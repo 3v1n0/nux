@@ -1595,6 +1595,7 @@ namespace nux
         m_pEvent->e_y = y_recalc;
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
+        m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
         mouse_press (xevent, m_pEvent);
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: ButtonPress event."));
         break;
@@ -1612,6 +1613,7 @@ namespace nux
         m_pEvent->e_y = y_recalc;
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
+        m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
         mouse_release (xevent, m_pEvent);
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: ButtonRelease event."));
         break;
@@ -1629,6 +1631,7 @@ namespace nux
         m_pEvent->e_y = y_recalc;
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
+        m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
         mouse_move (xevent, m_pEvent);
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: MotionNotify event."));
         break;
@@ -1644,6 +1647,7 @@ namespace nux
         m_pEvent->e_y = -1;
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
+        m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
         m_pEvent->e_event = NUX_WINDOW_MOUSELEAVE;
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: LeaveNotify event."));
         break;
@@ -1658,6 +1662,7 @@ namespace nux
         m_pEvent->e_y = y_recalc;
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
+        m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
         mouse_move (xevent, m_pEvent);
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: EnterNotify event."));
         break;

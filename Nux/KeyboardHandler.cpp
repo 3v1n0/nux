@@ -169,7 +169,13 @@ namespace nux
     for (t_u32 i = 0; i < StrLength; i++)
     {
       t_u32 cw0 = GetFont ()->GetCharWidth (m_textline[i]);
-      t_u32 cw1 = GetFont ()->GetCharWidth (m_textline[i+1]);
+      t_u32 cw1 = 0;
+
+      if (i+1 < StrLength)
+      {
+        cw1 = GetFont ()->GetCharWidth (m_textline[i+1]);
+      }
+
       {
         if (total == x)
         {

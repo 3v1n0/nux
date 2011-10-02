@@ -53,7 +53,12 @@ namespace nux
   protected:
     bool InitRegExp ();
     NString _regexp_str;
+
+#if defined (NUX_OS_WINDOWS)
     std::regex regex_;
+#else
+    pcre *_regexp;
+#endif
   };
 }
 

@@ -20,9 +20,9 @@
  *
  */
 
-//#if defined(NUX_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
   #pragma warning(disable : 4519) // error C4519: default template arguments are only allowed on a class template
-//#endif
+#endif
 
 #ifndef NUXCORE_PROPERTY_OPERATORS_H
 #define NUXCORE_PROPERTY_OPERATORS_H

@@ -35,6 +35,7 @@ namespace nux
   class VLayout;
   class HLayout;
   class EditTextBox;
+  class AbstractButton;
 
   class RGBValuator : public View //public ValuatorAbstraction
   {
@@ -82,8 +83,8 @@ namespace nux
     void OnReceiveMouseDrag_Green   (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     void OnReceiveMouseDrag_Blue    (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     void OnReceiveMouseDrag_Alpha   (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    void OnChangeColorModel();
-    void OnChangeColorFormat();
+    void OnChangeColorModel(AbstractButton* button);
+    void OnChangeColorFormat(AbstractButton* button);
     void RecvMouseDownColorModel (int x, int y, unsigned long button_flags, unsigned long key_flags);
 
     void OnReceiveMouseUp_Red       (int x, int y, unsigned long button_flags, unsigned long key_flags);

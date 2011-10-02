@@ -28,9 +28,9 @@
 namespace nux
 {
 
-  class HLayout: public Layout
+  class HLayout: public LinearLayout
   {
-    NUX_DECLARE_OBJECT_TYPE(HLayout, Layout);
+    NUX_DECLARE_OBJECT_TYPE(HLayout, LinearLayout);
   public:
     HLayout(NUX_FILE_LINE_PROTO);
     HLayout(NString name, NUX_FILE_LINE_PROTO);

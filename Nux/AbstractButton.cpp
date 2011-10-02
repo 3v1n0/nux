@@ -22,7 +22,7 @@
 
 #include "Nux.h"
 #include "AbstractButton.h"
-#include "HLayout.h"
+#include "StaticText.h"
 
 namespace nux
 {
@@ -33,7 +33,9 @@ namespace nux
   , visual_state_(STATE_NORMAL)
   {
     active_ = false;
-    persistent_active_state_ = true;
+    mouse_pressed_ = false;
+    static_text_ = NULL;
+    label_color_ = color::White;
 
     mouse_click.connect(sigc::mem_fun(this, &AbstractButton::RecvClick));
     mouse_down.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseDown));
@@ -49,26 +51,28 @@ namespace nux
 
   }
 
+  bool AbstractButton::Active() const
+  {
+    return active_;
+  }
+
   ButtonVisualState AbstractButton::GetVisualState()
   {
     return visual_state_;
   }
 
-  void AbstractButton::RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
-  {
-    if(persistent_active_state_)
-    {
-      active_ = !active_;
-    }
-
-    activated.emit(this);
-    QueueDraw();
-  }
-
   void AbstractButton::RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
+    if (IsMousePointerInside())
+    {
+      visual_state_ = STATE_PRELIGHT;
+    }
+    else
+    {
+      visual_state_ = STATE_NORMAL;
+    }
 
-    visual_state_ = STATE_PRELIGHT;
+    mouse_pressed_ = false;
     changed_visual_state.emit(this);
     QueueDraw();
   }
@@ -76,6 +80,7 @@ namespace nux
   void AbstractButton::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     visual_state_ = STATE_PRESSED;
+    mouse_pressed_ = true;
     changed_visual_state.emit(this);
     QueueDraw();
   }
@@ -87,7 +92,15 @@ namespace nux
 
   void AbstractButton::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    visual_state_ = STATE_PRELIGHT;
+    if (mouse_pressed_)
+    {
+      visual_state_ = STATE_PRESSED;
+    }
+    else
+    {
+      visual_state_ = STATE_PRELIGHT;
+    }
+
     changed_visual_state.emit(this);
     QueueDraw();
   }
@@ -97,5 +110,18 @@ namespace nux
     visual_state_ = STATE_NORMAL;
     changed_visual_state.emit(this);
     QueueDraw();
+  }
+
+  void AbstractButton::SetLabelColor (const Color &color)
+  {
+    label_color_ = color;
+    if (static_text_)
+      static_text_->SetTextColor(label_color_);
+    QueueDraw();
+  }
+
+  Color AbstractButton::GetLabelColor()
+  {
+    return label_color_;
   }
 }

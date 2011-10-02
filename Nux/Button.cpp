@@ -33,7 +33,6 @@ namespace nux
   Button::Button(TextureArea *image, NUX_FILE_LINE_DECL)
   : AbstractButton(NUX_FILE_LINE_PARAM)
   {
-    static_text_ = NULL;
     image_ = NULL;
     Initialize(std::string(), image);
   }
@@ -41,7 +40,6 @@ namespace nux
   Button::Button (const std::string& button_label, NUX_FILE_LINE_DECL)
   : AbstractButton (NUX_FILE_LINE_PARAM)
   {
-    static_text_ = NULL;
     image_ = NULL;
     Initialize(button_label, NULL);
   }
@@ -49,7 +47,6 @@ namespace nux
   Button::Button (const std::string& button_label, TextureArea *image, NUX_FILE_LINE_DECL)
   : AbstractButton (NUX_FILE_LINE_PARAM)
   {
-    static_text_ = NULL;
     image_ = NULL;
     Initialize(button_label, image);
   }
@@ -57,7 +54,6 @@ namespace nux
   Button::Button (NUX_FILE_LINE_DECL)
   : AbstractButton (NUX_FILE_LINE_PARAM)
   {
-    static_text_ = NULL;
     image_ = NULL;
     Initialize(std::string(), NULL);
   }
@@ -78,10 +74,14 @@ namespace nux
     item_order_ = IMAGE_FIRST;
     distribution_ = CENTER_OF_LAYOUT;
     space_between_items_ = 0;
+    
+    layout_top_padding_ = 4;
+    layout_right_padding_ = 4;
+    layout_bottom_padding_ = 4;
+    layout_left_padding_ = 4;
 
     // Set Geometry
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    image_position = NUX_POSITION_LEFT;
 
     image_minimum_size_ = Size(16, 16);
     image_maximum_size_ = Size(AREA_MAX_WIDTH, AREA_MAX_HEIGHT);
@@ -133,6 +133,14 @@ namespace nux
     QueueDraw();
   }
 
+  void Button::SetLayoutPadding(int top, int right, int bottom, int left)
+  {
+    layout_top_padding_ = top >= 0 ? top : 0;
+    layout_right_padding_ = right >= 0 ? right : 0;
+    layout_bottom_padding_ = bottom >= 0 ? bottom : 0;
+    layout_left_padding_ = left >= 0 ? left : 0;
+  }
+
   void Button::OnLabelChanged(std::string value)
   {
 
@@ -150,7 +158,6 @@ namespace nux
 
   void Button::BuildLayout(const std::string &str, TextureArea* image)
   {
-    bool image_change = false;
     if (image_ != image)
     {
       if (image_)
@@ -195,13 +202,13 @@ namespace nux
         label_ = str;
         static_text_ = new StaticText(str, NUX_TRACKER_LOCATION);
         static_text_->Reference();
-        static_text_->SetTextColor(text_color_);
+        static_text_->SetTextColor(label_color_);
       }
     }
 
     RemoveLayout();
 
-    Layout *layout = NULL;
+    LinearLayout *layout = NULL;
     if (static_text_ && image_)
     {
       if ((layout_type_ == HORIZONTAL) && (item_order_ == IMAGE_FIRST))
@@ -294,13 +301,16 @@ namespace nux
         break;
 
       case SPREAD_OVER_LAYOUT:
-        layout->SetContentDistribution(MAJOR_POSITION_EXPAND);
+        layout->SetContentDistribution(MAJOR_POSITION_SPREAD);
         break;
       }
     }
 
     if (layout)
-      layout->SetHorizontalInternalMargin(space_between_items_);
+    {
+        layout->SetHorizontalInternalMargin(space_between_items_);
+        layout->SetPadding(4, 4, 4, 4);
+    }
 
     if (layout)
       SetLayout(layout);
@@ -331,7 +341,61 @@ namespace nux
     }
 
     if (GetCompositionLayout())
+    {
+      GetPainter().PushPaintLayerStack();
       GetCompositionLayout()->ProcessDraw(graphics_engine, force_draw);
+      GetPainter().PopPaintLayerStack();
+    }
+  }
+
+  void Button::Activate()
+  {
+    if(persistent_active_state_ == false)
+    {
+      return;
+    }
+
+    if (active_ == true)
+    {
+      // already active
+      return;
+    }
+
+    active_ = true;
+    
+    changed.emit(this);
+    QueueDraw();
+  }
+
+  void Button::Deactivate()
+  {
+    if(persistent_active_state_ == false)
+    {
+      return;
+    }
+
+    if (active_ == false)
+    {
+      // already deactivated
+      return;
+    }
+
+    active_ = false;
+
+    changed.emit(this);
+    QueueDraw();
+  }
+
+  void Button::RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  {
+    if(persistent_active_state_)
+    {
+      active_ = !active_;
+    }
+
+    clicked.emit(this);
+    changed.emit(this);
+    QueueDraw();
   }
 
   void Button::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
@@ -341,34 +405,25 @@ namespace nux
   void Button::SetDistribution(Distribution distribution)
   {
     distribution_ = distribution;
+    BuildLayout(label_, image_);
   }
 
   void Button::SetItemOrder(ItemOrder item_order)
   {
     item_order_ = item_order;
+    BuildLayout(label_, image_);
   }
 
   void Button::SetLayoutType(LayoutType layout_type)
   {
     layout_type_ = layout_type;
+    BuildLayout(label_, image_);
   }
 
   void Button::SetSpaceBetweenItems(int space_between_items)
   {
     space_between_items_ = (space_between_items >= 0) ? space_between_items : 0;
-  }
-
-  void Button::SetTextColor (const Color &color)
-  {
-    text_color_ = color;
-    if (static_text_)
-      static_text_->SetTextColor(text_color_);
-    QueueDraw();
-  }
-
-  Color Button::GetTextColor()
-  {
-    return text_color_;
+    BuildLayout(label_, image_);
   }
 
 }

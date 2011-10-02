@@ -44,8 +44,6 @@ namespace nux
     GridHLayout (NUX_FILE_LINE_PROTO);
     ~GridHLayout ();
 
-    virtual long ComputeLayout2 ();
-
     virtual void GetCompositeList (std::list<Area *> *ViewList);
     
     //! Control the visibility of elements on the bottom edge.
@@ -88,10 +86,10 @@ namespace nux
         @param match_content If True, force the height of the layout to match the height of the content. This can also be achieve 
         if the stretch factor of this layout is set to 0;
     */
-    void SetHeightMatchContent (bool match_content);
+    void MatchContentSize(bool match_content);
 
     //! Return True if the grid width match the size of its content.
-    bool GetHeightMatchContent () const;
+    bool IsMatchingContentSize() const;
 
     //! Draw Element
     /*!
@@ -104,17 +102,31 @@ namespace nux
     */
     virtual void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
 
-  protected:
-    int GetChildPos (Area *child);
-    Area* GetChildAtPosition (int pos);
+    void SetSpaceBetweenChildrens(int horizontal_space, int vertical_space);
 
+  protected:
+    long ComputeLayoutRowOrder();
+    long ComputeLayoutColumnOrder();
+
+    virtual long ComputeLayout2();
+
+    int GetChildPos(Area *child);
+    Area* GetChildAtPosition(int pos);
+
+    Area* KeyNavIterationRowOrder(KeyNavDirection direction);
+    Area* KeyNavIterationColumnOrder(KeyNavDirection direction);
     virtual Area* KeyNavIteration(KeyNavDirection direction);
+
+    bool row_filling_order_;
+    int m_v_in_margin;
+    int m_h_in_margin;
+
   private:
     Size _children_size;
     bool _dynamic_column;
     bool _force_children_size;
     bool _partial_visibility;
-    bool _height_match_content; //!< If True, for the height of the layout to match the height of the content.
+    bool match_content_size_; //!< If True, for the height of the layout to match the height of the content.
 
     int _num_row;
     int _num_column;

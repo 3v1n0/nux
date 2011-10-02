@@ -144,7 +144,7 @@ namespace nux
     return texture;
   }
 
-  BaseTexture *CreateTexture2DFromFile (const TCHAR *filename, int max_size,
+  BaseTexture* CreateTexture2DFromFile (const TCHAR *filename, int max_size,
                                         bool premultiply)
   {
     GError *error = NULL;
@@ -245,6 +245,17 @@ namespace nux
       return texture;
     }
     return 0;
+  }
+
+  BaseTexture* LoadTextureFromFile(const std::string &filename)
+  {
+    NBitmapData* bitmap = LoadImageFile(filename.c_str());
+
+    if (bitmap == NULL)
+      return NULL;
+
+    BaseTexture *texture = CreateTextureFromBitmapData(bitmap);
+    return texture;
   }
 
   BaseTexture::BaseTexture(NUX_FILE_LINE_DECL)

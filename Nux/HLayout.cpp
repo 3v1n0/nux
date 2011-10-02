@@ -31,14 +31,16 @@ namespace nux
   static const int HERROR = 0;
   NUX_IMPLEMENT_OBJECT_TYPE (HLayout);
 
-  HLayout::HLayout (NUX_FILE_LINE_DECL)
-    :   Layout (NUX_FILE_LINE_PARAM)
+  HLayout::HLayout(NUX_FILE_LINE_DECL)
+    : LinearLayout(NUX_FILE_LINE_PARAM)
   {
 #if DEBUG_LAYOUT
-    m_h_in_margin = 10;
-    m_h_out_margin = 10;
+    space_between_children_ = 10;
+    left_padding_ = 10;
+    right_padding_ = 10;
     m_v_in_margin = 10;
-    m_v_out_margin = 10;
+    top_padding_ = 10;
+    bottom_padding_ = 10;
 #endif
 
     // Start packing the elements from the top. Is the layout has more space than the elements can use,
@@ -46,15 +48,17 @@ namespace nux
     m_ContentStacking = eStackLeft;
   }
 
-  HLayout::HLayout (NString name, NUX_FILE_LINE_DECL)
-    :   Layout (NUX_FILE_LINE_PARAM)
+  HLayout::HLayout(NString name, NUX_FILE_LINE_DECL)
+    : LinearLayout(NUX_FILE_LINE_PARAM)
   {
     m_name = name;
 #if DEBUG_LAYOUT
-    m_h_in_margin = 10;
-    m_h_out_margin = 10;
+    space_between_children_ = 10;
+    left_padding_ = 10;
+    right_padding_ = 10;
     m_v_in_margin = 10;
-    m_v_out_margin = 10;
+    top_padding_ = 10;
+    bottom_padding_ = 10;
 #endif
 
     m_ContentStacking = eStackLeft;
@@ -127,16 +131,14 @@ namespace nux
 
     switch (stacking)
     {
-      case eStackTop:
-      case eStackLeft:
+      case MAJOR_POSITION_START:
       {
         offset_space = 0;
         element_margin = 0;
       }
       break;
 
-      case eStackBottom:
-      case eStackRight:
+      case MAJOR_POSITION_END:
       {
         offset_space = (remaining_width - total_used_space);
 
@@ -231,15 +233,15 @@ namespace nux
       int height = GetBaseHeight();
 
       // Remove the margins. This is the real width and height available to the children.
-      width -= (int) (num_element - 1) * m_h_in_margin + 2 * m_h_out_margin;
-      height -= 2 * m_v_out_margin;
+      width -= (int) (num_element - 1) * space_between_children_ + (left_padding_ + right_padding_);
+      height -= (top_padding_ + bottom_padding_);
 
       // Size the children according to their stretch factor.
       HLayoutManagement (width, height);
 
       // Objects have been resized, now position them.
-      int current_x = GetBaseX() + m_h_out_margin;
-      int current_y = GetBaseY() + m_v_out_margin;
+      int current_x = GetBaseX() + left_padding_;
+      int current_y = GetBaseY() + top_padding_;
 
       int offset_space = 0;
       int space_after_element = 0;
@@ -328,16 +330,16 @@ namespace nux
           }
         }
 
-        current_x += (*it)->GetBaseWidth() + space_after_element + m_h_in_margin;
+        current_x += (*it)->GetBaseWidth() + space_after_element + space_between_children_;
       }
 
       // Manage child layout
       if (num_element == 0)
-        m_fittingWidth = (int) 2 * m_h_out_margin;
+        m_fittingWidth = (int) (left_padding_ + right_padding_);
       else
-        m_fittingWidth = (int) (num_element - 1) * m_h_in_margin + 2 * m_h_out_margin;
+        m_fittingWidth = (int) (num_element - 1) * space_between_children_ + (left_padding_ + right_padding_);
 
-      m_contentHeight = GetBaseHeight() - 2 * m_v_out_margin; // Set to the size of the layout.
+      m_contentHeight = GetBaseHeight() - (top_padding_ + bottom_padding_); // Set to the size of the layout.
 
       int element_height = 0;
       unadjusted_layout = false;
@@ -442,8 +444,8 @@ namespace nux
 
       // Set the height of the layout to be equal to the largest height it controls.
       // m_contentHeight is the largest height of an element within this layout. The layout size is then
-      // m_contentHeight + 2 * m_v_out_margin;
-      SetBaseHeight (m_contentHeight + 2 * m_v_out_margin);
+      // m_contentHeight + (top_padding_ + bottom_padding_);
+      SetBaseHeight (m_contentHeight + (top_padding_ + bottom_padding_));
 
       int temp = m_contentHeight;
       std::vector<int>::iterator IntIterator = FullSizeUnadjusted.begin();
@@ -459,7 +461,7 @@ namespace nux
     while (unadjusted_layout);
 
     // m_fittingHeight is sum of the largest element height plus the outer margin.
-    m_fittingHeight = m_contentHeight + 2 * m_v_out_margin;
+    m_fittingHeight = m_contentHeight + (top_padding_ + bottom_padding_);
 
     // m_fittingWidth is sum of the element width plus the inner and outer margin.
     // If the stretch factor is 0 then, the layout height has been set to 1 and need to grow with the elements within.
@@ -750,12 +752,12 @@ namespace nux
       int width = GetBaseWidth();
       int height = GetBaseHeight();
       // remove the margins
-      width -= (int) (num_element - 1) * m_h_in_margin + 2 * m_h_out_margin;
-      height -= 2 * m_v_out_margin;
+      width -= (int) (num_element - 1) * space_between_children_ + (left_padding_ + right_padding_);
+      height -= (top_padding_ + bottom_padding_);
 
       // Objects have been resized, now position them.
-      int current_x = GetBaseX() + m_h_out_margin + offsetX; // add base offset in X (used for scrolling)
-      int current_y = GetBaseY() + m_v_out_margin + offsetY; // add base offset in Y (used for scrolling)
+      int current_x = GetBaseX() + left_padding_ + offsetX; // add base offset in X (used for scrolling)
+      int current_y = GetBaseY() + top_padding_ + offsetY; // add base offset in Y (used for scrolling)
 
       int offset_space = 0;
       int element_margin = 0;
@@ -808,7 +810,7 @@ namespace nux
           }
         }
 
-        current_x += (*it)->GetBaseWidth() + element_margin + m_h_in_margin;
+        current_x += (*it)->GetBaseWidth() + element_margin + space_between_children_;
       }
     }
 

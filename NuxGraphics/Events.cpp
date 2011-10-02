@@ -98,6 +98,7 @@ namespace nux
     Memset (e_text, 0, sizeof (e_text));
     e_keysym = 0;
     e_key_repeat_count = 0;
+    e_key_modifiers = 0;
     e_wheeldelta = 0;
   }
 

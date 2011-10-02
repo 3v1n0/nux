@@ -73,8 +73,44 @@ namespace nux
 
     virtual void Clear();
 
+    //! Set the left/right padding with the same value.
+    /*!
+        Set the left/right padding of the layout. \n
+        Valid only for HLayout, VLayouts, HGridLayouts and VGridLayout.
+
+        @param padding The left/right padding value of the layout.
+    */
     void SetLeftAndRightPadding(int padding);
+
+    //! Set the left/right padding independently.
+    /*!
+        Set the left/right padding of the layout. \n
+        Valid only for HLayout, VLayouts, HGridLayouts and VGridLayout.
+
+        @param left Left padding value of the layout.
+        @param right Right padding value of the layout.
+    */
+    void SetLeftAndRightPadding(int left, int right);
+
+    //! Set the top/bottom padding with the same value.
+    /*!
+        Set the top/bottom padding of the layout. \n
+        Valid only for HLayout, VLayouts, HGridLayouts and VGridLayout.
+
+        @param padding The top/bottom padding value of the layout.
+    */
     void SetTopAndBottomPadding(int padding);
+
+
+    //! Set the top/bottom padding independently.
+    /*!
+        Set the top/bottom padding of the layout. \n
+        Valid only for HLayout, VLayouts, HGridLayouts and VGridLayout.
+
+        @param top Top padding value of the layout.
+        @param bottom Bottom padding value of the layout.
+    */
+    void SetTopAndBottomPadding(int top, int bottom);
 
     //! Set the left/right and top/bottom padding of the layout.
     /*!
@@ -86,38 +122,6 @@ namespace nux
     */
     void SetPadding(int left_right_padding, int top_bottom_padding);
 
-    //! Set the horizontal and vertical space between the children of the layout.
-    /*!
-        Set the horizontal and vertical space between the children of the layout. \n
-        For and HLayout only the horizontal space is taken into account. For and VLayout only the vertical space is taken into account.\n
-        Valid only for HLayout, VLayouts, HGridLayouts and VGridLayout.
-        \sa SetHorizontalSpaceBetweenItems, SetVerticalSpaceBetweenItems.
-
-        @param horizontal_space The horizontal space between the children of the layout.
-        @param vertical_padding The vertical space between the children of the layout.
-    */
-    void SetSpaceBetweenItems(int horizontal_space, int vertical_space);
-
-    //! Set the horizontal space between the children of the layout.
-    /*!
-        Set the horizontal space between the children of the layout. In a VLayout, children of the layout are placed
-        horizontally, on after the other, from left to right. This function set the space allowed between the children.
-        Valid only for HLayouts, HGridLayouts and VGridLayout.
-
-        @param horizontal_space The horizontal space between the children of the layout.
-    */
-    void SetHorizontalSpaceBetweenItems(int horizontal_space);
-    
-    //! Set the vertical space between the children of the layout.
-    /*!
-        Set the vertical space between the children of the layout. In a VLayout, children of the layout are placed
-        vertically, on after the other, from top to bottom. This function set the space allowed between the children.
-        Valid only for VLayouts, HGridLayouts and VGridLayout.
-
-        @param vertical_space The vertical space between the children of the layout.
-    */
-    void SetVerticalSpaceBetweenItems(int vertical_space);
-
     virtual unsigned int GetMaxStretchFactor();
     unsigned int GetMinStretchFactor();
     unsigned int GetNumStretchFactor (unsigned int sf);
@@ -126,56 +130,25 @@ namespace nux
     {
       return m_contentWidth;
     };
+
     int GetContentHeight() const
     {
       return m_contentHeight;
     };
 
-    int GetHorizontalInternalMargin() const
-    {
-      return m_h_in_margin;
-    }
-    int GetHorizontalExternalMargin() const
-    {
-      return m_h_out_margin;
-    }
-    void SetHorizontalInternalMargin (int m)
-    {
-#if DEBUG_LAYOUT
-      return;
-#endif
-      m_h_in_margin = m < 0 ? 0 : m;
-    }
-    void SetHorizontalExternalMargin (int m)
-    {
-#if DEBUG_LAYOUT
-      return;
-#endif
-      m_h_out_margin = m < 0 ? 0 : m;
-    }
 
-    int GetVerticalInternalMargin() const
-    {
-      return m_v_in_margin;
-    };
-    int GetVerticalExternalMargin() const
-    {
-      return m_v_out_margin;
-    };
-    void SetVerticalInternalMargin (int m)
-    {
-#if DEBUG_LAYOUT
-      return;
-#endif
-      m_v_in_margin = m < 0 ? 0 : m;
-    }
-    void SetVerticalExternalMargin (int m)
-    {
-#if DEBUG_LAYOUT
-      return;
-#endif
-      m_v_out_margin = m < 0 ? 0 : m;
-    }
+    //! Deprecated. Use SetLeftRightPadding.
+    void SetHorizontalExternalMargin(int m);
+
+    //! Deprecated. Use SetTopBottomPadding,
+    void SetVerticalExternalMargin(int m);
+
+    void SetPadding(int top, int right, int bottom, int left);
+
+    int GetLeftPadding() const;
+    int GetRightPadding() const;
+    int GetTopPadding() const;
+    int GetBottomPadding() const;
 
   public:
 
@@ -190,7 +163,7 @@ namespace nux
     bool SearchInAllSubNodes (Area *bo);
     bool SearchInFirstSubNodes (Area *bo);
 
-    // Deprectated. Do not use.
+    // Deprecated. Do not use.
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) {return 0;}
 
     Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
@@ -273,10 +246,14 @@ namespace nux
     int m_fittingWidth;
     int m_fittingHeight;
 
-    int m_h_in_margin;
-    int m_h_out_margin;
-    int m_v_in_margin;
-    int m_v_out_margin;
+    //int m_h_in_margin;
+    //int m_v_in_margin;
+
+    int space_between_children_;
+    int top_padding_;
+    int bottom_padding_;
+    int left_padding_;
+    int right_padding_;
 
     std::list<Area *> _layout_element_list;
 
@@ -286,7 +263,7 @@ namespace nux
   };
 
 
-// The Space layout is a layout object that is used to create fixed or resizable empty space.
+// The Space layout is a layout object that is used to create fixed or re-sizable empty space.
   class SpaceLayout: public Layout
   {
     NUX_DECLARE_OBJECT_TYPE (SpaceLayout, Layout);
@@ -351,6 +328,38 @@ namespace nux
     Area *Find (long handle);
   };
 
+
+  // The Space layout is a layout object that is used to create fixed or re-sizable empty space.
+  class LinearLayout: public Layout
+  {
+    NUX_DECLARE_OBJECT_TYPE (LinearLayout, Layout);
+  public:
+
+    //! Deprecated. Use SetSpaceBetweenChildren;
+    void SetHorizontalInternalMargin(int space);
+    //! Deprecated. Use SetSpaceBetweenChildren;
+    void SetVerticalInternalMargin(int space);
+
+    //! Set the space between the children of a HLayout or VLayout.
+    /*!
+        Set the horizontal space between the children of the layout. In a VLayout, children of the layout are placed
+        horizontally, on after the other, from left to right. This function set the space allowed between the children.
+        Valid only for HLayout and VLayout.
+
+        @param horizontal_space The horizontal space between the children of the layout.
+    */
+    void SetSpaceBetweenChildren(int space);
+
+  protected:
+    LinearLayout(NUX_FILE_LINE_PROTO)
+      : Layout (NUX_FILE_LINE_PARAM)
+    {
+    }
+
+    virtual ~LinearLayout()
+    {
+    }
+  };
 }
 
 #endif // LAYOUT_H

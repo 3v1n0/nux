@@ -29,16 +29,18 @@ namespace nux
 {
 
   static const int VERROR = 0;
-  NUX_IMPLEMENT_OBJECT_TYPE (VLayout);
+  NUX_IMPLEMENT_OBJECT_TYPE(VLayout);
 
-  VLayout::VLayout (NUX_FILE_LINE_DECL)
-    :   Layout (NUX_FILE_LINE_PARAM)
+  VLayout::VLayout(NUX_FILE_LINE_DECL)
+    : LinearLayout(NUX_FILE_LINE_PARAM)
   {
 #if DEBUG_LAYOUT
     m_h_in_margin = 10;
-    m_h_out_margin = 10;
-    m_v_in_margin = 10;
-    m_v_out_margin = 10;
+    left_padding_ = 10;
+    right_padding_ = 10;
+    space_between_children_ = 10;
+    top_padding_ = 10;
+    bottom_padding_ = 10;
 #endif
 
     // Start packing the elements from the left size. Is the layout has more space than the elements can use,
@@ -47,15 +49,17 @@ namespace nux
 
   }
 
-  VLayout::VLayout (NString name, NUX_FILE_LINE_DECL)
-    :   Layout (NUX_FILE_LINE_PARAM)
+  VLayout::VLayout(NString name, NUX_FILE_LINE_DECL)
+    : LinearLayout(NUX_FILE_LINE_PARAM)
   {
     m_name = name;
 #if DEBUG_LAYOUT
     m_h_in_margin = 10;
-    m_h_out_margin = 10;
-    m_v_in_margin = 10;
-    m_v_out_margin = 10;
+    left_padding_ = 10;
+    right_padding_ = 10;
+    space_between_children_ = 10;
+    top_padding_ = 10;
+    bottom_padding_ = 10;
 #endif
 
     m_ContentStacking = eStackTop;
@@ -65,13 +69,13 @@ namespace nux
   {
   }
 
-  void VLayout::GetCompositeList (std::list<Area *> *ViewList)
+  void VLayout::GetCompositeList(std::list<Area *> *ViewList)
   {
     std::list<Area *>::iterator it;
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      if ( (*it)->IsView() )
+      if ((*it)->IsView())
       {
         View *ic = NUX_STATIC_CAST (View *, (*it) );
         ViewList->push_back (ic);
@@ -134,16 +138,14 @@ namespace nux
 
     switch (stacking)
     {
-      case eStackTop:
-      case eStackLeft:
+      case MAJOR_POSITION_START:
       {
         offset_space = 0;
         element_margin = 0;
       }
       break;
 
-      case eStackBottom:
-      case eStackRight:
+      case MAJOR_POSITION_END:
       {
         offset_space = (remaining_height - total_used_space);
 
@@ -199,18 +201,18 @@ namespace nux
       if (GetParentObject() && GetParentObject()->Type().IsObjectType (HLayout::StaticObjectType) )
       {
         // The parent if a HLayout. Then a Stretch factor of 0 means this layout has its width set to 1.
-        Area::SetBaseWidth (1);
+        Area::SetBaseWidth(1);
       }
       else if (GetParentObject() && GetParentObject()->Type().IsObjectType (VLayout::StaticObjectType) )
       {
         // The parent if a VLayout(same type). Then a Stretch factor of 0 means this layout has its height set to 1.
-        Area::SetBaseHeight (1);
+        Area::SetBaseHeight(1);
       }
       else
       {
         // This is for when a layout is set as a composition layout of an View and its stretch factor is explicitly set to 0.
-        Area::SetBaseWidth (1);
-        Area::SetBaseHeight (1);
+        Area::SetBaseWidth(1);
+        Area::SetBaseHeight(1);
       }
 
       //The children will all assume their minimum size.
@@ -236,32 +238,32 @@ namespace nux
       int height = GetBaseHeight();
 
       // Remove the margins. This is the real width and height available to the children.
-      width -= 2 * m_h_out_margin;
-      height -= (int) (num_element - 1) * m_v_in_margin + 2 * m_v_out_margin;
+      width -= (left_padding_ + right_padding_);
+      height -= (int) (num_element - 1) * space_between_children_ + (top_padding_ + bottom_padding_);
 
       // Size the children according to their stretch factor.
-      VLayoutManagement (width, height);
+      VLayoutManagement(width, height);
 
       // Objects have been resized, now position them.
-      int current_x = GetBaseX() + m_h_out_margin;
-      int current_y = GetBaseY() + m_v_out_margin;
+      int current_x = GetBaseX() + left_padding_;
+      int current_y = GetBaseY() + top_padding_;
 
       //int per_element_space = 0;
       //int total_used_space = 0;
       int offset_space = 0;
       int space_after_element = 0;
-      ComputeStacking (height, offset_space, space_after_element);
+      ComputeStacking(height, offset_space, space_after_element);
       current_y += offset_space;
 
       for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
-        if (!(*it)->IsVisible ())
+        if (!(*it)->IsVisible())
           continue;
 
         current_y += space_after_element;
 
-        (*it)->SetBaseX (current_x);
-        (*it)->SetBaseY (current_y);
+        (*it)->SetBaseX(current_x);
+        (*it)->SetBaseY(current_y);
 
         MinorDimensionSize extend = (*it)->GetExtend();
         MinorDimensionPosition positioning = (*it)->GetPositioning();
@@ -275,7 +277,7 @@ namespace nux
             // The size of the element in the minor dimension is a percentage of layout minor dimension size.
             // Note that children of the processed element may force it to have a bigger size.
             int percentage_width = (width * percentage) / 100.0f;
-            (*it)->SetBaseWidth (percentage_width);
+            (*it)->SetBaseWidth(percentage_width);
             break;
           }
 
@@ -283,7 +285,7 @@ namespace nux
           {
             // Force the element width to be the minimum has defined with SetMinimumWidth.
             // The children of this element can force it to get larger.
-            (*it)->SetBaseWidth (0);
+            (*it)->SetBaseWidth(0);
             break;
           }
 
@@ -296,7 +298,7 @@ namespace nux
           case eFull:
           default:
           {
-            (*it)->SetBaseWidth (width);
+            (*it)->SetBaseWidth(width);
             break;
           }
         }
@@ -311,15 +313,15 @@ namespace nux
             case eLeft:
             {
               // do nothing
-              (*it)->SetBaseX (current_x);
+              (*it)->SetBaseX(current_x);
               break;
             }
             case eRight:
             {
               if (widget_width < width)
-                (*it)->SetBaseX (current_x + width - widget_width);
+                (*it)->SetBaseX(current_x + width - widget_width);
               else
-                (*it)->SetBaseX (current_x);
+                (*it)->SetBaseX(current_x);
 
               break;
             }
@@ -328,23 +330,23 @@ namespace nux
             default:
             {
               if (widget_width < width)
-                (*it)->SetBaseX (current_x + (width - widget_width) / 2);
+                (*it)->SetBaseX(current_x + (width - widget_width) / 2);
               else
-                (*it)->SetBaseX (current_x);
+                (*it)->SetBaseX(current_x);
             }
           }
         }
 
-        current_y += (*it)->GetBaseHeight() + space_after_element + m_v_in_margin;
+        current_y += (*it)->GetBaseHeight() + space_after_element + space_between_children_;
       }
 
       // Manage child layout
-      m_contentWidth = GetBaseWidth() - 2 * m_h_out_margin; // Set to the size of the layout.
+      m_contentWidth = GetBaseWidth() - (left_padding_ + right_padding_); // Set to the size of the layout.
 
       if (num_element == 0)
-        m_fittingHeight = (int) 2 * m_v_out_margin;
+        m_fittingHeight = (int) (top_padding_ + bottom_padding_);
       else
-        m_fittingHeight = (int) (num_element - 1) * m_v_in_margin + 2 * m_v_out_margin;
+        m_fittingHeight = (int) (num_element - 1) * space_between_children_ + (top_padding_ + bottom_padding_);
 
       int element_width;
       unadjusted_layout = false;
@@ -364,10 +366,10 @@ namespace nux
         bool larger_width   = false;
         int ret = 0;
 
-        if (!(*it)->IsVisible ())
+        if (!(*it)->IsVisible())
           continue;
 
-        if ( ( (*it)->IsLayout() || (*it)->IsView() ) /*&& ((*it)->IsLayoutDone() == false)*/ /*&& ((*it)->GetStretchFactor() != 0)*/)
+        if (((*it)->IsLayout() || (*it)->IsView()) /*&& ((*it)->IsLayoutDone() == false)*/ /*&& ((*it)->GetStretchFactor() != 0)*/)
         {
           ret = (*it)->ComputeLayout2();
 
@@ -376,7 +378,7 @@ namespace nux
           smaller_width   = (ret & eSmallerWidth)   ? true : false;
           larger_width    = (ret & eLargerWidth)    ? true : false;
 
-          if ( (larger_height || smaller_height) && ( (*it)->IsLayoutDone() == false) )
+          if ((larger_height || smaller_height) && ((*it)->IsLayoutDone() == false))
           {
             // Stop computing the size of this layout. Its size was not convenient to its children. So the children size take priority
             // over the layout. In ComputeLayout2, the dimension of the layout has been set so it encompasses its children (and the margins).
@@ -388,18 +390,18 @@ namespace nux
             // Set unadjusted_layout = true, so another pass will allow its sibling to claim more space.
             {
               unadjusted_layout = true;
-              (*it)->SetLayoutDone (true);
+              (*it)->SetLayoutDone(true);
             }
           }
 
-          if ( (smaller_width == false) && ( (*it)->GetExtend() == eFull) && ( (*it)->GetBaseWidth() < (*it)->GetMaximumWidth() ) )
+          if ((smaller_width == false) && ((*it)->GetExtend() == eFull) && ((*it)->GetBaseWidth() < (*it)->GetMaximumWidth()))
           {
             // Catch all object whose size is possibly larger than the layout. Check their size at the end and
             // recompute the layout if necessary.
             // For layout elements, make sure that the stretch factor is not 0. If it is, it means it will not use the
             // size provided by the parent layout. Its size will be adjusted to the minimum size of the layout content.
-            if (! ( (*it)->IsLayout() && (*it)->GetStretchFactor() == 0) )
-              FullSizeUnadjusted.push_back ( (*it)->GetBaseWidth() );
+            if (!((*it)->IsLayout() && (*it)->GetStretchFactor() == 0))
+              FullSizeUnadjusted.push_back((*it)->GetBaseWidth());
           }
 
           if ((smaller_width || larger_width) && ((*it)->GetExtend() == MINOR_SIZE_MATCHCONTENT))
@@ -418,13 +420,13 @@ namespace nux
 
         element_width = (*it)->GetBaseWidth();
 
-        if ( (*it)->IsSpaceLayout() == false)
+        if ((*it)->IsSpaceLayout() == false)
         {
-          if ( (GetStretchFactor() != 0) && (ret & eSmallerWidth) )
+          if ((GetStretchFactor() != 0) && (ret & eSmallerWidth))
           {
             if (m_contentWidth < element_width)
             {
-              if (m_contentWidth < GetMaximumHeight() )
+              if (m_contentWidth < GetMaximumHeight())
               {
                 // An element is larger than the layout width and the layout has not reach its maximum width yet.
                 m_contentWidth = element_width;
@@ -449,8 +451,8 @@ namespace nux
 
       // Set the width of the layout to be equal to the largest width it controls.
       // m_contentWidth is the largest width of an element within this layout. The layout size is then
-      // m_contentWidth + 2 * m_h_out_margin;
-      SetBaseWidth (m_contentWidth + 2 * m_h_out_margin);
+      // m_contentWidth + (left_padding_ + right_padding_);
+      SetBaseWidth (m_contentWidth + (left_padding_ + right_padding_));
 
       int temp = m_contentWidth;
       std::vector<int>::iterator IntIterator = FullSizeUnadjusted.begin();
@@ -466,7 +468,7 @@ namespace nux
     while (unadjusted_layout);
 
     // m_fittingWidth is sum of the largest element width plus the outer margin.
-    m_fittingWidth = m_contentWidth + 2 * m_h_out_margin;
+    m_fittingWidth = m_contentWidth + (left_padding_ + right_padding_);
 
     // m_fittingHeight is sum of the element height plus the inner and outer margin.
     // If the stretch factor is 0 then, the layout height has been set to 1 and need to grow with the elements within.
@@ -755,12 +757,12 @@ namespace nux
       int width = GetBaseWidth();
       int height = GetBaseHeight();
       // remove the margins
-      width -= 2 * m_h_out_margin;
-      height -= (int) (num_element - 1) * m_v_in_margin + 2 * m_v_out_margin;
+      width -= (left_padding_ + right_padding_);
+      height -= (int) (num_element - 1) * space_between_children_ + (top_padding_ + bottom_padding_);
 
       // Objects have been resized, now position them.
-      int current_x = GetBaseX() + m_h_out_margin + offsetX; // add base offset in X (used for scrolling)
-      int current_y = GetBaseY() + m_v_out_margin + offsetY; // add base offset in Y (used for scrolling)
+      int current_x = GetBaseX() + left_padding_ + offsetX; // add base offset in X (used for scrolling)
+      int current_y = GetBaseY() + top_padding_ + offsetY; // add base offset in Y (used for scrolling)
 
       int offset_space = 0;
       int element_margin = 0;
@@ -812,7 +814,7 @@ namespace nux
           }
         }
 
-        current_y += (*it)->GetBaseHeight() + element_margin + m_v_in_margin;
+        current_y += (*it)->GetBaseHeight() + element_margin + space_between_children_;
       }
     }
 
