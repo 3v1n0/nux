@@ -846,33 +846,6 @@ namespace nux
     return _parent_area->IsChildOf(parent);    
   }
 
-  /* handles our focusable code */
-  bool Area::DoGetFocused ()
-  {
-    return _is_focused;
-  }
-
-  /* Pretty much everything is going to have to override this */
-  void Area::DoSetFocused (bool focused)
-  {
-    if (_is_focused == focused)
-      return;
-    
-    _is_focused = focused;
-    FocusChanged.emit (this);
-  }
-
-  bool Area::DoCanFocus ()
-  {
-    return true;
-  }
-
-  /* override me! */
-  void Area::DoActivateFocus ()
-  {
-    FocusActivated.emit (this);
-  }
-
   void Area::QueueRelayout ()
   {
     nux::GetWindowThread ()->QueueObjectLayout (this);

@@ -202,7 +202,9 @@ namespace nux
 
       if (RectSize == 0)
       {
-        pLockedRect->pBits = 0;
+        _LockedRect.pBits = NULL;
+        _LockedRect.Pitch = 0;
+        pLockedRect->pBits = NULL;
         pLockedRect->Pitch = 0;
         return OGL_INVALID_LOCK;
       }

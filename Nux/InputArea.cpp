@@ -283,12 +283,6 @@ logging::Logger logger("nux.inputarea");
   }
 #endif
 
-  void InputArea::DoSetFocused(bool focused)
-  {
-    Area::DoSetFocused(focused);
-    SetKeyboardFocus(focused);
-  }
-  
   void InputArea::GrabPointer()
   {
     GetWindowCompositor().GrabPointerAdd (this);

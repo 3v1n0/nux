@@ -83,6 +83,12 @@ namespace nux
     */
     Color GetLabelColor();
 
+    //! Get the button visual state.
+    /*!
+        Get the button visual state.
+
+        @return The button visual state.
+    */
     ButtonVisualState GetVisualState() const;
 
   protected:

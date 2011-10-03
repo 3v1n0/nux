@@ -361,13 +361,6 @@ namespace nux
     */
     bool IsSensitive();
 
-    virtual bool DoGetFocused ();
-    virtual void DoSetFocused (bool focused);
-    virtual bool DoCanFocus ();
-    virtual void DoActivateFocus ();
-    
-    sigc::signal<void, Area *> FocusActivated;
-    sigc::signal<void, Area *> FocusChanged;
     sigc::signal<void, Area*> ChildFocusChanged; // sends parent + child
 
     /*!
