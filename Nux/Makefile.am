@@ -50,8 +50,6 @@ source_cpp = \
   $(srcdir)/ColorPickerDialog.cpp \
   $(srcdir)/ColorPreview.cpp \
   $(srcdir)/ColorRangeValuator.cpp \
-  $(srcdir)/ComboBoxComplex.cpp \
-  $(srcdir)/ComboBoxSimple.cpp \
   $(srcdir)/CurveControl.cpp \
   $(srcdir)/Dialog.cpp \
   $(srcdir)/DoubleValidator.cpp \
@@ -80,15 +78,12 @@ source_cpp = \
   $(srcdir)/MenuBar.cpp \
   $(srcdir)/MouseAreaCtrl.cpp \
   $(srcdir)/MouseHandler.cpp \
-  $(srcdir)/NodeItem.cpp \
-  $(srcdir)/NodeNetProtocol.cpp \
   $(srcdir)/NumericValuator.cpp \
   $(srcdir)/Nux.cpp \
   $(srcdir)/NuxGlobalInitializer.cpp \
   $(srcdir)/Painter.cpp \
   $(srcdir)/Panel.cpp \
   $(srcdir)/PopUpWindow.cpp \
-  $(srcdir)/PropertyList.cpp \
   $(srcdir)/RangeValue.cpp \
   $(srcdir)/RangeValueInteger.cpp \
   $(srcdir)/RGBValuator.cpp \
@@ -148,8 +143,6 @@ source_h = \
   $(srcdir)/ColorPickerDialog.h \
   $(srcdir)/ColorPreview.h \
   $(srcdir)/ColorRangeValuator.h \
-  $(srcdir)/ComboBoxComplex.h \
-  $(srcdir)/ComboBoxSimple.h \
   $(srcdir)/CurveControl.h \
   $(srcdir)/Dialog.h \
   $(srcdir)/DoubleValidator.h \
@@ -178,15 +171,12 @@ source_h = \
   $(srcdir)/MenuBar.h \
   $(srcdir)/MouseAreaCtrl.h \
   $(srcdir)/MouseHandler.h \
-  $(srcdir)/NodeItem.h \
-  $(srcdir)/NodeNetProtocol.h \
   $(srcdir)/NumericValuator.h \
   $(srcdir)/Nux.h \
   $(srcdir)/NuxGlobalInitializer.h \
   $(srcdir)/Painter.h \
   $(srcdir)/Panel.h \
   $(srcdir)/PopUpWindow.h \
-  $(srcdir)/PropertyList.h \
   $(srcdir)/RangeValue.h \
   $(srcdir)/RangeValueInteger.h \
   $(srcdir)/Readme.txt \
@@ -224,14 +214,10 @@ source_h = \
 
 libnux_@NUX_API_VERSION@_la_SOURCES = \
   $(source_cpp) \
-  $(source_h) \
-  $(source_property_item_h)
+  $(source_h)
 
 nuxdir = $(includedir)/Nux-@NUX_API_VERSION@/Nux
 nux_HEADERS = $(source_h)
-
-nux_property_itemdir = $(nuxdir)/PropertyItem
-nux_property_item_HEADERS = $(source_property_item_h)
 
 # pkg-config file
 nux-@NUX_API_VERSION@.pc: nux.pc
