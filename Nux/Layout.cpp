@@ -28,20 +28,21 @@ namespace nux
 {
   NUX_IMPLEMENT_OBJECT_TYPE(Layout);
   NUX_IMPLEMENT_OBJECT_TYPE(SpaceLayout);
+  NUX_IMPLEMENT_OBJECT_TYPE(LinearLayout);
 
   Layout::Layout (NUX_FILE_LINE_DECL)
     :   Area (NUX_FILE_LINE_PARAM)
   {
-    m_h_in_margin       = 0;
-    m_h_out_margin      = 0;
-    m_v_in_margin       = 0;
-    m_v_out_margin      = 0;
+    space_between_children_ = 0;
+
+    left_padding_      = 0;
+    right_padding_     = 0;    
+    top_padding_      = 0;
+    bottom_padding_   = 0;
     m_contentWidth      = 0;
     m_contentHeight     = 0;
     m_ContentStacking   = eStackExpand;
-    _has_focus_control  = false;
     _queued_draw        = false;
-    _ignore_focus       = false;
 
     SetMinimumSize(1, 1);
   }
@@ -64,6 +65,81 @@ namespace nux
     _layout_element_list.clear();
   }
 
+  int Layout::GetLeftPadding() const
+  {
+    return left_padding_;
+  }
+
+  int Layout::GetRightPadding() const
+  {
+    return right_padding_;
+  }
+
+  int Layout::GetTopPadding() const
+  {
+    return top_padding_;
+  }
+
+  int Layout::GetBottomPadding() const
+  {
+    return bottom_padding_;
+  }
+
+  void Layout::SetLeftAndRightPadding(int padding)
+  {
+#if DEBUG_LAYOUT
+    return;
+#endif
+    left_padding_ = padding < 0 ? 0 : padding;
+    right_padding_ = padding < 0 ? 0 : padding;
+  }
+
+  void Layout::SetLeftAndRightPadding(int left, int right)
+  {
+#if DEBUG_LAYOUT
+    return;
+#endif
+    left_padding_ = left < 0 ? 0 : left;
+    right_padding_ = right < 0 ? 0 : right;
+  }
+
+  void Layout::SetTopAndBottomPadding(int padding)
+  {
+#if DEBUG_LAYOUT
+    return;
+#endif
+    top_padding_ = padding < 0 ? 0 : padding;
+    bottom_padding_ = padding < 0 ? 0 : padding;
+  }
+
+  void Layout::SetTopAndBottomPadding(int top, int bottom)
+  {
+#if DEBUG_LAYOUT
+    return;
+#endif
+    top_padding_ = top < 0 ? 0 : top;
+    bottom_padding_ = bottom < 0 ? 0 : bottom;
+  }
+
+  void Layout::SetPadding(int top, int right, int bottom, int left)
+  {
+    top_padding_ = top < 0 ? 0 : top;
+    right_padding_ = right < 0 ? 0 : right;
+    bottom_padding_ = bottom < 0 ? 0 : bottom;
+    left_padding_ = left < 0 ? 0 : left;
+  }
+
+  //! Deprecated. Use SetLeftRightPadding.
+  void Layout::SetHorizontalExternalMargin(int padding)
+  {
+    SetLeftAndRightPadding(padding);
+  }
+
+  //! Deprecated. Use SetTopBottomPadding,
+  void Layout::SetVerticalExternalMargin(int padding)
+  {
+    SetTopAndBottomPadding(padding);
+  }
 
   void Layout::RemoveChildObject (Area *bo)
   {
@@ -72,7 +148,7 @@ namespace nux
 
     if (it != _layout_element_list.end())
     {
-      /* we need to emit the signal before the unparent, just in case
+      /* we need to emit the signal before the un-parent, just in case
          one of the callbacks wanted to use this object */
       ViewRemoved.emit (this, bo);
       bo->UnParentObject();
@@ -98,41 +174,6 @@ namespace nux
   bool Layout::IsEmpty() const
   {
     return (_layout_element_list.size() == 0);
-  }
-
-  bool Layout::HasFocusableEntries ()
-  {
-    std::list<Area *>::const_iterator it;
-
-    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
-    {
-      bool can_focus = false;
-      if ( (*it)->IsArea() )
-      {
-        CoreArea *area = NUX_STATIC_CAST (CoreArea *, (*it) );
-        can_focus = area->CanFocus ();
-      }
-      else if ( (*it)->IsView() )
-      {
-        View *ic = NUX_STATIC_CAST (View *, (*it) );
-        can_focus = ic->CanFocus ();
-      }
-      else if ( (*it)->IsLayout() )
-      {
-        Layout *layout = NUX_STATIC_CAST (Layout *, (*it) );
-        can_focus = layout->CanFocus ();
-      }
-
-      if (can_focus == true)
-        return true;
-    }
-
-    return false;
-  }
-
-  void Layout::OnChildFocusChanged (/*Area *parent,*/ Area *child)
-  {
-    ChildFocusChanged.emit (/*parent,*/ child);
   }
 
 // If(stretchfactor == 0): the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
@@ -174,12 +215,6 @@ namespace nux
     layout->OnChildQueueDraw.connect (sigc::mem_fun (this, &Layout::ChildLayoutChildQueuedDraw));
     layout->OnQueueDraw.connect (sigc::mem_fun (this, &Layout::ChildLayoutQueuedDraw));
 
-    if (HasFocusControl () && HasFocusableEntries () == false)
-    {
-      //layout->SetFocused (true);
-      //ChildFocusChanged (this, layout);
-    }
-
     if (index < 0)
       index = NUX_LAYOUT_BEGIN;
 
@@ -189,11 +224,7 @@ namespace nux
     }
     else
     {
-#if defined(NUX_OS_WINDOWS) && !defined(NUX_VISUAL_STUDIO_2010)
       std::list<Area *>::iterator pos = _layout_element_list.begin();
-#else
-      auto pos = _layout_element_list.begin();
-#endif
       int idx = index;
       while (pos != _layout_element_list.end() && idx > 0)
       {
@@ -203,9 +234,6 @@ namespace nux
       _layout_element_list.insert(pos, layout);
     }
 
-    _connection_map[layout] = layout->ChildFocusChanged.connect (sigc::mem_fun (this, &Layout::OnChildFocusChanged));
-
-    //--->> Removed because it cause problem with The splitter widget: ComputeLayout2();
   }
 
 //! Add an object to the layout.
@@ -294,8 +322,6 @@ namespace nux
       }
       _layout_element_list.insert(pos, bo);
     }
-
-    _connection_map[bo] = bo->ChildFocusChanged.connect (sigc::mem_fun (this, &Layout::OnChildFocusChanged));
 
     ViewAdded.emit (this, bo);
     //--->> Removed because it cause problem with The splitter widget: ComputeLayout2();
@@ -425,330 +451,6 @@ namespace nux
     }
   }
 
-  void Layout::DoActivateFocus ()
-  {
-    std::list<Area *>::const_iterator it;
-    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
-    {
-      if ((*it)->GetFocused ())
-      {
-        (*it)->ActivateFocus ();
-        break;
-      }
-    }
-  }
-
-  bool Layout::FocusFirstChild ()
-  {
-    if (_layout_element_list.empty ())
-      return false;
-
-    std::list<Area *>::const_iterator it;
-    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
-    {
-      if ((*it)->CanFocus ())
-      {
-        (*it)->SetFocused (true);
-        ChildFocusChanged (/*this,*/ (*it));
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  bool Layout::FocusLastChild ()
-  {
-    if (_layout_element_list.empty ())
-      return false;
-
-    std::list<Area *>::reverse_iterator it;
-    for (it = _layout_element_list.rbegin(); it != _layout_element_list.rend(); it++)
-    {
-      if ((*it)->CanFocus ())
-      {
-        (*it)->SetFocused (true);
-        ChildFocusChanged (/*this,*/ (*it));
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-
-  bool Layout::FocusNextChild (Area *child)
-  {
-    std::list<Area *>::const_iterator it;
-    bool found_child = false;
-
-    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
-    {
-      if (found_child)
-      {
-        if ((*it)->CanFocus ())
-        {
-          (*it)->SetFocused (true);
-          ChildFocusChanged (/*this,*/ (*it));
-          return true;
-        }
-      }
-
-      if ((*it) == child)
-      {
-        found_child = true;
-      }
-    }
-
-    return false;
-  }
-
-  bool Layout::FocusPreviousChild (Area *child)
-  {
-    std::list<Area *>::reverse_iterator it;
-    bool found_child = false;
-
-    for (it = _layout_element_list.rbegin(); it != _layout_element_list.rend(); it++)
-    {
-
-      if (found_child)
-      {
-        if ((*it)->CanFocus ())
-        {
-          (*it)->SetFocused (true);
-          ChildFocusChanged (/*this,*/ (*it));
-          return true;
-        }
-      }
-
-      if ((*it) == child)
-      {
-        found_child = true;
-      }
-    }
-
-    return false;
-  }
-
-
-  void Layout::SetFocusControl (bool focus_control)
-  {
-    _has_focus_control = focus_control;
-  }
-
-  bool Layout::HasFocusControl ()
-  {
-    return _has_focus_control;
-  }
-
-
-  long Layout::SendEventToArea (Area *area, IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    // if parent is null return, thats a valid usecase so no warnings.
-    if (area == NULL)
-    {
-      return 0;
-    }
-
-    long ret = 0;
-    if ( area->IsView() )
-    {
-      View *ic = NUX_STATIC_CAST (View *, area );
-      ret = ic->ProcessFocusEvent (ievent, ret, ProcessEventInfo);
-    }
-    else if ( area->IsLayout() )
-    {
-      Layout *layout = NUX_STATIC_CAST (Layout *, area );
-      layout->SetFocusControl (true);
-      SetFocusControl (false);
-      ret = layout->ProcessFocusEvent (ievent, ret, ProcessEventInfo);
-    }
-
-    return ret;
-  }
-
-  Area* Layout::GetFocusedChild ()
-  {
-    std::list<Area *>::iterator it;
-    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
-    {
-      if ((*it)->GetFocused ())
-      {
-        return (*it);
-      }
-    }
-
-    return NULL;
-  }
-
-  long Layout::DoFocusPrev (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    Area *focused_child = GetFocusedChild ();
-    if (focused_child == NULL) return ProcessEventInfo;
-    bool success = FocusPreviousChild (focused_child);
-    //focused_child->SetFocused (false);
-
-    if (success == false)
-    {
-      Area *parent = GetParentObject ();
-      if (parent != NULL)
-        return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
-      else
-        FocusFirstChild ();
-    }
-
-    return ProcessEventInfo;
-  }
-
-  long Layout::DoFocusNext (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    Area *focused_child = GetFocusedChild ();
-    if (focused_child == NULL) return ProcessEventInfo;
-    bool success = FocusNextChild(focused_child);
-    //focused_child->SetFocused (false);
-
-    if (success == false)
-    {
-      Area *parent = GetParentObject ();
-      if (parent != NULL)
-        return SendEventToArea (parent, ievent, TraverseInfo, ProcessEventInfo);
-      else
-        FocusFirstChild ();
-    }
-
-    return ProcessEventInfo;
-  }
-
-  long Layout::DoFocusUp (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    return DoFocusPrev (ievent, TraverseInfo, ProcessEventInfo);
-  }
-  long Layout::DoFocusDown (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    return DoFocusNext (ievent, TraverseInfo, ProcessEventInfo);
-  }
-  long Layout::DoFocusLeft (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    return DoFocusPrev (ievent, TraverseInfo, ProcessEventInfo);
-  }
-  long Layout::DoFocusRight (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    return DoFocusNext (ievent, TraverseInfo, ProcessEventInfo);
-  }
-
-
-  long Layout::ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-
-
-    if (GetFocused () && (ievent.e_event == NUX_KEYDOWN))
-    {
-      Area *focused_child = NULL;
-      Area *parent = GetParentObject ();
-      FocusDirection direction;
-      FocusEventType type;
-
-      direction = FOCUS_DIRECTION_NONE;
-
-      type = Focusable::GetFocusableEventType (ievent.e_event,
-                                               ievent.GetKeySym(),
-                                               ievent.GetText(),
-                                               &direction);
-
-      if ((type == FOCUS_EVENT_DIRECTION) && (direction != FOCUS_DIRECTION_NONE))
-      {
-        focused_child = GetFocusedChild ();
-
-        /* if nothing is focused, focus the first child else send the event to the parent */
-
-        if (focused_child == NULL)
-        {
-          bool have_focused_child = FocusFirstChild ();
-          if (have_focused_child == false)
-          {
-            /* propagate up */
-            if ((parent != NULL) && parent->IsLayout ())
-            {
-              ret |= SendEventToArea (parent, ievent, ret, ProcessEventInfo);
-            }
-            else
-            {
-              FocusFirstChild ();
-            }
-          }
-        }
-        else // we have a focused child
-        {
-          // if the focused child is the last/first handle next/prev for those
-          if (direction == FOCUS_DIRECTION_PREV)
-          {
-            if (focused_child == _layout_element_list.front ())
-            {
-              if (parent != NULL)
-              {
-                ret |= SendEventToArea (parent, ievent, ret, ProcessEventInfo);
-              }
-              else
-              {
-                FocusLastChild ();
-              }
-              return ret;
-            }
-          }
-          else if (direction == FOCUS_DIRECTION_NEXT)
-          {
-            if (focused_child == _layout_element_list.back ())
-            {
-              if (parent != NULL)
-              {
-                ret |= SendEventToArea (parent, ievent, ret, ProcessEventInfo);
-              }
-              else
-              {
-                FocusFirstChild ();
-              }
-              return ret;
-            }
-          }
-
-          switch (direction)
-          {
-            case FOCUS_DIRECTION_NEXT:
-              ret |= DoFocusNext (ievent, ret, ProcessEventInfo);
-              break;
-            case FOCUS_DIRECTION_PREV:
-              ret |= DoFocusPrev (ievent, ret, ProcessEventInfo);
-              break;
-            case FOCUS_DIRECTION_UP:
-              ret |= DoFocusUp (ievent, ret, ProcessEventInfo);
-              break;
-            case FOCUS_DIRECTION_DOWN:
-              ret |= DoFocusDown (ievent, ret, ProcessEventInfo);
-              break;
-            case FOCUS_DIRECTION_LEFT:
-              ret |= DoFocusLeft (ievent, ret, ProcessEventInfo);
-              break;
-            case FOCUS_DIRECTION_RIGHT:
-              ret |= DoFocusRight (ievent, ret, ProcessEventInfo);
-              break;
-            default:
-              break;
-          }
-
-          return ret;
-        }
-      }
-
-      if (type == FOCUS_EVENT_ACTIVATE)
-      {
-        ActivateFocus ();
-      }
-    }
-
-    return ret;
-  }
-
   Area* Layout::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
     bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
@@ -773,8 +475,14 @@ namespace nux
   void Layout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     std::list<Area *>::iterator it;
-    GfxContext.PushModelViewMatrix (Get2DMatrix ());
-    GfxContext.PushClippingRectangle (GetGeometry ());
+    GfxContext.PushModelViewMatrix(Get2DMatrix());
+
+    // Clip against the padding region.
+    Geometry clip_geo = GetGeometry();
+    clip_geo.OffsetPosition(left_padding_, top_padding_);
+    clip_geo.OffsetSize(-left_padding_ - right_padding_, -top_padding_ - bottom_padding_);
+
+    GfxContext.PushClippingRectangle(clip_geo);
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
@@ -799,8 +507,8 @@ namespace nux
       }
     }
 
-    GfxContext.PopClippingRectangle ();
-    GfxContext.PopModelViewMatrix ();
+    GfxContext.PopClippingRectangle();
+    GfxContext.PopModelViewMatrix();
 
     //GfxContext.PopClipOffset ();
 
@@ -870,123 +578,26 @@ namespace nux
     OnChildQueueDraw.emit (area);
   }
 
-  /* Focusable Code */
-  bool Layout::DoGetFocused ()
-  {
-    bool focused = false;
-
-    std::list<Area *>::iterator it;
-    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
-    {
-      if ((*it)->GetFocused ())
-        focused = true;
-    }
-
-    return focused;
-  }
-
-  void Layout::DoSetFocused (bool focused)
-  {
-    _is_focused = focused;
-    if (focused == GetFocused ())
-      return;
-
-    if (focused == false)
-    {
-      std::list<Area *>::iterator it;
-
-      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
-      {
-        if ((*it)->GetFocused ())
-        {
-          if ( (*it)->IsArea() )
-          {
-            CoreArea *area = NUX_STATIC_CAST (CoreArea *, (*it) );
-            area->SetFocused (false);
-          }
-          else if ( (*it)->IsView() )
-          {
-            View *ic = NUX_STATIC_CAST (View *, (*it) );
-            ic->SetFocused (false);
-          }
-          else if ( (*it)->IsLayout() )
-          {
-            Layout *layout = NUX_STATIC_CAST (Layout *, (*it) );
-            layout->SetFocused (false);
-          }
-        }
-
-      }
-    }
-    else
-    {
-      SetFocusControl (true);
-
-      if (GetFocused () == false)
-      {
-        FocusFirstChild ();
-        _ignore_focus = true;
-      }
-
-      // we need to chain up
-      Area *_parent = GetParentObject();
-      if (_parent == NULL)
-      {
-        return;
-      }
-
-      if (_parent->IsView ())
-      {
-        View *parent = (View*)_parent;
-        if (parent->GetFocused () == false && parent->HasPassiveFocus () == false)
-        {
-          parent->SetFocused (true);
-        }
-        parent->SetFocusControl (false);
-      }
-      else if (_parent->IsLayout ())
-      {
-        Layout *parent = (Layout *)_parent;
-        parent->SetFocusControl (false);
-      }
-
-    }
-  }
-
-  bool Layout::DoCanFocus ()
-  {
-    std::list<Area *>::iterator it;
-    if (_layout_element_list.empty ())
-      return false;
-
-    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
-    {
-      bool can_focus = false;
-      if ( (*it)->IsArea() )
-      {
-        CoreArea *area = NUX_STATIC_CAST (CoreArea *, (*it) );
-        can_focus = area->CanFocus ();
-      }
-      else if ( (*it)->IsView() )
-      {
-        View *ic = NUX_STATIC_CAST (View *, (*it) );
-        can_focus = ic->CanFocus ();
-      }
-      else if ( (*it)->IsLayout() )
-      {
-        Layout *layout = NUX_STATIC_CAST (Layout *, (*it) );
-        can_focus = layout->CanFocus ();
-      }
-
-      if (can_focus == true)
-        return true;
-    }
-
-    return false;
-  }
-
   bool Layout::AcceptKeyNavFocus()
   {
     return false;
+  }
+
+  void LinearLayout::SetHorizontalInternalMargin(int space)
+  {
+    SetSpaceBetweenChildren(space);
+  }
+
+  void LinearLayout::SetVerticalInternalMargin(int space)
+  {
+    SetSpaceBetweenChildren(space);
+  }
+
+  void LinearLayout::SetSpaceBetweenChildren(int space)
+  {
+#if DEBUG_LAYOUT
+    return;
+#endif
+    space_between_children_ = space >= 0 ? space : 0;
   }
 }

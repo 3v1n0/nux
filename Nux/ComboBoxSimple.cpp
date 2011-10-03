@@ -34,8 +34,6 @@ namespace nux
   ComboBoxSimple::ComboBoxSimple (NUX_FILE_LINE_DECL)
     :   AbstractComboBox (NUX_FILE_LINE_PARAM)
   {
-    m_block_focus       = false;
-    _can_pass_focus_to_composite_layout = false;
     m_SelectedAction    = 0;
     m_CurrentMenu       = 0;
 
@@ -72,119 +70,6 @@ namespace nux
   {
     m_CurrentMenu->UnParentObject();
     m_CurrentMenu->UnReference();
-  }
-
-  void ComboBoxSimple::DoSetFocused (bool focused)
-  {
-    View::DoSetFocused (focused);
-    if (focused == true)
-    {
-      m_block_focus = true;
-      // we need to grab focus control from our parent layout
-      // so that we can handle the key inputs ourself
-      Area *_parent = GetParentObject();
-      if (_parent == NULL)
-        return;
-
-      if (_parent->IsView ())
-      {
-        View *parent = (View*)_parent;
-        parent->SetFocusControl (false);
-      }
-      else if (_parent->IsLayout ())
-      {
-        Layout *parent = (Layout *)_parent;
-        parent->SetFocusControl (false);
-      }
-    }
-    QueueDraw();
-  }
-
-  long ComboBoxSimple::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-
-    //ret = m_Popup.ProcessEvent(ievent, ret, ProcessEventInfo); // implement isVisible on InputArea. If invisible, no event processed.
-    ret = _combo_box_opening_area->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = _combo_box_area->OnEvent (ievent, ret, ProcessEventInfo);
-
-    if (ievent.e_event == NUX_MOUSE_PRESSED)
-    {
-      bool mouse_down_on_menu_item = false;
-
-      if (m_MenuIsActive == true)
-      {
-        if (_combo_box_opening_area->IsMouseInside() || _combo_box_area->IsMouseInside() )
-          mouse_down_on_menu_item = true;
-
-        if (mouse_down_on_menu_item == false)
-        {
-          if (m_CurrentMenu->TestMouseDown() == false)
-          {
-            RecvSigTerminateMenuCascade();
-            m_MenuIsActive = false;
-          }
-        }
-      }
-    }
-
-    /* must do focus processing after sending events to children */
-    if (ievent.e_event == NUX_KEYDOWN && GetFocused () && m_block_focus == false)
-    {
-      FocusDirection direction;
-      FocusEventType type;
-
-      direction = FOCUS_DIRECTION_NONE;
-
-      type = Focusable::GetFocusableEventType (ievent.e_event,
-                                               ievent.GetKeySym(),
-                                               ievent.GetText(),
-                                               &direction);
-      if (type == FOCUS_EVENT_DIRECTION)
-      {
-        if (direction == FOCUS_DIRECTION_PREV || direction == FOCUS_DIRECTION_NEXT ||
-          direction == FOCUS_DIRECTION_LEFT || direction == FOCUS_DIRECTION_RIGHT)
-        {
-          // not pressed UP or Down so send focus to our parent layout
-          Area *area = GetParentObject ();
-          // if parent is null return, thats a valid usecase so no warnings.
-          if (area)
-          {
-            long ret = 0;
-            if ( area->IsView() )
-            {
-              View *ic = static_cast<View *>(area);
-              ic->SetFocusControl (true);
-              ret = ic->ProcessFocusEvent (ievent, ret, ProcessEventInfo);
-            }
-            else if ( area->IsLayout() )
-            {
-              Layout *layout = static_cast<Layout *>(area);
-              layout->SetFocusControl (true);
-              ret = layout->ProcessFocusEvent (ievent, ret, ProcessEventInfo);
-            }
-          }
-        }
-        else if (direction == FOCUS_DIRECTION_UP)
-        {
-          MoveSelectionUp ();
-          sigTriggered.emit (this);
-          sigActionTriggered.emit (GetItem (GetSelectionIndex ()));
-        }
-        else if (direction == FOCUS_DIRECTION_DOWN)
-        {
-          MoveSelectionDown ();
-          sigTriggered.emit (this);
-          sigActionTriggered.emit (GetItem (GetSelectionIndex ()));
-        }
-      }
-    }
-
-    if (m_block_focus == true)
-      m_block_focus = false;
-
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-    return ret;
   }
 
   Area* ComboBoxSimple::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)

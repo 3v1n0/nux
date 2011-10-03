@@ -37,6 +37,7 @@ namespace nux
   class VLayout;
   class EditTextBox;
   class CheckBox;
+  class AbstractButton;
   class ToggleButton;
   class Button;
 
@@ -114,7 +115,8 @@ namespace nux
     void RecvPickerMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvPickerMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
-    void RecvCheckColorModel (bool, color::Model, color::Channel);
+    void RecvCheckColorModel(bool, color::Model, color::Channel);
+    void RecvCheckColorModel0(AbstractButton *button, color::Model color_mode, color::Channel channel);
 
     sigc::signal< void, ColorEditor * > sigChange;
 

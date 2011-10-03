@@ -47,8 +47,8 @@ namespace nux
 
     _stretch_factor = 1;
     _layout_properties = NULL;
-    _visible = true;
-    _sensitive = true;
+    visible_ = true;
+    sensitive_ = true;
 
     _on_geometry_changeg_reconfigure_parent_layout = true;
     _accept_mouse_wheel_event = false;
@@ -269,22 +269,30 @@ namespace nux
     _stretch_factor = sf;
   }
 
-  void Area::SetParentObject (Area *bo)
+  bool Area::SetParentObject (Area *parent)
   {
-    if (bo == 0)
+    if (parent == 0)
     {
-      nuxAssertMsg (0, TEXT ("[Area::SetParentObject] Invalid parent obejct.") );
-      return;
+      nuxAssertMsg(0, TEXT("[Area::SetParentObject] Invalid parent obejct."));
+      return false;
+    }
+
+    if (_parent_area && (_parent_area != parent))
+    {
+      nuxAssertMsg (0, TEXT ("[Area::SetParentObject] Object already has a parent. You must UnParent the object before you can parenting again.") );
+      return false;
     }
 
     if (_parent_area)
     {
-      nuxAssertMsg (0, TEXT ("[Area::SetParentObject] Object already has a parent. You must UnParent the object before you can parenting again.") );
-      return;
+      // Already parented to the same area. Return.
+      return true;
     }
 
-    _parent_area = bo;
+    _parent_area = parent;
     Reference();
+
+    return true;
   }
 
   void Area::UnParentObject()
@@ -548,32 +556,32 @@ namespace nux
 
   void Area::SetVisible (bool visible)
   {
-    if (_visible == visible)
+    if (visible_ == visible)
       return;
 
-    _visible = visible;
+    visible_ = visible;
 
-    OnVisibleChanged.emit (this, _visible);
+    OnVisibleChanged.emit (this, visible_);
   }
 
   bool Area::IsVisible ()
   {
-    return _visible;
+    return visible_;
   }
 
   void Area::SetSensitive (bool sensitive)
   {
-    if (_sensitive == sensitive)
+    if (sensitive_ == sensitive)
       return;
 
-    _sensitive = sensitive;
+    sensitive_ = sensitive;
 
-    OnSensitiveChanged.emit (this, _sensitive);
+    OnSensitiveChanged.emit (this, sensitive_);
   }
 
   bool Area::IsSensitive ()
   {
-    return _sensitive;
+    return sensitive_;
   }
 
   MinorDimensionPosition Area::GetPositioning()
@@ -783,29 +791,34 @@ namespace nux
     return GetRootGeometry ().width;
   }
 
-  int Area::GetRootHeight () const
+  int Area::GetRootHeight() const
   {
-    return GetRootGeometry ().height;
+    return GetRootGeometry().height;
   }
 
-  Area* Area::GetToplevel ()
+  Area* Area::GetToplevel()
   {
-    if (Type ().IsDerivedFromType (BaseWindow::StaticObjectType) || (this == GetWindowThread ()->GetMainLayout ()))
+    return GetRootParent();
+  }
+
+  Area* Area::GetRootParent()
+  {
+    if (Type().IsDerivedFromType(BaseWindow::StaticObjectType) || (this == GetWindowThread()->GetMainLayout()))
     {
       return this;
     }
 
-    Area* parent = GetParentObject ();
+    Area* parent = GetParentObject();
     if (!parent) //we didn't find a way to salvation!
     {
       return 0;
     }
-    return parent->GetToplevel ();
+    return parent->GetRootParent();
   }
 
-  Area* Area::GetTopLevelViewWindow ()
+  Area* Area::GetTopLevelViewWindow()
   {
-    Area* area = GetToplevel ();
+    Area* area = GetRootParent();
 
     if (area && area->IsViewWindow ())
       return area;
@@ -815,7 +828,7 @@ namespace nux
 
   bool Area::HasTopLevelParent ()
   {
-    if (GetToplevel ())
+    if (GetRootParent())
     {
       return true;
     }
@@ -887,6 +900,9 @@ namespace nux
 
   bool Area::TestMousePointerInclusion(const Point& mouse_position, NuxEventType event_type)
   {
+    if (IsSensitive() == false)
+      return false;
+
     bool mouse_pointer_inside_area = false;
 
     if (Type().IsDerivedFromType(MenuPage::StaticObjectType))
@@ -910,6 +926,9 @@ namespace nux
 
   bool Area::TestMousePointerInclusionFilterMouseWheel(const Point& mouse_position, NuxEventType event_type)
   {
+    if (IsSensitive() == false)
+      return false;
+
     bool mouse_pointer_inside_area = false;
 
     if (Type().IsDerivedFromType(MenuPage::StaticObjectType))
@@ -998,6 +1017,9 @@ namespace nux
 
   bool Area::AcceptKeyNavFocus()
   {
+    if (IsSensitive() == false)
+      return false;
+
     return true;
   }
 
@@ -1009,6 +1031,17 @@ namespace nux
   bool Area::HasKeyFocus() const
   {
     return has_key_focus_;
+  }
+
+  bool Area::IsMousePointerInside() const
+  {
+    Geometry geo = GetAbsoluteGeometry();
+    Point position = GetWindowCompositor().GetMousePosition();
+    
+    if (geo.IsInside(position))
+      return true;
+
+    return false;
   }
 }
 

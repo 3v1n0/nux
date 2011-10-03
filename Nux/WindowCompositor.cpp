@@ -448,6 +448,8 @@ logging::Logger logger("nux.window");
           }
           else if (mouse_over_area_ && (hit_view == mouse_over_area_) && (event.e_event == NUX_MOUSE_DOUBLECLICK))
           {
+            // Double click is emitted, if the second click happened on the same area as the first click.
+            // This means mouse_over_area_ is not null and is equal to hit_view.
             emit_double_click_signal = true;
           }
 
@@ -457,7 +459,7 @@ logging::Logger logger("nux.window");
 
           // In the case of a mouse down event, if there is currently a keyboard event receiver and it is different
           // from the area returned by GetAreaUnderMouse, then stop that receiver from receiving anymore keyboard events and switch
-          // make the found area the new receiver (if it accept keyboard events).
+          // make mouse_over_area_ the new receiver (if it accept keyboard events).
           if (mouse_over_area_ != GetKeyFocusArea())
           {
             InputArea* grab_area = GetKeyboardGrabArea();
@@ -499,7 +501,12 @@ logging::Logger logger("nux.window");
             int x = event.e_x - geo.x;
             int y = event.e_y - geo.y;
 
-            mouse_over_area_->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
+            // Mouse wheel events are stationary. The mouse can remain inside an area while the mouse wheel is spinning.
+            // This shouldn't qualify as a mouse leave event.
+            if (event.e_event != NUX_MOUSE_WHEEL)
+            {
+              mouse_over_area_->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
+            }
           }
 
 //           if(GetKeyFocusArea() && (event.e_event == NUX_MOUSE_PRESSED))
@@ -1688,7 +1695,7 @@ logging::Logger logger("nux.window");
       }
       else
       {
-        GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (false);
         GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex (x, y, src_width, src_height, HWTexture, texxform0, Color (1.0f, 1.0f, 1.0f, opacity));
       }
       GetWindowThread ()->GetGraphicsEngine().GetRenderStates().SetBlend (false);

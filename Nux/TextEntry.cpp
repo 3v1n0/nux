@@ -111,7 +111,6 @@ namespace nux
     : View(NUX_FILE_LINE_PARAM)
     , _size_match_text(true)
     , _texture2D(nullptr)
-    , _block_focus(false)
     , canvas_(nullptr)
     , cached_layout_(nullptr)
     , preedit_attrs_(nullptr)
@@ -199,107 +198,12 @@ namespace nux
     return result;
   }
 
-  void TextEntry::DoSetFocused (bool focused)
-  {
-    focused_ = focused;
-    cursor_visible_ = focused; // visibilty of cursor depends on focus
-    View::DoSetFocused (focused);
-    if (focused == true)
-    {
-      _block_focus = true;
-      SetCursor(cursor_);
-      QueueRefresh(true, true);
-
-      Area *_parent = GetParentObject();
-      if (_parent == NULL)
-        return;
-
-      if (_parent->IsView ())
-      {
-        View *parent = (View*)_parent;
-        parent->SetFocusControl (false);
-      }
-      else if (_parent->IsLayout ())
-      {
-        Layout *parent = (Layout *)_parent;
-        parent->SetFocusControl (false);
-      }
-    }
-    else
-    {
-      QueueRefresh(true, false); // needed to hide cursor
-    }
-  }
-
   void TextEntry::GeometryChanged ()
   {
 
       update_canvas_ = true;
       View::GeometryChanged();
 
-  }
-
-  long TextEntry::ProcessEvent (IEvent& event,
-    long    traverseInfo,
-    long    processEventInfo)
-  {
-    long ret = traverseInfo;
-    /* must do focus processing after sending events to children */
-    if (event.e_event == NUX_KEYDOWN && GetFocused ())
-    {
-      FocusDirection direction;
-      FocusEventType type;
-
-      direction = FOCUS_DIRECTION_NONE;
-
-      type = Focusable::GetFocusableEventType (event.e_event,
-                                               event.GetKeySym(),
-                                               event.GetText(),
-                                               &direction);
-      if (type == FOCUS_EVENT_DIRECTION && _block_focus == false)
-      {
-        if (direction == FOCUS_DIRECTION_PREV || direction == FOCUS_DIRECTION_NEXT ||
-            direction == FOCUS_DIRECTION_UP || direction == FOCUS_DIRECTION_DOWN)
-        {
-          Area *area = GetParentObject ();
-          // if parent is null return, thats a valid usecase so no warnings.
-          if (area)
-          {
-            long ret = 0;
-            if ( area->IsView() )
-            {
-              View *ic = NUX_STATIC_CAST (View *, area );
-              ret = ic->ProcessFocusEvent (event, ret, processEventInfo);
-            }
-            else if ( area->IsLayout() )
-            {
-              Layout *layout = NUX_STATIC_CAST (Layout *, area );
-              layout->SetFocusControl (true);
-              ret = layout->ProcessFocusEvent (event, ret, processEventInfo);
-            }
-          }
-        }
-        else
-        {
-          key_down.emit (event.e_event, event.GetKeySym(),
-                           event.GetKeyState(), event.GetText(),
-                           event.GetKeyRepeatCount());
-          //ret = PostProcessEvent2 (event, ret, processEventInfo);
-        }
-      }
-      else
-      {
-        key_down.emit (event.e_event, event.GetKeySym(),
-                         event.GetKeyState(), event.GetText(),
-                         event.GetKeyRepeatCount());
-      }
-    }
-
-    if (_block_focus)
-      _block_focus = false;
-
-
-    return ret;
   }
 
   Area* TextEntry::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)

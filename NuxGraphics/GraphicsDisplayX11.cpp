@@ -531,7 +531,7 @@ namespace nux
     m_X11Window = X11Window;
     m_GLCtx = OpenGLContext;
 
-    m_X11Screen = DefaultScreen (m_X11Display);
+    m_X11Screen = DefaultScreen(m_X11Display);
 
     Window root_return;
     int x_return, y_return;
@@ -1635,6 +1635,7 @@ namespace nux
         m_pEvent->e_y = y_recalc;
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
+        m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
         mouse_move (xevent, m_pEvent);
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: MotionNotify event."));
         break;
@@ -1650,6 +1651,7 @@ namespace nux
         m_pEvent->e_y = -1;
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
+        m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
         m_pEvent->e_event = NUX_WINDOW_MOUSELEAVE;
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: LeaveNotify event."));
         break;
@@ -1664,6 +1666,7 @@ namespace nux
         m_pEvent->e_y = y_recalc;
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
+        m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
         mouse_move (xevent, m_pEvent);
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: EnterNotify event."));
         break;

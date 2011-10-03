@@ -27,47 +27,85 @@
 
 namespace nux
 {
-  enum State
+  class StaticText;
+
+  enum ButtonVisualState
   {
-    NUX_STATE_ACTIVE = 0,
-    NUX_STATE_NORMAL = 1,
-    NUX_STATE_PRELIGHT = 2,
-    NUX_STATE_SELECTED = 3,
-    NUX_STATE_INSENSITIVE = 4
+    STATE_PRESSED = 0,
+    STATE_NORMAL = 1,
+    STATE_PRELIGHT = 2,
+    STATE_DISABLED = 3
   };
 
-  //! The base class of Button widgets.
+  //! The base class of button type widgets.
+  /*!
+      AbstractButton is the direct base class of Button, CheckBox and RadioButton. It is a base class for ToggleButton.
+  */
   class AbstractButton : public View
   {
     NUX_DECLARE_OBJECT_TYPE(AbstractButton, View);
   public:
     AbstractButton(NUX_FILE_LINE_PROTO);
-    ~AbstractButton();
+    virtual ~AbstractButton();
 
-    //! Signal emitted when the button is activated.
-    Property<bool> active;
+    sigc::signal<void, AbstractButton*> changed_visual_state;
 
-    //! Signal emitted when the button is activated.
-    sigc::signal<void, AbstractButton*> activated;
+    //! Returns the visual state of the AbstractButton
+    /*!
+        Returns the visual state of the AbstractButton.
+
+        @return The visual state of the AbstractButton.
+    */
+    ButtonVisualState GetVisualState();
+
+    //! Return the active state of the button.
+    /*!
+        Return the active state of the button. A Button has a non-persistent active state. It always returns false.
+        CheckBox, RadionButton and ToggleButton return true if they are active.
+
+        @return True if the button object is in an active state.
+    */
+    bool Active() const;
+
+    //! Set the text color.
+    /*!
+        Set the text color.
+
+        @param color the text color.
+    */
+    void SetLabelColor(const Color &color);
+
+    //! Get the text color.
+    /*!
+        Get the text color.
+
+        @return The text color.
+    */
+    Color GetLabelColor();
+
+    ButtonVisualState GetVisualState() const;
 
   protected:
-    bool togglable_;
+    //! The state of the AbstractButton. 
+    bool active_;
 
-    //! Button state property.
-    // FIXME: Should be read only.
-    nux::Property<State> state;
+    bool mouse_pressed_;
 
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    //! Visual state of the button object.
+    ButtonVisualState visual_state_;
 
-    void RecvMouseUp    (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseDown  (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseMove  (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvClick      (int x, int y, unsigned long button_flags, unsigned long key_flags);
 
-  private:
-    void Init ();
+    // Common attribute for all the classes that inherit from AbstractButton.
+    std::string label_;
+    Color label_color_;
+    StaticText *static_text_;
+
+    virtual void RecvMouseUp    (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    virtual void RecvMouseDown  (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    virtual void RecvMouseMove  (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    virtual void RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    virtual void RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    virtual void RecvClick      (int x, int y, unsigned long button_flags, unsigned long key_flags) = 0;
   };
 }
 

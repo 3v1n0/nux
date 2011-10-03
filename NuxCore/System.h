@@ -24,7 +24,7 @@
 #define SYSTEM_H
 
 #ifdef _DEBUG
-#define NUX_DEBUG
+  #define NUX_DEBUG
 #endif
 
 #ifdef _WIN32
@@ -36,41 +36,41 @@
 #endif
 
 #if __GNUC__
-    #define NUX_GNUC_COMPILER
-#if __GNUG__
+  #define NUX_GNUC_COMPILER
+  #if __GNUG__
     #define NUX_GNUCPP_COMPILER
-#else
+  #else
     #error Support only g++.
-#endif
+  #endif
 
-// Compiler string.
-#define NUX_COMPILER_STRING "GNU CPP Compiler"
+  // Compiler string.
+  #define NUX_COMPILER_STRING "GNU CPP Compiler"
 
-// Build string
-#ifdef NUX_DEBUG
+  // Build string
+  #ifdef NUX_DEBUG
     #define NUX_BUILD_STRING "Debug build compiled with " NUX_COMPILER_STRING
-#else
+  #else
     #define NUX_BUILD_STRING "Compiled with " NUX_COMPILER_STRING
-#endif
+  #endif
 #endif
 
 #if __APPLE_CC__
-#define NUX_APPLE_COMPILER
+  #define NUX_APPLE_COMPILER
+#endif
+
+#if defined(_MSC_VER)
+  #define NUX_MICROSOFT_COMPILER
 #endif
 
 #if defined(_M_X64) || defined(__amd64__) || defined(__ia64__)
-#define NUX_ARCH_x64
+  #define NUX_ARCH_x64
 #elif defined(_M_IX86) || defined(__i386__)
-#define NUX_ARCH_i386
+  #define NUX_ARCH_i386
 #elif defined(__arm__)
-#define NUX_ARCH_arm
-#elif defined(__cell)
-#define NUX_ARCH_cell
+	#define NUX_ARCH_arm
 #endif
 
-#if _MSC_VER
-#define NUX_MICROSOFT_COMPILER
-#endif
+
 
 // Compiler Macros:
 // NUX_GNUCPP_COMPILER
@@ -105,9 +105,9 @@
 #error Support only Visual Studio Compiler.
 #endif
 
+#define VISUAL_STUDIO_2010_COMPILER     1600
 #define VISUAL_STUDIO_2008_COMPILER     1500
 #define VISUAL_STUDIO_2005_COMPILER     1400
-#define VISUAL_STUDIO_2003_COMPILER     1310
 #define VISUAL_STUDIO_2003_COMPILER     1310
 
 #if _MSC_VER >= 1600
@@ -122,11 +122,11 @@
 
 // Compiler string.
 #if (_MSC_VER >= VISUAL_STUDIO_2008_COMPILER)
-#define NUX_COMPILER_STRING "Visual Studio 2008"
+  #define NUX_COMPILER_STRING "Visual Studio 2008"
 #elif (_MSC_VER >= VISUAL_STUDIO_2005_COMPILER)
-#define NUX_COMPILER_STRING "Visual Studio 2005"
+  #define NUX_COMPILER_STRING "Visual Studio 2005"
 #elif (_MSC_VER >= VISUAL_STUDIO_2003_COMPILER)
-#define NUX_COMPILER_STRING "Visual Studio 2003"
+  #define NUX_COMPILER_STRING "Visual Studio 2003"
 #endif
 
 // Build String
@@ -177,11 +177,11 @@
 
 // Logging
 #if defined(NUX_OS_WINDOWS) && defined(NUX_DEBUG)
-#define NUX_ENABLE_ASSERT_MACROS
-#define NUX_ENABLE_LOGGING
+  #define NUX_ENABLE_ASSERT_MACROS
+  #define NUX_ENABLE_LOGGING
 #elif defined(NUX_OS_LINUX) && defined(NUX_DEBUG)
-#define NUX_ENABLE_ASSERT_MACROS
-#define NUX_ENABLE_LOGGING
+  #define NUX_ENABLE_ASSERT_MACROS
+  #define NUX_ENABLE_LOGGING
 #endif
 
 // NOP: no operation
@@ -190,21 +190,21 @@
 // debug functions that take a variable number of arguments.
 
 #if defined(NUX_MICROSOFT_COMPILER)
-    #define NUX_COMPILER_SUPPORTS_NOOP
-    #define NUX_NOOP __noop
+  #define NUX_COMPILER_SUPPORTS_NOOP
+  #define NUX_NOOP __noop
 #elif defined(NUX_GNUCPP_COMPILER)
-    #define NUX_COMPILER_SUPPORTS_NOOP
-    #define NUX_NOOP __asm__("nop")
+  #define NUX_COMPILER_SUPPORTS_NOOP
+  #define NUX_NOOP __asm__("nop")
 #endif
 
 // Pragma pack support
 #if defined(NUX_MICROSOFT_COMPILER) || defined(NUX_GNUCPP_COMPILER)
-    #define NUX_SUPPORTS_PRAGMA_PACK
+  #define NUX_SUPPORTS_PRAGMA_PACK
 #endif
 
 
 // Define variadic macro support
-#if defined(NUX_MICROSOFT_COMPILER) && (defined(NUX_VISUAL_STUDIO_2005) || defined(NUX_VISUAL_STUDIO_2008))
+#if defined(NUX_MICROSOFT_COMPILER) && (defined(NUX_VISUAL_STUDIO_2005) || defined(NUX_VISUAL_STUDIO_2008) || defined(NUX_VISUAL_STUDIO_2010))
     #define NUX_VARIADIC_MACROS_SUPPORT
 #elif defined(NUX_GNUCPP_COMPILER)
     #define NUX_VARIADIC_MACROS_SUPPORT

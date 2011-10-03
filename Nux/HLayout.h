@@ -28,9 +28,9 @@
 namespace nux
 {
 
-  class HLayout: public Layout
+  class HLayout: public LinearLayout
   {
-    NUX_DECLARE_OBJECT_TYPE(HLayout, Layout);
+    NUX_DECLARE_OBJECT_TYPE(HLayout, LinearLayout);
   public:
     HLayout(NUX_FILE_LINE_PROTO);
     HLayout(NString name, NUX_FILE_LINE_PROTO);
@@ -52,8 +52,6 @@ namespace nux
     void ComputeStacking(int remaining_width, int &offset_space, int &element_margin);
 
   protected:
-    virtual long DoFocusUp  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusDown (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual Area* KeyNavIteration(KeyNavDirection direction);
   };
 }

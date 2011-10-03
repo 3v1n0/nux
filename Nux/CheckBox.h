@@ -27,27 +27,64 @@
 
 namespace nux
 {
+  class HLayout;
+  class InputArea;
+  class StaticText;
+
   class CheckBox: public AbstractButton
   {
-    NUX_DECLARE_OBJECT_TYPE (CheckBox, AbstractButton);
+    NUX_DECLARE_OBJECT_TYPE(CheckBox, AbstractButton);
   public:
-    CheckBox (std::string label, NUX_FILE_LINE_PROTO);
+    CheckBox (const std::string &str, bool state = false, NUX_FILE_LINE_PROTO);
     ~CheckBox();
 
-    Property<std::string>   label;
+    //! Emitted when the button is clicked.
+    sigc::signal<void, CheckBox*> clicked;
 
-  private:
-    void Init ();
+    //! Emitted when the active state changes.
+    /*!
+        Emitted when the active state changes, as a result of a mouse click or an API call.\n
+        \sa Activate, Deactivate.
+    */
+    sigc::signal<void, CheckBox*> changed;
 
-    void OnStateChanged (int value);
-    void OnLabelChanged (std::string value);
-    void RebuildLayout ();
+    //! Set the label.
+    /*!
+        Set the label of this CheckBox. If the \a label argument is an empty string, then the the CheckBox label is destroyed,
+        and the content of the CheckBox is re-arranged accordingly.
 
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+        @param label The label of the CheckBox.
+    */
+    void SetLabel(const std::string &checkbox_label);
 
-  private:
+    //!Return the label of this CheckBox.
+    /*!
+        Return the label of this CheckBox.
+
+        @return The CheckBox label string.
+    */
+    std::string GetLabel() const;
+
+    //! Activate the check box.
+    /*!
+         Activate the check box.
+    */
+    void Activate();
+
+    //! Deactivate the check box.
+    /*!
+         Deactivate the check box.
+    */
+    void Deactivate();
+
+  protected:
+    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
+
+    HLayout   *hlayout_;
+    InputArea *check_area_;
   };
+
 }
 
 #endif // CHECKBOX_H

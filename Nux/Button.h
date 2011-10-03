@@ -29,45 +29,182 @@ namespace nux
   class HLayout;
   class VLayout;
   class TextureArea;
+  class StaticText;
 
+  // Deprecated
+  // Image position with regard to the text
   enum Position
   {
-    NUX_POSITION_LEFT,
-    NUX_POSITION_RIGHT,
-    NUX_POSITION_TOP,
-    NUX_POSITION_BOTTOM
+    NUX_POSITION_LEFT,    // image on left, text on the right
+    NUX_POSITION_RIGHT,   // text on the left, image on right
+    NUX_POSITION_TOP,     // image above text
+    NUX_POSITION_BOTTOM   // image below text
   };
 
+
+  //! A Button with styling (image + text)
+  /*!
+      The Button class has a non persistent active state. It returns to a normal state after a mouse click.
+      For a Button is a persistent active state, use the ToggleButton class. This widget is also known as a PushButton.
+  */
   class Button: public AbstractButton
   {
     NUX_DECLARE_OBJECT_TYPE(Button, View);
   public:
-    Button(TextureArea *image, NUX_FILE_LINE_PROTO);
-    Button(const std::string label, NUX_FILE_LINE_PROTO);
-    Button(const std::string label, TextureArea *image, NUX_FILE_LINE_PROTO);
-    Button(NUX_FILE_LINE_PROTO);
-    ~Button();
 
+    enum LayoutType
+    {
+      HORIZONTAL,
+      VERTICAL,
+    };
+
+    enum ItemOrder
+    {
+      IMAGE_FIRST,
+      LABEL_FIRST,
+    };
+
+    enum Distribution
+    {
+      START_OF_LAYOUT,
+      END_OF_LAYOUT,
+      CENTER_OF_LAYOUT,
+      SPREAD_OVER_LAYOUT,
+    };
+
+    Button(TextureArea *image, NUX_FILE_LINE_PROTO);
+    Button(const std::string& button_label, NUX_FILE_LINE_PROTO);
+    Button(const std::string& button_label, TextureArea *image, NUX_FILE_LINE_PROTO);
+    Button(NUX_FILE_LINE_PROTO);
+    virtual ~Button();
+
+    //! Emitted when the button is clicked.
+    sigc::signal<void, Button*> clicked;
+
+    //! Emitted when the active state changes.
+    /*!
+        Emitted when the active state changes, as a result of a mouse click or an API call.\n
+        \sa Activate, Deactivate.
+    */
+    sigc::signal<void, Button*> changed;
+
+    //! Set the label.
+    /*!
+        Set the label of this Button. If the \a label argument is an empty string, then the the Button label is destroyed,
+        and the content of the Button is re-arranged accordingly.
+
+        @param label The label of the Button.
+    */
+    void SetLabel(const std::string &button_label);
+
+    //!Return the label of this Button.
+    /*!
+        Return the label of this Button.
+
+        @return The Button label string.
+    */
+    std::string GetLabel() const;
+
+        //! Set the image.
+    /*!
+        Set the image of this Button. If the \a image argument is NULL and this Button has an image, then the image is destroyed,
+        and the content of the button is re-arranged accordingly.\n
+        This Button make a copy of the \a image argument if it is not NULL. The source image may be destroyed after if it is no longer needed.\n
+        The minimum and maximum size of the internal image are set to the minimum and maximum size of the \a image argument.
+        \sa SetImageMinimumSize, SetImageMaximumSize.
+
+        @param A TextureArea.
+    */
     void SetImage(TextureArea *image);
+
+    //! Get the image.
+    /*!
+        Returns a new TextureArea with the same content as the internal TextureArea of this Button.
+        The returned TextureArea has a floating reference.\n
+        If the Button doesn't have an image, the function returns NULL. 
+
+        @return A TextureArea.
+    */
     TextureArea* GetImage();
 
-    Property<std::string> label;
-    Property<Position>    image_position;
+    //! Set the minimum size of the image in the Button.
+    /*!
+        Set the minimum size of the image in the Button.\n
+        When setting an image into this Button with \a SetImage, the minimum size is set to the one of the \a image argument
+        of \a SetImage.
+        \sa SetImage.
+
+        @param width Minimum width of the image.
+        @param height Minimum height of the image.
+    */
+    void SetImageMinimumSize(int width, int height);
+    
+    //! Set the maximum size of the image in the Button.
+    /*!
+        Set the maximum size of the image in the Button.\n
+        When setting an image into this Button with \a SetImage, the maximum size is set to the one of the \a image argument
+        of \a SetImage.
+        \sa SetImage.
+
+        @param width Maximum width of the image.
+        @param height Maximum height of the image.
+    */
+    void SetImageMaximumSize(int width, int height);
+
+    void SetLayoutPadding(int top, int right, int bottom, int left);
+
+    void SetDistribution(Distribution distribution);
+    void SetItemOrder(ItemOrder item_order);
+    void SetLayoutType(LayoutType layout_type);
+    void SetSpaceBetweenItems(int space_between_items);
+
+    //! Activate the button.
+    /*!
+         Activate the button. If this object is a Button, then it has no persistent state and the function does nothing.
+    */
+    void Activate();
+
+    //! Deactivate the button.
+    /*!
+         Deactivate the button. If this object is a Button, then it has no persistent state and the function does nothing.
+    */
+    void Deactivate();
+
+    void SetActive(bool active);
 
   protected:
-    void Init();
+    LayoutType layout_type_;    //!< The button layout type.
+    ItemOrder item_order_;      //!< Ordering of the text and image.
+    Distribution distribution_; //!< Distribution of the image and text inside the Button layout.
+    int space_between_items_;   //!< Space between the Button image and text.
+    bool persistent_active_state_; //!< The button's persistent state flag.
+
+    int layout_left_padding_;
+    int layout_right_padding_;
+    int layout_top_padding_;
+    int layout_bottom_padding_;
+
+    bool SetLabelProperty(std::string &value, std::string const &str);
+
+    void Initialize(const std::string &str, TextureArea* texture_area);
 
     void OnStateChanged(int value);
     void OnLabelChanged(std::string value);
     void OnImageChanged(TextureArea *value);
     void OnImagePositionChanged(int value);
-    void RebuildLayout();
+    
+    void BuildLayout(const std::string &str, TextureArea* texture_area);
 
-    TextureArea *image;
+    TextureArea *image_;
+    Size image_minimum_size_;
+    Size image_maximum_size_;
 
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
   };
+
+  //typedef Button ToggleButton;
 }
 
 #endif // BUTTON_H

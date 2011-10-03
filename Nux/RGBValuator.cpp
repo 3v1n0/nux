@@ -150,8 +150,8 @@ namespace nux
     m_GreenValuator->mouse_drag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Green) );
     m_BlueValuator->mouse_drag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Blue) );
     m_AlphaValuator->mouse_drag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Alpha) );
-    //FIXME - m_ColorModel->sigClick.connect (sigc::mem_fun (this, &RGBValuator::OnChangeColorModel) );
-    //FIXME - m_ColorFormat->sigClick.connect (sigc::mem_fun (this, &RGBValuator::OnChangeColorFormat) );
+    m_ColorModel->clicked.connect (sigc::mem_fun (this, &RGBValuator::OnChangeColorModel) );
+    m_ColorFormat->clicked.connect (sigc::mem_fun (this, &RGBValuator::OnChangeColorFormat) );
 //    m_ColorModel->mouse_down.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
 //    m_ColorModel->mouse_up.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
 //    m_ColorModel->mouse_enter.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
@@ -1195,7 +1195,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnChangeColorModel()
+  void RGBValuator::OnChangeColorModel(AbstractButton* button)
   {
     if (m_color_model == color::RGB)
     {
@@ -1225,7 +1225,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnChangeColorFormat()
+  void RGBValuator::OnChangeColorFormat(AbstractButton* button)
   {
     if (m_color_format == color::FLOAT)
     {
@@ -1351,46 +1351,46 @@ namespace nux
     if (cm == color::RGB)
     {
       m_color_model = color::RGB;
-      //FIXME - m_ColorModel->SetCaption (TEXT ("RGB") );
+      m_ColorModel->SetLabel("RGB");
 
-      m_ComponentLabel0->SetBaseString (TEXT ("R") );
-      m_ComponentLabel1->SetBaseString (TEXT ("G") );
-      m_ComponentLabel2->SetBaseString (TEXT ("B") );
-      m_ComponentAlpha->SetBaseString (TEXT ("A") );
+      m_ComponentLabel0->SetBaseString("R");
+      m_ComponentLabel1->SetBaseString("G");
+      m_ComponentLabel2->SetBaseString("B");
+      m_ComponentAlpha->SetBaseString("A");
 
     }
 
     if (cm == color::HSV)
     {
       m_color_model = color::HSV;
-      //FIXME - m_ColorModel->SetCaption (TEXT ("HSV") );
+      m_ColorModel->SetLabel("HSV");
 
-      m_ComponentLabel0->SetBaseString (TEXT ("H") );
-      m_ComponentLabel1->SetBaseString (TEXT ("S") );
-      m_ComponentLabel2->SetBaseString (TEXT ("V") );
-      m_ComponentAlpha->SetBaseString (TEXT ("A") );
+      m_ComponentLabel0->SetBaseString("H");
+      m_ComponentLabel1->SetBaseString("S");
+      m_ComponentLabel2->SetBaseString("V");
+      m_ComponentAlpha->SetBaseString("A");
     }
 
     if (cm == color::HLS)
     {
       m_color_model = color::HLS;
-      //FIXME - m_ColorModel->SetCaption (TEXT ("HLS") );
+      m_ColorModel->SetLabel("HLS");
 
-      m_ComponentLabel0->SetBaseString (TEXT ("H") );
-      m_ComponentLabel1->SetBaseString (TEXT ("L") );
-      m_ComponentLabel2->SetBaseString (TEXT ("S") );
-      m_ComponentAlpha->SetBaseString (TEXT ("A") );
+      m_ComponentLabel0->SetBaseString("H");
+      m_ComponentLabel1->SetBaseString("L");
+      m_ComponentLabel2->SetBaseString("S");
+      m_ComponentAlpha->SetBaseString("A");
     }
 
     if (cm == color::YUV)
     {
       m_color_model = color::YUV;
-      m_ColorModel->SetBaseString (TEXT ("YUV") );
+      m_ColorModel->SetLabel("YUV");
 
-      m_ComponentLabel0->SetBaseString (TEXT ("Y") );
-      m_ComponentLabel1->SetBaseString (TEXT ("U") );
-      m_ComponentLabel2->SetBaseString (TEXT ("V") );
-      m_ComponentAlpha->SetBaseString (TEXT ("A") );
+      m_ComponentLabel0->SetBaseString("Y");
+      m_ComponentLabel1->SetBaseString("U");
+      m_ComponentLabel2->SetBaseString("V");
+      m_ComponentAlpha->SetBaseString("A");
     }
   }
 
@@ -1399,21 +1399,21 @@ namespace nux
     if (cf == color::FLOAT)
     {
       m_color_format = color::FLOAT;
-      m_ColorFormat->SetBaseString (TEXT ("float") );
+      m_ColorFormat->SetLabel("float");
       m_RedCaption->SetKeyEntryType (BaseKeyboardHandler::eAlphaNumeric);
       m_GreenCaption->SetKeyEntryType (BaseKeyboardHandler::eAlphaNumeric);
       m_BlueCaption->SetKeyEntryType (BaseKeyboardHandler::eAlphaNumeric);
 
-      m_RedCaption->SetPrefix (TEXT ("") );
-      m_GreenCaption->SetPrefix (TEXT ("") );
-      m_BlueCaption->SetPrefix (TEXT ("") );
-      m_AlphaCaption->SetPrefix (TEXT ("") );
+      m_RedCaption->SetPrefix("");
+      m_GreenCaption->SetPrefix("");
+      m_BlueCaption->SetPrefix("");
+      m_AlphaCaption->SetPrefix("");
     }
 
     if (cf == color::INT)
     {
       m_color_format = color::INT;
-      m_ColorFormat->SetBaseString (TEXT ("int") );
+      m_ColorFormat->SetLabel("int");
       m_RedCaption->SetKeyEntryType (BaseKeyboardHandler::eIntegerNumber);
       m_GreenCaption->SetKeyEntryType (BaseKeyboardHandler::eIntegerNumber);
       m_BlueCaption->SetKeyEntryType (BaseKeyboardHandler::eIntegerNumber);
@@ -1427,7 +1427,7 @@ namespace nux
     if (cf == color::HEX)
     {
       m_color_format = color::HEX;
-      m_ColorFormat->SetBaseString (TEXT ("hex") );
+      m_ColorFormat->SetLabel(TEXT ("hex") );
       m_RedCaption->SetKeyEntryType (BaseKeyboardHandler::eHexadecimalNumber);
       m_GreenCaption->SetKeyEntryType (BaseKeyboardHandler::eHexadecimalNumber);
       m_BlueCaption->SetKeyEntryType (BaseKeyboardHandler::eHexadecimalNumber);

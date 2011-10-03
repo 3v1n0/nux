@@ -62,14 +62,6 @@ namespace nux
     {0, 0}
   };
 
-  // Pixel buffer object seems to corrupt textures. This can be seen when the window is moved
-  // to the second screen in a multi-display configuration...
-  // Happens on geforce 6600. Does not happens on geforce 6800.
-
-  // ATI Radeon 4670 has problems loading textures from pixel buffer object. PBO should be deactivated if the
-  // graphics card is made by AMD/ATI
-  #define NUX_USE_PBO     1
-
   extern PixelFormatInfo GPixelFormats[];
 
   static void InitTextureFormats()

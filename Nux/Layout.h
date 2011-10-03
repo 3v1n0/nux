@@ -23,8 +23,6 @@
 #ifndef LAYOUT_H
 #define LAYOUT_H
 
-#include "Focusable.h"
-
 namespace nux
 {
 
@@ -75,6 +73,55 @@ namespace nux
 
     virtual void Clear();
 
+    //! Set the left/right padding with the same value.
+    /*!
+        Set the left/right padding of the layout. \n
+        Valid only for HLayout, VLayouts, HGridLayouts and VGridLayout.
+
+        @param padding The left/right padding value of the layout.
+    */
+    void SetLeftAndRightPadding(int padding);
+
+    //! Set the left/right padding independently.
+    /*!
+        Set the left/right padding of the layout. \n
+        Valid only for HLayout, VLayouts, HGridLayouts and VGridLayout.
+
+        @param left Left padding value of the layout.
+        @param right Right padding value of the layout.
+    */
+    void SetLeftAndRightPadding(int left, int right);
+
+    //! Set the top/bottom padding with the same value.
+    /*!
+        Set the top/bottom padding of the layout. \n
+        Valid only for HLayout, VLayouts, HGridLayouts and VGridLayout.
+
+        @param padding The top/bottom padding value of the layout.
+    */
+    void SetTopAndBottomPadding(int padding);
+
+
+    //! Set the top/bottom padding independently.
+    /*!
+        Set the top/bottom padding of the layout. \n
+        Valid only for HLayout, VLayouts, HGridLayouts and VGridLayout.
+
+        @param top Top padding value of the layout.
+        @param bottom Bottom padding value of the layout.
+    */
+    void SetTopAndBottomPadding(int top, int bottom);
+
+    //! Set the left/right and top/bottom padding of the layout.
+    /*!
+        Set the left/right and top/bottom padding of the layout. \n
+        Valid only for HLayout, VLayouts, HGridLayouts and VGridLayout.
+
+        @param left_right_padding The left/right padding value of the layout.
+        @param top_bottom_padding The top/bottom padding value of the layout.
+    */
+    void SetPadding(int left_right_padding, int top_bottom_padding);
+
     virtual unsigned int GetMaxStretchFactor();
     unsigned int GetMinStretchFactor();
     unsigned int GetNumStretchFactor (unsigned int sf);
@@ -83,56 +130,25 @@ namespace nux
     {
       return m_contentWidth;
     };
+
     int GetContentHeight() const
     {
       return m_contentHeight;
     };
 
-    int GetHorizontalInternalMargin() const
-    {
-      return m_h_in_margin;
-    }
-    int GetHorizontalExternalMargin() const
-    {
-      return m_h_out_margin;
-    }
-    void SetHorizontalInternalMargin (int m)
-    {
-#if DEBUG_LAYOUT
-      return;
-#endif
-      m_h_in_margin = m < 0 ? 0 : m;
-    }
-    void SetHorizontalExternalMargin (int m)
-    {
-#if DEBUG_LAYOUT
-      return;
-#endif
-      m_h_out_margin = m < 0 ? 0 : m;
-    }
 
-    int GetVerticalInternalMargin() const
-    {
-      return m_v_in_margin;
-    };
-    int GetVerticalExternalMargin() const
-    {
-      return m_v_out_margin;
-    };
-    void SetVerticalInternalMargin (int m)
-    {
-#if DEBUG_LAYOUT
-      return;
-#endif
-      m_v_in_margin = m < 0 ? 0 : m;
-    }
-    void SetVerticalExternalMargin (int m)
-    {
-#if DEBUG_LAYOUT
-      return;
-#endif
-      m_v_out_margin = m < 0 ? 0 : m;
-    }
+    //! Deprecated. Use SetLeftRightPadding.
+    void SetHorizontalExternalMargin(int m);
+
+    //! Deprecated. Use SetTopBottomPadding,
+    void SetVerticalExternalMargin(int m);
+
+    void SetPadding(int top, int right, int bottom, int left);
+
+    int GetLeftPadding() const;
+    int GetRightPadding() const;
+    int GetTopPadding() const;
+    int GetBottomPadding() const;
 
   public:
 
@@ -147,7 +163,7 @@ namespace nux
     bool SearchInAllSubNodes (Area *bo);
     bool SearchInFirstSubNodes (Area *bo);
 
-    // Deprectated. Do not use.
+    // Deprecated. Do not use.
     virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) {return 0;}
 
     Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
@@ -216,37 +232,9 @@ namespace nux
     sigc::signal<void, Area*>   OnChildQueueDraw;
     sigc::signal<void, Layout*, Area*> ViewAdded;
     sigc::signal<void, Layout*, Area*> ViewRemoved;
-    
-    virtual void DoSetFocused (bool focused);
-    virtual bool DoGetFocused ();
-    virtual bool DoCanFocus ();
-    virtual void DoActivateFocus ();
-
-    bool HasFocusableEntries ();
-
-    // this should not be public, but has to be because of nux's object setup
-    long ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    bool _has_focus_control;
-    void SetFocusControl (bool focus_control);
-    bool HasFocusControl ();
-    bool _ignore_focus;
 
   protected:
-    Area*GetFocusedChild ();
-    virtual long DoFocusPrev  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusNext  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusUp    (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusDown  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusLeft  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusRight (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual bool FocusFirstChild ();
-    virtual bool FocusLastChild ();
-    virtual bool FocusNextChild (Area *child);
-    virtual bool FocusPreviousChild (Area *child);
-    void OnChildFocusChanged (/*Area *parent,*/ Area *child);
-    
     virtual bool AcceptKeyNavFocus();
-    std::map<Area*, sigc::connection> _connection_map; // map our children to connections
     
     bool _queued_draw; //<! The rendering of the layout needs to be refreshed.
 
@@ -258,22 +246,24 @@ namespace nux
     int m_fittingWidth;
     int m_fittingHeight;
 
-    int m_h_in_margin;
-    int m_h_out_margin;
-    int m_v_in_margin;
-    int m_v_out_margin;
+    //int m_h_in_margin;
+    //int m_v_in_margin;
+
+    int space_between_children_;
+    int top_padding_;
+    int bottom_padding_;
+    int left_padding_;
+    int right_padding_;
 
     std::list<Area *> _layout_element_list;
 
     NString m_name;
 
     LayoutContentDistribution m_ContentStacking;
-
-    long SendEventToArea (Area *area, IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
   };
 
 
-// The Space layout is a layout object that is used to create fixed or resizable empty space.
+// The Space layout is a layout object that is used to create fixed or re-sizable empty space.
   class SpaceLayout: public Layout
   {
     NUX_DECLARE_OBJECT_TYPE (SpaceLayout, Layout);
@@ -338,6 +328,38 @@ namespace nux
     Area *Find (long handle);
   };
 
+
+  // The Space layout is a layout object that is used to create fixed or re-sizable empty space.
+  class LinearLayout: public Layout
+  {
+    NUX_DECLARE_OBJECT_TYPE (LinearLayout, Layout);
+  public:
+
+    //! Deprecated. Use SetSpaceBetweenChildren;
+    void SetHorizontalInternalMargin(int space);
+    //! Deprecated. Use SetSpaceBetweenChildren;
+    void SetVerticalInternalMargin(int space);
+
+    //! Set the space between the children of a HLayout or VLayout.
+    /*!
+        Set the horizontal space between the children of the layout. In a VLayout, children of the layout are placed
+        horizontally, on after the other, from left to right. This function set the space allowed between the children.
+        Valid only for HLayout and VLayout.
+
+        @param horizontal_space The horizontal space between the children of the layout.
+    */
+    void SetSpaceBetweenChildren(int space);
+
+  protected:
+    LinearLayout(NUX_FILE_LINE_PROTO)
+      : Layout (NUX_FILE_LINE_PARAM)
+    {
+    }
+
+    virtual ~LinearLayout()
+    {
+    }
+  };
 }
 
 #endif // LAYOUT_H

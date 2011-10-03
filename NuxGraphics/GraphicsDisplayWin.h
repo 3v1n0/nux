@@ -28,6 +28,12 @@
 #include "GLDeviceObjects.h"
 #include "GLRenderStates.h"
 
+#include <d2d1.h>
+#include <d2d1helper.h>
+#include <dwrite.h>
+#include "Wincodec.h"
+
+
 namespace nux
 {
 
@@ -57,11 +63,11 @@ namespace nux
     friend class GraphicsEngine;
 
   private:
-#ifdef WIN32
+
     // WIN32 system variables
-    HGLRC       _opengl_rendering_context;  //!< OpenGL Rendering Context.
-    HDC         _device_context;            //!< Device Context.
-    HWND        m_hWnd;                     //!< Window Handle.
+    HGLRC       opengl_rendering_context_;  //!< OpenGL Rendering Context.
+    HDC         device_context_;            //!< Device Context.
+    HWND        wnd_handle_;                     //!< Window Handle.
     HWND        m_ParentWindow;
 
     TCHAR m_WindowClassName[256];
@@ -69,10 +75,13 @@ namespace nux
     DWORD       m_dwExStyle;        // Window Extended Style
     DWORD       m_dwStyle;          // Window Style
     NString     m_WindowTitle;
-#endif
 
     static HGLRC sMainGLRC;         // Used as the first argument of wglShareLists to make all successive OpenGL  context share their objects
     static HDC   sMainDC;           // Used as the first argument of wglShareLists to make all successive OpenGL  context share their objects
+
+    ID2D1Factory    *d2d_factory_;
+    IDWriteFactory  *dw_factory_;
+    IWICImagingFactory *wic_factory_;
 
     // size, position
     Size  m_ViewportSize;
@@ -82,7 +91,7 @@ namespace nux
     bool m_fullscreen;
     unsigned int m_ScreenBitDepth;
 
-    // verifiy that the interface is properly created
+    // verify that the interface is properly created
     bool m_GfxInterfaceCreated;
 
     // Device information
@@ -91,7 +100,7 @@ namespace nux
 
     bool m_is_window_minimized;
 
-    HCURSOR m_Cursor;
+    HCURSOR cursor_;
 
     static int Win32KeySymToINL (int Keysym);
     static int Win32VKToNuxKey (int vk);
@@ -163,7 +172,7 @@ namespace nux
 
     HWND GetWindowHandle() const
     {
-      return m_hWnd;
+      return wnd_handle_;
     }
     HWND GetParentWindowHandle() const
     {
@@ -171,12 +180,16 @@ namespace nux
     }
     HDC GetWindowHDC() const
     {
-      return _device_context;
+      return device_context_;
     }
     bool IsChildWindow() const
     {
       return m_ParentWindow != 0;
     }
+
+    ID2D1Factory* GetDirect2DFactory();
+    IDWriteFactory* GetDirectWriteFactory();
+    IWICImagingFactory* GetWICFactory();
 
     // Return true if VSync swap control is available
     bool HasVSyncSwapControl() const;

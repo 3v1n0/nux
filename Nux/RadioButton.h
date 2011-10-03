@@ -20,80 +20,86 @@
  */
 
 
-#ifndef RADIOBUTTON_H
-#define RADIOBUTTON_H
+#ifndef RADIO_BUTTON_H
+#define RADIO_BUTTON_H
 
-#include "AbstractRadioButton.h"
+#include "AbstractButton.h"
 
 namespace nux
 {
-  class RadioButton;
-  class RadioButtonGroup;
   class HLayout;
+  class InputArea;
+  class StaticText;
+  class RadioButtonGroup;
 
-  class RadioButton: public AbstractRadioButton
+
+  class RadioButton: public AbstractButton
   {
-    NUX_DECLARE_OBJECT_TYPE (RadioButton, AbstractRadioButton);
+    NUX_DECLARE_OBJECT_TYPE(RadioButton, AbstractButton);
   public:
-    RadioButton (const TCHAR *Caption = 0, bool state = false, NUX_FILE_LINE_PROTO);
-
+    RadioButton (const std::string &str, bool state = false, NUX_FILE_LINE_PROTO);
     ~RadioButton();
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    //! Emitted when the button is clicked.
+    sigc::signal<void, RadioButton*> clicked;
 
-    void RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    /*
-        Signal emitted if a click happen. The state change and the check box need to redraw itself.
+    //! Emitted when the active state changes.
+    /*!
+        Emitted when the active state changes, as a result of a mouse click or an API call.\n
+        \sa Activate, Deactivate.
     */
-    void RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    /*
-        Signal emitted if the mouse is released. Whether a click happened or not,
-        the check box need to redraw itself.
+    sigc::signal<void, RadioButton*> changed;
+
+    //! Set the label.
+    /*!
+        Set the label of this RadioButton. If the \a label argument is an empty string, then the the RadioButton label is destroyed,
+        and the content of the RadioButton is re-arranged accordingly.
+
+        @param label The label of the RadioButton.
     */
-    void RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void SetLabel(const std::string &checkbox_label);
 
-    sigc::signal<void, RadioButton *> sigStateToggled;
-    sigc::signal<void> sigToggled;
-    sigc::signal<void, bool> sigStateChanged;
+    //!Return the label of this RadioButton.
+    /*!
+        Return the label of this RadioButton.
 
-    void EmitStateChangedSignal();
+        @return The RadioButton label string.
+    */
+    std::string GetLabel() const;
 
-    virtual void SetCaption (const TCHAR *Caption);
-    virtual const NString &GetCaption() const;
+    //! Activate the radio button.
+    /*!
+         Activate the radio button.
+    */
+    void Activate();
 
-    virtual void SetState (bool State);
-    virtual void SetState (bool State, bool EmitSignal);
-    virtual bool GetState() const;
+    //! Deactivate the radio button.
+    /*!
+         Deactivate the radio button.
+    */
+    void Deactivate();
 
   protected:
-    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
 
-  private:
+    bool block_changed_signal_;
+
+    HLayout   *hlayout_;
+    InputArea *check_area_;
+
     void SetRadioGroupSelector(RadioButtonGroup *RadioSelector);
-    RadioButtonGroup* GetRadioGroupSelector();
+    ObjectWeakPtr<RadioButtonGroup> GetRadioGroupSelector();
 
     //! Intended for RadioButtonGroup only.
     void SetStatePrivate (bool State);
     //! Intended for RadioButtonGroup only.
     void SetStatePrivate (bool State, bool EmitSignal);
-
-
-    HLayout    *m_hlayout;
-    InputArea   *m_TextArea;
-    InputArea   *m_CheckArea;
-    bool        m_State;
-
-    RadioButtonGroup *radio_button_group_;
-    int m_GroupId;
+    ObjectWeakPtr<RadioButtonGroup> radio_button_group_;
+    int radio_group_index_;
 
     friend class RadioButtonGroup;
   };
 }
 
-#endif // RADIOBUTTON_H
+#endif // RADIO_BUTTON_H

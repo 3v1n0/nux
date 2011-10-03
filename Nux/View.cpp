@@ -44,7 +44,6 @@ namespace nux
 
     // Set widget default size;
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    mouse_down_outside_pointer_grab_area.connect (sigc::mem_fun (this, &View::DoMouseDownOutsideArea));
   }
 
   View::~View()
@@ -52,47 +51,15 @@ namespace nux
     // It is possible that the window thread has been deleted before the view
     // itself, so check prior to calling.
     WindowThread* wt = GetWindowThread();
-    if (GetFocused() && HasPassiveFocus() == false && wt)
-    {
-      wt->SetFocusedArea (NULL);
-    }
 
-    // It is possible that the object is in the refresh list. Remove it here
-    // before it is deleted.
     if (wt)
+    {
+      // It is possible that the object is in the refresh list. Remove it here
+      // before it is deleted.
       wt->RemoveObjectFromLayoutQueue(this);
+    }
 
     RemoveLayout();
-  }
-
-  void View::DoMouseDownOutsideArea (int x, int y,unsigned long mousestate, unsigned long keystate)
-  {
-    if (GetFocused ())
-    {
-      SetFocused (false);
-    }
-  }
-
-  long View::ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    // we assume we were chained up to by our layout
-    if (GetLayout () == NULL)
-      return TraverseInfo;
-
-    Area *parent = GetParentObject ();
-    if (parent == NULL)
-    {
-      GetLayout ()->SetFocused (false);
-      GetLayout ()->SetFocused (true); // just reset the layout focus becase we are top level
-    }
-
-    if (parent != NULL && parent->IsLayout ())
-    {
-      Layout *parent_layout = (Layout *)parent;
-      return parent_layout->ProcessFocusEvent (ievent, TraverseInfo, ProcessEventInfo);
-    }
-
-    return TraverseInfo;
   }
 
   // NUXTODO: Find better name
@@ -359,8 +326,8 @@ namespace nux
 
   bool View::SetLayout (Layout *layout)
   {
-    nuxAssert(layout->IsLayout());
     NUX_RETURN_VALUE_IF_NULL (layout, false);
+    nuxAssert(layout->IsLayout());
     NUX_RETURN_VALUE_IF_TRUE (m_CompositionLayout == layout, true);
 
     Area *parent = layout->GetParentObject();
@@ -378,11 +345,6 @@ namespace nux
 
     if (m_CompositionLayout)
     {
-      if (GetFocused ())
-        m_CompositionLayout->SetFocused (false);
-
-      _on_focus_changed_handler.disconnect ();
-
       /* we need to emit the signal before the unparent, just in case
          one of the callbacks wanted to use this object */
 
@@ -393,10 +355,6 @@ namespace nux
     m_CompositionLayout = layout;
 
     GetWindowThread()->QueueObjectLayout (this);
-    if (GetFocused ())
-      layout->SetFocused (true);
-
-    _on_focus_changed_handler = layout->ChildFocusChanged.connect (sigc::mem_fun (this, &View::OnChildFocusChanged));
 
     LayoutAdded.emit (this, m_CompositionLayout);
 
@@ -494,131 +452,6 @@ namespace nux
   void View::GeometryChanged ()
   {
     QueueDraw ();
-  }
-
-  bool View::DoGetFocused ()
-  {
-    if (HasPassiveFocus ())
-      return GetLayout ()->GetFocused ();
-
-    return _is_focused;
-  }
-
-  void View::DoSetFocused (bool focused)
-  {
-    if (GetFocused () == focused)
-    {
-      return;
-    }
-
-    InputArea::DoSetFocused (focused);
-
-    if (HasPassiveFocus ())
-    {
-      Layout *layout = GetLayout ();
-
-      InputArea::DoSetFocused (focused);
-
-      if (layout != NULL)
-      {
-        layout->SetFocused (focused);
-      }
-    }
-    else if (focused == true)
-    {
-      // we only set the focused area if we are not passing focus
-      nux::GetWindowThread ()->SetFocusedArea (this);
-    }
-
-    if (focused == false)
-    {
-      bool has_focused_entry = false;
-      Area *_parent = GetParentObject ();
-      if (_parent == NULL)
-        return;
-
-      if (_parent->IsLayout ())
-        has_focused_entry = _parent->GetFocused ();
-
-      if (has_focused_entry == false)
-        SetFocusControl (false);
-
-    }
-  }
-
-  bool View::DoCanFocus ()
-  {
-    if (IsVisible () == false)
-      return false;
-
-    if (_can_focus == false)
-      return false;
-
-    if (_can_pass_focus_to_composite_layout)
-    {
-      if (GetLayout () != NULL)
-      {
-        return GetLayout ()->CanFocus ();
-      }
-    }
-
-    return _can_focus;
-  }
-
-  void View::SetCanFocus (bool can_focus)
-  {
-    _can_focus = can_focus;
-    if ((_can_focus == false) && GetFocused ())
-    {
-      SetFocused (false);
-    }
-  }
-
-  // if we have a layout, returns true if we pass focus to it
-  // else returns false
-  bool View::HasPassiveFocus ()
-  {
-    if (_can_pass_focus_to_composite_layout && GetLayout () != NULL)
-      return true;
-
-    return false;
-  }
-
-  void View::SetFocusControl (bool focus_control)
-  {
-    Area *_parent = GetParentObject ();
-    if (_parent == NULL)
-      return;
-
-    if (_parent->IsView ())
-    {
-      View *parent = (View*)_parent;
-      parent->SetFocusControl (focus_control);
-    }
-    else if (_parent->IsLayout ())
-    {
-      Layout *parent = (Layout *)_parent;
-      parent->SetFocusControl (focus_control);
-    }
-  }
-
-  bool View::HasFocusControl()
-  {
-    Area *_parent = GetParentObject();
-    if (_parent == NULL)
-      return false;
-
-    if (_parent->IsView())
-    {
-      View *parent = (View*)_parent;
-      return parent->HasFocusControl();
-    }
-    else if (_parent->IsLayout())
-    {
-      Layout *parent = (Layout *)_parent;
-      return parent->HasFocusControl();
-    }
-    return false;
   }
 
   Area* View::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)

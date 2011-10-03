@@ -28,7 +28,6 @@ namespace nux
 
   Validator::Validator()
   {
-    _regexp = 0;
   }
 
   Validator::~Validator()
@@ -38,6 +37,10 @@ namespace nux
 
   bool Validator::InitRegExp ()
   {
+#if defined (NUX_OS_WINDOWS)
+    regex_ = _regexp_str.GetTCharPtr();
+    return true;
+#else
     const char *error;
     int   erroffset;
     _regexp = pcre_compile (
@@ -53,10 +56,22 @@ namespace nux
       return false;
     }    
     return true;
+#endif
   }
 
-  Validator::State Validator::Validate (const TCHAR *str) const
+  Validator::State Validator::Validate (const char* str) const
   {
+#if defined (NUX_OS_WINDOWS)
+    if (str == NULL)
+      return Validator::Invalid;
+    std::string search_string = str;
+
+    if (std::regex_match(search_string.begin(), search_string.end(), regex_))
+    {
+      return Validator::Acceptable;
+    }
+    return Validator::Acceptable;
+#else
     if (_regexp == 0)
       return Validator::Invalid;
 
@@ -74,8 +89,8 @@ namespace nux
     {
       return Validator::Invalid;
     }
-
     return Validator::Acceptable;
+#endif
   }
 
 }

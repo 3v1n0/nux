@@ -42,7 +42,7 @@ namespace nux
       if((*it).IsValid())
       {
         (*it)->SetRadioGroupSelector(NULL);
-        (*it)->m_GroupId = -1;
+        (*it)->radio_group_index_ = -1;
       }
     }
   }
@@ -73,28 +73,28 @@ namespace nux
     if(index == 0)
     {
       // Inserting the first radio button
-      if(radio->GetRadioGroupSelector())
+      if(radio->GetRadioGroupSelector().IsValid())
       {
         // Disconnect from the other selector
         radio->GetRadioGroupSelector()->DisconnectButton(radio);
       }
 
       radio->SetRadioGroupSelector(this);
-      radio->m_GroupId = 0;
+      radio->radio_group_index_ = 0;
       radio->SetStatePrivate(true);
       m_RadioButtonArray.push_back(ObjectWeakPtr<RadioButton>(radio));
       m_ActiveRadioButtonIndex = 0;
     }
     else
     {
-      if(radio->GetRadioGroupSelector())
+      if(radio->GetRadioGroupSelector().IsValid())
       {
         // Disconnect from the other selector
         radio->GetRadioGroupSelector()->DisconnectButton (radio);
       }
 
       radio->SetRadioGroupSelector(this);
-      radio->m_GroupId = index;
+      radio->radio_group_index_ = index;
       // When a radio button is added to a group that is not empty, its check state is set to false.
       radio->SetStatePrivate(false);
       m_RadioButtonArray.push_back(ObjectWeakPtr<RadioButton>(radio));
@@ -131,7 +131,7 @@ namespace nux
     {
       if(m_RadioButtonArray[i] == radio)
       {
-        radio->m_GroupId = -1;
+        radio->radio_group_index_ = -1;
         radio->SetStatePrivate (false);
         m_RadioButtonArray.erase (it);
         found = true;
@@ -146,7 +146,7 @@ namespace nux
     }
   }
 
-  void RadioButtonGroup::NotifyClick (RadioButton *radio)
+  void RadioButtonGroup::NotifyClick(RadioButton *radio)
   {
     std::vector<ObjectWeakPtr<RadioButton> >::iterator it;
 
@@ -175,6 +175,18 @@ namespace nux
 
     if(it == m_RadioButtonArray.end())
       return;
+
+    if ((*it).IsValid() == false)
+    {
+      m_RadioButtonArray.erase(it);
+      return;
+    }
+
+    if ((*it)->Active() && (EmitSignal == false))
+    {
+      // The radio is already active.
+      return;
+    }
 
     for(it = m_RadioButtonArray.begin(); it != m_RadioButtonArray.end(); it++)
     {

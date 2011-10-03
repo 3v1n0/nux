@@ -356,8 +356,7 @@ logging::Logger logger("nux.windows.thread");
     {
       if((m_GLibContext == 0) || (m_GLibLoop == 0))
       {
-        LOG_WARNING(logger) << "Trying to set a timeout before GLib Context is created.\n"
-                            << logging::backtrace();
+        LOG_WARNING(logger) << "Trying to set a timeout before GLib Context is created.\n";
         return 0;
       }
 
@@ -448,7 +447,6 @@ logging::Logger logger("nux.windows.thread");
     _ready_for_next_fake_event = true;
     _fake_event_mode = false;
     _processing_fake_event = false;
-    _focused_area = NULL;
   }
 
   WindowThread::~WindowThread()
@@ -472,35 +470,6 @@ logging::Logger logger("nux.windows.thread");
       XCloseDisplay(_x11display);
     }
 #endif
-  }
-
-  void WindowThread::SetFocusedArea (Area *focused_area)
-  {
-    if (focused_area == _focused_area)
-      return; 
-    
-    if (_focused_area != NULL)
-    {
-      _focused_area->SetFocused (false);
-
-      if (_focused_area_destroyed_con.empty () == false)
-      {
-        _focused_area_destroyed_con.disconnect ();
-      }
-
-    }
-    
-    _focused_area = focused_area;
-    _focused_area_destroyed_con = focused_area->object_destroyed.connect (sigc::mem_fun (this, &WindowThread::OnFocusedAreaDestroyed));
-    
-  }
-
-  void WindowThread::OnFocusedAreaDestroyed (Object *object)
-  {
-    if (object == _focused_area)
-    {
-      _focused_area = NULL;
-    }
   }
 
   void WindowThread::AsyncWakeUpCallback (void* data)

@@ -139,17 +139,6 @@ namespace nux
   }
 
 
-  FxStructure::FxStructure()
-  {
-    src_texture = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(1, 1, 1, nux::BITFMT_R8G8B8A8);
-    dst_texture = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(1, 1, 1, nux::BITFMT_R8G8B8A8);
-    temp_texture = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(1, 1, 1, nux::BITFMT_R8G8B8A8);
-  }
-
-  FxStructure::~FxStructure()
-  {
-  }
-
   GraphicsEngine::GraphicsEngine (GraphicsDisplay &GlWindow, bool create_rendering_data)
     :   _graphics_display (GlWindow)
   {
@@ -932,17 +921,28 @@ namespace nux
 
   void GraphicsEngine::PushIdentityModelViewMatrix ()
   {
-    PushModelViewMatrix (Matrix4::IDENTITY());
+    _model_view_stack.push_back (Matrix4::IDENTITY ());
+
+    _model_view_matrix = Matrix4::IDENTITY ();
+
+    std::list<Matrix4>::iterator it;
+    for (it = _model_view_stack.begin (); it != _model_view_stack.end (); it++)
+    {
+      _model_view_matrix = (*it) * _model_view_matrix;
+    }
   }
 
   void GraphicsEngine::PushModelViewMatrix (const Matrix4 &matrix)
   {
-    if (_model_view_stack.empty())
-      _model_view_matrix = matrix;
-    else
-      _model_view_matrix = matrix * _model_view_stack.back();
+    _model_view_stack.push_back (matrix);
 
-    _model_view_stack.push_back (_model_view_matrix);
+    _model_view_matrix = Matrix4::IDENTITY ();
+    
+    std::list<Matrix4>::iterator it;
+    for (it = _model_view_stack.begin (); it != _model_view_stack.end (); it++)
+    {
+      _model_view_matrix = (*it) * _model_view_matrix;
+    }
   }
 
   void GraphicsEngine::Push2DTranslationModelViewMatrix (float tx, float ty, float tz)
@@ -955,16 +955,20 @@ namespace nux
 
   bool GraphicsEngine::PopModelViewMatrix ()
   {
-    if (!_model_view_stack.empty())
-      _model_view_stack.pop_back();
-
-    if (_model_view_stack.empty())
+    if (_model_view_stack.size () == 0)
     {
       _model_view_matrix = Matrix4::IDENTITY ();
       return false;
     }
 
-    _model_view_matrix = _model_view_stack.back();
+    _model_view_stack.pop_back();
+
+    _model_view_matrix = Matrix4::IDENTITY ();
+    std::list<Matrix4>::iterator it;
+    for (it = _model_view_stack.begin (); it != _model_view_stack.end (); it++)
+    {
+      _model_view_matrix = (*it) * _model_view_matrix;
+    }
 
     return true;
   }
@@ -982,10 +986,13 @@ namespace nux
 
   void GraphicsEngine::ApplyModelViewMatrix ()
   {
-    if (_model_view_stack.empty())
-      _model_view_matrix = Matrix4::IDENTITY ();
-    else
-      _model_view_matrix = _model_view_stack.back();
+    _model_view_matrix = Matrix4::IDENTITY ();
+
+    std::list<Matrix4>::iterator it;
+    for (it = _model_view_stack.begin (); it != _model_view_stack.end (); it++)
+    {
+      _model_view_matrix = (*it) * _model_view_matrix;
+    }
   }
 
   Rect GraphicsEngine::ModelViewXFormRect (const Rect& rect)
@@ -1294,9 +1301,9 @@ namespace nux
 
   void GraphicsEngine::UpdateResource (ResourceData *Resource)
   {
-    ObjectPtr< CachedResourceData > GLResource = ResourceCache.FindCachedResourceById (Resource->GetResourceIndex() ); //(CachedResourceData*)(*(ResourceCache.ResourceMap.find(Resource->ResourceIndex))).second;
+    ObjectPtr<CachedResourceData> GLResource = ResourceCache.FindCachedResourceById(Resource->GetResourceIndex()); //(CachedResourceData*)(*(ResourceCache.ResourceMap.find(Resource->ResourceIndex))).second;
 
-    if (GLResource.IsValid() )
+    if (GLResource.IsValid())
     {
       // Iterate through all resource updater types (list is sorted by subclass depth).
       for (t_u32 i = 0; i < ResourceCache.GetResourceUpdaters().size(); ++i)
@@ -1305,7 +1312,7 @@ namespace nux
         nuxAssert (ResourceUpdater);
 
         // Check if the updater is valid for updating the resource.
-        if ( ResourceUpdater->UpdatesThisResource (Resource) )
+        if (ResourceUpdater->UpdatesThisResource(Resource))
         {
           ResourceUpdater->UpdateResource(GLResource, Resource);
           break;
