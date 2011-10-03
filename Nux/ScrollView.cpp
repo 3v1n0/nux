@@ -102,7 +102,6 @@ namespace nux
 
     _vscrollbar = newVScrollBar;
 
-    _vscrollbar->Reference ();
     _vscrollbar->SetParentObject (this);
     _vscrollbar->SetReconfigureParentLayoutOnGeometryChange(false);
 

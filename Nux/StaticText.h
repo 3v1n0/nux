@@ -9,9 +9,7 @@ namespace nux
   {
     NUX_DECLARE_OBJECT_TYPE(StaticText, View);
   public:
-    //StaticText (const TCHAR* text, NUX_FILE_LINE_PROTO);
     StaticText (const std::string &text, NUX_FILE_LINE_PROTO);
-
     ~StaticText ();
 
 
@@ -24,49 +22,78 @@ namespace nux
     //! Return true if the widget with changes to match the text width.
     bool GetSizeMatchText () const;
 
+    //! Set the text string.
     void SetText(const std::string &text);
+
+    //! Get the text string.
     std::string GetText() const;
 
-    void SetTextColor (Color textColor);
-    void SetFontName (const char *font_name);
+    //! Set text color.
+    void SetTextColor(const Color &textColor);
+    void SetFontName(const std::string &font_name);
     
-    void GetTextSize (int &width, int &height, int clipping = 0);
+    void GetTextSize(int &width, int &height) const;
 
-    static void GetTextSize (const TCHAR* font, const TCHAR *char_str, int& width, int& height, int clipping = 0);
+    Size GetTextSize() const;
+
+    
 
     void SetClipping (int clipping);
     int GetClipping () const;
 
-    sigc::signal<void, StaticText*> sigTextChanged;
-    sigc::signal<void, StaticText*> sigTextColorChanged;
+    sigc::signal<void, StaticText*> text_changed;
+    sigc::signal<void, StaticText*> text_color_changed;
 
   protected:
+    int text_width_;  //!< Rasterized text width.
+    int text_height_; //!< Rasterized text height.
+
     void PreLayoutManagement ();
     long PostLayoutManagement (long layoutResult);
 
-    long ProcessEvent (IEvent& event, long traverseInfo, long processEventInfo);
     void Draw (GraphicsEngine& gfxContext, bool forceDraw);
-    void DrawContent (GraphicsEngine& gfxContext, bool forceDraw);
-    void PostDraw (GraphicsEngine& gfxContext, bool forceDraw);
+
 
     std::string text_;
-    Color _textColor;
+    Color text_color_;
 
-    CairoGraphics *_cairoGraphics;
-    BaseTexture *_texture2D;
+    BaseTexture *rasterized_text_texture_;
 
     int _pre_layout_width;
     int _pre_layout_height;
 
     bool _size_match_text;
 
-    void DrawText (void* cairo_context, int width, int height, Color color);
+    int clip_to_width_; //!< Wrapping of line.
 
+    float font_size_;
+    std::string font_name_;
+
+    ObjectPtr<nux::IOpenGLBaseTexture> dw_texture_;
+
+#if defined(NUX_OS_WINDOWS)
+    void ComputeTextSize();
+    void RasterizeText(Color color);
     void UpdateTextRendering ();
 
-    char *_font_string;
+    float layout_left_;
+    float layout_top_;
+    float dpi_scale_x;
+    float dpi_scale_y;
+    
+#else
+    float dpy_;
+    std::string pango_font_name_;
 
-    int _clipping;
+    void ComputeTextSize();
+    void RasterizeText(void* cairo_context, Color color);
+    void UpdateTextRendering ();
+
+    CairoGraphics *cairo_graphics_;
+#endif
+
+  private:
+    int padding_; //!< Adds a padding around the entire text box.
   };
 
 }

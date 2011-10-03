@@ -37,14 +37,14 @@ namespace nux
     mouse_click.connect(sigc::mem_fun (this, &TextureArea::RecvMouseClick));
     mouse_drag.connect(sigc::mem_fun (this, &TextureArea::RecvMouseDrag));
 
-    m_PaintLayer = new ColorLayer(nux::color::Black);
-    _2d_rotate.Identity();
+    paint_layer_ = new ColorLayer(nux::color::Black);
+    rotation_2d_.Identity();
   }
 
   TextureArea::~TextureArea()
   {
-    NUX_SAFE_DELETE (m_PaintLayer);
-    // m_UserTexture is delete by the user
+    if (paint_layer_)
+      delete paint_layer_;
   }
 
   void TextureArea::Draw (GraphicsEngine &GfxContext, bool force_draw)
@@ -57,10 +57,10 @@ namespace nux
     // The TextureArea should not render the accumulated background. That is left to the caller.
     // GetPainter().PaintBackground (GfxContext, GetGeometry() );
 
-    if (m_PaintLayer)
+    if (paint_layer_)
     {
-      m_PaintLayer->SetGeometry(GetGeometry());
-      GetPainter().RenderSinglePaintLayer(GfxContext, GetGeometry(), m_PaintLayer);
+      paint_layer_->SetGeometry(GetGeometry());
+      GetPainter().RenderSinglePaintLayer(GfxContext, GetGeometry(), paint_layer_);
     }
 
     GfxContext.PopModelViewMatrix();
@@ -81,36 +81,65 @@ namespace nux
   void TextureArea::SetTexture(BaseTexture *texture)
   {
     NUX_RETURN_IF_NULL(texture);
-    delete m_PaintLayer;
+    delete paint_layer_;
 
     TexCoordXForm texxform;
     texxform.SetTexCoordType(TexCoordXForm::OFFSET_COORD);
     texxform.SetWrap(TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-    m_PaintLayer = new TextureLayer(texture->GetDeviceTexture(), texxform, color::White);
+    paint_layer_ = new TextureLayer(texture->GetDeviceTexture(), texxform, color::White);
 
     QueueDraw();
   }
 
   void TextureArea::SetColor(const Color &color)
   {
-    delete m_PaintLayer;
-    m_PaintLayer = new ColorLayer(color);
+    delete paint_layer_;
+    paint_layer_ = new ColorLayer(color);
     QueueDraw();
+  }
+
+  void TextureArea::LoadImageFile(const std::string &filename)
+  {
+    if (paint_layer_)
+    {
+      delete paint_layer_;
+      paint_layer_ = NULL;
+    }
+
+    BaseTexture *texture = LoadTextureFromFile(filename.c_str());
+
+    BitmapFormat format = texture->GetFormat();
+
+    if (texture)
+    {
+      TexCoordXForm texxform;
+      ROPConfig rop;
+      rop.Blend = true;
+      rop.SrcBlend = GL_SRC_ALPHA;
+      rop.DstBlend = GL_ONE_MINUS_SRC_ALPHA;
+
+      paint_layer_ = new TextureLayer(texture->GetDeviceTexture(), texxform, color::White, true, rop);
+      delete texture;
+    }
+    else
+    {
+      paint_layer_ = new ColorLayer(nux::color::Black);
+    }
   }
 
   void TextureArea::SetPaintLayer (AbstractPaintLayer *layer)
   {
-    NUX_SAFE_DELETE (m_PaintLayer);
-    m_PaintLayer = layer->Clone();
+    NUX_SAFE_DELETE (paint_layer_);
+    paint_layer_ = layer->Clone();
 
     QueueDraw();
   }
 
   AbstractPaintLayer* TextureArea::GetPaintLayer() const
   {
-    if (m_PaintLayer == NULL)
+    if (paint_layer_ == NULL)
       return NULL;
-    return m_PaintLayer->Clone();
+    return paint_layer_->Clone();
   }
 
 // void TextureArea::SetTexture(const TCHAR* TextureFilename)
@@ -153,12 +182,12 @@ namespace nux
 
   void TextureArea::Set2DRotation (float angle)
   {
-    _2d_rotate.Rotate_z (angle);
+    rotation_2d_.Rotate_z (angle);
     QueueDraw ();
   }
 
   Matrix4 TextureArea::Get2DRotation () const
   {
-    return _2d_rotate;
+    return rotation_2d_;
   }
 }

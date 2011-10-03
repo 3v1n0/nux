@@ -539,8 +539,6 @@ logging::Logger logger("nux.image");
 
   void ImageSurface::Clear()
   {
-    t_s32 i;
-
     if (RawData_ == 0)
       return;
 

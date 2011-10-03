@@ -41,7 +41,12 @@ namespace nux
     NUX_POSITION_BOTTOM   // image below text
   };
 
-  // A Button that has Styling (image + text)
+
+  //! A Button with styling (image + text)
+  /*!
+      The Button class has a non persistent active state. It returns to a normal state after a mouse click.
+      For a Button is a persistent active state, use the ToggleButton class. This widget is also known as a PushButton.
+  */
   class Button: public AbstractButton
   {
     NUX_DECLARE_OBJECT_TYPE(Button, View);
@@ -71,7 +76,17 @@ namespace nux
     Button(const std::string& button_label, NUX_FILE_LINE_PROTO);
     Button(const std::string& button_label, TextureArea *image, NUX_FILE_LINE_PROTO);
     Button(NUX_FILE_LINE_PROTO);
-    ~Button();
+    virtual ~Button();
+
+    //! Emitted when the button is clicked.
+    sigc::signal<void, Button*> clicked;
+
+    //! Emitted when the active state changes.
+    /*!
+        Emitted when the active state changes, as a result of a mouse click or an API call.\n
+        \sa Activate, Deactivate.
+    */
+    sigc::signal<void, Button*> changed;
 
     //! Set the label.
     /*!
@@ -136,39 +151,38 @@ namespace nux
     */
     void SetImageMaximumSize(int width, int height);
 
-    //! Set the text color.
-    /*!
-        Set the text color.
-
-        @param color the text color.
-    */
-    void SetTextColor(const Color &color);
-
-    //! Get the text color.
-    /*!
-        Get the text color.
-
-        @return The text color.
-    */
-    Color GetTextColor();
+    void SetLayoutPadding(int top, int right, int bottom, int left);
 
     void SetDistribution(Distribution distribution);
     void SetItemOrder(ItemOrder item_order);
     void SetLayoutType(LayoutType layout_type);
     void SetSpaceBetweenItems(int space_between_items);
 
-    // Deprecated
-    Property<Position> image_position;
+    //! Activate the button.
+    /*!
+         Activate the button. If this object is a Button, then it has no persistent state and the function does nothing.
+    */
+    void Activate();
+
+    //! Deactivate the button.
+    /*!
+         Deactivate the button. If this object is a Button, then it has no persistent state and the function does nothing.
+    */
+    void Deactivate();
+
+    void SetActive(bool active);
 
   protected:
-    std::string label_;
-
     LayoutType layout_type_;    //!< The button layout type.
     ItemOrder item_order_;      //!< Ordering of the text and image.
     Distribution distribution_; //!< Distribution of the image and text inside the Button layout.
     int space_between_items_;   //!< Space between the Button image and text.
+    bool persistent_active_state_; //!< The button's persistent state flag.
 
-    Color text_color_; //!< The text color.
+    int layout_left_padding_;
+    int layout_right_padding_;
+    int layout_top_padding_;
+    int layout_bottom_padding_;
 
     bool SetLabelProperty(std::string &value, std::string const &str);
 
@@ -181,13 +195,13 @@ namespace nux
     
     void BuildLayout(const std::string &str, TextureArea* texture_area);
 
-    StaticText *static_text_;
     TextureArea *image_;
     Size image_minimum_size_;
     Size image_maximum_size_;
 
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
   };
 
   //typedef Button ToggleButton;

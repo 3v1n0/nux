@@ -28,7 +28,6 @@
 
 namespace nux
 {
-  static const t_s32 HERROR = 0;
   NUX_IMPLEMENT_OBJECT_TYPE (GridHLayout);
 
   GridHLayout::GridHLayout (NUX_FILE_LINE_DECL)
@@ -36,18 +35,24 @@ namespace nux
   {
 #if DEBUG_LAYOUT
     m_h_in_margin = 10;
-    m_h_out_margin = 10;
+    left_padding_ = 10;
+    right_padding_ = 10;
     m_v_in_margin = 10;
-    m_v_out_margin = 10;
+    top_padding_ = 10;
+    bottom_padding_ = 10;
 #endif
 
+    m_h_in_margin = 10;
+    m_v_in_margin = 10;
+
+    row_filling_order_ = true;
     _children_size = Size (64, 64);
     _force_children_size = true;
     _partial_visibility = true;
     _num_row = 1;
     _num_column = 1;
     _dynamic_column = true;
-    _height_match_content = true;
+    match_content_size_ = true;
 
     // Start packing the elements from the top. Is the layout has more space than the elements can use,
     // leave that space at the bottom of the GridHLayout.
@@ -59,6 +64,12 @@ namespace nux
   GridHLayout::~GridHLayout()
   {
 
+  }
+
+  void GridHLayout::SetSpaceBetweenChildren(int horizontal_space, int vertical_space)
+  {
+    m_h_in_margin = horizontal_space;
+    m_v_in_margin = vertical_space;
   }
 
   int GridHLayout::GetChildPos (Area *child)
@@ -117,14 +128,14 @@ namespace nux
     return _num_row;
   }
 
-  void GridHLayout::SetHeightMatchContent (bool match_content)
+  void GridHLayout::MatchContentSize(bool match_content)
   {
-    _height_match_content = match_content;
+    match_content_size_ = match_content;
   }
 
-  bool GridHLayout::GetHeightMatchContent () const
+  bool GridHLayout::IsMatchingContentSize () const
   {
-    return _height_match_content;
+    return match_content_size_;
   }
 
   void GridHLayout::GetCompositeList (std::list<Area *> *ViewList)
@@ -146,7 +157,7 @@ namespace nux
     }
   }
 
-  long GridHLayout::ComputeLayout2()
+  long GridHLayout::ComputeLayoutRowOrder()
   {
     std::list<Area *> elements;
 
@@ -192,8 +203,8 @@ namespace nux
 
     if (_dynamic_column)
     {
-      int X = base.x + m_h_out_margin;
-      int Y = base.y + m_v_out_margin;
+      int X = base.x + left_padding_;
+      int Y = base.y + top_padding_;
 
       bool first_element_of_row = true;
 
@@ -222,7 +233,7 @@ namespace nux
 
         if ((!_partial_visibility) && (X + _children_size.width > base.x + base.width))
         {
-          X = base.x + m_h_out_margin;
+          X = base.x + left_padding_;
           Y += _children_size.height + m_v_in_margin;
 
           first_element_of_row = true;
@@ -231,7 +242,7 @@ namespace nux
         }
         else if (X >= base.x + base.width)
         {
-          X = base.x + m_h_out_margin;
+          X = base.x + left_padding_;
           Y += _children_size.height + m_v_in_margin;
 
           first_element_of_row = true;
@@ -244,9 +255,9 @@ namespace nux
     _num_row = num_row;
     _num_column = num_column;
 
-    if ((GetStretchFactor() == 0) || _height_match_content)
+    if ((GetStretchFactor() == 0) || match_content_size_)
     {
-      int h = num_row * _children_size.height + 2 * m_v_out_margin + (num_row - 1) * m_v_in_margin;
+      int h = num_row * _children_size.height + (top_padding_ + bottom_padding_) + (num_row - 1) * m_v_in_margin;
       SetMinimumHeight(h);
       SetBaseHeight(h);
     }
@@ -261,7 +272,7 @@ namespace nux
     }
 
     // The layout has been resized to tightly pack its content
-    if (GetBaseHeight() > original_height + HERROR)
+    if (GetBaseHeight() > original_height)
     {
 #if DEBUG_LAYOUT_COMPUTATION
       // The layout has been resized larger in height to tightly pack its content.
@@ -270,7 +281,7 @@ namespace nux
 #endif
       size_compliance |= eLargerHeight; // need scrollbar
     }
-    else if (GetBaseHeight() + HERROR < original_height)
+    else if (GetBaseHeight() < original_height)
     {
 #if DEBUG_LAYOUT_COMPUTATION
       // The layout is smaller.
@@ -287,13 +298,163 @@ namespace nux
       size_compliance |= eCompliantHeight;
     }
 
-//    if(GetStretchFactor() == 0)
-//    {
-//        return size_compliance | eForceComply;
-//    }
+    //    if(GetStretchFactor() == 0)
+    //    {
+    //        return size_compliance | eForceComply;
+    //    }
 
     //SetDirty (false);
     return size_compliance;
+  }
+
+  long GridHLayout::ComputeLayoutColumnOrder()
+  {
+    std::list<Area *> elements;
+
+    if (GetStretchFactor() == 0)
+    {
+      ApplyMinHeight();
+    }
+
+    if (_layout_element_list.size() == 0)
+    {
+      return eCompliantHeight | eCompliantWidth;
+    }
+
+    t_s32 num_elements = 0;
+
+    std::list<Area *>::iterator it;
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
+    {
+      if ((*it)->IsVisible ())
+      {
+        (*it)->SetLayoutDone (false);
+        elements.push_back (*it);
+        num_elements++;
+      }
+      (*it)->SetLayoutDone (false);
+    }
+
+    t_s32 original_width = GetBaseWidth();
+
+    nux::Geometry base = GetGeometry();
+    it = elements.begin();
+    int num_row = 0;
+    int num_column = 0;
+
+    if (num_elements > 0)
+      ++num_column;
+
+    if (_dynamic_column)
+    {
+      int X = base.x + left_padding_;
+      int Y = base.y + top_padding_;
+
+      bool first_element_of_column = true;
+
+      for (int i = 0; i < num_elements; i++)
+      {
+        if (num_column == 1)
+          num_row++;
+
+        if (first_element_of_column)
+        {
+          first_element_of_column = false;
+        }
+
+        if (_force_children_size)
+        {
+          (*it)->SetMinimumSize (_children_size.width, _children_size.height);
+        }
+
+        (*it)->SetGeometry (nux::Geometry (X, Y, _children_size.width, _children_size.height));
+
+        (*it)->ComputeLayout2();
+
+        Y += _children_size.height + m_v_in_margin;
+
+        it++;
+
+        if ((!_partial_visibility) && (Y + _children_size.height > base.y + base.height - top_padding_))
+        {
+          X += _children_size.width + m_h_in_margin;
+          Y = base.y + top_padding_;
+
+          first_element_of_column = true;
+          if(i < num_elements - 1)
+            ++num_column;
+        }
+        else if (Y >= base.y + base.height)
+        {
+          X += _children_size.width + m_h_in_margin;
+          Y = base.y + top_padding_;
+
+          first_element_of_column = true;
+          if (i < num_elements - 1)
+            ++num_column;
+        }
+      }
+    }
+
+    _num_row = num_row;
+    _num_column = num_column;
+
+    if ((GetStretchFactor() == 0) || match_content_size_)
+    {
+      int w = num_column * _children_size.width + (left_padding_ + right_padding_) + (num_column - 1) * m_h_in_margin;
+      SetMinimumWidth (w);
+      SetBaseWidth (w);
+    }
+
+    long size_compliance = 0L;
+
+    if (GetBaseWidth() > original_width)
+    {
+#if DEBUG_LAYOUT_COMPUTATION
+      // The layout has been resized larger in WIDTH to tightly pack its content.
+      // Or you can say that the layout refuse to be smaller than total WIDTH of its elements.
+      std::cout << "ComputeLayout2: VLayout Width block at " << GetWidth() << std::endl;
+#endif
+      size_compliance |= eLargerWidth; // need scrollbar
+    }
+    else if (GetBaseWidth() < original_width)
+    {
+#if DEBUG_LAYOUT_COMPUTATION
+      // The layout is smaller.
+      std::cout << "ComputeLayout2: VLayout Width smaller = " << GetWidth() << std::endl;
+#endif
+      size_compliance |= eSmallerWidth;
+    }
+    else
+    {
+#if DEBUG_LAYOUT_COMPUTATION
+      // The layout and its content resized together without trouble.
+      std::cout << "ComputeLayout2: VLayout Width compliant = " << GetWidth() << std::endl;
+#endif
+      size_compliance |= eCompliantWidth;
+    }
+
+    {
+#if DEBUG_LAYOUT_COMPUTATION
+      // The layout and its content resized together without trouble.
+      std::cout << "ComputeLayout2: VLayout Height compliant = " << m_fittingHeight << std::endl;
+#endif
+      size_compliance |= eCompliantHeight;
+    }
+
+    return size_compliance;
+  }
+
+  long GridHLayout::ComputeLayout2()
+  {
+    if (row_filling_order_)
+    {
+      return ComputeLayoutRowOrder();
+    }
+    else
+    {
+      return ComputeLayoutColumnOrder();
+    }
   }
 
   void GridHLayout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
@@ -310,6 +471,7 @@ namespace nux
     Geometry absolute_geometry = GetAbsoluteGeometry();
     Geometry parent_geometry = absolute_geometry;
     Geometry visibility_geometry = absolute_geometry;
+
     if (GetToplevel())
     {
       parent_geometry = GetToplevel()->GetAbsoluteGeometry();
@@ -323,6 +485,21 @@ namespace nux
 
     bool first = false;
     bool last = false;
+
+    int major = 0;
+    int minor = 0;
+
+    if (row_filling_order_)
+    {
+      major = _num_row;
+      minor = _num_column;
+    }
+    else
+    {
+      major = _num_column;
+      minor = _num_row;
+    }
+
     for (int j = 0; j < _num_row; j++)
     {
       for (int i = 0; i < _num_column; i++)
@@ -347,8 +524,18 @@ namespace nux
             first = true; // First invisible child.
           }
 
-          int x = base.x + m_h_out_margin + i * (_children_size.width + m_h_in_margin);
-          int y = base.y + m_v_out_margin + j * (_children_size.height + m_v_in_margin);
+          int x = 0;
+          int y = 0;
+          if (row_filling_order_)
+          {
+            x = base.x + left_padding_ + i * (_children_size.width + m_h_in_margin);
+            y = base.y + top_padding_ + j * (_children_size.height + m_v_in_margin);
+          }
+          else
+          {
+            x = base.x + left_padding_ + j * (_children_size.width + m_h_in_margin);
+            y = base.y + top_padding_ + i * (_children_size.height + m_v_in_margin);
+          }
 
           GfxContext.PushClippingRectangle(Geometry (x, y, _children_size.width, _children_size.height));
 
@@ -392,7 +579,7 @@ namespace nux
     _queued_draw = false;
   }
 
-  Area* GridHLayout::KeyNavIteration(KeyNavDirection direction)
+  Area* GridHLayout::KeyNavIterationRowOrder(KeyNavDirection direction)
   {
     if (_layout_element_list.size() == 0)
       return NULL;
@@ -436,7 +623,7 @@ namespace nux
         // Left edge
         return NULL;
       }
-      
+
       if ((direction == KEY_NAV_RIGHT) && (position == (position / nun_column) * nun_column + (nun_column -1)))
       {
         // right edge
@@ -521,5 +708,149 @@ namespace nux
     }
 
     return NULL;
+  }
+
+  Area* GridHLayout::KeyNavIterationColumnOrder(KeyNavDirection direction)
+  {
+    if (_layout_element_list.size() == 0)
+      return NULL;
+
+    if (IsVisible() == false)
+      return NULL;
+
+    if (next_object_to_key_focus_area_)
+    {
+      std::list<Area*>::iterator it;
+      std::list<Area*>::iterator it_next;
+      it = std::find (_layout_element_list.begin(), _layout_element_list.end(), next_object_to_key_focus_area_);
+      it_next = it;
+      ++it_next;
+
+      if (it == _layout_element_list.end())
+      {
+        // Should never happen
+        nuxAssert (0);
+        return NULL;
+      }
+
+      int position = GetChildPos(*it); // note that (*it) == next_object_to_key_focus_area_
+      int nun_column = GetNumColumn();
+      int nun_row = GetNumRow();
+
+      if ((direction == KEY_NAV_UP) && (it == _layout_element_list.begin()))
+      {
+        // first item
+        return NULL;
+      }
+
+      if ((direction == KEY_NAV_DOWN) && (it_next == _layout_element_list.end()))
+      {
+        // last item
+        return NULL;
+      }
+
+      if ((direction == KEY_NAV_UP) && ((position % nun_row) == 0))
+      {
+        // Left edge
+        return NULL;
+      }
+
+      if ((direction == KEY_NAV_DOWN) && (position == (position / nun_row) * nun_row + (nun_row -1)))
+      {
+        // right edge
+        return NULL;
+      }
+
+      if ((direction == KEY_NAV_LEFT) && ((position / nun_row) == 0))
+      {
+        // top edge
+        return NULL;
+      }
+
+      if ((direction == KEY_NAV_RIGHT) && ((position / nun_row) == nun_column))
+      {
+        // bottom edge
+        return NULL;
+      }
+
+      //////
+      if (direction == KEY_NAV_UP)
+      {
+        --it;
+        Area* key_nav_focus = (*it)->KeyNavIteration(direction);
+
+        while (key_nav_focus == NULL)
+        {
+          int pos = GetChildPos(*it);
+          if (it == _layout_element_list.begin() || ((pos % nun_row) == 0))
+            break;
+
+          --it;
+          key_nav_focus = (*it)->KeyNavIteration(direction);
+        }
+
+        return key_nav_focus;
+      }
+
+      if (direction == KEY_NAV_DOWN)
+      {
+        ++it;
+        Area* key_nav_focus = (*it)->KeyNavIteration(direction);
+
+        while (key_nav_focus == NULL)
+        {
+          ++it;
+          int pos = GetChildPos(*it);
+
+          if ((it == _layout_element_list.end()) || (pos == (pos / nun_row) * nun_row + (nun_row -1)))
+            break;
+
+          key_nav_focus = (*it)->KeyNavIteration(direction);
+        }
+
+        return key_nav_focus;
+      }
+
+      if (direction == KEY_NAV_LEFT)
+      {
+        for (int i = 0; i < nun_row; ++i)
+        {
+          --it;
+        }
+        return (*it)->KeyNavIteration(direction);
+      }
+
+      if (direction == KEY_NAV_RIGHT)
+      {
+        for (int i = 0; i < nun_row; ++i)
+        {
+          ++it;
+          if (it == _layout_element_list.end())
+            return NULL;
+        }
+        return (*it)->KeyNavIteration(direction);
+      }
+    }
+    else
+    {
+      std::list<Area*>::iterator it;
+      it = _layout_element_list.begin();
+      return (*it)->KeyNavIteration(direction);
+    }
+
+    return NULL;
+
+  }
+
+  Area* GridHLayout::KeyNavIteration(KeyNavDirection direction)
+  {
+    if (row_filling_order_)
+    {
+      return KeyNavIterationRowOrder(direction);
+    }
+    else
+    {
+      return KeyNavIterationColumnOrder(direction);
+    }
   }
 }

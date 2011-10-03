@@ -70,6 +70,8 @@ namespace nux
   BaseTexture *CreateTextureFromFile(const TCHAR *TextureFilename);
   BaseTexture *CreateTextureFromBitmapData(const NBitmapData *BitmapData);
 
+  BaseTexture* LoadTextureFromFile(const std::string &filename);
+
   //! Abstract base class for textures.
   class BaseTexture: public ResourceData
   {

@@ -24,8 +24,6 @@
 #include "ComboBoxSimple.h"
 #include "MenuPage.h"
 #include "ActionItem.h"
-#include "TableItem.h"
-#include "TableCtrl.h"
 #include "StaticText.h"
 
 

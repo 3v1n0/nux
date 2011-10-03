@@ -22,8 +22,6 @@
 
 #include "Nux.h"
 #include "HLayout.h"
-#include "VLayout.h"
-#include "EditTextBox.h"
 #include "CheckBox.h"
 #include "StaticText.h"
 
@@ -35,14 +33,13 @@ namespace nux
     : AbstractButton(NUX_FILE_LINE_PARAM)
   {
     label_ = str;
-    state_ = state;
+    active_ = state;
     hlayout_ = 0;
-    text_area_ = 0;
 
     static_text_  = new StaticText(label_, NUX_TRACKER_LOCATION);
+    static_text_->SetTextColor(label_color_);
     hlayout_      = new HLayout(NUX_TRACKER_LOCATION);
     check_area_   = new InputArea(NUX_TRACKER_LOCATION);
-    text_area_    = new InputArea(NUX_TRACKER_LOCATION);
 
     check_area_->SetSensitive(false);
     static_text_->SetSensitive(false);
@@ -50,9 +47,6 @@ namespace nux
     // Set Geometry
     check_area_->SetMinimumSize(14, 14);
     check_area_->SetMaximumSize(14, 14);
-    text_area_->SetMinimumSize(14, 14);
-
-    // Do not configure text_area_-> This is done in setCaption according to the size of the caption text.
 
     hlayout_->SetHorizontalInternalMargin (4);
     hlayout_->SetContentDistribution(MAJOR_POSITION_CENTER);
@@ -118,28 +112,44 @@ namespace nux
     static_text_->ProcessDraw(graphics_engine, true);
   }
 
-
-  void CheckBox::SetState (bool state)
+  void CheckBox::RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    state_ = state;
-    NeedRedraw();
+    active_ = !active_;
+
+    clicked.emit(this);
+    changed.emit(this);
+    QueueDraw();
   }
 
-  void CheckBox::SetState (bool state, bool EmitSignal)
+  void CheckBox::Activate()
   {
-    state_ = state;
+    if (active_ == true)
+      return;
 
-    if (EmitSignal)
+    if (active_ == true)
     {
-      sigToggled.emit();
-      sigStateChanged.emit (state_);
+      // already active
+      return;
     }
 
-    NeedRedraw();
+    active_ = true;
+    changed.emit(this);
+    QueueDraw();
   }
 
-  bool CheckBox::GetState() const
+  void CheckBox::Deactivate()
   {
-    return state_;
+    if (active_ == false)
+      return;
+
+    if (active_ == false)
+    {
+      // already deactivated
+      return;
+    }
+
+    active_ = false;
+    changed.emit(this);
+    QueueDraw();
   }
 }

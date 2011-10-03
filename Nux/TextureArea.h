@@ -61,6 +61,8 @@ namespace nux
     */
     void SetPaintLayer(AbstractPaintLayer *layer);
 
+    void LoadImageFile(const std::string &filename);
+
     /*!
         Get a copy of the paint layer of this area. The layer must be destroyed with delete when it is no longer needed.
         \sa AbstractPaintLayer, ColorLayer, ShapeLayer, SliceScaledTextureLayer, TextureLayer;
@@ -93,10 +95,12 @@ namespace nux
     void RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
   private:
-    AbstractPaintLayer *m_PaintLayer;
+    AbstractPaintLayer *paint_layer_;
 
-    Matrix4 _2d_rotate;  //!< 2D rotation matrix for this area. Used for rendering only.
+    Matrix4 rotation_2d_;  //!< 2D rotation matrix for this area. Used for rendering only.
   };
+
+  typedef TextureArea Image;
 }
 
 #endif // TEXTUREAREA_H

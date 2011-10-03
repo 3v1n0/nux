@@ -356,8 +356,7 @@ logging::Logger logger("nux.windows.thread");
     {
       if((m_GLibContext == 0) || (m_GLibLoop == 0))
       {
-        LOG_WARNING(logger) << "Trying to set a timeout before GLib Context is created.\n"
-                            << logging::backtrace();
+        LOG_WARNING(logger) << "Trying to set a timeout before GLib Context is created.\n";
         return 0;
       }
 

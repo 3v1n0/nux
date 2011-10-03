@@ -38,9 +38,15 @@ namespace nux
     CheckBox (const std::string &str, bool state = false, NUX_FILE_LINE_PROTO);
     ~CheckBox();
 
-    sigc::signal<void, CheckBox *> sigStateToggled;
-    sigc::signal<void> sigToggled;
-    sigc::signal<void, bool> sigStateChanged;
+    //! Emitted when the button is clicked.
+    sigc::signal<void, CheckBox*> clicked;
+
+    //! Emitted when the active state changes.
+    /*!
+        Emitted when the active state changes, as a result of a mouse click or an API call.\n
+        \sa Activate, Deactivate.
+    */
+    sigc::signal<void, CheckBox*> changed;
 
     //! Set the label.
     /*!
@@ -59,20 +65,24 @@ namespace nux
     */
     std::string GetLabel() const;
 
-    void SetState (bool State);
-    void SetState (bool State, bool EmitSignal);
-    bool GetState() const;
+    //! Activate the check box.
+    /*!
+         Activate the check box.
+    */
+    void Activate();
+
+    //! Deactivate the check box.
+    /*!
+         Deactivate the check box.
+    */
+    void Deactivate();
 
   protected:
     virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
-
-    std::string label_;
-    StaticText *static_text_;
+    virtual void RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
 
     HLayout   *hlayout_;
-    InputArea *text_area_;
     InputArea *check_area_;
-    bool      state_;
   };
 
 }

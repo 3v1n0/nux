@@ -36,6 +36,7 @@
 #include <X11/keysym.h>
 
 #include <X11/extensions/xf86vmode.h>
+#include <X11/extensions/Xinerama.h>
 
 namespace nux
 {
@@ -312,6 +313,7 @@ namespace nux
     
     void * KeyboardGrabData () { return _global_keyboard_grab_data; }
     void * PointerGrabData () { return _global_pointer_grab_data; }
+
   private:
     void InitGlobalGrabWindow ();
   

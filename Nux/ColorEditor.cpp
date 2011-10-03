@@ -241,7 +241,7 @@ namespace nux
         redtext->SetMinimumWidth (36);
         redlayout->AddView (redcheck, 0);
         redlayout->AddView (redtext, 0);
-        //FIXME - redcheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), CC_RED), CM_RGB ) );
+        redcheck->clicked.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel0), color::RED), color::RGB) );
       }
       greenlayout = new HLayout (NUX_TRACKER_LOCATION);
       {
@@ -252,7 +252,7 @@ namespace nux
         greentext->SetMinimumWidth (36);
         greenlayout->AddView (greencheck, 0);
         greenlayout->AddView (greentext, 0);
-        //FIXME - greencheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), CC_GREEN), CM_RGB ) );
+        //FIXME - greencheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel0), color::GREEN), color::RGB) );
 
       }
       bluelayout = new HLayout (NUX_TRACKER_LOCATION);
@@ -264,7 +264,7 @@ namespace nux
         bluetext->SetMinimumWidth (36);
         bluelayout->AddView (bluecheck, 0);
         bluelayout->AddView (bluetext, 0);
-        //FIXME - change to radio button bluecheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), CC_BLUE), CM_RGB ) );
+        //FIXME - change to radio button bluecheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel0), color::BLUE), color::RGB) );
       }
     }
 
@@ -279,7 +279,7 @@ namespace nux
         huetext->SetMinimumWidth (36);
         huelayout->AddView (huecheck, 0);
         huelayout->AddView (huetext, 0);
-        //FIXME - huecheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), CC_HUE), CM_HSV ) );
+        //FIXME - huecheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel0), color::HUE), CM_HSV ) );
       }
       saturationlayout = new HLayout (NUX_TRACKER_LOCATION);
       {
@@ -290,7 +290,7 @@ namespace nux
         saturationtext->SetMinimumWidth (36);
         saturationlayout->AddView (saturationcheck, 0);
         saturationlayout->AddView (saturationtext, 0);
-        //FIXME - saturationcheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), CC_SATURATION), CM_HSV ) );
+        //FIXME - saturationcheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel0), color::SATURATION), CM_HSV ) );
       }
       valuelayout = new HLayout (NUX_TRACKER_LOCATION);
       {
@@ -301,7 +301,7 @@ namespace nux
         valuetext->SetMinimumWidth (36);
         valuelayout->AddView (valuecheck, 0);
         valuelayout->AddView (valuetext, 0);
-        //FIXME - valuecheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel), CC_VALUE), CM_HSV ) );
+        //FIXME - valuecheck->sigStateChanged.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel0), color::VALUE), CM_HSV ) );
       }
     }
 
@@ -869,25 +869,30 @@ namespace nux
     RecvPickerMouseDown (x, y, button_flags, key_flags);
   }
 
-void ColorEditor::RecvCheckColorModel (bool b, color::Model ColorModel, color::Channel ColorChannel)
+  void ColorEditor::RecvCheckColorModel0(AbstractButton *button, color::Model color_mode, color::Channel color_channel)
+  {
+    RecvCheckColorModel(true, color_mode, color_channel);
+  }
+
+  void ColorEditor::RecvCheckColorModel(bool b, color::Model color_mode, color::Channel color_channel)
   {
     if (b)
     {
-      if ( (ColorModel == color::HSV) && (m_ColorModel == color::RGB) )
+      if ( (color_mode == color::HSV) && (m_ColorModel == color::RGB) )
       {
         hsv_ = color::HueSaturationValue(rgb_);
       }
 
-      if ( (ColorModel == color::RGB) && (m_ColorModel == color::HSV) )
+      if ( (color_mode == color::RGB) && (m_ColorModel == color::HSV) )
       {
         rgb_ = color::RedGreenBlue(hsv_);
       }
 
-      m_ColorModel = ColorModel;
-      m_ColorChannel = ColorChannel;
+      m_ColorModel = color_mode;
+      m_ColorChannel = color_channel;
     }
 
-    if (b && (ColorModel == color::RGB) )
+    if (b && (color_mode == color::RGB) )
     {
       int x = 0;
       int y = 0;
@@ -922,7 +927,7 @@ void ColorEditor::RecvCheckColorModel (bool b, color::Model ColorModel, color::C
       bluetext->SetText (m_Validator.ToString (255 * rgb_.blue) );
     }
 
-    if (b && (ColorModel == color::HSV) )
+    if (b && (color_mode == color::HSV) )
     {
       int x = 0;
       int y = 0;
@@ -1050,7 +1055,7 @@ void ColorEditor::RecvCheckColorModel (bool b, color::Model ColorModel, color::C
     RecvCheckColorModel (true, m_ColorModel, m_ColorChannel);
 
     /*FIXME - disabled because we lost radiogroup 
-    if (m_ColorChannel == CC_RED)
+    if (m_ColorChannel == color::RED)
       radiogroup->ActivateButton (redcheck);
     else if (m_ColorChannel == color::GREEN)
       radiogroup->ActivateButton (greencheck);

@@ -35,6 +35,10 @@ namespace nux
   {
     inlRegisterThreadLocalIndex (1, _TLS_GraphicsDisplay, NULL);
 
+#if defined(NUX_OS_WINDOWS)
+
+#endif
+
 #if defined(NUX_OS_LINUX)
     // Necessary in order to use gdk
     g_type_init();

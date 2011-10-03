@@ -199,6 +199,8 @@ namespace nux
                                          bool FullscreenFlag,
                                          bool create_rendering_data)
   {
+    int xinerama_event, xinerama_error;
+    int xinerama_major, xinerama_minor;
     NScopeLock Scope (&CreateOpenGLWindow_CriticalSection);
 
     m_GfxInterfaceCreated = false;
@@ -223,6 +225,8 @@ namespace nux
 
     m_X11Screen = DefaultScreen (m_X11Display);
     XF86VidModeQueryVersion (m_X11Display, &_x11_major, &_x11_minor);
+    XineramaQueryVersion (m_X11Display, &xinerama_major, &xinerama_minor);
+    XineramaQueryExtension (m_X11Display, &xinerama_event, &xinerama_error);
 
     XF86VidModeGetAllModeLines (m_X11Display, m_X11Screen, &m_NumVideoModes, &m_X11VideoModes);
     m_X11OriginalVideoMode = *m_X11VideoModes[0];
@@ -1595,6 +1599,7 @@ namespace nux
         m_pEvent->e_y = y_recalc;
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
+        m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
         mouse_press (xevent, m_pEvent);
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: ButtonPress event."));
         break;
@@ -1612,6 +1617,7 @@ namespace nux
         m_pEvent->e_y = y_recalc;
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
+        m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
         mouse_release (xevent, m_pEvent);
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: ButtonRelease event."));
         break;
@@ -1629,6 +1635,7 @@ namespace nux
         m_pEvent->e_y = y_recalc;
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
+        m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
         mouse_move (xevent, m_pEvent);
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: MotionNotify event."));
         break;
@@ -1644,6 +1651,7 @@ namespace nux
         m_pEvent->e_y = -1;
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
+        m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
         m_pEvent->e_event = NUX_WINDOW_MOUSELEAVE;
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: LeaveNotify event."));
         break;
@@ -1658,6 +1666,7 @@ namespace nux
         m_pEvent->e_y = y_recalc;
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
+        m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
         mouse_move (xevent, m_pEvent);
         //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: EnterNotify event."));
         break;

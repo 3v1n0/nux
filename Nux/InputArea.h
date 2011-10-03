@@ -333,8 +333,6 @@ namespace nux
     sigc::signal<void, InputArea*> start_keyboard_grab;
     sigc::signal<void, InputArea*> end_keyboard_grab;
 
-    void DoSetFocused (bool focus);
-
     protected:
 
       virtual bool AcceptKeyNavFocus();

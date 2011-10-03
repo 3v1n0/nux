@@ -28,14 +28,17 @@ namespace nux
 {
   NUX_IMPLEMENT_OBJECT_TYPE(Layout);
   NUX_IMPLEMENT_OBJECT_TYPE(SpaceLayout);
+  NUX_IMPLEMENT_OBJECT_TYPE(LinearLayout);
 
   Layout::Layout (NUX_FILE_LINE_DECL)
     :   Area (NUX_FILE_LINE_PARAM)
   {
-    m_h_in_margin       = 0;
-    m_h_out_margin      = 0;
-    m_v_in_margin       = 0;
-    m_v_out_margin      = 0;
+    space_between_children_ = 0;
+
+    left_padding_      = 0;
+    right_padding_     = 0;    
+    top_padding_      = 0;
+    bottom_padding_   = 0;
     m_contentWidth      = 0;
     m_contentHeight     = 0;
     m_ContentStacking   = eStackExpand;
@@ -62,6 +65,81 @@ namespace nux
     _layout_element_list.clear();
   }
 
+  int Layout::GetLeftPadding() const
+  {
+    return left_padding_;
+  }
+
+  int Layout::GetRightPadding() const
+  {
+    return right_padding_;
+  }
+
+  int Layout::GetTopPadding() const
+  {
+    return top_padding_;
+  }
+
+  int Layout::GetBottomPadding() const
+  {
+    return bottom_padding_;
+  }
+
+  void Layout::SetLeftAndRightPadding(int padding)
+  {
+#if DEBUG_LAYOUT
+    return;
+#endif
+    left_padding_ = padding < 0 ? 0 : padding;
+    right_padding_ = padding < 0 ? 0 : padding;
+  }
+
+  void Layout::SetLeftAndRightPadding(int left, int right)
+  {
+#if DEBUG_LAYOUT
+    return;
+#endif
+    left_padding_ = left < 0 ? 0 : left;
+    right_padding_ = right < 0 ? 0 : right;
+  }
+
+  void Layout::SetTopAndBottomPadding(int padding)
+  {
+#if DEBUG_LAYOUT
+    return;
+#endif
+    top_padding_ = padding < 0 ? 0 : padding;
+    bottom_padding_ = padding < 0 ? 0 : padding;
+  }
+
+  void Layout::SetTopAndBottomPadding(int top, int bottom)
+  {
+#if DEBUG_LAYOUT
+    return;
+#endif
+    top_padding_ = top < 0 ? 0 : top;
+    bottom_padding_ = bottom < 0 ? 0 : bottom;
+  }
+
+  void Layout::SetPadding(int top, int right, int bottom, int left)
+  {
+    top_padding_ = top < 0 ? 0 : top;
+    right_padding_ = right < 0 ? 0 : right;
+    bottom_padding_ = bottom < 0 ? 0 : bottom;
+    left_padding_ = left < 0 ? 0 : left;
+  }
+
+  //! Deprecated. Use SetLeftRightPadding.
+  void Layout::SetHorizontalExternalMargin(int padding)
+  {
+    SetLeftAndRightPadding(padding);
+  }
+
+  //! Deprecated. Use SetTopBottomPadding,
+  void Layout::SetVerticalExternalMargin(int padding)
+  {
+    SetTopAndBottomPadding(padding);
+  }
 
   void Layout::RemoveChildObject (Area *bo)
   {
@@ -397,8 +475,14 @@ namespace nux
   void Layout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
   {
     std::list<Area *>::iterator it;
-    GfxContext.PushModelViewMatrix (Get2DMatrix ());
-    GfxContext.PushClippingRectangle (GetGeometry ());
+    GfxContext.PushModelViewMatrix(Get2DMatrix());
+
+    // Clip against the padding region.
+    Geometry clip_geo = GetGeometry();
+    clip_geo.OffsetPosition(left_padding_, top_padding_);
+    clip_geo.OffsetSize(-left_padding_ - right_padding_, -top_padding_ - bottom_padding_);
+
+    GfxContext.PushClippingRectangle(clip_geo);
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
@@ -423,8 +507,8 @@ namespace nux
       }
     }
 
-    GfxContext.PopClippingRectangle ();
-    GfxContext.PopModelViewMatrix ();
+    GfxContext.PopClippingRectangle();
+    GfxContext.PopModelViewMatrix();
 
     //GfxContext.PopClipOffset ();
 
@@ -497,5 +581,23 @@ namespace nux
   bool Layout::AcceptKeyNavFocus()
   {
     return false;
+  }
+
+  void LinearLayout::SetHorizontalInternalMargin(int space)
+  {
+    SetSpaceBetweenChildren(space);
+  }
+
+  void LinearLayout::SetVerticalInternalMargin(int space)
+  {
+    SetSpaceBetweenChildren(space);
+  }
+
+  void LinearLayout::SetSpaceBetweenChildren(int space)
+  {
+#if DEBUG_LAYOUT
+    return;
+#endif
+    space_between_children_ = space >= 0 ? space : 0;
   }
 }

@@ -123,6 +123,31 @@ namespace nux
     , device_context_(NULL)
     , wnd_handle_(NULL)
   {
+    // Initialize Direct2D and DirectWrite
+    d2d_factory_ = NULL;
+    dw_factory_ = NULL;
+    wic_factory_ = NULL;
+
+    HRESULT hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &d2d_factory_);
+
+    if (hr == S_OK)
+    {
+      hr = DWriteCreateFactory(
+        DWRITE_FACTORY_TYPE_SHARED,
+        __uuidof(IDWriteFactory),
+        reinterpret_cast<IUnknown**>(&dw_factory_));
+    }
+
+    // Initialize COM
+    CoInitialize(NULL);
+
+    hr = CoCreateInstance(
+      CLSID_WICImagingFactory,
+      NULL,
+      CLSCTX_INPROC_SERVER,
+      IID_IWICImagingFactory,
+      (LPVOID*)&wic_factory_);
+
     inlSetThreadLocalStorage (_TLS_GraphicsDisplay, this);
 
     m_GfxInterfaceCreated = false;
@@ -154,6 +179,39 @@ namespace nux
     NUX_SAFE_DELETE ( event_ );
 
     inlSetThreadLocalStorage (_TLS_GraphicsDisplay, 0);
+
+    if (dw_factory_)
+    {
+      dw_factory_->Release();
+      dw_factory_ = NULL;
+    }
+
+    if (d2d_factory_)
+    {
+      d2d_factory_->Release();
+      d2d_factory_ = NULL;
+    }
+
+    if (wic_factory_)
+    {
+      wic_factory_->Release();
+      wic_factory_ = NULL;
+    }
+  }
+
+  ID2D1Factory* GraphicsDisplay::GetDirect2DFactory()
+  {
+    return d2d_factory_;
+  }
+
+  IDWriteFactory* GraphicsDisplay::GetDirectWriteFactory()
+  {
+    return dw_factory_;
+  }
+
+  IWICImagingFactory* GraphicsDisplay::GetWICFactory()
+  {
+    return wic_factory_;
   }
 
 //---------------------------------------------------------------------------------------------------------

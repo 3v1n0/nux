@@ -20,7 +20,9 @@
  *
  */
 
-#pragma warning(disable : 4355) // warning C4355: 'this' : used in base member initializer list
+#if defined(NUX_OS_WINDOWS)
+  #pragma warning(disable : 4355) // warning C4355: 'this' : used in base member initializer list
+#endif
 
 #ifndef NUXCORE_PROPERTY_TRAITS_H
 #define NUXCORE_PROPERTY_TRAITS_H

@@ -64,11 +64,14 @@ namespace nux
 //! Policy for and element position in the minor dimension of a layout.
   typedef enum
   {
-    MINOR_POSITION_TOP,           //!< Place the element on the top side of the layout (Hlayout)
-    MINOR_POSITION_BOTTOM,        //!< Place the element on the bottom side of the layout (Hlayout)
-    MINOR_POSITION_LEFT,          //!< Place the element on the left side of the layout (Vlayout)
-    MINOR_POSITION_RIGHT,         //!< Place the element on the right side of the layout (Hlayout)
+    MINOR_POSITION_START,         //!< Place the element at the start of the layout (Hlayout and VLayout)
     MINOR_POSITION_CENTER,        //!< Place the element at the center of the layout (Hlayout and VLayout)
+    MINOR_POSITION_END,           //!< Place the element at the end of the layout (Hlayout and VLayout)
+    MINOR_POSITION_TOP = MINOR_POSITION_START,   //!< Deprecated.
+    MINOR_POSITION_LEFT = MINOR_POSITION_START,  //!< Deprecated.
+    MINOR_POSITION_BOTTOM = MINOR_POSITION_END,  //!< Deprecated.
+    MINOR_POSITION_RIGHT = MINOR_POSITION_END,   //!< Deprecated.
+
     eAbove = MINOR_POSITION_TOP,      //!< Deprecated.
     eBelow = MINOR_POSITION_BOTTOM,   //!< Deprecated.
     eLeft = MINOR_POSITION_LEFT,      //!< Deprecated.
@@ -83,19 +86,23 @@ namespace nux
   */
   typedef enum
   {
-    MAJOR_POSITION_TOP,      //!< Stack elements at the top (for VLayout only).
-    MAJOR_POSITION_BOTTOM,   //!< Stack elements at the bottom (for VLayout only).
-    MAJOR_POSITION_LEFT,     //!< Stack elements at the left (for HLayout only).
-    MAJOR_POSITION_RIGHT,    //!< Stack elements at the right (for HLayout only).
     MAJOR_POSITION_CENTER,   //!< Stack elements in the center of the layout (for HLayout and VLayout).
-    MAJOR_POSITION_EXPAND,   //!< Spread elements evenly inside the layout (for HLayout and VLayout).
+    MAJOR_POSITION_START,    //!< Stack elements at the begining of the layout (for HLayout and VLayout).
+    MAJOR_POSITION_END,      //!< Stack elements at the end of the layout (for HLayout and VLayout).
+    MAJOR_POSITION_SPREAD,   //!< Spread elements evenly inside the layout (for HLayout and VLayout).
+
+    MAJOR_POSITION_TOP = MAJOR_POSITION_START,    //!< Deprecated.
+    MAJOR_POSITION_BOTTOM = MAJOR_POSITION_END,   //!< Deprecated.
+    MAJOR_POSITION_LEFT = MAJOR_POSITION_START,   //!< Deprecated.
+    MAJOR_POSITION_RIGHT = MAJOR_POSITION_END,    //!< Deprecated.
+
 
     eStackTop = MAJOR_POSITION_TOP,         //!< Deprecated.
     eStackBottom = MAJOR_POSITION_BOTTOM,   //!< Deprecated.
     eStackLeft = MAJOR_POSITION_LEFT,       //!< Deprecated.
     eStackRight = MAJOR_POSITION_RIGHT,     //!< Deprecated.
     eStackCenter = MAJOR_POSITION_CENTER,   //!< Deprecated.
-    eStackExpand = MAJOR_POSITION_EXPAND,   //!< Deprecated.
+    eStackExpand = MAJOR_POSITION_SPREAD,   //!< Deprecated.
   }  LayoutContentDistribution;
 
   //! For internal use only.
@@ -228,19 +235,23 @@ namespace nux
     void SetBaseString (const TCHAR *Caption);
     const NString &GetBaseString() const;
 
-    //! Return the Top level parent of this area.
-    /*!
-        The top Level parent is either a BaseWindow or the main layout.
+    //! Deprecated. Use GetToplevel.
+    Area* GetToplevel();
 
-        @return The top level parent or Null.
+    //! Return the root parent of the rendering tree for this area.
+    /*!
+        The root parent of the rendering tree is either a BaseWindow or the main layout.
+        If the object isn't hooked to the rendering tree the function returns NULL.
+
+        @return The root parent of the rendering tree or NULL.
     */
-    Area * GetToplevel ();
+    Area* GetRootParent();
 
     //! Return the Top level BaseWindow of this area.
     /*!
         @return The top level BaseWindow or NULL.
     */
-    Area * GetTopLevelViewWindow ();
+    Area* GetTopLevelViewWindow ();
 
     //! Return true is this area has a top level parent.
     /*!
@@ -276,6 +287,14 @@ namespace nux
         @return True if p is located inside the Area.
     */
     bool TestMousePointerInclusionFilterMouseWheel(const Point& mouse_position, NuxEventType event);
+
+    //! Test if the muse pointer is inside the area.
+    /*!
+        Return true if the mouse pointer is inside the area.
+        
+        @return True if the mouse pointer is inside the area.
+    */
+    bool IsMousePointerInside() const;
 
     virtual long ComputeChildLayout ();
     virtual void PositionChildLayout (float offsetX, float offsetY);
@@ -342,13 +361,6 @@ namespace nux
     */
     bool IsSensitive();
 
-    virtual bool DoGetFocused ();
-    virtual void DoSetFocused (bool focused);
-    virtual bool DoCanFocus ();
-    virtual void DoActivateFocus ();
-    
-    sigc::signal<void, Area *> FocusActivated;
-    sigc::signal<void, Area *> FocusChanged;
     sigc::signal<void, Area*> ChildFocusChanged; // sends parent + child
 
     /*!
@@ -450,15 +462,21 @@ namespace nux
     sigc::signal<void, Area *, Geometry&> OnGeometryChanged;
 
     /*!
-        SetParentObject/UnParentObject are protected API. it is not meant to be used directly by users.
+        SetParentObject/UnParentObject are protected API. They are not meant to be used directly by users.
         Users add widgets to layouts and layout have to be attached to a composition for objects to be rendered.
         Setting a parent to and child widget does not mean that when the parent is rendered, the child is also rendered.
-        For instance, setting a button the be the child of a check-box means absolutely nothing is terms of rendering.
-        A widget with a parent cannot be added to a added to a layout for rendering. The widget has to be un-parented first.
-        A layout with a parent cannot be added to a widget or another layout for rendering. The layout has to be un-parented first.
-        In essence only View and Layouts should be calling SetParentObject/UnParentObject.
+        For instance, setting a button to be the child of a check-box means absolutely nothing is terms of rendering.
+        The check-box draw function would have to be aware of the existence of the button in order to render it.\n
+        A view with a parent cannot be parented to another area for rendering. It has to be un-parented first.\n
+        A layout with a parent cannot be parented to another area for rendering. It has to be un-parented first.\n
+        In essence only View and Layouts should be calling SetParentObject/UnParentObject.\n
+        SetParentObject returns true if it was successful.
+        
+
+        @param parent The object that will become the parent of this area.
+        @return True if the object is successfully parented. 
     */
-    virtual void SetParentObject (Area *);
+    virtual bool SetParentObject(Area *parent);
 
     //! Un-parent and area
     /*!
@@ -467,7 +485,7 @@ namespace nux
           \li GetRootGeometry ()
           \li GetAbsoluteGeometry ()
     */
-    virtual void UnParentObject ();
+    virtual void UnParentObject();
 
     /*!
         Return the area under the mouse pointer.
