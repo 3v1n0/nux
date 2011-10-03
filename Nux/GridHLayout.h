@@ -102,7 +102,7 @@ namespace nux
     */
     virtual void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
 
-    void SetSpaceBetweenChildrens(int horizontal_space, int vertical_space);
+    void SetSpaceBetweenChildren(int horizontal_space, int vertical_space);
 
   protected:
     long ComputeLayoutRowOrder();

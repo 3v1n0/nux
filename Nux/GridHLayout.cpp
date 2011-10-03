@@ -66,7 +66,7 @@ namespace nux
 
   }
 
-  void GridHLayout::SetSpaceBetweenChildrens(int horizontal_space, int vertical_space)
+  void GridHLayout::SetSpaceBetweenChildren(int horizontal_space, int vertical_space)
   {
     m_h_in_margin = horizontal_space;
     m_v_in_margin = vertical_space;

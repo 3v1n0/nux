@@ -124,4 +124,9 @@ namespace nux
   {
     return label_color_;
   }
+
+  ButtonVisualState AbstractButton::GetVisualState() const
+  {
+    return visual_state_;
+  }
 }

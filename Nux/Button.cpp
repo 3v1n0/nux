@@ -386,6 +386,14 @@ namespace nux
     QueueDraw();
   }
 
+  void Button::SetActive(bool active)
+  {
+    if (active)
+      Activate();
+    else
+      Deactivate();
+  }
+
   void Button::RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     if(persistent_active_state_)

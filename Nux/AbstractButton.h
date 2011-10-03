@@ -83,6 +83,8 @@ namespace nux
     */
     Color GetLabelColor();
 
+    ButtonVisualState GetVisualState() const;
+
   protected:
     //! The state of the AbstractButton. 
     bool active_;
