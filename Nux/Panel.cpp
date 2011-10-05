@@ -149,7 +149,7 @@ namespace nux
       // and the children will take their natural size by expending WidgetLayout.
       // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
 
-      ComputeChildLayout();
+      ComputeContentSize();
     }
   }
 
@@ -170,7 +170,7 @@ namespace nux
       return false;
     }
 
-    m_layout = m_CompositionLayout;
+    m_layout = view_layout_;
     
     FormatContent();
 
@@ -199,36 +199,36 @@ namespace nux
 
 // Get a change to do any work on an element.
 // Here we need to position the header by hand because it is not under the control of vlayout.
-  void Panel::PositionChildLayout (float offsetX, float offsetY)
+  void Panel::ComputeContentPosition (float offsetX, float offsetY)
   {
-    ScrollView::PositionChildLayout (offsetX, offsetY);
+    ScrollView::ComputeContentPosition (offsetX, offsetY);
   }
 
   void Panel::ScrollLeft (float stepx, int mousedx)
   {
     ScrollView::ScrollLeft (stepx, mousedx);
-    ComputeChildLayout();
+    ComputeContentSize();
     QueueDraw();
   }
 
   void Panel::ScrollRight (float stepx, int mousedx)
   {
     ScrollView::ScrollRight (stepx, mousedx);
-    ComputeChildLayout();
+    ComputeContentSize();
     QueueDraw();
   }
 
   void Panel::ScrollUp (float stepy, int mousedy)
   {
     ScrollView::ScrollUp (stepy, mousedy);
-    ComputeChildLayout();
+    ComputeContentSize();
     QueueDraw();
   }
 
   void Panel::ScrollDown (float stepy, int mousedy)
   {
     ScrollView::ScrollDown (stepy, mousedy);
-    ComputeChildLayout();
+    ComputeContentSize();
     QueueDraw();
   }
 

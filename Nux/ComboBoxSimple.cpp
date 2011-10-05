@@ -140,7 +140,7 @@ namespace nux
       //m_CurrentMenu->SetMinimumWidth (geo.width);
       //m_CurrentMenu->SetMaximumWidth (geo.width);
       m_CurrentMenu->SetGeometry (geo);
-      m_CurrentMenu->ComputeChildLayout ();
+      m_CurrentMenu->ComputeContentSize ();
       m_CurrentMenu->StartMenu (_combo_box_area->GetAbsoluteX(),
                                 _combo_box_area->GetAbsoluteY() + _combo_box_area->GetBaseHeight(),
                                 0, 0);

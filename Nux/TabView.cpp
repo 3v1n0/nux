@@ -302,12 +302,12 @@ namespace nux
   void TabView::PreLayoutManagement()
   {
     // Give the managed layout appropriate size and position..
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
       Geometry layout_geo = GetGeometry();
       layout_geo.OffsetPosition (TAB_X_BORDER, TAB_HEIGHT);
       layout_geo.OffsetSize (-2 * TAB_X_BORDER, - (TAB_HEIGHT) - TAB_Y_BORDER);
-      m_CompositionLayout->SetGeometry (layout_geo);
+      view_layout_->SetGeometry (layout_geo);
     }
   }
 
@@ -315,10 +315,10 @@ namespace nux
   {
     // Set the geometry of the control to be the same as the managed layout.
     // Only the size is changed. The position of the composition layout hasn't
-    // been changed by ComputeLayout2.
-    if (m_CompositionLayout)
+    // been changed by ComputeContentSize.
+    if (view_layout_)
     {
-      Geometry base = m_CompositionLayout->GetGeometry();
+      Geometry base = view_layout_->GetGeometry();
       base.OffsetPosition (-TAB_X_BORDER, -TAB_HEIGHT);
       base.OffsetSize (2 * TAB_X_BORDER, TAB_HEIGHT + TAB_Y_BORDER);
       Area::SetGeometry (base);
@@ -326,7 +326,7 @@ namespace nux
 
     Geometry base = GetGeometry();
 
-    int tab_x = m_CompositionLayout->GetGeometry().x + m_CompositionLayout->GetGeometry().GetWidth() - 2 * TAB_BUTTON_WIDTH;
+    int tab_x = view_layout_->GetGeometry().x + view_layout_->GetGeometry().GetWidth() - 2 * TAB_BUTTON_WIDTH;
     int tab_y = base.y;
 
     _scroll_left->SetBaseXY (tab_x, tab_y);
@@ -344,7 +344,7 @@ namespace nux
 
     if (_visible_tab_content_layout)
     {
-//        _visible_tab_content_layout->SetGeometry(m_CompositionLayout->GetGeometry());
+//        _visible_tab_content_layout->SetGeometry(view_layout_->GetGeometry());
 //        GetWindowThread ()->ComputeElementLayout(_visible_tab_content_layout);
       _visible_tab_content_layout->QueueDraw();
     }
@@ -352,13 +352,13 @@ namespace nux
     return LayoutResult;
   }
 
-  void TabView::PositionChildLayout (float offsetX, float offsetY)
+  void TabView::ComputeContentPosition (float offsetX, float offsetY)
   {
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
-      m_CompositionLayout->SetBaseX (GetBaseX() + TAB_X_BORDER);
-      m_CompositionLayout->SetBaseY (GetBaseY() + TAB_HEIGHT);
-      m_CompositionLayout->ComputePosition2 (offsetX, offsetY);
+      view_layout_->SetBaseX (GetBaseX() + TAB_X_BORDER);
+      view_layout_->SetBaseY (GetBaseY() + TAB_HEIGHT);
+      view_layout_->ComputeContentPosition (offsetX, offsetY);
     }
   }
 
@@ -376,7 +376,7 @@ namespace nux
     {
       m_FocusTabIndex = 0;
       _visible_tab_content_layout = Tab->_tab_content_layout;
-      //_visible_tab_content_layout->SetGeometry(m_CompositionLayout->GetGeometry());
+      //_visible_tab_content_layout->SetGeometry(view_layout_->GetGeometry());
       SetCompositionLayout (_visible_tab_content_layout);
       GetWindowThread ()->ComputeElementLayout (this);
     }
@@ -433,30 +433,30 @@ namespace nux
 //        return;
 
     m_TabPositionOffset += offset;
-    int lx = m_CompositionLayout->GetBaseX() + m_TabPositionOffset;
+    int lx = view_layout_->GetBaseX() + m_TabPositionOffset;
 
-    if (lx > m_CompositionLayout->GetBaseX() )
+    if (lx > view_layout_->GetBaseX() )
     {
       // end of scroll left;
       m_TabPositionOffset = 0;
-      lx = m_CompositionLayout->GetBaseX() + m_TabPositionOffset;
+      lx = view_layout_->GetBaseX() + m_TabPositionOffset;
     }
 
-    if (lx + _tabview_heads_layout->GetBaseWidth() < m_CompositionLayout->GetBaseX() +
-        m_CompositionLayout->GetBaseWidth() - 2 * TAB_BUTTON_WIDTH)
+    if (lx + _tabview_heads_layout->GetBaseWidth() < view_layout_->GetBaseX() +
+        view_layout_->GetBaseWidth() - 2 * TAB_BUTTON_WIDTH)
     {
 
-      lx = (m_CompositionLayout->GetBaseX() +
-            m_CompositionLayout->GetBaseWidth() - 2 * TAB_BUTTON_WIDTH) - _tabview_heads_layout->GetBaseWidth();
+      lx = (view_layout_->GetBaseX() +
+            view_layout_->GetBaseWidth() - 2 * TAB_BUTTON_WIDTH) - _tabview_heads_layout->GetBaseWidth();
 
 
-      if (lx > m_CompositionLayout->GetBaseX() )
+      if (lx > view_layout_->GetBaseX() )
       {
         m_TabPositionOffset = 0;
-        lx = m_CompositionLayout->GetBaseX() + m_TabPositionOffset;
+        lx = view_layout_->GetBaseX() + m_TabPositionOffset;
       }
       else
-        m_TabPositionOffset = - (m_CompositionLayout->GetBaseX() - lx);
+        m_TabPositionOffset = - (view_layout_->GetBaseX() - lx);
     }
 
     _tabview_heads_layout->SetBaseX (lx);
@@ -475,7 +475,7 @@ namespace nux
       SetCompositionLayout (_visible_tab_content_layout);
     }
 
-    //_visible_tab_content_layout->SetGeometry(m_CompositionLayout->GetGeometry());
+    //_visible_tab_content_layout->SetGeometry(view_layout_->GetGeometry());
 
     m_PreviousGeometry = GetGeometry();
 

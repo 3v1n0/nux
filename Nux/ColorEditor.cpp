@@ -40,7 +40,7 @@ namespace nux
   {
     VLayout *MainLayout (new VLayout (NUX_TRACKER_LOCATION) );
     ColorEditor *coloreditor (new ColorEditor() );
-    coloreditor->ComputeChildLayout(); // necessary so all element of the widget get their rightful size.
+    coloreditor->ComputeContentSize(); // necessary so all element of the widget get their rightful size.
     ColorDialogProxy *coloreditorproxy = static_cast<ColorDialogProxy *> (InitData);
 
     if (coloreditorproxy)
@@ -76,7 +76,7 @@ namespace nux
 
     MainLayout->SetBaseWidth (1);
     MainLayout->SetBaseHeight (1);
-    MainLayout->ComputeLayout2();
+    MainLayout->ComputeContentSize();
     static_cast<WindowThread *> (thread)->SetWindowSize (MainLayout->GetBaseWidth(), MainLayout->GetBaseHeight() );
 
     // Call StopThreadMonitoring in case the dialog was close by clicking the window close button.
@@ -241,7 +241,7 @@ namespace nux
         redtext->SetMinimumWidth (36);
         redlayout->AddView (redcheck, 0);
         redlayout->AddView (redtext, 0);
-        redcheck->clicked.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel0), color::RED), color::RGB) );
+        redcheck->click.connect (sigc::bind ( sigc::bind ( sigc::mem_fun (this, &ColorEditor::RecvCheckColorModel0), color::RED), color::RGB) );
       }
       greenlayout = new HLayout (NUX_TRACKER_LOCATION);
       {

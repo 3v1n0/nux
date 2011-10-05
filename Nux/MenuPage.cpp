@@ -508,7 +508,7 @@ namespace nux
 
     m_numItem = (int) m_MenuItemVector.size();
     _vlayout->AddView (pMenuItem, 0, eLeft, eFix);
-    ComputeChildLayout();
+    ComputeContentSize();
 
     return pMenuItem->GetActionItem();
   }
@@ -582,7 +582,7 @@ namespace nux
 //
 //    m_numItem = (int)m_MenuItemVector.size();
 //    _vlayout->AddView(pMenuItem, 0, eLeft, eFix);
-//    ComputeChildLayout();
+//    ComputeContentSize();
 //}
 
   MenuPage *MenuPage::AddMenu (const TCHAR *label)
@@ -654,7 +654,7 @@ namespace nux
 
     m_numItem = (int) m_MenuItemVector.size();
     _vlayout->AddView (pMenuItem, 0, eLeft, eFix);
-    ComputeChildLayout();
+    ComputeContentSize();
 
     return pMenuItem->GetChildMenu();
   }
@@ -727,7 +727,7 @@ namespace nux
 
     m_numItem = (int) m_MenuItemVector.size();
     _vlayout->AddView (pMenuItem, 0, eLeft, eFix);
-    ComputeChildLayout();
+    ComputeContentSize();
 
     return pMenuItem->GetActionItem();
   }
@@ -755,7 +755,7 @@ namespace nux
     }
 
     _vlayout->AddView (pMenuSeparator, 0, eLeft, eFix);
-    ComputeChildLayout();
+    ComputeContentSize();
   }
 
   void MenuPage::RemoveItem (ActionItem *item)
@@ -768,7 +768,7 @@ namespace nux
     m_MenuItemVector.clear();
     m_numItem = 0;
     _vlayout->Clear();
-    ComputeChildLayout();
+    ComputeContentSize();
    
     //FIXME - Hack to fix a bug with the menu height not being reset after removing items
     Geometry base = GetGeometry ();
@@ -1167,9 +1167,9 @@ namespace nux
     return m_Parent;
   }
 
-  long MenuPage::ComputeChildLayout()
+  long MenuPage::ComputeContentSize()
   {
-    return View::ComputeChildLayout();
+    return View::ComputeContentSize();
   }
 
   void MenuPage::SetGeometry (const Geometry &geo)
@@ -1186,7 +1186,7 @@ namespace nux
 
     SetBaseXY (geo.x, geo.y);
 
-    PositionChildLayout (0, 0);
+    ComputeContentPosition (0, 0);
   }
 
   ActionItem *MenuPage::GetActionItem (int index) const

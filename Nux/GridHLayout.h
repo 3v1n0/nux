@@ -108,7 +108,7 @@ namespace nux
     long ComputeLayoutRowOrder();
     long ComputeLayoutColumnOrder();
 
-    virtual long ComputeLayout2();
+    virtual long ComputeContentSize();
 
     int GetChildPos(Area *child);
     Area* GetChildAtPosition(int pos);

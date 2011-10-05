@@ -303,7 +303,7 @@ namespace nux
     // AbstractInterfaceObject
     ///////////////////////////////////////////////////////
 
-    virtual long ComputeChildLayout();
+    virtual long ComputeContentSize();
     virtual void SetGeometry (const Geometry &geo);
 
     friend class MenuBar;

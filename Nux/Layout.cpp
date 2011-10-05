@@ -324,7 +324,7 @@ namespace nux
     }
 
     ViewAdded.emit (this, bo);
-    //--->> Removed because it cause problem with The splitter widget: ComputeLayout2();
+    //--->> Removed because it cause problem with The splitter widget: ComputeContentSize();
   }
 
   void Layout::AddSpace (unsigned int width, unsigned int stretchFactor, LayoutPosition index)

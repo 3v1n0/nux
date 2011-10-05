@@ -80,7 +80,7 @@ namespace nux
 
     MainLayout->SetBaseWidth (1);
     MainLayout->SetBaseHeight (1);
-    MainLayout->ComputeLayout2();
+    MainLayout->ComputeContentSize();
     static_cast<WindowThread *> (thread)->SetWindowSize (MainLayout->GetBaseWidth(), MainLayout->GetBaseHeight() );
 
     // Call StopThreadMonitoring in case the dialog was close by clicking the window close button.

@@ -68,10 +68,10 @@ namespace nux
     InputArea   *m_Area;
 
   public:
-    virtual void SetGeometry (const Geometry &geo)
+    virtual void SetGeometry(const Geometry &geo)
     {
-      Area::SetGeometry (geo);
-      ComputeChildLayout();
+      Area::SetGeometry(geo);
+      ComputeContentSize();
     }
 
   };

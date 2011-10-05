@@ -101,11 +101,11 @@ namespace nux
     InteractState is;
     is.is_on = active_;
 
-    if(visual_state_ == STATE_PRESSED)
+    if(visual_state_ == VISUAL_STATE_PRESSED)
     {
       is.is_focus = true;
     }
-    else if(visual_state_ == STATE_PRELIGHT)
+    else if(visual_state_ == VISUAL_STATE_PRELIGHT)
     {
       is.is_prelight = true;
     }
@@ -128,12 +128,12 @@ namespace nux
       radio_button_group_->NotifyClick (this);
       block_changed_signal_ = false;
 
-      clicked.emit(this);
+      click.emit(this);
     }
     else
     {
       active_ = !active_;
-      clicked.emit(this);
+      click.emit(this);
     }
     QueueDraw();
   }
@@ -190,7 +190,7 @@ namespace nux
     active_ = state;
     if (EmitSignal && !block_changed_signal_)
     {
-      changed.emit(this);
+      state_change.emit(this);
     }
     QueueDraw();
   }

@@ -166,12 +166,12 @@ namespace nux
       }
     }
 
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
       // The ScrollView layout position is fixed. The ScrollView keeps track of the delta offset in x and y of the layout it manages.
       // Modify the event to account for this offset;
       Event mod_event = event;
-      ret = m_CompositionLayout->ProcessEvent (mod_event, ret, ProcEvInfo);
+      ret = view_layout_->ProcessEvent (mod_event, ret, ProcEvInfo);
     }
 
     ret = PostProcessEvent2 (event, ret, 0);
@@ -229,8 +229,8 @@ namespace nux
 
     Geometry base = GetGeometry ();
 
-    if (m_CompositionLayout)
-      m_CompositionLayout->QueueDraw();
+    if (view_layout_)
+      view_layout_->QueueDraw();
 
     GetPainter().PaintBackground (GfxContext, base);
 
@@ -256,12 +256,12 @@ namespace nux
 
     GfxContext.PushClippingRectangle (Rect (m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight));
 
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
 //       GfxContext.PushClipOffset (_delta_x, _delta_y);
-//       GfxContext.PushClippingRectangle (m_CompositionLayout->GetGeometry ());
+//       GfxContext.PushClippingRectangle (view_layout_->GetGeometry ());
 //       GfxContext.Push2DTranslationModelViewMatrix (_delta_x, _delta_y, 0.0f);
-      m_CompositionLayout->ProcessDraw (GfxContext, force_draw);
+      view_layout_->ProcessDraw (GfxContext, force_draw);
 //       GfxContext.PopModelViewMatrix ();
 //       GfxContext.PopClippingRectangle ();
 //       GfxContext.PopClipOffset ();
@@ -297,14 +297,14 @@ namespace nux
   {
     m_vertical_scrollbar_enable = b;
     _delta_y = 0;
-    ComputeChildLayout();
+    ComputeContentSize();
   }
 
   void ScrollView::EnableHorizontalScrollBar (bool b)
   {
     m_horizontal_scrollbar_enable = b;
     _delta_x = 0;
-    ComputeChildLayout();
+    ComputeContentSize();
   }
 
 ///////////////////////
@@ -314,7 +314,7 @@ namespace nux
   void ScrollView::SetGeometry (const Geometry &geo)
   {
     Area::SetGeometry (geo);
-    //ComputeChildLayout();
+    //ComputeContentSize();
   }
 
   void ScrollView::FormatContent()
@@ -322,7 +322,7 @@ namespace nux
     Geometry geo;
     geo = GetGeometry();
 
-    ComputeChildLayout();
+    ComputeContentSize();
   }
 
   void ScrollView::PreLayoutManagement()
@@ -369,20 +369,20 @@ namespace nux
       nuxAssert (_delta_y <= 0);
     }
 
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
       // Set the composition layout to the size of the view area and offset it by (_delta_x, _delta_y)
 
-      if (m_CompositionLayout->GetStretchFactor () != 0)
+      if (view_layout_->GetStretchFactor () != 0)
       {
-        m_CompositionLayout->SetGeometry (
+        view_layout_->SetGeometry (
                 m_ViewX,
                 m_ViewY,
                 m_ViewWidth,
                 m_ViewHeight);
       }
 
-      m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
+      view_layout_->Set2DTranslation (_delta_x, _delta_y, 0);
     }
 
     // Horizontal scrollbar Geometry
@@ -398,7 +398,7 @@ namespace nux
 
       _hscrollbar->SetBaseX (geo.x + m_border);
       _hscrollbar->SetBaseY (geo.y + geo.GetHeight() - _hscrollbar->GetBaseHeight() - m_border);
-      _hscrollbar->ComputeChildLayout();
+      _hscrollbar->ComputeContentSize();
     }
     else
     {
@@ -406,7 +406,7 @@ namespace nux
       _hscrollbar->SetBaseWidth (GetBaseWidth() - ScrollBarWidth - 2 * m_border);
       _hscrollbar->SetBaseX (geo.x + m_border);
       _hscrollbar->SetBaseY (geo.y + geo.GetHeight() - _hscrollbar->GetBaseHeight() - m_border);
-      _hscrollbar->ComputeChildLayout();
+      _hscrollbar->ComputeContentSize();
     }
 
 
@@ -423,7 +423,7 @@ namespace nux
 
       _vscrollbar->SetBaseX (geo.x + geo.GetWidth() - ScrollBarWidth - m_border);
       _vscrollbar->SetBaseY (geo.y + m_top_border);
-      _vscrollbar->ComputeChildLayout();
+      _vscrollbar->ComputeContentSize();
     }
     else
     {
@@ -431,7 +431,7 @@ namespace nux
       _vscrollbar->SetBaseHeight (GetBaseHeight() - ScrollBarHeight - m_top_border - m_border);
       _vscrollbar->SetBaseX (geo.x + geo.GetWidth() - ScrollBarWidth - m_border);
       _vscrollbar->SetBaseY (geo.y + m_top_border);
-      _vscrollbar->ComputeChildLayout();
+      _vscrollbar->ComputeContentSize();
     }
   }
 
@@ -443,12 +443,12 @@ namespace nux
     int ScrollBarWidth = 0;
     int ScrollBarHeight = 0;
 
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
-      m_ViewContentX = m_CompositionLayout->GetBaseX();
-      m_ViewContentY = m_CompositionLayout->GetBaseY();
-      m_ViewContentWidth = m_CompositionLayout->GetBaseWidth();
-      m_ViewContentHeight = m_CompositionLayout->GetBaseHeight();
+      m_ViewContentX = view_layout_->GetBaseX();
+      m_ViewContentY = view_layout_->GetBaseY();
+      m_ViewContentWidth = view_layout_->GetBaseWidth();
+      m_ViewContentHeight = view_layout_->GetBaseHeight();
     }
 
     if (m_horizontal_scrollbar_enable)
@@ -464,10 +464,10 @@ namespace nux
 
     if (m_horizontal_scrollbar_enable)
     {
-      if (m_CompositionLayout)
+      if (view_layout_)
       {
-        _hscrollbar->SetContentSize (m_CompositionLayout->GetBaseX(), m_CompositionLayout->GetBaseY(),
-                                    m_CompositionLayout->GetBaseWidth(), m_CompositionLayout->GetBaseHeight() );
+        _hscrollbar->SetContentSize (view_layout_->GetBaseX(), view_layout_->GetBaseY(),
+                                    view_layout_->GetBaseWidth(), view_layout_->GetBaseHeight() );
       }
       else
       {
@@ -491,10 +491,10 @@ namespace nux
 
     if (m_vertical_scrollbar_enable)
     {
-      if (m_CompositionLayout)
+      if (view_layout_)
       {
-        _vscrollbar->SetContentSize (m_CompositionLayout->GetBaseX(), m_CompositionLayout->GetBaseY(),
-                                    m_CompositionLayout->GetBaseWidth(), m_CompositionLayout->GetBaseHeight() );
+        _vscrollbar->SetContentSize (view_layout_->GetBaseX(), view_layout_->GetBaseY(),
+                                    view_layout_->GetBaseWidth(), view_layout_->GetBaseHeight() );
       }
       else
       {
@@ -511,10 +511,10 @@ namespace nux
       _vscrollbar->SetContentOffset (0, 0);
     }
 
-    // I may not be necessary to call this function here since ComputePosition2 was called on ComputePosition2
+    // I may not be necessary to call this function here since ComputeContentPosition was called on ComputeContentPosition
     // during the layout process.
-    if (m_CompositionLayout)
-      m_CompositionLayout->ComputePosition2 (0, 0);
+    if (view_layout_)
+      view_layout_->ComputeContentPosition (0, 0);
 
     // The ScrollView always returns complient width and height to its parent layout.
     return (eCompliantHeight | eCompliantWidth);
@@ -540,12 +540,12 @@ namespace nux
     // So we make the composition layout the same size as the content
     // Note that classes that inherits from ScrollView are responsible for setting the dimension of the ViewContent
 
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
-      m_CompositionLayout->SetBaseX (m_ViewContentX);
-      m_CompositionLayout->SetBaseY (m_ViewContentY);
-      m_CompositionLayout->SetBaseWidth (m_ViewContentWidth);
-      m_CompositionLayout->SetBaseHeight (m_ViewContentHeight);
+      view_layout_->SetBaseX (m_ViewContentX);
+      view_layout_->SetBaseY (m_ViewContentY);
+      view_layout_->SetBaseWidth (m_ViewContentWidth);
+      view_layout_->SetBaseHeight (m_ViewContentHeight);
     }
 
     Geometry base;
@@ -579,7 +579,7 @@ namespace nux
 
       _hscrollbar->SetBaseX (geo.x + m_border);
       _hscrollbar->SetBaseY (geo.y + geo.GetHeight() - _hscrollbar->GetBaseHeight() - m_border);
-      _hscrollbar->ComputeChildLayout();
+      _hscrollbar->ComputeContentSize();
 
       //---
       _hscrollbar->SetContainerSize (GetBaseX() + m_border + m_ViewContentLeftMargin,
@@ -587,10 +587,10 @@ namespace nux
                                     GetBaseWidth() - ScrollbarWidth - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
                                     GetBaseHeight() - ScrollbarHeight - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin);
 
-      if (m_CompositionLayout)
+      if (view_layout_)
       {
-        _hscrollbar->SetContentSize (m_CompositionLayout->GetBaseX(), m_CompositionLayout->GetBaseY(),
-                                    m_CompositionLayout->GetBaseWidth(), m_CompositionLayout->GetBaseHeight() );
+        _hscrollbar->SetContentSize (view_layout_->GetBaseX(), view_layout_->GetBaseY(),
+                                    view_layout_->GetBaseWidth(), view_layout_->GetBaseHeight() );
       }
       else
       {
@@ -605,7 +605,7 @@ namespace nux
       _hscrollbar->SetBaseWidth (GetBaseWidth() - ScrollbarWidth - 2 * m_border);
       _hscrollbar->SetBaseX (geo.x + m_border);
       _hscrollbar->SetBaseY (geo.y + geo.GetHeight() - _hscrollbar->GetBaseHeight() - m_border);
-      _hscrollbar->ComputeChildLayout();
+      _hscrollbar->ComputeContentSize();
 
       //---
       _hscrollbar->SetContainerSize (GetBaseX() + m_border + m_ViewContentLeftMargin,
@@ -628,7 +628,7 @@ namespace nux
 
       _vscrollbar->SetBaseX (geo.x + geo.GetWidth() - ScrollbarWidth - m_border);
       _vscrollbar->SetBaseY (geo.y + m_top_border);
-      _vscrollbar->ComputeChildLayout();
+      _vscrollbar->ComputeContentSize();
 
       //---
       _vscrollbar->SetContainerSize (GetBaseX() + m_border + m_ViewContentLeftMargin,
@@ -636,10 +636,10 @@ namespace nux
                                     GetBaseWidth() - ScrollbarWidth - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
                                     GetBaseHeight() - ScrollbarHeight - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin);
 
-      if (m_CompositionLayout)
+      if (view_layout_)
       {
-        _vscrollbar->SetContentSize (m_CompositionLayout->GetBaseX(), m_CompositionLayout->GetBaseY(),
-                                    m_CompositionLayout->GetBaseWidth(), m_CompositionLayout->GetBaseHeight() );
+        _vscrollbar->SetContentSize (view_layout_->GetBaseX(), view_layout_->GetBaseY(),
+                                    view_layout_->GetBaseWidth(), view_layout_->GetBaseHeight() );
       }
       else
       {
@@ -654,7 +654,7 @@ namespace nux
       _vscrollbar->SetBaseHeight (GetBaseHeight() - ScrollbarHeight - m_top_border - m_border);
       _vscrollbar->SetBaseX (geo.x + geo.GetWidth() - ScrollbarWidth - m_border);
       _vscrollbar->SetBaseY (geo.y + m_top_border);
-      _vscrollbar->ComputeChildLayout();
+      _vscrollbar->ComputeContentSize();
 
       //---
       _vscrollbar->SetContainerSize (GetBaseX() + m_border + m_ViewContentLeftMargin,
@@ -666,19 +666,19 @@ namespace nux
       _vscrollbar->SetContentOffset (0, 0);
     }
 
-    if (m_CompositionLayout)
-      m_CompositionLayout->ComputePosition2 (0, 0);
+    if (view_layout_)
+      view_layout_->ComputeContentPosition (0, 0);
 
     return (eCompliantHeight | eCompliantWidth);
   }
 
-// When the ScrollView is in a Layout object, and that layout call View::PositionChildLayout
-// the ScrollView must call its own PositionChildLayout so it can properly do the positioning of the inner object.
-// Otherwise, m_CompositionLayout->ComputePosition2 is called but it doesn't know that it may not contain all the
+// When the ScrollView is in a Layout object, and that layout call View::ComputeContentPosition
+// the ScrollView must call its own ComputeContentPosition so it can properly do the positioning of the inner object.
+// Otherwise, view_layout_->ComputeContentPosition is called but it doesn't know that it may not contain all the
 // object of the ScrollView. Which result in incorrect positioning.
 // Here we touch only the position. Do not touch the width or height of object.
 // This function is called when the ScrollView is embedded within a Layout.
-  void ScrollView::PositionChildLayout (float offsetX, float offsetY)
+  void ScrollView::ComputeContentPosition (float offsetX, float offsetY)
   {
     Geometry geo = GetGeometry();
     int w = 0;
@@ -711,10 +711,10 @@ namespace nux
       _delta_y = - (m_ViewContentHeight > m_ViewHeight ? m_ViewContentHeight - m_ViewHeight : 0);
     }
 
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
-      m_CompositionLayout->SetBaseX (m_ViewX);
-      m_CompositionLayout->SetBaseY (m_ViewY);
+      view_layout_->SetBaseX (m_ViewX);
+      view_layout_->SetBaseY (m_ViewY);
     }
 
     // Horizontal scrollbar Geometry
@@ -727,7 +727,7 @@ namespace nux
 
       _hscrollbar->SetBaseX (geo.x + m_border);
       _hscrollbar->SetBaseY (geo.y + geo.GetHeight() - _hscrollbar->GetBaseHeight() - m_border);
-      _hscrollbar->ComputeChildLayout();
+      _hscrollbar->ComputeContentSize();
     }
 
     // Vertical scrollbar Geometry
@@ -740,13 +740,13 @@ namespace nux
 
       _vscrollbar->SetBaseX (geo.x + geo.GetWidth() - w - m_border);
       _vscrollbar->SetBaseY (geo.y + m_top_border);
-      _vscrollbar->ComputeChildLayout();
+      _vscrollbar->ComputeContentSize();
     }
 
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
-      m_ViewContentX = m_CompositionLayout->GetBaseX();
-      m_ViewContentY = m_CompositionLayout->GetBaseY();
+      m_ViewContentX = view_layout_->GetBaseX();
+      m_ViewContentY = view_layout_->GetBaseY();
     }
     else
     {
@@ -757,16 +757,16 @@ namespace nux
     _vscrollbar->SetContentOffset (_delta_x, _delta_y);
     _hscrollbar->SetContentOffset (_delta_x, _delta_y);
 
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
-      m_CompositionLayout->ComputePosition2 (0, 0);
+      view_layout_->ComputeContentPosition (0, 0);
     }
   }
 
 
   void ScrollView::ScrollLeft (float stepx, int mousedx)
   {
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
       _delta_x += (float) stepx * (float) mousedx;;
 
@@ -774,11 +774,11 @@ namespace nux
       {
         _delta_x = 0;
       }
-      m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
+      view_layout_->Set2DTranslation (_delta_x, _delta_y, 0);
       scrolling.emit(_delta_x, _delta_y);
     }
 
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
       _hscrollbar->SetContentOffset (_delta_x, _delta_y);
       _hscrollbar->QueueDraw();
@@ -789,7 +789,7 @@ namespace nux
 
   void ScrollView::ScrollRight (float stepx, int mousedx)
   {
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
       _delta_x -= (float) stepx * (float) mousedx;
 
@@ -797,11 +797,11 @@ namespace nux
       {
         _delta_x = - (m_ViewContentWidth > m_ViewWidth ? m_ViewContentWidth - m_ViewWidth : 0);
       }
-      m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
+      view_layout_->Set2DTranslation (_delta_x, _delta_y, 0);
       scrolling.emit(_delta_x, _delta_y);
     }
 
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
       _hscrollbar->SetContentOffset (_delta_x, _delta_y);
       _hscrollbar->QueueDraw();
@@ -812,7 +812,7 @@ namespace nux
 
   void ScrollView::ScrollUp (float stepy, int mousedy)
   {
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
       _delta_y += (float) stepy * (float) mousedy;
 
@@ -820,11 +820,11 @@ namespace nux
       {
         _delta_y = 0;
       }
-      m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
+      view_layout_->Set2DTranslation (_delta_x, _delta_y, 0);
       scrolling.emit(_delta_x, _delta_y);
     }
 
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
       _vscrollbar->SetContentOffset (_delta_x, _delta_y);
       _vscrollbar->QueueDraw();
@@ -835,7 +835,7 @@ namespace nux
 
   void ScrollView::ScrollDown (float stepy, int mousedy)
   {
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
       _delta_y -= (float) stepy * (float) mousedy;
 
@@ -843,11 +843,11 @@ namespace nux
       {
         _delta_y = - (m_ViewContentHeight > m_ViewHeight ? m_ViewContentHeight - m_ViewHeight : 0);
       }
-      m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
+      view_layout_->Set2DTranslation (_delta_x, _delta_y, 0);
       scrolling.emit(_delta_x, _delta_y);
     }
 
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
       _vscrollbar->SetContentOffset (_delta_x, _delta_y);
       _vscrollbar->QueueDraw();
@@ -860,8 +860,8 @@ namespace nux
   {
     m_bSizeMatchContent = b;
 
-    if (m_CompositionLayout)
-      m_CompositionLayout->ComputeLayout2();
+    if (view_layout_)
+      view_layout_->ComputeContentSize();
   }
 
   bool ScrollView::IsSizeMatchContent() const
@@ -872,8 +872,8 @@ namespace nux
   void ScrollView::ResetScrollToLeft()
   {
     _delta_x = 0;
-    if (m_CompositionLayout)
-      m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
+    if (view_layout_)
+      view_layout_->Set2DTranslation (_delta_x, _delta_y, 0);
 
     _hscrollbar->SetContentOffset (_delta_x, _delta_y);
     _hscrollbar->QueueDraw();
@@ -883,10 +883,10 @@ namespace nux
 
   void ScrollView::ResetScrollToRight()
   {
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
       _delta_x = - (m_ViewContentWidth > m_ViewWidth ? m_ViewContentWidth - m_ViewWidth : 0);
-      m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
+      view_layout_->Set2DTranslation (_delta_x, _delta_y, 0);
     }
     else
     {
@@ -904,8 +904,8 @@ namespace nux
   void ScrollView::ResetScrollToUp()
   {
     _delta_y = 0;
-    if (m_CompositionLayout)
-      m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
+    if (view_layout_)
+      view_layout_->Set2DTranslation (_delta_x, _delta_y, 0);
 
     _vscrollbar->SetContentOffset (_delta_x, _delta_y);
     _vscrollbar->QueueDraw();
@@ -915,10 +915,10 @@ namespace nux
 
   void ScrollView::ResetScrollToDown()
   {
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
       _delta_y = - (m_ViewContentHeight > m_ViewHeight ? m_ViewContentHeight - m_ViewHeight : 0);
-      m_CompositionLayout->Set2DTranslation (_delta_x, _delta_y, 0);
+      view_layout_->Set2DTranslation (_delta_x, _delta_y, 0);
     }
     else
     {

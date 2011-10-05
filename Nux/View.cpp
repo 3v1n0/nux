@@ -35,7 +35,7 @@ namespace nux
   {
     _font = GetSysFont ();
     _is_view_active     = true; // The view is active by default
-    m_CompositionLayout = 0;
+    view_layout_ = 0;
     _need_redraw        = false;
     m_UseStyleDrawing   = true;
     m_TextColor         = Color (1.0f, 1.0f, 1.0f, 1.0f);
@@ -62,43 +62,31 @@ namespace nux
     RemoveLayout();
   }
 
-  // NUXTODO: Find better name
-  long View::ComputeLayout2()
+  long View::ComputeContentSize()
   {
-    return ComputeChildLayout();
-  }
-
-  // NUXTODO: Find better name
-  void View::ComputePosition2 (float offsetX, float offsetY)
-  {
-    PositionChildLayout (offsetX, offsetY);
-  }
-
-  long View::ComputeChildLayout()
-  {
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
-      //m_CompositionLayout->SetDirty (true);
-//        if(m_CompositionLayout->GetStretchFactor() != 0)
+      //view_layout_->SetDirty (true);
+//        if(view_layout_->GetStretchFactor() != 0)
 //        {
 //            PreLayoutManagement();
-//            long ret = m_CompositionLayout->ComputeLayout2();
+//            long ret = view_layout_->ComputeContentSize();
 //            return PostLayoutManagement(ret);
 //        }
 //        else
       {
         PreLayoutManagement();
 
-        int PreWidth = /*m_CompositionLayout->*/GetBaseWidth();
-        int PreHeight = /*m_CompositionLayout->*/GetBaseHeight();
+        int PreWidth = /*view_layout_->*/GetBaseWidth();
+        int PreHeight = /*view_layout_->*/GetBaseHeight();
 
-        long ret = m_CompositionLayout->ComputeLayout2();
+        long ret = view_layout_->ComputeContentSize();
 
         PostLayoutManagement (ret);
         //return eCompliantWidth | eCompliantHeight;
 
-        int PostWidth = /*m_CompositionLayout->*/GetBaseWidth();
-        int PostHeight = /*m_CompositionLayout->*/GetBaseHeight();
+        int PostWidth = /*view_layout_->*/GetBaseWidth();
+        int PostHeight = /*view_layout_->*/GetBaseHeight();
 
         long size_compliance = 0;
 
@@ -130,7 +118,7 @@ namespace nux
           size_compliance |= eCompliantHeight;
         }
 
-        //Area::SetGeometry(m_CompositionLayout->GetGeometry());
+        //Area::SetGeometry(view_layout_->GetGeometry());
         return size_compliance;
       }
     }
@@ -144,44 +132,33 @@ namespace nux
     return 0;
   }
 
-  void View::PositionChildLayout (float offsetX, float offsetY)
+  void View::ComputeContentPosition (float offsetX, float offsetY)
   {
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
-      // This section from //1 to //2 is not needed. here we should not do any size management. Only position..
-      //1
-      if (m_CompositionLayout->GetStretchFactor() != 0)
-      {
-        m_CompositionLayout->SetGeometry (GetGeometry() );
-      }
-      else //2
-      {
-        m_CompositionLayout->SetBaseX (GetBaseX() );
-        m_CompositionLayout->SetBaseY (GetBaseY() );
-      }
-
-      m_CompositionLayout->ComputePosition2 (offsetX, offsetY);
-
+      view_layout_->SetBaseX (GetBaseX() );
+      view_layout_->SetBaseY (GetBaseY() );
+      view_layout_->ComputeContentPosition (offsetX, offsetY);
     }
   }
 
   void View::PreLayoutManagement()
   {
     // Give the managed layout the same size and position as the Control.
-    if (m_CompositionLayout)
-      m_CompositionLayout->SetGeometry (GetGeometry() );
+    if (view_layout_)
+      view_layout_->SetGeometry (GetGeometry() );
   }
 
   long View::PostLayoutManagement (long LayoutResult)
   {
     // Set the geometry of the control to be the same as the managed layout.
     // Only the size is changed. The position of the composition layout hasn't
-    // been changed by ComputeLayout2.
-    if (m_CompositionLayout)
+    // been changed by ComputeContentSize.
+    if (view_layout_)
     {
       // If The layout is empty, do not change the size of the parent element.
-      if (!m_CompositionLayout->IsEmpty() )
-        Area::SetGeometry (m_CompositionLayout->GetGeometry() );
+      if (!view_layout_->IsEmpty() )
+        Area::SetGeometry (view_layout_->GetGeometry() );
     }
 
     return LayoutResult;
@@ -275,8 +252,8 @@ namespace nux
       application->RequestRedraw();
       //GetWindowCompositor().AddToDrawList(this);
     }
-    if (m_CompositionLayout)
-      m_CompositionLayout->QueueDraw ();
+    if (view_layout_)
+      view_layout_->QueueDraw ();
 
     _need_redraw = true;
     OnQueueDraw.emit (this);
@@ -308,15 +285,15 @@ namespace nux
   {
     _need_redraw = false;
 
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
-      m_CompositionLayout->DoneRedraw();
+      view_layout_->DoneRedraw();
     }
   }
 
   Layout* View::GetLayout()
   {
-    return m_CompositionLayout;
+    return view_layout_;
   }
 
   Layout *View::GetCompositionLayout()
@@ -328,13 +305,13 @@ namespace nux
   {
     NUX_RETURN_VALUE_IF_NULL (layout, false);
     nuxAssert(layout->IsLayout());
-    NUX_RETURN_VALUE_IF_TRUE (m_CompositionLayout == layout, true);
+    NUX_RETURN_VALUE_IF_TRUE (view_layout_ == layout, true);
 
     Area *parent = layout->GetParentObject();
 
     if (parent == this)
     {
-      nuxAssert (m_CompositionLayout == layout);
+      nuxAssert (view_layout_ == layout);
       return false;
     }
     else if (parent != 0)
@@ -343,20 +320,20 @@ namespace nux
       return false;
     }
 
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
       /* we need to emit the signal before the unparent, just in case
          one of the callbacks wanted to use this object */
 
-      LayoutRemoved.emit (this, m_CompositionLayout);
-      m_CompositionLayout->UnParentObject();
+      LayoutRemoved.emit (this, view_layout_);
+      view_layout_->UnParentObject();
     }
     layout->SetParentObject (this);
-    m_CompositionLayout = layout;
+    view_layout_ = layout;
 
     GetWindowThread()->QueueObjectLayout (this);
 
-    LayoutAdded.emit (this, m_CompositionLayout);
+    LayoutAdded.emit (this, view_layout_);
 
     return true;
   }
@@ -373,12 +350,12 @@ namespace nux
 
   void View::RemoveLayout()
   {
-    NUX_RETURN_IF_NULL(m_CompositionLayout);
+    NUX_RETURN_IF_NULL(view_layout_);
 
-    if (m_CompositionLayout)
-      m_CompositionLayout->UnParentObject();
+    if (view_layout_)
+      view_layout_->UnParentObject();
 
-    m_CompositionLayout = 0;
+    view_layout_ = 0;
   }
 
   void View::RemoveCompositionLayout()
@@ -388,16 +365,16 @@ namespace nux
 
   bool View::SearchInAllSubNodes (Area *bo)
   {
-    if (m_CompositionLayout)
-      return m_CompositionLayout->SearchInAllSubNodes (bo);
+    if (view_layout_)
+      return view_layout_->SearchInAllSubNodes (bo);
 
     return false;
   }
 
   bool View::SearchInFirstSubNodes (Area *bo)
   {
-    if (m_CompositionLayout)
-      return m_CompositionLayout->SearchInFirstSubNodes (bo);
+    if (view_layout_)
+      return view_layout_->SearchInFirstSubNodes (bo);
 
     return false;
   }
@@ -405,7 +382,7 @@ namespace nux
   void View::SetGeometry (const Geometry &geo)
   {
     Area::SetGeometry (geo);
-    ComputeChildLayout();
+    ComputeContentSize();
     PostResizeGeometry();
   }
 
@@ -461,9 +438,9 @@ namespace nux
     if (mouse_inside == false)
       return NULL;
 
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
-      Area* view = m_CompositionLayout->FindAreaUnderMouse(mouse_position, event_type);
+      Area* view = view_layout_->FindAreaUnderMouse(mouse_position, event_type);
 
       if (view)
         return view;
@@ -504,9 +481,9 @@ namespace nux
       QueueDraw();
       return this;
     }
-    else if (m_CompositionLayout)
+    else if (view_layout_)
     {
-      return m_CompositionLayout->KeyNavIteration(direction);
+      return view_layout_->KeyNavIteration(direction);
     }
 
     return NULL;

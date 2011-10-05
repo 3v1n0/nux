@@ -75,10 +75,17 @@ namespace nux
     distribution_ = CENTER_OF_LAYOUT;
     space_between_items_ = 0;
     
-    layout_top_padding_ = 4;
-    layout_right_padding_ = 4;
-    layout_bottom_padding_ = 4;
-    layout_left_padding_ = 4;
+    layout_top_padding_ = 2;
+    layout_right_padding_ = 2;
+    layout_bottom_padding_ = 2;
+    layout_left_padding_ = 2;
+
+    int clip = 2;
+    left_clip_ = clip;
+    right_clip_ = clip;
+    top_clip_ = clip;
+    bottom_clip_ = clip;
+
 
     // Set Geometry
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
@@ -128,11 +135,6 @@ namespace nux
       image_->SetMaximumSize(width, height);
   }
 
-  void Button::OnStateChanged(int value)
-  {
-    QueueDraw();
-  }
-
   void Button::SetLayoutPadding(int top, int right, int bottom, int left)
   {
     layout_top_padding_ = top >= 0 ? top : 0;
@@ -141,19 +143,12 @@ namespace nux
     layout_left_padding_ = left >= 0 ? left : 0;
   }
 
-  void Button::OnLabelChanged(std::string value)
+  void Button::SetButtonClipRegion(int top_clip, int right_clip, int bottom_clip, int left_clip)
   {
-
-  }
-
-  void Button::OnImageChanged (TextureArea *value)
-  {
-
-  }
-
-  void Button::OnImagePositionChanged (int value)
-  {
-
+    top_clip_ = top_clip >= 0 ? top_clip : 0;
+    right_clip_ = right_clip >= 0 ? right_clip : 0;
+    bottom_clip_ = bottom_clip >= 0 ? bottom_clip : 0;
+    left_clip_ = left_clip >= 0 ? left_clip : 0;
   }
 
   void Button::BuildLayout(const std::string &str, TextureArea* image)
@@ -327,11 +322,11 @@ namespace nux
 
     GetPainter().PaintBackground(graphics_engine, base);
 
-    if(visual_state_ == STATE_PRESSED)
+    if(visual_state_ == VISUAL_STATE_PRESSED)
     {
       GetPainter().PaintTextureShape(graphics_engine, base, eBUTTON_FOCUS);
     }
-    else if(visual_state_ == STATE_PRELIGHT)
+    else if(visual_state_ == VISUAL_STATE_PRELIGHT)
     {
       GetPainter().PaintTextureShape(graphics_engine, base, eBUTTON_PRELIGHT);
     }
@@ -342,9 +337,15 @@ namespace nux
 
     if (GetCompositionLayout())
     {
+      Geometry clip_geo = base;
+      clip_geo.OffsetPosition(left_clip_, top_clip_);
+      clip_geo.OffsetSize(-left_clip_ - right_clip_, -top_clip_ - bottom_clip_);
+
+      graphics_engine.PushClippingRectangle(clip_geo);
       GetPainter().PushPaintLayerStack();
       GetCompositionLayout()->ProcessDraw(graphics_engine, force_draw);
       GetPainter().PopPaintLayerStack();
+      graphics_engine.PopClippingRectangle();
     }
   }
 
@@ -363,7 +364,7 @@ namespace nux
 
     active_ = true;
     
-    changed.emit(this);
+    state_change.emit(this);
     QueueDraw();
   }
 
@@ -382,16 +383,8 @@ namespace nux
 
     active_ = false;
 
-    changed.emit(this);
+    state_change.emit(this);
     QueueDraw();
-  }
-
-  void Button::SetActive(bool active)
-  {
-    if (active)
-      Activate();
-    else
-      Deactivate();
   }
 
   void Button::RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -401,8 +394,8 @@ namespace nux
       active_ = !active_;
     }
 
-    clicked.emit(this);
-    changed.emit(this);
+    click.emit(this);
+    state_change.emit(this);
     QueueDraw();
   }
 

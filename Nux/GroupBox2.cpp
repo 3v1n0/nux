@@ -200,7 +200,7 @@ namespace nux
     return ret;
   }
 
-  void GroupBox2::PositionChildLayout (float offsetX, float offsetY)
+  void GroupBox2::ComputeContentPosition (float offsetX, float offsetY)
   {
     if (GetCompositionLayout() )
     {
@@ -214,7 +214,7 @@ namespace nux
 //            m_compositionLayout->SetX(GetX() + X_MARGIN);
 //            m_compositionLayout->SetY(GetY() + Y_MARGIN);
 //        }
-      GetCompositionLayout()->ComputePosition2 (offsetX, offsetY);
+      GetCompositionLayout()->ComputeContentPosition (offsetX, offsetY);
     }
 
     Geometry base = GetGeometry();

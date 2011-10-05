@@ -56,8 +56,8 @@ namespace nux
     Geometry const& GetGeometry() const;
 
   protected:
-    Geometry _geometry;
-    Matrix4  _model_view_matrix;
+    Geometry geometry_;
+    Matrix4  model_view_matrix_;
   };
 
 }

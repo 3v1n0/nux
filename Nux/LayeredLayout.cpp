@@ -101,7 +101,7 @@ namespace nux
     }
   }
 
-  long LayeredLayout::ComputeLayout2()
+  long LayeredLayout::ComputeContentSize()
   {
     nux::Geometry base = GetGeometry();
     std::list<Area *>::iterator it;
@@ -141,7 +141,7 @@ namespace nux
       }
 
       (*it)->SetGeometry (geo);
-      (*it)->ComputeLayout2 ();
+      (*it)->ComputeContentSize ();
     }
 
     SetBaseSize (total_max_width, total_max_height);

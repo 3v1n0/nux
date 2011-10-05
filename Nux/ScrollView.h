@@ -208,7 +208,7 @@ namespace nux
     void FormatContent ();
     virtual void PreLayoutManagement ();
     virtual long PostLayoutManagement (long LayoutResult);
-    virtual void PositionChildLayout (float offsetX, float offsetY);
+    virtual void ComputeContentPosition (float offsetX, float offsetY);
 
     virtual long PostLayoutManagement2 (long LayoutResult);
 

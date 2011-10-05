@@ -93,11 +93,11 @@ namespace nux
     InteractState is;
     is.is_on = active_;
 
-    if(visual_state_ == STATE_PRESSED)
+    if(visual_state_ == VISUAL_STATE_PRESSED)
     {
       is.is_focus = true;
     }
-    else if(visual_state_ == STATE_PRELIGHT)
+    else if(visual_state_ == VISUAL_STATE_PRELIGHT)
     {
       is.is_prelight = true;
     }
@@ -116,16 +116,13 @@ namespace nux
   {
     active_ = !active_;
 
-    clicked.emit(this);
-    changed.emit(this);
+    click.emit(this);
+    state_change.emit(this);
     QueueDraw();
   }
 
   void CheckBox::Activate()
   {
-    if (active_ == true)
-      return;
-
     if (active_ == true)
     {
       // already active
@@ -133,7 +130,7 @@ namespace nux
     }
 
     active_ = true;
-    changed.emit(this);
+    state_change.emit(this);
     QueueDraw();
   }
 
@@ -149,7 +146,7 @@ namespace nux
     }
 
     active_ = false;
-    changed.emit(this);
+    state_change.emit(this);
     QueueDraw();
   }
 }

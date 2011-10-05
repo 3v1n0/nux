@@ -46,7 +46,7 @@ namespace nux
 
   void PopUpWindow::Show()
   {
-    //m_Window.ComputeChildLayout();
+    //m_Window.ComputeContentSize();
     ShowWindow (true);
   }
 

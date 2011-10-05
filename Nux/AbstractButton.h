@@ -31,10 +31,10 @@ namespace nux
 
   enum ButtonVisualState
   {
-    STATE_PRESSED = 0,
-    STATE_NORMAL = 1,
-    STATE_PRELIGHT = 2,
-    STATE_DISABLED = 3
+    VISUAL_STATE_PRESSED = 0,
+    VISUAL_STATE_NORMAL = 1,
+    VISUAL_STATE_PRELIGHT = 2,
+    VISUAL_STATE_DISABLED = 3
   };
 
   //! The base class of button type widgets.
@@ -48,7 +48,7 @@ namespace nux
     AbstractButton(NUX_FILE_LINE_PROTO);
     virtual ~AbstractButton();
 
-    sigc::signal<void, AbstractButton*> changed_visual_state;
+    sigc::signal<void, AbstractButton*> visual_state_change;
 
     //! Returns the visual state of the AbstractButton
     /*!
@@ -66,6 +66,26 @@ namespace nux
         @return True if the button object is in an active state.
     */
     bool Active() const;
+
+    //! Activate the button.
+    /*!
+         Activate the button. If this object is a Button, then it has no persistent state and the function does nothing.
+    */
+    virtual void Activate() = 0;
+
+    //! Deactivate the button.
+    /*!
+         Deactivate the button. If this object is a Button, then it has no persistent state and the function does nothing.
+    */
+    virtual void Deactivate() = 0;
+
+    //! Set the state of the button.
+    /*!
+        Set the sate of the button. The button is either activated or deactivated.
+
+        @param active The button state.
+    */
+    virtual void SetActive(bool active);
 
     //! Set the text color.
     /*!

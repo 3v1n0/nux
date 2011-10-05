@@ -163,7 +163,7 @@ namespace nux
     HexRegExpValidator m_HexRegExp;
     IntegerValidator m_IntRegExp;
     DoubleValidator m_DoubleRegExp;
-    virtual long ComputeChildLayout();
+    virtual long ComputeContentSize();
   };
 
 }

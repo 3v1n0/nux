@@ -79,14 +79,14 @@ namespace nux
     virtual ~Button();
 
     //! Emitted when the button is clicked.
-    sigc::signal<void, Button*> clicked;
+    sigc::signal<void, Button*> click;
 
     //! Emitted when the active state changes.
     /*!
         Emitted when the active state changes, as a result of a mouse click or an API call.\n
         \sa Activate, Deactivate.
     */
-    sigc::signal<void, Button*> changed;
+    sigc::signal<void, Button*> state_change;
 
     //! Set the label.
     /*!
@@ -151,11 +151,65 @@ namespace nux
     */
     void SetImageMaximumSize(int width, int height);
 
+    //! Set the padding of the internal layout.
+    /*!
+        Set the padding of the internal layout.\n
+        The default value is 2 for top, right, bottom and left padding.
+
+        @param top Top padding.
+        @param right Right padding.
+        @param bottom Bottom padding.
+        @param left Left padding.
+    */
     void SetLayoutPadding(int top, int right, int bottom, int left);
 
+    //! Add a clipping rectangle inside the button.
+    /*!
+        Add an internal clipping rectangle inside the button. This will clip the rendering of anything 
+        inside the button. The default value is 2 for top, right, bottom and left clipping.
+
+        @param top Top clipping.
+        @param right Right clipping.
+        @param bottom Bottom clipping.
+        @param left Left clipping.
+    */
+    void SetButtonClipRegion(int top_clip, int right_clip, int bottom_clip, int left_clip);
+
+    //! Set the distribution of elements inside the layout.
+    /*!
+        Set how elements are distributed in the layout. The distribution takes effect only if the element don't 
+        use all the space available in the layout. In that case, they may be distributed toward the start, middle 
+        or end of the layout.
+
+        @param distribution Distribution of elements inside the layout.
+    */
     void SetDistribution(Distribution distribution);
+
+    //! Set the order of the image and label inside the layout.
+    /*!
+        Set the order of the image and label in the layout. Either the image comes first or the label. This is true in 
+        an horizontal or vertical layout configuration.
+
+        @param item_order Order of the image and label inside the layout.
+    */
     void SetItemOrder(ItemOrder item_order);
+
+    //! Set the layout type.
+    /*!
+        Set the layout type. With an horizontal layout type, the image and the label are arranged horizontally, while with a 
+        vertical layout type, they are arranged vertically. You may call SetItemOrder to choose if the image or the label 
+        come first in an horizontal (from left to right) or vertical (top to bottom) configuration.
+
+        @param layout_type The layout type.
+    */
     void SetLayoutType(LayoutType layout_type);
+
+    //! Set the space between the image and the label.
+    /*!
+        Set the space between the image and the label.
+
+        @param space_between_items The space between the image and the label inside the layout.
+    */
     void SetSpaceBetweenItems(int space_between_items);
 
     //! Activate the button.
@@ -170,8 +224,6 @@ namespace nux
     */
     void Deactivate();
 
-    void SetActive(bool active);
-
   protected:
     LayoutType layout_type_;    //!< The button layout type.
     ItemOrder item_order_;      //!< Ordering of the text and image.
@@ -184,15 +236,15 @@ namespace nux
     int layout_top_padding_;
     int layout_bottom_padding_;
 
+    int left_clip_;
+    int right_clip_;
+    int top_clip_;
+    int bottom_clip_;
+
     bool SetLabelProperty(std::string &value, std::string const &str);
 
     void Initialize(const std::string &str, TextureArea* texture_area);
 
-    void OnStateChanged(int value);
-    void OnLabelChanged(std::string value);
-    void OnImageChanged(TextureArea *value);
-    void OnImagePositionChanged(int value);
-    
     void BuildLayout(const std::string &str, TextureArea* texture_area);
 
     TextureArea *image_;

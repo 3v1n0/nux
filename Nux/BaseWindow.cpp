@@ -196,7 +196,7 @@ namespace nux
       // and the children will take their natural size by expending WidgetLayout.
       // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
 
-      ComputeChildLayout();
+      ComputeContentSize();
     }
   }
 
@@ -209,13 +209,13 @@ namespace nux
       // and the children will take their natural size by expending WidgetLayout.
       // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
 
-      ComputeChildLayout();
+      ComputeContentSize();
     }
   }
 
   void BaseWindow::AddWidget (std::list<View *> *ViewList)
   {
-    m_CompositionLayout->Clear();
+    view_layout_->Clear();
 
     std::list<View *>::iterator it;
 
@@ -242,7 +242,7 @@ namespace nux
     m_layout->SetGeometry (layout_geo);
 
     // When this call returns the layout computation is done.
-    ComputeChildLayout();
+    ComputeContentSize();
     // or use
     //GetWindowThread()->QueueObjectLayout(m_layout);
 
@@ -307,7 +307,7 @@ namespace nux
 
 // Get a change to do any work on an element.
 // Here we need to position the header by hand because it is not under the control of vlayout.
-  void BaseWindow::PositionChildLayout (float offsetX, float offsetY)
+  void BaseWindow::ComputeContentPosition (float offsetX, float offsetY)
   {
 
   }
@@ -376,7 +376,7 @@ namespace nux
       m_input_window->SetGeometry (geo);
     #endif
     //LayoutWindowElements();
-    //ComputeChildLayout();
+    //ComputeContentSize();
   }
 
   void BaseWindow::LayoutWindowElements()
@@ -432,7 +432,7 @@ namespace nux
       sigVisible.emit(this);
       GetWindowCompositor().sigVisibleViewWindow.emit(this);
 
-      ComputeChildLayout();
+      ComputeContentSize();
     }
     else
     {

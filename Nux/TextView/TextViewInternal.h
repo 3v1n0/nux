@@ -109,7 +109,7 @@ namespace nux
 
     virtual void PreLayoutManagement();
     virtual long PostLayoutManagement (long LayoutResult);
-    virtual void PositionChildLayout (float offsetX, float offsetY);
+    virtual void ComputeContentPosition (float offsetX, float offsetY);
 
     virtual void ScrollLeft (float stepx, int mousedx);
     virtual void ScrollRight (float stepx, int mousedx);

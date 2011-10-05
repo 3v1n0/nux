@@ -52,7 +52,7 @@ namespace nux
   private:
     virtual void PreLayoutManagement();
     virtual long PostLayoutManagement (long LayoutResult);
-    virtual void PositionChildLayout (float offsetX, float offsetY);
+    virtual void ComputeContentPosition (float offsetX, float offsetY);
 
     bool        bCaptionAvailable;
     InputArea   *m_CaptionArea;

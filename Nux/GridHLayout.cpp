@@ -225,7 +225,7 @@ namespace nux
 
         (*it)->SetGeometry(nux::Geometry (X, Y, _children_size.width, _children_size.height));
 
-        (*it)->ComputeLayout2();
+        (*it)->ComputeContentSize();
 
         X += _children_size.width + m_h_in_margin;
 
@@ -266,7 +266,7 @@ namespace nux
     {
 #if DEBUG_LAYOUT_COMPUTATION
       // The layout and its content resized together without trouble.
-      std::cout << "ComputeLayout2: GridHLayout Width compliant = " << m_fittingWidth << std::endl;
+      std::cout << "ComputeContentSize: GridHLayout Width compliant = " << m_fittingWidth << std::endl;
 #endif
       size_compliance |= eCompliantWidth;
     }
@@ -277,7 +277,7 @@ namespace nux
 #if DEBUG_LAYOUT_COMPUTATION
       // The layout has been resized larger in height to tightly pack its content.
       // Or you can say that the layout refuse to be smaller than total HEIGHT of its elements.
-      std::cout << "ComputeLayout2: GridHLayout Height block at " << GetBaseHeight() << std::endl;
+      std::cout << "ComputeContentSize: GridHLayout Height block at " << GetBaseHeight() << std::endl;
 #endif
       size_compliance |= eLargerHeight; // need scrollbar
     }
@@ -285,7 +285,7 @@ namespace nux
     {
 #if DEBUG_LAYOUT_COMPUTATION
       // The layout is smaller.
-      std::cout << "ComputeLayout2: GridHLayout Height is smaller = " << GetBaseHeight() << std::endl;
+      std::cout << "ComputeContentSize: GridHLayout Height is smaller = " << GetBaseHeight() << std::endl;
 #endif
       size_compliance |= eSmallerHeight;
     }
@@ -293,7 +293,7 @@ namespace nux
     {
 #if DEBUG_LAYOUT_COMPUTATION
       // The layout and its content resized together without trouble.
-      std::cout << "ComputeLayout2: GridHLayout Height compliant = " << GetBaseHeight() << std::endl;
+      std::cout << "ComputeContentSize: GridHLayout Height compliant = " << GetBaseHeight() << std::endl;
 #endif
       size_compliance |= eCompliantHeight;
     }
@@ -369,7 +369,7 @@ namespace nux
 
         (*it)->SetGeometry (nux::Geometry (X, Y, _children_size.width, _children_size.height));
 
-        (*it)->ComputeLayout2();
+        (*it)->ComputeContentSize();
 
         Y += _children_size.height + m_v_in_margin;
 
@@ -413,7 +413,7 @@ namespace nux
 #if DEBUG_LAYOUT_COMPUTATION
       // The layout has been resized larger in WIDTH to tightly pack its content.
       // Or you can say that the layout refuse to be smaller than total WIDTH of its elements.
-      std::cout << "ComputeLayout2: VLayout Width block at " << GetWidth() << std::endl;
+      std::cout << "ComputeContentSize: VLayout Width block at " << GetWidth() << std::endl;
 #endif
       size_compliance |= eLargerWidth; // need scrollbar
     }
@@ -421,7 +421,7 @@ namespace nux
     {
 #if DEBUG_LAYOUT_COMPUTATION
       // The layout is smaller.
-      std::cout << "ComputeLayout2: VLayout Width smaller = " << GetWidth() << std::endl;
+      std::cout << "ComputeContentSize: VLayout Width smaller = " << GetWidth() << std::endl;
 #endif
       size_compliance |= eSmallerWidth;
     }
@@ -429,7 +429,7 @@ namespace nux
     {
 #if DEBUG_LAYOUT_COMPUTATION
       // The layout and its content resized together without trouble.
-      std::cout << "ComputeLayout2: VLayout Width compliant = " << GetWidth() << std::endl;
+      std::cout << "ComputeContentSize: VLayout Width compliant = " << GetWidth() << std::endl;
 #endif
       size_compliance |= eCompliantWidth;
     }
@@ -437,7 +437,7 @@ namespace nux
     {
 #if DEBUG_LAYOUT_COMPUTATION
       // The layout and its content resized together without trouble.
-      std::cout << "ComputeLayout2: VLayout Height compliant = " << m_fittingHeight << std::endl;
+      std::cout << "ComputeContentSize: VLayout Height compliant = " << m_fittingHeight << std::endl;
 #endif
       size_compliance |= eCompliantHeight;
     }
@@ -445,7 +445,7 @@ namespace nux
     return size_compliance;
   }
 
-  long GridHLayout::ComputeLayout2()
+  long GridHLayout::ComputeContentSize()
   {
     if (row_filling_order_)
     {

@@ -181,7 +181,7 @@ namespace nux
     //
     // Overrides
     //
-    long ComputeLayout2 ();
+    long ComputeContentSize ();
     void GetCompositeList (std::list<Area *> *ViewList);
     void ProcessDraw (GraphicsEngine &gfx_context, bool force_draw);
     Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);

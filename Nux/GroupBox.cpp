@@ -140,7 +140,7 @@ namespace nux
   void GroupBox::PreLayoutManagement()
   {
     // Give the managed layout appropriate size and position..
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
       Geometry layout_geo = GetGeometry();
       //if(bCaptionAvailable)
@@ -153,7 +153,7 @@ namespace nux
 //            layout_geo.OffsetPosition(2, 2);
 //            layout_geo.OffsetSize(-4, -4);
 //        }
-      m_CompositionLayout->SetGeometry (layout_geo);
+      view_layout_->SetGeometry (layout_geo);
     }
   }
 
@@ -166,9 +166,9 @@ namespace nux
     long ret = 0;
     Geometry old_geo = Area::GetGeometry();
 
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
-      Geometry base = m_CompositionLayout->GetGeometry();
+      Geometry base = view_layout_->GetGeometry();
       //if(bCaptionAvailable)
       {
         base.OffsetPosition (-2, -20);
@@ -202,21 +202,21 @@ namespace nux
     return ret;
   }
 
-  void GroupBox::PositionChildLayout (float offsetX, float offsetY)
+  void GroupBox::ComputeContentPosition (float offsetX, float offsetY)
   {
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
       //if(bCaptionAvailable)
       {
-        m_CompositionLayout->SetBaseX (GetBaseX() + 2);
-        m_CompositionLayout->SetBaseY (GetBaseY() + 20);
+        view_layout_->SetBaseX (GetBaseX() + 2);
+        view_layout_->SetBaseY (GetBaseY() + 20);
       }
 //        else
 //        {
-//            m_CompositionLayout->SetX(GetX() + 2);
-//            m_CompositionLayout->SetY(GetY() + 2);
+//            view_layout_->SetX(GetX() + 2);
+//            view_layout_->SetY(GetY() + 2);
 //        }
-      m_CompositionLayout->ComputePosition2 (offsetX, offsetY);
+      view_layout_->ComputeContentPosition (offsetX, offsetY);
     }
 
     Geometry base = GetGeometry();

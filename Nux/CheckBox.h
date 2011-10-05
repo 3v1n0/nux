@@ -36,17 +36,17 @@ namespace nux
     NUX_DECLARE_OBJECT_TYPE(CheckBox, AbstractButton);
   public:
     CheckBox (const std::string &str, bool state = false, NUX_FILE_LINE_PROTO);
-    ~CheckBox();
+    virtual ~CheckBox();
 
     //! Emitted when the button is clicked.
-    sigc::signal<void, CheckBox*> clicked;
+    sigc::signal<void, CheckBox*> click;
 
     //! Emitted when the active state changes.
     /*!
         Emitted when the active state changes, as a result of a mouse click or an API call.\n
         \sa Activate, Deactivate.
     */
-    sigc::signal<void, CheckBox*> changed;
+    sigc::signal<void, CheckBox*> state_change;
 
     //! Set the label.
     /*!
@@ -69,13 +69,13 @@ namespace nux
     /*!
          Activate the check box.
     */
-    void Activate();
+    virtual void Activate();
 
     //! Deactivate the check box.
     /*!
          Deactivate the check box.
     */
-    void Deactivate();
+    virtual void Deactivate();
 
   protected:
     virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
