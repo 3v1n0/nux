@@ -113,6 +113,8 @@ namespace nux
     */
     bool IsViewActive () const;
 
+    void SetViewActive (bool active);
+
   public:
     virtual void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
     //! Causes a redraw. The widget parameter _need_redraw is set to true. The widget Draw(), DrawContent() and PostDraw() are called.
