@@ -16,21 +16,21 @@ namespace nux
 
   void AbstractPaintLayer::SetGeometry (const Geometry &geo)
   {
-    _geometry = geo;
+    geometry_ = geo;
   }
 
   Geometry const& AbstractPaintLayer::GetGeometry () const
   {
-    return _geometry;
+    return geometry_;
   }
 
   void AbstractPaintLayer::SetModelViewMatrix (const Matrix4 &mat)
   {
-    _model_view_matrix = mat;
+    model_view_matrix_ = mat;
   }
 
   Matrix4 AbstractPaintLayer::GetModelViewMatrix ()
   {
-    return _model_view_matrix;
+    return model_view_matrix_;
   }
 }

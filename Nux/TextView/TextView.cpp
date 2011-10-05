@@ -681,9 +681,9 @@ namespace nux
     return ret;
   }
 
-  void TextView::PositionChildLayout (float offsetX, float offsetY)
+  void TextView::ComputeContentPosition (float offsetX, float offsetY)
   {
-    TextViewWidget::PositionChildLayout (offsetX, offsetY);
+    TextViewWidget::ComputeContentPosition (offsetX, offsetY);
   }
 
   Geometry TextView::GetTextAreaGeometry() const

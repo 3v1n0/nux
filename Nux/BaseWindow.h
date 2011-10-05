@@ -206,7 +206,7 @@ namespace nux
 
     virtual void PreLayoutManagement ();
     virtual long PostLayoutManagement (long LayoutResult);
-    virtual void PositionChildLayout (float offsetX, float offsetY);
+    virtual void ComputeContentPosition (float offsetX, float offsetY);
     //! Layout the window elements.
     /*!
         Layout elements such as button on the title bar, and the resize widget according to the current

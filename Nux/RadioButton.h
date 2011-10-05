@@ -38,17 +38,17 @@ namespace nux
     NUX_DECLARE_OBJECT_TYPE(RadioButton, AbstractButton);
   public:
     RadioButton (const std::string &str, bool state = false, NUX_FILE_LINE_PROTO);
-    ~RadioButton();
+    virtual ~RadioButton();
 
     //! Emitted when the button is clicked.
-    sigc::signal<void, RadioButton*> clicked;
+    sigc::signal<void, RadioButton*> click;
 
     //! Emitted when the active state changes.
     /*!
         Emitted when the active state changes, as a result of a mouse click or an API call.\n
         \sa Activate, Deactivate.
     */
-    sigc::signal<void, RadioButton*> changed;
+    sigc::signal<void, RadioButton*> state_change;
 
     //! Set the label.
     /*!
@@ -71,13 +71,13 @@ namespace nux
     /*!
          Activate the radio button.
     */
-    void Activate();
+    virtual void Activate();
 
     //! Deactivate the radio button.
     /*!
          Deactivate the radio button.
     */
-    void Deactivate();
+    virtual void Deactivate();
 
   protected:
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);

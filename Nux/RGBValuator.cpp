@@ -150,8 +150,8 @@ namespace nux
     m_GreenValuator->mouse_drag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Green) );
     m_BlueValuator->mouse_drag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Blue) );
     m_AlphaValuator->mouse_drag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Alpha) );
-    m_ColorModel->clicked.connect (sigc::mem_fun (this, &RGBValuator::OnChangeColorModel) );
-    m_ColorFormat->clicked.connect (sigc::mem_fun (this, &RGBValuator::OnChangeColorFormat) );
+    m_ColorModel->click.connect (sigc::mem_fun (this, &RGBValuator::OnChangeColorModel) );
+    m_ColorFormat->click.connect (sigc::mem_fun (this, &RGBValuator::OnChangeColorFormat) );
 //    m_ColorModel->mouse_down.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
 //    m_ColorModel->mouse_up.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
 //    m_ColorModel->mouse_enter.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
@@ -1454,9 +1454,9 @@ namespace nux
     }
   }
 
-  long RGBValuator::ComputeChildLayout()
+  long RGBValuator::ComputeContentSize()
   {
-    return View::ComputeChildLayout();
+    return View::ComputeContentSize();
   }
 
   Color RGBValuator::GetColor() const

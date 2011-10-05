@@ -117,7 +117,7 @@ namespace nux
     virtual void SetGeometry (const Geometry &geo)
     {
       Area::SetGeometry (geo);
-      ComputeChildLayout();
+      ComputeContentSize();
     }
   };
 

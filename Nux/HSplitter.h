@@ -63,7 +63,7 @@ namespace nux
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
 
   protected:
-    virtual long ComputeChildLayout();
+    virtual long ComputeContentSize();
     virtual void DoneRedraw();
     void ResizeSplitter (t_s32 header_pos);
     //void ContinuousSplitterAdjustment();

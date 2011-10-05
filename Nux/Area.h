@@ -296,10 +296,8 @@ namespace nux
     */
     bool IsMousePointerInside() const;
 
-    virtual long ComputeChildLayout ();
-    virtual void PositionChildLayout (float offsetX, float offsetY);
-    virtual long ComputeLayout2 ();
-    virtual void ComputePosition2 (float offsetX, float offsetY);
+    virtual long ComputeContentSize ();
+    virtual void ComputeContentPosition (float offsetX, float offsetY);
 
     virtual bool IsArea () const;
     virtual bool IsInputArea () const;
@@ -519,7 +517,7 @@ namespace nux
         When the geometry of an area changes, the new geometry can be recursively propagated to all its 
         parent so a layout reconfiguration is initiated.
         \sa ReconfigureParentLayout()
-        \sa _on_geometry_changeg_reconfigure_parent_layout
+        \sa on_geometry_change_reconfigure_parent_layout_
 
         @param reconfigure_parent_layout Set it to True to reconfigure this area parent layouts.
     */
@@ -594,7 +592,7 @@ namespace nux
 //     */
 //     bool Secondary (Area *child);
    
-    bool _on_geometry_changeg_reconfigure_parent_layout;
+    bool on_geometry_change_reconfigure_parent_layout_;
 
     bool                    has_key_focus_;
 
@@ -605,7 +603,7 @@ namespace nux
     void CheckMaxSize();
 
 
-    Geometry                _geometry;        //!< The area geometry.
+    Geometry                geometry_;        //!< The area geometry.
 
     //! Define a parent child structure
     /*

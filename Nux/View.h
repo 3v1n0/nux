@@ -54,14 +54,8 @@ namespace nux
     // Deprecated
     //long BaseProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 
-    virtual long ComputeChildLayout();
-    virtual void PositionChildLayout (float offsetX, float offsetY);
-
-    // NUXTODO: Find better name
-    virtual long ComputeLayout2();
-
-    // NUXTODO: Find better name
-    virtual void ComputePosition2 (float offsetX, float offsetY);
+    virtual long ComputeContentSize();
+    virtual void ComputeContentPosition(float offsetX, float offsetY);
 
     virtual void PreLayoutManagement();
     virtual long PostLayoutManagement (long LayoutResult);
@@ -227,7 +221,7 @@ namespace nux
                           unsigned long x11_key_code,
                           unsigned long special_keys_state);
 
-    Layout *m_CompositionLayout;
+    Layout *view_layout_;
 
     bool _need_redraw; //<! The rendering of the view needs to be refreshed.
 

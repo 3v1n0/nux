@@ -104,7 +104,7 @@ namespace nux
     // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
     // and the children will take their natural size by expending WidgetLayout.
     // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
-    ComputeChildLayout();
+    ComputeContentSize();
   }
 
   void HToolBar::AddAction (ActionItem *action)
@@ -120,7 +120,7 @@ namespace nux
     // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
     // and the children will take their natural size by expending WidgetLayout.
     // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
-    ComputeChildLayout();
+    ComputeContentSize();
   }
 
   void HToolBar::AddSpace (int size)
@@ -129,14 +129,14 @@ namespace nux
     layout->SetMaximumWidth (size);
     layout->SetMinimumWidth (size);
     m_hlayout->AddLayout (layout);
-    ComputeChildLayout();
+    ComputeContentSize();
   }
 
   void HToolBar::AddSeparator()
   {
     VSeparator *separator (new VSeparator() );
     m_hlayout->AddView (separator, 0);
-    ComputeChildLayout();
+    ComputeContentSize();
   }
 
   void HToolBar::AddEditTextLine (EditTextBox *edittextline)
@@ -150,7 +150,7 @@ namespace nux
     // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
     // and the children will take their natural size by expending WidgetLayout.
     // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
-    ComputeChildLayout();
+    ComputeContentSize();
   }
 
   void HToolBar::AddStaticTextLine (StaticTextBox *statictextline)
@@ -164,12 +164,12 @@ namespace nux
     // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
     // and the children will take their natural size by expending WidgetLayout.
     // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
-    ComputeChildLayout();
+    ComputeContentSize();
   }
 
   void HToolBar::ClearWidget()
   {
-    m_CompositionLayout->Clear();
+    view_layout_->Clear();
   }
 
   void HToolBar::RecvMouseDownOnIcon (int x, int y, unsigned long button_flags, unsigned long key_flags)

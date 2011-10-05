@@ -254,7 +254,7 @@ namespace nux
       m_SplitConfig.push_back (stretchfactor);
 
       new_addition = true;
-      ComputeChildLayout();
+      ComputeContentSize();
     }
   }
 
@@ -263,7 +263,7 @@ namespace nux
     m_InterfaceObject.clear();
   }
 
-  long VSplitter::ComputeChildLayout()
+  long VSplitter::ComputeContentSize()
   {
     t_u32 num_element = (t_u32) m_InterfaceObject.size();
     t_s32 x = GetBaseX();
@@ -543,7 +543,7 @@ namespace nux
     }
 
     m_initial_config = false;
-    ComputeChildLayout();
+    ComputeContentSize();
 
     QueueDraw();
   }

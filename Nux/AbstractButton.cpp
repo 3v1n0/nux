@@ -30,7 +30,7 @@ namespace nux
 
   AbstractButton::AbstractButton(NUX_FILE_LINE_DECL)
   : View(NUX_FILE_LINE_PARAM)
-  , visual_state_(STATE_NORMAL)
+  , visual_state_(VISUAL_STATE_NORMAL)
   {
     active_ = false;
     mouse_pressed_ = false;
@@ -56,6 +56,14 @@ namespace nux
     return active_;
   }
 
+  void AbstractButton::SetActive(bool active)
+  {
+    if (active)
+      Activate();
+    else
+      Deactivate();
+  }
+
   ButtonVisualState AbstractButton::GetVisualState()
   {
     return visual_state_;
@@ -65,23 +73,23 @@ namespace nux
   {
     if (IsMousePointerInside())
     {
-      visual_state_ = STATE_PRELIGHT;
+      visual_state_ = VISUAL_STATE_PRELIGHT;
     }
     else
     {
-      visual_state_ = STATE_NORMAL;
+      visual_state_ = VISUAL_STATE_NORMAL;
     }
 
     mouse_pressed_ = false;
-    changed_visual_state.emit(this);
+    visual_state_change.emit(this);
     QueueDraw();
   }
 
   void AbstractButton::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    visual_state_ = STATE_PRESSED;
+    visual_state_ = VISUAL_STATE_PRESSED;
     mouse_pressed_ = true;
-    changed_visual_state.emit(this);
+    visual_state_change.emit(this);
     QueueDraw();
   }
 
@@ -94,21 +102,21 @@ namespace nux
   {
     if (mouse_pressed_)
     {
-      visual_state_ = STATE_PRESSED;
+      visual_state_ = VISUAL_STATE_PRESSED;
     }
     else
     {
-      visual_state_ = STATE_PRELIGHT;
+      visual_state_ = VISUAL_STATE_PRELIGHT;
     }
 
-    changed_visual_state.emit(this);
+    visual_state_change.emit(this);
     QueueDraw();
   }
 
   void AbstractButton::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    visual_state_ = STATE_NORMAL;
-    changed_visual_state.emit(this);
+    visual_state_ = VISUAL_STATE_NORMAL;
+    visual_state_change.emit(this);
     QueueDraw();
   }
 

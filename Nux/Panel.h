@@ -56,7 +56,7 @@ namespace nux
     virtual long PostLayoutManagement (long LayoutResult);
     // Get a change to do any work on an element.
     // Here we need to position the header by hand because it is not under the control of vlayout.
-    virtual void PositionChildLayout (float offsetX, float offsetY);
+    virtual void ComputeContentPosition (float offsetX, float offsetY);
 
   protected:
     virtual void ScrollLeft (float stepx, int mousedx);

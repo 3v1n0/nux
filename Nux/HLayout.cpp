@@ -170,7 +170,7 @@ namespace nux
     }
   }
 
-  long HLayout::ComputeLayout2()
+  long HLayout::ComputeContentSize()
   {
     if (_layout_element_list.size() == 0)
     {
@@ -345,7 +345,7 @@ namespace nux
       unadjusted_layout = false;
 
       // This array is meant to store the sizes of some of the elements height. These elements must have eFull as extent and
-      // they have not been not been constrained smaller after ComputeLayout2 is called. Because the layout may have a stretch factor of 0
+      // they have not been not been constrained smaller after ComputeContentSize is called. Because the layout may have a stretch factor of 0
       // and therefore its size has been set to 1x1 at the start of this function, there is a possibility that some of the elements don't have
       // the full height of the layout(these elements uses their minimum height because the layout was set to a size 1x1).
       // We check if that is the case and force a recompute.
@@ -363,7 +363,7 @@ namespace nux
 
         if ( ( (*it)->IsLayout()  || (*it)->IsView() ) /*&& ((*it)->IsLayoutDone() == false)*/ /*&& ((*it)->GetStretchFactor() != 0)*/)
         {
-          ret = (*it)->ComputeLayout2();
+          ret = (*it)->ComputeContentSize();
 
           larger_width    = (ret & eLargerWidth)    ? true : false;
           smaller_width   = (ret & eSmallerWidth)   ? true : false;
@@ -373,7 +373,7 @@ namespace nux
           if ( (larger_width || smaller_width) && ( (*it)->IsLayoutDone() == false) )
           {
             // Stop computing the size of this layout. Its size was not convenient to its children. So the children size take priority
-            // over the layout. In ComputeLayout2, the dimension of the layout has been set so it encompasses its children (and the margins).
+            // over the layout. In ComputeContentSize, the dimension of the layout has been set so it encompasses its children (and the margins).
             // Now the parent layout cannot be touched again: _layout_done = true. In VLayoutManagement, it is as if the stretchfactor
             // of this layout is now 0.
             // This is the only place where a layout can have _layout_done set to "true".
@@ -404,9 +404,9 @@ namespace nux
           }
 
           // Should be reactivate so that if the parent Layout does not call
-          // ComputePosition2, at least it is done here to arrange the internal
+          // ComputeContentPosition, at least it is done here to arrange the internal
           // element of the children.
-          //(*it)->ComputePosition2(0,0);
+          //(*it)->ComputeContentPosition(0,0);
         }
 
         m_fittingWidth += (*it)->GetBaseWidth();
@@ -475,12 +475,12 @@ namespace nux
     m_contentWidth = m_fittingWidth;
     long size_compliance = 0L;
 
-    ComputePosition2 (0, 0);
+    ComputeContentPosition (0, 0);
 
     {
 #if DEBUG_LAYOUT_COMPUTATION
       // The layout and its content resized together without trouble.
-      std::cout << "ComputeLayout2: HLayout Width compliant = " << m_fittingWidth << std::endl;
+      std::cout << "ComputeContentSize: HLayout Width compliant = " << m_fittingWidth << std::endl;
 #endif
       size_compliance |= eCompliantWidth;
     }
@@ -491,7 +491,7 @@ namespace nux
 #if DEBUG_LAYOUT_COMPUTATION
       // The layout has been resized larger in height to tightly pack its content.
       // Or you can say that the layout refuse to be smaller than total HEIGHT of its elements.
-      std::cout << "ComputeLayout2: HLayout Height block at " << GetBaseHeight() << std::endl;
+      std::cout << "ComputeContentSize: HLayout Height block at " << GetBaseHeight() << std::endl;
 #endif
       size_compliance |= eLargerHeight; // need scrollbar
     }
@@ -499,7 +499,7 @@ namespace nux
     {
 #if DEBUG_LAYOUT_COMPUTATION
       // The layout is smaller.
-      std::cout << "ComputeLayout2: HLayout Height is smaller = " << GetBaseHeight() << std::endl;
+      std::cout << "ComputeContentSize: HLayout Height is smaller = " << GetBaseHeight() << std::endl;
 #endif
       size_compliance |= eSmallerHeight;
     }
@@ -507,7 +507,7 @@ namespace nux
     {
 #if DEBUG_LAYOUT_COMPUTATION
       // The layout and its content resized together without trouble.
-      std::cout << "ComputeLayout2: HLayout Height compliant = " << GetBaseHeight() << std::endl;
+      std::cout << "ComputeContentSize: HLayout Height compliant = " << GetBaseHeight() << std::endl;
 #endif
       size_compliance |= eCompliantHeight;
     }
@@ -737,7 +737,7 @@ namespace nux
     return value;
   }
 
-  void HLayout::ComputePosition2 (float offsetX, float offsetY)
+  void HLayout::ComputeContentPosition (float offsetX, float offsetY)
   {
     std::list<Area *>::iterator it;
     {
@@ -821,11 +821,11 @@ namespace nux
 
       if ( (*it)->Type().IsDerivedFromType (Layout::StaticObjectType) )
       {
-        (*it)->ComputePosition2 (offsetX, offsetY);
+        (*it)->ComputeContentPosition (offsetX, offsetY);
       }
       else if ( (*it)->Type().IsDerivedFromType (View::StaticObjectType) )
       {
-        (*it)->PositionChildLayout (offsetX, offsetY);
+        (*it)->ComputeContentPosition (offsetX, offsetY);
       }
     }
   }

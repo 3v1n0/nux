@@ -44,7 +44,7 @@ namespace nux
     GridVLayout (NUX_FILE_LINE_PROTO);
     ~GridVLayout ();
 
-    virtual long ComputeLayout2 ();
+    virtual long ComputeContentSize ();
 
     virtual void GetCompositeList (std::list<Area *> *ViewList);
     

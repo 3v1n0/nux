@@ -300,7 +300,7 @@ namespace nux
   void FloatingWindow::EnableTitleBar (bool b)
   {
     m_hasTitleBar = b;
-    ComputeChildLayout();
+    ComputeContentSize();
   }
 
   bool FloatingWindow::HasTitleBar() const
@@ -395,7 +395,7 @@ namespace nux
     // Set the Window Size and Position
     Area::SetGeometry (geo);
     // No need to compute the window layout elements [LayoutWindowElements()]. They haven't changed.
-    // No need to compute the layout [ComputeChildLayout()]. It hasn't changed.
+    // No need to compute the layout [ComputeContentSize()]. It hasn't changed.
 
     _title_bar->SetGeometry (0, 0, geo.GetWidth(), _title_bar_height);
 
@@ -502,9 +502,9 @@ namespace nux
 
 // Get a change to do any work on an element.
 // Here we need to position the header by hand because it is not under the control of vlayout.
-  void FloatingWindow::PositionChildLayout (float offsetX, float offsetY)
+  void FloatingWindow::ComputeContentPosition (float offsetX, float offsetY)
   {
-    //ScrollView::PositionChildLayout(offsetX, offsetY);
+    //ScrollView::ComputeContentPosition(offsetX, offsetY);
 
     Geometry geo = GetGeometry();
 

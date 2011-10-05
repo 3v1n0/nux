@@ -98,7 +98,7 @@ namespace nux
 
     virtual void PreLayoutManagement();
     virtual long PostLayoutManagement (long LayoutResult);
-    virtual void PositionChildLayout (float offsetX, float offsetY);
+    virtual void ComputeContentPosition (float offsetX, float offsetY);
 
     void TranslateLeft (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void TranslateRight (int x, int y, unsigned long button_flags, unsigned long key_flags);

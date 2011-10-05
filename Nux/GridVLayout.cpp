@@ -147,7 +147,7 @@ namespace nux
     }
   }
 
-  long GridVLayout::ComputeLayout2()
+  long GridVLayout::ComputeContentSize()
   {
     std::list<Area *> elements;
 
@@ -208,7 +208,7 @@ namespace nux
 
         (*it)->SetGeometry (nux::Geometry (X, Y, _children_size.width, _children_size.height));
 
-        (*it)->ComputeLayout2();
+        (*it)->ComputeContentSize();
 
         Y += _children_size.height + m_v_in_margin;
 
@@ -252,7 +252,7 @@ namespace nux
 #if DEBUG_LAYOUT_COMPUTATION
       // The layout has been resized larger in WIDTH to tightly pack its content.
       // Or you can say that the layout refuse to be smaller than total WIDTH of its elements.
-      std::cout << "ComputeLayout2: VLayout Width block at " << GetWidth() << std::endl;
+      std::cout << "ComputeContentSize: VLayout Width block at " << GetWidth() << std::endl;
 #endif
       size_compliance |= eLargerWidth; // need scrollbar
     }
@@ -260,7 +260,7 @@ namespace nux
     {
 #if DEBUG_LAYOUT_COMPUTATION
       // The layout is smaller.
-      std::cout << "ComputeLayout2: VLayout Width smaller = " << GetWidth() << std::endl;
+      std::cout << "ComputeContentSize: VLayout Width smaller = " << GetWidth() << std::endl;
 #endif
       size_compliance |= eSmallerWidth;
     }
@@ -268,7 +268,7 @@ namespace nux
     {
 #if DEBUG_LAYOUT_COMPUTATION
       // The layout and its content resized together without trouble.
-      std::cout << "ComputeLayout2: VLayout Width compliant = " << GetWidth() << std::endl;
+      std::cout << "ComputeContentSize: VLayout Width compliant = " << GetWidth() << std::endl;
 #endif
       size_compliance |= eCompliantWidth;
     }
@@ -276,7 +276,7 @@ namespace nux
     {
 #if DEBUG_LAYOUT_COMPUTATION
       // The layout and its content resized together without trouble.
-      std::cout << "ComputeLayout2: VLayout Height compliant = " << m_fittingHeight << std::endl;
+      std::cout << "ComputeContentSize: VLayout Height compliant = " << m_fittingHeight << std::endl;
 #endif
       size_compliance |= eCompliantHeight;
     }

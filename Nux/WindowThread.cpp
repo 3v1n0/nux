@@ -623,8 +623,8 @@ logging::Logger logger("nux.windows.thread");
 
       StartLayoutCycle ();
       _main_layout->SetGeometry (0, 0, w, h);
-      _main_layout->ComputeLayout2();
-      _main_layout->ComputePosition2 (0, 0);
+      _main_layout->ComputeContentSize();
+      _main_layout->ComputeContentPosition (0, 0);
       StopLayoutCycle ();
 
       RemoveQueuedLayout ();
@@ -646,8 +646,8 @@ logging::Logger logger("nux.windows.thread");
     {
       StartLayoutCycle ();
       _main_layout->SetGeometry (0, 0, w, h);
-      _main_layout->ComputeLayout2();
-      _main_layout->ComputePosition2 (0, 0);
+      _main_layout->ComputeContentSize();
+      _main_layout->ComputeContentPosition (0, 0);
       StopLayoutCycle ();
     }
 
@@ -725,7 +725,7 @@ logging::Logger logger("nux.windows.thread");
         continue;
       }
 
-      (*it)->ComputeLayout2();
+      (*it)->ComputeContentSize();
     }
 
     StopLayoutCycle ();
@@ -780,7 +780,7 @@ logging::Logger logger("nux.windows.thread");
       layout->QueueDraw ();
     }
 
-    area->ComputeLayout2();
+    area->ComputeContentSize();
 
     if (!alreadyComputingLayout)
       StopLayoutCycle ();

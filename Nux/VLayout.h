@@ -36,8 +36,8 @@ namespace nux
     VLayout (NString name, NUX_FILE_LINE_PROTO);
     ~VLayout ();
 
-    virtual long ComputeLayout2();
-    virtual void ComputePosition2(float offsetX, float offsetY);
+    virtual long ComputeContentSize();
+    virtual void ComputeContentPosition(float offsetX, float offsetY);
     virtual void VLayoutManagement(int width, int height);
     virtual t_u32 GetMaxStretchFactor();
 

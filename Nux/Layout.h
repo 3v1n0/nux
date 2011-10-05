@@ -315,11 +315,11 @@ namespace nux
     }
 
     // Begin: Abstract virtual function member (inherited from class Layout) that must be implemented
-    virtual long ComputeLayout2()
+    virtual long ComputeContentSize()
     {
       return 0;
     }
-    virtual void ComputePosition2 (float offsetX, float offsetY)
+    virtual void ComputeContentPosition (float offsetX, float offsetY)
     {
     }
     // End: Abstract virtual function member (inherited from class Layout) that must be implemented
