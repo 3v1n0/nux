@@ -217,12 +217,6 @@ namespace nux
       _event_root = Point(x, y);
     }
 
-    //TODO: DEPRECATED
-    const IEvent *GetCurrentEvent() const
-    {
-      return NULL;
-    }
-
     void SetBackgroundPaintLayer(AbstractPaintLayer *bkg);
 
     /*!
@@ -428,7 +422,7 @@ namespace nux
       m_FocusAreaWindow = window;
     }
 
-    void SetCurrentEvent(IEvent *event)
+    void SetCurrentEvent(Event *event)
     {
       m_CurrentEvent = event;
     }
@@ -451,9 +445,6 @@ namespace nux
     // UnRegister is called via the object destroyed event, hence the Object*.
     void UnRegisterWindow(Object*);
 
-    //! Performs event cycle on menus.
-    long MenuEventCycle(Event &event, long TraverseInfo, long ProcessEventInfo);
-
     // We use Rectangle texture to attach to the frame-buffer because some GPU like the Geforce FX 5600 do not
     // have support for ARB_texture_non_power_of_two. However it does support ARB_texture_recatangle.
     struct RenderTargetTextures
@@ -470,7 +461,7 @@ namespace nux
     WeakBaseWindowPtr m_CurrentWindow;    //!< BaseWindow where event processing or rendering is happening.
     WeakBaseWindowPtr m_FocusAreaWindow;  //!< The BaseWindow that contains the _mouse_focus_area.
     WeakBaseWindowPtr m_MenuWindow;       //!< The BaseWindow that owns the menu being displayed;
-    IEvent* m_CurrentEvent; 
+    Event* m_CurrentEvent; 
 
     InputArea* _mouse_over_area;      //!< The base area that has the mouse directly over itself.
     InputArea* _previous_mouse_over_area;
@@ -498,7 +489,6 @@ namespace nux
         down to other areas. If it does, the following restrictions apply:
           - The other input area cannot have the mouse focus.
           - They cannot have the keyboard focus.
-          - they cannot call ForceStartFocus or ForceStopFocus.
           - No synthetic events: 
             * mouse click
             * mouse drag

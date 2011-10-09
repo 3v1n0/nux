@@ -270,12 +270,12 @@ namespace nux
 
     if (static_text_)
     {
-      static_text_->SetSensitive(false);
+      static_text_->SetInputEventSensitivity(false);
     }
 
     if (image_)
     {
-      image_->SetSensitive(false);
+      image_->SetInputEventSensitivity(false);
     }
 
 

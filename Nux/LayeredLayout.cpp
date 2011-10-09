@@ -28,41 +28,25 @@
 
 namespace nux
 {
-  class LayeredChildProperties : public Area::LayoutProperties
+  LayeredLayout::LayeredChildProperties::LayeredChildProperties(bool expand, int x, int y, int width, int height)
+  : m_expand (expand),
+    m_x (x),
+    m_y (y),
+    m_width (width),
+    m_height (height)
+  {}
+
+  LayeredLayout::LayeredChildProperties::~LayeredChildProperties ()
+  {}
+
+  void LayeredLayout::LayeredChildProperties::Update (bool expand, int x, int y, int width, int height)
   {
-    public:
-
-    LayeredChildProperties (bool expand, int x, int y, int width, int height)
-    : m_expand (expand),
-      m_x (x),
-      m_y (y),
-      m_width (width),
-      m_height (height)
-    {
-
-    }
-
-    ~LayeredChildProperties ()
-    {
-    }
-
-    void Update (bool expand, int x, int y, int width, int height)
-    {
-      m_expand = expand;
-      m_x = x;
-      m_y = y;
-      m_width = width;
-      m_height = height;
-    }
-
-    bool m_expand;
-    int  m_x;
-    int  m_y;
-    int  m_width;
-    int  m_height;
-
-    sigc::signal<void, Area *, bool>::iterator m_vis_it;
-  };
+    m_expand = expand;
+    m_x = x;
+    m_y = y;
+    m_width = width;
+    m_height = height;
+  }
 
   NUX_IMPLEMENT_OBJECT_TYPE (LayeredLayout);
 
@@ -75,28 +59,28 @@ namespace nux
     m_child_draw_queued (false)
   {
     m_ContentStacking = eStackLeft;
-    OnChildQueueDraw.connect (sigc::mem_fun (this, &LayeredLayout::ChildQueueDraw));
+    OnChildQueueDraw.connect(sigc::mem_fun(this, &LayeredLayout::ChildQueueDraw));
   }
 
   LayeredLayout::~LayeredLayout()
   {
   }
 
-  void LayeredLayout::GetCompositeList (std::list<Area *> *ViewList)
+  void LayeredLayout::GetCompositeList(std::list<Area*> *ViewList)
   {
-    std::list<Area *>::iterator it;
+    std::list<Area*>::iterator it;
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      if ( (*it)->IsView() )
+      if ((*it)->IsView())
       {
-        View *ic = NUX_STATIC_CAST (View *, (*it) );
-        ViewList->push_back (ic);
+        View *ic = NUX_STATIC_CAST(View*, (*it));
+        ViewList->push_back(ic);
       }
-      else if ( (*it)->IsLayout() )
+      else if ((*it)->IsLayout())
       {
-        Layout *layout = NUX_STATIC_CAST (Layout *, (*it) );
-        layout->GetCompositeList (ViewList);
+        Layout *layout = NUX_STATIC_CAST(Layout *, (*it));
+        layout->GetCompositeList(ViewList);
       }
     }
   }
@@ -115,7 +99,18 @@ namespace nux
       LayeredChildProperties *props;
       Geometry                geo = base;
 
-      props = dynamic_cast<LayeredChildProperties *> (area->GetLayoutProperties ());
+      std::map<Area*, LayeredChildProperties*>::iterator prop_it = area_property_map_.find(area);
+      if (prop_it != area_property_map_.end())
+      {
+        props = prop_it->second;
+      }
+      else
+      {
+        props = NULL;
+      }
+
+      if (props == NULL)
+        continue;
 
       if (props->m_expand)
       {
@@ -227,18 +222,18 @@ namespace nux
 
     if(m_input_mode == INPUT_MODE_ACTIVE)
     {
-      if (m_active_area && m_active_area->IsVisible () && m_active_area->IsSensitive ())
+      if (m_active_area && m_active_area->GetInputEventSensitivity() && m_active_area->GetInputEventSensitivity())
         return m_active_area->FindAreaUnderMouse(mouse_position, event_type);
     }
     else
     {
-      std::list<Area *>::reverse_iterator it, eit = _layout_element_list.rend ();
+      std::list<Area *>::reverse_iterator it, eit = _layout_element_list.rend();
 
       for (it = _layout_element_list.rbegin (); it != eit; ++it)
       {
         Area *area = (*it);
 
-        if (area->IsVisible () && area->IsSensitive ())
+        if (area->IsVisible() && area->GetInputEventSensitivity())
         {
           return m_active_area->FindAreaUnderMouse(mouse_position, event_type);
         }
@@ -248,43 +243,43 @@ namespace nux
     return NULL;
   }
 
-  void LayeredLayout::AddLayout (Layout                *layout,
-                                 unsigned int           stretch_factor,
-                                 MinorDimensionPosition positioning,
-                                 MinorDimensionSize     extend,
-                                 float                  percentage)
+  void LayeredLayout::AddLayout(Layout                *layout,
+                                unsigned int           stretch_factor,
+                                MinorDimensionPosition positioning,
+                                MinorDimensionSize     extend,
+                                float                  percentage)
   {
-    AddLayer (layout);
+    AddLayer(layout);
   }
 
-  void LayeredLayout::AddView (Area                  *view,
-                               unsigned int           stretch_factor,
-                               MinorDimensionPosition positioning,
-                               MinorDimensionSize     extend,
-                               float                  percentage)
+  void LayeredLayout::AddView(Area                  *view,
+                              unsigned int           stretch_factor,
+                              MinorDimensionPosition positioning,
+                              MinorDimensionSize     extend,
+                              float                  percentage)
   {
-    AddLayer (view);
+    AddLayer(view);
   }
 
-  void LayeredLayout::RemoveChildObject (Area *area)
+  void LayeredLayout::RemoveChildObject(Area *area)
   {
-    RemoveLayer (area);
+    RemoveLayer(area);
   }
 
-  void LayeredLayout::Clear ()
+  void LayeredLayout::Clear()
   {
     m_active_index = 0;
     m_active_area = NULL;
 
-    Layout::Clear ();
+    Layout::Clear();
   }
 
-  void LayeredLayout::ChildQueueDraw (Area *area)
+  void LayeredLayout::ChildQueueDraw(Area *area)
   {
     m_child_draw_queued = true;
   }
 
-  void LayeredLayout::ChildVisibilityChanged (Area *area, bool visible)
+  void LayeredLayout::ChildVisibilityChanged(Area *area, bool visible)
   {
     QueueDraw ();
   }
@@ -292,17 +287,24 @@ namespace nux
   //
   // LayeredLayout Methods
   //
-  void LayeredLayout::AddLayer (Area *area, bool expand, int x, int y, int width, int height)
+  void LayeredLayout::AddLayer(Area *area, bool expand, int x, int y, int width, int height)
   {
     LayeredChildProperties *props;
 
     // return if the area is NULL
     NUX_RETURN_IF_NULL(area);
     // Return if the area already has a parent
-    NUX_RETURN_IF_NOTNULL(area->GetParentObject ());
+    NUX_RETURN_IF_NOTNULL(area->GetParentObject());
 
     props = new LayeredChildProperties (expand, x, y, width, height);
-    area->SetLayoutProperties (props);
+
+    std::map<Area*, LayeredChildProperties*>::iterator it = area_property_map_.find(area);
+    if (it != area_property_map_.end())
+    {
+      delete (it->second);
+      it->second = NULL;
+    }
+    area_property_map_[area] = props;
 
     if (!m_active_area)
     {
@@ -325,8 +327,18 @@ namespace nux
 
     NUX_RETURN_IF_NULL(area);
 
-    props = dynamic_cast<LayeredChildProperties *>(area->GetLayoutProperties ());
-    NUX_RETURN_IF_NULL(props);
+    std::map<Area*, LayeredChildProperties*>::iterator it = area_property_map_.find(area);
+    if (it != area_property_map_.end())
+    {
+      props = it->second;
+    }
+    else
+    {
+      props = NULL;
+    }
+
+    if (props == NULL)
+      return;
 
     props->Update (expand, x, y, width, height);
 
@@ -335,33 +347,46 @@ namespace nux
 
   void LayeredLayout::RemoveLayer (Area *area)
   {
+    if (area == NULL)
+      return;
+
     LayeredChildProperties *props;
 
-    NUX_RETURN_IF_NULL(area);
+    std::map<Area*, LayeredChildProperties*>::iterator prop_it = area_property_map_.find(area);
+    if (prop_it != area_property_map_.end())
+    {
+      props = prop_it->second;
+    }
+    else
+    {
+      props = NULL;
+    }
 
-    props = dynamic_cast<LayeredChildProperties *>(area->GetLayoutProperties ());
-    NUX_RETURN_IF_NULL(props);
+    if (prop_it == area_property_map_.end())
+      return;
 
-    (*props->m_vis_it).disconnect ();
-    area->SetLayoutProperties (NULL);
+    if (props)
+    {
+      (*props->m_vis_it).disconnect ();
+    }
 
+    area_property_map_.erase(prop_it);
 
     if (m_active_area == area)
     {
-      std::list<Area *>::iterator it, eit = _layout_element_list.end ();
-      int i = 0;
+      std::list<Area *>::iterator it, eit = _layout_element_list.end();
 
+      int index = 0;
       m_active_index = 0;
       m_active_area = NULL;
-      for (it = _layout_element_list.begin (); it != eit; ++it)
+      for (it = _layout_element_list.begin (); it != eit; ++it, ++index)
       {
         if (*it != area)
         {
           m_active_area = static_cast<Area *> (*it);
-          m_active_index = i;
+          m_active_index = index;
           break;
         }
-        i++;
       }
     }
 

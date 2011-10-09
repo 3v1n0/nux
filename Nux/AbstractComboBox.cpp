@@ -64,18 +64,18 @@ namespace nux
     _pango_static_text = 0;
   }
 
-  void AbstractComboBox::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void AbstractComboBox::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
     
-    GfxContext.PushClippingRectangle (base);
-    GetPainter().PaintBackground (GfxContext, base);
-    GetPainter().PaintShape (GfxContext, base, m_sCOMBO_COLOR,  eSHAPE_CORNER_ROUND4);
+    graphics_engine.PushClippingRectangle (base);
+    GetPainter().PaintBackground (graphics_engine, base);
+    GetPainter().PaintShape (graphics_engine, base, m_sCOMBO_COLOR,  eSHAPE_CORNER_ROUND4);
 
     {
-      //GetPainter().PaintTextLineStatic (GfxContext, GetFont (), _combo_box_area->GetGeometry(), _combo_box_area->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
+      //GetPainter().PaintTextLineStatic (graphics_engine, GetFont (), _combo_box_area->GetGeometry(), _combo_box_area->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
       _pango_static_text->SetGeometry (_combo_box_area->GetGeometry ());
-      _pango_static_text->ProcessDraw (GfxContext, true);
+      _pango_static_text->ProcessDraw (graphics_engine, true);
     }
     
     Geometry button_geo = _combo_box_opening_area->GetGeometry();
@@ -83,13 +83,13 @@ namespace nux
     button_geo.OffsetPosition (+4, +1);
 
     if (_combo_box_area->IsMouseInside() || _combo_box_opening_area->IsMouseInside())
-      GetPainter().PaintShape (GfxContext, button_geo, m_sCOMBO_MOUSEOVER_COLOR,  eSHAPE_CORNER_ROUND4);
+      GetPainter().PaintShape (graphics_engine, button_geo, m_sCOMBO_MOUSEOVER_COLOR,  eSHAPE_CORNER_ROUND4);
     else
-      GetPainter().PaintShape (GfxContext, button_geo, m_sCOMBO_BUTTON_COLOR,  eSHAPE_CORNER_ROUND4);
+      GetPainter().PaintShape (graphics_engine, button_geo, m_sCOMBO_BUTTON_COLOR,  eSHAPE_CORNER_ROUND4);
 
     GeometryPositioning gp (eHACenter, eVACenter);
     Geometry GeoPo = ComputeGeometryPositioning (button_geo, GetTheme().GetImageGeometry (eCOMBOBOX_OPEN_BUTTON), gp);
-    GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eCOMBOBOX_OPEN_BUTTON);
+    GetPainter().PaintShape (graphics_engine, GeoPo, Color (0xFFFFFFFF), eCOMBOBOX_OPEN_BUTTON);
 
     Geometry popup_geometry;
     popup_geometry.SetX (_combo_box_area->GetBaseX() );
@@ -97,15 +97,15 @@ namespace nux
     popup_geometry.SetWidth (_combo_box_area->GetBaseWidth() );
     popup_geometry.SetHeight (_combo_box_area->GetBaseHeight() );
 
-    GfxContext.PopClippingRectangle ();
+    graphics_engine.PopClippingRectangle ();
   }
 
-  void AbstractComboBox::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void AbstractComboBox::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void AbstractComboBox::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void AbstractComboBox::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }

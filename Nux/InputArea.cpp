@@ -62,26 +62,10 @@ logging::Logger logger("nux.inputarea");
   {
   }
 
-  // TODO: DEPRECATED
-  bool InputArea::ForceStartFocus (int x, int y)
+  
+  void InputArea::OnDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
-    return false;
-  }
-
-  // TODO: DEPRECATED
-  void InputArea::ForceStopFocus (int x, int y)
-  {
-  }
-
-  // TODO: DEPRECATED
-  long InputArea::OnEvent (Event &event, long TraverseInfo, long ProcessEventInfo)
-  {
-    return 0;
-  }
-
-  void InputArea::OnDraw (GraphicsEngine &GfxContext, bool force_draw)
-  {
-    GfxContext.QRP_Color (GetBaseX(), GetBaseY(), GetBaseWidth(), GetBaseHeight(), m_AreaColor);
+    graphics_engine.QRP_Color (GetBaseX(), GetBaseY(), GetBaseWidth(), GetBaseHeight(), m_AreaColor);
   }
 
   void InputArea::SetBaseString (const TCHAR *Caption)

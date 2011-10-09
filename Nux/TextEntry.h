@@ -81,9 +81,9 @@ namespace nux
     ~TextEntry ();
 
     Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw);
 
     void PreLayoutManagement ();
     long PostLayoutManagement (long layoutResult);

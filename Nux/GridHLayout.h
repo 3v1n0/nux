@@ -100,7 +100,7 @@ namespace nux
       @param ProcessEventInfo
       @return The state of the Process Event.
     */
-    virtual void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void ProcessDraw (GraphicsEngine &graphics_engine, bool force_draw);
 
     void SetSpaceBetweenChildren(int horizontal_space, int vertical_space);
 

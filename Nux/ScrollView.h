@@ -157,13 +157,13 @@ namespace nux
 
   protected:
 
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual long ProcessEvent (Event &event, long TraverseInfo, long ProcessEventInfo);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
 
     void RecvMouseWheel(int x, int y, int wheel_delta,  long button_flags, unsigned long key_flags);
+    void OnChildFocusChanged(Area *child);
 
     //! Change Vertical Scrollbar in the ScrollView.
     /*!

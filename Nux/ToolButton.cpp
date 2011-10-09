@@ -60,44 +60,36 @@ namespace nux
     m_Texture->UnReference ();
   }
 
-  long ToolButton::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-    return ret;
-  }
-
-  void ToolButton::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void ToolButton::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
 
     if (IsMouseInside() && !IsMouseOwner() )
     {
-      GetPainter().PaintBackground (GfxContext, base);
-      GetPainter().PaintShape (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY),  eSHAPE_CORNER_ROUND2);
+      GetPainter().PaintBackground (graphics_engine, base);
+      GetPainter().PaintShape (graphics_engine, base, Color (COLOR_BACKGROUND_SECONDARY),  eSHAPE_CORNER_ROUND2);
     }
     else if (IsMouseOwner() )
     {
-      GetPainter().PaintBackground (GfxContext, base);
-      GetPainter().PaintShape (GfxContext, base, Color (0xFF2A2A2A),  eSHAPE_CORNER_ROUND2);
+      GetPainter().PaintBackground (graphics_engine, base);
+      GetPainter().PaintShape (graphics_engine, base, Color (0xFF2A2A2A),  eSHAPE_CORNER_ROUND2);
     }
     else
     {
-      GetPainter().PaintBackground (GfxContext, base);
-      GetPainter().PaintShape (GfxContext, base, Color (COLOR_BACKGROUND_PRIMARY),  eSHAPE_CORNER_ROUND2);
+      GetPainter().PaintBackground (graphics_engine, base);
+      GetPainter().PaintShape (graphics_engine, base, Color (COLOR_BACKGROUND_PRIMARY),  eSHAPE_CORNER_ROUND2);
     }
 
     if (m_Texture)
-      GetPainter().Draw2DTextureAligned (GfxContext, m_Texture, base, TextureAlignmentStyle (eTACenter, eTACenter) );
+      GetPainter().Draw2DTextureAligned (graphics_engine, m_Texture, base, TextureAlignmentStyle (eTACenter, eTACenter) );
   }
 
-  void ToolButton::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void ToolButton::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void ToolButton::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void ToolButton::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }

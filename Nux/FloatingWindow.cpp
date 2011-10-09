@@ -127,80 +127,6 @@ namespace nux
     _title_bar_layout->UnReference();
   }
 
-  long FloatingWindow::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-    long ProcEvInfo = 0;
-
-    IEvent window_event = ievent;
-    Geometry base = GetGeometry();
-    window_event.e_x_root = base.x;
-    window_event.e_y_root = base.y;
-
-    if (ievent.e_event == NUX_MOUSE_PRESSED)
-    {
-      if (!GetGeometry().IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root) )
-      {
-        ProcEvInfo = eDoNotProcess;
-        //return TraverseInfo;
-      }
-    }
-
-    ret = _close_button->OnEvent (window_event, ret, ProcEvInfo);
-
-    if (HasTitleBar() )
-    {
-      ret = _title_bar->OnEvent (window_event, ret, ProcEvInfo);
-    }
-
-//    if(m_vertical_scrollbar_enable)
-//        ret = vscrollbar->ProcessEvent(ievent, ret, ProcEvInfo);
-//    if(m_horizontal_scrollbar_enable)
-//        ret = hscrollbar->ProcessEvent(ievent, ret, ProcEvInfo);
-
-    if (IsSizeMatchContent() == false)
-    {
-      // Do not let the _resize_handle test the event because the window is not displaying it;
-      int XGrip = window_event.e_x - window_event.e_x_root - _resize_handle->GetBaseX();
-      int YGrip = window_event.e_y - window_event.e_y_root - _resize_handle->GetBaseY();
-
-      if (ievent.e_event == NUX_MOUSE_PRESSED)
-      {
-        // We want to false on one half of the size grip square to register a mouse down. This is meant to leave more room
-        // for the scrollbar buttons (if any) at the bottom right of the window.
-        if ((XGrip > 0) && (YGrip > 0) && (XGrip > _resize_handle_height - YGrip))
-        {
-          ret = _resize_handle->OnEvent(window_event, ret, ProcEvInfo);
-        }
-      }
-      else
-      {
-        ret = _resize_handle->OnEvent(window_event, ret, ProcEvInfo);
-      }
-    }
-
-    // The child layout get the Mouse down button only if the MouseDown happened inside the client view Area
-    Geometry viewGeometry = GetGeometry(); //Geometry(m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight);
-
-    if (ievent.e_event == NUX_MOUSE_PRESSED)
-    {
-      if (!viewGeometry.IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root) )
-      {
-        ProcEvInfo = eDoNotProcess;
-      }
-    }
-
-    if (m_layout)
-      ret = m_layout->ProcessEvent (window_event, ret, ProcEvInfo);
-
-    // PostProcessEvent2 must always have its last parameter set to 0
-    // because the m_BackgroundArea is the real physical limit of the window.
-    // So the previous test about IsPointInside do not prevail over m_BackgroundArea
-    // testing the event by itself.
-    ret = PostProcessEvent2 (ievent, ret, 0);
-    return ret;
-  }
-
   Area* FloatingWindow::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
     bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
@@ -237,52 +163,52 @@ namespace nux
     return this;
   }
 
-  void FloatingWindow::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void FloatingWindow::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
     // The elements position inside the window are referenced to top-left window corner. So bring base to (0, 0).
     base.SetX (0);
     base.SetY (0);
-    GfxContext.PushClippingRectangle (base);
+    graphics_engine.PushClippingRectangle (base);
 
-    GetPainter().PushDrawShapeLayer (GfxContext, base, eSHAPE_CORNER_ROUND10, Color (0xFF707070), eCornerTopLeft | eCornerTopRight, true);
+    GetPainter().PushDrawShapeLayer (graphics_engine, base, eSHAPE_CORNER_ROUND10, Color (0xFF707070), eCornerTopLeft | eCornerTopRight, true);
 
     if (HasTitleBar() )
     {
-      GetPainter().PaintShapeCorner (GfxContext, Geometry (_title_bar->GetBaseX(), _title_bar->GetBaseY(),
+      GetPainter().PaintShapeCorner (graphics_engine, Geometry (_title_bar->GetBaseX(), _title_bar->GetBaseY(),
                                  _title_bar->GetBaseWidth(), _title_bar->GetBaseHeight() ), Color (0xFF2f2f2f),
                                  eSHAPE_CORNER_ROUND10, eCornerTopLeft | eCornerTopRight);
 
-      GetPainter().PaintTextLineStatic (GfxContext, GetSysBoldFont(), _window_title_bar->GetGeometry(), _window_title, Color (0xFFFFFFFF), true, eAlignTextCenter);
-      GetPainter().Draw2DTextureAligned (GfxContext, CloseIcon, _close_button->GetGeometry(), TextureAlignmentStyle (eTACenter, eTACenter) );
+      GetPainter().PaintTextLineStatic (graphics_engine, GetSysBoldFont(), _window_title_bar->GetGeometry(), _window_title, Color (0xFFFFFFFF), true, eAlignTextCenter);
+      GetPainter().Draw2DTextureAligned (graphics_engine, CloseIcon, _close_button->GetGeometry(), TextureAlignmentStyle (eTACenter, eTACenter) );
     }
 
     GetPainter().PopBackground();
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void FloatingWindow::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void FloatingWindow::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
     // The elements position inside the window are referenced to top-left window corner. So bring base to (0, 0).
     base.SetX (0);
     base.SetY (0);
 
-    GetPainter().PushShapeLayer (GfxContext, base, eSHAPE_CORNER_ROUND10, Color (0xFF707070), eCornerTopLeft | eCornerTopRight, true);
+    GetPainter().PushShapeLayer (graphics_engine, base, eSHAPE_CORNER_ROUND10, Color (0xFF707070), eCornerTopLeft | eCornerTopRight, true);
 
     if (m_layout)
     {
-      GfxContext.PushClippingRectangle (base);
+      graphics_engine.PushClippingRectangle (base);
 
-      m_layout->ProcessDraw (GfxContext, force_draw);
+      m_layout->ProcessDraw (graphics_engine, force_draw);
 
-      GfxContext.PopClippingRectangle();
+      graphics_engine.PopClippingRectangle();
     }
 
     GetPainter().PopBackground();
   }
 
-  void FloatingWindow::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void FloatingWindow::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     if (force_draw == false)
     {
@@ -293,7 +219,7 @@ namespace nux
     {
       // Do not draw the size grip if the window is constrained by the size of the container layout.
       Geometry geo = _resize_handle->GetGeometry ();
-      GfxContext.QRP_Triangle (geo.x + geo.width, geo.y, geo.x, geo.y + geo.height, geo.x + geo.width, geo.y + geo.height, Color (0xFF999999));
+      graphics_engine.QRP_Triangle (geo.x + geo.width, geo.y, geo.x, geo.y + geo.height, geo.x + geo.width, geo.y + geo.height, Color (0xFF999999));
     }
   }
 

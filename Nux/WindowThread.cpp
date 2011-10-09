@@ -542,21 +542,8 @@ logging::Logger logger("nux.windows.thread");
     nuxDebugMsg (TEXT("[WindowThread::ReadyFakeEventProcessing] Ready to process fake event."));
     _processing_fake_event = true;
   }
-  
-  long WindowThread::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    if (m_bWaitForModalWindow)
-      return TraverseInfo;
 
-    long ret = TraverseInfo;
-
-    if (_main_layout)
-      ret = _main_layout->ProcessEvent (ievent, ret, ProcessEventInfo);
-
-    return ret;
-  }
-
-  void WindowThread::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void WindowThread::ProcessDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     if (_main_layout)
     {
@@ -566,12 +553,12 @@ logging::Logger logger("nux.windows.thread");
       {
         // A main layout re computation has happen. It was not initiated physically by resizing the window. We need to draw the background to
         // clean any dirty region.
-        int buffer_width = GfxContext.GetWindowWidth();
-        int buffer_height = GfxContext.GetWindowHeight();
-        GetPainter().PaintBackground (GfxContext, Geometry (0, 0, buffer_width, buffer_height) );
+        int buffer_width = graphics_engine.GetWindowWidth();
+        int buffer_height = graphics_engine.GetWindowHeight();
+        GetPainter().PaintBackground (graphics_engine, Geometry (0, 0, buffer_width, buffer_height) );
       }
 
-      _main_layout->ProcessDraw (GfxContext, force_draw || dirty);
+      _main_layout->ProcessDraw (graphics_engine, force_draw || dirty);
     }
   }
 
@@ -877,7 +864,7 @@ logging::Logger logger("nux.windows.thread");
   t_u32 WindowThread::ExecutionLoop()
 #endif
   {
-    IEvent event;
+    Event event;
 
     if (!IsEmbeddedWindow() && GetWindow().IsPauseThreadGraphicsRendering() )
     {
@@ -897,7 +884,7 @@ logging::Logger logger("nux.windows.thread");
         GetTimer().StartEarlyTimerObjects ();
       }
 
-      memset(&event, 0, sizeof(IEvent));
+      memset(&event, 0, sizeof(Event));
       GetWindow().GetSystemEvent(&event);
 
       if ((event.e_event == NUX_DND_ENTER_WINDOW) ||
@@ -914,7 +901,7 @@ logging::Logger logger("nux.windows.thread");
       if (_fake_event_mode && _processing_fake_event)
       {
         // Cancel the real X event and inject the fake event instead. This is wrong and should be improved.
-        memset(&event, 0, sizeof(IEvent));
+        memset(&event, 0, sizeof(Event));
         
         GetWindow().InjectXEvent(&event, _fake_event);
         
@@ -1681,8 +1668,8 @@ logging::Logger logger("nux.windows.thread");
       return false;
     }
 
-    IEvent nux_event;
-    memset (&nux_event, 0, sizeof (IEvent) );
+    Event nux_event;
+    memset (&nux_event, 0, sizeof (Event) );
 #if defined(NUX_OS_WINDOWS)
     _graphics_display->ProcessForeignWin32Event (hWnd, msg, wParam, lParam, &nux_event);
 #elif defined(NUX_OS_LINUX)

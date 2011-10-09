@@ -50,7 +50,7 @@ namespace nux
       coloreditor->sigChange.connect (sigc::mem_fun (coloreditorproxy, &ColorDialogProxy::RecvDialogChange) );
     }
 
-    HLayout *ButtonLayout (new HLayout (TEXT ("Dialog Buttons"), NUX_TRACKER_LOCATION) );
+    HLayout *ButtonLayout (new HLayout ("Dialog Buttons", NUX_TRACKER_LOCATION) );
 
     ToggleButton *OkButton (new ToggleButton ("OK", NUX_TRACKER_LOCATION) );
     OkButton->SetMinimumWidth (60);
@@ -365,65 +365,25 @@ namespace nux
     delete m_ValueShader;
   }
 
-
-  long ColorEditor::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret;
-
-    ret = m_PickerArea->OnEvent (ievent, TraverseInfo, ProcessEventInfo);
-    ret = m_BaseChannelArea->OnEvent (ievent, ret, ProcessEventInfo);
-
-    // RGB
-    {
-      ret = redcheck->OnEvent (ievent, ret, ProcessEventInfo);
-      ret = redtext->OnEvent (ievent, ret, ProcessEventInfo);
-
-      ret = greencheck->OnEvent (ievent, ret, ProcessEventInfo);
-      ret = greentext->OnEvent (ievent, ret, ProcessEventInfo);
-
-      ret = bluecheck->OnEvent (ievent, ret, ProcessEventInfo);
-      ret = bluetext->OnEvent (ievent, ret, ProcessEventInfo);
-    }
-
-    // HSV
-    {
-      ret = huecheck->OnEvent (ievent, ret, ProcessEventInfo);
-      ret = huetext->OnEvent (ievent, ret, ProcessEventInfo);
-
-      ret = saturationcheck->OnEvent (ievent, ret, ProcessEventInfo);
-      ret = saturationtext->OnEvent (ievent, ret, ProcessEventInfo);
-
-      ret = valuecheck->OnEvent (ievent, ret, ProcessEventInfo);
-      ret = valuetext->OnEvent (ievent, ret, ProcessEventInfo);
-    }
-
-//     OkButton->OnEvent (ievent, ret, ProcessEventInfo);
-//     CancelButton->OnEvent (ievent, ret, ProcessEventInfo);
-
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-
-    return ret;
-  }
-
-  void ColorEditor::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void ColorEditor::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
 
-    GetPainter().PaintBackground (GfxContext, base);
-    //GetPainter().Paint2DQuadWireframe(GfxContext, base, Color(COLOR_BACKGROUND_SECONDARY));
+    GetPainter().PaintBackground (graphics_engine, base);
+    //GetPainter().Paint2DQuadWireframe(graphics_engine, base, Color(COLOR_BACKGROUND_SECONDARY));
 
     base.OffsetPosition (1, 1);
     base.OffsetSize (-2, -2);
 
-    GfxContext.PushClippingRectangle (base);
+    graphics_engine.PushClippingRectangle (base);
 
     if (m_ColorModel == color::RGB)
     {
-      DrawRGB (GfxContext, force_draw);
+      DrawRGB (graphics_engine, force_draw);
     }
     else
     {
-      DrawHSV (GfxContext, force_draw);
+      DrawHSV (graphics_engine, force_draw);
     }
 
     redcheck->QueueDraw();
@@ -443,51 +403,51 @@ namespace nux
 //     OkButton->QueueDraw();
 //     CancelButton->QueueDraw();
 
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
 // Draw Marker on Base Chanel Area
-  void ColorEditor::DrawBaseChannelMarker (GraphicsEngine &GfxContext)
+  void ColorEditor::DrawBaseChannelMarker (GraphicsEngine &graphics_engine)
   {
     int marker_position_x;
     int marker_position_y;
 
-    GfxContext.PushClippingRectangle (m_BaseChannelArea->GetGeometry() );
+    graphics_engine.PushClippingRectangle (m_BaseChannelArea->GetGeometry() );
 
     marker_position_x = m_BaseChannelArea->GetBaseX();
     marker_position_y = m_BaseChannelArea->GetBaseY() + m_VertMarkerPosition.y;
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x, marker_position_y - 5,
+    GetPainter().Draw2DTriangleColor (graphics_engine, marker_position_x, marker_position_y - 5,
                                   marker_position_x + 5, marker_position_y,
                                   marker_position_x, marker_position_y + 5, Color (0.0f, 0.0f, 0.0f, 1.0f) );
 
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x, marker_position_y - 4,
+    GetPainter().Draw2DTriangleColor (graphics_engine, marker_position_x, marker_position_y - 4,
                                   marker_position_x + 4, marker_position_y,
                                   marker_position_x, marker_position_y + 4, Color (0.7f, 0.7f, 0.7f, 1.0f) );
 
     marker_position_x = m_BaseChannelArea->GetBaseX() + m_BaseChannelArea->GetBaseWidth();
     marker_position_y = m_BaseChannelArea->GetBaseY() + m_VertMarkerPosition.y;
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x, marker_position_y - 5,
+    GetPainter().Draw2DTriangleColor (graphics_engine, marker_position_x, marker_position_y - 5,
                                   marker_position_x - 5, marker_position_y,
                                   marker_position_x, marker_position_y + 5, Color (0.0f, 0.0f, 0.0f, 1.0f) );
 
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x, marker_position_y - 4,
+    GetPainter().Draw2DTriangleColor (graphics_engine, marker_position_x, marker_position_y - 4,
                                   marker_position_x - 4, marker_position_y,
                                   marker_position_x, marker_position_y + 4, Color (0.7f, 0.7f, 0.7f, 1.0f) );
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void ColorEditor::DrawRGB (GraphicsEngine &GfxContext, bool force_draw)
+  void ColorEditor::DrawRGB (GraphicsEngine &graphics_engine, bool force_draw)
   {
     if (m_ColorModel == color::RGB)
     {
-      GetPainter().Paint2DQuadColor (GfxContext, m_ColorSquare->GetGeometry(), Color(rgb_) );
+      GetPainter().Paint2DQuadColor (graphics_engine, m_ColorSquare->GetGeometry(), Color(rgb_) );
       Color BaseChannelTop;
       Color BaseChannelBottom;
 
       if (m_ColorChannel == color::RED)
       {
         m_RedShader->SetColor (rgb_.red, rgb_.green, rgb_.blue, 1.0f);
-        m_RedShader->SetScreenPositionOffset (GfxContext.GetViewportX (), GfxContext.GetViewportY ());
+        m_RedShader->SetScreenPositionOffset (graphics_engine.GetViewportX (), graphics_engine.GetViewportY ());
         BaseChannelTop = Color (1.0f, rgb_.green, rgb_.blue, 1.0f);
         BaseChannelBottom = Color (0.0f, rgb_.green, rgb_.blue, 1.0f);
         m_RedShader->Render (
@@ -496,13 +456,13 @@ namespace nux
           0,
           m_PickerArea->GetBaseWidth(),
           m_PickerArea->GetBaseHeight(),
-          GfxContext.GetViewportWidth (), GfxContext.GetViewportHeight ()
+          graphics_engine.GetViewportWidth (), graphics_engine.GetViewportHeight ()
         );
       }
       else if (m_ColorChannel == color::GREEN)
       {
         m_GreenShader->SetColor (rgb_.red, rgb_.green, rgb_.blue, 1.0f);
-        m_GreenShader->SetScreenPositionOffset (GfxContext.GetViewportX (), GfxContext.GetViewportY ());
+        m_GreenShader->SetScreenPositionOffset (graphics_engine.GetViewportX (), graphics_engine.GetViewportY ());
         BaseChannelTop = Color (rgb_.red, 1.0f, rgb_.blue, 1.0f);
         BaseChannelBottom = Color (rgb_.red, 0.0f, rgb_.blue, 1.0f);
         m_GreenShader->Render (
@@ -511,13 +471,13 @@ namespace nux
           0,
           m_PickerArea->GetBaseWidth(),
           m_PickerArea->GetBaseHeight(),
-          GfxContext.GetViewportWidth (), GfxContext.GetViewportHeight ()
+          graphics_engine.GetViewportWidth (), graphics_engine.GetViewportHeight ()
         );
       }
       else if (m_ColorChannel == color::BLUE)
       {
         m_BlueShader->SetColor (rgb_.red, rgb_.green, rgb_.blue, 1.0f);
-        m_BlueShader->SetScreenPositionOffset (GfxContext.GetViewportX (), GfxContext.GetViewportY ());
+        m_BlueShader->SetScreenPositionOffset (graphics_engine.GetViewportX (), graphics_engine.GetViewportY ());
         BaseChannelTop = Color (rgb_.red, rgb_.green, 1.0f, 1.0f);
         BaseChannelBottom = Color (rgb_.red, rgb_.green, 0.0f, 1.0f);
         m_BlueShader->Render (
@@ -526,7 +486,7 @@ namespace nux
           0,
           m_PickerArea->GetBaseWidth(),
           m_PickerArea->GetBaseHeight(),
-          GfxContext.GetViewportWidth (), GfxContext.GetViewportHeight ()
+          graphics_engine.GetViewportWidth (), graphics_engine.GetViewportHeight ()
         );
       }
 
@@ -534,20 +494,20 @@ namespace nux
       Geometry basepickermarker = Geometry (m_BaseChannelArea->GetBaseX(), m_BaseChannelArea->GetBaseY() + m_VertMarkerPosition.y, 5, 5);
 
       Color color (rgb_.red, rgb_.green, rgb_.blue);
-      GetPainter().Paint2DQuadWireframe (GfxContext, pickermarker, OneMinusLuminance(rgb_) );
+      GetPainter().Paint2DQuadWireframe (graphics_engine, pickermarker, OneMinusLuminance(rgb_) );
 
-      GetPainter().Paint2DQuadColor (GfxContext, m_BaseChannelArea->GetGeometry(), BaseChannelTop, BaseChannelBottom, BaseChannelBottom, BaseChannelTop);
+      GetPainter().Paint2DQuadColor (graphics_engine, m_BaseChannelArea->GetGeometry(), BaseChannelTop, BaseChannelBottom, BaseChannelBottom, BaseChannelTop);
       // Draw Marker on Base Chanel Area
-      DrawBaseChannelMarker (GfxContext);
+      DrawBaseChannelMarker (graphics_engine);
     }
   }
 
-  void ColorEditor::DrawHSV (GraphicsEngine &GfxContext, bool force_draw)
+  void ColorEditor::DrawHSV (GraphicsEngine &graphics_engine, bool force_draw)
   {
     if (m_ColorModel == color::HSV)
     {
       color::RedGreenBlue rgb(hsv_);
-      GetPainter().Paint2DQuadColor(GfxContext, m_ColorSquare->GetGeometry(), Color(rgb) );
+      GetPainter().Paint2DQuadColor(graphics_engine, m_ColorSquare->GetGeometry(), Color(rgb) );
 
       Color BaseChannelTop;
       Color BaseChannelBottom;
@@ -555,14 +515,14 @@ namespace nux
       if (m_ColorChannel == color::HUE)
       {
         m_HueShader->SetColor (hsv_.hue, hsv_.saturation, hsv_.value, 1.0f);
-        m_HueShader->SetScreenPositionOffset (GfxContext.GetViewportX (), GfxContext.GetViewportY ());
+        m_HueShader->SetScreenPositionOffset (graphics_engine.GetViewportX (), graphics_engine.GetViewportY ());
         m_HueShader->Render (
           m_PickerArea->GetBaseX(),
           m_PickerArea->GetBaseY(),
           0,
           m_PickerArea->GetBaseWidth(),
           m_PickerArea->GetBaseHeight(),
-          GfxContext.GetViewportWidth (), GfxContext.GetViewportHeight ()
+          graphics_engine.GetViewportWidth (), graphics_engine.GetViewportHeight ()
         );
 
         Geometry P = m_BaseChannelArea->GetGeometry();
@@ -572,21 +532,21 @@ namespace nux
         float fw = P.GetHeight() / 6;
 
         Geometry p = Geometry (P.x, P.y, P.GetWidth(), fw);
-        GetPainter().Paint2DQuadVGradient (GfxContext, p, Color (1.0f * v, s * v, s * v), Color (1.0f * v, s * v, 1.0f * v) );
+        GetPainter().Paint2DQuadVGradient (graphics_engine, p, Color (1.0f * v, s * v, s * v), Color (1.0f * v, s * v, 1.0f * v) );
         p.SetY (P.y + fw);
-        GetPainter().Paint2DQuadVGradient (GfxContext, p, Color (1.0f * v, s * v, 1.0f * v), Color (s * v, s * v, 1.0f * v) );
+        GetPainter().Paint2DQuadVGradient (graphics_engine, p, Color (1.0f * v, s * v, 1.0f * v), Color (s * v, s * v, 1.0f * v) );
         p.SetY (P.y + 2 * fw);
-        GetPainter().Paint2DQuadVGradient (GfxContext, p, Color (s * v, s * v, 1.0f * v), Color (s * v, 1.0f * v, 1.0f * v) );
+        GetPainter().Paint2DQuadVGradient (graphics_engine, p, Color (s * v, s * v, 1.0f * v), Color (s * v, 1.0f * v, 1.0f * v) );
         p.SetY (P.y + 3 * fw);
-        GetPainter().Paint2DQuadVGradient (GfxContext, p, Color (s * v, 1.0f * v, 1.0f * v), Color (s * v, 1.0f * v, s * v) );
+        GetPainter().Paint2DQuadVGradient (graphics_engine, p, Color (s * v, 1.0f * v, 1.0f * v), Color (s * v, 1.0f * v, s * v) );
         p.SetY (P.y + 4 * fw);
-        GetPainter().Paint2DQuadVGradient (GfxContext, p, Color (s * v, 1.0f * v, s * v), Color (1.0f * v, 1.0f * v, s * v) );
+        GetPainter().Paint2DQuadVGradient (graphics_engine, p, Color (s * v, 1.0f * v, s * v), Color (1.0f * v, 1.0f * v, s * v) );
         p.SetY (P.y + 5 * fw);
         p.SetHeight (P.GetHeight() - 5 * fw); // correct rounding errors
-        GetPainter().Paint2DQuadVGradient (GfxContext, p, Color (1.0f * v, 1.0f * v, s * v), Color (1.0f * v, s * v, s * v) );
+        GetPainter().Paint2DQuadVGradient (graphics_engine, p, Color (1.0f * v, 1.0f * v, s * v), Color (1.0f * v, s * v, s * v) );
 
         Geometry pickermarker = Geometry (GetBaseX() + m_MarkerPosition.x - 2, GetBaseY() + m_MarkerPosition.y - 2, 5, 5);
-        GetPainter().Paint2DQuadWireframe(GfxContext, pickermarker, OneMinusLuminance(rgb_));
+        GetPainter().Paint2DQuadWireframe(graphics_engine, pickermarker, OneMinusLuminance(rgb_));
       }
       else if (m_ColorChannel == color::SATURATION)
       {
@@ -594,7 +554,7 @@ namespace nux
         if (value < 0.3f) value = 0.3f;
 
         m_SaturationShader->SetColor(hsv_.hue, hsv_.saturation, hsv_.value, 1.0f);
-        m_SaturationShader->SetScreenPositionOffset (GfxContext.GetViewportX (), GfxContext.GetViewportY ());
+        m_SaturationShader->SetScreenPositionOffset (graphics_engine.GetViewportX (), graphics_engine.GetViewportY ());
         BaseChannelTop = Color(color::RedGreenBlue(color::HueSaturationValue(hsv_.hue, 1.0f, value)));
         BaseChannelBottom = Color(value, value, value, 1.0f);
         m_SaturationShader->Render (
@@ -603,18 +563,18 @@ namespace nux
           0,
           m_PickerArea->GetBaseWidth(),
           m_PickerArea->GetBaseHeight(),
-          GfxContext.GetViewportWidth (), GfxContext.GetViewportHeight ()
+          graphics_engine.GetViewportWidth (), graphics_engine.GetViewportHeight ()
         );
 
         //Geometry pickermarker = Geometry(GetX() + x - 2, GetY() + y -2, 5, 5);
         Geometry pickermarker = Geometry (GetBaseX() + m_MarkerPosition.x - 2, GetBaseY() + m_MarkerPosition.y - 2, 5, 5);
-        GetPainter().Paint2DQuadWireframe (GfxContext, pickermarker, OneMinusLuminance(rgb_) );
-        GetPainter().Paint2DQuadColor (GfxContext, m_BaseChannelArea->GetGeometry(), BaseChannelTop, BaseChannelBottom, BaseChannelBottom, BaseChannelTop);
+        GetPainter().Paint2DQuadWireframe (graphics_engine, pickermarker, OneMinusLuminance(rgb_) );
+        GetPainter().Paint2DQuadColor (graphics_engine, m_BaseChannelArea->GetGeometry(), BaseChannelTop, BaseChannelBottom, BaseChannelBottom, BaseChannelTop);
       }
       else if (m_ColorChannel == color::VALUE)
       {
         m_ValueShader->SetColor (hsv_.hue, hsv_.saturation, hsv_.value, 1.0f);
-        m_ValueShader->SetScreenPositionOffset (GfxContext.GetViewportX (), GfxContext.GetViewportY ());
+        m_ValueShader->SetScreenPositionOffset (graphics_engine.GetViewportX (), graphics_engine.GetViewportY ());
         BaseChannelTop = Color(color::RedGreenBlue(color::HueSaturationValue(hsv_.hue, hsv_.saturation, 1.0f)));
         BaseChannelBottom = Color(color::RedGreenBlue(color::HueSaturationValue(hsv_.hue, hsv_.saturation, 0.0f)));
         m_ValueShader->Render (
@@ -623,40 +583,35 @@ namespace nux
           0,
           m_PickerArea->GetBaseWidth(),
           m_PickerArea->GetBaseHeight(),
-          GfxContext.GetViewportWidth (), GfxContext.GetViewportHeight ()
+          graphics_engine.GetViewportWidth (), graphics_engine.GetViewportHeight ()
         );
 
         //Geometry pickermarker = Geometry(GetX() + x - 2, GetY() + y -2, 5, 5);
         Geometry pickermarker = Geometry (GetBaseX() + m_MarkerPosition.x - 2, GetBaseY() + m_MarkerPosition.y - 2, 5, 5);
-        GetPainter().Paint2DQuadWireframe (GfxContext, pickermarker, OneMinusLuminance(rgb_) );
-        GetPainter().Paint2DQuadColor (GfxContext, m_BaseChannelArea->GetGeometry(), BaseChannelTop, BaseChannelBottom, BaseChannelBottom, BaseChannelTop);
+        GetPainter().Paint2DQuadWireframe (graphics_engine, pickermarker, OneMinusLuminance(rgb_) );
+        GetPainter().Paint2DQuadColor (graphics_engine, m_BaseChannelArea->GetGeometry(), BaseChannelTop, BaseChannelBottom, BaseChannelBottom, BaseChannelTop);
       }
 
       // Draw Marker on Base Chanel Area
-      DrawBaseChannelMarker (GfxContext);
+      DrawBaseChannelMarker (graphics_engine);
     }
   }
 
-  void ColorEditor::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void ColorEditor::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
   {
-    redcheck->ProcessDraw (GfxContext, force_draw);
-    redtext->ProcessDraw (GfxContext, force_draw);
-    greencheck->ProcessDraw (GfxContext, force_draw);
-    greentext->ProcessDraw (GfxContext, force_draw);
-    bluecheck->ProcessDraw (GfxContext, force_draw);
-    bluetext->ProcessDraw (GfxContext, force_draw);
+    redcheck->ProcessDraw (graphics_engine, force_draw);
+    redtext->ProcessDraw (graphics_engine, force_draw);
+    greencheck->ProcessDraw (graphics_engine, force_draw);
+    greentext->ProcessDraw (graphics_engine, force_draw);
+    bluecheck->ProcessDraw (graphics_engine, force_draw);
+    bluetext->ProcessDraw (graphics_engine, force_draw);
 
-    huecheck->ProcessDraw (GfxContext, force_draw);
-    huetext->ProcessDraw (GfxContext, force_draw);
-    saturationcheck->ProcessDraw (GfxContext, force_draw);
-    saturationtext->ProcessDraw (GfxContext, force_draw);
-    valuecheck->ProcessDraw (GfxContext, force_draw);
-    valuetext->ProcessDraw (GfxContext, force_draw);
-  }
-
-  void ColorEditor::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
-  {
-
+    huecheck->ProcessDraw (graphics_engine, force_draw);
+    huetext->ProcessDraw (graphics_engine, force_draw);
+    saturationcheck->ProcessDraw (graphics_engine, force_draw);
+    saturationtext->ProcessDraw (graphics_engine, force_draw);
+    valuecheck->ProcessDraw (graphics_engine, force_draw);
+    valuetext->ProcessDraw (graphics_engine, force_draw);
   }
 
   void ColorEditor::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)

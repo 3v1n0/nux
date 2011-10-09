@@ -38,22 +38,17 @@ namespace nux
   {
   }
 
-  long ColorArea::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  void ColorArea::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
-    return TraverseInfo;
+    GetPainter().Paint2DQuadColor (graphics_engine, GetGeometry(), m_Color);
   }
 
-  void ColorArea::Draw (GraphicsEngine &GfxContext, bool force_draw)
-  {
-    GetPainter().Paint2DQuadColor (GfxContext, GetGeometry(), m_Color);
-  }
-
-  void ColorArea::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void ColorArea::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void ColorArea::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void ColorArea::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }

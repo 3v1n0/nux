@@ -50,36 +50,22 @@ namespace nux
     m_CaptionArea->Dispose();
   }
 
-  long GroupBox2::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  void GroupBox2::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
-    long ret = TraverseInfo;
-
-    if (m_layout != 0)
-    {
-      ret = m_layout->ProcessEvent (ievent, ret, ProcessEventInfo);
-    }
-
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-    return ret;
-  }
-
-
-  void GroupBox2::Draw (GraphicsEngine &GfxContext, bool force_draw)
-  {
-    GfxContext.PushClippingRectangle (GetGeometry() );
+    graphics_engine.PushClippingRectangle (GetGeometry() );
 
     Geometry header = GetGeometry();
     header.SetHeight (TOP_HEADER_HEIGHT);
     Geometry layoutgeomerty = GetGeometry();
     layoutgeomerty.OffsetPosition (0, TOP_HEADER_HEIGHT);
     layoutgeomerty.OffsetSize (0, -TOP_HEADER_HEIGHT);
-    GetPainter().PaintShapeCorner (GfxContext, header, Color (0xFF000000), eSHAPE_CORNER_ROUND4, eCornerTopLeft | eCornerTopRight, false);
+    GetPainter().PaintShapeCorner (graphics_engine, header, Color (0xFF000000), eSHAPE_CORNER_ROUND4, eCornerTopLeft | eCornerTopRight, false);
 
-    GetPainter().PushDrawShapeLayer (GfxContext, layoutgeomerty, eSHAPE_CORNER_ROUND4, GROUPBOX2_HEADER_BASE_COLOR, eCornerBottomLeft | eCornerBottomRight);
+    GetPainter().PushDrawShapeLayer (graphics_engine, layoutgeomerty, eSHAPE_CORNER_ROUND4, GROUPBOX2_HEADER_BASE_COLOR, eCornerBottomLeft | eCornerBottomRight);
 
     //if(bCaptionAvailable)
     {
-      GetPainter().PaintTextLineStatic (GfxContext, GetSysBoldFont(), m_CaptionArea->GetGeometry(), m_CaptionArea->GetBaseString(), GROUPBOX2_HEADER_TEXT_COLOR);
+      GetPainter().PaintTextLineStatic (graphics_engine, GetSysBoldFont(), m_CaptionArea->GetGeometry(), m_CaptionArea->GetBaseString(), GROUPBOX2_HEADER_TEXT_COLOR);
     }
 
     if (m_layout != 0)
@@ -88,36 +74,36 @@ namespace nux
     }
 
     GetPainter().PopBackground();
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void GroupBox2::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void GroupBox2::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
   {
     if (m_layout == 0)
       return;
 
-    GfxContext.PushClippingRectangle (m_layout->GetGeometry() );
+    graphics_engine.PushClippingRectangle (m_layout->GetGeometry() );
     Geometry layoutgeomerty = GetGeometry();
     layoutgeomerty.OffsetPosition (0, TOP_HEADER_HEIGHT);
     layoutgeomerty.OffsetSize (0, -TOP_HEADER_HEIGHT);
 
     if (force_draw)
-      GetPainter().PushDrawShapeLayer (GfxContext, layoutgeomerty, eSHAPE_CORNER_ROUND4, GROUPBOX2_HEADER_BASE_COLOR, eAllCorners);
+      GetPainter().PushDrawShapeLayer (graphics_engine, layoutgeomerty, eSHAPE_CORNER_ROUND4, GROUPBOX2_HEADER_BASE_COLOR, eAllCorners);
     else
-      GetPainter().PushShapeLayer (GfxContext, layoutgeomerty, eSHAPE_CORNER_ROUND4, GROUPBOX2_HEADER_BASE_COLOR, eAllCorners);
+      GetPainter().PushShapeLayer (graphics_engine, layoutgeomerty, eSHAPE_CORNER_ROUND4, GROUPBOX2_HEADER_BASE_COLOR, eAllCorners);
 
     if (m_layout)
     {
-      GfxContext.PushClippingRectangle (m_layout->GetGeometry() );
-      m_layout->ProcessDraw (GfxContext, force_draw);
-      GfxContext.PopClippingRectangle();
+      graphics_engine.PushClippingRectangle (m_layout->GetGeometry() );
+      m_layout->ProcessDraw (graphics_engine, force_draw);
+      graphics_engine.PopClippingRectangle();
     }
 
     GetPainter().PopBackground();
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void GroupBox2::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void GroupBox2::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }

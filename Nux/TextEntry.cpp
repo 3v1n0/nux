@@ -151,9 +151,6 @@ namespace nux
     , key_nav_mode_(false)
 
   {
-    // Protected member from View, not passable to constructor.
-    _can_pass_focus_to_composite_layout = false;
-
     cairo_font_options_set_antialias(font_options_, CAIRO_ANTIALIAS_SUBPIXEL);
     cairo_font_options_set_hint_style(font_options_, CAIRO_HINT_STYLE_FULL);
     cairo_font_options_set_hint_metrics(font_options_, CAIRO_HINT_METRICS_ON);

@@ -28,7 +28,6 @@ namespace nux
 {
   NUX_IMPLEMENT_OBJECT_TYPE(Layout);
   NUX_IMPLEMENT_OBJECT_TYPE(SpaceLayout);
-  NUX_IMPLEMENT_OBJECT_TYPE(LinearLayout);
 
   Layout::Layout (NUX_FILE_LINE_DECL)
     :   Area (NUX_FILE_LINE_PARAM)
@@ -181,17 +180,17 @@ namespace nux
 // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
   void Layout::AddLayout (Layout *layout, unsigned int stretchFactor, MinorDimensionPosition minor_position, MinorDimensionSize minor_size, float percentage, LayoutPosition index)
   {
-    nuxAssertMsg (layout != 0, TEXT ("[Layout::AddView] Invalid parameter.") );
+    nuxAssertMsg (layout != 0, "[Layout::AddView] Invalid parameter." );
     NUX_RETURN_IF_TRUE (layout == 0);
     //  Should never happen
-    nuxAssertMsg (layout != this, TEXT ("[Layout::AddLayout] Error: Trying to add a layout to itself.") );
+    nuxAssertMsg (layout != this, "[Layout::AddLayout] Error: Trying to add a layout to itself." );
     NUX_RETURN_IF_FALSE (layout != 0);
 
     Area *parent = layout->GetParentObject();
-    nuxAssertMsg (parent == 0, TEXT ("[Layout::AddLayout] Trying to add an object that already has a parent.") );
+    nuxAssertMsg (parent == 0, "[Layout::AddLayout] Trying to add an object that already has a parent." );
     NUX_RETURN_IF_TRUE (parent != 0);
 
-    nuxAssertMsg (index >= 0, TEXT ("[Layout::AddLayout] Invalid index position. Adding at the beginning of the list..") );
+    nuxAssertMsg (index >= 0, "[Layout::AddLayout] Invalid index position. Adding at the beginning of the list.." );
 
     layout->SetStretchFactor (stretchFactor);
     layout->SetPositioning (minor_position);
@@ -263,14 +262,14 @@ namespace nux
 
   void Layout::AddView (Area *bo, unsigned int stretchFactor, MinorDimensionPosition minor_position, MinorDimensionSize minor_size, float percentage, LayoutPosition index)
   {
-    nuxAssertMsg (bo != 0, TEXT ("[Layout::AddView] Invalid parameter.") );
+    nuxAssertMsg (bo != 0, "[Layout::AddView] Invalid parameter." );
     NUX_RETURN_IF_TRUE (bo == 0);
 
     Area *parent = bo->GetParentObject();
-    nuxAssertMsg (parent == 0, TEXT ("[Layout::AddView] Trying to add an object that already has a parent.") );
+    nuxAssertMsg (parent == 0, "[Layout::AddView] Trying to add an object that already has a parent." );
     NUX_RETURN_IF_TRUE (parent != 0);
 
-    nuxAssertMsg (index >= 0, TEXT ("[Layout::AddView] Invalid index position. Adding at the beginning of the list..") );
+    nuxAssertMsg (index >= 0, "[Layout::AddView] Invalid index position. Adding at the beginning of the list.." );
 
     bo->SetStretchFactor (stretchFactor);
     bo->SetPositioning (minor_position);
@@ -461,7 +460,7 @@ namespace nux
     std::list<Area *>::iterator it;
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      if ((*it)->IsVisible() && (*it)->IsSensitive())
+      if ((*it)->IsVisible() && (*it)->GetInputEventSensitivity())
       {
         Area* hit_view = NUX_STATIC_CAST(Area*, (*it)->FindAreaUnderMouse(mouse_position, event_type));
         if(hit_view)
@@ -472,17 +471,17 @@ namespace nux
     return NULL;
   }
 
-  void Layout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void Layout::ProcessDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     std::list<Area *>::iterator it;
-    GfxContext.PushModelViewMatrix(Get2DMatrix());
+    graphics_engine.PushModelViewMatrix(Get2DMatrix());
 
     // Clip against the padding region.
     Geometry clip_geo = GetGeometry();
     clip_geo.OffsetPosition(left_padding_, top_padding_);
     clip_geo.OffsetSize(-left_padding_ - right_padding_, -top_padding_ - bottom_padding_);
 
-    GfxContext.PushClippingRectangle(clip_geo);
+    graphics_engine.PushClippingRectangle(clip_geo);
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
@@ -492,25 +491,25 @@ namespace nux
       if ((*it)->IsView ())
       {
         View *ic = NUX_STATIC_CAST (View*, (*it));
-        ic->ProcessDraw (GfxContext, force_draw);
+        ic->ProcessDraw (graphics_engine, force_draw);
       }
       else if ((*it)->IsLayout ())
       {
         Layout *layout = NUX_STATIC_CAST (Layout*, (*it));
-        layout->ProcessDraw (GfxContext, force_draw);
+        layout->ProcessDraw (graphics_engine, force_draw);
       }
       // InputArea should be tested last
       else if ((*it)->IsInputArea ())
       {
         InputArea *input_area = NUX_STATIC_CAST (InputArea*, (*it));
-        input_area->OnDraw (GfxContext, force_draw);
+        input_area->OnDraw (graphics_engine, force_draw);
       }
     }
 
-    GfxContext.PopClippingRectangle();
-    GfxContext.PopModelViewMatrix();
+    graphics_engine.PopClippingRectangle();
+    graphics_engine.PopModelViewMatrix();
 
-    //GfxContext.PopClipOffset ();
+    //graphics_engine.PopClipOffset ();
 
     _queued_draw = false;
   }
@@ -581,23 +580,5 @@ namespace nux
   bool Layout::AcceptKeyNavFocus()
   {
     return false;
-  }
-
-  void LinearLayout::SetHorizontalInternalMargin(int space)
-  {
-    SetSpaceBetweenChildren(space);
-  }
-
-  void LinearLayout::SetVerticalInternalMargin(int space)
-  {
-    SetSpaceBetweenChildren(space);
-  }
-
-  void LinearLayout::SetSpaceBetweenChildren(int space)
-  {
-#if DEBUG_LAYOUT
-    return;
-#endif
-    space_between_children_ = space >= 0 ? space : 0;
   }
 }

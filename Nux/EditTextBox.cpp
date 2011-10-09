@@ -94,10 +94,10 @@ namespace nux
   void EditTextBox::ScrollTimerInterrupt (void *v)
   {
     Geometry base = GetGeometry();
-    IEvent &ievent = GetGraphicsDisplay()->GetCurrentEvent();
+    Event &event = GetGraphicsDisplay()->GetCurrentEvent();
 
-    int X = ievent.e_x;
-    m_KeyboardHandler.CaretAutoScroll (ievent.e_x, ievent.e_y, base);
+    int X = event.e_x;
+    m_KeyboardHandler.CaretAutoScroll (event.e_x, event.e_y, base);
 
     if ( ( (X < base.x) && (m_KeyboardHandler.GetCursorPosition() > 0) ) ||
          ( (X > base.x + base.GetWidth() ) && (m_KeyboardHandler.GetCursorPosition() < m_KeyboardHandler.GetLength() ) ) )
@@ -147,26 +147,19 @@ namespace nux
     m_Validator = validator->Clone();
   }
 
-  long EditTextBox::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-    return ret;
-  }
-
-  void EditTextBox::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void EditTextBox::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
 
     {
-      GfxContext.PushClippingRectangle (base);
+      graphics_engine.PushClippingRectangle (base);
 
-      GetPainter().Paint2DQuadColor (GfxContext, base, Color (m_BackgroundColor) );
+      GetPainter().Paint2DQuadColor (graphics_engine, base, Color (m_BackgroundColor) );
 
       if (HasKeyboardFocus() )
       {
 
-        GetPainter().PaintColorTextLineEdit (GfxContext, GetGeometry(),
+        GetPainter().PaintColorTextLineEdit (graphics_engine, GetGeometry(),
                                          m_KeyboardHandler.GetTextLine(),
                                          GetTextColor(),
                                          m_WriteAlpha,
@@ -183,20 +176,20 @@ namespace nux
       }
       else
       {
-        GetPainter().PaintTextLineStatic (GfxContext, GetFont (), GetGeometry(),
+        GetPainter().PaintTextLineStatic (graphics_engine, GetFont (), GetGeometry(),
                                       m_KeyboardHandler.GetTextLine(),
                                       GetTextColor() );
       }
     }
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void EditTextBox::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void EditTextBox::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void EditTextBox::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void EditTextBox::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }

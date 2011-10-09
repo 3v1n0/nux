@@ -61,9 +61,9 @@ namespace nux
     void SetColorFormat(color::Format cf);
     Color GetColor() const;
 
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw);
 
     void SetRGB (Color const& color);
     void SetRGB (float r, float g, float b);
@@ -115,14 +115,14 @@ namespace nux
     virtual bool AcceptKeyNavFocus();
 
   private:
-    void DrawRedMarker (GraphicsEngine &GfxContext);
-    void DrawGreenMarker (GraphicsEngine &GfxContext);
-    void DrawBlueMarker (GraphicsEngine &GfxContext);
-    void DrawAlphaMarker (GraphicsEngine &GfxContext);
+    void DrawRedMarker (GraphicsEngine &graphics_engine);
+    void DrawGreenMarker (GraphicsEngine &graphics_engine);
+    void DrawBlueMarker (GraphicsEngine &graphics_engine);
+    void DrawAlphaMarker (GraphicsEngine &graphics_engine);
 
-    void DrawRGB (GraphicsEngine &GfxContext);
-    void DrawHSV (GraphicsEngine &GfxContext);
-    void DrawHLS (GraphicsEngine &GfxContext);
+    void DrawRGB (GraphicsEngine &graphics_engine);
+    void DrawHSV (GraphicsEngine &graphics_engine);
+    void DrawHLS (GraphicsEngine &graphics_engine);
 
     HLayout *hlayout;
     HLayout *redlayout;

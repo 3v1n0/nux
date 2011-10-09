@@ -33,9 +33,9 @@ namespace nux
     VSplitter (NUX_FILE_LINE_PROTO);
     ~VSplitter();
 
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw);
 
     void AddWidget (Area *ic, float stretchfactor);
     void ResetSplitConfig();
@@ -46,7 +46,7 @@ namespace nux
     void OnSplitterMouseUp (t_s32 x, t_s32 y, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos);
     void OnSplitterMouseDrag (t_s32 x, t_s32 y, t_s32 dx, t_s32 dy, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos);
 
-    virtual void OverlayDrawing (GraphicsEngine &GfxContext);
+    virtual void OverlayDrawing (GraphicsEngine &graphics_engine);
 
     //! Return true if this object can break the layout.
     /*

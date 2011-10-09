@@ -41,10 +41,9 @@ namespace nux
   public:
     EditTextBox (const TCHAR *Caption, NUX_FILE_LINE_PROTO);
     ~EditTextBox();
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw);
 
     //! Return True if the the area knows what to do with the key event.
     virtual bool InspectKeyEvent(unsigned int eventType,

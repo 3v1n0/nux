@@ -258,18 +258,6 @@ namespace nux
 
   }
 
-  long HScrollBar::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-    ret = _scroll_right_button->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = _scroll_left_button->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = _slider->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = _track->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-
-    return ret;
-  }
-
   Area* HScrollBar::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
     bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
@@ -287,19 +275,19 @@ namespace nux
     return this;
   }
 
-  void HScrollBar::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void HScrollBar::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
-    GetPainter().PaintBackground (GfxContext, base);
+    GetPainter().PaintBackground (graphics_engine, base);
     base.OffsetPosition (HSCROLLBAR_WIDTH, 0);
     base.OffsetSize (-2 * HSCROLLBAR_WIDTH, 0);
-    GetPainter().PaintShape (GfxContext, base,
+    GetPainter().PaintShape (graphics_engine, base,
                          Color (COLOR_SCROLLBAR_TRACK), eHSCROLLBAR, false);
 
-    GetPainter().PaintShape (GfxContext, _scroll_left_button->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_LEFT);
-    GetPainter().PaintShape (GfxContext, _scroll_right_button->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_RIGHT);
+    GetPainter().PaintShape (graphics_engine, _scroll_left_button->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_LEFT);
+    GetPainter().PaintShape (graphics_engine, _scroll_right_button->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_RIGHT);
 
-    GetPainter().PaintShape (GfxContext, _slider->GetGeometry(),
+    GetPainter().PaintShape (graphics_engine, _slider->GetGeometry(),
                          Color (0.2156 * m_color_factor, 0.2156 * m_color_factor, 0.2156 * m_color_factor, 1.0f),
                          eHSCROLLBAR, true);
   };

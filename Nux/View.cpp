@@ -34,13 +34,9 @@ namespace nux
     :   InputArea (NUX_FILE_LINE_PARAM)
   {
     _font = GetSysFont ();
-    _is_view_active     = true; // The view is active by default
-    view_layout_ = 0;
-    _need_redraw        = false;
-    m_UseStyleDrawing   = true;
+    view_layout_ = NULL;
+    draw_cmd_queued_        = false;
     m_TextColor         = Color (1.0f, 1.0f, 1.0f, 1.0f);
-    _can_pass_focus_to_composite_layout = true;
-    _can_focus          = true;
 
     // Set widget default size;
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
@@ -173,71 +169,53 @@ namespace nux
   {
   }
 
-  long View::PostProcessEvent2 (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  void View::ProcessDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
-    return OnEvent (ievent, TraverseInfo, ProcessEventInfo);
-  }
+    full_view_draw_cmd_ = false;
 
-
-  void View::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
-  {
-    _full_redraw = false;
-
-    GfxContext.PushModelViewMatrix (Get2DMatrix ());
+    graphics_engine.PushModelViewMatrix (Get2DMatrix ());
 
     if (force_draw)
     {
-      _need_redraw = true;
-      _full_redraw = true;
-      Draw (GfxContext, force_draw);
-      DrawContent (GfxContext, force_draw);
-      PostDraw (GfxContext, force_draw);
+      draw_cmd_queued_ = true;
+      full_view_draw_cmd_ = true;
+      Draw (graphics_engine, force_draw);
+      DrawContent (graphics_engine, force_draw);
+      PostDraw (graphics_engine, force_draw);
     }
     else
     {
-      if (_need_redraw)
+      if (draw_cmd_queued_)
       {
-        _full_redraw = true;
-        Draw (GfxContext, false);
-        DrawContent (GfxContext, false);
-        PostDraw (GfxContext, false);
+        full_view_draw_cmd_ = true;
+        Draw (graphics_engine, false);
+        DrawContent (graphics_engine, false);
+        PostDraw (graphics_engine, false);
       }
       else
       {
-        DrawContent (GfxContext, false);
-        PostDraw (GfxContext, false);
+        DrawContent (graphics_engine, false);
+        PostDraw (graphics_engine, false);
       }
     }
 
-// just leave this here, its helpful for debugging focus issues :)
-//     if (GetFocused () && _can_pass_focus_to_composite_layout == false)
-//     {
-//       GetPainter ().Paint2DQuadColor (GfxContext, GetGeometry (), nux::Color (0.2, 1.0, 0.2, 1.0));
-//     }
+    graphics_engine.PopModelViewMatrix ();
 
-//     if (GetFocused () && _can_pass_focus_to_composite_layout == true)
-//     {
-//       GetPainter ().Paint2DQuadColor (GfxContext, GetGeometry (), nux::Color (1.0, 0.2, 0.2, 1.0));
-//     }
-
-
-    GfxContext.PopModelViewMatrix ();
-
-    _need_redraw = false;
-    _full_redraw = false;
+    draw_cmd_queued_ = false;
+    full_view_draw_cmd_ = false;
   }
 
-  void View::Draw(GraphicsEngine &GfxContext, bool force_draw)
+  void View::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void View::DrawContent(GraphicsEngine &GfxContext, bool force_draw)
+  void View::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void View::PostDraw(GraphicsEngine &GfxContext, bool force_draw)
+  void View::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
@@ -255,7 +233,7 @@ namespace nux
     if (view_layout_)
       view_layout_->QueueDraw ();
 
-    _need_redraw = true;
+    draw_cmd_queued_ = true;
     OnQueueDraw.emit (this);
   }
 
@@ -268,22 +246,22 @@ namespace nux
         application->AddToDrawList(this);
         application->RequestRedraw();
     }
-    //_need_redraw = false;
+    //draw_cmd_queued_ = false;
   }
 
   bool View::IsRedrawNeeded()
   {
-    return _need_redraw;
+    return draw_cmd_queued_;
   }
 
   bool View::IsFullRedraw() const
   {
-    return _full_redraw;
+    return full_view_draw_cmd_;
   }
 
   void View::DoneRedraw()
   {
-    _need_redraw = false;
+    draw_cmd_queued_ = false;
 
     if (view_layout_)
     {
@@ -391,12 +369,12 @@ namespace nux
     _font = font;
   }
 
-  ObjectPtr<FontTexture> View::GetFont ()
+  ObjectPtr<FontTexture> View::GetFont()
   {
     return _font;
   }
 
-  void View::SetTextColor (const Color &color)
+  void View::SetTextColor(const Color &color)
   {
     m_TextColor = color;
   }
@@ -406,29 +384,41 @@ namespace nux
     return m_TextColor;
   }
 
-  void View::ActivateView ()
+  void View::EnableView()
   {
-    _is_view_active = false;
+    view_enabled_ = false;
   }
 
-  void View::DeactivateView ()
+  void View::DisableView()
   {
-    _is_view_active = true;
+    view_enabled_ = true;
   }
 
-  bool View::IsViewActive () const
+  void View::SetEnableView(bool enable)
   {
-    return _is_view_active;
+    if (enable)
+    {
+      EnableView();
+    }
+    else
+    {
+      DisableView();
+    }
   }
 
-  void View::GeometryChangePending ()
+  bool View::IsViewEnabled() const
   {
-    QueueDraw ();
+    return view_enabled_;
   }
 
-  void View::GeometryChanged ()
+  void View::GeometryChangePending()
   {
-    QueueDraw ();
+    QueueDraw();
+  }
+
+  void View::GeometryChanged()
+  {
+    QueueDraw();
   }
 
   Area* View::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)

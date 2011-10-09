@@ -75,30 +75,22 @@ namespace nux
     delete m_DialogThreadProxy;
   }
 
-  long ColorPreview::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-    ret = m_ColorArea->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-    return ret;
-  }
-
-  void ColorPreview::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void ColorPreview::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
 
-    GetPainter().PaintBackground (GfxContext, base);
-    GetPainter().PaintShape (GfxContext, m_ColorArea->GetGeometry(), m_Color, eSHAPE_CORNER_ROUND4, false);
-    //GetPainter().Paint2DQuadWireFrameColor(GfxContext, base, Color(COLOR_BACKGROUND_SECONDARY));
+    GetPainter().PaintBackground (graphics_engine, base);
+    GetPainter().PaintShape (graphics_engine, m_ColorArea->GetGeometry(), m_Color, eSHAPE_CORNER_ROUND4, false);
+    //GetPainter().Paint2DQuadWireFrameColor(graphics_engine, base, Color(COLOR_BACKGROUND_SECONDARY));
     m_ColorValue->QueueDraw();
   }
 
-  void ColorPreview::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void ColorPreview::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
   {
-    m_ColorValue->ProcessDraw (GfxContext, force_draw);
+    m_ColorValue->ProcessDraw (graphics_engine, force_draw);
   }
 
-  void ColorPreview::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void ColorPreview::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }

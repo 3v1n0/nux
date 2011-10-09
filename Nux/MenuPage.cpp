@@ -140,17 +140,13 @@ namespace nux
 //    return &_action_item;
 //}
 
-  long MenuItem::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    return PostProcessEvent2 (ievent, TraverseInfo, ProcessEventInfo);
-  }
 
-  void MenuItem::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void MenuItem::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void MenuItem::DrawAsMenuItem (GraphicsEngine &GfxContext, const Color &textcolor, bool is_highlighted, bool isFirstItem, bool isLastItem, bool draw_icone)
+  void MenuItem::DrawAsMenuItem (GraphicsEngine &graphics_engine, const Color &textcolor, bool is_highlighted, bool isFirstItem, bool isLastItem, bool draw_icone)
   {
     Geometry geo = GetGeometry ();
     Geometry icon_geo (0, 0, 20, 20);
@@ -168,34 +164,34 @@ namespace nux
     {
       /*
           if(isFirstItem && isLastItem)
-              GetPainter().PaintShape(GfxContext, geo, COLOR_FOREGROUND_SECONDARY, eSHAPE_CORNER_ROUND4);
+              GetPainter().PaintShape(graphics_engine, geo, COLOR_FOREGROUND_SECONDARY, eSHAPE_CORNER_ROUND4);
           else if(isFirstItem)
-              GetPainter().PaintShapeCorner(GfxContext, geo, COLOR_FOREGROUND_SECONDARY, eSHAPE_CORNER_ROUND4, eCornerTopLeft | eCornerTopRight);
+              GetPainter().PaintShapeCorner(graphics_engine, geo, COLOR_FOREGROUND_SECONDARY, eSHAPE_CORNER_ROUND4, eCornerTopLeft | eCornerTopRight);
           else if(isLastItem)
-              GetPainter().PaintShapeCorner(GfxContext, geo, COLOR_FOREGROUND_SECONDARY, eSHAPE_CORNER_ROUND4, eCornerBottomLeft | eCornerBottomRight);
+              GetPainter().PaintShapeCorner(graphics_engine, geo, COLOR_FOREGROUND_SECONDARY, eSHAPE_CORNER_ROUND4, eCornerBottomLeft | eCornerBottomRight);
           else
-              GetPainter().Paint2DQuadColor(GfxContext, geo, COLOR_FOREGROUND_SECONDARY);
+              GetPainter().Paint2DQuadColor(graphics_engine, geo, COLOR_FOREGROUND_SECONDARY);
       */
-      GetPainter().Paint2DQuadColor (GfxContext, geo, Color (0x44000000) /*COLOR_FOREGROUND_SECONDARY*/);
+      GetPainter().Paint2DQuadColor (graphics_engine, geo, Color (0x44000000) /*COLOR_FOREGROUND_SECONDARY*/);
       _pango_static_text->SetTextColor (Color (1.0f, 1.0f, 1.0f, 1.0f));
     }
     else
     {
       _pango_static_text->SetTextColor (Color (0.0f, 0.0f, 0.0f, 1.0f));
-      //GetPainter().Paint2DQuadColor(GfxContext, geo, Color(0xFF868686));
+      //GetPainter().Paint2DQuadColor(graphics_engine, geo, Color(0xFF868686));
     }
 
     //if(m_Icon)
     {
-      //GetPainter().Draw2DTextureAligned(GfxContext, &_action_item->GetIcon(), icon_geo, TextureAlignmentStyle(eTACenter, eTACenter));
+      //GetPainter().Draw2DTextureAligned(graphics_engine, &_action_item->GetIcon(), icon_geo, TextureAlignmentStyle(eTACenter, eTACenter));
     }
 
     if (label)
     {
-      //GetPainter().PaintTextLineStatic (GfxContext, GetFont (), text_geo, std::string (label), textcolor, eAlignTextLeft);
+      //GetPainter().PaintTextLineStatic (graphics_engine, GetFont (), text_geo, std::string (label), textcolor, eAlignTextLeft);
 
       _pango_static_text->SetGeometry (text_geo);
-      _pango_static_text->ProcessDraw (GfxContext, true);
+      _pango_static_text->ProcessDraw (graphics_engine, true);
     }
   }
 
@@ -210,17 +206,12 @@ namespace nux
 
   }
 
-  long MenuSeparator::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    return PostProcessEvent2 (ievent, TraverseInfo, ProcessEventInfo);
-  }
-
-  void MenuSeparator::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void MenuSeparator::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
     int y0 = base.y + base.GetHeight() / 2;
-    GetPainter().Draw2DLine (GfxContext, base.x, y0, base.x + base.GetWidth(), y0, Color(0xFF222222));
-    GetPainter().Draw2DLine (GfxContext, base.x, y0 + 1, base.x + base.GetWidth(), y0 + 1, Color(0xFFAAAAAA));
+    GetPainter().Draw2DLine (graphics_engine, base.x, y0, base.x + base.GetWidth(), y0, Color(0xFF222222));
+    GetPainter().Draw2DLine (graphics_engine, base.x, y0 + 1, base.x + base.GetWidth(), y0 + 1, Color(0xFFAAAAAA));
   }
 
   MenuPage::MenuPage(const TCHAR *title, NUX_FILE_LINE_DECL)
@@ -294,73 +285,6 @@ namespace nux
     return m_Action_Triggered;
   }
 
-  long MenuPage::ProcessEvent (Event &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-
-    Event mod_event = ievent;
-    mod_event.e_x_root = 0;
-    mod_event.e_y_root = 0;
-
-    if (m_IsActive)
-    {
-      if (mod_event.e_event == NUX_MOUSE_RELEASED)
-      {
-        Geometry geo = GetGraphicsDisplay()->GetWindowGeometry();
-        geo.SetX (0);
-        geo.SetY (0);
-
-        if (!geo.IsPointInside (mod_event.e_x, mod_event.e_y) /*mod_event.e_x < 0 || mod_event.e_y < 0*/)
-        {
-          // the event happened outside the window.
-          NotifyTerminateMenuCascade();
-        }
-        else
-        {
-          EmitMouseUp (mod_event.e_x - GetBaseX(), mod_event.e_y - GetBaseY(), mod_event.GetMouseState(), mod_event.GetKeyState() );
-        }
-      }
-      else if (mod_event.e_event == NUX_MOUSE_PRESSED)
-      {
-        Geometry geo = GetGraphicsDisplay()->GetWindowGeometry();
-        geo.SetX (0);
-        geo.SetY (0);
-
-        if (!geo.IsPointInside (mod_event.e_x, mod_event.e_y) /*mod_event.e_x < 0 || mod_event.e_y < 0*/)
-        {
-          // the event happened outside the window.
-          NotifyTerminateMenuCascade();
-        }
-        else
-        {
-          ret = PostProcessEvent2 (mod_event, ret, ProcessEventInfo);
-        }
-      }
-      else if (mod_event.e_event == NUX_WINDOW_CONFIGURATION)
-      {
-        NotifyTerminateMenuCascade();
-      }
-      else if (mod_event.e_event == NUX_WINDOW_EXIT_FOCUS)
-      {
-        NotifyTerminateMenuCascade();
-      }
-      else
-      {
-        if (mod_event.e_event == NUX_MOUSE_MOVE)
-          QueueDraw ();
-
-        ret = PostProcessEvent2 (mod_event, ret, ProcessEventInfo);
-      }
-    }
-
-    if (GetGeometry ().IsPointInside (mod_event.GetX (), mod_event.GetY ()))
-    {
-      ret |= eMouseEventSolved;
-    }
-
-    return ret;
-  };
-
   Area* MenuPage::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
     bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
@@ -373,7 +297,7 @@ namespace nux
     return this;
   }
 
-  void MenuPage::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void MenuPage::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     if (m_IsActive)
     {
@@ -381,12 +305,12 @@ namespace nux
       Geometry shadow;
       shadow = base;
       shadow.OffsetPosition (4, 4);
-      //GetPainter().PaintShape(GfxContext, shadow, Color(0xFF000000), eSHAPE_CORNER_ROUND4_SHADOW);
+      //GetPainter().PaintShape(graphics_engine, shadow, Color(0xFF000000), eSHAPE_CORNER_ROUND4_SHADOW);
 
-      GfxContext.PushClippingRectangle (base);
-      GfxContext.GetRenderStates ().SetBlend (GL_TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      GetPainter ().Paint2DQuadColor (GfxContext, base, Color (0xCCFFFFFF) );
-      GfxContext.GetRenderStates ().SetBlend (GL_FALSE);
+      graphics_engine.PushClippingRectangle (base);
+      graphics_engine.GetRenderStates ().SetBlend (GL_TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      GetPainter ().Paint2DQuadColor (graphics_engine, base, Color (0xCCFFFFFF) );
+      graphics_engine.GetRenderStates ().SetBlend (GL_FALSE);
 
       Geometry text_area;
       text_area.SetX (base.x);
@@ -401,26 +325,26 @@ namespace nux
       for (it = m_MenuItemVector.begin (), i = 0; it != m_MenuItemVector.end (); it++, i++)
       {
         bool is_highlighted = (m_HighlightedItem == i);
-        (*it)->DrawAsMenuItem (GfxContext, Color (0xFFFFFFFF) /*GetTextColor()*/, is_highlighted, i == 0, i == (numItem - 1), true);
+        (*it)->DrawAsMenuItem (graphics_engine, Color (0xFFFFFFFF) /*GetTextColor()*/, is_highlighted, i == 0, i == (numItem - 1), true);
       }
 
       std::vector<MenuSeparator* >::iterator separator_iterator;
 
       for (separator_iterator = m_MenuSeparatorVector.begin (); separator_iterator != m_MenuSeparatorVector.end (); separator_iterator++)
       {
-        (*separator_iterator)->Draw (GfxContext, force_draw);
+        (*separator_iterator)->Draw (graphics_engine, force_draw);
       }
 
-      GfxContext.PopClippingRectangle ();
+      graphics_engine.PopClippingRectangle ();
     }
   }
 
-  void MenuPage::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void MenuPage::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void MenuPage::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void MenuPage::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
@@ -847,7 +771,6 @@ namespace nux
   {
     if (m_NextMouseUpMeanStop == false)
     {
-      ForceStopFocus (0, 0);
       m_NextMouseUpMeanStop = true;
       return;
     }
@@ -1051,7 +974,6 @@ namespace nux
   void MenuPage::StopMenu (int x, int y)
   {
     SetActive (false);
-    ForceStopFocus (x, y);
     // The Stack Manager will remove all popup that are not visible anymore
     m_NextMouseUpMeanStop = false;
     m_HighlightedItem = -1;

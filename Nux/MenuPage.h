@@ -40,7 +40,7 @@ namespace nux
     MenuItem (const TCHAR *label, int UserValue, NUX_FILE_LINE_PROTO);
     ~MenuItem();
 
-    void DrawAsMenuItem (GraphicsEngine &GfxContext, const Color &textcolor, bool is_highlighted, bool isFirstItem, bool isLastItem, bool draw_icone);
+    void DrawAsMenuItem (GraphicsEngine &graphics_engine, const Color &textcolor, bool is_highlighted, bool isFirstItem, bool isLastItem, bool draw_icone);
 
     //const ActionItem& GetItem() const {return m_ActionItem;}
     ActionItem *GetActionItem() const;
@@ -55,10 +55,9 @@ namespace nux
     }
 
   private:
-    virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw) {};
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw) {};
+    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw) {};
+    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw) {};
 
     void SetChildMenu (MenuPage *menu);
     MenuPage *GetChildMenu() const;
@@ -77,10 +76,9 @@ namespace nux
     MenuSeparator (NUX_FILE_LINE_PROTO);
     ~MenuSeparator();
 
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw) {};
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw) {};
+    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw) {};
+    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw) {};
 
   private:
     friend class MenuPage;
@@ -264,10 +262,9 @@ namespace nux
     
   protected:
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) ;
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw);
 
   private:
 

@@ -282,7 +282,7 @@ namespace nux
     NUX_SAFE_DELETE (m_CheckboardLayer);
   }
 
-  void RGBValuator::DrawRedMarker (GraphicsEngine &GfxContext)
+  void RGBValuator::DrawRedMarker (GraphicsEngine &graphics_engine)
   {
     int marker_position_x;
     int marker_position_y;
@@ -298,22 +298,22 @@ namespace nux
     if (m_color_model == color::HLS)
       percent = hls_.hue;
 
-    GfxContext.PushClippingRectangle (m_RedValuator->GetGeometry() );
+    graphics_engine.PushClippingRectangle (m_RedValuator->GetGeometry() );
 
     marker_position_x = m_RedValuator->GetBaseX() + percent * m_RedValuator->GetBaseWidth();
     marker_position_y = m_RedValuator->GetBaseY() + m_RedValuator->GetBaseHeight();
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 5, marker_position_y,
+    GetPainter().Draw2DTriangleColor (graphics_engine, marker_position_x - 5, marker_position_y,
                                   marker_position_x, marker_position_y - 5,
                                   marker_position_x + 5, marker_position_y, Color (0xFF000000) );
 
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 4, marker_position_y,
+    GetPainter().Draw2DTriangleColor (graphics_engine, marker_position_x - 4, marker_position_y,
                                   marker_position_x, marker_position_y - 4,
                                   marker_position_x + 4, marker_position_y, Color (0.7f, 0.7f, 0.7f, 1.0f) );
 
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void RGBValuator::DrawGreenMarker (GraphicsEngine &GfxContext)
+  void RGBValuator::DrawGreenMarker (GraphicsEngine &graphics_engine)
   {
     int marker_position_x;
     int marker_position_y;
@@ -329,22 +329,22 @@ namespace nux
     if (m_color_model == color::HLS)
       percent = hls_.lightness;
 
-    GfxContext.PushClippingRectangle (m_GreenValuator->GetGeometry() );
+    graphics_engine.PushClippingRectangle (m_GreenValuator->GetGeometry() );
 
     marker_position_x = m_GreenValuator->GetBaseX() + percent * m_GreenValuator->GetBaseWidth();
     marker_position_y = m_GreenValuator->GetBaseY() + m_GreenValuator->GetBaseHeight();
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 5, marker_position_y,
+    GetPainter().Draw2DTriangleColor (graphics_engine, marker_position_x - 5, marker_position_y,
                                   marker_position_x, marker_position_y - 5,
                                   marker_position_x + 5, marker_position_y, Color (0.0f, 0.0f, 0.0f, 1.0f) );
 
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 4, marker_position_y,
+    GetPainter().Draw2DTriangleColor (graphics_engine, marker_position_x - 4, marker_position_y,
                                   marker_position_x, marker_position_y - 4,
                                   marker_position_x + 4, marker_position_y, Color (0.7f, 0.7f, 0.7f, 1.0f) );
 
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void RGBValuator::DrawBlueMarker (GraphicsEngine &GfxContext)
+  void RGBValuator::DrawBlueMarker (GraphicsEngine &graphics_engine)
   {
     int marker_position_x;
     int marker_position_y;
@@ -360,70 +360,70 @@ namespace nux
     if (m_color_model == color::HLS)
       percent = hls_.saturation;
 
-    GfxContext.PushClippingRectangle (m_BlueValuator->GetGeometry() );
+    graphics_engine.PushClippingRectangle (m_BlueValuator->GetGeometry() );
 
     marker_position_x = m_BlueValuator->GetBaseX() + percent * m_BlueValuator->GetBaseWidth();
     marker_position_y = m_BlueValuator->GetBaseY() + m_BlueValuator->GetBaseHeight();
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 5, marker_position_y,
+    GetPainter().Draw2DTriangleColor (graphics_engine, marker_position_x - 5, marker_position_y,
                                   marker_position_x, marker_position_y - 5,
                                   marker_position_x + 5, marker_position_y, Color (0.0f, 0.0f, 0.0f, 1.0f) );
 
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 4, marker_position_y,
+    GetPainter().Draw2DTriangleColor (graphics_engine, marker_position_x - 4, marker_position_y,
                                   marker_position_x, marker_position_y - 4,
                                   marker_position_x + 4, marker_position_y, Color (0.7f, 0.7f, 0.7f, 1.0f) );
 
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void RGBValuator::DrawAlphaMarker (GraphicsEngine &GfxContext)
+  void RGBValuator::DrawAlphaMarker (GraphicsEngine &graphics_engine)
   {
     int marker_position_x;
     int marker_position_y;
 
-    GfxContext.PushClippingRectangle (m_AlphaValuator->GetGeometry() );
+    graphics_engine.PushClippingRectangle (m_AlphaValuator->GetGeometry() );
 
     marker_position_x = m_AlphaValuator->GetBaseX() + alpha_ * m_AlphaValuator->GetBaseWidth();
     marker_position_y = m_AlphaValuator->GetBaseY() + m_AlphaValuator->GetBaseHeight();
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 5, marker_position_y,
+    GetPainter().Draw2DTriangleColor (graphics_engine, marker_position_x - 5, marker_position_y,
                                   marker_position_x, marker_position_y - 5,
                                   marker_position_x + 5, marker_position_y, Color (0.0f, 0.0f, 0.0f, 1.0f) );
 
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 4, marker_position_y,
+    GetPainter().Draw2DTriangleColor (graphics_engine, marker_position_x - 4, marker_position_y,
                                   marker_position_x, marker_position_y - 4,
                                   marker_position_x + 4, marker_position_y, Color (0.7f, 0.7f, 0.7f, 1.0f) );
 
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void RGBValuator::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void RGBValuator::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
 
-    GfxContext.PushClippingRectangle (base);
-    GetPainter().PushDrawShapeLayer (GfxContext, vlayout->GetGeometry(), eSHAPE_CORNER_ROUND4, Color (0xFF000000), eAllCorners);
+    graphics_engine.PushClippingRectangle (base);
+    GetPainter().PushDrawShapeLayer (graphics_engine, vlayout->GetGeometry(), eSHAPE_CORNER_ROUND4, Color (0xFF000000), eAllCorners);
 
     if (m_color_model == color::RGB)
     {
-      DrawRGB (GfxContext);
+      DrawRGB (graphics_engine);
     }
     else if (m_color_model == color::HSV)
     {
-      DrawHSV (GfxContext);
+      DrawHSV (graphics_engine);
     }
     else if (m_color_model == color::HLS)
     {
-      DrawHLS (GfxContext);
+      DrawHLS (graphics_engine);
     }
 
-    GetPainter().PaintTextLineStatic (GfxContext, GetSysBoldFont(), m_ComponentLabel0->GetGeometry(), m_ComponentLabel0->GetBaseString().GetTCharPtr(), Color (0xFFFFFFFF) );
-    GetPainter().PaintTextLineStatic (GfxContext, GetSysBoldFont(), m_ComponentLabel1->GetGeometry(), m_ComponentLabel1->GetBaseString().GetTCharPtr(), Color (0xFFFFFFFF) );
-    GetPainter().PaintTextLineStatic (GfxContext, GetSysBoldFont(), m_ComponentLabel2->GetGeometry(), m_ComponentLabel2->GetBaseString().GetTCharPtr(), Color (0xFFFFFFFF) );
-    GetPainter().PaintTextLineStatic (GfxContext, GetSysBoldFont(), m_ComponentAlpha->GetGeometry(), m_ComponentAlpha->GetBaseString().GetTCharPtr(), Color (0xFFFFFFFF) );
+    GetPainter().PaintTextLineStatic (graphics_engine, GetSysBoldFont(), m_ComponentLabel0->GetGeometry(), m_ComponentLabel0->GetBaseString().GetTCharPtr(), Color (0xFFFFFFFF) );
+    GetPainter().PaintTextLineStatic (graphics_engine, GetSysBoldFont(), m_ComponentLabel1->GetGeometry(), m_ComponentLabel1->GetBaseString().GetTCharPtr(), Color (0xFFFFFFFF) );
+    GetPainter().PaintTextLineStatic (graphics_engine, GetSysBoldFont(), m_ComponentLabel2->GetGeometry(), m_ComponentLabel2->GetBaseString().GetTCharPtr(), Color (0xFFFFFFFF) );
+    GetPainter().PaintTextLineStatic (graphics_engine, GetSysBoldFont(), m_ComponentAlpha->GetGeometry(), m_ComponentAlpha->GetBaseString().GetTCharPtr(), Color (0xFFFFFFFF) );
 
-    DrawRedMarker (GfxContext);
-    DrawGreenMarker (GfxContext);
-    DrawBlueMarker (GfxContext);
-    DrawAlphaMarker (GfxContext);
+    DrawRedMarker (graphics_engine);
+    DrawGreenMarker (graphics_engine);
+    DrawBlueMarker (graphics_engine);
+    DrawAlphaMarker (graphics_engine);
 
     m_RedCaption->QueueDraw();
     m_GreenCaption->QueueDraw();
@@ -433,71 +433,71 @@ namespace nux
     m_ColorFormat->QueueDraw();
 
     GetPainter().PopBackground();
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void RGBValuator::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void RGBValuator::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
-    GfxContext.PushClippingRectangle (base);
+    graphics_engine.PushClippingRectangle (base);
 
-    m_RedCaption->ProcessDraw (GfxContext, force_draw);
-    m_GreenCaption->ProcessDraw (GfxContext, force_draw);
-    m_BlueCaption->ProcessDraw (GfxContext, force_draw);
-    m_AlphaCaption->ProcessDraw (GfxContext, force_draw);
+    m_RedCaption->ProcessDraw (graphics_engine, force_draw);
+    m_GreenCaption->ProcessDraw (graphics_engine, force_draw);
+    m_BlueCaption->ProcessDraw (graphics_engine, force_draw);
+    m_AlphaCaption->ProcessDraw (graphics_engine, force_draw);
 
-    m_ColorModel->ProcessDraw (GfxContext, force_draw); // the button has round corner. That is why we need to push the background.
-    m_ColorFormat->ProcessDraw (GfxContext, force_draw); // the button has round corner. That is why we need to push the background.
-    GfxContext.PopClippingRectangle();
+    m_ColorModel->ProcessDraw (graphics_engine, force_draw); // the button has round corner. That is why we need to push the background.
+    m_ColorFormat->ProcessDraw (graphics_engine, force_draw); // the button has round corner. That is why we need to push the background.
+    graphics_engine.PopClippingRectangle();
   }
 
-  void RGBValuator::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void RGBValuator::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void RGBValuator::DrawRGB (GraphicsEngine &GfxContext)
+  void RGBValuator::DrawRGB (GraphicsEngine &graphics_engine)
   {
     // Red
     Geometry P = m_RedValuator->GetGeometry();
-    GetPainter().Paint2DQuadColor (GfxContext, P, Color (0.0f, rgb_.green, rgb_.blue), Color (0.0f, rgb_.green, rgb_.blue),
+    GetPainter().Paint2DQuadColor (graphics_engine, P, Color (0.0f, rgb_.green, rgb_.blue), Color (0.0f, rgb_.green, rgb_.blue),
                                Color (1.0f, rgb_.green, rgb_.blue), Color (1.0f, rgb_.green, rgb_.blue) );
 
     // Green
     P = m_GreenValuator->GetGeometry();
-    GetPainter().Paint2DQuadColor (GfxContext, P, Color (rgb_.red, 0.0f, rgb_.blue), Color (rgb_.red, 0.0f, rgb_.blue),
+    GetPainter().Paint2DQuadColor (graphics_engine, P, Color (rgb_.red, 0.0f, rgb_.blue), Color (rgb_.red, 0.0f, rgb_.blue),
                                Color (rgb_.red, 1.0f, rgb_.blue), Color (rgb_.red, 1.0f, rgb_.blue) );
 
     // Blue
     P = m_BlueValuator->GetGeometry();
-    GetPainter().Paint2DQuadColor (GfxContext, P, Color (rgb_.red, rgb_.green, 0.0f), Color (rgb_.red, rgb_.green, 0.0f),
+    GetPainter().Paint2DQuadColor (graphics_engine, P, Color (rgb_.red, rgb_.green, 0.0f), Color (rgb_.red, rgb_.green, 0.0f),
                                Color (rgb_.red, rgb_.green, 1.0f), Color (rgb_.red, rgb_.green, 1.0f) );
 
     // Alpha
     P = m_AlphaValuator->GetGeometry();
     m_CheckboardLayer->SetGeometry (P);
-    m_CheckboardLayer->Renderlayer (GfxContext);
+    m_CheckboardLayer->Renderlayer (graphics_engine);
 
-    GfxContext.GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    GetPainter().Paint2DQuadColor (GfxContext, P, Color (0.0f, 0.0f, 0.0f, 0.0f), Color (0.0f, 0.0f, 0.0f, 0.0f),
+    graphics_engine.GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    GetPainter().Paint2DQuadColor (graphics_engine, P, Color (0.0f, 0.0f, 0.0f, 0.0f), Color (0.0f, 0.0f, 0.0f, 0.0f),
                                Color (rgb_.red, rgb_.green, rgb_.blue, 1.0f), Color (rgb_.red, rgb_.green, rgb_.blue, 1.0f) );
-    GfxContext.GetRenderStates().SetBlend (false);
+    graphics_engine.GetRenderStates().SetBlend (false);
 
     P = m_ColorSquare->GetGeometry();
     Geometry shadow_quad = P;
     P.OffsetSize (-2, -2);
     shadow_quad.OffsetSize (-2, -2);
     shadow_quad.OffsetPosition (2, 2);
-    GetPainter().Paint2DQuadColor (GfxContext, shadow_quad, Color (0, 0, 0) );
-    GetPainter().Paint2DQuadColor (GfxContext, P, Color (rgb_.red, rgb_.green, rgb_.blue), Color (rgb_.red, rgb_.green, rgb_.blue),
+    GetPainter().Paint2DQuadColor (graphics_engine, shadow_quad, Color (0, 0, 0) );
+    GetPainter().Paint2DQuadColor (graphics_engine, P, Color (rgb_.red, rgb_.green, rgb_.blue), Color (rgb_.red, rgb_.green, rgb_.blue),
                                Color (rgb_.red, rgb_.green, rgb_.blue), Color (rgb_.red, rgb_.green, rgb_.blue) );
-    GetPainter().Paint2DQuadWireframe (GfxContext, P, Color (0, 0, 0) );
+    GetPainter().Paint2DQuadWireframe (graphics_engine, P, Color (0, 0, 0) );
 
-    m_ColorModel->ProcessDraw (GfxContext, true);
-    m_ColorFormat->ProcessDraw (GfxContext, true);
+    m_ColorModel->ProcessDraw (graphics_engine, true);
+    m_ColorFormat->ProcessDraw (graphics_engine, true);
   }
 
-  void RGBValuator::DrawHSV (GraphicsEngine &GfxContext)
+  void RGBValuator::DrawHSV (GraphicsEngine &graphics_engine)
   {
     // Red
     Geometry P = m_RedValuator->GetGeometry();
@@ -506,20 +506,20 @@ namespace nux
     float fw = P.GetWidth() / 6;
 
     Geometry p = Geometry (P.x, P.y, fw, P.GetHeight() );
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (1.0f * v, s * v, s * v), Color (1.0f * v, s * v, s * v), Color (1.0f * v, 1.0f * v, s * v), Color (1.0f * v, 1.0f * v, s * v) );
+    GetPainter().Paint2DQuadColor (graphics_engine, p, Color (1.0f * v, s * v, s * v), Color (1.0f * v, s * v, s * v), Color (1.0f * v, 1.0f * v, s * v), Color (1.0f * v, 1.0f * v, s * v) );
     p.SetX (P.x + fw);
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (1.0f * v, 1.0f * v, s * v), Color (1.0f * v, 1.0f * v, s * v), Color (s * v, 1.0f * v, s * v), Color (s * v, 1.0f * v, s * v) );
+    GetPainter().Paint2DQuadColor (graphics_engine, p, Color (1.0f * v, 1.0f * v, s * v), Color (1.0f * v, 1.0f * v, s * v), Color (s * v, 1.0f * v, s * v), Color (s * v, 1.0f * v, s * v) );
 
     p.SetX (P.x + 2 * fw);
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (s * v, 1.0f * v, s * v), Color (s * v, 1.0f * v, s * v), Color (s * v, 1.0f * v, 1.0f * v), Color (s * v, 1.0f * v, 1.0f * v) );
+    GetPainter().Paint2DQuadColor (graphics_engine, p, Color (s * v, 1.0f * v, s * v), Color (s * v, 1.0f * v, s * v), Color (s * v, 1.0f * v, 1.0f * v), Color (s * v, 1.0f * v, 1.0f * v) );
     p.SetX (P.x + 3 * fw);
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (s * v, 1.0f * v, 1.0f * v), Color (s * v, 1.0f * v, 1.0f * v), Color (s * v, s * v, 1.0f * v), Color (s * v, s * v, 1.0f * v) );
+    GetPainter().Paint2DQuadColor (graphics_engine, p, Color (s * v, 1.0f * v, 1.0f * v), Color (s * v, 1.0f * v, 1.0f * v), Color (s * v, s * v, 1.0f * v), Color (s * v, s * v, 1.0f * v) );
 
     p.SetX (P.x + 4 * fw);
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (s * v, s * v, 1.0f * v), Color (s * v, s * v, 1.0f * v), Color (1.0f * v, s * v, 1.0f * v), Color (1.0f * v, s * v, 1.0f * v) );
+    GetPainter().Paint2DQuadColor (graphics_engine, p, Color (s * v, s * v, 1.0f * v), Color (s * v, s * v, 1.0f * v), Color (1.0f * v, s * v, 1.0f * v), Color (1.0f * v, s * v, 1.0f * v) );
     p.SetX (P.x + 5 * fw);
     p.SetWidth (P.GetWidth() - 5 * fw); // correct rounding errors
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (1.0f * v, s * v, 1.0f * v), Color (1.0f * v, s * v, 1.0f * v), Color (1.0f * v, s * v, s * v), Color (1.0f * v, s * v, s * v) );
+    GetPainter().Paint2DQuadColor (graphics_engine, p, Color (1.0f * v, s * v, 1.0f * v), Color (1.0f * v, s * v, 1.0f * v), Color (1.0f * v, s * v, s * v), Color (1.0f * v, s * v, s * v) );
 
     s = 1.0f - hsv_.saturation;
     v = hsv_.value;
@@ -533,38 +533,38 @@ namespace nux
     Color value_color(Color(rgb) * v);
     // Green
     P = m_GreenValuator->GetGeometry();
-    GetPainter().Paint2DQuadColor(GfxContext, P, value_gray, value_gray, value_color, value_color);
+    GetPainter().Paint2DQuadColor(graphics_engine, P, value_gray, value_gray, value_color, value_color);
 
     rgb = color::RedGreenBlue(color::HueSaturationValue(hue, hsv_.saturation, 1));
     // Blue
     P = m_BlueValuator->GetGeometry();
-    GetPainter().Paint2DQuadColor (GfxContext, P, color::Black, color::Black, Color(rgb), Color(rgb) );
+    GetPainter().Paint2DQuadColor (graphics_engine, P, color::Black, color::Black, Color(rgb), Color(rgb) );
 
     rgb = color::RedGreenBlue(color::HueSaturationValue(hue, hsv_.saturation, hsv_.value));
 
     // Alpha
     P = m_AlphaValuator->GetGeometry();
     m_CheckboardLayer->SetGeometry (P);
-    m_CheckboardLayer->Renderlayer (GfxContext);
+    m_CheckboardLayer->Renderlayer (graphics_engine);
 
-    GfxContext.GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    GetPainter().Paint2DQuadColor (GfxContext, P, Color(0.0f, 0.0f, 0.0f, 0.0f), Color(0.0f, 0.0f, 0.0f, 0.0f), Color(rgb), Color(rgb) );
-    GfxContext.GetRenderStates().SetBlend (false);
+    graphics_engine.GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    GetPainter().Paint2DQuadColor (graphics_engine, P, Color(0.0f, 0.0f, 0.0f, 0.0f), Color(0.0f, 0.0f, 0.0f, 0.0f), Color(rgb), Color(rgb) );
+    graphics_engine.GetRenderStates().SetBlend (false);
 
     P = m_ColorSquare->GetGeometry();
     Geometry shadow_quad = P;
     P.OffsetSize (-2, -2);
     shadow_quad.OffsetSize (-2, -2);
     shadow_quad.OffsetPosition (2, 2);
-    GetPainter().Paint2DQuadColor (GfxContext, shadow_quad, Color (0, 0, 0) );
-    GetPainter().Paint2DQuadColor (GfxContext, P, Color (rgb) );
-    GetPainter().Paint2DQuadWireframe (GfxContext, P, Color (0, 0, 0) );
+    GetPainter().Paint2DQuadColor (graphics_engine, shadow_quad, Color (0, 0, 0) );
+    GetPainter().Paint2DQuadColor (graphics_engine, P, Color (rgb) );
+    GetPainter().Paint2DQuadWireframe (graphics_engine, P, Color (0, 0, 0) );
 
-    m_ColorModel->ProcessDraw (GfxContext, true);
-    m_ColorFormat->ProcessDraw (GfxContext, true);
+    m_ColorModel->ProcessDraw (graphics_engine, true);
+    m_ColorFormat->ProcessDraw (graphics_engine, true);
   }
 
-  void RGBValuator::DrawHLS (GraphicsEngine &GfxContext)
+  void RGBValuator::DrawHLS (GraphicsEngine &graphics_engine)
   {
     // Red
     Geometry P = m_RedValuator->GetGeometry();
@@ -573,20 +573,20 @@ namespace nux
     float fw = P.GetWidth() / 6;
 
     Geometry p = Geometry (P.x, P.y, fw, P.GetHeight() );
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (1.0f * l, s * l, s * l), Color (1.0f * l, s * l, s * l), Color (1.0f * l, 1.0f * l, s * l), Color (1.0f * l, 1.0f * l, s * l) );
+    GetPainter().Paint2DQuadColor (graphics_engine, p, Color (1.0f * l, s * l, s * l), Color (1.0f * l, s * l, s * l), Color (1.0f * l, 1.0f * l, s * l), Color (1.0f * l, 1.0f * l, s * l) );
     p.SetX (P.x + fw);
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (1.0f * l, 1.0f * l, s * l), Color (1.0f * l, 1.0f * l, s * l), Color (s * l, 1.0f * l, s * l), Color (s * l, 1.0f * l, s * l) );
+    GetPainter().Paint2DQuadColor (graphics_engine, p, Color (1.0f * l, 1.0f * l, s * l), Color (1.0f * l, 1.0f * l, s * l), Color (s * l, 1.0f * l, s * l), Color (s * l, 1.0f * l, s * l) );
 
     p.SetX (P.x + 2 * fw);
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (s * l, 1.0f * l, s * l), Color (s * l, 1.0f * l, s * l), Color (s * l, 1.0f * l, 1.0f * l), Color (s * l, 1.0f * l, 1.0f * l) );
+    GetPainter().Paint2DQuadColor (graphics_engine, p, Color (s * l, 1.0f * l, s * l), Color (s * l, 1.0f * l, s * l), Color (s * l, 1.0f * l, 1.0f * l), Color (s * l, 1.0f * l, 1.0f * l) );
     p.SetX (P.x + 3 * fw);
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (s * l, 1.0f * l, 1.0f * l), Color (s * l, 1.0f * l, 1.0f * l), Color (s * l, s * l, 1.0f * l), Color (s * l, s * l, 1.0f * l) );
+    GetPainter().Paint2DQuadColor (graphics_engine, p, Color (s * l, 1.0f * l, 1.0f * l), Color (s * l, 1.0f * l, 1.0f * l), Color (s * l, s * l, 1.0f * l), Color (s * l, s * l, 1.0f * l) );
 
     p.SetX (P.x + 4 * fw);
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (s * l, s * l, 1.0f * l), Color (s * l, s * l, 1.0f * l), Color (1.0f * l, s * l, 1.0f * l), Color (1.0f * l, s * l, 1.0f * l) );
+    GetPainter().Paint2DQuadColor (graphics_engine, p, Color (s * l, s * l, 1.0f * l), Color (s * l, s * l, 1.0f * l), Color (1.0f * l, s * l, 1.0f * l), Color (1.0f * l, s * l, 1.0f * l) );
     p.SetX (P.x + 5 * fw);
     p.SetWidth (P.GetWidth() - 5 * fw); // correct rounding errors
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (1.0f * l, s * l, 1.0f * l), Color (1.0f * l, s * l, 1.0f * l), Color (1.0f * l, s * l, s * l), Color (1.0f * l, s * l, s * l) );
+    GetPainter().Paint2DQuadColor (graphics_engine, p, Color (1.0f * l, s * l, 1.0f * l), Color (1.0f * l, s * l, 1.0f * l), Color (1.0f * l, s * l, s * l), Color (1.0f * l, s * l, s * l) );
 
     s = 1.0f - hls_.saturation;
     l = hls_.lightness;
@@ -610,9 +610,9 @@ namespace nux
     P = m_GreenValuator->GetGeometry();
     fw = P.GetWidth() / 2;
     p = Geometry (P.x, P.y, fw, P.GetHeight() );
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (0.0f, 0.0f, 0.0f), Color (0.0f, 0.0f, 0.0f), Color (r* (1 - s) + 0.5f * s, g* (1 - s) + 0.5f * s, b* (1 - s) + 0.5f * s), Color (r* (1 - s) + 0.5f * s, g* (1 - s) + 0.5f * s, b* (1 - s) + 0.5f * s) );
+    GetPainter().Paint2DQuadColor (graphics_engine, p, Color (0.0f, 0.0f, 0.0f), Color (0.0f, 0.0f, 0.0f), Color (r* (1 - s) + 0.5f * s, g* (1 - s) + 0.5f * s, b* (1 - s) + 0.5f * s), Color (r* (1 - s) + 0.5f * s, g* (1 - s) + 0.5f * s, b* (1 - s) + 0.5f * s) );
     p.SetX (P.x + fw);
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (r* (1 - s) + 0.5f * s, g* (1 - s) + 0.5f * s, b* (1 - s) + 0.5f * s), Color (r* (1 - s) + 0.5f * s, g* (1 - s) + 0.5f * s, b* (1 - s) + 0.5f * s), Color (1.0f, 1.0f, 1.0f), Color (1.0f, 1.0f, 1.0f) );
+    GetPainter().Paint2DQuadColor (graphics_engine, p, Color (r* (1 - s) + 0.5f * s, g* (1 - s) + 0.5f * s, b* (1 - s) + 0.5f * s), Color (r* (1 - s) + 0.5f * s, g* (1 - s) + 0.5f * s, b* (1 - s) + 0.5f * s), Color (1.0f, 1.0f, 1.0f), Color (1.0f, 1.0f, 1.0f) );
 
 
     //HLStoRGB(r, g, b, Hue, hsv_.saturation, 1.0f);
@@ -635,7 +635,7 @@ namespace nux
     }
 
     P = m_BlueValuator->GetGeometry();
-    GetPainter().Paint2DQuadColor (GfxContext, P, Color (l, l, l), Color (l, l, l), Color (cr, cg, cb), Color (cr, cg, cb) );
+    GetPainter().Paint2DQuadColor (graphics_engine, P, Color (l, l, l), Color (l, l, l), Color (cr, cg, cb), Color (cr, cg, cb) );
 
     // TODO: Tim Penhey 2011-05-13
     // Can we just use the rgb_ member variable?  Check later.
@@ -644,23 +644,23 @@ namespace nux
     // Alpha
     P = m_AlphaValuator->GetGeometry();
     m_CheckboardLayer->SetGeometry (P);
-    m_CheckboardLayer->Renderlayer (GfxContext);
+    m_CheckboardLayer->Renderlayer (graphics_engine);
 
-    GfxContext.GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    GetPainter().Paint2DQuadColor(GfxContext, P, Color(0.0f, 0.0f, 0.0f, 0.0f), Color (0.0f, 0.0f, 0.0f, 0.0f), Color(rgb), Color(rgb) );
-    GfxContext.GetRenderStates().SetBlend (false);
+    graphics_engine.GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    GetPainter().Paint2DQuadColor(graphics_engine, P, Color(0.0f, 0.0f, 0.0f, 0.0f), Color (0.0f, 0.0f, 0.0f, 0.0f), Color(rgb), Color(rgb) );
+    graphics_engine.GetRenderStates().SetBlend (false);
 
     P = m_ColorSquare->GetGeometry();
     Geometry shadow_quad = P;
     P.OffsetSize (-2, -2);
     shadow_quad.OffsetSize (-2, -2);
     shadow_quad.OffsetPosition (2, 2);
-    GetPainter().Paint2DQuadColor (GfxContext, shadow_quad, Color (0, 0, 0) );
-    GetPainter().Paint2DQuadColor (GfxContext, P, Color (rgb) );
-    GetPainter().Paint2DQuadWireframe (GfxContext, P, Color (0, 0, 0) );
+    GetPainter().Paint2DQuadColor (graphics_engine, shadow_quad, Color (0, 0, 0) );
+    GetPainter().Paint2DQuadColor (graphics_engine, P, Color (rgb) );
+    GetPainter().Paint2DQuadWireframe (graphics_engine, P, Color (0, 0, 0) );
 
-    m_ColorModel->ProcessDraw (GfxContext, true);
-    m_ColorFormat->ProcessDraw (GfxContext, true);
+    m_ColorModel->ProcessDraw (graphics_engine, true);
+    m_ColorFormat->ProcessDraw (graphics_engine, true);
   }
 
   void RGBValuator::SetRGBA(Color const& color)

@@ -70,36 +70,26 @@ namespace nux
     hlayout = new HLayout (NUX_TRACKER_LOCATION);
   }
 
-  long NumericValuator::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-    ret = m_SpinnerDownBtn->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = m_SpinnerUpBtn->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = m_EditLine->ProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-    return ret;
-  };
-
-  void NumericValuator::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void NumericValuator::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
 
     GeometryPositioning gp (eHALeft, eVACenter);
     Geometry GeoPo = ComputeGeometryPositioning (m_SpinnerUpBtn->GetGeometry(), GetTheme().GetImageGeometry (eTRIANGLE_RIGHT), gp);
-    GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eTRIANGLE_RIGHT);
+    GetPainter().PaintShape (graphics_engine, GeoPo, Color (0xFFFFFFFF), eTRIANGLE_RIGHT);
 
     GeoPo = ComputeGeometryPositioning (m_SpinnerDownBtn->GetGeometry(), GetTheme().GetImageGeometry (eTRIANGLE_LEFT), gp);
-    GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eTRIANGLE_LEFT);
+    GetPainter().PaintShape (graphics_engine, GeoPo, Color (0xFFFFFFFF), eTRIANGLE_LEFT);
 
     m_EditLine->QueueDraw();
   }
 
-  void NumericValuator::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void NumericValuator::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
   {
-    m_EditLine->ProcessDraw (GfxContext, force_draw);
+    m_EditLine->ProcessDraw (graphics_engine, force_draw);
   }
 
-  void NumericValuator::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void NumericValuator::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }

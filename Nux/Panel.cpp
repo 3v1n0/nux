@@ -45,97 +45,35 @@ namespace nux
     m_layout = NULL;
   }
 
-  long Panel::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  void Panel::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
   {
-    long ret = TraverseInfo;
-    long ProcEvInfo = 0;
+    graphics_engine.PushClippingRectangle (GetGeometry() );
 
-    if (ievent.e_event == NUX_MOUSE_PRESSED)
-    {
-      if (!GetGeometry().IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root) )
-      {
-        ProcEvInfo = eDoNotProcess;
-        //return TraverseInfo;
-      }
-    }
-
-    if (m_vertical_scrollbar_enable)
-      ret = _vscrollbar->ProcessEvent (ievent, ret, ProcEvInfo);
-
-    if (m_horizontal_scrollbar_enable)
-      ret = _hscrollbar->ProcessEvent (ievent, ret, ProcEvInfo);
-
-    // The child layout get the Mouse down button only if the MouseDown happened inside the client view Area
-    Geometry viewGeometry = Geometry (m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight);
-
-    if (ievent.e_event == NUX_MOUSE_PRESSED)
-    {
-      if (!viewGeometry.IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root) )
-      {
-        ProcEvInfo = eDoNotProcess;
-      }
-    }
+    graphics_engine.PushClippingRectangle (Rect (m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight) );
 
     if (m_layout)
-      ret = m_layout->ProcessEvent (ievent, ret, ProcEvInfo);
+    {
+      graphics_engine.PushClippingRectangle (m_layout->GetGeometry() );
+      m_layout->ProcessDraw (graphics_engine, force_draw);
+      graphics_engine.PopClippingRectangle();
+    }
 
-    ret = PostProcessEvent2 (ievent, ret, 0);
-    return ret;
-  }
-
-  void Panel::Draw (GraphicsEngine &GfxContext, bool force_draw)
-  {
-    GfxContext.PushClippingRectangle (GetGeometry() );
-
-    Geometry base = GetGeometry();
-
-    if (m_layout)
-      m_layout->QueueDraw();
-
-    GetPainter().PaintBackground (GfxContext, base);
+    graphics_engine.PopClippingRectangle();
 
     if (m_vertical_scrollbar_enable)
     {
-      _vscrollbar->QueueDraw();
+      _vscrollbar->ProcessDraw (graphics_engine, force_draw);
     }
 
     if (m_horizontal_scrollbar_enable)
     {
-      _hscrollbar->QueueDraw();
+      _hscrollbar->ProcessDraw (graphics_engine, force_draw);
     }
 
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void Panel::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
-  {
-    GfxContext.PushClippingRectangle (GetGeometry() );
-
-    GfxContext.PushClippingRectangle (Rect (m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight) );
-
-    if (m_layout)
-    {
-      GfxContext.PushClippingRectangle (m_layout->GetGeometry() );
-      m_layout->ProcessDraw (GfxContext, force_draw);
-      GfxContext.PopClippingRectangle();
-    }
-
-    GfxContext.PopClippingRectangle();
-
-    if (m_vertical_scrollbar_enable)
-    {
-      _vscrollbar->ProcessDraw (GfxContext, force_draw);
-    }
-
-    if (m_horizontal_scrollbar_enable)
-    {
-      _hscrollbar->ProcessDraw (GfxContext, force_draw);
-    }
-
-    GfxContext.PopClippingRectangle();
-  }
-
-  void Panel::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void Panel::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }

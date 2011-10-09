@@ -271,12 +271,12 @@ namespace nux
     TCHAR      character    /*character*/,
     const Geometry &g)
   {
-    //if(ievent.event_type != I_AsciiKey && ievent.event_type != I_KeyPress && ievent.event_type != I_KeyRelease)
+    //if(event.event_type != I_AsciiKey && event.event_type != I_KeyPress && event.event_type != I_KeyRelease)
     if (eventType != NUX_KEYDOWN)
       return 0;
 
     m_need_redraw = true;
-    //unsigned key = ievent.ascii_code;
+    //unsigned key = event.ascii_code;
     unsigned key = 0;
 
     if (character != 0)

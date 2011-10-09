@@ -45,32 +45,9 @@ namespace nux
 
   }
 
-  long GroupBox::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  void GroupBox::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
-    long ret = TraverseInfo;
-    long ProcEvInfo = 0;
-
-    if (ievent.e_event == NUX_MOUSE_PRESSED)
-    {
-      if (!GetGeometry().IsPointInside (ievent.e_x, ievent.e_y) )
-      {
-        ProcEvInfo = eDoNotProcess;
-      }
-    }
-
-    if (m_layout != 0)
-    {
-      ret = m_layout->ProcessEvent (ievent, ret, ProcEvInfo);
-    }
-
-    ret = PostProcessEvent2 (ievent, ret, 0);
-    return ret;
-  }
-
-
-  void GroupBox::Draw (GraphicsEngine &GfxContext, bool force_draw)
-  {
-    GfxContext.PushClippingRectangle (GetGeometry() );
+    graphics_engine.PushClippingRectangle (GetGeometry() );
 
     Geometry wireborder_geo = GetGeometry();
 
@@ -89,7 +66,7 @@ namespace nux
     {
       //GetPainter().Paint2DQuadColor(m_CaptionArea.GetGeometry(), COLOR_BACKGROUND_PRIMARY);
       //GetPainter().PaintTextLineStatic(m_CaptionArea.GetGeometry(), m_CaptionArea.GetCaptionString(), eAlignTextCenter);
-      GetPainter().PaintTextLineStatic (GfxContext, GetSysBoldFont(), m_CaptionArea.GetGeometry(), m_CaptionArea.GetBaseString().GetTCharPtr(), GetTextColor(),
+      GetPainter().PaintTextLineStatic (graphics_engine, GetSysBoldFont(), m_CaptionArea.GetGeometry(), m_CaptionArea.GetBaseString().GetTCharPtr(), GetTextColor(),
                                     true, eAlignTextCenter);
     }
 
@@ -98,24 +75,24 @@ namespace nux
       m_layout->QueueDraw();
     }
 
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void GroupBox::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void GroupBox::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
   {
-    GfxContext.PushClippingRectangle (GetGeometry() );
+    graphics_engine.PushClippingRectangle (GetGeometry() );
 
     if (m_layout)
     {
-      GfxContext.PushClippingRectangle (m_layout->GetGeometry() );
-      m_layout->ProcessDraw (GfxContext, force_draw);
-      GfxContext.PopClippingRectangle();
+      graphics_engine.PushClippingRectangle (m_layout->GetGeometry() );
+      m_layout->ProcessDraw (graphics_engine, force_draw);
+      graphics_engine.PopClippingRectangle();
     }
 
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void GroupBox::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void GroupBox::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }

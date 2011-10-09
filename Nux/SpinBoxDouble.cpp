@@ -83,34 +83,24 @@ namespace nux
     m_vlayout = new VLayout (NUX_TRACKER_LOCATION);
   }
 
-  long SpinBoxDouble::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-    ret = m_SpinnerUpBtn->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = m_SpinnerDownBtn->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = m_EditLine->ProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-    return ret;
-  }
-
-  void SpinBoxDouble::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void SpinBoxDouble::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
-    GetPainter().PaintBackground (GfxContext, base);
+    GetPainter().PaintBackground (graphics_engine, base);
 
     if (m_EditLine->IsMouseInside() || m_SpinnerUpBtn->IsMouseInside() || m_SpinnerDownBtn->IsMouseInside() )
     {
 
-      GetPainter().PaintShapeCorner (GfxContext, m_SpinnerUpBtn->GetGeometry(), SPINBOX_DOUBLE_BUTTON_MOUSEOVER_COLOR, eSHAPE_CORNER_ROUND4,
+      GetPainter().PaintShapeCorner (graphics_engine, m_SpinnerUpBtn->GetGeometry(), SPINBOX_DOUBLE_BUTTON_MOUSEOVER_COLOR, eSHAPE_CORNER_ROUND4,
                                  eCornerTopRight, false);
-      GetPainter().PaintShapeCorner (GfxContext, m_SpinnerDownBtn->GetGeometry(), SPINBOX_DOUBLE_BUTTON_MOUSEOVER_COLOR, eSHAPE_CORNER_ROUND4,
+      GetPainter().PaintShapeCorner (graphics_engine, m_SpinnerDownBtn->GetGeometry(), SPINBOX_DOUBLE_BUTTON_MOUSEOVER_COLOR, eSHAPE_CORNER_ROUND4,
                                  eCornerBottomRight, false);
     }
     else
     {
-      GetPainter().PaintShapeCorner (GfxContext, m_SpinnerUpBtn->GetGeometry(), SPINBOX_DOUBLE_BUTTON_COLOR, eSHAPE_CORNER_ROUND4,
+      GetPainter().PaintShapeCorner (graphics_engine, m_SpinnerUpBtn->GetGeometry(), SPINBOX_DOUBLE_BUTTON_COLOR, eSHAPE_CORNER_ROUND4,
                                  eCornerTopRight, false);
-      GetPainter().PaintShapeCorner (GfxContext, m_SpinnerDownBtn->GetGeometry(), SPINBOX_DOUBLE_BUTTON_COLOR, eSHAPE_CORNER_ROUND4,
+      GetPainter().PaintShapeCorner (graphics_engine, m_SpinnerDownBtn->GetGeometry(), SPINBOX_DOUBLE_BUTTON_COLOR, eSHAPE_CORNER_ROUND4,
                                  eCornerBottomRight, false);
     }
 
@@ -118,28 +108,28 @@ namespace nux
     Geometry GeoPo = ComputeGeometryPositioning (m_SpinnerUpBtn->GetGeometry(), GetTheme().GetImageGeometry (eSPINER_UP), gp);
 
     if (m_SpinnerUpBtn->IsMouseInside() )
-      GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eSPINER_UP);
+      GetPainter().PaintShape (graphics_engine, GeoPo, Color (0xFFFFFFFF), eSPINER_UP);
     else
-      GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eSPINER_UP);
+      GetPainter().PaintShape (graphics_engine, GeoPo, Color (0xFFFFFFFF), eSPINER_UP);
 
 
     gp.SetAlignment (eHACenter, eVACenter);
     GeoPo = ComputeGeometryPositioning (m_SpinnerDownBtn->GetGeometry(), GetTheme().GetImageGeometry (eSPINER_DOWN), gp);
 
     if (m_SpinnerDownBtn->IsMouseInside() )
-      GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eSPINER_DOWN);
+      GetPainter().PaintShape (graphics_engine, GeoPo, Color (0xFFFFFFFF), eSPINER_DOWN);
     else
-      GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eSPINER_DOWN);
+      GetPainter().PaintShape (graphics_engine, GeoPo, Color (0xFFFFFFFF), eSPINER_DOWN);
 
     m_EditLine->QueueDraw();
   }
 
-  void SpinBoxDouble::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void SpinBoxDouble::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
   {
-    m_EditLine->ProcessDraw (GfxContext, force_draw);
+    m_EditLine->ProcessDraw (graphics_engine, force_draw);
   }
 
-  void SpinBoxDouble::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void SpinBoxDouble::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }

@@ -32,16 +32,6 @@ namespace nux
 {
   class Layout;
 
-  enum eControlType
-  {
-    eNumericValuator,
-    eSpinBox,
-    eVector3Box,
-    eBooleanBox,
-    eStaticText,
-    ePopupBox
-  };
-
   class View: public InputArea
   {
     NUX_DECLARE_OBJECT_TYPE (View, InputArea);
@@ -51,9 +41,6 @@ namespace nux
 
   public:
 
-    // Deprecated
-    //long BaseProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-
     virtual long ComputeContentSize();
     virtual void ComputeContentPosition(float offsetX, float offsetY);
 
@@ -62,64 +49,48 @@ namespace nux
     virtual void PreResizeGeometry();
     virtual void PostResizeGeometry();
 
-    // NUXTODO: Find better name
-    virtual long PostProcessEvent2 (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-
-    virtual bool IsLayout() const
-    {
-      return false;
-    }
-    virtual bool IsSpaceLayout() const
-    {
-      return false;
-    }
-    virtual bool IsArea() const
-    {
-      return false;
-    }
-    virtual bool IsView() const
-    {
-      return true;
-    }
-
-    void SetUsingStyleDrawing (bool b)
-    {
-      m_UseStyleDrawing = b;
-    };
-    bool IsUsingStyleDrawing() const
-    {
-      return m_UseStyleDrawing;
-    };
-
+    //! Enable a View.
     /*!
-        Activate the View. The view cannot receive events. Its rendering is grayed (NUXTODO).
+        Enable the view. The view cannot receive events. As for the rendering, each view handle 
+        its own rendering while is enabled state.
     */
-    void DeactivateView ();
+    virtual void EnableView();
 
+    //! Disable a View.
     /*!
-        Activate the View. It can process them. The rendering of the View is normal.
+        Disable the view. The view cannot receive input events (keyboard, mouse, touch). As for the rendering, each view handle 
+        its own rendering while is disabled state.
     */
-    void ActivateView ();
+    virtual void DisableView();
 
+    //! Set the enable state of the view.
+    /*!
+        Set the enable state of the view.
+
+        @param enable. The state of the view to be set.
+    */
+    virtual void SetEnableView(bool enable);
+
+    //! Gets the enable state of the View.
     /*!
         @return True if the view is active.
     */
-    bool IsViewActive () const;
+    bool IsViewEnabled () const;
 
   public:
-    virtual void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
-    //! Causes a redraw. The widget parameter _need_redraw is set to true. The widget Draw(), DrawContent() and PostDraw() are called.
+    virtual void ProcessDraw (GraphicsEngine &graphics_engine, bool force_draw);
+    //! Causes a redraw. The widget parameter draw_cmd_queued_ is set to true. The widget Draw(), DrawContent() and PostDraw() are called.
     /*!
         Emits the signal \i OnQueueDraw.
     */
     virtual void QueueDraw ();
 
-    //! Causes a soft redraw. The widget parameter _need_redraw is set to false. The widget DrawContent() and PostDraw() are called.
+    //! Causes a soft redraw. The widget parameter draw_cmd_queued_ is set to false. The widget DrawContent() and PostDraw() are called.
     virtual void NeedSoftRedraw();
     virtual bool IsRedrawNeeded();
     virtual void DoneRedraw();
 
-    virtual void OverlayDrawing (GraphicsEngine &GfxContext) {}
+    virtual void OverlayDrawing (GraphicsEngine &graphics_engine) {}
 
     //Layout Bridge
 
@@ -177,17 +148,13 @@ namespace nux
 
 
   protected:
-    bool _can_focus;
 
     void OnChildFocusChanged (/*Area *parent,*/ Area *child);
     sigc::connection _on_focus_changed_handler;
 
-    // ProcessEvent is deprecated. 
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) {return 0;}
-
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw) = 0;
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw) = 0;
+    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw);
 
     void InitializeWidgets();
     void InitializeLayout();
@@ -223,17 +190,13 @@ namespace nux
 
     Layout *view_layout_;
 
-    bool _need_redraw; //<! The rendering of the view needs to be refreshed.
+    bool draw_cmd_queued_; //<! The rendering of the view needs to be refreshed.
 
-    bool _full_redraw; //<! True if Draw is called before ContentDraw. It is read-only and can be accessed by calling IsFullRedraw();
+    bool full_view_draw_cmd_; //<! True if Draw is called before ContentDraw. It is read-only and can be accessed by calling IsFullRedraw();
 
     bool _is_active; //!< True if the view is enabled (it can receive events and process them).
 
-    bool _can_pass_focus_to_composite_layout; //<! Enable this and keynav will pass focus to your composite layout
-
   private:
-    bool m_UseStyleDrawing;
-    bool _is_view_active;
 
     friend class WindowCompositor;
     friend class Layout;

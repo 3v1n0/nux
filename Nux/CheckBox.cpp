@@ -41,8 +41,8 @@ namespace nux
     hlayout_      = new HLayout(NUX_TRACKER_LOCATION);
     check_area_   = new InputArea(NUX_TRACKER_LOCATION);
 
-    check_area_->SetSensitive(false);
-    static_text_->SetSensitive(false);
+    check_area_->SetInputEventSensitivity(false);
+    static_text_->SetInputEventSensitivity(false);
 
     // Set Geometry
     check_area_->SetMinimumSize(14, 14);

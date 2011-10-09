@@ -118,7 +118,7 @@ logging::Logger logger("nux.core.object");
   {
     if (_owns_the_reference == true)
     {
-      LOG_DEBUG(logger) << "Do not change the ownership if is already set to true!";
+      LOG_DEBUG(logger) << "Do not change the ownership if is already set to true!" << "\n";
       return;
     }
 
@@ -239,7 +239,7 @@ logging::Logger logger("nux.core.object");
       {
         LOG_WARN(logger) << "Invalid object destruction, still has "
                          << reference_count_->GetValue() << " references."
-                         << "\nObject allocated at: " << GetAllocationLoation();
+                         << "\nObject allocated at: " << GetAllocationLoation() << "\n";
       }
     }
     delete reference_count_;
@@ -251,7 +251,7 @@ logging::Logger logger("nux.core.object");
     if (!IsHeapAllocated())
     {
       LOG_WARN(logger) << "Trying to reference an object that was not heap allocated."
-                       << "\nObject allocated at: " << GetAllocationLoation();
+                       << "\nObject allocated at: " << GetAllocationLoation() << "\n";
       return false;
     }
 
@@ -271,7 +271,7 @@ logging::Logger logger("nux.core.object");
     if (!IsHeapAllocated())
     {
       LOG_WARN(logger) << "Trying to un-reference an object that was not heap allocated."
-                       << "\nObject allocated at: " << GetAllocationLoation();
+                       << "\nObject allocated at: " << GetAllocationLoation() << "\n";
       return false;
     }
 
@@ -283,7 +283,7 @@ logging::Logger logger("nux.core.object");
       // it.  This method should not be called directly in that case.
       LOG_WARN(logger) << "There are ObjectPtr hosting this object. "
                        << "Release all of them to destroy this object. "
-                       << "\nObject allocated at: " << GetAllocationLoation();
+                       << "\nObject allocated at: " << GetAllocationLoation() << "\n";
       return false;
     }
 

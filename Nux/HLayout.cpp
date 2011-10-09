@@ -374,9 +374,9 @@ namespace nux
           {
             // Stop computing the size of this layout. Its size was not convenient to its children. So the children size take priority
             // over the layout. In ComputeContentSize, the dimension of the layout has been set so it encompasses its children (and the margins).
-            // Now the parent layout cannot be touched again: _layout_done = true. In VLayoutManagement, it is as if the stretchfactor
+            // Now the parent layout cannot be touched again: layout_done_ = true. In VLayoutManagement, it is as if the stretchfactor
             // of this layout is now 0.
-            // This is the only place where a layout can have _layout_done set to "true".
+            // This is the only place where a layout can have layout_done_ set to "true".
 
             // If (smaller_width == true) the layout takes less space than anticipated.
             // Set unadjusted_layout = true, so another pass will allow its sibling to claim more space.
@@ -563,7 +563,7 @@ namespace nux
 
           if ( ( (*it)->GetStretchFactor() != 0) && (*it)->IsArea() )
           {
-            // If it is not an object of type eInputArea, do not set _layout_done to true,
+            // If it is not an object of type eInputArea, do not set layout_done_ to true,
             // so, the layout management function will later be called on the object.
             (*it)->ApplyMinWidth();
             (*it)->SetLayoutDone (true);
@@ -577,7 +577,7 @@ namespace nux
           else if ( ( (*it)->GetStretchFactor() != 0) && ( (*it)->IsLayoutDone() == false) ) // layout and not fixed
           {
             (*it)->ApplyMinWidth();
-            // A layout must never have _layout_done set to true "here" because it must continue
+            // A layout must never have layout_done_ set to true "here" because it must continue
             // doing the layout of its children and finally resize itself to fit them.
             // The same way, A layout size factor should never be set to 0.
           }
@@ -656,7 +656,7 @@ namespace nux
           int elemt_max_width = (*it)->GetMaximumSize().width;
           int elemt_min_width = (*it)->GetMinimumSize().width;
 
-          // A layout must never have _layout_done set to true "here" because it must continue
+          // A layout must never have layout_done_ set to true "here" because it must continue
           // doing the layout of its children and finally resize itself to fit them.
           // The same way, A layout size factor should never be set to 0.
           // Q: How about SpaceLayout? Should we treat them the same as layout or widget in this particular case?

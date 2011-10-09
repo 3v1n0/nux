@@ -163,9 +163,6 @@ namespace nux
     bool SearchInAllSubNodes (Area *bo);
     bool SearchInFirstSubNodes (Area *bo);
 
-    // Deprecated. Do not use.
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) {return 0;}
-
     Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
 
     //! Draw Element
@@ -177,7 +174,7 @@ namespace nux
         \param ProcessEventInfo
         \return The state of the Process Event.
     */
-    virtual void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void ProcessDraw (GraphicsEngine &graphics_engine, bool force_draw);
 
     //! Mark all element in the layout as dirty.
     /*!
@@ -326,39 +323,6 @@ namespace nux
 
   protected:
     Area *Find (long handle);
-  };
-
-
-  // The Space layout is a layout object that is used to create fixed or re-sizable empty space.
-  class LinearLayout: public Layout
-  {
-    NUX_DECLARE_OBJECT_TYPE (LinearLayout, Layout);
-  public:
-
-    //! Deprecated. Use SetSpaceBetweenChildren;
-    void SetHorizontalInternalMargin(int space);
-    //! Deprecated. Use SetSpaceBetweenChildren;
-    void SetVerticalInternalMargin(int space);
-
-    //! Set the space between the children of a HLayout or VLayout.
-    /*!
-        Set the horizontal space between the children of the layout. In a VLayout, children of the layout are placed
-        horizontally, on after the other, from left to right. This function set the space allowed between the children.
-        Valid only for HLayout and VLayout.
-
-        @param horizontal_space The horizontal space between the children of the layout.
-    */
-    void SetSpaceBetweenChildren(int space);
-
-  protected:
-    LinearLayout(NUX_FILE_LINE_PROTO)
-      : Layout (NUX_FILE_LINE_PARAM)
-    {
-    }
-
-    virtual ~LinearLayout()
-    {
-    }
   };
 }
 

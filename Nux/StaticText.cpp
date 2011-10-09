@@ -64,7 +64,7 @@ namespace nux
 #endif
 
     if (dw_texture_.IsValid())
-      dw_texture_->UnReference();
+      dw_texture_.Release();
   }
 
   void StaticText::PreLayoutManagement()

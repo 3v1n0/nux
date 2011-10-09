@@ -63,30 +63,21 @@ namespace nux
     m_Texture->UnReference ();
   }
 
-  long FileSelector::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-    ret = m_FileEditTextBox->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = m_OpenButton->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-    return ret;
-  }
-
-  void FileSelector::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void FileSelector::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
 
-    GetPainter().PaintBackground (GfxContext, base);
+    GetPainter().PaintBackground (graphics_engine, base);
 
     if (m_OpenButton->IsMouseInside() )
     {
 
-      GetPainter().PaintShapeCorner (GfxContext, m_OpenButton->GetGeometry(), FILESELECTOR_BUTTON_MOUSEOVER_COLOR, eSHAPE_CORNER_ROUND4,
+      GetPainter().PaintShapeCorner (graphics_engine, m_OpenButton->GetGeometry(), FILESELECTOR_BUTTON_MOUSEOVER_COLOR, eSHAPE_CORNER_ROUND4,
                                  eCornerTopRight | eCornerBottomRight, false);
     }
     else
     {
-      GetPainter().PaintShapeCorner (GfxContext, m_OpenButton->GetGeometry(), FILESELECTOR_BUTTON_COLOR, eSHAPE_CORNER_ROUND4,
+      GetPainter().PaintShapeCorner (graphics_engine, m_OpenButton->GetGeometry(), FILESELECTOR_BUTTON_COLOR, eSHAPE_CORNER_ROUND4,
                                  eCornerTopRight | eCornerBottomRight, false);
     }
 
@@ -98,7 +89,7 @@ namespace nux
     GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, FALSE);
 
     nux::TexCoordXForm texxform;
-    GfxContext.QRP_1Tex (GeoPo.x, GeoPo.y, GeoPo.width, GeoPo.height, m_Texture->GetDeviceTexture(), texxform, nux::color::White);
+    graphics_engine.QRP_1Tex (GeoPo.x, GeoPo.y, GeoPo.width, GeoPo.height, m_Texture->GetDeviceTexture(), texxform, nux::color::White);
 
     GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, TRUE);
     GetGraphicsDisplay()->GetGraphicsEngine()->GetRenderStates().SetBlend (FALSE);
@@ -106,14 +97,14 @@ namespace nux
     m_FileEditTextBox->QueueDraw();
   }
 
-  void FileSelector::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void FileSelector::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
 
-    m_FileEditTextBox->ProcessDraw (GfxContext, force_draw);
+    m_FileEditTextBox->ProcessDraw (graphics_engine, force_draw);
   }
 
-  void FileSelector::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void FileSelector::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }

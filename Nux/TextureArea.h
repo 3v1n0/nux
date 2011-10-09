@@ -83,9 +83,9 @@ namespace nux
     sigc::signal<void, int, int> sigMouseDrag;  //!< Signal emmitted when the mouse is dragged over this area.
 
   protected:
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw);
 
     void RecvMouseDown (int x, int y, long button_flags, long key_flags);
     void RecvMouseUp (int x, int y, long button_flags, long key_flags);

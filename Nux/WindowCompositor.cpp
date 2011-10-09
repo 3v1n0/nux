@@ -1036,65 +1036,6 @@ logging::Logger logger("nux.window");
     inside_event_cycle_ = false;
   }
 
-  long WindowCompositor::MenuEventCycle(Event &event, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-    std::list<MenuPage*>::iterator menu_it;
-
-    if (m_MenuWindow.IsValid())
-    {
-      event.e_x_root = m_MenuWindow->GetBaseX ();
-      event.e_y_root = m_MenuWindow->GetBaseY ();
-    }
-
-    // Let all the menu area check the event first. Beside, they are on top of everything else.
-    for (menu_it = _menu_chain->begin (); menu_it != _menu_chain->end (); menu_it++)
-    {
-      // The deepest menu in the menu cascade is in the front of the list.
-      ret = (*menu_it)->ProcessEvent (event, ret, ProcessEventInfo);
-    }
-
-    if ((event.e_event == NUX_MOUSE_PRESSED) && _menu_chain->size ())
-    {
-      bool inside = false;
-
-      for (menu_it = _menu_chain->begin (); menu_it != _menu_chain->end (); menu_it++)
-      {
-        Geometry geo = (*menu_it)->GetGeometry ();
-
-        if (PT_IN_BOX (event.e_x - event.e_x_root, event.e_y - event.e_y_root,
-                        geo.x, geo.x + geo.width, geo.y, geo.y + geo.height))
-        {
-          inside = true;
-          break;
-        }
-      }
-
-      if (inside == false)
-      {
-        (*_menu_chain->begin ())->NotifyMouseDownOutsideMenuCascade (event.e_x - event.e_x_root, event.e_y - event.e_y_root);
-      }
-    }
-
-    if (m_MenuWindow.IsValid ())
-    {
-      event.e_x_root = 0;
-      event.e_y_root = 0;
-    }
-
-    if ( (event.e_event == NUX_MOUSE_RELEASED) )
-    {
-      SetWidgetDrawingOverlay (NULL, NULL);
-    }
-
-    if ( (event.e_event == NUX_SIZE_CONFIGURATION) && _menu_chain->size() )
-    {
-      (*_menu_chain->begin() )->NotifyTerminateMenuCascade();
-    }
-
-    return ret;
-  }
-
   void WindowCompositor::StartModalWindow (ObjectWeakPtr<BaseWindow> window)
   {
     if (window == 0)

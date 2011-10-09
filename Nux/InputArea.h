@@ -48,19 +48,6 @@ namespace nux
     InputArea (NUX_FILE_LINE_PROTO);
     virtual ~InputArea();
 
-    //! Simulate a mouse down state on an area
-    /*!
-        Simulate a mouse down event on an area at the provided relative coordinates. If the provided coordinates
-        do not fall inside the geometry of the area, return false.
-        @param x Coordinates of the mouse down event relative to the top left corner of the area.
-        @param y Coordinates of the mouse down event relative to the top left corner of the area.
-        @return True if the simulated action was successful.
-    */
-    bool ForceStartFocus (int x, int y);
-    void ForceStopFocus (int x, int y);
-
-    virtual long OnEvent (Event &ievent, long TraverseInfo, long ProcessEventInfo);
-
     //! Draw InputArea.
     /*!
         Draw a colored quad using m_AreaColor.
@@ -68,9 +55,9 @@ namespace nux
         If force_draw is true then the system requests that all objects redraw themselves completely.
         \param force_draw.
     */
-    virtual void OnDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void OnDraw (GraphicsEngine &graphics_engine, bool force_draw);
 
-    virtual void OverlayDrawing (GraphicsEngine &GfxContext) {}
+    virtual void OverlayDrawing (GraphicsEngine &graphics_engine) {}
 
     bool HasKeyboardFocus();
     void SetKeyboardFocus (bool b);
@@ -87,21 +74,12 @@ namespace nux
                           unsigned long x11_key_code,
                           unsigned long special_keys_state);
 
+  protected:
+
   private:
     bool _dnd_enabled_as_source;
     bool _dnd_enabled_as_target;
-    //bool m_EnableKeyboardInput;
   public:
-//    void EnableKeyEntry(bool b)
-//    {
-//        m_EnableKeyboardInput = true;
-//    }
-//
-//    bool IsEnableKeyEntry()
-//    {
-//        return m_EnableKeyboardInput; //m_KeyboardHandler.IsEnableKeyEntry();
-//    }
-
     // Override the virtual methods from Object Base
     // Here, we get a change to update the text of the keyboard handler.
     virtual void SetBaseString (const TCHAR *Caption);
@@ -163,7 +141,7 @@ namespace nux
     /*!
         Bypass OnEvent and performs a simplified event processing mechanism.
     */
-    long ProcessEventInExclusiveMode (Event &ievent, long TraverseInfo, long ProcessEventInfo);
+    long ProcessEventInExclusiveMode (Event &event, long TraverseInfo, long ProcessEventInfo);
 
     void HandleDndMove  (Event &event);
     void HandleDndDrop  (Event &event);

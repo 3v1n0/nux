@@ -72,10 +72,7 @@ namespace nux
     //! Start running the user interface
     void RunUserInterface();
 
-    // Event, Drawing
-    virtual long ProcessEvent (IEvent &event, long TraverseInfo, long ProcessEventInfo);
-
-    void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
+    void ProcessDraw (GraphicsEngine &graphics_engine, bool force_draw);
 
     void SetWindowTitle (const TCHAR *WindowTitle)
     {

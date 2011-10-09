@@ -34,10 +34,9 @@ namespace nux
   public:
     AnimatedTextureArea (NUX_FILE_LINE_PROTO);
     ~AnimatedTextureArea();
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw);
 
     void SetTexture (TextureFrameAnimation *Texture);
     void RecvMouseDown (int x, int y, long button_flags, long key_flags);

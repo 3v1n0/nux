@@ -86,10 +86,8 @@ namespace nux
   public:
     ColorEditor (NUX_FILE_LINE_PROTO);
     ~ColorEditor();
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
 
     void SetRed (double r);
     void SetGreen (double g);
@@ -123,9 +121,9 @@ namespace nux
   protected:
     virtual bool AcceptKeyNavFocus();
   private:
-    void DrawBaseChannelMarker (GraphicsEngine &GfxContext);
-    void DrawRGB (GraphicsEngine &GfxContext, bool force_draw);
-    void DrawHSV (GraphicsEngine &GfxContext, bool force_draw);
+    void DrawBaseChannelMarker (GraphicsEngine &graphics_engine);
+    void DrawRGB (GraphicsEngine &graphics_engine, bool force_draw);
+    void DrawHSV (GraphicsEngine &graphics_engine, bool force_draw);
 
     color::Channel   m_ColorChannel;
     color::Model     m_ColorModel;

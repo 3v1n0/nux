@@ -52,30 +52,20 @@ namespace nux
   {
   }
 
-  long MouseAreaCtrl::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-    ret = m_Area->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-
-    QueueDraw();
-    return ret;
-  }
-
-  void MouseAreaCtrl::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void MouseAreaCtrl::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
-    GetPainter().PaintShape (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY),  eSHAPE_CORNER_ROUND10);
+    GetPainter().PaintShape (graphics_engine, base, Color (COLOR_BACKGROUND_SECONDARY),  eSHAPE_CORNER_ROUND10);
 
     sigDraw.emit (force_draw);
   }
 
-  void MouseAreaCtrl::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void MouseAreaCtrl::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
   {
     sigDraw.emit (force_draw);
   }
 
-  void MouseAreaCtrl::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void MouseAreaCtrl::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }

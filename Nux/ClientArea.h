@@ -47,11 +47,10 @@ namespace nux
     ClientArea (NUX_FILE_LINE_PROTO);
     ~ClientArea();
 
-    virtual void BeginDraw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    virtual void BeginDraw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw);
     virtual void QueueDraw();
 
     void EnableClientDraw (bool b)
@@ -63,7 +62,7 @@ namespace nux
       return m_IsClientAreaEnabled;
     };
 
-    virtual void ClientDraw (GraphicsEngine &GfxContext, DrawAreaContext &ctx, bool force_draw);
+    virtual void ClientDraw (GraphicsEngine &graphics_engine, DrawAreaContext &ctx, bool force_draw);
     virtual void RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
     virtual void RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
     virtual void RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
@@ -77,8 +76,8 @@ namespace nux
     );
 
     sigc::signal<void, DrawAreaContext, bool> sigClientDraw;
-    void SetClientViewport (GraphicsEngine &GfxContext);
-    void Setup2DMode (GraphicsEngine &GfxContext);
+    void SetClientViewport (GraphicsEngine &graphics_engine);
+    void Setup2DMode (GraphicsEngine &graphics_engine);
 
     // Before the client start drawing we set up a framebuffer object. We don't want the client to start messing
     // up the whole rendering by. If we setup a framebuffer instead, the client can never know the framebuffer

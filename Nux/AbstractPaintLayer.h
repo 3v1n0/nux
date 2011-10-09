@@ -44,7 +44,7 @@ namespace nux
     virtual ~AbstractPaintLayer ();
     virtual AbstractPaintLayer *Clone () const = 0; //Virtual Constructor Idiom
 
-    virtual void Renderlayer (GraphicsEngine &GfxContext) = 0;
+    virtual void Renderlayer (GraphicsEngine &graphics_engine) = 0;
 
     virtual void SetGeometry (const Geometry &geo);
 

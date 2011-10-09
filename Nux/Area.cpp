@@ -36,18 +36,18 @@ namespace nux
 
   Area::Area (NUX_FILE_LINE_DECL)
     :   InitiallyUnownedObject (NUX_FILE_LINE_PARAM)
-    ,   _is_focused (0)
     ,   geometry_ (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT)
-    ,   _min_size (AREA_MIN_WIDTH, AREA_MIN_HEIGHT)
-    ,   _max_size (AREA_MAX_WIDTH, AREA_MAX_HEIGHT)
+    ,   min_size_ (AREA_MIN_WIDTH, AREA_MIN_HEIGHT)
+    ,   max_size_ (AREA_MAX_WIDTH, AREA_MAX_HEIGHT)
   {
-    _parent_area = NULL;
+    visible_ = true;
+    view_enabled_ = true;
+    parent_area_ = NULL;
+
     next_object_to_key_focus_area_ = NULL;
     has_key_focus_ = false;
 
-    _stretch_factor = 1;
-    _layout_properties = NULL;
-    visible_ = true;
+    scale_factor_ = 1;
     sensitive_ = true;
 
     on_geometry_change_reconfigure_parent_layout_ = true;
@@ -62,8 +62,6 @@ namespace nux
 
   Area::~Area()
   {
-    if (_layout_properties)
-      delete _layout_properties;
   }
 
   const NString &Area::GetBaseString() const
@@ -78,61 +76,61 @@ namespace nux
 
   void Area::CheckMinSize()
   {
-    int w = _min_size.width;
+    int w = min_size_.width;
     w = Max<int>(AREA_MIN_WIDTH, w);
-    int h = _min_size.height;
+    int h = min_size_.height;
     h = Max<int>(AREA_MIN_HEIGHT, h);
 
-    _min_size = Size(w, h);
+    min_size_ = Size(w, h);
 
-    if (_min_size.width > _max_size.width)
+    if (min_size_.width > max_size_.width)
     {
-      _max_size.width = _min_size.width;
+      max_size_.width = min_size_.width;
     }
 
-    if (_min_size.height > _max_size.height)
+    if (min_size_.height > max_size_.height)
     {
-      _max_size.height = _min_size.height;
+      max_size_.height = min_size_.height;
     }
 
-    if (geometry_.width < _min_size.width)
+    if (geometry_.width < min_size_.width)
     {
-      geometry_.width = _min_size.width;
+      geometry_.width = min_size_.width;
     }
 
-    if (geometry_.height < _min_size.height )
+    if (geometry_.height < min_size_.height )
     {
-      geometry_.height = _min_size.height;
+      geometry_.height = min_size_.height;
     }
   }
 
   void Area::CheckMaxSize()
   {
-    int w = _max_size.width;
+    int w = max_size_.width;
     w = Min<int>(AREA_MAX_WIDTH, w);
-    int h = _max_size.height;
+    int h = max_size_.height;
     h = Min<int>(AREA_MAX_HEIGHT, h);
 
-    _max_size = Size(w, h);
+    max_size_ = Size(w, h);
 
-    if (_min_size.width > _max_size.width)
+    if (min_size_.width > max_size_.width)
     {
-      _min_size.width = _max_size.width;
+      min_size_.width = max_size_.width;
     }
 
-    if (_min_size.height > _max_size.height)
+    if (min_size_.height > max_size_.height)
     {
-      _min_size.height = _max_size.height;
+      min_size_.height = max_size_.height;
     }
 
-    if (geometry_.width > _max_size.width)
+    if (geometry_.width > max_size_.width)
     {
-      geometry_.width = _max_size.width;
+      geometry_.width = max_size_.width;
     }
 
-    if (geometry_.height > _max_size.height)
+    if (geometry_.height > max_size_.height)
     {
-      geometry_.height = _max_size.height;
+      geometry_.height = max_size_.height;
     }
   }
 
@@ -140,7 +138,7 @@ namespace nux
   {
     nuxAssert (w >= 0);
     nuxAssert (h >= 0);
-    _min_size = Size(w, h);
+    min_size_ = Size(w, h);
 
     CheckMinSize();
 
@@ -151,7 +149,7 @@ namespace nux
   {
     nuxAssert (w >= 0);
     nuxAssert (h >= 0);
-    _max_size = Size(w, h);
+    max_size_ = Size(w, h);
 
     CheckMaxSize();
 
@@ -170,46 +168,46 @@ namespace nux
 
   void Area::ApplyMinWidth()
   {
-    geometry_.width = _min_size.width;
+    geometry_.width = min_size_.width;
 
     ReconfigureParentLayout();
   }
 
   void Area::ApplyMinHeight()
   {
-    geometry_.height = _min_size.height;
+    geometry_.height = min_size_.height;
 
     ReconfigureParentLayout();
   }
 
   void Area::ApplyMaxWidth()
   {
-    geometry_.width = _max_size.width;
+    geometry_.width = max_size_.width;
 
     ReconfigureParentLayout();
   }
 
   void Area::ApplyMaxHeight()
   {
-    geometry_.height = _max_size.height;
+    geometry_.height = max_size_.height;
 
     ReconfigureParentLayout();
   }
 
   Size Area::GetMinimumSize() const
   {
-    return _min_size;
+    return min_size_;
   }
 
   Size Area::GetMaximumSize() const
   {
-    return _max_size;
+    return max_size_;
   }
 
   void Area::SetMinimumWidth (int w)
   {
     nuxAssert (w >= 0);
-    _min_size.width = w;
+    min_size_.width = w;
     CheckMinSize();
     ReconfigureParentLayout();
   }
@@ -217,7 +215,7 @@ namespace nux
   void Area::SetMaximumWidth (int w)
   {
     nuxAssert (w >= 0);
-    _max_size.width = w;
+    max_size_.width = w;
     CheckMaxSize();
     ReconfigureParentLayout();
   }
@@ -225,7 +223,7 @@ namespace nux
   void Area::SetMinimumHeight (int h)
   {
     nuxAssert (h >= 0);
-    _min_size.height = h;
+    min_size_.height = h;
     CheckMinSize();
     ReconfigureParentLayout();
   }
@@ -233,40 +231,40 @@ namespace nux
   void Area::SetMaximumHeight (int h)
   {
     nuxAssert (h >= 0);
-    _max_size.height = h;
+    max_size_.height = h;
     CheckMaxSize();
     ReconfigureParentLayout();
   }
 
   int Area::GetMinimumWidth() const
   {
-    return _min_size.width;
+    return min_size_.width;
   }
 
   int Area::GetMaximumWidth() const
   {
-    return _max_size.width;
+    return max_size_.width;
   }
 
   int Area::GetMinimumHeight() const
   {
-    return _min_size.height;
+    return min_size_.height;
   }
 
   int Area::GetMaximumHeight() const
   {
-    return _max_size.height;
+    return max_size_.height;
   }
 
   unsigned int Area::GetStretchFactor()
   {
-    return _stretch_factor;
+    return scale_factor_;
   }
 
   void Area::SetStretchFactor (unsigned int sf)
   {
     // re implemented by Layout
-    _stretch_factor = sf;
+    scale_factor_ = sf;
   }
 
   bool Area::SetParentObject (Area *parent)
@@ -277,19 +275,19 @@ namespace nux
       return false;
     }
 
-    if (_parent_area && (_parent_area != parent))
+    if (parent_area_ && (parent_area_ != parent))
     {
-      nuxAssertMsg (0, TEXT ("[Area::SetParentObject] Object already has a parent. You must UnParent the object before you can parenting again.") );
+      nuxAssertMsg (0, "[Area::SetParentObject] Object already has a parent. You must UnParent the object before you can parenting again." );
       return false;
     }
 
-    if (_parent_area)
+    if (parent_area_)
     {
       // Already parented to the same area. Return.
       return true;
     }
 
-    _parent_area = parent;
+    parent_area_ = parent;
     Reference();
 
     return true;
@@ -297,16 +295,16 @@ namespace nux
 
   void Area::UnParentObject()
   {
-    if (_parent_area)
+    if (parent_area_)
     {
-      _parent_area = 0;
+      parent_area_ = 0;
       UnReference();
     }
   }
 
   Area *Area::GetParentObject() const
   {
-    return _parent_area;
+    return parent_area_;
   }
 
   int Area::GetBaseX     () const
@@ -331,8 +329,8 @@ namespace nux
 
   void Area::SetGeometry(int x, int y, int w, int h)
   {
-    h = nux::Clamp<int> (h, _min_size.height, _max_size.height);
-    w = nux::Clamp<int> (w, _min_size.width, _max_size.width);
+    h = nux::Clamp<int> (h, min_size_.height, max_size_.height);
+    w = nux::Clamp<int> (w, min_size_.width, max_size_.width);
 
     nux::Geometry geometry(x, y, w, h);
     if (geometry_ == geometry)
@@ -450,8 +448,8 @@ namespace nux
           GetWindowThread ()->QueueObjectLayout (ic);
         }
       }
-      else if (ic->_parent_area)
-        ic->_parent_area->ReconfigureParentLayout (this);
+      else if (ic->parent_area_)
+        ic->parent_area_->ReconfigureParentLayout (this);
       else
       {
         GetWindowThread ()->QueueObjectLayout (ic);
@@ -468,11 +466,11 @@ namespace nux
 
       Layout *layout = static_cast<Layout *>(this);
 
-      if (layout->_parent_area)
+      if (layout->parent_area_)
       {
-        if (layout->_parent_area->Type().IsDerivedFromType (View::StaticObjectType) )
+        if (layout->parent_area_->Type().IsDerivedFromType (View::StaticObjectType) )
         {
-          View *ic = (View *) (layout->_parent_area);
+          View *ic = (View *) (layout->parent_area_);
 
           if (ic->CanBreakLayout() )
           {
@@ -491,12 +489,12 @@ namespace nux
           else
           {
             // The parent object of an object of type View is a Layout object type.
-            layout->_parent_area->ReconfigureParentLayout (this);
+            layout->parent_area_->ReconfigureParentLayout (this);
           }
         }
         else
         {
-          layout->_parent_area->ReconfigureParentLayout (this);
+          layout->parent_area_->ReconfigureParentLayout (this);
         }
       }
       else
@@ -508,7 +506,7 @@ namespace nux
     else
     {
       // The object that is being resized is a InputArea object.
-      if (this->_parent_area)
+      if (this->parent_area_)
       {
         // The object that is being resized is a View object and it has a parent.
         if (this->OwnsTheReference() == false && this->GetParentObject())
@@ -518,30 +516,17 @@ namespace nux
         }
 
         // The parent object of an object of type InputArea is a Layout object type.
-        this->_parent_area->ReconfigureParentLayout (this);
+        this->parent_area_->ReconfigureParentLayout (this);
       }
     }
   }
 
   void Area::RequestBottomUpLayoutComputation (Area *bo_initiator)
   {
-    if (_parent_area && _parent_area->IsLayout() )
+    if (parent_area_ && parent_area_->IsLayout() )
     {
-      _parent_area->RequestBottomUpLayoutComputation (bo_initiator);
+      parent_area_->RequestBottomUpLayoutComputation (bo_initiator);
     }
-  }
-
-  void Area::SetLayoutProperties (LayoutProperties *properties)
-  {
-    if (_layout_properties)
-      delete _layout_properties;
-
-    _layout_properties = properties;
-  }
-
-  Area::LayoutProperties * Area::GetLayoutProperties ()
-  {
-    return _layout_properties;
   }
 
   void Area::SetVisible (bool visible)
@@ -559,59 +544,69 @@ namespace nux
     return visible_;
   }
 
-  void Area::SetSensitive (bool sensitive)
+  void Area::SetSensitive(bool sensitive)
+  {
+    SetInputEventSensitivity(sensitive);
+  }
+
+  void Area::SetInputEventSensitivity(bool sensitive)
   {
     if (sensitive_ == sensitive)
       return;
 
     sensitive_ = sensitive;
 
-    OnSensitiveChanged.emit (this, sensitive_);
+    OnSensitiveChanged.emit(this, sensitive_);
   }
 
-  bool Area::IsSensitive ()
+  bool Area::IsSensitive() const
+  {
+    return GetInputEventSensitivity();
+  }
+
+  bool Area::GetInputEventSensitivity() const
   {
     return sensitive_;
   }
 
   MinorDimensionPosition Area::GetPositioning()
   {
-    return _positioning;
+    return minor_axis_position_;
   }
 
   void Area::SetPositioning (MinorDimensionPosition p)
   {
-    _positioning = p;
+    minor_axis_position_ = p;
   }
 
   MinorDimensionSize Area::GetExtend()
   {
-    return _extend;
+    return minor_axis_size_;
   }
 
   void Area::SetExtend (MinorDimensionSize ext)
   {
-    _extend = ext;
+    minor_axis_size_ = ext;
   }
 
   float Area::GetPercentage()
   {
-    return _percentage;
+    return minor_axis_size_scale_;
   }
 
   void Area::SetPercentage (float p)
   {
-    _percentage = p;
+    minor_axis_size_scale_ = p;
   }
 
   bool Area::IsLayoutDone()
   {
-    return _layout_done;
+    return layout_done_;
   }
 
   void Area::SetLayoutDone (bool b)
   {
-    _layout_done = b;
+    layout_done_ = b;
   }
 
   bool Area::IsArea () const
@@ -830,10 +825,10 @@ namespace nux
     if (this == parent)
       return true;
 
-    if (!parent || !_parent_area)
+    if (!parent || !parent_area_)
       return false;
 
-    return _parent_area->IsChildOf(parent);    
+    return parent_area_->IsChildOf(parent);    
   }
 
   void Area::QueueRelayout ()
@@ -861,51 +856,66 @@ namespace nux
     return _accept_mouse_wheel_event;
   }
 
-  bool Area::TestMousePointerInclusion(const Point& mouse_position, NuxEventType event_type)
-  {
-    if (IsSensitive() == false)
-      return false;
-
-    bool mouse_pointer_inside_area = false;
-
-    if (Type().IsDerivedFromType(MenuPage::StaticObjectType))
-    {
-      // A MenuPage geometry is already in absolute coordinates.
-      mouse_pointer_inside_area = geometry_.IsInside(mouse_position);
-    }
-    else
-    {
-      mouse_pointer_inside_area = GetAbsoluteGeometry().IsInside(mouse_position);
-    }
-
-    if ((event_type == NUX_MOUSE_WHEEL) && mouse_pointer_inside_area)
-    {
-      if (_accept_mouse_wheel_event == false)
-        return NULL;
-    }
-
-    return mouse_pointer_inside_area;
-  }
-
-  bool Area::TestMousePointerInclusionFilterMouseWheel(const Point& mouse_position, NuxEventType event_type)
-  {
-    if (IsSensitive() == false)
-      return false;
-
-    bool mouse_pointer_inside_area = false;
-
-    if (Type().IsDerivedFromType(MenuPage::StaticObjectType))
-    {
-      // A MenuPage geometry is already in absolute coordinates.
-      mouse_pointer_inside_area = geometry_.IsInside(mouse_position);
-    }
-    else
-    {
-      mouse_pointer_inside_area = GetAbsoluteGeometry().IsInside(mouse_position);
-    }
-
-    return mouse_pointer_inside_area;
-  }
+   bool Area::TestMousePointerInclusion(const Point& mouse_position, NuxEventType event_type)
+   {
+     if ((IsLayout() == false) && ((GetInputEventSensitivity() == false) || (view_enabled_ == false)))
+     {
+       // If this area is not a view and:
+       //    - it is insensitive to input event
+       //    - it is not enabled
+       //    - it is not visible
+       // then return false.
+       return false;
+     }
+ 
+     bool mouse_pointer_inside_area = false;
+ 
+     if (Type().IsDerivedFromType(MenuPage::StaticObjectType))
+     {
+       // A MenuPage geometry is already in absolute coordinates.
+       mouse_pointer_inside_area = geometry_.IsInside(mouse_position);
+     }
+     else
+     {
+       mouse_pointer_inside_area = GetAbsoluteGeometry().IsInside(mouse_position);
+     }
+ 
+     if ((event_type == NUX_MOUSE_WHEEL) && mouse_pointer_inside_area)
+     {
+       if (_accept_mouse_wheel_event == false)
+         return NULL;
+     }
+ 
+     return mouse_pointer_inside_area;
+   }
+ 
+   bool Area::TestMousePointerInclusionFilterMouseWheel(const Point& mouse_position, NuxEventType event_type)
+   {
+     if ((IsLayout() == false) && ((GetInputEventSensitivity() == false) || (view_enabled_ == false)))
+     {
+       // If this area is not a view and:
+       //    - it is insensitive to input event
+       //    - it is not enabled
+       //    - it is not visible
+       // then return false.
+ 
+       return false;
+     }
+ 
+     bool mouse_pointer_inside_area = false;
+ 
+     if (Type().IsDerivedFromType(MenuPage::StaticObjectType))
+     {
+       // A MenuPage geometry is already in absolute coordinates.
+       mouse_pointer_inside_area = geometry_.IsInside(mouse_position);
+     }
+     else
+     {
+       mouse_pointer_inside_area = GetAbsoluteGeometry().IsInside(mouse_position);
+     }
+ 
+     return mouse_pointer_inside_area;
+   }
 
   Area* Area::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
@@ -961,9 +971,9 @@ namespace nux
   void Area::ResetUpwardPathToKeyFocusArea()
   {
     has_key_focus_ = false;
-    if (_parent_area)
+    if (parent_area_)
     {
-      _parent_area->ResetUpwardPathToKeyFocusArea();
+      parent_area_->ResetUpwardPathToKeyFocusArea();
     }
     if(next_object_to_key_focus_area_)
       next_object_to_key_focus_area_->UnReference();
@@ -980,7 +990,7 @@ namespace nux
 
   bool Area::AcceptKeyNavFocus()
   {
-    if (IsSensitive() == false)
+    if (GetInputEventSensitivity() == false)
       return false;
 
     return true;

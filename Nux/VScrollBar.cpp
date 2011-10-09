@@ -264,17 +264,6 @@ namespace nux
 
   }
 
-  long VScrollBar::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret;
-    ret = _scroll_down_button->OnEvent (ievent, TraverseInfo, ProcessEventInfo);
-    ret = _scroll_up_button->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = _slider->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = _track->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-    return ret;
-  }
-
   Area* VScrollBar::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
     bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
@@ -292,27 +281,27 @@ namespace nux
     return this;
   }
 
-  void VScrollBar::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void VScrollBar::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
-    GetPainter().PaintBackground (GfxContext, base);
+    GetPainter().PaintBackground (graphics_engine, base);
 
     base.OffsetPosition (0, VSCROLLBAR_HEIGHT);
     base.OffsetSize (0, -2 * VSCROLLBAR_HEIGHT);
-    //GetPainter().PaintShape (GfxContext, base, Color (COLOR_SCROLLBAR_TRACK), eVSCROLLBAR, false);
-    //GfxContext.QRP_Color (base.x, base.y, base.width, base.height, Color (COLOR_SCROLLBAR_TRACK));
+    //GetPainter().PaintShape (graphics_engine, base, Color (COLOR_SCROLLBAR_TRACK), eVSCROLLBAR, false);
+    //graphics_engine.QRP_Color (base.x, base.y, base.width, base.height, Color (COLOR_SCROLLBAR_TRACK));
 
-    //GetPainter().PaintShape (GfxContext, _scroll_up_button->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_UP);
-    //GetPainter().PaintShape (GfxContext, _scroll_down_button->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_DOWN);
+    //GetPainter().PaintShape (graphics_engine, _scroll_up_button->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_UP);
+    //GetPainter().PaintShape (graphics_engine, _scroll_down_button->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_DOWN);
 
-    /*GetPainter().PaintShape (GfxContext, _slider->GetGeometry(),
+    /*GetPainter().PaintShape (graphics_engine, _slider->GetGeometry(),
                          Color (0.2156 * m_color_factor, 0.2156 * m_color_factor, 0.2156 * m_color_factor, 1.0f),
                          eVSCROLLBAR, true);*/
 
     if (content_height_ > container_height_)
     {
       Geometry slider_geo = _slider->GetGeometry ();
-      GfxContext.QRP_Color (slider_geo.x, slider_geo.y, slider_geo.width, slider_geo.height,
+      graphics_engine.QRP_Color (slider_geo.x, slider_geo.y, slider_geo.width, slider_geo.height,
           Color (1.0f, 1.0f, 1.0f, 0.8f));
     }
       //Color (0.2156 * m_color_factor, 0.2156 * m_color_factor, 0.2156 * m_color_factor, 1.0f));

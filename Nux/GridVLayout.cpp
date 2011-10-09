@@ -284,12 +284,12 @@ namespace nux
     return size_compliance;
   }
 
-  void GridVLayout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void GridVLayout::ProcessDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     std::list<Area *> elements;
     std::list<Area *>::iterator it = _layout_element_list.begin ();
 
-    GfxContext.PushModelViewMatrix (Get2DMatrix ());
+    graphics_engine.PushModelViewMatrix (Get2DMatrix ());
 
     for (it = _layout_element_list.begin (); it != _layout_element_list.end (); ++it)
     {
@@ -309,7 +309,7 @@ namespace nux
 
     visibility_geometry = parent_geometry.Intersect (GetAbsoluteGeometry ());
 
-    GfxContext.PushClippingRectangle (base);
+    graphics_engine.PushClippingRectangle (base);
 
     for (int i = 0; i < _num_column; i++)
     {
@@ -326,27 +326,27 @@ namespace nux
           int X = base.x + m_h_out_margin + i * (_children_size.width + m_h_in_margin);
           int Y = base.y + m_v_out_margin + j * (_children_size.height + m_v_in_margin);
 
-          GfxContext.PushClippingRectangle (Geometry (X, Y, _children_size.width, _children_size.height));
+          graphics_engine.PushClippingRectangle (Geometry (X, Y, _children_size.width, _children_size.height));
           if ((*it)->IsView ())
           {
             View *ic = static_cast<View *>(*it);
-            ic->ProcessDraw (GfxContext, force_draw);
+            ic->ProcessDraw (graphics_engine, force_draw);
           }
           else if ((*it)->IsLayout ())
           {
             Layout *layout = static_cast<Layout *>(*it);
-            layout->ProcessDraw (GfxContext, force_draw);
+            layout->ProcessDraw (graphics_engine, force_draw);
           }
 
-          GfxContext.PopClippingRectangle ();
+          graphics_engine.PopClippingRectangle ();
         }
 
         it++;
       }
     }
 
-    GfxContext.PopClippingRectangle ();
-    GfxContext.PopModelViewMatrix ();
+    graphics_engine.PopClippingRectangle ();
+    graphics_engine.PopModelViewMatrix ();
 
     _queued_draw = false;
   }

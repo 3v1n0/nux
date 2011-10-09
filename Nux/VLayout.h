@@ -23,7 +23,7 @@
 #ifndef VLAYOUT_H
 #define VLAYOUT_H
 
-#include "Layout.h"
+#include "LinearLayout.h"
 
 namespace nux
 {

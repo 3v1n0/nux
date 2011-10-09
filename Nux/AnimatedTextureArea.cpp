@@ -48,30 +48,25 @@ namespace nux
     m_TimerFunctor = 0;
   }
 
-  long AnimatedTextureArea::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    return PostProcessEvent2 (ievent, TraverseInfo, ProcessEventInfo);
-  }
-
-  void AnimatedTextureArea::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void AnimatedTextureArea::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     if (m_UserTexture)
     {
-      GetPainter().PaintBackground (GfxContext, GetGeometry() );
-      GfxContext.GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      GetPainter().PaintBackground (graphics_engine, GetGeometry() );
+      graphics_engine.GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       nux::Geometry base = GetGeometry();
       nux::TexCoordXForm texxform;
-      GfxContext.QRP_1Tex (base.x, base.y, base.width, base.height, m_UserTexture->GetDeviceTexture(), texxform, nux::color::White);
+      graphics_engine.QRP_1Tex (base.x, base.y, base.width, base.height, m_UserTexture->GetDeviceTexture(), texxform, nux::color::White);
 
-      GfxContext.GetRenderStates().SetBlend (false);
+      graphics_engine.GetRenderStates().SetBlend (false);
     }
   }
-  void AnimatedTextureArea::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void AnimatedTextureArea::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void AnimatedTextureArea::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void AnimatedTextureArea::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }

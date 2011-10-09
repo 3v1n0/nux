@@ -148,32 +148,6 @@ namespace nux
     _tab_array.clear();
   }
 
-  long TabView::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-
-    ret = _scroll_right->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = _scroll_left->OnEvent (ievent, ret, ProcessEventInfo);
-
-//    if(_scroll_right->IsMouseOwner())
-//        TranslateTabLayout(-10);
-//    if(_scroll_left->IsMouseOwner())
-//        TranslateTabLayout(10);
-
-    t_u32 vector_size = (t_u32) _tab_array.size();
-
-    for (t_u32 i = 0; i < vector_size; i++)
-    {
-      ret = _tab_array[i]->_tab_area->OnEvent (ievent, ret, ProcessEventInfo);
-    }
-
-    if (_visible_tab_content_layout)
-      ret = _visible_tab_content_layout->ProcessEvent (ievent, ret, ProcessEventInfo);
-
-    ret = PostProcessEvent2 (ievent, ret, 0);
-    return ret;
-  }
-
   Area* TabView::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
     bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
@@ -202,18 +176,18 @@ namespace nux
   }
 
 
-  void TabView::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void TabView::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     if (m_DrawBackgroundOnPreviousGeometry)
     {
-      GetPainter().PaintBackground (GfxContext, m_PreviousGeometry);
+      GetPainter().PaintBackground (graphics_engine, m_PreviousGeometry);
       m_DrawBackgroundOnPreviousGeometry = false;
     }
 
-    GfxContext.PushClippingRectangle (GetGeometry() );
+    graphics_engine.PushClippingRectangle (GetGeometry() );
     Geometry base = GetGeometry();
 
-    GetPainter().PushDrawShapeLayer (GfxContext, Geometry (base.x, base.y, base.GetWidth(), TAB_HEIGHT), eSHAPE_CORNER_ROUND4, TAB_HEADER_BACKGROUND_COLOR, eCornerTopLeft | eCornerTopRight);
+    GetPainter().PushDrawShapeLayer (graphics_engine, Geometry (base.x, base.y, base.GetWidth(), TAB_HEIGHT), eSHAPE_CORNER_ROUND4, TAB_HEADER_BACKGROUND_COLOR, eCornerTopLeft | eCornerTopRight);
 
     if (_visible_tab_content_layout)
       _visible_tab_content_layout->QueueDraw();
@@ -227,7 +201,7 @@ namespace nux
     clip_geo.SetWidth (geo.GetWidth() - 2 * TAB_BUTTON_WIDTH);
     clip_geo.SetHeight (_tabview_heads_layout->GetBaseHeight() );
 
-    GfxContext.PushClippingRectangle (clip_geo);
+    graphics_engine.PushClippingRectangle (clip_geo);
 
     for (t_u32 i = 0; i < vector_size; i++)
     {
@@ -237,64 +211,64 @@ namespace nux
       if (_tab_array[i]->_index == m_FocusTabIndex)
       {
         tab_geo.OffsetSize (-2, 0);
-        GetPainter().PaintShapeCorner (GfxContext, tab_geo, TAB_HEADER_FOCUS_COLOR, eSHAPE_CORNER_ROUND4, eCornerTopLeft | eCornerTopRight, false);
-        GetPainter().PaintTextLineStatic (GfxContext, GetSysBoldFont(), tab_geo, tab_text, Color (0xFFFFFFFF), true, eAlignTextCenter);
+        GetPainter().PaintShapeCorner (graphics_engine, tab_geo, TAB_HEADER_FOCUS_COLOR, eSHAPE_CORNER_ROUND4, eCornerTopLeft | eCornerTopRight, false);
+        GetPainter().PaintTextLineStatic (graphics_engine, GetSysBoldFont(), tab_geo, tab_text, Color (0xFFFFFFFF), true, eAlignTextCenter);
       }
       else
       {
         tab_geo.OffsetSize (-2, 0);
-        GetPainter().PaintShapeCorner (GfxContext, tab_geo, TAB_HEADER_COLOR, eSHAPE_CORNER_ROUND4, eCornerTopLeft | eCornerTopRight, false);
-        GetPainter().PaintTextLineStatic (GfxContext, GetSysBoldFont(), tab_geo, tab_text, Color (0xFF000000), true, eAlignTextCenter);
+        GetPainter().PaintShapeCorner (graphics_engine, tab_geo, TAB_HEADER_COLOR, eSHAPE_CORNER_ROUND4, eCornerTopLeft | eCornerTopRight, false);
+        GetPainter().PaintTextLineStatic (graphics_engine, GetSysBoldFont(), tab_geo, tab_text, Color (0xFF000000), true, eAlignTextCenter);
       }
     }
 
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
 
-    GetPainter().PaintShapeCorner (GfxContext, Geometry (base.x, base.y + TAB_HEIGHT, base.GetWidth(), base.GetHeight() - TAB_HEIGHT),
+    GetPainter().PaintShapeCorner (graphics_engine, Geometry (base.x, base.y + TAB_HEIGHT, base.GetWidth(), base.GetHeight() - TAB_HEIGHT),
                                TAB_BACKGROUND_COLOR, eSHAPE_CORNER_ROUND4, eCornerBottomLeft | eCornerBottomRight, false);
 
-    GetPainter().Paint2DQuadColor (GfxContext, _scroll_right->GetGeometry(), TAB_HEADER_BACKGROUND_COLOR);
+    GetPainter().Paint2DQuadColor (graphics_engine, _scroll_right->GetGeometry(), TAB_HEADER_BACKGROUND_COLOR);
     GeometryPositioning gp (eHACenter, eVACenter);
     Geometry GeoPo = ComputeGeometryPositioning (_scroll_right->GetGeometry(), GetTheme().GetImageGeometry (eTAB_RIGHT), gp);
 
     if (_scroll_right->IsMouseInside() )
-      GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eTAB_RIGHT);
+      GetPainter().PaintShape (graphics_engine, GeoPo, Color (0xFFFFFFFF), eTAB_RIGHT);
     else
-      GetPainter().PaintShape (GfxContext, GeoPo, TAB_HEADER_FOCUS_COLOR, eTAB_RIGHT);
+      GetPainter().PaintShape (graphics_engine, GeoPo, TAB_HEADER_FOCUS_COLOR, eTAB_RIGHT);
 
-    GetPainter().Paint2DQuadColor (GfxContext, _scroll_left->GetGeometry(), TAB_HEADER_BACKGROUND_COLOR);
+    GetPainter().Paint2DQuadColor (graphics_engine, _scroll_left->GetGeometry(), TAB_HEADER_BACKGROUND_COLOR);
     gp.SetAlignment (eHACenter, eVACenter);
     GeoPo = ComputeGeometryPositioning (_scroll_left->GetGeometry(), GetTheme().GetImageGeometry (eTAB_LEFT), gp);
 
     if (_scroll_left->IsMouseInside() )
-      GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eTAB_LEFT);
+      GetPainter().PaintShape (graphics_engine, GeoPo, Color (0xFFFFFFFF), eTAB_LEFT);
     else
-      GetPainter().PaintShape (GfxContext, GeoPo, TAB_HEADER_FOCUS_COLOR, eTAB_LEFT);
+      GetPainter().PaintShape (graphics_engine, GeoPo, TAB_HEADER_FOCUS_COLOR, eTAB_LEFT);
 
     GetPainter().PopBackground();
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void TabView::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void TabView::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
 
-    GfxContext.PushClippingRectangle (GetGeometry() );
-    GetPainter().PushShapeLayer (GfxContext, Geometry (base.x, base.y + TAB_HEIGHT, base.GetWidth(), base.GetHeight() - TAB_HEIGHT),
+    graphics_engine.PushClippingRectangle (GetGeometry() );
+    GetPainter().PushShapeLayer (graphics_engine, Geometry (base.x, base.y + TAB_HEIGHT, base.GetWidth(), base.GetHeight() - TAB_HEIGHT),
                              eSHAPE_CORNER_ROUND4, TAB_BACKGROUND_COLOR, eCornerBottomLeft | eCornerBottomRight);
 
     if (_visible_tab_content_layout)
     {
-      GfxContext.PushClippingRectangle (_visible_tab_content_layout->GetGeometry() );
-      _visible_tab_content_layout->ProcessDraw (GfxContext, force_draw);
-      GfxContext.PopClippingRectangle();
+      graphics_engine.PushClippingRectangle (_visible_tab_content_layout->GetGeometry() );
+      _visible_tab_content_layout->ProcessDraw (graphics_engine, force_draw);
+      graphics_engine.PopClippingRectangle();
     }
 
     GetPainter().PopBackground();
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void TabView::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void TabView::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }

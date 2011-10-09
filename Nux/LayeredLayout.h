@@ -41,8 +41,21 @@ namespace nux
   class LayeredLayout: public Layout
   {
     NUX_DECLARE_OBJECT_TYPE (LayeredLayout, Layout);
-
   public:
+    class LayeredChildProperties // : public LayeredLayout::LayoutProperties
+    {
+    public:
+      LayeredChildProperties (bool expand, int x, int y, int width, int height);
+      ~LayeredChildProperties();
+      void Update (bool expand, int x, int y, int width, int height);
+
+      bool m_expand;
+      int  m_x;
+      int  m_y;
+      int  m_width;
+      int  m_height;
+      sigc::signal<void, Area *, bool>::iterator m_vis_it;
+    };
 
     typedef enum
     {
@@ -178,13 +191,22 @@ namespace nux
     */
     LayeredLayout::InputMode GetInputMode ();
 
-    //
-    // Overrides
-    //
-    long ComputeContentSize ();
-    void GetCompositeList (std::list<Area *> *ViewList);
-    void ProcessDraw (GraphicsEngine &gfx_context, bool force_draw);
-    Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+//     //! Set the layout properties for this area
+//     /*!
+//         Allows the Layout managing this area to store the properties specifc to this area. Layouts
+//         should create a sub-class of LayoutProperties. The LayoutProperties of an area will
+//         be deleted upon destruction.
+//         @param properties the LayoutProperties sub-class  associated with this area. Can be NULL to
+//          unset.
+//     */
+//     void SetLayoutProperties (LayoutProperties *properties);
+// 
+//     //! Get the layout properties for this area
+//     /*!
+//         Retrieves the LayoutProperties sub-class with this area. See SetLayoutProperties
+//         @return LayoutProperties sub-class associated with this area.
+//     */
+//     LayoutProperties * GetLayoutProperties ();
 
     void AddLayout (Layout                *layouy,
                     unsigned int           stretch_factor = 1,
@@ -200,20 +222,30 @@ namespace nux
     void Clear ();
 
   protected:
+    //
+    // Overrides
+    //
+    long ComputeContentSize();
+    void GetCompositeList(std::list<Area *> *ViewList);
+
+    void ProcessDraw(GraphicsEngine &gfx_context, bool force_draw);
+    Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+
     virtual Area* KeyNavIteration(KeyNavDirection direction);
     void OnLayerGeometryChanged(Area* area, Geometry geo);
     
   private:
-    void PaintOne (Area *area, GraphicsEngine &GfxContext, bool force_draw);
-    void ChildQueueDraw (Area *area);
-    void ChildVisibilityChanged (Area *area, bool visible);
+    void PaintOne(Area *area, GraphicsEngine &graphics_engine, bool force_draw);
+    void ChildQueueDraw(Area *area);
+    void ChildVisibilityChanged(Area *area, bool visible);
     
   private:
-    int                      m_active_index;
-    Area                    *m_active_area;
-    bool                     m_paint_all;
-    LayeredLayout::InputMode m_input_mode;
-    bool                     m_child_draw_queued;
+    std::map<Area*, LayeredChildProperties*> area_property_map_;
+    int                       m_active_index;
+    Area                      *m_active_area;
+    bool                      m_paint_all;
+    LayeredLayout::InputMode  m_input_mode;
+    bool                      m_child_draw_queued;
   };
 }
 

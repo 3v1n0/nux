@@ -87,57 +87,10 @@ namespace nux
     m_MenuBarItemList.clear();
   }
 
-  long MenuBar::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-    ret = TraverseInfo;  // <<---- never forget this
-
-    std::list< MenuBarItem * >::iterator it;
-
-    for (it = m_MenuBarItemList.begin(); it != m_MenuBarItemList.end(); it++)
-    {
-      (*it)->menu->m_MenuWindow = m_MenuBarWindow;
-      ret = (*it)->area->OnEvent (ievent, ret, ProcessEventInfo);
-    }
-
-    if (ievent.e_event == NUX_MOUSE_PRESSED)
-    {
-      bool mouse_down_on_menu_item = false;
-
-      if (m_MenuIsActive == true)
-      {
-        for (it = m_MenuBarItemList.begin(); it != m_MenuBarItemList.end(); it++)
-        {
-          if ( (*it)->area->IsMouseInside() )
-          {
-            mouse_down_on_menu_item = true;
-            break;
-          }
-        }
-
-        if (mouse_down_on_menu_item == false)
-        {
-          if (m_CurrentMenu->menu->TestMouseDown() == false)
-          {
-            RecvSigTerminateMenuCascade();
-          }
-        }
-      }
-    }
-
-
-    // PostProcessEvent2 must always have its last parameter set to 0
-    // because the m_BackgroundArea is the real physical limit of the window.
-    // So the previous test about IsPointInside do not prevail over m_BackgroundArea
-    // testing the event by itself.
-    ret = PostProcessEvent2 (ievent, ret, 0);
-    return ret;
-  }
-
-  void MenuBar::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void MenuBar::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
-    GfxContext.PushClippingRectangle (base);
+    graphics_engine.PushClippingRectangle (base);
 
     Geometry item_geometry;
     std::list< MenuBarItem * >::iterator it;
@@ -150,48 +103,48 @@ namespace nux
       if (area->IsMouseInside() )
       {
 
-        GetPainter().PaintBackground (GfxContext, item_geometry);
+        GetPainter().PaintBackground (graphics_engine, item_geometry);
 
         if (!m_MenuIsActive)
         {
-          GetPainter().Paint2DQuadColor (GfxContext, item_geometry, Color (0xFF000000) );
-          //GetPainter().PaintShape(GfxContext, item_geometry, Color(0xFF000000), eSHAPE_CORNER_ROUND2);
+          GetPainter().Paint2DQuadColor (graphics_engine, item_geometry, Color (0xFF000000) );
+          //GetPainter().PaintShape(graphics_engine, item_geometry, Color(0xFF000000), eSHAPE_CORNER_ROUND2);
         }
         else
         {
-          GetPainter().Paint2DQuadColor (GfxContext, item_geometry, Color (0xFF000000) );
-          //GetPainter().PaintShapeCorner(GfxContext, item_geometry, Color(0xFF000000), eSHAPE_CORNER_ROUND2,
+          GetPainter().Paint2DQuadColor (graphics_engine, item_geometry, Color (0xFF000000) );
+          //GetPainter().PaintShapeCorner(graphics_engine, item_geometry, Color(0xFF000000), eSHAPE_CORNER_ROUND2,
           //eCornerTopLeft|eCornerTopRight, false);
         }
 
         if ( (*it)->icon)
         {
-          GfxContext.GetRenderStates().SetBlend (TRUE, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-          GfxContext.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-          GetPainter().Draw2DTexture (GfxContext, (*it)->icon, item_geometry.x, item_geometry.y);
-          GfxContext.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-          GfxContext.GetRenderStates().SetBlend (GL_FALSE);
+          graphics_engine.GetRenderStates().SetBlend (TRUE, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+          graphics_engine.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+          GetPainter().Draw2DTexture (graphics_engine, (*it)->icon, item_geometry.x, item_geometry.y);
+          graphics_engine.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+          graphics_engine.GetRenderStates().SetBlend (GL_FALSE);
         }
         else
         {
-          GetPainter().PaintTextLineStatic (GfxContext, GetFont (), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
+          GetPainter().PaintTextLineStatic (graphics_engine, GetFont (), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
         }
       }
       else
       {
-        GetPainter().PaintBackground (GfxContext, item_geometry);
+        GetPainter().PaintBackground (graphics_engine, item_geometry);
 
         if ( (*it)->icon)
         {
-          GfxContext.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-          GfxContext.GetRenderStates().SetBlend (TRUE, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-          GetPainter().Draw2DTexture (GfxContext, (*it)->icon, item_geometry.x, item_geometry.y);
-          GfxContext.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-          GfxContext.GetRenderStates().SetBlend (GL_FALSE);
+          graphics_engine.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+          graphics_engine.GetRenderStates().SetBlend (TRUE, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+          GetPainter().Draw2DTexture (graphics_engine, (*it)->icon, item_geometry.x, item_geometry.y);
+          graphics_engine.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+          graphics_engine.GetRenderStates().SetBlend (GL_FALSE);
         }
         else
         {
-          GetPainter().PaintTextLineStatic (GfxContext, GetFont (), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
+          GetPainter().PaintTextLineStatic (graphics_engine, GetFont (), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
         }
       }
     }
@@ -200,34 +153,34 @@ namespace nux
     {
       InputArea *area = m_CurrentMenu->area;
       item_geometry = area->GetGeometry();
-      GetPainter().PaintBackground (GfxContext, item_geometry);
-      GetPainter().Paint2DQuadColor (GfxContext, item_geometry, Color (0xFF000000) );
-      //GetPainter().PaintShapeCorner(GfxContext, item_geometry, Color(0xFF000000), eSHAPE_CORNER_ROUND2, eCornerTopLeft|eCornerTopRight, true);
+      GetPainter().PaintBackground (graphics_engine, item_geometry);
+      GetPainter().Paint2DQuadColor (graphics_engine, item_geometry, Color (0xFF000000) );
+      //GetPainter().PaintShapeCorner(graphics_engine, item_geometry, Color(0xFF000000), eSHAPE_CORNER_ROUND2, eCornerTopLeft|eCornerTopRight, true);
 
       if (m_CurrentMenu->icon)
       {
-        GfxContext.GetRenderStates().SetBlend (TRUE, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        GfxContext.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-        GetPainter().Draw2DTexture (GfxContext, m_CurrentMenu->icon, item_geometry.x, item_geometry.y);
-        GfxContext.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-        GfxContext.GetRenderStates().SetBlend (GL_FALSE);
+        graphics_engine.GetRenderStates().SetBlend (TRUE, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        graphics_engine.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        GetPainter().Draw2DTexture (graphics_engine, m_CurrentMenu->icon, item_geometry.x, item_geometry.y);
+        graphics_engine.GetRenderStates().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        graphics_engine.GetRenderStates().SetBlend (GL_FALSE);
       }
       else
       {
-        GetPainter().PaintTextLineStatic (GfxContext, GetFont (), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
+        GetPainter().PaintTextLineStatic (graphics_engine, GetFont (), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
       }
     }
 
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void MenuBar::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void MenuBar::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
   {
-    GfxContext.PushClippingRectangle (GetGeometry() );
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PushClippingRectangle (GetGeometry() );
+    graphics_engine.PopClippingRectangle();
   }
 
-  void MenuBar::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void MenuBar::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
@@ -325,7 +278,6 @@ namespace nux
       m_CurrentMenu->menu->m_MenuWindow = m_MenuBarWindow;
       m_IsOpeningMenu = true;
 
-      //m_CurrentMenu->area->ForceStopFocus(0, 0);
       m_CurrentMenu->menu->StartMenu (menubar_item->area->GetBaseX (),
                                       menubar_item->area->GetBaseY () + menubar_item->area->GetBaseHeight (), 0, 0);
     }

@@ -35,11 +35,10 @@ namespace nux
     RangeValueInteger (int Value = 0, int MinValue = 0, int MaxValue = 100, NUX_FILE_LINE_PROTO);
     ~RangeValueInteger();
 
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    void DrawMarker (GraphicsEngine &GfxContext);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    void DrawMarker (GraphicsEngine &graphics_engine);
+    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw);
 
     /////////////////
     //  RECEIVERS  //

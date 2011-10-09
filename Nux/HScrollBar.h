@@ -28,26 +28,21 @@
 
 namespace nux
 {
-
   class HLayout;
-  class VLayout;
-  class Layout;
 
-  class HScrollBar : public ScrollBar //public ValuatorAbstraction
+  class HScrollBar : public ScrollBar
   {
   public:
     HScrollBar (NUX_FILE_LINE_PROTO);
     ~HScrollBar();
 
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
-    void DrawLeftTriangle (GraphicsEngine &GfxContext, int width, int height, const Geometry &geo, BasePainter &painter);
-    void DrawRightTriangle (GraphicsEngine &GfxContext, int width, int height, const Geometry &geo, BasePainter &painter);
+    void DrawLeftTriangle (GraphicsEngine &graphics_engine, int width, int height, const Geometry &geo, BasePainter &painter);
+    void DrawRightTriangle (GraphicsEngine &graphics_engine, int width, int height, const Geometry &geo, BasePainter &painter);
 
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
   private:
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw) {};
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw) {};
+    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw) {};
+    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw) {};
 
     void HScrollBarHandler (void *v);
     void ScrollRight (void *v);
@@ -98,6 +93,8 @@ namespace nux
     // When the Scrollbar is used standalone, it is necessary to call ComputeScrolling at the end of the layout.
     virtual long PostLayoutManagement (long LayoutResult);
 
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+
     bool AtMinimum();
     bool AtMaximum();
 
@@ -139,8 +136,7 @@ namespace nux
 
     Point m_TrackMouseCoord;
     friend class HLayout;
-    friend class VLayout;
-    friend class Layout;
+    friend class ScrollView;
   };
 
 }

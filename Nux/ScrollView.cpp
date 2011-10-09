@@ -82,6 +82,9 @@ namespace nux
     mouse_wheel.connect(sigc::mem_fun(this, &ScrollView::RecvMouseWheel));
     _vscrollbar->mouse_wheel.connect(sigc::mem_fun(this, &ScrollView::RecvMouseWheel));
 
+    //FIXME disabling until we have better API for this
+    //ChildFocusChanged.connect (sigc::mem_fun (this, &ScrollView::OnChildFocusChanged));
+
     FormatContent();
 
     SetAcceptMouseWheelEvent(true);
@@ -119,63 +122,42 @@ namespace nux
     _vscrollbar->UnReference ();
   }
 
-  long ScrollView::ProcessEvent (Event &event, long TraverseInfo, long ProcessEventInfo)
+  void ScrollView::OnChildFocusChanged(Area *child)
   {
-    long ret = TraverseInfo;
-    long ProcEvInfo = 0;
+//     if (child->IsView ())
+//     {
+//       View *view = (View*)child;
+//       if (view->HasPassiveFocus ())
+//       {
+//         return;
+//       }
+//     }
+    if (child->IsLayout())
+      return;
 
-    if (event.e_event == NUX_MOUSE_PRESSED)
+    int child_y = child->GetGeometry().y - GetGeometry().y;
+    int child_y_diff = child_y - abs(_delta_y);
+
+
+    if (child_y_diff + child->GetGeometry().height < GetGeometry().height && child_y_diff >= 0)
     {
-      // Verify that the mouse down event falls inside the of the ScrollView.
-      if (!GetGeometry ().IsPointInside (event.e_x - event.e_x_root, event.e_y - event.e_y_root))
-      {
-        ProcEvInfo = eDoNotProcess;
-      }
+      return;
     }
 
-    if (event.e_event == NUX_MOUSE_WHEEL)
+    if (child_y_diff < 0)
     {
-      // nux can't tell the difference between horizontal and vertical mouse wheel events
-      // so we are only going to support vertical
-      if (event.e_wheeldelta > 0)
-      {
-        ScrollDown (abs (event.e_wheeldelta / NUX_MOUSEWHEEL_DELTA), m_MouseWheelScrollSize);
-      }
-      else
-      {
-        ScrollUp (abs (event.e_wheeldelta / NUX_MOUSEWHEEL_DELTA), m_MouseWheelScrollSize);
-      }
+      ScrollUp(1, abs(child_y_diff));
+    }
+    else
+    {
+      int size = child_y_diff - GetGeometry().height;
+
+      // always keeps the top of a view on the screen
+      size += (child->GetGeometry().height, GetGeometry().height) ? child->GetGeometry().height : GetGeometry().height;
+
+      ScrollDown(1, size);
     }
 
-    if (m_vertical_scrollbar_enable)
-      ret = _vscrollbar->ProcessEvent (event, ret, ProcEvInfo);
-
-    if (m_horizontal_scrollbar_enable)
-      ret = _hscrollbar->ProcessEvent (event, ret, ProcEvInfo);
-
-    // The child layout get the Mouse down button only if the MouseDown happened inside the client view Area
-    Geometry viewGeometry = Geometry (m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight);
-
-    if ((event.e_event == NUX_MOUSE_PRESSED) ||
-     (event.e_event == NUX_MOUSE_RELEASED) ||
-     (event.e_event == NUX_MOUSE_MOVE))
-    {
-      if (!viewGeometry.IsPointInside (event.e_x - event.e_x_root, event.e_y - event.e_y_root) )
-      {
-        ProcEvInfo = eDoNotProcess;
-      }
-    }
-
-    if (view_layout_)
-    {
-      // The ScrollView layout position is fixed. The ScrollView keeps track of the delta offset in x and y of the layout it manages.
-      // Modify the event to account for this offset;
-      Event mod_event = event;
-      ret = view_layout_->ProcessEvent (mod_event, ret, ProcEvInfo);
-    }
-
-    ret = PostProcessEvent2 (event, ret, 0);
-    return ret;
   }
 
   Area* ScrollView::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
@@ -223,16 +205,16 @@ namespace nux
     return true;
   }
 
-  void ScrollView::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void ScrollView::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
-    GfxContext.PushClippingRectangle (GetGeometry ());
+    graphics_engine.PushClippingRectangle (GetGeometry ());
 
     Geometry base = GetGeometry ();
 
     if (view_layout_)
       view_layout_->QueueDraw();
 
-    GetPainter().PaintBackground (GfxContext, base);
+    GetPainter().PaintBackground (graphics_engine, base);
 
     if (m_vertical_scrollbar_enable)
     {
@@ -244,48 +226,48 @@ namespace nux
       _hscrollbar->QueueDraw();
     }
 
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void ScrollView::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void ScrollView::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
   {
     if (IsFullRedraw())
       GetPainter().PushBackgroundStack();
       
-    GfxContext.PushClippingRectangle (GetGeometry ());
+    graphics_engine.PushClippingRectangle (GetGeometry ());
 
-    GfxContext.PushClippingRectangle (Rect (m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight));
+    graphics_engine.PushClippingRectangle (Rect (m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight));
 
     if (view_layout_)
     {
-//       GfxContext.PushClipOffset (_delta_x, _delta_y);
-//       GfxContext.PushClippingRectangle (view_layout_->GetGeometry ());
-//       GfxContext.Push2DTranslationModelViewMatrix (_delta_x, _delta_y, 0.0f);
-      view_layout_->ProcessDraw (GfxContext, force_draw);
-//       GfxContext.PopModelViewMatrix ();
-//       GfxContext.PopClippingRectangle ();
-//       GfxContext.PopClipOffset ();
+//       graphics_engine.PushClipOffset (_delta_x, _delta_y);
+//       graphics_engine.PushClippingRectangle (view_layout_->GetGeometry ());
+//       graphics_engine.Push2DTranslationModelViewMatrix (_delta_x, _delta_y, 0.0f);
+      view_layout_->ProcessDraw (graphics_engine, force_draw);
+//       graphics_engine.PopModelViewMatrix ();
+//       graphics_engine.PopClippingRectangle ();
+//       graphics_engine.PopClipOffset ();
     }
 
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
 
     if (m_vertical_scrollbar_enable)
     {
-      _vscrollbar->ProcessDraw (GfxContext, force_draw);
+      _vscrollbar->ProcessDraw (graphics_engine, force_draw);
     }
 
     if (m_horizontal_scrollbar_enable)
     {
-      _hscrollbar->ProcessDraw (GfxContext, force_draw);
+      _hscrollbar->ProcessDraw (graphics_engine, force_draw);
     }
 
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
 
     if (IsFullRedraw())
       GetPainter().PopBackgroundStack();
   }
 
-  void ScrollView::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void ScrollView::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }

@@ -75,9 +75,9 @@ namespace nux
     m_SplitConfig.clear();
   }
 
-  void HSplitter::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void HSplitter::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
-    GfxContext.PushClippingRectangle (GetGeometry() );
+    graphics_engine.PushClippingRectangle (GetGeometry() );
     Geometry base = GetGeometry();
 //    std::vector<View*>::iterator it;
 //    for(it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
@@ -85,7 +85,7 @@ namespace nux
 //        (*it)->ProcessDraw(force_draw);
 //    }
 
-    GetPainter().PaintBackground (GfxContext, base);
+    GetPainter().PaintBackground (graphics_engine, base);
     std::vector<MySplitter *>::iterator it_splitter;
 
     for (it_splitter = m_SplitterObject.begin(); it_splitter != m_SplitterObject.end(); it_splitter++)
@@ -109,17 +109,17 @@ namespace nux
         grip_geo.SetHeight (geo.GetHeight() );
       }
 
-      GetPainter().Draw2DLine (GfxContext, grip_geo.x, grip_geo.y + 1, grip_geo.x + grip_geo.GetWidth(), grip_geo.y + 1, Color (0xFF111111) );
-      GetPainter().Draw2DLine (GfxContext, grip_geo.x, grip_geo.y + 3, grip_geo.x + grip_geo.GetWidth(), grip_geo.y + 3, Color (0xFF111111) );
+      GetPainter().Draw2DLine (graphics_engine, grip_geo.x, grip_geo.y + 1, grip_geo.x + grip_geo.GetWidth(), grip_geo.y + 1, Color (0xFF111111) );
+      GetPainter().Draw2DLine (graphics_engine, grip_geo.x, grip_geo.y + 3, grip_geo.x + grip_geo.GetWidth(), grip_geo.y + 3, Color (0xFF111111) );
     }
 
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void HSplitter::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void HSplitter::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
-    GfxContext.PushClippingRectangle (base);
+    graphics_engine.PushClippingRectangle (base);
     bool need_redraw = IsRedrawNeeded();
 
     std::vector<MySplitter *>::iterator it_splitter;
@@ -131,7 +131,7 @@ namespace nux
          it++, it_splitter++)
     {
       Geometry sgeo = (*it_splitter)->GetGeometry();
-      GfxContext.PushClippingRectangle (Rect (
+      graphics_engine.PushClippingRectangle (Rect (
                                           base.x, base.y, base.GetWidth(), sgeo.y - base.y) );
 
       base.SetY (sgeo.y + sgeo.GetHeight() );
@@ -141,22 +141,22 @@ namespace nux
         if ( (*it)->Type().IsDerivedFromType (View::StaticObjectType) )
         {
           View *ic = static_cast<View *>(*it);
-          ic->ProcessDraw (GfxContext, true);
+          ic->ProcessDraw (graphics_engine, true);
         }
         else if ( (*it)->Type().IsObjectType (InputArea::StaticObjectType) )
         {
           InputArea *base_area = static_cast<InputArea *>(*it);
-          base_area->OnDraw (GfxContext, true);
+          base_area->OnDraw (graphics_engine, true);
         }
         else if ( (*it)->Type().IsObjectType (HLayout::StaticObjectType) )
         {
           HLayout *layout = static_cast<HLayout *>(*it);
-          layout->ProcessDraw (GfxContext, true);
+          layout->ProcessDraw (graphics_engine, true);
         }
         else if ( (*it)->Type().IsObjectType (VLayout::StaticObjectType) )
         {
           VLayout *layout = static_cast<VLayout *>(*it);
-          layout->ProcessDraw (GfxContext, true);
+          layout->ProcessDraw (graphics_engine, true);
         }
       }
       else
@@ -164,37 +164,37 @@ namespace nux
         if ( (*it)->Type().IsDerivedFromType (View::StaticObjectType) )
         {
           View *ic = static_cast<View *>(*it);
-          ic->ProcessDraw (GfxContext, false);
+          ic->ProcessDraw (graphics_engine, false);
         }
         else if ( (*it)->Type().IsObjectType (InputArea::StaticObjectType) )
         {
           InputArea *base_area = static_cast<InputArea *>(*it);
-          base_area->OnDraw (GfxContext, false);
+          base_area->OnDraw (graphics_engine, false);
         }
         else if ( (*it)->Type().IsObjectType (HLayout::StaticObjectType) )
         {
           HLayout *layout = static_cast<HLayout *>(*it);
-          layout->ProcessDraw (GfxContext, false);
+          layout->ProcessDraw (graphics_engine, false);
         }
         else if ( (*it)->Type().IsObjectType (VLayout::StaticObjectType) )
         {
           VLayout *layout = static_cast<VLayout *>(*it);
-          layout->ProcessDraw (GfxContext, false);
+          layout->ProcessDraw (graphics_engine, false);
         }
       }
 
-      GfxContext.PopClippingRectangle();
+      graphics_engine.PopClippingRectangle();
     }
 
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void HSplitter::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void HSplitter::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void HSplitter::OverlayDrawing (GraphicsEngine &GfxContext)
+  void HSplitter::OverlayDrawing (GraphicsEngine &graphics_engine)
   {
     t_u32 num_element = (t_u32) m_SplitterObject.size();
 
@@ -231,11 +231,11 @@ namespace nux
         }
       }
 
-      GfxContext.GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      graphics_engine.GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       {
-        GetPainter().Paint2DQuadColor (GfxContext, geo, Color (0xBB868686) );
+        GetPainter().Paint2DQuadColor (graphics_engine, geo, Color (0xBB868686) );
       }
-      GfxContext.GetRenderStates().SetBlend (false);
+      graphics_engine.GetRenderStates().SetBlend (false);
     }
   }
 

@@ -50,7 +50,6 @@ namespace nux
     void PreLayoutManagement ();
     long PostLayoutManagement (long layoutResult);
 
-    long ProcessEvent (IEvent& event, long traverseInfo, long processEventInfo);
     void Draw (GraphicsEngine& gfxContext, bool forceDraw);
     void DrawContent (GraphicsEngine& gfxContext, bool forceDraw);
     void PostDraw (GraphicsEngine& gfxContext, bool forceDraw);

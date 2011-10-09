@@ -89,38 +89,6 @@ namespace nux
 #endif
   }
 
-  long BaseWindow::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-    long ProcEvInfo = 0;
-
-    IEvent window_event = ievent;
-    Geometry base = GetGeometry();
-    window_event.e_x_root = base.x;
-    window_event.e_y_root = base.y;
-
-    // The child layout get the Mouse down button only if the MouseDown happened inside the client view Area
-    Geometry viewGeometry = GetGeometry();
-
-    if (ievent.e_event == NUX_MOUSE_PRESSED)
-    {
-      if (!viewGeometry.IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root) )
-      {
-        ProcEvInfo = eDoNotProcess;
-      }
-    }
-
-    if (m_layout)
-      ret = m_layout->ProcessEvent (window_event, ret, ProcEvInfo);
-
-    // PostProcessEvent2 must always have its last parameter set to 0
-    // because the m_BackgroundArea is the real physical limit of the window.
-    // So the previous test about IsPointInside do not prevail over m_BackgroundArea
-    // testing the event by itself.
-    ret = PostProcessEvent2 (ievent, ret, 0);
-    return ret;
-  }
-
   Area* BaseWindow::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
     bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
@@ -141,105 +109,67 @@ namespace nux
     return this;
   }
 
-  void BaseWindow::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void BaseWindow::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
     // The elements position inside the window are referenced to top-left window corner. So bring base to (0, 0).
     base.SetX (0);
     base.SetY (0);
-    GfxContext.PushClippingRectangle (base);
+    graphics_engine.PushClippingRectangle (base);
 
-    GetPainter().PushDrawLayer(GfxContext, base, _paint_layer.get());
+    GetPainter().PushDrawLayer(graphics_engine, base, _paint_layer.get());
 
     GetPainter().PopBackground();
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void BaseWindow::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void BaseWindow::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
     Geometry base = GetGeometry();
     // The elements position inside the window are referenced to top-left window corner. So bring base to (0, 0).
-    base.SetX (0);
-    base.SetY (0);
+    base.SetX(0);
+    base.SetY(0);
 
 
-    GetPainter().PushLayer(GfxContext, base, _paint_layer.get());
+    GetPainter().PushLayer(graphics_engine, base, _paint_layer.get());
 
     if (m_layout)
     {
-      GfxContext.PushClippingRectangle (base);
-      m_layout->ProcessDraw (GfxContext, force_draw);
-      GfxContext.PopClippingRectangle();
+      graphics_engine.PushClippingRectangle(base);
+      m_layout->ProcessDraw(graphics_engine, force_draw);
+      graphics_engine.PopClippingRectangle();
     }
 
     GetPainter().PopBackground();
   }
 
-  void BaseWindow::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void BaseWindow::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void BaseWindow::SetConfigureNotifyCallback (ConfigureNotifyCallback Callback, void *Data)
+  void BaseWindow::SetConfigureNotifyCallback(ConfigureNotifyCallback Callback, void *Data)
   {
     m_configure_notify_callback = Callback;
     m_configure_notify_callback_data = Data;
   }
 
-  void BaseWindow::AddWidget (View *ic)
-  {
-    if (ic && m_layout)
-    {
-      m_layout->AddView (ic, 0);
-      // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
-      // and the children will take their natural size by expending WidgetLayout.
-      // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
-
-      ComputeContentSize();
-    }
-  }
-
-  void BaseWindow::AddWidget (View *ic, int stretchfactor)
-  {
-    if (ic && m_layout)
-    {
-      m_layout->AddView (ic, stretchfactor);
-      // if(stretchfactor ==0): the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
-      // and the children will take their natural size by expending WidgetLayout.
-      // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
-
-      ComputeContentSize();
-    }
-  }
-
-  void BaseWindow::AddWidget (std::list<View *> *ViewList)
-  {
-    view_layout_->Clear();
-
-    std::list<View *>::iterator it;
-
-    for (it = ViewList->begin(); it != ViewList->end(); it++)
-    {
-      AddWidget ( (*it) );
-    }
-  }
-
-  Layout* BaseWindow::GetLayout ()
+  Layout* BaseWindow::GetLayout()
   {
     return m_layout;
   }
 
-  bool BaseWindow::SetLayout (Layout *layout)
+  bool BaseWindow::SetLayout(Layout *layout)
   {
-    if (View::SetLayout (layout) == false)
+    if (View::SetLayout(layout) == false)
       return false;
 
     m_layout = layout;
     Geometry geo = GetGeometry();
-    Geometry layout_geo = Geometry (geo.x + m_Border, geo.y + m_TopBorder,
+    Geometry layout_geo = Geometry(geo.x + m_Border, geo.y + m_TopBorder,
                                     geo.GetWidth() - 2 * m_Border, geo.GetHeight() - m_Border - m_TopBorder);
-    m_layout->SetGeometry (layout_geo);
+    m_layout->SetGeometry(layout_geo);
 
     // When this call returns the layout computation is done.
     ComputeContentSize();
@@ -257,11 +187,11 @@ namespace nux
 
     if (m_configure_notify_callback)
     {
-      (*m_configure_notify_callback) (GetGraphicsDisplay()->GetWindowWidth(), GetGraphicsDisplay()->GetWindowHeight(), geo, m_configure_notify_callback_data);
+      (*m_configure_notify_callback)(GetGraphicsDisplay()->GetWindowWidth(), GetGraphicsDisplay()->GetWindowHeight(), geo, m_configure_notify_callback_data);
 
-      if (geo.IsNull() )
+      if (geo.IsNull())
       {
-        nuxDebugMsg (TEXT ("[BaseWindow::PreLayoutManagement] Received an invalid Geometry.") );
+        nuxDebugMsg("[BaseWindow::PreLayoutManagement] Received an invalid Geometry.");
         geo = GetGeometry();
       }
       else
@@ -477,7 +407,7 @@ namespace nux
 
       if (geo.IsNull() )
       {
-        nuxDebugMsg (TEXT ("[BaseWindow::NotifyConfigurationChange] Received an invalid Geometry.") );
+        nuxDebugMsg ("[BaseWindow::NotifyConfigurationChange] Received an invalid Geometry." );
         geo = GetGeometry();
       }
       else

@@ -38,7 +38,7 @@ namespace nux
 
     void SetColor (const Color &color);
     Color GetColor () const;
-    virtual void Renderlayer (GraphicsEngine &GfxContext);
+    virtual void Renderlayer (GraphicsEngine &graphics_engine);
     virtual AbstractPaintLayer *Clone () const;
 
   private:
@@ -51,7 +51,7 @@ namespace nux
   {
   public:
     ShapeLayer (UXStyleImageRef imageStyle, const Color &color, unsigned long Corners = eAllCorners, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default);
-    virtual void Renderlayer (GraphicsEngine &GfxContext);
+    virtual void Renderlayer (GraphicsEngine &graphics_engine);
     virtual AbstractPaintLayer *Clone() const;
 
   private:
@@ -66,7 +66,7 @@ namespace nux
   {
   public:
     SliceScaledTextureLayer (UXStyleImageRef imageStyle, const Color &color, unsigned long Corners = eAllCorners, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default);
-    virtual void Renderlayer (GraphicsEngine &GfxContext);
+    virtual void Renderlayer (GraphicsEngine &graphics_engine);
     virtual AbstractPaintLayer *Clone() const;
 
   private:
@@ -81,7 +81,7 @@ namespace nux
   {
   public:
     TextureLayer (ObjectPtr< IOpenGLBaseTexture > device_texture, TexCoordXForm texxform, const Color &color, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default);
-    virtual void Renderlayer (GraphicsEngine &GfxContext);
+    virtual void Renderlayer (GraphicsEngine &graphics_engine);
     virtual AbstractPaintLayer *Clone() const;
 
     virtual ObjectPtr< IOpenGLBaseTexture> GetDeviceTexture ();

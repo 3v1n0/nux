@@ -84,16 +84,6 @@ namespace nux
     return result;
   }
 
-  long PangoText::ProcessEvent (IEvent& event,
-    long    traverseInfo,
-    long    processEventInfo)
-  {
-    long ret = traverseInfo;
-
-    ret = PostProcessEvent2 (event, ret, processEventInfo);
-    return ret;
-  }
-
   void PangoText::SetSizeMatchText (bool size_match_text)
   {
     _size_match_text = size_match_text;

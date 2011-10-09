@@ -148,16 +148,6 @@ namespace nux
   {
     NUX_DECLARE_OBJECT_TYPE (Area, InitiallyUnownedObject);
   public:
-    class LayoutProperties
-    {
-      public:
-      virtual ~LayoutProperties ()
-      {
-
-      }
-    };
-
-  public:
     Area (NUX_FILE_LINE_DECL);
     virtual ~Area();
 
@@ -306,23 +296,6 @@ namespace nux
     virtual bool IsSpaceLayout () const;
     virtual bool IsViewWindow () const;
 
-    //! Set the layout properties for this area
-    /*!
-        Allows the Layout managing this area to store the properties specifc to this area. Layouts
-        should create a sub-class of LayoutProperties. The LayoutProperties of an area will
-        be deleted upon destruction.
-        @param properties the LayoutProperties sub-class  associated with this area. Can be NULL to
-         unset.
-    */
-    void SetLayoutProperties (LayoutProperties *properties);
-
-    //! Get the layout properties for this area
-    /*!
-        Retrieves the LayoutProperties sub-class with this area. See SetLayoutProperties
-        @return LayoutProperties sub-class associated with this area.
-    */
-    LayoutProperties * GetLayoutProperties ();
-
     Area * GetParentObject() const;
 
     //! Set visibility of the area
@@ -330,16 +303,19 @@ namespace nux
         If visible, an area will be drawn. Default: true.
         @param visible if the area is visible to the user
     */
-    void SetVisible  (bool visible);
+    void SetVisible(bool visible);
 
     //! Get the visibility of the area
     /*!
         Gets whether the area is visible to the user and will be visible to the user. Default is true.
         @return whether the area is visible
     */
-    bool IsVisible ();
+    bool IsVisible();
 
-    //! Set sensitivity of the area.
+    //! Deprecated. Use SetInputEventSensitivity.
+    void SetSensitive(bool);
+
+    //! Set input event sensitivity of the area.
     /*!
         A insensitive Area will not receive input events.\n
         If the Area has a layout, the event will be passed down to it. Sensitivity only control an area's ability to receive input events (keyboard, mouse, touch).
@@ -350,14 +326,17 @@ namespace nux
 
         @param sensitive If the area should receive input events
     */
-    void SetSensitive(bool sensitive);
+    void SetInputEventSensitivity(bool sensitive);
 
-    //! Get whether the area is sensitive
+    //! Deprecated. Use GetInputEventSensitivity.
+    bool IsSensitive() const;
+
+    //! Get input event sensitivity of the area is sensitive
     /*!
         Gets whether the area is sensitive to input events
         @return whether the area is visible
     */
-    bool IsSensitive();
+    bool GetInputEventSensitivity() const;
 
     sigc::signal<void, Area*> ChildFocusChanged; // sends parent + child
 
@@ -554,7 +533,6 @@ namespace nux
     bool AcceptMouseWheelEvent() const;
 
   protected:
-    bool _is_focused;
     /*
         This function is reimplemented in Layout as it need to perform some special operations.
         It does nothing for Area and View classes.
@@ -612,23 +590,23 @@ namespace nux
         An object of the class Layout may have a parent of the class Layout or View as parent.
         A Area cannot have children (that may change later).
     */
-    Area                    *_parent_area;
-    
+    Area                    *parent_area_;
 
-    LayoutProperties        *_layout_properties;
-    bool                    visible_;
-    bool                    sensitive_;
+    bool              visible_;       //!< Visible state of the area.
+    bool              sensitive_;     //!< Input sensitive state of the area
+    bool              view_enabled_;  //!< The enable state of a view.
 
     NString                 _base_string;     //!< A text string property for this area.
 
-    Size                    _min_size;        //!< A text string property for this area.
-    Size                    _max_size;        //!< A text string property for this area.
+    Size                    min_size_;        //!< A text string property for this area.
+    Size                    max_size_;        //!< A text string property for this area.
 
-    unsigned int            _stretch_factor;  //!< Factor for element expansion.
-    MinorDimensionPosition  _positioning;     //!< Area position hint
-    MinorDimensionSize      _extend;          //!< Area dimension hint
-    float                   _percentage;      //!< Area size percentage value.
-    bool                    _layout_done;     //!< Area layout status flag.
+    // Parameters used in layouts
+    unsigned int            scale_factor_;          //!< Factor for element expansion.
+    MinorDimensionPosition  minor_axis_position_;   //!< Area position hint
+    MinorDimensionSize      minor_axis_size_;       //!< Area dimension hint
+    float                   minor_axis_size_scale_; //!< Area size percentage value.
+    bool                    layout_done_;           //!< Area layout status flag.
 
 
     Matrix4                 _2d_xform;        //!< 2D transformation matrix for this area and its children. Contains only translations.

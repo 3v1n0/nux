@@ -41,9 +41,9 @@ namespace nux
     ~ComboBoxSimple();
 
     // make the class abstract
-//    virtual void Draw(GraphicsEngine& GfxContext, bool force_draw);
-//    virtual void DrawContent(GraphicsEngine& GfxContext, bool force_draw);
-//    virtual void PostDraw(GraphicsEngine& GfxContext, bool force_draw);
+//    virtual void Draw(GraphicsEngine& graphics_engine, bool force_draw);
+//    virtual void DrawContent(GraphicsEngine& graphics_engine, bool force_draw);
+//    virtual void PostDraw(GraphicsEngine& graphics_engine, bool force_draw);
 
   public:
     ActionItem *AddItem (const TCHAR *label, int Uservalue = 0);

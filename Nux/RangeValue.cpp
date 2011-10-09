@@ -88,69 +88,52 @@ namespace nux
     m_ValueString   = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
   }
 
-  long RangeValue::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    m_CTRL_KEY = ievent.GetVirtualKeyState (NUX_VK_LCONTROL);
-
-    long ret;
-    ret = m_Percentage->OnEvent (ievent, TraverseInfo, ProcessEventInfo);
-    ret = m_ValueString->ProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-
-    if (m_ValueString->IsRedrawNeeded() )
-    {
-      QueueDraw();
-    }
-
-    return ret;
-  }
-
-  void RangeValue::DrawMarker (GraphicsEngine &GfxContext)
+  void RangeValue::DrawMarker (GraphicsEngine &graphics_engine)
   {
     int marker_position_x;
     int marker_position_y;
 
-    GfxContext.PushClippingRectangle (m_Percentage->GetGeometry() );
+    graphics_engine.PushClippingRectangle (m_Percentage->GetGeometry() );
 
     marker_position_x = m_Percentage->GetBaseX() + (m_Value - m_min) * m_Percentage->GetBaseWidth() * 1 / (m_max - m_min);
     marker_position_y = m_Percentage->GetBaseY() + m_Percentage->GetBaseHeight();
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 5, marker_position_y,
+    GetPainter().Draw2DTriangleColor (graphics_engine, marker_position_x - 5, marker_position_y,
                                   marker_position_x, marker_position_y - 5,
                                   marker_position_x + 5, marker_position_y, Color (0.0f, 0.0f, 0.0f, 1.0f) );
 
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 4, marker_position_y,
+    GetPainter().Draw2DTriangleColor (graphics_engine, marker_position_x - 4, marker_position_y,
                                   marker_position_x, marker_position_y - 4,
                                   marker_position_x + 4, marker_position_y, Color (0.7f, 0.7f, 0.7f, 1.0f) );
 
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
 
-  void RangeValue::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void RangeValue::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
 
     // Percentage
     Geometry P = m_Percentage->GetGeometry();
-    GetPainter().Paint2DQuadColor (GfxContext, P, m_StartColor, m_StartColor, m_EndColor, m_EndColor);
+    GetPainter().Paint2DQuadColor (graphics_engine, P, m_StartColor, m_StartColor, m_EndColor, m_EndColor);
 
     if (m_EnableDrawProgress)
     {
       P.SetWidth ( (m_Value - m_min) * (float) P.GetWidth() / (m_max - m_min) );
-      GetPainter().Paint2DQuadColor (GfxContext, P, m_ProgressColor);
+      GetPainter().Paint2DQuadColor (graphics_engine, P, m_ProgressColor);
     }
 
-    m_ValueString->ProcessDraw (GfxContext, true);
+    m_ValueString->ProcessDraw (graphics_engine, true);
 
-    DrawMarker (GfxContext);
+    DrawMarker (graphics_engine);
   }
 
-  void RangeValue::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void RangeValue::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
   {
-    m_ValueString->ProcessDraw (GfxContext, force_draw);
+    m_ValueString->ProcessDraw (graphics_engine, force_draw);
   }
 
-  void RangeValue::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void RangeValue::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }

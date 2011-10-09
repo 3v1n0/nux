@@ -47,33 +47,33 @@ namespace nux
       delete paint_layer_;
   }
 
-  void TextureArea::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void TextureArea::Draw (GraphicsEngine &graphics_engine, bool force_draw)
   {
     // Ability to rotate the widget around its center
-    GfxContext.PushModelViewMatrix(Matrix4::TRANSLATE(-GetBaseX() - GetBaseWidth() / 2, -GetBaseY() - GetBaseHeight() / 2, 0));
-    GfxContext.PushModelViewMatrix(Get2DRotation());
-    GfxContext.PushModelViewMatrix(Matrix4::TRANSLATE(GetBaseX() + GetBaseWidth() / 2, GetBaseY() + GetBaseHeight() / 2, 0));
+    graphics_engine.PushModelViewMatrix(Matrix4::TRANSLATE(-GetBaseX() - GetBaseWidth() / 2, -GetBaseY() - GetBaseHeight() / 2, 0));
+    graphics_engine.PushModelViewMatrix(Get2DRotation());
+    graphics_engine.PushModelViewMatrix(Matrix4::TRANSLATE(GetBaseX() + GetBaseWidth() / 2, GetBaseY() + GetBaseHeight() / 2, 0));
 
     // The TextureArea should not render the accumulated background. That is left to the caller.
-    // GetPainter().PaintBackground (GfxContext, GetGeometry() );
+    // GetPainter().PaintBackground (graphics_engine, GetGeometry() );
 
     if (paint_layer_)
     {
       paint_layer_->SetGeometry(GetGeometry());
-      GetPainter().RenderSinglePaintLayer(GfxContext, GetGeometry(), paint_layer_);
+      GetPainter().RenderSinglePaintLayer(graphics_engine, GetGeometry(), paint_layer_);
     }
 
-    GfxContext.PopModelViewMatrix();
-    GfxContext.PopModelViewMatrix();
-    GfxContext.PopModelViewMatrix();
+    graphics_engine.PopModelViewMatrix();
+    graphics_engine.PopModelViewMatrix();
+    graphics_engine.PopModelViewMatrix();
   }
 
-  void TextureArea::DrawContent(GraphicsEngine &GfxContext, bool force_draw)
+  void TextureArea::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void TextureArea::PostDraw(GraphicsEngine &GfxContext, bool force_draw)
+  void TextureArea::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }

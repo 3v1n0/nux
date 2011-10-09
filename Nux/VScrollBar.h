@@ -28,26 +28,22 @@
 
 namespace nux
 {
-
-  class HLayout;
   class VLayout;
-  class Layout;
 
-  class VScrollBar: public ScrollBar //public ValuatorAbstraction
+  class VScrollBar: public ScrollBar
   {
   public:
     VScrollBar (NUX_FILE_LINE_PROTO);
     ~VScrollBar();
 
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
-    void DrawDownTriangle (GraphicsEngine &GfxContext, int width, int height, const Geometry &geo, BasePainter &painter);
-    void DrawUpTriangle (GraphicsEngine &GfxContext, int width, int height, const Geometry &geo, BasePainter &painter);
+    void DrawDownTriangle (GraphicsEngine &graphics_engine, int width, int height, const Geometry &geo, BasePainter &painter);
+    void DrawUpTriangle (GraphicsEngine &graphics_engine, int width, int height, const Geometry &geo, BasePainter &painter);
 
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
   private:
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw) {};
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw) {};
+    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw) {};
+    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw) {};
 
     void VScrollBarHandler (void *v);
     void ScrollDown (void *v);
@@ -140,9 +136,8 @@ namespace nux
     TimerHandle m_TrackDownTimerHandler;
 
     Point m_TrackMouseCoord;
-    friend class HLayout;
     friend class VLayout;
-    friend class Layout;
+    friend class ScrollView;
   };
 
 
