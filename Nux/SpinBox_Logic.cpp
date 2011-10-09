@@ -34,11 +34,11 @@ namespace nux
   {
     m_SpinnerUpBtn      = new InputArea (NUX_TRACKER_LOCATION);
     m_SpinnerDownBtn    = new InputArea (NUX_TRACKER_LOCATION);
-    m_EditLine          = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
+    m_EditLine          = new EditTextBox ("", NUX_TRACKER_LOCATION);
 
     // Set Original State
-    m_EditLine->SetSuffix (TEXT ("") );
-    m_EditLine->SetPrefix (TEXT ("") );
+    m_EditLine->SetSuffix ("");
+    m_EditLine->SetPrefix ("");
 
     // Set Signals
     m_SpinnerUpBtn->mouse_down.connect ( sigc::mem_fun (this, &SpinBox_Logic::RecvIncrement) );

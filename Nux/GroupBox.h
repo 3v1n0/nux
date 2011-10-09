@@ -36,7 +36,7 @@ namespace nux
   class GroupBox : public View
   {
   public:
-    GroupBox (const TCHAR *Caption = TEXT (""), NUX_FILE_LINE_PROTO);
+    GroupBox (const TCHAR *Caption = "", NUX_FILE_LINE_PROTO);
     ~GroupBox();
 
     virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);

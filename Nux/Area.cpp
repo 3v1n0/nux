@@ -271,13 +271,13 @@ namespace nux
   {
     if (parent == 0)
     {
-      nuxAssertMsg(0, TEXT("[Area::SetParentObject] Invalid parent obejct."));
+      nuxAssertMsg(0, "[Area::SetParentObject] Invalid parent obejct.");
       return false;
     }
 
     if (parent_area_ && (parent_area_ != parent))
     {
-      nuxAssertMsg (0, "[Area::SetParentObject] Object already has a parent. You must UnParent the object before you can parenting again." );
+      nuxAssertMsg (0, "[Area::SetParentObject] Object already has a parent. You must UnParent the object before you can parenting again.");
       return false;
     }
 

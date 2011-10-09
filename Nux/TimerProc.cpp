@@ -222,7 +222,7 @@ namespace nux
         // This happens when trying to set a callback before the mainloop has been initialized.
       }
 
-      //nuxDebugMsg(TEXT("[TimerHandler::AddTimerHandler] Adding Timeout ID: %d"), timer_object->glibid);
+      //nuxDebugMsg("[TimerHandler::AddTimerHandler] Adding Timeout ID: %d", timer_object->glibid);
     }
 #endif
 
@@ -255,7 +255,7 @@ namespace nux
         // This happens when trying to set a callback before the mainloop has been initialized.
       }
 
-      //nuxDebugMsg(TEXT("[TimerHandler::AddTimerHandler] Adding Timeout ID: %d"), timer_object->glibid);
+      //nuxDebugMsg("[TimerHandler::AddTimerHandler] Adding Timeout ID: %d", timer_object->glibid);
     }
 #endif
 
@@ -288,7 +288,7 @@ namespace nux
         // This happens when trying to set a callback before the mainloop has been initialized.
       }
 
-      //nuxDebugMsg(TEXT("[TimerHandler::AddTimerHandler] Adding Timeout ID: %d"), timer_object->glibid);
+      //nuxDebugMsg("[TimerHandler::AddTimerHandler] Adding Timeout ID: %d", timer_object->glibid);
     }
 #endif
     TimerHandle handle (timer_object);
@@ -471,7 +471,7 @@ namespace nux
         }
         else
         {
-          nuxAssertMsg (0, TEXT ("[TimerHandler::ExecTimerHandler] Unknown timer type.") );
+          nuxAssertMsg (0, "[TimerHandler::ExecTimerHandler] Unknown timer type.");
         }
 
         if (timer_object->Param > 1.0f)
@@ -486,7 +486,7 @@ namespace nux
           GetWindowCompositor().SetProcessingTopView (NULL);          
           // Reset glibid to 0. glibid is not null, if this element ever happened to be at the head of the queue
           // and we set a timer for it.
-          //nuxDebugMsg(TEXT("[TimerHandler::ExecTimerHandler] Executed Timeout ID: %d"), timer_object->glibid);
+          //nuxDebugMsg("[TimerHandler::ExecTimerHandler] Executed Timeout ID: %d", timer_object->glibid);
           //timer_object->glibid = 0;
         }
 
@@ -555,7 +555,7 @@ namespace nux
 //         t_u32 time_difference = TimeDiff(now, m_timer_object_queue->when);
 //
 //         m_timer_object_queue->glibid = GetWindowThread ()->AddGLibTimeout(time_difference);
-//         //nuxDebugMsg(TEXT("[TimerHandler::ExecTimerHandler] Adding Timeout ID: %d"), m_timer_object_queue->glibid);
+//         //nuxDebugMsg("[TimerHandler::ExecTimerHandler] Adding Timeout ID: %d", m_timer_object_queue->glibid);
 //     }
 
     // Purge handles that have been marked for removal

@@ -119,12 +119,12 @@ namespace nux
 
   void HexRegExpValidator::Alternative (const TCHAR *str)
   {
-    str = TEXT ("0x0");
+    str = "0x0";
   }
 
   NString HexRegExpValidator::ToString (int i)
   {
-    NString Prec (TEXT ("%d"));
+    NString Prec ("%d");
     return NString::Printf (Prec.GetTCharPtr (), i);
   }
 

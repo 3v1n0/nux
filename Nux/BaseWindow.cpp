@@ -407,7 +407,7 @@ namespace nux
 
       if (geo.IsNull() )
       {
-        nuxDebugMsg ("[BaseWindow::NotifyConfigurationChange] Received an invalid Geometry." );
+        nuxDebugMsg ("[BaseWindow::NotifyConfigurationChange] Received an invalid Geometry.");
         geo = GetGeometry();
       }
       else

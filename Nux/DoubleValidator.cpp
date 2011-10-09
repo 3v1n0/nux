@@ -120,7 +120,7 @@ namespace nux
 
   void DoubleValidator::Alternative (const TCHAR *str)
   {
-    str = TEXT ("0.0");
+    str = "0.0";
   }
 
   void DoubleValidator::SetDecimals (int dec)
@@ -130,7 +130,7 @@ namespace nux
 
   NString DoubleValidator::ToString (double d)
   {
-    NString Prec = NString (TEXT ("%.") ) + NString::Printf (TEXT ("%d"), m_Decimals) + NString (TEXT ("f") );
+    NString Prec = NString ("%.") + NString::Printf ("%d", m_Decimals) + NString ("f");
     return NString::Printf (Prec.GetTCharPtr(), d);
   }
 

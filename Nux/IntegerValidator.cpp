@@ -120,12 +120,12 @@ namespace nux
 
   void IntegerValidator::Alternative (const TCHAR *str)
   {
-    str = TEXT ("0");
+    str = "0";
   }
 
   NString IntegerValidator::ToString (int i)
   {
-    NString Prec (TEXT ("%d") );
+    NString Prec ("%d");
     return NString::Printf (Prec.GetTCharPtr(), i);
   }
 

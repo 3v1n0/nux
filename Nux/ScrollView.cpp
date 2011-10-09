@@ -315,8 +315,8 @@ namespace nux
     int ScrollBarWidth = _vscrollbar->GetBaseWidth();
     int ScrollBarHeight = _hscrollbar->GetBaseHeight();
 
-    nuxAssertMsg (ScrollBarWidth > 0, TEXT ("[ScrollView::PreLayoutManagement] Invalid scrollbar width: %d"), ScrollBarWidth);
-    nuxAssertMsg (ScrollBarHeight > 0, TEXT ("[ScrollView::PreLayoutManagement] Invalid scrollbar height: %d"), ScrollBarHeight);
+    nuxAssertMsg (ScrollBarWidth > 0, "[ScrollView::PreLayoutManagement] Invalid scrollbar width: %d", ScrollBarWidth);
+    nuxAssertMsg (ScrollBarHeight > 0, "[ScrollView::PreLayoutManagement] Invalid scrollbar height: %d", ScrollBarHeight);
 
     m_ViewX = GetBaseX() + m_border + m_ViewContentLeftMargin;
     m_ViewY = GetBaseY() + m_top_border + m_ViewContentTopMargin;
@@ -326,14 +326,14 @@ namespace nux
     else
       m_ViewWidth = GetBaseWidth() - ScrollBarWidth - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin;
 
-    nuxAssertMsg (m_ViewWidth > 0, TEXT ("[ScrollView::PreLayoutManagement] Invalid view width: %d"), m_ViewWidth);
+    nuxAssertMsg (m_ViewWidth > 0, "[ScrollView::PreLayoutManagement] Invalid view width: %d", m_ViewWidth);
 
     if (m_horizontal_scrollbar_enable == false)
       m_ViewHeight = GetBaseHeight() - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin;
     else
       m_ViewHeight = GetBaseHeight() - ScrollBarHeight - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin;
 
-    nuxAssertMsg (m_ViewHeight > 0, TEXT ("[ScrollView::PreLayoutManagement] Invalid view height: %d"), m_ViewHeight);
+    nuxAssertMsg (m_ViewHeight > 0, "[ScrollView::PreLayoutManagement] Invalid view height: %d", m_ViewHeight);
 
     if (m_ViewX + _delta_x +  m_ViewContentWidth < m_ViewX + m_ViewWidth)
     {

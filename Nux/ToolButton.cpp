@@ -41,7 +41,7 @@ namespace nux
       m_Texture->Update (BitmapFilename);
 
     // Set Original State
-    SetBaseString (TEXT ("ToolButton") );
+    SetBaseString ("ToolButton");
 
     // Set Signals
     mouse_click.connect (sigc::mem_fun (this, &ToolButton::EmitClick) );

@@ -31,18 +31,18 @@
 namespace nux
 {
 
-  Dialog::Dialog (const TCHAR *WindowName /*  = TEXT("") */)
+  Dialog::Dialog (const TCHAR *WindowName /*  = "" */)
     :   FloatingWindow (WindowName)
   {
     ShowWindow (false);
 
-    m_ButtonLayout = new HLayout (TEXT ("Dialog Buttons") );
+    m_ButtonLayout = new HLayout ("Dialog Buttons");
 
-    m_OkButton = new Button (TEXT ("OK") );
+    m_OkButton = new Button ("OK");
     m_OkButton->SetMinimumWidth (60);
     m_OkButton->SetMinimumHeight (20);
 
-    m_CancelButton = new Button (TEXT ("Cancel") );
+    m_CancelButton = new Button ("Cancel");
     m_CancelButton->SetMinimumWidth (60);
     m_CancelButton->SetMinimumHeight (20);
 

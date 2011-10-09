@@ -39,7 +39,7 @@ namespace nux
     //setSize(200, 100);
     m_hlayout           = new HLayout(NUX_TRACKER_LOCATION);
     m_ColorArea         = new InputArea(NUX_TRACKER_LOCATION);
-    m_ColorValue        = new StaticTextBox (TEXT (""), NUX_TRACKER_LOCATION);
+    m_ColorValue        = new StaticTextBox ("", NUX_TRACKER_LOCATION);
     m_DialogThreadProxy = new ColorDialogProxy (true);
 
     SetMaximumHeight (18);
@@ -50,7 +50,7 @@ namespace nux
     m_ColorValue->SetFont (GetSysBoldFont() );
     m_ColorValue->SetMinimumWidth (128);
 
-    NString text = NString::Printf (TEXT ("[ R:%d, G:%d, B:%d ]"), (int) (m_Color.red * 255), (int) (m_Color.green * 255), (int) (m_Color.blue * 255) );
+    NString text = NString::Printf ("[ R:%d, G:%d, B:%d ]", (int) (m_Color.red * 255), (int) (m_Color.green * 255), (int) (m_Color.blue * 255) );
     m_ColorValue->SetText (text);
 
     m_ColorArea->mouse_click.connect (sigc::mem_fun (this, &ColorPreview::RecvClick) );

@@ -37,7 +37,7 @@ namespace nux
 
     SetMinimumSize (DEFAULT_WIDGET_WIDTH + 5, PRACTICAL_WIDGET_HEIGHT + 5);
     SetBaseSize (DEFAULT_WIDGET_WIDTH + 5, 2 * PRACTICAL_WIDGET_HEIGHT);
-    SetCaption (TEXT ("") );
+    SetCaption ("");
   }
 
   GroupBox::~GroupBox()
@@ -205,7 +205,7 @@ namespace nux
     if ( (name == 0) || strlen (name) == 0)
     {
       //bCaptionAvailable = false;
-      m_CaptionArea.SetBaseString (TEXT ("") );
+      m_CaptionArea.SetBaseString ("");
       m_CaptionArea.SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
       m_CaptionArea.SetBaseSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     }

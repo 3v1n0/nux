@@ -43,7 +43,7 @@ namespace nux
     int          textWidth  = 0;
     int          textHeight = 0;
 
-    GetTextExtents (TEXT("Ubuntu"), textWidth, textHeight);
+    GetTextExtents ("Ubuntu", textWidth, textHeight);
 
     _pre_layout_width = GetBaseWidth ();
     _pre_layout_height = GetBaseHeight ();
@@ -153,7 +153,7 @@ namespace nux
 
   void PangoText::GetTextExtents (int &width, int &height)
   {
-    GetTextExtents (TEXT("Ubuntu"), width, height);
+    GetTextExtents ("Ubuntu", width, height);
   }
 
   void PangoText::GetTextExtents (const TCHAR* font, int& width, int& height)
@@ -220,7 +220,7 @@ namespace nux
     PangoContext*         pangoCtx   = NULL;
     int                   dpi        = 0;
 
-    GetTextExtents (TEXT("Ubuntu"), textWidth, textHeight);
+    GetTextExtents ("Ubuntu", textWidth, textHeight);
 
     CairoFontOptions font_options;
 
@@ -232,7 +232,7 @@ namespace nux
     cairo_set_font_options (cr, font_options);
 
     layout = pango_cairo_create_layout (cr);
-    desc = pango_font_description_from_string (TEXT("Ubuntu"));
+    desc = pango_font_description_from_string ("Ubuntu");
     pango_layout_set_font_description (layout, desc);
 
     pango_layout_set_wrap (layout, PANGO_WRAP_WORD_CHAR);

@@ -65,7 +65,7 @@ namespace nux
     _title_bar->SetParentObject(this);
 
     _close_button       = new InputArea(NUX_TRACKER_LOCATION);
-    _window_title_bar   = new StaticTextBox (TEXT (""), NUX_TRACKER_LOCATION);
+    _window_title_bar   = new StaticTextBox ("", NUX_TRACKER_LOCATION);
 
     _title_bar_layout   = new HLayout (NUX_TRACKER_LOCATION);
     _title_bar_layout->Reference();
@@ -99,10 +99,10 @@ namespace nux
     SetMinimumSize(32, 32);
     SetGeometry(Geometry(100, 100, 320, 200));
 
-    NString Path = NUX_FINDRESOURCELOCATION (TEXT ("UITextures/AddButton.png") );
+    NString Path = NUX_FINDRESOURCELOCATION ("UITextures/AddButton.png");
     MinimizeIcon = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
     MinimizeIcon->Update (Path.GetTCharPtr() );
-    Path = NUX_FINDRESOURCELOCATION (TEXT ("UITextures/CancelButton.png") );
+    Path = NUX_FINDRESOURCELOCATION ("UITextures/CancelButton.png");
     CloseIcon = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
     CloseIcon->Update (Path.GetTCharPtr() );
 
@@ -298,7 +298,7 @@ namespace nux
 #if defined(NUX_OS_LINUX)
     if (m_input_window != 0)
     {
-      //nuxDebugMsg (TEXT("Resize Input window: %d, %d, %d, %d"), geo.x, geo.y, geo.width, geo.height);
+      //nuxDebugMsg ("Resize Input window: %d, %d, %d, %d", geo.x, geo.y, geo.width, geo.height);
       m_input_window->SetGeometry (GetGeometry());
     }
 #endif
@@ -328,7 +328,7 @@ namespace nux
 #if defined(NUX_OS_LINUX)
     if (m_input_window != 0)
     {
-      //nuxDebugMsg (TEXT("Resize Input window: %d, %d, %d, %d"), geo.x, geo.y, geo.width, geo.height);
+      //nuxDebugMsg ("Resize Input window: %d, %d, %d, %d", geo.x, geo.y, geo.width, geo.height);
       m_input_window->SetGeometry (GetGeometry());
     }
 #endif
@@ -358,7 +358,7 @@ namespace nux
 
       if (geo.IsNull() )
       {
-        nuxDebugMsg (TEXT ("[FloatingWindow::PreLayoutManagement] Received an invalid Geometry.") );
+        nuxDebugMsg ("[FloatingWindow::PreLayoutManagement] Received an invalid Geometry.");
         geo = GetGeometry();
       }
       else

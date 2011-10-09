@@ -66,7 +66,7 @@ namespace nux
       if (m_Parent->Type().IsObjectType (WindowThread::StaticObjectType) )
         return static_cast<WindowThread *> (m_Parent)->StartChildThread (this, true);
 
-      nuxAssertMsg (0, TEXT ("[WindowThread::Start] This should not happen.") );
+      nuxAssertMsg (0, "[WindowThread::Start] This should not happen.");
       return THREAD_START_ERROR;
     }
   }

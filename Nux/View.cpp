@@ -294,7 +294,7 @@ namespace nux
     }
     else if (parent != 0)
     {
-      nuxDebugMsg (0, TEXT ("[View::SetCompositionLayout] Object already has a parent. You must UnParent the object before you can parenting again.") );
+      nuxDebugMsg (0, "[View::SetCompositionLayout] Object already has a parent. You must UnParent the object before you can parenting again.");
       return false;
     }
 

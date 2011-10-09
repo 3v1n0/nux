@@ -212,7 +212,7 @@ namespace nux
     if ( (Caption == 0) || (StringLength (Caption) == 0) )
     {
       //bCaptionAvailable = false;
-      m_CaptionArea->SetBaseString (TEXT ("") );
+      m_CaptionArea->SetBaseString ("");
       m_CaptionArea->SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
       m_CaptionArea->SetBaseSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     }

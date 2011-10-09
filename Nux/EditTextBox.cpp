@@ -38,8 +38,8 @@ namespace nux
     m_ScrollTimerHandler    = 0;
     m_BlinkTimerFunctor     = 0;
     m_WriteAlpha            = true;
-    m_Prefix                = TEXT("");
-    m_Suffix                = TEXT("");
+    m_Prefix                = "";
+    m_Suffix                = "";
 
     key_nav_mode_           = false;
     text_input_mode_        = false;
@@ -476,7 +476,7 @@ namespace nux
 
   bool EditTextBox::IsEmpty()
   {
-    if (m_Text == TEXT ("") )
+    if (m_Text == "")
     {
       return true;
     }

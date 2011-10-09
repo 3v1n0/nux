@@ -37,13 +37,13 @@ namespace nux
     :   View (NUX_FILE_LINE_PARAM)
   {
     m_hlayout           = new HLayout (NUX_TRACKER_LOCATION);
-    m_OpenButton        = new Button (TEXT (""), NUX_TRACKER_LOCATION);
-    m_FileEditTextBox   = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
+    m_OpenButton        = new Button ("", NUX_TRACKER_LOCATION);
+    m_FileEditTextBox   = new EditTextBox ("", NUX_TRACKER_LOCATION);
 
     m_hlayout->AddView (m_FileEditTextBox, 1, eCenter);
     m_hlayout->AddView (m_OpenButton, 0, eCenter);
 
-    //m_OpenButton->setCaption(TEXT("..."));
+    //m_OpenButton->setCaption("...");
     m_OpenButton->SetMinimumWidth (20);
 
     m_OpenButton->mouse_enter.connect (sigc::mem_fun (this, &FileSelector::RecvMouseEnter) );
@@ -53,7 +53,7 @@ namespace nux
     SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     SetLayout(m_hlayout);
 
-    NString Path = NUX_FINDRESOURCELOCATION (TEXT ("Icons/Folder-16x16.png") );
+    NString Path = NUX_FINDRESOURCELOCATION ("Icons/Folder-16x16.png");
     m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
     m_Texture->Update (Path.GetTCharPtr() );
   }

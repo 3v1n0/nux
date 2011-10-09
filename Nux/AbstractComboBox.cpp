@@ -54,7 +54,7 @@ namespace nux
 
     SetTextColor (color::Black);
 
-    _pango_static_text = new StaticText (TEXT(""), NUX_TRACKER_LOCATION);
+    _pango_static_text = new StaticText ("", NUX_TRACKER_LOCATION);
   }
 
   AbstractComboBox::~AbstractComboBox()

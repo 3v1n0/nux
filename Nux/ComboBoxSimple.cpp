@@ -35,7 +35,7 @@ namespace nux
     m_SelectedAction    = 0;
     m_CurrentMenu       = 0;
 
-    m_CurrentMenu = new MenuPage (TEXT (""), NUX_TRACKER_LOCATION);
+    m_CurrentMenu = new MenuPage ("", NUX_TRACKER_LOCATION);
     m_CurrentMenu->SinkReference();
     m_CurrentMenu->SetParentObject(this);
     

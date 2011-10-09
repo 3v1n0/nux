@@ -1508,7 +1508,7 @@ logging::Logger logger("nux.window");
     page.x_margin = 0;
     page.y_margin = 0;
 
-    NString FPS = NString::Printf (TEXT ("FPS: %3.2f"), GetWindowThread ()->GetFrameRate() );
+    NString FPS = NString::Printf ("FPS: %3.2f", GetWindowThread ()->GetFrameRate() );
 
     GetWindowThread ()->GetGraphicsEngine().RenderColorTextLineStatic (GetSysBoldFont(), page, FPS, Color (0xffff0000), true, eAlignTextLeft);
 
@@ -1796,7 +1796,7 @@ logging::Logger logger("nux.window");
   {
     _tooltip_window = NULL;
     m_TooltipArea = NULL;
-    m_TooltipText = TEXT ("");
+    m_TooltipText = "";
   }
 
   bool WindowCompositor::ValidateMouseInsideTooltipArea(int x, int y)
@@ -2074,7 +2074,7 @@ logging::Logger logger("nux.window");
 
     if (GetPointerGrabArea() == area)
     {
-      nuxDebugMsg (TEXT ("[WindowCompositor::GrabPointerAdd] The area already has the grab"));
+      nuxDebugMsg ("[WindowCompositor::GrabPointerAdd] The area already has the grab");
       return result;
     }
     
@@ -2141,7 +2141,7 @@ logging::Logger logger("nux.window");
 
     if (GetKeyboardGrabArea() == area)
     {
-      nuxDebugMsg(TEXT ("[WindowCompositor::GrabKeyboardAdd] The area already has the grab"));
+      nuxDebugMsg("[WindowCompositor::GrabKeyboardAdd] The area already has the grab");
       return result;
     }
 

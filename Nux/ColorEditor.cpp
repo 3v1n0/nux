@@ -103,7 +103,7 @@ namespace nux
 
     int Width = 290;
     int Height = 230;
-    m_Thread = CreateModalWindowThread (WINDOWSTYLE_TOOL, TEXT ("Color Editor"), Width, Height, GetWindowThread (),
+    m_Thread = CreateModalWindowThread (WINDOWSTYLE_TOOL, "Color Editor", Width, Height, GetWindowThread (),
                                         ThreadColorEditorDialog,
                                         this);
 
@@ -235,9 +235,9 @@ namespace nux
       redlayout = new HLayout (NUX_TRACKER_LOCATION);
       {
         //FIXME - change to radio button
-        redcheck = new Button ("R:" );
+        redcheck = new Button ("R:");
         redcheck->SetMinimumWidth (30);
-        redtext = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
+        redtext = new EditTextBox ("", NUX_TRACKER_LOCATION);
         redtext->SetMinimumWidth (36);
         redlayout->AddView (redcheck, 0);
         redlayout->AddView (redtext, 0);
@@ -246,9 +246,9 @@ namespace nux
       greenlayout = new HLayout (NUX_TRACKER_LOCATION);
       {
         //FIXME - Change to radio button
-        greencheck = new Button ("G:" );
+        greencheck = new Button ("G:");
         greencheck->SetMinimumWidth (30);
-        greentext = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
+        greentext = new EditTextBox ("", NUX_TRACKER_LOCATION);
         greentext->SetMinimumWidth (36);
         greenlayout->AddView (greencheck, 0);
         greenlayout->AddView (greentext, 0);
@@ -258,9 +258,9 @@ namespace nux
       bluelayout = new HLayout (NUX_TRACKER_LOCATION);
       {
         //FIXME - change to radio button
-        bluecheck = new Button ("B:" );
+        bluecheck = new Button ("B:");
         bluecheck->SetMinimumWidth (30);
-        bluetext = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
+        bluetext = new EditTextBox ("", NUX_TRACKER_LOCATION);
         bluetext->SetMinimumWidth (36);
         bluelayout->AddView (bluecheck, 0);
         bluelayout->AddView (bluetext, 0);
@@ -273,9 +273,9 @@ namespace nux
       huelayout = new HLayout (NUX_TRACKER_LOCATION);
       {
         //FIXME - change to radio button
-        huecheck = new Button ("H:" );
+        huecheck = new Button ("H:");
         huecheck->SetMinimumWidth (30);
-        huetext = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
+        huetext = new EditTextBox ("", NUX_TRACKER_LOCATION);
         huetext->SetMinimumWidth (36);
         huelayout->AddView (huecheck, 0);
         huelayout->AddView (huetext, 0);
@@ -284,9 +284,9 @@ namespace nux
       saturationlayout = new HLayout (NUX_TRACKER_LOCATION);
       {
         //FIXME - change to radio button
-        saturationcheck = new Button ("S:" );
+        saturationcheck = new Button ("S:");
         saturationcheck->SetMinimumWidth (30);
-        saturationtext = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
+        saturationtext = new EditTextBox ("", NUX_TRACKER_LOCATION);
         saturationtext->SetMinimumWidth (36);
         saturationlayout->AddView (saturationcheck, 0);
         saturationlayout->AddView (saturationtext, 0);
@@ -295,9 +295,9 @@ namespace nux
       valuelayout = new HLayout (NUX_TRACKER_LOCATION);
       {
         //FIXME - change to radio button
-        valuecheck = new Button ("V:" );
+        valuecheck = new Button ("V:");
         valuecheck->SetMinimumWidth (30);
-        valuetext = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
+        valuetext = new EditTextBox ("", NUX_TRACKER_LOCATION);
         valuetext->SetMinimumWidth (36);
         valuelayout->AddView (valuecheck, 0);
         valuelayout->AddView (valuetext, 0);
@@ -319,11 +319,11 @@ namespace nux
     ctrllayout->SetVerticalInternalMargin (2);
 
 //     //ctrllayout->AddView(new SpaceLayout(20,20,20,40), 1);
-//     OkButton = new ToggleButton (TEXT ("OK"), NUX_TRACKER_LOCATION);
+//     OkButton = new ToggleButton ("OK", NUX_TRACKER_LOCATION);
 //     OkButton->SetMinimumWidth (60);
 //     OkButton->SetMinimumHeight (20);
 //
-//     CancelButton = new ToggleButton (TEXT ("Cancel"), NUX_TRACKER_LOCATION);
+//     CancelButton = new ToggleButton ("Cancel", NUX_TRACKER_LOCATION);
 //     CancelButton->SetMinimumWidth (60);
 //     CancelButton->SetMinimumHeight (20);
 //
@@ -989,7 +989,7 @@ namespace nux
            (colorchannel != color::SATURATION) &&
            (colorchannel != color::VALUE) )
       {
-        nuxDebugMsg (TEXT ("[ColorEditor::SetColorModel] The color model (HSV) and the color channel don't match.") );
+        nuxDebugMsg ("[ColorEditor::SetColorModel] The color model (HSV) and the color channel don't match.");
         return;
       }
     }
@@ -1000,7 +1000,7 @@ namespace nux
            (colorchannel != color::GREEN) &&
            (colorchannel != color::BLUE) )
       {
-        nuxDebugMsg (TEXT ("[ColorEditor::SetColorModel] The color model (RGB) and the color channel don't match.") );
+        nuxDebugMsg ("[ColorEditor::SetColorModel] The color model (RGB) and the color channel don't match.");
         return;
       }
     }

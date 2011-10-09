@@ -215,7 +215,7 @@ namespace nux
 
     t_s32 StrLength = (t_s32) m_textline.Length();
 
-    //nuxDebugMsg(TEXT("[BaseKeyboardHandler::ResolveCaretPosition]"));
+    //nuxDebugMsg("[BaseKeyboardHandler::ResolveCaretPosition]");
     if (x < geo.x)
     {
       if (m_mouse_inside_text_area)
@@ -223,7 +223,7 @@ namespace nux
         while (m_caret && (GetFont ()->GetCharStringWidth (m_textline.GetTCharPtr(), m_caret) + m_text_positionx > 0) )
         {
           --m_caret;
-          //nuxDebugMsg(TEXT("Group Add: %c"), m_textline[m_caret]);
+          //nuxDebugMsg("Group Add: %c", m_textline[m_caret]);
         }
 
         m_mouse_inside_text_area = false;
@@ -231,7 +231,7 @@ namespace nux
       else if (m_caret)
       {
         --m_caret;
-        //nuxDebugMsg(TEXT("Add Char: %c"), m_textline[m_caret]);
+        //nuxDebugMsg("Add Char: %c", m_textline[m_caret]);
       }
       else
       {
@@ -245,7 +245,7 @@ namespace nux
         while ( (m_caret != StrLength) && (GetFont ()->GetCharStringWidth (m_textline.GetTCharPtr(), m_caret) + m_text_positionx < geo.GetWidth() ) )
         {
           ++m_caret;
-          //nuxDebugMsg(TEXT("Group Add: %c"), m_textline[m_caret-1]);
+          //nuxDebugMsg("Group Add: %c", m_textline[m_caret-1]);
         }
 
         m_mouse_inside_text_area = false;
@@ -253,7 +253,7 @@ namespace nux
       else if (m_caret < StrLength)
       {
         ++m_caret;
-        //nuxDebugMsg(TEXT("Group Add: %c"), m_textline[m_caret-1]);
+        //nuxDebugMsg("Group Add: %c", m_textline[m_caret-1]);
       }
       else
       {
@@ -725,7 +725,7 @@ namespace nux
     if (m_caret > 0)
       temp0 = m_textline.GetSubString (0, m_caret - 1).GetTStringRef();
     else
-      temp0 = TEXT ("");
+      temp0 = "";
 
     //      0          1         2
     //      01234567|8901234567890123456789
@@ -893,7 +893,7 @@ namespace nux
   {
     if (m_selection_start == m_caret)
     {
-      return NString (TEXT ("") );
+      return NString ("");
     }
     else
     {

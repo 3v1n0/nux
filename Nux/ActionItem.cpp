@@ -32,7 +32,7 @@ namespace nux
   ActionItem::ActionItem (const TCHAR *label, int UserValue, NUX_FILE_LINE_DECL)
     :   Object (true, NUX_FILE_LINE_PARAM)
     ,   m_UserValue (UserValue)
-    ,   m_Label (TEXT ("") )
+    ,   m_Label ("")
     ,   m_IsActivated (true)
     ,   m_Menu (0)
     ,   m_Enable (true)

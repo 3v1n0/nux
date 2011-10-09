@@ -210,12 +210,12 @@ namespace nux
 
   void UXTheme::LoadPainterImages()
   {
-    NString file_search = TEXT ("Painter.xml");
+    NString file_search = "Painter.xml";
     NString painter_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL (file_search.GetTCharPtr() );
 
-    if (painter_filename == TEXT ("") )
+    if (painter_filename == "")
     {
-      nuxCriticalMsg (TEXT ("[GraphicsEngine::LoadPainterImages] Can't find Painter.xml file."));
+      nuxCriticalMsg ("[GraphicsEngine::LoadPainterImages] Can't find Painter.xml file.");
       return;
     }
 
@@ -223,28 +223,28 @@ namespace nux
     doc.LoadFile();
 
     TiXmlHandle docHandle ( &doc );
-    TiXmlElement *data = docHandle.FirstChild (TCHARToUTF8 (TEXT ("PaintData"))).Element();
+    TiXmlElement *data = docHandle.FirstChild (TCHARToUTF8 ("PaintData")).Element();
     TiXmlElement *image = 0;
 
-    for (image = data->FirstChildElement (TCHARToUTF8 (TEXT ("Image"))); image; image = image->NextSiblingElement (TCHARToUTF8 (TEXT ("Image"))))
+    for (image = data->FirstChildElement (TCHARToUTF8 ("Image")); image; image = image->NextSiblingElement (TCHARToUTF8 ("Image")))
     {
       PainterImage *pimage = new PainterImage;
       Memset (pimage, 0, sizeof (PainterImage) );
 
-      NString style = image->Attribute (TCHARToUTF8 (TEXT ("style")));
+      NString style = image->Attribute (TCHARToUTF8 ("style"));
 
       pimage->style = GetStyleImageRef (style.GetTCharPtr());
 
       // If the attributes border_left, border_right, border_top, border_bottom are not present, assume they are equal to 0;
       pimage->border_left = pimage->border_right = pimage->border_top = pimage->border_bottom = 0;
 
-      image->Attribute (TCHARToUTF8 (TEXT ("border_left") ), &pimage->border_left);
-      image->Attribute (TCHARToUTF8 (TEXT ("border_right") ), &pimage->border_right);
-      image->Attribute (TCHARToUTF8 (TEXT ("border_top") ),  &pimage->border_top);
-      image->Attribute (TCHARToUTF8 (TEXT ("border_bottom") ), &pimage->border_bottom);
+      image->Attribute (TCHARToUTF8 ("border_left"), &pimage->border_left);
+      image->Attribute (TCHARToUTF8 ("border_right"), &pimage->border_right);
+      image->Attribute (TCHARToUTF8 ("border_top"),  &pimage->border_top);
+      image->Attribute (TCHARToUTF8 ("border_bottom"), &pimage->border_bottom);
 
 
-      const char *draw_borders_only = image->Attribute (TCHARToUTF8 (TEXT ("border_only")));
+      const char *draw_borders_only = image->Attribute (TCHARToUTF8 ("border_only"));
 
       if (draw_borders_only == 0)
       {
@@ -252,7 +252,7 @@ namespace nux
       }
       else
       {
-        if (strcmp (TCHARToUTF8 (TEXT ("false")), draw_borders_only) == 0)
+        if (strcmp (TCHARToUTF8 ("false"), draw_borders_only) == 0)
         {
           pimage->draw_borders_only = false;
         }
@@ -266,7 +266,7 @@ namespace nux
       {
         BaseTexture* device_texture;
 
-        NString filename = image->Attribute (TCHARToUTF8 (TEXT ("Name")));
+        NString filename = image->Attribute (TCHARToUTF8 ("Name"));
         NString texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL (filename.GetTCharPtr());
         device_texture = Load2DTextureFile (texture_filename.GetTCharPtr());
 
@@ -274,7 +274,7 @@ namespace nux
       }
       else
       {
-        NString filename = image->Attribute (TCHARToUTF8 (TEXT ("Name")));
+        NString filename = image->Attribute (TCHARToUTF8 ("Name"));
         NString texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL (filename.GetTCharPtr());
         pimage->texture = Load2DTextureFile (texture_filename.GetTCharPtr());
       }
@@ -312,7 +312,7 @@ namespace nux
       }
     }
 
-    nuxDebugMsg (TEXT ("[GraphicsEngine::GetImageGeometry] Cannot find UXStyleImageRef") );
+    nuxDebugMsg ("[GraphicsEngine::GetImageGeometry] Cannot find UXStyleImageRef");
     return Rect (0, 0, 0, 0);
   }
 

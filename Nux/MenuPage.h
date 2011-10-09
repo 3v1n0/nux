@@ -88,7 +88,7 @@ namespace nux
   {
     NUX_DECLARE_OBJECT_TYPE (MenuPage, View);
   public:
-    MenuPage (const TCHAR *title = TEXT (""), NUX_FILE_LINE_PROTO);
+    MenuPage (const TCHAR *title = "", NUX_FILE_LINE_PROTO);
     ~MenuPage();
 
 //    void SetName(const TCHAR* name);

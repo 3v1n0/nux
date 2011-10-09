@@ -51,7 +51,7 @@ namespace nux
 
     if (w == 0)
     {
-      nuxAssertMsg (0, TEXT ("[_CreateModalWindowThread] WindowThread creation failed.") );
+      nuxAssertMsg (0, "[_CreateModalWindowThread] WindowThread creation failed.");
       return 0;
     }
 
@@ -78,7 +78,7 @@ namespace nux
 
     if (w == 0)
     {
-      nuxAssertMsg (0, TEXT ("[CreateGUIThread] WindowThread creation failed.") );
+      nuxAssertMsg (0, "[CreateGUIThread] WindowThread creation failed.");
       return 0;
     }
 
@@ -110,7 +110,7 @@ namespace nux
 
     if (w == 0)
     {
-      nuxAssertMsg (0, TEXT ("[CreateGUIThread] WindowThread creation failed.") );
+      nuxAssertMsg (0, "[CreateGUIThread] WindowThread creation failed.");
       return 0;
     }
 
@@ -141,7 +141,7 @@ namespace nux
 
     if (w == 0)
     {
-      nuxAssertMsg (0, TEXT ("[CreateGUIThread] WindowThread creation failed.") );
+      nuxAssertMsg (0, "[CreateGUIThread] WindowThread creation failed.");
       return 0;
     }
 
@@ -169,7 +169,7 @@ namespace nux
 
     if (w == 0)
     {
-      nuxAssertMsg (0, TEXT ("[CreateWindowThread] WindowThread creation failed.") );
+      nuxAssertMsg (0, "[CreateWindowThread] WindowThread creation failed.");
       return 0;
     }
 
@@ -195,7 +195,7 @@ namespace nux
 
     if (w == 0)
     {
-      nuxAssertMsg (0, TEXT ("[CreateWindowThread] WindowThread creation failed.") );
+      nuxAssertMsg (0, "[CreateWindowThread] WindowThread creation failed.");
       return 0;
     }
 
@@ -214,7 +214,7 @@ namespace nux
     
     if (system_thread == 0)
     {
-      nuxAssertMsg (0, TEXT ("[CreateSimpleThread] SystemThread creation failed.") );
+      nuxAssertMsg (0, "[CreateSimpleThread] SystemThread creation failed.");
       return 0;
     }
     system_thread->m_UserInitFunc = UserInitFunc;
@@ -288,8 +288,8 @@ namespace nux
 
     if (!thread->Type().IsObjectType (WindowThread::StaticObjectType) )
     {
-      nuxAssertMsg (0, TEXT ("[GetWindowCompositor] You can't call GetWindowCompositor on this type of thread: s"), thread->Type().name );
-      PrintOutputDebugString (TEXT ("[GetWindowCompositor] You can't call GetWindowCompositor on this type of thread: s"), thread->Type().name );
+      nuxAssertMsg (0, "[GetWindowCompositor] You can't call GetWindowCompositor on this type of thread: s", thread->Type().name );
+      PrintOutputDebugString ("[GetWindowCompositor] You can't call GetWindowCompositor on this type of thread: s", thread->Type().name );
       NUX_HARDWARE_BREAK;
     }
 

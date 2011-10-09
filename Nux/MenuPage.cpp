@@ -93,7 +93,7 @@ namespace nux
 
   void MenuItem::SetActionItem (ActionItem *action)
   {
-    nuxAssertMsg (action != 0, TEXT ("[MenuItem::SetActionItem] Parameter is Null.") );
+    nuxAssertMsg (action != 0, "[MenuItem::SetActionItem] Parameter is Null.");
 
     if (action == 0)
       return;
@@ -439,7 +439,7 @@ namespace nux
 
 //void MenuPage::AddActionItem(ActionItem* actionItem)
 //{
-//    nuxAssertMsg(actionItem != 0, TEXT("[MenuPage::AddActionItem] Parameter is Null."));
+//    nuxAssertMsg(actionItem != 0, "[MenuPage::AddActionItem] Parameter is Null.");
 //    if(actionItem == 0)
 //        return;
 //

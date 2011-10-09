@@ -51,9 +51,9 @@ namespace nux
   void SpinBoxDouble::InitializeWidgets()
   {
     m_EditLine->SetValidator (&m_DoubleValidator);
-    m_EditLine->SetSuffix (TEXT ("") );
-    m_EditLine->SetPrefix (TEXT ("") );
-    m_EditLine->SetText (NString::Printf (TEXT ("%.3f"), m_DoubleValidator.GetMinimum() ) );
+    m_EditLine->SetSuffix ("");
+    m_EditLine->SetPrefix ("");
+    m_EditLine->SetText (NString::Printf ("%.3f", m_DoubleValidator.GetMinimum() ) );
 
     m_EditLine->SetMinimumSize (1.5 * DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT);
     m_EditLine->SetGeometry (Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT) );

@@ -104,21 +104,21 @@ namespace nux
   }
   void RGBValuator::InitializeLayout()
   {
-    hlayout             = new HLayout (TEXT ("RGBValuatorLayout"), NUX_TRACKER_LOCATION);
-    redlayout           = new HLayout (TEXT ("RedLayout"), NUX_TRACKER_LOCATION);
-    greenlayout         = new HLayout (TEXT ("GreenLayout"), NUX_TRACKER_LOCATION);
-    bluelayout          = new HLayout (TEXT ("BlueLayout"), NUX_TRACKER_LOCATION);
-    alphalayout         = new HLayout (TEXT ("AlphaLayout"), NUX_TRACKER_LOCATION);
-    vlayout             = new VLayout (TEXT ("RGBVLayout"), NUX_TRACKER_LOCATION);
-    colormodel_layout   = new VLayout (TEXT ("ColorModel"), NUX_TRACKER_LOCATION);
+    hlayout             = new HLayout ("RGBValuatorLayout", NUX_TRACKER_LOCATION);
+    redlayout           = new HLayout ("RedLayout", NUX_TRACKER_LOCATION);
+    greenlayout         = new HLayout ("GreenLayout", NUX_TRACKER_LOCATION);
+    bluelayout          = new HLayout ("BlueLayout", NUX_TRACKER_LOCATION);
+    alphalayout         = new HLayout ("AlphaLayout", NUX_TRACKER_LOCATION);
+    vlayout             = new VLayout ("RGBVLayout", NUX_TRACKER_LOCATION);
+    colormodel_layout   = new VLayout ("ColorModel", NUX_TRACKER_LOCATION);
 
     m_ColorModel        = new ToggleButton();
     m_ColorFormat       = new ToggleButton();
 
-    m_RedCaption        = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
-    m_GreenCaption      = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
-    m_BlueCaption       = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
-    m_AlphaCaption      = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
+    m_RedCaption        = new EditTextBox ("", NUX_TRACKER_LOCATION);
+    m_GreenCaption      = new EditTextBox ("", NUX_TRACKER_LOCATION);
+    m_BlueCaption       = new EditTextBox ("", NUX_TRACKER_LOCATION);
+    m_AlphaCaption      = new EditTextBox ("", NUX_TRACKER_LOCATION);
 
     m_RedValuator       = new InputArea (NUX_TRACKER_LOCATION);
     m_GreenValuator     = new InputArea (NUX_TRACKER_LOCATION);
@@ -777,19 +777,19 @@ namespace nux
 
     if (m_color_format == color::HEX)
     {
-      m_RedCaption->SetText (NString::Printf (TEXT ("%x"), (int) (hls_.hue * 255) ) );
+      m_RedCaption->SetText (NString::Printf ("%x", (int) (hls_.hue * 255) ) );
       m_GreenCaption->SetText (NString::Printf ("%x", (int) (hls_.lightness * 255) ) );
       m_BlueCaption->SetText (NString::Printf ("%x", (int) (hls_.saturation * 255) ) );
     }
     else if (m_color_format == color::INT)
     {
-      m_RedCaption->SetText (NString::Printf (TEXT ("%d"), (int) (hls_.hue * 255) ) );
+      m_RedCaption->SetText (NString::Printf ("%d", (int) (hls_.hue * 255) ) );
       m_GreenCaption->SetText (NString::Printf ("%d", (int) (hls_.lightness * 255) ) );
       m_BlueCaption->SetText (NString::Printf ("%d", (int) (hls_.saturation * 255) ) );
     }
     else
     {
-      m_RedCaption->SetText (NString::Printf (TEXT ("%.3f"), hls_.hue) );
+      m_RedCaption->SetText (NString::Printf ("%.3f", hls_.hue) );
       m_GreenCaption->SetText (NString::Printf ("%.3f", hls_.lightness) );
       m_BlueCaption->SetText (NString::Printf ("%.3f", hls_.saturation) );
     }
@@ -1418,24 +1418,24 @@ namespace nux
       m_GreenCaption->SetKeyEntryType (BaseKeyboardHandler::eIntegerNumber);
       m_BlueCaption->SetKeyEntryType (BaseKeyboardHandler::eIntegerNumber);
 
-      m_RedCaption->SetPrefix (TEXT ("") );
-      m_GreenCaption->SetPrefix (TEXT ("") );
-      m_BlueCaption->SetPrefix (TEXT ("") );
-      m_AlphaCaption->SetPrefix (TEXT ("") );
+      m_RedCaption->SetPrefix ("");
+      m_GreenCaption->SetPrefix ("");
+      m_BlueCaption->SetPrefix ("");
+      m_AlphaCaption->SetPrefix ("");
     }
 
     if (cf == color::HEX)
     {
       m_color_format = color::HEX;
-      m_ColorFormat->SetLabel(TEXT ("hex") );
+      m_ColorFormat->SetLabel("hex");
       m_RedCaption->SetKeyEntryType (BaseKeyboardHandler::eHexadecimalNumber);
       m_GreenCaption->SetKeyEntryType (BaseKeyboardHandler::eHexadecimalNumber);
       m_BlueCaption->SetKeyEntryType (BaseKeyboardHandler::eHexadecimalNumber);
 
-      m_RedCaption->SetPrefix (TEXT ("0x") );
-      m_GreenCaption->SetPrefix (TEXT ("0x") );
-      m_BlueCaption->SetPrefix (TEXT ("0x") );
-      m_AlphaCaption->SetPrefix (TEXT ("0x") );
+      m_RedCaption->SetPrefix ("0x");
+      m_GreenCaption->SetPrefix ("0x");
+      m_BlueCaption->SetPrefix ("0x");
+      m_AlphaCaption->SetPrefix ("0x");
     }
 
     if (m_color_model == color::RGB)

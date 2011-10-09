@@ -85,7 +85,7 @@ namespace nux
   {
     hlayout         = new HLayout (NUX_TRACKER_LOCATION);
     m_Percentage    = new InputArea (NUX_TRACKER_LOCATION);
-    m_ValueString   = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
+    m_ValueString   = new EditTextBox ("", NUX_TRACKER_LOCATION);
   }
 
   void RangeValue::DrawMarker (GraphicsEngine &graphics_engine)

@@ -32,9 +32,9 @@ namespace nux
   ColorPickerDialog::ColorPickerDialog()
     :   m_Color (DummyColor)
   {
-    SetWindowTitle (TEXT ("Color Picker") );
+    SetWindowTitle ("Color Picker");
     SetWindowSizeMatchLayout (true);
-    m_Vlayout = new VLayout (TEXT ("Color Picker") );
+    m_Vlayout = new VLayout ("Color Picker");
     m_ColorEditor = new ColorEditor();
 
     m_Vlayout->AddView (m_ColorEditor);

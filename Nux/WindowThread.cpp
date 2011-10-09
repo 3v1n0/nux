@@ -498,13 +498,13 @@ logging::Logger logger("nux.windows.thread");
   {
     if (!_fake_event_mode)
     {
-      nuxDebugMsg (TEXT("[WindowThread::PumpFakeEventIntoPipe] Cannot register a fake event. Fake event mode is not enabled."));
+      nuxDebugMsg ("[WindowThread::PumpFakeEventIntoPipe] Cannot register a fake event. Fake event mode is not enabled.");
       return false;
     }
     
     if (!_ready_for_next_fake_event)
     {
-      nuxDebugMsg (TEXT("[WindowThread::PumpFakeEventIntoPipe] The fake event pipe is full. Only one fake event can be registered at any time."));
+      nuxDebugMsg ("[WindowThread::PumpFakeEventIntoPipe] The fake event pipe is full. Only one fake event can be registered at any time.");
       return false;
     }
     
@@ -519,13 +519,13 @@ logging::Logger logger("nux.windows.thread");
   {
     if (!_fake_event_mode)
     {
-      nuxDebugMsg (TEXT("[WindowThread::PumpFakeEventIntoPipe] Cannot register a fake event. Fake event mode is not enabled."));
+      nuxDebugMsg ("[WindowThread::PumpFakeEventIntoPipe] Cannot register a fake event. Fake event mode is not enabled.");
       return false;
     }
 
     if (!_ready_for_next_fake_event)
     {
-      nuxDebugMsg (TEXT("[WindowThread::PumpFakeEventIntoPipe] The fake event pipe is full. Only one fake event can be registered at any time."));
+      nuxDebugMsg ("[WindowThread::PumpFakeEventIntoPipe] The fake event pipe is full. Only one fake event can be registered at any time.");
       return false;
     }
 
@@ -539,7 +539,7 @@ logging::Logger logger("nux.windows.thread");
 
   void WindowThread::ReadyFakeEventProcessing (void* data)
   {
-    nuxDebugMsg (TEXT("[WindowThread::ReadyFakeEventProcessing] Ready to process fake event."));
+    nuxDebugMsg ("[WindowThread::ReadyFakeEventProcessing] Ready to process fake event.");
     _processing_fake_event = true;
   }
 
@@ -907,11 +907,11 @@ logging::Logger logger("nux.windows.thread");
         
         if (event.e_event == NUX_MOUSE_PRESSED)
         {
-          nuxDebugMsg (TEXT("[WindowThread::ExecutionLoop] Fake Event: Mouse Down."));
+          nuxDebugMsg ("[WindowThread::ExecutionLoop] Fake Event: Mouse Down.");
         }
         else if (event.e_event == NUX_MOUSE_RELEASED)
         {
-          nuxDebugMsg (TEXT("[WindowThread::ExecutionLoop] Fake Event: Mouse Up."));
+          nuxDebugMsg ("[WindowThread::ExecutionLoop] Fake Event: Mouse Up.");
         }
       }
       else if (_fake_event_mode)
@@ -1194,7 +1194,7 @@ logging::Logger logger("nux.windows.thread");
       else if (m_Parent->Type().IsObjectType (WindowThread::StaticObjectType) )
         return static_cast<WindowThread *> (m_Parent)->StartChildThread (this, true);
 
-      nuxAssertMsg (0, TEXT ("[WindowThread::Start] This should not happen.") );
+      nuxAssertMsg (0, "[WindowThread::Start] This should not happen.");
       return THREAD_START_ERROR;
     }
   }
@@ -1247,7 +1247,7 @@ logging::Logger logger("nux.windows.thread");
     {
       if (m_ModalWindowThread != thread)
       {
-        nuxAssertMsg (0, TEXT ("[WindowThread::SuspendChildGraphics] cannot supend thread that is not the modal window.") );
+        nuxAssertMsg (0, "[WindowThread::SuspendChildGraphics] cannot supend thread that is not the modal window.");
         return thread->GetThreadState();
       }
     }
@@ -1371,7 +1371,7 @@ logging::Logger logger("nux.windows.thread");
 
   bool WindowThread::ThreadCtor()
   {
-    nuxAssertMsg (m_ThreadCtorCalled == false, TEXT ("[WindowThread::ThreadCtor] ThreadCtor should not be called more than once.") );
+    nuxAssertMsg (m_ThreadCtorCalled == false, "[WindowThread::ThreadCtor] ThreadCtor should not be called more than once.");
     NUX_RETURN_VALUE_IF_TRUE (m_ThreadCtorCalled, true);
 
 #if defined(NUX_OS_WINDOWS)
@@ -1380,7 +1380,7 @@ logging::Logger logger("nux.windows.thread");
 
     if (RegisterNuxThread (this) == FALSE)
     {
-      nuxDebugMsg (TEXT ("[WindowThread::ThreadCtor] Failed to register the WindowThread.") );
+      nuxDebugMsg ("[WindowThread::ThreadCtor] Failed to register the WindowThread.");
       return false;
     }
 
@@ -1400,7 +1400,7 @@ logging::Logger logger("nux.windows.thread");
 
     if (_graphics_display == 0)
     {
-      nuxDebugMsg (TEXT ("[WindowThread::ThreadCtor] Failed to create the window.") );
+      nuxDebugMsg ("[WindowThread::ThreadCtor] Failed to create the window.");
       return false;
     }
 
@@ -1423,7 +1423,7 @@ logging::Logger logger("nux.windows.thread");
 #if defined(NUX_OS_WINDOWS)
   bool WindowThread::ThreadCtor (HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext)
   {
-    nuxAssertMsg (m_ThreadCtorCalled == false, TEXT ("[WindowThread::ThreadCtor] ThreadCtor should not be called more than once.") );
+    nuxAssertMsg (m_ThreadCtorCalled == false, "[WindowThread::ThreadCtor] ThreadCtor should not be called more than once.");
     NUX_RETURN_VALUE_IF_TRUE (m_ThreadCtorCalled, true);
 
 #if defined(NUX_OS_WINDOWS)
@@ -1432,7 +1432,7 @@ logging::Logger logger("nux.windows.thread");
 
     if (RegisterNuxThread (this) == FALSE)
     {
-      nuxDebugMsg (TEXT ("[WindowThread::ThreadCtor] Failed to register the WindowThread.") );
+      nuxDebugMsg ("[WindowThread::ThreadCtor] Failed to register the WindowThread.");
       return false;
     }
 
@@ -1452,7 +1452,7 @@ logging::Logger logger("nux.windows.thread");
 
     if (_graphics_display == 0)
     {
-      nuxDebugMsg (TEXT ("[WindowThread::ThreadCtor] Failed to create the window.") );
+      nuxDebugMsg ("[WindowThread::ThreadCtor] Failed to create the window.");
       return false;
     }
 
@@ -1482,12 +1482,12 @@ logging::Logger logger("nux.windows.thread");
 #elif defined(NUX_OS_LINUX)
   bool WindowThread::ThreadCtor (Display *X11Display, Window X11Window, GLXContext OpenGLContext)
   {
-    nuxAssertMsg (m_ThreadCtorCalled == false, TEXT ("[WindowThread::ThreadCtor] ThreadCtor should not be called more than once.") );
+    nuxAssertMsg (m_ThreadCtorCalled == false, "[WindowThread::ThreadCtor] ThreadCtor should not be called more than once.");
     NUX_RETURN_VALUE_IF_TRUE (m_ThreadCtorCalled, true);
 
     if (RegisterNuxThread (this) == FALSE)
     {
-      nuxDebugMsg (TEXT ("[WindowThread::ThreadCtor] Failed to register the WindowThread.") );
+      nuxDebugMsg ("[WindowThread::ThreadCtor] Failed to register the WindowThread.");
       return false;
     }
 
@@ -1508,7 +1508,7 @@ logging::Logger logger("nux.windows.thread");
 
     if (_graphics_display == 0)
     {
-      nuxDebugMsg (TEXT ("[WindowThread::ThreadCtor] Failed to create the window.") );
+      nuxDebugMsg ("[WindowThread::ThreadCtor] Failed to create the window.");
       return false;
     }
 
@@ -1790,7 +1790,7 @@ logging::Logger logger("nux.windows.thread");
 
   void WindowThread::RenderInterfaceFromForeignCmd(Geometry *clip)
   {
-    nuxAssertMsg (IsEmbeddedWindow() == true, TEXT ("[WindowThread::RenderInterfaceFromForeignCmd] You can only call RenderInterfaceFromForeignCmd if the window was created with CreateFromForeignWindow.") );
+    nuxAssertMsg (IsEmbeddedWindow() == true, "[WindowThread::RenderInterfaceFromForeignCmd] You can only call RenderInterfaceFromForeignCmd if the window was created with CreateFromForeignWindow.");
 
     if (!IsEmbeddedWindow() )
       return;

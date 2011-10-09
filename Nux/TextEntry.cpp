@@ -641,7 +641,7 @@ namespace nux
       }
       else
       {
-        nuxDebugMsg(TEXT("[TextEntry::EnsureCanvas] Recreate canvas"));
+        nuxDebugMsg("[TextEntry::EnsureCanvas] Recreate canvas");
         delete canvas_;
         canvas_ = NULL;
       }

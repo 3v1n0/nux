@@ -180,17 +180,17 @@ namespace nux
 // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
   void Layout::AddLayout (Layout *layout, unsigned int stretchFactor, MinorDimensionPosition minor_position, MinorDimensionSize minor_size, float percentage, LayoutPosition index)
   {
-    nuxAssertMsg (layout != 0, "[Layout::AddView] Invalid parameter." );
+    nuxAssertMsg (layout != 0, "[Layout::AddView] Invalid parameter.");
     NUX_RETURN_IF_TRUE (layout == 0);
     //  Should never happen
-    nuxAssertMsg (layout != this, "[Layout::AddLayout] Error: Trying to add a layout to itself." );
+    nuxAssertMsg (layout != this, "[Layout::AddLayout] Error: Trying to add a layout to itself.");
     NUX_RETURN_IF_FALSE (layout != 0);
 
     Area *parent = layout->GetParentObject();
-    nuxAssertMsg (parent == 0, "[Layout::AddLayout] Trying to add an object that already has a parent." );
+    nuxAssertMsg (parent == 0, "[Layout::AddLayout] Trying to add an object that already has a parent.");
     NUX_RETURN_IF_TRUE (parent != 0);
 
-    nuxAssertMsg (index >= 0, "[Layout::AddLayout] Invalid index position. Adding at the beginning of the list.." );
+    nuxAssertMsg (index >= 0, "[Layout::AddLayout] Invalid index position. Adding at the beginning of the list..");
 
     layout->SetStretchFactor (stretchFactor);
     layout->SetPositioning (minor_position);
@@ -262,14 +262,14 @@ namespace nux
 
   void Layout::AddView (Area *bo, unsigned int stretchFactor, MinorDimensionPosition minor_position, MinorDimensionSize minor_size, float percentage, LayoutPosition index)
   {
-    nuxAssertMsg (bo != 0, "[Layout::AddView] Invalid parameter." );
+    nuxAssertMsg (bo != 0, "[Layout::AddView] Invalid parameter.");
     NUX_RETURN_IF_TRUE (bo == 0);
 
     Area *parent = bo->GetParentObject();
-    nuxAssertMsg (parent == 0, "[Layout::AddView] Trying to add an object that already has a parent." );
+    nuxAssertMsg (parent == 0, "[Layout::AddView] Trying to add an object that already has a parent.");
     NUX_RETURN_IF_TRUE (parent != 0);
 
-    nuxAssertMsg (index >= 0, "[Layout::AddView] Invalid index position. Adding at the beginning of the list.." );
+    nuxAssertMsg (index >= 0, "[Layout::AddView] Invalid index position. Adding at the beginning of the list..");
 
     bo->SetStretchFactor (stretchFactor);
     bo->SetPositioning (minor_position);
