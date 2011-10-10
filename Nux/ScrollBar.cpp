@@ -26,8 +26,8 @@
 namespace nux
 {
 
-  ScrollBar::ScrollBar (NUX_FILE_LINE_DECL)
-    :   View (NUX_FILE_LINE_PARAM)
+  ScrollBar::ScrollBar(NUX_FILE_LINE_DECL)
+    :   View(NUX_FILE_LINE_PARAM)
   {
     m_visible   = 1;
     m_ScrollUnit = 5;
@@ -38,9 +38,9 @@ namespace nux
   {
   }
 
-  void ScrollBar::SetScrollUnit (int unit)
+  void ScrollBar::SetScrollUnit(int unit)
   {
-    nuxAssert (unit > 0);
+    nuxAssert(unit > 0);
     m_ScrollUnit = unit;
 
     if (m_ScrollUnit <= 0)

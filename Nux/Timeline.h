@@ -26,18 +26,18 @@ namespace nux
   {
   public:
 
-    Timeline (unsigned int msecs, const TCHAR *Caption, NUX_FILE_LINE_DECL);
+    Timeline(unsigned int msecs, const TCHAR *Caption, NUX_FILE_LINE_DECL);
     ~Timeline();
 
-    void Stop ();
-    void Start ();
-    void Pause ();
-    void Rewind ();
+    void Stop();
+    void Start();
+    void Pause();
+    void Rewind();
 
-    double GetProgress (); //ranges from 0.0 -> 1.0
-    virtual double GetEasing (); // override to provide easing values
+    double GetProgress(); //ranges from 0.0 -> 1.0
+    virtual double GetEasing(); // override to provide easing values
 
-    void DoTick (unsigned long msecs); // If you use this, you make baby kittens cry
+    void DoTick(unsigned long msecs); // If you use this, you make baby kittens cry
 
     bool Looping;
     unsigned long Duration;
@@ -133,7 +133,7 @@ namespace nux
   //     std::list<AnimatedPropertyBase*>::iterator it;
 
   //     // Go through all the properties and update them.
-  //     for(it = animated_properties_.begin(); it != animated_properties_.end(); ++it)
+  //     for (it = animated_properties_.begin(); it != animated_properties_.end(); ++it)
   //     {
   //       (*it)->Animate(t);
   //     }

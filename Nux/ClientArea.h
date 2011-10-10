@@ -44,16 +44,16 @@ namespace nux
   class ClientArea: public View
   {
   public:
-    ClientArea (NUX_FILE_LINE_PROTO);
+    ClientArea(NUX_FILE_LINE_PROTO);
     ~ClientArea();
 
-    virtual void BeginDraw (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void BeginDraw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void QueueDraw();
 
-    void EnableClientDraw (bool b)
+    void EnableClientDraw(bool b)
     {
       m_IsClientAreaEnabled = b;
     };
@@ -62,12 +62,12 @@ namespace nux
       return m_IsClientAreaEnabled;
     };
 
-    virtual void ClientDraw (GraphicsEngine &graphics_engine, DrawAreaContext &ctx, bool force_draw);
-    virtual void RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    virtual void RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    virtual void RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    virtual void RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    virtual void RecvKeyEvent (
+    virtual void ClientDraw(GraphicsEngine &graphics_engine, DrawAreaContext &ctx, bool force_draw);
+    virtual void RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    virtual void RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    virtual void RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    virtual void RecvMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    virtual void RecvKeyEvent(
       unsigned long       ,   /*event type*/
       unsigned long       ,   /*event keysym*/
       unsigned long       ,   /*event state*/
@@ -76,8 +76,8 @@ namespace nux
     );
 
     sigc::signal<void, DrawAreaContext, bool> sigClientDraw;
-    void SetClientViewport (GraphicsEngine &graphics_engine);
-    void Setup2DMode (GraphicsEngine &graphics_engine);
+    void SetClientViewport(GraphicsEngine &graphics_engine);
+    void Setup2DMode(GraphicsEngine &graphics_engine);
 
     // Before the client start drawing we set up a framebuffer object. We don't want the client to start messing
     // up the whole rendering by. If we setup a framebuffer instead, the client can never know the framebuffer

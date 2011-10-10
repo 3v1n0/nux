@@ -31,28 +31,28 @@
 namespace nux
 {
 
-  Dialog::Dialog (const TCHAR *WindowName /*  = "" */)
-    :   FloatingWindow (WindowName)
+  Dialog::Dialog(const TCHAR *WindowName /*  = "" */)
+    :   FloatingWindow(WindowName)
   {
-    ShowWindow (false);
+    ShowWindow(false);
 
-    m_ButtonLayout = new HLayout ("Dialog Buttons");
+    m_ButtonLayout = new HLayout("Dialog Buttons");
 
-    m_OkButton = new Button ("OK");
-    m_OkButton->SetMinimumWidth (60);
-    m_OkButton->SetMinimumHeight (20);
+    m_OkButton = new Button("OK");
+    m_OkButton->SetMinimumWidth(60);
+    m_OkButton->SetMinimumHeight(20);
 
-    m_CancelButton = new Button ("Cancel");
-    m_CancelButton->SetMinimumWidth (60);
-    m_CancelButton->SetMinimumHeight (20);
+    m_CancelButton = new Button("Cancel");
+    m_CancelButton->SetMinimumWidth(60);
+    m_CancelButton->SetMinimumHeight(20);
 
-    //FIXME - m_OkButton->sigClick.connect (sigc::mem_fun (this, &Dialog::RecvOk) );
-    //FIXME - m_CancelButton->sigClick.connect (sigc::mem_fun (this, &Dialog::RecvCancel) );
+    //FIXME - m_OkButton->sigClick.connect(sigc::mem_fun(this, &Dialog::RecvOk));
+    //FIXME - m_CancelButton->sigClick.connect(sigc::mem_fun(this, &Dialog::RecvCancel));
 
-    m_ButtonLayout->SetHorizontalInternalMargin (6);
-    m_ButtonLayout->SetVerticalExternalMargin (2);
-    m_ButtonLayout->AddView (m_OkButton, 0);
-    m_ButtonLayout->AddView (m_CancelButton, 0);
+    m_ButtonLayout->SetHorizontalInternalMargin(6);
+    m_ButtonLayout->SetVerticalExternalMargin(2);
+    m_ButtonLayout->AddView(m_OkButton, 0);
+    m_ButtonLayout->AddView(m_CancelButton, 0);
 
     // NuxNote: m_ButtonLayout should be moved to the places where it is used... For instance ColorPickerDialog.
   }
@@ -62,9 +62,9 @@ namespace nux
   {
   }
 
-  void Dialog::Start (bool StartModal)
+  void Dialog::Start(bool StartModal)
   {
-    ShowWindow (true, StartModal);
+    ShowWindow(true, StartModal);
   }
 
 

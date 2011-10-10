@@ -30,7 +30,7 @@ namespace nux
   //! An layered layout.
   /*!
   LayeredLayout works either as a bin layout, showing only one layer at a time, or it works
-  as a composite layout, drawing all children in order (and you are able to modify the order).
+  as a composite layout, drawing all children in order(and you are able to modify the order).
   
   The layout also allows two modes of input. In INPUT_MODE_ACTIVE, the layout will only send
   events to the active layer, even if in composite drawing mode. In INPUT_MODE_COMPOSITE, the
@@ -40,14 +40,14 @@ namespace nux
   */
   class LayeredLayout: public Layout
   {
-    NUX_DECLARE_OBJECT_TYPE (LayeredLayout, Layout);
+    NUX_DECLARE_OBJECT_TYPE(LayeredLayout, Layout);
   public:
     class LayeredChildProperties // : public LayeredLayout::LayoutProperties
     {
     public:
-      LayeredChildProperties (bool expand, int x, int y, int width, int height);
+      LayeredChildProperties(bool expand, int x, int y, int width, int height);
       ~LayeredChildProperties();
-      void Update (bool expand, int x, int y, int width, int height);
+      void Update(bool expand, int x, int y, int width, int height);
 
       bool m_expand;
       int  m_x;
@@ -64,8 +64,8 @@ namespace nux
 
     } InputMode;
 
-    LayeredLayout (NUX_FILE_LINE_PROTO);
-    ~LayeredLayout ();
+    LayeredLayout(NUX_FILE_LINE_PROTO);
+    ~LayeredLayout();
 
     //! Add a layer to the layout
     /*!
@@ -89,35 +89,35 @@ namespace nux
     \param width  the width of the layer inside the layout, expand must be false
     \param height the height of the layer inside the layout, expand must be false
     */
-    void UpdateLayer (Area *area, bool expand=true, int x=0, int y=0, int width=0, int height=0);
+    void UpdateLayer(Area *area, bool expand=true, int x=0, int y=0, int width=0, int height=0);
 
     //! Remove a layer
     /*!
     This method will remove a layer from the layout. It is here for completeness.
     \param area   the Area, Layout or View to remove
     */
-    void RemoveLayer (Area *area);
+    void RemoveLayer(Area *area);
 
     //! Set the active layer of the layout
     /*!
     The active layer will receives input in the input mode is INPUT_MODE_ACTIVE.
     \param index_ The index of the layer to make active
     */
-    void SetActiveLayerN (int index_);
+    void SetActiveLayerN(int index_);
 
     //! Get the active layer of the layout
     /*!
     Returns the index of the active layer of the layout. This is only useful if input mode is INPUT_MODE_ACTIVE.
     \return the index of the active layer
     */
-    int GetActiveLayerN ();
+    int GetActiveLayerN();
 
     //! Set the active layer of the layout
     /*!
     The active layer will receives input in the input mode is INPUT_MODE_ACTIVE.
     \param area The area of the layer to make active
     */
-    void SetActiveLayer (Area *area);
+    void SetActiveLayer(Area *area);
 
     //! Get the active layer of the layout
     /*!
@@ -133,14 +133,14 @@ namespace nux
     inside the layout, this should be set to true.
     \param paint_all whether to paint all the layers in the layout
     */
-    void SetPaintAll (bool paint_all);
+    void SetPaintAll(bool paint_all);
 
     //! Get whether the layout is drawing all the layers it contains
     /*!
     Returns whether the layout is drawing all the layers it contains. See SetPaintAll.
     \return whether the layout is drawing all the layers
     */
-    bool GetPaintAll ();
+    bool GetPaintAll();
 
     //! Sets the input mode of the layout
     /*!
@@ -152,7 +152,7 @@ namespace nux
     many backgrounds, but with only one active view.
     \param input_mode the input mode
     */
-    void SetInputMode (LayeredLayout::InputMode input_mode);
+    void SetInputMode(LayeredLayout::InputMode input_mode);
 
     //! Raise the paint and input depth of an area
     /*!
@@ -160,7 +160,7 @@ namespace nux
     \param area area to raise
     \param above area to raise above
     */
-    void Raise (Area *area, Area *above);
+    void Raise(Area *area, Area *above);
 
     //! Lower the paint and input depth of an area
     /*!
@@ -168,28 +168,28 @@ namespace nux
     \param area area to raise
     \param below area to lower below
     */
-    void Lower (Area *area, Area *below);
+    void Lower(Area *area, Area *below);
 
     //! Raises the paint and input depth of area to the top of the layout
     /*!
     Area will be drawn above all other layers and will be the first receive events  
     \param area area to raise
     */
-    void RaiseTop (Area *area);
+    void RaiseTop(Area *area);
 
     //! Lowers the paint and input depth of area to the bottom of the layout
     /*!
     Area will be drawn below all other layers and will be the last receive events
     \param area area to lower
     */
-    void LowerBottom (Area *area);
+    void LowerBottom(Area *area);
 
     //! Get which input mode is set on the layout
     /*!
     Returns the current input mode on the layout.
     \return the current input mode on the layout
     */
-    LayeredLayout::InputMode GetInputMode ();
+    LayeredLayout::InputMode GetInputMode();
 
 //     //! Set the layout properties for this area
 //     /*!
@@ -199,27 +199,27 @@ namespace nux
 //         @param properties the LayoutProperties sub-class  associated with this area. Can be NULL to
 //          unset.
 //     */
-//     void SetLayoutProperties (LayoutProperties *properties);
+//     void SetLayoutProperties(LayoutProperties *properties);
 // 
 //     //! Get the layout properties for this area
 //     /*!
 //         Retrieves the LayoutProperties sub-class with this area. See SetLayoutProperties
 //         @return LayoutProperties sub-class associated with this area.
 //     */
-//     LayoutProperties * GetLayoutProperties ();
+//     LayoutProperties * GetLayoutProperties();
 
-    void AddLayout (Layout                *layouy,
+    void AddLayout(Layout                *layouy,
                     unsigned int           stretch_factor = 1,
                     MinorDimensionPosition position       = eAbove,
                     MinorDimensionSize     extend         = eFull,
                     float                  percentage     = 100.0f);
-    void AddView (Area                  *view,
+    void AddView(Area                  *view,
                   unsigned int           stretch_factor = 1,
                   MinorDimensionPosition positioning    = eAbove,
                   MinorDimensionSize     extend         = eFull,
                   float                  percentage     = 100.0f);
-    void RemoveChildObject (Area *area);
-    void Clear ();
+    void RemoveChildObject(Area *area);
+    void Clear();
 
   protected:
     //

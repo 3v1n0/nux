@@ -26,13 +26,13 @@
 namespace nux
 {
 
-  HexRegExpValidator::HexRegExpValidator (int Minimum, int Maximum)
-    :   m_Minimum (Minimum)
-    ,   m_Maximum (Maximum)
+  HexRegExpValidator::HexRegExpValidator(int Minimum, int Maximum)
+    :   m_Minimum(Minimum)
+    ,   m_Maximum(Maximum)
   {
     _regexp_str = "^(0[xX])*[0-9a-fA-F]+$";
 
-    InitRegExp ();
+    InitRegExp();
 
     if (m_Minimum > m_Maximum)
     {
@@ -42,12 +42,12 @@ namespace nux
     }
   }
 
-  HexRegExpValidator::HexRegExpValidator (const HexRegExpValidator &copy)
+  HexRegExpValidator::HexRegExpValidator(const HexRegExpValidator &copy)
   {
     m_Minimum   = copy.m_Minimum;
     m_Minimum   = copy.m_Maximum;
     _regexp_str = copy._regexp_str;
-    InitRegExp ();
+    InitRegExp();
   }
 
   HexRegExpValidator &HexRegExpValidator::operator= (const HexRegExpValidator &rhs)
@@ -57,7 +57,7 @@ namespace nux
       m_Minimum   = rhs.m_Minimum;
       m_Minimum   = rhs.m_Maximum;
       _regexp_str = rhs._regexp_str;
-      InitRegExp ();
+      InitRegExp();
     }
 
     return *this;
@@ -69,10 +69,10 @@ namespace nux
 
   Validator *HexRegExpValidator::Clone()  const
   {
-    return new HexRegExpValidator (*this);
+    return new HexRegExpValidator(*this);
   }
 
-  void HexRegExpValidator::SetMinimum (int value)
+  void HexRegExpValidator::SetMinimum(int value)
   {
     m_Minimum = value;
 
@@ -89,7 +89,7 @@ namespace nux
     return m_Minimum;
   }
 
-  void HexRegExpValidator::SetMaximum (int value)
+  void HexRegExpValidator::SetMaximum(int value)
   {
     m_Maximum = value;
 
@@ -106,7 +106,7 @@ namespace nux
     return m_Maximum;
   }
 
-  int HexRegExpValidator::GetClampedValue (int i) const
+  int HexRegExpValidator::GetClampedValue(int i) const
   {
     if (i < m_Minimum)
       return m_Minimum;
@@ -117,21 +117,21 @@ namespace nux
     return i;
   }
 
-  void HexRegExpValidator::Alternative (const TCHAR *str)
+  void HexRegExpValidator::Alternative(const TCHAR *str)
   {
     str = "0x0";
   }
 
-  NString HexRegExpValidator::ToString (int i)
+  NString HexRegExpValidator::ToString(int i)
   {
-    NString Prec ("%d");
-    return NString::Printf (Prec.GetTCharPtr (), i);
+    NString Prec("%d");
+    return NString::Printf(Prec.GetTCharPtr(), i);
   }
 
-  int HexRegExpValidator::ToInteger (const TCHAR *str)
+  int HexRegExpValidator::ToInteger(const TCHAR *str)
   {
-    if (Validate (str) == Acceptable)
-      return HexCharToInteger (str);
+    if (Validate(str) == Acceptable)
+      return HexCharToInteger(str);
     else
       return 0;
   }

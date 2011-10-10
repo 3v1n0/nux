@@ -37,12 +37,12 @@ namespace nux
 
   class Layout: public Area
   {
-    NUX_DECLARE_OBJECT_TYPE (Layout, Area);
+    NUX_DECLARE_OBJECT_TYPE(Layout, Area);
   public:
-    Layout (NUX_FILE_LINE_PROTO);
+    Layout(NUX_FILE_LINE_PROTO);
     virtual ~Layout();
 
-    virtual void AddLayout (Layout *, unsigned int stretchFactor = 1, MinorDimensionPosition = eAbove, MinorDimensionSize extend = eFull, float percentage = 100.0f, LayoutPosition = NUX_LAYOUT_END);
+    virtual void AddLayout(Layout *, unsigned int stretchFactor = 1, MinorDimensionPosition = eAbove, MinorDimensionSize extend = eFull, float percentage = 100.0f, LayoutPosition = NUX_LAYOUT_END);
 
     //! Add an object to the layout.
     /*! Add an object to the layout.
@@ -68,8 +68,8 @@ namespace nux
         /param percentage Controls the object minor dimension size in percentage of the layout minor dimension size.
         /param index Controls the object position in the layout.
     */
-    virtual void AddView (Area *baseobject, unsigned int stretchFactor = 1, MinorDimensionPosition positioning = eAbove, MinorDimensionSize extend = eFull, float percentage = 100.0f, LayoutPosition index = NUX_LAYOUT_END);
-    virtual void AddSpace (unsigned int width, unsigned int stretchFactor = 0, LayoutPosition index = NUX_LAYOUT_END);
+    virtual void AddView(Area *baseobject, unsigned int stretchFactor = 1, MinorDimensionPosition positioning = eAbove, MinorDimensionSize extend = eFull, float percentage = 100.0f, LayoutPosition index = NUX_LAYOUT_END);
+    virtual void AddSpace(unsigned int width, unsigned int stretchFactor = 0, LayoutPosition index = NUX_LAYOUT_END);
 
     virtual void Clear();
 
@@ -124,7 +124,7 @@ namespace nux
 
     virtual unsigned int GetMaxStretchFactor();
     unsigned int GetMinStretchFactor();
-    unsigned int GetNumStretchFactor (unsigned int sf);
+    unsigned int GetNumStretchFactor(unsigned int sf);
 
     int GetContentWidth() const
     {
@@ -152,7 +152,7 @@ namespace nux
 
   public:
 
-    virtual void GetCompositeList (std::list<Area *> *ViewList)
+    virtual void GetCompositeList(std::list<Area *> *ViewList)
     {
 
     }
@@ -160,8 +160,8 @@ namespace nux
 
     void DoneRedraw();
 
-    bool SearchInAllSubNodes (Area *bo);
-    bool SearchInFirstSubNodes (Area *bo);
+    bool SearchInAllSubNodes(Area *bo);
+    bool SearchInFirstSubNodes(Area *bo);
 
     Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
 
@@ -174,56 +174,56 @@ namespace nux
         \param ProcessEventInfo
         \return The state of the Process Event.
     */
-    virtual void ProcessDraw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     //! Mark all element in the layout as dirty.
     /*!
         Mark all element in the layout as dirty. This will also mark all sub elements as dirty.
-        InputArea element are not marked as dirty (they don't have the flags).
+        InputArea element are not marked as dirty(they don't have the flags).
         Emits the signal \i OnQueueDraw.
     */
-    virtual void QueueDraw ();
+    virtual void QueueDraw();
 
     //! Return true if a draw has been scheduled for this layout
     /*!
         @return True if a draw has been scheduled for this layout.
     */
-    bool IsQueuedForDraw ();
+    bool IsQueuedForDraw();
 
     //! Define how elements are spread out inside the layout.
     /*!
-        Typically, a layout stacks it elements from left to right (HLayout) or top to bottom (VLayout).
+        Typically, a layout stacks it elements from left to right(HLayout) or top to bottom(VLayout).
         When the elements don't uses all the space that is available, the content stacking policy allows
         alternatives ways to position the elements. This does not affect the elements size, only their position
         inside the layout.
         @param stacking_order
     */
-    virtual void SetContentDistribution (LayoutContentDistribution stacking_order);
+    virtual void SetContentDistribution(LayoutContentDistribution stacking_order);
     virtual LayoutContentDistribution GetContentDistribution();
 
-    virtual bool FindWidget (Area *WidgetObject) const;
+    virtual bool FindWidget(Area *WidgetObject) const;
     virtual bool IsEmpty() const;
     /*
         This function is reimplemented in Layout and View classes  they need to perform some special operations.
-        It does nothing for Area classes (this class cannot have children).
+        It does nothing for Area classes(this class cannot have children).
     */
-    virtual void RemoveChildObject (Area *);
+    virtual void RemoveChildObject(Area *);
 
     //! Request a Layout recompute after a change of size
     /*
         When an object size changes, it is necessary for its parent structure to initiate a layout
         re computation in order preserve the layout structure defined by the user through the API.
     */
-    virtual void RequestBottomUpLayoutComputation (Area *bo_initiator);
+    virtual void RequestBottomUpLayoutComputation(Area *bo_initiator);
 
-    std::list<Area *>& GetChildren ()
+    std::list<Area *>& GetChildren()
     {
       return _layout_element_list;
     }
 
-    virtual void ChildViewQueuedDraw (View *view);
-    virtual void ChildLayoutQueuedDraw (Layout *layout);
-    virtual void ChildLayoutChildQueuedDraw (Area *area);
+    virtual void ChildViewQueuedDraw(View *view);
+    virtual void ChildLayoutQueuedDraw(Layout *layout);
+    virtual void ChildLayoutChildQueuedDraw(Area *area);
 
     sigc::signal<void, Layout*> OnQueueDraw;  //!< Signal emitted when a layout is scheduled for a draw.
     sigc::signal<void, Area*>   OnChildQueueDraw;
@@ -263,25 +263,25 @@ namespace nux
 // The Space layout is a layout object that is used to create fixed or re-sizable empty space.
   class SpaceLayout: public Layout
   {
-    NUX_DECLARE_OBJECT_TYPE (SpaceLayout, Layout);
+    NUX_DECLARE_OBJECT_TYPE(SpaceLayout, Layout);
   public:
     SpaceLayout(NUX_FILE_LINE_PROTO)
-      : Layout (NUX_FILE_LINE_PARAM)
+      : Layout(NUX_FILE_LINE_PARAM)
     {
     };
 
-    SpaceLayout (int minWidth, int maxWidth, int minHeight, int maxHeight, NUX_FILE_LINE_PROTO)
-      : Layout (NUX_FILE_LINE_PARAM)
+    SpaceLayout(int minWidth, int maxWidth, int minHeight, int maxHeight, NUX_FILE_LINE_PROTO)
+      : Layout(NUX_FILE_LINE_PARAM)
     {
-      SetMinimumSize (minWidth, minHeight);
-      SetMaximumSize (maxWidth, maxHeight);
+      SetMinimumSize(minWidth, minHeight);
+      SetMaximumSize(maxWidth, maxHeight);
     };
 
     ~SpaceLayout()
     {
     };
 
-    virtual bool FindWidget (Area *WidgetObject) const
+    virtual bool FindWidget(Area *WidgetObject) const
     {
       return false;
     }
@@ -291,38 +291,38 @@ namespace nux
     }
 
 
-    virtual void AddLayout (Layout *, unsigned int stretchFactor = 1, MinorDimensionPosition minor_position = eAbove, MinorDimensionSize minor_size = eFull, float percentage = 100.0f, LayoutPosition index = NUX_LAYOUT_END)
+    virtual void AddLayout(Layout *, unsigned int stretchFactor = 1, MinorDimensionPosition minor_position = eAbove, MinorDimensionSize minor_size = eFull, float percentage = 100.0f, LayoutPosition index = NUX_LAYOUT_END)
     {
       // Do not allow a WidgetLayout to encapsulate an object of type layout
     }
 
-    virtual void AddView (Area *baseobject, unsigned int stretchFactor = 1, MinorDimensionPosition positioning = eAbove, MinorDimensionSize extend = eFull, float percentage = 100.0f, LayoutPosition index = NUX_LAYOUT_END)
+    virtual void AddView(Area *baseobject, unsigned int stretchFactor = 1, MinorDimensionPosition positioning = eAbove, MinorDimensionSize extend = eFull, float percentage = 100.0f, LayoutPosition index = NUX_LAYOUT_END)
     {
       // the baseObject is provided via the constructor.
     };
 
-    virtual void AddSpace (unsigned int width, unsigned int stretchFactor = 0, LayoutPosition index = NUX_LAYOUT_END)
+    virtual void AddSpace(unsigned int width, unsigned int stretchFactor = 0, LayoutPosition index = NUX_LAYOUT_END)
     {
       // Do not allow a WidgetLayout to encapsulate an object of type layout
     }
 
-    virtual bool CanFocus ()
+    virtual bool CanFocus()
     {
       return false;
     }
 
-    // Begin: Abstract virtual function member (inherited from class Layout) that must be implemented
+    // Begin: Abstract virtual function member(inherited from class Layout) that must be implemented
     virtual long ComputeContentSize()
     {
       return 0;
     }
-    virtual void ComputeContentPosition (float offsetX, float offsetY)
+    virtual void ComputeContentPosition(float offsetX, float offsetY)
     {
     }
-    // End: Abstract virtual function member (inherited from class Layout) that must be implemented
+    // End: Abstract virtual function member(inherited from class Layout) that must be implemented
 
   protected:
-    Area *Find (long handle);
+    Area *Find(long handle);
   };
 }
 

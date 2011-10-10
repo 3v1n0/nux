@@ -26,25 +26,25 @@
 namespace nux
 {
 
-  typedef void (*ThreadUserInitFunc) (NThread *, void *InitData);
-  typedef void (*ThreadUserExitFunc) (NThread *, void *ExitData);
-  typedef void (*ThreadMainFunc) (NThread *, void *MainData);
+  typedef void(*ThreadUserInitFunc) (NThread *, void *InitData);
+  typedef void(*ThreadUserExitFunc) (NThread *, void *ExitData);
+  typedef void(*ThreadMainFunc) (NThread *, void *MainData);
 
   class AbstractThread: public NThread, public sigc::trackable
   {
-    NUX_DECLARE_OBJECT_TYPE (AbstractThread, NThread);
+    NUX_DECLARE_OBJECT_TYPE(AbstractThread, NThread);
 
   public:
-    AbstractThread (AbstractThread *Parent);
+    AbstractThread(AbstractThread *Parent);
     virtual ~AbstractThread();
 
   protected:
-    virtual unsigned int Run (void *) = 0;
+    virtual unsigned int Run(void *) = 0;
 
-    virtual ThreadState StartChildThread (NThread *thread, bool Modal) = 0;
-    virtual void AddChildThread (NThread *) = 0;
-    virtual void RemoveChildThread (NThread *) = 0;
-    virtual void ChildHasFinished (NThread *app) = 0;
+    virtual ThreadState StartChildThread(NThread *thread, bool Modal) = 0;
+    virtual void AddChildThread(NThread *) = 0;
+    virtual void RemoveChildThread(NThread *) = 0;
+    virtual void ChildHasFinished(NThread *app) = 0;
     virtual void TerminateAllChildThread() = 0;
 
     std::list<NThread *> m_ChildThread;
@@ -61,7 +61,7 @@ namespace nux
     std::list<NThread *> m_ThreadList;
 
   private:
-    AbstractThread (const AbstractThread &);
+    AbstractThread(const AbstractThread &);
     // Does not make sense for a singleton. This is a self assignment.
     AbstractThread &operator= (const AbstractThread &);
     // Declare operator adress-of as private

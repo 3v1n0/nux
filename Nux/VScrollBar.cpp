@@ -32,8 +32,8 @@ namespace nux
   const int VSCROLLBAR_WIDTH = 5;
   const int VSCROLLBAR_HEIGHT = 10;
 
-  VScrollBar::VScrollBar (NUX_FILE_LINE_DECL)
-    :   ScrollBar (NUX_FILE_LINE_PARAM)
+  VScrollBar::VScrollBar(NUX_FILE_LINE_DECL)
+    :   ScrollBar(NUX_FILE_LINE_PARAM)
   {
     content_width_      = 0;
     content_height_     = 0;
@@ -51,55 +51,55 @@ namespace nux
     m_UpTimerHandler    = 0;
     m_DownTimerHandler  = 0;
 
-    vlayout         = new VLayout (NUX_TRACKER_LOCATION);
-    _scroll_up_button      = new InputArea (NUX_TRACKER_LOCATION);
-    _track         = new InputArea (NUX_TRACKER_LOCATION);
-    _scroll_down_button   = new InputArea (NUX_TRACKER_LOCATION);
-    _slider      = new InputArea (NUX_TRACKER_LOCATION);
+    vlayout         = new VLayout(NUX_TRACKER_LOCATION);
+    _scroll_up_button      = new InputArea(NUX_TRACKER_LOCATION);
+    _track         = new InputArea(NUX_TRACKER_LOCATION);
+    _scroll_down_button   = new InputArea(NUX_TRACKER_LOCATION);
+    _slider      = new InputArea(NUX_TRACKER_LOCATION);
     _slider->SetParentObject(this);
 
     // Set Original State
-    SetMinimumSize (VSCROLLBAR_WIDTH, AREA_MIN_HEIGHT);
-    SetMaximumSize (VSCROLLBAR_WIDTH, AREA_MAX_HEIGHT);
+    SetMinimumSize(VSCROLLBAR_WIDTH, AREA_MIN_HEIGHT);
+    SetMaximumSize(VSCROLLBAR_WIDTH, AREA_MAX_HEIGHT);
 
     // Set Signals
-    //_scroll_down_button->mouse_down.connect ( sigc::mem_fun (this, &VScrollBar::RecvStartScrollDown) );
-    //_scroll_down_button->mouse_up.connect ( sigc::mem_fun (this, &VScrollBar::RecvEndScrollDown) );
-    //_scroll_up_button->mouse_down.connect ( sigc::mem_fun (this, &VScrollBar::RecvStartScrollUp) );
-    //_scroll_up_button->mouse_up.connect ( sigc::mem_fun (this, &VScrollBar::RecvEndScrollUp) );
+    //_scroll_down_button->mouse_down.connect(sigc::mem_fun(this, &VScrollBar::RecvStartScrollDown));
+    //_scroll_down_button->mouse_up.connect(sigc::mem_fun(this, &VScrollBar::RecvEndScrollDown));
+    //_scroll_up_button->mouse_down.connect(sigc::mem_fun(this, &VScrollBar::RecvStartScrollUp));
+    //_scroll_up_button->mouse_up.connect(sigc::mem_fun(this, &VScrollBar::RecvEndScrollUp));
 
-    _slider->mouse_down.connect ( sigc::mem_fun (this, &VScrollBar::OnSliderMouseDown) );
-    _slider->mouse_up.connect ( sigc::mem_fun (this, &VScrollBar::OnSliderMouseUp) );
-    _slider->mouse_drag.connect ( sigc::mem_fun (this, &VScrollBar::OnSliderMouseDrag) );
+    _slider->mouse_down.connect(sigc::mem_fun(this, &VScrollBar::OnSliderMouseDown));
+    _slider->mouse_up.connect(sigc::mem_fun(this, &VScrollBar::OnSliderMouseUp));
+    _slider->mouse_drag.connect(sigc::mem_fun(this, &VScrollBar::OnSliderMouseDrag));
 
-    _track->mouse_down.connect ( sigc::mem_fun (this, &VScrollBar::RecvTrackMouseDown) );
-    _track->mouse_up.connect ( sigc::mem_fun (this, &VScrollBar::RecvTrackMouseUp) );
-    _track->mouse_drag.connect ( sigc::mem_fun (this, &VScrollBar::RecvTrackMouseDrag) );
+    _track->mouse_down.connect(sigc::mem_fun(this, &VScrollBar::RecvTrackMouseDown));
+    _track->mouse_up.connect(sigc::mem_fun(this, &VScrollBar::RecvTrackMouseUp));
+    _track->mouse_drag.connect(sigc::mem_fun(this, &VScrollBar::RecvTrackMouseDrag));
 
-    //_track->mouse_down.connect( sigc::mem_fun(this, &VScrollBar::OnSliderMouseDown));
+    //_track->mouse_down.connect(sigc::mem_fun(this, &VScrollBar::OnSliderMouseDown));
 
     // Set Geometry
-    _scroll_down_button->SetMinimumSize (VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT);
-    _scroll_down_button->SetMaximumSize (VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT);
-    _scroll_down_button->SetGeometry (Geometry (0, 0, VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT) );
-    _scroll_up_button->SetMinimumSize (VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT);
-    _scroll_up_button->SetMaximumSize (VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT);
-    _scroll_up_button->SetGeometry (Geometry (0, 0, VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT) );
+    _scroll_down_button->SetMinimumSize(VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT);
+    _scroll_down_button->SetMaximumSize(VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT);
+    _scroll_down_button->SetGeometry(Geometry(0, 0, VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT));
+    _scroll_up_button->SetMinimumSize(VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT);
+    _scroll_up_button->SetMaximumSize(VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT);
+    _scroll_up_button->SetGeometry(Geometry(0, 0, VSCROLLBAR_WIDTH, VSCROLLBAR_HEIGHT));
 
-    vlayout->AddView (_scroll_up_button, 0, eCenter, eFix);
-    vlayout->AddView (_track, 1, eCenter, eFull);
-    vlayout->AddView (_scroll_down_button, 0, eCenter, eFix);
+    vlayout->AddView(_scroll_up_button, 0, eCenter, eFix);
+    vlayout->AddView(_track, 1, eCenter, eFull);
+    vlayout->AddView(_scroll_down_button, 0, eCenter, eFix);
 
     callback = new TimerFunctor;
-    callback->OnTimerExpired.connect (sigc::mem_fun (this, &VScrollBar::VScrollBarHandler) );
+    callback->OnTimerExpired.connect(sigc::mem_fun(this, &VScrollBar::VScrollBarHandler));
     up_callback = new TimerFunctor;
-    up_callback->OnTimerExpired.connect (sigc::mem_fun (this, &VScrollBar::ScrollUp) );
+    up_callback->OnTimerExpired.connect(sigc::mem_fun(this, &VScrollBar::ScrollUp));
     down_callback = new TimerFunctor;
-    down_callback->OnTimerExpired.connect (sigc::mem_fun (this, &VScrollBar::ScrollDown) );
+    down_callback->OnTimerExpired.connect(sigc::mem_fun(this, &VScrollBar::ScrollDown));
     trackup_callback = new TimerFunctor;
-    trackup_callback->OnTimerExpired.connect (sigc::mem_fun (this, &VScrollBar::TrackUp) );
+    trackup_callback->OnTimerExpired.connect(sigc::mem_fun(this, &VScrollBar::TrackUp));
     trackdown_callback = new TimerFunctor;
-    trackdown_callback->OnTimerExpired.connect (sigc::mem_fun (this, &VScrollBar::TrackDown) );
+    trackdown_callback->OnTimerExpired.connect(sigc::mem_fun(this, &VScrollBar::TrackDown));
 
     SetLayout(vlayout);
     SetAcceptMouseWheelEvent(true);
@@ -116,7 +116,7 @@ namespace nux
     delete trackdown_callback;
   }
 
-  void VScrollBar::VScrollBarHandler (void *v)
+  void VScrollBar::VScrollBarHandler(void *v)
   {
     VScrollBar *scrollbar = static_cast<VScrollBar *> (v);
 
@@ -132,7 +132,7 @@ namespace nux
       else
       {
         scrollbar->QueueDraw();
-        GetTimer().AddTimerHandler (10, callback, scrollbar);
+        GetTimer().AddTimerHandler(10, callback, scrollbar);
       }
     }
 
@@ -148,118 +148,118 @@ namespace nux
       else
       {
         scrollbar->QueueDraw();
-        GetTimer().AddTimerHandler (10, callback, scrollbar);
+        GetTimer().AddTimerHandler(10, callback, scrollbar);
       }
     }
 
     QueueDraw();
   }
 
-  void VScrollBar::ScrollDown (void *v)
+  void VScrollBar::ScrollDown(void *v)
   {
-    OnScrollDown.emit (m_ScrollUnit, 1);
+    OnScrollDown.emit(m_ScrollUnit, 1);
 
-    if (AtMaximum() )
-      RecvEndScrollDown (0, 0, 0, 0);
+    if (AtMaximum())
+      RecvEndScrollDown(0, 0, 0, 0);
     else
-      m_DownTimerHandler = GetTimer().AddTimerHandler (10, down_callback, this);
+      m_DownTimerHandler = GetTimer().AddTimerHandler(10, down_callback, this);
 
     QueueDraw();
   }
 
-  void VScrollBar::ScrollUp (void *v)
+  void VScrollBar::ScrollUp(void *v)
   {
-    OnScrollUp.emit (m_ScrollUnit, 1);
+    OnScrollUp.emit(m_ScrollUnit, 1);
 
-    if (AtMaximum() )
-      RecvEndScrollUp (0, 0, 0, 0);
+    if (AtMaximum())
+      RecvEndScrollUp(0, 0, 0, 0);
     else
-      m_UpTimerHandler = GetTimer().AddTimerHandler (10, up_callback, this);
+      m_UpTimerHandler = GetTimer().AddTimerHandler(10, up_callback, this);
 
     QueueDraw();
   }
 
-  void VScrollBar::TrackUp (void *v)
+  void VScrollBar::TrackUp(void *v)
   {
-    if (m_TrackMouseCoord.y < _slider->GetBaseY() - _track->GetBaseY() )
+    if (m_TrackMouseCoord.y < _slider->GetBaseY() - _track->GetBaseY())
     {
-      OnScrollUp.emit (container_height_, 1);
-      m_TrackUpTimerHandler  = GetTimer().AddTimerHandler (10, trackup_callback, this);
+      OnScrollUp.emit(container_height_, 1);
+      m_TrackUpTimerHandler  = GetTimer().AddTimerHandler(10, trackup_callback, this);
       QueueDraw();
     }
   }
 
-  void VScrollBar::TrackDown (void *v)
+  void VScrollBar::TrackDown(void *v)
   {
-    if (m_TrackMouseCoord.y > _slider->GetBaseY() + _slider->GetBaseHeight() - _track->GetBaseY() )
+    if (m_TrackMouseCoord.y > _slider->GetBaseY() + _slider->GetBaseHeight() - _track->GetBaseY())
     {
-      OnScrollDown.emit (container_height_, 1);
-      m_TrackDownTimerHandler  = GetTimer().AddTimerHandler (10, trackdown_callback, this);
+      OnScrollDown.emit(container_height_, 1);
+      m_TrackDownTimerHandler  = GetTimer().AddTimerHandler(10, trackdown_callback, this);
       QueueDraw();
     }
   }
 
-  void VScrollBar::RecvStartScrollUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void VScrollBar::RecvStartScrollUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    if (!AtMinimum ())
-      ScrollUp (this);
+    if (!AtMinimum())
+      ScrollUp(this);
   }
 
-  void VScrollBar::RecvEndScrollUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void VScrollBar::RecvEndScrollUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    if (m_UpTimerHandler.IsValid ())
+    if (m_UpTimerHandler.IsValid())
     {
-      GetTimer().RemoveTimerHandler (m_UpTimerHandler);
+      GetTimer().RemoveTimerHandler(m_UpTimerHandler);
       m_UpTimerHandler = 0;
     }
   }
 
-  void VScrollBar::RecvStartScrollDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void VScrollBar::RecvStartScrollDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    if (!AtMaximum ())
-      ScrollDown (this);
+    if (!AtMaximum())
+      ScrollDown(this);
   }
 
-  void VScrollBar::RecvEndScrollDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void VScrollBar::RecvEndScrollDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    if (m_DownTimerHandler.IsValid ())
+    if (m_DownTimerHandler.IsValid())
     {
-      GetTimer().RemoveTimerHandler (m_DownTimerHandler);
+      GetTimer().RemoveTimerHandler(m_DownTimerHandler);
       m_DownTimerHandler = 0;
     }
   }
 
-  void VScrollBar::RecvTrackMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void VScrollBar::RecvTrackMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    m_TrackMouseCoord = Point (x, y);
+    m_TrackMouseCoord = Point(x, y);
 
-    int Y = _slider->GetBaseY () - _track->GetBaseY ();
+    int Y = _slider->GetBaseY() - _track->GetBaseY();
 
     if (y < Y)
     {
       // move the slide bar up
-      TrackUp (this);
+      TrackUp(this);
     }
     else
     {
-      TrackDown (this);
+      TrackDown(this);
       // move the slide bar down
     }
   }
 
-  void VScrollBar::RecvTrackMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void VScrollBar::RecvTrackMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    if (m_TrackUpTimerHandler.IsValid ())
-      GetTimer ().RemoveTimerHandler (m_TrackUpTimerHandler);
+    if (m_TrackUpTimerHandler.IsValid())
+      GetTimer().RemoveTimerHandler(m_TrackUpTimerHandler);
 
-    if (m_TrackDownTimerHandler.IsValid ())
-      GetTimer ().RemoveTimerHandler (m_TrackDownTimerHandler);
+    if (m_TrackDownTimerHandler.IsValid())
+      GetTimer().RemoveTimerHandler(m_TrackDownTimerHandler);
 
     m_TrackUpTimerHandler = 0;
     m_TrackDownTimerHandler = 0;
   }
 
-  void VScrollBar::RecvTrackMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void VScrollBar::RecvTrackMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
 
   }
@@ -268,7 +268,7 @@ namespace nux
   {
     bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
 
-    if(mouse_inside == false)
+    if (mouse_inside == false)
       return NULL;
 
     NUX_RETURN_VALUE_IF_TRUE(_scroll_down_button->TestMousePointerInclusion(mouse_position, event_type), _scroll_down_button);
@@ -276,45 +276,45 @@ namespace nux
     NUX_RETURN_VALUE_IF_TRUE(_slider->TestMousePointerInclusion(mouse_position, event_type), _slider);
     NUX_RETURN_VALUE_IF_TRUE(_track->TestMousePointerInclusion(mouse_position, event_type), _track);
 
-    if((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
+    if ((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
       return NULL;
     return this;
   }
 
-  void VScrollBar::Draw (GraphicsEngine &graphics_engine, bool force_draw)
+  void VScrollBar::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
-    GetPainter().PaintBackground (graphics_engine, base);
+    GetPainter().PaintBackground(graphics_engine, base);
 
-    base.OffsetPosition (0, VSCROLLBAR_HEIGHT);
-    base.OffsetSize (0, -2 * VSCROLLBAR_HEIGHT);
-    //GetPainter().PaintShape (graphics_engine, base, Color (COLOR_SCROLLBAR_TRACK), eVSCROLLBAR, false);
-    //graphics_engine.QRP_Color (base.x, base.y, base.width, base.height, Color (COLOR_SCROLLBAR_TRACK));
+    base.OffsetPosition(0, VSCROLLBAR_HEIGHT);
+    base.OffsetSize(0, -2 * VSCROLLBAR_HEIGHT);
+    //GetPainter().PaintShape(graphics_engine, base, Color(COLOR_SCROLLBAR_TRACK), eVSCROLLBAR, false);
+    //graphics_engine.QRP_Color(base.x, base.y, base.width, base.height, Color(COLOR_SCROLLBAR_TRACK));
 
-    //GetPainter().PaintShape (graphics_engine, _scroll_up_button->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_UP);
-    //GetPainter().PaintShape (graphics_engine, _scroll_down_button->GetGeometry(), Color (0xFFFFFFFF), eSCROLLBAR_TRIANGLE_DOWN);
+    //GetPainter().PaintShape(graphics_engine, _scroll_up_button->GetGeometry(), Color(0xFFFFFFFF), eSCROLLBAR_TRIANGLE_UP);
+    //GetPainter().PaintShape(graphics_engine, _scroll_down_button->GetGeometry(), Color(0xFFFFFFFF), eSCROLLBAR_TRIANGLE_DOWN);
 
-    /*GetPainter().PaintShape (graphics_engine, _slider->GetGeometry(),
-                         Color (0.2156 * m_color_factor, 0.2156 * m_color_factor, 0.2156 * m_color_factor, 1.0f),
+    /*GetPainter().PaintShape(graphics_engine, _slider->GetGeometry(),
+                         Color(0.2156 * m_color_factor, 0.2156 * m_color_factor, 0.2156 * m_color_factor, 1.0f),
                          eVSCROLLBAR, true);*/
 
     if (content_height_ > container_height_)
     {
-      Geometry slider_geo = _slider->GetGeometry ();
-      graphics_engine.QRP_Color (slider_geo.x, slider_geo.y, slider_geo.width, slider_geo.height,
-          Color (1.0f, 1.0f, 1.0f, 0.8f));
+      Geometry slider_geo = _slider->GetGeometry();
+      graphics_engine.QRP_Color(slider_geo.x, slider_geo.y, slider_geo.width, slider_geo.height,
+          Color(1.0f, 1.0f, 1.0f, 0.8f));
     }
-      //Color (0.2156 * m_color_factor, 0.2156 * m_color_factor, 0.2156 * m_color_factor, 1.0f));
+      //Color(0.2156 * m_color_factor, 0.2156 * m_color_factor, 0.2156 * m_color_factor, 1.0f));
   }
 
-  void VScrollBar::SetContainerSize (int x, int y, int w, int h)
+  void VScrollBar::SetContainerSize(int x, int y, int w, int h)
   {
     container_width_ = w;
     container_height_ = h;
     ComputeScrolling();
   }
 
-  void VScrollBar::SetContentSize (int x, int y, int w, int h)
+  void VScrollBar::SetContentSize(int x, int y, int w, int h)
   {
     // x and y are not needed
     content_width_ = w;
@@ -322,7 +322,7 @@ namespace nux
     ComputeScrolling();
   }
 
-  void VScrollBar::SetContentOffset (float dx, float dy)
+  void VScrollBar::SetContentOffset(float dx, float dy)
   {
     content_offset_x_ = dx;
     content_offset_y_ = dy;
@@ -350,9 +350,9 @@ namespace nux
       slider_height = 15;
     }
 
-    _slider->SetBaseWidth (slider_width);
-    _slider->SetBaseHeight (slider_height);
-    _slider->SetBaseX (_scroll_up_button->GetBaseX() );
+    _slider->SetBaseWidth(slider_width);
+    _slider->SetBaseHeight(slider_height);
+    _slider->SetBaseX(_scroll_up_button->GetBaseX());
 
     float pct;
 
@@ -362,17 +362,17 @@ namespace nux
       pct = 0;
 
     int y = _track->GetBaseY() + pct * (m_TrackHeight - slider_height);
-    _slider->SetBaseY (y);
+    _slider->SetBaseY(y);
   }
 
 /////////////////
 //  RECEIVERS  //
 /////////////////
-  void VScrollBar::SetValue (float value)
+  void VScrollBar::SetValue(float value)
   {
     //m_ValueString.setCaption(value);
   }
-  void VScrollBar::SetParameterName (const char *parameter_name)
+  void VScrollBar::SetParameterName(const char *parameter_name)
   {
     //m_ParameterName.setCaption(parameter_name);
   }
@@ -389,42 +389,42 @@ namespace nux
 //    OnScrollDown.emit(m_ScrollUnit, 1);
 //}
 
-  void VScrollBar::OnSliderMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void VScrollBar::OnSliderMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     m_SliderDragPositionX = x;
     m_SliderDragPositionY = y;
     //sigVScrollBarSliderMouseDown.emit();
     b_MouseDownTimer = true;
     b_MouseUpTimer = false;
-    GetTimer().AddTimerHandler (10, callback, this);
+    GetTimer().AddTimerHandler(10, callback, this);
   }
 
-  void VScrollBar::OnSliderMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void VScrollBar::OnSliderMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     b_MouseDownTimer = false;
     b_MouseUpTimer = true;
-    GetTimer().AddTimerHandler (10, callback, this);
+    GetTimer().AddTimerHandler(10, callback, this);
   }
 
-  void VScrollBar::OnSliderMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void VScrollBar::OnSliderMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
     if (_track->GetBaseHeight() - _slider->GetBaseHeight() > 0)
     {
-      stepY = (float) (content_height_ - container_height_) / (float) (_track->GetBaseHeight() - _slider->GetBaseHeight() );
+      stepY = (float) (content_height_ - container_height_) / (float) (_track->GetBaseHeight() - _slider->GetBaseHeight());
     }
     else
     {
       return;
     }
 
-    if ( (dy > 0) && (y > m_SliderDragPositionY) )
+    if ((dy > 0) && (y > m_SliderDragPositionY))
     {
-      OnScrollDown.emit (stepY, y - m_SliderDragPositionY);
+      OnScrollDown.emit(stepY, y - m_SliderDragPositionY);
     }
 
-    if ( (dy < 0) && (y < m_SliderDragPositionY) )
+    if ((dy < 0) && (y < m_SliderDragPositionY))
     {
-      OnScrollUp.emit (stepY, m_SliderDragPositionY - y);
+      OnScrollUp.emit(stepY, m_SliderDragPositionY - y);
     }
 
     QueueDraw();
@@ -432,7 +432,7 @@ namespace nux
 
   bool VScrollBar::AtMaximum()
   {
-    if (_slider->GetBaseY() + _slider->GetBaseHeight() == _track->GetBaseY() + _track->GetBaseHeight() )
+    if (_slider->GetBaseY() + _slider->GetBaseHeight() == _track->GetBaseY() + _track->GetBaseHeight())
       return TRUE;
 
     return FALSE;
@@ -440,15 +440,15 @@ namespace nux
 
   bool VScrollBar::AtMinimum()
   {
-    if (_slider->GetBaseY() == _track->GetBaseY() )
+    if (_slider->GetBaseY() == _track->GetBaseY())
       return TRUE;
 
     return FALSE;
   }
 
-  long VScrollBar::PostLayoutManagement (long LayoutResult)
+  long VScrollBar::PostLayoutManagement(long LayoutResult)
   {
-    long ret = ScrollBar::PostLayoutManagement (LayoutResult);
+    long ret = ScrollBar::PostLayoutManagement(LayoutResult);
     ComputeScrolling();
     return ret;
   }

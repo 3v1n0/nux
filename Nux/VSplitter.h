@@ -28,25 +28,25 @@ namespace nux
 
   class VSplitter: public View
   {
-    NUX_DECLARE_OBJECT_TYPE (VSplitter, View);
+    NUX_DECLARE_OBJECT_TYPE(VSplitter, View);
   public:
-    VSplitter (NUX_FILE_LINE_PROTO);
+    VSplitter(NUX_FILE_LINE_PROTO);
     ~VSplitter();
 
-    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
-    void AddWidget (Area *ic, float stretchfactor);
+    void AddWidget(Area *ic, float stretchfactor);
     void ResetSplitConfig();
 
     void clearContent();
 
-    void OnSplitterMouseDown (t_s32 x, t_s32 y, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos);
-    void OnSplitterMouseUp (t_s32 x, t_s32 y, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos);
-    void OnSplitterMouseDrag (t_s32 x, t_s32 y, t_s32 dx, t_s32 dy, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos);
+    void OnSplitterMouseDown(t_s32 x, t_s32 y, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos);
+    void OnSplitterMouseUp(t_s32 x, t_s32 y, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos);
+    void OnSplitterMouseDrag(t_s32 x, t_s32 y, t_s32 dx, t_s32 dy, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos);
 
-    virtual void OverlayDrawing (GraphicsEngine &graphics_engine);
+    virtual void OverlayDrawing(GraphicsEngine &graphics_engine);
 
     //! Return true if this object can break the layout.
     /*
@@ -64,9 +64,9 @@ namespace nux
   protected:
     virtual long ComputeContentSize();
     virtual void DoneRedraw();
-    void ResizeSplitter (t_s32 header_pos);
+    void ResizeSplitter(t_s32 header_pos);
     //void ContinuousSplitterAdjustment();
-    void setResizeOnSplitterRelease (bool b)
+    void setResizeOnSplitterRelease(bool b)
     {
       m_ResizeOnSplitterRelease = b;
     }

@@ -4,32 +4,32 @@
 
 namespace nux
 {
-  AbstractPaintLayer::AbstractPaintLayer ()
+  AbstractPaintLayer::AbstractPaintLayer()
   {
 
   }
 
-  AbstractPaintLayer::~AbstractPaintLayer ()
+  AbstractPaintLayer::~AbstractPaintLayer()
   {
 
   }
 
-  void AbstractPaintLayer::SetGeometry (const Geometry &geo)
+  void AbstractPaintLayer::SetGeometry(const Geometry &geo)
   {
     geometry_ = geo;
   }
 
-  Geometry const& AbstractPaintLayer::GetGeometry () const
+  Geometry const& AbstractPaintLayer::GetGeometry() const
   {
     return geometry_;
   }
 
-  void AbstractPaintLayer::SetModelViewMatrix (const Matrix4 &mat)
+  void AbstractPaintLayer::SetModelViewMatrix(const Matrix4 &mat)
   {
     model_view_matrix_ = mat;
   }
 
-  Matrix4 AbstractPaintLayer::GetModelViewMatrix ()
+  Matrix4 AbstractPaintLayer::GetModelViewMatrix()
   {
     return model_view_matrix_;
   }

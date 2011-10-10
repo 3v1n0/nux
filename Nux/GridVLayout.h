@@ -39,14 +39,14 @@ namespace nux
     //  2   5   8   ..
     // This is a top to bottom fill, going right.
 
-    NUX_DECLARE_OBJECT_TYPE (GridVLayout, Layout);
+    NUX_DECLARE_OBJECT_TYPE(GridVLayout, Layout);
   public:
-    GridVLayout (NUX_FILE_LINE_PROTO);
-    ~GridVLayout ();
+    GridVLayout(NUX_FILE_LINE_PROTO);
+    ~GridVLayout();
 
-    virtual long ComputeContentSize ();
+    virtual long ComputeContentSize();
 
-    virtual void GetCompositeList (std::list<Area *> *ViewList);
+    virtual void GetCompositeList(std::list<Area *> *ViewList);
     
     //! Control the visibility of elements on the bottom edge.
     /*!
@@ -54,7 +54,7 @@ namespace nux
         @param partial_visibility If True, the layout will position elements at its bottom edge
         even if they are partially visible.
     */
-    void EnablePartialVisibility (bool partial_visibility);
+    void EnablePartialVisibility(bool partial_visibility);
 
     //! Set the size of the grid element.
     /*!
@@ -62,35 +62,35 @@ namespace nux
         @param width  Width of elements.
         @param height Height of elements.
     */
-    void SetChildrenSize (int width, int height);
+    void SetChildrenSize(int width, int height);
 
     //! Get the size of the grid element.
     /*!
         @return Size of the grid elements.
     */
-    Size GetChildrenSize () const;
+    Size GetChildrenSize() const;
 
     //! Force the grid elements size.
     /*!
         Force the grid elements size to be the one provided by SetChildrenSize.
     */
-    void ForceChildrenSize (bool force);
+    void ForceChildrenSize(bool force);
 
     //! Get the number of columns in the grid.
-    int GetNumColumn () const;
+    int GetNumColumn() const;
     
     //! Get the number of rows in the grid.
-    int GetNumRow () const;
+    int GetNumRow() const;
 
     //! Make the grid width match the size of its content.
     /*!
         @param match_content If True, force the width of the layout to match the height of the content. This can also be achieve 
         if the stretch factor of this layout is set to 0;
     */
-    void SetWidthMatchContent (bool match_content);
+    void SetWidthMatchContent(bool match_content);
 
     //! Return True if the grid width match the size of its content.
-    bool GetWidthMatchContent () const;
+    bool GetWidthMatchContent() const;
 
     //! Draw Element
     /*!
@@ -101,11 +101,11 @@ namespace nux
       @param ProcessEventInfo
       @return The state of the Process Event.
     */
-    virtual void ProcessDraw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
   protected:
-    int GetChildPos (Area *child);
-    Area* GetChildAtPosition (int pos);
+    int GetChildPos(Area *child);
+    Area* GetChildAtPosition(int pos);
     virtual Area* KeyNavIteration(KeyNavDirection direction);
 
   private:

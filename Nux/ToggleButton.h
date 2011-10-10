@@ -35,11 +35,11 @@ namespace nux
   class ToggleButton: public Button
   {
   public:
-    ToggleButton (TextureArea *image, NUX_FILE_LINE_PROTO);
-    ToggleButton (const std::string label, NUX_FILE_LINE_PROTO);
-    ToggleButton (const std::string label, TextureArea *image, NUX_FILE_LINE_PROTO);
-    ToggleButton (NUX_FILE_LINE_PROTO);
-    ~ToggleButton ();
+    ToggleButton(TextureArea *image, NUX_FILE_LINE_PROTO);
+    ToggleButton(const std::string label, NUX_FILE_LINE_PROTO);
+    ToggleButton(const std::string label, TextureArea *image, NUX_FILE_LINE_PROTO);
+    ToggleButton(NUX_FILE_LINE_PROTO);
+    ~ToggleButton();
   };
 
 }

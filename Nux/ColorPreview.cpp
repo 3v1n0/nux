@@ -39,29 +39,29 @@ namespace nux
     //setSize(200, 100);
     m_hlayout           = new HLayout(NUX_TRACKER_LOCATION);
     m_ColorArea         = new InputArea(NUX_TRACKER_LOCATION);
-    m_ColorValue        = new StaticTextBox ("", NUX_TRACKER_LOCATION);
-    m_DialogThreadProxy = new ColorDialogProxy (true);
+    m_ColorValue        = new StaticTextBox("", NUX_TRACKER_LOCATION);
+    m_DialogThreadProxy = new ColorDialogProxy(true);
 
-    SetMaximumHeight (18);
-    m_ColorArea->SetMaximumHeight (18);
-    m_ColorArea->SetMinimumWidth (32);
-    m_ColorArea->SetMaximumWidth (32);
-    m_ColorValue->SetTextColor (Color (0xFFFFFFFF) );
-    m_ColorValue->SetFont (GetSysBoldFont() );
-    m_ColorValue->SetMinimumWidth (128);
+    SetMaximumHeight(18);
+    m_ColorArea->SetMaximumHeight(18);
+    m_ColorArea->SetMinimumWidth(32);
+    m_ColorArea->SetMaximumWidth(32);
+    m_ColorValue->SetTextColor(Color(0xFFFFFFFF));
+    m_ColorValue->SetFont(GetSysBoldFont());
+    m_ColorValue->SetMinimumWidth(128);
 
-    NString text = NString::Printf ("[ R:%d, G:%d, B:%d ]", (int) (m_Color.red * 255), (int) (m_Color.green * 255), (int) (m_Color.blue * 255) );
-    m_ColorValue->SetText (text);
+    NString text = NString::Printf("[ R:%d, G:%d, B:%d ]", (int) (m_Color.red * 255), (int) (m_Color.green * 255), (int) (m_Color.blue * 255));
+    m_ColorValue->SetText(text);
 
-    m_ColorArea->mouse_click.connect (sigc::mem_fun (this, &ColorPreview::RecvClick) );
+    m_ColorArea->mouse_click.connect(sigc::mem_fun(this, &ColorPreview::RecvClick));
 
-    m_hlayout->AddView (m_ColorArea, 0);
-    m_hlayout->AddView (m_ColorValue, 1);
-    m_hlayout->SetHorizontalInternalMargin (4);
-    SetCompositionLayout (m_hlayout);
+    m_hlayout->AddView(m_ColorArea, 0);
+    m_hlayout->AddView(m_ColorValue, 1);
+    m_hlayout->SetHorizontalInternalMargin(4);
+    SetCompositionLayout(m_hlayout);
 
     m_ChangeDetectionTimer = new TimerFunctor();
-    m_ChangeDetectionTimer->OnTimerExpired.connect (sigc::mem_fun (this, &ColorPreview::RecvTimer) );
+    m_ChangeDetectionTimer->OnTimerExpired.connect(sigc::mem_fun(this, &ColorPreview::RecvTimer));
     m_ChangeTimerHandler = 0;
   }
 
@@ -69,41 +69,41 @@ namespace nux
   {
     delete m_ChangeDetectionTimer;
 
-    if (m_ChangeTimerHandler.IsValid() )
-      GetTimer().RemoveTimerHandler (m_ChangeTimerHandler);
+    if (m_ChangeTimerHandler.IsValid())
+      GetTimer().RemoveTimerHandler(m_ChangeTimerHandler);
 
     delete m_DialogThreadProxy;
   }
 
-  void ColorPreview::Draw (GraphicsEngine &graphics_engine, bool force_draw)
+  void ColorPreview::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
 
-    GetPainter().PaintBackground (graphics_engine, base);
-    GetPainter().PaintShape (graphics_engine, m_ColorArea->GetGeometry(), m_Color, eSHAPE_CORNER_ROUND4, false);
+    GetPainter().PaintBackground(graphics_engine, base);
+    GetPainter().PaintShape(graphics_engine, m_ColorArea->GetGeometry(), m_Color, eSHAPE_CORNER_ROUND4, false);
     //GetPainter().Paint2DQuadWireFrameColor(graphics_engine, base, Color(COLOR_BACKGROUND_SECONDARY));
     m_ColorValue->QueueDraw();
   }
 
-  void ColorPreview::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
+  void ColorPreview::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
-    m_ColorValue->ProcessDraw (graphics_engine, force_draw);
+    m_ColorValue->ProcessDraw(graphics_engine, force_draw);
   }
 
-  void ColorPreview::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
+  void ColorPreview::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void ColorPreview::RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ColorPreview::RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    m_DialogThreadProxy->SetColor (m_Color);
+    m_DialogThreadProxy->SetColor(m_Color);
     m_DialogThreadProxy->Start();
 
-    m_ChangeTimerHandler = GetTimer().AddTimerHandler (33, m_ChangeDetectionTimer, this);
+    m_ChangeTimerHandler = GetTimer().AddTimerHandler(33, m_ChangeDetectionTimer, this);
   }
 
-  void ColorPreview::RecvTimer (void *v)
+  void ColorPreview::RecvTimer(void *v)
   {
     if (m_DialogThreadProxy->m_bDialogChange && m_DialogThreadProxy->m_bDialogRunning)
     {
@@ -112,14 +112,14 @@ namespace nux
       QueueDraw();
     }
 
-    if (m_DialogThreadProxy->IsActive() )
+    if (m_DialogThreadProxy->IsActive())
     {
-      m_ChangeTimerHandler = GetTimer().AddTimerHandler (33, m_ChangeDetectionTimer, this);
+      m_ChangeTimerHandler = GetTimer().AddTimerHandler(33, m_ChangeDetectionTimer, this);
     }
     else
     {
-      if (m_ChangeTimerHandler.IsValid() )
-        GetTimer().RemoveTimerHandler (m_ChangeTimerHandler);
+      if (m_ChangeTimerHandler.IsValid())
+        GetTimer().RemoveTimerHandler(m_ChangeTimerHandler);
 
       m_ChangeTimerHandler = 0;
       m_Color = m_DialogThreadProxy->GetColor();
@@ -132,7 +132,7 @@ namespace nux
     return m_Color;
   }
 
-  void ColorPreview::SetColor (Color const& color)
+  void ColorPreview::SetColor(Color const& color)
   {
     m_Color = color;
   }

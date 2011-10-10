@@ -120,7 +120,7 @@ namespace nux
     QueueDraw();
   }
 
-  void AbstractButton::SetLabelColor (const Color &color)
+  void AbstractButton::SetLabelColor(const Color &color)
   {
     label_color_ = color;
     if (static_text_)

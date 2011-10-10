@@ -31,15 +31,15 @@
 
 namespace nux
 {
-  NUX_IMPLEMENT_OBJECT_TYPE (FloatingWindow);
+  NUX_IMPLEMENT_OBJECT_TYPE(FloatingWindow);
 
   /*
       Elements inside the Window have coordinates based on the top-left corner of the window.
       This is true whether we are drawing or computing the layout. When computing the layout, use x_root and y_root to
       pass the top-left corner position of the window. When drawing, make a similar adjustment.
   */
-  FloatingWindow::FloatingWindow (const TCHAR *WindowName, NUX_FILE_LINE_DECL)
-    :   BaseWindow (WindowName, NUX_FILE_LINE_PARAM)
+  FloatingWindow::FloatingWindow(const TCHAR *WindowName, NUX_FILE_LINE_DECL)
+    :   BaseWindow(WindowName, NUX_FILE_LINE_PARAM)
   {
     m_bIsVisible                = false;
     m_bSizeMatchLayout          = false;
@@ -65,9 +65,9 @@ namespace nux
     _title_bar->SetParentObject(this);
 
     _close_button       = new InputArea(NUX_TRACKER_LOCATION);
-    _window_title_bar   = new StaticTextBox ("", NUX_TRACKER_LOCATION);
+    _window_title_bar   = new StaticTextBox("", NUX_TRACKER_LOCATION);
 
-    _title_bar_layout   = new HLayout (NUX_TRACKER_LOCATION);
+    _title_bar_layout   = new HLayout(NUX_TRACKER_LOCATION);
     _title_bar_layout->Reference();
     
     _minimize_button->SetMinMaxSize(20, 20);
@@ -89,7 +89,7 @@ namespace nux
     _title_bar_layout->SetParentObject(this);
 
 
-    if(HasTitleBar())
+    if (HasTitleBar())
       SetTopBorder(24);
     else
       SetTopBorder(6);
@@ -99,14 +99,14 @@ namespace nux
     SetMinimumSize(32, 32);
     SetGeometry(Geometry(100, 100, 320, 200));
 
-    NString Path = NUX_FINDRESOURCELOCATION ("UITextures/AddButton.png");
-    MinimizeIcon = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
-    MinimizeIcon->Update (Path.GetTCharPtr() );
-    Path = NUX_FINDRESOURCELOCATION ("UITextures/CancelButton.png");
-    CloseIcon = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
-    CloseIcon->Update (Path.GetTCharPtr() );
+    NString Path = NUX_FINDRESOURCELOCATION("UITextures/AddButton.png");
+    MinimizeIcon = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
+    MinimizeIcon->Update(Path.GetTCharPtr());
+    Path = NUX_FINDRESOURCELOCATION("UITextures/CancelButton.png");
+    CloseIcon = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
+    CloseIcon->Update(Path.GetTCharPtr());
 
-    SetWindowTitle (WindowName);
+    SetWindowTitle(WindowName);
   }
 
   FloatingWindow::~FloatingWindow()
@@ -131,76 +131,76 @@ namespace nux
   {
     bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
 
-    if(mouse_inside == false)
+    if (mouse_inside == false)
       return NULL;
 
     NUX_RETURN_VALUE_IF_TRUE(_resize_handle->TestMousePointerInclusion(mouse_position, event_type), _resize_handle);
     NUX_RETURN_VALUE_IF_TRUE(_close_button->TestMousePointerInclusion(mouse_position, event_type), _close_button);
 
-    if(HasTitleBar())
+    if (HasTitleBar())
     {
       NUX_RETURN_VALUE_IF_TRUE(_title_bar->TestMousePointerInclusion(mouse_position, event_type), _title_bar);
     }
 
-//     if(_title_bar_layout)
+//     if (_title_bar_layout)
 //     {
 //       nuxAssert(_title_bar_layout->IsLayout());
 //       Area* found_area = _title_bar_layout->FindAreaUnderMouse(mouse_position, event_type);
-//       if(found_area)
+//       if (found_area)
 //         return found_area;
 //     }
 
-    if(m_layout)
+    if (m_layout)
     {
       nuxAssert(m_layout->IsLayout());
       Area* found_area = m_layout->FindAreaUnderMouse(mouse_position, event_type);
-      if(found_area)
+      if (found_area)
         return found_area;
     }
 
-    if((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
+    if ((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
       return NULL;
     return this;
   }
 
-  void FloatingWindow::Draw (GraphicsEngine &graphics_engine, bool force_draw)
+  void FloatingWindow::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
-    // The elements position inside the window are referenced to top-left window corner. So bring base to (0, 0).
-    base.SetX (0);
-    base.SetY (0);
-    graphics_engine.PushClippingRectangle (base);
+    // The elements position inside the window are referenced to top-left window corner. So bring base to(0, 0).
+    base.SetX(0);
+    base.SetY(0);
+    graphics_engine.PushClippingRectangle(base);
 
-    GetPainter().PushDrawShapeLayer (graphics_engine, base, eSHAPE_CORNER_ROUND10, Color (0xFF707070), eCornerTopLeft | eCornerTopRight, true);
+    GetPainter().PushDrawShapeLayer(graphics_engine, base, eSHAPE_CORNER_ROUND10, Color(0xFF707070), eCornerTopLeft | eCornerTopRight, true);
 
-    if (HasTitleBar() )
+    if (HasTitleBar())
     {
-      GetPainter().PaintShapeCorner (graphics_engine, Geometry (_title_bar->GetBaseX(), _title_bar->GetBaseY(),
-                                 _title_bar->GetBaseWidth(), _title_bar->GetBaseHeight() ), Color (0xFF2f2f2f),
+      GetPainter().PaintShapeCorner(graphics_engine, Geometry(_title_bar->GetBaseX(), _title_bar->GetBaseY(),
+                                 _title_bar->GetBaseWidth(), _title_bar->GetBaseHeight()), Color(0xFF2f2f2f),
                                  eSHAPE_CORNER_ROUND10, eCornerTopLeft | eCornerTopRight);
 
-      GetPainter().PaintTextLineStatic (graphics_engine, GetSysBoldFont(), _window_title_bar->GetGeometry(), _window_title, Color (0xFFFFFFFF), true, eAlignTextCenter);
-      GetPainter().Draw2DTextureAligned (graphics_engine, CloseIcon, _close_button->GetGeometry(), TextureAlignmentStyle (eTACenter, eTACenter) );
+      GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), _window_title_bar->GetGeometry(), _window_title, Color(0xFFFFFFFF), true, eAlignTextCenter);
+      GetPainter().Draw2DTextureAligned(graphics_engine, CloseIcon, _close_button->GetGeometry(), TextureAlignmentStyle(eTACenter, eTACenter));
     }
 
     GetPainter().PopBackground();
     graphics_engine.PopClippingRectangle();
   }
 
-  void FloatingWindow::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
+  void FloatingWindow::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
-    // The elements position inside the window are referenced to top-left window corner. So bring base to (0, 0).
-    base.SetX (0);
-    base.SetY (0);
+    // The elements position inside the window are referenced to top-left window corner. So bring base to(0, 0).
+    base.SetX(0);
+    base.SetY(0);
 
-    GetPainter().PushShapeLayer (graphics_engine, base, eSHAPE_CORNER_ROUND10, Color (0xFF707070), eCornerTopLeft | eCornerTopRight, true);
+    GetPainter().PushShapeLayer(graphics_engine, base, eSHAPE_CORNER_ROUND10, Color(0xFF707070), eCornerTopLeft | eCornerTopRight, true);
 
     if (m_layout)
     {
-      graphics_engine.PushClippingRectangle (base);
+      graphics_engine.PushClippingRectangle(base);
 
-      m_layout->ProcessDraw (graphics_engine, force_draw);
+      m_layout->ProcessDraw(graphics_engine, force_draw);
 
       graphics_engine.PopClippingRectangle();
     }
@@ -208,22 +208,22 @@ namespace nux
     GetPainter().PopBackground();
   }
 
-  void FloatingWindow::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
+  void FloatingWindow::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     if (force_draw == false)
     {
       return;
     }
 
-    if ((IsVisibleSizeGrip () == true) && (IsSizeMatchContent () == false))
+    if ((IsVisibleSizeGrip() == true) && (IsSizeMatchContent() == false))
     {
       // Do not draw the size grip if the window is constrained by the size of the container layout.
-      Geometry geo = _resize_handle->GetGeometry ();
-      graphics_engine.QRP_Triangle (geo.x + geo.width, geo.y, geo.x, geo.y + geo.height, geo.x + geo.width, geo.y + geo.height, Color (0xFF999999));
+      Geometry geo = _resize_handle->GetGeometry();
+      graphics_engine.QRP_Triangle(geo.x + geo.width, geo.y, geo.x, geo.y + geo.height, geo.x + geo.width, geo.y + geo.height, Color(0xFF999999));
     }
   }
 
-  void FloatingWindow::EnableTitleBar (bool b)
+  void FloatingWindow::EnableTitleBar(bool b)
   {
     m_hasTitleBar = b;
     ComputeContentSize();
@@ -234,9 +234,9 @@ namespace nux
     return m_hasTitleBar;
   }
 
-  void FloatingWindow::OnSizeGrigMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void FloatingWindow::OnSizeGrigMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    if(IsSizeMatchContent())
+    if (IsSizeMatchContent())
     {
       return;
     }
@@ -247,7 +247,7 @@ namespace nux
 
 
     // We want to false on one half of the size grip square to register a mouse down. This is meant to leave more room
-    // for the scrollbar buttons (if any) at the bottom right of the window.
+    // for the scrollbar buttons(if any) at the bottom right of the window.
     if ((XGrip > 0) && (YGrip > 0) && (XGrip > _resize_handle_height - YGrip))
     {
        // has grip
@@ -258,9 +258,9 @@ namespace nux
     //GetWindowCompositor().SetMouseFocusArea(this);
   }
 
-  void FloatingWindow::OnSizeGrigMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void FloatingWindow::OnSizeGrigMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    if(IsSizeMatchContent())
+    if (IsSizeMatchContent())
     {
       return;
     }
@@ -271,22 +271,22 @@ namespace nux
     int ddx = 0;
     int ddy = 0;
 
-    if((dx > 0) && (x > m_SizeGripDragPositionX))
+    if ((dx > 0) && (x > m_SizeGripDragPositionX))
     {
       ddx = dx;
     }
 
-    if((dx < 0) && (x < m_SizeGripDragPositionX))
+    if ((dx < 0) && (x < m_SizeGripDragPositionX))
     {
       ddx = dx;
     }
 
-    if((dy > 0) && (y > m_SizeGripDragPositionY))
+    if ((dy > 0) && (y > m_SizeGripDragPositionY))
     {
       ddy = dy;
     }
 
-    if((dy < 0) && (y < m_SizeGripDragPositionY))
+    if ((dy < 0) && (y < m_SizeGripDragPositionY))
     {
       ddy = dy;
     }
@@ -298,8 +298,8 @@ namespace nux
 #if defined(NUX_OS_LINUX)
     if (m_input_window != 0)
     {
-      //nuxDebugMsg ("Resize Input window: %d, %d, %d, %d", geo.x, geo.y, geo.width, geo.height);
-      m_input_window->SetGeometry (GetGeometry());
+      //nuxDebugMsg("Resize Input window: %d, %d, %d, %d", geo.x, geo.y, geo.width, geo.height);
+      m_input_window->SetGeometry(GetGeometry());
     }
 #endif
 
@@ -307,36 +307,36 @@ namespace nux
     QueueDraw();
   }
 
-  void FloatingWindow::RecvTitleBarMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void FloatingWindow::RecvTitleBarMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     _title_bar_mouse_down_location = Point(x, y);
   }
 
-  void FloatingWindow::RecvTitleBarMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void FloatingWindow::RecvTitleBarMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
     Geometry geo;
     geo = GetGeometry();
-    geo.OffsetPosition (dx, dy);
+    geo.OffsetPosition(dx, dy);
 
     // Set the Window Size and Position
-    Area::SetGeometry (geo);
+    Area::SetGeometry(geo);
     // No need to compute the window layout elements [LayoutWindowElements()]. They haven't changed.
     // No need to compute the layout [ComputeContentSize()]. It hasn't changed.
 
-    _title_bar->SetGeometry (0, 0, geo.GetWidth(), _title_bar_height);
+    _title_bar->SetGeometry(0, 0, geo.GetWidth(), _title_bar_height);
 
 #if defined(NUX_OS_LINUX)
     if (m_input_window != 0)
     {
-      //nuxDebugMsg ("Resize Input window: %d, %d, %d, %d", geo.x, geo.y, geo.width, geo.height);
-      m_input_window->SetGeometry (GetGeometry());
+      //nuxDebugMsg("Resize Input window: %d, %d, %d, %d", geo.x, geo.y, geo.width, geo.height);
+      m_input_window->SetGeometry(GetGeometry());
     }
 #endif
 
     QueueDraw();
   }
 
-  void FloatingWindow::RecvCloseButtonClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void FloatingWindow::RecvCloseButtonClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
 #if defined(NUX_OS_LINUX)
     // Disable the input window if there is one.
@@ -356,70 +356,70 @@ namespace nux
     {
       (*m_configure_notify_callback) (GetGraphicsDisplay()->GetWindowWidth(), GetGraphicsDisplay()->GetWindowHeight(), geo, m_configure_notify_callback_data);
 
-      if (geo.IsNull() )
+      if (geo.IsNull())
       {
-        nuxDebugMsg ("[FloatingWindow::PreLayoutManagement] Received an invalid Geometry.");
+        nuxDebugMsg("[FloatingWindow::PreLayoutManagement] Received an invalid Geometry.");
         geo = GetGeometry();
       }
       else
       {
-        Area::SetGeometry (geo);
+        Area::SetGeometry(geo);
         // Get the geometry adjusted with respect to min and max dimension of this area.
         geo = GetGeometry();
       }
     }
 
     // Drag Bar Geometry
-    if (HasTitleBar() )
+    if (HasTitleBar())
     {
-      _title_bar->SetGeometry (0, 0, geo.GetWidth(), _title_bar_height);
+      _title_bar->SetGeometry(0, 0, geo.GetWidth(), _title_bar_height);
     }
 
     // Size grip Geometry
-    Geometry SizeGripGeometry (geo.GetWidth() - _resize_handle_width, geo.GetHeight() - _resize_handle_height,
+    Geometry SizeGripGeometry(geo.GetWidth() - _resize_handle_width, geo.GetHeight() - _resize_handle_height,
                                _resize_handle_width, _resize_handle_height);
-    _resize_handle->SetGeometry (SizeGripGeometry);
+    _resize_handle->SetGeometry(SizeGripGeometry);
 
     if (m_layout)
     {
-      Geometry layout_geo = Geometry (m_Border, m_TopBorder,
+      Geometry layout_geo = Geometry(m_Border, m_TopBorder,
                                       geo.GetWidth() - 2 * m_Border, geo.GetHeight() - m_Border - m_TopBorder);
-      m_layout->SetGeometry (layout_geo);
+      m_layout->SetGeometry(layout_geo);
     }
   }
 
 // Get a change to do any work on an element.
 // Here we need to position the header by hand because it is not under the control of vlayout.
-  long FloatingWindow::PostLayoutManagement (long LayoutResult)
+  long FloatingWindow::PostLayoutManagement(long LayoutResult)
   {
     if (IsSizeMatchContent() && m_layout)
     {
       Geometry layout_geometry = m_layout->GetGeometry();
 
-      Geometry WindowGeometry = Geometry (GetGeometry().x,
+      Geometry WindowGeometry = Geometry(GetGeometry().x,
                                           GetGeometry().y,
                                           layout_geometry.GetWidth() + 2 * m_Border,
                                           layout_geometry.GetHeight() + m_Border + m_TopBorder);
 
-      Area::SetGeometry (WindowGeometry);
+      Area::SetGeometry(WindowGeometry);
     }
 
     Geometry geo = GetGeometry();
 
     // Drag Bar Geometry
-    if (HasTitleBar() )
+    if (HasTitleBar())
     {
-      _title_bar->SetGeometry (0, 0, geo.GetWidth(), _title_bar_height);
+      _title_bar->SetGeometry(0, 0, geo.GetWidth(), _title_bar_height);
     }
 
     // Size grip Geometry
-    Geometry temp (geo.GetWidth() - _resize_handle_width, geo.GetHeight() - _resize_handle_height,
+    Geometry temp(geo.GetWidth() - _resize_handle_width, geo.GetHeight() - _resize_handle_height,
                    _resize_handle_width, _resize_handle_height);
-    _resize_handle->SetGeometry (temp);
+    _resize_handle->SetGeometry(temp);
 
     // Title Bar
-    _title_bar_layout->SetGeometry (_title_bar->GetGeometry() );
-    GetWindowThread ()->ComputeElementLayout (_title_bar_layout);
+    _title_bar_layout->SetGeometry(_title_bar->GetGeometry());
+    GetWindowThread()->ComputeElementLayout(_title_bar_layout);
 
     // A FloatingWindow must kill the result of the management and pass it to the parent Layout.
     return (eCompliantHeight | eCompliantWidth);
@@ -428,26 +428,26 @@ namespace nux
 
 // Get a change to do any work on an element.
 // Here we need to position the header by hand because it is not under the control of vlayout.
-  void FloatingWindow::ComputeContentPosition (float offsetX, float offsetY)
+  void FloatingWindow::ComputeContentPosition(float offsetX, float offsetY)
   {
     //ScrollView::ComputeContentPosition(offsetX, offsetY);
 
     Geometry geo = GetGeometry();
 
     // Drag Bar Geometry
-    if (HasTitleBar() )
+    if (HasTitleBar())
     {
-      _title_bar->SetGeometry (0, 0, geo.GetWidth(), _title_bar_height);
+      _title_bar->SetGeometry(0, 0, geo.GetWidth(), _title_bar_height);
     }
 
     // Size grip Geometry
-    Geometry temp (geo.GetWidth() - _resize_handle_width, geo.GetHeight() - _resize_handle_height,
+    Geometry temp(geo.GetWidth() - _resize_handle_width, geo.GetHeight() - _resize_handle_height,
                    _resize_handle_width, _resize_handle_height);
-    _resize_handle->SetGeometry (temp);
+    _resize_handle->SetGeometry(temp);
 
     // Title Bar
-    _title_bar_layout->SetGeometry (_title_bar->GetGeometry() );
-    GetWindowThread ()->ComputeElementLayout (_title_bar_layout);
+    _title_bar_layout->SetGeometry(_title_bar->GetGeometry());
+    GetWindowThread()->ComputeElementLayout(_title_bar_layout);
 
   }
 
@@ -456,18 +456,18 @@ namespace nux
     // Define the geometry of some of the component of the window. Otherwise, if the composition layout is not set,
     // then the component won't be correctly placed after a SetGeometry. This can be redundant if the composition layout is set.
     Geometry base = GetGeometry();
-    _title_bar->SetGeometry (0, 0, base.GetWidth(), _title_bar_height);
+    _title_bar->SetGeometry(0, 0, base.GetWidth(), _title_bar_height);
 
-    _title_bar_layout->SetGeometry (_title_bar->GetGeometry() );
-    GetWindowThread ()->ComputeElementLayout (_title_bar_layout);
+    _title_bar_layout->SetGeometry(_title_bar->GetGeometry());
+    GetWindowThread()->ComputeElementLayout(_title_bar_layout);
 
     // Size grip Geometry
-    Geometry temp (base.GetWidth() - _resize_handle_width, base.GetHeight() - _resize_handle_height,
+    Geometry temp(base.GetWidth() - _resize_handle_width, base.GetHeight() - _resize_handle_height,
                    _resize_handle_width, _resize_handle_height);
-    _resize_handle->SetGeometry (temp);
+    _resize_handle->SetGeometry(temp);
   }
 
-  void FloatingWindow::SetWindowTitle (const TCHAR *title)
+  void FloatingWindow::SetWindowTitle(const TCHAR *title)
   {
     NUX_RETURN_IF_NULL(title)
     _window_title = title;

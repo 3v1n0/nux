@@ -27,17 +27,17 @@
 namespace nux
 {
 
-  GroupBox::GroupBox (const TCHAR *Caption, NUX_FILE_LINE_DECL)
-    :   View (NUX_FILE_LINE_PARAM)
-    ,   bCaptionAvailable (false)
-    ,   m_layout (0)
+  GroupBox::GroupBox(const TCHAR *Caption, NUX_FILE_LINE_DECL)
+    :   View(NUX_FILE_LINE_PARAM)
+    ,   bCaptionAvailable(false)
+    ,   m_layout(0)
   {
-    m_CaptionArea.SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    m_CaptionArea.SetBaseSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+    m_CaptionArea.SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+    m_CaptionArea.SetBaseSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
-    SetMinimumSize (DEFAULT_WIDGET_WIDTH + 5, PRACTICAL_WIDGET_HEIGHT + 5);
-    SetBaseSize (DEFAULT_WIDGET_WIDTH + 5, 2 * PRACTICAL_WIDGET_HEIGHT);
-    SetCaption ("");
+    SetMinimumSize(DEFAULT_WIDGET_WIDTH + 5, PRACTICAL_WIDGET_HEIGHT + 5);
+    SetBaseSize(DEFAULT_WIDGET_WIDTH + 5, 2 * PRACTICAL_WIDGET_HEIGHT);
+    SetCaption("");
   }
 
   GroupBox::~GroupBox()
@@ -45,16 +45,16 @@ namespace nux
 
   }
 
-  void GroupBox::Draw (GraphicsEngine &graphics_engine, bool force_draw)
+  void GroupBox::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
-    graphics_engine.PushClippingRectangle (GetGeometry() );
+    graphics_engine.PushClippingRectangle(GetGeometry());
 
     Geometry wireborder_geo = GetGeometry();
 
     //if(bCaptionAvailable)
     {
-      wireborder_geo.OffsetPosition (0, 10);
-      wireborder_geo.OffsetSize (0, -10);
+      wireborder_geo.OffsetPosition(0, 10);
+      wireborder_geo.OffsetSize(0, -10);
     }
 //    else
 //    {
@@ -66,7 +66,7 @@ namespace nux
     {
       //GetPainter().Paint2DQuadColor(m_CaptionArea.GetGeometry(), COLOR_BACKGROUND_PRIMARY);
       //GetPainter().PaintTextLineStatic(m_CaptionArea.GetGeometry(), m_CaptionArea.GetCaptionString(), eAlignTextCenter);
-      GetPainter().PaintTextLineStatic (graphics_engine, GetSysBoldFont(), m_CaptionArea.GetGeometry(), m_CaptionArea.GetBaseString().GetTCharPtr(), GetTextColor(),
+      GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_CaptionArea.GetGeometry(), m_CaptionArea.GetBaseString().GetTCharPtr(), GetTextColor(),
                                     true, eAlignTextCenter);
     }
 
@@ -78,28 +78,28 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void GroupBox::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
+  void GroupBox::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
-    graphics_engine.PushClippingRectangle (GetGeometry() );
+    graphics_engine.PushClippingRectangle(GetGeometry());
 
     if (m_layout)
     {
-      graphics_engine.PushClippingRectangle (m_layout->GetGeometry() );
-      m_layout->ProcessDraw (graphics_engine, force_draw);
+      graphics_engine.PushClippingRectangle(m_layout->GetGeometry());
+      m_layout->ProcessDraw(graphics_engine, force_draw);
       graphics_engine.PopClippingRectangle();
     }
 
     graphics_engine.PopClippingRectangle();
   }
 
-  void GroupBox::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
+  void GroupBox::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  bool GroupBox::SetLayout (Layout *layout)
+  bool GroupBox::SetLayout(Layout *layout)
   {
-    if(View::SetLayout(layout) == false)
+    if (View::SetLayout(layout) == false)
     {
       return false;
     }
@@ -122,19 +122,19 @@ namespace nux
       Geometry layout_geo = GetGeometry();
       //if(bCaptionAvailable)
       {
-        layout_geo.OffsetPosition (2, 20);
-        layout_geo.OffsetSize (-4, -22);
+        layout_geo.OffsetPosition(2, 20);
+        layout_geo.OffsetSize(-4, -22);
       }
 //        else
 //        {
 //            layout_geo.OffsetPosition(2, 2);
 //            layout_geo.OffsetSize(-4, -4);
 //        }
-      view_layout_->SetGeometry (layout_geo);
+      view_layout_->SetGeometry(layout_geo);
     }
   }
 
-  long GroupBox::PostLayoutManagement (long LayoutResult)
+  long GroupBox::PostLayoutManagement(long LayoutResult)
   {
     // A Group box must tightly group its children.
     // So it must embrace the size that was compute for the composition layout.
@@ -148,30 +148,30 @@ namespace nux
       Geometry base = view_layout_->GetGeometry();
       //if(bCaptionAvailable)
       {
-        base.OffsetPosition (-2, -20);
-        base.OffsetSize (4, 22);
+        base.OffsetPosition(-2, -20);
+        base.OffsetSize(4, 22);
       }
 //        else
 //        {
 //            base.OffsetPosition(-2, -2);
 //            base.OffsetSize(4, 4);
 //        }
-      Area::SetGeometry (base);
+      Area::SetGeometry(base);
     }
 
     Geometry base = GetGeometry();
-    m_CaptionArea.SetBaseXY (base.x + 6, base.y);
+    m_CaptionArea.SetBaseXY(base.x + 6, base.y);
 
-    if (old_geo.GetWidth() > base.GetWidth() )
+    if (old_geo.GetWidth() > base.GetWidth())
       ret |= eLargerWidth;
-    else if (old_geo.GetWidth() < base.GetWidth() )
+    else if (old_geo.GetWidth() < base.GetWidth())
       ret |= eSmallerWidth;
     else
       ret |= eCompliantWidth;
 
-    if (old_geo.GetHeight() > base.GetHeight() )
+    if (old_geo.GetHeight() > base.GetHeight())
       ret |= eLargerHeight;
-    else if (old_geo.GetHeight() < base.GetHeight() )
+    else if (old_geo.GetHeight() < base.GetHeight())
       ret |= eSmallerHeight;
     else
       ret |= eCompliantHeight;
@@ -179,42 +179,42 @@ namespace nux
     return ret;
   }
 
-  void GroupBox::ComputeContentPosition (float offsetX, float offsetY)
+  void GroupBox::ComputeContentPosition(float offsetX, float offsetY)
   {
     if (view_layout_)
     {
       //if(bCaptionAvailable)
       {
-        view_layout_->SetBaseX (GetBaseX() + 2);
-        view_layout_->SetBaseY (GetBaseY() + 20);
+        view_layout_->SetBaseX(GetBaseX() + 2);
+        view_layout_->SetBaseY(GetBaseY() + 20);
       }
 //        else
 //        {
 //            view_layout_->SetX(GetX() + 2);
 //            view_layout_->SetY(GetY() + 2);
 //        }
-      view_layout_->ComputeContentPosition (offsetX, offsetY);
+      view_layout_->ComputeContentPosition(offsetX, offsetY);
     }
 
     Geometry base = GetGeometry();
-    m_CaptionArea.SetBaseXY (base.x + 6, base.y);
+    m_CaptionArea.SetBaseXY(base.x + 6, base.y);
   }
 
-  void GroupBox::SetCaption (const char *name)
+  void GroupBox::SetCaption(const char *name)
   {
-    if ( (name == 0) || strlen (name) == 0)
+    if ((name == 0) || strlen(name) == 0)
     {
       //bCaptionAvailable = false;
-      m_CaptionArea.SetBaseString ("");
-      m_CaptionArea.SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-      m_CaptionArea.SetBaseSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+      m_CaptionArea.SetBaseString("");
+      m_CaptionArea.SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+      m_CaptionArea.SetBaseSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     }
     else
     {
       //bCaptionAvailable = true;
-      m_CaptionArea.SetBaseString (name);
-      m_CaptionArea.SetMinimumSize (4 + GetSysBoldFont()->GetStringWidth (name), PRACTICAL_WIDGET_HEIGHT);
-      m_CaptionArea.SetBaseSize (4 + GetSysBoldFont()->GetStringWidth (name), PRACTICAL_WIDGET_HEIGHT);
+      m_CaptionArea.SetBaseString(name);
+      m_CaptionArea.SetMinimumSize(4 + GetSysBoldFont()->GetStringWidth(name), PRACTICAL_WIDGET_HEIGHT);
+      m_CaptionArea.SetBaseSize(4 + GetSysBoldFont()->GetStringWidth(name), PRACTICAL_WIDGET_HEIGHT);
     }
   }
 

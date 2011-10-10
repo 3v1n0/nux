@@ -34,9 +34,9 @@ namespace nux
 
   class View: public InputArea
   {
-    NUX_DECLARE_OBJECT_TYPE (View, InputArea);
+    NUX_DECLARE_OBJECT_TYPE(View, InputArea);
   public:
-    View (NUX_FILE_LINE_DECL);
+    View(NUX_FILE_LINE_DECL);
     virtual ~View();
 
   public:
@@ -45,7 +45,7 @@ namespace nux
     virtual void ComputeContentPosition(float offsetX, float offsetY);
 
     virtual void PreLayoutManagement();
-    virtual long PostLayoutManagement (long LayoutResult);
+    virtual long PostLayoutManagement(long LayoutResult);
     virtual void PreResizeGeometry();
     virtual void PostResizeGeometry();
 
@@ -58,7 +58,7 @@ namespace nux
 
     //! Disable a View.
     /*!
-        Disable the view. The view cannot receive input events (keyboard, mouse, touch). As for the rendering, each view handle 
+        Disable the view. The view cannot receive input events(keyboard, mouse, touch). As for the rendering, each view handle 
         its own rendering while is disabled state.
     */
     virtual void DisableView();
@@ -75,36 +75,36 @@ namespace nux
     /*!
         @return True if the view is active.
     */
-    bool IsViewEnabled () const;
+    bool IsViewEnabled() const;
 
   public:
-    virtual void ProcessDraw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw);
     //! Causes a redraw. The widget parameter draw_cmd_queued_ is set to true. The widget Draw(), DrawContent() and PostDraw() are called.
     /*!
         Emits the signal \i OnQueueDraw.
     */
-    virtual void QueueDraw ();
+    virtual void QueueDraw();
 
     //! Causes a soft redraw. The widget parameter draw_cmd_queued_ is set to false. The widget DrawContent() and PostDraw() are called.
     virtual void NeedSoftRedraw();
     virtual bool IsRedrawNeeded();
     virtual void DoneRedraw();
 
-    virtual void OverlayDrawing (GraphicsEngine &graphics_engine) {}
+    virtual void OverlayDrawing(GraphicsEngine &graphics_engine) {}
 
     //Layout Bridge
 
-    bool SearchInAllSubNodes (Area *bo);
-    bool SearchInFirstSubNodes (Area *bo);
+    bool SearchInAllSubNodes(Area *bo);
+    bool SearchInFirstSubNodes(Area *bo);
 
     //! Set Geometry
     /*
         Set the Geometry of the View and the geometry of the Default Background Area.
-        For simple interface control UI classes (RGBValuator...), this is enough.
+        For simple interface control UI classes(RGBValuator...), this is enough.
         For others, they have to overwrite the function and do the appropriate computations
         for their component.
     */
-    virtual void SetGeometry (const Geometry &geo);
+    virtual void SetGeometry(const Geometry &geo);
 
     //! Return true if this object can break the layout.
     /*
@@ -131,7 +131,7 @@ namespace nux
         Set the default layout for this view.
         @param layout A Layout object.
     */
-    virtual bool SetLayout (Layout *layout);
+    virtual bool SetLayout(Layout *layout);
 
     sigc::signal<void, View*, Layout*> LayoutAdded;
     sigc::signal<void, View*, Layout*> LayoutRemoved;
@@ -149,12 +149,12 @@ namespace nux
 
   protected:
 
-    void OnChildFocusChanged (/*Area *parent,*/ Area *child);
+    void OnChildFocusChanged(/*Area *parent,*/ Area *child);
     sigc::connection _on_focus_changed_handler;
 
-    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw) = 0;
-    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw) = 0;
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     void InitializeWidgets();
     void InitializeLayout();
@@ -166,21 +166,21 @@ namespace nux
     virtual Layout* GetCompositionLayout();
 
     //! Deprecated. Use SetLayout();
-    virtual bool SetCompositionLayout (Layout *layout);
+    virtual bool SetCompositionLayout(Layout *layout);
 
     void RemoveLayout();
     void RemoveCompositionLayout();
 
     /*!
-        Accessed inside ContentDraw () to help determine if some parts needs to be rendered.
+        Accessed inside ContentDraw() to help determine if some parts needs to be rendered.
         Do not use it elsewhere.
-        @return True if Draw () was called before ContentDraw ().
+        @return True if Draw() was called before ContentDraw().
 
     */
     bool IsFullRedraw() const;
 
-    virtual void GeometryChangePending ();
-    virtual void GeometryChanged ();
+    virtual void GeometryChangePending();
+    virtual void GeometryChanged();
 
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
 
@@ -194,7 +194,7 @@ namespace nux
 
     bool full_view_draw_cmd_; //<! True if Draw is called before ContentDraw. It is read-only and can be accessed by calling IsFullRedraw();
 
-    bool _is_active; //!< True if the view is enabled (it can receive events and process them).
+    bool _is_active; //!< True if the view is enabled(it can receive events and process them).
 
   private:
 

@@ -35,12 +35,12 @@ namespace nux
   class MouseAreaCtrl: public View
   {
   public:
-    MouseAreaCtrl (NUX_FILE_LINE_PROTO);
+    MouseAreaCtrl(NUX_FILE_LINE_PROTO);
     ~MouseAreaCtrl();
 
-    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     int getAreaPosY();
     int getAreaPosX();
@@ -50,9 +50,9 @@ namespace nux
     /////////////////
     //  EMITERS    //
     /////////////////
-    void MouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void MouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void MouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void MouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void MouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void MouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
     /////////////////
     //  SIGNALS    //

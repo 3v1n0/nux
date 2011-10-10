@@ -30,7 +30,7 @@ namespace nux
 {
   NUX_IMPLEMENT_OBJECT_TYPE(RadioButton);
   
-  RadioButton::RadioButton (const std::string &str, bool state, NUX_FILE_LINE_DECL)
+  RadioButton::RadioButton(const std::string &str, bool state, NUX_FILE_LINE_DECL)
     : AbstractButton(NUX_FILE_LINE_PARAM)
   {
     label_ = str;
@@ -51,7 +51,7 @@ namespace nux
     check_area_->SetMinimumSize(14, 14);
     check_area_->SetMaximumSize(14, 14);
 
-    hlayout_->SetHorizontalInternalMargin (4);
+    hlayout_->SetHorizontalInternalMargin(4);
     hlayout_->SetContentDistribution(MAJOR_POSITION_CENTER);
     hlayout_->AddView(check_area_, 0, MINOR_POSITION_CENTER, MINOR_SIZE_MATCHCONTENT);
     hlayout_->AddView(static_text_, 1, MINOR_POSITION_CENTER, MINOR_SIZE_MATCHCONTENT);
@@ -61,13 +61,13 @@ namespace nux
 //     // This is useful if the RadioButton is put in a vertical layout and it has a stretch factor of 0. Then the width of the RadioButton
 //     // will be adjusted to fit the minimum width of the check area and the caption area.
 //     {
-//       hlayout_->SetMinimumSize (1, 1);
-//       SetMinimumSize (14, 14);
+//       hlayout_->SetMinimumSize(1, 1);
+//       SetMinimumSize(14, 14);
 //       ApplyMinWidth();
 //       ApplyMinHeight();
 //     }
 
-    SetLayout (hlayout_);
+    SetLayout(hlayout_);
 
   }
 
@@ -92,7 +92,7 @@ namespace nux
     return label_;
   }
 
-  void RadioButton::Draw (GraphicsEngine &graphics_engine, bool force_draw)
+  void RadioButton::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
 
@@ -101,11 +101,11 @@ namespace nux
     InteractState is;
     is.is_on = active_;
 
-    if(visual_state_ == VISUAL_STATE_PRESSED)
+    if (visual_state_ == VISUAL_STATE_PRESSED)
     {
       is.is_focus = true;
     }
-    else if(visual_state_ == VISUAL_STATE_PRELIGHT)
+    else if (visual_state_ == VISUAL_STATE_PRELIGHT)
     {
       is.is_prelight = true;
     }
@@ -125,7 +125,7 @@ namespace nux
     if (radio_button_group_.IsValid())
     {
       block_changed_signal_ = true;
-      radio_button_group_->NotifyClick (this);
+      radio_button_group_->NotifyClick(this);
       block_changed_signal_ = false;
 
       click.emit(this);
@@ -158,17 +158,17 @@ namespace nux
     SetStatePrivate(false);
   }
 
-  void RadioButton::SetRadioGroupSelector (RadioButtonGroup *RadioSelector)
+  void RadioButton::SetRadioGroupSelector(RadioButtonGroup *RadioSelector)
   {
     if (radio_button_group_.IsValid() && radio_button_group_.GetPointer() == RadioSelector)
       return;
 
-    if(radio_button_group_.IsValid())
+    if (radio_button_group_.IsValid())
     {
       radio_button_group_.Release();
     }
 
-    if(RadioSelector)
+    if (RadioSelector)
     {
       radio_button_group_ = ObjectWeakPtr<RadioButtonGroup>(RadioSelector);
     }

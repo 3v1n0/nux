@@ -32,19 +32,19 @@ namespace nux
   class RangeValueInteger : public View
   {
   public:
-    RangeValueInteger (int Value = 0, int MinValue = 0, int MaxValue = 100, NUX_FILE_LINE_PROTO);
+    RangeValueInteger(int Value = 0, int MinValue = 0, int MaxValue = 100, NUX_FILE_LINE_PROTO);
     ~RangeValueInteger();
 
-    void DrawMarker (GraphicsEngine &graphics_engine);
-    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw);
+    void DrawMarker(GraphicsEngine &graphics_engine);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     /////////////////
     //  RECEIVERS  //
     /////////////////
-    void SetRange (int min_value, int max_value);
-    void SetValue (int value);
+    void SetRange(int min_value, int max_value);
+    void SetValue(int value);
     int GetValue() const;
     int GetMinValue() const
     {
@@ -55,33 +55,33 @@ namespace nux
       return m_max;
     }
 
-    void SetBackgroundColor (const Color &color)
+    void SetBackgroundColor(const Color &color)
     {
-      m_ValueString->SetTextBackgroundColor (color);
+      m_ValueString->SetTextBackgroundColor(color);
     }
     const Color GetBackgroundColor() const
     {
       return m_ValueString->GetTextBackgroundColor();
     }
 
-    void setStartToEndColor (Color color_start, Color color_end)
+    void setStartToEndColor(Color color_start, Color color_end)
     {
       m_StartColor = color_start;
       m_EndColor = color_end;
     }
-    void setStartColor (Color color)
+    void setStartColor(Color color)
     {
       m_StartColor = color;
     }
-    void setEndColor (Color color)
+    void setEndColor(Color color)
     {
       m_EndColor = color;
     }
-    void setProgressColor (Color color)
+    void setProgressColor(Color color)
     {
       m_ProgressColor = color;
     }
-    void EnableDrawProgress (bool b)
+    void EnableDrawProgress(bool b)
     {
       m_EnableDrawProgress = b;
     }
@@ -89,12 +89,12 @@ namespace nux
     ////////////////
     //  EMITTERS  //
     ////////////////
-    void OnReceiveMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void OnReceiveMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void OnReceiveMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void OnReceiveMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void OnReceiveMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void OnReceiveMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     void OnKeyboardFocus();
     void OnLostKeyboardFocus();
-    void OnValidateKeyboardEntry (EditTextBox *textbox, const NString &text);
+    void OnValidateKeyboardEntry(EditTextBox *textbox, const NString &text);
 
     bool IsCtrlKeyPressed() const
     {
@@ -110,7 +110,7 @@ namespace nux
     sigc::signal<void, int> sigValueChanged2;
     //sigc::signal<void, const char*> sigValidateKeyboarEntry;
 
-    void BroadcastValue ();
+    void BroadcastValue();
   protected:
     void InitializeWidgets();
     void InitializeLayout();

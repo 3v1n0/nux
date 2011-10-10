@@ -29,13 +29,13 @@ namespace nux
   class ScrollBar : public View //public ValuatorAbstraction
   {
   public:
-    ScrollBar (NUX_FILE_LINE_PROTO);
+    ScrollBar(NUX_FILE_LINE_PROTO);
     ~ScrollBar();
 
   private:
-    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw) = 0;
-    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw) = 0;
-    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw) = 0;
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw) = 0;
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw) = 0;
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw) = 0;
 
   public:
     int visible() const
@@ -50,12 +50,12 @@ namespace nux
     {
       m_visible = 1;
     }
-    void resize (int x, int y, int w, int h)
+    void resize(int x, int y, int w, int h)
     {
-      SetGeometry (Geometry (x, y, w, h) );
+      SetGeometry(Geometry(x, y, w, h));
     }
 
-    void SetScrollUnit (int unit);
+    void SetScrollUnit(int unit);
     int GetScrollUnit() const;
 
   protected:

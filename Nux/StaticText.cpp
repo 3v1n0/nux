@@ -17,8 +17,8 @@ namespace nux
 
   NUX_IMPLEMENT_OBJECT_TYPE(StaticText);
 
-  StaticText::StaticText (const std::string &text, NUX_FILE_LINE_DECL)
-    : View (NUX_FILE_LINE_PARAM)
+  StaticText::StaticText(const std::string &text, NUX_FILE_LINE_DECL)
+    : View(NUX_FILE_LINE_PARAM)
   {
     padding_ = 2;
     text_width_ = 0;
@@ -52,15 +52,15 @@ namespace nux
     text_color_ = color::White;
     clip_to_width_ = 0;
 
-    SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+    SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     SetText(text);
   }
 
-  StaticText::~StaticText ()
+  StaticText::~StaticText()
   {
 #if defined(NUX_OS_LINUX)
     if (cairo_graphics_ != 0)
-      delete (cairo_graphics_);
+      delete(cairo_graphics_);
 #endif
 
     if (dw_texture_.IsValid())
@@ -141,7 +141,7 @@ namespace nux
 
   void StaticText::Draw(GraphicsEngine& gfxContext, bool forceDraw)
   {
-    if(!dw_texture_.IsValid())
+    if (!dw_texture_.IsValid())
       return;
 
     Geometry base = GetGeometry();
@@ -150,9 +150,9 @@ namespace nux
 
     // Get the current blend states. They will be restored later.
     t_u32 alpha = 0, src = 0, dest = 0;
-    gfxContext.GetRenderStates().GetBlend (alpha, src, dest);
+    gfxContext.GetRenderStates().GetBlend(alpha, src, dest);
     
-    gfxContext.GetRenderStates().SetBlend (true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    gfxContext.GetRenderStates().SetBlend(true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     
     gfxContext.PushClippingRectangle(base);
 
@@ -250,7 +250,7 @@ namespace nux
 
     hr = pDWriteFactory->CreateTextFormat(
         ANSICHAR_TO_UNICHAR(font_name_.c_str()),                  // Font family name.
-        NULL,                       // Font collection (NULL sets it to use the system font collection).
+        NULL,                       // Font collection(NULL sets it to use the system font collection).
         DWRITE_FONT_WEIGHT_REGULAR,
         DWRITE_FONT_STYLE_NORMAL,
         DWRITE_FONT_STRETCH_NORMAL,
@@ -258,7 +258,7 @@ namespace nux
         L"en-us",
         &pTextFormat);
 
-    // Center align (horizontally) the text.
+    // Center align(horizontally) the text.
     if (SUCCEEDED(hr))
     {
       hr = pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
@@ -278,7 +278,7 @@ namespace nux
     hr = pDWriteFactory->CreateTextLayout(
       TCHAR_TO_UNICHAR(text_.c_str()),      // The string to be laid out and formatted.
       text_.length(),                       // The length of the string.
-      pTextFormat,                         // The text format to apply to the string (contains font information, etc).
+      pTextFormat,                         // The text format to apply to the string(contains font information, etc).
       1,                                    // The width of the layout box.
       1,                                    // The height of the layout box.
       &pTextLayout_                         // The IDWriteTextLayout interface pointer.
@@ -325,7 +325,7 @@ namespace nux
 
     hr = pDWriteFactory->CreateTextFormat(
       ANSICHAR_TO_UNICHAR(font_name_.c_str()),                  // Font family name.
-      NULL,                       // Font collection (NULL sets it to use the system font collection).
+      NULL,                       // Font collection(NULL sets it to use the system font collection).
       DWRITE_FONT_WEIGHT_REGULAR,
       DWRITE_FONT_STYLE_NORMAL,
       DWRITE_FONT_STRETCH_NORMAL,
@@ -333,7 +333,7 @@ namespace nux
       L"en-us",
       &pTextFormat);
 
-    // Center align (horizontally) the text.
+    // Center align(horizontally) the text.
     if (SUCCEEDED(hr))
     {
       hr = pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
@@ -354,7 +354,7 @@ namespace nux
     hr = pDWriteFactory->CreateTextLayout(
       TCHAR_TO_UNICHAR(text_.c_str()),      // The string to be laid out and formatted.
       text_.length(),                       // The length of the string.
-      pTextFormat,                         // The text format to apply to the string (contains font information, etc).
+      pTextFormat,                         // The text format to apply to the string(contains font information, etc).
       text_width_ / dpi_scale_x,                                    // The width of the layout box.
       text_height_ / dpi_scale_y,                                    // The height of the layout box.
       &pTextLayout_                         // The IDWriteTextLayout interface pointer.
@@ -515,7 +515,7 @@ namespace nux
     CairoFontOptions font_options;
     {
       cairo_font_options_set_antialias      (font_options, CAIRO_ANTIALIAS_DEFAULT);
-      cairo_font_options_set_subpixel_order (font_options, CAIRO_SUBPIXEL_ORDER_DEFAULT);
+      cairo_font_options_set_subpixel_order(font_options, CAIRO_SUBPIXEL_ORDER_DEFAULT);
       cairo_font_options_set_hint_style     (font_options, CAIRO_HINT_STYLE_DEFAULT);
       cairo_font_options_set_hint_metrics   (font_options, CAIRO_HINT_METRICS_ON);
       cairo_set_font_options(cairo_ctx, font_options);
@@ -576,7 +576,7 @@ namespace nux
     CairoFontOptions font_options;
     {
       cairo_font_options_set_antialias      (font_options, CAIRO_ANTIALIAS_DEFAULT);
-      cairo_font_options_set_subpixel_order (font_options, CAIRO_SUBPIXEL_ORDER_DEFAULT);
+      cairo_font_options_set_subpixel_order(font_options, CAIRO_SUBPIXEL_ORDER_DEFAULT);
       cairo_font_options_set_hint_style     (font_options, CAIRO_HINT_STYLE_DEFAULT);
       cairo_font_options_set_hint_metrics   (font_options, CAIRO_HINT_METRICS_ON);
       cairo_set_font_options(cairo_ctx, font_options);
@@ -615,7 +615,7 @@ namespace nux
     }
 
     cairo_graphics_ = new CairoGraphics(CAIRO_FORMAT_ARGB32, GetBaseWidth(), GetBaseHeight());
-    cairo_t *cairo_ctx = cairo_graphics_->GetContext ();
+    cairo_t *cairo_ctx = cairo_graphics_->GetContext();
     cairo_set_operator(cairo_ctx, CAIRO_OPERATOR_CLEAR);
     cairo_paint(cairo_ctx);
     cairo_set_operator(cairo_ctx, CAIRO_OPERATOR_OVER);

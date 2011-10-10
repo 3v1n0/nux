@@ -83,16 +83,16 @@ namespace nux
     sigc::signal<void, int, int> sigMouseDrag;  //!< Signal emmitted when the mouse is dragged over this area.
 
   protected:
-    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
-    void RecvMouseDown (int x, int y, long button_flags, long key_flags);
-    void RecvMouseUp (int x, int y, long button_flags, long key_flags);
-    void RecvMouseEnter (int x, int y, long button_flags, long key_flags);
-    void RecvMouseLeave (int x, int y, long button_flags, long key_flags);
-    void RecvMouseClick (int x, int y, long button_flags, long key_flags);
-    void RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseDown(int x, int y, long button_flags, long key_flags);
+    void RecvMouseUp(int x, int y, long button_flags, long key_flags);
+    void RecvMouseEnter(int x, int y, long button_flags, long key_flags);
+    void RecvMouseLeave(int x, int y, long button_flags, long key_flags);
+    void RecvMouseClick(int x, int y, long button_flags, long key_flags);
+    void RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
   private:
     AbstractPaintLayer *paint_layer_;

@@ -28,18 +28,18 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (View);
+  NUX_IMPLEMENT_OBJECT_TYPE(View);
 
-  View::View (NUX_FILE_LINE_DECL)
-    :   InputArea (NUX_FILE_LINE_PARAM)
+  View::View(NUX_FILE_LINE_DECL)
+    :   InputArea(NUX_FILE_LINE_PARAM)
   {
-    _font = GetSysFont ();
+    _font = GetSysFont();
     view_layout_ = NULL;
     draw_cmd_queued_        = false;
-    m_TextColor         = Color (1.0f, 1.0f, 1.0f, 1.0f);
+    m_TextColor         = Color(1.0f, 1.0f, 1.0f, 1.0f);
 
     // Set widget default size;
-    SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+    SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
   }
 
   View::~View()
@@ -62,8 +62,8 @@ namespace nux
   {
     if (view_layout_)
     {
-      //view_layout_->SetDirty (true);
-//        if(view_layout_->GetStretchFactor() != 0)
+      //view_layout_->SetDirty(true);
+//        if (view_layout_->GetStretchFactor() != 0)
 //        {
 //            PreLayoutManagement();
 //            long ret = view_layout_->ComputeContentSize();
@@ -78,7 +78,7 @@ namespace nux
 
         long ret = view_layout_->ComputeContentSize();
 
-        PostLayoutManagement (ret);
+        PostLayoutManagement(ret);
         //return eCompliantWidth | eCompliantHeight;
 
         int PostWidth = /*view_layout_->*/GetBaseWidth();
@@ -121,20 +121,20 @@ namespace nux
     else
     {
       PreLayoutManagement();
-      int ret = PostLayoutManagement (eCompliantHeight | eCompliantWidth);
+      int ret = PostLayoutManagement(eCompliantHeight | eCompliantWidth);
       return ret;
     }
 
     return 0;
   }
 
-  void View::ComputeContentPosition (float offsetX, float offsetY)
+  void View::ComputeContentPosition(float offsetX, float offsetY)
   {
     if (view_layout_)
     {
-      view_layout_->SetBaseX (GetBaseX() );
-      view_layout_->SetBaseY (GetBaseY() );
-      view_layout_->ComputeContentPosition (offsetX, offsetY);
+      view_layout_->SetBaseX(GetBaseX());
+      view_layout_->SetBaseY(GetBaseY());
+      view_layout_->ComputeContentPosition(offsetX, offsetY);
     }
   }
 
@@ -142,10 +142,10 @@ namespace nux
   {
     // Give the managed layout the same size and position as the Control.
     if (view_layout_)
-      view_layout_->SetGeometry (GetGeometry() );
+      view_layout_->SetGeometry(GetGeometry());
   }
 
-  long View::PostLayoutManagement (long LayoutResult)
+  long View::PostLayoutManagement(long LayoutResult)
   {
     // Set the geometry of the control to be the same as the managed layout.
     // Only the size is changed. The position of the composition layout hasn't
@@ -153,8 +153,8 @@ namespace nux
     if (view_layout_)
     {
       // If The layout is empty, do not change the size of the parent element.
-      if (!view_layout_->IsEmpty() )
-        Area::SetGeometry (view_layout_->GetGeometry() );
+      if (!view_layout_->IsEmpty())
+        Area::SetGeometry(view_layout_->GetGeometry());
     }
 
     return LayoutResult;
@@ -169,37 +169,37 @@ namespace nux
   {
   }
 
-  void View::ProcessDraw (GraphicsEngine &graphics_engine, bool force_draw)
+  void View::ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     full_view_draw_cmd_ = false;
 
-    graphics_engine.PushModelViewMatrix (Get2DMatrix ());
+    graphics_engine.PushModelViewMatrix(Get2DMatrix());
 
     if (force_draw)
     {
       draw_cmd_queued_ = true;
       full_view_draw_cmd_ = true;
-      Draw (graphics_engine, force_draw);
-      DrawContent (graphics_engine, force_draw);
-      PostDraw (graphics_engine, force_draw);
+      Draw(graphics_engine, force_draw);
+      DrawContent(graphics_engine, force_draw);
+      PostDraw(graphics_engine, force_draw);
     }
     else
     {
       if (draw_cmd_queued_)
       {
         full_view_draw_cmd_ = true;
-        Draw (graphics_engine, false);
-        DrawContent (graphics_engine, false);
-        PostDraw (graphics_engine, false);
+        Draw(graphics_engine, false);
+        DrawContent(graphics_engine, false);
+        PostDraw(graphics_engine, false);
       }
       else
       {
-        DrawContent (graphics_engine, false);
-        PostDraw (graphics_engine, false);
+        DrawContent(graphics_engine, false);
+        PostDraw(graphics_engine, false);
       }
     }
 
-    graphics_engine.PopModelViewMatrix ();
+    graphics_engine.PopModelViewMatrix();
 
     draw_cmd_queued_ = false;
     full_view_draw_cmd_ = false;
@@ -220,28 +220,28 @@ namespace nux
 
   }
 
-  void View::QueueDraw ()
+  void View::QueueDraw()
   {
     //GetWindowCompositor()..AddToDrawList(this);
-    WindowThread* application = GetWindowThread ();
-    if(application)
+    WindowThread* application = GetWindowThread();
+    if (application)
     {
       application->AddToDrawList(this);
       application->RequestRedraw();
       //GetWindowCompositor().AddToDrawList(this);
     }
     if (view_layout_)
-      view_layout_->QueueDraw ();
+      view_layout_->QueueDraw();
 
     draw_cmd_queued_ = true;
-    OnQueueDraw.emit (this);
+    OnQueueDraw.emit(this);
   }
 
   void View::NeedSoftRedraw()
   {
     //GetWindowCompositor()..AddToDrawList(this);
-    WindowThread* application = GetWindowThread ();
-    if(application)
+    WindowThread* application = GetWindowThread();
+    if (application)
     {
         application->AddToDrawList(this);
         application->RequestRedraw();
@@ -276,25 +276,25 @@ namespace nux
 
   Layout *View::GetCompositionLayout()
   {
-    return GetLayout ();
+    return GetLayout();
   }
 
-  bool View::SetLayout (Layout *layout)
+  bool View::SetLayout(Layout *layout)
   {
-    NUX_RETURN_VALUE_IF_NULL (layout, false);
+    NUX_RETURN_VALUE_IF_NULL(layout, false);
     nuxAssert(layout->IsLayout());
-    NUX_RETURN_VALUE_IF_TRUE (view_layout_ == layout, true);
+    NUX_RETURN_VALUE_IF_TRUE(view_layout_ == layout, true);
 
     Area *parent = layout->GetParentObject();
 
     if (parent == this)
     {
-      nuxAssert (view_layout_ == layout);
+      nuxAssert(view_layout_ == layout);
       return false;
     }
     else if (parent != 0)
     {
-      nuxDebugMsg (0, "[View::SetCompositionLayout] Object already has a parent. You must UnParent the object before you can parenting again.");
+      nuxDebugMsg(0, "[View::SetCompositionLayout] Object already has a parent. You must UnParent the object before you can parenting again.");
       return false;
     }
 
@@ -303,27 +303,27 @@ namespace nux
       /* we need to emit the signal before the unparent, just in case
          one of the callbacks wanted to use this object */
 
-      LayoutRemoved.emit (this, view_layout_);
+      LayoutRemoved.emit(this, view_layout_);
       view_layout_->UnParentObject();
     }
-    layout->SetParentObject (this);
+    layout->SetParentObject(this);
     view_layout_ = layout;
 
-    GetWindowThread()->QueueObjectLayout (this);
+    GetWindowThread()->QueueObjectLayout(this);
 
-    LayoutAdded.emit (this, view_layout_);
+    LayoutAdded.emit(this, view_layout_);
 
     return true;
   }
 
-  void View::OnChildFocusChanged (/*Area *parent,*/ Area *child)
+  void View::OnChildFocusChanged(/*Area *parent,*/ Area *child)
   {
-    ChildFocusChanged.emit (/*parent,*/ child);
+    ChildFocusChanged.emit(/*parent,*/ child);
   }
 
-  bool View::SetCompositionLayout (Layout *layout)
+  bool View::SetCompositionLayout(Layout *layout)
   {
-    return SetLayout (layout);
+    return SetLayout(layout);
   }
 
   void View::RemoveLayout()
@@ -341,30 +341,30 @@ namespace nux
     RemoveLayout();
   }
 
-  bool View::SearchInAllSubNodes (Area *bo)
+  bool View::SearchInAllSubNodes(Area *bo)
   {
     if (view_layout_)
-      return view_layout_->SearchInAllSubNodes (bo);
+      return view_layout_->SearchInAllSubNodes(bo);
 
     return false;
   }
 
-  bool View::SearchInFirstSubNodes (Area *bo)
+  bool View::SearchInFirstSubNodes(Area *bo)
   {
     if (view_layout_)
-      return view_layout_->SearchInFirstSubNodes (bo);
+      return view_layout_->SearchInFirstSubNodes(bo);
 
     return false;
   }
 
-  void View::SetGeometry (const Geometry &geo)
+  void View::SetGeometry(const Geometry &geo)
   {
-    Area::SetGeometry (geo);
+    Area::SetGeometry(geo);
     ComputeContentSize();
     PostResizeGeometry();
   }
 
-  void View::SetFont (ObjectPtr<FontTexture> font)
+  void View::SetFont(ObjectPtr<FontTexture> font)
   {
     _font = font;
   }

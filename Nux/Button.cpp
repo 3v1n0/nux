@@ -37,22 +37,22 @@ namespace nux
     Initialize(std::string(), image);
   }
 
-  Button::Button (const std::string& button_label, NUX_FILE_LINE_DECL)
-  : AbstractButton (NUX_FILE_LINE_PARAM)
+  Button::Button(const std::string& button_label, NUX_FILE_LINE_DECL)
+  : AbstractButton(NUX_FILE_LINE_PARAM)
   {
     image_ = NULL;
     Initialize(button_label, NULL);
   }
 
-  Button::Button (const std::string& button_label, TextureArea *image, NUX_FILE_LINE_DECL)
-  : AbstractButton (NUX_FILE_LINE_PARAM)
+  Button::Button(const std::string& button_label, TextureArea *image, NUX_FILE_LINE_DECL)
+  : AbstractButton(NUX_FILE_LINE_PARAM)
   {
     image_ = NULL;
     Initialize(button_label, image);
   }
 
-  Button::Button (NUX_FILE_LINE_DECL)
-  : AbstractButton (NUX_FILE_LINE_PARAM)
+  Button::Button(NUX_FILE_LINE_DECL)
+  : AbstractButton(NUX_FILE_LINE_PARAM)
   {
     image_ = NULL;
     Initialize(std::string(), NULL);
@@ -88,7 +88,7 @@ namespace nux
 
 
     // Set Geometry
-    SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+    SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
     image_minimum_size_ = Size(16, 16);
     image_maximum_size_ = Size(AREA_MAX_WIDTH, AREA_MAX_HEIGHT);
@@ -316,17 +316,17 @@ namespace nux
     QueueDraw();
   }
 
-  void Button::Draw (GraphicsEngine &graphics_engine, bool force_draw)
+  void Button::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
 
     GetPainter().PaintBackground(graphics_engine, base);
 
-    if(visual_state_ == VISUAL_STATE_PRESSED)
+    if (visual_state_ == VISUAL_STATE_PRESSED)
     {
       GetPainter().PaintTextureShape(graphics_engine, base, eBUTTON_FOCUS);
     }
-    else if(visual_state_ == VISUAL_STATE_PRELIGHT)
+    else if (visual_state_ == VISUAL_STATE_PRELIGHT)
     {
       GetPainter().PaintTextureShape(graphics_engine, base, eBUTTON_PRELIGHT);
     }
@@ -351,7 +351,7 @@ namespace nux
 
   void Button::Activate()
   {
-    if(persistent_active_state_ == false)
+    if (persistent_active_state_ == false)
     {
       return;
     }
@@ -370,7 +370,7 @@ namespace nux
 
   void Button::Deactivate()
   {
-    if(persistent_active_state_ == false)
+    if (persistent_active_state_ == false)
     {
       return;
     }
@@ -389,7 +389,7 @@ namespace nux
 
   void Button::RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    if(persistent_active_state_)
+    if (persistent_active_state_)
     {
       active_ = !active_;
     }

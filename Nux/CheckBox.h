@@ -35,7 +35,7 @@ namespace nux
   {
     NUX_DECLARE_OBJECT_TYPE(CheckBox, AbstractButton);
   public:
-    CheckBox (const std::string &str, bool state = false, NUX_FILE_LINE_PROTO);
+    CheckBox(const std::string &str, bool state = false, NUX_FILE_LINE_PROTO);
     virtual ~CheckBox();
 
     //! Emitted when the button is clicked.
@@ -78,7 +78,7 @@ namespace nux
     virtual void Deactivate();
 
   protected:
-    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
 
     HLayout   *hlayout_;

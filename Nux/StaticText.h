@@ -9,18 +9,18 @@ namespace nux
   {
     NUX_DECLARE_OBJECT_TYPE(StaticText, View);
   public:
-    StaticText (const std::string &text, NUX_FILE_LINE_PROTO);
-    ~StaticText ();
+    StaticText(const std::string &text, NUX_FILE_LINE_PROTO);
+    ~StaticText();
 
 
     //! Set size of widget according to the text extent.
     /*!
         @param size_match_text If true, the widget size is set to match the size of the text on the screen.
     */
-    void SetSizeMatchText (bool size_match_text);
+    void SetSizeMatchText(bool size_match_text);
 
     //! Return true if the widget with changes to match the text width.
-    bool GetSizeMatchText () const;
+    bool GetSizeMatchText() const;
 
     //! Set the text string.
     void SetText(const std::string &text);
@@ -38,8 +38,8 @@ namespace nux
 
     
 
-    void SetClipping (int clipping);
-    int GetClipping () const;
+    void SetClipping(int clipping);
+    int GetClipping() const;
 
     sigc::signal<void, StaticText*> text_changed;
     sigc::signal<void, StaticText*> text_color_changed;
@@ -48,10 +48,10 @@ namespace nux
     int text_width_;  //!< Rasterized text width.
     int text_height_; //!< Rasterized text height.
 
-    void PreLayoutManagement ();
-    long PostLayoutManagement (long layoutResult);
+    void PreLayoutManagement();
+    long PostLayoutManagement(long layoutResult);
 
-    void Draw (GraphicsEngine& gfxContext, bool forceDraw);
+    void Draw(GraphicsEngine& gfxContext, bool forceDraw);
 
 
     std::string text_;
@@ -74,7 +74,7 @@ namespace nux
 #if defined(NUX_OS_WINDOWS)
     void ComputeTextSize();
     void RasterizeText(Color color);
-    void UpdateTextRendering ();
+    void UpdateTextRendering();
 
     float layout_left_;
     float layout_top_;
@@ -87,7 +87,7 @@ namespace nux
 
     void ComputeTextSize();
     void RasterizeText(void* cairo_context, Color color);
-    void UpdateTextRendering ();
+    void UpdateTextRendering();
 
     CairoGraphics *cairo_graphics_;
 #endif

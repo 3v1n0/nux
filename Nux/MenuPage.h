@@ -35,33 +35,33 @@ namespace nux
 
   class MenuItem: public View
   {
-    NUX_DECLARE_OBJECT_TYPE (MenuItem, View);
+    NUX_DECLARE_OBJECT_TYPE(MenuItem, View);
   public:
-    MenuItem (const TCHAR *label, int UserValue, NUX_FILE_LINE_PROTO);
+    MenuItem(const TCHAR *label, int UserValue, NUX_FILE_LINE_PROTO);
     ~MenuItem();
 
-    void DrawAsMenuItem (GraphicsEngine &graphics_engine, const Color &textcolor, bool is_highlighted, bool isFirstItem, bool isLastItem, bool draw_icone);
+    void DrawAsMenuItem(GraphicsEngine &graphics_engine, const Color &textcolor, bool is_highlighted, bool isFirstItem, bool isLastItem, bool draw_icone);
 
     //const ActionItem& GetItem() const {return m_ActionItem;}
     ActionItem *GetActionItem() const;
     //ActionItem* GetActionItem();
     
-    int GetTextWidth ();
-    int GetTextHeight ();
+    int GetTextWidth();
+    int GetTextHeight();
 
-    StaticText * GetStaticText ()
+    StaticText * GetStaticText()
     {
       return _pango_static_text;
     }
 
   private:
-    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw) {};
-    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw) {};
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw) {};
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw) {};
 
-    void SetChildMenu (MenuPage *menu);
+    void SetChildMenu(MenuPage *menu);
     MenuPage *GetChildMenu() const;
-    void SetActionItem (ActionItem *menu);
+    void SetActionItem(ActionItem *menu);
 
     MenuPage    *_child_menu;
     ActionItem  *_action_item;
@@ -71,14 +71,14 @@ namespace nux
 
   class MenuSeparator: public View
   {
-    NUX_DECLARE_OBJECT_TYPE (MenuSeparator, View);
+    NUX_DECLARE_OBJECT_TYPE(MenuSeparator, View);
   public:
-    MenuSeparator (NUX_FILE_LINE_PROTO);
+    MenuSeparator(NUX_FILE_LINE_PROTO);
     ~MenuSeparator();
 
-    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw) {};
-    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw) {};
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw) {};
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw) {};
 
   private:
     friend class MenuPage;
@@ -86,44 +86,44 @@ namespace nux
 
   class MenuPage: public View
   {
-    NUX_DECLARE_OBJECT_TYPE (MenuPage, View);
+    NUX_DECLARE_OBJECT_TYPE(MenuPage, View);
   public:
-    MenuPage (const TCHAR *title = "", NUX_FILE_LINE_PROTO);
+    MenuPage(const TCHAR *title = "", NUX_FILE_LINE_PROTO);
     ~MenuPage();
 
 //    void SetName(const TCHAR* name);
     const TCHAR *GetName() const;
 
-    ActionItem *AddAction (const TCHAR *label = 0, int UserValue = 0);
+    ActionItem *AddAction(const TCHAR *label = 0, int UserValue = 0);
     //void AddActionItem(ActionItem* actionItem);
     void AddSeparator();
-    MenuPage *AddMenu (const TCHAR *label);
-    ActionItem *AddSubMenu (const TCHAR *label, MenuPage *menu);
+    MenuPage *AddMenu(const TCHAR *label);
+    ActionItem *AddSubMenu(const TCHAR *label, MenuPage *menu);
 
-    void RemoveItem (ActionItem *item);
+    void RemoveItem(ActionItem *item);
     void RemoveAllItem();
 
     bool CanClose() const;
     // emitters
-    void EmitMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    void EmitMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void EmitMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void EmitMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void EmitMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void EmitMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void EmitMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void EmitMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags);
 
 //private:
     //! Start the MenuPage iteration and show it.
     /*
         Start the MenuPage iteration and show it.
-        When this function is called, the menu becomes visible and appear at position (MenuXPosition, MenuYPosition).
-        The menu also assumes it has received a mouse down event at coordinates (x, y).
+        When this function is called, the menu becomes visible and appear at position(MenuXPosition, MenuYPosition).
+        The menu also assumes it has received a mouse down event at coordinates(x, y).
         \param MenuXPosition: the position of the menu.
         \param MenuYPosition: the position of the menu.
         \param x: the simulate position where the mouse down happened on the menu area.
         \param y: the simulate position where the mouse down happened on the menu area.
         \param TakeMousefocus: if true, the MenuPage area will take the mouse focus.
     */
-    void StartMenu (int MenuXPosition, int MenuYPosition, int x = 0, int y = 0, bool OverrideCurrentMenuChain = true);
+    void StartMenu(int MenuXPosition, int MenuYPosition, int x = 0, int y = 0, bool OverrideCurrentMenuChain = true);
 
     //! Stop the MenuPage iteration and hide it.
     /*
@@ -132,9 +132,9 @@ namespace nux
         \param y: the simulate position where the mouse down happened on the menu area.
 
     */
-    void StopMenu (int x = 0, int y = 0);
+    void StopMenu(int x = 0, int y = 0);
 
-    void SetFontName (char *font_name);
+    void SetFontName(char *font_name);
 
         //! Let regular widgets process a mouse down event that closes the menu chain without a menu item selection.
     /*!
@@ -160,16 +160,16 @@ namespace nux
 
   public:
     void StopActionSubMenu();
-    void ExecuteActionItem (MenuItem *menuItem);
+    void ExecuteActionItem(MenuItem *menuItem);
 
-    void NotifyActionTriggeredToParent (MenuPage *, MenuItem *menuItem);
+    void NotifyActionTriggeredToParent(MenuPage *, MenuItem *menuItem);
     void NotifyTerminateMenuCascade();
-    void NotifyMouseDownOutsideMenuCascade (int x, int y);
+    void NotifyMouseDownOutsideMenuCascade(int x, int y);
 
-    void SetParentMenu (MenuPage *);
+    void SetParentMenu(MenuPage *);
     MenuPage *GetParentMenu();
 
-    void setShowItemIcon (bool b)
+    void setShowItemIcon(bool b)
     {
       m_show_item_icon = b;
     }
@@ -178,10 +178,10 @@ namespace nux
       return m_show_item_icon;
     }
     bool TestMouseDown();
-    bool TestMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags, bool &hit_inside_a_menu);
+    bool TestMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags, bool &hit_inside_a_menu);
 
     // Never call this function directly
-    void Terminate (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void Terminate(int x, int y, unsigned long button_flags, unsigned long key_flags);
 
     // signals
     sigc::signal<void, int> sigItemSelected;
@@ -213,14 +213,14 @@ namespace nux
     sigc::signal<void, MenuPage *> sigOpeningMenu;
     sigc::signal<void, MenuPage *> sigClosingMenu;
 
-    void SetActive (bool b)
+    void SetActive(bool b)
     {
       m_IsActive = b;
 
       if (b)
-        /*m_PopupArea.*/CaptureMouseDownAnyWhereElse (true);
+        /*m_PopupArea.*/CaptureMouseDownAnyWhereElse(true);
       else
-        /*m_PopupArea.*/CaptureMouseDownAnyWhereElse (false);
+        /*m_PopupArea.*/CaptureMouseDownAnyWhereElse(false);
     }
 
     bool IsActive() const
@@ -235,36 +235,36 @@ namespace nux
     {
       return m_numItem;
     }
-    ActionItem *GetActionItem (int i) const;
+    ActionItem *GetActionItem(int i) const;
 
     /*!
         Get the index of and item in the menu.
         @return the index of the ActionItem in the menu. -1 if the Action Item is not found.
     */
-    int GetActionItemIndex (ActionItem *action) const;
+    int GetActionItemIndex(ActionItem *action) const;
 
     //! Return the position of this object with regard to its top left corner of the physical window.
     /*!
         Return the position of the Area inside the physical window.
         For the main layout set in WindowThread, The following functions are equivalent:
-        \li GetGeometry ()
-        \li GetRootGeometry ()
-        \li GetAbsoluteGeometry ()
+        \li GetGeometry()
+        \li GetRootGeometry()
+        \li GetAbsoluteGeometry()
     */
-    virtual Geometry GetAbsoluteGeometry () const;
+    virtual Geometry GetAbsoluteGeometry() const;
 
-    //! Return the position of this object with regard to its top level parent (the main layout or a BaseWindow).
+    //! Return the position of this object with regard to its top level parent(the main layout or a BaseWindow).
     /*!
         Return the position of the Area inside the physical window.
-        For the main layout set in WindowThread or for a BaseWindow, GetRootGeometry () is equivalent to GetGeometry ().
+        For the main layout set in WindowThread or for a BaseWindow, GetRootGeometry() is equivalent to GetGeometry().
     */
-    virtual Geometry GetRootGeometry () const;
+    virtual Geometry GetRootGeometry() const;
     
   protected:
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
-    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
   private:
 
@@ -301,7 +301,7 @@ namespace nux
     ///////////////////////////////////////////////////////
 
     virtual long ComputeContentSize();
-    virtual void SetGeometry (const Geometry &geo);
+    virtual void SetGeometry(const Geometry &geo);
 
     friend class MenuBar;
     friend class WindowCompositor;

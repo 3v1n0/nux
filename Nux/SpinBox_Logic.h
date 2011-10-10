@@ -32,33 +32,33 @@ namespace nux
   class SpinBox_Logic: public View
   {
   public:
-    SpinBox_Logic (NUX_FILE_LINE_PROTO);
-    virtual ~SpinBox_Logic ();
+    SpinBox_Logic(NUX_FILE_LINE_PROTO);
+    virtual ~SpinBox_Logic();
 
-    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw) = 0;
-    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw) = 0;
-    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw) = 0;
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw) = 0;
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw) = 0;
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw) = 0;
 
     //  RECEIVERS
-    void RecvMouseMove (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvIncrement (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvDecrement (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void TimerSpinUpBtn (void *v);
-    void TimerSpinDownBtn (void *v);
-    void RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseMove(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvIncrement(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvDecrement(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void TimerSpinUpBtn(void *v);
+    void TimerSpinDownBtn(void *v);
+    void RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags);
     /*
         The spinner buttons need to be redrawn when they are released.
         Their color may have changed when the mouse down was initiated.
         This receiver is going to initiate the redraw of the whole SpinBox_Logic.
     */
-    void RecvSpinnerMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvStartKeyboardFocus (EditTextBox *textbox);
-    void RecvEndKeyboardFocus (EditTextBox *textbox);
-    void RecvEscapeKeyboardFocus (EditTextBox *textbox);
-    void RecvEditChange (EditTextBox *textbox);
-    void RecvValidateEntry (EditTextBox *textbox);
+    void RecvSpinnerMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvStartKeyboardFocus(EditTextBox *textbox);
+    void RecvEndKeyboardFocus(EditTextBox *textbox);
+    void RecvEscapeKeyboardFocus(EditTextBox *textbox);
+    void RecvEditChange(EditTextBox *textbox);
+    void RecvValidateEntry(EditTextBox *textbox);
 
     virtual void ImplementIncrementBtn() = 0;
     virtual void ImplementDecrementBtn() = 0;

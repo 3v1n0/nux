@@ -228,7 +228,7 @@ namespace nux
 
     //! Enable the exclusive event input mode.
     /*!
-        Set the exclusive event input area (\sa _exclusive_input_area). The greedy input area gets all input events (mouse and keyboard).
+        Set the exclusive event input area(\sa _exclusive_input_area). The greedy input area gets all input events(mouse and keyboard).
         The exclusive input mode can only be set if there is no exclusive input area already set.
         To disable the exclusive input move, call DisableExclusiveInputArea with the current exclusive input area as parameter.
         The exclusive event input mode can only change once during the processing of one event. The change it again, 
@@ -269,10 +269,10 @@ namespace nux
     void ResetDnDArea();
 
     // SetDnDArea is declared as private.
-    //void SetDnDArea (InputArea* area);
+    //void SetDnDArea(InputArea* area);
     InputArea* GetDnDArea();
 
-    //! Get the top view that is being processed (event or rendering).
+    //! Get the top view that is being processed(event or rendering).
     /*!
         Get the active ViewWindow during and event processing or rendering.
     */
@@ -334,10 +334,10 @@ namespace nux
     bool GrabKeyboardRemove(InputArea* area);
 
     //! Returns True if the area parameter is inside the keyboard grab stack.
-    bool IsInKeyboardGrabStack (InputArea* area);
+    bool IsInKeyboardGrabStack(InputArea* area);
 
     //! Returns the area at the top of the keyboard grab stack.
-    InputArea* GetKeyboardGrabArea ();
+    InputArea* GetKeyboardGrabArea();
 
   private:
     //! Render the interface.
@@ -390,7 +390,7 @@ namespace nux
     //! Push a floating view at the top of the stack.
     void PushToFront(BaseWindow *bottom_floating_view);
     //! Push a floating view at the bottom of the stack.
-    void PushToBack (BaseWindow *bottom_floating_view);
+    void PushToBack(BaseWindow *bottom_floating_view);
 
     /*!
         Returns the BaseWindow that is at the top of the BaseWindow stack, excluding the BaseWindow that is
@@ -405,7 +405,7 @@ namespace nux
       return m_FocusAreaWindow.GetPointer();
     }
 
-    //! Set the top view that is about to be processed (event or rendering).
+    //! Set the top view that is about to be processed(event or rendering).
     /*!
         Before event processing or rendering, this should be called to set the ViewWindow that is about 
         to be processed. This function is used internally by the system.
@@ -466,7 +466,7 @@ namespace nux
     InputArea* _mouse_over_area;      //!< The base area that has the mouse directly over itself.
     InputArea* _previous_mouse_over_area;
 
-    void SetDnDArea (InputArea* area);
+    void SetDnDArea(InputArea* area);
 
     // DnD support
     InputArea* _dnd_area;   //!< the area where the mouse is located during a DND action.
@@ -476,16 +476,16 @@ namespace nux
         Following the event processing cycle, it is necessary to setup the exclusive input area is _pending_exclusive_input_mode_action is true.
         The exclusive input area status always takes effect after the event processing cycle.
     */
-    void ExecPendingExclusiveInputAreaAction ();
+    void ExecPendingExclusiveInputAreaAction();
 
     //! Get the input area that has the exclusivity on events.
     /*!
         @return The input area that has the exclusivity on all events.
     */
-    InputArea *GetExclusiveInputArea ();
+    InputArea *GetExclusiveInputArea();
 
     /*!
-        The exclusive input area gets all events without exception (greedy). The exclusive input area may decide to pass events 
+        The exclusive input area gets all events without exception(greedy). The exclusive input area may decide to pass events 
         down to other areas. If it does, the following restrictions apply:
           - The other input area cannot have the mouse focus.
           - They cannot have the keyboard focus.
@@ -506,12 +506,12 @@ namespace nux
     bool _in_exclusive_input_mode;
 
     /*!
-        The exclusive input mode starts after after events have been processed inside ProcessEvent ().
+        The exclusive input mode starts after after events have been processed inside ProcessEvent().
         This flags signals that some action are required to enable/disable the exclusive input mode.
     */
     bool _pending_exclusive_input_mode_action;
 
-    //! True while events are being processed inside ProcessEvent ().
+    //! True while events are being processed inside ProcessEvent().
     bool inside_event_cycle_;
 
     //! True while inside the rendering cycle.
@@ -579,7 +579,7 @@ namespace nux
     std::list<InputArea*> keyboard_grab_stack_;
 
   private:
-    WindowCompositor (const WindowCompositor &);
+    WindowCompositor(const WindowCompositor &);
     // Does not make sense for a singleton. This is a self assignment.
     WindowCompositor &operator= (const WindowCompositor &);
     // Declare operator address-of as private

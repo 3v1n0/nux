@@ -30,8 +30,8 @@ namespace nux
   class IntegerValidator : public Validator
   {
   public:
-    IntegerValidator (int Minimum = INT_MIN, int Maximum = INT_MAX);
-    IntegerValidator (const IntegerValidator &validator);
+    IntegerValidator(int Minimum = INT_MIN, int Maximum = INT_MAX);
+    IntegerValidator(const IntegerValidator &validator);
     IntegerValidator &operator= (const IntegerValidator &rhs);
     virtual ~IntegerValidator();
 
@@ -40,17 +40,17 @@ namespace nux
     /*!
         @return The input value clamped to the range [m_Minimum, m_Maximum].
     */
-    int GetClampedValue (int i) const;
+    int GetClampedValue(int i) const;
 
-    virtual void Alternative (const TCHAR *str);
+    virtual void Alternative(const TCHAR *str);
 
-    void SetMinimum (int value);
+    void SetMinimum(int value);
     int GetMinimum() const;
-    void SetMaximum (int value);
+    void SetMaximum(int value);
     int GetMaximum() const;
 
-    NString ToString (int i);
-    int ToInteger (const TCHAR *str);
+    NString ToString(int i);
+    int ToInteger(const TCHAR *str);
 
   private:
     int m_Minimum;

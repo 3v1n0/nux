@@ -30,19 +30,19 @@ namespace nux
 
   class StaticTextBox : public View //public InputArea
   {
-    NUX_DECLARE_OBJECT_TYPE (StaticTextBox, View);
+    NUX_DECLARE_OBJECT_TYPE(StaticTextBox, View);
   public:
-    StaticTextBox (const TCHAR *Caption, NUX_FILE_LINE_PROTO);
+    StaticTextBox(const TCHAR *Caption, NUX_FILE_LINE_PROTO);
     ~StaticTextBox();
-    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     // API
-    void SetText (const TCHAR &Caption);
-    void SetText (const TCHAR *Caption);
-    void SetText (const tstring &Caption);
-    void SetText (const NString &Caption);
+    void SetText(const TCHAR &Caption);
+    void SetText(const TCHAR *Caption);
+    void SetText(const tstring &Caption);
+    void SetText(const NString &Caption);
     const TCHAR *GetText() const;
     t_u32 GetTextSize() const
     {
@@ -54,11 +54,11 @@ namespace nux
         Change the widget minimum width whenever the text is set.
         @param b If true, the widget minimum width is set to match the size of the text
     */
-    void SetMinWidthMatchText (bool b);
+    void SetMinWidthMatchText(bool b);
     //! Return true if the widget with changes to match the text width.
     bool GetMinWidthMatchText() const;
 
-    void SetTextColor (Color color)
+    void SetTextColor(Color color)
     {
       m_TextColor = color;
     };
@@ -67,7 +67,7 @@ namespace nux
       return m_TextColor;
     };
 
-    void SetTextBackgroundColor (const Color &color)
+    void SetTextBackgroundColor(const Color &color)
     {
       m_BackgroundColor = color;
     }
@@ -76,7 +76,7 @@ namespace nux
       return m_BackgroundColor;
     }
 
-    void SetTextAlignment (TextAlignment alignment)
+    void SetTextAlignment(TextAlignment alignment)
     {
       m_TextAlignment = alignment;
     }
@@ -85,17 +85,17 @@ namespace nux
       return m_TextAlignment;
     }
 
-    void SetDrawBackground (bool b)
+    void SetDrawBackground(bool b)
     {
       m_bDrawBackground = b;
     }
-    void SetBackground (AbstractPaintLayer *bkg);
+    void SetBackground(AbstractPaintLayer *bkg);
 
     /////////////////
     //  SIGNALS    //
     /////////////////
 
-    virtual void SetFont (ObjectPtr<FontTexture> Font);
+    virtual void SetFont(ObjectPtr<FontTexture> Font);
   protected:
     virtual bool AcceptKeyNavFocus();
     void AdjustMinWidthToMatchText();
@@ -113,9 +113,9 @@ namespace nux
     bool m_WriteAlpha;
 
   public:
-    virtual void SetGeometry (const Geometry &geo)
+    virtual void SetGeometry(const Geometry &geo)
     {
-      Area::SetGeometry (geo);
+      Area::SetGeometry(geo);
       ComputeContentSize();
     }
   };

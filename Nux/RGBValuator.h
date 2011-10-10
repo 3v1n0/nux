@@ -39,14 +39,14 @@ namespace nux
 
   class RGBValuator : public View //public ValuatorAbstraction
   {
-    NUX_DECLARE_OBJECT_TYPE (RGBValuator, View);
+    NUX_DECLARE_OBJECT_TYPE(RGBValuator, View);
   public:
     RGBValuator(NUX_FILE_LINE_PROTO);
     RGBValuator(Color const& color, NUX_FILE_LINE_PROTO);
     /*!
         Create an initialize the widget with the appropriate color model and value.
 
-        @param ColorModel The color model (CM_RGB, CM_HSV, CM_HLS)
+        @param ColorModel The color model(CM_RGB, CM_HSV, CM_HLS)
         @param x Red if CM_RGB, Hue if CM_HSV, Hue if CM_HLS
         @param y Green if CM_RGB, Saturation if CM_HSV, Light if CM_HLS
         @param z Blue if CM_RGB, Value if CM_HSV, Saturation if CM_HLS
@@ -61,18 +61,18 @@ namespace nux
     void SetColorFormat(color::Format cf);
     Color GetColor() const;
 
-    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
-    void SetRGB (Color const& color);
-    void SetRGB (float r, float g, float b);
-    void SetAlpha (float alpha);
-    void SetRGBA (Color const& color);
-    void SetRGBA (float r, float g, float b, float a);
+    void SetRGB(Color const& color);
+    void SetRGB(float r, float g, float b);
+    void SetAlpha(float alpha);
+    void SetRGBA(Color const& color);
+    void SetRGBA(float r, float g, float b, float a);
 
-    void SetHSV (float h, float s, float v);
-    void SetHLS (float h, float l, float s);
+    void SetHSV(float h, float s, float v);
+    void SetHLS(float h, float l, float s);
 
     // emitters
     void OnReceiveMouseDown_Red     (int x, int y, unsigned long button_flags, unsigned long key_flags);
@@ -85,7 +85,7 @@ namespace nux
     void OnReceiveMouseDrag_Alpha   (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     void OnChangeColorModel(AbstractButton* button);
     void OnChangeColorFormat(AbstractButton* button);
-    void RecvMouseDownColorModel (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseDownColorModel(int x, int y, unsigned long button_flags, unsigned long key_flags);
 
     void OnReceiveMouseUp_Red       (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void OnReceiveMouseUp_Green     (int x, int y, unsigned long button_flags, unsigned long key_flags);
@@ -95,7 +95,7 @@ namespace nux
     void OnChannelKeyboardFocus();
     void OnChannelLostKeyboardFocus();
     void OnChannelValidateKeyboardEntry();
-    void OnChannelCharacter (unsigned int character, int componentIndex);
+    void OnChannelCharacter(unsigned int character, int componentIndex);
 
     //! Cause the widget to emit sigColorChanged signal.
     /*!
@@ -115,14 +115,14 @@ namespace nux
     virtual bool AcceptKeyNavFocus();
 
   private:
-    void DrawRedMarker (GraphicsEngine &graphics_engine);
-    void DrawGreenMarker (GraphicsEngine &graphics_engine);
-    void DrawBlueMarker (GraphicsEngine &graphics_engine);
-    void DrawAlphaMarker (GraphicsEngine &graphics_engine);
+    void DrawRedMarker(GraphicsEngine &graphics_engine);
+    void DrawGreenMarker(GraphicsEngine &graphics_engine);
+    void DrawBlueMarker(GraphicsEngine &graphics_engine);
+    void DrawAlphaMarker(GraphicsEngine &graphics_engine);
 
-    void DrawRGB (GraphicsEngine &graphics_engine);
-    void DrawHSV (GraphicsEngine &graphics_engine);
-    void DrawHLS (GraphicsEngine &graphics_engine);
+    void DrawRGB(GraphicsEngine &graphics_engine);
+    void DrawHSV(GraphicsEngine &graphics_engine);
+    void DrawHLS(GraphicsEngine &graphics_engine);
 
     HLayout *hlayout;
     HLayout *redlayout;

@@ -33,49 +33,49 @@ namespace nux
   class VScrollBar: public ScrollBar
   {
   public:
-    VScrollBar (NUX_FILE_LINE_PROTO);
+    VScrollBar(NUX_FILE_LINE_PROTO);
     ~VScrollBar();
 
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
-    void DrawDownTriangle (GraphicsEngine &graphics_engine, int width, int height, const Geometry &geo, BasePainter &painter);
-    void DrawUpTriangle (GraphicsEngine &graphics_engine, int width, int height, const Geometry &geo, BasePainter &painter);
+    void DrawDownTriangle(GraphicsEngine &graphics_engine, int width, int height, const Geometry &geo, BasePainter &painter);
+    void DrawUpTriangle(GraphicsEngine &graphics_engine, int width, int height, const Geometry &geo, BasePainter &painter);
 
-    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
   private:
-    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw) {};
-    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw) {};
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw) {};
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw) {};
 
-    void VScrollBarHandler (void *v);
-    void ScrollDown (void *v);
-    void ScrollUp (void *v);
-    void TrackUp (void *v);
-    void TrackDown (void *v);
+    void VScrollBarHandler(void *v);
+    void ScrollDown(void *v);
+    void ScrollUp(void *v);
+    void TrackUp(void *v);
+    void TrackDown(void *v);
   public:
-    void SetContainerSize (int x, int y, int w, int h);
-    void SetContentSize (int x, int y, int w, int h);
-    void SetContentOffset (float dx, float dy);
+    void SetContainerSize(int x, int y, int w, int h);
+    void SetContentSize(int x, int y, int w, int h);
+    void SetContentOffset(float dx, float dy);
     void ComputeScrolling();
 
     /////////////////
     //  RECEIVERS  //
     /////////////////
-    void SetValue (float value);
-    void SetParameterName (const char *parameter_name);
+    void SetValue(float value);
+    void SetParameterName(const char *parameter_name);
     ////////////////
     //  EMITTERS  //
     ////////////////
-    void RecvStartScrollDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvStartScrollUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvEndScrollDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvEndScrollUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvStartScrollDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvStartScrollUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvEndScrollDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvEndScrollUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
 
-    void RecvTrackMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvTrackMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvTrackMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void RecvTrackMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvTrackMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvTrackMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
-    void OnSliderMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void OnSliderMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void OnSliderMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void OnSliderMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void OnSliderMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void OnSliderMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
     ///////////////
     //  SIGNALS  //
@@ -94,7 +94,7 @@ namespace nux
     void RecvMouseWheel(int x, int y, int wheel_delta,  long button_flags, unsigned long key_flags);
 
     // When the Scrollbar is used standalone, it is necessary to call ComputeScrolling at the end of the layout.
-    virtual long PostLayoutManagement (long LayoutResult);
+    virtual long PostLayoutManagement(long LayoutResult);
 
     bool AtMinimum();
     bool AtMaximum();

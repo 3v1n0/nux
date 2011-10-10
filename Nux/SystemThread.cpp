@@ -39,11 +39,11 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (SystemThread);
+  NUX_IMPLEMENT_OBJECT_TYPE(SystemThread);
 
 
-  SystemThread::SystemThread (AbstractThread *Parent/* = 0*/)
-    :   AbstractThread (Parent)
+  SystemThread::SystemThread(AbstractThread *Parent/* = 0*/)
+    :   AbstractThread(Parent)
   {
 
   }
@@ -52,7 +52,7 @@ namespace nux
   {
   }
 
-  ThreadState SystemThread::Start (void *arg)
+  ThreadState SystemThread::Start(void *arg)
   {
     if (!m_Parent)
     {
@@ -60,18 +60,18 @@ namespace nux
     }
     else
     {
-      if (m_Parent->Type().IsObjectType (SystemThread::StaticObjectType) )
-        return static_cast<SystemThread *> (m_Parent)->StartChildThread (this, true);
+      if (m_Parent->Type().IsObjectType(SystemThread::StaticObjectType))
+        return static_cast<SystemThread *> (m_Parent)->StartChildThread(this, true);
 
-      if (m_Parent->Type().IsObjectType (WindowThread::StaticObjectType) )
-        return static_cast<WindowThread *> (m_Parent)->StartChildThread (this, true);
+      if (m_Parent->Type().IsObjectType(WindowThread::StaticObjectType))
+        return static_cast<WindowThread *> (m_Parent)->StartChildThread(this, true);
 
-      nuxAssertMsg (0, "[WindowThread::Start] This should not happen.");
+      nuxAssertMsg(0, "[WindowThread::Start] This should not happen.");
       return THREAD_START_ERROR;
     }
   }
 
-  t_u32 SystemThread::Run (void *arg)
+  t_u32 SystemThread::Run(void *arg)
   {
     if (m_UserInitFunc)
     {
@@ -80,60 +80,60 @@ namespace nux
 
     if (m_Parent)
     {
-      if (m_Parent->Type().IsObjectType (SystemThread::StaticObjectType) )
-        static_cast<SystemThread *> (m_Parent)->ChildHasFinished (this);
+      if (m_Parent->Type().IsObjectType(SystemThread::StaticObjectType))
+        static_cast<SystemThread *> (m_Parent)->ChildHasFinished(this);
 
-      if (m_Parent->Type().IsObjectType (WindowThread::StaticObjectType) )
-        static_cast<WindowThread *> (m_Parent)->ChildHasFinished (this);
+      if (m_Parent->Type().IsObjectType(WindowThread::StaticObjectType))
+        static_cast<WindowThread *> (m_Parent)->ChildHasFinished(this);
     }
 
-    SetThreadState (THREADSTOP);
+    SetThreadState(THREADSTOP);
     TerminateAllChildThread();
     return 0;
   }
 
-  ThreadState SystemThread::StartChildThread (NThread *thread, bool Modal)
+  ThreadState SystemThread::StartChildThread(NThread *thread, bool Modal)
   {
     ThreadState state = thread->NThread::Start();
     //if(state == THREADRUNNING)
-    AddChildThread (thread);
+    AddChildThread(thread);
     return state;
   }
 
-  void SystemThread::AddChildThread (NThread *thread)
+  void SystemThread::AddChildThread(NThread *thread)
   {
-    nuxAssert (thread);
+    nuxAssert(thread);
     std::list<NThread *>::iterator it;
-    it = find (m_ChildThread.begin(), m_ChildThread.end(), thread);
+    it = find(m_ChildThread.begin(), m_ChildThread.end(), thread);
 
-    if (it == m_ChildThread.end() )
+    if (it == m_ChildThread.end())
     {
-      m_ChildThread.push_back (thread);
+      m_ChildThread.push_back(thread);
     }
   }
 
-  void SystemThread::RemoveChildThread (NThread *window)
+  void SystemThread::RemoveChildThread(NThread *window)
   {
-    nuxAssert (window);
+    nuxAssert(window);
     std::list<NThread *>::iterator it;
-    it = find (m_ChildThread.begin(), m_ChildThread.end(), window);
+    it = find(m_ChildThread.begin(), m_ChildThread.end(), window);
 
-    if (it != m_ChildThread.end() )
+    if (it != m_ChildThread.end())
     {
-      m_ChildThread.erase (it);
+      m_ChildThread.erase(it);
     }
   }
 
-  void SystemThread::ChildHasFinished (NThread *thread)
+  void SystemThread::ChildHasFinished(NThread *thread)
   {
-    RemoveChildThread (thread);
+    RemoveChildThread(thread);
 
-    if (thread->Type().IsObjectType (WindowThread::StaticObjectType) )
+    if (thread->Type().IsObjectType(WindowThread::StaticObjectType))
     {
       //SuspendChildGraphics(static_cast<WindowThread*>(thread));
     }
 
-    thread->SetThreadState (THREADSTOP);
+    thread->SetThreadState(THREADSTOP);
   }
 
   void SystemThread::TerminateAllChildThread()
@@ -142,7 +142,7 @@ namespace nux
 
     for (it = m_ChildThread.begin(); it != m_ChildThread.end(); it++)
     {
-      (*it)->SetThreadState (THREADSTOP);
+      (*it)->SetThreadState(THREADSTOP);
     }
 
     m_ChildThread.clear();
@@ -150,7 +150,7 @@ namespace nux
 
   bool SystemThread::ThreadCtor()
   {
-    SetThreadState (THREADRUNNING);
+    SetThreadState(THREADRUNNING);
 
     return true;
   }

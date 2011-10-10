@@ -29,27 +29,27 @@
 namespace nux
 {
 
-  ColorLayer::ColorLayer (const Color &color, bool write_alpha, const ROPConfig &ROP)
+  ColorLayer::ColorLayer(const Color &color, bool write_alpha, const ROPConfig &ROP)
   {
     _color = color;
     m_write_alpha = write_alpha;
     m_rop = ROP;
   }
 
-  void ColorLayer::Renderlayer (GraphicsEngine &graphics_engine)
+  void ColorLayer::Renderlayer(GraphicsEngine &graphics_engine)
   {
     t_u32 current_alpha_blend;
     t_u32 current_src_blend_factor;
     t_u32 current_dest_blend_factor;
 
     // Get the current blend states. They will be restored later.
-    graphics_engine.GetRenderStates ().GetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
+    graphics_engine.GetRenderStates().GetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
     
-    graphics_engine.GetRenderStates().SetBlend (m_rop.Blend, m_rop.SrcBlend, m_rop.DstBlend);
-    graphics_engine.QRP_Color (geometry_.x, geometry_.y, geometry_.GetWidth(), geometry_.GetHeight(), _color);
+    graphics_engine.GetRenderStates().SetBlend(m_rop.Blend, m_rop.SrcBlend, m_rop.DstBlend);
+    graphics_engine.QRP_Color(geometry_.x, geometry_.y, geometry_.GetWidth(), geometry_.GetHeight(), _color);
 
     // Restore the blend state
-    graphics_engine.GetRenderStates ().SetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
+    graphics_engine.GetRenderStates().SetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
   }
 
   AbstractPaintLayer *ColorLayer::Clone() const
@@ -57,7 +57,7 @@ namespace nux
     return new ColorLayer(*this);
   }
 
-  void ColorLayer::SetColor (const Color &color)
+  void ColorLayer::SetColor(const Color &color)
   {
     _color = color;
   }
@@ -68,7 +68,7 @@ namespace nux
   }
 
 /////////////////////////////////////////////////////
-  ShapeLayer::ShapeLayer (UXStyleImageRef image_style, const Color &color, unsigned long corners, bool write_alpha, const ROPConfig &ROP)
+  ShapeLayer::ShapeLayer(UXStyleImageRef image_style, const Color &color, unsigned long corners, bool write_alpha, const ROPConfig &ROP)
   {
     m_image_style = image_style;
     m_color = color;
@@ -78,26 +78,26 @@ namespace nux
     m_corners = corners;
   }
 
-  void ShapeLayer::Renderlayer (GraphicsEngine &graphics_engine)
+  void ShapeLayer::Renderlayer(GraphicsEngine &graphics_engine)
   {
     t_u32 current_alpha_blend;
     t_u32 current_src_blend_factor;
     t_u32 current_dest_blend_factor;
 
     // Get the current blend states. They will be restored later.
-    graphics_engine.GetRenderStates ().GetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
-    GetPainter().PaintShapeCornerROP (graphics_engine, geometry_, m_color, m_image_style, m_corners, m_write_alpha, m_rop);
+    graphics_engine.GetRenderStates().GetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
+    GetPainter().PaintShapeCornerROP(graphics_engine, geometry_, m_color, m_image_style, m_corners, m_write_alpha, m_rop);
 
-    graphics_engine.GetRenderStates ().SetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
+    graphics_engine.GetRenderStates().SetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
   }
 
   AbstractPaintLayer *ShapeLayer::Clone() const
   {
-    return new ShapeLayer (*this);
+    return new ShapeLayer(*this);
   }
 
 /////////////////////////////////////////////////////
-  SliceScaledTextureLayer::SliceScaledTextureLayer (UXStyleImageRef image_style, const Color &color, unsigned long corners, bool write_alpha, const ROPConfig &ROP)
+  SliceScaledTextureLayer::SliceScaledTextureLayer(UXStyleImageRef image_style, const Color &color, unsigned long corners, bool write_alpha, const ROPConfig &ROP)
   {
     m_image_style = image_style;
     m_color = color;
@@ -106,18 +106,18 @@ namespace nux
     m_corners = corners;
   }
 
-  void SliceScaledTextureLayer::Renderlayer (GraphicsEngine &graphics_engine)
+  void SliceScaledTextureLayer::Renderlayer(GraphicsEngine &graphics_engine)
   {
-    GetPainter().PaintTextureShape (graphics_engine, geometry_, m_image_style);
+    GetPainter().PaintTextureShape(graphics_engine, geometry_, m_image_style);
   }
 
   AbstractPaintLayer *SliceScaledTextureLayer::Clone() const
   {
-    return new SliceScaledTextureLayer (*this);
+    return new SliceScaledTextureLayer(*this);
   }
 
 /////////////////////////////////////////////////////
-  TextureLayer::TextureLayer (ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm texxform, const Color &color, bool write_alpha, const ROPConfig &ROP)
+  TextureLayer::TextureLayer(ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm texxform, const Color &color, bool write_alpha, const ROPConfig &ROP)
   {
     m_device_texture = device_texture;
     m_color = color;
@@ -126,7 +126,7 @@ namespace nux
     m_texxform = texxform;
   }
 
-  void TextureLayer::Renderlayer (GraphicsEngine &graphics_engine)
+  void TextureLayer::Renderlayer(GraphicsEngine &graphics_engine)
   {
     t_u32 current_alpha_blend;
     t_u32 current_src_blend_factor;
@@ -137,28 +137,28 @@ namespace nux
     t_u32 current_alpha_mask;
     
     // Get the current color mask and blend states. They will be restored later.
-    graphics_engine.GetRenderStates ().GetColorMask (current_red_mask, current_green_mask, current_blue_mask, current_alpha_mask);
-    graphics_engine.GetRenderStates ().GetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
+    graphics_engine.GetRenderStates().GetColorMask(current_red_mask, current_green_mask, current_blue_mask, current_alpha_mask);
+    graphics_engine.GetRenderStates().GetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
 
     
-    graphics_engine.GetRenderStates ().SetColorMask (GL_TRUE, GL_TRUE, GL_TRUE, m_write_alpha ? GL_TRUE : GL_FALSE);
-    graphics_engine.GetRenderStates ().SetBlend (m_rop.Blend, m_rop.SrcBlend, m_rop.DstBlend);
+    graphics_engine.GetRenderStates().SetColorMask(GL_TRUE, GL_TRUE, GL_TRUE, m_write_alpha ? GL_TRUE : GL_FALSE);
+    graphics_engine.GetRenderStates().SetBlend(m_rop.Blend, m_rop.SrcBlend, m_rop.DstBlend);
     
-    graphics_engine.QRP_1Tex (geometry_.x, geometry_.y, geometry_.GetWidth(), geometry_.GetHeight(), m_device_texture,
+    graphics_engine.QRP_1Tex(geometry_.x, geometry_.y, geometry_.GetWidth(), geometry_.GetHeight(), m_device_texture,
                               m_texxform, m_color);
     
     // Restore Color mask and blend states.
-    graphics_engine.GetRenderStates ().SetColorMask (current_red_mask, current_green_mask, current_blue_mask, current_alpha_mask);
-    graphics_engine.GetRenderStates ().SetBlend (current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
+    graphics_engine.GetRenderStates().SetColorMask(current_red_mask, current_green_mask, current_blue_mask, current_alpha_mask);
+    graphics_engine.GetRenderStates().SetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
     
   }
 
   AbstractPaintLayer *TextureLayer::Clone() const
   {
-    return new TextureLayer (*this);
+    return new TextureLayer(*this);
   }
 
-  ObjectPtr< IOpenGLBaseTexture> TextureLayer::GetDeviceTexture ()
+  ObjectPtr< IOpenGLBaseTexture> TextureLayer::GetDeviceTexture()
   {
     return m_device_texture;
   }

@@ -30,19 +30,19 @@ namespace nux
   static Color DummyColor;
 
   ColorPickerDialog::ColorPickerDialog()
-    :   m_Color (DummyColor)
+    :   m_Color(DummyColor)
   {
-    SetWindowTitle ("Color Picker");
-    SetWindowSizeMatchLayout (true);
-    m_Vlayout = new VLayout ("Color Picker");
+    SetWindowTitle("Color Picker");
+    SetWindowSizeMatchLayout(true);
+    m_Vlayout = new VLayout("Color Picker");
     m_ColorEditor = new ColorEditor();
 
-    m_Vlayout->AddView (m_ColorEditor);
-    m_Vlayout->AddLayout (m_ButtonLayout);
+    m_Vlayout->AddView(m_ColorEditor);
+    m_Vlayout->AddLayout(m_ButtonLayout);
 
-    m_Vlayout->SetStretchFactor (0);
+    m_Vlayout->SetStretchFactor(0);
     // Set layout for the window
-    SetLayout (m_Vlayout);
+    SetLayout(m_Vlayout);
   }
 
   ColorPickerDialog::~ColorPickerDialog()
@@ -50,9 +50,9 @@ namespace nux
 
   }
 
-  void ColorPickerDialog::StartDialog (Color &color, color::Model ColorModel, bool StartModal)
+  void ColorPickerDialog::StartDialog(Color &color, color::Model ColorModel, bool StartModal)
   {
-    Dialog::Start (StartModal);
+    Dialog::Start(StartModal);
     m_Color = color;
   }
 
@@ -60,13 +60,13 @@ namespace nux
   {
     m_Color = m_ColorEditor->GetRGBColor();
     m_Color = color::Black;
-    ShowWindow (FALSE);
+    ShowWindow(FALSE);
   }
 
   void ColorPickerDialog::RecvCancel()
   {
     m_Color = DummyColor;
-    ShowWindow (FALSE);
+    ShowWindow(FALSE);
   }
 
 

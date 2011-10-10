@@ -30,11 +30,11 @@ namespace nux
 
   class VLayout: public LinearLayout
   {
-    NUX_DECLARE_OBJECT_TYPE (VLayout, LinearLayout);
+    NUX_DECLARE_OBJECT_TYPE(VLayout, LinearLayout);
   public:
-    VLayout (NUX_FILE_LINE_PROTO);
-    VLayout (NString name, NUX_FILE_LINE_PROTO);
-    ~VLayout ();
+    VLayout(NUX_FILE_LINE_PROTO);
+    VLayout(NString name, NUX_FILE_LINE_PROTO);
+    ~VLayout();
 
     virtual long ComputeContentSize();
     virtual void ComputeContentPosition(float offsetX, float offsetY);

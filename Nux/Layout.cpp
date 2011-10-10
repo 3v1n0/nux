@@ -29,8 +29,8 @@ namespace nux
   NUX_IMPLEMENT_OBJECT_TYPE(Layout);
   NUX_IMPLEMENT_OBJECT_TYPE(SpaceLayout);
 
-  Layout::Layout (NUX_FILE_LINE_DECL)
-    :   Area (NUX_FILE_LINE_PARAM)
+  Layout::Layout(NUX_FILE_LINE_DECL)
+    :   Area(NUX_FILE_LINE_PARAM)
   {
     space_between_children_ = 0;
 
@@ -140,28 +140,28 @@ namespace nux
     SetTopAndBottomPadding(padding);
   }
 
-  void Layout::RemoveChildObject (Area *bo)
+  void Layout::RemoveChildObject(Area *bo)
   {
     std::list<Area *>::iterator it;
-    it = std::find (_layout_element_list.begin(), _layout_element_list.end(), bo);
+    it = std::find(_layout_element_list.begin(), _layout_element_list.end(), bo);
 
     if (it != _layout_element_list.end())
     {
       /* we need to emit the signal before the un-parent, just in case
          one of the callbacks wanted to use this object */
-      ViewRemoved.emit (this, bo);
+      ViewRemoved.emit(this, bo);
       bo->UnParentObject();
-      _layout_element_list.erase (it);
+      _layout_element_list.erase(it);
     }
   }
 
-  bool Layout::FindWidget (Area *WidgetObject) const
+  bool Layout::FindWidget(Area *WidgetObject) const
   {
     std::list<Area *>::const_iterator it;
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      if ( (*it) == WidgetObject)
+      if ((*it) == WidgetObject)
       {
         return true;
       }
@@ -178,48 +178,48 @@ namespace nux
 // If(stretchfactor == 0): the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
 // and the children will take their natural size by expending WidgetLayout.
 // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
-  void Layout::AddLayout (Layout *layout, unsigned int stretchFactor, MinorDimensionPosition minor_position, MinorDimensionSize minor_size, float percentage, LayoutPosition index)
+  void Layout::AddLayout(Layout *layout, unsigned int stretchFactor, MinorDimensionPosition minor_position, MinorDimensionSize minor_size, float percentage, LayoutPosition index)
   {
-    nuxAssertMsg (layout != 0, "[Layout::AddView] Invalid parameter.");
-    NUX_RETURN_IF_TRUE (layout == 0);
+    nuxAssertMsg(layout != 0, "[Layout::AddView] Invalid parameter.");
+    NUX_RETURN_IF_TRUE(layout == 0);
     //  Should never happen
-    nuxAssertMsg (layout != this, "[Layout::AddLayout] Error: Trying to add a layout to itself.");
-    NUX_RETURN_IF_FALSE (layout != 0);
+    nuxAssertMsg(layout != this, "[Layout::AddLayout] Error: Trying to add a layout to itself.");
+    NUX_RETURN_IF_FALSE(layout != 0);
 
     Area *parent = layout->GetParentObject();
-    nuxAssertMsg (parent == 0, "[Layout::AddLayout] Trying to add an object that already has a parent.");
-    NUX_RETURN_IF_TRUE (parent != 0);
+    nuxAssertMsg(parent == 0, "[Layout::AddLayout] Trying to add an object that already has a parent.");
+    NUX_RETURN_IF_TRUE(parent != 0);
 
-    nuxAssertMsg (index >= 0, "[Layout::AddLayout] Invalid index position. Adding at the beginning of the list..");
+    nuxAssertMsg(index >= 0, "[Layout::AddLayout] Invalid index position. Adding at the beginning of the list..");
 
-    layout->SetStretchFactor (stretchFactor);
-    layout->SetPositioning (minor_position);
-    layout->SetExtend (minor_size);
+    layout->SetStretchFactor(stretchFactor);
+    layout->SetPositioning(minor_position);
+    layout->SetExtend(minor_size);
 
     if (percentage < 1.0f)
     {
-      layout->SetPercentage (1.0f);
+      layout->SetPercentage(1.0f);
     }
     else if (percentage > 100.0f)
     {
-      layout->SetPercentage (100.0f);
+      layout->SetPercentage(100.0f);
     }
     else
     {
-      layout->SetPercentage (percentage);
+      layout->SetPercentage(percentage);
     }
 
-    layout->SetParentObject (this);
+    layout->SetParentObject(this);
 
-    layout->OnChildQueueDraw.connect (sigc::mem_fun (this, &Layout::ChildLayoutChildQueuedDraw));
-    layout->OnQueueDraw.connect (sigc::mem_fun (this, &Layout::ChildLayoutQueuedDraw));
+    layout->OnChildQueueDraw.connect(sigc::mem_fun(this, &Layout::ChildLayoutChildQueuedDraw));
+    layout->OnQueueDraw.connect(sigc::mem_fun(this, &Layout::ChildLayoutQueuedDraw));
 
     if (index < 0)
       index = NUX_LAYOUT_BEGIN;
 
     if (index == NUX_LAYOUT_END || index >= _layout_element_list.size())
     {
-      _layout_element_list.push_back (layout);
+      _layout_element_list.push_back(layout);
     }
     else
     {
@@ -260,43 +260,43 @@ namespace nux
       /param index Controls the object position in the layout children.
   */
 
-  void Layout::AddView (Area *bo, unsigned int stretchFactor, MinorDimensionPosition minor_position, MinorDimensionSize minor_size, float percentage, LayoutPosition index)
+  void Layout::AddView(Area *bo, unsigned int stretchFactor, MinorDimensionPosition minor_position, MinorDimensionSize minor_size, float percentage, LayoutPosition index)
   {
-    nuxAssertMsg (bo != 0, "[Layout::AddView] Invalid parameter.");
-    NUX_RETURN_IF_TRUE (bo == 0);
+    nuxAssertMsg(bo != 0, "[Layout::AddView] Invalid parameter.");
+    NUX_RETURN_IF_TRUE(bo == 0);
 
     Area *parent = bo->GetParentObject();
-    nuxAssertMsg (parent == 0, "[Layout::AddView] Trying to add an object that already has a parent.");
-    NUX_RETURN_IF_TRUE (parent != 0);
+    nuxAssertMsg(parent == 0, "[Layout::AddView] Trying to add an object that already has a parent.");
+    NUX_RETURN_IF_TRUE(parent != 0);
 
-    nuxAssertMsg (index >= 0, "[Layout::AddView] Invalid index position. Adding at the beginning of the list..");
+    nuxAssertMsg(index >= 0, "[Layout::AddView] Invalid index position. Adding at the beginning of the list..");
 
-    bo->SetStretchFactor (stretchFactor);
-    bo->SetPositioning (minor_position);
-    bo->SetExtend (minor_size);
+    bo->SetStretchFactor(stretchFactor);
+    bo->SetPositioning(minor_position);
+    bo->SetExtend(minor_size);
 
     if (percentage < 1.0f)
     {
-      bo->SetPercentage (1.0f);
+      bo->SetPercentage(1.0f);
     }
     else if (percentage > 100.0f)
     {
-      bo->SetPercentage (100.0f);
+      bo->SetPercentage(100.0f);
     }
     else
     {
-      bo->SetPercentage (percentage);
+      bo->SetPercentage(percentage);
     }
 
-    bo->SetParentObject (this);
+    bo->SetParentObject(this);
 
-    if (bo->IsView ())
-      static_cast<View *> (bo)->OnQueueDraw.connect (sigc::mem_fun (this, &Layout::ChildViewQueuedDraw));
+    if (bo->IsView())
+      static_cast<View *> (bo)->OnQueueDraw.connect(sigc::mem_fun(this, &Layout::ChildViewQueuedDraw));
 
-    //if (HasFocusControl () && HasFocusableEntries () == false)
+    //if(HasFocusControl() && HasFocusableEntries() == false)
     //{
-      //bo->SetFocused (true);
-      //ChildFocusChanged (this, bo);
+      //bo->SetFocused(true);
+      //ChildFocusChanged(this, bo);
     //}
 
     if (index < 0)
@@ -304,7 +304,7 @@ namespace nux
 
     if (index == NUX_LAYOUT_END || index >= _layout_element_list.size())
     {
-      _layout_element_list.push_back (bo);
+      _layout_element_list.push_back(bo);
     }
     else
     {
@@ -322,13 +322,13 @@ namespace nux
       _layout_element_list.insert(pos, bo);
     }
 
-    ViewAdded.emit (this, bo);
+    ViewAdded.emit(this, bo);
     //--->> Removed because it cause problem with The splitter widget: ComputeContentSize();
   }
 
-  void Layout::AddSpace (unsigned int width, unsigned int stretchFactor, LayoutPosition index)
+  void Layout::AddSpace(unsigned int width, unsigned int stretchFactor, LayoutPosition index)
   {
-    AddLayout (new SpaceLayout(), stretchFactor);
+    AddLayout(new SpaceLayout(), stretchFactor);
   }
 
   void Layout::Clear()
@@ -343,21 +343,21 @@ namespace nux
     _layout_element_list.clear();
   }
 
-  bool Layout::SearchInAllSubNodes (Area *bo)
+  bool Layout::SearchInAllSubNodes(Area *bo)
   {
     std::list<Area *>::iterator it;
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      if ( (*it) == bo)
+      if ((*it) == bo)
       {
         return true;
       }
-      else if ( (*it)->IsLayout() )
+      else if ((*it)->IsLayout())
       {
-        Layout *layout = NUX_STATIC_CAST (Layout *, (*it) );
+        Layout *layout = NUX_STATIC_CAST(Layout *, (*it));
 
-        if (layout->SearchInAllSubNodes (bo) )
+        if (layout->SearchInAllSubNodes(bo))
         {
           return true;
         }
@@ -367,13 +367,13 @@ namespace nux
     return false;
   }
 
-  bool Layout::SearchInFirstSubNodes (Area *bo)
+  bool Layout::SearchInFirstSubNodes(Area *bo)
   {
     std::list<Area *>::iterator it;
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      if ( (*it) == bo)
+      if ((*it) == bo)
       {
         return true;
       }
@@ -420,14 +420,14 @@ namespace nux
     return value;
   }
 
-  unsigned int Layout::GetNumStretchFactor (unsigned int sf)
+  unsigned int Layout::GetNumStretchFactor(unsigned int sf)
   {
     unsigned int count = 0;
     std::list<Area *>::iterator it;
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      if ( (*it)->GetStretchFactor() == sf)
+      if ((*it)->GetStretchFactor() == sf)
       {
         count++;
       }
@@ -442,9 +442,9 @@ namespace nux
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      if ( (*it)->IsView() )
+      if ((*it)->IsView())
       {
-        View *ic = NUX_STATIC_CAST (View *, (*it) );
+        View *ic = NUX_STATIC_CAST(View *, (*it));
         ic->DoneRedraw();
       }
     }
@@ -454,7 +454,7 @@ namespace nux
   {
     bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
 
-    if(mouse_inside == false)
+    if (mouse_inside == false)
       return NULL;
 
     std::list<Area *>::iterator it;
@@ -463,7 +463,7 @@ namespace nux
       if ((*it)->IsVisible() && (*it)->GetInputEventSensitivity())
       {
         Area* hit_view = NUX_STATIC_CAST(Area*, (*it)->FindAreaUnderMouse(mouse_position, event_type));
-        if(hit_view)
+        if (hit_view)
           return hit_view;
       }
     }
@@ -471,7 +471,7 @@ namespace nux
     return NULL;
   }
 
-  void Layout::ProcessDraw (GraphicsEngine &graphics_engine, bool force_draw)
+  void Layout::ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     std::list<Area *>::iterator it;
     graphics_engine.PushModelViewMatrix(Get2DMatrix());
@@ -485,36 +485,36 @@ namespace nux
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      if (!(*it)->IsVisible ())
+      if (!(*it)->IsVisible())
         continue;
 
-      if ((*it)->IsView ())
+      if ((*it)->IsView())
       {
-        View *ic = NUX_STATIC_CAST (View*, (*it));
-        ic->ProcessDraw (graphics_engine, force_draw);
+        View *ic = NUX_STATIC_CAST(View*, (*it));
+        ic->ProcessDraw(graphics_engine, force_draw);
       }
-      else if ((*it)->IsLayout ())
+      else if ((*it)->IsLayout())
       {
-        Layout *layout = NUX_STATIC_CAST (Layout*, (*it));
-        layout->ProcessDraw (graphics_engine, force_draw);
+        Layout *layout = NUX_STATIC_CAST(Layout*, (*it));
+        layout->ProcessDraw(graphics_engine, force_draw);
       }
       // InputArea should be tested last
-      else if ((*it)->IsInputArea ())
+      else if ((*it)->IsInputArea())
       {
-        InputArea *input_area = NUX_STATIC_CAST (InputArea*, (*it));
-        input_area->OnDraw (graphics_engine, force_draw);
+        InputArea *input_area = NUX_STATIC_CAST(InputArea*, (*it));
+        input_area->OnDraw(graphics_engine, force_draw);
       }
     }
 
     graphics_engine.PopClippingRectangle();
     graphics_engine.PopModelViewMatrix();
 
-    //graphics_engine.PopClipOffset ();
+    //graphics_engine.PopClipOffset();
 
     _queued_draw = false;
   }
 
-  void Layout::QueueDraw ()
+  void Layout::QueueDraw()
   {
     if (_queued_draw)
     {
@@ -526,28 +526,28 @@ namespace nux
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      if ((*it)->IsView ())
+      if ((*it)->IsView())
       {
-        View *ic = NUX_STATIC_CAST (View *, (*it));
-        ic->QueueDraw ();
+        View *ic = NUX_STATIC_CAST(View *, (*it));
+        ic->QueueDraw();
       }
-      else if ((*it)->IsLayout ())
+      else if ((*it)->IsLayout())
       {
-        Layout *layout = NUX_STATIC_CAST (Layout *, (*it));
-        layout->QueueDraw ();
+        Layout *layout = NUX_STATIC_CAST(Layout *, (*it));
+        layout->QueueDraw();
       }
     }
 
     _queued_draw = true;
-    OnQueueDraw.emit (this);
+    OnQueueDraw.emit(this);
   }
 
-  bool Layout::IsQueuedForDraw ()
+  bool Layout::IsQueuedForDraw()
   {
     return _queued_draw;
   }
 
-  void Layout::SetContentDistribution (LayoutContentDistribution stacking)
+  void Layout::SetContentDistribution(LayoutContentDistribution stacking)
   {
     m_ContentStacking = stacking;
   }
@@ -557,24 +557,24 @@ namespace nux
     return m_ContentStacking;
   }
 
-  void Layout::RequestBottomUpLayoutComputation (Area *bo_initiator)
+  void Layout::RequestBottomUpLayoutComputation(Area *bo_initiator)
   {
 
   }
 
-  void Layout::ChildViewQueuedDraw (View *view)
+  void Layout::ChildViewQueuedDraw(View *view)
   {
-    OnChildQueueDraw.emit (view);
+    OnChildQueueDraw.emit(view);
   }
 
-  void Layout::ChildLayoutQueuedDraw (Layout *layout)
+  void Layout::ChildLayoutQueuedDraw(Layout *layout)
   {
-    OnChildQueueDraw.emit (layout);
+    OnChildQueueDraw.emit(layout);
   }
 
-  void Layout::ChildLayoutChildQueuedDraw (Area *area)
+  void Layout::ChildLayoutChildQueuedDraw(Area *area)
   {
-    OnChildQueueDraw.emit (area);
+    OnChildQueueDraw.emit(area);
   }
 
   bool Layout::AcceptKeyNavFocus()

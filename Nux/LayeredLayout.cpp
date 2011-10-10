@@ -29,17 +29,17 @@
 namespace nux
 {
   LayeredLayout::LayeredChildProperties::LayeredChildProperties(bool expand, int x, int y, int width, int height)
-  : m_expand (expand),
-    m_x (x),
-    m_y (y),
-    m_width (width),
-    m_height (height)
+  : m_expand(expand),
+    m_x(x),
+    m_y(y),
+    m_width(width),
+    m_height(height)
   {}
 
-  LayeredLayout::LayeredChildProperties::~LayeredChildProperties ()
+  LayeredLayout::LayeredChildProperties::~LayeredChildProperties()
   {}
 
-  void LayeredLayout::LayeredChildProperties::Update (bool expand, int x, int y, int width, int height)
+  void LayeredLayout::LayeredChildProperties::Update(bool expand, int x, int y, int width, int height)
   {
     m_expand = expand;
     m_x = x;
@@ -48,15 +48,15 @@ namespace nux
     m_height = height;
   }
 
-  NUX_IMPLEMENT_OBJECT_TYPE (LayeredLayout);
+  NUX_IMPLEMENT_OBJECT_TYPE(LayeredLayout);
 
-  LayeredLayout::LayeredLayout (NUX_FILE_LINE_DECL)
-  : Layout (NUX_FILE_LINE_PARAM),
-    m_active_index (0),
-    m_active_area (NULL),
-    m_paint_all (false),
-    m_input_mode (INPUT_MODE_ACTIVE),
-    m_child_draw_queued (false)
+  LayeredLayout::LayeredLayout(NUX_FILE_LINE_DECL)
+  : Layout(NUX_FILE_LINE_PARAM),
+    m_active_index(0),
+    m_active_area(NULL),
+    m_paint_all(false),
+    m_input_mode(INPUT_MODE_ACTIVE),
+    m_child_draw_queued(false)
   {
     m_ContentStacking = eStackLeft;
     OnChildQueueDraw.connect(sigc::mem_fun(this, &LayeredLayout::ChildQueueDraw));
@@ -93,7 +93,7 @@ namespace nux
     int total_max_height = 0;
     int ret = 0;
 
-    for (it = _layout_element_list.begin (); it != _layout_element_list.end (); ++it)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); ++it)
     {
       Area                   *area = *it;
       LayeredChildProperties *props;
@@ -118,14 +118,14 @@ namespace nux
 
         // It wants to expand, however we need to check that it doesn't need at minimum more
         // space than we have
-        max_width = MAX (base.width, area->GetMinimumWidth ());
-        max_height = MAX (base.height, area->GetMinimumHeight ());
+        max_width = MAX(base.width, area->GetMinimumWidth());
+        max_height = MAX(base.height, area->GetMinimumHeight());
 
         geo.width = max_width;
         geo.height = max_height;
 
-        total_max_width = MAX (total_max_width, max_width);
-        total_max_height = MAX (total_max_height, max_height);
+        total_max_width = MAX(total_max_width, max_width);
+        total_max_height = MAX(total_max_height, max_height);
       }
       else
       {
@@ -135,11 +135,11 @@ namespace nux
         geo.height = props->m_height;
       }
 
-      (*it)->SetGeometry (geo);
-      (*it)->ComputeContentSize ();
+      (*it)->SetGeometry(geo);
+      (*it)->ComputeContentSize();
     }
 
-    SetBaseSize (total_max_width, total_max_height);
+    SetBaseSize(total_max_width, total_max_height);
 
     if (base.width < total_max_width)
       ret |= eLargerWidth;
@@ -154,73 +154,73 @@ namespace nux
     return ret;
   }
 
-  void LayeredLayout::PaintOne (Area *_area, GraphicsEngine &gfx_context, bool force_draw)
+  void LayeredLayout::PaintOne(Area *_area, GraphicsEngine &gfx_context, bool force_draw)
   {
-    if (_area->IsArea ())
+    if (_area->IsArea())
     {
-      InputArea *area = NUX_STATIC_CAST (InputArea *, _area);
-      area->OnDraw (gfx_context, force_draw);
+      InputArea *area = NUX_STATIC_CAST(InputArea *, _area);
+      area->OnDraw(gfx_context, force_draw);
     }
-    else if (_area->IsView ())
+    else if (_area->IsView())
     {
-      View *ic = NUX_STATIC_CAST (View *, _area);
-      ic->ProcessDraw (gfx_context, force_draw);
+      View *ic = NUX_STATIC_CAST(View *, _area);
+      ic->ProcessDraw(gfx_context, force_draw);
     }
-    else if (_area->IsLayout ())
+    else if (_area->IsLayout())
     {
-      Layout *layout = NUX_STATIC_CAST (Layout *, _area);
-      layout->ProcessDraw (gfx_context, force_draw);
+      Layout *layout = NUX_STATIC_CAST(Layout *, _area);
+      layout->ProcessDraw(gfx_context, force_draw);
     }
   }
 
-  void LayeredLayout::ProcessDraw (GraphicsEngine &gfx_context, bool force_draw)
+  void LayeredLayout::ProcessDraw(GraphicsEngine &gfx_context, bool force_draw)
   {
-    Geometry base = GetGeometry ();
-    gfx_context.PushClippingRectangle (base);
+    Geometry base = GetGeometry();
+    gfx_context.PushClippingRectangle(base);
 
     if (m_paint_all)
     {
-      std::list<Area *>::iterator it, eit = _layout_element_list.end ();
+      std::list<Area *>::iterator it, eit = _layout_element_list.end();
       t_u32 alpha = 0, src = 0, dest = 0;
 
-      gfx_context.GetRenderStates ().GetBlend (alpha, src, dest);
-      gfx_context.GetRenderStates ().SetBlend (true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+      gfx_context.GetRenderStates().GetBlend(alpha, src, dest);
+      gfx_context.GetRenderStates().SetBlend(true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
       nux::GetPainter().PaintBackground(gfx_context, base);
       nux::GetPainter().PushBackgroundStack();
 
-      for (it = _layout_element_list.begin (); it != eit; ++it)
+      for (it = _layout_element_list.begin(); it != eit; ++it)
       {
-        if ((*it)->IsVisible ())
-          PaintOne (static_cast<Area *> (*it), gfx_context, true);
+        if ((*it)->IsVisible())
+          PaintOne(static_cast<Area *> (*it), gfx_context, true);
       }
 
       nux::GetPainter().PopBackgroundStack();
 
-      gfx_context.GetRenderStates ().SetBlend (alpha, src, dest);
+      gfx_context.GetRenderStates().SetBlend(alpha, src, dest);
 
       m_child_draw_queued = false;
     }
-    else if (m_active_area && m_active_area->IsVisible ())
+    else if (m_active_area && m_active_area->IsVisible())
     {
-      PaintOne (m_active_area, gfx_context, force_draw);
+      PaintOne(m_active_area, gfx_context, force_draw);
     }
 
-    gfx_context.PopClippingRectangle ();
+    gfx_context.PopClippingRectangle();
     _queued_draw = false;
   }
 
   Area* LayeredLayout::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
-    if(m_active_area == NULL)
+    if (m_active_area == NULL)
     return NULL;
     
     bool mouse_inside = m_active_area->TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
 
-    if(mouse_inside == false)
+    if (mouse_inside == false)
       return NULL;
 
-    if(m_input_mode == INPUT_MODE_ACTIVE)
+    if (m_input_mode == INPUT_MODE_ACTIVE)
     {
       if (m_active_area && m_active_area->GetInputEventSensitivity() && m_active_area->GetInputEventSensitivity())
         return m_active_area->FindAreaUnderMouse(mouse_position, event_type);
@@ -229,7 +229,7 @@ namespace nux
     {
       std::list<Area *>::reverse_iterator it, eit = _layout_element_list.rend();
 
-      for (it = _layout_element_list.rbegin (); it != eit; ++it)
+      for (it = _layout_element_list.rbegin(); it != eit; ++it)
       {
         Area *area = (*it);
 
@@ -281,7 +281,7 @@ namespace nux
 
   void LayeredLayout::ChildVisibilityChanged(Area *area, bool visible)
   {
-    QueueDraw ();
+    QueueDraw();
   }
 
   //
@@ -296,12 +296,12 @@ namespace nux
     // Return if the area already has a parent
     NUX_RETURN_IF_NOTNULL(area->GetParentObject());
 
-    props = new LayeredChildProperties (expand, x, y, width, height);
+    props = new LayeredChildProperties(expand, x, y, width, height);
 
     std::map<Area*, LayeredChildProperties*>::iterator it = area_property_map_.find(area);
     if (it != area_property_map_.end())
     {
-      delete (it->second);
+      delete(it->second);
       it->second = NULL;
     }
     area_property_map_[area] = props;
@@ -311,17 +311,17 @@ namespace nux
       m_active_area = area;
     }
 
-    props->m_vis_it = area->OnVisibleChanged.connect (sigc::mem_fun (this, &LayeredLayout::ChildVisibilityChanged));
+    props->m_vis_it = area->OnVisibleChanged.connect(sigc::mem_fun(this, &LayeredLayout::ChildVisibilityChanged));
 
-    if (area->IsLayout ())
-      Layout::AddLayout (static_cast<Layout *> (area));
+    if (area->IsLayout())
+      Layout::AddLayout(static_cast<Layout *> (area));
     else
-      Layout::AddView (area);
+      Layout::AddView(area);
 
-    QueueDraw ();
+    QueueDraw();
   }
 
-  void LayeredLayout::UpdateLayer (Area *area, bool expand, int x, int y, int width, int height)
+  void LayeredLayout::UpdateLayer(Area *area, bool expand, int x, int y, int width, int height)
   {
     LayeredChildProperties *props;
 
@@ -340,12 +340,12 @@ namespace nux
     if (props == NULL)
       return;
 
-    props->Update (expand, x, y, width, height);
+    props->Update(expand, x, y, width, height);
 
-    QueueDraw ();
+    QueueDraw();
   }
 
-  void LayeredLayout::RemoveLayer (Area *area)
+  void LayeredLayout::RemoveLayer(Area *area)
   {
     if (area == NULL)
       return;
@@ -367,7 +367,7 @@ namespace nux
 
     if (props)
     {
-      (*props->m_vis_it).disconnect ();
+      (*props->m_vis_it).disconnect();
     }
 
     area_property_map_.erase(prop_it);
@@ -379,7 +379,7 @@ namespace nux
       int index = 0;
       m_active_index = 0;
       m_active_area = NULL;
-      for (it = _layout_element_list.begin (); it != eit; ++it, ++index)
+      for (it = _layout_element_list.begin(); it != eit; ++it, ++index)
       {
         if (*it != area)
         {
@@ -390,15 +390,15 @@ namespace nux
       }
     }
 
-    Layout::RemoveChildObject (area);
+    Layout::RemoveChildObject(area);
   }
 
-  void LayeredLayout::SetActiveLayerN (int index_)
+  void LayeredLayout::SetActiveLayerN(int index_)
   {
-    std::list<Area *>::iterator it, eit = _layout_element_list.end ();
+    std::list<Area *>::iterator it, eit = _layout_element_list.end();
     int i = 0;
 
-    NUX_RETURN_IF_FALSE((t_uint32)index_ < _layout_element_list.size ());
+    NUX_RETURN_IF_FALSE((t_uint32)index_ < _layout_element_list.size());
 
     if (index_ == m_active_index)
       return;
@@ -406,81 +406,81 @@ namespace nux
     m_active_index = index_;
     m_active_area = NULL;
 
-    for (it = _layout_element_list.begin (); it != eit; ++it)
+    for (it = _layout_element_list.begin(); it != eit; ++it)
     {
       if (i == m_active_index && !m_active_area)
       {
         m_active_area = static_cast<Area *> (*it);
       }
 
-      if ((*it)->IsView ())
+      if ((*it)->IsView())
       {
-        static_cast<View *> (*it)->QueueDraw ();
+        static_cast<View *> (*it)->QueueDraw();
       } 
-      else if ((*it)->IsLayout ())
+      else if ((*it)->IsLayout())
       {
-        static_cast<Layout *> (*it)->QueueDraw ();
+        static_cast<Layout *> (*it)->QueueDraw();
       }
 
       i++;
     }
 
-    QueueDraw ();
+    QueueDraw();
   }
 
-  int LayeredLayout::GetActiveLayerN ()
+  int LayeredLayout::GetActiveLayerN()
   {
     return m_active_index;
   }
 
   void LayeredLayout::SetActiveLayer  (Area *area)
   {
-    std::list<Area *>::iterator it, eit = _layout_element_list.end ();
+    std::list<Area *>::iterator it, eit = _layout_element_list.end();
     int i = 0;
 
-    for (it = _layout_element_list.begin (); it != eit; ++it)
+    for (it = _layout_element_list.begin(); it != eit; ++it)
     {
       Area *a = static_cast<Area *> (*it);
 
       if (area == a)
       {
-        SetActiveLayerN (i);
+        SetActiveLayerN(i);
         return;
       }
       i++;
     }
-    nuxDebugMsg("[LayeredLayout::LowerBottom] Area (%p) is not a child of LayeredLayout (%p)", area, this);
+    nuxDebugMsg("[LayeredLayout::LowerBottom] Area(%p) is not a child of LayeredLayout(%p)", area, this);
   }
 
   void LayeredLayout::OnLayerGeometryChanged(Area* area, Geometry geo)
   {
     // Set the LayeredLayout to the same saize as the active layer;
-    if(area && (area == m_active_area))
+    if (area && (area == m_active_area))
     {
       SetGeometry(geo);
     }
   }
 
-  Area * LayeredLayout::GetActiveLayer ()
+  Area * LayeredLayout::GetActiveLayer()
   {
     return m_active_area;
   }
 
-  void LayeredLayout::SetPaintAll (bool paint_all)
+  void LayeredLayout::SetPaintAll(bool paint_all)
   {
     if (m_paint_all == paint_all)
       return;
 
     m_paint_all = paint_all;
-    QueueDraw ();
+    QueueDraw();
   }
 
-  bool LayeredLayout::GetPaintAll ()
+  bool LayeredLayout::GetPaintAll()
   {
     return m_paint_all;
   }
 
-  void LayeredLayout::SetInputMode (LayeredLayout::InputMode input_mode)
+  void LayeredLayout::SetInputMode(LayeredLayout::InputMode input_mode)
   {
     if (m_input_mode == input_mode)
       return;
@@ -488,21 +488,21 @@ namespace nux
     m_input_mode = input_mode;
   }
 
-  LayeredLayout::InputMode LayeredLayout::GetInputMode ()
+  LayeredLayout::InputMode LayeredLayout::GetInputMode()
   {
     return m_input_mode;
   }
 
-  void LayeredLayout::Raise (Area *area, Area *above)
+  void LayeredLayout::Raise(Area *area, Area *above)
   {
-    std::list<Area *>::iterator it, eit = _layout_element_list.end ();
+    std::list<Area *>::iterator it, eit = _layout_element_list.end();
     std::list<Area *>::iterator area_it = eit;
     std::list<Area *>::iterator above_it = eit;
 
     NUX_RETURN_IF_NULL(area);
     NUX_RETURN_IF_NULL(above);
 
-    for (it = _layout_element_list.begin (); it != eit; ++it)
+    for (it = _layout_element_list.begin(); it != eit; ++it)
     {
       if (above == (*it))
         above_it = it;
@@ -521,20 +521,20 @@ namespace nux
       return;
     }
 
-    _layout_element_list.erase (area_it);
-    _layout_element_list.insert (++above_it, area);
+    _layout_element_list.erase(area_it);
+    _layout_element_list.insert(++above_it, area);
   }
 
-  void LayeredLayout::Lower (Area *area, Area *below)
+  void LayeredLayout::Lower(Area *area, Area *below)
   {
-    std::list<Area *>::iterator it, eit = _layout_element_list.end ();
+    std::list<Area *>::iterator it, eit = _layout_element_list.end();
     std::list<Area *>::iterator area_it = eit;
     std::list<Area *>::iterator below_it = eit;
 
     NUX_RETURN_IF_NULL(area);
     NUX_RETURN_IF_NULL(below);
 
-    for (it = _layout_element_list.begin (); it != eit; ++it)
+    for (it = _layout_element_list.begin(); it != eit; ++it)
     {
       if (below == (*it))
         below_it = it;
@@ -553,18 +553,18 @@ namespace nux
       return;
     }
 
-    _layout_element_list.erase (area_it);
-    _layout_element_list.insert (below_it, area);
+    _layout_element_list.erase(area_it);
+    _layout_element_list.insert(below_it, area);
   }
 
-  void LayeredLayout::RaiseTop (Area *area)
+  void LayeredLayout::RaiseTop(Area *area)
   {
-    std::list<Area *>::iterator it, eit = _layout_element_list.end ();
+    std::list<Area *>::iterator it, eit = _layout_element_list.end();
     std::list<Area *>::iterator area_it = eit;
 
     NUX_RETURN_IF_NULL(area);
 
-    for (it = _layout_element_list.begin (); it != eit; ++it)
+    for (it = _layout_element_list.begin(); it != eit; ++it)
     {
       if (area == (*it))
         area_it = it;
@@ -576,18 +576,18 @@ namespace nux
       return;
     }
 
-    _layout_element_list.erase (area_it);
-    _layout_element_list.insert (eit, area);
+    _layout_element_list.erase(area_it);
+    _layout_element_list.insert(eit, area);
   }
 
-  void LayeredLayout::LowerBottom (Area *area)
+  void LayeredLayout::LowerBottom(Area *area)
   {
-    std::list<Area *>::iterator it, eit = _layout_element_list.end ();
+    std::list<Area *>::iterator it, eit = _layout_element_list.end();
     std::list<Area *>::iterator area_it = eit;
 
     NUX_RETURN_IF_NULL(area);
 
-    for (it = _layout_element_list.begin (); it != eit; ++it)
+    for (it = _layout_element_list.begin(); it != eit; ++it)
     {
       if (area == (*it))
         area_it = it;
@@ -599,8 +599,8 @@ namespace nux
       return;
     }
 
-    _layout_element_list.erase (area_it);
-    _layout_element_list.insert (_layout_element_list.begin (), area);
+    _layout_element_list.erase(area_it);
+    _layout_element_list.insert(_layout_element_list.begin(), area);
   }
 
   Area* LayeredLayout::KeyNavIteration(KeyNavDirection direction)

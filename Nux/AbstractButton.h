@@ -129,8 +129,8 @@ namespace nux
     virtual void RecvMouseUp    (int x, int y, unsigned long button_flags, unsigned long key_flags);
     virtual void RecvMouseDown  (int x, int y, unsigned long button_flags, unsigned long key_flags);
     virtual void RecvMouseMove  (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    virtual void RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    virtual void RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    virtual void RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    virtual void RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags);
     virtual void RecvClick      (int x, int y, unsigned long button_flags, unsigned long key_flags) = 0;
   };
 }

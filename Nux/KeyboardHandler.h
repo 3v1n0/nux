@@ -54,7 +54,7 @@ namespace nux
     virtual ~BaseKeyboardHandler();
 
 
-    virtual long ProcessKey (
+    virtual long ProcessKey(
       unsigned long    eventType    /*event type*/,
       unsigned long    keysym       /*event keysym*/,
       unsigned long    state        /*event state*/,
@@ -87,21 +87,21 @@ namespace nux
       return m_text_positiony;
     }
 
-    void SetText (const TCHAR *str);
-    void SetText (const tstring &s);
-    void SetText (const NString &s);
+    void SetText(const TCHAR *str);
+    void SetText(const tstring &s);
+    void SetText(const NString &s);
 
     void ClearText();
-    void PlaceCaret (t_u32 cp);
+    void PlaceCaret(t_u32 cp);
 
     void MoveCursorAtStart();
     void MoveCursorAtEnd();
 
-    void SetKeyEntryType (eKeyEntryType keytype);
+    void SetKeyEntryType(eKeyEntryType keytype);
     eKeyEntryType GetKeyEntryType();
 
-    void SetClipRegion (const Geometry &g);
-    void GetTextSelection (t_s32 *start, t_s32 *end) const;
+    void SetClipRegion(const Geometry &g);
+    void GetTextSelection(t_s32 *start, t_s32 *end) const;
     t_s32 GetTextSelectionStart() const;
     t_s32 GetTextSelectionEnd() const;
     NString GetSelectedText() const;
@@ -109,22 +109,22 @@ namespace nux
     void UnselectAllText();
     bool IsTextSelected();
 
-    void SetPrefix (NString); // 0x865, 25 rad, 25 degree...
-    void SetPostfix (NString);
+    void SetPrefix(NString); // 0x865, 25 rad, 25 degree...
+    void SetPostfix(NString);
 
     void EnterFocus();
 
-    t_u32 NextWordPosition (t_u32 cp);
-    t_u32 PrevWordPosition (t_u32 cp);
-    void ResolveCaretPosition (t_s32 x, t_s32 y);
-    void CaretAutoScroll (t_s32 x, t_s32 y, Geometry geo);
-    void MouseDown (t_s32 x, t_s32 y);
-    void MouseUp (t_s32 x, t_s32 y);
-    void MouseDrag (t_s32 x, t_s32 y);
+    t_u32 NextWordPosition(t_u32 cp);
+    t_u32 PrevWordPosition(t_u32 cp);
+    void ResolveCaretPosition(t_s32 x, t_s32 y);
+    void CaretAutoScroll(t_s32 x, t_s32 y, Geometry geo);
+    void MouseDown(t_s32 x, t_s32 y);
+    void MouseUp(t_s32 x, t_s32 y);
+    void MouseDrag(t_s32 x, t_s32 y);
     //bool IsMouseDrag();
 
-    void SetFont (ObjectPtr<FontTexture> Font);
-    ObjectPtr<FontTexture> GetFont () const;
+    void SetFont(ObjectPtr<FontTexture> Font);
+    ObjectPtr<FontTexture> GetFont() const;
 
   protected:
     ObjectPtr<FontTexture> m_Font;
@@ -143,7 +143,7 @@ namespace nux
     t_s32   m_first_visible_char;   //!< First visible character in the edit control
 
     void DeleteSelectionText();
-    void InsertChar (t_u32 character);
+    void InsertChar(t_u32 character);
     void AdjustCursorAndTextPosition();
 
 

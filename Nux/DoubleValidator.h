@@ -32,8 +32,8 @@ namespace nux
   {
   public:
 
-    DoubleValidator (double Minimum = -1.7E308, double Maximum = 1.7E308);
-    DoubleValidator (const DoubleValidator &validator);
+    DoubleValidator(double Minimum = -1.7E308, double Maximum = 1.7E308);
+    DoubleValidator(const DoubleValidator &validator);
     DoubleValidator &operator= (const DoubleValidator &rhs);
     virtual ~DoubleValidator();
 
@@ -42,18 +42,18 @@ namespace nux
     /*!
         @return The input value clamped to the range [m_Minimum, m_Maximum].
     */
-    double GetClampedValue (double d) const;
+    double GetClampedValue(double d) const;
 
-    virtual void Alternative (const TCHAR *str);
+    virtual void Alternative(const TCHAR *str);
 
-    void SetDecimals (int dec);
-    void SetMinimum (double value);
-    double GetMinimum () const;
-    void SetMaximum (double value);
-    double GetMaximum () const;
+    void SetDecimals(int dec);
+    void SetMinimum(double value);
+    double GetMinimum() const;
+    void SetMaximum(double value);
+    double GetMaximum() const;
 
-    NString ToString (double d);
-    double ToDouble (const TCHAR *str);
+    NString ToString(double d);
+    double ToDouble(const TCHAR *str);
 
   private:
     double m_Minimum;

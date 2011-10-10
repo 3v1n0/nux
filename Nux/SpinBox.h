@@ -31,24 +31,24 @@ namespace nux
   class SpinBox: public SpinBox_Logic
   {
   public:
-    SpinBox (int Value = 0, int Step = 1, int MinValue = 0, int MaxValue = 100, NUX_FILE_LINE_PROTO);
+    SpinBox(int Value = 0, int Step = 1, int MinValue = 0, int MaxValue = 100, NUX_FILE_LINE_PROTO);
     virtual ~SpinBox();
 
-    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     virtual void ImplementIncrementBtn();
     virtual void ImplementDecrementBtn();
     virtual void ImplementValidateEntry();
 
-    void SetValue (int value);
+    void SetValue(int value);
     int GetValue() const;
-    void SetStep (int i);
+    void SetStep(int i);
     int GetStep() const;
     int GetMinValue() const;
     int GetMaxValue() const;
-    void SetRange (int MinValue, int Maxvalue);
+    void SetRange(int MinValue, int Maxvalue);
 
     sigc::signal<void, SpinBox * > sigIncrement;
     sigc::signal<void, SpinBox * > sigDecrement;

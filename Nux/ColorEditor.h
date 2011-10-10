@@ -47,24 +47,24 @@ namespace nux
   class ColorDialogProxy
   {
   public:
-    ColorDialogProxy (bool ModalWindow);
+    ColorDialogProxy(bool ModalWindow);
     ~ColorDialogProxy();
 
-    void RecvDialogOk (ColorEditor *coloreditor);
-    void RecvDialogCancel (ColorEditor *coloreditor);
-    void RecvDialogChange (ColorEditor *coloreditor);
+    void RecvDialogOk(ColorEditor *coloreditor);
+    void RecvDialogCancel(ColorEditor *coloreditor);
+    void RecvDialogChange(ColorEditor *coloreditor);
 
     void Start();
     bool IsActive();
     void StopThreadMonitoring();
 
-    void SetColor (Color color);
+    void SetColor(Color color);
     Color GetColor();
-    void SetPreviousColor (Color color);
+    void SetPreviousColor(Color color);
     Color GetPreviousColor();
-    void SetColorModel (color::Model color_model);
+    void SetColorModel(color::Model color_model);
     color::Model GetColorModel();
-    void SetColorChannel (color::Channel color_model);
+    void SetColorChannel(color::Channel color_model);
     color::Channel GetColorChannel();
 
   private:
@@ -84,34 +84,34 @@ namespace nux
   class ColorEditor : public View
   {
   public:
-    ColorEditor (NUX_FILE_LINE_PROTO);
+    ColorEditor(NUX_FILE_LINE_PROTO);
     ~ColorEditor();
-    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
 
-    void SetRed (double r);
-    void SetGreen (double g);
-    void SetBlue (double b);
-    void SetHue (double h);
-    void SetSaturation (double s);
-    void SetValue (double v);
+    void SetRed(double r);
+    void SetGreen(double g);
+    void SetBlue(double b);
+    void SetHue(double h);
+    void SetSaturation(double s);
+    void SetValue(double v);
 
-    void SetRGB (double r, double g, double b);
-    void SetHSV (double h, double s, double v);
+    void SetRGB(double r, double g, double b);
+    void SetHSV(double h, double s, double v);
     void SetRGB(Color const& rgb);
     Color GetRGBColor() const;
 
-    void SetColorModel (color::Model, color::Channel);
+    void SetColorModel(color::Model, color::Channel);
     color::Model GetColorModel() const;
     color::Channel GetColorChannel() const;
 
-    void RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
-    void RecvPickerMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvPickerMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvPickerMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void RecvPickerMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvPickerMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvPickerMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
     void RecvCheckColorModel(bool, color::Model, color::Channel);
     void RecvCheckColorModel0(AbstractButton *button, color::Model color_mode, color::Channel channel);
@@ -121,9 +121,9 @@ namespace nux
   protected:
     virtual bool AcceptKeyNavFocus();
   private:
-    void DrawBaseChannelMarker (GraphicsEngine &graphics_engine);
-    void DrawRGB (GraphicsEngine &graphics_engine, bool force_draw);
-    void DrawHSV (GraphicsEngine &graphics_engine, bool force_draw);
+    void DrawBaseChannelMarker(GraphicsEngine &graphics_engine);
+    void DrawRGB(GraphicsEngine &graphics_engine, bool force_draw);
+    void DrawHSV(GraphicsEngine &graphics_engine, bool force_draw);
 
     color::Channel   m_ColorChannel;
     color::Model     m_ColorModel;

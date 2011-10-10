@@ -39,12 +39,12 @@ namespace nux
     //  12  13  ..  ..  ..  ..
     // This is a left to right fill, going down.
 
-    NUX_DECLARE_OBJECT_TYPE (GridHLayout, Layout);
+    NUX_DECLARE_OBJECT_TYPE(GridHLayout, Layout);
   public:
-    GridHLayout (NUX_FILE_LINE_PROTO);
-    ~GridHLayout ();
+    GridHLayout(NUX_FILE_LINE_PROTO);
+    ~GridHLayout();
 
-    virtual void GetCompositeList (std::list<Area *> *ViewList);
+    virtual void GetCompositeList(std::list<Area *> *ViewList);
     
     //! Control the visibility of elements on the bottom edge.
     /*!
@@ -52,7 +52,7 @@ namespace nux
         @param partial_visibility If True, the layout will position elements at its bottom edge
         even if they are partially visible.
     */
-    void EnablePartialVisibility (bool partial_visibility);
+    void EnablePartialVisibility(bool partial_visibility);
 
     //! Set the size of the grid element.
     /*!
@@ -60,26 +60,26 @@ namespace nux
         @param width  Width of elements.
         @param height Height of elements.
     */
-    void SetChildrenSize (int width, int height);
+    void SetChildrenSize(int width, int height);
 
     //! Get the size of the grid element.
     /*!
         @return Size of the grid elements.
     */
-    Size GetChildrenSize () const;
+    Size GetChildrenSize() const;
 
 
     //! Force the grid elements size.
     /*!
         Force the grid elements size to be the one provided by SetChildrenSize.
     */
-    void ForceChildrenSize (bool force);
+    void ForceChildrenSize(bool force);
 
     //! Get the number of columns in the grid.
-    int GetNumColumn () const;
+    int GetNumColumn() const;
 
     //! Get the number of rows in the grid.
-    int GetNumRow () const;
+    int GetNumRow() const;
 
     //! Make the grid width match the size of its content.
     /*!
@@ -100,7 +100,7 @@ namespace nux
       @param ProcessEventInfo
       @return The state of the Process Event.
     */
-    virtual void ProcessDraw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     void SetSpaceBetweenChildren(int horizontal_space, int vertical_space);
 
@@ -137,7 +137,7 @@ namespace nux
 //         @param offset_space     The space at the left of all elements.
 //         @param element_margin   The margin between elements.
 //     */
-//     void ComputeStacking (t_s32 remaining_width, t_s32 &offset_space, t_s32 &element_margin);
+//     void ComputeStacking(t_s32 remaining_width, t_s32 &offset_space, t_s32 &element_margin);
   };
 }
 

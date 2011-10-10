@@ -37,7 +37,7 @@ namespace nux
   {
     NUX_DECLARE_OBJECT_TYPE(RadioButton, AbstractButton);
   public:
-    RadioButton (const std::string &str, bool state = false, NUX_FILE_LINE_PROTO);
+    RadioButton(const std::string &str, bool state = false, NUX_FILE_LINE_PROTO);
     virtual ~RadioButton();
 
     //! Emitted when the button is clicked.
@@ -92,9 +92,9 @@ namespace nux
     ObjectWeakPtr<RadioButtonGroup> GetRadioGroupSelector();
 
     //! Intended for RadioButtonGroup only.
-    void SetStatePrivate (bool State);
+    void SetStatePrivate(bool State);
     //! Intended for RadioButtonGroup only.
-    void SetStatePrivate (bool State, bool EmitSignal);
+    void SetStatePrivate(bool State, bool EmitSignal);
     ObjectWeakPtr<RadioButtonGroup> radio_button_group_;
     int radio_group_index_;
 

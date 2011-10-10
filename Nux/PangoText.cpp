@@ -13,54 +13,54 @@
 
 namespace nux
 {
-  PangoText::PangoText (const TCHAR* text, NUX_FILE_LINE_DECL)
-    : View (NUX_FILE_LINE_PARAM)
+  PangoText::PangoText(const TCHAR* text, NUX_FILE_LINE_DECL)
+    : View(NUX_FILE_LINE_PARAM)
   {
-    _pango_font_map   = pango_ft2_font_map_new ();
-    _pango_context    = pango_font_map_create_context (PANGO_FONT_MAP (_pango_font_map));
-    _pango_layout     = pango_layout_new (_pango_context);
-    _pango_font_desc  = pango_font_description_from_string ("Sans, 20");
+    _pango_font_map   = pango_ft2_font_map_new();
+    _pango_context    = pango_font_map_create_context(PANGO_FONT_MAP(_pango_font_map));
+    _pango_layout     = pango_layout_new(_pango_context);
+    _pango_font_desc  = pango_font_description_from_string("Sans, 20");
 
     _size_match_text = true;
     _textColor  = color::White;
     _texture2D  = 0;
 
-    SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    SetText (text);
+    SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+    SetText(text);
   }
 
-  PangoText::~PangoText ()
+  PangoText::~PangoText()
   {
     if (_cairoGraphics == 0)
-      delete (_cairoGraphics);
+      delete(_cairoGraphics);
 
     if (_texture2D == 0)
-      delete (_texture2D);
+      delete(_texture2D);
   }
 
-  void PangoText::PreLayoutManagement ()
+  void PangoText::PreLayoutManagement()
   {
     int          textWidth  = 0;
     int          textHeight = 0;
 
-    GetTextExtents ("Ubuntu", textWidth, textHeight);
+    GetTextExtents("Ubuntu", textWidth, textHeight);
 
-    _pre_layout_width = GetBaseWidth ();
-    _pre_layout_height = GetBaseHeight ();
+    _pre_layout_width = GetBaseWidth();
+    _pre_layout_height = GetBaseHeight();
 
-    SetBaseSize (textWidth, textHeight);
+    SetBaseSize(textWidth, textHeight);
 
     if (_texture2D == 0)
     {
-      UpdateTextLayout ();
+      UpdateTextLayout();
     }
 
-    View::PreLayoutManagement ();
+    View::PreLayoutManagement();
   }
 
-  long PangoText::PostLayoutManagement (long layoutResult)
+  long PangoText::PostLayoutManagement(long layoutResult)
   {
-    //  long result = View::PostLayoutManagement (layoutResult);
+    //  long result = View::PostLayoutManagement(layoutResult);
 
     long result = 0;
 
@@ -84,31 +84,31 @@ namespace nux
     return result;
   }
 
-  void PangoText::SetSizeMatchText (bool size_match_text)
+  void PangoText::SetSizeMatchText(bool size_match_text)
   {
     _size_match_text = size_match_text;
   }
 
-  bool PangoText::GetSizeMatchText () const
+  bool PangoText::GetSizeMatchText() const
   {
     return _size_match_text;
   }
 
-  void PangoText::Draw (GraphicsEngine& gfxContext, bool forceDraw)
+  void PangoText::Draw(GraphicsEngine& gfxContext, bool forceDraw)
   {
-    Geometry base = GetGeometry ();
+    Geometry base = GetGeometry();
 
-    gfxContext.PushClippingRectangle (base);
+    gfxContext.PushClippingRectangle(base);
 
     TexCoordXForm texxform;
-    texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-    texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
+    texxform.SetWrap(TEXWRAP_REPEAT, TEXWRAP_REPEAT);
+    texxform.SetTexCoordType(TexCoordXForm::OFFSET_COORD);
 
-    gfxContext.GetRenderStates().SetBlend (true,
+    gfxContext.GetRenderStates().SetBlend(true,
       GL_ONE,
       GL_ONE_MINUS_SRC_ALPHA);
 
-    gfxContext.QRP_1Tex (base.x,
+    gfxContext.QRP_1Tex(base.x,
       base.y,
       base.width,
       base.height,
@@ -116,47 +116,47 @@ namespace nux
       texxform,
       _textColor);
 
-    gfxContext.GetRenderStates().SetBlend (false);
+    gfxContext.GetRenderStates().SetBlend(false);
 
-    gfxContext.PopClippingRectangle ();
+    gfxContext.PopClippingRectangle();
   }
 
-  void PangoText::DrawContent (GraphicsEngine& gfxContext, bool forceDraw)
+  void PangoText::DrawContent(GraphicsEngine& gfxContext, bool forceDraw)
   {
 
   }
 
-  void PangoText::PostDraw (GraphicsEngine& gfxContext, bool forceDraw)
+  void PangoText::PostDraw(GraphicsEngine& gfxContext, bool forceDraw)
   {
     // intentionally left empty
   }
 
-  void PangoText::SetText (NString text)
+  void PangoText::SetText(NString text)
   {
     if (_text != text)
     {
       _text = text;
-      UpdateTextLayout ();
+      UpdateTextLayout();
 
-      sigTextChanged.emit (this);
+      sigTextChanged.emit(this);
     }
   }
 
-  void PangoText::SetTextColor (Color textColor)
+  void PangoText::SetTextColor(Color textColor)
   {
     if (_textColor != textColor)
     {
       _textColor = textColor;
-      sigTextColorChanged.emit (this);
+      sigTextColorChanged.emit(this);
     }
   }
 
-  void PangoText::GetTextExtents (int &width, int &height)
+  void PangoText::GetTextExtents(int &width, int &height)
   {
-    GetTextExtents ("Ubuntu", width, height);
+    GetTextExtents("Ubuntu", width, height);
   }
 
-  void PangoText::GetTextExtents (const TCHAR* font, int& width, int& height)
+  void PangoText::GetTextExtents(const TCHAR* font, int& width, int& height)
   {
     cairo_surface_t*      surface  = NULL;
     cairo_t*              cr       = NULL;
@@ -170,46 +170,46 @@ namespace nux
     if (!font)
       return;
 
-    surface = cairo_image_surface_create (CAIRO_FORMAT_A1, 1, 1);
-    cr = cairo_create (surface);
+    surface = cairo_image_surface_create(CAIRO_FORMAT_A1, 1, 1);
+    cr = cairo_create(surface);
 
     CairoFontOptions font_options;
 
     cairo_font_options_set_antialias      (font_options, CAIRO_ANTIALIAS_DEFAULT);
-    cairo_font_options_set_subpixel_order (font_options, CAIRO_SUBPIXEL_ORDER_DEFAULT);
+    cairo_font_options_set_subpixel_order(font_options, CAIRO_SUBPIXEL_ORDER_DEFAULT);
     cairo_font_options_set_hint_style     (font_options, CAIRO_HINT_STYLE_DEFAULT);
     cairo_font_options_set_hint_metrics   (font_options, CAIRO_HINT_METRICS_ON);
 
-    cairo_set_font_options (cr, font_options);
+    cairo_set_font_options(cr, font_options);
 
-    layout = pango_cairo_create_layout (cr);
-    desc = pango_font_description_from_string (font);
-    pango_font_description_set_weight (desc, PANGO_WEIGHT_NORMAL);
-    pango_layout_set_font_description (layout, desc);
-    pango_layout_set_wrap (layout, PANGO_WRAP_WORD_CHAR);
-    pango_layout_set_ellipsize (layout, PANGO_ELLIPSIZE_END);
-    pango_layout_set_text (layout, _text.GetTCharPtr(), -1);
+    layout = pango_cairo_create_layout(cr);
+    desc = pango_font_description_from_string(font);
+    pango_font_description_set_weight(desc, PANGO_WEIGHT_NORMAL);
+    pango_layout_set_font_description(layout, desc);
+    pango_layout_set_wrap(layout, PANGO_WRAP_WORD_CHAR);
+    pango_layout_set_ellipsize(layout, PANGO_ELLIPSIZE_END);
+    pango_layout_set_text(layout, _text.GetTCharPtr(), -1);
 
-    pangoCtx = pango_layout_get_context (layout); // is not ref'ed
-    pango_cairo_context_set_font_options (pangoCtx, font_options);
+    pangoCtx = pango_layout_get_context(layout); // is not ref'ed
+    pango_cairo_context_set_font_options(pangoCtx, font_options);
 
     // use some default DPI-value
-    pango_cairo_context_set_resolution (pangoCtx, dpi);
+    pango_cairo_context_set_resolution(pangoCtx, dpi);
 
-    pango_layout_context_changed (layout);
-    pango_layout_get_extents (layout, NULL, &logRect);
+    pango_layout_context_changed(layout);
+    pango_layout_get_extents(layout, NULL, &logRect);
 
     width  = logRect.width / PANGO_SCALE;
     height = logRect.height / PANGO_SCALE;
 
     // clean up
-    pango_font_description_free (desc);
-    g_object_unref (layout);
-    cairo_destroy (cr);
-    cairo_surface_destroy (surface);
+    pango_font_description_free(desc);
+    g_object_unref(layout);
+    cairo_destroy(cr);
+    cairo_surface_destroy(surface);
   }
 
-  void PangoText::DrawText (void* cairo_context, int width, int height, Color color)
+  void PangoText::DrawText(void* cairo_context, int width, int height, Color color)
   {
     cairo_t* cr = (cairo_t*) cairo_context;
 
@@ -220,59 +220,59 @@ namespace nux
     PangoContext*         pangoCtx   = NULL;
     int                   dpi        = 0;
 
-    GetTextExtents ("Ubuntu", textWidth, textHeight);
+    GetTextExtents("Ubuntu", textWidth, textHeight);
 
     CairoFontOptions font_options;
 
     cairo_font_options_set_antialias      (font_options, CAIRO_ANTIALIAS_DEFAULT);
-    cairo_font_options_set_subpixel_order (font_options, CAIRO_SUBPIXEL_ORDER_DEFAULT);
+    cairo_font_options_set_subpixel_order(font_options, CAIRO_SUBPIXEL_ORDER_DEFAULT);
     cairo_font_options_set_hint_style     (font_options, CAIRO_HINT_STYLE_DEFAULT);
     cairo_font_options_set_hint_metrics   (font_options, CAIRO_HINT_METRICS_ON);
 
-    cairo_set_font_options (cr, font_options);
+    cairo_set_font_options(cr, font_options);
 
-    layout = pango_cairo_create_layout (cr);
-    desc = pango_font_description_from_string ("Ubuntu");
-    pango_layout_set_font_description (layout, desc);
+    layout = pango_cairo_create_layout(cr);
+    desc = pango_font_description_from_string("Ubuntu");
+    pango_layout_set_font_description(layout, desc);
 
-    pango_layout_set_wrap (layout, PANGO_WRAP_WORD_CHAR);
-    pango_layout_set_ellipsize (layout, PANGO_ELLIPSIZE_END);
-    pango_layout_set_text (layout, _text.GetTCharPtr(), -1);
+    pango_layout_set_wrap(layout, PANGO_WRAP_WORD_CHAR);
+    pango_layout_set_ellipsize(layout, PANGO_ELLIPSIZE_END);
+    pango_layout_set_text(layout, _text.GetTCharPtr(), -1);
 
-    pangoCtx = pango_layout_get_context (layout);
-    pango_cairo_context_set_font_options (pangoCtx, font_options);
+    pangoCtx = pango_layout_get_context(layout);
+    pango_cairo_context_set_font_options(pangoCtx, font_options);
 
-    pango_cairo_context_set_resolution (pangoCtx, dpi);
+    pango_cairo_context_set_resolution(pangoCtx, dpi);
 
-    cairo_set_operator (cr, CAIRO_OPERATOR_SOURCE);
-    cairo_set_source_rgba (cr, 0.0f, 0.0f, 0.0f, 0.0f);
-    cairo_paint (cr);
-    cairo_set_source_rgba (cr, color.red, color.green, color.blue, color.alpha);
+    cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+    cairo_set_source_rgba(cr, 0.0f, 0.0f, 0.0f, 0.0f);
+    cairo_paint(cr);
+    cairo_set_source_rgba(cr, color.red, color.green, color.blue, color.alpha);
 
-    pango_layout_context_changed (layout);
+    pango_layout_context_changed(layout);
 
-    cairo_move_to (cr, 0.0f, 0.0f);
-    pango_cairo_show_layout (cr, layout);
+    cairo_move_to(cr, 0.0f, 0.0f);
+    pango_cairo_show_layout(cr, layout);
 
     // clean up
-    pango_font_description_free (desc);
-    g_object_unref (layout);
+    pango_font_description_free(desc);
+    g_object_unref(layout);
   }
 
-  void PangoText::UpdateTextLayout ()
+  void PangoText::UpdateTextLayout()
   {
-    pango_layout_set_text (_pango_layout, _text.GetTCharPtr (), -1);
+    pango_layout_set_text(_pango_layout, _text.GetTCharPtr(), -1);
 
     // reset the glyph string
     if (_glyph_text)
-      delete (_glyph_text);
+      delete(_glyph_text);
 
     _glyph_text = 0;
     _glyph_length = 0;
     int max_g = 0;
     double pango_to_ink = (1.0/((double) PANGO_SCALE));
 
-    PangoLayoutIter* pIter = pango_layout_get_iter (_pango_layout); // and go!
+    PangoLayoutIter* pIter = pango_layout_get_iter(_pango_layout); // and go!
     do
     {
 //       typedef struct {
@@ -284,12 +284,12 @@ namespace nux
 //         guint        resolved_dir : 3;       // Resolved direction of line.
 //       } PangoLayoutLine;
 
-      PangoLayoutLine* pLine = pango_layout_iter_get_line (pIter);  // no need for unref
+      PangoLayoutLine* pLine = pango_layout_iter_get_line(pIter);  // no need for unref
       int              plOffset = pLine->start_index;               // start of the line in the uni32_text
       PangoRectangle   ink_r;
       PangoRectangle   log_r;
 
-      pango_layout_iter_get_line_extents (pIter, &ink_r, &log_r);
+      pango_layout_iter_get_line_extents(pIter, &ink_r, &log_r);
       double           plY = (1.0 / ((double) PANGO_SCALE)) * ((double) log_r.y); // start position of this line of the layout
       double           plX = (1.0 / ((double) PANGO_SCALE)) * ((double) log_r.x);
       GSList* curR = pLine->runs;
@@ -341,7 +341,7 @@ namespace nux
               }
               else
               {
-                std::memcpy (temp, _glyph_text, _glyph_length * sizeof (pango_glyph));
+                std::memcpy(temp, _glyph_text, _glyph_length * sizeof(pango_glyph));
                 delete _glyph_text;
                 _glyph_text = temp;
               }
@@ -400,21 +400,21 @@ namespace nux
           }
           // the terminating glyph has glyph_id=0 because it means 'no glyph'
           _glyph_text[_glyph_length].gl = 0;
-          // and is associated with no text (but you cannot set uni_st=uni_en=0, because the termination
+          // and is associated with no text(but you cannot set uni_st=uni_en=0, because the termination
           // is expected to be the glyph for the termination of the uni32_text)
           _glyph_text[_glyph_length].uni_st = _glyph_text[_glyph_length].uni_en = plOffset + prOffset + pRun->item->length;
         }
         curR = curR->next;
       }
 
-    } while ( pango_layout_iter_next_line(pIter) );
+    } while ( pango_layout_iter_next_line(pIter));
 
     pango_layout_iter_free(pIter);
 
 
   }
 
-  void PangoText::ComputeTextLayout ()
+  void PangoText::ComputeTextLayout()
   {
     PangoLayout*          layout   = NULL;
     PangoFontDescription* desc     = NULL;

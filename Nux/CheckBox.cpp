@@ -29,7 +29,7 @@ namespace nux
 {
   NUX_IMPLEMENT_OBJECT_TYPE(CheckBox);
   
-  CheckBox::CheckBox (const std::string &str, bool state, NUX_FILE_LINE_DECL)
+  CheckBox::CheckBox(const std::string &str, bool state, NUX_FILE_LINE_DECL)
     : AbstractButton(NUX_FILE_LINE_PARAM)
   {
     label_ = str;
@@ -48,7 +48,7 @@ namespace nux
     check_area_->SetMinimumSize(14, 14);
     check_area_->SetMaximumSize(14, 14);
 
-    hlayout_->SetHorizontalInternalMargin (4);
+    hlayout_->SetHorizontalInternalMargin(4);
     hlayout_->SetContentDistribution(MAJOR_POSITION_CENTER);
     hlayout_->AddView(check_area_, 0, MINOR_POSITION_CENTER, MINOR_SIZE_MATCHCONTENT);
     hlayout_->AddView(static_text_, 1, MINOR_POSITION_CENTER, MINOR_SIZE_MATCHCONTENT);
@@ -58,13 +58,13 @@ namespace nux
 //     // This is useful if the CheckBox is put in a vertical layout and it has a stretch factor of 0. Then the width of the CheckBox
 //     // will be adjusted to fit the minimum width of the check area and the caption area.
 //     {
-//       hlayout_->SetMinimumSize (1, 1);
-//       SetMinimumSize (14, 14);
+//       hlayout_->SetMinimumSize(1, 1);
+//       SetMinimumSize(14, 14);
 //       ApplyMinWidth();
 //       ApplyMinHeight();
 //     }
 
-    SetLayout (hlayout_);
+    SetLayout(hlayout_);
 
   }
 
@@ -84,7 +84,7 @@ namespace nux
     return label_;
   }
 
-  void CheckBox::Draw (GraphicsEngine &graphics_engine, bool force_draw)
+  void CheckBox::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
 
@@ -93,11 +93,11 @@ namespace nux
     InteractState is;
     is.is_on = active_;
 
-    if(visual_state_ == VISUAL_STATE_PRESSED)
+    if (visual_state_ == VISUAL_STATE_PRESSED)
     {
       is.is_focus = true;
     }
-    else if(visual_state_ == VISUAL_STATE_PRELIGHT)
+    else if (visual_state_ == VISUAL_STATE_PRELIGHT)
     {
       is.is_prelight = true;
     }
@@ -107,7 +107,7 @@ namespace nux
       is.is_prelight = false;
     }
 
-    GetPainter().PaintCheckBox (graphics_engine, check_area_->GetGeometry(), is, Color (0xff000000) );
+    GetPainter().PaintCheckBox(graphics_engine, check_area_->GetGeometry(), is, Color(0xff000000));
 
     static_text_->ProcessDraw(graphics_engine, true);
   }

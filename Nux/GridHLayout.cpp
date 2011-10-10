@@ -28,10 +28,10 @@
 
 namespace nux
 {
-  NUX_IMPLEMENT_OBJECT_TYPE (GridHLayout);
+  NUX_IMPLEMENT_OBJECT_TYPE(GridHLayout);
 
-  GridHLayout::GridHLayout (NUX_FILE_LINE_DECL)
-    :   Layout (NUX_FILE_LINE_PARAM)
+  GridHLayout::GridHLayout(NUX_FILE_LINE_DECL)
+    :   Layout(NUX_FILE_LINE_PARAM)
   {
 #if DEBUG_LAYOUT
     m_h_in_margin = 10;
@@ -46,7 +46,7 @@ namespace nux
     m_v_in_margin = 10;
 
     row_filling_order_ = true;
-    _children_size = Size (64, 64);
+    _children_size = Size(64, 64);
     _force_children_size = true;
     _partial_visibility = true;
     _num_row = 1;
@@ -72,7 +72,7 @@ namespace nux
     m_v_in_margin = vertical_space;
   }
 
-  int GridHLayout::GetChildPos (Area *child)
+  int GridHLayout::GetChildPos(Area *child)
   {
     int position = 0;
     std::list<Area *>::const_iterator it;
@@ -85,11 +85,11 @@ namespace nux
     return position;
   }
 
-  Area* GridHLayout::GetChildAtPosition (int pos)
+  Area* GridHLayout::GetChildAtPosition(int pos)
   {
     int position = 0;
     std::list<Area *>::const_iterator it;
-    for (it = GetChildren ().begin(); it != GetChildren ().end(); it++)
+    for (it = GetChildren().begin(); it != GetChildren().end(); it++)
     {
       if (position == pos)
         return (*it);
@@ -98,32 +98,32 @@ namespace nux
     return NULL;
   }
 
-  void GridHLayout::EnablePartialVisibility (bool partial_visibility)
+  void GridHLayout::EnablePartialVisibility(bool partial_visibility)
   {
     _partial_visibility = partial_visibility;
   }
 
-  void GridHLayout::SetChildrenSize (int width, int height)
+  void GridHLayout::SetChildrenSize(int width, int height)
   {
-    _children_size = Size (width, height);
+    _children_size = Size(width, height);
   }
 
-  Size GridHLayout::GetChildrenSize () const
+  Size GridHLayout::GetChildrenSize() const
   {
     return _children_size;
   }
 
-  void GridHLayout::ForceChildrenSize (bool force)
+  void GridHLayout::ForceChildrenSize(bool force)
   {
     _force_children_size = force;
   }
 
-  int GridHLayout::GetNumColumn () const
+  int GridHLayout::GetNumColumn() const
   {
     return _num_column;
   }
 
-  int GridHLayout::GetNumRow () const
+  int GridHLayout::GetNumRow() const
   {
     return _num_row;
   }
@@ -133,26 +133,26 @@ namespace nux
     match_content_size_ = match_content;
   }
 
-  bool GridHLayout::IsMatchingContentSize () const
+  bool GridHLayout::IsMatchingContentSize() const
   {
     return match_content_size_;
   }
 
-  void GridHLayout::GetCompositeList (std::list<Area *> *ViewList)
+  void GridHLayout::GetCompositeList(std::list<Area *> *ViewList)
   {
     std::list<Area *>::iterator it;
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      if ( (*it)->IsView() )
+      if ((*it)->IsView())
       {
         View *ic = static_cast<View *>(*it);
-        ViewList->push_back (ic);
+        ViewList->push_back(ic);
       }
-      else if ( (*it)->IsLayout() )
+      else if ((*it)->IsLayout())
       {
         Layout *layout = static_cast<Layout *>(*it);
-        layout->GetCompositeList (ViewList);
+        layout->GetCompositeList(ViewList);
       }
     }
   }
@@ -176,13 +176,13 @@ namespace nux
     std::list<Area *>::iterator it;
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      if ((*it)->IsVisible ())
+      if ((*it)->IsVisible())
       {
-        (*it)->SetLayoutDone (false);
-        elements.push_back (*it);
+        (*it)->SetLayoutDone(false);
+        elements.push_back(*it);
         num_elements++;
       }
-      (*it)->SetLayoutDone (false);
+      (*it)->SetLayoutDone(false);
     }
 
     t_s32 original_height = GetBaseHeight();
@@ -208,12 +208,12 @@ namespace nux
 
       bool first_element_of_row = true;
 
-      for(int i = 0; i < num_elements; i++)
+      for (int i = 0; i < num_elements; i++)
       {
         if (num_row == 1)
           num_column++;
 
-        if(first_element_of_row)
+        if (first_element_of_row)
         {
           first_element_of_row = false;
         }
@@ -223,7 +223,7 @@ namespace nux
           (*it)->SetMinimumSize(_children_size.width, _children_size.height);
         }
 
-        (*it)->SetGeometry(nux::Geometry (X, Y, _children_size.width, _children_size.height));
+        (*it)->SetGeometry(nux::Geometry(X, Y, _children_size.width, _children_size.height));
 
         (*it)->ComputeContentSize();
 
@@ -298,12 +298,12 @@ namespace nux
       size_compliance |= eCompliantHeight;
     }
 
-    //    if(GetStretchFactor() == 0)
+    //    if (GetStretchFactor() == 0)
     //    {
     //        return size_compliance | eForceComply;
     //    }
 
-    //SetDirty (false);
+    //SetDirty(false);
     return size_compliance;
   }
 
@@ -326,13 +326,13 @@ namespace nux
     std::list<Area *>::iterator it;
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      if ((*it)->IsVisible ())
+      if ((*it)->IsVisible())
       {
-        (*it)->SetLayoutDone (false);
-        elements.push_back (*it);
+        (*it)->SetLayoutDone(false);
+        elements.push_back(*it);
         num_elements++;
       }
-      (*it)->SetLayoutDone (false);
+      (*it)->SetLayoutDone(false);
     }
 
     t_s32 original_width = GetBaseWidth();
@@ -364,10 +364,10 @@ namespace nux
 
         if (_force_children_size)
         {
-          (*it)->SetMinimumSize (_children_size.width, _children_size.height);
+          (*it)->SetMinimumSize(_children_size.width, _children_size.height);
         }
 
-        (*it)->SetGeometry (nux::Geometry (X, Y, _children_size.width, _children_size.height));
+        (*it)->SetGeometry(nux::Geometry(X, Y, _children_size.width, _children_size.height));
 
         (*it)->ComputeContentSize();
 
@@ -381,7 +381,7 @@ namespace nux
           Y = base.y + top_padding_;
 
           first_element_of_column = true;
-          if(i < num_elements - 1)
+          if (i < num_elements - 1)
             ++num_column;
         }
         else if (Y >= base.y + base.height)
@@ -402,8 +402,8 @@ namespace nux
     if ((GetStretchFactor() == 0) || match_content_size_)
     {
       int w = num_column * _children_size.width + (left_padding_ + right_padding_) + (num_column - 1) * m_h_in_margin;
-      SetMinimumWidth (w);
-      SetBaseWidth (w);
+      SetMinimumWidth(w);
+      SetBaseWidth(w);
     }
 
     long size_compliance = 0L;
@@ -457,13 +457,13 @@ namespace nux
     }
   }
 
-  void GridHLayout::ProcessDraw (GraphicsEngine &graphics_engine, bool force_draw)
+  void GridHLayout::ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     if (_layout_element_list.size() == 0)
       return;
 
     std::list<Area *> elements;
-    std::list<Area *>::iterator it = _layout_element_list.begin ();
+    std::list<Area *>::iterator it = _layout_element_list.begin();
 
     graphics_engine.PushModelViewMatrix(Get2DMatrix());
 
@@ -537,7 +537,7 @@ namespace nux
             y = base.y + top_padding_ + i * (_children_size.height + m_v_in_margin);
           }
 
-          graphics_engine.PushClippingRectangle(Geometry (x, y, _children_size.width, _children_size.height));
+          graphics_engine.PushClippingRectangle(Geometry(x, y, _children_size.width, _children_size.height));
 
           if ((*it)->IsView())
           {
@@ -573,8 +573,8 @@ namespace nux
         break;
     }
 
-    graphics_engine.PopClippingRectangle ();
-    graphics_engine.PopModelViewMatrix ();
+    graphics_engine.PopClippingRectangle();
+    graphics_engine.PopModelViewMatrix();
 
     _queued_draw = false;
   }
@@ -591,18 +591,18 @@ namespace nux
     {
       std::list<Area*>::iterator it;
       std::list<Area*>::iterator it_next;
-      it = std::find (_layout_element_list.begin(), _layout_element_list.end(), next_object_to_key_focus_area_);
+      it = std::find(_layout_element_list.begin(), _layout_element_list.end(), next_object_to_key_focus_area_);
       it_next = it;
       ++it_next;
 
       if (it == _layout_element_list.end())
       {
         // Should never happen
-        nuxAssert (0);
+        nuxAssert(0);
         return NULL;
       }
 
-      int position = GetChildPos(*it); // note that (*it) == next_object_to_key_focus_area_
+      int position = GetChildPos(*it); // note that(*it) == next_object_to_key_focus_area_
       int nun_column = GetNumColumn();
       int nun_row = GetNumRow();
 
@@ -722,18 +722,18 @@ namespace nux
     {
       std::list<Area*>::iterator it;
       std::list<Area*>::iterator it_next;
-      it = std::find (_layout_element_list.begin(), _layout_element_list.end(), next_object_to_key_focus_area_);
+      it = std::find(_layout_element_list.begin(), _layout_element_list.end(), next_object_to_key_focus_area_);
       it_next = it;
       ++it_next;
 
       if (it == _layout_element_list.end())
       {
         // Should never happen
-        nuxAssert (0);
+        nuxAssert(0);
         return NULL;
       }
 
-      int position = GetChildPos(*it); // note that (*it) == next_object_to_key_focus_area_
+      int position = GetChildPos(*it); // note that(*it) == next_object_to_key_focus_area_
       int nun_column = GetNumColumn();
       int nun_row = GetNumRow();
 

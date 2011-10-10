@@ -33,12 +33,12 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (HSplitter);
+  NUX_IMPLEMENT_OBJECT_TYPE(HSplitter);
   static const t_s32 HSPLITTERHEIGHT = 5;
   static const t_s32 HSTICK_SIZE = 5;
 
-  HSplitter::HSplitter (NUX_FILE_LINE_DECL)
-    :   View (NUX_FILE_LINE_PARAM)
+  HSplitter::HSplitter(NUX_FILE_LINE_DECL)
+    :   View(NUX_FILE_LINE_PARAM)
   {
     new_addition                = false;
     m_initial_config            = true;
@@ -53,7 +53,7 @@ namespace nux
     m_current_height = 200;
 
     //SetMinimumSize(200,200);
-    SetGeometry (Geometry (m_current_x, m_current_y, m_current_width, m_current_height) );
+    SetGeometry(Geometry(m_current_x, m_current_y, m_current_width, m_current_height));
   }
 
   HSplitter::~HSplitter()
@@ -75,17 +75,17 @@ namespace nux
     m_SplitConfig.clear();
   }
 
-  void HSplitter::Draw (GraphicsEngine &graphics_engine, bool force_draw)
+  void HSplitter::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
-    graphics_engine.PushClippingRectangle (GetGeometry() );
+    graphics_engine.PushClippingRectangle(GetGeometry());
     Geometry base = GetGeometry();
 //    std::vector<View*>::iterator it;
-//    for(it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
+//    for (it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
 //    {
 //        (*it)->ProcessDraw(force_draw);
 //    }
 
-    GetPainter().PaintBackground (graphics_engine, base);
+    GetPainter().PaintBackground(graphics_engine, base);
     std::vector<MySplitter *>::iterator it_splitter;
 
     for (it_splitter = m_SplitterObject.begin(); it_splitter != m_SplitterObject.end(); it_splitter++)
@@ -96,30 +96,30 @@ namespace nux
 
       if (geo.GetWidth() > w)
       {
-        grip_geo.SetX (geo.x + (geo.GetWidth() - w) / 2);
-        grip_geo.SetY (geo.y);
-        grip_geo.SetWidth (w);
-        grip_geo.SetHeight (geo.GetHeight() );
+        grip_geo.SetX(geo.x + (geo.GetWidth() - w) / 2);
+        grip_geo.SetY(geo.y);
+        grip_geo.SetWidth(w);
+        grip_geo.SetHeight(geo.GetHeight());
       }
       else
       {
-        grip_geo.SetX (geo.x - (w - geo.GetWidth() ) / 2);
-        grip_geo.SetY (geo.y);
-        grip_geo.SetWidth (w);
-        grip_geo.SetHeight (geo.GetHeight() );
+        grip_geo.SetX(geo.x - (w - geo.GetWidth()) / 2);
+        grip_geo.SetY(geo.y);
+        grip_geo.SetWidth(w);
+        grip_geo.SetHeight(geo.GetHeight());
       }
 
-      GetPainter().Draw2DLine (graphics_engine, grip_geo.x, grip_geo.y + 1, grip_geo.x + grip_geo.GetWidth(), grip_geo.y + 1, Color (0xFF111111) );
-      GetPainter().Draw2DLine (graphics_engine, grip_geo.x, grip_geo.y + 3, grip_geo.x + grip_geo.GetWidth(), grip_geo.y + 3, Color (0xFF111111) );
+      GetPainter().Draw2DLine(graphics_engine, grip_geo.x, grip_geo.y + 1, grip_geo.x + grip_geo.GetWidth(), grip_geo.y + 1, Color(0xFF111111));
+      GetPainter().Draw2DLine(graphics_engine, grip_geo.x, grip_geo.y + 3, grip_geo.x + grip_geo.GetWidth(), grip_geo.y + 3, Color(0xFF111111));
     }
 
     graphics_engine.PopClippingRectangle();
   }
 
-  void HSplitter::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
+  void HSplitter::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
-    graphics_engine.PushClippingRectangle (base);
+    graphics_engine.PushClippingRectangle(base);
     bool need_redraw = IsRedrawNeeded();
 
     std::vector<MySplitter *>::iterator it_splitter;
@@ -131,55 +131,55 @@ namespace nux
          it++, it_splitter++)
     {
       Geometry sgeo = (*it_splitter)->GetGeometry();
-      graphics_engine.PushClippingRectangle (Rect (
-                                          base.x, base.y, base.GetWidth(), sgeo.y - base.y) );
+      graphics_engine.PushClippingRectangle(Rect(
+                                          base.x, base.y, base.GetWidth(), sgeo.y - base.y));
 
-      base.SetY (sgeo.y + sgeo.GetHeight() );
+      base.SetY(sgeo.y + sgeo.GetHeight());
 
       if (force_draw || need_redraw)
       {
-        if ( (*it)->Type().IsDerivedFromType (View::StaticObjectType) )
+        if ((*it)->Type().IsDerivedFromType(View::StaticObjectType))
         {
           View *ic = static_cast<View *>(*it);
-          ic->ProcessDraw (graphics_engine, true);
+          ic->ProcessDraw(graphics_engine, true);
         }
-        else if ( (*it)->Type().IsObjectType (InputArea::StaticObjectType) )
+        else if ((*it)->Type().IsObjectType(InputArea::StaticObjectType))
         {
           InputArea *base_area = static_cast<InputArea *>(*it);
-          base_area->OnDraw (graphics_engine, true);
+          base_area->OnDraw(graphics_engine, true);
         }
-        else if ( (*it)->Type().IsObjectType (HLayout::StaticObjectType) )
+        else if ((*it)->Type().IsObjectType(HLayout::StaticObjectType))
         {
           HLayout *layout = static_cast<HLayout *>(*it);
-          layout->ProcessDraw (graphics_engine, true);
+          layout->ProcessDraw(graphics_engine, true);
         }
-        else if ( (*it)->Type().IsObjectType (VLayout::StaticObjectType) )
+        else if ((*it)->Type().IsObjectType(VLayout::StaticObjectType))
         {
           VLayout *layout = static_cast<VLayout *>(*it);
-          layout->ProcessDraw (graphics_engine, true);
+          layout->ProcessDraw(graphics_engine, true);
         }
       }
       else
       {
-        if ( (*it)->Type().IsDerivedFromType (View::StaticObjectType) )
+        if ((*it)->Type().IsDerivedFromType(View::StaticObjectType))
         {
           View *ic = static_cast<View *>(*it);
-          ic->ProcessDraw (graphics_engine, false);
+          ic->ProcessDraw(graphics_engine, false);
         }
-        else if ( (*it)->Type().IsObjectType (InputArea::StaticObjectType) )
+        else if ((*it)->Type().IsObjectType(InputArea::StaticObjectType))
         {
           InputArea *base_area = static_cast<InputArea *>(*it);
-          base_area->OnDraw (graphics_engine, false);
+          base_area->OnDraw(graphics_engine, false);
         }
-        else if ( (*it)->Type().IsObjectType (HLayout::StaticObjectType) )
+        else if ((*it)->Type().IsObjectType(HLayout::StaticObjectType))
         {
           HLayout *layout = static_cast<HLayout *>(*it);
-          layout->ProcessDraw (graphics_engine, false);
+          layout->ProcessDraw(graphics_engine, false);
         }
-        else if ( (*it)->Type().IsObjectType (VLayout::StaticObjectType) )
+        else if ((*it)->Type().IsObjectType(VLayout::StaticObjectType))
         {
           VLayout *layout = static_cast<VLayout *>(*it);
-          layout->ProcessDraw (graphics_engine, false);
+          layout->ProcessDraw(graphics_engine, false);
         }
       }
 
@@ -189,12 +189,12 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void HSplitter::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
+  void HSplitter::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void HSplitter::OverlayDrawing (GraphicsEngine &graphics_engine)
+  void HSplitter::OverlayDrawing(GraphicsEngine &graphics_engine)
   {
     t_u32 num_element = (t_u32) m_SplitterObject.size();
 
@@ -203,43 +203,43 @@ namespace nux
     if (m_focus_splitter_index >= 0)
     {
       Geometry geo = m_SplitterObject[m_focus_splitter_index]->GetGeometry();
-      geo.OffsetPosition (mvt_dx, mvt_dy);
+      geo.OffsetPosition(mvt_dx, mvt_dy);
 
       if (m_focus_splitter_index == 0 && num_element > 1)
       {
         if (geo.y < base.y)
         {
-          geo.SetY (base.y);
+          geo.SetY(base.y);
         }
 
         if (geo.y  + HSPLITTERHEIGHT > m_SplitterObject[m_focus_splitter_index + 1]->GetGeometry().y)
         {
-          geo.SetY (m_SplitterObject[m_focus_splitter_index+1]->GetGeometry().y - HSPLITTERHEIGHT);
+          geo.SetY(m_SplitterObject[m_focus_splitter_index+1]->GetGeometry().y - HSPLITTERHEIGHT);
         }
       }
 
-      if ( (m_focus_splitter_index > 0) && (m_focus_splitter_index < (t_s32) num_element - 1) )
+      if ((m_focus_splitter_index > 0) && (m_focus_splitter_index < (t_s32) num_element - 1))
       {
         if (geo.y < m_SplitterObject[m_focus_splitter_index - 1]->GetGeometry().y + HSPLITTERHEIGHT)
         {
-          geo.SetY (m_SplitterObject[m_focus_splitter_index - 1]->GetGeometry().y + HSPLITTERHEIGHT);
+          geo.SetY(m_SplitterObject[m_focus_splitter_index - 1]->GetGeometry().y + HSPLITTERHEIGHT);
         }
 
         if (geo.y + HSPLITTERHEIGHT > m_SplitterObject[m_focus_splitter_index + 1]->GetGeometry().y)
         {
-          geo.SetY (m_SplitterObject[m_focus_splitter_index + 1]->GetGeometry().y - HSPLITTERHEIGHT);
+          geo.SetY(m_SplitterObject[m_focus_splitter_index + 1]->GetGeometry().y - HSPLITTERHEIGHT);
         }
       }
 
-      graphics_engine.GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      graphics_engine.GetRenderStates().SetBlend(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       {
-        GetPainter().Paint2DQuadColor (graphics_engine, geo, Color (0xBB868686) );
+        GetPainter().Paint2DQuadColor(graphics_engine, geo, Color(0xBB868686));
       }
-      graphics_engine.GetRenderStates().SetBlend (false);
+      graphics_engine.GetRenderStates().SetBlend(false);
     }
   }
 
-  void HSplitter::AddWidget (Area *ic, float stretchfactor)
+  void HSplitter::AddWidget(Area *ic, float stretchfactor)
   {
     if (ic)
     {
@@ -248,14 +248,14 @@ namespace nux
       //splitter->SinkReference();
 
       t_u32 no = (t_u32) m_InterfaceObject.size();
-      splitter->mouse_down.connect (sigc::bind ( sigc::mem_fun (this, &HSplitter::OnSplitterMouseDown), no) );
-      splitter->mouse_drag.connect (sigc::bind ( sigc::mem_fun (this, &HSplitter::OnSplitterMouseDrag), no) );
-      splitter->mouse_up.connect (sigc::bind ( sigc::mem_fun (this, &HSplitter::OnSplitterMouseUp), no) );
+      splitter->mouse_down.connect(sigc::bind(sigc::mem_fun(this, &HSplitter::OnSplitterMouseDown), no));
+      splitter->mouse_drag.connect(sigc::bind(sigc::mem_fun(this, &HSplitter::OnSplitterMouseDrag), no));
+      splitter->mouse_up.connect(sigc::bind(sigc::mem_fun(this, &HSplitter::OnSplitterMouseUp), no));
 
-      ic->SetParentObject (this);
-      m_InterfaceObject.push_back (ic);
-      m_SplitterObject.push_back (splitter);
-      m_SplitConfig.push_back (stretchfactor);
+      ic->SetParentObject(this);
+      m_InterfaceObject.push_back(ic);
+      m_SplitterObject.push_back(splitter);
+      m_SplitConfig.push_back(stretchfactor);
 
       new_addition = true;
       ComputeContentSize();
@@ -275,7 +275,7 @@ namespace nux
     t_s32 w = GetBaseWidth();
     t_s32 h = GetBaseHeight();
 
-    if ( (w == 0) || (h == 0) )
+    if ((w == 0) || (h == 0))
     {
       return eCompliantHeight | eCompliantWidth;
     }
@@ -305,10 +305,10 @@ namespace nux
       for (t_u32 i = 0; i < num_element; i++)
       {
         Geometry splitter_geo = m_SplitterObject[i]->GetGeometry();
-        splitter_geo.SetWidth (w);
-        splitter_geo.SetX (x);
+        splitter_geo.SetWidth(w);
+        splitter_geo.SetX(x);
 
-        m_SplitterObject[i]->SetGeometry (splitter_geo);
+        m_SplitterObject[i]->SetGeometry(splitter_geo);
       }
     }
 
@@ -324,23 +324,23 @@ namespace nux
         // compute percentage of space occupied by the element i;
         // width of element i = m_SplitterObject[i]->GetY() - previous_splliter_end
         t_s32 splitter_start = m_SplitterObject[i]->GetBaseY();
-        float percent = float (splitter_start - previous_spliter_end) / float (m_current_height - num_element * HSPLITTERHEIGHT);
+        float percent = float(splitter_start - previous_spliter_end) / float(m_current_height - num_element * HSPLITTERHEIGHT);
 
         if (percent > 1.0f)
           percent = 1.0f;
 
-        splitter_geo.SetY (new_spliter_end + size_to_distribute * percent);
+        splitter_geo.SetY(new_spliter_end + size_to_distribute * percent);
         previous_spliter_end = splitter_start + HSPLITTERHEIGHT;
         new_spliter_end = new_spliter_end + size_to_distribute * percent + HSPLITTERHEIGHT;
-        m_SplitterObject[i]->SetGeometry (splitter_geo);
+        m_SplitterObject[i]->SetGeometry(splitter_geo);
       }
 
       if (m_SplitterObject[0]->GetBaseY() < y)
       {
-        m_SplitterObject[0]->SetBaseY (y);
+        m_SplitterObject[0]->SetBaseY(y);
       }
 
-      m_SplitterObject[num_element-1]->SetBaseY (y + h - HSPLITTERHEIGHT);
+      m_SplitterObject[num_element-1]->SetBaseY(y + h - HSPLITTERHEIGHT);
     }
 
     t_s32 accheight = y;
@@ -351,26 +351,26 @@ namespace nux
 
       //m_InterfaceObject[i]->SetGeometry(Geometry(x, accheight, w, splitter_geo.y - accheight));
 
-      if (m_InterfaceObject[i]->Type().IsDerivedFromType (View::StaticObjectType) )
+      if (m_InterfaceObject[i]->Type().IsDerivedFromType(View::StaticObjectType))
       {
         View *ic = static_cast<View *>(m_InterfaceObject[i]);
-        ic->SetGeometry (Geometry (x, accheight, w, splitter_geo.y - accheight) );
+        ic->SetGeometry(Geometry(x, accheight, w, splitter_geo.y - accheight));
         // if we are already computing the layout from the main window down, we need to call
         // ComputeElementLayout to force the computing of this element layout.
-        GetWindowThread ()->ComputeElementLayout (ic);
+        GetWindowThread()->ComputeElementLayout(ic);
       }
-      else if (m_InterfaceObject[i]->Type().IsObjectType (InputArea::StaticObjectType) )
+      else if (m_InterfaceObject[i]->Type().IsObjectType(InputArea::StaticObjectType))
       {
         InputArea *base_area = static_cast<InputArea *>(m_InterfaceObject[i]);
-        base_area->SetGeometry (Geometry (x, accheight, w, splitter_geo.y - accheight) );
+        base_area->SetGeometry(Geometry(x, accheight, w, splitter_geo.y - accheight));
       }
-      else if (m_InterfaceObject[i]->Type().IsDerivedFromType (Layout::StaticObjectType) )
+      else if (m_InterfaceObject[i]->Type().IsDerivedFromType(Layout::StaticObjectType))
       {
         Layout *layout = static_cast<Layout *>(m_InterfaceObject[i]);
-        layout->SetGeometry (Geometry (x, accheight, w, splitter_geo.y - accheight) );
+        layout->SetGeometry(Geometry(x, accheight, w, splitter_geo.y - accheight));
         // if we are already computing the layout from the main window down, we need to call
         // ComputeElementLayout to force the computing of this element layout.
-        GetWindowThread ()->ComputeElementLayout (layout);
+        GetWindowThread()->ComputeElementLayout(layout);
       }
 
       accheight += splitter_geo.y - accheight + HSPLITTERHEIGHT;
@@ -420,39 +420,39 @@ namespace nux
     }
 
     t_s32 availableheight = (h - num_element * HSPLITTERHEIGHT);
-    float max_size = float (availableheight) / total;
+    float max_size = float(availableheight) / total;
 
     for (t_u32 i = 0; i < (t_u32) m_SplitConfig.size(); i++)
     {
       stretchfactor = m_SplitConfig[i];
       y += stretchfactor * max_size / max_stretch;
-      Geometry geo (x, y, w, HSPLITTERHEIGHT);
-      m_SplitterObject[i]->SetGeometry (geo);
+      Geometry geo(x, y, w, HSPLITTERHEIGHT);
+      m_SplitterObject[i]->SetGeometry(geo);
     }
 
-    m_SplitterObject[num_element-1]->SetBaseX (y + h - HSPLITTERHEIGHT);
+    m_SplitterObject[num_element-1]->SetBaseX(y + h - HSPLITTERHEIGHT);
 
     m_initial_config = true;
   }
 
-  void HSplitter::OnSplitterMouseDown (t_s32 x, t_s32 y, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos)
+  void HSplitter::OnSplitterMouseDown(t_s32 x, t_s32 y, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos)
   {
     m_point = Point(x, y);
 
     m_focus_splitter_index = header_pos;
-    GetWindowCompositor().SetWidgetDrawingOverlay (this, GetWindowCompositor ().GetProcessingTopView () );
+    GetWindowCompositor().SetWidgetDrawingOverlay(this, GetWindowCompositor().GetProcessingTopView());
 
 
     // Hint for the window to initiate a redraw
-    GetWindowThread ()->RequestRedraw();
+    GetWindowThread()->RequestRedraw();
   }
 
-  void HSplitter::OnSplitterMouseUp (t_s32 x, t_s32 y, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos)
+  void HSplitter::OnSplitterMouseUp(t_s32 x, t_s32 y, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos)
   {
     if (mvt_dy)
     {
       Geometry geo = m_SplitterObject[header_pos]->GetGeometry();
-      geo.OffsetPosition (0, mvt_dy);
+      geo.OffsetPosition(0, mvt_dy);
 
       t_u32 num_element = (t_u32) m_SplitterObject.size();
 
@@ -460,11 +460,11 @@ namespace nux
       {
         // Make the splitter bar stick to the next one if the distance between them is less than HSTICK_SIZE.
         if (m_SplitterObject[header_pos + 1]->GetGeometry().y - geo.y - HSPLITTERHEIGHT < HSTICK_SIZE)
-          geo.SetY ( m_SplitterObject[header_pos + 1]->GetGeometry().y - HSPLITTERHEIGHT );
+          geo.SetY( m_SplitterObject[header_pos + 1]->GetGeometry().y - HSPLITTERHEIGHT );
       }
 
-      m_SplitterObject[header_pos]->SetGeometry (geo);
-      ResizeSplitter (header_pos);
+      m_SplitterObject[header_pos]->SetGeometry(geo);
+      ResizeSplitter(header_pos);
     }
 
     m_focus_splitter_index = -1;
@@ -472,12 +472,12 @@ namespace nux
     mvt_dy = 0;
 
     // End overlay drawing;
-    GetWindowCompositor().SetWidgetDrawingOverlay (0, GetWindowCompositor().GetProcessingTopView() );
+    GetWindowCompositor().SetWidgetDrawingOverlay(0, GetWindowCompositor().GetProcessingTopView());
     // Hint for the window to initiate a redraw
-    GetWindowThread ()->RequestRedraw();
+    GetWindowThread()->RequestRedraw();
   }
 
-  void HSplitter::OnSplitterMouseDrag (t_s32 x, t_s32 y, t_s32 dx, t_s32 dy, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos)
+  void HSplitter::OnSplitterMouseDrag(t_s32 x, t_s32 y, t_s32 dx, t_s32 dy, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos)
   {
     Geometry geo = m_SplitterObject[header_pos]->GetGeometry();
     t_s32 num_element = (t_s32) m_SplitterObject.size();
@@ -495,31 +495,31 @@ namespace nux
     {
       // Continuously redraw resize and redraw the 2 parts of the widget.
       // This is slow.
-      geo.OffsetPosition (mvt_dx, mvt_dy);
-      m_SplitterObject[header_pos]->SetGeometry (geo);
-      ResizeSplitter (header_pos);
+      geo.OffsetPosition(mvt_dx, mvt_dy);
+      m_SplitterObject[header_pos]->SetGeometry(geo);
+      ResizeSplitter(header_pos);
 
       mvt_dx = 0;
       mvt_dy = 0;
     }
 
     // Hint for the window to initiate a redraw
-    GetWindowThread ()->RequestRedraw();
+    GetWindowThread()->RequestRedraw();
   }
 
-  void HSplitter::ResizeSplitter (t_s32 header_pos)
+  void HSplitter::ResizeSplitter(t_s32 header_pos)
   {
     Geometry geo = m_SplitterObject[header_pos]->GetGeometry();
     t_s32 num_element = (t_s32) m_SplitterObject.size();
 
-    if ( (header_pos == 0) && (m_SplitterObject[header_pos]->GetBaseY() < GetBaseY() ) )
+    if ((header_pos == 0) && (m_SplitterObject[header_pos]->GetBaseY() < GetBaseY()))
     {
-      m_SplitterObject[header_pos]->SetBaseY (GetBaseY() );
+      m_SplitterObject[header_pos]->SetBaseY(GetBaseY());
     }
 
-    if ( (header_pos == num_element - 1) && (m_SplitterObject[header_pos]->GetBaseY() > GetBaseY() + GetBaseHeight() - HSPLITTERHEIGHT) )
+    if ((header_pos == num_element - 1) && (m_SplitterObject[header_pos]->GetBaseY() > GetBaseY() + GetBaseHeight() - HSPLITTERHEIGHT))
     {
-      m_SplitterObject[header_pos]->SetBaseY (GetBaseY() + GetBaseHeight() - HSPLITTERHEIGHT);
+      m_SplitterObject[header_pos]->SetBaseY(GetBaseY() + GetBaseHeight() - HSPLITTERHEIGHT);
     }
 
     if (header_pos < (t_s32) num_element - 1)
@@ -531,7 +531,7 @@ namespace nux
       if (posy0 > posy1 - HSPLITTERHEIGHT)
       {
         posy0 = posy1 - HSPLITTERHEIGHT;
-        m_SplitterObject[header_pos]->SetBaseY (posy0);
+        m_SplitterObject[header_pos]->SetBaseY(posy0);
       }
     }
 
@@ -544,7 +544,7 @@ namespace nux
       if (posy0 < posy1 + HSPLITTERHEIGHT)
       {
         posy0 = posy1 + HSPLITTERHEIGHT;
-        m_SplitterObject[header_pos]->SetBaseY (posy0);
+        m_SplitterObject[header_pos]->SetBaseY(posy0);
       }
     }
 
@@ -558,16 +558,16 @@ namespace nux
   {
     std::vector<Area *>::iterator it;
 
-    for(it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
+    for (it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
     {
       //(*it)->DoneRedraw();
-      if((*it)->Type().IsDerivedFromType (View::StaticObjectType))
+      if ((*it)->Type().IsDerivedFromType(View::StaticObjectType))
       {
         View *ic = static_cast<View *>(*it);
         ic->DoneRedraw();
       }
 
-      else if((*it)->Type().IsObjectType (InputArea::StaticObjectType))
+      else if ((*it)->Type().IsObjectType(InputArea::StaticObjectType))
       {
         //InputArea* base_area = NUX_STATIC_CAST(InputArea*, (*it));
       }
@@ -578,27 +578,27 @@ namespace nux
   {
     bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
 
-    if(mouse_inside == false)
+    if (mouse_inside == false)
       return NULL;
 
     std::vector<MySplitter*>::iterator splitter_it;
     for (splitter_it = m_SplitterObject.begin(); splitter_it != m_SplitterObject.end(); splitter_it++)
     {
       Area* found_area = (*splitter_it)->FindAreaUnderMouse(mouse_position, event_type);
-      if(found_area)
+      if (found_area)
         return found_area;
     }
 
     std::vector<Area *>::iterator it;
-    for(it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
+    for (it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
     {
       Area* found_area = (*it)->FindAreaUnderMouse(mouse_position, event_type);
 
-      if(found_area)
+      if (found_area)
         return found_area;
     }
 
-    if((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
+    if ((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
       return NULL;
     return this;
   }
@@ -622,12 +622,12 @@ namespace nux
       }
       std::vector<Area*>::iterator it;
       std::vector<Area*>::iterator it_next;
-      it = std::find (m_InterfaceObject.begin(), m_InterfaceObject.end(), next_object_to_key_focus_area_);
+      it = std::find(m_InterfaceObject.begin(), m_InterfaceObject.end(), next_object_to_key_focus_area_);
 
       if (it == m_InterfaceObject.end())
       {
         // Should never happen
-        nuxAssert (0);
+        nuxAssert(0);
         return NULL;
       }
 

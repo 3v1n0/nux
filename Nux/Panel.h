@@ -33,17 +33,17 @@ namespace nux
   class Panel: public ScrollView
   {
   public:
-    Panel (NUX_FILE_LINE_PROTO);
+    Panel(NUX_FILE_LINE_PROTO);
     ~Panel();
 
-    virtual void Draw (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     //void AddWidget(View* ic);
-    void AddWidget (View *ic, int stretchfactor = 1);
-    void AddWidget (std::list<View *> *ViewList);
-    virtual bool SetLayout (Layout *layout);
+    void AddWidget(View *ic, int stretchfactor = 1);
+    void AddWidget(std::list<View *> *ViewList);
+    virtual bool SetLayout(Layout *layout);
     void clearContent();
 
     // Get a change to do any work on an element.
@@ -51,16 +51,16 @@ namespace nux
     virtual void PreLayoutManagement();
     // Get a change to do any work on an element.
     // Here we need to position the header by hand because it is not under the control of vlayout.
-    virtual long PostLayoutManagement (long LayoutResult);
+    virtual long PostLayoutManagement(long LayoutResult);
     // Get a change to do any work on an element.
     // Here we need to position the header by hand because it is not under the control of vlayout.
-    virtual void ComputeContentPosition (float offsetX, float offsetY);
+    virtual void ComputeContentPosition(float offsetX, float offsetY);
 
   protected:
-    virtual void ScrollLeft (float stepx, int mousedx);
-    virtual void ScrollRight (float stepx, int mousedx);
-    virtual void ScrollUp (float stepy, int mousedy);
-    virtual void ScrollDown (float stepy, int mousedy);
+    virtual void ScrollLeft(float stepx, int mousedx);
+    virtual void ScrollRight(float stepx, int mousedx);
+    virtual void ScrollUp(float stepy, int mousedy);
+    virtual void ScrollDown(float stepy, int mousedy);
 
     virtual bool AcceptKeyNavFocus();
 

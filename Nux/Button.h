@@ -42,7 +42,7 @@ namespace nux
   };
 
 
-  //! A Button with styling (image + text)
+  //! A Button with styling(image + text)
   /*!
       The Button class has a non persistent active state. It returns to a normal state after a mouse click.
       For a Button is a persistent active state, use the ToggleButton class. This widget is also known as a PushButton.
@@ -198,7 +198,7 @@ namespace nux
     /*!
         Set the layout type. With an horizontal layout type, the image and the label are arranged horizontally, while with a 
         vertical layout type, they are arranged vertically. You may call SetItemOrder to choose if the image or the label 
-        come first in an horizontal (from left to right) or vertical (top to bottom) configuration.
+        come first in an horizontal(from left to right) or vertical(top to bottom) configuration.
 
         @param layout_type The layout type.
     */

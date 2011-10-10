@@ -27,26 +27,26 @@
 
 namespace nux
 {
-ToggleButton::ToggleButton (TextureArea *image, NUX_FILE_LINE_DECL)
-  : Button (image, NUX_FILE_LINE_PARAM)
+ToggleButton::ToggleButton(TextureArea *image, NUX_FILE_LINE_DECL)
+  : Button(image, NUX_FILE_LINE_PARAM)
   {
     persistent_active_state_ = true;
   }
 
-ToggleButton::ToggleButton (const std::string label, NUX_FILE_LINE_DECL)
-  : Button (label, NUX_FILE_LINE_PARAM)
+ToggleButton::ToggleButton(const std::string label, NUX_FILE_LINE_DECL)
+  : Button(label, NUX_FILE_LINE_PARAM)
   {
     persistent_active_state_ = true;
   }
 
-ToggleButton::ToggleButton (const std::string label, TextureArea *image, NUX_FILE_LINE_DECL)
-  : Button (label,  image, NUX_FILE_LINE_PARAM)
+ToggleButton::ToggleButton(const std::string label, TextureArea *image, NUX_FILE_LINE_DECL)
+  : Button(label,  image, NUX_FILE_LINE_PARAM)
   {
     persistent_active_state_ = true;
   }
 
-ToggleButton::ToggleButton (NUX_FILE_LINE_DECL)
-  : Button (NUX_FILE_LINE_PARAM)
+ToggleButton::ToggleButton(NUX_FILE_LINE_DECL)
+  : Button(NUX_FILE_LINE_PARAM)
   {
     persistent_active_state_ = true;
   }

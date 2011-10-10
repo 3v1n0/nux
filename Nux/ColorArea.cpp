@@ -27,33 +27,33 @@
 namespace nux
 {
 
-  ColorArea::ColorArea (Color color, NUX_FILE_LINE_DECL)
-    :   View (NUX_FILE_LINE_PARAM)
-    ,   m_Color (color)
+  ColorArea::ColorArea(Color color, NUX_FILE_LINE_DECL)
+    :   View(NUX_FILE_LINE_PARAM)
+    ,   m_Color(color)
   {
-    SetMinMaxSize (50, 50);
+    SetMinMaxSize(50, 50);
   }
 
   ColorArea::~ColorArea()
   {
   }
 
-  void ColorArea::Draw (GraphicsEngine &graphics_engine, bool force_draw)
+  void ColorArea::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
-    GetPainter().Paint2DQuadColor (graphics_engine, GetGeometry(), m_Color);
+    GetPainter().Paint2DQuadColor(graphics_engine, GetGeometry(), m_Color);
   }
 
-  void ColorArea::DrawContent (GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
-  }
-
-  void ColorArea::PostDraw (GraphicsEngine &graphics_engine, bool force_draw)
+  void ColorArea::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void ColorArea::SetColor (Color color)
+  void ColorArea::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
+  {
+
+  }
+
+  void ColorArea::SetColor(Color color)
   {
     m_Color = color;
     QueueDraw();
