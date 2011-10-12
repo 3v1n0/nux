@@ -60,6 +60,9 @@ namespace nux
 
   void AbstractButton::RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
+    if (!IsViewActive())
+      return;
+
     if(togglable_)
     {
       active = !active;
@@ -80,6 +83,9 @@ namespace nux
 
   void AbstractButton::RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
+    if (!IsViewActive())
+      return;
+
     state = NUX_STATE_PRELIGHT;
     //state = 1;
     QueueDraw();
@@ -87,6 +93,9 @@ namespace nux
 
   void AbstractButton::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
+    if (!IsViewActive())
+      return;
+
     state = NUX_STATE_ACTIVE;
     QueueDraw();
   }

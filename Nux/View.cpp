@@ -473,17 +473,22 @@ namespace nux
 
   void View::ActivateView ()
   {
-    _is_view_active = false;
+    _is_view_active = true;
   }
 
   void View::DeactivateView ()
   {
-    _is_view_active = true;
+    _is_view_active = false;
   }
 
   bool View::IsViewActive () const
   {
     return _is_view_active;
+  }
+
+  void View::SetViewActive (bool active)
+  {
+    _is_view_active = active;
   }
 
   void View::GeometryChangePending ()
