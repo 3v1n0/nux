@@ -344,13 +344,15 @@ logging::Logger logger("nux.window");
     {
       // Context: The left mouse button is not down over an area.
       // We look for the area where the mouse pointer is located.
-
-      // We should never get here for a NUX_MOUSE_RELEASED event
+      
+      // NUX_MOUSE_RELEASED is tipically processed in cases where mouse_owner_area_ is not NULL.
+      // See below for the case when NUX_MOUSE_RELEASED is processed here while mouse_owner_area_ is NULL.
       if ((event.e_event == NUX_MOUSE_PRESSED) ||
         (event.e_event == NUX_MOUSE_MOVE) ||
         (event.e_event == NUX_MOUSE_DOUBLECLICK) ||
         (event.e_event == NUX_MOUSE_WHEEL) ||
-        (event.e_event == NUX_WINDOW_MOUSELEAVE))
+        (event.e_event == NUX_WINDOW_MOUSELEAVE) ||
+        (event.e_event == NUX_MOUSE_RELEASED))
       {
         InputArea* hit_view = NULL;         // The view under the mouse
         BaseWindow* hit_base_window = NULL; // The BaseWindow below the mouse pointer.
@@ -490,6 +492,18 @@ logging::Logger logger("nux.window");
         else if (hit_view && (event.e_event == NUX_MOUSE_WHEEL))
         {
           hit_view->EmitMouseWheelSignal(hit_view_x, hit_view_y, event.e_wheeldelta, event.GetMouseState(), event.GetKeyState());
+        }
+        else if (hit_view && (event.e_event == NUX_MOUSE_RELEASED))
+        {
+          // We only get a NUX_MOUSE_RELEASED event when the mouse was pressed
+          // over another area and released here. There are a few situations that can cause 
+          // mouse_owner_area_ to be NULL on a NUX_MOUSE_RELEASED event:
+          //  - The mouse down event happens on a area. That area is set into mouse_owner_area_.
+          //    Then the area is destroyed, before the mouse is released.
+          //  - The mouse down event happens. Then a call to AddGrabPointer triggers a call to 
+          //    ResetMousePointerAreas. mouse_owner_area_ is then set to NULL.
+
+          hit_view->EmitMouseUpSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
         }
         else if (hit_view == NULL)
         {
