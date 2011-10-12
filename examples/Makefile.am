@@ -7,7 +7,8 @@ if BUILD_EXAMPLES
 # This tells automake that we want to build binaries, but they shouldn't be
 # installed. For each individual example, add it's binary name here
 
-noinst_PROGRAMS = 
+noinst_PROGRAMS = text_entry_focus
+
 #button \
 #                  cairo \
 #                  cairo_wrapper \
@@ -23,7 +24,6 @@ noinst_PROGRAMS =
 #                  scrollview \
 #                  tab_view \
 #                  textedit \
-#                  text_entry_focus \
 #                  tiles_view \
 #                  timegraph \
 #                  timeline \
@@ -93,8 +93,9 @@ ALL_LIBS = \
 #rotate_texture_area_LDADD = $(ALL_LIBS)
 #tiles_view_SOURCES = tiles_view.cpp
 #tiles_view_LDADD = $(ALL_LIBS)
-#text_entry_focus_SOURCES = text_entry_focus.cpp
-#text_entry_focus_LDADD = $(ALL_LIBS)
+
+text_entry_focus_SOURCES = text_entry_focus.cpp
+text_entry_focus_LDADD = $(ALL_LIBS)
 
 # To distribute source add the source code here
 #sourceexampledir = "$(pkgdatadir)/examples"

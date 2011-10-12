@@ -29,7 +29,6 @@ source_cpp = \
   $(srcdir)/AbstractButton.cpp \
   $(srcdir)/AbstractComboBox.cpp \
   $(srcdir)/AbstractPaintLayer.cpp \
-  $(srcdir)/AbstractSeparator.cpp \
   $(srcdir)/AbstractThread.cpp \
   $(srcdir)/ActionItem.cpp \
   $(srcdir)/AnimatedTextureArea.cpp \
@@ -37,8 +36,6 @@ source_cpp = \
   $(srcdir)/InputArea.cpp \
   $(srcdir)/Area.cpp \
   $(srcdir)/BaseWindow.cpp \
-  $(srcdir)/BezierCurveControl.cpp \
-  $(srcdir)/BezierCurveControl2.cpp \
   $(srcdir)/Button.cpp \
   $(srcdir)/Canvas.cpp \
   $(srcdir)/CairoWrapper.cpp \
@@ -46,34 +43,26 @@ source_cpp = \
   $(srcdir)/ClientArea.cpp \
   $(srcdir)/ColorArea.cpp \
   $(srcdir)/ColorEditor.cpp \
-  $(srcdir)/ColorGradient.cpp \
   $(srcdir)/ColorPickerDialog.cpp \
   $(srcdir)/ColorPreview.cpp \
-  $(srcdir)/ColorRangeValuator.cpp \
-  $(srcdir)/CurveControl.cpp \
   $(srcdir)/Dialog.cpp \
   $(srcdir)/DoubleValidator.cpp \
   $(srcdir)/EditTextBox.cpp \
   $(srcdir)/FileSelector.cpp \
   $(srcdir)/FloatingWindow.cpp \
-  $(srcdir)/Focusable.cpp \
-  $(srcdir)/FunctionGraph.cpp \
   $(srcdir)/GridHLayout.cpp \
   $(srcdir)/GroupBox.cpp \
   $(srcdir)/GroupBox2.cpp \
   $(srcdir)/HexRegExpValidator.cpp \
-  $(srcdir)/Histogram.cpp \
   $(srcdir)/HLayout.cpp \
   $(srcdir)/HScrollBar.cpp \
-  $(srcdir)/HSeparator.cpp \
   $(srcdir)/HSplitter.cpp \
-  $(srcdir)/HToolBar.cpp \
-  $(srcdir)/HueRangeValuator.cpp \
   $(srcdir)/IntegerValidator.cpp \
   $(srcdir)/View.cpp \
   $(srcdir)/KeyboardHandler.cpp \
   $(srcdir)/LayeredLayout.cpp \
   $(srcdir)/Layout.cpp \
+  $(srcdir)/LinearLayout.cpp \
   $(srcdir)/MenuPage.cpp \
   $(srcdir)/MenuBar.cpp \
   $(srcdir)/MouseAreaCtrl.cpp \
@@ -92,15 +81,12 @@ source_cpp = \
   $(srcdir)/SpinBox.cpp \
   $(srcdir)/SpinBoxDouble.cpp \
   $(srcdir)/SpinBox_Logic.cpp \
-  $(srcdir)/SplineCurveEditor.cpp \
-  $(srcdir)/SplineCurvePreview.cpp \
   $(srcdir)/StaticText.cpp \
   $(srcdir)/StaticTextBox.cpp \
   $(srcdir)/SystemThread.cpp \
   $(srcdir)/TabView.cpp \
   $(srcdir)/TextEntry.cpp \
   $(srcdir)/TextureArea.cpp \
-  $(srcdir)/TimeGraph.cpp \
   $(srcdir)/Timeline.cpp \
   $(srcdir)/TimelineEasings.cpp \
   $(srcdir)/TimerProc.cpp \
@@ -111,9 +97,7 @@ source_cpp = \
   $(srcdir)/Validator.cpp \
   $(srcdir)/VLayout.cpp \
   $(srcdir)/VScrollBar.cpp \
-  $(srcdir)/VSeparator.cpp \
   $(srcdir)/VSplitter.cpp \
-  $(srcdir)/VToolBar.cpp \
   $(srcdir)/WidgetMetrics.cpp \
   $(srcdir)/WindowCompositor.cpp \
   $(srcdir)/WindowThread.cpp
@@ -122,7 +106,6 @@ source_h = \
   $(srcdir)/AbstractButton.h \
   $(srcdir)/AbstractComboBox.h \
   $(srcdir)/AbstractPaintLayer.h \
-  $(srcdir)/AbstractSeparator.h \
   $(srcdir)/AbstractThread.h \
   $(srcdir)/ActionItem.h \
   $(srcdir)/AnimatedTextureArea.h \
@@ -130,8 +113,6 @@ source_h = \
   $(srcdir)/InputArea.h \
   $(srcdir)/Area.h \
   $(srcdir)/BaseWindow.h \
-  $(srcdir)/BezierCurveControl.h \
-  $(srcdir)/BezierCurveControl2.h \
   $(srcdir)/Button.h \
   $(srcdir)/Canvas.h \
   $(srcdir)/CairoWrapper.h \
@@ -139,34 +120,26 @@ source_h = \
   $(srcdir)/ClientArea.h \
   $(srcdir)/ColorArea.h \
   $(srcdir)/ColorEditor.h \
-  $(srcdir)/ColorGradient.h \
   $(srcdir)/ColorPickerDialog.h \
   $(srcdir)/ColorPreview.h \
-  $(srcdir)/ColorRangeValuator.h \
-  $(srcdir)/CurveControl.h \
   $(srcdir)/Dialog.h \
   $(srcdir)/DoubleValidator.h \
   $(srcdir)/EditTextBox.h \
   $(srcdir)/FileSelector.h \
   $(srcdir)/FloatingWindow.h \
-  $(srcdir)/Focusable.h \
-  $(srcdir)/FunctionGraph.h \
   $(srcdir)/GridHLayout.h \
   $(srcdir)/GroupBox.h \
   $(srcdir)/GroupBox2.h \
   $(srcdir)/HexRegExpValidator.h \
-  $(srcdir)/Histogram.h \
   $(srcdir)/HLayout.h \
   $(srcdir)/HScrollBar.h \
-  $(srcdir)/HSeparator.h \
   $(srcdir)/HSplitter.h \
-  $(srcdir)/HToolBar.h \
-  $(srcdir)/HueRangeValuator.h \
   $(srcdir)/IntegerValidator.h \
   $(srcdir)/View.h \
   $(srcdir)/KeyboardHandler.h \
   $(srcdir)/LayeredLayout.h \
   $(srcdir)/Layout.h \
+  $(srcdir)/LinearLayout.h \
   $(srcdir)/MenuPage.h \
   $(srcdir)/MenuBar.h \
   $(srcdir)/MouseAreaCtrl.h \
@@ -186,15 +159,12 @@ source_h = \
   $(srcdir)/SpinBox.h \
   $(srcdir)/SpinBoxDouble.h \
   $(srcdir)/SpinBox_Logic.h \
-  $(srcdir)/SplineCurveEditor.h \
-  $(srcdir)/SplineCurvePreview.h \
   $(srcdir)/StaticText.h \
   $(srcdir)/StaticTextBox.h \
   $(srcdir)/SystemThread.h \
   $(srcdir)/TabView.h \
   $(srcdir)/TextEntry.h \
   $(srcdir)/TextureArea.h \
-  $(srcdir)/TimeGraph.h \
   $(srcdir)/Timeline.h \
   $(srcdir)/TimelineEasings.h \
   $(srcdir)/TimerProc.h \
@@ -205,9 +175,7 @@ source_h = \
   $(srcdir)/Validator.h \
   $(srcdir)/VLayout.h \
   $(srcdir)/VScrollBar.h \
-  $(srcdir)/VSeparator.h \
   $(srcdir)/VSplitter.h \
-  $(srcdir)/VToolBar.h \
   $(srcdir)/WidgetMetrics.h \
   $(srcdir)/WindowCompositor.h \
   $(srcdir)/WindowThread.h

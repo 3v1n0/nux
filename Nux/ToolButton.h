@@ -37,7 +37,6 @@ namespace nux
     ToolButton (const TCHAR *BitmapFilename = 0, NUX_FILE_LINE_PROTO);
 
     ~ToolButton();
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
