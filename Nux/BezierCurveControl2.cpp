@@ -143,11 +143,15 @@ namespace nux
 
       int X0, Y0, X1, Y1, X2, Y2;
 
+#ifndef NUX_OPENGLES_20
+      // GLES 2.0 doesn't support anti-aliased lines/points
       glEnable (GL_POINT_SMOOTH);
       glEnable (GL_LINE_SMOOTH);
-      glLineWidth (1);
       glHint (GL_POINT_SMOOTH_HINT, GL_NICEST);	// Make round points, not square points
       glHint (GL_LINE_SMOOTH_HINT, GL_NICEST);		// Antialias the lines
+#endif
+
+      glLineWidth (1);
       GfxContext.GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
       for (i = 1; i < (t_u32) nsample; i++ )
@@ -186,8 +190,10 @@ namespace nux
         GetPainter().Draw2DLine (GfxContext, X0, Y0, base.x + base.GetWidth(), Y0, Color (0xFFFFFFFF) );
       }
 
+#ifndef NUX_OPENGLES_20
       glDisable (GL_POINT_SMOOTH);
       glDisable (GL_LINE_SMOOTH);
+#endif
       GfxContext.GetRenderStates().SetBlend (FALSE);
 
       for (i = 0; i <= nbKnot - 1; i += CURVE_DEGREE)

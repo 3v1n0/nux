@@ -7,7 +7,11 @@ if BUILD_GPUTESTS
 # This tells automake that we want to build binaries, but they shouldn't be
 # installed. For each individual test, add it's binary name here
 
-noinst_PROGRAMS = texture_power_of_2 framebufferobject quad_2texmod texture_copy_blur texture_blur texture_data arb_programs_limits
+noinst_PROGRAMS = texture_power_of_2 framebufferobject quad_2texmod texture_copy_blur texture_blur texture_data
+
+if !NUX_OPENGLES_20
+noinst_PROGRAMS += arb_programs_limits
+endif
 
 # We only have to do this AM_ once to affect all the binaries we build from
 # this Makefile

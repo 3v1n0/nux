@@ -338,15 +338,16 @@ namespace nux
       {
         time_t	FileTime;
         FileTime = FileInfo.st_mtime;
-        tm *pTime = ::gmtime (&FileTime);
+        tm tme;
+		errno_t err = gmtime_s(&tme, &FileTime);
 
-        Timestamp.Day       = pTime->tm_mday;
-        Timestamp.DayOfWeek = pTime->tm_wday;
-        Timestamp.DayOfYear = pTime->tm_yday;
-        Timestamp.Hour      = pTime->tm_hour;
-        Timestamp.Minute    = pTime->tm_min;
-        Timestamp.Second    = pTime->tm_sec;
-        Timestamp.Year      = pTime->tm_year + 1900;
+        Timestamp.Day       = tme.tm_mday;
+        Timestamp.DayOfWeek = tme.tm_wday;
+        Timestamp.DayOfYear = tme.tm_yday;
+        Timestamp.Hour      = tme.tm_hour;
+        Timestamp.Minute    = tme.tm_min;
+        Timestamp.Second    = tme.tm_sec;
+        Timestamp.Year      = tme.tm_year + 1900;
         return TRUE;
       }
 

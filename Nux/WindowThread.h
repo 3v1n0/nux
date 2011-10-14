@@ -261,7 +261,11 @@ namespace nux
 
 
     */
+#ifdef NUX_OPENGLES_20
+    virtual bool ThreadCtor (Display *X11Display, Window X11Window, EGLContext OpenGLContext);
+#else
     virtual bool ThreadCtor (Display *X11Display, Window X11Window, GLXContext OpenGLContext);
+#endif
     Display *_x11display;
     bool     _ownx11display;
 #endif
@@ -618,9 +622,15 @@ namespace nux
         ThreadUserInitFunc UserInitFunc,
         void *InitData);
 #elif defined(NUX_OS_LINUX)
+#ifdef NUX_OPENGLES_20
+    friend WindowThread *CreateFromForeignWindow (Window X11Window, EGLContext OpenGLContext,
+        ThreadUserInitFunc UserInitFunc,
+        void *InitData);
+#else
     friend WindowThread *CreateFromForeignWindow (Window X11Window, GLXContext OpenGLContext,
         ThreadUserInitFunc UserInitFunc,
         void *InitData);
+#endif
 #endif
 
     friend SystemThread *CreateSystemThread (AbstractThread *Parent, ThreadUserInitFunc UserInitFunc, void *InitData);

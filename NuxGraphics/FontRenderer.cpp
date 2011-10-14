@@ -41,7 +41,7 @@ namespace nux
   //  - declare the vertex attribute name before any other attribute.
   //  - Give the vertex attribute a name that comes before any other attribute name. For instance prefix the vertex attribute name with "_".
 
-  NString gFontVtxShader = TEXT ("#version 110      \n\
+  NString gFontVtxShader = TEXT ("                  \n\
   attribute vec4 _Position;                         \n\
   attribute vec4 iOffset;                           \n\
   attribute vec4 iScale;                            \n\
@@ -55,14 +55,29 @@ namespace nux
   gl_Position  = ViewProjectionMatrix * myvertex;   \n\
   }");
 
-  NString gFontFragShader = TEXT ("#version 110                             \n\
+  NString gFontFragShader = TEXT ("                                         \n\
   #extension GL_ARB_texture_rectangle : enable                              \n\
-  uniform sampler2DRect FontTexture;                                        \n\
+  #ifdef GL_ES                                                              \n\
+  precision mediump float;                                                  \n\
+  #endif                                                                    \n\
   uniform vec4 TextColor;                                                   \n\
   varying vec4 oTexCoord0;                                                  \n\
+  #ifdef SAMPLERTEX2D                                                       \n\
+  uniform sampler2D FontTexture;                                            \n\
+  vec4 SampleTexture(sampler2D TexObject, vec4 TexCoord)                    \n\
+  {                                                                         \n\
+    return texture2D(TexObject, TexCoord.st);                               \n\
+  }                                                                         \n\
+  #elif defined SAMPLERTEX2DRECT                                            \n\
+  uniform sampler2DRect FontTexture;                                        \n\
+  vec4 SampleTexture(sampler2DRect TexObject, vec4 TexCoord)                \n\
+  {                                                                         \n\
+    return texture2DRect(TexObject, TexCoord.st);                           \n\
+  }                                                                         \n\
+  #endif                                                                    \n\
   void main()                                                               \n\
   {                                                                         \n\
-    vec4 diffuse = texture2DRect(FontTexture, oTexCoord0.st);               \n\
+    vec4 diffuse = SampleTexture(FontTexture, oTexCoord0);                  \n\
     gl_FragColor = vec4(TextColor.x, TextColor.y, TextColor.z, diffuse.w);  \n\
   }");
 
@@ -112,7 +127,11 @@ namespace nux
       _shader_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateShaderProgram();
 
       _vertex_shader_prog->SetShaderCode (TCHAR_TO_ANSI (*gFontVtxShader) );
-      _pixel_shader_prog->SetShaderCode (TCHAR_TO_ANSI (*gFontFragShader) );
+#ifndef NUX_OPENGLES_20
+      _pixel_shader_prog->SetShaderCode (TCHAR_TO_ANSI (*gFontFragShader), TEXT ("#define SAMPLERTEX2DRECT") );
+#else
+      _pixel_shader_prog->SetShaderCode (TCHAR_TO_ANSI (*gFontFragShader), TEXT ("#define SAMPLERTEX2D") );
+#endif
 
       _shader_prog->ClearShaderObjects();
       _shader_prog->AddShaderObject (_vertex_shader_prog);
@@ -296,6 +315,7 @@ namespace nux
     _graphics_engine.GetRenderStates().SetBlend (TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     _graphics_engine.GetRenderStates().SetColorMask (TRUE, TRUE, TRUE, WriteAlphaChannel); // Do not write the alpha of characters
 
+    GLshort *Index = new GLshort[StrLength*6];
     Vector4 *Position = new Vector4[StrLength*4];
     Vector4 *UV = new Vector4[StrLength*4];
     Vector4 *Offset = new Vector4[StrLength*4];
@@ -410,6 +430,15 @@ namespace nux
         }
       }
 
+      // Set up element array indices
+      Index[i*6 + 0] = i*4;
+      Index[i*6 + 1] = i*4 + 2;
+      Index[i*6 + 2] = i*4 + 3;
+
+      Index[i*6 + 3] = i*4;
+      Index[i*6 + 4] = i*4 + 1;
+      Index[i*6 + 5] = i*4 + 2;
+
       CurX += abcA + abcB + abcC;
     }
 
@@ -450,6 +479,7 @@ namespace nux
         CHECKGL(glUniform4fARB(TextColor, color.red, color.green, color.blue, color.alpha));
       }
     }
+#ifndef NUX_OPENGLES_20
     else
     {
       shader_program = _asm_shader_prog;
@@ -480,6 +510,7 @@ namespace nux
 
       _graphics_engine.SetTexture (GL_TEXTURE0, glTexture->m_Texture);
     }
+#endif
 
     if (in_attrib_offset != -1)
     {
@@ -506,7 +537,7 @@ namespace nux
     }
 
     if (NumCharToDraw > 0)
-      CHECKGL ( glDrawArrays ( GL_QUADS, 0, NumCharToDraw * 4 ) );
+      CHECKGL ( glDrawElements ( GL_TRIANGLES, NumCharToDraw * 6, GL_UNSIGNED_SHORT, Index ) );
 
     if (in_attrib_position != -1)
       CHECKGL ( glDisableVertexAttribArrayARB (in_attrib_position) );
@@ -534,6 +565,7 @@ namespace nux
 
     CurX -= x + CURSOR_OFFSET;
 
+    delete [] Index;
     delete [] Position;
     delete [] UV;
     delete [] Scale;

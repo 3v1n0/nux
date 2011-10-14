@@ -1524,7 +1524,11 @@ logging::Logger logger("nux.windows.thread");
     return true;
   }
 #elif defined(NUX_OS_LINUX)
+#ifdef NUX_OPENGLES_20
+  bool WindowThread::ThreadCtor (Display *X11Display, Window X11Window, EGLContext OpenGLContext)
+#else
   bool WindowThread::ThreadCtor (Display *X11Display, Window X11Window, GLXContext OpenGLContext)
+#endif
   {
     nuxAssertMsg (m_ThreadCtorCalled == false, TEXT ("[WindowThread::ThreadCtor] ThreadCtor should not be called more than once.") );
     NUX_RETURN_VALUE_IF_TRUE (m_ThreadCtorCalled, true);
