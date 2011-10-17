@@ -355,7 +355,7 @@ namespace nux
     {
       // Set the composition layout to the size of the view area and offset it by(_delta_x, _delta_y)
 
-      if (view_layout_->GetStretchFactor() != 0)
+      if (view_layout_->GetScaleFactor() != 0)
       {
         view_layout_->SetGeometry(
                 m_ViewX,

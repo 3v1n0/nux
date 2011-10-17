@@ -32,7 +32,7 @@ namespace nux
   class TimerFunctor : public sigc::trackable
   {
   public:
-    sigc::signal<void, void *> OnTimerExpired;
+    sigc::signal<void, void *> time_expires;
   };
 
   class TimerObject;
@@ -41,9 +41,9 @@ namespace nux
   {
   public:
     TimerHandle();
-    TimerHandle (TimerObject *timer_object);
+    TimerHandle(TimerObject *timer_object);
     ~TimerHandle();
-    TimerHandle (const TimerHandle &);
+    TimerHandle(const TimerHandle &);
 
     TimerHandle &operator = (const TimerHandle &);
     bool IsValid() const;

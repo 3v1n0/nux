@@ -45,6 +45,11 @@ namespace nux
     m_layout = NULL;
   }
 
+  void Panel::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  {
+
+  }
+
   void Panel::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
     graphics_engine.PushClippingRectangle(GetGeometry());
@@ -71,11 +76,6 @@ namespace nux
     }
 
     graphics_engine.PopClippingRectangle();
-  }
-
-  void Panel::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
   }
 
   void Panel::AddWidget(View *ic, int stretchfactor)

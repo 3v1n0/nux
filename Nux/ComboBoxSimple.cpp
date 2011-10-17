@@ -54,7 +54,7 @@ namespace nux
 
     _combo_box_area->SetMinimumSize(2 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     _combo_box_area->SetGeometry(Geometry(0, 0, 3 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT));
-    _pango_static_text->SetClipping(_combo_box_area->GetBaseWidth());
+    //_pango_static_text->SetClipping(_combo_box_area->GetBaseWidth());
     _combo_box_area->OnGeometryChanged.connect(sigc::mem_fun(this, &ComboBoxSimple::RecvGeometryChanged));
 
     //m_CurrentMenu = new MenuPage;
@@ -247,7 +247,7 @@ namespace nux
 
   void ComboBoxSimple::RecvGeometryChanged(Area *area, Geometry &geo)
   {
-	  _pango_static_text->SetClipping(geo.width);
+    //_pango_static_text->SetClipping(geo.width);
   }
 
 

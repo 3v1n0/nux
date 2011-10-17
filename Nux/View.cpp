@@ -62,61 +62,49 @@ namespace nux
   {
     if (view_layout_)
     {
-      //view_layout_->SetDirty(true);
-//        if (view_layout_->GetStretchFactor() != 0)
-//        {
-//            PreLayoutManagement();
-//            long ret = view_layout_->ComputeContentSize();
-//            return PostLayoutManagement(ret);
-//        }
-//        else
+      PreLayoutManagement();
+
+      int PreWidth = GetBaseWidth();
+      int PreHeight = GetBaseHeight();
+
+      long ret = view_layout_->ComputeContentSize();
+
+      PostLayoutManagement(ret);
+
+      int PostWidth = GetBaseWidth();
+      int PostHeight = GetBaseHeight();
+
+      long size_compliance = 0;
+
+      // The layout has been resized to tightly pack its content
+      if (PostWidth > PreWidth)
       {
-        PreLayoutManagement();
-
-        int PreWidth = /*view_layout_->*/GetBaseWidth();
-        int PreHeight = /*view_layout_->*/GetBaseHeight();
-
-        long ret = view_layout_->ComputeContentSize();
-
-        PostLayoutManagement(ret);
-        //return eCompliantWidth | eCompliantHeight;
-
-        int PostWidth = /*view_layout_->*/GetBaseWidth();
-        int PostHeight = /*view_layout_->*/GetBaseHeight();
-
-        long size_compliance = 0;
-
-        // The layout has been resized to tightly pack its content
-        if (PostWidth > PreWidth)
-        {
-          size_compliance |= eLargerWidth; // need scrollbar
-        }
-        else if (PostWidth < PreWidth)
-        {
-          size_compliance |= eSmallerWidth;
-        }
-        else
-        {
-          size_compliance |= eCompliantWidth;
-        }
-
-        // The layout has been resized to tightly pack its content
-        if (PostHeight > PreHeight)
-        {
-          size_compliance |= eLargerHeight; // need scrollbar
-        }
-        else if (PostHeight < PreHeight)
-        {
-          size_compliance |= eSmallerHeight;
-        }
-        else
-        {
-          size_compliance |= eCompliantHeight;
-        }
-
-        //Area::SetGeometry(view_layout_->GetGeometry());
-        return size_compliance;
+        size_compliance |= eLargerWidth; // need scrollbar
       }
+      else if (PostWidth < PreWidth)
+      {
+        size_compliance |= eSmallerWidth;
+      }
+      else
+      {
+        size_compliance |= eCompliantWidth;
+      }
+
+      // The layout has been resized to tightly pack its content
+      if (PostHeight > PreHeight)
+      {
+        size_compliance |= eLargerHeight; // need scrollbar
+      }
+      else if (PostHeight < PreHeight)
+      {
+        size_compliance |= eSmallerHeight;
+      }
+      else
+      {
+        size_compliance |= eCompliantHeight;
+      }
+
+      return size_compliance;
     }
     else
     {

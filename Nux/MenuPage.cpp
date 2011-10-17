@@ -117,7 +117,7 @@ namespace nux
     if (_pango_static_text)
     {
       int w, h;
-      _pango_static_text->GetTextSize(w, h);
+      _pango_static_text->GetTextLayoutSize(w, h);
       return w;
     }
     return 0;
@@ -128,7 +128,7 @@ namespace nux
     if (_pango_static_text)
     {
       int w, h;
-      _pango_static_text->GetTextSize(w, h);
+      _pango_static_text->GetTextLayoutSize(w, h);
       return h;
     }
     return 0;

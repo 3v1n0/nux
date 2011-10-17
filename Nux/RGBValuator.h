@@ -61,10 +61,6 @@ namespace nux
     void SetColorFormat(color::Format cf);
     Color GetColor() const;
 
-    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
-
     void SetRGB(Color const& color);
     void SetRGB(float r, float g, float b);
     void SetAlpha(float alpha);
@@ -109,12 +105,28 @@ namespace nux
     sigc::signal<void, float, float, float, float> sigColorChanged;
 
   protected:
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PreLayoutManagement();
+
     void InitializeWidgets();
     void InitializeLayout();
 
     virtual bool AcceptKeyNavFocus();
 
   private:
+    //! Override of Area::SetMinimumHeight and made private.
+    /*!
+        Prevent changing the minimum height of the StaticText view.
+    */
+    virtual void SetMinimumHeight(){};
+
+    //! Override of Area::SetMaximumHeight and made private.
+    /*!
+        Prevent changing the maximum height of the StaticText view.
+    */
+    virtual void SetMaximumHeight(){};
+
     void DrawRedMarker(GraphicsEngine &graphics_engine);
     void DrawGreenMarker(GraphicsEngine &graphics_engine);
     void DrawBlueMarker(GraphicsEngine &graphics_engine);
@@ -132,15 +144,15 @@ namespace nux
     VLayout *vlayout;
     VLayout *colormodel_layout;
 
-    EditTextBox *m_RedCaption;
-    EditTextBox *m_GreenCaption;
-    EditTextBox *m_BlueCaption;
-    EditTextBox *m_AlphaCaption;
-    InputArea *m_RedValuator;
-    InputArea *m_GreenValuator;
-    InputArea *m_BlueValuator;
-    InputArea *m_AlphaValuator;
-    InputArea *m_ColorSquare;
+    EditTextBox *red_caption_;
+    EditTextBox *green_caption_;
+    EditTextBox *blue_caption_;
+    EditTextBox *alpha_caption_;
+    InputArea *red_valuator_;
+    InputArea *green_valuator_;
+    InputArea *blue_valuator_;
+    InputArea *alpha_valuator_;
+    InputArea *color_square_;
 
     InputArea *m_ComponentLabel0;
     InputArea *m_ComponentLabel1;
@@ -163,7 +175,6 @@ namespace nux
     HexRegExpValidator m_HexRegExp;
     IntegerValidator m_IntRegExp;
     DoubleValidator m_DoubleRegExp;
-    virtual long ComputeContentSize();
   };
 
 }

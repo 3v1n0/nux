@@ -90,15 +90,15 @@ namespace nux
     hlayout->AddView(_scroll_right_button, 0, eCenter, eFix);
 
     callback = new TimerFunctor;
-    callback->OnTimerExpired.connect(sigc::mem_fun(this, &HScrollBar::HScrollBarHandler));
+    callback->time_expires.connect(sigc::mem_fun(this, &HScrollBar::HScrollBarHandler));
     left_callback = new TimerFunctor;
-    left_callback->OnTimerExpired.connect(sigc::mem_fun(this, &HScrollBar::ScrollLeft));
+    left_callback->time_expires.connect(sigc::mem_fun(this, &HScrollBar::ScrollLeft));
     right_callback = new TimerFunctor;
-    right_callback->OnTimerExpired.connect(sigc::mem_fun(this, &HScrollBar::ScrollRight));
+    right_callback->time_expires.connect(sigc::mem_fun(this, &HScrollBar::ScrollRight));
     trackleft_callback = new TimerFunctor;
-    trackleft_callback->OnTimerExpired.connect(sigc::mem_fun(this, &HScrollBar::TrackLeft));
+    trackleft_callback->time_expires.connect(sigc::mem_fun(this, &HScrollBar::TrackLeft));
     trackright_callback = new TimerFunctor;
-    trackright_callback->OnTimerExpired.connect(sigc::mem_fun(this, &HScrollBar::TrackRight));
+    trackright_callback->time_expires.connect(sigc::mem_fun(this, &HScrollBar::TrackRight));
 
     SetLayout(hlayout);
     SetAcceptMouseWheelEvent(true);

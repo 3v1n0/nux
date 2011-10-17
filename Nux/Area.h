@@ -167,29 +167,29 @@ namespace nux
         The size is adjusted to respect the min and max size policy
         \sa SetWidth(), SetHeight(), SetMinimumSize(), SetMaximumSize().
     */
-    void SetBaseSize(int w, int h);
+    virtual void SetBaseSize(int w, int h);
 
-    void SetMinimumSize(int w, int h);
-    void SetMaximumSize(int w, int h);
-    void SetMinMaxSize(int w, int h);
+    virtual void SetMinimumSize(int w, int h);
+    virtual void SetMaximumSize(int w, int h);
+    virtual void SetMinMaxSize(int w, int h);
 
-    void SetMinimumWidth(int w);
-    void SetMaximumWidth(int w);
-    void SetMinimumHeight(int h);
-    void SetMaximumHeight(int h);
+    virtual void SetMinimumWidth(int w);
+    virtual void SetMaximumWidth(int w);
+    virtual void SetMinimumHeight(int h);
+    virtual void SetMaximumHeight(int h);
 
-    int GetMinimumWidth() const;
-    int GetMaximumWidth() const;
-    int GetMinimumHeight() const;
-    int GetMaximumHeight() const;
+    virtual int GetMinimumWidth() const;
+    virtual int GetMaximumWidth() const;
+    virtual int GetMinimumHeight() const;
+    virtual int GetMaximumHeight() const;
 
-    void ApplyMinWidth();
-    void ApplyMinHeight();
-    void ApplyMaxWidth();
-    void ApplyMaxHeight();
+    virtual void ApplyMinWidth();
+    virtual void ApplyMinHeight();
+    virtual void ApplyMaxWidth();
+    virtual void ApplyMaxHeight();
 
-    Size GetMinimumSize() const;
-    Size GetMaximumSize() const;
+    virtual Size GetMinimumSize() const;
+    virtual Size GetMaximumSize() const;
 
     //! Get the geometry of the object.
     /*!
@@ -354,8 +354,23 @@ namespace nux
     */
     void QueueRelayout();
 
-    virtual unsigned int GetStretchFactor();
-    virtual void SetStretchFactor(unsigned int sf);
+    //! Get the area scale factor.
+    /*!
+        The scale factor is used to control the layout of area objects inside HLayout and VLayout.
+        \sa HLayout, VLayout.
+
+        @return the Area scale factor.
+    */
+    virtual unsigned int GetScaleFactor();
+
+    //! Set the area scale factor.
+    /*!
+        The scale factor is used to control the layout of area objects inside HLayout and VLayout.
+        \sa HLayout, VLayout.
+
+        @param the scale factor.
+    */
+    virtual void SetScaleFactor(unsigned int sf);
 
     virtual MinorDimensionPosition GetPositioning();
     virtual void SetPositioning(MinorDimensionPosition p);

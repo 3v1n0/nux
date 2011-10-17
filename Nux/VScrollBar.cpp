@@ -91,15 +91,15 @@ namespace nux
     vlayout->AddView(_scroll_down_button, 0, eCenter, eFix);
 
     callback = new TimerFunctor;
-    callback->OnTimerExpired.connect(sigc::mem_fun(this, &VScrollBar::VScrollBarHandler));
+    callback->time_expires.connect(sigc::mem_fun(this, &VScrollBar::VScrollBarHandler));
     up_callback = new TimerFunctor;
-    up_callback->OnTimerExpired.connect(sigc::mem_fun(this, &VScrollBar::ScrollUp));
+    up_callback->time_expires.connect(sigc::mem_fun(this, &VScrollBar::ScrollUp));
     down_callback = new TimerFunctor;
-    down_callback->OnTimerExpired.connect(sigc::mem_fun(this, &VScrollBar::ScrollDown));
+    down_callback->time_expires.connect(sigc::mem_fun(this, &VScrollBar::ScrollDown));
     trackup_callback = new TimerFunctor;
-    trackup_callback->OnTimerExpired.connect(sigc::mem_fun(this, &VScrollBar::TrackUp));
+    trackup_callback->time_expires.connect(sigc::mem_fun(this, &VScrollBar::TrackUp));
     trackdown_callback = new TimerFunctor;
-    trackdown_callback->OnTimerExpired.connect(sigc::mem_fun(this, &VScrollBar::TrackDown));
+    trackdown_callback->time_expires.connect(sigc::mem_fun(this, &VScrollBar::TrackDown));
 
     SetLayout(vlayout);
     SetAcceptMouseWheelEvent(true);

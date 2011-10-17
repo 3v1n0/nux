@@ -36,9 +36,6 @@ namespace nux
     Panel(NUX_FILE_LINE_PROTO);
     ~Panel();
 
-    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
-
     //void AddWidget(View* ic);
     void AddWidget(View *ic, int stretchfactor = 1);
     void AddWidget(std::list<View *> *ViewList);
@@ -56,6 +53,9 @@ namespace nux
     virtual void ComputeContentPosition(float offsetX, float offsetY);
 
   protected:
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+
     virtual void ScrollLeft(float stepx, int mousedx);
     virtual void ScrollRight(float stepx, int mousedx);
     virtual void ScrollUp(float stepy, int mousedy);

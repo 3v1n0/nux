@@ -193,7 +193,7 @@ namespace nux
 
     int original_width = GetBaseWidth();
 
-    if (GetStretchFactor() == 0)
+    if (GetScaleFactor() == 0)
     {
       // The size must exactly fit the children. The parent cannot be larger or smaller
       // than the total height of its children(+ margins).
@@ -272,7 +272,7 @@ namespace nux
         // Compute the size of an element in the minor dimension(horizontal)
         switch(extend)
         {
-          case ePercentage:
+          case MINOR_SIZE_PERCENTAGE:
           {
             // The size of the element in the minor dimension is a percentage of layout minor dimension size.
             // Note that children of the processed element may force it to have a bigger size.
@@ -281,11 +281,11 @@ namespace nux
             break;
           }
 
-          case eMatchContent:
+          case MINOR_SIZE_MATCHCONTENT:
           {
             // Force the element width to be the minimum has defined with SetMinimumWidth.
             // The children of this element can force it to get larger.
-            (*it)->SetBaseWidth(0);
+            (*it)->ApplyMinWidth();
             break;
           }
 
@@ -295,7 +295,7 @@ namespace nux
             break;
           }
 
-          case eFull:
+          case MINOR_SIZE_FULL:
           default:
           {
             (*it)->SetBaseWidth(width);
@@ -304,19 +304,19 @@ namespace nux
         }
 
         // Compute the position of an element in the minor dimension.
-        if ((extend != eFull) || ((*it)->GetBaseWidth() < width))
+        if ((*it)->GetBaseWidth() < width)
         {
           int widget_width = (*it)->GetBaseWidth();
 
           switch(positioning)
           {
-            case eLeft:
+            case MINOR_POSITION_START:
             {
               // do nothing
               (*it)->SetBaseX(current_x);
               break;
             }
-            case eRight:
+            case MINOR_POSITION_END:
             {
               if (widget_width < width)
                 (*it)->SetBaseX(current_x + width - widget_width);
@@ -326,7 +326,7 @@ namespace nux
               break;
             }
 
-            case eCenter:
+            case MINOR_POSITION_CENTER:
             default:
             {
               if (widget_width < width)
@@ -351,7 +351,7 @@ namespace nux
       int element_width;
       unadjusted_layout = false;
 
-      // This array is meant to store the sizes of some of the elements width. These elements must have eFull as extent and
+      // This array is meant to store the sizes of some of the elements width. These elements must have MINOR_SIZE_FULL as extent and
       // they have not been not been constrained smaller after ComputeContentSize is called. Because the layout may have a stretch factor of 0
       // and therefore its size has been set to 1x1 at the start of this function, there is a possibility that some of the elements don't have
       // the full width of the layout(these elements uses their minimum width because the layout was set to a size 1x1).
@@ -369,7 +369,7 @@ namespace nux
         if (!(*it)->IsVisible())
           continue;
 
-        if (((*it)->IsLayout() || (*it)->IsView()) /*&& ((*it)->IsLayoutDone() == false)*/ /*&& ((*it)->GetStretchFactor() != 0)*/)
+        if (((*it)->IsLayout() || (*it)->IsView()) /*&& ((*it)->IsLayoutDone() == false)*/ /*&& ((*it)->GetScaleFactor() != 0)*/)
         {
           ret = (*it)->ComputeContentSize();
 
@@ -394,13 +394,13 @@ namespace nux
             }
           }
 
-          if ((smaller_width == false) && ((*it)->GetExtend() == eFull) && ((*it)->GetBaseWidth() < (*it)->GetMaximumWidth()))
+          if ((smaller_width == false) && ((*it)->GetExtend() == MINOR_SIZE_FULL) && ((*it)->GetBaseWidth() < (*it)->GetMaximumWidth()))
           {
             // Catch all object whose size is possibly larger than the layout. Check their size at the end and
             // recompute the layout if necessary.
             // For layout elements, make sure that the stretch factor is not 0. If it is, it means it will not use the
             // size provided by the parent layout. Its size will be adjusted to the minimum size of the layout content.
-            if (!((*it)->IsLayout() && (*it)->GetStretchFactor() == 0))
+            if (!((*it)->IsLayout() && (*it)->GetScaleFactor() == 0))
               FullSizeUnadjusted.push_back((*it)->GetBaseWidth());
           }
 
@@ -422,7 +422,7 @@ namespace nux
 
         if ((*it)->IsSpaceLayout() == false)
         {
-          if ((GetStretchFactor() != 0) && (ret & eSmallerWidth))
+          if ((GetScaleFactor() != 0) && (ret & eSmallerWidth))
           {
             if (m_contentWidth < element_width)
             {
@@ -441,7 +441,7 @@ namespace nux
               m_contentWidth = element_width;
             }
 
-//                    else if ((*it)->GetExtend() == eFull)
+//                    else if ((*it)->GetExtend() == MINOR_SIZE_FULL)
 //                    {
 //                        unadjusted_layout = true;
 //                    }
@@ -536,7 +536,7 @@ namespace nux
         if (!(*it)->IsVisible())
           continue;
 
-        if (((*it)->GetStretchFactor() == 0) && ((*it)->IsLayoutDone() != true))
+        if (((*it)->GetScaleFactor() == 0) && ((*it)->IsLayoutDone() != true))
         {
           (*it)->ApplyMinHeight();
         }
@@ -544,7 +544,20 @@ namespace nux
 
       if (max_stretchfactor == 0)
       {
-        // It means all object are fixed sized or all resizable object have been sized to there max or there min.
+        // It means all object are fixed sized or all re-sizable object have been sized to there max or there min.
+        if (GetScaleFactor() == 0)
+        {
+          // It is unlikely that we get here!
+          int h = 0;
+          for (it = _layout_element_list.begin(); it != _layout_element_list.end() && !need_recompute; it++)
+          {
+            if (!(*it)->IsVisible())
+              continue;
+
+            h += (*it)->GetBaseHeight();
+          }
+          SetBaseHeight(h);
+        }
         return;
       }
 
@@ -553,7 +566,7 @@ namespace nux
         if (!(*it)->IsVisible())
           continue;
         
-        if ((*it)->GetStretchFactor() == 0 || (*it)->IsLayoutDone() == true)
+        if ((*it)->GetScaleFactor() == 0 || (*it)->IsLayoutDone() == true)
         {
           available_height -= (*it)->GetBaseHeight();
         }
@@ -566,20 +579,20 @@ namespace nux
           if (!(*it)->IsVisible())
             continue;
 
-          if (((*it)->GetStretchFactor() != 0) && (*it)->IsArea())
+          if (((*it)->GetScaleFactor() != 0) && (*it)->IsArea())
           {
             // If it is not an object of type eInputArea, do not set layout_done_ to true,
             // so, the layout management function will later be called on the object.
             (*it)->ApplyMinHeight();
             (*it)->SetLayoutDone(true);
           }
-          else if (((*it)->GetStretchFactor() != 0) && ((*it)->IsLayout()) && ((*it)->IsLayoutDone() == false))
+          else if (((*it)->GetScaleFactor() != 0) && ((*it)->IsLayout()) && ((*it)->IsLayoutDone() == false))
           {
             // The out of bound must be reset to false.
             (*it)->ApplyMinHeight();
             (*it)->SetLayoutDone(false);
           }
-          else if (((*it)->GetStretchFactor() != 0)  && ((*it)->IsLayoutDone() == false))
+          else if (((*it)->GetScaleFactor() != 0)  && ((*it)->IsLayoutDone() == false))
           {
             (*it)->ApplyMinHeight();
             // A layout must never have layout_done_ set to true "here" because it must continue
@@ -600,9 +613,9 @@ namespace nux
         if (!(*it)->IsVisible())
           continue;
        
-        if (((*it)->GetStretchFactor() != 0) && ((*it)->IsLayoutDone() == false))
+        if (((*it)->GetScaleFactor() != 0) && ((*it)->IsLayoutDone() == false))
         {
-          float sf = (float) (*it)->GetStretchFactor();
+          float sf = (float) (*it)->GetScaleFactor();
           cumul += sf / max_stretchfactor;
           LastElementThatCanBeResized = (*it);
         }
@@ -630,9 +643,9 @@ namespace nux
         if (!(*it)->IsVisible())
           continue;
 
-        if (((*it)->GetStretchFactor() != 0) && ((*it)->IsLayoutDone() == false))
+        if (((*it)->GetScaleFactor() != 0) && ((*it)->IsLayoutDone() == false))
         {
-          int sf = (*it)->GetStretchFactor();
+          int sf = (*it)->GetScaleFactor();
           int new_height;
 
           if (sf == max_stretchfactor)
@@ -730,7 +743,7 @@ namespace nux
       // of an element that has not been bounded.
       if ((*it)->IsLayoutDone() == false)
       {
-        sf = (*it)->GetStretchFactor();
+        sf = (*it)->GetScaleFactor();
 
         if (sf >= value)
         {
@@ -781,19 +794,19 @@ namespace nux
         MinorDimensionSize extend = (*it)->GetExtend();
         MinorDimensionPosition positioning = (*it)->GetPositioning();
 
-        if ((extend != eFull) || ((*it)->GetBaseWidth() < width))
+        if ((*it)->GetBaseWidth() < width)
         {
           int widget_width = (*it)->GetBaseWidth();
 
           switch(positioning)
           {
-            case eLeft:
+            case MINOR_POSITION_START:
             {
               // do nothing
               (*it)->SetBaseX(current_x);
               break;
             }
-            case eRight:
+            case MINOR_POSITION_END:
             {
               if (widget_width < width)
                 (*it)->SetBaseX(current_x + width - widget_width);
@@ -803,7 +816,7 @@ namespace nux
               break;
             }
 
-            case eCenter:
+            case MINOR_POSITION_CENTER:
             default:
             {
               if (widget_width < width)

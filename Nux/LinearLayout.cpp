@@ -54,7 +54,7 @@ namespace nux
 
     nuxAssertMsg(index >= 0, "[Layout::AddLayout] Invalid index position. Adding at the beginning of the list..");
 
-    layout->SetStretchFactor(stretchFactor);
+    layout->SetScaleFactor(stretchFactor);
     layout->SetPositioning(minor_position);
     layout->SetExtend(minor_size);
 
@@ -133,7 +133,7 @@ namespace nux
 
     nuxAssertMsg(index >= 0, "[Layout::AddView] Invalid index position. Adding at the beginning of the list..");
 
-    bo->SetStretchFactor(stretchFactor);
+    bo->SetScaleFactor(stretchFactor);
     bo->SetPositioning(minor_position);
     bo->SetExtend(minor_size);
 

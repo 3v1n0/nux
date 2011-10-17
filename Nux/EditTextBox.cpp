@@ -70,10 +70,10 @@ namespace nux
     SetLayout(hlayout);
 
     m_BlinkTimerFunctor = new TimerFunctor();
-    m_BlinkTimerFunctor->OnTimerExpired.connect(sigc::mem_fun(this, &EditTextBox::BlinkCursorTimerInterrupt));
+    m_BlinkTimerFunctor->time_expires.connect(sigc::mem_fun(this, &EditTextBox::BlinkCursorTimerInterrupt));
 
     m_ScrollTimerFunctor = new TimerFunctor();
-    m_ScrollTimerFunctor->OnTimerExpired.connect(sigc::mem_fun(this, &EditTextBox::ScrollTimerInterrupt));
+    m_ScrollTimerFunctor->time_expires.connect(sigc::mem_fun(this, &EditTextBox::ScrollTimerInterrupt));
 
     SetAcceptKeyboardEvent(true);
     EnableDoubleClick(true);

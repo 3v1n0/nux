@@ -43,7 +43,7 @@ namespace nux
   class Area;
   struct ClientAreaDraw;
 
-#if(defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
   gboolean nux_event_dispatch(GSource *source, GSourceFunc callback, gpointer user_data);
   gboolean nux_timeout_dispatch(gpointer user_data);
 #endif
@@ -54,6 +54,7 @@ namespace nux
   */
   typedef int(*EventInspector) (Area* area, Event* event, void* data);
 
+  //! Main class of a Nux window app.
   class WindowThread: public AbstractThread
   {
     NUX_DECLARE_OBJECT_TYPE(WindowThread, AbstractThread);
@@ -413,7 +414,19 @@ namespace nux
         Sets the focused item on the screen
     */
     void SetFocusedArea(Area *focused_area);
-    
+
+    //! Set a callback timer from a different thread.
+    /*!
+        This function is set as the callback to a zero delay timer. When it is called, it doesn't do 
+        anything. But the main thread will wake up and start the execution loop.
+
+        @param time_ms Timer delay in milliseconds.
+        @param user_data Pointer to user data.
+
+        @return A timer handle.
+    */
+    TimerHandle SetAsyncTimerCallback(int time_ms, TimerFunctor* functor, void *user_data);
+
   protected:
     //! Compute the layout of this window thread.
     /*!
@@ -423,7 +436,14 @@ namespace nux
     */
     void ReconfigureLayout();
 
-    void AsyncWakeUpCallback(void*);
+    //! Custom callback to wake up the main thread and start the execution loop.
+    /*!
+        This function is set as the callback to a zero delay timer. When it is called, it doesn't do 
+        anything. But the main thread will wake up and start the execution loop.
+
+        @param user_ptr Pointer to user data.
+    */
+    void AsyncWakeUpCallback(void *user_ptr);
 
     //void SetModalWindow(bool b) {m_bIsModal = b;}
 
@@ -437,7 +457,7 @@ namespace nux
     */
     void DisableMouseKeyboardInput();
 
-#if(defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     t_u32 ExecutionLoop(t_u32 timer_id);
 #else
     t_u32 ExecutionLoop();
@@ -573,7 +593,7 @@ namespace nux
     friend class BasePainter;
     friend class SystemThread;
 
-#if(defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     GMainLoop *m_GLibLoop;
     GMainContext *m_GLibContext;
     friend gboolean nux_event_dispatch(GSource *source, GSourceFunc callback, gpointer user_data);

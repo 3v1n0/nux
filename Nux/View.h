@@ -44,11 +44,6 @@ namespace nux
     virtual long ComputeContentSize();
     virtual void ComputeContentPosition(float offsetX, float offsetY);
 
-    virtual void PreLayoutManagement();
-    virtual long PostLayoutManagement(long LayoutResult);
-    virtual void PreResizeGeometry();
-    virtual void PostResizeGeometry();
-
     //! Enable a View.
     /*!
         Enable the view. The view cannot receive events. As for the rendering, each view handle 
@@ -155,6 +150,11 @@ namespace nux
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw) = 0;
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PreLayoutManagement();
+    virtual long PostLayoutManagement(long LayoutResult);
+    virtual void PreResizeGeometry();
+    virtual void PostResizeGeometry();
+
 
     void InitializeWidgets();
     void InitializeLayout();

@@ -52,7 +52,7 @@ namespace nux
     check_area_->SetMaximumSize(14, 14);
 
     hlayout_->SetHorizontalInternalMargin(4);
-    hlayout_->SetContentDistribution(MAJOR_POSITION_CENTER);
+    hlayout_->SetContentDistribution(MAJOR_POSITION_LEFT);
     hlayout_->AddView(check_area_, 0, MINOR_POSITION_CENTER, MINOR_SIZE_MATCHCONTENT);
     hlayout_->AddView(static_text_, 1, MINOR_POSITION_CENTER, MINOR_SIZE_MATCHCONTENT);
 
@@ -67,6 +67,7 @@ namespace nux
 //       ApplyMinHeight();
 //     }
 
+    hlayout_->SetScaleFactor(0);
     SetLayout(hlayout_);
 
   }
@@ -95,6 +96,7 @@ namespace nux
   void RadioButton::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
+    graphics_engine.PushClippingRectangle(base);
 
     GetPainter().PaintBackground(graphics_engine, base);
 
@@ -115,10 +117,101 @@ namespace nux
       is.is_prelight = false;
     }
 
-    GetPainter().PaintRadioButton(graphics_engine, check_area_->GetGeometry(), is, Color(0xff000000));
+    GetPainter().PushPaintLayerStack();
+    {
+      GetPainter().PaintRadioButton(graphics_engine, check_area_->GetGeometry(), is, Color(0xff000000));
+      static_text_->ProcessDraw(graphics_engine, true);
+    }
+    GetPainter().PopPaintLayerStack();
 
-    static_text_->ProcessDraw(graphics_engine, true);
+    graphics_engine.PopClippingRectangle();
   }
+
+  long RadioButton::ComputeContentSize()
+  {
+    if (view_layout_)
+    {
+      PreLayoutManagement();
+
+      int old_width = GetBaseWidth();
+      int old_height = GetBaseHeight();
+
+      // Let the text view be as large as possible.
+      static_text_->SetMaximumWidth(AREA_MAX_WIDTH);
+
+      // Constrain the vertical expansion of the color selector.
+      view_layout_->SetBaseHeight(1);
+      long ret = view_layout_->ComputeContentSize();
+
+      PostLayoutManagement(ret);
+
+      {
+        // Check if the text view goes out of the CheckBox area.
+        Geometry base = GetGeometry();
+        Geometry text_geo = static_text_->GetGeometry();
+
+        // Intersect the CheckBox and the text view
+        Geometry intersection = base.Intersect(text_geo);
+        if (intersection != text_geo)
+        {
+          // The text view goes outside of the CheckBox area. We have to clip it
+          static_text_->SetMaximumWidth(intersection.width);
+
+          // Assign a size of 1 to the layout and call ComputeContentSize.
+          // Inside the StaticText::ComputeContentSize there is code that takes care of size negociation.
+          view_layout_->SetBaseWidth(1);
+          ret = view_layout_->ComputeContentSize();
+
+          // Assign the layout geometry to the CheckBox view.
+          PostLayoutManagement(ret);
+        }
+      }
+
+      int new_width = GetBaseWidth();
+      int new_height = GetBaseHeight();
+
+      long size_compliance = 0;
+
+      // The layout has been resized to tightly pack its content
+      if (new_width > old_width)
+      {
+        size_compliance |= eLargerWidth; // need scrollbar
+      }
+      else if (new_width < old_width)
+      {
+        size_compliance |= eSmallerWidth;
+      }
+      else
+      {
+        size_compliance |= eCompliantWidth;
+      }
+
+      // The layout has been resized to tightly pack its content
+      if (new_height > old_height)
+      {
+        size_compliance |= eLargerHeight; // need scrollbar
+      }
+      else if (new_height < old_height)
+      {
+        size_compliance |= eSmallerHeight;
+      }
+      else
+      {
+        size_compliance |= eCompliantHeight;
+      }
+
+      return size_compliance;
+    }
+    else
+    {
+      PreLayoutManagement();
+      int ret = PostLayoutManagement(eCompliantHeight | eCompliantWidth);
+      return ret;
+    }
+
+    return 0;
+  }
+
 
   void RadioButton::RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {

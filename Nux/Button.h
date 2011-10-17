@@ -214,13 +214,13 @@ namespace nux
 
     //! Activate the button.
     /*!
-         Activate the button. If this object is a Button, then it has no persistent state and the function does nothing.
+        Activate the button. If this object is a Button, then it has no persistent state and the function does nothing.
     */
     void Activate();
 
     //! Deactivate the button.
     /*!
-         Deactivate the button. If this object is a Button, then it has no persistent state and the function does nothing.
+        Deactivate the button. If this object is a Button, then it has no persistent state and the function does nothing.
     */
     void Deactivate();
 
@@ -252,8 +252,10 @@ namespace nux
     Size image_maximum_size_;
 
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
+//     virtual void PreLayoutManagement();
+//     virtual long PostLayoutManagement(long LayoutResult);
+    virtual long ComputeContentSize();
   };
 
   //typedef Button ToggleButton;

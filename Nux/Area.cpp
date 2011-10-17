@@ -107,9 +107,9 @@ namespace nux
   void Area::CheckMaxSize()
   {
     int w = max_size_.width;
-    w = Min<int>(AREA_MAX_WIDTH, w);
+    w = w <= AREA_MAX_WIDTH ? w : AREA_MAX_WIDTH;
     int h = max_size_.height;
-    h = Min<int>(AREA_MAX_HEIGHT, h);
+    h = h <= AREA_MAX_HEIGHT ? h: AREA_MAX_HEIGHT;
 
     max_size_ = Size(w, h);
 
@@ -256,12 +256,12 @@ namespace nux
     return max_size_.height;
   }
 
-  unsigned int Area::GetStretchFactor()
+  unsigned int Area::GetScaleFactor()
   {
     return scale_factor_;
   }
 
-  void Area::SetStretchFactor(unsigned int sf)
+  void Area::SetScaleFactor(unsigned int sf)
   {
     // re implemented by Layout
     scale_factor_ = sf;

@@ -181,7 +181,7 @@ namespace nux
       TimeRightNow(&timer_object->when);
       Addmillisecs(&timer_object->when, timer_object->Period);
 
-#if(defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
         timer_object->glibid = GetWindowThread()->AddGLibTimeout(timer_object->Period);
 #endif
     }
@@ -207,7 +207,7 @@ namespace nux
     
     AddHandle(timer_object);
 
-#if(defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     {
       if (window_thread)
         timer_object->glibid = window_thread->AddGLibTimeout(Period);
@@ -243,7 +243,7 @@ namespace nux
     timer_object->Type = TIMERTYPE_DURATION;
     AddHandle(timer_object);
 
-#if(defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     {
       timer_object->glibid = GetWindowThread()->AddGLibTimeout(Period);
 
@@ -276,7 +276,7 @@ namespace nux
     timer_object->Type = TIMERTYPE_ITERATION;
     AddHandle(timer_object);
 
-#if(defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     {
       timer_object->glibid = GetWindowThread()->AddGLibTimeout(Period);
 
@@ -397,7 +397,7 @@ namespace nux
     return false;
   }
 
-#if(defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
   int TimerHandler::ExecTimerHandler(t_u32 timer_id)
 #else
   int TimerHandler::ExecTimerHandler()
@@ -417,7 +417,7 @@ namespace nux
 
     while (timer_object != NULL)
     {
-#if(defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
 
       if ((/*TimeIsGreater(now, timer_object->when) ||*/ (timer_object->glibid == timer_id)) && (timer_object->MarkedForRemoval == false))
 #else
@@ -482,7 +482,7 @@ namespace nux
         if (timer_object->TimerCallback != 0)
         {
           GetWindowCompositor().SetProcessingTopView(timer_object->Window);
-          timer_object->TimerCallback->OnTimerExpired.emit(timer_object->CallbackData);
+          timer_object->TimerCallback->time_expires.emit(timer_object->CallbackData);
           GetWindowCompositor().SetProcessingTopView(NULL);          
           // Reset glibid to 0. glibid is not null, if this element ever happened to be at the head of the queue
           // and we set a timer for it.

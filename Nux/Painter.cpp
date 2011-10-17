@@ -746,10 +746,6 @@ namespace nux
     }
 
     graphics_engine.GetRenderStates().SetBlend(false);
-    //PaintShape(content_geo, check_box_color, eSHAPE_CHECK_BOX);
-    //Draw2DTexture(GetTheme().GetImage(eSHAPE_CHECK_BOX)->texture, content_geo);
-
-    //PaintShape(const Geometry& geo, Color c0, UXStyleImageRef style)
   }
 
   void BasePainter::PaintRadioButton(GraphicsEngine &graphics_engine, const Geometry &geo, const InteractState &interaction_state,
@@ -767,13 +763,10 @@ namespace nux
 
     BaseTexture *texture = pimage->texture;
 
-//     CachedBaseTexture* glr = (CachedBaseTexture*)GetGraphicsDisplay()->GetGraphicsEngine()->ResourceCache.GetCachedResource(texture);
-//     glr->m_Texture->SetFiltering(GL_LINEAR, GL_LINEAR);
-
     Geometry content_geo(0, 0, texture->GetWidth(), texture->GetHeight()) ;
     content_geo = ComputeGeometryPositioning(geo, content_geo, pctx);
 
-    graphics_engine.GetRenderStates().SetBlend(true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    graphics_engine.GetRenderStates().SetBlend(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     if (interaction_state.is_focus && interaction_state.is_on)
     {

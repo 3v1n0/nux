@@ -46,7 +46,7 @@ logging::Logger logger("nux.windows.thread");
   bool RegisterNuxThread(NThread *ThreadPtr);
   void UnregisterNuxThread(NThread *ThreadPtr);
 
-#if(defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
 
   static GMutex *gLibEventMutex = 0;
   static void
@@ -426,7 +426,7 @@ logging::Logger logger("nux.windows.thread");
     _last_timeline_frame_time_usec = time_val.tv_usec;
     _MasterClock = NULL;
 
-#if(defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     m_GLibLoop      = 0;
     m_GLibContext   = 0;
 #endif
@@ -439,11 +439,11 @@ logging::Logger logger("nux.windows.thread");
     _inside_main_loop = false;
     _inside_timer_loop = false;
     _async_wake_up_functor = new TimerFunctor();
-    _async_wake_up_functor->OnTimerExpired.connect(sigc::mem_fun(this, &WindowThread::AsyncWakeUpCallback));
+    _async_wake_up_functor->time_expires.connect(sigc::mem_fun(this, &WindowThread::AsyncWakeUpCallback));
 
 
     _fake_event_call_back = new TimerFunctor();
-    _fake_event_call_back->OnTimerExpired.connect(sigc::mem_fun(this, &WindowThread::ReadyFakeEventProcessing));
+    _fake_event_call_back->time_expires.connect(sigc::mem_fun(this, &WindowThread::ReadyFakeEventProcessing));
     _ready_for_next_fake_event = true;
     _fake_event_mode = false;
     _processing_fake_event = false;
@@ -470,6 +470,17 @@ logging::Logger logger("nux.windows.thread");
       XCloseDisplay(_x11display);
     }
 #endif
+  }
+
+  TimerHandle WindowThread::SetAsyncTimerCallback(int time_ms, TimerFunctor* functor, void *user_data)
+  {
+    if (functor == NULL)
+      return TimerHandle();
+
+    // Use "this->" because if called from a different thread, GetTimer and GetWindowThread are invalid.
+    TimerHandle handle = this->GetTimerHandler().AddTimerHandler(time_ms, functor, user_data, this);
+
+    return handle;
   }
 
   void WindowThread::AsyncWakeUpCallback(void* data)
@@ -606,7 +617,7 @@ logging::Logger logger("nux.windows.thread");
       int h = _graphics_display->GetGraphicsEngine()->GetContextHeight();
 
       _main_layout->Reference();
-      _main_layout->SetStretchFactor(1);
+      _main_layout->SetScaleFactor(1);
 
       StartLayoutCycle();
       _main_layout->SetGeometry(0, 0, w, h);
@@ -822,7 +833,7 @@ logging::Logger logger("nux.windows.thread");
     {
       if (GetThreadState() == THREADRUNNING)
       {
-#if(defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
         InitGlibLoop();
 #else
         ExecutionLoop();
@@ -858,7 +869,7 @@ logging::Logger logger("nux.windows.thread");
 
   extern EventToNameStruct EventToName[];
 
-#if(defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
   t_u32 WindowThread::ExecutionLoop(t_u32 timer_id)
 #else
   t_u32 WindowThread::ExecutionLoop()
@@ -874,7 +885,7 @@ logging::Logger logger("nux.windows.thread");
 
     WindowThread *Application = GetWindowThread();
 
-#if(!defined(NUX_OS_LINUX) && !defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) || defined(NUX_DISABLE_GLIB_LOOP)
+#if (!defined(NUX_OS_LINUX) && !defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) || defined(NUX_DISABLE_GLIB_LOOP)
     while (true)
 #endif
     {
@@ -988,7 +999,7 @@ logging::Logger logger("nux.windows.thread");
       
       _inside_main_loop = false;
 
-// #if(defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+// #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
 //       GetTimer().ExecTimerHandler(timer_id);
 // #else
 //       GetTimer().ExecTimerHandler();
@@ -1080,7 +1091,7 @@ logging::Logger logger("nux.windows.thread");
 
           float frame_time = GetWindow().GetFrameTime();
 
-#if(!defined(NUX_OS_LINUX) && !defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) || defined(NUX_DISABLE_GLIB_LOOP)
+#if (!defined(NUX_OS_LINUX) && !defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) || defined(NUX_DISABLE_GLIB_LOOP)
 
           // When we are not using the glib loop, we do sleep the thread ourselves if it took less that 16ms to render.
           if (16.6f - frame_time > 0)

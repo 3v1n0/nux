@@ -161,7 +161,7 @@ namespace nux
   {
     std::list<Area *> elements;
 
-    if (GetStretchFactor() == 0)
+    if (GetScaleFactor() == 0)
     {
       ApplyMinWidth();
     }
@@ -255,7 +255,7 @@ namespace nux
     _num_row = num_row;
     _num_column = num_column;
 
-    if ((GetStretchFactor() == 0) || match_content_size_)
+    if ((GetScaleFactor() == 0) || match_content_size_)
     {
       int h = num_row * _children_size.height + (top_padding_ + bottom_padding_) + (num_row - 1) * m_v_in_margin;
       SetMinimumHeight(h);
@@ -298,7 +298,7 @@ namespace nux
       size_compliance |= eCompliantHeight;
     }
 
-    //    if (GetStretchFactor() == 0)
+    //    if (GetScaleFactor() == 0)
     //    {
     //        return size_compliance | eForceComply;
     //    }
@@ -311,7 +311,7 @@ namespace nux
   {
     std::list<Area *> elements;
 
-    if (GetStretchFactor() == 0)
+    if (GetScaleFactor() == 0)
     {
       ApplyMinHeight();
     }
@@ -399,7 +399,7 @@ namespace nux
     _num_row = num_row;
     _num_column = num_column;
 
-    if ((GetStretchFactor() == 0) || match_content_size_)
+    if ((GetScaleFactor() == 0) || match_content_size_)
     {
       int w = num_column * _children_size.width + (left_padding_ + right_padding_) + (num_column - 1) * m_h_in_margin;
       SetMinimumWidth(w);

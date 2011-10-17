@@ -69,6 +69,7 @@ namespace nux
 
   void Button::Initialize(const std::string &str, TextureArea *image)
   {
+    same_size_as_content_ = true;
     persistent_active_state_ = false;
     layout_type_ = HORIZONTAL;
     item_order_ = IMAGE_FIRST;
@@ -141,6 +142,7 @@ namespace nux
     layout_right_padding_ = right >= 0 ? right : 0;
     layout_bottom_padding_ = bottom >= 0 ? bottom : 0;
     layout_left_padding_ = left >= 0 ? left : 0;
+    BuildLayout(label_, image_);
   }
 
   void Button::SetButtonClipRegion(int top_clip, int right_clip, int bottom_clip, int left_clip)
@@ -304,11 +306,16 @@ namespace nux
     if (layout)
     {
         layout->SetHorizontalInternalMargin(space_between_items_);
-        layout->SetPadding(4, 4, 4, 4);
+        layout->SetPadding(layout_top_padding_,
+          layout_right_padding_,
+          layout_bottom_padding_,
+          layout_left_padding_);
     }
 
     if (layout)
+    {
       SetLayout(layout);
+    }
 
     // Add this to the list of object which must have their layout re-calculated.
     GetWindowThread()->QueueObjectLayout(this);
@@ -320,6 +327,7 @@ namespace nux
   {
     Geometry base = GetGeometry();
 
+    graphics_engine.PushClippingRectangle(base);
     GetPainter().PaintBackground(graphics_engine, base);
 
     if (visual_state_ == VISUAL_STATE_PRESSED)
@@ -337,17 +345,97 @@ namespace nux
 
     if (GetCompositionLayout())
     {
-      Geometry clip_geo = base;
-      clip_geo.OffsetPosition(left_clip_, top_clip_);
-      clip_geo.OffsetSize(-left_clip_ - right_clip_, -top_clip_ - bottom_clip_);
-
-      graphics_engine.PushClippingRectangle(clip_geo);
       GetPainter().PushPaintLayerStack();
-      GetCompositionLayout()->ProcessDraw(graphics_engine, force_draw);
+      {
+        Geometry clip_geo = base;
+        clip_geo.OffsetPosition(left_clip_, top_clip_);
+        clip_geo.OffsetSize(-left_clip_ - right_clip_, -top_clip_ - bottom_clip_);
+
+        graphics_engine.PushClippingRectangle(clip_geo);
+        GetPainter().PushPaintLayerStack();
+        GetCompositionLayout()->ProcessDraw(graphics_engine, force_draw);
+        GetPainter().PopPaintLayerStack();
+        graphics_engine.PopClippingRectangle();
+      }
       GetPainter().PopPaintLayerStack();
-      graphics_engine.PopClippingRectangle();
     }
+    graphics_engine.PopClippingRectangle();
   }
+
+  long Button::ComputeContentSize()
+  {
+    return View::ComputeContentSize();
+
+//     if (view_layout_ && same_size_as_content_)
+//     {
+//       //PreLayoutManagement();
+// 
+//       int PreWidth = GetBaseWidth();
+//       int PreHeight = GetBaseHeight();
+// 
+//       long ret = view_layout_->ComputeContentSize();
+// 
+//       PostLayoutManagement(ret);
+// 
+//       int PostWidth = GetBaseWidth();
+//       int PostHeight = GetBaseHeight();
+// 
+//       long size_compliance = 0;
+// 
+//       // The layout has been resized to tightly pack its content
+//       if (PostWidth > PreWidth)
+//       {
+//         size_compliance |= eLargerWidth; // need scrollbar
+//       }
+//       else if (PostWidth < PreWidth)
+//       {
+//         size_compliance |= eSmallerWidth;
+//       }
+//       else
+//       {
+//         size_compliance |= eCompliantWidth;
+//       }
+// 
+//       // The layout has been resized to tightly pack its content
+//       if (PostHeight > PreHeight)
+//       {
+//         size_compliance |= eLargerHeight; // need scrollbar
+//       }
+//       else if (PostHeight < PreHeight)
+//       {
+//         size_compliance |= eSmallerHeight;
+//       }
+//       else
+//       {
+//         size_compliance |= eCompliantHeight;
+//       }
+// 
+//       return size_compliance;
+//     }
+//     else
+//     {
+//       View::PreLayoutManagement();
+//     }
+  }
+
+//   void Button::PreLayoutManagement()
+//   {
+//     if (view_layout_ && same_size_as_content_)
+//     {
+//       pre_layout_width_ = GetBaseWidth();
+//       _pre_layout_height = GetBaseHeight();
+//       view_layout_->SetBaseSize(1, 1);
+//     }
+//     else
+//     {
+//       View::PreLayoutManagement();
+//     }
+//   }
+// 
+//   long Button::PostLayoutManagement(long LayoutResult)
+//   {
+// 
+//   }
 
   void Button::Activate()
   {
@@ -397,10 +485,6 @@ namespace nux
     click.emit(this);
     state_change.emit(this);
     QueueDraw();
-  }
-
-  void Button::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
-  {
   }
 
   void Button::SetDistribution(Distribution distribution)

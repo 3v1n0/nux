@@ -40,7 +40,7 @@ namespace nux
     m_Vlayout->AddView(m_ColorEditor);
     m_Vlayout->AddLayout(m_ButtonLayout);
 
-    m_Vlayout->SetStretchFactor(0);
+    m_Vlayout->SetScaleFactor(0);
     // Set layout for the window
     SetLayout(m_Vlayout);
   }

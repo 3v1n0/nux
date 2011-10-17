@@ -37,7 +37,7 @@ namespace nux
     mouse_drag.connect(sigc::mem_fun(this, &AnimatedTextureArea::RecvMouseDrag));
 
     m_TimerFunctor = new TimerFunctor();
-    m_TimerFunctor->OnTimerExpired.connect(sigc::mem_fun(this, &AnimatedTextureArea::TimerNextFrame));
+    m_TimerFunctor->time_expires.connect(sigc::mem_fun(this, &AnimatedTextureArea::TimerNextFrame));
   }
 
   AnimatedTextureArea::~AnimatedTextureArea()

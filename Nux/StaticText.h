@@ -1,6 +1,15 @@
 #ifndef STATICTEXT_H
 #define STATICTEXT_H
 
+#include "NuxCore/Size.h"
+
+   #if defined(NUX_OS_WINDOWS)
+     #define NUX_STATIC_TEXT_USE_DIRECT_WRITE
+   #elif defined(NUX_OS_LINUX)
+     #define NUX_STATIC_TEXT_USE_CAIRO
+   #else
+     #error Not implemented.
+   #endif
 
 namespace nux
 {
@@ -30,29 +39,29 @@ namespace nux
 
     //! Set text color.
     void SetTextColor(const Color &textColor);
+    
+    //! Set the font name.
     void SetFontName(const std::string &font_name);
-    
-    void GetTextSize(int &width, int &height) const;
 
-    Size GetTextSize() const;
+    //! Set text point size.
+    void SetTextPointSize(int size);
 
-    
+    //! Get text point size.
+    int GetTextPointSize() const;
 
-    void SetClipping(int clipping);
-    int GetClipping() const;
+    void GetTextLayoutSize(int &width, int &height) const;
+
+    Size GetTextLayoutSize() const;
 
     sigc::signal<void, StaticText*> text_changed;
-    sigc::signal<void, StaticText*> text_color_changed;
 
   protected:
+    virtual void ApplyMinWidth();
+    virtual long ComputeContentSize();
+    virtual void Draw(GraphicsEngine& graphics_engine, bool forceDraw);
+
     int text_width_;  //!< Rasterized text width.
     int text_height_; //!< Rasterized text height.
-
-    void PreLayoutManagement();
-    long PostLayoutManagement(long layoutResult);
-
-    void Draw(GraphicsEngine& gfxContext, bool forceDraw);
-
 
     std::string text_;
     Color text_color_;
@@ -68,11 +77,15 @@ namespace nux
 
     float font_size_;
     std::string font_name_;
+    bool update_text_rendering_;
 
     ObjectPtr<nux::IOpenGLBaseTexture> dw_texture_;
 
-#if defined(NUX_OS_WINDOWS)
-    void ComputeTextSize();
+    void SetClipping(int clipping);
+    int GetClipping() const;
+
+#if defined(NUX_STATIC_TEXT_USE_DIRECT_WRITE)
+    Size ComputeTextSize(bool assign = true, bool with_clipping = true);
     void RasterizeText(Color color);
     void UpdateTextRendering();
 
@@ -81,11 +94,11 @@ namespace nux
     float dpi_scale_x;
     float dpi_scale_y;
     
-#else
+#elif defined (NUX_STATIC_TEXT_USE_CAIRO)
     float dpy_;
     std::string pango_font_name_;
 
-    void ComputeTextSize();
+    Size ComputeTextSize(bool assign = true, bool with_clipping = true);
     void RasterizeText(void* cairo_context, Color color);
     void UpdateTextRendering();
 
@@ -93,7 +106,27 @@ namespace nux
 #endif
 
   private:
-    int padding_; //!< Adds a padding around the entire text box.
+    //! Override of Area::SetMinimumHeight and made private.
+    /*!
+        Prevent changing the minimum height of the StaticText view.
+    */
+    virtual void SetMinimumHeight(){};
+
+    //! Override of Area::SetMaximumHeight and made private.
+    /*!
+        Prevent changing the maximum height of the StaticText view.
+    */
+    virtual void SetMaximumHeight(){};
+
+    //! Compute the full text size.
+    /*!
+        Compute the full text size, but do not change the parameters of this class.
+
+        @return The full text size.
+    */
+    Size GetTextSizeNoClip();
+    float padding_x_; //!< Adds a padding around the entire text box.
+    float padding_y_; //!< Adds a padding around the entire text box.
   };
 
 }

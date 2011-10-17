@@ -61,7 +61,7 @@ namespace nux
     SetCompositionLayout(m_hlayout);
 
     m_ChangeDetectionTimer = new TimerFunctor();
-    m_ChangeDetectionTimer->OnTimerExpired.connect(sigc::mem_fun(this, &ColorPreview::RecvTimer));
+    m_ChangeDetectionTimer->time_expires.connect(sigc::mem_fun(this, &ColorPreview::RecvTimer));
     m_ChangeTimerHandler = 0;
   }
 

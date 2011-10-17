@@ -36,6 +36,7 @@ namespace nux
     mouse_pressed_ = false;
     static_text_ = NULL;
     label_color_ = color::White;
+    same_size_as_content_ = false;
 
     mouse_click.connect(sigc::mem_fun(this, &AbstractButton::RecvClick));
     mouse_down.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseDown));

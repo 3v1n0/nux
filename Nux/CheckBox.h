@@ -31,6 +31,12 @@ namespace nux
   class InputArea;
   class StaticText;
 
+  //! CheckBox class
+  /*!
+      A CheckBox class.\n
+      The CheckBox class cannot be vertically resized. It can only be resized horizontally.
+      The vertical size is always match the size of the content (check area + label).
+  */
   class CheckBox: public AbstractButton
   {
     NUX_DECLARE_OBJECT_TYPE(CheckBox, AbstractButton);
@@ -80,9 +86,24 @@ namespace nux
   protected:
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    virtual long ComputeContentSize();
 
+    bool allow_label_trimming_;
     HLayout   *hlayout_;
     InputArea *check_area_;
+
+  private:
+    //! Override of Area::SetMinimumHeight and made private.
+    /*!
+        Prevent changing the minimum height of the StaticText view.
+    */
+    virtual void SetMinimumHeight(){};
+
+    //! Override of Area::SetMaximumHeight and made private.
+    /*!
+        Prevent changing the maximum height of the StaticText view.
+    */
+    virtual void SetMaximumHeight(){};
   };
 
 }

@@ -151,7 +151,7 @@ namespace nux
   {
     std::list<Area *> elements;
 
-    if (GetStretchFactor() == 0)
+    if (GetScaleFactor() == 0)
     {
       ApplyMinHeight();
     }
@@ -238,7 +238,7 @@ namespace nux
     _num_row = num_row;
     _num_column = num_column;
 
-    if ((GetStretchFactor() == 0) || _width_match_content)
+    if ((GetScaleFactor() == 0) || _width_match_content)
     {
       int w = num_column * _children_size.width + 2 * m_h_out_margin + (num_column - 1) * m_h_in_margin;
       SetMinimumWidth(w);

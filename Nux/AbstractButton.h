@@ -125,6 +125,9 @@ namespace nux
     std::string label_;
     Color label_color_;
     StaticText *static_text_;
+    bool same_size_as_content_;
+    int pre_layout_width_;
+    int pre_layout_height_;
 
     virtual void RecvMouseUp    (int x, int y, unsigned long button_flags, unsigned long key_flags);
     virtual void RecvMouseDown  (int x, int y, unsigned long button_flags, unsigned long key_flags);

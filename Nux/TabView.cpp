@@ -123,9 +123,9 @@ namespace nux
 
 
     tabright_callback = new TimerFunctor;
-    tabright_callback->OnTimerExpired.connect(sigc::mem_fun(this, &TabView::RecvTabRightTimerExpired));
+    tabright_callback->time_expires.connect(sigc::mem_fun(this, &TabView::RecvTabRightTimerExpired));
     tableft_callback = new TimerFunctor;
-    tableft_callback->OnTimerExpired.connect(sigc::mem_fun(this, &TabView::RecvTabLeftTimerExpired));
+    tableft_callback->time_expires.connect(sigc::mem_fun(this, &TabView::RecvTabLeftTimerExpired));
   }
 
   TabView::~TabView()
