@@ -1,4 +1,4 @@
-nux (1.16.0-0ubuntu1) oneiric; urgency=low
+nux (1.16.0-0ubuntu1) oneiric-proposed; urgency=low
 
   * New upstream release.
     - Regression: shift+click on a launcher icon to open a new application
