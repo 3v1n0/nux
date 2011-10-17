@@ -34,7 +34,7 @@ namespace nux
   Color GroupBox2::GROUPBOX2_HEADER_TEXT_COLOR = Color(0xFFFFFFFF);
   int GroupBox2::TOP_HEADER_HEIGHT = 24;
 
-  GroupBox2::GroupBox2(const TCHAR *Caption, NUX_FILE_LINE_DECL)
+  GroupBox2::GroupBox2(const char *Caption, NUX_FILE_LINE_DECL)
     :   View(NUX_FILE_LINE_PARAM)
     ,   bCaptionAvailable(false)
     ,   m_layout(0)
@@ -207,7 +207,7 @@ namespace nux
     m_CaptionArea->SetBaseXY(base.x + CAPTION_X_MARGIN, base.y + (TOP_HEADER_HEIGHT - m_CaptionArea->GetBaseHeight()) / 2);
   }
 
-  void GroupBox2::SetCaption(const TCHAR *Caption)
+  void GroupBox2::SetCaption(const char *Caption)
   {
     if ((Caption == 0) || (StringLength(Caption) == 0))
     {

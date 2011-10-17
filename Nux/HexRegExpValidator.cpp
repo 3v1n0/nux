@@ -117,7 +117,7 @@ namespace nux
     return i;
   }
 
-  void HexRegExpValidator::Alternative(const TCHAR *str)
+  void HexRegExpValidator::Alternative(const char *str)
   {
     str = "0x0";
   }
@@ -128,7 +128,7 @@ namespace nux
     return NString::Printf(Prec.GetTCharPtr(), i);
   }
 
-  int HexRegExpValidator::ToInteger(const TCHAR *str)
+  int HexRegExpValidator::ToInteger(const char *str)
   {
     if (Validate(str) == Acceptable)
       return HexCharToInteger(str);

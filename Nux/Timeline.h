@@ -26,7 +26,7 @@ namespace nux
   {
   public:
 
-    Timeline(unsigned int msecs, const TCHAR *Caption, NUX_FILE_LINE_DECL);
+    Timeline(unsigned int msecs, const char *Caption, NUX_FILE_LINE_DECL);
     ~Timeline();
 
     void Stop();

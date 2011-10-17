@@ -107,7 +107,7 @@ namespace nux
 
   NUX_IMPLEMENT_OBJECT_TYPE(TextEntry);
 
-  TextEntry::TextEntry(const TCHAR* text, NUX_FILE_LINE_DECL)
+  TextEntry::TextEntry(const char* text, NUX_FILE_LINE_DECL)
     : View(NUX_FILE_LINE_PARAM)
     , _size_match_text(true)
     , _texture2D(nullptr)
@@ -266,7 +266,7 @@ namespace nux
     unsigned long    event_type  ,   /*event type*/
     unsigned long    keysym     ,   /*event keysym*/
     unsigned long    state      ,   /*event state*/
-    const TCHAR*     character  ,   /*character*/
+    const char*     character  ,   /*character*/
     unsigned short   keyCount       /*key repeat count*/)
   {
     if (event_type == NUX_KEYDOWN)
@@ -449,7 +449,7 @@ namespace nux
     unsigned long    eventType  ,   /*event type*/
     unsigned long    keysym     ,   /*event keysym*/
     unsigned long    state      ,   /*event state*/
-    const TCHAR*     character  ,   /*character*/
+    const char*     character  ,   /*character*/
     unsigned short   keyCount       /*key repeat count*/)
   {
     ProcessKeyEvent(eventType, keysym, state, character, keyCount);

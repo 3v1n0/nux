@@ -32,18 +32,18 @@ namespace nux
   {
     NUX_DECLARE_OBJECT_TYPE(StaticTextBox, View);
   public:
-    StaticTextBox(const TCHAR *Caption, NUX_FILE_LINE_PROTO);
+    StaticTextBox(const char *Caption, NUX_FILE_LINE_PROTO);
     ~StaticTextBox();
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     // API
-    void SetText(const TCHAR &Caption);
-    void SetText(const TCHAR *Caption);
+    void SetText(const char &Caption);
+    void SetText(const char *Caption);
     void SetText(const tstring &Caption);
     void SetText(const NString &Caption);
-    const TCHAR *GetText() const;
+    const char *GetText() const;
     t_u32 GetTextSize() const
     {
       return (t_u32) m_Text.Length();

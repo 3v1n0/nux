@@ -79,10 +79,10 @@ namespace nux
   class TimerHandler;
 //class Theme;
 
-  void NuxInitialize(const TCHAR *CommandLine);
+  void NuxInitialize(const char *CommandLine);
 
 //! Create a main graphics thread. This thread has a window and no parent window(The Parent parameter should always be null).
-  WindowThread *CreateGUIThread(const TCHAR *WindowTitle,
+  WindowThread *CreateGUIThread(const char *WindowTitle,
                                  t_u32 width,
                                  t_u32 height,
                                  WindowThread *Parent = NULL,
@@ -103,7 +103,7 @@ namespace nux
 
 // Create a window thread that is a child of the Parent. This thread has a window.
   WindowThread *CreateWindowThread(WindowStyle WndStyle,
-                                    const TCHAR *WindowTitle,
+                                    const char *WindowTitle,
                                     t_u32 width,
                                     t_u32 height,
                                     WindowThread *Parent,
@@ -112,7 +112,7 @@ namespace nux
 
 // Create a Modal window thread that is a child of the Parent. This thread has a window.
   WindowThread *CreateModalWindowThread(WindowStyle WndStyle,
-                                         const TCHAR *WindowTitle,
+                                         const char *WindowTitle,
                                          t_u32 width,
                                          t_u32 height,
                                          WindowThread *Parent,

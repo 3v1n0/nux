@@ -38,7 +38,7 @@ namespace nux
       This is true whether we are drawing or computing the layout. When computing the layout, use x_root and y_root to
       pass the top-left corner position of the window. When drawing, make a similar adjustment.
   */
-  FloatingWindow::FloatingWindow(const TCHAR *WindowName, NUX_FILE_LINE_DECL)
+  FloatingWindow::FloatingWindow(const char *WindowName, NUX_FILE_LINE_DECL)
     :   BaseWindow(WindowName, NUX_FILE_LINE_PARAM)
   {
     m_bIsVisible                = false;
@@ -467,7 +467,7 @@ namespace nux
     _resize_handle->SetGeometry(temp);
   }
 
-  void FloatingWindow::SetWindowTitle(const TCHAR *title)
+  void FloatingWindow::SetWindowTitle(const char *title)
   {
     NUX_RETURN_IF_NULL(title)
     _window_title = title;

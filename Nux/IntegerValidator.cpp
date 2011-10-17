@@ -118,7 +118,7 @@ namespace nux
     return i;
   }
 
-  void IntegerValidator::Alternative(const TCHAR *str)
+  void IntegerValidator::Alternative(const char *str)
   {
     str = "0";
   }
@@ -129,7 +129,7 @@ namespace nux
     return NString::Printf(Prec.GetTCharPtr(), i);
   }
 
-  int IntegerValidator::ToInteger(const TCHAR *str)
+  int IntegerValidator::ToInteger(const char *str)
   {
     if (Validate(str) == Acceptable)
       return CharToInteger(str);

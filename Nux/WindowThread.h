@@ -59,7 +59,7 @@ namespace nux
   {
     NUX_DECLARE_OBJECT_TYPE(WindowThread, AbstractThread);
   public:
-    WindowThread(const TCHAR *WindowTitle, unsigned int width, unsigned int height, AbstractThread *Parent, bool Modal);
+    WindowThread(const char *WindowTitle, unsigned int width, unsigned int height, AbstractThread *Parent, bool Modal);
     ~WindowThread();
 
     //! Set the layout for this window thread.
@@ -75,7 +75,7 @@ namespace nux
 
     void ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
-    void SetWindowTitle(const TCHAR *WindowTitle)
+    void SetWindowTitle(const char *WindowTitle)
     {
       m_WindowTitle = WindowTitle;
     }
@@ -604,7 +604,7 @@ namespace nux
 #endif
     friend class TimerHandler;
 
-    friend WindowThread *CreateGUIThread(const TCHAR *WindowTitle,
+    friend WindowThread *CreateGUIThread(const char *WindowTitle,
                                           t_u32 width,
                                           t_u32 height,
                                           WindowThread *Parent,
@@ -612,7 +612,7 @@ namespace nux
                                           void *InitData);
 
     friend WindowThread *CreateWindowThread(WindowStyle WndStyle,
-        const TCHAR *WindowTitle,
+        const char *WindowTitle,
         t_u32 width,
         t_u32 height,
         WindowThread *Parent,
@@ -620,7 +620,7 @@ namespace nux
         void *InitData);
 
     friend WindowThread *CreateModalWindowThread(WindowStyle WndStyle,
-        const TCHAR *WindowTitle,
+        const char *WindowTitle,
         t_u32 width,
         t_u32 height,
         WindowThread *Parent,

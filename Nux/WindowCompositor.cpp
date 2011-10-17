@@ -1746,7 +1746,7 @@ logging::Logger logger("nux.window");
     return OverlayDrawingCommand;
   }
 
-  void WindowCompositor::SetTooltip(InputArea* TooltipArea, const TCHAR *TooltipText, int x, int y)
+  void WindowCompositor::SetTooltip(InputArea* TooltipArea, const char *TooltipText, int x, int y)
   {
     _tooltip_window = GetProcessingTopView();
     m_TooltipArea = TooltipArea;

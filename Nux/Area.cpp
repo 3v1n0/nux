@@ -69,7 +69,7 @@ namespace nux
     return _base_string;
   }
 
-  void Area::SetBaseString(const TCHAR *Caption)
+  void Area::SetBaseString(const char *Caption)
   {
     _base_string = Caption;
   }

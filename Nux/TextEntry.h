@@ -77,7 +77,7 @@ namespace nux
   {
     NUX_DECLARE_OBJECT_TYPE(TextEntry, View);
   public:
-    TextEntry(const TCHAR* text, NUX_FILE_LINE_PROTO);
+    TextEntry(const char* text, NUX_FILE_LINE_PROTO);
     ~TextEntry();
 
     Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
@@ -98,7 +98,7 @@ namespace nux
       unsigned long    eventType  ,   /*event type*/
       unsigned long    keysym     ,   /*event keysym*/
       unsigned long    state      ,   /*event state*/
-      const TCHAR*     character  ,   /*character*/
+      const char*     character  ,   /*character*/
       unsigned short   keyCount       /*key repeat count*/);
 
     void RecvStartKeyFocus();
@@ -113,7 +113,7 @@ namespace nux
       unsigned long    eventType  ,   /*event type*/
       unsigned long    keysym     ,   /*event keysym*/
       unsigned long    state      ,   /*event state*/
-      const TCHAR*     character  ,   /*character*/
+      const char*     character  ,   /*character*/
       unsigned short   keyCount       /*key repeat count*/);
 
     void FocusInx();

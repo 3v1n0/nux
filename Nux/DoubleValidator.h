@@ -44,7 +44,7 @@ namespace nux
     */
     double GetClampedValue(double d) const;
 
-    virtual void Alternative(const TCHAR *str);
+    virtual void Alternative(const char *str);
 
     void SetDecimals(int dec);
     void SetMinimum(double value);
@@ -53,7 +53,7 @@ namespace nux
     double GetMaximum() const;
 
     NString ToString(double d);
-    double ToDouble(const TCHAR *str);
+    double ToDouble(const char *str);
 
   private:
     double m_Minimum;

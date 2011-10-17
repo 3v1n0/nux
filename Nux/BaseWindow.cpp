@@ -44,7 +44,7 @@ namespace nux
       pass the top-left corner position of the window. When drawing, make a similar adjustment.
   */
 
-  BaseWindow::BaseWindow(const TCHAR *WindowName, NUX_FILE_LINE_DECL)
+  BaseWindow::BaseWindow(const char *WindowName, NUX_FILE_LINE_DECL)
     : View(NUX_FILE_LINE_PARAM)
     , _paint_layer(new ColorLayer(Color(0xFF707070)))
     , _opacity(1.0f)

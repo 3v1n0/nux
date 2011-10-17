@@ -142,7 +142,7 @@ namespace nux
     return paint_layer_->Clone();
   }
 
-// void TextureArea::SetTexture(const TCHAR* TextureFilename)
+// void TextureArea::SetTexture(const char* TextureFilename)
 // {
 //     // Who should delete the texture? This class or the user?
 //     m_UserTexture = CreateTextureFromFile(TextureFilename);

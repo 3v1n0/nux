@@ -25,7 +25,7 @@ namespace nux
   class PangoText: public View
   {
   public:
-    PangoText(const TCHAR* text, NUX_FILE_LINE_PROTO);
+    PangoText(const char* text, NUX_FILE_LINE_PROTO);
 
     ~PangoText();
 
@@ -90,7 +90,7 @@ namespace nux
 
 
     void ComputeTextLayout();
-    void GetTextExtents(const TCHAR* font, int& width, int& height);
+    void GetTextExtents(const char* font, int& width, int& height);
     void DrawText(void* cairo_context, int width, int height, Color color);
 
     void UpdateTextLayout();

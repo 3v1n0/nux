@@ -68,7 +68,7 @@ logging::Logger logger("nux.inputarea");
     graphics_engine.QRP_Color(GetBaseX(), GetBaseY(), GetBaseWidth(), GetBaseHeight(), m_AreaColor);
   }
 
-  void InputArea::SetBaseString(const TCHAR *Caption)
+  void InputArea::SetBaseString(const char *Caption)
   {
     Area::SetBaseString(Caption);
   }

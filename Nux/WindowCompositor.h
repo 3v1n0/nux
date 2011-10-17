@@ -195,7 +195,7 @@ namespace nux
     void SetWidgetDrawingOverlay(InputArea *ic, BaseWindow *OverlayWindow);
     InputArea *GetWidgetDrawingOverlay();
 
-    void SetTooltip(InputArea *TooltipArea, const TCHAR *TooltipText, int x, int y);
+    void SetTooltip(InputArea *TooltipArea, const char *TooltipText, int x, int y);
     /*!
         Return true if the mouse is still inside the area that initiated the tooltip;
 

@@ -118,7 +118,7 @@ namespace nux
     return d;
   }
 
-  void DoubleValidator::Alternative(const TCHAR *str)
+  void DoubleValidator::Alternative(const char *str)
   {
     str = "0.0";
   }
@@ -134,7 +134,7 @@ namespace nux
     return NString::Printf(Prec.GetTCharPtr(), d);
   }
 
-  double DoubleValidator::ToDouble(const TCHAR *str)
+  double DoubleValidator::ToDouble(const char *str)
   {
     if (Validate(str) == Acceptable)
       return CharToDouble(str);

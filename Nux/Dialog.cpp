@@ -31,7 +31,7 @@
 namespace nux
 {
 
-  Dialog::Dialog(const TCHAR *WindowName /*  = "" */)
+  Dialog::Dialog(const char *WindowName /*  = "" */)
     :   FloatingWindow(WindowName)
   {
     ShowWindow(false);

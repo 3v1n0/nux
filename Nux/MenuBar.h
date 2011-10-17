@@ -66,8 +66,8 @@ namespace nux
 
     //void AddActionItem(ActionItem* actionItem);
 
-    void AddMenu(const TCHAR *MenuLabel, MenuPage *popup);
-    void AddMenu(const TCHAR *MenuLabel, MenuPage *menu, BaseTexture *icon);
+    void AddMenu(const char *MenuLabel, MenuPage *popup);
+    void AddMenu(const char *MenuLabel, MenuPage *menu, BaseTexture *icon);
 
 
     /////////////////

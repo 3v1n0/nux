@@ -254,7 +254,7 @@ namespace nux
     unsigned long     event_type,    /*event type*/
     unsigned long     GetKeySym,    /*event keysym*/
     unsigned long     event_state,    /*event state*/
-    const TCHAR*      event_char,    /*character*/
+    const char*      event_char,    /*character*/
     unsigned short    repeat_count     /*key repeat count*/
   )
   {

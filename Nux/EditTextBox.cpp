@@ -30,7 +30,7 @@
 
 namespace nux
 {
-  EditTextBox::EditTextBox(const TCHAR *Caption, NUX_FILE_LINE_DECL)
+  EditTextBox::EditTextBox(const char *Caption, NUX_FILE_LINE_DECL)
     :   View(NUX_FILE_LINE_PARAM)
   {
     m_Validator             = NULL;
@@ -194,13 +194,13 @@ namespace nux
 
   }
 
-  void EditTextBox::SetText(const TCHAR &Caption)
+  void EditTextBox::SetText(const char &Caption)
   {
     NString s(Caption);
     SetText(s);
   }
 
-  void EditTextBox::SetText(const TCHAR *Caption)
+  void EditTextBox::SetText(const char *Caption)
   {
     NString s(Caption);
     SetText(s);
@@ -230,7 +230,7 @@ namespace nux
   }
 
 
-  const TCHAR *EditTextBox::GetText() const
+  const char *EditTextBox::GetText() const
   {
     return m_Text.GetTCharPtr();
   }
@@ -319,7 +319,7 @@ namespace nux
     unsigned long   eventType  , /*event type*/
     unsigned long   keysym     , /*event keysym*/
     unsigned long   state      , /*event state*/
-    const TCHAR*    character  , /*character*/
+    const char*    character  , /*character*/
     unsigned short  keyCount     /*key repeat count*/)
   {
     
@@ -369,7 +369,7 @@ namespace nux
     QueueDraw();
   }
 
-  bool EditTextBox::ValidateKeyboardEntry(const TCHAR *text) const
+  bool EditTextBox::ValidateKeyboardEntry(const char *text) const
   {
     if (m_Validator)
     {

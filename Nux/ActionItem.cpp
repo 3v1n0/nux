@@ -29,7 +29,7 @@ namespace nux
 
   NUX_IMPLEMENT_OBJECT_TYPE(ActionItem);
 
-  ActionItem::ActionItem(const TCHAR *label, int UserValue, NUX_FILE_LINE_DECL)
+  ActionItem::ActionItem(const char *label, int UserValue, NUX_FILE_LINE_DECL)
     :   Object(true, NUX_FILE_LINE_PARAM)
     ,   m_UserValue(UserValue)
     ,   m_Label("")
@@ -59,7 +59,7 @@ namespace nux
     icon_geo.SetX(geo.x + 2);
     icon_geo.SetY(geo.y + 2);
 
-    const TCHAR *label = GetLabel();
+    const char *label = GetLabel();
 
     if (is_highlighted)
     {
@@ -126,12 +126,12 @@ namespace nux
     return m_Enable;
   }
 
-  void ActionItem::SetLabel(const TCHAR *label)
+  void ActionItem::SetLabel(const char *label)
   {
     m_Label = label;
   }
 
-  const TCHAR *ActionItem::GetLabel() const
+  const char *ActionItem::GetLabel() const
   {
     return m_Label.GetTCharPtr();
   }

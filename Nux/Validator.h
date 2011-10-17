@@ -47,8 +47,8 @@ namespace nux
 
     virtual Validator *Clone()  const = 0; //Virtual Constructor Idiom
 
-    virtual Validator::State Validate(const TCHAR *str) const;
-    virtual void Alternative(const TCHAR *str) {}
+    virtual Validator::State Validate(const char *str) const;
+    virtual void Alternative(const char *str) {}
 
   protected:
     bool InitRegExp();

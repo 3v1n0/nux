@@ -27,7 +27,7 @@
 namespace nux
 {
 
-  GroupBox::GroupBox(const TCHAR *Caption, NUX_FILE_LINE_DECL)
+  GroupBox::GroupBox(const char *Caption, NUX_FILE_LINE_DECL)
     :   View(NUX_FILE_LINE_PARAM)
     ,   bCaptionAvailable(false)
     ,   m_layout(0)

@@ -29,7 +29,7 @@ namespace nux
   static NCriticalSection ThreadArrayLock;
   std::vector<NThread *> ThreadArray;
 
-  void NuxInitialize(const TCHAR *CommandLine)
+  void NuxInitialize(const char *CommandLine)
   {
     nux::NuxCoreInitialize(0);
     nux::NuxGraphicsInitialize();
@@ -38,7 +38,7 @@ namespace nux
     inlRegisterThreadLocalIndex(0, ThreadLocal_InalogicAppImpl, NULL);
   }
 
-  static WindowThread *_CreateModalWindowThread(const TCHAR *WindowTitle,
+  static WindowThread *_CreateModalWindowThread(const char *WindowTitle,
       t_u32 width,
       t_u32 height,
       WindowThread *Parent,
@@ -58,7 +58,7 @@ namespace nux
     return w;
   }
 
-  WindowThread *CreateGUIThread(const TCHAR *WindowTitle,
+  WindowThread *CreateGUIThread(const char *WindowTitle,
                                  t_u32 width,
                                  t_u32 height,
                                  WindowThread *Parent,
@@ -158,7 +158,7 @@ namespace nux
 
 // Create a window thread that is a child of the Parent. This thread has a window.
   WindowThread *CreateWindowThread(WindowStyle WndStyle,
-                                    const TCHAR *WindowTitle,
+                                    const char *WindowTitle,
                                     t_u32 width,
                                     t_u32 height,
                                     WindowThread *Parent,
@@ -184,7 +184,7 @@ namespace nux
 
 // Create modal graphics thread that is a child of the Parent. This thread has a window.
   WindowThread *CreateModalWindowThread(WindowStyle WndStyle,
-                                         const TCHAR *WindowTitle,
+                                         const char *WindowTitle,
                                          t_u32 width,
                                          t_u32 height,
                                          WindowThread *Parent,

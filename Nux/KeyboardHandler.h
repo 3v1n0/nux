@@ -58,7 +58,7 @@ namespace nux
       unsigned long    eventType    /*event type*/,
       unsigned long    keysym       /*event keysym*/,
       unsigned long    state        /*event state*/,
-      TCHAR      character    /*character*/,
+      char      character    /*character*/,
       const Geometry &g);
 
     NString GetTextLine() const
@@ -87,7 +87,7 @@ namespace nux
       return m_text_positiony;
     }
 
-    void SetText(const TCHAR *str);
+    void SetText(const char *str);
     void SetText(const tstring &s);
     void SetText(const NString &s);
 

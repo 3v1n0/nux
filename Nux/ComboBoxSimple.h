@@ -46,7 +46,7 @@ namespace nux
 //    virtual void PostDraw(GraphicsEngine& graphics_engine, bool force_draw);
 
   public:
-    ActionItem *AddItem(const TCHAR *label, int Uservalue = 0);
+    ActionItem *AddItem(const char *label, int Uservalue = 0);
     void RemoveItem(ActionItem *item);
     void RemoveAllItem();
     
@@ -63,7 +63,7 @@ namespace nux
     void RecvSigTerminateMenuCascade();
     void RecvGeometryChanged(Area *area, Geometry &geo);
 
-    const TCHAR *GetSelectionLabel() const;
+    const char *GetSelectionLabel() const;
     int GetSelectionUserValue() const;
     int GetNumItem() const;
     ActionItem *GetItem(int index) const;

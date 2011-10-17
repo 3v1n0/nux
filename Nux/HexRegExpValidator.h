@@ -43,7 +43,7 @@ namespace nux
     */
     int GetClampedValue(int i) const;
 
-    virtual void Alternative(const TCHAR *str);
+    virtual void Alternative(const char *str);
 
     void SetMinimum(int value);
     int GetMinimum() const;
@@ -51,7 +51,7 @@ namespace nux
     int GetMaximum() const;
 
     NString ToString(int i);
-    int ToInteger(const TCHAR *str);
+    int ToInteger(const char *str);
 
   private:
     int m_Minimum;

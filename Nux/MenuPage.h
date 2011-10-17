@@ -37,7 +37,7 @@ namespace nux
   {
     NUX_DECLARE_OBJECT_TYPE(MenuItem, View);
   public:
-    MenuItem(const TCHAR *label, int UserValue, NUX_FILE_LINE_PROTO);
+    MenuItem(const char *label, int UserValue, NUX_FILE_LINE_PROTO);
     ~MenuItem();
 
     void DrawAsMenuItem(GraphicsEngine &graphics_engine, const Color &textcolor, bool is_highlighted, bool isFirstItem, bool isLastItem, bool draw_icone);
@@ -88,17 +88,17 @@ namespace nux
   {
     NUX_DECLARE_OBJECT_TYPE(MenuPage, View);
   public:
-    MenuPage(const TCHAR *title = "", NUX_FILE_LINE_PROTO);
+    MenuPage(const char *title = "", NUX_FILE_LINE_PROTO);
     ~MenuPage();
 
-//    void SetName(const TCHAR* name);
-    const TCHAR *GetName() const;
+//    void SetName(const char* name);
+    const char *GetName() const;
 
-    ActionItem *AddAction(const TCHAR *label = 0, int UserValue = 0);
+    ActionItem *AddAction(const char *label = 0, int UserValue = 0);
     //void AddActionItem(ActionItem* actionItem);
     void AddSeparator();
-    MenuPage *AddMenu(const TCHAR *label);
-    ActionItem *AddSubMenu(const TCHAR *label, MenuPage *menu);
+    MenuPage *AddMenu(const char *label);
+    ActionItem *AddSubMenu(const char *label, MenuPage *menu);
 
     void RemoveItem(ActionItem *item);
     void RemoveAllItem();

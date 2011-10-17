@@ -31,7 +31,7 @@ namespace nux
 {
   NUX_IMPLEMENT_OBJECT_TYPE(StaticTextBox);
 
-  StaticTextBox::StaticTextBox(const TCHAR *Caption, NUX_FILE_LINE_DECL)
+  StaticTextBox::StaticTextBox(const char *Caption, NUX_FILE_LINE_DECL)
     :   View(NUX_FILE_LINE_PARAM)
     ,   m_TextAlignment(eAlignTextLeft)
     ,   m_bMinimumWidthMatchText(true)
@@ -90,13 +90,13 @@ namespace nux
 
   }
 
-  void StaticTextBox::SetText(const TCHAR &Caption)
+  void StaticTextBox::SetText(const char &Caption)
   {
     NString s(Caption);
     SetText(s);
   }
 
-  void StaticTextBox::SetText(const TCHAR *Caption)
+  void StaticTextBox::SetText(const char *Caption)
   {
     NString s(Caption);
     SetText(s);

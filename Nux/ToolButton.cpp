@@ -31,7 +31,7 @@
 namespace nux
 {
 
-  ToolButton::ToolButton(const TCHAR *BitmapFilename, NUX_FILE_LINE_DECL)
+  ToolButton::ToolButton(const char *BitmapFilename, NUX_FILE_LINE_DECL)
     :   View(NUX_FILE_LINE_PARAM)
     ,   m_ActionItem(0)
   {

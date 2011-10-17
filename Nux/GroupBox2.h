@@ -36,7 +36,7 @@ namespace nux
   class GroupBox2 : public View
   {
   public:
-    GroupBox2(const TCHAR *Caption = "", NUX_FILE_LINE_PROTO);
+    GroupBox2(const char *Caption = "", NUX_FILE_LINE_PROTO);
     ~GroupBox2();
 
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
@@ -44,7 +44,7 @@ namespace nux
     virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     virtual bool SetLayout(Layout *layout);
-    void SetCaption(const TCHAR *Caption);
+    void SetCaption(const char *Caption);
   
   protected:
     virtual bool AcceptKeyNavFocus();

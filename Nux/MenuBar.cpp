@@ -185,13 +185,13 @@ namespace nux
 
   }
 
-  void MenuBar::AddMenu(const TCHAR *MenuLabel, MenuPage *menu)
+  void MenuBar::AddMenu(const char *MenuLabel, MenuPage *menu)
   {
     NUX_RETURN_IF_NULL(menu);
     AddMenu(MenuLabel, menu, 0);
   }
 
-  void MenuBar::AddMenu(const TCHAR *MenuLabel, MenuPage *menu, BaseTexture *icon)
+  void MenuBar::AddMenu(const char *MenuLabel, MenuPage *menu, BaseTexture *icon)
   {
     NUX_RETURN_IF_NULL(menu);
 

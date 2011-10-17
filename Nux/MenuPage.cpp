@@ -55,7 +55,7 @@ namespace nux
 //
 
 
-  MenuItem::MenuItem(const TCHAR *label, int UserValue, NUX_FILE_LINE_DECL)
+  MenuItem::MenuItem(const char *label, int UserValue, NUX_FILE_LINE_DECL)
     :   View(NUX_FILE_LINE_PARAM)
   {
     _child_menu     = 0;
@@ -158,7 +158,7 @@ namespace nux
     icon_geo.SetX(geo.x + 2);
     icon_geo.SetY(geo.y + 0);
 
-    const TCHAR *label = _action_item->GetLabel();
+    const char *label = _action_item->GetLabel();
 
     if (is_highlighted)
     {
@@ -214,7 +214,7 @@ namespace nux
     GetPainter().Draw2DLine(graphics_engine, base.x, y0 + 1, base.x + base.GetWidth(), y0 + 1, Color(0xFFAAAAAA));
   }
 
-  MenuPage::MenuPage(const TCHAR *title, NUX_FILE_LINE_DECL)
+  MenuPage::MenuPage(const char *title, NUX_FILE_LINE_DECL)
   : View(NUX_FILE_LINE_PARAM)
   {
     m_Parent = 0;
@@ -270,12 +270,12 @@ namespace nux
     RemoveLayout();
   }
 
-//void MenuPage::SetName(const TCHAR* name)
+//void MenuPage::SetName(const char* name)
 //{
 //    m_Name = name;
 //}
 //
-  const TCHAR *MenuPage::GetName() const
+  const char *MenuPage::GetName() const
   {
     return m_Name.GetTCharPtr();
   }
@@ -362,7 +362,7 @@ namespace nux
     _font_name = g_strdup(font_name);
   }
 
-  ActionItem *MenuPage::AddAction(const TCHAR *label, int UserValue)
+  ActionItem *MenuPage::AddAction(const char *label, int UserValue)
   {
     // pMenuItem if added to the layout do not sink the Reference.
     MenuItem *pMenuItem(new MenuItem(label, UserValue, NUX_TRACKER_LOCATION));
@@ -509,7 +509,7 @@ namespace nux
 //    ComputeContentSize();
 //}
 
-  MenuPage *MenuPage::AddMenu(const TCHAR *label)
+  MenuPage *MenuPage::AddMenu(const char *label)
   {
     // pMenuItem if added to the layout do not sink the Reference.
     MenuItem *pMenuItem(new MenuItem(label, 0, NUX_TRACKER_LOCATION));
@@ -583,7 +583,7 @@ namespace nux
     return pMenuItem->GetChildMenu();
   }
 
-  ActionItem *MenuPage::AddSubMenu(const TCHAR *label, MenuPage *menu)
+  ActionItem *MenuPage::AddSubMenu(const char *label, MenuPage *menu)
   {
     menu->m_IsTopOfMenuChain = false;
     // pMenuItem if added to the layout do not sink the Reference.

@@ -39,7 +39,7 @@ namespace nux
   class EditTextBox : public View
   {
   public:
-    EditTextBox(const TCHAR *Caption, NUX_FILE_LINE_PROTO);
+    EditTextBox(const char *Caption, NUX_FILE_LINE_PROTO);
     ~EditTextBox();
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
@@ -50,11 +50,11 @@ namespace nux
       unsigned int keysym,
       const char* character);
 
-    void SetText(const TCHAR &Caption);
-    void SetText(const TCHAR *Caption);
+    void SetText(const char &Caption);
+    void SetText(const char *Caption);
     void SetText(const tstring &Caption);
     void SetText(const NString &Caption);
-    const TCHAR *GetText() const;
+    const char *GetText() const;
     t_u32 GetTextSize() const
     {
       return (t_u32) m_Text.Length();
@@ -121,7 +121,7 @@ namespace nux
       unsigned long    eventType  ,   /*event type*/
       unsigned long    keysym     ,   /*event keysym*/
       unsigned long    state      ,   /*event state*/
-      const TCHAR*     character  ,   /*character*/
+      const char*     character  ,   /*character*/
       unsigned short   keyCount       /*key repeat count*/);
 
     void RecvStartKeyFocus();
@@ -132,11 +132,11 @@ namespace nux
     {
       m_Prefix = p;
     };
-    void SetPrefix(const TCHAR *p)
+    void SetPrefix(const char *p)
     {
       m_Prefix = p;
     };
-    void SetPrefix(const TCHAR &p)
+    void SetPrefix(const char &p)
     {
       m_Prefix = p;
     };
@@ -153,11 +153,11 @@ namespace nux
     {
       m_Suffix = s;
     };
-    void SetSuffix(const TCHAR *s)
+    void SetSuffix(const char *s)
     {
       m_Suffix = s;
     };
-    void SetSuffix(const TCHAR &s)
+    void SetSuffix(const char &s)
     {
       m_Suffix = s;
     };
@@ -189,7 +189,7 @@ namespace nux
     bool IsEmpty();
 
   private:
-    bool ValidateKeyboardEntry(const TCHAR *text) const;
+    bool ValidateKeyboardEntry(const char *text) const;
     void EscapeKeyboardFocus();
     void EnteringKeyboardFocus();
     void QuitingKeyboardFocus();

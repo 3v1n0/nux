@@ -45,7 +45,7 @@ namespace nux
   {
     NUX_DECLARE_OBJECT_TYPE(FloatingWindow, BaseWindow);
   public:
-    FloatingWindow(const TCHAR *WindowName = "", NUX_FILE_LINE_PROTO);
+    FloatingWindow(const char *WindowName = "", NUX_FILE_LINE_PROTO);
     ~FloatingWindow();
 
     void SetVisibleSizeGrip(bool b)

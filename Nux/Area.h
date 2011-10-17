@@ -222,7 +222,7 @@ namespace nux
 
     void IncreaseSize(int x, int y);
 
-    void SetBaseString(const TCHAR *Caption);
+    void SetBaseString(const char *Caption);
     const NString &GetBaseString() const;
 
     //! Deprecated. Use GetToplevel.

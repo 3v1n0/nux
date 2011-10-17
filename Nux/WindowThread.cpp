@@ -381,7 +381,7 @@ logging::Logger logger("nux.windows.thread");
 
   NUX_IMPLEMENT_OBJECT_TYPE(WindowThread);
 
-  WindowThread::WindowThread(const TCHAR *WindowTitle, unsigned int width, unsigned int height, AbstractThread *Parent, bool Modal)
+  WindowThread::WindowThread(const char *WindowTitle, unsigned int width, unsigned int height, AbstractThread *Parent, bool Modal)
     :   AbstractThread(Parent)
     ,   m_StartupWidth(width)
     ,   m_StartupHeight(height)

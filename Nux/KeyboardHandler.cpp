@@ -99,7 +99,7 @@ namespace nux
 
     while (c < num_char - 1)
     {
-      if (( m_textline[c] == TCHAR(' ')) && (m_textline[c+1] != TCHAR(' ')))
+      if (( m_textline[c] == char(' ')) && (m_textline[c+1] != char(' ')))
         return c + 1;
 
       c++;
@@ -117,7 +117,7 @@ namespace nux
 
     while (c > 1)
     {
-      if (( m_textline[c] != TCHAR(' ')) && (m_textline[c-1] == TCHAR(' ')))
+      if (( m_textline[c] != char(' ')) && (m_textline[c-1] == char(' ')))
         return c;
 
       c--;
@@ -268,7 +268,7 @@ namespace nux
     unsigned long    eventType    /*event type*/,
     unsigned long    keysym       /*event keysym*/,
     unsigned long    state        /*event state*/,
-    TCHAR      character    /*character*/,
+    char      character    /*character*/,
     const Geometry &g)
   {
     //if(event.event_type != I_AsciiKey && event.event_type != I_KeyPress && event.event_type != I_KeyRelease)
@@ -296,7 +296,7 @@ namespace nux
           // It is WM_CHAR who send key = 0x30 = '0'. Therefore, do not use strchr(".0123456789", key) to test
           // if key is a digit character. When using strchr(".0123456789", key_kp0) we get a positive result
           // and the result is unexpected.
-          if ((key >= TCHAR('0') && key <= TCHAR('9')) || (key == TCHAR('.')) || (key == TCHAR('-')) || (key == TCHAR('+')))
+          if ((key >= char('0') && key <= char('9')) || (key == char('.')) || (key == char('-')) || (key == char('+')))
           {
             if ( m_caret != m_selection_start )
             {
@@ -304,9 +304,9 @@ namespace nux
             }
 
             // '-' and '+' can only be at position 0 of the number
-            if ((key == TCHAR('-')) || (key == TCHAR('+')))
+            if ((key == char('-')) || (key == char('+')))
             {
-              if ((m_caret == 0) && (m_textline[0] != TCHAR('+')) && (m_textline[0] != TCHAR('-')))
+              if ((m_caret == 0) && (m_textline[0] != char('+')) && (m_textline[0] != char('-')))
               {
                 // If we are in overwrite mode and there is already
                 // a char at the caret's position, simply replace it.
@@ -358,7 +358,7 @@ namespace nux
         case eIntegerNumber:
         {
           // Check if Key code is in "0123456789";
-          if ((key >= TCHAR('0') && key <= TCHAR('9')) || (key == TCHAR('-')) || (key == TCHAR('+')))
+          if ((key >= char('0') && key <= char('9')) || (key == char('-')) || (key == char('+')))
           {
             if ( m_caret != m_selection_start )
             {
@@ -366,7 +366,7 @@ namespace nux
             }
 
             // '-' and '+' can only be at position 0 of the number
-            if ((key == TCHAR('-')) || (key == TCHAR('+')))
+            if ((key == char('-')) || (key == char('+')))
             {
               // If we are in overwrite mode and there is already
               // a char at the caret's position, simply replace it.
@@ -417,7 +417,7 @@ namespace nux
 
         case eHexadecimalNumber:
         {
-          if ((key >= TCHAR('0') && key <= TCHAR('9')) || (key >= TCHAR('a') && key <= TCHAR('f')) || (key >= TCHAR('A') && key <= TCHAR('F')) || (key == TCHAR('-')) || (key == TCHAR('+')))
+          if ((key >= char('0') && key <= char('9')) || (key >= char('a') && key <= char('f')) || (key >= char('A') && key <= char('F')) || (key == char('-')) || (key == char('+')))
             //if(strchr("0123456789abcdefABCDEF", key))
           {
             if (m_caret != m_selection_start)
@@ -453,7 +453,7 @@ namespace nux
         case eBinaryNumber:
         {
           //if(strchr("01", key))
-          if ((key >= TCHAR('0') && key <= TCHAR('1')))
+          if ((key >= char('0') && key <= char('1')))
           {
             if ( m_caret != m_selection_start )
             {
@@ -829,7 +829,7 @@ namespace nux
     return m_KeyType;
   }
 
-  void BaseKeyboardHandler::SetText(const TCHAR *str)
+  void BaseKeyboardHandler::SetText(const char *str)
   {
     m_textline = str;
     // Every time we set the text, we reposition the cursor at the beginning of the text,

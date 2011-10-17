@@ -68,7 +68,7 @@ namespace nux
   {
     NUX_DECLARE_OBJECT_TYPE(BaseWindow, View);
   public:
-    BaseWindow(const TCHAR *WindowName = "", NUX_FILE_LINE_PROTO);
+    BaseWindow(const char *WindowName = "", NUX_FILE_LINE_PROTO);
     virtual ~BaseWindow();
 
     nux::Property<bool> premultiply;

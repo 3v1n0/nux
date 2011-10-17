@@ -175,7 +175,7 @@ namespace nux
       return retvalue;
   }*/
 
-  static UXStyleImageRef GetStyleImageRef(const TCHAR *style_name)
+  static UXStyleImageRef GetStyleImageRef(const char *style_name)
   {
     int i = 0;
 

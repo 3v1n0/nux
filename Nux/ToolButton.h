@@ -34,7 +34,7 @@ namespace nux
   class ToolButton : public View
   {
   public:
-    ToolButton(const TCHAR *BitmapFilename = 0, NUX_FILE_LINE_PROTO);
+    ToolButton(const char *BitmapFilename = 0, NUX_FILE_LINE_PROTO);
 
     ~ToolButton();
 

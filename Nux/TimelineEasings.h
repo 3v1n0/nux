@@ -6,42 +6,42 @@ namespace nux
   class TimelineEaseInOutQuad : public Timeline
   {
   public:
-    TimelineEaseInOutQuad(unsigned int msecs, const TCHAR *Caption, NUX_FILE_LINE_DECL);
+    TimelineEaseInOutQuad(unsigned int msecs, const char *Caption, NUX_FILE_LINE_DECL);
     double GetEasing();
   };
 
   class TimelineEaseInQuad : public Timeline
   {
   public:
-    TimelineEaseInQuad(unsigned int msecs, const TCHAR *Caption, NUX_FILE_LINE_DECL);
+    TimelineEaseInQuad(unsigned int msecs, const char *Caption, NUX_FILE_LINE_DECL);
     double GetEasing();
   };
 
   class TimelineEaseOutQuad : public Timeline
   {
   public:
-    TimelineEaseOutQuad(unsigned int msecs, const TCHAR *Caption, NUX_FILE_LINE_DECL);
+    TimelineEaseOutQuad(unsigned int msecs, const char *Caption, NUX_FILE_LINE_DECL);
     double GetEasing();
   };
 
   class TimelineEaseInOutCubic : public Timeline
   {
   public:
-    TimelineEaseInOutCubic(unsigned int msecs, const TCHAR *Caption, NUX_FILE_LINE_DECL);
+    TimelineEaseInOutCubic(unsigned int msecs, const char *Caption, NUX_FILE_LINE_DECL);
     double GetEasing();
   };
 
   class TimelineEaseInCubic : public Timeline
   {
   public:
-    TimelineEaseInCubic(unsigned int msecs, const TCHAR *Caption, NUX_FILE_LINE_DECL);
+    TimelineEaseInCubic(unsigned int msecs, const char *Caption, NUX_FILE_LINE_DECL);
     double GetEasing();
   };
 
   class TimelineEaseOutCubic : public Timeline
   {
   public:
-    TimelineEaseOutCubic(unsigned int msecs, const TCHAR *Caption, NUX_FILE_LINE_DECL);
+    TimelineEaseOutCubic(unsigned int msecs, const char *Caption, NUX_FILE_LINE_DECL);
     double GetEasing();
   };
 };

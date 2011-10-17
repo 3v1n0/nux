@@ -13,7 +13,7 @@
 
 namespace nux
 {
-  PangoText::PangoText(const TCHAR* text, NUX_FILE_LINE_DECL)
+  PangoText::PangoText(const char* text, NUX_FILE_LINE_DECL)
     : View(NUX_FILE_LINE_PARAM)
   {
     _pango_font_map   = pango_ft2_font_map_new();
@@ -156,7 +156,7 @@ namespace nux
     GetTextExtents("Ubuntu", width, height);
   }
 
-  void PangoText::GetTextExtents(const TCHAR* font, int& width, int& height)
+  void PangoText::GetTextExtents(const char* font, int& width, int& height)
   {
     cairo_surface_t*      surface  = NULL;
     cairo_t*              cr       = NULL;

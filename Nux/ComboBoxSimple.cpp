@@ -97,7 +97,7 @@ namespace nux
     SetSelectionIndex(current_index + 1);
   }
 
-  ActionItem *ComboBoxSimple::AddItem(const TCHAR *label, int Uservalue)
+  ActionItem *ComboBoxSimple::AddItem(const char *label, int Uservalue)
   {
     if (m_CurrentMenu->GetNumItem() == 0)
     {
@@ -251,7 +251,7 @@ namespace nux
   }
 
 
-  const TCHAR *ComboBoxSimple::GetSelectionLabel() const
+  const char *ComboBoxSimple::GetSelectionLabel() const
   {
     if (m_SelectedAction)
       return m_SelectedAction->GetLabel();
