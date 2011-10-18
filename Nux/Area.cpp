@@ -531,6 +531,9 @@ namespace nux
 
   void Area::SetVisible(bool visible)
   {
+    if (IsLayout())
+      return;
+
     if (visible_ == visible)
       return;
 
@@ -551,6 +554,9 @@ namespace nux
 
   void Area::SetInputEventSensitivity(bool sensitive)
   {
+    if (IsLayout())
+      return;
+
     if (sensitive_ == sensitive)
       return;
 
@@ -858,7 +864,9 @@ namespace nux
 
    bool Area::TestMousePointerInclusion(const Point& mouse_position, NuxEventType event_type)
    {
-     if ((IsLayout() == false) && ((GetInputEventSensitivity() == false) || (view_enabled_ == false)))
+     if ((IsLayout() == false) && ((visible_ == false) ||
+       (sensitive_ == false) ||
+       (view_enabled_ == false)))
      {
        // If this area is not a view and:
        //    - it is insensitive to input event
@@ -891,7 +899,9 @@ namespace nux
  
    bool Area::TestMousePointerInclusionFilterMouseWheel(const Point& mouse_position, NuxEventType event_type)
    {
-     if ((IsLayout() == false) && ((GetInputEventSensitivity() == false) || (view_enabled_ == false)))
+     if ((IsLayout() == false) && ((visible_ == false) ||
+       (sensitive_ == false) ||
+       (view_enabled_ == false)))
      {
        // If this area is not a view and:
        //    - it is insensitive to input event

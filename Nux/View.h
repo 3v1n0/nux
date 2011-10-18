@@ -194,8 +194,6 @@ namespace nux
 
     bool full_view_draw_cmd_; //<! True if Draw is called before ContentDraw. It is read-only and can be accessed by calling IsFullRedraw();
 
-    bool _is_active; //!< True if the view is enabled(it can receive events and process them).
-
   private:
 
     friend class WindowCompositor;

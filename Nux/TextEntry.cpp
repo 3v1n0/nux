@@ -1638,7 +1638,7 @@ namespace nux
     else
       SetCursor(new_cursor);
 
-    QueueRefresh(false, true);
+    QueueRefresh(true, true);
   }
 
   int TextEntry::MoveVisually(int current_index, int count)
