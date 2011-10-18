@@ -23,7 +23,7 @@
 #ifndef RADIO_BUTTON_H
 #define RADIO_BUTTON_H
 
-#include "AbstractButton.h"
+#include "AbstractCheckedButton.h"
 
 namespace nux
 {
@@ -38,9 +38,9 @@ namespace nux
       The RadioButton class cannot be vertically resized. It can only be resized horizontally.
       The vertical size is always match the size of the content (check area + label).
   */
-  class RadioButton: public AbstractButton
+  class RadioButton: public AbstractCheckedButton
   {
-    NUX_DECLARE_OBJECT_TYPE(RadioButton, AbstractButton);
+    NUX_DECLARE_OBJECT_TYPE(RadioButton, AbstractCheckedButton);
   public:
     RadioButton(const std::string &str, bool state = false, NUX_FILE_LINE_PROTO);
     virtual ~RadioButton();
@@ -54,23 +54,6 @@ namespace nux
         \sa Activate, Deactivate.
     */
     sigc::signal<void, RadioButton*> state_change;
-
-    //! Set the label.
-    /*!
-        Set the label of this RadioButton. If the \a label argument is an empty string, then the the RadioButton label is destroyed,
-        and the content of the RadioButton is re-arranged accordingly.
-
-        @param label The label of the RadioButton.
-    */
-    void SetLabel(const std::string &checkbox_label);
-
-    //!Return the label of this RadioButton.
-    /*!
-        Return the label of this RadioButton.
-
-        @return The RadioButton label string.
-    */
-    std::string GetLabel() const;
 
     //! Activate the radio button.
     /*!
@@ -87,12 +70,8 @@ namespace nux
   protected:
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    virtual long ComputeContentSize();
 
     bool block_changed_signal_;
-
-    HLayout   *hlayout_;
-    InputArea *check_area_;
 
     void SetRadioGroupSelector(RadioButtonGroup *RadioSelector);
     ObjectWeakPtr<RadioButtonGroup> GetRadioGroupSelector();

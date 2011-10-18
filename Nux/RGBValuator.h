@@ -117,13 +117,13 @@ namespace nux
   private:
     //! Override of Area::SetMinimumHeight and made private.
     /*!
-        Prevent changing the minimum height of the StaticText view.
+        Prevent changing the minimum height of the RGBValuator view.
     */
     virtual void SetMinimumHeight(){};
 
     //! Override of Area::SetMaximumHeight and made private.
     /*!
-        Prevent changing the maximum height of the StaticText view.
+        Prevent changing the maximum height of the RGBValuator view.
     */
     virtual void SetMaximumHeight(){};
 

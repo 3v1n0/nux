@@ -111,6 +111,9 @@ namespace nux
     */
     ButtonVisualState GetVisualState() const;
 
+    virtual void SetLabelFontSize(int point);
+    int GetLabelFontSize() const;
+
   protected:
     //! The state of the AbstractButton. 
     bool active_;
@@ -125,6 +128,7 @@ namespace nux
     std::string label_;
     Color label_color_;
     StaticText *static_text_;
+    int label_font_size_;
     bool same_size_as_content_;
     int pre_layout_width_;
     int pre_layout_height_;

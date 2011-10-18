@@ -273,6 +273,7 @@ namespace nux
     if (static_text_)
     {
       static_text_->SetInputEventSensitivity(false);
+      static_text_->SetTextPointSize(label_font_size_);
     }
 
     if (image_)
@@ -305,11 +306,11 @@ namespace nux
 
     if (layout)
     {
-        layout->SetHorizontalInternalMargin(space_between_items_);
-        layout->SetPadding(layout_top_padding_,
-          layout_right_padding_,
-          layout_bottom_padding_,
-          layout_left_padding_);
+      layout->SetHorizontalInternalMargin(space_between_items_);
+      layout->SetPadding(layout_top_padding_,
+        layout_right_padding_,
+        layout_bottom_padding_,
+        layout_left_padding_);
     }
 
     if (layout)
@@ -511,4 +512,14 @@ namespace nux
     BuildLayout(label_, image_);
   }
 
+  void Button::SetLabelFontSize(int point)
+  {
+    AbstractButton::SetLabelFontSize(point);
+
+    if (static_text_ == NULL)
+      return;
+    BuildLayout(label_, image_);
+
+    QueueDraw();
+  }
 }

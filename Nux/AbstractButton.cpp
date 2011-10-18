@@ -37,6 +37,7 @@ namespace nux
     static_text_ = NULL;
     label_color_ = color::White;
     same_size_as_content_ = false;
+    label_font_size_ = 12;
 
     mouse_click.connect(sigc::mem_fun(this, &AbstractButton::RecvClick));
     mouse_down.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseDown));
@@ -137,5 +138,18 @@ namespace nux
   ButtonVisualState AbstractButton::GetVisualState() const
   {
     return visual_state_;
+  }
+
+  void AbstractButton::SetLabelFontSize(int point)
+  {
+    if (point < 0)
+      return;
+
+    label_font_size_ = point;
+  }
+
+  int AbstractButton::GetLabelFontSize() const
+  {
+    return label_font_size_;
   }
 }

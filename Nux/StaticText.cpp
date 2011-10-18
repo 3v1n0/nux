@@ -66,7 +66,7 @@ namespace nux
     text_color_ = color::White;
     clip_to_width_ = 0;
 
-    SetMinimumSize(32, 16);
+    SetMinimumSize(1, 1);
     SetText(text);
   }
 

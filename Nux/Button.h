@@ -224,6 +224,8 @@ namespace nux
     */
     void Deactivate();
 
+    virtual void SetLabelFontSize(int point);
+
   protected:
     LayoutType layout_type_;    //!< The button layout type.
     ItemOrder item_order_;      //!< Ordering of the text and image.

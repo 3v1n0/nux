@@ -27,14 +27,16 @@
 #include "HLayout.h"
 #include "CheckBox.h"
 #include "EditTextBox.h"
-//#include "RadioButton.h"
-//#include "RadioButtonGroup.h"
+#include "RadioButton.h"
+#include "RadioButtonGroup.h"
 #include "ToggleButton.h"
 #include "Layout.h"
 #include "ColorEditor.h"
 
 namespace nux
 {
+  Size ColorEditor::picker_area_size = Size(200, 200);
+  int ColorEditor::channel_area_width = 12;
 
   static void ThreadColorEditorDialog(NThread *thread, void *InitData)
   {
@@ -90,7 +92,7 @@ namespace nux
     m_ModalWindow       = ModalWindow;
     m_RGBColor          = Color(1.0f, 1.0f, 1.0f, 1.0f);
     m_ColorModel        = color::RGB;
-    m_ColorChannel      = color::RED;
+    color_channel_      = color::RED;
   }
 
   ColorDialogProxy::~ColorDialogProxy()
@@ -183,12 +185,12 @@ namespace nux
 
   void ColorDialogProxy::SetColorChannel(color::Channel color_channel)
   {
-    m_ColorChannel = color_channel;
+    color_channel_ = color_channel;
   }
 
   color::Channel ColorDialogProxy::GetColorChannel()
   {
-    return m_ColorChannel;
+    return color_channel_;
   }
 
   ColorEditor::ColorEditor(NUX_FILE_LINE_DECL)
@@ -197,7 +199,7 @@ namespace nux
     , hsv_(rgb_)
   {
     m_ColorModel = color::RGB;
-    m_ColorChannel = color::RED;
+    color_channel_ = color::RED;
     m_MarkerPosition = Point(0, 0);
     m_VertMarkerPosition = Point(0, 0);
 
@@ -205,29 +207,28 @@ namespace nux
     m_Validator.SetMaximum(1.0);
     m_Validator.SetDecimals(2);
 
-    m_PickerArea        = new InputArea(NUX_TRACKER_LOCATION);
-    m_BaseChannelArea   = new InputArea(NUX_TRACKER_LOCATION);
-    m_ColorSquare       = new InputArea(NUX_TRACKER_LOCATION);
+    picker_area_        = new InputArea(NUX_TRACKER_LOCATION);
+    channel_area_   = new InputArea(NUX_TRACKER_LOCATION);
+    selected_color_area_       = new InputArea(NUX_TRACKER_LOCATION);
     m_hlayout           = new HLayout(NUX_TRACKER_LOCATION);
 
-    m_BaseChannelArea->mouse_down.connect(sigc::mem_fun(this, &ColorEditor::RecvMouseDown));
-    m_BaseChannelArea->mouse_up.connect(sigc::mem_fun(this, &ColorEditor::RecvMouseUp));
-    m_BaseChannelArea->mouse_drag.connect(sigc::mem_fun(this, &ColorEditor::RecvMouseDrag));
+    channel_area_->mouse_down.connect(sigc::mem_fun(this, &ColorEditor::RecvMouseDown));
+    channel_area_->mouse_up.connect(sigc::mem_fun(this, &ColorEditor::RecvMouseUp));
+    channel_area_->mouse_drag.connect(sigc::mem_fun(this, &ColorEditor::RecvMouseDrag));
 
-    m_PickerArea->mouse_down.connect(sigc::mem_fun(this, &ColorEditor::RecvPickerMouseDown));
-    m_PickerArea->mouse_up.connect(sigc::mem_fun(this, &ColorEditor::RecvPickerMouseUp));
-    m_PickerArea->mouse_drag.connect(sigc::mem_fun(this, &ColorEditor::RecvPickerMouseDrag));
+    picker_area_->mouse_down.connect(sigc::mem_fun(this, &ColorEditor::RecvPickerMouseDown));
+    picker_area_->mouse_up.connect(sigc::mem_fun(this, &ColorEditor::RecvPickerMouseUp));
+    picker_area_->mouse_drag.connect(sigc::mem_fun(this, &ColorEditor::RecvPickerMouseDrag));
 
-    m_ColorSquare->SetMinMaxSize(62, 32);
-    m_PickerArea->SetMinimumSize(200, 200);
-    m_PickerArea->SetMaximumSize(200, 200);
-    m_BaseChannelArea->SetMaximumHeight(200);
-    m_BaseChannelArea->SetMinimumWidth(20);
-    m_BaseChannelArea->SetMaximumWidth(20);
+    selected_color_area_->SetMinMaxSize(62, 32);
+    picker_area_->SetMinMaxSize(picker_area_size.width, picker_area_size.height);
+    channel_area_->SetMaximumHeight(picker_area_size.height);
+    channel_area_->SetMinimumWidth(channel_area_width);
+    channel_area_->SetMaximumWidth(channel_area_width);
 
-    m_hlayout->AddView(m_PickerArea, 1);
+    m_hlayout->AddView(picker_area_, 1);
     m_hlayout->AddLayout(new SpaceLayout(5, 5, 20, 20), 0);
-    m_hlayout->AddView(m_BaseChannelArea, 0, eAbove, eFull);
+    m_hlayout->AddView(channel_area_, 0, eAbove, eFull);
     SetCompositionLayout(m_hlayout);
 
     // RGB
@@ -235,8 +236,8 @@ namespace nux
       redlayout = new HLayout(NUX_TRACKER_LOCATION);
       {
         //FIXME - change to radio button
-        redcheck = new Button("R:");
-        redcheck->SetMinimumWidth(30);
+        redcheck = new RadioButton("R");
+        redcheck->SetMinimumWidth(32);
         redtext = new EditTextBox("", NUX_TRACKER_LOCATION);
         redtext->SetMinimumWidth(36);
         redlayout->AddView(redcheck, 0);
@@ -246,25 +247,25 @@ namespace nux
       greenlayout = new HLayout(NUX_TRACKER_LOCATION);
       {
         //FIXME - Change to radio button
-        greencheck = new Button("G:");
-        greencheck->SetMinimumWidth(30);
+        greencheck = new RadioButton("G");
+        greencheck->SetMinimumWidth(32);
         greentext = new EditTextBox("", NUX_TRACKER_LOCATION);
         greentext->SetMinimumWidth(36);
         greenlayout->AddView(greencheck, 0);
         greenlayout->AddView(greentext, 0);
-        //FIXME - greencheck->sigStateChanged.connect(sigc::bind(sigc::bind(sigc::mem_fun(this, &ColorEditor::RecvCheckColorModel0), color::GREEN), color::RGB));
+        greencheck->click.connect(sigc::bind(sigc::bind(sigc::mem_fun(this, &ColorEditor::RecvCheckColorModel0), color::GREEN), color::RGB));
 
       }
       bluelayout = new HLayout(NUX_TRACKER_LOCATION);
       {
         //FIXME - change to radio button
-        bluecheck = new Button("B:");
-        bluecheck->SetMinimumWidth(30);
+        bluecheck = new RadioButton("B");
+        bluecheck->SetMinimumWidth(32);
         bluetext = new EditTextBox("", NUX_TRACKER_LOCATION);
         bluetext->SetMinimumWidth(36);
         bluelayout->AddView(bluecheck, 0);
         bluelayout->AddView(bluetext, 0);
-        //FIXME - change to radio button bluecheck->sigStateChanged.connect(sigc::bind(sigc::bind(sigc::mem_fun(this, &ColorEditor::RecvCheckColorModel0), color::BLUE), color::RGB));
+        bluecheck->click.connect(sigc::bind(sigc::bind(sigc::mem_fun(this, &ColorEditor::RecvCheckColorModel0), color::BLUE), color::RGB));
       }
     }
 
@@ -272,41 +273,38 @@ namespace nux
     {
       huelayout = new HLayout(NUX_TRACKER_LOCATION);
       {
-        //FIXME - change to radio button
-        huecheck = new Button("H:");
-        huecheck->SetMinimumWidth(30);
-        huetext = new EditTextBox("", NUX_TRACKER_LOCATION);
-        huetext->SetMinimumWidth(36);
+        huecheck = new RadioButton("H");
+        huecheck->SetMinimumWidth(32);
+        hue_text_entry_ = new EditTextBox("", NUX_TRACKER_LOCATION);
+        hue_text_entry_->SetMinimumWidth(36);
         huelayout->AddView(huecheck, 0);
-        huelayout->AddView(huetext, 0);
-        //FIXME - huecheck->sigStateChanged.connect(sigc::bind(sigc::bind(sigc::mem_fun(this, &ColorEditor::RecvCheckColorModel0), color::HUE), CM_HSV ));
+        huelayout->AddView(hue_text_entry_, 0);
+        huecheck->click.connect(sigc::bind(sigc::bind(sigc::mem_fun(this, &ColorEditor::RecvCheckColorModel0), color::HUE), color::HSV ));
       }
       saturationlayout = new HLayout(NUX_TRACKER_LOCATION);
       {
-        //FIXME - change to radio button
-        saturationcheck = new Button("S:");
-        saturationcheck->SetMinimumWidth(30);
-        saturationtext = new EditTextBox("", NUX_TRACKER_LOCATION);
-        saturationtext->SetMinimumWidth(36);
+        saturationcheck = new RadioButton("S");
+        saturationcheck->SetMinimumWidth(32);
+        saturation_text_entry_ = new EditTextBox("", NUX_TRACKER_LOCATION);
+        saturation_text_entry_->SetMinimumWidth(36);
         saturationlayout->AddView(saturationcheck, 0);
-        saturationlayout->AddView(saturationtext, 0);
-        //FIXME - saturationcheck->sigStateChanged.connect(sigc::bind(sigc::bind(sigc::mem_fun(this, &ColorEditor::RecvCheckColorModel0), color::SATURATION), CM_HSV ));
+        saturationlayout->AddView(saturation_text_entry_, 0);
+        saturationcheck->click.connect(sigc::bind(sigc::bind(sigc::mem_fun(this, &ColorEditor::RecvCheckColorModel0), color::SATURATION), color::HSV ));
       }
       valuelayout = new HLayout(NUX_TRACKER_LOCATION);
       {
-        //FIXME - change to radio button
-        valuecheck = new Button("V:");
-        valuecheck->SetMinimumWidth(30);
-        valuetext = new EditTextBox("", NUX_TRACKER_LOCATION);
-        valuetext->SetMinimumWidth(36);
+        valuecheck = new RadioButton("V");
+        valuecheck->SetMinimumWidth(32);
+        value_text_entry_ = new EditTextBox("", NUX_TRACKER_LOCATION);
+        value_text_entry_->SetMinimumWidth(36);
         valuelayout->AddView(valuecheck, 0);
-        valuelayout->AddView(valuetext, 0);
-        //FIXME - valuecheck->sigStateChanged.connect(sigc::bind(sigc::bind(sigc::mem_fun(this, &ColorEditor::RecvCheckColorModel0), color::VALUE), CM_HSV ));
+        valuelayout->AddView(value_text_entry_, 0);
+        valuecheck->click.connect(sigc::bind(sigc::bind(sigc::mem_fun(this, &ColorEditor::RecvCheckColorModel0), color::VALUE), color::HSV ));
       }
     }
 
     ctrllayout = new VLayout(NUX_TRACKER_LOCATION);
-    ctrllayout->AddView(m_ColorSquare);
+    ctrllayout->AddView(selected_color_area_);
     ctrllayout->AddView(new SpaceLayout(20, 20, 10, 10), 1);
     ctrllayout->AddLayout(redlayout, 0);
     ctrllayout->AddLayout(greenlayout, 0);
@@ -332,13 +330,13 @@ namespace nux
 
     m_hlayout->AddLayout(ctrllayout, 0);
 
-    //radiogroup = new RadioButtonGroup(NUX_TRACKER_LOCATION);
-    //radiogroup->ConnectButton(redcheck);
-    //radiogroup->ConnectButton(greencheck);
-    //radiogroup->ConnectButton(bluecheck);
-    //radiogroup->ConnectButton(huecheck);
-    //radiogroup->ConnectButton(saturationcheck);
-    //radiogroup->ConnectButton(valuecheck);
+    radiogroup = new RadioButtonGroup(NUX_TRACKER_LOCATION);
+    radiogroup->ConnectButton(redcheck);
+    radiogroup->ConnectButton(greencheck);
+    radiogroup->ConnectButton(bluecheck);
+    radiogroup->ConnectButton(huecheck);
+    radiogroup->ConnectButton(saturationcheck);
+    radiogroup->ConnectButton(valuecheck);
 
     m_RedShader = new GLSh_ColorPicker(color::RED);
     m_GreenShader = new GLSh_ColorPicker(color::GREEN);
@@ -350,9 +348,9 @@ namespace nux
     redtext->SetText(m_Validator.ToString(255 * rgb_.red));
     greentext->SetText(m_Validator.ToString(255 * rgb_.green));
     bluetext->SetText(m_Validator.ToString(255 * rgb_.blue));
-    huetext->SetText(m_Validator.ToString(360 * hsv_.hue));
-    saturationtext->SetText(m_Validator.ToString(100 * hsv_.saturation));
-    valuetext->SetText(m_Validator.ToString(100 * hsv_.value));
+    hue_text_entry_->SetText(m_Validator.ToString(360 * hsv_.hue));
+    saturation_text_entry_->SetText(m_Validator.ToString(100 * hsv_.saturation));
+    value_text_entry_->SetText(m_Validator.ToString(100 * hsv_.value));
   }
 
   ColorEditor::~ColorEditor()
@@ -363,6 +361,17 @@ namespace nux
     delete m_HueShader;
     delete m_SaturationShader;
     delete m_ValueShader;
+  }
+
+  void ColorEditor::PreLayoutManagement()
+  {
+    View::PreLayoutManagement();
+    if (view_layout_)
+    {
+      // Constrain the vertical expansion of the color picker.
+      view_layout_->SetBaseWidth(1);
+      view_layout_->SetBaseHeight(1);
+    }
   }
 
   void ColorEditor::Draw(GraphicsEngine &graphics_engine, bool force_draw)
@@ -394,11 +403,11 @@ namespace nux
     bluetext->QueueDraw();
 
     huecheck->QueueDraw();
-    huetext->QueueDraw();
+    hue_text_entry_->QueueDraw();
     saturationcheck->QueueDraw();
-    saturationtext->QueueDraw();
+    saturation_text_entry_->QueueDraw();
     valuecheck->QueueDraw();
-    valuetext->QueueDraw();
+    value_text_entry_->QueueDraw();
 
 //     OkButton->QueueDraw();
 //     CancelButton->QueueDraw();
@@ -412,10 +421,10 @@ namespace nux
     int marker_position_x;
     int marker_position_y;
 
-    graphics_engine.PushClippingRectangle(m_BaseChannelArea->GetGeometry());
+    graphics_engine.PushClippingRectangle(channel_area_->GetGeometry());
 
-    marker_position_x = m_BaseChannelArea->GetBaseX();
-    marker_position_y = m_BaseChannelArea->GetBaseY() + m_VertMarkerPosition.y;
+    marker_position_x = channel_area_->GetBaseX();
+    marker_position_y = channel_area_->GetBaseY() + m_VertMarkerPosition.y;
     GetPainter().Draw2DTriangleColor(graphics_engine, marker_position_x, marker_position_y - 5,
                                   marker_position_x + 5, marker_position_y,
                                   marker_position_x, marker_position_y + 5, Color(0.0f, 0.0f, 0.0f, 1.0f));
@@ -424,8 +433,8 @@ namespace nux
                                   marker_position_x + 4, marker_position_y,
                                   marker_position_x, marker_position_y + 4, Color(0.7f, 0.7f, 0.7f, 1.0f));
 
-    marker_position_x = m_BaseChannelArea->GetBaseX() + m_BaseChannelArea->GetBaseWidth();
-    marker_position_y = m_BaseChannelArea->GetBaseY() + m_VertMarkerPosition.y;
+    marker_position_x = channel_area_->GetBaseX() + channel_area_->GetBaseWidth();
+    marker_position_y = channel_area_->GetBaseY() + m_VertMarkerPosition.y;
     GetPainter().Draw2DTriangleColor(graphics_engine, marker_position_x, marker_position_y - 5,
                                   marker_position_x - 5, marker_position_y,
                                   marker_position_x, marker_position_y + 5, Color(0.0f, 0.0f, 0.0f, 1.0f));
@@ -440,63 +449,63 @@ namespace nux
   {
     if (m_ColorModel == color::RGB)
     {
-      GetPainter().Paint2DQuadColor(graphics_engine, m_ColorSquare->GetGeometry(), Color(rgb_));
+      GetPainter().Paint2DQuadColor(graphics_engine, selected_color_area_->GetGeometry(), Color(rgb_));
       Color BaseChannelTop;
       Color BaseChannelBottom;
 
-      if (m_ColorChannel == color::RED)
+      if (color_channel_ == color::RED)
       {
         m_RedShader->SetColor(rgb_.red, rgb_.green, rgb_.blue, 1.0f);
         m_RedShader->SetScreenPositionOffset(graphics_engine.GetViewportX(), graphics_engine.GetViewportY());
         BaseChannelTop = Color(1.0f, rgb_.green, rgb_.blue, 1.0f);
         BaseChannelBottom = Color(0.0f, rgb_.green, rgb_.blue, 1.0f);
         m_RedShader->Render(
-          m_PickerArea->GetBaseX(),
-          m_PickerArea->GetBaseY(),
+          picker_area_->GetBaseX(),
+          picker_area_->GetBaseY(),
           0,
-          m_PickerArea->GetBaseWidth(),
-          m_PickerArea->GetBaseHeight(),
+          picker_area_->GetBaseWidth(),
+          picker_area_->GetBaseHeight(),
           graphics_engine.GetViewportWidth(), graphics_engine.GetViewportHeight()
         );
       }
-      else if (m_ColorChannel == color::GREEN)
+      else if (color_channel_ == color::GREEN)
       {
         m_GreenShader->SetColor(rgb_.red, rgb_.green, rgb_.blue, 1.0f);
         m_GreenShader->SetScreenPositionOffset(graphics_engine.GetViewportX(), graphics_engine.GetViewportY());
         BaseChannelTop = Color(rgb_.red, 1.0f, rgb_.blue, 1.0f);
         BaseChannelBottom = Color(rgb_.red, 0.0f, rgb_.blue, 1.0f);
         m_GreenShader->Render(
-          m_PickerArea->GetBaseX(),
-          m_PickerArea->GetBaseY(),
+          picker_area_->GetBaseX(),
+          picker_area_->GetBaseY(),
           0,
-          m_PickerArea->GetBaseWidth(),
-          m_PickerArea->GetBaseHeight(),
+          picker_area_->GetBaseWidth(),
+          picker_area_->GetBaseHeight(),
           graphics_engine.GetViewportWidth(), graphics_engine.GetViewportHeight()
         );
       }
-      else if (m_ColorChannel == color::BLUE)
+      else if (color_channel_ == color::BLUE)
       {
         m_BlueShader->SetColor(rgb_.red, rgb_.green, rgb_.blue, 1.0f);
         m_BlueShader->SetScreenPositionOffset(graphics_engine.GetViewportX(), graphics_engine.GetViewportY());
         BaseChannelTop = Color(rgb_.red, rgb_.green, 1.0f, 1.0f);
         BaseChannelBottom = Color(rgb_.red, rgb_.green, 0.0f, 1.0f);
         m_BlueShader->Render(
-          m_PickerArea->GetBaseX(),
-          m_PickerArea->GetBaseY(),
+          picker_area_->GetBaseX(),
+          picker_area_->GetBaseY(),
           0,
-          m_PickerArea->GetBaseWidth(),
-          m_PickerArea->GetBaseHeight(),
+          picker_area_->GetBaseWidth(),
+          picker_area_->GetBaseHeight(),
           graphics_engine.GetViewportWidth(), graphics_engine.GetViewportHeight()
         );
       }
 
       Geometry pickermarker = Geometry(GetBaseX() + m_MarkerPosition.x - 2, GetBaseY() + m_MarkerPosition.y - 2, 5, 5);
-      Geometry basepickermarker = Geometry(m_BaseChannelArea->GetBaseX(), m_BaseChannelArea->GetBaseY() + m_VertMarkerPosition.y, 5, 5);
+      Geometry basepickermarker = Geometry(channel_area_->GetBaseX(), channel_area_->GetBaseY() + m_VertMarkerPosition.y, 5, 5);
 
       Color color(rgb_.red, rgb_.green, rgb_.blue);
       GetPainter().Paint2DQuadWireframe(graphics_engine, pickermarker, OneMinusLuminance(rgb_));
 
-      GetPainter().Paint2DQuadColor(graphics_engine, m_BaseChannelArea->GetGeometry(), BaseChannelTop, BaseChannelBottom, BaseChannelBottom, BaseChannelTop);
+      GetPainter().Paint2DQuadColor(graphics_engine, channel_area_->GetGeometry(), BaseChannelTop, BaseChannelBottom, BaseChannelBottom, BaseChannelTop);
       // Draw Marker on Base Chanel Area
       DrawBaseChannelMarker(graphics_engine);
     }
@@ -507,25 +516,25 @@ namespace nux
     if (m_ColorModel == color::HSV)
     {
       color::RedGreenBlue rgb(hsv_);
-      GetPainter().Paint2DQuadColor(graphics_engine, m_ColorSquare->GetGeometry(), Color(rgb));
+      GetPainter().Paint2DQuadColor(graphics_engine, selected_color_area_->GetGeometry(), Color(rgb));
 
       Color BaseChannelTop;
       Color BaseChannelBottom;
 
-      if (m_ColorChannel == color::HUE)
+      if (color_channel_ == color::HUE)
       {
         m_HueShader->SetColor(hsv_.hue, hsv_.saturation, hsv_.value, 1.0f);
         m_HueShader->SetScreenPositionOffset(graphics_engine.GetViewportX(), graphics_engine.GetViewportY());
         m_HueShader->Render(
-          m_PickerArea->GetBaseX(),
-          m_PickerArea->GetBaseY(),
+          picker_area_->GetBaseX(),
+          picker_area_->GetBaseY(),
           0,
-          m_PickerArea->GetBaseWidth(),
-          m_PickerArea->GetBaseHeight(),
+          picker_area_->GetBaseWidth(),
+          picker_area_->GetBaseHeight(),
           graphics_engine.GetViewportWidth(), graphics_engine.GetViewportHeight()
         );
 
-        Geometry P = m_BaseChannelArea->GetGeometry();
+        Geometry P = channel_area_->GetGeometry();
 
         float s = 1.0f - 1.0f;
         float v = 1.0f;
@@ -548,7 +557,7 @@ namespace nux
         Geometry pickermarker = Geometry(GetBaseX() + m_MarkerPosition.x - 2, GetBaseY() + m_MarkerPosition.y - 2, 5, 5);
         GetPainter().Paint2DQuadWireframe(graphics_engine, pickermarker, OneMinusLuminance(rgb_));
       }
-      else if (m_ColorChannel == color::SATURATION)
+      else if (color_channel_ == color::SATURATION)
       {
         float value = hsv_.value;
         if (value < 0.3f) value = 0.3f;
@@ -558,38 +567,38 @@ namespace nux
         BaseChannelTop = Color(color::RedGreenBlue(color::HueSaturationValue(hsv_.hue, 1.0f, value)));
         BaseChannelBottom = Color(value, value, value, 1.0f);
         m_SaturationShader->Render(
-          m_PickerArea->GetBaseX(),
-          m_PickerArea->GetBaseY(),
+          picker_area_->GetBaseX(),
+          picker_area_->GetBaseY(),
           0,
-          m_PickerArea->GetBaseWidth(),
-          m_PickerArea->GetBaseHeight(),
+          picker_area_->GetBaseWidth(),
+          picker_area_->GetBaseHeight(),
           graphics_engine.GetViewportWidth(), graphics_engine.GetViewportHeight()
         );
 
         //Geometry pickermarker = Geometry(GetX() + x - 2, GetY() + y -2, 5, 5);
         Geometry pickermarker = Geometry(GetBaseX() + m_MarkerPosition.x - 2, GetBaseY() + m_MarkerPosition.y - 2, 5, 5);
         GetPainter().Paint2DQuadWireframe(graphics_engine, pickermarker, OneMinusLuminance(rgb_));
-        GetPainter().Paint2DQuadColor(graphics_engine, m_BaseChannelArea->GetGeometry(), BaseChannelTop, BaseChannelBottom, BaseChannelBottom, BaseChannelTop);
+        GetPainter().Paint2DQuadColor(graphics_engine, channel_area_->GetGeometry(), BaseChannelTop, BaseChannelBottom, BaseChannelBottom, BaseChannelTop);
       }
-      else if (m_ColorChannel == color::VALUE)
+      else if (color_channel_ == color::VALUE)
       {
         m_ValueShader->SetColor(hsv_.hue, hsv_.saturation, hsv_.value, 1.0f);
         m_ValueShader->SetScreenPositionOffset(graphics_engine.GetViewportX(), graphics_engine.GetViewportY());
         BaseChannelTop = Color(color::RedGreenBlue(color::HueSaturationValue(hsv_.hue, hsv_.saturation, 1.0f)));
         BaseChannelBottom = Color(color::RedGreenBlue(color::HueSaturationValue(hsv_.hue, hsv_.saturation, 0.0f)));
         m_ValueShader->Render(
-          m_PickerArea->GetBaseX(),
-          m_PickerArea->GetBaseY(),
+          picker_area_->GetBaseX(),
+          picker_area_->GetBaseY(),
           0,
-          m_PickerArea->GetBaseWidth(),
-          m_PickerArea->GetBaseHeight(),
+          picker_area_->GetBaseWidth(),
+          picker_area_->GetBaseHeight(),
           graphics_engine.GetViewportWidth(), graphics_engine.GetViewportHeight()
         );
 
         //Geometry pickermarker = Geometry(GetX() + x - 2, GetY() + y -2, 5, 5);
         Geometry pickermarker = Geometry(GetBaseX() + m_MarkerPosition.x - 2, GetBaseY() + m_MarkerPosition.y - 2, 5, 5);
         GetPainter().Paint2DQuadWireframe(graphics_engine, pickermarker, OneMinusLuminance(rgb_));
-        GetPainter().Paint2DQuadColor(graphics_engine, m_BaseChannelArea->GetGeometry(), BaseChannelTop, BaseChannelBottom, BaseChannelBottom, BaseChannelTop);
+        GetPainter().Paint2DQuadColor(graphics_engine, channel_area_->GetGeometry(), BaseChannelTop, BaseChannelBottom, BaseChannelBottom, BaseChannelTop);
       }
 
       // Draw Marker on Base Chanel Area
@@ -607,11 +616,11 @@ namespace nux
     bluetext->ProcessDraw(graphics_engine, force_draw);
 
     huecheck->ProcessDraw(graphics_engine, force_draw);
-    huetext->ProcessDraw(graphics_engine, force_draw);
+    hue_text_entry_->ProcessDraw(graphics_engine, force_draw);
     saturationcheck->ProcessDraw(graphics_engine, force_draw);
-    saturationtext->ProcessDraw(graphics_engine, force_draw);
+    saturation_text_entry_->ProcessDraw(graphics_engine, force_draw);
     valuecheck->ProcessDraw(graphics_engine, force_draw);
-    valuetext->ProcessDraw(graphics_engine, force_draw);
+    value_text_entry_->ProcessDraw(graphics_engine, force_draw);
   }
 
   void ColorEditor::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -622,16 +631,16 @@ namespace nux
     {
       if (y < 0)
         BaseValue = 1.0f;
-      else if (y > m_BaseChannelArea->GetBaseHeight())
+      else if (y > channel_area_->GetBaseHeight())
         BaseValue = 0.0f;
       else
-        BaseValue = 1.0f - (float) y / (float) m_BaseChannelArea->GetBaseHeight();
+        BaseValue = 1.0f - (float) y / (float) channel_area_->GetBaseHeight();
 
-      if (m_ColorChannel == color::RED)
+      if (color_channel_ == color::RED)
         rgb_.red = BaseValue;
-      else if (m_ColorChannel == color::GREEN)
+      else if (color_channel_ == color::GREEN)
         rgb_.green = BaseValue;
-      else if (m_ColorChannel == color::BLUE)
+      else if (color_channel_ == color::BLUE)
         rgb_.blue = BaseValue;
 
       hsv_ = color::HueSaturationValue(rgb_);
@@ -641,20 +650,20 @@ namespace nux
     {
       if (y < 0)
         BaseValue = 1.0f;
-      else if (y > m_BaseChannelArea->GetBaseHeight())
+      else if (y > channel_area_->GetBaseHeight())
         BaseValue = 0.0f;
       else
-        BaseValue = 1.0f - (float) y / (float) m_BaseChannelArea->GetBaseHeight();
+        BaseValue = 1.0f - (float) y / (float) channel_area_->GetBaseHeight();
 
-      if (m_ColorChannel == color::HUE)
+      if (color_channel_ == color::HUE)
       {
         hsv_.hue = BaseValue;
 
         if (hsv_.hue >= 1.0f) hsv_.hue = 0.0f;
       }
-      else if (m_ColorChannel == color::SATURATION)
+      else if (color_channel_ == color::SATURATION)
         hsv_.saturation = BaseValue;
-      else if (m_ColorChannel == color::VALUE)
+      else if (color_channel_ == color::VALUE)
         hsv_.value = BaseValue;
 
       rgb_ = color::RedGreenBlue(hsv_);
@@ -663,10 +672,10 @@ namespace nux
     redtext->SetText(m_Validator.ToString(255 * rgb_.red));
     greentext->SetText(m_Validator.ToString(255 * rgb_.green));
     bluetext->SetText(m_Validator.ToString(255 * rgb_.blue));
-    huetext->SetText(m_Validator.ToString(360 * hsv_.hue));
-    saturationtext->SetText(m_Validator.ToString(100 * hsv_.saturation));
-    valuetext->SetText(m_Validator.ToString(100 * hsv_.value));
-    m_VertMarkerPosition = Point(Clamp<int> (x, 0, m_BaseChannelArea->GetBaseWidth() - 1), Clamp<int> (y, 0, m_BaseChannelArea->GetBaseHeight() - 1));
+    hue_text_entry_->SetText(m_Validator.ToString(360 * hsv_.hue));
+    saturation_text_entry_->SetText(m_Validator.ToString(100 * hsv_.saturation));
+    value_text_entry_->SetText(m_Validator.ToString(100 * hsv_.value));
+    m_VertMarkerPosition = Point(Clamp<int> (x, 0, channel_area_->GetBaseWidth() - 1), Clamp<int> (y, 0, channel_area_->GetBaseHeight() - 1));
 
     sigChange.emit(this);
     QueueDraw();
@@ -686,129 +695,129 @@ namespace nux
   {
     if (m_ColorModel == color::RGB)
     {
-      if (m_ColorChannel == color::RED)
+      if (color_channel_ == color::RED)
       {
         if (y < 0)
           rgb_.green = 1.0f;
-        else if (y > m_PickerArea->GetBaseHeight())
+        else if (y > picker_area_->GetBaseHeight())
           rgb_.green = 0.0f;
         else
-          rgb_.green = 1.0f - (float) y / (float) m_PickerArea->GetBaseHeight();
+          rgb_.green = 1.0f - (float) y / (float) picker_area_->GetBaseHeight();
 
         if (x < 0)
           rgb_.blue = 0.0f;
-        else if (x > m_PickerArea->GetBaseWidth())
+        else if (x > picker_area_->GetBaseWidth())
           rgb_.blue = 1.0f;
         else
-          rgb_.blue = (float) x / (float) m_PickerArea->GetBaseWidth();
+          rgb_.blue = (float) x / (float) picker_area_->GetBaseWidth();
 
       }
 
-      if (m_ColorChannel == color::GREEN)
+      if (color_channel_ == color::GREEN)
       {
         if (y < 0)
           rgb_.red = 1.0f;
-        else if (y > m_PickerArea->GetBaseHeight())
+        else if (y > picker_area_->GetBaseHeight())
           rgb_.red = 0.0f;
         else
-          rgb_.red = 1.0f - (float) y / (float) m_PickerArea->GetBaseHeight();
+          rgb_.red = 1.0f - (float) y / (float) picker_area_->GetBaseHeight();
 
         if (x < 0)
           rgb_.blue = 0.0f;
-        else if (x > m_PickerArea->GetBaseWidth())
+        else if (x > picker_area_->GetBaseWidth())
           rgb_.blue = 1.0f;
         else
-          rgb_.blue = (float) x / (float) m_PickerArea->GetBaseWidth();
+          rgb_.blue = (float) x / (float) picker_area_->GetBaseWidth();
 
       }
 
-      if (m_ColorChannel == color::BLUE)
+      if (color_channel_ == color::BLUE)
       {
         if (x < 0)
           rgb_.red = 0.0f;
-        else if (x > m_PickerArea->GetBaseWidth())
+        else if (x > picker_area_->GetBaseWidth())
           rgb_.red = 1.0f;
         else
-          rgb_.red = (float) x / (float) m_PickerArea->GetBaseWidth();
+          rgb_.red = (float) x / (float) picker_area_->GetBaseWidth();
 
         if (y < 0)
           rgb_.green = 1.0f;
-        else if (y > m_PickerArea->GetBaseHeight())
+        else if (y > picker_area_->GetBaseHeight())
           rgb_.green = 0.0f;
         else
-          rgb_.green = 1.0f - (float) y / (float) m_PickerArea->GetBaseHeight();
+          rgb_.green = 1.0f - (float) y / (float) picker_area_->GetBaseHeight();
       }
 
       hsv_ = color::HueSaturationValue(rgb_);
-      m_MarkerPosition = Point(Clamp<int> (x, 0, m_PickerArea->GetBaseWidth() - 1), Clamp<int> (y, 0, m_PickerArea->GetBaseHeight() - 1));
+      m_MarkerPosition = Point(Clamp<int> (x, 0, picker_area_->GetBaseWidth() - 1), Clamp<int> (y, 0, picker_area_->GetBaseHeight() - 1));
     }
 
     if (m_ColorModel == color::HSV)
     {
-      if (m_ColorChannel == color::HUE)
+      if (color_channel_ == color::HUE)
       {
         if (y < 0)
           hsv_.value = 1.0f;
-        else if (y > m_PickerArea->GetBaseHeight())
+        else if (y > picker_area_->GetBaseHeight())
           hsv_.value = 0.0f;
         else
-          hsv_.value = 1.0f - (float) y / (float) m_PickerArea->GetBaseHeight();
+          hsv_.value = 1.0f - (float) y / (float) picker_area_->GetBaseHeight();
 
         if (x < 0)
           hsv_.saturation = 0.0f;
-        else if (x > m_PickerArea->GetBaseWidth())
+        else if (x > picker_area_->GetBaseWidth())
           hsv_.saturation = 1.0f;
         else
-          hsv_.saturation = (float) x / (float) m_PickerArea->GetBaseWidth();
+          hsv_.saturation = (float) x / (float) picker_area_->GetBaseWidth();
 
       }
 
-      if (m_ColorChannel == color::SATURATION)
+      if (color_channel_ == color::SATURATION)
       {
         if (y < 0)
           hsv_.value = 1.0f;
-        else if (y > m_PickerArea->GetBaseHeight())
+        else if (y > picker_area_->GetBaseHeight())
           hsv_.value = 0.0f;
         else
-          hsv_.value = 1.0f - (float) y / (float) m_PickerArea->GetBaseHeight();
+          hsv_.value = 1.0f - (float) y / (float) picker_area_->GetBaseHeight();
 
         if (x < 0)
           hsv_.hue = 0.0f;
-        else if (x >= m_PickerArea->GetBaseWidth())
+        else if (x >= picker_area_->GetBaseWidth())
           hsv_.hue = 0.0f;
         else
-          hsv_.hue = (float) x / (float) m_PickerArea->GetBaseWidth();
+          hsv_.hue = (float) x / (float) picker_area_->GetBaseWidth();
 
       }
 
-      if (m_ColorChannel == color::VALUE)
+      if (color_channel_ == color::VALUE)
       {
         if (x < 0)
           hsv_.hue = 0.0f;
-        else if (x >= m_PickerArea->GetBaseWidth())
+        else if (x >= picker_area_->GetBaseWidth())
           hsv_.hue = 0.0f;
         else
-          hsv_.hue = (float) x / (float) m_PickerArea->GetBaseWidth();
+          hsv_.hue = (float) x / (float) picker_area_->GetBaseWidth();
 
         if (y < 0)
           hsv_.saturation = 1.0f;
-        else if (y > m_PickerArea->GetBaseHeight())
+        else if (y > picker_area_->GetBaseHeight())
           hsv_.saturation = 0.0f;
         else
-          hsv_.saturation = 1.0f - (float) y / (float) m_PickerArea->GetBaseHeight();
+          hsv_.saturation = 1.0f - (float) y / (float) picker_area_->GetBaseHeight();
       }
 
       rgb_ = color::RedGreenBlue(hsv_);
-      m_MarkerPosition = Point(Clamp<int> (x, 0, m_PickerArea->GetBaseWidth() - 1), Clamp<int> (y, 0, m_PickerArea->GetBaseHeight() - 1));
+      m_MarkerPosition = Point(Clamp<int> (x, 0, picker_area_->GetBaseWidth() - 1), Clamp<int> (y, 0, picker_area_->GetBaseHeight() - 1));
     }
 
 
     redtext->SetText(m_Validator.ToString(255 * rgb_.red));
     greentext->SetText(m_Validator.ToString(255 * rgb_.green));
     bluetext->SetText(m_Validator.ToString(255 * rgb_.blue));
-    huetext->SetText(m_Validator.ToString(360 * hsv_.hue));
-    saturationtext->SetText(m_Validator.ToString(100 * hsv_.saturation));
-    valuetext->SetText(m_Validator.ToString(100 * hsv_.value));
+    hue_text_entry_->SetText(m_Validator.ToString(360 * hsv_.hue));
+    saturation_text_entry_->SetText(m_Validator.ToString(100 * hsv_.saturation));
+    value_text_entry_->SetText(m_Validator.ToString(100 * hsv_.value));
 
     sigChange.emit(this);
     QueueDraw();
@@ -844,7 +853,7 @@ namespace nux
       }
 
       m_ColorModel = color_mode;
-      m_ColorChannel = color_channel;
+      color_channel_ = color_channel;
     }
 
     if (b && (color_mode == color::RGB))
@@ -853,29 +862,29 @@ namespace nux
       int y = 0;
       int z = 1;
 
-      if (m_ColorChannel == color::RED)
+      if (color_channel_ == color::RED)
       {
-        z = (1.0f - rgb_.red) * m_PickerArea->GetBaseHeight();
-        y = (1.0f - rgb_.green) * m_PickerArea->GetBaseHeight();
-        x = rgb_.blue * m_PickerArea->GetBaseWidth();
+        z = (1.0f - rgb_.red) * picker_area_->GetBaseHeight();
+        y = (1.0f - rgb_.green) * picker_area_->GetBaseHeight();
+        x = rgb_.blue * picker_area_->GetBaseWidth();
       }
 
-      if (m_ColorChannel == color::GREEN)
+      if (color_channel_ == color::GREEN)
       {
-        z = (1.0f - rgb_.green) * m_PickerArea->GetBaseHeight();
-        y = (1.0f - rgb_.red) * m_PickerArea->GetBaseHeight();
-        x = rgb_.blue * m_PickerArea->GetBaseWidth();
+        z = (1.0f - rgb_.green) * picker_area_->GetBaseHeight();
+        y = (1.0f - rgb_.red) * picker_area_->GetBaseHeight();
+        x = rgb_.blue * picker_area_->GetBaseWidth();
       }
 
-      if (m_ColorChannel == color::BLUE)
+      if (color_channel_ == color::BLUE)
       {
-        z = (1.0f - rgb_.blue) * m_PickerArea->GetBaseHeight();
-        y = (1.0f - rgb_.green) * m_PickerArea->GetBaseHeight();
-        x = rgb_.red * m_PickerArea->GetBaseWidth();
+        z = (1.0f - rgb_.blue) * picker_area_->GetBaseHeight();
+        y = (1.0f - rgb_.green) * picker_area_->GetBaseHeight();
+        x = rgb_.red * picker_area_->GetBaseWidth();
       }
 
-      m_VertMarkerPosition = Point(Clamp<int> (0, 0, m_BaseChannelArea->GetBaseWidth() - 1), Clamp<int> (z, 0, m_BaseChannelArea->GetBaseHeight() - 1));
-      m_MarkerPosition = Point(Clamp<int> (x, 0, m_PickerArea->GetBaseWidth() - 1), Clamp<int> (y, 0, m_PickerArea->GetBaseHeight() - 1));
+      m_VertMarkerPosition = Point(Clamp<int> (0, 0, channel_area_->GetBaseWidth() - 1), Clamp<int> (z, 0, channel_area_->GetBaseHeight() - 1));
+      m_MarkerPosition = Point(Clamp<int> (x, 0, picker_area_->GetBaseWidth() - 1), Clamp<int> (y, 0, picker_area_->GetBaseHeight() - 1));
 
       redtext->SetText(m_Validator.ToString(255 * rgb_.red));
       greentext->SetText(m_Validator.ToString(255 * rgb_.green));
@@ -888,33 +897,33 @@ namespace nux
       int y = 0;
       int z = 1;
 
-      if (m_ColorChannel == color::HUE)
+      if (color_channel_ == color::HUE)
       {
-        z = (1.0f - hsv_.hue) * m_PickerArea->GetBaseHeight();
-        y = (1.0f - hsv_.value) * m_PickerArea->GetBaseHeight();
-        x = hsv_.saturation * m_PickerArea->GetBaseWidth();
+        z = (1.0f - hsv_.hue) * picker_area_->GetBaseHeight();
+        y = (1.0f - hsv_.value) * picker_area_->GetBaseHeight();
+        x = hsv_.saturation * picker_area_->GetBaseWidth();
       }
 
-      if (m_ColorChannel == color::SATURATION)
+      if (color_channel_ == color::SATURATION)
       {
-        z = (1.0f - hsv_.saturation) * m_PickerArea->GetBaseHeight();
-        y = (1.0f - hsv_.value) * m_PickerArea->GetBaseHeight();
-        x = hsv_.hue * m_PickerArea->GetBaseWidth();
+        z = (1.0f - hsv_.saturation) * picker_area_->GetBaseHeight();
+        y = (1.0f - hsv_.value) * picker_area_->GetBaseHeight();
+        x = hsv_.hue * picker_area_->GetBaseWidth();
       }
 
-      if (m_ColorChannel == color::VALUE)
+      if (color_channel_ == color::VALUE)
       {
-        z = (1.0f - hsv_.value) * m_PickerArea->GetBaseHeight();
-        y = (1.0f - hsv_.saturation) * m_PickerArea->GetBaseHeight();
-        x = hsv_.hue * m_PickerArea->GetBaseWidth();
+        z = (1.0f - hsv_.value) * picker_area_->GetBaseHeight();
+        y = (1.0f - hsv_.saturation) * picker_area_->GetBaseHeight();
+        x = hsv_.hue * picker_area_->GetBaseWidth();
       }
 
-      m_VertMarkerPosition = Point(Clamp<int> (0, 0, m_BaseChannelArea->GetBaseWidth() - 1), Clamp<int> (z, 0, m_BaseChannelArea->GetBaseHeight() - 1));
-      m_MarkerPosition = Point(Clamp<int> (x, 0, m_PickerArea->GetBaseWidth() - 1), Clamp<int> (y, 0, m_PickerArea->GetBaseHeight() - 1));
+      m_VertMarkerPosition = Point(Clamp<int> (0, 0, channel_area_->GetBaseWidth() - 1), Clamp<int> (z, 0, channel_area_->GetBaseHeight() - 1));
+      m_MarkerPosition = Point(Clamp<int> (x, 0, picker_area_->GetBaseWidth() - 1), Clamp<int> (y, 0, picker_area_->GetBaseHeight() - 1));
 
-      huetext->SetText(m_Validator.ToString(360 * hsv_.hue));
-      saturationtext->SetText(m_Validator.ToString(100 * hsv_.saturation));
-      valuetext->SetText(m_Validator.ToString(100 * hsv_.value));
+      hue_text_entry_->SetText(m_Validator.ToString(360 * hsv_.hue));
+      saturation_text_entry_->SetText(m_Validator.ToString(100 * hsv_.saturation));
+      value_text_entry_->SetText(m_Validator.ToString(100 * hsv_.value));
     }
 
     QueueDraw();
@@ -936,7 +945,7 @@ namespace nux
                                Clamp<double>(g, 0.0, 1.0),
                                Clamp<double> (b, 0.0, 1.0));
     hsv_ = color::HueSaturationValue(rgb_);
-    RecvCheckColorModel(true, m_ColorModel, m_ColorChannel);
+    RecvCheckColorModel(true, m_ColorModel, color_channel_);
     sigChange.emit(this);
   }
 
@@ -946,7 +955,7 @@ namespace nux
                                      Clamp<double>(s, 0.0, 1.0),
                                      Clamp<double>(v, 0.0, 1.0));
     rgb_ = color::RedGreenBlue(hsv_);
-    RecvCheckColorModel(true, m_ColorModel, m_ColorChannel);
+    RecvCheckColorModel(true, m_ColorModel, color_channel_);
     sigChange.emit(this);
   }
 
@@ -1006,21 +1015,21 @@ namespace nux
     }
 
     m_ColorModel = colormodel;
-    m_ColorChannel = colorchannel;
-    RecvCheckColorModel(true, m_ColorModel, m_ColorChannel);
+    color_channel_ = colorchannel;
+    RecvCheckColorModel(true, m_ColorModel, color_channel_);
 
     /*FIXME - disabled because we lost radiogroup 
-    if (m_ColorChannel == color::RED)
+    if (color_channel_ == color::RED)
       radiogroup->ActivateButton(redcheck);
-    else if (m_ColorChannel == color::GREEN)
+    else if (color_channel_ == color::GREEN)
       radiogroup->ActivateButton(greencheck);
-    else if (m_ColorChannel == color::BLUE)
+    else if (color_channel_ == color::BLUE)
       radiogroup->ActivateButton(bluecheck);
-    else if (m_ColorChannel == color::HUE)
+    else if (color_channel_ == color::HUE)
       radiogroup->ActivateButton(huecheck);
-    else if (m_ColorChannel == color::SATURATION)
+    else if (color_channel_ == color::SATURATION)
       radiogroup->ActivateButton(saturationcheck);
-    else if (m_ColorChannel == color::VALUE)
+    else if (color_channel_ == color::VALUE)
       radiogroup->ActivateButton(valuecheck);
     */
 
@@ -1033,7 +1042,7 @@ namespace nux
 
   color::Channel ColorEditor::GetColorChannel() const
   {
-    return m_ColorChannel;
+    return color_channel_;
   }
 
   bool ColorEditor::AcceptKeyNavFocus()

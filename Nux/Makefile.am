@@ -27,6 +27,7 @@ libnux_@NUX_API_VERSION@_la_LDFLAGS = \
 
 source_cpp = \
   $(srcdir)/AbstractButton.cpp \
+  $(srcdir)/AbstractCheckedButton.cpp \
   $(srcdir)/AbstractComboBox.cpp \
   $(srcdir)/AbstractPaintLayer.cpp \
   $(srcdir)/AbstractSeparator.cpp \
@@ -120,6 +121,7 @@ source_cpp = \
 
 source_h = \
   $(srcdir)/AbstractButton.h \
+  $(srcdir)/AbstractCheckedButton.h \
   $(srcdir)/AbstractComboBox.h \
   $(srcdir)/AbstractPaintLayer.h \
   $(srcdir)/AbstractSeparator.h \

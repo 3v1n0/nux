@@ -38,7 +38,8 @@ namespace nux
   class EditTextBox;
   class CheckBox;
   class AbstractButton;
-  class ToggleButton;
+  class RadioButton;
+  class RadioButtonGroup;
   class Button;
 
   class ColorEditor;
@@ -74,7 +75,7 @@ namespace nux
     Color m_RGBColor;
     Color m_PreviousRGBColor;
     color::Model m_ColorModel;
-    color::Channel m_ColorChannel;
+    color::Channel color_channel_;
     bool m_ModalWindow;
     NThread *m_Thread;
 
@@ -86,8 +87,6 @@ namespace nux
   public:
     ColorEditor(NUX_FILE_LINE_PROTO);
     ~ColorEditor();
-    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
 
     void SetRed(double r);
     void SetGreen(double g);
@@ -119,17 +118,45 @@ namespace nux
     sigc::signal< void, ColorEditor * > sigChange;
 
   protected:
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PreLayoutManagement();
     virtual bool AcceptKeyNavFocus();
   private:
+
+    //! Override of Area::SetMinimumHeight and made private.
+    /*!
+        Prevent changing the minimum height of the ColorEditor view.
+    */
+    virtual void SetMinimumHeight(){};
+
+    //! Override of Area::SetMaximumHeight and made private.
+    /*!
+        Prevent changing the maximum height of the ColorEditor view.
+    */
+    virtual void SetMaximumHeight(){};
+
+    //! Override of Area::SetMinimumWidth and made private.
+    /*!
+        Prevent changing the minimum width of the ColorEditor view.
+    */
+    virtual void SetMinimumWidth(){};
+
+    //! Override of Area::SetMaximumWidth and made private.
+    /*!
+        Prevent changing the maximum width of the ColorEditor view.
+    */
+    virtual void SetMaximumWidth(){};
+
     void DrawBaseChannelMarker(GraphicsEngine &graphics_engine);
     void DrawRGB(GraphicsEngine &graphics_engine, bool force_draw);
     void DrawHSV(GraphicsEngine &graphics_engine, bool force_draw);
 
-    color::Channel   m_ColorChannel;
+    color::Channel   color_channel_;
     color::Model     m_ColorModel;
-    InputArea       *m_PickerArea;
-    InputArea       *m_BaseChannelArea;
-    InputArea       *m_ColorSquare;
+    InputArea       *picker_area_;
+    InputArea       *channel_area_;
+    InputArea       *selected_color_area_;
     HLayout        *m_hlayout;
     VLayout        *ctrllayout;
 
@@ -151,30 +178,32 @@ namespace nux
     HLayout *greenlayout;
     HLayout *bluelayout;
 
-    Button *redcheck;
+    RadioButton *redcheck;
     EditTextBox *redtext;
-    Button *greencheck;
+    RadioButton *greencheck;
     EditTextBox *greentext;
-    Button *bluecheck;
+    RadioButton *bluecheck;
     EditTextBox *bluetext;
 
     HLayout *huelayout;
     HLayout *saturationlayout;
     HLayout *valuelayout;
 
-    Button *huecheck;
-    EditTextBox *huetext;
-    Button *saturationcheck;
-    EditTextBox *saturationtext;
-    Button *valuecheck;
-    EditTextBox *valuetext;
+    RadioButton *huecheck;
+    EditTextBox *hue_text_entry_;
+    RadioButton *saturationcheck;
+    EditTextBox *saturation_text_entry_;
+    RadioButton *valuecheck;
+    EditTextBox *value_text_entry_;
 
-    ToggleButton *OkButton;
-    ToggleButton *CancelButton;
-    //RadioButtonGroup *radiogroup;
+    Button *OkButton;
+    Button *CancelButton;
+    RadioButtonGroup *radiogroup;
 
     DoubleValidator m_Validator;
 
+    static Size picker_area_size;
+    static int channel_area_width;
   };
 
 
