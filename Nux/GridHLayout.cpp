@@ -486,20 +486,6 @@ namespace nux
     bool first = false;
     bool last = false;
 
-    int major = 0;
-    int minor = 0;
-
-    if (row_filling_order_)
-    {
-      major = _num_row;
-      minor = _num_column;
-    }
-    else
-    {
-      major = _num_column;
-      minor = _num_row;
-    }
-
     for (int j = 0; j < _num_row; j++)
     {
       for (int i = 0; i < _num_column; i++)

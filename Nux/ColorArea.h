@@ -31,12 +31,14 @@ namespace nux
   public:
     ColorArea (Color color = Color (0xFFFFFFFF), NUX_FILE_LINE_PROTO);
     ~ColorArea();
-    virtual long ProcessEvent (Event &event, long TraverseInfo, long ProcessEventInfo);
+
+    void SetColor (Color color);
+    
+  protected:
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
     virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
     virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
 
-    void SetColor (Color color);
   private:
     Color m_Color;
   };

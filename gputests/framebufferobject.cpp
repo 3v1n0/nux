@@ -56,8 +56,8 @@ void RenderToFrameBufferObject ()
   graphics_engine->SetContext(0, 0, w, h);
   graphics_engine->Push2DWindow(w, h);
 
-  nux::IEvent event;
-  memset(&event, 0, sizeof(nux::IEvent));
+  nux::Event event;
+  memset(&event, 0, sizeof(nux::Event));
 
   do
   {
