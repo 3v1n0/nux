@@ -109,23 +109,20 @@ namespace nux
         props = NULL;
       }
 
-      if (props == NULL)
-        continue;
-
-      if (props->m_expand)
+      if (props && props->m_expand)
       {
         int max_width, max_height;
 
         // It wants to expand, however we need to check that it doesn't need at minimum more
         // space than we have
-        max_width = MAX(base.width, area->GetMinimumWidth());
-        max_height = MAX(base.height, area->GetMinimumHeight());
+        max_width = base.width >= area->GetMinimumWidth() ? base.width : area->GetMinimumWidth();
+        max_height = base.height >= area->GetMinimumHeight() ? base.height : area->GetMinimumHeight();
 
         geo.width = max_width;
         geo.height = max_height;
 
-        total_max_width = MAX(total_max_width, max_width);
-        total_max_height = MAX(total_max_height, max_height);
+        total_max_width = total_max_width >= max_width ? total_max_width : max_width;
+        total_max_height = total_max_height >= max_height ? total_max_height : max_height;
       }
       else
       {
@@ -154,59 +151,59 @@ namespace nux
     return ret;
   }
 
-  void LayeredLayout::PaintOne(Area *_area, GraphicsEngine &gfx_context, bool force_draw)
+  void LayeredLayout::PaintOne(Area *_area, GraphicsEngine &graphics_engine, bool force_draw)
   {
-    if (_area->IsArea())
-    {
-      InputArea *area = NUX_STATIC_CAST(InputArea *, _area);
-      area->OnDraw(gfx_context, force_draw);
-    }
-    else if (_area->IsView())
+    if (_area->IsView())
     {
       View *ic = NUX_STATIC_CAST(View *, _area);
-      ic->ProcessDraw(gfx_context, force_draw);
+      ic->ProcessDraw(graphics_engine, force_draw);
     }
     else if (_area->IsLayout())
     {
       Layout *layout = NUX_STATIC_CAST(Layout *, _area);
-      layout->ProcessDraw(gfx_context, force_draw);
+      layout->ProcessDraw(graphics_engine, force_draw);
+    }
+    else if (_area->IsArea())
+    {
+      InputArea *area = NUX_STATIC_CAST(InputArea *, _area);
+      area->OnDraw(graphics_engine, force_draw);
     }
   }
 
-  void LayeredLayout::ProcessDraw(GraphicsEngine &gfx_context, bool force_draw)
+  void LayeredLayout::ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
-    gfx_context.PushClippingRectangle(base);
+    graphics_engine.PushClippingRectangle(base);
 
     if (m_paint_all)
     {
       std::list<Area *>::iterator it, eit = _layout_element_list.end();
       t_u32 alpha = 0, src = 0, dest = 0;
 
-      gfx_context.GetRenderStates().GetBlend(alpha, src, dest);
-      gfx_context.GetRenderStates().SetBlend(true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+      graphics_engine.GetRenderStates().GetBlend(alpha, src, dest);
+      graphics_engine.GetRenderStates().SetBlend(true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-      nux::GetPainter().PaintBackground(gfx_context, base);
+      nux::GetPainter().PaintBackground(graphics_engine, base);
       nux::GetPainter().PushBackgroundStack();
 
       for (it = _layout_element_list.begin(); it != eit; ++it)
       {
         if ((*it)->IsVisible())
-          PaintOne(static_cast<Area *> (*it), gfx_context, true);
+          PaintOne(static_cast<Area *> (*it), graphics_engine, true);
       }
 
       nux::GetPainter().PopBackgroundStack();
 
-      gfx_context.GetRenderStates().SetBlend(alpha, src, dest);
+      graphics_engine.GetRenderStates().SetBlend(alpha, src, dest);
 
       m_child_draw_queued = false;
     }
     else if (m_active_area && m_active_area->IsVisible())
     {
-      PaintOne(m_active_area, gfx_context, force_draw);
+      PaintOne(m_active_area, graphics_engine, force_draw);
     }
 
-    gfx_context.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
     _queued_draw = false;
   }
 
