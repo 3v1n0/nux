@@ -157,7 +157,7 @@ namespace nux
     int m_num_device_modes;
 
     // Event object
-    IEvent *m_pEvent;
+    Event *m_pEvent;
 
     bool IsGfxInterfaceCreated();
 
@@ -216,17 +216,17 @@ namespace nux
     void SwapBuffer(bool glswap = true);
 
     // Event methods
-    void GetSystemEvent(IEvent *evt);
+    void GetSystemEvent(Event *evt);
 
     // Os specific
     int GetGlXMajor() const;
     int GetGlXMinor() const;
 
 #if defined(NUX_OS_LINUX)
-    void InjectXEvent(IEvent *evt, XEvent xevent);
+    void InjectXEvent(Event *evt, XEvent xevent);
 #endif
     
-    IEvent &GetCurrentEvent();
+    Event &GetCurrentEvent();
 
     // That method is deprecated, it always returns false and still here in
     // order to maintain API compatibility.
@@ -301,7 +301,7 @@ namespace nux
     void PauseThreadGraphicsRendering();
     bool IsPauseThreadGraphicsRendering() const;
 
-    void ProcessForeignX11Event(XEvent *xevent, IEvent *nux_event);
+    void ProcessForeignX11Event(XEvent *xevent, Event *nux_event);
     void ProcessXEvent(XEvent xevent, bool foreign);
     void RecalcXYPosition(Window TheMainWindow, XEvent xevent, int &x, int &y);
     void RecalcXYPosition(int x_root, int y_root, int &x_recalc, int &y_recalc);

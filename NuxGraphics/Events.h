@@ -348,8 +348,6 @@ namespace nux
     int             e_length;
     NuxEventType    e_event;
   };
-
-  typedef Event IEvent;
 };
 
 #endif // EVENTS_H

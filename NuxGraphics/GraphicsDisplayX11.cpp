@@ -82,7 +82,7 @@ namespace nux
     m_X11RepeatKey = true;
 
     m_GfxInterfaceCreated = false;
-    m_pEvent = new IEvent();
+    m_pEvent = new Event();
 
     m_WindowSize = Size(0,0);
 
@@ -1148,7 +1148,7 @@ namespace nux
 //     return extended ? extendedlut[vk] : vklut[vk];
 // }
 
-  static int mouse_move(XEvent xevent, IEvent *m_pEvent)
+  static int mouse_move(XEvent xevent, Event *m_pEvent)
   {
 //     m_pEvent->e_x = xevent.xmotion.x;
 //     m_pEvent->e_y = xevent.xmotion.y;
@@ -1178,7 +1178,7 @@ namespace nux
     return 0;
   }
 
-  static int mouse_press(XEvent xevent, IEvent *m_pEvent)
+  static int mouse_press(XEvent xevent, Event *m_pEvent)
   {
 //     m_pEvent->e_x = xevent.xbutton.x;
 //     m_pEvent->e_y = xevent.xbutton.y;
@@ -1238,7 +1238,7 @@ namespace nux
     return 0;
   }
 
-  static int mouse_release(XEvent xevent, IEvent *m_pEvent)
+  static int mouse_release(XEvent xevent, Event *m_pEvent)
   {
 //     m_pEvent->e_x = xevent.xbutton.x;
 //     m_pEvent->e_y = xevent.xbutton.y;
@@ -1310,7 +1310,7 @@ namespace nux
     return state;
   }
 
-  void GraphicsDisplay::GetSystemEvent(IEvent *evt)
+  void GraphicsDisplay::GetSystemEvent(Event *evt)
   {
     m_pEvent->Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
@@ -1397,17 +1397,17 @@ namespace nux
       if (bProcessEvent)
         ProcessXEvent(xevent, false);
 
-      memcpy(evt, m_pEvent, sizeof(IEvent));
+      memcpy(evt, m_pEvent, sizeof(Event));
 
     }
     else
     {
-      memcpy(evt, m_pEvent, sizeof(IEvent));
+      memcpy(evt, m_pEvent, sizeof(Event));
     }
   }
   
 #if defined(NUX_OS_LINUX)
-  void GraphicsDisplay::InjectXEvent(IEvent *evt, XEvent xevent)
+  void GraphicsDisplay::InjectXEvent(Event *evt, XEvent xevent)
   {
     m_pEvent->Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
@@ -1415,11 +1415,11 @@ namespace nux
     
     // We could do some checks here to make sure the xevent is really what it pretends to be.
     ProcessXEvent(xevent, false);
-    memcpy(evt, m_pEvent, sizeof(IEvent));
+    memcpy(evt, m_pEvent, sizeof(Event));
   }
 #endif
 
-  void GraphicsDisplay::ProcessForeignX11Event(XEvent *xevent, IEvent *nux_event)
+  void GraphicsDisplay::ProcessForeignX11Event(XEvent *xevent, Event *nux_event)
   {
     m_pEvent->Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
@@ -1474,15 +1474,15 @@ namespace nux
       if (bProcessEvent)
         ProcessXEvent(*xevent, true);
 
-      memcpy(nux_event, m_pEvent, sizeof(IEvent));
+      memcpy(nux_event, m_pEvent, sizeof(Event));
     }
     else
     {
-      memcpy(nux_event, m_pEvent, sizeof(IEvent));
+      memcpy(nux_event, m_pEvent, sizeof(Event));
     }
   }
 
-  IEvent &GraphicsDisplay::GetCurrentEvent()
+  Event &GraphicsDisplay::GetCurrentEvent()
   {
     return *m_pEvent;
   }
