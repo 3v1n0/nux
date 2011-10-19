@@ -23,6 +23,7 @@
 #pragma warning(disable: 4996)  // 'std::_Copy_impl': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
                                 // 'std::_Equal1': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
 
+#include "NuxCore.h"
 #include "Logger.h"
 #include "LoggingWriter.h"
 
@@ -383,7 +384,7 @@ Level get_logging_level(std::string level)
   return Warning;
 }
 
-#if	defined(NUX_OS_LINUX)
+#if defined(NUX_OS_LINUX)
 std::string Backtrace(int levels)
 {
   std::ostringstream sout;

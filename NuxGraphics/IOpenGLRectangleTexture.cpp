@@ -35,6 +35,7 @@ namespace nux
     , BitmapFormat PixelFormat, bool Dummy, NUX_FILE_LINE_DECL)
     : IOpenGLBaseTexture (RTTEXTURERECTANGLE, Width, Height, 1, Levels, PixelFormat, NUX_FILE_LINE_PARAM)
   {
+#ifndef NUX_OPENGLES_20
     if (Dummy == false)
     {
       glGenTextures (1, &_OpenGLID);
@@ -56,6 +57,7 @@ namespace nux
     SetWrap (GL_CLAMP, GL_CLAMP, GL_CLAMP);
     SetRenderStates();
     GRunTimeStats.Register (this);
+#endif
   }
 
   IOpenGLRectangleTexture::~IOpenGLRectangleTexture()
@@ -160,3 +162,4 @@ namespace nux
     }
   }
 }
+

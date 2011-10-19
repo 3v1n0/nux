@@ -37,9 +37,11 @@ namespace nux
   GLenum AttachmentBuffer[] =
   {
     GL_COLOR_ATTACHMENT0_EXT
+#ifndef NUX_OPENGLES_20 // GLES 2.0 only supports one color attachment
     , GL_COLOR_ATTACHMENT1_EXT
     , GL_COLOR_ATTACHMENT2_EXT
     , GL_COLOR_ATTACHMENT3_EXT
+#endif
   };
 
 //////////////////////////////////////////////////////////////////////////
@@ -148,9 +150,13 @@ namespace nux
 
   GLint GLFramebufferObject::GetMaxColorAttachments()
   {
+#ifndef NUX_OPENGLES_20
     GLint maxAttach = 0;
     CHECKGL ( glGetIntegerv ( GL_MAX_COLOR_ATTACHMENTS_EXT, &maxAttach ) );
     return maxAttach;
+#else
+    return 1;
+#endif
   }
 
   GLuint GLFramebufferObject::_GenerateFboId()
@@ -171,7 +177,13 @@ namespace nux
       CHECKGL ( glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, m_fboId) );
     }
 #else
-    CHECKGL ( glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, m_fboId) );
+    // Only binds if m_fboId is different than the currently bound FBO
+    CHECKGL ( glGetIntegerv ( GL_FRAMEBUFFER_BINDING_EXT, &m_savedFboId ) );
+
+    if (m_fboId != m_savedFboId)
+    {
+      CHECKGL ( glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboId) );
+    }
 #endif
   }
 
@@ -195,6 +207,7 @@ namespace nux
       CHECKGL ( glFramebufferTexture2DEXT ( GL_FRAMEBUFFER_EXT, attachment,
                                             texType, texId, mipLevel ) );
     }
+#ifndef NUX_OPENGLES_20
     else if (texType == GL_TEXTURE_1D)
     {
       CHECKGL ( glFramebufferTexture1DEXT ( GL_FRAMEBUFFER_EXT, attachment,
@@ -205,6 +218,7 @@ namespace nux
       CHECKGL ( glFramebufferTexture3DEXT ( GL_FRAMEBUFFER_EXT, attachment,
                                             GL_TEXTURE_3D, texId, mipLevel, zSlice ) );
     }
+#endif
   }
 
   bool GLFramebufferObject::IsValid()
@@ -239,6 +253,7 @@ namespace nux
         nuxError (TEXT ("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT") );
         isOK = false;
         break;
+#ifndef NUX_OPENGLES_20
       case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
         nuxError (TEXT ("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT") );
         isOK = false;
@@ -251,6 +266,7 @@ namespace nux
         nuxError (TEXT ("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT") );
         isOK = false;
         break;
+#endif
 //  case GL_FRAMEBUFFER_STATUS_ERROR_EXT:
 //      nuxError(TEXT("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_STATUS_ERROR_EXT"));
 //      isOK = false;
@@ -307,9 +323,11 @@ namespace nux
   {
     _GuardedBind();
     GLint level = 0;
+#ifndef NUX_OPENGLES_20
     CHECKGL ( glGetFramebufferAttachmentParameterivEXT (GL_FRAMEBUFFER_EXT, attachment,
               GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE_EXT,
               &level) );
+#endif
     _GuardedUnbind();
     return level;
   }
@@ -318,9 +336,11 @@ namespace nux
   {
     _GuardedBind();
     GLint slice = 0;
+#ifndef NUX_OPENGLES_20
     CHECKGL ( glGetFramebufferAttachmentParameterivEXT (GL_FRAMEBUFFER_EXT, attachment,
               GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_3D_ZOFFSET_EXT,
               &slice) );
+#endif
     _GuardedUnbind();
     return slice;
   }

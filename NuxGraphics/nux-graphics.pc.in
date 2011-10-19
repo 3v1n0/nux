@@ -8,4 +8,5 @@ Description: Core OpenGL graphics functions for Nux
 Version: @VERSION@
 Libs: -L${libdir} -lnux-graphics-@NUX_API_VERSION@
 Cflags: -I${includedir}/Nux-@NUX_API_VERSION@
+
 Requires: glib-2.0 nux-core-@NUX_API_VERSION@ nux-image-@NUX_API_VERSION@ gl glu xxf86vm glew glewmx xinerama

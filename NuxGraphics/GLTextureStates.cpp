@@ -75,6 +75,7 @@ namespace nux
 
   void GLTextureStates::SetType (GLuint Type)
   {
+#ifndef NUX_OPENGLES_20
     nuxAssertMsg (
       (Type == GL_TEXTURE_1D) ||
       (Type == GL_TEXTURE_2D) ||
@@ -82,6 +83,11 @@ namespace nux
       (Type == GL_TEXTURE_3D) ||
       (Type == GL_TEXTURE_CUBE_MAP_ARB),
       TEXT ("Error[GLTextureStates::GLTextureStates]: Invalid texture type.") );
+#else
+    nuxAssertMsg (
+      (Type == GL_TEXTURE_2D),
+      TEXT ("Error[GLTextureStates::GLTextureStates]: Invalid texture type.") );
+#endif
 
     m_Type = Type;
   }
@@ -130,7 +136,9 @@ namespace nux
     {
       CHECKGL ( glTexParameteri (m_Type, GL_TEXTURE_WRAP_S,       m_TextureStateChanges[GFXTS_ADDRESSU].iValue) );
       CHECKGL ( glTexParameteri (m_Type, GL_TEXTURE_WRAP_T,       m_TextureStateChanges[GFXTS_ADDRESSV].iValue) );
+#ifndef NUX_OPENGLES_20
       CHECKGL ( glTexParameteri (m_Type, GL_TEXTURE_WRAP_R,       m_TextureStateChanges[GFXTS_ADDRESSW].iValue) );
+#endif
       m_TextureStateChanges[GFXTS_ADDRESSU].Dirty = false;
       m_TextureStateChanges[GFXTS_ADDRESSV].Dirty = false;
       m_TextureStateChanges[GFXTS_ADDRESSW].Dirty = false;
@@ -139,6 +147,7 @@ namespace nux
 
   void GLTextureStates::HW_SetLOD()
   {
+#ifndef NUX_OPENGLES_20
     if (m_Type == GL_TEXTURE_RECTANGLE_ARB)
     {
       // No support for mip LOP on rectangle texture.
@@ -156,10 +165,12 @@ namespace nux
       m_TextureStateChanges[GFXTS_MIN_LOD].Dirty = false;
       m_TextureStateChanges[GFXTS_MAX_LOD].Dirty = false;
     }
+#endif
   }
 
   void GLTextureStates::HW_SetMipLevel()
   {
+#ifndef NUX_OPENGLES_20
     if (m_TextureStateChanges[GFXTS_MIN_LOD].Dirty || m_TextureStateChanges[GFXTS_MAX_LOD].Dirty)
     {
       CHECKGL ( glTexParameteri (m_Type, GL_TEXTURE_MIN_LOD,  m_TextureStateChanges[GFXTS_MIN_LOD].fValue) );
@@ -167,6 +178,7 @@ namespace nux
       m_TextureStateChanges[GFXTS_MIN_LOD].Dirty = false;
       m_TextureStateChanges[GFXTS_MAX_LOD].Dirty = false;
     }
+#endif
   }
 
   void GLTextureStates::HW_SetBorderColor()
@@ -198,6 +210,7 @@ namespace nux
     //        (MIP == GL_NEAREST),
     //        TEXT("Error[GLTextureStates::SetFiltering]: Invalid Mipmap Filter State"));
 
+#ifndef NUX_OPENGLES_20
     if (m_Type == GL_TEXTURE_RECTANGLE_ARB)
     {
       if ( (MinFilter != GL_NEAREST) && (MinFilter != GL_LINEAR) )
@@ -225,6 +238,10 @@ namespace nux
       SET_TS_VALUE (m_TextureStateChanges[GFXTS_MINFILTER], MinFilter);
       SET_TS_VALUE (m_TextureStateChanges[GFXTS_MAGFILTER], MagFilter);
     }
+#else
+    SET_TS_VALUE (m_TextureStateChanges[GFXTS_MINFILTER], MinFilter);
+    SET_TS_VALUE (m_TextureStateChanges[GFXTS_MAGFILTER], MagFilter);
+#endif
 
     //SET_TS_VALUE(m_TextureStateChanges[GFXTS_MIPFILTER], MIP);
   }
@@ -234,6 +251,7 @@ namespace nux
     unsigned int V,
     unsigned int W)
   {
+#ifndef NUX_OPENGLES_20
     nuxAssertMsg (
       (U == GL_CLAMP) ||
       (U == GL_CLAMP_TO_EDGE) ||
@@ -304,6 +322,26 @@ namespace nux
       SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSV], V);
       SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSW], W);
     }
+#else
+    nuxAssertMsg (
+      (U == GL_CLAMP) ||
+      (U == GL_CLAMP_TO_EDGE) ||
+      (U == GL_CLAMP_TO_BORDER) ||
+      (U == GL_MIRRORED_REPEAT) ||
+      (U == GL_REPEAT),
+      TEXT ("Error[GLTextureStates::SetWrap]: Invalid U Wrap State") );
+
+    nuxAssertMsg (
+      (V == GL_CLAMP) ||
+      (V == GL_CLAMP_TO_EDGE) ||
+      (V == GL_CLAMP_TO_BORDER) ||
+      (V == GL_MIRRORED_REPEAT) ||
+      (V == GL_REPEAT),
+      TEXT ("Error[GLTextureStates::SetWrap]: Invalid V Wrap State") );
+
+    SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSU], U);
+    SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSV], V);
+#endif
   }
 
   void GLTextureStates::SetLOD (float MinLod,

@@ -160,7 +160,7 @@ namespace nux
         vtxelement.Type,
         GL_FALSE,
         vtxelement.stride_,
-        (void*)vtxelement.Offset));
+        (void*)&vtxelement.Offset));
 
       VertexDeclaration->_valid_vertex_input[shader_attribute_location] = 1;
       ++decl;
@@ -233,6 +233,7 @@ namespace nux
   }
 
 
+#ifndef NUX_OPENGLES_20
 // Draw Primitive without index buffer
   int GpuDevice::DrawPrimitive (ObjectPtr<IOpenGLVertexDeclaration> VertexDeclaration,
                                       PRIMITIVE_TYPE PrimitiveType,
@@ -443,6 +444,7 @@ namespace nux
 //     //    }
     return OGL_OK;
   }
+#endif
 
 // //    DirectX Matrix
 // //    |   2/W     0       0       -(W+1)/W    |

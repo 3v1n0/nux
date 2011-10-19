@@ -109,6 +109,27 @@ AC_CHECK_FUNCS([memset munmap strcasecmp strdup])
 PKG_PROG_PKG_CONFIG
 
 dnl ===========================================================================
+GL_PKGS="gl glu glew glewmx"
+MAINTAINER_CFLAGS=""
+
+# Enable opengl es 20 code path
+AC_ARG_ENABLE([opengles_20],
+              [AC_HELP_STRING([--enable-opengles-20=@<:@no/yes@:>@],
+              [Enable OpenGL ES 20 code path @<:@default=no@:>@])],
+              [],
+              [enable_opengles_20=no])
+AS_IF([test "x$enable_opengles_20" = "xyes"],
+      [
+         MAINTAINER_CFLAGS+=" -DNUX_OPENGLES_20"
+         GL_PKGS="egl glesv2"
+      ]
+)
+AM_CONDITIONAL(NUX_OPENGLES_20, [test "x$enable_opengles_20" = "xyes"])
+
+AC_SUBST(GL_PKGS)
+AC_SUBST(MAINTAINER_CFLAGS)
+
+dnl ===========================================================================
 
 PKG_CHECK_MODULES(NUX_CORE, glib-2.0 >= 2.25.14 gthread-2.0 sigc++-2.0 gio-2.0)
 AC_SUBST(NUX_CORE_CFLAGS)
@@ -124,23 +145,10 @@ PKG_CHECK_MODULES(NUX_IMAGE,
 AC_SUBST(NUX_IMAGE_CFLAGS)
 AC_SUBST(NUX_IMAGE_LIBS)
 
-PKG_CHECK_MODULES(NUX_MESH,
-                  glib-2.0 >= 2.25.14
-                  gdk-pixbuf-2.0
-                  glew
-                  glewmx
-                  sigc++-2.0
-                  )
-AC_SUBST(NUX_MESH_CFLAGS)
-AC_SUBST(NUX_MESH_LIBS)
-
 PKG_CHECK_MODULES(NUX_GRAPHICS,
                   glib-2.0 >= 2.25.14
                   gdk-pixbuf-2.0
-                  gl
-                  glu
-                  glew
-                  glewmx
+                  $GL_PKGS
                   xxf86vm
                   sigc++-2.0
 		  xinerama
@@ -152,10 +160,7 @@ PKG_CHECK_MODULES(NUX,
                   glib-2.0 >= 2.25.14
                   gdk-pixbuf-2.0
                   gthread-2.0
-                  gl
-                  glu
-                  glew
-                  glewmx
+                  $GL_PKGS
                   sigc++-2.0
                   pango
                   pangocairo
@@ -166,9 +171,9 @@ AC_SUBST(NUX_LIBS)
 
 PKG_CHECK_MODULES(UNITY_SUPPORT_TEST,
                   x11
+                  $GL_PKGS
                   xcomposite
                   xdamage
-                  gl
                   libpci
                   )
 AC_SUBST(UNITY_SUPPORT_TEST_CFLAGS)
@@ -236,7 +241,6 @@ AC_ARG_ENABLE([maintainer-mode],
               [],
               [enable_maintainer_mode=maintainer_mode_default])
 
-MAINTAINER_CFLAGS=""
 AS_IF([test "x$enable_maintainer_mode" = "xyes" && test "x$GCC" = "xyes"],
       [
          MAINTAINER_CFLAGS+="-Werror -Wall -Wcast-align -Wno-uninitialized -Wempty-body -Wformat-security -Winit-self"
@@ -252,20 +256,6 @@ AC_ARG_ENABLE([debug],
 AS_IF([test "x$enable_debug" = "xyes"],
       [
          MAINTAINER_CFLAGS+=" -DNUX_DEBUG"
-      ]
-)
-
-AC_SUBST(MAINTAINER_CFLAGS)
-
-# Enable opengl es 20 code path
-AC_ARG_ENABLE([opengles_20],
-              [AC_HELP_STRING([--enable-opengles-20=@<:@no/yes@:>@],
-              [Enable OpenGL ES 20 code path @<:@default=no@:>@])],
-              [],
-              [enable_opengles_20=no])
-AS_IF([test "x$enable_opengles_20" = "xyes"],
-      [
-         MAINTAINER_CFLAGS+=" -DNUX_OPENGLES_20"
       ]
 )
 
