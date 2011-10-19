@@ -29,19 +29,19 @@ namespace nux
   class IOpenGLResource;
   class IOpenGLFrameBufferObject: public IOpenGLResource
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLFrameBufferObject, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLFrameBufferObject, IOpenGLResource);
   public:
     virtual ~IOpenGLFrameBufferObject();
 
-    int FormatFrameBufferObject (int Width, int Height, BitmapFormat PixelFormat);
-    int SetRenderTarget (int ColorAttachmentIndex, ObjectPtr<IOpenGLSurface> pRenderTargetSurface);
-    int SetDepthSurface (ObjectPtr<IOpenGLSurface> pDepthSurface);
-    ObjectPtr<IOpenGLSurface> GetRenderTarget (int ColorAttachmentIndex);
+    int FormatFrameBufferObject(int Width, int Height, BitmapFormat PixelFormat);
+    int SetRenderTarget(int ColorAttachmentIndex, ObjectPtr<IOpenGLSurface> pRenderTargetSurface);
+    int SetDepthSurface(ObjectPtr<IOpenGLSurface> pDepthSurface);
+    ObjectPtr<IOpenGLSurface> GetRenderTarget(int ColorAttachmentIndex);
     ObjectPtr<IOpenGLSurface> GetDepthRenderTarget();
 
-    int Clear (DWORD Flags, FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha, FLOAT Z, DWORD Stencil);
+    int Clear(DWORD Flags, FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha, FLOAT Z, DWORD Stencil);
 
-    int Activate (bool WithClippingStack = false);
+    int Activate(bool WithClippingStack = false);
     //### Restore the original opengl back buffer as defined when creating the opengl context(color + depth + stencil).
     int Deactivate();
     bool IsActive()
@@ -51,7 +51,7 @@ namespace nux
 
     // For 2D screen operations
     std::vector<Rect> _ClippingRegionStack;
-    void PushClippingRegion (Rect rect);
+    void PushClippingRegion(Rect rect);
     void PopClippingRegion();
     void EmptyClippingRegion();
     void ApplyClippingRegion();
@@ -60,11 +60,11 @@ namespace nux
     /*!
         You may restore the clipping rectangle stack with ApplyClippingRectangle.
     */
-    void SetClippingRectangle (const Rect &rect);
+    void SetClippingRectangle(const Rect &rect);
 
-    void SetOpenGLClippingRectangle (int x, int y, int width, int height);
+    void SetOpenGLClippingRectangle(int x, int y, int width, int height);
     Rect GetClippingRegion();
-    int GetNumberOfClippingRegions () const;
+    int GetNumberOfClippingRegions() const;
 
     int GetWidth() const
     {
@@ -76,7 +76,7 @@ namespace nux
     }
 
   private:
-    IOpenGLFrameBufferObject (NUX_FILE_LINE_PROTO);
+    IOpenGLFrameBufferObject(NUX_FILE_LINE_PROTO);
 
     int             _Width;
     int             _Height;

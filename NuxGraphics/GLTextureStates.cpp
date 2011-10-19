@@ -39,20 +39,20 @@ namespace nux
     default_texture_state[GFXTS_##state__].fValue     = default_value__;      \
     default_texture_state[GFXTS_##state__].Checked   = checked__;
 
-      UL_MAP (ADDRESSU               ,           GL_REPEAT       ,       1);
-      UL_MAP (ADDRESSV               ,           GL_REPEAT       ,       1);
-      UL_MAP (ADDRESSW               ,           GL_REPEAT       ,       1);
+      UL_MAP(ADDRESSU               ,           GL_REPEAT       ,       1);
+      UL_MAP(ADDRESSV               ,           GL_REPEAT       ,       1);
+      UL_MAP(ADDRESSW               ,           GL_REPEAT       ,       1);
 
-      UL_MAP (MINFILTER              ,           GL_NEAREST      ,       1);
-      UL_MAP (MAGFILTER              ,           GL_NEAREST      ,       1);
-      UL_MAP (MIPFILTER              ,           GL_NEAREST      ,       1);
+      UL_MAP(MINFILTER              ,           GL_NEAREST      ,       1);
+      UL_MAP(MAGFILTER              ,           GL_NEAREST      ,       1);
+      UL_MAP(MIPFILTER              ,           GL_NEAREST      ,       1);
 
-      UL_MAP (MIP_BASE_LEVEL         ,           0               ,       1);
-      UL_MAP (MIP_MAX_LEVEL          ,           1000            ,       1);
-      UL_MAP_FLOAT (MIN_LOD          ,           -1000           ,       1);
-      UL_MAP_FLOAT (MAX_LOD          ,           +1000           ,       1);
+      UL_MAP(MIP_BASE_LEVEL         ,           0               ,       1);
+      UL_MAP(MIP_MAX_LEVEL          ,           1000            ,       1);
+      UL_MAP_FLOAT(MIN_LOD          ,           -1000           ,       1);
+      UL_MAP_FLOAT(MAX_LOD          ,           +1000           ,       1);
 
-      UL_MAP (BORDERCOLOR            ,           0x0             ,       1);
+      UL_MAP(BORDERCOLOR            ,           0x0             ,       1);
 
 #undef UL_MAP
 #undef UL_MAP_FLOAT
@@ -62,10 +62,10 @@ namespace nux
   } s_TextureStateLUT;
 
 
-  GLTextureStates::GLTextureStates (GLuint Type)
+  GLTextureStates::GLTextureStates(GLuint Type)
   {
-    SetType (Type);
-    Memcpy (&m_TextureStateChanges, &s_TextureStateLUT.default_texture_state, sizeof (m_TextureStateChanges) );
+    SetType(Type);
+    Memcpy(&m_TextureStateChanges, &s_TextureStateLUT.default_texture_state, sizeof(m_TextureStateChanges));
   }
 
   GLTextureStates::~GLTextureStates()
@@ -73,20 +73,20 @@ namespace nux
 
   }
 
-  void GLTextureStates::SetType (GLuint Type)
+  void GLTextureStates::SetType(GLuint Type)
   {
 #ifndef NUX_OPENGLES_20
-    nuxAssertMsg (
+    nuxAssertMsg(
       (Type == GL_TEXTURE_1D) ||
       (Type == GL_TEXTURE_2D) ||
       (Type == GL_TEXTURE_RECTANGLE_ARB) ||
       (Type == GL_TEXTURE_3D) ||
       (Type == GL_TEXTURE_CUBE_MAP_ARB),
-      TEXT ("Error[GLTextureStates::GLTextureStates]: Invalid texture type.") );
+      "Error[GLTextureStates::GLTextureStates]: Invalid texture type.");
 #else
-    nuxAssertMsg (
+    nuxAssertMsg(
       (Type == GL_TEXTURE_2D),
-      TEXT ("Error[GLTextureStates::GLTextureStates]: Invalid texture type.") );
+      "Error[GLTextureStates::GLTextureStates]: Invalid texture type.");
 #endif
 
     m_Type = Type;
@@ -110,10 +110,10 @@ namespace nux
     HW_SetMipLevel();
   }
 
-#define SET_TS_VALUE(a, b)  if(a.iValue != b){(a).iValue = (b); (a).Dirty = true;}
+#define SET_TS_VALUE(a, b)  if (a.iValue != b){(a).iValue = (b); (a).Dirty = true;}
 #define TS_VALUE(a, b)      (a).iValue
 
-#define SET_TS_VALUE_FLOAT(a, b)  if(a.fValue != b){(a).fValue = (b); (a).Dirty = true;}
+#define SET_TS_VALUE_FLOAT(a, b)  if (a.fValue != b){(a).fValue = (b); (a).Dirty = true;}
 #define TS_VALUE_FLOAT(a, b)      (a).fValue
 
 
@@ -121,8 +121,8 @@ namespace nux
   {
     if (m_TextureStateChanges[GFXTS_MINFILTER].Dirty || m_TextureStateChanges[GFXTS_MAGFILTER].Dirty)
     {
-      CHECKGL ( glTexParameteri (m_Type, GL_TEXTURE_MIN_FILTER,   m_TextureStateChanges[GFXTS_MINFILTER].iValue ) );
-      CHECKGL ( glTexParameteri (m_Type, GL_TEXTURE_MAG_FILTER,   m_TextureStateChanges[GFXTS_MAGFILTER].iValue) );
+      CHECKGL(glTexParameteri(m_Type, GL_TEXTURE_MIN_FILTER,   m_TextureStateChanges[GFXTS_MINFILTER].iValue ));
+      CHECKGL(glTexParameteri(m_Type, GL_TEXTURE_MAG_FILTER,   m_TextureStateChanges[GFXTS_MAGFILTER].iValue));
       m_TextureStateChanges[GFXTS_MINFILTER].Dirty = false;
       m_TextureStateChanges[GFXTS_MAGFILTER].Dirty = false;
     }
@@ -134,10 +134,10 @@ namespace nux
         m_TextureStateChanges[GFXTS_ADDRESSV].Dirty ||
         m_TextureStateChanges[GFXTS_ADDRESSW].Dirty)
     {
-      CHECKGL ( glTexParameteri (m_Type, GL_TEXTURE_WRAP_S,       m_TextureStateChanges[GFXTS_ADDRESSU].iValue) );
-      CHECKGL ( glTexParameteri (m_Type, GL_TEXTURE_WRAP_T,       m_TextureStateChanges[GFXTS_ADDRESSV].iValue) );
+      CHECKGL(glTexParameteri(m_Type, GL_TEXTURE_WRAP_S,       m_TextureStateChanges[GFXTS_ADDRESSU].iValue));
+      CHECKGL(glTexParameteri(m_Type, GL_TEXTURE_WRAP_T,       m_TextureStateChanges[GFXTS_ADDRESSV].iValue));
 #ifndef NUX_OPENGLES_20
-      CHECKGL ( glTexParameteri (m_Type, GL_TEXTURE_WRAP_R,       m_TextureStateChanges[GFXTS_ADDRESSW].iValue) );
+      CHECKGL(glTexParameteri(m_Type, GL_TEXTURE_WRAP_R,       m_TextureStateChanges[GFXTS_ADDRESSW].iValue));
 #endif
       m_TextureStateChanges[GFXTS_ADDRESSU].Dirty = false;
       m_TextureStateChanges[GFXTS_ADDRESSV].Dirty = false;
@@ -160,8 +160,8 @@ namespace nux
 
     if (m_TextureStateChanges[GFXTS_MIN_LOD].Dirty || m_TextureStateChanges[GFXTS_MAX_LOD].Dirty)
     {
-      CHECKGL ( glTexParameteri (m_Type, GL_TEXTURE_MIN_LOD,  m_TextureStateChanges[GFXTS_MIN_LOD].fValue) );
-      CHECKGL ( glTexParameteri (m_Type, GL_TEXTURE_MAX_LOD,  m_TextureStateChanges[GFXTS_MAX_LOD].fValue) );
+      CHECKGL(glTexParameteri(m_Type, GL_TEXTURE_MIN_LOD,  m_TextureStateChanges[GFXTS_MIN_LOD].fValue));
+      CHECKGL(glTexParameteri(m_Type, GL_TEXTURE_MAX_LOD,  m_TextureStateChanges[GFXTS_MAX_LOD].fValue));
       m_TextureStateChanges[GFXTS_MIN_LOD].Dirty = false;
       m_TextureStateChanges[GFXTS_MAX_LOD].Dirty = false;
     }
@@ -173,8 +173,8 @@ namespace nux
 #ifndef NUX_OPENGLES_20
     if (m_TextureStateChanges[GFXTS_MIN_LOD].Dirty || m_TextureStateChanges[GFXTS_MAX_LOD].Dirty)
     {
-      CHECKGL ( glTexParameteri (m_Type, GL_TEXTURE_MIN_LOD,  m_TextureStateChanges[GFXTS_MIN_LOD].fValue) );
-      CHECKGL ( glTexParameteri (m_Type, GL_TEXTURE_MAX_LOD,  m_TextureStateChanges[GFXTS_MAX_LOD].fValue) );
+      CHECKGL(glTexParameteri(m_Type, GL_TEXTURE_MIN_LOD,  m_TextureStateChanges[GFXTS_MIN_LOD].fValue));
+      CHECKGL(glTexParameteri(m_Type, GL_TEXTURE_MAX_LOD,  m_TextureStateChanges[GFXTS_MAX_LOD].fValue));
       m_TextureStateChanges[GFXTS_MIN_LOD].Dirty = false;
       m_TextureStateChanges[GFXTS_MAX_LOD].Dirty = false;
     }
@@ -186,73 +186,73 @@ namespace nux
 
   }
 
-  void GLTextureStates::SetFiltering (
+  void GLTextureStates::SetFiltering(
     unsigned int MinFilter,
     unsigned int MagFilter
     /*,unsigned int MIP*/)
   {
-    nuxAssertMsg (
+    nuxAssertMsg(
       (MinFilter == GL_LINEAR) ||
       (MinFilter == GL_NEAREST) ||
       (MinFilter == GL_NEAREST_MIPMAP_NEAREST) ||
       (MinFilter == GL_LINEAR_MIPMAP_NEAREST) ||
       (MinFilter == GL_NEAREST_MIPMAP_LINEAR) ||
       (MinFilter == GL_LINEAR_MIPMAP_LINEAR),
-      TEXT ("Error[GLTextureStates::SetFiltering]: Invalid MinFilter state") );
+      "Error[GLTextureStates::SetFiltering]: Invalid MinFilter state");
 
-    nuxAssertMsg (
+    nuxAssertMsg(
       (MagFilter == GL_LINEAR) ||
       (MagFilter == GL_NEAREST),
-      TEXT ("Error[GLTextureStates::SetFiltering]: Invalid MagFilter state") );
+      "Error[GLTextureStates::SetFiltering]: Invalid MagFilter state");
 
     //    nuxAssertMsg(
     //        (MIP == GL_LINEAR) ||
     //        (MIP == GL_NEAREST),
-    //        TEXT("Error[GLTextureStates::SetFiltering]: Invalid Mipmap Filter State"));
+    //        "Error[GLTextureStates::SetFiltering]: Invalid Mipmap Filter State");
 
 #ifndef NUX_OPENGLES_20
     if (m_Type == GL_TEXTURE_RECTANGLE_ARB)
     {
-      if ( (MinFilter != GL_NEAREST) && (MinFilter != GL_LINEAR) )
+      if ((MinFilter != GL_NEAREST) && (MinFilter != GL_LINEAR))
       {
-        nuxError (TEXT ("[GLTextureStates::SetFiltering] Incorrect MinFilter for rectangle texture.") );
-        SET_TS_VALUE (m_TextureStateChanges[GFXTS_MINFILTER], GL_LINEAR);
+        nuxError("[GLTextureStates::SetFiltering] Incorrect MinFilter for rectangle texture.");
+        SET_TS_VALUE(m_TextureStateChanges[GFXTS_MINFILTER], GL_LINEAR);
       }
       else
       {
-        SET_TS_VALUE (m_TextureStateChanges[GFXTS_MINFILTER], MinFilter);
+        SET_TS_VALUE(m_TextureStateChanges[GFXTS_MINFILTER], MinFilter);
       }
 
-      if ( (MagFilter != GL_NEAREST) && (MagFilter != GL_LINEAR) )
+      if ((MagFilter != GL_NEAREST) && (MagFilter != GL_LINEAR))
       {
-        nuxError (TEXT ("[GLTextureStates::SetFiltering] Incorrect MagFilter for rectangle texture.") );
-        SET_TS_VALUE (m_TextureStateChanges[GFXTS_MAGFILTER], GL_LINEAR);
+        nuxError("[GLTextureStates::SetFiltering] Incorrect MagFilter for rectangle texture.");
+        SET_TS_VALUE(m_TextureStateChanges[GFXTS_MAGFILTER], GL_LINEAR);
       }
       else
       {
-        SET_TS_VALUE (m_TextureStateChanges[GFXTS_MAGFILTER], MagFilter);
+        SET_TS_VALUE(m_TextureStateChanges[GFXTS_MAGFILTER], MagFilter);
       }
     }
     else
     {
-      SET_TS_VALUE (m_TextureStateChanges[GFXTS_MINFILTER], MinFilter);
-      SET_TS_VALUE (m_TextureStateChanges[GFXTS_MAGFILTER], MagFilter);
+      SET_TS_VALUE(m_TextureStateChanges[GFXTS_MINFILTER], MinFilter);
+      SET_TS_VALUE(m_TextureStateChanges[GFXTS_MAGFILTER], MagFilter);
     }
 #else
-    SET_TS_VALUE (m_TextureStateChanges[GFXTS_MINFILTER], MinFilter);
-    SET_TS_VALUE (m_TextureStateChanges[GFXTS_MAGFILTER], MagFilter);
+    SET_TS_VALUE(m_TextureStateChanges[GFXTS_MINFILTER], MinFilter);
+    SET_TS_VALUE(m_TextureStateChanges[GFXTS_MAGFILTER], MagFilter);
 #endif
 
     //SET_TS_VALUE(m_TextureStateChanges[GFXTS_MIPFILTER], MIP);
   }
 
-  void GLTextureStates::SetWrap (
+  void GLTextureStates::SetWrap(
     unsigned int U,
     unsigned int V,
     unsigned int W)
   {
 #ifndef NUX_OPENGLES_20
-    nuxAssertMsg (
+    nuxAssertMsg(
       (U == GL_CLAMP) ||
       (U == GL_CLAMP_TO_EDGE) ||
       (U == GL_CLAMP_TO_BORDER) ||
@@ -261,9 +261,9 @@ namespace nux
       (U == GL_MIRROR_CLAMP_TO_EDGE_EXT) ||
       (U == GL_MIRROR_CLAMP_TO_BORDER_EXT) ||
       (U == GL_REPEAT),
-      TEXT ("Error[GLTextureStates::SetWrap]: Invalid U Wrap State") );
+      "Error[GLTextureStates::SetWrap]: Invalid U Wrap State");
 
-    nuxAssertMsg (
+    nuxAssertMsg(
       (V == GL_CLAMP) ||
       (V == GL_CLAMP_TO_EDGE) ||
       (V == GL_CLAMP_TO_BORDER) ||
@@ -272,8 +272,8 @@ namespace nux
       (V == GL_MIRROR_CLAMP_TO_EDGE_EXT) ||
       (V == GL_MIRROR_CLAMP_TO_BORDER_EXT) ||
       (V == GL_REPEAT),
-      TEXT ("Error[GLTextureStates::SetWrap]: Invalid V Wrap State") );
-    nuxAssertMsg (
+      "Error[GLTextureStates::SetWrap]: Invalid V Wrap State");
+    nuxAssertMsg(
       (W == GL_CLAMP) ||
       (W == GL_CLAMP_TO_EDGE) ||
       (W == GL_CLAMP_TO_BORDER) ||
@@ -282,97 +282,97 @@ namespace nux
       (W == GL_MIRROR_CLAMP_TO_EDGE_EXT) ||
       (W == GL_MIRROR_CLAMP_TO_BORDER_EXT) ||
       (W == GL_REPEAT),
-      TEXT ("Error[GLTextureStates::SetWrap]: Invalid W Wrap State") );
+      "Error[GLTextureStates::SetWrap]: Invalid W Wrap State");
 
     if (m_Type == GL_TEXTURE_RECTANGLE_ARB)
     {
-      if ( (U != GL_CLAMP) && (U != GL_CLAMP_TO_BORDER) && (U != GL_CLAMP_TO_EDGE) )
+      if ((U != GL_CLAMP) && (U != GL_CLAMP_TO_BORDER) && (U != GL_CLAMP_TO_EDGE))
       {
-        nuxError (TEXT ("[GLTextureStates::SetFiltering] Incorrect warp for rectangle texture.") );
-        SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSU], GL_CLAMP_TO_EDGE);
+        nuxError("[GLTextureStates::SetFiltering] Incorrect warp for rectangle texture.");
+        SET_TS_VALUE(m_TextureStateChanges[GFXTS_ADDRESSU], GL_CLAMP_TO_EDGE);
       }
       else
       {
-        SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSU], U);
+        SET_TS_VALUE(m_TextureStateChanges[GFXTS_ADDRESSU], U);
       }
 
-      if ( (V != GL_CLAMP) && (V != GL_CLAMP_TO_BORDER) && (V != GL_CLAMP_TO_EDGE) )
+      if ((V != GL_CLAMP) && (V != GL_CLAMP_TO_BORDER) && (V != GL_CLAMP_TO_EDGE))
       {
-        nuxError (TEXT ("[GLTextureStates::SetFiltering] Incorrect warp for rectangle texture.") );
-        SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSV], GL_CLAMP_TO_EDGE);
+        nuxError("[GLTextureStates::SetFiltering] Incorrect warp for rectangle texture.");
+        SET_TS_VALUE(m_TextureStateChanges[GFXTS_ADDRESSV], GL_CLAMP_TO_EDGE);
       }
       else
       {
-        SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSV], V);
+        SET_TS_VALUE(m_TextureStateChanges[GFXTS_ADDRESSV], V);
       }
 
-      if ( (W != GL_CLAMP) && (W != GL_CLAMP_TO_BORDER) && (W != GL_CLAMP_TO_EDGE) )
+      if ((W != GL_CLAMP) && (W != GL_CLAMP_TO_BORDER) && (W != GL_CLAMP_TO_EDGE))
       {
-        nuxError (TEXT ("[GLTextureStates::SetFiltering] Incorrect warp for rectangle texture.") );
-        SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSW], GL_CLAMP_TO_EDGE);
+        nuxError("[GLTextureStates::SetFiltering] Incorrect warp for rectangle texture.");
+        SET_TS_VALUE(m_TextureStateChanges[GFXTS_ADDRESSW], GL_CLAMP_TO_EDGE);
       }
       else
       {
-        SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSW], W);
+        SET_TS_VALUE(m_TextureStateChanges[GFXTS_ADDRESSW], W);
       }
     }
     else
     {
-      SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSU], U);
-      SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSV], V);
-      SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSW], W);
+      SET_TS_VALUE(m_TextureStateChanges[GFXTS_ADDRESSU], U);
+      SET_TS_VALUE(m_TextureStateChanges[GFXTS_ADDRESSV], V);
+      SET_TS_VALUE(m_TextureStateChanges[GFXTS_ADDRESSW], W);
     }
 #else
-    nuxAssertMsg (
+    nuxAssertMsg(
       (U == GL_CLAMP) ||
       (U == GL_CLAMP_TO_EDGE) ||
       (U == GL_CLAMP_TO_BORDER) ||
       (U == GL_MIRRORED_REPEAT) ||
       (U == GL_REPEAT),
-      TEXT ("Error[GLTextureStates::SetWrap]: Invalid U Wrap State") );
+      "Error[GLTextureStates::SetWrap]: Invalid U Wrap State");
 
-    nuxAssertMsg (
+    nuxAssertMsg(
       (V == GL_CLAMP) ||
       (V == GL_CLAMP_TO_EDGE) ||
       (V == GL_CLAMP_TO_BORDER) ||
       (V == GL_MIRRORED_REPEAT) ||
       (V == GL_REPEAT),
-      TEXT ("Error[GLTextureStates::SetWrap]: Invalid V Wrap State") );
+      "Error[GLTextureStates::SetWrap]: Invalid V Wrap State");
 
-    SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSU], U);
-    SET_TS_VALUE (m_TextureStateChanges[GFXTS_ADDRESSV], V);
+    SET_TS_VALUE(m_TextureStateChanges[GFXTS_ADDRESSU], U);
+    SET_TS_VALUE(m_TextureStateChanges[GFXTS_ADDRESSV], V);
 #endif
   }
 
-  void GLTextureStates::SetLOD (float MinLod,
+  void GLTextureStates::SetLOD(float MinLod,
                                 float MaxLod)
   {
-    SET_TS_VALUE_FLOAT (m_TextureStateChanges[GFXTS_MIN_LOD], MinLod);
-    SET_TS_VALUE_FLOAT (m_TextureStateChanges[GFXTS_MAX_LOD], MaxLod);
+    SET_TS_VALUE_FLOAT(m_TextureStateChanges[GFXTS_MIN_LOD], MinLod);
+    SET_TS_VALUE_FLOAT(m_TextureStateChanges[GFXTS_MAX_LOD], MaxLod);
   }
 
-  void GLTextureStates::SetMipLevel (
+  void GLTextureStates::SetMipLevel(
     unsigned int MinMip,
     unsigned int MaxMip)
   {
-    SET_TS_VALUE (m_TextureStateChanges[GFXTS_MIP_BASE_LEVEL], MinMip);
-    SET_TS_VALUE (m_TextureStateChanges[GFXTS_MIP_MAX_LEVEL], MaxMip);
+    SET_TS_VALUE(m_TextureStateChanges[GFXTS_MIP_BASE_LEVEL], MinMip);
+    SET_TS_VALUE(m_TextureStateChanges[GFXTS_MIP_MAX_LEVEL], MaxMip);
   }
 
-  void GLTextureStates::SetBorderColor (
+  void GLTextureStates::SetBorderColor(
     float R,
     float G,
     float B,
     float A)
   {
     unsigned int r, g, b, a;
-    r = 255 * Clamp (R, 0.0f, 1.0f);
-    g = 255 * Clamp (G, 0.0f, 1.0f);
-    b = 255 * Clamp (B, 0.0f, 1.0f);
-    a = 255 * Clamp (A, 0.0f, 1.0f);
-    unsigned int color = (unsigned int) ( ( (a) << 24) | ( (r) << 16) | ( (g) << 8) | (b) );
+    r = 255 * Clamp(R, 0.0f, 1.0f);
+    g = 255 * Clamp(G, 0.0f, 1.0f);
+    b = 255 * Clamp(B, 0.0f, 1.0f);
+    a = 255 * Clamp(A, 0.0f, 1.0f);
+    unsigned int color = (unsigned int) (((a) << 24) | ((r) << 16) | ((g) << 8) | (b));
 
-    SET_TS_VALUE (m_TextureStateChanges[GFXTS_BORDERCOLOR], color);
+    SET_TS_VALUE(m_TextureStateChanges[GFXTS_BORDERCOLOR], color);
   }
 
 #undef SET_TS_VALUE

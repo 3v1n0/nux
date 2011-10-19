@@ -36,7 +36,7 @@
 namespace nux
 {
 
-  NBitmapData *Load_OpenEXR (const TCHAR *fileName);
+  NBitmapData *Load_OpenEXR(const TCHAR *fileName);
 
 }
 

@@ -29,27 +29,27 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLAnimatedTexture);
+  NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLAnimatedTexture);
 
-  IOpenGLAnimatedTexture::IOpenGLAnimatedTexture (
+  IOpenGLAnimatedTexture::IOpenGLAnimatedTexture(
     int Width
     , int Height
     , int Depth
     , BitmapFormat PixelFormat)
-    :    IOpenGLBaseTexture (RTANIMATEDTEXTURE, Width, Height, Depth, 1, PixelFormat)
-    ,    _CurrentFrame (0)
+    :    IOpenGLBaseTexture(RTANIMATEDTEXTURE, Width, Height, Depth, 1, PixelFormat)
+    ,    _CurrentFrame(0)
   {
     for (int i = 0; i < Depth; i++)
     {
-      ObjectPtr<IOpenGLBaseTexture> Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture (Width, Height, 1, PixelFormat);
-      _FrameTextureArray.push_back (Texture);
-      _FrameTimeArray.push_back (41); // 41 ms = 24 frames/second
+      ObjectPtr<IOpenGLBaseTexture> Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(Width, Height, 1, PixelFormat);
+      _FrameTextureArray.push_back(Texture);
+      _FrameTimeArray.push_back(41); // 41 ms = 24 frames/second
     }
 
     _OpenGLID = _FrameTextureArray[0]->GetOpenGLID();
 
-    SetFiltering (GL_NEAREST, GL_NEAREST);
-    SetWrap (GL_CLAMP, GL_CLAMP, GL_CLAMP);
+    SetFiltering(GL_NEAREST, GL_NEAREST);
+    SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
     SetRenderStates();
   }
 
@@ -65,41 +65,41 @@ namespace nux
   }
 
 
-  ObjectPtr<IOpenGLSurface> IOpenGLAnimatedTexture::GetSurfaceFrame (int Frame)
+  ObjectPtr<IOpenGLSurface> IOpenGLAnimatedTexture::GetSurfaceFrame(int Frame)
   {
-    nuxAssert (Frame >= 0);
-    nuxAssert (Frame < _Depth);
+    nuxAssert(Frame >= 0);
+    nuxAssert(Frame < _Depth);
 
-    if ( (Frame >= 0) && (Frame < _Depth) )
+    if ((Frame >= 0) && (Frame < _Depth))
     {
-      return _FrameTextureArray[Frame]->GetSurfaceLevel (0);
+      return _FrameTextureArray[Frame]->GetSurfaceLevel(0);
     }
     else
     {
-      nuxAssertMsg (0, TEXT ("[IOpenGLAnimatedTexture::GetSurfaceFrame] Invalid surface level") );
+      nuxAssertMsg(0, "[IOpenGLAnimatedTexture::GetSurfaceFrame] Invalid surface level");
     }
 
     return ObjectPtr<IOpenGLSurface> (0);
   }
 
-  void IOpenGLAnimatedTexture::GetSurfaceFrame (int Frame, ObjectPtr<IOpenGLSurface>& surface)
+  void IOpenGLAnimatedTexture::GetSurfaceFrame(int Frame, ObjectPtr<IOpenGLSurface>& surface)
   {
     surface = ObjectPtr<IOpenGLSurface> (0);
-    surface = GetSurfaceFrame (Frame);
+    surface = GetSurfaceFrame(Frame);
   }
 
-  int IOpenGLAnimatedTexture::LockRect (
+  int IOpenGLAnimatedTexture::LockRect(
     int Frame,
     SURFACE_LOCKED_RECT *pLockedRect,
     const SURFACE_RECT *pRect)
   {
-    return _FrameTextureArray[Frame]->LockRect (0, pLockedRect, pRect);
+    return _FrameTextureArray[Frame]->LockRect(0, pLockedRect, pRect);
   }
 
-  int IOpenGLAnimatedTexture::UnlockRect (
+  int IOpenGLAnimatedTexture::UnlockRect(
     int Frame)
   {
-    return _FrameTextureArray[Frame]->UnlockRect (0);
+    return _FrameTextureArray[Frame]->UnlockRect(0);
   }
 
   void IOpenGLAnimatedTexture::PresentFirstFrame()
@@ -124,15 +124,15 @@ namespace nux
     _OpenGLID = _FrameTextureArray[_CurrentFrame]->GetOpenGLID();
   }
 
-  void IOpenGLAnimatedTexture::SetFrameTime (int Frame, int time_ms)
+  void IOpenGLAnimatedTexture::SetFrameTime(int Frame, int time_ms)
   {
-    nuxAssert (_CurrentFrame < (int) _FrameTimeArray.size() );
+    nuxAssert(_CurrentFrame < (int) _FrameTimeArray.size());
     _FrameTimeArray[Frame] = time_ms;
   }
 
   int IOpenGLAnimatedTexture::GetFrameTime()
   {
-    nuxAssert (_CurrentFrame < (int) _FrameTimeArray.size() );
+    nuxAssert(_CurrentFrame < (int) _FrameTimeArray.size());
     return _FrameTimeArray[_CurrentFrame];
   }
 

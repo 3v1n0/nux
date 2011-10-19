@@ -28,7 +28,7 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLVolume);
+  NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLVolume);
 
   IOpenGLVolume::~IOpenGLVolume()
   {
@@ -40,11 +40,11 @@ namespace nux
     if (_VolumeTexture)
       return _VolumeTexture->RefCount();
 
-    nuxAssert (0); // Surface with no underlying texture. That should not happen.
+    nuxAssert(0); // Surface with no underlying texture. That should not happen.
     return 0;
   }
 
-  int IOpenGLVolume::LockBox (
+  int IOpenGLVolume::LockBox(
     VOLUME_LOCKED_BOX *pLockedVolume,
     const VOLUME_BOX *pBox)
 
@@ -52,12 +52,12 @@ namespace nux
 #ifndef NUX_OPENGLES_20
     // If _LockedRect.pBits or _LockedRect.Pitch are not equal to zero, then we have already Locked the buffer
     // Unlock it before locking again.
-    nuxAssert (_LockedBox.pBits == 0);
-    nuxAssert (_LockedBox.RowPitch == 0);
+    nuxAssert(_LockedBox.pBits == 0);
+    nuxAssert(_LockedBox.RowPitch == 0);
     //nuxAssert(_LockedBox.SlicePitch == 0);
-    nuxAssert (_CompressedDataSize == 0);
+    nuxAssert(_CompressedDataSize == 0);
 
-    if ( (_LockedBox.pBits != 0) || (_LockedBox.RowPitch != 0) || (_CompressedDataSize != 0) )
+    if ((_LockedBox.pBits != 0) || (_LockedBox.RowPitch != 0) || (_CompressedDataSize != 0))
     {
       // already locked;
       return OGL_INVALID_LOCK;
@@ -68,7 +68,7 @@ namespace nux
     //GLint unpack_alignment = GPixelFormats[_VolumeTexture->_PixelFormat].RowMemoryAlignment;
 
 
-    CHECKGL ( glBindTexture (_STextureTarget, _VolumeTexture->_OpenGLID) );
+    CHECKGL(glBindTexture(_STextureTarget, _VolumeTexture->_OpenGLID));
 
     unsigned int surface_size = 0;
 
@@ -77,12 +77,12 @@ namespace nux
 
     if (_VolumeTexture->_ResourceType != RTVOLUMETEXTURE)
     {
-      nuxAssertMsg (0, TEXT ("Unknown resource type") );
+      nuxAssertMsg(0, "Unknown resource type");
     }
 
     int texwidth, texheight;
-    texwidth = ImageSurface::GetLevelWidth (texture->_PixelFormat, texture->_Width, _SMipLevel);
-    texheight = ImageSurface::GetLevelHeight (texture->_PixelFormat, texture->_Height, _SMipLevel);
+    texwidth = ImageSurface::GetLevelWidth(texture->_PixelFormat, texture->_Width, _SMipLevel);
+    texheight = ImageSurface::GetLevelHeight(texture->_PixelFormat, texture->_Height, _SMipLevel);
 
     if ( texture->_PixelFormat == BITFMT_DXT1 ||
          texture->_PixelFormat == BITFMT_DXT2 ||
@@ -109,15 +109,15 @@ namespace nux
         //    | xx | xx | xx | xx |
         //    ---------------------
 
-        // A line of n texel DXT1 data uses n/2 bytes (4 bits/texel). So the number of bytes used for a
+        // A line of n texel DXT1 data uses n/2 bytes(4 bits/texel). So the number of bytes used for a
         // texwidth texel, is texwidth/2 bytes.
         // Note that texwidth is divisible by 4(to to the upper rounding to 4), therefore, it is also divisible
         // by 2.
 
         // glCompressedTexImage2DARB, glCompressedTexImage3DARB,
         // glCompressedTexSubImage2DARB, glCompressedTexSubImage3DARB are not affected by glPixelStorei.
-        surface_size = ImageSurface::GetLevelSize (texture->_PixelFormat, texture->_Width, texture->_Height, _SMipLevel);
-        _LockedBox.RowPitch = ImageSurface::GetLevelPitch (texture->_PixelFormat, texture->_Width, texture->_Height, _SMipLevel);
+        surface_size = ImageSurface::GetLevelSize(texture->_PixelFormat, texture->_Width, texture->_Height, _SMipLevel);
+        _LockedBox.RowPitch = ImageSurface::GetLevelPitch(texture->_PixelFormat, texture->_Width, texture->_Height, _SMipLevel);
 
         if (_Initialized == false)
         {
@@ -126,13 +126,13 @@ namespace nux
       }
       else
       {
-        // A line of n texel DXT3/5 data uses n bytes (1 byte/texel). So the number of bytes used for a
+        // A line of n texel DXT3/5 data uses n bytes(1 byte/texel). So the number of bytes used for a
         // texwidth texels, is texwidth bytes.
 
         // glCompressedTexImage2DARB, glCompressedTexImage3DARB,
         // glCompressedTexSubImage2DARB, glCompressedTexSubImage3DARB are not affected by glPixelStorei.
-        surface_size = ImageSurface::GetLevelSize (texture->_PixelFormat, texture->_Width, texture->_Height, _SMipLevel);
-        _LockedBox.RowPitch = ImageSurface::GetLevelPitch (texture->_PixelFormat, texture->_Width, texture->_Height, _SMipLevel);
+        surface_size = ImageSurface::GetLevelSize(texture->_PixelFormat, texture->_Width, texture->_Height, _SMipLevel);
+        _LockedBox.RowPitch = ImageSurface::GetLevelPitch(texture->_PixelFormat, texture->_Width, texture->_Height, _SMipLevel);
 
         if (_Initialized == false)
         {
@@ -142,8 +142,8 @@ namespace nux
     }
     else
     {
-      _LockedBox.RowPitch = ImageSurface::GetLevelPitch (texture->_PixelFormat, texture->_Width, texture->_Height, _SMipLevel);
-      surface_size = ImageSurface::GetLevelSize (texture->_PixelFormat, texture->_Width, texture->_Height, _SMipLevel);
+      _LockedBox.RowPitch = ImageSurface::GetLevelPitch(texture->_PixelFormat, texture->_Width, texture->_Height, _SMipLevel);
+      surface_size = ImageSurface::GetLevelSize(texture->_PixelFormat, texture->_Width, texture->_Height, _SMipLevel);
 
       if (_Initialized == false)
       {
@@ -157,31 +157,31 @@ namespace nux
     _Box.Bottom  = texheight;
     _Box.Right   = texwidth;
     _Box.Front   = 0;
-    _Box.Back    = ImageSurface::GetLevelDim (texture->_PixelFormat, texture->GetDepth(), _SMipLevel);
+    _Box.Back    = ImageSurface::GetLevelDim(texture->_PixelFormat, texture->GetDepth(), _SMipLevel);
 
-    if (GetGraphicsDisplay()->GetGpuDevice()->UsePixelBufferObjects() )
+    if (GetGraphicsDisplay()->GetGpuDevice()->UsePixelBufferObjects())
     {
-      GetGraphicsDisplay()->GetGpuDevice()->AllocateUnpackPixelBufferIndex (&_AllocatedUnpackBuffer);
+      GetGraphicsDisplay()->GetGpuDevice()->AllocateUnpackPixelBufferIndex(&_AllocatedUnpackBuffer);
     }
 
     if (pBox == 0)
     {
       _CompressedDataSize = GetDepth() * surface_size;
 
-      if (GetGraphicsDisplay()->GetGpuDevice()->UsePixelBufferObjects() )
+      if (GetGraphicsDisplay()->GetGpuDevice()->UsePixelBufferObjects())
       {
         // Mapping the entire area of the surface
         if (1)
         {
-          _LockedBox.pBits = GetGraphicsDisplay()->GetGpuDevice()->LockUnpackPixelBufferIndex (_AllocatedUnpackBuffer, _CompressedDataSize);
+          _LockedBox.pBits = GetGraphicsDisplay()->GetGpuDevice()->LockUnpackPixelBufferIndex(_AllocatedUnpackBuffer, _CompressedDataSize);
         }
         else
         {
-          GetGraphicsDisplay()->GetGpuDevice()->BindUnpackPixelBufferIndex (_AllocatedUnpackBuffer);
-          CHECKGL ( glBufferDataARB (GL_PIXEL_UNPACK_BUFFER_ARB, _CompressedDataSize, NULL, GL_STREAM_DRAW_ARB) );
-          _LockedBox.pBits = glMapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, GL_WRITE_ONLY_ARB);
-          CHECKGL_MSG (glMapBufferARB );
-          CHECKGL ( glBindBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, 0) );
+          GetGraphicsDisplay()->GetGpuDevice()->BindUnpackPixelBufferIndex(_AllocatedUnpackBuffer);
+          CHECKGL(glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, _CompressedDataSize, NULL, GL_STREAM_DRAW_ARB));
+          _LockedBox.pBits = glMapBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, GL_WRITE_ONLY_ARB);
+          CHECKGL_MSG(glMapBufferARB );
+          CHECKGL(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0));
         }
 
         pLockedVolume->pBits = _LockedBox.pBits;
@@ -200,21 +200,21 @@ namespace nux
     }
     else
     {
-      nuxAssert (pBox->Front >= 0);
-      nuxAssert (pBox->Back <= GetDepth() );
-      nuxAssert (pBox->Front < pBox->Back);
+      nuxAssert(pBox->Front >= 0);
+      nuxAssert(pBox->Back <= GetDepth());
+      nuxAssert(pBox->Front < pBox->Back);
 
       int RectWidth = pBox->Right - pBox->Left;
       int RectHeight = pBox->Bottom - pBox->Top;
       int NumSlice = pBox->Back - pBox->Front;
 
-      nuxAssert (RectWidth >= 0);
-      nuxAssert (RectHeight >= 0);
-      nuxAssert (NumSlice >= 0);
+      nuxAssert(RectWidth >= 0);
+      nuxAssert(RectHeight >= 0);
+      nuxAssert(NumSlice >= 0);
 
 
 
-      unsigned int RectSize = ImageSurface::GetLevelSize (GetPixelFormat(), RectWidth, RectHeight, 0); //(((RectWidth * BytePerPixel + (unpack_alignment-1)) >> (halfUnpack)) << (halfUnpack)) * RectHeight;
+      unsigned int RectSize = ImageSurface::GetLevelSize(GetPixelFormat(), RectWidth, RectHeight, 0); //(((RectWidth * BytePerPixel + (unpack_alignment-1)) >> (halfUnpack)) << (halfUnpack)) * RectHeight;
 
       if (RectSize == 0)
       {
@@ -225,26 +225,26 @@ namespace nux
 
       _CompressedDataSize = NumSlice * RectSize;
 
-      if (GetGraphicsDisplay()->GetGpuDevice()->UsePixelBufferObjects() )
+      if (GetGraphicsDisplay()->GetGpuDevice()->UsePixelBufferObjects())
       {
-        _LockedBox.pBits = GetGraphicsDisplay()->GetGpuDevice()->LockUnpackPixelBufferIndex (_AllocatedUnpackBuffer, NumSlice * RectSize);
+        _LockedBox.pBits = GetGraphicsDisplay()->GetGpuDevice()->LockUnpackPixelBufferIndex(_AllocatedUnpackBuffer, NumSlice * RectSize);
 
 //             GetGraphicsDisplay()->GetGpuDevice()->BindUnpackPixelBufferIndex(_AllocatedUnpackBuffer);
-//             CHECKGL( glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, NumSlice * RectSize, NULL, GL_STATIC_DRAW_ARB) );
+//             CHECKGL(glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, NumSlice * RectSize, NULL, GL_STATIC_DRAW_ARB));
 //             _LockedBox.pBits = glMapBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, GL_WRITE_ONLY);
 //             CHECKGL_MSG(glMapBufferARB );
-//             CHECKGL( glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0) );
+//             CHECKGL(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0));
 
-        pLockedVolume->pBits = ( (BYTE *) _LockedBox.pBits);
-        pLockedVolume->RowPitch = ImageSurface::GetLevelPitch (GetPixelFormat(), RectWidth, RectHeight, 0); //(((RectWidth * BytePerPixel + (unpack_alignment-1)) >> (halfUnpack)) << (halfUnpack));
+        pLockedVolume->pBits = ((BYTE *) _LockedBox.pBits);
+        pLockedVolume->RowPitch = ImageSurface::GetLevelPitch(GetPixelFormat(), RectWidth, RectHeight, 0); //(((RectWidth * BytePerPixel + (unpack_alignment-1)) >> (halfUnpack)) << (halfUnpack));
         pLockedVolume->SlicePitch = RectSize;
       }
       else
       {
         //[DEBUGGING - NO PBO]
         _LockedBox.pBits = new BYTE[_CompressedDataSize];
-        pLockedVolume->pBits = ( (BYTE *) _LockedBox.pBits);
-        pLockedVolume->RowPitch = ImageSurface::GetLevelPitch (GetPixelFormat(), RectWidth, RectHeight, 0); //(((RectWidth * BytePerPixel + (unpack_alignment-1)) >> (halfUnpack)) << (halfUnpack));
+        pLockedVolume->pBits = ((BYTE *) _LockedBox.pBits);
+        pLockedVolume->RowPitch = ImageSurface::GetLevelPitch(GetPixelFormat(), RectWidth, RectHeight, 0); //(((RectWidth * BytePerPixel + (unpack_alignment-1)) >> (halfUnpack)) << (halfUnpack));
         pLockedVolume->SlicePitch = RectSize;
       }
 
@@ -268,26 +268,26 @@ namespace nux
       return OGL_INVALID_UNLOCK;
     }
 
-    int MemAlignment = ImageSurface::GetMemAlignment (_VolumeTexture->_PixelFormat);
-    CHECKGL ( glPixelStorei (GL_UNPACK_ALIGNMENT, MemAlignment) );
-    nuxAssert (MemAlignment == _VolumeTexture->GetFormatRowMemoryAlignment() );
+    int MemAlignment = ImageSurface::GetMemAlignment(_VolumeTexture->_PixelFormat);
+    CHECKGL(glPixelStorei(GL_UNPACK_ALIGNMENT, MemAlignment));
+    nuxAssert(MemAlignment == _VolumeTexture->GetFormatRowMemoryAlignment());
 
     BYTE *DataPtr = 0;
 
     if (_STextureTarget == GL_TEXTURE_3D)
     {
-      CHECKGL ( glBindTexture (_STextureTarget, _VolumeTexture->_OpenGLID) );
+      CHECKGL(glBindTexture(_STextureTarget, _VolumeTexture->_OpenGLID));
 
-      if (GetGraphicsDisplay()->GetGpuDevice()->UsePixelBufferObjects() )
+      if (GetGraphicsDisplay()->GetGpuDevice()->UsePixelBufferObjects())
       {
         // Unmap the texture image buffer
-        GetGraphicsDisplay()->GetGpuDevice()->BindUnpackPixelBufferIndex (_AllocatedUnpackBuffer);
-        CHECKGL ( glUnmapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB) );
-        DataPtr = NUX_BUFFER_OFFSET (0);
+        GetGraphicsDisplay()->GetGpuDevice()->BindUnpackPixelBufferIndex(_AllocatedUnpackBuffer);
+        CHECKGL(glUnmapBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB));
+        DataPtr = NUX_BUFFER_OFFSET(0);
       }
       else
       {
-        CHECKGL ( glBindBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, 0) );
+        CHECKGL(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0));
         DataPtr = (BYTE *) _LockedBox.pBits;
       }
 
@@ -305,11 +305,11 @@ namespace nux
            texture->_PixelFormat == BITFMT_DXT4 ||
            texture->_PixelFormat == BITFMT_DXT5)
       {
-        nuxAssert (_CompressedDataSize != 0);
+        nuxAssert(_CompressedDataSize != 0);
         // This part does not work. The image is messed up.
         // Driver bug??? Tried glCompressedTexImage3DARB. Same result.
         // But I know the data that is loaded is correct.
-        glCompressedTexSubImage3DARB (_SSurfaceTarget,
+        glCompressedTexSubImage3DARB(_SSurfaceTarget,
                                       _SMipLevel,                 // level
                                       xoffset,
                                       yoffset,
@@ -321,7 +321,7 @@ namespace nux
                                       _CompressedDataSize,        // image Size
                                       DataPtr                     // data
                                      );
-        CHECKGL_MSG (glCompressedTexSubImage3DARB);
+        CHECKGL_MSG(glCompressedTexSubImage3DARB);
 
         //             glCompressedTexImage3DARB(_SSurfaceTarget,
         //                 _SMipLevel,             // level
@@ -337,7 +337,7 @@ namespace nux
       }
       else
       {
-        CHECKGL ( glTexSubImage3D (_SSurfaceTarget,
+        CHECKGL(glTexSubImage3D(_SSurfaceTarget,
                                    _SMipLevel,
                                    xoffset,
                                    yoffset,
@@ -348,29 +348,29 @@ namespace nux
                                    GPixelFormats[texture->_PixelFormat].Format,
                                    GPixelFormats[texture->_PixelFormat].type,
                                    DataPtr
-                                  ) );
+                                  ));
       }
     }
     else
     {
-      nuxAssertMsg (0, TEXT ("Incorrect Texture Target.") );
+      nuxAssertMsg(0, "Incorrect Texture Target.");
     }
 
-    if (GetGraphicsDisplay()->GetGpuDevice()->UsePixelBufferObjects() )
+    if (GetGraphicsDisplay()->GetGpuDevice()->UsePixelBufferObjects())
     {
-      CHECKGL ( glBindBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, 0) );
-      GetGraphicsDisplay()->GetGpuDevice()->FreeUnpackPixelBufferIndex (_AllocatedUnpackBuffer);
+      CHECKGL(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0));
+      GetGraphicsDisplay()->GetGpuDevice()->FreeUnpackPixelBufferIndex(_AllocatedUnpackBuffer);
     }
     else
     {
       //[DEBUGGING - NO PBO]
       if (_LockedBox.pBits)
       {
-        delete [] ( (BYTE *) _LockedBox.pBits);
+        delete [] ((BYTE *) _LockedBox.pBits);
       }
     }
 
-    CHECKGL ( glPixelStorei (GL_UNPACK_ALIGNMENT, GetGraphicsDisplay()->GetGpuDevice()->GetPixelStoreAlignment() ) );
+    CHECKGL(glPixelStorei(GL_UNPACK_ALIGNMENT, GetGraphicsDisplay()->GetGpuDevice()->GetPixelStoreAlignment()));
 
     _LockedBox.pBits = 0;
     _LockedBox.RowPitch = 0;
@@ -384,27 +384,27 @@ namespace nux
   {
 #ifndef NUX_OPENGLES_20
     // Because we use SubImage when unlocking surfaces, we must first get some dummy data in the surface before we can make a lock.
-    int volwidth = ImageSurface::GetLevelDim (_VolumeTexture->_PixelFormat, _VolumeTexture->_Width, _SMipLevel);
-    int volheight = ImageSurface::GetLevelDim (_VolumeTexture->_PixelFormat, _VolumeTexture->_Height, _SMipLevel);
-    int voldepth = ImageSurface::GetLevelDim (_VolumeTexture->_PixelFormat, _VolumeTexture->_Depth, _SMipLevel);
-    int size = ImageSurface::GetLevelSize (
+    int volwidth = ImageSurface::GetLevelDim(_VolumeTexture->_PixelFormat, _VolumeTexture->_Width, _SMipLevel);
+    int volheight = ImageSurface::GetLevelDim(_VolumeTexture->_PixelFormat, _VolumeTexture->_Height, _SMipLevel);
+    int voldepth = ImageSurface::GetLevelDim(_VolumeTexture->_PixelFormat, _VolumeTexture->_Depth, _SMipLevel);
+    int size = ImageSurface::GetLevelSize(
                  _VolumeTexture->_PixelFormat,
                  _VolumeTexture->_Width,
                  _VolumeTexture->_Height,
                  _VolumeTexture->_Depth,
                  _SMipLevel);
 
-    int MemAlignment = ImageSurface::GetMemAlignment (_VolumeTexture->_PixelFormat);
+    int MemAlignment = ImageSurface::GetMemAlignment(_VolumeTexture->_PixelFormat);
 
-    nuxAssert ( volwidth > 0 ); // Should never happen
-    nuxAssert ( volheight > 0 ); // Should never happen
-    nuxAssert ( voldepth > 0 ); // Should never happen
-    nuxAssert ( size > 0 ); // Should never happen
+    nuxAssert( volwidth > 0 ); // Should never happen
+    nuxAssert( volheight > 0 ); // Should never happen
+    nuxAssert( voldepth > 0 ); // Should never happen
+    nuxAssert( size > 0 ); // Should never happen
 
     BYTE *DummyBuffer = new BYTE[size];
-    Memset (DummyBuffer, 0, size);
+    Memset(DummyBuffer, 0, size);
 
-    CHECKGL ( glPixelStorei (GL_UNPACK_ALIGNMENT, MemAlignment) );
+    CHECKGL(glPixelStorei(GL_UNPACK_ALIGNMENT, MemAlignment));
 
     if ( _VolumeTexture->_PixelFormat == BITFMT_DXT1 ||
          _VolumeTexture->_PixelFormat == BITFMT_DXT2 ||
@@ -413,7 +413,7 @@ namespace nux
          _VolumeTexture->_PixelFormat == BITFMT_DXT5)
     {
       {
-        glCompressedTexImage3DARB (
+        glCompressedTexImage3DARB(
           _SSurfaceTarget,
           _SMipLevel,                 // level
           GPixelFormats[_VolumeTexture->_PixelFormat].PlatformFormat,
@@ -424,12 +424,12 @@ namespace nux
           size,                       // image Size
           DummyBuffer                           // data
         );
-        CHECKGL_MSG (glCompressedTexImage3DARB);
+        CHECKGL_MSG(glCompressedTexImage3DARB);
       }
     }
     else
     {
-      glTexImage3D (
+      glTexImage3D(
         _SSurfaceTarget,
         _SMipLevel,                 // level
         GPixelFormats[_VolumeTexture->_PixelFormat].PlatformFormat,
@@ -440,7 +440,7 @@ namespace nux
         GPixelFormats[_VolumeTexture->_PixelFormat].Format,
         GPixelFormats[_VolumeTexture->_PixelFormat].type,
         DummyBuffer);
-      CHECKGL_MSG (glTexImage3D);
+      CHECKGL_MSG(glTexImage3D);
     }
 
     delete [] DummyBuffer;
@@ -450,7 +450,7 @@ namespace nux
     //        // This is going to put some red in the texture.
     //        // The texture is not compressed.
     //        BYTE *color_array = new BYTE[texwidth*texheight*4];
-    //        for(unsigned int i = 0; i < texwidth*texheight*4; i += 4)
+    //        for (unsigned int i = 0; i < texwidth*texheight*4; i += 4)
     //        {
     //            color_array[i + 0] = 0xff;
     //            color_array[i + 1] = _SMipLevel * 0x3F;
@@ -464,7 +464,7 @@ namespace nux
     //        delete [] color_array;
     //    }
 
-    CHECKGL ( glPixelStorei (GL_UNPACK_ALIGNMENT, GetGraphicsDisplay()->GetGpuDevice()->GetPixelStoreAlignment() ) );
+    CHECKGL(glPixelStorei(GL_UNPACK_ALIGNMENT, GetGraphicsDisplay()->GetGpuDevice()->GetPixelStoreAlignment()));
 
     _Initialized = true;
 #endif
@@ -482,27 +482,27 @@ namespace nux
   int IOpenGLVolume::GetWidth() const
   {
     if (_VolumeTexture->_ResourceType == RTVOLUMETEXTURE)
-      return ImageSurface::GetLevelDim (_VolumeTexture->_PixelFormat, _VolumeTexture->_Width, _SMipLevel);
+      return ImageSurface::GetLevelDim(_VolumeTexture->_PixelFormat, _VolumeTexture->_Width, _SMipLevel);
 
-    nuxAssert (0); // Should not happen
+    nuxAssert(0); // Should not happen
     return 0;
   }
 
   int IOpenGLVolume::GetHeight() const
   {
     if (_VolumeTexture->_ResourceType == RTVOLUMETEXTURE)
-      return ImageSurface::GetLevelDim (_VolumeTexture->_PixelFormat, _VolumeTexture->_Height, _SMipLevel);
+      return ImageSurface::GetLevelDim(_VolumeTexture->_PixelFormat, _VolumeTexture->_Height, _SMipLevel);
 
-    nuxAssert (0); // Should not happen
+    nuxAssert(0); // Should not happen
     return 0;
   }
 
   int IOpenGLVolume::GetDepth() const
   {
     if (_VolumeTexture->_ResourceType == RTVOLUMETEXTURE)
-      return ImageSurface::GetLevelDim (_VolumeTexture->_PixelFormat, _VolumeTexture->_Depth, _SMipLevel);
+      return ImageSurface::GetLevelDim(_VolumeTexture->_PixelFormat, _VolumeTexture->_Depth, _SMipLevel);
 
-    nuxAssert (0); // Should not happen
+    nuxAssert(0); // Should not happen
     return 0;
   }
 

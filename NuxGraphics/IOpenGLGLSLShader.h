@@ -28,15 +28,15 @@ namespace nux
 
   class IOpenGLResource;
 
-  bool ExtractShaderString3 (const NString &ShaderToken, const NString &ShaderSource, NString &RetSource, NString ShaderPreprocessorDefines = NString (TEXT ("") ) );
+  bool ExtractShaderString3(const NString &ShaderToken, const NString &ShaderSource, NString &RetSource, NString ShaderPreprocessorDefines = NString(""));
 
   class IOpenGLShader:  public IOpenGLResource
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLShader, IOpenGLResource);
-    IOpenGLShader (NString ShaderName, OpenGLResourceType ResourceType);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLShader, IOpenGLResource);
+    IOpenGLShader(NString ShaderName, OpenGLResourceType ResourceType);
     virtual ~IOpenGLShader();
   public:
-    virtual void SetShaderCode (const ANSICHAR *ShaderCode, const TCHAR *ShaderPreprocessorDefines = TEXT ("") ) = 0;
+    virtual void SetShaderCode(const ANSICHAR *ShaderCode, const char *ShaderPreprocessorDefines = "") = 0;
     virtual bool Compile() = 0;
     virtual bool IsValid() = 0;
     NString _ShaderName;
@@ -45,28 +45,28 @@ namespace nux
 
   class IOpenGLVertexShader:  public IOpenGLShader
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLVertexShader, IOpenGLShader);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLVertexShader, IOpenGLShader);
   public:
     virtual ~IOpenGLVertexShader();
-    virtual void SetShaderCode (const ANSICHAR *ShaderCode, const TCHAR *VtxShaderPreprocessorDefines = TEXT ("") );
+    virtual void SetShaderCode(const ANSICHAR *ShaderCode, const char *VtxShaderPreprocessorDefines = "");
     virtual bool Compile();
     virtual bool IsValid();
   private:
-    IOpenGLVertexShader (NString ShaderName = NString ("Vertex Shader") );
+    IOpenGLVertexShader(NString ShaderName = NString("Vertex Shader"));
     int m_CompiledAndReady;
     friend class GpuDevice;
   };
 
   class IOpenGLPixelShader:  public IOpenGLShader
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLPixelShader, IOpenGLShader);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLPixelShader, IOpenGLShader);
   public:
     virtual ~IOpenGLPixelShader();
-    virtual void SetShaderCode (const ANSICHAR *ShaderCode, const TCHAR *FrgShaderPreprocessorDefines = TEXT ("") );
+    virtual void SetShaderCode(const ANSICHAR *ShaderCode, const char *FrgShaderPreprocessorDefines = "");
     virtual bool Compile();
     virtual bool IsValid();
   private:
-    IOpenGLPixelShader (NString ShaderName = NString ("Fragment Shader") );
+    IOpenGLPixelShader(NString ShaderName = NString("Fragment Shader"));
     int m_CompiledAndReady;
     friend class GpuDevice;
   };
@@ -77,7 +77,7 @@ namespace nux
     NUX_DECLARE_OBJECT_TYPE(IOpenGLGeometryShader, IOpenGLShader);
   public:
     virtual ~IOpenGLGeometryShader();
-    virtual void SetShaderCode(const ANSICHAR *ShaderCode, const TCHAR *GeometryShaderPreprocessorDefines = TEXT(""));
+    virtual void SetShaderCode(const ANSICHAR *ShaderCode, const char *GeometryShaderPreprocessorDefines = "");
     virtual bool Compile();
     virtual bool IsValid();
 
@@ -86,7 +86,7 @@ namespace nux
     void SetMaxVertexOutput(int max_vertex_output);
 
   private:
-    IOpenGLGeometryShader (NString ShaderName = NString ("Geometry Shader"));
+    IOpenGLGeometryShader(NString ShaderName = NString("Geometry Shader"));
     int m_CompiledAndReady;
     friend class GpuDevice;
   };
@@ -94,81 +94,81 @@ namespace nux
 
   class IOpenGLShaderProgram:  public IOpenGLResource
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLShaderProgram, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLShaderProgram, IOpenGLResource);
   public:
     virtual ~IOpenGLShaderProgram();
 
     // Load an inalogic shader.
-    void LoadVertexShader (const TCHAR *glslshader, const TCHAR *VtxShaderPreprocessorDefines = TEXT ("") );
-    void LoadPixelShader (const TCHAR *glslshader, const TCHAR *FrgShaderPreprocessorDefines = TEXT ("") );
-    void LoadIShaderFile (const TCHAR *ShaderFileName, const TCHAR *VtxShaderPreprocessorDefines = TEXT (""), const TCHAR *FrgShaderPreprocessorDefines = TEXT ("") );
-    void LoadIShader (const TCHAR *ShaderCode, const TCHAR *VtxShaderPreprocessorDefines = TEXT (""), const TCHAR *FrgShaderPreprocessorDefines = TEXT ("") );
-    void AddShaderParameter (GLShaderParameter *Parameter);
-    void AddShaderObject (ObjectPtr<IOpenGLShader> ShaderObject);
-    void RemoveShaderObject (ObjectPtr<IOpenGLShader> ShaderObject);
+    void LoadVertexShader(const char *glslshader, const char *VtxShaderPreprocessorDefines = "");
+    void LoadPixelShader(const char *glslshader, const char *FrgShaderPreprocessorDefines = "");
+    void LoadIShaderFile(const char *ShaderFileName, const char *VtxShaderPreprocessorDefines = "", const char *FrgShaderPreprocessorDefines = "");
+    void LoadIShader(const char *ShaderCode, const char *VtxShaderPreprocessorDefines = "", const char *FrgShaderPreprocessorDefines = "");
+    void AddShaderParameter(GLShaderParameter *Parameter);
+    void AddShaderObject(ObjectPtr<IOpenGLShader> ShaderObject);
+    void RemoveShaderObject(ObjectPtr<IOpenGLShader> ShaderObject);
     void ClearShaderObjects();
     bool Link();
 
     void Begin();
     void End();
 
-    static void SetShaderTracking (bool enabled);
+    static void SetShaderTracking(bool enabled);
 
   public:
 
-    bool SetUniform1f (char *varname, GLfloat v0);
-    bool SetUniform2f (char *varname, GLfloat v0, GLfloat v1);
-    bool SetUniform3f (char *varname, GLfloat v0, GLfloat v1, GLfloat v2);
-    bool SetUniform4f (char *varname, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
+    bool SetUniform1f(char *varname, GLfloat v0);
+    bool SetUniform2f(char *varname, GLfloat v0, GLfloat v1);
+    bool SetUniform3f(char *varname, GLfloat v0, GLfloat v1, GLfloat v2);
+    bool SetUniform4f(char *varname, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
 
-    bool SetUniform1i (char *varname, GLint v0);
-    bool SetUniform2i (char *varname, GLint v0, GLint v1);
-    bool SetUniform3i (char *varname, GLint v0, GLint v1, GLint v2);
-    bool SetUniform4i (char *varname, GLint v0, GLint v1, GLint v2, GLint v3);
+    bool SetUniform1i(char *varname, GLint v0);
+    bool SetUniform2i(char *varname, GLint v0, GLint v1);
+    bool SetUniform3i(char *varname, GLint v0, GLint v1, GLint v2);
+    bool SetUniform4i(char *varname, GLint v0, GLint v1, GLint v2, GLint v3);
 
-    bool SetUniform1fv (char *varname, GLsizei count, GLfloat *value);
-    bool SetUniform2fv (char *varname, GLsizei count, GLfloat *value);
-    bool SetUniform3fv (char *varname, GLsizei count, GLfloat *value);
-    bool SetUniform4fv (char *varname, GLsizei count, GLfloat *value);
+    bool SetUniform1fv(char *varname, GLsizei count, GLfloat *value);
+    bool SetUniform2fv(char *varname, GLsizei count, GLfloat *value);
+    bool SetUniform3fv(char *varname, GLsizei count, GLfloat *value);
+    bool SetUniform4fv(char *varname, GLsizei count, GLfloat *value);
 
-    bool SetUniform1iv (char *varname, GLsizei count, GLint *value);
-    bool SetUniform2iv (char *varname, GLsizei count, GLint *value);
-    bool SetUniform3iv (char *varname, GLsizei count, GLint *value);
-    bool SetUniform4iv (char *varname, GLsizei count, GLint *value);
+    bool SetUniform1iv(char *varname, GLsizei count, GLint *value);
+    bool SetUniform2iv(char *varname, GLsizei count, GLint *value);
+    bool SetUniform3iv(char *varname, GLsizei count, GLint *value);
+    bool SetUniform4iv(char *varname, GLsizei count, GLint *value);
 
-    bool SetUniformMatrix2fv (char *varname, GLsizei count, GLboolean transpose, GLfloat *value);
-    bool SetUniformMatrix3fv (char *varname, GLsizei count, GLboolean transpose, GLfloat *value);
-    bool SetUniformMatrix4fv (char *varname, GLsizei count, GLboolean transpose, GLfloat *value);
+    bool SetUniformMatrix2fv(char *varname, GLsizei count, GLboolean transpose, GLfloat *value);
+    bool SetUniformMatrix3fv(char *varname, GLsizei count, GLboolean transpose, GLfloat *value);
+    bool SetUniformMatrix4fv(char *varname, GLsizei count, GLboolean transpose, GLfloat *value);
 
 
-    bool SetUniform1f (GLint loc, GLfloat v0);
-    bool SetUniform2f (GLint loc, GLfloat v0, GLfloat v1);
-    bool SetUniform3f (GLint loc, GLfloat v0, GLfloat v1, GLfloat v2);
-    bool SetUniform4f (GLint loc, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
+    bool SetUniform1f(GLint loc, GLfloat v0);
+    bool SetUniform2f(GLint loc, GLfloat v0, GLfloat v1);
+    bool SetUniform3f(GLint loc, GLfloat v0, GLfloat v1, GLfloat v2);
+    bool SetUniform4f(GLint loc, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
 
-    bool SetUniform1i (GLint loc, GLint v0);
-    bool SetUniform2i (GLint loc, GLint v0, GLint v1);
-    bool SetUniform3i (GLint loc, GLint v0, GLint v1, GLint v2);
-    bool SetUniform4i (GLint loc, GLint v0, GLint v1, GLint v2, GLint v3);
+    bool SetUniform1i(GLint loc, GLint v0);
+    bool SetUniform2i(GLint loc, GLint v0, GLint v1);
+    bool SetUniform3i(GLint loc, GLint v0, GLint v1, GLint v2);
+    bool SetUniform4i(GLint loc, GLint v0, GLint v1, GLint v2, GLint v3);
 
-    bool SetUniform1fv (GLint loc, GLsizei count, GLfloat *value);
-    bool SetUniform2fv (GLint loc, GLsizei count, GLfloat *value);
-    bool SetUniform3fv (GLint loc, GLsizei count, GLfloat *value);
-    bool SetUniform4fv (GLint loc, GLsizei count, GLfloat *value);
+    bool SetUniform1fv(GLint loc, GLsizei count, GLfloat *value);
+    bool SetUniform2fv(GLint loc, GLsizei count, GLfloat *value);
+    bool SetUniform3fv(GLint loc, GLsizei count, GLfloat *value);
+    bool SetUniform4fv(GLint loc, GLsizei count, GLfloat *value);
 
-    bool SetUniform1iv (GLint loc, GLsizei count, GLint *value);
-    bool SetUniform2iv (GLint loc, GLsizei count, GLint *value);
-    bool SetUniform3iv (GLint loc, GLsizei count, GLint *value);
-    bool SetUniform4iv (GLint loc, GLsizei count, GLint *value);
+    bool SetUniform1iv(GLint loc, GLsizei count, GLint *value);
+    bool SetUniform2iv(GLint loc, GLsizei count, GLint *value);
+    bool SetUniform3iv(GLint loc, GLsizei count, GLint *value);
+    bool SetUniform4iv(GLint loc, GLsizei count, GLint *value);
 
-    bool SetUniformLocMatrix2fv (GLint loc, GLsizei count, GLboolean transpose, GLfloat *value);
-    bool SetUniformLocMatrix3fv (GLint loc, GLsizei count, GLboolean transpose, GLfloat *value);
-    bool SetUniformLocMatrix4fv (GLint loc, GLsizei count, GLboolean transpose, GLfloat *value);
+    bool SetUniformLocMatrix2fv(GLint loc, GLsizei count, GLboolean transpose, GLfloat *value);
+    bool SetUniformLocMatrix3fv(GLint loc, GLsizei count, GLboolean transpose, GLfloat *value);
+    bool SetUniformLocMatrix4fv(GLint loc, GLsizei count, GLboolean transpose, GLfloat *value);
 
-    void GetUniformfv (char *name, GLfloat *values);
-    void GetUniformiv (char *name, GLint *values);
-    int GetUniformLocationARB (const GLchar *name);
-    void GetActiveUniformARB (GLuint index,
+    void GetUniformfv(char *name, GLfloat *values);
+    void GetUniformiv(char *name, GLint *values);
+    int GetUniformLocationARB(const GLchar *name);
+    void GetActiveUniformARB(GLuint index,
                               GLsizei maxLength,
                               GLsizei *length,
                               GLint *size,
@@ -198,16 +198,16 @@ namespace nux
     //        params
     //        Returns the requested object parameter
     //
-    void GetObjectParameterfvARB (GLenum pname, GLfloat *params);
-    bool SetSampler (char *name, int exture_unit);
+    void GetObjectParameterfvARB(GLenum pname, GLfloat *params);
+    bool SetSampler(char *name, int exture_unit);
 
     GLShaderParameter *_FirstParameter;
     void CheckAttributeLocation();
     void CheckUniformLocation();
-    int GetAttributeLocation (const TCHAR *AttributeName);
+    int GetAttributeLocation(const char *AttributeName);
 
   private:
-    IOpenGLShaderProgram (NString ShaderProgramName = NString ("ShaderProgram") );
+    IOpenGLShaderProgram(NString ShaderProgramName = NString("ShaderProgram"));
     ShaderAttributeDefinition m_ProgramAttributeDefinition[16/*NUM_VERTEX_SHADER_INPUT_ATTRIBUTE*/];
     std::vector<ObjectPtr<IOpenGLShader> > ShaderObjectList;
     bool m_CompiledAndReady;

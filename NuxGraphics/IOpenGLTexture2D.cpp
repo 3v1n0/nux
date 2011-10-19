@@ -26,33 +26,33 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLTexture2D);
-  IOpenGLTexture2D::IOpenGLTexture2D (unsigned int Width
+  NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLTexture2D);
+  IOpenGLTexture2D::IOpenGLTexture2D(unsigned int Width
                                       , unsigned int Height
                                       , unsigned int Levels
                                       , BitmapFormat PixelFormat, bool Dummy, NUX_FILE_LINE_DECL)
-    :   IOpenGLBaseTexture (RTTEXTURE, Width, Height, 1, Levels, PixelFormat, NUX_FILE_LINE_PARAM)
+    :   IOpenGLBaseTexture(RTTEXTURE, Width, Height, 1, Levels, PixelFormat, NUX_FILE_LINE_PARAM)
   {
     external_id_ = Dummy;
     if (external_id_ == false)
     {
-      glGenTextures (1, &_OpenGLID);
-      CHECKGL ( glBindTexture (GL_TEXTURE_2D, _OpenGLID) );
+      glGenTextures(1, &_OpenGLID);
+      CHECKGL(glBindTexture(GL_TEXTURE_2D, _OpenGLID));
     }
 
     //_SurfaceArray.Empty(Levels);
     for (unsigned int l = 0; l < Levels; l++)
     {
-      IOpenGLSurface *surface = new IOpenGLSurface (this, _OpenGLID, GL_TEXTURE_2D, GL_TEXTURE_2D, l);
+      IOpenGLSurface *surface = new IOpenGLSurface(this, _OpenGLID, GL_TEXTURE_2D, GL_TEXTURE_2D, l);
 
       if (Dummy == false) surface->InitializeLevel();
 
-      _SurfaceArray.push_back (ObjectPtr<IOpenGLSurface> (surface));
-      surface->UnReference ();
+      _SurfaceArray.push_back(ObjectPtr<IOpenGLSurface> (surface));
+      surface->UnReference();
     }
 
-    SetFiltering (GL_NEAREST, GL_NEAREST);
-    SetWrap (GL_REPEAT, GL_REPEAT, GL_REPEAT);
+    SetFiltering(GL_NEAREST, GL_NEAREST);
+    SetWrap(GL_REPEAT, GL_REPEAT, GL_REPEAT);
 
 #ifdef NUX_OPENGLES_20
     // NPOT textures in GLES2 only support GL_CLAMP_TO_EDGE unless
@@ -60,13 +60,13 @@ namespace nux
     // TODO: Check for GL_OES_texture_npot
     if (!_IsPOT)
     {
-      SetWrap (GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+      SetWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
     }
 #endif
 
     SetRenderStates();
 
-    GRunTimeStats.Register (this);
+    GRunTimeStats.Register(this);
   }
 
   IOpenGLTexture2D::~IOpenGLTexture2D()
@@ -80,14 +80,14 @@ namespace nux
 
     if (external_id_ == false)
     {
-      CHECKGL ( glDeleteTextures (1, &_OpenGLID) );
+      CHECKGL(glDeleteTextures(1, &_OpenGLID));
     }
-    GRunTimeStats.UnRegister (this);
+    GRunTimeStats.UnRegister(this);
     _OpenGLID = 0;
 
   }
 
-  ObjectPtr<IOpenGLSurface> IOpenGLTexture2D::GetSurfaceLevel (int Level)
+  ObjectPtr<IOpenGLSurface> IOpenGLTexture2D::GetSurfaceLevel(int Level)
   {
     if ((Level >= 0) && (Level < _NumMipLevel))
     {
@@ -95,30 +95,30 @@ namespace nux
     }
     else
     {
-      nuxAssertMsg (0, TEXT ("[IOpenGLTexture2D::GetSurfaceLevel] Invalid surface level") );
+      nuxAssertMsg(0, "[IOpenGLTexture2D::GetSurfaceLevel] Invalid surface level");
     }
 
     return ObjectPtr<IOpenGLSurface> (0);
   }
 
-  void IOpenGLTexture2D::GetSurfaceLevel (int Level, ObjectPtr<IOpenGLSurface>& surface)
+  void IOpenGLTexture2D::GetSurfaceLevel(int Level, ObjectPtr<IOpenGLSurface>& surface)
   {
-    surface = GetSurfaceLevel (Level);
+    surface = GetSurfaceLevel(Level);
   }
 
-  int IOpenGLTexture2D::LockRect (
+  int IOpenGLTexture2D::LockRect(
     int Level,
     SURFACE_LOCKED_RECT *pLockedRect,
     const SURFACE_RECT *pRect)
   {
-    nuxAssertMsg (pLockedRect, TEXT ("[IOpenGLTexture2D::LockRect] Invalid parameter 'pLockedRect'.") );
-    nuxAssertMsg (Level >= 0, TEXT ("[IOpenGLTexture2D::LockRect] Invalid mipmap level.") );
-    nuxAssertMsg (Level < _NumMipLevel, TEXT ("[IOpenGLTexture2D::LockRect] Invalid mipmap level.") );
+    nuxAssertMsg(pLockedRect, "[IOpenGLTexture2D::LockRect] Invalid parameter 'pLockedRect'.");
+    nuxAssertMsg(Level >= 0, "[IOpenGLTexture2D::LockRect] Invalid mipmap level.");
+    nuxAssertMsg(Level < _NumMipLevel, "[IOpenGLTexture2D::LockRect] Invalid mipmap level.");
 
     if (Level < _NumMipLevel)
     {
       ObjectPtr<IOpenGLSurface> pSurfaceLevel = _SurfaceArray[Level];
-      return pSurfaceLevel->LockRect (pLockedRect, pRect);
+      return pSurfaceLevel->LockRect(pLockedRect, pRect);
     }
     else
     {
@@ -130,10 +130,10 @@ namespace nux
     return OGL_OK;
   }
 
-  int IOpenGLTexture2D::UnlockRect (int Level)
+  int IOpenGLTexture2D::UnlockRect(int Level)
   {
-    nuxAssertMsg (Level >= 0, TEXT ("[IOpenGLTexture2D::LockRect] Invalid mipmap level."));
-    nuxAssertMsg (Level < _NumMipLevel, TEXT ("[IOpenGLTexture2D::LockRect] Invalid mipmap level."));
+    nuxAssertMsg(Level >= 0, "[IOpenGLTexture2D::LockRect] Invalid mipmap level.");
+    nuxAssertMsg(Level < _NumMipLevel, "[IOpenGLTexture2D::LockRect] Invalid mipmap level.");
 
     if (Level < _NumMipLevel)
     {
@@ -148,21 +148,21 @@ namespace nux
     return OGL_OK;
   }
 
-  unsigned int IOpenGLTexture2D::EnableGammaCorrection (bool b)
+  unsigned int IOpenGLTexture2D::EnableGammaCorrection(bool b)
   {
-    nuxAssert (_OpenGLID);
+    nuxAssert(_OpenGLID);
     return OGL_OK;
   }
 
-  void* IOpenGLTexture2D::GetSurfaceData (int level, int &width, int &height, int &format)
+  void* IOpenGLTexture2D::GetSurfaceData(int level, int &width, int &height, int &format)
   {
-    nuxAssertMsg (level >= 0, TEXT ("[IOpenGLTexture2D::LockRect] Invalid mipmap level.") );
-    nuxAssertMsg (level < _NumMipLevel, TEXT ("[IOpenGLTexture2D::LockRect] Invalid mipmap level.") );
+    nuxAssertMsg(level >= 0, "[IOpenGLTexture2D::LockRect] Invalid mipmap level.");
+    nuxAssertMsg(level < _NumMipLevel, "[IOpenGLTexture2D::LockRect] Invalid mipmap level.");
 
     if (level < _NumMipLevel)
     {
       ObjectPtr<IOpenGLSurface> pSurfaceLevel = _SurfaceArray [level];
-      return pSurfaceLevel->GetSurfaceData (width, height, format);
+      return pSurfaceLevel->GetSurfaceData(width, height, format);
     }
     else
     {

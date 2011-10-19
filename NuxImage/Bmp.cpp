@@ -29,7 +29,7 @@
 
 #include "Bmp.h"
 
-#if defined (NUX_OS_LINUX)
+#if defined(NUX_OS_LINUX)
 #define BI_RGB        0L
 #define BI_RLE8       1L
 #define BI_RLE4       2L
@@ -41,7 +41,7 @@
 namespace nux
 {
 
-  ImageInfo get_bmp_info (const std::string &file_name)
+  ImageInfo get_bmp_info(const std::string &file_name)
   {
     ImageInfo info;
     info.isDelegate = false;
@@ -64,18 +64,18 @@ namespace nux
     // System call: check if the file exist
 #if defined(_WIN32)
 
-    if (_stat (file_name.c_str(), &file_info) != 0)
+    if (_stat(file_name.c_str(), &file_info) != 0)
 #else
-    if (stat (file_name.c_str(), &file_info) != 0)
+    if (stat(file_name.c_str(), &file_info) != 0)
 #endif
     {
-      DEBUG_WARNING ("file not found");
+      DEBUG_WARNING("file not found");
       return info;
     }
 
-    file.open (file_name.c_str(), std::ifstream::binary);                 // open as binary
+    file.open(file_name.c_str(), std::ifstream::binary);                 // open as binary
 
-    if (!file.is_open() )
+    if (!file.is_open())
     {
       //fprintf(stderr, "open file %s failed", file_name);
       //DEBUG_WARNING("Can't open file");
@@ -83,34 +83,34 @@ namespace nux
     }
 
     // Read the footer first
-    file.seekg (0, std::ios::beg);
-    file.read ( (char *) (&fileheader.bfType),              2);
-    file.read ( (char *) (&fileheader.bfSize),              4);
-    file.read ( (char *) (&fileheader.bfReserved1),         2);
-    file.read ( (char *) (&fileheader.bfReserved2),         2);
-    file.read ( (char *) (&fileheader.offset_to_data),      4);
+    file.seekg(0, std::ios::beg);
+    file.read((char *) (&fileheader.bfType),              2);
+    file.read((char *) (&fileheader.bfSize),              4);
+    file.read((char *) (&fileheader.bfReserved1),         2);
+    file.read((char *) (&fileheader.bfReserved2),         2);
+    file.read((char *) (&fileheader.offset_to_data),      4);
 
-    if (!file.good() )
+    if (!file.good())
     {
       file.close();
       //DEBUG_WARNING("error while reading the BMP file header");
       return info;
     }
 
-    file.seekg (BITMAPFILEHEADER_SIZE, std::ios::beg);
-    file.read ( (char *) (&infoheader.biSize),              4);
-    file.read ( (char *) (&infoheader.biWidth),             4);
-    file.read ( (char *) (&infoheader.biHeight),            4);
-    file.read ( (char *) (&infoheader.biPlanes),            2);
-    file.read ( (char *) (&infoheader.biBitCount),          2);
-    file.read ( (char *) (&infoheader.biCompression),       4);
-    file.read ( (char *) (&infoheader.biSizeImage),         4);
-    file.read ( (char *) (&infoheader.biXPelsPerMeter),     4);
-    file.read ( (char *) (&infoheader.biYPelsPerMeter),     4);
-    file.read ( (char *) (&infoheader.biClrUsed),           4);
-    file.read ( (char *) (&infoheader.biClrImportant),      4);
+    file.seekg(BITMAPFILEHEADER_SIZE, std::ios::beg);
+    file.read((char *) (&infoheader.biSize),              4);
+    file.read((char *) (&infoheader.biWidth),             4);
+    file.read((char *) (&infoheader.biHeight),            4);
+    file.read((char *) (&infoheader.biPlanes),            2);
+    file.read((char *) (&infoheader.biBitCount),          2);
+    file.read((char *) (&infoheader.biCompression),       4);
+    file.read((char *) (&infoheader.biSizeImage),         4);
+    file.read((char *) (&infoheader.biXPelsPerMeter),     4);
+    file.read((char *) (&infoheader.biYPelsPerMeter),     4);
+    file.read((char *) (&infoheader.biClrUsed),           4);
+    file.read((char *) (&infoheader.biClrImportant),      4);
 
-    if (!file.good() )
+    if (!file.good())
     {
       file.close();
       //DEBUG_WARNING("error while reading the BMP info header");
@@ -139,7 +139,7 @@ namespace nux
     return info;
   }
 
-  NBitmapData *read_bmp_file (const TCHAR *file_name)
+  NBitmapData *read_bmp_file(const TCHAR *file_name)
   {
     std::ifstream file;
 #if defined(_WIN32)
@@ -157,22 +157,22 @@ namespace nux
     // System call: check if the file exist
 #if defined(_WIN32)
 
-    if (_stat (file_name, &file_info) != 0)
+    if (_stat(file_name, &file_info) != 0)
 #else
-    if (stat (file_name, &file_info) != 0)
+    if (stat(file_name, &file_info) != 0)
 #endif
     {
-      DEBUG_WARNING ("file not found");
+      DEBUG_WARNING("file not found");
       return 0;
     }
 
-    file.open (file_name, std::ifstream::binary);                 // open as binary
+    file.open(file_name, std::ifstream::binary);                 // open as binary
 
-    if (!file.is_open() )
+    if (!file.is_open())
     {
       file.close();
-      fprintf (stderr, "open file %s failed", file_name);
-      DEBUG_WARNING ("cannot open file");
+      fprintf(stderr, "open file %s failed", file_name);
+      DEBUG_WARNING("cannot open file");
       return 0;
     }
 
@@ -216,17 +216,17 @@ namespace nux
 //                        Four byte integer, LSB first.
 
     // Read the footer first
-    file.seekg (0, std::ios::beg);
-    file.read ( (char *) (&fileheader.bfType),            2);
-    file.read ( (char *) (&fileheader.bfSize),            4);
-    file.read ( (char *) (&fileheader.bfReserved1),       2);
-    file.read ( (char *) (&fileheader.bfReserved2),       2);
-    file.read ( (char *) (&fileheader.offset_to_data),    4);
+    file.seekg(0, std::ios::beg);
+    file.read((char *) (&fileheader.bfType),            2);
+    file.read((char *) (&fileheader.bfSize),            4);
+    file.read((char *) (&fileheader.bfReserved1),       2);
+    file.read((char *) (&fileheader.bfReserved2),       2);
+    file.read((char *) (&fileheader.offset_to_data),    4);
 
-    if (!file.good() )
+    if (!file.good())
     {
       file.close();
-      DEBUG_WARNING ("error while reading the BMP file header");
+      DEBUG_WARNING("error while reading the BMP file header");
       return 0;
     }
 
@@ -236,28 +236,28 @@ namespace nux
       return 0;
     }
 
-    file.seekg (BITMAPFILEHEADER_SIZE, std::ios::beg);
-    file.read ( (char *) (&infoheader.biSize),    4);
-    file.read ( (char *) (&infoheader.biWidth),              4);
-    file.read ( (char *) (&infoheader.biHeight),             4);
-    file.read ( (char *) (&infoheader.biPlanes),             2);
-    file.read ( (char *) (&infoheader.biBitCount),          2);
-    file.read ( (char *) (&infoheader.biCompression),        4);
-    file.read ( (char *) (&infoheader.biSizeImage),         4);
-    file.read ( (char *) (&infoheader.biXPelsPerMeter),       4);
-    file.read ( (char *) (&infoheader.biYPelsPerMeter),       4);
-    file.read ( (char *) (&infoheader.biClrUsed),         4);
-    file.read ( (char *) (&infoheader.biClrImportant),    4);
+    file.seekg(BITMAPFILEHEADER_SIZE, std::ios::beg);
+    file.read((char *) (&infoheader.biSize),    4);
+    file.read((char *) (&infoheader.biWidth),              4);
+    file.read((char *) (&infoheader.biHeight),             4);
+    file.read((char *) (&infoheader.biPlanes),             2);
+    file.read((char *) (&infoheader.biBitCount),          2);
+    file.read((char *) (&infoheader.biCompression),        4);
+    file.read((char *) (&infoheader.biSizeImage),         4);
+    file.read((char *) (&infoheader.biXPelsPerMeter),       4);
+    file.read((char *) (&infoheader.biYPelsPerMeter),       4);
+    file.read((char *) (&infoheader.biClrUsed),         4);
+    file.read((char *) (&infoheader.biClrImportant),    4);
 
-    if (!file.good() )
+    if (!file.good())
     {
       file.close();
-      DEBUG_WARNING ("error while reading the BMP info header");
+      DEBUG_WARNING("error while reading the BMP info header");
       return 0;
     }
 
 //    int COMPRESSION_MODE = infoheader.biCompression;
-//    if(infoheader.biCompression)
+//    if (infoheader.biCompression)
 //    {
 //        // No support for compression
 //        file.close();
@@ -265,34 +265,34 @@ namespace nux
 //        return HR_UNSUPPORTED_FORMAT;
 //    }
 
-    if ( (infoheader.biBitCount == 1) ||
-         (infoheader.biBitCount == 4) )
+    if ((infoheader.biBitCount == 1) ||
+         (infoheader.biBitCount == 4))
     {
       file.close();
-      nuxAssertMsg (0, TEXT ("[read_bmp_file] No support for 1 or 4 bit BMP") );
+      nuxAssertMsg(0, "[read_bmp_file] No support for 1 or 4 bit BMP");
       return 0;
     }
 
-    if ( (infoheader.biCompression == BI_RLE8) &&
-         (infoheader.biBitCount == 8) )
+    if ((infoheader.biCompression == BI_RLE8) &&
+         (infoheader.biBitCount == 8))
     {
-      int PaletteSize = (infoheader.biClrUsed == 0) ? PowerOfTwo (infoheader.biBitCount) : infoheader.biClrUsed;
+      int PaletteSize = (infoheader.biClrUsed == 0) ? PowerOfTwo(infoheader.biBitCount) : infoheader.biClrUsed;
 
       for (int pal = 0; pal < PaletteSize; pal++)
       {
-        file.read ( (char *) (&infoheader.colorpalette[pal]),    4);
+        file.read((char *) (&infoheader.colorpalette[pal]),    4);
       }
     }
 
     if (infoheader.biCompression == BI_BITFIELDS)
     {
-      file.read ( (char *) (&infoheader.redMask),    4);
-      file.read ( (char *) (&infoheader.greenMask),    4);
-      file.read ( (char *) (&infoheader.blueMask),    4);
+      file.read((char *) (&infoheader.redMask),    4);
+      file.read((char *) (&infoheader.greenMask),    4);
+      file.read((char *) (&infoheader.blueMask),    4);
 
       if (infoheader.biBitCount == 32)
       {
-        nuxDebugMsg (TEXT ("[read_bmp_file] Warning: 32 Bits BMP with BITFIELDS has not been implemented") );
+        nuxDebugMsg("[read_bmp_file] Warning: 32 Bits BMP with BITFIELDS has not been implemented");
       }
     }
 
@@ -304,22 +304,22 @@ namespace nux
       FLIP_ROW_ORDER = false;
     }
 
-    if ( (infoheader.biCompression == BI_RLE4) && (infoheader.biCompression != BI_BITFIELDS) )
+    if ((infoheader.biCompression == BI_RLE4) && (infoheader.biCompression != BI_BITFIELDS))
     {
       // data is compressed. not supported.
       file.close();
-      nuxAssertMsg (0, TEXT ("[read_bmp_file] No support for 1 or 4 bit BMP") );
-      DEBUG_WARNING ("BMP compressed data not supported");
+      nuxAssertMsg(0, "[read_bmp_file] No support for 1 or 4 bit BMP");
+      DEBUG_WARNING("BMP compressed data not supported");
       return 0;
     }
 
     if (! (infoheader.biBitCount == 8 ||
            infoheader.biBitCount == 16 ||
            infoheader.biBitCount == 24 ||
-           infoheader.biBitCount == 32) )
+           infoheader.biBitCount == 32))
     {
       file.close();
-      nuxAssertMsg (0, TEXT ("[read_bmp_file] Unsupported bit count") );
+      nuxAssertMsg(0, "[read_bmp_file] Unsupported bit count");
       return 0;
     }
 
@@ -338,31 +338,31 @@ namespace nux
     if (infoheader.biBitCount == 32)
       bitmap_format = BITFMT_R8G8B8A8;
 
-    NTextureData *TextureObjectData = new NTextureData (bitmap_format, infoheader.biWidth, infoheader.biHeight, 1);
+    NTextureData *TextureObjectData = new NTextureData(bitmap_format, infoheader.biWidth, infoheader.biHeight, 1);
 
     // raster data size
     datasize = file_info.st_size - fileheader.offset_to_data;
     bmp_buffer = new unsigned char[datasize];
 
     // Set the position to read image data
-    file.seekg (fileheader.offset_to_data, std::ios::beg);
+    file.seekg(fileheader.offset_to_data, std::ios::beg);
 
     // Read image data
-    file.read ( (char *) bmp_buffer, datasize);
+    file.read((char *) bmp_buffer, datasize);
 
-    if (!file.good() )
+    if (!file.good())
     {
       file.close();
       delete bmp_buffer;
-      nuxAssertMsg (0, TEXT ("[read_bmp_file] Error while reading the BMP data") );
+      nuxAssertMsg(0, "[read_bmp_file] Error while reading the BMP data");
       delete TextureObjectData;
       return 0;
     }
 
 
     bmp_data_pointer = bmp_buffer;
-    t_u32 image_width = TextureObjectData->GetSurface (0).GetWidth();
-    t_u32 image_height = TextureObjectData->GetSurface (0).GetHeight();
+    t_u32 image_width = TextureObjectData->GetSurface(0).GetWidth();
+    t_u32 image_height = TextureObjectData->GetSurface(0).GetHeight();
     t_u32 i, j;
     t_u32 value;
 
@@ -378,7 +378,7 @@ namespace nux
                   (* (bmp_data_pointer + 1) << 8) |       // g
                   * (bmp_data_pointer + 2);               // r
 
-          TextureObjectData->GetSurface (0).Write32b (i, j, value);
+          TextureObjectData->GetSurface(0).Write32b(i, j, value);
           bmp_data_pointer += 4;
         }
       }
@@ -388,7 +388,7 @@ namespace nux
     //The bits in the array are packed together, but each scan line must be zero-padded to end on a 4 bytes boundary.
     if (infoheader.biBitCount == 24)
     {
-      int BMP_PITCH = ( (image_width * 3 + 3) >> 2) << 2;
+      int BMP_PITCH = ((image_width * 3 + 3) >> 2) << 2;
 
       for (j = 0; j < image_height; j++)
       {
@@ -400,7 +400,7 @@ namespace nux
                   (* (bmp_data_pointer + 1) << 8) |       // g
                   * (bmp_data_pointer + 2);               // r
 
-          TextureObjectData->GetSurface (0).Write24b (i, j, value);
+          TextureObjectData->GetSurface(0).Write24b(i, j, value);
           bmp_data_pointer += 3;
         }
       }
@@ -413,7 +413,7 @@ namespace nux
     {
       if (infoheader.biCompression != BI_RLE8)
       {
-        int BMP_PITCH = ( (image_width + 3) >> 2) << 2;
+        int BMP_PITCH = ((image_width + 3) >> 2) << 2;
 
         for (j = 0; j < image_height; j++)
         {
@@ -423,7 +423,7 @@ namespace nux
           {
             value = * (bmp_data_pointer);
 
-            TextureObjectData->GetSurface (0).Write8b (i, j, value);
+            TextureObjectData->GetSurface(0).Write8b(i, j, value);
             bmp_data_pointer += 1;
           }
         }
@@ -448,7 +448,7 @@ namespace nux
 
               while (val--)
               {
-                TextureObjectData->GetSurface (0).Write8b (ix, iy, infoheader.colorpalette[valS]);
+                TextureObjectData->GetSurface(0).Write8b(ix, iy, infoheader.colorpalette[valS]);
                 ix++;
               }
             }
@@ -457,7 +457,7 @@ namespace nux
               /* Special modes... */
               val = bmp_buffer[index++];
 
-              switch (val)
+              switch(val)
               {
                 case 0: /* End-Of-Line detected */
                   ix = image_width;
@@ -473,7 +473,7 @@ namespace nux
                   val = bmp_buffer[index++];
                   iy -= val;
                   break;
-                default: /* Transparent (not compressed) sequence detected */
+                default: /* Transparent(not compressed) sequence detected */
 
                   if (val & 1)
                     skip = 1;
@@ -483,7 +483,7 @@ namespace nux
                   while (val--)
                   {
                     valS = bmp_buffer[index++];
-                    TextureObjectData->GetSurface (0).Write8b (ix, iy, infoheader.colorpalette[valS]);
+                    TextureObjectData->GetSurface(0).Write8b(ix, iy, infoheader.colorpalette[valS]);
                     ix++;
                   }
 
@@ -499,7 +499,7 @@ namespace nux
     {
       if (infoheader.biCompression != BI_BITFIELDS)
       {
-        int BMP_PITCH = ( (image_width * 2 + 3) >> 2) << 2;
+        int BMP_PITCH = ((image_width * 2 + 3) >> 2) << 2;
 
         for (j = 0; j < image_height; j++)
         {
@@ -510,22 +510,22 @@ namespace nux
           for (i = 0; i < image_width; i++)
           {
             value = (* (bmp_data_pointer + 1) << 8) |
-                    (* (bmp_data_pointer + 0) ) ;
+                    (* (bmp_data_pointer + 0)) ;
 
             BYTE b = (BYTE) (value & 0x1f);
-            BYTE g = (BYTE) ( float ( (value & 0x3e0) >> 5) * 63.0f / 31.0f); // expand green component from 5 bits to 6 bits
-            BYTE r = (BYTE) ( (value & 0x7c00) >> 10);
+            BYTE g = (BYTE) ( float((value & 0x3e0) >> 5) * 63.0f / 31.0f); // expand green component from 5 bits to 6 bits
+            BYTE r = (BYTE) ((value & 0x7c00) >> 10);
 
             value = (r << 11) | (g << 5) | b;
 
-            TextureObjectData->GetSurface (0).Write16b (i, j, value);
+            TextureObjectData->GetSurface(0).Write16b(i, j, value);
             bmp_data_pointer += 2;
           }
         }
       }
       else
       {
-        int BMP_PITCH = ( (image_width * 2 + 3) >> 2) << 2;
+        int BMP_PITCH = ((image_width * 2 + 3) >> 2) << 2;
 
         for (j = 0; j < image_height; j++)
         {
@@ -536,28 +536,28 @@ namespace nux
           for (i = 0; i < image_width; i++)
           {
             value = (* (bmp_data_pointer + 1) << 8) |
-                    (* (bmp_data_pointer + 0) ) ;
+                    (* (bmp_data_pointer + 0)) ;
 
             BYTE b;
             BYTE g;
             BYTE r;
 
-            if (Hak32_CountNumBits (infoheader.greenMask) == 5)
+            if (Hak32_CountNumBits(infoheader.greenMask) == 5)
             {
               b = (BYTE) (value & infoheader.blueMask);
-              g = (BYTE) ( float ( (value & infoheader.greenMask) >> 5) * 63.0f / 31.0f); // expand green component from 5 bits to 6 bits
-              r = (BYTE) ( (value & infoheader.redMask) >> 10);
+              g = (BYTE) ( float((value & infoheader.greenMask) >> 5) * 63.0f / 31.0f); // expand green component from 5 bits to 6 bits
+              r = (BYTE) ((value & infoheader.redMask) >> 10);
             }
             else
             {
               b = (BYTE) (value & infoheader.blueMask);
-              g = (BYTE) ( (value & infoheader.greenMask) >> 5);
-              r = (BYTE) ( (value & infoheader.redMask) >> 11);
+              g = (BYTE) ((value & infoheader.greenMask) >> 5);
+              r = (BYTE) ((value & infoheader.redMask) >> 11);
             }
 
             value = (r << 11) | (g << 5) | b;
 
-            TextureObjectData->GetSurface (0).Write16b (i, j, value);
+            TextureObjectData->GetSurface(0).Write16b(i, j, value);
             bmp_data_pointer += 2;
           }
         }
@@ -569,13 +569,13 @@ namespace nux
 //        uchar c[2];
 //        long ix, iy, i = 0, step_up = 0;
 //
-//        if(height > 0) {	/* bottom-up */
+//        if (height > 0) {	/* bottom-up */
 //            i = (height - 1) * width;
 //            step_up = -2 * width;
 //        } else
 //            height = -height;
 //
-//        if(clut) {
+//        if (clut) {
 //            unsigned mask_blue =  (unsigned)clut[0].blue +
 //                ((unsigned)clut[0].green << 8);
 //            unsigned mask_green =  (unsigned)clut[1].blue +
@@ -586,29 +586,29 @@ namespace nux
 //            int shft_green = msb((ulong)mask_green) - 8;
 //            int shft_red = msb((ulong)mask_red) - 8;
 //
-//            for(iy = height; iy; iy--, i += step_up)
-//                for(ix = 0; ix < width; ix++, i++) {
+//            for (iy = height; iy; iy--, i += step_up)
+//                for (ix = 0; ix < width; ix++, i++) {
 //                    unsigned val;
 //                    Bread(b, c, sizeof(c));
 //                    val = (unsigned)c[0] + ((unsigned)c[1] << 8);
 //
 //                    buf[i].alpha = 0;
-//                    if(shft_blue >= 0)
+//                    if (shft_blue >= 0)
 //                        buf[i].blue = (uchar)((val & mask_blue) >> shft_blue);
 //                    else
 //                        buf[i].blue = (uchar)((val & mask_blue) << -shft_blue);
-//                    if(shft_green >= 0)
+//                    if (shft_green >= 0)
 //                        buf[i].green = (uchar)((val & mask_green) >> shft_green);
 //                    else
 //                        buf[i].green = (uchar)((val & mask_green) << -shft_green);
-//                    if(shft_red >= 0)
+//                    if (shft_red >= 0)
 //                        buf[i].red = (uchar)((val & mask_red) >> shft_red);
 //                    else
 //                        buf[i].red = (uchar)((val & mask_red) << -shft_red);
 //                }
 //        } else
-//            for(iy = height; iy; iy--, i += step_up)
-//                for(ix = 0; ix < width; ix++, i++) {
+//            for (iy = height; iy; iy--, i += step_up)
+//                for (ix = 0; ix < width; ix++, i++) {
 //                    Bread(b, c, sizeof(c));
 //                    buf[i].blue = (uchar)((c[0] << 3) & 0xf8);
 //                    buf[i].green = (uchar)(((((unsigned)c[1] << 6) +
@@ -622,7 +622,7 @@ namespace nux
     // correct orientation;
     // BMP are stored up-side down. The first pixel is the bottom left.
     if (FLIP_ROW_ORDER)
-      TextureObjectData->GetSurface (0).FlipVertical();
+      TextureObjectData->GetSurface(0).FlipVertical();
 
     delete [] bmp_buffer;
     file.close();
@@ -630,7 +630,7 @@ namespace nux
     return TextureObjectData;
   }
 
-  HReport write_bmp_file (const TCHAR *file_name, NBitmapData *image)
+  HReport write_bmp_file(const TCHAR *file_name, NBitmapData *image)
   {
     std::fstream file;
 
@@ -640,28 +640,28 @@ namespace nux
 
     if (file_name == 0)
     {
-      DEBUG_WARNING ("Cannot create file");
+      DEBUG_WARNING("Cannot create file");
       return HR_INVALID_ARG;
     }
 
-    if (image->GetSurface (0).GetFormat() != BITFMT_R8G8B8)
+    if (image->GetSurface(0).GetFormat() != BITFMT_R8G8B8)
     {
-      DEBUG_WARNING ("Unsupported format");
+      DEBUG_WARNING("Unsupported format");
       return HR_INVALID_ARG;
     }
 
-    file.open (file_name, std::fstream::out | std::fstream::binary);                 // open as binary
+    file.open(file_name, std::fstream::out | std::fstream::binary);                 // open as binary
 
-    if (!file.is_open() )
+    if (!file.is_open())
     {
-      fprintf (stderr, "Open file %s failed", file_name);
-      DEBUG_WARNING ("cannot open file");
+      fprintf(stderr, "Open file %s failed", file_name);
+      DEBUG_WARNING("cannot open file");
       return HR_FILE_IO_FAIL;
     }
 
-    if (image->GetSurface (0).GetFormat() == BITFMT_R8G8B8)
+    if (image->GetSurface(0).GetFormat() == BITFMT_R8G8B8)
     {
-      datasize = image->GetSurface (0).GetWidth() * image->GetSurface (0).GetHeight() * 3;
+      datasize = image->GetSurface(0).GetWidth() * image->GetSurface(0).GetHeight() * 3;
     }
 
     fileheader.bfType = 19778;
@@ -671,8 +671,8 @@ namespace nux
     fileheader.offset_to_data = BITMAPFILEHEADER_SIZE + BITMAPINFOHEADER_SIZE;
 
     infoheader.biSize = BITMAPINFOHEADER_SIZE;
-    infoheader.biWidth = image->GetSurface (0).GetWidth();
-    infoheader.biHeight = image->GetSurface (0).GetHeight();
+    infoheader.biWidth = image->GetSurface(0).GetWidth();
+    infoheader.biHeight = image->GetSurface(0).GetHeight();
     infoheader.biPlanes = 1;
     infoheader.biBitCount = 24;
     infoheader.biCompression = 0; // 0 = no compression, 1 = 8bit RLE encoding, 2 = 4bit RLE encoding
@@ -682,49 +682,49 @@ namespace nux
     infoheader.biClrUsed = 0;
     infoheader.biClrImportant = 0;
 
-    file.seekg (0, std::ios::beg);
+    file.seekg(0, std::ios::beg);
 
-    file.write ( (char *) &fileheader.bfType,       sizeof (fileheader.bfType) );
-    file.write ( (char *) &fileheader.bfSize,       sizeof (fileheader.bfSize) );
-    file.write ( (char *) &fileheader.bfReserved1,        sizeof (fileheader.bfReserved1) );
-    file.write ( (char *) &fileheader.bfReserved2,        sizeof (fileheader.bfReserved2) );
-    file.write ( (char *) &fileheader.offset_to_data,  sizeof (fileheader.offset_to_data) );
+    file.write((char *) &fileheader.bfType,       sizeof(fileheader.bfType));
+    file.write((char *) &fileheader.bfSize,       sizeof(fileheader.bfSize));
+    file.write((char *) &fileheader.bfReserved1,        sizeof(fileheader.bfReserved1));
+    file.write((char *) &fileheader.bfReserved2,        sizeof(fileheader.bfReserved2));
+    file.write((char *) &fileheader.offset_to_data,  sizeof(fileheader.offset_to_data));
 
-    file.write ( (char *) &infoheader.biSize, sizeof (infoheader.biSize) );
-    file.write ( (char *) &infoheader.biWidth,           sizeof (infoheader.biWidth) );
-    file.write ( (char *) &infoheader.biHeight,          sizeof (infoheader.biHeight) );
-    file.write ( (char *) &infoheader.biPlanes,          sizeof (infoheader.biPlanes) );
-    file.write ( (char *) &infoheader.biBitCount,       sizeof (infoheader.biBitCount) );
-    file.write ( (char *) &infoheader.biCompression,     sizeof (infoheader.biCompression) );
-    file.write ( (char *) &infoheader.biSizeImage,      sizeof (infoheader.biSizeImage) );
-    file.write ( (char *) &infoheader.biXPelsPerMeter,    sizeof (infoheader.biXPelsPerMeter) );
-    file.write ( (char *) &infoheader.biYPelsPerMeter,    sizeof (infoheader.biYPelsPerMeter) );
-    file.write ( (char *) &infoheader.biClrUsed,      sizeof (infoheader.biClrUsed) );
-    file.write ( (char *) &infoheader.biClrImportant, sizeof (infoheader.biClrImportant) );
+    file.write((char *) &infoheader.biSize, sizeof(infoheader.biSize));
+    file.write((char *) &infoheader.biWidth,           sizeof(infoheader.biWidth));
+    file.write((char *) &infoheader.biHeight,          sizeof(infoheader.biHeight));
+    file.write((char *) &infoheader.biPlanes,          sizeof(infoheader.biPlanes));
+    file.write((char *) &infoheader.biBitCount,       sizeof(infoheader.biBitCount));
+    file.write((char *) &infoheader.biCompression,     sizeof(infoheader.biCompression));
+    file.write((char *) &infoheader.biSizeImage,      sizeof(infoheader.biSizeImage));
+    file.write((char *) &infoheader.biXPelsPerMeter,    sizeof(infoheader.biXPelsPerMeter));
+    file.write((char *) &infoheader.biYPelsPerMeter,    sizeof(infoheader.biYPelsPerMeter));
+    file.write((char *) &infoheader.biClrUsed,      sizeof(infoheader.biClrUsed));
+    file.write((char *) &infoheader.biClrImportant, sizeof(infoheader.biClrImportant));
 
-    if (!file.good() )
+    if (!file.good())
     {
       file.close();
-      DEBUG_WARNING ("error while writing BMP file");
+      DEBUG_WARNING("error while writing BMP file");
       return HR_FILE_IO_FAIL;
     }
 
 
     t_s32 i, j;
 
-    for (j = 0; j < image->GetSurface (0).GetHeight(); j++)
+    for (j = 0; j < image->GetSurface(0).GetHeight(); j++)
     {
-      for (i = 0; i < image->GetSurface (0).GetWidth(); i++)
+      for (i = 0; i < image->GetSurface(0).GetWidth(); i++)
       {
-        t_u32 gba = image->GetSurface (0).Read (i, image->GetSurface (0).GetHeight() - 1 - j);
-        file.write ( (char *) &gba, 3);
+        t_u32 gba = image->GetSurface(0).Read(i, image->GetSurface(0).GetHeight() - 1 - j);
+        file.write((char *) &gba, 3);
       }
     }
 
-    if (!file.good() )
+    if (!file.good())
     {
       file.close();
-      DEBUG_WARNING ("error while writing BMP file");
+      DEBUG_WARNING("error while writing BMP file");
       return HR_FILE_IO_FAIL;
     }
 

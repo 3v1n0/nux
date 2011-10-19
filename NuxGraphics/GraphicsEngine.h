@@ -70,12 +70,12 @@ namespace nux
   class BlendOperator
   {
   public:
-    BlendOperator ();
-    ~BlendOperator ();
+    BlendOperator();
+    ~BlendOperator();
 
-    void EnableBlending (bool enable);
-    void SetPorterDuffOperator (PorterDuffOperator op);
-    void SetCustomBlendOperator (unsigned int src_blend, unsigned int dst_blend);
+    void EnableBlending(bool enable);
+    void SetPorterDuffOperator(PorterDuffOperator op);
+    void SetCustomBlendOperator(unsigned int src_blend, unsigned int dst_blend);
 
     bool  _enable;
     unsigned int _src_blend;
@@ -109,141 +109,141 @@ namespace nux
       @param GlWindow The graphics window for this rendering engine.
       @param create_rendering_data If true, then in GraphicsEngine, the system creates the OpenGL shaders and the font textures for the rendering.
     */
-    GraphicsEngine (GraphicsDisplay &GlWindow, bool create_rendering_data = true);
+    GraphicsEngine(GraphicsDisplay &GlWindow, bool create_rendering_data = true);
     ~GraphicsEngine();
 
-    void SetContext (int x, int y, int width, int height);
-    void GetContextSize (int &w, int &h) const;
+    void SetContext(int x, int y, int width, int height);
+    void GetContextSize(int &w, int &h) const;
     int GetContextWidth() const;
     int GetContextHeight() const;
     int GetContextX() const;
     int GetContextY() const;
 
-    void GetWindowSize (int &w, int &h) const;
+    void GetWindowSize(int &w, int &h) const;
     int GetWindowWidth() const;
     int GetWindowHeight() const;
 
     OpenGLContext m_CurrrentContext;
 
     // Load Textures
-    BaseTexture *Load2DTextureFile (const char *filename);
-    BaseTexture *Load2DRectangleTextureFile (const char *filename);
-    BaseTexture *Load2DTextureFileGenerateAlpha (const char *filename, int red, int green, int blue);
+    BaseTexture *Load2DTextureFile(const char *filename);
+    BaseTexture *Load2DRectangleTextureFile(const char *filename);
+    BaseTexture *Load2DTextureFileGenerateAlpha(const char *filename, int red, int green, int blue);
 
-    void SetTexture (int TextureUnit, BaseTexture *Texture);
-    void SetTexture (int TextureUnit, ObjectPtr< IOpenGLBaseTexture > Texture);
-    void EnableTextureMode (int TextureUnit, int TextureMode);
-    void DisableTextureMode (int TextureUnit, int TextureMode);
-    void DisableAllTextureMode (int TextureUnit);
+    void SetTexture(int TextureUnit, BaseTexture *Texture);
+    void SetTexture(int TextureUnit, ObjectPtr< IOpenGLBaseTexture > Texture);
+    void EnableTextureMode(int TextureUnit, int TextureMode);
+    void DisableTextureMode(int TextureUnit, int TextureMode);
+    void DisableAllTextureMode(int TextureUnit);
 
     ///////////////////
     // DRAW TEXTURE  //
     ///////////////////
 
     // Neutral
-    void QRP_1Tex (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm &texxform, const Color &color0);
-    void QRP_Pixelate (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &c0, int pixel_size);
-    void QRP_Color (int x, int y, int width, int height, const Color &c0);
-    void QRP_Color (int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3);
-    void QRP_ColorModTexAlpha (int x, int y, int width, int height,
+    void QRP_1Tex(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm &texxform, const Color &color0);
+    void QRP_Pixelate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &c0, int pixel_size);
+    void QRP_Color(int x, int y, int width, int height, const Color &c0);
+    void QRP_Color(int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3);
+    void QRP_ColorModTexAlpha(int x, int y, int width, int height,
       ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color);
 
-    void QRP_2Tex (int x, int y, int width, int height,
+    void QRP_2Tex(int x, int y, int width, int height,
       ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
       ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1);
 
-    void QRP_2TexMod (int x, int y, int width, int height,
+    void QRP_2TexMod(int x, int y, int width, int height,
       ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
       ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1);
 
-    void QRP_4Tex (int x, int y, int width, int height,
+    void QRP_4Tex(int x, int y, int width, int height,
       ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
       ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1,
       ObjectPtr<IOpenGLBaseTexture> DeviceTexture2, TexCoordXForm &texxform2, const Color &color2,
       ObjectPtr<IOpenGLBaseTexture> DeviceTexture3, TexCoordXForm &texxform3, const Color &color3);
 
-    void QRP_Triangle (int x0, int y0, int x1, int y1, int x2, int y2, Color c0);
-    void QRP_Triangle (int x0, int y0, int x1, int y1, int x2, int y2, Color c0, Color c1, Color c2);
-    void QRP_Line (int x0, int y0, int x1, int y1, Color c0);
-    void QRP_Line (int x0, int y0, int x1, int y1, Color c0, Color c1);
-    void QRP_QuadWireframe (int x0, int y0, int width, int height, Color c0, Color c1, Color c2, Color c3);
+    void QRP_Triangle(int x0, int y0, int x1, int y1, int x2, int y2, Color c0);
+    void QRP_Triangle(int x0, int y0, int x1, int y1, int x2, int y2, Color c0, Color c1, Color c2);
+    void QRP_Line(int x0, int y0, int x1, int y1, Color c0);
+    void QRP_Line(int x0, int y0, int x1, int y1, Color c0, Color c1);
+    void QRP_QuadWireframe(int x0, int y0, int width, int height, Color c0, Color c1, Color c2, Color c3);
 
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_GetBlurTexture (
+    ObjectPtr<IOpenGLBaseTexture> QRP_GetBlurTexture(
       int x, int y,
       int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0,
       float sigma = 1.0f, int num_pass = 1);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_GetAlphaTexture (
+    ObjectPtr<IOpenGLBaseTexture> QRP_GetAlphaTexture(
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_GetColorMatrixTexture (
+    ObjectPtr<IOpenGLBaseTexture> QRP_GetColorMatrixTexture(
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0,
       Matrix4 color_matrix, Vector4 offset);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_GetPower (
+    ObjectPtr<IOpenGLBaseTexture> QRP_GetPower(
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color& c0, const Vector4 &exponent);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_GetLQBlur (
+    ObjectPtr<IOpenGLBaseTexture> QRP_GetLQBlur(
       int x, int y, int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_GetHQBlur (
+    ObjectPtr<IOpenGLBaseTexture> QRP_GetHQBlur(
       int x, int y, int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0, float sigma = 1.0f, int num_pass = 1);
 
-    void QRP_DisturbedTexture (
+    void QRP_DisturbedTexture(
       int x, int y, int width, int height,
       ObjectPtr<IOpenGLBaseTexture> distorsion_texture, TexCoordXForm &texxform0, const Color& c0,
       ObjectPtr<IOpenGLBaseTexture> src_device_texture, TexCoordXForm &texxform1, const Color& c1);
 
-	  ObjectPtr<IOpenGLBaseTexture> QRP_GetPixelBlocks (
+	  ObjectPtr<IOpenGLBaseTexture> QRP_GetPixelBlocks(
 		  ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color& c0, int pixel_size);
 
-    void QRP_GetCopyTexture (
+    void QRP_GetCopyTexture(
       int width, int height,
       ObjectPtr<IOpenGLBaseTexture>& dst_device_texture,
       ObjectPtr<IOpenGLBaseTexture>& src_device_texture,
       TexCoordXForm &texxform0, const Color& c0);
 
     // ASM
-    void QRP_ASM_1Tex (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm &texxform, const Color &color0);
-    void QRP_ASM_Pixelate (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &c0, int pixel_size);
+    void QRP_ASM_1Tex(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm &texxform, const Color &color0);
+    void QRP_ASM_Pixelate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &c0, int pixel_size);
 
-    void QRP_ASM_Color (int x, int y, int width, int height, const Color &c0);
-    void QRP_ASM_Color (int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3);
-    void QRP_ASM_ColorModTexAlpha (int x, int y, int width, int height,
+    void QRP_ASM_Color(int x, int y, int width, int height, const Color &c0);
+    void QRP_ASM_Color(int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3);
+    void QRP_ASM_ColorModTexAlpha(int x, int y, int width, int height,
                                ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color);
 
-    void QRP_ASM_2Tex (int x, int y, int width, int height,
+    void QRP_ASM_2Tex(int x, int y, int width, int height,
                    ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
                    ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1);
 
-    void QRP_ASM_2TexMod (int x, int y, int width, int height,
+    void QRP_ASM_2TexMod(int x, int y, int width, int height,
       ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
       ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1);
 
-    void QRP_ASM_4Tex (int x, int y, int width, int height,
+    void QRP_ASM_4Tex(int x, int y, int width, int height,
                    ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
                    ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1,
                    ObjectPtr<IOpenGLBaseTexture> DeviceTexture2, TexCoordXForm &texxform2, const Color &color2,
                    ObjectPtr<IOpenGLBaseTexture> DeviceTexture3, TexCoordXForm &texxform3, const Color &color3);
 
-    void QRP_ASM_Triangle (int x0, int y0, int x1, int y1, int x2, int y2, Color c0);
-    void QRP_ASM_Triangle (int x0, int y0, int x1, int y1, int x2, int y2, Color c0, Color c1, Color c2);
-    void QRP_ASM_Line (int x0, int y0, int x1, int y1, Color c0);
-    void QRP_ASM_Line (int x0, int y0, int x1, int y1, Color c0, Color c1);
-    void QRP_ASM_QuadWireframe (int x0, int y0, int width, int height, Color c0, Color c1, Color c2, Color c3);
+    void QRP_ASM_Triangle(int x0, int y0, int x1, int y1, int x2, int y2, Color c0);
+    void QRP_ASM_Triangle(int x0, int y0, int x1, int y1, int x2, int y2, Color c0, Color c1, Color c2);
+    void QRP_ASM_Line(int x0, int y0, int x1, int y1, Color c0);
+    void QRP_ASM_Line(int x0, int y0, int x1, int y1, Color c0, Color c1);
+    void QRP_ASM_QuadWireframe(int x0, int y0, int width, int height, Color c0, Color c1, Color c2, Color c3);
 
     void QRP_ASM_Power  (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, Vector4 exponent);
     void QRP_ASM_AlphaReplicate  (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0);
-    void QRP_ASM_HorizontalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma = 1.0f);
+    void QRP_ASM_HorizontalGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma = 1.0f);
     void QRP_ASM_VerticalGauss   (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma = 1.0f);
     void QRP_ASM_ColorMatrix     (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, Matrix4 color_matrix, Vector4 offset);
 
@@ -257,11 +257,11 @@ namespace nux
         @param buffer_height  Height of result texture.
         @param sigma          
     */
-    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetBlurTexture (
+    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetBlurTexture(
       int x, int y, int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color& color, float sigma = 1.0f, int num_pass = 1);
 
-    void QRP_ASM_GetBlurTextureFx (
+    void QRP_ASM_GetBlurTextureFx(
       int x, int y, int buffer_width, int buffer_height,
       FxStructure *fx_structure, TexCoordXForm &texxform, const Color& color, float sigma = 1.0f, int num_pass = 1);
 
@@ -272,7 +272,7 @@ namespace nux
         @param color Modulation color.
         @return Texture with all components set to the alpha value of the source.
     */
-    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetAlphaTexture (
+    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetAlphaTexture(
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color& color);
 
     //! Color matrix filter.
@@ -284,7 +284,7 @@ namespace nux
         @param offset Last column of the color matrix filter.
         @return Texture resulting from the processing of the source through a color matrix.
     */
-    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetColorMatrixTexture (
+    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetColorMatrixTexture(
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c, Matrix4 color_matrix, Vector4 offset);
 
@@ -297,18 +297,18 @@ namespace nux
         @param exponent Power values for each component.
         @return A texture where the component of the source texture have been raised to a power.
     */
-    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetPower (
+    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetPower(
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color& c0, const Vector4 &exponent);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetLQBlur (
+    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetLQBlur(
       int x, int y, int buffer_width, int buffer_height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetHQBlur (
+    ObjectPtr<IOpenGLBaseTexture> QRP_ASM_GetHQBlur(
       int x, int y, int buffer_width, int buffer_height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0, float sigma = 1.0f, int num_pass = 1);
 
-    void QRP_ASM_DisturbedTexture (
+    void QRP_ASM_DisturbedTexture(
       int x, int y, int width, int height,
       ObjectPtr<IOpenGLBaseTexture> distorsion_texture, TexCoordXForm &texxform0, const Color& c0,
       ObjectPtr<IOpenGLBaseTexture> src_device_texture, TexCoordXForm &texxform1, const Color& c1);
@@ -321,10 +321,10 @@ namespace nux
         @param pixel_size Size of pixel blocks.
         @return A texture pixelated version of the source texture.
     */
-    ObjectPtr<IOpenGLBaseTexture>  QRP_ASM_GetPixelBlocks (
+    ObjectPtr<IOpenGLBaseTexture>  QRP_ASM_GetPixelBlocks(
 		  ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color& color, int pixel_size);
 
-    void QRP_ASM_GetCopyTexture (
+    void QRP_ASM_GetCopyTexture(
       int width, int height,
       ObjectPtr<IOpenGLBaseTexture>& dst_device_texture,
       ObjectPtr<IOpenGLBaseTexture>& src_device_texture,
@@ -332,24 +332,24 @@ namespace nux
 
     // GLSL
 
-    void QRP_GLSL_1Tex (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &c0);
-    void QRP_GLSL_Pixelate (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &c0, int pixel_size);
+    void QRP_GLSL_1Tex(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &c0);
+    void QRP_GLSL_Pixelate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &c0, int pixel_size);
 
-    void QRP_GLSL_Color (int x, int y, int width, int height, const Color &c0);
-    void QRP_GLSL_Color (int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3);
-    void QRP_GLSL_ColorModTexAlpha (int x, int y, int width, int height,
+    void QRP_GLSL_Color(int x, int y, int width, int height, const Color &c0);
+    void QRP_GLSL_Color(int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3);
+    void QRP_GLSL_ColorModTexAlpha(int x, int y, int width, int height,
                                     ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color);
 
-    void QRP_GLSL_2Tex (int x, int y, int width, int height,
+    void QRP_GLSL_2Tex(int x, int y, int width, int height,
                         ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
                         ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1);
 
-    void QRP_GLSL_2TexMod (int x, int y, int width, int height,
+    void QRP_GLSL_2TexMod(int x, int y, int width, int height,
       ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
       ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1);
 
 
-    void QRP_GLSL_4Tex (int x, int y, int width, int height,
+    void QRP_GLSL_4Tex(int x, int y, int width, int height,
                         ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
                         ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1,
                         ObjectPtr<IOpenGLBaseTexture> DeviceTexture2, TexCoordXForm &texxform2, const Color &color2,
@@ -359,13 +359,13 @@ namespace nux
     void QRP_GLSL_Triangle      (int x0, int y0, int x1, int y1, int x2, int y2, Color c0, Color c1, Color c2);
     void QRP_GLSL_Line          (int x0, int y0, int x1, int y1, Color c0);
     void QRP_GLSL_Line          (int x0, int y0, int x1, int y1, Color c0, Color c1);
-    void QRP_GLSL_QuadWireframe (int x0, int y0, int width, int height, Color c0, Color c1, Color c2, Color c3);
+    void QRP_GLSL_QuadWireframe(int x0, int y0, int width, int height, Color c0, Color c1, Color c2, Color c3);
 
     void QRP_GLSL_Power           (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, Vector4 exponent);
     void QRP_GLSL_AlphaReplicate  (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0);
-    void QRP_GLSL_HorizontalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma = 1.0f);
+    void QRP_GLSL_HorizontalGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma = 1.0f);
     void QRP_GLSL_VerticalGauss   (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma = 1.0f);
-    void QRP_GLSL_HorizontalHQGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma = 1.0f);
+    void QRP_GLSL_HorizontalHQGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma = 1.0f);
     void QRP_GLSL_VerticalHQGauss   (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma = 1.0f);
     void QRP_GLSL_ColorMatrix     (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, Matrix4 color_matrix, Vector4 offset);
 
@@ -377,44 +377,44 @@ namespace nux
         @param buffer_width   Width of result texture.
         @param buffer_height  Height of result texture.
     */
-    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetBlurTexture (
+    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetBlurTexture(
       int x, int y,
       int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0,
       float sigma = 1.0f, int num_pass = 1);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetAlphaTexture (
+    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetAlphaTexture(
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetColorMatrixTexture (
+    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetColorMatrixTexture(
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0,
       Matrix4 color_matrix, Vector4 offset);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetPower (
+    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetPower(
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color& c0, const Vector4 &exponent);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetLQBlur (
+    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetLQBlur(
       int x, int y,
       int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0);
 
-    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetHQBlur (
+    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetHQBlur(
       int x, int y,
       int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
       const Color& c0, float sigma = 1.0f, int num_pass = 1);
 
-    void QRP_GLSL_GetHQBlurFx (
+    void QRP_GLSL_GetHQBlurFx(
       int x, int y,
       int buffer_width, int buffer_height,
       FxStructure *fx_structure, TexCoordXForm &texxform,
       const Color& c0, float sigma = 1.0f, int num_pass = 1);
 
-    void QRP_GLSL_DisturbedTexture (
+    void QRP_GLSL_DisturbedTexture(
       int x, int y, int width, int height,
       ObjectPtr<IOpenGLBaseTexture> distorsion_texture, TexCoordXForm &texxform0, const Color& c0,
       ObjectPtr<IOpenGLBaseTexture> src_device_texture, TexCoordXForm &texxform1, const Color& c1);
@@ -437,7 +437,7 @@ namespace nux
         @param pixel_size Size of pixel blocks.
         @return A texture pixelated version of the source texture.
     */
-	  ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetPixelBlocks (
+	  ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetPixelBlocks(
 		  ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color& c0, int pixel_size);
 
     void QRP_GLSL_GetCopyTexture(
@@ -451,55 +451,55 @@ namespace nux
     //////////////////////
 
     mutable std::vector<Rect> ClippingRect;
-    void PushClippingRectangle (Rect rect);
-    void PopClippingRectangle ();
-    void EmptyClippingRegion ();
+    void PushClippingRectangle(Rect rect);
+    void PopClippingRectangle();
+    void EmptyClippingRegion();
     //! Set the clipping according to the clipping rectangle stack.
-    void ApplyClippingRectangle ();
+    void ApplyClippingRectangle();
     
-    void SetGlobalClippingRectangle (Rect rect);
-    void DisableGlobalClippingRectangle ();
+    void SetGlobalClippingRectangle(Rect rect);
+    void DisableGlobalClippingRectangle();
 
     //! Bypass the clipping rectangle stack and set a different clipping rectangle region.
     /*!
         You may restore the clipping rectangle stack with ApplyClippingRectangle.
     */
-    void SetClippingRectangle (const Rect &rect);
+    void SetClippingRectangle(const Rect &rect);
 
     //! Bypass the clipping rectangle stack and set a different clipping rectangle region.
-    void SetOpenGLClippingRectangle (int x, int y, unsigned int width, unsigned int height);
+    void SetOpenGLClippingRectangle(int x, int y, unsigned int width, unsigned int height);
 
-    Rect GetClippingRegion () const;
-    int GetNumberOfClippingRegions () const;
+    Rect GetClippingRegion() const;
+    int GetNumberOfClippingRegions() const;
     
-    void AddClipOffset (int x, int y);  //!< Deprecated. Use PushClipOffset.
-    void PushClipOffset (int x, int y);
-    void PopClipOffset ();
+    void AddClipOffset(int x, int y);  //!< Deprecated. Use PushClipOffset.
+    void PushClipOffset(int x, int y);
+    void PopClipOffset();
 
-    void ClearAreaColorDepthStencil (int x, int y, int width, int height, Color clearcolor, float cleardepth, int clearstencil);
-    void ClearAreaColor (int x, int y, int width, int height, Color clearcolor);
-    void ClearAreaDepthStencil (int x, int y, int width, int height, float cleardepth, int clearstencil);
+    void ClearAreaColorDepthStencil(int x, int y, int width, int height, Color clearcolor, float cleardepth, int clearstencil);
+    void ClearAreaColor(int x, int y, int width, int height, Color clearcolor);
+    void ClearAreaDepthStencil(int x, int y, int width, int height, float cleardepth, int clearstencil);
 
-    void Set3DView (int w, int h);
+    void Set3DView(int w, int h);
 
     //! Push a screen aligned 2D matrix.
-    void Push2DWindow (int w, int h);
-    void Pop2DWindow ();
-    void Push2DModelViewMatrix (Matrix4 mat);
-    Matrix4 Pop2DModelViewMatrix ();
-    void Clear2DModelViewMatrix ();
+    void Push2DWindow(int w, int h);
+    void Pop2DWindow();
+    void Push2DModelViewMatrix(Matrix4 mat);
+    Matrix4 Pop2DModelViewMatrix();
+    void Clear2DModelViewMatrix();
     std::list<Matrix4> m_2DModelViewMatricesStack;
 
-    void SetViewport (int x, int y, int w, int h);
-    Rect GetViewportRect () const;
-    int  GetViewportWidth () const;
-    int  GetViewportHeight () const;
-    int  GetViewportX () const;
-    int  GetViewportY () const;
+    void SetViewport(int x, int y, int w, int h);
+    Rect GetViewportRect() const;
+    int  GetViewportWidth() const;
+    int  GetViewportHeight() const;
+    int  GetViewportX() const;
+    int  GetViewportY() const;
 
-    void  GetViewportSize (int &viewport_width, int &viewport_height) const;
+    void  GetViewportSize(int &viewport_width, int &viewport_height) const;
 
-    void SetScissor (int x, int y, int w, int h);
+    void SetScissor(int x, int y, int w, int h);
 
     /*!
         When setting a matrix to translate the widgets, the scissor region is not translated accordingly.
@@ -508,10 +508,10 @@ namespace nux
         @param x Clipping area offset.
         @param y Clipping area offset.
     */
-    void SetScissorOffset (int x, int y);
+    void SetScissorOffset(int x, int y);
 
     Rect GetScissorRect();
-    void EnableScissoring (bool b);
+    void EnableScissoring(bool b);
 
 
 //     void LoadPainterImages();
@@ -519,17 +519,17 @@ namespace nux
 //     Rect GetImageGeometry(UXStyleImageRef style);
 //     std::list<PainterImage*> m_PainterImageList;
 
-    int RenderColorText (ObjectPtr<FontTexture> Font, int x, int y, const NString &Str,
+    int RenderColorText(ObjectPtr<FontTexture> Font, int x, int y, const NString &Str,
                          const Color &TextColor,
                          bool WriteAlphaChannel,
                          int NumCharacter);
 
-    int RenderColorTextLineStatic (ObjectPtr<FontTexture> Font, const PageBBox &pageSize, const NString &Str,
+    int RenderColorTextLineStatic(ObjectPtr<FontTexture> Font, const PageBBox &pageSize, const NString &Str,
                                    const Color &TextColor,
                                    bool WriteAlphaChannel,
                                    TextAlignment alignment);
 
-    int RenderColorTextLineEdit (ObjectPtr<FontTexture> Font, const PageBBox &pageSize, const NString &Str,
+    int RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const PageBBox &pageSize, const NString &Str,
                                  const Color &TextColor,
                                  bool WriteAlphaChannel,
                                  const Color &SelectedTextColor,
@@ -539,7 +539,7 @@ namespace nux
                                  bool ShowCursor, unsigned int CursorPosition,
                                  int offset = 0, int selection_start = 0, int selection_end = 0);
 
-    ObjectPtr <IOpenGLBaseTexture> CreateTextureFromBackBuffer (int x, int y, int width, int height);
+    ObjectPtr <IOpenGLBaseTexture> CreateTextureFromBackBuffer(int x, int y, int width, int height);
 
     //Statistics
     void ResetStats();
@@ -550,23 +550,23 @@ namespace nux
         @param Resource The resource to cache.
         @return A hardware resource.
     */
-    ObjectPtr<CachedResourceData> CacheResource (ResourceData *Resource);
+    ObjectPtr<CachedResourceData> CacheResource(ResourceData *Resource);
 
     /*!
         Update a resource if it has previously been cached.
         @param Resource The resource to cache.
     */
-    void UpdateResource (ResourceData *Resource);
+    void UpdateResource(ResourceData *Resource);
 
-    bool FlushCachedResourceData (ResourceData *Resource);
-    bool IsResourceCached (ResourceData *Resource);
+    bool FlushCachedResourceData(ResourceData *Resource);
+    bool IsResourceCached(ResourceData *Resource);
     NResourceCache ResourceCache;
 
-    Matrix4 GetProjectionMatrix ();
-    //! Return the transpose version of GetProjectionMatrix ();
-    Matrix4 GetOpenGLProjectionMatrix ();
+    Matrix4 GetProjectionMatrix();
+    //! Return the transpose version of GetProjectionMatrix();
+    Matrix4 GetOpenGLProjectionMatrix();
     
-    void SetProjectionMatrix (const Matrix4 &matrix);
+    void SetProjectionMatrix(const Matrix4 &matrix);
     
     //! Set orthographic projection matrix.
     /*!
@@ -575,17 +575,17 @@ namespace nux
         @param viewport_width Viewport width.
         @param viewport_height Viewport height.
     */
-    void SetOrthographicProjectionMatrix (int viewport_width, int viewport_height);
+    void SetOrthographicProjectionMatrix(int viewport_width, int viewport_height);
 
     //! Reset the projection matrix to identity.
-    void ResetProjectionMatrix ();
+    void ResetProjectionMatrix();
 
-    Matrix4 GetModelViewMatrix ();
-    //! Return the transpose version of GetModelViewMatrix ();
-    Matrix4 GetOpenGLModelViewMatrix ();
+    Matrix4 GetModelViewMatrix();
+    //! Return the transpose version of GetModelViewMatrix();
+    Matrix4 GetOpenGLModelViewMatrix();
 
-    Matrix4 GetModelViewProjectionMatrix ();
-    Matrix4 GetOpenGLModelViewProjectionMatrix ();
+    Matrix4 GetModelViewProjectionMatrix();
+    Matrix4 GetOpenGLModelViewProjectionMatrix();
 
     GpuRenderStates &GetRenderStates()
     {
@@ -607,43 +607,43 @@ namespace nux
     /*!
         @return True is the system is using the GLSL shader code path.
     */
-    bool UsingGLSLCodePath ();
+    bool UsingGLSLCodePath();
 
     //! Return True is GraphicsEngine is using the ARB program code path.
     /*!
         @return True is the system is using the ARB program code path.
     */
-    bool UsingARBProgramCodePath ();
+    bool UsingARBProgramCodePath();
 
     //! Push a model view matrix on the stack.
-    void PushModelViewMatrix (const Matrix4 &matrix);
+    void PushModelViewMatrix(const Matrix4 &matrix);
 
     //! Push an Identity model view matrix on the stack.
-    void PushIdentityModelViewMatrix ();
+    void PushIdentityModelViewMatrix();
 
     //! Push a 2D Translation model view matrix.
     /*!
         This is used by Nux to harmonize quads and lines pixel rendering in OpenGL.
     */
-    void Push2DTranslationModelViewMatrix (float tx, float ty, float tz);
+    void Push2DTranslationModelViewMatrix(float tx, float ty, float tz);
 
     //! Pop a model view matrix off the stack.
     /*!
         Return True is a matrix was successfully popped. False if there was no matrix to pop.
     */
-    bool PopModelViewMatrix ();
+    bool PopModelViewMatrix();
 
     //! Reset the model view matrix to identity.
-    void ResetModelViewMatrixStack ();
+    void ResetModelViewMatrixStack();
 
     //! Bypass the model view matrix stack and set a custom matrix.
     /*!
         You may restore the view matrix stack by calling ApplyModelViewMatrix.
     */
-    void SetModelViewMatrix (const Matrix4 &matrix);
+    void SetModelViewMatrix(const Matrix4 &matrix);
 
     //! Set the model view matrix according to the model view matrix stack.
-    void ApplyModelViewMatrix ();
+    void ApplyModelViewMatrix();
 
     //! Transform a rectangle with the model view matrix.
     /*!
@@ -652,59 +652,59 @@ namespace nux
 
         @param rect The rectangle to transform.
     */
-    Rect ModelViewXFormRect (const Rect& rect);
+    Rect ModelViewXFormRect(const Rect& rect);
 
     //! Return the depth of the model view matrix stack.
     /*!
         @return The depth of the model view matrix stack.
     */
-    int ModelViewStackDepth ();
+    int ModelViewStackDepth();
 
 
 
     //! Push a projection matrix on the stack.
-    void PushProjectionMatrix (const Matrix4 &matrix);
+    void PushProjectionMatrix(const Matrix4 &matrix);
 
     //! Pop a projection matrix off the stack.
     /*!
         Return True is a matrix was successfully popped. False if there was no matrix to pop.
     */
-    bool PopProjectionMatrix ();
+    bool PopProjectionMatrix();
 
     //! Return the depth of the projection matrix stack.
     /*!
         @return The depth of the projection matrix stack.
     */
-    int ProjectionStackDepth ();
+    int ProjectionStackDepth();
 
 
 
 
 
     //! Push a raster operation configuration setting on the stack.
-    void PushPorterDuffBlend (const PorterDuffOperator &porter_duff_op);
+    void PushPorterDuffBlend(const PorterDuffOperator &porter_duff_op);
 
     //! Push a state that disables the blending.
-    void PushDisableBlend ();
+    void PushDisableBlend();
 
     //! Push a custom blend state.
     /*!
         @param src_blend OpenGL source blending mode.
         @param dst_blend OpenGL destination blending mode.
     */
-    void PushBlend (unsigned int src_blend, unsigned int dst_blend);
+    void PushBlend(unsigned int src_blend, unsigned int dst_blend);
 
     //! Pop a raster operation configuration setting off the stack.
     /*!
         Return True is a matrix was successfully popped. False if there was no matrix to pop.
     */
-    bool PopBlend ();
+    bool PopBlend();
 
     //! Return the depth of the raster operation stack.
     /*!
         @return The depth of the raster operation stack.
     */
-    int BlendStackDepth ();
+    int BlendStackDepth();
 
   private:
 
@@ -714,7 +714,7 @@ namespace nux
     void InitShaders();
 
     //! Helper function to compute a Gaussian filter weights
-    void GaussianWeights (float **weights, float sigma, unsigned int num_tap);
+    void GaussianWeights(float **weights, float sigma, unsigned int num_tap);
 
     //! Helper function to set an fbo
     void SetFrameBufferHelper(
@@ -761,7 +761,7 @@ namespace nux
     ObjectPtr<IOpenGLAsmShaderProgram> m_Asm4TextureAdd;
     ObjectPtr<IOpenGLAsmShaderProgram> m_Asm4TextureRectAdd;
 
-    void InitAsmPower ();
+    void InitAsmPower();
     //! Raise a texture component to a power.
     /*!
         result = color0 * (tex0)^(exponent) = (tex0.r^exponent.r, tex0.g^exponent.g, tex0.b^exponent.b, tex0.a^exponent.a);
@@ -769,7 +769,7 @@ namespace nux
     ObjectPtr<IOpenGLAsmShaderProgram> _asm_tex_component_exponentiation_prog;
     ObjectPtr<IOpenGLAsmShaderProgram> _asm_texrect_component_exponentiation_prog;
 
-    void InitAsmAlphaReplicate ();
+    void InitAsmAlphaReplicate();
     //! Replicate the alpha component into r, g and b.
     /*!
         result = color0 * (tex0.a, tex0.a, tex0.a, tex0.a);
@@ -777,22 +777,22 @@ namespace nux
     ObjectPtr<IOpenGLAsmShaderProgram> _asm_tex_alpha_replicate_prog;
     ObjectPtr<IOpenGLAsmShaderProgram> _asm_texrect_alpha_replicate_prog;
 
-    void InitAsmSeparableGaussFilter ();
+    void InitAsmSeparableGaussFilter();
     //! Gauss horizontal filter.
     ObjectPtr<IOpenGLAsmShaderProgram> _asm_tex_separable_gauss_filter_prog;
     ObjectPtr<IOpenGLAsmShaderProgram> _asm_texrect_separable_gauss_filter_prog;
 
-//     void InitAsmSeparableGaussFilter2 ();
+//     void InitAsmSeparableGaussFilter2();
 //     //! Gauss horizontal filter.
 //     ObjectPtr<IOpenGLAsmShaderProgram> _asm_tex_separable_gauss_filter_prog2;
 //     ObjectPtr<IOpenGLAsmShaderProgram> _asm_texrect_separable_gauss_filter_prog2;
 
-    void InitAsmColorMatrixFilter ();
+    void InitAsmColorMatrixFilter();
     //! Color matrix filter.
     ObjectPtr<IOpenGLAsmShaderProgram> _asm_tex_color_matrix_filter_prog;
     ObjectPtr<IOpenGLAsmShaderProgram> _asm_texrect_color_matrix_filter_prog;
 
-    void InitAsm2TextureDepRead ();
+    void InitAsm2TextureDepRead();
     ObjectPtr<IOpenGLAsmShaderProgram> m_ASM2TextureDepRead;
     ObjectPtr<IOpenGLAsmShaderProgram> m_ASM2TextureRectDepRead;
 
@@ -829,7 +829,7 @@ namespace nux
 
     void InitSl2TextureDepRead();
     //! Render a quad with 2 textures. One texture sample is use to offset the coordinates of the second texture read.
-    //! result = (tex1 (coord1.xy + tex0.xy)*color1)
+    //! result = (tex1(coord1.xy + tex0.xy)*color1)
     ObjectPtr<IOpenGLShaderProgram> m_Sl2TextureDepRead;
 
 
@@ -842,40 +842,40 @@ namespace nux
     //! Render polygons with 4 textures, each modulated by a color, and added together.
     ObjectPtr<IOpenGLShaderProgram> m_Sl4TextureAdd;
 
-    void InitSLPower ();
+    void InitSLPower();
     //! Raise a texture component to a power.
     /*!
         result = color0 * (tex0)^(exponent) = (tex0.r^exponent.r, tex0.g^exponent.g, tex0.b^exponent.b, tex0.a^exponent.a);
     */
     ObjectPtr<IOpenGLShaderProgram> _component_exponentiation_prog;
 
-    void InitSLAlphaReplicate ();
+    void InitSLAlphaReplicate();
     //! Replicate the alpha component into r, g and b.
     /*!
         result = color0 * (tex0.a, tex0.a, tex0.a, tex0.a);
     */
     ObjectPtr<IOpenGLShaderProgram> _alpha_replicate_prog;
 
-    void InitSLHorizontalGaussFilter ();
+    void InitSLHorizontalGaussFilter();
     //! Gauss horizontal filter.
     ObjectPtr<IOpenGLShaderProgram> _horizontal_gauss_filter_prog;
     
-    void InitSLVerticalGaussFilter ();
+    void InitSLVerticalGaussFilter();
     //! Gauss vertical filter.
     ObjectPtr<IOpenGLShaderProgram> _vertical_gauss_filter_prog;
     
 
-    void InitSLHorizontalHQGaussFilter (int sigma);
+    void InitSLHorizontalHQGaussFilter(int sigma);
     //! Gauss horizontal filter.
     ObjectPtr<IOpenGLShaderProgram> _horizontal_hq_gauss_filter_prog[NUX_MAX_GAUSSIAN_SIGMA];
 
-    void InitSLVerticalHQGaussFilter (int sigma);
+    void InitSLVerticalHQGaussFilter(int sigma);
     //! Gauss vertical filter.
     ObjectPtr<IOpenGLShaderProgram> _vertical_hq_gauss_filter_prog[NUX_MAX_GAUSSIAN_SIGMA];
 
 
 
-    void InitSLColorMatrixFilter ();
+    void InitSLColorMatrixFilter();
     //! Color matrix filter.
     ObjectPtr<IOpenGLShaderProgram> _color_matrix_filter_prog;
 
@@ -892,7 +892,7 @@ namespace nux
 
 
     //! Test the gpu features and set variables such as \e _use_glsl_shaders.
-    void EvaluateGpuCaps ();
+    void EvaluateGpuCaps();
 
     bool _use_glsl_shaders; //!< True if the system is using the glsl code path.
 
@@ -944,7 +944,7 @@ namespace nux
     mutable long m_triangle_tex_stats;
     mutable long m_line_stats;
 
-    GraphicsEngine (const GraphicsEngine &);
+    GraphicsEngine(const GraphicsEngine &);
     // Does not make sense for a singleton. This is a self assignment.
     GraphicsEngine& operator = (const GraphicsEngine &);
     // Declare operator address-of as private

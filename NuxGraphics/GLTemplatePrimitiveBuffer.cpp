@@ -26,15 +26,15 @@
 namespace nux
 {
 
-  TemplateQuadBuffer::TemplateQuadBuffer (GpuDevice *pDeviceFactory, ShaderType Type, int NumQuads)
-    :   m_ShaderType (Type)
+  TemplateQuadBuffer::TemplateQuadBuffer(GpuDevice *pDeviceFactory, ShaderType Type, int NumQuads)
+    :   m_ShaderType(Type)
   {
-    Memset (VertexAttributeBuffer, 0, 16);
+    Memset(VertexAttributeBuffer, 0, 16);
 
-    nuxAssert (pDeviceFactory);
+    nuxAssert(pDeviceFactory);
     m_pDeviceFactory = pDeviceFactory;
     m_NumQuad = NumQuads;
-    nuxAssert (m_NumQuad > 0);
+    nuxAssert(m_NumQuad > 0);
 
     if (m_NumQuad < 0)
       m_NumQuad = 256;
@@ -58,17 +58,17 @@ namespace nux
   {
     // create vertex buffers for quad rendering
     // NumQuads * (4 vertices per Quad) * (4 Bytes per vertices)
-    VertexAttributeBuffer[0] = m_pDeviceFactory->CreateVertexBuffer (m_NumQuad * 4 * 16, VBO_USAGE_DYNAMIC);
+    VertexAttributeBuffer[0] = m_pDeviceFactory->CreateVertexBuffer(m_NumQuad * 4 * 16, VBO_USAGE_DYNAMIC);
 
     // fill quad vertex buffer
     unsigned idx = 0;
     //BYTE* data0;
     float *data0;
-    VertexAttributeBuffer[0]->Lock (0, m_NumQuad * 4 * 16, (void **) &data0);
+    VertexAttributeBuffer[0]->Lock(0, m_NumQuad * 4 * 16, (void **) &data0);
 
     for (INT i = 0; i < m_NumQuad; ++i)
     {
-      //         (0, 0) _________ (1, 0)
+      //         (0, 0) _________(1, 0)
       //                |      /|
       //                |     / |
       //                |    /  |
@@ -79,27 +79,27 @@ namespace nux
       //         (0, 1) --------- (1, 1)
 
 
-      ( (float *) data0) [idx++] = 0; // x
-      ( (float *) data0) [idx++] = 0; // y
-      ( (float *) data0) [idx++] = 0; // z
-      ( (float *) data0) [idx++] = 1.0f; // w
+      ((float *) data0) [idx++] = 0; // x
+      ((float *) data0) [idx++] = 0; // y
+      ((float *) data0) [idx++] = 0; // z
+      ((float *) data0) [idx++] = 1.0f; // w
 
 
-      ( (float *) data0) [idx++] = 0; // x
-      ( (float *) data0) [idx++] = 1.0f; // y
-      ( (float *) data0) [idx++] = 0; // z
-      ( (float *) data0) [idx++] = 1; // w
+      ((float *) data0) [idx++] = 0; // x
+      ((float *) data0) [idx++] = 1.0f; // y
+      ((float *) data0) [idx++] = 0; // z
+      ((float *) data0) [idx++] = 1; // w
 
-      ( (float *) data0) [idx++] = 1.0f; // x
-      ( (float *) data0) [idx++] = 1.0f; // y
-      ( (float *) data0) [idx++] = 0; // z
-      ( (float *) data0) [idx++] = 1; // w
+      ((float *) data0) [idx++] = 1.0f; // x
+      ((float *) data0) [idx++] = 1.0f; // y
+      ((float *) data0) [idx++] = 0; // z
+      ((float *) data0) [idx++] = 1; // w
 
 
-      ( (float *) data0) [idx++] = 1.0f; // x
-      ( (float *) data0) [idx++] = 0; // y
-      ( (float *) data0) [idx++] = 0; // z
-      ( (float *) data0) [idx++] = 1; // w
+      ((float *) data0) [idx++] = 1.0f; // x
+      ((float *) data0) [idx++] = 0; // y
+      ((float *) data0) [idx++] = 0; // z
+      ((float *) data0) [idx++] = 1; // w
 
 
 //         ((DWORD*)data0)[idx++]=((255*(0&1)))|((255*((0&2)>>1))<<8)|(0<<16)|(255<<24);
@@ -112,18 +112,18 @@ namespace nux
 
     // create index buffers for quad rendering
     // NumQuads * (6 index per Quad) * (2 Bytes per index) : each quad is 2 triangles => 6 indices.
-    m_IB = m_pDeviceFactory->CreateIndexBuffer (m_NumQuad * 6 * 2, VBO_USAGE_DYNAMIC, INDEX_FORMAT_USHORT);
+    m_IB = m_pDeviceFactory->CreateIndexBuffer(m_NumQuad * 6 * 2, VBO_USAGE_DYNAMIC, INDEX_FORMAT_USHORT);
 
     // Fill quad index buffer
     // The index buffers defines 2 triangles for each quad.
-    // Triangles are arranged as strips (that is 6 triangle index for a quad).
+    // Triangles are arranged as strips(that is 6 triangle index for a quad).
     WORD *data1;
-    m_IB->Lock (0, m_NumQuad * 6 * 2, (void **) &data1);
+    m_IB->Lock(0, m_NumQuad * 6 * 2, (void **) &data1);
 
     for (INT i = 0; i < m_NumQuad; ++i)
     {
       //
-      //            (0) _________ (1)
+      //            (0) _________(1)
       //                |      /|
       //                |     / |
       //                |    /  |
@@ -133,22 +133,22 @@ namespace nux
       //                |/      |
       //            (3) --------- (2)
       //
-      ( (WORD *) data1) [i*6+0] = i * 4 + 0;
-      ( (WORD *) data1) [i*6+1] = i * 4 + 1;
-      ( (WORD *) data1) [i*6+2] = i * 4 + 3;
-      ( (WORD *) data1) [i*6+3] = i * 4 + 3;
-      ( (WORD *) data1) [i*6+4] = i * 4 + 1;
-      ( (WORD *) data1) [i*6+5] = i * 4 + 2;
+      ((WORD *) data1) [i*6+0] = i * 4 + 0;
+      ((WORD *) data1) [i*6+1] = i * 4 + 1;
+      ((WORD *) data1) [i*6+2] = i * 4 + 3;
+      ((WORD *) data1) [i*6+3] = i * 4 + 3;
+      ((WORD *) data1) [i*6+4] = i * 4 + 1;
+      ((WORD *) data1) [i*6+5] = i * 4 + 2;
 
     }
 
     m_IB->Unlock();
   }
 
-  void TemplateQuadBuffer::SetNumQuads (int NumQuads)
+  void TemplateQuadBuffer::SetNumQuads(int NumQuads)
   {
     m_NumQuad = NumQuads;
-    nuxAssert (m_NumQuad > 0);
+    nuxAssert(m_NumQuad > 0);
 
     if (m_NumQuad < 0)
       m_NumQuad = 256;
@@ -174,7 +174,7 @@ namespace nux
     m_pDeviceFactory->InvalidateVertexBuffer();
   }
 
-  void TemplateQuadBuffer::BindAttribute (INT AttributeLocation, UINT AttributeIndex)
+  void TemplateQuadBuffer::BindAttribute(INT AttributeLocation, UINT AttributeIndex)
   {
     if (AttributeLocation < 0)
     {
@@ -182,12 +182,12 @@ namespace nux
       return;
     }
 
-    nuxAssert (AttributeIndex >= 0); // Index 0 is the vertex position attribute. This on is set in the constructor.
-    nuxAssert (AttributeIndex < 16);
-    nuxAssert (AttributeLocation >= 0);
+    nuxAssert(AttributeIndex >= 0); // Index 0 is the vertex position attribute. This on is set in the constructor.
+    nuxAssert(AttributeIndex < 16);
+    nuxAssert(AttributeLocation >= 0);
 
 
-    if (VertexAttributeBuffer[AttributeIndex].IsNull() )
+    if (VertexAttributeBuffer[AttributeIndex].IsNull())
       return;
 
     if (m_ShaderType == SHADER_TYPE_GLSL)
@@ -195,24 +195,24 @@ namespace nux
       if (AttributeIndex == 0)
       {
         VertexAttributeBuffer[AttributeIndex]->BindVertexBuffer();
-        CHECKGL ( glEnableVertexAttribArrayARB (AttributeLocation) );
-        CHECKGL ( glVertexAttribPointerARB ( (GLuint) AttributeLocation, 4, GL_FLOAT, GL_FALSE, 0, NUX_BUFFER_OFFSET (0) ) );
+        CHECKGL(glEnableVertexAttribArrayARB(AttributeLocation));
+        CHECKGL(glVertexAttribPointerARB((GLuint) AttributeLocation, 4, GL_FLOAT, GL_FALSE, 0, NUX_BUFFER_OFFSET(0)));
       }
       else
       {
         VertexAttributeBuffer[AttributeIndex]->BindVertexBuffer();
-        CHECKGL ( glEnableVertexAttribArrayARB (AttributeLocation) );
-        CHECKGL ( glVertexAttribPointerARB ( (GLuint) AttributeLocation, 4, GL_FLOAT, GL_FALSE, 0, NUX_BUFFER_OFFSET (0) ) );
+        CHECKGL(glEnableVertexAttribArrayARB(AttributeLocation));
+        CHECKGL(glVertexAttribPointerARB((GLuint) AttributeLocation, 4, GL_FLOAT, GL_FALSE, 0, NUX_BUFFER_OFFSET(0)));
       }
     }
     else
     {
-      nuxAssertMsg (0, TEXT ("[TemplateQuadBuffer::BindCgAttribute] Use BindCGAttribute for CG attributes.") );
+      nuxAssertMsg(0, "[TemplateQuadBuffer::BindCgAttribute] Use BindCGAttribute for CG attributes.");
     }
   }
 
 #if (NUX_ENABLE_CG_SHADERS)
-  void TemplateQuadBuffer::BindCGAttribute (CGparameter AttributeLocation, UINT AttributeIndex)
+  void TemplateQuadBuffer::BindCGAttribute(CGparameter AttributeLocation, UINT AttributeIndex)
   {
     if (AttributeLocation < 0)
     {
@@ -220,12 +220,12 @@ namespace nux
       return;
     }
 
-    nuxAssert (AttributeIndex >= 0); // Index 0 is the vertex position attribute. This on is set in the constructor.
-    nuxAssert (AttributeIndex < 16);
-    nuxAssert (AttributeLocation >= 0);
+    nuxAssert(AttributeIndex >= 0); // Index 0 is the vertex position attribute. This on is set in the constructor.
+    nuxAssert(AttributeIndex < 16);
+    nuxAssert(AttributeLocation >= 0);
 
 
-    if (VertexAttributeBuffer[AttributeIndex].IsNull() )
+    if (VertexAttributeBuffer[AttributeIndex].IsNull())
       return;
 
     if (m_ShaderType == SHADER_TYPE_CG)
@@ -233,24 +233,24 @@ namespace nux
       if (AttributeIndex == 0)
       {
         VertexAttributeBuffer[AttributeIndex]->BindVertexBuffer();
-        CHECKGL ( cgGLEnableClientState ( (CGparameter) AttributeLocation) );
-        CHECKGL ( cgGLSetParameterPointer ( (CGparameter) AttributeLocation, 4, GL_FLOAT, 0, NUX_BUFFER_OFFSET (0) ) );
+        CHECKGL(cgGLEnableClientState((CGparameter) AttributeLocation));
+        CHECKGL(cgGLSetParameterPointer((CGparameter) AttributeLocation, 4, GL_FLOAT, 0, NUX_BUFFER_OFFSET(0)));
       }
       else
       {
         VertexAttributeBuffer[AttributeIndex]->BindVertexBuffer();
-        CHECKGL ( cgGLEnableClientState ( (CGparameter) AttributeLocation) );
-        CHECKGL ( cgGLSetParameterPointer ( (CGparameter) AttributeLocation, 4, GL_FLOAT, 0, NUX_BUFFER_OFFSET (0) ) );
+        CHECKGL(cgGLEnableClientState((CGparameter) AttributeLocation));
+        CHECKGL(cgGLSetParameterPointer((CGparameter) AttributeLocation, 4, GL_FLOAT, 0, NUX_BUFFER_OFFSET(0)));
       }
     }
     else
     {
-      nuxAssertMsg (0, TEXT ("[TemplateQuadBuffer::BindCGAttribute] Use BindAttribute for GLSL attributes.") );
+      nuxAssertMsg(0, "[TemplateQuadBuffer::BindCGAttribute] Use BindAttribute for GLSL attributes.");
     }
   }
 #endif
 
-  void TemplateQuadBuffer::UnBindAttribute (INT AttributeLocation)
+  void TemplateQuadBuffer::UnBindAttribute(INT AttributeLocation)
   {
     if (AttributeLocation < 0)
     {
@@ -260,16 +260,16 @@ namespace nux
 
     if (m_ShaderType == SHADER_TYPE_GLSL)
     {
-      CHECKGL ( glDisableVertexAttribArrayARB (AttributeLocation) );
+      CHECKGL(glDisableVertexAttribArrayARB(AttributeLocation));
     }
     else
     {
-      nuxAssertMsg (0, TEXT ("[TemplateQuadBuffer::UnBindAttribute] Use UnBindCGAttribute for CG attributes.") );
+      nuxAssertMsg(0, "[TemplateQuadBuffer::UnBindAttribute] Use UnBindCGAttribute for CG attributes.");
     }
   }
 
 #if (NUX_ENABLE_CG_SHADERS)
-  void TemplateQuadBuffer::UnBindCGAttribute (CGparameter AttributeLocation)
+  void TemplateQuadBuffer::UnBindCGAttribute(CGparameter AttributeLocation)
   {
     if (AttributeLocation < 0)
     {
@@ -279,16 +279,16 @@ namespace nux
 
     if (m_ShaderType == SHADER_TYPE_CG)
     {
-      CHECKGL ( cgGLDisableClientState ( (CGparameter) AttributeLocation) );
+      CHECKGL(cgGLDisableClientState((CGparameter) AttributeLocation));
     }
     else
     {
-      nuxAssertMsg (0, TEXT ("[TemplateQuadBuffer::UnBindCGAttribute] Use UnBindAttribute for GLSL attributes.") );
+      nuxAssertMsg(0, "[TemplateQuadBuffer::UnBindCGAttribute] Use UnBindAttribute for GLSL attributes.");
     }
   }
 #endif
 
-  void TemplateQuadBuffer::Render (INT NumPrimitives)
+  void TemplateQuadBuffer::Render(INT NumPrimitives)
   {
     INT NumVertex = NumPrimitives * 6;  // each quad is 2 triangles = 6 indices
 
@@ -298,22 +298,22 @@ namespace nux
     }
 
     m_IB->BindIndexBuffer();
-    CHECKGL ( glDrawElements ( GL_TRIANGLES, NumVertex, GL_UNSIGNED_SHORT,  NUX_BUFFER_OFFSET (0) ) );
+    CHECKGL(glDrawElements( GL_TRIANGLES, NumVertex, GL_UNSIGNED_SHORT,  NUX_BUFFER_OFFSET(0)));
     m_pDeviceFactory->InvalidateIndexBuffer();
   }
 
-  void TemplateQuadBuffer::SetPerQuadAttribute (UINT AttributeIndex, INT Num, Vector4 *pVector)
+  void TemplateQuadBuffer::SetPerQuadAttribute(UINT AttributeIndex, INT Num, Vector4 *pVector)
   {
-    nuxAssert (AttributeIndex > 0); // Index 0 is the vertex position attribute. This on is set in the constructor.
-    nuxAssert (AttributeIndex < 16);
+    nuxAssert(AttributeIndex > 0); // Index 0 is the vertex position attribute. This on is set in the constructor.
+    nuxAssert(AttributeIndex < 16);
 
     // Destroy the vertex buffer by setting it to NULL;
     VertexAttributeBuffer[AttributeIndex] = ObjectPtr<IOpenGLVertexBuffer> (0);;
 
-    VertexAttributeBuffer[AttributeIndex] = m_pDeviceFactory->CreateVertexBuffer (m_NumQuad * 4 * sizeof (Vector4), VBO_USAGE_DYNAMIC);
+    VertexAttributeBuffer[AttributeIndex] = m_pDeviceFactory->CreateVertexBuffer(m_NumQuad * 4 * sizeof(Vector4), VBO_USAGE_DYNAMIC);
 
     FLOAT *data;
-    VertexAttributeBuffer[AttributeIndex]->Lock (0, m_NumQuad * 4 * sizeof (Vector4), (void **) &data);
+    VertexAttributeBuffer[AttributeIndex]->Lock(0, m_NumQuad * 4 * sizeof(Vector4), (void **) &data);
 
     INT i;
 
@@ -346,18 +346,18 @@ namespace nux
     VertexAttributeBuffer[AttributeIndex]->Unlock();
   }
 
-  void TemplateQuadBuffer::SetPerVertexAttribute (UINT AttributeIndex, INT Num, Vector4 *pVector)
+  void TemplateQuadBuffer::SetPerVertexAttribute(UINT AttributeIndex, INT Num, Vector4 *pVector)
   {
-    nuxAssert (AttributeIndex > 0); // Index 0 is the vertex position attribute. This on is set in the constructor.
-    nuxAssert (AttributeIndex < 16);
+    nuxAssert(AttributeIndex > 0); // Index 0 is the vertex position attribute. This on is set in the constructor.
+    nuxAssert(AttributeIndex < 16);
 
     // Destroy the vertex buffer by setting it to NULL;
     VertexAttributeBuffer[AttributeIndex] = ObjectPtr<IOpenGLVertexBuffer> (0);;
 
-    VertexAttributeBuffer[AttributeIndex] = m_pDeviceFactory->CreateVertexBuffer (m_NumQuad * 4 * sizeof (Vector4), VBO_USAGE_DYNAMIC);
+    VertexAttributeBuffer[AttributeIndex] = m_pDeviceFactory->CreateVertexBuffer(m_NumQuad * 4 * sizeof(Vector4), VBO_USAGE_DYNAMIC);
 
     FLOAT *data;
-    VertexAttributeBuffer[AttributeIndex]->Lock (0, m_NumQuad * 4 * sizeof (Vector4), (void **) &data);
+    VertexAttributeBuffer[AttributeIndex]->Lock(0, m_NumQuad * 4 * sizeof(Vector4), (void **) &data);
 
     INT i;
 
@@ -383,7 +383,7 @@ namespace nux
     VertexAttributeBuffer[AttributeIndex]->Unlock();
   }
 
-  void TemplateQuadBuffer::UnSetQuadAttribute (UINT AttributeIndex)
+  void TemplateQuadBuffer::UnSetQuadAttribute(UINT AttributeIndex)
   {
 
   }

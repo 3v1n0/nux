@@ -31,12 +31,12 @@ namespace nux
 
   class IOpenGLVolume: public IOpenGLResource
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLVolume, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLVolume, IOpenGLResource);
 
   public:
     virtual int RefCount() const;
 
-    int LockBox (
+    int LockBox(
       VOLUME_LOCKED_BOX *pLockedVolume,
       const VOLUME_BOX *pBox);
 
@@ -57,7 +57,7 @@ namespace nux
       return _SSurfaceTarget;
     }
 
-    int GetLevelDesc (VOLUME_DESC *pDesc)
+    int GetLevelDesc(VOLUME_DESC *pDesc)
     {
       pDesc->Width    = GetWidth();
       pDesc->Height   = GetHeight();
@@ -72,13 +72,13 @@ namespace nux
 
     int InitializeLevel();
 
-    IOpenGLVolume (IOpenGLVolumeTexture *VolumeTexture, GLenum OpenGLID, GLenum TextureTarget, GLenum SurfaceTarget, unsigned int MipLevel)
-      : IOpenGLResource (RTVOLUME)
-      , _STextureTarget (TextureTarget)
-      , _SSurfaceTarget (SurfaceTarget)
-      , _SMipLevel (MipLevel)
-      , _VolumeTexture (VolumeTexture)
-      , _AllocatedUnpackBuffer (0xFFFFFFFF)
+    IOpenGLVolume(IOpenGLVolumeTexture *VolumeTexture, GLenum OpenGLID, GLenum TextureTarget, GLenum SurfaceTarget, unsigned int MipLevel)
+      : IOpenGLResource(RTVOLUME)
+      , _STextureTarget(TextureTarget)
+      , _SSurfaceTarget(SurfaceTarget)
+      , _SMipLevel(MipLevel)
+      , _VolumeTexture(VolumeTexture)
+      , _AllocatedUnpackBuffer(0xFFFFFFFF)
     {
       // IOpenGLVolume surfaces are created inside a IOpenGLVolumeTexture.
       // They reside within this class. The reference counting starts once a call to GetVolumeLevel is made to the container object.

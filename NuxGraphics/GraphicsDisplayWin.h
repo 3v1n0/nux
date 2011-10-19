@@ -70,7 +70,7 @@ namespace nux
     HWND        wnd_handle_;                     //!< Window Handle.
     HWND        m_ParentWindow;
 
-    TCHAR m_WindowClassName[256];
+    char m_WindowClassName[256];
     GLuint      m_PixelFormat;      // Holds The Results After Searching For A Match
     DWORD       m_dwExStyle;        // Window Extended Style
     DWORD       m_dwStyle;          // Window Style
@@ -102,8 +102,8 @@ namespace nux
 
     HCURSOR cursor_;
 
-    static int Win32KeySymToINL (int Keysym);
-    static int Win32VKToNuxKey (int vk);
+    static int Win32KeySymToINL(int Keysym);
+    static int Win32VKToNuxKey(int vk);
   public:
 
     // Device
@@ -124,8 +124,8 @@ namespace nux
         @param ParentWindow     The parent window.
         @param FullscreenFlag   Full screen flag.
     */
-    bool CreateOpenGLWindow (
-      const TCHAR *WindowTitle,
+    bool CreateOpenGLWindow(
+      const char *WindowTitle,
       unsigned int WindowWidth,
       unsigned int WindowHeight,
       WindowStyle Style,
@@ -139,23 +139,23 @@ namespace nux
         @param WindowDCHandle   Provided device context.
         @param OpenGLRenderingContext   And OpenGL rendering context.
     */
-    bool CreateFromOpenGLWindow (HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext);
+    bool CreateFromOpenGLWindow(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext);
 
     void DestroyOpenGLWindow();
 
-    void SetWindowTitle (const TCHAR *Title);
-    void SetWindowSize (int width, int height);
-    void SetViewPort (int x, int y, int width, int height);
+    void SetWindowTitle(const char *Title);
+    void SetWindowSize(int width, int height);
+    void SetViewPort(int x, int y, int width, int height);
     Point GetMouseScreenCoord();
     Point GetMouseWindowCoord();
     Point GetWindowCoord();
     Rect GetWindowGeometry();
     Rect GetNCWindowGeometry();
-    void MakeGLContextCurrent (bool b = true);
-    void SwapBuffer (bool glswap = true);
+    void MakeGLContextCurrent(bool b = true);
+    void SwapBuffer(bool glswap = true);
 
     // Event methods
-    void GetSystemEvent (Event *evt);
+    void GetSystemEvent(Event *evt);
     Event &GetCurrentEvent();
 
     bool isWindowMinimized() const
@@ -165,7 +165,7 @@ namespace nux
 
     void ShowWindow();
     void HideWindow();
-    bool IsWindowVisible ();
+    bool IsWindowVisible();
 
     void EnterMaximizeWindow();
     void ExitMaximizeWindow();
@@ -202,15 +202,15 @@ namespace nux
 
     GraphicsEngine *GetGraphicsEngine() const;
     
-    GpuDevice *GetGpuDevice () const;
+    GpuDevice *GetGpuDevice() const;
 
     // Dialog
-    bool StartOpenFileDialog (FileDialogOption &fdo);
-    bool StartSaveFileDialog (FileDialogOption &fdo);
-    bool StartColorDialog (ColorDialogOption &cdo);
+    bool StartOpenFileDialog(FileDialogOption &fdo);
+    bool StartSaveFileDialog(FileDialogOption &fdo);
+    bool StartColorDialog(ColorDialogOption &cdo);
 
 
-    void GetWindowSize (int &w, int &h);
+    void GetWindowSize(int &w, int &h);
     int GetWindowWidth();
     int GetWindowHeight();
 
@@ -219,14 +219,14 @@ namespace nux
         This is a passive way to set the window size through out the NuxGraphics system. This call gets the 
         current window size and sets its accordingly to all sub-system.
     */
-    void ResetWindowSize ();
+    void ResetWindowSize();
 
     bool HasFrameBufferSupport();
-    void SetWindowCursor (HCURSOR cursor);
+    void SetWindowCursor(HCURSOR cursor);
     HCURSOR GetWindowCursor() const;
 
-    void ProcessForeignWin32Event (HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, Event *event);
-    LRESULT ProcessWin32Event (HWND hWnd, t_u32 uMsg, WPARAM wParam, LPARAM lParam);
+    void ProcessForeignWin32Event(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, Event *event);
+    LRESULT ProcessWin32Event(HWND hWnd, t_u32 uMsg, WPARAM wParam, LPARAM lParam);
 
     //! Pause graphics rendering.
     /*!
@@ -234,7 +234,7 @@ namespace nux
         This function also sets the current openGL context to 0 for this window.
         This is useful while a child window is being created and is sharing openGL objects with this context.
         For wglShareLists to work, both OpenGL context must be set to 0 in their respective thread.
-        Send NUX_THREADMSG_START_RENDERING (PostThreadMessage) to this window to reactivate rendering.
+        Send NUX_THREADMSG_START_RENDERING(PostThreadMessage) to this window to reactivate rendering.
 
         Never call this function while doing rendering. Call it only when processing events.
     */
@@ -242,21 +242,21 @@ namespace nux
     bool IsPauseThreadGraphicsRendering() const;
 
     // Pointer and keyboard grab API
-    typedef void (*GrabReleaseCallback) (bool replaced, void *user_data);
+    typedef void(*GrabReleaseCallback) (bool replaced, void *user_data);
 
     bool GrabPointer   (GrabReleaseCallback callback, void *data, bool replace_existing);
-    bool UngrabPointer (void *data);
-    bool PointerIsGrabbed ();
+    bool UngrabPointer(void *data);
+    bool PointerIsGrabbed();
 
     bool GrabKeyboard   (GrabReleaseCallback callback, void *data, bool replace_existing);
-    bool UngrabKeyboard (void *data);
-    bool KeyboardIsGrabbed ();
+    bool UngrabKeyboard(void *data);
+    bool KeyboardIsGrabbed();
 
-    void * KeyboardGrabData () { return _global_keyboard_grab_data; }
-    void * PointerGrabData () { return _global_pointer_grab_data; }
+    void * KeyboardGrabData() { return _global_keyboard_grab_data; }
+    void * PointerGrabData() { return _global_pointer_grab_data; }
 
   private:
-    void InitGlobalGrabWindow ();
+    void InitGlobalGrabWindow();
 
     bool m_PauseGraphicsRendering;
     GLTimer m_Timer;
@@ -289,7 +289,7 @@ namespace nux
 
   private:
     GraphicsDisplay();
-    GraphicsDisplay (const GraphicsDisplay &);
+    GraphicsDisplay(const GraphicsDisplay &);
     // Does not make sense for a singleton. This is a self assignment.
     GraphicsDisplay &operator= (const GraphicsDisplay &);
 
@@ -299,7 +299,7 @@ namespace nux
     friend class DisplayAccessController;
   };
 
-  LRESULT CALLBACK WndProcManager (HWND    hWnd,          // Handle For This Window
+  LRESULT CALLBACK WndProcManager(HWND    hWnd,          // Handle For This Window
                                    t_u32   uMsg,           // Message For This Window
                                    WPARAM  wParam,         // Additional Message Information
                                    LPARAM  lParam);        // Additional Message Information

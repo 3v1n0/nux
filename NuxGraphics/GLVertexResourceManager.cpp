@@ -49,13 +49,13 @@ namespace nux
     _Data.clear();
   }
 
-  VertexBuffer::VertexBuffer (int num_element, int size)
+  VertexBuffer::VertexBuffer(int num_element, int size)
   {
-    Allocate (num_element, size);
+    Allocate(num_element, size);
   }
 
   //! Copy constructor
-  VertexBuffer::VertexBuffer (const VertexBuffer &Other)
+  VertexBuffer::VertexBuffer(const VertexBuffer &Other)
   {
     _Data = Other._Data;
     _Stride = Other._Stride;
@@ -74,7 +74,7 @@ namespace nux
     nuxAssert(num_element > 0);
     nuxAssert(size > 0);
 
-    if((size <= 0) || (num_element <= 0))
+    if ((size <= 0) || (num_element <= 0))
     {
       _Data.clear();
       _Stride = 0;
@@ -109,7 +109,7 @@ namespace nux
     if (_Data.size() == 0)
       return 0;
 
-    return NUX_STATIC_CAST (const void*, &_Data[0]);
+    return NUX_STATIC_CAST(const void*, &_Data[0]);
   }
 
   void* VertexBuffer::GetPtrRawData()
@@ -117,7 +117,7 @@ namespace nux
     if (_Data.size() == 0)
       return 0;
 
-    return NUX_CONST_CAST(void*, ((NUX_CONST_CAST (const VertexBuffer *, this))->GetPtrRawData()));
+    return NUX_CONST_CAST(void*, ((NUX_CONST_CAST(const VertexBuffer *, this))->GetPtrRawData()));
   }
 
   IndexBuffer::IndexBuffer()
@@ -156,7 +156,7 @@ namespace nux
     nuxAssert(size > 0);
     nuxAssert((size == 2) || (size == 4));
 
-    if((size <= 0) || (num_index <= 0))
+    if ((size <= 0) || (num_index <= 0))
     {
       _Data.clear();
       _Stride = 0;
@@ -189,12 +189,12 @@ namespace nux
 
   const void* IndexBuffer::GetPtrRawData() const
   {
-    return NUX_STATIC_CAST (const void*, &_Data[0]);
+    return NUX_STATIC_CAST(const void*, &_Data[0]);
   }
 
   void* IndexBuffer::GetPtrRawData()
   {
-    return NUX_CONST_CAST (void*, ((NUX_CONST_CAST (const IndexBuffer *, this) )->GetPtrRawData()));
+    return NUX_CONST_CAST(void*, ((NUX_CONST_CAST(const IndexBuffer *, this))->GetPtrRawData()));
   }
 
   VertexDeclaration::VertexDeclaration()
@@ -214,25 +214,25 @@ namespace nux
 
 
 //   NMeshComponent::NMeshComponent()
-//     :   _Type (ATTRIB_DECLTYPE_UNKNOWN)
-//     ,   _StreamIndex (-1)
-//     ,   _Offset (0)
+//     :   _Type(ATTRIB_DECLTYPE_UNKNOWN)
+//     ,   _StreamIndex(-1)
+//     ,   _Offset(0)
 //   {
 //   }
 // 
-//   NMeshComponent::NMeshComponent (const NMeshComponent &Other)
-//     :   _Type (ATTRIB_DECLTYPE_UNKNOWN)
-//     ,   _StreamIndex (-1)
-//     ,   _Offset (0)
+//   NMeshComponent::NMeshComponent(const NMeshComponent &Other)
+//     :   _Type(ATTRIB_DECLTYPE_UNKNOWN)
+//     ,   _StreamIndex(-1)
+//     ,   _Offset(0)
 //   {
 //     _Type = Other._Type;
 //     _Offset = Other._Offset;
 //     _StreamIndex = Other._StreamIndex;
 //   }
 // 
-//   NMeshComponent::NMeshComponent (int StreamIndex/*ObjectPtr<VertexBuffer> VtxBuffer*/, int Offset, ATTRIB_DECL_TYPE Type)
+//   NMeshComponent::NMeshComponent(int StreamIndex/*ObjectPtr<VertexBuffer> VtxBuffer*/, int Offset, ATTRIB_DECL_TYPE Type)
 //   {
-//     nuxAssert (Offset >= 0);
+//     nuxAssert(Offset >= 0);
 //     _Type = Type;
 //     _Offset = Offset;
 //     _StreamIndex = StreamIndex;
@@ -265,9 +265,9 @@ namespace nux
 //     return _Offset;
 //   }
 
-  CachedVertexBuffer::CachedVertexBuffer (NResourceSet *ResourceManager, VertexBuffer *SourceVtxBuffer)
-    :   CachedResourceData (ResourceManager)
-    ,   _Size (0)
+  CachedVertexBuffer::CachedVertexBuffer(NResourceSet *ResourceManager, VertexBuffer *SourceVtxBuffer)
+    :   CachedResourceData(ResourceManager)
+    ,   _Size(0)
     ,   _Stride(0)
   {
     UpdateResource(SourceVtxBuffer);
@@ -281,7 +281,7 @@ namespace nux
 
   bool CachedVertexBuffer::UpdateResource(ResourceData *Source)
   {
-    if(Source == 0)
+    if (Source == 0)
     {
       _Stride = 0;
       _vertex_buffer.Release();
@@ -291,7 +291,7 @@ namespace nux
     VertexBuffer *SourceVtxBuffer = 0;
     nuxAssert(Source->Type().IsDerivedFromType(VertexBuffer::StaticObjectType));
 
-    if(Source->Type().IsDerivedFromType(VertexBuffer::StaticObjectType))
+    if (Source->Type().IsDerivedFromType(VertexBuffer::StaticObjectType))
     {
       SourceVtxBuffer = NUX_STATIC_CAST(VertexBuffer *, Source);
     }
@@ -300,14 +300,14 @@ namespace nux
       return false;
     }
 
-    if((SourceVtxBuffer->GetSize() == 0) || (SourceVtxBuffer->GetStride() == 0))
+    if ((SourceVtxBuffer->GetSize() == 0) || (SourceVtxBuffer->GetStride() == 0))
     {
       _Stride = 0;
       _vertex_buffer.Release();
       return true;
     }
 
-    if(_Size != SourceVtxBuffer->GetSize())
+    if (_Size != SourceVtxBuffer->GetSize())
     {
       // The current size of the cached buffer is not the same as the requested one.
       // Delete the previously allocated buffer and create a new one.
@@ -331,7 +331,7 @@ namespace nux
 
   void CachedVertexBuffer::LoadVertexData(VertexBuffer *SourceVtxBuffer)
   {
-    if((SourceVtxBuffer == 0) || (SourceVtxBuffer->GetSize() == 0) || (SourceVtxBuffer->GetStride() == 0))
+    if ((SourceVtxBuffer == 0) || (SourceVtxBuffer->GetSize() == 0) || (SourceVtxBuffer->GetStride() == 0))
     {
       return;
     }
@@ -353,8 +353,8 @@ namespace nux
     return _Stride;
   }
 
-  CachedIndexBuffer::CachedIndexBuffer (NResourceSet *ResourceManager, IndexBuffer *SourceIdxBuffer)
-    :   CachedResourceData (ResourceManager)
+  CachedIndexBuffer::CachedIndexBuffer(NResourceSet *ResourceManager, IndexBuffer *SourceIdxBuffer)
+    :   CachedResourceData(ResourceManager)
     ,   _Size(0)
     ,   _Stride(0)
   {
@@ -367,7 +367,7 @@ namespace nux
     _index_buffer = ObjectPtr<IOpenGLIndexBuffer> (0);
   }
 
-  bool CachedIndexBuffer::UpdateResource (ResourceData *Source)
+  bool CachedIndexBuffer::UpdateResource(ResourceData *Source)
   {
     if (Source == 0)
     {
@@ -378,18 +378,18 @@ namespace nux
     }
 
     IndexBuffer *SourceIdxBuffer = 0;
-    nuxAssert (Source->Type().IsDerivedFromType (IndexBuffer::StaticObjectType) );
+    nuxAssert(Source->Type().IsDerivedFromType(IndexBuffer::StaticObjectType));
 
-    if (Source->Type().IsDerivedFromType (IndexBuffer::StaticObjectType) )
+    if (Source->Type().IsDerivedFromType(IndexBuffer::StaticObjectType))
     {
-      SourceIdxBuffer = NUX_STATIC_CAST (IndexBuffer *, Source);
+      SourceIdxBuffer = NUX_STATIC_CAST(IndexBuffer *, Source);
     }
     else
     {
       return false;
     }
 
-    if ( (SourceIdxBuffer->GetSize() == 0) || (SourceIdxBuffer->GetStride() == 0) )
+    if ((SourceIdxBuffer->GetSize() == 0) || (SourceIdxBuffer->GetStride() == 0))
     {
       _Size = 0;
       _Stride = 0;
@@ -397,21 +397,21 @@ namespace nux
       return true;
     }
 
-    if (_Size != SourceIdxBuffer->GetSize() )
+    if (_Size != SourceIdxBuffer->GetSize())
     {
       _Size = SourceIdxBuffer->GetSize();
       _Stride = SourceIdxBuffer->GetStride();
 
       //Release the previous vertex buffer if any.
       _index_buffer.Release();
-      _index_buffer = GetGraphicsDisplay()->GetGpuDevice()->CreateIndexBuffer (_Size, VBO_USAGE_DYNAMIC,
+      _index_buffer = GetGraphicsDisplay()->GetGpuDevice()->CreateIndexBuffer(_Size, VBO_USAGE_DYNAMIC,
                     (SourceIdxBuffer->GetStride() == 2) ? INDEX_FORMAT_USHORT : INDEX_FORMAT_UINT);
-      LoadIndexData (SourceIdxBuffer);
+      LoadIndexData(SourceIdxBuffer);
     }
     else
     {
       _Stride = SourceIdxBuffer->GetStride();
-      LoadIndexData (SourceIdxBuffer);
+      LoadIndexData(SourceIdxBuffer);
     }
 
     _num_index = SourceIdxBuffer->GetNumIndex();
@@ -419,16 +419,16 @@ namespace nux
     return true;
   }
 
-  void CachedIndexBuffer::LoadIndexData (IndexBuffer *SourceIdxBuffer)
+  void CachedIndexBuffer::LoadIndexData(IndexBuffer *SourceIdxBuffer)
   {
-    if ( (SourceIdxBuffer == 0) || (SourceIdxBuffer->GetSize() == 0) || (SourceIdxBuffer->GetStride() == 0) )
+    if ((SourceIdxBuffer == 0) || (SourceIdxBuffer->GetSize() == 0) || (SourceIdxBuffer->GetStride() == 0))
     {
       return;
     }
 
     t_byte *pData;
-    _index_buffer->Lock (0, 0, (void **) &pData);
-    Memcpy (pData, SourceIdxBuffer->GetPtrRawData(), SourceIdxBuffer->GetSize() );
+    _index_buffer->Lock(0, 0, (void **) &pData);
+    Memcpy(pData, SourceIdxBuffer->GetPtrRawData(), SourceIdxBuffer->GetSize());
     _index_buffer->Unlock();
   }
 
@@ -447,10 +447,10 @@ namespace nux
     return _num_index;
   }
 
-  CachedVertexDeclaration::CachedVertexDeclaration (NResourceSet *ResourceManager, VertexDeclaration *SourceVertexDeclaration)
-    :   CachedResourceData (ResourceManager)
+  CachedVertexDeclaration::CachedVertexDeclaration(NResourceSet *ResourceManager, VertexDeclaration *SourceVertexDeclaration)
+    :   CachedResourceData(ResourceManager)
   {
-    UpdateResource (SourceVertexDeclaration);
+    UpdateResource(SourceVertexDeclaration);
   }
 
   CachedVertexDeclaration::~CachedVertexDeclaration()
@@ -458,7 +458,7 @@ namespace nux
     _declaration = ObjectPtr<IOpenGLVertexDeclaration> (0);
   }
 
-  bool CachedVertexDeclaration::UpdateResource (ResourceData *Source)
+  bool CachedVertexDeclaration::UpdateResource(ResourceData *Source)
   {
     if (Source == 0)
     {
@@ -467,11 +467,11 @@ namespace nux
     }
 
     VertexDeclaration *SourceVertexDeclaration = 0;
-    nuxAssert (Source->Type().IsDerivedFromType (VertexDeclaration::StaticObjectType) );
+    nuxAssert(Source->Type().IsDerivedFromType(VertexDeclaration::StaticObjectType));
 
-    if (Source->Type().IsDerivedFromType (VertexDeclaration::StaticObjectType) )
+    if (Source->Type().IsDerivedFromType(VertexDeclaration::StaticObjectType))
     {
-      SourceVertexDeclaration = NUX_STATIC_CAST (VertexDeclaration *, Source);
+      SourceVertexDeclaration = NUX_STATIC_CAST(VertexDeclaration *, Source);
     }
     else
     {
@@ -484,7 +484,7 @@ namespace nux
       return true;
     }
 
-    _declaration = GetGraphicsDisplay()->GetGpuDevice()->CreateVertexDeclaration (&SourceVertexDeclaration->_declaration[0]);
+    _declaration = GetGraphicsDisplay()->GetGpuDevice()->CreateVertexDeclaration(&SourceVertexDeclaration->_declaration[0]);
     return true;
   }
 
@@ -497,11 +497,11 @@ namespace nux
 
   MeshBuffer::~MeshBuffer()
   {
-    if(_vertex_buffer)
+    if (_vertex_buffer)
       _vertex_buffer->UnReference();
-    if(_index_buffer)
+    if (_index_buffer)
       _index_buffer->UnReference();
-    if(_vertex_declaration)
+    if (_vertex_declaration)
       _vertex_declaration->UnReference();
   }
 
@@ -579,7 +579,7 @@ namespace nux
 //   }
 // 
 // 
-//   NStaticMesh::NStaticMesh (NMeshObject *Object)
+//   NStaticMesh::NStaticMesh(NMeshObject *Object)
 //   {
 //     if (Object == 0)
 //       return;
@@ -598,21 +598,21 @@ namespace nux
 // 
 //   int NStaticMesh::GetNumStreams() const
 //   {
-//     return (int) m_pVertexStreamArray.size();
+//     return(int) m_pVertexStreamArray.size();
 //   }
 // 
-//   NGLStaticMesh::NGLStaticMesh (NResourceSet *ResourceManager, NStaticMesh *StaticMesh)
-//     :   CachedResourceData (ResourceManager)
+//   NGLStaticMesh::NGLStaticMesh(NResourceSet *ResourceManager, NStaticMesh *StaticMesh)
+//     :   CachedResourceData(ResourceManager)
 //   {
 //     int NumStreams = StaticMesh->GetNumStreams();
 // 
 //     for (int s = 0; s < NumStreams; s++)
 //     {
-//       m_VertexBufferArray.push_back (GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource (StaticMesh->m_pVertexStreamArray[s]) );
+//       m_VertexBufferArray.push_back(GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource(StaticMesh->m_pVertexStreamArray[s]));
 //     }
 // 
-//     m_Index = ObjectPtr<CachedIndexBuffer> (GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource (StaticMesh->m_pIndex));
-//     m_VertexDeclaration = ObjectPtr<CachedVertexDeclaration> (GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource (StaticMesh->m_pVertexDeclaration));
+//     m_Index = ObjectPtr<CachedIndexBuffer> (GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource(StaticMesh->m_pIndex));
+//     m_VertexDeclaration = ObjectPtr<CachedVertexDeclaration> (GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource(StaticMesh->m_pVertexDeclaration));
 //   }
 // 
 //   NGLStaticMesh::~NGLStaticMesh()
@@ -620,7 +620,7 @@ namespace nux
 // 
 //   }
 // 
-//   bool NGLStaticMesh::UpdateResource (ResourceData *Source)
+//   bool NGLStaticMesh::UpdateResource(ResourceData *Source)
 //   {
 //     if (Source == 0)
 //     {
@@ -628,20 +628,20 @@ namespace nux
 // 
 //       for (int s = 0; s < NumStreams; s++)
 //       {
-//         m_VertexBufferArray[s]->UpdateResource (0);
+//         m_VertexBufferArray[s]->UpdateResource(0);
 //       }
 // 
-//       m_Index->UpdateResource (0);
-//       m_VertexDeclaration->UpdateResource (0);
+//       m_Index->UpdateResource(0);
+//       m_VertexDeclaration->UpdateResource(0);
 //       return true;
 //     }
 // 
 //     NStaticMesh *StaticMesh = 0;
-//     nuxAssert (Source->Type().IsDerivedFromType (NStaticMesh::StaticObjectType) );
+//     nuxAssert(Source->Type().IsDerivedFromType(NStaticMesh::StaticObjectType));
 // 
-//     if (Source->Type().IsDerivedFromType (NStaticMesh::StaticObjectType) )
+//     if (Source->Type().IsDerivedFromType(NStaticMesh::StaticObjectType))
 //     {
-//       StaticMesh = NUX_STATIC_CAST (NStaticMesh *, Source);
+//       StaticMesh = NUX_STATIC_CAST(NStaticMesh *, Source);
 //     }
 //     else
 //     {
@@ -652,11 +652,11 @@ namespace nux
 // 
 //     for (int s = 0; s < NumStreams; s++)
 //     {
-//       GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource (StaticMesh->m_pVertexStreamArray[s]);
+//       GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource(StaticMesh->m_pVertexStreamArray[s]);
 //     }
 // 
-//     GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource (StaticMesh->m_pIndex);
-//     GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource (StaticMesh->m_pVertexDeclaration);
+//     GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource(StaticMesh->m_pIndex);
+//     GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource(StaticMesh->m_pVertexDeclaration);
 //     return true;
 //   }
 
@@ -681,7 +681,7 @@ namespace nux
 //         DECL_END
 //     };
 //     INT i = 0;
-//     while(decl[i].Stream != 0xFF)
+//     while (decl[i].Stream != 0xFF)
 //     {
 //         _DeclarationsArray.push_back(decl[i]);
 //         i++;
@@ -785,7 +785,7 @@ namespace nux
 //     float *Ptr = (float*)Buffer;
 //
 //     INT i = 0;
-//     for(i = 0; i < (INT)m_Vertex.size(); i++)
+//     for (i = 0; i < (INT)m_Vertex.size(); i++)
 //     {
 //         *Ptr++ = m_Vertex[i].x;
 //         *Ptr++ = m_Vertex[i].y;
@@ -801,7 +801,7 @@ namespace nux
 //
 // VERTEXELEMENT NCubeVertexBuffer::GetDeclaration(INT i)
 // {
-//     if(i < (INT)_DeclarationsArray.size())
+//     if (i < (INT)_DeclarationsArray.size())
 //     {
 //         return _DeclarationsArray[i];
 //     }

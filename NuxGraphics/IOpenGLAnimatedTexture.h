@@ -32,29 +32,29 @@ namespace nux
 // The number of mipmap levels is always 1;
   class IOpenGLAnimatedTexture: public IOpenGLBaseTexture
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLAnimatedTexture, IOpenGLBaseTexture);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLAnimatedTexture, IOpenGLBaseTexture);
 
   public:
     virtual ~IOpenGLAnimatedTexture();
 
-    void GetSurfaceFrame (int Frame, ObjectPtr<IOpenGLSurface>& surface);
-    ObjectPtr<IOpenGLSurface> GetSurfaceFrame (int Level);
+    void GetSurfaceFrame(int Frame, ObjectPtr<IOpenGLSurface>& surface);
+    ObjectPtr<IOpenGLSurface> GetSurfaceFrame(int Level);
 
-    int LockRect (
+    int LockRect(
       int Frame,
       SURFACE_LOCKED_RECT *pLockedRect,
       const SURFACE_RECT *pRect);
 
-    int UnlockRect (
+    int UnlockRect(
       int Frame
     );
 
-    int GetDepth (int MipLevel) const
+    int GetDepth(int MipLevel) const
     {
       return _Depth;
     }
 
-    int GetDesc (ANIMATEDTEXTURE_DESC *pDesc)
+    int GetDesc(ANIMATEDTEXTURE_DESC *pDesc)
     {
       pDesc->Width    = Max<int> (1, _Width);
       pDesc->Height   = Max<int> (1, _Height);
@@ -69,10 +69,10 @@ namespace nux
     void PresentLastFrame();
     int GetFrameTime();
     t_u32 GetNumFrame();
-    void SetFrameTime (int Frame, int time_ms);
+    void SetFrameTime(int Frame, int time_ms);
 
   private:
-    IOpenGLAnimatedTexture (
+    IOpenGLAnimatedTexture(
       int Width
       , int Height
       , int Depth

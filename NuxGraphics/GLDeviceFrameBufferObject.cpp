@@ -49,8 +49,8 @@ namespace nux
 //////////////////////////////////////////////////////////////////////////
 
   GLFramebufferObject::GLFramebufferObject()
-    :   m_fboId (0)
-    ,   m_savedFboId (0)
+    :   m_fboId(0)
+    ,   m_savedFboId(0)
   {
     m_fboId = _GenerateFboId();
     // Bind this FBO so that it actually gets created now
@@ -60,45 +60,45 @@ namespace nux
 
   GLFramebufferObject::~GLFramebufferObject()
   {
-    CHECKGL ( glDeleteFramebuffersEXT (1, (const GLuint *) &m_fboId) );
+    CHECKGL(glDeleteFramebuffersEXT(1, (const GLuint *) &m_fboId));
   }
 
   void GLFramebufferObject::Bind()
   {
-    CHECKGL ( glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, m_fboId) );
+    CHECKGL(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboId));
   }
 
   void GLFramebufferObject::Disable()
   {
-    CHECKGL ( glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0) );
+    CHECKGL(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
   }
 
   void
-  GLFramebufferObject::AttachTexture ( GLenum attachment, GLenum texType,
+  GLFramebufferObject::AttachTexture( GLenum attachment, GLenum texType,
                                        GLuint texId, int mipLevel, int zSlice)
   {
     _GuardedBind();
 
-    if ( GetAttachedId (attachment) != texId )
+    if ( GetAttachedId(attachment) != texId )
     {
-      _FramebufferTextureND ( attachment, texType,
+      _FramebufferTextureND( attachment, texType,
                               texId, mipLevel, zSlice );
     }
     else
     {
-//        nuxError(TEXT("GLFramebufferObject::AttachTexture PERFORMANCE WARNING:\n
-//            \tRedundant bind of texture (id = %d).\n"), texId);
+//        nuxError("GLFramebufferObject::AttachTexture PERFORMANCE WARNING:\n
+//            \tRedundant bind of texture(id = %d).\n"), texId);
     }
 
     _GuardedUnbind();
   }
   void
-  GLFramebufferObject::AttachTextures ( int numTextures, GLenum texTarget[], GLuint texId[],
+  GLFramebufferObject::AttachTextures( int numTextures, GLenum texTarget[], GLuint texId[],
                                         GLenum attachment[], int mipLevel[], int zSlice[] )
   {
     for (int i = 0; i < numTextures; ++i)
     {
-      AttachTexture ( texTarget[i], texId[i],
+      AttachTexture( texTarget[i], texId[i],
                       attachment ? attachment[i] : (GL_COLOR_ATTACHMENT0_EXT + i),
                       mipLevel ? mipLevel[i] : 0,
                       zSlice ? zSlice[i] : 0 );
@@ -107,39 +107,39 @@ namespace nux
 
 
   void
-  GLFramebufferObject::AttachRenderBuffer ( GLenum attachment, GLuint buffId )
+  GLFramebufferObject::AttachRenderBuffer( GLenum attachment, GLuint buffId )
   {
     _GuardedBind();
 
-    if ( GetAttachedId (attachment) != buffId )
+    if ( GetAttachedId(attachment) != buffId )
     {
-      CHECKGL ( glFramebufferRenderbufferEXT ( GL_FRAMEBUFFER_EXT, attachment,
-                GL_RENDERBUFFER_EXT, buffId) );
+      CHECKGL(glFramebufferRenderbufferEXT( GL_FRAMEBUFFER_EXT, attachment,
+                GL_RENDERBUFFER_EXT, buffId));
     }
     else
     {
 //        nuxError(TEXT("GLFramebufferObject::AttachRenderBuffer PERFORMANCE WARNING:\n
-//            \tRedundant bind of GLRenderbuffer (id = %d).\n"), buffId);
+//            \tRedundant bind of GLRenderbuffer(id = %d).\n"), buffId);
     }
 
     _GuardedUnbind();
   }
 
   void
-  GLFramebufferObject::Unattach ( GLenum attachment )
+  GLFramebufferObject::Unattach( GLenum attachment )
   {
     _GuardedBind();
-    GLenum type = GetAttachedType (attachment);
+    GLenum type = GetAttachedType(attachment);
 
-    switch (type)
+    switch(type)
     {
       case GL_NONE:
         break;
       case GL_RENDERBUFFER_EXT:
-        AttachRenderBuffer ( attachment, 0 );
+        AttachRenderBuffer( attachment, 0 );
         break;
       case GL_TEXTURE:
-        AttachTexture ( attachment, GL_TEXTURE_2D, 0 );
+        AttachTexture( attachment, GL_TEXTURE_2D, 0 );
         break;
       default:
         std::cout << "GLFramebufferObject::unbind_attachment ERROR: Unknown attached resource type\n";
@@ -152,7 +152,7 @@ namespace nux
   {
 #ifndef NUX_OPENGLES_20
     GLint maxAttach = 0;
-    CHECKGL ( glGetIntegerv ( GL_MAX_COLOR_ATTACHMENTS_EXT, &maxAttach ) );
+    CHECKGL(glGetIntegerv( GL_MAX_COLOR_ATTACHMENTS_EXT, &maxAttach ));
     return maxAttach;
 #else
     return 1;
@@ -162,7 +162,7 @@ namespace nux
   GLuint GLFramebufferObject::_GenerateFboId()
   {
     GLuint id = 0;
-    CHECKGL ( glGenFramebuffersEXT (1, &id) );
+    CHECKGL(glGenFramebuffersEXT(1, &id));
     return id;
   }
 
@@ -170,19 +170,19 @@ namespace nux
   {
 #ifndef NUX_OPENGLES_20
     // Only binds if m_fboId is different than the currently bound FBO
-    CHECKGL ( glGetIntegerv ( GL_FRAMEBUFFER_BINDING_EXT, &m_savedFboId ) );
+    CHECKGL(glGetIntegerv( GL_FRAMEBUFFER_BINDING_EXT, &m_savedFboId ));
 
     if (m_fboId != m_savedFboId)
     {
-      CHECKGL ( glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, m_fboId) );
+      CHECKGL(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboId));
     }
 #else
     // Only binds if m_fboId is different than the currently bound FBO
-    CHECKGL ( glGetIntegerv ( GL_FRAMEBUFFER_BINDING_EXT, &m_savedFboId ) );
+    CHECKGL(glGetIntegerv( GL_FRAMEBUFFER_BINDING_EXT, &m_savedFboId ));
 
     if (m_fboId != m_savedFboId)
     {
-      CHECKGL ( glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboId) );
+      CHECKGL(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboId));
     }
 #endif
   }
@@ -192,31 +192,31 @@ namespace nux
     // Returns FBO binding to the previously enabled FBO
     if (m_savedFboId != m_fboId)
     {
-      CHECKGL ( glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, (GLuint) m_savedFboId) );
+      CHECKGL(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, (GLuint) m_savedFboId));
     }
   }
 
   void
-  GLFramebufferObject::_FramebufferTextureND ( GLenum attachment, GLenum texType,
+  GLFramebufferObject::_FramebufferTextureND( GLenum attachment, GLenum texType,
       GLuint texId, int mipLevel,
       int zSlice )
   {
     if (texType == GL_TEXTURE_2D)
     {
       // Default is GL_TEXTURE_2D, GL_TEXTURE_RECTANGLE_ARB, or cube faces
-      CHECKGL ( glFramebufferTexture2DEXT ( GL_FRAMEBUFFER_EXT, attachment,
-                                            texType, texId, mipLevel ) );
+      CHECKGL(glFramebufferTexture2DEXT( GL_FRAMEBUFFER_EXT, attachment,
+                                            texType, texId, mipLevel ));
     }
 #ifndef NUX_OPENGLES_20
     else if (texType == GL_TEXTURE_1D)
     {
-      CHECKGL ( glFramebufferTexture1DEXT ( GL_FRAMEBUFFER_EXT, attachment,
-                                            GL_TEXTURE_1D, texId, mipLevel ) );
+      CHECKGL(glFramebufferTexture1DEXT( GL_FRAMEBUFFER_EXT, attachment,
+                                            GL_TEXTURE_1D, texId, mipLevel ));
     }
     else if (texType == GL_TEXTURE_3D)
     {
-      CHECKGL ( glFramebufferTexture3DEXT ( GL_FRAMEBUFFER_EXT, attachment,
-                                            GL_TEXTURE_3D, texId, mipLevel, zSlice ) );
+      CHECKGL(glFramebufferTexture3DEXT( GL_FRAMEBUFFER_EXT, attachment,
+                                            GL_TEXTURE_3D, texId, mipLevel, zSlice ));
     }
 #endif
   }
@@ -228,55 +228,55 @@ namespace nux
     bool isOK = false;
 
     GLenum status;
-    status = glCheckFramebufferStatusEXT (GL_FRAMEBUFFER_EXT);
-    CHECKGL_MSG (glCheckFramebufferStatusEXT);
+    status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+    CHECKGL_MSG(glCheckFramebufferStatusEXT);
 
-    switch (status)
+    switch(status)
     {
       case GL_FRAMEBUFFER_COMPLETE_EXT: // Everything's OK
         isOK = true;
         break;
       case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
-        nuxError (TEXT ("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT") );
+        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT");
         isOK = false;
         break;
       case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
-        nuxError (TEXT ("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT") );
+        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT");
         isOK = false;
         break;
-// See issue (87) of http://www.opengl.org/registry/specs/EXT/framebuffer_object.txt
+// See issue(87) of http://www.opengl.org/registry/specs/EXT/framebuffer_object.txt
 //  case GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT:
-//      nuxError(TEXT("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT"));
+//      nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT");
 //      isOK = false;
 //      break;
       case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
-        nuxError (TEXT ("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT") );
+        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT");
         isOK = false;
         break;
 #ifndef NUX_OPENGLES_20
       case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
-        nuxError (TEXT ("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT") );
+        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT");
         isOK = false;
         break;
       case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
-        nuxError (TEXT ("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT") );
+        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT");
         isOK = false;
         break;
       case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
-        nuxError (TEXT ("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT") );
+        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT");
         isOK = false;
         break;
 #endif
 //  case GL_FRAMEBUFFER_STATUS_ERROR_EXT:
-//      nuxError(TEXT("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_STATUS_ERROR_EXT"));
+//      nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_STATUS_ERROR_EXT");
 //      isOK = false;
 //      break;
       case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
-        nuxError (TEXT ("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_UNSUPPORTED_EXT") );
+        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_UNSUPPORTED_EXT");
         isOK = false;
         break;
       default:
-        nuxError (TEXT ("[GLFramebufferObject::IsValid] Unknown ERROR") );
+        nuxError("[GLFramebufferObject::IsValid] Unknown ERROR");
         isOK = false;
     }
 
@@ -285,61 +285,61 @@ namespace nux
   }
 
 /// Accessors
-  GLenum GLFramebufferObject::GetAttachedType ( GLenum attachment )
+  GLenum GLFramebufferObject::GetAttachedType( GLenum attachment )
   {
     // Returns GL_RENDERBUFFER_EXT or GL_TEXTURE
     _GuardedBind();
     GLint type = 0;
-    CHECKGL ( glGetFramebufferAttachmentParameterivEXT (GL_FRAMEBUFFER_EXT, attachment,
+    CHECKGL(glGetFramebufferAttachmentParameterivEXT(GL_FRAMEBUFFER_EXT, attachment,
               GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE_EXT,
-              &type) );
+              &type));
     _GuardedUnbind();
-    return GLenum (type);
+    return GLenum(type);
   }
 
-  GLuint GLFramebufferObject::GetAttachedId ( GLenum attachment )
+  GLuint GLFramebufferObject::GetAttachedId( GLenum attachment )
   {
     _GuardedBind();
     GLint id = 0;
-    CHECKGL ( glGetFramebufferAttachmentParameterivEXT (GL_FRAMEBUFFER_EXT, attachment,
+    CHECKGL(glGetFramebufferAttachmentParameterivEXT(GL_FRAMEBUFFER_EXT, attachment,
               GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_EXT,
-              &id) );
+              &id));
     _GuardedUnbind();
-    return GLuint (id);
+    return GLuint(id);
   }
 
-  GLint GLFramebufferObject::GetAttachedMipLevel ( GLenum attachment )
+  GLint GLFramebufferObject::GetAttachedMipLevel( GLenum attachment )
   {
     _GuardedBind();
     GLint level = 0;
-    CHECKGL ( glGetFramebufferAttachmentParameterivEXT (GL_FRAMEBUFFER_EXT, attachment,
+    CHECKGL(glGetFramebufferAttachmentParameterivEXT(GL_FRAMEBUFFER_EXT, attachment,
               GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL_EXT,
-              &level) );
+              &level));
     _GuardedUnbind();
     return level;
   }
 
-  GLint GLFramebufferObject::GetAttachedCubeFace ( GLenum attachment )
+  GLint GLFramebufferObject::GetAttachedCubeFace( GLenum attachment )
   {
     _GuardedBind();
     GLint level = 0;
 #ifndef NUX_OPENGLES_20
-    CHECKGL ( glGetFramebufferAttachmentParameterivEXT (GL_FRAMEBUFFER_EXT, attachment,
+    CHECKGL(glGetFramebufferAttachmentParameterivEXT(GL_FRAMEBUFFER_EXT, attachment,
               GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE_EXT,
-              &level) );
+              &level));
 #endif
     _GuardedUnbind();
     return level;
   }
 
-  GLint GLFramebufferObject::GetAttachedZSlice ( GLenum attachment )
+  GLint GLFramebufferObject::GetAttachedZSlice( GLenum attachment )
   {
     _GuardedBind();
     GLint slice = 0;
 #ifndef NUX_OPENGLES_20
-    CHECKGL ( glGetFramebufferAttachmentParameterivEXT (GL_FRAMEBUFFER_EXT, attachment,
+    CHECKGL(glGetFramebufferAttachmentParameterivEXT(GL_FRAMEBUFFER_EXT, attachment,
               GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_3D_ZOFFSET_EXT,
-              &slice) );
+              &slice));
 #endif
     _GuardedUnbind();
     return slice;
@@ -351,33 +351,33 @@ namespace nux
 
 
   GLRenderbuffer::GLRenderbuffer()
-    :   m_bufId (0)
+    :   m_bufId(0)
   {
     m_bufId = _CreateBufferId();
   }
 
-  GLRenderbuffer::GLRenderbuffer (GLenum internalFormat, int width, int height)
-    : m_bufId (_CreateBufferId() )
+  GLRenderbuffer::GLRenderbuffer(GLenum internalFormat, int width, int height)
+    : m_bufId(_CreateBufferId())
   {
-    Set (internalFormat, width, height);
+    Set(internalFormat, width, height);
   }
 
   GLRenderbuffer::~GLRenderbuffer()
   {
-    CHECKGL ( glDeleteRenderbuffersEXT (1, &m_bufId) );
+    CHECKGL(glDeleteRenderbuffersEXT(1, &m_bufId));
   }
 
   void GLRenderbuffer::Bind()
   {
-    CHECKGL ( glBindRenderbufferEXT (GL_RENDERBUFFER_EXT, m_bufId) );
+    CHECKGL(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_bufId));
   }
 
   void GLRenderbuffer::Unbind()
   {
-    CHECKGL ( glBindRenderbufferEXT (GL_RENDERBUFFER_EXT, 0) );
+    CHECKGL(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0));
   }
 
-  void GLRenderbuffer::Set (GLenum internalFormat, int width, int height)
+  void GLRenderbuffer::Set(GLenum internalFormat, int width, int height)
   {
     int maxSize = GLRenderbuffer::GetMaxSize();
 
@@ -389,7 +389,7 @@ namespace nux
 
     // Guarded bind
     GLint savedId = 0;
-    CHECKGL ( glGetIntegerv ( GL_RENDERBUFFER_BINDING_EXT, &savedId ) );
+    CHECKGL(glGetIntegerv( GL_RENDERBUFFER_BINDING_EXT, &savedId ));
 
     if (savedId != (GLint) m_bufId)
     {
@@ -397,7 +397,7 @@ namespace nux
     }
 
     // Allocate memory for renderBuffer
-    CHECKGL ( glRenderbufferStorageEXT (GL_RENDERBUFFER_EXT, internalFormat, width, height ) );
+    CHECKGL(glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, internalFormat, width, height ));
 
     // Guarded unbind
     if (savedId != (GLint) m_bufId)
@@ -414,14 +414,14 @@ namespace nux
   GLint GLRenderbuffer::GetMaxSize()
   {
     GLint maxAttach = 0;
-    CHECKGL ( glGetIntegerv ( GL_MAX_RENDERBUFFER_SIZE_EXT, &maxAttach ) );
+    CHECKGL(glGetIntegerv( GL_MAX_RENDERBUFFER_SIZE_EXT, &maxAttach ));
     return maxAttach;
   }
 
   GLuint GLRenderbuffer::_CreateBufferId()
   {
     GLuint id = 0;
-    CHECKGL ( glGenRenderbuffersEXT (1, &id) );
+    CHECKGL(glGenRenderbuffersEXT(1, &id));
     return id;
   }
 

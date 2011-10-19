@@ -108,12 +108,12 @@ namespace nux
 
     TexCoordXForm();
 
-    void SetTexCoordType (TexCoordType tex_coord_type);
-    void FlipUCoord (bool b);
-    void FlipVCoord (bool b);
-    void FlipUVCoord (bool flip_u, bool flip_v);
-    void SetFilter (TexFilter min_fliter, TexFilter mag_filter);
-    void SetWrap (TexWrap u_wrap, TexWrap v_wrap);
+    void SetTexCoordType(TexCoordType tex_coord_type);
+    void FlipUCoord(bool b);
+    void FlipVCoord(bool b);
+    void FlipUVCoord(bool flip_u, bool flip_v);
+    void SetFilter(TexFilter min_fliter, TexFilter mag_filter);
+    void SetWrap(TexWrap u_wrap, TexWrap v_wrap);
 
     //! Texture coordinates are computed automatically by following the TexCoordType policy or provided by the user
     float u0, v0, u1, v1;
@@ -137,7 +137,7 @@ namespace nux
       @param tex          Device texture.
       @param texxform     Texture coordinates computation mode.
   */
-  void QRP_Compute_Texture_Coord (t_int32 quad_width, t_int32 quad_height, ObjectPtr<IOpenGLBaseTexture> tex, TexCoordXForm &texxform);
+  void QRP_Compute_Texture_Coord(t_int32 quad_width, t_int32 quad_height, ObjectPtr<IOpenGLBaseTexture> tex, TexCoordXForm &texxform);
 
 }
 

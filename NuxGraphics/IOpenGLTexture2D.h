@@ -29,33 +29,33 @@ namespace nux
   class IOpenGLBaseTexture;
   class IOpenGLTexture2D: public IOpenGLBaseTexture
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLTexture2D, IOpenGLBaseTexture);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLTexture2D, IOpenGLBaseTexture);
   public:
     virtual ~IOpenGLTexture2D();
 
-    void GetSurfaceLevel (int Level, ObjectPtr<IOpenGLSurface>& surface);
-    ObjectPtr<IOpenGLSurface> GetSurfaceLevel (int Level);
+    void GetSurfaceLevel(int Level, ObjectPtr<IOpenGLSurface>& surface);
+    ObjectPtr<IOpenGLSurface> GetSurfaceLevel(int Level);
 
 
-    int LockRect (
+    int LockRect(
       int Level,
       SURFACE_LOCKED_RECT *pLockedRect,
       const SURFACE_RECT *pRect);
 
-    int UnlockRect (
+    int UnlockRect(
       int Level
     );
-    unsigned int EnableGammaCorrection (bool b);
+    unsigned int EnableGammaCorrection(bool b);
 
-    int GetLevelDesc (
+    int GetLevelDesc(
       int Level,
       SURFACE_DESC *pDesc
     )
     {
-      nuxAssert (Level >= 0 );
-      nuxAssert (Level < _NumMipLevel);
+      nuxAssert(Level >= 0 );
+      nuxAssert(Level < _NumMipLevel);
 
-      if ( (Level < 0) || (Level > _NumMipLevel) )
+      if ((Level < 0) || (Level > _NumMipLevel))
       {
         pDesc->Width    = 0;
         pDesc->Height   = 0;
@@ -74,7 +74,7 @@ namespace nux
     }
 
     //! Return the a pointer to the texture mip level data.
-    virtual void* GetSurfaceData (int level, int &width, int &height, int &format);
+    virtual void* GetSurfaceData(int level, int &width, int &height, int &format);
 
   private:
 
@@ -82,7 +82,7 @@ namespace nux
     // render target texture and surface; Only GpuDevice uses it in its constructor.
     // Do not use it otherwise!!!
 
-    IOpenGLTexture2D (
+    IOpenGLTexture2D(
       unsigned int Width
       , unsigned int Height
       , unsigned int Levels

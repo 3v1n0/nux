@@ -27,38 +27,38 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLIndexBuffer);
+  NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLIndexBuffer);
 
-  IOpenGLIndexBuffer::IOpenGLIndexBuffer (t_u32 Length, VBO_USAGE Usage, INDEX_FORMAT Format, NUX_FILE_LINE_DECL)
-    :   IOpenGLResource (RTINDEXBUFFER, NUX_FILE_LINE_PARAM)
-    ,   _Length (Length)
-    ,   _Format (Format)
-    ,   _Usage (Usage)
-    ,   _MemMap (0)
-    ,   _OffsetToLock (0)
-    ,   _SizeToLock (0)
+  IOpenGLIndexBuffer::IOpenGLIndexBuffer(t_u32 Length, VBO_USAGE Usage, INDEX_FORMAT Format, NUX_FILE_LINE_DECL)
+    :   IOpenGLResource(RTINDEXBUFFER, NUX_FILE_LINE_PARAM)
+    ,   _Length(Length)
+    ,   _Format(Format)
+    ,   _Usage(Usage)
+    ,   _MemMap(0)
+    ,   _OffsetToLock(0)
+    ,   _SizeToLock(0)
   {
-    CHECKGL ( glGenBuffersARB (1, &_OpenGLID) );
-    CHECKGL ( glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, _OpenGLID) );
-    CHECKGL ( glBufferDataARB (GL_ELEMENT_ARRAY_BUFFER_ARB, _Length, NULL, Usage) );
-    CHECKGL ( glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
-    GRunTimeStats.Register (this);
+    CHECKGL(glGenBuffersARB(1, &_OpenGLID));
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, _OpenGLID));
+    CHECKGL(glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, _Length, NULL, Usage));
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
+    GRunTimeStats.Register(this);
   }
 
   IOpenGLIndexBuffer::~IOpenGLIndexBuffer()
   {
-    CHECKGL ( glDeleteBuffersARB (1, &_OpenGLID) );
+    CHECKGL(glDeleteBuffersARB(1, &_OpenGLID));
     _OpenGLID = 0;
-    GRunTimeStats.UnRegister (this);
+    GRunTimeStats.UnRegister(this);
   }
 
-  int IOpenGLIndexBuffer::Lock (
+  int IOpenGLIndexBuffer::Lock(
     t_u32 OffsetToLock,
     t_u32 SizeToLock,
     void **ppbData)
   {
-    nuxAssert (SizeToLock <= _Length);
-    nuxAssert (OffsetToLock + SizeToLock <= _Length);
+    nuxAssert(SizeToLock <= _Length);
+    nuxAssert(OffsetToLock + SizeToLock <= _Length);
 
     if (SizeToLock == 0)
     {
@@ -73,15 +73,15 @@ namespace nux
 
     // If _MemMap, _OffsetToLock and _SizeToLock are not equal to zero, then we have already mapped the buffer
     // Unlock it before locking again.
-    nuxAssert (_MemMap == 0);
-    nuxAssert (_OffsetToLock == 0);
-    nuxAssert (_SizeToLock == 0);
+    nuxAssert(_MemMap == 0);
+    nuxAssert(_OffsetToLock == 0);
+    nuxAssert(_SizeToLock == 0);
 
-    CHECKGL ( glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, _OpenGLID) );
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, _OpenGLID));
     // Map the Entire buffer into system memory
 #ifndef NUX_OPENGLES_20
-    _MemMap = (BYTE *) glMapBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB); // todo: use Format instead of GL_WRITE_ONLY_ARB
-    CHECKGL_MSG (glMapBufferARB);
+    _MemMap = (BYTE *) glMapBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB); // todo: use Format instead of GL_WRITE_ONLY_ARB
+    CHECKGL_MSG(glMapBufferARB);
     *ppbData = (void *) (_MemMap + OffsetToLock);
 #else
     _MemMap = new BYTE[SizeToLock];
@@ -91,27 +91,27 @@ namespace nux
     _OffsetToLock   = OffsetToLock;
     _SizeToLock     = SizeToLock;
 
-    CHECKGL ( glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
 
     return OGL_OK;
   }
 
   int IOpenGLIndexBuffer::Unlock()
   {
-    nuxAssert (_MemMap != 0);
-    nuxAssert (_SizeToLock != 0);
+    nuxAssert(_MemMap != 0);
+    nuxAssert(_SizeToLock != 0);
 
     // No need to bind
-    CHECKGL ( glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, _OpenGLID) );
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, _OpenGLID));
 
 #ifndef NUX_OPENGLES_20
-    CHECKGL ( glUnmapBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB) );
+    CHECKGL(glUnmapBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB));
 #else
-    CHECKGL( glBufferSubData (GL_ELEMENT_ARRAY_BUFFER_ARB, _OffsetToLock, _SizeToLock, _MemMap) );
+    CHECKGL(glBufferSubData(GL_ELEMENT_ARRAY_BUFFER_ARB, _OffsetToLock, _SizeToLock, _MemMap));
     delete [] _MemMap;
 #endif
 
-    CHECKGL ( glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
 
     _MemMap         = 0;
     _OffsetToLock   = 0;
@@ -136,7 +136,7 @@ namespace nux
 
   void IOpenGLIndexBuffer::BindIndexBuffer()
   {
-    CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, _OpenGLID) );
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, _OpenGLID));
   }
 
   t_u32 IOpenGLIndexBuffer::GetSize()

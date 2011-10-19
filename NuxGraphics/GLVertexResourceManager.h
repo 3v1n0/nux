@@ -33,14 +33,14 @@ namespace nux
 {
   class VertexBuffer: public ResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (VertexBuffer, ResourceData);
+    NUX_DECLARE_OBJECT_TYPE(VertexBuffer, ResourceData);
 
   public:
     VertexBuffer();
     virtual ~VertexBuffer();
-    VertexBuffer (int Size, int Stride);
+    VertexBuffer(int Size, int Stride);
     //! Copy constructor
-    VertexBuffer (const VertexBuffer &);
+    VertexBuffer(const VertexBuffer &);
     //! Assignment constructor
     VertexBuffer &operator = (const VertexBuffer &);
 
@@ -63,20 +63,20 @@ namespace nux
 
   class IndexBuffer: public ResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (IndexBuffer, ResourceData);
+    NUX_DECLARE_OBJECT_TYPE(IndexBuffer, ResourceData);
 
     // IndexBuffer is very similar to MeshBuffer except that vertex indices
     // are not inter-mixed with other vertex data. So the Stride here should be 2 bytes or 4 bytes.
   public:
     IndexBuffer();
     virtual ~IndexBuffer();
-    IndexBuffer (int Size, int Stride);
+    IndexBuffer(int Size, int Stride);
     //! Copy constructor
-    IndexBuffer (const IndexBuffer &);
+    IndexBuffer(const IndexBuffer &);
     //! Assignment constructor
     IndexBuffer &operator = (const IndexBuffer &);
 
-    void Allocate (int Size, int Stride);
+    void Allocate(int Size, int Stride);
     int GetSize() const;
     int GetStride() const;
     int GetNumIndex() const;
@@ -91,7 +91,7 @@ namespace nux
 
   class VertexDeclaration: public ResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (NVertexDeclaration, ResourceData);
+    NUX_DECLARE_OBJECT_TYPE(NVertexDeclaration, ResourceData);
 
   public:
     VertexDeclaration();
@@ -155,8 +155,8 @@ namespace nux
 //   {
 //   public:
 //     NMeshComponent();
-//     NMeshComponent (const NMeshComponent &);
-//     NMeshComponent (int StreamIndex/*ObjectPtr<BaseMeshBuffer> VtxBuffer*/, int Offset, ATTRIB_DECL_TYPE Type);
+//     NMeshComponent(const NMeshComponent &);
+//     NMeshComponent(int StreamIndex/*ObjectPtr<BaseMeshBuffer> VtxBuffer*/, int Offset, ATTRIB_DECL_TYPE Type);
 // 
 //     NMeshComponent &operator = (const NMeshComponent &);
 // 
@@ -173,7 +173,7 @@ namespace nux
 // 
 //   class NMesh: public ResourceData
 //   {
-//     NUX_DECLARE_OBJECT_TYPE (NStaticMesh, ResourceData);
+//     NUX_DECLARE_OBJECT_TYPE(NStaticMesh, ResourceData);
 // 
 //     NMesh();
 //     virtual ~NMesh();
@@ -181,7 +181,7 @@ namespace nux
 // 
 //   class NStaticMesh: public NMesh
 //   {
-//     NUX_DECLARE_OBJECT_TYPE (NStaticMesh, NMesh);
+//     NUX_DECLARE_OBJECT_TYPE(NStaticMesh, NMesh);
 //   public:
 //     NStaticMesh(NMeshObject *Object);
 //     ~NStaticMesh();

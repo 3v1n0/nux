@@ -29,24 +29,24 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLQuery);
+  NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLQuery);
 
   t_u32 IOpenGLQuery::_CurrentlyActiveQuery = 0;
 
-  IOpenGLQuery::IOpenGLQuery (QUERY_TYPE Type)
-    : IOpenGLResource (RTQUERY)
-    , _Type (Type)
-    , _QueryStarted (false)
+  IOpenGLQuery::IOpenGLQuery(QUERY_TYPE Type)
+    : IOpenGLResource(RTQUERY)
+    , _Type(Type)
+    , _QueryStarted(false)
   {
 #ifndef NUX_OPENGLES_20
-    CHECKGL ( glGenQueriesARB (1, &_OpenGLID) ) ;
+    CHECKGL(glGenQueriesARB(1, &_OpenGLID)) ;
 #endif
   }
 
-// The return type identifies the query state (see Queries).
-// The method returns 1 (S_OK) if the query data is available and 0 (S_FALSE) if it is not.
+// The return type identifies the query state(see Queries).
+// The method returns 1(S_OK) if the query data is available and 0(S_FALSE) if it is not.
 // These are considered successful return values.
-  int IOpenGLQuery::GetData (
+  int IOpenGLQuery::GetData(
     int *pData,
     t_u32 Size,
     t_u32 GetDataFlags
@@ -54,13 +54,13 @@ namespace nux
   {
 #ifndef NUX_OPENGLES_20
     unsigned int ResultReady = 0;
-    glGetQueryObjectuivARB (_OpenGLID, GL_QUERY_RESULT_AVAILABLE_ARB, &ResultReady);
-    CHECKGL_MSG ( glGetQueryObjectuivARB );
+    glGetQueryObjectuivARB(_OpenGLID, GL_QUERY_RESULT_AVAILABLE_ARB, &ResultReady);
+    CHECKGL_MSG( glGetQueryObjectuivARB );
 
     if (ResultReady)
     {
-      glGetQueryObjectuivARB (_OpenGLID, GL_QUERY_RESULT_ARB, (GLuint *) pData);
-      CHECKGL_MSG ( glGetQueryObjectuivARB );
+      glGetQueryObjectuivARB(_OpenGLID, GL_QUERY_RESULT_ARB, (GLuint *) pData);
+      CHECKGL_MSG( glGetQueryObjectuivARB );
       return 1;
     }
 #endif
@@ -73,7 +73,7 @@ namespace nux
     return 0;
   }
 
-  void IOpenGLQuery::GetDevice (GpuDevice **ppDevice)
+  void IOpenGLQuery::GetDevice(GpuDevice **ppDevice)
   {
     // Do not call this function.
     *ppDevice = NULL;
@@ -84,38 +84,38 @@ namespace nux
     return _Type;
   }
 
-  void IOpenGLQuery::Issue (
+  void IOpenGLQuery::Issue(
     t_u32 IssueFlags
   )
   {
 #ifndef NUX_OPENGLES_20
     if (IssueFlags == (t_u32) ISSUE_BEGIN)
     {
-      nuxAssert (_CurrentlyActiveQuery == 0);
+      nuxAssert(_CurrentlyActiveQuery == 0);
 
       if (_QueryStarted == true)
       {
-        nuxError (TEXT ("The Query as already been activated") );
+        nuxError("The Query as already been activated");
       }
       else
       {
         _QueryStarted = true;
-        CHECKGL ( glBeginQueryARB (GL_SAMPLES_PASSED_ARB, _OpenGLID) );
+        CHECKGL(glBeginQueryARB(GL_SAMPLES_PASSED_ARB, _OpenGLID));
         _CurrentlyActiveQuery = _OpenGLID;
       }
     }
     else if (IssueFlags == (t_u32) ISSUE_END)
     {
-      nuxAssert (_CurrentlyActiveQuery == _OpenGLID);
+      nuxAssert(_CurrentlyActiveQuery == _OpenGLID);
 
       if (_QueryStarted == false)
       {
-        nuxError (TEXT ("The Query as already been stoped") );
+        nuxError("The Query as already been stoped");
       }
       else
       {
         _QueryStarted = false;
-        CHECKGL ( glEndQueryARB (GL_SAMPLES_PASSED_ARB) );
+        CHECKGL(glEndQueryARB(GL_SAMPLES_PASSED_ARB));
         _CurrentlyActiveQuery = 0;
       }
     }
@@ -128,8 +128,8 @@ namespace nux
   {
     unsigned int ResultReady = 0;
 #ifndef NUX_OPENGLES_20
-    glGetQueryObjectuivARB (_OpenGLID, GL_QUERY_RESULT_AVAILABLE_ARB, &ResultReady);
-    CHECKGL_MSG ( glGetQueryObjectuivARB );
+    glGetQueryObjectuivARB(_OpenGLID, GL_QUERY_RESULT_AVAILABLE_ARB, &ResultReady);
+    CHECKGL_MSG( glGetQueryObjectuivARB );
 #endif
 
     return ResultReady != 0;
@@ -140,8 +140,8 @@ namespace nux
   {
     unsigned int SamplesPassed = 0;
 #ifndef NUX_OPENGLES_20
-    glGetQueryObjectuivARB (_OpenGLID, GL_QUERY_RESULT_ARB, &SamplesPassed);
-    CHECKGL_MSG ( glGetQueryObjectuivARB );
+    glGetQueryObjectuivARB(_OpenGLID, GL_QUERY_RESULT_ARB, &SamplesPassed);
+    CHECKGL_MSG( glGetQueryObjectuivARB );
 #endif
 
     return SamplesPassed;

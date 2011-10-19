@@ -81,17 +81,17 @@ namespace nux
                     (unsigned char *) type, 1);
 
     XStoreName(display_, window_, title);
-    EnsureInputs ();
+    EnsureInputs();
 
     if (take_focus)
-      EnableTakeFocus ();
+      EnableTakeFocus();
 
-    EnableDnd ();
+    EnableDnd();
   }
 
   XInputWindow::~XInputWindow()
   {
-    native_windows_.erase(std::find (native_windows_.begin (), native_windows_.end (), window_));
+    native_windows_.erase(std::find(native_windows_.begin(), native_windows_.end(), window_));
     XDestroyWindow(display_, window_);
   }
 
@@ -104,11 +104,11 @@ namespace nux
   void XInputWindow::SetStruts()
   {
     int n_info;
-    XineramaScreenInfo *info = XineramaQueryScreens (display_, &n_info);
+    XineramaScreenInfo *info = XineramaQueryScreens(display_, &n_info);
     Region             screen_region;
-    Region             total_screen_region = XCreateRegion ();
-    Region             input_window_region = XCreateRegion ();
-    Region             intersection = XCreateRegion ();
+    Region             total_screen_region = XCreateRegion();
+    Region             input_window_region = XCreateRegion();
+    Region             intersection = XCreateRegion();
     XineramaScreenInfo monitor;
     XRectangle         tmp_rect;
     int largestWidth = 0, largestHeight = 0;
@@ -121,7 +121,7 @@ namespace nux
     tmp_rect.width = geometry_.width;
     tmp_rect.height = geometry_.height;
 
-    XUnionRectWithRegion (&tmp_rect, input_window_region, input_window_region);
+    XUnionRectWithRegion(&tmp_rect, input_window_region, input_window_region);
 
     for (int i = 0; i < n_info; i++)
     {
@@ -130,13 +130,13 @@ namespace nux
       tmp_rect.width = info[i].width;
       tmp_rect.height = info[i].height;
 
-      screen_region = XCreateRegion ();
+      screen_region = XCreateRegion();
 
-      XUnionRectWithRegion (&tmp_rect, screen_region, screen_region);
-      XUnionRegion (screen_region, total_screen_region, total_screen_region);
-      XIntersectRegion (screen_region, input_window_region, intersection);
+      XUnionRectWithRegion(&tmp_rect, screen_region, screen_region);
+      XUnionRegion(screen_region, total_screen_region, total_screen_region);
+      XIntersectRegion(screen_region, input_window_region, intersection);
 
-      if (!XEmptyRegion (intersection))
+      if (!XEmptyRegion(intersection))
       {
         int width = intersection->extents.x2 - intersection->extents.x1;
         int height = intersection->extents.y2 - intersection->extents.y1;
@@ -150,18 +150,18 @@ namespace nux
         }
       }
 
-      XDestroyRegion (screen_region);
+      XDestroyRegion(screen_region);
     }
 
     screenWidth = total_screen_region->extents.x2 - total_screen_region->extents.x1;
     screenHeight = total_screen_region->extents.y2 - total_screen_region->extents.y1;
 
-    XDestroyRegion (input_window_region);
-    XDestroyRegion (intersection);
-    XDestroyRegion (total_screen_region);
+    XDestroyRegion(input_window_region);
+    XDestroyRegion(intersection);
+    XDestroyRegion(total_screen_region);
 
     if (info)
-      XFree (info);
+      XFree(info);
 
     if (geometry_.width > geometry_.height)
     {
@@ -245,10 +245,10 @@ namespace nux
 
   void XInputWindow::EnableTakeFocus()
   {
-    Atom wmTakeFocus = XInternAtom (display_, "WM_TAKE_FOCUS", False);
+    Atom wmTakeFocus = XInternAtom(display_, "WM_TAKE_FOCUS", False);
     XWMHints* wmHints = NULL;
 
-    wmHints = (XWMHints*) calloc (1, sizeof (XWMHints));
+    wmHints = (XWMHints*) calloc(1, sizeof(XWMHints));
     wmHints->flags |= InputHint;
     wmHints->input = False;
     XSetWMHints(display_, window_, wmHints);
@@ -297,17 +297,17 @@ namespace nux
     return geometry_;
   }
 
-  Window XInputWindow::GetWindow ()
+  Window XInputWindow::GetWindow()
   {
     return window_;
   }
 
-  void XInputWindow::SetInputFocus ()
+  void XInputWindow::SetInputFocus()
   {
     XSetInputFocus(display_, window_, RevertToParent, CurrentTime);
   }
 
-  void XInputWindow::Hide ()
+  void XInputWindow::Hide()
   {
     XMoveResizeWindow(display_, window_,
                       -100 - geometry_.width,
@@ -317,13 +317,13 @@ namespace nux
     shown_ = false;
   }
 
-  void XInputWindow::Show ()
+  void XInputWindow::Show()
   {
     shown_ = true;
 
     if (!mapped_)
     {
-      XMapRaised (display_, window_);
+      XMapRaised(display_, window_);
       mapped_ = true;
     }
     XMoveResizeWindow(display_, window_,

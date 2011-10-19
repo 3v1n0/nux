@@ -37,7 +37,7 @@ namespace nux
   class GpuDevice;
   class GraphicsEngine;
 
-  extern const TCHAR *WINDOW_CLASS_NAME;
+  extern const char *WINDOW_CLASS_NAME;
 
   class DisplayAccessController
   {
@@ -52,7 +52,7 @@ namespace nux
       @param FullscreenFlag True to create a full screen window.
       @param create_rendering_data If true, then in GraphicsEngine, the system creates the OpenGL shaders and the font textures for the rendering.
     */
-    GraphicsDisplay *CreateGLWindow (const TCHAR *WindowTitle, unsigned int WindowWidth, unsigned int WindowHeight, WindowStyle Style,
+    GraphicsDisplay *CreateGLWindow(const char *WindowTitle, unsigned int WindowWidth, unsigned int WindowHeight, WindowStyle Style,
       GraphicsDisplay *parent,
       bool FullscreenFlag = false,
       bool create_rendering_data = true);
@@ -66,13 +66,13 @@ namespace nux
 
 #if defined(NUX_OS_WINDOWS)
     //! Create a GraphicsDisplay from a foreign window and display.
-    GraphicsDisplay *CreateFromForeignWindow (HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext);
+    GraphicsDisplay *CreateFromForeignWindow(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext);
 #elif defined(NUX_OS_LINUX)
     //! Create a GraphicsDisplay from a foreign window and display.
 #ifdef NUX_OPENGLES_20
-    GraphicsDisplay *CreateFromForeignWindow (Display *X11Display, Window X11Window, EGLContext OpenGLContext);
+    GraphicsDisplay *CreateFromForeignWindow(Display *X11Display, Window X11Window, EGLContext OpenGLContext);
 #else
-    GraphicsDisplay *CreateFromForeignWindow (Display *X11Display, Window X11Window, GLXContext OpenGLContext);
+    GraphicsDisplay *CreateFromForeignWindow(Display *X11Display, Window X11Window, GLXContext OpenGLContext);
 #endif
 #endif
 
@@ -80,7 +80,7 @@ namespace nux
   private:
     static DisplayAccessController *m_pInstance;
     DisplayAccessController();
-    DisplayAccessController (const DisplayAccessController &);
+    DisplayAccessController(const DisplayAccessController &);
     // Does not make sense for a singleton. This is a self assignment.
     DisplayAccessController &operator= (const DisplayAccessController &);
     // Declare operator address-of as private

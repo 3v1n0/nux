@@ -32,7 +32,7 @@ namespace nux
 
   class NuxGraphicsGlobalSingletonInitializer
   {
-    NUX_DISABLE_OBJECT_COPY (NuxGraphicsGlobalSingletonInitializer);
+    NUX_DISABLE_OBJECT_COPY(NuxGraphicsGlobalSingletonInitializer);
     NuxGraphicsGlobalSingletonInitializer *operator & ();
     const NuxGraphicsGlobalSingletonInitializer *operator & () const;
 

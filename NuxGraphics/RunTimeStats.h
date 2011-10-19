@@ -28,7 +28,7 @@ namespace nux
 
   class RenderingStats
   {
-    NUX_DECLARE_GLOBAL_OBJECT (RenderingStats, NuxGraphicsGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT(RenderingStats, NuxGraphicsGlobalSingletonInitializer);
   public:
     static t_u32 m_NumTex2D;
     static t_u32 m_GPUSizeTex2D;
@@ -59,8 +59,8 @@ namespace nux
     static t_u32 m_NumShaderProgram;
 
     static t_u32 m_TotalGPUSize;
-    void Register (IOpenGLResource *GraphicsObject);
-    void UnRegister (IOpenGLResource *GraphicsObject);
+    void Register(IOpenGLResource *GraphicsObject);
+    void UnRegister(IOpenGLResource *GraphicsObject);
 
     std::vector<int> _texture_2d_array;
     std::vector<int> _texture_rect_array;

@@ -144,17 +144,17 @@ namespace nux
     OGL_FORCE_DWORD            = 0x7fffffff /* force 32-bit size enum */
   };
 
-  extern const TCHAR *OGLDeviceErrorMessages[];
+  extern const char *OGLDeviceErrorMessages[];
 
 #define OGL_OK 0
 #define OGL_CALL(call)              \
     {                               \
         int Result = call;          \
-        if(Result != OGL_OK)          \
-        {nuxError(TEXT("OGL Object Error: Error # %d - (%s) "), Result,  *OGLDeviceErrorMessages[Result] );}   \
+        if (Result != OGL_OK)          \
+        {nuxError("OGL Object Error: Error # %d - (%s) ", Result,  *OGLDeviceErrorMessages[Result] );}   \
     }
 
-//if(Result!=OGL_OK) {nuxError(TEXT("OGL Object Error: Error # %d - %s"), Result, OGLDeviceErrorMessages[Result]);}
+//if(Result!=OGL_OK) {nuxError("OGL Object Error: Error # %d - %s", Result, OGLDeviceErrorMessages[Result]);}
 
 #ifndef NUX_OPENGLES_20
   enum TEXTURE_FORMAT
@@ -218,7 +218,7 @@ namespace nux
 
   struct PixelFormatReadInfo
   {
-    const TCHAR	*Name;
+    const char	*Name;
     GLenum          Format;     // format use for glReadPixels
     GLenum          type;       // type use for glReadPixels
     // Format specific internal flags, e.g. whether SRGB is supported with this format
@@ -510,8 +510,8 @@ namespace nux
   } QUERY_TYPE;
 
 // Flags field for Issue
-#define ISSUE_END (1 << 0) // Tells the runtime to issue the end of a query, changing it's state to "non-signaled".
-#define ISSUE_BEGIN (1 << 1) // Tells the runtime to issue the begining of a query.
+#define ISSUE_END   (1 << 0) // Tells the runtime to issue the end of a query, changing it's state to "non-signaled".
+#define ISSUE_BEGIN (1 << 1) // Tells the runtime to issue the beginning of a query.
 
   struct VERTEXELEMENT
   {
@@ -542,7 +542,7 @@ namespace nux
     int Offset;
     // Type can be GL_UNSIGNED_BYTE, GL_SHORT, GL_INT, GL_FLOAT, GL_DOUBLE ...
     ATTRIB_COMPONENT_TYPE Type;
-    // This can be 1, 2, 3 or 4; For a position (xyzw), it will be 4. For a texture coordinate (uv) it will be 2.
+    // This can be 1, 2, 3 or 4; For a position(xyzw), it will be 4. For a texture coordinate(uv) it will be 2.
     int NumComponent;
     int stride_;
   };
@@ -553,14 +553,14 @@ namespace nux
   ATTRIB_CT_UNKNOWN,          \
   0, 0)
 
-  unsigned int GetVertexElementSize (VERTEXELEMENT vtxelement);
+  unsigned int GetVertexElementSize(VERTEXELEMENT vtxelement);
 
 #define MAXDECLLENGTH    64
 #define MAX_NUM_STREAM  8
 
-  void DecomposeTypeDeclaraction (ATTRIB_DECL_TYPE Type, BYTE &NumComponent, ATTRIB_COMPONENT_TYPE &ComponentType);
+  void DecomposeTypeDeclaraction(ATTRIB_DECL_TYPE Type, BYTE &NumComponent, ATTRIB_COMPONENT_TYPE &ComponentType);
 
-//   void AddVertexElement (std::vector<VERTEXELEMENT>& Elements,
+//   void AddVertexElement(std::vector<VERTEXELEMENT>& Elements,
 //                          WORD Stream,
 //                          WORD Offset,
 //                          //ubiS16 Stride,

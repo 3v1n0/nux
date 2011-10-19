@@ -29,11 +29,11 @@ namespace nux
   class IOpenGLResource;
   class IOpenGLSurface: public IOpenGLResource
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLSurface, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLSurface, IOpenGLResource);
   public:
     virtual int RefCount() const;
 
-    int LockRect (
+    int LockRect(
       SURFACE_LOCKED_RECT *pLockedRect,
       const SURFACE_RECT *pRect);
     int UnlockRect();
@@ -42,7 +42,7 @@ namespace nux
     {
       if (_BaseTexture == 0)
       {
-        nuxAssert (0);  // should not happen
+        nuxAssert(0);  // should not happen
         return BITFMT_UNKNOWN;
       }
 
@@ -53,22 +53,22 @@ namespace nux
     {
       if (_BaseTexture == 0)
       {
-        nuxAssert (0);  // should not happen
+        nuxAssert(0);  // should not happen
         return 0;
       }
 
-      return ImageSurface::GetLevelDim (_BaseTexture->_PixelFormat, _BaseTexture->_Width, _SMipLevel);
+      return ImageSurface::GetLevelDim(_BaseTexture->_PixelFormat, _BaseTexture->_Width, _SMipLevel);
     }
 
     int GetHeight() const
     {
       if (_BaseTexture == 0)
       {
-        nuxAssert (0);  // should not happen
+        nuxAssert(0);  // should not happen
         return 0;
       }
 
-      return ImageSurface::GetLevelDim (_BaseTexture->_PixelFormat, _BaseTexture->_Height, _SMipLevel);
+      return ImageSurface::GetLevelDim(_BaseTexture->_PixelFormat, _BaseTexture->_Height, _SMipLevel);
     }
 
     int GetMipLevel() const
@@ -81,7 +81,7 @@ namespace nux
       return _SSurfaceTarget;
     }
 
-    int GetDesc (SURFACE_DESC *pDesc)
+    int GetDesc(SURFACE_DESC *pDesc)
     {
       pDesc->Width    = GetWidth();
       pDesc->Height   = GetHeight();
@@ -91,10 +91,10 @@ namespace nux
     }
 
     //! Copy the render target into the texture mip level. 
-    void CopyRenderTarget (int x, int y, int width, int height);
+    void CopyRenderTarget(int x, int y, int width, int height);
 
     //! Return the a pointer to the texture mip level data.
-    void* GetSurfaceData (int &width, int &height, int &format);
+    void* GetSurfaceData(int &width, int &height, int &format);
 
   private:
     virtual ~IOpenGLSurface();
@@ -115,14 +115,14 @@ namespace nux
     //        _RefCount = 0;
     //        _OpenGLID = OpenGLID;
     //    }
-    IOpenGLSurface (IOpenGLBaseTexture *DeviceBaseTexture, GLenum OpenGLID, GLenum TextureTarget, GLenum SurfaceTarget, int MipLevel, int Slice = 0 /*for volume textures*/, NUX_FILE_LINE_PROTO)
-      : IOpenGLResource (RTSURFACE, NUX_FILE_LINE_PARAM)
-      , _STextureTarget (TextureTarget)
-      , _SSurfaceTarget (SurfaceTarget)
-      , _SMipLevel (MipLevel)
-      , _SSlice (Slice)
-      , _BaseTexture (DeviceBaseTexture)
-      , _AllocatedUnpackBuffer (0xFFFFFFFF)
+    IOpenGLSurface(IOpenGLBaseTexture *DeviceBaseTexture, GLenum OpenGLID, GLenum TextureTarget, GLenum SurfaceTarget, int MipLevel, int Slice = 0 /*for volume textures*/, NUX_FILE_LINE_PROTO)
+      : IOpenGLResource(RTSURFACE, NUX_FILE_LINE_PARAM)
+      , _STextureTarget(TextureTarget)
+      , _SSurfaceTarget(SurfaceTarget)
+      , _SMipLevel(MipLevel)
+      , _SSlice(Slice)
+      , _BaseTexture(DeviceBaseTexture)
+      , _AllocatedUnpackBuffer(0xFFFFFFFF)
     {
       // IOpenGLSurface surfaces are created inside a IOpenGLTexture2D, IOpenGLCubeTexture and IOpenGLVolumeTexture.
       // They reside within those classes. The reference counting starts once a call to GetSurfaceLevel,

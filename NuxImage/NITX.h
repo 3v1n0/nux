@@ -51,9 +51,9 @@ namespace nux
   } TextureArchiveInfo_ver_0_0_1;
 #pragma pack()
 
-  bool TextureArchiveAdd_ver_0_0_1 (NSerializer *FileStream, NBitmapData *BitmapData, const TCHAR *InputTextureFile, NUX_OUT t_s64 &Offset);
-  NBitmapData *TextureArchiveLoad_ver_0_0_1 (NSerializer *FileStream, unsigned int Offset);
-  void TextureArchiveGetInfo_ver_0_0_1 (NSerializer *FileStream, TextureArchiveInfo_ver_0_0_1 &TextureArchiveInfo);
+  bool TextureArchiveAdd_ver_0_0_1(NSerializer *FileStream, NBitmapData *BitmapData, const TCHAR *InputTextureFile, NUX_OUT t_s64 &Offset);
+  NBitmapData *TextureArchiveLoad_ver_0_0_1(NSerializer *FileStream, unsigned int Offset);
+  void TextureArchiveGetInfo_ver_0_0_1(NSerializer *FileStream, TextureArchiveInfo_ver_0_0_1 &TextureArchiveInfo);
 
 
 #define TEXTUREARCHIVETAG NUX_MAKEFOURCHARTAG('i','t','x','t')
@@ -63,8 +63,8 @@ namespace nux
 #define NUX_ANIMATED_TEXTURE_VERSION NUX_MAKEFOURCHARTAG('0','0','0','1')
 
 
-  bool CreateITXFile (const TCHAR *InputTextureFile, const TCHAR *OutputTextureFile = 0);
-  NBitmapData *LoadITXFile (const TCHAR *ITXFilename);
+  bool CreateITXFile(const TCHAR *InputTextureFile, const TCHAR *OutputTextureFile = 0);
+  NBitmapData *LoadITXFile(const TCHAR *ITXFilename);
 
 }
 

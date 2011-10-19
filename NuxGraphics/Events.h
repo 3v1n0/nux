@@ -181,7 +181,7 @@ namespace nux
   struct EventToNameStruct
   {
     int event;
-    const TCHAR *EventName;
+    const char *EventName;
   };
 
   enum NuxEventType
@@ -211,8 +211,8 @@ namespace nux
     NUX_DND_DROP,
     NUX_DND_ENTER,  //!< Synthetic event generated when the dnd action enters an InputArea. This is not the event sent when the dnd action enters the window.
     NUX_DND_LEAVE,  //!< Synthetic event generated when the dnd action leaves an InputArea. This is not the event sent when the dnd action leaves the window.
-    NUX_DND_ENTER_WINDOW,  //!< Emitted when the DND action goes inside (XdndLeave) a window.
-    NUX_DND_LEAVE_WINDOW,   //!< Emitted when the DND action goes outside (XdndEnter) a window.
+    NUX_DND_ENTER_WINDOW,  //!< Emitted when the DND action goes inside(XdndLeave) a window.
+    NUX_DND_LEAVE_WINDOW,   //!< Emitted when the DND action goes outside(XdndEnter) a window.
   };
 
   //! Returns index of the mouse button that triggered an event.
@@ -232,7 +232,7 @@ namespace nux
       True is the button is pressed. False otherwise.
 
       @param button_state The mouse button states of an event.
-      @param button Button to query (1 for left mouse button).
+      @param button Button to query(1 for left mouse button).
       @return True is the button is pressed. False otherwise.
   */
   bool GetButtonState(unsigned long button_state, MouseButton button);
@@ -254,7 +254,7 @@ namespace nux
   class Event
   {
   public:
-    Event ();
+    Event();
 
     // Because an event is save in e_event instead of calling immediately the handling function,
     // we must clear the previous event each time before we test for new event in Gfx_OpenGLImpl::get_event.
@@ -284,7 +284,7 @@ namespace nux
         Returns the state of a mouse button.
         True is the button is pressed. False otherwise.
 
-        @param button_index Button index to query (1 for left mouse button).
+        @param button_index Button index to query(1 for left mouse button).
         @return True is the button is pressed. False otherwise.
     */
     bool GetButtonState(MouseButton button) const;
@@ -306,7 +306,7 @@ namespace nux
     */
     unsigned long GetKeySym() const;
     unsigned short GetKeyRepeatCount() const;
-    const TCHAR* GetText() const;
+    const char* GetText() const;
 
     //! Return the state of the Virtual key
     /*!
@@ -314,7 +314,7 @@ namespace nux
         @param VirtualKey virtual key code.
         @return 1 if the key is pressed, 0 if the key is released.
     */
-    unsigned long GetVirtualKeyState (unsigned long VirtualKey) const;
+    unsigned long GetVirtualKeyState(unsigned long VirtualKey) const;
 
     unsigned long VirtualKeycodeState[NUX_MAX_VK];
     int width, height;
@@ -341,7 +341,7 @@ namespace nux
     int e_keysym;       //!< Key symbol.
     int e_wheeldelta;
 
-    TCHAR           e_text [NUX_EVENT_TEXT_BUFFER_SIZE];
+    char           e_text [NUX_EVENT_TEXT_BUFFER_SIZE];
     unsigned long   e_key_modifiers;   // key modifiers
     unsigned long   e_mouse_state;
     unsigned short  e_key_repeat_count; // number of time a key is repeated;    

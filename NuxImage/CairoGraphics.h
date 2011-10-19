@@ -60,7 +60,7 @@ private:
   class CairoGraphics
   {
   public:
-    CairoGraphics (cairo_format_t format, int width, int height);
+    CairoGraphics(cairo_format_t format, int width, int height);
     ~CairoGraphics();
 
     //! Return a cairo context to the encapsulated surface.
@@ -68,16 +68,16 @@ private:
         Return the cairo context of this object. Call cairo_destroy to destroy the context when you are done with it.
         @return A cairo context.
     */
-    cairo_t *GetContext ();
+    cairo_t *GetContext();
 
     //! Return an internal cairo context to the encapsulated surface. Should not be destroyed.
     /*!
         Return the cairo context of this object. This cairo context should not be destroyed with cairo_destroy.
         @return A cairo context.
     */
-    cairo_t *GetInternalContext ();
+    cairo_t *GetInternalContext();
 
-    cairo_surface_t* GetSurface ();
+    cairo_surface_t* GetSurface();
     //! Create a NBitmapData pointer to a 2D texture data.
     /*!
         The returned data must be destroyed with delete.
@@ -85,11 +85,11 @@ private:
     */
     NBitmapData *GetBitmap();
 
-    int GetWidth () const;
-    int GetHeight () const;
+    int GetWidth() const;
+    int GetHeight() const;
 
-    bool PushState ();
-    bool PopState ();
+    bool PushState();
+    bool PopState();
 
     bool ClearCanvas();
 
@@ -101,7 +101,7 @@ private:
 
     bool DrawCanvas(double x, double y, CairoGraphics *cg);
 
-    bool DrawRoundedRectangle (cairo_t* cr,
+    bool DrawRoundedRectangle(cairo_t* cr,
                                double   aspect,
                                double   x,
                                double   y,
@@ -110,7 +110,7 @@ private:
                                double   height,
                                bool     align = false);
 
-    bool BlurSurface (unsigned int radius, cairo_surface_t* surf = NULL);
+    bool BlurSurface(unsigned int radius, cairo_surface_t* surf = NULL);
 
     bool IntersectRectClipRegion(double x, double y, double w, double h);
 

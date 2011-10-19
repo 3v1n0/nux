@@ -29,12 +29,12 @@ namespace nux
   class IOpenGLResource;
   class IOpenGLIndexBuffer: public IOpenGLResource
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLIndexBuffer, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLIndexBuffer, IOpenGLResource);
 
   public:
     virtual ~IOpenGLIndexBuffer();
 
-    int Lock (
+    int Lock(
       t_u32 OffsetToLock,
       t_u32 SizeToLock,
       void **ppbData);
@@ -42,7 +42,7 @@ namespace nux
 
     int GetStride();
 
-    int GetDescription (INDEXBUFFER_DESC *desc) const
+    int GetDescription(INDEXBUFFER_DESC *desc) const
     {
       desc->Format = _Format;
       desc->Usage = _Usage;
@@ -54,7 +54,7 @@ namespace nux
     t_u32 GetSize();
 
   private:
-    IOpenGLIndexBuffer (t_u32 Length, VBO_USAGE Usage, INDEX_FORMAT Format, NUX_FILE_LINE_PROTO);
+    IOpenGLIndexBuffer(t_u32 Length, VBO_USAGE Usage, INDEX_FORMAT Format, NUX_FILE_LINE_PROTO);
 
     t_u32        _Length;
     INDEX_FORMAT   _Format;

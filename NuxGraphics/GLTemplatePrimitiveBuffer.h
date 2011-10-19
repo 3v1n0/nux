@@ -41,34 +41,34 @@ namespace nux
   class TemplateQuadBuffer
   {
   public:
-    TemplateQuadBuffer (GpuDevice *, ShaderType Type = SHADER_TYPE_GLSL, int NumQuads = 256);
+    TemplateQuadBuffer(GpuDevice *, ShaderType Type = SHADER_TYPE_GLSL, int NumQuads = 256);
     ~TemplateQuadBuffer();
     //! Bind GLSL parameter
-    void BindAttribute (INT AttributeLocation, UINT AttributeIndex);
+    void BindAttribute(INT AttributeLocation, UINT AttributeIndex);
     //! Bind NVidia CG parameter
 
 #if (NUX_ENABLE_CG_SHADERS)
-    void BindCGAttribute (CGparameter AttributeLocation, UINT AttributeIndex);
-    void UnBindCGAttribute (CGparameter AttributeLocation);
+    void BindCGAttribute(CGparameter AttributeLocation, UINT AttributeIndex);
+    void UnBindCGAttribute(CGparameter AttributeLocation);
 #endif
-    void UnBindAttribute (INT AttributeLocation);
+    void UnBindAttribute(INT AttributeLocation);
     void UnBind();
-    void Render (INT NumPrimitives);
+    void Render(INT NumPrimitives);
     //! Set the Vertices's attribute on a per quad basis.
     /*!
         Set the Vertices's attribute on a per quad basis.
         All vertex of the quad will have the same value for the attribute index.
     */
-    void SetPerQuadAttribute (UINT AttributeIndex, INT Num, Vector4 *);
+    void SetPerQuadAttribute(UINT AttributeIndex, INT Num, Vector4 *);
 
     //! Set the Vertices's attribute on a per vertex basis.
     /*!
         Set the vertex attribute on a per vertex basis.
     */
-    void SetPerVertexAttribute (UINT AttributeIndex, INT Num, Vector4 *pVector);
-    void UnSetQuadAttribute (UINT AttributeIndex);
+    void SetPerVertexAttribute(UINT AttributeIndex, INT Num, Vector4 *pVector);
+    void UnSetQuadAttribute(UINT AttributeIndex);
 
-    void SetNumQuads (int NumQuads);
+    void SetNumQuads(int NumQuads);
     int GetNumQuads() const;
 
   protected:

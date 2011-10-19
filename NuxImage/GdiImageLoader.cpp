@@ -25,16 +25,16 @@
 
 namespace nux
 {
-  NBitmapData* GdiLoadImageFile (const TCHAR* filename)
+  NBitmapData* GdiLoadImageFile(const TCHAR* filename)
   {
     ULONG_PTR token;
     Gdiplus::GdiplusStartupInput input;
     Gdiplus::GdiplusStartup(&token, &input, NULL);
 
-    Gdiplus::Bitmap* bitmap = new Gdiplus::Bitmap (TCHAR_TO_UNICHAR (filename));
-    if (bitmap == 0 || (bitmap->GetType () == Gdiplus::ImageTypeUnknown) || (bitmap->GetWidth () == 0) || (bitmap->GetHeight () == 0))
+    Gdiplus::Bitmap* bitmap = new Gdiplus::Bitmap(TCHAR_TO_UNICHAR(filename));
+    if (bitmap == 0 || (bitmap->GetType() == Gdiplus::ImageTypeUnknown) || (bitmap->GetWidth() == 0) || (bitmap->GetHeight() == 0))
     {
-      Gdiplus::GdiplusShutdown (token);
+      Gdiplus::GdiplusShutdown(token);
       return 0;
     }
 
@@ -42,11 +42,11 @@ namespace nux
     if (bitmap_data == 0)
     {
       delete bitmap;
-      Gdiplus::GdiplusShutdown (token);
+      Gdiplus::GdiplusShutdown(token);
       return 0;
     }
 
-    Gdiplus::PixelFormat pixel_format = bitmap->GetPixelFormat ();
+    Gdiplus::PixelFormat pixel_format = bitmap->GetPixelFormat();
     int channels = 4;
     BitmapFormat bitmap_format = BITFMT_UNKNOWN;
 
@@ -93,36 +93,36 @@ namespace nux
       channels = 4;
     }
 
-    Gdiplus::Rect rect (0, 0, bitmap->GetWidth(), bitmap->GetHeight());
+    Gdiplus::Rect rect(0, 0, bitmap->GetWidth(), bitmap->GetHeight());
 
-    Gdiplus::Status status = bitmap->LockBits (&rect, Gdiplus::ImageLockModeRead, pixel_format, bitmap_data);
+    Gdiplus::Status status = bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead, pixel_format, bitmap_data);
   
     if (status != Gdiplus::Ok)
     {
       delete bitmap_data;
       delete bitmap;
-      Gdiplus::GdiplusShutdown (token);
+      Gdiplus::GdiplusShutdown(token);
       return 0;
     }
     
-    unsigned int width = bitmap->GetWidth ();
-    unsigned int height = bitmap->GetHeight ();
+    unsigned int width = bitmap->GetWidth();
+    unsigned int height = bitmap->GetHeight();
 
     NTextureData *Texture = NULL;
-    Texture = new NTextureData (bitmap_format, width, height, 1);
+    Texture = new NTextureData(bitmap_format, width, height, 1);
     
     if (Texture == 0)
     {
       bitmap->UnlockBits(bitmap_data);
       delete bitmap_data;
       delete bitmap;
-      Gdiplus::GdiplusShutdown (token);
+      Gdiplus::GdiplusShutdown(token);
       return 0;
     }
 
-    ImageSurface &image_surface = Texture->GetSurface (0);
-    t_u8* dest = image_surface.GetPtrRawData ();
-    int dest_pitch = image_surface.GetPitch ();
+    ImageSurface &image_surface = Texture->GetSurface(0);
+    t_u8* dest = image_surface.GetPtrRawData();
+    int dest_pitch = image_surface.GetPitch();
 
     t_u8* dst = dest;
     unsigned char *src = (unsigned char*) bitmap_data->Scan0;
@@ -130,15 +130,15 @@ namespace nux
 
     for (unsigned int i = 0; i < height; i++)
     {
-      Memcpy (dst, src + i*src_pitch, width*channels);
+      Memcpy(dst, src + i*src_pitch, width*channels);
       dst += dest_pitch;
     }
 
-    bitmap->UnlockBits (bitmap_data);
+    bitmap->UnlockBits(bitmap_data);
     delete bitmap_data;
     delete bitmap;
 
-    Gdiplus::GdiplusShutdown (token);
+    Gdiplus::GdiplusShutdown(token);
 
     return Texture;
   }

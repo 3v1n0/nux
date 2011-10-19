@@ -31,24 +31,24 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLBaseTexture);
+  NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLBaseTexture);
 
-  IOpenGLBaseTexture::IOpenGLBaseTexture (OpenGLResourceType ResourceType,
+  IOpenGLBaseTexture::IOpenGLBaseTexture(OpenGLResourceType ResourceType,
                                           t_u32 Width,
                                           t_u32 Height,
                                           t_u32 Depth,
                                           t_u32 NumMipLevel,
                                           BitmapFormat PixelFormat, NUX_FILE_LINE_DECL)
-    : IOpenGLResource (ResourceType, NUX_FILE_LINE_PARAM)
-    , _IsPOT (false)
-    , _NumMipLevel (NumMipLevel)
-    , _PixelFormat (PixelFormat)
-    , _Width (Width)
-    , _Height (Height)
-    , _Depth (Depth)
-    , _RowMemoryAlignment (1)
+    : IOpenGLResource(ResourceType, NUX_FILE_LINE_PARAM)
+    , _IsPOT(false)
+    , _NumMipLevel(NumMipLevel)
+    , _PixelFormat(PixelFormat)
+    , _Width(Width)
+    , _Height(Height)
+    , _Depth(Depth)
+    , _RowMemoryAlignment(1)
   {
-    //     if( (GPixelFormats[PixelFormat].BlockBytes == 1) ||
+    //     if ((GPixelFormats[PixelFormat].BlockBytes == 1) ||
     //         (GPixelFormats[PixelFormat].BlockBytes == 2) ||
     //         (GPixelFormats[PixelFormat].BlockBytes == 3))
     //         _RowMemoryAlignment = 1;
@@ -57,25 +57,25 @@ namespace nux
 
 
     if (_ResourceType == RTTEXTURE)
-      _TextureStates.SetType (GL_TEXTURE_2D);
+      _TextureStates.SetType(GL_TEXTURE_2D);
 
 #ifndef NUX_OPENGLES_20
     if (_ResourceType == RTTEXTURERECTANGLE)
-      _TextureStates.SetType (GL_TEXTURE_RECTANGLE_ARB);
+      _TextureStates.SetType(GL_TEXTURE_RECTANGLE_ARB);
 
     if (_ResourceType == RTCUBETEXTURE)
-      _TextureStates.SetType (GL_TEXTURE_CUBE_MAP_ARB);
+      _TextureStates.SetType(GL_TEXTURE_CUBE_MAP_ARB);
 
     if (_ResourceType == RTVOLUMETEXTURE)
-      _TextureStates.SetType (GL_TEXTURE_3D);
+      _TextureStates.SetType(GL_TEXTURE_3D);
 
     if (_ResourceType == RTANIMATEDTEXTURE)
-      _TextureStates.SetType (GL_TEXTURE_RECTANGLE_ARB);
+      _TextureStates.SetType(GL_TEXTURE_RECTANGLE_ARB);
 #endif
 
-    _RowMemoryAlignment = ImageSurface::GetMemAlignment (PixelFormat);
+    _RowMemoryAlignment = ImageSurface::GetMemAlignment(PixelFormat);
 
-    if (IsPowerOf2 (Width) && IsPowerOf2 (Height) )
+    if (IsPowerOf2(Width) && IsPowerOf2(Height))
     {
       _IsPOT = true;
     }
@@ -90,90 +90,90 @@ namespace nux
   {
     if (_ResourceType == RTTEXTURE)
     {
-      CHECKGL ( glBindTexture (GL_TEXTURE_2D, _OpenGLID) );
+      CHECKGL(glBindTexture(GL_TEXTURE_2D, _OpenGLID));
     }
 #ifndef NUX_OPENGLES_20
     else if (_ResourceType == RTTEXTURERECTANGLE)
     {
-      CHECKGL ( glBindTexture (GL_TEXTURE_RECTANGLE_ARB, _OpenGLID) );
+      CHECKGL(glBindTexture(GL_TEXTURE_RECTANGLE_ARB, _OpenGLID));
     }
     else if (_ResourceType == RTCUBETEXTURE)
     {
-      CHECKGL ( glBindTexture (GL_TEXTURE_CUBE_MAP, _OpenGLID) );
+      CHECKGL(glBindTexture(GL_TEXTURE_CUBE_MAP, _OpenGLID));
     }
     else if (_ResourceType == RTVOLUMETEXTURE)
     {
-      CHECKGL ( glBindTexture (GL_TEXTURE_3D, _OpenGLID) );
+      CHECKGL(glBindTexture(GL_TEXTURE_3D, _OpenGLID));
     }
     else if (_ResourceType == RTANIMATEDTEXTURE)
     {
-      CHECKGL ( glBindTexture (GL_TEXTURE_RECTANGLE_ARB, _OpenGLID) );
+      CHECKGL(glBindTexture(GL_TEXTURE_RECTANGLE_ARB, _OpenGLID));
     }
 #endif
     else
     {
-      nuxError (TEXT ("[IOpenGLBaseTexture::SetRenderStates] Incorrect texture resource type.") );
+      nuxError("[IOpenGLBaseTexture::SetRenderStates] Incorrect texture resource type.");
     }
 
     _TextureStates.SetRenderStates();
   }
 
-  void IOpenGLBaseTexture::SetFiltering (t_u32 MinFilter, t_u32 MagFilter/*, t_u32 MIP = GL_NEAREST*/)
+  void IOpenGLBaseTexture::SetFiltering(t_u32 MinFilter, t_u32 MagFilter/*, t_u32 MIP = GL_NEAREST*/)
   {
-    _TextureStates.SetFiltering (MinFilter, MagFilter);
+    _TextureStates.SetFiltering(MinFilter, MagFilter);
   }
 
-  void IOpenGLBaseTexture::SetWrap (t_u32 U, t_u32 V, t_u32 W)
+  void IOpenGLBaseTexture::SetWrap(t_u32 U, t_u32 V, t_u32 W)
   {
-    _TextureStates.SetWrap (U, V, W);
+    _TextureStates.SetWrap(U, V, W);
   }
 
-  void IOpenGLBaseTexture::SetLOD (float MinLod, float MaxLod)
+  void IOpenGLBaseTexture::SetLOD(float MinLod, float MaxLod)
   {
-    _TextureStates.SetLOD (MinLod, MaxLod);
+    _TextureStates.SetLOD(MinLod, MaxLod);
   }
 
-  void IOpenGLBaseTexture::SetMipLevel (t_u32 MinMip, t_u32 MaxMip)
+  void IOpenGLBaseTexture::SetMipLevel(t_u32 MinMip, t_u32 MaxMip)
   {
-    _TextureStates.SetMipLevel (MinMip, MaxMip);
+    _TextureStates.SetMipLevel(MinMip, MaxMip);
   }
 
-  void IOpenGLBaseTexture::SetBorderColor (float R, float G, float B, float A)
+  void IOpenGLBaseTexture::SetBorderColor(float R, float G, float B, float A)
   {
-    _TextureStates.SetBorderColor (R, G, B, A);
+    _TextureStates.SetBorderColor(R, G, B, A);
   }
 
   int IOpenGLBaseTexture::BindTexture()
   {
     if (_OpenGLID == 0)
     {
-      CHECKGL ( glBindTexture (GL_TEXTURE_2D, 0) );
+      CHECKGL(glBindTexture(GL_TEXTURE_2D, 0));
     }
     else if (_ResourceType == RTTEXTURE)
     {
-      CHECKGL ( glBindTexture (GL_TEXTURE_2D, _OpenGLID) );
+      CHECKGL(glBindTexture(GL_TEXTURE_2D, _OpenGLID));
     }
 #ifndef NUX_OPENGLES_20
     else if (_ResourceType == RTTEXTURERECTANGLE)
     {
-      CHECKGL ( glBindTexture (GL_TEXTURE_RECTANGLE_ARB, _OpenGLID) );
+      CHECKGL(glBindTexture(GL_TEXTURE_RECTANGLE_ARB, _OpenGLID));
     }
     else if (_ResourceType == RTCUBETEXTURE)
     {
-      CHECKGL ( glBindTexture (GL_TEXTURE_CUBE_MAP, _OpenGLID) );
+      CHECKGL(glBindTexture(GL_TEXTURE_CUBE_MAP, _OpenGLID));
     }
     else if (_ResourceType == RTVOLUMETEXTURE)
     {
-      CHECKGL ( glBindTexture (GL_TEXTURE_3D, _OpenGLID) );
+      CHECKGL(glBindTexture(GL_TEXTURE_3D, _OpenGLID));
     }
     else if (_ResourceType == RTANIMATEDTEXTURE)
     {
-      CHECKGL (glBindTexture (GL_TEXTURE_RECTANGLE_ARB, _OpenGLID) );
+      CHECKGL(glBindTexture(GL_TEXTURE_RECTANGLE_ARB, _OpenGLID));
     }
 #endif
     else
     {
-      nuxError (TEXT ("[GpuDevice::BindTexture] Unknown texture type.") );
+      nuxError("[GpuDevice::BindTexture] Unknown texture type.");
       return OGL_INVALID_TEXTURE;
     }
 
@@ -181,52 +181,52 @@ namespace nux
     return OGL_OK;
   }
 
-  int IOpenGLBaseTexture::BindTextureToUnit (int TextureUnitIndex)
+  int IOpenGLBaseTexture::BindTextureToUnit(int TextureUnitIndex)
   {
-    CHECKGL ( glActiveTextureARB (TextureUnitIndex) );
-    CHECKGL ( glBindTexture (GL_TEXTURE_2D, 0) );
+    CHECKGL(glActiveTextureARB(TextureUnitIndex));
+    CHECKGL(glBindTexture(GL_TEXTURE_2D, 0));
 #ifndef NUX_OPENGLES_20
-    CHECKGL ( glBindTexture (GL_TEXTURE_3D, 0) );
-    CHECKGL ( glBindTexture (GL_TEXTURE_CUBE_MAP, 0) );
-    CHECKGL ( glBindTexture (GL_TEXTURE_RECTANGLE_ARB, 0) );
-    CHECKGL ( glDisable (GL_TEXTURE_2D) );
-    CHECKGL ( glDisable (GL_TEXTURE_3D) );
-    CHECKGL ( glDisable (GL_TEXTURE_RECTANGLE_ARB) );
-    CHECKGL ( glDisable (GL_TEXTURE_CUBE_MAP) );
+    CHECKGL(glBindTexture(GL_TEXTURE_3D, 0));
+    CHECKGL(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
+    CHECKGL(glBindTexture(GL_TEXTURE_RECTANGLE_ARB, 0));
+    CHECKGL(glDisable(GL_TEXTURE_2D));
+    CHECKGL(glDisable(GL_TEXTURE_3D));
+    CHECKGL(glDisable(GL_TEXTURE_RECTANGLE_ARB));
+    CHECKGL(glDisable(GL_TEXTURE_CUBE_MAP));
 #endif
 
     if (_ResourceType == RTTEXTURE)
     {
-      CHECKGL (glBindTexture (GL_TEXTURE_2D, _OpenGLID) );
+      CHECKGL(glBindTexture(GL_TEXTURE_2D, _OpenGLID));
 #ifndef NUX_OPENGLES_20
-      CHECKGL (glEnable (GL_TEXTURE_2D) );
+      CHECKGL(glEnable(GL_TEXTURE_2D));
 #endif
     }
 #ifndef NUX_OPENGLES_20
     else if (_ResourceType == RTTEXTURERECTANGLE)
     {
-      CHECKGL (glBindTexture (GL_TEXTURE_RECTANGLE_ARB, _OpenGLID) );
-      CHECKGL (glEnable (GL_TEXTURE_RECTANGLE_ARB) );
+      CHECKGL(glBindTexture(GL_TEXTURE_RECTANGLE_ARB, _OpenGLID));
+      CHECKGL(glEnable(GL_TEXTURE_RECTANGLE_ARB));
     }
     else if (_ResourceType == RTCUBETEXTURE)
     {
-      CHECKGL (glBindTexture (GL_TEXTURE_CUBE_MAP, _OpenGLID) );
-      CHECKGL (glEnable (GL_TEXTURE_CUBE_MAP) );
+      CHECKGL(glBindTexture(GL_TEXTURE_CUBE_MAP, _OpenGLID));
+      CHECKGL(glEnable(GL_TEXTURE_CUBE_MAP));
     }
     else if (_ResourceType == RTVOLUMETEXTURE)
     {
-      CHECKGL (glBindTexture (GL_TEXTURE_3D, _OpenGLID) );
-      CHECKGL (glEnable (GL_TEXTURE_3D) );
+      CHECKGL(glBindTexture(GL_TEXTURE_3D, _OpenGLID));
+      CHECKGL(glEnable(GL_TEXTURE_3D));
     }
     else if (_ResourceType == RTANIMATEDTEXTURE)
     {
-      CHECKGL (glBindTexture (GL_TEXTURE_RECTANGLE_ARB, _OpenGLID) );
-      CHECKGL (glEnable (GL_TEXTURE_RECTANGLE_ARB) );
+      CHECKGL(glBindTexture(GL_TEXTURE_RECTANGLE_ARB, _OpenGLID));
+      CHECKGL(glEnable(GL_TEXTURE_RECTANGLE_ARB));
     }
 #endif
     else
     {
-      nuxError (TEXT ("[IOpenGLBaseTexture::BindTexture] unknown texture type.") );
+      nuxError("[IOpenGLBaseTexture::BindTexture] unknown texture type.");
       return OGL_ERROR;
     }
 
@@ -234,27 +234,27 @@ namespace nux
     return OGL_OK;
   }
 
-  void IOpenGLBaseTexture::GetSurfaceLevel (int Level, ObjectPtr<IOpenGLSurface>& surface)
+  void IOpenGLBaseTexture::GetSurfaceLevel(int Level, ObjectPtr<IOpenGLSurface>& surface)
   {
 
   }
 
-  ObjectPtr<IOpenGLSurface> IOpenGLBaseTexture::GetSurfaceLevel (int Level)
+  ObjectPtr<IOpenGLSurface> IOpenGLBaseTexture::GetSurfaceLevel(int Level)
   {
     return ObjectPtr<IOpenGLSurface> (0);
   }
 
-  int IOpenGLBaseTexture::LockRect (int Level, SURFACE_LOCKED_RECT *pLockedRect, const SURFACE_RECT *pRect)
+  int IOpenGLBaseTexture::LockRect(int Level, SURFACE_LOCKED_RECT *pLockedRect, const SURFACE_RECT *pRect)
   {
     return 0;
   }
 
-  int IOpenGLBaseTexture::UnlockRect (int Level)
+  int IOpenGLBaseTexture::UnlockRect(int Level)
   {
     return 0;
   }
 
-  void* IOpenGLBaseTexture::GetSurfaceData (int level, int &width, int &height, int &format)
+  void* IOpenGLBaseTexture::GetSurfaceData(int level, int &width, int &height, int &format)
   {
     width = 0;
     height = 0;
@@ -263,10 +263,10 @@ namespace nux
   }
 
 
-  t_s32 GetTextureSize (IOpenGLBaseTexture *pTexture)
+  t_s32 GetTextureSize(IOpenGLBaseTexture *pTexture)
   {
     GLint unpack_alignment = GPixelFormats[pTexture->_PixelFormat].RowMemoryAlignment;
-    t_u32 halfUnpack = Log2 (unpack_alignment);
+    t_u32 halfUnpack = Log2(unpack_alignment);
 
     t_u32 TextureSize = 0;
 
@@ -281,8 +281,8 @@ namespace nux
       {
         t_u32 Width            = Max<t_u32> (1, pTexture->_Width >> Level);
         t_u32 Height           = Max<t_u32> (1, pTexture->_Height >> Level);
-        t_u32 WidthInBlocks    = Max<t_u32> ( (Width + 3) / 4, 1); // round the width to the upper multiple of 4. DXT blocks are 4x4 texels.
-        t_u32 HeightInBlocks   = Max<t_u32> ( (Height + 3) / 4, 1); // round the height to the upper multiple of 4. DXT blocks are 4x4 texels.
+        t_u32 WidthInBlocks    = Max<t_u32> ((Width + 3) / 4, 1); // round the width to the upper multiple of 4. DXT blocks are 4x4 texels.
+        t_u32 HeightInBlocks   = Max<t_u32> ((Height + 3) / 4, 1); // round the height to the upper multiple of 4. DXT blocks are 4x4 texels.
 
         if (pTexture->_PixelFormat == BITFMT_DXT1)
         {
@@ -301,7 +301,7 @@ namespace nux
         t_u32 Width             = Max<t_u32> (1, pTexture->_Width >> Level);
         t_u32 Height            = Max<t_u32> (1, pTexture->_Height >> Level);
         t_u32 BytePerPixel      = GPixelFormats[pTexture->_PixelFormat].BlockBytes;
-        t_u32 SlicePitch        = ( ( (Width * BytePerPixel + (unpack_alignment - 1) ) >> (halfUnpack) ) << (halfUnpack) ) * Height;
+        t_u32 SlicePitch        = (((Width * BytePerPixel + (unpack_alignment - 1)) >> (halfUnpack)) << (halfUnpack)) * Height;
 
         TextureSize += SlicePitch;
       }
@@ -315,12 +315,12 @@ namespace nux
     return TextureSize;
   }
 
-  void GetTextureDesc (IOpenGLBaseTexture *pTexture,
+  void GetTextureDesc(IOpenGLBaseTexture *pTexture,
                        t_u32 Level,
                        TEXTURE_DESC *pDesc)
   {
     GLint unpack_alignment = GPixelFormats[pTexture->_PixelFormat].RowMemoryAlignment;
-    t_u32 halfUnpack = Log2 (unpack_alignment);
+    t_u32 halfUnpack = Log2(unpack_alignment);
 
     t_u32 BytePerPixel = 0;
 
@@ -335,8 +335,8 @@ namespace nux
     {
       pDesc->Width            = Max<t_u32> (1, pTexture->_Width >> Level);
       pDesc->Height           = Max<t_u32> (1, pTexture->_Height >> Level);
-      pDesc->WidthInBlocks    = Max<t_u32> ( (pDesc->Width + 3) / 4, 1); // round the width to the upper multiple of 4. DXT blocks are 4x4 texels.
-      pDesc->HeightInBlocks   = Max<t_u32> ( (pDesc->Height + 3) / 4, 1); // round the height to the upper multiple of 4. DXT blocks are 4x4 texels.
+      pDesc->WidthInBlocks    = Max<t_u32> ((pDesc->Width + 3) / 4, 1); // round the width to the upper multiple of 4. DXT blocks are 4x4 texels.
+      pDesc->HeightInBlocks   = Max<t_u32> ((pDesc->Height + 3) / 4, 1); // round the height to the upper multiple of 4. DXT blocks are 4x4 texels.
 
       if ( /*pTexture->_Format == GL_COMPRESSED_RGB_S3TC_DXT1_EXT ||*/
         pTexture->_PixelFormat == BITFMT_DXT1)
@@ -358,7 +358,7 @@ namespace nux
         //    | xx | xx | xx | xx |
         //    ---------------------
 
-        // A line of n texel DXT1 data uses n/2 bytes (4 bits/texel). So the number of bytes used for a
+        // A line of n texel DXT1 data uses n/2 bytes(4 bits/texel). So the number of bytes used for a
         // texwidth texel, is texwidth/2 bytes.
         // Note that texwidth is divisible by 4(to to the upper rounding to 4), therefore, it is also divisible
         // by 2.
@@ -373,7 +373,7 @@ namespace nux
       }
       else
       {
-        // A line of n texel DXT3/5 data uses n bytes (1 byte/texel). So the number of bytes used for a
+        // A line of n texel DXT3/5 data uses n bytes(1 byte/texel). So the number of bytes used for a
         // texwidth texels, is texwidth bytes.
 
         // glCompressedTexImage2DARB, glCompressedTexImage3DARB,
@@ -393,8 +393,8 @@ namespace nux
       BytePerPixel            = GPixelFormats[pTexture->_PixelFormat].BlockBytes;
       pDesc->BitsPerPixel     = BytePerPixel * 8;
       pDesc->BytesPerBlock    = BytePerPixel; // a block is a 1x1 pixel ie. 1 pixel.
-      pDesc->RowPitch = ( ( (pDesc->Width * BytePerPixel + (unpack_alignment - 1) ) >> (halfUnpack) ) << (halfUnpack) );
-      pDesc->SlicePitch = ( ( (pDesc->Width * BytePerPixel + (unpack_alignment - 1) ) >> (halfUnpack) ) << (halfUnpack) ) * pDesc->Height;
+      pDesc->RowPitch = (((pDesc->Width * BytePerPixel + (unpack_alignment - 1)) >> (halfUnpack)) << (halfUnpack));
+      pDesc->SlicePitch = (((pDesc->Width * BytePerPixel + (unpack_alignment - 1)) >> (halfUnpack)) << (halfUnpack)) * pDesc->Height;
     }
   }
 

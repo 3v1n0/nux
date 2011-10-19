@@ -34,16 +34,16 @@ namespace nux
   class IOpenGLResource;
   class IOpenGLBaseTexture;
 
-  t_s32 GetTextureSize (IOpenGLBaseTexture *pTexture);
+  t_s32 GetTextureSize(IOpenGLBaseTexture *pTexture);
 
 // todo: It should not be possible to create an object of type IOpenGLBaseTexture directly.
   class IOpenGLBaseTexture: public IOpenGLResource
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLBaseTexture, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLBaseTexture, IOpenGLResource);
 
   public:
 
-    IOpenGLBaseTexture (OpenGLResourceType ResourceType,
+    IOpenGLBaseTexture(OpenGLResourceType ResourceType,
                         t_u32 Width,
                         t_u32 Height,
                         t_u32 Depth,
@@ -120,28 +120,28 @@ namespace nux
     //GLTextureStates& GetTextureStates() {return _TextureStates;}
 
     void SetRenderStates();
-    void SetFiltering (t_u32 MIN = GL_NEAREST, t_u32 MAG = GL_NEAREST/*, t_u32 MIP = GL_NEAREST*/);
-    void SetWrap (t_u32 U = GL_REPEAT, t_u32 V = GL_REPEAT, t_u32 W = GL_REPEAT);
-    void SetLOD (float MinLod = -1000.0f, float MaxLod = +1000.0f);
-    void SetMipLevel (t_u32 MinMip = 0, t_u32 MaxMip = 1000);
-    void SetBorderColor (float R, float G, float B, float A);
+    void SetFiltering(t_u32 MIN = GL_NEAREST, t_u32 MAG = GL_NEAREST/*, t_u32 MIP = GL_NEAREST*/);
+    void SetWrap(t_u32 U = GL_REPEAT, t_u32 V = GL_REPEAT, t_u32 W = GL_REPEAT);
+    void SetLOD(float MinLod = -1000.0f, float MaxLod = +1000.0f);
+    void SetMipLevel(t_u32 MinMip = 0, t_u32 MaxMip = 1000);
+    void SetBorderColor(float R, float G, float B, float A);
 
     int BindTexture();
-    int BindTextureToUnit (int TextureUnitIndex);
+    int BindTextureToUnit(int TextureUnitIndex);
 
-    virtual void GetSurfaceLevel (int Level, ObjectPtr<IOpenGLSurface>& surface);
-    virtual ObjectPtr<IOpenGLSurface> GetSurfaceLevel (int Level);
-    virtual int LockRect (
+    virtual void GetSurfaceLevel(int Level, ObjectPtr<IOpenGLSurface>& surface);
+    virtual ObjectPtr<IOpenGLSurface> GetSurfaceLevel(int Level);
+    virtual int LockRect(
       int Level,
       SURFACE_LOCKED_RECT *pLockedRect,
       const SURFACE_RECT *pRect);
 
-    virtual int UnlockRect (
+    virtual int UnlockRect(
       int Level
       );
 
     //! Return the a pointer to the texture mip level data.
-    virtual void* GetSurfaceData (int level, int &width, int &height, int &format);
+    virtual void* GetSurfaceData(int level, int &width, int &height, int &format);
 
   protected:
     GLTextureStates _TextureStates;
@@ -159,12 +159,12 @@ namespace nux
 
     friend class IOpenGLSurface;
     friend class IOpenGLVolume;
-    friend void GetTextureDesc (
+    friend void GetTextureDesc(
       IOpenGLBaseTexture *pTexture,
       t_u32 Level,
       TEXTURE_DESC *pDesc
     );
-    friend t_s32 GetTextureSize (IOpenGLBaseTexture *pTexture);
+    friend t_s32 GetTextureSize(IOpenGLBaseTexture *pTexture);
   };
 
 }

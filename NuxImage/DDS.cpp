@@ -52,35 +52,35 @@ namespace nux
     // System call: check if the file exist
 #if defined(_WIN32)
 
-    if (_stat (filename, &file_info) != 0)
+    if (_stat(filename, &file_info) != 0)
 #else
-    if (stat (filename, &file_info) != 0)
+    if (stat(filename, &file_info) != 0)
 #endif
     {
-      nuxAssertMsg (0, TEXT ("[LoadFileFormat_DDS] File not found.") );
+      nuxAssertMsg(0, "[LoadFileFormat_DDS] File not found.");
       return 0;
     }
 
-    file.open (filename, std::ifstream::binary);       // open as binary
+    file.open(filename, std::ifstream::binary);       // open as binary
 
-    if (!file.is_open() )
+    if (!file.is_open())
     {
-      nuxAssertMsg (0, TEXT ("[LoadFileFormat_DDS] Cannot open file.") );
+      nuxAssertMsg(0, "[LoadFileFormat_DDS] Cannot open file.");
       return 0;
     }
 
     BYTE *buffer;
     int buffer_length;
 
-    file.seekg (0, std::ios_base::end);
+    file.seekg(0, std::ios_base::end);
     buffer_length = file.tellg();
-    file.seekg (0, std::ios_base::beg);
+    file.seekg(0, std::ios_base::beg);
     buffer = new BYTE[buffer_length];
-    file.read ( (char *) buffer, buffer_length);
+    file.read((char *) buffer, buffer_length);
 
-    if (file.fail() || file.eof() )
+    if (file.fail() || file.eof())
     {
-      nuxAssertMsg (0, TEXT ("[LoadFileFormat_DDS] Cannot read the expected content size.") );
+      nuxAssertMsg(0, "[LoadFileFormat_DDS] Cannot read the expected content size.");
       return 0;
     }
 
@@ -113,7 +113,7 @@ namespace nux
       return 0;
     }
 
-    if (buffer_length < (int) sizeof (DDS_header) )
+    if (buffer_length < (int) sizeof(DDS_header))
     {
       /*	we can't do it!	*/
       result_string_pointer = "DDS file was too small to contain the DDS header";
@@ -121,11 +121,11 @@ namespace nux
     }
 
     /*	try reading in the header	*/
-    memcpy ( (void *) (&header), (const void *) buffer, sizeof ( DDS_header ) );
-    buffer_index = sizeof ( DDS_header );
+    memcpy((void *) (&header), (const void *) buffer, sizeof( DDS_header ));
+    buffer_index = sizeof( DDS_header );
     /*	guilty until proven innocent	*/
     result_string_pointer = "Failed to read a known DDS header";
-    /*	validate the header (warning, "goto"'s ahead, shield your eyes!!)	*/
+    /*	validate the header(warning, "goto"'s ahead, shield your eyes!!)	*/
     flag = ('D' << 0) | ('D' << 8) | ('S' << 16) | (' ' << 24);
 
     if ( header.dwMagic != flag )
@@ -141,7 +141,7 @@ namespace nux
     /*	I need all of these	*/
     flag = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PIXELFORMAT;
 
-    if ( (header.dwFlags & flag) != flag )
+    if ((header.dwFlags & flag) != flag )
     {
       goto quick_exit;
     }
@@ -152,16 +152,16 @@ namespace nux
     spec, so I need to make my reader more tolerant	*/
     /*	I need one of these	*/
 
-    // DDPF_RGB - Texture contains uncompressed RGB data; dwRGBBitCount and the RGB masks (dwRBitMask, dwRBitMask, dwRBitMask) contain valid data.
+    // DDPF_RGB - Texture contains uncompressed RGB data; dwRGBBitCount and the RGB masks(dwRBitMask, dwRBitMask, dwRBitMask) contain valid data.
     // DDPF_FOURCC - Texture contains compressed RGB data; dwFourCC contains valid data.
     flag = DDPF_FOURCC | DDPF_RGB;
 
-    if ( (header.sPixelFormat.dwFlags & flag) == 0 )
+    if ((header.sPixelFormat.dwFlags & flag) == 0 )
     {
       goto quick_exit;
     }
 
-    if ( (header.sPixelFormat.dwRGBAlphaBitMask & DDPF_ALPHAPIXELS) )
+    if ((header.sPixelFormat.dwRGBAlphaBitMask & DDPF_ALPHAPIXELS))
     {
       // texture has valid alpha data.
       // check dwRGBAlphaBitMask for alpha mask
@@ -172,20 +172,20 @@ namespace nux
       goto quick_exit;
     }
 
-    if ( (header.sCaps.dwCaps1 & DDSCAPS_TEXTURE) == 0 )
+    if ((header.sCaps.dwCaps1 & DDSCAPS_TEXTURE) == 0 )
     {
       goto quick_exit;
     }
 
     /*	make sure it is a type we can upload */
-    if ( (header.sPixelFormat.dwFlags & DDPF_FOURCC) &&
+    if ((header.sPixelFormat.dwFlags & DDPF_FOURCC) &&
          ! (
-           (header.sPixelFormat.dwFourCC == ( ('D' << 0) | ('X' << 8) | ('T' << 16) | ('1' << 24) ) ) ||
-           (header.sPixelFormat.dwFourCC == ( ('D' << 0) | ('X' << 8) | ('T' << 16) | ('2' << 24) ) ) ||
-           (header.sPixelFormat.dwFourCC == ( ('D' << 0) | ('X' << 8) | ('T' << 16) | ('3' << 24) ) ) ||
-           (header.sPixelFormat.dwFourCC == ( ('D' << 0) | ('X' << 8) | ('T' << 16) | ('4' << 24) ) ) ||
-           (header.sPixelFormat.dwFourCC == ( ('D' << 0) | ('X' << 8) | ('T' << 16) | ('5' << 24) ) )
-         ) )
+           (header.sPixelFormat.dwFourCC == (('D' << 0) | ('X' << 8) | ('T' << 16) | ('1' << 24))) ||
+           (header.sPixelFormat.dwFourCC == (('D' << 0) | ('X' << 8) | ('T' << 16) | ('2' << 24))) ||
+           (header.sPixelFormat.dwFourCC == (('D' << 0) | ('X' << 8) | ('T' << 16) | ('3' << 24))) ||
+           (header.sPixelFormat.dwFourCC == (('D' << 0) | ('X' << 8) | ('T' << 16) | ('4' << 24))) ||
+           (header.sPixelFormat.dwFourCC == (('D' << 0) | ('X' << 8) | ('T' << 16) | ('5' << 24)))
+         ))
     {
       goto quick_exit;
     }
@@ -208,52 +208,52 @@ namespace nux
     {
       if ( header.sPixelFormat.dwRGBBitCount == 32 )
       {
-        if ( (header.sPixelFormat.dwRBitMask          & 0x00FF0000) &&
+        if ((header.sPixelFormat.dwRBitMask          & 0x00FF0000) &&
              (header.sPixelFormat.dwGBitMask         & 0x0000FF00) &&
              (header.sPixelFormat.dwBBitMask         & 0x000000FF) &&
-             (header.sPixelFormat.dwRGBAlphaBitMask  & 0xFF000000) )
+             (header.sPixelFormat.dwRGBAlphaBitMask  & 0xFF000000))
           DDSFormat = BITFMT_B8G8R8A8;
 
-        else if ( (header.sPixelFormat.dwRBitMask     & 0x000000FF) &&
+        else if ((header.sPixelFormat.dwRBitMask     & 0x000000FF) &&
                   (header.sPixelFormat.dwGBitMask         & 0x0000FF00) &&
                   (header.sPixelFormat.dwBBitMask         & 0x00FF0000) &&
-                  (header.sPixelFormat.dwRGBAlphaBitMask  & 0xFF000000) )
+                  (header.sPixelFormat.dwRGBAlphaBitMask  & 0xFF000000))
           DDSFormat = BITFMT_R8G8B8A8;
 
-        else if ( (header.sPixelFormat.dwRBitMask     & 0xFF000000) &&
+        else if ((header.sPixelFormat.dwRBitMask     & 0xFF000000) &&
                   (header.sPixelFormat.dwGBitMask         & 0x00FF0000) &&
                   (header.sPixelFormat.dwBBitMask         & 0x0000FF00) &&
-                  (header.sPixelFormat.dwRGBAlphaBitMask  & 0x000000FF) )
+                  (header.sPixelFormat.dwRGBAlphaBitMask  & 0x000000FF))
           DDSFormat = BITFMT_A8B8G8R8;
 
-        else if ( (header.sPixelFormat.dwRBitMask     & 0x0000FF00) &&
+        else if ((header.sPixelFormat.dwRBitMask     & 0x0000FF00) &&
                   (header.sPixelFormat.dwGBitMask         & 0x00FF0000) &&
                   (header.sPixelFormat.dwBBitMask         & 0xFF000000) &&
-                  (header.sPixelFormat.dwRGBAlphaBitMask  & 0x000000FF) )
+                  (header.sPixelFormat.dwRGBAlphaBitMask  & 0x000000FF))
           DDSFormat = BITFMT_A8R8G8B8;
 
-        else if ( (header.sPixelFormat.dwRBitMask     & 0x00FF0000) &&
+        else if ((header.sPixelFormat.dwRBitMask     & 0x00FF0000) &&
                   (header.sPixelFormat.dwGBitMask         & 0x0000FF00) &&
-                  (header.sPixelFormat.dwBBitMask         & 0x000000FF) )
+                  (header.sPixelFormat.dwBBitMask         & 0x000000FF))
           DDSFormat = BITFMT_B8G8R8A8;       // DirectX X8R8G8B8
 
-        else if ( (header.sPixelFormat.dwRBitMask     & 0x000000FF) &&
+        else if ((header.sPixelFormat.dwRBitMask     & 0x000000FF) &&
                   (header.sPixelFormat.dwGBitMask         & 0x0000FF00) &&
-                  (header.sPixelFormat.dwBBitMask         & 0x00FF0000) )
+                  (header.sPixelFormat.dwBBitMask         & 0x00FF0000))
           DDSFormat = BITFMT_R8G8B8A8;       // DirexctX X8B8G8R8
 
         block_size = 4;
       }
       else if ( header.sPixelFormat.dwRGBBitCount == 24 )
       {
-        if ( (header.sPixelFormat.dwRBitMask          & 0x00FF0000) &&
+        if ((header.sPixelFormat.dwRBitMask          & 0x00FF0000) &&
              (header.sPixelFormat.dwGBitMask         & 0x0000FF00) &&
-             (header.sPixelFormat.dwBBitMask         & 0x000000FF) )
+             (header.sPixelFormat.dwBBitMask         & 0x000000FF))
           DDSFormat = BITFMT_B8G8R8;
 
-        else if ( (header.sPixelFormat.dwRBitMask     & 0x000000FF) &&
+        else if ((header.sPixelFormat.dwRBitMask     & 0x000000FF) &&
                   (header.sPixelFormat.dwGBitMask         & 0x0000FF00) &&
-                  (header.sPixelFormat.dwBBitMask         & 0x00FF0000) )
+                  (header.sPixelFormat.dwBBitMask         & 0x00FF0000))
           DDSFormat = BITFMT_R8G8B8;
 
         block_size = 3;
@@ -274,7 +274,7 @@ namespace nux
     else
     {
       /*	well, we know it is DXT1/3/5, because we checked above	*/
-      switch ( (header.sPixelFormat.dwFourCC >> 24) - '0' )
+      switch((header.sPixelFormat.dwFourCC >> 24) - '0' )
       {
         case 1:
           DDSFormat = BITFMT_DXT1;
@@ -298,29 +298,29 @@ namespace nux
           break;
       }
 
-      DDS_main_size = ( (width + 3) >> 2) * ( (height + 3) >> 2) * block_size;
+      DDS_main_size = ((width + 3) >> 2) * ((height + 3) >> 2) * block_size;
     }
 
     if (isCubemap)
     {
       ogl_target_start = 0;
       ogl_target_end =   6;
-      BitmapData = (NBitmapData *) new NCubemapData (DDSFormat, width, height, (header.dwMipMapCount ? header.dwMipMapCount : 1) );
+      BitmapData = (NBitmapData *) new NCubemapData(DDSFormat, width, height, (header.dwMipMapCount ? header.dwMipMapCount : 1));
     }
     else if (isVolume)
     {
       int slice = header.dwDepth;
       VolumeDepth =   slice;
-      BitmapData = (NBitmapData *) new NVolumeData (DDSFormat, width, height, slice, (header.dwMipMapCount ? header.dwMipMapCount : 1) );
+      BitmapData = (NBitmapData *) new NVolumeData(DDSFormat, width, height, slice, (header.dwMipMapCount ? header.dwMipMapCount : 1));
     }
     else
     {
       ogl_target_start = 0;
       ogl_target_end =   1;
-      BitmapData = (NBitmapData *) new NTextureData (DDSFormat, width, height, (header.dwMipMapCount ? header.dwMipMapCount : 1) );
+      BitmapData = (NBitmapData *) new NTextureData(DDSFormat, width, height, (header.dwMipMapCount ? header.dwMipMapCount : 1));
     }
 
-    if ( (header.sCaps.dwCaps1 & DDSCAPS_MIPMAP) && (header.dwMipMapCount > 1) )
+    if ((header.sCaps.dwCaps1 & DDSCAPS_MIPMAP) && (header.dwMipMapCount > 1))
     {
       mipmaps = header.dwMipMapCount;
     }
@@ -339,14 +339,14 @@ namespace nux
     {
       for (t_s32 mip = 0; mip < mipmaps; ++mip )
       {
-        t_s32 pitch = ImageSurface::GetLevelPitchNoMemAlignment (DDSFormat, width, height, mip);
-        t_s32 blockheight = ImageSurface::GetLevelBlockHeight (DDSFormat, height, mip);
+        t_s32 pitch = ImageSurface::GetLevelPitchNoMemAlignment(DDSFormat, width, height, mip);
+        t_s32 blockheight = ImageSurface::GetLevelBlockHeight(DDSFormat, height, mip);
 
-        for (t_s32 s = 0; s < ImageSurface::GetLevelDim (DDSFormat, VolumeDepth, mip); s++ )
+        for (t_s32 s = 0; s < ImageSurface::GetLevelDim(DDSFormat, VolumeDepth, mip); s++ )
         {
           for (t_s32 b = 0; b < blockheight; b++)
           {
-            Memcpy ( BitmapData->GetSurface (mip, s).GetPtrRawData() + b * pitch,
+            Memcpy( BitmapData->GetSurface(mip, s).GetPtrRawData() + b * pitch,
                      (const void *) (&buffer[buffer_index + b * pitch]),
                      pitch);
           }
@@ -362,12 +362,12 @@ namespace nux
       {
         for ( int mip = 0; mip < mipmaps; ++mip )
         {
-          int pitch = ImageSurface::GetLevelPitchNoMemAlignment (DDSFormat, width, height, mip);
-          int blockheight = ImageSurface::GetLevelBlockHeight (DDSFormat, height, mip);
+          int pitch = ImageSurface::GetLevelPitchNoMemAlignment(DDSFormat, width, height, mip);
+          int blockheight = ImageSurface::GetLevelBlockHeight(DDSFormat, height, mip);
 
           for (int b = 0; b < blockheight; b++)
           {
-            Memcpy ( BitmapData->GetSurface (cf_target, mip).GetPtrRawData() + b * pitch,
+            Memcpy( BitmapData->GetSurface(cf_target, mip).GetPtrRawData() + b * pitch,
                      (const void *) (&buffer[buffer_index + b * pitch]),
                      pitch);
           }

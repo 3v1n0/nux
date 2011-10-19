@@ -51,11 +51,11 @@ namespace nux
 
   class IOpenGLAsmShader:  public IOpenGLResource
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLAsmShader, IOpenGLResource);
-    IOpenGLAsmShader (NString ShaderName, OpenGLResourceType ResourceType);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLAsmShader, IOpenGLResource);
+    IOpenGLAsmShader(NString ShaderName, OpenGLResourceType ResourceType);
     virtual ~IOpenGLAsmShader();
   public:
-    virtual void SetShaderCode (const ANSICHAR *ShaderCode) = 0;
+    virtual void SetShaderCode(const ANSICHAR *ShaderCode) = 0;
     virtual bool Compile() = 0;
     virtual bool IsValid() = 0;
     NString _ShaderName;
@@ -64,28 +64,28 @@ namespace nux
 
   class IOpenGLAsmVertexShader:  public IOpenGLAsmShader
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLAsmVertexShader, IOpenGLAsmShader);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLAsmVertexShader, IOpenGLAsmShader);
   public:
     virtual ~IOpenGLAsmVertexShader();
-    virtual void SetShaderCode (const ANSICHAR *ShaderCode);
+    virtual void SetShaderCode(const ANSICHAR *ShaderCode);
     virtual bool Compile();
     virtual bool IsValid();
   private:
-    IOpenGLAsmVertexShader (NString ShaderName = NString ("VertexProgram") );
+    IOpenGLAsmVertexShader(NString ShaderName = NString("VertexProgram"));
     bool m_CompiledAndReady;
     friend class GpuDevice;
   };
 
   class IOpenGLAsmPixelShader:  public IOpenGLAsmShader
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLAsmPixelShader, IOpenGLAsmShader);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLAsmPixelShader, IOpenGLAsmShader);
   public:
     virtual ~IOpenGLAsmPixelShader();
-    virtual void SetShaderCode (const ANSICHAR *ShaderCode);
+    virtual void SetShaderCode(const ANSICHAR *ShaderCode);
     virtual bool Compile();
     virtual bool IsValid();
   private:
-    IOpenGLAsmPixelShader (NString ShaderName = NString ("PixelProgram") );
+    IOpenGLAsmPixelShader(NString ShaderName = NString("PixelProgram"));
     bool m_CompiledAndReady;
     friend class GpuDevice;
   };
@@ -93,14 +93,14 @@ namespace nux
 
   class IOpenGLAsmShaderProgram:  public IOpenGLResource
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLAsmShaderProgram, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLAsmShaderProgram, IOpenGLResource);
   public:
     virtual ~IOpenGLAsmShaderProgram();
 
-    void LoadVertexShader (const TCHAR *glslshader);
-    void LoadPixelShader (const TCHAR *glslshader);
-    void LoadIShaderFile (const TCHAR *ShaderFileName);
-    void LoadIShader (const TCHAR *ShaderCode);
+    void LoadVertexShader(const char *glslshader);
+    void LoadPixelShader(const char *glslshader);
+    void LoadIShaderFile(const char *ShaderFileName);
+    void LoadIShader(const char *ShaderCode);
     void Link();
 
     bool IsValid();
@@ -127,7 +127,7 @@ namespace nux
     void SetFragmentLocalParameter4fvARB    (t_uint32 index, const float *params);
 
   private:
-    IOpenGLAsmShaderProgram (NString ShaderProgramName = NString ("AsmShaderProgram") );
+    IOpenGLAsmShaderProgram(NString ShaderProgramName = NString("AsmShaderProgram"));
     std::vector<ObjectPtr<IOpenGLAsmShader> > ShaderObjectList;
     NString _ShaderProgramName;
 

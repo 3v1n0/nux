@@ -33,7 +33,7 @@
 
 namespace nux
 {
-  NBitmapData* GdiLoadImageFile (const TCHAR* filename);
+  NBitmapData* GdiLoadImageFile(const TCHAR* filename);
 }
 
 #endif // GDIIMAGELOADER_H

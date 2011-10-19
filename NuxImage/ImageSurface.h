@@ -89,8 +89,8 @@ namespace nux
   public:
     ImageSurface();
     ~ImageSurface();
-    ImageSurface (BitmapFormat format, t_u32 width, t_u32 height);
-    ImageSurface (const ImageSurface &);
+    ImageSurface(BitmapFormat format, t_u32 width, t_u32 height);
+    ImageSurface(const ImageSurface &);
     ImageSurface &operator = (const ImageSurface &);
 
     bool IsNull() const;
@@ -102,20 +102,20 @@ namespace nux
     {
       return height_;
     }
-    void Allocate (BitmapFormat format, t_s32 width, t_s32 height);
-    void Write32b (t_s32 i, t_s32 j, t_u32 value);
-    void Write24b (t_s32 i, t_s32 j, t_u32 value);
-    void Write16b (t_s32 i, t_s32 j, t_u16 value);
-    void Write8b (t_s32 i, t_s32 j, t_u8 value);
-    void Write (t_s32 i, t_s32 j, t_u8 r, t_u8 g, t_u8 b, t_u8 a);
+    void Allocate(BitmapFormat format, t_s32 width, t_s32 height);
+    void Write32b(t_s32 i, t_s32 j, t_u32 value);
+    void Write24b(t_s32 i, t_s32 j, t_u32 value);
+    void Write16b(t_s32 i, t_s32 j, t_u16 value);
+    void Write8b(t_s32 i, t_s32 j, t_u8 value);
+    void Write(t_s32 i, t_s32 j, t_u8 r, t_u8 g, t_u8 b, t_u8 a);
     //! Read an element of the surface.
     /*!
-        Return a 32 bits value representing the image element at coordinates (i, j).
+        Return a 32 bits value representing the image element at coordinates(i, j).
         For the RGBA format, the LSB of the returned value represent the read value, and the MSB represents the alpha value.
         | LSB: Red | Green | Blue | MSB: Alpha|
-        @return The image element at coordinates (i, j).
+        @return The image element at coordinates(i, j).
     */
-    t_u32 Read (t_s32 i, t_s32 j);
+    t_u32 Read(t_s32 i, t_s32 j);
     //! Set all surface elements to 0.
     void Clear();
     //! Flip the surface horizontally.
@@ -131,17 +131,17 @@ namespace nux
     const t_u8 *GetPtrRawData() const;
     t_u8 *GetPtrRawData();
 
-    static t_s32 GetLevelPitch (BitmapFormat format, t_s32 width, t_s32 height, t_s32 miplevel);
-    static t_s32 GetLevelPitchNoMemAlignment (BitmapFormat format, t_s32 width, t_s32 height, t_s32 miplevel);
-    static t_s32 GetLevelSize (BitmapFormat format, t_s32 width, t_s32 height, t_s32 miplevel);
-    static t_s32 GetLevelSize (BitmapFormat format, t_s32 width, t_s32 height, t_s32 depth, t_s32 miplevel);
-    static t_s32 GetLevelWidth (BitmapFormat format, t_s32 width, t_s32 miplevel);
-    static t_s32 GetLevelHeight (BitmapFormat format, t_s32 height, t_s32 miplevel);
-    static t_s32 GetLevelDim (BitmapFormat format, t_s32 length, t_s32 miplevel);
-    static t_s32 GetNumMipLevel (BitmapFormat format, t_s32 width, t_s32 height);
-    static t_s32 GetMemAlignment (BitmapFormat format);
-    static t_s32 GetLevelBlockWidth (BitmapFormat format, t_s32 width, t_s32 miplevel);
-    static t_s32 GetLevelBlockHeight (BitmapFormat format, t_s32 height, t_s32 miplevel); // for DXT
+    static t_s32 GetLevelPitch(BitmapFormat format, t_s32 width, t_s32 height, t_s32 miplevel);
+    static t_s32 GetLevelPitchNoMemAlignment(BitmapFormat format, t_s32 width, t_s32 height, t_s32 miplevel);
+    static t_s32 GetLevelSize(BitmapFormat format, t_s32 width, t_s32 height, t_s32 miplevel);
+    static t_s32 GetLevelSize(BitmapFormat format, t_s32 width, t_s32 height, t_s32 depth, t_s32 miplevel);
+    static t_s32 GetLevelWidth(BitmapFormat format, t_s32 width, t_s32 miplevel);
+    static t_s32 GetLevelHeight(BitmapFormat format, t_s32 height, t_s32 miplevel);
+    static t_s32 GetLevelDim(BitmapFormat format, t_s32 length, t_s32 miplevel);
+    static t_s32 GetNumMipLevel(BitmapFormat format, t_s32 width, t_s32 height);
+    static t_s32 GetMemAlignment(BitmapFormat format);
+    static t_s32 GetLevelBlockWidth(BitmapFormat format, t_s32 width, t_s32 miplevel);
+    static t_s32 GetLevelBlockHeight(BitmapFormat format, t_s32 height, t_s32 miplevel); // for DXT
 
     // Image Processing
     //! Compute the average color of the image surface.
@@ -153,11 +153,11 @@ namespace nux
 
   private:
     void FlipDXTVertical();
-    void SwapBlocks (void *byte1, void *byte2, t_s32 size);
-    void FlipBlocksDXT1 (DXTColBlock *line, t_s32 numBlocks);
-    void FlipBlocksDXT3 (DXTColBlock *line, t_s32 numBlocks);
-    void FlipBlocksDXT5 (DXTColBlock *line, t_s32 numBlocks);
-    void FlipDXT5Alpha (DXT5AlphaBlock *block);
+    void SwapBlocks(void *byte1, void *byte2, t_s32 size);
+    void FlipBlocksDXT1(DXTColBlock *line, t_s32 numBlocks);
+    void FlipBlocksDXT3(DXTColBlock *line, t_s32 numBlocks);
+    void FlipBlocksDXT5(DXTColBlock *line, t_s32 numBlocks);
+    void FlipDXT5Alpha(DXT5AlphaBlock *block);
 
 
     t_s32 width_;           //!< Image width
@@ -176,10 +176,10 @@ namespace nux
     NBitmapData();
     virtual ~NBitmapData();
 
-    virtual const ImageSurface &GetSurface (t_s32 MipLevel) const = 0;
-    virtual ImageSurface &GetSurface (t_s32 MipLevel) = 0;
-    virtual const ImageSurface &GetSurface (t_s32 face, t_s32 MipLevel) const = 0;
-    virtual ImageSurface &GetSurface (t_s32 face, t_s32 MipLevel) = 0;
+    virtual const ImageSurface &GetSurface(t_s32 MipLevel) const = 0;
+    virtual ImageSurface &GetSurface(t_s32 MipLevel) = 0;
+    virtual const ImageSurface &GetSurface(t_s32 face, t_s32 MipLevel) const = 0;
+    virtual ImageSurface &GetSurface(t_s32 face, t_s32 MipLevel) = 0;
 
     virtual bool IsTextureData() const
     {
@@ -223,37 +223,37 @@ namespace nux
   class NTextureData: public NBitmapData
   {
   public:
-    NTextureData (BitmapFormat f = BITFMT_R8G8B8A8, t_s32 width = 16, t_s32 height = 16, t_s32 NumMipmap = 1);
+    NTextureData(BitmapFormat f = BITFMT_R8G8B8A8, t_s32 width = 16, t_s32 height = 16, t_s32 NumMipmap = 1);
     virtual ~NTextureData();
     //! Copy constructor.
-    NTextureData (const NTextureData &);
+    NTextureData(const NTextureData &);
     //! Assignment constructor.
     NTextureData &operator = (const NTextureData &);
 
-    virtual void Allocate (BitmapFormat f, t_s32 width, t_s32 height, t_s32 NumMipmap = 1);
-    virtual void AllocateCheckBoardTexture (t_s32 width, t_s32 height, t_s32 NumMipmap, Color color0, Color color1, t_s32 TileWidth = 4, t_s32 TileHeight = 4);
-    virtual void AllocateColorTexture (t_s32 width, t_s32 height, t_s32 NumMipmap, Color color0 = Color (0xFFFFFFF) );
+    virtual void Allocate(BitmapFormat f, t_s32 width, t_s32 height, t_s32 NumMipmap = 1);
+    virtual void AllocateCheckBoardTexture(t_s32 width, t_s32 height, t_s32 NumMipmap, Color color0, Color color1, t_s32 TileWidth = 4, t_s32 TileHeight = 4);
+    virtual void AllocateColorTexture(t_s32 width, t_s32 height, t_s32 NumMipmap, Color color0 = Color(0xFFFFFFF));
 
-    virtual const ImageSurface &GetSurface (t_s32 MipLevel) const
+    virtual const ImageSurface &GetSurface(t_s32 MipLevel) const
     {
       return *m_MipSurfaceArray[MipLevel];
     };
-    virtual ImageSurface &GetSurface (t_s32 MipLevel)
+    virtual ImageSurface &GetSurface(t_s32 MipLevel)
     {
-      return const_cast<ImageSurface &> ( (const_cast< const NTextureData * > (this) )->GetSurface (MipLevel) );
+      return const_cast<ImageSurface &> ((const_cast< const NTextureData * > (this))->GetSurface(MipLevel));
     }
-    virtual const ImageSurface &GetSurface (t_s32 face, t_s32 MipLevel) const
+    virtual const ImageSurface &GetSurface(t_s32 face, t_s32 MipLevel) const
     {
-      //nuxAssertMsg(0, TEXT("[NTextureData::GetSurface] Use GetSurface(t_u32 MipLevel) for NTextureData."));
-      return GetSurface (MipLevel);
+      //nuxAssertMsg(0, "[NTextureData::GetSurface] Use GetSurface(t_u32 MipLevel) for NTextureData.");
+      return GetSurface(MipLevel);
     }
-    virtual ImageSurface &GetSurface (t_s32 face, t_s32 MipLevel)
+    virtual ImageSurface &GetSurface(t_s32 face, t_s32 MipLevel)
     {
-      //nuxAssertMsg(0, TEXT("[NTextureData::GetSurface] Use GetSurface(t_u32 MipLevel) for NTextureData."));
-      return GetSurface (MipLevel);
+      //nuxAssertMsg(0, "[NTextureData::GetSurface] Use GetSurface(t_u32 MipLevel) for NTextureData.");
+      return GetSurface(MipLevel);
     }
 
-    bool SetSurface (t_s32 MipLevel, const ImageSurface &object);
+    bool SetSurface(t_s32 MipLevel, const ImageSurface &object);
 
     virtual bool IsTextureData() const
     {
@@ -283,46 +283,46 @@ namespace nux
     std::vector<ImageSurface *> m_MipSurfaceArray;
     void ClearData();
 
-    friend NBitmapData *read_tga_file (const TCHAR *file_name);
-    friend NBitmapData *read_bmp_file (const TCHAR *file_name);
-    friend NBitmapData *read_png_rgb (const TCHAR *filename);
-    friend NBitmapData *read_png_rgba (const TCHAR *filename);
+    friend NBitmapData *read_tga_file(const TCHAR *file_name);
+    friend NBitmapData *read_bmp_file(const TCHAR *file_name);
+    friend NBitmapData *read_png_rgb(const TCHAR *filename);
+    friend NBitmapData *read_png_rgba(const TCHAR *filename);
 
   };
 
   class NCubemapData: public NBitmapData
   {
   public:
-    NCubemapData (BitmapFormat f = BITFMT_R8G8B8A8, t_s32 width = 16, t_s32 height = 16, t_s32 NumMipmap = 1);
+    NCubemapData(BitmapFormat f = BITFMT_R8G8B8A8, t_s32 width = 16, t_s32 height = 16, t_s32 NumMipmap = 1);
     virtual ~NCubemapData();
     //! Copy constructor
-    NCubemapData (const NCubemapData &);
+    NCubemapData(const NCubemapData &);
     //! Assignment constructor
     NCubemapData &operator = (const NCubemapData &);
 
-    virtual void Allocate (BitmapFormat f, t_s32 width, t_s32 height, t_s32 NumMipmap = 1);
-    virtual void AllocateCheckBoardTexture (t_s32 width, t_s32 height, t_s32 NumMipmap, Color color0, Color color1, t_s32 TileWidth = 4, t_s32 TileHeight = 4);
-    virtual void AllocateColorTexture (t_s32 width, t_s32 height, t_s32 NumMipmap, Color color0 = Color (0xFFFFFFF) );
+    virtual void Allocate(BitmapFormat f, t_s32 width, t_s32 height, t_s32 NumMipmap = 1);
+    virtual void AllocateCheckBoardTexture(t_s32 width, t_s32 height, t_s32 NumMipmap, Color color0, Color color1, t_s32 TileWidth = 4, t_s32 TileHeight = 4);
+    virtual void AllocateColorTexture(t_s32 width, t_s32 height, t_s32 NumMipmap, Color color0 = Color(0xFFFFFFF));
 
-    virtual const ImageSurface &GetSurface (t_s32 face, t_s32 MipLevel) const
+    virtual const ImageSurface &GetSurface(t_s32 face, t_s32 MipLevel) const
     {
       return *m_MipSurfaceArray[face][MipLevel];
     };
-    virtual ImageSurface &GetSurface (t_s32 face, t_s32 MipLevel)
+    virtual ImageSurface &GetSurface(t_s32 face, t_s32 MipLevel)
     {
-      return const_cast<ImageSurface &> ( (const_cast< const NCubemapData * > (this) )->GetSurface (face, MipLevel) );
+      return const_cast<ImageSurface &> ((const_cast< const NCubemapData * > (this))->GetSurface(face, MipLevel));
     }
-    virtual const ImageSurface &GetSurface (t_s32 MipLevel) const
+    virtual const ImageSurface &GetSurface(t_s32 MipLevel) const
     {
-      nuxAssertMsg (0, TEXT ("[NCubemapData::GetSurface] Use GetSurface(t_u32 face, t_u32 MipLevel) for NCubemapData.") );
-      return GetSurface (0, MipLevel);
+      nuxAssertMsg(0, "[NCubemapData::GetSurface] Use GetSurface(t_u32 face, t_u32 MipLevel) for NCubemapData.");
+      return GetSurface(0, MipLevel);
     }
-    virtual ImageSurface &GetSurface (t_s32 MipLevel)
+    virtual ImageSurface &GetSurface(t_s32 MipLevel)
     {
-      nuxAssertMsg (0, TEXT ("[NCubemapData::GetSurface] Use GetSurface(t_u32 face, t_u32 MipLevel) for NCubemapData.") );
-      return GetSurface (0, MipLevel);
+      nuxAssertMsg(0, "[NCubemapData::GetSurface] Use GetSurface(t_u32 face, t_u32 MipLevel) for NCubemapData.");
+      return GetSurface(0, MipLevel);
     }
-    bool SetSurface (t_s32 face, t_s32 MipLevel, const ImageSurface &object);
+    bool SetSurface(t_s32 face, t_s32 MipLevel, const ImageSurface &object);
 
     virtual bool IsCubemapTextureData() const
     {
@@ -356,36 +356,36 @@ namespace nux
   class NVolumeData: public NBitmapData
   {
   public:
-    NVolumeData (BitmapFormat f = BITFMT_R8G8B8A8, t_s32 width = 16, t_s32 height = 16, t_s32 slice = 1, t_s32 NumMipmap = 1);
+    NVolumeData(BitmapFormat f = BITFMT_R8G8B8A8, t_s32 width = 16, t_s32 height = 16, t_s32 slice = 1, t_s32 NumMipmap = 1);
     virtual ~NVolumeData();
     //! Copy constructor
-    NVolumeData (const NVolumeData &);
+    NVolumeData(const NVolumeData &);
     //! Assignment constructor
     NVolumeData &operator = (const NVolumeData &);
 
-    virtual void Allocate (BitmapFormat f, t_s32 width, t_s32 height, t_s32 slice, t_s32 NumMipmap = 1);
-    virtual void AllocateCheckBoardTexture (t_s32 width, t_s32 height, t_s32 slice, t_s32 NumMipmap, Color color0, Color color1, t_s32 TileWidth = 4, t_s32 TileHeight = 4);
-    virtual void AllocateColorTexture (t_s32 width, t_s32 height, t_s32 slice, t_s32 NumMipmap, Color color0 = Color (0xFFFFFFF) );
+    virtual void Allocate(BitmapFormat f, t_s32 width, t_s32 height, t_s32 slice, t_s32 NumMipmap = 1);
+    virtual void AllocateCheckBoardTexture(t_s32 width, t_s32 height, t_s32 slice, t_s32 NumMipmap, Color color0, Color color1, t_s32 TileWidth = 4, t_s32 TileHeight = 4);
+    virtual void AllocateColorTexture(t_s32 width, t_s32 height, t_s32 slice, t_s32 NumMipmap, Color color0 = Color(0xFFFFFFF));
 
-    virtual const ImageSurface &GetSurface (t_s32 MipLevel, t_s32 slice) const
+    virtual const ImageSurface &GetSurface(t_s32 MipLevel, t_s32 slice) const
     {
       return *m_MipSurfaceArray[MipLevel][slice];
     };
-    virtual ImageSurface &GetSurface (t_s32 MipLevel, t_s32 slice)
+    virtual ImageSurface &GetSurface(t_s32 MipLevel, t_s32 slice)
     {
-      return const_cast<ImageSurface &> ( (const_cast< const NVolumeData * > (this) )->GetSurface (MipLevel, slice) );
+      return const_cast<ImageSurface &> ((const_cast< const NVolumeData * > (this))->GetSurface(MipLevel, slice));
     }
-    virtual const ImageSurface &GetSurface (t_s32 MipLevel) const
+    virtual const ImageSurface &GetSurface(t_s32 MipLevel) const
     {
-      nuxAssertMsg (0, TEXT ("[NVolumeData::GetSurface] Use GetSurface(t_u32 MipLevel, t_u32 MipLevel) for NVolumeData.") );
-      return GetSurface (MipLevel, 0);
+      nuxAssertMsg(0, "[NVolumeData::GetSurface] Use GetSurface(t_u32 MipLevel, t_u32 MipLevel) for NVolumeData.");
+      return GetSurface(MipLevel, 0);
     }
-    virtual ImageSurface &GetSurface (t_s32 MipLevel)
+    virtual ImageSurface &GetSurface(t_s32 MipLevel)
     {
-      nuxAssertMsg (0, TEXT ("[NVolumeData::GetSurface] Use GetSurface(t_u32 MipLevel, t_u32 MipLevel) for NVolumeData.") );
-      return GetSurface (MipLevel, 0);
+      nuxAssertMsg(0, "[NVolumeData::GetSurface] Use GetSurface(t_u32 MipLevel, t_u32 MipLevel) for NVolumeData.");
+      return GetSurface(MipLevel, 0);
     }
-    bool SetSurface (t_s32 face, t_s32 MipLevel, const ImageSurface &object);
+    bool SetSurface(t_s32 face, t_s32 MipLevel, const ImageSurface &object);
 
     virtual bool IsVolumeTextureData() const
     {
@@ -424,57 +424,57 @@ namespace nux
   class NAnimatedTextureData: public NBitmapData
   {
   public:
-    NAnimatedTextureData (BitmapFormat f = BITFMT_R8G8B8A8, t_s32 width = 16, t_s32 height = 16, t_s32 slice = 1 /*, t_u32 NumMipmap = 1*/);
+    NAnimatedTextureData(BitmapFormat f = BITFMT_R8G8B8A8, t_s32 width = 16, t_s32 height = 16, t_s32 slice = 1 /*, t_u32 NumMipmap = 1*/);
     virtual ~NAnimatedTextureData();
     //! Copy constructor
-    NAnimatedTextureData (const NAnimatedTextureData &);
+    NAnimatedTextureData(const NAnimatedTextureData &);
     //! Assignment constructor
     NAnimatedTextureData &operator = (const NAnimatedTextureData &);
 
-    virtual void Allocate (BitmapFormat f, t_s32 width, t_s32 height, t_s32 slice, t_s32 NumMipmap = 1);
-    virtual void AllocateCheckBoardTexture (t_s32 width, t_s32 height, t_s32 slice, t_s32 NumMipmap, Color color0, Color color1, t_s32 TileWidth = 4, t_s32 TileHeight = 4);
-    virtual void AllocateColorTexture (t_s32 width, t_s32 height, t_s32 slice, t_s32 NumMipmap, Color color0 = Color (0xFFFFFFF) );
+    virtual void Allocate(BitmapFormat f, t_s32 width, t_s32 height, t_s32 slice, t_s32 NumMipmap = 1);
+    virtual void AllocateCheckBoardTexture(t_s32 width, t_s32 height, t_s32 slice, t_s32 NumMipmap, Color color0, Color color1, t_s32 TileWidth = 4, t_s32 TileHeight = 4);
+    virtual void AllocateColorTexture(t_s32 width, t_s32 height, t_s32 slice, t_s32 NumMipmap, Color color0 = Color(0xFFFFFFF));
 
-    virtual const ImageSurface &GetSurface (t_s32 MipLevel, t_s32 slice) const
+    virtual const ImageSurface &GetSurface(t_s32 MipLevel, t_s32 slice) const
     {
-      nuxAssertMsg (0, TEXT ("[NAnimatedTextureData::GetSurface] Use GetSurface(t_u32 Frame) for NAnimatedTextureData.") );
-      return GetSurface (0);
+      nuxAssertMsg(0, "[NAnimatedTextureData::GetSurface] Use GetSurface(t_u32 Frame) for NAnimatedTextureData.");
+      return GetSurface(0);
     }
-    virtual ImageSurface &GetSurface (t_s32 MipLevel, t_s32 slice)
+    virtual ImageSurface &GetSurface(t_s32 MipLevel, t_s32 slice)
     {
-      nuxAssertMsg (0, TEXT ("[NAnimatedTextureData::GetSurface] Use GetSurface(t_u32 Frame) for NAnimatedTextureData.") );
-      return GetSurface (0);
+      nuxAssertMsg(0, "[NAnimatedTextureData::GetSurface] Use GetSurface(t_u32 Frame) for NAnimatedTextureData.");
+      return GetSurface(0);
     }
-    virtual const ImageSurface &GetSurface (t_s32 Frame) const
+    virtual const ImageSurface &GetSurface(t_s32 Frame) const
     {
-      nuxAssert (Frame >= 0);
-      nuxAssert (Frame < m_Depth);
+      nuxAssert(Frame >= 0);
+      nuxAssert(Frame < m_Depth);
       return *m_MipSurfaceArray[0][Frame];
     }
-    virtual ImageSurface &GetSurface (t_s32 Frame)
+    virtual ImageSurface &GetSurface(t_s32 Frame)
     {
-      nuxAssert (Frame >= 0);
-      nuxAssert (Frame < m_Depth);
-      return const_cast<ImageSurface &> ( (const_cast< const NAnimatedTextureData * > (this) )->GetSurface (Frame) );
+      nuxAssert(Frame >= 0);
+      nuxAssert(Frame < m_Depth);
+      return const_cast<ImageSurface &> ((const_cast< const NAnimatedTextureData * > (this))->GetSurface(Frame));
     }
 
-    bool SetSurface (t_s32 face, t_s32 MipLevel, const ImageSurface &object);
+    bool SetSurface(t_s32 face, t_s32 MipLevel, const ImageSurface &object);
 
     virtual bool IsAnimatedTextureData() const
     {
       return true;
     }
 
-    t_s32 GetFrameTime (t_s32 Frame) const
+    t_s32 GetFrameTime(t_s32 Frame) const
     {
-      nuxAssert (Frame >= 0);
-      nuxAssert (Frame < m_Depth);
+      nuxAssert(Frame >= 0);
+      nuxAssert(Frame < m_Depth);
       return m_FrameTimeArray[Frame];
     }
 
-    void AddFrameTime (t_u32 FrameTime)
+    void AddFrameTime(t_u32 FrameTime)
     {
-      m_FrameTimeArray.push_back (FrameTime);
+      m_FrameTimeArray.push_back(FrameTime);
     }
 
     t_s32 GetNumMipmap() const;
@@ -511,10 +511,10 @@ namespace nux
   struct ImageInfo
   {
     bool         isDelegate;        // true if delegate knows this format
-    t_s32 width ;            // Image size (if known)
+    t_s32 width ;            // Image size(if known)
     t_s32 height;
-    t_s32 bytes_per_pixel;   // Bytes per pixel (if known)
-    t_s32 planes;            // Number of planes (if known) 0=mono, 3=color
+    t_s32 bytes_per_pixel;   // Bytes per pixel(if known)
+    t_s32 planes;            // Number of planes(if known) 0=mono, 3=color
     std::string  format;            // Additional image format information
   };
 

@@ -46,7 +46,7 @@ namespace nux
     char programtype[16]; /* listed at beginning of file to identify it
                           * after "#?".  defaults to "RGBE" */
     float gamma;          /* image has already been gamma corrected with
-                          * given gamma.  defaults to 1.0 (no correction) */
+                          * given gamma.  defaults to 1.0(no correction) */
     float exposure;       /* a value of 1.0 in an image corresponds to
                           * <exposure> watts/steradian/m^2.
                           * defaults to 1.0 */
@@ -64,19 +64,19 @@ namespace nux
   /* read or write headers */
   /* you may set rgbe_header_info to null if you want to */
 //int RGBEWriteHeader(FILE *fp, int width, int height, rgbe_header_info *info);
-  int RGBEWriteHeader (std::ofstream &fileStream, int width, int height, rgbe_header_info *info);
-  int RGBEReadHeader (std::ifstream &fileStream, int &width, int &height, rgbe_header_info &info);
+  int RGBEWriteHeader(std::ofstream &fileStream, int width, int height, rgbe_header_info *info);
+  int RGBEReadHeader(std::ifstream &fileStream, int &width, int &height, rgbe_header_info &info);
 
   /* read or write pixels */
   /* can read or write pixels in chunks of any size including single pixels*/
-  int RGBEWritePixels (FILE *fp, float *data, int numpixels);
-  int RGBEReadPixels (FILE *fp, float *data, int numpixels);
+  int RGBEWritePixels(FILE *fp, float *data, int numpixels);
+  int RGBEReadPixels(FILE *fp, float *data, int numpixels);
 
   /* read or write run length encoded files */
   /* must be called to read or write whole scanlines */
-  int RGBEWritePixels_RLE (FILE *fp, float *data, int scanline_width,
+  int RGBEWritePixels_RLE(FILE *fp, float *data, int scanline_width,
                            int num_scanlines);
-  NBitmapData *LoadRGBE (const TCHAR *filename);
+  NBitmapData *LoadRGBE(const TCHAR *filename);
 
 }
 #endif // RGBE_H

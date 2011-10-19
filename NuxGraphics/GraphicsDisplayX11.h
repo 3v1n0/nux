@@ -115,7 +115,7 @@ namespace nux
     XEvent m_X11LastEvent;
     Bool m_X11RepeatKey;
 
-    TCHAR m_WindowClassName[256];
+    char m_WindowClassName[256];
     GLuint      m_PixelFormat;      // Holds The Results After Searching For A Match
     NString     m_WindowTitle;
 
@@ -138,7 +138,7 @@ namespace nux
     bool m_CreatedFromForeignWindow;
 
   public:
-    typedef void (*GrabReleaseCallback) (bool replaced, void *user_data);
+    typedef void(*GrabReleaseCallback) (bool replaced, void *user_data);
   
     typedef struct _DndSourceFuncs
     {
@@ -170,8 +170,8 @@ namespace nux
         @param ParentWindow     The parent window.
         @param FullscreenFlag   Full screen flag.
     */
-    bool CreateOpenGLWindow (
-      const TCHAR *WindowTitle,
+    bool CreateOpenGLWindow(
+      const char *WindowTitle,
       unsigned int WindowWidth,
       unsigned int WindowHeight,
       WindowStyle Style,
@@ -185,27 +185,27 @@ namespace nux
         @param X11Window    Provided window.
     */
 #ifdef NUX_OPENGLES_20
-    bool CreateFromOpenGLWindow (Display *X11Display, Window X11Window, EGLContext OpenGLContext);
+    bool CreateFromOpenGLWindow(Display *X11Display, Window X11Window, EGLContext OpenGLContext);
 #else
-    bool CreateFromOpenGLWindow (Display *X11Display, Window X11Window, GLXContext OpenGLContext);
+    bool CreateFromOpenGLWindow(Display *X11Display, Window X11Window, GLXContext OpenGLContext);
 #endif
 
     void DestroyOpenGLWindow();
 
-    void SetWindowTitle (const TCHAR *Title);
+    void SetWindowTitle(const char *Title);
 
     //! Set the window size.
     /*!
         Actively set the window size to the provided parameters.
         \sa ResetWindowSize
     */
-    void SetWindowSize (int width, int height);
+    void SetWindowSize(int width, int height);
 
     //! Set the window position.
-    void SetWindowPosition (int width, int height);
+    void SetWindowPosition(int width, int height);
     
     //! Set the OpenGL Viewport.
-    void SetViewPort (int x, int y, int width, int height);
+    void SetViewPort(int x, int y, int width, int height);
 
     Point GetMouseScreenCoord();
     Point GetMouseWindowCoord();
@@ -213,17 +213,17 @@ namespace nux
     Rect GetWindowGeometry();
     Rect GetNCWindowGeometry();
     void MakeGLContextCurrent();
-    void SwapBuffer (bool glswap = true);
+    void SwapBuffer(bool glswap = true);
 
     // Event methods
-    void GetSystemEvent (IEvent *evt);
+    void GetSystemEvent(IEvent *evt);
 
     // Os specific
-    int GetGlXMajor () const;
-    int GetGlXMinor () const;
+    int GetGlXMajor() const;
+    int GetGlXMinor() const;
 
-#if defined (NUX_OS_LINUX)
-    void InjectXEvent (IEvent *evt, XEvent xevent);
+#if defined(NUX_OS_LINUX)
+    void InjectXEvent(IEvent *evt, XEvent xevent);
 #endif
     
     IEvent &GetCurrentEvent();
@@ -237,7 +237,7 @@ namespace nux
 
     void ShowWindow();
     void HideWindow();
-    bool IsWindowVisible ();
+    bool IsWindowVisible();
 
     void EnterMaximizeWindow();
     void ExitMaximizeWindow();
@@ -262,7 +262,7 @@ namespace nux
 
     GraphicsEngine* GetGraphicsEngine() const;
 
-    GpuDevice* GetGpuDevice () const;
+    GpuDevice* GetGpuDevice() const;
 
     // Dialog
     /*bool StartOpenFileDialog(FileDialogOption& fdo);
@@ -270,10 +270,10 @@ namespace nux
     bool StartColorDialog(ColorDialogOption& cdo);*/
 
 
-    void GetDesktopSize (int &w, int &h);
-    void GetWindowSize (int &w, int &h);
-    int GetWindowWidth ();
-    int GetWindowHeight ();
+    void GetDesktopSize(int &w, int &h);
+    void GetWindowSize(int &w, int &h);
+    int GetWindowWidth();
+    int GetWindowHeight();
 
     //! Get the window size and reset the GraphicsEngine and GpuDevice accordingly.
     /*!
@@ -281,7 +281,7 @@ namespace nux
         current window size and sets its accordingly to all sub-system.
         \sa SetWindowSize
     */
-    void ResetWindowSize ();
+    void ResetWindowSize();
 
     bool HasFrameBufferSupport();
     /*void SetWindowCursor(HCURSOR cursor);
@@ -294,66 +294,66 @@ namespace nux
         This function also sets the current openGL context to 0 for this window.
         This is useful while a child window is being created and is sharing openGL objects with this context.
         For wglShareLists to work, both OpenGL context must be set to 0 in their respective thread.
-        Send NUX_THREADMSG_START_RENDERING (PostThreadMessage) to this window to reactivate rendering.
+        Send NUX_THREADMSG_START_RENDERING(PostThreadMessage) to this window to reactivate rendering.
 
         Never call this function while doing rendering. Call it only when processing events.
     */
     void PauseThreadGraphicsRendering();
     bool IsPauseThreadGraphicsRendering() const;
 
-    void ProcessForeignX11Event (XEvent *xevent, IEvent *nux_event);
-    void ProcessXEvent (XEvent xevent, bool foreign);
-    void RecalcXYPosition (Window TheMainWindow, XEvent xevent, int &x, int &y);
-    void RecalcXYPosition (int x_root, int y_root, int &x_recalc, int &y_recalc);
+    void ProcessForeignX11Event(XEvent *xevent, IEvent *nux_event);
+    void ProcessXEvent(XEvent xevent, bool foreign);
+    void RecalcXYPosition(Window TheMainWindow, XEvent xevent, int &x, int &y);
+    void RecalcXYPosition(int x_root, int y_root, int &x_recalc, int &y_recalc);
     
     void              SendDndStatus   (bool accept, DndAction action, Rect region);
-    void              SendDndFinished (bool accepted, DndAction performed_action);
-    std::list<char *> GetDndMimeTypes ();
+    void              SendDndFinished(bool accepted, DndAction performed_action);
+    std::list<char *> GetDndMimeTypes();
     char *            GetDndData      (char *property);
 
-    void StartDndDrag (const DndSourceFuncs &funcs, void *user_data);
+    void StartDndDrag(const DndSourceFuncs &funcs, void *user_data);
     
     bool GrabPointer   (GrabReleaseCallback callback, void *data, bool replace_existing);
-    bool UngrabPointer (void *data);
-    bool PointerIsGrabbed ();
+    bool UngrabPointer(void *data);
+    bool PointerIsGrabbed();
     
     bool GrabKeyboard   (GrabReleaseCallback callback, void *data, bool replace_existing);
-    bool UngrabKeyboard (void *data);
-    bool KeyboardIsGrabbed ();
+    bool UngrabKeyboard(void *data);
+    bool KeyboardIsGrabbed();
     
-    void * KeyboardGrabData () { return _global_keyboard_grab_data; }
-    void * PointerGrabData () { return _global_pointer_grab_data; }
+    void * KeyboardGrabData() { return _global_keyboard_grab_data; }
+    void * PointerGrabData() { return _global_pointer_grab_data; }
 
   private:
-    void InitGlobalGrabWindow ();
+    void InitGlobalGrabWindow();
   
-    void HandleXDndPosition (XEvent event, Event* nux_event);
+    void HandleXDndPosition(XEvent event, Event* nux_event);
     void HandleXDndEnter    (XEvent event);
     void HandleXDndStatus   (XEvent event);
     void HandleXDndLeave    (XEvent event);
     void HandleXDndDrop     (XEvent event, Event* nux_event);
-    void HandleXDndFinished (XEvent event);
+    void HandleXDndFinished(XEvent event);
     
-    void SendXDndStatus (Display *display, Window source, Window target, bool accept, Atom action, Rect box);
-    bool GetXDndSelectionEvent (Display *display, Window target, Atom property, long time, XEvent *result, int attempts);
-    void SendXDndFinished (Display *display, Window source, Window target, bool result, Atom action);
-    char * GetXDndData (Display *display, Window requestor, Atom property, long time);
+    void SendXDndStatus(Display *display, Window source, Window target, bool accept, Atom action, Rect box);
+    bool GetXDndSelectionEvent(Display *display, Window target, Atom property, long time, XEvent *result, int attempts);
+    void SendXDndFinished(Display *display, Window source, Window target, bool result, Atom action);
+    char * GetXDndData(Display *display, Window requestor, Atom property, long time);
 
-    void EndDndDrag (DndAction action);
-    bool GrabDndSelection (Display *display, Window window, Time time);
-    void HandleDndDragSourceEvent (XEvent event);
-    void HandleDndSelectionRequest (XEvent event);
-    Window GetDndTargetWindowForPos (int x, int y);
+    void EndDndDrag(DndAction action);
+    bool GrabDndSelection(Display *display, Window window, Time time);
+    void HandleDndDragSourceEvent(XEvent event);
+    void HandleDndSelectionRequest(XEvent event);
+    Window GetDndTargetWindowForPos(int x, int y);
     
-    void DrawDndSourceWindow ();
+    void DrawDndSourceWindow();
     
-    void SendDndSourcePosition (Window target, int x, int y, Time time);
-    void SendDndSourceEnter (Window target);
-    void SendDndSourceLeave (Window target);
-    void SendDndSourceDrop (Window target, Time time);
-    void SetDndSourceTargetWindow (Window target);
+    void SendDndSourcePosition(Window target, int x, int y, Time time);
+    void SendDndSourceEnter(Window target);
+    void SendDndSourceLeave(Window target);
+    void SendDndSourceDrop(Window target, Time time);
+    void SetDndSourceTargetWindow(Window target);
     
-    static gboolean OnDragEndTimeout (gpointer data);
+    static gboolean OnDragEndTimeout(gpointer data);
   
     Point _last_dnd_position;
 
@@ -403,10 +403,10 @@ namespace nux
     }
 #endif
 
-    NString FindResourceLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
-    NString FindUITextureLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
-    NString FindShaderLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
-    NString FindFontLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
+    NString FindResourceLocation(const char *ResourceFileName, bool ErrorOnFail = false);
+    NString FindUITextureLocation(const char *ResourceFileName, bool ErrorOnFail = false);
+    NString FindShaderLocation(const char *ResourceFileName, bool ErrorOnFail = false);
+    NString FindFontLocation(const char *ResourceFileName, bool ErrorOnFail = false);
 
     const std::vector<NString>& GetFontSearchPath() const
     {
@@ -428,7 +428,7 @@ namespace nux
     FilePath m_ResourcePathLocation;
 
     GraphicsDisplay();
-    GraphicsDisplay (const GraphicsDisplay &);
+    GraphicsDisplay(const GraphicsDisplay &);
     // Does not make sense for a singleton. This is a self assignment.
     GraphicsDisplay &operator= (const GraphicsDisplay &);
 

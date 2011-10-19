@@ -28,18 +28,18 @@ namespace nux
 
   class IOpenGLPixelBufferObject: public IOpenGLResource
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLPixelBufferObject, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLPixelBufferObject, IOpenGLResource);
 
   public:
     virtual ~IOpenGLPixelBufferObject();
 
-    int Lock (
+    int Lock(
       unsigned int OffsetToLock,
       unsigned int SizeToLock,
       void **ppbData);
     int Unlock();
 
-    int GetDescription (INDEXBUFFER_DESC *desc) const
+    int GetDescription(INDEXBUFFER_DESC *desc) const
     {
       desc->Usage = _Usage;
       desc->Size = _Length;
@@ -52,7 +52,7 @@ namespace nux
     t_u32 GetSize();
 
   private:
-    IOpenGLPixelBufferObject (unsigned int Size, VBO_USAGE Usage, NUX_FILE_LINE_PROTO);
+    IOpenGLPixelBufferObject(unsigned int Size, VBO_USAGE Usage, NUX_FILE_LINE_PROTO);
 
     unsigned int _Length;
     VBO_USAGE _Usage;

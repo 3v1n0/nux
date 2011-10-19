@@ -55,13 +55,13 @@
 namespace nux
 {
 
-  NBitmapData *Load_OpenEXR (const TCHAR *fileName)
+  NBitmapData *Load_OpenEXR(const TCHAR *fileName)
   {
     Imf::Array2D<float> rPixels;
     Imf::Array2D<float> gPixels;
     Imf::Array2D<float> bPixels;
 
-    Imf::InputFile in (fileName);
+    Imf::InputFile in(fileName);
 
     Imf::Header header = in.header();
     const Imath::Box2i &dw = in.header().dataWindow();
@@ -72,133 +72,133 @@ namespace nux
     const Imf::ChannelList &ch = in.header().channels();
 
 
-    rPixels.resizeErase (height, width);
-    gPixels.resizeErase (height, width);
-    bPixels.resizeErase (height, width);
+    rPixels.resizeErase(height, width);
+    gPixels.resizeErase(height, width);
+    bPixels.resizeErase(height, width);
 
     float *FloatArray = 0;
     NBitmapData *BitmapData = 0;
 
-    if (ch.findChannel ("Y") || ch.findChannel ("RY") || ch.findChannel ("BY") )
+    if (ch.findChannel("Y") || ch.findChannel("RY") || ch.findChannel("BY"))
     {
 
     }
-    else if (ch.findChannel ("R") && ch.findChannel ("G") && ch.findChannel ("B") && ch.findChannel ("A") )
+    else if (ch.findChannel("R") && ch.findChannel("G") && ch.findChannel("B") && ch.findChannel("A"))
     {
       //
       // RGBA mode
       //
-      // The pixel buffers for the tree image channels (RGB)
-      // are padded with a fourth dummy channel (A) and interleaved
+      // The pixel buffers for the tree image channels(RGB)
+      // are padded with a fourth dummy channel(A) and interleaved
       // (RGBARGBARGBA...).  All three buffers have the same width
       // and height as the frame.
       //
 
-      BitmapData = (NBitmapData *) new NTextureData (
+      BitmapData = (NBitmapData *) new NTextureData(
                      BITFMT_RGBA32F,
                      width,
                      height, 1);
 
-      BYTE *Dest = BitmapData->GetSurface (0).GetPtrRawData(); //new float[4*width*height];
+      BYTE *Dest = BitmapData->GetSurface(0).GetPtrRawData(); //new float[4*width*height];
 
       Imf::FrameBuffer frameBuffer;
 
-      frameBuffer.insert ("R",        // name
-                          Imf::Slice (Imf::FLOAT,     // type
+      frameBuffer.insert("R",        // name
+                          Imf::Slice(Imf::FLOAT,     // type
                                       (char *) (&Dest[0] -        // base
                                           dw.min.x -
                                           dw.min.y * width),
-                                      sizeof (float) * 4,         // xStride
-                                      sizeof (float) * 4 * width, // yStride
+                                      sizeof(float) * 4,         // xStride
+                                      sizeof(float) * 4 * width, // yStride
                                       1, 1,                       // x/y sampling
-                                      0.0) );                     // fillValue
+                                      0.0));                     // fillValue
 
-      frameBuffer.insert ("G",        // name
-                          Imf::Slice (Imf::FLOAT,     // type
+      frameBuffer.insert("G",        // name
+                          Imf::Slice(Imf::FLOAT,     // type
                                       (char *) (&Dest[4] -        // base
                                           dw.min.x -
                                           dw.min.y * width),
-                                      sizeof (float) * 4,         // xStride
-                                      sizeof (float) * 4 * width, // yStride
+                                      sizeof(float) * 4,         // xStride
+                                      sizeof(float) * 4 * width, // yStride
                                       1, 1,                       // x/y sampling
-                                      0.0) );                     // fillValue
+                                      0.0));                     // fillValue
 
-      frameBuffer.insert ("B",        // name
-                          Imf::Slice (Imf::FLOAT,     // type
+      frameBuffer.insert("B",        // name
+                          Imf::Slice(Imf::FLOAT,     // type
                                       (char *) (&Dest[8] -        // base
                                           dw.min.x -
                                           dw.min.y * width),
-                                      sizeof (float) * 4,         // xStride
-                                      sizeof (float) * 4 * width, // yStride
+                                      sizeof(float) * 4,         // xStride
+                                      sizeof(float) * 4 * width, // yStride
                                       1, 1,                       // x/y sampling
-                                      0.0) );                     // fillValue
+                                      0.0));                     // fillValue
 
-      frameBuffer.insert ("A",        // name
-                          Imf::Slice (Imf::FLOAT,     // type
+      frameBuffer.insert("A",        // name
+                          Imf::Slice(Imf::FLOAT,     // type
                                       (char *) (&Dest[12] -        // base
                                           dw.min.x -
                                           dw.min.y * width),
-                                      sizeof (float) * 4,         // xStride
-                                      sizeof (float) * 4 * width, // yStride
+                                      sizeof(float) * 4,         // xStride
+                                      sizeof(float) * 4 * width, // yStride
                                       1, 1,                       // x/y sampling
-                                      1.0) );                     // fillValue
+                                      1.0));                     // fillValue
 
-      in.setFrameBuffer (frameBuffer);
-      in.readPixels (dw.min.y, dw.max.y);
+      in.setFrameBuffer(frameBuffer);
+      in.readPixels(dw.min.y, dw.max.y);
 
     }
-    else if (ch.findChannel ("R") && ch.findChannel ("G") && ch.findChannel ("B") )
+    else if (ch.findChannel("R") && ch.findChannel("G") && ch.findChannel("B"))
     {
       //
       // RGB mode
       //
-      // The pixel buffers for the tree image channels (RGB)
-      // are padded with a fourth dummy channel (A) and interleaved
+      // The pixel buffers for the tree image channels(RGB)
+      // are padded with a fourth dummy channel(A) and interleaved
       // (RGBRGBRGB...).  All three buffers have the same width
       // and height as the frame.
       //
 
-      BitmapData = (NBitmapData *) new NTextureData (
+      BitmapData = (NBitmapData *) new NTextureData(
                      BITFMT_RGB32F,
                      width,
                      height, 1);
 
-      BYTE *Dest = BitmapData->GetSurface (0).GetPtrRawData(); //new float[4*width*height];
+      BYTE *Dest = BitmapData->GetSurface(0).GetPtrRawData(); //new float[4*width*height];
 
       Imf::FrameBuffer frameBuffer;
 
-      frameBuffer.insert ("R",        // name
-                          Imf::Slice (Imf::FLOAT,     // type
+      frameBuffer.insert("R",        // name
+                          Imf::Slice(Imf::FLOAT,     // type
                                       (char *) (&Dest[0] -        // base
                                           dw.min.x -
                                           dw.min.y * width),
-                                      sizeof (float) * 3,         // xStride
-                                      sizeof (float) * 3 * width, // yStride
+                                      sizeof(float) * 3,         // xStride
+                                      sizeof(float) * 3 * width, // yStride
                                       1, 1,                       // x/y sampling
-                                      0.0) );                     // fillValue
+                                      0.0));                     // fillValue
 
-      frameBuffer.insert ("G",        // name
-                          Imf::Slice (Imf::FLOAT,     // type
+      frameBuffer.insert("G",        // name
+                          Imf::Slice(Imf::FLOAT,     // type
                                       (char *) (&Dest[4] -        // base
                                           dw.min.x -
                                           dw.min.y * width),
-                                      sizeof (float) * 3,         // xStride
-                                      sizeof (float) * 3 * width, // yStride
+                                      sizeof(float) * 3,         // xStride
+                                      sizeof(float) * 3 * width, // yStride
                                       1, 1,                       // x/y sampling
-                                      0.0) );                     // fillValue
+                                      0.0));                     // fillValue
 
-      frameBuffer.insert ("B",        // name
-                          Imf::Slice (Imf::FLOAT,     // type
+      frameBuffer.insert("B",        // name
+                          Imf::Slice(Imf::FLOAT,     // type
                                       (char *) (&Dest[8] -        // base
                                           dw.min.x -
                                           dw.min.y * width),
-                                      sizeof (float) * 3,         // xStride
-                                      sizeof (float) * 3 * width, // yStride
+                                      sizeof(float) * 3,         // xStride
+                                      sizeof(float) * 3 * width, // yStride
                                       1, 1,                       // x/y sampling
-                                      0.0) );                     // fillValue
+                                      0.0));                     // fillValue
 
-      in.setFrameBuffer (frameBuffer);
-      in.readPixels (dw.min.y, dw.max.y);
+      in.setFrameBuffer(frameBuffer);
+      in.readPixels(dw.min.y, dw.max.y);
 
     }
 
