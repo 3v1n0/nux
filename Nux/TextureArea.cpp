@@ -119,7 +119,7 @@ namespace nux
       rop.DstBlend = GL_ONE_MINUS_SRC_ALPHA;
 
       paint_layer_ = new TextureLayer(texture->GetDeviceTexture(), texxform, color::White, true, rop);
-      delete texture;
+      texture->UnReference();
     }
     else
     {

@@ -53,6 +53,7 @@ namespace nux
     font_name_ = "Tahoma";
 
 #elif defined(NUX_STATIC_TEXT_USE_CAIRO)
+    cairo_graphics_ = NULL;
     font_size_ = 12;
     font_name_ = "Ubuntu";
     std::ostringstream os;
@@ -816,7 +817,7 @@ namespace nux
     delete bitmap;
     cairo_destroy(cairo_ctx);
     delete cairo_graphics_;
-    cairo_graphics_ = 0;
+    cairo_graphics_ = NULL;
 
     update_text_rendering_ = false;
   }
