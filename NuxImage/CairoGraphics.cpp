@@ -50,6 +50,9 @@ namespace nux
     _cr = cairo_create(_cairo_surface);
     if (cairo_status(_cr) == CAIRO_STATUS_NO_MEMORY)
     {
+      // If memory cannot be allocated, a special cairo_t object will be returned
+      // on which cairo_status() returns CAIRO_STATUS_NO_MEMORY.
+      // You can use this object normally, but no drawing will be done. 
       nuxAssertMsg(0, "[CairoGraphics::GetContext] Cairo context error.");
     }
 
@@ -59,7 +62,10 @@ namespace nux
 
   CairoGraphics::~CairoGraphics()
   {
-    cairo_destroy(_cr);
+    if (_cr)
+    {
+      cairo_destroy(_cr);
+    }
     cairo_surface_destroy(_cairo_surface);
   }
 
@@ -68,6 +74,9 @@ namespace nux
     cairo_t *cr = cairo_create(_cairo_surface);
     if (cairo_status(cr) == CAIRO_STATUS_NO_MEMORY)
     {
+      // If memory cannot be allocated, a special cairo_t object will be returned
+      // on which cairo_status() returns CAIRO_STATUS_NO_MEMORY.
+      // You can use this object normally, but no drawing will be done. 
       nuxAssertMsg(0, "[CairoGraphics::GetContext] Cairo context error.");
     }
     return cr;
