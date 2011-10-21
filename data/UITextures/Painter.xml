@@ -24,23 +24,23 @@
   <Image Name="ScrollBarTriangleDown.tga" type="Shape" style="eSCROLLBAR_TRIANGLE_DOWN"    border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
   <Image Name="ScrollBarTriangleLeft.tga" type="Shape" style="eSCROLLBAR_TRIANGLE_LEFT"    border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
   <Image Name="ScrollBarTriangleRight.tga" type="Shape" style="eSCROLLBAR_TRIANGLE_RIGHT"  border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
-  <Image Name="CheckBoxNormalOn.tga" type="Shape" style="eCHECKBOX_NORMAL_ON" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
-  <Image Name="CheckBoxNormalOff.tga" type="Shape" style="eCHECKBOX_NORMAL_OFF" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
-  <Image Name="CheckBoxMouseDownOn.tga" type="Shape" style="eCHECKBOX_FOCUS_ON" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
-  <Image Name="CheckBoxMouseDownOff.tga" type="Shape" style="eCHECKBOX_FOCUS_OFF" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
-  <Image Name="CheckBoxMouseOverOn.tga" type="Shape" style="eCHECKBOX_PRELIGHT_ON" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
-  <Image Name="CheckBoxMouseOverOff.tga" type="Shape" style="eCHECKBOX_PRELIGHT_OFF" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
+	<Image Name="checkbox-on.png" type="Shape" style="eCHECKBOX_NORMAL_ON" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
+	<Image Name="checkbox-off.png" type="Shape" style="eCHECKBOX_NORMAL_OFF" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
+	<Image Name="checkbox-on-mousedown.png" type="Shape" style="eCHECKBOX_FOCUS_ON" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
+	<Image Name="checkbox-off-mousedown.png" type="Shape" style="eCHECKBOX_FOCUS_OFF" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
+	<Image Name="checkbox-on-mouseover.png" type="Shape" style="eCHECKBOX_PRELIGHT_ON" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
+	<Image Name="checkbox-off-mouseover.png" type="Shape" style="eCHECKBOX_PRELIGHT_OFF" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
 
-  <Image Name="RadioNormalOn.tga" type="Shape" style="eRADIO_NORMAL_ON" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
-  <Image Name="RadioNormalOff.tga" type="Shape" style="eRADIO_NORMAL_OFF" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
-  <Image Name="RadioMouseDownOn.tga" type="Shape" style="eRADIO_FOCUS_ON" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
-  <Image Name="RadioMouseDownOff.tga" type="Shape" style="eRADIO_FOCUS_OFF" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
-  <Image Name="RadioMouseOverOn.tga" type="Shape" style="eRADIO_PRELIGHT_ON" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
-  <Image Name="RadioMouseOverOff.tga" type="Shape" style="eRADIO_PRELIGHT_OFF" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
+	<Image Name="radiobutton-on.png" type="Shape" style="eRADIO_NORMAL_ON" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
+	<Image Name="radiobutton-off.png" type="Shape" style="eRADIO_NORMAL_OFF" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
+	<Image Name="radiobutton-on-mousedown.png" type="Shape" style="eRADIO_FOCUS_ON" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
+	<Image Name="radiobutton-off-mousedown.png" type="Shape" style="eRADIO_FOCUS_OFF" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
+	<Image Name="radiobutton-on-mouseover.png" type="Shape" style="eRADIO_PRELIGHT_ON" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
+	<Image Name="radiobutton-off-mouseover.png" type="Shape" style="eRADIO_PRELIGHT_OFF" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
 
-  <Image Name="ButtonNormal.tga" type="Shape" style="eBUTTON_NORMAL" border_left="6" border_right="6" border_top="6" border_bottom="6" border_only="false" />
-  <Image Name="ButtonMouseOver.tga" type="Shape" style="eBUTTON_PRELIGHT" border_left="6" border_right="6" border_top="6" border_bottom="6" border_only="false" />
-  <Image Name="ButtonMouseDown.tga" type="Shape" style="eBUTTON_FOCUS" border_left="6" border_right="6" border_top="6" border_bottom="6" border_only="false" />
+	<Image Name="button.png" type="Shape" style="eBUTTON_NORMAL" border_left="6" border_right="6" border_top="6" border_bottom="6" border_only="false" />
+	<Image Name="button-mouseover.png" type="Shape" style="eBUTTON_PRELIGHT" border_left="6" border_right="6" border_top="6" border_bottom="6" border_only="false" />
+	<Image Name="button-mousedown.png" type="Shape" style="eBUTTON_FOCUS" border_left="6" border_right="6" border_top="6" border_bottom="6" border_only="false" />
 
   <Image Name="ComboBoxButton.tga" type="Shape" style="eCOMBOBOX_OPEN_BUTTON" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
   <Image Name="TabLeft.tga" type="Shape" style="eTAB_LEFT" border_left="0" border_right="0" border_top="0" border_bottom="0" border_only="false" />
