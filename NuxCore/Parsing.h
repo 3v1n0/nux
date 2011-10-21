@@ -38,7 +38,7 @@ namespace nux
 
 //! Parse a stream of characters and look for a t_32 value after the token string.
   /*!
-      Parse a t_u32 after the named token.
+      Parse a unsigned int after the named token.
 
       @param  stream  Character stream to search.
       @param  token   Token to match.
@@ -56,7 +56,7 @@ namespace nux
       @param  MaxLen      Max number of character to return.
       @return TRUE    if the token is found inside the stream.
   */
-  bool Parse_tchar (const TCHAR *stream, const TCHAR *Match, TCHAR *value, t_int size, t_int MaxLen);
+  bool Parse_tchar (const TCHAR *stream, const TCHAR *Match, TCHAR *value, int size, int MaxLen);
 
 //! Parse a BYTE after the named token.
   /*!
@@ -111,7 +111,7 @@ namespace nux
       @param Value parsed double WORD
       @return TRUE if the token is found inside the stream.
   */
-  bool Parse_int (const TCHAR *Stream, const TCHAR *Match, t_int &Value);
+  bool Parse_int (const TCHAR *Stream, const TCHAR *Match, int &Value);
 //! Parse a NString after the named token.
   /*!
       Parse a NString after the named token.
@@ -158,7 +158,7 @@ namespace nux
                           If FALSE advanced the pointer past all the CR/LF character at the end of the string.
       @return True i a line was copied to LineString;
   */
-  bool ParseLine (const TCHAR **Stream, TCHAR *LineBuffer, t_int BufferSize);
+  bool ParseLine (const TCHAR **Stream, TCHAR *LineBuffer, int BufferSize);
 
 //! Extract a line of Stream (everything up to, but not including, CR/LF).
   /*!
@@ -177,7 +177,7 @@ namespace nux
       @param BufferSize Size of the TokenBuffer.
       @return True if a token was found.
   */
-  bool ParseToken (const TCHAR *Str, TCHAR *TokenBuffer, t_int BufferSize);
+  bool ParseToken (const TCHAR *Str, TCHAR *TokenBuffer, int BufferSize);
 
 //! Parse the next space-delimited string from the input stream. If the next token starts with a quote, gets entire quoted string.
   /*!

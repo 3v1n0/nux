@@ -137,7 +137,7 @@ namespace nux
 //         @param offset_space     The space at the left of all elements.
 //         @param element_margin   The margin between elements.
 //     */
-//     void ComputeStacking(t_s32 remaining_width, t_s32 &offset_space, t_s32 &element_margin);
+//     void ComputeStacking(int remaining_width, int &offset_space, int &element_margin);
   };
 }
 

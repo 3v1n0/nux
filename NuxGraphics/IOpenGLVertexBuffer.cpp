@@ -29,7 +29,7 @@ namespace nux
 
   NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLVertexBuffer);
 
-  IOpenGLVertexBuffer::IOpenGLVertexBuffer(t_u32 Length, VBO_USAGE Usage, NUX_FILE_LINE_DECL)
+  IOpenGLVertexBuffer::IOpenGLVertexBuffer(unsigned int Length, VBO_USAGE Usage, NUX_FILE_LINE_DECL)
     :   IOpenGLResource(RTVERTEXBUFFER, NUX_FILE_LINE_PARAM)
     ,   _Length(Length)
     ,   _Usage(Usage)
@@ -52,8 +52,8 @@ namespace nux
   }
 
   int IOpenGLVertexBuffer::Lock(
-    t_u32 OffsetToLock,
-    t_u32 SizeToLock,
+    unsigned int OffsetToLock,
+    unsigned int SizeToLock,
     void **ppbData)
   {
     nuxAssert(SizeToLock <= _Length);
@@ -121,7 +121,7 @@ namespace nux
     CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, _OpenGLID));
   }
 
-  t_u32 IOpenGLVertexBuffer::GetSize()
+  unsigned int IOpenGLVertexBuffer::GetSize()
   {
     return _Length;
   }

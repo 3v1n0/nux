@@ -158,8 +158,8 @@ namespace nux
     NUX_RETURN_VALUE_IF_TRUE(_scroll_right->TestMousePointerInclusion(mouse_position, event_type), _scroll_right);
     NUX_RETURN_VALUE_IF_TRUE(_scroll_left->TestMousePointerInclusion(mouse_position, event_type), _scroll_left);
 
-    t_u32 vector_size = (t_u32) _tab_array.size();
-    for (t_u32 i = 0; i < vector_size; i++)
+    unsigned int vector_size = (unsigned int) _tab_array.size();
+    for (unsigned int i = 0; i < vector_size; i++)
     {
       NUX_RETURN_VALUE_IF_TRUE(_tab_array[i]->_tab_area->TestMousePointerInclusion(mouse_position, event_type), _tab_array[i]->_tab_area);
     }
@@ -192,7 +192,7 @@ namespace nux
     if (_visible_tab_content_layout)
       _visible_tab_content_layout->QueueDraw();
 
-    t_u32 vector_size = (t_u32) _tab_array.size();
+    unsigned int vector_size = (unsigned int) _tab_array.size();
 
     Geometry geo = GetGeometry();
     Geometry clip_geo;
@@ -203,7 +203,7 @@ namespace nux
 
     graphics_engine.PushClippingRectangle(clip_geo);
 
-    for (t_u32 i = 0; i < vector_size; i++)
+    for (unsigned int i = 0; i < vector_size; i++)
     {
       Geometry tab_geo = _tab_array[i]->_tab_area->GetGeometry();
       const char *tab_text = _tab_array[i]->GetName().GetTCharPtr();
@@ -369,9 +369,9 @@ namespace nux
 
   void TabView::SetActiveTad(int index)
   {
-    if (index >= (t_s32) _tab_array.size())
+    if (index >= (int) _tab_array.size())
     {
-      m_FocusTabIndex = (t_s32) _tab_array.size() - 1;
+      m_FocusTabIndex = (int) _tab_array.size() - 1;
     }
     else
     {

@@ -47,9 +47,9 @@ namespace nux
   }
 
   int GpuDevice::CreateTexture(
-    t_u32 Width
-    , t_u32 Height
-    , t_u32 Levels
+    unsigned int Width
+    , unsigned int Height
+    , unsigned int Levels
     //, DWORD Usage    // no use
     , BitmapFormat PixelFormat
     , IOpenGLTexture2D **ppTexture
@@ -61,13 +61,13 @@ namespace nux
     //        evaluate(with integer math) means to determine how many mipmap
     //        levels are required for a complete pyramid:
     //    numLevels = 1 + floor(log2(max(w, h, d)))
-    t_u32 NumTotalMipLevel    = 1 + floorf(Log2(Max(Width, Height)));
+    unsigned int NumTotalMipLevel    = 1 + floorf(Log2(Max(Width, Height)));
 
     //    Levels
     //        [in] Number of levels in the texture. If this is zero, generate all texture sublevels
     //        down to 1 by 1 pixels for hardware that supports mip-maps textures. Call GetNumMipLevel to see the
     //        number of levels generated.
-    t_u32 NumMipLevel = 0;
+    unsigned int NumMipLevel = 0;
 
     if (Levels == 0)
     {
@@ -125,9 +125,9 @@ namespace nux
   }
 
   int GpuDevice::CreateRectangleTexture(
-    t_u32 Width
-    , t_u32 Height
-    , t_u32 Levels
+    unsigned int Width
+    , unsigned int Height
+    , unsigned int Levels
     //, DWORD Usage    // no use
     , BitmapFormat PixelFormat
     , IOpenGLRectangleTexture **ppTexture
@@ -140,13 +140,13 @@ namespace nux
     //        evaluate(with integer math) means to determine how many mipmap
     //        levels are required for a complete pyramid:
     //    numLevels = 1 + floor(log2(max(w, h, d)))
-    t_u32 NumTotalMipLevel    = 1 + floorf(Log2(Max(Width, Height)));
+    unsigned int NumTotalMipLevel    = 1 + floorf(Log2(Max(Width, Height)));
 
     //    Levels
     //        [in] Number of levels in the texture. If this is zero, generate all texture sublevels
     //        down to 1 by 1 pixels for hardware that supports mip-maps textures. Call GetNumMipLevel to see the
     //        number of levels generated.
-    t_u32 NumMipLevel = 0;
+    unsigned int NumMipLevel = 0;
 
     if (Levels == 0)
     {
@@ -191,20 +191,20 @@ namespace nux
   }
 
   int GpuDevice::CreateCubeTexture(
-    t_u32 EdgeLength
-    , t_u32 Levels
+    unsigned int EdgeLength
+    , unsigned int Levels
     //, DWORD Usage    // no use
     , BitmapFormat PixelFormat
     , IOpenGLCubeTexture **ppCubeTexture
     //, HANDLE* pSharedHandle    // no use
     )
   {
-    t_u32 NumTotalMipLevel    = 1 + floorf(Log2(EdgeLength));
+    unsigned int NumTotalMipLevel    = 1 + floorf(Log2(EdgeLength));
     //    Levels
     //        [in] Number of levels in the texture. If this is zero, Direct3D will generate all texture sublevels
     //        down to 1 by 1 pixels for hardware that supports mipmapped textures. Call GetNumMipLevel to see the
     //        number of levels generated.
-    t_u32 NumMipLevel = 0;
+    unsigned int NumMipLevel = 0;
 
     if (Levels == 0)
     {
@@ -239,22 +239,22 @@ namespace nux
   }
 
   int GpuDevice::CreateVolumeTexture(
-    t_u32 Width
-    , t_u32 Height
-    , t_u32 Depth
-    , t_u32 Levels
+    unsigned int Width
+    , unsigned int Height
+    , unsigned int Depth
+    , unsigned int Levels
     //, DWORD Usage        // no use
     , BitmapFormat PixelFormat
     , IOpenGLVolumeTexture **ppVolumeTexture
     //, HANDLE* pSharedHandle       // no use
     )
   {
-    t_u32 NumTotalMipLevel = 1 + floorf(Log2(Max(Max(Width, Height), Depth)));
+    unsigned int NumTotalMipLevel = 1 + floorf(Log2(Max(Max(Width, Height), Depth)));
     //    Levels
     //        [in] Number of levels in the texture. If this is zero, Direct3D will generate all texture sublevels
     //        down to 1 by 1 pixels for hardware that supports mipmapped textures. Call GetNumMipLevel to see the
     //        number of levels generated.
-    t_u32 NumMipLevel = 0;
+    unsigned int NumMipLevel = 0;
 
     if (Levels == 0)
     {
@@ -287,9 +287,9 @@ namespace nux
     return h;
   }
 
-  int GpuDevice::CreateAnimatedTexture(t_u32 Width,
-    t_u32 Height,
-    t_u32 Depth,
+  int GpuDevice::CreateAnimatedTexture(unsigned int Width,
+    unsigned int Height,
+    unsigned int Depth,
     BitmapFormat PixelFormat,
     IOpenGLAnimatedTexture **ppAnimatedTexture)
   {

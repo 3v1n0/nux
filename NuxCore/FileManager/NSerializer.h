@@ -49,11 +49,11 @@ namespace nux
 
     // NSerializer interface.
     virtual ~NSerializer() {}
-    virtual void SerializeFinal (void *V, t_s64 Length) = 0;
+    virtual void SerializeFinal (void *V, long long Length) = 0;
 //     template<typename T>
-//     void SerializeBuffer( T* buffer, t_u64 NumberOfElements, t_u64 ElementSize = sizeof(T))
+//     void SerializeBuffer( T* buffer, unsigned long long NumberOfElements, unsigned long long ElementSize = sizeof(T))
 //     {
-//         for(t_u64 i = 0; i < NumberOfElements; i++)
+//         for(unsigned long long i = 0; i < NumberOfElements; i++)
 //         {
 //             t_u8* bytebuffer = (t_u8*)(&buffer[i]);
 //             Serialize(bytebuffer, ElementSize);
@@ -61,12 +61,12 @@ namespace nux
 //     }
     virtual bool isReader() = 0;
     virtual bool isWriter() = 0;
-    virtual t_s64 Tell() = 0;
-    virtual t_s64 GetFileSize()
+    virtual long long Tell() = 0;
+    virtual long long GetFileSize()
     {
       return -1;
     }
-    virtual t_s64 Seek (t_s64 FilePos, NSerializer::SeekPos) = 0;
+    virtual long long Seek (long long FilePos, NSerializer::SeekPos) = 0;
     virtual bool Precache (INT PrecacheOffset, INT PrecacheSize)
     {
       return TRUE;
@@ -109,36 +109,36 @@ namespace nux
     }
 
     virtual void Serialize (t_char   &data);
-    virtual void Serialize (t_wchar  &data);
-    virtual void Serialize (t_bool   &data);
+    virtual void Serialize (wchar_t  &data);
+    virtual void Serialize (bool   &data);
     virtual void Serialize (t_s8     &data);
     virtual void Serialize (t_u8     &data);
-    virtual void Serialize (t_u16    &data);
-    virtual void Serialize (t_s16    &data);
-    virtual void Serialize (t_uint32 &data);
-    virtual void Serialize (t_int32  &data);
-    virtual void Serialize (t_long   &data);
-    virtual void Serialize (t_ulong  &data);
-    virtual void Serialize (t_float  &data);
-    virtual void Serialize (t_double &data);
-    virtual void Serialize (t_u64    &data);
-    virtual void Serialize (t_s64    &data);
+    virtual void Serialize (unsigned short    &data);
+    virtual void Serialize (short    &data);
+    virtual void Serialize (unsigned int &data);
+    virtual void Serialize (int  &data);
+    virtual void Serialize (long   &data);
+    virtual void Serialize (unsigned long  &data);
+    virtual void Serialize (float  &data);
+    virtual void Serialize (double &data);
+    virtual void Serialize (unsigned long long    &data);
+    virtual void Serialize (long long    &data);
 
-    virtual void Serialize (t_char   *buffer, t_u32 len, t_u32 stride = sizeof (t_char) );
-    virtual void Serialize (t_wchar  *buffer, t_u32 len, t_u32 stride = sizeof (t_wchar) );
-    virtual void Serialize (t_bool   *buffer, t_u32 len, t_u32 stride = sizeof (t_bool)  );
-    virtual void Serialize (t_s8     *buffer, t_u32 len, t_u32 stride = sizeof (t_s8)    );
-    virtual void Serialize (t_u8     *buffer, t_u32 len, t_u32 stride = sizeof (t_u8)    );
-    virtual void Serialize (t_u16    *buffer, t_u32 len, t_u32 stride = sizeof (t_u16)   );
-    virtual void Serialize (t_s16    *buffer, t_u32 len, t_u32 stride = sizeof (t_s16)   );
-    virtual void Serialize (t_uint32 *buffer, t_u32 len, t_u32 stride = sizeof (t_uint32) );
-    virtual void Serialize (t_int32  *buffer, t_u32 len, t_u32 stride = sizeof (t_int32) );
-    virtual void Serialize (t_long   *buffer, t_u32 len, t_u32 stride = sizeof (t_long)  );
-    virtual void Serialize (t_ulong  *buffer, t_u32 len, t_u32 stride = sizeof (t_ulong) );
-    virtual void Serialize (t_float  *buffer, t_u32 len, t_u32 stride = sizeof (t_float) );
-    virtual void Serialize (t_double *buffer, t_u32 len, t_u32 stride = sizeof (t_double) );
-    virtual void Serialize (t_u64    *buffer, t_u32 len, t_u32 stride = sizeof (t_u64)   );
-    virtual void Serialize (t_s64    *buffer, t_u32 len, t_u32 stride = sizeof (t_s64)   );
+    virtual void Serialize (t_char   *buffer, unsigned int len, unsigned int stride = sizeof (t_char) );
+    virtual void Serialize (wchar_t  *buffer, unsigned int len, unsigned int stride = sizeof (wchar_t) );
+    virtual void Serialize (bool   *buffer, unsigned int len, unsigned int stride = sizeof (bool)  );
+    virtual void Serialize (t_s8     *buffer, unsigned int len, unsigned int stride = sizeof (t_s8)    );
+    virtual void Serialize (t_u8     *buffer, unsigned int len, unsigned int stride = sizeof (t_u8)    );
+    virtual void Serialize (unsigned short    *buffer, unsigned int len, unsigned int stride = sizeof (unsigned short)   );
+    virtual void Serialize (short    *buffer, unsigned int len, unsigned int stride = sizeof (short)   );
+    virtual void Serialize (unsigned int *buffer, unsigned int len, unsigned int stride = sizeof (unsigned int) );
+    virtual void Serialize (int  *buffer, unsigned int len, unsigned int stride = sizeof (int) );
+    virtual void Serialize (long   *buffer, unsigned int len, unsigned int stride = sizeof (long)  );
+    virtual void Serialize (unsigned long  *buffer, unsigned int len, unsigned int stride = sizeof (unsigned long) );
+    virtual void Serialize (float  *buffer, unsigned int len, unsigned int stride = sizeof (float) );
+    virtual void Serialize (double *buffer, unsigned int len, unsigned int stride = sizeof (double) );
+    virtual void Serialize (unsigned long long    *buffer, unsigned int len, unsigned int stride = sizeof (unsigned long long)   );
+    virtual void Serialize (long long    *buffer, unsigned int len, unsigned int stride = sizeof (long long)   );
 
     virtual void Identify (const char *name) {};
     virtual void Begin() {};
@@ -157,7 +157,7 @@ namespace nux
     Sr.Serialize (v);
     return Sr;
   }
-  NUX_INLINE NSerializer &operator << (NSerializer &Sr, t_bool      &v)
+  NUX_INLINE NSerializer &operator << (NSerializer &Sr, bool      &v)
   {
     Sr.Serialize (v);
     return Sr;
@@ -172,52 +172,52 @@ namespace nux
     Sr.Serialize (v);
     return Sr;
   }
-  NUX_INLINE NSerializer &operator << (NSerializer &Sr, t_u16       &v)
+  NUX_INLINE NSerializer &operator << (NSerializer &Sr, unsigned short       &v)
   {
     Sr.Serialize (v);
     return Sr;
   }
-  NUX_INLINE NSerializer &operator << (NSerializer &Sr, t_s16       &v)
+  NUX_INLINE NSerializer &operator << (NSerializer &Sr, short       &v)
   {
     Sr.Serialize (v);
     return Sr;
   }
-  NUX_INLINE NSerializer &operator << (NSerializer &Sr, t_uint32    &v)
+  NUX_INLINE NSerializer &operator << (NSerializer &Sr, unsigned int    &v)
   {
     Sr.Serialize (v);
     return Sr;
   }
-  NUX_INLINE NSerializer &operator << (NSerializer &Sr, t_int32     &v)
+  NUX_INLINE NSerializer &operator << (NSerializer &Sr, int     &v)
   {
     Sr.Serialize (v);
     return Sr;
   }
-  NUX_INLINE NSerializer &operator << (NSerializer &Sr, t_long      &v)
+  NUX_INLINE NSerializer &operator << (NSerializer &Sr, long      &v)
   {
     Sr.Serialize (v);
     return Sr;
   }
-  NUX_INLINE NSerializer &operator << (NSerializer &Sr, t_ulong     &v)
+  NUX_INLINE NSerializer &operator << (NSerializer &Sr, unsigned long     &v)
   {
     Sr.Serialize (v);
     return Sr;
   }
-  NUX_INLINE NSerializer &operator << (NSerializer &Sr, t_float     &v)
+  NUX_INLINE NSerializer &operator << (NSerializer &Sr, float     &v)
   {
     Sr.Serialize (v);
     return Sr;
   }
-  NUX_INLINE NSerializer &operator << (NSerializer &Sr, t_double    &v)
+  NUX_INLINE NSerializer &operator << (NSerializer &Sr, double    &v)
   {
     Sr.Serialize (v);
     return Sr;
   }
-  NUX_INLINE NSerializer &operator << (NSerializer &Sr, t_u64       &v)
+  NUX_INLINE NSerializer &operator << (NSerializer &Sr, unsigned long long       &v)
   {
     Sr.Serialize (v);
     return Sr;
   }
-  NUX_INLINE NSerializer &operator << (NSerializer &Sr, t_s64       &v)
+  NUX_INLINE NSerializer &operator << (NSerializer &Sr, long long       &v)
   {
     Sr.Serialize (v);
     return Sr;

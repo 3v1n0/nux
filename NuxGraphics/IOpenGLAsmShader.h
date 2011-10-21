@@ -108,23 +108,23 @@ namespace nux
     void Begin();
     void End();
 
-    void SetVertexEnvParameter4dARB         (t_uint32 index, double x, double y, double z, double w);
-    void SetVertexEnvParameter4dvARB        (t_uint32 index, const double *params);
-    void SetVertexEnvParameter4fARB         (t_uint32 index, float x, float y, float z, float w);
-    void SetVertexEnvParameter4fvARB        (t_uint32 index, const float *params);
-    void SetVertexLocalParameter4dARB       (t_uint32 index, double x, double y, double z, double w);
-    void SetVertexLocalParameter4dvARB      (t_uint32 index, const double *params);
-    void SetVertexLocalParameter4fARB       (t_uint32 index, float x, float y, float z, float w);
-    void SetVertexLocalParameter4fvARB      (t_uint32 index, const float *params);
+    void SetVertexEnvParameter4dARB         (unsigned int index, double x, double y, double z, double w);
+    void SetVertexEnvParameter4dvARB        (unsigned int index, const double *params);
+    void SetVertexEnvParameter4fARB         (unsigned int index, float x, float y, float z, float w);
+    void SetVertexEnvParameter4fvARB        (unsigned int index, const float *params);
+    void SetVertexLocalParameter4dARB       (unsigned int index, double x, double y, double z, double w);
+    void SetVertexLocalParameter4dvARB      (unsigned int index, const double *params);
+    void SetVertexLocalParameter4fARB       (unsigned int index, float x, float y, float z, float w);
+    void SetVertexLocalParameter4fvARB      (unsigned int index, const float *params);
 
-    void SetFragmentEnvParameter4dARB       (t_uint32 index, double x, double y, double z, double w);
-    void SetFragmentEnvParameter4dvARB      (t_uint32 index, const double *params);
-    void SetFragmentEnvParameter4fARB       (t_uint32 index, float x, float y, float z, float w);
-    void SetFragmentEnvParameter4fvARB      (t_uint32 index, const float *params);
-    void SetFragmentLocalParameter4dARB     (t_uint32 index, double x, double y, double z, double w);
-    void SetFragmentLocalParameter4dvARB    (t_uint32 index, const double *params);
-    void SetFragmentLocalParameter4fARB     (t_uint32 index, float x, float y, float z, float w);
-    void SetFragmentLocalParameter4fvARB    (t_uint32 index, const float *params);
+    void SetFragmentEnvParameter4dARB       (unsigned int index, double x, double y, double z, double w);
+    void SetFragmentEnvParameter4dvARB      (unsigned int index, const double *params);
+    void SetFragmentEnvParameter4fARB       (unsigned int index, float x, float y, float z, float w);
+    void SetFragmentEnvParameter4fvARB      (unsigned int index, const float *params);
+    void SetFragmentLocalParameter4dARB     (unsigned int index, double x, double y, double z, double w);
+    void SetFragmentLocalParameter4dvARB    (unsigned int index, const double *params);
+    void SetFragmentLocalParameter4fARB     (unsigned int index, float x, float y, float z, float w);
+    void SetFragmentLocalParameter4fvARB    (unsigned int index, const float *params);
 
   private:
     IOpenGLAsmShaderProgram(NString ShaderProgramName = NString("AsmShaderProgram"));

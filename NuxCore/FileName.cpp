@@ -29,7 +29,7 @@ namespace nux
 
   NString NFileName::GetDrive() const
   {
-    t_size Pos = FindFirstOccurence (NUX_BACKSLASH_CHAR);
+    size_t Pos = FindFirstOccurence (NUX_BACKSLASH_CHAR);
 
     if (Pos == tstring::npos)
     {
@@ -46,7 +46,7 @@ namespace nux
 
   NString NFileName::GetExtension() const
   {
-    t_size Pos = FindLastOccurence (TEXT (".") );
+    size_t Pos = FindLastOccurence (TEXT (".") );
 
     if (Pos != tstring::npos)
     {
@@ -59,9 +59,9 @@ namespace nux
 // Returns the base filename without the path
   NString NFileName::GetCleanFilename() const
   {
-    t_size Pos = FindLastOccurence (NUX_BACKSLASH_CHAR);
-    Pos = Max<t_size> (Pos, FindLastOccurence (TEXT ("/") ) ); // in case we are using slash and the NUX_BACKSLASH_CHAR is different.
-    Pos = Max<t_size> (Pos, FindLastOccurence (TEXT ("\\") ) ); // in case we are using backslash and the NUX_BACKSLASH_CHAR is different.
+    size_t Pos = FindLastOccurence (NUX_BACKSLASH_CHAR);
+    Pos = Max<size_t> (Pos, FindLastOccurence (TEXT ("/") ) ); // in case we are using slash and the NUX_BACKSLASH_CHAR is different.
+    Pos = Max<size_t> (Pos, FindLastOccurence (TEXT ("\\") ) ); // in case we are using backslash and the NUX_BACKSLASH_CHAR is different.
 
     if (Pos != tstring::npos)
     {
@@ -73,7 +73,7 @@ namespace nux
 
   NString NFileName::GetFilenameNoExtension() const
   {
-    t_size Pos = FindLastOccurence (TEXT (".") );
+    size_t Pos = FindLastOccurence (TEXT (".") );
 
     if (Pos != tstring::npos)
     {
@@ -88,7 +88,7 @@ namespace nux
   {
     NString Wk = GetCleanFilename();
 
-    t_size Pos = Wk.FindLastOccurence (TEXT (".") );
+    size_t Pos = Wk.FindLastOccurence (TEXT (".") );
 
     if (Pos != tstring::npos)
     {
@@ -102,9 +102,9 @@ namespace nux
 
   NString NFileName::GetDirectoryPath() const
   {
-    t_size Pos = FindLastOccurence (NUX_BACKSLASH_CHAR);
-    Pos = Max<t_size> (Pos, FindLastOccurence (TEXT ("/") ) ); // in case we are using slash and the NUX_BACKSLASH_CHAR is different.
-    Pos = Max<t_size> (Pos, FindLastOccurence (TEXT ("\\") ) ); // in case we are using backslash and the NUX_BACKSLASH_CHAR is different.
+    size_t Pos = FindLastOccurence (NUX_BACKSLASH_CHAR);
+    Pos = Max<size_t> (Pos, FindLastOccurence (TEXT ("/") ) ); // in case we are using slash and the NUX_BACKSLASH_CHAR is different.
+    Pos = Max<size_t> (Pos, FindLastOccurence (TEXT ("\\") ) ); // in case we are using backslash and the NUX_BACKSLASH_CHAR is different.
 
     if (Pos != tstring::npos)
     {
@@ -116,7 +116,7 @@ namespace nux
 
   void NFileName::ChangeFileExtension (const TCHAR *ext)
   {
-    t_size Pos = FindLastOccurence (TEXT (".") );
+    size_t Pos = FindLastOccurence (TEXT (".") );
 
     if (Pos != tstring::npos)
     {
@@ -130,7 +130,7 @@ namespace nux
 
   void NFileName::ConvertSlashToBackslash()
   {
-    t_size Pos = tstring::npos;
+    size_t Pos = tstring::npos;
     Pos = FindFirstOccurence (TEXT ('/') );
 
     while (Pos != tstring::npos)
@@ -142,7 +142,7 @@ namespace nux
 
   void NFileName::ConvertBackslashToSlash()
   {
-    t_size Pos = tstring::npos;
+    size_t Pos = tstring::npos;
     Pos = FindFirstOccurence (TEXT ('\\') );
 
     while (Pos != tstring::npos)
@@ -199,9 +199,9 @@ namespace nux
   {
     ConvertBackslashToSlash();
 
-    t_size size = Size();
+    size_t size = Size();
 
-    for (t_size i = 0; i < size; )
+    for (size_t i = 0; i < size; )
     {
       if ( (i < size - 1) && (operator[] (i) == TEXT ('/') ) && (operator[] (i + 1) == TEXT ('/') ) )
       {
@@ -219,9 +219,9 @@ namespace nux
   {
     ConvertSlashToBackslash();
 
-    t_size size = Size();
+    size_t size = Size();
 
-    for (t_size i = 0; i < size; )
+    for (size_t i = 0; i < size; )
     {
       if ( (i < size - 1) && (operator[] (i) == TEXT ('\\') ) && (operator[] (i + 1) == TEXT ('\\') ) )
       {

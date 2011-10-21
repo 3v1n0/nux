@@ -50,7 +50,7 @@ namespace nux
 
   void FilePath::AddSearchPath (const std::vector<NString>& searchpath)
   {
-    for (t_u32 i = 0; i < searchpath.size(); i++)
+    for (unsigned int i = 0; i < searchpath.size(); i++)
     {
       if (std::find (m_SearchPath.begin(), m_SearchPath.end(), searchpath[i]) == m_SearchPath.end() )
         m_SearchPath.push_back (searchpath[i]);
@@ -88,7 +88,7 @@ namespace nux
     if (GFileManager.FileExist (FileName.GetTCharPtr() ) )
       return FileName;
 
-    for (t_u32 i = 0; i < m_SearchPath.size(); i++)
+    for (unsigned int i = 0; i < m_SearchPath.size(); i++)
     {
       if (m_SearchPath[i].Size() == 0)
         continue;
@@ -120,9 +120,9 @@ namespace nux
 
     FileName = filename;
 
-    for (t_size i = 0; i < m_SearchPath.size(); i++)
+    for (size_t i = 0; i < m_SearchPath.size(); i++)
     {
-      t_size pos;
+      size_t pos;
       NString PathName;
 
       while (FileName.FindFirstOccurenceOf (TEXT ("\\/") ) != std::string::npos)

@@ -1299,7 +1299,7 @@ namespace nux
     if (GLResource.IsValid())
     {
       // Iterate through all resource updater types(list is sorted by subclass depth).
-      for (t_u32 i = 0; i < ResourceCache.GetResourceUpdaters().size(); ++i)
+      for (unsigned int i = 0; i < ResourceCache.GetResourceUpdaters().size(); ++i)
       {
         NResourceUpdater *ResourceUpdater = ResourceCache.GetResourceUpdaters() [i];
         nuxAssert(ResourceUpdater);

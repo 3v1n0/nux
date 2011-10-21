@@ -31,7 +31,7 @@ namespace nux
 
   NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLQuery);
 
-  t_u32 IOpenGLQuery::_CurrentlyActiveQuery = 0;
+  unsigned int IOpenGLQuery::_CurrentlyActiveQuery = 0;
 
   IOpenGLQuery::IOpenGLQuery(QUERY_TYPE Type)
     : IOpenGLResource(RTQUERY)
@@ -48,8 +48,8 @@ namespace nux
 // These are considered successful return values.
   int IOpenGLQuery::GetData(
     int *pData,
-    t_u32 Size,
-    t_u32 GetDataFlags
+    unsigned int Size,
+    unsigned int GetDataFlags
   )
   {
 #ifndef NUX_OPENGLES_20
@@ -68,7 +68,7 @@ namespace nux
     return 0;
   }
 
-  t_u32 IOpenGLQuery::GetDataSize()
+  unsigned int IOpenGLQuery::GetDataSize()
   {
     return 0;
   }
@@ -85,11 +85,11 @@ namespace nux
   }
 
   void IOpenGLQuery::Issue(
-    t_u32 IssueFlags
+    unsigned int IssueFlags
   )
   {
 #ifndef NUX_OPENGLES_20
-    if (IssueFlags == (t_u32) ISSUE_BEGIN)
+    if (IssueFlags == (unsigned int) ISSUE_BEGIN)
     {
       nuxAssert(_CurrentlyActiveQuery == 0);
 
@@ -104,7 +104,7 @@ namespace nux
         _CurrentlyActiveQuery = _OpenGLID;
       }
     }
-    else if (IssueFlags == (t_u32) ISSUE_END)
+    else if (IssueFlags == (unsigned int) ISSUE_END)
     {
       nuxAssert(_CurrentlyActiveQuery == _OpenGLID);
 

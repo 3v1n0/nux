@@ -48,11 +48,11 @@ namespace nux
   {
     std::ifstream fileStream;
     BYTE *tga_buffer, *tga_data_pointer;
-    t_u32 datasize;
+    unsigned int datasize;
 
     tga_header header;
     tga_footer footer;
-    t_u32 rle, footer_present;
+    unsigned int rle, footer_present;
 
     if (!GFileManager.FileExist(file_name))
     {
@@ -69,7 +69,7 @@ namespace nux
     }
 
     fileStream.seekg( 0, std::ios::end);
-    t_u32 filesize = fileStream.tellg();
+    unsigned int filesize = fileStream.tellg();
     fileStream.seekg( 0, std::ios::beg);
 
 
@@ -169,7 +169,7 @@ namespace nux
       return 0;
     }
 
-    t_u32 width, height;
+    unsigned int width, height;
     width  = header.width_hi << 8 |  header.width_lo;
     height = header.height_hi << 8 | header.height_lo;
 
@@ -219,14 +219,14 @@ namespace nux
 
     tga_data_pointer = tga_buffer;
 
-    t_u32 image_width = TextureObjectData->GetSurface(0).GetWidth();
-    t_u32 image_height = TextureObjectData->GetSurface(0).GetHeight();
+    unsigned int image_width = TextureObjectData->GetSurface(0).GetWidth();
+    unsigned int image_height = TextureObjectData->GetSurface(0).GetHeight();
 
     if (rle == 0)
     {
-      t_u32 j, i;
-      t_u32 position = 0;
-      t_u32 value;
+      unsigned int j, i;
+      unsigned int position = 0;
+      unsigned int value;
 
       for (j = 0; j < image_height; j++)
       {
@@ -303,11 +303,11 @@ namespace nux
       UINT value;
       //unsigned BYTE *last_byte = buf_dest + 4*image->height*image->width; // last byte of destination image
 
-      t_u32 size = TextureObjectData->GetSurface(0).GetWidth() * TextureObjectData->GetSurface(0).GetHeight();
+      unsigned int size = TextureObjectData->GetSurface(0).GetWidth() * TextureObjectData->GetSurface(0).GetHeight();
 
       while (position < size)
       {
-        t_u32 repetition_count = (*tga_data_pointer & 0x7f) + 1;
+        unsigned int repetition_count = (*tga_data_pointer & 0x7f) + 1;
 
         if (*tga_data_pointer & 0x80) // RLE Packet
         {
@@ -545,7 +545,7 @@ namespace nux
   {
     std::fstream fileStream;
 
-    t_u32 datasize;
+    unsigned int datasize;
     tga_header header;
     tga_footer footer;
 
@@ -570,7 +570,7 @@ namespace nux
       return HR_FILE_IO_FAIL;
     }
 
-    t_u32 BPP = 3;
+    unsigned int BPP = 3;
 
     if (image->GetSurface(0).GetFormat() == BITFMT_R8G8B8 ||
         image->GetSurface(0).GetFormat() == BITFMT_B8G8R8)
@@ -650,13 +650,13 @@ namespace nux
     fileStream.write((char *) &header.bpp,                 sizeof(header.bpp));
     fileStream.write((char *) &header.descriptor,          sizeof(header.descriptor));
 
-    t_s32 i, j;
+    int i, j;
 
     for (j = 0; j < image->GetSurface(0).GetHeight(); j++)
     {
       for (i = 0; i < image->GetSurface(0).GetWidth(); i++)
       {
-        t_u32 gba = image->GetSurface(0).Read(i, j);
+        unsigned int gba = image->GetSurface(0).Read(i, j);
         fileStream.write((char *) &gba, BPP);
       }
     }

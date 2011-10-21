@@ -34,10 +34,10 @@ namespace nux
   NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLBaseTexture);
 
   IOpenGLBaseTexture::IOpenGLBaseTexture(OpenGLResourceType ResourceType,
-                                          t_u32 Width,
-                                          t_u32 Height,
-                                          t_u32 Depth,
-                                          t_u32 NumMipLevel,
+                                          unsigned int Width,
+                                          unsigned int Height,
+                                          unsigned int Depth,
+                                          unsigned int NumMipLevel,
                                           BitmapFormat PixelFormat, NUX_FILE_LINE_DECL)
     : IOpenGLResource(ResourceType, NUX_FILE_LINE_PARAM)
     , _IsPOT(false)
@@ -118,12 +118,12 @@ namespace nux
     _TextureStates.SetRenderStates();
   }
 
-  void IOpenGLBaseTexture::SetFiltering(t_u32 MinFilter, t_u32 MagFilter/*, t_u32 MIP = GL_NEAREST*/)
+  void IOpenGLBaseTexture::SetFiltering(unsigned int MinFilter, unsigned int MagFilter/*, unsigned int MIP = GL_NEAREST*/)
   {
     _TextureStates.SetFiltering(MinFilter, MagFilter);
   }
 
-  void IOpenGLBaseTexture::SetWrap(t_u32 U, t_u32 V, t_u32 W)
+  void IOpenGLBaseTexture::SetWrap(unsigned int U, unsigned int V, unsigned int W)
   {
     _TextureStates.SetWrap(U, V, W);
   }
@@ -133,7 +133,7 @@ namespace nux
     _TextureStates.SetLOD(MinLod, MaxLod);
   }
 
-  void IOpenGLBaseTexture::SetMipLevel(t_u32 MinMip, t_u32 MaxMip)
+  void IOpenGLBaseTexture::SetMipLevel(unsigned int MinMip, unsigned int MaxMip)
   {
     _TextureStates.SetMipLevel(MinMip, MaxMip);
   }
@@ -263,12 +263,12 @@ namespace nux
   }
 
 
-  t_s32 GetTextureSize(IOpenGLBaseTexture *pTexture)
+  int GetTextureSize(IOpenGLBaseTexture *pTexture)
   {
     GLint unpack_alignment = GPixelFormats[pTexture->_PixelFormat].RowMemoryAlignment;
-    t_u32 halfUnpack = Log2(unpack_alignment);
+    unsigned int halfUnpack = Log2(unpack_alignment);
 
-    t_u32 TextureSize = 0;
+    unsigned int TextureSize = 0;
 
     if (
       pTexture->_PixelFormat == BITFMT_DXT1 ||
@@ -279,10 +279,10 @@ namespace nux
     {
       for (int Level = 0; Level < pTexture->GetNumMipLevel(); Level++)
       {
-        t_u32 Width            = Max<t_u32> (1, pTexture->_Width >> Level);
-        t_u32 Height           = Max<t_u32> (1, pTexture->_Height >> Level);
-        t_u32 WidthInBlocks    = Max<t_u32> ((Width + 3) / 4, 1); // round the width to the upper multiple of 4. DXT blocks are 4x4 texels.
-        t_u32 HeightInBlocks   = Max<t_u32> ((Height + 3) / 4, 1); // round the height to the upper multiple of 4. DXT blocks are 4x4 texels.
+        unsigned int Width            = Max<unsigned int> (1, pTexture->_Width >> Level);
+        unsigned int Height           = Max<unsigned int> (1, pTexture->_Height >> Level);
+        unsigned int WidthInBlocks    = Max<unsigned int> ((Width + 3) / 4, 1); // round the width to the upper multiple of 4. DXT blocks are 4x4 texels.
+        unsigned int HeightInBlocks   = Max<unsigned int> ((Height + 3) / 4, 1); // round the height to the upper multiple of 4. DXT blocks are 4x4 texels.
 
         if (pTexture->_PixelFormat == BITFMT_DXT1)
         {
@@ -298,10 +298,10 @@ namespace nux
     {
       for (int Level = 0; Level < pTexture->GetNumMipLevel(); Level++)
       {
-        t_u32 Width             = Max<t_u32> (1, pTexture->_Width >> Level);
-        t_u32 Height            = Max<t_u32> (1, pTexture->_Height >> Level);
-        t_u32 BytePerPixel      = GPixelFormats[pTexture->_PixelFormat].BlockBytes;
-        t_u32 SlicePitch        = (((Width * BytePerPixel + (unpack_alignment - 1)) >> (halfUnpack)) << (halfUnpack)) * Height;
+        unsigned int Width             = Max<unsigned int> (1, pTexture->_Width >> Level);
+        unsigned int Height            = Max<unsigned int> (1, pTexture->_Height >> Level);
+        unsigned int BytePerPixel      = GPixelFormats[pTexture->_PixelFormat].BlockBytes;
+        unsigned int SlicePitch        = (((Width * BytePerPixel + (unpack_alignment - 1)) >> (halfUnpack)) << (halfUnpack)) * Height;
 
         TextureSize += SlicePitch;
       }
@@ -316,13 +316,13 @@ namespace nux
   }
 
   void GetTextureDesc(IOpenGLBaseTexture *pTexture,
-                       t_u32 Level,
+                       unsigned int Level,
                        TEXTURE_DESC *pDesc)
   {
     GLint unpack_alignment = GPixelFormats[pTexture->_PixelFormat].RowMemoryAlignment;
-    t_u32 halfUnpack = Log2(unpack_alignment);
+    unsigned int halfUnpack = Log2(unpack_alignment);
 
-    t_u32 BytePerPixel = 0;
+    unsigned int BytePerPixel = 0;
 
     pDesc->PixelFormat = pTexture->_PixelFormat;
 
@@ -333,10 +333,10 @@ namespace nux
       pTexture->_PixelFormat == BITFMT_DXT4 ||
       pTexture->_PixelFormat == BITFMT_DXT5)
     {
-      pDesc->Width            = Max<t_u32> (1, pTexture->_Width >> Level);
-      pDesc->Height           = Max<t_u32> (1, pTexture->_Height >> Level);
-      pDesc->WidthInBlocks    = Max<t_u32> ((pDesc->Width + 3) / 4, 1); // round the width to the upper multiple of 4. DXT blocks are 4x4 texels.
-      pDesc->HeightInBlocks   = Max<t_u32> ((pDesc->Height + 3) / 4, 1); // round the height to the upper multiple of 4. DXT blocks are 4x4 texels.
+      pDesc->Width            = Max<unsigned int> (1, pTexture->_Width >> Level);
+      pDesc->Height           = Max<unsigned int> (1, pTexture->_Height >> Level);
+      pDesc->WidthInBlocks    = Max<unsigned int> ((pDesc->Width + 3) / 4, 1); // round the width to the upper multiple of 4. DXT blocks are 4x4 texels.
+      pDesc->HeightInBlocks   = Max<unsigned int> ((pDesc->Height + 3) / 4, 1); // round the height to the upper multiple of 4. DXT blocks are 4x4 texels.
 
       if ( /*pTexture->_Format == GL_COMPRESSED_RGB_S3TC_DXT1_EXT ||*/
         pTexture->_PixelFormat == BITFMT_DXT1)
@@ -386,8 +386,8 @@ namespace nux
     }
     else
     {
-      pDesc->Width            = Max<t_u32> (1, pTexture->_Width >> Level);
-      pDesc->Height           = Max<t_u32> (1, pTexture->_Height >> Level);
+      pDesc->Width            = Max<unsigned int> (1, pTexture->_Width >> Level);
+      pDesc->Height           = Max<unsigned int> (1, pTexture->_Height >> Level);
       pDesc->WidthInBlocks    = pDesc->Width;
       pDesc->HeightInBlocks   = pDesc->Height;
       BytePerPixel            = GPixelFormats[pTexture->_PixelFormat].BlockBytes;

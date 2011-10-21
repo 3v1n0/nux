@@ -48,8 +48,8 @@ namespace nux
   {
     WORD Stream;
     ObjectPtr<IOpenGLVertexBuffer> VertexBuffer;
-    t_u16 StreamOffset;
-    t_u16 StreamStride;
+    unsigned short StreamOffset;
+    unsigned short StreamStride;
 
     STREAMSOURCE()
     {
@@ -529,7 +529,7 @@ namespace nux
 
 #elif defined(NUX_OS_LINUX)
     #ifdef NUX_OPENGLES_20
-        GpuDevice(t_u32 DeviceWidth, t_u32 DeviceHeight,
+        GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight,
           BitmapFormat DeviceFormat,
           Display *display,
           Window window,
@@ -540,7 +540,7 @@ namespace nux
           int req_opengl_minor = 0,
           bool opengl_es_20 = true);
     #else
-        GpuDevice(t_u32 DeviceWidth, t_u32 DeviceHeight,
+        GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight,
           BitmapFormat DeviceFormat,
           Display *display,
           Window window,

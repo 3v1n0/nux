@@ -113,7 +113,7 @@ namespace nux
 
       // Copy the client frame buffer into the main frame buffer.
       {
-        t_u32 w, h;
+        unsigned int w, h;
         w = m_MainColorRT->GetWidth();
         h = m_MainColorRT->GetHeight();
         int x = m_ctx.x;

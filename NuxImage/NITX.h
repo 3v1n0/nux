@@ -38,20 +38,20 @@ namespace nux
 #pragma pack(1)
   typedef struct
   {
-    t_s64 FilePointer;
+    long long FilePointer;
     NFileName Name;
-    t_s32 Type;
-    t_s32 Format;
-    t_s32 Width;
-    t_s32 Height;
-    t_s32 Depth;
-    t_s32 NumMipmap;
-    t_s32 Size;
+    int Type;
+    int Format;
+    int Width;
+    int Height;
+    int Depth;
+    int NumMipmap;
+    int Size;
 
   } TextureArchiveInfo_ver_0_0_1;
 #pragma pack()
 
-  bool TextureArchiveAdd_ver_0_0_1(NSerializer *FileStream, NBitmapData *BitmapData, const TCHAR *InputTextureFile, NUX_OUT t_s64 &Offset);
+  bool TextureArchiveAdd_ver_0_0_1(NSerializer *FileStream, NBitmapData *BitmapData, const TCHAR *InputTextureFile, NUX_OUT long long &Offset);
   NBitmapData *TextureArchiveLoad_ver_0_0_1(NSerializer *FileStream, unsigned int Offset);
   void TextureArchiveGetInfo_ver_0_0_1(NSerializer *FileStream, TextureArchiveInfo_ver_0_0_1 &TextureArchiveInfo);
 

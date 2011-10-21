@@ -42,7 +42,7 @@ namespace nux
   static bool TimeIsGreater(TimeStruct t1, TimeStruct t2);
   static void TimeRightNow(TimeStruct *tv);
   static void Addmillisecs(TimeStruct *tv, unsigned int milliseconds);
-//static t_u32 TimeDiff(TimeStruct t1, TimeStruct t2);
+//static unsigned int TimeDiff(TimeStruct t1, TimeStruct t2);
 
   static NThreadSafeCounter TimerUID = 0x01234567;
 
@@ -71,8 +71,8 @@ namespace nux
     BaseWindow      *Window;                 //!< BaseWindow from where the timer was created.
     TimerObject     *next;
     TimerObject     *prev;
-    t_u32           glibid;
-    t_u32           uid;
+    unsigned int           glibid;
+    unsigned int           uid;
   };
 
   TimerObject::TimerObject()
@@ -343,9 +343,9 @@ namespace nux
     return timer_object;
   }
 
-  t_u32 TimerHandler::GetNumPendingHandler()
+  unsigned int TimerHandler::GetNumPendingHandler()
   {
-    t_u32 count = 0;
+    unsigned int count = 0;
     TimerObject *head = m_timer_object_queue;
 
     while (head)
@@ -398,7 +398,7 @@ namespace nux
   }
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-  int TimerHandler::ExecTimerHandler(t_u32 timer_id)
+  int TimerHandler::ExecTimerHandler(unsigned int timer_id)
 #else
   int TimerHandler::ExecTimerHandler()
 #endif
@@ -552,7 +552,7 @@ namespace nux
 //     if (m_timer_object_queue && (m_timer_object_queue->glibid == 0))
 //     {
 //         // How long(in milliseconds) between now and the moment the timeout expires?
-//         t_u32 time_difference = TimeDiff(now, m_timer_object_queue->when);
+//         unsigned int time_difference = TimeDiff(now, m_timer_object_queue->when);
 //
 //         m_timer_object_queue->glibid = GetWindowThread()->AddGLibTimeout(time_difference);
 //         //nuxDebugMsg("[TimerHandler::ExecTimerHandler] Adding Timeout ID: %d", m_timer_object_queue->glibid);
@@ -650,10 +650,10 @@ namespace nux
     }
   }
 
-  /*t_u32 TimeDiff( TimeStruct t1, TimeStruct t2)
+  /*unsigned int TimeDiff( TimeStruct t1, TimeStruct t2)
   {
-      t_s32 sec;
-      t_s32 usec;
+      int sec;
+      int usec;
       if (t1.sec >= t2.sec)
       {
           sec = t1.sec - t2.sec;

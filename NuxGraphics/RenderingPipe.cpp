@@ -33,7 +33,7 @@ namespace nux
   struct TexWrapMapping
   {
     TexWrap tex_wrap_mode;
-    t_u32 opengl_wrap_mode;
+    unsigned int opengl_wrap_mode;
   };
 
   struct TexWrapMapping TexWrapMappingArray [] =
@@ -72,7 +72,7 @@ namespace nux
   struct TexFilterMapping
   {
     TexFilter tex_filter_mode;
-    t_u32 opengl_filter_mode;
+    unsigned int opengl_filter_mode;
   };
 
   struct TexFilterMapping TexFilterMappingArray [] =
@@ -107,7 +107,7 @@ namespace nux
   struct RopBlendMapping
   {
     RopBlend rop_blend_mode;
-    t_u32 opengl_blend_op;
+    unsigned int opengl_blend_op;
   };
 
   struct RopBlendMapping RopBlendMappingArray [] =
@@ -197,7 +197,7 @@ namespace nux
     m_tex_coord_type = tex_coord_type;
   }
 
-  void QRP_Compute_Texture_Coord(t_int32 quad_width, t_int32 quad_height, ObjectPtr<IOpenGLBaseTexture> tex, TexCoordXForm &texxform)
+  void QRP_Compute_Texture_Coord(int quad_width, int quad_height, ObjectPtr<IOpenGLBaseTexture> tex, TexCoordXForm &texxform)
   {
     float tex_width = tex->GetWidth();
     float tex_height = tex->GetHeight();
@@ -234,8 +234,8 @@ namespace nux
     {
       if (texxform.m_tex_coord_type == TexCoordXForm::OFFSET_SCALE_COORD)
       {
-        texxform.u0 = t_int32(texxform.uoffset * tex_width);
-        texxform.v0 = t_int32(texxform.voffset * tex_height);
+        texxform.u0 = int(texxform.uoffset * tex_width);
+        texxform.v0 = int(texxform.voffset * tex_height);
         texxform.u1 = texxform.u0 + tex_width * texxform.uscale;
         texxform.v1 = texxform.v0 + tex_height * texxform.vscale;
       }

@@ -35,19 +35,19 @@ namespace nux
     {
       m_Counter = 0;
     }
-    NThreadSafeCounter (t_integer i)
+    NThreadSafeCounter (long i)
     {
       m_Counter = i;
     }
-    t_integer Increment();
-    t_integer Decrement();
-    t_integer Set (t_integer i);
-    t_integer GetValue() const;
-    t_integer operator ++ ();
-    t_integer operator -- ();
-    t_bool operator == (t_integer i);
+    long Increment();
+    long Decrement();
+    long Set (long i);
+    long GetValue() const;
+    long operator ++ ();
+    long operator -- ();
+    bool operator == (long i);
   private:
-    t_integer m_Counter;
+    long m_Counter;
   };
 
   class NCriticalSection
@@ -178,18 +178,18 @@ namespace nux
     typedef void (*TLS_ShutdownCallback) ();
 
     static BOOL                     m_TLSUsed[NbTLS];
-    static t_u32                     m_TLSIndex[NbTLS];
+    static unsigned int                     m_TLSIndex[NbTLS];
     static TLS_ShutdownCallback     m_TLSCallbacks[NbTLS];
 
     static void Initialize();
     static void Shutdown();
-    static BOOL RegisterTLS (t_u32 index, TLS_ShutdownCallback shutdownCallback);
+    static BOOL RegisterTLS (unsigned int index, TLS_ShutdownCallback shutdownCallback);
     static void ThreadInit();
     static void ThreadShutdown();
 
   public:
 
-    template<class T> static inline T GetData (t_u32 index)
+    template<class T> static inline T GetData (unsigned int index)
     {
       nuxAssert (sizeof (T) <= sizeof (size_t) );
       nuxAssert (index < NbTLS);
@@ -206,7 +206,7 @@ namespace nux
       return temp.t;
     }
 
-    template<class T> static inline void SetData (t_u32 index, T value)
+    template<class T> static inline void SetData (unsigned int index, T value)
     {
       nuxAssert (sizeof (T) <= sizeof (size_t) );
       nuxAssert (index < NbTLS);
@@ -313,7 +313,7 @@ inline		void SetTLS_##name(type value) { nux::NThreadLocalStorage::SetData<type>
 
         This function starts the thread pointed by m_pThreadFunc with default attributes
     */
-    t_u32 GetExitCode() const;
+    unsigned int GetExitCode() const;
 
     /*!
         Info: Attaches a Thread Function
@@ -337,7 +337,7 @@ inline		void SetTLS_##name(type value) { nux::NThreadLocalStorage::SetData<type>
     }
 
     HANDLE GetThreadHandle();
-    t_u32 GetThreadId();
+    unsigned int GetThreadId();
 
 
     ThreadState GetThreadState() const;
@@ -373,7 +373,7 @@ inline		void SetTLS_##name(type value) { nux::NThreadLocalStorage::SetData<type>
         Notice the signature is similar to that of any worker thread function
         except for the calling convention.
     */
-    virtual t_u32 Run (void* /* arg */ )
+    virtual unsigned int Run (void* /* arg */ )
     {
       return m_ThreadCtx.m_dwExitCode;
     }
@@ -431,10 +431,10 @@ inline		void SetTLS_##name(type value) { nux::NThreadLocalStorage::SetData<type>
       */
     public:
       HANDLE m_hThread;					//	The Thread Handle
-      volatile t_u32  m_dwTID;						//	The Thread ID
+      volatile unsigned int  m_dwTID;						//	The Thread ID
       void *m_pUserData;						//	The user data pointer
       void *m_pParent;					//	The this pointer of the parent NThread object
-      t_u32  m_dwExitCode;				//	The Exit Code of the thread
+      unsigned int  m_dwExitCode;				//	The Exit Code of the thread
     };
 
     /*!
@@ -453,7 +453,7 @@ inline		void SetTLS_##name(type value) { nux::NThreadLocalStorage::SetData<type>
 //
 //    class CDemoThread : public CThread
 //    {
-//        virtual t_u32 Run( void* /* arg */ )
+//        virtual unsigned int Run( void* /* arg */ )
 //        {
 //            for(;;)
 //            {

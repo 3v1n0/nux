@@ -384,7 +384,7 @@ namespace nux
 //       InvalidateVertexBuffer();
 //       InvalidateVertexBuffer();
 // 
-//       t_size ptr = * (t_size *) pVertexStreamZeroData + _StreamSource[vtxelement.Stream].StreamOffset;
+//       size_t ptr = * (size_t *) pVertexStreamZeroData + _StreamSource[vtxelement.Stream].StreamOffset;
 //       CHECKGL(glEnableClientState(GL_VERTEX_ARRAY));
 //       CHECKGL(glVertexPointer( vtxelement.NumComponent,
 //                                   vtxelement.Type,

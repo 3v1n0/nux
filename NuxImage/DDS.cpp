@@ -337,14 +337,14 @@ namespace nux
 
     if (isVolume)
     {
-      for (t_s32 mip = 0; mip < mipmaps; ++mip )
+      for (int mip = 0; mip < mipmaps; ++mip )
       {
-        t_s32 pitch = ImageSurface::GetLevelPitchNoMemAlignment(DDSFormat, width, height, mip);
-        t_s32 blockheight = ImageSurface::GetLevelBlockHeight(DDSFormat, height, mip);
+        int pitch = ImageSurface::GetLevelPitchNoMemAlignment(DDSFormat, width, height, mip);
+        int blockheight = ImageSurface::GetLevelBlockHeight(DDSFormat, height, mip);
 
-        for (t_s32 s = 0; s < ImageSurface::GetLevelDim(DDSFormat, VolumeDepth, mip); s++ )
+        for (int s = 0; s < ImageSurface::GetLevelDim(DDSFormat, VolumeDepth, mip); s++ )
         {
-          for (t_s32 b = 0; b < blockheight; b++)
+          for (int b = 0; b < blockheight; b++)
           {
             Memcpy( BitmapData->GetSurface(mip, s).GetPtrRawData() + b * pitch,
                      (const void *) (&buffer[buffer_index + b * pitch]),

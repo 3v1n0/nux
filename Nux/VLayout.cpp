@@ -223,7 +223,7 @@ namespace nux
     }
 
     bool unadjusted_layout = false;
-    t_size num_element = 0;
+    size_t num_element = 0;
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
@@ -718,8 +718,8 @@ namespace nux
           // For fixed element, reset their size to the same so it is checked against
           // the min and max. This is necessary in case you have set the size of the element first then latter,
           // you define its MinimumSize and/or MaximumSize size.
-          t_u32 w = (*it)->GetBaseWidth();
-          t_u32 h = (*it)->GetBaseHeight();
+          unsigned int w = (*it)->GetBaseWidth();
+          unsigned int h = (*it)->GetBaseHeight();
           (*it)->SetBaseWidth(w);
           (*it)->SetBaseHeight(h);
         }
@@ -728,10 +728,10 @@ namespace nux
     while (need_recompute);
   }
 
-  t_u32 VLayout::GetMaxStretchFactor()
+  unsigned int VLayout::GetMaxStretchFactor()
   {
-    t_u32 value = 0;
-    t_u32 sf;
+    unsigned int value = 0;
+    unsigned int sf;
     std::list<Area *>::iterator it;
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
@@ -759,7 +759,7 @@ namespace nux
   {
     std::list<Area *>::iterator it;
     {
-      t_u32 num_element = 0;
+      unsigned int num_element = 0;
 
       for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {

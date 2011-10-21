@@ -94,7 +94,7 @@ namespace nux
     NAnimatedTextureData *pAnimatedTexture = 0;
     pAnimatedTexture = new NAnimatedTextureData(FrameArray[0]->GetFormat(), FrameArray[0]->GetWidth(), FrameArray[0]->GetHeight(), FrameArray.size());
 
-    for (t_u32 i = 0; i < FrameArray.size(); i++)
+    for (unsigned int i = 0; i < FrameArray.size(); i++)
     {
       Memcpy(pAnimatedTexture->GetSurface(i).GetPtrRawData(),
               FrameArray[i]->GetSurface(0).GetPtrRawData(),
@@ -102,7 +102,7 @@ namespace nux
       pAnimatedTexture->AddFrameTime(FrameTimeArray[i]);
     }
 
-    for (t_u32 i = 0; i < FrameArray.size(); i++)
+    for (unsigned int i = 0; i < FrameArray.size(); i++)
     {
       delete FrameArray[i];
     }
@@ -124,7 +124,7 @@ namespace nux
       return false;
 
     fileStream->Seek(0, NSerializer::SeekStart);
-    t_s64 Offset = 0;
+    long long Offset = 0;
 
     unsigned int FileTag = NUX_ANIMATED_TEXTURE_TAG;
     unsigned int FileVersion = NUX_ANIMATED_TEXTURE_VERSION;
@@ -147,7 +147,7 @@ namespace nux
       return false;
 
     fileStream->Seek(0, NSerializer::SeekStart);
-    t_s64 Offset = 0;
+    long long Offset = 0;
 
     unsigned int FileTag;
     unsigned int FileVersion;

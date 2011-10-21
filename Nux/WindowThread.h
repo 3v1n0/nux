@@ -199,8 +199,8 @@ namespace nux
     // should be private
 
     float GetFrameRate() const;
-    t_u32 GetFrameCounter() const;
-    t_u32 GetFramePeriodeCounter() const;
+    unsigned int GetFrameCounter() const;
+    unsigned int GetFramePeriodeCounter() const;
 
     bool IsEmbeddedWindow();
 
@@ -463,9 +463,9 @@ namespace nux
     void DisableMouseKeyboardInput();
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-    t_u32 ExecutionLoop(t_u32 timer_id);
+    unsigned int ExecutionLoop(unsigned int timer_id);
 #else
-    t_u32 ExecutionLoop();
+    unsigned int ExecutionLoop();
 #endif
 
     virtual ThreadState StartChildThread(NThread *thread, bool Modal);
@@ -535,8 +535,8 @@ namespace nux
     bool _queue_main_layout;
 
     float m_FrameRate;
-    t_u32 m_FrameCounter;
-    t_u32 m_FramePeriodeCounter;
+    unsigned int m_FrameCounter;
+    unsigned int m_FramePeriodeCounter;
     float m_PeriodeTime;
 
     std::list<Timeline*> *_Timelines;
@@ -605,29 +605,29 @@ namespace nux
     friend gboolean nux_timeout_dispatch(gpointer user_data);
 
     void InitGlibLoop();
-    t_u32 AddGLibTimeout(t_u32 duration);
+    unsigned int AddGLibTimeout(unsigned int duration);
 #endif
     friend class TimerHandler;
 
     friend WindowThread *CreateGUIThread(const char *WindowTitle,
-                                          t_u32 width,
-                                          t_u32 height,
+                                          unsigned int width,
+                                          unsigned int height,
                                           WindowThread *Parent,
                                           ThreadUserInitFunc UserInitFunc,
                                           void *InitData);
 
     friend WindowThread *CreateWindowThread(WindowStyle WndStyle,
         const char *WindowTitle,
-        t_u32 width,
-        t_u32 height,
+        unsigned int width,
+        unsigned int height,
         WindowThread *Parent,
         ThreadUserInitFunc UserInitFunc,
         void *InitData);
 
     friend WindowThread *CreateModalWindowThread(WindowStyle WndStyle,
         const char *WindowTitle,
-        t_u32 width,
-        t_u32 height,
+        unsigned int width,
+        unsigned int height,
         WindowThread *Parent,
         ThreadUserInitFunc UserInitFunc,
         void *InitData);

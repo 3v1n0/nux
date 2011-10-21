@@ -293,7 +293,7 @@ namespace nux
     std::string password_char_;
 
     /** Last time of mouse double click event. */
-    t_u64 last_dblclick_time_;
+    unsigned long long last_dblclick_time_;
 
     /** The current cursor position in number of bytes. */
     int cursor_;

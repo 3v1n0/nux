@@ -126,7 +126,7 @@ namespace nux
 #endif
   }
 
-  t_u32 IOpenGLPixelBufferObject::GetSize()
+  unsigned int IOpenGLPixelBufferObject::GetSize()
   {
     return _Length;
   }

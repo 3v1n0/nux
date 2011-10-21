@@ -45,14 +45,14 @@ namespace nux
   static const Color kDefaultBackgroundColor(1, 1, 1, 1.0f);
   static const Color kDefaultSelectionBackgroundColor(0.5, 0.5, 0.5, 1.0f);
   static const Color kDefaultSelectionTextColor(1, 1, 1, 1.0f);
-  static const t_u64 kTripleClickTimeout = 500;
+  static const unsigned long long kTripleClickTimeout = 500;
   static const std::string kDefaultFontName = "Ubuntu";
 
-  static t_u64 GetCurrentTime()
+  static unsigned long long GetCurrentTime()
   {
     GTimeVal tv;
     g_get_current_time(&tv);
-    return static_cast<t_u64>(tv.tv_sec) * 1000 + tv.tv_usec / 1000;
+    return static_cast<unsigned long long>(tv.tv_sec) * 1000 + tv.tv_usec / 1000;
   }
 
   static std::string CleanupLineBreaks(const char *source)
@@ -224,7 +224,7 @@ namespace nux
     int sel_start, sel_end;
     GetSelectionBounds(&sel_start, &sel_end);
 
-    t_u64 current_time = GetCurrentTime();
+    unsigned long long current_time = GetCurrentTime();
 
     if ((event_type == NUX_MOUSE_PRESSED) && (current_time - last_dblclick_time_ <= kTripleClickTimeout))
     {

@@ -137,8 +137,8 @@ namespace nux
 {
 
 // Variable arguments.
-  t_u32 GetVariableArgs (TCHAR *Dest, t_u32 Size, t_u32 Count, const TCHAR*& Fmt, va_list ArgPtr);
-  t_u32 GetVariableArgsAnsi (ANSICHAR *Dest, t_u32 Size, t_u32 Count, const ANSICHAR*& Fmt, va_list ArgPtr);
+  unsigned int GetVariableArgs (TCHAR *Dest, unsigned int Size, unsigned int Count, const TCHAR*& Fmt, va_list ArgPtr);
+  unsigned int GetVariableArgsAnsi (ANSICHAR *Dest, unsigned int Size, unsigned int Count, const ANSICHAR*& Fmt, va_list ArgPtr);
 
 
 #define GET_VARARGS(msg, size, len, fmt)            \
@@ -388,7 +388,7 @@ namespace nux
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  extern const t_bool GNoDialog;         // Set to true to disable the popping of dialog box. The message will go to the log.
+  extern const bool GNoDialog;         // Set to true to disable the popping of dialog box. The message will go to the log.
 
 #ifdef NUX_VISUAL_STUDIO_2003
   //Visual Studio C++ 2003 doesn't support it, but there is a workaround:
@@ -508,19 +508,19 @@ namespace nux
   {
     return b;
   }
-  static inline t_u32        VAType (t_u32 ui)
+  static inline unsigned int        VAType (unsigned int ui)
   {
     return ui;
   }
-  static inline t_int         VAType (t_s32 i)
+  static inline int         VAType (int i)
   {
     return i;
   }
-  static inline t_u64         VAType (t_u64 qw)
+  static inline unsigned long long         VAType (unsigned long long qw)
   {
-    return qw;  // possible conflict with t_size when compiling in 64 bits
+    return qw;  // possible conflict with size_t when compiling in 64 bits
   }
-  static inline t_s64         VAType (t_s64 sqw)
+  static inline long long         VAType (long long sqw)
   {
     return sqw;
   }

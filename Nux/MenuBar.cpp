@@ -28,11 +28,11 @@
 namespace nux
 {
 
-  static const t_u32 MENU_MINIMUM_WIDTH = 10;
-  static const t_u32 MENU_MINIMUM_HEIGHT = 16;
+  static const unsigned int MENU_MINIMUM_WIDTH = 10;
+  static const unsigned int MENU_MINIMUM_HEIGHT = 16;
 
-  static const t_u32 MENUBAR_ICON_WIDTH = 24;
-  static const t_u32 MENUBAR_ICON_HEIGHT = 24;
+  static const unsigned int MENUBAR_ICON_WIDTH = 24;
+  static const unsigned int MENUBAR_ICON_HEIGHT = 24;
 
   NUX_IMPLEMENT_ROOT_OBJECT_TYPE(MenuBarItem);
   NUX_IMPLEMENT_OBJECT_TYPE(MenuBar);
@@ -213,7 +213,7 @@ namespace nux
     //menubar_item->area->SetMinimumSize(DEFAULT_WIDGET_WIDTH, 40);
     if (!icon)
     {
-      menubar_item->area->SetMinimumSize(Max(MENU_MINIMUM_WIDTH, (t_u32) (10 + GetFont()->GetStringWidth(MenuLabel))), Max(MENU_MINIMUM_WIDTH, (t_u32) 16));
+      menubar_item->area->SetMinimumSize(Max(MENU_MINIMUM_WIDTH, (unsigned int) (10 + GetFont()->GetStringWidth(MenuLabel))), Max(MENU_MINIMUM_WIDTH, (unsigned int) 16));
     }
     else
     {

@@ -30,7 +30,7 @@
 namespace nux
 {
 
-  bool TextureArchiveAdd_ver_0_0_1(NSerializer *FileStream,  NBitmapData *BaseTexture, const TCHAR *InputTextureFile, NUX_OUT t_s64 &Offset)
+  bool TextureArchiveAdd_ver_0_0_1(NSerializer *FileStream,  NBitmapData *BaseTexture, const TCHAR *InputTextureFile, NUX_OUT long long &Offset)
   {
     nuxAssert(FileStream);
     nuxAssert(InputTextureFile);
@@ -62,7 +62,7 @@ namespace nux
     Offset = FileStream->Seek( 0, NSerializer::SeekEnd);
 
     char *TextureName = Strdup(TCHAR_TO_ANSI(InputTextureFile));
-    t_u32 TextureNameSize = (t_u32) strlen(TextureName) + 1;
+    unsigned int TextureNameSize = (unsigned int) strlen(TextureName) + 1;
 
     //  -------------------------------------------------------------------------------------------------------------------
     //  |Texture Name Size|Texture Name + (NULL character)|Offset to Next Texture|....BaseTexture....|Texture Name Size|....
@@ -73,19 +73,19 @@ namespace nux
     // Write the texture name including directory path
     FileStream->Serialize((char *) TextureName,         TextureNameSize);
 
-    t_u32 TextureDataSize = 0;
-    t_u32 TextureDataSizePosition = FileStream->Tell();
+    unsigned int TextureDataSize = 0;
+    unsigned int TextureDataSizePosition = FileStream->Tell();
     FileStream->Serialize((char *) &TextureDataSize,         sizeof(TextureDataSize));
-    t_u32 TextureStartPosition = FileStream->Tell();
+    unsigned int TextureStartPosition = FileStream->Tell();
 
     if (BaseTexture->IsTextureData())
     {
       NTextureData *Texture2DData = static_cast<NTextureData *> (BaseTexture);
-      t_s32 type = ARCH_TEXTURE2D;
-      t_s32 NumMip = Texture2DData->GetNumMipmap();
-      t_s32 Width = Texture2DData->GetWidth();
-      t_s32 Height = Texture2DData->GetHeight();
-      t_s32 Format = Texture2DData->GetFormat();
+      int type = ARCH_TEXTURE2D;
+      int NumMip = Texture2DData->GetNumMipmap();
+      int Width = Texture2DData->GetWidth();
+      int Height = Texture2DData->GetHeight();
+      int Format = Texture2DData->GetFormat();
 
       FileStream->Serialize((char *) &type,        sizeof(type));
       FileStream->Serialize((char *) &Format,      sizeof(Format));
@@ -93,10 +93,10 @@ namespace nux
       FileStream->Serialize((char *) &Width,       sizeof(Width));
       FileStream->Serialize((char *) &Height,      sizeof(Height));
 
-      for (t_s32 mip = 0; mip < NumMip; mip++)
+      for (int mip = 0; mip < NumMip; mip++)
       {
-        t_s32 Pitch = Texture2DData->GetSurface(mip).GetPitch();
-        t_s32 Size = Texture2DData->GetSurface(mip).GetSize();
+        int Pitch = Texture2DData->GetSurface(mip).GetPitch();
+        int Size = Texture2DData->GetSurface(mip).GetSize();
         FileStream->Serialize((char *) &Pitch,    sizeof(Pitch));
         FileStream->Serialize((char *) &Size,     sizeof(Size));
         FileStream->Serialize((char *) Texture2DData->GetSurface(mip).GetPtrRawData(),     Size);
@@ -105,11 +105,11 @@ namespace nux
     else if (BaseTexture->IsCubemapTextureData())
     {
       NCubemapData *CubemapData = static_cast<NCubemapData *> (BaseTexture);
-      t_s32 type = ARCH_CUBEMAP;
-      t_s32 NumMip = CubemapData->GetNumMipmap();
-      t_s32 Width = CubemapData->GetWidth();
-      t_s32 Height = CubemapData->GetHeight();
-      t_s32 Format = CubemapData->GetFormat();
+      int type = ARCH_CUBEMAP;
+      int NumMip = CubemapData->GetNumMipmap();
+      int Width = CubemapData->GetWidth();
+      int Height = CubemapData->GetHeight();
+      int Format = CubemapData->GetFormat();
 
       FileStream->Serialize((char *) &type,     sizeof(type));
       FileStream->Serialize((char *) &Format,   sizeof(Format));
@@ -117,12 +117,12 @@ namespace nux
       FileStream->Serialize((char *) &Width,    sizeof(Width));
       FileStream->Serialize((char *) &Height,   sizeof(Height));
 
-      for (t_s32 face = 0; face < 6; face++)
+      for (int face = 0; face < 6; face++)
       {
-        for (t_s32 mip = 0; mip < NumMip; mip++)
+        for (int mip = 0; mip < NumMip; mip++)
         {
-          t_u32 Pitch = CubemapData->GetSurface(face, mip).GetPitch();
-          t_u32 Size = CubemapData->GetSurface(face, mip).GetSize();
+          unsigned int Pitch = CubemapData->GetSurface(face, mip).GetPitch();
+          unsigned int Size = CubemapData->GetSurface(face, mip).GetSize();
           FileStream->Serialize((char *) &Pitch,    sizeof(Pitch));
           FileStream->Serialize((char *) &Size,     sizeof(Size));
           FileStream->Serialize((char *) CubemapData->GetSurface(face, mip).GetPtrRawData(),     Size);
@@ -132,12 +132,12 @@ namespace nux
     else if (BaseTexture->IsVolumeTextureData())
     {
       NVolumeData *VolumeData = static_cast<NVolumeData *> (BaseTexture);
-      t_u32 type = ARCH_VOLUME;
-      t_s32 NumMip = VolumeData->GetNumMipmap();
-      t_s32 Width = VolumeData->GetWidth();
-      t_s32 Height = VolumeData->GetHeight();
-      t_s32 Depth = VolumeData->GetDepth();
-      t_s32 Format = VolumeData->GetFormat();
+      unsigned int type = ARCH_VOLUME;
+      int NumMip = VolumeData->GetNumMipmap();
+      int Width = VolumeData->GetWidth();
+      int Height = VolumeData->GetHeight();
+      int Depth = VolumeData->GetDepth();
+      int Format = VolumeData->GetFormat();
 
       FileStream->Serialize((char *) &type,     sizeof(type));
       FileStream->Serialize((char *) &Format,   sizeof(Format));
@@ -146,12 +146,12 @@ namespace nux
       FileStream->Serialize((char *) &Height,   sizeof(Height));
       FileStream->Serialize((char *) &Depth,    sizeof(Depth));
 
-      for (t_s32 mip = 0; mip < NumMip; mip++)
+      for (int mip = 0; mip < NumMip; mip++)
       {
-        for (t_s32 s = 0; s < ImageSurface::GetLevelDim(BitmapFormat(Format), Depth, mip); s++)
+        for (int s = 0; s < ImageSurface::GetLevelDim(BitmapFormat(Format), Depth, mip); s++)
         {
-          t_s32 Pitch = VolumeData->GetSurface(mip, s).GetPitch();
-          t_s32 Size = VolumeData->GetSurface(mip, s).GetSize();
+          int Pitch = VolumeData->GetSurface(mip, s).GetPitch();
+          int Size = VolumeData->GetSurface(mip, s).GetSize();
           FileStream->Serialize((char *) &Pitch,    sizeof(Pitch));
           FileStream->Serialize((char *) &Size,     sizeof(Size));
           FileStream->Serialize((char *) VolumeData->GetSurface(mip, s).GetPtrRawData(),     Size);
@@ -161,12 +161,12 @@ namespace nux
     else if (BaseTexture->IsAnimatedTextureData())
     {
       NAnimatedTextureData *AnimatedTextureData = static_cast<NAnimatedTextureData *> (BaseTexture);
-      t_u32 type = ARCH_ANIMATEDTEXTURE;
-      t_s32 NumMip = 1;;
-      t_s32 Width = AnimatedTextureData->GetWidth();
-      t_s32 Height = AnimatedTextureData->GetHeight();
-      t_s32 Depth = AnimatedTextureData->GetDepth();
-      t_s32 Format = AnimatedTextureData->GetFormat();
+      unsigned int type = ARCH_ANIMATEDTEXTURE;
+      int NumMip = 1;;
+      int Width = AnimatedTextureData->GetWidth();
+      int Height = AnimatedTextureData->GetHeight();
+      int Depth = AnimatedTextureData->GetDepth();
+      int Format = AnimatedTextureData->GetFormat();
 
       FileStream->Serialize((char *) &type,     sizeof(type));
       FileStream->Serialize((char *) &Format,   sizeof(Format));
@@ -175,18 +175,18 @@ namespace nux
       FileStream->Serialize((char *) &Height,   sizeof(Height));
       FileStream->Serialize((char *) &Depth,    sizeof(Depth));
 
-      for (t_s32 d = 0; d < Depth; d++)
+      for (int d = 0; d < Depth; d++)
       {
-        t_s32 frame_time_ms = AnimatedTextureData->GetFrameTime(d);
-        FileStream->Serialize((char *) &frame_time_ms, sizeof(t_u32));
+        int frame_time_ms = AnimatedTextureData->GetFrameTime(d);
+        FileStream->Serialize((char *) &frame_time_ms, sizeof(unsigned int));
       }
 
-      for (t_s32 mip = 0; mip < NumMip; mip++)
+      for (int mip = 0; mip < NumMip; mip++)
       {
-        for (t_s32 s = 0; s < ImageSurface::GetLevelDim(BitmapFormat(Format), Depth, mip); s++)
+        for (int s = 0; s < ImageSurface::GetLevelDim(BitmapFormat(Format), Depth, mip); s++)
         {
-          t_u32 Pitch = AnimatedTextureData->GetSurface(s).GetPitch();
-          t_u32 Size = AnimatedTextureData->GetSurface(s).GetSize();
+          unsigned int Pitch = AnimatedTextureData->GetSurface(s).GetPitch();
+          unsigned int Size = AnimatedTextureData->GetSurface(s).GetSize();
           FileStream->Serialize((char *) &Pitch,    sizeof(Pitch));
           FileStream->Serialize((char *) &Size,     sizeof(Size));
           FileStream->Serialize((char *) AnimatedTextureData->GetSurface(s).GetPtrRawData(),     Size);
@@ -198,7 +198,7 @@ namespace nux
       nuxAssertMsg(0, "[TextureArchiveAdd_ver_0_0_1] Texture type unknown.");
     }
 
-    t_u32 TextureEndPosition = FileStream->Tell();
+    unsigned int TextureEndPosition = FileStream->Tell();
     TextureDataSize = TextureEndPosition - TextureStartPosition;
     FileStream->Seek(TextureDataSizePosition, NSerializer::SeekStart);
     FileStream->Serialize((char *) &TextureDataSize, sizeof(TextureDataSize));
@@ -206,7 +206,7 @@ namespace nux
     return true;
   }
 
-  NBitmapData *TextureArchiveLoad_ver_0_0_1(NSerializer *FileStream, t_u32 Offset)
+  NBitmapData *TextureArchiveLoad_ver_0_0_1(NSerializer *FileStream, unsigned int Offset)
   {
     nuxAssert(FileStream != 0);
     NBitmapData *BitmapData = 0;
@@ -220,7 +220,7 @@ namespace nux
     // Set position at the end of the archive.
     FileStream->Seek(Offset, NSerializer::SeekStart);
 
-    t_u32 TextureNameSize = 0;
+    unsigned int TextureNameSize = 0;
 
     //  -------------------------------------------------------------------------------------------------------------------
     //  |Texture Name Size|Texture Name + (NULL character)|Offset to Next Texture|....BaseTexture....|Texture Name Size|....
@@ -233,19 +233,19 @@ namespace nux
     char *TextureName = new char[TextureNameSize];
     FileStream->Serialize((char *) TextureName,         TextureNameSize);
 
-    t_u32 TextureDataSize = 0;
+    unsigned int TextureDataSize = 0;
     FileStream->Serialize((char *) &TextureDataSize,         sizeof(TextureDataSize));
 
-    t_u32 TextureDataPosition = FileStream->Tell();
-    t_u32 TextureType;
+    unsigned int TextureDataPosition = FileStream->Tell();
+    unsigned int TextureType;
     FileStream->Serialize((char *) &TextureType,     sizeof(TextureType));
 
     if (TextureType == ARCH_TEXTURE2D)
     {
-      t_s32 NumMip = 0;
-      t_s32 Width = 0;
-      t_s32 Height = 0;
-      t_s32 Format = 0;
+      int NumMip = 0;
+      int Width = 0;
+      int Height = 0;
+      int Format = 0;
 
       FileStream->Serialize((char *) &Format,      sizeof(Format));
       FileStream->Serialize((char *) &NumMip,      sizeof(NumMip));
@@ -254,10 +254,10 @@ namespace nux
 
       BitmapData = new NTextureData((BitmapFormat) Format, Width, Height, NumMip);
 
-      for (t_s32 mip = 0; mip < NumMip; mip++)
+      for (int mip = 0; mip < NumMip; mip++)
       {
-        t_s32 Pitch = 0;;
-        t_s32 Size = 0;
+        int Pitch = 0;;
+        int Size = 0;
         FileStream->Serialize((char *) &Pitch,    sizeof(Pitch));
         FileStream->Serialize((char *) &Size,     sizeof(Size));
 
@@ -266,12 +266,12 @@ namespace nux
 
         BYTE	            *Dest        = BitmapData->GetSurface(mip).GetPtrRawData();
         BitmapFormat   Format      = BitmapData->GetSurface(mip).GetFormat();
-        t_s32                 Width       = Align( BitmapData->GetSurface(mip).GetWidth(),    GPixelFormats[Format].BlockSizeX );
-        t_s32                 Height      = Align( BitmapData->GetSurface(mip).GetHeight(),   GPixelFormats[Format].BlockSizeY );
-        t_s32                 RowByteSize = Align((Width / GPixelFormats[Format].BlockSizeX) * GPixelFormats[Format].BlockBytes, GPixelFormats[Format].RowMemoryAlignment);;
-        t_s32                 NumRows     = (Height / GPixelFormats[Format].BlockSizeY);
+        int                 Width       = Align( BitmapData->GetSurface(mip).GetWidth(),    GPixelFormats[Format].BlockSizeX );
+        int                 Height      = Align( BitmapData->GetSurface(mip).GetHeight(),   GPixelFormats[Format].BlockSizeY );
+        int                 RowByteSize = Align((Width / GPixelFormats[Format].BlockSizeX) * GPixelFormats[Format].BlockBytes, GPixelFormats[Format].RowMemoryAlignment);;
+        int                 NumRows     = (Height / GPixelFormats[Format].BlockSizeY);
 
-        for ( t_s32 Y = 0; Y < NumRows; Y++ )
+        for ( int Y = 0; Y < NumRows; Y++ )
         {
           Memcpy(Dest + Y * RowByteSize, &PixelLineBuffer[Y * Pitch], Min(Pitch, RowByteSize));
         }
@@ -279,10 +279,10 @@ namespace nux
     }
     else if (TextureType == ARCH_CUBEMAP)
     {
-      t_s32 NumMip = 0;
-      t_s32 Width = 0;
-      t_s32 Height = 0;
-      t_s32 Format = 0;
+      int NumMip = 0;
+      int Width = 0;
+      int Height = 0;
+      int Format = 0;
 
       FileStream->Serialize((char *) &Format,      sizeof(Format));
       FileStream->Serialize((char *) &NumMip,      sizeof(NumMip));
@@ -291,12 +291,12 @@ namespace nux
 
       BitmapData = new NCubemapData((BitmapFormat) Format, Width, Height, NumMip);
 
-      for (t_s32 face = 0; face < 6; face++)
+      for (int face = 0; face < 6; face++)
       {
-        for (t_s32 mip = 0; mip < NumMip; mip++)
+        for (int mip = 0; mip < NumMip; mip++)
         {
-          t_s32 Pitch = 0;;
-          t_s32 Size = 0;
+          int Pitch = 0;;
+          int Size = 0;
           FileStream->Serialize((char *) &Pitch,    sizeof(Pitch));
           FileStream->Serialize((char *) &Size,     sizeof(Size));
 
@@ -305,12 +305,12 @@ namespace nux
 
           BYTE	            *Dest        = BitmapData->GetSurface(face, mip).GetPtrRawData();
           BitmapFormat   Format      = BitmapData->GetSurface(face, mip).GetFormat();
-          t_s32                 Width       = Align( BitmapData->GetSurface(face, mip).GetWidth(),    GPixelFormats[Format].BlockSizeX );
-          t_s32                 Height      = Align( BitmapData->GetSurface(face, mip).GetHeight(),   GPixelFormats[Format].BlockSizeY );
-          t_s32                 RowByteSize = Align((Width / GPixelFormats[Format].BlockSizeX) * GPixelFormats[Format].BlockBytes, GPixelFormats[Format].RowMemoryAlignment);;
-          t_s32                 NumRows     = (Height / GPixelFormats[Format].BlockSizeY);
+          int                 Width       = Align( BitmapData->GetSurface(face, mip).GetWidth(),    GPixelFormats[Format].BlockSizeX );
+          int                 Height      = Align( BitmapData->GetSurface(face, mip).GetHeight(),   GPixelFormats[Format].BlockSizeY );
+          int                 RowByteSize = Align((Width / GPixelFormats[Format].BlockSizeX) * GPixelFormats[Format].BlockBytes, GPixelFormats[Format].RowMemoryAlignment);;
+          int                 NumRows     = (Height / GPixelFormats[Format].BlockSizeY);
 
-          for ( t_s32 Y = 0; Y < NumRows; Y++ )
+          for ( int Y = 0; Y < NumRows; Y++ )
           {
             Memcpy(Dest + Y * RowByteSize, &PixelLineBuffer[Y * Pitch], Min(Pitch, RowByteSize));
           }
@@ -319,11 +319,11 @@ namespace nux
     }
     else if (TextureType == ARCH_VOLUME)
     {
-      t_s32 NumMip = 0;
-      t_s32 Width = 0;
-      t_s32 Height = 0;
-      t_s32 Format = 0;
-      t_s32 Depth = 0;
+      int NumMip = 0;
+      int Width = 0;
+      int Height = 0;
+      int Format = 0;
+      int Depth = 0;
 
       FileStream->Serialize((char *) &Format,      sizeof(Format));
       FileStream->Serialize((char *) &NumMip,      sizeof(NumMip));
@@ -333,12 +333,12 @@ namespace nux
 
       BitmapData = new NVolumeData((BitmapFormat) Format, Width, Height, Depth, NumMip);
 
-      for (t_s32 mip = 0; mip < NumMip; mip++)
+      for (int mip = 0; mip < NumMip; mip++)
       {
-        for (t_s32 s = 0; s < ImageSurface::GetLevelDim(BitmapFormat(Format), Depth, mip); s++)
+        for (int s = 0; s < ImageSurface::GetLevelDim(BitmapFormat(Format), Depth, mip); s++)
         {
-          t_s32 Pitch = 0;;
-          t_s32 Size = 0;
+          int Pitch = 0;;
+          int Size = 0;
           FileStream->Serialize((char *) &Pitch,    sizeof(Pitch));
           FileStream->Serialize((char *) &Size,     sizeof(Size));
 
@@ -347,12 +347,12 @@ namespace nux
 
           BYTE	            *Dest        = BitmapData->GetSurface(mip, s).GetPtrRawData();
           BitmapFormat   Format      = BitmapData->GetSurface(mip, s).GetFormat();
-          t_s32                 Width       = Align( BitmapData->GetSurface(mip, s).GetWidth(),    GPixelFormats[Format].BlockSizeX );
-          t_s32                 Height      = Align( BitmapData->GetSurface(mip, s).GetHeight(),   GPixelFormats[Format].BlockSizeY );
-          t_s32                 RowByteSize = Align((Width / GPixelFormats[Format].BlockSizeX) * GPixelFormats[Format].BlockBytes, GPixelFormats[Format].RowMemoryAlignment);;
-          t_s32                 NumRows     = (Height / GPixelFormats[Format].BlockSizeY);
+          int                 Width       = Align( BitmapData->GetSurface(mip, s).GetWidth(),    GPixelFormats[Format].BlockSizeX );
+          int                 Height      = Align( BitmapData->GetSurface(mip, s).GetHeight(),   GPixelFormats[Format].BlockSizeY );
+          int                 RowByteSize = Align((Width / GPixelFormats[Format].BlockSizeX) * GPixelFormats[Format].BlockBytes, GPixelFormats[Format].RowMemoryAlignment);;
+          int                 NumRows     = (Height / GPixelFormats[Format].BlockSizeY);
 
-          for ( t_s32 Y = 0; Y < NumRows; Y++ )
+          for ( int Y = 0; Y < NumRows; Y++ )
           {
             Memcpy(Dest + Y * RowByteSize, &PixelLineBuffer[Y * Pitch], Min(Pitch, RowByteSize));
           }
@@ -361,11 +361,11 @@ namespace nux
     }
     else if (TextureType == ARCH_ANIMATEDTEXTURE)
     {
-      t_s32 NumMip = 0;
-      t_s32 Width = 0;
-      t_s32 Height = 0;
-      t_s32 Format = 0;
-      t_s32 Depth = 0;
+      int NumMip = 0;
+      int Width = 0;
+      int Height = 0;
+      int Format = 0;
+      int Depth = 0;
 
       FileStream->Serialize((char *) &Format,      sizeof(Format));
       FileStream->Serialize((char *) &NumMip,      sizeof(NumMip));
@@ -377,19 +377,19 @@ namespace nux
       NAnimatedTextureData *AnimatedTextureData = new NAnimatedTextureData((BitmapFormat) Format, Width, Height, Depth);
       BitmapData = NUX_STATIC_CAST(NBitmapData *, AnimatedTextureData);
 
-      for (t_s32 d = 0; d < Depth; d++)
+      for (int d = 0; d < Depth; d++)
       {
-        t_s32 frame_time_ms;
-        FileStream->Serialize((char *) &frame_time_ms,    sizeof(t_u32));
+        int frame_time_ms;
+        FileStream->Serialize((char *) &frame_time_ms,    sizeof(unsigned int));
         AnimatedTextureData->AddFrameTime(frame_time_ms);
       }
 
-      for (t_s32 mip = 0; mip < NumMip; mip++)
+      for (int mip = 0; mip < NumMip; mip++)
       {
-        for (t_s32 s = 0; s < ImageSurface::GetLevelDim(BitmapFormat(Format), Depth, mip); s++)
+        for (int s = 0; s < ImageSurface::GetLevelDim(BitmapFormat(Format), Depth, mip); s++)
         {
-          t_s32 Pitch = 0;;
-          t_s32 Size = 0;
+          int Pitch = 0;;
+          int Size = 0;
           FileStream->Serialize((char *) &Pitch,    sizeof(Pitch));
           FileStream->Serialize((char *) &Size,     sizeof(Size));
 
@@ -398,12 +398,12 @@ namespace nux
 
           BYTE	            *Dest        = BitmapData->GetSurface(s).GetPtrRawData();
           BitmapFormat   Format      = BitmapData->GetSurface(s).GetFormat();
-          t_s32                 Width       = Align( BitmapData->GetSurface(s).GetWidth(),    GPixelFormats[Format].BlockSizeX );
-          t_s32                 Height      = Align( BitmapData->GetSurface(s).GetHeight(),   GPixelFormats[Format].BlockSizeY );
-          t_s32                 RowByteSize = Align((Width / GPixelFormats[Format].BlockSizeX) * GPixelFormats[Format].BlockBytes, GPixelFormats[Format].RowMemoryAlignment);;
-          t_s32                 NumRows     = (Height / GPixelFormats[Format].BlockSizeY);
+          int                 Width       = Align( BitmapData->GetSurface(s).GetWidth(),    GPixelFormats[Format].BlockSizeX );
+          int                 Height      = Align( BitmapData->GetSurface(s).GetHeight(),   GPixelFormats[Format].BlockSizeY );
+          int                 RowByteSize = Align((Width / GPixelFormats[Format].BlockSizeX) * GPixelFormats[Format].BlockBytes, GPixelFormats[Format].RowMemoryAlignment);;
+          int                 NumRows     = (Height / GPixelFormats[Format].BlockSizeY);
 
-          for ( t_s32 Y = 0; Y < NumRows; Y++ )
+          for ( int Y = 0; Y < NumRows; Y++ )
           {
             Memcpy(Dest + Y * RowByteSize, &PixelLineBuffer[Y * Pitch], Min(Pitch, RowByteSize));
           }
@@ -416,7 +416,7 @@ namespace nux
       return 0;
     }
 
-    t_u32 TextureEndPosition = FileStream->Tell();
+    unsigned int TextureEndPosition = FileStream->Tell();
 
     if (TextureEndPosition != TextureDataPosition + TextureDataSize)
     {
@@ -430,14 +430,14 @@ namespace nux
   {
     Memset(&TextureArchiveInfo, 0, sizeof(TextureArchiveInfo_ver_0_0_1));
 
-    t_u32 texturenamesize = 0;
+    unsigned int texturenamesize = 0;
     char TextureFilename[1024];
 
     TextureArchiveInfo.FilePointer = FileStream->Tell();
     FileStream->Serialize((char *) &texturenamesize,     sizeof(texturenamesize));
     FileStream->Serialize((char *) TextureFilename,     texturenamesize);
     TextureArchiveInfo.Name = NFileName(TextureFilename);
-    t_u32 texturedatasize = 0;
+    unsigned int texturedatasize = 0;
     FileStream->Serialize((char *) &texturedatasize,     sizeof(texturedatasize));
     //     // Jump to next texture position(or end of this texture).
     //     m_FileStream->Seek(texturedatasize, NSerializer::SeekCurrent);
@@ -453,10 +453,10 @@ namespace nux
 
       TextureArchiveInfo.Size = 0;
 
-      for (t_s32 mip = 0; mip < TextureArchiveInfo.NumMipmap; mip++)
+      for (int mip = 0; mip < TextureArchiveInfo.NumMipmap; mip++)
       {
-        t_s32 Pitch = 0;
-        t_s32 Size = 0;
+        int Pitch = 0;
+        int Size = 0;
         FileStream->Serialize((char *) &Pitch,    sizeof(Pitch));
         FileStream->Serialize((char *) &Size,     sizeof(Size));
         nuxAssertMsg(Size == Pitch * ImageSurface::GetLevelBlockHeight(BitmapFormat(TextureArchiveInfo.Format), TextureArchiveInfo.Height, mip), "[TextureArchiveGetInfo_ver_0_0_1] Level size is inconsistant.");
@@ -474,12 +474,12 @@ namespace nux
 
       TextureArchiveInfo.Size = 0;
 
-      for (t_s32 face = 0; face < 6; face++)
+      for (int face = 0; face < 6; face++)
       {
-        for (t_s32 mip = 0; mip < TextureArchiveInfo.NumMipmap; mip++)
+        for (int mip = 0; mip < TextureArchiveInfo.NumMipmap; mip++)
         {
-          t_s32 Pitch = 0;
-          t_s32 Size = 0;
+          int Pitch = 0;
+          int Size = 0;
           FileStream->Serialize((char *) &Pitch,    sizeof(Pitch));
           FileStream->Serialize((char *) &Size,     sizeof(Size));
           nuxAssertMsg(Size == Pitch * ImageSurface::GetLevelBlockHeight(BitmapFormat(TextureArchiveInfo.Format), TextureArchiveInfo.Height, mip), "[TextureArchiveGetInfo_ver_0_0_1] Level size is inconsistant.");
@@ -499,12 +499,12 @@ namespace nux
 
       TextureArchiveInfo.Size = 0;
 
-      for (t_s32 mip = 0; mip < TextureArchiveInfo.NumMipmap; mip++)
+      for (int mip = 0; mip < TextureArchiveInfo.NumMipmap; mip++)
       {
-        for (t_s32 s = 0; s < ImageSurface::GetLevelDim(BitmapFormat(TextureArchiveInfo.Format), TextureArchiveInfo.Depth, mip); s++)
+        for (int s = 0; s < ImageSurface::GetLevelDim(BitmapFormat(TextureArchiveInfo.Format), TextureArchiveInfo.Depth, mip); s++)
         {
-          t_s32 Pitch = 0;
-          t_s32 Size = 0;
+          int Pitch = 0;
+          int Size = 0;
           FileStream->Serialize((char *) &Pitch,    sizeof(Pitch));
           FileStream->Serialize((char *) &Size,     sizeof(Size));
           nuxAssertMsg(Size == Pitch * ImageSurface::GetLevelBlockHeight(BitmapFormat(TextureArchiveInfo.Format), TextureArchiveInfo.Height, mip), "[TextureArchiveGetInfo_ver_0_0_1] Level size is inconsistant.");
@@ -522,20 +522,20 @@ namespace nux
       FileStream->Serialize((char *) &TextureArchiveInfo.Height, sizeof(TextureArchiveInfo.Height));
       FileStream->Serialize((char *) &TextureArchiveInfo.Depth, sizeof(TextureArchiveInfo.Depth));
 
-      for (t_s32 d = 0; d < TextureArchiveInfo.Depth; d++)
+      for (int d = 0; d < TextureArchiveInfo.Depth; d++)
       {
-        t_s32 frame_time_ms;
-        FileStream->Serialize((char *) &frame_time_ms,    sizeof(t_u32));
+        int frame_time_ms;
+        FileStream->Serialize((char *) &frame_time_ms,    sizeof(unsigned int));
       }
 
       TextureArchiveInfo.Size = 0;
 
-      for (t_s32 mip = 0; mip < TextureArchiveInfo.NumMipmap; mip++)
+      for (int mip = 0; mip < TextureArchiveInfo.NumMipmap; mip++)
       {
-        for (t_s32 s = 0; s < ImageSurface::GetLevelDim(BitmapFormat(TextureArchiveInfo.Format), TextureArchiveInfo.Depth, mip); s++)
+        for (int s = 0; s < ImageSurface::GetLevelDim(BitmapFormat(TextureArchiveInfo.Format), TextureArchiveInfo.Depth, mip); s++)
         {
-          t_s32 Pitch = 0;
-          t_s32 Size = 0;
+          int Pitch = 0;
+          int Size = 0;
           FileStream->Serialize((char *) &Pitch,    sizeof(Pitch));
           FileStream->Serialize((char *) &Size,     sizeof(Size));
           nuxAssertMsg(Size == Pitch * ImageSurface::GetLevelBlockHeight(BitmapFormat(TextureArchiveInfo.Format), TextureArchiveInfo.Height, mip), "[TextureArchiveGetInfo_ver_0_0_1] Level size is inconsistant.");
@@ -575,10 +575,10 @@ namespace nux
 
     NSerializer *fileStream = GFileManager.CreateFileWriter(OutputFilename.GetTCharPtr(), NSerializer::Read | NSerializer::Write);
     fileStream->Seek(0, NSerializer::SeekStart);
-    t_s64 Offset = 0;
+    long long Offset = 0;
 
-    t_u32 FileTag = TEXTUREARCHIVETAG;
-    t_u32 FileVersion = TEXTUREARCHIVEVERSION;
+    unsigned int FileTag = TEXTUREARCHIVETAG;
+    unsigned int FileVersion = TEXTUREARCHIVEVERSION;
 
     fileStream->Serialize((char *) &FileTag,     sizeof(FileTag));;
     fileStream->Serialize((char *) &FileVersion,     sizeof(FileVersion));
@@ -598,10 +598,10 @@ namespace nux
 
     NSerializer *fileStream = GFileManager.CreateFileReader(ITXFilename, NSerializer::Read | NSerializer::Write);
     fileStream->Seek(0, NSerializer::SeekStart);
-    t_s64 Offset = 0;
+    long long Offset = 0;
 
-    t_u32 FileTag;
-    t_u32 FileVersion;
+    unsigned int FileTag;
+    unsigned int FileVersion;
     fileStream->Serialize((char *) &FileTag, sizeof(FileTag));
     fileStream->Serialize((char *) &FileVersion, sizeof(FileVersion));
 

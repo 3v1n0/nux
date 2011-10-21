@@ -33,7 +33,7 @@ namespace nux
 //============================================================================
 // Calculate and log the amount of RAM in the machine
 //============================================================================
-  static t_u64 GetTotalPhysRAM_MB()
+  static unsigned long long GetTotalPhysRAM_MB()
   {
     // Get memory status
     MEMORYSTATUSEX theStatus;

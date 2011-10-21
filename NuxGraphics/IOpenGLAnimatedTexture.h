@@ -68,7 +68,7 @@ namespace nux
     void PresentNextFrame();
     void PresentLastFrame();
     int GetFrameTime();
-    t_u32 GetNumFrame();
+    unsigned int GetNumFrame();
     void SetFrameTime(int Frame, int time_ms);
 
   private:

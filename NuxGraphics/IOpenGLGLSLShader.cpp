@@ -45,17 +45,17 @@ namespace nux
 
   bool ExtractShaderString3(const NString &ShaderToken, const NString &ShaderSource, NString &RetSource, NString ShaderPreprocessorDefines)
   {
-    t_size lineStart = 0;
-    t_size lineCount = 1;
+    size_t lineStart = 0;
+    size_t lineCount = 1;
     bool startTokenFound = false;
-    t_size shaderStringStart = 0;
-    t_size shaderStartLine   = 1;
+    size_t shaderStringStart = 0;
+    size_t shaderStartLine   = 1;
 
 
     //Loop for all characters in the string
     if (ShaderToken != "")
     {
-      t_size i;
+      size_t i;
 
       for (i = 0; i < ShaderSource.Length(); i++)
       {
@@ -108,7 +108,7 @@ namespace nux
 
       //Add the line directive to the shader source. See the documentation for GLSL #line directive.
       // GLSL spec: The #version directive must occur in a shader before anything else, except for comments and white space.
-      t_size Pos = RetSource.FindFirstOccurence("#version");
+      size_t Pos = RetSource.FindFirstOccurence("#version");
 
       while (RetSource[Pos] != '\n')
       {
@@ -121,8 +121,8 @@ namespace nux
       if (RetSource[Pos] != 0)
         ++Pos;
 
-      t_size EndOfLinePosition = 0;
-      t_size LinePosition = 0;
+      size_t EndOfLinePosition = 0;
+      size_t LinePosition = 0;
 
       while ((EndOfLinePosition = RetSource.FindNextOccurence('\n', EndOfLinePosition)) < Pos - 1)
       {
@@ -154,7 +154,7 @@ namespace nux
       return;
 
     // GLSL spec: The #version directive must occur in a shader before anything else, except for comments and white space.
-    t_size Pos = RetSource.FindFirstOccurence("#version");
+    size_t Pos = RetSource.FindFirstOccurence("#version");
 
     if (Pos != tstring::npos)
     {
@@ -223,7 +223,7 @@ namespace nux
 
   bool IOpenGLVertexShader::Compile()
   {
-    t_size CodeSize = _ShaderCode.Size();
+    size_t CodeSize = _ShaderCode.Size();
 
     if (CodeSize == 0)
     {

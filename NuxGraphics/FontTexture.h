@@ -235,7 +235,7 @@ namespace nux
     //          The return value can be tested with the SUCCEEDED and FAILED macros.
     bool XToCursorPosition(const NString &Str,
                             int iX,
-                            t_u32 FirstVisibleCharIndex,
+                            unsigned int FirstVisibleCharIndex,
                             int *piCh,
                             int *piTrailing);
 
@@ -248,7 +248,7 @@ namespace nux
   private:
     INT _RefCount;
     INT _textureBMF;
-    std::vector<t_u32> m_gl_texture_id;
+    std::vector<unsigned int> m_gl_texture_id;
     Charset m_Charset;
 
     friend class FontRenderer;

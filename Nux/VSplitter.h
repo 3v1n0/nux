@@ -42,9 +42,9 @@ namespace nux
 
     void clearContent();
 
-    void OnSplitterMouseDown(t_s32 x, t_s32 y, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos);
-    void OnSplitterMouseUp(t_s32 x, t_s32 y, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos);
-    void OnSplitterMouseDrag(t_s32 x, t_s32 y, t_s32 dx, t_s32 dy, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos);
+    void OnSplitterMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags, int header_pos);
+    void OnSplitterMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags, int header_pos);
+    void OnSplitterMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags, int header_pos);
 
     virtual void OverlayDrawing(GraphicsEngine &graphics_engine);
 
@@ -64,7 +64,7 @@ namespace nux
   protected:
     virtual long ComputeContentSize();
     virtual void DoneRedraw();
-    void ResizeSplitter(t_s32 header_pos);
+    void ResizeSplitter(int header_pos);
     //void ContinuousSplitterAdjustment();
     void setResizeOnSplitterRelease(bool b)
     {
@@ -89,16 +89,16 @@ namespace nux
     bool new_addition;
 
     bool m_ResizeOnSplitterRelease;
-    t_s32 m_current_width;
-    t_s32 m_current_height;
-    t_s32 m_current_x;
-    t_s32 m_current_y;
+    int m_current_width;
+    int m_current_height;
+    int m_current_x;
+    int m_current_y;
 
     bool m_initial_config;
 
     // splitter bar differential position;
-    t_s32 mvt_dx, mvt_dy;
-    t_s32 m_focus_splitter_index;
+    int mvt_dx, mvt_dy;
+    int m_focus_splitter_index;
   };
 
 }

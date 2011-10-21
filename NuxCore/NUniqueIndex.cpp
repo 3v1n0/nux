@@ -38,7 +38,7 @@ namespace nux
   {
   }
 
-  t_u64 UniqueIndex::GetUniqueIndex()
+  unsigned long long UniqueIndex::GetUniqueIndex()
   {
     NScopeLock Scope (&m_CriticalSection);
     m_UniqueIndex.Increment();

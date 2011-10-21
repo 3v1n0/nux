@@ -37,8 +37,8 @@ namespace nux
     inline Vec4 (const Vec4<T>&);
 
     inline Vec4<T>& operator = (const Vec4<T>&);
-    inline t_bool operator == (const Vec4<T>&) const;
-    inline t_bool operator != (const Vec4<T>&) const;
+    inline bool operator == (const Vec4<T>&) const;
+    inline bool operator != (const Vec4<T>&) const;
     inline Vec4<T> operator + (const Vec4<T>&) const;
     inline Vec4<T> operator * (const Vec4<T>&) const;
     inline Vec4<T> operator - (const Vec4<T>&) const;
@@ -88,7 +88,7 @@ namespace nux
     w = fw;
   }
 
-//Vec4::Vec4(t_double fx, t_double fy, t_double fz, t_double fw)
+//Vec4::Vec4(double fx, double fy, double fz, double fw)
 //{
 //    x = T(fx);
 //    y = T(fy);
@@ -96,7 +96,7 @@ namespace nux
 //    w = T(fw);
 //}
 //
-//Vec4::Vec4(t_int fx, t_int fy, t_int fz, t_int fw)
+//Vec4::Vec4(int fx, int fy, int fz, int fw)
 //{
 //    x = T(fx);
 //    y = T(fy);
@@ -124,7 +124,7 @@ namespace nux
   }
 
   template <typename T>
-  inline t_bool Vec4<T>::operator == (const Vec4<T>& v) const
+  inline bool Vec4<T>::operator == (const Vec4<T>& v) const
   {
     if ( (x == v.x) &&
          (y == v.y) &&
@@ -138,7 +138,7 @@ namespace nux
   }
 
   template <typename T>
-  inline t_bool Vec4<T>::operator != (const Vec4<T>& v) const
+  inline bool Vec4<T>::operator != (const Vec4<T>& v) const
   {
     return ! (*this == v);
   }

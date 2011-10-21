@@ -220,7 +220,7 @@ namespace nux
 
     do
     {
-      t_u32 num_element = 0;
+      unsigned int num_element = 0;
 
       for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
@@ -523,7 +523,7 @@ namespace nux
     {
       need_recompute = false;
       int available_width = width;
-      t_u32 max_stretchfactor = GetMaxStretchFactor();
+      unsigned int max_stretchfactor = GetMaxStretchFactor();
       std::list<Area *>::iterator it;
 
       for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
@@ -629,7 +629,7 @@ namespace nux
       //                  -----
       //                  all element with stretchfactor != 0
 
-      t_u32 ref_width = available_width / cumul;
+      unsigned int ref_width = available_width / cumul;
 
       need_recompute = false;;
 
@@ -640,7 +640,7 @@ namespace nux
         
         if (((*it)->GetScaleFactor() != 0) && ((*it)->IsLayoutDone() == false))
         {
-          t_u32 sf = (*it)->GetScaleFactor();
+          unsigned int sf = (*it)->GetScaleFactor();
           int new_width;
 
           if (sf == max_stretchfactor)
@@ -714,8 +714,8 @@ namespace nux
           // For fixed element, reset their size to the same so it is checked against
           // the min and max. This is necessary in case you have set the size of the element first then latter,
           // you define its MinimumSize and/or MaximumSize size.
-          t_u32 w = (*it)->GetBaseWidth();
-          t_u32 h = (*it)->GetBaseHeight();
+          unsigned int w = (*it)->GetBaseWidth();
+          unsigned int h = (*it)->GetBaseHeight();
           (*it)->SetBaseWidth(w);
           (*it)->SetBaseHeight(h);
         }
@@ -724,10 +724,10 @@ namespace nux
     while (need_recompute);
   }
 
-  t_u32 HLayout::GetMaxStretchFactor()
+  unsigned int HLayout::GetMaxStretchFactor()
   {
-    t_u32 value = 0;
-    t_u32 sf;
+    unsigned int value = 0;
+    unsigned int sf;
     std::list<Area *>::iterator it;
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
@@ -755,7 +755,7 @@ namespace nux
   {
     std::list<Area *>::iterator it;
     {
-      t_u32 num_element = 0;
+      unsigned int num_element = 0;
       for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
         if ((*it)->IsVisible())

@@ -136,7 +136,7 @@ namespace nux
     return _FrameTimeArray[_CurrentFrame];
   }
 
-  t_u32 IOpenGLAnimatedTexture::GetNumFrame()
+  unsigned int IOpenGLAnimatedTexture::GetNumFrame()
   {
     return _Depth;
   }

@@ -33,8 +33,8 @@ namespace nux
 {
 
   NUX_IMPLEMENT_OBJECT_TYPE(VSplitter);
-  static const t_s32 VSPLITTERWIDTH = 5;
-  static const t_s32 VSTICK_SIZE = 5;
+  static const int VSPLITTERWIDTH = 5;
+  static const int VSTICK_SIZE = 5;
 
   VSplitter::VSplitter(NUX_FILE_LINE_DECL)
     :   View(NUX_FILE_LINE_PARAM)
@@ -89,7 +89,7 @@ namespace nux
     {
       Geometry geo = (*it_splitter)->GetGeometry();
       Geometry grip_geo;
-      t_s32 h = 20;
+      int h = 20;
 
       if (geo.GetHeight() > h)
       {
@@ -192,7 +192,7 @@ namespace nux
 
   void VSplitter::OverlayDrawing(GraphicsEngine &graphics_engine)
   {
-    t_u32 num_element = (t_u32) m_SplitterObject.size();
+    unsigned int num_element = (unsigned int) m_SplitterObject.size();
 
     Geometry base = GetGeometry();
 
@@ -214,7 +214,7 @@ namespace nux
         }
       }
 
-      if ((m_focus_splitter_index > 0) && m_focus_splitter_index < (t_s32) num_element - 1)
+      if ((m_focus_splitter_index > 0) && m_focus_splitter_index < (int) num_element - 1)
       {
         if (geo.x < m_SplitterObject[m_focus_splitter_index - 1]->GetGeometry().x + VSPLITTERWIDTH)
         {
@@ -243,7 +243,7 @@ namespace nux
       splitter->SetParentObject(this);
       //splitter->SinkReference();
 
-      t_u32 no = (t_u32) m_InterfaceObject.size();
+      unsigned int no = (unsigned int) m_InterfaceObject.size();
       splitter->mouse_down.connect(sigc::bind(sigc::mem_fun(this, &VSplitter::OnSplitterMouseDown), no));
       splitter->mouse_up.connect(sigc::bind(sigc::mem_fun(this, &VSplitter::OnSplitterMouseUp), no));
       splitter->mouse_drag.connect(sigc::bind(sigc::mem_fun(this, &VSplitter::OnSplitterMouseDrag), no));
@@ -265,11 +265,11 @@ namespace nux
 
   long VSplitter::ComputeContentSize()
   {
-    t_u32 num_element = (t_u32) m_InterfaceObject.size();
-    t_s32 x = GetBaseX();
-    t_s32 y = GetBaseY();
-    t_s32 w = GetBaseWidth();
-    t_s32 h = GetBaseHeight();
+    unsigned int num_element = (unsigned int) m_InterfaceObject.size();
+    int x = GetBaseX();
+    int y = GetBaseY();
+    int w = GetBaseWidth();
+    int h = GetBaseHeight();
 
     if ((w == 0) || (h == 0))
     {
@@ -298,7 +298,7 @@ namespace nux
 
     if (m_current_height != h)
     {
-      for (t_u32 i = 0; i < num_element; i++)
+      for (unsigned int i = 0; i < num_element; i++)
       {
         Geometry splitter_geo = m_SplitterObject[i]->GetGeometry();
         splitter_geo.SetHeight(h);
@@ -310,16 +310,16 @@ namespace nux
 
     if (m_current_width != w)
     {
-      t_s32 size_to_distribute = w - num_element * VSPLITTERWIDTH;
-      t_s32 previous_spliter_end = m_current_x;
-      t_s32 new_spliter_end = x;
+      int size_to_distribute = w - num_element * VSPLITTERWIDTH;
+      int previous_spliter_end = m_current_x;
+      int new_spliter_end = x;
 
-      for (t_u32 i = 0; i < num_element; i++)
+      for (unsigned int i = 0; i < num_element; i++)
       {
         Geometry splitter_geo = m_SplitterObject[i]->GetGeometry();
         // compute percentage of space occupied by the element i;
         // width of element i = m_SplitterObject[i]->GetX() - previous_splliter_end
-        t_s32 splitter_start = m_SplitterObject[i]->GetBaseX();
+        int splitter_start = m_SplitterObject[i]->GetBaseX();
         float percent = float(splitter_start - previous_spliter_end) / float(m_current_width - num_element * VSPLITTERWIDTH);
 
         if (percent > 1.0f)
@@ -339,9 +339,9 @@ namespace nux
       m_SplitterObject[num_element-1]->SetBaseX(x + w - VSPLITTERWIDTH);
     }
 
-    t_s32 accwidth = x;
+    int accwidth = x;
 
-    for (t_u32 i = 0; i < num_element; i++)
+    for (unsigned int i = 0; i < num_element; i++)
     {
       Geometry splitter_geo = m_SplitterObject[i]->GetGeometry();
 
@@ -382,11 +382,11 @@ namespace nux
 
   void VSplitter::ResetSplitConfig()
   {
-    t_s32 x = GetBaseX();
-    t_s32 y = GetBaseY();
-    t_s32 w = GetBaseWidth();
-    t_s32 h = GetBaseHeight();
-    t_u32 num_element = (t_u32) m_InterfaceObject.size();
+    int x = GetBaseX();
+    int y = GetBaseY();
+    int w = GetBaseWidth();
+    int h = GetBaseHeight();
+    unsigned int num_element = (unsigned int) m_InterfaceObject.size();
 
     if (num_element < 1)
     {
@@ -396,7 +396,7 @@ namespace nux
     float max_stretch = 0.0f;
     float stretchfactor;
 
-    for (t_u32 i = 0; i < (t_u32) m_SplitConfig.size(); i++)
+    for (unsigned int i = 0; i < (unsigned int) m_SplitConfig.size(); i++)
     {
       stretchfactor = m_SplitConfig[i];
 
@@ -408,16 +408,16 @@ namespace nux
 
     float total = 0;
 
-    for (t_u32 i = 0; i < (t_u32) m_SplitConfig.size(); i++)
+    for (unsigned int i = 0; i < (unsigned int) m_SplitConfig.size(); i++)
     {
       stretchfactor = m_SplitConfig[i];
       total += stretchfactor / max_stretch;
     }
 
-    t_s32 availableheight = (w - num_element * VSPLITTERWIDTH);
+    int availableheight = (w - num_element * VSPLITTERWIDTH);
     float max_size = float(availableheight) / total;
 
-    for (t_u32 i = 0; i < (t_u32) m_SplitConfig.size(); i++)
+    for (unsigned int i = 0; i < (unsigned int) m_SplitConfig.size(); i++)
     {
       stretchfactor = m_SplitConfig[i];
       x += stretchfactor * max_size / max_stretch;
@@ -430,7 +430,7 @@ namespace nux
     m_initial_config = true;
   }
 
-  void VSplitter::OnSplitterMouseDown(t_s32 x, t_s32 y, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos)
+  void VSplitter::OnSplitterMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags, int header_pos)
   {
     m_point = Point(x, y);
 
@@ -441,16 +441,16 @@ namespace nux
     GetWindowThread()->RequestRedraw();
   }
 
-  void VSplitter::OnSplitterMouseUp(t_s32 x, t_s32 y, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos)
+  void VSplitter::OnSplitterMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags, int header_pos)
   {
     if (mvt_dx)
     {
       Geometry geo = m_SplitterObject[header_pos]->GetGeometry();
       geo.OffsetPosition(mvt_dx, 0);
 
-      t_u32 num_element = (t_u32) m_SplitterObject.size();
+      unsigned int num_element = (unsigned int) m_SplitterObject.size();
 
-      if (header_pos < (t_s32) num_element - 1)
+      if (header_pos < (int) num_element - 1)
       {
         // Make the splitter bar stick to the next one if the distance between them is less than VSTICK_SIZE
         if (m_SplitterObject[header_pos + 1]->GetGeometry().x - geo.x - VSPLITTERWIDTH < VSTICK_SIZE)
@@ -471,10 +471,10 @@ namespace nux
     GetWindowThread()->RequestRedraw();
   }
 
-  void VSplitter::OnSplitterMouseDrag(t_s32 x, t_s32 y, t_s32 dx, t_s32 dy, unsigned long button_flags, unsigned long key_flags, t_s32 header_pos)
+  void VSplitter::OnSplitterMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags, int header_pos)
   {
     Geometry geo = m_SplitterObject[header_pos]->GetGeometry();
-    t_s32 num_element = (t_s32) m_SplitterObject.size();
+    int num_element = (int) m_SplitterObject.size();
 
     if (header_pos == num_element - 1)
     {
@@ -501,10 +501,10 @@ namespace nux
     GetWindowThread()->RequestRedraw();
   }
 
-  void VSplitter::ResizeSplitter(t_s32 header_pos)
+  void VSplitter::ResizeSplitter(int header_pos)
   {
     Geometry geo = m_SplitterObject[header_pos]->GetGeometry();
-    t_s32 num_element = (t_s32) m_SplitterObject.size();
+    int num_element = (int) m_SplitterObject.size();
 
     if ((header_pos == 0) && (m_SplitterObject[header_pos]->GetBaseX() < GetBaseX()))
     {
@@ -516,9 +516,9 @@ namespace nux
       m_SplitterObject[header_pos]->SetBaseX(GetBaseX() + GetBaseWidth() - VSPLITTERWIDTH);
     }
 
-    if (header_pos < (t_s32) num_element - 1)
+    if (header_pos < (int) num_element - 1)
     {
-      t_s32 posx0, posx1;
+      int posx0, posx1;
       posx0 = m_SplitterObject[header_pos]->GetBaseX();
       posx1 = m_SplitterObject[header_pos + 1]->GetBaseX();
 
@@ -531,7 +531,7 @@ namespace nux
 
     if (0 < header_pos)
     {
-      t_s32 posx0, posx1;
+      int posx0, posx1;
       posx0 = m_SplitterObject[header_pos]->GetBaseX();
       posx1 = m_SplitterObject[header_pos - 1]->GetBaseX();
 
