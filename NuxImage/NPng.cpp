@@ -203,7 +203,7 @@ namespace nux
 #endif
 
     // first check the eight byte PNG signature
-    t_size r = fread(sig, 1, 8, fp);
+    size_t r = fread(sig, 1, 8, fp);
 
     if (r == 0)
     {
@@ -414,7 +414,7 @@ namespace nux
 #endif
 
     // first check the eight byte PNG signature
-    t_size r = fread(sig, 1, 8, fp);
+    size_t r = fread(sig, 1, 8, fp);
 
     if (r == 0)
     {

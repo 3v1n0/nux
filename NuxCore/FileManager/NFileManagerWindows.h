@@ -36,12 +36,12 @@ namespace nux
     NWindowsSerialFileReader (HANDLE InHandle, LogOutputDevice &InError);
     ~NWindowsSerialFileReader();
 
-    virtual bool Precache (t_int PrecacheOffset, t_int PrecacheSize);
-    virtual t_s64 Seek (t_s64 InPos, NSerializer::SeekPos seekpos);
-    virtual t_s64 Tell();
-    virtual t_s64 GetFileSize();
+    virtual bool Precache (int PrecacheOffset, int PrecacheSize);
+    virtual long long Seek (long long InPos, NSerializer::SeekPos seekpos);
+    virtual long long Tell();
+    virtual long long GetFileSize();
     virtual bool Close();
-    virtual void SerializeFinal (void *V, t_s64 Length);
+    virtual void SerializeFinal (void *V, long long Length);
     virtual bool isReader()
     {
       return true;
@@ -54,12 +54,12 @@ namespace nux
   protected:
     HANDLE              m_FileHandle;
     LogOutputDevice &m_Error;
-    t_s64               m_FileSize;
-    t_s64               m_FilePos;
-    t_s64               m_BufferBase;
-    t_int               m_BufferCount;
+    long long               m_FileSize;
+    long long               m_FilePos;
+    long long               m_BufferBase;
+    int               m_BufferCount;
     BYTE               *m_Buffer;
-    static const t_int  sBufferSize;
+    static const int  sBufferSize;
   };
 
   class NWindowsSerialFileWriter : public NSerializer
@@ -68,12 +68,12 @@ namespace nux
     NWindowsSerialFileWriter (HANDLE InHandle, LogOutputDevice &InError);
     ~NWindowsSerialFileWriter();
 
-    virtual t_s64 Seek (t_s64 InPos, NSerializer::SeekPos seekpos);
-    virtual t_s64 Tell();
+    virtual long long Seek (long long InPos, NSerializer::SeekPos seekpos);
+    virtual long long Tell();
     virtual bool Close();
-    virtual void SerializeFinal (void *V, t_s64 Length);
+    virtual void SerializeFinal (void *V, long long Length);
     virtual void Flush();
-    virtual t_s64 GetFileSize();
+    virtual long long GetFileSize();
     virtual bool isReader()
     {
       return false;
@@ -87,10 +87,10 @@ namespace nux
     void _Flush();
     HANDLE              m_FileHandle;
     LogOutputDevice &m_Error;
-    t_s64               m_Pos;
-    t_int               m_BufferCount;
+    long long               m_Pos;
+    int               m_BufferCount;
     BYTE               *m_Buffer;
-    static const t_int  sBufferSize;
+    static const int  sBufferSize;
     NCriticalSection m_CriticalSection;
   };
 
@@ -114,7 +114,7 @@ namespace nux
     /*!
         @return Size of the File. Return -1 if an error occurs.
     */
-    t_s64 FileSize (const TCHAR *Filename);
+    long long FileSize (const TCHAR *Filename);
     bool FileExist (const TCHAR *Filename);
     int Copy (const TCHAR *DestFile, const TCHAR *SrcFile, bool OverWriteExisting, bool OverWriteReadOnly, NFileTransferMonitor *Monitor);
     bool Move (const TCHAR *Dest, const TCHAR *Src, bool OverWriteExisting = true, bool OverWriteReadOnly = false, NFileTransferMonitor *Monitor = NULL);
@@ -125,7 +125,7 @@ namespace nux
     /*!
         @return TRUE is the file exist.
     */
-    bool GetFileAttribute (const TCHAR *Filename, bool &isDirectory, bool &isReadOnly, bool &isHidden, t_s64 &Size);
+    bool GetFileAttribute (const TCHAR *Filename, bool &isDirectory, bool &isReadOnly, bool &isHidden, long long &Size);
     bool MakeDirectory (const TCHAR *Path, bool CreateCompletePath = false);
     bool DeleteDirectory (const TCHAR *Path, bool DeleteContentFirst = false);
 

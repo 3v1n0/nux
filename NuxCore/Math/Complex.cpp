@@ -26,7 +26,7 @@
 namespace nux
 {
 
-  ComplexNumber::ComplexNumber (t_float re, t_float im)
+  ComplexNumber::ComplexNumber (float re, float im)
   {
     real_ = re;
     imaginary_ = im;
@@ -73,7 +73,7 @@ namespace nux
   const ComplexNumber ComplexNumber::operator*(const ComplexNumber& complex) const
   {
   	ComplexNumber result;
-  	t_float a, b, c, d;
+  	float a, b, c, d;
 
   	a = real_; b = imaginary_;
   	c = complex.real_; d = complex.imaginary_;
@@ -87,12 +87,12 @@ namespace nux
   const ComplexNumber ComplexNumber::operator / (const ComplexNumber& complex) const
   {
       ComplexNumber result;
-      t_float a, b, c, d;
-      t_float inv_denominator;
+      float a, b, c, d;
+      float inv_denominator;
 
       a = real_; b = imaginary_;
       c = complex.real_; d = complex.imaginary_;
-      inv_denominator = (t_float) 1.0 / (c*c + d*d);
+      inv_denominator = (float) 1.0 / (c*c + d*d);
 
       result.real_ = (a*c + b*d) * inv_denominator;
       result.imaginary_ = (b*c - a*d) * inv_denominator;
@@ -100,7 +100,7 @@ namespace nux
       return result;
   }
   */
-  /*const ComplexNumber ComplexNumber::operator * (const t_float& f) const
+  /*const ComplexNumber ComplexNumber::operator * (const float& f) const
   {
       ComplexNumber result;
 
@@ -110,7 +110,7 @@ namespace nux
       return result;
   }*/
 
-  /*const ComplexNumber ComplexNumber::operator / (const t_float& f) const
+  /*const ComplexNumber ComplexNumber::operator / (const float& f) const
   {
       ComplexNumber result;
 
@@ -138,7 +138,7 @@ namespace nux
   void ComplexNumber::operator*= (const ComplexNumber &complex)
   {
     ComplexNumber result;
-    t_float a, b, c, d;
+    float a, b, c, d;
 
     a = real_;
     b = imaginary_;
@@ -152,8 +152,8 @@ namespace nux
   void ComplexNumber::operator /= (const ComplexNumber &complex)
   {
     ComplexNumber result;
-    t_float a, b, c, d;
-    t_float inv_denominator;
+    float a, b, c, d;
+    float inv_denominator;
 
     //if(complex.real_ == 0 && complex.imaginary_ == 0)
     //    trow(Exeption);
@@ -162,25 +162,25 @@ namespace nux
     b = imaginary_;
     c = complex.real_;
     d = complex.imaginary_;
-    inv_denominator = (t_float) 1.0 / (c * c + d * d);
+    inv_denominator = (float) 1.0 / (c * c + d * d);
 
     real_ = (a * c + b * d) * inv_denominator;
     imaginary_ = (b * c - a * d) * inv_denominator;
   }
 
-  /*void ComplexNumber::operator *= (const t_float& f)
+  /*void ComplexNumber::operator *= (const float& f)
   {
       real_ *= f;
       imaginary_ *= f;
   }*/
 
-  /*void ComplexNumber::operator/=(const t_float& f)
+  /*void ComplexNumber::operator/=(const float& f)
   {
       //if(f == 0.0f)
       //    trow(Exception);
 
-      real_ *= (t_float)1.0 / f;
-      imaginary_ *= (t_float)1.0 / f;
+      real_ *= (float)1.0 / f;
+      imaginary_ *= (float)1.0 / f;
   }*/
 
   void ComplexNumber::conjugue()
@@ -188,12 +188,12 @@ namespace nux
     imaginary_ = -imaginary_;
   }
 
-  t_float ComplexNumber::absolute()
+  float ComplexNumber::absolute()
   {
-    t_float x, y, result, temp;
+    float x, y, result, temp;
 
-    x = (t_float) std::fabs (real_);
-    y = (t_float) std::fabs (imaginary_);
+    x = (float) std::fabs (real_);
+    y = (float) std::fabs (imaginary_);
 
     if (x == 0.0)
       result = y;
@@ -206,12 +206,12 @@ namespace nux
         if (x > y)
         {
           temp = y / x;
-          result = x * (t_float) std::sqrt (1.0 + temp * temp);
+          result = x * (float) std::sqrt (1.0 + temp * temp);
         }
         else
         {
           temp = x / y;
-          result = y * (t_float) std::sqrt (1.0 + temp * temp);
+          result = y * (float) std::sqrt (1.0 + temp * temp);
         }
       }
     }
@@ -219,7 +219,7 @@ namespace nux
     return result;
   }
 
-  t_bool ComplexNumber::IsNull()
+  bool ComplexNumber::IsNull()
   {
     if ( (real_ == 0) && (imaginary_ == 0) )
     {
@@ -229,22 +229,22 @@ namespace nux
     return false;
   }
 
-  t_float ComplexNumber::real() const
+  float ComplexNumber::real() const
   {
     return real_;
   }
 
-  t_float ComplexNumber::imaginary() const
+  float ComplexNumber::imaginary() const
   {
     return imaginary_;
   }
 
-  void ComplexNumber::real (t_float r)
+  void ComplexNumber::real (float r)
   {
     real_ = r;
   }
 
-  void ComplexNumber::imaginary (t_float i)
+  void ComplexNumber::imaginary (float i)
   {
     imaginary_ = i;
   }
@@ -262,7 +262,7 @@ namespace nux
   const ComplexNumber operator* (const ComplexNumber &lhs, const ComplexNumber &rhs)
   {
     ComplexNumber result;
-    t_float a, b, c, d;
+    float a, b, c, d;
 
     a = lhs.real();
     b = lhs.imaginary();
@@ -278,14 +278,14 @@ namespace nux
   const ComplexNumber operator/ (const ComplexNumber &lhs, const ComplexNumber &rhs)
   {
     ComplexNumber result;
-    t_float a, b, c, d;
-    t_float inv_denominator;
+    float a, b, c, d;
+    float inv_denominator;
 
     a = lhs.real();
     b = lhs.imaginary();
     c = rhs.real();
     d = rhs.imaginary();
-    inv_denominator = (t_float) 1.0 / (c * c + d * d);
+    inv_denominator = (float) 1.0 / (c * c + d * d);
 
     result.real ( (a * c + b * d) * inv_denominator);
     result.imaginary ( (b * c - a * d) * inv_denominator);
@@ -295,7 +295,7 @@ namespace nux
   /*fcomplex Cdiv(fcomplex a, fcomplex b)
      {
      fcomplex c;
-     t_float den, r;
+     float den, r;
 
      if (fabs(b.r) >= fabs(b.i))
         {
@@ -321,7 +321,7 @@ namespace nux
   fcomplex Csqrt(fcomplex z)
      {
      fcomplex c;
-     t_float w;
+     float w;
 
      if ((z.r == 0.0) && (z.i == 0.0))
         {
@@ -347,7 +347,7 @@ namespace nux
      }
 
 
-  fcomplex RCmul(t_float x, fcomplex a)
+  fcomplex RCmul(float x, fcomplex a)
      {
      fcomplex c;
 
@@ -361,7 +361,7 @@ namespace nux
   fcomplex Cinv( fcomplex z)
      {
      fcomplex c;
-     t_float s = 1.0 / (z.r*z.r + z.i*z.i);
+     float s = 1.0 / (z.r*z.r + z.i*z.i);
 
      c.r = z.r * s;
      c.i = -z.i * s;

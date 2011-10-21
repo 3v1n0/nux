@@ -37,7 +37,7 @@ namespace nux
 
       @return the values of the n+1 Bernstein basis of degree n.
   */
-  NUX_DECLSPEC_DLL t_double *Bernstein (t_int n, t_double t);
+  NUX_DECLSPEC_DLL double *Bernstein (int n, double t);
 
 //! Evaluate 2D Bezier curve of degree n.
   /*!
@@ -50,7 +50,7 @@ namespace nux
       @param xval Return the x coordinates of the Bezier curve at parameter t.
       @param yval Return the y coordinates of the Bezier curve at parameter t.
   */
-  NUX_DECLSPEC_DLL void Bezier_XY (t_int n, t_double t, t_double xcon[], t_double ycon[], t_double *xval, t_double *yval);
+  NUX_DECLSPEC_DLL void Bezier_XY (int n, double t, double xcon[], double ycon[], double *xval, double *yval);
 
 //! Evaluate 2D Bezier curve of degree n.
   /*!
@@ -65,7 +65,7 @@ namespace nux
       @param yval Return the y coordinates of the Bezier curve at parameter t.
       @param yval Return the z coordinates of the Bezier curve at parameter t.
   */
-  NUX_DECLSPEC_DLL void Bezier_XYZ (t_int n, t_double t, t_double xcon[], t_double ycon[], t_double zcon[], t_double *xval, t_double *yval, t_double *zval);
+  NUX_DECLSPEC_DLL void Bezier_XYZ (int n, double t, double xcon[], double ycon[], double zcon[], double *xval, double *yval, double *zval);
 
 
 

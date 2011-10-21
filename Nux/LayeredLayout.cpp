@@ -178,7 +178,7 @@ namespace nux
     if (m_paint_all)
     {
       std::list<Area *>::iterator it, eit = _layout_element_list.end();
-      t_u32 alpha = 0, src = 0, dest = 0;
+      unsigned int alpha = 0, src = 0, dest = 0;
 
       graphics_engine.GetRenderStates().GetBlend(alpha, src, dest);
       graphics_engine.GetRenderStates().SetBlend(true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -395,7 +395,7 @@ namespace nux
     std::list<Area *>::iterator it, eit = _layout_element_list.end();
     int i = 0;
 
-    NUX_RETURN_IF_FALSE((t_uint32)index_ < _layout_element_list.size());
+    NUX_RETURN_IF_FALSE((unsigned int)index_ < _layout_element_list.size());
 
     if (index_ == m_active_index)
       return;

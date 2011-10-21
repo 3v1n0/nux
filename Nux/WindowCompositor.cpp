@@ -1414,8 +1414,8 @@ logging::Logger logger("nux.window");
         {
           if (rt.color_rt.IsValid() /*&& rt.depth_rt.IsValid()*/)
           {
-            t_s32 buffer_width = window->GetBaseWidth();
-            t_s32 buffer_height = window->GetBaseHeight();
+            int buffer_width = window->GetBaseWidth();
+            int buffer_height = window->GetBaseHeight();
 
             if ((rt.color_rt->GetWidth() != buffer_width) ||
                 (rt.color_rt->GetHeight() != buffer_height))
@@ -1531,7 +1531,7 @@ logging::Logger logger("nux.window");
 
   void WindowCompositor::RenderMainWindowComposition(bool force_draw)
   {
-    t_s32 buffer_width, buffer_height;
+    int buffer_width, buffer_height;
 
     buffer_width = GetWindowThread()->GetGraphicsEngine().GetWindowWidth();
     buffer_height = GetWindowThread()->GetGraphicsEngine().GetWindowHeight();
@@ -1610,7 +1610,7 @@ logging::Logger logger("nux.window");
     if (HWTexture.IsNull())
       return;
 
-    t_s32 window_width, window_height;
+    int window_width, window_height;
     window_width = GetWindowThread()->GetGraphicsEngine().GetWindowWidth();
     window_height = GetWindowThread()->GetGraphicsEngine().GetWindowHeight();
 

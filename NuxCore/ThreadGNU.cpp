@@ -26,37 +26,37 @@
 namespace nux
 {
 
-  t_int NThreadSafeCounter::Increment()
+  int NThreadSafeCounter::Increment()
   {
     return __sync_add_and_fetch (&m_Counter, 1);
   }
 
-  t_int NThreadSafeCounter::Decrement()
+  int NThreadSafeCounter::Decrement()
   {
     return __sync_add_and_fetch (&m_Counter, -1);
   }
 
-  t_int NThreadSafeCounter::Set (t_int i)
+  int NThreadSafeCounter::Set (int i)
   {
     return __sync_lock_test_and_set (&m_Counter, i);
   }
 
-  t_int NThreadSafeCounter::GetValue() const
+  int NThreadSafeCounter::GetValue() const
   {
     return m_Counter;
   }
 
-  t_int NThreadSafeCounter::operator ++ ()
+  int NThreadSafeCounter::operator ++ ()
   {
     return Increment();
   }
 
-  t_int NThreadSafeCounter::operator -- ()
+  int NThreadSafeCounter::operator -- ()
   {
     return Decrement();
   }
 
-  t_bool NThreadSafeCounter::operator == (t_int i)
+  bool NThreadSafeCounter::operator == (int i)
   {
     return (m_Counter == i);
   }
@@ -65,7 +65,7 @@ namespace nux
   BOOL NThreadLocalStorage::m_TLSUsed[NThreadLocalStorage::NbTLS];
   NThreadLocalStorage::TLS_ShutdownCallback  NThreadLocalStorage::m_TLSCallbacks[NThreadLocalStorage::NbTLS];
 
-  BOOL NThreadLocalStorage::RegisterTLS(t_u32 index, NThreadLocalStorage::TLS_ShutdownCallback shutdownCallback)
+  BOOL NThreadLocalStorage::RegisterTLS(unsigned int index, NThreadLocalStorage::TLS_ShutdownCallback shutdownCallback)
   {
     NUX_RETURN_VALUE_IF_FALSE(index < NThreadLocalStorage::NbTLS, FALSE);
     NUX_RETURN_VALUE_IF_TRUE(m_TLSUsed[index], TRUE); // already registered
@@ -75,7 +75,7 @@ namespace nux
     return TRUE;
   }
 
-  BOOL NThreadLocalStorage::UnRegisterTLS (t_u32 index)
+  BOOL NThreadLocalStorage::UnRegisterTLS (unsigned int index)
   {
     NUX_RETURN_VALUE_IF_FALSE(index < NThreadLocalStorage::NbTLS, FALSE);
     NUX_RETURN_VALUE_IF_FALSE(m_TLSUsed[index], FALSE);
@@ -91,7 +91,7 @@ namespace nux
   {
     Memset (m_TLSUsed, 0, sizeof (m_TLSUsed) );
 
-    for (t_u32 i = 0; i < NThreadLocalStorage::NbTLS; i++)
+    for (unsigned int i = 0; i < NThreadLocalStorage::NbTLS; i++)
     {
       // Fill the array with invalid values
       m_TLSIndex[i] = 0;
@@ -111,7 +111,7 @@ namespace nux
   {
     TLS_ShutdownCallback *callback = m_TLSCallbacks;
 
-    for (t_u32 i = 0; i < NThreadLocalStorage::NbTLS; ++i, ++callback)
+    for (unsigned int i = 0; i < NThreadLocalStorage::NbTLS; ++i, ++callback)
     {
       if (*callback)
       {
@@ -218,14 +218,14 @@ namespace nux
     return 0;
   }
 
-  t_u32 NThread::GetExitCode() const
+  unsigned int NThread::GetExitCode() const
   {
     return m_ThreadCtx.m_dwExitCode;
   }
 
-  t_u32 NThread::GetThreadId()
+  unsigned int NThread::GetThreadId()
   {
-    return (t_u32) m_ThreadCtx.m_dwTID;
+    return (unsigned int) m_ThreadCtx.m_dwTID;
   }
 
   ThreadState NThread::GetThreadState() const

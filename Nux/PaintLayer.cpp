@@ -38,9 +38,9 @@ namespace nux
 
   void ColorLayer::Renderlayer(GraphicsEngine &graphics_engine)
   {
-    t_u32 current_alpha_blend;
-    t_u32 current_src_blend_factor;
-    t_u32 current_dest_blend_factor;
+    unsigned int current_alpha_blend;
+    unsigned int current_src_blend_factor;
+    unsigned int current_dest_blend_factor;
 
     // Get the current blend states. They will be restored later.
     graphics_engine.GetRenderStates().GetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
@@ -80,9 +80,9 @@ namespace nux
 
   void ShapeLayer::Renderlayer(GraphicsEngine &graphics_engine)
   {
-    t_u32 current_alpha_blend;
-    t_u32 current_src_blend_factor;
-    t_u32 current_dest_blend_factor;
+    unsigned int current_alpha_blend;
+    unsigned int current_src_blend_factor;
+    unsigned int current_dest_blend_factor;
 
     // Get the current blend states. They will be restored later.
     graphics_engine.GetRenderStates().GetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
@@ -128,13 +128,13 @@ namespace nux
 
   void TextureLayer::Renderlayer(GraphicsEngine &graphics_engine)
   {
-    t_u32 current_alpha_blend;
-    t_u32 current_src_blend_factor;
-    t_u32 current_dest_blend_factor;
-    t_u32 current_red_mask;
-    t_u32 current_green_mask;
-    t_u32 current_blue_mask;
-    t_u32 current_alpha_mask;
+    unsigned int current_alpha_blend;
+    unsigned int current_src_blend_factor;
+    unsigned int current_dest_blend_factor;
+    unsigned int current_red_mask;
+    unsigned int current_green_mask;
+    unsigned int current_blue_mask;
+    unsigned int current_alpha_mask;
     
     // Get the current color mask and blend states. They will be restored later.
     graphics_engine.GetRenderStates().GetColorMask(current_red_mask, current_green_mask, current_blue_mask, current_alpha_mask);

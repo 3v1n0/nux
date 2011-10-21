@@ -71,7 +71,7 @@ namespace nux
     }
   }
 
-  t_u32 SystemThread::Run(void *arg)
+  unsigned int SystemThread::Run(void *arg)
   {
     if (m_UserInitFunc)
     {

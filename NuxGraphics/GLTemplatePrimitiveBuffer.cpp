@@ -48,7 +48,7 @@ namespace nux
   {
     m_IB.Release();
 
-    for (t_u32 i = 0; i < 16; i++)
+    for (unsigned int i = 0; i < 16; i++)
     {
       VertexAttributeBuffer[i].Release();
     }

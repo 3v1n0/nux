@@ -123,7 +123,7 @@ logging::Logger logger("nux.windows.thread");
   {
     nux_glib_threads_lock();
     WindowThread *window_thread = NUX_STATIC_CAST(WindowThread *, user_data);
-    t_u32 return_code = window_thread->ExecutionLoop(0);
+    unsigned int return_code = window_thread->ExecutionLoop(0);
 
     if (return_code == 0 && !window_thread->IsEmbeddedWindow())
     {
@@ -315,7 +315,7 @@ logging::Logger logger("nux.windows.thread");
   typedef struct
   {
     WindowThread *window_thread;
-    t_u32 id;
+    unsigned int id;
   } TimeoutData;
 
   gboolean nux_timeout_dispatch(gpointer user_data)
@@ -342,7 +342,7 @@ logging::Logger logger("nux.windows.thread");
     return repeat;
   }
 
-  t_u32 WindowThread::AddGLibTimeout(t_u32 duration)
+  unsigned int WindowThread::AddGLibTimeout(unsigned int duration)
   {
     if (IsEmbeddedWindow())
     {
@@ -870,9 +870,9 @@ logging::Logger logger("nux.windows.thread");
   extern EventToNameStruct EventToName[];
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-  t_u32 WindowThread::ExecutionLoop(t_u32 timer_id)
+  unsigned int WindowThread::ExecutionLoop(unsigned int timer_id)
 #else
-  t_u32 WindowThread::ExecutionLoop()
+  unsigned int WindowThread::ExecutionLoop()
 #endif
   {
     Event event;
@@ -1657,12 +1657,12 @@ logging::Logger logger("nux.windows.thread");
     return m_FrameRate;
   }
 
-  t_u32 WindowThread::GetFrameCounter() const
+  unsigned int WindowThread::GetFrameCounter() const
   {
     return m_FrameCounter;
   }
 
-  t_u32 WindowThread::GetFramePeriodeCounter() const
+  unsigned int WindowThread::GetFramePeriodeCounter() const
   {
     return m_FramePeriodeCounter;
   }

@@ -27,9 +27,9 @@ namespace nux
 {
 
 // Choose the size so it is a power of 2. Example (size-1)= 11111111.
-  const t_int NSerializeFileReader::sBufferSize = 1024;
+  const int NSerializeFileReader::sBufferSize = 1024;
 
-  NSerializeFileReader::NSerializeFileReader (FILE *InFile, LogOutputDevice *InError, t_int InSize)
+  NSerializeFileReader::NSerializeFileReader (FILE *InFile, LogOutputDevice *InError, int InSize)
     : m_File (InFile)
     , m_Error (InError)
     , m_FileSize (InSize)
@@ -49,13 +49,13 @@ namespace nux
       Close();
   }
 
-  bool NSerializeFileReader::Precache (t_int PrecacheOffset, t_int PrecacheSize)
+  bool NSerializeFileReader::Precache (int PrecacheOffset, int PrecacheSize)
   {
     // Only precache at current position and avoid work if precaching same offset twice.
     if ( (m_FilePos == PrecacheOffset) && (!BufferBase || !BufferCount || (BufferBase != m_FilePos) ) )
     {
       BufferBase = m_FilePos;
-      BufferCount = Min (Min (PrecacheSize, (t_int) (sBufferSize - (m_FilePos & (sBufferSize - 1) ) ) )
+      BufferCount = Min (Min (PrecacheSize, (int) (sBufferSize - (m_FilePos & (sBufferSize - 1) ) ) )
                          , m_FileSize - m_FilePos);
 
       //GTotalBytesReadViaFileManager += BufferCount;
@@ -77,7 +77,7 @@ namespace nux
     return TRUE;
   }
 
-  t_s64 NSerializeFileReader::Seek (t_s64 InPos, NSerializer::SeekPos seekpos)
+  long long NSerializeFileReader::Seek (long long InPos, NSerializer::SeekPos seekpos)
   {
     nuxAssert (InPos >= 0);
     nuxAssert (InPos <= m_FileSize);
@@ -95,12 +95,12 @@ namespace nux
     return InPos;
   }
 
-  t_s64 NSerializeFileReader::Tell()
+  long long NSerializeFileReader::Tell()
   {
     return m_FilePos;
   }
 
-  t_s64 NSerializeFileReader::GetFileSize()
+  long long NSerializeFileReader::GetFileSize()
   {
     return m_FileSize;
   }
@@ -114,11 +114,11 @@ namespace nux
     return !m_ErrorCode;
   }
 
-  void NSerializeFileReader::SerializeFinal (void *Dest, t_s64 Length)
+  void NSerializeFileReader::SerializeFinal (void *Dest, long long Length)
   {
     while (Length > 0)
     {
-      t_int Copy = Min<t_s64> (Length, BufferBase + BufferCount - m_FilePos);
+      int Copy = Min<long long> (Length, BufferBase + BufferCount - m_FilePos);
 
       if (Copy == 0)
       {
@@ -137,7 +137,7 @@ namespace nux
         }
 
         Precache (m_FilePos, t_s32_max);
-        Copy = Min<t_s64> (Length, BufferBase + BufferCount - m_FilePos);
+        Copy = Min<long long> (Length, BufferBase + BufferCount - m_FilePos);
 
         if (Copy <= 0)
         {
@@ -157,7 +157,7 @@ namespace nux
   }
 
 //////////////////////////////////////////////////////////////////////////
-  const t_int NSerializeFileWriter::sBufferSize = 4096;
+  const int NSerializeFileWriter::sBufferSize = 4096;
 
   NSerializeFileWriter::NSerializeFileWriter (FILE *InFile, LogOutputDevice *InError)
     : m_File (InFile)
@@ -178,7 +178,7 @@ namespace nux
     m_File = NULL;
   }
 
-  t_s64 NSerializeFileWriter::Seek (t_s64 InPos, NSerializer::SeekPos seekpos)
+  long long NSerializeFileWriter::Seek (long long InPos, NSerializer::SeekPos seekpos)
   {
     Flush();
 
@@ -193,23 +193,23 @@ namespace nux
     return InPos;
   }
 
-  t_s64 NSerializeFileWriter::Tell()
+  long long NSerializeFileWriter::Tell()
   {
     return m_FilePos;
   }
 
-  t_s64 NSerializeFileWriter::GetFileSize()
+  long long NSerializeFileWriter::GetFileSize()
   {
 
 #if defined(NUX_VISUAL_STUDIO_2005) || defined(NUX_VISUAL_STUDIO_2008)
-    t_s64 CurrentPosition = _ftelli64 (m_File);
+    long long CurrentPosition = _ftelli64 (m_File);
     _fseeki64 (m_File, 0, SEEK_END);
-    t_s64 FileSize = _ftelli64 (m_File);
+    long long FileSize = _ftelli64 (m_File);
     _fseeki64 (m_File, CurrentPosition, SEEK_SET);
 #else
-    t_s32 CurrentPosition = ftell (m_File);
+    int CurrentPosition = ftell (m_File);
     fseek (m_File, 0, SEEK_END);
-    t_s32 FileSize = ftell (m_File);
+    int FileSize = ftell (m_File);
     fseek (m_File, CurrentPosition, SEEK_SET);
 #endif
     return FileSize;
@@ -228,11 +228,11 @@ namespace nux
     return !m_ErrorCode;
   }
 
-  void NSerializeFileWriter::SerializeFinal (void *Src, t_s64 Length)
+  void NSerializeFileWriter::SerializeFinal (void *Src, long long Length)
   {
     BYTE *SrcBuffer = NUX_STATIC_CAST (BYTE *, Src);
     m_FilePos += Length;
-    t_int Copy;
+    int Copy;
 
     while (Length > (Copy = sBufferSize - m_CachePos) )
     {

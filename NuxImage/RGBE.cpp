@@ -269,7 +269,7 @@ namespace nux
     {
       info.valid |= RGBE_VALID_PROGRAMTYPE;
 
-      for (i = 0; i < (t_s32) sizeof(info.programtype) - 1; i++)
+      for (i = 0; i < (int) sizeof(info.programtype) - 1; i++)
       {
         if ((buf[i+2] == 0) || isspace(buf[i+2]))
           break;

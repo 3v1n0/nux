@@ -28,52 +28,45 @@
 namespace nux
 {
 
-#ifdef _WIN64
-#define NUX_ATOMOP_ITERLOCKED_INCREMENT      InterlockedIncrement64
-#define NUX_ATOMOP_ITERLOCKED_DECREMENT      InterlockedDecrement64
-#define NUX_ATOMOP_ITERLOCKED_EXCHANGED      InterlockedExchange64
-#define NUX_ATOMOP_ITERLOCKED_VALUE
-#elif _WIN32
 #define NUX_ATOMOP_ITERLOCKED_INCREMENT      InterlockedIncrement
 #define NUX_ATOMOP_ITERLOCKED_DECREMENT      InterlockedDecrement
 #define NUX_ATOMOP_ITERLOCKED_EXCHANGED      InterlockedExchange
 #define NUX_ATOMOP_ITERLOCKED_VALUE
-#endif
 
-  t_integer NThreadSafeCounter::Increment()
+  long NThreadSafeCounter::Increment()
   {
     return NUX_ATOMOP_ITERLOCKED_INCREMENT ( &m_Counter );
   }
-  t_integer NThreadSafeCounter::Decrement()
+  long NThreadSafeCounter::Decrement()
   {
     return NUX_ATOMOP_ITERLOCKED_DECREMENT ( &m_Counter );
   }
-  t_integer NThreadSafeCounter::Set (t_integer i)
+  long NThreadSafeCounter::Set (long i)
   {
     return NUX_ATOMOP_ITERLOCKED_EXCHANGED ( &m_Counter, i );
   }
 
-  t_integer NThreadSafeCounter::GetValue() const
+  long NThreadSafeCounter::GetValue() const
   {
     return m_Counter;
   }
 
-  t_integer NThreadSafeCounter::operator ++ ()
+  long NThreadSafeCounter::operator ++ ()
   {
     return Increment();
   }
 
-  t_integer NThreadSafeCounter::operator -- ()
+  long NThreadSafeCounter::operator -- ()
   {
     return Decrement();
   }
 
-  t_bool NThreadSafeCounter::operator == (t_integer i)
+  bool NThreadSafeCounter::operator == (long i)
   {
     return (m_Counter == i);
   }
 
-  t_u32  NThreadLocalStorage::m_TLSIndex[NThreadLocalStorage::NbTLS];
+  unsigned int  NThreadLocalStorage::m_TLSIndex[NThreadLocalStorage::NbTLS];
   BOOL NThreadLocalStorage::m_TLSUsed[NThreadLocalStorage::NbTLS];
   NThreadLocalStorage::TLS_ShutdownCallback  NThreadLocalStorage::m_TLSCallbacks[NThreadLocalStorage::NbTLS];
 
@@ -109,7 +102,7 @@ namespace nux
     }
   }
 
-  BOOL NThreadLocalStorage::RegisterTLS (t_u32 index, NThreadLocalStorage::TLS_ShutdownCallback shutdownCallback)
+  BOOL NThreadLocalStorage::RegisterTLS (unsigned int index, NThreadLocalStorage::TLS_ShutdownCallback shutdownCallback)
   {
     nuxAssert (!m_TLSUsed[index]);
 
@@ -136,7 +129,7 @@ namespace nux
   {
     Memset (m_TLSUsed, 0, sizeof (m_TLSUsed) );
 
-    for (t_u32 i = 0; i < NThreadLocalStorage::NbTLS; i++)
+    for (unsigned int i = 0; i < NThreadLocalStorage::NbTLS; i++)
     {
       // Fill the array with invalid values
       m_TLSIndex[i] = NThreadLocalStorage::InvalidTLS; // invalid index
@@ -156,7 +149,7 @@ namespace nux
   {
     TLS_ShutdownCallback *callback = m_TLSCallbacks;
 
-    for (t_u32 i = 0; i < NThreadLocalStorage::NbTLS; ++i, ++callback)
+    for (unsigned int i = 0; i < NThreadLocalStorage::NbTLS; ++i, ++callback)
     {
       if (*callback)
       {
@@ -199,7 +192,7 @@ namespace nux
       {
         //ResumeStart();
         m_ThreadState = THREADINIT;
-        m_ThreadCtx.m_dwExitCode = (t_u32) - 1;
+        m_ThreadCtx.m_dwExitCode = (unsigned int) - 1;
         return m_ThreadState;
       }
       else
@@ -232,7 +225,7 @@ namespace nux
 
       if ( m_ThreadCtx.m_dwExitCode == STILL_ACTIVE && bForceKill )
       {
-        TerminateThread (m_ThreadCtx.m_hThread, t_u32 (-1) );
+        TerminateThread (m_ThreadCtx.m_hThread, unsigned int (-1) );
         CloseHandle (m_ThreadCtx.m_hThread);
       }
 
@@ -360,7 +353,7 @@ namespace nux
     return 0;
   }
 
-  t_u32 NThread::GetExitCode() const
+  unsigned int NThread::GetExitCode() const
   {
     if ( m_ThreadCtx.m_hThread )
       GetExitCodeThread (m_ThreadCtx.m_hThread, (LPDWORD) &m_ThreadCtx.m_dwExitCode);
@@ -373,9 +366,9 @@ namespace nux
     return m_ThreadCtx.m_hThread;
   }
 
-  t_u32 NThread::GetThreadId()
+  unsigned int NThread::GetThreadId()
   {
-    return (t_u32) m_ThreadCtx.m_dwTID;
+    return (unsigned int) m_ThreadCtx.m_dwTID;
   }
 
   ThreadState NThread::GetThreadState() const

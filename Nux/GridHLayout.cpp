@@ -171,7 +171,7 @@ namespace nux
       return eCompliantHeight | eCompliantWidth;
     }
 
-    t_s32 num_elements = 0;
+    int num_elements = 0;
 
     std::list<Area *>::iterator it;
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
@@ -185,7 +185,7 @@ namespace nux
       (*it)->SetLayoutDone(false);
     }
 
-    t_s32 original_height = GetBaseHeight();
+    int original_height = GetBaseHeight();
 
     // The grid layout goes through the child elements and assign them a size and position. Children are filled in the grid like this:
     //  0   1   2   3   4   5
@@ -321,7 +321,7 @@ namespace nux
       return eCompliantHeight | eCompliantWidth;
     }
 
-    t_s32 num_elements = 0;
+    int num_elements = 0;
 
     std::list<Area *>::iterator it;
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
@@ -335,7 +335,7 @@ namespace nux
       (*it)->SetLayoutDone(false);
     }
 
-    t_s32 original_width = GetBaseWidth();
+    int original_width = GetBaseWidth();
 
     nux::Geometry base = GetGeometry();
     it = elements.begin();

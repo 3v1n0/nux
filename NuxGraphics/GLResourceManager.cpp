@@ -155,7 +155,7 @@ namespace nux
     if (CachedResource.IsNull())
     {
       // iterate over the list of factory types
-      for (t_u32 i = 0; i < GetResourceFactories().size(); ++i)
+      for (unsigned int i = 0; i < GetResourceFactories().size(); ++i)
       {
         NResourceFactory *ResourceFactory = GetResourceFactories() [i];
 

@@ -29,8 +29,8 @@
 namespace nux
 {
 
-  t_s32 BaseKeyboardHandler::s_jump_offset_at_borders = 60;
-  t_s32 BaseKeyboardHandler::s_cursor_width = 4;
+  int BaseKeyboardHandler::s_jump_offset_at_borders = 60;
+  int BaseKeyboardHandler::s_cursor_width = 4;
 
   BaseKeyboardHandler::BaseKeyboardHandler()
   {
@@ -55,18 +55,18 @@ namespace nux
 
   void BaseKeyboardHandler::DeleteSelectionText()
   {
-    t_s32 nFirst = Min(m_caret, m_selection_start);
-    t_s32 nLast = Max(m_caret, m_selection_start);
+    int nFirst = Min(m_caret, m_selection_start);
+    int nLast = Max(m_caret, m_selection_start);
     // Update caret and selection
     PlaceCaret(nFirst);
     m_selection_start = m_caret;
 
     // Remove the characters
-    for (t_s32 i = nFirst; i < nLast; ++i)
+    for (int i = nFirst; i < nLast; ++i)
       m_textline.Erase(nFirst, 1);
   }
 
-  void BaseKeyboardHandler::InsertChar(t_u32 character)
+  void BaseKeyboardHandler::InsertChar(unsigned int character)
   {
 
   }
@@ -81,21 +81,21 @@ namespace nux
     m_textline.Clear();
   }
 
-  void BaseKeyboardHandler::PlaceCaret(t_u32 nCP)
+  void BaseKeyboardHandler::PlaceCaret(unsigned int nCP)
   {
-    nuxAssert((nCP >= 0) && (nCP <= (t_u32) m_textline.Length()));
+    nuxAssert((nCP >= 0) && (nCP <= (unsigned int) m_textline.Length()));
     m_previous_cursor_position = m_caret;
     m_caret = nCP;
   }
 
-  t_u32 BaseKeyboardHandler::NextWordPosition(t_u32 cp)
+  unsigned int BaseKeyboardHandler::NextWordPosition(unsigned int cp)
   {
-    t_u32 num_char = (t_u32) m_textline.Length();
+    unsigned int num_char = (unsigned int) m_textline.Length();
 
     if (cp == num_char)
       return cp;
 
-    t_u32 c = cp + 1;
+    unsigned int c = cp + 1;
 
     while (c < num_char - 1)
     {
@@ -108,12 +108,12 @@ namespace nux
     return num_char;
   }
 
-  t_u32 BaseKeyboardHandler::PrevWordPosition(t_u32 cp)
+  unsigned int BaseKeyboardHandler::PrevWordPosition(unsigned int cp)
   {
     if (cp == 0)
       return 0;
 
-    t_u32 c = cp - 1;
+    unsigned int c = cp - 1;
 
     while (c > 1)
     {
@@ -126,7 +126,7 @@ namespace nux
     return 0;
   }
 
-  void BaseKeyboardHandler::MouseDown(t_s32 x, t_s32 y)
+  void BaseKeyboardHandler::MouseDown(int x, int y)
   {
     ResolveCaretPosition(x, y);
     m_mouse_drag = true;
@@ -134,13 +134,13 @@ namespace nux
     m_entering_focus = false;
   }
 
-  void BaseKeyboardHandler::MouseUp(t_s32 x, t_s32 y)
+  void BaseKeyboardHandler::MouseUp(int x, int y)
   {
     m_mouse_drag = false;
     m_entering_focus = false;
   }
 
-  void BaseKeyboardHandler::MouseDrag(t_s32 x, t_s32 y)
+  void BaseKeyboardHandler::MouseDrag(int x, int y)
   {
     if (m_entering_focus)
       return;
@@ -154,7 +154,7 @@ namespace nux
     m_entering_focus = true;
   }
 
-  void BaseKeyboardHandler::ResolveCaretPosition(t_s32 x, t_s32 y)
+  void BaseKeyboardHandler::ResolveCaretPosition(int x, int y)
   {
     if (m_entering_focus)
       return;
@@ -162,14 +162,14 @@ namespace nux
     if (m_textline.Length() == 0)
       return;
 
-    t_u32 StrLength = (t_u32) m_textline.Length();
-    t_s32 total = m_text_positionx;
-    t_u32 nCP = StrLength;
+    unsigned int StrLength = (unsigned int) m_textline.Length();
+    int total = m_text_positionx;
+    unsigned int nCP = StrLength;
 
-    for (t_u32 i = 0; i < StrLength; i++)
+    for (unsigned int i = 0; i < StrLength; i++)
     {
-      t_u32 cw0 = GetFont()->GetCharWidth(m_textline[i]);
-      t_u32 cw1 = 0;
+      unsigned int cw0 = GetFont()->GetCharWidth(m_textline[i]);
+      unsigned int cw1 = 0;
 
       if (i+1 < StrLength)
       {
@@ -182,12 +182,12 @@ namespace nux
           nCP = i;
           break;
         }
-        else if (x < total + (t_s32) cw0 / 2)
+        else if (x < total + (int) cw0 / 2)
         {
           nCP = i;
           break;
         }
-        else if (x < total + (t_s32) cw1 / 2)
+        else if (x < total + (int) cw1 / 2)
         {
           // I don't quite understand why we need this???
           nCP = i + 1;
@@ -205,7 +205,7 @@ namespace nux
     }
   }
 
-  void BaseKeyboardHandler::CaretAutoScroll(t_s32 x, t_s32 y, Geometry geo)
+  void BaseKeyboardHandler::CaretAutoScroll(int x, int y, Geometry geo)
   {
     if (m_entering_focus)
       return;
@@ -213,7 +213,7 @@ namespace nux
     if (m_textline.Length() == 0)
       return;
 
-    t_s32 StrLength = (t_s32) m_textline.Length();
+    int StrLength = (int) m_textline.Length();
 
     //nuxDebugMsg("[BaseKeyboardHandler::ResolveCaretPosition]");
     if (x < geo.x)
@@ -311,7 +311,7 @@ namespace nux
                 // If we are in overwrite mode and there is already
                 // a char at the caret's position, simply replace it.
                 // Otherwise, we insert the char as normal.
-                if ( !m_insert_mode && m_caret < (t_s32) m_textline.Length())
+                if ( !m_insert_mode && m_caret < (int) m_textline.Length())
                 {
                   m_textline[m_caret] = key;
                   PlaceCaret(m_caret + 1 );
@@ -320,7 +320,7 @@ namespace nux
                 else
                 {
                   // Insert the char
-                  if ( m_caret <= (t_s32) m_textline.Length())
+                  if ( m_caret <= (int) m_textline.Length())
                   {
                     m_textline.Insert(m_caret, 1, key);
                     PlaceCaret(m_caret + 1 );
@@ -334,7 +334,7 @@ namespace nux
               // If we are in overwrite mode and there is already
               // a char at the caret's position, simply replace it.
               // Otherwise, we insert the char as normal.
-              if ( !m_insert_mode && m_caret < (t_s32) m_textline.Length())
+              if ( !m_insert_mode && m_caret < (int) m_textline.Length())
               {
                 m_textline[m_caret] = key;
                 PlaceCaret(m_caret + 1 );
@@ -343,7 +343,7 @@ namespace nux
               else
               {
                 // Insert the char
-                if ( m_caret <= (t_s32) m_textline.Length())
+                if ( m_caret <= (int) m_textline.Length())
                 {
                   m_textline.Insert(m_caret, 1, key);
                   PlaceCaret(m_caret + 1 );
@@ -371,7 +371,7 @@ namespace nux
               // If we are in overwrite mode and there is already
               // a char at the caret's position, simply replace it.
               // Otherwise, we insert the char as normal.
-              if (!m_insert_mode && (m_caret < (t_s32) m_textline.Length()))
+              if (!m_insert_mode && (m_caret < (int) m_textline.Length()))
               {
                 m_textline[m_caret] = key;
                 PlaceCaret(m_caret + 1 );
@@ -380,7 +380,7 @@ namespace nux
               else
               {
                 // Insert the char
-                if ( m_caret <= (t_s32) m_textline.Length())
+                if ( m_caret <= (int) m_textline.Length())
                 {
                   m_textline.Insert(m_caret, 1, key);
                   PlaceCaret(m_caret + 1 );
@@ -393,7 +393,7 @@ namespace nux
               // If we are in overwrite mode and there is already
               // a char at the caret's position, simply replace it.
               // Otherwise, we insert the char as normal.
-              if (!m_insert_mode && (m_caret < (t_s32) m_textline.Length()))
+              if (!m_insert_mode && (m_caret < (int) m_textline.Length()))
               {
                 m_textline[m_caret] = key;
                 PlaceCaret(m_caret + 1 );
@@ -402,7 +402,7 @@ namespace nux
               else
               {
                 // Insert the char
-                if (m_caret <= (t_s32) m_textline.Length())
+                if (m_caret <= (int) m_textline.Length())
                 {
                   m_textline.Insert(m_caret, 1, key);
                   PlaceCaret(m_caret + 1 );
@@ -428,7 +428,7 @@ namespace nux
             // If we are in overwrite mode and there is already
             // a char at the caret's position, simply replace it.
             // Otherwise, we insert the char as normal.
-            if (!m_insert_mode && (m_caret < (t_s32) m_textline.Length()))
+            if (!m_insert_mode && (m_caret < (int) m_textline.Length()))
             {
               m_textline[m_caret] = key;
               PlaceCaret(m_caret + 1 );
@@ -437,7 +437,7 @@ namespace nux
             else
             {
               // Insert the char
-              if (m_caret <= (t_s32) m_textline.Length())
+              if (m_caret <= (int) m_textline.Length())
               {
                 m_textline.Insert(m_caret, 1, key);
                 PlaceCaret(m_caret + 1 );
@@ -463,7 +463,7 @@ namespace nux
             // If we are in overwrite mode and there is already
             // a char at the caret's position, simply replace it.
             // Otherwise, we insert the char as normal.
-            if (!m_insert_mode && (m_caret < (t_s32) m_textline.Length()))
+            if (!m_insert_mode && (m_caret < (int) m_textline.Length()))
             {
               m_textline[m_caret] = key;
               PlaceCaret(m_caret + 1 );
@@ -472,7 +472,7 @@ namespace nux
             else
             {
               // Insert the char
-              if (m_caret <= (t_s32) m_textline.Length())
+              if (m_caret <= (int) m_textline.Length())
               {
                 m_textline.Insert(m_caret, 1, key);
                 PlaceCaret(m_caret + 1 );
@@ -497,7 +497,7 @@ namespace nux
             // If we are in overwrite mode and there is already
             // a char at the caret's position, simply replace it.
             // Otherwise, we insert the char as normal.
-            if (!m_insert_mode && (m_caret < (t_s32) m_textline.Length()))
+            if (!m_insert_mode && (m_caret < (int) m_textline.Length()))
             {
               m_textline[m_caret] = key;
               PlaceCaret(m_caret + 1 );
@@ -506,7 +506,7 @@ namespace nux
             else
             {
               // Insert the char
-              if (m_caret <= (t_s32) m_textline.Length())
+              if (m_caret <= (int) m_textline.Length())
               {
                 m_textline.Insert(m_caret, 1, key);
                 PlaceCaret(m_caret + 1 );
@@ -538,11 +538,11 @@ namespace nux
 #elif defined(NUX_OS_LINUX)
       NString s = "Paste not implemented yet";
 #endif
-      t_u32 start = GetTextSelectionStart();
-      t_u32 end = GetTextSelectionEnd();
+      unsigned int start = GetTextSelectionStart();
+      unsigned int end = GetTextSelectionEnd();
       m_textline.Replace(start, end - start, s.m_string);
 
-      m_caret = start + (t_u32) s.Length();
+      m_caret = start + (unsigned int) s.Length();
       UnselectAllText();
     }
 
@@ -585,7 +585,7 @@ namespace nux
       else
       {
         // Deleting one character
-        if (m_caret < (t_s32) m_textline.Length())
+        if (m_caret < (int) m_textline.Length())
         {
           m_textline.Erase(m_caret, 1);
         }
@@ -637,7 +637,7 @@ namespace nux
           m_caret = NextWordPosition( m_caret);
           PlaceCaret(m_caret );
         }
-        else if (m_caret < (t_s32) m_textline.Length())
+        else if (m_caret < (int) m_textline.Length())
           PlaceCaret(m_caret + 1 );
 
         if ((state & NUX_STATE_SHIFT) == 0)
@@ -666,14 +666,14 @@ namespace nux
     {
       if ((state & NUX_STATE_SHIFT) == 0)
       {
-        PlaceCaret((t_u32) m_textline.Length());
+        PlaceCaret((unsigned int) m_textline.Length());
         // Shift is not down. Update selection
         // start along with the caret.
         m_selection_start = m_caret;
       }
       else
       {
-        PlaceCaret((t_u32) m_textline.Length());
+        PlaceCaret((unsigned int) m_textline.Length());
       }
     }
     else if (virtual_code == NUX_VK_ESCAPE)
@@ -695,9 +695,9 @@ namespace nux
     }
     else if (virtual_code == NUX_VK_END)
     {
-      t_u32 str_width = GetFont()->GetStringWidth(m_textline.GetTCharPtr());
+      unsigned int str_width = GetFont()->GetStringWidth(m_textline.GetTCharPtr());
 
-      if (str_width + s_cursor_width > (t_u32) m_clip_region.GetWidth())
+      if (str_width + s_cursor_width > (unsigned int) m_clip_region.GetWidth())
         m_text_positionx = m_clip_region.GetWidth() - (str_width + s_cursor_width);
       else
         m_text_positionx = 0;
@@ -719,7 +719,7 @@ namespace nux
 
   void BaseKeyboardHandler::AdjustCursorAndTextPosition()
   {
-    t_s32 str_width = GetFont()->GetStringWidth(m_textline.GetTCharPtr());
+    int str_width = GetFont()->GetStringWidth(m_textline.GetTCharPtr());
     NString temp0;
 
     if (m_caret > 0)
@@ -738,22 +738,22 @@ namespace nux
 
     NString temp1 = m_textline.GetSubString(0, m_caret).GetTStringRef();
     NString temp2 = m_textline.GetSubString(0, m_caret + 1).GetTStringRef();
-    t_s32 str_width0 = GetFont()->GetStringWidth(temp0);
-    t_s32 str_width1 = GetFont()->GetStringWidth(temp1);
-    t_s32 str_width2 = GetFont()->GetStringWidth(temp2);
+    int str_width0 = GetFont()->GetStringWidth(temp0);
+    int str_width1 = GetFont()->GetStringWidth(temp1);
+    int str_width2 = GetFont()->GetStringWidth(temp2);
 
 
     if ((m_text_positionx + str_width1 + s_cursor_width) > m_clip_region.GetWidth())
     {
       // Hitting the end of the text box
-      if (m_caret == (t_s32) m_textline.Length())
+      if (m_caret == (int) m_textline.Length())
       {
-        m_text_positionx = - (str_width + (t_s32) s_cursor_width - m_clip_region.GetWidth());
+        m_text_positionx = - (str_width + (int) s_cursor_width - m_clip_region.GetWidth());
       }
       else
       {
-        t_s32 PreviousCharWidth = str_width1 - str_width0;
-        t_s32 Offset = Min<t_s32> (s_jump_offset_at_borders, str_width + s_cursor_width - str_width1);
+        int PreviousCharWidth = str_width1 - str_width0;
+        int Offset = Min<int> (s_jump_offset_at_borders, str_width + s_cursor_width - str_width1);
 
         while (Offset > m_clip_region.GetWidth())
         {
@@ -765,9 +765,9 @@ namespace nux
 
         m_text_positionx -= Offset;
 
-        if (m_text_positionx + str_width + s_cursor_width < (t_s32) m_clip_region.GetWidth())
+        if (m_text_positionx + str_width + s_cursor_width < (int) m_clip_region.GetWidth())
         {
-          m_text_positionx = - (str_width + (t_s32) s_cursor_width - m_clip_region.GetWidth());
+          m_text_positionx = - (str_width + (int) s_cursor_width - m_clip_region.GetWidth());
         }
       }
     }
@@ -780,8 +780,8 @@ namespace nux
       }
       else
       {
-        t_s32 NextCharWidth = str_width2 - str_width1;
-        t_s32 Offset = Min<t_s32> (s_jump_offset_at_borders, str_width1);
+        int NextCharWidth = str_width2 - str_width1;
+        int Offset = Min<int> (s_jump_offset_at_borders, str_width1);
 
         while (Offset > m_clip_region.GetWidth())
         {
@@ -814,7 +814,7 @@ namespace nux
   }
   void BaseKeyboardHandler::MoveCursorAtEnd()
   {
-    t_u32 StrLength = ( t_u32) m_textline.Length();
+    unsigned int StrLength = ( unsigned int) m_textline.Length();
     m_previous_cursor_position = m_caret;
     m_caret = StrLength;
   }
@@ -835,13 +835,13 @@ namespace nux
     // Every time we set the text, we reposition the cursor at the beginning of the text,
     // and the text position is set to zero with regard to the start of the geometry area.
     MoveCursorAtStart();
-    m_selection_start = Min<t_s32> (m_selection_start, (t_s32) StringLength(str));
-    m_caret = Min<t_s32> (m_caret, (t_s32) StringLength(str));
+    m_selection_start = Min<int> (m_selection_start, (int) StringLength(str));
+    m_caret = Min<int> (m_caret, (int) StringLength(str));
 
     if (m_caret < m_selection_start)
-      m_selection_start = Max<t_s32> (m_selection_start, (t_s32) StringLength(str));
+      m_selection_start = Max<int> (m_selection_start, (int) StringLength(str));
     else if (m_caret > m_selection_start)
-      m_caret = Max<t_s32> (m_caret, (t_s32) StringLength(str));
+      m_caret = Max<int> (m_caret, (int) StringLength(str));
 
     m_text_positionx = 0;
   }
@@ -861,18 +861,18 @@ namespace nux
     m_clip_region = g;
   }
 
-  void BaseKeyboardHandler::GetTextSelection(t_s32 *start, t_s32 *end) const
+  void BaseKeyboardHandler::GetTextSelection(int *start, int *end) const
   {
     *start = Min(m_selection_start, m_caret);
     *end = Max(m_selection_start, m_caret);
   }
 
-  t_s32 BaseKeyboardHandler::GetTextSelectionStart() const
+  int BaseKeyboardHandler::GetTextSelectionStart() const
   {
     return Min(m_selection_start, m_caret);
   }
 
-  t_s32 BaseKeyboardHandler::GetTextSelectionEnd() const
+  int BaseKeyboardHandler::GetTextSelectionEnd() const
   {
     return Max(m_selection_start, m_caret);
   }
@@ -880,7 +880,7 @@ namespace nux
   void BaseKeyboardHandler::SelectAllText()
   {
     m_selection_start = 0;
-    m_caret = (t_u32) m_textline.Length();
+    m_caret = (unsigned int) m_textline.Length();
     AdjustCursorAndTextPosition();
   }
 

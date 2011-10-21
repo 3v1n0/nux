@@ -73,10 +73,10 @@ namespace nux
       if (Result == 0)
         NString (TEXT ("Unknown Program Directory") );
 
-      t_u32 i;
+      unsigned int i;
 
       // Skip the program name
-      for (i = (t_u32) StringLength (RootDirectory) - 1; i > 0; i--)
+      for (i = (unsigned int) StringLength (RootDirectory) - 1; i > 0; i--)
       {
         if ( (RootDirectory[i - 1] == NUX_BACKSLASH_CHAR) || (RootDirectory[i-1] == TEXT ('/') ) )
           break;

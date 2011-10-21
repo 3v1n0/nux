@@ -44,14 +44,14 @@ namespace nux
   {
   public:
     CRC32();
-    t_u32 FileCRC (const char *sFileName);
-    t_u32 FullCRC (const char *sData, t_u32 ulLength);
-    void PartialCRC (t_u32 *ulInCRC, const char *sData, t_u32 ulLength);
+    unsigned int FileCRC (const char *sFileName);
+    unsigned int FullCRC (const char *sData, unsigned int ulLength);
+    void PartialCRC (unsigned int *ulInCRC, const char *sData, unsigned int ulLength);
 
   private:
     void Initialize (void);
-    t_u32 Reflect (t_u32 ulReflect, char cChar);
-    t_u32 CRCTable[256]; // CRC lookup table array.
+    unsigned int Reflect (unsigned int ulReflect, char cChar);
+    unsigned int CRCTable[256]; // CRC lookup table array.
   };
 
 }

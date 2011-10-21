@@ -41,7 +41,7 @@ namespace nux
   // Compute the frame rate every FRAME_RATE_PERIODE;
   #define FRAME_RATE_PERIODE    10
 
-  void ClipOrCenterRectToMonitor(LPRECT prc, t_u32 flags)
+  void ClipOrCenterRectToMonitor(LPRECT prc, unsigned int flags)
   {
     HMONITOR hMonitor;
     MONITORINFO mi;
@@ -530,7 +530,7 @@ namespace nux
     // When not in 64-bit you can disable the warning:
     // Project Properties --> C/C++ tab --> General --> Select "NO" for - Detect 64-bit Portability Issues.
     // See also SetWindowLongPtr
-    SetWindowLongPtr(wnd_handle_, GWLP_USERDATA, (NUX_PTRSIZE_LONG) this);
+    SetWindowLongPtr(wnd_handle_, GWLP_USERDATA, (long) this);
 
     //::ShowWindow(wnd_handle_,SW_SHOW);           // Show The Window
     ::SetForegroundWindow(wnd_handle_);           // Slightly Higher Priority

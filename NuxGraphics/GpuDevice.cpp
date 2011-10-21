@@ -270,7 +270,7 @@ namespace nux
   }
 
 #if defined(NUX_OS_WINDOWS)
-  GpuDevice::GpuDevice(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat,
+  GpuDevice::GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
     HDC device_context,
     HGLRC &opengl_rendering_context,
     int req_opengl_major,
@@ -278,7 +278,7 @@ namespace nux
     bool opengl_es_20)
 #elif defined(NUX_OS_LINUX)
 #ifdef NUX_OPENGLES_20
-  GpuDevice::GpuDevice(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat,
+  GpuDevice::GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
     Display *display,
     Window window,
     bool has_glx_13_support,
@@ -288,7 +288,7 @@ namespace nux
     int req_opengl_minor,
     bool opengl_es_20)
 #else
-  GpuDevice::GpuDevice(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat,
+  GpuDevice::GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
     Display *display,
     Window window,
     bool has_glx_13_support,
@@ -732,9 +732,9 @@ namespace nux
 
   int GpuDevice::AllocateUnpackPixelBufferIndex(int *index)
   {
-    t_u32 num = (t_u32) _PixelBufferArray.size();
+    unsigned int num = (unsigned int) _PixelBufferArray.size();
 
-    for (t_u32 i = 0; i < num; i++)
+    for (unsigned int i = 0; i < num; i++)
     {
       if (_PixelBufferArray[i].IsReserved == FALSE)
       {
@@ -755,7 +755,7 @@ namespace nux
 
   int GpuDevice::FreeUnpackPixelBufferIndex(const int index)
   {
-    t_s32 num = (t_s32) _PixelBufferArray.size();
+    int num = (int) _PixelBufferArray.size();
     nuxAssertMsg((index >= 0) && (index < num), "[GpuDevice::FreeUnpackPixelBufferIndex] Trying to Free a pixel buffer index that does not exist.");
 
     if ((index < 0) || (index >= num))
@@ -822,7 +822,7 @@ namespace nux
 
   int GpuDevice::BindUnpackPixelBufferIndex(const int index)
   {
-    t_s32 num = (t_s32) _PixelBufferArray.size();
+    int num = (int) _PixelBufferArray.size();
     nuxAssertMsg((index >= 0) && (index < num), "[GpuDevice::BindUnpackPixelBufferIndex] Trying to bind an invalid pixel buffer index.");
 
     if ((index < 0) || (index >= num))
@@ -843,7 +843,7 @@ namespace nux
 
   int GpuDevice::BindPackPixelBufferIndex(const int index)
   {
-    t_s32 num = (t_s32) _PixelBufferArray.size();
+    int num = (int) _PixelBufferArray.size();
     nuxAssertMsg((index >= 0) && (index < num), "[GpuDevice::BindPackPixelBufferIndex] Trying to bind an invalid pixel buffer index.");
 
     if ((index < 0) || (index >= num))
@@ -862,7 +862,7 @@ namespace nux
     return OGL_OK;
   }
 
-  int GpuDevice::FormatFrameBufferObject(t_u32 Width, t_u32 Height, BitmapFormat PixelFormat)
+  int GpuDevice::FormatFrameBufferObject(unsigned int Width, unsigned int Height, BitmapFormat PixelFormat)
   {
     if (!GetGpuInfo().Support_EXT_Framebuffer_Object())
     {
@@ -873,7 +873,7 @@ namespace nux
     return _FrameBufferObject->FormatFrameBufferObject(Width, Height, PixelFormat);
   }
 
-  int GpuDevice::SetColorRenderTargetSurface(t_u32 ColorAttachmentIndex, ObjectPtr<IOpenGLSurface> pRenderTargetSurface)
+  int GpuDevice::SetColorRenderTargetSurface(unsigned int ColorAttachmentIndex, ObjectPtr<IOpenGLSurface> pRenderTargetSurface)
   {
     if (!GetGpuInfo().Support_EXT_Framebuffer_Object())
     {
@@ -895,7 +895,7 @@ namespace nux
     return _FrameBufferObject->SetDepthSurface(pDepthSurface);
   }
 
-  ObjectPtr<IOpenGLSurface> GpuDevice::GetColorRenderTargetSurface(t_u32 ColorAttachmentIndex)
+  ObjectPtr<IOpenGLSurface> GpuDevice::GetColorRenderTargetSurface(unsigned int ColorAttachmentIndex)
   {
     if (!GetGpuInfo().Support_EXT_Framebuffer_Object())
     {

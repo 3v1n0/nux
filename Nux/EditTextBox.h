@@ -55,9 +55,9 @@ namespace nux
     void SetText(const tstring &Caption);
     void SetText(const NString &Caption);
     const char *GetText() const;
-    t_u32 GetTextSize() const
+    unsigned int GetTextSize() const
     {
-      return (t_u32) m_Text.Length();
+      return (unsigned int) m_Text.Length();
     }
 
     void SetDoubleValue(double d);

@@ -34,10 +34,10 @@ namespace nux
   public:
     int GetData(
       int *pData,
-      t_u32 Size,
-      t_u32 GetDataFlags
+      unsigned int Size,
+      unsigned int GetDataFlags
     );
-    t_u32 GetDataSize();
+    unsigned int GetDataSize();
 
     void GetDevice(
       GpuDevice **ppDevice
@@ -46,7 +46,7 @@ namespace nux
     QUERY_TYPE GetType();
 
     void Issue(
-      t_u32 IssueFlags
+      unsigned int IssueFlags
     );
 
     // Convenient functions
@@ -66,7 +66,7 @@ namespace nux
     QUERY_TYPE _Type;
     bool _QueryStarted;
     friend class GpuDevice;
-    static t_u32 _CurrentlyActiveQuery;
+    static unsigned int _CurrentlyActiveQuery;
   };
 
 }

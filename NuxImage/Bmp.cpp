@@ -361,10 +361,10 @@ namespace nux
 
 
     bmp_data_pointer = bmp_buffer;
-    t_u32 image_width = TextureObjectData->GetSurface(0).GetWidth();
-    t_u32 image_height = TextureObjectData->GetSurface(0).GetHeight();
-    t_u32 i, j;
-    t_u32 value;
+    unsigned int image_width = TextureObjectData->GetSurface(0).GetWidth();
+    unsigned int image_height = TextureObjectData->GetSurface(0).GetHeight();
+    unsigned int i, j;
+    unsigned int value;
 
     // 32 bits RGBA pixels
     if (infoheader.biBitCount == 32)
@@ -430,9 +430,9 @@ namespace nux
       }
       else
       {
-        t_u32 ix, iy = image_height - 1;
-        t_u32 val, valS, skip;
-        t_u32 index = 0;
+        unsigned int ix, iy = image_height - 1;
+        unsigned int val, valS, skip;
+        unsigned int index = 0;
 
         while (iy >= 0)
         {
@@ -710,13 +710,13 @@ namespace nux
     }
 
 
-    t_s32 i, j;
+    int i, j;
 
     for (j = 0; j < image->GetSurface(0).GetHeight(); j++)
     {
       for (i = 0; i < image->GetSurface(0).GetWidth(); i++)
       {
-        t_u32 gba = image->GetSurface(0).Read(i, image->GetSurface(0).GetHeight() - 1 - j);
+        unsigned int gba = image->GetSurface(0).Read(i, image->GetSurface(0).GetHeight() - 1 - j);
         file.write((char *) &gba, 3);
       }
     }

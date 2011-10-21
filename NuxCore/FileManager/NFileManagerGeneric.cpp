@@ -49,7 +49,7 @@ namespace nux
     }
     else
     {
-      t_u32 Size = Src->GetFileSize();
+      unsigned int Size = Src->GetFileSize();
       NSerializer *Dest = CreateFileWriter (DestFile.GetTCharPtr(), (OverWriteExisting ? 0 : FILEWRITE_NOREPLACEEXISTING) | (OverWriteReadOnly ? FILEWRITE_EVENIFREADONLY : 0) );
 
       if (!Dest)
@@ -58,12 +58,12 @@ namespace nux
       }
       else
       {
-        t_u32 Percent = 0, NewPercent = 0;
+        unsigned int Percent = 0, NewPercent = 0;
         BYTE Buffer[COPYBLOCKSIZE];
 
-        for (t_u32 Total = 0; Total < Size; Total += sizeof (Buffer) )
+        for (unsigned int Total = 0; Total < Size; Total += sizeof (Buffer) )
         {
-          t_u32 Count = Min<t_u32> (Size - Total, (t_u32) sizeof (Buffer) );
+          unsigned int Count = Min<unsigned int> (Size - Total, (unsigned int) sizeof (Buffer) );
           Src->Serialize (Buffer, Count);
 
           if (Src->IsError() )
@@ -156,7 +156,7 @@ namespace nux
   {
     // Support code for making a directory tree.
     nuxAssert (CreateCompletePath);
-    t_u32 SlashCount = 0, CreateCount = 0;
+    unsigned int SlashCount = 0, CreateCount = 0;
 
     for (TCHAR Full[256] = TEXT (""), *Ptr = Full; ; *Ptr++ = *Path++)
     {
@@ -185,7 +185,7 @@ namespace nux
     nuxAssert (DeleteContentFirst);
     nuxAssert (Path != NULL);
 
-    t_size PathLength = StringLength (Path);
+    size_t PathLength = StringLength (Path);
 
     if (PathLength == 0)
       return false;
@@ -200,7 +200,7 @@ namespace nux
     std::vector<NString> List;
     FindFiles (List, *WildcardPath, 1, 0);
 
-    for (t_u32 i = 0; i < List.size(); i++)
+    for (unsigned int i = 0; i < List.size(); i++)
     {
       if (!Delete (* (NString (Path) + NUX_BACKSLASH_CHAR + List[i]), 1) )
         return 0;
@@ -209,7 +209,7 @@ namespace nux
     List.clear();
     FindFiles (List, *WildcardPath, 0, 1);
 
-    for (t_u32 i = 0; i < List.size(); i++)
+    for (unsigned int i = 0; i < List.size(); i++)
     {
       if (!DeleteDirectory (* (NString (Path) + NUX_BACKSLASH_CHAR + List[i]), true) )
         return 0;
@@ -236,7 +236,7 @@ namespace nux
     nuxAssert (Extension);
 
     NString FullPath (Filename);
-    const t_size IndexMarker = FullPath.Length();			// Marks location of the four-digit index.
+    const size_t IndexMarker = FullPath.Length();			// Marks location of the four-digit index.
     FullPath += TEXT ("0000.");
     FullPath += Extension;
 

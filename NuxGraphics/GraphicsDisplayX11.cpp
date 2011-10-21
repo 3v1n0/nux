@@ -1156,7 +1156,7 @@ namespace nux
 //     m_pEvent->e_y_root = 0;
 
     // Erase mouse event and mouse doubleclick events. Keep the mouse states.
-    t_uint32 _mouse_state = m_pEvent->e_mouse_state & 0x0F000000;
+    unsigned int _mouse_state = m_pEvent->e_mouse_state & 0x0F000000;
 
     m_pEvent->e_event = NUX_MOUSE_MOVE;
 

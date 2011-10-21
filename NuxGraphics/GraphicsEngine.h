@@ -61,8 +61,8 @@ namespace nux
     ~ROPConfig();
 
     bool Blend;
-    t_u32 SrcBlend;
-    t_u32 DstBlend;
+    unsigned int SrcBlend;
+    unsigned int DstBlend;
 
     static ROPConfig Default;
   };

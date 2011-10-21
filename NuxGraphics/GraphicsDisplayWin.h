@@ -226,7 +226,7 @@ namespace nux
     HCURSOR GetWindowCursor() const;
 
     void ProcessForeignWin32Event(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, Event *event);
-    LRESULT ProcessWin32Event(HWND hWnd, t_u32 uMsg, WPARAM wParam, LPARAM lParam);
+    LRESULT ProcessWin32Event(HWND hWnd, unsigned int uMsg, WPARAM wParam, LPARAM lParam);
 
     //! Pause graphics rendering.
     /*!
@@ -300,7 +300,7 @@ namespace nux
   };
 
   LRESULT CALLBACK WndProcManager(HWND    hWnd,          // Handle For This Window
-                                   t_u32   uMsg,           // Message For This Window
+                                   unsigned int   uMsg,           // Message For This Window
                                    WPARAM  wParam,         // Additional Message Information
                                    LPARAM  lParam);        // Additional Message Information
 

@@ -137,7 +137,7 @@ namespace nux
     int DelayUntilNextTimerExpires();
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-    int ExecTimerHandler (t_u32 timer_id);
+    int ExecTimerHandler (unsigned int timer_id);
 #else
     int ExecTimerHandler();
 #endif
@@ -148,7 +148,7 @@ namespace nux
   private:
     bool m_IsProceesingTimers;
     TimerObject *AddHandle (TimerObject *handle);
-    t_u32 GetNumPendingHandler();
+    unsigned int GetNumPendingHandler();
 
     //! Single linked list of timer delays.
     TimerObject *m_timer_object_queue;

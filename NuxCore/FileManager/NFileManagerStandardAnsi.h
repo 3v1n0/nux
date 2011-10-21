@@ -32,15 +32,15 @@ namespace nux
   class NSerializeFileReader : public NSerializer
   {
   public:
-    NSerializeFileReader (FILE *InFile, LogOutputDevice *InError, t_int InSize);
+    NSerializeFileReader (FILE *InFile, LogOutputDevice *InError, int InSize);
     ~NSerializeFileReader();
 
-    virtual bool Precache (t_int PrecacheOffset, t_int PrecacheSize);
-    virtual t_s64 Seek (t_s64 InPos, NSerializer::SeekPos seekpos);
-    virtual t_s64 Tell();
-    virtual t_s64 GetFileSize();
+    virtual bool Precache (int PrecacheOffset, int PrecacheSize);
+    virtual long long Seek (long long InPos, NSerializer::SeekPos seekpos);
+    virtual long long Tell();
+    virtual long long GetFileSize();
     virtual bool Close();
-    virtual void SerializeFinal (void *Dest, t_s64 Length);
+    virtual void SerializeFinal (void *Dest, long long Length);
     virtual bool isReader()
     {
       return true;
@@ -53,12 +53,12 @@ namespace nux
   protected:
     FILE			*m_File;
     LogOutputDevice	*m_Error;
-    t_int				m_FileSize;
-    t_int				m_FilePos;
-    t_int				BufferBase;
-    t_int				BufferCount;
+    int				m_FileSize;
+    int				m_FilePos;
+    int				BufferBase;
+    int				BufferCount;
     BYTE               *m_PreCacheBuffer;
-    static const t_int  sBufferSize;
+    static const int  sBufferSize;
   };
 
   class NSerializeFileWriter : public NSerializer
@@ -67,11 +67,11 @@ namespace nux
     NSerializeFileWriter (FILE *InFile, LogOutputDevice *InError);
     ~NSerializeFileWriter();
 
-    virtual t_s64 Seek (t_s64 InPos, NSerializer::SeekPos seekpos);
-    virtual t_s64 Tell();
-    virtual t_s64 GetFileSize();
+    virtual long long Seek (long long InPos, NSerializer::SeekPos seekpos);
+    virtual long long Tell();
+    virtual long long GetFileSize();
     virtual bool Close();
-    virtual void SerializeFinal (void *Src, t_s64 Length);
+    virtual void SerializeFinal (void *Src, long long Length);
     virtual void Flush();
     virtual bool isReader()
     {
@@ -85,10 +85,10 @@ namespace nux
   protected:
     FILE               *m_File;
     LogOutputDevice	*m_Error;
-    t_int               m_FilePos;
-    t_int               m_CachePos;
+    int               m_FilePos;
+    int               m_CachePos;
     BYTE               *m_CacheBuffer;
-    static const t_int  sBufferSize;
+    static const int  sBufferSize;
   };
 
   class NFileManagerAnsi : public NFileManagerGeneric

@@ -38,7 +38,7 @@ namespace nux
 
     Matrix2x2<T> (const Matrix2x2<T>&);
     Matrix2x2<T>&   operator = (const Matrix2x2<T>&);
-    t_bool          operator == (const Matrix2x2<T>&);
+    bool          operator == (const Matrix2x2<T>&);
     Matrix2x2<T>    operator * (const Matrix2x2<T>&) const;
     Matrix2x2<T>    operator + (const Matrix2x2<T>&) const;
     Matrix2x2<T>    operator - (const Matrix2x2<T>&) const;
@@ -187,7 +187,7 @@ namespace nux
   }
 
   template <typename T>
-  t_bool Matrix2x2<T>::operator == (const Matrix2x2<T>& M)
+  bool Matrix2x2<T>::operator == (const Matrix2x2<T>& M)
   {
     for (int i = 0; i < 2; i++)
       for (int j = 0; j < 2; j++)
