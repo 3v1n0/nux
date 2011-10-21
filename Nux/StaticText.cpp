@@ -209,7 +209,7 @@ namespace nux
     nux::GetPainter().PaintBackground(graphics_engine, base);
 
     // Get the current blend states. They will be restored later.
-    t_u32 alpha = 0, src = 0, dest = 0;
+    unsigned int alpha = 0, src = 0, dest = 0;
     graphics_engine.GetRenderStates().GetBlend(alpha, src, dest);
 
     graphics_engine.GetRenderStates().SetBlend(true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -276,6 +276,7 @@ namespace nux
     // Calling SetBaseSize will trigger a layout request of this view and all of its parents.
     SetBaseSize(sz.width, sz.height);
 
+    update_text_rendering_ = true;
     text_changed.emit(this);
     QueueDraw();
   }
