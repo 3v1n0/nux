@@ -37,10 +37,11 @@ namespace nux
     int Width
     , int Height
     , int Levels
-    , BitmapFormat PixelFormat)
+    , BitmapFormat PixelFormat
+    , NUX_FILE_LINE_DECL)
   {
     IOpenGLTexture2D *ptr;
-    CreateTexture(Width, Height, Levels, PixelFormat, (IOpenGLTexture2D **) &ptr);
+    CreateTexture(Width, Height, Levels, PixelFormat, (IOpenGLTexture2D **) &ptr, NUX_FILE_LINE_PARAM);
     ObjectPtr<IOpenGLTexture2D> h = ObjectPtr<IOpenGLTexture2D> (ptr);
     ptr->UnReference();
     return h;
@@ -50,10 +51,9 @@ namespace nux
     unsigned int Width
     , unsigned int Height
     , unsigned int Levels
-    //, DWORD Usage    // no use
     , BitmapFormat PixelFormat
     , IOpenGLTexture2D **ppTexture
-    //, HANDLE* pSharedHandle       // no use
+    , NUX_FILE_LINE_DECL
     )
   {
     // From : http://oss.sgi.com/projects/ogl-sample/registry/ARB/texture_non_power_of_two.txt
@@ -92,19 +92,20 @@ namespace nux
     //        is the dimension of level N+1.  The recursion stops when level
     //        numLevels-1 is reached.
 
-    *ppTexture = new IOpenGLTexture2D(Width, Height, NumMipLevel, PixelFormat, false, NUX_TRACKER_LOCATION);
+    *ppTexture = new IOpenGLTexture2D(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM);
 
     return 1;
   }
 
-  ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture2DFromID(int id,
-    int width,
-    int height,
-    int levels,
-    BitmapFormat pixel_format)
+  ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture2DFromID(int id
+    , int width
+    , int height
+    , int levels
+    , BitmapFormat pixel_format
+    , NUX_FILE_LINE_DECL)
   {
     IOpenGLTexture2D *ptr;
-    ptr = new IOpenGLTexture2D(width, height, levels, pixel_format, true, NUX_TRACKER_LOCATION); // ref count = 1;
+    ptr = new IOpenGLTexture2D(width, height, levels, pixel_format, true, NUX_FILE_LINE_PARAM); // ref count = 1;
     ptr->_OpenGLID = id;
     ObjectPtr<IOpenGLTexture2D> h = ObjectPtr<IOpenGLTexture2D> (ptr); // ref count = 2
     ptr->UnReference(); // ref count = 1
@@ -115,10 +116,11 @@ namespace nux
     int Width
     , int Height
     , int Levels
-    , BitmapFormat PixelFormat)
+    , BitmapFormat PixelFormat
+    , NUX_FILE_LINE_DECL)
   {
     IOpenGLRectangleTexture *ptr;
-    CreateRectangleTexture(Width, Height, Levels, PixelFormat, (IOpenGLRectangleTexture **) &ptr);
+    CreateRectangleTexture(Width, Height, Levels, PixelFormat, (IOpenGLRectangleTexture **) &ptr, NUX_FILE_LINE_PARAM);
     ObjectPtr<IOpenGLRectangleTexture> h = ObjectPtr<IOpenGLRectangleTexture> (ptr);
     ptr->UnReference();
     return h;
@@ -128,10 +130,9 @@ namespace nux
     unsigned int Width
     , unsigned int Height
     , unsigned int Levels
-    //, DWORD Usage    // no use
     , BitmapFormat PixelFormat
     , IOpenGLRectangleTexture **ppTexture
-    //, HANDLE* pSharedHandle       // no use
+    , NUX_FILE_LINE_DECL
     )
   {
 
@@ -172,7 +173,7 @@ namespace nux
     //        is the dimension of level N+1.  The recursion stops when level
     //        numLevels-1 is reached.
 
-    *ppTexture = new IOpenGLRectangleTexture(Width, Height, NumMipLevel, PixelFormat, false, NUX_TRACKER_LOCATION);
+    *ppTexture = new IOpenGLRectangleTexture(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM);
 
 
     return 1;
@@ -181,7 +182,8 @@ namespace nux
   ObjectPtr<IOpenGLCubeTexture> GpuDevice::CreateCubeTexture(
     int EdgeLength
     , int Levels
-    , BitmapFormat PixelFormat)
+    , BitmapFormat PixelFormat
+    , NUX_FILE_LINE_DECL)
   {
     IOpenGLCubeTexture *ptr;
     CreateCubeTexture(EdgeLength, Levels, PixelFormat, (IOpenGLCubeTexture **) &ptr);
@@ -193,10 +195,9 @@ namespace nux
   int GpuDevice::CreateCubeTexture(
     unsigned int EdgeLength
     , unsigned int Levels
-    //, DWORD Usage    // no use
     , BitmapFormat PixelFormat
     , IOpenGLCubeTexture **ppCubeTexture
-    //, HANDLE* pSharedHandle    // no use
+    , NUX_FILE_LINE_DECL
     )
   {
     unsigned int NumTotalMipLevel    = 1 + floorf(Log2(EdgeLength));
@@ -229,10 +230,11 @@ namespace nux
     , int Height
     , int Depth
     , int Levels
-    , BitmapFormat PixelFormat)
+    , BitmapFormat PixelFormat
+    , NUX_FILE_LINE_DECL)
   {
     IOpenGLVolumeTexture *ptr;
-    CreateVolumeTexture(Width, Height, Depth, Levels, PixelFormat, (IOpenGLVolumeTexture **) &ptr);
+    CreateVolumeTexture(Width, Height, Depth, Levels, PixelFormat, (IOpenGLVolumeTexture **) &ptr, NUX_FILE_LINE_PARAM);
     ObjectPtr<IOpenGLVolumeTexture> h = ObjectPtr<IOpenGLVolumeTexture> (ptr);
     ptr->UnReference();
     return h;
@@ -243,10 +245,9 @@ namespace nux
     , unsigned int Height
     , unsigned int Depth
     , unsigned int Levels
-    //, DWORD Usage        // no use
     , BitmapFormat PixelFormat
     , IOpenGLVolumeTexture **ppVolumeTexture
-    //, HANDLE* pSharedHandle       // no use
+    , NUX_FILE_LINE_DECL
     )
   {
     unsigned int NumTotalMipLevel = 1 + floorf(Log2(Max(Max(Width, Height), Depth)));

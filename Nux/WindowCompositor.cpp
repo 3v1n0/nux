@@ -81,14 +81,24 @@ logging::Logger logger("nux.window");
 
     // At this stage, the size of the window may not be known yet.
     // FormatRenderTargets will be called the first time runtime gets into WindowThread::ExecutionLoop
-    m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_R8G8B8A8);
-    m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_D24S8);
+    m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+    m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
 
     _menu_chain = new std::list<MenuPage*>;
     m_PopupRemoved = false;
     m_MenuRemoved = false;
     m_ModalWindow = NULL;
     m_Background = new ColorLayer(Color(0xFF4D4D4D));
+  }
+
+  void WindowCompositor::BeforeDestructor()
+  {
+    if (key_focus_area_)
+    {
+      key_focus_area_->ResetDownwardPathToKeyFocusArea();
+      key_focus_area_->ResetUpwardPathToKeyFocusArea();
+      key_focus_area_ = NULL;
+    }
   }
 
   WindowCompositor::~WindowCompositor()
@@ -141,8 +151,8 @@ logging::Logger logger("nux.window");
 
       // Don't size the texture to the dimension of the window yet. this will be done later.
       auto device = GetGraphicsDisplay()->GetGpuDevice();
-      rt.color_rt = device->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_R8G8B8A8);
-      rt.depth_rt = device->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_D24S8);
+      rt.color_rt = device->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+      rt.depth_rt = device->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
 
       _window_to_texture_map[window] = rt;
 
@@ -1420,8 +1430,8 @@ logging::Logger logger("nux.window");
             if ((rt.color_rt->GetWidth() != buffer_width) ||
                 (rt.color_rt->GetHeight() != buffer_height))
             {
-              rt.color_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-              rt.depth_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_D24S8);
+              rt.color_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+              rt.depth_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
             }
 
             m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
@@ -1538,8 +1548,8 @@ logging::Logger logger("nux.window");
 
     if ((!m_MainColorRT.IsValid()) || (!m_MainDepthRT.IsValid()) || (m_MainColorRT->GetWidth() != buffer_width) || (m_MainColorRT->GetHeight() != buffer_height))
     {
-      m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-      m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_D24S8);
+      m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+      m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
     }
 
     m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
@@ -1834,6 +1844,9 @@ logging::Logger logger("nux.window");
   {
     if (key_focus_area_ == area)
     {
+      key_focus_area_->ResetDownwardPathToKeyFocusArea();
+      key_focus_area_->ResetUpwardPathToKeyFocusArea();
+
       key_focus_area_ = NULL;
     }
   }
@@ -1949,8 +1962,8 @@ logging::Logger logger("nux.window");
     nuxAssert(buffer_width >= 1);
     nuxAssert(buffer_height >= 1);
 
-    m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-    m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_D24S8);
+    m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+    m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
 
     // Clear the buffer the first time...
     m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
@@ -1968,10 +1981,10 @@ logging::Logger logger("nux.window");
     CHECKGL(glClearStencil(0));
     CHECKGL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
-//     m_BlurTexture   = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(Max(buffer_width, 1), Max(buffer_height, 1), 1, BITFMT_R8G8B8A8);
-//     m_FullSceneMip0 = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(Max(buffer_width / 2, 1), Max(buffer_height / 2, 1), 1, BITFMT_R8G8B8A8);
-//     m_FullSceneMip1 = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(Max(buffer_width / 4, 1), Max(buffer_height / 4, 1), 1, BITFMT_R8G8B8A8);
-//     m_FullSceneMip2 = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(Max(buffer_width / 8, 1), Max(buffer_height / 8, 1), 1, BITFMT_R8G8B8A8);
+//     m_BlurTexture   = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(Max(buffer_width, 1), Max(buffer_height, 1), 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+//     m_FullSceneMip0 = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(Max(buffer_width / 2, 1), Max(buffer_height / 2, 1), 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+//     m_FullSceneMip1 = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(Max(buffer_width / 4, 1), Max(buffer_height / 4, 1), 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+//     m_FullSceneMip2 = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(Max(buffer_width / 8, 1), Max(buffer_height / 8, 1), 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
   }
 
   void WindowCompositor::RestoreRenderingSurface()
@@ -1992,8 +2005,8 @@ logging::Logger logger("nux.window");
 
       if ((rt.color_rt->GetWidth() != buffer_width) || (rt.color_rt->GetHeight() != buffer_height))
       {
-        rt.color_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-        rt.depth_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_D24S8);
+        rt.color_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+        rt.depth_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
       }
 
       m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);

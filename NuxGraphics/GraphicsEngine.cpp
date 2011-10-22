@@ -141,9 +141,9 @@ namespace nux
 
   FxStructure::FxStructure()
   {
-    src_texture = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(1, 1, 1, nux::BITFMT_R8G8B8A8);
-    dst_texture = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(1, 1, 1, nux::BITFMT_R8G8B8A8);
-    temp_texture = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(1, 1, 1, nux::BITFMT_R8G8B8A8);
+    src_texture = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(1, 1, 1, nux::BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+    dst_texture = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(1, 1, 1, nux::BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+    temp_texture = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(1, 1, 1, nux::BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
   }
 
   FxStructure::~FxStructure()
@@ -297,10 +297,10 @@ namespace nux
       if (gpu_info.Support_EXT_Framebuffer_Object())
         _offscreen_fbo = _graphics_display.GetGpuDevice()->CreateFrameBufferObject();
 
-      _offscreen_color_rt0  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
-      _offscreen_color_rt1  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
-      _offscreen_color_rt2  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
-      _offscreen_color_rt3  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
+      _offscreen_color_rt0  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+      _offscreen_color_rt1  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+      _offscreen_color_rt2  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+      _offscreen_color_rt3  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
     }
   }
 
@@ -1327,13 +1327,13 @@ namespace nux
   {
     if ((colorbuffer.IsValid() == false) || (colorbuffer->GetWidth() != width) || (colorbuffer->GetHeight() != height))
     {
-      colorbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_R8G8B8A8);
+      colorbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
     }
 
     if ((depthbuffer.IsValid()) && ((depthbuffer->GetWidth() != width) || (depthbuffer->GetHeight() != height)))
     {
       // Generate a new depth texture only if a valid one was passed to this function.
-      depthbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_D24S8);
+      depthbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
     }
 
     fbo->FormatFrameBufferObject(width, height, BITFMT_R8G8B8A8);
@@ -1421,7 +1421,7 @@ namespace nux
       Y = bb_height - Y - H;
     }
 
-    ObjectPtr <IOpenGLBaseTexture> device_texture = _graphics_display.GetGpuDevice()->CreateSystemCapableDeviceTexture(W, H, 1, BITFMT_R8G8B8A8);
+    ObjectPtr <IOpenGLBaseTexture> device_texture = _graphics_display.GetGpuDevice()->CreateSystemCapableDeviceTexture(W, H, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
     ObjectPtr <IOpenGLSurface> sfc = device_texture->GetSurfaceLevel(0);
 
     sfc->CopyRenderTarget(X, Y, W, H);

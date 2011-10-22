@@ -414,7 +414,7 @@ namespace nux
     m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(SourceTexture->GetWidth(),
                 SourceTexture->GetHeight(),
                 SourceTexture->GetNumMipLevel(),
-                SourceTexture->GetFormat());
+                SourceTexture->GetFormat(), NUX_TRACKER_LOCATION);
 
     for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
     {
@@ -446,7 +446,7 @@ namespace nux
       m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetNumMipLevel(),
-                  SourceTexture->GetFormat());
+                  SourceTexture->GetFormat(), NUX_TRACKER_LOCATION);
 
       for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
       {
@@ -566,7 +566,7 @@ namespace nux
     m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateRectangleTexture(SourceTexture->GetWidth(),
                 SourceTexture->GetHeight(),
                 SourceTexture->GetNumMipLevel(),
-                SourceTexture->GetFormat());
+                SourceTexture->GetFormat(), NUX_TRACKER_LOCATION);
 
     for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
     {
@@ -598,7 +598,7 @@ namespace nux
       m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateRectangleTexture(SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetNumMipLevel(),
-                  SourceTexture->GetFormat());
+                  SourceTexture->GetFormat(), NUX_TRACKER_LOCATION);
 
       for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
       {

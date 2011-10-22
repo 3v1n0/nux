@@ -41,7 +41,7 @@ namespace nux
   {
     for (int i = 0; i < Depth; i++)
     {
-      ObjectPtr<IOpenGLBaseTexture> Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(Width, Height, 1, PixelFormat);
+      ObjectPtr<IOpenGLBaseTexture> Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(Width, Height, 1, PixelFormat, NUX_TRACKER_LOCATION);
       _FrameTextureArray.push_back(Texture);
       _FrameTimeArray.push_back(41); // 41 ms = 24 frames/second
     }
