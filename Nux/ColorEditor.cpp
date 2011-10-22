@@ -361,6 +361,7 @@ namespace nux
     delete m_HueShader;
     delete m_SaturationShader;
     delete m_ValueShader;
+    radiogroup->UnReference();
   }
 
   void ColorEditor::PreLayoutManagement()

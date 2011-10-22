@@ -53,7 +53,6 @@ namespace nux
     _title_bar_height           = 20;
 
     _minimize_button    = new InputArea(NUX_TRACKER_LOCATION);
-    _minimize_button->Reference();
     _minimize_button->SetParentObject(this);
 
     _resize_handle      = new InputArea(NUX_TRACKER_LOCATION);
