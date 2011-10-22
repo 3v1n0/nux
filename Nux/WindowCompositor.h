@@ -154,6 +154,7 @@ namespace nux
       const char* text,
       int key_repeat_count);
 
+
     //! The InputArea that has the keyboard navigation focus.
     /*!
         The InputArea that has the mouse focus also has the keyboard focus. That is if _mouse_focus_area is not Null
@@ -579,6 +580,14 @@ namespace nux
     std::list<InputArea*> keyboard_grab_stack_;
 
   private:
+
+    //! Perform some action before destruction.
+    /*!
+        Perform some action before destruction. This function should only be 
+        called from WindowThread::ThreadDtor(). It will invalidate the area that currently has the keyboard focus.
+    */
+    void BeforeDestructor();
+
     WindowCompositor(const WindowCompositor &);
     // Does not make sense for a singleton. This is a self assignment.
     WindowCompositor &operator= (const WindowCompositor &);

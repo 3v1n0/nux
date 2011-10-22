@@ -31,9 +31,87 @@ namespace nux
 
   NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLSurface);
 
+  IOpenGLSurface::IOpenGLSurface(IOpenGLBaseTexture *DeviceBaseTexture
+    , GLenum OpenGLID
+    , GLenum TextureTarget
+    , GLenum SurfaceTarget
+    , int MipLevel
+    , int Slice
+    , NUX_FILE_LINE_DECL)
+    : IOpenGLResource(RTSURFACE, NUX_FILE_LINE_PARAM)
+    , _STextureTarget(TextureTarget)
+    , _SSurfaceTarget(SurfaceTarget)
+    , _SMipLevel(MipLevel)
+    , _SSlice(Slice)
+    , _BaseTexture(DeviceBaseTexture)
+    , _AllocatedUnpackBuffer(0xFFFFFFFF)
+  {
+    // IOpenGLSurface surfaces are created inside a IOpenGLTexture2D, IOpenGLCubeTexture and IOpenGLVolumeTexture.
+    // They reside within those classes. The reference counting starts once a call to GetSurfaceLevel,
+    // GetCubeMapSurface or GetVolumeLevel is made to the container object.
+    _RefCount = 0;
+    _OpenGLID = OpenGLID;
+    _LockedRect.pBits = 0;
+    _LockedRect.Pitch = 0;
+    _CompressedDataSize = 0;
+    _Initialized = 0;
+  }
+
   IOpenGLSurface::~IOpenGLSurface()
   {
 
+  }
+
+  BitmapFormat IOpenGLSurface::GetPixelFormat() const
+  {
+    if (_BaseTexture == 0)
+    {
+      nuxAssert(0);  // should not happen
+      return BITFMT_UNKNOWN;
+    }
+
+    return _BaseTexture->GetPixelFormat();
+  }
+
+  int IOpenGLSurface::GetWidth() const
+  {
+    if (_BaseTexture == 0)
+    {
+      nuxAssert(0);  // should not happen
+      return 0;
+    }
+
+    return ImageSurface::GetLevelDim(_BaseTexture->_PixelFormat, _BaseTexture->_Width, _SMipLevel);
+  }
+
+  int IOpenGLSurface::GetHeight() const
+  {
+    if (_BaseTexture == 0)
+    {
+      nuxAssert(0);  // should not happen
+      return 0;
+    }
+
+    return ImageSurface::GetLevelDim(_BaseTexture->_PixelFormat, _BaseTexture->_Height, _SMipLevel);
+  }
+
+  int IOpenGLSurface::GetMipLevel() const
+  {
+    return _SMipLevel;
+  }
+
+  int IOpenGLSurface::GetSurfaceTarget() const
+  {
+    return _SSurfaceTarget;
+  }
+
+  int IOpenGLSurface::GetDesc(SURFACE_DESC *pDesc)
+  {
+    pDesc->Width    = GetWidth();
+    pDesc->Height   = GetHeight();
+    pDesc->PixelFormat   = GetPixelFormat();
+    pDesc->Type     = _ResourceType;
+    return OGL_OK;
   }
 
   int IOpenGLSurface::RefCount() const

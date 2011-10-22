@@ -50,8 +50,8 @@ namespace nux
     if (GetWindowThread()->GetWindow().HasFrameBufferSupport())
     {
       m_FrameBufferObject = GetGraphicsDisplay()->GetGpuDevice()->CreateFrameBufferObject();
-      m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_R8G8B8A8);
-      m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_D24S8);
+      m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+      m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
     }
   }
 
@@ -92,8 +92,8 @@ namespace nux
       if ((m_FrameBufferObject->GetWidth() != buffer_width) || (m_FrameBufferObject->GetHeight() != buffer_height))
       {
         m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
-        m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-        m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_D24S8);
+        m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+        m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
       }
 
       m_FrameBufferObject->SetRenderTarget(0, m_MainColorRT->GetSurfaceLevel(0));

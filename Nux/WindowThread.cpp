@@ -382,15 +382,15 @@ logging::Logger logger("nux.windows.thread");
   NUX_IMPLEMENT_OBJECT_TYPE(WindowThread);
 
   WindowThread::WindowThread(const char *WindowTitle, unsigned int width, unsigned int height, AbstractThread *Parent, bool Modal)
-    :   AbstractThread(Parent)
-    ,   m_StartupWidth(width)
-    ,   m_StartupHeight(height)
-    ,   m_WindowTitle(WindowTitle)
-    ,   m_WidgetInitialized(false)
-    ,   m_WindowStyle(WINDOWSTYLE_NORMAL)
-    ,	m_embedded_window(false)
-    ,   m_size_configuration_event(false)
-    ,   m_force_redraw(false)
+    : AbstractThread(Parent)
+    , m_StartupWidth(width)
+    , m_StartupHeight(height)
+    , m_WindowTitle(WindowTitle)
+    , m_WidgetInitialized(false)
+    , m_WindowStyle(WINDOWSTYLE_NORMAL)
+    , m_embedded_window(false)
+    , m_size_configuration_event(false)
+    , m_force_redraw(false)
   {
     // Thread specific objects
     _graphics_display      = 0;
@@ -1558,6 +1558,8 @@ logging::Logger logger("nux.windows.thread");
 
     // Cleanup
     RemoveQueuedLayout();
+
+    m_window_compositor->BeforeDestructor();
 
     if (_main_layout)
     {

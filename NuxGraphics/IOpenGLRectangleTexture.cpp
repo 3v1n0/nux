@@ -45,7 +45,7 @@ namespace nux
     //_SurfaceArray.Empty(Levels);
     for (unsigned int l = 0; l < Levels; l++)
     {
-      IOpenGLSurface *surface = new IOpenGLSurface(this, _OpenGLID, GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_RECTANGLE_ARB, l, 0, NUX_TRACKER_LOCATION);
+      IOpenGLSurface *surface = new IOpenGLSurface(this, _OpenGLID, GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_RECTANGLE_ARB, l, 0, NUX_FILE_LINE_PARAM);
 
       if (Dummy == false) surface->InitializeLevel();
 

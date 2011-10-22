@@ -109,7 +109,7 @@ namespace nux
     /*!
         Set the image of this Button. If the \a image argument is NULL and this Button has an image, then the image is destroyed,
         and the content of the button is re-arranged accordingly.\n
-        This Button make a copy of the \a image argument if it is not NULL. The source image may be destroyed after if it is no longer needed.\n
+        This Button make a copy of the \a image argument if it is not NULL. The source image should be destroyed after if it is no longer needed.\n
         The minimum and maximum size of the internal image are set to the minimum and maximum size of the \a image argument.
         \sa SetImageMinimumSize, SetImageMaximumSize.
 

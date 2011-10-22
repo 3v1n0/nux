@@ -955,16 +955,17 @@ namespace nux
     int Width
     , int Height
     , int Levels
-    , BitmapFormat PixelFormat)
+    , BitmapFormat PixelFormat
+    , NUX_FILE_LINE_DECL)
   {
     if (GetGpuInfo().Support_ARB_Texture_Non_Power_Of_Two())
     {
-      return CreateTexture(Width, Height, Levels, PixelFormat);
+      return CreateTexture(Width, Height, Levels, PixelFormat, NUX_FILE_LINE_PARAM);
     }
 
     if (GetGpuInfo().Support_EXT_Texture_Rectangle() || GetGpuInfo().Support_ARB_Texture_Rectangle())
     {
-      return CreateRectangleTexture(Width, Height, Levels, PixelFormat);
+      return CreateRectangleTexture(Width, Height, Levels, PixelFormat, NUX_FILE_LINE_PARAM);
     }
 
     nuxAssertMsg(0, "[NuxGraphicsResources::CreateSystemCapableDeviceTexture] No support for non power of two textures or rectangle textures");
@@ -972,16 +973,16 @@ namespace nux
     return ObjectPtr<IOpenGLBaseTexture>();
   }
 
-  BaseTexture* GpuDevice::CreateSystemCapableTexture()
+  BaseTexture* GpuDevice::CreateSystemCapableTexture(NUX_FILE_LINE_DECL)
   {
     if (GetGpuInfo().Support_ARB_Texture_Non_Power_Of_Two())
     {
-      return new Texture2D(NUX_TRACKER_LOCATION);
+      return new Texture2D(NUX_FILE_LINE_PARAM);
     }
 
     if (GetGpuInfo().Support_EXT_Texture_Rectangle() || GetGpuInfo().Support_ARB_Texture_Rectangle())
     {
-      return new TextureRectangle(NUX_TRACKER_LOCATION);
+      return new TextureRectangle(NUX_FILE_LINE_PARAM);
     }
 
     nuxAssertMsg(0, "[NuxGraphicsResources::CreateSystemCapableTexture] No support for non power of two textures or rectangle textures");

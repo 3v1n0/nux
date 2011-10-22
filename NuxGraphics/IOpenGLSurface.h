@@ -38,57 +38,12 @@ namespace nux
       const SURFACE_RECT *pRect);
     int UnlockRect();
 
-    BitmapFormat GetPixelFormat() const
-    {
-      if (_BaseTexture == 0)
-      {
-        nuxAssert(0);  // should not happen
-        return BITFMT_UNKNOWN;
-      }
-
-      return _BaseTexture->GetPixelFormat();
-    }
-
-    int GetWidth() const
-    {
-      if (_BaseTexture == 0)
-      {
-        nuxAssert(0);  // should not happen
-        return 0;
-      }
-
-      return ImageSurface::GetLevelDim(_BaseTexture->_PixelFormat, _BaseTexture->_Width, _SMipLevel);
-    }
-
-    int GetHeight() const
-    {
-      if (_BaseTexture == 0)
-      {
-        nuxAssert(0);  // should not happen
-        return 0;
-      }
-
-      return ImageSurface::GetLevelDim(_BaseTexture->_PixelFormat, _BaseTexture->_Height, _SMipLevel);
-    }
-
-    int GetMipLevel() const
-    {
-      return _SMipLevel;
-    }
-
-    int GetSurfaceTarget() const
-    {
-      return _SSurfaceTarget;
-    }
-
-    int GetDesc(SURFACE_DESC *pDesc)
-    {
-      pDesc->Width    = GetWidth();
-      pDesc->Height   = GetHeight();
-      pDesc->PixelFormat   = GetPixelFormat();
-      pDesc->Type     = _ResourceType;
-      return OGL_OK;
-    }
+    BitmapFormat GetPixelFormat() const;
+    int GetWidth() const;
+    int GetHeight() const;
+    int GetMipLevel() const;
+    int GetSurfaceTarget() const;
+    int GetDesc(SURFACE_DESC *pDesc);
 
     //! Copy the render target into the texture mip level. 
     void CopyRenderTarget(int x, int y, int width, int height);
@@ -115,25 +70,13 @@ namespace nux
     //        _RefCount = 0;
     //        _OpenGLID = OpenGLID;
     //    }
-    IOpenGLSurface(IOpenGLBaseTexture *DeviceBaseTexture, GLenum OpenGLID, GLenum TextureTarget, GLenum SurfaceTarget, int MipLevel, int Slice = 0 /*for volume textures*/, NUX_FILE_LINE_PROTO)
-      : IOpenGLResource(RTSURFACE, NUX_FILE_LINE_PARAM)
-      , _STextureTarget(TextureTarget)
-      , _SSurfaceTarget(SurfaceTarget)
-      , _SMipLevel(MipLevel)
-      , _SSlice(Slice)
-      , _BaseTexture(DeviceBaseTexture)
-      , _AllocatedUnpackBuffer(0xFFFFFFFF)
-    {
-      // IOpenGLSurface surfaces are created inside a IOpenGLTexture2D, IOpenGLCubeTexture and IOpenGLVolumeTexture.
-      // They reside within those classes. The reference counting starts once a call to GetSurfaceLevel,
-      // GetCubeMapSurface or GetVolumeLevel is made to the container object.
-      _RefCount = 0;
-      _OpenGLID = OpenGLID;
-      _LockedRect.pBits = 0;
-      _LockedRect.Pitch = 0;
-      _CompressedDataSize = 0;
-      _Initialized = 0;
-    }
+    IOpenGLSurface(IOpenGLBaseTexture *DeviceBaseTexture
+      , GLenum OpenGLID
+      , GLenum TextureTarget
+      , GLenum SurfaceTarget
+      , int MipLevel
+      , int Slice = 0 /*for volume textures*/
+      , NUX_FILE_LINE_PROTO);
 
     // _STextureTarget may be
     //      GL_TEXTURE_2D

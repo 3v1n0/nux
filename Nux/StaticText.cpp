@@ -577,7 +577,7 @@ namespace nux
       unsigned int width, height;
       pWICBitmap->GetSize(&width, &height);
 
-      dw_texture_ = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(width, height, 1, nux::BITFMT_B8G8R8A8);
+      dw_texture_ = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(width, height, 1, nux::BITFMT_B8G8R8A8, NUX_TRACKER_LOCATION);
 
       nux::SURFACE_LOCKED_RECT lock_rect;
       dw_texture_->LockRect(0, &lock_rect, NULL);

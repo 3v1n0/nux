@@ -177,6 +177,7 @@ namespace nux
       , unsigned int Levels
       , BitmapFormat PixelFormat
       , IOpenGLTexture2D **ppTexture
+      , NUX_FILE_LINE_PROTO
     );
 
     int CreateRectangleTexture(
@@ -185,6 +186,7 @@ namespace nux
       , unsigned int Levels
       , BitmapFormat PixelFormat
       , IOpenGLRectangleTexture **ppTexture
+      , NUX_FILE_LINE_PROTO
     );
 
     int CreateCubeTexture(
@@ -192,6 +194,7 @@ namespace nux
       , unsigned int Levels
       , BitmapFormat PixelFormat
       , IOpenGLCubeTexture **ppCubeTexture
+      , NUX_FILE_LINE_PROTO
     );
 
     int CreateVolumeTexture(
@@ -201,6 +204,7 @@ namespace nux
       , unsigned int Levels
       , BitmapFormat PixelFormat
       , IOpenGLVolumeTexture **ppVolumeTexture
+      , NUX_FILE_LINE_PROTO
     );
 
     int CreateAnimatedTexture(
@@ -270,31 +274,31 @@ namespace nux
       int Width,
       int Height,
       int Levels,
-      BitmapFormat PixelFormat);
+      BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
 
     ObjectPtr<IOpenGLTexture2D> CreateTexture2DFromID(int id,
       int Width,
       int Height,
       int Levels,
-      BitmapFormat PixelFormat);
+      BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
 
     ObjectPtr<IOpenGLRectangleTexture> CreateRectangleTexture(
       int Width
       , int Height
       , int Levels
-      , BitmapFormat PixelFormat);
+      , BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
 
     ObjectPtr<IOpenGLCubeTexture> CreateCubeTexture(
       int EdgeLength
       , int Levels
-      , BitmapFormat PixelFormat);
+      , BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
 
     ObjectPtr<IOpenGLVolumeTexture> CreateVolumeTexture(
       int Width
       , int Height
       , int Depth
       , int Levels
-      , BitmapFormat PixelFormat);
+      , BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
 
     ObjectPtr<IOpenGLAnimatedTexture> CreateAnimatedTexture(
       int Width
@@ -458,13 +462,13 @@ namespace nux
       int Width
       , int Height
       , int Levels
-      , BitmapFormat PixelFormat);
+      , BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
 
     //! Created a cached texture
     /*!
       @return A cached texture. Depending on the system capabilities, returns a Texture2D or TextureRectangle.
     */
-    BaseTexture* CreateSystemCapableTexture();
+    BaseTexture* CreateSystemCapableTexture(NUX_FILE_LINE_PROTO);
 
     bool SUPPORT_GL_ARB_TEXTURE_NON_POWER_OF_TWO() const
     {

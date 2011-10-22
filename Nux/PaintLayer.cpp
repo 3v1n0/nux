@@ -126,6 +126,11 @@ namespace nux
     m_texxform = texxform;
   }
 
+  TextureLayer::~TextureLayer()
+  {
+    m_device_texture.Release();
+  }
+
   void TextureLayer::Renderlayer(GraphicsEngine &graphics_engine)
   {
     unsigned int current_alpha_blend;

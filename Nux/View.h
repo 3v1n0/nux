@@ -41,6 +41,11 @@ namespace nux
 
   public:
 
+    /*
+        If ComputeContentSize is called while outside of the layout process (\sa IsInsideLayoutCycle) then the parents of 
+        this object maybe added to the layout queue if this view size changes. \sa Area::ReconfigureParentLayout.
+
+    */
     virtual long ComputeContentSize();
     virtual void ComputeContentPosition(float offsetX, float offsetY);
 
