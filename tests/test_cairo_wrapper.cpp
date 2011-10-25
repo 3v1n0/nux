@@ -84,7 +84,7 @@ init (nux::NThread* thread, void* data)
   (func) ();
 
   g_timer = new nux::TimerFunctor ();
-  g_timer->OnTimerExpired.connect (sigc::ptr_fun (&terminate));
+  g_timer->time_expires.connect (sigc::ptr_fun (&terminate));
   g_handler = nux::GetTimer().AddTimerHandler (100,
                                                g_timer,
                                                nux::GetWindowThread ());
