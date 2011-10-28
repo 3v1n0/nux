@@ -160,7 +160,7 @@ namespace nux
         vtxelement.Type,
         GL_FALSE,
         vtxelement.stride_,
-        (void*)&vtxelement.Offset));
+        (void*)vtxelement.Offset));
 
       VertexDeclaration->_valid_vertex_input[shader_attribute_location] = 1;
       ++decl;
