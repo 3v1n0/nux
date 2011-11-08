@@ -109,7 +109,7 @@ namespace nux
     Region             total_screen_region = XCreateRegion();
     Region             input_window_region = XCreateRegion();
     Region             intersection = XCreateRegion();
-    XineramaScreenInfo monitor;
+    XRectangle         monitor;
     XRectangle         tmp_rect;
     int largestWidth = 0, largestHeight = 0;
     int screenWidth, screenHeight;
@@ -122,6 +122,13 @@ namespace nux
     tmp_rect.height = geometry_.height;
 
     XUnionRectWithRegion(&tmp_rect, input_window_region, input_window_region);
+
+    /* If there is no Xinerama data available just use the geometry we have */
+    if (!info)
+    {
+      monitor = tmp_rect;
+      n_info = 0;
+    }
 
     for (int i = 0; i < n_info; i++)
     {
@@ -146,7 +153,10 @@ namespace nux
           largestWidth = width;
           largestHeight = height;
 
-          monitor = info[i];
+          monitor.x      = info[i].x_org;
+          monitor.y      = info[i].y_org;
+          monitor.width  = info[i].width;
+          monitor.height = info[i].height;
         }
       }
 
@@ -165,7 +175,7 @@ namespace nux
 
     if (geometry_.width > geometry_.height)
     {
-      if (geometry_.y - monitor.y_org < monitor.height / 2)
+      if (geometry_.y - monitor.y < monitor.height / 2)
       {
         /* top */
         data[2] = geometry_.y + geometry_.height;
@@ -182,7 +192,7 @@ namespace nux
     }
     else
     {
-      if (geometry_.x - monitor.x_org < monitor.width / 2)
+      if (geometry_.x - monitor.x < monitor.width / 2)
       {
         /* left */
         data[0] = geometry_.x + geometry_.width;
