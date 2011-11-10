@@ -34,7 +34,6 @@ namespace nux
   class HLayout;
   class StaticTextBox;
   class ColorEditor;
-  class TimerFunctor;
   class TimerHandle;
   class ColorDialogProxy;
 

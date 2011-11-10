@@ -34,7 +34,7 @@ namespace nux
   class BaseKeyboardHandler;
   class TextLine;
   class Validator;
-  class TimerFunctor;
+
 
   class EditTextBox : public View
   {

@@ -467,9 +467,9 @@ namespace nux
     SURFACE_LOCKED_RECT LockedRect;
     ObjectPtr < IOpenGLTexture2D > Texture2D = m_Texture; //m_Texture.CastRef<IOpenGLTexture2D>();
 
-    OGL_CALL( Texture2D->LockRect( MipLevel, &LockedRect, NULL));
-    SourceTexture->GetData( LockedRect.pBits, MipLevel, LockedRect.Pitch );
-    OGL_CALL( Texture2D->UnlockRect( MipLevel ));
+    OGL_CALL(Texture2D->LockRect(MipLevel, &LockedRect, NULL));
+    SourceTexture->GetData(LockedRect.pBits, MipLevel, LockedRect.Pitch);
+    OGL_CALL(Texture2D->UnlockRect(MipLevel));
   }
 
   TextureRectangle::TextureRectangle(NUX_FILE_LINE_DECL)
