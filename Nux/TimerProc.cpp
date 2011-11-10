@@ -54,9 +54,9 @@ namespace nux
     bool operator == (const TimerObject &timer_object);
 
     //! Delay before the callback expires
-    TimeStruct           when;
-    void 		    *CallbackData;
-    TimerFunctor    *TimerCallback;
+    TimeStruct      when;
+    void            *CallbackData;
+    TimeOutSignal    *timeout_signal;
 
     //! time progression factor between [0.0, 1.0]
     float           Param;
@@ -79,7 +79,7 @@ namespace nux
   {
     Type            = 0;
     CallbackData    = 0;
-    TimerCallback   = 0;
+    timeout_signal   = 0;
     Param           = 0;
     Period          = 0;
     Duration        = 0;
@@ -189,7 +189,7 @@ namespace nux
     _early_timer_objects.clear();
   }
 
-  TimerHandle TimerHandler::AddTimerHandler(unsigned int Period, TimerFunctor *Callback, void *Data, WindowThread* window_thread)
+  TimerHandle TimerHandler::AddTimerHandler(unsigned int Period, TimeOutSignal *timeout_signal, void *Data, WindowThread* window_thread)
   {
     TimerObject *timer_object = new TimerObject();
 
@@ -197,7 +197,7 @@ namespace nux
     Addmillisecs(&timer_object->when, Period);
 
     timer_object->CallbackData  = Data;
-    timer_object->TimerCallback = Callback;
+    timer_object->timeout_signal = timeout_signal;
     timer_object->Period        = Period;
     timer_object->Type          = TIMERTYPE_PERIODIC;
     if (window_thread)
@@ -230,13 +230,13 @@ namespace nux
     return handle;
   }
 
-  TimerHandle TimerHandler::AddPeriodicTimerHandler(unsigned int Period, int Duration, TimerFunctor *Callback, void *Data)
+  TimerHandle TimerHandler::AddPeriodicTimerHandler(unsigned int Period, int Duration, TimeOutSignal *timeout_signal, void *Data)
   {
     TimerObject *timer_object = new TimerObject();
     TimeRightNow(&timer_object->when);
     Addmillisecs(&timer_object->when, Period);
     timer_object->CallbackData = Data;
-    timer_object->TimerCallback = Callback;
+    timer_object->timeout_signal = timeout_signal;
 
     timer_object->Period = Period;
     timer_object->Duration = (Duration < 0) ? -1 : Duration;
@@ -263,13 +263,13 @@ namespace nux
     return handle;
   }
 
-  TimerHandle TimerHandler::AddCountIterationTimerHandler(unsigned int Period, int NumberOfIterations, TimerFunctor *Callback, void *Data)
+  TimerHandle TimerHandler::AddCountIterationTimerHandler(unsigned int Period, int NumberOfIterations, TimeOutSignal *timeout_signal, void *Data)
   {
     TimerObject *timer_object = new TimerObject();
     TimeRightNow(&timer_object->when);
     Addmillisecs(&timer_object->when, Period);
     timer_object->CallbackData = Data;
-    timer_object->TimerCallback = Callback;
+    timer_object->timeout_signal = timeout_signal;
 
     timer_object->Period = Period;
     timer_object->ScheduledIteration  = (NumberOfIterations < 0) ? -1 : NumberOfIterations;
@@ -479,10 +479,10 @@ namespace nux
 
         timer_object->MarkedForRemoval = false;
 
-        if (timer_object->TimerCallback != 0)
+        if (timer_object->timeout_signal != 0)
         {
           GetWindowCompositor().SetProcessingTopView(timer_object->Window);
-          timer_object->TimerCallback->time_expires.emit(timer_object->CallbackData);
+          timer_object->timeout_signal->time_expires.emit(timer_object->CallbackData);
           GetWindowCompositor().SetProcessingTopView(NULL);          
           // Reset glibid to 0. glibid is not null, if this element ever happened to be at the head of the queue
           // and we set a timer for it.

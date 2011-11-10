@@ -438,8 +438,8 @@ logging::Logger logger("nux.windows.thread");
     _pending_wake_up_timer = false;
     _inside_main_loop = false;
     _inside_timer_loop = false;
-    _async_wake_up_functor = new TimerFunctor();
-    _async_wake_up_functor->time_expires.connect(sigc::mem_fun(this, &WindowThread::AsyncWakeUpCallback));
+    async_wake_up_signal_ = new TimerFunctor();
+    async_wake_up_signal_->time_expires.connect(sigc::mem_fun(this, &WindowThread::AsyncWakeUpCallback));
 
 
     _fake_event_call_back = new TimerFunctor();
@@ -461,7 +461,7 @@ logging::Logger logger("nux.windows.thread");
     }
     
     delete _Timelines;
-    delete _async_wake_up_functor;
+    delete async_wake_up_signal_;
     delete _fake_event_call_back;
 
 #if defined(NUX_OS_LINUX)
@@ -472,20 +472,20 @@ logging::Logger logger("nux.windows.thread");
 #endif
   }
 
-  TimerHandle WindowThread::SetAsyncTimerCallback(int time_ms, TimerFunctor* functor, void *user_data)
+  TimerHandle WindowThread::SetAsyncTimerCallback(int time_ms, TimeOutSignal* timeout_signal, void *user_data)
   {
-    if (functor == NULL)
+    if (timeout_signal == NULL)
       return TimerHandle();
 
     // Use "this->" because if called from a different thread, GetTimer and GetWindowThread are invalid.
-    TimerHandle handle = this->GetTimerHandler().AddTimerHandler(time_ms, functor, user_data, this);
+    TimerHandle handle = this->GetTimerHandler().AddTimerHandler(time_ms, timeout_signal, user_data, this);
 
     return handle;
   }
 
   void WindowThread::AsyncWakeUpCallback(void* data)
   {
-    GetTimer().RemoveTimerHandler(_async_wake_up_timer);
+    this->GetTimerHandler().RemoveTimerHandler(async_wake_up_timer_handle_);
     _pending_wake_up_timer = false;
   }
   
@@ -587,7 +587,7 @@ logging::Logger logger("nux.windows.thread");
       if ((_inside_main_loop == false) && (_inside_timer_loop == false) && (_pending_wake_up_timer == false))
       {
         _pending_wake_up_timer = true;
-        _async_wake_up_timer = GetTimer().AddTimerHandler(0, _async_wake_up_functor, this);
+        async_wake_up_timer_handle_ = this->GetTimerHandler().AddTimerHandler(0, async_wake_up_signal_, this);
       }
     }
   }

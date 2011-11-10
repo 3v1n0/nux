@@ -128,7 +128,8 @@ namespace nux
 
     //! Set the default layout for this view.
     /*!
-        Set the default layout for this view.
+        Set the default layout for this view. Assigns a scale factor of 1 to the layout.
+
         @param layout A Layout object.
     */
     virtual bool SetLayout(Layout *layout);
