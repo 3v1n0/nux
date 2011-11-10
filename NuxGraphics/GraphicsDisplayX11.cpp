@@ -111,6 +111,7 @@ namespace nux
     _dnd_source_funcs.get_drag_image = 0;
     _dnd_source_funcs.get_drag_types = 0;
     _dnd_source_funcs.get_data_for_type = 0;
+    _dnd_source_funcs.drag_finished = 0;
   }
 
   GraphicsDisplay::~GraphicsDisplay()
