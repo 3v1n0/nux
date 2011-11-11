@@ -14,7 +14,7 @@
  * version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
- * Authored by: Jay Taoko <jaytaoko@inalogic.com>
+ * Authored by: Brandon Schaefer <brandontschaefer@gmail.com>
  *
  */
 
@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 {
     nux::NuxInitialize(0);
     // When the GUI thread is created, it creates the GraphicsDisplay.
-    nux::WindowThread* wt = nux::CreateGUIThread(TEXT("Text Entry"),
+    nux::WindowThread* wt = nux::CreateGUIThread(TEXT("Graphics Display"),
                                                  400, 300, 0, &ThreadWidgetInit, 0);
 
     // Test to see if the variable in GraphicsDisplay is initialized
