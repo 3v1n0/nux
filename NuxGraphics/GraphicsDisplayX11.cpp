@@ -61,49 +61,57 @@ namespace nux
   };
 
   GraphicsDisplay::GraphicsDisplay()
+    : m_X11Screen(0)
+    , m_ParentWindow(0)
+    , m_NumVideoModes(0)
+    , m_BorderPixel(0)
+    , _x11_major(0)
+    , _x11_minor(0)
+    , _glx_major(0)
+    , _glx_minor(0)
+    , _has_glx_13(false)
+    , m_X11RepeatKey(true)
+    , m_ViewportSize(Size(0,0))
+    , m_WindowSize(Size(0,0))
+    , m_WindowPosition(Point(0,0)) 
+    , m_Fullscreen(false)
+    , m_ScreenBitDepth(32)
+    , m_GfxInterfaceCreated(false)
+    , m_BestMode(-1)
+    , m_CreatedFromForeignWindow(false)
+    , m_num_device_modes(0)
+    , m_pEvent(NULL)
+    , _last_dnd_position(Point(0, 0)) //DND
+    , m_PauseGraphicsRendering(false)
+    , m_FrameTime(0) 
+    , m_DeviceFactory(0)
+    , m_GraphicsContext(0)
+    , m_Style(WINDOWSTYLE_NORMAL)
+    , _drag_display(NULL)
+    , _drag_drop_timestamp(0)
+    , _dnd_source_data(NULL)
+    , _global_pointer_grab_data(0)
+    , _global_pointer_grab_active(false)
+    , _global_pointer_grab_callback(0)
+    , _global_keyboard_grab_data(0)
+    , _global_keyboard_grab_active(false)
+    , _global_keyboard_grab_callback(0)
+    , _dnd_is_drag_source(false)
+    , _dnd_source_target_accepts_drop(false)
+    , _dnd_source_grab_active(false)
+    , _dnd_source_drop_sent(false)
   {
-    m_CreatedFromForeignWindow      = false;
-    m_ParentWindow                  = 0;
-    m_GLCtx                         = 0;
-    m_Fullscreen                    = false;
-    m_GfxInterfaceCreated           = false;
-    m_pEvent                        = NULL;
-    m_ScreenBitDepth                = 32;
-    m_BestMode                      = -1;
-    m_num_device_modes              = 0;
-    m_DeviceFactory                 = 0;
-    m_GraphicsContext               = 0;
-    m_Style                         = WINDOWSTYLE_NORMAL;
-    m_PauseGraphicsRendering        = false;
-
     inlSetThreadLocalStorage(_TLS_GraphicsDisplay, this);
 
+    m_GLCtx = 0;
     m_X11LastEvent.type = -1;
-    m_X11RepeatKey = true;
 
-    m_GfxInterfaceCreated = false;
     m_pEvent = new Event();
 
-    m_WindowSize = Size(0,0);
-
-    _has_glx_13 = false;
-    _glx_major = 0;
-    _glx_minor = 0;
-    
-    _dnd_is_drag_source = false;
-    _dnd_source_grab_active = false;
     _dnd_source_funcs.get_drag_image = 0;
     _dnd_source_funcs.get_drag_types = 0;
     _dnd_source_funcs.get_data_for_type = 0;
     _dnd_source_funcs.drag_finished = 0;
-    
-    _global_keyboard_grab_data = 0;
-    _global_keyboard_grab_callback = 0;
-    _global_pointer_grab_data = 0;
-    _global_pointer_grab_callback = 0;
-
-    // DND
-    _last_dnd_position = Point(0, 0);
   }
 
   GraphicsDisplay::~GraphicsDisplay()
