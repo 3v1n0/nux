@@ -152,6 +152,18 @@ TEST(TestObject, TestObjectPtrAdopt) {
   EXPECT_THAT(a->GetReferenceCount(), Eq(1));
 }
 
+TEST(TestObject, TestObjectPtrGetPointer) {
+
+  OwnedObject* a = new OwnedObject(NUX_TRACKER_LOCATION);  // ref count = 1, owned
+  nux::ObjectPtr<OwnedObject> object_ptr;
+  object_ptr.Adopt(a);
+
+  EXPECT_THAT(object_ptr.GetPointer(), Eq(a));
+  // Const too
+  nux::ObjectPtr<OwnedObject> const& object_ptr_ref = object_ptr;
+  EXPECT_THAT(object_ptr_ref.GetPointer(), Eq(a));
+}
+
 TEST(TestObject, TestObjectPtr1) {
 
   ChildOwnedObject *c = new ChildOwnedObject (NUX_TRACKER_LOCATION);  // ref count = 1, owned
