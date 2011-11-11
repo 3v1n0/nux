@@ -40,25 +40,25 @@
 namespace nux
 {
 
-  t_u32 Memcmp ( const void *Buf1, const void *Buf2, t_u32 Count );
+  unsigned int Memcmp ( const void *Buf1, const void *Buf2, unsigned int Count );
 
-  bool MemIsZero ( const void *V, t_size Count );
+  bool MemIsZero ( const void *V, size_t Count );
 
-  void *Memmove ( void *Dest, const void *Src, t_size Count );
+  void *Memmove ( void *Dest, const void *Src, size_t Count );
 
-  void Memset ( void *Dest, t_s32 C, t_size Count );
+  void Memset ( void *Dest, int C, size_t Count );
 
-  void Memzero ( void *Dest, t_size Count );
+  void Memzero ( void *Dest, size_t Count );
 
-  void Memcpy ( void *Dest, const void *Src, t_size Count );
+  void Memcpy ( void *Dest, const void *Src, size_t Count );
 
-  void Memswap ( void *Ptr1, void *Ptr2, t_size Size );
+  void Memswap ( void *Ptr1, void *Ptr2, size_t Size );
 
 //! Check that the alignment is a power of two
-  bool IsMemoryAligned (void *data, t_u32 alignment);
+  bool IsMemoryAligned (void *data, unsigned int alignment);
 
-  void *Malloc (t_size Count, t_u32 Alignment = NUX_DEFAULT_ALIGNMENT);
-  void *Realloc (void *Original, t_size Count, t_u32 Alignment = NUX_DEFAULT_ALIGNMENT);
+  void *Malloc (size_t Count, unsigned int Alignment = NUX_DEFAULT_ALIGNMENT);
+  void *Realloc (void *Original, size_t Count, unsigned int Alignment = NUX_DEFAULT_ALIGNMENT);
 
 }
 

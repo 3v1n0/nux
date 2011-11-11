@@ -43,14 +43,14 @@ namespace nux
 
   class FloatingWindow: public BaseWindow
   {
-    NUX_DECLARE_OBJECT_TYPE (FloatingWindow, BaseWindow);
+    NUX_DECLARE_OBJECT_TYPE(FloatingWindow, BaseWindow);
   public:
-    FloatingWindow (const TCHAR *WindowName = TEXT (""), NUX_FILE_LINE_PROTO);
+    FloatingWindow(const char *WindowName = "", NUX_FILE_LINE_PROTO);
     ~FloatingWindow();
 
-    void SetVisibleSizeGrip (bool b)
+    void SetVisibleSizeGrip(bool b)
     {
-      if (b && (m_bSizeMatchLayout) )
+      if (b && (m_bSizeMatchLayout))
         m_bIsVisibleSizeGrip = false;
       else
         m_bIsVisibleSizeGrip = b;
@@ -62,16 +62,16 @@ namespace nux
     }
 
 
-    void EnableTitleBar (bool b);
+    void EnableTitleBar(bool b);
     bool HasTitleBar() const;
-    void OnSizeGrigMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void OnSizeGrigMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    void RecvCloseButtonClick (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void OnSizeGrigMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void OnSizeGrigMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void RecvCloseButtonClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
 
-    void RecvTitleBarMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvTitleBarMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void RecvTitleBarMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvTitleBarMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
-    void SetWindowTitle (const char *title);
+    void SetWindowTitle(const char *title);
     NString GetWindowTitle();
 
     //! Return true if this object can break the layout.
@@ -82,22 +82,21 @@ namespace nux
     */
     virtual bool CanBreakLayout()
     {
-      if (IsSizeMatchContent() )
+      if (IsSizeMatchContent())
         return false;
 
       return true;
     }
 
   protected:
-    virtual long ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
-    virtual void Draw(GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent(GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw(GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     virtual void PreLayoutManagement();
     virtual long PostLayoutManagement(long LayoutResult);
-    virtual void PositionChildLayout(float offsetX, float offsetY);
+    virtual void ComputeContentPosition(float offsetX, float offsetY);
 
     //! Layout the window elements.
     /*!

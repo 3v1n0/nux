@@ -45,7 +45,7 @@ namespace nux
     void SetVertexBuffer(int input_index, ObjectPtr<IOpenGLVertexBuffer> vertex_buffer);
     ObjectPtr<IOpenGLVertexBuffer> GetVertexBuffer(int input_index);
 
-    IOpenGLVertexDeclaration (const VERTEXELEMENT *pVertexElements);
+    IOpenGLVertexDeclaration(const VERTEXELEMENT *pVertexElements);
 
     int _stride[8]; //!< Stride for each stream
     int _valid_vertex_input[16]; // Vertex Input valid for this vertex declaration

@@ -30,12 +30,12 @@ namespace nux
 
   static void SystemStart()
   {
-    static t_u8 StaticBuffer[sizeof (NuxGlobalSingletonInitializer) ];
+    static t_u8 StaticBuffer[sizeof(NuxGlobalSingletonInitializer) ];
     // Placement new in our reserved buffer.
-    GNuxGlobalInitializer =  new (StaticBuffer) NuxGlobalSingletonInitializer();
+    GNuxGlobalInitializer =  new(StaticBuffer) NuxGlobalSingletonInitializer();
 
-    //GLogDevice.AddOutputDevice( &NUX_GLOBAL_OBJECT_INSTANCE(NOutputLogFile) );
-    //GLogDevice.AddOutputDevice( &NUX_GLOBAL_OBJECT_INSTANCE(NOutputVisualDebugConsole) );
+    //GLogDevice.AddOutputDevice( &NUX_GLOBAL_OBJECT_INSTANCE(NOutputLogFile));
+    //GLogDevice.AddOutputDevice( &NUX_GLOBAL_OBJECT_INSTANCE(NOutputVisualDebugConsole));
   }
 
   static void SystemShutdown()

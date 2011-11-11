@@ -8,4 +8,4 @@ Description: Image loading utilities for Nux
 Version: @VERSION@
 Libs: -L${libdir} -lnux-image-@NUX_API_VERSION@
 Cflags: -I${includedir}/Nux-@NUX_API_VERSION@
-Requires: glib-2.0 cairo libpng nux-core-@NUX_API_VERSION@
+Requires: glib-2.0 cairo libpng nux-core-@NUX_API_VERSION@ gdk-pixbuf-2.0

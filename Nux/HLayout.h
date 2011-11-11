@@ -23,23 +23,23 @@
 #ifndef HLAYOUT_H
 #define HLAYOUT_H
 
-#include "Layout.h"
+#include "LinearLayout.h"
 
 namespace nux
 {
 
-  class HLayout: public Layout
+  class HLayout: public LinearLayout
   {
-    NUX_DECLARE_OBJECT_TYPE(HLayout, Layout);
+    NUX_DECLARE_OBJECT_TYPE(HLayout, LinearLayout);
   public:
     HLayout(NUX_FILE_LINE_PROTO);
     HLayout(NString name, NUX_FILE_LINE_PROTO);
     ~HLayout();
 
-    virtual long ComputeLayout2();
-    virtual void ComputePosition2(float offsetX, float offsetY);
+    virtual long ComputeContentSize();
+    virtual void ComputeContentPosition(float offsetX, float offsetY);
     virtual void HLayoutManagement(int width, int height);
-    virtual t_u32 GetMaxStretchFactor();
+    virtual unsigned int GetMaxStretchFactor();
 
     virtual void GetCompositeList(std::list<Area *> *ViewList);
 
@@ -52,8 +52,6 @@ namespace nux
     void ComputeStacking(int remaining_width, int &offset_space, int &element_margin);
 
   protected:
-    virtual long DoFocusUp  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusDown (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
     virtual Area* KeyNavIteration(KeyNavDirection direction);
   };
 }

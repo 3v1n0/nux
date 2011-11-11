@@ -26,16 +26,16 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLCubeTexture);
+  NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLCubeTexture);
 
-  IOpenGLCubeTexture::IOpenGLCubeTexture (
+  IOpenGLCubeTexture::IOpenGLCubeTexture(
     unsigned int EdgeLength
     , int Levels
     , BitmapFormat PixelFormat)
-    : IOpenGLBaseTexture (RTCUBETEXTURE, EdgeLength, EdgeLength, 1, Levels, PixelFormat)
+    : IOpenGLBaseTexture(RTCUBETEXTURE, EdgeLength, EdgeLength, 1, Levels, PixelFormat)
   {
-    CHECKGL ( glGenTextures (1, &_OpenGLID) );
-    CHECKGL ( glBindTexture (GL_TEXTURE_CUBE_MAP, _OpenGLID) );
+    CHECKGL(glGenTextures(1, &_OpenGLID));
+    CHECKGL(glBindTexture(GL_TEXTURE_CUBE_MAP, _OpenGLID));
 
     for (unsigned int face = CUBEMAP_FACE_POSITIVE_X; face < CUBEMAP_FACE_NEGATIVE_Z + 1; face++)
     {
@@ -45,29 +45,29 @@ namespace nux
       //array = (*(_SurfaceArray.find((eCUBEMAP_FACES)face))).second;
       for (int l = 0; l < Levels; l++)
       {
-        IOpenGLSurface *surface = new IOpenGLSurface (this, _OpenGLID, GL_TEXTURE_CUBE_MAP, face, l);
+        IOpenGLSurface *surface = new IOpenGLSurface(this, _OpenGLID, GL_TEXTURE_CUBE_MAP, face, l);
         surface->InitializeLevel();
-        array->push_back ( surface );
+        array->push_back( surface );
         //IOpenGLSurface* surface = new(array) IOpenGLSurface(this, GL_TEXTURE_CUBE_MAP, face, l) ;
       }
     }
 
-    CHECKGL ( glBindTexture (GL_TEXTURE_CUBE_MAP, _OpenGLID) );
-    SetFiltering (GL_NEAREST, GL_NEAREST);
-    SetWrap (GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+    CHECKGL(glBindTexture(GL_TEXTURE_CUBE_MAP, _OpenGLID));
+    SetFiltering(GL_NEAREST, GL_NEAREST);
+    SetWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
     SetRenderStates();
-    GRunTimeStats.Register (this);
+    GRunTimeStats.Register(this);
   }
 
   IOpenGLCubeTexture::~IOpenGLCubeTexture()
   {
     for (unsigned int face = CUBEMAP_FACE_POSITIVE_X; face < CUBEMAP_FACE_NEGATIVE_Z + 1; face++)
     {
-      std::vector<IOpenGLSurface *> *array = (_SurfaceArray.find ( (eCUBEMAP_FACES) face) )->second;
+      std::vector<IOpenGLSurface *> *array = (_SurfaceArray.find((eCUBEMAP_FACES) face))->second;
 
       for (int l = 0; l < _NumMipLevel; l++)
       {
-        ((*array) [l])->UnReference ();
+        ((*array) [l])->UnReference();
       }
 
       array->clear();
@@ -75,12 +75,12 @@ namespace nux
     }
 
     _SurfaceArray.clear();
-    CHECKGL ( glDeleteTextures (1, &_OpenGLID) );
+    CHECKGL(glDeleteTextures(1, &_OpenGLID));
     _OpenGLID = 0;
-    GRunTimeStats.UnRegister (this);
+    GRunTimeStats.UnRegister(this);
   }
 
-  int IOpenGLCubeTexture::GetCubeMapSurface (
+  int IOpenGLCubeTexture::GetCubeMapSurface(
     eCUBEMAP_FACES FaceType,
     int Level,
     IOpenGLSurface **ppCubeMapSurface
@@ -88,7 +88,7 @@ namespace nux
   {
     if (Level < _NumMipLevel)
     {
-      std::vector<IOpenGLSurface *> *array = (* (_SurfaceArray.find (FaceType) ) ).second;
+      std::vector<IOpenGLSurface *> *array = (* (_SurfaceArray.find(FaceType))).second;
       *ppCubeMapSurface = (*array) [Level];
       //(*ppCubeMapSurface)->AddRef();
     }
@@ -100,22 +100,22 @@ namespace nux
     return 1;
   }
 
-  int IOpenGLCubeTexture::LockRect (
+  int IOpenGLCubeTexture::LockRect(
     eCUBEMAP_FACES FaceType,
     int Level,
     SURFACE_LOCKED_RECT *pLockedRect,
     const SURFACE_RECT *pRect)
   {
-    nuxAssertMsg (pLockedRect, TEXT ("[IOpenGLCubeTexture::LockRect] Invalid parameter 'pLockedRect'.") );
-    nuxAssertMsg (Level >= 0, TEXT ("[IOpenGLCubeTexture::LockRect] Invalid mipmap level.") );
-    nuxAssertMsg (Level < _NumMipLevel, TEXT ("[IOpenGLCubeTexture::LockRect] Invalid mipmap level.") );
+    nuxAssertMsg(pLockedRect, "[IOpenGLCubeTexture::LockRect] Invalid parameter 'pLockedRect'.");
+    nuxAssertMsg(Level >= 0, "[IOpenGLCubeTexture::LockRect] Invalid mipmap level.");
+    nuxAssertMsg(Level < _NumMipLevel, "[IOpenGLCubeTexture::LockRect] Invalid mipmap level.");
 
 
     if (Level < _NumMipLevel)
     {
-      std::vector<IOpenGLSurface *> *array = (* (_SurfaceArray.find (FaceType) ) ).second;
+      std::vector<IOpenGLSurface *> *array = (* (_SurfaceArray.find(FaceType))).second;
       IOpenGLSurface *pCubeSurfaceLevel = (*array) [Level];
-      return pCubeSurfaceLevel->LockRect (pLockedRect, pRect);
+      return pCubeSurfaceLevel->LockRect(pLockedRect, pRect);
 
     }
     else
@@ -128,17 +128,17 @@ namespace nux
     return OGL_OK;
   }
 
-  int IOpenGLCubeTexture::UnlockRect (
+  int IOpenGLCubeTexture::UnlockRect(
     eCUBEMAP_FACES FaceType,
     int Level
   )
   {
-    nuxAssertMsg (Level >= 0, TEXT ("[IOpenGLCubeTexture::LockRect] Invalid mipmap level.") );
-    nuxAssertMsg (Level < _NumMipLevel, TEXT ("[IOpenGLCubeTexture::LockRect] Invalid mipmap level.") );
+    nuxAssertMsg(Level >= 0, "[IOpenGLCubeTexture::LockRect] Invalid mipmap level.");
+    nuxAssertMsg(Level < _NumMipLevel, "[IOpenGLCubeTexture::LockRect] Invalid mipmap level.");
 
     if (Level < _NumMipLevel)
     {
-      std::vector<IOpenGLSurface *> *array = (* (_SurfaceArray.find (FaceType) ) ).second;
+      std::vector<IOpenGLSurface *> *array = (* (_SurfaceArray.find(FaceType))).second;
       IOpenGLSurface *pCubeSurfaceLevel = (*array) [Level];
       return pCubeSurfaceLevel->UnlockRect();
     }
@@ -150,9 +150,9 @@ namespace nux
     return OGL_OK;
   }
 
-  unsigned int IOpenGLCubeTexture::EnableGammaCorrection (bool b)
+  unsigned int IOpenGLCubeTexture::EnableGammaCorrection(bool b)
   {
-    nuxAssert (_OpenGLID);
+    nuxAssert(_OpenGLID);
     return OGL_OK;
   }
 }

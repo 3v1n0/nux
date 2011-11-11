@@ -22,7 +22,7 @@
 
 #include "Nux.h"
 #include "AbstractButton.h"
-#include "HLayout.h"
+#include "StaticText.h"
 
 namespace nux
 {
@@ -30,20 +30,15 @@ namespace nux
 
   AbstractButton::AbstractButton(NUX_FILE_LINE_DECL)
   : View(NUX_FILE_LINE_PARAM)
-  , state(NUX_STATE_NORMAL)
+  , visual_state_(VISUAL_STATE_NORMAL)
   {
-    active = false;
-    togglable_ = false;
-    Init();
-  }
+    active_ = false;
+    mouse_pressed_ = false;
+    static_text_ = NULL;
+    label_color_ = color::White;
+    same_size_as_content_ = false;
+    label_font_size_ = 0; // use default point size defined in nux::StaticText
 
-  AbstractButton::~AbstractButton()
-  {
-
-  }
-
-  void AbstractButton::Init()
-  {
     mouse_click.connect(sigc::mem_fun(this, &AbstractButton::RecvClick));
     mouse_down.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseDown));
     mouse_double_click.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseDown));
@@ -53,41 +48,50 @@ namespace nux
     mouse_leave.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseLeave));
   }
 
-  long AbstractButton::ProcessEvent(IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  AbstractButton::~AbstractButton()
   {
-    return PostProcessEvent2 (ievent, TraverseInfo, ProcessEventInfo);
+
   }
 
-  void AbstractButton::RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  bool AbstractButton::Active() const
   {
-    if(togglable_)
-    {
-      active = !active;
-    }
+    return active_;
+  }
+
+  void AbstractButton::SetActive(bool active)
+  {
+    if (active)
+      Activate();
     else
-    {
-      active = true;
-    }
+      Deactivate();
+  }
 
-    if(togglable_ == false)
-    {
-      active = false;
-    }
-
-    activated.emit(this);
-    QueueDraw();
+  ButtonVisualState AbstractButton::GetVisualState()
+  {
+    return visual_state_;
   }
 
   void AbstractButton::RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    state = NUX_STATE_PRELIGHT;
-    //state = 1;
+    if (IsMousePointerInside())
+    {
+      visual_state_ = VISUAL_STATE_PRELIGHT;
+    }
+    else
+    {
+      visual_state_ = VISUAL_STATE_NORMAL;
+    }
+
+    mouse_pressed_ = false;
+    visual_state_change.emit(this);
     QueueDraw();
   }
 
   void AbstractButton::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    state = NUX_STATE_ACTIVE;
+    visual_state_ = VISUAL_STATE_PRESSED;
+    mouse_pressed_ = true;
+    visual_state_change.emit(this);
     QueueDraw();
   }
 
@@ -98,13 +102,54 @@ namespace nux
 
   void AbstractButton::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    state = NUX_STATE_PRELIGHT;
+    if (mouse_pressed_)
+    {
+      visual_state_ = VISUAL_STATE_PRESSED;
+    }
+    else
+    {
+      visual_state_ = VISUAL_STATE_PRELIGHT;
+    }
+
+    visual_state_change.emit(this);
     QueueDraw();
   }
 
   void AbstractButton::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    state = NUX_STATE_NORMAL;
+    visual_state_ = VISUAL_STATE_NORMAL;
+    visual_state_change.emit(this);
     QueueDraw();
+  }
+
+  void AbstractButton::SetLabelColor(const Color &color)
+  {
+    label_color_ = color;
+    if (static_text_)
+      static_text_->SetTextColor(label_color_);
+    QueueDraw();
+  }
+
+  Color AbstractButton::GetLabelColor()
+  {
+    return label_color_;
+  }
+
+  ButtonVisualState AbstractButton::GetVisualState() const
+  {
+    return visual_state_;
+  }
+
+  void AbstractButton::SetLabelFontSize(int point)
+  {
+    if (point < 0)
+      return;
+
+    label_font_size_ = point;
+  }
+
+  int AbstractButton::GetLabelFontSize() const
+  {
+    return label_font_size_;
   }
 }

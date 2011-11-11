@@ -79,70 +79,76 @@ namespace nux
   class TimerHandler;
 //class Theme;
 
-  void NuxInitialize (const TCHAR *CommandLine);
+  void NuxInitialize(const char *CommandLine);
 
-//! Create a main graphics thread. This thread has a window and no parent window (The Parent parameter should always be null).
-  WindowThread *CreateGUIThread (const TCHAR *WindowTitle,
-                                 t_u32 width,
-                                 t_u32 height,
+//! Create a main graphics thread. This thread has a window and no parent window(The Parent parameter should always be null).
+  WindowThread *CreateGUIThread(const char *WindowTitle,
+                                 unsigned int width,
+                                 unsigned int height,
                                  WindowThread *Parent = NULL,
                                  ThreadUserInitFunc UserInitFunc = NULL,
                                  void *InitData = NULL);
 
 #if defined(NUX_OS_WINDOWS)
   //! Create a main graphics thread. This thread has a window and no parent window.
-  WindowThread *CreateFromForeignWindow (HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext,
+  WindowThread *CreateFromForeignWindow(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext,
                                          ThreadUserInitFunc UserInitFunc,
                                          void *InitData);
 #elif defined(NUX_OS_LINUX)
   //! Create a main graphics thread. This thread has a window and no parent window.
+#ifdef NUX_OPENGLES_20
+  WindowThread *CreateFromForeignWindow (Window X11Window, EGLContext OpenGLContext,
+                                         ThreadUserInitFunc UserInitFunc,
+                                         void *InitData);
+#else
   WindowThread *CreateFromForeignWindow (Window X11Window, GLXContext OpenGLContext,
                                          ThreadUserInitFunc UserInitFunc,
                                          void *InitData);
 #endif
+#endif
 
 // Create a window thread that is a child of the Parent. This thread has a window.
-  WindowThread *CreateWindowThread (WindowStyle WndStyle,
-                                    const TCHAR *WindowTitle,
-                                    t_u32 width,
-                                    t_u32 height,
+  WindowThread *CreateWindowThread(WindowStyle WndStyle,
+                                    const char *WindowTitle,
+                                    unsigned int width,
+                                    unsigned int height,
                                     WindowThread *Parent,
                                     ThreadUserInitFunc UserInitFunc = NULL,
                                     void *InitData = NULL);
 
 // Create a Modal window thread that is a child of the Parent. This thread has a window.
-  WindowThread *CreateModalWindowThread (WindowStyle WndStyle,
-                                         const TCHAR *WindowTitle,
-                                         t_u32 width,
-                                         t_u32 height,
+  WindowThread *CreateModalWindowThread(WindowStyle WndStyle,
+                                         const char *WindowTitle,
+                                         unsigned int width,
+                                         unsigned int height,
                                          WindowThread *Parent,
                                          ThreadUserInitFunc UserInitFunc = NULL,
                                          void *InitData = NULL);
 
 // Create a simple thread
-  SystemThread *CreateSystemThread (AbstractThread *Parent = NULL,
+  SystemThread *CreateSystemThread(AbstractThread *Parent = NULL,
                                     ThreadUserInitFunc UserInitFunc = NULL, void *InitData = NULL);
 
-  ThreadState GetThreadState (unsigned int ThreadID);
+  ThreadState GetThreadState(unsigned int ThreadID);
 
 
   ObjectPtr<FontTexture> GetSysFont();
   ObjectPtr<FontTexture> GetSysBoldFont();
 
-  NThread           *GetThreadApplication (); // deprecated
-  WindowThread      *GetGraphicsThread (); // deprecated
-  WindowThread      *GetWindowThread ();
-  GraphicsDisplay   &GetWindow ();
-  GraphicsEngine    &GetGraphicsEngine ();
-  WindowCompositor  &GetWindowCompositor ();
-  BasePainter       &GetPainter ();
-  UXTheme           &GetTheme ();
-  TimerHandler      &GetTimer ();
+  NThread           *GetThreadApplication(); // deprecated
+  WindowThread      *GetGraphicsThread(); // deprecated
+  WindowThread      *GetWindowThread();
+  GraphicsDisplay   &GetWindow();
+  GraphicsEngine    &GetGraphicsEngine();
+  WindowCompositor  &GetWindowCompositor();
+  BasePainter       &GetPainter();
+  UXTheme           &GetTheme();
+  TimerHandler      &GetTimer();
 
-#define  gPainter nux::GetPainter () // deprecated
-#define  gTheme   nux::GetTheme () // deprecated
+#define  gPainter nux::GetPainter() // deprecated
+#define  gTheme   nux::GetTheme() // deprecated
 
-  inlDeclareThreadLocalStorage (NThread *, 0, ThreadLocal_InalogicAppImpl);
+  inlDeclareThreadLocalStorage(NThread *, 0, ThreadLocal_InalogicAppImpl);
 
 }
 

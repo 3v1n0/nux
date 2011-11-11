@@ -11,20 +11,19 @@ dist_font_DATA = \
 uitexturesdir = $(PKGDATADIR)/UITextures
 dist_uitextures_DATA = \
   UITextures/AddButton.png \
-  UITextures/ButtonDisable.tga \
-  UITextures/ButtonMouseDown.tga \
-  UITextures/ButtonMouseNormal.tga \
-  UITextures/ButtonMouseOver.tga \
-  UITextures/ButtonNormal.tga \
+  UITextures/button-disabled.png \
+  UITextures/button-mousedown.png \
+  UITextures/button-mouseover.png \
+  UITextures/button.png \
   UITextures/CancelButton.png \
-  UITextures/CheckBoxDisableOff.tga \
-  UITextures/CheckBoxDisableOn.tga \
-  UITextures/CheckBoxMouseDownOff.tga \
-  UITextures/CheckBoxMouseDownOn.tga \
-  UITextures/CheckBoxMouseOverOff.tga \
-  UITextures/CheckBoxMouseOverOn.tga \
-  UITextures/CheckBoxNormalOff.tga \
-  UITextures/CheckBoxNormalOn.tga \
+  UITextures/checkbox-off-disable.png \
+  UITextures/checkbox-off-mousedown.png \
+  UITextures/checkbox-off-mouseover.png \
+  UITextures/checkbox-off.png \
+  UITextures/checkbox-on-disable.png \
+  UITextures/checkbox-on-mousedown.png \
+  UITextures/checkbox-on-mouseover.png \
+  UITextures/checkbox-on.png \
   UITextures/ComboBoxButton.tga \
   UITextures/Corner_shadow.tga \
   UITextures/Dot-6x6.tga \
@@ -40,14 +39,14 @@ dist_uitextures_DATA = \
   UITextures/Matrix3Preview.tga \
   UITextures/Matrix4Preview.tga \
   UITextures/Painter.xml \
-  UITextures/RadioDisableOff.tga \
-  UITextures/RadioDisableOn.tga \
-  UITextures/RadioMouseDownOff.tga \
-  UITextures/RadioMouseDownOn.tga \
-  UITextures/RadioMouseOverOff.tga \
-  UITextures/RadioMouseOverOn.tga \
-  UITextures/RadioNormalOff.tga \
-  UITextures/RadioNormalOn.tga \
+  UITextures/radiobutton-off-disable.png \
+  UITextures/radiobutton-off-mousedown.png \
+  UITextures/radiobutton-off-mouseover.png \
+  UITextures/radiobutton-off.png \
+  UITextures/radiobutton-on-disable.png \
+  UITextures/radiobutton-on-mousedown.png \
+  UITextures/radiobutton-on-mouseover.png \
+  UITextures/radiobutton-on.png \
   UITextures/RoundCorner_10pxrad.tga \
   UITextures/RoundCorner_10px_shadow.tga \
   UITextures/RoundCorner_1pxrad.tga \

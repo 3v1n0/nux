@@ -31,9 +31,9 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (MenuItem);
-  NUX_IMPLEMENT_OBJECT_TYPE (MenuSeparator);
-  NUX_IMPLEMENT_OBJECT_TYPE (MenuPage);
+  NUX_IMPLEMENT_OBJECT_TYPE(MenuItem);
+  NUX_IMPLEMENT_OBJECT_TYPE(MenuSeparator);
+  NUX_IMPLEMENT_OBJECT_TYPE(MenuPage);
 
   static const int MENU_ICONE_WIDTH = 18;
   static const int MENU_ICON_HEIGHT = 18;
@@ -44,7 +44,7 @@ namespace nux
   static const int MENU_ITEM_TEXT_TO_BORDER_MARGIN = 5;
 
 // Algorithm:
-// To initiate the menu, the mouse has to hit one of the menu bar item (they hold the name of the menu that are displayed).
+// To initiate the menu, the mouse has to hit one of the menu bar item(they hold the name of the menu that are displayed).
 // When that happens, the menu attached to the MenuBarItem gets the focus and becomes visible. Before the mouse is released,
 // the flag m_NextMouseUpMeanStop is set to FALSE, meaning that the following mouse up will not be processed by the menu, even if the released happened
 // outside of any of the menu forming the menu cascade. This way, the menu will remain open. There are exceptions to this however.
@@ -55,35 +55,35 @@ namespace nux
 //
 
 
-  MenuItem::MenuItem (const TCHAR *label, int UserValue, NUX_FILE_LINE_DECL)
-    :   View (NUX_FILE_LINE_PARAM)
+  MenuItem::MenuItem(const char *label, int UserValue, NUX_FILE_LINE_DECL)
+    :   View(NUX_FILE_LINE_PARAM)
   {
     _child_menu     = 0;
-    _action_item    = new ActionItem (label, UserValue, NUX_TRACKER_LOCATION);
+    _action_item    = new ActionItem(label, UserValue, NUX_TRACKER_LOCATION);
     
-    _pango_static_text = new StaticText (label, NUX_TRACKER_LOCATION);
-    _pango_static_text->SetTextColor (Color (0.0f, 0.0f, 0.0f, 1.0f));
+    _pango_static_text = new StaticText(label, NUX_TRACKER_LOCATION);
+    _pango_static_text->SetTextColor(Color(0.0f, 0.0f, 0.0f, 1.0f));
   }
 
   MenuItem::~MenuItem()
   {
-    _pango_static_text->Dispose ();
+    _pango_static_text->Dispose();
 
     if (_action_item)
-      _action_item->UnReference ();
+      _action_item->UnReference();
     if (_child_menu)
-      _child_menu->UnReference ();
+      _child_menu->UnReference();
   }
 
-  void MenuItem::SetChildMenu (MenuPage *menu)
+  void MenuItem::SetChildMenu(MenuPage *menu)
   {
     nuxAssert(menu);
-    NUX_RETURN_IF_NULL (menu);
+    NUX_RETURN_IF_NULL(menu);
 
     if (_child_menu)
-      _child_menu->UnReference ();
+      _child_menu->UnReference();
     _child_menu = menu;
-    _child_menu->Reference ();
+    _child_menu->Reference();
   }
 
   MenuPage *MenuItem::GetChildMenu() const
@@ -91,20 +91,20 @@ namespace nux
     return _child_menu;
   }
 
-  void MenuItem::SetActionItem (ActionItem *action)
+  void MenuItem::SetActionItem(ActionItem *action)
   {
-    nuxAssertMsg (action != 0, TEXT ("[MenuItem::SetActionItem] Parameter is Null.") );
+    nuxAssertMsg(action != 0, "[MenuItem::SetActionItem] Parameter is Null.");
 
     if (action == 0)
       return;
 
-    _pango_static_text->Dispose ();
+    _pango_static_text->Dispose();
     if (_action_item)
-      _action_item->UnReference ();
+      _action_item->UnReference();
     _action_item = action;
     _action_item->Reference();
 
-    _pango_static_text = new StaticText (_action_item->GetLabel (), NUX_TRACKER_LOCATION);
+    _pango_static_text = new StaticText(_action_item->GetLabel(), NUX_TRACKER_LOCATION);
   }
 
   ActionItem *MenuItem::GetActionItem() const
@@ -112,23 +112,23 @@ namespace nux
     return _action_item;
   }
 
-  int MenuItem::GetTextWidth ()
+  int MenuItem::GetTextWidth()
   {
     if (_pango_static_text)
     {
       int w, h;
-      _pango_static_text->GetTextSize (w, h);
+      _pango_static_text->GetTextLayoutSize(w, h);
       return w;
     }
     return 0;
   }
 
-  int MenuItem::GetTextHeight ()
+  int MenuItem::GetTextHeight()
   {
     if (_pango_static_text)
     {
       int w, h;
-      _pango_static_text->GetTextSize (w, h);
+      _pango_static_text->GetTextLayoutSize(w, h);
       return h;
     }
     return 0;
@@ -140,91 +140,82 @@ namespace nux
 //    return &_action_item;
 //}
 
-  long MenuItem::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    return PostProcessEvent2 (ievent, TraverseInfo, ProcessEventInfo);
-  }
 
-  void MenuItem::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void MenuItem::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void MenuItem::DrawAsMenuItem (GraphicsEngine &GfxContext, const Color &textcolor, bool is_highlighted, bool isFirstItem, bool isLastItem, bool draw_icone)
+  void MenuItem::DrawAsMenuItem(GraphicsEngine &graphics_engine, const Color &textcolor, bool is_highlighted, bool isFirstItem, bool isLastItem, bool draw_icone)
   {
-    Geometry geo = GetGeometry ();
-    Geometry icon_geo (0, 0, 20, 20);
+    Geometry geo = GetGeometry();
+    Geometry icon_geo(0, 0, 20, 20);
     Geometry text_geo = geo;
 
-    text_geo.OffsetPosition (24, 0);
-    text_geo.OffsetSize (2 * 24, 0);
+    text_geo.OffsetPosition(24, 0);
+    text_geo.OffsetSize(2 * 24, 0);
 
-    icon_geo.SetX (geo.x + 2);
-    icon_geo.SetY (geo.y + 0);
+    icon_geo.SetX(geo.x + 2);
+    icon_geo.SetY(geo.y + 0);
 
-    const TCHAR *label = _action_item->GetLabel ();
+    const char *label = _action_item->GetLabel();
 
     if (is_highlighted)
     {
       /*
-          if(isFirstItem && isLastItem)
-              GetPainter().PaintShape(GfxContext, geo, COLOR_FOREGROUND_SECONDARY, eSHAPE_CORNER_ROUND4);
-          else if(isFirstItem)
-              GetPainter().PaintShapeCorner(GfxContext, geo, COLOR_FOREGROUND_SECONDARY, eSHAPE_CORNER_ROUND4, eCornerTopLeft | eCornerTopRight);
-          else if(isLastItem)
-              GetPainter().PaintShapeCorner(GfxContext, geo, COLOR_FOREGROUND_SECONDARY, eSHAPE_CORNER_ROUND4, eCornerBottomLeft | eCornerBottomRight);
+          if (isFirstItem && isLastItem)
+              GetPainter().PaintShape(graphics_engine, geo, COLOR_FOREGROUND_SECONDARY, eSHAPE_CORNER_ROUND4);
+          else if (isFirstItem)
+              GetPainter().PaintShapeCorner(graphics_engine, geo, COLOR_FOREGROUND_SECONDARY, eSHAPE_CORNER_ROUND4, eCornerTopLeft | eCornerTopRight);
+          else if (isLastItem)
+              GetPainter().PaintShapeCorner(graphics_engine, geo, COLOR_FOREGROUND_SECONDARY, eSHAPE_CORNER_ROUND4, eCornerBottomLeft | eCornerBottomRight);
           else
-              GetPainter().Paint2DQuadColor(GfxContext, geo, COLOR_FOREGROUND_SECONDARY);
+              GetPainter().Paint2DQuadColor(graphics_engine, geo, COLOR_FOREGROUND_SECONDARY);
       */
-      GetPainter().Paint2DQuadColor (GfxContext, geo, Color (0x44000000) /*COLOR_FOREGROUND_SECONDARY*/);
-      _pango_static_text->SetTextColor (Color (1.0f, 1.0f, 1.0f, 1.0f));
+      GetPainter().Paint2DQuadColor(graphics_engine, geo, Color(0x44000000) /*COLOR_FOREGROUND_SECONDARY*/);
+      _pango_static_text->SetTextColor(Color(1.0f, 1.0f, 1.0f, 1.0f));
     }
     else
     {
-      _pango_static_text->SetTextColor (Color (0.0f, 0.0f, 0.0f, 1.0f));
-      //GetPainter().Paint2DQuadColor(GfxContext, geo, Color(0xFF868686));
+      _pango_static_text->SetTextColor(Color(0.0f, 0.0f, 0.0f, 1.0f));
+      //GetPainter().Paint2DQuadColor(graphics_engine, geo, Color(0xFF868686));
     }
 
     //if(m_Icon)
     {
-      //GetPainter().Draw2DTextureAligned(GfxContext, &_action_item->GetIcon(), icon_geo, TextureAlignmentStyle(eTACenter, eTACenter));
+      //GetPainter().Draw2DTextureAligned(graphics_engine, &_action_item->GetIcon(), icon_geo, TextureAlignmentStyle(eTACenter, eTACenter));
     }
 
     if (label)
     {
-      //GetPainter().PaintTextLineStatic (GfxContext, GetFont (), text_geo, std::string (label), textcolor, eAlignTextLeft);
+      //GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), text_geo, std::string(label), textcolor, eAlignTextLeft);
 
-      _pango_static_text->SetGeometry (text_geo);
-      _pango_static_text->ProcessDraw (GfxContext, true);
+      _pango_static_text->SetGeometry(text_geo);
+      _pango_static_text->ProcessDraw(graphics_engine, true);
     }
   }
 
-  MenuSeparator::MenuSeparator (NUX_FILE_LINE_DECL)
-    :   View (NUX_FILE_LINE_PARAM)
+  MenuSeparator::MenuSeparator(NUX_FILE_LINE_DECL)
+    :   View(NUX_FILE_LINE_PARAM)
   {
 
   }
 
-  MenuSeparator::~MenuSeparator ()
+  MenuSeparator::~MenuSeparator()
   {
 
   }
 
-  long MenuSeparator::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    return PostProcessEvent2 (ievent, TraverseInfo, ProcessEventInfo);
-  }
-
-  void MenuSeparator::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void MenuSeparator::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
     int y0 = base.y + base.GetHeight() / 2;
-    GetPainter().Draw2DLine (GfxContext, base.x, y0, base.x + base.GetWidth(), y0, Color(0xFF222222));
-    GetPainter().Draw2DLine (GfxContext, base.x, y0 + 1, base.x + base.GetWidth(), y0 + 1, Color(0xFFAAAAAA));
+    GetPainter().Draw2DLine(graphics_engine, base.x, y0, base.x + base.GetWidth(), y0, Color(0xFF222222));
+    GetPainter().Draw2DLine(graphics_engine, base.x, y0 + 1, base.x + base.GetWidth(), y0 + 1, Color(0xFFAAAAAA));
   }
 
-  MenuPage::MenuPage(const TCHAR *title, NUX_FILE_LINE_DECL)
-  : View (NUX_FILE_LINE_PARAM)
+  MenuPage::MenuPage(const char *title, NUX_FILE_LINE_DECL)
+  : View(NUX_FILE_LINE_PARAM)
   {
     m_Parent = 0;
     m_item_width = MENU_ITEM_MIN_WIDTH;
@@ -245,10 +236,10 @@ namespace nux
     mouse_down.connect(sigc::mem_fun(this, &MenuPage::EmitMouseDown));
     mouse_up.connect(sigc::mem_fun(this, &MenuPage::EmitMouseUp));
     mouse_leave.connect(sigc::mem_fun(this, &MenuPage::RecvMouseLeave));
-    mouse_down_outside_pointer_grab_area.connect(sigc::mem_fun (this, &MenuPage::Terminate));
+    mouse_down_outside_pointer_grab_area.connect(sigc::mem_fun(this, &MenuPage::Terminate));
 
     // Set Geometry
-    SetGeometry(Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
+    SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
 
     // Set layout
 
@@ -258,15 +249,15 @@ namespace nux
     m_NextMouseUpMeanStop = false;
     m_SubMenuAction = 0;
 
-    _vlayout = new VLayout (NUX_TRACKER_LOCATION);
+    _vlayout = new VLayout(NUX_TRACKER_LOCATION);
     // No Need to set a composition layout.
     // The MenuPage is floating above everything else.
     SetLayout(_vlayout);
 
-    SetTextColor (color::Black);
+    SetTextColor(color::Black);
   }
 
-  MenuPage::~MenuPage ()
+  MenuPage::~MenuPage()
   {
 //     std::vector <MenuItem*>::iterator it;
 // 
@@ -274,19 +265,19 @@ namespace nux
 //     {
 //       (*it)->UnReference();
 //     }
-    m_MenuItemVector.clear ();
-    m_MenuSeparatorVector.clear ();
-    RemoveLayout ();
+    m_MenuItemVector.clear();
+    m_MenuSeparatorVector.clear();
+    RemoveLayout();
   }
 
-//void MenuPage::SetName(const TCHAR* name)
+//void MenuPage::SetName(const char* name)
 //{
 //    m_Name = name;
 //}
 //
-  const TCHAR *MenuPage::GetName () const
+  const char *MenuPage::GetName() const
   {
-    return m_Name.GetTCharPtr ();
+    return m_Name.GetTCharPtr();
   }
 
   bool MenuPage::CanClose() const
@@ -294,169 +285,102 @@ namespace nux
     return m_Action_Triggered;
   }
 
-  long MenuPage::ProcessEvent (Event &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-
-    Event mod_event = ievent;
-    mod_event.e_x_root = 0;
-    mod_event.e_y_root = 0;
-
-    if (m_IsActive)
-    {
-      if (mod_event.e_event == NUX_MOUSE_RELEASED)
-      {
-        Geometry geo = GetGraphicsDisplay()->GetWindowGeometry();
-        geo.SetX (0);
-        geo.SetY (0);
-
-        if (!geo.IsPointInside (mod_event.e_x, mod_event.e_y) /*mod_event.e_x < 0 || mod_event.e_y < 0*/)
-        {
-          // the event happened outside the window.
-          NotifyTerminateMenuCascade();
-        }
-        else
-        {
-          EmitMouseUp (mod_event.e_x - GetBaseX(), mod_event.e_y - GetBaseY(), mod_event.GetMouseState(), mod_event.GetKeyState() );
-        }
-      }
-      else if (mod_event.e_event == NUX_MOUSE_PRESSED)
-      {
-        Geometry geo = GetGraphicsDisplay()->GetWindowGeometry();
-        geo.SetX (0);
-        geo.SetY (0);
-
-        if (!geo.IsPointInside (mod_event.e_x, mod_event.e_y) /*mod_event.e_x < 0 || mod_event.e_y < 0*/)
-        {
-          // the event happened outside the window.
-          NotifyTerminateMenuCascade();
-        }
-        else
-        {
-          ret = PostProcessEvent2 (mod_event, ret, ProcessEventInfo);
-        }
-      }
-      else if (mod_event.e_event == NUX_WINDOW_CONFIGURATION)
-      {
-        NotifyTerminateMenuCascade();
-      }
-      else if (mod_event.e_event == NUX_WINDOW_EXIT_FOCUS)
-      {
-        NotifyTerminateMenuCascade();
-      }
-      else
-      {
-        if (mod_event.e_event == NUX_MOUSE_MOVE)
-          QueueDraw ();
-
-        ret = PostProcessEvent2 (mod_event, ret, ProcessEventInfo);
-      }
-    }
-
-    if (GetGeometry ().IsPointInside (mod_event.GetX (), mod_event.GetY ()))
-    {
-      ret |= eMouseEventSolved;
-    }
-
-    return ret;
-  };
-
   Area* MenuPage::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
     bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
 
-    if(mouse_inside == false)
+    if (mouse_inside == false)
       return NULL;
 
-    if((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
+    if ((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
       return NULL;
     return this;
   }
 
-  void MenuPage::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void MenuPage::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     if (m_IsActive)
     {
-      Geometry base = GetGeometry ();
+      Geometry base = GetGeometry();
       Geometry shadow;
       shadow = base;
-      shadow.OffsetPosition (4, 4);
-      //GetPainter().PaintShape(GfxContext, shadow, Color(0xFF000000), eSHAPE_CORNER_ROUND4_SHADOW);
+      shadow.OffsetPosition(4, 4);
+      //GetPainter().PaintShape(graphics_engine, shadow, Color(0xFF000000), eSHAPE_CORNER_ROUND4_SHADOW);
 
-      GfxContext.PushClippingRectangle (base);
-      GfxContext.GetRenderStates ().SetBlend (GL_TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      GetPainter ().Paint2DQuadColor (GfxContext, base, Color (0xCCFFFFFF) );
-      GfxContext.GetRenderStates ().SetBlend (GL_FALSE);
+      graphics_engine.PushClippingRectangle(base);
+      graphics_engine.GetRenderStates().SetBlend(GL_TRUE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      GetPainter().Paint2DQuadColor(graphics_engine, base, Color(0xCCFFFFFF));
+      graphics_engine.GetRenderStates().SetBlend(GL_FALSE);
 
       Geometry text_area;
-      text_area.SetX (base.x);
-      text_area.SetY (base.y);
-      text_area.SetWidth (base.GetWidth ());
-      text_area.SetHeight (PRACTICAL_WIDGET_HEIGHT);
+      text_area.SetX(base.x);
+      text_area.SetY(base.y);
+      text_area.SetWidth(base.GetWidth());
+      text_area.SetHeight(PRACTICAL_WIDGET_HEIGHT);
 
       int i;
       std::vector<MenuItem *>::iterator it;
-      int numItem = (int) m_MenuItemVector.size ();
+      int numItem = (int) m_MenuItemVector.size();
 
-      for (it = m_MenuItemVector.begin (), i = 0; it != m_MenuItemVector.end (); it++, i++)
+      for (it = m_MenuItemVector.begin(), i = 0; it != m_MenuItemVector.end(); it++, i++)
       {
         bool is_highlighted = (m_HighlightedItem == i);
-        (*it)->DrawAsMenuItem (GfxContext, Color (0xFFFFFFFF) /*GetTextColor()*/, is_highlighted, i == 0, i == (numItem - 1), true);
+        (*it)->DrawAsMenuItem(graphics_engine, Color(0xFFFFFFFF) /*GetTextColor()*/, is_highlighted, i == 0, i == (numItem - 1), true);
       }
 
       std::vector<MenuSeparator* >::iterator separator_iterator;
 
-      for (separator_iterator = m_MenuSeparatorVector.begin (); separator_iterator != m_MenuSeparatorVector.end (); separator_iterator++)
+      for (separator_iterator = m_MenuSeparatorVector.begin(); separator_iterator != m_MenuSeparatorVector.end(); separator_iterator++)
       {
-        (*separator_iterator)->Draw (GfxContext, force_draw);
+        (*separator_iterator)->Draw(graphics_engine, force_draw);
       }
 
-      GfxContext.PopClippingRectangle ();
+      graphics_engine.PopClippingRectangle();
     }
   }
 
-  void MenuPage::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void MenuPage::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void MenuPage::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void MenuPage::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void MenuPage::SetFontName (char *font_name)
+  void MenuPage::SetFontName(char *font_name)
   {
     std::vector<MenuItem *>::iterator it;
     
     for (it = m_MenuItemVector.begin(); it != m_MenuItemVector.end(); ++it)
     {
-      (*it)->GetStaticText ()->SetFontName (font_name);
+      (*it)->GetStaticText()->SetFontName(font_name);
     }
 
-    g_free (_font_name);
-    _font_name = g_strdup (font_name);
+    g_free(_font_name);
+    _font_name = g_strdup(font_name);
   }
 
-  ActionItem *MenuPage::AddAction (const TCHAR *label, int UserValue)
+  ActionItem *MenuPage::AddAction(const char *label, int UserValue)
   {
     // pMenuItem if added to the layout do not sink the Reference.
-    MenuItem *pMenuItem (new MenuItem (label, UserValue, NUX_TRACKER_LOCATION) );
-    pMenuItem->GetStaticText ()->SetFontName (_font_name);
+    MenuItem *pMenuItem(new MenuItem(label, UserValue, NUX_TRACKER_LOCATION));
+    pMenuItem->GetStaticText()->SetFontName(_font_name);
 
-    m_MenuItemVector.push_back (pMenuItem);
-    pMenuItem->SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+    m_MenuItemVector.push_back(pMenuItem);
+    pMenuItem->SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
-    int new_item_width = pMenuItem->GetTextWidth(); //GetFont ()->GetStringWidth (pMenuItem->GetActionItem()->GetLabel() );
+    int new_item_width = pMenuItem->GetTextWidth(); //GetFont()->GetStringWidth(pMenuItem->GetActionItem()->GetLabel());
 
     if (new_item_width < m_item_width)
     {
       std::vector<MenuItem *>::iterator it;
       for (it = m_MenuItemVector.begin(); it != m_MenuItemVector.end(); it++)
       {
-        if (ShowItemIcon() )
+        if (ShowItemIcon())
         {
-          pMenuItem->SetMinMaxSize (MENU_ITEM_BORDER_TO_ICON_MARGIN
+          pMenuItem->SetMinMaxSize(MENU_ITEM_BORDER_TO_ICON_MARGIN
                                     + MENU_ICONE_WIDTH
                                     + MENU_ITEM_ICON_TO_TEXT_MARGIN
                                     + m_item_width
@@ -464,7 +388,7 @@ namespace nux
         }
         else
         {
-          pMenuItem->SetMinMaxSize (MENU_ITEM_ICON_TO_TEXT_MARGIN
+          pMenuItem->SetMinMaxSize(MENU_ITEM_ICON_TO_TEXT_MARGIN
                                     + m_item_width
                                     + MENU_ITEM_TEXT_TO_BORDER_MARGIN, m_item_height);
         }
@@ -475,9 +399,9 @@ namespace nux
       std::vector<MenuItem *>::iterator it;
       for (it = m_MenuItemVector.begin(); it != m_MenuItemVector.end(); it++)
       {
-        if (ShowItemIcon() )
+        if (ShowItemIcon())
         {
-          (*it)->SetMinMaxSize (MENU_ITEM_BORDER_TO_ICON_MARGIN
+          (*it)->SetMinMaxSize(MENU_ITEM_BORDER_TO_ICON_MARGIN
                                     + MENU_ICONE_WIDTH
                                     + MENU_ITEM_ICON_TO_TEXT_MARGIN
                                     + new_item_width
@@ -485,51 +409,51 @@ namespace nux
         }
         else
         {
-          (*it)->SetMinMaxSize (MENU_ITEM_ICON_TO_TEXT_MARGIN
+          (*it)->SetMinMaxSize(MENU_ITEM_ICON_TO_TEXT_MARGIN
                                     + new_item_width
                                     + MENU_ITEM_TEXT_TO_BORDER_MARGIN, m_item_height);
         }
 
-        (*it)->SetBaseSize (MENU_ITEM_ICON_TO_TEXT_MARGIN
+        (*it)->SetBaseSize(MENU_ITEM_ICON_TO_TEXT_MARGIN
                             + new_item_width
                             + MENU_ITEM_TEXT_TO_BORDER_MARGIN, m_item_height);
       }
 
       m_item_width = new_item_width;
-//       SetBaseWidth (MENU_ITEM_ICON_TO_TEXT_MARGIN
+//       SetBaseWidth(MENU_ITEM_ICON_TO_TEXT_MARGIN
 //                     + m_item_width
 //                     + MENU_ITEM_TEXT_TO_BORDER_MARGIN);
     }
 
     if (pMenuItem->GetChildMenu() != 0)
     {
-      pMenuItem->GetChildMenu()->SetParentMenu (this);
+      pMenuItem->GetChildMenu()->SetParentMenu(this);
     }
 
     m_numItem = (int) m_MenuItemVector.size();
-    _vlayout->AddView (pMenuItem, 0, eLeft, eFix);
-    ComputeChildLayout();
+    _vlayout->AddView(pMenuItem, 0, eLeft, eFix);
+    ComputeContentSize();
 
     return pMenuItem->GetActionItem();
   }
 
 //void MenuPage::AddActionItem(ActionItem* actionItem)
 //{
-//    nuxAssertMsg(actionItem != 0, TEXT("[MenuPage::AddActionItem] Parameter is Null."));
-//    if(actionItem == 0)
+//    nuxAssertMsg(actionItem != 0, "[MenuPage::AddActionItem] Parameter is Null.");
+//    if (actionItem == 0)
 //        return;
 //
 //     MenuItem* pMenuItem = new MenuItem(actionItem->GetLabel(), actionItem->GetUserValue(), NUX_TRACKER_LOCATION);
-//     pMenuItem->SinkReference ();
+//     pMenuItem->SinkReference();
 //    pMenuItem->SetActionItem(actionItem);
 //
 //    m_MenuItemVector.push_back(pMenuItem);
 //    pMenuItem->SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 //
-//    int new_item_width = GetFont ()->GetStringWidth(actionItem->GetLabel());
-//    if(new_item_width < m_item_width)
+//    int new_item_width = GetFont()->GetStringWidth(actionItem->GetLabel());
+//    if (new_item_width < m_item_width)
 //    {
-//        if(ShowItemIcon())
+//        if (ShowItemIcon())
 //        {
 //            pMenuItem->SetMinMaxSize(MENU_ITEM_BORDER_TO_ICON_MARGIN
 //                + MENU_ICONE_WIDTH
@@ -546,7 +470,7 @@ namespace nux
 //    }
 //    else
 //    {
-//        if(ShowItemIcon())
+//        if (ShowItemIcon())
 //        {
 //            pMenuItem->SetMinMaxSize(MENU_ITEM_BORDER_TO_ICON_MARGIN
 //                + MENU_ICONE_WIDTH
@@ -562,7 +486,7 @@ namespace nux
 //        }
 //
 //        std::vector<MenuItem*>::iterator it;
-//        for(it = m_MenuItemVector.begin(); it != m_MenuItemVector.end(); it++)
+//        for (it = m_MenuItemVector.begin(); it != m_MenuItemVector.end(); it++)
 //        {
 //            (*it)->setSize(MENU_ITEM_ICON_TO_TEXT_MARGIN
 //                + new_item_width
@@ -575,34 +499,34 @@ namespace nux
 //            + MENU_ITEM_TEXT_TO_BORDER_MARGIN);
 //    }
 //
-//    if(pMenuItem->GetChildMenu() != 0)
+//    if (pMenuItem->GetChildMenu() != 0)
 //    {
 //        pMenuItem->GetChildMenu()->SetParentMenu(this);
 //    }
 //
 //    m_numItem = (int)m_MenuItemVector.size();
 //    _vlayout->AddView(pMenuItem, 0, eLeft, eFix);
-//    ComputeChildLayout();
+//    ComputeContentSize();
 //}
 
-  MenuPage *MenuPage::AddMenu (const TCHAR *label)
+  MenuPage *MenuPage::AddMenu(const char *label)
   {
     // pMenuItem if added to the layout do not sink the Reference.
-    MenuItem *pMenuItem (new MenuItem (label, 0, NUX_TRACKER_LOCATION));
+    MenuItem *pMenuItem(new MenuItem(label, 0, NUX_TRACKER_LOCATION));
 
-    pMenuItem->SetChildMenu (new MenuPage (label) );
+    pMenuItem->SetChildMenu(new MenuPage(label));
     //pMenuItem->SetActionItem(new ActionItem());
     //pMenuItem->GetActionItem()->SetLabel(label);
-    m_MenuItemVector.push_back (pMenuItem);
-    pMenuItem->SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+    m_MenuItemVector.push_back(pMenuItem);
+    pMenuItem->SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
-    int new_item_width = pMenuItem->GetTextWidth(); //GetFont ()->GetStringWidth (label);
+    int new_item_width = pMenuItem->GetTextWidth(); //GetFont()->GetStringWidth(label);
 
     if (new_item_width < m_item_width)
     {
-      if (ShowItemIcon() )
+      if (ShowItemIcon())
       {
-        pMenuItem->SetMinMaxSize (MENU_ITEM_BORDER_TO_ICON_MARGIN
+        pMenuItem->SetMinMaxSize(MENU_ITEM_BORDER_TO_ICON_MARGIN
                                   + MENU_ICONE_WIDTH
                                   + MENU_ITEM_ICON_TO_TEXT_MARGIN
                                   + m_item_width
@@ -610,16 +534,16 @@ namespace nux
       }
       else
       {
-        pMenuItem->SetMinMaxSize (MENU_ITEM_ICON_TO_TEXT_MARGIN
+        pMenuItem->SetMinMaxSize(MENU_ITEM_ICON_TO_TEXT_MARGIN
                                   + m_item_width
                                   + MENU_ITEM_TEXT_TO_BORDER_MARGIN, m_item_height);
       }
     }
     else
     {
-      if (ShowItemIcon() )
+      if (ShowItemIcon())
       {
-        pMenuItem->SetMinMaxSize (MENU_ITEM_BORDER_TO_ICON_MARGIN
+        pMenuItem->SetMinMaxSize(MENU_ITEM_BORDER_TO_ICON_MARGIN
                                   + MENU_ICONE_WIDTH
                                   + MENU_ITEM_ICON_TO_TEXT_MARGIN
                                   + new_item_width
@@ -627,7 +551,7 @@ namespace nux
       }
       else
       {
-        pMenuItem->SetMinMaxSize (MENU_ITEM_ICON_TO_TEXT_MARGIN
+        pMenuItem->SetMinMaxSize(MENU_ITEM_ICON_TO_TEXT_MARGIN
                                   + new_item_width
                                   + MENU_ITEM_TEXT_TO_BORDER_MARGIN, m_item_height);
       }
@@ -636,46 +560,46 @@ namespace nux
 
       for (it = m_MenuItemVector.begin(); it != m_MenuItemVector.end(); it++)
       {
-        (*it)->SetBaseSize (MENU_ITEM_ICON_TO_TEXT_MARGIN
+        (*it)->SetBaseSize(MENU_ITEM_ICON_TO_TEXT_MARGIN
                             + new_item_width
                             + MENU_ITEM_TEXT_TO_BORDER_MARGIN, m_item_height);
       }
 
       m_item_width = new_item_width;
-      SetBaseWidth (MENU_ITEM_ICON_TO_TEXT_MARGIN
+      SetBaseWidth(MENU_ITEM_ICON_TO_TEXT_MARGIN
                     + m_item_width
                     + MENU_ITEM_TEXT_TO_BORDER_MARGIN);
     }
 
     if (pMenuItem->GetChildMenu() != 0)
     {
-      pMenuItem->GetChildMenu()->SetParentMenu (this);
+      pMenuItem->GetChildMenu()->SetParentMenu(this);
     }
 
     m_numItem = (int) m_MenuItemVector.size();
-    _vlayout->AddView (pMenuItem, 0, eLeft, eFix);
-    ComputeChildLayout();
+    _vlayout->AddView(pMenuItem, 0, eLeft, eFix);
+    ComputeContentSize();
 
     return pMenuItem->GetChildMenu();
   }
 
-  ActionItem *MenuPage::AddSubMenu (const TCHAR *label, MenuPage *menu)
+  ActionItem *MenuPage::AddSubMenu(const char *label, MenuPage *menu)
   {
     menu->m_IsTopOfMenuChain = false;
     // pMenuItem if added to the layout do not sink the Reference.
-    MenuItem *pMenuItem (new MenuItem (menu->GetName(), 0, NUX_TRACKER_LOCATION));
+    MenuItem *pMenuItem(new MenuItem(menu->GetName(), 0, NUX_TRACKER_LOCATION));
     
-    pMenuItem->SetChildMenu (menu);
-    m_MenuItemVector.push_back (pMenuItem);
-    pMenuItem->SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+    pMenuItem->SetChildMenu(menu);
+    m_MenuItemVector.push_back(pMenuItem);
+    pMenuItem->SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
-    int new_item_width = pMenuItem->GetTextWidth(); //GetFont ()->GetStringWidth (label);
+    int new_item_width = pMenuItem->GetTextWidth(); //GetFont()->GetStringWidth(label);
 
     if (new_item_width < m_item_width)
     {
-      if (ShowItemIcon() )
+      if (ShowItemIcon())
       {
-        pMenuItem->SetMinMaxSize (MENU_ITEM_BORDER_TO_ICON_MARGIN
+        pMenuItem->SetMinMaxSize(MENU_ITEM_BORDER_TO_ICON_MARGIN
                                   + MENU_ICONE_WIDTH
                                   + MENU_ITEM_ICON_TO_TEXT_MARGIN
                                   + m_item_width
@@ -683,16 +607,16 @@ namespace nux
       }
       else
       {
-        pMenuItem->SetMinMaxSize (MENU_ITEM_ICON_TO_TEXT_MARGIN
+        pMenuItem->SetMinMaxSize(MENU_ITEM_ICON_TO_TEXT_MARGIN
                                   + m_item_width
                                   + MENU_ITEM_TEXT_TO_BORDER_MARGIN, m_item_height);
       }
     }
     else
     {
-      if (ShowItemIcon() )
+      if (ShowItemIcon())
       {
-        pMenuItem->SetMinMaxSize (MENU_ITEM_BORDER_TO_ICON_MARGIN
+        pMenuItem->SetMinMaxSize(MENU_ITEM_BORDER_TO_ICON_MARGIN
                                   + MENU_ICONE_WIDTH
                                   + MENU_ITEM_ICON_TO_TEXT_MARGIN
                                   + new_item_width
@@ -700,7 +624,7 @@ namespace nux
       }
       else
       {
-        pMenuItem->SetMinMaxSize (MENU_ITEM_ICON_TO_TEXT_MARGIN
+        pMenuItem->SetMinMaxSize(MENU_ITEM_ICON_TO_TEXT_MARGIN
                                   + new_item_width
                                   + MENU_ITEM_TEXT_TO_BORDER_MARGIN, m_item_height);
       }
@@ -709,25 +633,25 @@ namespace nux
 
       for (it = m_MenuItemVector.begin(); it != m_MenuItemVector.end(); it++)
       {
-        (*it)->SetBaseSize (MENU_ITEM_ICON_TO_TEXT_MARGIN
+        (*it)->SetBaseSize(MENU_ITEM_ICON_TO_TEXT_MARGIN
                             + new_item_width
                             + MENU_ITEM_TEXT_TO_BORDER_MARGIN, m_item_height);
       }
 
       m_item_width = new_item_width;
-      SetBaseWidth (MENU_ITEM_ICON_TO_TEXT_MARGIN
+      SetBaseWidth(MENU_ITEM_ICON_TO_TEXT_MARGIN
                     + m_item_width
                     + MENU_ITEM_TEXT_TO_BORDER_MARGIN);
     }
 
     if (pMenuItem->GetChildMenu() != 0)
     {
-      pMenuItem->GetChildMenu()->SetParentMenu (this);
+      pMenuItem->GetChildMenu()->SetParentMenu(this);
     }
 
     m_numItem = (int) m_MenuItemVector.size();
-    _vlayout->AddView (pMenuItem, 0, eLeft, eFix);
-    ComputeChildLayout();
+    _vlayout->AddView(pMenuItem, 0, eLeft, eFix);
+    ComputeContentSize();
 
     return pMenuItem->GetActionItem();
   }
@@ -735,13 +659,13 @@ namespace nux
   void MenuPage::AddSeparator()
   {
     // pMenuSeparator if added to the layout do not sink the Reference.
-    MenuSeparator *pMenuSeparator (new MenuSeparator(NUX_TRACKER_LOCATION) );
+    MenuSeparator *pMenuSeparator(new MenuSeparator(NUX_TRACKER_LOCATION));
 
-    m_MenuSeparatorVector.push_back (pMenuSeparator);
+    m_MenuSeparatorVector.push_back(pMenuSeparator);
 
-    if (ShowItemIcon() )
+    if (ShowItemIcon())
     {
-      pMenuSeparator->SetMinMaxSize (MENU_ITEM_BORDER_TO_ICON_MARGIN
+      pMenuSeparator->SetMinMaxSize(MENU_ITEM_BORDER_TO_ICON_MARGIN
                                      + MENU_ICONE_WIDTH
                                      + MENU_ITEM_ICON_TO_TEXT_MARGIN
                                      + m_item_width
@@ -749,16 +673,16 @@ namespace nux
     }
     else
     {
-      pMenuSeparator->SetMinMaxSize (MENU_ITEM_ICON_TO_TEXT_MARGIN
+      pMenuSeparator->SetMinMaxSize(MENU_ITEM_ICON_TO_TEXT_MARGIN
                                      + m_item_width
                                      + MENU_ITEM_TEXT_TO_BORDER_MARGIN, 4);
     }
 
-    _vlayout->AddView (pMenuSeparator, 0, eLeft, eFix);
-    ComputeChildLayout();
+    _vlayout->AddView(pMenuSeparator, 0, eLeft, eFix);
+    ComputeContentSize();
   }
 
-  void MenuPage::RemoveItem (ActionItem *item)
+  void MenuPage::RemoveItem(ActionItem *item)
   {
   }
 
@@ -768,22 +692,22 @@ namespace nux
     m_MenuItemVector.clear();
     m_numItem = 0;
     _vlayout->Clear();
-    ComputeChildLayout();
+    ComputeContentSize();
    
     //FIXME - Hack to fix a bug with the menu height not being reset after removing items
-    Geometry base = GetGeometry ();
+    Geometry base = GetGeometry();
     base.height = 0;
-    View::SetGeometry (base);
+    View::SetGeometry(base);
   }
 
-  void MenuPage::EmitMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void MenuPage::EmitMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    if (IsMouseInside ())
+    if (IsMouseInside())
     {
       m_NextMouseUpMeanStop = true;
       // Find on which item the mouse is
       std::vector< MenuItem * >::iterator item_iterator;
-      t_u32 i = 0;
+      unsigned int i = 0;
       m_HighlightedItem = -1;
 
       for (item_iterator = m_MenuItemVector.begin(), i = 0; item_iterator != m_MenuItemVector.end(); item_iterator++, i++)
@@ -802,7 +726,7 @@ namespace nux
     }
     else
     {
-      if(m_HighlightedItem != -1)
+      if (m_HighlightedItem != -1)
       {
         m_HighlightedItem = -1;
         QueueDraw();
@@ -813,15 +737,15 @@ namespace nux
     {
       MenuItem *selected_action = m_MenuItemVector[m_HighlightedItem];
 
-      if((selected_action->GetChildMenu() != 0) && selected_action->GetActionItem()->isEnabled())
+      if ((selected_action->GetChildMenu() != 0) && selected_action->GetActionItem()->isEnabled())
       {
         // This MenuItem has a sub-MenuPage. Start it.
         Geometry geo = selected_action->GetGeometry();
         selected_action->GetChildMenu()->m_MenuWindow = selected_action->GetChildMenu()->GetParentMenu()->m_MenuWindow;
-        selected_action->GetChildMenu()->StartMenu (geo.x + geo.GetWidth() - 5, geo.y, 0, 0);
+        selected_action->GetChildMenu()->StartMenu(geo.x + geo.GetWidth() - 5, geo.y, 0, 0);
 
         // The current SubMenu is not the same as the new one...
-        if(m_SubMenuAction != selected_action)
+        if (m_SubMenuAction != selected_action)
         {
           // If m_SubMenuAction is not null then stop the sub menu
           StopActionSubMenu();
@@ -836,18 +760,17 @@ namespace nux
     }
   }
 
-  void MenuPage::EmitMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void MenuPage::EmitMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     m_NextMouseUpMeanStop = true;
 
-    EmitMouseMove (x, y, 0, 0, button_flags, key_flags);
+    EmitMouseMove(x, y, 0, 0, button_flags, key_flags);
   }
 
-  void MenuPage::EmitMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void MenuPage::EmitMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     if (m_NextMouseUpMeanStop == false)
     {
-      ForceStopFocus (0, 0);
       m_NextMouseUpMeanStop = true;
       return;
     }
@@ -858,12 +781,12 @@ namespace nux
 
     if (m_SubMenuAction)
     {
-      m_Action_Triggered = m_SubMenuAction->GetChildMenu()->TestMouseUp (x, y, button_flags, key_flags, hit_inside_a_menu);
+      m_Action_Triggered = m_SubMenuAction->GetChildMenu()->TestMouseUp(x, y, button_flags, key_flags, hit_inside_a_menu);
     }
 
     if (m_Action_Triggered == false)
     {
-      if (IsMouseInside() )
+      if (IsMouseInside())
       {
         if (m_SubMenuAction)
         {
@@ -880,8 +803,8 @@ namespace nux
           {
             m_Action_Triggered = true;
             // Fire the Action Here
-            ExecuteActionItem (m_MenuItemVector[m_HighlightedItem]);
-            NotifyActionTriggeredToParent (this, m_MenuItemVector[m_HighlightedItem]);
+            ExecuteActionItem(m_MenuItemVector[m_HighlightedItem]);
+            NotifyActionTriggeredToParent(this, m_MenuItemVector[m_HighlightedItem]);
           }
         }
       }
@@ -897,18 +820,18 @@ namespace nux
     }
   }
 
-  bool MenuPage::TestMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags, bool &hit_inside_a_menu)
+  bool MenuPage::TestMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags, bool &hit_inside_a_menu)
   {
     m_Action_Triggered = false;
 
     if (m_SubMenuAction)
     {
-      m_Action_Triggered = m_SubMenuAction->GetChildMenu()->TestMouseUp (x, y, button_flags, key_flags, hit_inside_a_menu);
+      m_Action_Triggered = m_SubMenuAction->GetChildMenu()->TestMouseUp(x, y, button_flags, key_flags, hit_inside_a_menu);
     }
 
     if (m_Action_Triggered == false)
     {
-      if (IsMouseInside() )
+      if (IsMouseInside())
       {
         hit_inside_a_menu = true;
 
@@ -928,8 +851,8 @@ namespace nux
           {
             m_Action_Triggered = true;
             // Fire the Action Here
-            ExecuteActionItem (m_MenuItemVector[m_HighlightedItem]);
-            NotifyActionTriggeredToParent (this, m_MenuItemVector[m_HighlightedItem]);
+            ExecuteActionItem(m_MenuItemVector[m_HighlightedItem]);
+            NotifyActionTriggeredToParent(this, m_MenuItemVector[m_HighlightedItem]);
             // But Do not emit the Stop
             //sigPopupStop.emit();
           }
@@ -962,22 +885,22 @@ namespace nux
     }
   }
 
-  void MenuPage::EmitMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void MenuPage::EmitMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    if (IsMouseInside() )
-      EmitMouseMove (x, y, 0, 0, button_flags, key_flags);
+    if (IsMouseInside())
+      EmitMouseMove(x, y, 0, 0, button_flags, key_flags);
   }
 
-  void MenuPage::RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void MenuPage::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     // Cancel selected item when the mouse is out.
     if (m_HighlightedItem != -1)
     {
       MenuItem *item = m_MenuItemVector[m_HighlightedItem];
 
-      if (item->GetChildMenu() )
+      if (item->GetChildMenu())
       {
-        if (!item->GetChildMenu()->IsActive() )
+        if (!item->GetChildMenu()->IsActive())
         {
           m_HighlightedItem = -1;
         }
@@ -991,49 +914,49 @@ namespace nux
     QueueDraw();
   }
 
-  void MenuPage::StartMenu (int MenuXPosition, int MenuYPosition, int x, int y, bool OverrideCurrentMenuChain)
+  void MenuPage::StartMenu(int MenuXPosition, int MenuYPosition, int x, int y, bool OverrideCurrentMenuChain)
   {
     Geometry base = GetGeometry();
-    base.SetX (MenuXPosition);
-    base.SetY (MenuYPosition);
+    base.SetX(MenuXPosition);
+    base.SetY(MenuYPosition);
 
     int WindowWidth = GetGraphicsEngine().GetWindowWidth();
     int WindowHeight = GetGraphicsEngine().GetWindowHeight();
 
     // Correct the position of the MenuPage if is going out of the screen
     // The first page of a menu chain has less opportunities to be adjusted than its child pages.
-    // The first page of a menu chain has (GetParentMenu() == 0) return true.
+    // The first page of a menu chain has(GetParentMenu() == 0) return true.
     int MenuLeft = base.x + base.GetWidth() + 5;
 
     if (MenuLeft > WindowWidth)
     {
-      base.OffsetPosition (WindowWidth - MenuLeft, 0);
+      base.OffsetPosition(WindowWidth - MenuLeft, 0);
     }
 
     int MenuRight = base.x;
 
-    if ( (MenuRight < 0) && (GetParentMenu() != 0) )
+    if ((MenuRight < 0) && (GetParentMenu() != 0))
     {
-      base.OffsetPosition (-MenuRight, 0);
+      base.OffsetPosition(-MenuRight, 0);
     }
 
     int MenuBottom = base.y + base.GetHeight() + 5;
 
-    if ( (MenuBottom > WindowHeight) && (GetParentMenu() != 0) )
+    if ((MenuBottom > WindowHeight) && (GetParentMenu() != 0))
     {
-      base.OffsetPosition (0, WindowHeight - MenuBottom);
+      base.OffsetPosition(0, WindowHeight - MenuBottom);
     }
 
     int MenuTop = base.y - 5;
 
-    if ( (MenuTop < 0) && (GetParentMenu() != 0) )
+    if ((MenuTop < 0) && (GetParentMenu() != 0))
     {
-      base.OffsetPosition (0, -MenuTop);
+      base.OffsetPosition(0, -MenuTop);
     }
 
-    SetGeometry (base);
+    SetGeometry(base);
 
-    SetActive (true);
+    SetActive(true);
 
     // Add the menu to the stack manager popup list.
     if (GetParentMenu() == 0)
@@ -1042,16 +965,15 @@ namespace nux
       m_MenuWindow = GetWindowCompositor().GetProcessingTopView();
     }
 
-    GetWindowCompositor().AddMenu (this, m_MenuWindow/*, OverrideCurrentMenuChain*/);
+    GetWindowCompositor().AddMenu(this, m_MenuWindow/*, OverrideCurrentMenuChain*/);
     m_NextMouseUpMeanStop = false;
 
     StopActionSubMenu();
   }
 
-  void MenuPage::StopMenu (int x, int y)
+  void MenuPage::StopMenu(int x, int y)
   {
-    SetActive (false);
-    ForceStopFocus (x, y);
+    SetActive(false);
     // The Stack Manager will remove all popup that are not visible anymore
     m_NextMouseUpMeanStop = false;
     m_HighlightedItem = -1;
@@ -1061,25 +983,25 @@ namespace nux
     // The MenuPage does not need to be redrawn, but in embedded mode, this triggers a dirty Area on 
     // the BaseWindow and it informs the system to update this egion of the screen
     // (where the menu is about to disappear).
-    QueueDraw ();
+    QueueDraw();
 
-    /*Area *top_area = GetWindowCompositor().GetProcessingTopView ();
+    /*Area *top_area = GetWindowCompositor().GetProcessingTopView();
     if (top_area)
     {
-      if (top_area->IsView ())
+      if (top_area->IsView())
       {
-        NUX_STATIC_CAST (View*, top_area)->QueueDraw ();
+        NUX_STATIC_CAST(View*, top_area)->QueueDraw();
       }
       
-      if (top_area->IsLayout ())
+      if (top_area->IsLayout())
       {
-        NUX_STATIC_CAST (Layout*, top_area)->QueueDraw ();
+        NUX_STATIC_CAST(Layout*, top_area)->QueueDraw();
       }
     }*/
   }
 
 // Never call this function directly
-  void MenuPage::Terminate (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void MenuPage::Terminate(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
   }
 
@@ -1087,29 +1009,29 @@ namespace nux
   {
     if (m_SubMenuAction)
     {
-      if (m_SubMenuAction->GetChildMenu() )
+      if (m_SubMenuAction->GetChildMenu())
       {
-        m_SubMenuAction->GetChildMenu()->StopMenu (0, 0);
+        m_SubMenuAction->GetChildMenu()->StopMenu(0, 0);
       }
     }
 
     m_SubMenuAction = 0;
   }
 
-  void MenuPage::ExecuteActionItem (MenuItem *menuItem)
+  void MenuPage::ExecuteActionItem(MenuItem *menuItem)
   {
     menuItem->GetActionItem()->Trigger();
   }
 
-  void MenuPage::NotifyActionTriggeredToParent (MenuPage *menu, MenuItem *menuItem)
+  void MenuPage::NotifyActionTriggeredToParent(MenuPage *menu, MenuItem *menuItem)
   {
     if (m_Parent)
     {
-      m_Parent->NotifyActionTriggeredToParent (menu, menuItem);
+      m_Parent->NotifyActionTriggeredToParent(menu, menuItem);
     }
     else
     {
-      sigActionTriggered.emit (menu, menuItem->GetActionItem() );
+      sigActionTriggered.emit(menu, menuItem->GetActionItem());
     }
 
     StopMenu();
@@ -1126,30 +1048,30 @@ namespace nux
       sigTerminateMenuCascade.emit();
     }
 
-//     if(IsActive())
+//     if (IsActive())
 //     {
 //         StopMenu();
 //     }
   }
 
-  void MenuPage::NotifyMouseDownOutsideMenuCascade (int x, int y)
+  void MenuPage::NotifyMouseDownOutsideMenuCascade(int x, int y)
   {
     if (m_Parent)
     {
-      m_Parent->NotifyMouseDownOutsideMenuCascade (x, y);
+      m_Parent->NotifyMouseDownOutsideMenuCascade(x, y);
     }
     else
     {
       // This is the top MenuPage in a menu chain.
       // If this MenuPage has been registered with a MenuBar, then the MenuBar will intercept this signal
       // and terminate the menu chain.
-      sigMouseDownOutsideMenuCascade.emit (this, x, y);
+      sigMouseDownOutsideMenuCascade.emit(this, x, y);
 
-      // It is also possible that this MenuPage is not associated to a MenuBar (called directly for a contextual menu)
+      // It is also possible that this MenuPage is not associated to a MenuBar(called directly for a contextual menu)
       if (m_IsTopOfMenuChain == false)
       {
         // This MenuPage is not attached to a MenuBar
-        if (IsActive() )
+        if (IsActive())
         {
           //StopMenu();
         }
@@ -1157,7 +1079,7 @@ namespace nux
     }
   }
 
-  void MenuPage::SetParentMenu (MenuPage *parent)
+  void MenuPage::SetParentMenu(MenuPage *parent)
   {
     m_Parent = parent;
   }
@@ -1167,46 +1089,46 @@ namespace nux
     return m_Parent;
   }
 
-  long MenuPage::ComputeChildLayout()
+  long MenuPage::ComputeContentSize()
   {
-    return View::ComputeChildLayout();
+    return View::ComputeContentSize();
   }
 
-  void MenuPage::SetGeometry (const Geometry &geo)
+  void MenuPage::SetGeometry(const Geometry &geo)
   {
     // The MenuPage widget cannot be resized by the client. The menu widget controls its own size.
 
     Geometry base = GetGeometry();
     // We are only interested in the position X/Y. The popup figures out its width and height by itself.
-    base.SetX (geo.x);
-    base.SetY (geo.y);
+    base.SetX(geo.x);
+    base.SetY(geo.y);
 
-    base.SetWidth (geo.GetWidth() );
-    base.SetHeight (m_numItem * PRACTICAL_WIDGET_HEIGHT);
+    base.SetWidth(geo.GetWidth());
+    base.SetHeight(m_numItem * PRACTICAL_WIDGET_HEIGHT);
 
-    SetBaseXY (geo.x, geo.y);
+    SetBaseXY(geo.x, geo.y);
 
-    PositionChildLayout (0, 0);
+    ComputeContentPosition(0, 0);
   }
 
-  ActionItem *MenuPage::GetActionItem (int index) const
+  ActionItem *MenuPage::GetActionItem(int index) const
   {
-    nuxAssert (index >= 0);
+    nuxAssert(index >= 0);
 
-    if (index >= (int) m_MenuItemVector.size() )
+    if (index >= (int) m_MenuItemVector.size())
       return 0;
 
     return m_MenuItemVector[index]->GetActionItem();
   }
 
-  int MenuPage::GetActionItemIndex (ActionItem *action) const
+  int MenuPage::GetActionItemIndex(ActionItem *action) const
   {
     if (action == 0)
       return -1;
 
     for (int i = 0; i < (int) m_MenuItemVector.size(); i++)
     {
-      if (action == m_MenuItemVector[i]->GetActionItem() )
+      if (action == m_MenuItemVector[i]->GetActionItem())
       {
         return i;
       }
@@ -1215,12 +1137,12 @@ namespace nux
     return -1;
   }
 
-  Geometry MenuPage::GetAbsoluteGeometry () const
+  Geometry MenuPage::GetAbsoluteGeometry() const
   {
     return GetGeometry();  
   }
 
-  Geometry MenuPage::GetRootGeometry () const
+  Geometry MenuPage::GetRootGeometry() const
   {
     return GetGeometry();
   }

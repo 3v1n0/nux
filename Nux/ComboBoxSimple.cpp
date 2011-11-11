@@ -24,42 +24,38 @@
 #include "ComboBoxSimple.h"
 #include "MenuPage.h"
 #include "ActionItem.h"
-#include "TableItem.h"
-#include "TableCtrl.h"
 #include "StaticText.h"
 
 
 namespace nux
 {
-  ComboBoxSimple::ComboBoxSimple (NUX_FILE_LINE_DECL)
-    :   AbstractComboBox (NUX_FILE_LINE_PARAM)
+  ComboBoxSimple::ComboBoxSimple(NUX_FILE_LINE_DECL)
+    :   AbstractComboBox(NUX_FILE_LINE_PARAM)
   {
-    m_block_focus       = false;
-    _can_pass_focus_to_composite_layout = false;
     m_SelectedAction    = 0;
     m_CurrentMenu       = 0;
 
-    m_CurrentMenu = new MenuPage (TEXT (""), NUX_TRACKER_LOCATION);
+    m_CurrentMenu = new MenuPage("", NUX_TRACKER_LOCATION);
     m_CurrentMenu->SinkReference();
     m_CurrentMenu->SetParentObject(this);
     
     // Set Signals
-    _combo_box_opening_area->mouse_down.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseDown));
-    _combo_box_opening_area->mouse_up.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseUp));
-    _combo_box_area->mouse_down.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseDown));
-    _combo_box_area->mouse_up.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvMouseUp));
+    _combo_box_opening_area->mouse_down.connect(sigc::mem_fun(this, &ComboBoxSimple::RecvMouseDown));
+    _combo_box_opening_area->mouse_up.connect(sigc::mem_fun(this, &ComboBoxSimple::RecvMouseUp));
+    _combo_box_area->mouse_down.connect(sigc::mem_fun(this, &ComboBoxSimple::RecvMouseDown));
+    _combo_box_area->mouse_up.connect(sigc::mem_fun(this, &ComboBoxSimple::RecvMouseUp));
 
     //m_Popup.sigPopupStop.connect(sigc::mem_fun(this, &ComboBox::OnPopupStop));
 
     // Set Geometry
-    _combo_box_opening_area->SetGeometry (Geometry (0, 0, 20, DEFAULT_WIDGET_HEIGHT));
+    _combo_box_opening_area->SetGeometry(Geometry(0, 0, 20, DEFAULT_WIDGET_HEIGHT));
     //_combo_box_opening_area->SetMaximumSize(20, DEFAULT_WIDGET_HEIGHT);
-    _combo_box_opening_area->SetMinimumSize (20, DEFAULT_WIDGET_HEIGHT);
+    _combo_box_opening_area->SetMinimumSize(20, DEFAULT_WIDGET_HEIGHT);
 
-    _combo_box_area->SetMinimumSize (2 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    _combo_box_area->SetGeometry (Geometry (0, 0, 3 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT));
-    _pango_static_text->SetClipping (_combo_box_area->GetBaseWidth());
-    _combo_box_area->OnGeometryChanged.connect (sigc::mem_fun (this, &ComboBoxSimple::RecvGeometryChanged));
+    _combo_box_area->SetMinimumSize(2 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+    _combo_box_area->SetGeometry(Geometry(0, 0, 3 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT));
+    //_pango_static_text->SetClipping(_combo_box_area->GetBaseWidth());
+    _combo_box_area->OnGeometryChanged.connect(sigc::mem_fun(this, &ComboBoxSimple::RecvGeometryChanged));
 
     //m_CurrentMenu = new MenuPage;
     m_CurrentMenu->SetParentMenu(0);
@@ -74,165 +70,52 @@ namespace nux
     m_CurrentMenu->UnReference();
   }
 
-  void ComboBoxSimple::DoSetFocused (bool focused)
-  {
-    View::DoSetFocused (focused);
-    if (focused == true)
-    {
-      m_block_focus = true;
-      // we need to grab focus control from our parent layout
-      // so that we can handle the key inputs ourself
-      Area *_parent = GetParentObject();
-      if (_parent == NULL)
-        return;
-
-      if (_parent->IsView ())
-      {
-        View *parent = (View*)_parent;
-        parent->SetFocusControl (false);
-      }
-      else if (_parent->IsLayout ())
-      {
-        Layout *parent = (Layout *)_parent;
-        parent->SetFocusControl (false);
-      }
-    }
-    QueueDraw();
-  }
-
-  long ComboBoxSimple::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-
-    //ret = m_Popup.ProcessEvent(ievent, ret, ProcessEventInfo); // implement isVisible on InputArea. If invisible, no event processed.
-    ret = _combo_box_opening_area->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = _combo_box_area->OnEvent (ievent, ret, ProcessEventInfo);
-
-    if (ievent.e_event == NUX_MOUSE_PRESSED)
-    {
-      bool mouse_down_on_menu_item = false;
-
-      if (m_MenuIsActive == true)
-      {
-        if (_combo_box_opening_area->IsMouseInside() || _combo_box_area->IsMouseInside() )
-          mouse_down_on_menu_item = true;
-
-        if (mouse_down_on_menu_item == false)
-        {
-          if (m_CurrentMenu->TestMouseDown() == false)
-          {
-            RecvSigTerminateMenuCascade();
-            m_MenuIsActive = false;
-          }
-        }
-      }
-    }
-
-    /* must do focus processing after sending events to children */
-    if (ievent.e_event == NUX_KEYDOWN && GetFocused () && m_block_focus == false)
-    {
-      FocusDirection direction;
-      FocusEventType type;
-
-      direction = FOCUS_DIRECTION_NONE;
-
-      type = Focusable::GetFocusableEventType (ievent.e_event,
-                                               ievent.GetKeySym(),
-                                               ievent.GetText(),
-                                               &direction);
-      if (type == FOCUS_EVENT_DIRECTION)
-      {
-        if (direction == FOCUS_DIRECTION_PREV || direction == FOCUS_DIRECTION_NEXT ||
-          direction == FOCUS_DIRECTION_LEFT || direction == FOCUS_DIRECTION_RIGHT)
-        {
-          // not pressed UP or Down so send focus to our parent layout
-          Area *area = GetParentObject ();
-          // if parent is null return, thats a valid usecase so no warnings.
-          if (area)
-          {
-            long ret = 0;
-            if ( area->IsView() )
-            {
-              View *ic = static_cast<View *>(area);
-              ic->SetFocusControl (true);
-              ret = ic->ProcessFocusEvent (ievent, ret, ProcessEventInfo);
-            }
-            else if ( area->IsLayout() )
-            {
-              Layout *layout = static_cast<Layout *>(area);
-              layout->SetFocusControl (true);
-              ret = layout->ProcessFocusEvent (ievent, ret, ProcessEventInfo);
-            }
-          }
-        }
-        else if (direction == FOCUS_DIRECTION_UP)
-        {
-          MoveSelectionUp ();
-          sigTriggered.emit (this);
-          sigActionTriggered.emit (GetItem (GetSelectionIndex ()));
-        }
-        else if (direction == FOCUS_DIRECTION_DOWN)
-        {
-          MoveSelectionDown ();
-          sigTriggered.emit (this);
-          sigActionTriggered.emit (GetItem (GetSelectionIndex ()));
-        }
-      }
-    }
-
-    if (m_block_focus == true)
-      m_block_focus = false;
-
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-    return ret;
-  }
-
   Area* ComboBoxSimple::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
     bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
 
-    if(mouse_inside == false)
+    if (mouse_inside == false)
       return NULL;
 
     NUX_RETURN_VALUE_IF_TRUE(_combo_box_opening_area->TestMousePointerInclusion(mouse_position, event_type), _combo_box_opening_area);
     NUX_RETURN_VALUE_IF_TRUE(_combo_box_area->TestMousePointerInclusion(mouse_position, event_type), _combo_box_area);
 
-    if((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
+    if ((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
       return NULL;
     return this;
   }
 
-  void ComboBoxSimple::MoveSelectionUp ()
+  void ComboBoxSimple::MoveSelectionUp()
   {
-    int current_index = GetSelectionIndex ();
-    SetSelectionIndex (current_index - 1);
+    int current_index = GetSelectionIndex();
+    SetSelectionIndex(current_index - 1);
   }
 
-  void ComboBoxSimple::MoveSelectionDown ()
+  void ComboBoxSimple::MoveSelectionDown()
   {
-    int current_index = GetSelectionIndex ();
-    SetSelectionIndex (current_index + 1);
+    int current_index = GetSelectionIndex();
+    SetSelectionIndex(current_index + 1);
   }
 
-  ActionItem *ComboBoxSimple::AddItem (const TCHAR *label, int Uservalue)
+  ActionItem *ComboBoxSimple::AddItem(const char *label, int Uservalue)
   {
     if (m_CurrentMenu->GetNumItem() == 0)
     {
       // The first element added is the element featured on the combo box when it is closed.
-      m_SelectedAction = m_CurrentMenu->AddAction (label, Uservalue);
-      _combo_box_area->SetBaseString (m_SelectedAction->GetLabel ());
+      m_SelectedAction = m_CurrentMenu->AddAction(label, Uservalue);
+      _combo_box_area->SetBaseString(m_SelectedAction->GetLabel());
 
-      _pango_static_text->SetText (m_SelectedAction->GetLabel ());
+      _pango_static_text->SetText(m_SelectedAction->GetLabel());
 
       return m_SelectedAction;
     }
     else
     {
-      return m_CurrentMenu->AddAction (label, Uservalue);
+      return m_CurrentMenu->AddAction(label, Uservalue);
     }
   }
 
-  void ComboBoxSimple::RemoveItem (ActionItem *item)
+  void ComboBoxSimple::RemoveItem(ActionItem *item)
   {
 
   }
@@ -242,7 +125,7 @@ namespace nux
     m_CurrentMenu->RemoveAllItem();
   }
 
-  void ComboBoxSimple::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ComboBoxSimple::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     if (m_MenuIsActive == false)
     {
@@ -251,14 +134,14 @@ namespace nux
       m_IsOpeningMenu = true;
 
       Geometry geo = m_CurrentMenu->GetGeometry();
-      geo.SetX (_combo_box_area->GetAbsoluteX() );
-      geo.SetY (_combo_box_area->GetAbsoluteY() + _combo_box_area->GetBaseHeight() );
-      geo.SetWidth (_combo_box_area->GetBaseWidth() );
-      //m_CurrentMenu->SetMinimumWidth (geo.width);
-      //m_CurrentMenu->SetMaximumWidth (geo.width);
-      m_CurrentMenu->SetGeometry (geo);
-      m_CurrentMenu->ComputeChildLayout ();
-      m_CurrentMenu->StartMenu (_combo_box_area->GetAbsoluteX(),
+      geo.SetX(_combo_box_area->GetAbsoluteX());
+      geo.SetY(_combo_box_area->GetAbsoluteY() + _combo_box_area->GetBaseHeight());
+      geo.SetWidth(_combo_box_area->GetBaseWidth());
+      //m_CurrentMenu->SetMinimumWidth(geo.width);
+      //m_CurrentMenu->SetMaximumWidth(geo.width);
+      m_CurrentMenu->SetGeometry(geo);
+      m_CurrentMenu->ComputeContentSize();
+      m_CurrentMenu->StartMenu(_combo_box_area->GetAbsoluteX(),
                                 _combo_box_area->GetAbsoluteY() + _combo_box_area->GetBaseHeight(),
                                 0, 0);
     }
@@ -271,16 +154,16 @@ namespace nux
     QueueDraw();
   }
 
-  void ComboBoxSimple::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ComboBoxSimple::RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     if (m_MenuIsActive)
     {
-      if (_combo_box_area->IsMouseInside() || _combo_box_opening_area->IsMouseInside() )
+      if (_combo_box_area->IsMouseInside() || _combo_box_opening_area->IsMouseInside())
       {
         if (m_IsOpeningMenu == false)
         {
           // close the MenuPage that is Open
-          m_CurrentMenu->StopMenu (0, 0);
+          m_CurrentMenu->StopMenu(0, 0);
           m_MenuIsActive = false;
         }
         else
@@ -294,9 +177,9 @@ namespace nux
       else
       {
         bool hit_inside_a_menu = false;
-        bool b = m_CurrentMenu->TestMouseUp (x, y, button_flags, key_flags, hit_inside_a_menu);
+        bool b = m_CurrentMenu->TestMouseUp(x, y, button_flags, key_flags, hit_inside_a_menu);
 
-        if (b || (hit_inside_a_menu == false) )
+        if (b || (hit_inside_a_menu == false))
         {
           RecvSigTerminateMenuCascade();
           m_MenuIsActive = false;
@@ -307,7 +190,7 @@ namespace nux
     QueueDraw();
   }
 
-  void ComboBoxSimple::RecvSigActionTriggered (MenuPage *menu, ActionItem *action)
+  void ComboBoxSimple::RecvSigActionTriggered(MenuPage *menu, ActionItem *action)
   {
     m_MenuIsActive = false;
     m_CurrentMenu->StopMenu();
@@ -318,8 +201,8 @@ namespace nux
 
     _pango_static_text->SetText(m_SelectedAction->GetLabel());
 
-    sigTriggered.emit (this);
-    sigActionTriggered.emit (m_SelectedAction);
+    sigTriggered.emit(this);
+    sigActionTriggered.emit(m_SelectedAction);
 
     QueueDraw();
     // You can do something if you want with the menu* and the action*
@@ -349,12 +232,12 @@ namespace nux
 
     // When the menu is closing check if the mouse is still inside the combo box surface 
     // and set the _current_mouse_in flag accordingly.  
-    if(!_combo_box_area->TestMousePointerInclusion(GetWindowCompositor().GetMousePosition(), NUX_NO_EVENT))
+    if (!_combo_box_area->TestMousePointerInclusion(GetWindowCompositor().GetMousePosition(), NUX_NO_EVENT))
     {
       _combo_box_area->_event_processor._current_mouse_in = false;
     }
 
-    if(!_combo_box_opening_area->TestMousePointerInclusion(GetWindowCompositor().GetMousePosition(), NUX_NO_EVENT))
+    if (!_combo_box_opening_area->TestMousePointerInclusion(GetWindowCompositor().GetMousePosition(), NUX_NO_EVENT))
     {
       _combo_box_opening_area->_event_processor._current_mouse_in = false;
     }
@@ -364,11 +247,11 @@ namespace nux
 
   void ComboBoxSimple::RecvGeometryChanged(Area *area, Geometry &geo)
   {
-	  _pango_static_text->SetClipping (geo.width);
+    //_pango_static_text->SetClipping(geo.width);
   }
 
 
-  const TCHAR *ComboBoxSimple::GetSelectionLabel() const
+  const char *ComboBoxSimple::GetSelectionLabel() const
   {
     if (m_SelectedAction)
       return m_SelectedAction->GetLabel();
@@ -389,37 +272,37 @@ namespace nux
     return m_CurrentMenu->GetNumItem();
   }
 
-  ActionItem *ComboBoxSimple::GetItem (int index) const
+  ActionItem *ComboBoxSimple::GetItem(int index) const
   {
-    return m_CurrentMenu->GetActionItem (index);
+    return m_CurrentMenu->GetActionItem(index);
   }
 
   int ComboBoxSimple::GetSelectionIndex() const
   {
     if (m_SelectedAction)
-      return m_CurrentMenu->GetActionItemIndex (m_SelectedAction);
+      return m_CurrentMenu->GetActionItemIndex(m_SelectedAction);
 
     return -1;
   }
 
-  void ComboBoxSimple::SetSelectionIndex (int index)
+  void ComboBoxSimple::SetSelectionIndex(int index)
   {
-    if ((index >= 0) && (index < m_CurrentMenu->GetNumItem ()))
+    if ((index >= 0) && (index < m_CurrentMenu->GetNumItem()))
     {
-      m_SelectedAction = m_CurrentMenu->GetActionItem (index);
-      _combo_box_area->SetBaseString (m_SelectedAction->GetLabel ());
+      m_SelectedAction = m_CurrentMenu->GetActionItem(index);
+      _combo_box_area->SetBaseString(m_SelectedAction->GetLabel());
 
-      _pango_static_text->SetText (m_SelectedAction->GetLabel ());
+      _pango_static_text->SetText(m_SelectedAction->GetLabel());
 
-      QueueDraw ();
+      QueueDraw();
     }
     else if (m_CurrentMenu->GetNumItem() > 0)
     {
       // index is negative
-      m_SelectedAction = m_CurrentMenu->GetActionItem (0);
-      _combo_box_area->SetBaseString (m_SelectedAction->GetLabel ());
+      m_SelectedAction = m_CurrentMenu->GetActionItem(0);
+      _combo_box_area->SetBaseString(m_SelectedAction->GetLabel());
 
-      _pango_static_text->SetText (m_SelectedAction->GetLabel ());
+      _pango_static_text->SetText(m_SelectedAction->GetLabel());
 
       QueueDraw();
     }

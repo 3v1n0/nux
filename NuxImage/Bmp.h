@@ -68,10 +68,10 @@ namespace nux
     unsigned char reserved;
   } bmp_colortable_element;
 
-  NBitmapData *read_bmp_file (const TCHAR *file_name);
-  HReport write_bmp_file (const TCHAR *file_name, NBitmapData *image);
+  NBitmapData *read_bmp_file(const TCHAR *file_name);
+  HReport write_bmp_file(const TCHAR *file_name, NBitmapData *image);
 
-  ImageInfo get_bmp_info (const std::string &file_name);
+  ImageInfo get_bmp_info(const std::string &file_name);
 
 }
 
@@ -94,7 +94,7 @@ start size  name                stdvalue    purpose
 23      4   biHeight            100         specifies the height of the image, in pixels.
 27      2   biPlanes            1           specifies the number of planes of the target device, must be set to zero.
 29      2   biBitCount          8           specifies the number of bits per pixel.
-31      4   biCompression       0           Specifies the type of compression, usually set to zero (no compression).
+31      4   biCompression       0           Specifies the type of compression, usually set to zero(no compression).
 35      4   biSizeImage         0           specifies the size of the image data, in bytes. If there is no compression, it is valid to set this member to zero.
 39      4   biXPelsPerMeter     0           specifies the the horizontal pixels per meter on the designated targer device, usually set to zero.
 43      4   biYPelsPerMeter     0           specifies the the vertical pixels per meter on the designated targer device, usually set to zero.

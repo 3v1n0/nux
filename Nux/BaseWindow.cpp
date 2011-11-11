@@ -32,7 +32,7 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (BaseWindow);
+  NUX_IMPLEMENT_OBJECT_TYPE(BaseWindow);
 
   const int SizeGripWidth = 20;
   const int SizeGripHeight = 20;
@@ -44,10 +44,10 @@ namespace nux
       pass the top-left corner position of the window. When drawing, make a similar adjustment.
   */
 
-  BaseWindow::BaseWindow (const TCHAR *WindowName, NUX_FILE_LINE_DECL)
-    : View (NUX_FILE_LINE_PARAM)
+  BaseWindow::BaseWindow(const char *WindowName, NUX_FILE_LINE_DECL)
+    : View(NUX_FILE_LINE_PARAM)
     , _paint_layer(new ColorLayer(Color(0xFF707070)))
-    , _opacity (1.0f)
+    , _opacity(1.0f)
   {
     premultiply = true;
     _name = WindowName;
@@ -70,9 +70,9 @@ namespace nux
     accept_key_nav_focus_ = false;
 
     // Should be at the end of the constructor
-    GetWindowCompositor().RegisterWindow (this);
+    GetWindowCompositor().RegisterWindow(this);
 
-    SetMinimumSize (1, 1);
+    SetMinimumSize(1, 1);
     SetGeometry(Geometry(100, 100, 320, 200));
   }
 
@@ -80,7 +80,7 @@ namespace nux
   {
     if (_enter_focus_input_area)
     {
-      _enter_focus_input_area->UnReference ();
+      _enter_focus_input_area->UnReference();
     }
 
 #if defined(NUX_OS_LINUX)
@@ -89,160 +89,90 @@ namespace nux
 #endif
   }
 
-  long BaseWindow::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-    long ProcEvInfo = 0;
-
-    IEvent window_event = ievent;
-    Geometry base = GetGeometry();
-    window_event.e_x_root = base.x;
-    window_event.e_y_root = base.y;
-
-    // The child layout get the Mouse down button only if the MouseDown happened inside the client view Area
-    Geometry viewGeometry = GetGeometry();
-
-    if (ievent.e_event == NUX_MOUSE_PRESSED)
-    {
-      if (!viewGeometry.IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root) )
-      {
-        ProcEvInfo = eDoNotProcess;
-      }
-    }
-
-    if (m_layout)
-      ret = m_layout->ProcessEvent (window_event, ret, ProcEvInfo);
-
-    // PostProcessEvent2 must always have its last parameter set to 0
-    // because the m_BackgroundArea is the real physical limit of the window.
-    // So the previous test about IsPointInside do not prevail over m_BackgroundArea
-    // testing the event by itself.
-    ret = PostProcessEvent2 (ievent, ret, 0);
-    return ret;
-  }
-
   Area* BaseWindow::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
     bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
 
-    if(mouse_inside == false)
+    if (mouse_inside == false)
       return NULL;
 
-    if(m_layout)
+    if (m_layout)
     {
       nuxAssert(m_layout->IsLayout());
       Area* found_area = m_layout->FindAreaUnderMouse(mouse_position, event_type);
-      if(found_area)
+      if (found_area)
         return found_area;
     }
 
-    if((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
+    if ((event_type == NUX_MOUSE_WHEEL) && (!AcceptMouseWheelEvent()))
       return NULL;
     return this;
   }
 
-  void BaseWindow::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void BaseWindow::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
-    // The elements position inside the window are referenced to top-left window corner. So bring base to (0, 0).
-    base.SetX (0);
-    base.SetY (0);
-    GfxContext.PushClippingRectangle (base);
+    // The elements position inside the window are referenced to top-left window corner. So bring base to(0, 0).
+    base.SetX(0);
+    base.SetY(0);
+    graphics_engine.PushClippingRectangle(base);
 
-    GetPainter().PushDrawLayer(GfxContext, base, _paint_layer.get());
+    GetPainter().PushDrawLayer(graphics_engine, base, _paint_layer.get());
 
     GetPainter().PopBackground();
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void BaseWindow::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void BaseWindow::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
     Geometry base = GetGeometry();
-    // The elements position inside the window are referenced to top-left window corner. So bring base to (0, 0).
-    base.SetX (0);
-    base.SetY (0);
+    // The elements position inside the window are referenced to top-left window corner. So bring base to(0, 0).
+    base.SetX(0);
+    base.SetY(0);
 
 
-    GetPainter().PushLayer(GfxContext, base, _paint_layer.get());
+    GetPainter().PushLayer(graphics_engine, base, _paint_layer.get());
 
     if (m_layout)
     {
-      GfxContext.PushClippingRectangle (base);
-      m_layout->ProcessDraw (GfxContext, force_draw);
-      GfxContext.PopClippingRectangle();
+      graphics_engine.PushClippingRectangle(base);
+      m_layout->ProcessDraw(graphics_engine, force_draw);
+      graphics_engine.PopClippingRectangle();
     }
 
     GetPainter().PopBackground();
   }
 
-  void BaseWindow::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void BaseWindow::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void BaseWindow::SetConfigureNotifyCallback (ConfigureNotifyCallback Callback, void *Data)
+  void BaseWindow::SetConfigureNotifyCallback(ConfigureNotifyCallback Callback, void *Data)
   {
     m_configure_notify_callback = Callback;
     m_configure_notify_callback_data = Data;
   }
 
-  void BaseWindow::AddWidget (View *ic)
-  {
-    if (ic && m_layout)
-    {
-      m_layout->AddView (ic, 0);
-      // 0: the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
-      // and the children will take their natural size by expending WidgetLayout.
-      // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
-
-      ComputeChildLayout();
-    }
-  }
-
-  void BaseWindow::AddWidget (View *ic, int stretchfactor)
-  {
-    if (ic && m_layout)
-    {
-      m_layout->AddView (ic, stretchfactor);
-      // if(stretchfactor ==0): the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
-      // and the children will take their natural size by expending WidgetLayout.
-      // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
-
-      ComputeChildLayout();
-    }
-  }
-
-  void BaseWindow::AddWidget (std::list<View *> *ViewList)
-  {
-    m_CompositionLayout->Clear();
-
-    std::list<View *>::iterator it;
-
-    for (it = ViewList->begin(); it != ViewList->end(); it++)
-    {
-      AddWidget ( (*it) );
-    }
-  }
-
-  Layout* BaseWindow::GetLayout ()
+  Layout* BaseWindow::GetLayout()
   {
     return m_layout;
   }
 
-  bool BaseWindow::SetLayout (Layout *layout)
+  bool BaseWindow::SetLayout(Layout *layout)
   {
-    if (View::SetLayout (layout) == false)
+    if (View::SetLayout(layout) == false)
       return false;
 
     m_layout = layout;
     Geometry geo = GetGeometry();
-    Geometry layout_geo = Geometry (geo.x + m_Border, geo.y + m_TopBorder,
+    Geometry layout_geo = Geometry(geo.x + m_Border, geo.y + m_TopBorder,
                                     geo.GetWidth() - 2 * m_Border, geo.GetHeight() - m_Border - m_TopBorder);
-    m_layout->SetGeometry (layout_geo);
+    m_layout->SetGeometry(layout_geo);
 
     // When this call returns the layout computation is done.
-    ComputeChildLayout();
+    ComputeContentSize();
     // or use
     //GetWindowThread()->QueueObjectLayout(m_layout);
 
@@ -257,16 +187,16 @@ namespace nux
 
     if (m_configure_notify_callback)
     {
-      (*m_configure_notify_callback) (GetGraphicsDisplay()->GetWindowWidth(), GetGraphicsDisplay()->GetWindowHeight(), geo, m_configure_notify_callback_data);
+      (*m_configure_notify_callback)(GetGraphicsDisplay()->GetWindowWidth(), GetGraphicsDisplay()->GetWindowHeight(), geo, m_configure_notify_callback_data);
 
-      if (geo.IsNull() )
+      if (geo.IsNull())
       {
-        nuxDebugMsg (TEXT ("[BaseWindow::PreLayoutManagement] Received an invalid Geometry.") );
+        nuxDebugMsg("[BaseWindow::PreLayoutManagement] Received an invalid Geometry.");
         geo = GetGeometry();
       }
       else
       {
-        Area::SetGeometry (geo);
+        Area::SetGeometry(geo);
         // Get the geometry adjusted with respect to min and max dimension of this area.
         geo = GetGeometry();
       }
@@ -274,30 +204,30 @@ namespace nux
 
     if (m_layout)
     {
-      Geometry layout_geo = Geometry (m_Border, m_TopBorder,
+      Geometry layout_geo = Geometry(m_Border, m_TopBorder,
                                       geo.GetWidth() - 2 * m_Border, geo.GetHeight() - m_Border - m_TopBorder);
 
-      if (IsSizeMatchContent ())
-        m_layout->SetGeometry (Geometry (0, 0, 1, 1));
+      if (IsSizeMatchContent())
+        m_layout->SetGeometry(Geometry(0, 0, 1, 1));
       else
-        m_layout->SetGeometry (layout_geo);
+        m_layout->SetGeometry(layout_geo);
     }
   }
 
 // Get a change to do any work on an element.
 // Here we need to position the header by hand because it is not under the control of vlayout.
-  long BaseWindow::PostLayoutManagement (long LayoutResult)
+  long BaseWindow::PostLayoutManagement(long LayoutResult)
   {
     if (IsSizeMatchContent() && m_layout)
     {
       Geometry layout_geometry = m_layout->GetGeometry();
 
-      Geometry WindowGeometry = Geometry (GetGeometry().x,
+      Geometry WindowGeometry = Geometry(GetGeometry().x,
                                           GetGeometry().y,
                                           layout_geometry.GetWidth() + 2 * m_Border,
                                           layout_geometry.GetHeight() + m_Border + m_TopBorder);
 
-      Area::SetGeometry (WindowGeometry);
+      Area::SetGeometry(WindowGeometry);
     }
 
     // A BaseWindow must kill the result of the management and pass it to the parent Layout.
@@ -307,13 +237,13 @@ namespace nux
 
 // Get a change to do any work on an element.
 // Here we need to position the header by hand because it is not under the control of vlayout.
-  void BaseWindow::PositionChildLayout (float offsetX, float offsetY)
+  void BaseWindow::ComputeContentPosition(float offsetX, float offsetY)
   {
 
   }
   
   #if defined(NUX_OS_LINUX)
-  void BaseWindow::EnableInputWindow (bool        b,
+  void BaseWindow::EnableInputWindow(bool        b,
                                       const char* title,
                                       bool        take_focus,
                                       bool        override_redirect)
@@ -321,62 +251,62 @@ namespace nux
     if (b)
     {
       if (m_input_window == 0)
-        m_input_window = new XInputWindow (title, take_focus, override_redirect);
+        m_input_window = new XInputWindow(title, take_focus, override_redirect);
         
-      m_input_window->Show ();
-      m_input_window->SetGeometry (GetGeometry());
+      m_input_window->Show();
+      m_input_window->SetGeometry(GetGeometry());
       m_input_window_enabled = true;
     }
     else
     {
       if (m_input_window)
-        m_input_window->Hide ();
+        m_input_window->Hide();
       m_input_window_enabled = false;
     }
   }
 
-  bool BaseWindow::InputWindowEnabled ()
+  bool BaseWindow::InputWindowEnabled()
   {
     return m_input_window_enabled;
   }
   
-  void BaseWindow::InputWindowEnableStruts (bool enable)
+  void BaseWindow::InputWindowEnableStruts(bool enable)
   {
     if (m_input_window)
-      m_input_window->EnableStruts (enable);
+      m_input_window->EnableStruts(enable);
   }
   
-  bool BaseWindow::InputWindowStrutsEnabled ()
+  bool BaseWindow::InputWindowStrutsEnabled()
   {
-    return m_input_window_enabled && m_input_window->StrutsEnabled ();
+    return m_input_window_enabled && m_input_window->StrutsEnabled();
   }
   
-  void BaseWindow::SetInputFocus ()
+  void BaseWindow::SetInputFocus()
   {
     if (m_input_window)
-      m_input_window->SetInputFocus ();
+      m_input_window->SetInputFocus();
   }
 
-  Window BaseWindow::GetInputWindowId ()
+  Window BaseWindow::GetInputWindowId()
   {
     if (m_input_window)
-      return m_input_window->GetWindow ();
+      return m_input_window->GetWindow();
     else
       return 0;
   }
 
   #endif
 
-  void BaseWindow::SetGeometry (const Geometry &geo)
+  void BaseWindow::SetGeometry(const Geometry &geo)
   {
-    Area::SetGeometry (geo);
+    Area::SetGeometry(geo);
     
     #if defined(NUX_OS_LINUX)
     if (m_input_window)
-      m_input_window->SetGeometry (geo);
+      m_input_window->SetGeometry(geo);
     #endif
     //LayoutWindowElements();
-    //ComputeChildLayout();
+    //ComputeContentSize();
   }
 
   void BaseWindow::LayoutWindowElements()
@@ -386,7 +316,7 @@ namespace nux
     Geometry base = GetGeometry();
   }
 
-  void BaseWindow::SetBorder (int border)
+  void BaseWindow::SetBorder(int border)
   {
     if (m_Border != border)
     {
@@ -394,7 +324,7 @@ namespace nux
     }
   }
 
-  void BaseWindow::SetTopBorder (int border)
+  void BaseWindow::SetTopBorder(int border)
   {
     if (m_TopBorder != border)
     {
@@ -412,7 +342,7 @@ namespace nux
     return m_TopBorder;
   }
 
-  void BaseWindow::ShowWindow (bool visible, bool StartModal /*  = false */)
+  void BaseWindow::ShowWindow(bool visible, bool StartModal /*  = false */)
   {
     if (visible == _is_visible)
       return;
@@ -424,22 +354,25 @@ namespace nux
     {
       if (m_layout)
       {
-        m_layout->SetGeometry (GetGeometry() );
+        m_layout->SetGeometry(GetGeometry());
       }
+
       _entering_visible_state = true;
 
-      sigVisible.emit (this);
+      sigVisible.emit(this);
+      GetWindowCompositor().sigVisibleViewWindow.emit(this);
 
-      ComputeChildLayout();
+      ComputeContentSize();
     }
     else
     {
       _entering_hidden_state = true;
-      sigHidden.emit (this);
+      sigHidden.emit(this);
+      GetWindowCompositor().sigHiddenViewWindow.emit(this);
     }
     
     if (_is_modal)
-      GetWindowCompositor().StartModalWindow (ObjectWeakPtr<BaseWindow> (this));
+      GetWindowCompositor().StartModalWindow(ObjectWeakPtr<BaseWindow>(this));
 
     // Whether this view is added or removed, call QueueDraw. in the case where this view is removed, this is a signal 
     // that the region below this view need to be redrawn.
@@ -456,7 +389,7 @@ namespace nux
     _is_visible = false;
     _is_modal = false;
     //ShowWindow(false);
-    GetWindowCompositor().StopModalWindow (ObjectWeakPtr<BaseWindow> (this));
+    GetWindowCompositor().StopModalWindow(ObjectWeakPtr<BaseWindow> (this));
   }
 
   bool BaseWindow::IsModal() const
@@ -464,7 +397,7 @@ namespace nux
     return _is_modal;
   }
 
-  void BaseWindow::NotifyConfigurationChange (int Width, int Height)
+  void BaseWindow::NotifyConfigurationChange(int Width, int Height)
   {
     Geometry geo = GetGeometry();
 
@@ -472,14 +405,14 @@ namespace nux
     {
       (*m_configure_notify_callback) (GetGraphicsDisplay()->GetWindowWidth(), GetGraphicsDisplay()->GetWindowHeight(), geo, m_configure_notify_callback_data);
 
-      if (geo.IsNull() )
+      if (geo.IsNull())
       {
-        nuxDebugMsg (TEXT ("[BaseWindow::NotifyConfigurationChange] Received an invalid Geometry.") );
+        nuxDebugMsg("[BaseWindow::NotifyConfigurationChange] Received an invalid Geometry.");
         geo = GetGeometry();
       }
       else
       {
-        Area::SetGeometry (geo);
+        Area::SetGeometry(geo);
         // Get the geometry adjusted with respect to min and max dimension of this area.
         geo = GetGeometry();
       }
@@ -490,68 +423,68 @@ namespace nux
     }
   }
 
-  void BaseWindow::SetBackgroundLayer (AbstractPaintLayer *layer)
+  void BaseWindow::SetBackgroundLayer(AbstractPaintLayer *layer)
   {
-    NUX_RETURN_IF_NULL (layer);
+    NUX_RETURN_IF_NULL(layer);
     _paint_layer.reset(layer->Clone());
   }
 
-  void BaseWindow::SetBackgroundColor (const Color &color)
+  void BaseWindow::SetBackgroundColor(const Color &color)
   {
     _paint_layer.reset(new ColorLayer(color));
   }
 
-  void BaseWindow::PushHigher (BaseWindow* floating_view)
+  void BaseWindow::PushHigher(BaseWindow* floating_view)
   {
-    GetWindowCompositor().PushHigher (this, floating_view);
+    GetWindowCompositor().PushHigher(this, floating_view);
   }
 
-  void BaseWindow::PushToFront ()
+  void BaseWindow::PushToFront()
   {
-    GetWindowCompositor().PushToFront (this);
+    GetWindowCompositor().PushToFront(this);
   }
 
-  void BaseWindow::PushToBack ()
+  void BaseWindow::PushToBack()
   {
-    GetWindowCompositor().PushToBack (this);
+    GetWindowCompositor().PushToBack(this);
   }
 
-  bool BaseWindow::ChildNeedsRedraw ()
+  bool BaseWindow::ChildNeedsRedraw()
   {
     return _child_need_redraw;
   }
 
-  void* BaseWindow::GetBackupTextureData (int &width, int &height, int &format)
+  void* BaseWindow::GetBackupTextureData(int &width, int &height, int &format)
   {
-    return GetWindowCompositor ().GetBackupTextureData (this, width, height, format);
+    return GetWindowCompositor().GetBackupTextureData(this, width, height, format);
   }
 
-  void BaseWindow::SetEnterFocusInputArea (InputArea *input_area)
+  void BaseWindow::SetEnterFocusInputArea(InputArea *input_area)
   {
     if (_enter_focus_input_area)
     {
-      _enter_focus_input_area->UnReference ();
+      _enter_focus_input_area->UnReference();
     }
 
     _enter_focus_input_area = input_area;
     if (_enter_focus_input_area)
-      _enter_focus_input_area->Reference ();
+      _enter_focus_input_area->Reference();
 
   }
 
-  void BaseWindow::SetOpacity (float opacity)
+  void BaseWindow::SetOpacity(float opacity)
   {
     if (_opacity == opacity)
       return;
 
     _opacity = opacity;
 
-    _opacity = CLAMP (_opacity, 0.0f, 1.0f);
+    _opacity = CLAMP(_opacity, 0.0f, 1.0f);
 
-    QueueDraw ();
+    QueueDraw();
   }
 
-  float BaseWindow::GetOpacity ()
+  float BaseWindow::GetOpacity()
   {
     return _opacity;
   }

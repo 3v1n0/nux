@@ -30,12 +30,12 @@ namespace nux
   PopUpWindow::PopUpWindow()
   {
 
-    EnableTitleBar (false);
-    ShowWindow (false);
-    SetTopBorder (0);
-    SetBorder (0);
-    SetWindowSizeMatchLayout (true);
-    SetMinimumSize (20, 20);
+    EnableTitleBar(false);
+    ShowWindow(false);
+    SetTopBorder(0);
+    SetBorder(0);
+    SetWindowSizeMatchLayout(true);
+    SetMinimumSize(20, 20);
   }
 
 
@@ -46,13 +46,13 @@ namespace nux
 
   void PopUpWindow::Show()
   {
-    //m_Window.ComputeChildLayout();
-    ShowWindow (true);
+    //m_Window.ComputeContentSize();
+    ShowWindow(true);
   }
 
   void PopUpWindow::Hide()
   {
-    ShowWindow (false);
+    ShowWindow(false);
   }
 
 }

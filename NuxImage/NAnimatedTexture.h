@@ -26,9 +26,9 @@
 namespace nux
 {
 
-  NBitmapData *LoadAnimatedTextureFromXML (const char *XMLFile);
-  bool SaveAnimatedTextureFile (NBitmapData *pAnimatedTexture, const TCHAR *Filename);
-  NBitmapData *LoadAnimatedTextureFile (const TCHAR *Filename);
+  NBitmapData *LoadAnimatedTextureFromXML(const char *XMLFile);
+  bool SaveAnimatedTextureFile(NBitmapData *pAnimatedTexture, const TCHAR *Filename);
+  NBitmapData *LoadAnimatedTextureFile(const TCHAR *Filename);
 
 }
 

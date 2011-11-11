@@ -29,20 +29,20 @@ namespace nux
   class IOpenGLResource;
   class IOpenGLIndexBuffer: public IOpenGLResource
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLIndexBuffer, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLIndexBuffer, IOpenGLResource);
 
   public:
     virtual ~IOpenGLIndexBuffer();
 
-    int Lock (
-      t_u32 OffsetToLock,
-      t_u32 SizeToLock,
+    int Lock(
+      unsigned int OffsetToLock,
+      unsigned int SizeToLock,
       void **ppbData);
     int Unlock();
 
     int GetStride();
 
-    int GetDescription (INDEXBUFFER_DESC *desc) const
+    int GetDescription(INDEXBUFFER_DESC *desc) const
     {
       desc->Format = _Format;
       desc->Usage = _Usage;
@@ -51,18 +51,18 @@ namespace nux
     }
 
     void BindIndexBuffer();
-    t_u32 GetSize();
+    unsigned int GetSize();
 
   private:
-    IOpenGLIndexBuffer (t_u32 Length, VBO_USAGE Usage, INDEX_FORMAT Format, NUX_FILE_LINE_PROTO);
+    IOpenGLIndexBuffer(unsigned int Length, VBO_USAGE Usage, INDEX_FORMAT Format, NUX_FILE_LINE_PROTO);
 
-    t_u32        _Length;
+    unsigned int        _Length;
     INDEX_FORMAT   _Format;
     VBO_USAGE      _Usage;
 
     BYTE       *_MemMap;
-    t_u32        _OffsetToLock;
-    t_u32        _SizeToLock;
+    unsigned int        _OffsetToLock;
+    unsigned int        _SizeToLock;
     friend class GpuDevice;
   };
 

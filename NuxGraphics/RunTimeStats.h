@@ -28,39 +28,39 @@ namespace nux
 
   class RenderingStats
   {
-    NUX_DECLARE_GLOBAL_OBJECT (RenderingStats, NuxGraphicsGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT(RenderingStats, NuxGraphicsGlobalSingletonInitializer);
   public:
-    static t_u32 m_NumTex2D;
-    static t_u32 m_GPUSizeTex2D;
-    static t_u32 m_NumTexRectangle;
-    static t_u32 m_GPUSizeTexRectangle;
-    static t_u32 m_NumTexCube;
-    static t_u32 m_GPUSizeTexCube;
-    static t_u32 m_NumTexVolume;
-    static t_u32 m_GPUSizeTexVolume;
-    static t_u32 m_NumTexAnimated;
-    static t_u32 m_GPUSizeTexAnimated;
+    static unsigned int m_NumTex2D;
+    static unsigned int m_GPUSizeTex2D;
+    static unsigned int m_NumTexRectangle;
+    static unsigned int m_GPUSizeTexRectangle;
+    static unsigned int m_NumTexCube;
+    static unsigned int m_GPUSizeTexCube;
+    static unsigned int m_NumTexVolume;
+    static unsigned int m_GPUSizeTexVolume;
+    static unsigned int m_NumTexAnimated;
+    static unsigned int m_GPUSizeTexAnimated;
 
-    static t_u32 m_NumPBO;
-    static t_u32 m_GPUSizePBO;
+    static unsigned int m_NumPBO;
+    static unsigned int m_GPUSizePBO;
 
-    static t_u32 m_NumFrameBufferObject;
+    static unsigned int m_NumFrameBufferObject;
 
-    static t_u32 m_NumQueryObject;
+    static unsigned int m_NumQueryObject;
 
-    static t_u32 m_NumVertexBuffer;
-    static t_u32 m_GPUSizeVertexBuffer;
+    static unsigned int m_NumVertexBuffer;
+    static unsigned int m_GPUSizeVertexBuffer;
 
-    static t_u32 m_NumIndexBuffer;
-    static t_u32 m_GPUSizeIndexBuffer;
+    static unsigned int m_NumIndexBuffer;
+    static unsigned int m_GPUSizeIndexBuffer;
 
-    static t_u32 m_NumVertexShader;
-    static t_u32 m_NumPixelShader;
-    static t_u32 m_NumShaderProgram;
+    static unsigned int m_NumVertexShader;
+    static unsigned int m_NumPixelShader;
+    static unsigned int m_NumShaderProgram;
 
-    static t_u32 m_TotalGPUSize;
-    void Register (IOpenGLResource *GraphicsObject);
-    void UnRegister (IOpenGLResource *GraphicsObject);
+    static unsigned int m_TotalGPUSize;
+    void Register(IOpenGLResource *GraphicsObject);
+    void UnRegister(IOpenGLResource *GraphicsObject);
 
     std::vector<int> _texture_2d_array;
     std::vector<int> _texture_rect_array;

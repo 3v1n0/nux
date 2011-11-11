@@ -72,8 +72,8 @@ namespace nux
     char null;
   } tga_footer;
 
-  NBitmapData *read_tga_file (const TCHAR *file_name);
-  HReport write_tga_file (const TCHAR *file_name, NBitmapData *image);
+  NBitmapData *read_tga_file(const TCHAR *file_name);
+  HReport write_tga_file(const TCHAR *file_name, NBitmapData *image);
 
 }
 

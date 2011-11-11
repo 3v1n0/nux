@@ -78,6 +78,7 @@ source_h = \
   $(srcdir)/NuxGraphicsObject.h \
   $(srcdir)/NuxGraphicsResources.h \
   $(srcdir)/OpenGLDefinitions.h \
+  $(srcdir)/OpenGLMapping.h \
   $(srcdir)/RenderingPipe.h \
   $(srcdir)/RenderingPipeAsm.h \
   $(srcdir)/RenderingPipeGLSL.h \

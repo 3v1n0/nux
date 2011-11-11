@@ -30,7 +30,7 @@ namespace nux
 // static void SetMouseFocusOwner(AreaEventProcessor* ptr)
 // {
 //     gFocusMouseHandler = ptr;
-//     if(ptr)
+//     if (ptr)
 //         gMouseOwned = true;
 //     else
 //         gMouseOwned = false;
@@ -43,7 +43,7 @@ namespace nux
 
   AreaEventProcessor::AreaEventProcessor()
   {
-    ResetState ();
+    ResetState();
   }
 
   AreaEventProcessor::~AreaEventProcessor()
@@ -51,7 +51,7 @@ namespace nux
 
   }
 
-  void AreaEventProcessor::ResetState ()
+  void AreaEventProcessor::ResetState()
   {
     _initial_state      = true;
     _has_mouse_focus    = false;
@@ -60,7 +60,7 @@ namespace nux
     _state              = 0;
   }
 
-  unsigned int AreaEventProcessor::EventProcessor (Event &event, const Geometry &geo, bool process_mouse_focus)
+  unsigned int AreaEventProcessor::EventProcessor(Event &event, const Geometry &geo, bool process_mouse_focus)
   {
     // preserve mouse focus state.
     bool has_mouse_focus = ((_state & AREA_MOUSE_STATUS_FOCUS) != 0) ? true : false;
@@ -76,10 +76,10 @@ namespace nux
     _previous_mouse_in = _current_mouse_in;
 
     int x, y, lo_x, hi_x, lo_y, hi_y;
-    // Usually (e_x_root, e_y_root) is equal to (0, 0). In that case, (x, y) is the mouse coordinate
+    // Usually(e_x_root, e_y_root) is equal to(0, 0). In that case, (x, y) is the mouse coordinate
     // that refers to the top-left corner of the window.
-    // If (e_x_root, e_y_root) is equal to the top left corner of this area in the window,
-    // then (x, y) represent the coordinate of the mouse based on the top-left corner of this area.
+    // If(e_x_root, e_y_root) is equal to the top left corner of this area in the window,
+    // then(x, y) represent the coordinate of the mouse based on the top-left corner of this area.
     x = event.e_x - event.e_x_root;
     y = event.e_y - event.e_y_root;
 
@@ -96,7 +96,7 @@ namespace nux
     }
     else
     {
-      _current_mouse_in = PT_IN_BOX (x, y, lo_x, hi_x, lo_y, hi_y);
+      _current_mouse_in = PT_IN_BOX(x, y, lo_x, hi_x, lo_y, hi_y);
     }
 
 
@@ -106,12 +106,12 @@ namespace nux
     }
     else
     {
-      if ( (_previous_mouse_in == true) && (_current_mouse_in == false) )
+      if ((_previous_mouse_in == true) && (_current_mouse_in == false))
       {
         _state |= AREA_MOUSE_STATUS_LEAVE;
       }
 
-      if ( (_previous_mouse_in == false) && (_current_mouse_in == true) )
+      if ((_previous_mouse_in == false) && (_current_mouse_in == true))
       {
         _state |= AREA_MOUSE_STATUS_ENTER;
       }
@@ -141,7 +141,7 @@ namespace nux
       return _state;
     }
 
-    switch (event.e_event)
+    switch(event.e_event)
     {
       case NUX_MOUSE_PRESSED:
       case NUX_MOUSE_DOUBLECLICK:
@@ -150,7 +150,7 @@ namespace nux
         {
           _state |= AREA_MOUSE_STATUS_DOWN;
           _state |= AREA_MOUSE_STATUS_FOCUS;
-          //SetMouseFocus (true);
+          //SetMouseFocus(true);
         }
       }
       break;
@@ -161,7 +161,7 @@ namespace nux
         {
           _state |= AREA_MOUSE_STATUS_UP;
           _state &= ~AREA_MOUSE_STATUS_FOCUS;
-          //SetMouseFocus (false);
+          //SetMouseFocus(false);
         }
       }
       break;
@@ -179,7 +179,7 @@ namespace nux
     return _state;
   }
 
-//   void AreaEventProcessor::SetMouseFocus (bool focus)
+//   void AreaEventProcessor::SetMouseFocus(bool focus)
 //   {
 //     if (focus)
 //     {
@@ -193,7 +193,7 @@ namespace nux
 
 //   bool AreaEventProcessor::ReleaseMouseFocus()
 //   {
-//     SetMouseFocus (false);
+//     SetMouseFocus(false);
 //     return true;
 //   }
 
@@ -207,7 +207,7 @@ namespace nux
     return _current_mouse_in;
   }
 
-  void AreaEventProcessor::ForceMouseFocus (int x, int y, const Geometry &g)
+  void AreaEventProcessor::ForceMouseFocus(int x, int y, const Geometry &g)
   {
     int lo_x, hi_x, lo_y, hi_y;
     lo_x = g.x;
@@ -215,7 +215,7 @@ namespace nux
     lo_y = g.y;
     hi_y = g.y + g.GetHeight() - 1;
 
-    bool isIn = PT_IN_BOX ( x, y, lo_x, hi_x, lo_y, hi_y );
+    bool isIn = PT_IN_BOX( x, y, lo_x, hi_x, lo_y, hi_y );
 
     if (isIn)
     {
@@ -230,7 +230,7 @@ namespace nux
     _has_mouse_focus = true;
   }
 
-  void AreaEventProcessor::StopMouseFocus (int x, int y, const Geometry &g)
+  void AreaEventProcessor::StopMouseFocus(int x, int y, const Geometry &g)
   {
     _has_mouse_focus = false;
   }

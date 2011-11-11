@@ -28,188 +28,121 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (View);
+  NUX_IMPLEMENT_OBJECT_TYPE(View);
 
-  View::View (NUX_FILE_LINE_DECL)
-    :   InputArea (NUX_FILE_LINE_PARAM)
+  View::View(NUX_FILE_LINE_DECL)
+    :   InputArea(NUX_FILE_LINE_PARAM)
   {
-    _font = GetSysFont ();
-    _is_view_active     = true; // The view is active by default
-    m_CompositionLayout = 0;
-    _need_redraw        = false;
-    m_UseStyleDrawing   = true;
-    m_TextColor         = Color (1.0f, 1.0f, 1.0f, 1.0f);
-    _can_pass_focus_to_composite_layout = true;
-    _can_focus          = true;
+    _font = GetSysFont();
+    view_layout_ = NULL;
+    draw_cmd_queued_        = false;
+    m_TextColor         = Color(1.0f, 1.0f, 1.0f, 1.0f);
 
     // Set widget default size;
-    SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    mouse_down_outside_pointer_grab_area.connect (sigc::mem_fun (this, &View::DoMouseDownOutsideArea));
+    SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
   }
 
   View::~View()
   {
-    if (GetFocused () && HasPassiveFocus() == false)
-    {
-      nux::GetWindowThread ()->SetFocusedArea (NULL);
-    }
+    // It is possible that the window thread has been deleted before the view
+    // itself, so check prior to calling.
+    WindowThread* wt = GetWindowThread();
 
-    // It is possible that the object is in the refresh list. Remove it here before it is deleted.
-    GetWindowThread()->RemoveObjectFromLayoutQueue(this);
+    if (wt)
+    {
+      // It is possible that the object is in the refresh list. Remove it here
+      // before it is deleted.
+      wt->RemoveObjectFromLayoutQueue(this);
+    }
 
     RemoveLayout();
   }
 
-  void View::DoMouseDownOutsideArea (int x, int y,unsigned long mousestate, unsigned long keystate)
+  long View::ComputeContentSize()
   {
-    if (GetFocused ())
+    if (view_layout_)
     {
-      SetFocused (false);
-    }
-  }
+      PreLayoutManagement();
 
-  long View::ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    // we assume we were chained up to by our layout
-    if (GetLayout () == NULL)
-      return TraverseInfo;
+      int PreWidth = GetBaseWidth();
+      int PreHeight = GetBaseHeight();
 
-    Area *parent = GetParentObject ();
-    if (parent == NULL)
-    {
-      GetLayout ()->SetFocused (false);
-      GetLayout ()->SetFocused (true); // just reset the layout focus becase we are top level
-    }
+      long ret = view_layout_->ComputeContentSize();
 
-    if (parent != NULL && parent->IsLayout ())
-    {
-      Layout *parent_layout = (Layout *)parent;
-      return parent_layout->ProcessFocusEvent (ievent, TraverseInfo, ProcessEventInfo);
-    }
+      PostLayoutManagement(ret);
 
-    return TraverseInfo;
-  }
+      int PostWidth = GetBaseWidth();
+      int PostHeight = GetBaseHeight();
 
-  // NUXTODO: Find better name
-  long View::ComputeLayout2()
-  {
-    return ComputeChildLayout();
-  }
+      long size_compliance = 0;
 
-  // NUXTODO: Find better name
-  void View::ComputePosition2 (float offsetX, float offsetY)
-  {
-    PositionChildLayout (offsetX, offsetY);
-  }
-
-  long View::ComputeChildLayout()
-  {
-    if (m_CompositionLayout)
-    {
-      //m_CompositionLayout->SetDirty (true);
-//        if(m_CompositionLayout->GetStretchFactor() != 0)
-//        {
-//            PreLayoutManagement();
-//            long ret = m_CompositionLayout->ComputeLayout2();
-//            return PostLayoutManagement(ret);
-//        }
-//        else
+      // The layout has been resized to tightly pack its content
+      if (PostWidth > PreWidth)
       {
-        PreLayoutManagement();
-
-        int PreWidth = /*m_CompositionLayout->*/GetBaseWidth();
-        int PreHeight = /*m_CompositionLayout->*/GetBaseHeight();
-
-        long ret = m_CompositionLayout->ComputeLayout2();
-
-        PostLayoutManagement (ret);
-        //return eCompliantWidth | eCompliantHeight;
-
-        int PostWidth = /*m_CompositionLayout->*/GetBaseWidth();
-        int PostHeight = /*m_CompositionLayout->*/GetBaseHeight();
-
-        long size_compliance = 0;
-
-        // The layout has been resized to tightly pack its content
-        if (PostWidth > PreWidth)
-        {
-          size_compliance |= eLargerWidth; // need scrollbar
-        }
-        else if (PostWidth < PreWidth)
-        {
-          size_compliance |= eSmallerWidth;
-        }
-        else
-        {
-          size_compliance |= eCompliantWidth;
-        }
-
-        // The layout has been resized to tightly pack its content
-        if (PostHeight > PreHeight)
-        {
-          size_compliance |= eLargerHeight; // need scrollbar
-        }
-        else if (PostHeight < PreHeight)
-        {
-          size_compliance |= eSmallerHeight;
-        }
-        else
-        {
-          size_compliance |= eCompliantHeight;
-        }
-
-        //Area::SetGeometry(m_CompositionLayout->GetGeometry());
-        return size_compliance;
+        size_compliance |= eLargerWidth; // need scrollbar
       }
+      else if (PostWidth < PreWidth)
+      {
+        size_compliance |= eSmallerWidth;
+      }
+      else
+      {
+        size_compliance |= eCompliantWidth;
+      }
+
+      // The layout has been resized to tightly pack its content
+      if (PostHeight > PreHeight)
+      {
+        size_compliance |= eLargerHeight; // need scrollbar
+      }
+      else if (PostHeight < PreHeight)
+      {
+        size_compliance |= eSmallerHeight;
+      }
+      else
+      {
+        size_compliance |= eCompliantHeight;
+      }
+
+      return size_compliance;
     }
     else
     {
       PreLayoutManagement();
-      int ret = PostLayoutManagement (eCompliantHeight | eCompliantWidth);
+      int ret = PostLayoutManagement(eCompliantHeight | eCompliantWidth);
       return ret;
     }
 
     return 0;
   }
 
-  void View::PositionChildLayout (float offsetX, float offsetY)
+  void View::ComputeContentPosition(float offsetX, float offsetY)
   {
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
-      // This section from //1 to //2 is not needed. here we should not do any size management. Only position..
-      //1
-      if (m_CompositionLayout->GetStretchFactor() != 0)
-      {
-        m_CompositionLayout->SetGeometry (GetGeometry() );
-      }
-      else //2
-      {
-        m_CompositionLayout->SetBaseX (GetBaseX() );
-        m_CompositionLayout->SetBaseY (GetBaseY() );
-      }
-
-      m_CompositionLayout->ComputePosition2 (offsetX, offsetY);
-
+      view_layout_->SetBaseX(GetBaseX());
+      view_layout_->SetBaseY(GetBaseY());
+      view_layout_->ComputeContentPosition(offsetX, offsetY);
     }
   }
 
   void View::PreLayoutManagement()
   {
     // Give the managed layout the same size and position as the Control.
-    if (m_CompositionLayout)
-      m_CompositionLayout->SetGeometry (GetGeometry() );
+    if (view_layout_)
+      view_layout_->SetGeometry(GetGeometry());
   }
 
-  long View::PostLayoutManagement (long LayoutResult)
+  long View::PostLayoutManagement(long LayoutResult)
   {
     // Set the geometry of the control to be the same as the managed layout.
     // Only the size is changed. The position of the composition layout hasn't
-    // been changed by ComputeLayout2.
-    if (m_CompositionLayout)
+    // been changed by ComputeContentSize.
+    if (view_layout_)
     {
       // If The layout is empty, do not change the size of the parent element.
-      if (!m_CompositionLayout->IsEmpty() )
-        Area::SetGeometry (m_CompositionLayout->GetGeometry() );
+      if (!view_layout_->IsEmpty())
+        Area::SetGeometry(view_layout_->GetGeometry());
     }
 
     return LayoutResult;
@@ -224,198 +157,171 @@ namespace nux
   {
   }
 
-  long View::PostProcessEvent2 (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  void View::ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
-    return OnEvent (ievent, TraverseInfo, ProcessEventInfo);
-  }
+    full_view_draw_cmd_ = false;
 
-
-  void View::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
-  {
-    _full_redraw = false;
-
-    GfxContext.PushModelViewMatrix (Get2DMatrix ());
+    graphics_engine.PushModelViewMatrix(Get2DMatrix());
 
     if (force_draw)
     {
-      _need_redraw = true;
-      _full_redraw = true;
-      Draw (GfxContext, force_draw);
-      DrawContent (GfxContext, force_draw);
-      PostDraw (GfxContext, force_draw);
+      draw_cmd_queued_ = true;
+      full_view_draw_cmd_ = true;
+      Draw(graphics_engine, force_draw);
+      DrawContent(graphics_engine, force_draw);
+      PostDraw(graphics_engine, force_draw);
     }
     else
     {
-      if (_need_redraw)
+      if (draw_cmd_queued_)
       {
-        _full_redraw = true;
-        Draw (GfxContext, false);
-        DrawContent (GfxContext, false);
-        PostDraw (GfxContext, false);
+        full_view_draw_cmd_ = true;
+        Draw(graphics_engine, false);
+        DrawContent(graphics_engine, false);
+        PostDraw(graphics_engine, false);
       }
       else
       {
-        DrawContent (GfxContext, false);
-        PostDraw (GfxContext, false);
+        DrawContent(graphics_engine, false);
+        PostDraw(graphics_engine, false);
       }
     }
 
-// just leave this here, its helpful for debugging focus issues :)
-//     if (GetFocused () && _can_pass_focus_to_composite_layout == false)
-//     {
-//       GetPainter ().Paint2DQuadColor (GfxContext, GetGeometry (), nux::Color (0.2, 1.0, 0.2, 1.0));
-//     }
+    graphics_engine.PopModelViewMatrix();
 
-//     if (GetFocused () && _can_pass_focus_to_composite_layout == true)
-//     {
-//       GetPainter ().Paint2DQuadColor (GfxContext, GetGeometry (), nux::Color (1.0, 0.2, 0.2, 1.0));
-//     }
-
-
-    GfxContext.PopModelViewMatrix ();
-
-    _need_redraw = false;
-    _full_redraw = false;
+    draw_cmd_queued_ = false;
+    full_view_draw_cmd_ = false;
   }
 
-  void View::Draw(GraphicsEngine &GfxContext, bool force_draw)
+  void View::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void View::DrawContent(GraphicsEngine &GfxContext, bool force_draw)
+  void View::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void View::PostDraw(GraphicsEngine &GfxContext, bool force_draw)
+  void View::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void View::QueueDraw ()
+  void View::QueueDraw()
   {
     //GetWindowCompositor()..AddToDrawList(this);
-    WindowThread* application = GetWindowThread ();
-    if(application)
+    WindowThread* application = GetWindowThread();
+    if (application)
     {
       application->AddToDrawList(this);
       application->RequestRedraw();
       //GetWindowCompositor().AddToDrawList(this);
     }
-    if (m_CompositionLayout)
-      m_CompositionLayout->QueueDraw ();
+    if (view_layout_)
+      view_layout_->QueueDraw();
 
-    _need_redraw = true;
-    OnQueueDraw.emit (this);
+    draw_cmd_queued_ = true;
+    OnQueueDraw.emit(this);
   }
 
   void View::NeedSoftRedraw()
   {
     //GetWindowCompositor()..AddToDrawList(this);
-    WindowThread* application = GetWindowThread ();
-    if(application)
+    WindowThread* application = GetWindowThread();
+    if (application)
     {
         application->AddToDrawList(this);
         application->RequestRedraw();
     }
-    //_need_redraw = false;
+    //draw_cmd_queued_ = false;
   }
 
   bool View::IsRedrawNeeded()
   {
-    return _need_redraw;
+    return draw_cmd_queued_;
   }
 
   bool View::IsFullRedraw() const
   {
-    return _full_redraw;
+    return full_view_draw_cmd_;
   }
 
   void View::DoneRedraw()
   {
-    _need_redraw = false;
+    draw_cmd_queued_ = false;
 
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
-      m_CompositionLayout->DoneRedraw();
+      view_layout_->DoneRedraw();
     }
   }
 
   Layout* View::GetLayout()
   {
-    return m_CompositionLayout;
+    return view_layout_;
   }
 
   Layout *View::GetCompositionLayout()
   {
-    return GetLayout ();
+    return GetLayout();
   }
 
-  bool View::SetLayout (Layout *layout)
+  bool View::SetLayout(Layout *layout)
   {
+    NUX_RETURN_VALUE_IF_NULL(layout, false);
     nuxAssert(layout->IsLayout());
-    NUX_RETURN_VALUE_IF_NULL (layout, false);
-    NUX_RETURN_VALUE_IF_TRUE (m_CompositionLayout == layout, true);
+    NUX_RETURN_VALUE_IF_TRUE(view_layout_ == layout, true);
 
     Area *parent = layout->GetParentObject();
 
     if (parent == this)
     {
-      nuxAssert (m_CompositionLayout == layout);
+      nuxAssert(view_layout_ == layout);
       return false;
     }
     else if (parent != 0)
     {
-      nuxDebugMsg (0, TEXT ("[View::SetCompositionLayout] Object already has a parent. You must UnParent the object before you can parenting again.") );
+      nuxDebugMsg(0, "[View::SetCompositionLayout] Object already has a parent. You must UnParent the object before you can parenting again.");
       return false;
     }
 
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
-      if (GetFocused ())
-        m_CompositionLayout->SetFocused (false);
-
-      _on_focus_changed_handler.disconnect ();
-
       /* we need to emit the signal before the unparent, just in case
          one of the callbacks wanted to use this object */
 
-      LayoutRemoved.emit (this, m_CompositionLayout);
-      m_CompositionLayout->UnParentObject();
+      LayoutRemoved.emit(this, view_layout_);
+      view_layout_->UnParentObject();
     }
-    layout->SetParentObject (this);
-    m_CompositionLayout = layout;
+    layout->SetParentObject(this);
+    view_layout_ = layout;
 
-    GetWindowThread()->QueueObjectLayout (this);
-    if (GetFocused ())
-      layout->SetFocused (true);
+    GetWindowThread()->QueueObjectLayout(this);
 
-    _on_focus_changed_handler = layout->ChildFocusChanged.connect (sigc::mem_fun (this, &View::OnChildFocusChanged));
-
-    LayoutAdded.emit (this, m_CompositionLayout);
+    LayoutAdded.emit(this, view_layout_);
 
     return true;
   }
 
-  void View::OnChildFocusChanged (/*Area *parent,*/ Area *child)
+  void View::OnChildFocusChanged(/*Area *parent,*/ Area *child)
   {
-    ChildFocusChanged.emit (/*parent,*/ child);
+    ChildFocusChanged.emit(/*parent,*/ child);
   }
 
-  bool View::SetCompositionLayout (Layout *layout)
+  bool View::SetCompositionLayout(Layout *layout)
   {
-    return SetLayout (layout);
+    return SetLayout(layout);
   }
 
   void View::RemoveLayout()
   {
-    NUX_RETURN_IF_NULL(m_CompositionLayout);
+    NUX_RETURN_IF_NULL(view_layout_);
 
-    if (m_CompositionLayout)
-      m_CompositionLayout->UnParentObject();
+    if (view_layout_)
+      view_layout_->UnParentObject();
 
-    m_CompositionLayout = 0;
+    view_layout_ = 0;
   }
 
   void View::RemoveCompositionLayout()
@@ -423,40 +329,40 @@ namespace nux
     RemoveLayout();
   }
 
-  bool View::SearchInAllSubNodes (Area *bo)
+  bool View::SearchInAllSubNodes(Area *bo)
   {
-    if (m_CompositionLayout)
-      return m_CompositionLayout->SearchInAllSubNodes (bo);
+    if (view_layout_)
+      return view_layout_->SearchInAllSubNodes(bo);
 
     return false;
   }
 
-  bool View::SearchInFirstSubNodes (Area *bo)
+  bool View::SearchInFirstSubNodes(Area *bo)
   {
-    if (m_CompositionLayout)
-      return m_CompositionLayout->SearchInFirstSubNodes (bo);
+    if (view_layout_)
+      return view_layout_->SearchInFirstSubNodes(bo);
 
     return false;
   }
 
-  void View::SetGeometry (const Geometry &geo)
+  void View::SetGeometry(const Geometry &geo)
   {
-    Area::SetGeometry (geo);
-    ComputeChildLayout();
+    Area::SetGeometry(geo);
+    ComputeContentSize();
     PostResizeGeometry();
   }
 
-  void View::SetFont (ObjectPtr<FontTexture> font)
+  void View::SetFont(ObjectPtr<FontTexture> font)
   {
     _font = font;
   }
 
-  ObjectPtr<FontTexture> View::GetFont ()
+  ObjectPtr<FontTexture> View::GetFont()
   {
     return _font;
   }
 
-  void View::SetTextColor (const Color &color)
+  void View::SetTextColor(const Color &color)
   {
     m_TextColor = color;
   }
@@ -466,154 +372,41 @@ namespace nux
     return m_TextColor;
   }
 
-  void View::ActivateView ()
+  void View::EnableView()
   {
-    _is_view_active = false;
+    view_enabled_ = false;
   }
 
-  void View::DeactivateView ()
+  void View::DisableView()
   {
-    _is_view_active = true;
+    view_enabled_ = true;
   }
 
-  bool View::IsViewActive () const
+  void View::SetEnableView(bool enable)
   {
-    return _is_view_active;
-  }
-
-  void View::GeometryChangePending ()
-  {
-    QueueDraw ();
-  }
-
-  void View::GeometryChanged ()
-  {
-    QueueDraw ();
-  }
-
-  bool View::DoGetFocused ()
-  {
-    if (HasPassiveFocus ())
-      return GetLayout ()->GetFocused ();
-
-    return _is_focused;
-  }
-
-  void View::DoSetFocused (bool focused)
-  {
-    if (GetFocused () == focused)
+    if (enable)
     {
-      return;
+      EnableView();
     }
-
-    InputArea::DoSetFocused (focused);
-
-    if (HasPassiveFocus ())
+    else
     {
-      Layout *layout = GetLayout ();
-
-      InputArea::DoSetFocused (focused);
-
-      if (layout != NULL)
-      {
-        layout->SetFocused (focused);
-      }
-    }
-    else if (focused == true)
-    {
-      // we only set the focused area if we are not passing focus
-      nux::GetWindowThread ()->SetFocusedArea (this);
-    }
-
-    if (focused == false)
-    {
-      bool has_focused_entry = false;
-      Area *_parent = GetParentObject ();
-      if (_parent == NULL)
-        return;
-
-      if (_parent->IsLayout ())
-        has_focused_entry = _parent->GetFocused ();
-
-      if (has_focused_entry == false)
-        SetFocusControl (false);
-
+      DisableView();
     }
   }
 
-  bool View::DoCanFocus ()
+  bool View::IsViewEnabled() const
   {
-    if (IsVisible () == false)
-      return false;
-
-    if (_can_focus == false)
-      return false;
-
-    if (_can_pass_focus_to_composite_layout)
-    {
-      if (GetLayout () != NULL)
-      {
-        return GetLayout ()->CanFocus ();
-      }
-    }
-
-    return _can_focus;
+    return view_enabled_;
   }
 
-  void View::SetCanFocus (bool can_focus)
+  void View::GeometryChangePending()
   {
-    _can_focus = can_focus;
-    if ((_can_focus == false) && GetFocused ())
-    {
-      SetFocused (false);
-    }
+    QueueDraw();
   }
 
-  // if we have a layout, returns true if we pass focus to it
-  // else returns false
-  bool View::HasPassiveFocus ()
+  void View::GeometryChanged()
   {
-    if (_can_pass_focus_to_composite_layout && GetLayout () != NULL)
-      return true;
-
-    return false;
-  }
-
-  void View::SetFocusControl (bool focus_control)
-  {
-    Area *_parent = GetParentObject ();
-    if (_parent == NULL)
-      return;
-
-    if (_parent->IsView ())
-    {
-      View *parent = (View*)_parent;
-      parent->SetFocusControl (focus_control);
-    }
-    else if (_parent->IsLayout ())
-    {
-      Layout *parent = (Layout *)_parent;
-      parent->SetFocusControl (focus_control);
-    }
-  }
-
-  bool View::HasFocusControl()
-  {
-    Area *_parent = GetParentObject();
-    if (_parent == NULL)
-      return false;
-
-    if (_parent->IsView())
-    {
-      View *parent = (View*)_parent;
-      return parent->HasFocusControl();
-    }
-    else if (_parent->IsLayout())
-    {
-      Layout *parent = (Layout *)_parent;
-      return parent->HasFocusControl();
-    }
-    return false;
+    QueueDraw();
   }
 
   Area* View::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
@@ -623,9 +416,9 @@ namespace nux
     if (mouse_inside == false)
       return NULL;
 
-    if (m_CompositionLayout)
+    if (view_layout_)
     {
-      Area* view = m_CompositionLayout->FindAreaUnderMouse(mouse_position, event_type);
+      Area* view = view_layout_->FindAreaUnderMouse(mouse_position, event_type);
 
       if (view)
         return view;
@@ -666,9 +459,9 @@ namespace nux
       QueueDraw();
       return this;
     }
-    else if (m_CompositionLayout)
+    else if (view_layout_)
     {
-      return m_CompositionLayout->KeyNavIteration(direction);
+      return view_layout_->KeyNavIteration(direction);
     }
 
     return NULL;

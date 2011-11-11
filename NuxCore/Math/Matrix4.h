@@ -55,7 +55,7 @@ namespace nux
       T a30, T a31, T a32, T a33);
 
     Matrix4x4<T>& operator = (const Matrix4x4<T>&);
-    t_bool operator == (const Matrix4x4<T>&);
+    bool operator == (const Matrix4x4<T>&);
     Matrix4x4<T> operator * (const Matrix4x4<T>&) const;
     Matrix4x4<T> operator + (const Matrix4x4<T>&) const;
     Matrix4x4<T> operator - (const Matrix4x4<T>&) const;
@@ -264,7 +264,7 @@ namespace nux
   }
 
   template <typename T>
-  t_bool Matrix4x4<T>::operator == (const Matrix4x4<T>& M)
+  bool Matrix4x4<T>::operator == (const Matrix4x4<T>& M)
   {
     for (int i = 0; i < 4; i++)
       for (int j = 0; j < 4; j++)

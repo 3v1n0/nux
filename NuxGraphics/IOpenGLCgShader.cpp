@@ -27,14 +27,14 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (ICgShader);
-  NUX_IMPLEMENT_OBJECT_TYPE (ICgVertexShader);
-  NUX_IMPLEMENT_OBJECT_TYPE (ICgPixelShader);
+  NUX_IMPLEMENT_OBJECT_TYPE(ICgShader);
+  NUX_IMPLEMENT_OBJECT_TYPE(ICgVertexShader);
+  NUX_IMPLEMENT_OBJECT_TYPE(ICgPixelShader);
 
-  ICgShader::ICgShader (NString ShaderName, OpenGLResourceType ResourceType)
-    :   IOpenGLResource (ResourceType)
-    ,   _ShaderName (ShaderName)
-    ,   _CgProgram (0)
+  ICgShader::ICgShader(NString ShaderName, OpenGLResourceType ResourceType)
+    :   IOpenGLResource(ResourceType)
+    ,   _ShaderName(ShaderName)
+    ,   _CgProgram(0)
   {
 
   }
@@ -46,60 +46,60 @@ namespace nux
 
   const char *ICgShader::GetProgramString()
   {
-    return cgGetProgramString ( _CgProgram, CG_PROGRAM_SOURCE );
+    return cgGetProgramString( _CgProgram, CG_PROGRAM_SOURCE );
   }
 
   const char *ICgShader::GetProgramBinary()
   {
-    return cgGetProgramString ( _CgProgram, CG_COMPILED_PROGRAM );
+    return cgGetProgramString( _CgProgram, CG_COMPILED_PROGRAM );
   }
 
-  CGparameter ICgShader::GetNamedParameter (const TCHAR *parameter)
+  CGparameter ICgShader::GetNamedParameter(const char *parameter)
   {
-    return cgGetNamedParameter (_CgProgram, TCHAR_TO_ANSI (parameter) );
+    return cgGetNamedParameter(_CgProgram, TCHAR_TO_ANSI(parameter));
   }
 
-  ICgVertexShader::ICgVertexShader (NString ShaderName)
-    :   _ready (0)
-    ,   ICgShader (ShaderName, RT_GLSL_VERTEXSHADER)
+  ICgVertexShader::ICgVertexShader(NString ShaderName)
+    :   _ready(0)
+    ,   ICgShader(ShaderName, RT_GLSL_VERTEXSHADER)
   {
 
   }
 
   ICgVertexShader::~ICgVertexShader()
   {
-    cgDestroyProgram (_CgProgram);
+    cgDestroyProgram(_CgProgram);
     _ready = 0;
   }
 
-  void ICgVertexShader::CreateProgram (const ANSICHAR *ShaderCode, const ANSICHAR *EntryPoint)
+  void ICgVertexShader::CreateProgram(const ANSICHAR *ShaderCode, const ANSICHAR *EntryPoint)
   {
-    CGprofile cg_vprofile = cgGLGetLatestProfile (CG_GL_VERTEX);
-    nuxAssertMsg (ShaderCode != 0, TEXT ("[ICgVertexShader::CreateProgram] Invalid shader code.") );
+    CGprofile cg_vprofile = cgGLGetLatestProfile(CG_GL_VERTEX);
+    nuxAssertMsg(ShaderCode != 0, "[ICgVertexShader::CreateProgram] Invalid shader code.");
 
-    _ShaderCode = ANSI_TO_TCHAR (ShaderCode);
-    _EntryPoint = ANSI_TO_TCHAR (EntryPoint);
-    _CgProgram = cgCreateProgram (GetGpuDevice()->GetCgContext(),
+    _ShaderCode = ANSI_TO_TCHAR(ShaderCode);
+    _EntryPoint = ANSI_TO_TCHAR(EntryPoint);
+    _CgProgram = cgCreateProgram(GetGpuDevice()->GetCgContext(),
                                   CG_SOURCE,
                                   ShaderCode,
                                   cg_vprofile, //CG_PROFILE_VP40
                                   EntryPoint,
                                   0);
 
-    cgGLLoadProgram (_CgProgram);
+    cgGLLoadProgram(_CgProgram);
 
     _ready = 0;
   }
 
-  void ICgVertexShader::CreateProgramFromFileShaderCode (const TCHAR *Filename, const TCHAR *EntryPoint)
+  void ICgVertexShader::CreateProgramFromFileShaderCode(const char *Filename, const char *EntryPoint)
   {
-    nuxAssertMsg (Filename != 0, TEXT ("[ICgVertexShader::CreateProgramFromFileShaderCode] Invalid shader file.") );
+    nuxAssertMsg(Filename != 0, "[ICgVertexShader::CreateProgramFromFileShaderCode] Invalid shader file.");
 
     if (Filename == 0)
       return;
 
-    LoadFileToString (_ShaderCode, Filename);
-    CreateProgram (TCHAR_TO_ANSI (&_ShaderCode[0]), TCHAR_TO_ANSI (EntryPoint) );
+    LoadFileToString(_ShaderCode, Filename);
+    CreateProgram(TCHAR_TO_ANSI(&_ShaderCode[0]), TCHAR_TO_ANSI(EntryPoint));
     _ready = 0;
   }
 
@@ -111,54 +111,54 @@ namespace nux
 
   void ICgVertexShader::BindProgram()
   {
-    cgGLBindProgram (_CgProgram);
+    cgGLBindProgram(_CgProgram);
   }
 
 
   bool ICgVertexShader::IsValid()
   {
-    return (_ready ? true : false);
+    return(_ready ? true : false);
   }
 
-  ICgPixelShader::ICgPixelShader (NString ShaderName)
-    :   _ready (0)
-    ,   ICgShader (ShaderName, RT_GLSL_PIXELSHADER)
+  ICgPixelShader::ICgPixelShader(NString ShaderName)
+    :   _ready(0)
+    ,   ICgShader(ShaderName, RT_GLSL_PIXELSHADER)
   {
   }
 
   ICgPixelShader::~ICgPixelShader()
   {
-    cgDestroyProgram (_CgProgram);
+    cgDestroyProgram(_CgProgram);
     _ready = 0;
   }
 
-  void ICgPixelShader::CreateProgram (const ANSICHAR *ShaderCode, const ANSICHAR *EntryPoint)
+  void ICgPixelShader::CreateProgram(const ANSICHAR *ShaderCode, const ANSICHAR *EntryPoint)
   {
-    CGprofile cg_fprofile = cgGLGetLatestProfile (CG_GL_FRAGMENT);
-    nuxAssertMsg (ShaderCode != 0, TEXT ("[ICgPixelShader::CreateProgram] Invalid shader code.") );
+    CGprofile cg_fprofile = cgGLGetLatestProfile(CG_GL_FRAGMENT);
+    nuxAssertMsg(ShaderCode != 0, "[ICgPixelShader::CreateProgram] Invalid shader code.");
 
-    _ShaderCode = ANSI_TO_TCHAR (ShaderCode);
-    _EntryPoint = ANSI_TO_TCHAR (EntryPoint);
-    _CgProgram = cgCreateProgram (GetGpuDevice()->GetCgContext(),
+    _ShaderCode = ANSI_TO_TCHAR(ShaderCode);
+    _EntryPoint = ANSI_TO_TCHAR(EntryPoint);
+    _CgProgram = cgCreateProgram(GetGpuDevice()->GetCgContext(),
                                   CG_SOURCE,
                                   ShaderCode,
                                   cg_fprofile, //CG_PROFILE_FP40,
                                   EntryPoint,
                                   0);
 
-    cgGLLoadProgram (_CgProgram);
+    cgGLLoadProgram(_CgProgram);
     _ready = 0;
   }
 
-  void ICgPixelShader::CreateProgramFromFileShaderCode (const TCHAR *Filename, const TCHAR *EntryPoint)
+  void ICgPixelShader::CreateProgramFromFileShaderCode(const char *Filename, const char *EntryPoint)
   {
-    nuxAssertMsg (Filename != 0, TEXT ("[ICgPixelShader::CreateProgramFromFileShaderCode] Invalid shader file.") );
+    nuxAssertMsg(Filename != 0, "[ICgPixelShader::CreateProgramFromFileShaderCode] Invalid shader file.");
 
     if (Filename == 0)
       return;
 
-    LoadFileToString (_ShaderCode, Filename);
-    CreateProgram (TCHAR_TO_ANSI (&_ShaderCode[0]), TCHAR_TO_ANSI (EntryPoint) );
+    LoadFileToString(_ShaderCode, Filename);
+    CreateProgram(TCHAR_TO_ANSI(&_ShaderCode[0]), TCHAR_TO_ANSI(EntryPoint));
     _ready = 0;
   }
 
@@ -170,24 +170,24 @@ namespace nux
 
   void ICgPixelShader::BindProgram()
   {
-    cgGLBindProgram (_CgProgram);
+    cgGLBindProgram(_CgProgram);
   }
 
   bool ICgPixelShader::IsValid()
   {
-    return (_ready ? true : false);
+    return(_ready ? true : false);
   }
 
-  void cgErrorCallback (void)
+  void cgErrorCallback(void)
   {
     CGerror LastError = cgGetError();
 
     if (LastError)
     {
-      nuxDebugMsg (TEXT ("%s\n\n"), cgGetErrorString (LastError) );
-      nuxDebugMsg (TEXT ("%s\n"), cgGetLastListing (GetGpuDevice()->GetCgContext() ) );
-      nuxDebugMsg (TEXT ("Cg error, exiting...\n") );
-      nuxAssertMsg (0, TEXT ("[cgErrorCallback]: Cg Error.") );
+      nuxDebugMsg("%s\n\n", cgGetErrorString(LastError));
+      nuxDebugMsg("%s\n", cgGetLastListing(GetGpuDevice()->GetCgContext()));
+      nuxDebugMsg("Cg error, exiting...\n");
+      nuxAssertMsg(0, "[cgErrorCallback]: Cg Error.");
     }
   }
 }

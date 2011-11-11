@@ -30,9 +30,9 @@
 namespace nux
 {
 
-  Panel::Panel (NUX_FILE_LINE_DECL)
-    :   ScrollView (NUX_FILE_LINE_PARAM)
-    ,   m_layout (0)
+  Panel::Panel(NUX_FILE_LINE_DECL)
+    :   ScrollView(NUX_FILE_LINE_PARAM)
+    ,   m_layout(0)
   {
     m_top_border = 0;
     m_border = 0;
@@ -45,132 +45,70 @@ namespace nux
     m_layout = NULL;
   }
 
-  long Panel::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
+  void Panel::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
-    long ret = TraverseInfo;
-    long ProcEvInfo = 0;
 
-    if (ievent.e_event == NUX_MOUSE_PRESSED)
-    {
-      if (!GetGeometry().IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root) )
-      {
-        ProcEvInfo = eDoNotProcess;
-        //return TraverseInfo;
-      }
-    }
-
-    if (m_vertical_scrollbar_enable)
-      ret = _vscrollbar->ProcessEvent (ievent, ret, ProcEvInfo);
-
-    if (m_horizontal_scrollbar_enable)
-      ret = _hscrollbar->ProcessEvent (ievent, ret, ProcEvInfo);
-
-    // The child layout get the Mouse down button only if the MouseDown happened inside the client view Area
-    Geometry viewGeometry = Geometry (m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight);
-
-    if (ievent.e_event == NUX_MOUSE_PRESSED)
-    {
-      if (!viewGeometry.IsPointInside (ievent.e_x - ievent.e_x_root, ievent.e_y - ievent.e_y_root) )
-      {
-        ProcEvInfo = eDoNotProcess;
-      }
-    }
-
-    if (m_layout)
-      ret = m_layout->ProcessEvent (ievent, ret, ProcEvInfo);
-
-    ret = PostProcessEvent2 (ievent, ret, 0);
-    return ret;
   }
 
-  void Panel::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void Panel::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
-    GfxContext.PushClippingRectangle (GetGeometry() );
+    graphics_engine.PushClippingRectangle(GetGeometry());
 
-    Geometry base = GetGeometry();
+    graphics_engine.PushClippingRectangle(Rect(m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight));
 
     if (m_layout)
-      m_layout->QueueDraw();
+    {
+      graphics_engine.PushClippingRectangle(m_layout->GetGeometry());
+      m_layout->ProcessDraw(graphics_engine, force_draw);
+      graphics_engine.PopClippingRectangle();
+    }
 
-    GetPainter().PaintBackground (GfxContext, base);
+    graphics_engine.PopClippingRectangle();
 
     if (m_vertical_scrollbar_enable)
     {
-      _vscrollbar->QueueDraw();
+      _vscrollbar->ProcessDraw(graphics_engine, force_draw);
     }
 
     if (m_horizontal_scrollbar_enable)
     {
-      _hscrollbar->QueueDraw();
+      _hscrollbar->ProcessDraw(graphics_engine, force_draw);
     }
 
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void Panel::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
-  {
-    GfxContext.PushClippingRectangle (GetGeometry() );
-
-    GfxContext.PushClippingRectangle (Rect (m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight) );
-
-    if (m_layout)
-    {
-      GfxContext.PushClippingRectangle (m_layout->GetGeometry() );
-      m_layout->ProcessDraw (GfxContext, force_draw);
-      GfxContext.PopClippingRectangle();
-    }
-
-    GfxContext.PopClippingRectangle();
-
-    if (m_vertical_scrollbar_enable)
-    {
-      _vscrollbar->ProcessDraw (GfxContext, force_draw);
-    }
-
-    if (m_horizontal_scrollbar_enable)
-    {
-      _hscrollbar->ProcessDraw (GfxContext, force_draw);
-    }
-
-    GfxContext.PopClippingRectangle();
-  }
-
-  void Panel::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
-  {
-
-  }
-
-  void Panel::AddWidget (View *ic, int stretchfactor)
+  void Panel::AddWidget(View *ic, int stretchfactor)
   {
     if (ic && m_layout)
     {
-      m_layout->AddView (ic, stretchfactor);
-      // if(stretchfactor ==0): the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
+      m_layout->AddView(ic, stretchfactor);
+      // if (stretchfactor ==0): the WidgetLayout geometry will be set to SetGeometry(0,0,1,1);
       // and the children will take their natural size by expending WidgetLayout.
       // If the parent of WidgetLayout offers more space, it won't be used by WidgetLayout.
 
-      ComputeChildLayout();
+      ComputeContentSize();
     }
   }
 
-  void Panel::AddWidget (std::list<View *> *ViewList)
+  void Panel::AddWidget(std::list<View *> *ViewList)
   {
     std::list<View *>::iterator it;
 
     for (it = ViewList->begin(); it != ViewList->end(); it++)
     {
-      AddWidget ( (*it) );
+      AddWidget((*it));
     }
   }
 
-  bool Panel::SetLayout (Layout *layout)
+  bool Panel::SetLayout(Layout *layout)
   {
-    if(View::SetLayout(layout) == false)
+    if (View::SetLayout(layout) == false)
     {
       return false;
     }
 
-    m_layout = m_CompositionLayout;
+    m_layout = view_layout_;
     
     FormatContent();
 
@@ -191,44 +129,44 @@ namespace nux
 
 // Get a change to do any work on an element.
 // Here we need to position the header by hand because it is not under the control of vlayout.
-  long Panel::PostLayoutManagement (long LayoutResult)
+  long Panel::PostLayoutManagement(long LayoutResult)
   {
-    long result = ScrollView::PostLayoutManagement (LayoutResult);
+    long result = ScrollView::PostLayoutManagement(LayoutResult);
     return result;
   }
 
 // Get a change to do any work on an element.
 // Here we need to position the header by hand because it is not under the control of vlayout.
-  void Panel::PositionChildLayout (float offsetX, float offsetY)
+  void Panel::ComputeContentPosition(float offsetX, float offsetY)
   {
-    ScrollView::PositionChildLayout (offsetX, offsetY);
+    ScrollView::ComputeContentPosition(offsetX, offsetY);
   }
 
-  void Panel::ScrollLeft (float stepx, int mousedx)
+  void Panel::ScrollLeft(float stepx, int mousedx)
   {
-    ScrollView::ScrollLeft (stepx, mousedx);
-    ComputeChildLayout();
+    ScrollView::ScrollLeft(stepx, mousedx);
+    ComputeContentSize();
     QueueDraw();
   }
 
-  void Panel::ScrollRight (float stepx, int mousedx)
+  void Panel::ScrollRight(float stepx, int mousedx)
   {
-    ScrollView::ScrollRight (stepx, mousedx);
-    ComputeChildLayout();
+    ScrollView::ScrollRight(stepx, mousedx);
+    ComputeContentSize();
     QueueDraw();
   }
 
-  void Panel::ScrollUp (float stepy, int mousedy)
+  void Panel::ScrollUp(float stepy, int mousedy)
   {
-    ScrollView::ScrollUp (stepy, mousedy);
-    ComputeChildLayout();
+    ScrollView::ScrollUp(stepy, mousedy);
+    ComputeContentSize();
     QueueDraw();
   }
 
-  void Panel::ScrollDown (float stepy, int mousedy)
+  void Panel::ScrollDown(float stepy, int mousedy)
   {
-    ScrollView::ScrollDown (stepy, mousedy);
-    ComputeChildLayout();
+    ScrollView::ScrollDown(stepy, mousedy);
+    ComputeContentSize();
     QueueDraw();
   }
 

@@ -37,18 +37,17 @@ namespace nux
     NumericValuator();
     ~NumericValuator();
 
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     virtual void ImplementIncrementBtn();
     virtual void ImplementDecrementBtn();
     virtual void ImplementValidateEntry();
 
-    void SetValue (float value);
+    void SetValue(float value);
     float GetValue() const;
-    void SetStep (float f);
+    void SetStep(float f);
     float GetStep();
 
     sigc::signal<void> sigIncrement;

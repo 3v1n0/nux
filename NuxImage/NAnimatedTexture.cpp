@@ -38,28 +38,28 @@ namespace nux
 //      <frame Texture="1_macthrob2.png" time="41"/>
 //  </PaintData>
 
-  NBitmapData *LoadAnimatedTextureFromXML (const char *XMLFile)
+  NBitmapData *LoadAnimatedTextureFromXML(const char *XMLFile)
   {
     FilePath m_FilePath;
-    m_FilePath.AddSearchPath (TEXT ("") ); // for case where fully qualified path is given
-    m_FilePath.AddSearchPath (TEXT (".") );
-    m_FilePath.AddSearchPath (TEXT ("./Data/AnimatedTextures") );
-    m_FilePath.AddSearchPath (TEXT ("../Data/AnimatedTextures") );
-    m_FilePath.AddSearchPath (TEXT ("../../Data/AnimatedTextures") );
+    m_FilePath.AddSearchPath(""); // for case where fully qualified path is given
+    m_FilePath.AddSearchPath(".");
+    m_FilePath.AddSearchPath("./Data/AnimatedTextures");
+    m_FilePath.AddSearchPath("../Data/AnimatedTextures");
+    m_FilePath.AddSearchPath("../../Data/AnimatedTextures");
 
     std::string file_search = XMLFile;
-    NString painter_filename = m_FilePath.GetFile (file_search.c_str() );
+    NString painter_filename = m_FilePath.GetFile(file_search.c_str());
 
-    if (painter_filename == TEXT ("") )
+    if (painter_filename == "")
     {
-      printf (TEXT ("Unable to locate %s ...\n"), file_search.c_str() );
+      printf("Unable to locate %s ...\n", file_search.c_str());
       return false;
     }
 
-    TiXmlDocument doc (painter_filename.GetTCharPtr() );
+    TiXmlDocument doc(painter_filename.GetTCharPtr());
     doc.LoadFile();
-    TiXmlHandle docHandle ( &doc );
-    TiXmlElement *data = docHandle.FirstChild ("AnimatedTexture").Element();
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *data = docHandle.FirstChild("AnimatedTexture").Element();
 
 //     int frame_width, frame_height, num_frame;
 //     data->Attribute("width", &frame_width);
@@ -71,38 +71,38 @@ namespace nux
 
     TiXmlElement *image = 0;
 
-    for (image = data->FirstChildElement ("frame"); image; image = image->NextSiblingElement ("frame") )
+    for (image = data->FirstChildElement("frame"); image; image = image->NextSiblingElement("frame"))
     {
       int time_ms = 0;
-      image->Attribute ("time", &time_ms);
+      image->Attribute("time", &time_ms);
 
-      const char *filename = image->Attribute ("Texture");
-      NString filepath = m_FilePath.GetFile (filename);
+      const char *filename = image->Attribute("Texture");
+      NString filepath = m_FilePath.GetFile(filename);
 
-      if (filepath != TEXT ("") )
+      if (filepath != "")
       {
-        NBitmapData *pFrame = LoadImageFile (filepath.GetTCharPtr() );
+        NBitmapData *pFrame = LoadImageFile(filepath.GetTCharPtr());
 
         if (pFrame)
         {
-          FrameArray.push_back (pFrame);
-          FrameTimeArray.push_back (time_ms);
+          FrameArray.push_back(pFrame);
+          FrameTimeArray.push_back(time_ms);
         }
       }
     }
 
     NAnimatedTextureData *pAnimatedTexture = 0;
-    pAnimatedTexture = new NAnimatedTextureData (FrameArray[0]->GetFormat(), FrameArray[0]->GetWidth(), FrameArray[0]->GetHeight(), FrameArray.size() );
+    pAnimatedTexture = new NAnimatedTextureData(FrameArray[0]->GetFormat(), FrameArray[0]->GetWidth(), FrameArray[0]->GetHeight(), FrameArray.size());
 
-    for (t_u32 i = 0; i < FrameArray.size(); i++)
+    for (unsigned int i = 0; i < FrameArray.size(); i++)
     {
-      Memcpy (pAnimatedTexture->GetSurface (i).GetPtrRawData(),
-              FrameArray[i]->GetSurface (0).GetPtrRawData(),
-              FrameArray[i]->GetSurface (0).GetSize() );
-      pAnimatedTexture->AddFrameTime (FrameTimeArray[i]);
+      Memcpy(pAnimatedTexture->GetSurface(i).GetPtrRawData(),
+              FrameArray[i]->GetSurface(0).GetPtrRawData(),
+              FrameArray[i]->GetSurface(0).GetSize());
+      pAnimatedTexture->AddFrameTime(FrameTimeArray[i]);
     }
 
-    for (t_u32 i = 0; i < FrameArray.size(); i++)
+    for (unsigned int i = 0; i < FrameArray.size(); i++)
     {
       delete FrameArray[i];
     }
@@ -113,56 +113,56 @@ namespace nux
     return pAnimatedTexture;
   }
 
-  bool SaveAnimatedTextureFile (NBitmapData *pAnimatedTexture, const TCHAR *Filename)
+  bool SaveAnimatedTextureFile(NBitmapData *pAnimatedTexture, const TCHAR *Filename)
   {
-    if (pAnimatedTexture == 0 || !pAnimatedTexture->IsAnimatedTextureData() )
+    if (pAnimatedTexture == 0 || !pAnimatedTexture->IsAnimatedTextureData())
       return false;
 
-    NSerializer *fileStream = GFileManager.CreateFileWriter (Filename, NSerializer::Read | NSerializer::Write);
+    NSerializer *fileStream = GFileManager.CreateFileWriter(Filename, NSerializer::Read | NSerializer::Write);
 
     if (fileStream == 0)
       return false;
 
-    fileStream->Seek (0, NSerializer::SeekStart);
-    t_s64 Offset = 0;
+    fileStream->Seek(0, NSerializer::SeekStart);
+    long long Offset = 0;
 
     unsigned int FileTag = NUX_ANIMATED_TEXTURE_TAG;
     unsigned int FileVersion = NUX_ANIMATED_TEXTURE_VERSION;
 
-    fileStream->Serialize ( (char *) &FileTag,     sizeof (FileTag) );;
-    fileStream->Serialize ( (char *) &FileVersion,     sizeof (FileVersion) );
+    fileStream->Serialize((char *) &FileTag,     sizeof(FileTag));;
+    fileStream->Serialize((char *) &FileVersion,     sizeof(FileVersion));
 
-    TextureArchiveAdd_ver_0_0_1 (fileStream, pAnimatedTexture, TEXT ("TestAnimatedTexture.iatx"), Offset);
+    TextureArchiveAdd_ver_0_0_1(fileStream, pAnimatedTexture, "TestAnimatedTexture.iatx", Offset);
 
     fileStream->Close();
 
     return true;
   }
 
-  NBitmapData *LoadAnimatedTextureFile (const TCHAR *Filename)
+  NBitmapData *LoadAnimatedTextureFile(const TCHAR *Filename)
   {
-    NSerializer *fileStream = GFileManager.CreateFileReader (Filename, NSerializer::Read | NSerializer::Write);
+    NSerializer *fileStream = GFileManager.CreateFileReader(Filename, NSerializer::Read | NSerializer::Write);
 
     if (fileStream == 0)
       return false;
 
-    fileStream->Seek (0, NSerializer::SeekStart);
-    t_s64 Offset = 0;
+    fileStream->Seek(0, NSerializer::SeekStart);
+    long long Offset = 0;
 
     unsigned int FileTag;
     unsigned int FileVersion;
 
-    fileStream->Serialize ( (char *) &FileTag,     sizeof (FileTag) );;
-    fileStream->Serialize ( (char *) &FileVersion,     sizeof (FileVersion) );
+    fileStream->Serialize((char *) &FileTag,     sizeof(FileTag));;
+    fileStream->Serialize((char *) &FileVersion,     sizeof(FileVersion));
 
     if (FileTag != NUX_ANIMATED_TEXTURE_TAG)
     {
-      //nuxAssertMsg(0, TEXT("[LoadAnimatedTextureFile] File: %s format is incorrect."), Filename);
+      //nuxAssertMsg(0, "[LoadAnimatedTextureFile] File: %s format is incorrect.", Filename);
       return 0;
     }
 
     Offset = fileStream->Tell();
-    NBitmapData *pAnimatedTexture = TextureArchiveLoad_ver_0_0_1 (fileStream, Offset);
+    NBitmapData *pAnimatedTexture = TextureArchiveLoad_ver_0_0_1(fileStream, Offset);
 
     fileStream->Close();
     return pAnimatedTexture;
@@ -184,9 +184,9 @@ namespace nux
 //     fileStream->Serialize((char*) &FileTag, sizeof(FileTag));
 //     fileStream->Serialize((char*) &FileVersion, sizeof(FileVersion));
 //
-//     if(FileTag != UITEXTUREARCHIVETAG)
+//     if (FileTag != UITEXTUREARCHIVETAG)
 //     {
-//         nuxAssertMsg(0, TEXT("[ReadArchive] File: %s is not a texture archive."), ArchiveName);
+//         nuxAssertMsg(0, "[ReadArchive] File: %s is not a texture archive.", ArchiveName);
 //         return false;
 //     }
 //
@@ -194,15 +194,15 @@ namespace nux
 //     OFFSET = fileStream->Tell();
 //
 //     char CharBuffer[2048];
-//     for(int i = 0; i < numtexture; i++)
+//     for (int i = 0; i < numtexture; i++)
 //     {
 //         int c = 0;
-//         do {fileStream->Serialize(&CharBuffer[c], 1); c++;} while(CharBuffer[c-1] != 0);
+//         do {fileStream->Serialize(&CharBuffer[c], 1); c++;} while (CharBuffer[c-1] != 0);
 //         CharBuffer[c] = 0; // add null terminating char
 //         NString Style = CharBuffer;
 //
 //         c = 0;
-//         do {fileStream->Serialize(&CharBuffer[c], 1); c++;} while(CharBuffer[c-1] != 0);
+//         do {fileStream->Serialize(&CharBuffer[c], 1); c++;} while (CharBuffer[c-1] != 0);
 //         CharBuffer[c] = 0; // add null terminating char
 //         NString SourceFile = CharBuffer;
 //
@@ -222,7 +222,7 @@ namespace nux
 //
 //         int CurrentPos = fileStream->Tell();
 //
-//         //nuxDebugMsg(TEXT("%s - %s"), Style.GetTCharPtr(), SourceFile.GetTCharPtr());
+//         //nuxDebugMsg("%s - %s", Style.GetTCharPtr(), SourceFile.GetTCharPtr());
 //         NBitmapData* BaseTexture = TextureArchiveLoad_ver_0_0_1(fileStream, DataOffset);
 //
 //         ArchiveTextureData* pimage = new ArchiveTextureData;

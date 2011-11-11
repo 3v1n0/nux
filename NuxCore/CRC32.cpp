@@ -127,9 +127,9 @@ namespace nux
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Reflection is a requirement for the official CRC-32 standard.
 //	You can create CRCs without it, but they won't conform to the standard.
-  t_u32 CRC32::Reflect (t_u32 ulReflect, char cChar)
+  unsigned int CRC32::Reflect (unsigned int ulReflect, char cChar)
   {
-    t_u32 ulValue = 0;
+    unsigned int ulValue = 0;
 
     // Swap bit 0 for bit 7 bit 1 For bit 6, etc....
     for (int iPos = 1; iPos < (cChar + 1); iPos++)
@@ -143,13 +143,13 @@ namespace nux
     return ulValue;
   }
 
-  t_u32 CRC32::FileCRC (const char *sFileName)
+  unsigned int CRC32::FileCRC (const char *sFileName)
   {
-    t_u32 ulCRC = 0xffffffff;
+    unsigned int ulCRC = 0xffffffff;
 
     FILE *fSource = NULL;
     char sBuf[CRC32BUFSZ];
-    t_u32 iBytesRead = 0;
+    unsigned int iBytesRead = 0;
 
 #ifdef WIN32_SECURE
 
@@ -163,7 +163,7 @@ namespace nux
 
     do
     {
-      iBytesRead = (t_u32) fread (sBuf, sizeof (char), CRC32BUFSZ, fSource);
+      iBytesRead = (unsigned int) fread (sBuf, sizeof (char), CRC32BUFSZ, fSource);
       PartialCRC (&ulCRC, sBuf, iBytesRead);
     }
     while (iBytesRead == CRC32BUFSZ);
@@ -174,16 +174,16 @@ namespace nux
   }
 
 // This function uses the CRCTable lookup table to generate a CRC for sData
-  t_u32 CRC32::FullCRC (const char *sData, t_u32 ulLength)
+  unsigned int CRC32::FullCRC (const char *sData, unsigned int ulLength)
   {
-    t_u32 ulCRC = 0xffffffff;
+    unsigned int ulCRC = 0xffffffff;
     PartialCRC (&ulCRC, sData, ulLength);
     return ulCRC ^ 0xffffffff;
   }
 
 // Perform the algorithm on each character
 // in the string, using the lookup table values.
-  void CRC32::PartialCRC (t_u32 *ulInCRC, const char *sData, t_u32 ulLength)
+  void CRC32::PartialCRC (unsigned int *ulInCRC, const char *sData, unsigned int ulLength)
   {
     while (ulLength--)
     {

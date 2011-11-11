@@ -26,12 +26,12 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (AbstractThread);
+  NUX_IMPLEMENT_OBJECT_TYPE(AbstractThread);
 
-  AbstractThread::AbstractThread (AbstractThread *Parent)
-    :   m_Parent (Parent)
-    ,   m_UserInitFunc (0)
-    ,   m_UserExitFunc (0)
+  AbstractThread::AbstractThread(AbstractThread *Parent)
+    :   m_Parent(Parent)
+    ,   m_UserInitFunc(0)
+    ,   m_UserExitFunc(0)
   {
 
   }

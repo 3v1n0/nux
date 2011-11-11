@@ -23,8 +23,8 @@
 #ifndef VALIDATOR_H
 #define VALIDATOR_H
 
-#if defined (NUX_OS_WINDOWS)
-  #include "pcre/pcre.h"
+#if defined(NUX_OS_WINDOWS)
+  #include <regex>
 #else
   #include <pcre.h>
 #endif
@@ -47,13 +47,18 @@ namespace nux
 
     virtual Validator *Clone()  const = 0; //Virtual Constructor Idiom
 
-    virtual Validator::State Validate (const TCHAR *str) const;
-    virtual void Alternative (const TCHAR *str) {}
+    virtual Validator::State Validate(const char *str) const;
+    virtual void Alternative(const char *str) {}
 
   protected:
-    bool InitRegExp ();
+    bool InitRegExp();
     NString _regexp_str;
+
+#if defined(NUX_OS_WINDOWS)
+    std::regex regex_;
+#else
     pcre *_regexp;
+#endif
   };
 }
 

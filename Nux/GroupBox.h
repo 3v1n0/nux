@@ -36,24 +36,23 @@ namespace nux
   class GroupBox : public View
   {
   public:
-    GroupBox (const TCHAR *Caption = TEXT (""), NUX_FILE_LINE_PROTO);
+    GroupBox(const char *Caption = "", NUX_FILE_LINE_PROTO);
     ~GroupBox();
 
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
-    virtual bool SetLayout (Layout *layout);
-    void SetCaption (const TCHAR *Caption);
+    virtual bool SetLayout(Layout *layout);
+    void SetCaption(const char *Caption);
 
   protected:
     virtual bool AcceptKeyNavFocus();
 
   private:
     virtual void PreLayoutManagement();
-    virtual long PostLayoutManagement (long LayoutResult);
-    virtual void PositionChildLayout (float offsetX, float offsetY);
+    virtual long PostLayoutManagement(long LayoutResult);
+    virtual void ComputeContentPosition(float offsetX, float offsetY);
 
     bool bCaptionAvailable;
     InputArea m_CaptionArea;

@@ -20,9 +20,6 @@
  *
  */
 
-#include <iostream>
-#include <sstream>
-
 #include "NuxCore.h"
 #include "Object.h"
 #include "ObjectPtr.h"
@@ -58,15 +55,20 @@ logging::Logger logger("nux.core.object");
     int index = 0;
 
 #if defined(NUX_OS_WINDOWS)
-	// Visual Studio does not support range based for loops.
-	for (AllocationList::iterator ptr = _allocation_list.begin(); ptr != _allocation_list.end(); ++ptr)
-	{
-		Object* obj = static_cast<Object*>(*ptr);
-		std::cerr << "\t" << ++index << " Undeleted object: Type "
-			<< obj->Type().name << ", "
-			<< obj->GetAllocationLoation() << "\n";
-	}
+  // Visual Studio does not support range based for loops.
+  for (AllocationList::iterator ptr = _allocation_list.begin(); ptr != _allocation_list.end(); ++ptr)
+  {
+    Object* obj = static_cast<Object*>(*ptr);
+    
+    std::stringstream sout;
+    sout << "\t" << ++index << " Undeleted object: Type "
+      << obj->Type().name << ", "
+      << obj->GetAllocationLoation() << "\n";
 
+    OutputDebugString (sout.str().c_str());
+
+    std::cerr << sout.str().c_str();
+  }
 #else
     for (auto ptr : _allocation_list)
     {
@@ -121,7 +123,7 @@ logging::Logger logger("nux.core.object");
   {
     if (_owns_the_reference == true)
     {
-      LOG_DEBUG(logger) << "Do not change the ownership if is already set to true!";
+      LOG_DEBUG(logger) << "Do not change the ownership if is already set to true!" << "\n";
       return;
     }
 
@@ -242,7 +244,7 @@ logging::Logger logger("nux.core.object");
       {
         LOG_WARN(logger) << "Invalid object destruction, still has "
                          << reference_count_->GetValue() << " references."
-                         << "\nObject allocated at: " << GetAllocationLoation();
+                         << "\nObject allocated at: " << GetAllocationLoation() << "\n";
       }
     }
     delete reference_count_;
@@ -254,7 +256,7 @@ logging::Logger logger("nux.core.object");
     if (!IsHeapAllocated())
     {
       LOG_WARN(logger) << "Trying to reference an object that was not heap allocated."
-                       << "\nObject allocated at: " << GetAllocationLoation();
+                       << "\nObject allocated at: " << GetAllocationLoation() << "\n";
       return false;
     }
 
@@ -274,7 +276,7 @@ logging::Logger logger("nux.core.object");
     if (!IsHeapAllocated())
     {
       LOG_WARN(logger) << "Trying to un-reference an object that was not heap allocated."
-                       << "\nObject allocated at: " << GetAllocationLoation();
+                       << "\nObject allocated at: " << GetAllocationLoation() << "\n";
       return false;
     }
 
@@ -286,7 +288,7 @@ logging::Logger logger("nux.core.object");
       // it.  This method should not be called directly in that case.
       LOG_WARN(logger) << "There are ObjectPtr hosting this object. "
                        << "Release all of them to destroy this object. "
-                       << "\nObject allocated at: " << GetAllocationLoation();
+                       << "\nObject allocated at: " << GetAllocationLoation() << "\n";
       return false;
     }
 
@@ -303,21 +305,7 @@ logging::Logger logger("nux.core.object");
 
   bool Object::SinkReference()
   {
-    if (!IsHeapAllocated())
-    {
-      LOG_WARN(logger) << "Trying to sink an object that was not heap allocated."
-                       << "\nObject allocated at: " << GetAllocationLoation();
-      return false;
-    }
-
-    if (!OwnsTheReference())
-    {
-      SetOwnedReference(true);
-      // The ref count remains at 1. Exit the method.
-      return true;
-    }
-
-    return false;
+    return Reference();
   }
 
   bool Object::Dispose()
@@ -342,11 +330,11 @@ logging::Logger logger("nux.core.object");
   {
     static int delete_depth = 0;
     ++delete_depth;
-    // Weak smart pointers will clear their pointers when they get this signal.
-    object_destroyed.emit(this);
     const char* obj_type = this->Type().name;
     LOG_TRACE(logger) << "Depth: " << delete_depth << ", about to delete "
                       << obj_type << " allocated at " << GetAllocationLoation();
+    // Weak smart pointers will clear their pointers when they get this signal.
+    object_destroyed.emit(this);
     delete this;
     LOG_TRACE(logger) << "Depth: " << delete_depth << ", delete successful for " << obj_type;
     --delete_depth;

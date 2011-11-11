@@ -94,8 +94,8 @@ void RenderTexturePowerOfTwo ()
   m_GraphicsContext->SetContext(0, 0, w, h);
   m_GraphicsContext->Push2DWindow(w, h);
 
-  nux::IEvent event;
-  memset(&event, 0, sizeof(nux::IEvent));
+  nux::Event event;
+  memset(&event, 0, sizeof(nux::Event));
 
   
   {

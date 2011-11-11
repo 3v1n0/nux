@@ -23,8 +23,6 @@
 #ifndef LAYOUT_H
 #define LAYOUT_H
 
-#include "Focusable.h"
-
 namespace nux
 {
 
@@ -39,12 +37,12 @@ namespace nux
 
   class Layout: public Area
   {
-    NUX_DECLARE_OBJECT_TYPE (Layout, Area);
+    NUX_DECLARE_OBJECT_TYPE(Layout, Area);
   public:
-    Layout (NUX_FILE_LINE_PROTO);
+    Layout(NUX_FILE_LINE_PROTO);
     virtual ~Layout();
 
-    virtual void AddLayout (Layout *, unsigned int stretchFactor = 1, MinorDimensionPosition = eAbove, MinorDimensionSize extend = eFull, float percentage = 100.0f, LayoutPosition = NUX_LAYOUT_END);
+    virtual void AddLayout(Layout *, unsigned int stretchFactor = 1, MinorDimensionPosition = eAbove, MinorDimensionSize extend = eFull, float percentage = 100.0f, LayoutPosition = NUX_LAYOUT_END);
 
     //! Add an object to the layout.
     /*! Add an object to the layout.
@@ -70,73 +68,91 @@ namespace nux
         /param percentage Controls the object minor dimension size in percentage of the layout minor dimension size.
         /param index Controls the object position in the layout.
     */
-    virtual void AddView (Area *baseobject, unsigned int stretchFactor = 1, MinorDimensionPosition positioning = eAbove, MinorDimensionSize extend = eFull, float percentage = 100.0f, LayoutPosition index = NUX_LAYOUT_END);
-    virtual void AddSpace (unsigned int width, unsigned int stretchFactor = 0, LayoutPosition index = NUX_LAYOUT_END);
+    virtual void AddView(Area *baseobject, unsigned int stretchFactor = 1, MinorDimensionPosition positioning = eAbove, MinorDimensionSize extend = eFull, float percentage = 100.0f, LayoutPosition index = NUX_LAYOUT_END);
+    virtual void AddSpace(unsigned int width, unsigned int stretchFactor = 0, LayoutPosition index = NUX_LAYOUT_END);
 
     virtual void Clear();
 
+    //! Set the left/right padding with the same value.
+    /*!
+        Set the left/right padding of the layout. \n
+        Valid only for HLayout, VLayouts, HGridLayouts and VGridLayout.
+
+        @param padding The left/right padding value of the layout.
+    */
+    void SetLeftAndRightPadding(int padding);
+
+    //! Set the left/right padding independently.
+    /*!
+        Set the left/right padding of the layout. \n
+        Valid only for HLayout, VLayouts, HGridLayouts and VGridLayout.
+
+        @param left Left padding value of the layout.
+        @param right Right padding value of the layout.
+    */
+    void SetLeftAndRightPadding(int left, int right);
+
+    //! Set the top/bottom padding with the same value.
+    /*!
+        Set the top/bottom padding of the layout. \n
+        Valid only for HLayout, VLayouts, HGridLayouts and VGridLayout.
+
+        @param padding The top/bottom padding value of the layout.
+    */
+    void SetTopAndBottomPadding(int padding);
+
+
+    //! Set the top/bottom padding independently.
+    /*!
+        Set the top/bottom padding of the layout. \n
+        Valid only for HLayout, VLayouts, HGridLayouts and VGridLayout.
+
+        @param top Top padding value of the layout.
+        @param bottom Bottom padding value of the layout.
+    */
+    void SetTopAndBottomPadding(int top, int bottom);
+
+    //! Set the left/right and top/bottom padding of the layout.
+    /*!
+        Set the left/right and top/bottom padding of the layout. \n
+        Valid only for HLayout, VLayouts, HGridLayouts and VGridLayout.
+
+        @param left_right_padding The left/right padding value of the layout.
+        @param top_bottom_padding The top/bottom padding value of the layout.
+    */
+    void SetPadding(int left_right_padding, int top_bottom_padding);
+
     virtual unsigned int GetMaxStretchFactor();
     unsigned int GetMinStretchFactor();
-    unsigned int GetNumStretchFactor (unsigned int sf);
+    unsigned int GetNumStretchFactor(unsigned int sf);
 
     int GetContentWidth() const
     {
       return m_contentWidth;
     };
+
     int GetContentHeight() const
     {
       return m_contentHeight;
     };
 
-    int GetHorizontalInternalMargin() const
-    {
-      return m_h_in_margin;
-    }
-    int GetHorizontalExternalMargin() const
-    {
-      return m_h_out_margin;
-    }
-    void SetHorizontalInternalMargin (int m)
-    {
-#if DEBUG_LAYOUT
-      return;
-#endif
-      m_h_in_margin = m < 0 ? 0 : m;
-    }
-    void SetHorizontalExternalMargin (int m)
-    {
-#if DEBUG_LAYOUT
-      return;
-#endif
-      m_h_out_margin = m < 0 ? 0 : m;
-    }
 
-    int GetVerticalInternalMargin() const
-    {
-      return m_v_in_margin;
-    };
-    int GetVerticalExternalMargin() const
-    {
-      return m_v_out_margin;
-    };
-    void SetVerticalInternalMargin (int m)
-    {
-#if DEBUG_LAYOUT
-      return;
-#endif
-      m_v_in_margin = m < 0 ? 0 : m;
-    }
-    void SetVerticalExternalMargin (int m)
-    {
-#if DEBUG_LAYOUT
-      return;
-#endif
-      m_v_out_margin = m < 0 ? 0 : m;
-    }
+    //! Deprecated. Use SetLeftRightPadding.
+    void SetHorizontalExternalMargin(int m);
+
+    //! Deprecated. Use SetTopBottomPadding,
+    void SetVerticalExternalMargin(int m);
+
+    void SetPadding(int top, int right, int bottom, int left);
+
+    int GetLeftPadding() const;
+    int GetRightPadding() const;
+    int GetTopPadding() const;
+    int GetBottomPadding() const;
 
   public:
 
-    virtual void GetCompositeList (std::list<Area *> *ViewList)
+    virtual void GetCompositeList(std::list<Area *> *ViewList)
     {
 
     }
@@ -144,11 +160,8 @@ namespace nux
 
     void DoneRedraw();
 
-    bool SearchInAllSubNodes (Area *bo);
-    bool SearchInFirstSubNodes (Area *bo);
-
-    // Deprectated. Do not use.
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo) {return 0;}
+    bool SearchInAllSubNodes(Area *bo);
+    bool SearchInFirstSubNodes(Area *bo);
 
     Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
 
@@ -161,92 +174,64 @@ namespace nux
         \param ProcessEventInfo
         \return The state of the Process Event.
     */
-    virtual void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     //! Mark all element in the layout as dirty.
     /*!
         Mark all element in the layout as dirty. This will also mark all sub elements as dirty.
-        InputArea element are not marked as dirty (they don't have the flags).
+        InputArea element are not marked as dirty(they don't have the flags).
         Emits the signal \i OnQueueDraw.
     */
-    virtual void QueueDraw ();
+    virtual void QueueDraw();
 
     //! Return true if a draw has been scheduled for this layout
     /*!
         @return True if a draw has been scheduled for this layout.
     */
-    bool IsQueuedForDraw ();
+    bool IsQueuedForDraw();
 
     //! Define how elements are spread out inside the layout.
     /*!
-        Typically, a layout stacks it elements from left to right (HLayout) or top to bottom (VLayout).
+        Typically, a layout stacks it elements from left to right(HLayout) or top to bottom(VLayout).
         When the elements don't uses all the space that is available, the content stacking policy allows
         alternatives ways to position the elements. This does not affect the elements size, only their position
         inside the layout.
         @param stacking_order
     */
-    virtual void SetContentDistribution (LayoutContentDistribution stacking_order);
+    virtual void SetContentDistribution(LayoutContentDistribution stacking_order);
     virtual LayoutContentDistribution GetContentDistribution();
 
-    virtual bool FindWidget (Area *WidgetObject) const;
+    virtual bool FindWidget(Area *WidgetObject) const;
     virtual bool IsEmpty() const;
     /*
         This function is reimplemented in Layout and View classes  they need to perform some special operations.
-        It does nothing for Area classes (this class cannot have children).
+        It does nothing for Area classes(this class cannot have children).
     */
-    virtual void RemoveChildObject (Area *);
+    virtual void RemoveChildObject(Area *);
 
     //! Request a Layout recompute after a change of size
     /*
         When an object size changes, it is necessary for its parent structure to initiate a layout
         re computation in order preserve the layout structure defined by the user through the API.
     */
-    virtual void RequestBottomUpLayoutComputation (Area *bo_initiator);
+    virtual void RequestBottomUpLayoutComputation(Area *bo_initiator);
 
-    std::list<Area *>& GetChildren ()
+    std::list<Area *>& GetChildren()
     {
       return _layout_element_list;
     }
 
-    virtual void ChildViewQueuedDraw (View *view);
-    virtual void ChildLayoutQueuedDraw (Layout *layout);
-    virtual void ChildLayoutChildQueuedDraw (Area *area);
+    virtual void ChildViewQueuedDraw(View *view);
+    virtual void ChildLayoutQueuedDraw(Layout *layout);
+    virtual void ChildLayoutChildQueuedDraw(Area *area);
 
     sigc::signal<void, Layout*> OnQueueDraw;  //!< Signal emitted when a layout is scheduled for a draw.
     sigc::signal<void, Area*>   OnChildQueueDraw;
     sigc::signal<void, Layout*, Area*> ViewAdded;
     sigc::signal<void, Layout*, Area*> ViewRemoved;
-    
-    virtual void DoSetFocused (bool focused);
-    virtual bool DoGetFocused ();
-    virtual bool DoCanFocus ();
-    virtual void DoActivateFocus ();
-
-    bool HasFocusableEntries ();
-
-    // this should not be public, but has to be because of nux's object setup
-    long ProcessFocusEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    bool _has_focus_control;
-    void SetFocusControl (bool focus_control);
-    bool HasFocusControl ();
-    bool _ignore_focus;
 
   protected:
-    Area*GetFocusedChild ();
-    virtual long DoFocusPrev  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusNext  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusUp    (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusDown  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusLeft  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusRight (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual bool FocusFirstChild ();
-    virtual bool FocusLastChild ();
-    virtual bool FocusNextChild (Area *child);
-    virtual bool FocusPreviousChild (Area *child);
-    void OnChildFocusChanged (/*Area *parent,*/ Area *child);
-    
     virtual bool AcceptKeyNavFocus();
-    std::map<Area*, sigc::connection> _connection_map; // map our children to connections
     
     bool _queued_draw; //<! The rendering of the layout needs to be refreshed.
 
@@ -258,43 +243,45 @@ namespace nux
     int m_fittingWidth;
     int m_fittingHeight;
 
-    int m_h_in_margin;
-    int m_h_out_margin;
-    int m_v_in_margin;
-    int m_v_out_margin;
+    //int m_h_in_margin;
+    //int m_v_in_margin;
+
+    int space_between_children_;
+    int top_padding_;
+    int bottom_padding_;
+    int left_padding_;
+    int right_padding_;
 
     std::list<Area *> _layout_element_list;
 
     NString m_name;
 
     LayoutContentDistribution m_ContentStacking;
-
-    long SendEventToArea (Area *area, IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
   };
 
 
-// The Space layout is a layout object that is used to create fixed or resizable empty space.
+// The Space layout is a layout object that is used to create fixed or re-sizable empty space.
   class SpaceLayout: public Layout
   {
-    NUX_DECLARE_OBJECT_TYPE (SpaceLayout, Layout);
+    NUX_DECLARE_OBJECT_TYPE(SpaceLayout, Layout);
   public:
     SpaceLayout(NUX_FILE_LINE_PROTO)
-      : Layout (NUX_FILE_LINE_PARAM)
+      : Layout(NUX_FILE_LINE_PARAM)
     {
     };
 
-    SpaceLayout (int minWidth, int maxWidth, int minHeight, int maxHeight, NUX_FILE_LINE_PROTO)
-      : Layout (NUX_FILE_LINE_PARAM)
+    SpaceLayout(int minWidth, int maxWidth, int minHeight, int maxHeight, NUX_FILE_LINE_PROTO)
+      : Layout(NUX_FILE_LINE_PARAM)
     {
-      SetMinimumSize (minWidth, minHeight);
-      SetMaximumSize (maxWidth, maxHeight);
+      SetMinimumSize(minWidth, minHeight);
+      SetMaximumSize(maxWidth, maxHeight);
     };
 
     ~SpaceLayout()
     {
     };
 
-    virtual bool FindWidget (Area *WidgetObject) const
+    virtual bool FindWidget(Area *WidgetObject) const
     {
       return false;
     }
@@ -304,40 +291,39 @@ namespace nux
     }
 
 
-    virtual void AddLayout (Layout *, unsigned int stretchFactor = 1, MinorDimensionPosition minor_position = eAbove, MinorDimensionSize minor_size = eFull, float percentage = 100.0f, LayoutPosition index = NUX_LAYOUT_END)
+    virtual void AddLayout(Layout *, unsigned int stretchFactor = 1, MinorDimensionPosition minor_position = eAbove, MinorDimensionSize minor_size = eFull, float percentage = 100.0f, LayoutPosition index = NUX_LAYOUT_END)
     {
       // Do not allow a WidgetLayout to encapsulate an object of type layout
     }
 
-    virtual void AddView (Area *baseobject, unsigned int stretchFactor = 1, MinorDimensionPosition positioning = eAbove, MinorDimensionSize extend = eFull, float percentage = 100.0f, LayoutPosition index = NUX_LAYOUT_END)
+    virtual void AddView(Area *baseobject, unsigned int stretchFactor = 1, MinorDimensionPosition positioning = eAbove, MinorDimensionSize extend = eFull, float percentage = 100.0f, LayoutPosition index = NUX_LAYOUT_END)
     {
       // the baseObject is provided via the constructor.
     };
 
-    virtual void AddSpace (unsigned int width, unsigned int stretchFactor = 0, LayoutPosition index = NUX_LAYOUT_END)
+    virtual void AddSpace(unsigned int width, unsigned int stretchFactor = 0, LayoutPosition index = NUX_LAYOUT_END)
     {
       // Do not allow a WidgetLayout to encapsulate an object of type layout
     }
 
-    virtual bool CanFocus ()
+    virtual bool CanFocus()
     {
       return false;
     }
 
-    // Begin: Abstract virtual function member (inherited from class Layout) that must be implemented
-    virtual long ComputeLayout2()
+    // Begin: Abstract virtual function member(inherited from class Layout) that must be implemented
+    virtual long ComputeContentSize()
     {
       return 0;
     }
-    virtual void ComputePosition2 (float offsetX, float offsetY)
+    virtual void ComputeContentPosition(float offsetX, float offsetY)
     {
     }
-    // End: Abstract virtual function member (inherited from class Layout) that must be implemented
+    // End: Abstract virtual function member(inherited from class Layout) that must be implemented
 
   protected:
-    Area *Find (long handle);
+    Area *Find(long handle);
   };
-
 }
 
 #endif // LAYOUT_H

@@ -25,12 +25,12 @@
 namespace nux
 {
 
-  t_u32 Memcmp ( const void *Buf1, const void *Buf2, t_u32 Count )
+  unsigned int Memcmp ( const void *Buf1, const void *Buf2, unsigned int Count )
   {
     return std::memcmp ( Buf1, Buf2, Count );
   }
 
-  bool MemIsZero ( const void *V, t_size Count )
+  bool MemIsZero ( const void *V, size_t Count )
   {
     t_u8 *B = (t_u8 *) V;
 
@@ -41,7 +41,7 @@ namespace nux
     return true;
   }
 
-  void *Memmove ( void *Dest, const void *Src, t_size Count )
+  void *Memmove ( void *Dest, const void *Src, size_t Count )
   {
     if (Count == 0)
       return Dest;
@@ -49,22 +49,22 @@ namespace nux
     return std::memmove ( Dest, Src, Count );
   }
 
-  void Memset ( void *Dest, t_s32 C, t_size Count )
+  void Memset ( void *Dest, int C, size_t Count )
   {
     std::memset ( Dest, C, Count );
   }
 
-  void Memzero ( void *Dest, t_size Count )
+  void Memzero ( void *Dest, size_t Count )
   {
     std::memset ( Dest, 0, Count );
   }
 
-  void Memcpy ( void *Dest, const void *Src, t_size Count )
+  void Memcpy ( void *Dest, const void *Src, size_t Count )
   {
     std::memcpy ( Dest, Src, Count );
   }
 
-  void Memswap ( void *Ptr1, void *Ptr2, t_size Size )
+  void Memswap ( void *Ptr1, void *Ptr2, size_t Size )
   {
     void *Temp = malloc (Size);
     Memcpy ( Temp, Ptr1, Size );
@@ -73,18 +73,18 @@ namespace nux
     free (Temp);
   }
 
-  bool IsMemoryAligned (void *data, t_u32 alignment)
+  bool IsMemoryAligned (void *data, unsigned int alignment)
   {
     nuxAssertMsg ( (alignment & (alignment - 1) ) == 0, TEXT ("[IsMemAligned] Argument for memory alignment test is not a power of two: %d"), alignment);
     return ( ( (uintptr_t) &data) & (alignment - 1) ) == 0;
   }
 
-  void *Malloc (t_size Count, t_u32 Alignment)
+  void *Malloc (size_t Count, unsigned int Alignment)
   {
     return std::malloc ( Count );
   }
 
-  void *Realloc (void *Original, t_size Count, t_u32 Alignment)
+  void *Realloc (void *Original, size_t Count, unsigned int Alignment)
   {
     void *mem = std::realloc ( Original, Count );
 

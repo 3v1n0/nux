@@ -34,7 +34,7 @@ namespace nux
   ColorDialogOption::ColorDialogOption()
     : m_ReturnColor (0, 0, 0, 0)
   {
-    for (t_u32 i = 0; i < NUX_COLOR_DIALOG_CUSTOM_COLOR; i++)
+    for (unsigned int i = 0; i < NUX_COLOR_DIALOG_CUSTOM_COLOR; i++)
     {
       m_CustomColors[i] = (COLORREF) (0xFFFFFF);
     }
@@ -45,13 +45,13 @@ namespace nux
 
   }
 
-  void ColorDialogOption::SetCustomColor (t_u32 index, t_u32 RGBColor)
+  void ColorDialogOption::SetCustomColor (unsigned int index, unsigned int RGBColor)
   {
     nuxAssert (index < NUX_COLOR_DIALOG_CUSTOM_COLOR);
     m_CustomColors[index] = (COLORREF) RGBColor;
   }
 
-  void ColorDialogOption::SetCustomColor (t_u32 index, BYTE R, BYTE G, BYTE B)
+  void ColorDialogOption::SetCustomColor (unsigned int index, BYTE R, BYTE G, BYTE B)
   {
     nuxAssert (index < NUX_COLOR_DIALOG_CUSTOM_COLOR);
     m_CustomColors[index] = (COLORREF) ((R<<16)|(G<<8)|B);
@@ -98,9 +98,9 @@ namespace nux
 
   TCHAR *FileDialogOption::GetFormatedFilter()
   {
-    t_size size = 0;
+    size_t size = 0;
 
-    for (t_u32 i = 0; i < NumFilters; i++)
+    for (unsigned int i = 0; i < NumFilters; i++)
     {
       size += FilterDesc[i].Length() + Filters[i].Length() + 2; // + 2 for for the NULL char at the end of each string
     }
@@ -111,9 +111,9 @@ namespace nux
       delete [] FormattedFilter;
 
     FormattedFilter = new TCHAR[size];
-    t_size l = 0;
+    size_t l = 0;
 
-    for (t_u32 i = 0; i < NumFilters; i++)
+    for (unsigned int i = 0; i < NumFilters; i++)
     {
       Memcpy ( (void *) (FormattedFilter + l), *FilterDesc[i], FilterDesc[i].Length() );
       l += FilterDesc[i].Length();
@@ -214,7 +214,7 @@ namespace nux
       }
     }
 
-    t_u32 error = ::CommDlgExtendedError();
+    unsigned int error = ::CommDlgExtendedError();
     return FALSE;
   }
 

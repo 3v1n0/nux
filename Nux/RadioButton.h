@@ -20,80 +20,84 @@
  */
 
 
-#ifndef RADIOBUTTON_H
-#define RADIOBUTTON_H
+#ifndef RADIO_BUTTON_H
+#define RADIO_BUTTON_H
 
-#include "AbstractRadioButton.h"
+#include "AbstractCheckedButton.h"
 
 namespace nux
 {
-  class RadioButton;
-  class RadioButtonGroup;
   class HLayout;
+  class InputArea;
+  class StaticText;
+  class RadioButtonGroup;
 
-  class RadioButton: public AbstractRadioButton
+  //! RadioButton class
+  /*!
+      A RadioButton class. Work with the RadioButtonGroup to allow "one to many" selection.\n
+      The RadioButton class cannot be vertically resized. It can only be resized horizontally.
+      The vertical size is always match the size of the content (check area + label).
+  */
+  class RadioButton: public AbstractCheckedButton
   {
-    NUX_DECLARE_OBJECT_TYPE (RadioButton, AbstractRadioButton);
+    NUX_DECLARE_OBJECT_TYPE(RadioButton, AbstractCheckedButton);
   public:
-    RadioButton (const TCHAR *Caption = 0, bool state = false, NUX_FILE_LINE_PROTO);
+    RadioButton(const std::string &str, bool state = false, NUX_FILE_LINE_PROTO);
+    virtual ~RadioButton();
 
-    ~RadioButton();
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+    //! Emitted when the button is clicked.
+    sigc::signal<void, RadioButton*> click;
 
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
-
-    void RecvMouseMove (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    /*
-        Signal emitted if a click happen. The state change and the check box need to redraw itself.
+    //! Emitted when the active state changes.
+    /*!
+        Emitted when the active state changes, as a result of a mouse click or an API call.\n
+        \sa Activate, Deactivate.
     */
-    void RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    /*
-        Signal emitted if the mouse is released. Whether a click happened or not,
-        the check box need to redraw itself.
+    sigc::signal<void, RadioButton*> state_change;
+
+    //! Activate the radio button.
+    /*!
+         Activate the radio button.
     */
-    void RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    virtual void Activate();
 
-    sigc::signal<void, RadioButton *> sigStateToggled;
-    sigc::signal<void> sigToggled;
-    sigc::signal<void, bool> sigStateChanged;
-
-    void EmitStateChangedSignal();
-
-    virtual void SetCaption (const TCHAR *Caption);
-    virtual const NString &GetCaption() const;
-
-    virtual void SetState (bool State);
-    virtual void SetState (bool State, bool EmitSignal);
-    virtual bool GetState() const;
+    //! Deactivate the radio button.
+    /*!
+         Deactivate the radio button.
+    */
+    virtual void Deactivate();
 
   protected:
-    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
+
+    bool block_changed_signal_;
+
+    void SetRadioGroupSelector(RadioButtonGroup *RadioSelector);
+    ObjectWeakPtr<RadioButtonGroup> GetRadioGroupSelector();
+
+    //! Intended for RadioButtonGroup only.
+    void SetStatePrivate(bool State);
+    //! Intended for RadioButtonGroup only.
+    void SetStatePrivate(bool State, bool EmitSignal);
+    ObjectWeakPtr<RadioButtonGroup> radio_button_group_;
+    int radio_group_index_;
 
   private:
-    void SetRadioGroupSelector(RadioButtonGroup *RadioSelector);
-    RadioButtonGroup* GetRadioGroupSelector();
+    //! Override of Area::SetMinimumHeight and made private.
+    /*!
+        Prevent changing the minimum height of the StaticText view.
+    */
+    virtual void SetMinimumHeight(){};
 
-    //! Intended for RadioButtonGroup only.
-    void SetStatePrivate (bool State);
-    //! Intended for RadioButtonGroup only.
-    void SetStatePrivate (bool State, bool EmitSignal);
-
-
-    HLayout    *m_hlayout;
-    InputArea   *m_TextArea;
-    InputArea   *m_CheckArea;
-    bool        m_State;
-
-    RadioButtonGroup *radio_button_group_;
-    int m_GroupId;
+    //! Override of Area::SetMaximumHeight and made private.
+    /*!
+        Prevent changing the maximum height of the StaticText view.
+    */
+    virtual void SetMaximumHeight(){};
 
     friend class RadioButtonGroup;
   };
 }
 
-#endif // RADIOBUTTON_H
+#endif // RADIO_BUTTON_H

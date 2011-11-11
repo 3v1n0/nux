@@ -113,7 +113,7 @@ namespace nux
         @param Filename the full path of the file to search.
         @return TRUE if the file exist.
     */
-    virtual t_s64 FileSize (const TCHAR *Filename) = 0;   // Max file size is 16 terabytes minus 64 KB on NTFS. 4 gigabytes on Fat32.
+    virtual long long FileSize (const TCHAR *Filename) = 0;   // Max file size is 16 terabytes minus 64 KB on NTFS. 4 gigabytes on Fat32.
     virtual bool FileExist (const TCHAR *Filename) = 0;
     virtual int Copy (const TCHAR *Dest, const TCHAR *Src, bool OverWriteExisting = true, bool OverWriteReadOnly = false, NFileTransferMonitor *Progress = NULL) = 0;
     virtual bool Move (const TCHAR *Dest, const TCHAR *Src, bool OverWriteExisting = true, bool OverWriteReadOnly = false, NFileTransferMonitor *Monitor = NULL) = 0;
@@ -122,7 +122,7 @@ namespace nux
     virtual bool IsDirectory (const TCHAR *DirectoryName) = 0;
     virtual bool IsHidden (const TCHAR *Filename) = 0;
 
-    virtual bool GetFileAttribute (const TCHAR *Filename, bool &isDirectory, bool &IsReadOnly, bool &IsHidden, t_s64 &Size) = 0;
+    virtual bool GetFileAttribute (const TCHAR *Filename, bool &isDirectory, bool &IsReadOnly, bool &IsHidden, long long &Size) = 0;
     virtual bool MakeDirectory (const TCHAR *Path, bool CreateCompletePath = false) = 0;
     //! Delete directory
     /*!

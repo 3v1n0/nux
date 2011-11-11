@@ -29,11 +29,11 @@
 namespace nux
 {
 
-  static const t_s32 VERROR = 0;
-  NUX_IMPLEMENT_OBJECT_TYPE (GridVLayout);
+  static const int VERROR = 0;
+  NUX_IMPLEMENT_OBJECT_TYPE(GridVLayout);
 
-  GridVLayout::GridVLayout (NUX_FILE_LINE_DECL)
-    :   Layout (NUX_FILE_LINE_PARAM)
+  GridVLayout::GridVLayout(NUX_FILE_LINE_DECL)
+    :   Layout(NUX_FILE_LINE_PARAM)
   {
 #if DEBUG_LAYOUT
     m_h_in_margin = 10;
@@ -42,7 +42,7 @@ namespace nux
     m_v_out_margin = 10;
 #endif
 
-    _children_size = Size (64, 64);
+    _children_size = Size(64, 64);
     _force_children_size = true;
     _partial_visibility = true;
     _num_row = 1;
@@ -62,106 +62,96 @@ namespace nux
 
   }
 
-  int GridVLayout::GetChildPos (Area *child)
+  int GridVLayout::GetChildPos(Area *child)
   {
     int position = 0;
     std::list<Area *>::const_iterator it;
-    for (it = GetChildren ().begin(); it != GetChildren ().end(); it++)
+    for (it = GetChildren().begin(); it != GetChildren().end(); it++)
     {
       if ((*it) == child)
         break;
-
-      if ((*it)->CanFocus ())
-      {
-        position++;
-      }
     }
 
     return position;
   }
 
-  Area* GridVLayout::GetChildAtPosition (int pos)
+  Area* GridVLayout::GetChildAtPosition(int pos)
   {
     int position = 0;
     std::list<Area *>::const_iterator it;
-    for (it = GetChildren ().begin(); it != GetChildren ().end(); it++)
+    for (it = GetChildren().begin(); it != GetChildren().end(); it++)
     {
       if (position == pos)
         return (*it);
-
-      if ((*it)->CanFocus ())
-      {
-        position++;
-      }
     }   
 
     return NULL;
   }
 
-  void GridVLayout::EnablePartialVisibility (bool partial_visibility)
+  void GridVLayout::EnablePartialVisibility(bool partial_visibility)
   {
     _partial_visibility = partial_visibility;
   }
 
-  void GridVLayout::SetChildrenSize (int width, int height)
+  void GridVLayout::SetChildrenSize(int width, int height)
   {
-    _children_size = Size (width, height);
+    _children_size = Size(width, height);
   }
 
-  Size GridVLayout::GetChildrenSize () const
+  Size GridVLayout::GetChildrenSize() const
   {
     return _children_size;
   }
 
-  void GridVLayout::ForceChildrenSize (bool force)
+  void GridVLayout::ForceChildrenSize(bool force)
   {
     _force_children_size = force;
   }
 
-  int GridVLayout::GetNumColumn () const
+  int GridVLayout::GetNumColumn() const
   {
     return _num_column;
   }
 
-  int GridVLayout::GetNumRow () const
+  int GridVLayout::GetNumRow() const
   {
     return _num_row;
   }
 
-  void GridVLayout::SetWidthMatchContent (bool match_content)
+  void GridVLayout::SetWidthMatchContent(bool match_content)
   {
     _width_match_content = match_content;
   }
 
-  bool GridVLayout::GetWidthMatchContent () const
+  bool GridVLayout::GetWidthMatchContent() const
   {
     return _width_match_content;
   }
 
-  void GridVLayout::GetCompositeList (std::list<Area *> *ViewList)
+  void GridVLayout::GetCompositeList(std::list<Area *> *ViewList)
   {
     std::list<Area *>::iterator it;
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      if ( (*it)->IsView() )
+      if ((*it)->IsView())
       {
         View *ic = static_cast<View *>(*it);
-        ViewList->push_back (ic);
+        ViewList->push_back(ic);
       }
-      else if ( (*it)->IsLayout() )
+      else if ((*it)->IsLayout())
       {
         Layout *layout = static_cast<Layout *>(*it);
-        layout->GetCompositeList (ViewList);
+        layout->GetCompositeList(ViewList);
       }
     }
   }
 
-  long GridVLayout::ComputeLayout2()
+  long GridVLayout::ComputeContentSize()
   {
     std::list<Area *> elements;
 
-    if (GetStretchFactor() == 0)
+    if (GetScaleFactor() == 0)
     {
       ApplyMinHeight();
     }
@@ -171,20 +161,20 @@ namespace nux
       return eCompliantHeight | eCompliantWidth;
     }
 
-    t_s32 num_elements = 0;
+    int num_elements = 0;
 
     std::list<Area *>::iterator it;
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
-      if ((*it)->IsVisible ())
+      if ((*it)->IsVisible())
       {
-        (*it)->SetLayoutDone (false);
-        elements.push_back (*it);
+        (*it)->SetLayoutDone(false);
+        elements.push_back(*it);
         num_elements++;
       }
     }
 
-    t_s32 original_width = GetBaseWidth();
+    int original_width = GetBaseWidth();
 
     nux::Geometry base = GetGeometry();
     it = elements.begin();
@@ -213,12 +203,12 @@ namespace nux
 
         if (_force_children_size)
         {
-          (*it)->SetMinimumSize (_children_size.width, _children_size.height);
+          (*it)->SetMinimumSize(_children_size.width, _children_size.height);
         }
 
-        (*it)->SetGeometry (nux::Geometry (X, Y, _children_size.width, _children_size.height));
+        (*it)->SetGeometry(nux::Geometry(X, Y, _children_size.width, _children_size.height));
 
-        (*it)->ComputeLayout2();
+        (*it)->ComputeContentSize();
 
         Y += _children_size.height + m_v_in_margin;
 
@@ -230,7 +220,7 @@ namespace nux
           Y = base.y + m_v_out_margin;
 
           first_element_of_column = true;
-          if(i < num_elements - 1)
+          if (i < num_elements - 1)
             ++num_column;
         }
         else if (Y >= base.y + base.height)
@@ -248,11 +238,11 @@ namespace nux
     _num_row = num_row;
     _num_column = num_column;
 
-    if ((GetStretchFactor() == 0) || _width_match_content)
+    if ((GetScaleFactor() == 0) || _width_match_content)
     {
       int w = num_column * _children_size.width + 2 * m_h_out_margin + (num_column - 1) * m_h_in_margin;
-      SetMinimumWidth (w);
-      SetBaseWidth (w);
+      SetMinimumWidth(w);
+      SetBaseWidth(w);
     }
 
     long size_compliance = 0L;
@@ -262,7 +252,7 @@ namespace nux
 #if DEBUG_LAYOUT_COMPUTATION
       // The layout has been resized larger in WIDTH to tightly pack its content.
       // Or you can say that the layout refuse to be smaller than total WIDTH of its elements.
-      std::cout << "ComputeLayout2: VLayout Width block at " << GetWidth() << std::endl;
+      std::cout << "ComputeContentSize: VLayout Width block at " << GetWidth() << std::endl;
 #endif
       size_compliance |= eLargerWidth; // need scrollbar
     }
@@ -270,7 +260,7 @@ namespace nux
     {
 #if DEBUG_LAYOUT_COMPUTATION
       // The layout is smaller.
-      std::cout << "ComputeLayout2: VLayout Width smaller = " << GetWidth() << std::endl;
+      std::cout << "ComputeContentSize: VLayout Width smaller = " << GetWidth() << std::endl;
 #endif
       size_compliance |= eSmallerWidth;
     }
@@ -278,7 +268,7 @@ namespace nux
     {
 #if DEBUG_LAYOUT_COMPUTATION
       // The layout and its content resized together without trouble.
-      std::cout << "ComputeLayout2: VLayout Width compliant = " << GetWidth() << std::endl;
+      std::cout << "ComputeContentSize: VLayout Width compliant = " << GetWidth() << std::endl;
 #endif
       size_compliance |= eCompliantWidth;
     }
@@ -286,7 +276,7 @@ namespace nux
     {
 #if DEBUG_LAYOUT_COMPUTATION
       // The layout and its content resized together without trouble.
-      std::cout << "ComputeLayout2: VLayout Height compliant = " << m_fittingHeight << std::endl;
+      std::cout << "ComputeContentSize: VLayout Height compliant = " << m_fittingHeight << std::endl;
 #endif
       size_compliance |= eCompliantHeight;
     }
@@ -294,69 +284,69 @@ namespace nux
     return size_compliance;
   }
 
-  void GridVLayout::ProcessDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void GridVLayout::ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     std::list<Area *> elements;
-    std::list<Area *>::iterator it = _layout_element_list.begin ();
+    std::list<Area *>::iterator it = _layout_element_list.begin();
 
-    GfxContext.PushModelViewMatrix (Get2DMatrix ());
+    graphics_engine.PushModelViewMatrix(Get2DMatrix());
 
-    for (it = _layout_element_list.begin (); it != _layout_element_list.end (); ++it)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); ++it)
     {
-      if ((*it)->IsVisible ())
-        elements.push_back (*it);
+      if ((*it)->IsVisible())
+        elements.push_back(*it);
     }
 
-    it = elements.begin ();
+    it = elements.begin();
 
-    Geometry base = GetGeometry ();
-    Geometry parent_geometry = GetAbsoluteGeometry ();
+    Geometry base = GetGeometry();
+    Geometry parent_geometry = GetAbsoluteGeometry();
     Geometry visibility_geometry = parent_geometry;
-    if (GetToplevel ())
+    if (GetToplevel())
     {
-      parent_geometry = GetToplevel ()->GetAbsoluteGeometry ();
+      parent_geometry = GetToplevel()->GetAbsoluteGeometry();
     }
 
-    visibility_geometry = parent_geometry.Intersect (GetAbsoluteGeometry ());
+    visibility_geometry = parent_geometry.Intersect(GetAbsoluteGeometry());
 
-    GfxContext.PushClippingRectangle (base);
+    graphics_engine.PushClippingRectangle(base);
 
     for (int i = 0; i < _num_column; i++)
     {
       for (int j = 0; j < _num_row; j++)
       {
-        if (it == elements.end ())
+        if (it == elements.end())
           break;
 
-        Geometry intersection = base.Intersect ((*it)->GetGeometry ());
+        Geometry intersection = base.Intersect((*it)->GetGeometry());
 
         // Test if the element is inside the Grid before rendering.
-        if (!visibility_geometry.IsNull ())
+        if (!visibility_geometry.IsNull())
         {
           int X = base.x + m_h_out_margin + i * (_children_size.width + m_h_in_margin);
           int Y = base.y + m_v_out_margin + j * (_children_size.height + m_v_in_margin);
 
-          GfxContext.PushClippingRectangle (Geometry (X, Y, _children_size.width, _children_size.height));
-          if ((*it)->IsView ())
+          graphics_engine.PushClippingRectangle(Geometry(X, Y, _children_size.width, _children_size.height));
+          if ((*it)->IsView())
           {
             View *ic = static_cast<View *>(*it);
-            ic->ProcessDraw (GfxContext, force_draw);
+            ic->ProcessDraw(graphics_engine, force_draw);
           }
-          else if ((*it)->IsLayout ())
+          else if ((*it)->IsLayout())
           {
             Layout *layout = static_cast<Layout *>(*it);
-            layout->ProcessDraw (GfxContext, force_draw);
+            layout->ProcessDraw(graphics_engine, force_draw);
           }
 
-          GfxContext.PopClippingRectangle ();
+          graphics_engine.PopClippingRectangle();
         }
 
         it++;
       }
     }
 
-    GfxContext.PopClippingRectangle ();
-    GfxContext.PopModelViewMatrix ();
+    graphics_engine.PopClippingRectangle();
+    graphics_engine.PopModelViewMatrix();
 
     _queued_draw = false;
   }
@@ -373,18 +363,18 @@ namespace nux
     {
       std::list<Area*>::iterator it;
       std::list<Area*>::iterator it_next;
-      it = std::find (_layout_element_list.begin(), _layout_element_list.end(), next_object_to_key_focus_area_);
+      it = std::find(_layout_element_list.begin(), _layout_element_list.end(), next_object_to_key_focus_area_);
       it_next = it;
       ++it_next;
 
       if (it == _layout_element_list.end())
       {
         // Should never happen
-        nuxAssert (0);
+        nuxAssert(0);
         return NULL;
       }
 
-      int position = GetChildPos(*it); // note that (*it) == next_object_to_key_focus_area_
+      int position = GetChildPos(*it); // note that(*it) == next_object_to_key_focus_area_
       int nun_column = GetNumColumn();
       int nun_row = GetNumRow();
 

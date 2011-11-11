@@ -129,6 +129,18 @@ namespace nux
       }
     }
 
+    //! Take ownership of ptr.
+    void Adopt(T* ptr)
+    {
+        ObjectPtr<T> temp(ptr);
+        Swap(temp);
+        // Now we want to release the reference that was added on construction,
+        // but keep the smart pointer count.
+        if (ptr_)
+          ptr_->UnReference();
+    }
+
+
     //! Assignment of a smart pointer of type T.
     /*!
         @param other Smart pointer of type T.
@@ -229,7 +241,7 @@ namespace nux
     */
     bool IsValid() const
     {
-        return bool(ptr_);
+      return (ptr_ != NULL) ? true : false;
     }
 
     bool operator < (T *ptr) const
@@ -599,7 +611,7 @@ namespace nux
     */
     bool IsValid() const
     {
-      return bool(ptr_);
+      return (ptr_!= NULL) ? true : false;
     }
 
     //! Return true is the hosted pointer is null or has been destroyed.
@@ -649,7 +661,7 @@ namespace nux
     {
       if (ptr_)
       {
-        auto slot = sigc::mem_fun(this, &ObjectWeakPtr<T>::TargetDestroyed);
+        sigc::slot<void, Object*> slot = sigc::mem_fun(this, &ObjectWeakPtr<T>::TargetDestroyed);
         destroy_listener_ = ptr_->object_destroyed.connect(slot);
       }
     }

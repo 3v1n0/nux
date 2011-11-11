@@ -24,14 +24,28 @@
 #include <X11/Xutil.h>
 #include <X11/extensions/Xcomposite.h>
 #include <X11/extensions/Xdamage.h>
+#ifndef NUX_OPENGLES_20
 #include <GL/gl.h>
 #define GLX_GLXEXT_PROTOTYPES
 #include <GL/glx.h>
 #undef GLX_GLXEXT_PROTOTYPES
+#else
+#include <EGL/egl.h>
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#endif
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+#ifndef NUX_OPENGLES_20
+typedef GLXContext NUXContext;
+#else
+typedef EGLConfig NUXContext;
+#endif
 
 // Enables colored console output at build time.
 #define COLORED_OUTPUT 1
@@ -54,6 +68,8 @@ enum {
   FLAG_GL_ARB_FRAMEBUFFER_OBJECT   = (1 << 10),
   FLAG_SOFTWARE_RENDERING          = (1 << 11),
   FLAG_BLACKLISTED                 = (1 << 12),
+  FLAG_GL_OES_EGL_IMAGE            = (1 << 13),
+  FLAG_EGL_KHR_IMAGE_PIXMAP        = (1 << 14),
 
   // Extension masks.
   MASK_GL_NON_POWER_OF_TWO   = (FLAG_GL_ARB_NON_POWER_OF_TWO
@@ -75,6 +91,8 @@ struct PciDevice gpu_blacklist[] = {
   { 0x8086, 0x3577 },  // Intel : 82830M/MG
   { 0x8086, 0x2562 },  // Intel : 82845G aka Poulsbo
   { 0x1002, 0x4c57 },  // ATI : Radeon Mobility 7500
+  { 0x10de, 0x0322 },  // nVidia: GeForce FX 5200
+  { 0x10de, 0x0326 },  // nVidia: GeForce FX 5500
   { 0x10de, 0x0240 },  // nVidia: GeForce 6150
   { 0x10de, 0x01d3 },  // nVidia: GeForce Go 7300 SE / 7200 GS
   { 0x10de, 0x01d7 },  // nVidia: GeForce Go 7300 / Quadro NVS 110M
@@ -172,6 +190,7 @@ static void print_report (const char* vendor, const char* renderer,
              flags & FLAG_GLX_EXT_TEXTURE_FROM_PIXMAP ? yes : no,
              flags & MASK_GL_NON_POWER_OF_TWO ? yes : no);
     if (compiz == 0) {
+#ifndef NUX_OPENGLES_20
       fprintf (stdout,
                "GL vertex program:        %s\n"
                "GL fragment program:      %s\n"
@@ -186,6 +205,18 @@ static void print_report (const char* vendor, const char* renderer,
                flags & MASK_GL_FRAMEBUFFER_OBJECT ? yes : no,
                (major >= 2 || (major == 1 && minor >= 4)) ? yes : no,
                result == 0 ? yes : no);
+#else
+      fprintf (stdout,
+               "GL OES EGL image:         %s\n"
+               "EGL KHR image pixmap:     %s\n"
+               "EGL version is 1.4+:      %s\n"
+               "\n"
+               "Unity supported:          %s\n",
+               flags & FLAG_GL_OES_EGL_IMAGE ? yes : no,
+               flags & FLAG_EGL_KHR_IMAGE_PIXMAP ? yes : no,
+               (major >= 2 || (major == 1 && minor >= 4)) ? yes : no,
+               result == 0 ? yes : no);
+#endif
     } else {
       fprintf (stdout, "\nCompiz supported:         %s\n",
                result == 0 ? yes : no);
@@ -198,7 +229,7 @@ static void print_report (const char* vendor, const char* renderer,
 static int check_root_visual (Display     *display,
 			      unsigned int screen,
 			      Window      root,
-			      GLXContext  *context,
+			      NUXContext  *context,
 			      XVisualInfo **vinfos,
 			      TestResults  *results)
 {
@@ -225,7 +256,7 @@ static int check_root_visual (Display     *display,
 static int check_xcomposite (Display     *display,
 			      unsigned int screen,
 			      Window      root,
-			      GLXContext  *context,
+			      NUXContext  *context,
 			      XVisualInfo **vinfos,
 			      TestResults  *results)
 {
@@ -255,7 +286,7 @@ static int check_xcomposite (Display     *display,
 static int check_damage_extension (Display     *display,
 			            unsigned int screen,
 				    Window      root,
-				    GLXContext  *context,
+				    NUXContext  *context,
 			   	    XVisualInfo **vinfos,
 			   	    TestResults  *results)
 {
@@ -274,7 +305,7 @@ static int check_damage_extension (Display     *display,
 static int check_fixes_extension (Display     *display,
 			           unsigned int screen,
 			     	   Window      root,
-			      	   GLXContext  *context,
+			      	   NUXContext  *context,
 				   XVisualInfo **vinfos,
 				   TestResults  *results)
 {
@@ -290,10 +321,130 @@ static int check_fixes_extension (Display     *display,
   return 1;
 }
 
+#ifdef NUX_OPENGLES_20
+
+static int check_egl_config (Display     *display,
+			      unsigned int screen,
+			      Window      root,
+			      NUXContext  *context,
+			      XVisualInfo **vinfos,
+			      TestResults  *results)
+{
+  EGLint attribs[] = {
+    EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+    EGL_RED_SIZE, 1,
+    EGL_GREEN_SIZE, 1,
+    EGL_BLUE_SIZE, 1,
+    EGL_NONE
+  };
+  EGLint ctx_attribs[] = {
+    EGL_CONTEXT_CLIENT_VERSION, 2,
+    EGL_NONE
+  };
+
+  XVisualInfo *visInfo, visTemplate;
+  XSetWindowAttributes attr;
+  Window win;
+  int num_visuals;
+  unsigned long mask;
+  const int width = 400, height = 300;
+  const char* name = "Unity Support Test";
+  EGLDisplay egl_dpy;
+  EGLSurface egl_surf;
+  EGLContext egl_ctx;
+  EGLConfig config;
+  EGLint num_configs;
+  EGLint vid;
+
+  egl_dpy = eglGetDisplay(display);
+
+  if (!eglChooseConfig (egl_dpy, attribs, &config, 1, &num_configs)) {
+    results->error = strdup ("OpenGLES: couldn't get an EGL visual config");
+    results->result = 1;
+    return 0;
+  }
+
+  if (num_configs <= 0) {
+    results->error = strdup ("OpenGLES: no valid config found (!num_configs)");
+    results->result = 1;
+    return 0;
+  }
+
+  if (!eglGetConfigAttrib (egl_dpy, config, EGL_NATIVE_VISUAL_ID, &vid)) {
+    results->error = strdup ("OpenGLES: eglGetConfigAttrib() failed");
+    results->result = 1;
+    return 0;
+  }
+
+  /* The X window visual must match the EGL config */
+  visTemplate.visualid = vid;
+  visInfo = XGetVisualInfo (display, VisualIDMask, &visTemplate, &num_visuals);
+  if (!visInfo) {
+    results->error = strdup ("OpenGLES: unable to get a matching X visual");
+    results->result = 1;
+    return 0;
+  }
+
+  /* window attributes */
+  attr.background_pixel = 0;
+  attr.border_pixel = 0;
+  attr.colormap = XCreateColormap (display, root, visInfo->visual, AllocNone);
+  attr.event_mask = StructureNotifyMask | ExposureMask | KeyPressMask;
+  mask = CWBackPixel | CWBorderPixel | CWColormap | CWEventMask;
+
+  win = XCreateWindow (display, root, 0, 0, width, height,
+                       0, visInfo->depth, InputOutput,
+                       visInfo->visual, mask, &attr);
+
+  /* set hints and properties */
+  {
+    XSizeHints sizehints;
+    sizehints.x = 0;
+    sizehints.y = 0;
+    sizehints.width  = width;
+    sizehints.height = height;
+    sizehints.flags = USSize | USPosition;
+    XSetNormalHints (display, win, &sizehints);
+    XSetStandardProperties (display, win, name, name,
+                            None, (char **)NULL, 0, &sizehints);
+  }
+
+  eglBindAPI (EGL_OPENGL_ES_API);
+
+  egl_surf = eglCreateWindowSurface (egl_dpy, config, win, NULL);
+  if (egl_surf == EGL_NO_SURFACE) {
+    results->error = strdup ("OpenGLES: eglCreateWindowSurface failed");
+    results->result = 1;
+    return 0;
+  }
+
+  context = eglCreateContext (egl_dpy, config, EGL_NO_CONTEXT, ctx_attribs);
+  if (context == EGL_NO_CONTEXT) {
+    results->error = strdup ("OpenGLES: eglCreateContext failed");
+    results->result = 1;
+    return 0;
+  }
+
+  if (!eglMakeCurrent (egl_dpy, egl_surf, egl_surf, context)) {
+    results->error = strdup ("OpenGLES: eglMakeCurrent() failed");
+    results->result = 1;
+    return 0;
+  }
+
+  XFree(visInfo);
+  eglDestroySurface (egl_dpy, egl_surf);
+  XDestroyWindow (display, win);
+
+  return 1;
+}
+
+#else
+
 static int check_glx_config (Display     *display,
 			      unsigned int screen,
 			      Window      root,
-			      GLXContext  *context,
+			      NUXContext  *context,
 			      XVisualInfo **vinfos,
 			      TestResults  *results)
 {
@@ -312,7 +463,7 @@ static int check_glx_config (Display     *display,
 static int check_colorbuffers (Display     *display,
 			        unsigned int screen,
 				Window      root,
-				GLXContext  *context,
+				NUXContext  *context,
 				XVisualInfo **vinfos,
 				TestResults  *results)
 {
@@ -326,14 +477,16 @@ static int check_colorbuffers (Display     *display,
 
   return 1;
 }
+#endif
 
 static int check_context (Display     *display,
 			   unsigned int screen,
 			   Window      root,
-			   GLXContext  *context,
+			   NUXContext  *context,
 			   XVisualInfo **vinfos,
 			   TestResults  *results)
 {
+#ifndef NUX_OPENGLES_20
   // Create and map the OpenGL context to the root window and get the strings.
   *context = glXCreateContext (display, *vinfos, NULL, !results->indirect);
   if (*context == NULL) {
@@ -342,6 +495,8 @@ static int check_context (Display     *display,
     return 0;
   }
   glXMakeCurrent (display, root, *context);
+#endif
+
   results->vendor = (char*) glGetString (GL_VENDOR);
   results->renderer = (char*) glGetString (GL_RENDERER);
   results->version = (char*) glGetString (GL_VERSION);
@@ -352,7 +507,7 @@ static int check_context (Display     *display,
 static int check_extensions (Display     *display,
 			     unsigned int screen,
 			     Window      root,
-			     GLXContext  *context,
+			     NUXContext  *context,
 			     XVisualInfo **vinfos,
 			     TestResults  *results)
 {
@@ -373,12 +528,14 @@ static int check_extensions (Display     *display,
     { "GL_ARB_vertex_buffer_object", FLAG_GL_ARB_VERTEX_BUFFER_OBJECT },
     { "GL_EXT_framebuffer_object", FLAG_GL_EXT_FRAMEBUFFER_OBJECT },
     { "GL_ARB_framebuffer_object", FLAG_GL_ARB_FRAMEBUFFER_OBJECT },
+    { "GL_OES_EGL_image", FLAG_GL_OES_EGL_IMAGE },
     { NULL, 0 }
   };
   for (int i = 0; gl_extension[i].name != NULL; i++)
     if (is_extension_supported (gl_extensions, gl_extension[i].name) == 1)
       results->flags |= gl_extension[i].flag;
 
+#ifndef NUX_OPENGLES_20
   // Fill results->flags with the supported GLX extensions.
   const char* glx_extensions = glXQueryExtensionsString (display, screen);
   const struct { const char* name; const unsigned int flag; } glx_extension[] = {
@@ -404,6 +561,17 @@ static int check_extensions (Display     *display,
       results->flags &= ~FLAG_GLX_EXT_TEXTURE_FROM_PIXMAP;
     }
   }
+#else
+  EGLDisplay egl_dpy = eglGetDisplay(display);
+  const char* egl_extensions = eglQueryString (egl_dpy, EGL_EXTENSIONS);
+  const struct { const char* name; const unsigned int flag; } egl_extension[] = {
+    { "EGL_KHR_image_pixmap", FLAG_EGL_KHR_IMAGE_PIXMAP },
+    { NULL, 0 }
+  };
+  for (int i = 0; egl_extension[i].name != NULL; i++)
+    if (is_extension_supported (egl_extensions, egl_extension[i].name) == 1)
+      results->flags |= egl_extension[i].flag;
+#endif
 
   return 1;
 }
@@ -411,14 +579,15 @@ static int check_extensions (Display     *display,
 static int check_blacklist (Display     *display,
 			    unsigned int screen,
 			    Window      root,
-			    GLXContext  *context,
+			    NUXContext  *context,
 			    XVisualInfo **vinfos,
 			    TestResults  *results)
 {
   // Check for software rendering.
   if (results->renderer != NULL &&
       (strncmp (results->renderer, "Software Rasterizer", 19) == 0 ||
-       strncmp (results->renderer, "Mesa X11", 8) == 0)) {
+       strncmp (results->renderer, "Mesa X11", 8) == 0 ||
+       strstr (results->renderer, "on softpipe") != NULL)) {
     results->flags |= FLAG_SOFTWARE_RENDERING;
   }
 
@@ -434,6 +603,9 @@ static int check_blacklist (Display     *display,
   //     available for the default depth or not.
 
   // Scan the PCI devices searching for blacklisted GPUs.
+// FIXME: pci or not is not actually related with PCI, it's just that if pci_init
+// fails it exit directly :-(
+#ifndef NUX_OPENGLES_20
   const int gpu_blacklist_size = ARRAY_SIZE (gpu_blacklist);
   struct pci_access* access;
   struct pci_dev* dev;
@@ -452,6 +624,7 @@ static int check_blacklist (Display     *display,
     dev = dev->next;
   }
   pci_cleanup (access);
+#endif
 
   return 1;
 }
@@ -459,21 +632,29 @@ static int check_blacklist (Display     *display,
 int (*tests[]) (Display     *display,
 		      unsigned int screen,
 		      Window      root,
-		      GLXContext  *context,
+		      NUXContext  *context,
 		      XVisualInfo **vinfos,
 		      TestResults  *results) = {
   check_root_visual,
   check_xcomposite,
   check_damage_extension,
   check_fixes_extension,
+#ifndef NUX_OPENGLES_20
   check_glx_config,
   check_colorbuffers,
+#else
+  check_egl_config,
+#endif
   check_context,
   check_extensions,
   check_blacklist
 };
 
+#ifndef NUX_OPENGLES_20
 const unsigned int c_num_tests = 9;
+#else
+const unsigned int c_num_tests = 8;
+#endif
 
 int main (int argc, char* argv[]) {
   char         *display_name = NULL;
@@ -482,10 +663,13 @@ int main (int argc, char* argv[]) {
   Window       root;
   XVisualInfo  *vinfos = NULL;
   Display      *display = NULL;
-  GLXContext   context = NULL;
+  NUXContext   context = NULL;
   TestResults  results;
+#ifdef NUX_OPENGLES_20
+  EGLDisplay   egl_dpy;
+#endif
   char         resultfilename[30];
-  FILE         *resultfile;
+  int          resultfile;
   int          forcecheck = 0;
 
   results.indirect = 0;
@@ -524,10 +708,8 @@ int main (int argc, char* argv[]) {
   }
 
   // can skip some tests if not forced
-  if (!forcecheck) {
-      resultfile = fopen("/tmp/unity_support_test.0", "r");
-      if (resultfile) {
-          fclose(resultfile);
+  if (!forcecheck && !print) {
+      if (access("/tmp/unity_support_test.0", F_OK) == 0) {
           return 0;
       }
       if (getenv ("UNITY_FORCE_START")) {
@@ -548,6 +730,7 @@ int main (int argc, char* argv[]) {
     screen = DefaultScreen (display);
     root = XRootWindow (display, screen);
 
+#ifndef NUX_OPENGLES_20
     // Do the tests, if one of them fails break out of the loop
 
     for (unsigned int i = 0; i < c_num_tests; i++)
@@ -583,6 +766,41 @@ int main (int argc, char* argv[]) {
         results.result = 1;
       }
     }
+#else
+    egl_dpy = eglGetDisplay(display);
+    if (!eglInitialize (egl_dpy, &results.major, &results.minor)) {
+      results.error = strdup ("OpenGLES: eglInitialize() failed");
+      results.result = 1;
+    } else {
+      // Do the tests, if one of them fails break out of the loop
+      for (unsigned int i = 0; i < c_num_tests; i++)
+        if (!(*tests[i]) (display, screen, root, &context, &vinfos, &results))
+          break;
+
+      if (results.compiz == 0) {
+        // Unity compatibility checks.
+        if ((results.major >= 2 || (results.major == 1 && results.minor >= 4)) &&
+            (results.flags & FLAG_GL_OES_EGL_IMAGE) &&
+            (results.flags & FLAG_EGL_KHR_IMAGE_PIXMAP) &&
+            (~results.flags & FLAG_SOFTWARE_RENDERING) &&
+            (~results.flags & FLAG_BLACKLISTED)) {
+          results.result = 0;
+        } else {
+          results.result = 1;
+        }
+      } else {
+        // Compiz compatibility checks.
+        if ((results.flags & FLAG_GL_OES_EGL_IMAGE) &&
+            (results.flags & FLAG_EGL_KHR_IMAGE_PIXMAP) &&
+            (~results.flags & FLAG_SOFTWARE_RENDERING) &&
+            (~results.flags & FLAG_BLACKLISTED)) {
+          results.result = 0;
+        } else {
+          results.result = 1;
+        }
+      }
+    }
+#endif
   }
 
   if (print == 1) {
@@ -594,8 +812,15 @@ int main (int argc, char* argv[]) {
 
   if (vinfos != NULL)
     XFree (vinfos);
+#ifndef NUX_OPENGLES_20
   if (context != NULL)
     glXDestroyContext (display, context);
+#else
+  if (context == EGL_NO_CONTEXT)
+    eglDestroyContext (egl_dpy, context);
+  if (egl_dpy)
+    eglTerminate (egl_dpy);
+#endif
   if (display != NULL)
     XCloseDisplay (display);
   if (results.error != NULL)
@@ -604,8 +829,9 @@ int main (int argc, char* argv[]) {
   // drop result file
   if (results.result != 5) {
     sprintf(resultfilename, "/tmp/unity_support_test.%i", results.result);
-    resultfile = fopen(resultfilename, "w");
-    fclose(resultfile);
+    resultfile = open(resultfilename, O_CREAT|O_WRONLY|O_EXCL, 0666);
+    if (resultfile > 0)
+      close(resultfile);
   }
 
   return results.result;

@@ -34,9 +34,9 @@ namespace nux
   */
   class RadioButtonGroup: public InitiallyUnownedObject
   {
-    NUX_DECLARE_OBJECT_TYPE (RadioButtonGroup, InitiallyUnownedObject);
+    NUX_DECLARE_OBJECT_TYPE(RadioButtonGroup, InitiallyUnownedObject);
   public:
-    RadioButtonGroup (NUX_FILE_LINE_PROTO);
+    RadioButtonGroup(NUX_FILE_LINE_PROTO);
     ~RadioButtonGroup();
 
     //! Add a radio button to the group.
@@ -44,20 +44,20 @@ namespace nux
         The first radio button added to the group gets its check state set to true.
         When a radio button is added to a group that is not empty, its check state is set to false.
     */
-    void ConnectButton (RadioButton *radio);
+    void ConnectButton(RadioButton *radio);
 
-    void ActivateButton (RadioButton *radio);
+    void ActivateButton(RadioButton *radio);
 
     //! Remove a radio button from the group.
     /*
         When a radio button is removed, the previous button in the group gets its check state set to true;
     */
-    void DisconnectButton (RadioButton *radio);
+    void DisconnectButton(RadioButton *radio);
 
-    void SetActiveButton (RadioButton *radio, bool EmitSignal);
+    void SetActiveButton(RadioButton *radio, bool EmitSignal);
 
   private:
-    void NotifyClick (RadioButton *radio);
+    void NotifyClick(RadioButton *radio);
     std::vector<ObjectWeakPtr<RadioButton> > m_RadioButtonArray;
     int m_ActiveRadioButtonIndex;
 

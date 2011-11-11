@@ -27,37 +27,37 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLVertexBuffer);
+  NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLVertexBuffer);
 
-  IOpenGLVertexBuffer::IOpenGLVertexBuffer (t_u32 Length, VBO_USAGE Usage, NUX_FILE_LINE_DECL)
-    :   IOpenGLResource (RTVERTEXBUFFER, NUX_FILE_LINE_PARAM)
-    ,   _Length (Length)
-    ,   _Usage (Usage)
-    ,   _MemMap (0)
-    ,   _OffsetToLock (0)
-    ,   _SizeToLock (0)
+  IOpenGLVertexBuffer::IOpenGLVertexBuffer(unsigned int Length, VBO_USAGE Usage, NUX_FILE_LINE_DECL)
+    :   IOpenGLResource(RTVERTEXBUFFER, NUX_FILE_LINE_PARAM)
+    ,   _Length(Length)
+    ,   _Usage(Usage)
+    ,   _MemMap(0)
+    ,   _OffsetToLock(0)
+    ,   _SizeToLock(0)
   {
-    CHECKGL ( glGenBuffersARB (1, &_OpenGLID) );
-    CHECKGL ( glBindBufferARB (GL_ARRAY_BUFFER_ARB, _OpenGLID) );
-    CHECKGL ( glBufferDataARB (GL_ARRAY_BUFFER_ARB, _Length, NULL, Usage) );
-    CHECKGL ( glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
-    GRunTimeStats.Register (this);
+    CHECKGL(glGenBuffersARB(1, &_OpenGLID));
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, _OpenGLID));
+    CHECKGL(glBufferDataARB(GL_ARRAY_BUFFER_ARB, _Length, NULL, Usage));
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    GRunTimeStats.Register(this);
   }
 
   IOpenGLVertexBuffer::~IOpenGLVertexBuffer()
   {
-    CHECKGL ( glDeleteBuffersARB (1, &_OpenGLID) );
+    CHECKGL(glDeleteBuffersARB(1, &_OpenGLID));
     _OpenGLID = 0;
-    GRunTimeStats.UnRegister (this);
+    GRunTimeStats.UnRegister(this);
   }
 
-  int IOpenGLVertexBuffer::Lock (
-    t_u32 OffsetToLock,
-    t_u32 SizeToLock,
+  int IOpenGLVertexBuffer::Lock(
+    unsigned int OffsetToLock,
+    unsigned int SizeToLock,
     void **ppbData)
   {
-    nuxAssert (SizeToLock <= _Length);
-    nuxAssert (OffsetToLock + SizeToLock <= _Length);
+    nuxAssert(SizeToLock <= _Length);
+    nuxAssert(OffsetToLock + SizeToLock <= _Length);
 
     if (SizeToLock == 0)
     {
@@ -68,38 +68,47 @@ namespace nux
       }
       else
       {
-        nuxDebugMsg (TEXT ("[IOpenGLVertexBuffer::Lock] Invalid parameters.") );
+        nuxDebugMsg("[IOpenGLVertexBuffer::Lock] Invalid parameters.");
         return OGL_INVALID_CALL;
       }
     }
 
     // If _MemMap, _OffsetToLock and _SizeToLock are not equal to zero, then we have already mapped the buffer
     // Unlock it before locking again.
-    nuxAssert (_MemMap == 0);
-    nuxAssert (_OffsetToLock == 0);
-    nuxAssert (_SizeToLock == 0);
+    nuxAssert(_MemMap == 0);
+    nuxAssert(_OffsetToLock == 0);
+    nuxAssert(_SizeToLock == 0);
 
-    CHECKGL ( glBindBufferARB (GL_ARRAY_BUFFER_ARB, _OpenGLID) );
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, _OpenGLID));
+#ifndef NUX_OPENGLES_20
     // Map the Entire buffer into system memory
-    _MemMap = (BYTE *) glMapBufferARB (GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB);
-    CHECKGL_MSG (glMapBufferARB);
+    _MemMap = (BYTE *) glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB);
+    CHECKGL_MSG(glMapBufferARB);
     *ppbData = (void *) (_MemMap + OffsetToLock);
+#else
+    _MemMap = new BYTE[SizeToLock];
+    *ppbData = _MemMap;
+#endif
 
     _OffsetToLock   = OffsetToLock;
     _SizeToLock     = SizeToLock;
 
-    CHECKGL ( glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
 
     return OGL_OK;
   }
 
   int IOpenGLVertexBuffer::Unlock()
   {
-    CHECKGL ( glBindBufferARB (GL_ARRAY_BUFFER_ARB, _OpenGLID) );
-    //CHECKGL( glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, _OffsetToLock, _SizeToLock, _MemMap) );
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, _OpenGLID));
 
-    CHECKGL ( glUnmapBufferARB (GL_ARRAY_BUFFER_ARB) );
-    CHECKGL ( glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
+#ifndef NUX_OPENGLES_20
+    CHECKGL(glUnmapBufferARB(GL_ARRAY_BUFFER_ARB));
+#else
+    CHECKGL(glBufferSubData(GL_ARRAY_BUFFER_ARB, _OffsetToLock, _SizeToLock, _MemMap));
+    delete [] _MemMap;
+#endif
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
 
     _MemMap         = 0;
     _OffsetToLock   = 0;
@@ -109,10 +118,10 @@ namespace nux
 
   void IOpenGLVertexBuffer::BindVertexBuffer()
   {
-    CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, _OpenGLID) );
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, _OpenGLID));
   }
 
-  t_u32 IOpenGLVertexBuffer::GetSize()
+  unsigned int IOpenGLVertexBuffer::GetSize()
   {
     return _Length;
   }

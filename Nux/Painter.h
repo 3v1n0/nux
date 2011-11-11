@@ -41,7 +41,7 @@ namespace nux
   {
   public:
     GeometryPositioning();
-    GeometryPositioning (
+    GeometryPositioning(
       HorizontalAlignment horizontal_aligment,
       VerticalAlignment vertical_aligment,
       bool stretch_horizontal = FALSE,
@@ -53,7 +53,7 @@ namespace nux
     bool m_stretch_horizontal;  // if TRUE, the content width will be stretched over the width of the container.
     bool m_stretch_vertical;    // if TRUE, the content height will be stretched over the height of the container.
 
-    void SetAlignment (HorizontalAlignment ha, VerticalAlignment va)
+    void SetAlignment(HorizontalAlignment ha, VerticalAlignment va)
     {
       m_vertical_aligment = va;
       m_horizontal_aligment = ha;
@@ -75,7 +75,7 @@ namespace nux
       @GeometryPositioning    The parameter to use to compute the position of the content.
       @return the computed geometry.
   */
-  Geometry ComputeGeometryPositioning (const Geometry &container_geo, const Geometry &content_geo, GeometryPositioning gctx);
+  Geometry ComputeGeometryPositioning(const Geometry &container_geo, const Geometry &content_geo, GeometryPositioning gctx);
 
 //! State of UI controls
   /*
@@ -89,7 +89,7 @@ namespace nux
        Default constructor. All states are set to false.
     */
     InteractState();
-    InteractState (bool on, bool focus, bool prelight, bool disable);
+    InteractState(bool on, bool focus, bool prelight, bool disable);
     ~InteractState();
 
     bool is_on;
@@ -119,7 +119,7 @@ namespace nux
       horizontal_margin = 0;
       vertical_margin = 0;
     };
-    TextureAlignmentStyle (TextureAlignment horz_align, TextureAlignment vert_align)
+    TextureAlignmentStyle(TextureAlignment horz_align, TextureAlignment vert_align)
     {
       horz_alignment = horz_align;
       vert_alignment = vert_align;
@@ -142,16 +142,16 @@ namespace nux
     virtual ~BasePainter();
     int intTest;
 
-    //! Draw unscaled texture at position (x, y). The size of the quad is the size of the texture.
-    virtual void Draw2DTexture (GraphicsEngine &GfxContext, BaseTexture *Texture, int x, int y) const;
-    virtual void Draw2DTextureAligned (GraphicsEngine &GfxContext, BaseTexture *Texture, const Geometry &g, TextureAlignmentStyle tex_align) const;
+    //! Draw unscaled texture at position(x, y). The size of the quad is the size of the texture.
+    virtual void Draw2DTexture(GraphicsEngine &graphics_engine, BaseTexture *Texture, int x, int y) const;
+    virtual void Draw2DTextureAligned(GraphicsEngine &graphics_engine, BaseTexture *Texture, const Geometry &g, TextureAlignmentStyle tex_align) const;
 
     ///////////////////
 
     ////////////////////
     // TEXT PAINTING  //
     ////////////////////
-    virtual int PaintColorTextLineEdit (GraphicsEngine &GfxContext, const Geometry &g, const NString &Str,
+    virtual int PaintColorTextLineEdit(GraphicsEngine &graphics_engine, const Geometry &g, const NString &Str,
                                         Color TextColor,
                                         bool WriteAlphaChannel,
                                         Color SelectedTextColor,
@@ -162,17 +162,17 @@ namespace nux
                                         int offset = 0,
                                         int selection_start = 0, int selection_end = 0) const;
 
-    virtual int PaintTextLineStatic (GraphicsEngine &GfxContext, ObjectPtr<FontTexture> Font, const Geometry &g,
+    virtual int PaintTextLineStatic(GraphicsEngine &graphics_engine, ObjectPtr<FontTexture> Font, const Geometry &g,
                                      const NString &Str,
-                                     const Color &color = Color (0.0f, 0.0f, 0.0f, 1.0f),
+                                     const Color &color = Color(0.0f, 0.0f, 0.0f, 1.0f),
                                      bool WriteAlphaChannel = true,
                                      TextAlignment alignment = eAlignTextLeft) const;
 
-    void Paint2DQuadColor (GraphicsEngine &GfxContext, const Geometry &g, Color c0) const;
-    void Paint2DQuadColor (GraphicsEngine &GfxContext, const Geometry &g, Color c0_top_left, Color c1_bottom_left, Color c2_bottom_right, Color c3_top_right) const;
+    void Paint2DQuadColor(GraphicsEngine &graphics_engine, const Geometry &g, const Color &c0) const;
+    void Paint2DQuadColor(GraphicsEngine &graphics_engine, const Geometry &g, const Color &c0_top_left, const Color &c1_bottom_left, const Color &c2_bottom_right, const Color &c3_top_right) const;
 
-    void Paint2DQuadColor (GraphicsEngine &GfxContext, int x, int y, int width, int height, Color c0) const;
-    void Paint2DQuadColor (GraphicsEngine &GfxContext, int x, int y, int width, int height, Color c0_top_left, Color c1_bottom_left, Color c2_bottom_right, Color c3_top_right) const;
+    void Paint2DQuadColor(GraphicsEngine &graphics_engine, int x, int y, int width, int height, const Color &c0) const;
+    void Paint2DQuadColor(GraphicsEngine &graphics_engine, int x, int y, int width, int height, const Color &c0_top_left, const Color &c1_bottom_left, const Color &c2_bottom_right, const Color &c3_top_right) const;
 
     //! Paint a 2D quad with a gradient color going from Top to Bottom.
     /*! Paint a 2D quad with a gradient color going from Top to Bottom.
@@ -180,26 +180,26 @@ namespace nux
         @param TopColor color at the top of the quad.
         @param TopColor color at the bottom of the quad.
     */
-    void Paint2DQuadVGradient (GraphicsEngine &GfxContext, const Geometry &g, Color TopColor, Color BottomColor) const;
+    void Paint2DQuadVGradient(GraphicsEngine &graphics_engine, const Geometry &g, Color TopColor, Color BottomColor) const;
     //! Paint a 2D quad with a gradient color going from Left to Right.
     /*! Paint a 2D quad with a gradient color going from Left to Right.
         @param g Geometry of the quad.
         @param LeftColor color at the top of the quad.
         @param RightColor color at the bottom of the quad.
     */
-    void Paint2DQuadHGradient (GraphicsEngine &GfxContext, const Geometry &g, Color LeftColor, Color RightColor) const;
+    void Paint2DQuadHGradient(GraphicsEngine &graphics_engine, const Geometry &g, Color LeftColor, Color RightColor) const;
 
-    void Paint2DQuadWireframe (GraphicsEngine &GfxContext, const Geometry &g, Color c0) const;
-    void Paint2DQuadWireframe (GraphicsEngine &GfxContext, const Geometry &g, Color c_top_left, Color c_bottom_left, Color c_bottom_right, Color c_top_right) const;
+    void Paint2DQuadWireframe(GraphicsEngine &graphics_engine, const Geometry &g, Color c0) const;
+    void Paint2DQuadWireframe(GraphicsEngine &graphics_engine, const Geometry &g, Color c_top_left, Color c_bottom_left, Color c_bottom_right, Color c_top_right) const;
 
-    void Paint2DQuadWireframe (GraphicsEngine &GfxContext, int x, int y, int width, int height, Color c0) const;
-    void Paint2DQuadWireframe (GraphicsEngine &GfxContext, int x, int y, int width, int height, Color c_top_left, Color c_bottom_left, Color c_bottom_right, Color c_top_right) const;
+    void Paint2DQuadWireframe(GraphicsEngine &graphics_engine, int x, int y, int width, int height, Color c0) const;
+    void Paint2DQuadWireframe(GraphicsEngine &graphics_engine, int x, int y, int width, int height, Color c_top_left, Color c_bottom_left, Color c_bottom_right, Color c_top_right) const;
 
-    void Draw2DTriangleColor (GraphicsEngine &GfxContext, int x0, int y0,
+    void Draw2DTriangleColor(GraphicsEngine &graphics_engine, int x0, int y0,
                               int x1, int y1,
                               int x2, int y2,
                               Color c0);
-    void Draw2DTriangleColor (GraphicsEngine &GfxContext, int x0, int y0,
+    void Draw2DTriangleColor(GraphicsEngine &graphics_engine, int x0, int y0,
                               int x1, int y1,
                               int x2, int y2,
                               Color c0, Color c1, Color c2);
@@ -207,23 +207,28 @@ namespace nux
     //////////////////////
     // DRAW LINES       //
     //////////////////////
-    void Draw2DLine (GraphicsEngine &GfxContext, int x0, int y0,
+    void Draw2DLine(GraphicsEngine &graphics_engine, int x0, int y0,
                      int x1, int y1, Color c0) const;
-    void Draw2DLine (GraphicsEngine &GfxContext, int x0, int y0,
+    void Draw2DLine(GraphicsEngine &graphics_engine, int x0, int y0,
                      int x1, int y1, Color c0, Color c1) const;
 
     ////////////////////
     // Themes         //
     ////////////////////
-    void PaintShape (GraphicsEngine &GfxContext, const Geometry &geo, Color c0, UXStyleImageRef style, bool WriteAlpha = true) const;
-    void PaintShapeCorner (GraphicsEngine &GfxContext, const Geometry &geo, Color c0, UXStyleImageRef style, long corners, bool WriteAlpha = true) const;
-    void PaintShapeROP (GraphicsEngine &GfxContext, const Geometry &geo, Color c0, UXStyleImageRef style, bool WriteAlpha = true,
+    void PaintShape(GraphicsEngine &graphics_engine, const Geometry &geo, const Color &c0, UXStyleImageRef style, bool WriteAlpha = true) const;
+    void PaintShapeCorner(GraphicsEngine &graphics_engine, const Geometry &geo, const Color &c0, UXStyleImageRef style, long corners, bool WriteAlpha = true) const;
+    void PaintShapeROP(GraphicsEngine &graphics_engine, const Geometry &geo, const Color &c0, UXStyleImageRef style, bool WriteAlpha = true,
                         const ROPConfig &ROP = ROPConfig::Default) const;
-    void PaintShapeCornerROP (GraphicsEngine &GfxContext, const Geometry &geo, Color c0, UXStyleImageRef style, long corners, bool WriteAlpha = true,
-                              const ROPConfig &ROP = ROPConfig::Default) const;
+    void PaintShapeCornerROP(GraphicsEngine &graphics_engine,
+                            const Geometry &geo,
+                            const Color &c0,
+                            UXStyleImageRef style,
+                            long corners,
+                            bool WriteAlpha = true,
+                            const ROPConfig &ROP = ROPConfig::Default) const;
 
-    void PaintTextureShape (GraphicsEngine &GfxContext, const Geometry &geo, UXStyleImageRef style) const;
-    void PaintTextureShape (GraphicsEngine &GfxContext, const Geometry &geo, BaseTexture *Texture,
+    void PaintTextureShape(GraphicsEngine &graphics_engine, const Geometry &geo, UXStyleImageRef style) const;
+    void PaintTextureShape(GraphicsEngine &graphics_engine, const Geometry &geo, BaseTexture *Texture,
                             int border_left, int border_right, int border_top, int border_bottom, bool draw_borders_only, bool premultiply = true) const;
 
     //! Draw Check Box.
@@ -231,87 +236,135 @@ namespace nux
         Draw a Check box.
     */
 
-    void PaintCheckBox (GraphicsEngine &GfxContext, const Geometry &geo, const InteractState &interaction_state,
-                        Color check_mark_color = Color (0x0), Color check_box_color = Color (0x0) );
+    void PaintCheckBox(GraphicsEngine &graphics_engine, const Geometry &geo, const InteractState &interaction_state,
+                        Color check_mark_color = Color(0x0), Color check_box_color = Color(0x0));
 
-    void PaintRadioButton (GraphicsEngine &GfxContext, const Geometry &geo, const InteractState &interaction_state,
-                           Color check_mark_color = Color (0x0), Color check_box_color = Color (0x0) );
+    void PaintRadioButton(GraphicsEngine &graphics_engine, const Geometry &geo, const InteractState &interaction_state,
+                           Color check_mark_color = Color(0x0), Color check_box_color = Color(0x0));
 
-    void PaintHorizontalGradientQuad (GraphicsEngine &GfxContext, const Geometry &geo, int num_color, float *percentage_array, Color *color_array);
+    void PaintHorizontalGradientQuad(GraphicsEngine &graphics_engine, const Geometry &geo, int num_color, float *percentage_array, Color *color_array);
 
   public:
-    void PushColorLayer (GraphicsEngine &GfxContext, const Geometry &geo,
+    void PushColorLayer(GraphicsEngine &graphics_engine, const Geometry &geo,
                          Color color,
                          bool WriteAlpha = false,
                          const ROPConfig &ROP = ROPConfig::Default);
 
-    void PushShapeLayer (GraphicsEngine &GfxContext, Geometry geo,
+    void PushShapeLayer(GraphicsEngine &graphics_engine, Geometry geo,
                          UXStyleImageRef imageStyle,
                          const Color &color,
                          unsigned long Corners = eAllCorners,
                          bool WriteAlpha = false,
                          const ROPConfig &ROP = ROPConfig::Default);
 
-    void PushSliceScaledTextureLayer (GraphicsEngine &GfxContext, Geometry geo,
+    void PushSliceScaledTextureLayer(GraphicsEngine &graphics_engine, Geometry geo,
                                       UXStyleImageRef imageStyle,
                                       const Color &color,
                                       unsigned long Corners = eAllCorners,
                                       bool WriteAlpha = false,
                                       const ROPConfig &ROP = ROPConfig::Default);
 
-    void PushTextureLayer (GraphicsEngine &GfxContext, Geometry geo,
+    void PushTextureLayer(GraphicsEngine &graphics_engine, Geometry geo,
                            ObjectPtr<IOpenGLBaseTexture> DeviceTexture,
                            TexCoordXForm texxform,
                            const Color &color,
                            bool WriteAlpha = false,
                            const ROPConfig &ROP = ROPConfig::Default);
 
-    void PushDrawColorLayer (GraphicsEngine &GfxContext, const Geometry &geo,
+    void PushDrawColorLayer(GraphicsEngine &graphics_engine, const Geometry &geo,
                              Color color,
                              bool WriteAlpha = false,
                              const ROPConfig &ROP = ROPConfig::Default);
 
-    void PushDrawShapeLayer (GraphicsEngine &GfxContext, Geometry geo,
+    void PushDrawShapeLayer(GraphicsEngine &graphics_engine, Geometry geo,
                              UXStyleImageRef imageStyle,
                              const Color &color,
                              unsigned long Corners = eAllCorners,
                              bool WriteAlpha = false,
                              const ROPConfig &ROP = ROPConfig::Default);
 
-    void PushDrawSliceScaledTextureLayer (GraphicsEngine &GfxContext, Geometry geo,
+    void PushDrawSliceScaledTextureLayer(GraphicsEngine &graphics_engine, Geometry geo,
                                           UXStyleImageRef imageStyle,
                                           const Color &color,
                                           unsigned long Corners = eAllCorners,
                                           bool WriteAlpha = false,
                                           const ROPConfig &ROP = ROPConfig::Default);
 
-    void PushDrawTextureLayer (GraphicsEngine &GfxContext, Geometry geo,
+    void PushDrawTextureLayer(GraphicsEngine &graphics_engine, Geometry geo,
                                ObjectPtr<IOpenGLBaseTexture> DeviceTexture,
                                TexCoordXForm texxform,
                                const Color &color,
                                bool WriteAlpha = false,
                                const ROPConfig &ROP = ROPConfig::Default);
 
-    void PushLayer (GraphicsEngine &GfxContext, const Geometry &geo, AbstractPaintLayer *layer);
-    void PushDrawLayer (GraphicsEngine &GfxContext, const Geometry &geo, AbstractPaintLayer *layer);
+    void PushLayer(GraphicsEngine &graphics_engine, const Geometry &geo, AbstractPaintLayer *layer);
+    void PushDrawLayer(GraphicsEngine &graphics_engine, const Geometry &geo, AbstractPaintLayer *layer);
 
     //! Render a paint layer.
     /*!
         When calling this function make sure to assign a correct geometry to the paint layer parameter.
     */
-    void RenderSinglePaintLayer (GraphicsEngine &GfxContext, Geometry geo, AbstractPaintLayer *paint_layer);
+    void RenderSinglePaintLayer(GraphicsEngine &graphics_engine, Geometry geo, AbstractPaintLayer *paint_layer);
 
-    //! Pop a number of levels off the painter background stack.
+    //! Deprecated. Use PopPaintLayer.
+    void PopBackground(int level = 1);
+
+    //! Pop the top most paint layers from the active paint layer stack.
     /*!
-        Pop a number of levels off the painter background stack.
+        Pop the top most paint layers from the active paint layer stack.
+
+        @param level The number of layer to pop off.
     */
-    void PopBackground (int level = 1);
+    void PopPaintLayer(int level = 1);
+    
+    //! Deprecated. Use EmptyActivePaintLayerStack.
     void EmptyBackgroundStack();
-    void PaintBackground (GraphicsEngine &GfxContext, const Geometry &geo);
+    
+    //! Empty the active paint layer stack.
+    /*!
+        Empty the active paint layer stack. All paint layers in the active stack are deleted.
+
+    */
+    void EmptyActivePaintLayerStack();
+
+    //! Deprecated. Use PaintActivePaintLayerStack.
+    void PaintBackground(GraphicsEngine &graphics_engine, const Geometry &geo);
+
+    //! Paint all the layers in the active paint layer stack.
+    /*!
+        Paint all the layers in the active paint layer stack.
+
+    */
+    void PaintActivePaintLayerStack(GraphicsEngine &graphics_engine, const Geometry &geo);
+
+    //! Deprecated. Use PushPaintLayerStack.
+    void PushBackgroundStack();
+
+    //! Push the current paint layer stack.
+    /*!
+        Push the current paint layer stack.
+    */
+    void PushPaintLayerStack();
+    
+    //! Deprecated. Use PopPaintLayerStack.
+    void PopBackgroundStack();
+
+    //! Pop a previously pushed paint layer stack.
+    /*!
+        Pop a previously pushed paint layer stack.
+    */
+    void PopPaintLayerStack();
 
   private:
-
-    std::list<AbstractPaintLayer*> m_BackgroundStack;
+    
+    //! Clear all the pushed paint layers.
+    /*!
+        Clear all the pushed paint layers.
+        Each layer in a paint layer stack is deleted.
+    */
+    void EmptyPushedPaintLayerStack();
+    std::list<AbstractPaintLayer*> active_paint_layer_stack_;
+    std::list<std::list<AbstractPaintLayer*> > pushed_paint_layer_stack_;
 
   };
 
@@ -319,13 +372,13 @@ namespace nux
   class PushBackgroundScope
   {
   public:
-    PushBackgroundScope (BasePainter &painter, GraphicsEngine &GfxContext, const Geometry &geo, UXStyleImageRef image_style, bool PushAndDraw = false)
-      : m_painter (painter)
+    PushBackgroundScope(BasePainter &painter, GraphicsEngine &graphics_engine, const Geometry &geo, UXStyleImageRef image_style, bool PushAndDraw = false)
+      : m_painter(painter)
     {
       if (PushAndDraw)
-        m_painter.PushDrawShapeLayer (GfxContext, geo, image_style, color::White, eAllCorners);
+        m_painter.PushDrawShapeLayer(graphics_engine, geo, image_style, color::White, eAllCorners);
       else
-        m_painter.PushShapeLayer (GfxContext, geo, image_style, color::White, eAllCorners);
+        m_painter.PushShapeLayer(graphics_engine, geo, image_style, color::White, eAllCorners);
     }
 
     ~PushBackgroundScope()
@@ -340,13 +393,13 @@ namespace nux
   class PushShapeBackgroundScope
   {
   public:
-    PushShapeBackgroundScope (BasePainter &painter, GraphicsEngine &GfxContext, const Geometry &geo, UXStyleImageRef image_style, const Color &color, bool PushAndDraw = false, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default)
-      : m_painter (painter)
+    PushShapeBackgroundScope(BasePainter &painter, GraphicsEngine &graphics_engine, const Geometry &geo, UXStyleImageRef image_style, const Color &color, bool PushAndDraw = false, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default)
+      : m_painter(painter)
     {
       if (PushAndDraw)
-        m_painter.PushDrawShapeLayer (GfxContext, geo, image_style, color, eAllCorners, WriteAlpha, ROP);
+        m_painter.PushDrawShapeLayer(graphics_engine, geo, image_style, color, eAllCorners, WriteAlpha, ROP);
       else
-        m_painter.PushShapeLayer (GfxContext, geo, image_style, color, eAllCorners, WriteAlpha, ROP);
+        m_painter.PushShapeLayer(graphics_engine, geo, image_style, color, eAllCorners, WriteAlpha, ROP);
     }
     ~PushShapeBackgroundScope()
     {
@@ -359,13 +412,13 @@ namespace nux
   class PushShapeCornerBackgroundScope
   {
   public:
-    PushShapeCornerBackgroundScope (BasePainter &painter, GraphicsEngine &GfxContext, const Geometry &geo, UXStyleImageRef image_style, const Color &color, long corners, bool PushAndDraw = false, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default)
-      : m_painter (painter)
+    PushShapeCornerBackgroundScope(BasePainter &painter, GraphicsEngine &graphics_engine, const Geometry &geo, UXStyleImageRef image_style, const Color &color, long corners, bool PushAndDraw = false, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default)
+      : m_painter(painter)
     {
       if (PushAndDraw)
-        m_painter.PushDrawShapeLayer (GfxContext, geo, image_style, color, corners, WriteAlpha, ROP);
+        m_painter.PushDrawShapeLayer(graphics_engine, geo, image_style, color, corners, WriteAlpha, ROP);
       else
-        m_painter.PushShapeLayer (GfxContext, geo, image_style, color, corners, WriteAlpha, ROP);
+        m_painter.PushShapeLayer(graphics_engine, geo, image_style, color, corners, WriteAlpha, ROP);
     }
     ~PushShapeCornerBackgroundScope()
     {
@@ -378,13 +431,13 @@ namespace nux
   class PushColorBackgroundScope
   {
   public:
-    PushColorBackgroundScope (BasePainter &painter, GraphicsEngine &GfxContext, const Geometry &geo, const Color &color, bool PushAndDraw = false, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default)
-      : m_painter (painter)
+    PushColorBackgroundScope(BasePainter &painter, GraphicsEngine &graphics_engine, const Geometry &geo, const Color &color, bool PushAndDraw = false, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default)
+      : m_painter(painter)
     {
       if (PushAndDraw)
-        m_painter.PushDrawColorLayer (GfxContext, geo, color, WriteAlpha, ROP);
+        m_painter.PushDrawColorLayer(graphics_engine, geo, color, WriteAlpha, ROP);
       else
-        m_painter.PushColorLayer (GfxContext, geo, color, WriteAlpha, ROP);
+        m_painter.PushColorLayer(graphics_engine, geo, color, WriteAlpha, ROP);
     }
 
     ~PushColorBackgroundScope()

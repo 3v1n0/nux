@@ -30,12 +30,12 @@ namespace nux
 {
 
 #ifdef WIN32
-  void set_png_module_handle (unsigned long hM);
-  void set_png_module_restypename (const char *tname);
+  void set_png_module_handle(unsigned long hM);
+  void set_png_module_restypename(const char *tname);
 #endif
 
-  NBitmapData *read_png_rgb (const TCHAR *filename);
-  NBitmapData *read_png_rgba (const TCHAR *filename);
+  NBitmapData *read_png_rgb(const TCHAR *filename);
+  NBitmapData *read_png_rgba(const TCHAR *filename);
 
 }
 

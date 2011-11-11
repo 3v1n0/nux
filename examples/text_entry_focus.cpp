@@ -50,7 +50,6 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
     MainVLayout->SetVerticalInternalMargin(10);
 
     MainVLayout->SetContentDistribution(nux::eStackCenter);
-		MainVLayout->SetFocused (true);    
     nux::GetWindowThread ()->SetLayout(MainVLayout);
     nux::ColorLayer background(nux::Color(0xFF4D4D4D));
     static_cast<nux::WindowThread*>(thread)->SetWindowBackgroundPaintLayer(&background);

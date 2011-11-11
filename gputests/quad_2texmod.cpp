@@ -86,8 +86,8 @@ void QuadRendering_2TexMod ()
 
 
   int w, h;
-  nux::IEvent event;
-  memset(&event, 0, sizeof(nux::IEvent));
+  nux::Event event;
+  memset(&event, 0, sizeof(nux::Event));
   graphics_engine->GetWindowSize(w, h);
   graphics_engine->SetViewport(0, 0, w, h);
   graphics_engine->SetContext(0, 0, w, h);

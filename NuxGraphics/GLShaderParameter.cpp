@@ -28,18 +28,18 @@
 namespace nux
 {
 
-  GLShaderParameter::GLShaderParameter (GLProgramObject *Shader,
-                                        const TCHAR *ParamName,
+  GLShaderParameter::GLShaderParameter(GLProgramObject *Shader,
+                                        const char *ParamName,
                                         eShaderParameterType ParamType,
                                         bool IsOptional,
                                         bool IsStatic)
-    :   m_ShaderParameterType (ParamType)
-    ,   m_Name (ParamName)
-    ,   m_bIsOptional (IsOptional)
-    ,   m_bIsStatic (IsStatic)
-    ,   m_ShaderProgram (Shader)
-    ,   m_ShaderProgram2 (0)
-    ,   m_NextParameter (0)
+    :   m_ShaderParameterType(ParamType)
+    ,   m_Name(ParamName)
+    ,   m_bIsOptional(IsOptional)
+    ,   m_bIsStatic(IsStatic)
+    ,   m_ShaderProgram(Shader)
+    ,   m_ShaderProgram2(0)
+    ,   m_NextParameter(0)
   {
     m_Index = -1;
   }

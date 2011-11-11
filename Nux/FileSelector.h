@@ -32,21 +32,19 @@ namespace nux
   class FileSelector: public View
   {
   public:
-    FileSelector (NUX_FILE_LINE_PROTO);
+    FileSelector(NUX_FILE_LINE_PROTO);
     ~FileSelector();
 
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     //void RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
     //void RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
     //void RecvMouseMove(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvOpenButtonClick (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvOpenButtonClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
     sigc::signal<void> sigClick;
 
   private:

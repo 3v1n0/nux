@@ -19,66 +19,61 @@
  *
  */
 
-
 #include "Nux.h"
 #include "TextureArea.h"
 #include "NuxImage/ImageSurface.h"
 
 namespace nux
 {
-  NUX_IMPLEMENT_OBJECT_TYPE (TextureArea);
+  NUX_IMPLEMENT_OBJECT_TYPE(TextureArea);
 
-  TextureArea::TextureArea (NUX_FILE_LINE_DECL)
-    :   View (NUX_FILE_LINE_PARAM)
+  TextureArea::TextureArea(NUX_FILE_LINE_DECL)
+  : View(NUX_FILE_LINE_PARAM)
   {
-    //SetMinMaxSize(50, 50);
+    mouse_down.connect(sigc::mem_fun(this, &TextureArea::RecvMouseDown));
+    mouse_up.connect(sigc::mem_fun(this, &TextureArea::RecvMouseUp));
+    mouse_enter.connect(sigc::mem_fun(this, &TextureArea::RecvMouseEnter));
+    mouse_leave.connect(sigc::mem_fun(this, &TextureArea::RecvMouseLeave));
+    mouse_click.connect(sigc::mem_fun(this, &TextureArea::RecvMouseClick));
+    mouse_drag.connect(sigc::mem_fun(this, &TextureArea::RecvMouseDrag));
 
-    mouse_down.connect (sigc::mem_fun (this, &TextureArea::RecvMouseDown));
-    mouse_up.connect (sigc::mem_fun (this, &TextureArea::RecvMouseUp));
-    
-    mouse_enter.connect (sigc::mem_fun (this, &TextureArea::RecvMouseEnter));
-    mouse_leave.connect (sigc::mem_fun (this, &TextureArea::RecvMouseLeave));
-    mouse_click.connect (sigc::mem_fun (this, &TextureArea::RecvMouseClick));
-
-    mouse_drag.connect (sigc::mem_fun (this, &TextureArea::RecvMouseDrag));
-
-    m_PaintLayer = new ColorLayer (Color (0xFFFF40FF));
-    _2d_rotate.Identity ();
+    paint_layer_ = new ColorLayer(nux::color::Black);
+    rotation_2d_.Identity();
   }
 
   TextureArea::~TextureArea()
   {
-    NUX_SAFE_DELETE (m_PaintLayer);
-    // m_UserTexture is delete by the user
+    if (paint_layer_)
+      delete paint_layer_;
   }
 
-  void TextureArea::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void TextureArea::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     // Ability to rotate the widget around its center
-    GfxContext.PushModelViewMatrix(Matrix4::TRANSLATE(-GetBaseX() - GetBaseWidth() / 2, -GetBaseY() - GetBaseHeight() / 2, 0));
-    GfxContext.PushModelViewMatrix(Get2DRotation());
-    GfxContext.PushModelViewMatrix(Matrix4::TRANSLATE(GetBaseX() + GetBaseWidth() / 2, GetBaseY() + GetBaseHeight() / 2, 0));
+    graphics_engine.PushModelViewMatrix(Matrix4::TRANSLATE(-GetBaseX() - GetBaseWidth() / 2, -GetBaseY() - GetBaseHeight() / 2, 0));
+    graphics_engine.PushModelViewMatrix(Get2DRotation());
+    graphics_engine.PushModelViewMatrix(Matrix4::TRANSLATE(GetBaseX() + GetBaseWidth() / 2, GetBaseY() + GetBaseHeight() / 2, 0));
 
     // The TextureArea should not render the accumulated background. That is left to the caller.
-    // GetPainter().PaintBackground (GfxContext, GetGeometry() );
+    // GetPainter().PaintBackground(graphics_engine, GetGeometry());
 
-    if (m_PaintLayer)
+    if (paint_layer_)
     {
-      m_PaintLayer->SetGeometry(GetGeometry());
-      GetPainter().RenderSinglePaintLayer(GfxContext, GetGeometry(), m_PaintLayer);
+      paint_layer_->SetGeometry(GetGeometry());
+      GetPainter().RenderSinglePaintLayer(graphics_engine, GetGeometry(), paint_layer_);
     }
 
-    GfxContext.PopModelViewMatrix();
-    GfxContext.PopModelViewMatrix();
-    GfxContext.PopModelViewMatrix();
+    graphics_engine.PopModelViewMatrix();
+    graphics_engine.PopModelViewMatrix();
+    graphics_engine.PopModelViewMatrix();
   }
 
-  void TextureArea::DrawContent(GraphicsEngine &GfxContext, bool force_draw)
+  void TextureArea::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void TextureArea::PostDraw(GraphicsEngine &GfxContext, bool force_draw)
+  void TextureArea::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
@@ -86,70 +81,113 @@ namespace nux
   void TextureArea::SetTexture(BaseTexture *texture)
   {
     NUX_RETURN_IF_NULL(texture);
-    NUX_SAFE_DELETE(m_PaintLayer);
+    delete paint_layer_;
 
     TexCoordXForm texxform;
     texxform.SetTexCoordType(TexCoordXForm::OFFSET_COORD);
     texxform.SetWrap(TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-    m_PaintLayer = new TextureLayer(texture->GetDeviceTexture(), texxform, color::White);
+    paint_layer_ = new TextureLayer(texture->GetDeviceTexture(), texxform, color::White);
 
     QueueDraw();
   }
 
-  void TextureArea::SetPaintLayer (AbstractPaintLayer *layer)
+  void TextureArea::SetColor(const Color &color)
   {
-    NUX_SAFE_DELETE (m_PaintLayer);
-    m_PaintLayer = layer->Clone();
+    delete paint_layer_;
+    paint_layer_ = new ColorLayer(color);
+    QueueDraw();
+  }
+
+  void TextureArea::LoadImageFile(const std::string &filename)
+  {
+    if (paint_layer_)
+    {
+      delete paint_layer_;
+      paint_layer_ = NULL;
+    }
+
+    BaseTexture *texture = LoadTextureFromFile(filename.c_str());
+
+    BitmapFormat format = texture->GetFormat();
+
+    if (texture)
+    {
+      TexCoordXForm texxform;
+      ROPConfig rop;
+      rop.Blend = true;
+      rop.SrcBlend = GL_SRC_ALPHA;
+      rop.DstBlend = GL_ONE_MINUS_SRC_ALPHA;
+
+      paint_layer_ = new TextureLayer(texture->GetDeviceTexture(), texxform, color::White, true, rop);
+      texture->UnReference();
+    }
+    else
+    {
+      paint_layer_ = new ColorLayer(nux::color::Black);
+    }
+  }
+
+  void TextureArea::SetPaintLayer(AbstractPaintLayer *layer)
+  {
+    NUX_SAFE_DELETE(paint_layer_);
+    paint_layer_ = layer->Clone();
 
     QueueDraw();
   }
 
-// void TextureArea::SetTexture(const TCHAR* TextureFilename)
+  AbstractPaintLayer* TextureArea::GetPaintLayer() const
+  {
+    if (paint_layer_ == NULL)
+      return NULL;
+    return paint_layer_->Clone();
+  }
+
+// void TextureArea::SetTexture(const char* TextureFilename)
 // {
 //     // Who should delete the texture? This class or the user?
 //     m_UserTexture = CreateTextureFromFile(TextureFilename);
 //     QueueDraw();
 // }
 
-  void TextureArea::RecvMouseDown (int x, int y, long button_flags, long key_flags)
+  void TextureArea::RecvMouseDown(int x, int y, long button_flags, long key_flags)
   {
-    sigMouseDown.emit (x, y);
-    QueueDraw ();
+    sigMouseDown.emit(x, y);
+    QueueDraw();
   }
 
-  void TextureArea::RecvMouseClick (int x, int y, long button_flags, long key_flags)
-  {
-
-  }
-
-  void TextureArea::RecvMouseUp (int x, int y, long button_flags, long key_flags)
-  {
-    QueueDraw ();
-  }
-
-  void TextureArea::RecvMouseEnter (int x, int y, long button_flags, long key_flags)
+  void TextureArea::RecvMouseClick(int x, int y, long button_flags, long key_flags)
   {
 
   }
 
-  void TextureArea::RecvMouseLeave (int x, int y, long button_flags, long key_flags)
+  void TextureArea::RecvMouseUp(int x, int y, long button_flags, long key_flags)
+  {
+    QueueDraw();
+  }
+
+  void TextureArea::RecvMouseEnter(int x, int y, long button_flags, long key_flags)
   {
 
   }
 
-  void TextureArea::RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void TextureArea::RecvMouseLeave(int x, int y, long button_flags, long key_flags)
   {
-    sigMouseDrag.emit (x, y);
+
   }
 
-  void TextureArea::Set2DRotation (float angle)
+  void TextureArea::RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    _2d_rotate.Rotate_z (angle);
-    QueueDraw ();
+    sigMouseDrag.emit(x, y);
   }
 
-  Matrix4 TextureArea::Get2DRotation () const
+  void TextureArea::Set2DRotation(float angle)
   {
-    return _2d_rotate;
+    rotation_2d_.Rotate_z(angle);
+    QueueDraw();
+  }
+
+  Matrix4 TextureArea::Get2DRotation() const
+  {
+    return rotation_2d_;
   }
 }

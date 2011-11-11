@@ -27,86 +27,86 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (ActionItem);
+  NUX_IMPLEMENT_OBJECT_TYPE(ActionItem);
 
-  ActionItem::ActionItem (const TCHAR *label, int UserValue, NUX_FILE_LINE_DECL)
-    :   Object (true, NUX_FILE_LINE_PARAM)
-    ,   m_UserValue (UserValue)
-    ,   m_Label (TEXT ("") )
-    ,   m_IsActivated (true)
-    ,   m_Menu (0)
-    ,   m_Enable (true)
+  ActionItem::ActionItem(const char *label, int UserValue, NUX_FILE_LINE_DECL)
+    :   Object(true, NUX_FILE_LINE_PARAM)
+    ,   m_UserValue(UserValue)
+    ,   m_Label("")
+    ,   m_IsActivated(true)
+    ,   m_Menu(0)
+    ,   m_Enable(true)
   {
     m_Icon = 0;
-    SetLabel (label);
+    SetLabel(label);
   }
 
   ActionItem::~ActionItem()
   {
-    if(m_Icon)
+    if (m_Icon)
       m_Icon->UnReference();
   }
 
-  void ActionItem::DrawAsMenuItem (GraphicsEngine &GfxContext, InputArea &area, bool is_highlighted, bool draw_icone)
+  void ActionItem::DrawAsMenuItem(GraphicsEngine &graphics_engine, InputArea &area, bool is_highlighted, bool draw_icone)
   {
     Geometry geo = area.GetGeometry();
-    Geometry icon_geo (0, 0, 20, 20);
+    Geometry icon_geo(0, 0, 20, 20);
     Geometry text_geo = geo;
 
-    text_geo.OffsetPosition (24, 2);
-    text_geo.OffsetSize (2 * 24, 2 * 2);
+    text_geo.OffsetPosition(24, 2);
+    text_geo.OffsetSize(2 * 24, 2 * 2);
 
-    icon_geo.SetX (geo.x + 2);
-    icon_geo.SetY (geo.y + 2);
+    icon_geo.SetX(geo.x + 2);
+    icon_geo.SetY(geo.y + 2);
 
-    const TCHAR *label = GetLabel();
+    const char *label = GetLabel();
 
     if (is_highlighted)
     {
-      GetPainter().Paint2DQuadColor (GfxContext, geo, Color (COLOR_FOREGROUND_SECONDARY) );
+      GetPainter().Paint2DQuadColor(graphics_engine, geo, Color(COLOR_FOREGROUND_SECONDARY));
     }
 
-    if(m_Icon)
-      GetPainter().Draw2DTextureAligned (GfxContext, m_Icon, icon_geo, TextureAlignmentStyle (eTACenter, eTACenter) );
+    if (m_Icon)
+      GetPainter().Draw2DTextureAligned(graphics_engine, m_Icon, icon_geo, TextureAlignmentStyle(eTACenter, eTACenter));
 
-    GetPainter().PaintTextLineStatic (GfxContext, GetSysFont(), text_geo, std::string (label), Color (0xFF000000), eAlignTextLeft);
+    GetPainter().PaintTextLineStatic(graphics_engine, GetSysFont(), text_geo, std::string(label), Color(0xFF000000), eAlignTextLeft);
   }
 
-  void ActionItem::DrawAsToolButton (GraphicsEngine &GfxContext, InputArea &area)
+  void ActionItem::DrawAsToolButton(GraphicsEngine &graphics_engine, InputArea &area)
   {
     Geometry base = area.GetGeometry();
 
-    if (area.IsMouseOwner() )
+    if (area.IsMouseOwner())
     {
-      if (area.IsMouseInside() )
+      if (area.IsMouseInside())
       {
-        GetPainter().PaintShape (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY),  eSHAPE_CORNER_ROUND2);
-        GetPainter().PaintShape (GfxContext, base, Color (COLOR_BLACK),  eSTROKE_CORNER_ROUND2);
+        GetPainter().PaintShape(graphics_engine, base, Color(COLOR_BACKGROUND_SECONDARY),  eSHAPE_CORNER_ROUND2);
+        GetPainter().PaintShape(graphics_engine, base, Color(COLOR_BLACK),  eSTROKE_CORNER_ROUND2);
       }
       else
       {
-        GetPainter().PaintShape (GfxContext, base, Color (COLOR_FOREGROUND_PRIMARY),  eSHAPE_CORNER_ROUND2);
-        GetPainter().PaintShape (GfxContext, base, Color (COLOR_BLACK),  eSTROKE_CORNER_ROUND2);
+        GetPainter().PaintShape(graphics_engine, base, Color(COLOR_FOREGROUND_PRIMARY),  eSHAPE_CORNER_ROUND2);
+        GetPainter().PaintShape(graphics_engine, base, Color(COLOR_BLACK),  eSTROKE_CORNER_ROUND2);
       }
     }
     else
     {
-      if (area.IsMouseInside() && (!area.MouseFocusOnOtherArea() ) )
+      if (area.IsMouseInside() && (!area.MouseFocusOnOtherArea()))
       {
-        GetPainter().PaintShape (GfxContext, base, Color (COLOR_FOREGROUND_PRIMARY),  eSHAPE_CORNER_ROUND2);
-        GetPainter().PaintShape (GfxContext, base, Color (COLOR_BLACK),  eSTROKE_CORNER_ROUND2);
+        GetPainter().PaintShape(graphics_engine, base, Color(COLOR_FOREGROUND_PRIMARY),  eSHAPE_CORNER_ROUND2);
+        GetPainter().PaintShape(graphics_engine, base, Color(COLOR_BLACK),  eSTROKE_CORNER_ROUND2);
       }
       else
       {
-        GetPainter().PaintShape (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY),  eSHAPE_CORNER_ROUND2);
-        GetPainter().PaintShape (GfxContext, base, Color (COLOR_BLACK),  eSTROKE_CORNER_ROUND2);
+        GetPainter().PaintShape(graphics_engine, base, Color(COLOR_BACKGROUND_SECONDARY),  eSHAPE_CORNER_ROUND2);
+        GetPainter().PaintShape(graphics_engine, base, Color(COLOR_BLACK),  eSTROKE_CORNER_ROUND2);
       }
     }
 
-    GetPainter().Draw2DTextureAligned (GfxContext, m_Icon, base, TextureAlignmentStyle (eTACenter, eTACenter) );
+    GetPainter().Draw2DTextureAligned(graphics_engine, m_Icon, base, TextureAlignmentStyle(eTACenter, eTACenter));
   }
 
-  void ActionItem::Activate (bool b)
+  void ActionItem::Activate(bool b)
   {
     m_IsActivated = b;
   }
@@ -116,7 +116,7 @@ namespace nux
     sigAction.emit();
   }
 
-  void ActionItem::Enable (bool b)
+  void ActionItem::Enable(bool b)
   {
     m_Enable = b;
   }
@@ -126,19 +126,19 @@ namespace nux
     return m_Enable;
   }
 
-  void ActionItem::SetLabel (const TCHAR *label)
+  void ActionItem::SetLabel(const char *label)
   {
     m_Label = label;
   }
 
-  const TCHAR *ActionItem::GetLabel() const
+  const char *ActionItem::GetLabel() const
   {
     return m_Label.GetTCharPtr();
   }
 
-  void ActionItem::SetIcon (const BaseTexture* icon)
+  void ActionItem::SetIcon(const BaseTexture* icon)
   {
-    if(m_Icon)
+    if (m_Icon)
       m_Icon->UnReference();
     m_Icon = icon->Clone();
   }

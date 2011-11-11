@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 InalogicÂ® Inc.
+ * Copyright 2010 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -27,37 +27,46 @@
 
 namespace nux
 {
-  NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLShader);
-  NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLVertexShader);
-  NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLPixelShader);
-  //NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLGeometryShader);
-  NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLShaderProgram);
-
-
-  bool ExtractShaderString3 (const NString &ShaderToken, const NString &ShaderSource, NString &RetSource, NString ShaderPreprocessorDefines)
+  namespace local
   {
-    t_size lineStart = 0;
-    t_size lineCount = 1;
+  namespace
+  {
+    GLuint last_loaded_shader = 0;
+    bool enable_tracking = false;
+  }
+  }
+
+  NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLShader);
+  NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLVertexShader);
+  NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLPixelShader);
+  //NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLGeometryShader);
+  NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLShaderProgram);
+
+
+  bool ExtractShaderString3(const NString &ShaderToken, const NString &ShaderSource, NString &RetSource, NString ShaderPreprocessorDefines)
+  {
+    size_t lineStart = 0;
+    size_t lineCount = 1;
     bool startTokenFound = false;
-    t_size shaderStringStart = 0;
-    t_size shaderStartLine   = 1;
+    size_t shaderStringStart = 0;
+    size_t shaderStartLine   = 1;
 
 
     //Loop for all characters in the string
-    if (ShaderToken != TEXT ("") )
+    if (ShaderToken != "")
     {
-      t_size i;
+      size_t i;
 
       for (i = 0; i < ShaderSource.Length(); i++)
       {
         //Check if the starting character '[' (open bracket) is found at the beginning of the line
         // i counts the characters in the file. lineStart is equal to i at the beginning of the line.
-        if ( (TCharStringNCompare (&ShaderSource[i], TEXT ("["), 1) == 0) && (lineStart == i) )
+        if ((TCharStringNCompare(&ShaderSource[i], "[", 1) == 0) && (lineStart == i))
         {
           if (!startTokenFound)
           {
             //Test for the start token
-            if (ShaderSource.FindFirstOccurence (ShaderToken) == i)
+            if (ShaderSource.FindFirstOccurence(ShaderToken) == i)
             {
               // Found the shader token
               shaderStringStart = i + ShaderToken.Length();
@@ -76,13 +85,13 @@ namespace nux
 
         //If the character is equal to the new line character,
         // The next character must be on the new line
-        if ( (TCharStringNCompare (&ShaderSource[i], TEXT ("\r"), 1) == 0) || (TCharStringNCompare (&ShaderSource[i], TEXT ("\n"), 1) == 0) )
+        if ((TCharStringNCompare(&ShaderSource[i], "\r", 1) == 0) || (TCharStringNCompare(&ShaderSource[i], "\n", 1) == 0))
         {
           lineStart = i + 1;
         }
 
         //Count the new lines
-        if (TCharStringNCompare (&ShaderSource[i], TEXT ("\n"), 1) == 0)
+        if (TCharStringNCompare(&ShaderSource[i], "\n", 1) == 0)
         {
           lineCount++;
         }
@@ -95,13 +104,13 @@ namespace nux
       }
 
       //Assign the return string
-      RetSource = ShaderSource.GetSubString (shaderStringStart, i - shaderStringStart);
+      RetSource = ShaderSource.GetSubString(shaderStringStart, i - shaderStringStart);
 
       //Add the line directive to the shader source. See the documentation for GLSL #line directive.
       // GLSL spec: The #version directive must occur in a shader before anything else, except for comments and white space.
-      t_size Pos = RetSource.FindFirstOccurence (TEXT ("#version") );
+      size_t Pos = RetSource.FindFirstOccurence("#version");
 
-      while (RetSource[Pos] != TEXT ('\n') )
+      while (RetSource[Pos] != '\n')
       {
         if (RetSource[Pos] == 0)
           break;
@@ -112,20 +121,20 @@ namespace nux
       if (RetSource[Pos] != 0)
         ++Pos;
 
-      t_size EndOfLinePosition = 0;
-      t_size LinePosition = 0;
+      size_t EndOfLinePosition = 0;
+      size_t LinePosition = 0;
 
-      while ( (EndOfLinePosition = RetSource.FindNextOccurence (TEXT ('\n'), EndOfLinePosition) ) < Pos - 1)
+      while ((EndOfLinePosition = RetSource.FindNextOccurence('\n', EndOfLinePosition)) < Pos - 1)
       {
         ++EndOfLinePosition;
         ++LinePosition;
       }
 
-      RetSource.Insert (Pos, NString::Printf (TEXT ("#line %u\n"), LinePosition + shaderStartLine) );
+      RetSource.Insert(Pos, NString::Printf("#line %u\n", LinePosition + shaderStartLine));
 
       // Insert the preprocessor definitions before the #line directive
-      if (ShaderPreprocessorDefines.Length() )
-        RetSource.Insert (Pos, ShaderPreprocessorDefines + NString (TEXT ('\n') ) );
+      if (ShaderPreprocessorDefines.Length())
+        RetSource.Insert(Pos, ShaderPreprocessorDefines + NString('\n'));
 
       return true;
     }
@@ -137,7 +146,7 @@ namespace nux
     }
   }
 
-  static void InsertPreProcessorDefinitions (const NString &ShaderSource, NString &RetSource, NString &ShaderPreprocessorDefines)
+  static void InsertPreProcessorDefinitions(const NString &ShaderSource, NString &RetSource, NString &ShaderPreprocessorDefines)
   {
     RetSource = ShaderSource;
 
@@ -145,17 +154,17 @@ namespace nux
       return;
 
     // GLSL spec: The #version directive must occur in a shader before anything else, except for comments and white space.
-    t_size Pos = RetSource.FindFirstOccurence (TEXT ("#version") );
+    size_t Pos = RetSource.FindFirstOccurence("#version");
 
     if (Pos != tstring::npos)
     {
-      Pos = RetSource.FindNextOccurence (TEXT ('\n'), Pos);
+      Pos = RetSource.FindNextOccurence('\n', Pos);
 
       if (Pos == tstring::npos)
       {
         // this is most likely an incorrect shader
         Pos = RetSource.Size();
-        RetSource.Insert (Pos, NString (TEXT ('\n') ) );
+        RetSource.Insert(Pos, NString('\n'));
         Pos = RetSource.Size();
       }
       else
@@ -169,13 +178,13 @@ namespace nux
       Pos = 0;
     }
 
-    if (ShaderPreprocessorDefines.Length() )
-      RetSource.Insert (Pos, ShaderPreprocessorDefines + NString (TEXT ('\n') ) );
+    if (ShaderPreprocessorDefines.Length())
+      RetSource.Insert(Pos, ShaderPreprocessorDefines + NString('\n'));
   }
 
-  IOpenGLShader::IOpenGLShader (NString ShaderName, OpenGLResourceType ResourceType)
-    :   IOpenGLResource (ResourceType)
-    ,   _ShaderName (ShaderName)
+  IOpenGLShader::IOpenGLShader(NString ShaderName, OpenGLResourceType ResourceType)
+    :   IOpenGLResource(ResourceType)
+    ,   _ShaderName(ShaderName)
   {
 
   }
@@ -185,28 +194,28 @@ namespace nux
 
   }
 
-  IOpenGLVertexShader::IOpenGLVertexShader (NString ShaderName)
-    :   IOpenGLShader (ShaderName, RT_GLSL_VERTEXSHADER)
-    ,   m_CompiledAndReady (false)
+  IOpenGLVertexShader::IOpenGLVertexShader(NString ShaderName)
+    :   IOpenGLShader(ShaderName, RT_GLSL_VERTEXSHADER)
+    ,   m_CompiledAndReady(false)
   {
-    _OpenGLID = glCreateShader (GL_VERTEX_SHADER_ARB);
-    CHECKGL_MSG ( glCreateShader (GL_VERTEX_SHADER_ARB) );
+    _OpenGLID = glCreateShader(GL_VERTEX_SHADER_ARB);
+    CHECKGL_MSG( glCreateShader(GL_VERTEX_SHADER_ARB));
   }
 
   IOpenGLVertexShader::~IOpenGLVertexShader()
   {
-    CHECKGL ( glDeleteShader (_OpenGLID) );
+    CHECKGL(glDeleteShader(_OpenGLID));
     _OpenGLID = 0;
     m_CompiledAndReady = false;
   }
 
-  void IOpenGLVertexShader::SetShaderCode (const TCHAR *ShaderCode, const TCHAR *VtxShaderPreprocessorDefines)
+  void IOpenGLVertexShader::SetShaderCode(const char *ShaderCode, const char *VtxShaderPreprocessorDefines)
   {
-    nuxAssertMsg (ShaderCode, TEXT ("[IOpenGLVertexShader::SetShaderCode] Invalid shader code.") );
-    NUX_RETURN_IF_NULL (ShaderCode);
+    nuxAssertMsg(ShaderCode, "[IOpenGLVertexShader::SetShaderCode] Invalid shader code.");
+    NUX_RETURN_IF_NULL(ShaderCode);
     NString ProcessedShaderSource;
-    NString Defines (VtxShaderPreprocessorDefines);
-    InsertPreProcessorDefinitions (ShaderCode, ProcessedShaderSource, Defines);
+    NString Defines(VtxShaderPreprocessorDefines);
+    InsertPreProcessorDefinitions(ShaderCode, ProcessedShaderSource, Defines);
 
     m_CompiledAndReady = false;
     _ShaderCode = ProcessedShaderSource;
@@ -214,26 +223,26 @@ namespace nux
 
   bool IOpenGLVertexShader::Compile()
   {
-    t_size CodeSize = _ShaderCode.Size();
+    size_t CodeSize = _ShaderCode.Size();
 
     if (CodeSize == 0)
     {
-      nuxDebugMsg (TEXT ("[IOpenGLVertexShader::Compile] Vertex shader source code is empty.") );
+      nuxDebugMsg("[IOpenGLVertexShader::Compile] Vertex shader source code is empty.");
     }
 
     char *ShaderSource = new char[CodeSize+1];
-    Memset (ShaderSource, 0, CodeSize + 1);
-    Memcpy (ShaderSource, _ShaderCode.GetTCharPtr(), CodeSize);
+    Memset(ShaderSource, 0, CodeSize + 1);
+    Memcpy(ShaderSource, _ShaderCode.GetTCharPtr(), CodeSize);
 
-    CHECKGL ( glShaderSource (_OpenGLID, 1, (const GLcharARB **) &ShaderSource, NULL) );
+    CHECKGL(glShaderSource(_OpenGLID, 1, (const GLcharARB **) &ShaderSource, NULL));
     delete [] ShaderSource;
 
     // compile vertex shader object
-    CHECKGL ( glCompileShader (_OpenGLID) );
+    CHECKGL(glCompileShader(_OpenGLID));
 
     // check if shader compiled
     m_CompiledAndReady = false;
-    CHECKGL ( glGetShaderiv (_OpenGLID, GL_COMPILE_STATUS, &m_CompiledAndReady) );
+    CHECKGL(glGetShaderiv(_OpenGLID, GL_COMPILE_STATUS, &m_CompiledAndReady));
 
     if (!m_CompiledAndReady)
     {
@@ -242,50 +251,50 @@ namespace nux
       GLint InfoLogReturnSize = 0;
       GLint iLog = 0;
 
-      glGetShaderiv (_OpenGLID, GL_INFO_LOG_LENGTH, &iLog);
+      glGetShaderiv(_OpenGLID, GL_INFO_LOG_LENGTH, &iLog);
       InfoLogBuffer = new ANSICHAR[iLog+1];
       InfoLogBufferSize = iLog + 1;
-      glGetShaderInfoLog (_OpenGLID, InfoLogBufferSize, &InfoLogReturnSize, InfoLogBuffer);
+      glGetShaderInfoLog(_OpenGLID, InfoLogBufferSize, &InfoLogReturnSize, InfoLogBuffer);
 
       if (InfoLogReturnSize != 0)
       {
-        nuxError (TEXT ("[IOpenGLVertexShader::Compile] glCompileShader: %s"), InfoLogBuffer);
+        nuxError("[IOpenGLVertexShader::Compile] glCompileShader: %s", InfoLogBuffer);
       }
 
       delete[] InfoLogBuffer;
     }
 
-    return (m_CompiledAndReady ? true : false);
+    return(m_CompiledAndReady ? true : false);
   }
 
   bool IOpenGLVertexShader::IsValid()
   {
-    return (m_CompiledAndReady ? true : false);
+    return(m_CompiledAndReady ? true : false);
   }
 
-  IOpenGLPixelShader::IOpenGLPixelShader (NString ShaderName)
-    :   IOpenGLShader (ShaderName, RT_GLSL_PIXELSHADER)
-    ,   m_CompiledAndReady (false)
+  IOpenGLPixelShader::IOpenGLPixelShader(NString ShaderName)
+    :   IOpenGLShader(ShaderName, RT_GLSL_PIXELSHADER)
+    ,   m_CompiledAndReady(false)
 
   {
-    _OpenGLID = glCreateShader (GL_FRAGMENT_SHADER_ARB);
-    CHECKGL_MSG ( glCreateShader (GL_FRAGMENT_SHADER_ARB) );
+    _OpenGLID = glCreateShader(GL_FRAGMENT_SHADER_ARB);
+    CHECKGL_MSG( glCreateShader(GL_FRAGMENT_SHADER_ARB));
   }
 
   IOpenGLPixelShader::~IOpenGLPixelShader()
   {
-    CHECKGL ( glDeleteShader (_OpenGLID) );
+    CHECKGL(glDeleteShader(_OpenGLID));
     _OpenGLID = 0;
     m_CompiledAndReady = false;
   }
 
-  void IOpenGLPixelShader::SetShaderCode (const TCHAR *ShaderCode, const TCHAR *FrgShaderPreprocessorDefines)
+  void IOpenGLPixelShader::SetShaderCode(const char *ShaderCode, const char *FrgShaderPreprocessorDefines)
   {
-    nuxAssertMsg (ShaderCode, TEXT ("[IOpenGLPixelShader::SetShaderCode] Invalid shader code.") );
-    NUX_RETURN_IF_NULL (ShaderCode);
+    nuxAssertMsg(ShaderCode, "[IOpenGLPixelShader::SetShaderCode] Invalid shader code.");
+    NUX_RETURN_IF_NULL(ShaderCode);
     NString ProcessedShaderSource;
-    NString Defines (FrgShaderPreprocessorDefines);
-    InsertPreProcessorDefinitions (ShaderCode, ProcessedShaderSource, Defines);
+    NString Defines(FrgShaderPreprocessorDefines);
+    InsertPreProcessorDefinitions(ShaderCode, ProcessedShaderSource, Defines);
 
     m_CompiledAndReady = false;
     _ShaderCode = ProcessedShaderSource;
@@ -298,21 +307,21 @@ namespace nux
 
     if (CodeSize == 0)
     {
-      nuxDebugMsg (TEXT ("[IOpenGLPixelShader::Compile] Pixel shader source code is empty.") );
+      nuxDebugMsg("[IOpenGLPixelShader::Compile] Pixel shader source code is empty.");
     }
 
     char *ShaderSource = new char[CodeSize+1];
-    Memset (ShaderSource, 0, CodeSize + 1);
-    Memcpy (ShaderSource, _ShaderCode.m_string.c_str(), CodeSize);
-    CHECKGL ( glShaderSource (_OpenGLID, 1, (const GLcharARB **) &ShaderSource, &CodeSize) );
+    Memset(ShaderSource, 0, CodeSize + 1);
+    Memcpy(ShaderSource, _ShaderCode.m_string.c_str(), CodeSize);
+    CHECKGL(glShaderSource(_OpenGLID, 1, (const GLcharARB **) &ShaderSource, &CodeSize));
     delete [] ShaderSource;
 
     // compile pixel shader object
-    CHECKGL ( glCompileShader (_OpenGLID) );
+    CHECKGL(glCompileShader(_OpenGLID));
 
     // check if shader compiled
     m_CompiledAndReady = false;
-    CHECKGL ( glGetShaderiv (_OpenGLID, GL_COMPILE_STATUS, &m_CompiledAndReady) );
+    CHECKGL(glGetShaderiv(_OpenGLID, GL_COMPILE_STATUS, &m_CompiledAndReady));
 
     if (!m_CompiledAndReady)
     {
@@ -321,31 +330,31 @@ namespace nux
       GLint InfoLogReturnSize = 0;
       GLint iLog = 0;
 
-      glGetShaderiv (_OpenGLID, GL_INFO_LOG_LENGTH, &iLog);
+      glGetShaderiv(_OpenGLID, GL_INFO_LOG_LENGTH, &iLog);
       InfoLogBuffer = new ANSICHAR[iLog+1];
       InfoLogBufferSize = iLog + 1;
-      glGetShaderInfoLog (_OpenGLID, InfoLogBufferSize, &InfoLogReturnSize, InfoLogBuffer);
+      glGetShaderInfoLog(_OpenGLID, InfoLogBufferSize, &InfoLogReturnSize, InfoLogBuffer);
 
       if (InfoLogReturnSize != 0)
       {
-        nuxError (TEXT ("[IOpenGLPixelShader::Compile] glCompileShader: %s"), InfoLogBuffer);
+        nuxError("[IOpenGLPixelShader::Compile] glCompileShader: %s", InfoLogBuffer);
       }
 
       delete[] InfoLogBuffer;
     }
 
-    return (m_CompiledAndReady ? true : false);
+    return(m_CompiledAndReady ? true : false);
   }
 
   bool IOpenGLPixelShader::IsValid()
   {
-    return (m_CompiledAndReady ? true : false);
+    return(m_CompiledAndReady ? true : false);
   }
 
 #if 0
-  IOpenGLGeometryShader::IOpenGLGeometryShader (NString ShaderName)
-    :   IOpenGLShader (ShaderName, RT_GLSL_GEOMETRYSHADER)
-    ,   m_CompiledAndReady (false)
+  IOpenGLGeometryShader::IOpenGLGeometryShader(NString ShaderName)
+    :   IOpenGLShader(ShaderName, RT_GLSL_GEOMETRYSHADER)
+    ,   m_CompiledAndReady(false)
 
   {
     _OpenGLID = glCreateShader(GL_GEOMETRY_SHADER);
@@ -359,9 +368,9 @@ namespace nux
     m_CompiledAndReady = false;
   }
 
-  void IOpenGLGeometryShader::SetShaderCode (const TCHAR *ShaderCode, const TCHAR *GeometryShaderPreprocessorDefines)
+  void IOpenGLGeometryShader::SetShaderCode(const char *ShaderCode, const char *GeometryShaderPreprocessorDefines)
   {
-    nuxAssertMsg (ShaderCode, TEXT("[IOpenGLGeometryShader::SetShaderCode] Invalid shader code.") );
+    nuxAssertMsg(ShaderCode, "[IOpenGLGeometryShader::SetShaderCode] Invalid shader code.");
     NUX_RETURN_IF_NULL(ShaderCode);
     NString ProcessedShaderSource;
     NString Defines(GeometryShaderPreprocessorDefines);
@@ -378,21 +387,21 @@ namespace nux
 
     if (CodeSize == 0)
     {
-      nuxDebugMsg(TEXT("[IOpenGLGeometryShader::Compile] Pixel shader source code is empty.") );
+      nuxDebugMsg("[IOpenGLGeometryShader::Compile] Pixel shader source code is empty.");
     }
 
     char *ShaderSource = new char[CodeSize+1];
     Memset(ShaderSource, 0, CodeSize + 1);
     Memcpy(ShaderSource, _ShaderCode.m_string.c_str(), CodeSize);
-    CHECKGL( glShaderSource(_OpenGLID, 1, (const GLcharARB **) &ShaderSource, &CodeSize) );
+    CHECKGL(glShaderSource(_OpenGLID, 1, (const GLcharARB **) &ShaderSource, &CodeSize));
     delete [] ShaderSource;
 
     // compile pixel shader object
-    CHECKGL(glCompileShader(_OpenGLID) );
+    CHECKGL(glCompileShader(_OpenGLID));
 
     // check if shader compiled
     m_CompiledAndReady = false;
-    CHECKGL( glGetShaderiv(_OpenGLID, GL_COMPILE_STATUS, &m_CompiledAndReady) );
+    CHECKGL(glGetShaderiv(_OpenGLID, GL_COMPILE_STATUS, &m_CompiledAndReady));
 
     if (!m_CompiledAndReady)
     {
@@ -408,18 +417,18 @@ namespace nux
 
       if (InfoLogReturnSize != 0)
       {
-        nuxError(TEXT("[IOpenGLGeometryShader::Compile] glCompileShader: %s"), InfoLogBuffer);
+        nuxError("[IOpenGLGeometryShader::Compile] glCompileShader: %s", InfoLogBuffer);
       }
 
       delete InfoLogBuffer;
     }
 
-    return (m_CompiledAndReady ? true : false);
+    return(m_CompiledAndReady ? true : false);
   }
 
   bool IOpenGLGeometryShader::IsValid()
   {
-    return (m_CompiledAndReady ? true : false);
+    return(m_CompiledAndReady ? true : false);
   }
 
   void IOpenGLGeometryShader::SetInputPrimitiveType(GLenum type)
@@ -445,33 +454,39 @@ namespace nux
     ,   _ShaderProgramName(ShaderProgramName)
   {
     _OpenGLID = glCreateProgram();
-    CHECKGL_MSG( glCreateProgram() );
+    CHECKGL_MSG( glCreateProgram());
   }
 
   IOpenGLShaderProgram::~IOpenGLShaderProgram()
   {
-    CHECKGL( glDeleteProgram(_OpenGLID) );
+    if (local::last_loaded_shader == _OpenGLID)
+    {
+      CHECKGL(glUseProgramObjectARB(0));
+      local::last_loaded_shader = 0;
+    }
+      
+    CHECKGL(glDeleteProgram(_OpenGLID));
     _OpenGLID = 0;
     m_CompiledAndReady = false;
   }
 
-  void IOpenGLShaderProgram::LoadIShaderFile(const TCHAR *ShaderFileName, const TCHAR *VtxShaderPreprocessorDefines, const TCHAR *FrgShaderPreprocessorDefines)
+  void IOpenGLShaderProgram::LoadIShaderFile(const char *ShaderFileName, const char *VtxShaderPreprocessorDefines, const char *FrgShaderPreprocessorDefines)
   {
-    nuxAssertMsg(ShaderFileName, TEXT("[IOpenGLShaderProgram::LoadIShaderFile] Invalid shader file name.") );
+    nuxAssertMsg(ShaderFileName, "[IOpenGLShaderProgram::LoadIShaderFile] Invalid shader file name.");
     NUX_RETURN_IF_NULL(ShaderFileName);
     NString SourceCode;
     LoadFileToString(SourceCode, ShaderFileName);
     LoadIShader(&SourceCode[0], VtxShaderPreprocessorDefines, FrgShaderPreprocessorDefines);
   }
 
-  void IOpenGLShaderProgram::LoadIShader(const TCHAR *ShaderCode, const TCHAR *VtxShaderPreprocessorDefines, const TCHAR *FrgShaderPreprocessorDefines)
+  void IOpenGLShaderProgram::LoadIShader(const char *ShaderCode, const char *VtxShaderPreprocessorDefines, const char *FrgShaderPreprocessorDefines)
   {
-    nuxAssertMsg(ShaderCode, TEXT("[IOpenGLShaderProgram::LoadIShader] Invalid shader code.") );
+    nuxAssertMsg(ShaderCode, "[IOpenGLShaderProgram::LoadIShader] Invalid shader code.");
     NUX_RETURN_IF_NULL(ShaderCode);
     NString VertexShaderSource;
-    ExtractShaderString3(TEXT("[Vertex Shader]"), ShaderCode, VertexShaderSource, NString(VtxShaderPreprocessorDefines) );
+    ExtractShaderString3("[Vertex Shader]", ShaderCode, VertexShaderSource, NString(VtxShaderPreprocessorDefines));
     NString PixelShaderSource;
-    ExtractShaderString3(TEXT("[Fragment Shader]"), ShaderCode, PixelShaderSource, NString(FrgShaderPreprocessorDefines) );
+    ExtractShaderString3("[Fragment Shader]", ShaderCode, PixelShaderSource, NString(FrgShaderPreprocessorDefines));
 
     ObjectPtr<IOpenGLVertexShader> vs = GetGraphicsDisplay()->GetGpuDevice()->CreateVertexShader(); //new IOpenGLVertexShader;
     ObjectPtr<IOpenGLPixelShader> ps = GetGraphicsDisplay()->GetGpuDevice()->CreatePixelShader(); //new IOpenGLPixelShader;
@@ -487,9 +502,9 @@ namespace nux
     AddShaderObject(ps);
   }
 
-  void IOpenGLShaderProgram::LoadVertexShader(const TCHAR *glslshader, const TCHAR *VtxShaderPreprocessorDefines)
+  void IOpenGLShaderProgram::LoadVertexShader(const char *glslshader, const char *VtxShaderPreprocessorDefines)
   {
-    nuxAssertMsg(glslshader, TEXT("[IOpenGLShaderProgram::LoadVertexShader] Invalid shader code.") );
+    nuxAssertMsg(glslshader, "[IOpenGLShaderProgram::LoadVertexShader] Invalid shader code.");
     NUX_RETURN_IF_NULL(glslshader);
     ObjectPtr<IOpenGLVertexShader> vs = GetGraphicsDisplay()->GetGpuDevice()->CreateVertexShader(); //new IOpenGLVertexShader;
 
@@ -502,9 +517,9 @@ namespace nux
     AddShaderObject(vs);
   }
 
-  void IOpenGLShaderProgram::LoadPixelShader(const TCHAR *glslshader, const TCHAR *FrgShaderPreprocessorDefines)
+  void IOpenGLShaderProgram::LoadPixelShader(const char *glslshader, const char *FrgShaderPreprocessorDefines)
   {
-    nuxAssertMsg(glslshader, TEXT("[IOpenGLShaderProgram::LoadPixelShader] Invalid shader code.") );
+    nuxAssertMsg(glslshader, "[IOpenGLShaderProgram::LoadPixelShader] Invalid shader code.");
     NUX_RETURN_IF_NULL(glslshader);
     ObjectPtr<IOpenGLPixelShader> ps = GetGraphicsDisplay()->GetGpuDevice()->CreatePixelShader(); //new IOpenGLPixelShader;
 
@@ -526,9 +541,9 @@ namespace nux
   {
     GLShaderParameter* temp = _FirstParameter;
 
-    while(temp)
+    while (temp)
     {
-      if(temp == parameter)
+      if (temp == parameter)
       {
         // Parameter already added
         return;
@@ -547,7 +562,7 @@ namespace nux
   {
     std::vector< ObjectPtr<IOpenGLShader> >::iterator it = find(ShaderObjectList.begin(), ShaderObjectList.end(), ShaderObject);
 
-    if (it != ShaderObjectList.end() )
+    if (it != ShaderObjectList.end())
     {
       ShaderObjectList.erase(it);
     }
@@ -562,7 +577,7 @@ namespace nux
   {
     // Get the number of attached shaders.
     GLint NumAttachedShaders;
-    CHECKGL( glGetProgramiv(_OpenGLID, GL_ATTACHED_SHADERS, &NumAttachedShaders) );
+    CHECKGL(glGetProgramiv(_OpenGLID, GL_ATTACHED_SHADERS, &NumAttachedShaders));
     GLuint *ShaderObjects = 0;
 
     if (NumAttachedShaders)
@@ -570,37 +585,37 @@ namespace nux
       ShaderObjects = new GLuint[NumAttachedShaders];
     }
 
-    CHECKGL( glGetAttachedShaders(_OpenGLID, NumAttachedShaders, NULL, ShaderObjects) );
+    CHECKGL(glGetAttachedShaders(_OpenGLID, NumAttachedShaders, NULL, ShaderObjects));
 
     // Detach everything first
     for (int i = 0; i < (int) NumAttachedShaders; i++)
     {
       unsigned int obj = ShaderObjects[i];
-      CHECKGL( glDetachShader(_OpenGLID, obj) );
+      CHECKGL(glDetachShader(_OpenGLID, obj));
     }
 
     if (NumAttachedShaders)
     {
-      delete ShaderObjects;
+      delete[] ShaderObjects;
     }
 
     for (int i = 0; i < (int) ShaderObjectList.size(); i++)
     {
-      if (!ShaderObjectList[i]->IsValid() )
+      if (!ShaderObjectList[i]->IsValid())
       {
         if (ShaderObjectList[i]->Compile() == false)
         {
-          nuxDebugMsg(TEXT("[IOpenGLShaderProgram::Link] Attached shader %s does not compile with program: %s."), ShaderObjectList[i]->_ShaderName.GetTCharPtr(), _ShaderProgramName.GetTCharPtr() );
+          nuxDebugMsg("[IOpenGLShaderProgram::Link] Attached shader %s does not compile with program: %s.", ShaderObjectList[i]->_ShaderName.GetTCharPtr(), _ShaderProgramName.GetTCharPtr());
         }
       }
 
       unsigned int obj = ShaderObjectList[i]->GetOpenGLID();
-      CHECKGL( glAttachShader(_OpenGLID, obj) );
+      CHECKGL(glAttachShader(_OpenGLID, obj));
     }
 
     GLint linked;
-    CHECKGL( glLinkProgram(_OpenGLID) );
-    CHECKGL( glGetProgramiv(_OpenGLID, GL_LINK_STATUS, &linked) );
+    CHECKGL(glLinkProgram(_OpenGLID));
+    CHECKGL(glGetProgramiv(_OpenGLID, GL_LINK_STATUS, &linked));
 
     if (linked == GL_FALSE)
     {
@@ -616,7 +631,7 @@ namespace nux
 
       if (InfoLogReturnSize != 0)
       {
-        nuxError(TEXT("[IOpenGLShaderProgram::Link] glLinkProgram: %s"), InfoLogBuffer);
+        nuxError("[IOpenGLShaderProgram::Link] glLinkProgram: %s", InfoLogBuffer);
       }
 
       delete[] InfoLogBuffer;
@@ -626,8 +641,8 @@ namespace nux
 
     GLint validated;
     // glValidateProgram checks to see whether the executables contained in program can execute given the current OpenGL state.
-    CHECKGL( glValidateProgram(_OpenGLID) );
-    CHECKGL( glGetProgramiv(_OpenGLID, GL_VALIDATE_STATUS, &validated) );
+    CHECKGL(glValidateProgram(_OpenGLID));
+    CHECKGL(glGetProgramiv(_OpenGLID, GL_VALIDATE_STATUS, &validated));
 
     if (validated == GL_FALSE)
     {
@@ -643,7 +658,7 @@ namespace nux
 
       if (InfoLogReturnSize != 0)
       {
-        nuxError(TEXT("[IOpenGLShaderProgram::Link] glValidateProgram: %s"), InfoLogBuffer);
+        nuxError("[IOpenGLShaderProgram::Link] glValidateProgram: %s", InfoLogBuffer);
       }
 
       delete [] InfoLogBuffer;
@@ -660,14 +675,26 @@ namespace nux
     return m_CompiledAndReady;
   }
 
+  void IOpenGLShaderProgram::SetShaderTracking(bool enabled)
+  {
+    local::enable_tracking = enabled;
+    local::last_loaded_shader = 0;
+    CHECKGL(glUseProgramObjectARB(0));
+  }
+
   void IOpenGLShaderProgram::Begin(void)
   {
-    CHECKGL( glUseProgramObjectARB(_OpenGLID) );
+    if (local::last_loaded_shader == _OpenGLID && local::enable_tracking)
+      return;
+    
+    local::last_loaded_shader = _OpenGLID;
+    CHECKGL(glUseProgramObjectARB(_OpenGLID));
   }
 
   void IOpenGLShaderProgram::End(void)
   {
-    CHECKGL( glUseProgramObjectARB(0) );
+    if (!local::enable_tracking)
+      CHECKGL(glUseProgramObjectARB(0));
   }
 
   void IOpenGLShaderProgram::CheckAttributeLocation()
@@ -687,16 +714,16 @@ namespace nux
     GLenum type;
 
     GLint num_active_attributes;
-    CHECKGL( glGetObjectParameterivARB(_OpenGLID, GL_OBJECT_ACTIVE_ATTRIBUTES_ARB, &num_active_attributes) );
+    CHECKGL(glGetObjectParameterivARB(_OpenGLID, GL_OBJECT_ACTIVE_ATTRIBUTES_ARB, &num_active_attributes));
 
 
     //         Vertex Attribute Aliasing
-    //         GLSL attempts to eliminate aliasing of vertex attributes but this is integral to NVIDIA’s hardware
+    //         GLSL attempts to eliminate aliasing of vertex attributes but this is integral to NVIDIA's hardware
     //         approach and necessary for maintaining compatibility with existing OpenGL applications that NVIDIA customers rely on.
-    //         NVIDIA’s GLSL implementation therefore does not allow built-in vertex attributes to collide with a
+    //         NVIDIA's GLSL implementation therefore does not allow built-in vertex attributes to collide with a
     //         generic vertex attributes that is assigned to a particular vertex attribute index with glBindAttribLocation.
-    //         For example, you should not use gl_Normal (a built-in vertex attribute) and also use glBindAttribLocation to
-    //         bind a generic vertex attribute named “whatever” to vertex attribute index 2 because gl_Normal aliases to index 2.
+    //         For example, you should not use gl_Normal(a built-in vertex attribute) and also use glBindAttribLocation to
+    //         bind a generic vertex attribute named "whatever" to vertex attribute index 2 because gl_Normal aliases to index 2.
     //
     //         Built-in vertex attribute name      Incompatible aliased vertex attribute index
     //         gl_Vertex                           0
@@ -720,20 +747,20 @@ namespace nux
 
     for (int index = 0; index < num_active_attributes; index++)
     {
-      glGetActiveAttribARB (_OpenGLID,
+      glGetActiveAttribARB(_OpenGLID,
                             index,
                             256,
                             &length,
                             &size,
                             &type,
                             active_attribute_name);
-      CHECKGL_MSG ( glGetActiveAttribARB );
+      CHECKGL_MSG( glGetActiveAttribARB );
       m_ProgramAttributeDefinition[index].attribute_index = glGetAttribLocationARB(_OpenGLID, active_attribute_name);
-      CHECKGL_MSG ( glGetAttribLocationARB );
+      CHECKGL_MSG( glGetAttribLocationARB );
       m_ProgramAttributeDefinition[index].attribute_name = active_attribute_name;
       m_ProgramAttributeDefinition[index].valid = true;
 
-      switch (type)
+      switch(type)
       {
         case GL_FLOAT:
           m_ProgramAttributeDefinition[index].type = VAT_FLOAT;
@@ -764,14 +791,14 @@ namespace nux
 
     while (m_CompiledAndReady && parameter)
     {
-      int location = glGetUniformLocationARB (_OpenGLID, TCHAR_TO_ANSI (parameter->m_Name.GetTCharPtr() ) );
-      CHECKGL_MSG ( glGetUniformLocationARB (_OpenGLID, TCHAR_TO_ANSI (parameter->m_Name.GetTCharPtr() ) ) );
+      int location = glGetUniformLocationARB(_OpenGLID, TCHAR_TO_ANSI(parameter->m_Name.GetTCharPtr()));
+      CHECKGL_MSG( glGetUniformLocationARB(_OpenGLID, TCHAR_TO_ANSI(parameter->m_Name.GetTCharPtr())));
 
-      //nuxDebugMsg(TEXT("[IOpenGLShaderProgram::CheckUniformLocation] Location index: %d"), location);
-      if (location == -1 && (!parameter->m_bIsOptional) )
+      //nuxDebugMsg("[IOpenGLShaderProgram::CheckUniformLocation] Location index: %d", location);
+      if (location == -1 && (!parameter->m_bIsOptional))
       {
-        nuxDebugMsg (TEXT ("[IOpenGLShaderProgram::CheckUniformLocation] Couldn't find shader program parameter %s \n"), parameter->m_Name.GetTCharPtr() );
-        nuxAssert (0);
+        nuxDebugMsg("[IOpenGLShaderProgram::CheckUniformLocation] Couldn't find shader program parameter %s \n", parameter->m_Name.GetTCharPtr());
+        nuxAssert(0);
       }
 
       GLint size = 0;
@@ -779,7 +806,7 @@ namespace nux
 
       if (location >= 0)
       {
-        CHECKGL ( glGetActiveUniformARB (_OpenGLID, location, 0, NULL /*&length*/, &size, &type, NULL) );
+        CHECKGL(glGetActiveUniformARB(_OpenGLID, location, 0, NULL /*&length*/, &size, &type, NULL));
       }
 
       parameter->m_Index = location;
@@ -790,7 +817,7 @@ namespace nux
     }
   }
 
-  int IOpenGLShaderProgram::GetAttributeLocation (const TCHAR *AttributeName)
+  int IOpenGLShaderProgram::GetAttributeLocation(const char *AttributeName)
   {
     for (int i = 0; i < 16 /*NUM_VERTEX_SHADER_INPUT_ATTRIBUTE*/; i++)
     {
@@ -801,408 +828,408 @@ namespace nux
     return -1;
   }
 
-  bool IOpenGLShaderProgram::SetUniform1f (char *varname, GLfloat v0)
+  bool IOpenGLShaderProgram::SetUniform1f(char *varname, GLfloat v0)
   {
-    GLint loc = GetUniformLocationARB (varname);
+    GLint loc = GetUniformLocationARB(varname);
 
     if (loc == -1) return false; // can't find variable
 
-    glUniform1fARB (loc, v0);
+    glUniform1fARB(loc, v0);
 
     return true;
   }
-  bool IOpenGLShaderProgram::SetUniform1f (GLint loc, GLfloat v0)
+  bool IOpenGLShaderProgram::SetUniform1f(GLint loc, GLfloat v0)
   {
     if (loc == -1) return false; // can't find variable
 
-    glUniform1fARB (loc, v0);
-    return true;
-  }
-
-
-  bool IOpenGLShaderProgram::SetUniform2f (char *varname, GLfloat v0, GLfloat v1)
-  {
-    GLint loc = GetUniformLocationARB (varname);
-
-    if (loc == -1) return false; // can't find variable
-
-    glUniform2fARB (loc, v0, v1);
-
-    return true;
-  }
-  bool IOpenGLShaderProgram::SetUniform2f (GLint loc, GLfloat v0, GLfloat v1)
-  {
-    if (loc == -1) return false; // can't find variable
-
-    glUniform2fARB (loc, v0, v1);
-    return true;
-  }
-
-  bool IOpenGLShaderProgram::SetUniform3f (char *varname, GLfloat v0, GLfloat v1, GLfloat v2)
-  {
-    GLint loc = GetUniformLocationARB (varname);
-
-    if (loc == -1) return false; // can't find variable
-
-    glUniform3fARB (loc, v0, v1, v2);
-
-    return true;
-  }
-  bool IOpenGLShaderProgram::SetUniform3f (GLint loc, GLfloat v0, GLfloat v1, GLfloat v2)
-  {
-    if (loc == -1) return false; // can't find variable
-
-    glUniform3fARB (loc, v0, v1, v2);
-
-    return true;
-  }
-
-  bool IOpenGLShaderProgram::SetUniform4f (char *varname, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3)
-  {
-    GLint loc = GetUniformLocationARB (varname);
-
-    if (loc == -1) return false; // can't find variable
-
-    glUniform4fARB (loc, v0, v1, v2, v3);
-
-    return true;
-  }
-  bool IOpenGLShaderProgram::SetUniform4f (GLint loc, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3)
-  {
-    if (loc == -1) return false; // can't find variable
-
-    glUniform4fARB (loc, v0, v1, v2, v3);
-
-    return true;
-  }
-
-  bool IOpenGLShaderProgram::SetUniform1i (char *varname, GLint v0)
-  {
-    GLint loc = GetUniformLocationARB (varname);
-
-    if (loc == -1) return false; // can't find variable
-
-    glUniform1iARB (loc, v0);
-
-    return true;
-  }
-  bool IOpenGLShaderProgram::SetUniform1i (GLint loc, GLint v0)
-  {
-    if (loc == -1) return false; // can't find variable
-
-    glUniform1iARB (loc, v0);
-
-    return true;
-  }
-
-  bool IOpenGLShaderProgram::SetUniform2i (char *varname, GLint v0, GLint v1)
-  {
-    GLint loc = GetUniformLocationARB (varname);
-
-    if (loc == -1) return false; // can't find variable
-
-    glUniform2iARB (loc, v0, v1);
-
-
-    return true;
-  }
-  bool IOpenGLShaderProgram::SetUniform2i (GLint loc, GLint v0, GLint v1)
-  {
-    if (loc == -1) return false; // can't find variable
-
-    glUniform2iARB (loc, v0, v1);
-
-
-    return true;
-  }
-
-  bool IOpenGLShaderProgram::SetUniform3i (char *varname, GLint v0, GLint v1, GLint v2)
-  {
-    GLint loc = GetUniformLocationARB (varname);
-
-    if (loc == -1) return false; // can't find variable
-
-    glUniform3iARB (loc, v0, v1, v2);
-
-    return true;
-  }
-  bool IOpenGLShaderProgram::SetUniform3i (GLint loc, GLint v0, GLint v1, GLint v2)
-  {
-    if (loc == -1) return false; // can't find variable
-
-    glUniform3iARB (loc, v0, v1, v2);
-
-    return true;
-  }
-
-  bool IOpenGLShaderProgram::SetUniform4i (char *varname, GLint v0, GLint v1, GLint v2, GLint v3)
-  {
-    GLint loc = GetUniformLocationARB (varname);
-
-    if (loc == -1) return false; // can't find variable
-
-    glUniform4iARB (loc, v0, v1, v2, v3);
-
-    return true;
-  }
-  bool IOpenGLShaderProgram::SetUniform4i (GLint loc, GLint v0, GLint v1, GLint v2, GLint v3)
-  {
-    if (loc == -1) return false; // can't find variable
-
-    glUniform4iARB (loc, v0, v1, v2, v3);
-
-    return true;
-  }
-
-  bool IOpenGLShaderProgram::SetUniform1fv (char *varname, GLsizei count, GLfloat *value)
-  {
-    GLint loc = GetUniformLocationARB (varname);
-
-    if (loc == -1) return false; // can't find variable
-
-    glUniform1fvARB (loc, count, value);
-
-    return true;
-  }
-  bool IOpenGLShaderProgram::SetUniform1fv (GLint loc, GLsizei count, GLfloat *value)
-  {
-    if (loc == -1) return false; // can't find variable
-
-    glUniform1fvARB (loc, count, value);
-
-    return true;
-  }
-
-  bool IOpenGLShaderProgram::SetUniform2fv (char *varname, GLsizei count, GLfloat *value)
-  {
-    GLint loc = GetUniformLocationARB (varname);
-
-    if (loc == -1) return false; // can't find variable
-
-    glUniform2fvARB (loc, count, value);
-
-    return true;
-  }
-  bool IOpenGLShaderProgram::SetUniform2fv (GLint loc, GLsizei count, GLfloat *value)
-  {
-    if (loc == -1) return false; // can't find variable
-
-    glUniform2fvARB (loc, count, value);
-
-    return true;
-  }
-
-  bool IOpenGLShaderProgram::SetUniform3fv (char *varname, GLsizei count, GLfloat *value)
-  {
-    GLint loc = GetUniformLocationARB (varname);
-
-    if (loc == -1) return false; // can't find variable
-
-    glUniform3fvARB (loc, count, value);
-
-    return true;
-  }
-  bool IOpenGLShaderProgram::SetUniform3fv (GLint loc, GLsizei count, GLfloat *value)
-  {
-    if (loc == -1) return false; // can't find variable
-
-    glUniform3fvARB (loc, count, value);
-
-    return true;
-  }
-
-  bool IOpenGLShaderProgram::SetUniform4fv (char *varname, GLsizei count, GLfloat *value)
-  {
-    GLint loc = GetUniformLocationARB (varname);
-
-    if (loc == -1) return false; // can't find variable
-
-    glUniform4fvARB (loc, count, value);
-
-    return true;
-  }
-  bool IOpenGLShaderProgram::SetUniform4fv (GLint loc, GLsizei count, GLfloat *value)
-  {
-    if (loc == -1) return false; // can't find variable
-
-    glUniform4fvARB (loc, count, value);
-
-    return true;
-  }
-
-  bool IOpenGLShaderProgram::SetUniform1iv (char *varname, GLsizei count, GLint *value)
-  {
-    GLint loc = GetUniformLocationARB (varname);
-
-    if (loc == -1) return false; // can't find variable
-
-    glUniform1ivARB (loc, count, value);
-
-    return true;
-  }
-  bool IOpenGLShaderProgram::SetUniform1iv (GLint loc, GLsizei count, GLint *value)
-  {
-    if (loc == -1) return false; // can't find variable
-
-    glUniform1ivARB (loc, count, value);
-
-    return true;
-  }
-
-  bool IOpenGLShaderProgram::SetUniform2iv (char *varname, GLsizei count, GLint *value)
-  {
-    GLint loc = GetUniformLocationARB (varname);
-
-    if (loc == -1) return false; // can't find variable
-
-    glUniform2ivARB (loc, count, value);
-
-    return true;
-  }
-  bool IOpenGLShaderProgram::SetUniform2iv (GLint loc, GLsizei count, GLint *value)
-  {
-    if (loc == -1) return false; // can't find variable
-
-    glUniform2ivARB (loc, count, value);
-
-    return true;
-  }
-
-  bool IOpenGLShaderProgram::SetUniform3iv (char *varname, GLsizei count, GLint *value)
-  {
-    GLint loc = GetUniformLocationARB (varname);
-
-    if (loc == -1) return false; // can't find variable
-
-    glUniform3ivARB (loc, count, value);
-
-    return true;
-  }
-  bool IOpenGLShaderProgram::SetUniform3iv (GLint loc, GLsizei count, GLint *value)
-  {
-    if (loc == -1) return false; // can't find variable
-
-    glUniform3ivARB (loc, count, value);
-
-    return true;
-  }
-
-  bool IOpenGLShaderProgram::SetUniform4iv (char *varname, GLsizei count, GLint *value)
-  {
-    GLint loc = GetUniformLocationARB (varname);
-
-    if (loc == -1) return false; // can't find variable
-
-    glUniform4ivARB (loc, count, value);
-
-    return true;
-  }
-  bool IOpenGLShaderProgram::SetUniform4iv (GLint loc, GLsizei count, GLint *value)
-  {
-    if (loc == -1) return false; // can't find variable
-
-    glUniform4ivARB (loc, count, value);
-
-    return true;
-  }
-
-  bool IOpenGLShaderProgram::SetUniformMatrix2fv (char *varname, GLsizei count, GLboolean transpose, GLfloat *value)
-  {
-    GLint loc = GetUniformLocationARB (varname);
-
-    if (loc == -1) return false; // can't find variable
-
-    glUniformMatrix2fvARB (loc, count, transpose, value);
-
-    return true;
-  }
-  bool IOpenGLShaderProgram::SetUniformLocMatrix2fv (GLint loc, GLsizei count, GLboolean transpose, GLfloat *value)
-  {
-    if (loc == -1) return false; // can't find variable
-
-    glUniformMatrix2fvARB (loc, count, transpose, value);
-
-    return true;
-  }
-
-  bool IOpenGLShaderProgram::SetUniformMatrix3fv (char *varname, GLsizei count, GLboolean transpose, GLfloat *value)
-  {
-    GLint loc = GetUniformLocationARB (varname);
-
-    if (loc == -1) return false; // can't find variable
-
-    glUniformMatrix3fvARB (loc, count, transpose, value);
-
-    return true;
-  }
-  bool IOpenGLShaderProgram::SetUniformLocMatrix3fv (GLint loc, GLsizei count, GLboolean transpose, GLfloat *value)
-  {
-    if (loc == -1) return false; // can't find variable
-
-    glUniformMatrix3fvARB (loc, count, transpose, value);
-
-    return true;
-  }
-
-  bool IOpenGLShaderProgram::SetUniformMatrix4fv (char *varname, GLsizei count, GLboolean transpose, GLfloat *value)
-  {
-    GLint loc = GetUniformLocationARB (varname);
-
-    if (loc == -1) return false; // can't find variable
-
-    glUniformMatrix4fvARB (loc, count, transpose, value);
-
-    return true;
-  }
-  bool IOpenGLShaderProgram::SetUniformLocMatrix4fv (GLint loc, GLsizei count, GLboolean transpose, GLfloat *value)
-  {
-    if (loc == -1) return false; // can't find variable
-
-    glUniformMatrix4fvARB (loc, count, transpose, value);
-
+    glUniform1fARB(loc, v0);
     return true;
   }
 
 
-  void IOpenGLShaderProgram::GetUniformfv (char *name, GLfloat *values)
+  bool IOpenGLShaderProgram::SetUniform2f(char *varname, GLfloat v0, GLfloat v1)
+  {
+    GLint loc = GetUniformLocationARB(varname);
+
+    if (loc == -1) return false; // can't find variable
+
+    glUniform2fARB(loc, v0, v1);
+
+    return true;
+  }
+  bool IOpenGLShaderProgram::SetUniform2f(GLint loc, GLfloat v0, GLfloat v1)
+  {
+    if (loc == -1) return false; // can't find variable
+
+    glUniform2fARB(loc, v0, v1);
+    return true;
+  }
+
+  bool IOpenGLShaderProgram::SetUniform3f(char *varname, GLfloat v0, GLfloat v1, GLfloat v2)
+  {
+    GLint loc = GetUniformLocationARB(varname);
+
+    if (loc == -1) return false; // can't find variable
+
+    glUniform3fARB(loc, v0, v1, v2);
+
+    return true;
+  }
+  bool IOpenGLShaderProgram::SetUniform3f(GLint loc, GLfloat v0, GLfloat v1, GLfloat v2)
+  {
+    if (loc == -1) return false; // can't find variable
+
+    glUniform3fARB(loc, v0, v1, v2);
+
+    return true;
+  }
+
+  bool IOpenGLShaderProgram::SetUniform4f(char *varname, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3)
+  {
+    GLint loc = GetUniformLocationARB(varname);
+
+    if (loc == -1) return false; // can't find variable
+
+    glUniform4fARB(loc, v0, v1, v2, v3);
+
+    return true;
+  }
+  bool IOpenGLShaderProgram::SetUniform4f(GLint loc, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3)
+  {
+    if (loc == -1) return false; // can't find variable
+
+    glUniform4fARB(loc, v0, v1, v2, v3);
+
+    return true;
+  }
+
+  bool IOpenGLShaderProgram::SetUniform1i(char *varname, GLint v0)
+  {
+    GLint loc = GetUniformLocationARB(varname);
+
+    if (loc == -1) return false; // can't find variable
+
+    glUniform1iARB(loc, v0);
+
+    return true;
+  }
+  bool IOpenGLShaderProgram::SetUniform1i(GLint loc, GLint v0)
+  {
+    if (loc == -1) return false; // can't find variable
+
+    glUniform1iARB(loc, v0);
+
+    return true;
+  }
+
+  bool IOpenGLShaderProgram::SetUniform2i(char *varname, GLint v0, GLint v1)
+  {
+    GLint loc = GetUniformLocationARB(varname);
+
+    if (loc == -1) return false; // can't find variable
+
+    glUniform2iARB(loc, v0, v1);
+
+
+    return true;
+  }
+  bool IOpenGLShaderProgram::SetUniform2i(GLint loc, GLint v0, GLint v1)
+  {
+    if (loc == -1) return false; // can't find variable
+
+    glUniform2iARB(loc, v0, v1);
+
+
+    return true;
+  }
+
+  bool IOpenGLShaderProgram::SetUniform3i(char *varname, GLint v0, GLint v1, GLint v2)
+  {
+    GLint loc = GetUniformLocationARB(varname);
+
+    if (loc == -1) return false; // can't find variable
+
+    glUniform3iARB(loc, v0, v1, v2);
+
+    return true;
+  }
+  bool IOpenGLShaderProgram::SetUniform3i(GLint loc, GLint v0, GLint v1, GLint v2)
+  {
+    if (loc == -1) return false; // can't find variable
+
+    glUniform3iARB(loc, v0, v1, v2);
+
+    return true;
+  }
+
+  bool IOpenGLShaderProgram::SetUniform4i(char *varname, GLint v0, GLint v1, GLint v2, GLint v3)
+  {
+    GLint loc = GetUniformLocationARB(varname);
+
+    if (loc == -1) return false; // can't find variable
+
+    glUniform4iARB(loc, v0, v1, v2, v3);
+
+    return true;
+  }
+  bool IOpenGLShaderProgram::SetUniform4i(GLint loc, GLint v0, GLint v1, GLint v2, GLint v3)
+  {
+    if (loc == -1) return false; // can't find variable
+
+    glUniform4iARB(loc, v0, v1, v2, v3);
+
+    return true;
+  }
+
+  bool IOpenGLShaderProgram::SetUniform1fv(char *varname, GLsizei count, GLfloat *value)
+  {
+    GLint loc = GetUniformLocationARB(varname);
+
+    if (loc == -1) return false; // can't find variable
+
+    glUniform1fvARB(loc, count, value);
+
+    return true;
+  }
+  bool IOpenGLShaderProgram::SetUniform1fv(GLint loc, GLsizei count, GLfloat *value)
+  {
+    if (loc == -1) return false; // can't find variable
+
+    glUniform1fvARB(loc, count, value);
+
+    return true;
+  }
+
+  bool IOpenGLShaderProgram::SetUniform2fv(char *varname, GLsizei count, GLfloat *value)
+  {
+    GLint loc = GetUniformLocationARB(varname);
+
+    if (loc == -1) return false; // can't find variable
+
+    glUniform2fvARB(loc, count, value);
+
+    return true;
+  }
+  bool IOpenGLShaderProgram::SetUniform2fv(GLint loc, GLsizei count, GLfloat *value)
+  {
+    if (loc == -1) return false; // can't find variable
+
+    glUniform2fvARB(loc, count, value);
+
+    return true;
+  }
+
+  bool IOpenGLShaderProgram::SetUniform3fv(char *varname, GLsizei count, GLfloat *value)
+  {
+    GLint loc = GetUniformLocationARB(varname);
+
+    if (loc == -1) return false; // can't find variable
+
+    glUniform3fvARB(loc, count, value);
+
+    return true;
+  }
+  bool IOpenGLShaderProgram::SetUniform3fv(GLint loc, GLsizei count, GLfloat *value)
+  {
+    if (loc == -1) return false; // can't find variable
+
+    glUniform3fvARB(loc, count, value);
+
+    return true;
+  }
+
+  bool IOpenGLShaderProgram::SetUniform4fv(char *varname, GLsizei count, GLfloat *value)
+  {
+    GLint loc = GetUniformLocationARB(varname);
+
+    if (loc == -1) return false; // can't find variable
+
+    glUniform4fvARB(loc, count, value);
+
+    return true;
+  }
+  bool IOpenGLShaderProgram::SetUniform4fv(GLint loc, GLsizei count, GLfloat *value)
+  {
+    if (loc == -1) return false; // can't find variable
+
+    glUniform4fvARB(loc, count, value);
+
+    return true;
+  }
+
+  bool IOpenGLShaderProgram::SetUniform1iv(char *varname, GLsizei count, GLint *value)
+  {
+    GLint loc = GetUniformLocationARB(varname);
+
+    if (loc == -1) return false; // can't find variable
+
+    glUniform1ivARB(loc, count, value);
+
+    return true;
+  }
+  bool IOpenGLShaderProgram::SetUniform1iv(GLint loc, GLsizei count, GLint *value)
+  {
+    if (loc == -1) return false; // can't find variable
+
+    glUniform1ivARB(loc, count, value);
+
+    return true;
+  }
+
+  bool IOpenGLShaderProgram::SetUniform2iv(char *varname, GLsizei count, GLint *value)
+  {
+    GLint loc = GetUniformLocationARB(varname);
+
+    if (loc == -1) return false; // can't find variable
+
+    glUniform2ivARB(loc, count, value);
+
+    return true;
+  }
+  bool IOpenGLShaderProgram::SetUniform2iv(GLint loc, GLsizei count, GLint *value)
+  {
+    if (loc == -1) return false; // can't find variable
+
+    glUniform2ivARB(loc, count, value);
+
+    return true;
+  }
+
+  bool IOpenGLShaderProgram::SetUniform3iv(char *varname, GLsizei count, GLint *value)
+  {
+    GLint loc = GetUniformLocationARB(varname);
+
+    if (loc == -1) return false; // can't find variable
+
+    glUniform3ivARB(loc, count, value);
+
+    return true;
+  }
+  bool IOpenGLShaderProgram::SetUniform3iv(GLint loc, GLsizei count, GLint *value)
+  {
+    if (loc == -1) return false; // can't find variable
+
+    glUniform3ivARB(loc, count, value);
+
+    return true;
+  }
+
+  bool IOpenGLShaderProgram::SetUniform4iv(char *varname, GLsizei count, GLint *value)
+  {
+    GLint loc = GetUniformLocationARB(varname);
+
+    if (loc == -1) return false; // can't find variable
+
+    glUniform4ivARB(loc, count, value);
+
+    return true;
+  }
+  bool IOpenGLShaderProgram::SetUniform4iv(GLint loc, GLsizei count, GLint *value)
+  {
+    if (loc == -1) return false; // can't find variable
+
+    glUniform4ivARB(loc, count, value);
+
+    return true;
+  }
+
+  bool IOpenGLShaderProgram::SetUniformMatrix2fv(char *varname, GLsizei count, GLboolean transpose, GLfloat *value)
+  {
+    GLint loc = GetUniformLocationARB(varname);
+
+    if (loc == -1) return false; // can't find variable
+
+    glUniformMatrix2fvARB(loc, count, transpose, value);
+
+    return true;
+  }
+  bool IOpenGLShaderProgram::SetUniformLocMatrix2fv(GLint loc, GLsizei count, GLboolean transpose, GLfloat *value)
+  {
+    if (loc == -1) return false; // can't find variable
+
+    glUniformMatrix2fvARB(loc, count, transpose, value);
+
+    return true;
+  }
+
+  bool IOpenGLShaderProgram::SetUniformMatrix3fv(char *varname, GLsizei count, GLboolean transpose, GLfloat *value)
+  {
+    GLint loc = GetUniformLocationARB(varname);
+
+    if (loc == -1) return false; // can't find variable
+
+    glUniformMatrix3fvARB(loc, count, transpose, value);
+
+    return true;
+  }
+  bool IOpenGLShaderProgram::SetUniformLocMatrix3fv(GLint loc, GLsizei count, GLboolean transpose, GLfloat *value)
+  {
+    if (loc == -1) return false; // can't find variable
+
+    glUniformMatrix3fvARB(loc, count, transpose, value);
+
+    return true;
+  }
+
+  bool IOpenGLShaderProgram::SetUniformMatrix4fv(char *varname, GLsizei count, GLboolean transpose, GLfloat *value)
+  {
+    GLint loc = GetUniformLocationARB(varname);
+
+    if (loc == -1) return false; // can't find variable
+
+    glUniformMatrix4fvARB(loc, count, transpose, value);
+
+    return true;
+  }
+  bool IOpenGLShaderProgram::SetUniformLocMatrix4fv(GLint loc, GLsizei count, GLboolean transpose, GLfloat *value)
+  {
+    if (loc == -1) return false; // can't find variable
+
+    glUniformMatrix4fvARB(loc, count, transpose, value);
+
+    return true;
+  }
+
+
+  void IOpenGLShaderProgram::GetUniformfv(char *name, GLfloat *values)
   {
     GLint loc;
 
-    loc = glGetUniformLocationARB (_OpenGLID, name);
-    CHECKGL_MSG ( glGetUniformLocationARB );
+    loc = glGetUniformLocationARB(_OpenGLID, name);
+    CHECKGL_MSG( glGetUniformLocationARB );
 
     if (loc == -1)
     {
       std::cout << "Error: can't find uniform variable \"" << name << "\"\n";
     }
 
-    CHECKGL ( glGetUniformfvARB (_OpenGLID, loc, values) );
+    CHECKGL(glGetUniformfvARB(_OpenGLID, loc, values));
   }
 
 
-  void IOpenGLShaderProgram::GetUniformiv (char *name, GLint *values)
+  void IOpenGLShaderProgram::GetUniformiv(char *name, GLint *values)
   {
     GLint loc;
-    loc = glGetUniformLocationARB (_OpenGLID, name);
-    CHECKGL_MSG ( glGetUniformLocationARB );
+    loc = glGetUniformLocationARB(_OpenGLID, name);
+    CHECKGL_MSG( glGetUniformLocationARB );
 
     if (loc == -1)
     {
       std::cout << "Error: can't find uniform variable \"" << name << "\"\n";
     }
 
-    CHECKGL ( glGetUniformivARB (_OpenGLID, loc, values) );
+    CHECKGL(glGetUniformivARB(_OpenGLID, loc, values));
   }
 
-  int IOpenGLShaderProgram::GetUniformLocationARB (const GLcharARB *name)
+  int IOpenGLShaderProgram::GetUniformLocationARB(const GLcharARB *name)
   {
     GLint loc;
-    loc = glGetUniformLocationARB (_OpenGLID, name);
-    CHECKGL_MSG ( glGetUniformLocationARB );
+    loc = glGetUniformLocationARB(_OpenGLID, name);
+    CHECKGL_MSG( glGetUniformLocationARB );
     return loc;
   }
 
-  void IOpenGLShaderProgram::GetActiveUniformARB (
+  void IOpenGLShaderProgram::GetActiveUniformARB(
     GLuint index,
     GLsizei maxLength,
     GLsizei *length,
@@ -1211,33 +1238,35 @@ namespace nux
     GLcharARB *name)
   {
 
-    glGetActiveUniformARB (_OpenGLID,
+    glGetActiveUniformARB(_OpenGLID,
                            index,
                            maxLength,
                            length,
                            size,
                            type,
                            name);
-    CHECKGL_MSG (glGetActiveUniformARB);
+    CHECKGL_MSG(glGetActiveUniformARB);
   }
 
 
-  void IOpenGLShaderProgram::GetObjectParameterfvARB (GLenum pname,
+  void IOpenGLShaderProgram::GetObjectParameterfvARB(GLenum pname,
       GLfloat *params)
   {
-    glGetObjectParameterfvARB (_OpenGLID,
+#ifndef NUX_OPENGLES_20
+    glGetObjectParameterfvARB(_OpenGLID,
                                pname,
                                params);
-    CHECKGL_MSG (glGetObjectParameterfvARB);
+    CHECKGL_MSG(glGetObjectParameterfvARB);
+#endif
   }
 
-  bool IOpenGLShaderProgram::SetSampler (char *name, int texture_unit)
+  bool IOpenGLShaderProgram::SetSampler(char *name, int texture_unit)
   {
-    GLint loc = GetUniformLocationARB (name);
+    GLint loc = GetUniformLocationARB(name);
 
     if (loc == -1) return false; // can't find variable
 
-    glUniform1iARB (loc, texture_unit);
+    glUniform1iARB(loc, texture_unit);
     return true;
   }
 
