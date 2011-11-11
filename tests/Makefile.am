@@ -1,7 +1,8 @@
 if BUILD_TESTS
 check_PROGRAMS = \
   test-nux \
-  gtest-nux-core
+  gtest-nux-core \
+  test-graphics-display
 
 # Please keep alphabetical
 test_nux_SOURCES = \
@@ -67,13 +68,44 @@ gtest_nux_core_LDFLAGS = \
   -lboost_filesystem -lboost_system
 
 
+test_graphics_display_SOURCES = \
+  test_graphics_display.cpp
+
+test_graphics_display_CPPFLAGS = \
+  -I$(srcdir) \
+  -I$(top_srcdir) \
+  -DPREFIX=\""$(prefix)"\" \
+	-DLIBDIR=\""$(libdir)"\" \
+  -DDATADIR=\""$(datadir)"\" \
+  -DG_LOG_DOMAIN=\"NuxTests\" \
+  -DTESTDIR=\""$(top_srcdir)/tests"\" \
+  $(GCC_FLAGS) \
+  $(NUX_CORE_CFLAGS) \
+  $(NUX_EXAMPLES_CFLAGS) \
+  $(NUX_CFLAGS) \
+  $(MAINTAINER_CFLAGS)
+
+test_graphics_display_LDADD = \
+  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
+  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
+  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
+  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
+  $(NUX_LIBS)
+
+test_graphics_display_LDFLAGS = \
+  -lpthread
+
+
 #run make test as part of make check
-check-local: test gtest
+check-local: test gtest test-apps
 test:
 	@gtester --verbose -k -o=test-nux-results.xml ./test-nux
 
 gtest: gtest-nux-core
 	./gtest-nux-core
+
+test-apps: test-graphics-display
+	./test-graphics-display
 
 check-report:
 	@gtester -k -o=test-nux-results.xml -k ./test-nux \
