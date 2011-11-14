@@ -48,7 +48,8 @@ namespace nux
     TimerHandle(const TimerHandle &);
 
     TimerHandle &operator = (const TimerHandle &);
-    bool IsValid() const;
+    bool IsValid() const; //!<deprecated. use Activated().
+    bool Activated() const;
 
     //! return a factor between 0.0f and 1.0f representing the progress of the timer.
     float GetProgress() const;
