@@ -895,6 +895,16 @@ logging::Logger logger("nux.window");
     InputArea* focus_area = NULL;   // The view under the mouse
     BaseWindow* base_window = NULL; // The BaseWindow below the mouse pointer.
 
+    if (event.e_event == NUX_KEYUP)
+    {
+      nuxDebugMsg("[WindowCompositor::KeyboardEventCycle] Key up event %s", event.GetText());
+    }
+
+    if (event.e_event == NUX_KEYDOWN)
+    {
+      nuxDebugMsg("[WindowCompositor::KeyboardEventCycle] Key down event %s", event.GetText());
+    }
+
     if (keyboard_event_grab_view)
     {
       // There is a keyboard grab.

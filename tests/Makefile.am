@@ -3,7 +3,8 @@ check_PROGRAMS = \
   test-nux \
   gtest-nux-core \
   test-graphics-display \
-  test-empty-window
+  test-empty-window \
+  test-xtest
 
 # Please keep alphabetical
 test_nux_SOURCES = \
@@ -101,9 +102,14 @@ test_empty_window_CPPFLAGS = $(TestFlags)
 test_empty_window_LDADD = $(TestLibs)
 test_empty_window_LDFLAGS = -lpthread
 
+test_xtest_SOURCES = test_xtest.cpp
+
+test_xtest_CPPFLAGS = $(TestFlags)
+test_xtest_LDADD = $(TestLibs)
+test_xtest_LDFLAGS = -lpthread -lXtst
 
 #run make test as part of make check
-check-local: test gtest test0 test1 
+check-local: test gtest  test2
 
 test:
 	@gtester --verbose -k -o=test-nux-results.xml ./test-nux
@@ -117,6 +123,8 @@ test0: test-graphics-display
 test1: test-empty-window
 	./test-empty-window
 
+test2: test-xtest
+	./test-xtest
 
 check-report:
 	@gtester -k -o=test-nux-results.xml -k ./test-nux \
