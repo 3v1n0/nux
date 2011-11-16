@@ -339,7 +339,9 @@ namespace nux
     if (((_opengl_major >= 3) && (req_opengl_major >= 3)) || (_opengl_major >= 3) || opengl_es_20)
 #elif defined(NUX_OS_LINUX)
     //bool opengl_es_context_created = false;
-    if (has_glx_13_support && (((_opengl_major >= 3) && (req_opengl_major >= 3)) || ((_opengl_major >= 3) && opengl_es_20)))
+    if (has_glx_13_support &&
+    (((_opengl_major >= 3) && (req_opengl_major >= 3)) ||
+    ((_opengl_major >= 3) && opengl_es_20)))
 #endif
     {
       // Create a new Opengl Rendering Context
@@ -502,10 +504,6 @@ namespace nux
       {
         nuxDebugMsg("[GpuDevice::GpuDevice] Using highest default OpenGL version.");
       }
-    }
-    else
-    {
-      opengl_rendering_context = 0;
     }
 
     _board_vendor_string = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char *, glGetString(GL_VENDOR)));

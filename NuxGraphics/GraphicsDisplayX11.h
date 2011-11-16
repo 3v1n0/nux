@@ -90,6 +90,7 @@ namespace nux
 #ifndef NUX_OPENGLES_20
     GLXContext  m_GLCtx;
     GLXFBConfig _fb_config;
+    GLXWindow   glx_window_;
 #else
     EGLContext  m_GLCtx;
     EGLSurface  m_GLSurface;
@@ -436,6 +437,9 @@ namespace nux
     GLEWContext m_GLEWContext;
     GLXEWContext m_GLXEWContext;
 #endif
+
+    static int X11ErrorHandler(Display *display, XErrorEvent *error);
+
     friend class DisplayAccessController;
   };
 
