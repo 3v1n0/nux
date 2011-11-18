@@ -109,7 +109,7 @@ test_xtest_LDADD = $(TestLibs)
 test_xtest_LDFLAGS = -lpthread -lXtst
 
 #run make test as part of make check
-check-local: test gtest  test2
+check-local: test gtest test2
 
 test:
 	@gtester --verbose -k -o=test-nux-results.xml ./test-nux

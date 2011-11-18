@@ -78,8 +78,6 @@ namespace nux
 // This will become GLWindow
   class GraphicsDisplay : public GraphicSystem
   {
-    friend class GraphicsEngine;
-
   private:
     Display     *m_X11Display;
     int         m_X11Screen;
@@ -441,6 +439,7 @@ namespace nux
     static int X11ErrorHandler(Display *display, XErrorEvent *error);
 
     friend class DisplayAccessController;
+    friend class GraphicsEngine;
   };
 
 }

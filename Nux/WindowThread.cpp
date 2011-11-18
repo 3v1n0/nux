@@ -940,8 +940,12 @@ logging::Logger logger("nux.windows.thread");
           return 0;
       }
       
-      if (IsEmbeddedWindow() && (event.e_event == NUX_SIZE_CONFIGURATION))
+      if (event.e_event == NUX_SIZE_CONFIGURATION)
+      {
         m_size_configuration_event = true;
+        Rect r = GetWindow().GetWindowGeometry();
+        window_configuration.emit(r.x, r.y, r.width, r.height);
+      }
 
       int w, h;
       // Call gGfx_OpenGL.getWindowSize after the gGfx_OpenGL.get_event.

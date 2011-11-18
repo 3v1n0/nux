@@ -204,7 +204,7 @@ AS_IF([test "x$enable_tests" = "xyes"],
        #Check for libxtst
        AC_CHECK_HEADER([X11/extensions/XTest.h],
                        [],
-                       [AC_MSG_ERROR([you are missing libxtst-dev, apt-get install libxtest-dev])])
+                       [AC_MSG_ERROR([you are missing libxtst-dev, apt-get install libxtst-dev])])
       ]
 )
 AM_CONDITIONAL(BUILD_TESTS, [test "x$enable_tests" = "xyes"])

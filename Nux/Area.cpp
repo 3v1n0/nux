@@ -40,6 +40,7 @@ namespace nux
     ,   min_size_(AREA_MIN_WIDTH, AREA_MIN_HEIGHT)
     ,   max_size_(AREA_MAX_WIDTH, AREA_MAX_HEIGHT)
   {
+    window_thread_ = GetWindowThread();
     visible_ = true;
     view_enabled_ = true;
     parent_area_ = NULL;
@@ -415,7 +416,7 @@ namespace nux
     if (on_geometry_change_reconfigure_parent_layout_ == false)
       return;
 
-    if (GetWindowThread() && GetWindowThread()->IsComputingLayout())
+    if (window_thread_ && window_thread_->IsComputingLayout())
     {
       // there is no need to do the following while we are already computing the layout.
       // If we do, we will end up in an infinite loop.
@@ -441,18 +442,18 @@ namespace nux
         {
           // If this element is a Splitter, then we submit its child to the refresh list. We don't want to submit the
           // splitter because this will cause a redraw of all parts of the splitter(costly and unnecessary).
-          GetWindowThread()->QueueObjectLayout(child);
+          window_thread_->QueueObjectLayout(child);
         }
         else
         {
-          GetWindowThread()->QueueObjectLayout(ic);
+          window_thread_->QueueObjectLayout(ic);
         }
       }
       else if (ic->parent_area_)
         ic->parent_area_->ReconfigureParentLayout(this);
       else
       {
-        GetWindowThread()->QueueObjectLayout(ic);
+        window_thread_->QueueObjectLayout(ic);
       }
     }
     else if (this->Type().IsDerivedFromType(Layout::StaticObjectType))
@@ -479,11 +480,11 @@ namespace nux
             {
               // If the parent of this element is a splitter, then we submit its child to the refresh list. We don't want to submit the
               // splitter because this will cause a redraw of all parts of the splitter(costly and unnecessary).
-              GetWindowThread()->QueueObjectLayout(this);
+              window_thread_->QueueObjectLayout(this);
             }
             else
             {
-              GetWindowThread()->QueueObjectLayout(ic);
+              window_thread_->QueueObjectLayout(ic);
             }
           }
           else
@@ -500,7 +501,7 @@ namespace nux
       else
       {
         // This is possibly the Main layout or the layout of a floating object(popup for example) unless the layout is not part of the object tree.
-        GetWindowThread()->QueueObjectLayout(layout);
+        window_thread_->QueueObjectLayout(layout);
       }
     }
     else
@@ -681,7 +682,7 @@ namespace nux
 
   void Area::InnerGetAbsoluteGeometry(Geometry &geometry)
   {
-    if (this->Type().IsDerivedFromType(BaseWindow::StaticObjectType) || (this == GetWindowThread()->GetMainLayout()))
+    if (this->Type().IsDerivedFromType(BaseWindow::StaticObjectType) || (this == window_thread_->GetMainLayout()))
     {
       geometry.OffsetPosition(geometry_.x, geometry_.y);
       return;
@@ -698,7 +699,7 @@ namespace nux
   {
     if (Type().IsDerivedFromType(BaseWindow::StaticObjectType) ||
       Type().IsDerivedFromType(MenuPage::StaticObjectType) ||
-      (this == GetWindowThread()->GetMainLayout()))
+      (this == window_thread_->GetMainLayout()))
     {
       // Do not apply the _2D_xform matrix  to a BaseWindow or the main layout
       return geometry_;
@@ -738,7 +739,7 @@ namespace nux
 
   void Area::InnerGetRootGeometry(Geometry &geometry)
   {
-    if (this->Type().IsDerivedFromType(BaseWindow::StaticObjectType) || (this == GetWindowThread()->GetMainLayout()))
+    if (this->Type().IsDerivedFromType(BaseWindow::StaticObjectType) || (this == window_thread_->GetMainLayout()))
       return;
 
     MatrixXFormGeometry(_2d_xform, geometry);
@@ -753,7 +754,7 @@ namespace nux
     nux::Geometry geo = geometry_;
     MatrixXFormGeometry(_2d_xform, geo);
 
-    if (Type().IsDerivedFromType(BaseWindow::StaticObjectType) || (this == GetWindowThread()->GetMainLayout()))
+    if (Type().IsDerivedFromType(BaseWindow::StaticObjectType) || (this == window_thread_->GetMainLayout()))
     {
       return geo;
     }
@@ -794,7 +795,7 @@ namespace nux
 
   Area* Area::GetRootParent()
   {
-    if (Type().IsDerivedFromType(BaseWindow::StaticObjectType) || (this == GetWindowThread()->GetMainLayout()))
+    if (Type().IsDerivedFromType(BaseWindow::StaticObjectType) || (this == window_thread_->GetMainLayout()))
     {
       return this;
     }
@@ -839,7 +840,7 @@ namespace nux
 
   void Area::QueueRelayout()
   {
-    nux::GetWindowThread()->QueueObjectLayout(this);
+    window_thread_->QueueObjectLayout(this);
   }
   
   void Area::SetAcceptKeyboardEvent(bool accept_keyboard_event)

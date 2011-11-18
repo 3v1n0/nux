@@ -1015,30 +1015,47 @@ namespace nux
 
   Rect GraphicsDisplay::GetWindowGeometry()
   {
-    XWindowAttributes attrib;
-    int status = XGetWindowAttributes(m_X11Display, m_X11Window, &attrib);
+    // Window rw;
+    // int x, y;
+    // unsigned int w, h, b, d;
+    // Window child_return;
 
-    if (status == 0)
-    {
-      nuxAssert("[GraphicsDisplay::GetWindowGeometry] Failed to get the window attributes.");
-      return Rect(0, 0, 0, 0);
-    }
+    // int status = XGetGeometry(m_X11Display, m_X11Window, &rw, &x, &y, &w, &h, &b, &d);
+    
+    // if (status == 0)
+    // {
+    //   nuxAssert("[GraphicsDisplay::GetWindowGeometry] Failed to get the window attributes.");
+    //   return Rect(0, 0, 0, 0);
+    // }    
+    
+    // XSync(m_X11Display, False);
 
-    return Rect(attrib.x, attrib.y, attrib.width, attrib.height);
+    // status = XTranslateCoordinates(m_X11Display, m_X11Window, RootWindow(m_X11Display, 0), x, y, &x, &y, &child_return);
+    
+    // if (status == 0)
+    // {
+    //   nuxAssert("[GraphicsDisplay::GetWindowGeometry] Failed to get the window attributes.");
+    //   return Rect(0, 0, 0, 0);
+    // }    
+
+    // XSync(m_X11Display, False);
+    return Rect(m_WindowPosition.x, m_WindowPosition.y, m_WindowSize.width, m_WindowSize.height);
   }
 
   Rect GraphicsDisplay::GetNCWindowGeometry()
   {
-    XWindowAttributes attrib;
-    int status = XGetWindowAttributes(m_X11Display, m_X11Window, &attrib);
+    // XWindowAttributes attrib;
+    // int status = XGetWindowAttributes(m_X11Display, m_X11Window, &attrib);
 
-    if (status == 0)
-    {
-      nuxAssert("[GraphicsDisplay::GetWindowGeometry] Failed to get the window attributes.");
-      return Rect(0, 0, 0, 0);
-    }
+    // if (status == 0)
+    // {
+    //   nuxAssert("[GraphicsDisplay::GetWindowGeometry] Failed to get the window attributes.");
+    //   return Rect(0, 0, 0, 0);
+    // }
 
-    return Rect(attrib.x, attrib.y, attrib.width, attrib.height);
+    // return Rect(attrib.x, attrib.y, attrib.width, attrib.height);
+
+    return Rect(m_WindowPosition.x, m_WindowPosition.y, m_WindowSize.width, m_WindowSize.height);
   }
 
   void GraphicsDisplay::MakeGLContextCurrent()
@@ -1709,9 +1726,16 @@ namespace nux
         m_pEvent->width =  xevent.xconfigure.width;
         m_pEvent->height = xevent.xconfigure.height;
         m_WindowSize = Size(xevent.xconfigure.width, xevent.xconfigure.height);
-        m_WindowPosition = Point(xevent.xconfigure.x, xevent.xconfigure.y);
 
-        //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: ConfigureNotify event.");
+        Window rw;
+        int x, y;
+        unsigned int w, h, b, d;
+        Window child_return;
+
+        int status = XTranslateCoordinates(m_X11Display, m_X11Window, RootWindow(m_X11Display, 0), 0, 0, &x, &y, &child_return);
+        m_WindowPosition = Point(x, y);
+
+        //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: ConfigureNotify event. %d %d", x, y);
         break;
       }
 
@@ -1747,7 +1771,7 @@ namespace nux
 
       case KeyPress:
       {
-        //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: KeyPress event.");
+        nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: KeyPress event.");
         KeyCode keycode = xevent.xkey.keycode;
         KeySym keysym = NoSymbol;
         keysym = XKeycodeToKeysym(xevent.xany.display, keycode, 0);
@@ -1783,7 +1807,7 @@ namespace nux
 
       case KeyRelease:
       {
-        //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: KeyRelease event.");
+        nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: KeyRelease event.");
         KeyCode keycode = xevent.xkey.keycode;
         KeySym keysym = NoSymbol;
         keysym = XKeycodeToKeysym(xevent.xany.display, keycode, 0);

@@ -300,6 +300,7 @@ namespace nux
     void *m_ExitData;
 
     sigc::signal<void> RedrawRequested;
+    sigc::signal<void, int, int, int, int> window_configuration; //!< emmitted when the window Geometry changes.
 
     bool _inside_main_loop;
     bool _inside_timer_loop;
