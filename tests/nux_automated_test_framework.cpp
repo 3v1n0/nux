@@ -308,6 +308,36 @@ void NuxAutomatedTestFramework::ViewSendKeyCombo(KeySym modsym0, KeySym modsym1,
   XTestGrabControl(display_, False);  
 }
 
+void NuxAutomatedTestFramework::ViewSendCtrlA()
+{
+  ViewSendKeyCombo(XK_Control_L, 0, 0, 'a');
+}
+
+void NuxAutomatedTestFramework::ViewSendDelete()
+{
+  SendFakeKeyEvent(XK_Delete, 0);
+}
+
+void NuxAutomatedTestFramework::ViewSendBackspace()
+{
+  SendFakeKeyEvent(XK_BackSpace, 0);  
+}
+
+void NuxAutomatedTestFramework::ViewSendEscape()
+{
+  SendFakeKeyEvent(XK_Escape, 0);  
+}
+
+void NuxAutomatedTestFramework::ViewSendTab()
+{
+  SendFakeKeyEvent(XK_Tab, 0);
+}
+
+void NuxAutomatedTestFramework::ViewSendReturn()
+{
+  SendFakeKeyEvent(XK_Return, 0);
+}
+
 void NuxAutomatedTestFramework::SendFakeKeyEvent(KeySym keysym, KeySym modsym)
 {
   KeyCode keycode = 0;

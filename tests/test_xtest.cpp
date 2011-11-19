@@ -103,17 +103,13 @@ void TestingThread(nux::NThread *thread, void *user_data)
   test.ViewSendMouseMotionToTopLeft(test_button->button_);
   test.ViewSendMouseMotionToTopRight(test_button->button_);
 
-  test.ViewSendChar('S');
-  test.ViewSendChar('A');
-  test.ViewSendChar('X');
-  test.ViewSendString("Nux Rules");
-  test.ViewSendKeyCombo(XK_Control_L, 0, 0, 'a');
+  test.ViewSendString("Nux");
 
   if (test.WhenDoneTerminateProgram())
   {
     wnd_thread->NuxMainLoopQuit();
   }
-  nuxDebugMsg("Exit system thread");
+  nuxDebugMsg("Exit testing thread");
 }
 
 int main(int argc, char **argv)

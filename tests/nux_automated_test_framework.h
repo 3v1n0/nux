@@ -46,6 +46,12 @@ public:
   void ViewSendChar(const char c);
   void ViewSendString(const std::string &str);
   void ViewSendKeyCombo(KeySym modsym0, KeySym modsym1, KeySym modsym2, const char c);
+  void ViewSendCtrlA();
+  void ViewSendDelete();
+  void ViewSendBackspace();
+  void ViewSendEscape();
+  void ViewSendTab();
+  void ViewSendReturn();
 
 
   void SendFakeMouseEvent(int mouse_button_index, bool pressed);
