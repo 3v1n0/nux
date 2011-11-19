@@ -23,35 +23,15 @@
 #include "Nux/HLayout.h"
 #include "Nux/WindowThread.h"
 #include "Nux/TextEntry.h"
+#include "nux_test_framework.h"
 
 
-class NuxTestFramework
+NuxTestFramework::NuxTestFramework(const char* program_name,
+  int window_width,
+  int window_height,
+  int program_life_span)
 {
-public:
-  NuxTestFramework(const char* program_name, int window_width, int window_height, int program_life_span);
-  virtual ~NuxTestFramework();
-
-  virtual void Startup();
-  virtual void UserInterfaceSetup();
-  virtual void Run();
-
-public:
-  std::string program_name_;
-  int program_life_span_;                  //!< The program will auto-terminate after a delay in milliseconds.
-  nux::TimeOutSignal *timeout_signal_;
-
-  nux::WindowThread *window_thread_;
-
-  int window_width_;
-  int window_height_;
-
-private:
-  void ProgramExitCall(void *data);
-};
-
-
-NuxTestFramework::NuxTestFramework(const char* program_name, int window_width, int window_height, int program_life_span)
-{
+  ready_to_go_ = false;
   window_width_ = window_width;
   window_height_ = window_height;
 
@@ -83,20 +63,22 @@ void NuxTestFramework::Startup()
 {
   nux::NuxInitialize(0);
   window_thread_ = nux::CreateGUIThread(program_name_.c_str(), window_width_, window_height_, NULL, NULL, NULL);
+
+  window_thread_->window_configuration.connect(sigc::mem_fun(this, &NuxTestFramework::WaitForConfigureEvent));
 }
 
 void NuxTestFramework::UserInterfaceSetup()
 {
-  nux::VLayout *MainVLayout = new nux::VLayout(NUX_TRACKER_LOCATION);
-  nux::TextEntry *text_entry_0 = new nux::TextEntry(TEXT("0123456789abcdefghij"), NUX_TRACKER_LOCATION);
+  // nux::VLayout *MainVLayout = new nux::VLayout(NUX_TRACKER_LOCATION);
+  // nux::TextEntry *text_entry_0 = new nux::TextEntry(TEXT("0123456789abcdefghij"), NUX_TRACKER_LOCATION);
 
-  MainVLayout->AddView(text_entry_0, 0, nux::eCenter, nux::eFull);
-  MainVLayout->SetVerticalInternalMargin(10);
-  MainVLayout->SetContentDistribution(nux::eStackCenter);
+  // MainVLayout->AddView(text_entry_0, 0, nux::eCenter, nux::eFull);
+  // MainVLayout->SetVerticalInternalMargin(10);
+  // MainVLayout->SetContentDistribution(nux::eStackCenter);
 
-  nux::GetWindowThread()->SetLayout(MainVLayout);
-  nux::ColorLayer background(nux::Color(0xFF4D4D4D));
-  window_thread_->SetWindowBackgroundPaintLayer(&background);
+  // nux::GetWindowThread()->SetLayout(MainVLayout);
+  // nux::ColorLayer background(nux::Color(0xFF4D4D4D));
+  // window_thread_->SetWindowBackgroundPaintLayer(&background);
 }
 
 void NuxTestFramework::Run()
@@ -114,18 +96,34 @@ void NuxTestFramework::Run()
   window_thread_->Run(NULL);
 }
 
+bool NuxTestFramework::ReadyToGo()
+{
+  return window_thread_;
+}
+
+nux::WindowThread* NuxTestFramework::GetWindowThread()
+{
+  return window_thread_;
+}
+
 void NuxTestFramework::ProgramExitCall(void *data)
 {
   if (window_thread_)
-    window_thread_->TerminateThread();
+    window_thread_->NuxMainLoopQuit();
 }
 
-int main(int argc, char **argv)
+void NuxTestFramework::WaitForConfigureEvent(int x, int y, int width, int height)
 {
-    NuxTestFramework test("Text Entry", 300, 300, 3000);
-    test.Startup();
-    test.UserInterfaceSetup();
-    test.Run();
-
-    return 0;
+  ready_to_go_ = true;
 }
+
+
+// int main(int argc, char **argv)
+// {
+//     NuxTestFramework test("Text Entry", 300, 300, 3000);
+//     test.Startup();
+//     test.UserInterfaceSetup();
+//     test.Run();
+
+//     return 0;
+// }

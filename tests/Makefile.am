@@ -102,7 +102,7 @@ test_empty_window_CPPFLAGS = $(TestFlags)
 test_empty_window_LDADD = $(TestLibs)
 test_empty_window_LDFLAGS = -lpthread
 
-test_xtest_SOURCES = test_xtest.cpp
+test_xtest_SOURCES = test_xtest.cpp nux_test_framework.cpp nux_automated_test_framework.cpp
 
 test_xtest_CPPFLAGS = $(TestFlags)
 test_xtest_LDADD = $(TestLibs)

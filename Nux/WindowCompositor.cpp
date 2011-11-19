@@ -345,21 +345,6 @@ logging::Logger logger("nux.window");
     // mouse_owner_area_: the view that has the mouse down
     // mouse_over_area_: the view that is directly below the mouse pointer
 
-    if (event.e_event == NUX_MOUSE_RELEASED)
-    {
-      nuxDebugMsg("[WindowCompositor::MouseEventCycle] Mouse up event %d", event.GetEventButton());
-    }
-
-    if (event.e_event == NUX_MOUSE_PRESSED)
-    {
-      nuxDebugMsg("[WindowCompositor::MouseEventCycle] Mouse down event %d", event.GetEventButton());
-    }
-
-    if (event.e_event == NUX_MOUSE_MOVE)
-    {
-      //nuxDebugMsg("[WindowCompositor::MouseEventCycle] Mouse motion event");
-    }
-
     int dx = event.e_x - _mouse_position.x;
     int dy = event.e_y - _mouse_position.y;
 
@@ -909,16 +894,6 @@ logging::Logger logger("nux.window");
 
     InputArea* focus_area = NULL;   // The view under the mouse
     BaseWindow* base_window = NULL; // The BaseWindow below the mouse pointer.
-
-    if (event.e_event == NUX_KEYUP)
-    {
-      nuxDebugMsg("[WindowCompositor::KeyboardEventCycle] Key up event %s", event.GetText());
-    }
-
-    if (event.e_event == NUX_KEYDOWN)
-    {
-      nuxDebugMsg("[WindowCompositor::KeyboardEventCycle] Key down event %s", event.GetText());
-    }
 
     if (keyboard_event_grab_view)
     {

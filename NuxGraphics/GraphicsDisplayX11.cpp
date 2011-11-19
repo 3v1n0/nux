@@ -304,7 +304,7 @@ namespace nux
       _has_glx_13 = true;
     }
 
-    //_has_glx_13 = false; // force old way. this is temporary...
+    _has_glx_13 = false; // force old way. this is temporary...
  
     if (_has_glx_13 == false)
     {
@@ -1061,7 +1061,16 @@ namespace nux
   void GraphicsDisplay::MakeGLContextCurrent()
   {
 #ifndef NUX_OPENGLES_20
-    if (!glXMakeCurrent(m_X11Display, m_X11Window, m_GLCtx))
+    if (_has_glx_13)
+    {
+      nuxDebugMsg("Has glx 1.3");
+      if (!glXMakeContextCurrent(m_X11Display, glx_window_, glx_window_, m_GLCtx))
+      {
+        nuxDebugMsg("Destroy");
+        DestroyOpenGLWindow();
+      }
+    }
+    else if (!glXMakeCurrent(m_X11Display, m_X11Window, m_GLCtx))
     {
       DestroyOpenGLWindow();
     }
@@ -1105,7 +1114,10 @@ namespace nux
     if (glswap)
     {
 #ifndef NUX_OPENGLES_20
-      glXSwapBuffers(m_X11Display, m_X11Window);
+      if (_has_glx_13)
+        glXSwapBuffers(m_X11Display, glx_window_);
+      else
+        glXSwapBuffers(m_X11Display, m_X11Window);
 #else
       eglSwapBuffers(eglGetDisplay((EGLNativeDisplayType)m_X11Display), m_GLSurface);
 #endif
@@ -1771,7 +1783,7 @@ namespace nux
 
       case KeyPress:
       {
-        nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: KeyPress event.");
+        //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: KeyPress event.");
         KeyCode keycode = xevent.xkey.keycode;
         KeySym keysym = NoSymbol;
         keysym = XKeycodeToKeysym(xevent.xany.display, keycode, 0);
@@ -1807,7 +1819,7 @@ namespace nux
 
       case KeyRelease:
       {
-        nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: KeyRelease event.");
+        //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: KeyRelease event.");
         KeyCode keycode = xevent.xkey.keycode;
         KeySym keysym = NoSymbol;
         keysym = XKeycodeToKeysym(xevent.xany.display, keycode, 0);
