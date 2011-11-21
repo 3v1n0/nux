@@ -146,6 +146,12 @@ namespace nux
       return;
 
     label_font_size_ = point;
+    if (static_text_)
+    {
+      static_text_->SetTextPointSize(label_font_size_);
+      ComputeContentSize();
+      QueueDraw();
+    }
   }
 
   int AbstractButton::GetLabelFontSize() const

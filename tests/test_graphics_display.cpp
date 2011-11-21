@@ -35,7 +35,7 @@ int main(int argc, char **argv)
     nux::NuxInitialize(0);
     // When the GUI thread is created, it creates the GraphicsDisplay.
     nux::WindowThread* wt = nux::CreateGUIThread(TEXT("Graphics Display"),
-                                                 400, 300, 0, &ThreadWidgetInit, 0);
+                                                 300, 200, 0, &ThreadWidgetInit, 0);
 
     // Test to see if the variable in GraphicsDisplay is initialized
     int result = 1;
@@ -48,9 +48,6 @@ int main(int argc, char **argv)
     {
       std::cerr << "FAIL: GraphicsDisplay hasn't correctly initialized.\n";
     }
-
-    // Dont want to make the window pop up
-    //wt->Run(NULL);
 
     delete wt;
     return result;

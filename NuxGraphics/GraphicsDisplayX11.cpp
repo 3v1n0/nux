@@ -69,7 +69,6 @@ namespace nux
     , _x11_minor(0)
     , _glx_major(0)
     , _glx_minor(0)
-    , _has_glx_13(false)
     , m_X11RepeatKey(true)
     , m_ViewportSize(Size(0,0))
     , m_WindowSize(Size(0,0))
@@ -103,8 +102,11 @@ namespace nux
   {
     inlSetThreadLocalStorage(_TLS_GraphicsDisplay, this);
 
+    m_X11Display = NULL;
     m_GLCtx = 0;
     m_X11LastEvent.type = -1;
+    _has_glx_13 = false;
+    glx_window_ = 0;
 
     m_pEvent = new Event();
 
@@ -120,11 +122,28 @@ namespace nux
     NUX_SAFE_DELETE( m_DeviceFactory );
 
     if (m_CreatedFromForeignWindow == false)
+    {
       DestroyOpenGLWindow();
-
+    }
+    
     NUX_SAFE_DELETE( m_pEvent );
-
     inlSetThreadLocalStorage(_TLS_GraphicsDisplay, 0);
+  }
+
+  int GraphicsDisplay::X11ErrorHandler(Display *display, XErrorEvent *error)
+  {
+    if (error->display == NULL)
+      return 0;
+
+    static char str_buffer[256];
+
+    XGetErrorText(error->display, error->error_code, str_buffer, 256);
+    nuxDebugMsg("[GraphicsDisplay::X11ErrorHandler] X Error of failed request: %s", str_buffer);
+    nuxDebugMsg("[GraphicsDisplay::X11ErrorHandler] Major opcode of failed request: %s", error->request_code);
+    nuxDebugMsg("[GraphicsDisplay::X11ErrorHandler] Minor opcode of failed request: %s", error->minor_code);
+    nuxDebugMsg("[GraphicsDisplay::X11ErrorHandler] Serial number of failed request: %s", error->serial);
+
+    return 0;
   }
 
   NString GraphicsDisplay::FindResourceLocation(const char *ResourceFileName, bool ErrorOnFail)
@@ -231,6 +250,8 @@ namespace nux
       return false;
     }
 
+    //XSetErrorHandler(X11ErrorHandler);
+
     m_X11Screen = DefaultScreen(m_X11Display);
     XF86VidModeQueryVersion(m_X11Display, &_x11_major, &_x11_minor);
     XineramaQueryVersion(m_X11Display, &xinerama_major, &xinerama_minor);
@@ -319,30 +340,70 @@ namespace nux
     }
     else
     {
-        static int DoubleBufferAttributes[] =
+        int DoubleBufferAttributes[] =
         {
           //GLX_X_RENDERABLE, True,
           GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
           GLX_RENDER_TYPE,   GLX_RGBA_BIT,
-          //GLX_X_VISUAL_TYPE, GLX_TRUE_COLOR,
+          GLX_X_VISUAL_TYPE, GLX_TRUE_COLOR,
           GLX_DOUBLEBUFFER,  True,
           GLX_RED_SIZE,      8,     /* the maximum number of bits per component    */
           GLX_GREEN_SIZE,    8, 
           GLX_BLUE_SIZE,     8,
-          //GLX_ALPHA_SIZE,    8,
-          //GLX_DEPTH_SIZE,    24,
-          //GLX_STENCIL_SIZE,  8,
+          GLX_ALPHA_SIZE,    8,
+          GLX_DEPTH_SIZE,    24,
+          GLX_STENCIL_SIZE,  8,
           None
         };
 
-        //XSetWindowAttributes  swa;
-        GLXFBConfig           *fbconfigs;
-        //GLXContext            context;
-        //GLXWindow             glxWin;
-        int                   fbcount;
+        GLXFBConfig *fbconfigs = NULL;
+        int         fbcount;
+
+        #define GET_PROC(proc_type, proc_name, check)       \
+        do                                                  \
+        {                                                   \
+          proc_name = (proc_type) glXGetProcAddress((const GLubyte *) #proc_name); \
+        } while (0)
+
+        // /* GLX 1.0 */
+        // GET_PROC(GLXCREATECONTEXTPROC,            glXCreateContext, true);
+        // GET_PROC(GLXDESTROYCONTEXTPROC,           glXDestroyContext, true);
+        // GET_PROC(GLXMAKECURRENTPROC,              glXMakeCurrent, true);
+        // GET_PROC(GLXSWAPBUFFERSPROC,              glXSwapBuffers, true);
+        // GET_PROC(GLXCREATEGLXPIXMAPPROC,          glXCreateGLXPixmap, true);
+        // GET_PROC(GLXDESTROYGLXPIXMAPPROC,         glXDestroyGLXPixmap, true);
+        // GET_PROC(GLXQUERYVERSIONPROC,             glXQueryVersion, true);
+        // GET_PROC(GLXGETCONFIGPROC,                glXGetConfig, true);
+        // GET_PROC(GLXWAITGLPROC,                   glXWaitGL, true);
+        // GET_PROC(GLXWAITXPROC,                    glXWaitX, true);
+        
+        // /* GLX 1.1 */
+        // GET_PROC(GLXQUERYEXTENSIONSSTRINGPROC,    glXQueryExtensionsString, true);
+        // GET_PROC(GLXQUERYSERVERSTRINGPROC,        glXQueryServerString, true);
+        // GET_PROC(GLXGETCLIENTSTRINGPROC,          glXGetClientString, true);
+        
+        /* GLX 1.3 */
+        GET_PROC(PFNGLXGETFBCONFIGSPROC,              glXGetFBConfigs, false);
+        GET_PROC(PFNGLXGETFBCONFIGATTRIBPROC,         glXGetFBConfigAttrib, false);
+        GET_PROC(PFNGLXGETVISUALFROMFBCONFIGPROC,     glXGetVisualFromFBConfig, false);
+        GET_PROC(PFNGLXCREATEWINDOWPROC,              glXCreateWindow, false);
+        GET_PROC(PFNGLXDESTROYWINDOWPROC,             glXDestroyWindow, false);
+        GET_PROC(PFNGLXCREATEPIXMAPPROC,              glXCreatePixmap, false);
+        GET_PROC(PFNGLXDESTROYPIXMAPPROC,             glXDestroyPixmap, false);
+        GET_PROC(PFNGLXCREATEPBUFFERPROC,             glXCreatePbuffer, false);
+        GET_PROC(PFNGLXDESTROYPBUFFERPROC,            glXDestroyPbuffer, false);
+        GET_PROC(PFNGLXCREATENEWCONTEXTPROC,          glXCreateNewContext, false);
+        GET_PROC(PFNGLXMAKECONTEXTCURRENTPROC,        glXMakeContextCurrent, false);
+        GET_PROC(PFNGLXCHOOSEFBCONFIGPROC,            glXChooseFBConfig, false);
+        
+        /* GLX_SGIX_pbuffer */
+        GET_PROC(PFNGLXCREATEGLXPBUFFERSGIXPROC,      glXCreateGLXPbufferSGIX, false);
+        GET_PROC(PFNGLXDESTROYGLXPBUFFERSGIXPROC,     glXDestroyGLXPbufferSGIX, false);
+        #undef GET_PROC
+
 
         // Request a double buffer configuration
-        fbconfigs = glXChooseFBConfig(m_X11Display, DefaultScreen(m_X11Display), DoubleBufferAttributes, &fbcount );
+        fbconfigs = glXChooseFBConfig(m_X11Display, DefaultScreen(m_X11Display), DoubleBufferAttributes, &fbcount);
 
         if (fbconfigs == NULL)
         {
@@ -350,28 +411,45 @@ namespace nux
           return false;
         }
 
-        // Select the best config
-        int best_fbc = -1, worst_fbc = -1, best_num_samp = -1, worst_num_samp = 999;
-        for (int i = 0; i < fbcount; i++)
+        // Select best multi-sample config.
+        if ((_glx_major >= 1) && (_glx_minor >= 4))
         {
-          XVisualInfo *vi = glXGetVisualFromFBConfig(m_X11Display, fbconfigs[i]);
-          if (vi)
+          int best_fbc = -1, worst_fbc = -1, best_num_samp = -1, worst_num_samp = 999;
+          for (int i = 0; i < fbcount; i++)
           {
-            int samp_buf, samples;
-            glXGetFBConfigAttrib(m_X11Display, fbconfigs[i], GLX_SAMPLE_BUFFERS, &samp_buf);
-            glXGetFBConfigAttrib(m_X11Display, fbconfigs[i], GLX_SAMPLES       , &samples);
+            XVisualInfo *vi = glXGetVisualFromFBConfig(m_X11Display, fbconfigs[i]);
+            if (vi)
+            {
+              int sample_buf, samples;
+              glXGetFBConfigAttrib(m_X11Display, fbconfigs[i], GLX_SAMPLE_BUFFERS, &sample_buf);
+              glXGetFBConfigAttrib(m_X11Display, fbconfigs[i], GLX_SAMPLES       , &samples);
 
-            nuxDebugMsg("Matching fbconfig %d, visual ID 0x%2x: SAMPLE_BUFFERS = %d SAMPLES = %d\n", i, vi->visualid, samp_buf, samples);
+              //nuxDebugMsg("Matching fbconfig %d, visual ID 0x%2x: SAMPLE_BUFFERS = %d SAMPLES = %d\n", i, vi->visualid, sample_buf, samples);
 
-            if (((best_fbc < 0) || samp_buf) && (samples > best_num_samp))
-              best_fbc = i, best_num_samp = samples;
-            if ((worst_fbc < 0) || (!samp_buf) || (samples < worst_num_samp))
-              worst_fbc = i, worst_num_samp = samples;
+              if (((best_fbc < 0) || sample_buf) && (samples > best_num_samp))
+              {
+                best_fbc = i;
+                best_num_samp = samples; 
+              }
+
+              if ((worst_fbc < 0) || (!sample_buf) || (samples < worst_num_samp))
+              {
+                worst_fbc = i;
+                worst_num_samp = samples;
+              }
+            }
+            XFree(vi);
           }
-          XFree(vi);
-        }
 
-        _fb_config = fbconfigs[best_fbc];
+          nuxAssertMsg(best_fbc >= 0, "[GraphicsDisplay::CreateOpenGLWindow] Invalid frame buffer config.");
+
+          _fb_config = fbconfigs[best_fbc];
+        }
+        else
+        {
+          // Choose the first one
+          _fb_config = fbconfigs[0];
+        }
 
         XFree(fbconfigs);
 
@@ -542,7 +620,7 @@ namespace nux
     }
 
 #ifndef NUX_OPENGLES_20
-    if (0 /*_has_glx_13*/)
+    if (_has_glx_13)
     {
       XFree(m_X11VisualInfo);
       m_X11VisualInfo = 0;
@@ -550,9 +628,14 @@ namespace nux
       /* Create a GLX context for OpenGL rendering */
       m_GLCtx = glXCreateNewContext(m_X11Display, _fb_config, GLX_RGBA_TYPE, NULL, True);
 
+      if (m_GLCtx == 0)
+      {
+        nuxDebugMsg("[GraphicsDisplay::CreateOpenGLWindow] m_GLCtx is null");
+      }
+
       /* Create a GLX window to associate the frame buffer configuration
       ** with the created X window */
-      GLXWindow glxWin = glXCreateWindow(m_X11Display, _fb_config, m_X11Window, NULL );
+      glx_window_ = glXCreateWindow(m_X11Display, _fb_config, m_X11Window, NULL);
       
       // Map the window to the screen, and wait for it to appear */
       XMapWindow(m_X11Display, m_X11Window);
@@ -560,7 +643,7 @@ namespace nux
       XIfEvent(m_X11Display, &event, WaitForNotify, (XPointer) m_X11Window);
 
       /* Bind the GLX context to the Window */
-      glXMakeContextCurrent(m_X11Display, glxWin, glxWin, m_GLCtx);
+      glXMakeContextCurrent(m_X11Display, glx_window_, glx_window_, m_GLCtx);
     }
 #else
     m_GLSurface = eglCreateWindowSurface(dpy, config, (EGLNativeWindowType)m_X11Window, 0);
@@ -593,7 +676,7 @@ namespace nux
     m_DeviceFactory = new GpuDevice(m_ViewportSize.width, m_ViewportSize.height, BITFMT_R8G8B8A8,
         m_X11Display,
         m_X11Window,
-        0,
+        _has_glx_13,
         _fb_config,
         m_GLCtx,
         1, 0, false);
@@ -932,36 +1015,62 @@ namespace nux
 
   Rect GraphicsDisplay::GetWindowGeometry()
   {
-    XWindowAttributes attrib;
-    int status = XGetWindowAttributes(m_X11Display, m_X11Window, &attrib);
+    // Window rw;
+    // int x, y;
+    // unsigned int w, h, b, d;
+    // Window child_return;
 
-    if (status == 0)
-    {
-      nuxAssert("[GraphicsDisplay::GetWindowGeometry] Failed to get the window attributes.");
-      return Rect(0, 0, 0, 0);
-    }
+    // int status = XGetGeometry(m_X11Display, m_X11Window, &rw, &x, &y, &w, &h, &b, &d);
+    
+    // if (status == 0)
+    // {
+    //   nuxAssert("[GraphicsDisplay::GetWindowGeometry] Failed to get the window attributes.");
+    //   return Rect(0, 0, 0, 0);
+    // }    
+    
+    // XSync(m_X11Display, False);
 
-    return Rect(attrib.x, attrib.y, attrib.width, attrib.height);
+    // status = XTranslateCoordinates(m_X11Display, m_X11Window, RootWindow(m_X11Display, 0), x, y, &x, &y, &child_return);
+    
+    // if (status == 0)
+    // {
+    //   nuxAssert("[GraphicsDisplay::GetWindowGeometry] Failed to get the window attributes.");
+    //   return Rect(0, 0, 0, 0);
+    // }    
+
+    // XSync(m_X11Display, False);
+    return Rect(m_WindowPosition.x, m_WindowPosition.y, m_WindowSize.width, m_WindowSize.height);
   }
 
   Rect GraphicsDisplay::GetNCWindowGeometry()
   {
-    XWindowAttributes attrib;
-    int status = XGetWindowAttributes(m_X11Display, m_X11Window, &attrib);
+    // XWindowAttributes attrib;
+    // int status = XGetWindowAttributes(m_X11Display, m_X11Window, &attrib);
 
-    if (status == 0)
-    {
-      nuxAssert("[GraphicsDisplay::GetWindowGeometry] Failed to get the window attributes.");
-      return Rect(0, 0, 0, 0);
-    }
+    // if (status == 0)
+    // {
+    //   nuxAssert("[GraphicsDisplay::GetWindowGeometry] Failed to get the window attributes.");
+    //   return Rect(0, 0, 0, 0);
+    // }
 
-    return Rect(attrib.x, attrib.y, attrib.width, attrib.height);
+    // return Rect(attrib.x, attrib.y, attrib.width, attrib.height);
+
+    return Rect(m_WindowPosition.x, m_WindowPosition.y, m_WindowSize.width, m_WindowSize.height);
   }
 
   void GraphicsDisplay::MakeGLContextCurrent()
   {
 #ifndef NUX_OPENGLES_20
-    if (!glXMakeCurrent(m_X11Display, m_X11Window, m_GLCtx))
+    if (_has_glx_13)
+    {
+      nuxDebugMsg("Has glx 1.3");
+      if (!glXMakeContextCurrent(m_X11Display, glx_window_, glx_window_, m_GLCtx))
+      {
+        nuxDebugMsg("Destroy");
+        DestroyOpenGLWindow();
+      }
+    }
+    else if (!glXMakeCurrent(m_X11Display, m_X11Window, m_GLCtx))
     {
       DestroyOpenGLWindow();
     }
@@ -1005,7 +1114,10 @@ namespace nux
     if (glswap)
     {
 #ifndef NUX_OPENGLES_20
-      glXSwapBuffers(m_X11Display, m_X11Window);
+      if (_has_glx_13)
+        glXSwapBuffers(m_X11Display, glx_window_);
+      else
+        glXSwapBuffers(m_X11Display, m_X11Window);
 #else
       eglSwapBuffers(eglGetDisplay((EGLNativeDisplayType)m_X11Display), m_GLSurface);
 #endif
@@ -1037,6 +1149,11 @@ namespace nux
   {
     if (m_GfxInterfaceCreated == true)
     {
+      if (m_GLCtx == 0)
+      {
+        nuxDebugMsg("[GraphicsDisplay::DestroyOpenGLWindow] m_GLCtx is null");
+      }
+
       if (m_GLCtx)
       {
 #ifndef NUX_OPENGLES_20
@@ -1069,6 +1186,10 @@ namespace nux
         XF86VidModeSetViewPort(m_X11Display, m_X11Screen, 0, 0);
       }
 
+      glXDestroyWindow(m_X11Display, glx_window_);
+
+      XDestroyWindow(m_X11Display, m_X11Window);
+      XFreeColormap(m_X11Display, m_X11Colormap);
       XCloseDisplay(m_X11Display);
     }
 
@@ -1617,9 +1738,16 @@ namespace nux
         m_pEvent->width =  xevent.xconfigure.width;
         m_pEvent->height = xevent.xconfigure.height;
         m_WindowSize = Size(xevent.xconfigure.width, xevent.xconfigure.height);
-        m_WindowPosition = Point(xevent.xconfigure.x, xevent.xconfigure.y);
 
-        //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: ConfigureNotify event.");
+        Window rw;
+        int x, y;
+        unsigned int w, h, b, d;
+        Window child_return;
+
+        int status = XTranslateCoordinates(m_X11Display, m_X11Window, RootWindow(m_X11Display, 0), 0, 0, &x, &y, &child_return);
+        m_WindowPosition = Point(x, y);
+
+        //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: ConfigureNotify event. %d %d", x, y);
         break;
       }
 

@@ -176,6 +176,7 @@ namespace nux
 
   } MessageSeverity;
 
+#define nuxOkMsg(str, ...)        { nux::LogOutputSeverityMessage(nux::NUX_MSG_SEVERITY_INFO, str, ##__VA_ARGS__);}
 #define nuxWarningMsg(str, ...)   { nux::LogOutputSeverityMessage(nux::NUX_MSG_SEVERITY_WARNING, str, ##__VA_ARGS__);}
 #define nuxAlertMsg(str, ...)     { nux::LogOutputSeverityMessage(nux::NUX_MSG_SEVERITY_ALERT, str, ##__VA_ARGS__);}
 #define nuxCriticalMsg(str, ...)  { nux::LogOutputSeverityMessage(nux::NUX_MSG_SEVERITY_CRITICAL, str, ##__VA_ARGS__);}

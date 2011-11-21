@@ -390,7 +390,7 @@ namespace nux
     Matrix4 Get3DMatrix() const;
     bool Is3DArea() const;
 
-    //! Return the position of this object with regard to its top left corner of the physical window.
+    //! Return the position of this object with regard to the top left corner of the physical window.
     /*!
         Return the position of the Area inside the physical window.
         For the main layout set in WindowThread, The following functions are equivalent:
@@ -632,6 +632,8 @@ namespace nux
 
     bool                    _accept_mouse_wheel_event;
     bool                    _accept_keyboard_event;
+
+    WindowThread            *window_thread_;
 
     friend class Layout;
     friend class View;

@@ -78,8 +78,6 @@ namespace nux
 // This will become GLWindow
   class GraphicsDisplay : public GraphicSystem
   {
-    friend class GraphicsEngine;
-
   private:
     Display     *m_X11Display;
     int         m_X11Screen;
@@ -90,6 +88,7 @@ namespace nux
 #ifndef NUX_OPENGLES_20
     GLXContext  m_GLCtx;
     GLXFBConfig _fb_config;
+    GLXWindow   glx_window_;
 #else
     EGLContext  m_GLCtx;
     EGLSurface  m_GLSurface;
@@ -436,7 +435,11 @@ namespace nux
     GLEWContext m_GLEWContext;
     GLXEWContext m_GLXEWContext;
 #endif
+
+    static int X11ErrorHandler(Display *display, XErrorEvent *error);
+
     friend class DisplayAccessController;
+    friend class GraphicsEngine;
   };
 
 }

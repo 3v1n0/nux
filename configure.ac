@@ -200,6 +200,11 @@ AS_IF([test "x$enable_tests" = "xyes"],
                        [],
                        [AC_MSG_ERROR([you are missing google-mock, apt-get install google-mock])])
        AC_LANG_POP([C++])
+
+       #Check for libxtst
+       AC_CHECK_HEADER([X11/extensions/XTest.h],
+                       [],
+                       [AC_MSG_ERROR([you are missing libxtst-dev, apt-get install libxtst-dev])])
       ]
 )
 AM_CONDITIONAL(BUILD_TESTS, [test "x$enable_tests" = "xyes"])
