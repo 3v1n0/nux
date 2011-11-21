@@ -412,3 +412,14 @@ void NuxAutomatedTestFramework::SendFakeMouseMotionEvent(int x, int y, int ms_de
   XSync(display_, False);
 }
 
+void NuxAutomatedTestFramework::TestReportMsg(bool b, const char* msg)
+{
+  if (b)
+  {
+    nuxOkMsg("%s: %s", msg, "Ok");
+  }
+  else
+  {
+    nuxAlertMsg("%s: %s", msg, "Failed");
+  }  
+}

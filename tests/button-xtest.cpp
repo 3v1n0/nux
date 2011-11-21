@@ -35,7 +35,11 @@ public:
 
   virtual void UserInterfaceSetup();
 
+  void ButtonClick(nux::Button *button);
+  void ResetEvents();
   nux::Button *button_;
+
+  bool clicked_;
 };
 
 TestButton::TestButton(const char *program_name,
@@ -44,12 +48,26 @@ TestButton::TestButton(const char *program_name,
   int program_life_span)
   : NuxTestFramework(program_name, window_width, window_height, program_life_span)
 {
+  ResetEvents();
   button_ = NULL;
 }
 
 TestButton::~TestButton()
 {
   
+}
+
+void TestButton::ResetEvents()
+{
+  clicked_ = false;
+}
+
+void TestButton::ButtonClick(nux::Button *button)
+{
+  if (button_ == button)
+  {
+    clicked_ = true;
+  }
 }
 
 void TestButton::UserInterfaceSetup()
@@ -62,12 +80,13 @@ void TestButton::UserInterfaceSetup()
   main_layout->SetVerticalInternalMargin(10);
   main_layout->SetContentDistribution(nux::MAJOR_POSITION_CENTER);
 
+  button_->click.connect(sigc::mem_fun(this, &TestButton::ButtonClick));
+
   static_cast<nux::WindowThread*>(window_thread_)->SetLayout(main_layout);
   
   nux::ColorLayer background(nux::Color(0xFF4D4D4D));
   static_cast<nux::WindowThread*>(window_thread_)->SetWindowBackgroundPaintLayer(&background);
 }
-
 
 TestButton *test_button = NULL;
 
@@ -87,23 +106,22 @@ void TestingThread(nux::NThread *thread, void *user_data)
 
   test.Startup();
 
+  test.TestReportMsg(test_button->button_, "Button created");
+
+  test_button->ResetEvents();
   test.ViewSendMouseMotionToCenter(test_button->button_);
   test.ViewSendMouseClick(0, 1);
 
-  test.SendFakeKeyEvent(XK_N, 0);
-  test.SendFakeKeyEvent(XK_U, 0);
-  test.SendFakeKeyEvent(XK_X, 0);
+  nux::SleepForMilliseconds(1000);
+  test.TestReportMsg(test_button->clicked_, "Button clicked");
 
   test.ViewSendMouseDrag(test_button->button_, 1, 0, 0, 50, 50);
 
   test.ViewSendMouseMotionToCenter(test_button->button_);
-
   test.ViewSendMouseMotionToBottomRight(test_button->button_);
   test.ViewSendMouseMotionToBottomLeft(test_button->button_);
   test.ViewSendMouseMotionToTopLeft(test_button->button_);
   test.ViewSendMouseMotionToTopRight(test_button->button_);
-
-  test.ViewSendString("Nux");
 
   if (test.WhenDoneTerminateProgram())
   {
@@ -117,7 +135,7 @@ int main(int argc, char **argv)
   int xstatus = XInitThreads();
   nuxAssertMsg(xstatus > 0, "XInitThreads has failed");
 
-  test_button = new TestButton("Test Button", 300, 300, 20000);
+  test_button = new TestButton("Button XTest", 300, 300, 15000);
   test_button->Startup();
   test_button->UserInterfaceSetup();
 
@@ -133,3 +151,4 @@ int main(int argc, char **argv)
   //nuxDebugMsg("Exit program");
   return 0;
 }
+

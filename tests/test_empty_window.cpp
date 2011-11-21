@@ -42,12 +42,12 @@ void UserInterfaceInitialization(nux::NThread* thread, void* init_data)
 
 int main(int argc, char **argv)
 {
-  // // Initialize Nux subsystem
+  // Initialize Nux subsystem
   nux::NuxInitialize (0);
 
   // Create a Window thread
   nux::WindowThread* wt = nux::CreateGUIThread(
-    TEXT("Test"),
+    TEXT("Empty Window Test"),
     300,
     200,
     0,

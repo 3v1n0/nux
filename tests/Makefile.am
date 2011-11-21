@@ -4,7 +4,7 @@ check_PROGRAMS = \
   gtest-nux-core \
   test-graphics-display \
   test-empty-window \
-  test-xtest
+  button-xtest
 
 # Please keep alphabetical
 test_nux_SOURCES = \
@@ -102,14 +102,14 @@ test_empty_window_CPPFLAGS = $(TestFlags)
 test_empty_window_LDADD = $(TestLibs)
 test_empty_window_LDFLAGS = -lpthread
 
-test_xtest_SOURCES = test_xtest.cpp nux_test_framework.cpp nux_automated_test_framework.cpp
+button_xtest_SOURCES = button-xtest.cpp nux_test_framework.cpp nux_automated_test_framework.cpp
 
-test_xtest_CPPFLAGS = $(TestFlags)
-test_xtest_LDADD = $(TestLibs)
-test_xtest_LDFLAGS = -lpthread -lXtst
+button_xtest_CPPFLAGS = $(TestFlags)
+button_xtest_LDADD = $(TestLibs)
+button_xtest_LDFLAGS = -lpthread -lXtst
 
 #run make test as part of make check
-check-local: test gtest test2
+check-local: test gtest graphics_display_states empty_window button_xtest
 
 test:
 	@gtester --verbose -k -o=test-nux-results.xml ./test-nux
@@ -117,14 +117,14 @@ test:
 gtest: gtest-nux-core
 	./gtest-nux-core
 
-test0: test-graphics-display
+graphics_display_states: test-graphics-display
 	./test-graphics-display
 
-test1: test-empty-window
+empty_window: test-empty-window
 	./test-empty-window
 
-test2: test-xtest
-	./test-xtest
+button_xtest: button-xtest
+	./button-xtest
 
 check-report:
 	@gtester -k -o=test-nux-results.xml -k ./test-nux \
