@@ -23,6 +23,7 @@ Build-Depends: debhelper (>= 7.0.50~),
                libpcre3-dev,
                libpci-dev,
                libxinerama-dev,
+               libutouch-geis-dev,
 Standards-Version: 3.9.2
 Section: libs
 Homepage: http://launchpad.net/nux
