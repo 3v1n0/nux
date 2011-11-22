@@ -10,7 +10,7 @@
 # build documentation as I didn't find a proper way to avoid make clean to not
 # remove doc/
 override_dh_auto_configure:
-	dh_auto_configure -- --enable-documentation=yes --disable-tests
+	dh_auto_configure -- --enable-documentation=no --disable-tests
 
 override_dh_install:
 	rm debian/tmp/usr/lib/*la
