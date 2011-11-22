@@ -14,6 +14,7 @@ override_dh_auto_configure:
 
 override_dh_install:
 	rm debian/tmp/usr/lib/*la
+	rm -rf debian/usr/share/nux/gputests/
 	dh_install --fail-missing
 
 override_dh_auto_test:
