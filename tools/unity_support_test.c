@@ -720,8 +720,19 @@ int main (int argc, char* argv[]) {
 
   // Open a X11 connection and get the root window.
   display = XOpenDisplay (display_name);
-  if (display == NULL) {
-    results.error = strdup ("unable to open display");
+  
+  // Before doing anything with GLX, check that it is supported on the system.
+  Bool glx_supported = False;
+  int dummy0, dummy1;
+  if (display)
+    glx_supported = glXQueryExtension(display, &dummy0, &dummy1);
+
+  if (display == NULL || (glx_supported == False)) {
+    if (display == NULL)
+      results.error = strdup ("unable to open display");
+    else
+      results.error = strdup ("GLX is not available on the system");
+
     // exit with 5, to tell "it's not an error we should cache"
     results.result = 5;
   }
