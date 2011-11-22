@@ -109,7 +109,7 @@ button_xtest_LDADD = $(TestLibs)
 button_xtest_LDFLAGS = -lpthread -lXtst
 
 #run make test as part of make check
-check-local: test gtest graphics_display_states empty_window button_xtest
+check-local: test gtest test-apps
 
 test:
 	@gtester --verbose -k -o=test-nux-results.xml ./test-nux
@@ -117,13 +117,9 @@ test:
 gtest: gtest-nux-core
 	./gtest-nux-core
 
-graphics_display_states: test-graphics-display
+test-apps: test-graphics-display test-empty-window button-xtest
 	./test-graphics-display
-
-empty_window: test-empty-window
 	./test-empty-window
-
-button_xtest: button-xtest
 	./button-xtest
 
 check-report:

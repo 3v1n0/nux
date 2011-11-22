@@ -633,7 +633,7 @@ namespace nux
     bool                    _accept_mouse_wheel_event;
     bool                    _accept_keyboard_event;
 
-    WindowThread            *window_thread_;
+    WindowThread*           window_thread_;
 
     friend class Layout;
     friend class View;
