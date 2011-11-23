@@ -34,7 +34,15 @@ public:
   void Startup();
 
   //! Simulate a mouse click event on a view.
+  /*!
+      Move the mouse to the middle of the view (if it isn't there already) and perform a click event.
+  */  
   void ViewSendMouseClick(nux::View *view, int button);
+  //! Simulate a mouse double click event on a view.
+  /*!
+      Move the mouse to the middle of the view (if it isn't there already) and perform a double click event.
+  */  
+  void ViewSendMouseDoubleClick(nux::View *view, int button);
   //! Simulate a mouse down event on a view.
   void ViewSendMouseDown(nux::View *view, int button);
   //! Simulate a mouse up event on a view.
@@ -73,6 +81,8 @@ public:
   //! Simulate Return key.
   void ViewSendReturn();
 
+  //! Put the mouse pointer anywhere on the display.
+  void PutMouseAt(int x, int y);
 
   //! Simulate a mouse event.
   void SendFakeMouseEvent(int mouse_button_index, bool pressed);
@@ -107,9 +117,10 @@ private:
   int window_height_;
   bool terminate_when_test_over_;
 
-  static int mouse_motion_time_span;  // in seconds
-  static int mouse_click_time_span;  // in seconds
-  static int safety_border_inside_view;  // in pixels
+  static int mouse_motion_time_span;    // in milliseconds
+  static int mouse_click_time_span;     // in milliseconds
+  static int minimum_sleep_time;        // in milliseconds   
+  static int safety_border_inside_view; // in pixels
 };
 
 #endif // NUX_AUTOMATED_TEST_FRAMEWORK_H

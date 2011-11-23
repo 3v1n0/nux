@@ -24,9 +24,10 @@
 #include "nux_automated_test_framework.h"
 
 
-int NuxAutomatedTestFramework::mouse_motion_time_span = 1000;
-int NuxAutomatedTestFramework::mouse_click_time_span = 300;
-int NuxAutomatedTestFramework::safety_border_inside_view = 1;
+int NuxAutomatedTestFramework::mouse_motion_time_span = 1000; // milliseconds
+int NuxAutomatedTestFramework::mouse_click_time_span = 300;   // milliseconds
+int NuxAutomatedTestFramework::minimum_sleep_time = 600;      // milliseconds
+int NuxAutomatedTestFramework::safety_border_inside_view = 1; // pixels
 
 NuxAutomatedTestFramework::NuxAutomatedTestFramework(nux::WindowThread *window_thread)
 {
@@ -85,6 +86,34 @@ void NuxAutomatedTestFramework::ViewSendMouseClick(nux::View *view, int button)
   SendFakeMouseEvent(button, true);
   nux::SleepForMilliseconds(NuxAutomatedTestFramework::mouse_click_time_span);
   SendFakeMouseEvent(button, false);
+
+  XSync(display_, False);
+  nux::SleepForMilliseconds(NuxAutomatedTestFramework::minimum_sleep_time);
+}
+
+void NuxAutomatedTestFramework::ViewSendMouseDoubleClick(nux::View *view, int button)
+{
+  nux::Rect r;
+  if (view)
+  {
+    r = view->GetAbsoluteGeometry();
+    r.OffsetPosition(window_x_ + r.width/2, window_y_ + r.height/2);
+  }
+  else
+  {
+    r = window_thread_->GetWindow().GetWindowGeometry();
+    r.OffsetPosition(r.width/2, r.height/2);
+  }
+    
+  // Send the mouse to the center of the view
+  SendFakeMouseMotionEvent(r.x, r.y, NuxAutomatedTestFramework::mouse_motion_time_span);
+
+  XTestFakeButtonEvent(display_, button, true,  CurrentTime);
+  XTestFakeButtonEvent(display_, button, false,  CurrentTime);
+  XTestFakeButtonEvent(display_, button, true,  CurrentTime);
+  XTestFakeButtonEvent(display_, button, false,  CurrentTime);
+  XSync(display_, False);
+  nux::SleepForMilliseconds(NuxAutomatedTestFramework::minimum_sleep_time);
 }
 
 void NuxAutomatedTestFramework::ViewSendMouseDown(nux::View *view, int button)
@@ -112,7 +141,7 @@ void NuxAutomatedTestFramework::ViewSendMouseDown(nux::View *view, int button)
     int view_center_x = r.x + r.width/2;
     int view_center_y = r.y + r.height/2;
     SendFakeMouseMotionEvent(view_center_x, view_center_y, NuxAutomatedTestFramework::mouse_motion_time_span);
-    nux::SleepForMilliseconds(600);
+    nux::SleepForMilliseconds(minimum_sleep_time);
   }
   SendFakeMouseEvent(button, true);
 }
@@ -126,7 +155,7 @@ void NuxAutomatedTestFramework::ViewSendMouseUp(nux::View *view, int button)
   // int view_center_y = r.y + r.height/2;
 
   // SendFakeMouseMotionEvent(view_center_x, view_center_y, 1000);
-  // nux::SleepForMilliseconds(600);
+  // nux::SleepForMilliseconds(minimum_sleep_time);
   SendFakeMouseEvent(button, false);
 }
 
@@ -139,14 +168,14 @@ void NuxAutomatedTestFramework::ViewSendMouseDrag(nux::View *view, int button_in
 
   // Go to first point
   SendFakeMouseMotionEvent(r0.x, r0.y, NuxAutomatedTestFramework::mouse_motion_time_span);
-  nux::SleepForMilliseconds(600);
+  nux::SleepForMilliseconds(minimum_sleep_time);
   
   // Mouse down
   ViewSendMouseDown(view, button_index);
 
   // Drag to second point
   SendFakeMouseMotionEvent(r1.x, r1.y, NuxAutomatedTestFramework::mouse_motion_time_span);
-  nux::SleepForMilliseconds(600);
+  nux::SleepForMilliseconds(minimum_sleep_time);
 
   // Mouse up
   ViewSendMouseUp(view, button_index);
@@ -338,6 +367,12 @@ void NuxAutomatedTestFramework::ViewSendReturn()
   SendFakeKeyEvent(XK_Return, 0);
 }
 
+void NuxAutomatedTestFramework::PutMouseAt(int x, int y)
+{
+  XTestFakeMotionEvent(display_, XScreenNumberOfScreen(DefaultScreenOfDisplay(display_)), x, y, CurrentTime);  
+  XSync(display_, False);
+}
+
 void NuxAutomatedTestFramework::SendFakeKeyEvent(KeySym keysym, KeySym modsym)
 {
   KeyCode keycode = 0;
@@ -410,6 +445,7 @@ void NuxAutomatedTestFramework::SendFakeMouseMotionEvent(int x, int y, int ms_de
 
   XTestFakeMotionEvent(display_, XScreenNumberOfScreen(DefaultScreenOfDisplay(display_)), x, y, CurrentTime);  
   XSync(display_, False);
+  nux::SleepForMilliseconds(NuxAutomatedTestFramework::minimum_sleep_time);
 }
 
 void NuxAutomatedTestFramework::TestReportMsg(bool b, const char* msg)

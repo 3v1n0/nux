@@ -39,23 +39,25 @@ namespace nux
 {
   EventToNameStruct EventToName[] =
   {
-    {NUX_NO_EVENT,               "NUX_NO_EVENT" },
-    {NUX_MOUSE_PRESSED,          "NUX_MOUSE_PRESSED" },
-    {NUX_MOUSE_RELEASED,         "NUX_MOUSE_RELEASED" },
-    {NUX_KEYDOWN,                "NUX_KEYDOWN" },
-    {NUX_KEYUP,                  "NUX_KEYUP" },
-    {NUX_MOUSE_MOVE,             "NUX_MOUSE_MOVE" },
-    {NUX_SIZE_CONFIGURATION,     "NUX_SIZE_CONFIGURATION" },
-    {NUX_WINDOW_CONFIGURATION,   "NUX_WINDOW_CONFIGURATION" },
-    {NUX_WINDOW_MAP,             "NUX_WINDOW_MAP" },
-    {NUX_WINDOW_UNMAP,           "NUX_WINDOW_UNMAP" },
-    {NUX_WINDOW_ENTER_FOCUS,     "NUX_WINDOW_ENTER_FOCUS" },
-    {NUX_WINDOW_EXIT_FOCUS,      "NUX_WINDOW_EXIT_FOCUS" },
-    {NUX_WINDOW_DIRTY,           "NUX_WINDOW_DIRTY" },
-    {NUX_WINDOW_MOUSELEAVE,      "NUX_WINDOW_MOUSELEAVE" },
-    {NUX_TERMINATE_APP,          "NUX_TERMINATE_APP" },
-    {NUX_TAKE_FOCUS,             "NUX_TAKE_FOCUS" }
+    {NUX_NO_EVENT,               "NO_EVENT" },
+    {NUX_MOUSE_PRESSED,          "MOUSE_PRESSED" },
+    {NUX_MOUSE_RELEASED,         "MOUSE_RELEASED" },
+    {NUX_KEYDOWN,                "KEYDOWN" },
+    {NUX_KEYUP,                  "KEYUP" },
+    {NUX_MOUSE_MOVE,             "MOUSE_MOVE" },
+    {NUX_SIZE_CONFIGURATION,     "SIZE_CONFIGURATION" },
+    {NUX_WINDOW_CONFIGURATION,   "WINDOW_CONFIGURATION" },
+    {NUX_WINDOW_MAP,             "WINDOW_MAP" },
+    {NUX_WINDOW_UNMAP,           "WINDOW_UNMAP" },
+    {NUX_WINDOW_ENTER_FOCUS,     "WINDOW_ENTER_FOCUS" },
+    {NUX_WINDOW_EXIT_FOCUS,      "WINDOW_EXIT_FOCUS" },
+    {NUX_WINDOW_DIRTY,           "WINDOW_DIRTY" },
+    {NUX_WINDOW_MOUSELEAVE,      "WINDOW_MOUSELEAVE" },
+    {NUX_TERMINATE_APP,          "TERMINATE_APP" },
+    {NUX_TAKE_FOCUS,             "TAKE_FOCUS" }
   };
+
+  const int GraphicsDisplay::double_click_time_delay = 400; // milliseconds
 
   GraphicsDisplay::GraphicsDisplay()
     : m_X11Display(NULL)
@@ -78,6 +80,8 @@ namespace nux
     , m_ScreenBitDepth(32)
     , m_GfxInterfaceCreated(false)
     , m_BestMode(-1)
+    , last_click_time_(0)
+    , double_click_counter_(0)
     , m_CreatedFromForeignWindow(false)
     , m_num_device_modes(0)
     , m_pEvent(NULL)
@@ -1002,7 +1006,7 @@ namespace nux
     m_GfxInterfaceCreated = false;
   }
 
-  static int mouse_move(XEvent xevent, Event *m_pEvent)
+  int GraphicsDisplay::MouseMove(XEvent xevent, Event *m_pEvent)
   {
     // Erase mouse event and mouse doubleclick events. Keep the mouse states.
     unsigned int _mouse_state = m_pEvent->e_mouse_state & 0x0F000000;
@@ -1027,12 +1031,22 @@ namespace nux
     return 0;
   }
 
-  static int mouse_press(XEvent xevent, Event *m_pEvent)
+  int GraphicsDisplay::MousePress(XEvent xevent, Event *m_pEvent)
   {
     // Erase mouse event and mouse double-click events. Keep the mouse states.
     ulong _mouse_state = m_pEvent->e_mouse_state & 0x0F000000;
 
-    m_pEvent->e_event = NUX_MOUSE_PRESSED;
+    Time current_time = xevent.xbutton.time;
+    if ((double_click_counter_ == 1) && (current_time - last_click_time_ < double_click_time_delay))
+    {
+      m_pEvent->e_event = NUX_MOUSE_DOUBLECLICK;
+      double_click_counter_ = 0;
+    }
+    else
+    {
+      m_pEvent->e_event = NUX_MOUSE_PRESSED;
+      double_click_counter_ = 1;
+    }
 
     // State of the button before the event
     _mouse_state |= (xevent.xbutton.state & Button1Mask) ? NUX_STATE_BUTTON1_DOWN : 0;
@@ -1082,12 +1096,12 @@ namespace nux
     return 0;
   }
 
-  static int mouse_release(XEvent xevent, Event *m_pEvent)
+  int GraphicsDisplay::MouseRelease(XEvent xevent, Event *m_pEvent)
   {
     // Erase mouse event and mouse double-click events. Keep the mouse states.
     ulong _mouse_state = m_pEvent->e_mouse_state & 0x0F000000;
 
-    m_pEvent->e_event = NUX_MOUSE_RELEASED;
+    m_pEvent->e_event = NUX_MOUSE_RELEASED; 
 
     // State of the button before the event
     _mouse_state |= (xevent.xbutton.state & Button1Mask) ? NUX_STATE_BUTTON1_DOWN : 0;
@@ -1116,6 +1130,7 @@ namespace nux
     }
 
     m_pEvent->e_mouse_state = _mouse_state;
+    last_click_time_ = xevent.xbutton.time;
 
     return 0;
   }
@@ -1526,7 +1541,7 @@ namespace nux
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
         m_pEvent->e_key_modifiers = GetModifierKeyState(xevent.xkey.state);
-        mouse_press(xevent, m_pEvent);
+        MousePress(xevent, m_pEvent);
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: ButtonPress event.");
         break;
       }
@@ -1544,7 +1559,7 @@ namespace nux
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
         m_pEvent->e_key_modifiers = GetModifierKeyState(xevent.xkey.state);
-        mouse_release(xevent, m_pEvent);
+        MouseRelease(xevent, m_pEvent);
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: ButtonRelease event.");
         break;
       }
@@ -1562,7 +1577,7 @@ namespace nux
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
         m_pEvent->e_key_modifiers = GetModifierKeyState(xevent.xkey.state);
-        mouse_move(xevent, m_pEvent);
+        MouseMove(xevent, m_pEvent);
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: MotionNotify event.");
         break;
       }
@@ -1593,7 +1608,7 @@ namespace nux
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
         m_pEvent->e_key_modifiers = GetModifierKeyState(xevent.xkey.state);
-        mouse_move(xevent, m_pEvent);
+        MouseMove(xevent, m_pEvent);
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: EnterNotify event.");
         break;
       }
