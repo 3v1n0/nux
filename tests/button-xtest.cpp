@@ -135,7 +135,7 @@ int main(int argc, char **argv)
   int xstatus = XInitThreads();
   nuxAssertMsg(xstatus > 0, "XInitThreads has failed");
 
-  test_button = new TestButton("Button XTest", 300, 300, 15000);
+  test_button = new TestButton("Button XTest", 300, 300, 20000);
   test_button->Startup();
   test_button->UserInterfaceSetup();
 

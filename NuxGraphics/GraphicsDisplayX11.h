@@ -135,6 +135,9 @@ namespace nux
     int m_BestMode;
 
     bool m_CreatedFromForeignWindow;
+    Time last_click_time_;
+    static const int double_click_time_delay; // milliseconds
+    int double_click_counter_;
 
   public:
     typedef void(*GrabReleaseCallback) (bool replaced, void *user_data);
@@ -437,6 +440,10 @@ namespace nux
 #endif
 
     static int X11ErrorHandler(Display *display, XErrorEvent *error);
+
+    int MouseMove(XEvent xevent, Event *event);
+    int MousePress(XEvent xevent, Event *event);
+    int MouseRelease(XEvent xevent, Event *event);
 
     friend class DisplayAccessController;
     friend class GraphicsEngine;

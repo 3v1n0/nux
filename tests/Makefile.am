@@ -4,7 +4,8 @@ check_PROGRAMS = \
   gtest-nux-core \
   test-graphics-display \
   test-empty-window \
-  button-xtest
+  button-xtest \
+  mouse-events-test
 
 # Please keep alphabetical
 test_nux_SOURCES = \
@@ -108,6 +109,11 @@ button_xtest_CPPFLAGS = $(TestFlags)
 button_xtest_LDADD = $(TestLibs)
 button_xtest_LDFLAGS = -lpthread -lXtst
 
+mouse_events_test_SOURCES = mouse-events-test.cpp test-view.cpp nux_test_framework.cpp nux_automated_test_framework.cpp
+mouse_events_test_CPPFLAGS = $(TestFlags)
+mouse_events_test_LDADD = $(TestLibs)
+mouse_events_test_LDFLAGS = -lpthread -lXtst
+
 #run make test as part of make check
 check-local: test gtest test-apps
 
@@ -117,10 +123,11 @@ test:
 gtest: gtest-nux-core
 	./gtest-nux-core
 
-test-apps: test-graphics-display test-empty-window button-xtest
+test-apps: test-graphics-display test-empty-window button-xtest mouse-events-test
 	./test-graphics-display
 	./test-empty-window
 	./button-xtest
+	./mouse-events-test
 
 check-report:
 	@gtester -k -o=test-nux-results.xml -k ./test-nux \

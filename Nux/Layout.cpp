@@ -120,6 +120,24 @@ namespace nux
     bottom_padding_ = bottom < 0 ? 0 : bottom;
   }
 
+  void Layout::SetPadding(int padding)
+  {
+    top_padding_ = padding < 0 ? 0 : padding;
+    bottom_padding_ = top_padding_;
+    right_padding_ = top_padding_;
+    left_padding_ = top_padding_;
+  }
+
+  void Layout::SetPadding(int left_right_padding, int top_bottom_padding)
+  {
+    top_padding_ = top_bottom_padding < 0 ? 0 : top_bottom_padding;
+    bottom_padding_ = top_bottom_padding;
+
+    right_padding_ = left_right_padding < 0 ? 0 : left_right_padding;
+    left_padding_ = right_padding_;
+  }
+
+
   void Layout::SetPadding(int top, int right, int bottom, int left)
   {
     top_padding_ = top < 0 ? 0 : top;
