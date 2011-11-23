@@ -127,8 +127,6 @@ logging::Logger logger("nux.windows.thread");
 
     if (return_code == 0 && !window_thread->IsEmbeddedWindow())
     {
-      //g_source_destroy(source);
-      //g_source_unref(source);
       g_main_loop_quit(window_thread->m_GLibLoop);
     }
 
@@ -322,6 +320,7 @@ logging::Logger logger("nux.windows.thread");
   {
     bool repeat = false;
     TimeoutData* dd = NUX_STATIC_CAST(TimeoutData*, user_data);
+    unsigned int return_code = 1;
 
     dd->window_thread->_inside_timer_loop = true;
     repeat = GetTimer().ExecTimerHandler(dd->id)? true : false;
@@ -333,9 +332,14 @@ logging::Logger logger("nux.windows.thread");
     }
     else
     {
-      dd->window_thread->ExecutionLoop(0);
+      return_code = dd->window_thread->ExecutionLoop(0);
     }
     
+    if ((return_code == 0) && !dd->window_thread->IsEmbeddedWindow())
+    {
+      g_main_loop_quit(dd->window_thread->m_GLibLoop);
+    }
+
     if (!repeat)
       delete dd;
 
@@ -935,7 +939,7 @@ logging::Logger logger("nux.windows.thread");
       }
 #endif
 
-      if ((event.e_event ==	NUX_TERMINATE_APP) || (this->GetThreadState() == THREADSTOP))
+      if ((event.e_event == NUX_TERMINATE_APP) || (this->GetThreadState() == THREADSTOP))
       {
           return 0;
       }
@@ -1697,12 +1701,12 @@ logging::Logger logger("nux.windows.thread");
     _graphics_display->ProcessForeignX11Event(xevent, &nux_event);
 #endif
 
-    if (nux_event.e_event ==	NUX_TERMINATE_APP || (this->GetThreadState() == THREADSTOP))
+    if (nux_event.e_event == NUX_TERMINATE_APP || (this->GetThreadState() == THREADSTOP))
     {
       return false;
     }
 
-    if (nux_event.e_event ==	NUX_SIZE_CONFIGURATION)
+    if (nux_event.e_event == NUX_SIZE_CONFIGURATION)
       m_size_configuration_event = true;
 
     int w, h;

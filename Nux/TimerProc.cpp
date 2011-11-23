@@ -122,6 +122,11 @@ namespace nux
 
   bool TimerHandle::IsValid() const
   {
+    return Activated();
+  }
+
+  bool TimerHandle::Activated() const
+  {
     return m_d != 0;
   }
 
@@ -298,6 +303,13 @@ namespace nux
 // Sort timers and add them to the queue
   TimerObject *TimerHandler::AddHandle(TimerObject *timer_object)
   {
+    if (timer_object == NULL)
+      return NULL;
+
+    // Give the Timer a unique ID;
+    timer_object->uid = TimerUID.GetValue();
+    TimerUID.Increment();
+
     // If the queue is empty or the new timer will expire sooner than the first timer in the queue
     // then add the new timer at the start of the queue.
     if ((m_timer_object_queue == NULL) || TimeIsGreater(m_timer_object_queue->when, timer_object->when))
@@ -310,12 +322,9 @@ namespace nux
 
       timer_object->prev = 0;
       m_timer_object_queue = timer_object;
+
       return timer_object;
     }
-
-    // Give the Timer a unique ID;
-    timer_object->uid = TimerUID.GetValue();
-    TimerUID.Increment();
 
     TimerObject *tmp = m_timer_object_queue;
 
