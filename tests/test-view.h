@@ -45,19 +45,6 @@ protected:
   void OnMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags);
 
   void Draw(nux::GraphicsEngine &graphics_engine, bool force_draw);
-  void DrawTexture(nux::GraphicsEngine &graphics_engine, bool force_draw);
-  void DrawColor(nux::GraphicsEngine &graphics_engine, bool force_draw);
-
-private:
-  nux::ObjectPtr<nux::IOpenGLFrameBufferObject> fbo_;
-  nux::ObjectPtr<nux::IOpenGLBaseTexture> texture_;
-  nux::ObjectPtr<nux::IOpenGLBaseTexture> depth_texture_;
-
-  nux::ObjectPtr<nux::IOpenGLPixelShader>  fragment_shader_prog_;
-  nux::ObjectPtr<nux::IOpenGLVertexShader> vertex_shader_prog_;
-  nux::ObjectPtr<nux::IOpenGLShaderProgram> color_shader_prog_;
-  nux::ObjectPtr<nux::IOpenGLShaderProgram> texture_shader_prog_;
-  nux::ObjectPtr<nux::IOpenGLBaseTexture> image_texture_;
 };
 
 #endif // TEST_VIEW_H

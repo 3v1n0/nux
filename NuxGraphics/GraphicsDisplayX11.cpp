@@ -57,7 +57,7 @@ namespace nux
     {NUX_TAKE_FOCUS,             "TAKE_FOCUS" }
   };
 
-  const int GraphicsDisplay::double_click_time_delay = 400; // milliseconds
+  int GraphicsDisplay::double_click_time_delay = 400; // milliseconds
 
   GraphicsDisplay::GraphicsDisplay()
     : m_X11Display(NULL)
