@@ -727,8 +727,8 @@ int main (int argc, char* argv[]) {
   if (display)
     glx_supported = glXQueryExtension(display, &dummy0, &dummy1);
 
-  if (display == NULL || (glx_supported == False)) {
-    if (display == NULL)
+  if (!display || !glx_supported) {
+    if (!display)
       results.error = strdup ("unable to open display");
     else
       results.error = strdup ("GLX is not available on the system");
