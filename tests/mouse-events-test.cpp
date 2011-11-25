@@ -148,9 +148,7 @@ int main(int argc, char **argv)
 
   event_test->Run();
 
-  nuxDebugMsg("Exit Prog");
   delete test_thread;
-  nuxDebugMsg("Exit Prog");
   delete event_test;
 
   return 0;
