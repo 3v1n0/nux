@@ -135,6 +135,13 @@ namespace nux
     int m_BestMode;
 
     bool m_CreatedFromForeignWindow;
+    Time last_click_time_;
+    /*!
+        Maximum time allowed between the end of the last click (mouse up) and the next mouse down
+        to be considered as a double click event.
+    */
+    static int double_click_time_delay; 
+    int double_click_counter_;
 
   public:
     typedef void(*GrabReleaseCallback) (bool replaced, void *user_data);
@@ -436,7 +443,9 @@ namespace nux
     GLXEWContext m_GLXEWContext;
 #endif
 
-    static int X11ErrorHandler(Display *display, XErrorEvent *error);
+    int MouseMove(XEvent xevent, Event *event);
+    int MousePress(XEvent xevent, Event *event);
+    int MouseRelease(XEvent xevent, Event *event);
 
     friend class DisplayAccessController;
     friend class GraphicsEngine;
