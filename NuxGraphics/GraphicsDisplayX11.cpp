@@ -1036,10 +1036,11 @@ namespace nux
     // Erase mouse event and mouse double-click events. Keep the mouse states.
     ulong _mouse_state = m_pEvent->e_mouse_state & 0x0F000000;
 
+    bool double_click = false;
     Time current_time = xevent.xbutton.time;
     if ((double_click_counter_ == 1) && (current_time - last_click_time_ < double_click_time_delay))
     {
-      m_pEvent->e_event = NUX_MOUSE_DOUBLECLICK;
+      double_click = true;
       double_click_counter_ = 0;
     }
     else
@@ -1057,18 +1058,33 @@ namespace nux
     {
       if (xevent.xbutton.button == Button1)
       {
+        if (double_click)
+          m_pEvent->e_event = NUX_MOUSE_DOUBLECLICK;
+        else
+          m_pEvent->e_event = NUX_MOUSE_PRESSED;
+
         _mouse_state |= NUX_EVENT_BUTTON1_DOWN;
         _mouse_state |= NUX_STATE_BUTTON1_DOWN;
       }
 
       if (xevent.xbutton.button == Button2)
       {
+        if (double_click)
+          m_pEvent->e_event = NUX_MOUSE_DOUBLECLICK;
+        else
+          m_pEvent->e_event = NUX_MOUSE_PRESSED;
+
         _mouse_state |= NUX_EVENT_BUTTON2_DOWN;
         _mouse_state |= NUX_STATE_BUTTON2_DOWN;
       }
 
       if (xevent.xbutton.button == Button3)
       {
+        if (double_click)
+          m_pEvent->e_event = NUX_MOUSE_DOUBLECLICK;
+        else
+          m_pEvent->e_event = NUX_MOUSE_PRESSED;
+
         _mouse_state |= NUX_EVENT_BUTTON3_DOWN;
         _mouse_state |= NUX_STATE_BUTTON3_DOWN;
       }
@@ -1101,8 +1117,6 @@ namespace nux
     // Erase mouse event and mouse double-click events. Keep the mouse states.
     ulong _mouse_state = m_pEvent->e_mouse_state & 0x0F000000;
 
-    m_pEvent->e_event = NUX_MOUSE_RELEASED; 
-
     // State of the button before the event
     _mouse_state |= (xevent.xbutton.state & Button1Mask) ? NUX_STATE_BUTTON1_DOWN : 0;
     _mouse_state |= (xevent.xbutton.state & Button2Mask) ? NUX_STATE_BUTTON2_DOWN : 0;
@@ -1112,18 +1126,21 @@ namespace nux
     {
       if (xevent.xbutton.button == Button1)
       {
+        m_pEvent->e_event = NUX_MOUSE_RELEASED;
         _mouse_state |= NUX_EVENT_BUTTON1_UP;
         _mouse_state &= ~NUX_STATE_BUTTON1_DOWN;
       }
 
       if (xevent.xbutton.button == Button2)
       {
+        m_pEvent->e_event = NUX_MOUSE_RELEASED;
         _mouse_state |= NUX_EVENT_BUTTON2_UP;
         _mouse_state &= ~NUX_STATE_BUTTON2_DOWN;
       }
 
       if (xevent.xbutton.button == Button3)
       {
+        m_pEvent->e_event = NUX_MOUSE_RELEASED;
         _mouse_state |= NUX_EVENT_BUTTON3_UP;
         _mouse_state &= ~NUX_STATE_BUTTON3_DOWN;
       }
