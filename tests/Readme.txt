@@ -29,7 +29,7 @@ mouse_events_test:
 		- mouse move
 
 
-mouse_button_tests:
+mouse_buttons_tests:
 	Make sure that only mouse button 1, 2 and 3 generate mouse-down and mouse-up events.
 	The artificial button event 4, 5, 6... should not generate mouse-down or mouse-up events.
 
