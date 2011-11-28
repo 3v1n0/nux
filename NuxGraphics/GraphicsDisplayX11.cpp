@@ -1045,7 +1045,6 @@ namespace nux
     }
     else
     {
-      m_pEvent->e_event = NUX_MOUSE_PRESSED;
       double_click_counter_ = 1;
     }
 
