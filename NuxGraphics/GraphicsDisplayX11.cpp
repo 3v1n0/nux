@@ -1104,6 +1104,21 @@ namespace nux
         return 1;
       }
 
+      if (xevent.xbutton.button == 6)
+      {
+        _mouse_state |= NUX_EVENT_MOUSEWHEEL;
+        m_pEvent->e_event = NUX_MOUSE_WHEEL;
+        m_pEvent->e_wheeldelta = NUX_MOUSEWHEEL_DELTA;
+        return 1;
+      }
+
+      if (xevent.xbutton.button == 7)
+      {
+        _mouse_state |= NUX_EVENT_MOUSEWHEEL;
+        m_pEvent->e_event = NUX_MOUSE_WHEEL;
+        m_pEvent->e_wheeldelta = -NUX_MOUSEWHEEL_DELTA;
+        return 1;
+      }
     }
 
     m_pEvent->e_mouse_state = _mouse_state;

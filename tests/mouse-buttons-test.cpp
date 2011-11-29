@@ -132,6 +132,17 @@ void TestingThread(nux::NThread *thread, void *user_data)
   test.TestReportMsg(!button_event_test->test_view_->registered_mouse_down_, "Mouse button 5 down");
   test.TestReportMsg(!button_event_test->test_view_->registered_mouse_up_, "Mouse button 5 up");
 
+  // Mouse click with button 6
+  button_event_test->ResetEvents();
+  test.ViewSendMouseClick(button_event_test->test_view_, 6);
+  test.TestReportMsg(!button_event_test->test_view_->registered_mouse_down_, "Mouse button 6 down");
+  test.TestReportMsg(!button_event_test->test_view_->registered_mouse_up_, "Mouse button 6 up");
+
+  // Mouse click with button 7
+  button_event_test->ResetEvents();
+  test.ViewSendMouseClick(button_event_test->test_view_, 7);
+  test.TestReportMsg(!button_event_test->test_view_->registered_mouse_down_, "Mouse button 7 down");
+  test.TestReportMsg(!button_event_test->test_view_->registered_mouse_up_, "Mouse button 7 up");
 
   if (test.WhenDoneTerminateProgram())
   {
@@ -146,7 +157,7 @@ int main(int argc, char **argv)
   int xstatus = XInitThreads();
   nuxAssertMsg(xstatus > 0, "XInitThreads has failed");
 
-  button_event_test = new ButtonEventsTest("Events Test", 300, 300, 20000);
+  button_event_test = new ButtonEventsTest("Events Test", 300, 300, 30000);
   button_event_test->Startup();
   button_event_test->UserInterfaceSetup();
 
