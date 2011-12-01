@@ -1,4 +1,4 @@
-nux (1.16.0-0ubuntu2) UNRELEASED; urgency=low
+nux (1.16.0-0ubuntu2) precise; urgency=low
 
   * Don't build anymore the documentation and don't gputests files
   * debian/control:
