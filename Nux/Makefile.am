@@ -105,6 +105,7 @@ source_cpp = \
   $(srcdir)/WindowThread.cpp
 
 source_h = \
+  $(srcdir)/ABI.h \
   $(srcdir)/AbstractButton.h \
   $(srcdir)/AbstractCheckedButton.h \
   $(srcdir)/AbstractComboBox.h \
@@ -153,7 +154,7 @@ source_h = \
   $(srcdir)/Panel.h \
   $(srcdir)/PopUpWindow.h \
   $(srcdir)/RadioButton.h \
-  $(srcdir)/RadioButtonGroup.h \  
+  $(srcdir)/RadioButtonGroup.h \
   $(srcdir)/RangeValue.h \
   $(srcdir)/RangeValueInteger.h \
   $(srcdir)/Readme.txt \

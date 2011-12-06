@@ -17,8 +17,15 @@ m4_define([nux_major_version], [1])
 m4_define([nux_minor_version], [16])
 m4_define([nux_micro_version], [0])
 
-# Bump this when we break ABI
+# Bump this when we break API
 m4_define([nux_api_version], [1.0])
+
+# Bump this when we break ABI
+# Increase the number (to the current date) everytime you propose a branch that breaks the API or ABI
+# The number format is : year/month/day
+# e.g.: december 5th, 2011 is: 20111205
+# So far there is no provision for more than one break in a day.
+m4_define([nux_abi_version], [20111205])
 
 m4_define([nux_version],
           [nux_major_version.nux_minor_version.nux_micro_version])
@@ -63,11 +70,13 @@ NUX_MINOR_VERSION=nux_minor_version
 NUX_MICRO_VERSION=nux_micro_version
 NUX_VERSION=nux_version
 NUX_API_VERSION=nux_api_version
+NUX_ABI_VERSION=nux_abi_version
 AC_SUBST(NUX_MAJOR_VERSION)
 AC_SUBST(NUX_MINOR_VERSION)
 AC_SUBST(NUX_MICRO_VERSION)
 AC_SUBST(NUX_VERSION)
 AC_SUBST(NUX_API_VERSION)
+AC_SUBST(NUX_ABI_VERSION)
 
 m4_define([lt_current],
           [m4_eval(100 * nux_minor_version + nux_micro_version - nux_interface_age)])
@@ -312,6 +321,7 @@ AC_CONFIG_FILES([
   NuxGraphics/nux-graphics.pc
   Nux/Makefile
   Nux/nux.pc
+  Nux/ABI.h
   examples/Makefile
   tests/Makefile
   tools/Makefile
