@@ -11,6 +11,7 @@
 # remove doc/
 override_dh_auto_configure:
 	dh_auto_configure -- --enable-documentation=no --disable-tests
+	NUX_ABIVERSION := $(shell sed -rn 's/^\#define[[:space:]]+NUX_ABIVERSION[[:space:]]+//p' Nux/ABI.h )
 
 override_dh_install:
 	rm debian/tmp/usr/lib/*la
@@ -19,5 +20,5 @@ override_dh_install:
 
 override_dh_auto_test:
 
-override_dh_makeshlibs:
-	dh_makeshlibs -V 'libnux-1.0-0 (>= 1.8.0-0)'
+override_dh_gencontrol:
+	dh_gencontrol -- -Vnuxabiversion=$(NUX_ABIVERSION)

@@ -1,3 +1,13 @@
+nux (1.16.0-0ubuntu3) UNRELEASED; urgency=low
+
+  * debian/rules, debian/control:
+    - add nuxabiversion capability as upstream is breaking a lot the ABI
+      wasn't bumping the soname. Create a virtual package similar to what
+      we already do in compiz to ensure we dep on the right version.
+      Remove the makeshlibs override then as not needed anymore.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 06 Dec 2011 09:03:41 +0100
+
 nux (1.16.0-0ubuntu2) precise; urgency=low
 
   * Don't build anymore the documentation and don't gputests files
