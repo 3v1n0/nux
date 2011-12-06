@@ -48,6 +48,7 @@ Section: x11
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends}
+Replaces: libnux-1.0-common
 Description: Visual rendering toolkit for real-time applications - tools
  Nux is a graphical user interface toolkit for applications that mixes opengl
  hardware acceleration with high quality visual rendering.
@@ -81,7 +82,7 @@ Package: libnux-2.0-common
 Section: libs
 Architecture: all
 Depends: ${misc:Depends}
-Replaces: libnux-0.9-common, libnux-1.0-common
+Replaces: libnux-0.9-common
 Description: Visual rendering toolkit for real-time applications - common files
  Nux is a graphical user interface toolkit for applications that mixes opengl
  hardware acceleration with high quality visual rendering.

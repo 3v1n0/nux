@@ -1,4 +1,4 @@
-nux (2.0.0~-0ubuntu1) UNRELEASED; urgency=low
+nux (1.16.0-0ubuntu3) UNRELEASED; urgency=low
 
   * debian/rules, debian/control:
     - add nuxabiversion capability as upstream is breaking a lot the ABI
