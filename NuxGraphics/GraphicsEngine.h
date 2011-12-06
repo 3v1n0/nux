@@ -102,6 +102,9 @@ namespace nux
   };
 
   //! Rendering engine class
+  /*!
+      This is the object that renders the graphics primitives.
+  */
   class GraphicsEngine
   {
   public:

@@ -32,7 +32,6 @@
 
 namespace nux
 {
-
   class MenuPage;
   class PBuffer;
   class WindowThread;
@@ -42,14 +41,14 @@ namespace nux
   class PaintLayer;
   class Event;
 
+  //! A user interface composition class created by WindowThread.
   class WindowCompositor : public sigc::trackable
   {
   public:
     typedef ObjectWeakPtr<BaseWindow> WeakBaseWindowPtr;
 
-    WindowCompositor();
+    WindowCompositor(WindowThread *window_thread);
     ~WindowCompositor();
-
 
     //! Get the Geometry of the tooltip based on the BaseWindow that initiated it.
     Geometry GetTooltipGeometry() const;
@@ -580,6 +579,7 @@ namespace nux
     std::list<InputArea*> keyboard_grab_stack_;
 
   private:
+    WindowThread *window_thread_; //!< The WindowThread to which this object belongs.
 
     //! Perform some action before destruction.
     /*!

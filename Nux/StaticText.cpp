@@ -728,12 +728,12 @@ namespace nux
 
   void StaticText::RasterizeText(void* cairo_context, Color color)
   {
-    cairo_t* cairo_ctx = (cairo_t*) cairo_context;
+    cairo_t *cairo_ctx = (cairo_t*) cairo_context;
 
-    PangoLayout*          pango_layout  = NULL;
-    PangoFontDescription* font_desc     = NULL;
-    PangoContext*         pango_ctx     = NULL;
-    int                   dpi           = 96;
+    PangoLayout           *pango_layout  = NULL;
+    PangoFontDescription  *font_desc     = NULL;
+    PangoContext          *pango_ctx     = NULL;
+    int                   dpi            = 96;
 
     // Create layout.
     pango_layout = pango_cairo_create_layout(cairo_ctx);
@@ -760,7 +760,7 @@ namespace nux
     CairoFontOptions font_options;
     {
       cairo_font_options_set_antialias      (font_options, CAIRO_ANTIALIAS_DEFAULT);
-      cairo_font_options_set_subpixel_order(font_options, CAIRO_SUBPIXEL_ORDER_DEFAULT);
+      cairo_font_options_set_subpixel_order (font_options, CAIRO_SUBPIXEL_ORDER_DEFAULT);
       cairo_font_options_set_hint_style     (font_options, CAIRO_HINT_STYLE_DEFAULT);
       cairo_font_options_set_hint_metrics   (font_options, CAIRO_HINT_METRICS_ON);
       cairo_set_font_options(cairo_ctx, font_options);

@@ -97,6 +97,8 @@ private:
 
     bool DrawLine(double x0, double y0, double x1, double y1, double width, const Color &c);
 
+    void TranslateCoordinates(double dx, double dy);
+
     bool DrawFilledRect(double x, double y, double w, double h, const Color &c);
 
     bool DrawCanvas(double x, double y, CairoGraphics *cg);

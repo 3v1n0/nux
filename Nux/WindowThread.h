@@ -55,12 +55,15 @@ namespace nux
   typedef int(*EventInspector) (Area* area, Event* event, void* data);
 
   //! Main class of a Nux window app.
+  /*!
+      Each WindowThread runs in its own loop. There cannot be more than one WindowThread per system thread.
+  */
   class WindowThread: public AbstractThread
   {
     NUX_DECLARE_OBJECT_TYPE(WindowThread, AbstractThread);
   public:
-    WindowThread(const char *WindowTitle, unsigned int width, unsigned int height, AbstractThread *Parent, bool Modal);
-    ~WindowThread();
+    WindowThread(const char *WindowTitle, int width, int height, AbstractThread *Parent, bool Modal);
+    virtual ~WindowThread();
 
     //! Set the layout for this window thread.
     /*!
@@ -68,43 +71,28 @@ namespace nux
     */
     void SetLayout(Layout *layout);
 
-    void TerminateThread();
 
-    //! Start running the user interface
-    void RunUserInterface();
+    //! Start the WindowThread in the current Thread.
+    /*!
+        Run the main loop of the window. \n;
+        The function blocks until the the main loop is stopped.
+
+        @param ptr Reserved.
+    */
+    virtual int Run(void *ptr = NULL);
+
+    /*!
+        Start the user interface Window in it own thread. Start return immediately after the thread is created.
+    */
+    virtual ThreadState Start(void *ptr = NULL);
+
+    //! Exit from the WindowThread loop.
+    /*!
+        Exit the WindowThread loop.
+    */
+    void NuxMainLoopQuit();
 
     void ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw);
-
-    void SetWindowTitle(const char *WindowTitle)
-    {
-      m_WindowTitle = WindowTitle;
-    }
-
-    GraphicsDisplay &GetWindow() const
-    {
-      return *_graphics_display;
-    }
-
-    GraphicsEngine &GetGraphicsEngine() const
-    {
-      return *_graphics_display->GetGraphicsEngine();
-    }
-    
-    BasePainter &GetPainter() const
-    {
-      return *m_Painter;
-    }
-    
-    TimerHandler &GetTimerHandler() const
-    {
-      return *m_TimerHandler;
-    }
-
-    UXTheme& GetTheme() const;
-
-    void SetWindowSize(int width, int height);
-
-    void SetWindowBackgroundPaintLayer(AbstractPaintLayer *bkg);
 
     void RequestRedraw();
 
@@ -117,6 +105,62 @@ namespace nux
     void ClearDrawList();
 
     std::vector<Geometry> GetDrawList();
+
+
+
+    /*!
+        Get the graphics display (this is the physical window of this thread).
+        @return The graphics display.
+    */
+    GraphicsDisplay &GetGraphicsDisplay() const;
+
+    /*!
+        Get the graphics engine (this is the object that renders the graphics primitives).
+        @return The graphics display.
+    */
+    GraphicsEngine &GetGraphicsEngine() const;
+
+    /*!
+        Get the UI compositor (this is processes events and renders ui objects).
+        @return The UI compositor.
+    */
+    WindowCompositor& GetWindowCompositor() const;
+
+    /*!
+        Get the painter object.
+        @return The painter object.
+    */
+    BasePainter &GetPainter() const;
+
+    /*!
+        Get the timer manager.
+        @return The timer manager.
+    */
+    TimerHandler &GetTimerHandler() const;
+
+    /*!
+        Get the UI resource manager (load textures and other data for user interface rendering).
+        @param The ui resource manager.
+    */
+    UXTheme& GetTheme() const;
+
+    //! Set window size.
+    /*!
+        Set window size.
+
+        @param width Window width.
+        @param height Window height.
+    */
+    void SetWindowSize(int width, int height);
+
+    //! Set the background for the window.
+    /*!
+        Set the background for the window.
+
+        @param background_layer background layer.
+    */
+    void SetWindowBackgroundPaintLayer(AbstractPaintLayer *background_layer);
+
 
     // Layout
 
@@ -170,49 +214,41 @@ namespace nux
       return IsInsideLayoutCycle();
     }
 
-    bool IsWaitingforModalWindow()
-    {
-      return m_bWaitForModalWindow;
-    }
+    /*!
+        Return \i true while waiting for a modal window to return.
 
-    bool IsModalWindow()
-    {
-      return m_bWaitForModalWindow;
-    }
+        @return \i True while waiting for a modal window to return.
+    */
+    bool IsWaitingforModalWindow() const;
 
-    void SetWindowStyle(WindowStyle wstyle)
-    {
-      m_WindowStyle = wstyle;
-    }
+    /*!
+        Return \i true if this window is modal.
 
-    WindowStyle GetWindowStyle() const
-    {
-      return m_WindowStyle;
-    }
+        @return \i True if this window is modal.
+    */
+    bool IsModalWindow() const;
 
-    virtual ThreadState Start( void* arg = NULL );
+    /*!
+        Return true if this windowThread is embedded inside Compiz.
 
-    WindowCompositor& GetWindowCompositor()
-    {
-      return *m_window_compositor;
-    }
-    // should be private
-
-    float GetFrameRate() const;
-    unsigned int GetFrameCounter() const;
-    unsigned int GetFramePeriodeCounter() const;
-
+        @return True if embedded inside Compiz.
+    */
     bool IsEmbeddedWindow();
 
 #if defined(NUX_OS_WINDOWS)
-    bool ProcessForeignEvent(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, void *data);
+  bool ProcessForeignEvent(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, void *data);
 #elif defined(NUX_OS_LINUX)
     bool ProcessForeignEvent(XEvent *event, void *data);
 #endif
 
-    void RenderInterfaceFromForeignCmd(nux::Geometry *clip);
+    /*!
+        Render the interface. This command is send from the pluging when the window thread is embedded.
+        The clip region matches the surface of one single monitor screen, or a region inside that screen.
+        \sa IsEmbeddedWindow.
 
-    virtual unsigned int Run(void *);
+        @param clip Region of the display to render.
+    */
+    void RenderInterfaceFromForeignCmd(Geometry *clip);
 
     /*!
         Constructor-like function for the thread.
@@ -224,7 +260,7 @@ namespace nux
             - Painter
             - Compositor
             - Theme engine
-        After ThreadCtor is called, m_ThreadCtorCalled is set to true;
+        After ThreadCtor is called, thread_ctor_called_ is set to true;
     */
     virtual bool ThreadCtor();
 
@@ -239,12 +275,12 @@ namespace nux
             - Painter
             - Compositor
             - Theme engine
-        After ThreadCtor is called, m_ThreadCtorCalled is set to true;
-
-
+        After ThreadCtor is called, thread_ctor_called_ is set to true;
+        This function is called when Nux is embedded. \sa IsEmbeddedWindow.
     */
     virtual bool ThreadCtor(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext);
 #elif defined(NUX_OS_LINUX)
+#ifdef NUX_OPENGLES_20
     /*!
         Constructor-like function for the thread.
         Will be called by EntryPoint before executing the thread body.
@@ -255,23 +291,35 @@ namespace nux
             - Painter
             - Compositor
             - Theme engine
-        After ThreadCtor is called, m_ThreadCtorCalled is set to true;
+        After ThreadCtor is called, thread_ctor_called_ is set to true;
+        This function is called when Nux is embedded. \sa IsEmbeddedWindow.
     */
-
-#ifdef NUX_OPENGLES_20
     virtual bool ThreadCtor(Display *X11Display, Window X11Window, EGLContext OpenGLContext);
 #else
+    /*!
+        Constructor-like function for the thread.
+        Will be called by EntryPoint before executing the thread body.
+        For the main window, ThreadCtor is called in nux::CreateMainWindow.
+        ThreadCtor creates and initialize the following elements:
+            - Graphics Window(from the externally created window)
+            - Timer
+            - Painter
+            - Compositor
+            - Theme engine
+        After ThreadCtor is called, thread_ctor_called_ is set to true;
+        This function is called when Nux is embedded. \sa IsEmbeddedWindow.
+    */
     virtual bool ThreadCtor(Display *X11Display, Window X11Window, GLXContext OpenGLContext);
 #endif
-    Display *_x11display;
-    bool     _ownx11display;
+    Display *x11display_;
+    bool     ownx11display_;
 #endif
 
     /*!
         Destructor-like function for the thread.
         Will be called by EntryPoint after executing the thread body.
-        After ThreadDtor is called, m_ThreadDtorCalled is set to true.
-        ThreadDtor is also called in the destructor of the WindowThread but is protected by m_ThreadDtorCalled so it is not called twice.
+        After ThreadDtor is called, thread_dtor_called_ is set to true.
+        ThreadDtor is also called in the destructor of the WindowThread but is protected by thread_dtor_called_ so it is not called twice.
         In the case of the main window, ThreadDtor is called in the destructor of WindowThread.
     */
     virtual bool ThreadDtor();
@@ -288,16 +336,15 @@ namespace nux
     void AddTimeline(Timeline* timeline);
     void RemoveTimeline(Timeline* timeline);
     bool ProcessTimelines(GTimeVal *frame_time);
-    long _last_timeline_frame_time_sec;
-    long _last_timeline_frame_time_usec;
+    long last_timeline_frame_time_sec_;
+    long last_timeline_frame_time_usec_;
 
     void StartMasterClock();
     void StopMasterClock();
     /*!
         This pointer maybe set by the user in ThreadInitFunc and reused in ThreadExitFunc
     */
-    void *m_InitData;
-    void *m_ExitData;
+    //void *initialization_data_;
 
     sigc::signal<void> RedrawRequested;
     sigc::signal<void, int, int, int, int> window_configuration; //!< emmitted when the window Geometry changes.
@@ -305,9 +352,6 @@ namespace nux
     bool _inside_main_loop;
     bool _inside_timer_loop;
     bool _pending_wake_up_timer;
-
-    // quits the main loop.
-    void NuxMainLoopQuit();
 
     // Automation
 
@@ -438,8 +482,6 @@ namespace nux
     */
     void ReconfigureLayout();
 
-    //void SetModalWindow(bool b) {m_bIsModal = b;}
-
     /*!
         Suspend Win32 Mouse and Keyboard inputs for this window thread and its child thread that are also window(not SystemThread).
     */
@@ -451,20 +493,43 @@ namespace nux
     void DisableMouseKeyboardInput();
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+
+    /*!
+        Entire frame of goes through this function. It does the following:
+          * get the input events from the mouse, keyboard, touchpad
+          * processes the input events
+          * resizes views
+          * draw the frame
+        This function is called when there is an input event or when a timer has expired.
+
+        @param timer_id The id of the timer that has has expired.
+    */
     unsigned int ExecutionLoop(unsigned int timer_id);
 #else
+    /*!
+        Entire frame of goes through this function. It does the following:
+          * get the input events from the mouse, keyboard, touchpad
+          * processes the input events
+          * resizes views
+          * draw the frame
+        This function is called when there is an input event or when a timer has expired.
+
+        @param timer_id The id of the timer that has has expired.
+    */
     unsigned int ExecutionLoop();
 #endif
 
-    virtual ThreadState StartChildThread(NThread *thread, bool Modal);
-    virtual void AddChildThread(NThread *);
-    virtual void RemoveChildThread(NThread *);
-    virtual void ChildHasFinished(NThread *app);
-    virtual void TerminateAllChildThread();
+    virtual ThreadState StartChildThread(AbstractThread *thread, bool Modal);
+    virtual void AddChildThread(AbstractThread *);
+    virtual void RemoveChildThread(AbstractThread *);
+    virtual void ChildHasFinished(AbstractThread *app);
+    virtual void TerminateChildThreads();
+
     virtual ThreadState SuspendChildGraphics(WindowThread *app);
 
-    bool m_bWaitForModalWindow;
-    WindowThread *m_ModalWindowThread;
+    bool is_modal_window_;
+    bool wait_for_modal_window_;
+    WindowThread *modal_window_thread_;
 
     //typedef Loki::Functor< void, LOKI_TYPELIST_1(void*)   > ChildThreadExitCallback;
 
@@ -474,10 +539,18 @@ namespace nux
       std::list< sigc::signal<void, void *> > ChildThreadExitCallback;
     } ThreadInfo;
 
-    //std::list<NThread*> m_ChildThread;
+
     std::list< ThreadInfo * > m_ChildThreadInfo;
 
   private:
+    //! Execute the main loop of this thread.
+    /*!
+        Execute the main loop of this thread.
+
+        @return And exit code. 0 if there was no error.
+    */
+    int MainLoop();
+
     //! Custom callback to wake up the main thread and start the execution loop.
     /*!
         This function is executed when \i async_wake_up_signal_ expires. It doesn't do 
@@ -533,48 +606,54 @@ namespace nux
     bool _inside_layout_cycle;
 
     //! Set to true to schedule a compute cycle on the main layout.
-    bool _queue_main_layout;
-
-    float m_FrameRate;
-    unsigned int m_FrameCounter;
-    unsigned int m_FramePeriodeCounter;
-    float m_PeriodeTime;
+    bool queue_main_layout_;
 
     std::list<Timeline*> *_Timelines;
 
-    bool m_bFirstDrawPass;
-    unsigned int m_StartupWidth;
-    unsigned int m_StartupHeight;
-    NString m_WindowTitle;
+    bool first_pass_;                     //!< True when going through the ExecutionLoop for the first time.
+    unsigned int window_initial_width_;   //!< Window height at startup.
+    unsigned int window_initial_height_;  //!< Window width at startup.
+    std::string window_title_;            //!< Window title.
 
-    bool _draw_requested_to_host_wm;  //!< Flags signaling that a draw cycle has been requested to the host window manager.
-    Layout *_main_layout;
+    bool _draw_requested_to_host_wm;      //!< Flags signaling that a draw cycle has been requested to the host window manager.
+    Layout *main_layout_;
 
-    UXTheme         *m_Theme;
-    BasePainter     *m_Painter;
-    TimerHandler    *m_TimerHandler;
+    UXTheme         *theme_;
+    BasePainter     *painter_;
+    TimerHandler    *timer_manager_;
 
-    GraphicsDisplay *_graphics_display;
-    GraphicsEngine *m_GraphicsContext;
-    WindowCompositor *m_window_compositor;
+    //bool created_own_thread_;             //!< If true, create a system thread and run the window in it.
+    GraphicsDisplay *graphics_display_;
+    WindowCompositor *window_compositor_;
     std::list<NThread *> m_ThreadList;
     bool m_WidgetInitialized;
-    WindowStyle m_WindowStyle;
-    bool m_bIsModal;
+    WindowStyle window_style_;
+    
 
-    bool m_ThreadCtorCalled;	//!< True is the thread constructor has been called.
+    /*!
+        True if the thread constructor has been called.
+        This is a form of per-WindowThread reentry protection.
+    */
+    bool thread_ctor_called_;
 
-    bool m_ThreadDtorCalled;	//!< True is the thread destructor has been called.
+    /*!
+        True if the thread destructor has been called.
+        This is a form of per-WindowThread reentry protection.
+    */
+    bool thread_dtor_called_;
 
-    bool m_embedded_window;		//!< Flag to run the interface in embedded mode.
+    /*!
+        True when running Ubuntu Unity+Nux has a plugin of Compiz.
+    */
+    bool embedded_window_;
 
     /*!
         Record if there was a configuration nux_event(NUX_SIZE_CONFIGURATION) that requires a full redraw.
         Used in the case where event processing and rendering are decoupled(with foreign windows).
     */
-    bool m_size_configuration_event;
+    bool window_size_configuration_event_;
 
-    bool m_force_redraw;
+    bool force_rendering_;
 
     typedef struct _EventInspectorStorage
     {
@@ -596,39 +675,82 @@ namespace nux
     */
     std::map<int, EventInspectorStorage> _event_inspectors_map; //!< map of events inspectors
 
+    static const int MINIMUM_WINDOW_WIDTH;  //!< Minimum width allowed for a window.
+    static const int MINIMUM_WINDOW_HEIGHT; //!< Minimum height allowed for a window.
+
     friend class BasePainter;
     friend class SystemThread;
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-    GMainLoop *m_GLibLoop;
-    GMainContext *m_GLibContext;
+    GMainLoop *main_loop_glib_;
+    GMainContext *main_loop_glib_context_;
     friend gboolean nux_event_dispatch(GSource *source, GSourceFunc callback, gpointer user_data);
     friend gboolean nux_timeout_dispatch(gpointer user_data);
+    std::list<GSource*> child_window_list_;
 
     void InitGlibLoop();
+    void RunGlibLoop();
+    void StopGLibLoop();
+    void CleanupGlibLoop();
+    bool AddChildWindowGlibLoop(WindowThread* wnd_thread);
+
     unsigned int AddGLibTimeout(unsigned int duration);
 #endif
+
+    /*!
+        Add a timeout and return the timeout index.
+        This function is used internally by Nux.
+
+        @param timeout_delay Time laps before the timeout is fired.
+        @return An index for the timeout.
+    */
+    unsigned int AddTimeout(unsigned int timeout_delay);
+
     friend class TimerHandler;
 
     friend WindowThread *CreateGUIThread(const char *WindowTitle,
-                                          unsigned int width,
-                                          unsigned int height,
+                                          int width,
+                                          int height,
                                           WindowThread *Parent,
                                           ThreadUserInitFunc UserInitFunc,
                                           void *InitData);
 
+    friend WindowThread *CreateNuxWindow(const char *WindowTitle,
+      int width,
+      int height,
+      ThreadUserInitFunc UserInitFunc,
+      void *InitData);
+    
+    friend WindowThread *CreateSingleNuxWindow(const char *window_title,
+      int width,
+      int height,
+      WindowStyle window_border_style,
+      AbstractThread *parent,
+      bool modal,
+      ThreadUserInitFunc user_init_func,
+      void *data);
+
+    friend WindowThread *CreateThreadedNuxWindow(const char *window_title,
+      int width,
+      int height,
+      WindowStyle window_border_style,
+      AbstractThread *parent,
+      bool modal,
+      ThreadUserInitFunc user_init_func,
+      void *data);
+
     friend WindowThread *CreateWindowThread(WindowStyle WndStyle,
         const char *WindowTitle,
-        unsigned int width,
-        unsigned int height,
+        int width,
+        int height,
         WindowThread *Parent,
         ThreadUserInitFunc UserInitFunc,
         void *InitData);
 
     friend WindowThread *CreateModalWindowThread(WindowStyle WndStyle,
         const char *WindowTitle,
-        unsigned int width,
-        unsigned int height,
+        int width,
+        int height,
         WindowThread *Parent,
         ThreadUserInitFunc UserInitFunc,
         void *InitData);

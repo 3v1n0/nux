@@ -19,19 +19,20 @@
  *
  */
 
-
 #include "Nux.h"
 #include "AbstractThread.h"
 
 namespace nux
 {
+  class WindowThread;
+  class SystemThread;
 
   NUX_IMPLEMENT_OBJECT_TYPE(AbstractThread);
 
   AbstractThread::AbstractThread(AbstractThread *Parent)
-    :   m_Parent(Parent)
-    ,   m_UserInitFunc(0)
-    ,   m_UserExitFunc(0)
+    :   parent_(Parent)
+    ,   user_init_func_(NULL)
+    ,   user_exit_func_(NULL)
   {
 
   }
@@ -39,6 +40,48 @@ namespace nux
   AbstractThread::~AbstractThread()
   {
 
+  }
+
+  void AbstractThread::TerminateChildWindows()
+  {
+    std::list<AbstractThread*>::iterator it;
+
+    for (it = children_thread_list_.begin(); it != children_thread_list_.end(); it++)
+    {
+      if ((*it)->Type().IsObjectType(WindowThread::StaticObjectType))
+      {
+        // Terminate by shutting down the main loop
+        static_cast<WindowThread*>(*it)->NuxMainLoopQuit();
+      }
+    }
+  }
+
+  void AbstractThread::JoinChildThreads()
+  {
+#if defined(NUX_OS_WINDOWS)
+    size_t sz = children_thread_list_.size();
+
+    if (sz == 0)
+    {
+      return;
+    }
+
+    HANDLE *hdl = new HANDLE[sz];
+
+    int i = 0;
+    std::list<AbstractThread*>::iterator it;
+    for (it = children_thread_list_.begin(); it != children_thread_list_.end(); ++it, ++i)
+    {
+      hdl[i] = (*it)->GetThreadHandle();
+    }
+
+    unsigned int result = WaitForMultipleObjects(sz, hdl, FALSE, INFINITE);
+#else
+  //#error WindowThread::JoinChildThreads has not been implemented for this platform.
+  // Todo
+#endif
+
+    return;
   }
 
 }

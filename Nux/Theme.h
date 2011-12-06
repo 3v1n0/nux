@@ -127,6 +127,10 @@ namespace nux
     bool draw_borders_only;
   };
 
+  //! Load textures and other data for user interface rendering.
+  /*!
+      Load textures and other data for user interface rendering.
+  */
   class UXTheme
   {
   public:
