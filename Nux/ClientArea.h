@@ -32,8 +32,6 @@ namespace nux
 {
 
   class ClientArea;
-  class TimerFunctor;
-  class TimerHandle;
 
   struct ClientAreaDraw
   {

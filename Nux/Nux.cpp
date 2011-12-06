@@ -292,7 +292,7 @@ namespace nux
   {
     NThread *thread = GetWindowThread();
 
-    if (!thread->Type().IsObjectType(WindowThread::StaticObjectType))
+    if (thread && !thread->Type().IsObjectType(WindowThread::StaticObjectType))
     {
       nuxAssertMsg(0, "[GetWindowCompositor] You can't call GetWindowCompositor on this type of thread: s", thread->Type().name );
       PrintOutputDebugString("[GetWindowCompositor] You can't call GetWindowCompositor on this type of thread: s", thread->Type().name );

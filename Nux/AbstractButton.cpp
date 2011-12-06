@@ -37,7 +37,7 @@ namespace nux
     static_text_ = NULL;
     label_color_ = color::White;
     same_size_as_content_ = false;
-    label_font_size_ = 12;
+    label_font_size_ = 0; // use default point size defined in nux::StaticText
 
     mouse_click.connect(sigc::mem_fun(this, &AbstractButton::RecvClick));
     mouse_down.connect(sigc::mem_fun(this, &AbstractButton::RecvMouseDown));
@@ -146,6 +146,12 @@ namespace nux
       return;
 
     label_font_size_ = point;
+    if (static_text_)
+    {
+      static_text_->SetTextPointSize(label_font_size_);
+      ComputeContentSize();
+      QueueDraw();
+    }
   }
 
   int AbstractButton::GetLabelFontSize() const

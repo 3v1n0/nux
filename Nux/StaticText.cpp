@@ -54,7 +54,7 @@ namespace nux
 
 #elif defined(NUX_STATIC_TEXT_USE_CAIRO)
     cairo_graphics_ = NULL;
-    font_size_ = 12;
+    font_size_ = 10;
     font_name_ = "Ubuntu";
     std::ostringstream os;
     os << font_name_ << " " << font_size_;
@@ -244,6 +244,9 @@ namespace nux
 
   void StaticText::SetTextPointSize(int pt_size)
   {
+    if (pt_size <= 0)
+      return;
+      
 #if defined(NUX_STATIC_TEXT_USE_DIRECT_WRITE)
     font_size_ = pt_size;
 #elif defined(NUX_STATIC_TEXT_USE_CAIRO)

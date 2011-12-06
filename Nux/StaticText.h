@@ -44,6 +44,12 @@ namespace nux
     void SetFontName(const std::string &font_name);
 
     //! Set text point size.
+    /*
+        Set the text point size. The value should be be greater than 0. Otherwise, the 
+        text point size is not changed.
+
+        @param size The text point size.
+    */
     void SetTextPointSize(int size);
 
     //! Get text point size.

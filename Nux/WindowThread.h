@@ -256,15 +256,13 @@ namespace nux
             - Compositor
             - Theme engine
         After ThreadCtor is called, m_ThreadCtorCalled is set to true;
-
-
     */
+
 #ifdef NUX_OPENGLES_20
     virtual bool ThreadCtor(Display *X11Display, Window X11Window, EGLContext OpenGLContext);
 #else
     virtual bool ThreadCtor(Display *X11Display, Window X11Window, GLXContext OpenGLContext);
 #endif
-
     Display *_x11display;
     bool     _ownx11display;
 #endif
@@ -302,13 +300,11 @@ namespace nux
     void *m_ExitData;
 
     sigc::signal<void> RedrawRequested;
+    sigc::signal<void, int, int, int, int> window_configuration; //!< emmitted when the window Geometry changes.
 
     bool _inside_main_loop;
     bool _inside_timer_loop;
     bool _pending_wake_up_timer;
-
-    TimerFunctor *_async_wake_up_functor;
-    TimerHandle _async_wake_up_timer;
 
     // quits the main loop.
     void NuxMainLoopQuit();
@@ -420,17 +416,18 @@ namespace nux
     */
     void SetFocusedArea(Area *focused_area);
 
-    //! Set a callback timer from a different thread.
+    //! Sets a timer from a different thread.
     /*!
-        This function is set as the callback to a zero delay timer. When it is called, it doesn't do 
-        anything. But the main thread will wake up and start the execution loop.
+        Sets a timer and a callback. When the timer expires, the callback is executed. This function is meant to be called
+        from a different thread. This function very carefully avoid calling any thread specific objects (TLS).
 
         @param time_ms Timer delay in milliseconds.
+        @param timeout_signal Pointer to a TimeOutSignal.
         @param user_data Pointer to user data.
 
         @return A timer handle.
     */
-    TimerHandle SetAsyncTimerCallback(int time_ms, TimerFunctor* functor, void *user_data);
+    TimerHandle SetAsyncTimerCallback(int time_ms, TimeOutSignal* timeout_signal, void *user_data);
 
   protected:
     //! Compute the layout of this window thread.
@@ -440,15 +437,6 @@ namespace nux
         \sa QueueMainLayout.
     */
     void ReconfigureLayout();
-
-    //! Custom callback to wake up the main thread and start the execution loop.
-    /*!
-        This function is set as the callback to a zero delay timer. When it is called, it doesn't do 
-        anything. But the main thread will wake up and start the execution loop.
-
-        @param user_ptr Pointer to user data.
-    */
-    void AsyncWakeUpCallback(void *user_ptr);
 
     //void SetModalWindow(bool b) {m_bIsModal = b;}
 
@@ -490,6 +478,19 @@ namespace nux
     std::list< ThreadInfo * > m_ChildThreadInfo;
 
   private:
+    //! Custom callback to wake up the main thread and start the execution loop.
+    /*!
+        This function is executed when \i async_wake_up_signal_ expires. It doesn't do 
+        anything when called, but the main thread will wake up and start the execution loop.
+        \sa async_wake_up_signal_
+
+        @param user_ptr Pointer to user data.
+    */
+    void AsyncWakeUpCallback(void *user_ptr);
+
+    TimeOutSignal *async_wake_up_signal_;
+    TimerHandle async_wake_up_timer_handle_;
+
     //! Informs the system of the start of a layout cycle.
     /*!
         This call merely sets a flag to true or false. This flag is used to decided if some actions should be 
