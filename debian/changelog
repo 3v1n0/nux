@@ -1,10 +1,16 @@
-nux (1.16.0-0ubuntu3) UNRELEASED; urgency=low
+nux (2.0.0~-0ubuntu1) UNRELEASED; urgency=low
 
   * debian/rules, debian/control:
     - add nuxabiversion capability as upstream is breaking a lot the ABI
       wasn't bumping the soname. Create a virtual package similar to what
       we already do in compiz to ensure we dep on the right version.
       Remove the makeshlibs override then as not needed anymore.
+    - bump to nux 2.0 with new libnux-2.0-0, libnux-2.0-common, libnux-2.0-dev
+      packages. Make the necessary changes in .install files as well
+    - don't ship anymore the -doc package.
+  * debian/nux-tools.install:
+    - move the apport file there instead of the -common package to enable
+      co-instability
 
  -- Didier Roche <didrocks@ubuntu.com>  Tue, 06 Dec 2011 09:03:41 +0100
 

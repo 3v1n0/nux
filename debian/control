@@ -29,10 +29,10 @@ Section: libs
 Homepage: http://launchpad.net/nux
 Vcs-Bzr: https://code.launchpad.net/~ubuntu-desktop/nux/ubuntu
 
-Package: libnux-1.0-0
+Package: libnux-2.0-0
 Section: libs
 Architecture: any
-Depends: libnux-1.0-common (= ${source:Version}),
+Depends: libnux-2.0-common (= ${source:Version}),
          ${shlibs:Depends},
          ${misc:Depends}
 Provides: libnux-abiversion-${nuxabiversion}
@@ -54,10 +54,10 @@ Description: Visual rendering toolkit for real-time applications - tools
  .
  This package contains various tools for nux
 
-Package: libnux-1.0-dev
+Package: libnux-2.0-dev
 Section: libdevel
 Architecture: any
-Depends: libnux-1.0-0 (= ${binary:Version}),
+Depends: libnux-2.0-0 (= ${binary:Version}),
          libglib2.0-dev (>= 2.25.14),
          libgdk-pixbuf2.0-dev,
          libcairo2-dev (>= 1.9.14),
@@ -77,27 +77,14 @@ Description: Visual rendering toolkit for real-time applications - dev files
  .
  This package contains files that are needed to build applications.
 
-Package: libnux-1.0-common
+Package: libnux-2.0-common
 Section: libs
 Architecture: all
 Depends: ${misc:Depends}
-Replaces: libnux-0.9-common
+Replaces: libnux-0.9-common, libnux-1.0-common
 Description: Visual rendering toolkit for real-time applications - common files
  Nux is a graphical user interface toolkit for applications that mixes opengl
  hardware acceleration with high quality visual rendering.
  .
  This package contains common architecture files used by the library.
-
-Package: libnux-1.0-doc
-Section: doc
-Architecture: all
-Depends: ${misc:Depends},
-         ${misc:Depends}
-Suggests: libnux-1.0-dev,
-          doxygen
-Description: Visual rendering toolkit for real-time applications - documentation
- Nux is a graphical user interface toolkit for applications that mixes opengl
- hardware acceleration with high quality visual rendering.
- .
- This package contains the documentation and some examples to try the toolkit.
 
