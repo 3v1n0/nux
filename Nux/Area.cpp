@@ -1020,7 +1020,7 @@ namespace nux
   bool Area::IsMousePointerInside() const
   {
     Geometry geo = GetAbsoluteGeometry();
-    Point position = GetWindowCompositor().GetMousePosition();
+    Point position = GetWindowThread()->GetWindowCompositor().GetMousePosition();
     
     if (geo.IsInside(position))
       return true;

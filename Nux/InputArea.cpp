@@ -75,7 +75,7 @@ logging::Logger logger("nux.inputarea");
 
   bool InputArea::HasKeyboardFocus()
   {
-    return GetWindowCompositor().GetKeyFocusArea() == this;
+    return GetWindowThread()->GetWindowCompositor().GetKeyFocusArea() == this;
   }
 
   void InputArea::SetKeyboardFocus(bool b)
@@ -269,37 +269,37 @@ logging::Logger logger("nux.inputarea");
 
   void InputArea::GrabPointer()
   {
-    GetWindowCompositor().GrabPointerAdd(this);
+    GetWindowThread()->GetWindowCompositor().GrabPointerAdd(this);
   }
   
   void InputArea::UnGrabPointer()
   {
-    GetWindowCompositor().GrabPointerRemove(this);
+    GetWindowThread()->GetWindowCompositor().GrabPointerRemove(this);
   }
 
   void InputArea::GrabKeyboard()
   {
-    GetWindowCompositor().GrabKeyboardAdd(this);
+    GetWindowThread()->GetWindowCompositor().GrabKeyboardAdd(this);
   }
   
   void InputArea::UnGrabKeyboard()
   {
-    GetWindowCompositor().GrabKeyboardRemove(this);
+    GetWindowThread()->GetWindowCompositor().GrabKeyboardRemove(this);
   }
   
   bool InputArea::OwnsPointerGrab()
   {
-    return GetWindowCompositor().GetPointerGrabArea() == this;
+    return GetWindowThread()->GetWindowCompositor().GetPointerGrabArea() == this;
   }
   
   bool InputArea::OwnsKeyboardGrab()
   {
-    return GetWindowCompositor().GetKeyboardGrabArea() == this;
+    return GetWindowThread()->GetWindowCompositor().GetKeyboardGrabArea() == this;
   }
 
   bool InputArea::IsMouseOwner()
   {
-    return (GetWindowCompositor().GetMouseOwnerArea() == this);
+    return (GetWindowThread()->GetWindowCompositor().GetMouseOwnerArea() == this);
   }
 
   // == Signals with 1 to 1 mapping to input device ==

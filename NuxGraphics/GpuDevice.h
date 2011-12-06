@@ -166,6 +166,11 @@ namespace nux
     friend class GpuDevice;
   };
 
+  //! The interface to the GPU.
+  /*!
+      This is the object that serves as the interface between the program and the GPU device.
+      The GpuDevice creates the opengl primitives used for rendering.
+  */
   class GpuDevice
   {
   private:

@@ -278,7 +278,7 @@ namespace nux
 //       typedef struct {
 //         PangoLayout *layout;
 //         gint         start_index;            // start of line as byte index into layout->text.
-//         gint         length;		              // length of line in bytes.
+//         gint         length;                 // length of line in bytes.
 //         GSList      *runs;                   // a list containing the runs of the line in visual order.
 //         guint        is_paragraph_start : 1; // TRUE if this is the first line of the paragraph.
 //         guint        resolved_dir : 3;       // Resolved direction of line.

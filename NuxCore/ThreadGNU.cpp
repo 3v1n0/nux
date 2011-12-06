@@ -89,10 +89,9 @@ namespace nux
 
   void NThreadLocalStorage::Initialize()
   {
-    Memset (m_TLSUsed, 0, sizeof (m_TLSUsed) );
-
     for (unsigned int i = 0; i < NThreadLocalStorage::NbTLS; i++)
     {
+      m_TLSUsed[i] = FALSE;
       // Fill the array with invalid values
       m_TLSIndex[i] = 0;
     }
@@ -223,9 +222,9 @@ namespace nux
     return m_ThreadCtx.m_dwExitCode;
   }
 
-  unsigned int NThread::GetThreadId()
+  pthread_t NThread::GetPThread()
   {
-    return (unsigned int) m_ThreadCtx.m_dwTID;
+    return m_ThreadCtx.m_dwTID;
   }
 
   ThreadState NThread::GetThreadState() const
@@ -238,4 +237,22 @@ namespace nux
     m_ThreadState = state;
   }
 
+  ThreadWaitResult NThread::JoinThread(NThread *thread, unsigned int milliseconds)
+  {
+    if (thread == NULL)
+    {
+      return THREAD_WAIT_RESULT_FAILED;
+    }
+
+    void *value_ptr = NULL;
+    int result = pthread_join(thread->GetPThread(), &value_ptr);
+
+    switch(result)
+    {
+    case 0:
+      return THREAD_WAIT_RESULT_COMPLETED;
+    default:
+      return THREAD_WAIT_RESULT_FAILED;
+    }
+  }
 }

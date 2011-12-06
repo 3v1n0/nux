@@ -351,11 +351,22 @@ inline		void SetTLS_##name(type value) { nux::NThreadLocalStorage::SetData<type>
       m_pThreadFunc = NThread::EntryPoint;
     }
 
-    unsigned int GetThreadId();
-
+    unsigned int GetPThread();
 
     ThreadState GetThreadState() const;
     void SetThreadState (ThreadState state);
+
+    /*!
+        Wait for a thread to complete.
+        The second parameters to this call specifies a how long to wait for the thread to complete.
+        The following options are available:
+          ThreadWaitTimeout::THREAD_WAIT_TIMEOUT_NONE: The function returns immediately if the thread exits.
+          ThreadWaitTimeout::THREAD_WAIT_TIMEOUT_FOREVER: The function waits until the thread exits.
+
+        @param thread Pointer to a valid NThread.
+        @param milliseconds Time to wait for the thread to complete.
+    */
+    static ThreadWaitResult JoinThread(NThread *thread, unsigned int milliseconds);
 
   protected:
     volatile ThreadState m_ThreadState;
