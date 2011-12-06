@@ -224,14 +224,9 @@ namespace nux
   ObjectPtr<FontTexture> GetSysFont();
   ObjectPtr<FontTexture> GetSysBoldFont();
 
-  //NThread           *GetThreadApplication();  // deprecated
-  //WindowThread      *GetGraphicsThread();     // deprecated
-  WindowThread      *GetWindowThread();       // 
+  WindowThread      *GetWindowThread();
   WindowThread      *GetThreadNuxWindow();
 
-  //GraphicsDisplay   &GetWindow();
-  //GraphicsDisplay   &GetGraphicsDisplay();
-  //GraphicsEngine    &GetGraphicsEngine();
   WindowCompositor  &GetWindowCompositor();
   BasePainter       &GetPainter();
   UXTheme           &GetTheme();

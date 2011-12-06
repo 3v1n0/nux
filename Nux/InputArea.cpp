@@ -150,7 +150,7 @@ logging::Logger logger("nux.inputarea");
 #if defined(NUX_OS_LINUX)
     std::list<char *> mimes;
 
-    mimes = GetWindow().GetDndMimeTypes();
+    mimes = GetWindowThread()->GetGraphicsDisplay().GetDndMimeTypes();
     std::list<char *>::iterator it;
     ProcessDndMove(event.e_x, event.e_y, mimes);
 
@@ -169,12 +169,12 @@ logging::Logger logger("nux.inputarea");
 #if defined(NUX_OS_LINUX)
   void InputArea::SendDndStatus(bool accept, DndAction action, Geometry region)
   {
-    GetWindow().SendDndStatus(accept, action, Rect(region.x, region.y, region.width, region.height));
+    GetWindowThread()->GetGraphicsDisplay().SendDndStatus(accept, action, Rect(region.x, region.y, region.width, region.height));
   }
 
   void InputArea::SendDndFinished(bool accepted, DndAction action)
   {
-    GetWindow().SendDndFinished(accepted, action);
+    GetWindowThread()->GetGraphicsDisplay().SendDndFinished(accepted, action);
   }
 
   void InputArea::ProcessDndMove(int x, int y, std::list<char *>mimes)
@@ -263,7 +263,7 @@ logging::Logger logger("nux.inputarea");
     funcs.drag_finished = &InputArea::InnerDndSourceDragFinished;
     
     if (DndSourceDragBegin())
-      GetWindow().StartDndDrag(funcs, this);
+      GetWindowThread()->GetGraphicsDisplay().StartDndDrag(funcs, this);
   }
 #endif
 

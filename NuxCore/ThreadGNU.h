@@ -262,7 +262,7 @@ inline		void SetTLS_##name(type value) { nux::NThreadLocalStorage::SetData<type>
 #define nuxAssertNotInsideThread(threadtype) ((void) 0)
 #endif
 
-  typedef enum
+  enum ThreadState
   {
     THREADINIT,
     THREADRUNNING,
@@ -272,7 +272,21 @@ inline		void SetTLS_##name(type value) { nux::NThreadLocalStorage::SetData<type>
     THREAD_STOP_ERROR,
     THREAD_SUSPEND_ERROR,
     THREAD_RESUME_ERROR,
-  } ThreadState;
+  };
+
+  enum ThreadWaitTimeout
+  {
+    THREAD_WAIT_TIMEOUT_NONE    = 0,
+    THREAD_WAIT_TIMEOUT_FOREVER = 0xFFFFFFFF,
+  };
+
+  enum ThreadWaitResult
+  {
+    THREAD_WAIT_RESULT_COMPLETED  = 0,
+    THREAD_WAIT_RESULT_ABANDONED  = 1,
+    THREAD_WAIT_RESULT_TIMEOUT    = 2,
+    THREAD_WAIT_RESULT_FAILED     = 3,
+  };
 
 // http://www.codeguru.com/cpp/misc/misc/threadsprocesses/article.php/c3793/
 
@@ -351,7 +365,7 @@ inline		void SetTLS_##name(type value) { nux::NThreadLocalStorage::SetData<type>
       m_pThreadFunc = NThread::EntryPoint;
     }
 
-    unsigned int GetPThread();
+    pthread_t GetPThread();
 
     ThreadState GetThreadState() const;
     void SetThreadState (ThreadState state);
@@ -393,7 +407,7 @@ inline		void SetTLS_##name(type value) { nux::NThreadLocalStorage::SetData<type>
         Notice the signature is similar to that of any worker thread function
         except for the calling convention.
     */
-    virtual unsigned int Run (void* /* arg */)
+    virtual int Run (void* /* arg */)
     {
       return m_ThreadCtx.m_dwExitCode;
     }

@@ -58,6 +58,7 @@ namespace nux
 
   void AbstractThread::JoinChildThreads()
   {
+#if defined(NUX_OS_WINDOWS)
     size_t sz = children_thread_list_.size();
 
     if (sz == 0)
@@ -74,10 +75,10 @@ namespace nux
       hdl[i] = (*it)->GetThreadHandle();
     }
 
-#if defined(NUX_OS_WINDOWS)
     unsigned int result = WaitForMultipleObjects(sz, hdl, FALSE, INFINITE);
 #else
-#error WindowThread::JoinChildThreads has not been implemented for this platform.
+  //#error WindowThread::JoinChildThreads has not been implemented for this platform.
+  // Todo
 #endif
 
     return;

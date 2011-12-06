@@ -190,7 +190,7 @@ namespace nux
     if (GetWindowThread())
     {
       // An WindowThread already exist for this thread.
-      nuxAssertMsg("[CreateGUIThread] You may have only one Nux window per system thread.");
+      nuxDebugMsg("[CreateGUIThread] You may have only one Nux window per system thread.");
       return 0;
     }
 
@@ -206,7 +206,7 @@ namespace nux
     w->user_exit_func_ = 0;
     w->initialization_data_ = data;
     w->window_style_ = WINDOWSTYLE_NORMAL;
-    w->m_embedded_window = true;
+    w->embedded_window_ = true;
     w->ThreadCtor(NULL, X11Window, OpenGLContext);
     return w;
   }
@@ -327,24 +327,6 @@ namespace nux
     }
   }
 
-//   ThreadState GetThreadState(unsigned int ThreadID)
-//   {
-//     NScopeLock Scope(&ThreadArrayLock);
-//     std::vector<NThread *>::iterator it;
-// 
-//     for (it = ThreadArray.begin(); it != ThreadArray.end(); it++)
-//     {
-//       if ((*it)->GetThreadId() == ThreadID)
-//       {
-//         return (*it)->GetThreadState();
-//         break;
-//       }
-//     }
-// 
-//     return THREADSTOP;
-//   }
-
-
   ObjectPtr<FontTexture> GetSysFont()
   {
     return GetWindowThread()->GetGraphicsEngine().GetFont();
@@ -368,17 +350,6 @@ namespace nux
 
     return (static_cast<WindowThread *> (thread))->GetWindowCompositor();
   }
-
-//   NThread *GetThreadApplication()
-//   {
-//     NThread *thread = static_cast<NThread *> (inlGetThreadLocalStorage(ThreadLocal_InalogicAppImpl));
-//     return thread;
-//   }
-
-//   WindowThread *GetGraphicsThread()
-//   {
-//     return GetThreadNuxWindow();
-//   }
 
   WindowThread *GetWindowThread()
   {
@@ -408,17 +379,4 @@ namespace nux
     NThread *thread = GetWindowThread();
     return NUX_STATIC_CAST(WindowThread *, thread)->GetTimerHandler();
   }
-
-  GraphicsDisplay& GetWindow()
-  {
-    NThread *thread = GetWindowThread();
-    return NUX_STATIC_CAST(WindowThread *, thread)->GetGraphicsDisplay();
-  }
-
-  GraphicsEngine& GetGraphicsEngine()
-  {
-    NThread *thread = GetWindowThread();
-    return NUX_STATIC_CAST(WindowThread *, thread)->GetGraphicsEngine();
-  }
-
 }

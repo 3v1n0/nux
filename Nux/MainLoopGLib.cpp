@@ -240,7 +240,7 @@ namespace nux
 #if defined(NUX_OS_WINDOWS)
     event_source->event_poll_fd.fd = G_WIN32_MSG_HANDLE;
 #elif defined(NUX_OS_LINUX)
-    event_source->event_poll_fd.fd = ConnectionNumber(GetGraphicsDisplay()->GetX11Display());
+    event_source->event_poll_fd.fd = ConnectionNumber(GetGraphicsDisplay().GetX11Display());
 #else
 #error Not implemented.
 #endif
@@ -309,8 +309,7 @@ namespace nux
 
   bool WindowThread::AddChildWindowGlibLoop(WindowThread* wnd_thread)
   {
-    //return false;
-
+#if defined(NUX_OS_WINDOWS)
     if (wnd_thread == NULL)
     {
       return false;
@@ -336,6 +335,7 @@ namespace nux
       g_source_attach(source, NULL);
     else
       g_source_attach(source, main_loop_glib_context_);
+#endif
 
     return true;
   }

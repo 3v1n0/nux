@@ -595,8 +595,6 @@ logging::Logger logger("nux.windows.thread");
       return 0;
     }
 
-    WindowThread *wt = GetWindowThread();
-
 #if (!defined(NUX_OS_LINUX) && !defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) || defined(NUX_DISABLE_GLIB_LOOP)
     while (true)
 #endif
@@ -1255,7 +1253,7 @@ logging::Logger logger("nux.windows.thread");
 
     painter_ = new BasePainter(this);
     timer_manager_ = new TimerHandler(this);
-    window_compositor_ = new WindowCompositor;
+    window_compositor_ = new WindowCompositor(this);
 
     SetThreadState(THREADRUNNING);
     thread_ctor_called_ = true;

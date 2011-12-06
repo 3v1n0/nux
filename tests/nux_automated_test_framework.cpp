@@ -59,7 +59,7 @@ bool NuxAutomatedTestFramework::WhenDoneTerminateProgram()
 void NuxAutomatedTestFramework::Startup()
 {
   display_ = XOpenDisplay(NULL);
-  nux::Geometry rect = window_thread_->GetWindow().GetWindowGeometry();
+  nux::Geometry rect = window_thread_->GetGraphicsDisplay().GetWindowGeometry();
   //nuxDebugMsg("Window geometry: (%d, %d, %d, %d)", rect.x, rect.y, rect.width, rect.height);
 
   window_x_ = rect.x;
@@ -78,7 +78,7 @@ void NuxAutomatedTestFramework::ViewSendMouseClick(nux::View *view, int button)
   }
   else
   {
-    r = window_thread_->GetWindow().GetWindowGeometry();
+    r = window_thread_->GetGraphicsDisplay().GetWindowGeometry();
     r.OffsetPosition(r.width/2, r.height/2);
   }
 
@@ -101,7 +101,7 @@ void NuxAutomatedTestFramework::ViewSendMouseDoubleClick(nux::View *view, int bu
   }
   else
   {
-    r = window_thread_->GetWindow().GetWindowGeometry();
+    r = window_thread_->GetGraphicsDisplay().GetWindowGeometry();
     r.OffsetPosition(r.width/2, r.height/2);
   }
     
@@ -191,7 +191,7 @@ void NuxAutomatedTestFramework::ViewSendMouseMotionTo(nux::View *view, int x, in
   }
   else
   {
-    r = window_thread_->GetWindow().GetWindowGeometry();
+    r = window_thread_->GetGraphicsDisplay().GetWindowGeometry();
     r.OffsetPosition(x, y);
   }
 
@@ -208,7 +208,7 @@ void NuxAutomatedTestFramework::ViewSendMouseMotionToCenter(nux::View *view)
   }
   else
   {
-    r = window_thread_->GetWindow().GetWindowGeometry();
+    r = window_thread_->GetGraphicsDisplay().GetWindowGeometry();
   }
 
   int view_center_x = r.x + r.width/2;
