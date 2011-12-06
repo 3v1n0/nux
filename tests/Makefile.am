@@ -104,18 +104,36 @@ test_empty_window_CPPFLAGS = $(TestFlags)
 test_empty_window_LDADD = $(TestLibs)
 test_empty_window_LDFLAGS = -lpthread
 
-button_xtest_SOURCES = button-xtest.cpp nux_test_framework.cpp nux_automated_test_framework.cpp
+button_xtest_SOURCES = button-xtest.cpp \
+  nux_test_framework.cpp \
+  nux_test_framework.h \
+  nux_automated_test_framework.cpp \
+  nux_automated_test_framework.h
 
 button_xtest_CPPFLAGS = $(TestFlags)
 button_xtest_LDADD = $(TestLibs)
 button_xtest_LDFLAGS = -lpthread -lXtst
 
-mouse_events_test_SOURCES = mouse-events-test.cpp test-view.cpp nux_test_framework.cpp nux_automated_test_framework.cpp
+mouse_events_test_SOURCES = mouse-events-test.cpp \
+  nux_test_framework.cpp \
+  nux_test_framework.h \
+  nux_automated_test_framework.cpp \
+  nux_automated_test_framework.h \
+  test-view.cpp \
+  test-view.h
+
 mouse_events_test_CPPFLAGS = $(TestFlags)
 mouse_events_test_LDADD = $(TestLibs)
 mouse_events_test_LDFLAGS = -lpthread -lXtst
 
-mouse_buttons_test_SOURCES = mouse-buttons-test.cpp test-view.cpp nux_test_framework.cpp nux_automated_test_framework.cpp
+mouse_buttons_test_SOURCES = mouse-buttons-test.cpp \
+  nux_test_framework.cpp \
+  nux_test_framework.h \
+  nux_automated_test_framework.cpp \
+  nux_automated_test_framework.h \
+  test-view.cpp \
+  test-view.h
+
 mouse_buttons_test_CPPFLAGS = $(TestFlags)
 mouse_buttons_test_LDADD = $(TestLibs)
 mouse_buttons_test_LDFLAGS = -lpthread -lXtst

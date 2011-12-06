@@ -105,7 +105,7 @@ source_cpp = \
   $(srcdir)/WindowThread.cpp
 
 source_h = \
-  $(srcdir)/ABI.h \
+  $(builddir)/ABI.h \
   $(srcdir)/AbstractButton.h \
   $(srcdir)/AbstractCheckedButton.h \
   $(srcdir)/AbstractComboBox.h \
