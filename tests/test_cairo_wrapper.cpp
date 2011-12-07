@@ -73,7 +73,7 @@ void
 terminate (void* data)
 {
   nux::WindowThread* thread = NUX_STATIC_CAST (nux::WindowThread*, data);
-  thread->NuxMainLoopQuit();
+  thread->ExitMainLoop();
 }
 
 void

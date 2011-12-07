@@ -65,13 +65,6 @@ namespace nux
     WindowThread(const char *WindowTitle, int width, int height, AbstractThread *Parent, bool Modal);
     virtual ~WindowThread();
 
-    //! Set the layout for this window thread.
-    /*!
-        @param layout The layout of the user interface.
-    */
-    void SetLayout(Layout *layout);
-
-
     //! Start the WindowThread in the current Thread.
     /*!
         Run the main loop of the window. \n;
@@ -83,6 +76,8 @@ namespace nux
 
     /*!
         Start the user interface Window in it own thread. Start return immediately after the thread is created.
+
+        @param ptr Reserved.
     */
     virtual ThreadState Start(void *ptr = NULL);
 
@@ -90,22 +85,24 @@ namespace nux
     /*!
         Exit the WindowThread loop.
     */
-    void NuxMainLoopQuit();
+    void ExitMainLoop();
 
-    void ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw);
+    //! Set window size.
+    /*!
+        Set window size.
 
-    void RequestRedraw();
+        @param width Window width.
+        @param height Window height.
+    */
+    void SetWindowSize(int width, int height);
 
-    void ClearRedrawFlag();
+    //! Set the background for the window.
+    /*!
+        Set the background for the window.
 
-    bool IsRedrawNeeded() const;
-
-    void AddToDrawList(View *view);
-
-    void ClearDrawList();
-
-    std::vector<Geometry> GetDrawList();
-
+        @param background_layer background layer.
+    */
+    void SetWindowBackgroundPaintLayer(AbstractPaintLayer *background_layer);
 
 
     /*!
@@ -142,65 +139,22 @@ namespace nux
         Get the UI resource manager (load textures and other data for user interface rendering).
         @param The ui resource manager.
     */
-    UXTheme& GetTheme() const;
+    UXTheme &GetTheme() const;
 
-    //! Set window size.
+
+    //! Set the layout for this window thread.
     /*!
-        Set window size.
-
-        @param width Window width.
-        @param height Window height.
+        @param layout The layout of the user interface.
     */
-    void SetWindowSize(int width, int height);
+    void SetLayout(Layout *layout);
 
-    //! Set the background for the window.
+    //! Get the layout of this window.
     /*!
-        Set the background for the window.
-
-        @param background_layer background layer.
+        @return The layout of this window.
     */
-    void SetWindowBackgroundPaintLayer(AbstractPaintLayer *background_layer);
+    Layout* GetLayout();
 
 
-    // Layout
-
-    //! Causes the Main layout to be recomputed.
-    /*!
-        Causes the main layout to be recomputed. This will happen just before the next draw cycle.
-    */
-    void QueueMainLayout();
-
-    //! Schedule a size computation cycle on an area before the rendering is performed.
-    /*!
-        This list contains the area whose size need to be computed.
-        @param area The object that will perform a size computation cycle.
-        \sa RefreshLayout.
-    */
-    bool QueueObjectLayout(Area *area);
-    void AddObjectToRefreshList(Area *area); //!< Deprecated. Replace with QueueObjectLayout.
-
-    //! Remove an area from the list of object whose size was scheduled to be computed before the rendering cycle.
-    /*!
-        @param area The object to remove form the list.
-        @return True if the object was in the _queued_layout_list and has been removed.
-        \sa RefreshLayout, QueueObjectLayout.
-    */
-    bool RemoveObjectFromLayoutQueue(Area *area);
-
-    //! Deprecated. Use RemoveObjectFromLayoutQueue.
-    bool RemoveObjectFromRefreshList(Area *area);
-
-    //! Empty the queue of objects set for layout computation.
-    /*!
-        The queue was filled with calls to QueueObjectLayout.
-    */
-    void RemoveQueuedLayout();
-
-    //! Compute the layout of a specific element
-    /*!
-        Immediate size negotiation for a View or a layout.
-    */
-    void ComputeElementLayout(Area* bo, bool recurse_to_top_level_layout = false);
 
     //! Return true if the process is inside a layout cycle.
     /*!
@@ -324,12 +278,6 @@ namespace nux
     */
     virtual bool ThreadDtor();
 
-    //! Get the main layout of this thread.
-    /*!
-      @return The main layout of this thread.
-    */
-    Layout* GetMainLayout();
-
     /*!
         Add a timeline to our window
     */
@@ -352,68 +300,6 @@ namespace nux
     bool _inside_main_loop;
     bool _inside_timer_loop;
     bool _pending_wake_up_timer;
-
-    // Automation
-
-#if defined(NUX_OS_WINDOWS)
-    /*!
-       Used by an external thread to push a fake event for processing.
-       Start a 0 delay timer with a call back to ReadyFakeEventProcessing.
-       
-       @param xevent Simulated XEvent
-       @return True if the fake event was successfully registered for later processing.
-    */
-    bool PumpFakeEventIntoPipe(WindowThread* window_thread, INPUT *win_event);
-    
-    INPUT _fake_event;
-#elif defined(NUX_OS_LINUX)
-    /*!
-       Used by an external thread to push a fake event for processing.
-       Start a 0 delay timer with a call back to ReadyFakeEventProcessing.
-       
-       @param xevent Simulated XEvent
-       @return True if the fake event was successfully registered for later processing.
-    */
-    bool PumpFakeEventIntoPipe(WindowThread* window_thread, XEvent *xevent);
-    
-    XEvent _fake_event;
-#endif
-    
-    /*!
-        Enable the processing of fake events set through PumpFakeEventIntoPipe.
-        Disable the processing of mouse up/down events coming from the display server.
-        Process other mouse events normaly.
-        
-        @param enable True to enable fake events.
-        \sa InFakeEventMode
-    */
-    void SetFakeEventMode(bool enable);
-    
-    /*!
-        Return True if the system is in accepting fake events.
-        
-        @return True if the fake event mode is active.
-
-    */
-    bool InFakeEventMode() const;
-
-    /*!
-        Called when the timer set in PumpFakeEventIntoPipe expires.This is the signal that the main 
-        thread is ready to process the fake event.
-    */
-    void ReadyFakeEventProcessing(void*);
-    
-    /*!
-        Fake events are processed one after the other. While this function return false,
-        PumpFakeEventIntoPipe should not be called.
-    */
-    bool ReadyForNextFakeEvent() const;
-
-    bool _ready_for_next_fake_event;
-    bool _processing_fake_event;
-    bool _fake_event_mode;
-    TimerFunctor *_fake_event_call_back;
-    TimerHandle _fake_event_timer;
 
     //! Set an event inspector function.
     /*!
@@ -454,12 +340,6 @@ namespace nux
     */
     bool CallEventInspectors(Event* event);
 
-    /*!
-     
-        Sets the focused item on the screen
-    */
-    void SetFocusedArea(Area *focused_area);
-
     //! Sets a timer from a different thread.
     /*!
         Sets a timer and a callback. When the timer expires, the callback is executed. This function is meant to be called
@@ -473,7 +353,67 @@ namespace nux
     */
     TimerHandle SetAsyncTimerCallback(int time_ms, TimeOutSignal* timeout_signal, void *user_data);
 
+    /*!
+        Return the Window title.
+
+        @return The window title.
+    */
+    std::string GetWindowTitle() const;
+
+    void ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw);
+
+    void RequestRedraw();
+
+    void ClearRedrawFlag();
+
+    bool IsRedrawNeeded() const;
+
+    void AddToDrawList(View *view);
+
+    void ClearDrawList();
+
+    std::vector<Geometry> GetDrawList();
+
+
+    //! Schedule a size computation cycle on an area before the rendering is performed.
+    /*!
+        This list contains the area whose size need to be computed.
+        @param area The object that will perform a size computation cycle.
+        \sa RefreshLayout.
+    */
+    bool QueueObjectLayout(Area *area);
+
+
+    //! Compute the layout of a specific element
+    /*!
+        Immediate size negotiation for a View or a layout.
+    */
+    void ComputeElementLayout(Area* bo, bool recurse_to_top_level_layout = false);    
+
+    //! Remove an area from the list of object whose size was scheduled to be computed before the rendering cycle.
+    /*!
+        @param area The object to remove form the list.
+        @return True if the object was in the _queued_layout_list and has been removed.
+        \sa RefreshLayout, QueueObjectLayout.
+    */
+    bool RemoveObjectFromLayoutQueue(Area *area);
+
   protected:
+    
+    /*** Layout Management ***/
+
+    //! Causes the Main layout to be recomputed.
+    /*!
+        Causes the main layout to be recomputed. This will happen just before the next draw cycle.
+    */
+    void QueueLayout();
+
+    //! Empty the queue of objects set for layout computation.
+    /*!
+        The queue was filled with calls to QueueObjectLayout.
+    */
+    void RemoveQueuedLayout();
+
     //! Compute the layout of this window thread.
     /*!
         Reconfigure the layout of this window. Start by setting the size of the layout to the size of this window.
@@ -483,12 +423,14 @@ namespace nux
     void ReconfigureLayout();
 
     /*!
-        Suspend Win32 Mouse and Keyboard inputs for this window thread and its child thread that are also window(not SystemThread).
+        Suspend Win32 Mouse and Keyboard inputs for this window thread and its
+        child thread that are also window (not SystemThread).
     */
     void EnableMouseKeyboardInput();
 
     /*!
-        Enable Win32 Mouse and Keyboard inputs for this window thread and its child thread that are also window(not SystemThread).
+        Enable Win32 Mouse and Keyboard inputs for this window thread and its
+        child thread that are also window (not SystemThread).
     */
     void DisableMouseKeyboardInput();
 
@@ -531,17 +473,6 @@ namespace nux
     bool wait_for_modal_window_;
     WindowThread *modal_window_thread_;
 
-    //typedef Loki::Functor< void, LOKI_TYPELIST_1(void*)   > ChildThreadExitCallback;
-
-    typedef struct
-    {
-      NThread *thread;
-      std::list< sigc::signal<void, void *> > ChildThreadExitCallback;
-    } ThreadInfo;
-
-
-    std::list< ThreadInfo * > m_ChildThreadInfo;
-
   private:
     //! Execute the main loop of this thread.
     /*!
@@ -580,9 +511,9 @@ namespace nux
 
     //! Execute the size computation cycle on objects.
     /*
-        The objects whose size is to be computed are added to a list with a call to AddObjectToRefreshList.
+        The objects whose size is to be computed are added to a list with a call to QueueObjectLayout.
         Size computation is performed just before the rendering cycle.
-        \sa AddObjectToRefreshList
+        \sa QueueObjectLayout
     */
     void ComputeQueuedLayout();
     void RefreshLayout();  //!< Deprecated. Replace with ComputeQueuedLayout.

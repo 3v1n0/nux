@@ -235,7 +235,7 @@ logging::Logger logger("nux.window");
     // any of the BaseWindow. Try the main window layout.
     if (*area_under_mouse_pointer == NULL)
     {
-      Layout* main_window_layout = window_thread_->GetMainLayout();
+      Layout* main_window_layout = window_thread_->GetLayout();
       if (main_window_layout)
         *area_under_mouse_pointer = static_cast<InputArea*>(main_window_layout->FindAreaUnderMouse(mouse_position, event_type));
     }
@@ -834,7 +834,7 @@ logging::Logger logger("nux.window");
     // If key_focus_area is NULL, then try the main window layout.
     if (*key_focus_area == NULL)
     {
-      Layout* main_window_layout = window_thread_->GetMainLayout();
+      Layout* main_window_layout = window_thread_->GetLayout();
       if (main_window_layout)
       {
         *key_focus_area = NUX_STATIC_CAST(InputArea*, main_window_layout->FindKeyFocusArea(event_type, key_symbol, special_keys_state));

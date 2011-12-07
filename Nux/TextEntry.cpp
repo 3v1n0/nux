@@ -138,7 +138,10 @@ namespace nux
   TextEntry::TextEntry(const char* text, NUX_FILE_LINE_DECL)
     : View(NUX_FILE_LINE_PARAM)
     , _size_match_text(true)
+    , text_input_mode_(false)
     , _texture2D(nullptr)
+    , key_nav_mode_(false)
+    , cursor_blink_signal_(NULL)
     , canvas_(nullptr)
     , cached_layout_(nullptr)
     , preedit_attrs_(nullptr)
@@ -170,11 +173,10 @@ namespace nux
     , font_size_(42)
     , _text_color(color::White)
     , align_(CairoGraphics::ALIGN_LEFT)
+    
     , valign_(CairoGraphics::VALIGN_TOP)
-    , text_input_mode_(false)
-    , key_nav_mode_(false)
-    , cursor_blink_signal_(NULL)
     , cursor_index_in_layout_(-1)
+    , wrap_mode_(PANGO_WRAP_WORD_CHAR)
   {
     cursor_blink_signal_ = new TimeOutSignal();
     cursor_blink_signal_->time_expires.connect(sigc::mem_fun(this, &TextEntry::CursorBlinkCallback));

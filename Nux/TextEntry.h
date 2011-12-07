@@ -73,6 +73,8 @@ namespace nux
 
   class TextEntry: public View
   {
+    NUX_DECLARE_OBJECT_TYPE(TextEntry, View);
+  public:
     enum MovementStep {
       VISUALLY,
       WORDS,
@@ -88,8 +90,6 @@ namespace nux
       MINIMAL_ADJUST
     };
 
-    NUX_DECLARE_OBJECT_TYPE(TextEntry, View);
-  public:
     TextEntry(const char* text, NUX_FILE_LINE_PROTO);
     ~TextEntry();
 
@@ -116,9 +116,6 @@ namespace nux
 
     void RecvStartKeyFocus();
     void RecvEndKeyFocus();
-
-    bool _size_match_text;
-    BaseTexture *_texture2D;
 
     void MainDraw();
     void ProcessMouseEvent(int event_type, int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
@@ -158,7 +155,11 @@ namespace nux
     void SetAlign(CairoGraphics::Alignment align);
 
   protected:
-    bool _block_focus; // used to selectively ignore focus key events
+    bool _size_match_text;
+    bool text_input_mode_;
+    BaseTexture *_texture2D;
+    bool key_nav_mode_;
+    
     TimeOutSignal *cursor_blink_signal_;
     TimerHandle   cursor_blink_handle_;
 
@@ -462,11 +463,7 @@ namespace nux
     std::list<Rect> content_region_;
 
     PangoWrapMode wrap_mode_;
-
-  protected:
-    bool text_input_mode_;
-    bool key_nav_mode_;
-
+  
     virtual bool InspectKeyEvent(unsigned int eventType,
       unsigned int keysym,
       const char* character);

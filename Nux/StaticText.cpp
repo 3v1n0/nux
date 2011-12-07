@@ -85,7 +85,6 @@ namespace nux
   void StaticText::ApplyMinWidth()
   {
     Size sz = GetTextSizeNoClip();
-    int width = GetBaseWidth();
 
     if ((sz.width <= GetMaximumWidth()) && (sz.width >= GetMinimumWidth()))
     {

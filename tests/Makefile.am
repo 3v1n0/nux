@@ -1,6 +1,7 @@
 if BUILD_TESTS
 check_PROGRAMS = \
   test-nux \
+  gtest-nux \
   gtest-nux-core \
   test-graphics-display \
   test-empty-window \
@@ -71,6 +72,34 @@ gtest_nux_core_LDFLAGS = \
   -lpthread -lgtest -lgmock \
   -lboost_filesystem -lboost_system
 
+gtest_nux_SOURCES = \
+  test_nux_main.cpp \
+  test_nux_windowthread.cpp
+
+gtest_nux_CPPFLAGS = \
+  -I$(srcdir) \
+  -I$(top_srcdir) \
+  -DPREFIX=\""$(prefix)"\" \
+	-DLIBDIR=\""$(libdir)"\" \
+  -DDATADIR=\""$(datadir)"\" \
+  -DG_LOG_DOMAIN=\"NuxTests\" \
+  -DTESTDIR=\""$(top_srcdir)/tests"\" \
+  $(GCC_FLAGS) \
+  $(NUX_CORE_CFLAGS) \
+  $(NUX_EXAMPLES_CFLAGS) \
+  $(NUX_CFLAGS) \
+  $(MAINTAINER_CFLAGS)
+
+gtest_nux_LDADD = \
+  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
+  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
+  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
+  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
+  $(NUX_LIBS)
+
+gtest_nux_LDFLAGS = \
+  -lpthread -lgtest -lgmock \
+  -lboost_filesystem -lboost_system
 
 TestFlags = -I$(srcdir) \
   -I$(top_srcdir) \
@@ -144,8 +173,9 @@ check-local: test gtest test-apps
 test:
 	@gtester --verbose -k -o=test-nux-results.xml ./test-nux
 
-gtest: gtest-nux-core
+gtest: gtest-nux-core gtest-nux
 	./gtest-nux-core
+	./gtest-nux
 
 test-apps: test-graphics-display test-empty-window button-xtest mouse-events-test mouse-buttons-test
 	./test-graphics-display

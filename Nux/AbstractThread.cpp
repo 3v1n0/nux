@@ -50,8 +50,8 @@ namespace nux
     {
       if ((*it)->Type().IsObjectType(WindowThread::StaticObjectType))
       {
-        // Terminate by shutting down the main loop
-        static_cast<WindowThread*>(*it)->NuxMainLoopQuit();
+        // Exit the main loop of a window.
+        static_cast<WindowThread*>(*it)->ExitMainLoop();
       }
     }
   }

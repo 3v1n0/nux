@@ -106,13 +106,6 @@ logging::Logger logger("nux.windows.thread");
     _inside_timer_loop = false;
     async_wake_up_signal_ = new TimerFunctor();
     async_wake_up_signal_->time_expires.connect(sigc::mem_fun(this, &WindowThread::AsyncWakeUpCallback));
-
-
-    _fake_event_call_back = new TimerFunctor();
-    _fake_event_call_back->time_expires.connect(sigc::mem_fun(this, &WindowThread::ReadyFakeEventProcessing));
-    _ready_for_next_fake_event = true;
-    _fake_event_mode = false;
-    _processing_fake_event = false;
   }
 
   WindowThread::~WindowThread()
@@ -130,7 +123,6 @@ logging::Logger logger("nux.windows.thread");
     
     delete _Timelines;
     delete async_wake_up_signal_;
-    delete _fake_event_call_back;
 
 #if defined(NUX_OS_LINUX)
     if (x11display_ && ownx11display_)
@@ -140,7 +132,7 @@ logging::Logger logger("nux.windows.thread");
 #endif
   }
 
-  void WindowThread::NuxMainLoopQuit()
+  void WindowThread::ExitMainLoop()
   {
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     StopGLibLoop();
@@ -171,71 +163,6 @@ logging::Logger logger("nux.windows.thread");
     _pending_wake_up_timer = false;
   }
   
-  void WindowThread::SetFakeEventMode(bool enable)
-  {
-    _fake_event_mode = enable;
-  }
-  
-  bool WindowThread::InFakeEventMode() const
-  {
-    return _fake_event_mode;
-  }
-  
-  bool WindowThread::ReadyForNextFakeEvent() const
-  {
-    return _ready_for_next_fake_event;
-  }
-  
-#if defined(NUX_OS_WINDOWS)
-  bool WindowThread::PumpFakeEventIntoPipe(WindowThread* window_thread, INPUT *win_event)
-  {
-    if (!_fake_event_mode)
-    {
-      nuxDebugMsg("[WindowThread::PumpFakeEventIntoPipe] Cannot register a fake event. Fake event mode is not enabled.");
-      return false;
-    }
-    
-    if (!_ready_for_next_fake_event)
-    {
-      nuxDebugMsg("[WindowThread::PumpFakeEventIntoPipe] The fake event pipe is full. Only one fake event can be registered at any time.");
-      return false;
-    }
-    
-    _ready_for_next_fake_event = false;
-//     _fake_event = *xevent;
-//     _fake_event.xany.window = this->graphics_display_->GetWindowHandle();
-    _fake_event_timer = this->GetTimerHandler().AddTimerHandler(0, _fake_event_call_back, this, this);
-    return true;
-  }
-#elif defined(NUX_OS_LINUX)
-  bool WindowThread::PumpFakeEventIntoPipe(WindowThread* window_thread, XEvent *xevent)
-  {
-    if (!_fake_event_mode)
-    {
-      nuxDebugMsg("[WindowThread::PumpFakeEventIntoPipe] Cannot register a fake event. Fake event mode is not enabled.");
-      return false;
-    }
-
-    if (!_ready_for_next_fake_event)
-    {
-      nuxDebugMsg("[WindowThread::PumpFakeEventIntoPipe] The fake event pipe is full. Only one fake event can be registered at any time.");
-      return false;
-    }
-
-    _ready_for_next_fake_event = false;
-    _fake_event = *xevent;
-    _fake_event.xany.window = this->graphics_display_->GetWindowHandle();
-    _fake_event_timer = this->GetTimerHandler().AddTimerHandler(0, _fake_event_call_back, this, this);
-    return true;
-  }
-#endif
-
-  void WindowThread::ReadyFakeEventProcessing(void* data)
-  {
-    nuxDebugMsg("[WindowThread::ReadyFakeEventProcessing] Ready to process fake event.");
-    _processing_fake_event = true;
-  }
-
   void WindowThread::ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     if (main_layout_)
@@ -284,11 +211,6 @@ logging::Logger logger("nux.windows.thread");
     return _draw_requested_to_host_wm;
   }
 
-  Layout* WindowThread::GetMainLayout()
-  {
-    return main_layout_;
-  }
-
   void WindowThread::SetLayout(Layout *layout)
   {
     main_layout_ = layout;
@@ -311,7 +233,12 @@ logging::Logger logger("nux.windows.thread");
     }
   }
 
-  void WindowThread::QueueMainLayout()
+  Layout* WindowThread::GetLayout()
+  {
+    return main_layout_;
+  }
+
+  void WindowThread::QueueLayout()
   {
     queue_main_layout_ = true;
     RequestRedraw();
@@ -349,11 +276,6 @@ logging::Logger logger("nux.windows.thread");
     return true;
   }
 
-  void WindowThread::AddObjectToRefreshList(Area *area)
-  {
-    QueueObjectLayout(area);
-  }
-
   bool WindowThread::RemoveObjectFromLayoutQueue(Area *area)
   {
     NUX_RETURN_VALUE_IF_NULL(area, false);
@@ -367,11 +289,6 @@ logging::Logger logger("nux.windows.thread");
       return true;
     }
     return false;
-  }
-
-  bool WindowThread::RemoveObjectFromRefreshList(Area *area)
-  {
-    return RemoveObjectFromLayoutQueue(area);
   }
 
   void WindowThread::RemoveQueuedLayout()
@@ -619,34 +536,6 @@ logging::Logger logger("nux.windows.thread");
       // Call event inspectors.
       CallEventInspectors(&event);
 
-#if defined(NUX_OS_LINUX)
-      // Automation and fake event inputs
-      if (_fake_event_mode && _processing_fake_event)
-      {
-        // Cancel the real X event and inject the fake event instead. This is wrong and should be improved.
-        memset(&event, 0, sizeof(Event));
-        
-        graphics_display_->InjectXEvent(&event, _fake_event);
-        
-        if (event.e_event == NUX_MOUSE_PRESSED)
-        {
-          nuxDebugMsg("[WindowThread::ExecutionLoop] Fake Event: Mouse Down.");
-        }
-        else if (event.e_event == NUX_MOUSE_RELEASED)
-        {
-          nuxDebugMsg("[WindowThread::ExecutionLoop] Fake Event: Mouse Up.");
-        }
-      }
-      else if (_fake_event_mode)
-      {
-        // In fake event mode we don't allow X mouse up/down events.
-        if ((event.e_event == NUX_MOUSE_PRESSED) || (event.e_event == NUX_MOUSE_RELEASED))
-        {
-          event.e_event = NUX_NO_EVENT;
-        }
-      }
-#endif
-
       if ((event.e_event == NUX_TERMINATE_APP) || (this->GetThreadState() == THREADSTOP))
       {
           return 0;
@@ -714,13 +603,6 @@ logging::Logger logger("nux.windows.thread");
       }
       
       _inside_main_loop = false;
-
-// #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-//       GetTimer().ExecTimerHandler(timer_id);
-// #else
-//       GetTimer().ExecTimerHandler();
-// #endif
-
 
       if (!graphics_display_->IsPauseThreadGraphicsRendering() || IsEmbeddedWindow())
       {
@@ -816,15 +698,6 @@ logging::Logger logger("nux.windows.thread");
       }
     }
 
-#if defined(NUX_OS_LINUX)
-      // Automation and fake event inputs
-      if (_processing_fake_event)
-      {
-        _processing_fake_event = false;
-        _ready_for_next_fake_event = true;
-      }
-#endif
-
     return 1;
   }
 
@@ -892,7 +765,7 @@ logging::Logger logger("nux.windows.thread");
       if ((*it)->Type().IsObjectType(WindowThread::StaticObjectType))
       {
         // Terminate by shutting down the main loop
-        static_cast<WindowThread*>(*it)->NuxMainLoopQuit();
+        static_cast<WindowThread*>(*it)->ExitMainLoop();
       }
 
       if ((*it)->Type().IsObjectType(SystemThread::StaticObjectType))
@@ -903,7 +776,7 @@ logging::Logger logger("nux.windows.thread");
     }
   }
 
-  ThreadState WindowThread::Start(void *arg)
+  ThreadState WindowThread::Start(void *ptr)
   {
     if (!parent_)
     {
@@ -1684,5 +1557,9 @@ logging::Logger logger("nux.windows.thread");
     return *theme_;
   }
 
+  std::string WindowThread::GetWindowTitle() const
+  {
+    return window_title_;
+  }
 }
 

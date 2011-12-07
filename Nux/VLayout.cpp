@@ -791,7 +791,6 @@ namespace nux
         (*it)->SetBaseX(current_x);
         (*it)->SetBaseY(current_y);
 
-        MinorDimensionSize extend = (*it)->GetExtend();
         MinorDimensionPosition positioning = (*it)->GetPositioning();
 
         if ((*it)->GetBaseWidth() < width)
