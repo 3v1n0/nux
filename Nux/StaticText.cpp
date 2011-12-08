@@ -37,6 +37,7 @@ namespace nux
     text_width_ = 0;
     text_height_ = 0;
     update_text_rendering_ = true;
+    text_alignment_ = ALIGN_CENTER;
 
 #if defined(NUX_STATIC_TEXT_USE_DIRECT_WRITE)
     layout_left_ = 0;
@@ -227,7 +228,18 @@ namespace nux
     // width of the view, then center the text horizontally.
     if (dw_texture_->GetWidth() < base.width)
     {
-      x = base.x + (base.width - dw_texture_->GetWidth()) / 2;
+      if (text_alignment_ == ALIGN_CENTER)
+      {
+        x = base.x + (base.width - dw_texture_->GetWidth()) / 2;
+      }
+      else if (text_alignment_ == ALIGN_LEFT)
+      {
+        x = base.x;
+      }
+      else if (text_alignment_ == ALIGN_RIGHT)
+      {
+        x = base.x + base.width - dw_texture_->GetWidth();
+      }
     }
 
     graphics_engine.QRP_1Tex(x,
@@ -337,6 +349,17 @@ namespace nux
     return sz;
   }
 
+  void StaticText::SetTextAlignment(TextAlignment alignment)
+  {
+    text_alignment_ = alignment;
+  }
+
+  //! Return true if the widget with changes to match the text width.
+  StaticText::TextAlignment StaticText::GetTextAlignment() const
+  {
+    return text_alignment_;
+  }
+  
   Size StaticText::GetTextSizeNoClip()
   {
     return ComputeTextSize(false, false);

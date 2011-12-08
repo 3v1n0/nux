@@ -18,8 +18,25 @@ namespace nux
   {
     NUX_DECLARE_OBJECT_TYPE(StaticText, View);
   public:
+
+    //! Text alignment inside the view.
+    /*!
+        When the text width is smaller than the view width, the text may be aligned
+        inside the view. The options are:
+            Left
+            Right
+            Center
+        The default alignment is centered.
+    */
+    enum TextAlignment
+    {
+      ALIGN_CENTER = 0,
+      ALIGN_LEFT,
+      ALIGN_RIGHT,
+    };
+
     StaticText(const std::string &text, NUX_FILE_LINE_PROTO);
-    ~StaticText();
+    virtual ~StaticText();
 
 
     //! Set size of widget according to the text extent.
@@ -59,6 +76,15 @@ namespace nux
 
     Size GetTextLayoutSize() const;
 
+    //! Set size of widget according to the text extent.
+    /*!
+        @param size_match_text If true, the widget size is set to match the size of the text on the screen.
+    */
+    void SetTextAlignment(TextAlignment);
+
+    //! Return true if the widget with changes to match the text width.
+    TextAlignment GetTextAlignment() const;
+
     sigc::signal<void, StaticText*> text_changed;
 
   protected:
@@ -86,6 +112,8 @@ namespace nux
     bool update_text_rendering_;
 
     ObjectPtr<nux::IOpenGLBaseTexture> dw_texture_;
+    
+    TextAlignment text_alignment_;
 
     void SetClipping(int clipping);
     int GetClipping() const;
