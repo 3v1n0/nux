@@ -355,6 +355,7 @@ namespace nux
       {
         if (!(*it)->IsVisible())
           continue;
+
         bool smaller_height = false;
         bool larger_height  = false;
         bool larger_width   = false;
@@ -363,12 +364,14 @@ namespace nux
 
         if (((*it)->IsLayout()  || (*it)->IsView()) /*&& ((*it)->IsLayoutDone() == false)*/ /*&& ((*it)->GetScaleFactor() != 0)*/)
         {
+          Geometry pre_geo = (*it)->GetGeometry();
           ret = (*it)->ComputeContentSize();
+          Geometry post_geo = (*it)->GetGeometry();
 
-          larger_width    = (ret & eLargerWidth)    ? true : false;
-          smaller_width   = (ret & eSmallerWidth)   ? true : false;
-          smaller_height  = (ret & eSmallerHeight)  ? true : false;
-          larger_height   = (ret & eLargerHeight)   ? true : false;
+          larger_width    = (pre_geo.width < post_geo.width)    ? true : false;
+          smaller_width   = (pre_geo.width > post_geo.width)    ? true : false;
+          larger_height   = (pre_geo.height < post_geo.height)  ? true : false;
+          smaller_height  = (pre_geo.height > post_geo.height)  ? true : false;
 
           if ((larger_width || smaller_width) && ((*it)->IsLayoutDone() == false))
           {
@@ -415,7 +418,7 @@ namespace nux
 
         if ((*it)->IsSpaceLayout() == false)
         {
-          if ((GetScaleFactor() != 0) /* && (ret & eSmallerHeight)*/)
+          if ((GetScaleFactor() != 0) && (ret & eSmallerHeight))
           {
             if (m_contentHeight < element_height)
             {
@@ -788,7 +791,6 @@ namespace nux
         (*it)->SetBaseX(current_x);
         (*it)->SetBaseY(current_y);
 
-        MinorDimensionSize extend = (*it)->GetExtend();
         MinorDimensionPosition positioning = (*it)->GetPositioning();
 
         if ((*it)->GetBaseHeight() < height)
