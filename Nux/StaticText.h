@@ -76,13 +76,16 @@ namespace nux
 
     Size GetTextLayoutSize() const;
 
-    //! Set size of widget according to the text extent.
+    //! Set text alignment inside the view.
     /*!
-        @param size_match_text If true, the widget size is set to match the size of the text on the screen.
+        @param alignment The text alignment inside the view.
     */
-    void SetTextAlignment(TextAlignment);
+    void SetTextAlignment(TextAlignment alignment);
 
-    //! Return true if the widget with changes to match the text width.
+    //! Return the text alignment
+    /*!
+        @return The text alignment inside the view.
+    */
     TextAlignment GetTextAlignment() const;
 
     sigc::signal<void, StaticText*> text_changed;

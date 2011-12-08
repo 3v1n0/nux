@@ -86,7 +86,6 @@ namespace nux
   void StaticText::ApplyMinWidth()
   {
     Size sz = GetTextSizeNoClip();
-    int width = GetBaseWidth();
 
     if ((sz.width <= GetMaximumWidth()) && (sz.width >= GetMinimumWidth()))
     {
@@ -354,7 +353,6 @@ namespace nux
     text_alignment_ = alignment;
   }
 
-  //! Return true if the widget with changes to match the text width.
   StaticText::TextAlignment StaticText::GetTextAlignment() const
   {
     return text_alignment_;
