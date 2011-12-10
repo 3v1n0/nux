@@ -257,6 +257,12 @@ namespace nux
     return true;
   }
 
+  void CairoGraphics::TranslateCoordinates(double tx, double ty)
+  {
+    nuxAssert(_cr);
+    cairo_translate(_cr, tx, ty);
+  }
+
   bool CairoGraphics::DrawFilledRect(double x, double y, double w, double h,
                                      const Color &c)
   {

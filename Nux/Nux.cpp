@@ -38,87 +38,140 @@ namespace nux
     inlRegisterThreadLocalIndex(0, ThreadLocal_InalogicAppImpl, NULL);
   }
 
-  static WindowThread *_CreateModalWindowThread(const char *WindowTitle,
-      unsigned int width,
-      unsigned int height,
-      WindowThread *Parent,
-      ThreadUserInitFunc UserInitFunc,
-      void *InitData,
+  static WindowThread *_CreateModalWindowThread(const char *window_title,
+      int width,
+      int height,
+      WindowThread *parent,
+      ThreadUserInitFunc user_init_func,
+      void *data,
       bool Modal)
   {
     // check that Parent exist
-    WindowThread *w = new WindowThread(WindowTitle, width, height, Parent, Modal);
+    WindowThread *w = new WindowThread(window_title, width, height, parent, Modal);
 
     if (w == 0)
     {
-      nuxAssertMsg(0, "[_CreateModalWindowThread] WindowThread creation failed.");
-      return 0;
+      nuxDebugMsg("[_CreateModalWindowThread] WindowThread creation failed.");
+      return NULL;
     }
 
     return w;
   }
 
-  WindowThread *CreateGUIThread(const char *WindowTitle,
-                                 unsigned int width,
-                                 unsigned int height,
-                                 WindowThread *Parent,
-                                 ThreadUserInitFunc UserInitFunc,
-                                 void *InitData)
+  WindowThread *CreateGUIThread(const char *window_title,
+                                int width,
+                                int height,
+                                WindowThread *parent,
+                                ThreadUserInitFunc user_init_func,
+                                void *data)
+  {
+    return CreateNuxWindow(window_title, width, height, WINDOWSTYLE_NORMAL, parent, false, user_init_func, data);
+  }
+
+  WindowThread *CreateNuxWindow(const char *window_title,
+    int width,
+    int height,
+    WindowStyle window_border_style,
+    AbstractThread *parent,
+    bool modal,
+    ThreadUserInitFunc user_init_func,
+    void *data)
   {
     if (GetWindowThread())
     {
       // An WindowThread already exist for this thread.
-      nuxAssertMsg(0, "[CreateGUIThread] Only one WindowThread per thread is allowed");
-      return 0;
+      nuxDebugMsg("[CreateGUIThread] You may have only one Nux window per system thread.");
+      return NULL;
     }
 
-    inlSetThreadLocalStorage(ThreadLocal_InalogicAppImpl, 0);
+    modal = (modal && parent && parent->Type().IsObjectType(WindowThread::StaticObjectType));
 
-    WindowThread *w = new WindowThread(WindowTitle, width, height, 0, true);
-
-    if (w == 0)
+    if (width <= WindowThread::MINIMUM_WINDOW_WIDTH)
     {
-      nuxAssertMsg(0, "[CreateGUIThread] WindowThread creation failed.");
-      return 0;
+      width = WindowThread::MINIMUM_WINDOW_WIDTH;
+    }
+    
+    if (height <= WindowThread::MINIMUM_WINDOW_HEIGHT)
+    {
+      height = WindowThread::MINIMUM_WINDOW_HEIGHT;
     }
 
-    w->m_UserInitFunc = UserInitFunc;
-    w->m_UserExitFunc = 0;
-    w->m_InitData = InitData;
-    w->m_ExitData = 0;
-    w->SetWindowStyle(WINDOWSTYLE_NORMAL);
+    WindowThread *w = new WindowThread(window_title, width, height, parent, modal);
+
+    if (w == NULL)
+    {
+      nuxDebugMsg("[CreateGUIThread] WindowThread creation failed.");
+      return NULL;
+    }
+
+    w->user_init_func_ = user_init_func;
+    w->user_exit_func_ = 0;
+    w->initialization_data_ = data;
+    w->window_style_ = window_border_style;
     w->ThreadCtor();
     return w;
   }
 
+  WindowThread *CreateNuxWindowNewThread(const char *window_title,
+    int width,
+    int height,
+    WindowStyle window_border_style,
+    AbstractThread *parent,
+    bool modal,
+    ThreadUserInitFunc user_init_func,
+    void *data)
+  {
+    modal = (modal && parent && parent->Type().IsObjectType(WindowThread::StaticObjectType));
+
+    if (width <= WindowThread::MINIMUM_WINDOW_WIDTH)
+    {
+      width = WindowThread::MINIMUM_WINDOW_WIDTH;
+    }
+
+    if (height <= WindowThread::MINIMUM_WINDOW_HEIGHT)
+    {
+      height = WindowThread::MINIMUM_WINDOW_HEIGHT;
+    }
+
+    WindowThread *w = new WindowThread(window_title, width, height, parent, modal);
+    if (w == NULL)
+    {
+      nuxDebugMsg("[CreateNuxWindowNewThread] WindowThread creation failed.");
+      return NULL;
+    }
+
+    w->user_init_func_ = user_init_func;
+    w->user_exit_func_ = 0;
+    w->initialization_data_ = data;
+    w->window_style_ = window_border_style;
+    // Do not call WindowThread::ThreadCtor();
+    return w;
+  }
+
 #if defined(NUX_OS_WINDOWS)
-  WindowThread *CreateFromForeignWindow(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext,
-                                         ThreadUserInitFunc UserInitFunc,
-                                         void *InitData
-                                        )
+  WindowThread* CreateFromForeignWindow(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext,
+                                        ThreadUserInitFunc user_init_func,
+                                        void *data)
   {
     if (GetWindowThread())
     {
       // An WindowThread already exist for this thread.
-      nuxAssertMsg(0, "[CreateGUIThread] Only one WindowThread per thread is allowed");
-      return 0;
+      nuxDebugMsg("[CreateGUIThread] You may have only one Nux window per system thread.");
+      return NULL;
     }
-
-    inlSetThreadLocalStorage(ThreadLocal_InalogicAppImpl, 0);
 
     WindowThread *w = new WindowThread("WindowTitle", 400, 300, 0, true);
 
     if (w == 0)
     {
-      nuxAssertMsg(0, "[CreateGUIThread] WindowThread creation failed.");
-      return 0;
+      nuxDebugMsg("[CreateGUIThread] WindowThread creation failed.");
+      return NULL;
     }
 
-    w->m_UserInitFunc = UserInitFunc;
-    w->m_UserExitFunc = 0;
-    w->m_InitData = InitData;
-    w->m_ExitData = 0;
-    w->SetWindowStyle(WINDOWSTYLE_NORMAL);
+    w->user_init_func_ = user_init_func;
+    w->user_exit_func_ = 0;
+    w->initialization_data_ = data;
+    w->window_style_ = WINDOWSTYLE_NORMAL;
     w->ThreadCtor(WindowHandle, WindowDCHandle, OpenGLRenderingContext);
     return w;
   }
@@ -126,37 +179,34 @@ namespace nux
 #elif defined(NUX_OS_LINUX)
 #ifdef NUX_OPENGLES_20
   WindowThread *CreateFromForeignWindow (Window X11Window, EGLContext OpenGLContext,
-                                         ThreadUserInitFunc UserInitFunc,
-                                         void *InitData)
+                                         ThreadUserInitFunc user_init_func,
+                                         void *data)
 #else
   WindowThread *CreateFromForeignWindow (Window X11Window, GLXContext OpenGLContext,
-                                         ThreadUserInitFunc UserInitFunc,
-                                         void *InitData)
+                                         ThreadUserInitFunc user_init_func,
+                                         void *data)
 #endif
   {
     if (GetWindowThread())
     {
       // An WindowThread already exist for this thread.
-      nuxAssertMsg(0, "[CreateGUIThread] Only one WindowThread per thread is allowed");
+      nuxDebugMsg("[CreateGUIThread] You may have only one Nux window per system thread.");
       return 0;
     }
-
-    inlSetThreadLocalStorage(ThreadLocal_InalogicAppImpl, 0);
 
     WindowThread *w = new WindowThread("WindowTitle", 400, 300, 0, true);
 
     if (w == 0)
     {
-      nuxAssertMsg(0, "[CreateGUIThread] WindowThread creation failed.");
-      return 0;
+      nuxDebugMsg("[CreateGUIThread] WindowThread creation failed.");
+      return NULL;
     }
 
-    w->m_UserInitFunc = UserInitFunc;
-    w->m_UserExitFunc = 0;
-    w->m_InitData = InitData;
-    w->m_ExitData = 0;
-    w->SetWindowStyle(WINDOWSTYLE_NORMAL);
-    w->m_embedded_window = true;
+    w->user_init_func_ = user_init_func;
+    w->user_exit_func_ = 0;
+    w->initialization_data_ = data;
+    w->window_style_ = WINDOWSTYLE_NORMAL;
+    w->embedded_window_ = true;
     w->ThreadCtor(NULL, X11Window, OpenGLContext);
     return w;
   }
@@ -164,69 +214,86 @@ namespace nux
 
 // Create a window thread that is a child of the Parent. This thread has a window.
   WindowThread *CreateWindowThread(WindowStyle WndStyle,
-                                    const char *WindowTitle,
-                                    unsigned int width,
-                                    unsigned int height,
-                                    WindowThread *Parent,
-                                    ThreadUserInitFunc UserInitFunc,
-                                    void *InitData)
+                                   const char *window_title,
+                                   int width,
+                                   int height,
+                                   WindowThread *parent,
+                                   ThreadUserInitFunc user_init_func,
+                                   void *data)
   {
-    WindowThread *w = _CreateModalWindowThread(WindowTitle, width, height, Parent, UserInitFunc, InitData, false);
+    if (width <= WindowThread::MINIMUM_WINDOW_WIDTH)
+    {
+      width = WindowThread::MINIMUM_WINDOW_WIDTH;
+    }
+
+    if (height <= WindowThread::MINIMUM_WINDOW_HEIGHT)
+    {
+      height = WindowThread::MINIMUM_WINDOW_HEIGHT;
+    }
+
+    WindowThread *w = _CreateModalWindowThread(window_title, width, height, parent, user_init_func, data, false);
 
     if (w == 0)
     {
-      nuxAssertMsg(0, "[CreateWindowThread] WindowThread creation failed.");
-      return 0;
+      nuxDebugMsg("[CreateWindowThread] WindowThread creation failed.");
+      return NULL;
     }
 
-    w->m_UserInitFunc = UserInitFunc;
-    w->m_UserExitFunc = 0;
-    w->m_InitData = InitData;
-    w->m_ExitData = 0;
-    w->SetWindowStyle(WndStyle);
+    w->user_init_func_ = user_init_func;
+    w->user_exit_func_ = 0;
+    w->initialization_data_ = data;
+    w->window_style_ = WndStyle;
 
     return w;
   }
 
 // Create modal graphics thread that is a child of the Parent. This thread has a window.
   WindowThread *CreateModalWindowThread(WindowStyle WndStyle,
-                                         const char *WindowTitle,
-                                         unsigned int width,
-                                         unsigned int height,
-                                         WindowThread *Parent,
-                                         ThreadUserInitFunc UserInitFunc,
-                                         void *InitData)
+                                        const char *window_title,
+                                        int width,
+                                        int height,
+                                        WindowThread *parent,
+                                        ThreadUserInitFunc user_init_func,
+                                        void *data)
   {
-    WindowThread *w = _CreateModalWindowThread(WindowTitle, width, height, Parent, UserInitFunc, InitData, true);
+    if (width <= WindowThread::MINIMUM_WINDOW_WIDTH)
+    {
+      width = WindowThread::MINIMUM_WINDOW_WIDTH;
+    }
+
+    if (height <= WindowThread::MINIMUM_WINDOW_HEIGHT)
+    {
+      height = WindowThread::MINIMUM_WINDOW_HEIGHT;
+    }
+
+    WindowThread *w = _CreateModalWindowThread(window_title, width, height, parent, user_init_func, data, true);
 
     if (w == 0)
     {
-      nuxAssertMsg(0, "[CreateWindowThread] WindowThread creation failed.");
-      return 0;
+      nuxDebugMsg("[CreateWindowThread] WindowThread creation failed.");
+      return NULL;
     }
 
-    w->m_UserInitFunc = UserInitFunc;
-    w->m_UserExitFunc = 0;
-    w->m_InitData = InitData;
-    w->m_ExitData = 0;
-    w->SetWindowStyle(WndStyle);
+    w->user_init_func_ = user_init_func;
+    w->user_exit_func_ = 0;
+    w->initialization_data_ = data;
+    w->window_style_ = WndStyle;
 
     return w;
   }
 
-  SystemThread *CreateSystemThread(AbstractThread *Parent, ThreadUserInitFunc UserInitFunc, void *InitData)
+  SystemThread *CreateSystemThread(AbstractThread *parent, ThreadUserInitFunc user_init_func, void *data)
   {
-    SystemThread *system_thread = new SystemThread(Parent);
+    SystemThread *system_thread = new SystemThread(parent);
     
     if (system_thread == 0)
     {
-      nuxAssertMsg(0, "[CreateSimpleThread] SystemThread creation failed.");
-      return 0;
+      nuxDebugMsg("[CreateSimpleThread] SystemThread creation failed.");
+      return NULL;
     }
-    system_thread->m_UserInitFunc = UserInitFunc;
-    system_thread->m_UserExitFunc = 0;
-    system_thread->m_InitData = InitData;
-    system_thread->m_ExitData = 0;
+    system_thread->user_init_func_ = user_init_func;
+    system_thread->user_exit_func_ = 0;
+    system_thread->initialization_data_ = data;
     return system_thread;
   }
 
@@ -260,32 +327,14 @@ namespace nux
     }
   }
 
-  ThreadState GetThreadState(unsigned int ThreadID)
-  {
-    NScopeLock Scope(&ThreadArrayLock);
-    std::vector<NThread *>::iterator it;
-
-    for (it = ThreadArray.begin(); it != ThreadArray.end(); it++)
-    {
-      if ((*it)->GetThreadId() == ThreadID)
-      {
-        return (*it)->GetThreadState();
-        break;
-      }
-    }
-
-    return THREADSTOP;
-  }
-
-
   ObjectPtr<FontTexture> GetSysFont()
   {
-    return GetGraphicsEngine().GetFont();
+    return GetWindowThread()->GetGraphicsEngine().GetFont();
   }
 
   ObjectPtr<FontTexture> GetSysBoldFont()
   {
-    return GetGraphicsEngine().GetBoldFont();
+    return GetWindowThread()->GetGraphicsEngine().GetBoldFont();
   }
 
   WindowCompositor &GetWindowCompositor()
@@ -294,7 +343,7 @@ namespace nux
 
     if (thread && !thread->Type().IsObjectType(WindowThread::StaticObjectType))
     {
-      nuxAssertMsg(0, "[GetWindowCompositor] You can't call GetWindowCompositor on this type of thread: s", thread->Type().name );
+      nuxDebugMsg("[GetWindowCompositor] You can't call GetWindowCompositor on this type of thread: s", thread->Type().name );
       PrintOutputDebugString("[GetWindowCompositor] You can't call GetWindowCompositor on this type of thread: s", thread->Type().name );
       NUX_HARDWARE_BREAK;
     }
@@ -302,18 +351,12 @@ namespace nux
     return (static_cast<WindowThread *> (thread))->GetWindowCompositor();
   }
 
-  NThread *GetThreadApplication()
-  {
-    NThread *thread = static_cast<NThread *> (inlGetThreadLocalStorage(ThreadLocal_InalogicAppImpl));
-    return thread;
-  }
-
-  WindowThread *GetGraphicsThread()
-  {
-    return NUX_STATIC_CAST(WindowThread *, GetWindowThread());
-  }
-
   WindowThread *GetWindowThread()
+  {
+    return GetThreadNuxWindow();
+  }
+
+  WindowThread *GetThreadNuxWindow()
   {
     NThread *thread = static_cast<NThread *> (inlGetThreadLocalStorage(ThreadLocal_InalogicAppImpl));
     return NUX_STATIC_CAST(WindowThread *, thread);
@@ -336,17 +379,4 @@ namespace nux
     NThread *thread = GetWindowThread();
     return NUX_STATIC_CAST(WindowThread *, thread)->GetTimerHandler();
   }
-
-  GraphicsDisplay& GetWindow()
-  {
-    NThread *thread = GetWindowThread();
-    return NUX_STATIC_CAST(WindowThread *, thread)->GetWindow();
-  }
-
-  GraphicsEngine& GetGraphicsEngine()
-  {
-    NThread *thread = GetWindowThread();
-    return NUX_STATIC_CAST(WindowThread *, thread)->GetGraphicsEngine();
-  }
-
 }

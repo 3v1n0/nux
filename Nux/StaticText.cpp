@@ -300,12 +300,14 @@ namespace nux
     return text_;
   }
 
-  void StaticText::SetTextColor(const Color &textColor)
+  void StaticText::SetTextColor(const Color &text_color)
   {
-    if (text_color_ == textColor)
-      return;
+    text_color_ = text_color;
+  }
 
-    text_color_ = textColor;
+  Color StaticText::GetTextColor() const
+  {
+    return text_color_;
   }
 
   void StaticText::SetFontName(const std::string &font_name)
@@ -326,6 +328,11 @@ namespace nux
     // Calling SetBaseSize will trigger a layout request of this view and all of its parents.
     SetBaseSize(sz.width, sz.height);
     QueueDraw();
+  }
+
+  std::string StaticText::GetFontName() const
+  {
+    return font_name_;
   }
 
   void StaticText::GetTextLayoutSize(int &width, int &height) const
@@ -749,12 +756,12 @@ namespace nux
 
   void StaticText::RasterizeText(void* cairo_context, Color color)
   {
-    cairo_t* cairo_ctx = (cairo_t*) cairo_context;
+    cairo_t *cairo_ctx = (cairo_t*) cairo_context;
 
-    PangoLayout*          pango_layout  = NULL;
-    PangoFontDescription* font_desc     = NULL;
-    PangoContext*         pango_ctx     = NULL;
-    int                   dpi           = 96;
+    PangoLayout           *pango_layout  = NULL;
+    PangoFontDescription  *font_desc     = NULL;
+    PangoContext          *pango_ctx     = NULL;
+    int                   dpi            = 96;
 
     // Create layout.
     pango_layout = pango_cairo_create_layout(cairo_ctx);
@@ -781,7 +788,7 @@ namespace nux
     CairoFontOptions font_options;
     {
       cairo_font_options_set_antialias      (font_options, CAIRO_ANTIALIAS_DEFAULT);
-      cairo_font_options_set_subpixel_order(font_options, CAIRO_SUBPIXEL_ORDER_DEFAULT);
+      cairo_font_options_set_subpixel_order (font_options, CAIRO_SUBPIXEL_ORDER_DEFAULT);
       cairo_font_options_set_hint_style     (font_options, CAIRO_HINT_STYLE_DEFAULT);
       cairo_font_options_set_hint_metrics   (font_options, CAIRO_HINT_METRICS_ON);
       cairo_set_font_options(cairo_ctx, font_options);

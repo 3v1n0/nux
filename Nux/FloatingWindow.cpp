@@ -302,7 +302,7 @@ namespace nux
     }
 #endif
 
-    GetWindowThread()->AddObjectToRefreshList(this);
+    GetWindowThread()->QueueObjectLayout(this);
     QueueDraw();
   }
 

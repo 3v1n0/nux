@@ -108,8 +108,6 @@ namespace nux
 
     BaseTexture *texture = LoadTextureFromFile(filename.c_str());
 
-    BitmapFormat format = texture->GetFormat();
-
     if (texture)
     {
       TexCoordXForm texxform;

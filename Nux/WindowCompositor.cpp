@@ -39,7 +39,8 @@ namespace
 logging::Logger logger("nux.window");
 }
 
-  WindowCompositor::WindowCompositor()
+  WindowCompositor::WindowCompositor(WindowThread *window_thread)
+  : window_thread_(window_thread)
   {
     m_FocusAreaWindow           = NULL;
     m_MenuWindow                = NULL;
@@ -234,7 +235,7 @@ logging::Logger logger("nux.window");
     // any of the BaseWindow. Try the main window layout.
     if (*area_under_mouse_pointer == NULL)
     {
-      Layout* main_window_layout = GetWindowThread()->GetMainLayout();
+      Layout* main_window_layout = window_thread_->GetLayout();
       if (main_window_layout)
         *area_under_mouse_pointer = static_cast<InputArea*>(main_window_layout->FindAreaUnderMouse(mouse_position, event_type));
     }
@@ -334,7 +335,7 @@ logging::Logger logger("nux.window");
     }
     else if (event.e_event == NUX_DND_DROP)
     {
-      InputArea *current_dnd_area = GetWindowCompositor().GetDnDArea();
+      InputArea *current_dnd_area = GetDnDArea();
       if (current_dnd_area->GetGeometry().IsPointInside(event.e_x - event.e_x_root, event.e_y - event.e_y_root))
         current_dnd_area->HandleDndDrop(event);
     }
@@ -833,7 +834,7 @@ logging::Logger logger("nux.window");
     // If key_focus_area is NULL, then try the main window layout.
     if (*key_focus_area == NULL)
     {
-      Layout* main_window_layout = GetWindowThread()->GetMainLayout();
+      Layout* main_window_layout = window_thread_->GetLayout();
       if (main_window_layout)
       {
         *key_focus_area = NUX_STATIC_CAST(InputArea*, main_window_layout->FindKeyFocusArea(event_type, key_symbol, special_keys_state));
@@ -1205,24 +1206,24 @@ logging::Logger logger("nux.window");
   void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
   {
     inside_rendering_cycle_ = true;
-    if (!GetWindowThread()->GetWindow().isWindowMinimized())
+    if (!window_thread_->GetGraphicsDisplay().isWindowMinimized())
     {
       //int w, h;
-      GetWindowThread()->GetGraphicsEngine().GetContextSize(m_Width, m_Height);
-      GetWindowThread()->GetGraphicsEngine().SetViewport(0, 0, m_Width, m_Height);
+      window_thread_->GetGraphicsEngine().GetContextSize(m_Width, m_Height);
+      window_thread_->GetGraphicsEngine().SetViewport(0, 0, m_Width, m_Height);
       
       // Reset the Model view Matrix and the projection matrix
-      GetWindowThread()->GetGraphicsEngine().ResetProjectionMatrix();
+      window_thread_->GetGraphicsEngine().ResetProjectionMatrix();
       
-      GetWindowThread()->GetGraphicsEngine().ResetModelViewMatrixStack();
-      GetWindowThread()->GetGraphicsEngine().Push2DTranslationModelViewMatrix(0.375f, 0.375f, 0.0f);
+      window_thread_->GetGraphicsEngine().ResetModelViewMatrixStack();
+      window_thread_->GetGraphicsEngine().Push2DTranslationModelViewMatrix(0.375f, 0.375f, 0.0f);
 
 
       if (force_draw || SizeConfigurationEvent)
       {
         // We fall here after something dramatic has happen to the window such as a resizing. In this case
         // everything must be rendered. This is very costly and should happen rarely.
-        if (!GetWindowThread()->IsEmbeddedWindow())
+        if (!window_thread_->IsEmbeddedWindow())
           RenderMainWindowComposition(true);
 
         {
@@ -1238,7 +1239,7 @@ logging::Logger logger("nux.window");
       {
         // A popup removed cause the whole window to be dirty(at least some part of it).
         // So exchange DrawList with a real Draw.
-        if (!GetWindowThread()->IsEmbeddedWindow())
+        if (!window_thread_->IsEmbeddedWindow())
           RenderMainWindowComposition(false);
 
         {
@@ -1252,7 +1253,7 @@ logging::Logger logger("nux.window");
       }
       else
       {
-        if (!GetWindowThread()->IsEmbeddedWindow())
+        if (!window_thread_->IsEmbeddedWindow())
           RenderMainWindowComposition(false);
 
         {
@@ -1268,7 +1269,7 @@ logging::Logger logger("nux.window");
       m_PopupRemoved = false;
       m_MenuRemoved = false;
 
-      GetWindowThread()->GetGraphicsEngine().Pop2DWindow();
+      window_thread_->GetGraphicsEngine().Pop2DWindow();
     }
     inside_rendering_cycle_ = false;
   }
@@ -1279,16 +1280,16 @@ logging::Logger logger("nux.window");
 
     if (window.IsValid())
     {
-      //GetWindowThread()->GetGraphicsEngine().SetContext(x, y, buffer_width, buffer_height);
-      GetWindowThread()->GetGraphicsEngine().SetOrthographicProjectionMatrix(GetWindowThread()->GetGraphicsEngine().GetWindowWidth(),
-          GetWindowThread()->GetGraphicsEngine().GetWindowHeight());
-      GetWindowThread()->GetGraphicsEngine().EmptyClippingRegion();
+      //window_thread_->GetGraphicsEngine().SetContext(x, y, buffer_width, buffer_height);
+      window_thread_->GetGraphicsEngine().SetOrthographicProjectionMatrix(window_thread_->GetGraphicsEngine().GetWindowWidth(),
+          window_thread_->GetGraphicsEngine().GetWindowHeight());
+      window_thread_->GetGraphicsEngine().EmptyClippingRegion();
     }
     else
     {
-      GetWindowThread()->GetGraphicsEngine().SetOrthographicProjectionMatrix(GetWindowThread()->GetGraphicsEngine().GetWindowWidth(),
-          GetWindowThread()->GetGraphicsEngine().GetWindowHeight());
-      GetWindowThread()->GetGraphicsEngine().EmptyClippingRegion();
+      window_thread_->GetGraphicsEngine().SetOrthographicProjectionMatrix(window_thread_->GetGraphicsEngine().GetWindowWidth(),
+          window_thread_->GetGraphicsEngine().GetWindowHeight());
+      window_thread_->GetGraphicsEngine().EmptyClippingRegion();
     }
 
     std::list<MenuPage *>::reverse_iterator rev_it_menu;
@@ -1296,34 +1297,34 @@ logging::Logger logger("nux.window");
     for (rev_it_menu = _menu_chain->rbegin(); rev_it_menu != _menu_chain->rend( ); rev_it_menu++)
     {
       SetProcessingTopView(m_MenuWindow.GetPointer());
-      (*rev_it_menu)->ProcessDraw(GetWindowThread()->GetGraphicsEngine(), force_draw);
+      (*rev_it_menu)->ProcessDraw(window_thread_->GetGraphicsEngine(), force_draw);
       SetProcessingTopView(NULL);
     }
 
 //     GetGraphicsDisplay()->GetGraphicsEngine()->SetContext(0, 0,
-//                                             GetWindowThread()->GetGraphicsEngine().GetWindowWidth(),
-//                                             GetWindowThread()->GetGraphicsEngine().GetWindowHeight());
+//                                             window_thread_->GetGraphicsEngine().GetWindowWidth(),
+//                                             window_thread_->GetGraphicsEngine().GetWindowHeight());
   }
 
   void WindowCompositor::DrawOverlay(bool force_draw)
   {
     ObjectWeakPtr<BaseWindow> window = m_OverlayWindow;
-    int buffer_width = GetWindowThread()->GetGraphicsEngine().GetWindowWidth();
-    int buffer_height = GetWindowThread()->GetGraphicsEngine().GetWindowHeight();
+    int buffer_width = window_thread_->GetGraphicsEngine().GetWindowWidth();
+    int buffer_height = window_thread_->GetGraphicsEngine().GetWindowHeight();
 
     if (window.IsValid())
     {
-      //GetWindowThread()->GetGraphicsEngine().SetContext(x, y, buffer_width, buffer_height);
-      GetWindowThread()->GetGraphicsEngine().SetOrthographicProjectionMatrix(buffer_width, buffer_height);
-      GetWindowThread()->GetGraphicsEngine().EmptyClippingRegion();
+      //window_thread_->GetGraphicsEngine().SetContext(x, y, buffer_width, buffer_height);
+      window_thread_->GetGraphicsEngine().SetOrthographicProjectionMatrix(buffer_width, buffer_height);
+      window_thread_->GetGraphicsEngine().EmptyClippingRegion();
     }
     else
-      GetWindowThread()->GetGraphicsEngine().SetOpenGLClippingRectangle(0, 0, buffer_width, buffer_height);
+      window_thread_->GetGraphicsEngine().SetOpenGLClippingRectangle(0, 0, buffer_width, buffer_height);
 
     if (OverlayDrawingCommand)
     {
       SetProcessingTopView(m_OverlayWindow.GetPointer());
-      OverlayDrawingCommand->OverlayDrawing(GetWindowThread()->GetGraphicsEngine());
+      OverlayDrawingCommand->OverlayDrawing(window_thread_->GetGraphicsEngine());
       SetProcessingTopView(NULL);
     }
 
@@ -1333,23 +1334,23 @@ logging::Logger logger("nux.window");
   void WindowCompositor::DrawTooltip(bool force_draw)
   {
     ObjectWeakPtr<BaseWindow> window = _tooltip_window;
-    int buffer_width = GetWindowThread()->GetGraphicsEngine().GetWindowWidth();
-    int buffer_height = GetWindowThread()->GetGraphicsEngine().GetWindowHeight();
+    int buffer_width = window_thread_->GetGraphicsEngine().GetWindowWidth();
+    int buffer_height = window_thread_->GetGraphicsEngine().GetWindowHeight();
 
     if (window.IsValid())
     {
-      //GetWindowThread()->GetGraphicsEngine().SetContext(x, y, buffer_width, buffer_height);
-      GetWindowThread()->GetGraphicsEngine().SetOrthographicProjectionMatrix(buffer_width, buffer_height);
-      GetWindowThread()->GetGraphicsEngine().EmptyClippingRegion();
+      //window_thread_->GetGraphicsEngine().SetContext(x, y, buffer_width, buffer_height);
+      window_thread_->GetGraphicsEngine().SetOrthographicProjectionMatrix(buffer_width, buffer_height);
+      window_thread_->GetGraphicsEngine().EmptyClippingRegion();
     }
     else
-      GetWindowThread()->GetGraphicsEngine().SetOpenGLClippingRectangle(0, 0, buffer_width, buffer_height);
+      window_thread_->GetGraphicsEngine().SetOpenGLClippingRectangle(0, 0, buffer_width, buffer_height);
 
     if (m_TooltipText.Size())
     {
         //SetProcessingTopView(_tooltip_window);
-        GetPainter().PaintShape(GetWindowThread()->GetGraphicsEngine(), _tooltip_geometry, Color(0xA0000000), eSHAPE_CORNER_ROUND10, true);
-        GetPainter().PaintTextLineStatic(GetWindowThread()->GetGraphicsEngine(), GetSysBoldFont(), _tooltip_text_geometry, m_TooltipText, Color(0xFFFFFFFF));
+        GetPainter().PaintShape(window_thread_->GetGraphicsEngine(), _tooltip_geometry, Color(0xA0000000), eSHAPE_CORNER_ROUND10, true);
+        GetPainter().PaintTextLineStatic(window_thread_->GetGraphicsEngine(), GetSysBoldFont(), _tooltip_text_geometry, m_TooltipText, Color(0xFFFFFFFF));
         //SetProcessingTopView(NULL);
     }
 
@@ -1360,7 +1361,7 @@ logging::Logger logger("nux.window");
   {
     GetPainter().EmptyBackgroundStack();
     SetProcessingTopView(window);
-    window->ProcessDraw(GetWindowThread()->GetGraphicsEngine(), force_draw || window->IsRedrawNeeded());
+    window->ProcessDraw(window_thread_->GetGraphicsEngine(), force_draw || window->IsRedrawNeeded());
     SetProcessingTopView(NULL);
     GetPainter().EmptyBackgroundStack();
   }
@@ -1373,7 +1374,7 @@ logging::Logger logger("nux.window");
     // to the size of the display and call EmptyClippingRegion().
     // Then call GetScissorRect() to get the size of the global clipping area.
     // This is is hack until we implement SetGlobalClippingRectangle() (the opposite of SetGlobalClippingRectangle).
-    GraphicsEngine& graphics_engine = GetWindowThread()->GetGraphicsEngine();
+    GraphicsEngine& graphics_engine = window_thread_->GetGraphicsEngine();
     unsigned int window_width = graphics_engine.GetWindowWidth();
     unsigned int window_height = graphics_engine.GetWindowHeight();
     GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
@@ -1483,7 +1484,7 @@ logging::Logger logger("nux.window");
 //                    else
 //                    {
 //                        shadow.OffsetPosition(4, 4);
-//                        GetPainter().PaintShape(GetWindowThread()->GetGraphicsEngine(), shadow, Color(0xFF000000), eSHAPE_CORNER_ROUND10_SHADOW);
+//                        GetPainter().PaintShape(window_thread_->GetGraphicsEngine(), shadow, Color(0xFF000000), eSHAPE_CORNER_ROUND10_SHADOW);
 //                    }
           }
 
@@ -1515,36 +1516,36 @@ logging::Logger logger("nux.window");
   {
     m_FrameBufferObject->Deactivate();
     unsigned int window_width, window_height;
-    window_width = GetWindowThread()->GetGraphicsEngine().GetWindowWidth();
-    window_height = GetWindowThread()->GetGraphicsEngine().GetWindowHeight();
-    GetWindowThread()->GetGraphicsEngine().EmptyClippingRegion();
-    //GetWindowThread()->GetGraphicsEngine().SetOpenGLClippingRectangle(0, 0, window_width, window_height);
-    GetWindowThread()->GetGraphicsEngine().SetViewport(0, 0, window_width, window_height);
-    GetWindowThread()->GetGraphicsEngine().SetOrthographicProjectionMatrix(window_width, window_height);
+    window_width = window_thread_->GetGraphicsEngine().GetWindowWidth();
+    window_height = window_thread_->GetGraphicsEngine().GetWindowHeight();
+    window_thread_->GetGraphicsEngine().EmptyClippingRegion();
+    //window_thread_->GetGraphicsEngine().SetOpenGLClippingRectangle(0, 0, window_width, window_height);
+    window_thread_->GetGraphicsEngine().SetViewport(0, 0, window_width, window_height);
+    window_thread_->GetGraphicsEngine().SetOrthographicProjectionMatrix(window_width, window_height);
 
     PresentBufferToScreen(m_MainColorRT, 0, 0, false);
 
-    PageBBox page;
-    page.xmin = 0;
-    page.xmax = 100;
-    page.ymin = 700;
-    page.ymax = 730;
-    page.x_margin = 0;
-    page.y_margin = 0;
+//     PageBBox page;
+//     page.xmin = 0;
+//     page.xmax = 100;
+//     page.ymin = 700;
+//     page.ymax = 730;
+//     page.x_margin = 0;
+//     page.y_margin = 0;
+// 
+//     NString FPS = NString::Printf("FPS: %3.2f", window_thread_->GetFrameRate());
+// 
+//     window_thread_->GetGraphicsEngine().RenderColorTextLineStatic(GetSysBoldFont(), page, FPS, Color(0xffff0000), true, eAlignTextLeft);
 
-    NString FPS = NString::Printf("FPS: %3.2f", GetWindowThread()->GetFrameRate());
-
-    GetWindowThread()->GetGraphicsEngine().RenderColorTextLineStatic(GetSysBoldFont(), page, FPS, Color(0xffff0000), true, eAlignTextLeft);
-
-    GetWindowThread()->GetGraphicsEngine().Pop2DWindow();
+    window_thread_->GetGraphicsEngine().Pop2DWindow();
   }
 
   void WindowCompositor::RenderMainWindowComposition(bool force_draw)
   {
     int buffer_width, buffer_height;
 
-    buffer_width = GetWindowThread()->GetGraphicsEngine().GetWindowWidth();
-    buffer_height = GetWindowThread()->GetGraphicsEngine().GetWindowHeight();
+    buffer_width = window_thread_->GetGraphicsEngine().GetWindowWidth();
+    buffer_height = window_thread_->GetGraphicsEngine().GetWindowHeight();
 
     if ((!m_MainColorRT.IsValid()) || (!m_MainDepthRT.IsValid()) || (m_MainColorRT->GetWidth() != buffer_width) || (m_MainColorRT->GetHeight() != buffer_height))
     {
@@ -1557,33 +1558,33 @@ logging::Logger logger("nux.window");
     m_FrameBufferObject->SetDepthSurface(m_MainDepthRT->GetSurfaceLevel(0));
     m_FrameBufferObject->Activate();
 
-    GetWindowThread()->GetGraphicsEngine().EmptyClippingRegion();
-    GetWindowThread()->GetGraphicsEngine().SetOpenGLClippingRectangle(0, 0, buffer_width, buffer_height);
-    GetWindowThread()->GetGraphicsEngine().SetViewport(0, 0, buffer_width, buffer_height);
-    GetWindowThread()->GetGraphicsEngine().SetOrthographicProjectionMatrix(buffer_width, buffer_height);
+    window_thread_->GetGraphicsEngine().EmptyClippingRegion();
+    window_thread_->GetGraphicsEngine().SetOpenGLClippingRectangle(0, 0, buffer_width, buffer_height);
+    window_thread_->GetGraphicsEngine().SetViewport(0, 0, buffer_width, buffer_height);
+    window_thread_->GetGraphicsEngine().SetOrthographicProjectionMatrix(buffer_width, buffer_height);
     {
       CHECKGL(glClear(/*GL_COLOR_BUFFER_BIT |*/ GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
       //Begin 2D Drawing
       {
         if (force_draw)
         {
-          GetPainter().PushDrawLayer(GetWindowThread()->GetGraphicsEngine(), Geometry(0, 0, buffer_width, buffer_height), m_Background);
-          //GetPainter().PushBackground(GetWindowThread()->GetGraphicsEngine(), Geometry(0, 0, buffer_width, buffer_height), m_Background, true);
+          GetPainter().PushDrawLayer(window_thread_->GetGraphicsEngine(), Geometry(0, 0, buffer_width, buffer_height), m_Background);
+          //GetPainter().PushBackground(window_thread_->GetGraphicsEngine(), Geometry(0, 0, buffer_width, buffer_height), m_Background, true);
 
-          GetWindowThread()->ProcessDraw(GetWindowThread()->GetGraphicsEngine(), true);
+          window_thread_->ProcessDraw(window_thread_->GetGraphicsEngine(), true);
 
-          nuxAssert(GetWindowThread()->GetGraphicsEngine().GetNumberOfClippingRegions() == 0);
+          nuxAssert(window_thread_->GetGraphicsEngine().GetNumberOfClippingRegions() == 0);
           GetPainter().PopBackground();
           GetPainter().EmptyBackgroundStack();
         }
         else
         {
-          GetPainter().PushLayer(GetWindowThread()->GetGraphicsEngine(), Geometry(0, 0, buffer_width, buffer_height), m_Background);
-          //GetPainter().PushBackground(GetWindowThread()->GetGraphicsEngine(), Geometry(0, 0, buffer_width, buffer_height), m_Background, false);
+          GetPainter().PushLayer(window_thread_->GetGraphicsEngine(), Geometry(0, 0, buffer_width, buffer_height), m_Background);
+          //GetPainter().PushBackground(window_thread_->GetGraphicsEngine(), Geometry(0, 0, buffer_width, buffer_height), m_Background, false);
 
-          GetWindowThread()->ProcessDraw(GetWindowThread()->GetGraphicsEngine(), false);
+          window_thread_->ProcessDraw(window_thread_->GetGraphicsEngine(), false);
 
-          nuxAssert(GetWindowThread()->GetGraphicsEngine().GetNumberOfClippingRegions() == 0);
+          nuxAssert(window_thread_->GetGraphicsEngine().GetNumberOfClippingRegions() == 0);
           GetPainter().PopBackground();
           GetPainter().EmptyBackgroundStack();
         }
@@ -1598,16 +1599,16 @@ logging::Logger logger("nux.window");
       //GetGraphicsDisplay()->GetGraphicsEngine()->QRP_Color(geo.x, geo.y, geo.width, geo.height, color::Blue);
     }
 
-    GetWindowThread()->GetGraphicsEngine().SetOrthographicProjectionMatrix(buffer_width, buffer_height);
+    window_thread_->GetGraphicsEngine().SetOrthographicProjectionMatrix(buffer_width, buffer_height);
     m_FrameBufferObject->Deactivate();
 
     unsigned int window_width, window_height;
-    window_width = GetWindowThread()->GetGraphicsEngine().GetWindowWidth();
-    window_height = GetWindowThread()->GetGraphicsEngine().GetWindowHeight();
-    GetWindowThread()->GetGraphicsEngine().EmptyClippingRegion();
-    GetWindowThread()->GetGraphicsEngine().SetOpenGLClippingRectangle(0, 0, window_width, window_height);
-    GetWindowThread()->GetGraphicsEngine().SetViewport(0, 0, window_width, window_height);
-    GetWindowThread()->GetGraphicsEngine().SetOrthographicProjectionMatrix(window_width, window_height);
+    window_width = window_thread_->GetGraphicsEngine().GetWindowWidth();
+    window_height = window_thread_->GetGraphicsEngine().GetWindowHeight();
+    window_thread_->GetGraphicsEngine().EmptyClippingRegion();
+    window_thread_->GetGraphicsEngine().SetOpenGLClippingRectangle(0, 0, window_width, window_height);
+    window_thread_->GetGraphicsEngine().SetViewport(0, 0, window_width, window_height);
+    window_thread_->GetGraphicsEngine().SetOrthographicProjectionMatrix(window_width, window_height);
 
     PresentBufferToScreen(m_MainColorRT, 0, 0, false);
 
@@ -1621,8 +1622,8 @@ logging::Logger logger("nux.window");
       return;
 
     int window_width, window_height;
-    window_width = GetWindowThread()->GetGraphicsEngine().GetWindowWidth();
-    window_height = GetWindowThread()->GetGraphicsEngine().GetWindowHeight();
+    window_width = window_thread_->GetGraphicsEngine().GetWindowWidth();
+    window_height = window_thread_->GetGraphicsEngine().GetWindowHeight();
 
 
     if (RenderToMainTexture && (HWTexture != m_MainColorRT))
@@ -1639,10 +1640,10 @@ logging::Logger logger("nux.window");
       GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
     }
 
-    GetWindowThread()->GetGraphicsEngine().EmptyClippingRegion();
-    GetWindowThread()->GetGraphicsEngine().SetOpenGLClippingRectangle(0, 0, window_width, window_height);
-    GetWindowThread()->GetGraphicsEngine().SetViewport(0, 0, window_width, window_height);
-    GetWindowThread()->GetGraphicsEngine().SetOrthographicProjectionMatrix(window_width, window_height);
+    window_thread_->GetGraphicsEngine().EmptyClippingRegion();
+    window_thread_->GetGraphicsEngine().SetOpenGLClippingRectangle(0, 0, window_width, window_height);
+    window_thread_->GetGraphicsEngine().SetViewport(0, 0, window_width, window_height);
+    window_thread_->GetGraphicsEngine().SetOrthographicProjectionMatrix(window_width, window_height);
 
     // Render the MAINFBO
     {
@@ -1655,15 +1656,15 @@ logging::Logger logger("nux.window");
 
       if (premultiply)
       {
-        GetWindowThread()->GetGraphicsEngine().GetRenderStates().SetBlend(true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        window_thread_->GetGraphicsEngine().GetRenderStates().SetBlend(true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(x, y, src_width, src_height, HWTexture, texxform0, Color(opacity, opacity, opacity, opacity));
       }
       else
       {
-        GetWindowThread()->GetGraphicsEngine().GetRenderStates().SetBlend(false);
+        window_thread_->GetGraphicsEngine().GetRenderStates().SetBlend(false);
         GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(x, y, src_width, src_height, HWTexture, texxform0, Color(1.0f, 1.0f, 1.0f, opacity));
       }
-      GetWindowThread()->GetGraphicsEngine().GetRenderStates().SetBlend(false);
+      window_thread_->GetGraphicsEngine().GetRenderStates().SetBlend(false);
     }
   }
 
@@ -1956,8 +1957,8 @@ logging::Logger logger("nux.window");
 
   void WindowCompositor::FormatRenderTargets(int width, int height)
   {
-    int buffer_width = GetWindowThread()->GetGraphicsEngine().GetWindowWidth();
-    int buffer_height = GetWindowThread()->GetGraphicsEngine().GetWindowHeight();
+    int buffer_width = window_thread_->GetGraphicsEngine().GetWindowWidth();
+    int buffer_height = window_thread_->GetGraphicsEngine().GetWindowHeight();
 
     nuxAssert(buffer_width >= 1);
     nuxAssert(buffer_height >= 1);
@@ -2014,15 +2015,15 @@ logging::Logger logger("nux.window");
       m_FrameBufferObject->SetDepthSurface(rt.depth_rt->GetSurfaceLevel(0));
       m_FrameBufferObject->Activate();
 
-      GetWindowThread()->GetGraphicsEngine().SetViewport(0, 0, buffer_width, buffer_height);
-      GetWindowThread()->GetGraphicsEngine().SetOrthographicProjectionMatrix(buffer_width, buffer_height);
-      GetWindowThread()->GetGraphicsEngine().ApplyClippingRectangle();
-      //GetWindowThread()->GetGraphicsEngine().ApplyModelViewMatrix(); ???
+      window_thread_->GetGraphicsEngine().SetViewport(0, 0, buffer_width, buffer_height);
+      window_thread_->GetGraphicsEngine().SetOrthographicProjectionMatrix(buffer_width, buffer_height);
+      window_thread_->GetGraphicsEngine().ApplyClippingRectangle();
+      //window_thread_->GetGraphicsEngine().ApplyModelViewMatrix(); ???
     }
     else
     {
-      int buffer_width = GetWindowThread()->GetGraphicsEngine().GetWindowWidth();
-      int buffer_height = GetWindowThread()->GetGraphicsEngine().GetWindowHeight();
+      int buffer_width = window_thread_->GetGraphicsEngine().GetWindowWidth();
+      int buffer_height = window_thread_->GetGraphicsEngine().GetWindowHeight();
 
       nuxAssert(buffer_width >= 1);
       nuxAssert(buffer_height >= 1);
@@ -2032,10 +2033,10 @@ logging::Logger logger("nux.window");
       m_FrameBufferObject->SetDepthSurface(m_MainDepthRT->GetSurfaceLevel(0));
       m_FrameBufferObject->Activate();
 
-      GetWindowThread()->GetGraphicsEngine().SetViewport(0, 0, buffer_width, buffer_height);
-      GetWindowThread()->GetGraphicsEngine().SetOrthographicProjectionMatrix(buffer_width, buffer_height);
-      GetWindowThread()->GetGraphicsEngine().ApplyClippingRectangle();
-      //GetWindowThread()->GetGraphicsEngine().ApplyModelViewMatrix(); ???
+      window_thread_->GetGraphicsEngine().SetViewport(0, 0, buffer_width, buffer_height);
+      window_thread_->GetGraphicsEngine().SetOrthographicProjectionMatrix(buffer_width, buffer_height);
+      window_thread_->GetGraphicsEngine().ApplyClippingRectangle();
+      //window_thread_->GetGraphicsEngine().ApplyModelViewMatrix(); ???
     }
   }
 
@@ -2105,8 +2106,8 @@ logging::Logger logger("nux.window");
       return result;
     }
     
-    if (GetWindow().PointerGrabData() != this)
-      result = GetWindow().GrabPointer(NULL, this, true);
+    if (window_thread_->GetGraphicsDisplay().PointerGrabData() != this)
+      result = window_thread_->GetGraphicsDisplay().GrabPointer(NULL, this, true);
 
     if (result)
       pointer_grab_stack_.push_front(area);
@@ -2132,7 +2133,7 @@ logging::Logger logger("nux.window");
     pointer_grab_stack_.erase(it);
     
     if (pointer_grab_stack_.empty())
-      GetWindow().UngrabPointer(this);
+      window_thread_->GetGraphicsDisplay().UngrabPointer(this);
     
     // reset the mouse pointers areas.
     ResetMousePointerAreas();
@@ -2172,9 +2173,9 @@ logging::Logger logger("nux.window");
       return result;
     }
 
-    if (GetWindow().KeyboardGrabData() != this)
+    if (window_thread_->GetGraphicsDisplay().KeyboardGrabData() != this)
     {
-      result = GetWindow().GrabKeyboard(NULL, this, true);
+      result = window_thread_->GetGraphicsDisplay().GrabKeyboard(NULL, this, true);
     }
     
     if (result)
@@ -2243,7 +2244,7 @@ logging::Logger logger("nux.window");
 
     if (keyboard_grab_stack_.empty())
     {
-      GetWindow().UngrabKeyboard(this);
+      window_thread_->GetGraphicsDisplay().UngrabKeyboard(this);
     }
 
     // Must be called only after the area has been added to the front of keyboard_grab_stack_.

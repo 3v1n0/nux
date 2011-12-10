@@ -630,8 +630,8 @@ namespace nux
 
     std::list<Area*>        _children_list;
 
-    bool                    _accept_mouse_wheel_event;
-    bool                    _accept_keyboard_event;
+    bool                    accept_mouse_wheel_event_;
+    bool                    accept_keyboard_event_;
 
     WindowThread*           window_thread_;
 

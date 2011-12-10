@@ -633,9 +633,6 @@ namespace nux
 #endif
 
     MakeGLContextCurrent();
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    SwapBuffer();
 
     m_GfxInterfaceCreated = true;
 
@@ -651,7 +648,12 @@ namespace nux
 
     //EnableVSyncSwapControl();
     DisableVSyncSwapControl();
+        
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    SwapBuffer();
     
+       
     InitGlobalGrabWindow();
 
     return TRUE;
@@ -2676,7 +2678,10 @@ namespace nux
     if (GetGpuDevice()->GetGpuInfo().Support_EXT_Swap_Control())
     {
       GLXDrawable drawable = glXGetCurrentDrawable();
-      glXSwapIntervalEXT(m_X11Display, drawable, 0);
+      if (drawable != None)
+      {
+        glXSwapIntervalEXT(m_X11Display, drawable, 0);
+      }
     }
 #endif
   }
