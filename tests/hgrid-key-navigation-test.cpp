@@ -27,11 +27,16 @@
 #include "nux_automated_test_framework.h"
 #include "test-view.h"
 
-class KeyNavigationTest: public NuxTestFramework
+
+// 0  1  2  3
+// 4  5  6  7
+// 8  9 10 
+
+class HGridKeyNavigationTest: public NuxTestFramework
 {
 public:
-  KeyNavigationTest(const char* program_name, int window_width, int window_height, int program_life_span);
-  ~KeyNavigationTest();
+  HGridKeyNavigationTest(const char* program_name, int window_width, int window_height, int program_life_span);
+  ~HGridKeyNavigationTest();
 
   virtual void UserInterfaceSetup();
   
@@ -39,33 +44,33 @@ public:
   void AddTile(TestView* tile);
   
   nux::GridHLayout* grid_layout_;
-  TestView* tiles_[8];
+  TestView* tiles_[11];
 };
 
-KeyNavigationTest::KeyNavigationTest(const char *program_name,
-                                     int window_width,
-                                     int window_height,
-                                     int program_life_span)
+HGridKeyNavigationTest::HGridKeyNavigationTest(const char *program_name,
+                                               int window_width,
+                                               int window_height,
+                                               int program_life_span)
   : NuxTestFramework(program_name, window_width, window_height, program_life_span)
 {
 }
 
-KeyNavigationTest::~KeyNavigationTest()
+HGridKeyNavigationTest::~HGridKeyNavigationTest()
 {
 }
 
-TestView* KeyNavigationTest::CreateTile()
+TestView* HGridKeyNavigationTest::CreateTile()
 {
   TestView* tile = new TestView();
   return tile;
 }
 
-void KeyNavigationTest::AddTile(TestView* tile)
+void HGridKeyNavigationTest::AddTile(TestView* tile)
 {
   grid_layout_->AddView(tile, 1);
 }
 
-void KeyNavigationTest::UserInterfaceSetup()
+void HGridKeyNavigationTest::UserInterfaceSetup()
 {  
   grid_layout_ = new nux::GridHLayout(NUX_TRACKER_LOCATION);
   grid_layout_->ForceChildrenSize(true);
@@ -74,7 +79,7 @@ void KeyNavigationTest::UserInterfaceSetup()
   grid_layout_->SetPadding(20, 20);
   grid_layout_->SetSpaceBetweenChildren(10, 10);
   
-  for (int i=0; i<8; ++i)
+  for (int i=0; i<11; ++i)
   {
     tiles_[i] = CreateTile();
     AddTile(tiles_[i]);
@@ -88,7 +93,7 @@ void KeyNavigationTest::UserInterfaceSetup()
   static_cast<nux::WindowThread*>(window_thread_)->SetWindowBackgroundPaintLayer(&background);
 }
 
-KeyNavigationTest *key_navigation_test = NULL;
+HGridKeyNavigationTest *key_navigation_test = NULL;
 
 void TestingThread(nux::NThread *thread, void *user_data)
 {
@@ -112,8 +117,9 @@ void TestingThread(nux::NThread *thread, void *user_data)
   test.TestReportMsg(key_navigation_test->grid_layout_, "TestView created");
   test.TestReportMsg(key_navigation_test->tiles_[0]->has_focus_, "Top left tile has key focus");
 
+
   // Rigth key
-  for (int i=0; i<7; ++i)
+  for (int i=0; i<10; ++i)
   {
     test.SendFakeKeyEvent(XK_Right, 0);
     nux::SleepForMilliseconds(500);
@@ -124,10 +130,10 @@ void TestingThread(nux::NThread *thread, void *user_data)
   // Another right key, should do nothing
   test.SendFakeKeyEvent(XK_Right, 0);
   nux::SleepForMilliseconds(500);
-  test.TestReportMsg(key_navigation_test->tiles_[7]->has_focus_, "Right key, last element");
+  test.TestReportMsg(key_navigation_test->tiles_[10]->has_focus_, "Right key, last element");
   
   // Left key
-  for (int i=7; i>0; --i)
+  for (int i=10; i>0; --i)
   {
     test.SendFakeKeyEvent(XK_Left, 0);
     nux::SleepForMilliseconds(500);
@@ -145,29 +151,28 @@ void TestingThread(nux::NThread *thread, void *user_data)
   {
     test.SendFakeKeyEvent(XK_Down, 0);
     nux::SleepForMilliseconds(500);
-    test.TestReportMsg(!key_navigation_test->tiles_[3*i]->has_focus_, "Down: key focus out");
-    test.TestReportMsg(key_navigation_test->tiles_[3*(i+1)]->has_focus_, "Down: key focus in");
+    test.TestReportMsg(!key_navigation_test->tiles_[4*i]->has_focus_, "Down: key focus out");
+    test.TestReportMsg(key_navigation_test->tiles_[4*(i+1)]->has_focus_, "Down: key focus in");
   }
   
   // Another down key, should do nothing
   test.SendFakeKeyEvent(XK_Down, 0);
   nux::SleepForMilliseconds(500);
-  test.TestReportMsg(key_navigation_test->tiles_[6]->has_focus_, "Down key, last row");
+  test.TestReportMsg(key_navigation_test->tiles_[8]->has_focus_, "Down key, last row");
   
   // Up key
   for (int i=2; i>0; --i)
   {
     test.SendFakeKeyEvent(XK_Up, 0);
     nux::SleepForMilliseconds(500);
-    test.TestReportMsg(!key_navigation_test->tiles_[3*i]->has_focus_, "Up: key focus out");
-    test.TestReportMsg(key_navigation_test->tiles_[3*(i-1)]->has_focus_, "Up: key focus in");
+    test.TestReportMsg(!key_navigation_test->tiles_[4*i]->has_focus_, "Up: key focus out");
+    test.TestReportMsg(key_navigation_test->tiles_[4*(i-1)]->has_focus_, "Up: key focus in");
   }
   
   // Another down key, should do nothing
   test.SendFakeKeyEvent(XK_Up, 0);
   nux::SleepForMilliseconds(500);
   test.TestReportMsg(key_navigation_test->tiles_[0]->has_focus_, "Up key, first row");
-
 
   if (test.WhenDoneTerminateProgram())
   {
@@ -182,7 +187,7 @@ int main(int argc, char **argv)
   int xstatus = XInitThreads();
   nuxAssertMsg(xstatus > 0, "XInitThreads has failed");
 
-  key_navigation_test = new KeyNavigationTest("Key navigation Test", 400, 400, 20000);
+  key_navigation_test = new HGridKeyNavigationTest("Key navigation Test", 500, 400, 20000);
   key_navigation_test->Startup();
   key_navigation_test->UserInterfaceSetup();
 
