@@ -27,6 +27,9 @@
 #include "nux_automated_test_framework.h"
 #include "test-view.h"
 
+unsigned int const NUM_VIEWS = 5;
+unsigned int const ID_UNFOCUSABLE_VIEW = 2; // Please don't make this the last/first one :)
+
 class HLayoutKeyNavigationTest : public NuxTestFramework
 {
 public:
@@ -39,7 +42,7 @@ public:
   void AddView(TestView* view);
   
   nux::HLayout* hlayout_;
-  TestView* views_[11];
+  TestView* views_[NUM_VIEWS];
 };
 
 HLayoutKeyNavigationTest::HLayoutKeyNavigationTest(const char *program_name,
@@ -68,18 +71,16 @@ void HLayoutKeyNavigationTest::AddView(TestView* view)
 void HLayoutKeyNavigationTest::UserInterfaceSetup()
 {  
   hlayout_ = new nux::HLayout(NUX_TRACKER_LOCATION);
-  //grid_layout_->ForceChildrenSize(true);
-  //grid_layout_->SetChildrenSize(100, 100);
-  //grid_layout_->EnablePartialVisibility(false);
   hlayout_->SetPadding(20, 20);
   hlayout_->SetSpaceBetweenChildren(10);
   
-  for (int i=0; i<4; ++i)
+  for (unsigned int i=0; i<NUM_VIEWS; ++i)
   {
     views_[i] = CreateView();
     AddView(views_[i]);
   }
   
+  views_[ID_UNFOCUSABLE_VIEW]->can_focus_ = false;
   nux::GetWindowCompositor().SetKeyFocusArea(views_[0]);
   
   static_cast<nux::WindowThread*>(window_thread_)->SetLayout(hlayout_);
@@ -113,26 +114,45 @@ void TestingThread(nux::NThread *thread, void *user_data)
   test.TestReportMsg(key_navigation_test->views_[0]->has_focus_, "Top left tile has key focus");
   
   // Right key
-  for (int i=0; i<3; ++i)
+  for (unsigned int i=0; i<NUM_VIEWS-1; ++i)
   {
     test.SendFakeKeyEvent(XK_Right, 0);
     nux::SleepForMilliseconds(500);
     test.TestReportMsg(!key_navigation_test->views_[i]->has_focus_, "Right: key focus out");
-    test.TestReportMsg(key_navigation_test->views_[i+1]->has_focus_, "Right: key focus in");
+    if ((i+1) == ID_UNFOCUSABLE_VIEW)
+    {
+      test.TestReportMsg(!key_navigation_test->views_[i+1]->has_focus_, "Right: key focus skipped");
+      test.TestReportMsg(key_navigation_test->views_[i+2]->has_focus_, "Right: key focus in");
+      ++i;
+    }
+    else
+    {
+      test.TestReportMsg(key_navigation_test->views_[i+1]->has_focus_, "Right: key focus in");
+    }
+      
   }
   
   // Another right key, should do nothing
   test.SendFakeKeyEvent(XK_Right, 0);
   nux::SleepForMilliseconds(500);
-  test.TestReportMsg(key_navigation_test->views_[3]->has_focus_, "Rigth key, last element");
+  test.TestReportMsg(key_navigation_test->views_[NUM_VIEWS-1]->has_focus_, "Rigth key, last element");
   
   // Left key
-  for (int i=3; i>0; --i)
+  for (unsigned int i=NUM_VIEWS-1; i>0; --i)
   {
     test.SendFakeKeyEvent(XK_Left, 0);
     nux::SleepForMilliseconds(500);
     test.TestReportMsg(!key_navigation_test->views_[i]->has_focus_, "Left: key focus out");
-    test.TestReportMsg(key_navigation_test->views_[i-1]->has_focus_, "Left: key focus in");
+    if ((i-1) == ID_UNFOCUSABLE_VIEW)
+    {
+      test.TestReportMsg(!key_navigation_test->views_[i-1]->has_focus_, "Left: key focus skipped");
+      test.TestReportMsg(key_navigation_test->views_[i-2]->has_focus_, "Left: key focus in");
+      --i;
+    }
+    else
+    {
+      test.TestReportMsg(key_navigation_test->views_[i-1]->has_focus_, "Left: key focus in");
+    }
   }
   
   // Another Left key, should do nothing

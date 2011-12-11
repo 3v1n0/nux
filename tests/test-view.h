@@ -12,8 +12,11 @@ public:
   ~TestView();
 
   nux::Color GetColor() const;
+  bool AcceptKeyNavFocus() {return can_focus_;}
 
   void ResetEvents();
+
+  bool can_focus_;
 
   bool has_focus_;
   bool registered_mouse_down_;
