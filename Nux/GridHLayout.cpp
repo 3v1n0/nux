@@ -672,8 +672,6 @@ namespace nux
         for (int i = 0; i < nun_column; ++i)
         {
           ++it;
-          if (it == _layout_element_list.end())
-            return NULL;
         }
         return (*it)->KeyNavIteration(direction);
       }
