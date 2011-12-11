@@ -7,7 +7,8 @@ check_PROGRAMS = \
   button-xtest \
   mouse-events-test \
   mouse-buttons-test \
-  hgrid-key-navigation-test
+  hgrid-key-navigation-test \
+  vlayout-key-navigation-test
 
 # Please keep alphabetical
 test_nux_SOURCES = \
@@ -151,6 +152,17 @@ hgrid_key_navigation_test_CPPFLAGS = $(TestFlags)
 hgrid_key_navigation_test_LDADD = $(TestLibs)
 hgrid_key_navigation_test_LDFLAGS = -lpthread -lXtst
 
+vlayout_key_navigation_test_SOURCES = vlayout-key-navigation-test.cpp \
+  nux_test_framework.cpp \
+  nux_test_framework.h \
+  nux_automated_test_framework.cpp \
+  nux_automated_test_framework.h \
+  test-view.cpp \
+  test-view.h
+
+vlayout_key_navigation_test_CPPFLAGS = $(TestFlags)
+vlayout_key_navigation_test_LDADD = $(TestLibs)
+vlayout_key_navigation_test_LDFLAGS = -lpthread -lXtst
 
 
 #run make test as part of make check
@@ -162,13 +174,14 @@ test:
 gtest: gtest-nux-core
 	./gtest-nux-core
 
-test-apps: test-graphics-display test-empty-window button-xtest mouse-events-test mouse-buttons-test hgrid-key-navigation-test
+test-apps: test-graphics-display test-empty-window button-xtest mouse-events-test mouse-buttons-test hgrid-key-navigation-test vlayout-key-navigation-test
 	./test-graphics-display
 	./test-empty-window
 	./button-xtest
 	./mouse-events-test
 	./mouse-buttons-test
 	./hgrid-key-navigation-test
+	./vlayout-key-navigation-test
 
 check-report:
 	@gtester -k -o=test-nux-results.xml -k ./test-nux \
