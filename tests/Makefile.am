@@ -8,6 +8,7 @@ check_PROGRAMS = \
   mouse-events-test \
   mouse-buttons-test \
   hgrid-key-navigation-test \
+  hlayout-key-navigation-test \
   vlayout-key-navigation-test
 
 # Please keep alphabetical
@@ -152,6 +153,18 @@ hgrid_key_navigation_test_CPPFLAGS = $(TestFlags)
 hgrid_key_navigation_test_LDADD = $(TestLibs)
 hgrid_key_navigation_test_LDFLAGS = -lpthread -lXtst
 
+hlayout_key_navigation_test_SOURCES = hlayout-key-navigation-test.cpp \
+  nux_test_framework.cpp \
+  nux_test_framework.h \
+  nux_automated_test_framework.cpp \
+  nux_automated_test_framework.h \
+  test-view.cpp \
+  test-view.h
+
+hlayout_key_navigation_test_CPPFLAGS = $(TestFlags)
+hlayout_key_navigation_test_LDADD = $(TestLibs)
+hlayout_key_navigation_test_LDFLAGS = -lpthread -lXtst
+
 vlayout_key_navigation_test_SOURCES = vlayout-key-navigation-test.cpp \
   nux_test_framework.cpp \
   nux_test_framework.h \
@@ -174,13 +187,14 @@ test:
 gtest: gtest-nux-core
 	./gtest-nux-core
 
-test-apps: test-graphics-display test-empty-window button-xtest mouse-events-test mouse-buttons-test hgrid-key-navigation-test vlayout-key-navigation-test
+test-apps: test-graphics-display test-empty-window button-xtest mouse-events-test mouse-buttons-test hgrid-key-navigation-test hlayout-key-navigation-test vlayout-key-navigation-test
 	./test-graphics-display
 	./test-empty-window
 	./button-xtest
 	./mouse-events-test
 	./mouse-buttons-test
 	./hgrid-key-navigation-test
+	./hlayout-key-navigation-test
 	./vlayout-key-navigation-test
 
 check-report:
