@@ -15,6 +15,7 @@ public:
 
   void ResetEvents();
 
+  bool has_focus_;
   bool registered_mouse_down_;
   bool registered_mouse_up_;
   bool registered_mouse_drag_;
@@ -30,6 +31,8 @@ protected:
   nux::Color mouse_down_color_;
   nux::Color mouse_drag_color_;
   nux::Color mouse_in_color_;
+  nux::Color with_key_focus_color_;
+  nux::Color without_key_focus_color_;
   
   bool mouse_in_;
   bool mouse_mouse_drag_;
@@ -43,6 +46,7 @@ protected:
   void OnMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
   void OnMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags);
   void OnMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags);
+  void OnKeyNavFocusChange(nux::Area* area);
 
   void Draw(nux::GraphicsEngine &graphics_engine, bool force_draw);
 };
