@@ -80,6 +80,8 @@ namespace nux
     {
       if ((*it) == child)
         break;
+        
+      ++position;
     }
 
     return position;
@@ -93,6 +95,8 @@ namespace nux
     {
       if (position == pos)
         return (*it);
+        
+        ++position;
     }   
 
     return NULL;
@@ -604,25 +608,13 @@ namespace nux
         return NULL;
       }
 
-      if ((direction == KEY_NAV_LEFT) && ((position % nun_column) == 0))
-      {
-        // Left edge
-        return NULL;
-      }
-
-      if ((direction == KEY_NAV_RIGHT) && (position == (position / nun_column) * nun_column + (nun_column -1)))
-      {
-        // right edge
-        return NULL;
-      }
-
       if ((direction == KEY_NAV_UP) && ((position / nun_column) == 0))
       {
         // top edge
         return NULL;
       }
 
-      if ((direction == KEY_NAV_DOWN) && ((position / nun_column) == nun_row))
+      if ((direction == KEY_NAV_DOWN) && ((position / nun_column) == (nun_row-1)))
       {
         // bottom edge
         return NULL;
@@ -680,8 +672,6 @@ namespace nux
         for (int i = 0; i < nun_column; ++i)
         {
           ++it;
-          if (it == _layout_element_list.end())
-            return NULL;
         }
         return (*it)->KeyNavIteration(direction);
       }

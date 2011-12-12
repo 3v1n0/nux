@@ -6,7 +6,10 @@ check_PROGRAMS = \
   test-empty-window \
   button-xtest \
   mouse-events-test \
-  mouse-buttons-test
+  mouse-buttons-test \
+  hgrid-key-navigation-test \
+  hlayout-key-navigation-test \
+  vlayout-key-navigation-test
 
 # Please keep alphabetical
 test_nux_SOURCES = \
@@ -138,6 +141,43 @@ mouse_buttons_test_CPPFLAGS = $(TestFlags)
 mouse_buttons_test_LDADD = $(TestLibs)
 mouse_buttons_test_LDFLAGS = -lpthread -lXtst
 
+hgrid_key_navigation_test_SOURCES = hgrid-key-navigation-test.cpp \
+  nux_test_framework.cpp \
+  nux_test_framework.h \
+  nux_automated_test_framework.cpp \
+  nux_automated_test_framework.h \
+  test-view.cpp \
+  test-view.h
+
+hgrid_key_navigation_test_CPPFLAGS = $(TestFlags)
+hgrid_key_navigation_test_LDADD = $(TestLibs)
+hgrid_key_navigation_test_LDFLAGS = -lpthread -lXtst
+
+hlayout_key_navigation_test_SOURCES = hlayout-key-navigation-test.cpp \
+  nux_test_framework.cpp \
+  nux_test_framework.h \
+  nux_automated_test_framework.cpp \
+  nux_automated_test_framework.h \
+  test-view.cpp \
+  test-view.h
+
+hlayout_key_navigation_test_CPPFLAGS = $(TestFlags)
+hlayout_key_navigation_test_LDADD = $(TestLibs)
+hlayout_key_navigation_test_LDFLAGS = -lpthread -lXtst
+
+vlayout_key_navigation_test_SOURCES = vlayout-key-navigation-test.cpp \
+  nux_test_framework.cpp \
+  nux_test_framework.h \
+  nux_automated_test_framework.cpp \
+  nux_automated_test_framework.h \
+  test-view.cpp \
+  test-view.h
+
+vlayout_key_navigation_test_CPPFLAGS = $(TestFlags)
+vlayout_key_navigation_test_LDADD = $(TestLibs)
+vlayout_key_navigation_test_LDFLAGS = -lpthread -lXtst
+
+
 #run make test as part of make check
 check-local: test gtest test-apps
 
@@ -147,12 +187,15 @@ test:
 gtest: gtest-nux-core
 	./gtest-nux-core
 
-test-apps: test-graphics-display test-empty-window button-xtest mouse-events-test mouse-buttons-test
+test-apps: test-graphics-display test-empty-window button-xtest mouse-events-test mouse-buttons-test hgrid-key-navigation-test hlayout-key-navigation-test vlayout-key-navigation-test
 	./test-graphics-display
 	./test-empty-window
 	./button-xtest
 	./mouse-events-test
 	./mouse-buttons-test
+	./hgrid-key-navigation-test
+	./hlayout-key-navigation-test
+	./vlayout-key-navigation-test
 
 check-report:
 	@gtester -k -o=test-nux-results.xml -k ./test-nux \
