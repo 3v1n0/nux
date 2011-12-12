@@ -32,6 +32,15 @@ mouse_events_test:
 mouse_buttons_tests:
 	Make sure that only physical mouse button 1, 2 and 3 generate mouse-down and mouse-up events.
 	The artificial button event 4 and 5 should not generate mouse-down or mouse-up events.
+	
+hgrid_key_navigation_test
+  Make sure that the key navigation works well in a GridHLayout. 
+  
+hlayout_key_navigation_test
+  Make sure that the key naviagation works well in a HLayout.
+  
+vlayout_key_navigation_test
+  Make sure that the key navigation works well in a VLayout.
 
 
 
