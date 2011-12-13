@@ -100,6 +100,9 @@ namespace nux
                                                      &ScrollView::ScrollUp));
       _vscrollbar->OnScrollDown.connect(sigc::mem_fun(this,
                                                        &ScrollView::ScrollDown));
+      _vscrollbar->mouse_wheel.connect(sigc::mem_fun(this,
+                                                     &ScrollView::RecvMouseWheel));
+      
       _vscrollbar->UnReference();
     }
 
@@ -113,6 +116,8 @@ namespace nux
                                                    &ScrollView::ScrollUp));
     _vscrollbar->OnScrollDown.connect(sigc::mem_fun(this,
                                                      &ScrollView::ScrollDown));
+    _vscrollbar->mouse_wheel.connect(sigc::mem_fun(this,
+                                                   &ScrollView::RecvMouseWheel));
   }
 
   ScrollView::~ScrollView()
@@ -914,7 +919,7 @@ namespace nux
   }
 
   void ScrollView::RecvMouseWheel(int x, int y, int wheel_delta, long button_flags, unsigned long key_flags)
-  {
+  {        
     // nux can't tell the difference between horizontal and vertical mouse wheel events
     // so we are only going to support vertical
     if (wheel_delta < 0)
