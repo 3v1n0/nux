@@ -919,7 +919,7 @@ namespace nux
   }
 
   void ScrollView::RecvMouseWheel(int x, int y, int wheel_delta, long button_flags, unsigned long key_flags)
-  {        
+  {
     // nux can't tell the difference between horizontal and vertical mouse wheel events
     // so we are only going to support vertical
     if (wheel_delta < 0)
