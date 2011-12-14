@@ -74,7 +74,7 @@ void RenderBlurredCopyOfRenderTarget ()
     CHECKGL( glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT) );
 
     graphics_display->GetSystemEvent(&event);
-    if(first_time || (event.event_type == nux::NUX_SIZE_CONFIGURATION))
+    if(first_time || (event.type == nux::NUX_SIZE_CONFIGURATION))
     {
       first_time = false;
       graphics_engine->DisableAllTextureMode(0);
@@ -148,7 +148,7 @@ void RenderBlurredCopyOfRenderTarget ()
       frame_periode = 0;
     }
 
-  } while((event.event_type != nux::NUX_TERMINATE_APP) && (event.GetVirtualKeyState(NUX_VK_ESCAPE) == 0));
+  } while((event.type != nux::NUX_TERMINATE_APP) && (event.GetVirtualKeyState(NUX_VK_ESCAPE) == 0));
 
   fbo.Release ();
   texture_rt.Release ();

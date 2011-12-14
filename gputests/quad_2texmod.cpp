@@ -99,7 +99,7 @@ void QuadRendering_2TexMod ()
     CHECKGL( glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT) );
 
     graphics_display->GetSystemEvent(&event);
-    if(event.event_type == nux::NUX_SIZE_CONFIGURATION)
+    if(event.type == nux::NUX_SIZE_CONFIGURATION)
     {
       graphics_engine->GetWindowSize(w, h);
       graphics_engine->SetViewport(0, 0, w, h);
@@ -131,7 +131,7 @@ void QuadRendering_2TexMod ()
     graphics_display->GetGraphicsEngine()->GetRenderStates ().SetBlend(false);
 
     graphics_display->SwapBuffer();
-  } while(event.event_type != nux::NUX_TERMINATE_APP);
+  } while(event.type != nux::NUX_TERMINATE_APP);
 
   gradient_texture.Release ();
   checkboard_texture->UnReference ();
