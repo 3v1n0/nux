@@ -41,12 +41,12 @@ logging::Logger logger("nux.inputarea");
   NUX_IMPLEMENT_OBJECT_TYPE(InputArea);
 
   InputArea::InputArea(NUX_FILE_LINE_DECL)
-    :   Area(NUX_FILE_LINE_PARAM)
-    ,   m_AreaColor(color::Green)
+  : Area(NUX_FILE_LINE_PARAM)
+  , area_color_(color::Green)
   {
     SetGeometry(0, 0, 1, 1);
-    _has_keyboard_focus = false;
 
+    mouse_in_ = false;
     _capture_mouse_down_any_where_else = false;
     _double_click = false;
 
@@ -65,7 +65,7 @@ logging::Logger logger("nux.inputarea");
   
   void InputArea::OnDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
-    graphics_engine.QRP_Color(GetBaseX(), GetBaseY(), GetBaseWidth(), GetBaseHeight(), m_AreaColor);
+    graphics_engine.QRP_Color(GetBaseX(), GetBaseY(), GetBaseWidth(), GetBaseHeight(), area_color_);
   }
 
   void InputArea::SetBaseString(const char *Caption)
@@ -78,29 +78,9 @@ logging::Logger logger("nux.inputarea");
     return GetWindowThread()->GetWindowCompositor().GetKeyFocusArea() == this;
   }
 
-  void InputArea::SetKeyboardFocus(bool b)
-  {
-    _has_keyboard_focus = b;
-  }
-
-  int InputArea::GetMouseX()
-  {
-    return _event_processor._mouse_positionx - GetRootX();
-  }
-
-  int InputArea::GetMouseY()
-  {
-    return _event_processor._mouse_positiony - GetRootY();
-  }
-
   bool InputArea::IsMouseInside()
   {
-    return _event_processor.MouseIn();
-  }
-
-  bool InputArea::HasMouseFocus()
-  {
-    return (_event_processor._state & AREA_MOUSE_STATUS_FOCUS ? true : false);
+    return mouse_in_;
   }
 
   // TODO: DEPRECATED
@@ -139,12 +119,6 @@ logging::Logger logger("nux.inputarea");
     return _keyboard_receiver_ignore_mouse_down_outside;
   }
 
-  void InputArea::SetAreaMousePosition(int x, int y)
-  {
-    _event_processor._mouse_positionx = x;
-    _event_processor._mouse_positiony = y;
-  }
-
   void InputArea::HandleDndMove(Event &event)
   {
 #if defined(NUX_OS_LINUX)
@@ -152,7 +126,7 @@ logging::Logger logger("nux.inputarea");
 
     mimes = GetWindowThread()->GetGraphicsDisplay().GetDndMimeTypes();
     std::list<char *>::iterator it;
-    ProcessDndMove(event.e_x, event.e_y, mimes);
+    ProcessDndMove(event.x, event.y, mimes);
 
     for (it = mimes.begin(); it != mimes.end(); it++)
       g_free(*it);
@@ -162,7 +136,7 @@ logging::Logger logger("nux.inputarea");
   void InputArea::HandleDndDrop(Event &event)
   {
 #if defined(NUX_OS_LINUX)
-    ProcessDndDrop(event.e_x, event.e_y);
+    ProcessDndDrop(event.x, event.y);
 #endif
   }
 
@@ -354,13 +328,13 @@ logging::Logger logger("nux.inputarea");
 
   void InputArea::EmitMouseEnterSignal(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
   {
-    _event_processor._current_mouse_in = true;
+    mouse_in_ = true;
     mouse_enter.emit(x, y, mouse_button_state, special_keys_state);
   }
 
   void InputArea::EmitMouseLeaveSignal(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
   {
-    _event_processor._current_mouse_in = false;
+    mouse_in_ = false;
     mouse_leave.emit(x, y, mouse_button_state, special_keys_state);
   }
 

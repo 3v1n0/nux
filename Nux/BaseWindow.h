@@ -35,7 +35,6 @@
 #endif
 
 #include "InputArea.h"
-#include "MouseHandler.h"
 #include "PaintLayer.h"
 
 namespace nux

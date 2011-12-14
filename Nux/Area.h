@@ -278,7 +278,7 @@ namespace nux
     */
     bool TestMousePointerInclusionFilterMouseWheel(const Point& mouse_position, NuxEventType event);
 
-    //! Test if the muse pointer is inside the area.
+    //! Test if the mouse pointer is inside the area.
     /*!
         Return true if the mouse pointer is inside the area.
         

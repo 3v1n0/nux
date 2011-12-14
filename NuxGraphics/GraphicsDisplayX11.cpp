@@ -1011,9 +1011,9 @@ namespace nux
   int GraphicsDisplay::MouseMove(XEvent xevent, Event *m_pEvent)
   {
     // Erase mouse event and mouse doubleclick events. Keep the mouse states.
-    unsigned int _mouse_state = m_pEvent->e_mouse_state & 0x0F000000;
+    unsigned int _mouse_state = m_pEvent->mouse_state & 0x0F000000;
 
-    m_pEvent->e_event = NUX_MOUSE_MOVE;
+    m_pEvent->event_type = NUX_MOUSE_MOVE;
 
     if (xevent.type == MotionNotify)
     {
@@ -1028,7 +1028,7 @@ namespace nux
       _mouse_state |= (xevent.xcrossing.state & Button3Mask) ? NUX_STATE_BUTTON3_DOWN : 0;
     }
 
-    m_pEvent->e_mouse_state = _mouse_state;
+    m_pEvent->mouse_state = _mouse_state;
 
     return 0;
   }
@@ -1036,7 +1036,7 @@ namespace nux
   int GraphicsDisplay::MousePress(XEvent xevent, Event *m_pEvent)
   {
     // Erase mouse event and mouse double-click events. Keep the mouse states.
-    ulong _mouse_state = m_pEvent->e_mouse_state & 0x0F000000;
+    ulong _mouse_state = m_pEvent->mouse_state & 0x0F000000;
 
     bool double_click = false;
     Time current_time = xevent.xbutton.time;
@@ -1060,9 +1060,9 @@ namespace nux
       if (xevent.xbutton.button == Button1)
       {
         if (double_click)
-          m_pEvent->e_event = NUX_MOUSE_DOUBLECLICK;
+          m_pEvent->event_type = NUX_MOUSE_DOUBLECLICK;
         else
-          m_pEvent->e_event = NUX_MOUSE_PRESSED;
+          m_pEvent->event_type = NUX_MOUSE_PRESSED;
 
         _mouse_state |= NUX_EVENT_BUTTON1_DOWN;
         _mouse_state |= NUX_STATE_BUTTON1_DOWN;
@@ -1071,9 +1071,9 @@ namespace nux
       if (xevent.xbutton.button == Button2)
       {
         if (double_click)
-          m_pEvent->e_event = NUX_MOUSE_DOUBLECLICK;
+          m_pEvent->event_type = NUX_MOUSE_DOUBLECLICK;
         else
-          m_pEvent->e_event = NUX_MOUSE_PRESSED;
+          m_pEvent->event_type = NUX_MOUSE_PRESSED;
 
         _mouse_state |= NUX_EVENT_BUTTON2_DOWN;
         _mouse_state |= NUX_STATE_BUTTON2_DOWN;
@@ -1082,9 +1082,9 @@ namespace nux
       if (xevent.xbutton.button == Button3)
       {
         if (double_click)
-          m_pEvent->e_event = NUX_MOUSE_DOUBLECLICK;
+          m_pEvent->event_type = NUX_MOUSE_DOUBLECLICK;
         else
-          m_pEvent->e_event = NUX_MOUSE_PRESSED;
+          m_pEvent->event_type = NUX_MOUSE_PRESSED;
 
         _mouse_state |= NUX_EVENT_BUTTON3_DOWN;
         _mouse_state |= NUX_STATE_BUTTON3_DOWN;
@@ -1093,7 +1093,7 @@ namespace nux
       if (xevent.xbutton.button == Button4)
       {
         _mouse_state |= NUX_EVENT_MOUSEWHEEL;
-        m_pEvent->e_event = NUX_MOUSE_WHEEL;
+        m_pEvent->event_type = NUX_MOUSE_WHEEL;
         m_pEvent->e_wheeldelta = NUX_MOUSEWHEEL_DELTA;
         return 1;
       }
@@ -1101,7 +1101,7 @@ namespace nux
       if (xevent.xbutton.button == Button5)
       {
         _mouse_state |= NUX_EVENT_MOUSEWHEEL;
-        m_pEvent->e_event = NUX_MOUSE_WHEEL;
+        m_pEvent->event_type = NUX_MOUSE_WHEEL;
         m_pEvent->e_wheeldelta = -NUX_MOUSEWHEEL_DELTA;
         return 1;
       }
@@ -1109,7 +1109,7 @@ namespace nux
       if (xevent.xbutton.button == 6)
       {
         _mouse_state |= NUX_EVENT_MOUSEWHEEL;
-        m_pEvent->e_event = NUX_MOUSE_WHEEL;
+        m_pEvent->event_type = NUX_MOUSE_WHEEL;
         m_pEvent->e_wheeldelta = NUX_MOUSEWHEEL_DELTA;
         return 1;
       }
@@ -1117,13 +1117,13 @@ namespace nux
       if (xevent.xbutton.button == 7)
       {
         _mouse_state |= NUX_EVENT_MOUSEWHEEL;
-        m_pEvent->e_event = NUX_MOUSE_WHEEL;
+        m_pEvent->event_type = NUX_MOUSE_WHEEL;
         m_pEvent->e_wheeldelta = -NUX_MOUSEWHEEL_DELTA;
         return 1;
       }
     }
 
-    m_pEvent->e_mouse_state = _mouse_state;
+    m_pEvent->mouse_state = _mouse_state;
 
     return 0;
   }
@@ -1131,7 +1131,7 @@ namespace nux
   int GraphicsDisplay::MouseRelease(XEvent xevent, Event *m_pEvent)
   {
     // Erase mouse event and mouse double-click events. Keep the mouse states.
-    ulong _mouse_state = m_pEvent->e_mouse_state & 0x0F000000;
+    ulong _mouse_state = m_pEvent->mouse_state & 0x0F000000;
 
     // State of the button before the event
     _mouse_state |= (xevent.xbutton.state & Button1Mask) ? NUX_STATE_BUTTON1_DOWN : 0;
@@ -1142,27 +1142,27 @@ namespace nux
     {
       if (xevent.xbutton.button == Button1)
       {
-        m_pEvent->e_event = NUX_MOUSE_RELEASED;
+        m_pEvent->event_type = NUX_MOUSE_RELEASED;
         _mouse_state |= NUX_EVENT_BUTTON1_UP;
         _mouse_state &= ~NUX_STATE_BUTTON1_DOWN;
       }
 
       if (xevent.xbutton.button == Button2)
       {
-        m_pEvent->e_event = NUX_MOUSE_RELEASED;
+        m_pEvent->event_type = NUX_MOUSE_RELEASED;
         _mouse_state |= NUX_EVENT_BUTTON2_UP;
         _mouse_state &= ~NUX_STATE_BUTTON2_DOWN;
       }
 
       if (xevent.xbutton.button == Button3)
       {
-        m_pEvent->e_event = NUX_MOUSE_RELEASED;
+        m_pEvent->event_type = NUX_MOUSE_RELEASED;
         _mouse_state |= NUX_EVENT_BUTTON3_UP;
         _mouse_state &= ~NUX_STATE_BUTTON3_DOWN;
       }
     }
 
-    m_pEvent->e_mouse_state = _mouse_state;
+    m_pEvent->mouse_state = _mouse_state;
     last_click_time_ = xevent.xbutton.time;
 
     return 0;
@@ -1201,7 +1201,7 @@ namespace nux
   {
     m_pEvent->Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
-    m_pEvent->e_mouse_state &= 0x0F000000;
+    m_pEvent->mouse_state &= 0x0F000000;
     bool bProcessEvent = true;
 
     // Process event matching this window
@@ -1269,7 +1269,7 @@ namespace nux
   {
     m_pEvent->Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
-    m_pEvent->e_mouse_state &= 0x0F000000;
+    m_pEvent->mouse_state &= 0x0F000000;
     
     // We could do some checks here to make sure the xevent is really what it pretends to be.
     ProcessXEvent(xevent, false);
@@ -1281,7 +1281,7 @@ namespace nux
   {
     m_pEvent->Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
-    m_pEvent->e_mouse_state &= 0x0F000000;
+    m_pEvent->mouse_state &= 0x0F000000;
     bool bProcessEvent = true;
 
     // Process event matching this window
@@ -1431,7 +1431,7 @@ namespace nux
     bool local_from_server = !foreign;
     foreign = foreign || xevent.xany.window != m_X11Window;
 
-    m_pEvent->e_event = NUX_NO_EVENT;
+    m_pEvent->event_type = NUX_NO_EVENT;
     m_pEvent->e_x11_window = xevent.xany.window;
 
 
@@ -1442,7 +1442,7 @@ namespace nux
         if (foreign)
           break;
           
-        m_pEvent->e_event = NUX_DESTROY_WINDOW;
+        m_pEvent->event_type = NUX_DESTROY_WINDOW;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: DestroyNotify event.");
         break;
       }
@@ -1452,7 +1452,7 @@ namespace nux
         if (foreign)
           break;
         
-        m_pEvent->e_event = NUX_WINDOW_DIRTY;
+        m_pEvent->event_type = NUX_WINDOW_DIRTY;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: Expose event.");
         break;
       }
@@ -1463,7 +1463,7 @@ namespace nux
         if (foreign)
           break;
         
-        m_pEvent->e_event = NUX_SIZE_CONFIGURATION;
+        m_pEvent->event_type = NUX_SIZE_CONFIGURATION;
         m_pEvent->width =  xevent.xconfigure.width;
         m_pEvent->height = xevent.xconfigure.height;
         m_WindowSize = Size(xevent.xconfigure.width, xevent.xconfigure.height);
@@ -1483,8 +1483,8 @@ namespace nux
         if (!local_from_server)
           break;
           
-        m_pEvent->e_event = NUX_WINDOW_ENTER_FOCUS;
-        m_pEvent->e_mouse_state = 0;
+        m_pEvent->event_type = NUX_WINDOW_ENTER_FOCUS;
+        m_pEvent->mouse_state = 0;
 
         m_pEvent->e_dx = 0;
         m_pEvent->e_dy = 0;
@@ -1498,8 +1498,8 @@ namespace nux
         if (!local_from_server)
           break;
           
-        m_pEvent->e_event = NUX_WINDOW_EXIT_FOCUS;
-        m_pEvent->e_mouse_state = 0;
+        m_pEvent->event_type = NUX_WINDOW_EXIT_FOCUS;
+        m_pEvent->mouse_state = 0;
 
         m_pEvent->e_dx = 0;
         m_pEvent->e_dy = 0;
@@ -1515,16 +1515,16 @@ namespace nux
         KeySym keysym = NoSymbol;
         keysym = XKeycodeToKeysym(xevent.xany.display, keycode, 0);
 
-        m_pEvent->e_key_modifiers = GetModifierKeyState(xevent.xkey.state);
-        m_pEvent->e_key_repeat_count = 0;
+        m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
+        m_pEvent->key_repeat_count = 0;
         m_pEvent->e_keysym = keysym;
         m_pEvent->e_x11_keycode = xevent.xkey.keycode;
-        m_pEvent->e_event = NUX_KEYDOWN;
+        m_pEvent->event_type = NUX_KEYDOWN;
         m_pEvent->e_x11_timestamp = xevent.xkey.time;
         m_pEvent->e_x11_state = xevent.xkey.state;
 
         char buffer[NUX_EVENT_TEXT_BUFFER_SIZE];
-        Memset(m_pEvent->e_text, 0, NUX_EVENT_TEXT_BUFFER_SIZE);
+        Memset(m_pEvent->text, 0, NUX_EVENT_TEXT_BUFFER_SIZE);
 
         bool skip = false;
         if ((keysym == NUX_VK_BACKSPACE) ||
@@ -1538,7 +1538,7 @@ namespace nux
         int num_char_stored = XLookupString(&xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->e_keysym, NULL);
         if (num_char_stored && (!skip))
         {
-          Memcpy(m_pEvent->e_text, buffer, num_char_stored);
+          Memcpy(m_pEvent->text, buffer, num_char_stored);
         }
 
         break;
@@ -1551,11 +1551,11 @@ namespace nux
         KeySym keysym = NoSymbol;
         keysym = XKeycodeToKeysym(xevent.xany.display, keycode, 0);
 
-        m_pEvent->e_key_modifiers = GetModifierKeyState(xevent.xkey.state);
-        m_pEvent->e_key_repeat_count = 0;
+        m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
+        m_pEvent->key_repeat_count = 0;
         m_pEvent->e_keysym = keysym;
         m_pEvent->e_x11_keycode = xevent.xkey.keycode;
-        m_pEvent->e_event = NUX_KEYUP;
+        m_pEvent->event_type = NUX_KEYUP;
         m_pEvent->e_x11_timestamp = xevent.xkey.time;
         m_pEvent->e_x11_state = xevent.xkey.state;
         break;
@@ -1569,11 +1569,11 @@ namespace nux
           break;
         }
         
-        m_pEvent->e_x = x_recalc;
-        m_pEvent->e_y = y_recalc;
-        m_pEvent->e_x_root = 0;
-        m_pEvent->e_y_root = 0;
-        m_pEvent->e_key_modifiers = GetModifierKeyState(xevent.xkey.state);
+        m_pEvent->x = x_recalc;
+        m_pEvent->y = y_recalc;
+        m_pEvent->x_root = 0;
+        m_pEvent->y_root = 0;
+        m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
         MousePress(xevent, m_pEvent);
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: ButtonPress event.");
         break;
@@ -1587,11 +1587,11 @@ namespace nux
           // fall through on purpose
         }
       
-        m_pEvent->e_x = x_recalc;
-        m_pEvent->e_y = y_recalc;
-        m_pEvent->e_x_root = 0;
-        m_pEvent->e_y_root = 0;
-        m_pEvent->e_key_modifiers = GetModifierKeyState(xevent.xkey.state);
+        m_pEvent->x = x_recalc;
+        m_pEvent->y = y_recalc;
+        m_pEvent->x_root = 0;
+        m_pEvent->y_root = 0;
+        m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
         MouseRelease(xevent, m_pEvent);
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: ButtonRelease event.");
         break;
@@ -1605,11 +1605,11 @@ namespace nux
           break;
         }
       
-        m_pEvent->e_x = x_recalc;
-        m_pEvent->e_y = y_recalc;
-        m_pEvent->e_x_root = 0;
-        m_pEvent->e_y_root = 0;
-        m_pEvent->e_key_modifiers = GetModifierKeyState(xevent.xkey.state);
+        m_pEvent->x = x_recalc;
+        m_pEvent->y = y_recalc;
+        m_pEvent->x_root = 0;
+        m_pEvent->y_root = 0;
+        m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
         MouseMove(xevent, m_pEvent);
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: MotionNotify event.");
         break;
@@ -1621,12 +1621,12 @@ namespace nux
         if (xevent.xcrossing.mode != NotifyNormal || !local_from_server)
           break;
           
-        m_pEvent->e_x = -1;
-        m_pEvent->e_y = -1;
-        m_pEvent->e_x_root = 0;
-        m_pEvent->e_y_root = 0;
-        m_pEvent->e_key_modifiers = GetModifierKeyState(xevent.xkey.state);
-        m_pEvent->e_event = NUX_WINDOW_MOUSELEAVE;
+        m_pEvent->x = -1;
+        m_pEvent->y = -1;
+        m_pEvent->x_root = 0;
+        m_pEvent->y_root = 0;
+        m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
+        m_pEvent->event_type = NUX_WINDOW_MOUSELEAVE;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: LeaveNotify event.");
         break;
       }
@@ -1636,11 +1636,11 @@ namespace nux
         if (xevent.xcrossing.mode != NotifyNormal || !local_from_server)
           break;
           
-        m_pEvent->e_x = x_recalc;
-        m_pEvent->e_y = y_recalc;
-        m_pEvent->e_x_root = 0;
-        m_pEvent->e_y_root = 0;
-        m_pEvent->e_key_modifiers = GetModifierKeyState(xevent.xkey.state);
+        m_pEvent->x = x_recalc;
+        m_pEvent->y = y_recalc;
+        m_pEvent->x_root = 0;
+        m_pEvent->y_root = 0;
+        m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
         MouseMove(xevent, m_pEvent);
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: EnterNotify event.");
         break;
@@ -1662,7 +1662,7 @@ namespace nux
         else
         {
           //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: MapNotify event.");
-          m_pEvent->e_event = NUX_WINDOW_MAP;
+          m_pEvent->event_type = NUX_WINDOW_MAP;
 
           XSetInputFocus(xevent.xany.display,
                           xevent.xany.window,
@@ -1677,7 +1677,7 @@ namespace nux
       case UnmapNotify:
       {
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: UnmapNotify event.");
-        m_pEvent->e_event = NUX_WINDOW_UNMAP;
+        m_pEvent->event_type = NUX_WINDOW_UNMAP;
         break;
       }
 
@@ -1688,7 +1688,7 @@ namespace nux
 
         if ((xevent.xclient.format == 32) && ((xevent.xclient.data.l[0]) == static_cast<long> (m_WMDeleteWindow)))
         {
-          m_pEvent->e_event = NUX_TERMINATE_APP;
+          m_pEvent->event_type = NUX_TERMINATE_APP;
           //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: ClientMessage event: Close Application.");
         }
         
@@ -1699,17 +1699,17 @@ namespace nux
         else if (xevent.xclient.message_type == XInternAtom(xevent.xany.display, "XdndEnter", false))
         {
           HandleXDndEnter(xevent);
-          m_pEvent->e_event = NUX_DND_ENTER_WINDOW;
+          m_pEvent->event_type = NUX_DND_ENTER_WINDOW;
         }
         else if (xevent.xclient.message_type == XInternAtom(xevent.xany.display, "XdndStatus", false))
         {
           HandleXDndStatus(xevent);
-          m_pEvent->e_event = NUX_NO_EVENT;
+          m_pEvent->event_type = NUX_NO_EVENT;
         }
         else if (xevent.xclient.message_type == XInternAtom(xevent.xany.display, "XdndLeave", false))
         {
           HandleXDndLeave(xevent);
-          m_pEvent->e_event = NUX_DND_LEAVE_WINDOW;
+          m_pEvent->event_type = NUX_DND_LEAVE_WINDOW;
         }
         else if (xevent.xclient.message_type == XInternAtom(xevent.xany.display, "XdndDrop", false))
         {
@@ -1718,7 +1718,7 @@ namespace nux
         else if (xevent.xclient.message_type == XInternAtom(xevent.xany.display, "XdndFinished", false))
         {
           HandleXDndFinished(xevent);
-          m_pEvent->e_event = NUX_NO_EVENT;
+          m_pEvent->event_type = NUX_NO_EVENT;
         }
         
         break;
@@ -2277,9 +2277,9 @@ namespace nux
 
     RecalcXYPosition(x, y, x_recalc, y_recalc);
 
-    nux_event->e_event = NUX_DND_MOVE;
-    nux_event->e_x = x_recalc;
-    nux_event->e_y = y_recalc;
+    nux_event->event_type = NUX_DND_MOVE;
+    nux_event->x = x_recalc;
+    nux_event->y = y_recalc;
 
     // Store the last DND position;
     _last_dnd_position = Point(x_recalc, y_recalc);
@@ -2432,11 +2432,11 @@ namespace nux
     const long *l = event.xclient.data.l;
     _drag_drop_timestamp = l[2];
     
-    nux_event->e_event = NUX_DND_DROP;
+    nux_event->event_type = NUX_DND_DROP;
 
     // The drop does not provide(x, y) coordinates of the location of the drop. Use the last DND position.
-    nux_event->e_x = _last_dnd_position.x;
-    nux_event->e_y = _last_dnd_position.y;
+    nux_event->x = _last_dnd_position.x;
+    nux_event->y = _last_dnd_position.y;
   }
   
   void GraphicsDisplay::HandleXDndFinished(XEvent event)

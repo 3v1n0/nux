@@ -24,7 +24,6 @@
 #define INPUTAREA_H
 
 #include "Area.h"
-#include "MouseHandler.h"
 
 #if defined(NUX_OS_WINDOWS)
   #include "NuxGraphics/Events.h"
@@ -60,11 +59,7 @@ namespace nux
     virtual void OverlayDrawing(GraphicsEngine &graphics_engine) {}
 
     bool HasKeyboardFocus();
-    void SetKeyboardFocus(bool b);
-    int GetMouseX();
-    int GetMouseY();
-    
-    bool HasMouseFocus();
+
     bool MouseFocusOnOtherArea();
     void CaptureMouseDownAnyWhereElse(bool b);
     bool IsCaptureMouseDownAnyWhereElse() const;
@@ -93,10 +88,6 @@ namespace nux
       return true;
     }
 
-    // This method reset the mouse position inside the Area. This is necessary for areas that serve as Drag
-    // when the area position is referred to(x_root, y_root) instead of being the system window coordinates(0, 0).
-    void SetAreaMousePosition(int x, int y);
-
     void GrabPointer();
     void GrabKeyboard();
     void UnGrabPointer();
@@ -113,11 +104,12 @@ namespace nux
     */
     bool IsMouseOwner();
 
-    //! Returns true if the mouse pointer is inside the Area.
+    //! Returns true if the mouse pointer has been determined as inside the this area, following event processing.
     /*!
-        Returns true if during a call to FindAreaUnderMouse it the Area has been determined to be directly under the
-        mouse pointer. Note that is is true only for the first area that is found. there might be other areas that 
-        which have the mouse pointer inside of them.
+        Returns true if during a call to FindAreaUnderMouse, this area has been determined to be directly under the
+        mouse pointer. Note that this is true only for the first area that is found. There might be other areas that 
+        which have the mouse pointer inside of them. \n
+        Call Area::IsMousePointerInside to find out if the mouse pointer is inside an area.
         
         @return Return true if the mouse pointer is inside the Area.
     */
@@ -129,7 +121,7 @@ namespace nux
     //! Returns true if the double click signal is enable for this InputArea.
     bool DoubleClickEnabled() const;
 
-    AreaEventProcessor _event_processor;
+    bool mouse_in_;
 
 #if defined(NUX_OS_LINUX)
     void HandleDndEnter() {ProcessDndEnter();}
@@ -150,14 +142,12 @@ namespace nux
     /*
         Color of the InputArea use to draw a colored quad when OnDraw() is called.
     */
-    Color m_AreaColor;
+    Color area_color_;
     
     int _dnd_safety_x;
     int _dnd_safety_y;
 
   protected:
-
-    bool _has_keyboard_focus;
     bool _capture_mouse_down_any_where_else;
     bool _double_click;     //!< If True, this InputArea can emit the signal mouse_double_click. Default is false.
 

@@ -57,12 +57,10 @@ namespace nux
       Weight weight);
 
     virtual ~CairoFont();
-
-    virtual Style GetStyle() const {return style_;}
-    virtual Weight GetWeight() const {return weight_;}
-    virtual double GetPointSize() const {return size_;}
-
-    virtual void Destroy() {delete this;}
+    virtual Style GetStyle() const;
+    virtual Weight GetWeight() const;
+    virtual double GetPointSize() const;
+    virtual void Destroy();
 
     const PangoFontDescription *GetFontDescription() const {return font_;}
 
@@ -75,6 +73,21 @@ namespace nux
 
   class TextEntry: public View
   {
+    enum MovementStep {
+      VISUALLY,
+      WORDS,
+      DISPLAY_LINES,
+      DISPLAY_LINE_ENDS,
+      PAGES,
+      BUFFER
+    };
+
+    enum AdjustScrollPolicy {
+      NO_SCROLL = 0,
+      CENTER_CURSOR,
+      MINIMAL_ADJUST
+    };
+
     NUX_DECLARE_OBJECT_TYPE(TextEntry, View);
   public:
     TextEntry(const char* text, NUX_FILE_LINE_PROTO);
@@ -116,8 +129,8 @@ namespace nux
       const char*     character  ,   /*character*/
       unsigned short   keyCount       /*key repeat count*/);
 
-    void FocusInx();
-    void FocusOutx();
+    void StartKeyboardFocus();
+    void EndKeyboardFocus();
 
     //! Text changed signal
     /*!
@@ -145,49 +158,62 @@ namespace nux
     void SetAlign(CairoGraphics::Alignment align);
 
   protected:
-    bool _block_focus; // used to selectively ignore focus keyevents
+    bool _block_focus; // used to selectively ignore focus key events
+    TimeOutSignal *cursor_blink_signal_;
+    TimerHandle   cursor_blink_handle_;
 
     virtual void GeometryChanged();
 
-    /**
-     * Enum used to specify different motion types.
-     */
-    enum MovementStep {
-      VISUALLY,
-      WORDS,
-      DISPLAY_LINES,
-      DISPLAY_LINE_ENDS,
-      PAGES,
-      BUFFER
-    };
-
     void QueueTextDraw();
-    /** Remove the cached layout. */
+    
+    /*!
+        Remove the cached layout.
+    */
     void ResetLayout();
-    /**
-     * Create pango layout on-demand. If the layout is not changed, return the
-     * cached one.
+
+    /*!
+        Create pango layout on-demand. If the layout is not changed, return the cached one.
+
+        @return A PangoLayout.
      */
     PangoLayout* EnsureLayout();
-    /** Create a new layout containning current edit content */
+
+    /*!
+        Create a new layout containing current edit content.
+
+        @return A PangoLayout.
+    */
     PangoLayout* CreateLayout();
+
     /** Create cairo canvas on-demand. */
     CairoGraphics* EnsureCanvas();
     /** Adjust the scroll information */
-    void AdjustScroll();
-    /**
-     * Send out a request to refresh all informations of the edit control
-     * and queue a draw request.
-     * If @c relayout is true then the layout will be regenerated.
-     * */
-    void QueueRefresh(bool relayout, bool adjust_scroll);
+    void AdjustScroll(AdjustScrollPolicy policy);
+    /*!
+        Send out a request to refresh all informations of the edit control
+        and queue a draw request.
+
+        @param relayout If true, the layout will be regenerated.
+        @param adjust_scroll If true, adjust the scrolling.
+    */
+    void QueueRefresh(bool relayout, AdjustScrollPolicy policy);
+
     /** Reset the input method context */
     void ResetImContext();
     /** Reset preedit text */
     void ResetPreedit();
-    /** Send out a request to blink the cursor if necessary */
-    void QueueCursorBlink();
-    static bool CursorBlinkCallback(TextEntry *data);
+
+    void CursorBlinkCallback(void *data);
+
+    /*!
+        Start the blinking of the cursor.
+    */
+    void StartCursorBlink();
+
+    /*!
+        Stop the blinking of the cursor.
+    */
+    void StopCursorBlink();
 
     void ShowCursor();
     void HideCursor();
@@ -203,12 +229,30 @@ namespace nux
 
     void UpdateSelectionRegion();
 
+    void UpdateContentRegion();
+
     /** Move cursor */
     void MoveCursor(MovementStep step, int count, bool extend_selection);
     /** Move cursor visually, meaning left or right */
     int MoveVisually(int current_pos, int count);
-    /** Move cursor in words */
+
+    /** Move cursor logically, meaning towards head or end of the text. */
+    int MoveLogically(int current_index, int count);
+
+    /*!
+        Return the next word boundary around the character position given by \i current_pos.\n
+        The direction for which to search for the word boundary is determined by the \i count parameter.\n
+        If \i count > 0, search forward for the next word boundary.\n
+        If \i count < 0, search backward for the next word boundary.\n
+        This call does not physically move the cursor.
+
+        @param current_pos The character position.
+        @param count The search direction.
+
+        @return The character position of the word boundary around \i current_pos.
+    */
     int MoveWords(int current_pos, int count);
+
     /** Move cursor in display lines */
     int MoveDisplayLines(int current_pos, int count);
     /** Move cursor in pages */
@@ -221,9 +265,24 @@ namespace nux
     /** Get the most reasonable character offset according to the pixel
      * coordinate in the layout */
     int XYToTextIndex(int x, int y);
-    /** Get the offset range that is currently selected,in number of characters.*/
+
+
+    /*!
+        Get the offset range that is currently selected, in number of characters.
+
+        @param start Beginning of selection.
+        @param end End of selection.
+
+        @return True is there is a current active selection.
+    */
     bool GetSelectionBounds(int *start, int *end);
-    /** Set the offest range that should be selected, in number of characters. */
+
+    /*!
+        Set the offset range that should be selected, in number of characters.
+
+        @param selection_bound Beginning of selection.
+        @param cursor End of selection (also the cursor position).
+    */
     void SetSelectionBounds(int selection_bound, int cursor);
 
     /** Convert index in text_ into index in layout text. */
@@ -271,21 +330,25 @@ namespace nux
     /**
      * Gets the cursor location in pango layout. The unit is pixel.
      */
-    void GetCursorLocationInLayout(int *strong_x, int *strong_y, int *strong_height,
-                                   int *weak_x, int *weak_y, int *weak_height);
+//     void GetCursorLocationInLayout(int *strong_x, int *strong_y, int *strong_height,
+//                                    int *weak_x, int *weak_y, int *weak_height);
+
+    void GetCursorLocationInLayout(PangoRectangle *strong, PangoRectangle *weak);
 
     /** The CairoCanvas which hold cairo_t inside */
     CairoGraphics* canvas_;
 
-    /** The cached Pango Layout */
-    PangoLayout* cached_layout_;
+    PangoLayout* cached_layout_; //!< The cached Pango Layout.
 
     /** The text content of the edit control */
     std::string text_;
+
     /** The preedit text of the edit control */
     std::string preedit_;
-    /** Attribute list of the preedit text */
+
+    /** Attribute list of the pre-edit text */
     PangoAttrList *preedit_attrs_;
+
     /**
      *  The character that should be displayed in invisible mode.
      *  If this is empty, then the edit control is visible
@@ -312,8 +375,7 @@ namespace nux
     int scroll_offset_x_;
     /** Y offset of current scroll, in pixels */
     int scroll_offset_y_;
-    /** Timer id of cursor blink callback */
-    int cursor_blink_timer_;
+
     /**
      * Indicates the status of cursor blinking,
      * 0 means hide cursor
@@ -323,10 +385,11 @@ namespace nux
      */
     int cursor_blink_status_;
 
-    /** Whether the text is visible, decided by password_char_ */
-    bool visible_;
-    /** Whether the edit control is focused */
-    bool focused_;
+    
+    bool characters_revealed_;        //!< Whether the text is visible, decided by password_char_.
+    
+    bool has_keyboard_focused_;       //!< Whether the text entry is focused.
+
     /** Whether the input method should be reset */
     bool need_im_reset_;
     /** Whether the keyboard in overwrite mode */
@@ -380,11 +443,25 @@ namespace nux
     Color _text_color;
 
     CairoGraphics::Alignment align_;
+    CairoGraphics::VAlignment valign_;
+
+    PangoRectangle strong_cursor_pos_;
+    PangoRectangle weak_cursor_pos_;
+
+    /**
+    * Cursor index in layout, which shall be reset to -1 when resetting
+    * layout or moving cursor so that it'll be recalculated.
+    */
+    int cursor_index_in_layout_;
 
     std::list<Rect> last_selection_region_;
     std::list<Rect> selection_region_;
     std::list<Rect> last_cursor_region_;
     std::list<Rect> cursor_region_;
+    std::list<Rect> last_content_region_;
+    std::list<Rect> content_region_;
+
+    PangoWrapMode wrap_mode_;
 
   protected:
     bool text_input_mode_;

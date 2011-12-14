@@ -308,12 +308,12 @@ logging::Logger logger("nux.window");
 
   void WindowCompositor::DndEventCycle(Event &event)
   {
-    if (event.e_event == NUX_DND_MOVE)
+    if (event.event_type == NUX_DND_MOVE)
     {
       InputArea *hit_area = NULL;
       BaseWindow *hit_base_window = NULL;
 
-      GetAreaUnderMouse(Point(event.e_x, event.e_y), event.e_event, &hit_area, &hit_base_window);
+      GetAreaUnderMouse(Point(event.x, event.y), event.event_type, &hit_area, &hit_base_window);
 
       if (hit_area)
       {
@@ -325,18 +325,18 @@ logging::Logger logger("nux.window");
         ResetDnDArea();
       }
     }
-    else if (event.e_event == NUX_DND_ENTER_WINDOW)
+    else if (event.event_type == NUX_DND_ENTER_WINDOW)
     {
       // do nothing for now
     }
-    else if (event.e_event == NUX_DND_LEAVE_WINDOW)
+    else if (event.event_type == NUX_DND_LEAVE_WINDOW)
     {
       ResetDnDArea();
     }
-    else if (event.e_event == NUX_DND_DROP)
+    else if (event.event_type == NUX_DND_DROP)
     {
       InputArea *current_dnd_area = GetDnDArea();
-      if (current_dnd_area->GetGeometry().IsPointInside(event.e_x - event.e_x_root, event.e_y - event.e_y_root))
+      if (current_dnd_area->GetGeometry().IsPointInside(event.x - event.x_root, event.y - event.y_root))
         current_dnd_area->HandleDndDrop(event);
     }
   }
@@ -346,10 +346,10 @@ logging::Logger logger("nux.window");
     // mouse_owner_area_: the view that has the mouse down
     // mouse_over_area_: the view that is directly below the mouse pointer
 
-    int dx = event.e_x - _mouse_position.x;
-    int dy = event.e_y - _mouse_position.y;
+    int dx = event.x - _mouse_position.x;
+    int dy = event.y - _mouse_position.y;
 
-    _mouse_position = Point(event.e_x, event.e_y);
+    _mouse_position = Point(event.x, event.y);
 
     if (mouse_owner_area_ == NULL)
     {
@@ -358,12 +358,12 @@ logging::Logger logger("nux.window");
       
       // NUX_MOUSE_RELEASED is tipically processed in cases where mouse_owner_area_ is not NULL.
       // See below for the case when NUX_MOUSE_RELEASED is processed here while mouse_owner_area_ is NULL.
-      if ((event.e_event == NUX_MOUSE_PRESSED) ||
-        (event.e_event == NUX_MOUSE_MOVE) ||
-        (event.e_event == NUX_MOUSE_DOUBLECLICK) ||
-        (event.e_event == NUX_MOUSE_WHEEL) ||
-        (event.e_event == NUX_WINDOW_MOUSELEAVE) ||
-        (event.e_event == NUX_MOUSE_RELEASED))
+      if ((event.event_type == NUX_MOUSE_PRESSED) ||
+        (event.event_type == NUX_MOUSE_MOVE) ||
+        (event.event_type == NUX_MOUSE_DOUBLECLICK) ||
+        (event.event_type == NUX_MOUSE_WHEEL) ||
+        (event.event_type == NUX_WINDOW_MOUSELEAVE) ||
+        (event.event_type == NUX_MOUSE_RELEASED))
       {
         InputArea* hit_view = NULL;         // The view under the mouse
         BaseWindow* hit_base_window = NULL; // The BaseWindow below the mouse pointer.
@@ -373,19 +373,19 @@ logging::Logger logger("nux.window");
         if (pointer_grab_area)
         {
           // If there is a pending mouse pointer grab, test that area only
-          hit_view = NUX_STATIC_CAST(InputArea*, pointer_grab_area->FindAreaUnderMouse(Point(event.e_x, event.e_y), event.e_event));
-          if ((hit_view == NULL) && (event.e_event == NUX_MOUSE_PRESSED))
+          hit_view = NUX_STATIC_CAST(InputArea*, pointer_grab_area->FindAreaUnderMouse(Point(event.x, event.y), event.event_type));
+          if ((hit_view == NULL) && (event.event_type == NUX_MOUSE_PRESSED))
           {
             Geometry geo = pointer_grab_area->GetAbsoluteGeometry();
-            int x = event.e_x - geo.x;
-            int y = event.e_y - geo.y;
+            int x = event.x - geo.x;
+            int y = event.y - geo.y;
 
             NUX_STATIC_CAST(InputArea*, pointer_grab_area)->EmitMouseDownOutsideArea(x, y, event.GetMouseState(), event.GetKeyState());
           }
         }
         else
         {
-          GetAreaUnderMouse(Point(event.e_x, event.e_y), event.e_event, &hit_view, &hit_base_window);
+          GetAreaUnderMouse(Point(event.x, event.y), event.event_type, &hit_view, &hit_base_window);
           SetMouseOwnerBaseWindow(hit_base_window);
         }
 
@@ -396,25 +396,25 @@ logging::Logger logger("nux.window");
         if (hit_view)
         {
           hit_view_geo = hit_view->GetAbsoluteGeometry();
-          hit_view_x = event.e_x - hit_view_geo.x;
-          hit_view_y = event.e_y - hit_view_geo.y;
+          hit_view_x = event.x - hit_view_geo.x;
+          hit_view_y = event.y - hit_view_geo.y;
         }
 
-        if (event.e_event == NUX_WINDOW_MOUSELEAVE)
+        if (event.event_type == NUX_WINDOW_MOUSELEAVE)
         {
           if (mouse_over_area_ != NULL)
           {
             // The area where the mouse was in the previous cycle and the area returned by GetAreaUnderMouse are different.
             // The area from the previous cycle receive a "mouse leave signal".
             Geometry geo = mouse_over_area_->GetAbsoluteGeometry();
-            int x = event.e_x - geo.x;
-            int y = event.e_y - geo.y;
+            int x = event.x - geo.x;
+            int y = event.y - geo.y;
 
             mouse_over_area_->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
             SetMouseOverArea(NULL);
           }
         }
-        else if (hit_view && (event.e_event == NUX_MOUSE_MOVE))
+        else if (hit_view && (event.event_type == NUX_MOUSE_MOVE))
         {
           if (hit_view != mouse_over_area_)
           {
@@ -423,8 +423,8 @@ logging::Logger logger("nux.window");
               // The area where the mouse was in the previous cycle and the area returned by GetAreaUnderMouse are different.
               // The area from the previous cycle receive a "mouse leave signal".
               Geometry geo = mouse_over_area_->GetAbsoluteGeometry();
-              int x = event.e_x - geo.x;
-              int y = event.e_y - geo.y;
+              int x = event.x - geo.x;
+              int y = event.y - geo.y;
 
               mouse_over_area_->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
             }
@@ -437,12 +437,12 @@ logging::Logger logger("nux.window");
           // Send a "mouse mouse signal".
           mouse_over_area_->EmitMouseMoveSignal(hit_view_x, hit_view_y, dx, dy, event.GetMouseState(), event.GetKeyState());
         }
-        else if (hit_view && ((event.e_event == NUX_MOUSE_PRESSED) || (event.e_event == NUX_MOUSE_DOUBLECLICK)))
+        else if (hit_view && ((event.event_type == NUX_MOUSE_PRESSED) || (event.event_type == NUX_MOUSE_DOUBLECLICK)))
         {
-          if ((event.e_event == NUX_MOUSE_DOUBLECLICK) && (!hit_view->DoubleClickEnabled()))
+          if ((event.event_type == NUX_MOUSE_DOUBLECLICK) && (!hit_view->DoubleClickEnabled()))
           {
             // If the area does not accept double click events, transform the event into a mouse pressed.
-            event.e_event = NUX_MOUSE_PRESSED;
+            event.event_type = NUX_MOUSE_PRESSED;
           }
 
           bool emit_double_click_signal = false;
@@ -454,12 +454,12 @@ logging::Logger logger("nux.window");
             // a new area. If the next mouse event is a NUX_MOUSE_PRESSED, then the revealed area will be the one 
             // that is returned by GetAreaUnderMouse.
             Geometry geo = mouse_over_area_->GetAbsoluteGeometry();
-            int x = event.e_x - geo.x;
-            int y = event.e_y - geo.y;
+            int x = event.x - geo.x;
+            int y = event.y - geo.y;
 
             mouse_over_area_->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
           }
-          else if (mouse_over_area_ && (hit_view == mouse_over_area_) && (event.e_event == NUX_MOUSE_DOUBLECLICK))
+          else if (mouse_over_area_ && (hit_view == mouse_over_area_) && (event.event_type == NUX_MOUSE_DOUBLECLICK))
           {
             // Double click is emitted, if the second click happened on the same area as the first click.
             // This means mouse_over_area_ is not null and is equal to hit_view.
@@ -502,11 +502,11 @@ logging::Logger logger("nux.window");
             mouse_over_area_->EmitMouseDownSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
           }
         }
-        else if (hit_view && (event.e_event == NUX_MOUSE_WHEEL))
+        else if (hit_view && (event.event_type == NUX_MOUSE_WHEEL))
         {
           hit_view->EmitMouseWheelSignal(hit_view_x, hit_view_y, event.e_wheeldelta, event.GetMouseState(), event.GetKeyState());
         }
-        else if (hit_view && (event.e_event == NUX_MOUSE_RELEASED))
+        else if (hit_view && (event.event_type == NUX_MOUSE_RELEASED))
         {
           // We only get a NUX_MOUSE_RELEASED event when the mouse was pressed
           // over another area and released here. There are a few situations that can cause 
@@ -523,18 +523,18 @@ logging::Logger logger("nux.window");
           if (mouse_over_area_)
           {
             Geometry geo = mouse_over_area_->GetAbsoluteGeometry();
-            int x = event.e_x - geo.x;
-            int y = event.e_y - geo.y;
+            int x = event.x - geo.x;
+            int y = event.y - geo.y;
 
             // Mouse wheel events are stationary. The mouse can remain inside an area while the mouse wheel is spinning.
             // This shouldn't qualify as a mouse leave event.
-            if (event.e_event != NUX_MOUSE_WHEEL)
+            if (event.event_type != NUX_MOUSE_WHEEL)
             {
               mouse_over_area_->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
             }
           }
 
-//           if (GetKeyFocusArea() && (event.e_event == NUX_MOUSE_PRESSED))
+//           if (GetKeyFocusArea() && (event.event_type == NUX_MOUSE_PRESSED))
 //           {
 //             InputArea* grab_area = GetKeyFocusArea();
 // 
@@ -559,14 +559,14 @@ logging::Logger logger("nux.window");
       InputArea* hit_view = NULL;         // The view under the mouse
       BaseWindow* hit_base_window = NULL; // The BaseWindow below the mouse pointer.
 
-      GetAreaUnderMouse(Point(event.e_x, event.e_y), event.e_event, &hit_view, &hit_base_window);
+      GetAreaUnderMouse(Point(event.x, event.y), event.event_type, &hit_view, &hit_base_window);
 
       Geometry mouse_owner_geo = mouse_owner_area_->GetAbsoluteGeometry();
-      int mouse_owner_x = event.e_x - mouse_owner_geo.x;
-      int mouse_owner_y = event.e_y - mouse_owner_geo.y;
+      int mouse_owner_x = event.x - mouse_owner_geo.x;
+      int mouse_owner_y = event.y - mouse_owner_geo.y;
 
       // the mouse is down over a view
-      if (event.e_event == NUX_MOUSE_MOVE)
+      if (event.event_type == NUX_MOUSE_MOVE)
       {
         int dx = mouse_owner_x - _mouse_position_on_owner.x;
         int dy = mouse_owner_y - _mouse_position_on_owner.y;
@@ -603,7 +603,7 @@ logging::Logger logger("nux.window");
 
         _mouse_position_on_owner = Point(mouse_owner_x, mouse_owner_y);
       }
-      else if (event.e_event == NUX_MOUSE_RELEASED)
+      else if (event.event_type == NUX_MOUSE_RELEASED)
       {
         mouse_owner_area_->EmitMouseUpSignal(mouse_owner_x, mouse_owner_y, event.GetMouseState(), event.GetKeyState());
 
@@ -628,15 +628,15 @@ logging::Logger logger("nux.window");
     // _mouse_owner_menu_page: the menu page that has the mouse down
     // _mouse_over_menu_page: the menu page that is directly below the mouse pointer
 
-    _mouse_position = Point(event.e_x, event.e_y);
+    _mouse_position = Point(event.x, event.y);
 
     if (_mouse_owner_menu_page == NULL)
     {
-      if ((event.e_event == NUX_MOUSE_PRESSED) ||
-        (event.e_event == NUX_MOUSE_RELEASED) ||
-        (event.e_event == NUX_MOUSE_MOVE) ||
-        (event.e_event == NUX_MOUSE_DOUBLECLICK) ||
-        (event.e_event == NUX_MOUSE_WHEEL))
+      if ((event.event_type == NUX_MOUSE_PRESSED) ||
+        (event.event_type == NUX_MOUSE_RELEASED) ||
+        (event.event_type == NUX_MOUSE_MOVE) ||
+        (event.event_type == NUX_MOUSE_DOUBLECLICK) ||
+        (event.event_type == NUX_MOUSE_WHEEL))
       {
         // Find the MenuPage under the mouse
         MenuPage* hit_menu_page = NULL;
@@ -644,7 +644,7 @@ logging::Logger logger("nux.window");
         for (menu_it = _menu_chain->begin(); menu_it != _menu_chain->end(); menu_it++)
         {
           // The leaf of the menu chain is in the front of the list.
-          hit_menu_page = NUX_STATIC_CAST(MenuPage*, (*menu_it)->FindAreaUnderMouse(Point(event.e_x, event.e_y), event.e_event));
+          hit_menu_page = NUX_STATIC_CAST(MenuPage*, (*menu_it)->FindAreaUnderMouse(Point(event.x, event.y), event.event_type));
           if (hit_menu_page)
           {
             break;
@@ -658,26 +658,26 @@ logging::Logger logger("nux.window");
         if (hit_menu_page)
         {
           hit_menu_page_geo = hit_menu_page->GetAbsoluteGeometry();
-          hit_menu_page_x = event.e_x - hit_menu_page_geo.x;
-          hit_menu_page_y = event.e_y - hit_menu_page_geo.y;
+          hit_menu_page_x = event.x - hit_menu_page_geo.x;
+          hit_menu_page_y = event.y - hit_menu_page_geo.y;
         }
 
-        if (hit_menu_page && (event.e_event == NUX_MOUSE_RELEASED))
+        if (hit_menu_page && (event.event_type == NUX_MOUSE_RELEASED))
         {
           hit_menu_page->EmitMouseUpSignal(hit_menu_page_x, hit_menu_page_y, event.GetMouseState(), event.GetKeyState());
 
           (*_menu_chain->begin())->sigClosingMenu(*_menu_chain->begin());
           (*_menu_chain->begin())->StopMenu();
         }
-        else if (hit_menu_page && (event.e_event == NUX_MOUSE_MOVE))
+        else if (hit_menu_page && (event.event_type == NUX_MOUSE_MOVE))
         {
           if (hit_menu_page != _mouse_over_menu_page)
           {
             if (_mouse_over_menu_page != 0)
             {
               Geometry geo = _mouse_over_menu_page->GetAbsoluteGeometry();
-              int x = event.e_x - geo.x;
-              int y = event.e_y - geo.y;
+              int x = event.x - geo.x;
+              int y = event.y - geo.y;
 
               _mouse_over_menu_page->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
             }
@@ -686,9 +686,9 @@ logging::Logger logger("nux.window");
             _mouse_over_menu_page->EmitMouseEnterSignal(hit_menu_page_x, hit_menu_page_y, event.GetMouseState(), event.GetKeyState());
           }
 
-          _mouse_over_menu_page->EmitMouseMoveSignal(hit_menu_page_x, hit_menu_page_y, event.e_dx, event.e_dy, event.GetMouseState(), event.GetKeyState());
+          _mouse_over_menu_page->EmitMouseMoveSignal(hit_menu_page_x, hit_menu_page_y, event.dx, event.dy, event.GetMouseState(), event.GetKeyState());
         }
-        else if (hit_menu_page && ((event.e_event == NUX_MOUSE_PRESSED) || (event.e_event == NUX_MOUSE_DOUBLECLICK)))
+        else if (hit_menu_page && ((event.event_type == NUX_MOUSE_PRESSED) || (event.event_type == NUX_MOUSE_DOUBLECLICK)))
         {
           if (!hit_menu_page->DoubleClickEnabled())
           {
@@ -698,8 +698,8 @@ logging::Logger logger("nux.window");
           if (_mouse_over_menu_page && (hit_menu_page != _mouse_over_menu_page))
           {
             Geometry geo = _mouse_over_menu_page->GetAbsoluteGeometry();
-            int x = event.e_x - geo.x;
-            int y = event.e_y - geo.y;
+            int x = event.x - geo.x;
+            int y = event.y - geo.y;
 
             _mouse_over_menu_page->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
           }
@@ -716,7 +716,7 @@ logging::Logger logger("nux.window");
 
           _mouse_over_menu_page->EmitMouseDownSignal(hit_menu_page_x, hit_menu_page_y, event.GetMouseState(), event.GetKeyState());
         }
-        else if (hit_menu_page && (event.e_event == NUX_MOUSE_WHEEL))
+        else if (hit_menu_page && (event.event_type == NUX_MOUSE_WHEEL))
         {
           hit_menu_page->EmitMouseWheelSignal(hit_menu_page_x, hit_menu_page_y, event.e_wheeldelta, event.GetMouseState(), event.GetKeyState());
         }
@@ -725,13 +725,13 @@ logging::Logger logger("nux.window");
           if (_mouse_over_menu_page)
           {
             Geometry geo = _mouse_over_menu_page->GetAbsoluteGeometry();
-            int x = event.e_x - geo.x;
-            int y = event.e_y - geo.y;
+            int x = event.x - geo.x;
+            int y = event.y - geo.y;
 
             _mouse_over_menu_page->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
           }
 
-          if (event.e_event == NUX_MOUSE_PRESSED || event.e_event == NUX_MOUSE_DOUBLECLICK)
+          if (event.event_type == NUX_MOUSE_PRESSED || event.event_type == NUX_MOUSE_DOUBLECLICK)
           {
             (*_menu_chain->begin())->sigClosingMenu(*_menu_chain->begin());
             (*_menu_chain->begin())->StopMenu();
@@ -750,7 +750,7 @@ logging::Logger logger("nux.window");
       for (menu_it = _menu_chain->begin(); menu_it != _menu_chain->end(); menu_it++)
       {
         // The leaf of the menu chain is in the front of the list.
-        hit_menu_page = NUX_STATIC_CAST(MenuPage*, (*menu_it)->FindAreaUnderMouse(Point(event.e_x, event.e_y), event.e_event));
+        hit_menu_page = NUX_STATIC_CAST(MenuPage*, (*menu_it)->FindAreaUnderMouse(Point(event.x, event.y), event.event_type));
         if (hit_menu_page)
         {
           break;
@@ -758,11 +758,11 @@ logging::Logger logger("nux.window");
       }
 
       Geometry mouse_owner_geo = _mouse_owner_menu_page->GetAbsoluteGeometry();
-      int mouse_owner_x = event.e_x - mouse_owner_geo.x;
-      int mouse_owner_y = event.e_y - mouse_owner_geo.y;
+      int mouse_owner_x = event.x - mouse_owner_geo.x;
+      int mouse_owner_y = event.y - mouse_owner_geo.y;
 
       // the mouse is down over a view
-      if (event.e_event == NUX_MOUSE_MOVE)
+      if (event.event_type == NUX_MOUSE_MOVE)
       {
         int dx = mouse_owner_x - _mouse_position_on_owner.x;
         int dy = mouse_owner_y - _mouse_position_on_owner.y;
@@ -782,7 +782,7 @@ logging::Logger logger("nux.window");
 
         _mouse_position_on_owner = Point(mouse_owner_x, mouse_owner_y);
       }
-      else if (event.e_event == NUX_MOUSE_RELEASED)
+      else if (event.event_type == NUX_MOUSE_RELEASED)
       {
         _mouse_owner_menu_page->EmitMouseUpSignal(mouse_owner_x, mouse_owner_y, event.GetMouseState(), event.GetKeyState());
 
@@ -902,14 +902,14 @@ logging::Logger logger("nux.window");
       // Find the key focus area, under the keyboard grab area. That is to say, the key focus area is in the widget tree 
       // whose root is the keyboard grab area. This phase is known as the capture phase.
       
-      FindKeyFocusAreaFrom(event.e_event, event.GetKeySym(), event.GetKeyState(),
+      FindKeyFocusAreaFrom(event.event_type, event.GetKeySym(), event.GetKeyState(),
         keyboard_event_grab_view,
         &focus_area,
         &base_window);
     }
     else
     {
-      FindKeyFocusArea(event.e_event, event.GetKeySym(), event.GetKeyState(),
+      FindKeyFocusArea(event.event_type, event.GetKeySym(), event.GetKeyState(),
         &focus_area,
         &base_window);
     }
@@ -953,10 +953,10 @@ logging::Logger logger("nux.window");
 
     if (key_focus_area_)
     {
-      if (key_focus_area_->InspectKeyEvent(event.e_event, event.GetKeySym(), event.GetText()))
+      if (key_focus_area_->InspectKeyEvent(event.event_type, event.GetKeySym(), event.GetText()))
       {
         SendKeyEvent(key_focus_area_,
-                    event.e_event,
+                    event.event_type,
                     event.GetKeySym(),
                     event.e_x11_keycode,
                     event.GetKeyState(),
@@ -967,7 +967,7 @@ logging::Logger logger("nux.window");
       {
         Area* parent = key_focus_area_->GetParentObject();
 
-        while (parent && !parent->InspectKeyEvent(event.e_event, event.GetKeySym(), event.GetText()))
+        while (parent && !parent->InspectKeyEvent(event.event_type, event.GetKeySym(), event.GetText()))
         {
           parent = parent->GetParentObject();
         }
@@ -975,7 +975,7 @@ logging::Logger logger("nux.window");
         if (parent)
         {
           SendKeyEvent(static_cast<InputArea*>(parent),
-            event.e_event,
+            event.event_type,
             event.GetKeySym(),
             event.e_x11_keycode,
             event.GetKeyState(),
@@ -983,7 +983,7 @@ logging::Logger logger("nux.window");
             event.GetKeyRepeatCount());
         }
       }
-      else if (event.e_event == NUX_KEYDOWN)
+      else if (event.event_type == NUX_KEYDOWN)
       {        
         if (direction == KEY_NAV_ENTER)
         {
@@ -1026,8 +1026,8 @@ logging::Logger logger("nux.window");
     inside_event_cycle_ = true;
     if (_enable_nux_new_event_architecture)
     {
-      if (((event.e_event >= NUX_MOUSE_PRESSED) && (event.e_event <= NUX_MOUSE_WHEEL)) ||
-      (event.e_event == NUX_WINDOW_MOUSELEAVE))
+      if (((event.event_type >= NUX_MOUSE_PRESSED) && (event.event_type <= NUX_MOUSE_WHEEL)) ||
+      (event.event_type == NUX_WINDOW_MOUSELEAVE))
       {
         bool menu_active = false;
         if (_menu_chain->size())
@@ -1049,11 +1049,11 @@ logging::Logger logger("nux.window");
           _starting_menu_event_cycle = false;
         }
       }
-      else if ((event.e_event >= NUX_KEYDOWN) && (event.e_event <= NUX_KEYUP))
+      else if ((event.event_type >= NUX_KEYDOWN) && (event.event_type <= NUX_KEYUP))
       {
         KeyboardEventCycle(event);
       }
-      else if ((event.e_event >= NUX_DND_MOVE) && (event.e_event <= NUX_DND_LEAVE_WINDOW))
+      else if ((event.event_type >= NUX_DND_MOVE) && (event.event_type <= NUX_DND_LEAVE_WINDOW))
       {
         DndEventCycle(event);
       }
