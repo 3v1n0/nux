@@ -935,7 +935,7 @@ namespace nux
     if (button == 4)
     {
       event->mouse_state |= NUX_EVENT_MOUSEWHEEL;
-      event->event_type = NUX_MOUSE_WHEEL;
+      event->type = NUX_MOUSE_WHEEL;
 
       int zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
       int xPos = (int) (short) LOWORD(lParam) - WindowScreenPosition.x;
@@ -1034,7 +1034,7 @@ namespace nux
           event->is_click = 1;
           px = pmx = event->x;
           py = pmy = event->y;
-          event->event_type = NUX_MOUSE_DOUBLECLICK;
+          event->type = NUX_MOUSE_DOUBLECLICK;
           return 1;
         }
 
@@ -1048,7 +1048,7 @@ namespace nux
         event->is_click = 1;
         px = pmx = event->x;
         py = pmy = event->y;
-        event->event_type = NUX_MOUSE_PRESSED;
+        event->type = NUX_MOUSE_PRESSED;
         return 1;
 
       case 2: // release:
@@ -1057,7 +1057,7 @@ namespace nux
         // mouse input, regardless of the position of the cursor, except when a mouse button is clicked
         // while the cursor hot spot is in the window of another thread.
         ReleaseCapture();
-        event->event_type = NUX_MOUSE_RELEASED;
+        event->type = NUX_MOUSE_RELEASED;
         return 1;
 
       case 3: // move:
@@ -1071,7 +1071,7 @@ namespace nux
         pmy = event->y;
 //        if (abs(event->x - px)>5 || abs(event->y - py)>5)
 //            event->is_click = 0;
-        event->event_type = NUX_MOUSE_MOVE;
+        event->type = NUX_MOUSE_MOVE;
         return 1;
     }
 
@@ -1166,13 +1166,13 @@ namespace nux
       // See [Modality, part 3: The WM_QUIT message] http://blogs.msdn.com/oldnewthing/archive/2005/02/22/378018.aspx
       PostQuitMessage(msg.wParam);
 
-      event_->event_type = NUX_TERMINATE_APP;
+      event_->type = NUX_TERMINATE_APP;
       memcpy(evt, event_, sizeof(Event));
     }
 
     if (msg.message == -1) // error
     {
-      event_->event_type = NUX_NO_EVENT;
+      event_->type = NUX_NO_EVENT;
       memcpy(evt, event_, sizeof(Event));
     }
   }
@@ -1196,13 +1196,13 @@ namespace nux
       // See [Modality, part 3: The WM_QUIT message] http://blogs.msdn.com/oldnewthing/archive/2005/02/22/378018.aspx
       PostQuitMessage(msg.wParam);
 
-      event_->event_type = NUX_TERMINATE_APP;
+      event_->type = NUX_TERMINATE_APP;
       memcpy(event, event_, sizeof(Event));
     }
 
     if (msg.message == -1) // error
     {
-      event_->event_type = NUX_NO_EVENT;
+      event_->type = NUX_NO_EVENT;
       memcpy(event, event_, sizeof(Event));
     }
   }
@@ -1278,7 +1278,7 @@ namespace nux
       case WM_PAINT:
       {
         ValidateRect(hWnd, NULL); //  validate the surface to avoid receiving WM_PAINT continuously
-        event_->event_type = NUX_WINDOW_DIRTY;
+        event_->type = NUX_WINDOW_DIRTY;
         break;
       }
 
@@ -1306,7 +1306,7 @@ namespace nux
         RECT clientrect;
         GetClientRect( hWnd, &clientrect);
 
-        event_->event_type = NUX_SIZE_CONFIGURATION;
+        event_->type = NUX_SIZE_CONFIGURATION;
         event_->width =  clientrect.right - clientrect.left;
         event_->height =  clientrect.bottom - clientrect.top;
         return 0;
@@ -1317,7 +1317,7 @@ namespace nux
         RECT clientrect;
         GetClientRect( hWnd, &clientrect);
 
-        event_->event_type = NUX_NO_EVENT; //NUX_SIZE_CONFIGURATION;
+        event_->type = NUX_NO_EVENT; //NUX_SIZE_CONFIGURATION;
         event_->width =  clientrect.right - clientrect.left;
         event_->height =  clientrect.bottom - clientrect.top;
 
@@ -1336,7 +1336,7 @@ namespace nux
 
         if ((wParam == SIZE_MAXIMIZED) || (wParam == SIZE_RESTORED))
         {
-          event_->event_type = NUX_SIZE_CONFIGURATION;
+          event_->type = NUX_SIZE_CONFIGURATION;
         }
 
         return 0;
@@ -1344,7 +1344,7 @@ namespace nux
 
       case WM_SETFOCUS:
       {
-        event_->event_type = NUX_WINDOW_ENTER_FOCUS;
+        event_->type = NUX_WINDOW_ENTER_FOCUS;
         event_->mouse_state = 0;
 
         // This causes the mouse to be outside of all widgets when it is tested in m_EventHandler.Process().
@@ -1361,7 +1361,7 @@ namespace nux
 
       case WM_KILLFOCUS:
       {
-        event_->event_type = NUX_WINDOW_EXIT_FOCUS;
+        event_->type = NUX_WINDOW_EXIT_FOCUS;
         event_->mouse_state = 0;
 
         // This causes the mouse to be outside of all widgets when it is tested in m_EventHandler.Process()
@@ -1383,11 +1383,11 @@ namespace nux
       {
         if (LOWORD(wParam) != WA_INACTIVE)
         {
-          event_->event_type = NUX_WINDOW_ENTER_FOCUS;
+          event_->type = NUX_WINDOW_ENTER_FOCUS;
         }
         else
         {
-          event_->event_type = NUX_WINDOW_EXIT_FOCUS;
+          event_->type = NUX_WINDOW_EXIT_FOCUS;
         }
         event_->mouse_state = 0;
 
@@ -1408,11 +1408,11 @@ namespace nux
         {
           if (wParam)
           {
-            event_->event_type = NUX_WINDOW_ENTER_FOCUS;
+            event_->type = NUX_WINDOW_ENTER_FOCUS;
           }
           else
           {
-            event_->event_type = NUX_WINDOW_EXIT_FOCUS;
+            event_->type = NUX_WINDOW_EXIT_FOCUS;
           }
           event_->mouse_state = 0;
 
@@ -1432,7 +1432,7 @@ namespace nux
       case WM_SYSKEYDOWN:
       case WM_KEYDOWN:
       {
-        event_->event_type = NUX_KEYDOWN;
+        event_->type = NUX_KEYDOWN;
         event_->key_modifiers = GetModifierKeyState();
         event_->e_keysym = wParam;
 
@@ -1483,7 +1483,7 @@ namespace nux
       case WM_SYSKEYUP:
       case WM_KEYUP:
       {
-        event_->event_type = NUX_KEYUP;
+        event_->type = NUX_KEYUP;
         event_->key_modifiers = GetModifierKeyState();
         event_->e_keysym = wParam;
 
@@ -1508,13 +1508,13 @@ namespace nux
         if (lParam & (1 << 31))
         {
           // key up events.
-          event_->event_type = NUX_KEYUP;
+          event_->type = NUX_KEYUP;
           return 0;
         }
         else
         {
           // key down events.
-          event_->event_type = NUX_KEYDOWN;
+          event_->type = NUX_KEYDOWN;
           event_->key_repeat_count = (int) (lParam & 0xff);
         }
 
@@ -1566,13 +1566,13 @@ namespace nux
         if (lParam & (1 << 31))
         {
           // key up events.
-          event_->event_type = NUX_KEYUP;
+          event_->type = NUX_KEYUP;
           return 0;
         }
         else
         {
           // key down events.
-          event_->event_type = NUX_KEYDOWN;
+          event_->type = NUX_KEYDOWN;
           event_->key_repeat_count = (int) (lParam & 0xff);
         }
 
@@ -1656,47 +1656,47 @@ namespace nux
 
       case WM_NCLBUTTONDBLCLK:
       {
-        event_->event_type = NUX_NC_WINDOW_CONFIGURATION;
+        event_->type = NUX_NC_WINDOW_CONFIGURATION;
         break;
       }
       case WM_NCLBUTTONDOWN:
       {
-        event_->event_type = NUX_NC_WINDOW_CONFIGURATION;
+        event_->type = NUX_NC_WINDOW_CONFIGURATION;
         break;
       }
       case WM_NCLBUTTONUP:
       {
-        event_->event_type = NUX_NC_WINDOW_CONFIGURATION;
+        event_->type = NUX_NC_WINDOW_CONFIGURATION;
         break;
       }
       case WM_NCMBUTTONDBLCLK:
       {
-        event_->event_type = NUX_NC_WINDOW_CONFIGURATION;
+        event_->type = NUX_NC_WINDOW_CONFIGURATION;
         break;
       }
       case WM_NCMBUTTONDOWN:
       {
-        event_->event_type = NUX_NC_WINDOW_CONFIGURATION;
+        event_->type = NUX_NC_WINDOW_CONFIGURATION;
         break;
       }
       case WM_NCMBUTTONUP:
       {
-        event_->event_type = NUX_NC_WINDOW_CONFIGURATION;
+        event_->type = NUX_NC_WINDOW_CONFIGURATION;
         break;
       }
       case WM_NCRBUTTONDBLCLK:
       {
-        event_->event_type = NUX_NC_WINDOW_CONFIGURATION;
+        event_->type = NUX_NC_WINDOW_CONFIGURATION;
         break;
       }
       case WM_NCRBUTTONDOWN:
       {
-        event_->event_type = NUX_NC_WINDOW_CONFIGURATION;
+        event_->type = NUX_NC_WINDOW_CONFIGURATION;
         break;
       }
       case WM_NCRBUTTONUP:
       {
-        event_->event_type = NUX_NC_WINDOW_CONFIGURATION;
+        event_->type = NUX_NC_WINDOW_CONFIGURATION;
         break;
       }
 
@@ -1719,7 +1719,7 @@ namespace nux
         // All tracking requested by TrackMouseEvent is canceled when this message is generated.
         // The application must call TrackMouseEvent when the mouse reenters its window if
         // it requires further tracking of mouse hover behavior.
-        event_->event_type = NUX_WINDOW_MOUSELEAVE;
+        event_->type = NUX_WINDOW_MOUSELEAVE;
         // This causes the mouse to be outside of all widgets when it is tested in m_EventHandler.Process()
         event_->x = 0xFFFFFFFF;
         event_->y = 0xFFFFFFFF;

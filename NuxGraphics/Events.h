@@ -401,7 +401,7 @@ namespace nux
     unsigned long   key_modifiers;   // key modifiers
     unsigned long   mouse_state;
     unsigned short  key_repeat_count; // number of time a key is repeated;    
-    NuxEventType    event_type;
+    EventType    type;
   };
 };
 

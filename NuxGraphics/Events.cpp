@@ -94,7 +94,7 @@ namespace nux
 
   void Event::Reset()
   {
-    event_type = NUX_NO_EVENT;
+    type = NUX_NO_EVENT;
     Memset(text, 0, sizeof(text));
     e_keysym = 0;
     key_repeat_count = 0;
