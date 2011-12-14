@@ -37,26 +37,6 @@
 
 namespace nux
 {
-  EventToNameStruct EventToName[] =
-  {
-    {NUX_NO_EVENT,               "NO_EVENT" },
-    {NUX_MOUSE_PRESSED,          "MOUSE_PRESSED" },
-    {NUX_MOUSE_RELEASED,         "MOUSE_RELEASED" },
-    {NUX_KEYDOWN,                "KEYDOWN" },
-    {NUX_KEYUP,                  "KEYUP" },
-    {NUX_MOUSE_MOVE,             "MOUSE_MOVE" },
-    {NUX_SIZE_CONFIGURATION,     "SIZE_CONFIGURATION" },
-    {NUX_WINDOW_CONFIGURATION,   "WINDOW_CONFIGURATION" },
-    {NUX_WINDOW_MAP,             "WINDOW_MAP" },
-    {NUX_WINDOW_UNMAP,           "WINDOW_UNMAP" },
-    {NUX_WINDOW_ENTER_FOCUS,     "WINDOW_ENTER_FOCUS" },
-    {NUX_WINDOW_EXIT_FOCUS,      "WINDOW_EXIT_FOCUS" },
-    {NUX_WINDOW_DIRTY,           "WINDOW_DIRTY" },
-    {NUX_WINDOW_MOUSELEAVE,      "WINDOW_MOUSELEAVE" },
-    {NUX_TERMINATE_APP,          "TERMINATE_APP" },
-    {NUX_TAKE_FOCUS,             "TAKE_FOCUS" }
-  };
-
   int GraphicsDisplay::double_click_time_delay = 400; // milliseconds
 
   GraphicsDisplay::GraphicsDisplay()
@@ -647,7 +627,7 @@ namespace nux
     m_GraphicsContext = new GraphicsEngine(*this);
 
     //EnableVSyncSwapControl();
-    DisableVSyncSwapControl();
+    //DisableVSyncSwapControl();
         
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -1486,8 +1466,8 @@ namespace nux
         m_pEvent->event_type = NUX_WINDOW_ENTER_FOCUS;
         m_pEvent->mouse_state = 0;
 
-        m_pEvent->e_dx = 0;
-        m_pEvent->e_dy = 0;
+        m_pEvent->dx = 0;
+        m_pEvent->dy = 0;
         m_pEvent->virtual_code = 0;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: FocusIn event.");
         break;
@@ -1501,8 +1481,8 @@ namespace nux
         m_pEvent->event_type = NUX_WINDOW_EXIT_FOCUS;
         m_pEvent->mouse_state = 0;
 
-        m_pEvent->e_dx = 0;
-        m_pEvent->e_dy = 0;
+        m_pEvent->dx = 0;
+        m_pEvent->dy = 0;
         m_pEvent->virtual_code = 0;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: FocusOut event.");
         break;

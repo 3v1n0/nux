@@ -172,6 +172,7 @@ PKG_CHECK_MODULES(NUX,
                   pango
                   pangocairo
                   libpcre
+                  ibus-1.0
                   )
 AC_SUBST(NUX_CFLAGS)
 AC_SUBST(NUX_LIBS)

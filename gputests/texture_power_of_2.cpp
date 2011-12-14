@@ -101,7 +101,7 @@ void RenderTexturePowerOfTwo ()
     CHECKGL( glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT) );
 
     m_GLWindow->GetSystemEvent(&event);
-    if(event.e_event == nux::NUX_SIZE_CONFIGURATION)
+    if(event.event_type == nux::NUX_SIZE_CONFIGURATION)
     {
       m_GraphicsContext->DisableAllTextureMode(0);
       m_GraphicsContext->DisableAllTextureMode(1);
@@ -131,7 +131,7 @@ void RenderTexturePowerOfTwo ()
     }
 
     m_GLWindow->SwapBuffer();
-  } while(event.e_event != nux::NUX_TERMINATE_APP);
+  } while(event.event_type != nux::NUX_TERMINATE_APP);
 
   for (int i = 0; i < 9; i++)
   {
