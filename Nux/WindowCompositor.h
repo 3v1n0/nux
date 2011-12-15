@@ -176,6 +176,23 @@ namespace nux
     //====================================
   
   public:
+    /*!
+        Set and external fbo to draw Nux BaseWindow into. This external fbo will be
+        restored after Nux completes it rendering. The external fbo is used only in embedded mode. \n
+        If the fbo_object parameter 0, then the reference fbo is invalid and will not be used.
+
+        @param fbo_object The opengl index of the fbo.
+        @param fbo_geometry The geometry of the fbo.
+    */
+    void SetReferenceFramebuffer(unsigned int fbo_object, Geometry fbo_geometry);
+
+    /*!
+        Bind the reference opengl framebuffer object.
+
+        @return True if no error was detected.
+    */
+    bool RestoreReferenceFramebuffer();
+
     ObjectPtr<IOpenGLFrameBufferObject>& GetWindowFrameBufferObject()
     {
       return m_FrameBufferObject;
@@ -562,6 +579,10 @@ namespace nux
     InputArea *m_TooltipArea;
     int m_TooltipX;
     int m_TooltipY;
+
+    //! The fbo to restore after Nux rendering in embedded mode.
+    unsigned int reference_fbo_;
+    Geometry reference_fbo_geometry_;
 
     //! Pointer grab stack.
     /*!

@@ -40,6 +40,7 @@ logging::Logger logger("nux.window");
 }
 
   WindowCompositor::WindowCompositor()
+  : reference_fbo_(0)
   {
     m_FocusAreaWindow           = NULL;
     m_MenuWindow                = NULL;
@@ -1464,35 +1465,15 @@ logging::Logger logger("nux.window");
         {
           m_FrameBufferObject->Deactivate();
 
-          // Enable this to render the drop shadow under windows: not perfect yet...
-          if (0)
-          {
-            graphics_engine.EmptyClippingRegion();
-            graphics_engine.SetOpenGLClippingRectangle(0, 0, window_width, window_height);
-            graphics_engine.SetViewport(0, 0, window_width, window_height);
-            graphics_engine.SetOrthographicProjectionMatrix(window_width, window_height);
+          // Nux is done rendering a BaseWindow into a texture. The previous call to Deactivate
+          // has cancelled any opengl framebuffer object that was set.
 
-            Geometry shadow(window->GetBaseX(), window->GetBaseY(),
-                            window->GetBaseWidth(), window->GetBaseHeight());
-            //if(window->IsVisibleSizeGrip())
-            {
-              shadow.OffsetPosition(4, 4);
-              GetPainter().PaintShape(graphics_engine, shadow, color::Black,
-                                       eSHAPE_CORNER_SHADOW);
-            }
-//                    else
-//                    {
-//                        shadow.OffsetPosition(4, 4);
-//                        GetPainter().PaintShape(GetWindowThread()->GetGraphicsEngine(), shadow, Color(0xFF000000), eSHAPE_CORNER_ROUND10_SHADOW);
-//                    }
-          }
-
-          CHECKGL( glDepthMask(GL_FALSE));
+          CHECKGL(glDepthMask(GL_FALSE));
           {
             graphics_engine.ApplyClippingRectangle();
             PresentBufferToScreen(rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false, window->GetOpacity(), window->premultiply());
           }
-          CHECKGL( glDepthMask(GL_TRUE));
+          CHECKGL(glDepthMask(GL_TRUE));
           graphics_engine.GetRenderStates().SetBlend(false);
         }
 
@@ -1636,7 +1617,20 @@ logging::Logger logger("nux.window");
     }
     else
     {
-      GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
+      if (GetWindowThread()->IsEmbeddedWindow() && reference_fbo_)
+      {
+        // In the context of Unity, we may want Nux to restore a specific fbo and render the
+        // BaseWindow texture into it. That fbo is called a reference framebuffer object. if a
+        // Reference framebuffer object is present, Nux sets it.
+        if (!RestoreReferenceFramebuffer())
+        {
+          nuxDebugMsg("[WindowCompositor::RenderTopViews] Setting the Reference fbo has failed.");
+        }
+      }
+      else
+      {
+        GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
+      }
     }
 
     GetWindowThread()->GetGraphicsEngine().EmptyClippingRegion();
@@ -2300,6 +2294,86 @@ logging::Logger logger("nux.window");
       return NULL;
 
     return (*keyboard_grab_stack_.begin());
+  }
+
+  void WindowCompositor::SetReferenceFramebuffer(unsigned int fbo_object, Geometry fbo_geometry)
+  {
+    reference_fbo_ = fbo_object;
+    reference_fbo_geometry_ = fbo_geometry;
+  }
+
+  bool WindowCompositor::RestoreReferenceFramebuffer()
+  {
+    // It is assumed that the reference fbo contains valid textures.
+    // Nux does the following:
+    //    - Bind the reference fbo (reference_fbo_)
+    //    - Call glDrawBuffer with GL_COLOR_ATTACHMENT0
+    //    - Set the opengl viewport size (reference_fbo_geometry_)
+
+    bool ok = false;
+
+    CHECKGL(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, reference_fbo_));
+    CHECKGL(glDrawBuffer(GL_COLOR_ATTACHMENT0));
+    CHECKGL(glViewport(reference_fbo_geometry_.x,
+      reference_fbo_geometry_.y,
+      reference_fbo_geometry_.width,
+      reference_fbo_geometry_.height));
+
+    // Nux does some sanity checks to make sure that the FBO is in good condition.
+    GLenum status;
+    status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+    CHECKGL_MSG(glCheckFramebufferStatusEXT);
+
+    switch(status)
+    {
+      case GL_FRAMEBUFFER_COMPLETE_EXT: // Everything's OK
+        ok = true;
+        break;
+      case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
+        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT");
+        ok = false;
+        break;
+      case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
+        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT");
+        ok = false;
+        break;
+        // See issue(87) of http://www.opengl.org/registry/specs/EXT/framebuffer_object.txt
+        //  case GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT:
+        //      nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT");
+        //      ok = false;
+        //      break;
+      case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
+        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT");
+        ok = false;
+        break;
+#ifndef NUX_OPENGLES_20
+      case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
+        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT");
+        ok = false;
+        break;
+      case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
+        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT");
+        ok = false;
+        break;
+      case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
+        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT");
+        ok = false;
+        break;
+#endif
+      //  case GL_FRAMEBUFFER_STATUS_ERROR_EXT:
+      //      nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_STATUS_ERROR_EXT");
+      //      ok = false;
+      //      break;
+      case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
+        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_UNSUPPORTED_EXT");
+        ok = false;
+        break;
+      default:
+        nuxError("[GLFramebufferObject::IsValid] Unknown ERROR");
+        ok = false;
+    }    
+
+    return ok;
   }
 }
 

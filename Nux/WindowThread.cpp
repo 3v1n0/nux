@@ -1846,6 +1846,15 @@ logging::Logger logger("nux.windows.thread");
 
     GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
     IOpenGLShaderProgram::SetShaderTracking(false);
+
+    if (IsEmbeddedWindow() && m_window_compositor->reference_fbo_)
+    {
+      // Restore the reference framebuffer
+      if (!m_window_compositor->RestoreReferenceFramebuffer())
+      {
+        nuxDebugMsg("[WindowCompositor::RenderTopViews] Setting the Reference fbo has failed.");
+      }
+    }
   }
 
   int WindowThread::InstallEventInspector(EventInspector function, void* data)
