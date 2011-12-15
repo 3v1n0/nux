@@ -2313,7 +2313,9 @@ logging::Logger logger("nux.window");
     bool ok = false;
 
     CHECKGL(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, reference_fbo_));
+#ifndef NUX_OPENGLES_20
     CHECKGL(glDrawBuffer(GL_COLOR_ATTACHMENT0));
+#endif
     CHECKGL(glViewport(reference_fbo_geometry_.x,
       reference_fbo_geometry_.y,
       reference_fbo_geometry_.width,
