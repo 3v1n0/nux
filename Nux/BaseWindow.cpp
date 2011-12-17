@@ -46,6 +46,7 @@ namespace nux
 
   BaseWindow::BaseWindow(const char *WindowName, NUX_FILE_LINE_DECL)
     : View(NUX_FILE_LINE_PARAM)
+    , accept_key_nav_focus_on_mouse_down_(false)
     , _paint_layer(new ColorLayer(Color(0xFF707070)))
     , _opacity(1.0f)
   {
@@ -493,10 +494,20 @@ namespace nux
   {
     accept_key_nav_focus_ = accept;
   }
+  
+  void BaseWindow::SetAcceptKeyNavFocusOnMouseDown(bool accept)
+  {
+    accept_key_nav_focus_on_mouse_down_ = accept;
+  }
 
   bool BaseWindow::AcceptKeyNavFocus()
   {
     return accept_key_nav_focus_;
+  }
+  
+  bool BaseWindow::AcceptKeyNavFocusOnMouseDown()
+  {
+    return accept_key_nav_focus_on_mouse_down_;
   }
 }
 

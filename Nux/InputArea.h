@@ -314,6 +314,7 @@ namespace nux
     protected:
 
       virtual bool AcceptKeyNavFocus();
+      virtual bool AcceptKeyNavFocusOnMouseDown();
 
       // == Signals with 1 to 1 mapping to input device ==
       virtual void EmitMouseDownSignal        (int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state);

@@ -501,6 +501,7 @@ namespace nux
       const char* character);
 
     virtual bool AcceptKeyNavFocus();
+    virtual bool AcceptKeyNavFocusOnMouseDown();
     
     virtual Area* KeyNavIteration(KeyNavDirection direction);
 
@@ -528,6 +529,7 @@ namespace nux
         @param accept_key_event Set it to true if the area accepts keyboard events.
     */
     void SetAcceptKeyboardEvent(bool accept_key_event);
+    
 
     //! Return true if the Area is interested in keyboard events.
     /*!

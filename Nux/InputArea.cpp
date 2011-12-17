@@ -418,5 +418,10 @@ logging::Logger logger("nux.inputarea");
   {
     return false;
   }
+  
+  bool InputArea::AcceptKeyNavFocusOnMouseDown()
+  {
+    return false;
+  }
 }
 
