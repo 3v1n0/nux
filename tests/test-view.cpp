@@ -13,6 +13,7 @@ NUX_IMPLEMENT_OBJECT_TYPE(TestView);
 TestView::TestView(NUX_FILE_LINE_DECL)
   : nux::View(NUX_FILE_LINE_PARAM)
   , can_focus_(true)
+  , focus_on_down_(true)
 {
   ResetEvents();
 

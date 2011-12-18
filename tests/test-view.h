@@ -13,10 +13,12 @@ public:
 
   nux::Color GetColor() const;
   bool AcceptKeyNavFocus() {return can_focus_;}
+  bool AcceptKeyNavFocusOnMouseDown() {return focus_on_down_;}
 
   void ResetEvents();
 
   bool can_focus_;
+  bool focus_on_down_;
 
   bool has_focus_;
   bool registered_mouse_down_;
