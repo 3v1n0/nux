@@ -111,7 +111,7 @@ namespace nux
 
     if (m_Thread)
     {
-      m_DialogThreadID = m_Thread->GetThreadId();
+      //todo(jaytaoko): m_DialogThreadID = m_Thread->GetThreadId();
       m_Thread->Start(0);
     }
 

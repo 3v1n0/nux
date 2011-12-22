@@ -102,9 +102,13 @@ namespace nux
     }
   }
 
-  BOOL NThreadLocalStorage::RegisterTLS (unsigned int index, NThreadLocalStorage::TLS_ShutdownCallback shutdownCallback)
+  BOOL NThreadLocalStorage::RegisterTLS(unsigned int index, NThreadLocalStorage::TLS_ShutdownCallback shutdownCallback)
   {
-    nuxAssert (!m_TLSUsed[index]);
+    if (m_TLSUsed[index])
+    {
+      nuxDebugMsg("[NThreadLocalStorage::RegisterTLS] TLS has already been registered.");
+      return TRUE;
+    }
 
     if (!m_TLSUsed[index])
     {
@@ -127,10 +131,9 @@ namespace nux
 
   void NThreadLocalStorage::Initialize()
   {
-    Memset (m_TLSUsed, 0, sizeof (m_TLSUsed) );
-
     for (unsigned int i = 0; i < NThreadLocalStorage::NbTLS; i++)
     {
+      m_TLSUsed[i] = FALSE;
       // Fill the array with invalid values
       m_TLSIndex[i] = NThreadLocalStorage::InvalidTLS; // invalid index
     }
@@ -207,7 +210,7 @@ namespace nux
     return m_ThreadState;
   }
 
-  ThreadState NThread::Stop ( bool bForceKill )
+  ThreadState NThread::Stop(bool bForceKill)
   {
 // From MSDN
 //    TerminateThread is used to cause a thread to exit. When this occurs, the target thread has no chance to execute any user-mode code and its initial stack is not deallocated. DLLs attached to the thread are not notified that the thread is terminating.
@@ -219,14 +222,15 @@ namespace nux
 
     // Attention: Calling Stop from another thread is not going to free the stack of this thread.
     // the stack is freed only if the thread exits by itself.
-    if ( m_ThreadCtx.m_hThread )
+    if (m_ThreadCtx.m_hThread)
     {
-      GetExitCodeThread (m_ThreadCtx.m_hThread, (LPDWORD) &m_ThreadCtx.m_dwExitCode);
+      BOOL success = GetExitCodeThread(m_ThreadCtx.m_hThread, (LPDWORD) &m_ThreadCtx.m_dwExitCode);
 
-      if ( m_ThreadCtx.m_dwExitCode == STILL_ACTIVE && bForceKill )
+      if ((m_ThreadCtx.m_dwExitCode == STILL_ACTIVE) && bForceKill)
       {
-        TerminateThread (m_ThreadCtx.m_hThread, unsigned int (-1) );
-        CloseHandle (m_ThreadCtx.m_hThread);
+        // This will forcibly kill the thread! Read the doc on TerminateThread to find out about the consequences.
+        TerminateThread(m_ThreadCtx.m_hThread, unsigned int (-1));
+        CloseHandle(m_ThreadCtx.m_hThread);
       }
 
       m_ThreadCtx.m_hThread = NULL;
@@ -238,11 +242,11 @@ namespace nux
 
   ThreadState NThread::Suspend()
   {
-    unsigned int ret = SuspendThread (m_ThreadCtx.m_hThread);
+    unsigned int ret = SuspendThread(m_ThreadCtx.m_hThread);
 
     if (ret == 0xFFFFFFFF)
     {
-      nuxDebugMsg (TEXT ("[NThread::Suspend] Cannot suspend thread: %s"), inlGetSystemErrorMessage() );
+      nuxDebugMsg(TEXT("[NThread::Suspend] Cannot suspend thread: %s"), inlGetSystemErrorMessage());
       return THREAD_SUSPEND_ERROR;
     }
 
@@ -252,11 +256,11 @@ namespace nux
 
   ThreadState NThread::Resume()
   {
-    unsigned int ret = ResumeThread (m_ThreadCtx.m_hThread);
+    unsigned int ret = ResumeThread(m_ThreadCtx.m_hThread);
 
     if (ret == 0xFFFFFFFF)
     {
-      nuxDebugMsg (TEXT ("[NThread::Suspend] Cannot resume thread: %s"), inlGetSystemErrorMessage() );
+      nuxDebugMsg(TEXT("[NThread::Suspend] Cannot resume thread: %s"), inlGetSystemErrorMessage());
       return THREAD_RESUME_ERROR;
     }
 
@@ -279,11 +283,11 @@ namespace nux
   ThreadState NThread::ResumeStart()
   {
     m_ThreadState = THREADINIT;
-    unsigned int ret = ResumeThread (m_ThreadCtx.m_hThread);
+    unsigned int ret = ResumeThread(m_ThreadCtx.m_hThread);
 
     if (ret == 0xFFFFFFFF)
     {
-      nuxDebugMsg (TEXT ("[NThread::ResumeExit] Cannot resume thread: %s"), inlGetSystemErrorMessage() );
+      nuxDebugMsg(TEXT("[NThread::ResumeExit] Cannot resume thread: %s"), inlGetSystemErrorMessage());
       return THREAD_RESUME_ERROR;
     }
 
@@ -295,7 +299,7 @@ namespace nux
 
     if (ret > 1)
     {
-      nuxAssert (0); // should not happen
+      nuxAssert(0); // should not happen
       // If the return value is greater than 1, the specified thread is still suspended.
       m_ThreadState = THREADINIT;
     }
@@ -307,11 +311,11 @@ namespace nux
   ThreadState NThread::ResumeExit()
   {
     m_ThreadState = THREADSTOP;
-    unsigned int ret = ResumeThread (m_ThreadCtx.m_hThread);
+    unsigned int ret = ResumeThread(m_ThreadCtx.m_hThread);
 
     if (ret == 0xFFFFFFFF)
     {
-      nuxDebugMsg (TEXT ("[NThread::ResumeExit] Cannot resume thread: %s"), inlGetSystemErrorMessage() );
+      nuxDebugMsg(TEXT("[NThread::ResumeExit] Cannot resume thread: %s"), inlGetSystemErrorMessage());
       return THREAD_RESUME_ERROR;
     }
 
@@ -323,7 +327,7 @@ namespace nux
 
     if (ret > 1)
     {
-      nuxAssert (0); // should not happen
+      nuxAssert(0); // should not happen
       // If the return value is greater than 1, the specified thread is still suspended.
       m_ThreadState = THREADSTOP;
     }
@@ -331,23 +335,23 @@ namespace nux
     return m_ThreadState;
   }
 
-  DWORD WINAPI NThread::EntryPoint (void *pArg)
+  DWORD WINAPI NThread::EntryPoint(void *pArg)
   {
     NThread *pParent = reinterpret_cast<NThread *> (pArg);
 
     if (pParent == 0)
     {
-      nuxDebugMsg (TEXT ("[NThread::EntryPoint] Invalid pointer. The thread will exit.") );
+      nuxDebugMsg(TEXT("[NThread::EntryPoint] Invalid pointer. The thread will exit."));
       return 0;
     }
 
-    if (!pParent->ThreadCtor() )
+    if (!pParent->ThreadCtor())
     {
       // return another message saying the thread could not execute due to error in ThreadCtor;
       return 0;
     }
 
-    pParent->Run ( pParent->m_ThreadCtx.m_pUserData );
+    pParent->Run(pParent->m_ThreadCtx.m_pUserData);
     pParent->ThreadDtor();
 
     return 0;
@@ -368,7 +372,7 @@ namespace nux
 
   unsigned int NThread::GetThreadId()
   {
-    return (unsigned int) m_ThreadCtx.m_dwTID;
+    return (unsigned int)m_ThreadCtx.m_dwTID;
   }
 
   ThreadState NThread::GetThreadState() const
@@ -376,12 +380,12 @@ namespace nux
     return m_ThreadState;
   }
 
-  void NThread::SetThreadState (ThreadState state)
+  void NThread::SetThreadState(ThreadState state)
   {
     m_ThreadState = state;
   }
 
-  void NThread::SetThreadName (const TCHAR *ThreadName)
+  void NThread::SetThreadName(const TCHAR *ThreadName)
   {
     SetWin32ThreadName (GetThreadId(), TCHAR_TO_ANSI (ThreadName) );
     m_ThreadName = ThreadName;
@@ -392,5 +396,27 @@ namespace nux
     return m_ThreadName;
   }
 
+  ThreadWaitResult NThread::JoinThread(NThread *thread, unsigned int milliseconds)
+  {
+    if (thread == NULL)
+    {
+      return THREAD_WAIT_RESULT_FAILED;
+    }
+
+    unsigned int result = WaitForSingleObject(thread->GetThreadHandle(), milliseconds);
+
+    switch(result)
+    {
+    case WAIT_OBJECT_0:
+      return THREAD_WAIT_RESULT_COMPLETED;
+    case WAIT_ABANDONED:
+      return THREAD_WAIT_RESULT_ABANDONED;
+    case WAIT_TIMEOUT:
+      return THREAD_WAIT_RESULT_TIMEOUT;
+    case WAIT_FAILED:
+    default:
+      return THREAD_WAIT_RESULT_FAILED;
+    }
+  }
 }
 

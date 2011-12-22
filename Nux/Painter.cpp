@@ -166,7 +166,8 @@ namespace nux
 
   }
 
-  BasePainter::BasePainter()
+  BasePainter::BasePainter(WindowThread *window_thread)
+  : window_thread_(window_thread)
   {
   }
 

@@ -115,17 +115,9 @@ void TestingThread(nux::NThread *thread, void *user_data)
   nux::SleepForMilliseconds(1000);
   test.TestReportMsg(test_button->clicked_, "Button clicked");
 
-  test.ViewSendMouseDrag(test_button->button_, 1, 0, 0, 50, 50);
-
-  test.ViewSendMouseMotionToCenter(test_button->button_);
-  test.ViewSendMouseMotionToBottomRight(test_button->button_);
-  test.ViewSendMouseMotionToBottomLeft(test_button->button_);
-  test.ViewSendMouseMotionToTopLeft(test_button->button_);
-  test.ViewSendMouseMotionToTopRight(test_button->button_);
-
   if (test.WhenDoneTerminateProgram())
   {
-    wnd_thread->NuxMainLoopQuit();
+    wnd_thread->ExitMainLoop();
   }
   nuxDebugMsg("Exit testing thread");
 }
@@ -135,7 +127,7 @@ int main(int argc, char **argv)
   int xstatus = XInitThreads();
   nuxAssertMsg(xstatus > 0, "XInitThreads has failed");
 
-  test_button = new TestButton("Button XTest", 300, 300, 20000);
+  test_button = new TestButton("Button XTest", 300, 300, 10000);
   test_button->Startup();
   test_button->UserInterfaceSetup();
 

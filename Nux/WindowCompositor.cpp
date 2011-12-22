@@ -36,10 +36,11 @@ namespace nux
 {
 namespace
 {
-logging::Logger logger("nux.window");
+  logging::Logger logger("nux.window");
 }
 
-  WindowCompositor::WindowCompositor()
+  WindowCompositor::WindowCompositor(WindowThread *window_thread)
+  : window_thread_(window_thread)  
   {
     m_FocusAreaWindow           = NULL;
     m_MenuWindow                = NULL;
@@ -1507,36 +1508,6 @@ logging::Logger logger("nux.window");
     }
 
     m_FrameBufferObject->Deactivate();
-  }
-
-// This function is meant to draw the main window and the small windows but it will not traverse the element.
-// It just copies to the backbuffer what it already has in  the framebuffer objects.
-  void WindowCompositor::PresentRendering()
-  {
-    m_FrameBufferObject->Deactivate();
-    unsigned int window_width, window_height;
-    window_width = GetWindowThread()->GetGraphicsEngine().GetWindowWidth();
-    window_height = GetWindowThread()->GetGraphicsEngine().GetWindowHeight();
-    GetWindowThread()->GetGraphicsEngine().EmptyClippingRegion();
-    //GetWindowThread()->GetGraphicsEngine().SetOpenGLClippingRectangle(0, 0, window_width, window_height);
-    GetWindowThread()->GetGraphicsEngine().SetViewport(0, 0, window_width, window_height);
-    GetWindowThread()->GetGraphicsEngine().SetOrthographicProjectionMatrix(window_width, window_height);
-
-    PresentBufferToScreen(m_MainColorRT, 0, 0, false);
-
-    PageBBox page;
-    page.xmin = 0;
-    page.xmax = 100;
-    page.ymin = 700;
-    page.ymax = 730;
-    page.x_margin = 0;
-    page.y_margin = 0;
-
-    NString FPS = NString::Printf("FPS: %3.2f", GetWindowThread()->GetFrameRate());
-
-    GetWindowThread()->GetGraphicsEngine().RenderColorTextLineStatic(GetSysBoldFont(), page, FPS, Color(0xffff0000), true, eAlignTextLeft);
-
-    GetWindowThread()->GetGraphicsEngine().Pop2DWindow();
   }
 
   void WindowCompositor::RenderMainWindowComposition(bool force_draw)

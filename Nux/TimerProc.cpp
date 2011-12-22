@@ -161,7 +161,8 @@ namespace nux
   }
 
 ////////////////////////////////////////////////////
-  TimerHandler::TimerHandler()
+  TimerHandler::TimerHandler(WindowThread* window_thread)
+  : window_thread_(window_thread)
   {
     m_timer_object_queue = 0;
     m_IsProceesingTimers = false;

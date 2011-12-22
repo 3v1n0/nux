@@ -138,7 +138,7 @@ namespace nux
   class BasePainter
   {
   public:
-    BasePainter();
+    BasePainter(WindowThread *window_thread);
     virtual ~BasePainter();
     int intTest;
 
@@ -365,6 +365,8 @@ namespace nux
     void EmptyPushedPaintLayerStack();
     std::list<AbstractPaintLayer*> active_paint_layer_stack_;
     std::list<std::list<AbstractPaintLayer*> > pushed_paint_layer_stack_;
+
+    WindowThread *window_thread_; //!< The WindowThread to which this object belongs.
 
   };
 
