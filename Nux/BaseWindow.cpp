@@ -70,7 +70,7 @@ namespace nux
     accept_key_nav_focus_ = false;
 
     // Should be at the end of the constructor
-    GetWindowCompositor().RegisterWindow(this);
+    GetWindowThread()->GetWindowCompositor().RegisterWindow(this);
 
     SetMinimumSize(1, 1);
     SetGeometry(Geometry(100, 100, 320, 200));
@@ -360,7 +360,7 @@ namespace nux
       _entering_visible_state = true;
 
       sigVisible.emit(this);
-      GetWindowCompositor().sigVisibleViewWindow.emit(this);
+      GetWindowThread()->GetWindowCompositor().sigVisibleViewWindow.emit(this);
 
       ComputeContentSize();
     }
@@ -368,11 +368,11 @@ namespace nux
     {
       _entering_hidden_state = true;
       sigHidden.emit(this);
-      GetWindowCompositor().sigHiddenViewWindow.emit(this);
+      GetWindowThread()->GetWindowCompositor().sigHiddenViewWindow.emit(this);
     }
     
     if (_is_modal)
-      GetWindowCompositor().StartModalWindow(ObjectWeakPtr<BaseWindow>(this));
+      GetWindowThread()->GetWindowCompositor().StartModalWindow(ObjectWeakPtr<BaseWindow>(this));
 
     // Whether this view is added or removed, call QueueDraw. in the case where this view is removed, this is a signal 
     // that the region below this view need to be redrawn.
@@ -389,7 +389,7 @@ namespace nux
     _is_visible = false;
     _is_modal = false;
     //ShowWindow(false);
-    GetWindowCompositor().StopModalWindow(ObjectWeakPtr<BaseWindow> (this));
+    GetWindowThread()->GetWindowCompositor().StopModalWindow(ObjectWeakPtr<BaseWindow> (this));
   }
 
   bool BaseWindow::IsModal() const
@@ -436,17 +436,17 @@ namespace nux
 
   void BaseWindow::PushHigher(BaseWindow* floating_view)
   {
-    GetWindowCompositor().PushHigher(this, floating_view);
+    GetWindowThread()->GetWindowCompositor().PushHigher(this, floating_view);
   }
 
   void BaseWindow::PushToFront()
   {
-    GetWindowCompositor().PushToFront(this);
+    GetWindowThread()->GetWindowCompositor().PushToFront(this);
   }
 
   void BaseWindow::PushToBack()
   {
-    GetWindowCompositor().PushToBack(this);
+    GetWindowThread()->GetWindowCompositor().PushToBack(this);
   }
 
   bool BaseWindow::ChildNeedsRedraw()
@@ -456,7 +456,7 @@ namespace nux
 
   void* BaseWindow::GetBackupTextureData(int &width, int &height, int &format)
   {
-    return GetWindowCompositor().GetBackupTextureData(this, width, height, format);
+    return GetWindowThread()->GetWindowCompositor().GetBackupTextureData(this, width, height, format);
   }
 
   void BaseWindow::SetEnterFocusInputArea(InputArea *input_area)
