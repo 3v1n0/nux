@@ -22,7 +22,7 @@ m4_define([nux_api_version], [2.0])
 # The number format is : year/month/day
 # e.g.: december 5th, 2011 is: 20111205
 # So far there is no provision for more than one break in a day.
-m4_define([nux_abi_version], [20111208])
+m4_define([nux_abi_version], [20111209])
 
 m4_define([nux_version],
           [nux_major_version.nux_minor_version.nux_micro_version])

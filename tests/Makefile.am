@@ -9,7 +9,8 @@ check_PROGRAMS = \
   mouse-buttons-test \
   hgrid-key-navigation-test \
   hlayout-key-navigation-test \
-  vlayout-key-navigation-test
+  vlayout-key-navigation-test \
+  scrollbar-test
 
 # Please keep alphabetical
 test_nux_SOURCES = \
@@ -178,6 +179,21 @@ vlayout_key_navigation_test_LDADD = $(TestLibs)
 vlayout_key_navigation_test_LDFLAGS = -lpthread -lXtst
 
 
+scrollbar_test_SOURCES = scrollbar-test.cpp \
+  nux_test_framework.cpp \
+  nux_test_framework.h \
+  nux_automated_test_framework.cpp \
+  nux_automated_test_framework.h \
+  test-scrollview.cpp \
+  test-scrollview.h \
+  test-view.cpp \
+  test-view.h
+
+scrollbar_test_CPPFLAGS = $(TestFlags)
+scrollbar_test_LDADD = $(TestLibs)
+scrollbar_test_LDFLAGS = -lpthread -lXtst
+
+
 #run make test as part of make check
 check-local: test gtest test-apps
 
@@ -187,7 +203,7 @@ test:
 gtest: gtest-nux-core
 	./gtest-nux-core
 
-test-apps: test-graphics-display test-empty-window button-xtest mouse-events-test mouse-buttons-test hgrid-key-navigation-test hlayout-key-navigation-test vlayout-key-navigation-test
+test-apps: test-graphics-display test-empty-window button-xtest mouse-events-test mouse-buttons-test hgrid-key-navigation-test hlayout-key-navigation-test vlayout-key-navigation-test scrollbar-test
 	./test-graphics-display
 	./test-empty-window
 	./button-xtest
@@ -196,6 +212,7 @@ test-apps: test-graphics-display test-empty-window button-xtest mouse-events-tes
 	./hgrid-key-navigation-test
 	./hlayout-key-navigation-test
 	./vlayout-key-navigation-test
+	./scrollbar-test
 
 check-report:
 	@gtester -k -o=test-nux-results.xml -k ./test-nux \
