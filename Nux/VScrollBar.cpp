@@ -71,12 +71,10 @@ namespace nux
     _slider->mouse_down.connect(sigc::mem_fun(this, &VScrollBar::OnSliderMouseDown));
     _slider->mouse_up.connect(sigc::mem_fun(this, &VScrollBar::OnSliderMouseUp));
     _slider->mouse_drag.connect(sigc::mem_fun(this, &VScrollBar::OnSliderMouseDrag));
-    _slider->mouse_wheel.connect(sigc::mem_fun(this, &VScrollBar::RecvMouseWheel));
 
     _track->mouse_down.connect(sigc::mem_fun(this, &VScrollBar::RecvTrackMouseDown));
     _track->mouse_up.connect(sigc::mem_fun(this, &VScrollBar::RecvTrackMouseUp));
     _track->mouse_drag.connect(sigc::mem_fun(this, &VScrollBar::RecvTrackMouseDrag));
-    _track->mouse_wheel.connect(sigc::mem_fun(this, &VScrollBar::RecvMouseWheel));
         
     //_track->mouse_down.connect(sigc::mem_fun(this, &VScrollBar::OnSliderMouseDown));
 
@@ -264,11 +262,6 @@ namespace nux
   void VScrollBar::RecvTrackMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
 
-  }
-  
-  void VScrollBar::RecvMouseWheel(int x, int y, int wheel_delta,  long button_flags, unsigned long key_flags)
-  {
-    EmitMouseWheelSignal(x, y, wheel_delta, button_flags, key_flags);
   }
 
   Area* VScrollBar::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
