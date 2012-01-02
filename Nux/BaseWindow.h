@@ -185,9 +185,7 @@ namespace nux
   protected:
     
     void SetAcceptKeyNavFocus(bool accept);
-    
     bool accept_key_nav_focus_;
-    
     virtual bool AcceptKeyNavFocus();
 
      //! Callback function to set the window position and size.
