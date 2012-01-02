@@ -75,7 +75,7 @@ namespace nux
     _track->mouse_down.connect(sigc::mem_fun(this, &VScrollBar::RecvTrackMouseDown));
     _track->mouse_up.connect(sigc::mem_fun(this, &VScrollBar::RecvTrackMouseUp));
     _track->mouse_drag.connect(sigc::mem_fun(this, &VScrollBar::RecvTrackMouseDrag));
-        
+
     //_track->mouse_down.connect(sigc::mem_fun(this, &VScrollBar::OnSliderMouseDown));
 
     // Set Geometry
