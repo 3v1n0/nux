@@ -144,7 +144,6 @@ namespace nux
 
     virtual Area* KeyNavIteration(KeyNavDirection direction);
     virtual bool AcceptKeyNavFocus();
-    virtual bool AcceptKeyNavFocusOnMouseDown();
 
     void IsHitDetectionSkipingChildren(bool skip_children);
 

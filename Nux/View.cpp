@@ -471,9 +471,4 @@ namespace nux
   {
     return true;
   }
-  
-  bool View::AcceptKeyNavFocusOnMouseDown()
-  {
-    return true;
-  }
 }

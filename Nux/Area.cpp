@@ -1006,11 +1006,6 @@ namespace nux
 
     return true;
   }
-  
-  bool Area::AcceptKeyNavFocusOnMouseDown()
-  {
-    return GetInputEventSensitivity(); 
-  }
 
   Area* Area::KeyNavIteration(KeyNavDirection direction)
   {

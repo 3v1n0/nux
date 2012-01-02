@@ -46,7 +46,6 @@ namespace nux
 
   BaseWindow::BaseWindow(const char *WindowName, NUX_FILE_LINE_DECL)
     : View(NUX_FILE_LINE_PARAM)
-    , accept_key_nav_focus_on_mouse_down_(false)
     , _paint_layer(new ColorLayer(Color(0xFF707070)))
     , _opacity(1.0f)
   {
@@ -69,6 +68,8 @@ namespace nux
     _entering_hidden_state = false;
     _enter_focus_input_area = NULL;
     accept_key_nav_focus_ = false;
+    
+    SetAcceptKeyNavFocusOnMouseDown(false);
 
     // Should be at the end of the constructor
     GetWindowCompositor().RegisterWindow(this);
@@ -494,20 +495,10 @@ namespace nux
   {
     accept_key_nav_focus_ = accept;
   }
-  
-  void BaseWindow::SetAcceptKeyNavFocusOnMouseDown(bool accept)
-  {
-    accept_key_nav_focus_on_mouse_down_ = accept;
-  }
 
   bool BaseWindow::AcceptKeyNavFocus()
   {
     return accept_key_nav_focus_;
-  }
-  
-  bool BaseWindow::AcceptKeyNavFocusOnMouseDown()
-  {
-    return accept_key_nav_focus_on_mouse_down_;
   }
 }
 

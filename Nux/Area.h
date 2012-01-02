@@ -501,7 +501,6 @@ namespace nux
       const char* character);
 
     virtual bool AcceptKeyNavFocus();
-    virtual bool AcceptKeyNavFocusOnMouseDown();
     
     virtual Area* KeyNavIteration(KeyNavDirection direction);
 

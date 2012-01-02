@@ -61,12 +61,12 @@ void FocusOnMouseDownTest::UserInterfaceSetup()
   
   focus_view_ = new TestView(NUX_TRACKER_LOCATION);
   focus_view_->can_focus_ = true;
-  focus_view_->focus_on_down_ = true;
+  focus_view_->SetAcceptKeyNavFocusOnMouseDown(true);
   main_layout->AddView(focus_view_, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_FULL);
     
   no_focus_view_ = new TestView(NUX_TRACKER_LOCATION);
   no_focus_view_->can_focus_ = true;
-  no_focus_view_->focus_on_down_ = false;
+  no_focus_view_->SetAcceptKeyNavFocusOnMouseDown(false);
   main_layout->AddView(no_focus_view_, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_FULL);
 
   static_cast<nux::WindowThread*>(window_thread_)->SetLayout(main_layout);

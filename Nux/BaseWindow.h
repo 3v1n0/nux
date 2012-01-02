@@ -185,13 +185,10 @@ namespace nux
   protected:
     
     void SetAcceptKeyNavFocus(bool accept);
-    void SetAcceptKeyNavFocusOnMouseDown(bool accept);
     
     bool accept_key_nav_focus_;
-    bool accept_key_nav_focus_on_mouse_down_;
     
     virtual bool AcceptKeyNavFocus();
-    virtual bool AcceptKeyNavFocusOnMouseDown();
 
      //! Callback function to set the window position and size.
     ConfigureNotifyCallback m_configure_notify_callback;

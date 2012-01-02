@@ -61,6 +61,7 @@ namespace nux
 
     bool HasKeyboardFocus();
     void SetKeyboardFocus(bool b);
+    void SetAcceptKeyNavFocusOnMouseDown(bool accept);
     int GetMouseX();
     int GetMouseY();
     
@@ -154,6 +155,8 @@ namespace nux
     
     int _dnd_safety_x;
     int _dnd_safety_y;
+    
+    bool accept_key_nav_focus_on_mouse_down_;
 
   protected:
 
