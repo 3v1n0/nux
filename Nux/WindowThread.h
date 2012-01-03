@@ -104,12 +104,6 @@ namespace nux
     */
     void SetWindowBackgroundPaintLayer(AbstractPaintLayer *background_layer);
 
-    // todo(jaytaoko): remove this function
-    GraphicsDisplay &GetWindow() const
-    {
-      return *graphics_display_;
-    }
-
     /*!
         Get the graphics display (this is the physical window of this thread).
         @return The graphics display.
@@ -159,12 +153,6 @@ namespace nux
     */
     Layout* GetLayout();
 
-    // todo(jaytaoko): remove this function.
-    Layout* GetMainLayout()
-    {
-      return GetLayout();
-    }
-
     //! Return true if the process is inside a layout cycle.
     /*!
         @return True if the process is inside a layout cycle.
@@ -187,12 +175,6 @@ namespace nux
     */
     bool QueueObjectLayout(Area *area);
 
-    // todo(jaytaoko): remove this function
-    void AddObjectToRefreshList(Area *area)
-    {
-      QueueObjectLayout(area);
-    }
-
     //! Compute the layout of a specific element
     /*!
         Immediate size negotiation for a View or a layout.
@@ -206,12 +188,6 @@ namespace nux
         \sa ComputeQueuedLayout, QueueObjectLayout.
     */
     bool RemoveObjectFromLayoutQueue(Area *area);
-
-    // todo(jaytaoko): remove this function
-    bool RemoveObjectFromRefreshList(Area *area)
-    {
-      return RemoveObjectFromLayoutQueue(area);
-    }
 
     /*!
         Return \i true while waiting for a modal window to return.
