@@ -473,7 +473,7 @@ namespace
           // In the case of a mouse down event, if there is currently a keyboard event receiver and it is different
           // from the area returned by GetAreaUnderMouse, then stop that receiver from receiving anymore keyboard events and switch
           // make mouse_over_area_ the new receiver(if it accept keyboard events).
-          if (mouse_over_area_ != GetKeyFocusArea())
+          if (mouse_over_area_ != GetKeyFocusArea() and mouse_over_area_->AcceptKeyNavFocusOnMouseDown())
           {
             InputArea* grab_area = GetKeyboardGrabArea();
             if (grab_area)

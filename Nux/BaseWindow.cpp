@@ -68,6 +68,8 @@ namespace nux
     _entering_hidden_state = false;
     _enter_focus_input_area = NULL;
     accept_key_nav_focus_ = false;
+    
+    SetAcceptKeyNavFocusOnMouseDown(false);
 
     // Should be at the end of the constructor
     GetWindowThread()->GetWindowCompositor().RegisterWindow(this);

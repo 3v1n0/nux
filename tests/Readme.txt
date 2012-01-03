@@ -42,6 +42,7 @@ hlayout_key_navigation_test
 vlayout_key_navigation_test
   Make sure that the key navigation works well in a VLayout.
 
-
+focus_on_mouse_down_test
+  Make sure that AcceptKeyNavFocusOnMouseDown works well.
 
 
