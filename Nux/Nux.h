@@ -232,13 +232,6 @@ namespace nux
   UXTheme           &GetTheme();
   TimerHandler      &GetTimer();
 
-  // todo(jaytaoko): remove the following calls.
-  GraphicsDisplay& GetWindow(); //deprecated
-  GraphicsEngine& GetGraphicsEngine(); //deprecated
-  NThread* GetThreadApplication(); // deprecated
-  WindowThread* GetGraphicsThread(); // deprecated
-
-
 #define  gPainter nux::GetPainter() // deprecated
 #define  gTheme   nux::GetTheme()   // deprecated
 

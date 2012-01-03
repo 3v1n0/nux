@@ -839,7 +839,7 @@ namespace nux
   void BasePainter::PushLayer(GraphicsEngine &graphics_engine, const Geometry &geo, AbstractPaintLayer *layer)
   {
     AbstractPaintLayer *l = layer->Clone();
-    l->SetModelViewMatrix(GetGraphicsEngine().GetModelViewMatrix());
+    l->SetModelViewMatrix(window_thread_->GetGraphicsEngine().GetModelViewMatrix());
     l->SetGeometry(geo);
     active_paint_layer_stack_.push_front(l);
   }
@@ -856,7 +856,7 @@ namespace nux
                                     const ROPConfig &ROP)
   {
     ColorLayer *cl = new ColorLayer(color, WriteAlpha, ROP);
-    cl->SetModelViewMatrix(GetGraphicsEngine().GetModelViewMatrix());
+    cl->SetModelViewMatrix(window_thread_->GetGraphicsEngine().GetModelViewMatrix());
     cl->SetGeometry(geo);
     active_paint_layer_stack_.push_front(cl);
   }
@@ -878,7 +878,7 @@ namespace nux
                                     const ROPConfig &ROP)
   {
     ShapeLayer *sl = new ShapeLayer(imageStyle, color, Corners, WriteAlpha, ROP);
-    sl->SetModelViewMatrix(GetGraphicsEngine().GetModelViewMatrix());
+    sl->SetModelViewMatrix(window_thread_->GetGraphicsEngine().GetModelViewMatrix());
     sl->SetGeometry(geo);
     active_paint_layer_stack_.push_front(sl);
   }
@@ -902,7 +902,7 @@ namespace nux
       const ROPConfig &ROP)
   {
     SliceScaledTextureLayer *sl = new SliceScaledTextureLayer(imageStyle, color, Corners, WriteAlpha, ROP);
-    sl->SetModelViewMatrix(GetGraphicsEngine().GetModelViewMatrix());
+    sl->SetModelViewMatrix(window_thread_->GetGraphicsEngine().GetModelViewMatrix());
     sl->SetGeometry(geo);
     active_paint_layer_stack_.push_front(sl);
   }
@@ -926,7 +926,7 @@ namespace nux
                                       const ROPConfig &ROP)
   {
     TextureLayer *tl = new TextureLayer(DeviceTexture, texxform, color, WriteAlpha, ROP);
-    tl->SetModelViewMatrix(GetGraphicsEngine().GetModelViewMatrix());
+    tl->SetModelViewMatrix(window_thread_->GetGraphicsEngine().GetModelViewMatrix());
     tl->SetGeometry(geo);
     active_paint_layer_stack_.push_front(tl);
   }

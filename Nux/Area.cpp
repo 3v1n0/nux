@@ -52,8 +52,8 @@ namespace nux
     sensitive_ = true;
 
     on_geometry_change_reconfigure_parent_layout_ = true;
-    _accept_mouse_wheel_event = false;
-    _accept_keyboard_event = false;
+    accept_mouse_wheel_event_ = false;
+    accept_keyboard_event_ = false;
 
     _2d_xform.Identity();
     _3d_xform.Identity();
@@ -845,22 +845,22 @@ namespace nux
   
   void Area::SetAcceptKeyboardEvent(bool accept_keyboard_event)
   {
-    _accept_keyboard_event = accept_keyboard_event;
+    accept_keyboard_event_ = accept_keyboard_event;
   }
 
   bool Area::AcceptKeyboardEvent() const
   {
-    return _accept_keyboard_event;
+    return accept_keyboard_event_;
   }
 
   void Area::SetAcceptMouseWheelEvent(bool accept_mouse_wheel_event)
   {
-    _accept_mouse_wheel_event = accept_mouse_wheel_event;
+    accept_mouse_wheel_event_ = accept_mouse_wheel_event;
   }
 
   bool Area::AcceptMouseWheelEvent() const
   {
-    return _accept_mouse_wheel_event;
+    return accept_mouse_wheel_event_;
   }
 
    bool Area::TestMousePointerInclusion(const Point& mouse_position, NuxEventType event_type)
@@ -891,7 +891,7 @@ namespace nux
  
      if ((event_type == NUX_MOUSE_WHEEL) && mouse_pointer_inside_area)
      {
-       if (_accept_mouse_wheel_event == false)
+       if (accept_mouse_wheel_event_ == false)
          return NULL;
      }
  
@@ -1020,7 +1020,7 @@ namespace nux
   bool Area::IsMousePointerInside() const
   {
     Geometry geo = GetAbsoluteGeometry();
-    Point position = GetWindowCompositor().GetMousePosition();
+    Point position = GetWindowThread()->GetWindowCompositor().GetMousePosition();
     
     if (geo.IsInside(position))
       return true;

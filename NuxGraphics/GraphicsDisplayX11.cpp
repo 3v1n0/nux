@@ -80,9 +80,9 @@ namespace nux
     , m_ScreenBitDepth(32)
     , m_GfxInterfaceCreated(false)
     , m_BestMode(-1)
+    , m_CreatedFromForeignWindow(false)
     , last_click_time_(0)
     , double_click_counter_(0)
-    , m_CreatedFromForeignWindow(false)
     , m_num_device_modes(0)
     , m_pEvent(NULL)
     , _last_dnd_position(Point(0, 0)) //DND
@@ -602,7 +602,7 @@ namespace nux
       /* Create a GLX window to associate the frame buffer configuration
       ** with the created X window */
       glx_window_ = glXCreateWindow(m_X11Display, _fb_config, m_X11Window, NULL);
-      
+
       // Map the window to the screen, and wait for it to appear */
       XMapWindow(m_X11Display, m_X11Window);
       XEvent event;
@@ -633,9 +633,6 @@ namespace nux
 #endif
 
     MakeGLContextCurrent();
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    SwapBuffer();
 
     m_GfxInterfaceCreated = true;
 
@@ -651,7 +648,12 @@ namespace nux
 
     //EnableVSyncSwapControl();
     DisableVSyncSwapControl();
+        
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    SwapBuffer();
     
+       
     InitGlobalGrabWindow();
 
     return TRUE;
@@ -967,9 +969,21 @@ namespace nux
       if (m_GLCtx)
       {
 #ifndef NUX_OPENGLES_20
-        if (!glXMakeCurrent(m_X11Display, None, NULL))
+
+        // Release the current context
+        if (_has_glx_13)
         {
-          nuxAssert("[GraphicsDisplay::DestroyOpenGLWindow] glXMakeCurrent failed.");
+          if (!glXMakeContextCurrent(m_X11Display, None, None, NULL))
+          {
+            nuxAssert("[GraphicsDisplay::DestroyOpenGLWindow] glXMakeContextCurrent failed.");
+          }
+        }
+        else
+        {
+          if (!glXMakeCurrent(m_X11Display, None, NULL))
+          {
+            nuxAssert("[GraphicsDisplay::DestroyOpenGLWindow] glXMakeCurrent failed.");
+          }
         }
 
         glXDestroyContext(m_X11Display, m_GLCtx);
@@ -1041,7 +1055,7 @@ namespace nux
 
     bool double_click = false;
     Time current_time = xevent.xbutton.time;
-    if ((double_click_counter_ == 1) && (current_time - last_click_time_ < double_click_time_delay))
+    if ((double_click_counter_ == 1) && ((int)current_time - (int)last_click_time_ < double_click_time_delay))
     {
       double_click = true;
       double_click_counter_ = 0;
@@ -2679,7 +2693,10 @@ namespace nux
     if (GetGpuDevice()->GetGpuInfo().Support_EXT_Swap_Control())
     {
       GLXDrawable drawable = glXGetCurrentDrawable();
-      glXSwapIntervalEXT(m_X11Display, drawable, 0);
+      if (drawable != None)
+      {
+        glXSwapIntervalEXT(m_X11Display, drawable, 0);
+      }
     }
 #endif
   }

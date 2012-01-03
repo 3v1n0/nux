@@ -168,7 +168,7 @@ namespace nux
     // draw the texture on screen
     graphics_engine.PushClippingRectangle (geom);
 
-    GetGraphicsEngine().GetRenderStates().SetBlend (false);
+    GetWindowThread()->GetGraphicsEngine().GetRenderStates().SetBlend (false);
 
     TexCoordXForm texxform;
     texxform.SetWrap(TEXWRAP_CLAMP, TEXWRAP_CLAMP);

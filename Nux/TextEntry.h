@@ -281,9 +281,9 @@ namespace nux
     PangoLayout* cached_layout_;
 
     /** The text content of the edit control */
-    std::string _text;
+    std::string text_;
     /** The preedit text of the edit control */
-    std::string _preedit;
+    std::string preedit_;
     /** Attribute list of the preedit text */
     PangoAttrList *preedit_attrs_;
     /**

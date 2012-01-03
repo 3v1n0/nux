@@ -38,7 +38,6 @@ namespace nux
     StaticText(const std::string &text, NUX_FILE_LINE_PROTO);
     virtual ~StaticText();
 
-
     //! Set size of widget according to the text extent.
     /*!
         @param size_match_text If true, the widget size is set to match the size of the text on the screen.
@@ -55,15 +54,42 @@ namespace nux
     std::string GetText() const;
 
     //! Set text color.
-    void SetTextColor(const Color &textColor);
+    /*!
+        Set the text color. The default color is white.
+
+        @param text_color The text color.
+    */
+    void SetTextColor(const Color &text_color);
     
+    //! Get text color.
+    /*!
+        Get the text color.
+
+        @return The text color.
+    */
+    Color GetTextColor() const;
+
     //! Set the font name.
+    /*!
+        Set the font name. On Ubuntu, the default is "Ubuntu".
+
+        @param font_name The font name.
+    */
     void SetFontName(const std::string &font_name);
+
+    //! Get the font name.
+    /*!
+        Get the font name.
+
+        @return The font name.
+    */
+    std::string GetFontName() const;
 
     //! Set text point size.
     /*
-        Set the text point size. The value should be be greater than 0. Otherwise, the 
-        text point size is not changed.
+        Set the text point size. The value should be greater than 0. Otherwise, the 
+        text point size is not changed. \n
+        The default value is 10.
 
         @param size The text point size.
     */
@@ -133,7 +159,7 @@ namespace nux
     
 #elif defined (NUX_STATIC_TEXT_USE_CAIRO)
     float dpy_;
-    std::string pango_font_name_;
+    std::string pango_font_name_;  //!< Input to pango_font_description_from_string.
 
     Size ComputeTextSize(bool assign = true, bool with_clipping = true);
     void RasterizeText(void* cairo_context, Color color);

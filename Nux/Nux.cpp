@@ -379,31 +379,4 @@ namespace nux
     NThread *thread = GetWindowThread();
     return NUX_STATIC_CAST(WindowThread *, thread)->GetTimerHandler();
   }
-
-  // todo(jaytaoko): remove the following call.
-  GraphicsDisplay& GetWindow() //deprecated
-  {
-    NThread* thread = GetWindowThread();
-    return NUX_STATIC_CAST(WindowThread*, thread)->GetWindow();
-  }
-
-  // todo(jaytaoko): remove the following call.
-  GraphicsEngine& GetGraphicsEngine() //deprecated
-  {
-    NThread* thread = GetWindowThread();
-    return NUX_STATIC_CAST(WindowThread*, thread)->GetGraphicsEngine();    
-  }
-
-  // todo(jaytaoko): remove the following call.
-  NThread* GetThreadApplication() // deprecated
-  {
-    NThread* thread = static_cast<NThread*> (inlGetThreadLocalStorage(ThreadLocal_InalogicAppImpl));
-    return thread;
-  }
-
-  // todo(jaytaoko): remove the following call.
-  WindowThread* GetGraphicsThread() // deprecated
-  {
-    return NUX_STATIC_CAST(WindowThread*, GetWindowThread());
-  }
 }
