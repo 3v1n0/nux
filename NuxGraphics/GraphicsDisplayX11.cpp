@@ -973,6 +973,11 @@ namespace nux
         }
 
         glXDestroyContext(m_X11Display, m_GLCtx);
+
+        if (_has_glx_13)
+        {
+          glXDestroyWindow(m_X11Display, glx_window_);
+        }
 #else
         EGLDisplay dpy = eglGetDisplay((EGLNativeDisplayType)m_X11Display);
 
@@ -995,8 +1000,6 @@ namespace nux
         XF86VidModeSwitchToMode(m_X11Display, m_X11Screen, &m_X11OriginalVideoMode);
         XF86VidModeSetViewPort(m_X11Display, m_X11Screen, 0, 0);
       }
-
-      glXDestroyWindow(m_X11Display, glx_window_);
 
       XDestroyWindow(m_X11Display, m_X11Window);
       XFreeColormap(m_X11Display, m_X11Colormap);

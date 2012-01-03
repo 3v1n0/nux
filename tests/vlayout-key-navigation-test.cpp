@@ -173,7 +173,7 @@ void TestingThread(nux::NThread *thread, void *user_data)
   if (test.WhenDoneTerminateProgram())
   {
     nux::SleepForMilliseconds(1000);
-    wnd_thread->NuxMainLoopQuit();
+    wnd_thread->ExitMainLoop();
   }
   nuxDebugMsg("Exit testing thread");
 }

@@ -63,6 +63,7 @@ source_cpp = \
   $(srcdir)/LayeredLayout.cpp \
   $(srcdir)/Layout.cpp \
   $(srcdir)/LinearLayout.cpp \
+  $(srcdir)/MainLoopGLib.cpp \
   $(srcdir)/MenuPage.cpp \
   $(srcdir)/MenuBar.cpp \
   $(srcdir)/MouseAreaCtrl.cpp \

@@ -109,7 +109,7 @@ nux::WindowThread* NuxTestFramework::GetWindowThread()
 void NuxTestFramework::ProgramExitCall(void *data)
 {
   if (window_thread_)
-    window_thread_->NuxMainLoopQuit();
+    window_thread_->ExitMainLoop();
 }
 
 void NuxTestFramework::WaitForConfigureEvent(int x, int y, int width, int height)

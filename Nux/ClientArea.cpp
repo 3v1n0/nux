@@ -47,7 +47,7 @@ namespace nux
     mouse_move.connect(sigc::mem_fun(this, &ClientArea::RecvMouseMove));
     key_down.connect(sigc::mem_fun(this, &ClientArea::RecvKeyEvent));
 
-    if (GetWindowThread()->GetWindow().HasFrameBufferSupport())
+    if (GetWindowThread()->GetGraphicsDisplay().HasFrameBufferSupport())
     {
       m_FrameBufferObject = GetGraphicsDisplay()->GetGpuDevice()->CreateFrameBufferObject();
       m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
@@ -64,7 +64,7 @@ namespace nux
     if ((IsRedrawNeeded() == false) && (force_draw == false))
       return;
 
-    if (GetWindowThread()->GetWindow().HasFrameBufferSupport())
+    if (GetWindowThread()->GetGraphicsDisplay().HasFrameBufferSupport())
     {
       int buffer_width = GetBaseWidth();
       int buffer_height = GetBaseHeight();
@@ -201,7 +201,7 @@ namespace nux
 
   void ClientArea::SetClientViewport(GraphicsEngine &graphics_engine)
   {
-    if (GetWindowThread()->GetWindow().HasFrameBufferSupport())
+    if (GetWindowThread()->GetGraphicsDisplay().HasFrameBufferSupport())
     {
       graphics_engine.SetViewport(0, 0, m_FrameBufferObject->GetWidth(), m_FrameBufferObject->GetHeight());
       m_FrameBufferObject->EmptyClippingRegion();

@@ -48,7 +48,8 @@ namespace nux
     TimerHandle(const TimerHandle &);
 
     TimerHandle &operator = (const TimerHandle &);
-    bool IsValid() const;
+    bool IsValid() const; //!<deprecated. use Activated().
+    bool Activated() const;
 
     //! return a factor between 0.0f and 1.0f representing the progress of the timer.
     float GetProgress() const;
@@ -64,6 +65,7 @@ namespace nux
     friend class TimerHandler;
   };
 
+  //! A timer manager class created by WindowThread.
   class TimerHandler
   {
   public:
@@ -75,7 +77,7 @@ namespace nux
       TIMERTYPE_ITERATION,
     };
 
-    TimerHandler();
+    TimerHandler(WindowThread *window_thread);
     ~TimerHandler();
 
     //! Add a timer callback.
@@ -148,6 +150,8 @@ namespace nux
     void StartEarlyTimerObjects();
 
   private:
+    WindowThread *window_thread_; //!< The WindowThread to which this object belongs.
+
     bool m_IsProceesingTimers;
     TimerObject *AddHandle (TimerObject *handle);
     unsigned int GetNumPendingHandler();
