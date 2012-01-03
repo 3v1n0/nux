@@ -61,6 +61,7 @@ namespace nux
 
     bool HasKeyboardFocus();
     void SetKeyboardFocus(bool b);
+    void SetAcceptKeyNavFocusOnMouseDown(bool accept);
     int GetMouseX();
     int GetMouseY();
     
@@ -154,6 +155,8 @@ namespace nux
     
     int _dnd_safety_x;
     int _dnd_safety_y;
+    
+    bool accept_key_nav_focus_on_mouse_down_;
 
   protected:
 
@@ -314,6 +317,7 @@ namespace nux
     protected:
 
       virtual bool AcceptKeyNavFocus();
+      virtual bool AcceptKeyNavFocusOnMouseDown();
 
       // == Signals with 1 to 1 mapping to input device ==
       virtual void EmitMouseDownSignal        (int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state);
