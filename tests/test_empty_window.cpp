@@ -26,7 +26,7 @@ nux::TimeOutSignal *timeout_signal = NULL;
 void TimeOutCallback(void *data)
 {
   nux::WindowThread *thread = static_cast<nux::WindowThread*>(data);
-  thread->NuxMainLoopQuit();
+  thread->ExitMainLoop();
 }
 
 void UserInterfaceInitialization(nux::NThread* thread, void* init_data)
@@ -37,7 +37,7 @@ void UserInterfaceInitialization(nux::NThread* thread, void* init_data)
 
   timeout_signal = new nux::TimeOutSignal();
   timeout_signal->time_expires.connect(sigc::ptr_fun(TimeOutCallback));
-  static_cast<nux::WindowThread*>(thread)->GetTimerHandler().AddTimerHandler(3000, timeout_signal, thread, NULL);
+  static_cast<nux::WindowThread*>(thread)->GetTimerHandler().AddTimerHandler(1000, timeout_signal, thread, NULL);
 }
 
 int main(int argc, char **argv)

@@ -32,7 +32,6 @@
 
 namespace nux
 {
-
   class MenuPage;
   class PBuffer;
   class WindowThread;
@@ -42,14 +41,14 @@ namespace nux
   class PaintLayer;
   class Event;
 
+  //! A user interface composition class created by WindowThread.
   class WindowCompositor : public sigc::trackable
   {
   public:
     typedef ObjectWeakPtr<BaseWindow> WeakBaseWindowPtr;
 
-    WindowCompositor();
+    WindowCompositor(WindowThread *window_thread);
     ~WindowCompositor();
-
 
     //! Get the Geometry of the tooltip based on the BaseWindow that initiated it.
     Geometry GetTooltipGeometry() const;
@@ -372,7 +371,6 @@ namespace nux
         @param BluredBackground     If true, the texture is blended with the blurred version of the main window texture.
     */
     void PresentBufferToScreen(ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground = false, float opacity=1.0f, bool premultiply = false);
-    void PresentRendering();
 
     /*!
         Set the main color render target as the texture to draw into.
@@ -580,6 +578,7 @@ namespace nux
     std::list<InputArea*> keyboard_grab_stack_;
 
   private:
+    WindowThread *window_thread_; //!< The WindowThread to which this object belongs.
 
     //! Perform some action before destruction.
     /*!

@@ -39,24 +39,18 @@ namespace nux
     virtual ThreadState Start(void *arg);
 
   protected:
-    virtual unsigned int Run(void *arg);
+    virtual int Run(void *arg);
 
-    virtual ThreadState StartChildThread(NThread *thread, bool Modal);
-    virtual void AddChildThread(NThread *);
-    virtual void RemoveChildThread(NThread *);
-    virtual void ChildHasFinished(NThread *app);
-    virtual void TerminateAllChildThread();
+    virtual ThreadState StartChildThread(AbstractThread *thread, bool Modal);
+    virtual void AddChildThread(AbstractThread *);
+    virtual void RemoveChildThread(AbstractThread *);
+    virtual void ChildHasFinished(AbstractThread *app);
+    virtual void TerminateChildThreads();
 
 //    std::list<NThread*> m_ChildThread;
 //    SystemThread* m_Parent;
 //    ThreadUserInitFunc m_UserInitFunc;
 //    ThreadUserExitFunc m_UserExitFunc;
-
-    /*!
-    This pointer maybe set by the user in ThreadInitFunc and reused in ThreadExitFunc
-    */
-    void *m_InitData;
-    void *m_ExitData;
 
     /*!
         Info: Constructor-like function.

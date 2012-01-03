@@ -39,400 +39,66 @@ namespace
 logging::Logger logger("nux.windows.thread");
 }
 
-    TimerFunctor *m_ScrollTimerFunctor;
-    TimerHandle m_ScrollTimerHandler;  
+  TimerFunctor *m_ScrollTimerFunctor;
+  TimerHandle m_ScrollTimerHandler;
 
 // Thread registration call. Hidden from the users. Implemented in Nux.cpp
   bool RegisterNuxThread(NThread *ThreadPtr);
   void UnregisterNuxThread(NThread *ThreadPtr);
 
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-
-  static GMutex *gLibEventMutex = 0;
-  static void
-  nux_glib_threads_lock(void)
-  {
-    if (gLibEventMutex)
-      g_mutex_lock(gLibEventMutex);
-  }
-
-  static void
-  nux_glib_threads_unlock(void)
-  {
-    if (gLibEventMutex)
-      g_mutex_unlock(gLibEventMutex);
-  }
-
-  struct NuxEventSource
-  {
-    GSource source;
-    GPollFD event_poll_fd;
-  };
-
-  static gboolean
-  nux_event_prepare(GSource *source,
-                     gint    *timeout)
-  {
-    nux_glib_threads_lock();
-
-    gboolean retval;
-    *timeout = -1;
-#if defined(NUX_OS_WINDOWS)
-    MSG msg;
-    retval = PeekMessageW(&msg, NULL, 0, 0, PM_NOREMOVE) ? TRUE : FALSE;
-#elif defined(NUX_OS_LINUX)
-    retval = GetGraphicsDisplay()->HasXPendingEvent() ? TRUE : FALSE;
-#else
-#error Not implemented.
-#endif
-
-    nux_glib_threads_unlock();
-    return retval;
-  }
-
-  static gboolean
-  nux_event_check(GSource *source)
-  {
-    nux_glib_threads_lock();
-
-    gboolean retval;
-    NuxEventSource *event_source = (NuxEventSource *) source;
-
-    if ((event_source->event_poll_fd.revents & G_IO_IN))
-    {
-#if defined(NUX_OS_WINDOWS)
-      MSG msg;
-      retval = PeekMessageW(&msg, NULL, 0, 0, PM_NOREMOVE) ? TRUE : FALSE;
-#elif defined(NUX_OS_LINUX)
-      retval = GetGraphicsDisplay()->HasXPendingEvent() ? TRUE : FALSE;
-#else
-#error Not implemented.
-#endif
-    }
-    else
-      retval = FALSE;
-
-    nux_glib_threads_unlock();
-    return retval;
-  }
-
-  gboolean
-  nux_event_dispatch(GSource     *source,
-                      GSourceFunc  callback,
-                      gpointer     user_data)
-  {
-    nux_glib_threads_lock();
-    WindowThread *window_thread = NUX_STATIC_CAST(WindowThread *, user_data);
-    unsigned int return_code = window_thread->ExecutionLoop(0);
-
-    if (return_code == 0 && !window_thread->IsEmbeddedWindow())
-    {
-      //g_source_destroy(source);
-      //g_source_unref(source);
-      g_main_loop_quit(window_thread->m_GLibLoop);
-    }
-
-    nux_glib_threads_unlock();
-    return return_code || window_thread->IsEmbeddedWindow();
-  }
-
-  static GSourceFuncs event_funcs =
-  {
-    nux_event_prepare,
-    nux_event_check,
-    nux_event_dispatch,
-    NULL
-  };
-
-   // Timeline source functions
-  static gboolean
-  nux_timeline_prepare  (GSource  *source,
-                         gint     *timeout)
-  {
-    // right now we are assuming that we are vsynced, so that will handle syncronisation
-    // we could guess how long we have to wait for the next frame but thats rather ugly
-    // idealy we need some more api that ensures that timeline/event/relayout/draws are all in sync
-
-    *timeout = 0;
-    return TRUE;
-  }
-
-  static gboolean
-  nux_timeline_check    (GSource  *source)
-  {
-    return TRUE;
-  }
-
-  static gboolean
-  nux_timeline_dispatch(GSource    *source,
-                         GSourceFunc callback,
-                         gpointer    user_data)
-  {
-    GTimeVal time_val;
-    bool has_timelines_left = false;
-    nux_glib_threads_lock();
-    g_source_get_current_time(source, &time_val);
-    WindowThread *window_thread = NUX_STATIC_CAST(WindowThread *, user_data);
-
-    // pump the timelines
-    has_timelines_left = window_thread->ProcessTimelines(&time_val);
-
-    if (!has_timelines_left)
-    {
-      // no timelines left on the stack so lets go ahead and remove the
-      // master clock, to save on wakeups
-      window_thread->StopMasterClock();
-    }
-
-    nux_glib_threads_unlock();
-    return TRUE;
-  }
-
-  static GSourceFuncs timeline_funcs =
-  {
-    nux_timeline_prepare,
-    nux_timeline_check,
-    nux_timeline_dispatch,
-    NULL
-  };
-
-  void WindowThread::InitGlibLoop()
-  {
-    static bool main_context_created = false;
-
-    GSource *source;
-
-    if (!IsEmbeddedWindow())
-    {
-      static bool gthread_initialized = false;
-
-      if (!gthread_initialized)
-        g_thread_init(NULL);
-
-      gthread_initialized = true;
-
-      if (((m_GLibContext == 0) || (m_GLibLoop == 0)) && (main_context_created == false))
-      {
-        //create a context
-        m_GLibContext = g_main_context_default();
-        //create a main loop with context
-        m_GLibLoop = g_main_loop_new(m_GLibContext, TRUE);
-      }
-      else
-      {
-        // Secondary physical windows goes in here
-        //create a context
-        m_GLibContext = g_main_context_new();
-        //create a main loop with context
-        m_GLibLoop = g_main_loop_new(m_GLibContext, TRUE);
-      }
-    }
-
-    main_context_created = true;
-
-    gLibEventMutex = 0; //g_mutex_new();
-
-    source = g_source_new(&event_funcs, sizeof(NuxEventSource));
-    NuxEventSource *event_source = (NuxEventSource *) source;
-
-    g_source_set_priority(source, G_PRIORITY_DEFAULT);
-
-#if defined(NUX_OS_WINDOWS)
-    event_source->event_poll_fd.fd = G_WIN32_MSG_HANDLE;
-#elif defined(NUX_OS_LINUX)
-    event_source->event_poll_fd.fd = ConnectionNumber(GetGraphicsDisplay()->GetX11Display());
-#else
-#error Not implemented.
-#endif
-
-    event_source->event_poll_fd.events = G_IO_IN;
-
-    g_source_add_poll(source, &event_source->event_poll_fd);
-    g_source_set_can_recurse(source, TRUE);
-    g_source_set_callback(source, 0, this, 0);
-    
-    if (IsEmbeddedWindow())
-      g_source_attach(source, NULL);
-    else
-      g_source_attach(source, m_GLibContext);
-
-    if (_Timelines->size() > 0)
-      StartMasterClock();
-
-    if (!IsEmbeddedWindow())
-    {
-      g_main_loop_run(m_GLibLoop);
-      g_main_loop_unref(m_GLibLoop);
-    }
-  }
-
-  void WindowThread::StartMasterClock()
-  {
-    // if we are not embedded and don't have a context yet
-    if (!IsEmbeddedWindow() && m_GLibContext == 0)
-      return;
-
-    if (_MasterClock == NULL)
-      {
-        GTimeVal time_val;
-        // make a source for our master clock
-        _MasterClock = g_source_new(&timeline_funcs, sizeof(GSource));
-
-        g_source_set_priority(_MasterClock, G_PRIORITY_DEFAULT + 10);
-        g_source_set_callback(_MasterClock, 0, this, 0);
-        g_source_set_can_recurse(_MasterClock, TRUE);
-
-        if (IsEmbeddedWindow())
-          g_source_attach(_MasterClock, NULL);
-        else if (m_GLibContext != 0)
-          g_source_attach(_MasterClock, m_GLibContext);
-
-
-        g_get_current_time(&time_val);
-        _last_timeline_frame_time_sec = time_val.tv_sec;
-        _last_timeline_frame_time_usec = time_val.tv_usec;
-      }
-  }
-
-  void WindowThread::StopMasterClock()
-  {
-    if (_MasterClock)
-    {
-      g_source_remove(g_source_get_id(_MasterClock));
-      _MasterClock = NULL;
-    }
-  }
-
-  void WindowThread::NuxMainLoopQuit()
-  {
-    // woo no more main loop! this is prolly bad for nux, so erm
-    // FIXME!! - Jay take a look at this, make sure just quitting the mainloop
-    // is an idea that makes sense(needed for testing)
-    if (!IsEmbeddedWindow())
-      g_main_loop_quit(m_GLibLoop);
-  }
-
-  typedef struct
-  {
-    WindowThread *window_thread;
-    unsigned int id;
-  } TimeoutData;
-
-  gboolean nux_timeout_dispatch(gpointer user_data)
-  {
-    bool repeat = false;
-    TimeoutData* dd = NUX_STATIC_CAST(TimeoutData*, user_data);
-
-    dd->window_thread->_inside_timer_loop = true;
-    repeat = GetTimer().ExecTimerHandler(dd->id)? true : false;
-    dd->window_thread->_inside_timer_loop = false;
-
-    if (dd->window_thread->IsEmbeddedWindow())
-    {
-      dd->window_thread->RedrawRequested.emit();
-    }
-    else
-    {
-      dd->window_thread->ExecutionLoop(0);
-    }
-    
-    if (!repeat)
-      delete dd;
-
-    return repeat;
-  }
-
-  unsigned int WindowThread::AddGLibTimeout(unsigned int duration)
-  {
-    if (IsEmbeddedWindow())
-    {
-      TimeoutData* dd = new TimeoutData;
-      dd->window_thread = this;
-      dd->id = g_timeout_add(duration, nux_timeout_dispatch, dd);
-
-      return dd->id;
-    }
-    else
-    {
-      if ((m_GLibContext == 0) || (m_GLibLoop == 0))
-      {
-        //LOG_WARNING(logger) << "Trying to set a timeout before GLib Context is created.\n";
-        return 0;
-      }
-
-      GSource *timeout_source;
-
-      //create a new time-out source
-      timeout_source = g_timeout_source_new(duration);
-
-      TimeoutData* dd = new TimeoutData;
-      dd->window_thread = this;
-      dd->id = 0;
-      //set the callback for this source
-      g_source_set_callback(timeout_source, nux_timeout_dispatch, dd, NULL);
-
-      //attach source to context
-      dd->id = g_source_attach(timeout_source, m_GLibContext);
-
-      return dd->id;
-    }
-  }
-  #endif
+  const int WindowThread::MINIMUM_WINDOW_WIDTH  = 1;
+  const int WindowThread::MINIMUM_WINDOW_HEIGHT = 1;
 
   NUX_IMPLEMENT_OBJECT_TYPE(WindowThread);
 
-  WindowThread::WindowThread(const char *WindowTitle, unsigned int width, unsigned int height, AbstractThread *Parent, bool Modal)
+  WindowThread::WindowThread(const char *WindowTitle, int width, int height, AbstractThread *Parent, bool Modal)
     : AbstractThread(Parent)
-    , m_StartupWidth(width)
-    , m_StartupHeight(height)
-    , m_WindowTitle(WindowTitle)
+    , window_initial_width_(width)
+    , window_initial_height_(height)
+    , window_title_(WindowTitle)
     , m_WidgetInitialized(false)
-    , m_WindowStyle(WINDOWSTYLE_NORMAL)
-    , m_embedded_window(false)
-    , m_size_configuration_event(false)
-    , m_force_redraw(false)
+    , window_style_(WINDOWSTYLE_NORMAL)
+    , embedded_window_(false)
+    , window_size_configuration_event_(false)
+    , force_rendering_(false)
   {
     // Thread specific objects
-    _graphics_display      = 0;
-    m_window_compositor  = 0;
-    m_Painter       = 0;
-    m_TimerHandler  = 0;
-    m_Theme         = 0;
-    _main_layout     = 0;
-    _queue_main_layout = false;
+    graphics_display_       = NULL;
+    window_compositor_      = NULL;
+    painter_                = NULL;
+    timer_manager_          = NULL;
+    theme_                  = NULL;
+    main_layout_            = NULL;
+    queue_main_layout_ = false;
+    
     // Protection for ThreadCtor and ThreadDtor;
-    m_ThreadCtorCalled = false;
-    m_ThreadDtorCalled = false;
+    thread_ctor_called_ = false;
+    thread_dtor_called_ = false;
 
     //
-    m_bWaitForModalWindow   = false;
-    m_ModalWindowThread     = 0;
-    m_bIsModal              = Modal;
+    wait_for_modal_window_   = false;
+    modal_window_thread_     = 0;
+    is_modal_window_              = Modal;
 
     _inside_layout_cycle = 0;
     _draw_requested_to_host_wm       = false;
-    m_bFirstDrawPass        = true;
-
-    // The layout of the window is null.
-    m_FrameRate = 0;
-    m_FrameCounter = 0;
-    m_FramePeriodeCounter = 0;
-    m_PeriodeTime = 0;
+    first_pass_        = true;
 
     _Timelines = new std::list<Timeline*> ();
     GTimeVal time_val;
     g_get_current_time(&time_val);
-    _last_timeline_frame_time_sec = time_val.tv_sec;
-    _last_timeline_frame_time_usec = time_val.tv_usec;
+    last_timeline_frame_time_sec_ = time_val.tv_sec;
+    last_timeline_frame_time_usec_ = time_val.tv_usec;
     _MasterClock = NULL;
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-    m_GLibLoop      = 0;
-    m_GLibContext   = 0;
+    main_loop_glib_      = 0;
+    main_loop_glib_context_   = 0;
 #endif
+
 #if defined(NUX_OS_LINUX)
-    _x11display = NULL;
-    _ownx11display = false;
+    x11display_ = NULL;
+    ownx11display_ = false;
 #endif
     
     _pending_wake_up_timer = false;
@@ -440,18 +106,13 @@ logging::Logger logger("nux.windows.thread");
     _inside_timer_loop = false;
     async_wake_up_signal_ = new TimerFunctor();
     async_wake_up_signal_->time_expires.connect(sigc::mem_fun(this, &WindowThread::AsyncWakeUpCallback));
-
-
-    _fake_event_call_back = new TimerFunctor();
-    _fake_event_call_back->time_expires.connect(sigc::mem_fun(this, &WindowThread::ReadyFakeEventProcessing));
-    _ready_for_next_fake_event = true;
-    _fake_event_mode = false;
-    _processing_fake_event = false;
   }
 
   WindowThread::~WindowThread()
   {
-    g_source_remove_by_funcs_user_data(&event_funcs, this);
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+    CleanupGlibLoop();
+#endif
 
     ThreadDtor();
     std::list<Timeline*>::iterator li;
@@ -462,13 +123,26 @@ logging::Logger logger("nux.windows.thread");
     
     delete _Timelines;
     delete async_wake_up_signal_;
-    delete _fake_event_call_back;
 
 #if defined(NUX_OS_LINUX)
-    if (_x11display && _ownx11display)
+    if (x11display_ && ownx11display_)
     {
-      XCloseDisplay(_x11display);
+      XCloseDisplay(x11display_);
     }
+#endif
+  }
+
+  void WindowThread::ExitMainLoop()
+  {
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+    StopGLibLoop();
+#endif
+  }
+
+  unsigned int WindowThread::AddTimeout(unsigned int timeout_delay)
+  {
+#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+    return AddGLibTimeout(timeout_delay);
 #endif
   }
 
@@ -489,76 +163,11 @@ logging::Logger logger("nux.windows.thread");
     _pending_wake_up_timer = false;
   }
   
-  void WindowThread::SetFakeEventMode(bool enable)
-  {
-    _fake_event_mode = enable;
-  }
-  
-  bool WindowThread::InFakeEventMode() const
-  {
-    return _fake_event_mode;
-  }
-  
-  bool WindowThread::ReadyForNextFakeEvent() const
-  {
-    return _ready_for_next_fake_event;
-  }
-  
-#if defined(NUX_OS_WINDOWS)
-  bool WindowThread::PumpFakeEventIntoPipe(WindowThread* window_thread, INPUT *win_event)
-  {
-    if (!_fake_event_mode)
-    {
-      nuxDebugMsg("[WindowThread::PumpFakeEventIntoPipe] Cannot register a fake event. Fake event mode is not enabled.");
-      return false;
-    }
-    
-    if (!_ready_for_next_fake_event)
-    {
-      nuxDebugMsg("[WindowThread::PumpFakeEventIntoPipe] The fake event pipe is full. Only one fake event can be registered at any time.");
-      return false;
-    }
-    
-    _ready_for_next_fake_event = false;
-//     _fake_event = *xevent;
-//     _fake_event.xany.window = this->GetWindow().GetWindowHandle();
-    _fake_event_timer = this->GetTimerHandler().AddTimerHandler(0, _fake_event_call_back, this, this);
-    return true;
-  }
-#elif defined(NUX_OS_LINUX)
-  bool WindowThread::PumpFakeEventIntoPipe(WindowThread* window_thread, XEvent *xevent)
-  {
-    if (!_fake_event_mode)
-    {
-      nuxDebugMsg("[WindowThread::PumpFakeEventIntoPipe] Cannot register a fake event. Fake event mode is not enabled.");
-      return false;
-    }
-
-    if (!_ready_for_next_fake_event)
-    {
-      nuxDebugMsg("[WindowThread::PumpFakeEventIntoPipe] The fake event pipe is full. Only one fake event can be registered at any time.");
-      return false;
-    }
-
-    _ready_for_next_fake_event = false;
-    _fake_event = *xevent;
-    _fake_event.xany.window = this->GetWindow().GetWindowHandle();
-    _fake_event_timer = this->GetTimerHandler().AddTimerHandler(0, _fake_event_call_back, this, this);
-    return true;
-  }
-#endif
-
-  void WindowThread::ReadyFakeEventProcessing(void* data)
-  {
-    nuxDebugMsg("[WindowThread::ReadyFakeEventProcessing] Ready to process fake event.");
-    _processing_fake_event = true;
-  }
-
   void WindowThread::ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
-    if (_main_layout)
+    if (main_layout_)
     {
-      bool dirty = _main_layout->IsQueuedForDraw();
+      bool dirty = main_layout_->IsQueuedForDraw();
 
       if (dirty)
       {
@@ -569,7 +178,7 @@ logging::Logger logger("nux.windows.thread");
         GetPainter().PaintBackground(graphics_engine, Geometry(0, 0, buffer_width, buffer_height));
       }
 
-      _main_layout->ProcessDraw(graphics_engine, force_draw || dirty);
+      main_layout_->ProcessDraw(graphics_engine, force_draw || dirty);
     }
   }
 
@@ -602,55 +211,55 @@ logging::Logger logger("nux.windows.thread");
     return _draw_requested_to_host_wm;
   }
 
-  Layout* WindowThread::GetMainLayout()
-  {
-    return _main_layout;
-  }
-
   void WindowThread::SetLayout(Layout *layout)
   {
-    _main_layout = layout;
+    main_layout_ = layout;
 
-    if (_main_layout)
+    if (main_layout_)
     {
-      int w = _graphics_display->GetGraphicsEngine()->GetContextWidth();
-      int h = _graphics_display->GetGraphicsEngine()->GetContextHeight();
+      int w = graphics_display_->GetGraphicsEngine()->GetContextWidth();
+      int h = graphics_display_->GetGraphicsEngine()->GetContextHeight();
 
-      _main_layout->Reference();
-      _main_layout->SetScaleFactor(1);
+      main_layout_->Reference();
+      main_layout_->SetScaleFactor(1);
 
       StartLayoutCycle();
-      _main_layout->SetGeometry(0, 0, w, h);
-      _main_layout->ComputeContentSize();
-      _main_layout->ComputeContentPosition(0, 0);
+      main_layout_->SetGeometry(0, 0, w, h);
+      main_layout_->ComputeContentSize();
+      main_layout_->ComputeContentPosition(0, 0);
       StopLayoutCycle();
 
       RemoveQueuedLayout();
     }
   }
 
-  void WindowThread::QueueMainLayout()
+  Layout* WindowThread::GetLayout()
   {
-    _queue_main_layout = true;
+    return main_layout_;
+  }
+
+  void WindowThread::QueueLayout()
+  {
+    queue_main_layout_ = true;
     RequestRedraw();
   }
 
   void WindowThread::ReconfigureLayout()
   {
-    int w = _graphics_display->GetGraphicsEngine()->GetWindowWidth();
-    int h = _graphics_display->GetGraphicsEngine()->GetWindowHeight();
+    int w = graphics_display_->GetGraphicsEngine()->GetWindowWidth();
+    int h = graphics_display_->GetGraphicsEngine()->GetWindowHeight();
 
-    if (_main_layout)
+    if (main_layout_)
     {
       StartLayoutCycle();
-      _main_layout->SetGeometry(0, 0, w, h);
-      _main_layout->ComputeContentSize();
-      _main_layout->ComputeContentPosition(0, 0);
+      main_layout_->SetGeometry(0, 0, w, h);
+      main_layout_->ComputeContentSize();
+      main_layout_->ComputeContentPosition(0, 0);
       StopLayoutCycle();
     }
 
     RemoveQueuedLayout();
-    _queue_main_layout = false;
+    queue_main_layout_ = false;
   }
 
   bool WindowThread::QueueObjectLayout(Area *area)
@@ -667,11 +276,6 @@ logging::Logger logger("nux.windows.thread");
     return true;
   }
 
-  void WindowThread::AddObjectToRefreshList(Area *area)
-  {
-    QueueObjectLayout(area);
-  }
-
   bool WindowThread::RemoveObjectFromLayoutQueue(Area *area)
   {
     NUX_RETURN_VALUE_IF_NULL(area, false);
@@ -685,11 +289,6 @@ logging::Logger logger("nux.windows.thread");
       return true;
     }
     return false;
-  }
-
-  bool WindowThread::RemoveObjectFromRefreshList(Area *area)
-  {
-    return RemoveObjectFromLayoutQueue(area);
   }
 
   void WindowThread::RemoveQueuedLayout()
@@ -729,11 +328,6 @@ logging::Logger logger("nux.windows.thread");
     StopLayoutCycle();
     
     RemoveQueuedLayout();
-  }
-
-  void WindowThread::RefreshLayout()
-  {
-    ComputeQueuedLayout();
   }
 
   void WindowThread::StartLayoutCycle()
@@ -800,34 +394,45 @@ logging::Logger logger("nux.windows.thread");
     }
   }
 
-  unsigned int WindowThread::Run(void *arg)
+  int WindowThread::Run(void *ptr)
   {
-    if (m_UserInitFunc && (m_WidgetInitialized == false))
+    if (GetWindowThread() != this)
     {
-      (*m_UserInitFunc) (this, m_InitData);
+      nuxDebugMsg("Cannot run a several WindowThreads in the same window.");
+      return 1;
+    }
+
+    if (!IsEmbeddedWindow() && (thread_ctor_called_ == false))
+    {
+      nuxDebugMsg("Call WindowThread::Start to run this window in its own thread.");
+      return 1;
+    }
+
+    if (user_init_func_ && (m_WidgetInitialized == false))
+    {
+      (*user_init_func_) (this, initialization_data_);
       m_WidgetInitialized = true;
     }
 
-    RunUserInterface();
-
-    return 0;
+    return MainLoop();
   }
 
-  void WindowThread::RunUserInterface()
+  int WindowThread::MainLoop()
   {
     if (IsEmbeddedWindow())
     {
-      m_window_compositor->FormatRenderTargets(_graphics_display->GetWindowWidth(), _graphics_display->GetWindowHeight());
+      window_compositor_->FormatRenderTargets(graphics_display_->GetWindowWidth(), graphics_display_->GetWindowHeight());
       InitGlibLoop();
-      return;
+      RunGlibLoop();
+      return 0;
     }
     else
     {
-      _graphics_display->ShowWindow();
+      graphics_display_->ShowWindow();
     }
     // Called the first time so we can initialize the size of the render targets
     // At this stage, the size of the window is known.
-    m_window_compositor->FormatRenderTargets(_graphics_display->GetWindowWidth(), _graphics_display->GetWindowHeight());
+    window_compositor_->FormatRenderTargets(graphics_display_->GetWindowWidth(), graphics_display_->GetWindowHeight());
 
     while (GetThreadState() != THREADSTOP)
     {
@@ -835,27 +440,46 @@ logging::Logger logger("nux.windows.thread");
       {
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
         InitGlibLoop();
+        RunGlibLoop();
 #else
         ExecutionLoop();
 #endif
 
-        if (m_Parent)
+        if (parent_)
         {
-          if (m_Parent->Type().IsObjectType(SystemThread::StaticObjectType))
-            static_cast<SystemThread *> (m_Parent)->ChildHasFinished(this);
+          if (parent_->Type().IsObjectType(SystemThread::StaticObjectType))
+            static_cast<SystemThread *> (parent_)->ChildHasFinished(this);
 
-          if (m_Parent->Type().IsObjectType(WindowThread::StaticObjectType))
-            static_cast<WindowThread *> (m_Parent)->ChildHasFinished(this);
+          if (parent_->Type().IsObjectType(WindowThread::StaticObjectType))
+            static_cast<WindowThread *> (parent_)->ChildHasFinished(this);
 
           {
             SetThreadState(THREADSTOP);
-            TerminateAllChildThread();
+            // All children window must be terminated.
+            TerminateChildWindows();
+            JoinChildThreads();
+
+            std::list<AbstractThread*>::iterator it;
+            for (it = children_thread_list_.begin(); it != children_thread_list_.end(); ++it)
+            {
+              delete (*it);
+            }
+            children_thread_list_.clear();
           }
         }
         else
         {
           SetThreadState(THREADSTOP);
-          TerminateAllChildThread();
+          // All child window must be terminated.
+          TerminateChildWindows();
+          JoinChildThreads();
+
+          std::list<AbstractThread*>::iterator it;
+          for (it = children_thread_list_.begin(); it != children_thread_list_.end(); ++it)
+          {
+            delete (*it);
+          }
+          children_thread_list_.clear();
         }
       }
       else
@@ -864,7 +488,7 @@ logging::Logger logger("nux.windows.thread");
       }
     }
 
-    return;
+    return 0;
   }
 
   extern EventToNameStruct EventToName[];
@@ -877,26 +501,26 @@ logging::Logger logger("nux.windows.thread");
   {
     Event event;
 
-    if (!IsEmbeddedWindow() && GetWindow().IsPauseThreadGraphicsRendering())
+    if (!IsEmbeddedWindow() && graphics_display_->IsPauseThreadGraphicsRendering())
     {
       // Do not sleep. Just return and let the GraphicsDisplay::SwapBuffer do the sleep if necessary.
       return 0;
     }
-
-    WindowThread *Application = GetWindowThread();
 
 #if (!defined(NUX_OS_LINUX) && !defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) || defined(NUX_DISABLE_GLIB_LOOP)
     while (true)
 #endif
     {
       _inside_main_loop = true;
-      if (Application->m_bFirstDrawPass)
+
+      if (first_pass_)
       {
+        // Reset the timers that were called before the mainloop got initialized.
         GetTimer().StartEarlyTimerObjects();
       }
 
       memset(&event, 0, sizeof(Event));
-      GetWindow().GetSystemEvent(&event);
+      graphics_display_->GetSystemEvent(&event);
 
       if ((event.e_event == NUX_DND_ENTER_WINDOW) ||
         (event.e_event == NUX_DND_LEAVE_WINDOW))
@@ -907,50 +531,22 @@ logging::Logger logger("nux.windows.thread");
       // Call event inspectors.
       CallEventInspectors(&event);
 
-#if defined(NUX_OS_LINUX)
-      // Automation and fake event inputs
-      if (_fake_event_mode && _processing_fake_event)
-      {
-        // Cancel the real X event and inject the fake event instead. This is wrong and should be improved.
-        memset(&event, 0, sizeof(Event));
-        
-        GetWindow().InjectXEvent(&event, _fake_event);
-        
-        if (event.e_event == NUX_MOUSE_PRESSED)
-        {
-          nuxDebugMsg("[WindowThread::ExecutionLoop] Fake Event: Mouse Down.");
-        }
-        else if (event.e_event == NUX_MOUSE_RELEASED)
-        {
-          nuxDebugMsg("[WindowThread::ExecutionLoop] Fake Event: Mouse Up.");
-        }
-      }
-      else if (_fake_event_mode)
-      {
-        // In fake event mode we don't allow X mouse up/down events.
-        if ((event.e_event == NUX_MOUSE_PRESSED) || (event.e_event == NUX_MOUSE_RELEASED))
-        {
-          event.e_event = NUX_NO_EVENT;
-        }
-      }
-#endif
-
-      if ((event.e_event ==	NUX_TERMINATE_APP) || (this->GetThreadState() == THREADSTOP))
+      if ((event.e_event == NUX_TERMINATE_APP) || (this->GetThreadState() == THREADSTOP))
       {
           return 0;
       }
       
       if (event.e_event == NUX_SIZE_CONFIGURATION)
       {
-        m_size_configuration_event = true;
-        Rect r = GetWindow().GetWindowGeometry();
+        window_size_configuration_event_ = true;
+        Rect r = graphics_display_->GetWindowGeometry();
         window_configuration.emit(r.x, r.y, r.width, r.height);
       }
 
       int w, h;
       // Call gGfx_OpenGL.getWindowSize after the gGfx_OpenGL.get_event.
       // Otherwise, w and h may not be correct for the current frame if a resizing happened.
-      GetWindow().GetWindowSize(w, h);
+      graphics_display_->GetWindowSize(w, h);
 
       if ((event.e_event == NUX_MOUSE_PRESSED) ||
           (event.e_event == NUX_MOUSE_RELEASED) ||
@@ -971,26 +567,26 @@ logging::Logger logger("nux.windows.thread");
       {
           //DISPATCH EVENT HERE
           //event.Application = Application;
-          m_window_compositor->ProcessEvent(event);
+          window_compositor_->ProcessEvent(event);
       }
 
       if (event.e_event == NUX_SIZE_CONFIGURATION)
       {
-          if (!GetWindow().isWindowMinimized())
+          if (!graphics_display_->isWindowMinimized())
           {
-              GetWindow().SetViewPort(0, 0, event.width, event.height);
+              graphics_display_->SetViewPort(0, 0, event.width, event.height);
               ReconfigureLayout();
-              m_window_compositor->FormatRenderTargets(event.width, event.height);
+              window_compositor_->FormatRenderTargets(event.width, event.height);
           }
-          m_window_compositor->FloatingAreaConfigureNotify(event.width, event.height);
-          m_size_configuration_event = true;
+          window_compositor_->FloatingAreaConfigureNotify(event.width, event.height);
+          window_size_configuration_event_ = true;
       }
 
       // Some action may have caused layouts and areas to request a recompute. 
       // Process them here before the Draw section.
-      if (!GetWindow().isWindowMinimized() && !IsEmbeddedWindow())
+      if (!graphics_display_->isWindowMinimized() && !IsEmbeddedWindow())
       {
-        if (_queue_main_layout)
+        if (queue_main_layout_)
         {
           ReconfigureLayout();
         }
@@ -1003,32 +599,25 @@ logging::Logger logger("nux.windows.thread");
       
       _inside_main_loop = false;
 
-// #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-//       GetTimer().ExecTimerHandler(timer_id);
-// #else
-//       GetTimer().ExecTimerHandler();
-// #endif
-
-
-      if (!GetWindow().IsPauseThreadGraphicsRendering() || IsEmbeddedWindow())
+      if (!graphics_display_->IsPauseThreadGraphicsRendering() || IsEmbeddedWindow())
       {
         bool SwapGLBuffer = false;
         
         // Warn the host window manager to initiate a draw cycle.
         bool request_draw_cycle_to_host_wm = false;
 
-        if (Application->m_bFirstDrawPass)
+        if (first_pass_)
         {
           if (IsEmbeddedWindow())
           {
             request_draw_cycle_to_host_wm = true;
-            m_force_redraw = true;
+            force_rendering_ = true;
           }
           else
           {
-            m_window_compositor->Draw(m_size_configuration_event, true);
+            window_compositor_->Draw(window_size_configuration_event_, true);
           }
-          Application->m_bFirstDrawPass = false;
+          first_pass_ = false;
         }
         else
         {
@@ -1044,17 +633,17 @@ logging::Logger logger("nux.windows.thread");
                    (event.e_event == NUX_WINDOW_EXIT_FOCUS) ||
                    (event.e_event == NUX_WINDOW_DIRTY);
 
-          if (b && m_window_compositor->IsTooltipActive())
+          if (b && window_compositor_->IsTooltipActive())
           {
             // Cancel the tooltip since an event that should cause the tooltip to disappear has occurred.
-            m_window_compositor->CancelTooltip();
+            window_compositor_->CancelTooltip();
             b |= true;
           }
 
-          if (!m_window_compositor->ValidateMouseInsideTooltipArea(event.e_x, event.e_y) && m_window_compositor->IsTooltipActive())
+          if (!window_compositor_->ValidateMouseInsideTooltipArea(event.e_x, event.e_y) && window_compositor_->IsTooltipActive())
           {
             // Cancel the tooltip since an event that should cause the tooltip to disappear has occurred.
-            m_window_compositor->CancelTooltip();
+            window_compositor_->CancelTooltip();
             b |= true;
           }
 
@@ -1066,11 +655,11 @@ logging::Logger logger("nux.windows.thread");
             }
             else
             {
-              m_window_compositor->Draw(m_size_configuration_event, false);
+              window_compositor_->Draw(window_size_configuration_event_, false);
             }
             SwapGLBuffer = true;
           }
-          else if (m_window_compositor->GetWidgetDrawingOverlay() != 0)
+          else if (window_compositor_->GetWidgetDrawingOverlay() != 0)
           {
             if (IsEmbeddedWindow())
             {
@@ -1078,7 +667,7 @@ logging::Logger logger("nux.windows.thread");
             }
             else
             {
-              m_window_compositor->Draw(m_size_configuration_event, false);
+              window_compositor_->Draw(window_size_configuration_event_, false);
             }
             SwapGLBuffer = false;
           }
@@ -1090,34 +679,7 @@ logging::Logger logger("nux.windows.thread");
           if (SwapGLBuffer)
           {
             // Something was rendered! Swap the rendering buffer!
-            GetWindow().SwapBuffer(true);
-          }
-
-          float frame_time = GetWindow().GetFrameTime();
-
-#if (!defined(NUX_OS_LINUX) && !defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) || defined(NUX_DISABLE_GLIB_LOOP)
-
-          // When we are not using the glib loop, we do sleep the thread ourselves if it took less that 16ms to render.
-          if (16.6f - frame_time > 0)
-          {
-            SleepForMilliseconds(16.6f - frame_time);
-          }
-#endif
-          // The frame rate calculation below is only reliable when we are constantly rendering.
-          // Otherwise the frame rate drops, which does not mean that we are the performance is bad.
-          // What is happening is that rendering occurs only when there is something to render.
-          // If nothing is happening, the application sleeps.
-          GetWindow().ResetFrameTime();
-          m_PeriodeTime += frame_time;
-
-          m_FrameCounter++;
-          m_FramePeriodeCounter++;
-
-          if (m_FramePeriodeCounter >= 10)
-          {
-            m_FrameRate = m_FramePeriodeCounter * 1000.0f / m_PeriodeTime;
-            m_PeriodeTime = 0.0f;
-            m_FramePeriodeCounter = 0;
+            graphics_display_->SwapBuffer(true);
           }
 
           ClearRedrawFlag();
@@ -1127,18 +689,9 @@ logging::Logger logger("nux.windows.thread");
         {
           RequestRedraw();
         }
-        m_size_configuration_event = false;
+        window_size_configuration_event_ = false;
       }
     }
-
-#if defined(NUX_OS_LINUX)
-      // Automation and fake event inputs
-      if (_processing_fake_event)
-      {
-        _processing_fake_event = false;
-        _ready_for_next_fake_event = true;
-      }
-#endif
 
     return 1;
   }
@@ -1148,75 +701,101 @@ logging::Logger logger("nux.windows.thread");
     return 0;
   }
 
-  void WindowThread::AddChildThread(NThread *window)
+  bool WindowThread::IsWaitingforModalWindow() const
   {
-    nuxAssert(window);
-    std::list<NThread *>::iterator it;
-    it = find(m_ChildThread.begin(), m_ChildThread.end(), window);
+    return wait_for_modal_window_;
+  }
 
-    if (it == m_ChildThread.end())
+  bool WindowThread::IsModalWindow() const
+  {
+    return is_modal_window_;
+  }
+
+  void WindowThread::AddChildThread(AbstractThread *window)
+  {
+    if (window == NULL)
+      return;
+
+    std::list<AbstractThread*>::iterator it;
+    it = find(children_thread_list_.begin(), children_thread_list_.end(), window);
+
+    if (it == children_thread_list_.end())
     {
-      m_ChildThread.push_back(window);
+      children_thread_list_.push_back(window);
     }
   }
 
-  void WindowThread::RemoveChildThread(NThread *window)
+  void WindowThread::RemoveChildThread(AbstractThread *window)
   {
     nuxAssert(window);
-    std::list<NThread *>::iterator it;
-    it = find(m_ChildThread.begin(), m_ChildThread.end(), window);
+    std::list<AbstractThread*>::iterator it;
+    it = find(children_thread_list_.begin(), children_thread_list_.end(), window);
 
-    if (it != m_ChildThread.end())
+    if (it != children_thread_list_.end())
     {
-      m_ChildThread.erase(it);
+      children_thread_list_.erase(it);
     }
   }
 
-  void WindowThread::ChildHasFinished(NThread *thread)
+  void WindowThread::ChildHasFinished(AbstractThread *thread)
   {
     RemoveChildThread(thread);
 
     if (thread->Type().IsObjectType(WindowThread::StaticObjectType))
     {
-      SuspendChildGraphics(static_cast<WindowThread *> (thread));
+      SuspendChildGraphics(static_cast<WindowThread*> (thread));
     }
 
     thread->SetThreadState(THREADSTOP);
   }
 
-  void WindowThread::TerminateAllChildThread()
+  void WindowThread::TerminateChildThreads()
   {
-    std::list<NThread *>::iterator it;
+    std::list<AbstractThread*>::iterator it;
 
-    for (it = m_ChildThread.begin(); it != m_ChildThread.end(); it++)
+    for (it = children_thread_list_.begin(); it != children_thread_list_.end(); it++)
     {
       (*it)->SetThreadState(THREADSTOP);
-    }
 
-    m_ChildThread.clear();
+      if ((*it)->Type().IsObjectType(WindowThread::StaticObjectType))
+      {
+        // Terminate by shutting down the main loop
+        static_cast<WindowThread*>(*it)->ExitMainLoop();
+      }
+
+      if ((*it)->Type().IsObjectType(SystemThread::StaticObjectType))
+      {
+        // Just kill the thread
+        static_cast<SystemThread*>(*it)->Stop(true);
+      }
+    }
   }
 
-  ThreadState WindowThread::Start( void *arg )
+  ThreadState WindowThread::Start(void *ptr)
   {
-    if (!m_Parent)
+    if (!parent_)
     {
       return NThread::Start();
     }
     else
     {
-      if (m_Parent->Type().IsObjectType(SystemThread::StaticObjectType))
-        return static_cast<SystemThread *> (m_Parent)->StartChildThread(this, true);
-      else if (m_Parent->Type().IsObjectType(WindowThread::StaticObjectType))
-        return static_cast<WindowThread *> (m_Parent)->StartChildThread(this, true);
+      if (parent_->Type().IsObjectType(SystemThread::StaticObjectType))
+      {
+        return static_cast<SystemThread *> (parent_)->StartChildThread(this, true);
+      }
+      else if (parent_->Type().IsObjectType(WindowThread::StaticObjectType))
+      {
+        return static_cast<WindowThread *> (parent_)->StartChildThread(this, true);
+      }
 
       nuxAssertMsg(0, "[WindowThread::Start] This should not happen.");
       return THREAD_START_ERROR;
     }
   }
 
-  ThreadState WindowThread::StartChildThread(NThread *thread, bool Modal)
+  ThreadState WindowThread::StartChildThread(AbstractThread *thread, bool Modal)
   {
-    if (m_bWaitForModalWindow)
+    if (wait_for_modal_window_)
     {
       // This window is already waiting for a modal window. It cannot start another windows.
       return thread->GetThreadState();
@@ -1230,25 +809,25 @@ logging::Logger logger("nux.windows.thread");
         // While the child window is being created, the rendering is paused.
         // This is necessary to active OpenGL objects context sharing.
         // Cancel the pause by sending the message NUX_THREADMSG_START_RENDERING to this thread.
-        //GetWindow().PauseThreadGraphicsRendering();
+        //graphics_display_->PauseThreadGraphicsRendering();
 
-        if (static_cast<WindowThread *> (thread)->m_bIsModal)
+        if (static_cast<WindowThread *> (thread)->is_modal_window_)
         {
           DisableMouseKeyboardInput();
-          m_ModalWindowThread = static_cast<WindowThread *> (thread);
+          modal_window_thread_ = static_cast<WindowThread *> (thread);
 //                 std::list<NThread*>::iterator it;
-//                 for (it = m_ChildThread.begin(); it != m_ChildThread.end(); it++)
+//                 for (it = children_thread_list_.begin(); it != children_thread_list_.end(); it++)
 //                 {
-//                     static_cast<WindowThread*>(*it)->m_bWaitForModalWindow = true;
+//                     static_cast<WindowThread*>(*it)->wait_for_modal_window_ = true;
 //                     // WIN32: Disable Mouse and Keyboard inputs for all windows child of this window
-//                     ::EnableWindow(static_cast<WindowThread*>(*it)->_graphics_display->GetWindowHandle(), FALSE);
+//                     ::EnableWindow(static_cast<WindowThread*>(*it)->graphics_display_->GetWindowHandle(), FALSE);
 //                 }
 //                 // WIN32
-//                 ::EnableWindow(_graphics_display->GetWindowHandle(), FALSE);
-//                 m_bWaitForModalWindow = true;
+//                 ::EnableWindow(graphics_display_->GetWindowHandle(), FALSE);
+//                 wait_for_modal_window_ = true;
         }
 
-        static_cast<WindowThread *> (thread)->m_bWaitForModalWindow = false;
+        static_cast<WindowThread *> (thread)->wait_for_modal_window_ = false;
 
         AddChildThread(thread);
       }
@@ -1258,9 +837,9 @@ logging::Logger logger("nux.windows.thread");
 
   ThreadState WindowThread::SuspendChildGraphics(WindowThread *thread)
   {
-    if (m_bWaitForModalWindow)
+    if (wait_for_modal_window_)
     {
-      if (m_ModalWindowThread != thread)
+      if (modal_window_thread_ != thread)
       {
         nuxAssertMsg(0, "[WindowThread::SuspendChildGraphics] cannot supend thread that is not the modal window.");
         return thread->GetThreadState();
@@ -1269,24 +848,24 @@ logging::Logger logger("nux.windows.thread");
 
     ThreadState state = thread->GetThreadState();
 
-    if (m_bWaitForModalWindow)
+    if (wait_for_modal_window_)
     {
-      m_ModalWindowThread = 0;
+      modal_window_thread_ = 0;
 
       EnableMouseKeyboardInput();
 //         std::list<NThread*>::iterator it;
-//         for (it = m_ChildThread.begin(); it != m_ChildThread.end(); it++)
+//         for (it = children_thread_list_.begin(); it != children_thread_list_.end(); it++)
 //         {
-//             static_cast<WindowThread*>(*it)->m_bWaitForModalWindow = false;
+//             static_cast<WindowThread*>(*it)->wait_for_modal_window_ = false;
 //
 //             // WIN32
-//             ::EnableWindow(static_cast<WindowThread*>(*it)->_graphics_display->GetWindowHandle(), TRUE);
+//             ::EnableWindow(static_cast<WindowThread*>(*it)->graphics_display_->GetWindowHandle(), TRUE);
 //         }
     }
 
     // WIN32
 #if defined(NUX_OS_WINDOWS)
-    ::EnableWindow(_graphics_display->GetWindowHandle(), TRUE);
+    ::EnableWindow(graphics_display_->GetWindowHandle(), TRUE);
 #elif defined(NUX_OS_LINUX)
 
 #endif
@@ -1299,20 +878,20 @@ logging::Logger logger("nux.windows.thread");
     // return true if we still have active timelines
 
     long msecs;
-    msecs = (frame_time->tv_sec - _last_timeline_frame_time_sec) * 1000 +
-            (frame_time->tv_usec - _last_timeline_frame_time_usec) / 1000;
+    msecs = (frame_time->tv_sec - last_timeline_frame_time_sec_) * 1000 +
+            (frame_time->tv_usec - last_timeline_frame_time_usec_) / 1000;
 
     if (msecs < 0)
     {
-      _last_timeline_frame_time_sec = frame_time->tv_sec;
-      _last_timeline_frame_time_usec = frame_time->tv_usec;
+      last_timeline_frame_time_sec_ = frame_time->tv_sec;
+      last_timeline_frame_time_usec_ = frame_time->tv_usec;
       return true;
     }
 
     if (msecs > 0)
     {
-      _last_timeline_frame_time_sec += msecs / 1000;
-      _last_timeline_frame_time_usec += msecs * 1000;
+      last_timeline_frame_time_sec_ += msecs / 1000;
+      last_timeline_frame_time_usec_ += msecs * 1000;
     }
 
     std::list<Timeline*>::iterator li;
@@ -1324,7 +903,7 @@ logging::Logger logger("nux.windows.thread");
       timelines_copy.push_back((*li));
     }
 
-  	for(li=timelines_copy.begin(); li!=timelines_copy.end(); ++li)
+    for(li=timelines_copy.begin(); li!=timelines_copy.end(); ++li)
     {
       (*li)->DoTick(msecs);
     }
@@ -1339,9 +918,9 @@ logging::Logger logger("nux.windows.thread");
 
   void WindowThread::EnableMouseKeyboardInput()
   {
-    std::list<NThread *>::iterator it;
+    std::list<AbstractThread*>::iterator it;
 
-    for (it = m_ChildThread.begin(); it != m_ChildThread.end(); it++)
+    for (it = children_thread_list_.begin(); it != children_thread_list_.end(); it++)
     {
       if (NUX_STATIC_CAST(WindowThread *, *it)->Type().IsObjectType(WindowThread::StaticObjectType))
       {
@@ -1351,18 +930,18 @@ logging::Logger logger("nux.windows.thread");
 
     // WIN32: Enable Mouse and Keyboard inputs for all windows child of this window
 #if defined(NUX_OS_WINDOWS)
-    ::EnableWindow(_graphics_display->GetWindowHandle(), TRUE);
+    ::EnableWindow(graphics_display_->GetWindowHandle(), TRUE);
 #elif defined(NUX_OS_LINUX)
 
 #endif
-    m_bWaitForModalWindow = false;
+    wait_for_modal_window_ = false;
   }
 
   void WindowThread::DisableMouseKeyboardInput()
   {
-    std::list<NThread *>::iterator it;
+    std::list<AbstractThread*>::iterator it;
 
-    for (it = m_ChildThread.begin(); it != m_ChildThread.end(); it++)
+    for (it = children_thread_list_.begin(); it != children_thread_list_.end(); it++)
     {
       if (NUX_STATIC_CAST(WindowThread *, *it)->Type().IsObjectType(WindowThread::StaticObjectType))
       {
@@ -1372,25 +951,23 @@ logging::Logger logger("nux.windows.thread");
 
     // WIN32: Disable Mouse and Keyboard inputs for all windows child of this window
 #if defined(NUX_OS_WINDOWS)
-    ::EnableWindow(_graphics_display->GetWindowHandle(), FALSE);
+    ::EnableWindow(graphics_display_->GetWindowHandle(), FALSE);
 #elif defined(NUX_OS_LINUX)
 
 #endif
-    m_bWaitForModalWindow = true;
-  }
-
-  void WindowThread::TerminateThread()
-  {
-    SetThreadState(THREADSTOP);
+    wait_for_modal_window_ = true;
   }
 
   bool WindowThread::ThreadCtor()
   {
-    nuxAssertMsg(m_ThreadCtorCalled == false, "[WindowThread::ThreadCtor] ThreadCtor should not be called more than once.");
-    NUX_RETURN_VALUE_IF_TRUE(m_ThreadCtorCalled, true);
+    if(thread_ctor_called_)
+    {
+      nuxDebugMsg("[WindowThread::ThreadCtor] ThreadCtor should not be entered more than once per WindowThread.");
+      return true;
+    }
 
 #if defined(NUX_OS_WINDOWS)
-    SetWin32ThreadName(GetThreadId(), m_WindowTitle.GetTCharPtr());
+    SetWin32ThreadName(GetThreadId(), window_title_.c_str());
 #endif
 
     if (RegisterNuxThread(this) == FALSE)
@@ -1400,49 +977,51 @@ logging::Logger logger("nux.windows.thread");
     }
 
     inlSetThreadLocalStorage(ThreadLocal_InalogicAppImpl, this);
-    GraphicsDisplay *ParentWindow = 0;
+    GraphicsDisplay *parent_window = NULL;
 
-    if (m_Parent && static_cast<WindowThread *> (m_Parent)->Type().IsObjectType(WindowThread::StaticObjectType))
+    if (parent_ && static_cast<WindowThread *> (parent_)->Type().IsObjectType(WindowThread::StaticObjectType))
     {
-      ParentWindow = &static_cast<WindowThread *> (m_Parent)->GetWindow();
+      parent_window = &static_cast<WindowThread *> (parent_)->GetGraphicsDisplay();
     }
     else
     {
-      ParentWindow = 0;
+      parent_window = NULL;
     }
 
-    _graphics_display = gGLWindowManager.CreateGLWindow(m_WindowTitle.GetTCharPtr(), m_StartupWidth, m_StartupHeight, m_WindowStyle, ParentWindow, false);
+    graphics_display_ = gGLWindowManager.CreateGLWindow(window_title_.c_str(), window_initial_width_, window_initial_height_, window_style_, parent_window, false);
 
-    if (_graphics_display == 0)
+    if (graphics_display_ == NULL)
     {
       nuxDebugMsg("[WindowThread::ThreadCtor] Failed to create the window.");
       return false;
     }
 
-    if (m_Parent && m_Parent->Type().IsObjectType(WindowThread::StaticObjectType))
+    if (parent_ && parent_->Type().IsObjectType(WindowThread::StaticObjectType))
     {
       // Cancel the effect of PauseThreadGraphicsRendering on the parent window.
-      //PostThreadMessage(m_Parent->GetThreadId(), NUX_THREADMSG_START_RENDERING, (UINT_PTR)((void*)this), 0);
+      //PostThreadMessage(parent_->GetThreadId(), NUX_THREADMSG_START_RENDERING, (UINT_PTR)((void*)this), 0);
     }
 
-    m_Painter = new BasePainter();
-    m_TimerHandler = new TimerHandler();
-    m_window_compositor = new WindowCompositor;
+    painter_ = new BasePainter(this);
+    timer_manager_ = new TimerHandler(this);
+    window_compositor_ = new WindowCompositor(this);
 
     SetThreadState(THREADRUNNING);
-    m_ThreadCtorCalled = true;
-
+    thread_ctor_called_ = true;
     return true;
   }
 
 #if defined(NUX_OS_WINDOWS)
   bool WindowThread::ThreadCtor(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext)
   {
-    nuxAssertMsg(m_ThreadCtorCalled == false, "[WindowThread::ThreadCtor] ThreadCtor should not be called more than once.");
-    NUX_RETURN_VALUE_IF_TRUE(m_ThreadCtorCalled, true);
+    nuxAssertMsg(thread_ctor_called_ == false, "[WindowThread::ThreadCtor] ThreadCtor should not be entered more than once per WindowThread.");
+    if(thread_ctor_called_)
+    {
+      return true;
+    }
 
 #if defined(NUX_OS_WINDOWS)
-    SetWin32ThreadName(GetThreadId(), m_WindowTitle.GetTCharPtr());
+    SetWin32ThreadName(GetThreadId(), window_title_.c_str());
 #endif
 
     if (RegisterNuxThread(this) == FALSE)
@@ -1454,43 +1033,43 @@ logging::Logger logger("nux.windows.thread");
     inlSetThreadLocalStorage(ThreadLocal_InalogicAppImpl, this);
     GraphicsDisplay *ParentWindow = 0;
 
-    if (m_Parent && static_cast<WindowThread *> (m_Parent)->Type().IsObjectType(WindowThread::StaticObjectType))
+    if (parent_ && static_cast<WindowThread *> (parent_)->Type().IsObjectType(WindowThread::StaticObjectType))
     {
-      ParentWindow = &static_cast<WindowThread *> (m_Parent)->GetWindow();
+      ParentWindow = &static_cast<WindowThread *> (parent_)->GetGraphicsDisplay();
     }
     else
     {
       ParentWindow = 0;
     }
 
-    _graphics_display = gGLWindowManager.CreateFromForeignWindow(WindowHandle, WindowDCHandle, OpenGLRenderingContext);
+    graphics_display_ = gGLWindowManager.CreateFromForeignWindow(WindowHandle, WindowDCHandle, OpenGLRenderingContext);
 
-    if (_graphics_display == 0)
+    if (graphics_display_ == 0)
     {
       nuxDebugMsg("[WindowThread::ThreadCtor] Failed to create the window.");
       return false;
     }
 
-    if (m_Parent && m_Parent->Type().IsObjectType(WindowThread::StaticObjectType))
+    if (parent_ && parent_->Type().IsObjectType(WindowThread::StaticObjectType))
     {
       // Cancel the effect of PauseThreadGraphicsRendering on the parent window.
-      //PostThreadMessage(m_Parent->GetThreadId(), NUX_THREADMSG_START_RENDERING, (UINT_PTR)((void*)this), 0);
+      //PostThreadMessage(parent_->GetThreadId(), NUX_THREADMSG_START_RENDERING, (UINT_PTR)((void*)this), 0);
     }
 
-    m_Painter = new BasePainter();
-    m_TimerHandler = new TimerHandler();
-    m_window_compositor = new WindowCompositor;
+    painter_ = new BasePainter(this);
+    timer_manager_ = new TimerHandler(this);
+    window_compositor_ = new WindowCompositor(this);
 
     SetThreadState(THREADRUNNING);
-    m_ThreadCtorCalled = true;
+    thread_ctor_called_ = true;
 
     // Set initial states
-    int w = _graphics_display->GetWindowWidth();
-    int h = _graphics_display->GetWindowHeight();
+    int w = graphics_display_->GetWindowWidth();
+    int h = graphics_display_->GetWindowHeight();
 
-    _graphics_display->SetViewPort(0, 0, w, h);
-    m_window_compositor->FormatRenderTargets(w, h);
-    m_window_compositor->FloatingAreaConfigureNotify(w, h);
+    graphics_display_->SetViewPort(0, 0, w, h);
+    window_compositor_->FormatRenderTargets(w, h);
+    window_compositor_->FloatingAreaConfigureNotify(w, h);
 
     return true;
   }
@@ -1501,8 +1080,11 @@ logging::Logger logger("nux.windows.thread");
   bool WindowThread::ThreadCtor(Display *X11Display, Window X11Window, GLXContext OpenGLContext)
 #endif
   {
-    nuxAssertMsg(m_ThreadCtorCalled == false, "[WindowThread::ThreadCtor] ThreadCtor should not be called more than once.");
-    NUX_RETURN_VALUE_IF_TRUE(m_ThreadCtorCalled, true);
+    nuxAssertMsg(thread_ctor_called_ == false, "[WindowThread::ThreadCtor] ThreadCtor should not be entered more than once per WindowThread.");
+    if(thread_ctor_called_)
+    {
+      return true;
+    }
 
     if (RegisterNuxThread(this) == FALSE)
     {
@@ -1514,43 +1096,43 @@ logging::Logger logger("nux.windows.thread");
 
     if (X11Display)
     {
-      _x11display = X11Display;
-      _ownx11display = false;
+      x11display_ = X11Display;
+      ownx11display_ = false;
     }
     else
     {
-      _x11display = XOpenDisplay(NULL);
-      _ownx11display = true;
+      x11display_ = XOpenDisplay(NULL);
+      ownx11display_ = true;
     }
       
-    _graphics_display = gGLWindowManager.CreateFromForeignWindow(_x11display, X11Window, OpenGLContext);
+    graphics_display_ = gGLWindowManager.CreateFromForeignWindow(x11display_, X11Window, OpenGLContext);
 
-    if (_graphics_display == 0)
+    if (graphics_display_ == 0)
     {
       nuxDebugMsg("[WindowThread::ThreadCtor] Failed to create the window.");
       return false;
     }
 
-    if (m_Parent && m_Parent->Type().IsObjectType(WindowThread::StaticObjectType))
+    if (parent_ && parent_->Type().IsObjectType(WindowThread::StaticObjectType))
     {
       // Cancel the effect of PauseThreadGraphicsRendering on the parent window.
-      //PostThreadMessage(m_Parent->GetThreadId(), NUX_THREADMSG_START_RENDERING, (UINT_PTR)((void*)this), 0);
+      //PostThreadMessage(parent_->GetThreadId(), NUX_THREADMSG_START_RENDERING, (UINT_PTR)((void*)this), 0);
     }
 
-    m_Painter = new BasePainter();
-    m_TimerHandler = new TimerHandler();
-    m_window_compositor = new WindowCompositor;
+    painter_ = new BasePainter(this);
+    timer_manager_ = new TimerHandler(this);
+    window_compositor_ = new WindowCompositor(this);
 
     SetThreadState(THREADRUNNING);
-    m_ThreadCtorCalled = true;
+    thread_ctor_called_ = true;
 
     // Set initial states
-    int w = _graphics_display->GetWindowWidth();
-    int h = _graphics_display->GetWindowHeight();
+    int w = graphics_display_->GetWindowWidth();
+    int h = graphics_display_->GetWindowHeight();
 
-    _graphics_display->SetViewPort(0, 0, w, h);
-    m_window_compositor->FormatRenderTargets(w, h);
-    m_window_compositor->FloatingAreaConfigureNotify(w, h);
+    graphics_display_->SetViewPort(0, 0, w, h);
+    window_compositor_->FormatRenderTargets(w, h);
+    window_compositor_->FloatingAreaConfigureNotify(w, h);
 
     return true;
   }
@@ -1558,23 +1140,26 @@ logging::Logger logger("nux.windows.thread");
 
   bool WindowThread::ThreadDtor()
   {
-    NUX_RETURN_VALUE_IF_TRUE(m_ThreadDtorCalled, true);
+    if(thread_dtor_called_)
+    {
+      return true;
+    }
 
     // Cleanup
     RemoveQueuedLayout();
 
-    m_window_compositor->BeforeDestructor();
+    window_compositor_->BeforeDestructor();
 
-    if (_main_layout)
+    if (main_layout_)
     {
-      _main_layout->UnReference();
+      main_layout_->UnReference();
     }
 
-    NUX_SAFE_DELETE(m_window_compositor);
-    NUX_SAFE_DELETE(m_TimerHandler);
-    NUX_SAFE_DELETE(m_Painter);
-    NUX_SAFE_DELETE(m_Theme);
-    NUX_SAFE_DELETE(_graphics_display);
+    NUX_SAFE_DELETE(window_compositor_);
+    NUX_SAFE_DELETE(timer_manager_);
+    NUX_SAFE_DELETE(painter_);
+    NUX_SAFE_DELETE(theme_);
+    NUX_SAFE_DELETE(graphics_display_);
 
 #if defined(NUX_OS_WINDOWS)
     PostThreadMessage(NUX_GLOBAL_OBJECT_INSTANCE(NProcess).GetMainThreadID(),
@@ -1589,32 +1174,35 @@ logging::Logger logger("nux.windows.thread");
 
     inlSetThreadLocalStorage(ThreadLocal_InalogicAppImpl, 0);
     UnregisterNuxThread(this);
-    m_ThreadDtorCalled = true;
+    thread_dtor_called_ = true;
     return true;
   }
 
   void WindowThread::SetWindowSize(int width, int height)
   {
-    if (_graphics_display)
+    if (graphics_display_)
     {
       if (IsEmbeddedWindow())
       {
         // This is a passive way to set the window size through out the NuxGraphics system. This call gets the 
         // current window size and sets its accordingly to all sub-system.
-        _graphics_display->ResetWindowSize();
+        graphics_display_->ResetWindowSize();
       }
       else
       {
-        _graphics_display->SetWindowSize(width, height);
+        graphics_display_->SetWindowSize(width, height);
         ReconfigureLayout();
       }
     }
   }
 
-  void WindowThread::SetWindowBackgroundPaintLayer(AbstractPaintLayer *bkg)
+  void WindowThread::SetWindowBackgroundPaintLayer(AbstractPaintLayer *background_layer)
   {
-    if (m_window_compositor)
-      m_window_compositor->SetBackgroundPaintLayer(bkg);
+    if (background_layer == NULL)
+      return;
+
+    if (window_compositor_)
+      window_compositor_->SetBackgroundPaintLayer(background_layer);
   }
   
   void WindowThread::AddToDrawList(View *view)
@@ -1658,24 +1246,9 @@ logging::Logger logger("nux.windows.thread");
     return m_dirty_areas;
   }
 
-  float WindowThread::GetFrameRate() const
-  {
-    return m_FrameRate;
-  }
-
-  unsigned int WindowThread::GetFrameCounter() const
-  {
-    return m_FrameCounter;
-  }
-
-  unsigned int WindowThread::GetFramePeriodeCounter() const
-  {
-    return m_FramePeriodeCounter;
-  }
-
   bool WindowThread::IsEmbeddedWindow()
   {
-    return m_embedded_window;
+    return embedded_window_;
   }
 
 #if defined(NUX_OS_WINDOWS)
@@ -1684,7 +1257,7 @@ logging::Logger logger("nux.windows.thread");
   bool WindowThread::ProcessForeignEvent(XEvent *xevent, void *data)
 #endif
   {
-    if (GetWindow().IsPauseThreadGraphicsRendering())
+    if (graphics_display_->IsPauseThreadGraphicsRendering())
     {
       return false;
     }
@@ -1692,23 +1265,25 @@ logging::Logger logger("nux.windows.thread");
     Event nux_event;
     memset(&nux_event, 0, sizeof(Event));
 #if defined(NUX_OS_WINDOWS)
-    _graphics_display->ProcessForeignWin32Event(hWnd, msg, wParam, lParam, &nux_event);
+    graphics_display_->ProcessForeignWin32Event(hWnd, msg, wParam, lParam, &nux_event);
 #elif defined(NUX_OS_LINUX)
-    _graphics_display->ProcessForeignX11Event(xevent, &nux_event);
+    graphics_display_->ProcessForeignX11Event(xevent, &nux_event);
 #endif
 
-    if (nux_event.e_event ==	NUX_TERMINATE_APP || (this->GetThreadState() == THREADSTOP))
+    if (nux_event.e_event == NUX_TERMINATE_APP || (this->GetThreadState() == THREADSTOP))
     {
       return false;
     }
 
-    if (nux_event.e_event ==	NUX_SIZE_CONFIGURATION)
-      m_size_configuration_event = true;
+    if (nux_event.e_event == NUX_SIZE_CONFIGURATION)
+    {
+      window_size_configuration_event_ = true;
+    }
 
     int w, h;
     // Call gGfx_OpenGL.getWindowSize after the gGfx_OpenGL.get_event.
     // Otherwise, w and h may not be correct for the current frame if a resizing happened.
-    GetWindow().GetWindowSize(w, h);
+    graphics_display_->GetWindowSize(w, h);
 
     if (nux_event.e_event == NUX_MOUSE_PRESSED ||
         (nux_event.e_event == NUX_MOUSE_RELEASED) ||
@@ -1725,26 +1300,26 @@ logging::Logger logger("nux.windows.thread");
     {
         //DISPATCH EVENT HERE
         //nux_event.Application = Application;
-        m_window_compositor->ProcessEvent(nux_event);
+        window_compositor_->ProcessEvent(nux_event);
     }
 
     if (nux_event.e_event == NUX_SIZE_CONFIGURATION)
     {
-        if (!GetWindow().isWindowMinimized())
+        if (!graphics_display_->isWindowMinimized())
         {
-            GetWindow().SetViewPort(0, 0, nux_event.width, nux_event.height);
+            graphics_display_->SetViewPort(0, 0, nux_event.width, nux_event.height);
             ReconfigureLayout();
-            m_window_compositor->FormatRenderTargets(nux_event.width, nux_event.height);
+            window_compositor_->FormatRenderTargets(nux_event.width, nux_event.height);
         }
-        m_window_compositor->FloatingAreaConfigureNotify(nux_event.width, nux_event.height);
-        m_size_configuration_event = true;
+        window_compositor_->FloatingAreaConfigureNotify(nux_event.width, nux_event.height);
+        window_size_configuration_event_ = true;
     }
 
     // Some action may have caused layouts and areas to request a recompute. 
     // Process them here before the Draw section.
-    if (!GetWindow().isWindowMinimized())
+    if (!graphics_display_->isWindowMinimized())
     {
-      if (_queue_main_layout)
+      if (queue_main_layout_)
       {
         ReconfigureLayout();
       }
@@ -1758,12 +1333,12 @@ logging::Logger logger("nux.windows.thread");
     // Warn the host window manager to initiate a draw cycle.
     bool request_draw_cycle_to_host_wm = false;
 
-    if (this->m_bFirstDrawPass)
+    if (this->first_pass_)
     {
       request_draw_cycle_to_host_wm = true;
-      m_force_redraw = true;
-      //m_window_compositor->Draw(m_size_configuration_event, true);
-      this->m_bFirstDrawPass = false;
+      force_rendering_ = true;
+      //window_compositor_->Draw(window_size_configuration_event_, true);
+      this->first_pass_ = false;
     }
     else
     {
@@ -1779,17 +1354,17 @@ logging::Logger logger("nux.windows.thread");
                (nux_event.e_event == NUX_WINDOW_EXIT_FOCUS) ||
                (nux_event.e_event == NUX_WINDOW_DIRTY);
 
-      if (b && m_window_compositor->IsTooltipActive())
+      if (b && window_compositor_->IsTooltipActive())
       {
         // Cancel the tooltip since an event that should cause the tooltip to disappear has occurred.
-        m_window_compositor->CancelTooltip();
+        window_compositor_->CancelTooltip();
         b |= true;
       }
 
-      if (!m_window_compositor->ValidateMouseInsideTooltipArea(nux_event.e_x, nux_event.e_y) && m_window_compositor->IsTooltipActive())
+      if (!window_compositor_->ValidateMouseInsideTooltipArea(nux_event.e_x, nux_event.e_y) && window_compositor_->IsTooltipActive())
       {
         // Cancel the tooltip since an event that should cause the tooltip to disappear has occurred.
-        m_window_compositor->CancelTooltip();
+        window_compositor_->CancelTooltip();
         b |= true;
       }
 
@@ -1797,7 +1372,7 @@ logging::Logger logger("nux.windows.thread");
       {
         request_draw_cycle_to_host_wm = true;
       }
-      else if (m_window_compositor->GetWidgetDrawingOverlay() != 0)
+      else if (window_compositor_->GetWidgetDrawingOverlay() != 0)
       {
         request_draw_cycle_to_host_wm = true;
       }
@@ -1825,14 +1400,14 @@ logging::Logger logger("nux.windows.thread");
     GetWindowThread()->GetGraphicsEngine().SetOpenGLClippingRectangle(0, 0, GetWindowThread()->GetGraphicsEngine().GetWindowWidth(),
         GetWindowThread()->GetGraphicsEngine().GetWindowHeight());
 
-    if (GetWindow().IsPauseThreadGraphicsRendering() == false)
+    if (graphics_display_->IsPauseThreadGraphicsRendering() == false)
     {
-      RefreshLayout();
+      ComputeQueuedLayout();
       
       if (clip)
         GetWindowThread()->GetGraphicsEngine().SetGlobalClippingRectangle(Rect(clip->x, clip->y, clip->width, clip->height));
         
-      m_window_compositor->Draw(m_size_configuration_event, m_force_redraw);
+      window_compositor_->Draw(window_size_configuration_event_, force_rendering_);
       
       if (clip)
         GetWindowThread()->GetGraphicsEngine().DisableGlobalClippingRectangle();
@@ -1842,13 +1417,13 @@ logging::Logger logger("nux.windows.thread");
       GetWindowThread()->GetGraphicsEngine().ResetStats();
       ClearRedrawFlag();
 
-      m_size_configuration_event = false;
-      m_force_redraw = false;
+      window_size_configuration_event_ = false;
+      force_rendering_ = false;
     }
 
     CHECKGL( glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE));
 
-    GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
+    graphics_display_->GetGpuDevice()->DeactivateFrameBuffer();
     IOpenGLShaderProgram::SetShaderTracking(false);
   }
 
@@ -1942,15 +1517,44 @@ logging::Logger logger("nux.windows.thread");
   }
 
 
-UXTheme& WindowThread::GetTheme() const
-{
-  if (!m_Theme)
+  GraphicsDisplay& WindowThread::GetGraphicsDisplay() const
   {
-    LOG_INFO(logger) << "Lazily creating nux::UXTheme";
-    const_cast<WindowThread*>(this)->m_Theme = new UXTheme();
+    return *graphics_display_;
   }
-  return *m_Theme;
-}
 
+  GraphicsEngine& WindowThread::GetGraphicsEngine() const
+  {
+    return *graphics_display_->GetGraphicsEngine();
+  }
+
+  WindowCompositor& WindowThread::GetWindowCompositor() const
+  {
+    return *window_compositor_;
+  }
+
+  BasePainter& WindowThread::GetPainter() const
+  {
+    return *painter_;
+  }
+
+  TimerHandler& WindowThread::GetTimerHandler() const
+  {
+    return *timer_manager_;
+  }
+
+  UXTheme& WindowThread::GetTheme() const
+  {
+    if (!theme_)
+    {
+      LOG_INFO(logger) << "Lazily creating nux::UXTheme";
+      const_cast<WindowThread*>(this)->theme_ = new UXTheme();
+    }
+    return *theme_;
+  }
+
+  std::string WindowThread::GetWindowTitle() const
+  {
+    return window_title_;
+  }
 }
 

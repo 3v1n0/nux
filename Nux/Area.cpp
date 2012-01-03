@@ -682,7 +682,7 @@ namespace nux
 
   void Area::InnerGetAbsoluteGeometry(Geometry &geometry)
   {
-    if (this->Type().IsDerivedFromType(BaseWindow::StaticObjectType) || (this == window_thread_->GetMainLayout()))
+    if (this->Type().IsDerivedFromType(BaseWindow::StaticObjectType) || (this == window_thread_->GetLayout()))
     {
       geometry.OffsetPosition(geometry_.x, geometry_.y);
       return;
@@ -699,7 +699,7 @@ namespace nux
   {
     if (Type().IsDerivedFromType(BaseWindow::StaticObjectType) ||
       Type().IsDerivedFromType(MenuPage::StaticObjectType) ||
-      (this == window_thread_->GetMainLayout()))
+      (this == window_thread_->GetLayout()))
     {
       // Do not apply the _2D_xform matrix  to a BaseWindow or the main layout
       return geometry_;
@@ -739,7 +739,7 @@ namespace nux
 
   void Area::InnerGetRootGeometry(Geometry &geometry)
   {
-    if (this->Type().IsDerivedFromType(BaseWindow::StaticObjectType) || (this == window_thread_->GetMainLayout()))
+    if (this->Type().IsDerivedFromType(BaseWindow::StaticObjectType) || (this == window_thread_->GetLayout()))
       return;
 
     MatrixXFormGeometry(_2d_xform, geometry);
@@ -754,7 +754,7 @@ namespace nux
     nux::Geometry geo = geometry_;
     MatrixXFormGeometry(_2d_xform, geo);
 
-    if (Type().IsDerivedFromType(BaseWindow::StaticObjectType) || (this == window_thread_->GetMainLayout()))
+    if (Type().IsDerivedFromType(BaseWindow::StaticObjectType) || (this == window_thread_->GetLayout()))
     {
       return geo;
     }
@@ -795,7 +795,7 @@ namespace nux
 
   Area* Area::GetRootParent()
   {
-    if (Type().IsDerivedFromType(BaseWindow::StaticObjectType) || (this == window_thread_->GetMainLayout()))
+    if (Type().IsDerivedFromType(BaseWindow::StaticObjectType) || (this == window_thread_->GetLayout()))
     {
       return this;
     }
