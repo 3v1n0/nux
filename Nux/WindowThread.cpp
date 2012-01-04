@@ -522,8 +522,8 @@ logging::Logger logger("nux.windows.thread");
       memset(&event, 0, sizeof(Event));
       graphics_display_->GetSystemEvent(&event);
 
-      if ((event.e_event == NUX_DND_ENTER_WINDOW) ||
-        (event.e_event == NUX_DND_LEAVE_WINDOW))
+      if ((event.type == NUX_DND_ENTER_WINDOW) ||
+        (event.type == NUX_DND_LEAVE_WINDOW))
       {
         GetWindowCompositor().ResetDnDArea();
       }
@@ -531,12 +531,12 @@ logging::Logger logger("nux.windows.thread");
       // Call event inspectors.
       CallEventInspectors(&event);
 
-      if ((event.e_event == NUX_TERMINATE_APP) || (this->GetThreadState() == THREADSTOP))
+      if ((event.type == NUX_TERMINATE_APP) || (this->GetThreadState() == THREADSTOP))
       {
           return 0;
       }
       
-      if (event.e_event == NUX_SIZE_CONFIGURATION)
+      if (event.type == NUX_SIZE_CONFIGURATION)
       {
         window_size_configuration_event_ = true;
         Rect r = graphics_display_->GetWindowGeometry();
@@ -548,29 +548,29 @@ logging::Logger logger("nux.windows.thread");
       // Otherwise, w and h may not be correct for the current frame if a resizing happened.
       graphics_display_->GetWindowSize(w, h);
 
-      if ((event.e_event == NUX_MOUSE_PRESSED) ||
-          (event.e_event == NUX_MOUSE_RELEASED) ||
-          (event.e_event == NUX_MOUSE_DOUBLECLICK) ||
-          (event.e_event == NUX_MOUSE_MOVE) ||
-          (event.e_event == NUX_SIZE_CONFIGURATION) ||
-          (event.e_event == NUX_KEYDOWN) ||
-          (event.e_event == NUX_KEYUP) ||
-          (event.e_event == NUX_WINDOW_CONFIGURATION) ||
-          (event.e_event == NUX_WINDOW_ENTER_FOCUS) ||
-          (event.e_event == NUX_WINDOW_EXIT_FOCUS) ||
-          (event.e_event == NUX_WINDOW_MOUSELEAVE) ||
-          (event.e_event == NUX_DND_MOVE) ||
-          (event.e_event == NUX_DND_DROP) ||
-          (event.e_event == NUX_DND_ENTER) ||
-          (event.e_event == NUX_DND_LEAVE) ||
-          (event.e_event == NUX_MOUSE_WHEEL))
+      if ((event.type == NUX_MOUSE_PRESSED) ||
+          (event.type == NUX_MOUSE_RELEASED) ||
+          (event.type == NUX_MOUSE_DOUBLECLICK) ||
+          (event.type == NUX_MOUSE_MOVE) ||
+          (event.type == NUX_SIZE_CONFIGURATION) ||
+          (event.type == NUX_KEYDOWN) ||
+          (event.type == NUX_KEYUP) ||
+          (event.type == NUX_NC_WINDOW_CONFIGURATION) ||
+          (event.type == NUX_WINDOW_ENTER_FOCUS) ||
+          (event.type == NUX_WINDOW_EXIT_FOCUS) ||
+          (event.type == NUX_WINDOW_MOUSELEAVE) ||
+          (event.type == NUX_DND_MOVE) ||
+          (event.type == NUX_DND_DROP) ||
+          (event.type == NUX_DND_ENTER) ||
+          (event.type == NUX_DND_LEAVE) ||
+          (event.type == NUX_MOUSE_WHEEL))
       {
           //DISPATCH EVENT HERE
           //event.Application = Application;
           window_compositor_->ProcessEvent(event);
       }
 
-      if (event.e_event == NUX_SIZE_CONFIGURATION)
+      if (event.type == NUX_SIZE_CONFIGURATION)
       {
           if (!graphics_display_->isWindowMinimized())
           {
@@ -621,17 +621,17 @@ logging::Logger logger("nux.windows.thread");
         }
         else
         {
-          bool b = (event.e_event == NUX_MOUSE_PRESSED) ||
-                   (event.e_event == NUX_MOUSE_RELEASED) ||
-                   (event.e_event == NUX_MOUSE_DOUBLECLICK) ||
-                   //(event.e_event == NUX_MOUSE_MOVE) ||
-                   (event.e_event == NUX_SIZE_CONFIGURATION) ||
-                   (event.e_event == NUX_KEYDOWN) ||
-                   (event.e_event == NUX_KEYUP) ||
-                   (event.e_event == NUX_WINDOW_CONFIGURATION) ||
-                   (event.e_event == NUX_WINDOW_ENTER_FOCUS) ||
-                   (event.e_event == NUX_WINDOW_EXIT_FOCUS) ||
-                   (event.e_event == NUX_WINDOW_DIRTY);
+          bool b = (event.type == NUX_MOUSE_PRESSED) ||
+                   (event.type == NUX_MOUSE_RELEASED) ||
+                   (event.type == NUX_MOUSE_DOUBLECLICK) ||
+                   //(event.type == NUX_MOUSE_MOVE) ||
+                   (event.type == NUX_SIZE_CONFIGURATION) ||
+                   (event.type == NUX_KEYDOWN) ||
+                   (event.type == NUX_KEYUP) ||
+                   (event.type == NUX_NC_WINDOW_CONFIGURATION) ||
+                   (event.type == NUX_WINDOW_ENTER_FOCUS) ||
+                   (event.type == NUX_WINDOW_EXIT_FOCUS) ||
+                   (event.type == NUX_WINDOW_DIRTY);
 
           if (b && window_compositor_->IsTooltipActive())
           {
@@ -640,7 +640,7 @@ logging::Logger logger("nux.windows.thread");
             b |= true;
           }
 
-          if (!window_compositor_->ValidateMouseInsideTooltipArea(event.e_x, event.e_y) && window_compositor_->IsTooltipActive())
+          if (!window_compositor_->ValidateMouseInsideTooltipArea(event.x, event.y) && window_compositor_->IsTooltipActive())
           {
             // Cancel the tooltip since an event that should cause the tooltip to disappear has occurred.
             window_compositor_->CancelTooltip();
@@ -1270,12 +1270,12 @@ logging::Logger logger("nux.windows.thread");
     graphics_display_->ProcessForeignX11Event(xevent, &nux_event);
 #endif
 
-    if (nux_event.e_event == NUX_TERMINATE_APP || (this->GetThreadState() == THREADSTOP))
+    if (nux_event.type == NUX_TERMINATE_APP || (this->GetThreadState() == THREADSTOP))
     {
       return false;
     }
 
-    if (nux_event.e_event == NUX_SIZE_CONFIGURATION)
+    if (nux_event.type == NUX_SIZE_CONFIGURATION)
     {
       window_size_configuration_event_ = true;
     }
@@ -1285,25 +1285,25 @@ logging::Logger logger("nux.windows.thread");
     // Otherwise, w and h may not be correct for the current frame if a resizing happened.
     graphics_display_->GetWindowSize(w, h);
 
-    if (nux_event.e_event == NUX_MOUSE_PRESSED ||
-        (nux_event.e_event == NUX_MOUSE_RELEASED) ||
-        (nux_event.e_event == NUX_MOUSE_DOUBLECLICK) ||
-        (nux_event.e_event == NUX_MOUSE_MOVE) ||
-        (nux_event.e_event == NUX_SIZE_CONFIGURATION) ||
-        (nux_event.e_event == NUX_KEYDOWN) ||
-        (nux_event.e_event == NUX_KEYUP) ||
-        (nux_event.e_event == NUX_WINDOW_CONFIGURATION) ||
-        (nux_event.e_event == NUX_WINDOW_ENTER_FOCUS) ||
-        (nux_event.e_event == NUX_WINDOW_EXIT_FOCUS) ||
-        (nux_event.e_event == NUX_WINDOW_MOUSELEAVE) ||
-        (nux_event.e_event == NUX_MOUSE_WHEEL))
+    if (nux_event.type == NUX_MOUSE_PRESSED ||
+        (nux_event.type == NUX_MOUSE_RELEASED) ||
+        (nux_event.type == NUX_MOUSE_DOUBLECLICK) ||
+        (nux_event.type == NUX_MOUSE_MOVE) ||
+        (nux_event.type == NUX_SIZE_CONFIGURATION) ||
+        (nux_event.type == NUX_KEYDOWN) ||
+        (nux_event.type == NUX_KEYUP) ||
+        (nux_event.type == NUX_NC_WINDOW_CONFIGURATION) ||
+        (nux_event.type == NUX_WINDOW_ENTER_FOCUS) ||
+        (nux_event.type == NUX_WINDOW_EXIT_FOCUS) ||
+        (nux_event.type == NUX_WINDOW_MOUSELEAVE) ||
+        (nux_event.type == NUX_MOUSE_WHEEL))
     {
         //DISPATCH EVENT HERE
         //nux_event.Application = Application;
         window_compositor_->ProcessEvent(nux_event);
     }
 
-    if (nux_event.e_event == NUX_SIZE_CONFIGURATION)
+    if (nux_event.type == NUX_SIZE_CONFIGURATION)
     {
         if (!graphics_display_->isWindowMinimized())
         {
@@ -1342,17 +1342,17 @@ logging::Logger logger("nux.windows.thread");
     }
     else
     {
-      bool b = (nux_event.e_event == NUX_MOUSE_PRESSED) ||
-               (nux_event.e_event == NUX_MOUSE_RELEASED) ||
-               (nux_event.e_event == NUX_MOUSE_DOUBLECLICK) ||
-               //(event.e_event == NUX_MOUSE_MOVE) ||
-               (nux_event.e_event == NUX_SIZE_CONFIGURATION) ||
-               (nux_event.e_event == NUX_KEYDOWN) ||
-               (nux_event.e_event == NUX_KEYUP) ||
-               (nux_event.e_event == NUX_WINDOW_CONFIGURATION) ||
-               (nux_event.e_event == NUX_WINDOW_ENTER_FOCUS) ||
-               (nux_event.e_event == NUX_WINDOW_EXIT_FOCUS) ||
-               (nux_event.e_event == NUX_WINDOW_DIRTY);
+      bool b = (nux_event.type == NUX_MOUSE_PRESSED) ||
+               (nux_event.type == NUX_MOUSE_RELEASED) ||
+               (nux_event.type == NUX_MOUSE_DOUBLECLICK) ||
+               //(event.type == NUX_MOUSE_MOVE) ||
+               (nux_event.type == NUX_SIZE_CONFIGURATION) ||
+               (nux_event.type == NUX_KEYDOWN) ||
+               (nux_event.type == NUX_KEYUP) ||
+               (nux_event.type == NUX_NC_WINDOW_CONFIGURATION) ||
+               (nux_event.type == NUX_WINDOW_ENTER_FOCUS) ||
+               (nux_event.type == NUX_WINDOW_EXIT_FOCUS) ||
+               (nux_event.type == NUX_WINDOW_DIRTY);
 
       if (b && window_compositor_->IsTooltipActive())
       {
@@ -1361,7 +1361,7 @@ logging::Logger logger("nux.windows.thread");
         b |= true;
       }
 
-      if (!window_compositor_->ValidateMouseInsideTooltipArea(nux_event.e_x, nux_event.e_y) && window_compositor_->IsTooltipActive())
+      if (!window_compositor_->ValidateMouseInsideTooltipArea(nux_event.x, nux_event.y) && window_compositor_->IsTooltipActive())
       {
         // Cancel the tooltip since an event that should cause the tooltip to disappear has occurred.
         window_compositor_->CancelTooltip();

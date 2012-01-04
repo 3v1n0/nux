@@ -20,7 +20,6 @@
  */
 
 #include "Nux.h"
-#include "MouseHandler.h"
 
 namespace nux
 {
@@ -70,27 +69,27 @@ namespace nux
     if (has_mouse_focus)
       _state |= AREA_MOUSE_STATUS_FOCUS;
 
-    if (event.e_event == NUX_NO_EVENT)
+    if (event.event_type == NUX_NO_EVENT)
       return _state;
 
     _previous_mouse_in = _current_mouse_in;
 
     int x, y, lo_x, hi_x, lo_y, hi_y;
-    // Usually(e_x_root, e_y_root) is equal to(0, 0). In that case, (x, y) is the mouse coordinate
+    // Usually(x_root, y_root) is equal to(0, 0). In that case, (x, y) is the mouse coordinate
     // that refers to the top-left corner of the window.
-    // If(e_x_root, e_y_root) is equal to the top left corner of this area in the window,
+    // If(x_root, y_root) is equal to the top left corner of this area in the window,
     // then(x, y) represent the coordinate of the mouse based on the top-left corner of this area.
-    x = event.e_x - event.e_x_root;
-    y = event.e_y - event.e_y_root;
+    x = event.x - event.x_root;
+    y = event.y - event.y_root;
 
     lo_x = geo.x;
     hi_x = geo.x + geo.GetWidth() - 1;
     lo_y = geo.y;
     hi_y = geo.y + geo.GetHeight() - 1;
 
-    if ((event.e_x == -1) && (event.e_y == -1))
+    if ((event.x == -1) && (event.y == -1))
     {
-      // e_x == -1 and e_y == -1 are associated with some specific window events that have the mouse outside of any widget.
+      // x == -1 and y == -1 are associated with some specific window events that have the mouse outside of any widget.
       // See WM_SETFOCUS, WM_KILLFOCUS, NUX_WINDOW_MOUSELEAVE
       _current_mouse_in = false;
     }
@@ -141,7 +140,7 @@ namespace nux
       return _state;
     }
 
-    switch(event.e_event)
+    switch(event.event_type)
     {
       case NUX_MOUSE_PRESSED:
       case NUX_MOUSE_DOUBLECLICK:
