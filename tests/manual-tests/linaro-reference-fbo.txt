@@ -1,0 +1,8 @@
+
+The logic behind the reference framebuffer:
+ - by default there is no reference frame buffer set and Nux render to the opengl back buffer.
+ - When a reference frame buffer is set Nux does its rendering into the reference frame buffer texture.
+ - it is up to the caller to display the texture from the reference frame buffer into the back buffer.
+
+To test this, a sample program would set a reference frame buffer and have Nux render a single color quad all over the window. Then the program would dump the texture in the reference frame buffer to memory and compare a few texels with the color that was used.
+
