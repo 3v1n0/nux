@@ -44,7 +44,9 @@ namespace nux
     , m_X11Screen(0)
     , m_ParentWindow(0)
     , m_GLCtx(0)
+#ifndef NUX_OPENGLES_20    
     , glx_window_(0)
+#endif
     , m_NumVideoModes(0)
     , m_BorderPixel(0)
     , _x11_major(0)
