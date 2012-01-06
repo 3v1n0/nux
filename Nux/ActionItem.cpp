@@ -91,7 +91,7 @@ namespace nux
     }
     else
     {
-      if (area.IsMouseInside() && (!area.MouseFocusOnOtherArea()))
+      if (area.IsMouseInside() /*TODO: && (!area.MouseFocusOnOtherArea())*/)
       {
         GetPainter().PaintShape(graphics_engine, base, Color(COLOR_FOREGROUND_PRIMARY),  eSHAPE_CORNER_ROUND2);
         GetPainter().PaintShape(graphics_engine, base, Color(COLOR_BLACK),  eSTROKE_CORNER_ROUND2);
@@ -157,6 +157,4 @@ namespace nux
 //{
 //    return m_Menu;
 //}
-
-
 }

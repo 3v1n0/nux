@@ -67,7 +67,6 @@ source_cpp = \
   $(srcdir)/MenuPage.cpp \
   $(srcdir)/MenuBar.cpp \
   $(srcdir)/MouseAreaCtrl.cpp \
-  $(srcdir)/MouseHandler.cpp \
   $(srcdir)/NumericValuator.cpp \
   $(srcdir)/Nux.cpp \
   $(srcdir)/NuxGlobalInitializer.cpp \
@@ -147,7 +146,6 @@ source_h = \
   $(srcdir)/MenuPage.h \
   $(srcdir)/MenuBar.h \
   $(srcdir)/MouseAreaCtrl.h \
-  $(srcdir)/MouseHandler.h \
   $(srcdir)/NumericValuator.h \
   $(srcdir)/Nux.h \
   $(srcdir)/NuxGlobalInitializer.h \
