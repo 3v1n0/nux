@@ -456,8 +456,11 @@ namespace nux
       auto display = GetGraphicsDisplay()->GetX11Display();
       auto window = static_cast<nux::BaseWindow*>(GetTopLevelViewWindow());
     
-      caret_cursor_ = XCreateFontCursor(display, XC_xterm);
-      XDefineCursor(display, window->GetInputWindowId(), caret_cursor_);
+      if (display && window)
+      {
+        caret_cursor_ = XCreateFontCursor(display, XC_xterm);
+        XDefineCursor(display, window->GetInputWindowId(), caret_cursor_);
+      }
     }
   }
   
@@ -468,9 +471,12 @@ namespace nux
       auto display = nux::GetGraphicsDisplay()->GetX11Display();
       auto window = static_cast<nux::BaseWindow*>(GetTopLevelViewWindow());
       
-      XUndefineCursor(display, window->GetInputWindowId());
-      XFreeCursor(display, caret_cursor_);
-      caret_cursor_ = None;
+      if (display && window)
+      {
+        XUndefineCursor(display, window->GetInputWindowId());
+        XFreeCursor(display, caret_cursor_);
+        caret_cursor_ = None;
+      }
     }
   }
 
