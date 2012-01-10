@@ -1,5 +1,3 @@
-
-
 /*
   Copyright 2008 Google Inc.
 
@@ -216,7 +214,7 @@ namespace nux
 
   void TextEntry::ProcessMouseEvent(int event_type, int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    if (GetEventButton(button_flags) != 1)
+    if (GetEventButton(button_flags) != 1 && event_type != NUX_MOUSE_MOVE)
       return;
 
     //ResetImContext();
