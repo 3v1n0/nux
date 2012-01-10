@@ -149,7 +149,9 @@ namespace nux
     , font_dpi_(96.0)
     , _text_color(color::White)
     , align_(CairoGraphics::ALIGN_LEFT)
+#if defined(NUX_OS_LINUX)
     , caret_cursor_(None)
+#endif
     , text_input_mode_(false)
     , key_nav_mode_(false)
   {
