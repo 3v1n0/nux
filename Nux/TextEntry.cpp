@@ -28,7 +28,9 @@
 
 #include "TextEntry.h"
 
+#if defined(NUX_OS_LINUX)
 #include <X11/cursorfont.h>
+#endif
 
 namespace nux
 {
@@ -449,10 +451,11 @@ namespace nux
   
   void TextEntry::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
+#if defined(NUX_OS_LINUX)
     if (caret_cursor_ == None)
     {
-      auto display = GetGraphicsDisplay()->GetX11Display();
-      auto window = static_cast<nux::BaseWindow*>(GetTopLevelViewWindow());
+      Display* display = nux::GetGraphicsDisplay()->GetX11Display();
+      nux::BaseWindow* window = static_cast<nux::BaseWindow*>(GetTopLevelViewWindow());
     
       if (display && window)
       {
@@ -460,14 +463,16 @@ namespace nux
         XDefineCursor(display, window->GetInputWindowId(), caret_cursor_);
       }
     }
+#endif
   }
   
   void TextEntry::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
+#if defined(NUX_OS_LINUX)
     if (caret_cursor_ != None)
     {
-      auto display = nux::GetGraphicsDisplay()->GetX11Display();
-      auto window = static_cast<nux::BaseWindow*>(GetTopLevelViewWindow());
+      Display* display = nux::GetGraphicsDisplay()->GetX11Display();
+      nux::BaseWindow* window = static_cast<nux::BaseWindow*>(GetTopLevelViewWindow());
       
       if (display && window)
       {
@@ -476,6 +481,7 @@ namespace nux
         caret_cursor_ = None;
       }
     }
+#endif
   }
 
   void TextEntry::RecvKeyEvent(
