@@ -26,14 +26,14 @@
 namespace nux
 {
 
-  DoubleValidator::DoubleValidator (double Minimum, double Maximum)
-    :   m_Minimum (Minimum)
-    ,   m_Maximum (Maximum)
-    ,   m_Decimals (3)
+  DoubleValidator::DoubleValidator(double Minimum, double Maximum)
+    :   m_Minimum(Minimum)
+    ,   m_Maximum(Maximum)
+    ,   m_Decimals(3)
   {
     _regexp_str = "^[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?$";
 
-    InitRegExp ();
+    InitRegExp();
 
     if (m_Minimum > m_Maximum)
     {
@@ -43,12 +43,12 @@ namespace nux
     }
   }
 
-  DoubleValidator::DoubleValidator (const DoubleValidator &copy)
+  DoubleValidator::DoubleValidator(const DoubleValidator &copy)
   {
     m_Minimum   = copy.m_Minimum;
     m_Minimum   = copy.m_Maximum;
     _regexp_str = copy._regexp_str;
-    InitRegExp ();
+    InitRegExp();
   }
 
   DoubleValidator &DoubleValidator::operator= (const DoubleValidator &rhs)
@@ -58,7 +58,7 @@ namespace nux
       m_Minimum   = rhs.m_Minimum;
       m_Minimum   = rhs.m_Maximum;
       _regexp_str = rhs._regexp_str;
-      InitRegExp ();
+      InitRegExp();
     }
 
     return *this;
@@ -70,10 +70,10 @@ namespace nux
 
   Validator *DoubleValidator::Clone()  const
   {
-    return new DoubleValidator (*this);
+    return new DoubleValidator(*this);
   }
 
-  void DoubleValidator::SetMinimum (double value)
+  void DoubleValidator::SetMinimum(double value)
   {
     m_Minimum = value;
 
@@ -90,7 +90,7 @@ namespace nux
     return m_Minimum;
   }
 
-  void DoubleValidator::SetMaximum (double value)
+  void DoubleValidator::SetMaximum(double value)
   {
     m_Maximum = value;
 
@@ -107,7 +107,7 @@ namespace nux
     return m_Maximum;
   }
 
-  double DoubleValidator::GetClampedValue (double d) const
+  double DoubleValidator::GetClampedValue(double d) const
   {
     if (d < m_Minimum)
       return m_Minimum;
@@ -118,26 +118,26 @@ namespace nux
     return d;
   }
 
-  void DoubleValidator::Alternative (const TCHAR *str)
+  void DoubleValidator::Alternative(const char *str)
   {
-    str = TEXT ("0.0");
+    str = "0.0";
   }
 
-  void DoubleValidator::SetDecimals (int dec)
+  void DoubleValidator::SetDecimals(int dec)
   {
     m_Decimals = Clamp<int> (dec, 0, 13);
   }
 
-  NString DoubleValidator::ToString (double d)
+  NString DoubleValidator::ToString(double d)
   {
-    NString Prec = NString (TEXT ("%.") ) + NString::Printf (TEXT ("%d"), m_Decimals) + NString (TEXT ("f") );
-    return NString::Printf (Prec.GetTCharPtr(), d);
+    NString Prec = NString("%.") + NString::Printf("%d", m_Decimals) + NString("f");
+    return NString::Printf(Prec.GetTCharPtr(), d);
   }
 
-  double DoubleValidator::ToDouble (const TCHAR *str)
+  double DoubleValidator::ToDouble(const char *str)
   {
-    if (Validate (str) == Acceptable)
-      return CharToDouble (str);
+    if (Validate(str) == Acceptable)
+      return CharToDouble(str);
     else
       return 0.0;
   }

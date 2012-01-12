@@ -56,8 +56,8 @@ void RenderToFrameBufferObject ()
   graphics_engine->SetContext(0, 0, w, h);
   graphics_engine->Push2DWindow(w, h);
 
-  nux::IEvent event;
-  memset(&event, 0, sizeof(nux::IEvent));
+  nux::Event event;
+  memset(&event, 0, sizeof(nux::Event));
 
   do
   {
@@ -65,7 +65,7 @@ void RenderToFrameBufferObject ()
     CHECKGL( glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT) );
 
     graphics_display->GetSystemEvent(&event);
-    if(event.e_event == nux::NUX_SIZE_CONFIGURATION)
+    if(event.type == nux::NUX_SIZE_CONFIGURATION)
     {
       graphics_engine->DisableAllTextureMode(0);
       graphics_engine->DisableAllTextureMode(1);
@@ -105,7 +105,7 @@ void RenderToFrameBufferObject ()
     graphics_engine->QRP_1Tex(0, 0, graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), texture_rt, texxform, nux::color::White);
 
     graphics_display->SwapBuffer();
-  } while(event.e_event != nux::NUX_TERMINATE_APP);
+  } while(event.type != nux::NUX_TERMINATE_APP);
 
   fbo.Release ();
   texture_rt.Release ();

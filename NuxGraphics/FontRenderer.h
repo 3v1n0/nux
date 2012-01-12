@@ -40,15 +40,15 @@ namespace nux
   class FontRenderer
   {
   public:
-    FontRenderer (GraphicsEngine &OpenGLEngine);
+    FontRenderer(GraphicsEngine &OpenGLEngine);
     ~FontRenderer();
 
-    int DrawColorString (ObjectPtr<FontTexture> Font, int x, int y, const NString &str, const Color &color, bool WriteAlphaChannel, int NumCharacter = 0, int SkipFirstNCharacters = 0);
-    void PositionString (ObjectPtr<FontTexture> Font, const NString &str, const PageBBox &, StringBBox &, TextAlignment align = eAlignTextCenter, int NumCharacter = 0);
-    int RenderColorText (ObjectPtr<FontTexture> Font, int x, int y, const NString &Str, const Color &color, bool WriteAlphaChannel, int NumCharacter);
-    int RenderColorTextLineStatic (ObjectPtr<FontTexture> Font, const PageBBox &pageSize, const NString &Str, const Color &color,
+    int DrawColorString(ObjectPtr<FontTexture> Font, int x, int y, const NString &str, const Color &color, bool WriteAlphaChannel, int NumCharacter = 0, int SkipFirstNCharacters = 0);
+    void PositionString(ObjectPtr<FontTexture> Font, const NString &str, const PageBBox &, StringBBox &, TextAlignment align = eAlignTextCenter, int NumCharacter = 0);
+    int RenderColorText(ObjectPtr<FontTexture> Font, int x, int y, const NString &Str, const Color &color, bool WriteAlphaChannel, int NumCharacter);
+    int RenderColorTextLineStatic(ObjectPtr<FontTexture> Font, const PageBBox &pageSize, const NString &Str, const Color &color,
                                    bool WriteAlphaChannel, TextAlignment alignment);
-    int RenderColorTextLineEdit (ObjectPtr<FontTexture> Font, const PageBBox &pageSize, const NString &Str,
+    int RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const PageBBox &pageSize, const NString &Str,
                                  const Color &TextColor,
                                  bool WriteAlphaChannel,
                                  const Color &SelectedTextColor,
@@ -58,8 +58,8 @@ namespace nux
                                  bool ShowCursor, unsigned int CursorPosition,
                                  int offset = 0, int selection_start = 0, int selection_end = 0);
 
-    int RenderText (ObjectPtr<FontTexture> Font, int x, int y, const NString &str, const Color &color, bool WriteAlphaChannel, int StartCharacter = 0, int NumCharacters = 0);
-    int RenderTextToBuffer (
+    int RenderText(ObjectPtr<FontTexture> Font, int x, int y, const NString &str, const Color &color, bool WriteAlphaChannel, int StartCharacter = 0, int NumCharacters = 0);
+    int RenderTextToBuffer(
       float *VertexBuffer, int VBSize,
       ObjectPtr<FontTexture> Font, Rect geo, const NString &str, const Color &color, TextAlignment alignment = eAlignTextCenter, int NumCharacter = 0);
 

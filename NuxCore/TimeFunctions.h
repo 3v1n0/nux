@@ -43,8 +43,8 @@ namespace nux
     //unsigned int     m_DayOfYear;      /* days since January 1 - [0,365]   */
     unsigned int     m_MicroSecond;
 
-    t_s64  GetJulianDayNumber()             const;
-    t_f64  GetJulianDate()                  const;
+    long long  GetJulianDayNumber()             const;
+    double  GetJulianDate()                  const;
     unsigned int    GetSecondOfDay()                 const;
     bool   operator== ( TimeStamp &Other )  const;
     bool   operator!= ( TimeStamp &Other )  const;

@@ -34,7 +34,17 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 @BUILD_TESTS_TRUE@check_PROGRAMS = test-nux$(EXEEXT) \
-@BUILD_TESTS_TRUE@	gtest-nux-core$(EXEEXT)
+@BUILD_TESTS_TRUE@	gtest-nux$(EXEEXT) gtest-nux-core$(EXEEXT) \
+@BUILD_TESTS_TRUE@	test-graphics-display$(EXEEXT) \
+@BUILD_TESTS_TRUE@	test-empty-window$(EXEEXT) \
+@BUILD_TESTS_TRUE@	button-xtest$(EXEEXT) \
+@BUILD_TESTS_TRUE@	mouse-events-test$(EXEEXT) \
+@BUILD_TESTS_TRUE@	mouse-buttons-test$(EXEEXT) \
+@BUILD_TESTS_TRUE@	hgrid-key-navigation-test$(EXEEXT) \
+@BUILD_TESTS_TRUE@	hlayout-key-navigation-test$(EXEEXT) \
+@BUILD_TESTS_TRUE@	vlayout-key-navigation-test$(EXEEXT) \
+@BUILD_TESTS_TRUE@	scrollbar-test$(EXEEXT) \
+@BUILD_TESTS_TRUE@	focus-on-mouse-down-test$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -48,6 +58,59 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+am__button_xtest_SOURCES_DIST = button-xtest.cpp \
+	nux_test_framework.cpp nux_test_framework.h \
+	nux_automated_test_framework.cpp \
+	nux_automated_test_framework.h
+@BUILD_TESTS_TRUE@am_button_xtest_OBJECTS =  \
+@BUILD_TESTS_TRUE@	button_xtest-button-xtest.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	button_xtest-nux_test_framework.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	button_xtest-nux_automated_test_framework.$(OBJEXT)
+button_xtest_OBJECTS = $(am_button_xtest_OBJECTS)
+am__DEPENDENCIES_1 =
+@BUILD_TESTS_TRUE@am__DEPENDENCIES_2 = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@	$(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@	$(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@	$(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_1)
+@BUILD_TESTS_TRUE@button_xtest_DEPENDENCIES = $(am__DEPENDENCIES_2)
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+button_xtest_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(button_xtest_LDFLAGS) $(LDFLAGS) -o $@
+am__focus_on_mouse_down_test_SOURCES_DIST =  \
+	focus-on-mouse-down-test.cpp nux_test_framework.cpp \
+	nux_test_framework.h nux_automated_test_framework.cpp \
+	nux_automated_test_framework.h test-view.cpp test-view.h
+@BUILD_TESTS_TRUE@am_focus_on_mouse_down_test_OBJECTS = focus_on_mouse_down_test-focus-on-mouse-down-test.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	focus_on_mouse_down_test-nux_test_framework.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	focus_on_mouse_down_test-nux_automated_test_framework.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	focus_on_mouse_down_test-test-view.$(OBJEXT)
+focus_on_mouse_down_test_OBJECTS =  \
+	$(am_focus_on_mouse_down_test_OBJECTS)
+@BUILD_TESTS_TRUE@focus_on_mouse_down_test_DEPENDENCIES =  \
+@BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_2)
+focus_on_mouse_down_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(AM_CXXFLAGS) $(CXXFLAGS) $(focus_on_mouse_down_test_LDFLAGS) \
+	$(LDFLAGS) -o $@
+am__gtest_nux_SOURCES_DIST = test-nux-main.cpp test-nux-statictext.cpp \
+	test-nux-windowthread.cpp
+@BUILD_TESTS_TRUE@am_gtest_nux_OBJECTS =  \
+@BUILD_TESTS_TRUE@	gtest_nux-test-nux-main.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	gtest_nux-test-nux-statictext.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	gtest_nux-test-nux-windowthread.$(OBJEXT)
+gtest_nux_OBJECTS = $(am_gtest_nux_OBJECTS)
+@BUILD_TESTS_TRUE@gtest_nux_DEPENDENCIES = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@	$(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@	$(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@	$(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_1)
+gtest_nux_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(gtest_nux_LDFLAGS) $(LDFLAGS) -o $@
 am__gtest_nux_core_SOURCES_DIST = Helpers.h Helpers.cpp \
 	test_object.cpp test_main.cpp test_async_file_writer.cpp \
 	test_logger.cpp test_cairo_wrapper.cpp test_properties.cpp \
@@ -62,18 +125,111 @@ am__gtest_nux_core_SOURCES_DIST = Helpers.h Helpers.cpp \
 @BUILD_TESTS_TRUE@	gtest_nux_core-test_properties.$(OBJEXT) \
 @BUILD_TESTS_TRUE@	gtest_nux_core-test_rolling_file_appender.$(OBJEXT)
 gtest_nux_core_OBJECTS = $(am_gtest_nux_core_OBJECTS)
-am__DEPENDENCIES_1 =
 @BUILD_TESTS_TRUE@gtest_nux_core_DEPENDENCIES = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@	$(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@	$(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@	$(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_1)
-AM_V_lt = $(am__v_lt_$(V))
-am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
-am__v_lt_0 = --silent
 gtest_nux_core_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
 	$(AM_CXXFLAGS) $(CXXFLAGS) $(gtest_nux_core_LDFLAGS) \
+	$(LDFLAGS) -o $@
+am__hgrid_key_navigation_test_SOURCES_DIST =  \
+	hgrid-key-navigation-test.cpp nux_test_framework.cpp \
+	nux_test_framework.h nux_automated_test_framework.cpp \
+	nux_automated_test_framework.h test-view.cpp test-view.h
+@BUILD_TESTS_TRUE@am_hgrid_key_navigation_test_OBJECTS = hgrid_key_navigation_test-hgrid-key-navigation-test.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	hgrid_key_navigation_test-nux_test_framework.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	hgrid_key_navigation_test-nux_automated_test_framework.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	hgrid_key_navigation_test-test-view.$(OBJEXT)
+hgrid_key_navigation_test_OBJECTS =  \
+	$(am_hgrid_key_navigation_test_OBJECTS)
+@BUILD_TESTS_TRUE@hgrid_key_navigation_test_DEPENDENCIES =  \
+@BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_2)
+hgrid_key_navigation_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(AM_CXXFLAGS) $(CXXFLAGS) \
+	$(hgrid_key_navigation_test_LDFLAGS) $(LDFLAGS) -o $@
+am__hlayout_key_navigation_test_SOURCES_DIST =  \
+	hlayout-key-navigation-test.cpp nux_test_framework.cpp \
+	nux_test_framework.h nux_automated_test_framework.cpp \
+	nux_automated_test_framework.h test-view.cpp test-view.h
+@BUILD_TESTS_TRUE@am_hlayout_key_navigation_test_OBJECTS = hlayout_key_navigation_test-hlayout-key-navigation-test.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	hlayout_key_navigation_test-nux_test_framework.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	hlayout_key_navigation_test-nux_automated_test_framework.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	hlayout_key_navigation_test-test-view.$(OBJEXT)
+hlayout_key_navigation_test_OBJECTS =  \
+	$(am_hlayout_key_navigation_test_OBJECTS)
+@BUILD_TESTS_TRUE@hlayout_key_navigation_test_DEPENDENCIES =  \
+@BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_2)
+hlayout_key_navigation_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(AM_CXXFLAGS) $(CXXFLAGS) \
+	$(hlayout_key_navigation_test_LDFLAGS) $(LDFLAGS) -o $@
+am__mouse_buttons_test_SOURCES_DIST = mouse-buttons-test.cpp \
+	nux_test_framework.cpp nux_test_framework.h \
+	nux_automated_test_framework.cpp \
+	nux_automated_test_framework.h test-view.cpp test-view.h
+@BUILD_TESTS_TRUE@am_mouse_buttons_test_OBJECTS = mouse_buttons_test-mouse-buttons-test.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	mouse_buttons_test-nux_test_framework.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	mouse_buttons_test-nux_automated_test_framework.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	mouse_buttons_test-test-view.$(OBJEXT)
+mouse_buttons_test_OBJECTS = $(am_mouse_buttons_test_OBJECTS)
+@BUILD_TESTS_TRUE@mouse_buttons_test_DEPENDENCIES =  \
+@BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_2)
+mouse_buttons_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(AM_CXXFLAGS) $(CXXFLAGS) $(mouse_buttons_test_LDFLAGS) \
+	$(LDFLAGS) -o $@
+am__mouse_events_test_SOURCES_DIST = mouse-events-test.cpp \
+	nux_test_framework.cpp nux_test_framework.h \
+	nux_automated_test_framework.cpp \
+	nux_automated_test_framework.h test-view.cpp test-view.h
+@BUILD_TESTS_TRUE@am_mouse_events_test_OBJECTS = mouse_events_test-mouse-events-test.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	mouse_events_test-nux_test_framework.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	mouse_events_test-nux_automated_test_framework.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	mouse_events_test-test-view.$(OBJEXT)
+mouse_events_test_OBJECTS = $(am_mouse_events_test_OBJECTS)
+@BUILD_TESTS_TRUE@mouse_events_test_DEPENDENCIES =  \
+@BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_2)
+mouse_events_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(AM_CXXFLAGS) $(CXXFLAGS) $(mouse_events_test_LDFLAGS) \
+	$(LDFLAGS) -o $@
+am__scrollbar_test_SOURCES_DIST = scrollbar-test.cpp \
+	nux_test_framework.cpp nux_test_framework.h \
+	nux_automated_test_framework.cpp \
+	nux_automated_test_framework.h test-scrollview.cpp \
+	test-scrollview.h test-view.cpp test-view.h
+@BUILD_TESTS_TRUE@am_scrollbar_test_OBJECTS =  \
+@BUILD_TESTS_TRUE@	scrollbar_test-scrollbar-test.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	scrollbar_test-nux_test_framework.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	scrollbar_test-nux_automated_test_framework.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	scrollbar_test-test-scrollview.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	scrollbar_test-test-view.$(OBJEXT)
+scrollbar_test_OBJECTS = $(am_scrollbar_test_OBJECTS)
+@BUILD_TESTS_TRUE@scrollbar_test_DEPENDENCIES = $(am__DEPENDENCIES_2)
+scrollbar_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(AM_CXXFLAGS) $(CXXFLAGS) $(scrollbar_test_LDFLAGS) \
+	$(LDFLAGS) -o $@
+am__test_empty_window_SOURCES_DIST = test_empty_window.cpp
+@BUILD_TESTS_TRUE@am_test_empty_window_OBJECTS = test_empty_window-test_empty_window.$(OBJEXT)
+test_empty_window_OBJECTS = $(am_test_empty_window_OBJECTS)
+@BUILD_TESTS_TRUE@test_empty_window_DEPENDENCIES =  \
+@BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_2)
+test_empty_window_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(AM_CXXFLAGS) $(CXXFLAGS) $(test_empty_window_LDFLAGS) \
+	$(LDFLAGS) -o $@
+am__test_graphics_display_SOURCES_DIST = test_graphics_display.cpp
+@BUILD_TESTS_TRUE@am_test_graphics_display_OBJECTS = test_graphics_display-test_graphics_display.$(OBJEXT)
+test_graphics_display_OBJECTS = $(am_test_graphics_display_OBJECTS)
+@BUILD_TESTS_TRUE@test_graphics_display_DEPENDENCIES =  \
+@BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_2)
+test_graphics_display_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(AM_CXXFLAGS) $(CXXFLAGS) $(test_graphics_display_LDFLAGS) \
 	$(LDFLAGS) -o $@
 am__test_nux_SOURCES_DIST = test-canvas.cpp test-nux.cpp \
 	test-system.cpp
@@ -87,6 +243,22 @@ test_nux_OBJECTS = $(am_test_nux_OBJECTS)
 @BUILD_TESTS_TRUE@	$(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@	$(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_1)
+am__vlayout_key_navigation_test_SOURCES_DIST =  \
+	vlayout-key-navigation-test.cpp nux_test_framework.cpp \
+	nux_test_framework.h nux_automated_test_framework.cpp \
+	nux_automated_test_framework.h test-view.cpp test-view.h
+@BUILD_TESTS_TRUE@am_vlayout_key_navigation_test_OBJECTS = vlayout_key_navigation_test-vlayout-key-navigation-test.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	vlayout_key_navigation_test-nux_test_framework.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	vlayout_key_navigation_test-nux_automated_test_framework.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	vlayout_key_navigation_test-test-view.$(OBJEXT)
+vlayout_key_navigation_test_OBJECTS =  \
+	$(am_vlayout_key_navigation_test_OBJECTS)
+@BUILD_TESTS_TRUE@vlayout_key_navigation_test_DEPENDENCIES =  \
+@BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_2)
+vlayout_key_navigation_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(AM_CXXFLAGS) $(CXXFLAGS) \
+	$(vlayout_key_navigation_test_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -129,9 +301,27 @@ am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(gtest_nux_core_SOURCES) $(test_nux_SOURCES)
-DIST_SOURCES = $(am__gtest_nux_core_SOURCES_DIST) \
-	$(am__test_nux_SOURCES_DIST)
+SOURCES = $(button_xtest_SOURCES) $(focus_on_mouse_down_test_SOURCES) \
+	$(gtest_nux_SOURCES) $(gtest_nux_core_SOURCES) \
+	$(hgrid_key_navigation_test_SOURCES) \
+	$(hlayout_key_navigation_test_SOURCES) \
+	$(mouse_buttons_test_SOURCES) $(mouse_events_test_SOURCES) \
+	$(scrollbar_test_SOURCES) $(test_empty_window_SOURCES) \
+	$(test_graphics_display_SOURCES) $(test_nux_SOURCES) \
+	$(vlayout_key_navigation_test_SOURCES)
+DIST_SOURCES = $(am__button_xtest_SOURCES_DIST) \
+	$(am__focus_on_mouse_down_test_SOURCES_DIST) \
+	$(am__gtest_nux_SOURCES_DIST) \
+	$(am__gtest_nux_core_SOURCES_DIST) \
+	$(am__hgrid_key_navigation_test_SOURCES_DIST) \
+	$(am__hlayout_key_navigation_test_SOURCES_DIST) \
+	$(am__mouse_buttons_test_SOURCES_DIST) \
+	$(am__mouse_events_test_SOURCES_DIST) \
+	$(am__scrollbar_test_SOURCES_DIST) \
+	$(am__test_empty_window_SOURCES_DIST) \
+	$(am__test_graphics_display_SOURCES_DIST) \
+	$(am__test_nux_SOURCES_DIST) \
+	$(am__vlayout_key_navigation_test_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -189,6 +379,7 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GCC_FLAGS = @GCC_FLAGS@
+GL_PKGS = @GL_PKGS@
 GREP = @GREP@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -209,6 +400,7 @@ MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 NM = @NM@
 NMEDIT = @NMEDIT@
+NUX_ABI_VERSION = @NUX_ABI_VERSION@
 NUX_API_VERSION = @NUX_API_VERSION@
 NUX_CFLAGS = @NUX_CFLAGS@
 NUX_CORE_CFLAGS = @NUX_CORE_CFLAGS@
@@ -225,8 +417,6 @@ NUX_LIBS = @NUX_LIBS@
 NUX_LT_LDFLAGS = @NUX_LT_LDFLAGS@
 NUX_LT_VERSION = @NUX_LT_VERSION@
 NUX_MAJOR_VERSION = @NUX_MAJOR_VERSION@
-NUX_MESH_CFLAGS = @NUX_MESH_CFLAGS@
-NUX_MESH_LIBS = @NUX_MESH_LIBS@
 NUX_MICRO_VERSION = @NUX_MICRO_VERSION@
 NUX_MINOR_VERSION = @NUX_MINOR_VERSION@
 NUX_VERSION = @NUX_VERSION@
@@ -370,6 +560,151 @@ top_srcdir = @top_srcdir@
 @BUILD_TESTS_TRUE@  -lpthread -lgtest -lgmock \
 @BUILD_TESTS_TRUE@  -lboost_filesystem -lboost_system
 
+@BUILD_TESTS_TRUE@gtest_nux_SOURCES = \
+@BUILD_TESTS_TRUE@  test-nux-main.cpp \
+@BUILD_TESTS_TRUE@  test-nux-statictext.cpp \
+@BUILD_TESTS_TRUE@  test-nux-windowthread.cpp
+
+@BUILD_TESTS_TRUE@gtest_nux_CPPFLAGS = \
+@BUILD_TESTS_TRUE@  -I$(srcdir) \
+@BUILD_TESTS_TRUE@  -I$(top_srcdir) \
+@BUILD_TESTS_TRUE@  -DPREFIX=\""$(prefix)"\" \
+@BUILD_TESTS_TRUE@	-DLIBDIR=\""$(libdir)"\" \
+@BUILD_TESTS_TRUE@  -DDATADIR=\""$(datadir)"\" \
+@BUILD_TESTS_TRUE@  -DG_LOG_DOMAIN=\"NuxTests\" \
+@BUILD_TESTS_TRUE@  -DTESTDIR=\""$(top_srcdir)/tests"\" \
+@BUILD_TESTS_TRUE@  $(GCC_FLAGS) \
+@BUILD_TESTS_TRUE@  $(NUX_CORE_CFLAGS) \
+@BUILD_TESTS_TRUE@  $(NUX_EXAMPLES_CFLAGS) \
+@BUILD_TESTS_TRUE@  $(NUX_CFLAGS) \
+@BUILD_TESTS_TRUE@  $(MAINTAINER_CFLAGS)
+
+@BUILD_TESTS_TRUE@gtest_nux_LDADD = \
+@BUILD_TESTS_TRUE@  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@  $(NUX_LIBS)
+
+@BUILD_TESTS_TRUE@gtest_nux_LDFLAGS = \
+@BUILD_TESTS_TRUE@  -lpthread -lgtest -lgmock \
+@BUILD_TESTS_TRUE@  -lboost_filesystem -lboost_system
+
+@BUILD_TESTS_TRUE@TestFlags = -I$(srcdir) \
+@BUILD_TESTS_TRUE@  -I$(top_srcdir) \
+@BUILD_TESTS_TRUE@  -DPREFIX=\""$(prefix)"\" \
+@BUILD_TESTS_TRUE@  -DLIBDIR=\""$(libdir)"\" \
+@BUILD_TESTS_TRUE@  -DDATADIR=\""$(datadir)"\" \
+@BUILD_TESTS_TRUE@  -DG_LOG_DOMAIN=\"NuxTests\" \
+@BUILD_TESTS_TRUE@  -DTESTDIR=\""$(top_srcdir)/tests"\" \
+@BUILD_TESTS_TRUE@  $(GCC_FLAGS) \
+@BUILD_TESTS_TRUE@  $(NUX_CORE_CFLAGS) \
+@BUILD_TESTS_TRUE@  $(NUX_EXAMPLES_CFLAGS) \
+@BUILD_TESTS_TRUE@  $(NUX_CFLAGS) \
+@BUILD_TESTS_TRUE@  $(MAINTAINER_CFLAGS)
+
+@BUILD_TESTS_TRUE@TestLibs = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
+@BUILD_TESTS_TRUE@  $(NUX_LIBS)
+
+@BUILD_TESTS_TRUE@test_graphics_display_SOURCES = test_graphics_display.cpp
+@BUILD_TESTS_TRUE@test_graphics_display_CPPFLAGS = $(TestFlags)
+@BUILD_TESTS_TRUE@test_graphics_display_LDADD = $(TestLibs)
+@BUILD_TESTS_TRUE@test_graphics_display_LDFLAGS = -lpthread
+@BUILD_TESTS_TRUE@test_empty_window_SOURCES = test_empty_window.cpp
+@BUILD_TESTS_TRUE@test_empty_window_CPPFLAGS = $(TestFlags)
+@BUILD_TESTS_TRUE@test_empty_window_LDADD = $(TestLibs)
+@BUILD_TESTS_TRUE@test_empty_window_LDFLAGS = -lpthread
+@BUILD_TESTS_TRUE@button_xtest_SOURCES = button-xtest.cpp \
+@BUILD_TESTS_TRUE@  nux_test_framework.cpp \
+@BUILD_TESTS_TRUE@  nux_test_framework.h \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.cpp \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.h
+
+@BUILD_TESTS_TRUE@button_xtest_CPPFLAGS = $(TestFlags)
+@BUILD_TESTS_TRUE@button_xtest_LDADD = $(TestLibs)
+@BUILD_TESTS_TRUE@button_xtest_LDFLAGS = -lpthread -lXtst
+@BUILD_TESTS_TRUE@mouse_events_test_SOURCES = mouse-events-test.cpp \
+@BUILD_TESTS_TRUE@  nux_test_framework.cpp \
+@BUILD_TESTS_TRUE@  nux_test_framework.h \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.cpp \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.h \
+@BUILD_TESTS_TRUE@  test-view.cpp \
+@BUILD_TESTS_TRUE@  test-view.h
+
+@BUILD_TESTS_TRUE@mouse_events_test_CPPFLAGS = $(TestFlags)
+@BUILD_TESTS_TRUE@mouse_events_test_LDADD = $(TestLibs)
+@BUILD_TESTS_TRUE@mouse_events_test_LDFLAGS = -lpthread -lXtst
+@BUILD_TESTS_TRUE@mouse_buttons_test_SOURCES = mouse-buttons-test.cpp \
+@BUILD_TESTS_TRUE@  nux_test_framework.cpp \
+@BUILD_TESTS_TRUE@  nux_test_framework.h \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.cpp \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.h \
+@BUILD_TESTS_TRUE@  test-view.cpp \
+@BUILD_TESTS_TRUE@  test-view.h
+
+@BUILD_TESTS_TRUE@mouse_buttons_test_CPPFLAGS = $(TestFlags)
+@BUILD_TESTS_TRUE@mouse_buttons_test_LDADD = $(TestLibs)
+@BUILD_TESTS_TRUE@mouse_buttons_test_LDFLAGS = -lpthread -lXtst
+@BUILD_TESTS_TRUE@hgrid_key_navigation_test_SOURCES = hgrid-key-navigation-test.cpp \
+@BUILD_TESTS_TRUE@  nux_test_framework.cpp \
+@BUILD_TESTS_TRUE@  nux_test_framework.h \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.cpp \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.h \
+@BUILD_TESTS_TRUE@  test-view.cpp \
+@BUILD_TESTS_TRUE@  test-view.h
+
+@BUILD_TESTS_TRUE@hgrid_key_navigation_test_CPPFLAGS = $(TestFlags)
+@BUILD_TESTS_TRUE@hgrid_key_navigation_test_LDADD = $(TestLibs)
+@BUILD_TESTS_TRUE@hgrid_key_navigation_test_LDFLAGS = -lpthread -lXtst
+@BUILD_TESTS_TRUE@hlayout_key_navigation_test_SOURCES = hlayout-key-navigation-test.cpp \
+@BUILD_TESTS_TRUE@  nux_test_framework.cpp \
+@BUILD_TESTS_TRUE@  nux_test_framework.h \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.cpp \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.h \
+@BUILD_TESTS_TRUE@  test-view.cpp \
+@BUILD_TESTS_TRUE@  test-view.h
+
+@BUILD_TESTS_TRUE@hlayout_key_navigation_test_CPPFLAGS = $(TestFlags)
+@BUILD_TESTS_TRUE@hlayout_key_navigation_test_LDADD = $(TestLibs)
+@BUILD_TESTS_TRUE@hlayout_key_navigation_test_LDFLAGS = -lpthread -lXtst
+@BUILD_TESTS_TRUE@vlayout_key_navigation_test_SOURCES = vlayout-key-navigation-test.cpp \
+@BUILD_TESTS_TRUE@  nux_test_framework.cpp \
+@BUILD_TESTS_TRUE@  nux_test_framework.h \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.cpp \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.h \
+@BUILD_TESTS_TRUE@  test-view.cpp \
+@BUILD_TESTS_TRUE@  test-view.h
+
+@BUILD_TESTS_TRUE@vlayout_key_navigation_test_CPPFLAGS = $(TestFlags)
+@BUILD_TESTS_TRUE@vlayout_key_navigation_test_LDADD = $(TestLibs)
+@BUILD_TESTS_TRUE@vlayout_key_navigation_test_LDFLAGS = -lpthread -lXtst
+@BUILD_TESTS_TRUE@focus_on_mouse_down_test_SOURCES = focus-on-mouse-down-test.cpp \
+@BUILD_TESTS_TRUE@  nux_test_framework.cpp \
+@BUILD_TESTS_TRUE@  nux_test_framework.h \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.cpp \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.h \
+@BUILD_TESTS_TRUE@  test-view.cpp \
+@BUILD_TESTS_TRUE@  test-view.h
+
+@BUILD_TESTS_TRUE@focus_on_mouse_down_test_CPPFLAGS = $(TestFlags)
+@BUILD_TESTS_TRUE@focus_on_mouse_down_test_LDADD = $(TestLibs)
+@BUILD_TESTS_TRUE@focus_on_mouse_down_test_LDFLAGS = -lpthread -lXtst
+@BUILD_TESTS_TRUE@scrollbar_test_SOURCES = scrollbar-test.cpp \
+@BUILD_TESTS_TRUE@  nux_test_framework.cpp \
+@BUILD_TESTS_TRUE@  nux_test_framework.h \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.cpp \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.h \
+@BUILD_TESTS_TRUE@  test-scrollview.cpp \
+@BUILD_TESTS_TRUE@  test-scrollview.h \
+@BUILD_TESTS_TRUE@  test-view.cpp \
+@BUILD_TESTS_TRUE@  test-view.h
+
+@BUILD_TESTS_TRUE@scrollbar_test_CPPFLAGS = $(TestFlags)
+@BUILD_TESTS_TRUE@scrollbar_test_LDADD = $(TestLibs)
+@BUILD_TESTS_TRUE@scrollbar_test_LDFLAGS = -lpthread -lXtst
 all: all-am
 
 .SUFFIXES:
@@ -413,12 +748,45 @@ clean-checkPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
+button-xtest$(EXEEXT): $(button_xtest_OBJECTS) $(button_xtest_DEPENDENCIES) 
+	@rm -f button-xtest$(EXEEXT)
+	$(AM_V_CXXLD)$(button_xtest_LINK) $(button_xtest_OBJECTS) $(button_xtest_LDADD) $(LIBS)
+focus-on-mouse-down-test$(EXEEXT): $(focus_on_mouse_down_test_OBJECTS) $(focus_on_mouse_down_test_DEPENDENCIES) 
+	@rm -f focus-on-mouse-down-test$(EXEEXT)
+	$(AM_V_CXXLD)$(focus_on_mouse_down_test_LINK) $(focus_on_mouse_down_test_OBJECTS) $(focus_on_mouse_down_test_LDADD) $(LIBS)
+gtest-nux$(EXEEXT): $(gtest_nux_OBJECTS) $(gtest_nux_DEPENDENCIES) 
+	@rm -f gtest-nux$(EXEEXT)
+	$(AM_V_CXXLD)$(gtest_nux_LINK) $(gtest_nux_OBJECTS) $(gtest_nux_LDADD) $(LIBS)
 gtest-nux-core$(EXEEXT): $(gtest_nux_core_OBJECTS) $(gtest_nux_core_DEPENDENCIES) 
 	@rm -f gtest-nux-core$(EXEEXT)
 	$(AM_V_CXXLD)$(gtest_nux_core_LINK) $(gtest_nux_core_OBJECTS) $(gtest_nux_core_LDADD) $(LIBS)
+hgrid-key-navigation-test$(EXEEXT): $(hgrid_key_navigation_test_OBJECTS) $(hgrid_key_navigation_test_DEPENDENCIES) 
+	@rm -f hgrid-key-navigation-test$(EXEEXT)
+	$(AM_V_CXXLD)$(hgrid_key_navigation_test_LINK) $(hgrid_key_navigation_test_OBJECTS) $(hgrid_key_navigation_test_LDADD) $(LIBS)
+hlayout-key-navigation-test$(EXEEXT): $(hlayout_key_navigation_test_OBJECTS) $(hlayout_key_navigation_test_DEPENDENCIES) 
+	@rm -f hlayout-key-navigation-test$(EXEEXT)
+	$(AM_V_CXXLD)$(hlayout_key_navigation_test_LINK) $(hlayout_key_navigation_test_OBJECTS) $(hlayout_key_navigation_test_LDADD) $(LIBS)
+mouse-buttons-test$(EXEEXT): $(mouse_buttons_test_OBJECTS) $(mouse_buttons_test_DEPENDENCIES) 
+	@rm -f mouse-buttons-test$(EXEEXT)
+	$(AM_V_CXXLD)$(mouse_buttons_test_LINK) $(mouse_buttons_test_OBJECTS) $(mouse_buttons_test_LDADD) $(LIBS)
+mouse-events-test$(EXEEXT): $(mouse_events_test_OBJECTS) $(mouse_events_test_DEPENDENCIES) 
+	@rm -f mouse-events-test$(EXEEXT)
+	$(AM_V_CXXLD)$(mouse_events_test_LINK) $(mouse_events_test_OBJECTS) $(mouse_events_test_LDADD) $(LIBS)
+scrollbar-test$(EXEEXT): $(scrollbar_test_OBJECTS) $(scrollbar_test_DEPENDENCIES) 
+	@rm -f scrollbar-test$(EXEEXT)
+	$(AM_V_CXXLD)$(scrollbar_test_LINK) $(scrollbar_test_OBJECTS) $(scrollbar_test_LDADD) $(LIBS)
+test-empty-window$(EXEEXT): $(test_empty_window_OBJECTS) $(test_empty_window_DEPENDENCIES) 
+	@rm -f test-empty-window$(EXEEXT)
+	$(AM_V_CXXLD)$(test_empty_window_LINK) $(test_empty_window_OBJECTS) $(test_empty_window_LDADD) $(LIBS)
+test-graphics-display$(EXEEXT): $(test_graphics_display_OBJECTS) $(test_graphics_display_DEPENDENCIES) 
+	@rm -f test-graphics-display$(EXEEXT)
+	$(AM_V_CXXLD)$(test_graphics_display_LINK) $(test_graphics_display_OBJECTS) $(test_graphics_display_LDADD) $(LIBS)
 test-nux$(EXEEXT): $(test_nux_OBJECTS) $(test_nux_DEPENDENCIES) 
 	@rm -f test-nux$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_nux_OBJECTS) $(test_nux_LDADD) $(LIBS)
+vlayout-key-navigation-test$(EXEEXT): $(vlayout_key_navigation_test_OBJECTS) $(vlayout_key_navigation_test_DEPENDENCIES) 
+	@rm -f vlayout-key-navigation-test$(EXEEXT)
+	$(AM_V_CXXLD)$(vlayout_key_navigation_test_LINK) $(vlayout_key_navigation_test_OBJECTS) $(vlayout_key_navigation_test_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -426,6 +794,16 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/button_xtest-button-xtest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/button_xtest-nux_automated_test_framework.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/button_xtest-nux_test_framework.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/focus_on_mouse_down_test-focus-on-mouse-down-test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/focus_on_mouse_down_test-nux_automated_test_framework.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/focus_on_mouse_down_test-nux_test_framework.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/focus_on_mouse_down_test-test-view.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-test-nux-main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-test-nux-statictext.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-test-nux-windowthread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-Helpers.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-test_async_file_writer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-test_cairo_wrapper.Po@am__quote@
@@ -434,9 +812,36 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-test_object.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-test_properties.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-test_rolling_file_appender.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hgrid_key_navigation_test-hgrid-key-navigation-test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hgrid_key_navigation_test-nux_automated_test_framework.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hgrid_key_navigation_test-nux_test_framework.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hgrid_key_navigation_test-test-view.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hlayout_key_navigation_test-hlayout-key-navigation-test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hlayout_key_navigation_test-nux_automated_test_framework.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hlayout_key_navigation_test-nux_test_framework.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hlayout_key_navigation_test-test-view.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mouse_buttons_test-mouse-buttons-test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mouse_buttons_test-nux_automated_test_framework.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mouse_buttons_test-nux_test_framework.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mouse_buttons_test-test-view.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mouse_events_test-mouse-events-test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mouse_events_test-nux_automated_test_framework.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mouse_events_test-nux_test_framework.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mouse_events_test-test-view.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/scrollbar_test-nux_automated_test_framework.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/scrollbar_test-nux_test_framework.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/scrollbar_test-scrollbar-test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/scrollbar_test-test-scrollview.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/scrollbar_test-test-view.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_empty_window-test_empty_window.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_graphics_display-test_graphics_display.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_nux-test-canvas.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_nux-test-nux.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_nux-test-system.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vlayout_key_navigation_test-nux_automated_test_framework.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vlayout_key_navigation_test-nux_test_framework.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vlayout_key_navigation_test-test-view.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vlayout_key_navigation_test-vlayout-key-navigation-test.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -461,6 +866,166 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
+
+button_xtest-button-xtest.o: button-xtest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(button_xtest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT button_xtest-button-xtest.o -MD -MP -MF $(DEPDIR)/button_xtest-button-xtest.Tpo -c -o button_xtest-button-xtest.o `test -f 'button-xtest.cpp' || echo '$(srcdir)/'`button-xtest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/button_xtest-button-xtest.Tpo $(DEPDIR)/button_xtest-button-xtest.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='button-xtest.cpp' object='button_xtest-button-xtest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(button_xtest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o button_xtest-button-xtest.o `test -f 'button-xtest.cpp' || echo '$(srcdir)/'`button-xtest.cpp
+
+button_xtest-button-xtest.obj: button-xtest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(button_xtest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT button_xtest-button-xtest.obj -MD -MP -MF $(DEPDIR)/button_xtest-button-xtest.Tpo -c -o button_xtest-button-xtest.obj `if test -f 'button-xtest.cpp'; then $(CYGPATH_W) 'button-xtest.cpp'; else $(CYGPATH_W) '$(srcdir)/button-xtest.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/button_xtest-button-xtest.Tpo $(DEPDIR)/button_xtest-button-xtest.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='button-xtest.cpp' object='button_xtest-button-xtest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(button_xtest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o button_xtest-button-xtest.obj `if test -f 'button-xtest.cpp'; then $(CYGPATH_W) 'button-xtest.cpp'; else $(CYGPATH_W) '$(srcdir)/button-xtest.cpp'; fi`
+
+button_xtest-nux_test_framework.o: nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(button_xtest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT button_xtest-nux_test_framework.o -MD -MP -MF $(DEPDIR)/button_xtest-nux_test_framework.Tpo -c -o button_xtest-nux_test_framework.o `test -f 'nux_test_framework.cpp' || echo '$(srcdir)/'`nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/button_xtest-nux_test_framework.Tpo $(DEPDIR)/button_xtest-nux_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_test_framework.cpp' object='button_xtest-nux_test_framework.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(button_xtest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o button_xtest-nux_test_framework.o `test -f 'nux_test_framework.cpp' || echo '$(srcdir)/'`nux_test_framework.cpp
+
+button_xtest-nux_test_framework.obj: nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(button_xtest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT button_xtest-nux_test_framework.obj -MD -MP -MF $(DEPDIR)/button_xtest-nux_test_framework.Tpo -c -o button_xtest-nux_test_framework.obj `if test -f 'nux_test_framework.cpp'; then $(CYGPATH_W) 'nux_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_test_framework.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/button_xtest-nux_test_framework.Tpo $(DEPDIR)/button_xtest-nux_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_test_framework.cpp' object='button_xtest-nux_test_framework.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(button_xtest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o button_xtest-nux_test_framework.obj `if test -f 'nux_test_framework.cpp'; then $(CYGPATH_W) 'nux_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_test_framework.cpp'; fi`
+
+button_xtest-nux_automated_test_framework.o: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(button_xtest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT button_xtest-nux_automated_test_framework.o -MD -MP -MF $(DEPDIR)/button_xtest-nux_automated_test_framework.Tpo -c -o button_xtest-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/button_xtest-nux_automated_test_framework.Tpo $(DEPDIR)/button_xtest-nux_automated_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_automated_test_framework.cpp' object='button_xtest-nux_automated_test_framework.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(button_xtest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o button_xtest-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+
+button_xtest-nux_automated_test_framework.obj: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(button_xtest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT button_xtest-nux_automated_test_framework.obj -MD -MP -MF $(DEPDIR)/button_xtest-nux_automated_test_framework.Tpo -c -o button_xtest-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/button_xtest-nux_automated_test_framework.Tpo $(DEPDIR)/button_xtest-nux_automated_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_automated_test_framework.cpp' object='button_xtest-nux_automated_test_framework.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(button_xtest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o button_xtest-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+
+focus_on_mouse_down_test-focus-on-mouse-down-test.o: focus-on-mouse-down-test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(focus_on_mouse_down_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT focus_on_mouse_down_test-focus-on-mouse-down-test.o -MD -MP -MF $(DEPDIR)/focus_on_mouse_down_test-focus-on-mouse-down-test.Tpo -c -o focus_on_mouse_down_test-focus-on-mouse-down-test.o `test -f 'focus-on-mouse-down-test.cpp' || echo '$(srcdir)/'`focus-on-mouse-down-test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/focus_on_mouse_down_test-focus-on-mouse-down-test.Tpo $(DEPDIR)/focus_on_mouse_down_test-focus-on-mouse-down-test.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='focus-on-mouse-down-test.cpp' object='focus_on_mouse_down_test-focus-on-mouse-down-test.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(focus_on_mouse_down_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o focus_on_mouse_down_test-focus-on-mouse-down-test.o `test -f 'focus-on-mouse-down-test.cpp' || echo '$(srcdir)/'`focus-on-mouse-down-test.cpp
+
+focus_on_mouse_down_test-focus-on-mouse-down-test.obj: focus-on-mouse-down-test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(focus_on_mouse_down_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT focus_on_mouse_down_test-focus-on-mouse-down-test.obj -MD -MP -MF $(DEPDIR)/focus_on_mouse_down_test-focus-on-mouse-down-test.Tpo -c -o focus_on_mouse_down_test-focus-on-mouse-down-test.obj `if test -f 'focus-on-mouse-down-test.cpp'; then $(CYGPATH_W) 'focus-on-mouse-down-test.cpp'; else $(CYGPATH_W) '$(srcdir)/focus-on-mouse-down-test.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/focus_on_mouse_down_test-focus-on-mouse-down-test.Tpo $(DEPDIR)/focus_on_mouse_down_test-focus-on-mouse-down-test.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='focus-on-mouse-down-test.cpp' object='focus_on_mouse_down_test-focus-on-mouse-down-test.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(focus_on_mouse_down_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o focus_on_mouse_down_test-focus-on-mouse-down-test.obj `if test -f 'focus-on-mouse-down-test.cpp'; then $(CYGPATH_W) 'focus-on-mouse-down-test.cpp'; else $(CYGPATH_W) '$(srcdir)/focus-on-mouse-down-test.cpp'; fi`
+
+focus_on_mouse_down_test-nux_test_framework.o: nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(focus_on_mouse_down_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT focus_on_mouse_down_test-nux_test_framework.o -MD -MP -MF $(DEPDIR)/focus_on_mouse_down_test-nux_test_framework.Tpo -c -o focus_on_mouse_down_test-nux_test_framework.o `test -f 'nux_test_framework.cpp' || echo '$(srcdir)/'`nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/focus_on_mouse_down_test-nux_test_framework.Tpo $(DEPDIR)/focus_on_mouse_down_test-nux_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_test_framework.cpp' object='focus_on_mouse_down_test-nux_test_framework.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(focus_on_mouse_down_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o focus_on_mouse_down_test-nux_test_framework.o `test -f 'nux_test_framework.cpp' || echo '$(srcdir)/'`nux_test_framework.cpp
+
+focus_on_mouse_down_test-nux_test_framework.obj: nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(focus_on_mouse_down_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT focus_on_mouse_down_test-nux_test_framework.obj -MD -MP -MF $(DEPDIR)/focus_on_mouse_down_test-nux_test_framework.Tpo -c -o focus_on_mouse_down_test-nux_test_framework.obj `if test -f 'nux_test_framework.cpp'; then $(CYGPATH_W) 'nux_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_test_framework.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/focus_on_mouse_down_test-nux_test_framework.Tpo $(DEPDIR)/focus_on_mouse_down_test-nux_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_test_framework.cpp' object='focus_on_mouse_down_test-nux_test_framework.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(focus_on_mouse_down_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o focus_on_mouse_down_test-nux_test_framework.obj `if test -f 'nux_test_framework.cpp'; then $(CYGPATH_W) 'nux_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_test_framework.cpp'; fi`
+
+focus_on_mouse_down_test-nux_automated_test_framework.o: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(focus_on_mouse_down_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT focus_on_mouse_down_test-nux_automated_test_framework.o -MD -MP -MF $(DEPDIR)/focus_on_mouse_down_test-nux_automated_test_framework.Tpo -c -o focus_on_mouse_down_test-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/focus_on_mouse_down_test-nux_automated_test_framework.Tpo $(DEPDIR)/focus_on_mouse_down_test-nux_automated_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_automated_test_framework.cpp' object='focus_on_mouse_down_test-nux_automated_test_framework.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(focus_on_mouse_down_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o focus_on_mouse_down_test-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+
+focus_on_mouse_down_test-nux_automated_test_framework.obj: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(focus_on_mouse_down_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT focus_on_mouse_down_test-nux_automated_test_framework.obj -MD -MP -MF $(DEPDIR)/focus_on_mouse_down_test-nux_automated_test_framework.Tpo -c -o focus_on_mouse_down_test-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/focus_on_mouse_down_test-nux_automated_test_framework.Tpo $(DEPDIR)/focus_on_mouse_down_test-nux_automated_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_automated_test_framework.cpp' object='focus_on_mouse_down_test-nux_automated_test_framework.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(focus_on_mouse_down_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o focus_on_mouse_down_test-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+
+focus_on_mouse_down_test-test-view.o: test-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(focus_on_mouse_down_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT focus_on_mouse_down_test-test-view.o -MD -MP -MF $(DEPDIR)/focus_on_mouse_down_test-test-view.Tpo -c -o focus_on_mouse_down_test-test-view.o `test -f 'test-view.cpp' || echo '$(srcdir)/'`test-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/focus_on_mouse_down_test-test-view.Tpo $(DEPDIR)/focus_on_mouse_down_test-test-view.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-view.cpp' object='focus_on_mouse_down_test-test-view.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(focus_on_mouse_down_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o focus_on_mouse_down_test-test-view.o `test -f 'test-view.cpp' || echo '$(srcdir)/'`test-view.cpp
+
+focus_on_mouse_down_test-test-view.obj: test-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(focus_on_mouse_down_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT focus_on_mouse_down_test-test-view.obj -MD -MP -MF $(DEPDIR)/focus_on_mouse_down_test-test-view.Tpo -c -o focus_on_mouse_down_test-test-view.obj `if test -f 'test-view.cpp'; then $(CYGPATH_W) 'test-view.cpp'; else $(CYGPATH_W) '$(srcdir)/test-view.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/focus_on_mouse_down_test-test-view.Tpo $(DEPDIR)/focus_on_mouse_down_test-test-view.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-view.cpp' object='focus_on_mouse_down_test-test-view.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(focus_on_mouse_down_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o focus_on_mouse_down_test-test-view.obj `if test -f 'test-view.cpp'; then $(CYGPATH_W) 'test-view.cpp'; else $(CYGPATH_W) '$(srcdir)/test-view.cpp'; fi`
+
+gtest_nux-test-nux-main.o: test-nux-main.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-test-nux-main.o -MD -MP -MF $(DEPDIR)/gtest_nux-test-nux-main.Tpo -c -o gtest_nux-test-nux-main.o `test -f 'test-nux-main.cpp' || echo '$(srcdir)/'`test-nux-main.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-test-nux-main.Tpo $(DEPDIR)/gtest_nux-test-nux-main.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-nux-main.cpp' object='gtest_nux-test-nux-main.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-test-nux-main.o `test -f 'test-nux-main.cpp' || echo '$(srcdir)/'`test-nux-main.cpp
+
+gtest_nux-test-nux-main.obj: test-nux-main.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-test-nux-main.obj -MD -MP -MF $(DEPDIR)/gtest_nux-test-nux-main.Tpo -c -o gtest_nux-test-nux-main.obj `if test -f 'test-nux-main.cpp'; then $(CYGPATH_W) 'test-nux-main.cpp'; else $(CYGPATH_W) '$(srcdir)/test-nux-main.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-test-nux-main.Tpo $(DEPDIR)/gtest_nux-test-nux-main.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-nux-main.cpp' object='gtest_nux-test-nux-main.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-test-nux-main.obj `if test -f 'test-nux-main.cpp'; then $(CYGPATH_W) 'test-nux-main.cpp'; else $(CYGPATH_W) '$(srcdir)/test-nux-main.cpp'; fi`
+
+gtest_nux-test-nux-statictext.o: test-nux-statictext.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-test-nux-statictext.o -MD -MP -MF $(DEPDIR)/gtest_nux-test-nux-statictext.Tpo -c -o gtest_nux-test-nux-statictext.o `test -f 'test-nux-statictext.cpp' || echo '$(srcdir)/'`test-nux-statictext.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-test-nux-statictext.Tpo $(DEPDIR)/gtest_nux-test-nux-statictext.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-nux-statictext.cpp' object='gtest_nux-test-nux-statictext.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-test-nux-statictext.o `test -f 'test-nux-statictext.cpp' || echo '$(srcdir)/'`test-nux-statictext.cpp
+
+gtest_nux-test-nux-statictext.obj: test-nux-statictext.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-test-nux-statictext.obj -MD -MP -MF $(DEPDIR)/gtest_nux-test-nux-statictext.Tpo -c -o gtest_nux-test-nux-statictext.obj `if test -f 'test-nux-statictext.cpp'; then $(CYGPATH_W) 'test-nux-statictext.cpp'; else $(CYGPATH_W) '$(srcdir)/test-nux-statictext.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-test-nux-statictext.Tpo $(DEPDIR)/gtest_nux-test-nux-statictext.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-nux-statictext.cpp' object='gtest_nux-test-nux-statictext.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-test-nux-statictext.obj `if test -f 'test-nux-statictext.cpp'; then $(CYGPATH_W) 'test-nux-statictext.cpp'; else $(CYGPATH_W) '$(srcdir)/test-nux-statictext.cpp'; fi`
+
+gtest_nux-test-nux-windowthread.o: test-nux-windowthread.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-test-nux-windowthread.o -MD -MP -MF $(DEPDIR)/gtest_nux-test-nux-windowthread.Tpo -c -o gtest_nux-test-nux-windowthread.o `test -f 'test-nux-windowthread.cpp' || echo '$(srcdir)/'`test-nux-windowthread.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-test-nux-windowthread.Tpo $(DEPDIR)/gtest_nux-test-nux-windowthread.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-nux-windowthread.cpp' object='gtest_nux-test-nux-windowthread.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-test-nux-windowthread.o `test -f 'test-nux-windowthread.cpp' || echo '$(srcdir)/'`test-nux-windowthread.cpp
+
+gtest_nux-test-nux-windowthread.obj: test-nux-windowthread.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-test-nux-windowthread.obj -MD -MP -MF $(DEPDIR)/gtest_nux-test-nux-windowthread.Tpo -c -o gtest_nux-test-nux-windowthread.obj `if test -f 'test-nux-windowthread.cpp'; then $(CYGPATH_W) 'test-nux-windowthread.cpp'; else $(CYGPATH_W) '$(srcdir)/test-nux-windowthread.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-test-nux-windowthread.Tpo $(DEPDIR)/gtest_nux-test-nux-windowthread.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-nux-windowthread.cpp' object='gtest_nux-test-nux-windowthread.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-test-nux-windowthread.obj `if test -f 'test-nux-windowthread.cpp'; then $(CYGPATH_W) 'test-nux-windowthread.cpp'; else $(CYGPATH_W) '$(srcdir)/test-nux-windowthread.cpp'; fi`
 
 gtest_nux_core-Helpers.o: Helpers.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-Helpers.o -MD -MP -MF $(DEPDIR)/gtest_nux_core-Helpers.Tpo -c -o gtest_nux_core-Helpers.o `test -f 'Helpers.cpp' || echo '$(srcdir)/'`Helpers.cpp
@@ -590,6 +1155,374 @@ gtest_nux_core-test_rolling_file_appender.obj: test_rolling_file_appender.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_rolling_file_appender.obj `if test -f 'test_rolling_file_appender.cpp'; then $(CYGPATH_W) 'test_rolling_file_appender.cpp'; else $(CYGPATH_W) '$(srcdir)/test_rolling_file_appender.cpp'; fi`
 
+hgrid_key_navigation_test-hgrid-key-navigation-test.o: hgrid-key-navigation-test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hgrid_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hgrid_key_navigation_test-hgrid-key-navigation-test.o -MD -MP -MF $(DEPDIR)/hgrid_key_navigation_test-hgrid-key-navigation-test.Tpo -c -o hgrid_key_navigation_test-hgrid-key-navigation-test.o `test -f 'hgrid-key-navigation-test.cpp' || echo '$(srcdir)/'`hgrid-key-navigation-test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hgrid_key_navigation_test-hgrid-key-navigation-test.Tpo $(DEPDIR)/hgrid_key_navigation_test-hgrid-key-navigation-test.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='hgrid-key-navigation-test.cpp' object='hgrid_key_navigation_test-hgrid-key-navigation-test.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hgrid_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o hgrid_key_navigation_test-hgrid-key-navigation-test.o `test -f 'hgrid-key-navigation-test.cpp' || echo '$(srcdir)/'`hgrid-key-navigation-test.cpp
+
+hgrid_key_navigation_test-hgrid-key-navigation-test.obj: hgrid-key-navigation-test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hgrid_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hgrid_key_navigation_test-hgrid-key-navigation-test.obj -MD -MP -MF $(DEPDIR)/hgrid_key_navigation_test-hgrid-key-navigation-test.Tpo -c -o hgrid_key_navigation_test-hgrid-key-navigation-test.obj `if test -f 'hgrid-key-navigation-test.cpp'; then $(CYGPATH_W) 'hgrid-key-navigation-test.cpp'; else $(CYGPATH_W) '$(srcdir)/hgrid-key-navigation-test.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hgrid_key_navigation_test-hgrid-key-navigation-test.Tpo $(DEPDIR)/hgrid_key_navigation_test-hgrid-key-navigation-test.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='hgrid-key-navigation-test.cpp' object='hgrid_key_navigation_test-hgrid-key-navigation-test.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hgrid_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o hgrid_key_navigation_test-hgrid-key-navigation-test.obj `if test -f 'hgrid-key-navigation-test.cpp'; then $(CYGPATH_W) 'hgrid-key-navigation-test.cpp'; else $(CYGPATH_W) '$(srcdir)/hgrid-key-navigation-test.cpp'; fi`
+
+hgrid_key_navigation_test-nux_test_framework.o: nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hgrid_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hgrid_key_navigation_test-nux_test_framework.o -MD -MP -MF $(DEPDIR)/hgrid_key_navigation_test-nux_test_framework.Tpo -c -o hgrid_key_navigation_test-nux_test_framework.o `test -f 'nux_test_framework.cpp' || echo '$(srcdir)/'`nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hgrid_key_navigation_test-nux_test_framework.Tpo $(DEPDIR)/hgrid_key_navigation_test-nux_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_test_framework.cpp' object='hgrid_key_navigation_test-nux_test_framework.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hgrid_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o hgrid_key_navigation_test-nux_test_framework.o `test -f 'nux_test_framework.cpp' || echo '$(srcdir)/'`nux_test_framework.cpp
+
+hgrid_key_navigation_test-nux_test_framework.obj: nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hgrid_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hgrid_key_navigation_test-nux_test_framework.obj -MD -MP -MF $(DEPDIR)/hgrid_key_navigation_test-nux_test_framework.Tpo -c -o hgrid_key_navigation_test-nux_test_framework.obj `if test -f 'nux_test_framework.cpp'; then $(CYGPATH_W) 'nux_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_test_framework.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hgrid_key_navigation_test-nux_test_framework.Tpo $(DEPDIR)/hgrid_key_navigation_test-nux_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_test_framework.cpp' object='hgrid_key_navigation_test-nux_test_framework.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hgrid_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o hgrid_key_navigation_test-nux_test_framework.obj `if test -f 'nux_test_framework.cpp'; then $(CYGPATH_W) 'nux_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_test_framework.cpp'; fi`
+
+hgrid_key_navigation_test-nux_automated_test_framework.o: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hgrid_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hgrid_key_navigation_test-nux_automated_test_framework.o -MD -MP -MF $(DEPDIR)/hgrid_key_navigation_test-nux_automated_test_framework.Tpo -c -o hgrid_key_navigation_test-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hgrid_key_navigation_test-nux_automated_test_framework.Tpo $(DEPDIR)/hgrid_key_navigation_test-nux_automated_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_automated_test_framework.cpp' object='hgrid_key_navigation_test-nux_automated_test_framework.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hgrid_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o hgrid_key_navigation_test-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+
+hgrid_key_navigation_test-nux_automated_test_framework.obj: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hgrid_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hgrid_key_navigation_test-nux_automated_test_framework.obj -MD -MP -MF $(DEPDIR)/hgrid_key_navigation_test-nux_automated_test_framework.Tpo -c -o hgrid_key_navigation_test-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hgrid_key_navigation_test-nux_automated_test_framework.Tpo $(DEPDIR)/hgrid_key_navigation_test-nux_automated_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_automated_test_framework.cpp' object='hgrid_key_navigation_test-nux_automated_test_framework.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hgrid_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o hgrid_key_navigation_test-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+
+hgrid_key_navigation_test-test-view.o: test-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hgrid_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hgrid_key_navigation_test-test-view.o -MD -MP -MF $(DEPDIR)/hgrid_key_navigation_test-test-view.Tpo -c -o hgrid_key_navigation_test-test-view.o `test -f 'test-view.cpp' || echo '$(srcdir)/'`test-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hgrid_key_navigation_test-test-view.Tpo $(DEPDIR)/hgrid_key_navigation_test-test-view.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-view.cpp' object='hgrid_key_navigation_test-test-view.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hgrid_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o hgrid_key_navigation_test-test-view.o `test -f 'test-view.cpp' || echo '$(srcdir)/'`test-view.cpp
+
+hgrid_key_navigation_test-test-view.obj: test-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hgrid_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hgrid_key_navigation_test-test-view.obj -MD -MP -MF $(DEPDIR)/hgrid_key_navigation_test-test-view.Tpo -c -o hgrid_key_navigation_test-test-view.obj `if test -f 'test-view.cpp'; then $(CYGPATH_W) 'test-view.cpp'; else $(CYGPATH_W) '$(srcdir)/test-view.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hgrid_key_navigation_test-test-view.Tpo $(DEPDIR)/hgrid_key_navigation_test-test-view.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-view.cpp' object='hgrid_key_navigation_test-test-view.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hgrid_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o hgrid_key_navigation_test-test-view.obj `if test -f 'test-view.cpp'; then $(CYGPATH_W) 'test-view.cpp'; else $(CYGPATH_W) '$(srcdir)/test-view.cpp'; fi`
+
+hlayout_key_navigation_test-hlayout-key-navigation-test.o: hlayout-key-navigation-test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hlayout_key_navigation_test-hlayout-key-navigation-test.o -MD -MP -MF $(DEPDIR)/hlayout_key_navigation_test-hlayout-key-navigation-test.Tpo -c -o hlayout_key_navigation_test-hlayout-key-navigation-test.o `test -f 'hlayout-key-navigation-test.cpp' || echo '$(srcdir)/'`hlayout-key-navigation-test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hlayout_key_navigation_test-hlayout-key-navigation-test.Tpo $(DEPDIR)/hlayout_key_navigation_test-hlayout-key-navigation-test.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='hlayout-key-navigation-test.cpp' object='hlayout_key_navigation_test-hlayout-key-navigation-test.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o hlayout_key_navigation_test-hlayout-key-navigation-test.o `test -f 'hlayout-key-navigation-test.cpp' || echo '$(srcdir)/'`hlayout-key-navigation-test.cpp
+
+hlayout_key_navigation_test-hlayout-key-navigation-test.obj: hlayout-key-navigation-test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hlayout_key_navigation_test-hlayout-key-navigation-test.obj -MD -MP -MF $(DEPDIR)/hlayout_key_navigation_test-hlayout-key-navigation-test.Tpo -c -o hlayout_key_navigation_test-hlayout-key-navigation-test.obj `if test -f 'hlayout-key-navigation-test.cpp'; then $(CYGPATH_W) 'hlayout-key-navigation-test.cpp'; else $(CYGPATH_W) '$(srcdir)/hlayout-key-navigation-test.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hlayout_key_navigation_test-hlayout-key-navigation-test.Tpo $(DEPDIR)/hlayout_key_navigation_test-hlayout-key-navigation-test.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='hlayout-key-navigation-test.cpp' object='hlayout_key_navigation_test-hlayout-key-navigation-test.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o hlayout_key_navigation_test-hlayout-key-navigation-test.obj `if test -f 'hlayout-key-navigation-test.cpp'; then $(CYGPATH_W) 'hlayout-key-navigation-test.cpp'; else $(CYGPATH_W) '$(srcdir)/hlayout-key-navigation-test.cpp'; fi`
+
+hlayout_key_navigation_test-nux_test_framework.o: nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hlayout_key_navigation_test-nux_test_framework.o -MD -MP -MF $(DEPDIR)/hlayout_key_navigation_test-nux_test_framework.Tpo -c -o hlayout_key_navigation_test-nux_test_framework.o `test -f 'nux_test_framework.cpp' || echo '$(srcdir)/'`nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hlayout_key_navigation_test-nux_test_framework.Tpo $(DEPDIR)/hlayout_key_navigation_test-nux_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_test_framework.cpp' object='hlayout_key_navigation_test-nux_test_framework.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o hlayout_key_navigation_test-nux_test_framework.o `test -f 'nux_test_framework.cpp' || echo '$(srcdir)/'`nux_test_framework.cpp
+
+hlayout_key_navigation_test-nux_test_framework.obj: nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hlayout_key_navigation_test-nux_test_framework.obj -MD -MP -MF $(DEPDIR)/hlayout_key_navigation_test-nux_test_framework.Tpo -c -o hlayout_key_navigation_test-nux_test_framework.obj `if test -f 'nux_test_framework.cpp'; then $(CYGPATH_W) 'nux_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_test_framework.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hlayout_key_navigation_test-nux_test_framework.Tpo $(DEPDIR)/hlayout_key_navigation_test-nux_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_test_framework.cpp' object='hlayout_key_navigation_test-nux_test_framework.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o hlayout_key_navigation_test-nux_test_framework.obj `if test -f 'nux_test_framework.cpp'; then $(CYGPATH_W) 'nux_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_test_framework.cpp'; fi`
+
+hlayout_key_navigation_test-nux_automated_test_framework.o: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hlayout_key_navigation_test-nux_automated_test_framework.o -MD -MP -MF $(DEPDIR)/hlayout_key_navigation_test-nux_automated_test_framework.Tpo -c -o hlayout_key_navigation_test-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hlayout_key_navigation_test-nux_automated_test_framework.Tpo $(DEPDIR)/hlayout_key_navigation_test-nux_automated_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_automated_test_framework.cpp' object='hlayout_key_navigation_test-nux_automated_test_framework.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o hlayout_key_navigation_test-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+
+hlayout_key_navigation_test-nux_automated_test_framework.obj: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hlayout_key_navigation_test-nux_automated_test_framework.obj -MD -MP -MF $(DEPDIR)/hlayout_key_navigation_test-nux_automated_test_framework.Tpo -c -o hlayout_key_navigation_test-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hlayout_key_navigation_test-nux_automated_test_framework.Tpo $(DEPDIR)/hlayout_key_navigation_test-nux_automated_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_automated_test_framework.cpp' object='hlayout_key_navigation_test-nux_automated_test_framework.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o hlayout_key_navigation_test-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+
+hlayout_key_navigation_test-test-view.o: test-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hlayout_key_navigation_test-test-view.o -MD -MP -MF $(DEPDIR)/hlayout_key_navigation_test-test-view.Tpo -c -o hlayout_key_navigation_test-test-view.o `test -f 'test-view.cpp' || echo '$(srcdir)/'`test-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hlayout_key_navigation_test-test-view.Tpo $(DEPDIR)/hlayout_key_navigation_test-test-view.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-view.cpp' object='hlayout_key_navigation_test-test-view.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o hlayout_key_navigation_test-test-view.o `test -f 'test-view.cpp' || echo '$(srcdir)/'`test-view.cpp
+
+hlayout_key_navigation_test-test-view.obj: test-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hlayout_key_navigation_test-test-view.obj -MD -MP -MF $(DEPDIR)/hlayout_key_navigation_test-test-view.Tpo -c -o hlayout_key_navigation_test-test-view.obj `if test -f 'test-view.cpp'; then $(CYGPATH_W) 'test-view.cpp'; else $(CYGPATH_W) '$(srcdir)/test-view.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hlayout_key_navigation_test-test-view.Tpo $(DEPDIR)/hlayout_key_navigation_test-test-view.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-view.cpp' object='hlayout_key_navigation_test-test-view.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o hlayout_key_navigation_test-test-view.obj `if test -f 'test-view.cpp'; then $(CYGPATH_W) 'test-view.cpp'; else $(CYGPATH_W) '$(srcdir)/test-view.cpp'; fi`
+
+mouse_buttons_test-mouse-buttons-test.o: mouse-buttons-test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_buttons_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mouse_buttons_test-mouse-buttons-test.o -MD -MP -MF $(DEPDIR)/mouse_buttons_test-mouse-buttons-test.Tpo -c -o mouse_buttons_test-mouse-buttons-test.o `test -f 'mouse-buttons-test.cpp' || echo '$(srcdir)/'`mouse-buttons-test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mouse_buttons_test-mouse-buttons-test.Tpo $(DEPDIR)/mouse_buttons_test-mouse-buttons-test.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mouse-buttons-test.cpp' object='mouse_buttons_test-mouse-buttons-test.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_buttons_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mouse_buttons_test-mouse-buttons-test.o `test -f 'mouse-buttons-test.cpp' || echo '$(srcdir)/'`mouse-buttons-test.cpp
+
+mouse_buttons_test-mouse-buttons-test.obj: mouse-buttons-test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_buttons_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mouse_buttons_test-mouse-buttons-test.obj -MD -MP -MF $(DEPDIR)/mouse_buttons_test-mouse-buttons-test.Tpo -c -o mouse_buttons_test-mouse-buttons-test.obj `if test -f 'mouse-buttons-test.cpp'; then $(CYGPATH_W) 'mouse-buttons-test.cpp'; else $(CYGPATH_W) '$(srcdir)/mouse-buttons-test.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mouse_buttons_test-mouse-buttons-test.Tpo $(DEPDIR)/mouse_buttons_test-mouse-buttons-test.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mouse-buttons-test.cpp' object='mouse_buttons_test-mouse-buttons-test.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_buttons_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mouse_buttons_test-mouse-buttons-test.obj `if test -f 'mouse-buttons-test.cpp'; then $(CYGPATH_W) 'mouse-buttons-test.cpp'; else $(CYGPATH_W) '$(srcdir)/mouse-buttons-test.cpp'; fi`
+
+mouse_buttons_test-nux_test_framework.o: nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_buttons_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mouse_buttons_test-nux_test_framework.o -MD -MP -MF $(DEPDIR)/mouse_buttons_test-nux_test_framework.Tpo -c -o mouse_buttons_test-nux_test_framework.o `test -f 'nux_test_framework.cpp' || echo '$(srcdir)/'`nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mouse_buttons_test-nux_test_framework.Tpo $(DEPDIR)/mouse_buttons_test-nux_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_test_framework.cpp' object='mouse_buttons_test-nux_test_framework.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_buttons_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mouse_buttons_test-nux_test_framework.o `test -f 'nux_test_framework.cpp' || echo '$(srcdir)/'`nux_test_framework.cpp
+
+mouse_buttons_test-nux_test_framework.obj: nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_buttons_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mouse_buttons_test-nux_test_framework.obj -MD -MP -MF $(DEPDIR)/mouse_buttons_test-nux_test_framework.Tpo -c -o mouse_buttons_test-nux_test_framework.obj `if test -f 'nux_test_framework.cpp'; then $(CYGPATH_W) 'nux_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_test_framework.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mouse_buttons_test-nux_test_framework.Tpo $(DEPDIR)/mouse_buttons_test-nux_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_test_framework.cpp' object='mouse_buttons_test-nux_test_framework.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_buttons_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mouse_buttons_test-nux_test_framework.obj `if test -f 'nux_test_framework.cpp'; then $(CYGPATH_W) 'nux_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_test_framework.cpp'; fi`
+
+mouse_buttons_test-nux_automated_test_framework.o: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_buttons_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mouse_buttons_test-nux_automated_test_framework.o -MD -MP -MF $(DEPDIR)/mouse_buttons_test-nux_automated_test_framework.Tpo -c -o mouse_buttons_test-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mouse_buttons_test-nux_automated_test_framework.Tpo $(DEPDIR)/mouse_buttons_test-nux_automated_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_automated_test_framework.cpp' object='mouse_buttons_test-nux_automated_test_framework.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_buttons_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mouse_buttons_test-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+
+mouse_buttons_test-nux_automated_test_framework.obj: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_buttons_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mouse_buttons_test-nux_automated_test_framework.obj -MD -MP -MF $(DEPDIR)/mouse_buttons_test-nux_automated_test_framework.Tpo -c -o mouse_buttons_test-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mouse_buttons_test-nux_automated_test_framework.Tpo $(DEPDIR)/mouse_buttons_test-nux_automated_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_automated_test_framework.cpp' object='mouse_buttons_test-nux_automated_test_framework.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_buttons_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mouse_buttons_test-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+
+mouse_buttons_test-test-view.o: test-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_buttons_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mouse_buttons_test-test-view.o -MD -MP -MF $(DEPDIR)/mouse_buttons_test-test-view.Tpo -c -o mouse_buttons_test-test-view.o `test -f 'test-view.cpp' || echo '$(srcdir)/'`test-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mouse_buttons_test-test-view.Tpo $(DEPDIR)/mouse_buttons_test-test-view.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-view.cpp' object='mouse_buttons_test-test-view.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_buttons_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mouse_buttons_test-test-view.o `test -f 'test-view.cpp' || echo '$(srcdir)/'`test-view.cpp
+
+mouse_buttons_test-test-view.obj: test-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_buttons_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mouse_buttons_test-test-view.obj -MD -MP -MF $(DEPDIR)/mouse_buttons_test-test-view.Tpo -c -o mouse_buttons_test-test-view.obj `if test -f 'test-view.cpp'; then $(CYGPATH_W) 'test-view.cpp'; else $(CYGPATH_W) '$(srcdir)/test-view.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mouse_buttons_test-test-view.Tpo $(DEPDIR)/mouse_buttons_test-test-view.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-view.cpp' object='mouse_buttons_test-test-view.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_buttons_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mouse_buttons_test-test-view.obj `if test -f 'test-view.cpp'; then $(CYGPATH_W) 'test-view.cpp'; else $(CYGPATH_W) '$(srcdir)/test-view.cpp'; fi`
+
+mouse_events_test-mouse-events-test.o: mouse-events-test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_events_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mouse_events_test-mouse-events-test.o -MD -MP -MF $(DEPDIR)/mouse_events_test-mouse-events-test.Tpo -c -o mouse_events_test-mouse-events-test.o `test -f 'mouse-events-test.cpp' || echo '$(srcdir)/'`mouse-events-test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mouse_events_test-mouse-events-test.Tpo $(DEPDIR)/mouse_events_test-mouse-events-test.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mouse-events-test.cpp' object='mouse_events_test-mouse-events-test.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_events_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mouse_events_test-mouse-events-test.o `test -f 'mouse-events-test.cpp' || echo '$(srcdir)/'`mouse-events-test.cpp
+
+mouse_events_test-mouse-events-test.obj: mouse-events-test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_events_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mouse_events_test-mouse-events-test.obj -MD -MP -MF $(DEPDIR)/mouse_events_test-mouse-events-test.Tpo -c -o mouse_events_test-mouse-events-test.obj `if test -f 'mouse-events-test.cpp'; then $(CYGPATH_W) 'mouse-events-test.cpp'; else $(CYGPATH_W) '$(srcdir)/mouse-events-test.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mouse_events_test-mouse-events-test.Tpo $(DEPDIR)/mouse_events_test-mouse-events-test.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mouse-events-test.cpp' object='mouse_events_test-mouse-events-test.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_events_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mouse_events_test-mouse-events-test.obj `if test -f 'mouse-events-test.cpp'; then $(CYGPATH_W) 'mouse-events-test.cpp'; else $(CYGPATH_W) '$(srcdir)/mouse-events-test.cpp'; fi`
+
+mouse_events_test-nux_test_framework.o: nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_events_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mouse_events_test-nux_test_framework.o -MD -MP -MF $(DEPDIR)/mouse_events_test-nux_test_framework.Tpo -c -o mouse_events_test-nux_test_framework.o `test -f 'nux_test_framework.cpp' || echo '$(srcdir)/'`nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mouse_events_test-nux_test_framework.Tpo $(DEPDIR)/mouse_events_test-nux_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_test_framework.cpp' object='mouse_events_test-nux_test_framework.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_events_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mouse_events_test-nux_test_framework.o `test -f 'nux_test_framework.cpp' || echo '$(srcdir)/'`nux_test_framework.cpp
+
+mouse_events_test-nux_test_framework.obj: nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_events_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mouse_events_test-nux_test_framework.obj -MD -MP -MF $(DEPDIR)/mouse_events_test-nux_test_framework.Tpo -c -o mouse_events_test-nux_test_framework.obj `if test -f 'nux_test_framework.cpp'; then $(CYGPATH_W) 'nux_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_test_framework.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mouse_events_test-nux_test_framework.Tpo $(DEPDIR)/mouse_events_test-nux_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_test_framework.cpp' object='mouse_events_test-nux_test_framework.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_events_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mouse_events_test-nux_test_framework.obj `if test -f 'nux_test_framework.cpp'; then $(CYGPATH_W) 'nux_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_test_framework.cpp'; fi`
+
+mouse_events_test-nux_automated_test_framework.o: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_events_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mouse_events_test-nux_automated_test_framework.o -MD -MP -MF $(DEPDIR)/mouse_events_test-nux_automated_test_framework.Tpo -c -o mouse_events_test-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mouse_events_test-nux_automated_test_framework.Tpo $(DEPDIR)/mouse_events_test-nux_automated_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_automated_test_framework.cpp' object='mouse_events_test-nux_automated_test_framework.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_events_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mouse_events_test-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+
+mouse_events_test-nux_automated_test_framework.obj: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_events_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mouse_events_test-nux_automated_test_framework.obj -MD -MP -MF $(DEPDIR)/mouse_events_test-nux_automated_test_framework.Tpo -c -o mouse_events_test-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mouse_events_test-nux_automated_test_framework.Tpo $(DEPDIR)/mouse_events_test-nux_automated_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_automated_test_framework.cpp' object='mouse_events_test-nux_automated_test_framework.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_events_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mouse_events_test-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+
+mouse_events_test-test-view.o: test-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_events_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mouse_events_test-test-view.o -MD -MP -MF $(DEPDIR)/mouse_events_test-test-view.Tpo -c -o mouse_events_test-test-view.o `test -f 'test-view.cpp' || echo '$(srcdir)/'`test-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mouse_events_test-test-view.Tpo $(DEPDIR)/mouse_events_test-test-view.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-view.cpp' object='mouse_events_test-test-view.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_events_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mouse_events_test-test-view.o `test -f 'test-view.cpp' || echo '$(srcdir)/'`test-view.cpp
+
+mouse_events_test-test-view.obj: test-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_events_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mouse_events_test-test-view.obj -MD -MP -MF $(DEPDIR)/mouse_events_test-test-view.Tpo -c -o mouse_events_test-test-view.obj `if test -f 'test-view.cpp'; then $(CYGPATH_W) 'test-view.cpp'; else $(CYGPATH_W) '$(srcdir)/test-view.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mouse_events_test-test-view.Tpo $(DEPDIR)/mouse_events_test-test-view.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-view.cpp' object='mouse_events_test-test-view.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mouse_events_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mouse_events_test-test-view.obj `if test -f 'test-view.cpp'; then $(CYGPATH_W) 'test-view.cpp'; else $(CYGPATH_W) '$(srcdir)/test-view.cpp'; fi`
+
+scrollbar_test-scrollbar-test.o: scrollbar-test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(scrollbar_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT scrollbar_test-scrollbar-test.o -MD -MP -MF $(DEPDIR)/scrollbar_test-scrollbar-test.Tpo -c -o scrollbar_test-scrollbar-test.o `test -f 'scrollbar-test.cpp' || echo '$(srcdir)/'`scrollbar-test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/scrollbar_test-scrollbar-test.Tpo $(DEPDIR)/scrollbar_test-scrollbar-test.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='scrollbar-test.cpp' object='scrollbar_test-scrollbar-test.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(scrollbar_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o scrollbar_test-scrollbar-test.o `test -f 'scrollbar-test.cpp' || echo '$(srcdir)/'`scrollbar-test.cpp
+
+scrollbar_test-scrollbar-test.obj: scrollbar-test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(scrollbar_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT scrollbar_test-scrollbar-test.obj -MD -MP -MF $(DEPDIR)/scrollbar_test-scrollbar-test.Tpo -c -o scrollbar_test-scrollbar-test.obj `if test -f 'scrollbar-test.cpp'; then $(CYGPATH_W) 'scrollbar-test.cpp'; else $(CYGPATH_W) '$(srcdir)/scrollbar-test.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/scrollbar_test-scrollbar-test.Tpo $(DEPDIR)/scrollbar_test-scrollbar-test.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='scrollbar-test.cpp' object='scrollbar_test-scrollbar-test.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(scrollbar_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o scrollbar_test-scrollbar-test.obj `if test -f 'scrollbar-test.cpp'; then $(CYGPATH_W) 'scrollbar-test.cpp'; else $(CYGPATH_W) '$(srcdir)/scrollbar-test.cpp'; fi`
+
+scrollbar_test-nux_test_framework.o: nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(scrollbar_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT scrollbar_test-nux_test_framework.o -MD -MP -MF $(DEPDIR)/scrollbar_test-nux_test_framework.Tpo -c -o scrollbar_test-nux_test_framework.o `test -f 'nux_test_framework.cpp' || echo '$(srcdir)/'`nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/scrollbar_test-nux_test_framework.Tpo $(DEPDIR)/scrollbar_test-nux_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_test_framework.cpp' object='scrollbar_test-nux_test_framework.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(scrollbar_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o scrollbar_test-nux_test_framework.o `test -f 'nux_test_framework.cpp' || echo '$(srcdir)/'`nux_test_framework.cpp
+
+scrollbar_test-nux_test_framework.obj: nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(scrollbar_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT scrollbar_test-nux_test_framework.obj -MD -MP -MF $(DEPDIR)/scrollbar_test-nux_test_framework.Tpo -c -o scrollbar_test-nux_test_framework.obj `if test -f 'nux_test_framework.cpp'; then $(CYGPATH_W) 'nux_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_test_framework.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/scrollbar_test-nux_test_framework.Tpo $(DEPDIR)/scrollbar_test-nux_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_test_framework.cpp' object='scrollbar_test-nux_test_framework.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(scrollbar_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o scrollbar_test-nux_test_framework.obj `if test -f 'nux_test_framework.cpp'; then $(CYGPATH_W) 'nux_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_test_framework.cpp'; fi`
+
+scrollbar_test-nux_automated_test_framework.o: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(scrollbar_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT scrollbar_test-nux_automated_test_framework.o -MD -MP -MF $(DEPDIR)/scrollbar_test-nux_automated_test_framework.Tpo -c -o scrollbar_test-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/scrollbar_test-nux_automated_test_framework.Tpo $(DEPDIR)/scrollbar_test-nux_automated_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_automated_test_framework.cpp' object='scrollbar_test-nux_automated_test_framework.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(scrollbar_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o scrollbar_test-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+
+scrollbar_test-nux_automated_test_framework.obj: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(scrollbar_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT scrollbar_test-nux_automated_test_framework.obj -MD -MP -MF $(DEPDIR)/scrollbar_test-nux_automated_test_framework.Tpo -c -o scrollbar_test-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/scrollbar_test-nux_automated_test_framework.Tpo $(DEPDIR)/scrollbar_test-nux_automated_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_automated_test_framework.cpp' object='scrollbar_test-nux_automated_test_framework.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(scrollbar_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o scrollbar_test-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+
+scrollbar_test-test-scrollview.o: test-scrollview.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(scrollbar_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT scrollbar_test-test-scrollview.o -MD -MP -MF $(DEPDIR)/scrollbar_test-test-scrollview.Tpo -c -o scrollbar_test-test-scrollview.o `test -f 'test-scrollview.cpp' || echo '$(srcdir)/'`test-scrollview.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/scrollbar_test-test-scrollview.Tpo $(DEPDIR)/scrollbar_test-test-scrollview.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-scrollview.cpp' object='scrollbar_test-test-scrollview.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(scrollbar_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o scrollbar_test-test-scrollview.o `test -f 'test-scrollview.cpp' || echo '$(srcdir)/'`test-scrollview.cpp
+
+scrollbar_test-test-scrollview.obj: test-scrollview.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(scrollbar_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT scrollbar_test-test-scrollview.obj -MD -MP -MF $(DEPDIR)/scrollbar_test-test-scrollview.Tpo -c -o scrollbar_test-test-scrollview.obj `if test -f 'test-scrollview.cpp'; then $(CYGPATH_W) 'test-scrollview.cpp'; else $(CYGPATH_W) '$(srcdir)/test-scrollview.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/scrollbar_test-test-scrollview.Tpo $(DEPDIR)/scrollbar_test-test-scrollview.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-scrollview.cpp' object='scrollbar_test-test-scrollview.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(scrollbar_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o scrollbar_test-test-scrollview.obj `if test -f 'test-scrollview.cpp'; then $(CYGPATH_W) 'test-scrollview.cpp'; else $(CYGPATH_W) '$(srcdir)/test-scrollview.cpp'; fi`
+
+scrollbar_test-test-view.o: test-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(scrollbar_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT scrollbar_test-test-view.o -MD -MP -MF $(DEPDIR)/scrollbar_test-test-view.Tpo -c -o scrollbar_test-test-view.o `test -f 'test-view.cpp' || echo '$(srcdir)/'`test-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/scrollbar_test-test-view.Tpo $(DEPDIR)/scrollbar_test-test-view.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-view.cpp' object='scrollbar_test-test-view.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(scrollbar_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o scrollbar_test-test-view.o `test -f 'test-view.cpp' || echo '$(srcdir)/'`test-view.cpp
+
+scrollbar_test-test-view.obj: test-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(scrollbar_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT scrollbar_test-test-view.obj -MD -MP -MF $(DEPDIR)/scrollbar_test-test-view.Tpo -c -o scrollbar_test-test-view.obj `if test -f 'test-view.cpp'; then $(CYGPATH_W) 'test-view.cpp'; else $(CYGPATH_W) '$(srcdir)/test-view.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/scrollbar_test-test-view.Tpo $(DEPDIR)/scrollbar_test-test-view.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-view.cpp' object='scrollbar_test-test-view.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(scrollbar_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o scrollbar_test-test-view.obj `if test -f 'test-view.cpp'; then $(CYGPATH_W) 'test-view.cpp'; else $(CYGPATH_W) '$(srcdir)/test-view.cpp'; fi`
+
+test_empty_window-test_empty_window.o: test_empty_window.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_empty_window_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_empty_window-test_empty_window.o -MD -MP -MF $(DEPDIR)/test_empty_window-test_empty_window.Tpo -c -o test_empty_window-test_empty_window.o `test -f 'test_empty_window.cpp' || echo '$(srcdir)/'`test_empty_window.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_empty_window-test_empty_window.Tpo $(DEPDIR)/test_empty_window-test_empty_window.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_empty_window.cpp' object='test_empty_window-test_empty_window.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_empty_window_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_empty_window-test_empty_window.o `test -f 'test_empty_window.cpp' || echo '$(srcdir)/'`test_empty_window.cpp
+
+test_empty_window-test_empty_window.obj: test_empty_window.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_empty_window_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_empty_window-test_empty_window.obj -MD -MP -MF $(DEPDIR)/test_empty_window-test_empty_window.Tpo -c -o test_empty_window-test_empty_window.obj `if test -f 'test_empty_window.cpp'; then $(CYGPATH_W) 'test_empty_window.cpp'; else $(CYGPATH_W) '$(srcdir)/test_empty_window.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_empty_window-test_empty_window.Tpo $(DEPDIR)/test_empty_window-test_empty_window.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_empty_window.cpp' object='test_empty_window-test_empty_window.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_empty_window_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_empty_window-test_empty_window.obj `if test -f 'test_empty_window.cpp'; then $(CYGPATH_W) 'test_empty_window.cpp'; else $(CYGPATH_W) '$(srcdir)/test_empty_window.cpp'; fi`
+
+test_graphics_display-test_graphics_display.o: test_graphics_display.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_graphics_display_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_graphics_display-test_graphics_display.o -MD -MP -MF $(DEPDIR)/test_graphics_display-test_graphics_display.Tpo -c -o test_graphics_display-test_graphics_display.o `test -f 'test_graphics_display.cpp' || echo '$(srcdir)/'`test_graphics_display.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_graphics_display-test_graphics_display.Tpo $(DEPDIR)/test_graphics_display-test_graphics_display.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_graphics_display.cpp' object='test_graphics_display-test_graphics_display.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_graphics_display_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_graphics_display-test_graphics_display.o `test -f 'test_graphics_display.cpp' || echo '$(srcdir)/'`test_graphics_display.cpp
+
+test_graphics_display-test_graphics_display.obj: test_graphics_display.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_graphics_display_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_graphics_display-test_graphics_display.obj -MD -MP -MF $(DEPDIR)/test_graphics_display-test_graphics_display.Tpo -c -o test_graphics_display-test_graphics_display.obj `if test -f 'test_graphics_display.cpp'; then $(CYGPATH_W) 'test_graphics_display.cpp'; else $(CYGPATH_W) '$(srcdir)/test_graphics_display.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_graphics_display-test_graphics_display.Tpo $(DEPDIR)/test_graphics_display-test_graphics_display.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_graphics_display.cpp' object='test_graphics_display-test_graphics_display.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_graphics_display_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_graphics_display-test_graphics_display.obj `if test -f 'test_graphics_display.cpp'; then $(CYGPATH_W) 'test_graphics_display.cpp'; else $(CYGPATH_W) '$(srcdir)/test_graphics_display.cpp'; fi`
+
 test_nux-test-canvas.o: test-canvas.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_nux-test-canvas.o -MD -MP -MF $(DEPDIR)/test_nux-test-canvas.Tpo -c -o test_nux-test-canvas.o `test -f 'test-canvas.cpp' || echo '$(srcdir)/'`test-canvas.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_nux-test-canvas.Tpo $(DEPDIR)/test_nux-test-canvas.Po
@@ -637,6 +1570,70 @@ test_nux-test-system.obj: test-system.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-system.cpp' object='test_nux-test-system.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_nux-test-system.obj `if test -f 'test-system.cpp'; then $(CYGPATH_W) 'test-system.cpp'; else $(CYGPATH_W) '$(srcdir)/test-system.cpp'; fi`
+
+vlayout_key_navigation_test-vlayout-key-navigation-test.o: vlayout-key-navigation-test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(vlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT vlayout_key_navigation_test-vlayout-key-navigation-test.o -MD -MP -MF $(DEPDIR)/vlayout_key_navigation_test-vlayout-key-navigation-test.Tpo -c -o vlayout_key_navigation_test-vlayout-key-navigation-test.o `test -f 'vlayout-key-navigation-test.cpp' || echo '$(srcdir)/'`vlayout-key-navigation-test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vlayout_key_navigation_test-vlayout-key-navigation-test.Tpo $(DEPDIR)/vlayout_key_navigation_test-vlayout-key-navigation-test.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='vlayout-key-navigation-test.cpp' object='vlayout_key_navigation_test-vlayout-key-navigation-test.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(vlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o vlayout_key_navigation_test-vlayout-key-navigation-test.o `test -f 'vlayout-key-navigation-test.cpp' || echo '$(srcdir)/'`vlayout-key-navigation-test.cpp
+
+vlayout_key_navigation_test-vlayout-key-navigation-test.obj: vlayout-key-navigation-test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(vlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT vlayout_key_navigation_test-vlayout-key-navigation-test.obj -MD -MP -MF $(DEPDIR)/vlayout_key_navigation_test-vlayout-key-navigation-test.Tpo -c -o vlayout_key_navigation_test-vlayout-key-navigation-test.obj `if test -f 'vlayout-key-navigation-test.cpp'; then $(CYGPATH_W) 'vlayout-key-navigation-test.cpp'; else $(CYGPATH_W) '$(srcdir)/vlayout-key-navigation-test.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vlayout_key_navigation_test-vlayout-key-navigation-test.Tpo $(DEPDIR)/vlayout_key_navigation_test-vlayout-key-navigation-test.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='vlayout-key-navigation-test.cpp' object='vlayout_key_navigation_test-vlayout-key-navigation-test.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(vlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o vlayout_key_navigation_test-vlayout-key-navigation-test.obj `if test -f 'vlayout-key-navigation-test.cpp'; then $(CYGPATH_W) 'vlayout-key-navigation-test.cpp'; else $(CYGPATH_W) '$(srcdir)/vlayout-key-navigation-test.cpp'; fi`
+
+vlayout_key_navigation_test-nux_test_framework.o: nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(vlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT vlayout_key_navigation_test-nux_test_framework.o -MD -MP -MF $(DEPDIR)/vlayout_key_navigation_test-nux_test_framework.Tpo -c -o vlayout_key_navigation_test-nux_test_framework.o `test -f 'nux_test_framework.cpp' || echo '$(srcdir)/'`nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vlayout_key_navigation_test-nux_test_framework.Tpo $(DEPDIR)/vlayout_key_navigation_test-nux_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_test_framework.cpp' object='vlayout_key_navigation_test-nux_test_framework.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(vlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o vlayout_key_navigation_test-nux_test_framework.o `test -f 'nux_test_framework.cpp' || echo '$(srcdir)/'`nux_test_framework.cpp
+
+vlayout_key_navigation_test-nux_test_framework.obj: nux_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(vlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT vlayout_key_navigation_test-nux_test_framework.obj -MD -MP -MF $(DEPDIR)/vlayout_key_navigation_test-nux_test_framework.Tpo -c -o vlayout_key_navigation_test-nux_test_framework.obj `if test -f 'nux_test_framework.cpp'; then $(CYGPATH_W) 'nux_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_test_framework.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vlayout_key_navigation_test-nux_test_framework.Tpo $(DEPDIR)/vlayout_key_navigation_test-nux_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_test_framework.cpp' object='vlayout_key_navigation_test-nux_test_framework.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(vlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o vlayout_key_navigation_test-nux_test_framework.obj `if test -f 'nux_test_framework.cpp'; then $(CYGPATH_W) 'nux_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_test_framework.cpp'; fi`
+
+vlayout_key_navigation_test-nux_automated_test_framework.o: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(vlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT vlayout_key_navigation_test-nux_automated_test_framework.o -MD -MP -MF $(DEPDIR)/vlayout_key_navigation_test-nux_automated_test_framework.Tpo -c -o vlayout_key_navigation_test-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vlayout_key_navigation_test-nux_automated_test_framework.Tpo $(DEPDIR)/vlayout_key_navigation_test-nux_automated_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_automated_test_framework.cpp' object='vlayout_key_navigation_test-nux_automated_test_framework.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(vlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o vlayout_key_navigation_test-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+
+vlayout_key_navigation_test-nux_automated_test_framework.obj: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(vlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT vlayout_key_navigation_test-nux_automated_test_framework.obj -MD -MP -MF $(DEPDIR)/vlayout_key_navigation_test-nux_automated_test_framework.Tpo -c -o vlayout_key_navigation_test-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vlayout_key_navigation_test-nux_automated_test_framework.Tpo $(DEPDIR)/vlayout_key_navigation_test-nux_automated_test_framework.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='nux_automated_test_framework.cpp' object='vlayout_key_navigation_test-nux_automated_test_framework.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(vlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o vlayout_key_navigation_test-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+
+vlayout_key_navigation_test-test-view.o: test-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(vlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT vlayout_key_navigation_test-test-view.o -MD -MP -MF $(DEPDIR)/vlayout_key_navigation_test-test-view.Tpo -c -o vlayout_key_navigation_test-test-view.o `test -f 'test-view.cpp' || echo '$(srcdir)/'`test-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vlayout_key_navigation_test-test-view.Tpo $(DEPDIR)/vlayout_key_navigation_test-test-view.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-view.cpp' object='vlayout_key_navigation_test-test-view.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(vlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o vlayout_key_navigation_test-test-view.o `test -f 'test-view.cpp' || echo '$(srcdir)/'`test-view.cpp
+
+vlayout_key_navigation_test-test-view.obj: test-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(vlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT vlayout_key_navigation_test-test-view.obj -MD -MP -MF $(DEPDIR)/vlayout_key_navigation_test-test-view.Tpo -c -o vlayout_key_navigation_test-test-view.obj `if test -f 'test-view.cpp'; then $(CYGPATH_W) 'test-view.cpp'; else $(CYGPATH_W) '$(srcdir)/test-view.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vlayout_key_navigation_test-test-view.Tpo $(DEPDIR)/vlayout_key_navigation_test-test-view.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test-view.cpp' object='vlayout_key_navigation_test-test-view.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(vlayout_key_navigation_test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o vlayout_key_navigation_test-test-view.obj `if test -f 'test-view.cpp'; then $(CYGPATH_W) 'test-view.cpp'; else $(CYGPATH_W) '$(srcdir)/test-view.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -847,12 +1844,26 @@ uninstall-am:
 
 
 #run make test as part of make check
-@BUILD_TESTS_TRUE@check-local: test gtest
+@BUILD_TESTS_TRUE@check-local: test gtest test-apps
+
 @BUILD_TESTS_TRUE@test:
 @BUILD_TESTS_TRUE@	@gtester --verbose -k -o=test-nux-results.xml ./test-nux
 
-@BUILD_TESTS_TRUE@gtest: gtest-nux-core
+@BUILD_TESTS_TRUE@gtest: gtest-nux-core gtest-nux
 @BUILD_TESTS_TRUE@	./gtest-nux-core
+@BUILD_TESTS_TRUE@	./gtest-nux
+
+@BUILD_TESTS_TRUE@test-apps: test-graphics-display test-empty-window button-xtest mouse-events-test mouse-buttons-test hgrid-key-navigation-test hlayout-key-navigation-test vlayout-key-navigation-test scrollbar-test focus-on-mouse-down-test
+@BUILD_TESTS_TRUE@	./test-graphics-display
+@BUILD_TESTS_TRUE@	./test-empty-window
+@BUILD_TESTS_TRUE@	./button-xtest
+@BUILD_TESTS_TRUE@	./mouse-events-test
+@BUILD_TESTS_TRUE@	./mouse-buttons-test
+@BUILD_TESTS_TRUE@	./hgrid-key-navigation-test
+@BUILD_TESTS_TRUE@	./hlayout-key-navigation-test
+@BUILD_TESTS_TRUE@	./vlayout-key-navigation-test
+@BUILD_TESTS_TRUE@	./scrollbar-test
+@BUILD_TESTS_TRUE@	./focus-on-mouse-down-test
 
 @BUILD_TESTS_TRUE@check-report:
 @BUILD_TESTS_TRUE@	@gtester -k -o=test-nux-results.xml -k ./test-nux \
@@ -862,7 +1873,7 @@ uninstall-am:
 @BUILD_TESTS_TRUE@		&& gnome-open ./test-nux-results.html
 
 @BUILD_TESTS_TRUE@full-report:
-@BUILD_TESTS_TRUE@		@gtester -k -o=test-nux-results.xml -k -m=slow ./test-nux \
+@BUILD_TESTS_TRUE@	@gtester -k -o=test-nux-results.xml -k -m=slow ./test-nux \
 @BUILD_TESTS_TRUE@	  && ( gtester-report test-nux-results.xml \
 @BUILD_TESTS_TRUE@	      | sed 's/>GTester Unit Test Report</>GTester Unit Test Report (normal)</' \
 @BUILD_TESTS_TRUE@	      > test-nux-results.html )

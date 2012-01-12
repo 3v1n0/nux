@@ -28,15 +28,18 @@ namespace nux
 {
   class HLayout;
 
-  //! A Button control that performs and action when clicked.
+  //! A Button with a persistent activate state.
+  /*!
+      The ToggleButton class has a persistent active state. When it is active, it is visually different from its normal state.
+  */
   class ToggleButton: public Button
   {
   public:
-    ToggleButton (TextureArea *image, NUX_FILE_LINE_PROTO);
-    ToggleButton (const std::string label, NUX_FILE_LINE_PROTO);
-    ToggleButton (const std::string label, TextureArea *image, NUX_FILE_LINE_PROTO);
-    ToggleButton (NUX_FILE_LINE_PROTO);
-    ~ToggleButton ();
+    ToggleButton(TextureArea *image, NUX_FILE_LINE_PROTO);
+    ToggleButton(const std::string label, NUX_FILE_LINE_PROTO);
+    ToggleButton(const std::string label, TextureArea *image, NUX_FILE_LINE_PROTO);
+    ToggleButton(NUX_FILE_LINE_PROTO);
+    ~ToggleButton();
   };
 
 }

@@ -32,15 +32,12 @@ namespace nux
       Canvas (NUX_FILE_LINE_DECL);
       ~Canvas ();
 
-      void Draw (GraphicsEngine& gfxContext, bool forceDraw);
-      void DrawContent (GraphicsEngine& gfxContext, bool forceDraw);
-      long ProcessEvent (IEvent& event,
-                         long    traverseInfo,
-                         long    processEventInfo);
+    protected:
+      void Draw (GraphicsEngine& graphics_engine, bool forceDraw);
+      void DrawContent (GraphicsEngine& graphics_engine, bool forceDraw);
       virtual void Paint ();
       void Invalidate ();
 
-    protected:
       cairo_surface_t* GetCairoSurface ();
       cairo_t*         GetCairoContext ();
       int              GetLastWidth ();

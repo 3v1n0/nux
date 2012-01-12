@@ -27,7 +27,7 @@ namespace nux
 {
 
 #if defined(NUX_OS_WINDOWS)
-  const TCHAR *WINDOW_CLASS_NAME = TEXT ("InalogicWindowClass");
+  const char *WINDOW_CLASS_NAME = "InalogicWindowClass";
   HINSTANCE gInstance = 0;
 #endif
 
@@ -40,11 +40,11 @@ namespace nux
 
     // Get hInstance of current application.
     if (gInstance == 0)
-      hInstance = GetModuleHandle (NULL);
+      hInstance = GetModuleHandle(NULL);
     else
       hInstance = gInstance;
 
-    WinClass.cbSize         = sizeof (WNDCLASSEX);
+    WinClass.cbSize         = sizeof(WNDCLASSEX);
     //  CS_CLASSDC      Specifies that one device context is shared between all windows created with this class.
     //  CS_DBLCLKS      This is needed if you want to be able to detect double mouse clicks made on the window.
     //  CS_HREDRAW      The window is redrawn if there is a change in the window's width or if the window is moved horizontally.
@@ -57,16 +57,16 @@ namespace nux
     WinClass.cbClsExtra     = 0;									// No Extra Window Data
     WinClass.cbWndExtra     = 0;									// No Extra Window Data
     WinClass.hInstance      = hInstance;							// Set The Instance
-    WinClass.hIcon          = LoadIcon (hInstance, "IDI_INALOGIC"); //LoadIcon(NULL, IDI_WINLOGO);			// Load The Default Icon
-    WinClass.hCursor        = LoadCursor (NULL, IDC_ARROW);			// Class cursor: Load The Arrow Pointer
+    WinClass.hIcon          = LoadIcon(hInstance, "IDI_INALOGIC"); //LoadIcon(NULL, IDI_WINLOGO);			// Load The Default Icon
+    WinClass.hCursor        = LoadCursor(NULL, IDC_ARROW);			// Class cursor: Load The Arrow Pointer
     WinClass.hbrBackground  = NULL; //(HBRUSH)GetStockObject(BLACK_BRUSH);  // No Background Required For GL
     WinClass.lpszMenuName   = NULL;									// We Don't Want A Menu
     WinClass.lpszClassName  = WINDOW_CLASS_NAME; //gClassName;							// Set The Class Name
-    WinClass.hIconSm        = LoadIcon (hInstance, "IDI_INALOGIC");
+    WinClass.hIconSm        = LoadIcon(hInstance, "IDI_INALOGIC");
 
-    if (!RegisterClassEx (&WinClass) )									// Attempt To Register The Window Class
+    if (!RegisterClassEx(&WinClass))									// Attempt To Register The Window Class
     {
-      nuxCriticalMsg (TEXT ("[DisplayAccessController::~DisplayAccessController] Failed to register window class name: %s."), WINDOW_CLASS_NAME);
+      nuxCriticalMsg("[DisplayAccessController::~DisplayAccessController] Failed to register window class name: %s.", WINDOW_CLASS_NAME);
     }
 
 #endif
@@ -77,9 +77,9 @@ namespace nux
   {
 #if defined(NUX_OS_WINDOWS)
 
-    if (!UnregisterClass (WINDOW_CLASS_NAME, hInstance) )			// Are We Able To Unregister Class
+    if (!UnregisterClass(WINDOW_CLASS_NAME, hInstance))			// Are We Able To Unregister Class
     {
-      nuxDebugMsg (TEXT ("[DisplayAccessController::~DisplayAccessController] Failed to unregister window class name: %s."), WINDOW_CLASS_NAME);
+      nuxDebugMsg("[DisplayAccessController::~DisplayAccessController] Failed to unregister window class name: %s.", WINDOW_CLASS_NAME);
       hInstance = NULL;									      // Set hInstance To NULL
     }
 
@@ -96,69 +96,75 @@ namespace nux
     return *m_pInstance;
   }
 
-  GraphicsDisplay *DisplayAccessController::CreateGLWindow(const TCHAR *WindowTitle, unsigned int WindowWidth, unsigned int WindowHeight,
+  GraphicsDisplay *DisplayAccessController::CreateGLWindow(const char *WindowTitle, unsigned int WindowWidth, unsigned int WindowHeight,
                                                            WindowStyle Style,
                                                            GraphicsDisplay *GLWindow,
                                                            bool FullscreenFlag,
                                                            bool create_rendering_data)
   {
-    if(GetGraphicsDisplay())
+    if (GetGraphicsDisplay())
     {
       // A GlWindow already exist for this thread.
-      nuxAssertMsg (0, TEXT ("Only one GLWindow per thread is allowed") );
+      nuxAssertMsg(0, "Only one GLWindow per thread is allowed");
       return 0;
     }
 
     GraphicsDisplay *glwindow = new GraphicsDisplay();
-    glwindow->CreateOpenGLWindow (WindowTitle, WindowWidth, WindowHeight, Style, GLWindow, FullscreenFlag, create_rendering_data);
+    glwindow->CreateOpenGLWindow(WindowTitle, WindowWidth, WindowHeight, Style, GLWindow, FullscreenFlag, create_rendering_data);
 
     return glwindow;
   }
 
 #if defined(NUX_OS_WINDOWS)
-  GraphicsDisplay *DisplayAccessController::CreateFromForeignWindow (HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext)
-  {
-    if(GetGraphicsDisplay())
-    {
-      // A GlWindow already exist for this thread.
-      nuxAssertMsg (0, TEXT ("Only one GLWindow per thread is allowed") );
-      return 0;
-    }
-
-    GraphicsDisplay *glwindow = new GraphicsDisplay();
-    glwindow->CreateFromOpenGLWindow (WindowHandle, WindowDCHandle, OpenGLRenderingContext);
-
-    return glwindow;
-  }
-#elif defined(NUX_OS_LINUX)
-  GraphicsDisplay *DisplayAccessController::CreateFromForeignWindow (Display *X11Display, Window X11Window, GLXContext OpenGLContext)
+  GraphicsDisplay *DisplayAccessController::CreateFromForeignWindow(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext)
   {
     if (GetGraphicsDisplay())
     {
       // A GlWindow already exist for this thread.
-      nuxAssertMsg (0, TEXT ("Only one GLWindow per thread is allowed") );
+      nuxAssertMsg(0, "Only one GLWindow per thread is allowed");
       return 0;
     }
 
     GraphicsDisplay *glwindow = new GraphicsDisplay();
-    glwindow->CreateFromOpenGLWindow (X11Display, X11Window, OpenGLContext);
+    glwindow->CreateFromOpenGLWindow(WindowHandle, WindowDCHandle, OpenGLRenderingContext);
+
+    return glwindow;
+  }
+#elif defined(NUX_OS_LINUX)
+#ifdef NUX_OPENGLES_20
+  GraphicsDisplay *DisplayAccessController::CreateFromForeignWindow(Display *X11Display, Window X11Window, EGLContext OpenGLContext)
+#else
+  GraphicsDisplay *DisplayAccessController::CreateFromForeignWindow(Display *X11Display, Window X11Window, GLXContext OpenGLContext)
+#endif
+  {
+    if (GetGraphicsDisplay())
+    {
+      // A GlWindow already exist for this thread.
+      nuxAssertMsg(0, "Only one GLWindow per thread is allowed");
+      return 0;
+    }
+
+    GraphicsDisplay *glwindow = new GraphicsDisplay();
+    glwindow->CreateFromOpenGLWindow(X11Display, X11Window, OpenGLContext);
 
     return glwindow;
   }
 #endif
 }
 
+#ifndef NUX_OPENGLES_20
 GLEWContext *glewGetContext()
 {
   return nux::GetGraphicsDisplay()->GetGLEWContext();
 }
+#endif
 
 #if defined(NUX_OS_WINDOWS)
 WGLEWContext *wglewGetContext()
 {
   return nux::GetGraphicsDisplay()->GetWGLEWContext();
 }
-#elif defined(NUX_OS_LINUX)
+#elif defined(NUX_OS_LINUX) && !defined(NUX_OPENGLES_20)
 GLXEWContext *glxewGetContext()
 {
   return nux::GetGraphicsDisplay()->GetGLXEWContext();

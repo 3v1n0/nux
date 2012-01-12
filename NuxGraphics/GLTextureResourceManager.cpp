@@ -29,19 +29,19 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (BaseTexture);
-  NUX_IMPLEMENT_OBJECT_TYPE (Texture2D);
-  NUX_IMPLEMENT_OBJECT_TYPE (TextureRectangle);
-  NUX_IMPLEMENT_OBJECT_TYPE (TextureCube);
-  NUX_IMPLEMENT_OBJECT_TYPE (TextureVolume);
-  NUX_IMPLEMENT_OBJECT_TYPE (TextureFrameAnimation);
+  NUX_IMPLEMENT_OBJECT_TYPE(BaseTexture);
+  NUX_IMPLEMENT_OBJECT_TYPE(Texture2D);
+  NUX_IMPLEMENT_OBJECT_TYPE(TextureRectangle);
+  NUX_IMPLEMENT_OBJECT_TYPE(TextureCube);
+  NUX_IMPLEMENT_OBJECT_TYPE(TextureVolume);
+  NUX_IMPLEMENT_OBJECT_TYPE(TextureFrameAnimation);
 
-  NUX_IMPLEMENT_OBJECT_TYPE (CachedBaseTexture);
-  NUX_IMPLEMENT_OBJECT_TYPE (CachedTexture2D);
-  NUX_IMPLEMENT_OBJECT_TYPE (CachedTextureRectangle);
-  NUX_IMPLEMENT_OBJECT_TYPE (CachedTextureCube);
-  NUX_IMPLEMENT_OBJECT_TYPE (CachedTextureVolume);
-  NUX_IMPLEMENT_OBJECT_TYPE (CachedTextureFrameAnimation);
+  NUX_IMPLEMENT_OBJECT_TYPE(CachedBaseTexture);
+  NUX_IMPLEMENT_OBJECT_TYPE(CachedTexture2D);
+  NUX_IMPLEMENT_OBJECT_TYPE(CachedTextureRectangle);
+  NUX_IMPLEMENT_OBJECT_TYPE(CachedTextureCube);
+  NUX_IMPLEMENT_OBJECT_TYPE(CachedTextureVolume);
+  NUX_IMPLEMENT_OBJECT_TYPE(CachedTextureFrameAnimation);
 
   /*! Up cast a Resource.
       The source must be derived from the destination type
@@ -50,19 +50,19 @@ namespace nux
       @return	        The casted to the destination type
   */
   template < class T, class U >
-  static T *UpCastResource (U *Src)
+  static T *UpCastResource(U *Src)
   {
-    if (!Src || !Src->Type().IsDerivedFromType (T::StaticObjectType))
-      nuxError (TEXT ("[UpCastResource] Cast of %s to %s failed"), U::StaticObjectType.name, T::StaticObjectType.name);
+    if (!Src || !Src->Type().IsDerivedFromType(T::StaticObjectType))
+      nuxError("[UpCastResource] Cast of %s to %s failed", U::StaticObjectType.name, T::StaticObjectType.name);
 
-    return (T *) Src;
+    return(T *) Src;
   }
 
-  BaseTexture *CreateTexture2DFromPixbuf (GdkPixbuf *pixbuf, bool premultiply)
+  BaseTexture *CreateTexture2DFromPixbuf(GdkPixbuf *pixbuf, bool premultiply)
   {
-    const unsigned int rowstride = gdk_pixbuf_get_rowstride (pixbuf);
-    const unsigned int width = gdk_pixbuf_get_width (pixbuf);
-    const unsigned int height = gdk_pixbuf_get_height (pixbuf);
+    const unsigned int rowstride = gdk_pixbuf_get_rowstride(pixbuf);
+    const unsigned int width = gdk_pixbuf_get_width(pixbuf);
+    const unsigned int height = gdk_pixbuf_get_height(pixbuf);
 
     // Put the RGB or RGBA pixels in a RGBA texture data object taking care
     // of alpha premultiplication if requested.
@@ -73,19 +73,19 @@ namespace nux
     //     components bit-shifted considering little-endian ordering. Nux
     //     doesn't seem to be big-endian aware anyway.
     // FIXME(loicm) Surface::Write32b does branching, splits the 32-bit value
-    //     as four 8-bit values (using bit-shifts) that are then stored
+    //     as four 8-bit values(using bit-shifts) that are then stored
     //     separately, that's slow considering it's meant to be used a lot in
     //     deep loops.
-    NTextureData *data = new NTextureData (BITFMT_R8G8B8A8, width, height, 1);
-    ImageSurface &surface = data->GetSurface (0);
-    if (gdk_pixbuf_get_has_alpha (pixbuf) == TRUE)
+    NTextureData *data = new NTextureData(BITFMT_R8G8B8A8, width, height, 1);
+    ImageSurface &surface = data->GetSurface(0);
+    if (gdk_pixbuf_get_has_alpha(pixbuf) == TRUE)
     {
-      unsigned char *pixels_u8 = gdk_pixbuf_get_pixels (pixbuf);
+      unsigned char *pixels_u8 = gdk_pixbuf_get_pixels(pixbuf);
       unsigned int *pixels_u32 = reinterpret_cast<unsigned int *> (pixels_u8);
 
       if (premultiply == true)
       {
-        // Copy from pixbuf (RGBA) to surface (premultiplied RGBA).
+        // Copy from pixbuf(RGBA) to surface(premultiplied RGBA).
         for (unsigned int i = 0; i < height; i++)
         {
           for (unsigned int j = 0; j < width; j++)
@@ -93,14 +93,14 @@ namespace nux
             const unsigned int pixel = pixels_u32[j];
             const unsigned int a = pixel >> 24;
             if (a == 0)
-              surface.Write32b (j, i, 0);
+              surface.Write32b(j, i, 0);
             else
             {
               const unsigned int b = (((pixel >> 16) & 0xff) * a) / 255;
               const unsigned int g = (((pixel >> 8) & 0xff) * a) / 255;
               const unsigned int r = ((pixel & 0xff) * a) / 255;
               const unsigned int p = a << 24 | b << 16 | g << 8 | r;
-              surface.Write32b (j, i, p);
+              surface.Write32b(j, i, p);
             }
           }
           pixels_u8 += rowstride;
@@ -109,11 +109,11 @@ namespace nux
       }
       else
       {
-        // Copy from pixbuf (RGBA) to surface (RGBA).
+        // Copy from pixbuf(RGBA) to surface(RGBA).
         for (unsigned int i = 0; i < height; i++)
         {
           for (unsigned int j = 0; j < width; j++)
-            surface.Write32b (j, i, pixels_u32[j]);
+            surface.Write32b(j, i, pixels_u32[j]);
           pixels_u8 += rowstride;
           pixels_u32 = reinterpret_cast<unsigned int *> (pixels_u8);
         }
@@ -121,8 +121,8 @@ namespace nux
     }
     else
     {
-      // Copy from pixbuf (RGB) to surface (RGBA).
-      unsigned char *pixels = gdk_pixbuf_get_pixels (pixbuf);
+      // Copy from pixbuf(RGB) to surface(RGBA).
+      unsigned char *pixels = gdk_pixbuf_get_pixels(pixbuf);
       for (unsigned int i = 0; i < height; i++)
       {
         for (unsigned int j = 0; j < width; j++)
@@ -130,74 +130,74 @@ namespace nux
           const unsigned char r = pixels[j*3];
           const unsigned char g = pixels[j*3+1];
           const unsigned char b = pixels[j*3+2];
-          surface.Write (j, i, r, g, b, 0xff);
+          surface.Write(j, i, r, g, b, 0xff);
         }
         pixels += rowstride;
       }
     }
 
     // Create a 2D texture and upload the pixels.
-    BaseTexture *texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
-    texture->Update (data);
+    BaseTexture *texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
+    texture->Update(data);
     
-    delete data; // data is deleted as texture->Update () copies it.
+    delete data; // data is deleted as texture->Update() copies it.
     return texture;
   }
 
-  BaseTexture *CreateTexture2DFromFile (const TCHAR *filename, int max_size,
+  BaseTexture* CreateTexture2DFromFile(const char *filename, int max_size,
                                         bool premultiply)
   {
     GError *error = NULL;
     GdkPixbuf *pixbuf =
-      gdk_pixbuf_new_from_file_at_size (filename, max_size, max_size, &error);
+      gdk_pixbuf_new_from_file_at_size(filename, max_size, max_size, &error);
     if (error == NULL)
     {
-      BaseTexture *texture = CreateTexture2DFromPixbuf (pixbuf, premultiply);
-      g_object_unref (pixbuf);
+      BaseTexture *texture = CreateTexture2DFromPixbuf(pixbuf, premultiply);
+      g_object_unref(pixbuf);
       return texture;
     }
     else
     {
-      nuxDebugMsg ("%s", error->message);
+      nuxDebugMsg("%s", error->message);
       return NULL;
     }
   }
 
-  BaseTexture *CreateTextureFromPixbuf (GdkPixbuf *pixbuf)
+  BaseTexture *CreateTextureFromPixbuf(GdkPixbuf *pixbuf)
   {
-    NBitmapData *BitmapData = LoadGdkPixbuf (pixbuf);
-    NUX_RETURN_VALUE_IF_NULL (BitmapData, 0);
+    NBitmapData *BitmapData = LoadGdkPixbuf(pixbuf);
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, 0);
 
-    if (BitmapData->IsTextureData() )
+    if (BitmapData->IsTextureData())
     {
       BaseTexture *texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
-      texture->Update (BitmapData);
+      texture->Update(BitmapData);
       return texture;
     }
     delete BitmapData;
     return 0;
   }
 
-  BaseTexture *CreateTextureFromFile (const TCHAR *TextureFilename)
+  BaseTexture *CreateTextureFromFile(const char *TextureFilename)
   {
     BaseTexture* texture = nullptr;
 
-    NBitmapData* BitmapData = LoadImageFile (TextureFilename);
-    NUX_RETURN_VALUE_IF_NULL (BitmapData, 0);
+    NBitmapData* BitmapData = LoadImageFile(TextureFilename);
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, 0);
 
-    if (BitmapData->IsTextureData() )
+    if (BitmapData->IsTextureData())
     {
       texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
     }
-    else if (BitmapData->IsCubemapTextureData() )
+    else if (BitmapData->IsCubemapTextureData())
     {
       texture = new TextureCube();
     }
-    else if (BitmapData->IsVolumeTextureData() )
+    else if (BitmapData->IsVolumeTextureData())
     {
       texture = new TextureVolume();
     }
-    else if (BitmapData->IsAnimatedTextureData() )
+    else if (BitmapData->IsAnimatedTextureData())
     {
       texture = new TextureFrameAnimation();
     }
@@ -208,47 +208,58 @@ namespace nux
     }
     else
     {
-      nuxDebugMsg ("[CreateTextureFromFile] Invalid texture format type for file (%s)", TextureFilename);
+      nuxDebugMsg("[CreateTextureFromFile] Invalid texture format type for file(%s)", TextureFilename);
     }
 
     delete BitmapData;
     return texture;
   }
 
-  BaseTexture *CreateTextureFromBitmapData (const NBitmapData *BitmapData)
+  BaseTexture *CreateTextureFromBitmapData(const NBitmapData *BitmapData)
   {
     if (BitmapData == 0)
       return 0;
 
-    if (BitmapData->IsTextureData() )
+    if (BitmapData->IsTextureData())
     {
       BaseTexture *texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
-      texture->Update (BitmapData);
+      texture->Update(BitmapData);
       return texture;
     }
-    else if (BitmapData->IsCubemapTextureData() )
+    else if (BitmapData->IsCubemapTextureData())
     {
       TextureCube *texture = new TextureCube();
-      texture->Update (BitmapData);
+      texture->Update(BitmapData);
       return texture;
     }
-    else if (BitmapData->IsVolumeTextureData() )
+    else if (BitmapData->IsVolumeTextureData())
     {
       TextureVolume *texture = new TextureVolume();
-      texture->Update (BitmapData);
+      texture->Update(BitmapData);
       return texture;
     }
-    else if (BitmapData->IsAnimatedTextureData() )
+    else if (BitmapData->IsAnimatedTextureData())
     {
       TextureFrameAnimation *texture = new TextureFrameAnimation();
-      texture->Update (BitmapData);
+      texture->Update(BitmapData);
       return texture;
     }
     return 0;
   }
 
+  BaseTexture* LoadTextureFromFile(const std::string &filename)
+  {
+    NBitmapData* bitmap = LoadImageFile(filename.c_str());
+
+    if (bitmap == NULL)
+      return NULL;
+
+    BaseTexture *texture = CreateTextureFromBitmapData(bitmap);
+    return texture;
+  }
+
   BaseTexture::BaseTexture(NUX_FILE_LINE_DECL)
-    : ResourceData (NUX_FILE_LINE_PARAM)
+    : ResourceData(NUX_FILE_LINE_PARAM)
   {
 
   }
@@ -260,7 +271,7 @@ namespace nux
 
   ObjectPtr < IOpenGLBaseTexture > BaseTexture::GetDeviceTexture()
   {
-    ObjectPtr<CachedBaseTexture> CachedTexture = GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource (this);
+    ObjectPtr<CachedBaseTexture> CachedTexture = GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource(this);
     return CachedTexture->m_Texture;
   }
 
@@ -274,13 +285,13 @@ namespace nux
   {
   }
 
-  Texture2D::Texture2D (const Texture2D &texture, NUX_FILE_LINE_DECL)
+  Texture2D::Texture2D(const Texture2D &texture, NUX_FILE_LINE_DECL)
     : BaseTexture(NUX_FILE_LINE_PARAM)
   {
     _image = texture._image;
   }
 
-  Texture2D::Texture2D (const NTextureData &texture_data, NUX_FILE_LINE_DECL)
+  Texture2D::Texture2D(const NTextureData &texture_data, NUX_FILE_LINE_DECL)
     : BaseTexture(NUX_FILE_LINE_PARAM)
   {
     _image = texture_data;
@@ -299,14 +310,14 @@ namespace nux
   {
   }
 
-  bool Texture2D::Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource)
+  bool Texture2D::Update(const NBitmapData *BitmapData, bool UpdateAndCacheResource)
   {
-    nuxAssertMsg (BitmapData, TEXT ("[Texture2D::Update] Argument BitmapData is NULL."));
-    NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
+    nuxAssertMsg(BitmapData, "[Texture2D::Update] Argument BitmapData is NULL.");
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
 
     if (!BitmapData->IsTextureData())
     {
-      nuxAssertMsg (0, TEXT ("[Texture2D::Update] Argument BitmapData is not a 2D texture"));
+      nuxAssertMsg(0, "[Texture2D::Update] Argument BitmapData is not a 2D texture");
       return false;
     }
 
@@ -314,66 +325,66 @@ namespace nux
 
     if (UpdateAndCacheResource)
     {
-      // call the texture manager and recreate the texture (CachedTexture2D) associated with this object if any.
-      GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource (this);
+      // call the texture manager and recreate the texture(CachedTexture2D) associated with this object if any.
+      GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource(this);
     }
 
     return true;
   }
 
-  bool Texture2D::Update (const TCHAR *filename, bool UpdateAndCacheResource)
+  bool Texture2D::Update(const char *filename, bool UpdateAndCacheResource)
   {
-    NBitmapData *BitmapData = LoadImageFile (filename);
-    nuxAssertMsg (BitmapData, TEXT ("[Texture2D::Update] Bitmap for file (%s) is NULL."), filename);
-    NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
-    bool ret = Update (BitmapData, UpdateAndCacheResource);
-    NUX_SAFE_DELETE (BitmapData);
+    NBitmapData *BitmapData = LoadImageFile(filename);
+    nuxAssertMsg(BitmapData, "[Texture2D::Update] Bitmap for file(%s) is NULL.", filename);
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
+    bool ret = Update(BitmapData, UpdateAndCacheResource);
+    NUX_SAFE_DELETE(BitmapData);
     return ret;
   }
 
-  void Texture2D::GetData (void *Buffer, int MipIndex, int StrideY, int face)
+  void Texture2D::GetData(void *Buffer, int MipIndex, int StrideY, int face)
   {
     BYTE	            *Dest        = (BYTE *) Buffer;
-    const BYTE         *Src         = _image.GetSurface (MipIndex).GetPtrRawData();
-    int                 RowByteSize = _image.GetSurface (MipIndex).GetPitch();
-    int                 NumRows     = _image.GetSurface (MipIndex).GetBlockHeight();
+    const BYTE         *Src         = _image.GetSurface(MipIndex).GetPtrRawData();
+    int                 RowByteSize = _image.GetSurface(MipIndex).GetPitch();
+    int                 NumRows     = _image.GetSurface(MipIndex).GetBlockHeight();
 
     for ( int Y = 0; Y < NumRows; Y++ )
     {
       // Take Min(RowByteSize, StrideY): the source and the destination may not have the same Pitch but
       // they contain the same amount of valid data since they have the same width, height and format.
-      Memcpy (Dest + Y * StrideY, &Src[Y * RowByteSize], Min (RowByteSize, StrideY) );
+      Memcpy(Dest + Y * StrideY, &Src[Y * RowByteSize], Min(RowByteSize, StrideY));
     }
   }
 
-  BaseTexture* Texture2D::Clone () const
+  BaseTexture* Texture2D::Clone() const
   {
     Texture2D* texture = new Texture2D(*this);
     return texture;
   }
 
-  CachedBaseTexture::CachedBaseTexture (NResourceSet *ResourceManager)
-    :   CachedResourceData (ResourceManager),
-    SourceWidth (0),
-    SourceHeight (0),
-    SourceDepth (0),
-    SourceFormat (BITFMT_UNKNOWN)
+  CachedBaseTexture::CachedBaseTexture(NResourceSet *ResourceManager)
+    :   CachedResourceData(ResourceManager),
+    SourceWidth(0),
+    SourceHeight(0),
+    SourceDepth(0),
+    SourceFormat(BITFMT_UNKNOWN)
   {
 
   }
 
   CachedBaseTexture::~CachedBaseTexture()
   {
-    m_Texture.Release ();
+    m_Texture.Release();
   }
 
-  bool CachedBaseTexture::UpdateResource (ResourceData *Resource)
+  bool CachedBaseTexture::UpdateResource(ResourceData *Resource)
   {
-    UpdateTexture ( (BaseTexture *) Resource);
+    UpdateTexture((BaseTexture *) Resource);
     return TRUE;
   }
 
-  bool CachedBaseTexture::RecreateTexture (BaseTexture *Source)
+  bool CachedBaseTexture::RecreateTexture(BaseTexture *Source)
   {
     int CurrentWidth   = m_Texture->GetWidth();
     int CurrentHeight  = m_Texture->GetHeight();
@@ -382,17 +393,17 @@ namespace nux
     BitmapFormat CurrentFormat = m_Texture->GetPixelFormat();
 
     bool Recreate =
-      (CurrentWidth       != Source->GetWidth() ) ||
-      (CurrentHeight      != Source->GetHeight() ) ||
-      (CurrentDepth       != Source->GetDepth() ) ||
-      (CurrentNumMipmap   != Source->GetNumMipLevel() ) ||
-      (CurrentFormat      != Source->GetFormat() );
+      (CurrentWidth       != Source->GetWidth()) ||
+      (CurrentHeight      != Source->GetHeight()) ||
+      (CurrentDepth       != Source->GetDepth()) ||
+      (CurrentNumMipmap   != Source->GetNumMipLevel()) ||
+      (CurrentFormat      != Source->GetFormat());
 
     return Recreate;
   }
 
-  CachedTexture2D::CachedTexture2D (NResourceSet *ResourceManager, Texture2D *SourceTexture)
-    : CachedBaseTexture (ResourceManager)
+  CachedTexture2D::CachedTexture2D(NResourceSet *ResourceManager, Texture2D *SourceTexture)
+    : CachedBaseTexture(ResourceManager)
   {
     if (SourceTexture->IsNull())
     {
@@ -400,14 +411,14 @@ namespace nux
       return;
     }
 
-    m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateTexture (SourceTexture->GetWidth(),
+    m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(SourceTexture->GetWidth(),
                 SourceTexture->GetHeight(),
                 SourceTexture->GetNumMipLevel(),
-                SourceTexture->GetFormat());
+                SourceTexture->GetFormat(), NUX_TRACKER_LOCATION);
 
     for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
     {
-      LoadMipLevel (SourceTexture, i);
+      LoadMipLevel(SourceTexture, i);
     }
   }
 
@@ -416,62 +427,62 @@ namespace nux
 
   }
 
-  void CachedTexture2D::UpdateTexture ( BaseTexture *SourceTexture )
+  void CachedTexture2D::UpdateTexture( BaseTexture *SourceTexture )
   {
-    if ( (SourceTexture == 0) || SourceTexture->IsNull() )
+    if ((SourceTexture == 0) || SourceTexture->IsNull())
     {
       m_Texture = ObjectPtr <IOpenGLBaseTexture> (0);
       return;
     }
 
-    if (!SourceTexture->Type().IsObjectType (Texture2D::StaticObjectType) )
+    if (!SourceTexture->Type().IsObjectType(Texture2D::StaticObjectType))
     {
-      nuxAssertMsg (0, TEXT ("[Texture2D::UpdateTexture] Source texture is not of type Texture2D.") );
+      nuxAssertMsg(0, "[Texture2D::UpdateTexture] Source texture is not of type Texture2D.");
       return;
     }
 
-    if ( RecreateTexture (SourceTexture) )
+    if ( RecreateTexture(SourceTexture))
     {
-      m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateTexture (SourceTexture->GetWidth(),
+      m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetNumMipLevel(),
-                  SourceTexture->GetFormat() );
+                  SourceTexture->GetFormat(), NUX_TRACKER_LOCATION);
 
       for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
       {
-        LoadMipLevel (SourceTexture, i);
+        LoadMipLevel(SourceTexture, i);
       }
     }
     else
     {
       for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
       {
-        LoadMipLevel (SourceTexture, i);
+        LoadMipLevel(SourceTexture, i);
       }
     }
   }
 
-  void CachedTexture2D::LoadMipLevel (BaseTexture *SourceTexture, int MipLevel)
+  void CachedTexture2D::LoadMipLevel(BaseTexture *SourceTexture, int MipLevel)
   {
     SURFACE_LOCKED_RECT LockedRect;
     ObjectPtr < IOpenGLTexture2D > Texture2D = m_Texture; //m_Texture.CastRef<IOpenGLTexture2D>();
 
-    OGL_CALL ( Texture2D->LockRect ( MipLevel, &LockedRect, NULL) );
-    SourceTexture->GetData ( LockedRect.pBits, MipLevel, LockedRect.Pitch );
-    OGL_CALL ( Texture2D->UnlockRect ( MipLevel ) );
+    OGL_CALL(Texture2D->LockRect(MipLevel, &LockedRect, NULL));
+    SourceTexture->GetData(LockedRect.pBits, MipLevel, LockedRect.Pitch);
+    OGL_CALL(Texture2D->UnlockRect(MipLevel));
   }
 
-  TextureRectangle::TextureRectangle (NUX_FILE_LINE_DECL)
-    : BaseTexture (NUX_FILE_LINE_PARAM)
+  TextureRectangle::TextureRectangle(NUX_FILE_LINE_DECL)
+    : BaseTexture(NUX_FILE_LINE_PARAM)
   {
   }
 
-  TextureRectangle::TextureRectangle (const TextureRectangle &texture)
+  TextureRectangle::TextureRectangle(const TextureRectangle &texture)
   {
     _image = texture._image;
   }
 
-  TextureRectangle::TextureRectangle (const NTextureData &BaseTexture)
+  TextureRectangle::TextureRectangle(const NTextureData &BaseTexture)
   {
     _image = BaseTexture;
   }
@@ -490,14 +501,14 @@ namespace nux
 
   }
 
-  bool TextureRectangle::Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource)
+  bool TextureRectangle::Update(const NBitmapData *BitmapData, bool UpdateAndCacheResource)
   {
-    nuxAssertMsg (BitmapData, TEXT ("[TextureRectangle::Update] Argument BitmapData is NULL.") );
-    NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
+    nuxAssertMsg(BitmapData, "[TextureRectangle::Update] Argument BitmapData is NULL.");
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
 
-    if (!BitmapData->IsTextureData() )
+    if (!BitmapData->IsTextureData())
     {
-      nuxAssertMsg (0, TEXT ("[TextureRectangle::Update] Argument BitmapData is not a 2D texture") );
+      nuxAssertMsg(0, "[TextureRectangle::Update] Argument BitmapData is not a 2D texture");
       return false;
     }
 
@@ -505,61 +516,61 @@ namespace nux
 
     if (UpdateAndCacheResource)
     {
-      // call the texture manager and recreate the texture (CachedTexture2D) associated with this object if any.
-      GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource (this);
+      // call the texture manager and recreate the texture(CachedTexture2D) associated with this object if any.
+      GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource(this);
     }
     return true;
   }
 
-  bool TextureRectangle::Update (const TCHAR *filename, bool UpdateAndCacheResource)
+  bool TextureRectangle::Update(const char *filename, bool UpdateAndCacheResource)
   {
     bool b = false;
-    NBitmapData *BitmapData = LoadImageFile (filename);
-    nuxAssertMsg (BitmapData, TEXT ("[TextureRectangle::Update] Bitmap for file (%s) is NULL."), filename);
-    NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
-    b = Update (BitmapData);
-    NUX_SAFE_DELETE (BitmapData);
+    NBitmapData *BitmapData = LoadImageFile(filename);
+    nuxAssertMsg(BitmapData, "[TextureRectangle::Update] Bitmap for file(%s) is NULL.", filename);
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
+    b = Update(BitmapData);
+    NUX_SAFE_DELETE(BitmapData);
     return b;
   }
 
-  void TextureRectangle::GetData (void *Buffer, int MipIndex, int StrideY, int face)
+  void TextureRectangle::GetData(void *Buffer, int MipIndex, int StrideY, int face)
   {
     BYTE	            *Dest        = (BYTE *) Buffer;
-    const BYTE         *Src         = _image.GetSurface (MipIndex).GetPtrRawData();
-    int                 RowByteSize = _image.GetSurface (MipIndex).GetPitch();
-    int                 NumRows     = _image.GetSurface (MipIndex).GetBlockHeight();
+    const BYTE         *Src         = _image.GetSurface(MipIndex).GetPtrRawData();
+    int                 RowByteSize = _image.GetSurface(MipIndex).GetPitch();
+    int                 NumRows     = _image.GetSurface(MipIndex).GetBlockHeight();
 
     for ( int Y = 0; Y < NumRows; Y++ )
     {
       // Take Min(RowByteSize, StrideY): the source and the destination may not have the same Pitch but
       // they contain the same amount of valid data since they have the same width, height and format.
-      Memcpy (Dest + Y * StrideY, &Src[Y * RowByteSize], Min (RowByteSize, StrideY) );
+      Memcpy(Dest + Y * StrideY, &Src[Y * RowByteSize], Min(RowByteSize, StrideY));
     }
   }
 
-  BaseTexture* TextureRectangle::Clone () const
+  BaseTexture* TextureRectangle::Clone() const
   {
     TextureRectangle* texture = new TextureRectangle(*this);
     return texture;
   }
 
-  CachedTextureRectangle::CachedTextureRectangle (NResourceSet *ResourceManager, TextureRectangle *SourceTexture)
-    : CachedBaseTexture (ResourceManager)
+  CachedTextureRectangle::CachedTextureRectangle(NResourceSet *ResourceManager, TextureRectangle *SourceTexture)
+    : CachedBaseTexture(ResourceManager)
   {
-    if (SourceTexture->IsNull() )
+    if (SourceTexture->IsNull())
     {
       m_Texture = ObjectPtr<IOpenGLBaseTexture> (0);
       return;
     }
 
-    m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateRectangleTexture (SourceTexture->GetWidth(),
+    m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateRectangleTexture(SourceTexture->GetWidth(),
                 SourceTexture->GetHeight(),
                 SourceTexture->GetNumMipLevel(),
-                SourceTexture->GetFormat() );
+                SourceTexture->GetFormat(), NUX_TRACKER_LOCATION);
 
     for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
     {
-      LoadMipLevel (SourceTexture, i);
+      LoadMipLevel(SourceTexture, i);
     }
   }
 
@@ -568,57 +579,57 @@ namespace nux
 
   }
 
-  void CachedTextureRectangle::UpdateTexture ( BaseTexture *SourceTexture )
+  void CachedTextureRectangle::UpdateTexture( BaseTexture *SourceTexture )
   {
-    if ( (SourceTexture == 0) || SourceTexture->IsNull() )
+    if ((SourceTexture == 0) || SourceTexture->IsNull())
     {
       m_Texture = ObjectPtr<IOpenGLBaseTexture> (0);
       return;
     }
 
-    if (!SourceTexture->Type().IsObjectType (TextureRectangle::StaticObjectType) )
+    if (!SourceTexture->Type().IsObjectType(TextureRectangle::StaticObjectType))
     {
-      nuxAssertMsg (0, TEXT ("[CachedTextureRectangle::UpdateTexture] Source texture is not of type TextureRectangle.") );
+      nuxAssertMsg(0, "[CachedTextureRectangle::UpdateTexture] Source texture is not of type TextureRectangle.");
       return;
     }
 
-    if ( RecreateTexture (SourceTexture) )
+    if ( RecreateTexture(SourceTexture))
     {
-      m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateRectangleTexture (SourceTexture->GetWidth(),
+      m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateRectangleTexture(SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetNumMipLevel(),
-                  SourceTexture->GetFormat() );
+                  SourceTexture->GetFormat(), NUX_TRACKER_LOCATION);
 
       for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
       {
-        LoadMipLevel (SourceTexture, i);
+        LoadMipLevel(SourceTexture, i);
       }
     }
     else
     {
       for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
       {
-        LoadMipLevel (SourceTexture, i);
+        LoadMipLevel(SourceTexture, i);
       }
     }
   }
 
-  void CachedTextureRectangle::LoadMipLevel (BaseTexture *SourceTexture, int MipLevel)
+  void CachedTextureRectangle::LoadMipLevel(BaseTexture *SourceTexture, int MipLevel)
   {
     SURFACE_LOCKED_RECT		        LockedRect;
     ObjectPtr <IOpenGLRectangleTexture>	TextureRectangle = m_Texture; //m_Texture.CastRef<IOpenGLRectangleTexture>();
 
-    OGL_CALL (TextureRectangle->LockRect ( MipLevel, &LockedRect, NULL) );
-    SourceTexture->GetData ( LockedRect.pBits, MipLevel, LockedRect.Pitch );
-    OGL_CALL (TextureRectangle->UnlockRect ( MipLevel ) );
+    OGL_CALL(TextureRectangle->LockRect( MipLevel, &LockedRect, NULL));
+    SourceTexture->GetData( LockedRect.pBits, MipLevel, LockedRect.Pitch );
+    OGL_CALL(TextureRectangle->UnlockRect( MipLevel ));
   }
 
   TextureCube::TextureCube(NUX_FILE_LINE_DECL)
-    : BaseTexture (NUX_FILE_LINE_PARAM)
+    : BaseTexture(NUX_FILE_LINE_PARAM)
   {
   }
 
-  TextureCube::TextureCube (const TextureCube &texture)
+  TextureCube::TextureCube(const TextureCube &texture)
   {
     _image = texture._image;
   }
@@ -637,14 +648,14 @@ namespace nux
 
   }
 
-  bool TextureCube::Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource)
+  bool TextureCube::Update(const NBitmapData *BitmapData, bool UpdateAndCacheResource)
   {
-    nuxAssertMsg (BitmapData, TEXT ("[TextureCube::Update] Argument BitmapData is NULL.") );
-    NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
+    nuxAssertMsg(BitmapData, "[TextureCube::Update] Argument BitmapData is NULL.");
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
 
-    if (!BitmapData->IsCubemapTextureData() )
+    if (!BitmapData->IsCubemapTextureData())
     {
-      nuxAssertMsg (0, TEXT ("[TextureCube::Update] Argument BitmapData is not a Cube texture") );
+      nuxAssertMsg(0, "[TextureCube::Update] Argument BitmapData is not a Cube texture");
       return false;
     }
 
@@ -652,60 +663,60 @@ namespace nux
 
     if (UpdateAndCacheResource)
     {
-      // call the texture manager and recreate the texture (CachedTexture2D) associated with this object if any.
-      GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource (this);
+      // call the texture manager and recreate the texture(CachedTexture2D) associated with this object if any.
+      GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource(this);
     }
 
     return true;
   }
 
-  bool TextureCube::Update (const TCHAR *filename, bool UpdateAndCacheResource)
+  bool TextureCube::Update(const char *filename, bool UpdateAndCacheResource)
   {
-    NBitmapData *BitmapData = LoadImageFile (filename);
-    nuxAssertMsg (BitmapData, TEXT ("[TextureCube::Update] Bitmap for file (%s) is NULL."), filename);
-    NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
-    bool ret = Update (BitmapData);
-    NUX_SAFE_DELETE (BitmapData);
+    NBitmapData *BitmapData = LoadImageFile(filename);
+    nuxAssertMsg(BitmapData, "[TextureCube::Update] Bitmap for file(%s) is NULL.", filename);
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
+    bool ret = Update(BitmapData);
+    NUX_SAFE_DELETE(BitmapData);
     return ret;
   }
 
-  void TextureCube::GetData (void *Buffer, int MipIndex, int StrideY, int face)
+  void TextureCube::GetData(void *Buffer, int MipIndex, int StrideY, int face)
   {
     BYTE	            *Dest        = (BYTE *) Buffer;
-    const BYTE         *Src         = _image.GetSurface (face, MipIndex).GetPtrRawData();
-    int                 RowByteSize = _image.GetSurface (face, MipIndex).GetPitch();
-    int                 NumRows     = _image.GetSurface (face, MipIndex).GetBlockHeight();
+    const BYTE         *Src         = _image.GetSurface(face, MipIndex).GetPtrRawData();
+    int                 RowByteSize = _image.GetSurface(face, MipIndex).GetPitch();
+    int                 NumRows     = _image.GetSurface(face, MipIndex).GetBlockHeight();
 
     for ( int Y = 0; Y < NumRows; Y++ )
     {
       // Take Min(RowByteSize, StrideY): the source and the destination may not have the same Pitch but
       // they contain the same amount of valid data since they have the same width, height and format.
-      Memcpy (Dest + Y * StrideY, &Src[Y * RowByteSize], Min (RowByteSize, StrideY) );
+      Memcpy(Dest + Y * StrideY, &Src[Y * RowByteSize], Min(RowByteSize, StrideY));
     }
   }
 
-  BaseTexture* TextureCube::Clone () const
+  BaseTexture* TextureCube::Clone() const
   {
     TextureCube* texture = new TextureCube(*this);
     return texture;
   }
 
-  CachedTextureCube::CachedTextureCube (NResourceSet *ResourceManager, TextureCube *SourceTexture)
-    : CachedBaseTexture (ResourceManager)
+  CachedTextureCube::CachedTextureCube(NResourceSet *ResourceManager, TextureCube *SourceTexture)
+    : CachedBaseTexture(ResourceManager)
   {
-    if (SourceTexture->IsNull() )
+    if (SourceTexture->IsNull())
     {
       m_Texture = ObjectPtr<IOpenGLBaseTexture> (0);
       return;
     }
 
-    m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateCubeTexture (SourceTexture->GetWidth(),
+    m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateCubeTexture(SourceTexture->GetWidth(),
                 SourceTexture->GetNumMipLevel(),
-                SourceTexture->GetFormat() );
+                SourceTexture->GetFormat());
 
     for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
     {
-      LoadMipLevel (SourceTexture, i);
+      LoadMipLevel(SourceTexture, i);
     }
   }
 
@@ -714,59 +725,59 @@ namespace nux
 
   }
 
-  void CachedTextureCube::UpdateTexture ( BaseTexture *SourceTexture )
+  void CachedTextureCube::UpdateTexture( BaseTexture *SourceTexture )
   {
-    if ( (SourceTexture == 0) || SourceTexture->IsNull() )
+    if ((SourceTexture == 0) || SourceTexture->IsNull())
     {
       m_Texture = ObjectPtr<IOpenGLBaseTexture> (0);
       return;
     }
 
-    if (!SourceTexture->Type().IsObjectType (TextureCube::StaticObjectType) )
+    if (!SourceTexture->Type().IsObjectType(TextureCube::StaticObjectType))
     {
-      nuxAssertMsg (0, TEXT ("[CachedTextureCube::UpdateTexture] Source texture is not of type TextureCube.") );
+      nuxAssertMsg(0, "[CachedTextureCube::UpdateTexture] Source texture is not of type TextureCube.");
       return;
     }
 
-    if ( RecreateTexture (SourceTexture) )
+    if ( RecreateTexture(SourceTexture))
     {
-      m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateCubeTexture (SourceTexture->GetWidth(),
+      m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateCubeTexture(SourceTexture->GetWidth(),
                   SourceTexture->GetNumMipLevel(),
-                  SourceTexture->GetFormat() );
+                  SourceTexture->GetFormat());
 
       for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
       {
-        LoadMipLevel (SourceTexture, i);
+        LoadMipLevel(SourceTexture, i);
       }
     }
     else
     {
       for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
       {
-        LoadMipLevel (SourceTexture, i);
+        LoadMipLevel(SourceTexture, i);
       }
     }
   }
 
-  void CachedTextureCube::LoadMipLevel (BaseTexture *SourceTexture, int MipLevel)
+  void CachedTextureCube::LoadMipLevel(BaseTexture *SourceTexture, int MipLevel)
   {
     SURFACE_LOCKED_RECT		LockedRect;
     ObjectPtr <IOpenGLCubeTexture> CubemapTexture = m_Texture; //m_Texture.CastRef<IOpenGLCubeTexture>();
 
     for (int face = CUBEMAP_FACE_POSITIVE_X; face < GL_TEXTURE_CUBE_MAP_NEGATIVE_Z + 1; face++)
     {
-      OGL_CALL ( CubemapTexture->LockRect (eCUBEMAP_FACES (face), MipLevel, &LockedRect, NULL) );
-      SourceTexture->GetData (LockedRect.pBits, MipLevel, LockedRect.Pitch, face - CUBEMAP_FACE_POSITIVE_X);
-      OGL_CALL ( CubemapTexture->UnlockRect (eCUBEMAP_FACES (face), MipLevel ) );
+      OGL_CALL( CubemapTexture->LockRect(eCUBEMAP_FACES(face), MipLevel, &LockedRect, NULL));
+      SourceTexture->GetData(LockedRect.pBits, MipLevel, LockedRect.Pitch, face - CUBEMAP_FACE_POSITIVE_X);
+      OGL_CALL( CubemapTexture->UnlockRect(eCUBEMAP_FACES(face), MipLevel ));
     }
   }
 
   TextureVolume::TextureVolume(NUX_FILE_LINE_DECL)
-    : BaseTexture (NUX_FILE_LINE_PARAM)
+    : BaseTexture(NUX_FILE_LINE_PARAM)
   {
   }
 
-  TextureVolume::TextureVolume (const TextureVolume &texture)
+  TextureVolume::TextureVolume(const TextureVolume &texture)
   {
     _image = texture._image;
   }
@@ -785,14 +796,14 @@ namespace nux
 
   }
 
-  bool TextureVolume::Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource)
+  bool TextureVolume::Update(const NBitmapData *BitmapData, bool UpdateAndCacheResource)
   {
-    nuxAssertMsg (BitmapData, TEXT ("[TextureVolume::Update] Argument BitmapData is NULL.") );
-    NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
+    nuxAssertMsg(BitmapData, "[TextureVolume::Update] Argument BitmapData is NULL.");
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
 
-    if (!BitmapData->IsVolumeTextureData() )
+    if (!BitmapData->IsVolumeTextureData())
     {
-      nuxAssertMsg (0, TEXT ("[TextureVolume::Update] Argument BitmapData is not a Volume texture") );
+      nuxAssertMsg(0, "[TextureVolume::Update] Argument BitmapData is not a Volume texture");
       return false;
     }
 
@@ -800,41 +811,41 @@ namespace nux
 
     if (UpdateAndCacheResource)
     {
-      // call the texture manager and recreate the texture (CachedTexture2D) associated with this object if any.
-      GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource (this);
+      // call the texture manager and recreate the texture(CachedTexture2D) associated with this object if any.
+      GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource(this);
     }
 
     return true;
   }
 
-  bool TextureVolume::Update (const TCHAR *filename, bool UpdateAndCacheResource)
+  bool TextureVolume::Update(const char *filename, bool UpdateAndCacheResource)
   {
-    NBitmapData *BitmapData = LoadImageFile (filename);
-    nuxAssertMsg (BitmapData, TEXT ("[TextureVolume::Update] Bitmap for file (%s) is NULL."), filename);
-    NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
-    bool ret = Update (filename);
-    NUX_SAFE_DELETE (BitmapData);
+    NBitmapData *BitmapData = LoadImageFile(filename);
+    nuxAssertMsg(BitmapData, "[TextureVolume::Update] Bitmap for file(%s) is NULL.", filename);
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
+    bool ret = Update(filename);
+    NUX_SAFE_DELETE(BitmapData);
     return ret;
   }
 
-  void TextureVolume::GetData (void *Buffer, int MipIndex, int StrideY, int slice)
+  void TextureVolume::GetData(void *Buffer, int MipIndex, int StrideY, int slice)
   {
     BYTE               *Dest        = (BYTE *) Buffer;
 //     const BYTE*         Src         = _image.GetSurface(MipIndex, slice).GetPtrRawData();
 //     int                 RowByteSize = _image.GetSurface(MipIndex, slice).GetPitch();
 //     int                 NumRows     = _image.GetSurface(MipIndex, slice).GetBlockHeight();
 
-    for (t_s32 slice = 0; slice < ImageSurface::GetLevelDim (_image.GetFormat(), _image.GetDepth(), MipIndex); slice++)
+    for (int slice = 0; slice < ImageSurface::GetLevelDim(_image.GetFormat(), _image.GetDepth(), MipIndex); slice++)
     {
-      const BYTE         *Src         = _image.GetSurface (MipIndex, slice).GetPtrRawData();
-      int                 RowByteSize = _image.GetSurface (MipIndex, slice).GetPitch();
-      int                 NumRows     = _image.GetSurface (MipIndex, slice).GetBlockHeight();
+      const BYTE         *Src         = _image.GetSurface(MipIndex, slice).GetPtrRawData();
+      int                 RowByteSize = _image.GetSurface(MipIndex, slice).GetPitch();
+      int                 NumRows     = _image.GetSurface(MipIndex, slice).GetBlockHeight();
 
       for ( int Y = 0; Y < NumRows; Y++ )
       {
         // Take Min(RowByteSize, StrideY): the source and the destination may not have the same Pitch but
         // they contain the same amount of valid data since they have the same width, height and format.
-        Memcpy (Dest + Y * StrideY, &Src[Y * RowByteSize], Min (RowByteSize, StrideY) );
+        Memcpy(Dest + Y * StrideY, &Src[Y * RowByteSize], Min(RowByteSize, StrideY));
       }
 
       Dest += NumRows * StrideY;
@@ -845,7 +856,7 @@ namespace nux
 //     int                 RowByteSize = _image.GetSurface(MipIndex, slice).GetPitch();
 //     int                 NumRows     = _image.GetSurface(MipIndex, slice).GetBlockHeight();
 //
-//     for( int Y = 0; Y < NumRows; Y++ )
+//     for ( int Y = 0; Y < NumRows; Y++ )
 //     {
 //         // Take Min(RowByteSize, StrideY): the source and the destination may not have the same Pitch but
 //         // they contain the same amount of valid data since they have the same width, height and format.
@@ -853,30 +864,30 @@ namespace nux
 //     }
   }
 
-  BaseTexture* TextureVolume::Clone () const
+  BaseTexture* TextureVolume::Clone() const
   {
     TextureVolume* texture = new TextureVolume(*this);
     return texture;
   }
 
-  CachedTextureVolume::CachedTextureVolume (NResourceSet *ResourceManager, TextureVolume *SourceTexture)
-    :   CachedBaseTexture (ResourceManager)
+  CachedTextureVolume::CachedTextureVolume(NResourceSet *ResourceManager, TextureVolume *SourceTexture)
+    :   CachedBaseTexture(ResourceManager)
   {
-    if (SourceTexture->IsNull() )
+    if (SourceTexture->IsNull())
     {
       m_Texture = ObjectPtr<IOpenGLBaseTexture> (0);
       return;
     }
 
-    m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateVolumeTexture (SourceTexture->GetWidth(),
+    m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateVolumeTexture(SourceTexture->GetWidth(),
                 SourceTexture->GetHeight(),
                 SourceTexture->GetDepth(),
                 SourceTexture->GetNumMipLevel(),
-                SourceTexture->GetFormat() );
+                SourceTexture->GetFormat());
 
     for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
     {
-      LoadMipLevel (SourceTexture, i);
+      LoadMipLevel(SourceTexture, i);
     }
   }
 
@@ -885,43 +896,43 @@ namespace nux
 
   }
 
-  void CachedTextureVolume::UpdateTexture ( BaseTexture *SourceTexture )
+  void CachedTextureVolume::UpdateTexture( BaseTexture *SourceTexture )
   {
-    if ( (SourceTexture == 0) || SourceTexture->IsNull() )
+    if ((SourceTexture == 0) || SourceTexture->IsNull())
     {
       m_Texture = ObjectPtr<IOpenGLBaseTexture> (0);
       return;
     }
 
-    if (!SourceTexture->Type().IsObjectType (TextureVolume::StaticObjectType) )
+    if (!SourceTexture->Type().IsObjectType(TextureVolume::StaticObjectType))
     {
-      nuxAssertMsg (0, TEXT ("[CachedTextureVolume::UpdateTexture] Source texture is not of type TextureVolume.") );
+      nuxAssertMsg(0, "[CachedTextureVolume::UpdateTexture] Source texture is not of type TextureVolume.");
       return;
     }
 
-    if ( RecreateTexture (SourceTexture) )
+    if ( RecreateTexture(SourceTexture))
     {
-      m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateVolumeTexture (SourceTexture->GetWidth(),
+      m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateVolumeTexture(SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetDepth(),
                   SourceTexture->GetNumMipLevel(),
-                  SourceTexture->GetFormat() );
+                  SourceTexture->GetFormat());
 
       for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
       {
-        LoadMipLevel (SourceTexture, i);
+        LoadMipLevel(SourceTexture, i);
       }
     }
     else
     {
       for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
       {
-        LoadMipLevel (SourceTexture, i);
+        LoadMipLevel(SourceTexture, i);
       }
     }
   }
 
-  void CachedTextureVolume::LoadMipLevel (BaseTexture *SourceTexture, int MipLevel)
+  void CachedTextureVolume::LoadMipLevel(BaseTexture *SourceTexture, int MipLevel)
   {
     VOLUME_LOCKED_BOX       LockedBox;
     ObjectPtr <IOpenGLVolumeTexture> VolumeTexture = m_Texture; //m_Texture.CastRef<IOpenGLVolumeTexture>();
@@ -929,25 +940,25 @@ namespace nux
 
     //for(int slice = 0; slice < ImageSurface::GetLevelDim(Source->GetFormat(), Source->GetDepth(), MipLevel); slice++)
     {
-      OGL_CALL ( VolumeTexture->LockBox (MipLevel, &LockedBox, NULL) );
-      SourceTexture->GetData (LockedBox.pBits, MipLevel, LockedBox.RowPitch, 0);
-      OGL_CALL ( VolumeTexture->UnlockBox (MipLevel) );
+      OGL_CALL( VolumeTexture->LockBox(MipLevel, &LockedBox, NULL));
+      SourceTexture->GetData(LockedBox.pBits, MipLevel, LockedBox.RowPitch, 0);
+      OGL_CALL( VolumeTexture->UnlockBox(MipLevel));
     }
 
-//     for(int slice = 0; slice < depth; slice++)
+//     for (int slice = 0; slice < depth; slice++)
 //     {
-//         OGL_CALL( VolumeTexture->LockRect(slice, MipLevel, &LockedRect, NULL) );
+//         OGL_CALL( VolumeTexture->LockRect(slice, MipLevel, &LockedRect, NULL));
 //         SourceTexture->GetData(LockedRect.pBits, MipLevel, LockedRect.Pitch, slice);
-//         OGL_CALL( VolumeTexture->UnlockRect(slice, MipLevel ) );
+//         OGL_CALL( VolumeTexture->UnlockRect(slice, MipLevel ));
 //     }
   }
 
   TextureFrameAnimation::TextureFrameAnimation(NUX_FILE_LINE_DECL)
-    : BaseTexture (NUX_FILE_LINE_PARAM)
+    : BaseTexture(NUX_FILE_LINE_PARAM)
   {
   }
 
-  TextureFrameAnimation::TextureFrameAnimation (const TextureFrameAnimation &texture)
+  TextureFrameAnimation::TextureFrameAnimation(const TextureFrameAnimation &texture)
   {
     _image = texture._image;
   }
@@ -966,14 +977,14 @@ namespace nux
 
   }
 
-  bool TextureFrameAnimation::Update (const NBitmapData *BitmapData, bool UpdateAndCacheResource)
+  bool TextureFrameAnimation::Update(const NBitmapData *BitmapData, bool UpdateAndCacheResource)
   {
-    nuxAssertMsg (BitmapData, TEXT ("[TextureFrameAnimation::Update] Argument BitmapData is NULL.") );
-    NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
+    nuxAssertMsg(BitmapData, "[TextureFrameAnimation::Update] Argument BitmapData is NULL.");
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
 
-    if (!BitmapData->IsAnimatedTextureData() )
+    if (!BitmapData->IsAnimatedTextureData())
     {
-      nuxAssertMsg (0, TEXT ("[TextureFrameAnimation::Update] Argument BitmapData is not a Animated texture") );
+      nuxAssertMsg(0, "[TextureFrameAnimation::Update] Argument BitmapData is not a Animated texture");
       return false;
     }
 
@@ -981,71 +992,71 @@ namespace nux
 
     if (UpdateAndCacheResource)
     {
-      // call the texture manager and recreate the texture (CachedTexture2D) associated with this object if any.
-      GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource (this);
+      // call the texture manager and recreate the texture(CachedTexture2D) associated with this object if any.
+      GetGraphicsDisplay()->GetGraphicsEngine()->UpdateResource(this);
     }
 
     return true;
   }
 
-  bool TextureFrameAnimation::Update (const TCHAR *filename, bool UpdateAndCacheResource)
+  bool TextureFrameAnimation::Update(const char *filename, bool UpdateAndCacheResource)
   {
-    NBitmapData *BitmapData = LoadImageFile (filename);
-    nuxAssertMsg (BitmapData, TEXT ("[TextureFrameAnimation::Update] Bitmap for file (%s) is NULL."), filename);
-    NUX_RETURN_VALUE_IF_NULL (BitmapData, false);
-    bool ret = Update (BitmapData);
-    NUX_SAFE_DELETE (BitmapData);
+    NBitmapData *BitmapData = LoadImageFile(filename);
+    nuxAssertMsg(BitmapData, "[TextureFrameAnimation::Update] Bitmap for file(%s) is NULL.", filename);
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, false);
+    bool ret = Update(BitmapData);
+    NUX_SAFE_DELETE(BitmapData);
     return ret;
   }
 
-  void TextureFrameAnimation::GetData (void *Buffer, int MipIndex, int StrideY, int slice)
+  void TextureFrameAnimation::GetData(void *Buffer, int MipIndex, int StrideY, int slice)
   {
     BYTE               *Dest        = (BYTE *) Buffer;
     //for(int slice = 0; slice < ImageSurface::GetLevelDim(_image.GetFormat(), _image.GetDepth(), MipIndex); slice++)
     {
-      const BYTE         *Src         = _image.GetSurface (slice).GetPtrRawData();
-      int                 RowByteSize = _image.GetSurface (slice).GetPitch();
-      int                 NumRows     = _image.GetSurface (slice).GetBlockHeight();
+      const BYTE         *Src         = _image.GetSurface(slice).GetPtrRawData();
+      int                 RowByteSize = _image.GetSurface(slice).GetPitch();
+      int                 NumRows     = _image.GetSurface(slice).GetBlockHeight();
 
       for (int Y = 0; Y < NumRows; Y++)
       {
         // Take Min(RowByteSize, StrideY): the source and the destination may not have the same Pitch but
         // they contain the same amount of valid data since they have the same width, height and format.
-        Memcpy (Dest + Y * StrideY, &Src[Y * RowByteSize], Min (RowByteSize, StrideY) );
+        Memcpy(Dest + Y * StrideY, &Src[Y * RowByteSize], Min(RowByteSize, StrideY));
       }
 
       //Dest += NumRows * StrideY;
     }
   }
 
-  int TextureFrameAnimation::GetFrameTime (int Frame)
+  int TextureFrameAnimation::GetFrameTime(int Frame)
   {
-    return _image.GetFrameTime (Frame);
+    return _image.GetFrameTime(Frame);
   }
 
-  BaseTexture* TextureFrameAnimation::Clone () const
+  BaseTexture* TextureFrameAnimation::Clone() const
   {
     TextureFrameAnimation* texture = new TextureFrameAnimation(*this);
     return texture;
   }
 
-  CachedTextureFrameAnimation::CachedTextureFrameAnimation (NResourceSet *ResourceManager, TextureFrameAnimation *SourceTexture)
-    :   CachedBaseTexture (ResourceManager)
+  CachedTextureFrameAnimation::CachedTextureFrameAnimation(NResourceSet *ResourceManager, TextureFrameAnimation *SourceTexture)
+    :   CachedBaseTexture(ResourceManager)
   {
-    if (SourceTexture->IsNull() )
+    if (SourceTexture->IsNull())
     {
       m_Texture = ObjectPtr<IOpenGLBaseTexture> (0);
       return;
     }
 
-    m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateAnimatedTexture (SourceTexture->GetWidth(),
+    m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateAnimatedTexture(SourceTexture->GetWidth(),
                 SourceTexture->GetHeight(),
                 SourceTexture->GetDepth(),
-                SourceTexture->GetFormat() );
+                SourceTexture->GetFormat());
 
     for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
     {
-      LoadMipLevel (SourceTexture, i);
+      LoadMipLevel(SourceTexture, i);
     }
   }
 
@@ -1054,42 +1065,42 @@ namespace nux
 
   }
 
-  void CachedTextureFrameAnimation::UpdateTexture ( BaseTexture *SourceTexture )
+  void CachedTextureFrameAnimation::UpdateTexture( BaseTexture *SourceTexture )
   {
-    if ( (SourceTexture == 0) || SourceTexture->IsNull() )
+    if ((SourceTexture == 0) || SourceTexture->IsNull())
     {
       m_Texture = ObjectPtr <IOpenGLBaseTexture> (0);
       return;
     }
 
-    if (!SourceTexture->Type().IsObjectType (TextureFrameAnimation::StaticObjectType) )
+    if (!SourceTexture->Type().IsObjectType(TextureFrameAnimation::StaticObjectType))
     {
-      nuxAssertMsg (0, TEXT ("[CachedTextureFrameAnimation::UpdateTexture] Source texture is not of type TextureFrameAnimation.") );
+      nuxAssertMsg(0, "[CachedTextureFrameAnimation::UpdateTexture] Source texture is not of type TextureFrameAnimation.");
       return;
     }
 
-    if (RecreateTexture (SourceTexture) )
+    if (RecreateTexture(SourceTexture))
     {
-      m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateAnimatedTexture (SourceTexture->GetWidth(),
+      m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateAnimatedTexture(SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetDepth(),
-                  SourceTexture->GetFormat() );
+                  SourceTexture->GetFormat());
 
       for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
       {
-        LoadMipLevel (SourceTexture, i);
+        LoadMipLevel(SourceTexture, i);
       }
     }
     else
     {
       for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
       {
-        LoadMipLevel (SourceTexture, i);
+        LoadMipLevel(SourceTexture, i);
       }
     }
   }
 
-  void CachedTextureFrameAnimation::LoadMipLevel (BaseTexture *SourceTexture, int MipLevel)
+  void CachedTextureFrameAnimation::LoadMipLevel(BaseTexture *SourceTexture, int MipLevel)
   {
     SURFACE_LOCKED_RECT       LockedRect;
     ObjectPtr <IOpenGLAnimatedTexture> AnimatedTexture = m_Texture; //m_Texture.CastRef<IOpenGLAnimatedTexture>();
@@ -1097,11 +1108,11 @@ namespace nux
 
     for (int frame = 0; frame < Source->GetDepth(); frame++)
     {
-      OGL_CALL ( AnimatedTexture->LockRect (frame, &LockedRect, NULL) );
-      SourceTexture->GetData (LockedRect.pBits, 0, LockedRect.Pitch, frame);
-      OGL_CALL ( AnimatedTexture->UnlockRect (frame) );
+      OGL_CALL( AnimatedTexture->LockRect(frame, &LockedRect, NULL));
+      SourceTexture->GetData(LockedRect.pBits, 0, LockedRect.Pitch, frame);
+      OGL_CALL( AnimatedTexture->UnlockRect(frame));
 
-      AnimatedTexture->SetFrameTime (frame, Source->GetFrameTime (frame) );
+      AnimatedTexture->SetFrameTime(frame, Source->GetFrameTime(frame));
     }
   }
 

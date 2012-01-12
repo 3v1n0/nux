@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 InalogicÂ® Inc.
+ * Copyright 2010 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -71,13 +71,13 @@ namespace nux
     return str;
   }
 
-  t_double CharToDouble (const TCHAR *digit)
+  double CharToDouble (const TCHAR *digit)
   {
     char *endptr = NULL;
     NString str = TCHAR_TO_ANSICHAR (digit);
     errno = 0;
-    t_double ret = std::strtod (str.GetTCharPtr(), &endptr);
-    t_u32 error = errno;
+    double ret = std::strtod (str.GetTCharPtr(), &endptr);
+    unsigned int error = errno;
 
     if (error == ERANGE)
     {
@@ -99,15 +99,15 @@ namespace nux
     return str;
   }
 
-  t_s32 CharToInteger (const TCHAR *digit)
+  int CharToInteger (const TCHAR *digit)
   {
     NString str = TCHAR_TO_ANSICHAR (digit);
-    t_s64 ret = std::atoi (str.GetTCharPtr() );
+    long long ret = std::atoi (str.GetTCharPtr() );
     return ret;
   }
 
-// convert an hexadecimal string to t_u32
-  t_u32 HexCharToInteger (const TCHAR *s)
+// convert an hexadecimal string to unsigned int
+  unsigned int HexCharToInteger (const TCHAR *s)
   {
     int n = 0;         // position in string
     int m = 0;         // position in digit[] to shift

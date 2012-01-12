@@ -35,17 +35,18 @@ namespace nux
   class VLayout;
   class HLayout;
   class EditTextBox;
+  class AbstractButton;
 
   class RGBValuator : public View //public ValuatorAbstraction
   {
-    NUX_DECLARE_OBJECT_TYPE (RGBValuator, View);
+    NUX_DECLARE_OBJECT_TYPE(RGBValuator, View);
   public:
     RGBValuator(NUX_FILE_LINE_PROTO);
     RGBValuator(Color const& color, NUX_FILE_LINE_PROTO);
     /*!
         Create an initialize the widget with the appropriate color model and value.
 
-        @param ColorModel The color model (CM_RGB, CM_HSV, CM_HLS)
+        @param ColorModel The color model(CM_RGB, CM_HSV, CM_HLS)
         @param x Red if CM_RGB, Hue if CM_HSV, Hue if CM_HLS
         @param y Green if CM_RGB, Saturation if CM_HSV, Light if CM_HLS
         @param z Blue if CM_RGB, Value if CM_HSV, Saturation if CM_HLS
@@ -60,18 +61,14 @@ namespace nux
     void SetColorFormat(color::Format cf);
     Color GetColor() const;
 
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    void SetRGB(Color const& color);
+    void SetRGB(float r, float g, float b);
+    void SetAlpha(float alpha);
+    void SetRGBA(Color const& color);
+    void SetRGBA(float r, float g, float b, float a);
 
-    void SetRGB (Color const& color);
-    void SetRGB (float r, float g, float b);
-    void SetAlpha (float alpha);
-    void SetRGBA (Color const& color);
-    void SetRGBA (float r, float g, float b, float a);
-
-    void SetHSV (float h, float s, float v);
-    void SetHLS (float h, float l, float s);
+    void SetHSV(float h, float s, float v);
+    void SetHLS(float h, float l, float s);
 
     // emitters
     void OnReceiveMouseDown_Red     (int x, int y, unsigned long button_flags, unsigned long key_flags);
@@ -82,9 +79,9 @@ namespace nux
     void OnReceiveMouseDrag_Green   (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     void OnReceiveMouseDrag_Blue    (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     void OnReceiveMouseDrag_Alpha   (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    void OnChangeColorModel();
-    void OnChangeColorFormat();
-    void RecvMouseDownColorModel (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void OnChangeColorModel(AbstractButton* button);
+    void OnChangeColorFormat(AbstractButton* button);
+    void RecvMouseDownColorModel(int x, int y, unsigned long button_flags, unsigned long key_flags);
 
     void OnReceiveMouseUp_Red       (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void OnReceiveMouseUp_Green     (int x, int y, unsigned long button_flags, unsigned long key_flags);
@@ -94,7 +91,7 @@ namespace nux
     void OnChannelKeyboardFocus();
     void OnChannelLostKeyboardFocus();
     void OnChannelValidateKeyboardEntry();
-    void OnChannelCharacter (unsigned int character, int componentIndex);
+    void OnChannelCharacter(unsigned int character, int componentIndex);
 
     //! Cause the widget to emit sigColorChanged signal.
     /*!
@@ -108,20 +105,36 @@ namespace nux
     sigc::signal<void, float, float, float, float> sigColorChanged;
 
   protected:
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PreLayoutManagement();
+
     void InitializeWidgets();
     void InitializeLayout();
 
     virtual bool AcceptKeyNavFocus();
 
   private:
-    void DrawRedMarker (GraphicsEngine &GfxContext);
-    void DrawGreenMarker (GraphicsEngine &GfxContext);
-    void DrawBlueMarker (GraphicsEngine &GfxContext);
-    void DrawAlphaMarker (GraphicsEngine &GfxContext);
+    //! Override of Area::SetMinimumHeight and made private.
+    /*!
+        Prevent changing the minimum height of the RGBValuator view.
+    */
+    virtual void SetMinimumHeight(){};
 
-    void DrawRGB (GraphicsEngine &GfxContext);
-    void DrawHSV (GraphicsEngine &GfxContext);
-    void DrawHLS (GraphicsEngine &GfxContext);
+    //! Override of Area::SetMaximumHeight and made private.
+    /*!
+        Prevent changing the maximum height of the RGBValuator view.
+    */
+    virtual void SetMaximumHeight(){};
+
+    void DrawRedMarker(GraphicsEngine &graphics_engine);
+    void DrawGreenMarker(GraphicsEngine &graphics_engine);
+    void DrawBlueMarker(GraphicsEngine &graphics_engine);
+    void DrawAlphaMarker(GraphicsEngine &graphics_engine);
+
+    void DrawRGB(GraphicsEngine &graphics_engine);
+    void DrawHSV(GraphicsEngine &graphics_engine);
+    void DrawHLS(GraphicsEngine &graphics_engine);
 
     HLayout *hlayout;
     HLayout *redlayout;
@@ -131,15 +144,15 @@ namespace nux
     VLayout *vlayout;
     VLayout *colormodel_layout;
 
-    EditTextBox *m_RedCaption;
-    EditTextBox *m_GreenCaption;
-    EditTextBox *m_BlueCaption;
-    EditTextBox *m_AlphaCaption;
-    InputArea *m_RedValuator;
-    InputArea *m_GreenValuator;
-    InputArea *m_BlueValuator;
-    InputArea *m_AlphaValuator;
-    InputArea *m_ColorSquare;
+    EditTextBox *red_caption_;
+    EditTextBox *green_caption_;
+    EditTextBox *blue_caption_;
+    EditTextBox *alpha_caption_;
+    InputArea *red_valuator_;
+    InputArea *green_valuator_;
+    InputArea *blue_valuator_;
+    InputArea *alpha_valuator_;
+    InputArea *color_square_;
 
     InputArea *m_ComponentLabel0;
     InputArea *m_ComponentLabel1;
@@ -162,7 +175,6 @@ namespace nux
     HexRegExpValidator m_HexRegExp;
     IntegerValidator m_IntRegExp;
     DoubleValidator m_DoubleRegExp;
-    virtual long ComputeChildLayout();
   };
 
 }

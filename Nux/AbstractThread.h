@@ -26,42 +26,43 @@
 namespace nux
 {
 
-  typedef void (*ThreadUserInitFunc) (NThread *, void *InitData);
-  typedef void (*ThreadUserExitFunc) (NThread *, void *ExitData);
-  typedef void (*ThreadMainFunc) (NThread *, void *MainData);
+  typedef void(*ThreadUserInitFunc) (NThread *, void *InitData);
+  typedef void(*ThreadUserExitFunc) (NThread *, void *ExitData);
+  typedef void(*ThreadMainFunc) (NThread *, void *MainData);
 
   class AbstractThread: public NThread, public sigc::trackable
   {
-    NUX_DECLARE_OBJECT_TYPE (AbstractThread, NThread);
+    NUX_DECLARE_OBJECT_TYPE(AbstractThread, NThread);
 
   public:
-    AbstractThread (AbstractThread *Parent);
+    AbstractThread(AbstractThread *Parent);
     virtual ~AbstractThread();
 
   protected:
-    virtual unsigned int Run (void *) = 0;
+    virtual int Run(void *) = 0;
 
-    virtual ThreadState StartChildThread (NThread *thread, bool Modal) = 0;
-    virtual void AddChildThread (NThread *) = 0;
-    virtual void RemoveChildThread (NThread *) = 0;
-    virtual void ChildHasFinished (NThread *app) = 0;
-    virtual void TerminateAllChildThread() = 0;
+    virtual ThreadState StartChildThread(AbstractThread *thread, bool Modal) = 0;
+    virtual void AddChildThread(AbstractThread *) = 0;
+    virtual void RemoveChildThread(AbstractThread *) = 0;
+    virtual void ChildHasFinished(AbstractThread *app) = 0;
+    virtual void TerminateChildThreads() = 0;
+    void TerminateChildWindows();
+    void JoinChildThreads();
 
-    std::list<NThread *> m_ChildThread;
-    AbstractThread *m_Parent;
-    ThreadUserInitFunc m_UserInitFunc;
-    ThreadUserExitFunc m_UserExitFunc;
+    std::list<AbstractThread*> children_thread_list_;
+    AbstractThread *parent_;
+    ThreadUserInitFunc user_init_func_;
+    ThreadUserExitFunc user_exit_func_;
 
     /*!
         This pointer maybe set by the user in ThreadInitFunc and reused in ThreadExitFunc
     */
-    void *m_InitData;
-    void *m_ExitData;
+    void *initialization_data_;
 
     std::list<NThread *> m_ThreadList;
 
   private:
-    AbstractThread (const AbstractThread &);
+    AbstractThread(const AbstractThread &);
     // Does not make sense for a singleton. This is a self assignment.
     AbstractThread &operator= (const AbstractThread &);
     // Declare operator adress-of as private

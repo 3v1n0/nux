@@ -61,14 +61,14 @@ namespace nux
 
     struct CPUInfo
     {
-      t_u32 m_CPUType;
+      unsigned int m_CPUType;
       t_char m_CPUModel;
       t_char m_CPUExtModel;
-      t_u32 m_CPUFamily;
-      t_u32 m_CPUExtFamily;
+      unsigned int m_CPUFamily;
+      unsigned int m_CPUExtFamily;
       t_char m_CPUSteppingID;
-      t_u32 m_CPUNumLogicalProcessors;
-      t_u32 m_CPUSpeed;
+      unsigned int m_CPUNumLogicalProcessors;
+      unsigned int m_CPUSpeed;
     };
     struct CPUInfo m_CPUInfo;
 
@@ -94,13 +94,13 @@ namespace nux
 
     struct MemInfo
     {
-      t_u32 m_PhysicalMemorySize;
+      unsigned int m_PhysicalMemorySize;
     };
     struct MemInfo m_MemInfo;
 
     struct OSInfo
     {
-      t_u32 m_OSType;
+      unsigned int m_OSType;
     };
 
     struct OSInfo m_OSInfo;

@@ -58,8 +58,8 @@ void RenderBlurredTexture ()
   graphics_engine->SetContext(0, 0, w, h);
   graphics_engine->Push2DWindow(w, h);
 
-  nux::IEvent event;
-  memset(&event, 0, sizeof(nux::IEvent));
+  nux::Event event;
+  memset(&event, 0, sizeof(nux::Event));
   
   char fps [25];
   int frame_counter = 0;
@@ -73,7 +73,7 @@ void RenderBlurredTexture ()
     CHECKGL( glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT) );
 
     graphics_display->GetSystemEvent(&event);
-    if(first_time || (event.e_event == nux::NUX_SIZE_CONFIGURATION))
+    if(first_time || (event.type == nux::NUX_SIZE_CONFIGURATION))
     {
       first_time = false;
       graphics_engine->DisableAllTextureMode(0);
@@ -142,7 +142,7 @@ void RenderBlurredTexture ()
       frame_periode = 0;
     }
 
-  } while((event.e_event != nux::NUX_TERMINATE_APP) && (event.GetVirtualKeyState(NUX_VK_ESCAPE) == 0));
+  } while((event.type != nux::NUX_TERMINATE_APP) && (event.GetVirtualKeyState(NUX_VK_ESCAPE) == 0));
 
   fbo.Release ();
   texture_rt.Release ();

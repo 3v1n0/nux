@@ -32,7 +32,6 @@
 
 namespace nux
 {
-
   class MenuPage;
   class PBuffer;
   class WindowThread;
@@ -42,14 +41,14 @@ namespace nux
   class PaintLayer;
   class Event;
 
+  //! A user interface composition class created by WindowThread.
   class WindowCompositor : public sigc::trackable
   {
   public:
     typedef ObjectWeakPtr<BaseWindow> WeakBaseWindowPtr;
 
-    WindowCompositor();
+    WindowCompositor(WindowThread *window_thread);
     ~WindowCompositor();
-
 
     //! Get the Geometry of the tooltip based on the BaseWindow that initiated it.
     Geometry GetTooltipGeometry() const;
@@ -154,6 +153,7 @@ namespace nux
       const char* text,
       int key_repeat_count);
 
+
     //! The InputArea that has the keyboard navigation focus.
     /*!
         The InputArea that has the mouse focus also has the keyboard focus. That is if _mouse_focus_area is not Null
@@ -175,6 +175,23 @@ namespace nux
     //====================================
   
   public:
+    /*!
+        Set and external fbo to draw Nux BaseWindow into. This external fbo will be
+        restored after Nux completes it rendering. The external fbo is used only in embedded mode. \n
+        If the fbo_object parameter 0, then the reference fbo is invalid and will not be used.
+
+        @param fbo_object The opengl index of the fbo.
+        @param fbo_geometry The geometry of the fbo.
+    */
+    void SetReferenceFramebuffer(unsigned int fbo_object, Geometry fbo_geometry);
+
+    /*!
+        Bind the reference opengl framebuffer object.
+
+        @return True if no error was detected.
+    */
+    bool RestoreReferenceFramebuffer();
+
     ObjectPtr<IOpenGLFrameBufferObject>& GetWindowFrameBufferObject()
     {
       return m_FrameBufferObject;
@@ -195,7 +212,7 @@ namespace nux
     void SetWidgetDrawingOverlay(InputArea *ic, BaseWindow *OverlayWindow);
     InputArea *GetWidgetDrawingOverlay();
 
-    void SetTooltip(InputArea *TooltipArea, const TCHAR *TooltipText, int x, int y);
+    void SetTooltip(InputArea *TooltipArea, const char *TooltipText, int x, int y);
     /*!
         Return true if the mouse is still inside the area that initiated the tooltip;
 
@@ -217,12 +234,6 @@ namespace nux
       _event_root = Point(x, y);
     }
 
-    //TODO: DEPRECATED
-    const IEvent *GetCurrentEvent() const
-    {
-      return NULL;
-    }
-
     void SetBackgroundPaintLayer(AbstractPaintLayer *bkg);
 
     /*!
@@ -234,7 +245,7 @@ namespace nux
 
     //! Enable the exclusive event input mode.
     /*!
-        Set the exclusive event input area (\sa _exclusive_input_area). The greedy input area gets all input events (mouse and keyboard).
+        Set the exclusive event input area(\sa _exclusive_input_area). The greedy input area gets all input events(mouse and keyboard).
         The exclusive input mode can only be set if there is no exclusive input area already set.
         To disable the exclusive input move, call DisableExclusiveInputArea with the current exclusive input area as parameter.
         The exclusive event input mode can only change once during the processing of one event. The change it again, 
@@ -275,10 +286,10 @@ namespace nux
     void ResetDnDArea();
 
     // SetDnDArea is declared as private.
-    //void SetDnDArea (InputArea* area);
+    //void SetDnDArea(InputArea* area);
     InputArea* GetDnDArea();
 
-    //! Get the top view that is being processed (event or rendering).
+    //! Get the top view that is being processed(event or rendering).
     /*!
         Get the active ViewWindow during and event processing or rendering.
     */
@@ -340,10 +351,10 @@ namespace nux
     bool GrabKeyboardRemove(InputArea* area);
 
     //! Returns True if the area parameter is inside the keyboard grab stack.
-    bool IsInKeyboardGrabStack (InputArea* area);
+    bool IsInKeyboardGrabStack(InputArea* area);
 
     //! Returns the area at the top of the keyboard grab stack.
-    InputArea* GetKeyboardGrabArea ();
+    InputArea* GetKeyboardGrabArea();
 
   private:
     //! Render the interface.
@@ -377,7 +388,6 @@ namespace nux
         @param BluredBackground     If true, the texture is blended with the blurred version of the main window texture.
     */
     void PresentBufferToScreen(ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground = false, float opacity=1.0f, bool premultiply = false);
-    void PresentRendering();
 
     /*!
         Set the main color render target as the texture to draw into.
@@ -396,7 +406,7 @@ namespace nux
     //! Push a floating view at the top of the stack.
     void PushToFront(BaseWindow *bottom_floating_view);
     //! Push a floating view at the bottom of the stack.
-    void PushToBack (BaseWindow *bottom_floating_view);
+    void PushToBack(BaseWindow *bottom_floating_view);
 
     /*!
         Returns the BaseWindow that is at the top of the BaseWindow stack, excluding the BaseWindow that is
@@ -411,7 +421,7 @@ namespace nux
       return m_FocusAreaWindow.GetPointer();
     }
 
-    //! Set the top view that is about to be processed (event or rendering).
+    //! Set the top view that is about to be processed(event or rendering).
     /*!
         Before event processing or rendering, this should be called to set the ViewWindow that is about 
         to be processed. This function is used internally by the system.
@@ -428,7 +438,7 @@ namespace nux
       m_FocusAreaWindow = window;
     }
 
-    void SetCurrentEvent(IEvent *event)
+    void SetCurrentEvent(Event *event)
     {
       m_CurrentEvent = event;
     }
@@ -451,9 +461,6 @@ namespace nux
     // UnRegister is called via the object destroyed event, hence the Object*.
     void UnRegisterWindow(Object*);
 
-    //! Performs event cycle on menus.
-    long MenuEventCycle(Event &event, long TraverseInfo, long ProcessEventInfo);
-
     // We use Rectangle texture to attach to the frame-buffer because some GPU like the Geforce FX 5600 do not
     // have support for ARB_texture_non_power_of_two. However it does support ARB_texture_recatangle.
     struct RenderTargetTextures
@@ -470,12 +477,12 @@ namespace nux
     WeakBaseWindowPtr m_CurrentWindow;    //!< BaseWindow where event processing or rendering is happening.
     WeakBaseWindowPtr m_FocusAreaWindow;  //!< The BaseWindow that contains the _mouse_focus_area.
     WeakBaseWindowPtr m_MenuWindow;       //!< The BaseWindow that owns the menu being displayed;
-    IEvent* m_CurrentEvent; 
+    Event* m_CurrentEvent; 
 
     InputArea* _mouse_over_area;      //!< The base area that has the mouse directly over itself.
     InputArea* _previous_mouse_over_area;
 
-    void SetDnDArea (InputArea* area);
+    void SetDnDArea(InputArea* area);
 
     // DnD support
     InputArea* _dnd_area;   //!< the area where the mouse is located during a DND action.
@@ -485,20 +492,19 @@ namespace nux
         Following the event processing cycle, it is necessary to setup the exclusive input area is _pending_exclusive_input_mode_action is true.
         The exclusive input area status always takes effect after the event processing cycle.
     */
-    void ExecPendingExclusiveInputAreaAction ();
+    void ExecPendingExclusiveInputAreaAction();
 
     //! Get the input area that has the exclusivity on events.
     /*!
         @return The input area that has the exclusivity on all events.
     */
-    InputArea *GetExclusiveInputArea ();
+    InputArea *GetExclusiveInputArea();
 
     /*!
-        The exclusive input area gets all events without exception (greedy). The exclusive input area may decide to pass events 
+        The exclusive input area gets all events without exception(greedy). The exclusive input area may decide to pass events 
         down to other areas. If it does, the following restrictions apply:
           - The other input area cannot have the mouse focus.
           - They cannot have the keyboard focus.
-          - they cannot call ForceStartFocus or ForceStopFocus.
           - No synthetic events: 
             * mouse click
             * mouse drag
@@ -516,12 +522,12 @@ namespace nux
     bool _in_exclusive_input_mode;
 
     /*!
-        The exclusive input mode starts after after events have been processed inside ProcessEvent ().
+        The exclusive input mode starts after after events have been processed inside ProcessEvent().
         This flags signals that some action are required to enable/disable the exclusive input mode.
     */
     bool _pending_exclusive_input_mode_action;
 
-    //! True while events are being processed inside ProcessEvent ().
+    //! True while events are being processed inside ProcessEvent().
     bool inside_event_cycle_;
 
     //! True while inside the rendering cycle.
@@ -572,6 +578,10 @@ namespace nux
     int m_TooltipX;
     int m_TooltipY;
 
+    //! The fbo to restore after Nux rendering in embedded mode.
+    unsigned int reference_fbo_;
+    Geometry reference_fbo_geometry_;
+
     //! Pointer grab stack.
     /*!
         The head of the list is the top of the stack.
@@ -589,7 +599,16 @@ namespace nux
     std::list<InputArea*> keyboard_grab_stack_;
 
   private:
-    WindowCompositor (const WindowCompositor &);
+    WindowThread *window_thread_; //!< The WindowThread to which this object belongs.
+
+    //! Perform some action before destruction.
+    /*!
+        Perform some action before destruction. This function should only be 
+        called from WindowThread::ThreadDtor(). It will invalidate the area that currently has the keyboard focus.
+    */
+    void BeforeDestructor();
+
+    WindowCompositor(const WindowCompositor &);
     // Does not make sense for a singleton. This is a self assignment.
     WindowCompositor &operator= (const WindowCompositor &);
     // Declare operator address-of as private

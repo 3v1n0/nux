@@ -61,88 +61,88 @@ namespace nux
     UINT                        m_Size;
     UINT                        m_Type;
 
-    GLShaderParameter (GLProgramObject *Shader,
-                       const TCHAR *ParamName,
+    GLShaderParameter(GLProgramObject *Shader,
+                       const char *ParamName,
                        eShaderParameterType InType,
                        bool InbIsOptional = FALSE,
                        bool InbIsStatic = FALSE);
 
-    inline void SetUniform1f ( FLOAT FloatA )
+    inline void SetUniform1f( FLOAT FloatA )
     {
       NUX_RETURN_IF_TRUE(m_Index == -1);
-      CHECKGL ( glUniform1fARB ( m_Index, FloatA ) );
+      CHECKGL(glUniform1fARB( m_Index, FloatA ));
     }
-    inline void SetUniform1i ( INT i )
+    inline void SetUniform1i( INT i )
     {
       NUX_RETURN_IF_TRUE(m_Index == -1);
-      CHECKGL ( glUniform1iARB ( m_Index, i ) );
+      CHECKGL(glUniform1iARB( m_Index, i ));
     }
-    inline void SetUniform2f ( FLOAT FloatA, FLOAT FloatB )
+    inline void SetUniform2f( FLOAT FloatA, FLOAT FloatB )
     {
       NUX_RETURN_IF_TRUE(m_Index == -1);
-      CHECKGL ( glUniform2fARB ( m_Index, FloatA, FloatB ) );
+      CHECKGL(glUniform2fARB( m_Index, FloatA, FloatB ));
     }
-    inline void SetUniform3f ( FLOAT FloatA, FLOAT FloatB, FLOAT FloatC )
+    inline void SetUniform3f( FLOAT FloatA, FLOAT FloatB, FLOAT FloatC )
     {
       NUX_RETURN_IF_TRUE(m_Index == -1);
-      CHECKGL ( glUniform3fARB ( m_Index, FloatA, FloatB, FloatC ) );
+      CHECKGL(glUniform3fARB( m_Index, FloatA, FloatB, FloatC ));
     }
-    inline void SetUniform4f ( FLOAT FloatA, FLOAT FloatB, FLOAT FloatC, FLOAT FloatD )
+    inline void SetUniform4f( FLOAT FloatA, FLOAT FloatB, FLOAT FloatC, FLOAT FloatD )
     {
       NUX_RETURN_IF_TRUE(m_Index == -1);
-      CHECKGL ( glUniform4fARB ( m_Index, FloatA, FloatB, FloatC, FloatD ) );
+      CHECKGL(glUniform4fARB( m_Index, FloatA, FloatB, FloatC, FloatD ));
     }
 
-    inline void SetUniform1fv ( GLsizei count, GLfloat *value )
+    inline void SetUniform1fv( GLsizei count, GLfloat *value )
     {
       NUX_RETURN_IF_TRUE(m_Index == -1);
-      CHECKGL ( glUniform1fvARB ( m_Index, count, value ) );
+      CHECKGL(glUniform1fvARB( m_Index, count, value ));
     }
 
-    inline void SetUniform2fv ( GLsizei count, GLfloat *value )
+    inline void SetUniform2fv( GLsizei count, GLfloat *value )
     {
       NUX_RETURN_IF_TRUE(m_Index == -1);
-      CHECKGL ( glUniform2fvARB ( m_Index, count, value ) );
+      CHECKGL(glUniform2fvARB( m_Index, count, value ));
     }
 
-    inline void SetUniform3fv ( GLsizei count, GLfloat *value )
+    inline void SetUniform3fv( GLsizei count, GLfloat *value )
     {
       NUX_RETURN_IF_TRUE(m_Index == -1);
-      CHECKGL ( glUniform3fvARB ( m_Index, count, value ) );
+      CHECKGL(glUniform3fvARB( m_Index, count, value ));
     }
 
-    inline void SetUniform4fv ( GLsizei count, GLfloat *value )
+    inline void SetUniform4fv( GLsizei count, GLfloat *value )
     {
       NUX_RETURN_IF_TRUE(m_Index == -1);
-      CHECKGL ( glUniform4fvARB ( m_Index, count, value ) );
+      CHECKGL(glUniform4fvARB( m_Index, count, value ));
     }
 
-    inline void SetUniformMatrix2fv ( GLsizei count, GLfloat *value, GLboolean transpose = GL_FALSE )
+    inline void SetUniformMatrix2fv( GLsizei count, GLfloat *value, GLboolean transpose = GL_FALSE )
     {
       NUX_RETURN_IF_TRUE(m_Index == -1);
-      CHECKGL ( glUniformMatrix2fvARB ( m_Index, count, transpose, value ) );
+      CHECKGL(glUniformMatrix2fvARB( m_Index, count, transpose, value ));
     }
 
-    inline void SetUniformMatrix3fv ( GLsizei count, GLfloat *value, GLboolean transpose = GL_FALSE )
+    inline void SetUniformMatrix3fv( GLsizei count, GLfloat *value, GLboolean transpose = GL_FALSE )
     {
       NUX_RETURN_IF_TRUE(m_Index == -1);
-      CHECKGL ( glUniformMatrix3fvARB ( m_Index, count, transpose, value ) );
+      CHECKGL(glUniformMatrix3fvARB( m_Index, count, transpose, value ));
     }
 
-    inline void SetUniformMatrix4fv ( GLsizei count, GLfloat *value, GLboolean transpose = GL_FALSE )
+    inline void SetUniformMatrix4fv( GLsizei count, GLfloat *value, GLboolean transpose = GL_FALSE )
     {
       NUX_RETURN_IF_TRUE(m_Index == -1);
-      CHECKGL ( glUniformMatrix4fvARB ( m_Index, count, transpose, value ) );
+      CHECKGL(glUniformMatrix4fvARB( m_Index, count, transpose, value ));
     }
 
 
-    inline void SetTexture ( const GLuint textureId )
+    inline void SetTexture( const GLuint textureId )
     {
-      //CHECKGL( glUniform1iARB( m_Index, textureId ) );
-      //CHECKGL( cgGLEnableTextureParameter( CgParameter ) );
+      //CHECKGL(glUniform1iARB( m_Index, textureId ));
+      //CHECKGL(cgGLEnableTextureParameter( CgParameter ));
     }
 
-    void MapTo ( GLProgramObject *Shader );
+    void MapTo( GLProgramObject *Shader );
 
   private:
 

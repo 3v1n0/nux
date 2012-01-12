@@ -35,7 +35,7 @@ namespace nux
 {
   NUX_IMPLEMENT_OBJECT_TYPE(RGBValuator);
 
-  RGBValuator::RGBValuator (NUX_FILE_LINE_DECL)
+  RGBValuator::RGBValuator(NUX_FILE_LINE_DECL)
     : View(NUX_FILE_LINE_PARAM)
     , rgb_(1, 1, 1)
     , hsv_(rgb_)
@@ -44,245 +44,248 @@ namespace nux
     , m_color_format(color::FLOAT)
   {
     InitializeLayout();
-    SetColorModel (m_color_model);
-    SetColorFormat (m_color_format);
-    SetRGBA (1.0f, 1.0f, 1.0f, 1.0f);
+    SetColorModel(m_color_model);
+    SetColorFormat(m_color_format);
+    SetRGBA(1.0f, 1.0f, 1.0f, 1.0f);
     InitializeWidgets();
   }
 
-  RGBValuator::RGBValuator (Color const& color, NUX_FILE_LINE_DECL)
-    : View (NUX_FILE_LINE_PARAM)
+  RGBValuator::RGBValuator(Color const& color, NUX_FILE_LINE_DECL)
+    : View(NUX_FILE_LINE_PARAM)
     , rgb_(1, 1, 1)
     , hsv_(rgb_)
     , hls_(rgb_)
-    , m_color_model (color::RGB)
-    , m_color_format (color::FLOAT)
+    , m_color_model(color::RGB)
+    , m_color_format(color::FLOAT)
   {
     InitializeLayout();
-    SetColorModel (m_color_model);
-    SetColorFormat (m_color_format);
-    SetRGBA (color);
+    SetColorModel(m_color_model);
+    SetColorFormat(m_color_format);
+    SetRGBA(color);
     InitializeWidgets();
   }
 
-  RGBValuator::RGBValuator (color::Model colorModel, float x, float y, float z, float alpha,    NUX_FILE_LINE_DECL)
-    : View (NUX_FILE_LINE_PARAM)
+  RGBValuator::RGBValuator(color::Model colorModel, float x, float y, float z, float alpha,    NUX_FILE_LINE_DECL)
+    : View(NUX_FILE_LINE_PARAM)
     , rgb_(1, 1, 1)
     , hsv_(rgb_)
     , hls_(rgb_)
-    , m_color_model (colorModel)
-    , m_color_format (color::FLOAT)
+    , m_color_model(colorModel)
+    , m_color_format(color::FLOAT)
   {
     InitializeLayout();
 
-    switch (m_color_model)
+    switch(m_color_model)
     {
       case color::HSV:
       {
-        SetColorModel (color::HSV);
-        SetHSV (x, y, z);
-        SetAlpha (alpha);
+        SetColorModel(color::HSV);
+        SetHSV(x, y, z);
+        SetAlpha(alpha);
       }
       case color::HLS:
       {
-        SetColorModel (color::HLS);
-        SetHLS (x, y, z);
-        SetAlpha (alpha);
+        SetColorModel(color::HLS);
+        SetHLS(x, y, z);
+        SetAlpha(alpha);
       }
       default:
       case color::RGB:
       {
-        SetColorModel (color::RGB);
-        SetRGBA (x, y, z, alpha);
+        SetColorModel(color::RGB);
+        SetRGBA(x, y, z, alpha);
       }
     }
 
-    SetColorFormat (m_color_format);
+    SetColorFormat(m_color_format);
 
     InitializeWidgets();
 
   }
   void RGBValuator::InitializeLayout()
   {
-    hlayout             = new HLayout (TEXT ("RGBValuatorLayout"), NUX_TRACKER_LOCATION);
-    redlayout           = new HLayout (TEXT ("RedLayout"), NUX_TRACKER_LOCATION);
-    greenlayout         = new HLayout (TEXT ("GreenLayout"), NUX_TRACKER_LOCATION);
-    bluelayout          = new HLayout (TEXT ("BlueLayout"), NUX_TRACKER_LOCATION);
-    alphalayout         = new HLayout (TEXT ("AlphaLayout"), NUX_TRACKER_LOCATION);
-    vlayout             = new VLayout (TEXT ("RGBVLayout"), NUX_TRACKER_LOCATION);
-    colormodel_layout   = new VLayout (TEXT ("ColorModel"), NUX_TRACKER_LOCATION);
+    hlayout             = new HLayout("RGBValuatorLayout", NUX_TRACKER_LOCATION);
+    redlayout           = new HLayout("RedLayout", NUX_TRACKER_LOCATION);
+    greenlayout         = new HLayout("GreenLayout", NUX_TRACKER_LOCATION);
+    bluelayout          = new HLayout("BlueLayout", NUX_TRACKER_LOCATION);
+    alphalayout         = new HLayout("AlphaLayout", NUX_TRACKER_LOCATION);
+    vlayout             = new VLayout("RGBVLayout", NUX_TRACKER_LOCATION);
+    colormodel_layout   = new VLayout("ColorModel", NUX_TRACKER_LOCATION);
 
     m_ColorModel        = new ToggleButton();
     m_ColorFormat       = new ToggleButton();
 
-    m_RedCaption        = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
-    m_GreenCaption      = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
-    m_BlueCaption       = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
-    m_AlphaCaption      = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
+    red_caption_        = new EditTextBox("", NUX_TRACKER_LOCATION);
+    green_caption_      = new EditTextBox("", NUX_TRACKER_LOCATION);
+    blue_caption_       = new EditTextBox("", NUX_TRACKER_LOCATION);
+    alpha_caption_      = new EditTextBox("", NUX_TRACKER_LOCATION);
 
-    m_RedValuator       = new InputArea (NUX_TRACKER_LOCATION);
-    m_GreenValuator     = new InputArea (NUX_TRACKER_LOCATION);
-    m_BlueValuator      = new InputArea (NUX_TRACKER_LOCATION);
-    m_AlphaValuator     = new InputArea (NUX_TRACKER_LOCATION);
-    m_ColorSquare       = new InputArea (NUX_TRACKER_LOCATION);
+    red_valuator_       = new InputArea(NUX_TRACKER_LOCATION);
+    green_valuator_     = new InputArea(NUX_TRACKER_LOCATION);
+    blue_valuator_      = new InputArea(NUX_TRACKER_LOCATION);
+    alpha_valuator_     = new InputArea(NUX_TRACKER_LOCATION);
+    color_square_       = new InputArea(NUX_TRACKER_LOCATION);
 
-    m_ComponentLabel0   = new InputArea (NUX_TRACKER_LOCATION);
-    m_ComponentLabel1   = new InputArea (NUX_TRACKER_LOCATION);
-    m_ComponentLabel2   = new InputArea (NUX_TRACKER_LOCATION);
-    m_ComponentAlpha    = new InputArea (NUX_TRACKER_LOCATION);
+    m_ComponentLabel0   = new InputArea(NUX_TRACKER_LOCATION);
+    m_ComponentLabel1   = new InputArea(NUX_TRACKER_LOCATION);
+    m_ComponentLabel2   = new InputArea(NUX_TRACKER_LOCATION);
+    m_ComponentAlpha    = new InputArea(NUX_TRACKER_LOCATION);
   }
 
   void RGBValuator::InitializeWidgets()
   {
-    m_HexRegExp.SetMaximum (255);
-    m_HexRegExp.SetMinimum (0);
-    m_IntRegExp.SetMaximum (255);
-    m_IntRegExp.SetMinimum (0);
-    m_DoubleRegExp.SetMaximum (1.0);
-    m_DoubleRegExp.SetMinimum (0);
+    m_HexRegExp.SetMaximum(255);
+    m_HexRegExp.SetMinimum(0);
+    m_IntRegExp.SetMaximum(255);
+    m_IntRegExp.SetMinimum(0);
+    m_DoubleRegExp.SetMaximum(1.0);
+    m_DoubleRegExp.SetMinimum(0);
 
     // Set Signals
-    m_RedValuator->mouse_down.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDown_Red) );
-    m_GreenValuator->mouse_down.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDown_Green) );
-    m_BlueValuator->mouse_down.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDown_Blue) );
-    m_AlphaValuator->mouse_down.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDown_Alpha) );
-    m_RedValuator->mouse_drag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Red) );
-    m_GreenValuator->mouse_drag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Green) );
-    m_BlueValuator->mouse_drag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Blue) );
-    m_AlphaValuator->mouse_drag.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseDrag_Alpha) );
-    //FIXME - m_ColorModel->sigClick.connect (sigc::mem_fun (this, &RGBValuator::OnChangeColorModel) );
-    //FIXME - m_ColorFormat->sigClick.connect (sigc::mem_fun (this, &RGBValuator::OnChangeColorFormat) );
+    red_valuator_->mouse_down.connect(sigc::mem_fun(this, &RGBValuator::OnReceiveMouseDown_Red));
+    green_valuator_->mouse_down.connect(sigc::mem_fun(this, &RGBValuator::OnReceiveMouseDown_Green));
+    blue_valuator_->mouse_down.connect(sigc::mem_fun(this, &RGBValuator::OnReceiveMouseDown_Blue));
+    alpha_valuator_->mouse_down.connect(sigc::mem_fun(this, &RGBValuator::OnReceiveMouseDown_Alpha));
+    red_valuator_->mouse_drag.connect(sigc::mem_fun(this, &RGBValuator::OnReceiveMouseDrag_Red));
+    green_valuator_->mouse_drag.connect(sigc::mem_fun(this, &RGBValuator::OnReceiveMouseDrag_Green));
+    blue_valuator_->mouse_drag.connect(sigc::mem_fun(this, &RGBValuator::OnReceiveMouseDrag_Blue));
+    alpha_valuator_->mouse_drag.connect(sigc::mem_fun(this, &RGBValuator::OnReceiveMouseDrag_Alpha));
+    m_ColorModel->click.connect(sigc::mem_fun(this, &RGBValuator::OnChangeColorModel));
+    m_ColorFormat->click.connect(sigc::mem_fun(this, &RGBValuator::OnChangeColorFormat));
 //    m_ColorModel->mouse_down.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
 //    m_ColorModel->mouse_up.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
 //    m_ColorModel->mouse_enter.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
 
 
-    m_ColorModel->SetFont (GetSysBoldFont() );
-    m_ColorFormat->SetFont (GetSysBoldFont() );
+    m_ColorModel->SetFont(GetSysBoldFont());
+    m_ColorFormat->SetFont(GetSysBoldFont());
 
-    m_RedValuator->mouse_up.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseUp_Red) );
-    m_GreenValuator->mouse_up.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseUp_Green) );
-    m_BlueValuator->mouse_up.connect (sigc::mem_fun (this, &RGBValuator::OnReceiveMouseUp_Blue) );
+    red_valuator_->mouse_up.connect(sigc::mem_fun(this, &RGBValuator::OnReceiveMouseUp_Red));
+    green_valuator_->mouse_up.connect(sigc::mem_fun(this, &RGBValuator::OnReceiveMouseUp_Green));
+    blue_valuator_->mouse_up.connect(sigc::mem_fun(this, &RGBValuator::OnReceiveMouseUp_Blue));
 
-    m_RedCaption->sigValidateKeyboardEntry.connect (sigc::bind (sigc::mem_fun (this, &RGBValuator::OnComponentInput), 0) );
-    m_GreenCaption->sigValidateKeyboardEntry.connect (sigc::bind (sigc::mem_fun (this, &RGBValuator::OnComponentInput), 1) );
-    m_BlueCaption->sigValidateKeyboardEntry.connect (sigc::bind (sigc::mem_fun (this, &RGBValuator::OnComponentInput), 2) );
-    m_AlphaCaption->sigValidateKeyboardEntry.connect (sigc::bind (sigc::mem_fun (this, &RGBValuator::OnComponentInput), 3) );
+    red_caption_->sigValidateKeyboardEntry.connect(sigc::bind(sigc::mem_fun(this, &RGBValuator::OnComponentInput), 0));
+    green_caption_->sigValidateKeyboardEntry.connect(sigc::bind(sigc::mem_fun(this, &RGBValuator::OnComponentInput), 1));
+    blue_caption_->sigValidateKeyboardEntry.connect(sigc::bind(sigc::mem_fun(this, &RGBValuator::OnComponentInput), 2));
+    alpha_caption_->sigValidateKeyboardEntry.connect(sigc::bind(sigc::mem_fun(this, &RGBValuator::OnComponentInput), 3));
 
     // Set Geometry
 
-    m_RedCaption->SetGeometry (Geometry (0, 0, 42, DEFAULT_WIDGET_HEIGHT) );
-    m_RedCaption->SetMaximumHeight (15);
+    red_caption_->SetGeometry(Geometry(0, 0, 42, DEFAULT_WIDGET_HEIGHT));
+    red_caption_->SetMaximumHeight(15);
 
-    m_GreenCaption->SetGeometry (Geometry (0, 0, 42, DEFAULT_WIDGET_HEIGHT) );
-    m_GreenCaption->SetMaximumHeight (15);
+    green_caption_->SetGeometry(Geometry(0, 0, 42, DEFAULT_WIDGET_HEIGHT));
+    green_caption_->SetMaximumHeight(15);
 
-    m_BlueCaption->SetGeometry (Geometry (0, 0, 42, DEFAULT_WIDGET_HEIGHT) );
-    m_BlueCaption->SetMaximumHeight (15);
+    blue_caption_->SetGeometry(Geometry(0, 0, 42, DEFAULT_WIDGET_HEIGHT));
+    blue_caption_->SetMaximumHeight(15);
 
-    m_AlphaCaption->SetGeometry (Geometry (0, 0, 42, DEFAULT_WIDGET_HEIGHT) );
-    m_AlphaCaption->SetMaximumHeight (15);
+    alpha_caption_->SetGeometry(Geometry(0, 0, 42, DEFAULT_WIDGET_HEIGHT));
+    alpha_caption_->SetMaximumHeight(15);
 
-    m_ComponentLabel0->SetMinimumSize (10, DEFAULT_WIDGET_HEIGHT);
-    m_ComponentLabel0->SetMaximumHeight (15);
+    m_ComponentLabel0->SetMinimumSize(10, DEFAULT_WIDGET_HEIGHT);
+    m_ComponentLabel0->SetMaximumHeight(15);
     //m_ComponentLabel0->SetGeometry(Geometry(0, 0, 15, DEFAULT_WIDGET_HEIGHT));
 
-    m_ComponentLabel1->SetMinimumSize (10, DEFAULT_WIDGET_HEIGHT);
-    m_ComponentLabel1->SetMaximumHeight (15);
+    m_ComponentLabel1->SetMinimumSize(10, DEFAULT_WIDGET_HEIGHT);
+    m_ComponentLabel1->SetMaximumHeight(15);
     //m_ComponentLabel1->SetGeometry(Geometry(0, 0, 15, DEFAULT_WIDGET_HEIGHT));
 
-    m_ComponentLabel2->SetMinimumSize (10, DEFAULT_WIDGET_HEIGHT);
-    m_ComponentLabel2->SetMaximumHeight (15);
+    m_ComponentLabel2->SetMinimumSize(10, DEFAULT_WIDGET_HEIGHT);
+    m_ComponentLabel2->SetMaximumHeight(15);
     //m_ComponentLabel2->SetGeometry(Geometry(0, 0, 15, DEFAULT_WIDGET_HEIGHT));
 
-    m_ComponentAlpha->SetMinimumSize (10, DEFAULT_WIDGET_HEIGHT);
-    m_ComponentAlpha->SetMaximumHeight (15);
+    m_ComponentAlpha->SetMinimumSize(10, DEFAULT_WIDGET_HEIGHT);
+    m_ComponentAlpha->SetMaximumHeight(15);
     //m_ComponentAlpha->SetGeometry(Geometry(0, 0, 15, DEFAULT_WIDGET_HEIGHT));
 
-    m_RedValuator->SetMinimumSize (3 * DEFAULT_WIDGET_WIDTH, 15);
-    m_RedValuator->SetMaximumHeight (15);
-    m_RedValuator->SetGeometry (Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT) );
+    red_valuator_->SetMinimumSize(3 * DEFAULT_WIDGET_WIDTH, 15);
+    red_valuator_->SetMaximumHeight(15);
+    red_valuator_->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
 
-    m_GreenValuator->SetMinimumSize (3 * DEFAULT_WIDGET_WIDTH, 15);
-    m_GreenValuator->SetMaximumHeight (15);
-    m_GreenValuator->SetGeometry (Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT) );
+    green_valuator_->SetMinimumSize(3 * DEFAULT_WIDGET_WIDTH, 15);
+    green_valuator_->SetMaximumHeight(15);
+    green_valuator_->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
 
-    m_BlueValuator->SetMinimumSize (3 * DEFAULT_WIDGET_WIDTH, 15);
-    m_BlueValuator->SetMaximumHeight (15);
-    m_BlueValuator->SetGeometry (Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT) );
+    blue_valuator_->SetMinimumSize(3 * DEFAULT_WIDGET_WIDTH, 15);
+    blue_valuator_->SetMaximumHeight(15);
+    blue_valuator_->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
 
-    m_AlphaValuator->SetMinimumSize (3 * DEFAULT_WIDGET_WIDTH, 15);
-    m_AlphaValuator->SetMaximumHeight (15);
-    m_AlphaValuator->SetGeometry (Geometry (0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT) );
+    alpha_valuator_->SetMinimumSize(3 * DEFAULT_WIDGET_WIDTH, 15);
+    alpha_valuator_->SetMaximumHeight(15);
+    alpha_valuator_->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
 
-    m_ColorSquare->SetMinimumSize (40, 40);
-    m_ColorSquare->SetGeometry (Geometry (0, 0, 40, 40) );
-    m_ColorModel->SetMinimumSize (20, 16 /*PRACTICAL_WIDGET_HEIGHT*/);
-    m_ColorFormat->SetMinimumSize (20, 16 /*PRACTICAL_WIDGET_HEIGHT*/);
+    color_square_->SetMinimumSize(32, 32);
+    color_square_->SetGeometry(Geometry(0, 0, 32, 32));
+    m_ColorModel->SetMinimumSize(20, 16);
+    m_ColorModel->SetLayoutPadding(0, 0, 0, 0);
+    m_ColorFormat->SetMinimumSize(20, 16);
+    m_ColorFormat->SetLayoutPadding(0, 0, 0, 0);
 
-    redlayout->AddView (m_ComponentLabel0, 0);
-    redlayout->AddView (m_RedCaption, 0);
-    redlayout->AddView (m_RedValuator, 1);
-    redlayout->SetHorizontalInternalMargin (4);
+    redlayout->AddView(m_ComponentLabel0, 0, MINOR_POSITION_CENTER, MINOR_SIZE_MATCHCONTENT);
+    redlayout->AddView(red_caption_, 0);
+    redlayout->AddView(red_valuator_, 1);
+    redlayout->SetSpaceBetweenChildren(4);
 
-    greenlayout->AddView (m_ComponentLabel1, 0);
-    greenlayout->AddView (m_GreenCaption, 0);
-    greenlayout->AddView (m_GreenValuator, 1);
-    greenlayout->SetHorizontalInternalMargin (4);
+    greenlayout->AddView(m_ComponentLabel1, 0, MINOR_POSITION_CENTER, MINOR_SIZE_MATCHCONTENT);
+    greenlayout->AddView(green_caption_, 0);
+    greenlayout->AddView(green_valuator_, 1);
+    greenlayout->SetSpaceBetweenChildren(4);
 
-    bluelayout->AddView (m_ComponentLabel2, 0);
-    bluelayout->AddView (m_BlueCaption, 0);
-    bluelayout->AddView (m_BlueValuator, 1);
-    bluelayout->SetHorizontalInternalMargin (4);
+    bluelayout->AddView(m_ComponentLabel2, 0, MINOR_POSITION_CENTER, MINOR_SIZE_MATCHCONTENT);
+    bluelayout->AddView(blue_caption_, 0);
+    bluelayout->AddView(blue_valuator_, 1);
+    bluelayout->SetSpaceBetweenChildren(4);
 
-    alphalayout->AddView (m_ComponentAlpha, 0);
-    alphalayout->AddView (m_AlphaCaption, 0);
-    alphalayout->AddView (m_AlphaValuator, 1);
-    alphalayout->SetHorizontalInternalMargin (4);
+    alphalayout->AddView(m_ComponentAlpha, 0, MINOR_POSITION_CENTER, MINOR_SIZE_MATCHCONTENT);
+    alphalayout->AddView(alpha_caption_, 0);
+    alphalayout->AddView(alpha_valuator_, 1);
+    alphalayout->SetSpaceBetweenChildren(4);
 
     // Set layout
-    colormodel_layout->AddView (m_ColorSquare, 0, eCenter, eFix);
-    colormodel_layout->AddView (m_ColorModel, 0, eCenter, eFull);
-    colormodel_layout->AddView (m_ColorFormat, 0, eCenter, eFull);
-    colormodel_layout->SetVerticalInternalMargin (2);
+    colormodel_layout->AddView(color_square_, 0, eCenter, eFix);
+    colormodel_layout->AddView(m_ColorModel, 0, eCenter, eFull);
+    colormodel_layout->AddView(m_ColorFormat, 0, eCenter, eFull);
+    colormodel_layout->SetSpaceBetweenChildren(2);
 
-    hlayout->AddView (colormodel_layout, 0, eCenter , eFull);
+    hlayout->AddView(colormodel_layout, 0, MINOR_POSITION_START, MINOR_SIZE_MATCHCONTENT);
 
-    vlayout->AddLayout (redlayout, 1);
-    vlayout->AddLayout (greenlayout, 1);
-    vlayout->AddLayout (bluelayout, 1);
-    vlayout->AddLayout (alphalayout, 1);
-    vlayout->SetVerticalInternalMargin (2);
-    vlayout->SetVerticalExternalMargin (4);
-    vlayout->SetHorizontalExternalMargin (4);
+    vlayout->AddLayout(redlayout, 0);
+    vlayout->AddLayout(greenlayout, 0);
+    vlayout->AddLayout(bluelayout, 0);
+    vlayout->AddLayout(alphalayout, 0);
+    vlayout->SetSpaceBetweenChildren(2);
+    vlayout->SetTopAndBottomPadding(4);
+    vlayout->SetLeftAndRightPadding(4);
+    vlayout->SetContentDistribution(MAJOR_POSITION_CENTER);
 
 
-    hlayout->AddLayout (vlayout, 10);
-    hlayout->SetHorizontalInternalMargin (2);
-    hlayout->SetHorizontalExternalMargin (6);
-    hlayout->SetVerticalExternalMargin (4);
+    hlayout->AddLayout(vlayout, 1, MINOR_POSITION_CENTER, MINOR_SIZE_FULL);
+    hlayout->SetSpaceBetweenChildren(2);
+    hlayout->SetLeftAndRightPadding(6, 6);
+    hlayout->SetTopAndBottomPadding(0);
 
-    SetCompositionLayout (hlayout);
+    SetCompositionLayout(hlayout);
 
     NTextureData image;
-    MakeCheckBoardImage (image.GetSurface (0), 64, 64, Color (0xff000000), Color (0xff323232), 4, 4);
-    BaseTexture* CheckboardPattern = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture ();
-    CheckboardPattern->Update (&image);
+    MakeCheckBoardImage(image.GetSurface(0), 64, 64, Color(0xff000000), Color(0xff323232), 4, 4);
+    BaseTexture* CheckboardPattern = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
+    CheckboardPattern->Update(&image);
 
     TexCoordXForm texxform;
-    texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
-    texxform.SetWrap (TEXWRAP_REPEAT, TEXWRAP_REPEAT);
-    m_CheckboardLayer = new TextureLayer (CheckboardPattern->GetDeviceTexture(), texxform, color::White);
+    texxform.SetTexCoordType(TexCoordXForm::OFFSET_COORD);
+    texxform.SetWrap(TEXWRAP_REPEAT, TEXWRAP_REPEAT);
+    m_CheckboardLayer = new TextureLayer(CheckboardPattern->GetDeviceTexture(), texxform, color::White);
 
-    CheckboardPattern->UnReference ();
+    CheckboardPattern->UnReference();
   }
 
   RGBValuator::~RGBValuator()
   {
-    NUX_SAFE_DELETE (m_CheckboardLayer);
+    NUX_SAFE_DELETE(m_CheckboardLayer);
   }
 
-  void RGBValuator::DrawRedMarker (GraphicsEngine &GfxContext)
+  void RGBValuator::DrawRedMarker(GraphicsEngine &graphics_engine)
   {
     int marker_position_x;
     int marker_position_y;
@@ -298,22 +301,22 @@ namespace nux
     if (m_color_model == color::HLS)
       percent = hls_.hue;
 
-    GfxContext.PushClippingRectangle (m_RedValuator->GetGeometry() );
+    graphics_engine.PushClippingRectangle(red_valuator_->GetGeometry());
 
-    marker_position_x = m_RedValuator->GetBaseX() + percent * m_RedValuator->GetBaseWidth();
-    marker_position_y = m_RedValuator->GetBaseY() + m_RedValuator->GetBaseHeight();
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 5, marker_position_y,
+    marker_position_x = red_valuator_->GetBaseX() + percent * red_valuator_->GetBaseWidth();
+    marker_position_y = red_valuator_->GetBaseY() + red_valuator_->GetBaseHeight();
+    GetPainter().Draw2DTriangleColor(graphics_engine, marker_position_x - 5, marker_position_y,
                                   marker_position_x, marker_position_y - 5,
-                                  marker_position_x + 5, marker_position_y, Color (0xFF000000) );
+                                  marker_position_x + 5, marker_position_y, Color(0xFF000000));
 
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 4, marker_position_y,
+    GetPainter().Draw2DTriangleColor(graphics_engine, marker_position_x - 4, marker_position_y,
                                   marker_position_x, marker_position_y - 4,
-                                  marker_position_x + 4, marker_position_y, Color (0.7f, 0.7f, 0.7f, 1.0f) );
+                                  marker_position_x + 4, marker_position_y, Color(0.7f, 0.7f, 0.7f, 1.0f));
 
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void RGBValuator::DrawGreenMarker (GraphicsEngine &GfxContext)
+  void RGBValuator::DrawGreenMarker(GraphicsEngine &graphics_engine)
   {
     int marker_position_x;
     int marker_position_y;
@@ -329,22 +332,22 @@ namespace nux
     if (m_color_model == color::HLS)
       percent = hls_.lightness;
 
-    GfxContext.PushClippingRectangle (m_GreenValuator->GetGeometry() );
+    graphics_engine.PushClippingRectangle(green_valuator_->GetGeometry());
 
-    marker_position_x = m_GreenValuator->GetBaseX() + percent * m_GreenValuator->GetBaseWidth();
-    marker_position_y = m_GreenValuator->GetBaseY() + m_GreenValuator->GetBaseHeight();
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 5, marker_position_y,
+    marker_position_x = green_valuator_->GetBaseX() + percent * green_valuator_->GetBaseWidth();
+    marker_position_y = green_valuator_->GetBaseY() + green_valuator_->GetBaseHeight();
+    GetPainter().Draw2DTriangleColor(graphics_engine, marker_position_x - 5, marker_position_y,
                                   marker_position_x, marker_position_y - 5,
-                                  marker_position_x + 5, marker_position_y, Color (0.0f, 0.0f, 0.0f, 1.0f) );
+                                  marker_position_x + 5, marker_position_y, Color(0.0f, 0.0f, 0.0f, 1.0f));
 
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 4, marker_position_y,
+    GetPainter().Draw2DTriangleColor(graphics_engine, marker_position_x - 4, marker_position_y,
                                   marker_position_x, marker_position_y - 4,
-                                  marker_position_x + 4, marker_position_y, Color (0.7f, 0.7f, 0.7f, 1.0f) );
+                                  marker_position_x + 4, marker_position_y, Color(0.7f, 0.7f, 0.7f, 1.0f));
 
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void RGBValuator::DrawBlueMarker (GraphicsEngine &GfxContext)
+  void RGBValuator::DrawBlueMarker(GraphicsEngine &graphics_engine)
   {
     int marker_position_x;
     int marker_position_y;
@@ -360,166 +363,155 @@ namespace nux
     if (m_color_model == color::HLS)
       percent = hls_.saturation;
 
-    GfxContext.PushClippingRectangle (m_BlueValuator->GetGeometry() );
+    graphics_engine.PushClippingRectangle(blue_valuator_->GetGeometry());
 
-    marker_position_x = m_BlueValuator->GetBaseX() + percent * m_BlueValuator->GetBaseWidth();
-    marker_position_y = m_BlueValuator->GetBaseY() + m_BlueValuator->GetBaseHeight();
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 5, marker_position_y,
+    marker_position_x = blue_valuator_->GetBaseX() + percent * blue_valuator_->GetBaseWidth();
+    marker_position_y = blue_valuator_->GetBaseY() + blue_valuator_->GetBaseHeight();
+    GetPainter().Draw2DTriangleColor(graphics_engine, marker_position_x - 5, marker_position_y,
                                   marker_position_x, marker_position_y - 5,
-                                  marker_position_x + 5, marker_position_y, Color (0.0f, 0.0f, 0.0f, 1.0f) );
+                                  marker_position_x + 5, marker_position_y, Color(0.0f, 0.0f, 0.0f, 1.0f));
 
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 4, marker_position_y,
+    GetPainter().Draw2DTriangleColor(graphics_engine, marker_position_x - 4, marker_position_y,
                                   marker_position_x, marker_position_y - 4,
-                                  marker_position_x + 4, marker_position_y, Color (0.7f, 0.7f, 0.7f, 1.0f) );
+                                  marker_position_x + 4, marker_position_y, Color(0.7f, 0.7f, 0.7f, 1.0f));
 
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void RGBValuator::DrawAlphaMarker (GraphicsEngine &GfxContext)
+  void RGBValuator::DrawAlphaMarker(GraphicsEngine &graphics_engine)
   {
     int marker_position_x;
     int marker_position_y;
 
-    GfxContext.PushClippingRectangle (m_AlphaValuator->GetGeometry() );
+    graphics_engine.PushClippingRectangle(alpha_valuator_->GetGeometry());
 
-    marker_position_x = m_AlphaValuator->GetBaseX() + alpha_ * m_AlphaValuator->GetBaseWidth();
-    marker_position_y = m_AlphaValuator->GetBaseY() + m_AlphaValuator->GetBaseHeight();
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 5, marker_position_y,
+    marker_position_x = alpha_valuator_->GetBaseX() + alpha_ * alpha_valuator_->GetBaseWidth();
+    marker_position_y = alpha_valuator_->GetBaseY() + alpha_valuator_->GetBaseHeight();
+    GetPainter().Draw2DTriangleColor(graphics_engine, marker_position_x - 5, marker_position_y,
                                   marker_position_x, marker_position_y - 5,
-                                  marker_position_x + 5, marker_position_y, Color (0.0f, 0.0f, 0.0f, 1.0f) );
+                                  marker_position_x + 5, marker_position_y, Color(0.0f, 0.0f, 0.0f, 1.0f));
 
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 4, marker_position_y,
+    GetPainter().Draw2DTriangleColor(graphics_engine, marker_position_x - 4, marker_position_y,
                                   marker_position_x, marker_position_y - 4,
-                                  marker_position_x + 4, marker_position_y, Color (0.7f, 0.7f, 0.7f, 1.0f) );
+                                  marker_position_x + 4, marker_position_y, Color(0.7f, 0.7f, 0.7f, 1.0f));
 
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void RGBValuator::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void RGBValuator::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
 
-    GfxContext.PushClippingRectangle (base);
-    GetPainter().PushDrawShapeLayer (GfxContext, vlayout->GetGeometry(), eSHAPE_CORNER_ROUND4, Color (0xFF000000), eAllCorners);
+    graphics_engine.PushClippingRectangle(base);
+    GetPainter().PushDrawShapeLayer(graphics_engine, vlayout->GetGeometry(), eSHAPE_CORNER_ROUND4, Color(0xFF000000), eAllCorners);
 
     if (m_color_model == color::RGB)
     {
-      DrawRGB (GfxContext);
+      DrawRGB(graphics_engine);
     }
     else if (m_color_model == color::HSV)
     {
-      DrawHSV (GfxContext);
+      DrawHSV(graphics_engine);
     }
     else if (m_color_model == color::HLS)
     {
-      DrawHLS (GfxContext);
+      DrawHLS(graphics_engine);
     }
 
-    GetPainter().PaintTextLineStatic (GfxContext, GetSysBoldFont(), m_ComponentLabel0->GetGeometry(), m_ComponentLabel0->GetBaseString().GetTCharPtr(), Color (0xFFFFFFFF) );
-    GetPainter().PaintTextLineStatic (GfxContext, GetSysBoldFont(), m_ComponentLabel1->GetGeometry(), m_ComponentLabel1->GetBaseString().GetTCharPtr(), Color (0xFFFFFFFF) );
-    GetPainter().PaintTextLineStatic (GfxContext, GetSysBoldFont(), m_ComponentLabel2->GetGeometry(), m_ComponentLabel2->GetBaseString().GetTCharPtr(), Color (0xFFFFFFFF) );
-    GetPainter().PaintTextLineStatic (GfxContext, GetSysBoldFont(), m_ComponentAlpha->GetGeometry(), m_ComponentAlpha->GetBaseString().GetTCharPtr(), Color (0xFFFFFFFF) );
+    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentLabel0->GetGeometry(), m_ComponentLabel0->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
+    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentLabel1->GetGeometry(), m_ComponentLabel1->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
+    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentLabel2->GetGeometry(), m_ComponentLabel2->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
+    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentAlpha->GetGeometry(), m_ComponentAlpha->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
 
-    DrawRedMarker (GfxContext);
-    DrawGreenMarker (GfxContext);
-    DrawBlueMarker (GfxContext);
-    DrawAlphaMarker (GfxContext);
+    DrawRedMarker(graphics_engine);
+    DrawGreenMarker(graphics_engine);
+    DrawBlueMarker(graphics_engine);
+    DrawAlphaMarker(graphics_engine);
 
-    m_RedCaption->QueueDraw();
-    m_GreenCaption->QueueDraw();
-    m_BlueCaption->QueueDraw();
-    m_AlphaCaption->QueueDraw();
+    red_caption_->QueueDraw();
+    green_caption_->QueueDraw();
+    blue_caption_->QueueDraw();
+    alpha_caption_->QueueDraw();
     m_ColorModel->QueueDraw();
     m_ColorFormat->QueueDraw();
 
     GetPainter().PopBackground();
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void RGBValuator::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void RGBValuator::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
-    GfxContext.PushClippingRectangle (base);
+    graphics_engine.PushClippingRectangle(base);
 
-    m_RedCaption->ProcessDraw (GfxContext, force_draw);
-    m_GreenCaption->ProcessDraw (GfxContext, force_draw);
-    m_BlueCaption->ProcessDraw (GfxContext, force_draw);
-    m_AlphaCaption->ProcessDraw (GfxContext, force_draw);
+    red_caption_->ProcessDraw(graphics_engine, force_draw);
+    green_caption_->ProcessDraw(graphics_engine, force_draw);
+    blue_caption_->ProcessDraw(graphics_engine, force_draw);
+    alpha_caption_->ProcessDraw(graphics_engine, force_draw);
 
-    m_ColorModel->ProcessDraw (GfxContext, force_draw); // the button has round corner. That is why we need to push the background.
-    m_ColorFormat->ProcessDraw (GfxContext, force_draw); // the button has round corner. That is why we need to push the background.
-    GfxContext.PopClippingRectangle();
+    m_ColorModel->ProcessDraw(graphics_engine, force_draw); // the button has round corner. That is why we need to push the background.
+    m_ColorFormat->ProcessDraw(graphics_engine, force_draw); // the button has round corner. That is why we need to push the background.
+    graphics_engine.PopClippingRectangle();
   }
 
-  void RGBValuator::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
-  {
-
-  }
-
-  void RGBValuator::DrawRGB (GraphicsEngine &GfxContext)
+  void RGBValuator::DrawRGB(GraphicsEngine &graphics_engine)
   {
     // Red
-    Geometry P = m_RedValuator->GetGeometry();
-    GetPainter().Paint2DQuadColor (GfxContext, P, Color (0.0f, rgb_.green, rgb_.blue), Color (0.0f, rgb_.green, rgb_.blue),
-                               Color (1.0f, rgb_.green, rgb_.blue), Color (1.0f, rgb_.green, rgb_.blue) );
+    Geometry P = red_valuator_->GetGeometry();
+    GetPainter().Paint2DQuadColor(graphics_engine, P, Color(0.0f, rgb_.green, rgb_.blue), Color(0.0f, rgb_.green, rgb_.blue),
+                               Color(1.0f, rgb_.green, rgb_.blue), Color(1.0f, rgb_.green, rgb_.blue));
 
     // Green
-    P = m_GreenValuator->GetGeometry();
-    GetPainter().Paint2DQuadColor (GfxContext, P, Color (rgb_.red, 0.0f, rgb_.blue), Color (rgb_.red, 0.0f, rgb_.blue),
-                               Color (rgb_.red, 1.0f, rgb_.blue), Color (rgb_.red, 1.0f, rgb_.blue) );
+    P = green_valuator_->GetGeometry();
+    GetPainter().Paint2DQuadColor(graphics_engine, P, Color(rgb_.red, 0.0f, rgb_.blue), Color(rgb_.red, 0.0f, rgb_.blue),
+                               Color(rgb_.red, 1.0f, rgb_.blue), Color(rgb_.red, 1.0f, rgb_.blue));
 
     // Blue
-    P = m_BlueValuator->GetGeometry();
-    GetPainter().Paint2DQuadColor (GfxContext, P, Color (rgb_.red, rgb_.green, 0.0f), Color (rgb_.red, rgb_.green, 0.0f),
-                               Color (rgb_.red, rgb_.green, 1.0f), Color (rgb_.red, rgb_.green, 1.0f) );
+    P = blue_valuator_->GetGeometry();
+    GetPainter().Paint2DQuadColor(graphics_engine, P, Color(rgb_.red, rgb_.green, 0.0f), Color(rgb_.red, rgb_.green, 0.0f),
+                               Color(rgb_.red, rgb_.green, 1.0f), Color(rgb_.red, rgb_.green, 1.0f));
 
     // Alpha
-    P = m_AlphaValuator->GetGeometry();
-    m_CheckboardLayer->SetGeometry (P);
-    m_CheckboardLayer->Renderlayer (GfxContext);
+    P = alpha_valuator_->GetGeometry();
+    m_CheckboardLayer->SetGeometry(P);
+    m_CheckboardLayer->Renderlayer(graphics_engine);
 
-    GfxContext.GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    GetPainter().Paint2DQuadColor (GfxContext, P, Color (0.0f, 0.0f, 0.0f, 0.0f), Color (0.0f, 0.0f, 0.0f, 0.0f),
-                               Color (rgb_.red, rgb_.green, rgb_.blue, 1.0f), Color (rgb_.red, rgb_.green, rgb_.blue, 1.0f) );
-    GfxContext.GetRenderStates().SetBlend (false);
+    graphics_engine.GetRenderStates().SetBlend(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    GetPainter().Paint2DQuadColor(graphics_engine, P, Color(0.0f, 0.0f, 0.0f, 0.0f), Color(0.0f, 0.0f, 0.0f, 0.0f),
+                               Color(rgb_.red, rgb_.green, rgb_.blue, 1.0f), Color(rgb_.red, rgb_.green, rgb_.blue, 1.0f));
+    graphics_engine.GetRenderStates().SetBlend(false);
 
-    P = m_ColorSquare->GetGeometry();
-    Geometry shadow_quad = P;
-    P.OffsetSize (-2, -2);
-    shadow_quad.OffsetSize (-2, -2);
-    shadow_quad.OffsetPosition (2, 2);
-    GetPainter().Paint2DQuadColor (GfxContext, shadow_quad, Color (0, 0, 0) );
-    GetPainter().Paint2DQuadColor (GfxContext, P, Color (rgb_.red, rgb_.green, rgb_.blue), Color (rgb_.red, rgb_.green, rgb_.blue),
-                               Color (rgb_.red, rgb_.green, rgb_.blue), Color (rgb_.red, rgb_.green, rgb_.blue) );
-    GetPainter().Paint2DQuadWireframe (GfxContext, P, Color (0, 0, 0) );
+    P = color_square_->GetGeometry();
+    GetPainter().Paint2DQuadColor(graphics_engine, P, Color(rgb_.red, rgb_.green, rgb_.blue), Color(rgb_.red, rgb_.green, rgb_.blue),
+                               Color(rgb_.red, rgb_.green, rgb_.blue), Color(rgb_.red, rgb_.green, rgb_.blue));
 
-    m_ColorModel->ProcessDraw (GfxContext, true);
-    m_ColorFormat->ProcessDraw (GfxContext, true);
+    m_ColorModel->ProcessDraw(graphics_engine, true);
+    m_ColorFormat->ProcessDraw(graphics_engine, true);
   }
 
-  void RGBValuator::DrawHSV (GraphicsEngine &GfxContext)
+  void RGBValuator::DrawHSV(GraphicsEngine &graphics_engine)
   {
     // Red
-    Geometry P = m_RedValuator->GetGeometry();
+    Geometry P = red_valuator_->GetGeometry();
     float s = 0; //XSI: 1.0f - hsv_.saturation;
     float v = 1; //XSI: hsv_.value;
     float fw = P.GetWidth() / 6;
 
-    Geometry p = Geometry (P.x, P.y, fw, P.GetHeight() );
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (1.0f * v, s * v, s * v), Color (1.0f * v, s * v, s * v), Color (1.0f * v, 1.0f * v, s * v), Color (1.0f * v, 1.0f * v, s * v) );
-    p.SetX (P.x + fw);
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (1.0f * v, 1.0f * v, s * v), Color (1.0f * v, 1.0f * v, s * v), Color (s * v, 1.0f * v, s * v), Color (s * v, 1.0f * v, s * v) );
+    Geometry p = Geometry(P.x, P.y, fw, P.GetHeight());
+    GetPainter().Paint2DQuadColor(graphics_engine, p, Color(1.0f * v, s * v, s * v), Color(1.0f * v, s * v, s * v), Color(1.0f * v, 1.0f * v, s * v), Color(1.0f * v, 1.0f * v, s * v));
+    p.SetX(P.x + fw);
+    GetPainter().Paint2DQuadColor(graphics_engine, p, Color(1.0f * v, 1.0f * v, s * v), Color(1.0f * v, 1.0f * v, s * v), Color(s * v, 1.0f * v, s * v), Color(s * v, 1.0f * v, s * v));
 
-    p.SetX (P.x + 2 * fw);
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (s * v, 1.0f * v, s * v), Color (s * v, 1.0f * v, s * v), Color (s * v, 1.0f * v, 1.0f * v), Color (s * v, 1.0f * v, 1.0f * v) );
-    p.SetX (P.x + 3 * fw);
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (s * v, 1.0f * v, 1.0f * v), Color (s * v, 1.0f * v, 1.0f * v), Color (s * v, s * v, 1.0f * v), Color (s * v, s * v, 1.0f * v) );
+    p.SetX(P.x + 2 * fw);
+    GetPainter().Paint2DQuadColor(graphics_engine, p, Color(s * v, 1.0f * v, s * v), Color(s * v, 1.0f * v, s * v), Color(s * v, 1.0f * v, 1.0f * v), Color(s * v, 1.0f * v, 1.0f * v));
+    p.SetX(P.x + 3 * fw);
+    GetPainter().Paint2DQuadColor(graphics_engine, p, Color(s * v, 1.0f * v, 1.0f * v), Color(s * v, 1.0f * v, 1.0f * v), Color(s * v, s * v, 1.0f * v), Color(s * v, s * v, 1.0f * v));
 
-    p.SetX (P.x + 4 * fw);
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (s * v, s * v, 1.0f * v), Color (s * v, s * v, 1.0f * v), Color (1.0f * v, s * v, 1.0f * v), Color (1.0f * v, s * v, 1.0f * v) );
-    p.SetX (P.x + 5 * fw);
-    p.SetWidth (P.GetWidth() - 5 * fw); // correct rounding errors
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (1.0f * v, s * v, 1.0f * v), Color (1.0f * v, s * v, 1.0f * v), Color (1.0f * v, s * v, s * v), Color (1.0f * v, s * v, s * v) );
+    p.SetX(P.x + 4 * fw);
+    GetPainter().Paint2DQuadColor(graphics_engine, p, Color(s * v, s * v, 1.0f * v), Color(s * v, s * v, 1.0f * v), Color(1.0f * v, s * v, 1.0f * v), Color(1.0f * v, s * v, 1.0f * v));
+    p.SetX(P.x + 5 * fw);
+    p.SetWidth(P.GetWidth() - 5 * fw); // correct rounding errors
+    GetPainter().Paint2DQuadColor(graphics_engine, p, Color(1.0f * v, s * v, 1.0f * v), Color(1.0f * v, s * v, 1.0f * v), Color(1.0f * v, s * v, s * v), Color(1.0f * v, s * v, s * v));
 
     s = 1.0f - hsv_.saturation;
     v = hsv_.value;
@@ -532,61 +524,55 @@ namespace nux
     Color value_gray(v, v, v);
     Color value_color(Color(rgb) * v);
     // Green
-    P = m_GreenValuator->GetGeometry();
-    GetPainter().Paint2DQuadColor(GfxContext, P, value_gray, value_gray, value_color, value_color);
+    P = green_valuator_->GetGeometry();
+    GetPainter().Paint2DQuadColor(graphics_engine, P, value_gray, value_gray, value_color, value_color);
 
     rgb = color::RedGreenBlue(color::HueSaturationValue(hue, hsv_.saturation, 1));
     // Blue
-    P = m_BlueValuator->GetGeometry();
-    GetPainter().Paint2DQuadColor (GfxContext, P, color::Black, color::Black, Color(rgb), Color(rgb) );
+    P = blue_valuator_->GetGeometry();
+    GetPainter().Paint2DQuadColor(graphics_engine, P, color::Black, color::Black, Color(rgb), Color(rgb));
 
     rgb = color::RedGreenBlue(color::HueSaturationValue(hue, hsv_.saturation, hsv_.value));
 
     // Alpha
-    P = m_AlphaValuator->GetGeometry();
-    m_CheckboardLayer->SetGeometry (P);
-    m_CheckboardLayer->Renderlayer (GfxContext);
+    P = alpha_valuator_->GetGeometry();
+    m_CheckboardLayer->SetGeometry(P);
+    m_CheckboardLayer->Renderlayer(graphics_engine);
 
-    GfxContext.GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    GetPainter().Paint2DQuadColor (GfxContext, P, Color(0.0f, 0.0f, 0.0f, 0.0f), Color(0.0f, 0.0f, 0.0f, 0.0f), Color(rgb), Color(rgb) );
-    GfxContext.GetRenderStates().SetBlend (false);
+    graphics_engine.GetRenderStates().SetBlend(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    GetPainter().Paint2DQuadColor(graphics_engine, P, Color(0.0f, 0.0f, 0.0f, 0.0f), Color(0.0f, 0.0f, 0.0f, 0.0f), Color(rgb), Color(rgb));
+    graphics_engine.GetRenderStates().SetBlend(false);
 
-    P = m_ColorSquare->GetGeometry();
-    Geometry shadow_quad = P;
-    P.OffsetSize (-2, -2);
-    shadow_quad.OffsetSize (-2, -2);
-    shadow_quad.OffsetPosition (2, 2);
-    GetPainter().Paint2DQuadColor (GfxContext, shadow_quad, Color (0, 0, 0) );
-    GetPainter().Paint2DQuadColor (GfxContext, P, Color (rgb) );
-    GetPainter().Paint2DQuadWireframe (GfxContext, P, Color (0, 0, 0) );
+    P = color_square_->GetGeometry();
+    GetPainter().Paint2DQuadColor(graphics_engine, P, Color(rgb));
 
-    m_ColorModel->ProcessDraw (GfxContext, true);
-    m_ColorFormat->ProcessDraw (GfxContext, true);
+    m_ColorModel->ProcessDraw(graphics_engine, true);
+    m_ColorFormat->ProcessDraw(graphics_engine, true);
   }
 
-  void RGBValuator::DrawHLS (GraphicsEngine &GfxContext)
+  void RGBValuator::DrawHLS(GraphicsEngine &graphics_engine)
   {
     // Red
-    Geometry P = m_RedValuator->GetGeometry();
+    Geometry P = red_valuator_->GetGeometry();
     float s = 0; //XSI: 1.0f - hls_.saturation;
     float l = 1; //XSI: hls_.lightness;
     float fw = P.GetWidth() / 6;
 
-    Geometry p = Geometry (P.x, P.y, fw, P.GetHeight() );
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (1.0f * l, s * l, s * l), Color (1.0f * l, s * l, s * l), Color (1.0f * l, 1.0f * l, s * l), Color (1.0f * l, 1.0f * l, s * l) );
-    p.SetX (P.x + fw);
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (1.0f * l, 1.0f * l, s * l), Color (1.0f * l, 1.0f * l, s * l), Color (s * l, 1.0f * l, s * l), Color (s * l, 1.0f * l, s * l) );
+    Geometry p = Geometry(P.x, P.y, fw, P.GetHeight());
+    GetPainter().Paint2DQuadColor(graphics_engine, p, Color(1.0f * l, s * l, s * l), Color(1.0f * l, s * l, s * l), Color(1.0f * l, 1.0f * l, s * l), Color(1.0f * l, 1.0f * l, s * l));
+    p.SetX(P.x + fw);
+    GetPainter().Paint2DQuadColor(graphics_engine, p, Color(1.0f * l, 1.0f * l, s * l), Color(1.0f * l, 1.0f * l, s * l), Color(s * l, 1.0f * l, s * l), Color(s * l, 1.0f * l, s * l));
 
-    p.SetX (P.x + 2 * fw);
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (s * l, 1.0f * l, s * l), Color (s * l, 1.0f * l, s * l), Color (s * l, 1.0f * l, 1.0f * l), Color (s * l, 1.0f * l, 1.0f * l) );
-    p.SetX (P.x + 3 * fw);
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (s * l, 1.0f * l, 1.0f * l), Color (s * l, 1.0f * l, 1.0f * l), Color (s * l, s * l, 1.0f * l), Color (s * l, s * l, 1.0f * l) );
+    p.SetX(P.x + 2 * fw);
+    GetPainter().Paint2DQuadColor(graphics_engine, p, Color(s * l, 1.0f * l, s * l), Color(s * l, 1.0f * l, s * l), Color(s * l, 1.0f * l, 1.0f * l), Color(s * l, 1.0f * l, 1.0f * l));
+    p.SetX(P.x + 3 * fw);
+    GetPainter().Paint2DQuadColor(graphics_engine, p, Color(s * l, 1.0f * l, 1.0f * l), Color(s * l, 1.0f * l, 1.0f * l), Color(s * l, s * l, 1.0f * l), Color(s * l, s * l, 1.0f * l));
 
-    p.SetX (P.x + 4 * fw);
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (s * l, s * l, 1.0f * l), Color (s * l, s * l, 1.0f * l), Color (1.0f * l, s * l, 1.0f * l), Color (1.0f * l, s * l, 1.0f * l) );
-    p.SetX (P.x + 5 * fw);
-    p.SetWidth (P.GetWidth() - 5 * fw); // correct rounding errors
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (1.0f * l, s * l, 1.0f * l), Color (1.0f * l, s * l, 1.0f * l), Color (1.0f * l, s * l, s * l), Color (1.0f * l, s * l, s * l) );
+    p.SetX(P.x + 4 * fw);
+    GetPainter().Paint2DQuadColor(graphics_engine, p, Color(s * l, s * l, 1.0f * l), Color(s * l, s * l, 1.0f * l), Color(1.0f * l, s * l, 1.0f * l), Color(1.0f * l, s * l, 1.0f * l));
+    p.SetX(P.x + 5 * fw);
+    p.SetWidth(P.GetWidth() - 5 * fw); // correct rounding errors
+    GetPainter().Paint2DQuadColor(graphics_engine, p, Color(1.0f * l, s * l, 1.0f * l), Color(1.0f * l, s * l, 1.0f * l), Color(1.0f * l, s * l, s * l), Color(1.0f * l, s * l, s * l));
 
     s = 1.0f - hls_.saturation;
     l = hls_.lightness;
@@ -607,12 +593,12 @@ namespace nux
     float b = rgb.blue;
 
     // Green
-    P = m_GreenValuator->GetGeometry();
+    P = green_valuator_->GetGeometry();
     fw = P.GetWidth() / 2;
-    p = Geometry (P.x, P.y, fw, P.GetHeight() );
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (0.0f, 0.0f, 0.0f), Color (0.0f, 0.0f, 0.0f), Color (r* (1 - s) + 0.5f * s, g* (1 - s) + 0.5f * s, b* (1 - s) + 0.5f * s), Color (r* (1 - s) + 0.5f * s, g* (1 - s) + 0.5f * s, b* (1 - s) + 0.5f * s) );
-    p.SetX (P.x + fw);
-    GetPainter().Paint2DQuadColor (GfxContext, p, Color (r* (1 - s) + 0.5f * s, g* (1 - s) + 0.5f * s, b* (1 - s) + 0.5f * s), Color (r* (1 - s) + 0.5f * s, g* (1 - s) + 0.5f * s, b* (1 - s) + 0.5f * s), Color (1.0f, 1.0f, 1.0f), Color (1.0f, 1.0f, 1.0f) );
+    p = Geometry(P.x, P.y, fw, P.GetHeight());
+    GetPainter().Paint2DQuadColor(graphics_engine, p, Color(0.0f, 0.0f, 0.0f), Color(0.0f, 0.0f, 0.0f), Color(r* (1 - s) + 0.5f * s, g* (1 - s) + 0.5f * s, b* (1 - s) + 0.5f * s), Color(r* (1 - s) + 0.5f * s, g* (1 - s) + 0.5f * s, b* (1 - s) + 0.5f * s));
+    p.SetX(P.x + fw);
+    GetPainter().Paint2DQuadColor(graphics_engine, p, Color(r* (1 - s) + 0.5f * s, g* (1 - s) + 0.5f * s, b* (1 - s) + 0.5f * s), Color(r* (1 - s) + 0.5f * s, g* (1 - s) + 0.5f * s, b* (1 - s) + 0.5f * s), Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f));
 
 
     //HLStoRGB(r, g, b, Hue, hsv_.saturation, 1.0f);
@@ -634,33 +620,27 @@ namespace nux
       cb = (factor) * b * (1 - s) + 0.5 * s;
     }
 
-    P = m_BlueValuator->GetGeometry();
-    GetPainter().Paint2DQuadColor (GfxContext, P, Color (l, l, l), Color (l, l, l), Color (cr, cg, cb), Color (cr, cg, cb) );
+    P = blue_valuator_->GetGeometry();
+    GetPainter().Paint2DQuadColor(graphics_engine, P, Color(l, l, l), Color(l, l, l), Color(cr, cg, cb), Color(cr, cg, cb));
 
     // TODO: Tim Penhey 2011-05-13
     // Can we just use the rgb_ member variable?  Check later.
     rgb = color::RedGreenBlue(hls_);
 
     // Alpha
-    P = m_AlphaValuator->GetGeometry();
-    m_CheckboardLayer->SetGeometry (P);
-    m_CheckboardLayer->Renderlayer (GfxContext);
+    P = alpha_valuator_->GetGeometry();
+    m_CheckboardLayer->SetGeometry(P);
+    m_CheckboardLayer->Renderlayer(graphics_engine);
 
-    GfxContext.GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    GetPainter().Paint2DQuadColor(GfxContext, P, Color(0.0f, 0.0f, 0.0f, 0.0f), Color (0.0f, 0.0f, 0.0f, 0.0f), Color(rgb), Color(rgb) );
-    GfxContext.GetRenderStates().SetBlend (false);
+    graphics_engine.GetRenderStates().SetBlend(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    GetPainter().Paint2DQuadColor(graphics_engine, P, Color(0.0f, 0.0f, 0.0f, 0.0f), Color(0.0f, 0.0f, 0.0f, 0.0f), Color(rgb), Color(rgb));
+    graphics_engine.GetRenderStates().SetBlend(false);
 
-    P = m_ColorSquare->GetGeometry();
-    Geometry shadow_quad = P;
-    P.OffsetSize (-2, -2);
-    shadow_quad.OffsetSize (-2, -2);
-    shadow_quad.OffsetPosition (2, 2);
-    GetPainter().Paint2DQuadColor (GfxContext, shadow_quad, Color (0, 0, 0) );
-    GetPainter().Paint2DQuadColor (GfxContext, P, Color (rgb) );
-    GetPainter().Paint2DQuadWireframe (GfxContext, P, Color (0, 0, 0) );
+    P = color_square_->GetGeometry();
+    GetPainter().Paint2DQuadColor(graphics_engine, P, Color(rgb));
 
-    m_ColorModel->ProcessDraw (GfxContext, true);
-    m_ColorFormat->ProcessDraw (GfxContext, true);
+    m_ColorModel->ProcessDraw(graphics_engine, true);
+    m_ColorFormat->ProcessDraw(graphics_engine, true);
   }
 
   void RGBValuator::SetRGBA(Color const& color)
@@ -679,74 +659,74 @@ namespace nux
     SetRGB(color.red, color.green, color.blue);
   }
 
-  void RGBValuator::SetRGB (float r, float g, float b)
+  void RGBValuator::SetRGB(float r, float g, float b)
   {
-    rgb_.red   = Clamp (r, 0.0f, 1.0f);
-    rgb_.green = Clamp (g, 0.0f, 1.0f);
-    rgb_.blue  = Clamp (b, 0.0f, 1.0f);
+    rgb_.red   = Clamp(r, 0.0f, 1.0f);
+    rgb_.green = Clamp(g, 0.0f, 1.0f);
+    rgb_.blue  = Clamp(b, 0.0f, 1.0f);
 
-    bool RedEditSelected = m_RedCaption->IsTextSelected();
-    bool GreenEditSelected = m_GreenCaption->IsTextSelected();
-    bool BlueEditSelected = m_BlueCaption->IsTextSelected();
+    bool RedEditSelected = red_caption_->IsTextSelected();
+    bool GreenEditSelected = green_caption_->IsTextSelected();
+    bool BlueEditSelected = blue_caption_->IsTextSelected();
 
     if (m_color_format == color::HEX)
     {
-      m_RedCaption->SetText (NString::Printf ("%x", (int) (rgb_.red * 255) ) );
-      m_GreenCaption->SetText (NString::Printf ("%x", (int) (rgb_.green * 255) ) );
-      m_BlueCaption->SetText (NString::Printf ("%x", (int) (rgb_.blue * 255) ) );
+      red_caption_->SetText(NString::Printf("%x", (int) (rgb_.red * 255)));
+      green_caption_->SetText(NString::Printf("%x", (int) (rgb_.green * 255)));
+      blue_caption_->SetText(NString::Printf("%x", (int) (rgb_.blue * 255)));
     }
     else if (m_color_format == color::INT)
     {
-      m_RedCaption->SetText (NString::Printf ("%d", (int) (rgb_.red * 255) ) );
-      m_GreenCaption->SetText (NString::Printf ("%d", (int) (rgb_.green * 255) ) );
-      m_BlueCaption->SetText (NString::Printf ("%d", (int) (rgb_.blue * 255) ) );
+      red_caption_->SetText(NString::Printf("%d", (int) (rgb_.red * 255)));
+      green_caption_->SetText(NString::Printf("%d", (int) (rgb_.green * 255)));
+      blue_caption_->SetText(NString::Printf("%d", (int) (rgb_.blue * 255)));
     }
     else
     {
-      m_RedCaption->SetText (NString::Printf ("%.3f", rgb_.red) );
-      m_GreenCaption->SetText (NString::Printf ("%.3f", rgb_.green) );
-      m_BlueCaption->SetText (NString::Printf ("%.3f", rgb_.blue) );
+      red_caption_->SetText(NString::Printf("%.3f", rgb_.red));
+      green_caption_->SetText(NString::Printf("%.3f", rgb_.green));
+      blue_caption_->SetText(NString::Printf("%.3f", rgb_.blue));
     }
 
     // Restore text selection if necessary.
     // This solves a problem when an EditTextBox of the widget gets the focus and has its text selected
     // but another who is losing the focus will cause it to lose the text selection by calling SetRGB.
-    if (RedEditSelected) m_RedCaption->m_KeyboardHandler.SelectAllText();
+    if (RedEditSelected) red_caption_->m_KeyboardHandler.SelectAllText();
 
-    if (GreenEditSelected) m_GreenCaption->m_KeyboardHandler.SelectAllText();
+    if (GreenEditSelected) green_caption_->m_KeyboardHandler.SelectAllText();
 
-    if (BlueEditSelected) m_BlueCaption->m_KeyboardHandler.SelectAllText();
+    if (BlueEditSelected) blue_caption_->m_KeyboardHandler.SelectAllText();
 
-    sigColorChanged.emit (rgb_.red, rgb_.green, rgb_.blue, alpha_);
+    sigColorChanged.emit(rgb_.red, rgb_.green, rgb_.blue, alpha_);
   }
 
-  void RGBValuator::SetHSV (float h, float s, float v)
+  void RGBValuator::SetHSV(float h, float s, float v)
   {
-    hsv_.hue        = Clamp (h, 0.0f, 1.0f);
-    hsv_.saturation = Clamp (s, 0.0f, 1.0f);
-    hsv_.value      = Clamp (v, 0.0f, 1.0f);
+    hsv_.hue        = Clamp(h, 0.0f, 1.0f);
+    hsv_.saturation = Clamp(s, 0.0f, 1.0f);
+    hsv_.value      = Clamp(v, 0.0f, 1.0f);
 
-    bool RedEditSelected = m_RedCaption->IsTextSelected();
-    bool GreenEditSelected = m_GreenCaption->IsTextSelected();
-    bool BlueEditSelected = m_BlueCaption->IsTextSelected();
+    bool RedEditSelected = red_caption_->IsTextSelected();
+    bool GreenEditSelected = green_caption_->IsTextSelected();
+    bool BlueEditSelected = blue_caption_->IsTextSelected();
 
     if (m_color_format == color::HEX)
     {
-      m_RedCaption->SetText (NString::Printf ("%x", (int) (hsv_.hue * 255) ) );
-      m_GreenCaption->SetText (NString::Printf ("%x", (int) (hsv_.saturation * 255) ) );
-      m_BlueCaption->SetText (NString::Printf ("%x", (int) (hsv_.value * 255) ) );
+      red_caption_->SetText(NString::Printf("%x", (int) (hsv_.hue * 255)));
+      green_caption_->SetText(NString::Printf("%x", (int) (hsv_.saturation * 255)));
+      blue_caption_->SetText(NString::Printf("%x", (int) (hsv_.value * 255)));
     }
     else if (m_color_format == color::INT)
     {
-      m_RedCaption->SetText (NString::Printf ("%d", (int) (hsv_.hue * 255) ) );
-      m_GreenCaption->SetText (NString::Printf ("%d", (int) (hsv_.saturation * 255) ) );
-      m_BlueCaption->SetText (NString::Printf ("%d", (int) (hsv_.value * 255) ) );
+      red_caption_->SetText(NString::Printf("%d", (int) (hsv_.hue * 255)));
+      green_caption_->SetText(NString::Printf("%d", (int) (hsv_.saturation * 255)));
+      blue_caption_->SetText(NString::Printf("%d", (int) (hsv_.value * 255)));
     }
     else
     {
-      m_RedCaption->SetText (NString::Printf ("%.3f", hsv_.hue) );
-      m_GreenCaption->SetText (NString::Printf ("%.3f", hsv_.saturation) );
-      m_BlueCaption->SetText (NString::Printf ("%.3f", hsv_.value) );
+      red_caption_->SetText(NString::Printf("%.3f", hsv_.hue));
+      green_caption_->SetText(NString::Printf("%.3f", hsv_.saturation));
+      blue_caption_->SetText(NString::Printf("%.3f", hsv_.value));
     }
 
     if (hsv_.hue >= 1.0f)
@@ -755,43 +735,43 @@ namespace nux
       // XSI: hsv_.hue = 0.0f;
     }
 
-    if (RedEditSelected) m_RedCaption->m_KeyboardHandler.SelectAllText();
+    if (RedEditSelected) red_caption_->m_KeyboardHandler.SelectAllText();
 
-    if (GreenEditSelected) m_GreenCaption->m_KeyboardHandler.SelectAllText();
+    if (GreenEditSelected) green_caption_->m_KeyboardHandler.SelectAllText();
 
-    if (BlueEditSelected) m_BlueCaption->m_KeyboardHandler.SelectAllText();
+    if (BlueEditSelected) blue_caption_->m_KeyboardHandler.SelectAllText();
 
     rgb_ = color::RedGreenBlue(hsv_);
-    sigColorChanged.emit (rgb_.red, rgb_.green, rgb_.blue, alpha_);
+    sigColorChanged.emit(rgb_.red, rgb_.green, rgb_.blue, alpha_);
   }
 
-  void RGBValuator::SetHLS (float h, float l, float s)
+  void RGBValuator::SetHLS(float h, float l, float s)
   {
-    hls_.hue        = Clamp (h, 0.0f, 1.0f);
-    hls_.lightness      = Clamp (l, 0.0f, 1.0f);
-    hls_.saturation = Clamp (s, 0.0f, 1.0f);
+    hls_.hue        = Clamp(h, 0.0f, 1.0f);
+    hls_.lightness      = Clamp(l, 0.0f, 1.0f);
+    hls_.saturation = Clamp(s, 0.0f, 1.0f);
 
-    bool RedEditSelected = m_RedCaption->IsTextSelected();
-    bool GreenEditSelected = m_GreenCaption->IsTextSelected();
-    bool BlueEditSelected = m_BlueCaption->IsTextSelected();
+    bool RedEditSelected = red_caption_->IsTextSelected();
+    bool GreenEditSelected = green_caption_->IsTextSelected();
+    bool BlueEditSelected = blue_caption_->IsTextSelected();
 
     if (m_color_format == color::HEX)
     {
-      m_RedCaption->SetText (NString::Printf (TEXT ("%x"), (int) (hls_.hue * 255) ) );
-      m_GreenCaption->SetText (NString::Printf ("%x", (int) (hls_.lightness * 255) ) );
-      m_BlueCaption->SetText (NString::Printf ("%x", (int) (hls_.saturation * 255) ) );
+      red_caption_->SetText(NString::Printf("%x", (int) (hls_.hue * 255)));
+      green_caption_->SetText(NString::Printf("%x", (int) (hls_.lightness * 255)));
+      blue_caption_->SetText(NString::Printf("%x", (int) (hls_.saturation * 255)));
     }
     else if (m_color_format == color::INT)
     {
-      m_RedCaption->SetText (NString::Printf (TEXT ("%d"), (int) (hls_.hue * 255) ) );
-      m_GreenCaption->SetText (NString::Printf ("%d", (int) (hls_.lightness * 255) ) );
-      m_BlueCaption->SetText (NString::Printf ("%d", (int) (hls_.saturation * 255) ) );
+      red_caption_->SetText(NString::Printf("%d", (int) (hls_.hue * 255)));
+      green_caption_->SetText(NString::Printf("%d", (int) (hls_.lightness * 255)));
+      blue_caption_->SetText(NString::Printf("%d", (int) (hls_.saturation * 255)));
     }
     else
     {
-      m_RedCaption->SetText (NString::Printf (TEXT ("%.3f"), hls_.hue) );
-      m_GreenCaption->SetText (NString::Printf ("%.3f", hls_.lightness) );
-      m_BlueCaption->SetText (NString::Printf ("%.3f", hls_.saturation) );
+      red_caption_->SetText(NString::Printf("%.3f", hls_.hue));
+      green_caption_->SetText(NString::Printf("%.3f", hls_.lightness));
+      blue_caption_->SetText(NString::Printf("%.3f", hls_.saturation));
     }
 
     if (hls_.hue >= 1.0f)
@@ -800,247 +780,247 @@ namespace nux
       // XSI: hls_.hue = 0.0f;
     }
 
-    if (RedEditSelected) m_RedCaption->m_KeyboardHandler.SelectAllText();
+    if (RedEditSelected) red_caption_->m_KeyboardHandler.SelectAllText();
 
-    if (GreenEditSelected) m_GreenCaption->m_KeyboardHandler.SelectAllText();
+    if (GreenEditSelected) green_caption_->m_KeyboardHandler.SelectAllText();
 
-    if (BlueEditSelected) m_BlueCaption->m_KeyboardHandler.SelectAllText();
+    if (BlueEditSelected) blue_caption_->m_KeyboardHandler.SelectAllText();
 
     rgb_ = color::RedGreenBlue(hls_);
-    sigColorChanged.emit (rgb_.red, rgb_.green, rgb_.blue, alpha_);
+    sigColorChanged.emit(rgb_.red, rgb_.green, rgb_.blue, alpha_);
   }
 
   void RGBValuator::SetAlpha(float alpha)
   {
-    alpha_ = Clamp (alpha, 0.0f, 1.0f);
+    alpha_ = Clamp(alpha, 0.0f, 1.0f);
 
     if (m_color_format == color::HEX)
     {
-      m_AlphaCaption->SetText (NString::Printf ("%x", (int) (alpha_ * 255) ) );
+      alpha_caption_->SetText(NString::Printf("%x", (int) (alpha_ * 255)));
     }
     else if (m_color_format == color::INT)
     {
-      m_AlphaCaption->SetText (NString::Printf ("%d", (int) (alpha_ * 255) ) );
+      alpha_caption_->SetText(NString::Printf("%d", (int) (alpha_ * 255)));
     }
     else
     {
-      m_AlphaCaption->SetText (NString::Printf ("%.3f", alpha_) );
+      alpha_caption_->SetText(NString::Printf("%.3f", alpha_));
     }
 
     sigColorChanged.emit(rgb_.red, rgb_.green, rgb_.blue, alpha_);
   }
 
-  void RGBValuator::OnReceiveMouseDown_Red (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDown_Red(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     if (m_color_model == color::RGB)
     {
       if (x < 0)
         rgb_.red = 0.0f;
-      else if (x > m_RedValuator->GetBaseWidth() )
+      else if (x > red_valuator_->GetBaseWidth())
         rgb_.red = 1.0f;
       else
-        rgb_.red = (float) x / (float) m_RedValuator->GetBaseWidth();
+        rgb_.red = (float) x / (float) red_valuator_->GetBaseWidth();
 
       if (key_flags & NUX_STATE_CTRL)
       {
-        SetRGB (rgb_.red, rgb_.red, rgb_.red);
+        SetRGB(rgb_.red, rgb_.red, rgb_.red);
       }
       else
       {
-        SetRGB (rgb_.red, rgb_.green, rgb_.blue);
+        SetRGB(rgb_.red, rgb_.green, rgb_.blue);
       }
     }
     else if (m_color_model == color::HSV)
     {
       if (x < 0)
         hsv_.hue = 0.0f;
-      else if (x > m_RedValuator->GetBaseWidth() )
+      else if (x > red_valuator_->GetBaseWidth())
         hsv_.hue = 1.0f;
       else
-        hsv_.hue = (float) x / (float) m_RedValuator->GetBaseWidth();
+        hsv_.hue = (float) x / (float) red_valuator_->GetBaseWidth();
 
       if (key_flags & NUX_STATE_CTRL)
       {
-        SetHSV (hsv_.hue, hsv_.hue, hsv_.hue);
+        SetHSV(hsv_.hue, hsv_.hue, hsv_.hue);
       }
       else
       {
-        SetHSV (hsv_.hue, hsv_.saturation, hsv_.value);
+        SetHSV(hsv_.hue, hsv_.saturation, hsv_.value);
       }
     }
     else if (m_color_model == color::HLS)
     {
       if (x < 0)
         hls_.hue = 0.0f;
-      else if (x > m_RedValuator->GetBaseWidth() )
+      else if (x > red_valuator_->GetBaseWidth())
         hls_.hue = 1.0f;
       else
-        hls_.hue = (float) x / (float) m_RedValuator->GetBaseWidth();
+        hls_.hue = (float) x / (float) red_valuator_->GetBaseWidth();
 
       if (key_flags & NUX_STATE_CTRL)
       {
-        SetHLS (hls_.hue, hls_.hue, hls_.hue);
+        SetHLS(hls_.hue, hls_.hue, hls_.hue);
       }
       else
       {
-        SetHLS (hls_.hue, hls_.lightness, hls_.saturation);
+        SetHLS(hls_.hue, hls_.lightness, hls_.saturation);
       }
     }
 
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseDown_Green (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDown_Green(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     if (m_color_model == color::RGB)
     {
       if (x < 0)
         rgb_.green = 0.0f;
-      else if (x > m_GreenValuator->GetBaseWidth() )
+      else if (x > green_valuator_->GetBaseWidth())
         rgb_.green = 1.0f;
       else
-        rgb_.green = (float) x / (float) m_GreenValuator->GetBaseWidth();
+        rgb_.green = (float) x / (float) green_valuator_->GetBaseWidth();
 
       if (key_flags & NUX_STATE_CTRL)
       {
-        SetRGB (rgb_.green, rgb_.green, rgb_.green);
+        SetRGB(rgb_.green, rgb_.green, rgb_.green);
       }
       else
       {
-        SetRGB (rgb_.red, rgb_.green, rgb_.blue);
+        SetRGB(rgb_.red, rgb_.green, rgb_.blue);
       }
     }
     else if (m_color_model == color::HSV)
     {
       if (x < 0)
         hsv_.saturation = 0.0f;
-      else if (x > m_GreenValuator->GetBaseWidth() )
+      else if (x > green_valuator_->GetBaseWidth())
         hsv_.saturation = 1.0f;
       else
-        hsv_.saturation = (float) x / (float) m_GreenValuator->GetBaseWidth();
+        hsv_.saturation = (float) x / (float) green_valuator_->GetBaseWidth();
 
       if (key_flags & NUX_STATE_CTRL)
       {
-        SetHSV (hsv_.saturation, hsv_.saturation, hsv_.saturation);
+        SetHSV(hsv_.saturation, hsv_.saturation, hsv_.saturation);
       }
       else
       {
-        SetHSV (hsv_.hue, hsv_.saturation, hsv_.value);
+        SetHSV(hsv_.hue, hsv_.saturation, hsv_.value);
       }
     }
     else if (m_color_model == color::HLS)
     {
       if (x < 0)
         hls_.lightness = 0.0f;
-      else if (x > m_GreenValuator->GetBaseWidth() )
+      else if (x > green_valuator_->GetBaseWidth())
         hls_.lightness = 1.0f;
       else
-        hls_.lightness = (float) x / (float) m_GreenValuator->GetBaseWidth();
+        hls_.lightness = (float) x / (float) green_valuator_->GetBaseWidth();
 
       if (key_flags & NUX_STATE_CTRL)
       {
-        SetHLS (hls_.lightness, hls_.lightness, hls_.lightness);
+        SetHLS(hls_.lightness, hls_.lightness, hls_.lightness);
       }
       else
       {
-        SetHLS (hls_.hue, hls_.lightness, hls_.saturation);
+        SetHLS(hls_.hue, hls_.lightness, hls_.saturation);
       }
     }
 
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseDown_Blue (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDown_Blue(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     if (m_color_model == color::RGB)
     {
       if (x < 0)
         rgb_.blue = 0.0f;
-      else if (x > m_BlueValuator->GetBaseWidth() )
+      else if (x > blue_valuator_->GetBaseWidth())
         rgb_.blue = 1.0f;
       else
-        rgb_.blue = (float) x / (float) m_BlueValuator->GetBaseWidth();
+        rgb_.blue = (float) x / (float) blue_valuator_->GetBaseWidth();
 
       if (key_flags & NUX_STATE_CTRL)
       {
-        SetRGB (rgb_.blue, rgb_.blue, rgb_.blue);
+        SetRGB(rgb_.blue, rgb_.blue, rgb_.blue);
       }
       else
       {
-        SetRGB (rgb_.red, rgb_.green, rgb_.blue);
+        SetRGB(rgb_.red, rgb_.green, rgb_.blue);
       }
     }
     else if (m_color_model == color::HSV)
     {
       if (x < 0)
         hsv_.value = 0.0f;
-      else if (x > m_BlueValuator->GetBaseWidth() )
+      else if (x > blue_valuator_->GetBaseWidth())
         hsv_.value = 1.0f;
       else
-        hsv_.value = (float) x / (float) m_BlueValuator->GetBaseWidth();
+        hsv_.value = (float) x / (float) blue_valuator_->GetBaseWidth();
 
       if (key_flags & NUX_STATE_CTRL)
       {
-        SetHSV (hsv_.value, hsv_.value, hsv_.value);
+        SetHSV(hsv_.value, hsv_.value, hsv_.value);
       }
       else
       {
-        SetHSV (hsv_.hue, hsv_.saturation, hsv_.value);
+        SetHSV(hsv_.hue, hsv_.saturation, hsv_.value);
       }
     }
     else if (m_color_model == color::HLS)
     {
       if (x < 0)
         hls_.saturation = 0.0f;
-      else if (x > m_BlueValuator->GetBaseWidth() )
+      else if (x > blue_valuator_->GetBaseWidth())
         hls_.saturation = 1.0f;
       else
-        hls_.saturation = (float) x / (float) m_BlueValuator->GetBaseWidth();
+        hls_.saturation = (float) x / (float) blue_valuator_->GetBaseWidth();
 
       if (key_flags & NUX_STATE_CTRL)
       {
-        SetHLS (hls_.saturation, hls_.saturation, hls_.saturation);
+        SetHLS(hls_.saturation, hls_.saturation, hls_.saturation);
       }
       else
       {
-        SetHLS (hls_.hue, hls_.lightness, hls_.saturation);
+        SetHLS(hls_.hue, hls_.lightness, hls_.saturation);
       }
     }
 
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseDown_Alpha (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDown_Alpha(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     if (x < 0)
       alpha_ = 0.0f;
-    else if (x > m_AlphaValuator->GetBaseWidth() )
+    else if (x > alpha_valuator_->GetBaseWidth())
       alpha_ = 1.0f;
     else
-      alpha_ = (float) x / (float) m_AlphaValuator->GetBaseWidth();
+      alpha_ = (float) x / (float) alpha_valuator_->GetBaseWidth();
 
-    SetAlpha (alpha_);
+    SetAlpha(alpha_);
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseDrag_Red (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDrag_Red(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    OnReceiveMouseDown_Red (x, y, button_flags, key_flags);
+    OnReceiveMouseDown_Red(x, y, button_flags, key_flags);
   }
 
-  void RGBValuator::OnReceiveMouseDrag_Green (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDrag_Green(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    OnReceiveMouseDown_Green (x, y, button_flags, key_flags);
+    OnReceiveMouseDown_Green(x, y, button_flags, key_flags);
   }
 
-  void RGBValuator::OnReceiveMouseDrag_Blue (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDrag_Blue(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    OnReceiveMouseDown_Blue (x, y, button_flags, key_flags);
+    OnReceiveMouseDown_Blue(x, y, button_flags, key_flags);
   }
 
-  void RGBValuator::OnReceiveMouseDrag_Alpha (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDrag_Alpha(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    OnReceiveMouseDown_Alpha (x, y, button_flags, key_flags);
+    OnReceiveMouseDown_Alpha(x, y, button_flags, key_flags);
   }
 
   void RGBValuator::OnReceiveMouseUp_Red       (int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -1064,7 +1044,7 @@ namespace nux
         // XSI: hsv_.saturation = 0.0f;
       }
 
-      SetHSV (hsv_.hue, hsv_.saturation, hsv_.value);
+      SetHSV(hsv_.hue, hsv_.saturation, hsv_.value);
     }
 
     if (m_color_model == color::HLS)
@@ -1086,7 +1066,7 @@ namespace nux
         // XSI: hls_.saturation = 0.0f;
       }
 
-      SetHLS (hls_.hue, hls_.lightness, hls_.saturation);
+      SetHLS(hls_.hue, hls_.lightness, hls_.saturation);
     }
 
     QueueDraw();
@@ -1113,7 +1093,7 @@ namespace nux
         // XSI: hsv_.saturation = 0.0f;
       }
 
-      SetHSV (hsv_.hue, hsv_.saturation, hsv_.value);
+      SetHSV(hsv_.hue, hsv_.saturation, hsv_.value);
     }
 
     if (m_color_model == color::HLS)
@@ -1135,13 +1115,13 @@ namespace nux
         // XSI: hls_.saturation = 0.0f;
       }
 
-      SetHLS (hls_.hue, hls_.lightness, hls_.saturation);
+      SetHLS(hls_.hue, hls_.lightness, hls_.saturation);
     }
 
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseUp_Blue (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseUp_Blue(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     if (m_color_model == color::HSV)
     {
@@ -1162,7 +1142,7 @@ namespace nux
         // XSI: hsv_.saturation = 0.0f;
       }
 
-      SetHSV (hsv_.hue, hsv_.saturation, hsv_.value);
+      SetHSV(hsv_.hue, hsv_.saturation, hsv_.value);
     }
 
     if (m_color_model == color::HLS)
@@ -1184,31 +1164,31 @@ namespace nux
         // XSI: hls_.saturation = 0.0f;
       }
 
-      SetHLS (hls_.hue, hls_.lightness, hls_.saturation);
+      SetHLS(hls_.hue, hls_.lightness, hls_.saturation);
     }
 
     QueueDraw();
   }
 
-  void RGBValuator::RecvMouseDownColorModel (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::RecvMouseDownColorModel(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     QueueDraw();
   }
 
-  void RGBValuator::OnChangeColorModel()
+  void RGBValuator::OnChangeColorModel(AbstractButton* button)
   {
     if (m_color_model == color::RGB)
     {
-      SetColorModel (color::HLS);
+      SetColorModel(color::HLS);
       hls_ = color::HueLightnessSaturation(rgb_);
-      SetHLS (hls_.hue, hls_.lightness, hls_.saturation);
+      SetHLS(hls_.hue, hls_.lightness, hls_.saturation);
     }
     else if (m_color_model == color::HLS)
     {
-      SetColorModel (color::HSV);
+      SetColorModel(color::HSV);
       rgb_ = color::RedGreenBlue(hls_);
       hsv_ = color::HueSaturationValue(rgb_);
-      SetHSV (hsv_.hue, hsv_.saturation, hsv_.value);
+      SetHSV(hsv_.hue, hsv_.saturation, hsv_.value);
 
       if (hsv_.hue == -1.0f)
       {
@@ -1217,128 +1197,128 @@ namespace nux
     }
     else if (m_color_model == color::HSV)
     {
-      SetColorModel (color::RGB);
+      SetColorModel(color::RGB);
       rgb_ = color::RedGreenBlue(hsv_);
-      SetRGB (rgb_.red, rgb_.green, rgb_.blue);
+      SetRGB(rgb_.red, rgb_.green, rgb_.blue);
     }
 
     QueueDraw();
   }
 
-  void RGBValuator::OnChangeColorFormat()
+  void RGBValuator::OnChangeColorFormat(AbstractButton* button)
   {
     if (m_color_format == color::FLOAT)
     {
-      SetColorFormat (color::INT);
+      SetColorFormat(color::INT);
     }
     else if (m_color_format == color::INT)
     {
-      SetColorFormat (color::HEX);
+      SetColorFormat(color::HEX);
     }
     else if (m_color_format == color::HEX)
     {
-      SetColorFormat (color::FLOAT);
+      SetColorFormat(color::FLOAT);
     }
 
   }
 
-  void RGBValuator::OnComponentInput (EditTextBox *textbox, const NString &s, int componentIndex)
+  void RGBValuator::OnComponentInput(EditTextBox *textbox, const NString &s, int componentIndex)
   {
     float f = 0;
 
-    if ( (m_color_format == color::HEX) && (m_HexRegExp.Validate (s.GetTCharPtr() ) == Validator::Acceptable) )
+    if ((m_color_format == color::HEX) && (m_HexRegExp.Validate(s.GetTCharPtr()) == Validator::Acceptable))
     {
-      f = (float) m_HexRegExp.ToInteger (s.GetTCharPtr() ) / 255.0f;
+      f = (float) m_HexRegExp.ToInteger(s.GetTCharPtr()) / 255.0f;
     }
-    else if ( (m_color_format == color::INT) && (m_IntRegExp.Validate (s.GetTCharPtr() ) == Validator::Acceptable) )
+    else if ((m_color_format == color::INT) && (m_IntRegExp.Validate(s.GetTCharPtr()) == Validator::Acceptable))
     {
-      f = (float) m_IntRegExp.ToInteger (s.GetTCharPtr() ) / 255.0f;
+      f = (float) m_IntRegExp.ToInteger(s.GetTCharPtr()) / 255.0f;
     }
     else
     {
-      f = (float) m_DoubleRegExp.ToDouble (s.GetTCharPtr() );
+      f = (float) m_DoubleRegExp.ToDouble(s.GetTCharPtr());
     }
 
-    f = Clamp (f, 0.0f, 1.0f);
+    f = Clamp(f, 0.0f, 1.0f);
 
     if (componentIndex == 0)
     {
-      f = Clamp (f, 0.0f, 1.0f);
+      f = Clamp(f, 0.0f, 1.0f);
 
       if (m_color_model == color::RGB)
       {
         rgb_.red = f;
-        SetRGB (rgb_.red, rgb_.green, rgb_.blue);
+        SetRGB(rgb_.red, rgb_.green, rgb_.blue);
       }
       else if (m_color_model == color::HSV)
       {
         hsv_.hue = f;
-        OnReceiveMouseUp_Red (0, 0, 0, 0);
-        SetHSV (hsv_.hue, hsv_.saturation, hsv_.value);
+        OnReceiveMouseUp_Red(0, 0, 0, 0);
+        SetHSV(hsv_.hue, hsv_.saturation, hsv_.value);
       }
       else if (m_color_model == color::HLS)
       {
         hls_.hue = f;
-        OnReceiveMouseUp_Red (0, 0, 0, 0);
-        SetHLS (hls_.hue, hls_.lightness, hls_.saturation);
+        OnReceiveMouseUp_Red(0, 0, 0, 0);
+        SetHLS(hls_.hue, hls_.lightness, hls_.saturation);
       }
     }
 
     if (componentIndex == 1)
     {
-      f = Clamp (f, 0.0f, 1.0f);
+      f = Clamp(f, 0.0f, 1.0f);
 
       if (m_color_model == color::RGB)
       {
         rgb_.green = f;
-        SetRGB (rgb_.red, rgb_.green, rgb_.blue);
+        SetRGB(rgb_.red, rgb_.green, rgb_.blue);
       }
       else if (m_color_model == color::HSV)
       {
         hsv_.saturation = f;
-        OnReceiveMouseUp_Green (0, 0, 0, 0);
-        SetHSV (hsv_.hue, hsv_.saturation, hsv_.value);
+        OnReceiveMouseUp_Green(0, 0, 0, 0);
+        SetHSV(hsv_.hue, hsv_.saturation, hsv_.value);
       }
       else if (m_color_model == color::HLS)
       {
         hls_.lightness = f;
-        OnReceiveMouseUp_Green (0, 0, 0, 0);
-        SetHLS (hls_.hue, hls_.lightness, hls_.saturation);
+        OnReceiveMouseUp_Green(0, 0, 0, 0);
+        SetHLS(hls_.hue, hls_.lightness, hls_.saturation);
       }
     }
 
     if (componentIndex == 2)
     {
-      f = Clamp (f, 0.0f, 1.0f);
+      f = Clamp(f, 0.0f, 1.0f);
 
       if (m_color_model == color::RGB)
       {
         rgb_.blue = f;
-        SetRGB (rgb_.red, rgb_.green, rgb_.blue);
+        SetRGB(rgb_.red, rgb_.green, rgb_.blue);
       }
       else if (m_color_model == color::HSV)
       {
         hsv_.value = f;
-        OnReceiveMouseUp_Blue (0, 0, 0, 0);
-        SetHSV (hsv_.hue, hsv_.saturation, hsv_.value);
+        OnReceiveMouseUp_Blue(0, 0, 0, 0);
+        SetHSV(hsv_.hue, hsv_.saturation, hsv_.value);
       }
       else if (m_color_model == color::HLS)
       {
         hls_.saturation = f;
-        OnReceiveMouseUp_Blue (0, 0, 0, 0);
-        SetHLS (hls_.hue, hls_.lightness, hls_.saturation);
+        OnReceiveMouseUp_Blue(0, 0, 0, 0);
+        SetHLS(hls_.hue, hls_.lightness, hls_.saturation);
       }
     }
 
     if (componentIndex == 3)
     {
       float f = 0;
-      f = CharToDouble (s.GetTCharPtr() );
-      f = Clamp (f, 0.0f, 1.0f);
+      f = CharToDouble(s.GetTCharPtr());
+      f = Clamp(f, 0.0f, 1.0f);
       //if(m_color_model == color::RGB)
       {
         alpha_ = f;
-        SetAlpha (alpha_);
+        SetAlpha(alpha_);
       }
     }
 
@@ -1351,112 +1331,117 @@ namespace nux
     if (cm == color::RGB)
     {
       m_color_model = color::RGB;
-      //FIXME - m_ColorModel->SetCaption (TEXT ("RGB") );
+      m_ColorModel->SetLabel("RGB");
 
-      m_ComponentLabel0->SetBaseString (TEXT ("R") );
-      m_ComponentLabel1->SetBaseString (TEXT ("G") );
-      m_ComponentLabel2->SetBaseString (TEXT ("B") );
-      m_ComponentAlpha->SetBaseString (TEXT ("A") );
+      m_ComponentLabel0->SetBaseString("R");
+      m_ComponentLabel1->SetBaseString("G");
+      m_ComponentLabel2->SetBaseString("B");
+      m_ComponentAlpha->SetBaseString("A");
 
     }
 
     if (cm == color::HSV)
     {
       m_color_model = color::HSV;
-      //FIXME - m_ColorModel->SetCaption (TEXT ("HSV") );
+      m_ColorModel->SetLabel("HSV");
 
-      m_ComponentLabel0->SetBaseString (TEXT ("H") );
-      m_ComponentLabel1->SetBaseString (TEXT ("S") );
-      m_ComponentLabel2->SetBaseString (TEXT ("V") );
-      m_ComponentAlpha->SetBaseString (TEXT ("A") );
+      m_ComponentLabel0->SetBaseString("H");
+      m_ComponentLabel1->SetBaseString("S");
+      m_ComponentLabel2->SetBaseString("V");
+      m_ComponentAlpha->SetBaseString("A");
     }
 
     if (cm == color::HLS)
     {
       m_color_model = color::HLS;
-      //FIXME - m_ColorModel->SetCaption (TEXT ("HLS") );
+      m_ColorModel->SetLabel("HLS");
 
-      m_ComponentLabel0->SetBaseString (TEXT ("H") );
-      m_ComponentLabel1->SetBaseString (TEXT ("L") );
-      m_ComponentLabel2->SetBaseString (TEXT ("S") );
-      m_ComponentAlpha->SetBaseString (TEXT ("A") );
+      m_ComponentLabel0->SetBaseString("H");
+      m_ComponentLabel1->SetBaseString("L");
+      m_ComponentLabel2->SetBaseString("S");
+      m_ComponentAlpha->SetBaseString("A");
     }
 
     if (cm == color::YUV)
     {
       m_color_model = color::YUV;
-      m_ColorModel->SetBaseString (TEXT ("YUV") );
+      m_ColorModel->SetLabel("YUV");
 
-      m_ComponentLabel0->SetBaseString (TEXT ("Y") );
-      m_ComponentLabel1->SetBaseString (TEXT ("U") );
-      m_ComponentLabel2->SetBaseString (TEXT ("V") );
-      m_ComponentAlpha->SetBaseString (TEXT ("A") );
+      m_ComponentLabel0->SetBaseString("Y");
+      m_ComponentLabel1->SetBaseString("U");
+      m_ComponentLabel2->SetBaseString("V");
+      m_ComponentAlpha->SetBaseString("A");
     }
   }
 
-  void RGBValuator::SetColorFormat (color::Format cf)
+  void RGBValuator::SetColorFormat(color::Format cf)
   {
     if (cf == color::FLOAT)
     {
       m_color_format = color::FLOAT;
-      m_ColorFormat->SetBaseString (TEXT ("float") );
-      m_RedCaption->SetKeyEntryType (BaseKeyboardHandler::eAlphaNumeric);
-      m_GreenCaption->SetKeyEntryType (BaseKeyboardHandler::eAlphaNumeric);
-      m_BlueCaption->SetKeyEntryType (BaseKeyboardHandler::eAlphaNumeric);
+      m_ColorFormat->SetLabel("float");
+      red_caption_->SetKeyEntryType(BaseKeyboardHandler::eAlphaNumeric);
+      green_caption_->SetKeyEntryType(BaseKeyboardHandler::eAlphaNumeric);
+      blue_caption_->SetKeyEntryType(BaseKeyboardHandler::eAlphaNumeric);
 
-      m_RedCaption->SetPrefix (TEXT ("") );
-      m_GreenCaption->SetPrefix (TEXT ("") );
-      m_BlueCaption->SetPrefix (TEXT ("") );
-      m_AlphaCaption->SetPrefix (TEXT ("") );
+      red_caption_->SetPrefix("");
+      green_caption_->SetPrefix("");
+      blue_caption_->SetPrefix("");
+      alpha_caption_->SetPrefix("");
     }
 
     if (cf == color::INT)
     {
       m_color_format = color::INT;
-      m_ColorFormat->SetBaseString (TEXT ("int") );
-      m_RedCaption->SetKeyEntryType (BaseKeyboardHandler::eIntegerNumber);
-      m_GreenCaption->SetKeyEntryType (BaseKeyboardHandler::eIntegerNumber);
-      m_BlueCaption->SetKeyEntryType (BaseKeyboardHandler::eIntegerNumber);
+      m_ColorFormat->SetLabel("int");
+      red_caption_->SetKeyEntryType(BaseKeyboardHandler::eIntegerNumber);
+      green_caption_->SetKeyEntryType(BaseKeyboardHandler::eIntegerNumber);
+      blue_caption_->SetKeyEntryType(BaseKeyboardHandler::eIntegerNumber);
 
-      m_RedCaption->SetPrefix (TEXT ("") );
-      m_GreenCaption->SetPrefix (TEXT ("") );
-      m_BlueCaption->SetPrefix (TEXT ("") );
-      m_AlphaCaption->SetPrefix (TEXT ("") );
+      red_caption_->SetPrefix("");
+      green_caption_->SetPrefix("");
+      blue_caption_->SetPrefix("");
+      alpha_caption_->SetPrefix("");
     }
 
     if (cf == color::HEX)
     {
       m_color_format = color::HEX;
-      m_ColorFormat->SetBaseString (TEXT ("hex") );
-      m_RedCaption->SetKeyEntryType (BaseKeyboardHandler::eHexadecimalNumber);
-      m_GreenCaption->SetKeyEntryType (BaseKeyboardHandler::eHexadecimalNumber);
-      m_BlueCaption->SetKeyEntryType (BaseKeyboardHandler::eHexadecimalNumber);
+      m_ColorFormat->SetLabel("hex");
+      red_caption_->SetKeyEntryType(BaseKeyboardHandler::eHexadecimalNumber);
+      green_caption_->SetKeyEntryType(BaseKeyboardHandler::eHexadecimalNumber);
+      blue_caption_->SetKeyEntryType(BaseKeyboardHandler::eHexadecimalNumber);
 
-      m_RedCaption->SetPrefix (TEXT ("0x") );
-      m_GreenCaption->SetPrefix (TEXT ("0x") );
-      m_BlueCaption->SetPrefix (TEXT ("0x") );
-      m_AlphaCaption->SetPrefix (TEXT ("0x") );
+      red_caption_->SetPrefix("0x");
+      green_caption_->SetPrefix("0x");
+      blue_caption_->SetPrefix("0x");
+      alpha_caption_->SetPrefix("0x");
     }
 
     if (m_color_model == color::RGB)
     {
-      SetRGBA (rgb_.red, rgb_.green, rgb_.blue, alpha_);
+      SetRGBA(rgb_.red, rgb_.green, rgb_.blue, alpha_);
     }
     else if (m_color_model == color::HLS)
     {
-      SetHLS (hls_.hue, hls_.lightness, hls_.saturation);
-      SetAlpha (alpha_);
+      SetHLS(hls_.hue, hls_.lightness, hls_.saturation);
+      SetAlpha(alpha_);
     }
     else if (m_color_model == color::HSV)
     {
-      SetHSV (hsv_.hue, hsv_.saturation, hsv_.value);
-      SetAlpha (alpha_);
+      SetHSV(hsv_.hue, hsv_.saturation, hsv_.value);
+      SetAlpha(alpha_);
     }
   }
 
-  long RGBValuator::ComputeChildLayout()
+  void RGBValuator::PreLayoutManagement()
   {
-    return View::ComputeChildLayout();
+    View::PreLayoutManagement();
+    if (view_layout_)
+    {
+      // Constrain the vertical expansion of the color selector.
+      view_layout_->SetBaseHeight(1);
+    }
   }
 
   Color RGBValuator::GetColor() const
@@ -1466,7 +1451,7 @@ namespace nux
 
   void RGBValuator::EmitColorChangedSignal()
   {
-    sigColorChanged.emit (rgb_.red, rgb_.green, rgb_.blue, alpha_);
+    sigColorChanged.emit(rgb_.red, rgb_.green, rgb_.blue, alpha_);
   }
 
   bool RGBValuator::AcceptKeyNavFocus()

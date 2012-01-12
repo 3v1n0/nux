@@ -198,18 +198,7 @@ namespace nux
         keep it.
         @param Return the stored pointer.
     */
-    const T* GetPointer () const
-    {
-      return ptr_;
-    }
-
-    //! Return the stored pointer.
-    /*!
-        Caller of this function should Reference the pointer if they intend to
-        keep it.
-        @param Return the stored pointer.
-    */
-    T* GetPointer()
+    T* GetPointer () const
     {
       return ptr_;
     }
@@ -252,7 +241,7 @@ namespace nux
     */
     bool IsValid() const
     {
-        return bool(ptr_);
+      return (ptr_ != NULL) ? true : false;
     }
 
     bool operator < (T *ptr) const
@@ -622,7 +611,7 @@ namespace nux
     */
     bool IsValid() const
     {
-      return bool(ptr_);
+      return (ptr_!= NULL) ? true : false;
     }
 
     //! Return true is the hosted pointer is null or has been destroyed.
@@ -656,17 +645,7 @@ namespace nux
         Caller of this function should Reference the pointer if they intend to keep it.
         @param Return the stored pointer.
     */
-    const T* GetPointer () const
-    {
-      return ptr_;
-    }
-
-    //! Return the stored pointer.
-    /*!
-        Caller of this function should Reference the pointer if they intend to keep it.
-        @param Return the stored pointer.
-    */
-    T* GetPointer()
+    T* GetPointer () const
     {
       return ptr_;
     }
@@ -682,7 +661,7 @@ namespace nux
     {
       if (ptr_)
       {
-        auto slot = sigc::mem_fun(this, &ObjectWeakPtr<T>::TargetDestroyed);
+        sigc::slot<void, Object*> slot = sigc::mem_fun(this, &ObjectWeakPtr<T>::TargetDestroyed);
         destroy_listener_ = ptr_->object_destroyed.connect(slot);
       }
     }

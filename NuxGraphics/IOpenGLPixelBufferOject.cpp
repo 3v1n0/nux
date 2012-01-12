@@ -26,37 +26,37 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLPixelBufferObject);
+  NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLPixelBufferObject);
 
-  IOpenGLPixelBufferObject::IOpenGLPixelBufferObject (unsigned int Size, VBO_USAGE Usage, NUX_FILE_LINE_DECL)
-    :   IOpenGLResource (RTVERTEXBUFFER, NUX_FILE_LINE_PARAM)
-    ,   _Length (Size)
-    ,   _Usage (Usage)
-    ,   _MemMap (0)
-    ,   _OffsetToLock (0)
-    ,   _SizeToLock (0)
+  IOpenGLPixelBufferObject::IOpenGLPixelBufferObject(unsigned int Size, VBO_USAGE Usage, NUX_FILE_LINE_DECL)
+    :   IOpenGLResource(RTVERTEXBUFFER, NUX_FILE_LINE_PARAM)
+    ,   _Length(Size)
+    ,   _Usage(Usage)
+    ,   _MemMap(0)
+    ,   _OffsetToLock(0)
+    ,   _SizeToLock(0)
   {
-    CHECKGL ( glGenBuffersARB (1, &_OpenGLID) );
-    CHECKGL ( glBindBufferARB (GL_ARRAY_BUFFER_ARB, _OpenGLID) );
-    CHECKGL ( glBufferDataARB (GL_ARRAY_BUFFER_ARB, _Length, NULL, Usage) );
-    CHECKGL ( glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
-    GRunTimeStats.Register (this);
+    CHECKGL(glGenBuffersARB(1, &_OpenGLID));
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, _OpenGLID));
+    CHECKGL(glBufferDataARB(GL_ARRAY_BUFFER_ARB, _Length, NULL, Usage));
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    GRunTimeStats.Register(this);
   }
 
   IOpenGLPixelBufferObject::~IOpenGLPixelBufferObject()
   {
-    CHECKGL ( glDeleteBuffersARB (1, &_OpenGLID) );
+    CHECKGL(glDeleteBuffersARB(1, &_OpenGLID));
     _OpenGLID = 0;
-    GRunTimeStats.UnRegister (this);
+    GRunTimeStats.UnRegister(this);
   }
 
-  int IOpenGLPixelBufferObject::Lock (
+  int IOpenGLPixelBufferObject::Lock(
     unsigned int OffsetToLock,
     unsigned int SizeToLock,
     void **ppbData)
   {
-    nuxAssert (SizeToLock <= _Length);
-    nuxAssert (OffsetToLock + SizeToLock <= _Length);
+    nuxAssert(SizeToLock <= _Length);
+    nuxAssert(OffsetToLock + SizeToLock <= _Length);
 
     if (SizeToLock == 0)
     {
@@ -71,36 +71,40 @@ namespace nux
 
     // If _MemMap, _OffsetToLock and _SizeToLock are not equal to zero, then we have already mapped the buffer
     // Unlock it before locking again.
-    nuxAssert (_MemMap == 0);
-    nuxAssert (_OffsetToLock == 0);
-    nuxAssert (_SizeToLock == 0);
+    nuxAssert(_MemMap == 0);
+    nuxAssert(_OffsetToLock == 0);
+    nuxAssert(_SizeToLock == 0);
 
+#ifndef NUX_OPENGLES_20
+//FIXME: GLES 2.0 doesn't support PBOs, we need to allocate client memory and copy data there
     // When locking it shouldn't matter if we use GL_PIXEL_UNPACK_BUFFER_ARB or GL_PIXEL_PACK_BUFFER_ARB.
     // We just want a pointer to the data.
-    CHECKGL ( glBindBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, _OpenGLID) );
+    CHECKGL(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, _OpenGLID));
     // Map the Entire buffer into system memory
-    _MemMap = (BYTE *) glMapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, GL_READ_WRITE); // we maybe reading or writing to the PBO.
-    CHECKGL_MSG (glMapBufferARB);
+    _MemMap = (BYTE *) glMapBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, GL_READ_WRITE); // we maybe reading or writing to the PBO.
+    CHECKGL_MSG(glMapBufferARB);
     *ppbData = (void *) (_MemMap + OffsetToLock);
 
     _OffsetToLock   = OffsetToLock;
     _SizeToLock     = SizeToLock;
 
-    CHECKGL ( glBindBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, 0) );
-    CHECKGL ( glBindBufferARB (GL_PIXEL_PACK_BUFFER_ARB, 0) );
+    CHECKGL(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0));
+    CHECKGL(glBindBufferARB(GL_PIXEL_PACK_BUFFER_ARB, 0));
+#endif
 
     return OGL_OK;
   }
 
   int IOpenGLPixelBufferObject::Unlock()
   {
-    CHECKGL ( glBindBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, _OpenGLID) );
-    //CHECKGL( glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, _OffsetToLock, _SizeToLock, _MemMap) );
+#ifndef NUX_OPENGLES_20
+    CHECKGL(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, _OpenGLID));
+    //CHECKGL(glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, _OffsetToLock, _SizeToLock, _MemMap));
 
-    CHECKGL ( glUnmapBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB) );
-    CHECKGL ( glBindBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, 0) );
-    CHECKGL ( glBindBufferARB (GL_PIXEL_PACK_BUFFER_ARB, 0) );
-
+    CHECKGL(glUnmapBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB));
+    CHECKGL(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0));
+    CHECKGL(glBindBufferARB(GL_PIXEL_PACK_BUFFER_ARB, 0));
+#endif
 
     _MemMap         = 0;
     _OffsetToLock   = 0;
@@ -110,15 +114,19 @@ namespace nux
 
   void IOpenGLPixelBufferObject::BindPackPixelBufferObject()
   {
-    CHECKGL (glBindBufferARB (GL_PIXEL_PACK_BUFFER_ARB, _OpenGLID) );
+#ifndef NUX_OPENGLES_20
+    CHECKGL(glBindBufferARB(GL_PIXEL_PACK_BUFFER_ARB, _OpenGLID));
+#endif
   }
 
   void IOpenGLPixelBufferObject::BindUnpackPixelBufferObject()
   {
-    CHECKGL (glBindBufferARB (GL_PIXEL_UNPACK_BUFFER_ARB, _OpenGLID) );
+#ifndef NUX_OPENGLES_20
+    CHECKGL(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, _OpenGLID));
+#endif
   }
 
-  t_u32 IOpenGLPixelBufferObject::GetSize()
+  unsigned int IOpenGLPixelBufferObject::GetSize()
   {
     return _Length;
   }

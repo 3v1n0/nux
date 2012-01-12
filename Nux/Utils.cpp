@@ -30,7 +30,7 @@ namespace nux
 //
 // bool IsMouseOwned()
 // {
-//     if(gMouseOwned)
+//     if (gMouseOwned)
 //     {
 //         return true;
 //     }

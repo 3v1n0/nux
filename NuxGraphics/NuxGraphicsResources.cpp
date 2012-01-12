@@ -27,7 +27,7 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_GLOBAL_OBJECT (NuxGraphicsResources);
+  NUX_IMPLEMENT_GLOBAL_OBJECT(NuxGraphicsResources);
 
   void NuxGraphicsResources::Constructor()
   {
@@ -42,35 +42,35 @@ namespace nux
   void NuxGraphicsResources::InitializeResources()
   {
 //         FilePath m_FilePath;
-//         m_FilePath.AddSearchPath(TEXT("")); // for case where fully qualified path is given
-//         m_FilePath.AddSearchPath(TEXT("./ini"));
-//         m_FilePath.AddSearchPath(TEXT("../ini"));
-//         m_FilePath.AddSearchPath(TEXT("../../ini"));
-//         m_FilePath.AddSearchPath(TEXT("../../../ini"));
+//         m_FilePath.AddSearchPath(""); // for case where fully qualified path is given
+//         m_FilePath.AddSearchPath("./ini");
+//         m_FilePath.AddSearchPath("../ini");
+//         m_FilePath.AddSearchPath("../../ini");
+//         m_FilePath.AddSearchPath("../../../ini");
 //
 //
-//         NString file_search = TEXT("inalogic.ini");
+//         NString file_search = "inalogic.ini";
 //         NString FileName = m_FilePath.GetFile(file_search.GetTCharPtr());
-//         if (FileName == TEXT(""))
+//         if (FileName == "")
 //         {
-//             nuxCriticalMsg(TEXT("[GraphicsDisplay::GraphicsDisplay] Can't find inalogic.ini file."));
+//             nuxCriticalMsg("[GraphicsDisplay::GraphicsDisplay] Can't find inalogic.ini file.");
 // //             exit(-1);
 //         }
 //
-//         if(FileName != TEXT(""))
+//         if (FileName != "")
 //         {
-//             NString key_name = TEXT("UseBackupFBO");
-//             NString section_name = TEXT("OpenGLSystem");
+//             NString key_name = "UseBackupFBO";
+//             NString section_name = "OpenGLSystem";
 //
-//             if(CIniFile::RecordExists(key_name.GetTCharPtr(), section_name.GetTCharPtr(), FileName.GetTCharPtr()) == false)
+//             if (CIniFile::RecordExists(key_name.GetTCharPtr(), section_name.GetTCharPtr(), FileName.GetTCharPtr()) == false)
 //             {
-//                 nuxDebugMsg(TEXT("[GraphicsDisplay::GraphicsDisplay] Key [%s] does not exit in .ini file."));
+//                 nuxDebugMsg("[GraphicsDisplay::GraphicsDisplay] Key [%s] does not exit in .ini file.");
 //             }
 //             else
 //             {
 //                 bool m_BackupFrameBuffer;
 //                 NString value = CIniFile::GetValue(key_name.GetTCharPtr(), section_name.GetTCharPtr(), FileName.GetTCharPtr());
-//                 if((value == TEXT("1")) || (value == TEXT("true")))
+//                 if ((value == "1") || (value == "true"))
 //                 {
 //                     m_BackupFrameBuffer = true;
 //                 }
@@ -80,195 +80,195 @@ namespace nux
 //                 }
 //             }
 //
-//             section_name = TEXT("SearchPath");
-//             key_name = TEXT("FontPath");
-//             if(CIniFile::RecordExists(key_name.GetTCharPtr(), section_name.GetTCharPtr(), FileName.GetTCharPtr()))
+//             section_name = "SearchPath";
+//             key_name = "FontPath";
+//             if (CIniFile::RecordExists(key_name.GetTCharPtr(), section_name.GetTCharPtr(), FileName.GetTCharPtr()))
 //             {
 //                 NString FontPath = CIniFile::GetValue(key_name.GetTCharPtr(), section_name.GetTCharPtr(), FileName.GetTCharPtr());
-//                 FontPath.ParseToArray(m_FontSearchPath, TEXT(";"));
+//                 FontPath.ParseToArray(m_FontSearchPath, ";");
 //             }
 //             else
 //             {
-//                 nuxCriticalMsg(TEXT("[GraphicsDisplay::GraphicsDisplay] Failed to read font search path from .ini file."));
+//                 nuxCriticalMsg("[GraphicsDisplay::GraphicsDisplay] Failed to read font search path from .ini file.");
 // //                 return;
 //
 //             }
 //
-//             key_name = TEXT("UITexturePath");
-//             if(CIniFile::RecordExists(key_name.GetTCharPtr(), section_name.GetTCharPtr(), FileName.GetTCharPtr()))
+//             key_name = "UITexturePath";
+//             if (CIniFile::RecordExists(key_name.GetTCharPtr(), section_name.GetTCharPtr(), FileName.GetTCharPtr()))
 //             {
 //                 NString UITexturePath = CIniFile::GetValue(key_name.GetTCharPtr(), section_name.GetTCharPtr(), FileName.GetTCharPtr());
-//                 UITexturePath.ParseToArray(m_UITextureSearchPath, TEXT(";"));
+//                 UITexturePath.ParseToArray(m_UITextureSearchPath, ";");
 //             }
 //             else
 //             {
-//                 nuxCriticalMsg(TEXT("[GraphicsDisplay::GraphicsDisplay] Failed to read texture search path from .ini file."));
+//                 nuxCriticalMsg("[GraphicsDisplay::GraphicsDisplay] Failed to read texture search path from .ini file.");
 // //                 return;
 //             }
 //
-//             key_name = TEXT("ShaderPath");
-//             if(CIniFile::RecordExists(key_name.GetTCharPtr(), section_name.GetTCharPtr(), FileName.GetTCharPtr()))
+//             key_name = "ShaderPath";
+//             if (CIniFile::RecordExists(key_name.GetTCharPtr(), section_name.GetTCharPtr(), FileName.GetTCharPtr()))
 //             {
 //                 NString ShaderPath = CIniFile::GetValue(key_name.GetTCharPtr(), section_name.GetTCharPtr(), FileName.GetTCharPtr());
-//                 ShaderPath.ParseToArray(m_ShaderSearchPath, TEXT(";"));
+//                 ShaderPath.ParseToArray(m_ShaderSearchPath, ";");
 //             }
 //             else
 //             {
-//                 nuxCriticalMsg(TEXT("[GraphicsDisplay::GraphicsDisplay] Failed to read shader search path from .ini file."));
+//                 nuxCriticalMsg("[GraphicsDisplay::GraphicsDisplay] Failed to read shader search path from .ini file.");
 // //                 return;
 //             }
 //         }
 
 #ifdef NUX_OS_LINUX
-    m_ResourcePathLocation.AddSearchPath (TEXT (PKGDATADIR) );
-    m_ResourcePathLocation.AddSearchPath (TEXT (PKGDATADIR"/Fonts") );
-    m_ResourcePathLocation.AddSearchPath (TEXT (PKGDATADIR"/Meshes") );
-    m_ResourcePathLocation.AddSearchPath (TEXT (PKGDATADIR"/UITextures") );
+    m_ResourcePathLocation.AddSearchPath(PKGDATADIR);
+    m_ResourcePathLocation.AddSearchPath(PKGDATADIR"/Fonts");
+    m_ResourcePathLocation.AddSearchPath(PKGDATADIR"/Meshes");
+    m_ResourcePathLocation.AddSearchPath(PKGDATADIR"/UITextures");
 
 #ifdef NUX_DEBUG
     /* For examples */
-    m_ResourcePathLocation.AddSearchPath (TEXT ("../data") );
-    m_ResourcePathLocation.AddSearchPath (TEXT ("../data/Fonts") );
-    m_ResourcePathLocation.AddSearchPath (TEXT ("../data/Meshes") );
-    m_ResourcePathLocation.AddSearchPath (TEXT ("../data/UITextures") );
+    m_ResourcePathLocation.AddSearchPath("../data");
+    m_ResourcePathLocation.AddSearchPath("../data/Fonts");
+    m_ResourcePathLocation.AddSearchPath("../data/Meshes");
+    m_ResourcePathLocation.AddSearchPath("../data/UITextures");
 #endif
 
 #else
-    m_ResourcePathLocation.AddSearchPath (TEXT ("") );
-    m_ResourcePathLocation.AddSearchPath (TEXT ("./") );
-    m_ResourcePathLocation.AddSearchPath (TEXT ("../") );
-    m_ResourcePathLocation.AddSearchPath (TEXT ("../../") );
-    m_ResourcePathLocation.AddSearchPath (TEXT ("./Data") );
-    m_ResourcePathLocation.AddSearchPath (TEXT ("../Data") );
-    m_ResourcePathLocation.AddSearchPath (TEXT ("../../Data") );
-    m_ResourcePathLocation.AddSearchPath (TEXT ("../../../Data") );
-    m_ResourcePathLocation.AddSearchPath (TEXT ("./Data/Fonts") );
-    m_ResourcePathLocation.AddSearchPath (TEXT ("../Data/Fonts") );
-    m_ResourcePathLocation.AddSearchPath (TEXT ("../../Data/Fonts") );
-    m_ResourcePathLocation.AddSearchPath (TEXT ("../../../Data/Fonts") );
-    m_ResourcePathLocation.AddSearchPath (TEXT ("./Data/UITextures") );
-    m_ResourcePathLocation.AddSearchPath (TEXT ("../Data/UITextures") );
-    m_ResourcePathLocation.AddSearchPath (TEXT ("../../Data/UITextures") );
-    m_ResourcePathLocation.AddSearchPath (TEXT ("../../../Data/UITextures") );
+    m_ResourcePathLocation.AddSearchPath("");
+    m_ResourcePathLocation.AddSearchPath("./");
+    m_ResourcePathLocation.AddSearchPath("../");
+    m_ResourcePathLocation.AddSearchPath("../../");
+    m_ResourcePathLocation.AddSearchPath("./Data");
+    m_ResourcePathLocation.AddSearchPath("../Data");
+    m_ResourcePathLocation.AddSearchPath("../../Data");
+    m_ResourcePathLocation.AddSearchPath("../../../Data");
+    m_ResourcePathLocation.AddSearchPath("./Data/Fonts");
+    m_ResourcePathLocation.AddSearchPath("../Data/Fonts");
+    m_ResourcePathLocation.AddSearchPath("../../Data/Fonts");
+    m_ResourcePathLocation.AddSearchPath("../../../Data/Fonts");
+    m_ResourcePathLocation.AddSearchPath("./Data/UITextures");
+    m_ResourcePathLocation.AddSearchPath("../Data/UITextures");
+    m_ResourcePathLocation.AddSearchPath("../../Data/UITextures");
+    m_ResourcePathLocation.AddSearchPath("../../../Data/UITextures");
 #endif
 
-    m_ResourcePathLocation.AddSearchPath (m_FontSearchPath);
-    m_ResourcePathLocation.AddSearchPath (m_ShaderSearchPath);
-    m_ResourcePathLocation.AddSearchPath (m_UITextureSearchPath);
+    m_ResourcePathLocation.AddSearchPath(m_FontSearchPath);
+    m_ResourcePathLocation.AddSearchPath(m_ShaderSearchPath);
+    m_ResourcePathLocation.AddSearchPath(m_UITextureSearchPath);
   }
 
 #ifdef NUX_OS_WINDOWS
-  NString NuxGraphicsResources::FindResourceLocation (const TCHAR *ResourceFileName, bool ErrorOnFail)
+  NString NuxGraphicsResources::FindResourceLocation(const char *ResourceFileName, bool ErrorOnFail)
   {
-    NString path = m_ResourcePathLocation.GetFile (ResourceFileName);
+    NString path = m_ResourcePathLocation.GetFile(ResourceFileName);
 
-    if (path == TEXT ("") && ErrorOnFail)
+    if (path == "" && ErrorOnFail)
     {
-      nuxCriticalMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate resource file: %s."), ResourceFileName);
-      return NString (TEXT(""));
+      nuxCriticalMsg("[NuxGraphicsResources::FindResourceLocation] Failed to locate resource file: %s.", ResourceFileName);
+      return NString("");
     }
 
     return path;
   }
 
-  NString NuxGraphicsResources::FindUITextureLocation (const TCHAR *ResourceFileName, bool ErrorOnFail)
+  NString NuxGraphicsResources::FindUITextureLocation(const char *ResourceFileName, bool ErrorOnFail)
   {
     FilePath searchpath;
-    searchpath.AddSearchPath (m_UITextureSearchPath);
-    NString path = searchpath.GetFile (ResourceFileName);
+    searchpath.AddSearchPath(m_UITextureSearchPath);
+    NString path = searchpath.GetFile(ResourceFileName);
 
-    if ( (path == TEXT ("") ) && ErrorOnFail)
+    if ((path == "") && ErrorOnFail)
     {
-      nuxCriticalMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate ui texture file: %s."), ResourceFileName);
-      return NString (TEXT(""));
+      nuxCriticalMsg("[NuxGraphicsResources::FindResourceLocation] Failed to locate ui texture file: %s.", ResourceFileName);
+      return NString("");
     }
 
     return path;
   }
 
-  NString NuxGraphicsResources::FindShaderLocation (const TCHAR *ResourceFileName, bool ErrorOnFail)
+  NString NuxGraphicsResources::FindShaderLocation(const char *ResourceFileName, bool ErrorOnFail)
   {
     FilePath searchpath;
-    searchpath.AddSearchPath (m_ShaderSearchPath);
-    NString path = searchpath.GetFile (ResourceFileName);
+    searchpath.AddSearchPath(m_ShaderSearchPath);
+    NString path = searchpath.GetFile(ResourceFileName);
 
-    if ( (path == TEXT ("") ) && ErrorOnFail)
+    if ((path == "") && ErrorOnFail)
     {
-      nuxCriticalMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate shader file: %s."), ResourceFileName);
-      return NString (TEXT(""));
+      nuxCriticalMsg("[NuxGraphicsResources::FindResourceLocation] Failed to locate shader file: %s.", ResourceFileName);
+      return NString("");
     }
 
     return path;
   }
 
-  NString NuxGraphicsResources::FindFontLocation (const TCHAR *ResourceFileName, bool ErrorOnFail)
+  NString NuxGraphicsResources::FindFontLocation(const char *ResourceFileName, bool ErrorOnFail)
   {
     FilePath searchpath;
-    searchpath.AddSearchPath (m_FontSearchPath);
-    NString path = searchpath.GetFile (ResourceFileName);
+    searchpath.AddSearchPath(m_FontSearchPath);
+    NString path = searchpath.GetFile(ResourceFileName);
 
-    if ( (path == TEXT ("") ) && ErrorOnFail)
+    if ((path == "") && ErrorOnFail)
     {
-      nuxCriticalMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate font file file: %s."), ResourceFileName);
-      return NString (TEXT(""));
+      nuxCriticalMsg("[NuxGraphicsResources::FindResourceLocation] Failed to locate font file file: %s.", ResourceFileName);
+      return NString("");
     }
 
     return path;
   }
 #elif defined(NUX_OS_LINUX)
-  NString NuxGraphicsResources::FindResourceLocation (const TCHAR *ResourceFileName, bool ErrorOnFail)
+  NString NuxGraphicsResources::FindResourceLocation(const char *ResourceFileName, bool ErrorOnFail)
   {
-    NString path = m_ResourcePathLocation.GetFile (ResourceFileName);
+    NString path = m_ResourcePathLocation.GetFile(ResourceFileName);
 
-    if (path == TEXT ("") && ErrorOnFail)
+    if (path == "" && ErrorOnFail)
     {
-      nuxCriticalMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate resource file: %s."), ResourceFileName);
-      return NString (TEXT(""));
+      nuxCriticalMsg("[NuxGraphicsResources::FindResourceLocation] Failed to locate resource file: %s.", ResourceFileName);
+      return NString("");
     }
 
     return path;
   }
 
-  NString NuxGraphicsResources::FindUITextureLocation (const TCHAR *ResourceFileName, bool ErrorOnFail)
+  NString NuxGraphicsResources::FindUITextureLocation(const char *ResourceFileName, bool ErrorOnFail)
   {
     FilePath searchpath;
-    searchpath.AddSearchPath (m_UITextureSearchPath);
-    NString path = searchpath.GetFile (ResourceFileName);
+    searchpath.AddSearchPath(m_UITextureSearchPath);
+    NString path = searchpath.GetFile(ResourceFileName);
 
-    if ( (path == TEXT ("") ) && ErrorOnFail)
+    if ((path == "") && ErrorOnFail)
     {
-      nuxCriticalMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate ui texture file: %s."), ResourceFileName);
-      return NString (TEXT(""));
+      nuxCriticalMsg("[NuxGraphicsResources::FindResourceLocation] Failed to locate ui texture file: %s.", ResourceFileName);
+      return NString("");
     }
 
     return path;
   }
 
-  NString NuxGraphicsResources::FindShaderLocation (const TCHAR *ResourceFileName, bool ErrorOnFail)
+  NString NuxGraphicsResources::FindShaderLocation(const char *ResourceFileName, bool ErrorOnFail)
   {
     FilePath searchpath;
-    searchpath.AddSearchPath (m_ShaderSearchPath);
-    NString path = searchpath.GetFile (ResourceFileName);
+    searchpath.AddSearchPath(m_ShaderSearchPath);
+    NString path = searchpath.GetFile(ResourceFileName);
 
-    if ( (path == TEXT ("") ) && ErrorOnFail)
+    if ((path == "") && ErrorOnFail)
     {
-      nuxCriticalMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate shader file: %s."), ResourceFileName);
-      return NString (TEXT(""));
+      nuxCriticalMsg("[NuxGraphicsResources::FindResourceLocation] Failed to locate shader file: %s.", ResourceFileName);
+      return NString("");
     }
 
     return path;
   }
 
-  NString NuxGraphicsResources::FindFontLocation (const TCHAR *ResourceFileName, bool ErrorOnFail)
+  NString NuxGraphicsResources::FindFontLocation(const char *ResourceFileName, bool ErrorOnFail)
   {
     FilePath searchpath;
-    searchpath.AddSearchPath (m_FontSearchPath);
-    NString path = searchpath.GetFile (ResourceFileName);
+    searchpath.AddSearchPath(m_FontSearchPath);
+    NString path = searchpath.GetFile(ResourceFileName);
 
-    if ( (path == TEXT ("") ) && ErrorOnFail)
+    if ((path == "") && ErrorOnFail)
     {
-      nuxCriticalMsg (TEXT ("[NuxGraphicsResources::FindResourceLocation] Failed to locate font file file: %s."), ResourceFileName);
-      return NString (TEXT(""));
+      nuxCriticalMsg("[NuxGraphicsResources::FindResourceLocation] Failed to locate font file file: %s.", ResourceFileName);
+      return NString("");
     }
 
     return path;

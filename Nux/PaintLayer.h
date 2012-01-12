@@ -34,12 +34,12 @@ namespace nux
   class ColorLayer: public AbstractPaintLayer
   {
   public:
-    ColorLayer (const Color &color, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default);
+    ColorLayer(const Color &color, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default);
 
-    void SetColor (const Color &color);
-    Color GetColor () const;
-    virtual void Renderlayer (GraphicsEngine &GfxContext);
-    virtual AbstractPaintLayer *Clone () const;
+    void SetColor(const Color &color);
+    Color GetColor() const;
+    virtual void Renderlayer(GraphicsEngine &graphics_engine);
+    virtual AbstractPaintLayer *Clone() const;
 
   private:
     Color _color;
@@ -50,8 +50,8 @@ namespace nux
   class ShapeLayer: public AbstractPaintLayer
   {
   public:
-    ShapeLayer (UXStyleImageRef imageStyle, const Color &color, unsigned long Corners = eAllCorners, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default);
-    virtual void Renderlayer (GraphicsEngine &GfxContext);
+    ShapeLayer(UXStyleImageRef imageStyle, const Color &color, unsigned long Corners = eAllCorners, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default);
+    virtual void Renderlayer(GraphicsEngine &graphics_engine);
     virtual AbstractPaintLayer *Clone() const;
 
   private:
@@ -65,8 +65,8 @@ namespace nux
   class SliceScaledTextureLayer: public AbstractPaintLayer
   {
   public:
-    SliceScaledTextureLayer (UXStyleImageRef imageStyle, const Color &color, unsigned long Corners = eAllCorners, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default);
-    virtual void Renderlayer (GraphicsEngine &GfxContext);
+    SliceScaledTextureLayer(UXStyleImageRef imageStyle, const Color &color, unsigned long Corners = eAllCorners, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default);
+    virtual void Renderlayer(GraphicsEngine &graphics_engine);
     virtual AbstractPaintLayer *Clone() const;
 
   private:
@@ -80,11 +80,12 @@ namespace nux
   class TextureLayer: public AbstractPaintLayer
   {
   public:
-    TextureLayer (ObjectPtr< IOpenGLBaseTexture > device_texture, TexCoordXForm texxform, const Color &color, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default);
-    virtual void Renderlayer (GraphicsEngine &GfxContext);
+    TextureLayer(ObjectPtr< IOpenGLBaseTexture > device_texture, TexCoordXForm texxform, const Color &color, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default);
+    virtual ~TextureLayer();
+    virtual void Renderlayer(GraphicsEngine &graphics_engine);
     virtual AbstractPaintLayer *Clone() const;
 
-    virtual ObjectPtr< IOpenGLBaseTexture> GetDeviceTexture ();
+    virtual ObjectPtr< IOpenGLBaseTexture> GetDeviceTexture();
 
   private:
     ObjectPtr< IOpenGLBaseTexture > m_device_texture;

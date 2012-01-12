@@ -29,39 +29,39 @@ namespace nux
   class IOpenGLBaseTexture;
   class IOpenGLCubeTexture: public IOpenGLBaseTexture
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLCubeTexture, IOpenGLBaseTexture);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLCubeTexture, IOpenGLBaseTexture);
 
   public:
     virtual ~IOpenGLCubeTexture();
 
-    int GetCubeMapSurface (
+    int GetCubeMapSurface(
       eCUBEMAP_FACES FaceType,
       int Level,
       IOpenGLSurface **ppCubeMapSurface
     );
 
-    int LockRect (
+    int LockRect(
       eCUBEMAP_FACES FaceType,
       int Level,
       SURFACE_LOCKED_RECT *pLockedRect,
       const SURFACE_RECT *pRect);
 
-    int UnlockRect (
+    int UnlockRect(
       eCUBEMAP_FACES FaceType,
       int Level
     );
 
-    unsigned int EnableGammaCorrection (bool b);
+    unsigned int EnableGammaCorrection(bool b);
 
-    int GetLevelDesc (
+    int GetLevelDesc(
       int Level,
       SURFACE_DESC *pDesc
     )
     {
-      nuxAssert (Level >= 0 );
-      nuxAssert (Level < _NumMipLevel);
+      nuxAssert(Level >= 0 );
+      nuxAssert(Level < _NumMipLevel);
 
-      if ( (Level < 0) || (Level > _NumMipLevel) )
+      if ((Level < 0) || (Level > _NumMipLevel))
       {
         pDesc->Width    = 0;
         pDesc->Height   = 0;
@@ -80,7 +80,7 @@ namespace nux
     }
   private:
 
-    IOpenGLCubeTexture (
+    IOpenGLCubeTexture(
       unsigned int EdgeLength
       , int Levels
       , BitmapFormat PixelFormat);

@@ -30,14 +30,14 @@ namespace nux
 
   class NuxGraphicsResources
   {
-    NUX_DECLARE_GLOBAL_OBJECT (NuxGraphicsResources, NuxGraphicsGlobalSingletonInitializer);
+    NUX_DECLARE_GLOBAL_OBJECT(NuxGraphicsResources, NuxGraphicsGlobalSingletonInitializer);
   public:
 
     void InitializeResources();
-    NString FindResourceLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
-    NString FindUITextureLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
-    NString FindShaderLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
-    NString FindFontLocation (const TCHAR *ResourceFileName, bool ErrorOnFail = false);
+    NString FindResourceLocation(const char *ResourceFileName, bool ErrorOnFail = false);
+    NString FindUITextureLocation(const char *ResourceFileName, bool ErrorOnFail = false);
+    NString FindShaderLocation(const char *ResourceFileName, bool ErrorOnFail = false);
+    NString FindFontLocation(const char *ResourceFileName, bool ErrorOnFail = false);
 
   private:
 

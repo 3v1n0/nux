@@ -30,7 +30,7 @@ namespace nux
   {
   public:
     ~ComplexNumber();
-    ComplexNumber (t_float re = 0.0f, t_float im = 0.0f);
+    ComplexNumber (float re = 0.0f, float im = 0.0f);
     ComplexNumber (const ComplexNumber &);
 
 
@@ -39,27 +39,27 @@ namespace nux
     //const ComplexNumber operator - (const ComplexNumber&) const;
     //const ComplexNumber operator * (const ComplexNumber&) const;
     //const ComplexNumber operator / (const ComplexNumber&) const;
-    //const ComplexNumber operator * (const t_float& f) const;
-    //const ComplexNumber operator / (const t_float& f) const;
+    //const ComplexNumber operator * (const float& f) const;
+    //const ComplexNumber operator / (const float& f) const;
 
     void operator += (const ComplexNumber &);
     void operator -= (const ComplexNumber &);
     void operator *= (const ComplexNumber &);
     void operator /= (const ComplexNumber &);
-    //void operator *= (const t_float& f);
-    //void operator /= (const t_float& f);
+    //void operator *= (const float& f);
+    //void operator /= (const float& f);
 
     void conjugue();
-    t_float absolute();
-    t_bool IsNull();
-    t_float real() const;
-    t_float imaginary() const;
-    void real (t_float r);
-    void imaginary (t_float i);
+    float absolute();
+    bool IsNull();
+    float real() const;
+    float imaginary() const;
+    void real (float r);
+    void imaginary (float i);
 
   private:
-    t_float real_;
-    t_float imaginary_;
+    float real_;
+    float imaginary_;
   };
 
 

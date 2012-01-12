@@ -35,10 +35,10 @@ namespace nux
 
   GLSh_Fill::GLSh_Fill()
   {
-//     Color                 = new GLShaderParameter(0,  TEXT("ColorFill"),                  eFRAGMENTUNIFORMTYPE, TRUE);
-//     ViewProjectionMatrix  = new GLShaderParameter(0,  TEXT("ViewProjectionMatrix"),       eVERTEXUNIFORMTYPE, TRUE);
-//     Scale                 = new GLShaderParameter(0,  TEXT("Scale"),                      eVERTEXUNIFORMTYPE, TRUE);
-//     Offset                = new GLShaderParameter(0,  TEXT("Offset"),                     eVERTEXUNIFORMTYPE, TRUE);
+//     Color                 = new GLShaderParameter(0,  "ColorFill",                  eFRAGMENTUNIFORMTYPE, TRUE);
+//     ViewProjectionMatrix  = new GLShaderParameter(0,  "ViewProjectionMatrix",       eVERTEXUNIFORMTYPE, TRUE);
+//     Scale                 = new GLShaderParameter(0,  "Scale",                      eVERTEXUNIFORMTYPE, TRUE);
+//     Offset                = new GLShaderParameter(0,  "Offset",                     eVERTEXUNIFORMTYPE, TRUE);
 //
 //     vs = GetGpuDevice()->CreateVertexShader();
 //     ps = GetGpuDevice()->CreatePixelShader();
@@ -50,11 +50,11 @@ namespace nux
 //     sprog->AddShaderParameter(Offset);
 //
 //     NString SourceCode;
-//     LoadFileToString(SourceCode, TEXT("..//Shaders//Fill.glsl"));
+//     LoadFileToString(SourceCode, "..//Shaders//Fill.glsl");
 //     NString VertexShaderSource;
-//     ExtractShaderString3(TEXT("[Vertex Shader]"), SourceCode, VertexShaderSource);
+//     ExtractShaderString3("[Vertex Shader]", SourceCode, VertexShaderSource);
 //     NString PixelShaderSource;
-//     ExtractShaderString3(TEXT("[Fragment Shader]"), SourceCode, PixelShaderSource);
+//     ExtractShaderString3("[Fragment Shader]", SourceCode, PixelShaderSource);
 //
 //     vs->SetShaderCode(VertexShaderSource.GetTCharPtr());
 //     ps->SetShaderCode(PixelShaderSource.GetTCharPtr());
@@ -78,14 +78,14 @@ namespace nux
 
   GLSh_Fill::~GLSh_Fill()
   {
-    NUX_SAFE_DELETE (m_QuadBuffer);
-    NUX_SAFE_DELETE (Color);
-    NUX_SAFE_DELETE (ViewProjectionMatrix);
-    NUX_SAFE_DELETE (Scale);
-    NUX_SAFE_DELETE (Offset);
+    NUX_SAFE_DELETE(m_QuadBuffer);
+    NUX_SAFE_DELETE(Color);
+    NUX_SAFE_DELETE(ViewProjectionMatrix);
+    NUX_SAFE_DELETE(Scale);
+    NUX_SAFE_DELETE(Offset);
   }
 
-  void GLSh_Fill::SetColor (FLOAT R, FLOAT G, FLOAT B, FLOAT A)
+  void GLSh_Fill::SetColor(FLOAT R, FLOAT G, FLOAT B, FLOAT A)
   {
     _R = R;
     _G = G;
@@ -93,35 +93,35 @@ namespace nux
     _A = A;
   }
 
-  void GLSh_Fill::SetTransformMatrix (const Matrix4 &TransformMatrix)
+  void GLSh_Fill::SetTransformMatrix(const Matrix4 &TransformMatrix)
   {
     m_TransformMatrix = TransformMatrix;
   }
 
-  void GLSh_Fill::Render (INT x, INT y, INT z, INT width, INT height)
+  void GLSh_Fill::Render(INT x, INT y, INT z, INT width, INT height)
   {
     return;
-    CHECKGL ( glDisable (GL_CULL_FACE) );
+    CHECKGL(glDisable(GL_CULL_FACE));
     sprog->Begin();
 
     //Matrix4 ProjectionMatrix;
     //ProjectionMatrix.Orthographic(0, 640, 480, 0, 0.0, 10000.0);
     //ProjectionMatrix.Transpose();
-    ViewProjectionMatrix->SetUniformMatrix4fv (1, (GLfloat *) m_TransformMatrix.m, GL_FALSE);
+    ViewProjectionMatrix->SetUniformMatrix4fv(1, (GLfloat *) m_TransformMatrix.m, GL_FALSE);
 
-    Scale->SetUniform4f (width, height, 1, 1);
-    Offset->SetUniform4f (x, y, 0, 0);
-    Color->SetUniform4f (_R, _G, _B, _A);
+    Scale->SetUniform4f(width, height, 1, 1);
+    Offset->SetUniform4f(x, y, 0, 0);
+    Color->SetUniform4f(_R, _G, _B, _A);
 
-    INT VertexLocation = sprog->GetAttributeLocation (TEXT ("Vertex") );
-    m_QuadBuffer->BindAttribute (VertexLocation, 0);
+    INT VertexLocation = sprog->GetAttributeLocation("Vertex");
+    m_QuadBuffer->BindAttribute(VertexLocation, 0);
 
-//     INT VertexColorLocation = sprog->GetAttributeLocation(TEXT("VertexColor"));
+//     INT VertexColorLocation = sprog->GetAttributeLocation("VertexColor");
 //     m_QuadBuffer->BindAttribute(VertexColorLocation, 1);
 
-    m_QuadBuffer->Render (1);
+    m_QuadBuffer->Render(1);
 
-    m_QuadBuffer->UnBindAttribute (VertexLocation);
+    m_QuadBuffer->UnBindAttribute(VertexLocation);
 //     m_QuadBuffer->UnBindAttribute(VertexColorLocation);
     m_QuadBuffer->UnBind(); // Unbind the vertex and index buffer.
 

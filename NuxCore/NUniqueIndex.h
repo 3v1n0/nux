@@ -30,7 +30,7 @@ namespace nux
   {
     NUX_DECLARE_GLOBAL_OBJECT (UniqueIndex, GlobalSingletonInitializer);
   public:
-    t_u64 GetUniqueIndex();
+    unsigned long long GetUniqueIndex();
   private:
     NThreadSafeCounter m_UniqueIndex;
     static NCriticalSection m_CriticalSection;

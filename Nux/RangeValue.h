@@ -32,20 +32,19 @@ namespace nux
   class RangeValue : public View //public ValuatorAbstraction
   {
   public:
-    RangeValue (float Value = 0, float MinValue = 0.0f, float MaxValue = 1.0f, NUX_FILE_LINE_PROTO);
+    RangeValue(float Value = 0, float MinValue = 0.0f, float MaxValue = 1.0f, NUX_FILE_LINE_PROTO);
     virtual ~RangeValue();
 
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    void DrawMarker (GraphicsEngine &GfxContext);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    void DrawMarker(GraphicsEngine &graphics_engine);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     /////////////////
     //  RECEIVERS  //
     /////////////////
-    void SetRange (float min_value, float max_value);
-    void SetValue (float value);
+    void SetRange(float min_value, float max_value);
+    void SetValue(float value);
     float GetValue() const;
     float GetMinValue() const
     {
@@ -56,27 +55,27 @@ namespace nux
       return m_max;
     }
 
-    void SetBackgroundColor (const Color &color);
+    void SetBackgroundColor(const Color &color);
     const Color GetBackgroundColor() const;
 
-    void setStartToEndColor (Color color_start, Color color_end)
+    void setStartToEndColor(Color color_start, Color color_end)
     {
       m_StartColor = color_start;
       m_EndColor = color_end;
     }
-    void setStartColor (Color color)
+    void setStartColor(Color color)
     {
       m_StartColor = color;
     }
-    void setEndColor (Color color)
+    void setEndColor(Color color)
     {
       m_EndColor = color;
     }
-    void setProgressColor (Color color)
+    void setProgressColor(Color color)
     {
       m_ProgressColor = color;
     }
-    void EnableDrawProgress (bool b)
+    void EnableDrawProgress(bool b)
     {
       m_EnableDrawProgress = b;
     }
@@ -84,12 +83,12 @@ namespace nux
     ////////////////
     //  EMITTERS  //
     ////////////////
-    void OnReceiveMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void OnReceiveMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void OnReceiveMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void OnReceiveMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void OnReceiveMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void OnReceiveMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     void OnKeyboardFocus();
     void OnLostKeyboardFocus();
-    void OnValidateKeyboardEntry (EditTextBox *textbox, const NString &text);
+    void OnValidateKeyboardEntry(EditTextBox *textbox, const NString &text);
 
     bool IsCtrlKeyPressed() const
     {

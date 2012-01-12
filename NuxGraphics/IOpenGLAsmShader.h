@@ -51,11 +51,11 @@ namespace nux
 
   class IOpenGLAsmShader:  public IOpenGLResource
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLAsmShader, IOpenGLResource);
-    IOpenGLAsmShader (NString ShaderName, OpenGLResourceType ResourceType);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLAsmShader, IOpenGLResource);
+    IOpenGLAsmShader(NString ShaderName, OpenGLResourceType ResourceType);
     virtual ~IOpenGLAsmShader();
   public:
-    virtual void SetShaderCode (const ANSICHAR *ShaderCode) = 0;
+    virtual void SetShaderCode(const ANSICHAR *ShaderCode) = 0;
     virtual bool Compile() = 0;
     virtual bool IsValid() = 0;
     NString _ShaderName;
@@ -64,28 +64,28 @@ namespace nux
 
   class IOpenGLAsmVertexShader:  public IOpenGLAsmShader
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLAsmVertexShader, IOpenGLAsmShader);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLAsmVertexShader, IOpenGLAsmShader);
   public:
     virtual ~IOpenGLAsmVertexShader();
-    virtual void SetShaderCode (const ANSICHAR *ShaderCode);
+    virtual void SetShaderCode(const ANSICHAR *ShaderCode);
     virtual bool Compile();
     virtual bool IsValid();
   private:
-    IOpenGLAsmVertexShader (NString ShaderName = NString ("VertexProgram") );
+    IOpenGLAsmVertexShader(NString ShaderName = NString("VertexProgram"));
     bool m_CompiledAndReady;
     friend class GpuDevice;
   };
 
   class IOpenGLAsmPixelShader:  public IOpenGLAsmShader
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLAsmPixelShader, IOpenGLAsmShader);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLAsmPixelShader, IOpenGLAsmShader);
   public:
     virtual ~IOpenGLAsmPixelShader();
-    virtual void SetShaderCode (const ANSICHAR *ShaderCode);
+    virtual void SetShaderCode(const ANSICHAR *ShaderCode);
     virtual bool Compile();
     virtual bool IsValid();
   private:
-    IOpenGLAsmPixelShader (NString ShaderName = NString ("PixelProgram") );
+    IOpenGLAsmPixelShader(NString ShaderName = NString("PixelProgram"));
     bool m_CompiledAndReady;
     friend class GpuDevice;
   };
@@ -93,14 +93,14 @@ namespace nux
 
   class IOpenGLAsmShaderProgram:  public IOpenGLResource
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLAsmShaderProgram, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLAsmShaderProgram, IOpenGLResource);
   public:
     virtual ~IOpenGLAsmShaderProgram();
 
-    void LoadVertexShader (const TCHAR *glslshader);
-    void LoadPixelShader (const TCHAR *glslshader);
-    void LoadIShaderFile (const TCHAR *ShaderFileName);
-    void LoadIShader (const TCHAR *ShaderCode);
+    void LoadVertexShader(const char *glslshader);
+    void LoadPixelShader(const char *glslshader);
+    void LoadIShaderFile(const char *ShaderFileName);
+    void LoadIShader(const char *ShaderCode);
     void Link();
 
     bool IsValid();
@@ -108,26 +108,26 @@ namespace nux
     void Begin();
     void End();
 
-    void SetVertexEnvParameter4dARB         (t_uint32 index, double x, double y, double z, double w);
-    void SetVertexEnvParameter4dvARB        (t_uint32 index, const double *params);
-    void SetVertexEnvParameter4fARB         (t_uint32 index, float x, float y, float z, float w);
-    void SetVertexEnvParameter4fvARB        (t_uint32 index, const float *params);
-    void SetVertexLocalParameter4dARB       (t_uint32 index, double x, double y, double z, double w);
-    void SetVertexLocalParameter4dvARB      (t_uint32 index, const double *params);
-    void SetVertexLocalParameter4fARB       (t_uint32 index, float x, float y, float z, float w);
-    void SetVertexLocalParameter4fvARB      (t_uint32 index, const float *params);
+    void SetVertexEnvParameter4dARB         (unsigned int index, double x, double y, double z, double w);
+    void SetVertexEnvParameter4dvARB        (unsigned int index, const double *params);
+    void SetVertexEnvParameter4fARB         (unsigned int index, float x, float y, float z, float w);
+    void SetVertexEnvParameter4fvARB        (unsigned int index, const float *params);
+    void SetVertexLocalParameter4dARB       (unsigned int index, double x, double y, double z, double w);
+    void SetVertexLocalParameter4dvARB      (unsigned int index, const double *params);
+    void SetVertexLocalParameter4fARB       (unsigned int index, float x, float y, float z, float w);
+    void SetVertexLocalParameter4fvARB      (unsigned int index, const float *params);
 
-    void SetFragmentEnvParameter4dARB       (t_uint32 index, double x, double y, double z, double w);
-    void SetFragmentEnvParameter4dvARB      (t_uint32 index, const double *params);
-    void SetFragmentEnvParameter4fARB       (t_uint32 index, float x, float y, float z, float w);
-    void SetFragmentEnvParameter4fvARB      (t_uint32 index, const float *params);
-    void SetFragmentLocalParameter4dARB     (t_uint32 index, double x, double y, double z, double w);
-    void SetFragmentLocalParameter4dvARB    (t_uint32 index, const double *params);
-    void SetFragmentLocalParameter4fARB     (t_uint32 index, float x, float y, float z, float w);
-    void SetFragmentLocalParameter4fvARB    (t_uint32 index, const float *params);
+    void SetFragmentEnvParameter4dARB       (unsigned int index, double x, double y, double z, double w);
+    void SetFragmentEnvParameter4dvARB      (unsigned int index, const double *params);
+    void SetFragmentEnvParameter4fARB       (unsigned int index, float x, float y, float z, float w);
+    void SetFragmentEnvParameter4fvARB      (unsigned int index, const float *params);
+    void SetFragmentLocalParameter4dARB     (unsigned int index, double x, double y, double z, double w);
+    void SetFragmentLocalParameter4dvARB    (unsigned int index, const double *params);
+    void SetFragmentLocalParameter4fARB     (unsigned int index, float x, float y, float z, float w);
+    void SetFragmentLocalParameter4fvARB    (unsigned int index, const float *params);
 
   private:
-    IOpenGLAsmShaderProgram (NString ShaderProgramName = NString ("AsmShaderProgram") );
+    IOpenGLAsmShaderProgram(NString ShaderProgramName = NString("AsmShaderProgram"));
     std::vector<ObjectPtr<IOpenGLAsmShader> > ShaderObjectList;
     NString _ShaderProgramName;
 

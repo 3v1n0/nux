@@ -35,9 +35,9 @@ namespace nux
     GLSh_ColorPicker(color::Channel cc);
     ~GLSh_ColorPicker();
 
-    void SetColor (float R, float G, float B, float A);
-    void SetScreenPositionOffset (float x, float y);
-    void Render (int x, int y, int z, int width, int height, int WindowWidth, int WindowHeight);
+    void SetColor(float R, float G, float B, float A);
+    void SetScreenPositionOffset(float x, float y);
+    void Render(int x, int y, int z, int width, int height, int WindowWidth, int WindowHeight);
 
 
   private:

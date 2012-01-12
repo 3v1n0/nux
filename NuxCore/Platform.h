@@ -83,7 +83,7 @@ namespace nux
 
     void Initialize (const TCHAR *CommandLine);
 
-    t_u32 m_RandomSeed;
+    unsigned int m_RandomSeed;
     NString m_UserName;
     NString m_ComputerName;
     NString m_ProgramName;

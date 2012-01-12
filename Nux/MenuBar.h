@@ -40,9 +40,9 @@ namespace nux
   class MenuBarItem: public Object
   {
   public:
-    NUX_DECLARE_OBJECT_TYPE (MenuBarItem, Object);
+    NUX_DECLARE_OBJECT_TYPE(MenuBarItem, Object);
 
-    MenuBarItem (NUX_FILE_LINE_PROTO);
+    MenuBarItem(NUX_FILE_LINE_PROTO);
     ~MenuBarItem();
   private:
     InputArea   *area;
@@ -54,21 +54,20 @@ namespace nux
 
   class MenuBar: public View
   {
-    NUX_DECLARE_OBJECT_TYPE (MenuBar, View);
+    NUX_DECLARE_OBJECT_TYPE(MenuBar, View);
 
   public:
-    MenuBar (NUX_FILE_LINE_PROTO);
+    MenuBar(NUX_FILE_LINE_PROTO);
     ~MenuBar();
 
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     //void AddActionItem(ActionItem* actionItem);
 
-    void AddMenu (const TCHAR *MenuLabel, MenuPage *popup);
-    void AddMenu (const TCHAR *MenuLabel, MenuPage *menu, BaseTexture *icon);
+    void AddMenu(const char *MenuLabel, MenuPage *popup);
+    void AddMenu(const char *MenuLabel, MenuPage *menu, BaseTexture *icon);
 
 
     /////////////////
@@ -76,12 +75,12 @@ namespace nux
     /////////////////
 
   private:
-    void EmitItemMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item);
-    void EmitItemMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item);
-    void EmitItemMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item);
-    void EmitItemMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item);
-    void RecvItemMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item);
-    void RecvSigActionTriggered (MenuPage *, ActionItem *);
+    void EmitItemMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item);
+    void EmitItemMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item);
+    void EmitItemMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item);
+    void EmitItemMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item);
+    void RecvItemMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item);
+    void RecvSigActionTriggered(MenuPage *, ActionItem *);
     void RecvSigTerminateMenuCascade();
 
     //! Process a mouse down event outside of the menu cascade.
@@ -93,7 +92,7 @@ namespace nux
         \param x    coordinate of the mouse down event
         \param y    coordinate of the mouse down event
     */
-    void RecvSigMouseDownOutsideMenuCascade (MenuPage *menu, int x, int y);
+    void RecvSigMouseDownOutsideMenuCascade(MenuPage *menu, int x, int y);
 
   protected:
 

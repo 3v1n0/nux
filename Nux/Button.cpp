@@ -32,186 +32,446 @@ namespace nux
 
   Button::Button(TextureArea *image, NUX_FILE_LINE_DECL)
   : AbstractButton(NUX_FILE_LINE_PARAM)
-  , label("")
-  , image_position(NUX_POSITION_TOP)
   {
-    this->image = image;
-    Init();
+    image_ = NULL;
+    Initialize(std::string(), image);
   }
 
-  Button::Button (const std::string label, NUX_FILE_LINE_DECL)
-  : AbstractButton (NUX_FILE_LINE_PARAM)
-  , label (label)
-  , image_position (NUX_POSITION_TOP)
-    {
-      this->image = NULL;
-      Init();
-    }
-
-  Button::Button (const std::string label, TextureArea *image, NUX_FILE_LINE_DECL)
-  : AbstractButton (NUX_FILE_LINE_PARAM)
-  , label (label)
-  , image_position (NUX_POSITION_TOP)
-    {
-      this->image = image;
-      Init();
-    }
-
-  Button::Button (NUX_FILE_LINE_DECL)
-  : AbstractButton (NUX_FILE_LINE_PARAM)
-  , label ("")
-  , image_position (NUX_POSITION_TOP)
+  Button::Button(const std::string& button_label, NUX_FILE_LINE_DECL)
+  : AbstractButton(NUX_FILE_LINE_PARAM)
   {
-    this->image = NULL;
-    Init();
+    image_ = NULL;
+    Initialize(button_label, NULL);
+  }
+
+  Button::Button(const std::string& button_label, TextureArea *image, NUX_FILE_LINE_DECL)
+  : AbstractButton(NUX_FILE_LINE_PARAM)
+  {
+    image_ = NULL;
+    Initialize(button_label, image);
+  }
+
+  Button::Button(NUX_FILE_LINE_DECL)
+  : AbstractButton(NUX_FILE_LINE_PARAM)
+  {
+    image_ = NULL;
+    Initialize(std::string(), NULL);
   }
 
   Button::~Button()
   {
+    if (image_)
+      image_->UnReference();
+
+    if (static_text_)
+      static_text_->UnReference();
   }
 
-  void Button::Init ()
+  void Button::Initialize(const std::string &str, TextureArea *image)
   {
+    same_size_as_content_ = true;
+    persistent_active_state_ = false;
+    layout_type_ = HORIZONTAL;
+    item_order_ = IMAGE_FIRST;
+    distribution_ = CENTER_OF_LAYOUT;
+    space_between_items_ = 0;
+    
+    layout_top_padding_ = 2;
+    layout_right_padding_ = 2;
+    layout_bottom_padding_ = 2;
+    layout_left_padding_ = 2;
+
+    int clip = 2;
+    left_clip_ = clip;
+    right_clip_ = clip;
+    top_clip_ = clip;
+    bottom_clip_ = clip;
+
+
     // Set Geometry
-    SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    image_position = NUX_POSITION_LEFT;
-    state.changed.connect (sigc::mem_fun(this, &Button::OnStateChanged));
+    SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
-    // connect up to the imag/label signals
-    label.changed.connect (sigc::mem_fun(this, &Button::OnLabelChanged));
-
-    //FIXME - enable this once properties work.
-    //image.changed.connect (sigc::mem_fun(this, &Button::OnImageChanged));
-
-    image_position.changed.connect (sigc::mem_fun(this, &Button::OnImagePositionChanged));
-
-    Layout *layout = new VLayout (NUX_TRACKER_LOCATION);
-    SetLayout (layout);
-
-    RebuildLayout();
+    image_minimum_size_ = Size(16, 16);
+    image_maximum_size_ = Size(AREA_MAX_WIDTH, AREA_MAX_HEIGHT);
+    BuildLayout(str, image);
   }
 
-  void Button::SetImage (TextureArea *image)
+  void Button::SetImage(TextureArea *image)
   {
-    this->image = image;
-    OnImageChanged (this->image);
+    if (image == NULL)
+      return;
+    BuildLayout(label_, image);
   }
 
-  TextureArea *Button::GetImage ()
+  void Button::SetLabel(const std::string &button_label)
   {
-    return this->image;
+    BuildLayout(button_label, image_);
   }
 
-  void Button::OnStateChanged (int value)
+  TextureArea* Button::GetImage()
   {
+    if (image_ == NULL)
+      return NULL;
+
+    TextureArea *texture_area = new TextureArea();
+    texture_area->SetPaintLayer(image_->GetPaintLayer());
+
+    return texture_area;
+  }
+
+  std::string Button::GetLabel() const
+  {
+    return label_;
+  }
+
+  void Button::SetImageMinimumSize(int width, int height)
+  {
+    image_minimum_size_ = Size(width, height);
+    if (image_)
+      image_->SetMinimumSize(width, height);
+  }
+
+  void Button::SetImageMaximumSize(int width, int height)
+  {
+    image_maximum_size_ = Size(width, height);
+    if (image_)
+      image_->SetMaximumSize(width, height);
+  }
+
+  void Button::SetLayoutPadding(int top, int right, int bottom, int left)
+  {
+    layout_top_padding_ = top >= 0 ? top : 0;
+    layout_right_padding_ = right >= 0 ? right : 0;
+    layout_bottom_padding_ = bottom >= 0 ? bottom : 0;
+    layout_left_padding_ = left >= 0 ? left : 0;
+
+    if (view_layout_)
+    {
+      static_cast<LinearLayout*>(view_layout_)->SetPadding(layout_top_padding_,
+        layout_right_padding_,
+        layout_bottom_padding_,
+        layout_left_padding_);
+    }
+    ComputeContentSize();
     QueueDraw();
   }
 
-  void Button::OnLabelChanged (std::string value)
+  void Button::SetButtonClipRegion(int top_clip, int right_clip, int bottom_clip, int left_clip)
   {
-    RebuildLayout();
+    top_clip_ = top_clip >= 0 ? top_clip : 0;
+    right_clip_ = right_clip >= 0 ? right_clip : 0;
+    bottom_clip_ = bottom_clip >= 0 ? bottom_clip : 0;
+    left_clip_ = left_clip >= 0 ? left_clip : 0;
   }
 
-  void Button::OnImageChanged (TextureArea *value)
+  void Button::BuildLayout(const std::string &str, TextureArea* image)
   {
-    RebuildLayout();
-  }
-
-  void Button::OnImagePositionChanged (int value)
-  {
-    RebuildLayout();
-  }
-
-  void Button::RebuildLayout()
-  {
-    Layout *layout;
-
-    if (image_position == NUX_POSITION_LEFT || image_position == NUX_POSITION_RIGHT)
+    if (image_ != image)
     {
-      layout = new HLayout (NUX_TRACKER_LOCATION);
-    }
-    else
-    {
-      layout = new VLayout (NUX_TRACKER_LOCATION);
-    }
-
-    StaticText *text = NULL;
-    if(label().empty () == false)
-    {
-      text = new StaticText(TEXT (label().c_str()));
-      text->SetSensitive(false);
-    }
-
-    if(image != NULL && text != NULL)
-    {
-      if(image_position == NUX_POSITION_LEFT || image_position == NUX_POSITION_TOP)
+      if (image_)
       {
-        layout->AddView(image, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
-        layout->AddView(text, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+        image_->UnReference();
+        nuxAssert(image_->GetReferenceCount() == 1);
+        image_ = NULL;
       }
-      else
+
+      if (image)
       {
-        layout->AddView(text, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
-        layout->AddView(image, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+        image_ = new TextureArea();
+        image_->Reference();
+        // WARNING: GetPaintLayer returns a clone and SetPaintLayer makes a copy of the clone
+        // UnReference temp otherwise it will be lost and cause a mem leak.
+        AbstractPaintLayer *temp = image->GetPaintLayer();
+        image_->SetPaintLayer(temp);
+        delete temp;
+
+        SetImageMinimumSize(image->GetMinimumWidth(), image->GetMinimumHeight());
+        SetImageMaximumSize(image->GetMaximumWidth(), image->GetMaximumHeight());
       }
     }
-    else if (image != NULL)
+
+    bool create_new_text = false;
+    if (static_text_ && (str != static_text_->GetText()))
     {
-      layout->AddView(image, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
-    }
-    else if (text != NULL)
-    {
-      layout->AddView(text, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+      create_new_text = true;
     }
 
-    Layout *HPadding = new HLayout(NUX_TRACKER_LOCATION);
-    Layout *VPadding = new VLayout(NUX_TRACKER_LOCATION);
+    if ((static_text_ == NULL) && (str != ""))
+    {
+      create_new_text = true;
+    }
 
-    HPadding->AddLayout(new nux::SpaceLayout(12,12,12,12), 0);
-    VPadding->AddLayout(new nux::SpaceLayout(12,12,12,12), 0);
-    VPadding->AddLayout(layout, 0, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
-    VPadding->AddLayout(new nux::SpaceLayout(12,12,12,12), 0);
-    HPadding->AddLayout(VPadding, 0, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
-    HPadding->AddLayout(new nux::SpaceLayout(12,12,12,12), 0);
+    if (create_new_text)
+    {
+      if (static_text_)
+      {
+        static_text_->UnReference();
+        nuxAssert(static_text_->GetReferenceCount() == 1);
+        static_text_ = NULL;
+      }
 
-    // NOTE - setting the layout here, unreferences the previous one, should cause all the memory
-    // to be freed
-    SetLayout (HPadding);
+      if (str != "")
+      {
+        label_ = str;
+        static_text_ = new StaticText(str, NUX_TRACKER_LOCATION);
+        static_text_->Reference();
+        static_text_->SetTextColor(label_color_);
+      }
+    }
+
+    RemoveLayout();
+
+    LinearLayout *layout = NULL;
+    if (static_text_ && image_)
+    {
+      if ((layout_type_ == HORIZONTAL) && (item_order_ == IMAGE_FIRST))
+      {
+        layout = new HLayout(NUX_TRACKER_LOCATION);
+        layout->AddView(image_, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+        layout->AddView(static_text_, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+        layout->SetHorizontalInternalMargin(space_between_items_);
+      }
+      else if ((layout_type_ == HORIZONTAL) && (item_order_ == LABEL_FIRST))
+      {
+        layout = new HLayout(NUX_TRACKER_LOCATION);
+        layout->AddView(static_text_, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+        layout->AddView(image_, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+        layout->SetHorizontalInternalMargin(space_between_items_);
+      }
+      else if ((layout_type_ == VERTICAL) && (item_order_ == IMAGE_FIRST))
+      {
+        layout = new VLayout(NUX_TRACKER_LOCATION);
+        layout->AddView(image_, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+        layout->AddView(static_text_, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+        layout->SetVerticalInternalMargin(space_between_items_);
+      }
+      else if ((layout_type_ == VERTICAL) && (item_order_ == LABEL_FIRST))
+      {
+        layout = new VLayout(NUX_TRACKER_LOCATION);
+        layout->AddView(static_text_, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+        layout->AddView(image_, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+        layout->SetVerticalInternalMargin(space_between_items_);
+      }
+
+      // Both image_ and static_text_ have a reference count of 2.
+      nuxAssert(image_->GetReferenceCount() == 2);
+      nuxAssert(static_text_->GetReferenceCount() == 2);
+    }
+    else if (static_text_)
+    {
+      if (layout_type_ == HORIZONTAL)
+      {
+        layout = new HLayout(NUX_TRACKER_LOCATION);
+        layout->AddView(static_text_, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+      }
+      else if (layout_type_ == VERTICAL)
+      {
+        layout = new VLayout(NUX_TRACKER_LOCATION);
+        layout->AddView(static_text_, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+      }
+      nuxAssert(static_text_->GetReferenceCount() == 2);
+    }
+    else if (image_)
+    {
+      if (layout_type_ == HORIZONTAL)
+      {
+        layout = new HLayout(NUX_TRACKER_LOCATION);
+        layout->AddView(image_, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+      }
+      else if (layout_type_ == VERTICAL)
+      {
+        layout = new VLayout(NUX_TRACKER_LOCATION);
+        layout->AddView(image_, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
+      }
+      nuxAssert(image_->GetReferenceCount() == 2);
+    }
+
+    if (static_text_)
+    {
+      static_text_->SetInputEventSensitivity(false);
+      static_text_->SetTextPointSize(label_font_size_);
+    }
+
+    if (image_)
+    {
+      image_->SetInputEventSensitivity(false);
+    }
+
+
+    if (layout)
+    {
+      switch(distribution_)
+      {
+      case START_OF_LAYOUT:
+        layout->SetContentDistribution(MAJOR_POSITION_LEFT);
+        break;
+
+      case END_OF_LAYOUT:
+        layout->SetContentDistribution(MAJOR_POSITION_RIGHT);
+        break;
+
+      case CENTER_OF_LAYOUT:
+        layout->SetContentDistribution(MAJOR_POSITION_CENTER);
+        break;
+
+      case SPREAD_OVER_LAYOUT:
+        layout->SetContentDistribution(MAJOR_POSITION_SPREAD);
+        break;
+      }
+    }
+
+    if (layout)
+    {
+      layout->SetHorizontalInternalMargin(space_between_items_);
+      layout->SetPadding(layout_top_padding_,
+        layout_right_padding_,
+        layout_bottom_padding_,
+        layout_left_padding_);
+    }
+
+    if (layout)
+    {
+      SetLayout(layout);
+    }
+
+    ComputeContentSize();
 
     QueueDraw();
   }
 
-  void Button::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void Button::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
 
-    //FIXME - nux button theming only supports a few states - low priority really.
-    if(state == NUX_STATE_ACTIVE)
+    graphics_engine.PushClippingRectangle(base);
+    GetPainter().PaintBackground(graphics_engine, base);
+
+    if (visual_state_ == VISUAL_STATE_PRESSED)
     {
-      //FIXME - this uses eBUTTON_FOCUS but that's badly named, focus really means "mouse down" or "activated"
-      GetPainter().PushDrawSliceScaledTextureLayer(GfxContext, base, eBUTTON_FOCUS, color::White, eAllCorners);
-      GetPainter().PopBackground();
+      GetPainter().PaintTextureShape(graphics_engine, base, eBUTTON_FOCUS);
     }
-    else if(state == NUX_STATE_PRELIGHT)
+    else if (visual_state_ == VISUAL_STATE_PRELIGHT)
     {
-      GetPainter().PushDrawSliceScaledTextureLayer(GfxContext, base, eBUTTON_PRELIGHT, color::White, eAllCorners);
-      GetPainter().PopBackground();
+      GetPainter().PaintTextureShape(graphics_engine, base, eBUTTON_PRELIGHT);
     }
     else
     {
-      GetPainter().PushDrawSliceScaledTextureLayer(GfxContext, base, eBUTTON_NORMAL, color::White, eAllCorners);
-      GetPainter().PopBackground();
+      GetPainter().PaintTextureShape(graphics_engine, base, eBUTTON_NORMAL);
     }
-  }
-
-  void Button::DrawContent(GraphicsEngine &GfxContent, bool force_draw)
-  {
-    nux::Geometry base = GetGeometry();
-    GfxContent.PushClippingRectangle(base);
 
     if (GetCompositionLayout())
-      GetCompositionLayout()->ProcessDraw(GfxContent, force_draw);
+    {
+      GetPainter().PushPaintLayerStack();
+      {
+        Geometry clip_geo = base;
+        clip_geo.OffsetPosition(left_clip_, top_clip_);
+        clip_geo.OffsetSize(-left_clip_ - right_clip_, -top_clip_ - bottom_clip_);
 
-    GfxContent.PopClippingRectangle();
+        graphics_engine.PushClippingRectangle(clip_geo);
+        GetPainter().PushPaintLayerStack();
+        GetCompositionLayout()->ProcessDraw(graphics_engine, force_draw);
+        GetPainter().PopPaintLayerStack();
+        graphics_engine.PopClippingRectangle();
+      }
+      GetPainter().PopPaintLayerStack();
+    }
+    graphics_engine.PopClippingRectangle();
+  }
+
+  long Button::ComputeContentSize()
+  {
+    return View::ComputeContentSize();
+  }
+
+  void Button::Activate()
+  {
+    if (persistent_active_state_ == false)
+    {
+      return;
+    }
+
+    if (active_ == true)
+    {
+      // already active
+      return;
+    }
+
+    active_ = true;
+    
+    state_change.emit(this);
+    QueueDraw();
+  }
+
+  void Button::Deactivate()
+  {
+    if (persistent_active_state_ == false)
+    {
+      return;
+    }
+
+    if (active_ == false)
+    {
+      // already deactivated
+      return;
+    }
+
+    active_ = false;
+
+    state_change.emit(this);
+    QueueDraw();
+  }
+
+  void Button::RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  {
+    if (persistent_active_state_)
+    {
+      active_ = !active_;
+    }
+
+    click.emit(this);
+    state_change.emit(this);
+    QueueDraw();
+  }
+
+  void Button::SetDistribution(Distribution distribution)
+  {
+    distribution_ = distribution;
+    BuildLayout(label_, image_);
+  }
+
+  void Button::SetItemOrder(ItemOrder item_order)
+  {
+    item_order_ = item_order;
+    BuildLayout(label_, image_);
+  }
+
+  void Button::SetLayoutType(LayoutType layout_type)
+  {
+    layout_type_ = layout_type;
+    BuildLayout(label_, image_);
+  }
+
+  void Button::SetSpaceBetweenItems(int space_between_items)
+  {
+    space_between_items_ = (space_between_items >= 0) ? space_between_items : 0;
+    if (view_layout_)
+    {
+      static_cast<LinearLayout*>(view_layout_)->SetSpaceBetweenChildren(space_between_items_);
+    }
+
+    ComputeContentSize();
+    QueueDraw();
+
+  }
+
+  void Button::SetLabelFontSize(int point)
+  {
+    AbstractButton::SetLabelFontSize(point);
+
+    if (static_text_ == NULL)
+      return;
+
+    ComputeContentSize();
+    QueueDraw();
   }
 }

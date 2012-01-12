@@ -42,25 +42,25 @@ namespace nux
   bool GetButtonState(unsigned long button_state, MouseButton button)
   {
     if (button == NUX_MOUSE_BUTTON1)
-      return (button_state & NUX_STATE_BUTTON1_DOWN) ? true : false;
+      return(button_state & NUX_STATE_BUTTON1_DOWN) ? true : false;
     else if (button == NUX_MOUSE_BUTTON2)
-      return (button_state & NUX_STATE_BUTTON2_DOWN) ? true : false;
+      return(button_state & NUX_STATE_BUTTON2_DOWN) ? true : false;
     else if (button == NUX_MOUSE_BUTTON3)
-      return (button_state & NUX_STATE_BUTTON3_DOWN) ? true : false;
+      return(button_state & NUX_STATE_BUTTON3_DOWN) ? true : false;
     else if (button == NUX_MOUSE_BUTTON4)
-      return (button_state & NUX_STATE_BUTTON4_DOWN) ? true : false;
+      return(button_state & NUX_STATE_BUTTON4_DOWN) ? true : false;
 
     return false;    
   }
   
   bool GetKeyModifierState(unsigned long key_modifiers_states, KeyModifier key_modifier)
   {
-    return ((key_modifiers_states & key_modifier) != 0);
+    return((key_modifiers_states & key_modifier) != 0);
   }
 
   Event::Event()
   {
-    Memset (e_text, 0, sizeof (e_text));
+    Memset(text, 0, sizeof(text));
 
     for (int i = 0; i < NUX_MAX_VK; i++)
     {
@@ -69,24 +69,26 @@ namespace nux
 
     ascii_code = 0;
     virtual_code = 0;
-    e_key_modifiers = 0;
-    e_key_repeat_count = 0;
-    e_mouse_state = 0;
-    e_x = -1;
-    e_y = -1;
-    e_x_root = 0;
-    e_y_root = 0;
-    e_dx = 0;
-    e_dy = 0;
-    e_clicks = 0;
-    e_is_click = 0;
-    e_keysym = 0;
-    e_wheeldelta = 0;
-    e_x11_keycode = 0;
-#if defined (NUX_OS_LINUX)
-    e_x11_timestamp = 0;
-    e_x11_window = 0;
-    e_x11_state = 0;
+    key_modifiers = 0;
+    key_repeat_count = 0;
+    mouse_state = 0;
+    x = -1;
+    y = -1;
+    x_root = 0;
+    y_root = 0;
+    dx = 0;
+    dy = 0;
+    clicks = 0;
+    is_click = 0;
+    
+    wheel_delta = 0;
+    
+#if defined(NUX_OS_LINUX)
+    x11_keycode = 0;
+    x11_keysym = 0;
+    x11_timestamp = 0;
+    x11_window = 0;
+    x11_key_state = 0;
 #endif
 
     //Application = 0;
@@ -94,57 +96,58 @@ namespace nux
 
   void Event::Reset()
   {
-    e_event = NUX_NO_EVENT;
-    Memset (e_text, 0, sizeof (e_text));
-    e_keysym = 0;
-    e_key_repeat_count = 0;
-    e_wheeldelta = 0;
+    type = NUX_NO_EVENT;
+    Memset(text, 0, sizeof(text));
+    x11_keysym = 0;
+    key_repeat_count = 0;
+    key_modifiers = 0;
+    wheel_delta = 0;
   }
 
   int Event::GetX() const
   {
-    return e_x;
+    return x;
   }
   int Event::GetY() const
   {
-    return e_y;
+    return y;
   }
   int Event::GetRootX() const
   {
-    return e_x_root;
+    return x_root;
   }
   int Event::GetRootY() const
   {
-    return e_y_root;
+    return y_root;
   }
   int Event::GetDeltaX() const
   {
-    return e_dx;
+    return dx;
   }
   int Event::GetDeltaY() const
   {
-    return e_dy;
+    return dy;
   }
 
   unsigned long Event::GetKeyState()	const
   {
-    return e_key_modifiers;
+    return key_modifiers;
   }
 
   unsigned long Event::GetMouseState() const
   {
-    return e_mouse_state;
+    return mouse_state;
   }
 
   MouseButton Event::GetEventButton() const
   {
-    if ((e_mouse_state & NUX_EVENT_BUTTON1_DOWN) || (e_mouse_state & NUX_EVENT_BUTTON1_UP))
+    if ((mouse_state & NUX_EVENT_BUTTON1_DOWN) || (mouse_state & NUX_EVENT_BUTTON1_UP))
       return NUX_MOUSE_BUTTON1;
-    else if ((e_mouse_state & NUX_EVENT_BUTTON2_DOWN) || (e_mouse_state & NUX_EVENT_BUTTON2_UP))
+    else if ((mouse_state & NUX_EVENT_BUTTON2_DOWN) || (mouse_state & NUX_EVENT_BUTTON2_UP))
       return NUX_MOUSE_BUTTON2;
-    else if ((e_mouse_state & NUX_EVENT_BUTTON3_DOWN) || (e_mouse_state & NUX_EVENT_BUTTON3_UP))
+    else if ((mouse_state & NUX_EVENT_BUTTON3_DOWN) || (mouse_state & NUX_EVENT_BUTTON3_UP))
       return NUX_MOUSE_BUTTON3;
-    else if ((e_mouse_state & NUX_EVENT_BUTTON4_DOWN) || (e_mouse_state & NUX_EVENT_BUTTON4_UP))
+    else if ((mouse_state & NUX_EVENT_BUTTON4_DOWN) || (mouse_state & NUX_EVENT_BUTTON4_UP))
       return NUX_MOUSE_BUTTON4;
 
     return NUX_INVALID_MOUSE_BUTTON;
@@ -153,20 +156,20 @@ namespace nux
   bool Event::GetButtonState(MouseButton button) const
   {
     if (button == 1)
-      return (e_mouse_state & NUX_STATE_BUTTON1_DOWN) ? true : false;
+      return(mouse_state & NUX_STATE_BUTTON1_DOWN) ? true : false;
     else if (button == 2)
-      return (e_mouse_state & NUX_STATE_BUTTON2_DOWN) ? true : false;
+      return(mouse_state & NUX_STATE_BUTTON2_DOWN) ? true : false;
     else if (button == 3)
-      return (e_mouse_state & NUX_STATE_BUTTON3_DOWN) ? true : false;
+      return(mouse_state & NUX_STATE_BUTTON3_DOWN) ? true : false;
     else if (button == 4)
-      return (e_mouse_state & NUX_STATE_BUTTON4_DOWN) ? true : false;
+      return(mouse_state & NUX_STATE_BUTTON4_DOWN) ? true : false;
 
     return false;
   }
 
   bool Event::GetKeyModifierState(KeyModifier key_modifier) const
   {
-    return ((e_key_modifiers & key_modifier) != 0);
+    return((key_modifiers & key_modifier) != 0);
   }
 
   //! Return virtual key code of the key that has triggered the last event.
@@ -176,16 +179,16 @@ namespace nux
   */
   unsigned long Event::GetKeySym() const
   {
-    return e_keysym;
+    return x11_keysym;
   }
   unsigned short Event::GetKeyRepeatCount() const
   {
-    return e_key_repeat_count;
+    return key_repeat_count;
   }
 
-  const TCHAR* Event::GetText() const
+  const char* Event::GetText() const
   {
-    return e_text;
+    return text;
   }
 
 
@@ -195,7 +198,7 @@ namespace nux
       @param VirtualKey virtual key code.
       @return 1 if the key is pressed, 0 if the key is released.
   */
-  unsigned long Event::GetVirtualKeyState (unsigned long VirtualKey) const
+  unsigned long Event::GetVirtualKeyState(unsigned long VirtualKey) const
   {
     if (VirtualKey >= NUX_MAX_VK)
       return 0;
@@ -206,6 +209,40 @@ namespace nux
     return VirtualKeycodeState[VirtualKey];
   }
 
+  bool Event::IsShiftDown() const
+  {
+    return (key_modifiers & NUX_STATE_SHIFT) ? true : false;
+  }
+
+  bool Event::IsControlDown() const
+  {
+    return (key_modifiers & NUX_STATE_CTRL) ? true : false;
+  }
+
+  bool Event::IsCapsLockDown() const
+  {
+    return (key_modifiers & NUX_STATE_CAPS_LOCK) ? true : false;
+  }
+
+  bool Event::IsAltDown() const
+  {
+    return (key_modifiers & NUX_STATE_ALT) ? true : false;
+  }
+
+  bool Event::IsNumLockDown() const
+  {
+    return (key_modifiers & NUX_STATE_NUMLOCK) ? true : false;
+  }
+
+  bool Event::IsScrollLockDown() const
+  {
+    return (key_modifiers & NUX_STATE_SCROLLLOCK) ? true : false;
+  }
+
+  bool Event::IsSuperKeyDown() const
+  {
+    return (key_modifiers & NUX_STATE_SCROLLLOCK) ? true : false;
+  }
 
 }
 

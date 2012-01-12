@@ -13,12 +13,16 @@
 #   - Increase micro_version to the next odd number
 #   - Increase interface_version to the next odd number
 # 
-m4_define([nux_major_version], [1])
-m4_define([nux_minor_version], [16])
+m4_define([nux_major_version], [2])
+m4_define([nux_minor_version], [0])
 m4_define([nux_micro_version], [0])
 
-# Bump this when we break ABI
-m4_define([nux_api_version], [1.0])
+m4_define([nux_api_version], [2.0])
+# Increase the number (to the current date) everytime you propose a branch that breaks the API or ABI
+# The number format is : year/month/day
+# e.g.: december 5th, 2011 is: 20111205
+# So far there is no provision for more than one break in a day.
+m4_define([nux_abi_version], [20111214])
 
 m4_define([nux_version],
           [nux_major_version.nux_minor_version.nux_micro_version])
@@ -63,11 +67,13 @@ NUX_MINOR_VERSION=nux_minor_version
 NUX_MICRO_VERSION=nux_micro_version
 NUX_VERSION=nux_version
 NUX_API_VERSION=nux_api_version
+NUX_ABI_VERSION=nux_abi_version
 AC_SUBST(NUX_MAJOR_VERSION)
 AC_SUBST(NUX_MINOR_VERSION)
 AC_SUBST(NUX_MICRO_VERSION)
 AC_SUBST(NUX_VERSION)
 AC_SUBST(NUX_API_VERSION)
+AC_SUBST(NUX_ABI_VERSION)
 
 m4_define([lt_current],
           [m4_eval(100 * nux_minor_version + nux_micro_version - nux_interface_age)])
@@ -109,6 +115,27 @@ AC_CHECK_FUNCS([memset munmap strcasecmp strdup])
 PKG_PROG_PKG_CONFIG
 
 dnl ===========================================================================
+GL_PKGS="gl glu glew glewmx"
+MAINTAINER_CFLAGS=""
+
+# Enable opengl es 20 code path
+AC_ARG_ENABLE([opengles_20],
+              [AC_HELP_STRING([--enable-opengles-20=@<:@no/yes@:>@],
+              [Enable OpenGL ES 20 code path @<:@default=no@:>@])],
+              [],
+              [enable_opengles_20=no])
+AS_IF([test "x$enable_opengles_20" = "xyes"],
+      [
+         MAINTAINER_CFLAGS+=" -DNUX_OPENGLES_20"
+         GL_PKGS="egl glesv2"
+      ]
+)
+AM_CONDITIONAL(NUX_OPENGLES_20, [test "x$enable_opengles_20" = "xyes"])
+
+AC_SUBST(GL_PKGS)
+AC_SUBST(MAINTAINER_CFLAGS)
+
+dnl ===========================================================================
 
 PKG_CHECK_MODULES(NUX_CORE, glib-2.0 >= 2.25.14 gthread-2.0 sigc++-2.0 gio-2.0)
 AC_SUBST(NUX_CORE_CFLAGS)
@@ -124,26 +151,14 @@ PKG_CHECK_MODULES(NUX_IMAGE,
 AC_SUBST(NUX_IMAGE_CFLAGS)
 AC_SUBST(NUX_IMAGE_LIBS)
 
-PKG_CHECK_MODULES(NUX_MESH,
-                  glib-2.0 >= 2.25.14
-                  gdk-pixbuf-2.0
-                  glew
-                  glewmx
-                  sigc++-2.0
-                  )
-AC_SUBST(NUX_MESH_CFLAGS)
-AC_SUBST(NUX_MESH_LIBS)
-
 PKG_CHECK_MODULES(NUX_GRAPHICS,
                   glib-2.0 >= 2.25.14
                   gdk-pixbuf-2.0
-                  gl
-                  glu
-                  glew
-                  glewmx
+                  $GL_PKGS
                   xxf86vm
                   sigc++-2.0
-		  xinerama
+		              xinerama
+                  libutouch-geis
                   )
 AC_SUBST(NUX_GRAPHICS_CFLAGS)
 AC_SUBST(NUX_GRAPHICS_LIBS)
@@ -152,10 +167,7 @@ PKG_CHECK_MODULES(NUX,
                   glib-2.0 >= 2.25.14
                   gdk-pixbuf-2.0
                   gthread-2.0
-                  gl
-                  glu
-                  glew
-                  glewmx
+                  $GL_PKGS
                   sigc++-2.0
                   pango
                   pangocairo
@@ -166,9 +178,9 @@ AC_SUBST(NUX_LIBS)
 
 PKG_CHECK_MODULES(UNITY_SUPPORT_TEST,
                   x11
+                  $GL_PKGS
                   xcomposite
                   xdamage
-                  gl
                   libpci
                   )
 AC_SUBST(UNITY_SUPPORT_TEST_CFLAGS)
@@ -194,6 +206,11 @@ AS_IF([test "x$enable_tests" = "xyes"],
                        [],
                        [AC_MSG_ERROR([you are missing google-mock, apt-get install google-mock])])
        AC_LANG_POP([C++])
+
+       #Check for libxtst
+       AC_CHECK_HEADER([X11/extensions/XTest.h],
+                       [],
+                       [AC_MSG_ERROR([you are missing libxtst-dev, apt-get install libxtst-dev])])
       ]
 )
 AM_CONDITIONAL(BUILD_TESTS, [test "x$enable_tests" = "xyes"])
@@ -236,7 +253,6 @@ AC_ARG_ENABLE([maintainer-mode],
               [],
               [enable_maintainer_mode=maintainer_mode_default])
 
-MAINTAINER_CFLAGS=""
 AS_IF([test "x$enable_maintainer_mode" = "xyes" && test "x$GCC" = "xyes"],
       [
          MAINTAINER_CFLAGS+="-Werror -Wall -Wcast-align -Wno-uninitialized -Wempty-body -Wformat-security -Winit-self"
@@ -252,20 +268,6 @@ AC_ARG_ENABLE([debug],
 AS_IF([test "x$enable_debug" = "xyes"],
       [
          MAINTAINER_CFLAGS+=" -DNUX_DEBUG"
-      ]
-)
-
-AC_SUBST(MAINTAINER_CFLAGS)
-
-# Enable opengl es 20 code path
-AC_ARG_ENABLE([opengles_20],
-              [AC_HELP_STRING([--enable-opengles-20=@<:@no/yes@:>@],
-              [Enable OpenGL ES 20 code path @<:@default=no@:>@])],
-              [],
-              [enable_opengles_20=no])
-AS_IF([test "x$enable_opengles_20" = "xyes"],
-      [
-         MAINTAINER_CFLAGS+=" -DNUX_OPENGLES_20"
       ]
 )
 
@@ -316,6 +318,7 @@ AC_CONFIG_FILES([
   NuxGraphics/nux-graphics.pc
   Nux/Makefile
   Nux/nux.pc
+  Nux/ABI.h
   examples/Makefile
   tests/Makefile
   tools/Makefile

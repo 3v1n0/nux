@@ -41,7 +41,7 @@ namespace nux
     virtual void RecvOk();
     virtual void RecvCancel();
 
-    void StartDialog (Color &color, color::Model ColorModel = color::RGB, bool StartModal = false);
+    void StartDialog(Color &color, color::Model ColorModel = color::RGB, bool StartModal = false);
 
   private:
 

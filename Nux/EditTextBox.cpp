@@ -30,50 +30,50 @@
 
 namespace nux
 {
-  EditTextBox::EditTextBox (const TCHAR *Caption, NUX_FILE_LINE_DECL)
-    :   View (NUX_FILE_LINE_PARAM)
+  EditTextBox::EditTextBox(const char *Caption, NUX_FILE_LINE_DECL)
+    :   View(NUX_FILE_LINE_PARAM)
   {
     m_Validator             = NULL;
     BlinkCursor             = false;
     m_ScrollTimerHandler    = 0;
     m_BlinkTimerFunctor     = 0;
     m_WriteAlpha            = true;
-    m_Prefix                = TEXT("");
-    m_Suffix                = TEXT("");
+    m_Prefix                = "";
+    m_Suffix                = "";
 
     key_nav_mode_           = false;
     text_input_mode_        = false;
 
-    SetGeometry (Geometry (0, 0, 3 * DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT) );
-    SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    SetGeometry (Geometry (0, 0, 3 * DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT) );
-    mouse_down.connect (sigc::mem_fun (this, &EditTextBox::RecvMouseDown) );
-    mouse_drag.connect (sigc::mem_fun (this, &EditTextBox::RecvMouseDrag) );
-    mouse_up.connect (sigc::mem_fun (this, &EditTextBox::RecvMouseUp) );
-    mouse_double_click.connect (sigc::mem_fun (this, &EditTextBox::RecvMouseDoubleClick) );
+    SetGeometry(Geometry(0, 0, 3 * DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
+    SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+    SetGeometry(Geometry(0, 0, 3 * DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
+    mouse_down.connect(sigc::mem_fun(this, &EditTextBox::RecvMouseDown));
+    mouse_drag.connect(sigc::mem_fun(this, &EditTextBox::RecvMouseDrag));
+    mouse_up.connect(sigc::mem_fun(this, &EditTextBox::RecvMouseUp));
+    mouse_double_click.connect(sigc::mem_fun(this, &EditTextBox::RecvMouseDoubleClick));
 
-    key_down.connect (sigc::mem_fun (this, &EditTextBox::RecvKeyEvent) );
+    key_down.connect(sigc::mem_fun(this, &EditTextBox::RecvKeyEvent));
 
-    begin_key_focus.connect (sigc::mem_fun (this, &EditTextBox::RecvStartKeyFocus) );
-    end_key_focus.connect (sigc::mem_fun (this, &EditTextBox::RecvEndKeyFocus) );
+    begin_key_focus.connect(sigc::mem_fun(this, &EditTextBox::RecvStartKeyFocus));
+    end_key_focus.connect(sigc::mem_fun(this, &EditTextBox::RecvEndKeyFocus));
 
-    SetText (Caption);
-    SetTextColor (color::White);
-    m_BackgroundColor = Color (0xFF343434); //COLOR_TEXTEDIT_BACKGROUNG;
-    m_SelectedTextColor = Color (0xFFFAFAFA);
-    m_SelectedTextBackgroundColor = Color (0xFF777777);
-    m_TextBlinkColor = Color (0xFF003D0A);
-    m_CursorColor = Color (0xFFDDDDDD);
+    SetText(Caption);
+    SetTextColor(color::White);
+    m_BackgroundColor = Color(0xFF343434); //COLOR_TEXTEDIT_BACKGROUNG;
+    m_SelectedTextColor = Color(0xFFFAFAFA);
+    m_SelectedTextBackgroundColor = Color(0xFF777777);
+    m_TextBlinkColor = Color(0xFF003D0A);
+    m_CursorColor = Color(0xFFDDDDDD);
 
 
-    hlayout = new HLayout (NUX_TRACKER_LOCATION);
+    hlayout = new HLayout(NUX_TRACKER_LOCATION);
     SetLayout(hlayout);
 
     m_BlinkTimerFunctor = new TimerFunctor();
-    m_BlinkTimerFunctor->OnTimerExpired.connect (sigc::mem_fun (this, &EditTextBox::BlinkCursorTimerInterrupt) );
+    m_BlinkTimerFunctor->time_expires.connect(sigc::mem_fun(this, &EditTextBox::BlinkCursorTimerInterrupt));
 
     m_ScrollTimerFunctor = new TimerFunctor();
-    m_ScrollTimerFunctor->OnTimerExpired.connect (sigc::mem_fun (this, &EditTextBox::ScrollTimerInterrupt) );
+    m_ScrollTimerFunctor->time_expires.connect(sigc::mem_fun(this, &EditTextBox::ScrollTimerInterrupt));
 
     SetAcceptKeyboardEvent(true);
     EnableDoubleClick(true);
@@ -85,88 +85,81 @@ namespace nux
     delete m_ScrollTimerFunctor;
     delete m_Validator;
 
-    if (m_BlinkTimerHandler.IsValid() )
-      GetTimer().RemoveTimerHandler (m_BlinkTimerHandler);
+    if (m_BlinkTimerHandler.IsValid())
+      GetTimer().RemoveTimerHandler(m_BlinkTimerHandler);
 
     m_BlinkTimerHandler = 0;
   }
 
-  void EditTextBox::ScrollTimerInterrupt (void *v)
+  void EditTextBox::ScrollTimerInterrupt(void *v)
   {
     Geometry base = GetGeometry();
-    IEvent &ievent = GetGraphicsDisplay()->GetCurrentEvent();
+    Event &event = GetGraphicsDisplay()->GetCurrentEvent();
 
-    int X = ievent.e_x;
-    m_KeyboardHandler.CaretAutoScroll (ievent.e_x, ievent.e_y, base);
+    int X = event.x;
+    m_KeyboardHandler.CaretAutoScroll(event.x, event.y, base);
 
-    if ( ( (X < base.x) && (m_KeyboardHandler.GetCursorPosition() > 0) ) ||
-         ( (X > base.x + base.GetWidth() ) && (m_KeyboardHandler.GetCursorPosition() < m_KeyboardHandler.GetLength() ) ) )
+    if (((X < base.x) && (m_KeyboardHandler.GetCursorPosition() > 0)) ||
+         ((X > base.x + base.GetWidth()) && (m_KeyboardHandler.GetCursorPosition() < m_KeyboardHandler.GetLength())))
     {
-      m_ScrollTimerHandler = GetTimer().AddTimerHandler (50, m_ScrollTimerFunctor, this);
+      m_ScrollTimerHandler = GetTimer().AddTimerHandler(50, m_ScrollTimerFunctor, this);
     }
     else
     {
-      GetTimer().RemoveTimerHandler (m_BlinkTimerHandler);
+      GetTimer().RemoveTimerHandler(m_BlinkTimerHandler);
       m_ScrollTimerHandler = 0;
     }
 
     // While the mouse is selecting the text, no blinking of cursor
-    StopBlinkCursor (false);
-    StartBlinkCursor (false);
+    StopBlinkCursor(false);
+    StartBlinkCursor(false);
 
     QueueDraw();
   }
 
-  void EditTextBox::BlinkCursorTimerInterrupt (void *v)
+  void EditTextBox::BlinkCursorTimerInterrupt(void *v)
   {
-    GetTimer().RemoveTimerHandler (m_BlinkTimerHandler);
-    m_BlinkTimerHandler = GetTimer().AddTimerHandler (500, m_BlinkTimerFunctor, this);
+    GetTimer().RemoveTimerHandler(m_BlinkTimerHandler);
+    m_BlinkTimerHandler = GetTimer().AddTimerHandler(500, m_BlinkTimerFunctor, this);
     BlinkCursor = !BlinkCursor;
     QueueDraw();
   }
 
-  void EditTextBox::StopBlinkCursor (bool BlinkState)
+  void EditTextBox::StopBlinkCursor(bool BlinkState)
   {
-    GetTimer().RemoveTimerHandler (m_BlinkTimerHandler);
+    GetTimer().RemoveTimerHandler(m_BlinkTimerHandler);
     m_BlinkTimerHandler = 0;
     BlinkCursor = BlinkState;
     QueueDraw();
   }
 
-  void EditTextBox::StartBlinkCursor (bool BlinkState)
+  void EditTextBox::StartBlinkCursor(bool BlinkState)
   {
-    m_BlinkTimerHandler = GetTimer().AddTimerHandler (500, m_BlinkTimerFunctor, this);
+    m_BlinkTimerHandler = GetTimer().AddTimerHandler(500, m_BlinkTimerFunctor, this);
     BlinkCursor = BlinkState;
     QueueDraw();
   }
 
-  void EditTextBox::SetValidator (const Validator *validator)
+  void EditTextBox::SetValidator(const Validator *validator)
   {
-    nuxAssert (validator != 0);
+    nuxAssert(validator != 0);
     delete m_Validator;
     m_Validator = validator->Clone();
   }
 
-  long EditTextBox::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-    return ret;
-  }
-
-  void EditTextBox::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void EditTextBox::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
 
     {
-      GfxContext.PushClippingRectangle (base);
+      graphics_engine.PushClippingRectangle(base);
 
-      GetPainter().Paint2DQuadColor (GfxContext, base, Color (m_BackgroundColor) );
+      GetPainter().Paint2DQuadColor(graphics_engine, base, Color(m_BackgroundColor));
 
-      if (HasKeyboardFocus() )
+      if (HasKeyboardFocus())
       {
 
-        GetPainter().PaintColorTextLineEdit (GfxContext, GetGeometry(),
+        GetPainter().PaintColorTextLineEdit(graphics_engine, GetGeometry(),
                                          m_KeyboardHandler.GetTextLine(),
                                          GetTextColor(),
                                          m_WriteAlpha,
@@ -183,61 +176,61 @@ namespace nux
       }
       else
       {
-        GetPainter().PaintTextLineStatic (GfxContext, GetFont (), GetGeometry(),
+        GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), GetGeometry(),
                                       m_KeyboardHandler.GetTextLine(),
-                                      GetTextColor() );
+                                      GetTextColor());
       }
     }
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void EditTextBox::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void EditTextBox::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void EditTextBox::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void EditTextBox::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void EditTextBox::SetText (const TCHAR &Caption)
+  void EditTextBox::SetText(const char &Caption)
   {
-    NString s (Caption);
-    SetText (s);
+    NString s(Caption);
+    SetText(s);
   }
 
-  void EditTextBox::SetText (const TCHAR *Caption)
+  void EditTextBox::SetText(const char *Caption)
   {
-    NString s (Caption);
-    SetText (s);
+    NString s(Caption);
+    SetText(s);
   }
 
-  void EditTextBox::SetText (const tstring &Caption)
+  void EditTextBox::SetText(const tstring &Caption)
   {
-    NString s (Caption);
-    SetText (s);
+    NString s(Caption);
+    SetText(s);
   }
 
-  void EditTextBox::SetText (const NString &Caption)
+  void EditTextBox::SetText(const NString &Caption)
   {
-    NString s (Caption);
-    s.RemovePrefix (m_Prefix);
-    s.RemoveSuffix (m_Suffix);
+    NString s(Caption);
+    s.RemovePrefix(m_Prefix);
+    s.RemoveSuffix(m_Suffix);
 
-    if (ValidateKeyboardEntry (s.GetTCharPtr ()))
+    if (ValidateKeyboardEntry(s.GetTCharPtr()))
     {
       m_Text = (m_Prefix + s) + m_Suffix;
-      m_KeyboardHandler.SetText (m_Text.GetTStringRef ());
+      m_KeyboardHandler.SetText(m_Text.GetTStringRef());
       m_temporary_caption = m_Text;
-      sigSetText.emit (this);
+      sigSetText.emit(this);
     }
 
     QueueDraw();
   }
 
 
-  const TCHAR *EditTextBox::GetText() const
+  const char *EditTextBox::GetText() const
   {
     return m_Text.GetTCharPtr();
   }
@@ -245,32 +238,32 @@ namespace nux
 //! Return a caption string striping out the prefix and the suffix
   NString EditTextBox::GetCleanText() const
   {
-    NString CleanText (m_Text);
-    CleanText.RemovePrefix (m_Prefix);
-    CleanText.RemoveSuffix (m_Suffix);
+    NString CleanText(m_Text);
+    CleanText.RemovePrefix(m_Prefix);
+    CleanText.RemoveSuffix(m_Suffix);
     return CleanText.m_string;
   }
 
-  void EditTextBox::RecvMouseDoubleClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void EditTextBox::RecvMouseDoubleClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     m_KeyboardHandler.SelectAllText();
     QueueDraw();
   }
 
-  void EditTextBox::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void EditTextBox::RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    m_KeyboardHandler.MouseUp (x, y);
+    m_KeyboardHandler.MouseUp(x, y);
 
-    if (m_ScrollTimerHandler.IsValid() )
+    if (m_ScrollTimerHandler.IsValid())
     {
-      GetTimer().RemoveTimerHandler (m_ScrollTimerHandler);
+      GetTimer().RemoveTimerHandler(m_ScrollTimerHandler);
       m_ScrollTimerHandler = 0;
     }
 
     QueueDraw();
   }
 
-  void EditTextBox::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void EditTextBox::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     if (HasKeyboardFocus() == false)
     {
@@ -281,89 +274,89 @@ namespace nux
     {
       // Second mouse down and more
       m_KeyboardHandler.UnselectAllText();
-      m_KeyboardHandler.MouseDown (x, y);
+      m_KeyboardHandler.MouseDown(x, y);
 
       // Always make the cursor visible when a mouse down happens.
-      StopBlinkCursor (false);
-      StartBlinkCursor (false);
+      StopBlinkCursor(false);
+      StartBlinkCursor(false);
     }
 
     QueueDraw();
   }
 
-  void EditTextBox::RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void EditTextBox::RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
     Geometry base = GetGeometry();
 
     int X = x + base.x;
 
-    if ( (!m_ScrollTimerHandler.IsValid() ) && ( (X < base.x) || (X > base.x + base.GetWidth() ) ) )
+    if ((!m_ScrollTimerHandler.IsValid()) && ((X < base.x) || (X > base.x + base.GetWidth())))
     {
-      m_ScrollTimerHandler = GetTimer().AddTimerHandler (25, m_ScrollTimerFunctor, this);
+      m_ScrollTimerHandler = GetTimer().AddTimerHandler(25, m_ScrollTimerFunctor, this);
     }
-    else if ( (X >= base.x) && (X < base.x + base.GetWidth() ) )
+    else if ((X >= base.x) && (X < base.x + base.GetWidth()))
     {
-      m_KeyboardHandler.MouseDrag (x, y);
+      m_KeyboardHandler.MouseDrag(x, y);
 
       // While the mouse is selecting the text, no blinking of cursor
-      StopBlinkCursor (false);
-      StartBlinkCursor (false);
+      StopBlinkCursor(false);
+      StartBlinkCursor(false);
     }
 
     QueueDraw();
   }
 
-  long EditTextBox::PostLayoutManagement (long LayoutResult)
+  long EditTextBox::PostLayoutManagement(long LayoutResult)
   {
-    long ret = View::PostLayoutManagement (LayoutResult);
+    long ret = View::PostLayoutManagement(LayoutResult);
 
-    m_KeyboardHandler.SetClipRegion (GetGeometry() );
+    m_KeyboardHandler.SetClipRegion(GetGeometry());
     return ret;
   }
 
 
-  void EditTextBox::RecvKeyEvent (
+  void EditTextBox::RecvKeyEvent(
     unsigned long   eventType  , /*event type*/
     unsigned long   keysym     , /*event keysym*/
     unsigned long   state      , /*event state*/
-    const TCHAR*    character  , /*character*/
+    const char*     character  , /*character*/
     unsigned short  keyCount     /*key repeat count*/)
   {
     
     if (eventType == NUX_KEYDOWN)
       text_input_mode_ = true;
 
-    m_KeyboardHandler.ProcessKey (eventType, keysym, state, character[0], GetGeometry() );
+    m_KeyboardHandler.ProcessKey(eventType, keysym, state, character[0], GetGeometry());
 
 
     // When a key event happens, show the cursor.
-    StopBlinkCursor (false);
+    StopBlinkCursor(false);
     // Start a new blink cycle with the cursor originally visible.
-    StartBlinkCursor (false);
+    StartBlinkCursor(false);
 
     if (character)
     {
-      sigCharacter.emit (this, character[0]);
-      sigEditChange.emit (this);
+      sigCharacter.emit(this, character[0]);
+      sigEditChange.emit(this);
     }
 
     if (keysym == NUX_VK_ENTER || keysym == NUX_KP_ENTER)
     {
-      NString str (m_KeyboardHandler.GetTextLine() );
-      str.RemoveSuffix (m_Suffix);
+      NString str(m_KeyboardHandler.GetTextLine());
+      str.RemoveSuffix(m_Suffix);
 
-      if (ValidateKeyboardEntry (str.m_string.c_str() ) )
+      if (ValidateKeyboardEntry(str.m_string.c_str()))
       {
         m_Text = m_KeyboardHandler.GetTextLine();
         m_temporary_caption = m_Text;
-        sigValidateKeyboardEntry.emit (this, m_Text);
-        sigValidateEntry.emit (this);
+        sigValidateKeyboardEntry.emit(this, m_Text);
+        sigValidateEntry.emit(this);
         m_KeyboardHandler.SelectAllText();
       }
       else
       {
         m_Text = m_temporary_caption;
-        m_KeyboardHandler.SetText (m_Text);
+        m_KeyboardHandler.SetText(m_Text);
         m_KeyboardHandler.SelectAllText();
       }
     }
@@ -376,11 +369,11 @@ namespace nux
     QueueDraw();
   }
 
-  bool EditTextBox::ValidateKeyboardEntry (const TCHAR *text) const
+  bool EditTextBox::ValidateKeyboardEntry(const char *text) const
   {
     if (m_Validator)
     {
-      if (m_Validator->Validate (text) == Validator::Acceptable)
+      if (m_Validator->Validate(text) == Validator::Acceptable)
       {
         return true;
       }
@@ -395,45 +388,45 @@ namespace nux
 
   void EditTextBox::EscapeKeyboardFocus()
   {
-    SetKeyboardFocus (false);
+    // todo(jaytaoko): SetKeyboardFocus(false);
     // Revert back the caption text
     m_Text = m_temporary_caption;
-    sigEscapeKeyboardFocus.emit (this);
+    sigEscapeKeyboardFocus.emit(this);
     QueueDraw();
   }
 
   void EditTextBox::EnteringKeyboardFocus()
   {
-    m_KeyboardHandler.SetText (m_Text.GetTStringRef() );
+    m_KeyboardHandler.SetText(m_Text.GetTStringRef());
     m_KeyboardHandler.SelectAllText();
     // Preserve the current caption text. If ESC is pressed while we have keyboard focus then
     // the previous caption text is restored
     m_temporary_caption = m_Text;
-    sigStartKeyboardFocus.emit (this);
+    sigStartKeyboardFocus.emit(this);
     QueueDraw();
   }
 
   void EditTextBox::QuitingKeyboardFocus()
   {
-    NString CleanText (m_KeyboardHandler.GetTextLine() );
-    CleanText.RemovePrefix (m_Prefix);
-    CleanText.RemoveSuffix (m_Suffix);
+    NString CleanText(m_KeyboardHandler.GetTextLine());
+    CleanText.RemovePrefix(m_Prefix);
+    CleanText.RemoveSuffix(m_Suffix);
 
-    if (ValidateKeyboardEntry (CleanText.GetTCharPtr() ) )
+    if (ValidateKeyboardEntry(CleanText.GetTCharPtr()))
     {
       CleanText = m_Prefix + CleanText;
       CleanText = CleanText + m_Suffix;
 
       m_Text = CleanText.m_string; //m_KeyboardHandler.GetTextLine();
-      m_KeyboardHandler.SetText (CleanText.m_string);
+      m_KeyboardHandler.SetText(CleanText.m_string);
       m_temporary_caption = m_Text;
-      sigValidateKeyboardEntry.emit (this, m_Text.GetTStringRef() );
-      sigValidateEntry.emit (this);
+      sigValidateKeyboardEntry.emit(this, m_Text.GetTStringRef());
+      sigValidateEntry.emit(this);
     }
     else
     {
       m_Text = m_temporary_caption;
-      m_KeyboardHandler.SetText (m_Text.GetTStringRef() );
+      m_KeyboardHandler.SetText(m_Text.GetTStringRef());
       m_KeyboardHandler.SelectAllText();
     }
 
@@ -446,7 +439,7 @@ namespace nux
     text_input_mode_  = false;
     
     EnteringKeyboardFocus();
-    m_BlinkTimerHandler = GetTimer().AddTimerHandler (500, m_BlinkTimerFunctor, this);
+    m_BlinkTimerHandler = GetTimer().AddTimerHandler(500, m_BlinkTimerFunctor, this);
   }
 
   void EditTextBox::RecvEndKeyFocus()
@@ -455,22 +448,22 @@ namespace nux
     text_input_mode_  = false;
 
     QuitingKeyboardFocus();
-    GetTimer().RemoveTimerHandler (m_BlinkTimerHandler);
+    GetTimer().RemoveTimerHandler(m_BlinkTimerHandler);
     m_BlinkTimerHandler = 0;
     BlinkCursor = false;
   }
 
-  void EditTextBox::SetDoubleValue (double d)
+  void EditTextBox::SetDoubleValue(double d)
   {
-    SetText (NString::Printf ("%f", d) );
+    SetText(NString::Printf("%f", d));
   }
 
-  void EditTextBox::SetIntegerValue (int i)
+  void EditTextBox::SetIntegerValue(int i)
   {
-    SetText (NString::Printf ("%d", i) );
+    SetText(NString::Printf("%d", i));
   }
 
-  void EditTextBox::SetTextBackgroundColor (const Color &color)
+  void EditTextBox::SetTextBackgroundColor(const Color &color)
   {
     m_BackgroundColor = color;
     QueueDraw();
@@ -483,7 +476,7 @@ namespace nux
 
   bool EditTextBox::IsEmpty()
   {
-    if (m_Text == TEXT ("") )
+    if (m_Text == "")
     {
       return true;
     }

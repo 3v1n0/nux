@@ -26,20 +26,20 @@
 namespace nux
 {
 
-  const TCHAR *OGLDeviceErrorMessages[] =
+  const char *OGLDeviceErrorMessages[] =
   {
-    TEXT ("OGL_OK"),
-    TEXT ("OGL_ERROR_UNKNOWN"),
-    TEXT ("OGL_INVALID_SURFACE_LEVEL"),
-    TEXT ("OGL_INVALID_CALL"),
-    TEXT ("OGL_INVALID_LOCK"),
-    TEXT ("OGL_INVALID_UNLOCK"),
-    TEXT ("OGL_INVALID_TEXTURE"),
+    "OGL_OK",
+    "OGL_ERROR_UNKNOWN",
+    "OGL_INVALID_SURFACE_LEVEL",
+    "OGL_INVALID_CALL",
+    "OGL_INVALID_LOCK",
+    "OGL_INVALID_UNLOCK",
+    "OGL_INVALID_TEXTURE",
   };
 
 
   /*
-      This table lists the most efficient combinations of internalformat (either generic or specific), format, and type:
+      This table lists the most efficient combinations of internalformat(either generic or specific), format, and type:
       internalformat 	            format 	                    type
       ------------------------------------------------------------------------------------
       GL_ALPHA16                  GL_ALPHA                    GL_UNSIGNED_SHORT
@@ -88,9 +88,9 @@ namespace nux
 //    Elements.AddItem(Element);
 //}
 
-  void DecomposeTypeDeclaraction (ATTRIB_DECL_TYPE Type, int &NumComponent, ATTRIB_COMPONENT_TYPE &ComponentType)
+  void DecomposeTypeDeclaraction(ATTRIB_DECL_TYPE Type, int &NumComponent, ATTRIB_COMPONENT_TYPE &ComponentType)
   {
-    switch (Type)
+    switch(Type)
     {
       case ATTRIB_DECLTYPE_FLOAT1:
       {
@@ -171,6 +171,7 @@ namespace nux
         break;
       }
 
+#ifndef NUX_OPENGLES_20
       case ATTRIB_DECLTYPE_FLOAT16_2:
       {
         NumComponent = 2;
@@ -183,23 +184,24 @@ namespace nux
         ComponentType = ATTRIB_CT_HALF_FLOAT;
         break;
       }
+#endif
 
       case ATTRIB_DECLTYPE_UNUSED:
       default:
       {
         NumComponent = 0;
         ComponentType = ATTRIB_CT_UNKNOWN;
-        nuxError (TEXT ("Unsupported Declaration Type. \n") );
+        nuxError("Unsupported Declaration Type. \n");
       }
     }
   }
 
-  UINT GetVertexElementSize (VERTEXELEMENT vtxelement)
+  UINT GetVertexElementSize(VERTEXELEMENT vtxelement)
   {
     ATTRIB_COMPONENT_TYPE type = vtxelement.Type;
     UINT NumComponent = vtxelement.NumComponent;
 
-    switch (type)
+    switch(type)
     {
       case ATTRIB_CT_BYTE:
       case ATTRIB_CT_UNSIGNED_BYTE:
@@ -212,20 +214,22 @@ namespace nux
       case ATTRIB_CT_UNSIGNED_INT:
       case ATTRIB_CT_FLOAT:
         return 4 * NumComponent;
+#ifndef NUX_OPENGLES_20
       case ATTRIB_CT_HALF_FLOAT:
         return 2 * NumComponent;
       case ATTRIB_CT_DOUBLE:
         return 8 * NumComponent;
+#endif
       case ATTRIB_CT_UNKNOWN:
       default:
-        nuxAssert (TEXT ("Unknown Component Type") );
+        nuxAssert("Unknown Component Type");
         return 0;
     }
 
     return 0;
   }
 
-  void AddVertexElement (std::vector<VERTEXELEMENT>& Elements,
+  void AddVertexElement(std::vector<VERTEXELEMENT>& Elements,
                          WORD Stream,
                          WORD Offset,
                          //ubiU16 Stride,
@@ -239,17 +243,17 @@ namespace nux
     // We don't want to store ATTRIB_DECL_TYPE. We unpack it here so we don't have to do it every frame.
     // Opengl commands such as cgGLSetParameterPointer needs to know how many components there are in
     // a vertex attribute and what is the format of each component.
-    DecomposeTypeDeclaraction (Type, Element.NumComponent, Element.Type);
+    DecomposeTypeDeclaraction(Type, Element.NumComponent, Element.Type);
     //Element.Stride    = Stride;
     //Element.Usage       = Usage;
     //Element.UsageIndex  = UsageIndex;
-    Elements.push_back (Element);
+    Elements.push_back(Element);
   }
 
-  unsigned int GetGLElementCount (PRIMITIVE_TYPE InPrimitiveType,
+  unsigned int GetGLElementCount(PRIMITIVE_TYPE InPrimitiveType,
                                   unsigned int           InPrimitiveCount)
   {
-    switch (InPrimitiveType)
+    switch(InPrimitiveType)
     {
       case PRIMITIVE_TYPE_POINTLIST:
         return InPrimitiveCount;
@@ -263,15 +267,17 @@ namespace nux
         return InPrimitiveCount + 2;
       case PRIMITIVE_TYPE_TRIANGLEFAN:
         return InPrimitiveCount;
+#ifndef NUX_OPENGLES_20
       case PRIMITIVE_TYPE_QUADLIST:
         return InPrimitiveCount * 4;
       case PRIMITIVE_TYPE_QUADSTRIP:
         return InPrimitiveCount * 2 + 2;
+#endif
       default:
         return 0;
     }
 
-    nuxAssertMsg (0, TEXT ("[GetGLElementCount] Invalid PRIMITIVE_TYPE") );
+    nuxAssertMsg(0, "[GetGLElementCount] Invalid PRIMITIVE_TYPE");
     return InPrimitiveCount;
   }
 }

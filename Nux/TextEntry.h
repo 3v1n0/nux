@@ -7,7 +7,7 @@
 /*
   Copyright 2008 Google Inc.
 
-  Licensed under the Apache License, Version 2.0 (the "License");
+  Licensed under the Apache License, Version 2.0(the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
 
@@ -75,31 +75,30 @@ namespace nux
 
   class TextEntry: public View
   {
-    NUX_DECLARE_OBJECT_TYPE (TextEntry, View);
+    NUX_DECLARE_OBJECT_TYPE(TextEntry, View);
   public:
-    TextEntry (const TCHAR* text, NUX_FILE_LINE_PROTO);
-    ~TextEntry ();
+    TextEntry(const char* text, NUX_FILE_LINE_PROTO);
+    ~TextEntry();
 
     Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
-    void PreLayoutManagement ();
-    long PostLayoutManagement (long layoutResult);
+    void PreLayoutManagement();
+    long PostLayoutManagement(long layoutResult);
 
     //  Receivers
 
-    void RecvMouseDoubleClick (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    void RecvKeyEvent (
+    void RecvMouseDoubleClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void RecvKeyEvent(
       unsigned long    eventType  ,   /*event type*/
       unsigned long    keysym     ,   /*event keysym*/
       unsigned long    state      ,   /*event state*/
-      const TCHAR*     character  ,   /*character*/
+      const char*     character  ,   /*character*/
       unsigned short   keyCount       /*key repeat count*/);
 
     void RecvStartKeyFocus();
@@ -108,17 +107,17 @@ namespace nux
     bool _size_match_text;
     BaseTexture *_texture2D;
 
-    void MainDraw ();
-    void ProcessMouseEvent (int event_type, int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void MainDraw();
+    void ProcessMouseEvent(int event_type, int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     void ProcessKeyEvent   (
       unsigned long    eventType  ,   /*event type*/
       unsigned long    keysym     ,   /*event keysym*/
       unsigned long    state      ,   /*event state*/
-      const TCHAR*     character  ,   /*character*/
+      const char*     character  ,   /*character*/
       unsigned short   keyCount       /*key repeat count*/);
 
-    void FocusInx ();
-    void FocusOutx ();
+    void FocusInx();
+    void FocusOutx();
 
     //! Text changed signal
     /*!
@@ -133,9 +132,9 @@ namespace nux
 
     void SetTextColor(const Color &color);
     Color const& GetTextColor() const;
-    void SetFontFamily (const char *font);
-    void SetFontSize (double font_size);
-    void SetFontOptions (const cairo_font_options_t *options);
+    void SetFontFamily(const char *font);
+    void SetFontSize(double font_size);
+    void SetFontOptions(const cairo_font_options_t *options);
 
     /** Select text between start and end. */
     void Select(int start, int end);
@@ -146,10 +145,9 @@ namespace nux
     void SetAlign(CairoGraphics::Alignment align);
 
   protected:
-    virtual void DoSetFocused (bool focused);
     bool _block_focus; // used to selectively ignore focus keyevents
 
-    virtual void GeometryChanged ();
+    virtual void GeometryChanged();
 
     /**
      * Enum used to specify different motion types.
@@ -163,7 +161,7 @@ namespace nux
       BUFFER
     };
 
-    void QueueTextDraw ();
+    void QueueTextDraw();
     /** Remove the cached layout. */
     void ResetLayout();
     /**
@@ -283,9 +281,9 @@ namespace nux
     PangoLayout* cached_layout_;
 
     /** The text content of the edit control */
-    std::string _text;
+    std::string text_;
     /** The preedit text of the edit control */
-    std::string _preedit;
+    std::string preedit_;
     /** Attribute list of the preedit text */
     PangoAttrList *preedit_attrs_;
     /**
@@ -295,7 +293,7 @@ namespace nux
     std::string password_char_;
 
     /** Last time of mouse double click event. */
-    t_u64 last_dblclick_time_;
+    unsigned long long last_dblclick_time_;
 
     /** The current cursor position in number of bytes. */
     int cursor_;

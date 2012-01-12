@@ -30,11 +30,11 @@ namespace nux
   {
 #if defined(NUX_OS_WINDOWS)
     LARGE_INTEGER freq;
-    QueryPerformanceFrequency (&freq);
-    QueryPerformanceCounter (&now);
+    QueryPerformanceFrequency(&freq);
+    QueryPerformanceCounter(&now);
     res = (float) (1.0f / (double) freq.QuadPart);
 #elif defined(NUX_OS_LINUX)
-    gettimeofday (&m_last_time, NULL);
+    gettimeofday(&m_last_time, NULL);
 #endif
   }
 
@@ -42,20 +42,20 @@ namespace nux
   {
   }
 
-  void GLTimer::Reset (void)
+  void GLTimer::Reset(void)
   {
 #if defined(NUX_OS_WINDOWS)
-    QueryPerformanceCounter (&now);
+    QueryPerformanceCounter(&now);
 #elif defined(NUX_OS_LINUX)
-    gettimeofday (&m_last_time, NULL);
+    gettimeofday(&m_last_time, NULL);
 #endif
   }
 
-  float GLTimer::PassedMilliseconds (void)
+  float GLTimer::PassedMilliseconds(void)
   {
 #if defined(NUX_OS_WINDOWS)
     LARGE_INTEGER temp;
-    QueryPerformanceCounter (&temp);
+    QueryPerformanceCounter(&temp);
     double elapsedTime = (temp.QuadPart - now.QuadPart) * res * 1000.0f;
     //now.QuadPart = temp.QuadPart;
     return elapsedTime;
@@ -64,7 +64,7 @@ namespace nux
     timeval current_time;
     float elapsedTime;
 
-    gettimeofday (&current_time, NULL);
+    gettimeofday(&current_time, NULL);
 
     elapsedTime = (current_time.tv_sec - m_last_time.tv_sec) * 1000.0f;      // seconds to millisecond
     elapsedTime += (current_time.tv_usec - m_last_time.tv_usec) / 1000.0f;   // micro seconds to millisecond
@@ -76,6 +76,6 @@ namespace nux
 // {
 //     LARGE_INTEGER temp;
 //     QueryPerformanceCounter(&temp);
-//     return (temp.QuadPart - now.QuadPart) * res;
+//     return(temp.QuadPart - now.QuadPart) * res;
 // }
 }
