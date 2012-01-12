@@ -33,7 +33,7 @@ namespace nux
       @param  digit A TCHAR string.
       @return A double value translated from a TCHAR string.
   */
-  t_double CharToDouble (const TCHAR *digit);
+  double CharToDouble (const TCHAR *digit);
 
 //! Convert a double to an NString.
   /*!
@@ -47,7 +47,7 @@ namespace nux
       @param  digit A TCHAR string.
       @return A 32 bits long value translated from a TCHAR string.
   */
-  t_s32 CharToInteger (const TCHAR *digit);
+  int CharToInteger (const TCHAR *digit);
 
 //! Convert an integer to a tstring.
   /*!
@@ -62,14 +62,14 @@ namespace nux
       @param  digit A TCHAR string.
       @return An integer value.
   */
-  t_int IntegerToChar (const TCHAR *digit);
+  int IntegerToChar (const TCHAR *digit);
 
 //! Convert an Hex TCHAR string to an integer value.
   /*!
       @param  value A TCHAR string.
       @return An integer value.
   */
-  t_u32 HexCharToInteger (const TCHAR *s);
+  unsigned int HexCharToInteger (const TCHAR *s);
 
 
 }

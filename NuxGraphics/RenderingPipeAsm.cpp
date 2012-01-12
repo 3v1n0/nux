@@ -102,7 +102,7 @@ namespace nux
 
   void GraphicsEngine::InitAsmColorShader()
   {
-    NString AsmVtx = TEXT (
+    NString AsmVtx = 
         "!!ARBvp1.0                                 \n\
         ATTRIB iPos         = vertex.position;      \n\
         ATTRIB iColor       = vertex.attrib[3];     \n\
@@ -115,22 +115,22 @@ namespace nux
         DP4   oPos.z, mvp[2], iPos;      \n\
         DP4   oPos.w, mvp[3], iPos;      \n\
         MOV   oColor, iColor;            \n\
-        END");
+        END";
 
-    NString AsmFrg = TEXT (
+    NString AsmFrg = 
         "!!ARBfp1.0                                     \n\
         MOV result.color, fragment.color;               \n\
-        END");
+        END";
 
     m_AsmColor = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_AsmColor->LoadVertexShader (AsmVtx.GetTCharPtr() );
-    m_AsmColor->LoadPixelShader (AsmFrg.GetTCharPtr() );
+    m_AsmColor->LoadVertexShader(AsmVtx.GetTCharPtr());
+    m_AsmColor->LoadPixelShader(AsmFrg.GetTCharPtr());
     m_AsmColor->Link();
   }
 
   void GraphicsEngine::InitAsmTextureShader()
   {
-    NString AsmVtx = TEXT (
+    NString AsmVtx = 
         "!!ARBvp1.0                                 \n\
         ATTRIB iPos         = vertex.position;      \n\
         ATTRIB iColor       = vertex.attrib[3];     \n\
@@ -145,36 +145,36 @@ namespace nux
         DP4   oPos.w, mvp[3], iPos;                     \n\
         MOV   oColor, iColor;                           \n\
         MOV   oTexCoord0, vertex.attrib[8];             \n\
-        END");
+        END";
 
-    NString AsmFrg = TEXT (
+    NString AsmFrg = 
         "!!ARBfp1.0                                       \n\
         TEMP tex0;                                        \n\
         TEX tex0, fragment.texcoord[0], texture[0], 2D;   \n\
         MUL result.color, fragment.color, tex0;           \n\
-        END");
+        END";
 
-    NString AsmFrgRect = TEXT (
+    NString AsmFrgRect = 
       "!!ARBfp1.0                                       \n\
       TEMP tex0;                                        \n\
       TEX tex0, fragment.texcoord[0], texture[0], RECT; \n\
       MUL result.color, fragment.color, tex0;           \n\
-      END");
+      END";
 
     m_AsmTextureModColor = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_AsmTextureModColor->LoadVertexShader (AsmVtx.GetTCharPtr() );
-    m_AsmTextureModColor->LoadPixelShader (AsmFrg.GetTCharPtr() );
+    m_AsmTextureModColor->LoadVertexShader(AsmVtx.GetTCharPtr());
+    m_AsmTextureModColor->LoadPixelShader(AsmFrg.GetTCharPtr());
     m_AsmTextureModColor->Link();
 
     m_AsmTextureRectModColor = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_AsmTextureRectModColor->LoadVertexShader (AsmVtx.GetTCharPtr() );
-    m_AsmTextureRectModColor->LoadPixelShader (AsmFrgRect.GetTCharPtr() );
+    m_AsmTextureRectModColor->LoadVertexShader(AsmVtx.GetTCharPtr());
+    m_AsmTextureRectModColor->LoadPixelShader(AsmFrgRect.GetTCharPtr());
     m_AsmTextureRectModColor->Link();
   }
 
   void GraphicsEngine::InitAsmColorModTexMaskAlpha()
   {
-    NString AsmVtx = TEXT (
+    NString AsmVtx = 
         "!!ARBvp1.0                                 \n\
         OUTPUT oPos         = result.position;      \n\
         OUTPUT oColor       = result.color;         \n\
@@ -186,9 +186,9 @@ namespace nux
         DP4   oPos.w, state.matrix.mvp.row[3], vertex.position;      \n\
         MOV   oColor, vertex.attrib[3];             \n\
         MOV   oTexCoord0, vertex.attrib[8];         \n\
-        END");
+        END";
 
-    NString AsmFrg = TEXT (
+    NString AsmFrg = 
       "!!ARBfp1.0                                         \n\
       TEMP tex0;                                          \n\
       TEMP temp;                                          \n\
@@ -196,9 +196,9 @@ namespace nux
       MOV temp, fragment.color;                           \n\
       MUL temp.w, fragment.color, tex0.wwww;              \n\
       MOV result.color, temp;                             \n\
-      END");
+      END";
 
-    NString AsmFrgRect = TEXT (
+    NString AsmFrgRect = 
       "!!ARBfp1.0                                         \n\
       TEMP tex0;                                          \n\
       TEMP temp;                                          \n\
@@ -206,22 +206,22 @@ namespace nux
       MOV temp, fragment.color;                           \n\
       MUL temp.w, fragment.color, tex0.wwww;              \n\
       MOV result.color, temp;                             \n\
-      END");
+      END";
 
     m_AsmColorModTexMaskAlpha = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_AsmColorModTexMaskAlpha->LoadVertexShader (AsmVtx.GetTCharPtr() );
-    m_AsmColorModTexMaskAlpha->LoadPixelShader (AsmFrg.GetTCharPtr() );
+    m_AsmColorModTexMaskAlpha->LoadVertexShader(AsmVtx.GetTCharPtr());
+    m_AsmColorModTexMaskAlpha->LoadPixelShader(AsmFrg.GetTCharPtr());
     m_AsmColorModTexMaskAlpha->Link();
 
     m_AsmColorModTexRectMaskAlpha = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_AsmColorModTexRectMaskAlpha->LoadVertexShader (AsmVtx.GetTCharPtr() );
-    m_AsmColorModTexRectMaskAlpha->LoadPixelShader (AsmFrgRect.GetTCharPtr() );
+    m_AsmColorModTexRectMaskAlpha->LoadVertexShader(AsmVtx.GetTCharPtr());
+    m_AsmColorModTexRectMaskAlpha->LoadPixelShader(AsmFrgRect.GetTCharPtr());
     m_AsmColorModTexRectMaskAlpha->Link();
   }
 
   void GraphicsEngine::InitAsm2TextureAdd()
   {
-    NString AsmVtx = TEXT (
+    NString AsmVtx = 
         "!!ARBvp1.0                                 \n\
         ATTRIB iPos         = vertex.position;      \n\
         OUTPUT oPos         = result.position;      \n\
@@ -234,9 +234,9 @@ namespace nux
         DP4   oPos.w, state.matrix.mvp.row[3], vertex.position;      \n\
         MOV   oTexCoord0, vertex.attrib[8];       \n\
         MOV   oTexCoord1, vertex.attrib[9];       \n\
-        END");
+        END";
 
-    NString AsmFrg = TEXT (
+    NString AsmFrg = 
         "!!ARBfp1.0                                         \n\
         PARAM color0 = program.local[0];                    \n\
         PARAM color1 = program.local[1];                    \n\
@@ -248,9 +248,9 @@ namespace nux
         TEX tex1, fragment.texcoord[1], texture[1], 2D;     \n\
         MAD temp, color1, tex1, temp;                       \n\
         MOV result.color, temp;                             \n\
-        END");
+        END";
 
-    NString AsmFrgRect = TEXT (
+    NString AsmFrgRect = 
       "!!ARBfp1.0                                         \n\
       PARAM color0 = program.local[0];                    \n\
       PARAM color1 = program.local[1];                    \n\
@@ -262,22 +262,22 @@ namespace nux
       TEX tex1, fragment.texcoord[1], texture[1], RECT;   \n\
       MAD temp, color1, tex1, temp;                       \n\
       MOV result.color, temp;                             \n\
-      END");
+      END";
 
     m_Asm2TextureAdd = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_Asm2TextureAdd->LoadVertexShader (AsmVtx.GetTCharPtr() );
-    m_Asm2TextureAdd->LoadPixelShader (AsmFrg.GetTCharPtr() );
+    m_Asm2TextureAdd->LoadVertexShader(AsmVtx.GetTCharPtr());
+    m_Asm2TextureAdd->LoadPixelShader(AsmFrg.GetTCharPtr());
     m_Asm2TextureAdd->Link();
 
     m_Asm2TextureRectAdd = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_Asm2TextureRectAdd->LoadVertexShader (AsmVtx.GetTCharPtr() );
-    m_Asm2TextureRectAdd->LoadPixelShader (AsmFrgRect.GetTCharPtr() );
+    m_Asm2TextureRectAdd->LoadVertexShader(AsmVtx.GetTCharPtr());
+    m_Asm2TextureRectAdd->LoadPixelShader(AsmFrgRect.GetTCharPtr());
     m_Asm2TextureRectAdd->Link();
   }
 
-  void GraphicsEngine::InitAsm2TextureDepRead ()
+  void GraphicsEngine::InitAsm2TextureDepRead()
   {
-    NString AsmVtx = TEXT (
+    NString AsmVtx = 
       "!!ARBvp1.0                                 \n\
       ATTRIB iPos         = vertex.position;      \n\
       OUTPUT oPos         = result.position;      \n\
@@ -290,9 +290,9 @@ namespace nux
       DP4   oPos.w, state.matrix.mvp.row[3], vertex.position;      \n\
       MOV   oTexCoord0, vertex.attrib[8];       \n\
       MOV   oTexCoord1, vertex.attrib[9];       \n\
-      END");
+      END";
 
-    NString AsmFrg = TEXT (
+    NString AsmFrg = 
       "!!ARBfp1.0                                         \n\
       PARAM color0 = program.local[0];                    \n\
       PARAM color1 = program.local[1];                    \n\
@@ -307,9 +307,9 @@ namespace nux
       ADD temp1, texture[1];                         \n\
       TEX tex1, fragment.texcoord[1], texture[1], 2D;           \n\
       MUL result.color, color1, tex1;                     \n\
-      END");
+      END";
 
-    NString AsmFrgRect = TEXT (
+    NString AsmFrgRect = 
       "!!ARBfp1.0                                         \n\
       PARAM color0 = program.local[0];                    \n\
       PARAM color1 = program.local[1];                    \n\
@@ -321,22 +321,22 @@ namespace nux
       MUL temp, color0, tex0;                             \n\
       TEX tex1, fragment.texcoord[1], temp, RECT;         \n\
       MUL result.color, color1, tex1;                     \n\
-      END");
+      END";
 
-    m_ASM2TextureDepRead = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram ();
-    m_ASM2TextureDepRead->LoadVertexShader (AsmVtx.GetTCharPtr ());
-    m_ASM2TextureDepRead->LoadPixelShader (AsmFrg.GetTCharPtr ());
-    m_ASM2TextureDepRead->Link ();
+    m_ASM2TextureDepRead = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
+    m_ASM2TextureDepRead->LoadVertexShader(AsmVtx.GetTCharPtr());
+    m_ASM2TextureDepRead->LoadPixelShader(AsmFrg.GetTCharPtr());
+    m_ASM2TextureDepRead->Link();
 
-    m_ASM2TextureRectDepRead = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram ();
-    m_ASM2TextureRectDepRead->LoadVertexShader (AsmVtx.GetTCharPtr ());
-    m_ASM2TextureRectDepRead->LoadPixelShader (AsmFrgRect.GetTCharPtr ());
-    m_ASM2TextureRectDepRead->Link ();
+    m_ASM2TextureRectDepRead = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
+    m_ASM2TextureRectDepRead->LoadVertexShader(AsmVtx.GetTCharPtr());
+    m_ASM2TextureRectDepRead->LoadPixelShader(AsmFrgRect.GetTCharPtr());
+    m_ASM2TextureRectDepRead->Link();
   }
 
   void GraphicsEngine::InitAsm2TextureMod()
   {
-    NString AsmVtx = TEXT (
+    NString AsmVtx = 
       "!!ARBvp1.0                                 \n\
       ATTRIB iPos         = vertex.position;      \n\
       OUTPUT oPos         = result.position;      \n\
@@ -349,9 +349,9 @@ namespace nux
       DP4   oPos.w, state.matrix.mvp.row[3], vertex.position;      \n\
       MOV   oTexCoord0, vertex.attrib[8];       \n\
       MOV   oTexCoord1, vertex.attrib[9];       \n\
-      END");
+      END";
 
-    NString AsmFrg = TEXT (
+    NString AsmFrg = 
       "!!ARBfp1.0                                         \n\
       PARAM color0 = program.local[0];                    \n\
       PARAM color1 = program.local[1];                    \n\
@@ -364,9 +364,9 @@ namespace nux
       TEX tex1, fragment.texcoord[1], texture[1], 2D;     \n\
       MUL temp1, color1, tex1;                            \n\
       MUL result.color, temp0, temp1;                     \n\
-      END");
+      END";
 
-    NString AsmFrgRect = TEXT (
+    NString AsmFrgRect = 
       "!!ARBfp1.0                                         \n\
       PARAM color0 = program.local[0];                    \n\
       PARAM color1 = program.local[1];                    \n\
@@ -379,22 +379,22 @@ namespace nux
       TEX tex1, fragment.texcoord[1], texture[1], RECT;   \n\
       MUL temp1, color1, tex1;                            \n\
       MUL result.color, temp0, temp1;                     \n\
-      END");
+      END";
 
     m_Asm2TextureMod = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_Asm2TextureMod->LoadVertexShader (AsmVtx.GetTCharPtr() );
-    m_Asm2TextureMod->LoadPixelShader (AsmFrg.GetTCharPtr() );
+    m_Asm2TextureMod->LoadVertexShader(AsmVtx.GetTCharPtr());
+    m_Asm2TextureMod->LoadPixelShader(AsmFrg.GetTCharPtr());
     m_Asm2TextureMod->Link();
 
     m_Asm2TextureRectMod = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_Asm2TextureRectMod->LoadVertexShader (AsmVtx.GetTCharPtr() );
-    m_Asm2TextureRectMod->LoadPixelShader (AsmFrgRect.GetTCharPtr() );
+    m_Asm2TextureRectMod->LoadVertexShader(AsmVtx.GetTCharPtr());
+    m_Asm2TextureRectMod->LoadPixelShader(AsmFrgRect.GetTCharPtr());
     m_Asm2TextureRectMod->Link();
   }
 
   void GraphicsEngine::InitAsm4TextureAdd()
   {
-    NString AsmVtx = TEXT (
+    NString AsmVtx = 
         "!!ARBvp1.0                                 \n\
         ATTRIB iPos         = vertex.position;      \n\
         OUTPUT oPos         = result.position;      \n\
@@ -411,9 +411,9 @@ namespace nux
         MOV   oTexCoord1, vertex.attrib[9];       \n\
         MOV   oTexCoord2, vertex.attrib[10];       \n\
         MOV   oTexCoord3, vertex.attrib[11];       \n\
-        END");
+        END";
 
-    NString AsmFrg = TEXT (
+    NString AsmFrg = 
         "!!ARBfp1.0                                         \n\
         PARAM color0 = program.local[0];                    \n\
         PARAM color1 = program.local[1];                    \n\
@@ -433,9 +433,9 @@ namespace nux
         TEX tex3, fragment.texcoord[3], texture[3], 2D;     \n\
         MAD temp, color3, tex3, temp;                       \n\
         MOV result.color, temp;                             \n\
-        END");
+        END";
 
-    NString AsmFrgRect = TEXT (
+    NString AsmFrgRect = 
       "!!ARBfp1.0                                         \n\
       PARAM color0 = program.local[0];                    \n\
       PARAM color1 = program.local[1];                    \n\
@@ -455,22 +455,22 @@ namespace nux
       TEX tex3, fragment.texcoord[3], texture[3], RECT;   \n\
       MAD temp, color3, tex3, temp;                       \n\
       MOV result.color, temp;                             \n\
-      END");
+      END";
 
     m_Asm4TextureAdd = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_Asm4TextureAdd->LoadVertexShader (AsmVtx.GetTCharPtr() );
-    m_Asm4TextureAdd->LoadPixelShader (AsmFrg.GetTCharPtr() );
+    m_Asm4TextureAdd->LoadVertexShader(AsmVtx.GetTCharPtr());
+    m_Asm4TextureAdd->LoadPixelShader(AsmFrg.GetTCharPtr());
     m_Asm4TextureAdd->Link();
 
     m_Asm4TextureRectAdd = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_Asm4TextureRectAdd->LoadVertexShader (AsmVtx.GetTCharPtr() );
-    m_Asm4TextureRectAdd->LoadPixelShader (AsmFrgRect.GetTCharPtr() );
+    m_Asm4TextureRectAdd->LoadVertexShader(AsmVtx.GetTCharPtr());
+    m_Asm4TextureRectAdd->LoadPixelShader(AsmFrgRect.GetTCharPtr());
     m_Asm4TextureRectAdd->Link();
   }
 
   void GraphicsEngine::InitAsmBlendModes()
   {
-    NString AsmVtx = TEXT (
+    NString AsmVtx = 
                        "!!ARBvp1.0                                 \n\
         OUTPUT oPos         = result.position;      \n\
         OUTPUT oTexCoord0   = result.texcoord[0];   \n\
@@ -482,24 +482,24 @@ namespace nux
         DP4   oPos.w, state.matrix.mvp.row[3], vertex.position;      \n\
         MOV   oTexCoord0, vertex.attrib[8];       \n\
         MOV   oTexCoord1, vertex.attrib[9];       \n\
-        END");
+        END";
 
-    NString AsmPSBNormal = TEXT (
+    NString AsmPSBNormal = 
                              "!!ARBfp1.0                                         \n\
         TEMP tex0;                                          \n\
         TEMP tex1;                                          \n\
         TEX tex0, fragment.texcoord[0], texture[0], 2D;     \n\
         TEX tex1, fragment.texcoord[1], texture[1], 2D;     \n\
         MOV result.color, tex0;                             \n\
-        END");
+        END";
 
     m_AsmPSBNormal = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_AsmPSBNormal->LoadVertexShader (AsmVtx.GetTCharPtr() );
-    m_AsmPSBNormal->LoadPixelShader (AsmPSBNormal.GetTCharPtr() );
+    m_AsmPSBNormal->LoadVertexShader(AsmVtx.GetTCharPtr());
+    m_AsmPSBNormal->LoadPixelShader(AsmPSBNormal.GetTCharPtr());
     m_AsmPSBNormal->Link();
 
     // Lighten
-    NString AsmPSBLighten = TEXT (
+    NString AsmPSBLighten = 
                               "!!ARBfp1.0                                         \n\
         TEMP tex0;                                          \n\
         TEMP tex1;                                          \n\
@@ -510,15 +510,15 @@ namespace nux
         SUB temp, tex0, tex1;                               \n\
         CMP cmpres, temp, tex1, tex0;                       \n\
         MOV result.color, temp;                             \n\
-        END");
+        END";
 
     m_AsmPSBLighten = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_AsmPSBLighten->LoadVertexShader (AsmVtx.GetTCharPtr() );
-    m_AsmPSBLighten->LoadPixelShader (AsmPSBLighten.GetTCharPtr() );
+    m_AsmPSBLighten->LoadVertexShader(AsmVtx.GetTCharPtr());
+    m_AsmPSBLighten->LoadPixelShader(AsmPSBLighten.GetTCharPtr());
     m_AsmPSBLighten->Link();
 
     // Darken
-    NString AsmPSBDarken = TEXT (
+    NString AsmPSBDarken = 
                              "!!ARBfp1.0                                         \n\
         TEMP tex0;                                          \n\
         TEMP tex1;                                          \n\
@@ -529,15 +529,15 @@ namespace nux
         SUB temp, tex1, tex0;                               \n\
         CMP cmpres, temp, tex1, tex0;                       \n\
         MOV result.color, temp;                             \n\
-        END");
+        END";
 
-    m_AsmPSBDarken = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram ();
-    m_AsmPSBDarken->LoadVertexShader (AsmVtx.GetTCharPtr ());
-    m_AsmPSBDarken->LoadPixelShader (AsmPSBDarken.GetTCharPtr ());
-    m_AsmPSBDarken->Link ();
+    m_AsmPSBDarken = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
+    m_AsmPSBDarken->LoadVertexShader(AsmVtx.GetTCharPtr());
+    m_AsmPSBDarken->LoadPixelShader(AsmPSBDarken.GetTCharPtr());
+    m_AsmPSBDarken->Link();
 
     // Multiply
-    NString AsmPSBMultiply = TEXT (
+    NString AsmPSBMultiply = 
                                "!!ARBfp1.0                                         \n\
         TEMP tex0;                                          \n\
         TEMP tex1;                                          \n\
@@ -545,24 +545,24 @@ namespace nux
         TEX tex0, fragment.texcoord[0], texture[0], 2D;     \n\
         TEX tex1, fragment.texcoord[1], texture[1], 2D;     \n\
         MUL result.color, tex0, tex1;                       \n\
-        END");
+        END";
 
     m_AsmPSBMultiply = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_AsmPSBMultiply->LoadVertexShader (AsmVtx.GetTCharPtr ());
-    m_AsmPSBMultiply->LoadPixelShader (AsmPSBMultiply.GetTCharPtr ());
-    m_AsmPSBMultiply->Link ();
+    m_AsmPSBMultiply->LoadVertexShader(AsmVtx.GetTCharPtr());
+    m_AsmPSBMultiply->LoadPixelShader(AsmPSBMultiply.GetTCharPtr());
+    m_AsmPSBMultiply->Link();
   }
 
 
 
-  void GraphicsEngine::QRP_ASM_Color (int x, int y, int width, int height, const Color &c0)
+  void GraphicsEngine::QRP_ASM_Color(int x, int y, int width, int height, const Color &c0)
   {
-    QRP_ASM_Color (x, y, width, height, c0, c0, c0, c0);
+    QRP_ASM_Color(x, y, width, height, c0, c0, c0, c0);
   }
 
-  void GraphicsEngine::QRP_ASM_Color (int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3)
+  void GraphicsEngine::QRP_ASM_Color(int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3)
   {
-    NUX_RETURN_IF_FALSE (m_AsmColor.IsValid());
+    NUX_RETURN_IF_FALSE(m_AsmColor.IsValid());
 
     float fx = x, fy = y;
     float VtxBuffer[] =
@@ -573,49 +573,49 @@ namespace nux
       fx + width,  fy,          0.0f, 1.0f, c3.red, c3.green, c3.blue, c3.alpha,
     };
 
-    CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
-    CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
 
     ObjectPtr<IOpenGLAsmShaderProgram> shader_program = m_AsmColor;
 
     shader_program->Begin();
 
-    CHECKGL ( glMatrixMode (GL_MODELVIEW) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
-    CHECKGL ( glMatrixMode (GL_PROJECTION) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
+    CHECKGL(glMatrixMode(GL_MODELVIEW));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLModelViewMatrix().m));
+    CHECKGL(glMatrixMode(GL_PROJECTION));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLProjectionMatrix().m));
 
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int VertexColorLocation     = VTXATTRIB_COLOR;
 
-    CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
-    CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer) );
+    CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+    CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer));
 
     if (VertexColorLocation != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (VertexColorLocation) );
-      CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4) );
+      CHECKGL(glEnableVertexAttribArrayARB(VertexColorLocation));
+      CHECKGL(glVertexAttribPointerARB((GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4));
     }
 
-    CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
+    CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
 
-    CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
+    CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));
 
     if (VertexColorLocation != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (VertexColorLocation) );
+      CHECKGL(glDisableVertexAttribArrayARB(VertexColorLocation));
 
     shader_program->End();
   }
 
-  void GraphicsEngine::QRP_ASM_1Tex (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &color)
+  void GraphicsEngine::QRP_ASM_1Tex(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &color)
   {
-    NUX_RETURN_IF_FALSE (m_AsmTextureModColor.IsValid());
-    NUX_RETURN_IF_FALSE (m_AsmTextureRectModColor.IsValid());
+    NUX_RETURN_IF_FALSE(m_AsmTextureModColor.IsValid());
+    NUX_RETURN_IF_FALSE(m_AsmTextureRectModColor.IsValid());
 
-    QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
+    QRP_Compute_Texture_Coord(width, height, device_texture, texxform);
     float fx = x, fy = y;
     float VtxBuffer[] =
     {
@@ -625,65 +625,65 @@ namespace nux
       fx + width,  fy,          0.0f, 1.0f, texxform.u1, texxform.v0, 0, 1.0f, color.red, color.green, color.blue, color.alpha,
     };
 
-    CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
-    CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
     
     ObjectPtr<IOpenGLAsmShaderProgram> shader_program = m_AsmTextureModColor;
-    if(device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
+    if (device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       shader_program = m_AsmTextureRectModColor;
     }
     shader_program->Begin();
 
-    SetTexture (GL_TEXTURE0, device_texture);
+    SetTexture(GL_TEXTURE0, device_texture);
 
-    CHECKGL ( glMatrixMode (GL_MODELVIEW) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
-    CHECKGL ( glMatrixMode (GL_PROJECTION) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
+    CHECKGL(glMatrixMode(GL_MODELVIEW));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLModelViewMatrix().m));
+    CHECKGL(glMatrixMode(GL_PROJECTION));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLProjectionMatrix().m));
 
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int TextureCoord0Location   = VTXATTRIB_TEXCOORD0;
     int VertexColorLocation     = VTXATTRIB_COLOR;
 
-    CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
-    CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer) );
+    CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+    CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer));
 
     if (TextureCoord0Location != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord0Location) );
-      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4) );
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord0Location));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4));
     }
 
     if (VertexColorLocation != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (VertexColorLocation) );
-      CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8) );
+      CHECKGL(glEnableVertexAttribArrayARB(VertexColorLocation));
+      CHECKGL(glVertexAttribPointerARB((GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8));
     }
 
-    CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
+    CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
 
-    CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
+    CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));
 
     if (TextureCoord0Location != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord0Location) );
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord0Location));
 
     if (VertexColorLocation != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (VertexColorLocation) );
+      CHECKGL(glDisableVertexAttribArrayARB(VertexColorLocation));
 
     shader_program->End();
   }
 
-  void GraphicsEngine::QRP_ASM_ColorModTexAlpha (int x, int y, int width, int height,
+  void GraphicsEngine::QRP_ASM_ColorModTexAlpha(int x, int y, int width, int height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &color)
   {
-    NUX_RETURN_IF_FALSE (m_AsmColorModTexMaskAlpha.IsValid());
-    NUX_RETURN_IF_FALSE (m_AsmColorModTexRectMaskAlpha.IsValid());
+    NUX_RETURN_IF_FALSE(m_AsmColorModTexMaskAlpha.IsValid());
+    NUX_RETURN_IF_FALSE(m_AsmColorModTexRectMaskAlpha.IsValid());
 
-    QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
+    QRP_Compute_Texture_Coord(width, height, device_texture, texxform);
 
     float fx = x, fy = y;
     float VtxBuffer[] =
@@ -694,67 +694,67 @@ namespace nux
       fx + width,  fy,          0.0f, 1.0f, texxform.u1, texxform.v0, 0, 1.0f, color.red, color.green, color.blue, color.alpha,
     };
 
-    CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
-    CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
 
     ObjectPtr<IOpenGLAsmShaderProgram> shader_program = m_AsmColorModTexMaskAlpha;
-    if(device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
+    if (device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       shader_program = m_AsmColorModTexRectMaskAlpha;
     }
     shader_program->Begin();
 
-    SetTexture (GL_TEXTURE0, device_texture);
+    SetTexture(GL_TEXTURE0, device_texture);
 
-    CHECKGL ( glMatrixMode (GL_MODELVIEW) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
-    CHECKGL ( glMatrixMode (GL_PROJECTION) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
+    CHECKGL(glMatrixMode(GL_MODELVIEW));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLModelViewMatrix().m));
+    CHECKGL(glMatrixMode(GL_PROJECTION));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLProjectionMatrix().m));
 
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int TextureCoord0Location   = VTXATTRIB_TEXCOORD0;
     int VertexColorLocation     = VTXATTRIB_COLOR;
 
-    CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
-    CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer) );
+    CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+    CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer));
 
     if (TextureCoord0Location != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord0Location) );
-      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4) );
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord0Location));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4));
     }
 
     if (VertexColorLocation != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (VertexColorLocation) );
-      CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8) );
+      CHECKGL(glEnableVertexAttribArrayARB(VertexColorLocation));
+      CHECKGL(glVertexAttribPointerARB((GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8));
     }
 
-    CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
+    CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
 
-    CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
+    CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));
 
     if (TextureCoord0Location != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord0Location) );
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord0Location));
 
     if (VertexColorLocation != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (VertexColorLocation) );
+      CHECKGL(glDisableVertexAttribArrayARB(VertexColorLocation));
 
     shader_program->End();
   }
 
-  void GraphicsEngine::QRP_ASM_2Tex (int x, int y, int width, int height,
+  void GraphicsEngine::QRP_ASM_2Tex(int x, int y, int width, int height,
                                   ObjectPtr<IOpenGLBaseTexture> device_texture0, TexCoordXForm &texxform0, const Color &color0,
                                   ObjectPtr<IOpenGLBaseTexture> device_texture1, TexCoordXForm &texxform1, const Color &color1)
   {
-    NUX_RETURN_IF_FALSE (m_Asm2TextureAdd.IsValid());
-    NUX_RETURN_IF_FALSE (m_Asm2TextureRectAdd.IsValid());
+    NUX_RETURN_IF_FALSE(m_Asm2TextureAdd.IsValid());
+    NUX_RETURN_IF_FALSE(m_Asm2TextureRectAdd.IsValid());
 
-    QRP_Compute_Texture_Coord (width, height, device_texture0, texxform0);
-    QRP_Compute_Texture_Coord (width, height, device_texture1, texxform1);
+    QRP_Compute_Texture_Coord(width, height, device_texture0, texxform0);
+    QRP_Compute_Texture_Coord(width, height, device_texture1, texxform1);
 
     float fx = x, fy = y;
     float VtxBuffer[] =
@@ -765,71 +765,71 @@ namespace nux
       fx + width,  fy,          0.0f, 1.0f, texxform0.u1, texxform0.v0, 0.0f, 1.0f, texxform1.u1, texxform1.v0, 0.0f, 1.0f,
     };
 
-    CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
-    CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
 
     ObjectPtr<IOpenGLAsmShaderProgram> shader_program = m_Asm2TextureAdd;
-    if(device_texture0->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
+    if (device_texture0->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       shader_program = m_Asm2TextureRectAdd;
     }
     shader_program->Begin();
 
-    SetTexture (GL_TEXTURE0, device_texture0);
-    SetTexture (GL_TEXTURE1, device_texture1);
+    SetTexture(GL_TEXTURE0, device_texture0);
+    SetTexture(GL_TEXTURE1, device_texture1);
 
-    CHECKGL ( glMatrixMode (GL_MODELVIEW) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
-    CHECKGL ( glMatrixMode (GL_PROJECTION) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
+    CHECKGL(glMatrixMode(GL_MODELVIEW));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLModelViewMatrix().m));
+    CHECKGL(glMatrixMode(GL_PROJECTION));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLProjectionMatrix().m));
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int TextureCoord0Location   = VTXATTRIB_TEXCOORD0;
     int TextureCoord1Location   = VTXATTRIB_TEXCOORD1;
 
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, color0.red, color0.green, color0.blue, color0.alpha ) );
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, color1.red, color1.green, color1.blue, color1.alpha ) );
+    CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 0, color0.red, color0.green, color0.blue, color0.alpha ));
+    CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 1, color1.red, color1.green, color1.blue, color1.alpha ));
 
-    CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
-    CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer) );
+    CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+    CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer));
 
     if (TextureCoord0Location != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord0Location) );
-      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4) );
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord0Location));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4));
     }
 
     if (TextureCoord1Location != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord1Location) );
-      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord1Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8) );
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord1Location));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord1Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8));
     }
 
-    CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
+    CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
 
-    CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
+    CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));
 
     if (TextureCoord0Location != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord0Location) );
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord0Location));
 
     if (TextureCoord1Location != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord1Location) );
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord1Location));
 
     shader_program->End();
   }
 
-  void GraphicsEngine::QRP_ASM_DisturbedTexture (
+  void GraphicsEngine::QRP_ASM_DisturbedTexture(
     int x, int y, int width, int height,
     ObjectPtr<IOpenGLBaseTexture> distorsion_texture, TexCoordXForm &texxform0, const Color& c0,
     ObjectPtr<IOpenGLBaseTexture> src_device_texture, TexCoordXForm &texxform1, const Color& c1)
   {
-    NUX_RETURN_IF_FALSE (m_ASM2TextureDepRead.IsValid());
-    NUX_RETURN_IF_FALSE (m_ASM2TextureRectDepRead.IsValid());
+    NUX_RETURN_IF_FALSE(m_ASM2TextureDepRead.IsValid());
+    NUX_RETURN_IF_FALSE(m_ASM2TextureRectDepRead.IsValid());
 
-    QRP_Compute_Texture_Coord (width, height, distorsion_texture, texxform0);
-    QRP_Compute_Texture_Coord (width, height, src_device_texture, texxform1);
+    QRP_Compute_Texture_Coord(width, height, distorsion_texture, texxform0);
+    QRP_Compute_Texture_Coord(width, height, src_device_texture, texxform1);
 
     float fx = x, fy = y;
     float VtxBuffer[] =
@@ -840,70 +840,70 @@ namespace nux
       fx + width,  fy,          0.0f, 1.0f, texxform0.u1, texxform0.v0, 0.0f, 1.0f, texxform1.u1, texxform1.v0, 0.0f, 1.0f,
     };
 
-    CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
-    CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
 
     ObjectPtr<IOpenGLAsmShaderProgram> shader_program = m_ASM2TextureDepRead;
-    if(src_device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
+    if (src_device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       shader_program = m_ASM2TextureRectDepRead;
     }
     shader_program->Begin();
 
-    SetTexture (GL_TEXTURE0, distorsion_texture);
-    SetTexture (GL_TEXTURE1, src_device_texture);
+    SetTexture(GL_TEXTURE0, distorsion_texture);
+    SetTexture(GL_TEXTURE1, src_device_texture);
 
-    CHECKGL ( glMatrixMode (GL_MODELVIEW) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
-    CHECKGL ( glMatrixMode (GL_PROJECTION) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
+    CHECKGL(glMatrixMode(GL_MODELVIEW));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLModelViewMatrix().m));
+    CHECKGL(glMatrixMode(GL_PROJECTION));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLProjectionMatrix().m));
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int TextureCoord0Location   = VTXATTRIB_TEXCOORD0;
     int TextureCoord1Location   = VTXATTRIB_TEXCOORD1;
 
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, c0.red, c0.green, c0.blue, c0.alpha ) );
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, c1.red, c1.green, c1.blue, c1.alpha ) );
+    CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 0, c0.red, c0.green, c0.blue, c0.alpha ));
+    CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 1, c1.red, c1.green, c1.blue, c1.alpha ));
 
-    CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
-    CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer) );
+    CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+    CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer));
 
     if (TextureCoord0Location != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord0Location) );
-      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4) );
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord0Location));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4));
     }
 
     if (TextureCoord1Location != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord1Location) );
-      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord1Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8) );
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord1Location));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord1Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8));
     }
 
-    CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
+    CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
 
-    CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
+    CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));
 
     if (TextureCoord0Location != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord0Location) );
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord0Location));
 
     if (TextureCoord1Location != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord1Location) );
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord1Location));
 
     shader_program->End();
   }
 
-  void GraphicsEngine::QRP_ASM_2TexMod (int x, int y, int width, int height,
+  void GraphicsEngine::QRP_ASM_2TexMod(int x, int y, int width, int height,
     ObjectPtr<IOpenGLBaseTexture> device_texture0, TexCoordXForm &texxform0, const Color &color0,
     ObjectPtr<IOpenGLBaseTexture> device_texture1, TexCoordXForm &texxform1, const Color &color1)
   {
-    NUX_RETURN_IF_FALSE (m_Asm2TextureMod.IsValid());
-    NUX_RETURN_IF_FALSE (m_Asm2TextureRectMod.IsValid());
+    NUX_RETURN_IF_FALSE(m_Asm2TextureMod.IsValid());
+    NUX_RETURN_IF_FALSE(m_Asm2TextureRectMod.IsValid());
 
-    QRP_Compute_Texture_Coord (width, height, device_texture0, texxform0);
-    QRP_Compute_Texture_Coord (width, height, device_texture1, texxform1);
+    QRP_Compute_Texture_Coord(width, height, device_texture0, texxform0);
+    QRP_Compute_Texture_Coord(width, height, device_texture1, texxform1);
 
     float fx = x, fy = y;
     float VtxBuffer[] =
@@ -914,74 +914,74 @@ namespace nux
       fx + width,  fy,          0.0f, 1.0f, texxform0.u1, texxform0.v0, 0.0f, 1.0f, texxform1.u1, texxform1.v0, 0.0f, 1.0f,
     };
 
-    CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
-    CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
 
     ObjectPtr<IOpenGLAsmShaderProgram> shader_program = m_Asm2TextureMod;
-    if(device_texture0->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
+    if (device_texture0->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       shader_program = m_Asm2TextureRectMod;
     }
     shader_program->Begin();
 
-    SetTexture (GL_TEXTURE0, device_texture0);
-    SetTexture (GL_TEXTURE1, device_texture1);
+    SetTexture(GL_TEXTURE0, device_texture0);
+    SetTexture(GL_TEXTURE1, device_texture1);
 
-    CHECKGL ( glMatrixMode (GL_MODELVIEW) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
-    CHECKGL ( glMatrixMode (GL_PROJECTION) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
+    CHECKGL(glMatrixMode(GL_MODELVIEW));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLModelViewMatrix().m));
+    CHECKGL(glMatrixMode(GL_PROJECTION));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLProjectionMatrix().m));
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int TextureCoord0Location   = VTXATTRIB_TEXCOORD0;
     int TextureCoord1Location   = VTXATTRIB_TEXCOORD1;
 
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, color0.red, color0.green, color0.blue, color0.alpha ) );
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, color1.red, color1.green, color1.blue, color1.alpha ) );
+    CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 0, color0.red, color0.green, color0.blue, color0.alpha ));
+    CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 1, color1.red, color1.green, color1.blue, color1.alpha ));
 
-    CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
-    CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer) );
+    CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+    CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer));
 
     if (TextureCoord0Location != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord0Location) );
-      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4) );
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord0Location));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4));
     }
 
     if (TextureCoord1Location != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord1Location) );
-      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord1Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8) );
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord1Location));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord1Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8));
     }
 
-    CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
+    CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
 
-    CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
+    CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));
 
     if (TextureCoord0Location != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord0Location) );
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord0Location));
 
     if (TextureCoord1Location != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord1Location) );
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord1Location));
 
     shader_program->End();
   }
 
-  void GraphicsEngine::QRP_ASM_4Tex (int x, int y, int width, int height,
+  void GraphicsEngine::QRP_ASM_4Tex(int x, int y, int width, int height,
                                   ObjectPtr<IOpenGLBaseTexture> device_texture0, TexCoordXForm &texxform0, const Color &color0,
                                   ObjectPtr<IOpenGLBaseTexture> device_texture1, TexCoordXForm &texxform1, const Color &color1,
                                   ObjectPtr<IOpenGLBaseTexture> device_texture2, TexCoordXForm &texxform2, const Color &color2,
                                   ObjectPtr<IOpenGLBaseTexture> device_texture3, TexCoordXForm &texxform3, const Color &color3)
   {
-    NUX_RETURN_IF_FALSE (m_Asm4TextureAdd.IsValid());
-    NUX_RETURN_IF_FALSE (m_Asm4TextureRectAdd.IsValid());
+    NUX_RETURN_IF_FALSE(m_Asm4TextureAdd.IsValid());
+    NUX_RETURN_IF_FALSE(m_Asm4TextureRectAdd.IsValid());
 
-    QRP_Compute_Texture_Coord (width, height, device_texture0, texxform0);
-    QRP_Compute_Texture_Coord (width, height, device_texture1, texxform1);
-    QRP_Compute_Texture_Coord (width, height, device_texture2, texxform1);
-    QRP_Compute_Texture_Coord (width, height, device_texture3, texxform1);
+    QRP_Compute_Texture_Coord(width, height, device_texture0, texxform0);
+    QRP_Compute_Texture_Coord(width, height, device_texture1, texxform1);
+    QRP_Compute_Texture_Coord(width, height, device_texture2, texxform1);
+    QRP_Compute_Texture_Coord(width, height, device_texture3, texxform1);
 
     float fx = x, fy = y;
     float VtxBuffer[] =
@@ -992,27 +992,27 @@ namespace nux
       fx + width,  fy,          0.0f, 1.0f, texxform0.u1, texxform0.v0, 0, 1.0f, texxform1.u1, texxform1.v0, 0, 1.0f, texxform2.u1, texxform2.v0, 0, 1.0f, texxform3.u1, texxform3.v0, 0, 1.0f,
     };
 
-    CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
-    CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
 
     ObjectPtr<IOpenGLAsmShaderProgram> shader_program = m_Asm4TextureAdd;
-    if(device_texture0->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
+    if (device_texture0->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       shader_program = m_Asm4TextureRectAdd;
     }
     shader_program->Begin();
 
-    SetTexture (GL_TEXTURE0, device_texture0);
-    SetTexture (GL_TEXTURE1, device_texture1);
-    SetTexture (GL_TEXTURE2, device_texture1);
-    SetTexture (GL_TEXTURE3, device_texture1);
+    SetTexture(GL_TEXTURE0, device_texture0);
+    SetTexture(GL_TEXTURE1, device_texture1);
+    SetTexture(GL_TEXTURE2, device_texture1);
+    SetTexture(GL_TEXTURE3, device_texture1);
 
-    CHECKGL ( glMatrixMode (GL_MODELVIEW) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
-    CHECKGL ( glMatrixMode (GL_PROJECTION) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
+    CHECKGL(glMatrixMode(GL_MODELVIEW));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLModelViewMatrix().m));
+    CHECKGL(glMatrixMode(GL_PROJECTION));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLProjectionMatrix().m));
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int TextureCoord0Location   = VTXATTRIB_TEXCOORD0;
@@ -1020,72 +1020,72 @@ namespace nux
     int TextureCoord2Location   = VTXATTRIB_TEXCOORD2;
     int TextureCoord3Location   = VTXATTRIB_TEXCOORD3;
 
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, color0.red, color0.green, color0.blue, color0.alpha ) );
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, color1.red, color1.green, color1.blue, color1.alpha ) );
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 2, color2.red, color2.green, color2.blue, color2.alpha ) );
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 3, color3.red, color3.green, color3.blue, color3.alpha ) );
+    CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 0, color0.red, color0.green, color0.blue, color0.alpha ));
+    CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 1, color1.red, color1.green, color1.blue, color1.alpha ));
+    CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 2, color2.red, color2.green, color2.blue, color2.alpha ));
+    CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 3, color3.red, color3.green, color3.blue, color3.alpha ));
 
-    CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
-    CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 80, VtxBuffer) );
+    CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+    CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 80, VtxBuffer));
 
     if (TextureCoord0Location != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord0Location) );
-      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 80, VtxBuffer + 4) );
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord0Location));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 80, VtxBuffer + 4));
     }
 
     if (TextureCoord1Location != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord1Location) );
-      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord1Location, 4, GL_FLOAT, GL_FALSE, 80, VtxBuffer + 8) );
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord1Location));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord1Location, 4, GL_FLOAT, GL_FALSE, 80, VtxBuffer + 8));
     }
 
     if (TextureCoord2Location != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord2Location) );
-      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord2Location, 4, GL_FLOAT, GL_FALSE, 80, VtxBuffer + 12) );
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord2Location));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord2Location, 4, GL_FLOAT, GL_FALSE, 80, VtxBuffer + 12));
     }
 
     if (TextureCoord3Location != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord3Location) );
-      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord3Location, 4, GL_FLOAT, GL_FALSE, 80, VtxBuffer + 16) );
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord3Location));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord3Location, 4, GL_FLOAT, GL_FALSE, 80, VtxBuffer + 16));
     }
 
-    CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
+    CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
 
-    CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
+    CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));
 
     if (TextureCoord0Location != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord0Location) );
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord0Location));
 
     if (TextureCoord1Location != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord1Location) );
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord1Location));
 
     if (TextureCoord2Location != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord2Location) );
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord2Location));
 
     if (TextureCoord3Location != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord3Location) );
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord3Location));
 
     shader_program->End();
   }
 
 ////////////////////////////////////////////////////////////////////////////////////
-  void GraphicsEngine::QRP_ASM_Triangle (int x0, int y0,
+  void GraphicsEngine::QRP_ASM_Triangle(int x0, int y0,
                                       int x1, int y1,
                                       int x2, int y2,
                                       Color c0)
   {
-    QRP_ASM_Triangle (x0, y0, x1, y1, x2, y2, c0, c0, c0);
+    QRP_ASM_Triangle(x0, y0, x1, y1, x2, y2, c0, c0, c0);
   }
 
-  void GraphicsEngine::QRP_ASM_Triangle (int x0, int y0,
+  void GraphicsEngine::QRP_ASM_Triangle(int x0, int y0,
                                       int x1, int y1,
                                       int x2, int y2,
                                       Color c0, Color c1, Color c2)
   {
-    NUX_RETURN_IF_FALSE (m_AsmColor.IsValid());
+    NUX_RETURN_IF_FALSE(m_AsmColor.IsValid());
 
     float VtxBuffer[] =
     {
@@ -1094,33 +1094,33 @@ namespace nux
       static_cast<float>(x2), static_cast<float>(y2), 0.0f, 1.0f, c2.red, c2.green, c2.blue, c2.alpha,
     };
 
-    CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
-    CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
 
     ObjectPtr<IOpenGLAsmShaderProgram> ShaderProg = m_AsmColor;
 
     ShaderProg->Begin();
 
-    CHECKGL ( glMatrixMode (GL_MODELVIEW) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
-    CHECKGL ( glMatrixMode (GL_PROJECTION) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
+    CHECKGL(glMatrixMode(GL_MODELVIEW));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLModelViewMatrix().m));
+    CHECKGL(glMatrixMode(GL_PROJECTION));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLProjectionMatrix().m));
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int VertexColorLocation     = VTXATTRIB_COLOR;
 
-    CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
-    CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer) );
+    CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+    CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer));
 
-    CHECKGL ( glEnableVertexAttribArrayARB (VertexColorLocation) );
-    CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4) );
+    CHECKGL(glEnableVertexAttribArrayARB(VertexColorLocation));
+    CHECKGL(glVertexAttribPointerARB((GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4));
 
-    CHECKGL ( glDrawArrays (GL_TRIANGLES, 0, 3) );
+    CHECKGL(glDrawArrays(GL_TRIANGLES, 0, 3));
 
-    CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
-    CHECKGL ( glDisableVertexAttribArrayARB (VertexColorLocation) );
+    CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));
+    CHECKGL(glDisableVertexAttribArrayARB(VertexColorLocation));
     ShaderProg->End();
 
     m_triangle_stats++;
@@ -1129,16 +1129,16 @@ namespace nux
 //////////////////////
 // DRAW LINES       //
 //////////////////////
-  void GraphicsEngine::QRP_ASM_Line (int x0, int y0,
+  void GraphicsEngine::QRP_ASM_Line(int x0, int y0,
                                   int x1, int y1, Color c0)
   {
-    QRP_ASM_Line (x0, y0, x1, y1, c0, c0);
+    QRP_ASM_Line(x0, y0, x1, y1, c0, c0);
   }
 
-  void GraphicsEngine::QRP_ASM_Line (int x0, int y0,
+  void GraphicsEngine::QRP_ASM_Line(int x0, int y0,
                                   int x1, int y1, Color c0, Color c1)
   {
-    NUX_RETURN_IF_FALSE (m_AsmColor.IsValid());
+    NUX_RETURN_IF_FALSE(m_AsmColor.IsValid());
 
     float VtxBuffer[] =
     {
@@ -1149,48 +1149,48 @@ namespace nux
     ObjectPtr<IOpenGLAsmShaderProgram> ShaderProg = m_AsmColor;
 
 
-    CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
-    CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
     ShaderProg->Begin();
 
-    CHECKGL ( glMatrixMode (GL_MODELVIEW) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
-    CHECKGL ( glMatrixMode (GL_PROJECTION) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
+    CHECKGL(glMatrixMode(GL_MODELVIEW));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLModelViewMatrix().m));
+    CHECKGL(glMatrixMode(GL_PROJECTION));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLProjectionMatrix().m));
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int VertexColorLocation     = VTXATTRIB_COLOR;
 
-    CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
-    CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer) );
+    CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+    CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer));
 
     if (VertexColorLocation != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (VertexColorLocation) );
-      CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4) );
+      CHECKGL(glEnableVertexAttribArrayARB(VertexColorLocation));
+      CHECKGL(glVertexAttribPointerARB((GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4));
     }
 
-    CHECKGL ( glDrawArrays (GL_LINES, 0, 2) );
+    CHECKGL(glDrawArrays(GL_LINES, 0, 2));
 
-    CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
+    CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));
 
     if (VertexColorLocation != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (VertexColorLocation) );
+      CHECKGL(glDisableVertexAttribArrayARB(VertexColorLocation));
 
     ShaderProg->End();
 
     m_line_stats++;
   }
 
-  void GraphicsEngine::QRP_ASM_QuadWireframe (int x0, int y0, int width, int height,
+  void GraphicsEngine::QRP_ASM_QuadWireframe(int x0, int y0, int width, int height,
       Color c0,
       Color c1,
       Color c2,
       Color c3)
   {
-    NUX_RETURN_IF_FALSE (m_AsmColor.IsValid());
+    NUX_RETURN_IF_FALSE(m_AsmColor.IsValid());
 
     float fx0 = x0, fy0 = y0;
     float VtxBuffer[] =
@@ -1204,44 +1204,44 @@ namespace nux
 
     ObjectPtr<IOpenGLAsmShaderProgram> ShaderProg = m_AsmColor;
 
-    CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
-    CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
     ShaderProg->Begin();
 
-    CHECKGL ( glMatrixMode (GL_MODELVIEW) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
-    CHECKGL ( glMatrixMode (GL_PROJECTION) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
+    CHECKGL(glMatrixMode(GL_MODELVIEW));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLModelViewMatrix().m));
+    CHECKGL(glMatrixMode(GL_PROJECTION));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLProjectionMatrix().m));
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int VertexColorLocation     = VTXATTRIB_COLOR;
 
-    CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
-    CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer) );
+    CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+    CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer));
 
     if (VertexColorLocation != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (VertexColorLocation) );
-      CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4) );
+      CHECKGL(glEnableVertexAttribArrayARB(VertexColorLocation));
+      CHECKGL(glVertexAttribPointerARB((GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4));
     }
 
-    CHECKGL ( glDrawArrays (GL_LINE_STRIP, 0, 5) );
+    CHECKGL(glDrawArrays(GL_LINE_STRIP, 0, 5));
 
-    CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
+    CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));
 
     if (VertexColorLocation != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (VertexColorLocation) );
+      CHECKGL(glDisableVertexAttribArrayARB(VertexColorLocation));
 
     ShaderProg->End();
 
     m_line_stats++;
   }
 
-  void GraphicsEngine::InitAsmPower ()
+  void GraphicsEngine::InitAsmPower()
   {
-    NString AsmVtx = TEXT (
+    NString AsmVtx = 
       "!!ARBvp1.0                                 \n\
       ATTRIB iPos         = vertex.position;      \n\
       OUTPUT oPos         = result.position;      \n\
@@ -1252,10 +1252,10 @@ namespace nux
       DP4   oPos.z, state.matrix.mvp.row[2], vertex.position;      \n\
       DP4   oPos.w, state.matrix.mvp.row[3], vertex.position;      \n\
       MOV   oTexCoord0, vertex.attrib[8];       \n\
-      END");
+      END";
 
 
-    NString AsmFrg = TEXT (
+    NString AsmFrg = 
       "!!ARBfp1.0                                       \n\
       PARAM color0 = program.local[0];                  \n\
       PARAM exponent = program.local[1];                \n\
@@ -1267,9 +1267,9 @@ namespace nux
       POW final.b, tex0.b, exponent.b;             \n\
       MOV final.a, tex0.a;                         \n\
       MUL result.color, color0, final;             \n\
-      END");
+      END";
 
-    NString AsmFrgRect = TEXT (
+    NString AsmFrgRect = 
       "!!ARBfp1.0                                       \n\
       PARAM color0 = program.local[0];                  \n\
       PARAM exponent = program.local[1];                \n\
@@ -1281,20 +1281,20 @@ namespace nux
       POW final.b, tex0.b, exponent.b;             \n\
       MOV final.a, tex0.a;                         \n\
       MUL result.color, color0, final;             \n\
-      END");
+      END";
 
-    _asm_tex_component_exponentiation_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram ();
-    _asm_tex_component_exponentiation_prog->LoadVertexShader (AsmVtx.GetTCharPtr ());
-    _asm_tex_component_exponentiation_prog->LoadPixelShader (AsmFrg.GetTCharPtr ());
+    _asm_tex_component_exponentiation_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
+    _asm_tex_component_exponentiation_prog->LoadVertexShader(AsmVtx.GetTCharPtr());
+    _asm_tex_component_exponentiation_prog->LoadPixelShader(AsmFrg.GetTCharPtr());
     _asm_tex_component_exponentiation_prog->Link();
   }
 
   void GraphicsEngine::QRP_ASM_Power  (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, Vector4 exponent)
   {
-    NUX_RETURN_IF_FALSE (_asm_tex_component_exponentiation_prog.IsValid());
-    NUX_RETURN_IF_FALSE (_asm_texrect_component_exponentiation_prog.IsValid());
+    NUX_RETURN_IF_FALSE(_asm_tex_component_exponentiation_prog.IsValid());
+    NUX_RETURN_IF_FALSE(_asm_texrect_component_exponentiation_prog.IsValid());
 
-    QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
+    QRP_Compute_Texture_Coord(width, height, device_texture, texxform);
     float fx = x, fy = y;
     float VtxBuffer[] =
     {
@@ -1304,54 +1304,54 @@ namespace nux
       fx + width,  fy,          0.0f, 1.0f, texxform.u1, texxform.v0, 0, 1.0f,
     };
 
-    CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
-    CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
 
     ObjectPtr<IOpenGLAsmShaderProgram> shader_program = _asm_tex_component_exponentiation_prog;
-    if(device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
+    if (device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       shader_program = _asm_texrect_component_exponentiation_prog;
     }
     shader_program->Begin();
 
-    SetTexture (GL_TEXTURE0, device_texture);
+    SetTexture(GL_TEXTURE0, device_texture);
 
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, c0.red, c0.green, c0.blue, c0.alpha));
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, exponent.x, exponent.y, exponent.z, exponent.w));
+    CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 0, c0.red, c0.green, c0.blue, c0.alpha));
+    CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 1, exponent.x, exponent.y, exponent.z, exponent.w));
 
-    CHECKGL ( glMatrixMode (GL_MODELVIEW) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
-    CHECKGL ( glMatrixMode (GL_PROJECTION) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
+    CHECKGL(glMatrixMode(GL_MODELVIEW));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLModelViewMatrix().m));
+    CHECKGL(glMatrixMode(GL_PROJECTION));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLProjectionMatrix().m));
 
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int TextureCoord0Location   = VTXATTRIB_TEXCOORD0;
 
-    CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
-    CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer) );
+    CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+    CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer));
 
     if (TextureCoord0Location != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord0Location) );
-      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4) );
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord0Location));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4));
     }
 
-    CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
+    CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
 
-    CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
+    CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));
 
     if (TextureCoord0Location != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord0Location) );
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord0Location));
 
     shader_program->End();
   }
 
-  void GraphicsEngine::InitAsmAlphaReplicate ()
+  void GraphicsEngine::InitAsmAlphaReplicate()
   {
-    NString AsmVtx = TEXT (
+    NString AsmVtx = 
       "!!ARBvp1.0                                 \n\
       ATTRIB iPos         = vertex.position;      \n\
       OUTPUT oPos         = result.position;      \n\
@@ -1362,39 +1362,39 @@ namespace nux
       DP4   oPos.z, state.matrix.mvp.row[2], vertex.position;      \n\
       DP4   oPos.w, state.matrix.mvp.row[3], vertex.position;      \n\
       MOV   oTexCoord0, vertex.attrib[8];       \n\
-      END");
+      END";
 
 
-    NString AsmFrg = TEXT (
+    NString AsmFrg = 
       "!!ARBfp1.0                                     \n\
       PARAM color0 = program.local[0];                \n\
       TEMP tex0;                                      \n\
       TEX tex0, fragment.texcoord[0], texture[0], 2D; \n\
       MUL result.color, color0, tex0.aaaa;            \n\
-      END");
+      END";
 
-    NString AsmFrgRect = TEXT (
+    NString AsmFrgRect = 
       "!!ARBfp1.0                                       \n\
       PARAM color0 = program.local[0];                  \n\
       TEMP tex0;                                        \n\
       TEX tex0, fragment.texcoord[0], texture[0], RECT; \n\
       MUL result.color, color0, tex0.aaaa;              \n\
-      END");
+      END";
 
-    _asm_tex_alpha_replicate_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram ();
-    _asm_tex_alpha_replicate_prog->LoadVertexShader (AsmVtx.GetTCharPtr ());
-    _asm_tex_alpha_replicate_prog->LoadPixelShader (AsmFrg.GetTCharPtr ());
-    _asm_tex_alpha_replicate_prog->Link ();
+    _asm_tex_alpha_replicate_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
+    _asm_tex_alpha_replicate_prog->LoadVertexShader(AsmVtx.GetTCharPtr());
+    _asm_tex_alpha_replicate_prog->LoadPixelShader(AsmFrg.GetTCharPtr());
+    _asm_tex_alpha_replicate_prog->Link();
 
   }
 
-  void GraphicsEngine::QRP_ASM_AlphaReplicate (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
+  void GraphicsEngine::QRP_ASM_AlphaReplicate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
     const Color &c0)
   {
-    NUX_RETURN_IF_FALSE (_asm_tex_alpha_replicate_prog.IsValid());
-    NUX_RETURN_IF_FALSE (_asm_texrect_alpha_replicate_prog.IsValid());
+    NUX_RETURN_IF_FALSE(_asm_tex_alpha_replicate_prog.IsValid());
+    NUX_RETURN_IF_FALSE(_asm_texrect_alpha_replicate_prog.IsValid());
 
-    QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
+    QRP_Compute_Texture_Coord(width, height, device_texture, texxform);
     float fx = x, fy = y;
     float VtxBuffer[] =
     {
@@ -1404,53 +1404,53 @@ namespace nux
       fx + width,  fy,          0.0f, 1.0f, texxform.u1, texxform.v0, 0, 1.0f,
     };
 
-    CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
-    CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
 
     ObjectPtr<IOpenGLAsmShaderProgram> shader_program = _asm_tex_alpha_replicate_prog;
-    if(device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
+    if (device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       shader_program = _asm_texrect_alpha_replicate_prog;
     }
     shader_program->Begin();
 
-    SetTexture (GL_TEXTURE0, device_texture);
+    SetTexture(GL_TEXTURE0, device_texture);
 
-    CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, c0.red, c0.green, c0.blue, c0.alpha));
+    CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 0, c0.red, c0.green, c0.blue, c0.alpha));
 
-    CHECKGL ( glMatrixMode (GL_MODELVIEW) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
-    CHECKGL ( glMatrixMode (GL_PROJECTION) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
+    CHECKGL(glMatrixMode(GL_MODELVIEW));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLModelViewMatrix().m));
+    CHECKGL(glMatrixMode(GL_PROJECTION));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLProjectionMatrix().m));
 
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int TextureCoord0Location   = VTXATTRIB_TEXCOORD0;
 
-    CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
-    CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer) );
+    CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+    CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer));
 
     if (TextureCoord0Location != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord0Location) );
-      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4) );
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord0Location));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4));
     }
 
-    CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
+    CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
 
-    CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
+    CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));
 
     if (TextureCoord0Location != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord0Location) );
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord0Location));
 
     shader_program->End();
   }
 
-  void GraphicsEngine::InitAsmColorMatrixFilter ()
+  void GraphicsEngine::InitAsmColorMatrixFilter()
   {
-    NString AsmVtx = TEXT (
+    NString AsmVtx = 
       "!!ARBvp1.0                                               \n\
       ATTRIB iPos         = vertex.position;                    \n\
       OUTPUT oPos         = result.position;                    \n\
@@ -1461,10 +1461,10 @@ namespace nux
       DP4   oPos.z, state.matrix.mvp.row[2], vertex.position;   \n\
       DP4   oPos.w, state.matrix.mvp.row[3], vertex.position;   \n\
       MOV   oTexCoord0, vertex.attrib[8];                       \n\
-      END");
+      END";
 
 
-    NString AsmFrg = TEXT (
+    NString AsmFrg = 
       "!!ARBfp1.0                                     \n\
       PARAM color0 = program.local[0];                \n\
       PARAM CM0 = program.local[1];                   \n\
@@ -1480,9 +1480,9 @@ namespace nux
       MAD final.b, tex0, CM2, offset.b;               \n\
       MAD final.a, tex0, CM3, offset.a;               \n\
       MUL result.color, color0, final;                \n\
-      END");
+      END";
 
-    NString AsmFrgRect = TEXT (
+    NString AsmFrgRect = 
       "!!ARBfp1.0                                     \n\
       PARAM color0 = program.local[0];                \n\
       PARAM CM0 = program.local[1];                   \n\
@@ -1498,26 +1498,26 @@ namespace nux
       MAD final.b, tex0, CM2, offset.b;               \n\
       MAD final.a, tex0, CM3, offset.a;               \n\
       MUL result.color, color0, final;                \n\
-      END");
+      END";
 
-    _asm_tex_color_matrix_filter_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram ();
-    _asm_tex_color_matrix_filter_prog->LoadVertexShader (AsmVtx.GetTCharPtr ());
-    _asm_tex_color_matrix_filter_prog->LoadPixelShader (AsmFrg.GetTCharPtr ());
-    _asm_tex_color_matrix_filter_prog->Link ();
+    _asm_tex_color_matrix_filter_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
+    _asm_tex_color_matrix_filter_prog->LoadVertexShader(AsmVtx.GetTCharPtr());
+    _asm_tex_color_matrix_filter_prog->LoadPixelShader(AsmFrg.GetTCharPtr());
+    _asm_tex_color_matrix_filter_prog->Link();
 
-    _asm_texrect_color_matrix_filter_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram ();
-    _asm_texrect_color_matrix_filter_prog->LoadVertexShader (AsmVtx.GetTCharPtr ());
-    _asm_texrect_color_matrix_filter_prog->LoadPixelShader (AsmFrgRect.GetTCharPtr ());
-    _asm_texrect_color_matrix_filter_prog->Link ();
+    _asm_texrect_color_matrix_filter_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
+    _asm_texrect_color_matrix_filter_prog->LoadVertexShader(AsmVtx.GetTCharPtr());
+    _asm_texrect_color_matrix_filter_prog->LoadPixelShader(AsmFrgRect.GetTCharPtr());
+    _asm_texrect_color_matrix_filter_prog->Link();
   }
 
   void GraphicsEngine::QRP_ASM_ColorMatrix  (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
     const Color &c0, Matrix4 color_matrix, Vector4 offset)
   {
-    NUX_RETURN_IF_FALSE (_asm_tex_color_matrix_filter_prog.IsValid());
-    NUX_RETURN_IF_FALSE (_asm_texrect_color_matrix_filter_prog.IsValid());
+    NUX_RETURN_IF_FALSE(_asm_tex_color_matrix_filter_prog.IsValid());
+    NUX_RETURN_IF_FALSE(_asm_texrect_color_matrix_filter_prog.IsValid());
 
-    QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
+    QRP_Compute_Texture_Coord(width, height, device_texture, texxform);
     float fx = x, fy = y;
     float VtxBuffer[] =
     {
@@ -1527,58 +1527,58 @@ namespace nux
       fx + width,  fy,          0.0f, 1.0f, texxform.u1, texxform.v0, 0, 1.0f,
     };
 
-    CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
-    CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
 
     ObjectPtr<IOpenGLAsmShaderProgram> shader_program = _asm_tex_color_matrix_filter_prog;
-    if(device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
+    if (device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       shader_program = _asm_texrect_color_matrix_filter_prog;
     }
     shader_program->Begin();
 
-    SetTexture (GL_TEXTURE0, device_texture);
+    SetTexture(GL_TEXTURE0, device_texture);
 
-    CHECKGL (glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, c0.red, c0.green, c0.blue, c0.alpha));
-    CHECKGL (glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, color_matrix.m[0][0], color_matrix.m[0][1], color_matrix.m[0][2], color_matrix.m[0][3]));
-    CHECKGL (glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 2, color_matrix.m[1][0], color_matrix.m[1][1], color_matrix.m[1][2], color_matrix.m[1][3]));
-    CHECKGL (glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 3, color_matrix.m[2][0], color_matrix.m[2][1], color_matrix.m[2][2], color_matrix.m[2][3]));
-    CHECKGL (glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 4, color_matrix.m[3][0], color_matrix.m[3][1], color_matrix.m[3][2], color_matrix.m[3][3]));
-    CHECKGL (glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 5, offset.x, offset.y, offset.z, offset.w));
+    CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 0, c0.red, c0.green, c0.blue, c0.alpha));
+    CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 1, color_matrix.m[0][0], color_matrix.m[0][1], color_matrix.m[0][2], color_matrix.m[0][3]));
+    CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 2, color_matrix.m[1][0], color_matrix.m[1][1], color_matrix.m[1][2], color_matrix.m[1][3]));
+    CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 3, color_matrix.m[2][0], color_matrix.m[2][1], color_matrix.m[2][2], color_matrix.m[2][3]));
+    CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 4, color_matrix.m[3][0], color_matrix.m[3][1], color_matrix.m[3][2], color_matrix.m[3][3]));
+    CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 5, offset.x, offset.y, offset.z, offset.w));
 
-    CHECKGL ( glMatrixMode (GL_MODELVIEW) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
-    CHECKGL ( glMatrixMode (GL_PROJECTION) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
+    CHECKGL(glMatrixMode(GL_MODELVIEW));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLModelViewMatrix().m));
+    CHECKGL(glMatrixMode(GL_PROJECTION));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLProjectionMatrix().m));
 
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int TextureCoord0Location   = VTXATTRIB_TEXCOORD0;
 
-    CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
-    CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer) );
+    CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+    CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer));
 
     if (TextureCoord0Location != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord0Location) );
-      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4) );
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord0Location));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4));
     }
 
-    CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
+    CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
 
-    CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
+    CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));
 
     if (TextureCoord0Location != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord0Location) );
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord0Location));
 
     shader_program->End();
   }
 
   void GraphicsEngine::InitAsmSeparableGaussFilter()
   {
-    NString AsmVtx = TEXT (
+    NString AsmVtx = 
       "!!ARBvp1.0                                 \n\
       ATTRIB iPos         = vertex.position;      \n\
       OUTPUT oPos         = result.position;      \n\
@@ -1601,10 +1601,10 @@ namespace nux
       MOV   oTexCoord4, vertex.attrib[12];        \n\
       MOV   oTexCoord5, vertex.attrib[13];        \n\
       MOV   oTexCoord6, vertex.attrib[14];        \n\
-      END");
+      END";
 
 
-    NString AsmFrg = TEXT (
+    NString AsmFrg = 
       "!!ARBfp1.0                                                   \n\
       TEMP tex0;                                                    \n\
       TEMP final;                                                   \n\
@@ -1624,10 +1624,10 @@ namespace nux
       TEX tex0, fragment.texcoord[6], texture[0], 2D;               \n\
       MAD final, tex0, program.local[6], final;                     \n\
       MOV result.color, final;                                      \n\
-      END");
+      END";
 
 
-    NString AsmFrgRect = TEXT (
+    NString AsmFrgRect = 
       "!!ARBfp1.0                                                   \n\
       TEMP tex0;                                                    \n\
       TEMP final;                                                   \n\
@@ -1647,25 +1647,25 @@ namespace nux
       TEX tex0, fragment.texcoord[6], texture[0], RECT;             \n\
       MAD final, tex0, program.local[6], final;                     \n\
       MOV result.color, final;                                      \n\
-      END");
+      END";
 
-    _asm_tex_separable_gauss_filter_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram ();
-    _asm_tex_separable_gauss_filter_prog->LoadVertexShader (AsmVtx.GetTCharPtr ());
-    _asm_tex_separable_gauss_filter_prog->LoadPixelShader (AsmFrg.GetTCharPtr ());
-    _asm_tex_separable_gauss_filter_prog->Link ();
+    _asm_tex_separable_gauss_filter_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
+    _asm_tex_separable_gauss_filter_prog->LoadVertexShader(AsmVtx.GetTCharPtr());
+    _asm_tex_separable_gauss_filter_prog->LoadPixelShader(AsmFrg.GetTCharPtr());
+    _asm_tex_separable_gauss_filter_prog->Link();
 
-    _asm_texrect_separable_gauss_filter_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram ();
-    _asm_texrect_separable_gauss_filter_prog->LoadVertexShader (AsmVtx.GetTCharPtr ());
-    _asm_texrect_separable_gauss_filter_prog->LoadPixelShader (AsmFrgRect.GetTCharPtr ());
-    _asm_texrect_separable_gauss_filter_prog->Link ();
+    _asm_texrect_separable_gauss_filter_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
+    _asm_texrect_separable_gauss_filter_prog->LoadVertexShader(AsmVtx.GetTCharPtr());
+    _asm_texrect_separable_gauss_filter_prog->LoadPixelShader(AsmFrgRect.GetTCharPtr());
+    _asm_texrect_separable_gauss_filter_prog->Link();
   }
 
-  void GraphicsEngine::QRP_ASM_HorizontalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma)
+  void GraphicsEngine::QRP_ASM_HorizontalGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma)
   {
-    NUX_RETURN_IF_FALSE (_asm_tex_separable_gauss_filter_prog.IsValid());
-    NUX_RETURN_IF_FALSE (_asm_texrect_separable_gauss_filter_prog.IsValid());
+    NUX_RETURN_IF_FALSE(_asm_tex_separable_gauss_filter_prog.IsValid());
+    NUX_RETURN_IF_FALSE(_asm_texrect_separable_gauss_filter_prog.IsValid());
 
-    QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
+    QRP_Compute_Texture_Coord(width, height, device_texture, texxform);
 
     float delta = 1.0f / device_texture->GetWidth();
 
@@ -1706,36 +1706,36 @@ namespace nux
       texxform.u1 + 3.0f * delta, texxform.v0, 0, 1.0f,
     };
 
-    CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
-    CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
 
     ObjectPtr<IOpenGLAsmShaderProgram> shader_program = _asm_tex_separable_gauss_filter_prog;
-    if(device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
+    if (device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       shader_program = _asm_texrect_separable_gauss_filter_prog;
     }
     shader_program->Begin();
 
-    SetTexture (GL_TEXTURE0, device_texture);
+    SetTexture(GL_TEXTURE0, device_texture);
 
     // Set the Gaussian weights
     {
       float *W;
       GaussianWeights(&W, 1, 7);
 
-      for(int i = 0; i < 7; i++)
+      for (int i = 0; i < 7; i++)
       {
-        CHECKGL (glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, i, W[i], W[i], W[i], W[i]));
+        CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, i, W[i], W[i], W[i], W[i]));
       }
       delete[] W;
     }
 
-    CHECKGL ( glMatrixMode (GL_MODELVIEW) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLModelViewMatrix().m) );
-    CHECKGL ( glMatrixMode (GL_PROJECTION) );
-    CHECKGL ( glLoadIdentity() );
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m) );
+    CHECKGL(glMatrixMode(GL_MODELVIEW));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLModelViewMatrix().m));
+    CHECKGL(glMatrixMode(GL_PROJECTION));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLProjectionMatrix().m));
 
 
     int VertexLocation          = VTXATTRIB_POSITION;
@@ -1747,56 +1747,56 @@ namespace nux
     int TextureCoord5Location   = VTXATTRIB_TEXCOORD5;
     int TextureCoord6Location   = VTXATTRIB_TEXCOORD6;
 
-    CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation));
-    CHECKGL ( glVertexAttribPointerARB ((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer));
+    CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+    CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer));
 
-    //if (TextureCoord0Location != -1)
+    //if(TextureCoord0Location != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord0Location));
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord1Location));
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord2Location));
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord3Location));
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord4Location));
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord5Location));
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord6Location));
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord0Location));
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord1Location));
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord2Location));
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord3Location));
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord4Location));
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord5Location));
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord6Location));
 
-      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 4));
-      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord1Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 8));
-      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord2Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 12));
-      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord3Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 16));
-      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord4Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 20));
-      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord5Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 24));
-      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord6Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 28));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 4));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord1Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 8));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord2Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 12));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord3Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 16));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord4Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 20));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord5Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 24));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord6Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 28));
     }
 
-    CHECKGL (glDrawArrays (GL_TRIANGLE_FAN, 0, 4));
+    CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
 
-    CHECKGL (glDisableVertexAttribArrayARB (VertexLocation));
+    CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));
 
     if (TextureCoord0Location != -1)
-      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord0Location));
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord0Location));
     if (TextureCoord1Location != -1)
-      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord1Location));
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord1Location));
     if (TextureCoord2Location != -1)
-      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord2Location));
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord2Location));
     if (TextureCoord3Location != -1)
-      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord3Location));
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord3Location));
     if (TextureCoord4Location != -1)
-      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord4Location));
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord4Location));
     if (TextureCoord5Location != -1)
-      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord5Location));
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord5Location));
     if (TextureCoord6Location != -1)
-      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord6Location));
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord6Location));
 
     shader_program->End();
   }
 
-  void GraphicsEngine::QRP_ASM_VerticalGauss (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma)
+  void GraphicsEngine::QRP_ASM_VerticalGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma)
   {
-    NUX_RETURN_IF_FALSE (_asm_tex_separable_gauss_filter_prog.IsValid());
-    NUX_RETURN_IF_FALSE (_asm_texrect_separable_gauss_filter_prog.IsValid());
+    NUX_RETURN_IF_FALSE(_asm_tex_separable_gauss_filter_prog.IsValid());
+    NUX_RETURN_IF_FALSE(_asm_texrect_separable_gauss_filter_prog.IsValid());
 
-    QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
+    QRP_Compute_Texture_Coord(width, height, device_texture, texxform);
 
     float delta = 1.0f / device_texture->GetHeight();
 
@@ -1837,36 +1837,36 @@ namespace nux
       texxform.u1, texxform.v0 + 3.0f * delta, 0, 1.0f,
     };
 
-    CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
-    CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
 
     ObjectPtr<IOpenGLAsmShaderProgram> shader_program = _asm_tex_separable_gauss_filter_prog;
-    if(device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
+    if (device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       shader_program = _asm_texrect_separable_gauss_filter_prog;
     }
     shader_program->Begin();
 
-    SetTexture (GL_TEXTURE0, device_texture);
+    SetTexture(GL_TEXTURE0, device_texture);
 
     // Set the Gaussian weights
     {
       float *W;
       GaussianWeights(&W, 1, 7);
 
-      for(int i = 0; i < 7; i++)
+      for (int i = 0; i < 7; i++)
       {
-        CHECKGL (glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, i, W[i], W[i], W[i], W[i]));
+        CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, i, W[i], W[i], W[i], W[i]));
       }
       delete[] W;
     }
 
-    CHECKGL ( glMatrixMode (GL_MODELVIEW));
-    CHECKGL ( glLoadIdentity ());
-    CHECKGL ( glLoadMatrixf ((FLOAT *) GetOpenGLModelViewMatrix().m));
-    CHECKGL ( glMatrixMode (GL_PROJECTION));
-    CHECKGL ( glLoadIdentity ());
-    CHECKGL ( glLoadMatrixf ( (FLOAT *) GetOpenGLProjectionMatrix().m));
+    CHECKGL(glMatrixMode(GL_MODELVIEW));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLModelViewMatrix().m));
+    CHECKGL(glMatrixMode(GL_PROJECTION));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLProjectionMatrix().m));
 
 
     int VertexLocation          = VTXATTRIB_POSITION;
@@ -1878,82 +1878,82 @@ namespace nux
     int TextureCoord5Location   = VTXATTRIB_TEXCOORD5;
     int TextureCoord6Location   = VTXATTRIB_TEXCOORD6;
 
-    CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation));
-    CHECKGL ( glVertexAttribPointerARB ((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer));
+    CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+    CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer));
 
-    //if (TextureCoord0Location != -1)
+    //if(TextureCoord0Location != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord0Location));
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord1Location));
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord2Location));
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord3Location));
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord4Location));
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord5Location));
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord6Location));
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord0Location));
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord1Location));
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord2Location));
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord3Location));
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord4Location));
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord5Location));
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord6Location));
 
-      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 4));
-      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord1Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 8));
-      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord2Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 12));
-      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord3Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 16));
-      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord4Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 20));
-      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord5Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 24));
-      CHECKGL ( glVertexAttribPointerARB ((GLuint) TextureCoord6Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 28));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 4));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord1Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 8));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord2Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 12));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord3Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 16));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord4Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 20));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord5Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 24));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord6Location, 4, GL_FLOAT, GL_FALSE, 128, VtxBuffer + 28));
     }
 
-    CHECKGL (glDrawArrays (GL_TRIANGLE_FAN, 0, 4));
+    CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
 
-    CHECKGL (glDisableVertexAttribArrayARB (VertexLocation));
+    CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));
 
     if (TextureCoord0Location != -1)
-      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord0Location));
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord0Location));
     if (TextureCoord1Location != -1)
-      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord1Location));
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord1Location));
     if (TextureCoord2Location != -1)
-      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord2Location));
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord2Location));
     if (TextureCoord3Location != -1)
-      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord3Location));
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord3Location));
     if (TextureCoord4Location != -1)
-      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord4Location));
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord4Location));
     if (TextureCoord5Location != -1)
-      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord5Location));
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord5Location));
     if (TextureCoord6Location != -1)
-      CHECKGL (glDisableVertexAttribArrayARB (TextureCoord6Location));
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord6Location));
 
     shader_program->End();
   }
 
-  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetBlurTexture (
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetBlurTexture(
     int x, int y,
     int buffer_width, int buffer_height,
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
     const Color& c0,
     float sigma, int num_pass)
   {
-    //     _offscreen_color_rt0.Release ();
-    //     _offscreen_color_rt1.Release ();
-    //     _offscreen_depth_rt0.Release ();
-    //     _offscreen_depth_rt1.Release ();
+    //     _offscreen_color_rt0.Release();
+    //     _offscreen_color_rt1.Release();
+    //     _offscreen_depth_rt0.Release();
+    //     _offscreen_depth_rt1.Release();
 
-    int quad_width = device_texture->GetWidth ();
-    int quad_height = device_texture->GetHeight ();
+    int quad_width = device_texture->GetWidth();
+    int quad_height = device_texture->GetHeight();
 
     num_pass = Clamp<int> (num_pass, 1, 5);
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
     int previous_width = 0;
     int previous_height = 0;
-    if (prevFBO.IsValid ())
+    if (prevFBO.IsValid())
     {
-      previous_width = prevFBO->GetWidth ();
-      previous_height = prevFBO->GetHeight ();
+      previous_width = prevFBO->GetWidth();
+      previous_height = prevFBO->GetHeight();
     }
     else
     {
-      previous_width = _graphics_display.GetWindowWidth ();
-      previous_height = _graphics_display.GetWindowHeight ();
+      previous_width = _graphics_display.GetWindowWidth();
+      previous_height = _graphics_display.GetWindowHeight();
     }
 
-    CHECKGL (glClearColor (0, 0, 0, 0));
+    CHECKGL(glClearColor(0, 0, 0, 0));
     _offscreen_color_rt0->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
     _offscreen_color_rt0->SetFiltering(GL_NEAREST, GL_NEAREST);
     _offscreen_color_rt1->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
@@ -1978,9 +1978,9 @@ namespace nux
 
     _offscreen_fbo->Deactivate();
 
-    if (prevFBO.IsValid ())
+    if (prevFBO.IsValid())
     {
-      prevFBO->Activate (true);
+      prevFBO->Activate(true);
       SetViewport(0, 0, previous_width, previous_height);
     }
     else
@@ -1991,30 +1991,30 @@ namespace nux
     return _offscreen_color_rt0;
   }
 
-  void GraphicsEngine::QRP_ASM_GetBlurTextureFx (
+  void GraphicsEngine::QRP_ASM_GetBlurTextureFx(
       int x, int y, int buffer_width, int buffer_height,
       FxStructure *fx_structure, TexCoordXForm &texxform, const Color& color, float sigma, int num_pass)
   {
-    int quad_width = fx_structure->src_texture->GetWidth ();
-    int quad_height = fx_structure->src_texture->GetHeight ();
+    int quad_width = fx_structure->src_texture->GetWidth();
+    int quad_height = fx_structure->src_texture->GetHeight();
 
     num_pass = Clamp<int> (num_pass, 1, 5);
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
     int previous_width = 0;
     int previous_height = 0;
-    if (prevFBO.IsValid ())
+    if (prevFBO.IsValid())
     {
-      previous_width = prevFBO->GetWidth ();
-      previous_height = prevFBO->GetHeight ();
+      previous_width = prevFBO->GetWidth();
+      previous_height = prevFBO->GetHeight();
     }
     else
     {
-      previous_width = _graphics_display.GetWindowWidth ();
-      previous_height = _graphics_display.GetWindowHeight ();
+      previous_width = _graphics_display.GetWindowWidth();
+      previous_height = _graphics_display.GetWindowHeight();
     }
 
-    CHECKGL (glClearColor (0, 0, 0, 0));
+    CHECKGL(glClearColor(0, 0, 0, 0));
     fx_structure->src_texture->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
     fx_structure->src_texture->SetFiltering(GL_NEAREST, GL_NEAREST);
     fx_structure->dst_texture->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
@@ -2041,9 +2041,9 @@ namespace nux
 
     _offscreen_fbo->Deactivate();
 
-    if (prevFBO.IsValid ())
+    if (prevFBO.IsValid())
     {
-      prevFBO->Activate (true);
+      prevFBO->Activate(true);
       SetViewport(0, 0, previous_width, previous_height);
     }
     else
@@ -2052,27 +2052,27 @@ namespace nux
     }
   }      
 
-  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetPower (
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetPower(
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color & c0, const Vector4 &exponent)
   {
-    int quad_width = device_texture->GetWidth ();
-    int quad_height = device_texture->GetHeight ();
+    int quad_width = device_texture->GetWidth();
+    int quad_height = device_texture->GetHeight();
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
     int previous_width = 0;
     int previous_height = 0;
-    if (prevFBO.IsValid ())
+    if (prevFBO.IsValid())
     {
-      previous_width = prevFBO->GetWidth ();
-      previous_height = prevFBO->GetHeight ();
+      previous_width = prevFBO->GetWidth();
+      previous_height = prevFBO->GetHeight();
     }
     else
     {
-      previous_width = _graphics_display.GetWindowWidth ();
-      previous_height = _graphics_display.GetWindowHeight ();
+      previous_width = _graphics_display.GetWindowWidth();
+      previous_height = _graphics_display.GetWindowHeight();
     }
 
-    CHECKGL (glClearColor (0, 0, 0, 0));
+    CHECKGL(glClearColor(0, 0, 0, 0));
     _offscreen_color_rt0->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
     _offscreen_color_rt0->SetFiltering(GL_NEAREST, GL_NEAREST);
     _offscreen_color_rt1->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
@@ -2088,9 +2088,9 @@ namespace nux
 
     _offscreen_fbo->Deactivate();
 
-    if (prevFBO.IsValid ())
+    if (prevFBO.IsValid())
     {
-      prevFBO->Activate (true);
+      prevFBO->Activate(true);
       SetViewport(0, 0, previous_width, previous_height);
     }
     else
@@ -2101,33 +2101,33 @@ namespace nux
     return _offscreen_color_rt1;
   }
 
-  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetAlphaTexture (
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetAlphaTexture(
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
     const Color & c0)
   {
-    //     _offscreen_color_rt0.Release ();
-    //     _offscreen_color_rt1.Release ();
-    //     _offscreen_depth_rt0.Release ();
-    //     _offscreen_depth_rt1.Release ();
+    //     _offscreen_color_rt0.Release();
+    //     _offscreen_color_rt1.Release();
+    //     _offscreen_depth_rt0.Release();
+    //     _offscreen_depth_rt1.Release();
 
-    int quad_width = device_texture->GetWidth ();
-    int quad_height = device_texture->GetHeight ();
+    int quad_width = device_texture->GetWidth();
+    int quad_height = device_texture->GetHeight();
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
     int previous_width = 0;
     int previous_height = 0;
-    if (prevFBO.IsValid ())
+    if (prevFBO.IsValid())
     {
-      previous_width = prevFBO->GetWidth ();
-      previous_height = prevFBO->GetHeight ();
+      previous_width = prevFBO->GetWidth();
+      previous_height = prevFBO->GetHeight();
     }
     else
     {
-      previous_width = _graphics_display.GetWindowWidth ();
-      previous_height = _graphics_display.GetWindowHeight ();
+      previous_width = _graphics_display.GetWindowWidth();
+      previous_height = _graphics_display.GetWindowHeight();
     }
 
-    CHECKGL (glClearColor (0, 0, 0, 0));
+    CHECKGL(glClearColor(0, 0, 0, 0));
     _offscreen_color_rt0->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
     _offscreen_color_rt0->SetFiltering(GL_NEAREST, GL_NEAREST);
     _offscreen_color_rt1->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
@@ -2143,9 +2143,9 @@ namespace nux
 
     _offscreen_fbo->Deactivate();
 
-    if (prevFBO.IsValid ())
+    if (prevFBO.IsValid())
     {
-      prevFBO->Activate (true);
+      prevFBO->Activate(true);
       SetViewport(0, 0, previous_width, previous_height);
     }
     else
@@ -2156,27 +2156,27 @@ namespace nux
     return _offscreen_color_rt1;
   }
 
-  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetColorMatrixTexture (
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetColorMatrixTexture(
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color & c0, Matrix4 color_matrix, Vector4 offset)
   {
-    int quad_width = device_texture->GetWidth ();
-    int quad_height = device_texture->GetHeight ();
+    int quad_width = device_texture->GetWidth();
+    int quad_height = device_texture->GetHeight();
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
     int previous_width = 0;
     int previous_height = 0;
-    if (prevFBO.IsValid ())
+    if (prevFBO.IsValid())
     {
-      previous_width = prevFBO->GetWidth ();
-      previous_height = prevFBO->GetHeight ();
+      previous_width = prevFBO->GetWidth();
+      previous_height = prevFBO->GetHeight();
     }
     else
     {
-      previous_width = _graphics_display.GetWindowWidth ();
-      previous_height = _graphics_display.GetWindowHeight ();
+      previous_width = _graphics_display.GetWindowWidth();
+      previous_height = _graphics_display.GetWindowHeight();
     }
 
-    CHECKGL (glClearColor (0, 0, 0, 0));
+    CHECKGL(glClearColor(0, 0, 0, 0));
     _offscreen_color_rt0->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
     _offscreen_color_rt0->SetFiltering(GL_NEAREST, GL_NEAREST);
     _offscreen_color_rt1->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
@@ -2188,13 +2188,13 @@ namespace nux
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, quad_width, quad_height);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_ASM_ColorMatrix (0, 0, quad_width, quad_height, _offscreen_color_rt0, texxform, c0, color_matrix, offset);
+    QRP_ASM_ColorMatrix(0, 0, quad_width, quad_height, _offscreen_color_rt0, texxform, c0, color_matrix, offset);
 
     _offscreen_fbo->Deactivate();
 
-    if (prevFBO.IsValid ())
+    if (prevFBO.IsValid())
     {
-      prevFBO->Activate (true);
+      prevFBO->Activate(true);
       SetViewport(0, 0, previous_width, previous_height);
     }
     else
@@ -2205,58 +2205,58 @@ namespace nux
     return _offscreen_color_rt1;
   }
 
-  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetLQBlur (
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetLQBlur(
     int x, int y,
     int buffer_width, int buffer_height,
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
     const Color& c0)
   {
-    //     _offscreen_color_rt0.Release ();
-    //     _offscreen_color_rt1.Release ();
-    //     _offscreen_depth_rt0.Release ();
-    //     _offscreen_depth_rt1.Release ();
+    //     _offscreen_color_rt0.Release();
+    //     _offscreen_color_rt1.Release();
+    //     _offscreen_depth_rt0.Release();
+    //     _offscreen_depth_rt1.Release();
 
-    int quad_width = device_texture->GetWidth ();
-    int quad_height = device_texture->GetHeight ();
+    int quad_width = device_texture->GetWidth();
+    int quad_height = device_texture->GetHeight();
 
-    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject ();
+    ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
     int previous_width = 0;
     int previous_height = 0;
-    if (prevFBO.IsValid ())
+    if (prevFBO.IsValid())
     {
-      previous_width  = prevFBO->GetWidth ();
-      previous_height = prevFBO->GetHeight ();
+      previous_width  = prevFBO->GetWidth();
+      previous_height = prevFBO->GetHeight();
     }
     else
     {
-      previous_width  = _graphics_display.GetWindowWidth ();
-      previous_height = _graphics_display.GetWindowHeight ();
+      previous_width  = _graphics_display.GetWindowWidth();
+      previous_height = _graphics_display.GetWindowHeight();
     }
 
-    CHECKGL (glClearColor (0, 0, 0, 0));
-    _offscreen_color_rt0->SetWrap (GL_CLAMP, GL_CLAMP, GL_CLAMP);
-    _offscreen_color_rt0->SetFiltering (GL_NEAREST, GL_NEAREST);
-    _offscreen_color_rt1->SetWrap (GL_CLAMP, GL_CLAMP, GL_CLAMP);
-    _offscreen_color_rt1->SetFiltering (GL_NEAREST, GL_NEAREST);
-    _offscreen_color_rt2->SetWrap (GL_CLAMP, GL_CLAMP, GL_CLAMP);
-    _offscreen_color_rt2->SetFiltering (GL_NEAREST, GL_NEAREST);
-    _offscreen_color_rt3->SetWrap (GL_CLAMP, GL_CLAMP, GL_CLAMP);
-    _offscreen_color_rt3->SetFiltering (GL_NEAREST, GL_NEAREST);
+    CHECKGL(glClearColor(0, 0, 0, 0));
+    _offscreen_color_rt0->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
+    _offscreen_color_rt0->SetFiltering(GL_NEAREST, GL_NEAREST);
+    _offscreen_color_rt1->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
+    _offscreen_color_rt1->SetFiltering(GL_NEAREST, GL_NEAREST);
+    _offscreen_color_rt2->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
+    _offscreen_color_rt2->SetFiltering(GL_NEAREST, GL_NEAREST);
+    _offscreen_color_rt3->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
+    _offscreen_color_rt3->SetFiltering(GL_NEAREST, GL_NEAREST);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, quad_width/2, quad_height/2);
-    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_ASM_1Tex (0, 0, quad_width / 2, quad_height / 2, device_texture, texxform, color::White);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    QRP_ASM_1Tex(0, 0, quad_width / 2, quad_height / 2, device_texture, texxform, color::White);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt1, _offscreen_depth_rt1, quad_width/4, quad_height/4);
-    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_ASM_1Tex (0, 0, quad_width / 4, quad_height / 4, _offscreen_color_rt0, texxform, color::White);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    QRP_ASM_1Tex(0, 0, quad_width / 4, quad_height / 4, _offscreen_color_rt0, texxform, color::White);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt2, _offscreen_depth_rt2, quad_width/8, quad_height/8);
-    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    QRP_ASM_1Tex (0, 0, quad_width / 8, quad_height / 8, _offscreen_color_rt1, texxform, color::White);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    QRP_ASM_1Tex(0, 0, quad_width / 8, quad_height / 8, _offscreen_color_rt1, texxform, color::White);
 
     SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt3, _offscreen_depth_rt3, quad_width, quad_height);
-    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     TexCoordXForm texxform0;
     TexCoordXForm texxform1;
@@ -2265,7 +2265,7 @@ namespace nux
 
     texxform0.flip_v_coord = true;
     texxform2.flip_v_coord = true;
-    QRP_ASM_4Tex (0, 0, quad_width, quad_height,
+    QRP_ASM_4Tex(0, 0, quad_width, quad_height,
       device_texture, texxform0, Color(0.25, 0.25, 0.25, 0.25),
       _offscreen_color_rt0, texxform1, Color(0.25, 0.25, 0.25, 0.25),
       _offscreen_color_rt1, texxform2, Color(0.25, 0.25, 0.25, 0.25),
@@ -2273,9 +2273,9 @@ namespace nux
 
     _offscreen_fbo->Deactivate();
 
-    if (prevFBO.IsValid ())
+    if (prevFBO.IsValid())
     {
-      prevFBO->Activate (true);
+      prevFBO->Activate(true);
       SetViewport(0, 0, previous_width, previous_height);
     }
     else
@@ -2285,9 +2285,9 @@ namespace nux
     return _offscreen_color_rt3;
   }
 
-  void GraphicsEngine::InitAsmPixelateShader ()
+  void GraphicsEngine::InitAsmPixelateShader()
   {
-    NString AsmVtx = TEXT (
+    NString AsmVtx = 
       "!!ARBvp1.0                                 \n\
       ATTRIB iPos         = vertex.position;      \n\
       ATTRIB iColor       = vertex.attrib[3];     \n\
@@ -2302,9 +2302,9 @@ namespace nux
       DP4   oPos.w, mvp[3], iPos;                     \n\
       MOV   oColor, iColor;                           \n\
       MOV   oTexCoord0, vertex.attrib[8];             \n\
-      END");
+      END";
 
-    NString AsmFrg = TEXT (
+    NString AsmFrg = 
       "!!ARBfp1.0                                       \n\
       TEMP tex0;                                        \n\
       TEMP tex_coord;                                   \n\
@@ -2315,9 +2315,9 @@ namespace nux
       MUL tex_coord, tex_coord, pixel_size;  \n\
       TEX tex0, tex_coord, texture[0], 2D;              \n\
       MUL result.color, fragment.color, tex0;           \n\
-      END");
+      END";
 
-    NString AsmFrgRect = TEXT (
+    NString AsmFrgRect = 
       "!!ARBfp1.0                                       \n\
       TEMP tex0;                                        \n\
       TEMP tex_coord;                                   \n\
@@ -2328,28 +2328,28 @@ namespace nux
       MUL tex_coord, tex_coord, pixel_size;  \n\
       TEX tex0, tex_coord, texture[0], RECT;            \n\
       MUL result.color, fragment.color, tex0;           \n\
-      END");
+      END";
 
     m_AsmPixelate = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_AsmPixelate->LoadVertexShader (AsmVtx.GetTCharPtr() );
-    m_AsmPixelate->LoadPixelShader (AsmFrg.GetTCharPtr() );
+    m_AsmPixelate->LoadVertexShader(AsmVtx.GetTCharPtr());
+    m_AsmPixelate->LoadPixelShader(AsmFrg.GetTCharPtr());
     m_AsmPixelate->Link();
 
-    m_AsmPixelateRect = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram ();
-    m_AsmPixelateRect->LoadVertexShader (AsmVtx.GetTCharPtr ());
-    m_AsmPixelateRect->LoadPixelShader (AsmFrgRect.GetTCharPtr ());
+    m_AsmPixelateRect = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
+    m_AsmPixelateRect->LoadVertexShader(AsmVtx.GetTCharPtr());
+    m_AsmPixelateRect->LoadPixelShader(AsmFrgRect.GetTCharPtr());
     m_AsmPixelateRect->Link();
   }
 
-  void GraphicsEngine::QRP_ASM_Pixelate (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &color, int pixel_size)
+  void GraphicsEngine::QRP_ASM_Pixelate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &color, int pixel_size)
   {
-    NUX_RETURN_IF_FALSE (m_AsmPixelate.IsValid());
-    NUX_RETURN_IF_FALSE (m_AsmPixelateRect.IsValid());
+    NUX_RETURN_IF_FALSE(m_AsmPixelate.IsValid());
+    NUX_RETURN_IF_FALSE(m_AsmPixelateRect.IsValid());
 
     if (pixel_size <= 0)
       pixel_size = 1;
 
-    QRP_Compute_Texture_Coord (width, height, device_texture, texxform);
+    QRP_Compute_Texture_Coord(width, height, device_texture, texxform);
     float fx = x, fy = y;
     float VtxBuffer[] =
     {
@@ -2359,29 +2359,29 @@ namespace nux
       fx + width,  fy,          0.0f, 1.0f, texxform.u1, texxform.v0, 0, 1.0f, color.red, color.green, color.blue, color.alpha,
     };
 
-    float tex_width = device_texture->GetWidth ();
-    float tex_height = device_texture->GetHeight ();
+    float tex_width = device_texture->GetWidth();
+    float tex_height = device_texture->GetHeight();
 
-    CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
-    CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
 
     bool rectangle_texture = false;
     ObjectPtr<IOpenGLAsmShaderProgram> shader_program = m_AsmPixelate;
-    if(device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
+    if (device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       shader_program = m_AsmPixelateRect;
       rectangle_texture = true;
     }
     shader_program->Begin();
 
-    SetTexture (GL_TEXTURE0, device_texture);
+    SetTexture(GL_TEXTURE0, device_texture);
 
-    CHECKGL (glMatrixMode (GL_MODELVIEW));
-    CHECKGL (glLoadIdentity ());
-    CHECKGL (glLoadMatrixf ((FLOAT *) GetOpenGLModelViewMatrix ().m));
-    CHECKGL (glMatrixMode (GL_PROJECTION));
-    CHECKGL (glLoadIdentity ());
-    CHECKGL (glLoadMatrixf ((FLOAT *) GetOpenGLProjectionMatrix ().m));
+    CHECKGL(glMatrixMode(GL_MODELVIEW));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLModelViewMatrix().m));
+    CHECKGL(glMatrixMode(GL_PROJECTION));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLProjectionMatrix().m));
 
     int VertexLocation          = VTXATTRIB_POSITION;
     int TextureCoord0Location   = VTXATTRIB_TEXCOORD0;
@@ -2389,78 +2389,78 @@ namespace nux
 
     if (rectangle_texture == false)
     {
-      CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, (float)pixel_size/(float)tex_width, (float)pixel_size/(float)tex_height, 1.0f, 1.0f));
-      CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, (float)tex_width/(float)pixel_size, (float)tex_height/(float)pixel_size, 1.0f, 1.0f));
+      CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 0, (float)pixel_size/(float)tex_width, (float)pixel_size/(float)tex_height, 1.0f, 1.0f));
+      CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 1, (float)tex_width/(float)pixel_size, (float)tex_height/(float)pixel_size, 1.0f, 1.0f));
     }
     else
     {
-      CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, pixel_size, pixel_size, 1.0f, 1.0f));
-      CHECKGL ( glProgramLocalParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 1, 1.0f/pixel_size, 1.0f/pixel_size, 1.0f, 1.0f));
+      CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 0, pixel_size, pixel_size, 1.0f, 1.0f));
+      CHECKGL(glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 1, 1.0f/pixel_size, 1.0f/pixel_size, 1.0f, 1.0f));
     }
 
-    CHECKGL ( glEnableVertexAttribArrayARB (VertexLocation) );
-    CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer) );
+    CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+    CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer));
 
     if (TextureCoord0Location != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (TextureCoord0Location) );
-      CHECKGL ( glVertexAttribPointerARB ( (GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4) );
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord0Location));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4));
     }
 
     if (VertexColorLocation != -1)
     {
-      CHECKGL ( glEnableVertexAttribArrayARB (VertexColorLocation) );
-      CHECKGL ( glVertexAttribPointerARB ( (GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8) );
+      CHECKGL(glEnableVertexAttribArrayARB(VertexColorLocation));
+      CHECKGL(glVertexAttribPointerARB((GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8));
     }
 
-    CHECKGL ( glDrawArrays (GL_TRIANGLE_FAN, 0, 4) );
+    CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
 
-    CHECKGL ( glDisableVertexAttribArrayARB (VertexLocation) );
+    CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));
 
     if (TextureCoord0Location != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (TextureCoord0Location) );
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord0Location));
 
     if (VertexColorLocation != -1)
-      CHECKGL ( glDisableVertexAttribArrayARB (VertexColorLocation) );
+      CHECKGL(glDisableVertexAttribArrayARB(VertexColorLocation));
 
     shader_program->End();
   }
 
-  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetPixelBlocks (
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetPixelBlocks(
 	  ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color& c0, int pixel_size)
   {
-	  int quad_width = device_texture->GetWidth ();
-	  int quad_height = device_texture->GetHeight ();
+	  int quad_width = device_texture->GetWidth();
+	  int quad_height = device_texture->GetHeight();
 
-	  ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject ();
+	  ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
 	  int previous_width = 0;
 	  int previous_height = 0;
-	  if (prevFBO.IsValid ())
+	  if (prevFBO.IsValid())
 	  {
-		  previous_width  = prevFBO->GetWidth ();
-		  previous_height = prevFBO->GetHeight ();
+		  previous_width  = prevFBO->GetWidth();
+		  previous_height = prevFBO->GetHeight();
 	  }
 	  else
 	  {
-		  previous_width  = _graphics_display.GetWindowWidth ();
-		  previous_height = _graphics_display.GetWindowHeight ();
+		  previous_width  = _graphics_display.GetWindowWidth();
+		  previous_height = _graphics_display.GetWindowHeight();
 	  }
 
-    CHECKGL (glClearColor (0, 0, 0, 0));
-	  SetFrameBufferHelper (_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, quad_width, quad_height);
-	  CHECKGL (glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
-	  QRP_ASM_Pixelate (0, 0, quad_width, quad_height, device_texture, texxform0, c0, pixel_size);
+    CHECKGL(glClearColor(0, 0, 0, 0));
+	  SetFrameBufferHelper(_offscreen_fbo, _offscreen_color_rt0, _offscreen_depth_rt0, quad_width, quad_height);
+	  CHECKGL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
+	  QRP_ASM_Pixelate(0, 0, quad_width, quad_height, device_texture, texxform0, c0, pixel_size);
 
-	  _offscreen_fbo->Deactivate ();
+	  _offscreen_fbo->Deactivate();
 
-	  if (prevFBO.IsValid ())
+	  if (prevFBO.IsValid())
 	  {
-		  prevFBO->Activate (true);
-		  SetViewport (0, 0, previous_width, previous_height);
+		  prevFBO->Activate(true);
+		  SetViewport(0, 0, previous_width, previous_height);
 	  }
 	  else
 	  {
-		  SetViewport (0, 0, previous_width, previous_height);
+		  SetViewport(0, 0, previous_width, previous_height);
 	  }
 	  return _offscreen_color_rt0;
   }

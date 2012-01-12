@@ -29,50 +29,50 @@ namespace nux
   class IOpenGLBaseTexture;
   class IOpenGLVolumeTexture: public IOpenGLBaseTexture
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLVolumeTexture, IOpenGLBaseTexture);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLVolumeTexture, IOpenGLBaseTexture);
 
   public:
     virtual ~IOpenGLVolumeTexture();
 
-    int GetVolumeLevel (
+    int GetVolumeLevel(
       int Level,
       IOpenGLVolume **ppVolumeLevel
     );
 
-    int LockRect (
+    int LockRect(
       int Slice,
       int Level,
       SURFACE_LOCKED_RECT *pLockedRect,
       const SURFACE_RECT *pRect);
 
-    int UnlockRect (
+    int UnlockRect(
       int Slice,
       int Level
     );
 
-    int LockBox (
+    int LockBox(
       int Level,
       VOLUME_LOCKED_BOX *pLockedVolume,
       const VOLUME_BOX *pBox);
 
-    int UnlockBox (
+    int UnlockBox(
       int Level
     );
 
-    int GetLevelDepth (int MipLevel) const
+    int GetLevelDepth(int MipLevel) const
     {
-      return ImageSurface::GetLevelDim (_PixelFormat, _Depth, MipLevel);
+      return ImageSurface::GetLevelDim(_PixelFormat, _Depth, MipLevel);
     }
 
-    int GetLevelDesc (
+    int GetLevelDesc(
       int Level,
       VOLUME_DESC *pDesc
     )
     {
-      nuxAssert (Level >= 0 );
-      nuxAssert (Level < _NumMipLevel);
+      nuxAssert(Level >= 0 );
+      nuxAssert(Level < _NumMipLevel);
 
-      if ( (Level < 0) || (Level > _NumMipLevel) )
+      if ((Level < 0) || (Level > _NumMipLevel))
       {
         pDesc->Width    = 0;
         pDesc->Height   = 0;
@@ -94,7 +94,7 @@ namespace nux
 
   private:
 
-    IOpenGLVolumeTexture (
+    IOpenGLVolumeTexture(
       int Width
       , int Height
       , int Depth

@@ -72,14 +72,14 @@ namespace nux
 //////////////////////////////////////////////////////////////////////////
   class IOpenGLResource: public Object
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLResource, Object);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLResource, Object);
 
   public:
-    IOpenGLResource (OpenGLResourceType ResourceType, NUX_FILE_LINE_PROTO)
-      : Object (true, NUX_FILE_LINE_PARAM)
-      , _OpenGLID (0)
-      , _RefCount (0)
-      , _ResourceType (ResourceType)
+    IOpenGLResource(OpenGLResourceType ResourceType, NUX_FILE_LINE_PROTO)
+      : Object(true, NUX_FILE_LINE_PARAM)
+      , _OpenGLID(0)
+      , _RefCount(0)
+      , _ResourceType(ResourceType)
     {
     }
 

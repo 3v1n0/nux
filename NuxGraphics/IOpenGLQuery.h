@@ -29,24 +29,24 @@ namespace nux
   class IOpenGLResource;
   class IOpenGLQuery: public IOpenGLResource
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLQuery, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLQuery, IOpenGLResource);
 
   public:
-    int GetData (
+    int GetData(
       int *pData,
-      t_u32 Size,
-      t_u32 GetDataFlags
+      unsigned int Size,
+      unsigned int GetDataFlags
     );
-    t_u32 GetDataSize();
+    unsigned int GetDataSize();
 
-    void GetDevice (
+    void GetDevice(
       GpuDevice **ppDevice
     );
 
     QUERY_TYPE GetType();
 
-    void Issue (
-      t_u32 IssueFlags
+    void Issue(
+      unsigned int IssueFlags
     );
 
     // Convenient functions
@@ -58,7 +58,7 @@ namespace nux
     // If you fail to do that, GetResult will block before returning.
     unsigned int GetResult();
 
-    IOpenGLQuery (QUERY_TYPE Type);
+    IOpenGLQuery(QUERY_TYPE Type);
     virtual ~IOpenGLQuery() {};
 
 
@@ -66,7 +66,7 @@ namespace nux
     QUERY_TYPE _Type;
     bool _QueryStarted;
     friend class GpuDevice;
-    static t_u32 _CurrentlyActiveQuery;
+    static unsigned int _CurrentlyActiveQuery;
   };
 
 }

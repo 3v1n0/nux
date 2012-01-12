@@ -34,20 +34,15 @@ namespace nux
   class ToolButton : public View
   {
   public:
-    ToolButton (const TCHAR *BitmapFilename = 0, NUX_FILE_LINE_PROTO);
+    ToolButton(const char *BitmapFilename = 0, NUX_FILE_LINE_PROTO);
 
     ~ToolButton();
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
 
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
-
-    void SetAction (ActionItem *action);
-    void SetState (bool b);
-    void SetBitmap (const BaseTexture* Texture);
+    void SetAction(ActionItem *action);
+    void SetState(bool b);
+    void SetBitmap(const BaseTexture* Texture);
     // emitters
-    void EmitClick (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void EmitClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
 
     void RecvMouseDoubleClick (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
@@ -56,6 +51,11 @@ namespace nux
     void RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags);
     // signals
     sigc::signal<void> sigClick;
+
+  protected:
+    virtual void Draw(GraphicsEngine &GfxContext, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &GfxContext, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &GfxContext, bool force_draw);
 
   private:
     HLayout    *hlayout;

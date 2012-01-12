@@ -32,19 +32,19 @@ namespace nux
 
   extern PixelFormatInfo GPixelFormats[];
 
-  NUX_IMPLEMENT_OBJECT_TYPE (ResourceData);
-  NUX_IMPLEMENT_OBJECT_TYPE (CachedResourceData);
+  NUX_IMPLEMENT_OBJECT_TYPE(ResourceData);
+  NUX_IMPLEMENT_OBJECT_TYPE(CachedResourceData);
 
   ResourceData::ResourceData(NUX_FILE_LINE_DECL)
-    : Object (true, NUX_FILE_LINE_PARAM)
-    , m_ResourceIndex (NUX_INVALID_INDEX)
+    : Object(true, NUX_FILE_LINE_PARAM)
+    , m_ResourceIndex(NUX_INVALID_INDEX)
   {
 #define GET_UNIQUE_RESOURCE_INDEX NUX_GLOBAL_OBJECT_INSTANCE(UniqueIndex)
     m_ResourceIndex = GET_UNIQUE_RESOURCE_INDEX.GetUniqueIndex();
 #undef GET_UNIQUE_RESOURCE_INDEX
   }
 
-  ResourceData::~ResourceData ()
+  ResourceData::~ResourceData()
   {
     // If the windows thread is deleted before any texture type resource, the
     // graphics display will not exist.
@@ -59,7 +59,7 @@ namespace nux
   }
 
   NResourceSet::NResourceSet()
-    : FirstResource ( NULL )
+    : FirstResource( NULL )
   {
     if ( 1 )
     {
@@ -67,13 +67,13 @@ namespace nux
     }
   }
 
-  CachedResourceData::CachedResourceData (NResourceSet *ResourceManager)
-    :   Set (ResourceManager)
-    ,   _cached (0)
-    ,   NumRefs (0)
-    ,   ResourceType (NULL)
-    ,   Size (0)
-    ,   UpdateHint (RUH_Static)
+  CachedResourceData::CachedResourceData(NResourceSet *ResourceManager)
+    :   Set(ResourceManager)
+    ,   _cached(0)
+    ,   NumRefs(0)
+    ,   ResourceType(NULL)
+    ,   Size(0)
+    ,   UpdateHint(RUH_Static)
   {
     PrevResource = NULL;
     NextResource = Set->FirstResource;
@@ -103,7 +103,7 @@ namespace nux
 
     if (_cached)
     {
-      Set->FlushResource (this);
+      Set->FlushResource(this);
       _cached = false;
     }
   }
@@ -115,15 +115,15 @@ namespace nux
     static TGLResourceFactory<SourceTypeName, ResourceTypeName> Factory##SourceTypeName(&SourceTypeName::StaticObjectType); \
     GetResourceFactories().push_back(&Factory##SourceTypeName);
 
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR (Texture2D, CachedTexture2D);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR (TextureRectangle, CachedTextureRectangle);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR (TextureCube, CachedTextureCube);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR (TextureVolume, CachedTextureVolume);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR (TextureFrameAnimation, CachedTextureFrameAnimation);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR (VertexBuffer, CachedVertexBuffer);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR (IndexBuffer, CachedIndexBuffer);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR (VertexDeclaration, CachedVertexDeclaration);
-    NUX_DEFINE_RESOURCE_FACTORY_PAIR (MeshBuffer, CachedMeshBuffer);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR(Texture2D, CachedTexture2D);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR(TextureRectangle, CachedTextureRectangle);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR(TextureCube, CachedTextureCube);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR(TextureVolume, CachedTextureVolume);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR(TextureFrameAnimation, CachedTextureFrameAnimation);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR(VertexBuffer, CachedVertexBuffer);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR(IndexBuffer, CachedIndexBuffer);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR(VertexDeclaration, CachedVertexDeclaration);
+    NUX_DEFINE_RESOURCE_FACTORY_PAIR(MeshBuffer, CachedMeshBuffer);
 
 #undef NUX_DEFINE_RESOURCE_FACTORY_PAIR
 
@@ -132,38 +132,38 @@ namespace nux
     static NResourceUpdater Updater##SourceTypeName(&SourceTypeName::StaticObjectType); \
     GetResourceUpdaters().push_back(&Updater##SourceTypeName);
 
-    NUX_DEFINE_RESOURCE_UPDATER (Texture2D);
-    NUX_DEFINE_RESOURCE_UPDATER (TextureRectangle);
-    NUX_DEFINE_RESOURCE_UPDATER (TextureCube);
-    NUX_DEFINE_RESOURCE_UPDATER (TextureVolume);
-    NUX_DEFINE_RESOURCE_UPDATER (TextureFrameAnimation);
-    NUX_DEFINE_RESOURCE_UPDATER (VertexBuffer);
-    NUX_DEFINE_RESOURCE_UPDATER (IndexBuffer);
-    NUX_DEFINE_RESOURCE_UPDATER (VertexDeclaration);
-    NUX_DEFINE_RESOURCE_UPDATER (MeshBuffer);
+    NUX_DEFINE_RESOURCE_UPDATER(Texture2D);
+    NUX_DEFINE_RESOURCE_UPDATER(TextureRectangle);
+    NUX_DEFINE_RESOURCE_UPDATER(TextureCube);
+    NUX_DEFINE_RESOURCE_UPDATER(TextureVolume);
+    NUX_DEFINE_RESOURCE_UPDATER(TextureFrameAnimation);
+    NUX_DEFINE_RESOURCE_UPDATER(VertexBuffer);
+    NUX_DEFINE_RESOURCE_UPDATER(IndexBuffer);
+    NUX_DEFINE_RESOURCE_UPDATER(VertexDeclaration);
+    NUX_DEFINE_RESOURCE_UPDATER(MeshBuffer);
 
 #undef NUX_DEFINE_RESOURCE_UPDATER
   }
 
-  ObjectPtr<CachedResourceData> NResourceCache::GetCachedResource (ResourceData *Source)
+  ObjectPtr<CachedResourceData> NResourceCache::GetCachedResource(ResourceData *Source)
   {
-    NUX_RETURN_VALUE_IF_NULL (Source, ObjectPtr<CachedResourceData>(0));
+    NUX_RETURN_VALUE_IF_NULL(Source, ObjectPtr<CachedResourceData>(0));
     
     // check to see if it already exists
-    ObjectPtr<CachedResourceData> CachedResource = TResourceCache<int, CachedResourceData>::FindCachedResourceById (Source->GetResourceIndex());
+    ObjectPtr<CachedResourceData> CachedResource = TResourceCache<int, CachedResourceData>::FindCachedResourceById(Source->GetResourceIndex());
 
-    if (CachedResource.IsNull() )
+    if (CachedResource.IsNull())
     {
       // iterate over the list of factory types
-      for (t_u32 i = 0; i < GetResourceFactories().size(); ++i)
+      for (unsigned int i = 0; i < GetResourceFactories().size(); ++i)
       {
         NResourceFactory *ResourceFactory = GetResourceFactories() [i];
 
         // check if the factory is valid for the source resource type
-        if (ResourceFactory->BuildsThisResource (Source) )
+        if (ResourceFactory->BuildsThisResource(Source))
         {
           // cache the device resource
-          CachedResourceData* ptr = ResourceFactory->BuildResource (this, Source);
+          CachedResourceData* ptr = ResourceFactory->BuildResource(this, Source);
           CachedResource = ObjectPtr<CachedResourceData> (ptr);
           ptr->UnReference();
           break;
@@ -171,26 +171,26 @@ namespace nux
       }
 
       // make sure the result is valid
-      if (CachedResource.IsNull() )
+      if (CachedResource.IsNull())
       {
-        nuxError (TEXT ("Cannot cache resource type %s"), Source->Type().name );
+        nuxError("Cannot cache resource type %s", Source->Type().name );
       }
       else
       {
         // Get resource type
-        CachedResource->ResourceType	= & (Source->Type() );
+        CachedResource->ResourceType	= & (Source->Type());
         // add it to the pool of cached resources
-        AddCachedResource (Source->GetResourceIndex(), CachedResource);
+        AddCachedResource(Source->GetResourceIndex(), CachedResource);
       }
     }
 
     return CachedResource;
   }
 
-  bool NResourceCache::IsCachedResource (ResourceData *Source)
+  bool NResourceCache::IsCachedResource(ResourceData *Source)
   {
-    ObjectPtr<CachedResourceData> CachedResource = TResourceCache< int, CachedResourceData >::FindCachedResourceById (Source->GetResourceIndex() );
-    return (CachedResource.IsValid() );
+    ObjectPtr<CachedResourceData> CachedResource = TResourceCache< int, CachedResourceData >::FindCachedResourceById(Source->GetResourceIndex());
+    return(CachedResource.IsValid());
   }
 
 }

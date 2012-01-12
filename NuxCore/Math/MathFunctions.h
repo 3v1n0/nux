@@ -28,8 +28,8 @@
 namespace nux
 {
 
-  t_int Factorial (t_int n);
-  t_double BinomialCoefficient (t_int n, t_int k);
+  int Factorial (int n);
+  double BinomialCoefficient (int n, int k);
 
 
 //! Template power function. The exponent is an integer.
@@ -57,10 +57,10 @@ namespace nux
     }
   }
 
-  t_double Power (t_double x, t_double y);
+  double Power (double x, double y);
 
-  t_double Log2 (t_double d);
-  t_double Floor (t_double d);
+  double Log2 (double d);
+  double Floor (double d);
 
 
 }

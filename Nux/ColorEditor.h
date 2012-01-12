@@ -37,7 +37,9 @@ namespace nux
   class VLayout;
   class EditTextBox;
   class CheckBox;
-  class ToggleButton;
+  class AbstractButton;
+  class RadioButton;
+  class RadioButtonGroup;
   class Button;
 
   class ColorEditor;
@@ -46,24 +48,24 @@ namespace nux
   class ColorDialogProxy
   {
   public:
-    ColorDialogProxy (bool ModalWindow);
+    ColorDialogProxy(bool ModalWindow);
     ~ColorDialogProxy();
 
-    void RecvDialogOk (ColorEditor *coloreditor);
-    void RecvDialogCancel (ColorEditor *coloreditor);
-    void RecvDialogChange (ColorEditor *coloreditor);
+    void RecvDialogOk(ColorEditor *coloreditor);
+    void RecvDialogCancel(ColorEditor *coloreditor);
+    void RecvDialogChange(ColorEditor *coloreditor);
 
     void Start();
     bool IsActive();
     void StopThreadMonitoring();
 
-    void SetColor (Color color);
+    void SetColor(Color color);
     Color GetColor();
-    void SetPreviousColor (Color color);
+    void SetPreviousColor(Color color);
     Color GetPreviousColor();
-    void SetColorModel (color::Model color_model);
+    void SetColorModel(color::Model color_model);
     color::Model GetColorModel();
-    void SetColorChannel (color::Channel color_model);
+    void SetColorChannel(color::Channel color_model);
     color::Channel GetColorChannel();
 
   private:
@@ -73,7 +75,7 @@ namespace nux
     Color m_RGBColor;
     Color m_PreviousRGBColor;
     color::Model m_ColorModel;
-    color::Channel m_ColorChannel;
+    color::Channel color_channel_;
     bool m_ModalWindow;
     NThread *m_Thread;
 
@@ -83,53 +85,78 @@ namespace nux
   class ColorEditor : public View
   {
   public:
-    ColorEditor (NUX_FILE_LINE_PROTO);
+    ColorEditor(NUX_FILE_LINE_PROTO);
     ~ColorEditor();
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
 
-    void SetRed (double r);
-    void SetGreen (double g);
-    void SetBlue (double b);
-    void SetHue (double h);
-    void SetSaturation (double s);
-    void SetValue (double v);
+    void SetRed(double r);
+    void SetGreen(double g);
+    void SetBlue(double b);
+    void SetHue(double h);
+    void SetSaturation(double s);
+    void SetValue(double v);
 
-    void SetRGB (double r, double g, double b);
-    void SetHSV (double h, double s, double v);
+    void SetRGB(double r, double g, double b);
+    void SetHSV(double h, double s, double v);
     void SetRGB(Color const& rgb);
     Color GetRGBColor() const;
 
-    void SetColorModel (color::Model, color::Channel);
+    void SetColorModel(color::Model, color::Channel);
     color::Model GetColorModel() const;
     color::Channel GetColorChannel() const;
 
-    void RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
-    void RecvPickerMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvPickerMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvPickerMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void RecvPickerMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvPickerMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvPickerMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
-    void RecvCheckColorModel (bool, color::Model, color::Channel);
+    void RecvCheckColorModel(bool, color::Model, color::Channel);
+    void RecvCheckColorModel0(AbstractButton *button, color::Model color_mode, color::Channel channel);
 
     sigc::signal< void, ColorEditor * > sigChange;
 
   protected:
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PreLayoutManagement();
     virtual bool AcceptKeyNavFocus();
   private:
-    void DrawBaseChannelMarker (GraphicsEngine &GfxContext);
-    void DrawRGB (GraphicsEngine &GfxContext, bool force_draw);
-    void DrawHSV (GraphicsEngine &GfxContext, bool force_draw);
 
-    color::Channel   m_ColorChannel;
+    //! Override of Area::SetMinimumHeight and made private.
+    /*!
+        Prevent changing the minimum height of the ColorEditor view.
+    */
+    virtual void SetMinimumHeight(){};
+
+    //! Override of Area::SetMaximumHeight and made private.
+    /*!
+        Prevent changing the maximum height of the ColorEditor view.
+    */
+    virtual void SetMaximumHeight(){};
+
+    //! Override of Area::SetMinimumWidth and made private.
+    /*!
+        Prevent changing the minimum width of the ColorEditor view.
+    */
+    virtual void SetMinimumWidth(){};
+
+    //! Override of Area::SetMaximumWidth and made private.
+    /*!
+        Prevent changing the maximum width of the ColorEditor view.
+    */
+    virtual void SetMaximumWidth(){};
+
+    void DrawBaseChannelMarker(GraphicsEngine &graphics_engine);
+    void DrawRGB(GraphicsEngine &graphics_engine, bool force_draw);
+    void DrawHSV(GraphicsEngine &graphics_engine, bool force_draw);
+
+    color::Channel   color_channel_;
     color::Model     m_ColorModel;
-    InputArea       *m_PickerArea;
-    InputArea       *m_BaseChannelArea;
-    InputArea       *m_ColorSquare;
+    InputArea       *picker_area_;
+    InputArea       *channel_area_;
+    InputArea       *selected_color_area_;
     HLayout        *m_hlayout;
     VLayout        *ctrllayout;
 
@@ -151,30 +178,32 @@ namespace nux
     HLayout *greenlayout;
     HLayout *bluelayout;
 
-    Button *redcheck;
+    RadioButton *redcheck;
     EditTextBox *redtext;
-    Button *greencheck;
+    RadioButton *greencheck;
     EditTextBox *greentext;
-    Button *bluecheck;
+    RadioButton *bluecheck;
     EditTextBox *bluetext;
 
     HLayout *huelayout;
     HLayout *saturationlayout;
     HLayout *valuelayout;
 
-    Button *huecheck;
-    EditTextBox *huetext;
-    Button *saturationcheck;
-    EditTextBox *saturationtext;
-    Button *valuecheck;
-    EditTextBox *valuetext;
+    RadioButton *huecheck;
+    EditTextBox *hue_text_entry_;
+    RadioButton *saturationcheck;
+    EditTextBox *saturation_text_entry_;
+    RadioButton *valuecheck;
+    EditTextBox *value_text_entry_;
 
-    ToggleButton *OkButton;
-    ToggleButton *CancelButton;
-    //RadioButtonGroup *radiogroup;
+    Button *OkButton;
+    Button *CancelButton;
+    RadioButtonGroup *radiogroup;
 
     DoubleValidator m_Validator;
 
+    static Size picker_area_size;
+    static int channel_area_width;
   };
 
 

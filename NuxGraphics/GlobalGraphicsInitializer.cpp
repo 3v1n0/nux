@@ -33,12 +33,12 @@ namespace nux
 
   static void SystemStart()
   {
-    static t_u8 StaticBuffer[sizeof (NuxGraphicsGlobalSingletonInitializer) ];
+    static t_u8 StaticBuffer[sizeof(NuxGraphicsGlobalSingletonInitializer) ];
     // Placement new in our reserved buffer.
-    GNuxGraphicsGlobalInitializer =  new (StaticBuffer) NuxGraphicsGlobalSingletonInitializer();
+    GNuxGraphicsGlobalInitializer =  new(StaticBuffer) NuxGraphicsGlobalSingletonInitializer();
 
-    //GLogDevice.AddOutputDevice( &NUX_GLOBAL_OBJECT_INSTANCE(NOutputLogFile) );
-    //GLogDevice.AddOutputDevice( &NUX_GLOBAL_OBJECT_INSTANCE(NOutputVisualDebugConsole) );
+    //GLogDevice.AddOutputDevice( &NUX_GLOBAL_OBJECT_INSTANCE(NOutputLogFile));
+    //GLogDevice.AddOutputDevice( &NUX_GLOBAL_OBJECT_INSTANCE(NOutputVisualDebugConsole));
   }
 
   static void SystemShutdown()

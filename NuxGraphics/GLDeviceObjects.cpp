@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 InalogicÂ® Inc.
+ * Copyright 2010 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -35,13 +35,13 @@ namespace nux
 {
 
   extern PixelFormatInfo GPixelFormats[];
-//NObjectType IOpenGLResource::StaticObjectType(TEXT("IOpenGLResource"), 0);
-  NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLResource);
+//NObjectType IOpenGLResource::StaticObjectType("IOpenGLResource", 0);
+  NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLResource);
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   /*
-  GLSL Built-in vertex attribute (Deprecated in GLSL 1.30)
+  GLSL Built-in vertex attribute(Deprecated in GLSL 1.30)
   -------------------------------
   Built-in vertex attribute name      Incompatible aliased vertex attribute index
   gl_Vertex                           0
@@ -68,23 +68,23 @@ namespace nux
   gl_Color:
       - glColor{34sifd}
       - glEnableClientState/glDisableClientState(GL_COLOR_ARRAY); glColorPointer(...);
-  gl_SecondaryColor (requires GL_EXT_secondary_color)
+  gl_SecondaryColor(requires GL_EXT_secondary_color)
       - glSecondaryColor3{bsifd};
       - glEnableClientState/glDisableClientState(SECONDARY_COLOR_ARRAY_EXT); glSecondaryColorPointerEXT(...);
-  gl_FogCoord (requires GL_EXT_fog_coord)
+  gl_FogCoord(requires GL_EXT_fog_coord)
       - glFogCoord{fd};
       - glEnableClientState/glDisableClientState(FOG_COORDINATE_ARRAY_EXT); glFogCoordPointerEXT(...);
   gl_MultiTexCoordXXX
       - glMultiTexCoord{234fd}
       - glClientActiveTextureARB(GL_TEXTUREXXX_ARB); glEnableClientState/glDisableClientState(GL_TEXTURE_COORD_ARRAY); glTexCoordPointer(...);
 
-  GLSL Vertex Shader Special output variables (write)
+  GLSL Vertex Shader Special output variables(write)
   ----------------------------------------------------
       gl_Position     (must be written to)
       gl_PointSize    (may be written to)
       gl_ClipVertex   (may be written to)
 
-  GLSL Vertex Shader Built-in varying (write)                     GLSL Fragment Shader Built-in varying (read)
+  GLSL Vertex Shader Built-in varying(write)                     GLSL Fragment Shader Built-in varying(read)
   -------------------------------------------                     -------------------------------------------
       varying vec4    gl_FrontColor;                     ---->    gl_Color
       varying vec4    gl_BackColor;                      ---->    gl_Color
@@ -127,7 +127,7 @@ namespace nux
       		TESSFACTOR, FOGCOORD, ATTR5                 Input fog coordinate, Generic Attribute 5
       		PSIZE, ATTR6                                Input point size, Generic Attribute 6
       		BLENDINDICES, ATTR7                         Generic Attribute 7
-      		TEXCOORD0-TEXCOORD7, ATTR8-ATTR15           Input texture coordinates (texcoord0-texcoord7), Generic Attributes 8–15
+      		TEXCOORD0-TEXCOORD7, ATTR8-ATTR15           Input texture coordinates(texcoord0-texcoord7), Generic Attributes 8–15
       		TANGENT, ATTR14                             Generic Attribute 14
       		BINORMAL, ATTR15                            Generic Attribute 15
 

@@ -28,14 +28,14 @@
 namespace nux
 {
 
-  RangeValueInteger::RangeValueInteger (int Value, int MinValue, int MaxValue, NUX_FILE_LINE_DECL)
-    :   View (NUX_FILE_LINE_PARAM)
+  RangeValueInteger::RangeValueInteger(int Value, int MinValue, int MaxValue, NUX_FILE_LINE_DECL)
+    :   View(NUX_FILE_LINE_PARAM)
   {
     m_min                   = MinValue;
     m_max                   = MaxValue;
-    m_StartColor            = Color (0xff202020);
-    m_EndColor              = Color (0xff202020);
-    m_ProgressColor         = Color (0xff606060);
+    m_StartColor            = Color(0xff202020);
+    m_EndColor              = Color(0xff202020);
+    m_ProgressColor         = Color(0xff606060);
     m_EnableDrawProgress    = true;
     m_CTRL_KEY              = 0;
     m_MarkerPosition        = 0;
@@ -43,7 +43,7 @@ namespace nux
     InitializeLayout();
     InitializeWidgets();
 
-    SetValue (Value);
+    SetValue(Value);
   }
 
   RangeValueInteger::~RangeValueInteger()
@@ -55,107 +55,90 @@ namespace nux
     //////////////////
     // Set Signals  //
     //////////////////
-    m_Percentage->mouse_down.connect ( sigc::mem_fun (this, &RangeValueInteger::OnReceiveMouseDown) );
-    m_Percentage->mouse_up.connect ( sigc::mem_fun (this, &RangeValueInteger::OnReceiveMouseUp) );
-    m_Percentage->mouse_drag.connect ( sigc::mem_fun (this, &RangeValueInteger::OnReceiveMouseDrag) );
+    m_Percentage->mouse_down.connect(sigc::mem_fun(this, &RangeValueInteger::OnReceiveMouseDown));
+    m_Percentage->mouse_up.connect(sigc::mem_fun(this, &RangeValueInteger::OnReceiveMouseUp));
+    m_Percentage->mouse_drag.connect(sigc::mem_fun(this, &RangeValueInteger::OnReceiveMouseDrag));
 
-    m_ValueString->sigValidateKeyboardEntry.connect (sigc::mem_fun (this, &RangeValueInteger::OnValidateKeyboardEntry) );
+    m_ValueString->sigValidateKeyboardEntry.connect(sigc::mem_fun(this, &RangeValueInteger::OnValidateKeyboardEntry));
 
     //////////////////
     // Set Geometry //
     //////////////////
-    m_ValueString->SetMinimumSize (DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT);
-    m_ValueString->SetGeometry (Geometry (0, 0, DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT) );
+    m_ValueString->SetMinimumSize(DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT);
+    m_ValueString->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT));
 
-    m_Percentage->SetMinimumSize (2 * DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT);
-    m_Percentage->SetGeometry (Geometry (0, 0, DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT) );
+    m_Percentage->SetMinimumSize(2 * DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT);
+    m_Percentage->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT));
 
     // Set the minimum size of this widget.
     // This is use by RangeValuePropertyItem::GetItemBestHeight
-    SetMinimumSize (DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+    SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
 
 
-    hlayout->AddView (m_ValueString, 0, eCenter, eFull);
-    hlayout->AddView (m_Percentage, 4, eCenter, eFull);
+    hlayout->AddView(m_ValueString, 0, eCenter, eFull);
+    hlayout->AddView(m_Percentage, 4, eCenter, eFull);
     //hlayout->AddLayout(&vlayout, 4);
-    hlayout->SetHorizontalExternalMargin (0);
-    hlayout->SetHorizontalInternalMargin (2);
-    hlayout->SetVerticalExternalMargin (0);
-    SetCompositionLayout (hlayout);
+    hlayout->SetHorizontalExternalMargin(0);
+    hlayout->SetHorizontalInternalMargin(2);
+    hlayout->SetVerticalExternalMargin(0);
+    SetCompositionLayout(hlayout);
   }
 
   void RangeValueInteger::InitializeLayout()
   {
-    hlayout         = new HLayout (NUX_TRACKER_LOCATION);
-    m_Percentage    = new InputArea (NUX_TRACKER_LOCATION);
-    m_ValueString   = new EditTextBox (TEXT (""), NUX_TRACKER_LOCATION);
+    hlayout         = new HLayout(NUX_TRACKER_LOCATION);
+    m_Percentage    = new InputArea(NUX_TRACKER_LOCATION);
+    m_ValueString   = new EditTextBox("", NUX_TRACKER_LOCATION);
   }
 
-  long RangeValueInteger::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    m_CTRL_KEY = ievent.GetVirtualKeyState (NUX_VK_LCONTROL);
-
-    long ret;
-    ret = m_Percentage->OnEvent (ievent, TraverseInfo, ProcessEventInfo);
-    ret = m_ValueString->ProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-
-    if (m_ValueString->IsRedrawNeeded() )
-    {
-      QueueDraw();
-    }
-
-    return ret;
-  }
-
-  void RangeValueInteger::DrawMarker (GraphicsEngine &GfxContext)
+  void RangeValueInteger::DrawMarker(GraphicsEngine &graphics_engine)
   {
     int marker_position_x;
     int marker_position_y;
 
-    GfxContext.PushClippingRectangle (m_Percentage->GetGeometry() );
+    graphics_engine.PushClippingRectangle(m_Percentage->GetGeometry());
 
     marker_position_x = m_Percentage->GetBaseX() + (m_MarkerPosition - m_min) * m_Percentage->GetBaseWidth() * 1 / (m_max - m_min);
     marker_position_y = m_Percentage->GetBaseY() + m_Percentage->GetBaseHeight();
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 5, marker_position_y,
+    GetPainter().Draw2DTriangleColor(graphics_engine, marker_position_x - 5, marker_position_y,
                                   marker_position_x, marker_position_y - 5,
-                                  marker_position_x + 5, marker_position_y, Color (0.0f, 0.0f, 0.0f, 1.0f) );
+                                  marker_position_x + 5, marker_position_y, Color(0.0f, 0.0f, 0.0f, 1.0f));
 
-    GetPainter().Draw2DTriangleColor (GfxContext, marker_position_x - 4, marker_position_y,
+    GetPainter().Draw2DTriangleColor(graphics_engine, marker_position_x - 4, marker_position_y,
                                   marker_position_x, marker_position_y - 4,
-                                  marker_position_x + 4, marker_position_y, Color (0.7f, 0.7f, 0.7f, 1.0f) );
+                                  marker_position_x + 4, marker_position_y, Color(0.7f, 0.7f, 0.7f, 1.0f));
 
-    GfxContext.PopClippingRectangle();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void RangeValueInteger::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void RangeValueInteger::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
 
     // Percentage
     Geometry P = m_Percentage->GetGeometry();
-    GetPainter().Paint2DQuadColor (GfxContext, P, m_StartColor, m_StartColor, m_EndColor, m_EndColor);
+    GetPainter().Paint2DQuadColor(graphics_engine, P, m_StartColor, m_StartColor, m_EndColor, m_EndColor);
 
     if (m_EnableDrawProgress)
     {
-      P.SetWidth ( (m_MarkerPosition - m_min) * (float) P.GetWidth() / (m_max - m_min) );
-      GetPainter().Paint2DQuadColor (GfxContext, P, m_ProgressColor);
+      P.SetWidth((m_MarkerPosition - m_min) * (float) P.GetWidth() / (m_max - m_min));
+      GetPainter().Paint2DQuadColor(graphics_engine, P, m_ProgressColor);
     }
 
-    DrawMarker (GfxContext);
+    DrawMarker(graphics_engine);
   }
 
-  void RangeValueInteger::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void RangeValueInteger::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
-    m_ValueString->ProcessDraw (GfxContext, force_draw);
+    m_ValueString->ProcessDraw(graphics_engine, force_draw);
   }
 
-  void RangeValueInteger::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void RangeValueInteger::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void RangeValueInteger::SetRange (int min_value, int max_value)
+  void RangeValueInteger::SetRange(int min_value, int max_value)
   {
     if (min_value < max_value)
     {
@@ -173,10 +156,10 @@ namespace nux
     else if (m_Value > m_max)
       m_Value = m_max;
 
-    SetValue (m_Value);
+    SetValue(m_Value);
   }
 
-  void RangeValueInteger::SetValue (int value)
+  void RangeValueInteger::SetValue(int value)
   {
     if (value < m_min)
       m_Value = m_min;
@@ -186,7 +169,7 @@ namespace nux
       m_Value = value;
 
     m_MarkerPosition = m_Value;
-    m_ValueString->SetText (NString::Printf ("%d", m_Value) );
+    m_ValueString->SetText(NString::Printf("%d", m_Value));
     QueueDraw();
   }
 
@@ -198,14 +181,14 @@ namespace nux
 ////////////////
 //  EMITTERS  //
 ////////////////
-  void RangeValueInteger::OnReceiveMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RangeValueInteger::OnReceiveMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     if (x < 0)
     {
       m_Value = m_min;
       m_MarkerPosition = m_Value;
     }
-    else if (x > m_Percentage->GetBaseWidth() )
+    else if (x > m_Percentage->GetBaseWidth())
     {
       m_Value = m_max;
       m_MarkerPosition = m_Value;
@@ -219,19 +202,19 @@ namespace nux
         m_Value++;
     }
 
-    m_ValueString->SetText (NString::Printf ("%d", m_Value) );
-    sigValueChanged.emit (this);
-    sigMouseDown.emit (m_Value);
-    sigValueChanged2.emit (m_Value);
+    m_ValueString->SetText(NString::Printf("%d", m_Value));
+    sigValueChanged.emit(this);
+    sigMouseDown.emit(m_Value);
+    sigValueChanged2.emit(m_Value);
 
     QueueDraw();
   }
 
-  void RangeValueInteger::OnReceiveMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RangeValueInteger::OnReceiveMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     if (x < 0)
       m_Value = m_min;
-    else if (x > m_Percentage->GetBaseWidth() )
+    else if (x > m_Percentage->GetBaseWidth())
       m_Value = m_max;
     else
     {
@@ -242,22 +225,22 @@ namespace nux
     }
 
     m_MarkerPosition = m_Value;
-    m_ValueString->SetText (NString::Printf ("%d", m_Value) );
-    sigValueChanged.emit (this);
-    sigMouseUp.emit (m_Value);
-    sigValueChanged2.emit (m_Value);
+    m_ValueString->SetText(NString::Printf("%d", m_Value));
+    sigValueChanged.emit(this);
+    sigMouseUp.emit(m_Value);
+    sigValueChanged2.emit(m_Value);
 
     QueueDraw();
   }
 
-  void RangeValueInteger::OnReceiveMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void RangeValueInteger::OnReceiveMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
     if (x < 0)
     {
       m_Value = m_min;
       m_MarkerPosition = m_Value;
     }
-    else if (x > m_Percentage->GetBaseWidth() )
+    else if (x > m_Percentage->GetBaseWidth())
     {
       m_Value = m_max;
       m_MarkerPosition = m_Value;
@@ -271,10 +254,10 @@ namespace nux
         m_Value++;
     }
 
-    m_ValueString->SetText (NString::Printf ("%d", m_Value) );
-    sigValueChanged.emit (this);
-    sigMouseDrag.emit (m_Value);
-    sigValueChanged2.emit (m_Value);
+    m_ValueString->SetText(NString::Printf("%d", m_Value));
+    sigValueChanged.emit(this);
+    sigMouseDrag.emit(m_Value);
+    sigValueChanged2.emit(m_Value);
 
     QueueDraw();
   }
@@ -289,19 +272,19 @@ namespace nux
 
   }
 
-  void RangeValueInteger::OnValidateKeyboardEntry (EditTextBox *textbox, const NString &text)
+  void RangeValueInteger::OnValidateKeyboardEntry(EditTextBox *textbox, const NString &text)
   {
     int i;
-    i = CharToInteger (text.GetTCharPtr() );
-    SetValue (i);
-    sigValueChanged.emit (this);
-    sigSetTypedValue.emit (i);
-    sigValueChanged2.emit (m_Value);
+    i = CharToInteger(text.GetTCharPtr());
+    SetValue(i);
+    sigValueChanged.emit(this);
+    sigSetTypedValue.emit(i);
+    sigValueChanged2.emit(m_Value);
     QueueDraw();
   }
 
-  void RangeValueInteger::BroadcastValue ()
+  void RangeValueInteger::BroadcastValue()
   {
-    sigValueChanged2.emit (m_Value);
+    sigValueChanged2.emit(m_Value);
   }
 }

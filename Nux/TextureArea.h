@@ -26,6 +26,10 @@
 
 namespace nux
 {
+  //! Represent a rectangular area painted with a color or a texture layer.
+  /*!
+      By default TextureArea contains a ColorLayer with the color set to Black.
+  */
   class TextureArea: public View
   {
     NUX_DECLARE_OBJECT_TYPE(TextureArea, View);
@@ -34,18 +38,38 @@ namespace nux
     virtual ~TextureArea();
 
     /*!
-        Render this area with a Texture. The reference count of the device texture which is cached by \a texture is increased by 1.
-        It \a layer was allocated on the heap, it must be deleted later.
-        @param layer A pointer to a BaseTexture class.
+        Use the provided BaseTexture to create a TextureLayer.
+        The current layer is destroyed. If the \a texture argument is invalid the function returns without changing this object.
+
+        @param texture Pointer to a BaseTexture class.
     */
     void SetTexture(BaseTexture *texture);
 
     /*!
-        Set the paint layer of this area. The \a layer argument to this function is cloned by this object.
-        It \a layer was allocated on the heap, it must be deleted later.
+        Use the provided \a color argument to create a ColorLayer.
+        The current layer is destroyed.
+
+        @param texture Pointer to a BaseTexture class.
+    */
+    void SetColor(const Color &color);
+
+    /*!
+        Set the paint layer of this area. The layer argument to this function is cloned.
+        \sa AbstractPaintLayer, ColorLayer, ShapeLayer, SliceScaledTextureLayer, TextureLayer;
+
         @param layer A pointer to a concrete class that inherit from AbstractPaintLayer.
     */
     void SetPaintLayer(AbstractPaintLayer *layer);
+
+    void LoadImageFile(const std::string &filename);
+
+    /*!
+        Get a copy of the paint layer of this area. The layer must be destroyed with delete when it is no longer needed.
+        \sa AbstractPaintLayer, ColorLayer, ShapeLayer, SliceScaledTextureLayer, TextureLayer;
+        
+        @return A copy of the layer inside this object.
+    */
+    AbstractPaintLayer* GetPaintLayer() const;
 
     //! Convenience function to set a 2D rotation when rendering the area.
     /*!
@@ -59,22 +83,24 @@ namespace nux
     sigc::signal<void, int, int> sigMouseDrag;  //!< Signal emmitted when the mouse is dragged over this area.
 
   protected:
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
-    void RecvMouseDown (int x, int y, long button_flags, long key_flags);
-    void RecvMouseUp (int x, int y, long button_flags, long key_flags);
-    void RecvMouseEnter (int x, int y, long button_flags, long key_flags);
-    void RecvMouseLeave (int x, int y, long button_flags, long key_flags);
-    void RecvMouseClick (int x, int y, long button_flags, long key_flags);
-    void RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseDown(int x, int y, long button_flags, long key_flags);
+    void RecvMouseUp(int x, int y, long button_flags, long key_flags);
+    void RecvMouseEnter(int x, int y, long button_flags, long key_flags);
+    void RecvMouseLeave(int x, int y, long button_flags, long key_flags);
+    void RecvMouseClick(int x, int y, long button_flags, long key_flags);
+    void RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
   private:
-    AbstractPaintLayer *m_PaintLayer;
+    AbstractPaintLayer *paint_layer_;
 
-    Matrix4 _2d_rotate;  //!< 2D rotation matrix for this area. Used for rendering only.
+    Matrix4 rotation_2d_;  //!< 2D rotation matrix for this area. Used for rendering only.
   };
+
+  typedef TextureArea Image;
 }
 
 #endif // TEXTUREAREA_H

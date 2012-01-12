@@ -27,12 +27,12 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLVertexDeclaration);
+  NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLVertexDeclaration);
 
   IOpenGLVertexDeclaration::IOpenGLVertexDeclaration(const VERTEXELEMENT* pVertexElements)
     : IOpenGLResource(RTVERTEXDECLARATION)
   {
-    for(int i = 0; i < 8; i++)
+    for (int i = 0; i < 8; i++)
     {
       _stride[i] = 0;
       vertex_buffer_array.push_back(ObjectPtr<IOpenGLVertexBuffer>(NULL));
@@ -52,7 +52,7 @@ namespace nux
     // Add in the invalid vertex element stream at the end.
     //VERTEXELEMENT *pVtxElement = new VERTEXELEMENT;
     //pVtxElement->Stream = 0xFF; // invalid stream
-    _declarations_array.push_back (DECL_END);
+    _declarations_array.push_back(DECL_END);
   };
 
   IOpenGLVertexDeclaration::~IOpenGLVertexDeclaration()
@@ -61,7 +61,7 @@ namespace nux
     _OpenGLID = 0;
   }
 
-//   int IOpenGLVertexDeclaration::GetDeclaration (
+//   int IOpenGLVertexDeclaration::GetDeclaration(
 //     VERTEXELEMENT& pDecl,
 //     unsigned int *pNumElements)
 //   {
@@ -72,7 +72,7 @@ namespace nux
 //   }
 
 
-  VERTEXELEMENT IOpenGLVertexDeclaration::GetUsage (ATTRIB_USAGE_DECL usage)
+  VERTEXELEMENT IOpenGLVertexDeclaration::GetUsage(ATTRIB_USAGE_DECL usage)
   {
     VERTEXELEMENT vtxelt;
     return vtxelt;

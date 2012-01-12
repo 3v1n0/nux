@@ -27,113 +27,108 @@
 namespace nux
 {
 
-  AnimatedTextureArea::AnimatedTextureArea (NUX_FILE_LINE_DECL)
-    :   View (NUX_FILE_LINE_PARAM)
-    ,   m_UserTexture (0)
+  AnimatedTextureArea::AnimatedTextureArea(NUX_FILE_LINE_DECL)
+    :   View(NUX_FILE_LINE_PARAM)
+    ,   m_UserTexture(0)
   {
-    SetMinMaxSize (32, 32);
+    SetMinMaxSize(32, 32);
 
-    mouse_down.connect (sigc::mem_fun (this, &AnimatedTextureArea::RecvMouseDown) );
-    mouse_drag.connect (sigc::mem_fun (this, &AnimatedTextureArea::RecvMouseDrag) );
+    mouse_down.connect(sigc::mem_fun(this, &AnimatedTextureArea::RecvMouseDown));
+    mouse_drag.connect(sigc::mem_fun(this, &AnimatedTextureArea::RecvMouseDrag));
 
     m_TimerFunctor = new TimerFunctor();
-    m_TimerFunctor->OnTimerExpired.connect (sigc::mem_fun (this, &AnimatedTextureArea::TimerNextFrame) );
+    m_TimerFunctor->time_expires.connect(sigc::mem_fun(this, &AnimatedTextureArea::TimerNextFrame));
   }
 
   AnimatedTextureArea::~AnimatedTextureArea()
   {
-    GetTimer().RemoveTimerHandler (m_TimerHandler);
+    GetTimer().RemoveTimerHandler(m_TimerHandler);
     m_TimerHandler = 0;
     delete m_TimerFunctor;
     m_TimerFunctor = 0;
   }
 
-  long AnimatedTextureArea::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    return PostProcessEvent2 (ievent, TraverseInfo, ProcessEventInfo);
-  }
-
-  void AnimatedTextureArea::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void AnimatedTextureArea::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     if (m_UserTexture)
     {
-      GetPainter().PaintBackground (GfxContext, GetGeometry() );
-      GfxContext.GetRenderStates().SetBlend (true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      GetPainter().PaintBackground(graphics_engine, GetGeometry());
+      graphics_engine.GetRenderStates().SetBlend(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       nux::Geometry base = GetGeometry();
       nux::TexCoordXForm texxform;
-      GfxContext.QRP_1Tex (base.x, base.y, base.width, base.height, m_UserTexture->GetDeviceTexture(), texxform, nux::color::White);
+      graphics_engine.QRP_1Tex(base.x, base.y, base.width, base.height, m_UserTexture->GetDeviceTexture(), texxform, nux::color::White);
 
-      GfxContext.GetRenderStates().SetBlend (false);
+      graphics_engine.GetRenderStates().SetBlend(false);
     }
   }
-  void AnimatedTextureArea::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void AnimatedTextureArea::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void AnimatedTextureArea::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void AnimatedTextureArea::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void AnimatedTextureArea::SetTexture (TextureFrameAnimation *Texture)
+  void AnimatedTextureArea::SetTexture(TextureFrameAnimation *Texture)
   {
     m_UserTexture = Texture;
 
     if (m_UserTexture)
     {
-      ObjectPtr< CachedTextureFrameAnimation > Texture = GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource (m_UserTexture);
+      ObjectPtr< CachedTextureFrameAnimation > Texture = GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource(m_UserTexture);
       ObjectPtr<IOpenGLAnimatedTexture> AnimatedTexture = Texture->m_Texture; //Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
       ObjectPtr<IOpenGLBaseTexture> Texture2D = Texture->m_Texture; //Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
 
-      AnimatedTexture->SetFiltering (GL_LINEAR, GL_LINEAR);
-      AnimatedTexture->SetWrap (GL_CLAMP, GL_CLAMP, GL_CLAMP);
+      AnimatedTexture->SetFiltering(GL_LINEAR, GL_LINEAR);
+      AnimatedTexture->SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
     }
 
     QueueDraw();
   }
 
-  void AnimatedTextureArea::RecvMouseDown (int x, int y, long button_flags, long key_flags)
+  void AnimatedTextureArea::RecvMouseDown(int x, int y, long button_flags, long key_flags)
   {
-    sigMouseDown.emit (x, y);
+    sigMouseDown.emit(x, y);
   }
 
-  void AnimatedTextureArea::RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void AnimatedTextureArea::RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    sigMouseDrag.emit (x, y);
+    sigMouseDrag.emit(x, y);
   }
 
   void AnimatedTextureArea::StartAnimation()
   {
-    if (m_TimerHandler.IsValid() )
+    if (m_TimerHandler.IsValid())
     {
-      GetTimer().RemoveTimerHandler (m_TimerHandler);
+      GetTimer().RemoveTimerHandler(m_TimerHandler);
       m_TimerHandler = 0;
     }
 
-    m_TimerHandler = GetTimer().AddTimerHandler (41, m_TimerFunctor, 0);
+    m_TimerHandler = GetTimer().AddTimerHandler(41, m_TimerFunctor, 0);
     QueueDraw();
   }
 
   void AnimatedTextureArea::StopAnimation()
   {
-    if (m_TimerHandler.IsValid() )
+    if (m_TimerHandler.IsValid())
     {
-      GetTimer().RemoveTimerHandler (m_TimerHandler);
+      GetTimer().RemoveTimerHandler(m_TimerHandler);
       m_TimerHandler = 0;
     }
   }
 
-  void AnimatedTextureArea::TimerNextFrame (void *v)
+  void AnimatedTextureArea::TimerNextFrame(void *v)
   {
     if (m_UserTexture)
     {
-      ObjectPtr< CachedTextureFrameAnimation > Texture = GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource (m_UserTexture);
+      ObjectPtr< CachedTextureFrameAnimation > Texture = GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource(m_UserTexture);
       ObjectPtr<IOpenGLAnimatedTexture> AnimatedTexture = Texture->m_Texture; //Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
       ObjectPtr<IOpenGLBaseTexture> Texture2D = Texture->m_Texture; //Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
 
       AnimatedTexture->PresentNextFrame();
-      m_TimerHandler = GetTimer().AddTimerHandler (41, m_TimerFunctor, 0);
+      m_TimerHandler = GetTimer().AddTimerHandler(41, m_TimerFunctor, 0);
     }
 
     QueueDraw();

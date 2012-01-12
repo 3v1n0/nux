@@ -114,7 +114,7 @@ logging::Logger logger("nux.image");
 
     for (unsigned int i = 0; i < height; ++i)
     {
-      Memcpy (dest, src + i*src_pitch, width*channels);
+      Memcpy(dest, src + i*src_pitch, width*channels);
       dest += dest_pitch;
     }
     return texture;

@@ -37,9 +37,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = Nux
-DIST_COMMON = $(nux_HEADERS) $(nux_property_item_HEADERS) \
-	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
-	$(srcdir)/nux.pc.in
+DIST_COMMON = $(nux_HEADERS) $(srcdir)/ABI.h.in $(srcdir)/Makefile.am \
+	$(srcdir)/Makefile.in $(srcdir)/nux.pc.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_doxygen.m4 \
 	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
@@ -49,7 +48,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = nux.pc
+CONFIG_CLEAN_FILES = nux.pc ABI.h
 CONFIG_CLEAN_VPATH_FILES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -73,7 +72,7 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" \
-	"$(DESTDIR)$(nuxdir)" "$(DESTDIR)$(nux_property_itemdir)"
+	"$(DESTDIR)$(nuxdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 libnux_@NUX_API_VERSION@_la_DEPENDENCIES =  \
@@ -81,31 +80,10 @@ libnux_@NUX_API_VERSION@_la_DEPENDENCIES =  \
 	$(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
 	$(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
 	$(am__DEPENDENCIES_1)
-am__objects_1 = libnux_@NUX_API_VERSION@_la-CheckBoxProperty.lo \
-	libnux_@NUX_API_VERSION@_la-ColorGradientPropertyItem.lo \
-	libnux_@NUX_API_VERSION@_la-ColorPreviewPropertyItem.lo \
-	libnux_@NUX_API_VERSION@_la-ComboBoxListPropertyItem.lo \
-	libnux_@NUX_API_VERSION@_la-ComboBoxPropertyItem.lo \
-	libnux_@NUX_API_VERSION@_la-DoubleValuatorPropertyItem.lo \
-	libnux_@NUX_API_VERSION@_la-EditTextLinePropertyItem.lo \
-	libnux_@NUX_API_VERSION@_la-FilePropertyItem.lo \
-	libnux_@NUX_API_VERSION@_la-IntegerValuatorPropertyItem.lo \
-	libnux_@NUX_API_VERSION@_la-Matrix3PreviewPropertyItem.lo \
-	libnux_@NUX_API_VERSION@_la-Matrix4PreviewPropertyItem.lo \
-	libnux_@NUX_API_VERSION@_la-RangeValueIntegerPropertyItem.lo \
-	libnux_@NUX_API_VERSION@_la-RangeValuePropertyItem.lo \
-	libnux_@NUX_API_VERSION@_la-RGBAProperty.lo \
-	libnux_@NUX_API_VERSION@_la-RGBProperty.lo \
-	libnux_@NUX_API_VERSION@_la-SpinBoxDoublePropertyItem.lo \
-	libnux_@NUX_API_VERSION@_la-SpinBoxPropertyItem.lo \
-	libnux_@NUX_API_VERSION@_la-SplineCurvePropertyItem.lo \
-	libnux_@NUX_API_VERSION@_la-Vector3Property.lo \
-	libnux_@NUX_API_VERSION@_la-Vector3ValuatorPropertyItem.lo \
-	libnux_@NUX_API_VERSION@_la-Vector4Property.lo \
-	libnux_@NUX_API_VERSION@_la-AbstractButton.lo \
+am__objects_1 = libnux_@NUX_API_VERSION@_la-AbstractButton.lo \
+	libnux_@NUX_API_VERSION@_la-AbstractCheckedButton.lo \
 	libnux_@NUX_API_VERSION@_la-AbstractComboBox.lo \
 	libnux_@NUX_API_VERSION@_la-AbstractPaintLayer.lo \
-	libnux_@NUX_API_VERSION@_la-AbstractSeparator.lo \
 	libnux_@NUX_API_VERSION@_la-AbstractThread.lo \
 	libnux_@NUX_API_VERSION@_la-ActionItem.lo \
 	libnux_@NUX_API_VERSION@_la-AnimatedTextureArea.lo \
@@ -113,65 +91,44 @@ am__objects_1 = libnux_@NUX_API_VERSION@_la-CheckBoxProperty.lo \
 	libnux_@NUX_API_VERSION@_la-InputArea.lo \
 	libnux_@NUX_API_VERSION@_la-Area.lo \
 	libnux_@NUX_API_VERSION@_la-BaseWindow.lo \
-	libnux_@NUX_API_VERSION@_la-BezierCurveControl.lo \
-	libnux_@NUX_API_VERSION@_la-BezierCurveControl2.lo \
 	libnux_@NUX_API_VERSION@_la-Button.lo \
 	libnux_@NUX_API_VERSION@_la-Canvas.lo \
 	libnux_@NUX_API_VERSION@_la-CairoWrapper.lo \
 	libnux_@NUX_API_VERSION@_la-CheckBox.lo \
 	libnux_@NUX_API_VERSION@_la-ClientArea.lo \
-	libnux_@NUX_API_VERSION@_la-ColorArea.lo \
 	libnux_@NUX_API_VERSION@_la-ColorEditor.lo \
-	libnux_@NUX_API_VERSION@_la-ColorGradient.lo \
 	libnux_@NUX_API_VERSION@_la-ColorPickerDialog.lo \
 	libnux_@NUX_API_VERSION@_la-ColorPreview.lo \
-	libnux_@NUX_API_VERSION@_la-ColorRangeValuator.lo \
-	libnux_@NUX_API_VERSION@_la-ComboBoxComplex.lo \
-	libnux_@NUX_API_VERSION@_la-ComboBoxSimple.lo \
-	libnux_@NUX_API_VERSION@_la-CurveControl.lo \
 	libnux_@NUX_API_VERSION@_la-Dialog.lo \
 	libnux_@NUX_API_VERSION@_la-DoubleValidator.lo \
 	libnux_@NUX_API_VERSION@_la-EditTextBox.lo \
 	libnux_@NUX_API_VERSION@_la-FileSelector.lo \
 	libnux_@NUX_API_VERSION@_la-FloatingWindow.lo \
-	libnux_@NUX_API_VERSION@_la-Focusable.lo \
-	libnux_@NUX_API_VERSION@_la-FolderTreeItem.lo \
-	libnux_@NUX_API_VERSION@_la-FunctionGraph.lo \
 	libnux_@NUX_API_VERSION@_la-GridHLayout.lo \
-	libnux_@NUX_API_VERSION@_la-GridVLayout.lo \
 	libnux_@NUX_API_VERSION@_la-GroupBox.lo \
 	libnux_@NUX_API_VERSION@_la-GroupBox2.lo \
 	libnux_@NUX_API_VERSION@_la-HexRegExpValidator.lo \
-	libnux_@NUX_API_VERSION@_la-Histogram.lo \
 	libnux_@NUX_API_VERSION@_la-HLayout.lo \
 	libnux_@NUX_API_VERSION@_la-HScrollBar.lo \
-	libnux_@NUX_API_VERSION@_la-HSeparator.lo \
 	libnux_@NUX_API_VERSION@_la-HSplitter.lo \
-	libnux_@NUX_API_VERSION@_la-HToolBar.lo \
-	libnux_@NUX_API_VERSION@_la-HueRangeValuator.lo \
 	libnux_@NUX_API_VERSION@_la-IntegerValidator.lo \
 	libnux_@NUX_API_VERSION@_la-View.lo \
 	libnux_@NUX_API_VERSION@_la-KeyboardHandler.lo \
 	libnux_@NUX_API_VERSION@_la-LayeredLayout.lo \
 	libnux_@NUX_API_VERSION@_la-Layout.lo \
-	libnux_@NUX_API_VERSION@_la-ListControl.lo \
-	libnux_@NUX_API_VERSION@_la-Matrix3Editor.lo \
-	libnux_@NUX_API_VERSION@_la-Matrix3Preview.lo \
-	libnux_@NUX_API_VERSION@_la-Matrix4Editor.lo \
-	libnux_@NUX_API_VERSION@_la-Matrix4Preview.lo \
+	libnux_@NUX_API_VERSION@_la-LinearLayout.lo \
+	libnux_@NUX_API_VERSION@_la-MainLoopGLib.lo \
 	libnux_@NUX_API_VERSION@_la-MenuPage.lo \
 	libnux_@NUX_API_VERSION@_la-MenuBar.lo \
 	libnux_@NUX_API_VERSION@_la-MouseAreaCtrl.lo \
-	libnux_@NUX_API_VERSION@_la-MouseHandler.lo \
-	libnux_@NUX_API_VERSION@_la-NodeItem.lo \
-	libnux_@NUX_API_VERSION@_la-NodeNetProtocol.lo \
 	libnux_@NUX_API_VERSION@_la-NumericValuator.lo \
 	libnux_@NUX_API_VERSION@_la-Nux.lo \
 	libnux_@NUX_API_VERSION@_la-NuxGlobalInitializer.lo \
 	libnux_@NUX_API_VERSION@_la-Painter.lo \
 	libnux_@NUX_API_VERSION@_la-Panel.lo \
 	libnux_@NUX_API_VERSION@_la-PopUpWindow.lo \
-	libnux_@NUX_API_VERSION@_la-PropertyList.lo \
+	libnux_@NUX_API_VERSION@_la-RadioButton.lo \
+	libnux_@NUX_API_VERSION@_la-RadioButtonGroup.lo \
 	libnux_@NUX_API_VERSION@_la-RangeValue.lo \
 	libnux_@NUX_API_VERSION@_la-RangeValueInteger.lo \
 	libnux_@NUX_API_VERSION@_la-RGBValuator.lo \
@@ -180,42 +137,29 @@ am__objects_1 = libnux_@NUX_API_VERSION@_la-CheckBoxProperty.lo \
 	libnux_@NUX_API_VERSION@_la-SpinBox.lo \
 	libnux_@NUX_API_VERSION@_la-SpinBoxDouble.lo \
 	libnux_@NUX_API_VERSION@_la-SpinBox_Logic.lo \
-	libnux_@NUX_API_VERSION@_la-SplineCurveEditor.lo \
-	libnux_@NUX_API_VERSION@_la-SplineCurvePreview.lo \
 	libnux_@NUX_API_VERSION@_la-StaticText.lo \
 	libnux_@NUX_API_VERSION@_la-StaticTextBox.lo \
 	libnux_@NUX_API_VERSION@_la-SystemThread.lo \
-	libnux_@NUX_API_VERSION@_la-TableCtrl.lo \
-	libnux_@NUX_API_VERSION@_la-TableItem.lo \
 	libnux_@NUX_API_VERSION@_la-TabView.lo \
 	libnux_@NUX_API_VERSION@_la-TextEntry.lo \
 	libnux_@NUX_API_VERSION@_la-TextureArea.lo \
-	libnux_@NUX_API_VERSION@_la-TimeGraph.lo \
 	libnux_@NUX_API_VERSION@_la-Timeline.lo \
 	libnux_@NUX_API_VERSION@_la-TimelineEasings.lo \
 	libnux_@NUX_API_VERSION@_la-TimerProc.lo \
 	libnux_@NUX_API_VERSION@_la-ToggleButton.lo \
 	libnux_@NUX_API_VERSION@_la-ToolButton.lo \
-	libnux_@NUX_API_VERSION@_la-TreeControl.lo \
 	libnux_@NUX_API_VERSION@_la-Utils.lo \
 	libnux_@NUX_API_VERSION@_la-Theme.lo \
 	libnux_@NUX_API_VERSION@_la-Validator.lo \
-	libnux_@NUX_API_VERSION@_la-Valuator.lo \
-	libnux_@NUX_API_VERSION@_la-ValuatorDouble.lo \
-	libnux_@NUX_API_VERSION@_la-ValuatorInt.lo \
-	libnux_@NUX_API_VERSION@_la-Vector3Valuator.lo \
-	libnux_@NUX_API_VERSION@_la-Vector3ValuatorDouble.lo \
 	libnux_@NUX_API_VERSION@_la-VLayout.lo \
 	libnux_@NUX_API_VERSION@_la-VScrollBar.lo \
-	libnux_@NUX_API_VERSION@_la-VSeparator.lo \
 	libnux_@NUX_API_VERSION@_la-VSplitter.lo \
-	libnux_@NUX_API_VERSION@_la-VToolBar.lo \
 	libnux_@NUX_API_VERSION@_la-WidgetMetrics.lo \
 	libnux_@NUX_API_VERSION@_la-WindowCompositor.lo \
 	libnux_@NUX_API_VERSION@_la-WindowThread.lo
 am__objects_2 =
 am_libnux_@NUX_API_VERSION@_la_OBJECTS = $(am__objects_1) \
-	$(am__objects_2) $(am__objects_2)
+	$(am__objects_2)
 libnux_@NUX_API_VERSION@_la_OBJECTS =  \
 	$(am_libnux_@NUX_API_VERSION@_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
@@ -270,7 +214,7 @@ am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libnux_@NUX_API_VERSION@_la_SOURCES)
 DIST_SOURCES = $(libnux_@NUX_API_VERSION@_la_SOURCES)
 DATA = $(pkgconfig_DATA)
-HEADERS = $(nux_HEADERS) $(nux_property_item_HEADERS)
+HEADERS = $(nux_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -328,6 +272,7 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GCC_FLAGS = @GCC_FLAGS@
+GL_PKGS = @GL_PKGS@
 GREP = @GREP@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -348,6 +293,7 @@ MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 NM = @NM@
 NMEDIT = @NMEDIT@
+NUX_ABI_VERSION = @NUX_ABI_VERSION@
 NUX_API_VERSION = @NUX_API_VERSION@
 NUX_CFLAGS = @NUX_CFLAGS@
 NUX_CORE_CFLAGS = @NUX_CORE_CFLAGS@
@@ -364,8 +310,6 @@ NUX_LIBS = @NUX_LIBS@
 NUX_LT_LDFLAGS = @NUX_LT_LDFLAGS@
 NUX_LT_VERSION = @NUX_LT_VERSION@
 NUX_MAJOR_VERSION = @NUX_MAJOR_VERSION@
-NUX_MESH_CFLAGS = @NUX_MESH_CFLAGS@
-NUX_MESH_LIBS = @NUX_MESH_LIBS@
 NUX_MICRO_VERSION = @NUX_MICRO_VERSION@
 NUX_MINOR_VERSION = @NUX_MINOR_VERSION@
 NUX_VERSION = @NUX_VERSION@
@@ -472,31 +416,10 @@ libnux_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
 
 source_cpp = \
-  $(srcdir)/PropertyItem/CheckBoxProperty.cpp \
-  $(srcdir)/PropertyItem/ColorGradientPropertyItem.cpp \
-  $(srcdir)/PropertyItem/ColorPreviewPropertyItem.cpp \
-  $(srcdir)/PropertyItem/ComboBoxListPropertyItem.cpp \
-  $(srcdir)/PropertyItem/ComboBoxPropertyItem.cpp \
-  $(srcdir)/PropertyItem/DoubleValuatorPropertyItem.cpp \
-  $(srcdir)/PropertyItem/EditTextLinePropertyItem.cpp \
-  $(srcdir)/PropertyItem/FilePropertyItem.cpp \
-  $(srcdir)/PropertyItem/IntegerValuatorPropertyItem.cpp \
-  $(srcdir)/PropertyItem/Matrix3PreviewPropertyItem.cpp \
-  $(srcdir)/PropertyItem/Matrix4PreviewPropertyItem.cpp \
-  $(srcdir)/PropertyItem/RangeValueIntegerPropertyItem.cpp \
-  $(srcdir)/PropertyItem/RangeValuePropertyItem.cpp \
-  $(srcdir)/PropertyItem/RGBAProperty.cpp \
-  $(srcdir)/PropertyItem/RGBProperty.cpp \
-  $(srcdir)/PropertyItem/SpinBoxDoublePropertyItem.cpp \
-  $(srcdir)/PropertyItem/SpinBoxPropertyItem.cpp \
-  $(srcdir)/PropertyItem/SplineCurvePropertyItem.cpp \
-  $(srcdir)/PropertyItem/Vector3Property.cpp \
-  $(srcdir)/PropertyItem/Vector3ValuatorPropertyItem.cpp \
-  $(srcdir)/PropertyItem/Vector4Property.cpp \
   $(srcdir)/AbstractButton.cpp \
+  $(srcdir)/AbstractCheckedButton.cpp \
   $(srcdir)/AbstractComboBox.cpp \
   $(srcdir)/AbstractPaintLayer.cpp \
-  $(srcdir)/AbstractSeparator.cpp \
   $(srcdir)/AbstractThread.cpp \
   $(srcdir)/ActionItem.cpp \
   $(srcdir)/AnimatedTextureArea.cpp \
@@ -504,65 +427,44 @@ source_cpp = \
   $(srcdir)/InputArea.cpp \
   $(srcdir)/Area.cpp \
   $(srcdir)/BaseWindow.cpp \
-  $(srcdir)/BezierCurveControl.cpp \
-  $(srcdir)/BezierCurveControl2.cpp \
   $(srcdir)/Button.cpp \
   $(srcdir)/Canvas.cpp \
   $(srcdir)/CairoWrapper.cpp \
   $(srcdir)/CheckBox.cpp \
   $(srcdir)/ClientArea.cpp \
-  $(srcdir)/ColorArea.cpp \
   $(srcdir)/ColorEditor.cpp \
-  $(srcdir)/ColorGradient.cpp \
   $(srcdir)/ColorPickerDialog.cpp \
   $(srcdir)/ColorPreview.cpp \
-  $(srcdir)/ColorRangeValuator.cpp \
-  $(srcdir)/ComboBoxComplex.cpp \
-  $(srcdir)/ComboBoxSimple.cpp \
-  $(srcdir)/CurveControl.cpp \
   $(srcdir)/Dialog.cpp \
   $(srcdir)/DoubleValidator.cpp \
   $(srcdir)/EditTextBox.cpp \
   $(srcdir)/FileSelector.cpp \
   $(srcdir)/FloatingWindow.cpp \
-  $(srcdir)/Focusable.cpp \
-  $(srcdir)/FolderTreeItem.cpp \
-  $(srcdir)/FunctionGraph.cpp \
   $(srcdir)/GridHLayout.cpp \
-  $(srcdir)/GridVLayout.cpp \
   $(srcdir)/GroupBox.cpp \
   $(srcdir)/GroupBox2.cpp \
   $(srcdir)/HexRegExpValidator.cpp \
-  $(srcdir)/Histogram.cpp \
   $(srcdir)/HLayout.cpp \
   $(srcdir)/HScrollBar.cpp \
-  $(srcdir)/HSeparator.cpp \
   $(srcdir)/HSplitter.cpp \
-  $(srcdir)/HToolBar.cpp \
-  $(srcdir)/HueRangeValuator.cpp \
   $(srcdir)/IntegerValidator.cpp \
   $(srcdir)/View.cpp \
   $(srcdir)/KeyboardHandler.cpp \
   $(srcdir)/LayeredLayout.cpp \
   $(srcdir)/Layout.cpp \
-  $(srcdir)/ListControl.cpp \
-  $(srcdir)/Matrix3Editor.cpp \
-  $(srcdir)/Matrix3Preview.cpp \
-  $(srcdir)/Matrix4Editor.cpp \
-  $(srcdir)/Matrix4Preview.cpp \
+  $(srcdir)/LinearLayout.cpp \
+  $(srcdir)/MainLoopGLib.cpp \
   $(srcdir)/MenuPage.cpp \
   $(srcdir)/MenuBar.cpp \
   $(srcdir)/MouseAreaCtrl.cpp \
-  $(srcdir)/MouseHandler.cpp \
-  $(srcdir)/NodeItem.cpp \
-  $(srcdir)/NodeNetProtocol.cpp \
   $(srcdir)/NumericValuator.cpp \
   $(srcdir)/Nux.cpp \
   $(srcdir)/NuxGlobalInitializer.cpp \
   $(srcdir)/Painter.cpp \
   $(srcdir)/Panel.cpp \
   $(srcdir)/PopUpWindow.cpp \
-  $(srcdir)/PropertyList.cpp \
+  $(srcdir)/RadioButton.cpp \
+  $(srcdir)/RadioButtonGroup.cpp \
   $(srcdir)/RangeValue.cpp \
   $(srcdir)/RangeValueInteger.cpp \
   $(srcdir)/RGBValuator.cpp \
@@ -571,68 +473,33 @@ source_cpp = \
   $(srcdir)/SpinBox.cpp \
   $(srcdir)/SpinBoxDouble.cpp \
   $(srcdir)/SpinBox_Logic.cpp \
-  $(srcdir)/SplineCurveEditor.cpp \
-  $(srcdir)/SplineCurvePreview.cpp \
   $(srcdir)/StaticText.cpp \
   $(srcdir)/StaticTextBox.cpp \
   $(srcdir)/SystemThread.cpp \
-  $(srcdir)/TableCtrl.cpp \
-  $(srcdir)/TableItem.cpp \
   $(srcdir)/TabView.cpp \
   $(srcdir)/TextEntry.cpp \
   $(srcdir)/TextureArea.cpp \
-  $(srcdir)/TimeGraph.cpp \
   $(srcdir)/Timeline.cpp \
   $(srcdir)/TimelineEasings.cpp \
   $(srcdir)/TimerProc.cpp \
   $(srcdir)/ToggleButton.cpp \
   $(srcdir)/ToolButton.cpp \
-  $(srcdir)/TreeControl.cpp \
   $(srcdir)/Utils.cpp \
   $(srcdir)/Theme.cpp \
   $(srcdir)/Validator.cpp \
-  $(srcdir)/Valuator.cpp \
-  $(srcdir)/ValuatorDouble.cpp \
-  $(srcdir)/ValuatorInt.cpp \
-  $(srcdir)/Vector3Valuator.cpp \
-  $(srcdir)/Vector3ValuatorDouble.cpp \
   $(srcdir)/VLayout.cpp \
   $(srcdir)/VScrollBar.cpp \
-  $(srcdir)/VSeparator.cpp \
   $(srcdir)/VSplitter.cpp \
-  $(srcdir)/VToolBar.cpp \
   $(srcdir)/WidgetMetrics.cpp \
   $(srcdir)/WindowCompositor.cpp \
   $(srcdir)/WindowThread.cpp
 
-source_property_item_h = \
-  $(srcdir)/PropertyItem/CheckBoxProperty.h \
-  $(srcdir)/PropertyItem/ColorGradientPropertyItem.h \
-  $(srcdir)/PropertyItem/ColorPreviewPropertyItem.h \
-  $(srcdir)/PropertyItem/ComboBoxListPropertyItem.h \
-  $(srcdir)/PropertyItem/ComboBoxPropertyItem.h \
-  $(srcdir)/PropertyItem/DoubleValuatorPropertyItem.h \
-  $(srcdir)/PropertyItem/EditTextLinePropertyItem.h \
-  $(srcdir)/PropertyItem/FilePropertyItem.h \
-  $(srcdir)/PropertyItem/IntegerValuatorPropertyItem.h \
-  $(srcdir)/PropertyItem/Matrix3PreviewPropertyItem.h \
-  $(srcdir)/PropertyItem/Matrix4PreviewPropertyItem.h \
-  $(srcdir)/PropertyItem/RangeValueIntegerPropertyItem.h \
-  $(srcdir)/PropertyItem/RangeValuePropertyItem.h \
-  $(srcdir)/PropertyItem/RGBAProperty.h \
-  $(srcdir)/PropertyItem/RGBProperty.h \
-  $(srcdir)/PropertyItem/SpinBoxDoublePropertyItem.h \
-  $(srcdir)/PropertyItem/SpinBoxPropertyItem.h \
-  $(srcdir)/PropertyItem/SplineCurvePropertyItem.h \
-  $(srcdir)/PropertyItem/Vector3Property.h \
-  $(srcdir)/PropertyItem/Vector3ValuatorPropertyItem.h \
-  $(srcdir)/PropertyItem/Vector4Property.h
-
 source_h = \
+  $(builddir)/ABI.h \
   $(srcdir)/AbstractButton.h \
+  $(srcdir)/AbstractCheckedButton.h \
   $(srcdir)/AbstractComboBox.h \
   $(srcdir)/AbstractPaintLayer.h \
-  $(srcdir)/AbstractSeparator.h \
   $(srcdir)/AbstractThread.h \
   $(srcdir)/ActionItem.h \
   $(srcdir)/AnimatedTextureArea.h \
@@ -640,65 +507,43 @@ source_h = \
   $(srcdir)/InputArea.h \
   $(srcdir)/Area.h \
   $(srcdir)/BaseWindow.h \
-  $(srcdir)/BezierCurveControl.h \
-  $(srcdir)/BezierCurveControl2.h \
   $(srcdir)/Button.h \
   $(srcdir)/Canvas.h \
   $(srcdir)/CairoWrapper.h \
   $(srcdir)/CheckBox.h \
   $(srcdir)/ClientArea.h \
-  $(srcdir)/ColorArea.h \
   $(srcdir)/ColorEditor.h \
-  $(srcdir)/ColorGradient.h \
   $(srcdir)/ColorPickerDialog.h \
   $(srcdir)/ColorPreview.h \
-  $(srcdir)/ColorRangeValuator.h \
-  $(srcdir)/ComboBoxComplex.h \
-  $(srcdir)/ComboBoxSimple.h \
-  $(srcdir)/CurveControl.h \
   $(srcdir)/Dialog.h \
   $(srcdir)/DoubleValidator.h \
   $(srcdir)/EditTextBox.h \
   $(srcdir)/FileSelector.h \
   $(srcdir)/FloatingWindow.h \
-  $(srcdir)/Focusable.h \
-  $(srcdir)/FolderTreeItem.h \
-  $(srcdir)/FunctionGraph.h \
   $(srcdir)/GridHLayout.h \
-  $(srcdir)/GridVLayout.h \
   $(srcdir)/GroupBox.h \
   $(srcdir)/GroupBox2.h \
   $(srcdir)/HexRegExpValidator.h \
-  $(srcdir)/Histogram.h \
   $(srcdir)/HLayout.h \
   $(srcdir)/HScrollBar.h \
-  $(srcdir)/HSeparator.h \
   $(srcdir)/HSplitter.h \
-  $(srcdir)/HToolBar.h \
-  $(srcdir)/HueRangeValuator.h \
   $(srcdir)/IntegerValidator.h \
   $(srcdir)/View.h \
   $(srcdir)/KeyboardHandler.h \
   $(srcdir)/LayeredLayout.h \
   $(srcdir)/Layout.h \
-  $(srcdir)/ListControl.h \
-  $(srcdir)/Matrix3Editor.h \
-  $(srcdir)/Matrix3Preview.h \
-  $(srcdir)/Matrix4Editor.h \
-  $(srcdir)/Matrix4Preview.h \
+  $(srcdir)/LinearLayout.h \
   $(srcdir)/MenuPage.h \
   $(srcdir)/MenuBar.h \
   $(srcdir)/MouseAreaCtrl.h \
-  $(srcdir)/MouseHandler.h \
-  $(srcdir)/NodeItem.h \
-  $(srcdir)/NodeNetProtocol.h \
   $(srcdir)/NumericValuator.h \
   $(srcdir)/Nux.h \
   $(srcdir)/NuxGlobalInitializer.h \
   $(srcdir)/Painter.h \
   $(srcdir)/Panel.h \
   $(srcdir)/PopUpWindow.h \
-  $(srcdir)/PropertyList.h \
+  $(srcdir)/RadioButton.h \
+  $(srcdir)/RadioButtonGroup.h \
   $(srcdir)/RangeValue.h \
   $(srcdir)/RangeValueInteger.h \
   $(srcdir)/Readme.txt \
@@ -708,49 +553,33 @@ source_h = \
   $(srcdir)/SpinBox.h \
   $(srcdir)/SpinBoxDouble.h \
   $(srcdir)/SpinBox_Logic.h \
-  $(srcdir)/SplineCurveEditor.h \
-  $(srcdir)/SplineCurvePreview.h \
   $(srcdir)/StaticText.h \
   $(srcdir)/StaticTextBox.h \
   $(srcdir)/SystemThread.h \
-  $(srcdir)/TableCtrl.h \
-  $(srcdir)/TableItem.h \
   $(srcdir)/TabView.h \
   $(srcdir)/TextEntry.h \
   $(srcdir)/TextureArea.h \
-  $(srcdir)/TimeGraph.h \
   $(srcdir)/Timeline.h \
   $(srcdir)/TimelineEasings.h \
   $(srcdir)/TimerProc.h \
   $(srcdir)/ToolButton.h \
   $(srcdir)/ToggleButton.h \
-  $(srcdir)/TreeControl.h \
   $(srcdir)/Theme.h \
   $(srcdir)/Utils.h \
   $(srcdir)/Validator.h \
-  $(srcdir)/Valuator.h \
-  $(srcdir)/ValuatorDouble.h \
-  $(srcdir)/ValuatorInt.h \
-  $(srcdir)/Vector3Valuator.h \
-  $(srcdir)/Vector3ValuatorDouble.h \
   $(srcdir)/VLayout.h \
   $(srcdir)/VScrollBar.h \
-  $(srcdir)/VSeparator.h \
   $(srcdir)/VSplitter.h \
-  $(srcdir)/VToolBar.h \
   $(srcdir)/WidgetMetrics.h \
   $(srcdir)/WindowCompositor.h \
   $(srcdir)/WindowThread.h
 
 libnux_@NUX_API_VERSION@_la_SOURCES = \
   $(source_cpp) \
-  $(source_h) \
-  $(source_property_item_h)
+  $(source_h)
 
 nuxdir = $(includedir)/Nux-@NUX_API_VERSION@/Nux
 nux_HEADERS = $(source_h)
-nux_property_itemdir = $(nuxdir)/PropertyItem
-nux_property_item_HEADERS = $(source_property_item_h)
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = nux-@NUX_API_VERSION@.pc
 all: all-am
@@ -788,6 +617,8 @@ $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
 nux.pc: $(top_builddir)/config.status $(srcdir)/nux.pc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+ABI.h: $(top_builddir)/config.status $(srcdir)/ABI.h.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 install-libLTLIBRARIES: $(lib_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
@@ -830,77 +661,44 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractButton.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractCheckedButton.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractComboBox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractPaintLayer.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractSeparator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractThread.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ActionItem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-AnimatedTextureArea.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Area.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-BaseWindow.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-BezierCurveControl.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-BezierCurveControl2.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Button.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-CairoWrapper.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Canvas.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-CheckBox.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-CheckBoxProperty.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ClientArea.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorArea.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorEditor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorGradient.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorGradientPropertyItem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorPickerDialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorPreview.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorPreviewPropertyItem.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorRangeValuator.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ComboBoxComplex.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ComboBoxListPropertyItem.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ComboBoxPropertyItem.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ComboBoxSimple.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-CurveControl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Dialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-DoubleValidator.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-DoubleValuatorPropertyItem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-EditTextBox.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-EditTextLinePropertyItem.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-FilePropertyItem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-FileSelector.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-FloatingWindow.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Focusable.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-FolderTreeItem.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-FunctionGraph.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-GridHLayout.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-GridVLayout.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-GroupBox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-GroupBox2.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-HLayout.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-HScrollBar.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-HSeparator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-HSplitter.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-HToolBar.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-HexRegExpValidator.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Histogram.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-HueRangeValuator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-InputArea.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-IntegerValidator.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-IntegerValuatorPropertyItem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-KeyboardHandler.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-LayeredLayout.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Layout.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ListControl.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix3Editor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix3Preview.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix3PreviewPropertyItem.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix4Editor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix4Preview.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix4PreviewPropertyItem.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-LinearLayout.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-MainLoopGLib.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-MenuBar.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-MenuPage.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-MouseAreaCtrl.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-MouseHandler.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-NodeItem.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-NodeNetProtocol.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-NumericValuator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Nux.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-NuxGlobalInitializer.Plo@am__quote@
@@ -908,55 +706,33 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Painter.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Panel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-PopUpWindow.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-PropertyList.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-RGBAProperty.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-RGBProperty.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-RGBValuator.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-RadioButton.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-RadioButtonGroup.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-RangeValue.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-RangeValueInteger.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-RangeValueIntegerPropertyItem.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-RangeValuePropertyItem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ScrollBar.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ScrollView.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-SpinBox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-SpinBoxDouble.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-SpinBoxDoublePropertyItem.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-SpinBoxPropertyItem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-SpinBox_Logic.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-SplineCurveEditor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-SplineCurvePreview.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-SplineCurvePropertyItem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-StaticText.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-StaticTextBox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-SystemThread.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TabView.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TableCtrl.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TableItem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TextEntry.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TextureArea.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Theme.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TimeGraph.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Timeline.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TimelineEasings.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TimerProc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ToggleButton.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ToolButton.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TreeControl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Utils.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-VLayout.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-VScrollBar.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-VSeparator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-VSplitter.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-VToolBar.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Validator.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Valuator.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ValuatorDouble.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ValuatorInt.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Vector3Property.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Vector3Valuator.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Vector3ValuatorDouble.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Vector3ValuatorPropertyItem.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Vector4Property.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-View.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-WidgetMetrics.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-WindowCompositor.Plo@am__quote@
@@ -986,174 +762,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
 
-libnux_@NUX_API_VERSION@_la-CheckBoxProperty.lo: $(srcdir)/PropertyItem/CheckBoxProperty.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-CheckBoxProperty.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-CheckBoxProperty.Tpo -c -o libnux_@NUX_API_VERSION@_la-CheckBoxProperty.lo `test -f '$(srcdir)/PropertyItem/CheckBoxProperty.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/CheckBoxProperty.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-CheckBoxProperty.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-CheckBoxProperty.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PropertyItem/CheckBoxProperty.cpp' object='libnux_@NUX_API_VERSION@_la-CheckBoxProperty.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-CheckBoxProperty.lo `test -f '$(srcdir)/PropertyItem/CheckBoxProperty.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/CheckBoxProperty.cpp
-
-libnux_@NUX_API_VERSION@_la-ColorGradientPropertyItem.lo: $(srcdir)/PropertyItem/ColorGradientPropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-ColorGradientPropertyItem.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorGradientPropertyItem.Tpo -c -o libnux_@NUX_API_VERSION@_la-ColorGradientPropertyItem.lo `test -f '$(srcdir)/PropertyItem/ColorGradientPropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/ColorGradientPropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorGradientPropertyItem.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorGradientPropertyItem.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PropertyItem/ColorGradientPropertyItem.cpp' object='libnux_@NUX_API_VERSION@_la-ColorGradientPropertyItem.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-ColorGradientPropertyItem.lo `test -f '$(srcdir)/PropertyItem/ColorGradientPropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/ColorGradientPropertyItem.cpp
-
-libnux_@NUX_API_VERSION@_la-ColorPreviewPropertyItem.lo: $(srcdir)/PropertyItem/ColorPreviewPropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-ColorPreviewPropertyItem.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorPreviewPropertyItem.Tpo -c -o libnux_@NUX_API_VERSION@_la-ColorPreviewPropertyItem.lo `test -f '$(srcdir)/PropertyItem/ColorPreviewPropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/ColorPreviewPropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorPreviewPropertyItem.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorPreviewPropertyItem.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PropertyItem/ColorPreviewPropertyItem.cpp' object='libnux_@NUX_API_VERSION@_la-ColorPreviewPropertyItem.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-ColorPreviewPropertyItem.lo `test -f '$(srcdir)/PropertyItem/ColorPreviewPropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/ColorPreviewPropertyItem.cpp
-
-libnux_@NUX_API_VERSION@_la-ComboBoxListPropertyItem.lo: $(srcdir)/PropertyItem/ComboBoxListPropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-ComboBoxListPropertyItem.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ComboBoxListPropertyItem.Tpo -c -o libnux_@NUX_API_VERSION@_la-ComboBoxListPropertyItem.lo `test -f '$(srcdir)/PropertyItem/ComboBoxListPropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/ComboBoxListPropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ComboBoxListPropertyItem.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ComboBoxListPropertyItem.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PropertyItem/ComboBoxListPropertyItem.cpp' object='libnux_@NUX_API_VERSION@_la-ComboBoxListPropertyItem.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-ComboBoxListPropertyItem.lo `test -f '$(srcdir)/PropertyItem/ComboBoxListPropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/ComboBoxListPropertyItem.cpp
-
-libnux_@NUX_API_VERSION@_la-ComboBoxPropertyItem.lo: $(srcdir)/PropertyItem/ComboBoxPropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-ComboBoxPropertyItem.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ComboBoxPropertyItem.Tpo -c -o libnux_@NUX_API_VERSION@_la-ComboBoxPropertyItem.lo `test -f '$(srcdir)/PropertyItem/ComboBoxPropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/ComboBoxPropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ComboBoxPropertyItem.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ComboBoxPropertyItem.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PropertyItem/ComboBoxPropertyItem.cpp' object='libnux_@NUX_API_VERSION@_la-ComboBoxPropertyItem.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-ComboBoxPropertyItem.lo `test -f '$(srcdir)/PropertyItem/ComboBoxPropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/ComboBoxPropertyItem.cpp
-
-libnux_@NUX_API_VERSION@_la-DoubleValuatorPropertyItem.lo: $(srcdir)/PropertyItem/DoubleValuatorPropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-DoubleValuatorPropertyItem.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-DoubleValuatorPropertyItem.Tpo -c -o libnux_@NUX_API_VERSION@_la-DoubleValuatorPropertyItem.lo `test -f '$(srcdir)/PropertyItem/DoubleValuatorPropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/DoubleValuatorPropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-DoubleValuatorPropertyItem.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-DoubleValuatorPropertyItem.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PropertyItem/DoubleValuatorPropertyItem.cpp' object='libnux_@NUX_API_VERSION@_la-DoubleValuatorPropertyItem.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-DoubleValuatorPropertyItem.lo `test -f '$(srcdir)/PropertyItem/DoubleValuatorPropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/DoubleValuatorPropertyItem.cpp
-
-libnux_@NUX_API_VERSION@_la-EditTextLinePropertyItem.lo: $(srcdir)/PropertyItem/EditTextLinePropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-EditTextLinePropertyItem.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-EditTextLinePropertyItem.Tpo -c -o libnux_@NUX_API_VERSION@_la-EditTextLinePropertyItem.lo `test -f '$(srcdir)/PropertyItem/EditTextLinePropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/EditTextLinePropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-EditTextLinePropertyItem.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-EditTextLinePropertyItem.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PropertyItem/EditTextLinePropertyItem.cpp' object='libnux_@NUX_API_VERSION@_la-EditTextLinePropertyItem.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-EditTextLinePropertyItem.lo `test -f '$(srcdir)/PropertyItem/EditTextLinePropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/EditTextLinePropertyItem.cpp
-
-libnux_@NUX_API_VERSION@_la-FilePropertyItem.lo: $(srcdir)/PropertyItem/FilePropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-FilePropertyItem.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-FilePropertyItem.Tpo -c -o libnux_@NUX_API_VERSION@_la-FilePropertyItem.lo `test -f '$(srcdir)/PropertyItem/FilePropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/FilePropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-FilePropertyItem.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-FilePropertyItem.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PropertyItem/FilePropertyItem.cpp' object='libnux_@NUX_API_VERSION@_la-FilePropertyItem.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-FilePropertyItem.lo `test -f '$(srcdir)/PropertyItem/FilePropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/FilePropertyItem.cpp
-
-libnux_@NUX_API_VERSION@_la-IntegerValuatorPropertyItem.lo: $(srcdir)/PropertyItem/IntegerValuatorPropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-IntegerValuatorPropertyItem.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-IntegerValuatorPropertyItem.Tpo -c -o libnux_@NUX_API_VERSION@_la-IntegerValuatorPropertyItem.lo `test -f '$(srcdir)/PropertyItem/IntegerValuatorPropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/IntegerValuatorPropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-IntegerValuatorPropertyItem.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-IntegerValuatorPropertyItem.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PropertyItem/IntegerValuatorPropertyItem.cpp' object='libnux_@NUX_API_VERSION@_la-IntegerValuatorPropertyItem.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-IntegerValuatorPropertyItem.lo `test -f '$(srcdir)/PropertyItem/IntegerValuatorPropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/IntegerValuatorPropertyItem.cpp
-
-libnux_@NUX_API_VERSION@_la-Matrix3PreviewPropertyItem.lo: $(srcdir)/PropertyItem/Matrix3PreviewPropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Matrix3PreviewPropertyItem.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix3PreviewPropertyItem.Tpo -c -o libnux_@NUX_API_VERSION@_la-Matrix3PreviewPropertyItem.lo `test -f '$(srcdir)/PropertyItem/Matrix3PreviewPropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/Matrix3PreviewPropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix3PreviewPropertyItem.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix3PreviewPropertyItem.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PropertyItem/Matrix3PreviewPropertyItem.cpp' object='libnux_@NUX_API_VERSION@_la-Matrix3PreviewPropertyItem.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-Matrix3PreviewPropertyItem.lo `test -f '$(srcdir)/PropertyItem/Matrix3PreviewPropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/Matrix3PreviewPropertyItem.cpp
-
-libnux_@NUX_API_VERSION@_la-Matrix4PreviewPropertyItem.lo: $(srcdir)/PropertyItem/Matrix4PreviewPropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Matrix4PreviewPropertyItem.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix4PreviewPropertyItem.Tpo -c -o libnux_@NUX_API_VERSION@_la-Matrix4PreviewPropertyItem.lo `test -f '$(srcdir)/PropertyItem/Matrix4PreviewPropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/Matrix4PreviewPropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix4PreviewPropertyItem.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix4PreviewPropertyItem.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PropertyItem/Matrix4PreviewPropertyItem.cpp' object='libnux_@NUX_API_VERSION@_la-Matrix4PreviewPropertyItem.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-Matrix4PreviewPropertyItem.lo `test -f '$(srcdir)/PropertyItem/Matrix4PreviewPropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/Matrix4PreviewPropertyItem.cpp
-
-libnux_@NUX_API_VERSION@_la-RangeValueIntegerPropertyItem.lo: $(srcdir)/PropertyItem/RangeValueIntegerPropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-RangeValueIntegerPropertyItem.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RangeValueIntegerPropertyItem.Tpo -c -o libnux_@NUX_API_VERSION@_la-RangeValueIntegerPropertyItem.lo `test -f '$(srcdir)/PropertyItem/RangeValueIntegerPropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/RangeValueIntegerPropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RangeValueIntegerPropertyItem.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RangeValueIntegerPropertyItem.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PropertyItem/RangeValueIntegerPropertyItem.cpp' object='libnux_@NUX_API_VERSION@_la-RangeValueIntegerPropertyItem.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-RangeValueIntegerPropertyItem.lo `test -f '$(srcdir)/PropertyItem/RangeValueIntegerPropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/RangeValueIntegerPropertyItem.cpp
-
-libnux_@NUX_API_VERSION@_la-RangeValuePropertyItem.lo: $(srcdir)/PropertyItem/RangeValuePropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-RangeValuePropertyItem.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RangeValuePropertyItem.Tpo -c -o libnux_@NUX_API_VERSION@_la-RangeValuePropertyItem.lo `test -f '$(srcdir)/PropertyItem/RangeValuePropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/RangeValuePropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RangeValuePropertyItem.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RangeValuePropertyItem.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PropertyItem/RangeValuePropertyItem.cpp' object='libnux_@NUX_API_VERSION@_la-RangeValuePropertyItem.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-RangeValuePropertyItem.lo `test -f '$(srcdir)/PropertyItem/RangeValuePropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/RangeValuePropertyItem.cpp
-
-libnux_@NUX_API_VERSION@_la-RGBAProperty.lo: $(srcdir)/PropertyItem/RGBAProperty.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-RGBAProperty.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RGBAProperty.Tpo -c -o libnux_@NUX_API_VERSION@_la-RGBAProperty.lo `test -f '$(srcdir)/PropertyItem/RGBAProperty.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/RGBAProperty.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RGBAProperty.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RGBAProperty.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PropertyItem/RGBAProperty.cpp' object='libnux_@NUX_API_VERSION@_la-RGBAProperty.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-RGBAProperty.lo `test -f '$(srcdir)/PropertyItem/RGBAProperty.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/RGBAProperty.cpp
-
-libnux_@NUX_API_VERSION@_la-RGBProperty.lo: $(srcdir)/PropertyItem/RGBProperty.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-RGBProperty.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RGBProperty.Tpo -c -o libnux_@NUX_API_VERSION@_la-RGBProperty.lo `test -f '$(srcdir)/PropertyItem/RGBProperty.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/RGBProperty.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RGBProperty.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RGBProperty.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PropertyItem/RGBProperty.cpp' object='libnux_@NUX_API_VERSION@_la-RGBProperty.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-RGBProperty.lo `test -f '$(srcdir)/PropertyItem/RGBProperty.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/RGBProperty.cpp
-
-libnux_@NUX_API_VERSION@_la-SpinBoxDoublePropertyItem.lo: $(srcdir)/PropertyItem/SpinBoxDoublePropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-SpinBoxDoublePropertyItem.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-SpinBoxDoublePropertyItem.Tpo -c -o libnux_@NUX_API_VERSION@_la-SpinBoxDoublePropertyItem.lo `test -f '$(srcdir)/PropertyItem/SpinBoxDoublePropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/SpinBoxDoublePropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-SpinBoxDoublePropertyItem.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-SpinBoxDoublePropertyItem.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PropertyItem/SpinBoxDoublePropertyItem.cpp' object='libnux_@NUX_API_VERSION@_la-SpinBoxDoublePropertyItem.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-SpinBoxDoublePropertyItem.lo `test -f '$(srcdir)/PropertyItem/SpinBoxDoublePropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/SpinBoxDoublePropertyItem.cpp
-
-libnux_@NUX_API_VERSION@_la-SpinBoxPropertyItem.lo: $(srcdir)/PropertyItem/SpinBoxPropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-SpinBoxPropertyItem.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-SpinBoxPropertyItem.Tpo -c -o libnux_@NUX_API_VERSION@_la-SpinBoxPropertyItem.lo `test -f '$(srcdir)/PropertyItem/SpinBoxPropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/SpinBoxPropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-SpinBoxPropertyItem.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-SpinBoxPropertyItem.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PropertyItem/SpinBoxPropertyItem.cpp' object='libnux_@NUX_API_VERSION@_la-SpinBoxPropertyItem.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-SpinBoxPropertyItem.lo `test -f '$(srcdir)/PropertyItem/SpinBoxPropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/SpinBoxPropertyItem.cpp
-
-libnux_@NUX_API_VERSION@_la-SplineCurvePropertyItem.lo: $(srcdir)/PropertyItem/SplineCurvePropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-SplineCurvePropertyItem.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-SplineCurvePropertyItem.Tpo -c -o libnux_@NUX_API_VERSION@_la-SplineCurvePropertyItem.lo `test -f '$(srcdir)/PropertyItem/SplineCurvePropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/SplineCurvePropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-SplineCurvePropertyItem.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-SplineCurvePropertyItem.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PropertyItem/SplineCurvePropertyItem.cpp' object='libnux_@NUX_API_VERSION@_la-SplineCurvePropertyItem.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-SplineCurvePropertyItem.lo `test -f '$(srcdir)/PropertyItem/SplineCurvePropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/SplineCurvePropertyItem.cpp
-
-libnux_@NUX_API_VERSION@_la-Vector3Property.lo: $(srcdir)/PropertyItem/Vector3Property.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Vector3Property.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Vector3Property.Tpo -c -o libnux_@NUX_API_VERSION@_la-Vector3Property.lo `test -f '$(srcdir)/PropertyItem/Vector3Property.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/Vector3Property.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Vector3Property.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Vector3Property.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PropertyItem/Vector3Property.cpp' object='libnux_@NUX_API_VERSION@_la-Vector3Property.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-Vector3Property.lo `test -f '$(srcdir)/PropertyItem/Vector3Property.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/Vector3Property.cpp
-
-libnux_@NUX_API_VERSION@_la-Vector3ValuatorPropertyItem.lo: $(srcdir)/PropertyItem/Vector3ValuatorPropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Vector3ValuatorPropertyItem.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Vector3ValuatorPropertyItem.Tpo -c -o libnux_@NUX_API_VERSION@_la-Vector3ValuatorPropertyItem.lo `test -f '$(srcdir)/PropertyItem/Vector3ValuatorPropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/Vector3ValuatorPropertyItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Vector3ValuatorPropertyItem.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Vector3ValuatorPropertyItem.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PropertyItem/Vector3ValuatorPropertyItem.cpp' object='libnux_@NUX_API_VERSION@_la-Vector3ValuatorPropertyItem.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-Vector3ValuatorPropertyItem.lo `test -f '$(srcdir)/PropertyItem/Vector3ValuatorPropertyItem.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/Vector3ValuatorPropertyItem.cpp
-
-libnux_@NUX_API_VERSION@_la-Vector4Property.lo: $(srcdir)/PropertyItem/Vector4Property.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Vector4Property.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Vector4Property.Tpo -c -o libnux_@NUX_API_VERSION@_la-Vector4Property.lo `test -f '$(srcdir)/PropertyItem/Vector4Property.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/Vector4Property.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Vector4Property.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Vector4Property.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PropertyItem/Vector4Property.cpp' object='libnux_@NUX_API_VERSION@_la-Vector4Property.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-Vector4Property.lo `test -f '$(srcdir)/PropertyItem/Vector4Property.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyItem/Vector4Property.cpp
-
 libnux_@NUX_API_VERSION@_la-AbstractButton.lo: $(srcdir)/AbstractButton.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-AbstractButton.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractButton.Tpo -c -o libnux_@NUX_API_VERSION@_la-AbstractButton.lo `test -f '$(srcdir)/AbstractButton.cpp' || echo '$(srcdir)/'`$(srcdir)/AbstractButton.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractButton.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractButton.Plo
@@ -1161,6 +769,14 @@ libnux_@NUX_API_VERSION@_la-AbstractButton.lo: $(srcdir)/AbstractButton.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/AbstractButton.cpp' object='libnux_@NUX_API_VERSION@_la-AbstractButton.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-AbstractButton.lo `test -f '$(srcdir)/AbstractButton.cpp' || echo '$(srcdir)/'`$(srcdir)/AbstractButton.cpp
+
+libnux_@NUX_API_VERSION@_la-AbstractCheckedButton.lo: $(srcdir)/AbstractCheckedButton.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-AbstractCheckedButton.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractCheckedButton.Tpo -c -o libnux_@NUX_API_VERSION@_la-AbstractCheckedButton.lo `test -f '$(srcdir)/AbstractCheckedButton.cpp' || echo '$(srcdir)/'`$(srcdir)/AbstractCheckedButton.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractCheckedButton.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractCheckedButton.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/AbstractCheckedButton.cpp' object='libnux_@NUX_API_VERSION@_la-AbstractCheckedButton.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-AbstractCheckedButton.lo `test -f '$(srcdir)/AbstractCheckedButton.cpp' || echo '$(srcdir)/'`$(srcdir)/AbstractCheckedButton.cpp
 
 libnux_@NUX_API_VERSION@_la-AbstractComboBox.lo: $(srcdir)/AbstractComboBox.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-AbstractComboBox.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractComboBox.Tpo -c -o libnux_@NUX_API_VERSION@_la-AbstractComboBox.lo `test -f '$(srcdir)/AbstractComboBox.cpp' || echo '$(srcdir)/'`$(srcdir)/AbstractComboBox.cpp
@@ -1177,14 +793,6 @@ libnux_@NUX_API_VERSION@_la-AbstractPaintLayer.lo: $(srcdir)/AbstractPaintLayer.
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/AbstractPaintLayer.cpp' object='libnux_@NUX_API_VERSION@_la-AbstractPaintLayer.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-AbstractPaintLayer.lo `test -f '$(srcdir)/AbstractPaintLayer.cpp' || echo '$(srcdir)/'`$(srcdir)/AbstractPaintLayer.cpp
-
-libnux_@NUX_API_VERSION@_la-AbstractSeparator.lo: $(srcdir)/AbstractSeparator.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-AbstractSeparator.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractSeparator.Tpo -c -o libnux_@NUX_API_VERSION@_la-AbstractSeparator.lo `test -f '$(srcdir)/AbstractSeparator.cpp' || echo '$(srcdir)/'`$(srcdir)/AbstractSeparator.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractSeparator.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractSeparator.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/AbstractSeparator.cpp' object='libnux_@NUX_API_VERSION@_la-AbstractSeparator.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-AbstractSeparator.lo `test -f '$(srcdir)/AbstractSeparator.cpp' || echo '$(srcdir)/'`$(srcdir)/AbstractSeparator.cpp
 
 libnux_@NUX_API_VERSION@_la-AbstractThread.lo: $(srcdir)/AbstractThread.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-AbstractThread.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-AbstractThread.Tpo -c -o libnux_@NUX_API_VERSION@_la-AbstractThread.lo `test -f '$(srcdir)/AbstractThread.cpp' || echo '$(srcdir)/'`$(srcdir)/AbstractThread.cpp
@@ -1242,22 +850,6 @@ libnux_@NUX_API_VERSION@_la-BaseWindow.lo: $(srcdir)/BaseWindow.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-BaseWindow.lo `test -f '$(srcdir)/BaseWindow.cpp' || echo '$(srcdir)/'`$(srcdir)/BaseWindow.cpp
 
-libnux_@NUX_API_VERSION@_la-BezierCurveControl.lo: $(srcdir)/BezierCurveControl.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-BezierCurveControl.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-BezierCurveControl.Tpo -c -o libnux_@NUX_API_VERSION@_la-BezierCurveControl.lo `test -f '$(srcdir)/BezierCurveControl.cpp' || echo '$(srcdir)/'`$(srcdir)/BezierCurveControl.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-BezierCurveControl.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-BezierCurveControl.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/BezierCurveControl.cpp' object='libnux_@NUX_API_VERSION@_la-BezierCurveControl.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-BezierCurveControl.lo `test -f '$(srcdir)/BezierCurveControl.cpp' || echo '$(srcdir)/'`$(srcdir)/BezierCurveControl.cpp
-
-libnux_@NUX_API_VERSION@_la-BezierCurveControl2.lo: $(srcdir)/BezierCurveControl2.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-BezierCurveControl2.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-BezierCurveControl2.Tpo -c -o libnux_@NUX_API_VERSION@_la-BezierCurveControl2.lo `test -f '$(srcdir)/BezierCurveControl2.cpp' || echo '$(srcdir)/'`$(srcdir)/BezierCurveControl2.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-BezierCurveControl2.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-BezierCurveControl2.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/BezierCurveControl2.cpp' object='libnux_@NUX_API_VERSION@_la-BezierCurveControl2.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-BezierCurveControl2.lo `test -f '$(srcdir)/BezierCurveControl2.cpp' || echo '$(srcdir)/'`$(srcdir)/BezierCurveControl2.cpp
-
 libnux_@NUX_API_VERSION@_la-Button.lo: $(srcdir)/Button.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Button.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Button.Tpo -c -o libnux_@NUX_API_VERSION@_la-Button.lo `test -f '$(srcdir)/Button.cpp' || echo '$(srcdir)/'`$(srcdir)/Button.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Button.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Button.Plo
@@ -1298,14 +890,6 @@ libnux_@NUX_API_VERSION@_la-ClientArea.lo: $(srcdir)/ClientArea.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-ClientArea.lo `test -f '$(srcdir)/ClientArea.cpp' || echo '$(srcdir)/'`$(srcdir)/ClientArea.cpp
 
-libnux_@NUX_API_VERSION@_la-ColorArea.lo: $(srcdir)/ColorArea.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-ColorArea.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorArea.Tpo -c -o libnux_@NUX_API_VERSION@_la-ColorArea.lo `test -f '$(srcdir)/ColorArea.cpp' || echo '$(srcdir)/'`$(srcdir)/ColorArea.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorArea.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorArea.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/ColorArea.cpp' object='libnux_@NUX_API_VERSION@_la-ColorArea.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-ColorArea.lo `test -f '$(srcdir)/ColorArea.cpp' || echo '$(srcdir)/'`$(srcdir)/ColorArea.cpp
-
 libnux_@NUX_API_VERSION@_la-ColorEditor.lo: $(srcdir)/ColorEditor.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-ColorEditor.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorEditor.Tpo -c -o libnux_@NUX_API_VERSION@_la-ColorEditor.lo `test -f '$(srcdir)/ColorEditor.cpp' || echo '$(srcdir)/'`$(srcdir)/ColorEditor.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorEditor.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorEditor.Plo
@@ -1313,14 +897,6 @@ libnux_@NUX_API_VERSION@_la-ColorEditor.lo: $(srcdir)/ColorEditor.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/ColorEditor.cpp' object='libnux_@NUX_API_VERSION@_la-ColorEditor.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-ColorEditor.lo `test -f '$(srcdir)/ColorEditor.cpp' || echo '$(srcdir)/'`$(srcdir)/ColorEditor.cpp
-
-libnux_@NUX_API_VERSION@_la-ColorGradient.lo: $(srcdir)/ColorGradient.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-ColorGradient.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorGradient.Tpo -c -o libnux_@NUX_API_VERSION@_la-ColorGradient.lo `test -f '$(srcdir)/ColorGradient.cpp' || echo '$(srcdir)/'`$(srcdir)/ColorGradient.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorGradient.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorGradient.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/ColorGradient.cpp' object='libnux_@NUX_API_VERSION@_la-ColorGradient.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-ColorGradient.lo `test -f '$(srcdir)/ColorGradient.cpp' || echo '$(srcdir)/'`$(srcdir)/ColorGradient.cpp
 
 libnux_@NUX_API_VERSION@_la-ColorPickerDialog.lo: $(srcdir)/ColorPickerDialog.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-ColorPickerDialog.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorPickerDialog.Tpo -c -o libnux_@NUX_API_VERSION@_la-ColorPickerDialog.lo `test -f '$(srcdir)/ColorPickerDialog.cpp' || echo '$(srcdir)/'`$(srcdir)/ColorPickerDialog.cpp
@@ -1337,38 +913,6 @@ libnux_@NUX_API_VERSION@_la-ColorPreview.lo: $(srcdir)/ColorPreview.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/ColorPreview.cpp' object='libnux_@NUX_API_VERSION@_la-ColorPreview.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-ColorPreview.lo `test -f '$(srcdir)/ColorPreview.cpp' || echo '$(srcdir)/'`$(srcdir)/ColorPreview.cpp
-
-libnux_@NUX_API_VERSION@_la-ColorRangeValuator.lo: $(srcdir)/ColorRangeValuator.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-ColorRangeValuator.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorRangeValuator.Tpo -c -o libnux_@NUX_API_VERSION@_la-ColorRangeValuator.lo `test -f '$(srcdir)/ColorRangeValuator.cpp' || echo '$(srcdir)/'`$(srcdir)/ColorRangeValuator.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorRangeValuator.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ColorRangeValuator.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/ColorRangeValuator.cpp' object='libnux_@NUX_API_VERSION@_la-ColorRangeValuator.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-ColorRangeValuator.lo `test -f '$(srcdir)/ColorRangeValuator.cpp' || echo '$(srcdir)/'`$(srcdir)/ColorRangeValuator.cpp
-
-libnux_@NUX_API_VERSION@_la-ComboBoxComplex.lo: $(srcdir)/ComboBoxComplex.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-ComboBoxComplex.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ComboBoxComplex.Tpo -c -o libnux_@NUX_API_VERSION@_la-ComboBoxComplex.lo `test -f '$(srcdir)/ComboBoxComplex.cpp' || echo '$(srcdir)/'`$(srcdir)/ComboBoxComplex.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ComboBoxComplex.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ComboBoxComplex.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/ComboBoxComplex.cpp' object='libnux_@NUX_API_VERSION@_la-ComboBoxComplex.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-ComboBoxComplex.lo `test -f '$(srcdir)/ComboBoxComplex.cpp' || echo '$(srcdir)/'`$(srcdir)/ComboBoxComplex.cpp
-
-libnux_@NUX_API_VERSION@_la-ComboBoxSimple.lo: $(srcdir)/ComboBoxSimple.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-ComboBoxSimple.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ComboBoxSimple.Tpo -c -o libnux_@NUX_API_VERSION@_la-ComboBoxSimple.lo `test -f '$(srcdir)/ComboBoxSimple.cpp' || echo '$(srcdir)/'`$(srcdir)/ComboBoxSimple.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ComboBoxSimple.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ComboBoxSimple.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/ComboBoxSimple.cpp' object='libnux_@NUX_API_VERSION@_la-ComboBoxSimple.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-ComboBoxSimple.lo `test -f '$(srcdir)/ComboBoxSimple.cpp' || echo '$(srcdir)/'`$(srcdir)/ComboBoxSimple.cpp
-
-libnux_@NUX_API_VERSION@_la-CurveControl.lo: $(srcdir)/CurveControl.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-CurveControl.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-CurveControl.Tpo -c -o libnux_@NUX_API_VERSION@_la-CurveControl.lo `test -f '$(srcdir)/CurveControl.cpp' || echo '$(srcdir)/'`$(srcdir)/CurveControl.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-CurveControl.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-CurveControl.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/CurveControl.cpp' object='libnux_@NUX_API_VERSION@_la-CurveControl.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-CurveControl.lo `test -f '$(srcdir)/CurveControl.cpp' || echo '$(srcdir)/'`$(srcdir)/CurveControl.cpp
 
 libnux_@NUX_API_VERSION@_la-Dialog.lo: $(srcdir)/Dialog.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Dialog.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Dialog.Tpo -c -o libnux_@NUX_API_VERSION@_la-Dialog.lo `test -f '$(srcdir)/Dialog.cpp' || echo '$(srcdir)/'`$(srcdir)/Dialog.cpp
@@ -1410,30 +954,6 @@ libnux_@NUX_API_VERSION@_la-FloatingWindow.lo: $(srcdir)/FloatingWindow.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-FloatingWindow.lo `test -f '$(srcdir)/FloatingWindow.cpp' || echo '$(srcdir)/'`$(srcdir)/FloatingWindow.cpp
 
-libnux_@NUX_API_VERSION@_la-Focusable.lo: $(srcdir)/Focusable.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Focusable.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Focusable.Tpo -c -o libnux_@NUX_API_VERSION@_la-Focusable.lo `test -f '$(srcdir)/Focusable.cpp' || echo '$(srcdir)/'`$(srcdir)/Focusable.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Focusable.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Focusable.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Focusable.cpp' object='libnux_@NUX_API_VERSION@_la-Focusable.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-Focusable.lo `test -f '$(srcdir)/Focusable.cpp' || echo '$(srcdir)/'`$(srcdir)/Focusable.cpp
-
-libnux_@NUX_API_VERSION@_la-FolderTreeItem.lo: $(srcdir)/FolderTreeItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-FolderTreeItem.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-FolderTreeItem.Tpo -c -o libnux_@NUX_API_VERSION@_la-FolderTreeItem.lo `test -f '$(srcdir)/FolderTreeItem.cpp' || echo '$(srcdir)/'`$(srcdir)/FolderTreeItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-FolderTreeItem.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-FolderTreeItem.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/FolderTreeItem.cpp' object='libnux_@NUX_API_VERSION@_la-FolderTreeItem.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-FolderTreeItem.lo `test -f '$(srcdir)/FolderTreeItem.cpp' || echo '$(srcdir)/'`$(srcdir)/FolderTreeItem.cpp
-
-libnux_@NUX_API_VERSION@_la-FunctionGraph.lo: $(srcdir)/FunctionGraph.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-FunctionGraph.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-FunctionGraph.Tpo -c -o libnux_@NUX_API_VERSION@_la-FunctionGraph.lo `test -f '$(srcdir)/FunctionGraph.cpp' || echo '$(srcdir)/'`$(srcdir)/FunctionGraph.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-FunctionGraph.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-FunctionGraph.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/FunctionGraph.cpp' object='libnux_@NUX_API_VERSION@_la-FunctionGraph.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-FunctionGraph.lo `test -f '$(srcdir)/FunctionGraph.cpp' || echo '$(srcdir)/'`$(srcdir)/FunctionGraph.cpp
-
 libnux_@NUX_API_VERSION@_la-GridHLayout.lo: $(srcdir)/GridHLayout.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-GridHLayout.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GridHLayout.Tpo -c -o libnux_@NUX_API_VERSION@_la-GridHLayout.lo `test -f '$(srcdir)/GridHLayout.cpp' || echo '$(srcdir)/'`$(srcdir)/GridHLayout.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GridHLayout.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GridHLayout.Plo
@@ -1441,14 +961,6 @@ libnux_@NUX_API_VERSION@_la-GridHLayout.lo: $(srcdir)/GridHLayout.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GridHLayout.cpp' object='libnux_@NUX_API_VERSION@_la-GridHLayout.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-GridHLayout.lo `test -f '$(srcdir)/GridHLayout.cpp' || echo '$(srcdir)/'`$(srcdir)/GridHLayout.cpp
-
-libnux_@NUX_API_VERSION@_la-GridVLayout.lo: $(srcdir)/GridVLayout.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-GridVLayout.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GridVLayout.Tpo -c -o libnux_@NUX_API_VERSION@_la-GridVLayout.lo `test -f '$(srcdir)/GridVLayout.cpp' || echo '$(srcdir)/'`$(srcdir)/GridVLayout.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GridVLayout.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GridVLayout.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GridVLayout.cpp' object='libnux_@NUX_API_VERSION@_la-GridVLayout.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-GridVLayout.lo `test -f '$(srcdir)/GridVLayout.cpp' || echo '$(srcdir)/'`$(srcdir)/GridVLayout.cpp
 
 libnux_@NUX_API_VERSION@_la-GroupBox.lo: $(srcdir)/GroupBox.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-GroupBox.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GroupBox.Tpo -c -o libnux_@NUX_API_VERSION@_la-GroupBox.lo `test -f '$(srcdir)/GroupBox.cpp' || echo '$(srcdir)/'`$(srcdir)/GroupBox.cpp
@@ -1474,14 +986,6 @@ libnux_@NUX_API_VERSION@_la-HexRegExpValidator.lo: $(srcdir)/HexRegExpValidator.
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-HexRegExpValidator.lo `test -f '$(srcdir)/HexRegExpValidator.cpp' || echo '$(srcdir)/'`$(srcdir)/HexRegExpValidator.cpp
 
-libnux_@NUX_API_VERSION@_la-Histogram.lo: $(srcdir)/Histogram.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Histogram.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Histogram.Tpo -c -o libnux_@NUX_API_VERSION@_la-Histogram.lo `test -f '$(srcdir)/Histogram.cpp' || echo '$(srcdir)/'`$(srcdir)/Histogram.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Histogram.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Histogram.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Histogram.cpp' object='libnux_@NUX_API_VERSION@_la-Histogram.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-Histogram.lo `test -f '$(srcdir)/Histogram.cpp' || echo '$(srcdir)/'`$(srcdir)/Histogram.cpp
-
 libnux_@NUX_API_VERSION@_la-HLayout.lo: $(srcdir)/HLayout.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-HLayout.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-HLayout.Tpo -c -o libnux_@NUX_API_VERSION@_la-HLayout.lo `test -f '$(srcdir)/HLayout.cpp' || echo '$(srcdir)/'`$(srcdir)/HLayout.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-HLayout.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-HLayout.Plo
@@ -1498,14 +1002,6 @@ libnux_@NUX_API_VERSION@_la-HScrollBar.lo: $(srcdir)/HScrollBar.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-HScrollBar.lo `test -f '$(srcdir)/HScrollBar.cpp' || echo '$(srcdir)/'`$(srcdir)/HScrollBar.cpp
 
-libnux_@NUX_API_VERSION@_la-HSeparator.lo: $(srcdir)/HSeparator.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-HSeparator.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-HSeparator.Tpo -c -o libnux_@NUX_API_VERSION@_la-HSeparator.lo `test -f '$(srcdir)/HSeparator.cpp' || echo '$(srcdir)/'`$(srcdir)/HSeparator.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-HSeparator.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-HSeparator.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/HSeparator.cpp' object='libnux_@NUX_API_VERSION@_la-HSeparator.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-HSeparator.lo `test -f '$(srcdir)/HSeparator.cpp' || echo '$(srcdir)/'`$(srcdir)/HSeparator.cpp
-
 libnux_@NUX_API_VERSION@_la-HSplitter.lo: $(srcdir)/HSplitter.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-HSplitter.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-HSplitter.Tpo -c -o libnux_@NUX_API_VERSION@_la-HSplitter.lo `test -f '$(srcdir)/HSplitter.cpp' || echo '$(srcdir)/'`$(srcdir)/HSplitter.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-HSplitter.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-HSplitter.Plo
@@ -1513,22 +1009,6 @@ libnux_@NUX_API_VERSION@_la-HSplitter.lo: $(srcdir)/HSplitter.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/HSplitter.cpp' object='libnux_@NUX_API_VERSION@_la-HSplitter.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-HSplitter.lo `test -f '$(srcdir)/HSplitter.cpp' || echo '$(srcdir)/'`$(srcdir)/HSplitter.cpp
-
-libnux_@NUX_API_VERSION@_la-HToolBar.lo: $(srcdir)/HToolBar.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-HToolBar.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-HToolBar.Tpo -c -o libnux_@NUX_API_VERSION@_la-HToolBar.lo `test -f '$(srcdir)/HToolBar.cpp' || echo '$(srcdir)/'`$(srcdir)/HToolBar.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-HToolBar.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-HToolBar.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/HToolBar.cpp' object='libnux_@NUX_API_VERSION@_la-HToolBar.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-HToolBar.lo `test -f '$(srcdir)/HToolBar.cpp' || echo '$(srcdir)/'`$(srcdir)/HToolBar.cpp
-
-libnux_@NUX_API_VERSION@_la-HueRangeValuator.lo: $(srcdir)/HueRangeValuator.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-HueRangeValuator.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-HueRangeValuator.Tpo -c -o libnux_@NUX_API_VERSION@_la-HueRangeValuator.lo `test -f '$(srcdir)/HueRangeValuator.cpp' || echo '$(srcdir)/'`$(srcdir)/HueRangeValuator.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-HueRangeValuator.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-HueRangeValuator.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/HueRangeValuator.cpp' object='libnux_@NUX_API_VERSION@_la-HueRangeValuator.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-HueRangeValuator.lo `test -f '$(srcdir)/HueRangeValuator.cpp' || echo '$(srcdir)/'`$(srcdir)/HueRangeValuator.cpp
 
 libnux_@NUX_API_VERSION@_la-IntegerValidator.lo: $(srcdir)/IntegerValidator.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-IntegerValidator.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-IntegerValidator.Tpo -c -o libnux_@NUX_API_VERSION@_la-IntegerValidator.lo `test -f '$(srcdir)/IntegerValidator.cpp' || echo '$(srcdir)/'`$(srcdir)/IntegerValidator.cpp
@@ -1570,45 +1050,21 @@ libnux_@NUX_API_VERSION@_la-Layout.lo: $(srcdir)/Layout.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-Layout.lo `test -f '$(srcdir)/Layout.cpp' || echo '$(srcdir)/'`$(srcdir)/Layout.cpp
 
-libnux_@NUX_API_VERSION@_la-ListControl.lo: $(srcdir)/ListControl.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-ListControl.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ListControl.Tpo -c -o libnux_@NUX_API_VERSION@_la-ListControl.lo `test -f '$(srcdir)/ListControl.cpp' || echo '$(srcdir)/'`$(srcdir)/ListControl.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ListControl.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ListControl.Plo
+libnux_@NUX_API_VERSION@_la-LinearLayout.lo: $(srcdir)/LinearLayout.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-LinearLayout.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-LinearLayout.Tpo -c -o libnux_@NUX_API_VERSION@_la-LinearLayout.lo `test -f '$(srcdir)/LinearLayout.cpp' || echo '$(srcdir)/'`$(srcdir)/LinearLayout.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-LinearLayout.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-LinearLayout.Plo
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/ListControl.cpp' object='libnux_@NUX_API_VERSION@_la-ListControl.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/LinearLayout.cpp' object='libnux_@NUX_API_VERSION@_la-LinearLayout.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-ListControl.lo `test -f '$(srcdir)/ListControl.cpp' || echo '$(srcdir)/'`$(srcdir)/ListControl.cpp
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-LinearLayout.lo `test -f '$(srcdir)/LinearLayout.cpp' || echo '$(srcdir)/'`$(srcdir)/LinearLayout.cpp
 
-libnux_@NUX_API_VERSION@_la-Matrix3Editor.lo: $(srcdir)/Matrix3Editor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Matrix3Editor.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix3Editor.Tpo -c -o libnux_@NUX_API_VERSION@_la-Matrix3Editor.lo `test -f '$(srcdir)/Matrix3Editor.cpp' || echo '$(srcdir)/'`$(srcdir)/Matrix3Editor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix3Editor.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix3Editor.Plo
+libnux_@NUX_API_VERSION@_la-MainLoopGLib.lo: $(srcdir)/MainLoopGLib.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-MainLoopGLib.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-MainLoopGLib.Tpo -c -o libnux_@NUX_API_VERSION@_la-MainLoopGLib.lo `test -f '$(srcdir)/MainLoopGLib.cpp' || echo '$(srcdir)/'`$(srcdir)/MainLoopGLib.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-MainLoopGLib.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-MainLoopGLib.Plo
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Matrix3Editor.cpp' object='libnux_@NUX_API_VERSION@_la-Matrix3Editor.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/MainLoopGLib.cpp' object='libnux_@NUX_API_VERSION@_la-MainLoopGLib.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-Matrix3Editor.lo `test -f '$(srcdir)/Matrix3Editor.cpp' || echo '$(srcdir)/'`$(srcdir)/Matrix3Editor.cpp
-
-libnux_@NUX_API_VERSION@_la-Matrix3Preview.lo: $(srcdir)/Matrix3Preview.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Matrix3Preview.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix3Preview.Tpo -c -o libnux_@NUX_API_VERSION@_la-Matrix3Preview.lo `test -f '$(srcdir)/Matrix3Preview.cpp' || echo '$(srcdir)/'`$(srcdir)/Matrix3Preview.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix3Preview.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix3Preview.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Matrix3Preview.cpp' object='libnux_@NUX_API_VERSION@_la-Matrix3Preview.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-Matrix3Preview.lo `test -f '$(srcdir)/Matrix3Preview.cpp' || echo '$(srcdir)/'`$(srcdir)/Matrix3Preview.cpp
-
-libnux_@NUX_API_VERSION@_la-Matrix4Editor.lo: $(srcdir)/Matrix4Editor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Matrix4Editor.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix4Editor.Tpo -c -o libnux_@NUX_API_VERSION@_la-Matrix4Editor.lo `test -f '$(srcdir)/Matrix4Editor.cpp' || echo '$(srcdir)/'`$(srcdir)/Matrix4Editor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix4Editor.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix4Editor.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Matrix4Editor.cpp' object='libnux_@NUX_API_VERSION@_la-Matrix4Editor.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-Matrix4Editor.lo `test -f '$(srcdir)/Matrix4Editor.cpp' || echo '$(srcdir)/'`$(srcdir)/Matrix4Editor.cpp
-
-libnux_@NUX_API_VERSION@_la-Matrix4Preview.lo: $(srcdir)/Matrix4Preview.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Matrix4Preview.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix4Preview.Tpo -c -o libnux_@NUX_API_VERSION@_la-Matrix4Preview.lo `test -f '$(srcdir)/Matrix4Preview.cpp' || echo '$(srcdir)/'`$(srcdir)/Matrix4Preview.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix4Preview.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Matrix4Preview.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Matrix4Preview.cpp' object='libnux_@NUX_API_VERSION@_la-Matrix4Preview.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-Matrix4Preview.lo `test -f '$(srcdir)/Matrix4Preview.cpp' || echo '$(srcdir)/'`$(srcdir)/Matrix4Preview.cpp
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-MainLoopGLib.lo `test -f '$(srcdir)/MainLoopGLib.cpp' || echo '$(srcdir)/'`$(srcdir)/MainLoopGLib.cpp
 
 libnux_@NUX_API_VERSION@_la-MenuPage.lo: $(srcdir)/MenuPage.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-MenuPage.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-MenuPage.Tpo -c -o libnux_@NUX_API_VERSION@_la-MenuPage.lo `test -f '$(srcdir)/MenuPage.cpp' || echo '$(srcdir)/'`$(srcdir)/MenuPage.cpp
@@ -1633,30 +1089,6 @@ libnux_@NUX_API_VERSION@_la-MouseAreaCtrl.lo: $(srcdir)/MouseAreaCtrl.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/MouseAreaCtrl.cpp' object='libnux_@NUX_API_VERSION@_la-MouseAreaCtrl.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-MouseAreaCtrl.lo `test -f '$(srcdir)/MouseAreaCtrl.cpp' || echo '$(srcdir)/'`$(srcdir)/MouseAreaCtrl.cpp
-
-libnux_@NUX_API_VERSION@_la-MouseHandler.lo: $(srcdir)/MouseHandler.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-MouseHandler.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-MouseHandler.Tpo -c -o libnux_@NUX_API_VERSION@_la-MouseHandler.lo `test -f '$(srcdir)/MouseHandler.cpp' || echo '$(srcdir)/'`$(srcdir)/MouseHandler.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-MouseHandler.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-MouseHandler.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/MouseHandler.cpp' object='libnux_@NUX_API_VERSION@_la-MouseHandler.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-MouseHandler.lo `test -f '$(srcdir)/MouseHandler.cpp' || echo '$(srcdir)/'`$(srcdir)/MouseHandler.cpp
-
-libnux_@NUX_API_VERSION@_la-NodeItem.lo: $(srcdir)/NodeItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-NodeItem.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-NodeItem.Tpo -c -o libnux_@NUX_API_VERSION@_la-NodeItem.lo `test -f '$(srcdir)/NodeItem.cpp' || echo '$(srcdir)/'`$(srcdir)/NodeItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-NodeItem.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-NodeItem.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/NodeItem.cpp' object='libnux_@NUX_API_VERSION@_la-NodeItem.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-NodeItem.lo `test -f '$(srcdir)/NodeItem.cpp' || echo '$(srcdir)/'`$(srcdir)/NodeItem.cpp
-
-libnux_@NUX_API_VERSION@_la-NodeNetProtocol.lo: $(srcdir)/NodeNetProtocol.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-NodeNetProtocol.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-NodeNetProtocol.Tpo -c -o libnux_@NUX_API_VERSION@_la-NodeNetProtocol.lo `test -f '$(srcdir)/NodeNetProtocol.cpp' || echo '$(srcdir)/'`$(srcdir)/NodeNetProtocol.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-NodeNetProtocol.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-NodeNetProtocol.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/NodeNetProtocol.cpp' object='libnux_@NUX_API_VERSION@_la-NodeNetProtocol.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-NodeNetProtocol.lo `test -f '$(srcdir)/NodeNetProtocol.cpp' || echo '$(srcdir)/'`$(srcdir)/NodeNetProtocol.cpp
 
 libnux_@NUX_API_VERSION@_la-NumericValuator.lo: $(srcdir)/NumericValuator.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-NumericValuator.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-NumericValuator.Tpo -c -o libnux_@NUX_API_VERSION@_la-NumericValuator.lo `test -f '$(srcdir)/NumericValuator.cpp' || echo '$(srcdir)/'`$(srcdir)/NumericValuator.cpp
@@ -1706,13 +1138,21 @@ libnux_@NUX_API_VERSION@_la-PopUpWindow.lo: $(srcdir)/PopUpWindow.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-PopUpWindow.lo `test -f '$(srcdir)/PopUpWindow.cpp' || echo '$(srcdir)/'`$(srcdir)/PopUpWindow.cpp
 
-libnux_@NUX_API_VERSION@_la-PropertyList.lo: $(srcdir)/PropertyList.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-PropertyList.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-PropertyList.Tpo -c -o libnux_@NUX_API_VERSION@_la-PropertyList.lo `test -f '$(srcdir)/PropertyList.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyList.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-PropertyList.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-PropertyList.Plo
+libnux_@NUX_API_VERSION@_la-RadioButton.lo: $(srcdir)/RadioButton.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-RadioButton.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RadioButton.Tpo -c -o libnux_@NUX_API_VERSION@_la-RadioButton.lo `test -f '$(srcdir)/RadioButton.cpp' || echo '$(srcdir)/'`$(srcdir)/RadioButton.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RadioButton.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RadioButton.Plo
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PropertyList.cpp' object='libnux_@NUX_API_VERSION@_la-PropertyList.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/RadioButton.cpp' object='libnux_@NUX_API_VERSION@_la-RadioButton.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-PropertyList.lo `test -f '$(srcdir)/PropertyList.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyList.cpp
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-RadioButton.lo `test -f '$(srcdir)/RadioButton.cpp' || echo '$(srcdir)/'`$(srcdir)/RadioButton.cpp
+
+libnux_@NUX_API_VERSION@_la-RadioButtonGroup.lo: $(srcdir)/RadioButtonGroup.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-RadioButtonGroup.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RadioButtonGroup.Tpo -c -o libnux_@NUX_API_VERSION@_la-RadioButtonGroup.lo `test -f '$(srcdir)/RadioButtonGroup.cpp' || echo '$(srcdir)/'`$(srcdir)/RadioButtonGroup.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RadioButtonGroup.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RadioButtonGroup.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/RadioButtonGroup.cpp' object='libnux_@NUX_API_VERSION@_la-RadioButtonGroup.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-RadioButtonGroup.lo `test -f '$(srcdir)/RadioButtonGroup.cpp' || echo '$(srcdir)/'`$(srcdir)/RadioButtonGroup.cpp
 
 libnux_@NUX_API_VERSION@_la-RangeValue.lo: $(srcdir)/RangeValue.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-RangeValue.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RangeValue.Tpo -c -o libnux_@NUX_API_VERSION@_la-RangeValue.lo `test -f '$(srcdir)/RangeValue.cpp' || echo '$(srcdir)/'`$(srcdir)/RangeValue.cpp
@@ -1778,22 +1218,6 @@ libnux_@NUX_API_VERSION@_la-SpinBox_Logic.lo: $(srcdir)/SpinBox_Logic.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-SpinBox_Logic.lo `test -f '$(srcdir)/SpinBox_Logic.cpp' || echo '$(srcdir)/'`$(srcdir)/SpinBox_Logic.cpp
 
-libnux_@NUX_API_VERSION@_la-SplineCurveEditor.lo: $(srcdir)/SplineCurveEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-SplineCurveEditor.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-SplineCurveEditor.Tpo -c -o libnux_@NUX_API_VERSION@_la-SplineCurveEditor.lo `test -f '$(srcdir)/SplineCurveEditor.cpp' || echo '$(srcdir)/'`$(srcdir)/SplineCurveEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-SplineCurveEditor.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-SplineCurveEditor.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/SplineCurveEditor.cpp' object='libnux_@NUX_API_VERSION@_la-SplineCurveEditor.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-SplineCurveEditor.lo `test -f '$(srcdir)/SplineCurveEditor.cpp' || echo '$(srcdir)/'`$(srcdir)/SplineCurveEditor.cpp
-
-libnux_@NUX_API_VERSION@_la-SplineCurvePreview.lo: $(srcdir)/SplineCurvePreview.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-SplineCurvePreview.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-SplineCurvePreview.Tpo -c -o libnux_@NUX_API_VERSION@_la-SplineCurvePreview.lo `test -f '$(srcdir)/SplineCurvePreview.cpp' || echo '$(srcdir)/'`$(srcdir)/SplineCurvePreview.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-SplineCurvePreview.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-SplineCurvePreview.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/SplineCurvePreview.cpp' object='libnux_@NUX_API_VERSION@_la-SplineCurvePreview.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-SplineCurvePreview.lo `test -f '$(srcdir)/SplineCurvePreview.cpp' || echo '$(srcdir)/'`$(srcdir)/SplineCurvePreview.cpp
-
 libnux_@NUX_API_VERSION@_la-StaticText.lo: $(srcdir)/StaticText.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-StaticText.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-StaticText.Tpo -c -o libnux_@NUX_API_VERSION@_la-StaticText.lo `test -f '$(srcdir)/StaticText.cpp' || echo '$(srcdir)/'`$(srcdir)/StaticText.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-StaticText.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-StaticText.Plo
@@ -1818,22 +1242,6 @@ libnux_@NUX_API_VERSION@_la-SystemThread.lo: $(srcdir)/SystemThread.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-SystemThread.lo `test -f '$(srcdir)/SystemThread.cpp' || echo '$(srcdir)/'`$(srcdir)/SystemThread.cpp
 
-libnux_@NUX_API_VERSION@_la-TableCtrl.lo: $(srcdir)/TableCtrl.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-TableCtrl.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TableCtrl.Tpo -c -o libnux_@NUX_API_VERSION@_la-TableCtrl.lo `test -f '$(srcdir)/TableCtrl.cpp' || echo '$(srcdir)/'`$(srcdir)/TableCtrl.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TableCtrl.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TableCtrl.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/TableCtrl.cpp' object='libnux_@NUX_API_VERSION@_la-TableCtrl.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-TableCtrl.lo `test -f '$(srcdir)/TableCtrl.cpp' || echo '$(srcdir)/'`$(srcdir)/TableCtrl.cpp
-
-libnux_@NUX_API_VERSION@_la-TableItem.lo: $(srcdir)/TableItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-TableItem.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TableItem.Tpo -c -o libnux_@NUX_API_VERSION@_la-TableItem.lo `test -f '$(srcdir)/TableItem.cpp' || echo '$(srcdir)/'`$(srcdir)/TableItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TableItem.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TableItem.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/TableItem.cpp' object='libnux_@NUX_API_VERSION@_la-TableItem.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-TableItem.lo `test -f '$(srcdir)/TableItem.cpp' || echo '$(srcdir)/'`$(srcdir)/TableItem.cpp
-
 libnux_@NUX_API_VERSION@_la-TabView.lo: $(srcdir)/TabView.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-TabView.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TabView.Tpo -c -o libnux_@NUX_API_VERSION@_la-TabView.lo `test -f '$(srcdir)/TabView.cpp' || echo '$(srcdir)/'`$(srcdir)/TabView.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TabView.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TabView.Plo
@@ -1857,14 +1265,6 @@ libnux_@NUX_API_VERSION@_la-TextureArea.lo: $(srcdir)/TextureArea.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/TextureArea.cpp' object='libnux_@NUX_API_VERSION@_la-TextureArea.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-TextureArea.lo `test -f '$(srcdir)/TextureArea.cpp' || echo '$(srcdir)/'`$(srcdir)/TextureArea.cpp
-
-libnux_@NUX_API_VERSION@_la-TimeGraph.lo: $(srcdir)/TimeGraph.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-TimeGraph.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TimeGraph.Tpo -c -o libnux_@NUX_API_VERSION@_la-TimeGraph.lo `test -f '$(srcdir)/TimeGraph.cpp' || echo '$(srcdir)/'`$(srcdir)/TimeGraph.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TimeGraph.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TimeGraph.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/TimeGraph.cpp' object='libnux_@NUX_API_VERSION@_la-TimeGraph.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-TimeGraph.lo `test -f '$(srcdir)/TimeGraph.cpp' || echo '$(srcdir)/'`$(srcdir)/TimeGraph.cpp
 
 libnux_@NUX_API_VERSION@_la-Timeline.lo: $(srcdir)/Timeline.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Timeline.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Timeline.Tpo -c -o libnux_@NUX_API_VERSION@_la-Timeline.lo `test -f '$(srcdir)/Timeline.cpp' || echo '$(srcdir)/'`$(srcdir)/Timeline.cpp
@@ -1906,14 +1306,6 @@ libnux_@NUX_API_VERSION@_la-ToolButton.lo: $(srcdir)/ToolButton.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-ToolButton.lo `test -f '$(srcdir)/ToolButton.cpp' || echo '$(srcdir)/'`$(srcdir)/ToolButton.cpp
 
-libnux_@NUX_API_VERSION@_la-TreeControl.lo: $(srcdir)/TreeControl.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-TreeControl.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TreeControl.Tpo -c -o libnux_@NUX_API_VERSION@_la-TreeControl.lo `test -f '$(srcdir)/TreeControl.cpp' || echo '$(srcdir)/'`$(srcdir)/TreeControl.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TreeControl.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TreeControl.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/TreeControl.cpp' object='libnux_@NUX_API_VERSION@_la-TreeControl.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-TreeControl.lo `test -f '$(srcdir)/TreeControl.cpp' || echo '$(srcdir)/'`$(srcdir)/TreeControl.cpp
-
 libnux_@NUX_API_VERSION@_la-Utils.lo: $(srcdir)/Utils.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Utils.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Utils.Tpo -c -o libnux_@NUX_API_VERSION@_la-Utils.lo `test -f '$(srcdir)/Utils.cpp' || echo '$(srcdir)/'`$(srcdir)/Utils.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Utils.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Utils.Plo
@@ -1938,46 +1330,6 @@ libnux_@NUX_API_VERSION@_la-Validator.lo: $(srcdir)/Validator.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-Validator.lo `test -f '$(srcdir)/Validator.cpp' || echo '$(srcdir)/'`$(srcdir)/Validator.cpp
 
-libnux_@NUX_API_VERSION@_la-Valuator.lo: $(srcdir)/Valuator.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Valuator.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Valuator.Tpo -c -o libnux_@NUX_API_VERSION@_la-Valuator.lo `test -f '$(srcdir)/Valuator.cpp' || echo '$(srcdir)/'`$(srcdir)/Valuator.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Valuator.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Valuator.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Valuator.cpp' object='libnux_@NUX_API_VERSION@_la-Valuator.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-Valuator.lo `test -f '$(srcdir)/Valuator.cpp' || echo '$(srcdir)/'`$(srcdir)/Valuator.cpp
-
-libnux_@NUX_API_VERSION@_la-ValuatorDouble.lo: $(srcdir)/ValuatorDouble.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-ValuatorDouble.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ValuatorDouble.Tpo -c -o libnux_@NUX_API_VERSION@_la-ValuatorDouble.lo `test -f '$(srcdir)/ValuatorDouble.cpp' || echo '$(srcdir)/'`$(srcdir)/ValuatorDouble.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ValuatorDouble.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ValuatorDouble.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/ValuatorDouble.cpp' object='libnux_@NUX_API_VERSION@_la-ValuatorDouble.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-ValuatorDouble.lo `test -f '$(srcdir)/ValuatorDouble.cpp' || echo '$(srcdir)/'`$(srcdir)/ValuatorDouble.cpp
-
-libnux_@NUX_API_VERSION@_la-ValuatorInt.lo: $(srcdir)/ValuatorInt.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-ValuatorInt.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ValuatorInt.Tpo -c -o libnux_@NUX_API_VERSION@_la-ValuatorInt.lo `test -f '$(srcdir)/ValuatorInt.cpp' || echo '$(srcdir)/'`$(srcdir)/ValuatorInt.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ValuatorInt.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ValuatorInt.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/ValuatorInt.cpp' object='libnux_@NUX_API_VERSION@_la-ValuatorInt.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-ValuatorInt.lo `test -f '$(srcdir)/ValuatorInt.cpp' || echo '$(srcdir)/'`$(srcdir)/ValuatorInt.cpp
-
-libnux_@NUX_API_VERSION@_la-Vector3Valuator.lo: $(srcdir)/Vector3Valuator.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Vector3Valuator.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Vector3Valuator.Tpo -c -o libnux_@NUX_API_VERSION@_la-Vector3Valuator.lo `test -f '$(srcdir)/Vector3Valuator.cpp' || echo '$(srcdir)/'`$(srcdir)/Vector3Valuator.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Vector3Valuator.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Vector3Valuator.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Vector3Valuator.cpp' object='libnux_@NUX_API_VERSION@_la-Vector3Valuator.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-Vector3Valuator.lo `test -f '$(srcdir)/Vector3Valuator.cpp' || echo '$(srcdir)/'`$(srcdir)/Vector3Valuator.cpp
-
-libnux_@NUX_API_VERSION@_la-Vector3ValuatorDouble.lo: $(srcdir)/Vector3ValuatorDouble.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Vector3ValuatorDouble.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Vector3ValuatorDouble.Tpo -c -o libnux_@NUX_API_VERSION@_la-Vector3ValuatorDouble.lo `test -f '$(srcdir)/Vector3ValuatorDouble.cpp' || echo '$(srcdir)/'`$(srcdir)/Vector3ValuatorDouble.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Vector3ValuatorDouble.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Vector3ValuatorDouble.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Vector3ValuatorDouble.cpp' object='libnux_@NUX_API_VERSION@_la-Vector3ValuatorDouble.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-Vector3ValuatorDouble.lo `test -f '$(srcdir)/Vector3ValuatorDouble.cpp' || echo '$(srcdir)/'`$(srcdir)/Vector3ValuatorDouble.cpp
-
 libnux_@NUX_API_VERSION@_la-VLayout.lo: $(srcdir)/VLayout.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-VLayout.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-VLayout.Tpo -c -o libnux_@NUX_API_VERSION@_la-VLayout.lo `test -f '$(srcdir)/VLayout.cpp' || echo '$(srcdir)/'`$(srcdir)/VLayout.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-VLayout.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-VLayout.Plo
@@ -1994,14 +1346,6 @@ libnux_@NUX_API_VERSION@_la-VScrollBar.lo: $(srcdir)/VScrollBar.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-VScrollBar.lo `test -f '$(srcdir)/VScrollBar.cpp' || echo '$(srcdir)/'`$(srcdir)/VScrollBar.cpp
 
-libnux_@NUX_API_VERSION@_la-VSeparator.lo: $(srcdir)/VSeparator.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-VSeparator.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-VSeparator.Tpo -c -o libnux_@NUX_API_VERSION@_la-VSeparator.lo `test -f '$(srcdir)/VSeparator.cpp' || echo '$(srcdir)/'`$(srcdir)/VSeparator.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-VSeparator.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-VSeparator.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/VSeparator.cpp' object='libnux_@NUX_API_VERSION@_la-VSeparator.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-VSeparator.lo `test -f '$(srcdir)/VSeparator.cpp' || echo '$(srcdir)/'`$(srcdir)/VSeparator.cpp
-
 libnux_@NUX_API_VERSION@_la-VSplitter.lo: $(srcdir)/VSplitter.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-VSplitter.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-VSplitter.Tpo -c -o libnux_@NUX_API_VERSION@_la-VSplitter.lo `test -f '$(srcdir)/VSplitter.cpp' || echo '$(srcdir)/'`$(srcdir)/VSplitter.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-VSplitter.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-VSplitter.Plo
@@ -2009,14 +1353,6 @@ libnux_@NUX_API_VERSION@_la-VSplitter.lo: $(srcdir)/VSplitter.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/VSplitter.cpp' object='libnux_@NUX_API_VERSION@_la-VSplitter.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-VSplitter.lo `test -f '$(srcdir)/VSplitter.cpp' || echo '$(srcdir)/'`$(srcdir)/VSplitter.cpp
-
-libnux_@NUX_API_VERSION@_la-VToolBar.lo: $(srcdir)/VToolBar.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-VToolBar.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-VToolBar.Tpo -c -o libnux_@NUX_API_VERSION@_la-VToolBar.lo `test -f '$(srcdir)/VToolBar.cpp' || echo '$(srcdir)/'`$(srcdir)/VToolBar.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-VToolBar.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-VToolBar.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/VToolBar.cpp' object='libnux_@NUX_API_VERSION@_la-VToolBar.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-VToolBar.lo `test -f '$(srcdir)/VToolBar.cpp' || echo '$(srcdir)/'`$(srcdir)/VToolBar.cpp
 
 libnux_@NUX_API_VERSION@_la-WidgetMetrics.lo: $(srcdir)/WidgetMetrics.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-WidgetMetrics.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-WidgetMetrics.Tpo -c -o libnux_@NUX_API_VERSION@_la-WidgetMetrics.lo `test -f '$(srcdir)/WidgetMetrics.cpp' || echo '$(srcdir)/'`$(srcdir)/WidgetMetrics.cpp
@@ -2087,26 +1423,6 @@ uninstall-nuxHEADERS:
 	test -n "$$files" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(nuxdir)' && rm -f" $$files ")"; \
 	cd "$(DESTDIR)$(nuxdir)" && rm -f $$files
-install-nux_property_itemHEADERS: $(nux_property_item_HEADERS)
-	@$(NORMAL_INSTALL)
-	test -z "$(nux_property_itemdir)" || $(MKDIR_P) "$(DESTDIR)$(nux_property_itemdir)"
-	@list='$(nux_property_item_HEADERS)'; test -n "$(nux_property_itemdir)" || list=; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(nux_property_itemdir)'"; \
-	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(nux_property_itemdir)" || exit $$?; \
-	done
-
-uninstall-nux_property_itemHEADERS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(nux_property_item_HEADERS)'; test -n "$(nux_property_itemdir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	test -n "$$files" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(nux_property_itemdir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(nux_property_itemdir)" && rm -f $$files
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -2194,7 +1510,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(LTLIBRARIES) $(DATA) $(HEADERS)
 installdirs:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(nuxdir)" "$(DESTDIR)$(nux_property_itemdir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(nuxdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -2247,8 +1563,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-nuxHEADERS install-nux_property_itemHEADERS \
-	install-pkgconfigDATA
+install-data-am: install-nuxHEADERS install-pkgconfigDATA
 
 install-dvi: install-dvi-am
 
@@ -2295,7 +1610,7 @@ ps: ps-am
 ps-am:
 
 uninstall-am: uninstall-libLTLIBRARIES uninstall-nuxHEADERS \
-	uninstall-nux_property_itemHEADERS uninstall-pkgconfigDATA
+	uninstall-pkgconfigDATA
 
 .MAKE: install-am install-strip
 
@@ -2307,13 +1622,12 @@ uninstall-am: uninstall-libLTLIBRARIES uninstall-nuxHEADERS \
 	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am \
 	install-libLTLIBRARIES install-man install-nuxHEADERS \
-	install-nux_property_itemHEADERS install-pdf install-pdf-am \
-	install-pkgconfigDATA install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-libLTLIBRARIES \
-	uninstall-nuxHEADERS uninstall-nux_property_itemHEADERS \
+	install-pdf install-pdf-am install-pkgconfigDATA install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-libLTLIBRARIES uninstall-nuxHEADERS \
 	uninstall-pkgconfigDATA
 
 

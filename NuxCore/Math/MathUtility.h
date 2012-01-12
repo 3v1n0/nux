@@ -55,7 +55,7 @@ namespace nux
 
   template<typename T> inline T Align (const T Ptr, int Alignment)
   {
-    return (T) (((NUX_POINTER) Ptr + Alignment - 1) & ~ (Alignment - 1));
+    return (T) (((unsigned int) Ptr + Alignment - 1) & ~ (Alignment - 1));
   }
 
   //Bitwise rotation on the left.
@@ -174,20 +174,20 @@ namespace nux
     return std::rand() % max_random;
   }
 
-  inline t_size DiffPointer (void *Ptr0, void *Ptr1)
+  inline size_t DiffPointer (void *Ptr0, void *Ptr1)
   {
-    if ((t_size) Ptr0 >= (t_size) Ptr1) return (t_size) ((t_size) Ptr0 - (t_size) Ptr1);
+    if ((size_t) Ptr0 >= (size_t) Ptr1) return (size_t) ((size_t) Ptr0 - (size_t) Ptr1);
 
-    return (t_size) ((t_size) Ptr1 - (t_size) Ptr0);
+    return (size_t) ((size_t) Ptr1 - (size_t) Ptr0);
   }
   // Dangerous to use!
-  template<typename T> inline T SubstractPointer (void *Ptr, t_size Value)
+  template<typename T> inline T SubstractPointer (void *Ptr, size_t Value)
   {
-    return (T) (((t_size) Ptr) - Value);
+    return (T) (((size_t) Ptr) - Value);
   }
-  template<typename T> inline T AddPointer (void *Ptr, t_size Value)
+  template<typename T> inline T AddPointer (void *Ptr, size_t Value)
   {
-    return (T) (((t_size) Ptr) + Value);
+    return (T) (((size_t) Ptr) + Value);
   }
 
   //! Round up to the nearest multiple of Alignment that is greater or equal to Value
@@ -221,9 +221,9 @@ namespace nux
       Revert Byte order
       0x0011 -> 0x1100
   */
-  inline t_u16 ReverseByteOrdering (t_u16 value)
+  inline unsigned short ReverseByteOrdering (unsigned short value)
   {
-    t_u16 temp;
+    unsigned short temp;
     t_u8 *src = (t_u8 *) &value;
     t_u8 *dest = (t_u8 *) &temp;
 
@@ -237,9 +237,9 @@ namespace nux
       Revert Byte order
       0x00112233 -> 0x33221100
   */
-  inline t_u32 ReverseByteOrdering (t_u32 value)
+  inline unsigned int ReverseByteOrdering (unsigned int value)
   {
-    t_u32 temp;
+    unsigned int temp;
     t_u8 *src = (t_u8 *) &value;
     t_u8 *dest = (t_u8 *) &temp;
 
@@ -255,9 +255,9 @@ namespace nux
       Revert Byte order
       0x0011223344556677 -> 0x7766554433221100
   */
-  inline t_u64 ReverseByteOrdering (t_u64 value)
+  inline unsigned long long ReverseByteOrdering (unsigned long long value)
   {
-    t_u64 temp;
+    unsigned long long temp;
     t_u8 *src = (t_u8 *) &value;
     t_u8 *dest = (t_u8 *) &temp;
 

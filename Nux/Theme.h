@@ -127,21 +127,25 @@ namespace nux
     bool draw_borders_only;
   };
 
+  //! Load textures and other data for user interface rendering.
+  /*!
+      Load textures and other data for user interface rendering.
+  */
   class UXTheme
   {
   public:
     UXTheme();
     ~UXTheme();
 
-    const PainterImage *GetImage (UXStyleImageRef style);
-    Rect GetImageGeometry (UXStyleImageRef style);
+    const PainterImage *GetImage(UXStyleImageRef style);
+    Rect GetImageGeometry(UXStyleImageRef style);
 
 
   private:
     void LoadPainterImages();
-    BaseTexture *Load2DTextureFile (const char *filename);
-    //BaseTexture *Load2DRectangleTextureFile (const char *filename);
-    BaseTexture *Load2DTextureFileGenerateAlpha (const char *filename, int red, int green, int blue);
+    BaseTexture *Load2DTextureFile(const char *filename);
+    //BaseTexture *Load2DRectangleTextureFile(const char *filename);
+    BaseTexture *Load2DTextureFileGenerateAlpha(const char *filename, int red, int green, int blue);
 
     std::list<PainterImage *> m_PainterImageList;
 

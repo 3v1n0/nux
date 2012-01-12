@@ -242,7 +242,7 @@ namespace nux
       return false;
     }
 
-    t_u32 Size = Reader->GetFileSize();
+    unsigned int Size = Reader->GetFileSize();
     std::vector<ANSICHAR> ByteArray (Size + 2);
     Reader->Serialize (&ByteArray[0], Size);
     bool Success = Reader->Close();
@@ -290,7 +290,7 @@ namespace nux
       ResultArray.clear();
       ResultArray.resize (Size + 1);
 
-      for (t_u32 i = 0; i < Size; i++)
+      for (unsigned int i = 0; i < Size; i++)
         ResultArray[i] = ConvertAnsiCharToTCHAR (ByteArray[i]);
 
       ResultArray[Size] = 0;
@@ -347,20 +347,20 @@ namespace nux
 
     if ( SaveAsUnicode || (sizeof (TCHAR) == 1) )
     {
-      t_u32 s = (t_u32) String.Length() * sizeof (TCHAR);
-      Ar->Serialize ( NUX_CONST_CAST (TCHAR *, String.GetTCharPtr() ), (t_u32) s);
+      unsigned int s = (unsigned int) String.Length() * sizeof (TCHAR);
+      Ar->Serialize ( NUX_CONST_CAST (TCHAR *, String.GetTCharPtr() ), (unsigned int) s);
     }
     else
     {
-      t_u32 s = (t_u32) String.Length();
-      std::vector<ANSICHAR> AnsiBuffer ( (t_u32) s);
+      unsigned int s = (unsigned int) String.Length();
+      std::vector<ANSICHAR> AnsiBuffer ( (unsigned int) s);
 
       // Cast all character down from UTF16 to ANSI
-      for (t_u32 i = 0; i < (t_u32) String.Length(); i++ )
-        AnsiBuffer[i] = ConvertTCHARToAnsiChar ( (t_u32) String[i]);
+      for (unsigned int i = 0; i < (unsigned int) String.Length(); i++ )
+        AnsiBuffer[i] = ConvertTCHARToAnsiChar ( (unsigned int) String[i]);
 
       // serialize
-      s = (t_u32) String.Length();
+      s = (unsigned int) String.Length();
       Ar->Serialize ( NUX_CONST_CAST (ANSICHAR *, &AnsiBuffer[0]), s);
     }
 

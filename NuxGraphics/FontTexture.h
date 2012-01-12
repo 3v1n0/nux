@@ -56,7 +56,7 @@ namespace nux
     int width;
     int height;
     int ybearing; // max ybearing of the string
-    int downline; // max downline of the string (max space below the baseline)
+    int downline; // max downline of the string(max space below the baseline)
   };
 
   class PageBBox
@@ -98,17 +98,17 @@ namespace nux
 
 
     CharDescriptor()
-      : x ( 0 )
-      , y ( 0 )
-      , Width ( 0 )
-      , Height ( 0 )
-      , XOffset ( 0 )
-      , YOffset ( 0 )
-      , page ( 0 )
-      , XAdvance ( 0 )
-      , abcA ( 0 )
-      , abcB ( 0 )
-      , abcC ( 0 )
+      : x( 0 )
+      , y( 0 )
+      , Width( 0 )
+      , Height( 0 )
+      , XOffset( 0 )
+      , YOffset( 0 )
+      , page( 0 )
+      , XAdvance( 0 )
+      , abcA( 0 )
+      , abcB( 0 )
+      , abcC( 0 )
     { }
   };
 
@@ -157,7 +157,7 @@ namespace nux
   };
 
 // Information about a glyph. Tex_y2 can be calculated from tex_y1
-// and _tex_line_height (see below). Advance is the width of the
+// and _tex_line_height(see below). Advance is the width of the
 // glyph in screen space.
   struct Glyph
   {
@@ -171,15 +171,15 @@ namespace nux
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // This font system loads in a custom file containing a gray scale
-// texture (used as alpha texture) with all the letters on it, and
+// texture(used as alpha texture) with all the letters on it, and
 // information about what glyph is where.
   class FontTexture: public Object
   {
   public:
-    NUX_DECLARE_OBJECT_TYPE (FontTexture, Object);
+    NUX_DECLARE_OBJECT_TYPE(FontTexture, Object);
 
-    FontTexture (const TCHAR *FontFile, NUX_FILE_LINE_PROTO);
-    FontTexture (INT width, INT height, BYTE *Texture);
+    FontTexture(const char *FontFile, NUX_FILE_LINE_PROTO);
+    FontTexture(INT width, INT height, BYTE *Texture);
     ~FontTexture();
 
     // The line height is a constant;
@@ -189,14 +189,14 @@ namespace nux
     }
     // Knowing the width of a character or a string can be useful if you
     // want your UI to look good at all.
-    int GetCharWidth (const TCHAR &c) const;
-    int GetStringWidth (const NString &str) const;
-    int GetCharStringWidth (const TCHAR *str) const;
-    int GetStringWidth (const NString &str, int num_char_to_compute) const;
-    int GetCharStringWidth (const TCHAR *str, int num_char_to_compute) const;
+    int GetCharWidth(const char &c) const;
+    int GetStringWidth(const NString &str) const;
+    int GetCharStringWidth(const char *str) const;
+    int GetStringWidth(const NString &str, int num_char_to_compute) const;
+    int GetCharStringWidth(const char *str, int num_char_to_compute) const;
     int GetFontHeight();
 
-    //    CursorPosToX (similar to ScriptStringCPtoX from microsoft UniScript)
+    //    CursorPosToX(similar to ScriptStringCPtoX from microsoft UniScript)
     //        The CursorPosToX function returns the x-coordinate for the leading or trailing edge of a character position.
 
     //        Parameters
@@ -211,12 +211,12 @@ namespace nux
     //          If the function succeeds, it returns S_OK.
     //          If the function fails, it returns an HRESULT.
     //          The return value can be tested with the SUCCEEDED and FAILED macros.
-    bool CursorPosToX (const NString &Str,
+    bool CursorPosToX(const NString &Str,
                        int icp,
                        bool fTrailing,
                        int *pX);
 
-    //    XToCursorPosition (similar to ScriptStringXtoCP from microsoft UniScript)
+    //    XToCursorPosition(similar to ScriptStringXtoCP from microsoft UniScript)
     //        The XToCursorPosition function converts an x-coordinate to a character position.
     //
     //    Parameters
@@ -233,13 +233,13 @@ namespace nux
     //          If the function is successful, it returns S_OK.
     //          If the function fails, it returns an HRESULT.
     //          The return value can be tested with the SUCCEEDED and FAILED macros.
-    bool XToCursorPosition (const NString &Str,
+    bool XToCursorPosition(const NString &Str,
                             int iX,
-                            t_u32 FirstVisibleCharIndex,
+                            unsigned int FirstVisibleCharIndex,
                             int *piCh,
                             int *piTrailing);
 
-    bool BMFontParseFNT ( std::istream &Stream);
+    bool BMFontParseFNT( std::istream &Stream);
 
     const Charset &GetFontInfo() const;
 
@@ -248,7 +248,7 @@ namespace nux
   private:
     INT _RefCount;
     INT _textureBMF;
-    std::vector<t_u32> m_gl_texture_id;
+    std::vector<unsigned int> m_gl_texture_id;
     Charset m_Charset;
 
     friend class FontRenderer;

@@ -22,8 +22,6 @@
 
 #include "Nux.h"
 #include "HLayout.h"
-#include "VLayout.h"
-#include "EditTextBox.h"
 #include "CheckBox.h"
 #include "StaticText.h"
 
@@ -31,99 +29,84 @@ namespace nux
 {
   NUX_IMPLEMENT_OBJECT_TYPE(CheckBox);
   
-  CheckBox::CheckBox (std::string label, NUX_FILE_LINE_DECL)
-  : AbstractButton (NUX_FILE_LINE_PARAM)
-  , label(label)
+  CheckBox::CheckBox(const std::string &str, bool state, NUX_FILE_LINE_DECL)
+    : AbstractCheckedButton(str, state, NUX_FILE_LINE_PARAM)
   {
-    togglable_ = true;
-    Init();
   }
 
   CheckBox::~CheckBox()
   {
   }
 
-  void CheckBox::Init()
-  {
-    SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-
-    state.changed.connect(sigc::mem_fun(this, &CheckBox::OnStateChanged));
-
-    // connect up to the label signal
-    label.changed.connect(sigc::mem_fun(this, &CheckBox::OnLabelChanged));
-
-    Layout *layout = new VLayout(NUX_TRACKER_LOCATION);
-    SetLayout(layout);
-
-    RebuildLayout();
-  }
-
-  void CheckBox::OnStateChanged(int value)
-  {
-    QueueDraw();
-  }
-
-  void CheckBox::OnLabelChanged(std::string value)
-  {
-    RebuildLayout();
-  }
-
-  void CheckBox::RebuildLayout()
-  {
-    Layout *layout = new HLayout(NUX_TRACKER_LOCATION);
-
-    // add some padding for our checkbox draw
-    layout->AddLayout(new SpaceLayout(20, 20, 20, 20), 0);
-
-    if(label().empty() == false)
-    {
-      StaticText *text = new StaticText(TEXT(label().c_str()));
-      layout->AddView (text, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
-    }
-
-    Layout *HPadding = new HLayout(NUX_TRACKER_LOCATION);
-    Layout *VPadding = new VLayout(NUX_TRACKER_LOCATION);
-
-    HPadding->AddLayout(new nux::SpaceLayout(12,12,12,12), 0);
-    VPadding->AddLayout(new nux::SpaceLayout(12,12,12,12), 0);
-    VPadding->AddLayout(layout, 0, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
-    VPadding->AddLayout(new nux::SpaceLayout(12,12,12,12), 0);
-    HPadding->AddLayout(VPadding, 0, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_MATCHCONTENT);
-    HPadding->AddLayout(new nux::SpaceLayout(12,12,12,12), 0);
-
-    // NOTE - setting the layout here, unreferences the previous one, should cause all the memory
-    // to be freed
-    SetLayout (HPadding);
-
-    QueueDraw();
-  }
-
-  void CheckBox::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void CheckBox::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
+    graphics_engine.PushClippingRectangle(base);
+
+    GetPainter().PaintBackground(graphics_engine, base);
 
     InteractState is;
-    is.is_on = active;
-    is.is_focus = NUX_STATE_ACTIVE;
-    is.is_prelight = NUX_STATE_PRELIGHT;
+    is.is_on = active_;
 
-    Geometry base_state = GetGeometry();
-    base_state.SetWidth(20);
-    base_state.SetX(base_state.x + 12);
+    if (visual_state_ == VISUAL_STATE_PRESSED)
+    {
+      is.is_focus = true;
+    }
+    else if (visual_state_ == VISUAL_STATE_PRELIGHT)
+    {
+      is.is_prelight = true;
+    }
+    else
+    {
+      is.is_focus = false;
+      is.is_prelight = false;
+    }
 
-    GetPainter().PaintCheckBox(GfxContext, base_state, is, Color(0xff000000));
+    GetPainter().PushPaintLayerStack();
+    {
+      GetPainter().PaintCheckBox(graphics_engine, check_area_->GetGeometry(), is, Color(0xff000000));
+      static_text_->ProcessDraw(graphics_engine, true);
+    }
+    GetPainter().PopPaintLayerStack();
+
+    graphics_engine.PopClippingRectangle();
   }
 
-  void CheckBox::DrawContent(GraphicsEngine &GfxContext, bool force_draw)
+  void CheckBox::RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    nux::Geometry base = GetGeometry();
-    GfxContext.PushClippingRectangle(base);
+    active_ = !active_;
 
-    if(GetCompositionLayout())
-      GetCompositionLayout()->ProcessDraw (GfxContext, force_draw);
-
-    GfxContext.PopClippingRectangle();
+    click.emit(this);
+    state_change.emit(this);
+    QueueDraw();
   }
 
+  void CheckBox::Activate()
+  {
+    if (active_ == true)
+    {
+      // already active
+      return;
+    }
 
+    active_ = true;
+    state_change.emit(this);
+    QueueDraw();
+  }
+
+  void CheckBox::Deactivate()
+  {
+    if (active_ == false)
+      return;
+
+    if (active_ == false)
+    {
+      // already deactivated
+      return;
+    }
+
+    active_ = false;
+    state_change.emit(this);
+    QueueDraw();
+  }
 }

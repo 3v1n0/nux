@@ -34,20 +34,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@BUILD_EXAMPLES_TRUE@noinst_PROGRAMS = button$(EXEEXT) cairo$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	cairo_wrapper$(EXEEXT) canvas$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	checkbox$(EXEEXT) combobox$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	gridlayout$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	layeredlayout$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	moveable_view$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	pango_combobox$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	pangotextedit$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	rotate_texture_area$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	scrollview$(EXEEXT) tab_view$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	textedit$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	text_entry_focus$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	tiles_view$(EXEEXT) timegraph$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	timeline$(EXEEXT) tooltip$(EXEEXT)
+@BUILD_EXAMPLES_TRUE@noinst_PROGRAMS = text_entry_focus$(EXEEXT) \
+@BUILD_EXAMPLES_TRUE@	shortcut_keys$(EXEEXT)
 subdir = examples
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -62,9 +50,13 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
-am__button_SOURCES_DIST = button.cpp
-@BUILD_EXAMPLES_TRUE@am_button_OBJECTS = button.$(OBJEXT)
-button_OBJECTS = $(am_button_OBJECTS)
+am__shortcut_keys_SOURCES_DIST = shortcut-keys.cpp line-separator.cpp \
+	line-separator.h abstract-separator.h abstract-separator.cpp
+@BUILD_EXAMPLES_TRUE@am_shortcut_keys_OBJECTS =  \
+@BUILD_EXAMPLES_TRUE@	shortcut-keys.$(OBJEXT) \
+@BUILD_EXAMPLES_TRUE@	line-separator.$(OBJEXT) \
+@BUILD_EXAMPLES_TRUE@	abstract-separator.$(OBJEXT)
+shortcut_keys_OBJECTS = $(am_shortcut_keys_OBJECTS)
 am__DEPENDENCIES_1 =
 @BUILD_EXAMPLES_TRUE@am__DEPENDENCIES_2 = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
 @BUILD_EXAMPLES_TRUE@	$(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
@@ -72,100 +64,17 @@ am__DEPENDENCIES_1 =
 @BUILD_EXAMPLES_TRUE@	$(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
 @BUILD_EXAMPLES_TRUE@	$(am__DEPENDENCIES_1) \
 @BUILD_EXAMPLES_TRUE@	$(am__DEPENDENCIES_1)
-@BUILD_EXAMPLES_TRUE@button_DEPENDENCIES = $(am__DEPENDENCIES_2)
+@BUILD_EXAMPLES_TRUE@shortcut_keys_DEPENDENCIES =  \
+@BUILD_EXAMPLES_TRUE@	$(am__DEPENDENCIES_2)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
-am__cairo_SOURCES_DIST = cairo.cpp
-@BUILD_EXAMPLES_TRUE@am_cairo_OBJECTS = cairo.$(OBJEXT)
-cairo_OBJECTS = $(am_cairo_OBJECTS)
-@BUILD_EXAMPLES_TRUE@cairo_DEPENDENCIES = $(am__DEPENDENCIES_2)
-am__cairo_wrapper_SOURCES_DIST = cairo_wrapper.cpp
-@BUILD_EXAMPLES_TRUE@am_cairo_wrapper_OBJECTS =  \
-@BUILD_EXAMPLES_TRUE@	cairo_wrapper.$(OBJEXT)
-cairo_wrapper_OBJECTS = $(am_cairo_wrapper_OBJECTS)
-@BUILD_EXAMPLES_TRUE@cairo_wrapper_DEPENDENCIES =  \
-@BUILD_EXAMPLES_TRUE@	$(am__DEPENDENCIES_2)
-am__canvas_SOURCES_DIST = canvas.cpp
-@BUILD_EXAMPLES_TRUE@am_canvas_OBJECTS = canvas.$(OBJEXT)
-canvas_OBJECTS = $(am_canvas_OBJECTS)
-@BUILD_EXAMPLES_TRUE@canvas_DEPENDENCIES = $(am__DEPENDENCIES_2)
-am__checkbox_SOURCES_DIST = checkbox.cpp
-@BUILD_EXAMPLES_TRUE@am_checkbox_OBJECTS = checkbox.$(OBJEXT)
-checkbox_OBJECTS = $(am_checkbox_OBJECTS)
-@BUILD_EXAMPLES_TRUE@checkbox_DEPENDENCIES = $(am__DEPENDENCIES_2)
-am__combobox_SOURCES_DIST = combobox.cpp
-@BUILD_EXAMPLES_TRUE@am_combobox_OBJECTS = combobox.$(OBJEXT)
-combobox_OBJECTS = $(am_combobox_OBJECTS)
-@BUILD_EXAMPLES_TRUE@combobox_DEPENDENCIES = $(am__DEPENDENCIES_2)
-am__gridlayout_SOURCES_DIST = gridlayout.cpp
-@BUILD_EXAMPLES_TRUE@am_gridlayout_OBJECTS = gridlayout.$(OBJEXT)
-gridlayout_OBJECTS = $(am_gridlayout_OBJECTS)
-@BUILD_EXAMPLES_TRUE@gridlayout_DEPENDENCIES = $(am__DEPENDENCIES_2)
-am__layeredlayout_SOURCES_DIST = layeredlayout.cpp
-@BUILD_EXAMPLES_TRUE@am_layeredlayout_OBJECTS =  \
-@BUILD_EXAMPLES_TRUE@	layeredlayout.$(OBJEXT)
-layeredlayout_OBJECTS = $(am_layeredlayout_OBJECTS)
-@BUILD_EXAMPLES_TRUE@layeredlayout_DEPENDENCIES =  \
-@BUILD_EXAMPLES_TRUE@	$(am__DEPENDENCIES_2)
-am__moveable_view_SOURCES_DIST = moveable_view.cpp
-@BUILD_EXAMPLES_TRUE@am_moveable_view_OBJECTS =  \
-@BUILD_EXAMPLES_TRUE@	moveable_view.$(OBJEXT)
-moveable_view_OBJECTS = $(am_moveable_view_OBJECTS)
-@BUILD_EXAMPLES_TRUE@moveable_view_DEPENDENCIES =  \
-@BUILD_EXAMPLES_TRUE@	$(am__DEPENDENCIES_2)
-am__pango_combobox_SOURCES_DIST = pango_combobox.cpp
-@BUILD_EXAMPLES_TRUE@am_pango_combobox_OBJECTS =  \
-@BUILD_EXAMPLES_TRUE@	pango_combobox.$(OBJEXT)
-pango_combobox_OBJECTS = $(am_pango_combobox_OBJECTS)
-@BUILD_EXAMPLES_TRUE@pango_combobox_DEPENDENCIES =  \
-@BUILD_EXAMPLES_TRUE@	$(am__DEPENDENCIES_2)
-am__pangotextedit_SOURCES_DIST = pangotextedit.cpp
-@BUILD_EXAMPLES_TRUE@am_pangotextedit_OBJECTS =  \
-@BUILD_EXAMPLES_TRUE@	pangotextedit.$(OBJEXT)
-pangotextedit_OBJECTS = $(am_pangotextedit_OBJECTS)
-@BUILD_EXAMPLES_TRUE@pangotextedit_DEPENDENCIES =  \
-@BUILD_EXAMPLES_TRUE@	$(am__DEPENDENCIES_2)
-am__rotate_texture_area_SOURCES_DIST = rotate_texture_area.cpp
-@BUILD_EXAMPLES_TRUE@am_rotate_texture_area_OBJECTS =  \
-@BUILD_EXAMPLES_TRUE@	rotate_texture_area.$(OBJEXT)
-rotate_texture_area_OBJECTS = $(am_rotate_texture_area_OBJECTS)
-@BUILD_EXAMPLES_TRUE@rotate_texture_area_DEPENDENCIES =  \
-@BUILD_EXAMPLES_TRUE@	$(am__DEPENDENCIES_2)
-am__scrollview_SOURCES_DIST = scrollview.cpp
-@BUILD_EXAMPLES_TRUE@am_scrollview_OBJECTS = scrollview.$(OBJEXT)
-scrollview_OBJECTS = $(am_scrollview_OBJECTS)
-@BUILD_EXAMPLES_TRUE@scrollview_DEPENDENCIES = $(am__DEPENDENCIES_2)
-am__tab_view_SOURCES_DIST = tab_view.cpp
-@BUILD_EXAMPLES_TRUE@am_tab_view_OBJECTS = tab_view.$(OBJEXT)
-tab_view_OBJECTS = $(am_tab_view_OBJECTS)
-@BUILD_EXAMPLES_TRUE@tab_view_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am__text_entry_focus_SOURCES_DIST = text_entry_focus.cpp
 @BUILD_EXAMPLES_TRUE@am_text_entry_focus_OBJECTS =  \
 @BUILD_EXAMPLES_TRUE@	text_entry_focus.$(OBJEXT)
 text_entry_focus_OBJECTS = $(am_text_entry_focus_OBJECTS)
 @BUILD_EXAMPLES_TRUE@text_entry_focus_DEPENDENCIES =  \
 @BUILD_EXAMPLES_TRUE@	$(am__DEPENDENCIES_2)
-am__textedit_SOURCES_DIST = textedit.cpp
-@BUILD_EXAMPLES_TRUE@am_textedit_OBJECTS = textedit.$(OBJEXT)
-textedit_OBJECTS = $(am_textedit_OBJECTS)
-@BUILD_EXAMPLES_TRUE@textedit_DEPENDENCIES = $(am__DEPENDENCIES_2)
-am__tiles_view_SOURCES_DIST = tiles_view.cpp
-@BUILD_EXAMPLES_TRUE@am_tiles_view_OBJECTS = tiles_view.$(OBJEXT)
-tiles_view_OBJECTS = $(am_tiles_view_OBJECTS)
-@BUILD_EXAMPLES_TRUE@tiles_view_DEPENDENCIES = $(am__DEPENDENCIES_2)
-am__timegraph_SOURCES_DIST = timegraph.cpp
-@BUILD_EXAMPLES_TRUE@am_timegraph_OBJECTS = timegraph.$(OBJEXT)
-timegraph_OBJECTS = $(am_timegraph_OBJECTS)
-@BUILD_EXAMPLES_TRUE@timegraph_DEPENDENCIES = $(am__DEPENDENCIES_2)
-am__timeline_SOURCES_DIST = timeline.cpp
-@BUILD_EXAMPLES_TRUE@am_timeline_OBJECTS = timeline.$(OBJEXT)
-timeline_OBJECTS = $(am_timeline_OBJECTS)
-@BUILD_EXAMPLES_TRUE@timeline_DEPENDENCIES = $(am__DEPENDENCIES_2)
-am__tooltip_SOURCES_DIST = tooltip.cpp
-@BUILD_EXAMPLES_TRUE@am_tooltip_OBJECTS = tooltip.$(OBJEXT)
-tooltip_OBJECTS = $(am_tooltip_OBJECTS)
-@BUILD_EXAMPLES_TRUE@tooltip_DEPENDENCIES = $(am__DEPENDENCIES_2)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -189,32 +98,28 @@ CXXLINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 AM_V_CXXLD = $(am__v_CXXLD_$(V))
 am__v_CXXLD_ = $(am__v_CXXLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CXXLD_0 = @echo "  CXXLD " $@;
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+CCLD = $(CC)
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(button_SOURCES) $(cairo_SOURCES) $(cairo_wrapper_SOURCES) \
-	$(canvas_SOURCES) $(checkbox_SOURCES) $(combobox_SOURCES) \
-	$(gridlayout_SOURCES) $(layeredlayout_SOURCES) \
-	$(moveable_view_SOURCES) $(pango_combobox_SOURCES) \
-	$(pangotextedit_SOURCES) $(rotate_texture_area_SOURCES) \
-	$(scrollview_SOURCES) $(tab_view_SOURCES) \
-	$(text_entry_focus_SOURCES) $(textedit_SOURCES) \
-	$(tiles_view_SOURCES) $(timegraph_SOURCES) $(timeline_SOURCES) \
-	$(tooltip_SOURCES)
-DIST_SOURCES = $(am__button_SOURCES_DIST) $(am__cairo_SOURCES_DIST) \
-	$(am__cairo_wrapper_SOURCES_DIST) $(am__canvas_SOURCES_DIST) \
-	$(am__checkbox_SOURCES_DIST) $(am__combobox_SOURCES_DIST) \
-	$(am__gridlayout_SOURCES_DIST) \
-	$(am__layeredlayout_SOURCES_DIST) \
-	$(am__moveable_view_SOURCES_DIST) \
-	$(am__pango_combobox_SOURCES_DIST) \
-	$(am__pangotextedit_SOURCES_DIST) \
-	$(am__rotate_texture_area_SOURCES_DIST) \
-	$(am__scrollview_SOURCES_DIST) $(am__tab_view_SOURCES_DIST) \
-	$(am__text_entry_focus_SOURCES_DIST) \
-	$(am__textedit_SOURCES_DIST) $(am__tiles_view_SOURCES_DIST) \
-	$(am__timegraph_SOURCES_DIST) $(am__timeline_SOURCES_DIST) \
-	$(am__tooltip_SOURCES_DIST)
+SOURCES = $(shortcut_keys_SOURCES) $(text_entry_focus_SOURCES)
+DIST_SOURCES = $(am__shortcut_keys_SOURCES_DIST) \
+	$(am__text_entry_focus_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -272,6 +177,7 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GCC_FLAGS = @GCC_FLAGS@
+GL_PKGS = @GL_PKGS@
 GREP = @GREP@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -292,6 +198,7 @@ MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 NM = @NM@
 NMEDIT = @NMEDIT@
+NUX_ABI_VERSION = @NUX_ABI_VERSION@
 NUX_API_VERSION = @NUX_API_VERSION@
 NUX_CFLAGS = @NUX_CFLAGS@
 NUX_CORE_CFLAGS = @NUX_CORE_CFLAGS@
@@ -308,8 +215,6 @@ NUX_LIBS = @NUX_LIBS@
 NUX_LT_LDFLAGS = @NUX_LT_LDFLAGS@
 NUX_LT_VERSION = @NUX_LT_VERSION@
 NUX_MAJOR_VERSION = @NUX_MAJOR_VERSION@
-NUX_MESH_CFLAGS = @NUX_MESH_CFLAGS@
-NUX_MESH_LIBS = @NUX_MESH_LIBS@
 NUX_MICRO_VERSION = @NUX_MICRO_VERSION@
 NUX_MINOR_VERSION = @NUX_MINOR_VERSION@
 NUX_VERSION = @NUX_VERSION@
@@ -393,6 +298,26 @@ CLEANFILES =
 DISTCLEANFILES = 
 EXTRA_DIST = 
 
+#button \
+#                  cairo \
+#                  cairo_wrapper \
+#                  canvas \
+#                  checkbox \
+#                  combobox \
+#                  gridlayout \
+#                  layeredlayout \
+#                  moveable_view \
+#                  pango_combobox \
+#                  pangotextedit \
+#                  rotate_texture_area \
+#                  scrollview \
+#                  tab_view \
+#                  textedit \
+#                  tiles_view \
+#                  timegraph \
+#                  timeline \
+#                  tooltip
+
 # We only have to do this AM_ once to affect all the binaries we build from
 # this Makefile
 @BUILD_EXAMPLES_TRUE@AM_CPPFLAGS = \
@@ -419,46 +344,48 @@ EXTRA_DIST =
 
 # This is the individual executable build. For every $exe in noinst_PROGRAMS
 # you need a $exe_SOURCES and $exe_LDADD so it builds
-@BUILD_EXAMPLES_TRUE@combobox_SOURCES = combobox.cpp
-@BUILD_EXAMPLES_TRUE@combobox_LDADD = $(ALL_LIBS)
-@BUILD_EXAMPLES_TRUE@cairo_SOURCES = cairo.cpp
-@BUILD_EXAMPLES_TRUE@cairo_LDADD = $(ALL_LIBS)
-@BUILD_EXAMPLES_TRUE@cairo_wrapper_SOURCES = cairo_wrapper.cpp
-@BUILD_EXAMPLES_TRUE@cairo_wrapper_LDADD = $(ALL_LIBS)
-@BUILD_EXAMPLES_TRUE@canvas_SOURCES = canvas.cpp
-@BUILD_EXAMPLES_TRUE@canvas_LDADD = $(ALL_LIBS)
-@BUILD_EXAMPLES_TRUE@textedit_SOURCES = textedit.cpp
-@BUILD_EXAMPLES_TRUE@textedit_LDADD = $(ALL_LIBS)
-@BUILD_EXAMPLES_TRUE@button_SOURCES = button.cpp
-@BUILD_EXAMPLES_TRUE@button_LDADD = $(ALL_LIBS)
-@BUILD_EXAMPLES_TRUE@checkbox_SOURCES = checkbox.cpp
-@BUILD_EXAMPLES_TRUE@checkbox_LDADD = $(ALL_LIBS)
-@BUILD_EXAMPLES_TRUE@tooltip_SOURCES = tooltip.cpp
-@BUILD_EXAMPLES_TRUE@tooltip_LDADD = $(ALL_LIBS)
-@BUILD_EXAMPLES_TRUE@timeline_SOURCES = timeline.cpp
-@BUILD_EXAMPLES_TRUE@timeline_LDADD = $(ALL_LIBS)
-@BUILD_EXAMPLES_TRUE@timegraph_SOURCES = timegraph.cpp
-@BUILD_EXAMPLES_TRUE@timegraph_LDADD = $(ALL_LIBS)
-@BUILD_EXAMPLES_TRUE@gridlayout_SOURCES = gridlayout.cpp
-@BUILD_EXAMPLES_TRUE@gridlayout_LDADD = $(ALL_LIBS)
-@BUILD_EXAMPLES_TRUE@pangotextedit_SOURCES = pangotextedit.cpp
-@BUILD_EXAMPLES_TRUE@pangotextedit_LDADD = $(ALL_LIBS)
-@BUILD_EXAMPLES_TRUE@moveable_view_SOURCES = moveable_view.cpp
-@BUILD_EXAMPLES_TRUE@moveable_view_LDADD = $(ALL_LIBS)
-@BUILD_EXAMPLES_TRUE@layeredlayout_SOURCES = layeredlayout.cpp
-@BUILD_EXAMPLES_TRUE@layeredlayout_LDADD = $(ALL_LIBS)
-@BUILD_EXAMPLES_TRUE@scrollview_SOURCES = scrollview.cpp
-@BUILD_EXAMPLES_TRUE@scrollview_LDADD = $(ALL_LIBS)
-@BUILD_EXAMPLES_TRUE@tab_view_SOURCES = tab_view.cpp
-@BUILD_EXAMPLES_TRUE@tab_view_LDADD = $(ALL_LIBS)
-@BUILD_EXAMPLES_TRUE@pango_combobox_SOURCES = pango_combobox.cpp
-@BUILD_EXAMPLES_TRUE@pango_combobox_LDADD = $(ALL_LIBS)
-@BUILD_EXAMPLES_TRUE@rotate_texture_area_SOURCES = rotate_texture_area.cpp
-@BUILD_EXAMPLES_TRUE@rotate_texture_area_LDADD = $(ALL_LIBS)
-@BUILD_EXAMPLES_TRUE@tiles_view_SOURCES = tiles_view.cpp
-@BUILD_EXAMPLES_TRUE@tiles_view_LDADD = $(ALL_LIBS)
+#combobox_SOURCES = combobox.cpp
+#combobox_LDADD = $(ALL_LIBS)
+#cairo_SOURCES = cairo.cpp
+#cairo_LDADD = $(ALL_LIBS)
+#cairo_wrapper_SOURCES = cairo_wrapper.cpp
+#cairo_wrapper_LDADD = $(ALL_LIBS)
+#canvas_SOURCES = canvas.cpp
+#canvas_LDADD = $(ALL_LIBS)
+#textedit_SOURCES = textedit.cpp
+#textedit_LDADD = $(ALL_LIBS)
+#button_SOURCES = button.cpp
+#button_LDADD = $(ALL_LIBS)
+#checkbox_SOURCES = checkbox.cpp
+#checkbox_LDADD = $(ALL_LIBS)
+#tooltip_SOURCES = tooltip.cpp
+#tooltip_LDADD = $(ALL_LIBS)
+#timeline_SOURCES = timeline.cpp
+#timeline_LDADD = $(ALL_LIBS)
+#timegraph_SOURCES = timegraph.cpp
+#timegraph_LDADD = $(ALL_LIBS)
+#gridlayout_SOURCES = gridlayout.cpp
+#gridlayout_LDADD = $(ALL_LIBS)
+#pangotextedit_SOURCES = pangotextedit.cpp
+#pangotextedit_LDADD = $(ALL_LIBS)
+#moveable_view_SOURCES = moveable_view.cpp
+#moveable_view_LDADD = $(ALL_LIBS)
+#layeredlayout_SOURCES = layeredlayout.cpp
+#layeredlayout_LDADD = $(ALL_LIBS)
+#scrollview_SOURCES = scrollview.cpp
+#scrollview_LDADD = $(ALL_LIBS)
+#tab_view_SOURCES = tab_view.cpp
+#tab_view_LDADD = $(ALL_LIBS)
+#pango_combobox_SOURCES = pango_combobox.cpp
+#pango_combobox_LDADD = $(ALL_LIBS)
+#rotate_texture_area_SOURCES = rotate_texture_area.cpp
+#rotate_texture_area_LDADD = $(ALL_LIBS)
+#tiles_view_SOURCES = tiles_view.cpp
+#tiles_view_LDADD = $(ALL_LIBS)
 @BUILD_EXAMPLES_TRUE@text_entry_focus_SOURCES = text_entry_focus.cpp
 @BUILD_EXAMPLES_TRUE@text_entry_focus_LDADD = $(ALL_LIBS)
+@BUILD_EXAMPLES_TRUE@shortcut_keys_SOURCES = shortcut-keys.cpp line-separator.cpp line-separator.h abstract-separator.h abstract-separator.cpp
+@BUILD_EXAMPLES_TRUE@shortcut_keys_LDADD = $(ALL_LIBS)
 all: all-am
 
 .SUFFIXES:
@@ -502,66 +429,12 @@ clean-noinstPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
-button$(EXEEXT): $(button_OBJECTS) $(button_DEPENDENCIES) 
-	@rm -f button$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(button_OBJECTS) $(button_LDADD) $(LIBS)
-cairo$(EXEEXT): $(cairo_OBJECTS) $(cairo_DEPENDENCIES) 
-	@rm -f cairo$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(cairo_OBJECTS) $(cairo_LDADD) $(LIBS)
-cairo_wrapper$(EXEEXT): $(cairo_wrapper_OBJECTS) $(cairo_wrapper_DEPENDENCIES) 
-	@rm -f cairo_wrapper$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(cairo_wrapper_OBJECTS) $(cairo_wrapper_LDADD) $(LIBS)
-canvas$(EXEEXT): $(canvas_OBJECTS) $(canvas_DEPENDENCIES) 
-	@rm -f canvas$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(canvas_OBJECTS) $(canvas_LDADD) $(LIBS)
-checkbox$(EXEEXT): $(checkbox_OBJECTS) $(checkbox_DEPENDENCIES) 
-	@rm -f checkbox$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(checkbox_OBJECTS) $(checkbox_LDADD) $(LIBS)
-combobox$(EXEEXT): $(combobox_OBJECTS) $(combobox_DEPENDENCIES) 
-	@rm -f combobox$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(combobox_OBJECTS) $(combobox_LDADD) $(LIBS)
-gridlayout$(EXEEXT): $(gridlayout_OBJECTS) $(gridlayout_DEPENDENCIES) 
-	@rm -f gridlayout$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(gridlayout_OBJECTS) $(gridlayout_LDADD) $(LIBS)
-layeredlayout$(EXEEXT): $(layeredlayout_OBJECTS) $(layeredlayout_DEPENDENCIES) 
-	@rm -f layeredlayout$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(layeredlayout_OBJECTS) $(layeredlayout_LDADD) $(LIBS)
-moveable_view$(EXEEXT): $(moveable_view_OBJECTS) $(moveable_view_DEPENDENCIES) 
-	@rm -f moveable_view$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(moveable_view_OBJECTS) $(moveable_view_LDADD) $(LIBS)
-pango_combobox$(EXEEXT): $(pango_combobox_OBJECTS) $(pango_combobox_DEPENDENCIES) 
-	@rm -f pango_combobox$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(pango_combobox_OBJECTS) $(pango_combobox_LDADD) $(LIBS)
-pangotextedit$(EXEEXT): $(pangotextedit_OBJECTS) $(pangotextedit_DEPENDENCIES) 
-	@rm -f pangotextedit$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(pangotextedit_OBJECTS) $(pangotextedit_LDADD) $(LIBS)
-rotate_texture_area$(EXEEXT): $(rotate_texture_area_OBJECTS) $(rotate_texture_area_DEPENDENCIES) 
-	@rm -f rotate_texture_area$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(rotate_texture_area_OBJECTS) $(rotate_texture_area_LDADD) $(LIBS)
-scrollview$(EXEEXT): $(scrollview_OBJECTS) $(scrollview_DEPENDENCIES) 
-	@rm -f scrollview$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(scrollview_OBJECTS) $(scrollview_LDADD) $(LIBS)
-tab_view$(EXEEXT): $(tab_view_OBJECTS) $(tab_view_DEPENDENCIES) 
-	@rm -f tab_view$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(tab_view_OBJECTS) $(tab_view_LDADD) $(LIBS)
+shortcut_keys$(EXEEXT): $(shortcut_keys_OBJECTS) $(shortcut_keys_DEPENDENCIES) 
+	@rm -f shortcut_keys$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(shortcut_keys_OBJECTS) $(shortcut_keys_LDADD) $(LIBS)
 text_entry_focus$(EXEEXT): $(text_entry_focus_OBJECTS) $(text_entry_focus_DEPENDENCIES) 
 	@rm -f text_entry_focus$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(text_entry_focus_OBJECTS) $(text_entry_focus_LDADD) $(LIBS)
-textedit$(EXEEXT): $(textedit_OBJECTS) $(textedit_DEPENDENCIES) 
-	@rm -f textedit$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(textedit_OBJECTS) $(textedit_LDADD) $(LIBS)
-tiles_view$(EXEEXT): $(tiles_view_OBJECTS) $(tiles_view_DEPENDENCIES) 
-	@rm -f tiles_view$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(tiles_view_OBJECTS) $(tiles_view_LDADD) $(LIBS)
-timegraph$(EXEEXT): $(timegraph_OBJECTS) $(timegraph_DEPENDENCIES) 
-	@rm -f timegraph$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(timegraph_OBJECTS) $(timegraph_LDADD) $(LIBS)
-timeline$(EXEEXT): $(timeline_OBJECTS) $(timeline_DEPENDENCIES) 
-	@rm -f timeline$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(timeline_OBJECTS) $(timeline_LDADD) $(LIBS)
-tooltip$(EXEEXT): $(tooltip_OBJECTS) $(tooltip_DEPENDENCIES) 
-	@rm -f tooltip$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(tooltip_OBJECTS) $(tooltip_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -569,26 +442,10 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/button.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cairo.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cairo_wrapper.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/canvas.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/checkbox.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/combobox.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gridlayout.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/layeredlayout.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/moveable_view.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pango_combobox.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pangotextedit.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rotate_texture_area.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/scrollview.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tab_view.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/abstract-separator.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/line-separator.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/shortcut-keys.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/text_entry_focus.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/textedit.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tiles_view.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timegraph.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timeline.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tooltip.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

@@ -26,13 +26,13 @@
 namespace nux
 {
 
-  IntegerValidator::IntegerValidator (int Minimum, int Maximum)
-    :   m_Minimum (Minimum)
-    ,   m_Maximum (Maximum)
+  IntegerValidator::IntegerValidator(int Minimum, int Maximum)
+    :   m_Minimum(Minimum)
+    ,   m_Maximum(Maximum)
   {
     _regexp_str = "^[-+]?[0-9]+$";
 
-    InitRegExp ();
+    InitRegExp();
 
     if (m_Minimum > m_Maximum)
     {
@@ -42,12 +42,12 @@ namespace nux
     }
   }
 
-  IntegerValidator::IntegerValidator (const IntegerValidator &copy)
+  IntegerValidator::IntegerValidator(const IntegerValidator &copy)
   {
     m_Minimum   = copy.m_Minimum;
     m_Minimum   = copy.m_Maximum;
     _regexp_str    = copy._regexp_str;
-    InitRegExp ();
+    InitRegExp();
   }
 
   IntegerValidator &IntegerValidator::operator= (const IntegerValidator &rhs)
@@ -57,7 +57,7 @@ namespace nux
       m_Minimum   = rhs.m_Minimum;
       m_Minimum   = rhs.m_Maximum;
       _regexp_str    = rhs._regexp_str;
-      InitRegExp ();
+      InitRegExp();
     }
 
     return *this;
@@ -70,10 +70,10 @@ namespace nux
 
   Validator *IntegerValidator::Clone()  const
   {
-    return new IntegerValidator (*this);
+    return new IntegerValidator(*this);
   }
 
-  void IntegerValidator::SetMinimum (int value)
+  void IntegerValidator::SetMinimum(int value)
   {
     m_Minimum = value;
 
@@ -90,7 +90,7 @@ namespace nux
     return m_Minimum;
   }
 
-  void IntegerValidator::SetMaximum (int value)
+  void IntegerValidator::SetMaximum(int value)
   {
     m_Maximum = value;
 
@@ -107,7 +107,7 @@ namespace nux
     return m_Maximum;
   }
 
-  int IntegerValidator::GetClampedValue (int i) const
+  int IntegerValidator::GetClampedValue(int i) const
   {
     if (i < m_Minimum)
       return m_Minimum;
@@ -118,21 +118,21 @@ namespace nux
     return i;
   }
 
-  void IntegerValidator::Alternative (const TCHAR *str)
+  void IntegerValidator::Alternative(const char *str)
   {
-    str = TEXT ("0");
+    str = "0";
   }
 
-  NString IntegerValidator::ToString (int i)
+  NString IntegerValidator::ToString(int i)
   {
-    NString Prec (TEXT ("%d") );
-    return NString::Printf (Prec.GetTCharPtr(), i);
+    NString Prec("%d");
+    return NString::Printf(Prec.GetTCharPtr(), i);
   }
 
-  int IntegerValidator::ToInteger (const TCHAR *str)
+  int IntegerValidator::ToInteger(const char *str)
   {
-    if (Validate (str) == Acceptable)
-      return CharToInteger (str);
+    if (Validate(str) == Acceptable)
+      return CharToInteger(str);
     else
       return 0;
   }

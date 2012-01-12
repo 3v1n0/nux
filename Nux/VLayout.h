@@ -23,23 +23,23 @@
 #ifndef VLAYOUT_H
 #define VLAYOUT_H
 
-#include "Layout.h"
+#include "LinearLayout.h"
 
 namespace nux
 {
 
-  class VLayout: public Layout
+  class VLayout: public LinearLayout
   {
-    NUX_DECLARE_OBJECT_TYPE (VLayout, Layout);
+    NUX_DECLARE_OBJECT_TYPE(VLayout, LinearLayout);
   public:
-    VLayout (NUX_FILE_LINE_PROTO);
-    VLayout (NString name, NUX_FILE_LINE_PROTO);
-    ~VLayout ();
+    VLayout(NUX_FILE_LINE_PROTO);
+    VLayout(NString name, NUX_FILE_LINE_PROTO);
+    ~VLayout();
 
-    virtual long ComputeLayout2();
-    virtual void ComputePosition2(float offsetX, float offsetY);
+    virtual long ComputeContentSize();
+    virtual void ComputeContentPosition(float offsetX, float offsetY);
     virtual void VLayoutManagement(int width, int height);
-    virtual t_u32 GetMaxStretchFactor();
+    virtual unsigned int GetMaxStretchFactor();
 
     virtual void GetCompositeList(std::list<Area *> *ViewList);
 
@@ -53,8 +53,6 @@ namespace nux
 
   protected:
     virtual Area* KeyNavIteration(KeyNavDirection direction);
-    virtual long DoFocusLeft  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusRight (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
   };
 }
 

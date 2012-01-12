@@ -147,7 +147,7 @@ namespace nux
     //cairo_surface_write_to_png (GetCairoSurface (), "/tmp/surf-debug.png");      
   }
 
-  void Canvas::Draw (GraphicsEngine& gfxContext, bool forceDraw)
+  void Canvas::Draw (GraphicsEngine& graphics_engine, bool forceDraw)
   {
     Geometry geom = GetGeometry ();
 
@@ -166,15 +166,15 @@ namespace nux
     }
 
     // draw the texture on screen
-    gfxContext.PushClippingRectangle (geom);
+    graphics_engine.PushClippingRectangle (geom);
 
-    GetGraphicsEngine().GetRenderStates().SetBlend (false);
+    GetWindowThread()->GetGraphicsEngine().GetRenderStates().SetBlend (false);
 
     TexCoordXForm texxform;
-    texxform.SetWrap (TEXWRAP_CLAMP, TEXWRAP_CLAMP);
-    texxform.SetTexCoordType (TexCoordXForm::OFFSET_COORD);
+    texxform.SetWrap(TEXWRAP_CLAMP, TEXWRAP_CLAMP);
+    texxform.SetTexCoordType(TexCoordXForm::OFFSET_COORD);
 
-    gfxContext.QRP_1Tex (geom.x,
+    graphics_engine.QRP_1Tex(geom.x,
                          geom.y,
                          geom.width,
                          geom.height,
@@ -182,35 +182,26 @@ namespace nux
                          texxform,
                          Color (1.0f, 1.0f, 1.0f, 1.0f));
 
-    gfxContext.PopClippingRectangle ();
+    graphics_engine.PopClippingRectangle();
   }
 
-  void Canvas::DrawContent (GraphicsEngine& gfxContext, bool forceDraw)
+  void Canvas::DrawContent(GraphicsEngine& graphics_engine, bool forceDraw)
   {
   }
 
-  long Canvas::ProcessEvent (IEvent& event,
-                             long    traverseInfo,
-                             long    processEventInfo)
-  {
-    long ret = traverseInfo;
-    
-    return ret;
-  }
-
-  void Canvas::Invalidate ()
+  void Canvas::Invalidate()
   {
     _invalid = true;
   }
 
-  void Canvas::PreLayoutManagement ()
+  void Canvas::PreLayoutManagement()
   {
-    View::PreLayoutManagement ();
+    View::PreLayoutManagement();
   }
 
-  long Canvas::PostLayoutManagement (long layoutResult)
+  long Canvas::PostLayoutManagement(long layoutResult)
   {
-    long result = View::PostLayoutManagement (layoutResult);
+    long result = View::PostLayoutManagement(layoutResult);
 
     return result;
   }

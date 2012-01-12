@@ -29,23 +29,23 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (FontTexture);
+  NUX_IMPLEMENT_OBJECT_TYPE(FontTexture);
 
   const int CURSOR_OFFSET = 0;
 
-  FontTexture::FontTexture (const TCHAR *FontFile, NUX_FILE_LINE_DECL)
-    :   Object (true, NUX_FILE_LINE_PARAM)
+  FontTexture::FontTexture(const char *FontFile, NUX_FILE_LINE_DECL)
+    :   Object(true, NUX_FILE_LINE_PARAM)
   {
-    NString FontPath = GNuxGraphicsResources.FindResourceLocation (FontFile);
+    NString FontPath = GNuxGraphicsResources.FindResourceLocation(FontFile);
 
     std::filebuf fb;
-    fb.open (FontPath.GetTCharPtr(), std::ios::in);
-    std::istream is (&fb);
+    fb.open(FontPath.GetTCharPtr(), std::ios::in);
+    std::istream is(&fb);
 
-    BMFontParseFNT (is);
+    BMFontParseFNT(is);
   }
 
-  FontTexture::FontTexture (int width, int height, BYTE *Texture)
+  FontTexture::FontTexture(int width, int height, BYTE *Texture)
   {
 
   }
@@ -53,17 +53,17 @@ namespace nux
   FontTexture::~FontTexture()
   {
     std::vector<BaseTexture*>::iterator it;
-    for(it = TextureArray.begin(); it != TextureArray.end(); it++)
+    for (it = TextureArray.begin(); it != TextureArray.end(); it++)
     {
-      (*it)->UnReference ();
+      (*it)->UnReference();
     }
     TextureArray.clear();
   }
 
-  int FontTexture::GetCharWidth (const TCHAR &c) const
+  int FontTexture::GetCharWidth(const char &c) const
   {
     int ascii = c & 0xff;
-    nuxAssert (ascii < m_Charset.NumChar);
+    nuxAssert(ascii < m_Charset.NumChar);
 
     if (ascii >= m_Charset.NumChar)
       return 0;
@@ -72,7 +72,7 @@ namespace nux
     return m_Charset.Chars[ascii].XAdvance;
   }
 
-  int FontTexture::GetStringWidth (const NString &str) const
+  int FontTexture::GetStringWidth(const NString &str) const
   {
 //     unsigned int total = 0;
 //     for (unsigned int i = 0; i != (unsigned int)str.size(); ++i)
@@ -80,12 +80,12 @@ namespace nux
 //         total += GetCharWidth(str[i]);
 //     }
 //     return total;
-    return GetCharStringWidth (str.GetTCharPtr() );
+    return GetCharStringWidth(str.GetTCharPtr());
   }
 
-  int FontTexture::GetCharStringWidth (const TCHAR *str) const
+  int FontTexture::GetCharStringWidth(const char *str) const
   {
-    if ( (str == 0) || (NString (str) == NString (TEXT ("") ) ) )
+    if ((str == 0) || (NString(str) == NString("")))
       return 0;
 
     unsigned int total = 0;
@@ -95,20 +95,20 @@ namespace nux
       if (str[i] == 0)
         return total;
 
-      total += GetCharWidth (str[i]);
+      total += GetCharWidth(str[i]);
     }
 
     return total;
   }
 
-  int FontTexture::GetStringWidth (const NString &str, int num_char_to_compute) const
+  int FontTexture::GetStringWidth(const NString &str, int num_char_to_compute) const
   {
-    return GetCharStringWidth (str.GetTCharPtr(), num_char_to_compute);
+    return GetCharStringWidth(str.GetTCharPtr(), num_char_to_compute);
   }
 
-  int FontTexture::GetCharStringWidth (const TCHAR *str, int num_char_to_compute) const
+  int FontTexture::GetCharStringWidth(const char *str, int num_char_to_compute) const
   {
-    if ( (str == 0) || (NString (str) == NString (TEXT ("") ) ) )
+    if ((str == 0) || (NString(str) == NString("")))
       return 0;
 
     int num_chars = num_char_to_compute;
@@ -125,7 +125,7 @@ namespace nux
       if (str[i] == 0)
         return total;
 
-      total += GetCharWidth (str[i]);
+      total += GetCharWidth(str[i]);
     }
 
     return total;
@@ -136,79 +136,79 @@ namespace nux
     return m_Charset.FontHeight;
   }
 
-  bool FontTexture::BMFontParseFNT ( std::istream &Stream )
+  bool FontTexture::BMFontParseFNT( std::istream &Stream )
   {
     std::string Line;
     int KerningIndex = 0;
 
-    while ( !Stream.eof() )
+    while ( !Stream.eof())
     {
-      std::getline ( Stream, Line );
+      std::getline( Stream, Line );
 
       unsigned int line_size = (unsigned int) Line.length();
-      TCHAR *tc = new TCHAR[line_size+1];
-      const TCHAR *Stream = tc;
-      Memcpy (tc, Line.c_str(), line_size + 1);
+      char *tc = new char[line_size+1];
+      const char *Stream = tc;
+      Memcpy(tc, Line.c_str(), line_size + 1);
       tc[line_size] = 0;
 
-      if ( ParseCommand (&Stream, TEXT ("common") ) /*Read == "common"*/)
+      if ( ParseCommand(&Stream, "common") /*Read == "common"*/)
       {
-        Parse_bool (tc, TEXT ("Bold="),        m_Charset.bold);
-        Parse_bool (tc, TEXT ("Italic="),      m_Charset.italic);
-        Parse_u16 (tc, TEXT ("base="),        m_Charset.Base);
-        Parse_u16 (tc, TEXT ("scaleW="),      m_Charset.Width);
-        Parse_u16 (tc, TEXT ("scaleH="),      m_Charset.Height);
-        Parse_u16 (tc, TEXT ("NumPages="),    m_Charset.Pages);
-        Parse_u16 (tc, TEXT ("FontHeight="),  m_Charset.FontHeight);
-        Parse_u16 (tc, TEXT ("Ascent="),      m_Charset.Ascent);
-        Parse_u16 (tc, TEXT ("Descent="),     m_Charset.Descent);
-        Parse_int (tc, TEXT ("AvgCharWidth="),     m_Charset.AvgCharWidth);
-        Parse_int (tc, TEXT ("MaxCharWidth="),     m_Charset.MaxCharWidth);
-        Parse_int (tc, TEXT ("InternalLeading="),     m_Charset.InternalLeading);
-        Parse_int (tc, TEXT ("ExternalLeading="),     m_Charset.ExternalLeading);
+        Parse_bool(tc, "Bold=",        m_Charset.bold);
+        Parse_bool(tc, "Italic=",      m_Charset.italic);
+        Parse_u16(tc, "base=",        m_Charset.Base);
+        Parse_u16(tc, "scaleW=",      m_Charset.Width);
+        Parse_u16(tc, "scaleH=",      m_Charset.Height);
+        Parse_u16(tc, "NumPages=",    m_Charset.Pages);
+        Parse_u16(tc, "FontHeight=",  m_Charset.FontHeight);
+        Parse_u16(tc, "Ascent=",      m_Charset.Ascent);
+        Parse_u16(tc, "Descent=",     m_Charset.Descent);
+        Parse_int(tc, "AvgCharWidth=",     m_Charset.AvgCharWidth);
+        Parse_int(tc, "MaxCharWidth=",     m_Charset.MaxCharWidth);
+        Parse_int(tc, "InternalLeading=",     m_Charset.InternalLeading);
+        Parse_int(tc, "ExternalLeading=",     m_Charset.ExternalLeading);
         // Constant for now... Should be read from the font file
         m_Charset.NumChar = 256;
       }
-      else if (ParseCommand (&Stream, TEXT ("char") ) )
+      else if (ParseCommand(&Stream, "char"))
       {
 
         unsigned short CharID = 0;
 
-        Parse_u16 (tc, TEXT ("id="), CharID);
-        Parse_u16 (tc, TEXT ("x="), m_Charset.Chars[CharID].x);
-        Parse_u16 (tc, TEXT ("y="), m_Charset.Chars[CharID].y);
-        Parse_u16 (tc, TEXT ("width="), m_Charset.Chars[CharID].Width);
-        Parse_u16 (tc, TEXT ("height="), m_Charset.Chars[CharID].Height);
-        Parse_s16 (tc, TEXT ("xoffset="), m_Charset.Chars[CharID].XOffset);
-        Parse_s16 (tc, TEXT ("yoffset="), m_Charset.Chars[CharID].YOffset);
-        Parse_s16 (tc, TEXT ("xadvance="), m_Charset.Chars[CharID].XAdvance);
-        Parse_s16 (tc, TEXT ("abcA="), m_Charset.Chars[CharID].abcA);
-        Parse_s16 (tc, TEXT ("abcB="), m_Charset.Chars[CharID].abcB);
-        Parse_s16 (tc, TEXT ("abcC="), m_Charset.Chars[CharID].abcC);
-        Parse_u16 (tc, TEXT ("page="), m_Charset.Chars[CharID].page);
+        Parse_u16(tc, "id=", CharID);
+        Parse_u16(tc, "x=", m_Charset.Chars[CharID].x);
+        Parse_u16(tc, "y=", m_Charset.Chars[CharID].y);
+        Parse_u16(tc, "width=", m_Charset.Chars[CharID].Width);
+        Parse_u16(tc, "height=", m_Charset.Chars[CharID].Height);
+        Parse_s16(tc, "xoffset=", m_Charset.Chars[CharID].XOffset);
+        Parse_s16(tc, "yoffset=", m_Charset.Chars[CharID].YOffset);
+        Parse_s16(tc, "xadvance=", m_Charset.Chars[CharID].XAdvance);
+        Parse_s16(tc, "abcA=", m_Charset.Chars[CharID].abcA);
+        Parse_s16(tc, "abcB=", m_Charset.Chars[CharID].abcB);
+        Parse_s16(tc, "abcC=", m_Charset.Chars[CharID].abcC);
+        Parse_u16(tc, "page=", m_Charset.Chars[CharID].page);
       }
-      else if ( ParseCommand (&Stream, TEXT ("Kerning") ) )
+      else if ( ParseCommand(&Stream, "Kerning"))
       {
-        Parse_u16 (tc, "count=", m_Charset.NumKerningPairs);
+        Parse_u16(tc, "count=", m_Charset.NumKerningPairs);
 
         if (m_Charset.NumKerningPairs > 0)
           m_Charset.Kerning = new KerningPair[m_Charset.NumKerningPairs];
       }
-      else if ( ParseCommand (&Stream, TEXT ("KerningPair") ) )
+      else if ( ParseCommand(&Stream, "KerningPair"))
       {
         if (KerningIndex < m_Charset.NumKerningPairs)
         {
-          Parse_u16 (tc, "first=", m_Charset.Kerning[KerningIndex].first);
-          Parse_u16 (tc, "second=", m_Charset.Kerning[KerningIndex].second);
-          Parse_s16 (tc, "amount=", m_Charset.Kerning[KerningIndex].amount);
+          Parse_u16(tc, "first=", m_Charset.Kerning[KerningIndex].first);
+          Parse_u16(tc, "second=", m_Charset.Kerning[KerningIndex].second);
+          Parse_s16(tc, "amount=", m_Charset.Kerning[KerningIndex].amount);
           KerningIndex++;
         }
       }
-      else if ( ParseCommand (&Stream, TEXT ("Texture") ) )
+      else if ( ParseCommand(&Stream, "Texture"))
       {
-        TCHAR texture[256];
+        char texture[256];
 
-        if (ParseLine (&Stream, texture, 256) )
+        if (ParseLine(&Stream, texture, 256))
         {
 //                 FilePath FontPath;
 //                 FontPath.AddSearchPath(""); // for case where fully qualified path is given
@@ -216,19 +216,24 @@ namespace nux
 //                 FontPath.AddSearchPath("../Fonts");
 
 #ifdef UNICODE
-          NString font_texture_file = GNuxGraphicsResources.FindResourceLocation (texture);
+          NString font_texture_file = GNuxGraphicsResources.FindResourceLocation(texture);
 #else
-          NString font_texture_file = GNuxGraphicsResources.FindResourceLocation (texture);
+          NString font_texture_file = GNuxGraphicsResources.FindResourceLocation(texture);
 #endif
 
-          TextureRectangle *Texture = new TextureRectangle (NUX_TRACKER_LOCATION);
-          NBitmapData* bitmap_data = LoadImageFile(font_texture_file.GetTCharPtr ());
+#ifdef NUX_OPENGLES_20
+          Texture2D *Texture = new Texture2D(NUX_TRACKER_LOCATION);
+#else
+          TextureRectangle *Texture = new TextureRectangle(NUX_TRACKER_LOCATION);
+#endif
+
+          NBitmapData* bitmap_data = LoadImageFile(font_texture_file.GetTCharPtr());
 
           if (bitmap_data)
-            Texture->Update (bitmap_data, false);
+            Texture->Update(bitmap_data, false);
 
           delete bitmap_data;
-          TextureArray.push_back (Texture);
+          TextureArray.push_back(Texture);
         }
       }
 
@@ -238,7 +243,7 @@ namespace nux
     return true;
   }
 
-//    CursorPosToX (similar to ScriptStringCPtoX from Microsoft UniScript)
+//    CursorPosToX(similar to ScriptStringCPtoX from Microsoft UniScript)
 //        The CursorPosToX function returns the x-coordinate for the leading or trailing edge of a character position.
 
 //        Parameters
@@ -253,25 +258,25 @@ namespace nux
 //          If the function succeeds, it returns S_OK.
 //          If the function fails, it returns an HRESULT.
 //          The return value can be tested with the SUCCEEDED and FAILED macros.
-  bool FontTexture::CursorPosToX (const NString &Str,
+  bool FontTexture::CursorPosToX(const NString &Str,
                                   int icp,
                                   bool fTrailing,
                                   int *pX)
   {
-    if (icp > (int) Str.Size() )
+    if (icp > (int) Str.Size())
       return false;
 
     if (fTrailing)
       // get pX at the right of the character at position icp
-      *pX = GetStringWidth (Str, icp + 1);
+      *pX = GetStringWidth(Str, icp + 1);
     else
       // get pX at the left of the character at position icp
-      *pX = GetStringWidth (Str, icp);
+      *pX = GetStringWidth(Str, icp);
 
     return true;
   }
 
-//    XToCursorPosition (similar to ScriptStringXtoCP from Microsoft UniScript)
+//    XToCursorPosition(similar to ScriptStringXtoCP from Microsoft UniScript)
 //        The XToCursorPosition function converts an x-coordinate to a character position.
 //
 //    Parameters
@@ -288,7 +293,7 @@ namespace nux
 //          If the function is successful, it returns S_OK.
 //          If the function fails, it returns an HRESULT.
 //          The return value can be tested with the SUCCEEDED and FAILED macros.
-  bool FontTexture::XToCursorPosition (const NString &Str,
+  bool FontTexture::XToCursorPosition(const NString &Str,
                                        int iX,
                                        unsigned int FirstVisibleCharIndex,
                                        int *piCh,
@@ -296,7 +301,7 @@ namespace nux
   {
     unsigned int num_chars;
     num_chars = (unsigned int) Str.Size();
-    nuxAssert (FirstVisibleCharIndex < num_chars);
+    nuxAssert(FirstVisibleCharIndex < num_chars);
 
     *piCh = 0;
     *piTrailing = 0;
@@ -315,12 +320,12 @@ namespace nux
 
     for (unsigned int i = 0; i < FirstVisibleCharIndex; ++i)
     {
-      X += GetCharWidth (Str[i]);
+      X += GetCharWidth(Str[i]);
     }
 
     for (unsigned int i = 0; i < num_chars; ++i)
     {
-      unsigned int s = GetCharWidth (Str[i]);
+      unsigned int s = GetCharWidth(Str[i]);
 
       if (i >= FirstVisibleCharIndex)
       {
@@ -337,7 +342,7 @@ namespace nux
           return true;
         }
 
-        else if (total + GetCharWidth (Str[i+1]) / 2 > X)
+        else if (total + GetCharWidth(Str[i+1]) / 2 > X)
         {
           *piCh = i + 1;
           *piTrailing = 0;

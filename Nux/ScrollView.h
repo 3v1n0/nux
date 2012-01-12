@@ -37,13 +37,13 @@ namespace nux
   {
     NUX_DECLARE_OBJECT_TYPE(ScrollView, View);
   public:
-    ScrollView (NUX_FILE_LINE_PROTO);
+    ScrollView(NUX_FILE_LINE_PROTO);
     virtual ~ScrollView();
 
     // API
-    void EnableVerticalScrollBar (bool b);
-    void EnableHorizontalScrollBar (bool b);
-    virtual bool SetLayout (Layout *layout);
+    void EnableVerticalScrollBar(bool b);
+    void EnableHorizontalScrollBar(bool b);
+    virtual bool SetLayout(Layout *layout);
 
     /*!
         Set the table size to be such that all the content items of the table are visible .
@@ -52,7 +52,7 @@ namespace nux
         @param b If b is true, the size of the table is constrained by its content.
         @see IsSizeMatchLayout()
     */
-    void SetSizeMatchContent (bool b);
+    void SetSizeMatchContent(bool b);
 
     /*!
         Check if the table size is constrained by its content.
@@ -62,24 +62,24 @@ namespace nux
     bool IsSizeMatchContent() const;
 
     //! Inherited from Area
-    virtual void SetGeometry (const Geometry &geo);
+    virtual void SetGeometry(const Geometry &geo);
 
     /////////////////
     //  EMITERS    //
     /////////////////
-    void OnSizeGrigMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void OnSizeGrigMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    void EmitMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void OnSizeGrigMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void OnSizeGrigMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void EmitMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     //void EmitInternalResize(int x, int y, int w, int h);
 
 
     /////////////////
     //  RECEIVERS  //
     /////////////////
-    virtual void ScrollLeft (float stepx, int mousedx);
-    virtual void ScrollRight (float stepx, int mousedx);
-    virtual void ScrollUp (float stepy, int mousedy);
-    virtual void ScrollDown (float stepy, int mousedy);
+    virtual void ScrollLeft(float stepx, int mousedx);
+    virtual void ScrollRight(float stepx, int mousedx);
+    virtual void ScrollUp(float stepy, int mousedy);
+    virtual void ScrollDown(float stepy, int mousedy);
 
     virtual void ResetScrollToLeft();
     virtual void ResetScrollToRight();
@@ -113,12 +113,16 @@ namespace nux
     Geometry m_ContentGeometry;
 
     // signals
-    sigc::signal<void> SigTest;
-    sigc::signal<void> sigMoveWindow;
-    sigc::signal<void, int, int, int, int> sigResize;
+    /*!
+        Emitted when scrolling happens. the parameters to the signals are:
+        int: value of the horizontal translation of the layout.
+        int: value of the vertical translation of the layout.
+        This signal is emitted only if the scroll view has a layout.
+    */
+    sigc::signal<void, int, int> scrolling;
 
   public:
-    void    SetViewContentLeftMargin (int margin)
+    void    SetViewContentLeftMargin(int margin)
     {
       m_ViewContentLeftMargin = margin;
     }
@@ -126,7 +130,7 @@ namespace nux
     {
       return m_ViewContentLeftMargin;
     }
-    void    SetViewContentRightMargin (int margin)
+    void    SetViewContentRightMargin(int margin)
     {
       m_ViewContentRightMargin = margin;
     }
@@ -134,7 +138,7 @@ namespace nux
     {
       return m_ViewContentRightMargin;
     }
-    void    SetViewContentTopMargin (int margin)
+    void    SetViewContentTopMargin(int margin)
     {
       m_ViewContentTopMargin = margin;
     }
@@ -142,7 +146,7 @@ namespace nux
     {
       return m_ViewContentTopMargin;
     }
-    void    SetViewContentBottomMargin (int margin)
+    void    SetViewContentBottomMargin(int margin)
     {
       m_ViewContentBottomMargin = margin;
     }
@@ -153,22 +157,20 @@ namespace nux
 
   protected:
 
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual long ProcessEvent (Event &event, long TraverseInfo, long ProcessEventInfo);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
 
     void RecvMouseWheel(int x, int y, int wheel_delta,  long button_flags, unsigned long key_flags);
+    void OnChildFocusChanged(Area *child);
 
     //! Change Vertical Scrollbar in the ScrollView.
     /*!
         For styling purpose, allow the classes that inherit from ScrollView to
         change the vertical scrollbar.
     */ 
-    void SetVScrollBar (VScrollBar* newVScrollBar);
-
-    void OnChildFocusChanged (/*Area *parent,*/ Area *child);
+    void SetVScrollBar(VScrollBar* newVScrollBar);
 
     // Backup texture to speed up scrolling
     ObjectPtr<IOpenGLFrameBufferObject> m_FrameBufferObject;
@@ -177,7 +179,7 @@ namespace nux
     {
       m_TextureIndex = (m_TextureIndex == 0) ? 1 : 0;
     }
-    void SetTextureIndex (int index)
+    void SetTextureIndex(int index)
     {
       m_TextureIndex = index;
     }
@@ -203,12 +205,12 @@ namespace nux
     //! Vertical scrollbar offsets.
     int _delta_y;
 
-    void FormatContent ();
-    virtual void PreLayoutManagement ();
-    virtual long PostLayoutManagement (long LayoutResult);
-    virtual void PositionChildLayout (float offsetX, float offsetY);
+    void FormatContent();
+    virtual void PreLayoutManagement();
+    virtual long PostLayoutManagement(long LayoutResult);
+    virtual void ComputeContentPosition(float offsetX, float offsetY);
 
-    virtual long PostLayoutManagement2 (long LayoutResult);
+    virtual long PostLayoutManagement2(long LayoutResult);
 
   private:
 

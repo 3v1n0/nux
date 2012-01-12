@@ -47,11 +47,14 @@
   if (!logger.IsErrorEnabled()) {} \
   else ::nux::logging::LogStream(::nux::logging::Error, logger.module(), __FILE__, __LINE__).stream()
 
-// We shouldn't really be logging block level information at anything higher
-// than debug.
-#define LOG_TRACE_BLOCK(logger) ::nux::logging::BlockTracer _block_tracer_ ## __LINE__ (logger, ::nux::logging::Trace, __PRETTY_FUNCTION__, __FILE__, __LINE__)
-#define LOG_DEBUG_BLOCK(logger) ::nux::logging::BlockTracer _block_tracer_ ## __LINE__ (logger, ::nux::logging::Debug, __PRETTY_FUNCTION__, __FILE__, __LINE__)
-
+// We shouldn't really be logging block level information at anything higher than debug.
+#if defined(NUX_OS_WINDOWS)
+  #define LOG_TRACE_BLOCK(logger)
+  #define LOG_DEBUG_BLOCK(logger)
+#else
+  #define LOG_TRACE_BLOCK(logger) ::nux::logging::BlockTracer _block_tracer_ ## __LINE__ (logger, ::nux::logging::Trace, __PRETTY_FUNCTION__, __FILE__, __LINE__)
+  #define LOG_DEBUG_BLOCK(logger) ::nux::logging::BlockTracer _block_tracer_ ## __LINE__ (logger, ::nux::logging::Debug, __PRETTY_FUNCTION__, __FILE__, __LINE__)
+#endif
 
 namespace nux {
 namespace logging {
@@ -88,7 +91,7 @@ Level get_logging_level(std::string level);
  *   nux::logging::configure_logging(::getenv("MY_APP_LOGGING_CONFIG"));
  */
 void configure_logging(const char* config_string);
-std::string backtrace(int levels = -1);
+std::string Backtrace(int levels = -1);
 
 std::string dump_logging_levels(std::string const& prefix = "");
 

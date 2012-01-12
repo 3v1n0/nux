@@ -89,11 +89,14 @@ namespace nux
 #elif defined(NUX_OS_LINUX)
 
   #ifdef NUX_OPENGLES_20
-    #ifndef GLEW_MX
-      #define GLEW_MX
-    #endif
+    #include "NuxGraphics/OpenGLMapping.h"
     #include "EGL/egl.h"
     #include "GLES2/gl2.h"
+    #include "GLES2/gl2ext.h"
+    // Explicitly include X11 headers as many EGL implementations don't
+    // do it for us.
+    #include <X11/Xlib.h>
+    #include <X11/Xutil.h>
   #else
     #ifndef GLEW_MX
       #define GLEW_MX
@@ -141,18 +144,19 @@ namespace nux
     OGL_FORCE_DWORD            = 0x7fffffff /* force 32-bit size enum */
   };
 
-  extern const TCHAR *OGLDeviceErrorMessages[];
+  extern const char *OGLDeviceErrorMessages[];
 
 #define OGL_OK 0
 #define OGL_CALL(call)              \
     {                               \
         int Result = call;          \
-        if(Result != OGL_OK)          \
-        {nuxError(TEXT("OGL Object Error: Error # %d - (%s) "), Result,  *OGLDeviceErrorMessages[Result] );}   \
+        if (Result != OGL_OK)          \
+        {nuxError("OGL Object Error: Error # %d - (%s) ", Result,  *OGLDeviceErrorMessages[Result] );}   \
     }
 
-//if(Result!=OGL_OK) {nuxError(TEXT("OGL Object Error: Error # %d - %s"), Result, OGLDeviceErrorMessages[Result]);}
+//if(Result!=OGL_OK) {nuxError("OGL Object Error: Error # %d - %s", Result, OGLDeviceErrorMessages[Result]);}
 
+#ifndef NUX_OPENGLES_20
   enum TEXTURE_FORMAT
   {
     TEXTURE_FMT_UNKNOWN              = 0,
@@ -193,10 +197,28 @@ namespace nux
     TEXTURE_FMT_COMPRESSED_RGBA_S3TC_DXT5_EXT  = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT,
     TEXTURE_FMT_FORCE_DWORD                    = 0x7fffffff /* force 32-bit size enum */
   };
+#else
+
+  enum TEXTURE_FORMAT
+  {
+    TEXTURE_FMT_UNKNOWN              = 0,
+    TEXTURE_FMT_ALPHA                = GL_ALPHA,
+
+    TEXTURE_FMT_LUMINANCE            = GL_LUMINANCE,
+    TEXTURE_FMT_LUMINANCE_ALPHA      = GL_LUMINANCE_ALPHA,
+
+    TEXTURE_FMT_GL_DEPTH_COMPONENT   = GL_DEPTH_COMPONENT,
+
+    TEXTURE_FMT_RGBA                 = GL_RGBA,
+    TEXTURE_FMT_RGB                  = GL_RGB,
+
+    TEXTURE_FMT_FORCE_DWORD                    = 0x7fffffff /* force 32-bit size enum */
+  };
+#endif
 
   struct PixelFormatReadInfo
   {
-    const TCHAR	*Name;
+    const char	*Name;
     GLenum          Format;     // format use for glReadPixels
     GLenum          type;       // type use for glReadPixels
     // Format specific internal flags, e.g. whether SRGB is supported with this format
@@ -242,8 +264,10 @@ namespace nux
     PRIMITIVE_TYPE_TRIANGLELIST          = GL_TRIANGLES,
     PRIMITIVE_TYPE_TRIANGLESTRIP         = GL_TRIANGLE_STRIP,
     PRIMITIVE_TYPE_TRIANGLEFAN           = GL_TRIANGLE_FAN,
+#ifndef NUX_OPENGLES_20
     PRIMITIVE_TYPE_QUADLIST              = GL_QUADS,
     PRIMITIVE_TYPE_QUADSTRIP             = GL_QUAD_STRIP,
+#endif
     PRIMITIVE_TYPE_FORCE_DWORD           = 0x7fffffff /* force 32-bit size enum */
   } PRIMITIVE_TYPE;
 
@@ -438,11 +462,13 @@ namespace nux
     ATTRIB_CT_INT               =   GL_INT,
     ATTRIB_CT_UNSIGNED_INT      =   GL_UNSIGNED_INT,
     ATTRIB_CT_FLOAT             =   GL_FLOAT,
+#ifndef NUX_OPENGLES_20
     ATTRIB_CT_HALF_FLOAT        =   GL_HALF_FLOAT_ARB,
 //    ATTRIB_CT_2_BYTES           =   GL_2_BYTES,
 //    ATTRIB_CT_3_BYTES           =   GL_3_BYTES,
 //    ATTRIB_CT_4_BYTES           =   GL_4_BYTES,
     ATTRIB_CT_DOUBLE            =   GL_DOUBLE,
+#endif
 // Type can be GL_UNSIGNED_BYTE, GL_SHORT, GL_INT, GL_FLOAT, GL_DOUBLE
     ATTRIB_CT_FORCE_DWORD           = 0x7fffffff /* force 32-bit size enum */
   } ATTRIB_COMPONENT_TYPE;
@@ -484,8 +510,8 @@ namespace nux
   } QUERY_TYPE;
 
 // Flags field for Issue
-#define ISSUE_END (1 << 0) // Tells the runtime to issue the end of a query, changing it's state to "non-signaled".
-#define ISSUE_BEGIN (1 << 1) // Tells the runtime to issue the begining of a query.
+#define ISSUE_END   (1 << 0) // Tells the runtime to issue the end of a query, changing it's state to "non-signaled".
+#define ISSUE_BEGIN (1 << 1) // Tells the runtime to issue the beginning of a query.
 
   struct VERTEXELEMENT
   {
@@ -516,7 +542,7 @@ namespace nux
     int Offset;
     // Type can be GL_UNSIGNED_BYTE, GL_SHORT, GL_INT, GL_FLOAT, GL_DOUBLE ...
     ATTRIB_COMPONENT_TYPE Type;
-    // This can be 1, 2, 3 or 4; For a position (xyzw), it will be 4. For a texture coordinate (uv) it will be 2.
+    // This can be 1, 2, 3 or 4; For a position(xyzw), it will be 4. For a texture coordinate(uv) it will be 2.
     int NumComponent;
     int stride_;
   };
@@ -527,14 +553,14 @@ namespace nux
   ATTRIB_CT_UNKNOWN,          \
   0, 0)
 
-  unsigned int GetVertexElementSize (VERTEXELEMENT vtxelement);
+  unsigned int GetVertexElementSize(VERTEXELEMENT vtxelement);
 
 #define MAXDECLLENGTH    64
 #define MAX_NUM_STREAM  8
 
-  void DecomposeTypeDeclaraction (ATTRIB_DECL_TYPE Type, BYTE &NumComponent, ATTRIB_COMPONENT_TYPE &ComponentType);
+  void DecomposeTypeDeclaraction(ATTRIB_DECL_TYPE Type, BYTE &NumComponent, ATTRIB_COMPONENT_TYPE &ComponentType);
 
-//   void AddVertexElement (std::vector<VERTEXELEMENT>& Elements,
+//   void AddVertexElement(std::vector<VERTEXELEMENT>& Elements,
 //                          WORD Stream,
 //                          WORD Offset,
 //                          //ubiS16 Stride,

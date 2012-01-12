@@ -64,3 +64,4 @@ Logs
 **/nux.log.*
 examples/cairo_wrapper
 examples/tiles_view
+test-graphics-display
