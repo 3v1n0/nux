@@ -1,6 +1,28 @@
-nux (2.0.0-0ubuntu1) UNRELEASED; urgency=low
+nux (2.0.0-0ubuntu1) precise; urgency=low
 
-  [ Didier Roche ]
+  [ Aurélien Gâteau ]
+  * New upstream release:
+    - compiz crashed with SIGSEGV in nux::ROProperty<std::string>::operator
+      std::string() (LP: #881106)
+    - compiz crashed with SIGSEGV in
+      nux::WindowCompositor::FindKeyFocusAreaFrom() (LP: #860852)
+    - compiz crashed with SIGSEGV in nux::Area::FindKeyFocusArea()
+      (LP: #848952)
+    - compiz crashed with SIGILL in typeinfo for std::ostream() (LP: #849881)
+    - compiz crashed with SIGSEGV in nux::WindowThread::IsInsideLayoutCycle()
+      (LP: #864686)
+    - Select quicklist items with just one right click (LP: #688830)
+    - OnMouseDoubleClick in InputArea isn't working (LP: #708020)
+    - Menubar - horizontal scroll over a menu opens it (LP: #775872)
+    - Clicking on a dash category header should not give it keyboard focus
+      (LP: #905921)
+    - Horizontal scroll on maximize/restore window control restores window.
+      (LP: #809717)
+    - Horizontally scrolling while highlighting an item in the dash or on an
+      indicator will open the item. (LP: #837004)
+    - compiz crashed with SIGSEGV in free() (LP: #864446)
+    - Mouse wheel doesn't works if the mouse pointer is inside dash scrollbar.
+      (LP: #888819)
   * debian/rules, debian/control:
     - add nuxabiversion capability as upstream is breaking a lot the ABI
       wasn't bumping the soname. Create a virtual package similar to what
@@ -13,10 +35,7 @@ nux (2.0.0-0ubuntu1) UNRELEASED; urgency=low
     - move the apport file there instead of the -common package to enable
       co-instability
 
-  [ Aurélien Gâteau ]
-  * New upstream release.
-
- -- Aurélien Gâteau <aurelien.gateau@ubuntu.com>  Thu, 12 Jan 2012 18:30:52 +0100
+ -- Didier Roche <didrocks@ubuntu.com>  Fri, 13 Jan 2012 09:04:48 +0100
 
 nux (1.16.0-0ubuntu2) precise; urgency=low
 
