@@ -335,10 +335,14 @@ namespace nux
     {
       XMapRaised(display_, window_);
       mapped_ = true;
+
+      XEvent xevent;
+      while (XCheckTypedWindowEvent(display_, window_, MapNotify, &xevent));
+      XSetInputFocus(display_, window_, RevertToParent, CurrentTime);
+
     }
     XMoveResizeWindow(display_, window_,
                       geometry_.x, geometry_.y,
                       geometry_.width, geometry_.height);
   }
 }
-
