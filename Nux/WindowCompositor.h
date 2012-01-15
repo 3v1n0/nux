@@ -196,9 +196,8 @@ namespace nux
     {
       return m_FrameBufferObject;
     }
+    
     ObjectPtr<IOpenGLFrameBufferObject> m_FrameBufferObject;
-
-    ObjectPtr<IOpenGLBaseTexture> GetScreenBlurTexture();
 
     void StartModalWindow(ObjectWeakPtr<BaseWindow>);
     void StopModalWindow(ObjectWeakPtr<BaseWindow>);
@@ -356,6 +355,17 @@ namespace nux
     //! Returns the area at the top of the keyboard grab stack.
     InputArea* GetKeyboardGrabArea();
 
+    // We use Rectangle texture to attach to the frame-buffer because some GPU like the Geforce FX 5600 do not
+    // have support for ARB_texture_non_power_of_two. However it does support ARB_texture_recatangle.
+    struct RenderTargetTextures
+    {
+      ObjectPtr<IOpenGLBaseTexture> color_rt;
+      ObjectPtr<IOpenGLBaseTexture> depth_rt;
+    };
+    
+    //! Return the RenderTargetTextures structure of a BaseWindow.
+    RenderTargetTextures& GetWindowBuffer(BaseWindow* window);
+
   private:
     //! Render the interface.
     void Draw(bool SizeConfigurationEvent, bool force_draw);
@@ -461,18 +471,8 @@ namespace nux
     // UnRegister is called via the object destroyed event, hence the Object*.
     void UnRegisterWindow(Object*);
 
-    // We use Rectangle texture to attach to the frame-buffer because some GPU like the Geforce FX 5600 do not
-    // have support for ARB_texture_non_power_of_two. However it does support ARB_texture_recatangle.
-    struct RenderTargetTextures
-    {
-      ObjectPtr<IOpenGLBaseTexture> color_rt;
-      ObjectPtr<IOpenGLBaseTexture> depth_rt;
-    };
     ObjectPtr<IOpenGLBaseTexture> m_MainColorRT;
     ObjectPtr<IOpenGLBaseTexture> m_MainDepthRT;
-
-    //! Return the RenderTargetTextures structure of a ViewWindow.
-    RenderTargetTextures &GetWindowBuffer(BaseWindow* window);
 
     WeakBaseWindowPtr m_CurrentWindow;    //!< BaseWindow where event processing or rendering is happening.
     WeakBaseWindowPtr m_FocusAreaWindow;  //!< The BaseWindow that contains the _mouse_focus_area.
