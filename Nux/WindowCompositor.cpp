@@ -39,7 +39,7 @@ namespace
   logging::Logger logger("nux.window");
 }
 
-  WindowCompositor::WindowCompositor(WindowThread *window_thread)
+  WindowCompositor::WindowCompositor(WindowThread* window_thread)
   : window_thread_(window_thread)  
   , reference_fbo_(0)
   {
@@ -123,7 +123,7 @@ namespace
     return m_SelectedWindow.GetPointer();
   }
 
-  WindowCompositor::RenderTargetTextures &WindowCompositor::GetWindowBuffer(BaseWindow *window)
+  WindowCompositor::RenderTargetTextures& WindowCompositor::GetWindowBuffer(BaseWindow* window)
   {
     static RenderTargetTextures invalid;
     std::map< BaseWindow*, RenderTargetTextures >::iterator it = _window_to_texture_map.find(window);
@@ -136,7 +136,7 @@ namespace
     return invalid;
   }
 
-  void WindowCompositor::RegisterWindow(BaseWindow *window)
+  void WindowCompositor::RegisterWindow(BaseWindow* window)
   {
     LOG_DEBUG_BLOCK(logger);
     if (!window)
@@ -222,7 +222,7 @@ namespace
     {
       if ((*window_it).IsValid() && (*window_it)->IsVisible())
       {
-        InputArea *area = static_cast<InputArea*>((*window_it)->FindAreaUnderMouse(mouse_position, event_type));
+        InputArea* area = static_cast<InputArea*>((*window_it)->FindAreaUnderMouse(mouse_position, event_type));
         if (area)
         {
           *area_under_mouse_pointer = area;
@@ -307,12 +307,12 @@ namespace
     }
   }
 
-  void WindowCompositor::DndEventCycle(Event &event)
+  void WindowCompositor::DndEventCycle(Event& event)
   {
     if (event.type == NUX_DND_MOVE)
     {
-      InputArea *hit_area = NULL;
-      BaseWindow *hit_base_window = NULL;
+      InputArea* hit_area = NULL;
+      BaseWindow* hit_base_window = NULL;
 
       GetAreaUnderMouse(Point(event.x, event.y), event.type, &hit_area, &hit_base_window);
 
@@ -336,13 +336,13 @@ namespace
     }
     else if (event.type == NUX_DND_DROP)
     {
-      InputArea *current_dnd_area = GetDnDArea();
+      InputArea* current_dnd_area = GetDnDArea();
       if (current_dnd_area->GetGeometry().IsPointInside(event.x - event.x_root, event.y - event.y_root))
         current_dnd_area->HandleDndDrop(event);
     }
   }
 
-  void WindowCompositor::MouseEventCycle(Event &event)
+  void WindowCompositor::MouseEventCycle(Event& event)
   {
     // mouse_owner_area_: the view that has the mouse down
     // mouse_over_area_: the view that is directly below the mouse pointer
@@ -370,7 +370,7 @@ namespace
         BaseWindow* hit_base_window = NULL; // The BaseWindow below the mouse pointer.
 
         // Look for the area below the mouse pointer in the BaseWindow.
-        Area *pointer_grab_area = GetPointerGrabArea();
+        Area* pointer_grab_area = GetPointerGrabArea();
         if (pointer_grab_area)
         {
           // If there is a pending mouse pointer grab, test that area only
@@ -890,7 +890,7 @@ namespace
     }
   }
 
-  void WindowCompositor::KeyboardEventCycle(Event &event)
+  void WindowCompositor::KeyboardEventCycle(Event& event)
   {
     InputArea* keyboard_event_grab_view = GetKeyboardGrabArea();
 
@@ -1022,7 +1022,7 @@ namespace
   }
 
   // NUXTODO: rename as EventCycle
-  void WindowCompositor::ProcessEvent(Event &event)
+  void WindowCompositor::ProcessEvent(Event& event)
   {
     inside_event_cycle_ = true;
     if (_enable_nux_new_event_architecture)
@@ -1085,7 +1085,7 @@ namespace
   }
 
   //! Push a floating view at the top of the stack.
-  void WindowCompositor::PushToFront(BaseWindow *window)
+  void WindowCompositor::PushToFront(BaseWindow* window)
   {
     if (window == 0)
       return;
@@ -1102,7 +1102,7 @@ namespace
   }
 
   //! Push a floating view at the bottom of the stack.
-  void WindowCompositor::PushToBack(BaseWindow *window)
+  void WindowCompositor::PushToBack(BaseWindow* window)
   {
     if (window == 0)
       return;
@@ -1122,7 +1122,7 @@ namespace
   }
 
   //! Push a floating view just above another floating view.
-  void WindowCompositor::PushHigher(BaseWindow *top_floating_view, BaseWindow *bottom_floating_view, bool strict)
+  void WindowCompositor::PushHigher(BaseWindow* top_floating_view, BaseWindow* bottom_floating_view, bool strict)
   {
     NUX_RETURN_IF_NULL(bottom_floating_view);
     NUX_RETURN_IF_NULL(top_floating_view);
@@ -1168,7 +1168,7 @@ namespace
     EnsureAlwaysOnFrontWindow();
   }
 
-  void WindowCompositor::SetAlwaysOnFrontWindow(BaseWindow *window)
+  void WindowCompositor::SetAlwaysOnFrontWindow(BaseWindow* window)
   {
     _always_on_front_window = ObjectWeakPtr<BaseWindow> (window);
 
@@ -1194,7 +1194,7 @@ namespace
     }
   }
 
-  InputArea *WindowCompositor::GetExclusiveInputArea()
+  InputArea* WindowCompositor::GetExclusiveInputArea()
   {
     return _exclusive_input_area;
   }
@@ -1293,7 +1293,7 @@ namespace
       window_thread_->GetGraphicsEngine().EmptyClippingRegion();
     }
 
-    std::list<MenuPage *>::reverse_iterator rev_it_menu;
+    std::list<MenuPage*>::reverse_iterator rev_it_menu;
 
     for (rev_it_menu = _menu_chain->rbegin(); rev_it_menu != _menu_chain->rend( ); rev_it_menu++)
     {
@@ -1358,7 +1358,7 @@ namespace
     //GetGraphicsDisplay()->GetGraphicsEngine()->SetContext(0, 0, buffer_width, buffer_height);
   }
 
-  void WindowCompositor::RenderTopViewContent(BaseWindow *window, bool force_draw)
+  void WindowCompositor::RenderTopViewContent(BaseWindow* window, bool force_draw)
   {
     GetPainter().EmptyBackgroundStack();
     SetProcessingTopView(window);
@@ -1632,7 +1632,7 @@ namespace
     }
   }
 
-  void WindowCompositor::AddMenu(MenuPage *menu, BaseWindow *window, bool OverrideCurrentMenuChain)
+  void WindowCompositor::AddMenu(MenuPage* menu, BaseWindow* window, bool OverrideCurrentMenuChain)
   {
     if (_menu_chain->size() == 0)
     {
@@ -1675,9 +1675,9 @@ namespace
   }
 
   // Be careful never call this function while you are iterating through the elements of _menu_chain.
-  void WindowCompositor::RemoveMenu(MenuPage *menu)
+  void WindowCompositor::RemoveMenu(MenuPage* menu)
   {
-    std::list<MenuPage *>::iterator it = find(_menu_chain->begin(), _menu_chain->end(), menu);
+    std::list<MenuPage*>::iterator it = find(_menu_chain->begin(), _menu_chain->end(), menu);
 
     if (it == _menu_chain->end())
     {
@@ -1701,7 +1701,7 @@ namespace
     if (_menu_chain->size() == 0)
       return;
 
-    std::list<MenuPage *>::iterator menu_it = _menu_chain->begin();
+    std::list<MenuPage*>::iterator menu_it = _menu_chain->begin();
 
     while (menu_it != _menu_chain->end())
     {
@@ -1724,18 +1724,18 @@ namespace
     }
   }
 
-  void WindowCompositor::SetWidgetDrawingOverlay(InputArea *ic, BaseWindow* OverlayWindow)
+  void WindowCompositor::SetWidgetDrawingOverlay(InputArea* ic, BaseWindow* OverlayWindow)
   {
     OverlayDrawingCommand = ic;
     m_OverlayWindow = OverlayWindow;
   }
 
-  InputArea *WindowCompositor::GetWidgetDrawingOverlay()
+  InputArea* WindowCompositor::GetWidgetDrawingOverlay()
   {
     return OverlayDrawingCommand;
   }
 
-  void WindowCompositor::SetTooltip(InputArea* TooltipArea, const char *TooltipText, int x, int y)
+  void WindowCompositor::SetTooltip(InputArea* TooltipArea, const char* TooltipText, int x, int y)
   {
     _tooltip_window = GetProcessingTopView();
     m_TooltipArea = TooltipArea;
@@ -1816,7 +1816,7 @@ namespace
     }
   }
   
-  void WindowCompositor::SetKeyFocusArea(InputArea *area)
+  void WindowCompositor::SetKeyFocusArea(InputArea* area)
   {
     InputArea* keyboard_grab_area = GetKeyboardGrabArea();
 
@@ -1898,7 +1898,7 @@ namespace
     return key_focus_area_;
   }
 
-  void WindowCompositor::SetBackgroundPaintLayer(AbstractPaintLayer *bkg)
+  void WindowCompositor::SetBackgroundPaintLayer(AbstractPaintLayer* bkg)
   {
     NUX_SAFE_DELETE(m_Background);
     m_Background = bkg->Clone();
@@ -1954,7 +1954,7 @@ namespace
 
   void WindowCompositor::RestoreRenderingSurface()
   {
-    BaseWindow *top_view = GetProcessingTopView();
+    BaseWindow* top_view = GetProcessingTopView();
 
     if (top_view && inside_rendering_cycle_)
     {
@@ -2004,7 +2004,7 @@ namespace
     }
   }
 
-  void* WindowCompositor::GetBackupTextureData(BaseWindow *base_window, int &width, int &height, int &format)
+  void* WindowCompositor::GetBackupTextureData(BaseWindow* base_window, int& width, int& height, int& format)
   {
     width = height = format = 0;
 
