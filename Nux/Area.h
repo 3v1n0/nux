@@ -344,8 +344,19 @@ namespace nux
         This signal is propagated upward so all parent of this area can reconfigure themselves.
         For instance, scroll views will translate their content to make the focused object visible.
     */
-    sigc::signal<void, Area*> OnKeyNavChangeReconfigure; 
-    sigc::signal<void, Area*> OnKeyNavFocusChange;
+    sigc::signal<void, Area*> OnKeyNavChangeReconfigure;
+
+    /*!
+        This signal is received whether the area receiving or loosing the keyboard focus.
+        Call WindowCompositor::GetKeyFocusArea() to find out if this area has received the focus.
+        The second parameter of this signal indicates the keyboard action that triggered this area 
+        to receive or loose the keyboard focus.
+    */
+    sigc::signal<void, Area*, KeyNavDirection> OnKeyNavFocusChange;
+
+    /*!
+        This signal is received when the area has the key focus and the enter key has been pressed.s
+    */
     sigc::signal<void, Area*> OnKeyNavFocusActivate;
 
     //! Queue a relayout

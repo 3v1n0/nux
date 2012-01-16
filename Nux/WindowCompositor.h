@@ -83,7 +83,21 @@ namespace nux
     bool      _starting_menu_event_cycle;
     bool      _menu_is_active;
 
-    void SetKeyFocusArea(InputArea* area);
+    //! Set the area that has the keyboard focus.
+    /*!
+        Set the area that has the keyboard focus.
+
+        @param The area that that gets the keyboard focus.
+        @param The key nav direction that initiated the focus to the provided area.
+    */
+    void SetKeyFocusArea(InputArea* area, KeyNavDirection direction = KEY_NAV_NONE);
+
+    //! Return the area that has the keyboard focus.
+    /*!
+        Return the area that has the keyboard focus.
+
+        @return The area that has the keyboard focus.
+    */    
     InputArea* GetKeyFocusArea();
 
     //! Signal emitted when a BaseWindow becomes visible.
@@ -125,6 +139,7 @@ namespace nux
 
     //! Get the area upon which the mouse button is currently down.
     Area* GetMouseOwnerArea();
+
     //! Set the area upon which the mouse button is currently down.
     void SetMouseOwnerArea(Area* area);
 

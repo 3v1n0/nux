@@ -915,11 +915,6 @@ namespace
         &base_window);
     }
 
-    if (focus_area)
-      SetKeyFocusArea(focus_area);
-    else
-      SetKeyFocusArea(NULL);
-
     KeyNavDirection direction = KEY_NAV_NONE;
 
     switch(event.GetKeySym())
@@ -950,6 +945,15 @@ namespace
     default:
       direction = KEY_NAV_NONE;
       break;
+    }
+
+    if (focus_area)
+    {
+      SetKeyFocusArea(focus_area, direction);
+    }
+    else
+    {
+      SetKeyFocusArea(NULL, direction);
     }
 
     if (key_focus_area_)
@@ -1010,7 +1014,7 @@ namespace
 
           if (key_nav_focus)
           {
-            SetKeyFocusArea(key_nav_focus);
+            SetKeyFocusArea(key_nav_focus, direction);
           }
         }
       }
@@ -1816,7 +1820,7 @@ namespace
     }
   }
   
-  void WindowCompositor::SetKeyFocusArea(InputArea *area)
+  void WindowCompositor::SetKeyFocusArea(InputArea *area, KeyNavDirection direction)
   {
     InputArea* keyboard_grab_area = GetKeyboardGrabArea();
 
@@ -1843,7 +1847,7 @@ namespace
 
       if (key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
       {
-        static_cast<InputArea*>(key_focus_area_)->OnKeyNavFocusChange.emit(key_focus_area_);
+        static_cast<InputArea*>(key_focus_area_)->OnKeyNavFocusChange.emit(key_focus_area_, direction);
       }
 
       if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
@@ -1861,7 +1865,7 @@ namespace
 
       if (key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
       {
-        static_cast<InputArea*>(key_focus_area_)->OnKeyNavFocusChange.emit(key_focus_area_);
+        static_cast<InputArea*>(key_focus_area_)->OnKeyNavFocusChange.emit(key_focus_area_, direction);
       }
 
       if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
@@ -2158,7 +2162,7 @@ namespace
 
         if (key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
         {
-          static_cast<InputArea*>(key_focus_area_)->OnKeyNavFocusChange.emit(key_focus_area_);
+          static_cast<InputArea*>(key_focus_area_)->OnKeyNavFocusChange.emit(key_focus_area_, KEY_NAV_NONE);
         }
 
         if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
@@ -2226,7 +2230,7 @@ namespace
 
         if (key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
         {
-          static_cast<InputArea*>(key_focus_area_)->OnKeyNavFocusChange.emit(key_focus_area_);
+          static_cast<InputArea*>(key_focus_area_)->OnKeyNavFocusChange.emit(key_focus_area_, KEY_NAV_NONE);
         }
 
         if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))

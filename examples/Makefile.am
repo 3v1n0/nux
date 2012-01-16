@@ -7,7 +7,8 @@ if BUILD_EXAMPLES
 # This tells automake that we want to build binaries, but they shouldn't be
 # installed. For each individual example, add it's binary name here
 
-noinst_PROGRAMS = text_entry_focus \
+noinst_PROGRAMS = button \
+  text_entry_focus \
   shortcut_keys
 
 #button \
@@ -66,8 +67,8 @@ ALL_LIBS = \
 #canvas_LDADD = $(ALL_LIBS)
 #textedit_SOURCES = textedit.cpp
 #textedit_LDADD = $(ALL_LIBS)
-#button_SOURCES = button.cpp
-#button_LDADD = $(ALL_LIBS)
+button_SOURCES = button.cpp
+button_LDADD = $(ALL_LIBS)
 #checkbox_SOURCES = checkbox.cpp
 #checkbox_LDADD = $(ALL_LIBS)
 #tooltip_SOURCES = tooltip.cpp
