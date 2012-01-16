@@ -123,10 +123,10 @@ namespace
     return m_SelectedWindow.GetPointer();
   }
 
-  WindowCompositor::RenderTargetTextures& WindowCompositor::GetWindowBuffer(BaseWindow* window)
+  WindowCompositor::RenderTargetTextures WindowCompositor::GetWindowBuffer(BaseWindow* window)
   {
     static RenderTargetTextures invalid;
-    std::map< BaseWindow*, RenderTargetTextures >::iterator it = _window_to_texture_map.find(window);
+    std::map< BaseWindow*, RenderTargetTextures>::iterator it = _window_to_texture_map.find(window);
 
     if (it != _window_to_texture_map.end())
     {
@@ -1418,7 +1418,7 @@ namespace
           continue;
         }
 
-        RenderTargetTextures& rt = GetWindowBuffer(window);
+        RenderTargetTextures rt = GetWindowBuffer(window);
 
         // Based on the areas that requested a rendering inside the
         // BaseWindow, render the BaseWindow or just use its cache.
