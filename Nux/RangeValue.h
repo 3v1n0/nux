@@ -29,8 +29,9 @@ namespace nux
   class HLayout;
   class EditTextBox;
 
-  class RangeValue : public View //public ValuatorAbstraction
+  class RangeValue : public View
   {
+    NUX_DECLARE_OBJECT_TYPE(RangeValue, View);
   public:
     RangeValue(float Value = 0, float MinValue = 0.0f, float MaxValue = 1.0f, NUX_FILE_LINE_PROTO);
     virtual ~RangeValue();

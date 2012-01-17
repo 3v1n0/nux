@@ -30,8 +30,8 @@ namespace nux
 {
   NUX_IMPLEMENT_OBJECT_TYPE(RadioButton);
   
-  RadioButton::RadioButton(const std::string &str, bool state, NUX_FILE_LINE_DECL)
-    : AbstractCheckedButton(str, state, NUX_FILE_LINE_PARAM)
+  RadioButton::RadioButton(const std::string& str, bool state, NUX_FILE_LINE_DECL)
+  : AbstractCheckedButton(str, state, NUX_FILE_LINE_PARAM)
   {
     block_changed_signal_ = false;
     radio_group_index_ = -1;
@@ -42,11 +42,16 @@ namespace nux
     if (radio_button_group_.IsValid() && radio_group_index_ != -1)
     {
       radio_button_group_->DisconnectButton(this);
-      radio_button_group_.Release();
+
+      if (radio_button_group_->GetNumButtons() == 0)
+      {
+        // The last button in the group calls UnReference on the RadioButtonGroup.
+        radio_button_group_->UnReference();
+      }
     }
   }
 
-  void RadioButton::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void RadioButton::Draw(GraphicsEngine& graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
     graphics_engine.PushClippingRectangle(base);
@@ -88,6 +93,7 @@ namespace nux
       radio_button_group_->NotifyClick(this);
       block_changed_signal_ = false;
 
+      state_change.emit(this);
       click.emit(this);
     }
     else
@@ -118,9 +124,9 @@ namespace nux
     SetStatePrivate(false);
   }
 
-  void RadioButton::SetRadioGroupSelector(RadioButtonGroup *RadioSelector)
+  void RadioButton::SetRadioButtonGroup(RadioButtonGroup* radio_button_group)
   {
-    if (radio_button_group_.IsValid() && radio_button_group_.GetPointer() == RadioSelector)
+    if (radio_button_group_.IsValid() && radio_button_group_.GetPointer() == radio_button_group)
       return;
 
     if (radio_button_group_.IsValid())
@@ -128,13 +134,13 @@ namespace nux
       radio_button_group_.Release();
     }
 
-    if (RadioSelector)
+    if (radio_button_group)
     {
-      radio_button_group_ = ObjectWeakPtr<RadioButtonGroup>(RadioSelector);
+      radio_button_group_ = ObjectWeakPtr<RadioButtonGroup>(radio_button_group);
     }
   }
 
-  ObjectWeakPtr<RadioButtonGroup> RadioButton::GetRadioGroupSelector()
+  ObjectWeakPtr<RadioButtonGroup> RadioButton::GetRadioButtonGroup()
   {
     return radio_button_group_;
   }
@@ -145,10 +151,10 @@ namespace nux
     QueueDraw();
   }
 
-  void RadioButton::SetStatePrivate(bool state, bool EmitSignal)
+  void RadioButton::SetStatePrivate(bool state, bool emit_signal)
   {
     active_ = state;
-    if (EmitSignal && !block_changed_signal_)
+    if (emit_signal && !block_changed_signal_)
     {
       state_change.emit(this);
     }

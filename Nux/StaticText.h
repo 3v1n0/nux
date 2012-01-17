@@ -93,10 +93,12 @@ namespace nux
 
         @param size The text point size.
     */
-    void SetTextPointSize(int size);
+    void SetFontSize(int size);
+    void SetTextPointSize(int size); //deprecated: use SetFontSize
 
     //! Get text point size.
-    int GetTextPointSize() const;
+    int GetFontSize() const;
+    int GetTextPointSize() const; //deprecated: use GetFontSize
 
     void GetTextLayoutSize(int &width, int &height) const;
 

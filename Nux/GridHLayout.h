@@ -41,6 +41,13 @@ namespace nux
 
     NUX_DECLARE_OBJECT_TYPE(GridHLayout, Layout);
   public:
+
+    enum FillingOrder
+    {
+      FILL_HORIZONTAL,
+      FILL_VERTICAL
+    };
+
     GridHLayout(NUX_FILE_LINE_PROTO);
     ~GridHLayout();
 
@@ -104,6 +111,9 @@ namespace nux
 
     void SetSpaceBetweenChildren(int horizontal_space, int vertical_space);
 
+    void SetFillingOrder(FillingOrder order);
+    FillingOrder GetFillingOrder() const;
+
   protected:
     long ComputeLayoutRowOrder();
     long ComputeLayoutColumnOrder();
@@ -117,7 +127,7 @@ namespace nux
     Area* KeyNavIterationColumnOrder(KeyNavDirection direction);
     virtual Area* KeyNavIteration(KeyNavDirection direction);
 
-    bool row_filling_order_;
+    FillingOrder filling_order_;
     int m_v_in_margin;
     int m_h_in_margin;
 
