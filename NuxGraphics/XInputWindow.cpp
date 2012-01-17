@@ -102,7 +102,7 @@ namespace nux
     return native_windows_;
   }
 
-  std::vector<unsigned char> XInputWindow::GetStrutsData()
+  std::vector<long int> XInputWindow::GetStrutsData()
   {
     int n_info;
     XineramaScreenInfo *info = XineramaQueryScreens(display_, &n_info);
@@ -114,7 +114,7 @@ namespace nux
     XRectangle         tmp_rect;
     int largestWidth = 0, largestHeight = 0;
     int screenWidth, screenHeight;
-    std::vector<unsigned char> data(12, 0);
+    std::vector<long int> data(12, 0);
 
     /* Find the screen that this region intersects */
     tmp_rect.x = geometry_.x;
@@ -214,13 +214,12 @@ namespace nux
 
   void XInputWindow::SetStruts()
   {
-
-    std::vector<unsigned char> data(GetStrutsData());
+    std::vector<long int> data(GetStrutsData());
 
     XChangeProperty(display_, window_,
                     XInternAtom(display_, "_NET_WM_STRUT_PARTIAL", 0),
                     XA_CARDINAL, 32, PropModeReplace,
-                    &data[0], 12);
+                    (unsigned char*) &data[0], 12);
   }
 
   void XInputWindow::UnsetStruts()
@@ -231,13 +230,12 @@ namespace nux
 
   void XInputWindow::SetOverlayStruts()
   {
-
-    std::vector<unsigned char> data(GetStrutsData());
+    std::vector<long int> data(GetStrutsData());
 
     XChangeProperty(display_, window_,
                     XInternAtom(display_, "_COMPIZ_NET_OVERLAY_STRUT", 0),
                     XA_CARDINAL, 32, PropModeReplace,
-                    &data[0], 12);
+                    (unsigned char*) &data[0], 12);
   }
 
   void XInputWindow::UnsetOverlayStruts()

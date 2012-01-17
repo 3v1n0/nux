@@ -77,7 +77,7 @@ namespace nux
 
   private:
 
-    std::vector<unsigned char> GetStrutsData();
+    std::vector<long int> GetStrutsData();
 
     void SetStruts ();
     void UnsetStruts ();
