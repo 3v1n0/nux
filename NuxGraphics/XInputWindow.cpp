@@ -34,6 +34,7 @@ namespace nux
                              bool        take_focus,
                              int         override_redirect)
     : strutsEnabled_(false)
+    , overlayStrutsEnabled_(false)
     , display_(GetGraphicsDisplay()->GetX11Display())
     , geometry_(0, 0, 1, 1)
     , shown_(false)
@@ -101,7 +102,7 @@ namespace nux
     return native_windows_;
   }
 
-  void XInputWindow::SetStruts()
+  std::vector<unsigned char> XInputWindow::GetStrutsData()
   {
     int n_info;
     XineramaScreenInfo *info = XineramaQueryScreens(display_, &n_info);
@@ -113,7 +114,7 @@ namespace nux
     XRectangle         tmp_rect;
     int largestWidth = 0, largestHeight = 0;
     int screenWidth, screenHeight;
-    long int data[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    std::vector<unsigned char> data(12, 0);
 
     /* Find the screen that this region intersects */
     tmp_rect.x = geometry_.x;
@@ -208,16 +209,41 @@ namespace nux
       }
     }
 
+    return data;
+  }
+
+  void XInputWindow::SetStruts()
+  {
+
+    std::vector<unsigned char> data(GetStrutsData());
+
     XChangeProperty(display_, window_,
                     XInternAtom(display_, "_NET_WM_STRUT_PARTIAL", 0),
                     XA_CARDINAL, 32, PropModeReplace,
-                    (unsigned char *) data, 12);
+                    &data[0], 12);
   }
 
   void XInputWindow::UnsetStruts()
   {
     XDeleteProperty(display_, window_,
                     XInternAtom(display_, "_NET_WM_STRUT_PARTIAL", 0));
+  }
+
+  void XInputWindow::SetOverlayStruts()
+  {
+
+    std::vector<unsigned char> data(GetStrutsData());
+
+    XChangeProperty(display_, window_,
+                    XInternAtom(display_, "_COMPIZ_NET_OVERLAY_STRUT", 0),
+                    XA_CARDINAL, 32, PropModeReplace,
+                    &data[0], 12);
+  }
+
+  void XInputWindow::UnsetOverlayStruts()
+  {
+    XDeleteProperty(display_, window_,
+                    XInternAtom(display_, "_COMPIZ_NET_OVERLAY_STRUT", 0));
   }
 
   void XInputWindow::EnableStruts(bool enable)
@@ -235,6 +261,23 @@ namespace nux
   bool XInputWindow::StrutsEnabled()
   {
     return strutsEnabled_;
+  }
+
+  void XInputWindow::EnableOverlayStruts(bool enable)
+  {
+    if (overlayStrutsEnabled_ == enable)
+      return;
+
+    overlayStrutsEnabled_ = enable;
+    if (enable)
+      SetOverlayStruts();
+    else
+      UnsetOverlayStruts();
+  }
+
+  bool XInputWindow::OverlayStrutsEnabled()
+  {
+    return overlayStrutsEnabled_;
   }
 
   void XInputWindow::EnsureInputs()
@@ -293,6 +336,8 @@ namespace nux
 
     if (strutsEnabled_)
       SetStruts();
+    if (overlayStrutsEnabled_)
+      SetOverlayStruts();
   }
 
   //! Set the position and size of the window

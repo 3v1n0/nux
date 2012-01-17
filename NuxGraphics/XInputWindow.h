@@ -51,6 +51,9 @@ namespace nux
     void EnableStruts(bool enable);
     bool StrutsEnabled();
 
+    void EnableOverlayStruts(bool enable);
+    bool OverlayStrutsEnabled();
+
     void EnsureInputs();
 
     void EnableTakeFocus ();
@@ -74,8 +77,13 @@ namespace nux
 
   private:
 
+    std::vector<unsigned char> GetStrutsData();
+
     void SetStruts ();
     void UnsetStruts ();
+
+    void SetOverlayStruts ();
+    void UnsetOverlayStruts ();
 
     void EnableDnd ();
     void DisableDnd ();
@@ -83,6 +91,7 @@ namespace nux
     static std::vector<Window> native_windows_;
 
     bool strutsEnabled_;
+    bool overlayStrutsEnabled_;
     Window window_;
     Display *display_;
     Rect geometry_;
@@ -92,4 +101,3 @@ namespace nux
 }
 
 #endif // XINPUTWINDOW_H
-
