@@ -232,22 +232,23 @@ namespace nux
   {
     std::vector<long int> data(GetStrutsData());
 
-    XChangeProperty(display_, window_,
-                    XInternAtom(display_, "_COMPIZ_NET_OVERLAY_STRUT", 0),
+    XChangeProperty(display_, window_, overlay_strut_atom_,
                     XA_CARDINAL, 32, PropModeReplace,
                     (unsigned char*) &data[0], 12);
   }
 
   void XInputWindow::UnsetOverlayStruts()
   {
-    XDeleteProperty(display_, window_,
-                    XInternAtom(display_, "_COMPIZ_NET_OVERLAY_STRUT", 0));
+    XDeleteProperty(display_, window_, overlay_strut_atom_);
   }
 
   void XInputWindow::EnableStruts(bool enable)
   {
     if (strutsEnabled_ == enable)
       return;
+      
+    if (!overlay_strut_atom_)
+      overlay_strut_atom_ = XInternAtom(display_, "_COMPIZ_NET_OVERLAY_STRUT", 0);
 
     strutsEnabled_ = enable;
     if (enable)

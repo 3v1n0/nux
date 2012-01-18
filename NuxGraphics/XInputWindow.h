@@ -97,6 +97,7 @@ namespace nux
     Rect geometry_;
     bool shown_;
     bool mapped_;
+    Atom overlay_strut_atom_;
   };
 }
 

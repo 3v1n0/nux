@@ -291,7 +291,7 @@ namespace nux
 
   bool BaseWindow::InputWindowOverlayStrutsEnabled()
   {
-    return m_input_window_enabled && m_input_window->OverlayStrutsEnabled();
+    return m_input_window && m_input_window->OverlayStrutsEnabled();
   }
 
   void BaseWindow::SetInputFocus()
