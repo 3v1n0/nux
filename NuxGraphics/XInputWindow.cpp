@@ -39,6 +39,7 @@ namespace nux
     , geometry_(0, 0, 1, 1)
     , shown_(false)
     , mapped_(false)
+    , overlay_strut_atom_(0)
   {
     XSetWindowAttributes attrib;
 
@@ -246,9 +247,6 @@ namespace nux
   {
     if (strutsEnabled_ == enable)
       return;
-      
-    if (!overlay_strut_atom_)
-      overlay_strut_atom_ = XInternAtom(display_, "_COMPIZ_NET_OVERLAY_STRUT", 0);
 
     strutsEnabled_ = enable;
     if (enable)
@@ -266,6 +264,9 @@ namespace nux
   {
     if (overlayStrutsEnabled_ == enable)
       return;
+
+    if (!overlay_strut_atom_)
+      overlay_strut_atom_ = XInternAtom(display_, "_COMPIZ_NET_OVERLAY_STRUT", 0);
 
     overlayStrutsEnabled_ = enable;
     if (enable)
