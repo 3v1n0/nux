@@ -1,9 +1,9 @@
-nux (2.0.0-0ubuntu2) UNRELEASED; urgency=low
+nux (2.0.0-0ubuntu2) precise; urgency=low
 
   * Build with glew1.6, the issue it was creating on intel previous cycles
     seem to be sorted so there is no reason to stay on an old version
 
- -- Sebastien Bacher <seb128@ubuntu.com>  Wed, 18 Jan 2012 18:36:56 +0100
+ -- Sebastien Bacher <seb128@ubuntu.com>  Thu, 19 Jan 2012 17:24:19 +0100
 
 nux (2.0.0-0ubuntu1) precise; urgency=low
 
