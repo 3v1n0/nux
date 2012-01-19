@@ -1,5 +1,3 @@
-
-
 /*
   Copyright 2008 Google Inc.
 
@@ -29,6 +27,10 @@
 #include "NuxImage/CairoGraphics.h"
 
 #include "TextEntry.h"
+
+#if defined(NUX_OS_LINUX)
+#include <X11/cursorfont.h>
+#endif
 
 namespace nux
 {
@@ -147,9 +149,11 @@ namespace nux
     , font_dpi_(96.0)
     , _text_color(color::White)
     , align_(CairoGraphics::ALIGN_LEFT)
+#if defined(NUX_OS_LINUX)
+    , caret_cursor_(None)
+#endif
     , text_input_mode_(false)
     , key_nav_mode_(false)
-
   {
     cairo_font_options_set_antialias(font_options_, CAIRO_ANTIALIAS_SUBPIXEL);
     cairo_font_options_set_hint_style(font_options_, CAIRO_HINT_STYLE_FULL);
@@ -160,6 +164,8 @@ namespace nux
     mouse_drag.connect(sigc::mem_fun(this, &TextEntry::RecvMouseDrag));
     mouse_up.connect(sigc::mem_fun(this, &TextEntry::RecvMouseUp));
     mouse_double_click.connect(sigc::mem_fun(this, &TextEntry::RecvMouseDoubleClick));
+    mouse_enter.connect(sigc::mem_fun(this, &TextEntry::RecvMouseEnter));
+    mouse_leave.connect(sigc::mem_fun(this, &TextEntry::RecvMouseLeave));
 
     key_down.connect(sigc::mem_fun(this, &TextEntry::RecvKeyEvent));
 
@@ -212,7 +218,7 @@ namespace nux
 
   void TextEntry::ProcessMouseEvent(int event_type, int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    if (GetEventButton(button_flags) != 1)
+    if (GetEventButton(button_flags) != 1 && event_type != NUX_MOUSE_MOVE)
       return;
 
     //ResetImContext();
@@ -443,6 +449,41 @@ namespace nux
   void TextEntry::RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
     ProcessMouseEvent(NUX_MOUSE_MOVE, x, y, dx, dy, button_flags, key_flags);
+  }
+  
+  void TextEntry::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  {
+#if defined(NUX_OS_LINUX)
+    if (caret_cursor_ == None)
+    {
+      Display* display = nux::GetGraphicsDisplay()->GetX11Display();
+      nux::BaseWindow* window = static_cast<nux::BaseWindow*>(GetTopLevelViewWindow());
+    
+      if (display && window)
+      {
+        caret_cursor_ = XCreateFontCursor(display, XC_xterm);
+        XDefineCursor(display, window->GetInputWindowId(), caret_cursor_);
+      }
+    }
+#endif
+  }
+  
+  void TextEntry::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  {
+#if defined(NUX_OS_LINUX)
+    if (caret_cursor_ != None)
+    {
+      Display* display = nux::GetGraphicsDisplay()->GetX11Display();
+      nux::BaseWindow* window = static_cast<nux::BaseWindow*>(GetTopLevelViewWindow());
+      
+      if (display && window)
+      {
+        XUndefineCursor(display, window->GetInputWindowId());
+        XFreeCursor(display, caret_cursor_);
+        caret_cursor_ = None;
+      }
+    }
+#endif
   }
 
   void TextEntry::RecvKeyEvent(
