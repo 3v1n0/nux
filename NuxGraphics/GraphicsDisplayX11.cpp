@@ -1682,12 +1682,6 @@ namespace nux
         {
           //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: MapNotify event.");
           m_pEvent->type = NUX_WINDOW_MAP;
-
-          XSetInputFocus(xevent.xany.display,
-                          xevent.xany.window,
-                          RevertToParent,
-                          CurrentTime);
-
         }
         
         break;
@@ -2727,5 +2721,3 @@ namespace nux
   }
 
 }
-
-
