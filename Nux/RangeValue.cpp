@@ -27,9 +27,10 @@
 
 namespace nux
 {
+  NUX_IMPLEMENT_OBJECT_TYPE(RangeValue);
 
   RangeValue::RangeValue(float Value, float MinValue, float MaxValue, NUX_FILE_LINE_DECL)
-    :   View(NUX_FILE_LINE_PARAM)
+  : View(NUX_FILE_LINE_PARAM)
   {
     m_min           = MinValue;
     m_max           = MaxValue;

@@ -45,7 +45,7 @@ namespace nux
     m_h_in_margin = 10;
     m_v_in_margin = 10;
 
-    row_filling_order_ = true;
+    filling_order_ = FILL_HORIZONTAL;
     _children_size = Size(64, 64);
     _force_children_size = true;
     _partial_visibility = true;
@@ -56,7 +56,7 @@ namespace nux
 
     // Start packing the elements from the top. Is the layout has more space than the elements can use,
     // leave that space at the bottom of the GridHLayout.
-    m_ContentStacking = eStackLeft;
+    m_ContentStacking = MAJOR_POSITION_LEFT;
 
     SetMinimumSize(32, 32);
   }
@@ -80,8 +80,6 @@ namespace nux
     {
       if ((*it) == child)
         break;
-        
-      ++position;
     }
 
     return position;
@@ -95,8 +93,6 @@ namespace nux
     {
       if (position == pos)
         return (*it);
-        
-        ++position;
     }   
 
     return NULL;
@@ -451,7 +447,7 @@ namespace nux
 
   long GridHLayout::ComputeContentSize()
   {
-    if (row_filling_order_)
+    if (filling_order_ == FILL_HORIZONTAL)
     {
       return ComputeLayoutRowOrder();
     }
@@ -490,9 +486,23 @@ namespace nux
     bool first = false;
     bool last = false;
 
-    for (int j = 0; j < _num_row; j++)
+    int JJ = 0;
+    int II = 0;
+
+    if (filling_order_ == FILL_HORIZONTAL)
     {
-      for (int i = 0; i < _num_column; i++)
+      JJ = _num_row;
+      II = _num_column;
+    }
+    else
+    {
+      JJ = _num_column;
+      II = _num_row;
+    }
+
+    for (int j = 0; j < JJ; j++)
+    {
+      for (int i = 0; i < II; i++)
       {
         if (it == _layout_element_list.end())
           break;
@@ -516,7 +526,7 @@ namespace nux
 
           int x = 0;
           int y = 0;
-          if (row_filling_order_)
+          if (filling_order_ == FILL_HORIZONTAL)
           {
             x = base.x + left_padding_ + i * (_children_size.width + m_h_in_margin);
             y = base.y + top_padding_ + j * (_children_size.height + m_v_in_margin);
@@ -608,13 +618,25 @@ namespace nux
         return NULL;
       }
 
+      if ((direction == KEY_NAV_LEFT) && ((position % nun_column) == 0))
+      {
+        // Left edge
+        return NULL;
+      }
+
+      if ((direction == KEY_NAV_RIGHT) && (position == (position / nun_column) * nun_column + (nun_column -1)))
+      {
+        // right edge
+        return NULL;
+      }
+
       if ((direction == KEY_NAV_UP) && ((position / nun_column) == 0))
       {
         // top edge
         return NULL;
       }
 
-      if ((direction == KEY_NAV_DOWN) && ((position / nun_column) == (nun_row-1)))
+      if ((direction == KEY_NAV_DOWN) && ((position / nun_column) == nun_row))
       {
         // bottom edge
         return NULL;
@@ -672,6 +694,8 @@ namespace nux
         for (int i = 0; i < nun_column; ++i)
         {
           ++it;
+          if (it == _layout_element_list.end())
+            return NULL;
         }
         return (*it)->KeyNavIteration(direction);
       }
@@ -820,7 +844,7 @@ namespace nux
 
   Area* GridHLayout::KeyNavIteration(KeyNavDirection direction)
   {
-    if (row_filling_order_)
+    if (filling_order_ == FILL_HORIZONTAL)
     {
       return KeyNavIterationRowOrder(direction);
     }
@@ -828,5 +852,15 @@ namespace nux
     {
       return KeyNavIterationColumnOrder(direction);
     }
+  }
+
+  void GridHLayout::SetFillingOrder(FillingOrder filling_order)
+  {
+    filling_order_ = filling_order;
+  }
+
+  GridHLayout::FillingOrder GridHLayout::GetFillingOrder() const
+  {
+    return filling_order_;
   }
 }
