@@ -253,15 +253,15 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void StaticText::SetTextPointSize(int pt_size)
+  void StaticText::SetFontSize(int font_size)
   {
-    if (pt_size <= 0)
+    if (font_size <= 0)
       return;
       
 #if defined(NUX_STATIC_TEXT_USE_DIRECT_WRITE)
-    font_size_ = pt_size;
+    font_size_ = font_size;
 #elif defined(NUX_STATIC_TEXT_USE_CAIRO)
-    font_size_ = pt_size;
+    font_size_ = font_size;
     std::ostringstream os;
     os << font_name_ << " " << font_size_;
     pango_font_name_ = std::string(os.str());
@@ -273,9 +273,19 @@ namespace nux
     SetBaseSize(sz.width, sz.height);
   }
 
-  int StaticText::GetTextPointSize() const
+  void StaticText::SetTextPointSize(int font_size)
+  {
+    SetFontSize(font_size);
+  }
+
+  int StaticText::GetFontSize() const
   {
     return font_size_;
+  }
+
+  int StaticText::GetTextPointSize() const
+  {
+    return GetFontSize();
   }
 
   void StaticText::SetText(const std::string &text)
