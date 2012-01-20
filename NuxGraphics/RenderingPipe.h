@@ -91,7 +91,7 @@ namespace nux
 
   //! Texture parameter and coordinate computation class.
   /*!
-      Defines the texture coordinate computation, wraping and filtering modes 
+      Defines the texture coordinate computation, wrapping and filtering modes 
    */
   class TexCoordXForm
   {
@@ -99,8 +99,8 @@ namespace nux
     //! Texture coordinates computation mode
     typedef enum
     {
-      OFFSET_SCALE_COORD, //!< Texture coordinates are offset and scaled
-      OFFSET_COORD,       //!< Textures coordinates are offset only
+      OFFSET_SCALE_COORD, //!< Texture coordinates are scaled and offset.
+      OFFSET_COORD,       //!< Textures coordinates are offset. The scaling factor between the texture size and the quad size is preserved.
       NORMALIZED_COORD,   //!< Provided normalized texture coordinates in u0, v0, u1, v1
       UNNORMALIZED_COORD, //!< Provided un-normalized texture coordinates in u0, v0, u1, v1
       FIXED_COORD,        //!< Provided fix coordinates in u0, v0, u1, v1

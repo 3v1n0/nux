@@ -136,12 +136,20 @@ namespace nux
       SURFACE_LOCKED_RECT *pLockedRect,
       const SURFACE_RECT *pRect);
 
-    virtual int UnlockRect(
-      int Level
-      );
+    virtual int UnlockRect(int Level);
 
-    //! Return the a pointer to the texture mip level data.
-    virtual void* GetSurfaceData(int level, int &width, int &height, int &format);
+    //! Return a pointer to a mipmap level data.
+    /*!
+        Return a pointer to a mipmap level data. The data is in the RGBA format.\n
+
+        @param level The requested texture mipmap level data.
+        @param width Returns the width in pixel of the image data.
+        @param height Returns the height in pixel of the image data.
+        @param stride Returns the row stride of the image data.
+
+        @return A pointer to RGBA data. The caller must delete the data by calling delete [].
+    */
+    virtual unsigned char* GetSurfaceData(int level, int &width, int &height, int &stride);
 
   protected:
     GLTextureStates _TextureStates;

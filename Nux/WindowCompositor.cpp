@@ -1217,7 +1217,7 @@ namespace
       window_thread_->GetGraphicsEngine().ResetProjectionMatrix();
       
       window_thread_->GetGraphicsEngine().ResetModelViewMatrixStack();
-      window_thread_->GetGraphicsEngine().Push2DTranslationModelViewMatrix(0.375f, 0.375f, 0.0f);
+      window_thread_->GetGraphicsEngine().Push2DTranslationModelViewMatrix(0.0f, 0.0f, 0.0f);
 
 
       if (force_draw || SizeConfigurationEvent)
