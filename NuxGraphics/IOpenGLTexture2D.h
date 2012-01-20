@@ -73,8 +73,19 @@ namespace nux
       return OGL_OK;
     }
 
-    //! Return the a pointer to the texture mip level data.
-    virtual void* GetSurfaceData(int level, int &width, int &height, int &format);
+    //! Return a pointer to a mipmap level data.
+    /*!
+        Return a pointer to a mipmap level data. The data is in the RGBA format.\n
+        Inherited from IOpenGLBaseTexture.
+
+        @param level The requested texture mipmap level data.
+        @param width Returns the width in pixel of the image data.
+        @param height Returns the height in pixel of the image data.
+        @param stride Returns the row stride of the image data.
+
+        @return A pointer to RGBA data. The caller must dlete the data by calling delete [].
+    */
+    unsigned char* GetSurfaceData(int level, int &width, int &height, int &stride);
 
   private:
 
