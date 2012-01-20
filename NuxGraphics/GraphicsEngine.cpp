@@ -808,7 +808,7 @@ namespace nux
 //    glTranslatef(0.375, 0.375, 0.0);
   /* render all primitives at integer positions */
 
-  const float RASTERIZATION_OFFSET = 0.375f;
+  const float RASTERIZATION_OFFSET = 0.0f;
   void GraphicsEngine::Push2DWindow(int w, int h)
   {
 #ifndef NUX_OPENGLES_20

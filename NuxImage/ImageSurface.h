@@ -282,12 +282,6 @@ namespace nux
     int m_NumMipmap;
     std::vector<ImageSurface *> m_MipSurfaceArray;
     void ClearData();
-
-    friend NBitmapData *read_tga_file(const TCHAR *file_name);
-    friend NBitmapData *read_bmp_file(const TCHAR *file_name);
-    friend NBitmapData *read_png_rgb(const TCHAR *filename);
-    friend NBitmapData *read_png_rgba(const TCHAR *filename);
-
   };
 
   class NCubemapData: public NBitmapData
