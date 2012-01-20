@@ -95,7 +95,7 @@ namespace nux
       if (position == pos)
         return (*it);
 
-        ++position;
+      ++position;
     }
 
     return NULL;
