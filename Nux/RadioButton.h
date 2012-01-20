@@ -42,7 +42,7 @@ namespace nux
   {
     NUX_DECLARE_OBJECT_TYPE(RadioButton, AbstractCheckedButton);
   public:
-    RadioButton(const std::string &str, bool state = false, NUX_FILE_LINE_PROTO);
+    RadioButton(const std::string& str, bool state = false, NUX_FILE_LINE_PROTO);
     virtual ~RadioButton();
 
     //! Emitted when the button is clicked.
@@ -57,7 +57,7 @@ namespace nux
 
     //! Activate the radio button.
     /*!
-         Activate the radio button.
+         Activate the radio button. If this radio button is part of a RadioButtonGroup, it will emit the signal state_change.
     */
     virtual void Activate();
 
@@ -68,18 +68,18 @@ namespace nux
     virtual void Deactivate();
 
   protected:
-    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void Draw(GraphicsEngine& graphics_engine, bool force_draw);
     virtual void RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
 
     bool block_changed_signal_;
 
-    void SetRadioGroupSelector(RadioButtonGroup *RadioSelector);
-    ObjectWeakPtr<RadioButtonGroup> GetRadioGroupSelector();
+    void SetRadioButtonGroup(RadioButtonGroup* radio_button_group);
+    ObjectWeakPtr<RadioButtonGroup> GetRadioButtonGroup();
 
     //! Intended for RadioButtonGroup only.
-    void SetStatePrivate(bool State);
+    void SetStatePrivate(bool state);
     //! Intended for RadioButtonGroup only.
-    void SetStatePrivate(bool State, bool EmitSignal);
+    void SetStatePrivate(bool state, bool emit_signal);
     ObjectWeakPtr<RadioButtonGroup> radio_button_group_;
     int radio_group_index_;
 
