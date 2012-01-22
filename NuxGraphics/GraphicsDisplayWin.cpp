@@ -1434,7 +1434,7 @@ namespace nux
       {
         event_->type = NUX_KEYDOWN;
         event_->key_modifiers = GetModifierKeyState();
-        event_->e_keysym = wParam;
+        event_->win32_keysym = wParam;
 
         if ((uMsg == WM_KEYDOWN) || (uMsg == WM_SYSKEYDOWN))
         {
@@ -1445,11 +1445,11 @@ namespace nux
         {
           if (lParam & (1 << 24))
           {
-            event_->e_keysym = NUX_VK_RCONTROL;
+            event_->win32_keysym = NUX_VK_RCONTROL;
           }
           else
           {
-            event_->e_keysym = NUX_VK_LCONTROL;
+            event_->win32_keysym = NUX_VK_LCONTROL;
           }
         }
 
@@ -1457,11 +1457,11 @@ namespace nux
         {
           if (lParam & (1 << 24))
           {
-            event_->e_keysym = NUX_VK_RALT;
+            event_->win32_keysym = NUX_VK_RALT;
           }
           else
           {
-            event_->e_keysym = NUX_VK_LALT;
+            event_->win32_keysym = NUX_VK_LALT;
           }
         }
 
@@ -1469,11 +1469,11 @@ namespace nux
         {
           if (HIWORD(GetAsyncKeyState(VK_LSHIFT)))
           {
-            event_->e_keysym = NUX_VK_LSHIFT;
+            event_->win32_keysym = NUX_VK_LSHIFT;
           }
           else if (HIWORD(GetAsyncKeyState(VK_RSHIFT)))
           {
-            event_->e_keysym = NUX_VK_RSHIFT;
+            event_->win32_keysym = NUX_VK_RSHIFT;
           }
         }
 
@@ -1485,7 +1485,7 @@ namespace nux
       {
         event_->type = NUX_KEYUP;
         event_->key_modifiers = GetModifierKeyState();
-        event_->e_keysym = wParam;
+        event_->win32_keysym = wParam;
 
         if ((uMsg == WM_KEYUP) || (uMsg == WM_SYSKEYUP))
         {
