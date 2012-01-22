@@ -50,7 +50,7 @@ namespace nux
     else if (button == NUX_MOUSE_BUTTON4)
       return(button_state & NUX_STATE_BUTTON4_DOWN) ? true : false;
 
-    return false;    
+    return false;
   }
   
   bool GetKeyModifierState(unsigned long key_modifiers_states, KeyModifier key_modifier)
@@ -80,9 +80,13 @@ namespace nux
     dy = 0;
     clicks = 0;
     is_click = 0;
-    
     wheel_delta = 0;
-    
+
+#if defined(NUX_OS_WINDOWS)
+    win32_keycode = 0;
+    win32_keysym = 0;
+#endif
+
 #if defined(NUX_OS_LINUX)
     x11_keycode = 0;
     x11_keysym = 0;
@@ -98,7 +102,15 @@ namespace nux
   {
     type = NUX_NO_EVENT;
     Memset(text, 0, sizeof(text));
-    x11_keysym = 0;
+#if defined(NUX_OS_WINDOWS)
+    win32_keycode = 0;
+    win32_keysym = 0;
+#endif
+
+#if defined(NUX_OS_LINUX)
+    return x11_keysym = 0;
+#endif
+
     key_repeat_count = 0;
     key_modifiers = 0;
     wheel_delta = 0;
@@ -179,7 +191,15 @@ namespace nux
   */
   unsigned long Event::GetKeySym() const
   {
+#if defined(NUX_OS_WINDOWS)
+    return win32_keysym;
+#endif
+
+#if defined(NUX_OS_LINUX)
     return x11_keysym;
+#endif
+
+    return 0;
   }
   unsigned short Event::GetKeyRepeatCount() const
   {

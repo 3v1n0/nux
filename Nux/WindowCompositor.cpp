@@ -959,7 +959,11 @@ namespace
         SendKeyEvent(key_focus_area_,
                     event.type,
                     event.GetKeySym(),
+#if defined(NUX_OS_WINDOWS)
+                    event.win32_keycode,
+#elif defined(NUX_OS_LINUX)
                     event.x11_keycode,
+#endif
                     event.GetKeyState(),
                     event.GetText(),
                     event.GetKeyRepeatCount());
@@ -978,7 +982,11 @@ namespace
           SendKeyEvent(static_cast<InputArea*>(parent),
             event.type,
             event.GetKeySym(),
+#if defined(NUX_OS_WINDOWS)
+            event.win32_keycode,
+#elif defined(NUX_OS_LINUX)
             event.x11_keycode,
+#endif
             event.GetKeyState(),
             event.GetText(),
             event.GetKeyRepeatCount());
