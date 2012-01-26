@@ -22,31 +22,31 @@
 #include "Nux/WindowThread.h"
 #include "Nux/VLayout.h"
 #include "Nux/Button.h"
+#include "Nux/TestFramework/NuxProgramTemplate.h"
 #include <X11/extensions/XTest.h>
 #include <X11/keysym.h> 
-#include "nux_test_framework.h"
 #include "nux_automated_test_framework.h"
 
-class TestButton: public NuxTestFramework
+class TestButton: public NuxProgramTemplate
 {
 public:
-  TestButton(const char *program_name, int window_width, int window_height, int program_life_span);
+  TestButton(const char* program_name, int window_width, int window_height, int program_life_span);
   ~TestButton();
 
   virtual void UserInterfaceSetup();
 
-  void ButtonClick(nux::Button *button);
+  void ButtonClick(nux::Button* button);
   void ResetEvents();
-  nux::Button *button_;
+  nux::Button* button_;
 
   bool clicked_;
 };
 
-TestButton::TestButton(const char *program_name,
+TestButton::TestButton(const char* program_name,
   int window_width,
   int window_height,
   int program_life_span)
-  : NuxTestFramework(program_name, window_width, window_height, program_life_span)
+: NuxProgramTemplate(program_name, window_width, window_height, program_life_span)
 {
   ResetEvents();
   button_ = NULL;
@@ -62,7 +62,7 @@ void TestButton::ResetEvents()
   clicked_ = false;
 }
 
-void TestButton::ButtonClick(nux::Button *button)
+void TestButton::ButtonClick(nux::Button* button)
 {
   if (button_ == button)
   {
@@ -72,7 +72,7 @@ void TestButton::ButtonClick(nux::Button *button)
 
 void TestButton::UserInterfaceSetup()
 {
-  nux::VLayout *main_layout = new nux::VLayout(NUX_TRACKER_LOCATION);
+  nux::VLayout* main_layout = new nux::VLayout(NUX_TRACKER_LOCATION);
   button_ = new nux::Button("NUX", NUX_TRACKER_LOCATION);
   button_->SetLabelFontSize(76);
 
@@ -88,9 +88,9 @@ void TestButton::UserInterfaceSetup()
   static_cast<nux::WindowThread*>(window_thread_)->SetWindowBackgroundPaintLayer(&background);
 }
 
-TestButton *test_button = NULL;
+TestButton* test_button = NULL;
 
-void TestingThread(nux::NThread *thread, void *user_data)
+void TestingThread(nux::NThread* thread, void* user_data)
 {
   while (test_button->ReadyToGo() == false)
   {
@@ -100,7 +100,7 @@ void TestingThread(nux::NThread *thread, void *user_data)
 
   nux::SleepForMilliseconds(1300);
 
-  nux::WindowThread *wnd_thread = static_cast<nux::WindowThread*>(user_data);
+  nux::WindowThread* wnd_thread = static_cast<nux::WindowThread*>(user_data);
 
   NuxAutomatedTestFramework test(wnd_thread);
 
@@ -122,7 +122,7 @@ void TestingThread(nux::NThread *thread, void *user_data)
   nuxDebugMsg("Exit testing thread");
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   int xstatus = XInitThreads();
   nuxAssertMsg(xstatus > 0, "XInitThreads has failed");
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
   test_button->Startup();
   test_button->UserInterfaceSetup();
 
-  nux::SystemThread *test_thread = nux::CreateSystemThread(NULL, &TestingThread, test_button->GetWindowThread());
+  nux::SystemThread* test_thread = nux::CreateSystemThread(NULL, &TestingThread, test_button->GetWindowThread());
 
   test_thread->Start(test_button);
 

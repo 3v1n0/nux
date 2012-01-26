@@ -24,14 +24,14 @@
 #include "Nux/WindowThread.h"
 #include "Nux/TextEntry.h"
 
-#ifndef NUXTESTFRAMEWORK_H
-#define NUXTESTFRAMEWORK_H
+#ifndef NUXPROGRAMTEMPLATE_H
+#define NUXPROGRAMTEMPLATE_H
 
-class NuxTestFramework
+class NuxProgramTemplate
 {
 public:
-  NuxTestFramework(const char* program_name, int window_width, int window_height, int program_life_span);
-  virtual ~NuxTestFramework();
+  NuxProgramTemplate(const char* program_name, int window_width, int window_height, int program_life_span);
+  virtual ~NuxProgramTemplate();
 
   virtual void Startup();
   virtual void UserInterfaceSetup();
@@ -44,18 +44,17 @@ public:
 public:
   std::string program_name_;
   int program_life_span_;                  //!< The program will auto-terminate after a delay in milliseconds.
-  nux::TimeOutSignal *timeout_signal_;
-
-  nux::WindowThread *window_thread_;
+  nux::TimeOutSignal* timeout_signal_;
+  nux::WindowThread* window_thread_;
 
   int window_width_;
   int window_height_;
 
 private:
-  void ProgramExitCall(void *data);
+  void ProgramExitCall(void* data);
   void WaitForConfigureEvent(int x, int y, int width, int height);
   bool ready_to_go_;
 };
 
-#endif // NUXTESTFRAMEWORK_H
+#endif // NUXPROGRAMTEMPLATE_H
 

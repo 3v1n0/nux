@@ -1,6 +1,6 @@
 
 #include "Nux/Nux.h"
-#include "test-view.h"
+#include "TestView.h"
 
 /*
   TestView:
@@ -11,8 +11,8 @@
 NUX_IMPLEMENT_OBJECT_TYPE(TestView);
 
 TestView::TestView(NUX_FILE_LINE_DECL)
-  : nux::View(NUX_FILE_LINE_PARAM)
-  , can_focus_(true)
+: nux::View(NUX_FILE_LINE_PARAM)
+, can_focus_(true)
 {
   ResetEvents();
 
@@ -66,7 +66,7 @@ nux::Color TestView::GetColor() const
   return current_color_;
 }
 
-void TestView::Draw(nux::GraphicsEngine &graphics_engine, bool force_draw)
+void TestView::Draw(nux::GraphicsEngine& graphics_engine, bool force_draw)
 {
   nux::Geometry geo = GetGeometry();
   graphics_engine.QRP_Color(geo.x, geo.y, geo.width, geo.height, current_color_);

@@ -51,7 +51,7 @@ protected:
   void OnMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags);
   void OnKeyNavFocusChange(nux::Area* area);
 
-  void Draw(nux::GraphicsEngine &graphics_engine, bool force_draw);
+  void Draw(nux::GraphicsEngine& graphics_engine, bool force_draw);
 };
 
 #endif // TEST_VIEW_H
