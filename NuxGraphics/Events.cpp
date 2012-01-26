@@ -80,6 +80,7 @@ namespace nux
     dy = 0;
     clicks = 0;
     is_click = 0;
+    velocity = 0;
     
     wheel_delta = 0;
     

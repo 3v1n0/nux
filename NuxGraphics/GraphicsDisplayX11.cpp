@@ -1024,7 +1024,6 @@ namespace nux
       _mouse_state |= (xevent.xcrossing.state & Button2Mask) ? NUX_STATE_BUTTON2_DOWN : 0;
       _mouse_state |= (xevent.xcrossing.state & Button3Mask) ? NUX_STATE_BUTTON3_DOWN : 0;
     }
-
     m_pEvent->mouse_state = _mouse_state;
 
     return 0;
@@ -1229,6 +1228,19 @@ namespace nux
     if (XPending(m_X11Display))
     {
       XNextEvent(m_X11Display, &xevent);
+
+      if (!_event_filters.empty())
+      {
+        for (auto filter : _event_filters)
+        {
+          bool result = filter.filter(xevent, filter.data);
+          if (result)
+          {
+            memcpy(evt, m_pEvent, sizeof(Event));
+            return;
+          }
+        }
+      }
       // Detect auto repeat keys. X11 sends a combination of KeyRelease/KeyPress(at the same time) when a key auto repeats.
       // Here, we make sure we process only the keyRelease when the key is effectively released.
       if ((xevent.type == KeyPress) || (xevent.type == KeyRelease))
@@ -1293,6 +1305,24 @@ namespace nux
     // We could do some checks here to make sure the xevent is really what it pretends to be.
     ProcessXEvent(xevent, false);
     memcpy(evt, m_pEvent, sizeof(Event));
+  }
+
+  void GraphicsDisplay::AddEventFilter(EventFilterArg arg)
+  {
+    _event_filters.push_back(arg);
+  }
+
+  void GraphicsDisplay::RemoveEventFilter(void *owner)
+  {
+    std::list<EventFilterArg>::iterator it;
+    for (it = _event_filters.begin(); it != _event_filters.end(); ++it)
+    {
+      if ((*it).data == owner)
+      {
+        _event_filters.erase(it);
+        break;
+      }
+    }
   }
 #endif
 
@@ -1380,6 +1410,7 @@ namespace nux
 
   void GraphicsDisplay::RecalcXYPosition(Window TheMainWindow, XEvent xevent, int &x_recalc, int &y_recalc)
   {
+    x_recalc = y_recalc = 0;
     int main_window_x = m_WindowPosition.x;
     int main_window_y = m_WindowPosition.y;
     bool same = (TheMainWindow == xevent.xany.window);
@@ -1432,11 +1463,6 @@ namespace nux
         }
         break;
       }
-      
-      default:
-      {
-        x_recalc = y_recalc = 0;
-      }
     }
   }
 
@@ -1452,7 +1478,6 @@ namespace nux
 
     m_pEvent->type = NUX_NO_EVENT;
     m_pEvent->x11_window = xevent.xany.window;
-
 
     switch(xevent.type)
     {
