@@ -7,7 +7,9 @@ if BUILD_EXAMPLES
 # This tells automake that we want to build binaries, but they shouldn't be
 # installed. For each individual example, add it's binary name here
 
-noinst_PROGRAMS = text_entry_focus \
+noinst_PROGRAMS = \
+  text-entry \
+  text_entry_focus \
   shortcut_keys
 
 #button \
@@ -95,11 +97,14 @@ ALL_LIBS = \
 #tiles_view_SOURCES = tiles_view.cpp
 #tiles_view_LDADD = $(ALL_LIBS)
 
-text_entry_focus_SOURCES = text_entry_focus.cpp
-text_entry_focus_LDADD = $(ALL_LIBS)
-
 shortcut_keys_SOURCES = shortcut-keys.cpp line-separator.cpp line-separator.h abstract-separator.h abstract-separator.cpp
 shortcut_keys_LDADD = $(ALL_LIBS)
+
+text_entry_SOURCES = text-entry.cpp
+text_entry_LDADD = $(ALL_LIBS)
+
+text_entry_focus_SOURCES = text_entry_focus.cpp
+text_entry_focus_LDADD = $(ALL_LIBS)
 
 
 # To distribute source add the source code here

@@ -4,6 +4,7 @@ check_PROGRAMS = \
   gtest-nux \
   gtest-nux-core \
   test-graphics-display \
+  text-entry-xtest \
   test-empty-window \
   button-xtest \
   mouse-events-test \
@@ -235,6 +236,15 @@ scrollbar_test_CPPFLAGS = $(TestFlags)
 scrollbar_test_LDADD = $(TestLibs)
 scrollbar_test_LDFLAGS = -lpthread -lXtst
 
+text_entry_xtest_SOURCES = text-entry-xtest.cpp \
+  nux_test_framework.cpp \
+  nux_test_framework.h \
+  nux_automated_test_framework.cpp \
+  nux_automated_test_framework.h
+
+text_entry_xtest_CPPFLAGS = $(TestFlags)
+text_entry_xtest_LDADD = $(TestLibs)
+text_entry_xtest_LDFLAGS = -lpthread -lXtst
 
 #run make test as part of make check
 check-local: test gtest test-apps
@@ -246,9 +256,10 @@ gtest: gtest-nux-core gtest-nux
 	./gtest-nux-core
 	./gtest-nux
 
-test-apps: test-graphics-display test-empty-window button-xtest mouse-events-test mouse-buttons-test hgrid-key-navigation-test hlayout-key-navigation-test vlayout-key-navigation-test scrollbar-test focus-on-mouse-down-test
+test-apps: test-graphics-display test-empty-window button-xtest mouse-events-test mouse-buttons-test hgrid-key-navigation-test hlayout-key-navigation-test vlayout-key-navigation-test scrollbar-test focus-on-mouse-down-test text-entry-xtest
 	./test-graphics-display
 	./test-empty-window
+	./text-entry-xtest
 	./button-xtest
 	./mouse-events-test
 	./mouse-buttons-test
