@@ -21,8 +21,8 @@
 #include "Nux/Nux.h"
 #include "Nux/WindowThread.h"
 #include "Nux/VLayout.h"
-#include "Nux/TestFramework/NuxProgramTemplate.h"
-#include "Nux/TestFramework/TestView.h"
+#include "Nux/ProgramFramework/ProgramTemplate.h"
+#include "Nux/ProgramFramework/TestView.h"
 #include <X11/extensions/XTest.h>
 #include <X11/keysym.h> 
 #include "nux_automated_test_framework.h"
@@ -30,7 +30,7 @@
 unsigned int const NUM_VIEWS = 5;
 unsigned int const ID_UNFOCUSABLE_VIEW = 1; // Please don't make this the last/first one :)
 
-class VLayoutKeyNavigationTest : public NuxProgramTemplate
+class VLayoutKeyNavigationTest : public ProgramTemplate
 {
 public:
   VLayoutKeyNavigationTest(const char* program_name, int window_width, int window_height, int program_life_span);
@@ -49,7 +49,7 @@ VLayoutKeyNavigationTest::VLayoutKeyNavigationTest(const char* program_name,
                                                    int window_width,
                                                    int window_height,
                                                    int program_life_span)
-: NuxProgramTemplate(program_name, window_width, window_height, program_life_span)
+: ProgramTemplate(program_name, window_width, window_height, program_life_span)
 {
 }
 

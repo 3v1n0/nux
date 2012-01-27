@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Inalogic Inc.
+ * Copyright 2012 Inalogic Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 3, as published
@@ -24,14 +24,14 @@
 #include "Nux/WindowThread.h"
 #include "Nux/TextEntry.h"
 
-#ifndef NUXPROGRAMTEMPLATE_H
-#define NUXPROGRAMTEMPLATE_H
+#ifndef PROGRAMTEMPLATE_H
+#define PROGRAMTEMPLATE_H
 
-class NuxProgramTemplate
+class ProgramTemplate
 {
 public:
-  NuxProgramTemplate(const char* program_name, int window_width, int window_height, int program_life_span);
-  virtual ~NuxProgramTemplate();
+  ProgramTemplate(const char* program_name, int window_width, int window_height, int program_life_span);
+  virtual ~ProgramTemplate();
 
   virtual void Startup();
   virtual void UserInterfaceSetup();
@@ -56,5 +56,5 @@ private:
   bool ready_to_go_;
 };
 
-#endif // NUXPROGRAMTEMPLATE_H
+#endif // PROGRAMTEMPLATE_H
 

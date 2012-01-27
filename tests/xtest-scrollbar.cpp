@@ -21,14 +21,14 @@
 #include "Nux/Nux.h"
 #include "Nux/WindowThread.h"
 #include "Nux/VLayout.h"
-#include "Nux/TestFramework/NuxProgramTemplate.h"
-#include "Nux/TestFramework/TestView.h"
+#include "Nux/ProgramFramework/ProgramTemplate.h"
+#include "Nux/ProgramFramework/TestView.h"
 #include <X11/extensions/XTest.h>
 #include <X11/keysym.h> 
 #include "nux_automated_test_framework.h"
 #include "test-scrollview.h"
 
-class ScrollBarTest: public NuxProgramTemplate
+class ScrollBarTest: public ProgramTemplate
 {
 public:
   ScrollBarTest(const char* program_name, int window_width, int window_height, int program_life_span);
@@ -46,7 +46,7 @@ ScrollBarTest::ScrollBarTest(const char* program_name,
                              int window_width,
                              int window_height,
                              int program_life_span)
-: NuxProgramTemplate(program_name, window_width, window_height, program_life_span)
+: ProgramTemplate(program_name, window_width, window_height, program_life_span)
 {
 }
 
