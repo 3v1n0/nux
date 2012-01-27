@@ -385,7 +385,6 @@ namespace nux
     int dy;
     int clicks;
     int is_click;
-    int velocity;
 
 #if defined(NUX_OS_LINUX)
     Time          x11_timestamp;  //!< X11 timestamp.
