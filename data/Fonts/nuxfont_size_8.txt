@@ -1,0 +1,897 @@
+common face=Tahoma Bold=0 Italic=0 Charset=ANSI_CHARSET scaleW=512 scaleH=256 NumPages=1 FontHeight=13 Ascent=8 Descent=-2 MaxCharWidth=23 AvgCharWidth=5 InternalLeading=2 ExternalLeading=0
+Texture nuxfont_size_8_page_0.png
+char ' ' id=32          x=5           y=5           width=23          height=13          xadvance=3           abcA=0            abcB=3           abcC=0            page=0            
+char '!' id=33          x=28          y=5           width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char '"' id=34          x=51          y=5           width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char '#' id=35          x=74          y=5           width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char '$' id=36          x=97          y=5           width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '%' id=37          x=120         y=5           width=23          height=13          xadvance=11          abcA=0            abcB=11          abcC=0            page=0            
+char '&' id=38          x=143         y=5           width=23          height=13          xadvance=7           abcA=0            abcB=7           abcC=0            page=0            
+char ''' id=39          x=166         y=5           width=23          height=13          xadvance=2           abcA=0            abcB=2           abcC=0            page=0            
+char '(' id=40          x=189         y=5           width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char ')' id=41          x=212         y=5           width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char '*' id=42          x=235         y=5           width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '+' id=43          x=258         y=5           width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char ',' id=44          x=281         y=5           width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char '-' id=45          x=304         y=5           width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char '.' id=46          x=327         y=5           width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char '/' id=47          x=350         y=5           width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char '0' id=48          x=373         y=5           width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '1' id=49          x=396         y=5           width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '2' id=50          x=419         y=5           width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '3' id=51          x=442         y=5           width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '4' id=52          x=465         y=5           width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '5' id=53          x=488         y=5           width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '6' id=54          x=5           y=23          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '7' id=55          x=28          y=23          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '8' id=56          x=51          y=23          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '9' id=57          x=74          y=23          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char ':' id=58          x=97          y=23          width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char ';' id=59          x=120         y=23          width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char '<' id=60          x=143         y=23          width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char '=' id=61          x=166         y=23          width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char '>' id=62          x=189         y=23          width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char '?' id=63          x=212         y=23          width=23          height=13          xadvance=5           abcA=0            abcB=5           abcC=0            page=0            
+char '@' id=64          x=235         y=23          width=23          height=13          xadvance=10          abcA=0            abcB=10          abcC=0            page=0            
+char 'A' id=65          x=258         y=23          width=23          height=13          xadvance=7           abcA=0            abcB=7           abcC=0            page=0            
+char 'B' id=66          x=281         y=23          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'C' id=67          x=304         y=23          width=23          height=13          xadvance=7           abcA=0            abcB=7           abcC=0            page=0            
+char 'D' id=68          x=327         y=23          width=23          height=13          xadvance=7           abcA=0            abcB=7           abcC=0            page=0            
+char 'E' id=69          x=350         y=23          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'F' id=70          x=373         y=23          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'G' id=71          x=396         y=23          width=23          height=13          xadvance=7           abcA=0            abcB=7           abcC=0            page=0            
+char 'H' id=72          x=419         y=23          width=23          height=13          xadvance=7           abcA=0            abcB=7           abcC=0            page=0            
+char 'I' id=73          x=442         y=23          width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char 'J' id=74          x=465         y=23          width=23          height=13          xadvance=5           abcA=0            abcB=5           abcC=0            page=0            
+char 'K' id=75          x=488         y=23          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'L' id=76          x=5           y=41          width=23          height=13          xadvance=5           abcA=0            abcB=5           abcC=0            page=0            
+char 'M' id=77          x=28          y=41          width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char 'N' id=78          x=51          y=41          width=23          height=13          xadvance=7           abcA=0            abcB=7           abcC=0            page=0            
+char 'O' id=79          x=74          y=41          width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char 'P' id=80          x=97          y=41          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'Q' id=81          x=120         y=41          width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char 'R' id=82          x=143         y=41          width=23          height=13          xadvance=7           abcA=0            abcB=7           abcC=0            page=0            
+char 'S' id=83          x=166         y=41          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'T' id=84          x=189         y=41          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'U' id=85          x=212         y=41          width=23          height=13          xadvance=7           abcA=0            abcB=7           abcC=0            page=0            
+char 'V' id=86          x=235         y=41          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'W' id=87          x=258         y=41          width=23          height=13          xadvance=10          abcA=0            abcB=10          abcC=0            page=0            
+char 'X' id=88          x=281         y=41          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'Y' id=89          x=304         y=41          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'Z' id=90          x=327         y=41          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '[' id=91          x=350         y=41          width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char '\' id=92          x=373         y=41          width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char ']' id=93          x=396         y=41          width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char '^' id=94          x=419         y=41          width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char '_' id=95          x=442         y=41          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '`' id=96          x=465         y=41          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'a' id=97          x=488         y=41          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'b' id=98          x=5           y=59          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'c' id=99          x=28          y=59          width=23          height=13          xadvance=5           abcA=0            abcB=5           abcC=0            page=0            
+char 'd' id=100         x=51          y=59          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'e' id=101         x=74          y=59          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'f' id=102         x=97          y=59          width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char 'g' id=103         x=120         y=59          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'h' id=104         x=143         y=59          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'i' id=105         x=166         y=59          width=23          height=13          xadvance=2           abcA=0            abcB=2           abcC=0            page=0            
+char 'j' id=106         x=189         y=59          width=23          height=13          xadvance=3           abcA=0            abcB=3           abcC=0            page=0            
+char 'k' id=107         x=212         y=59          width=23          height=13          xadvance=5           abcA=0            abcB=5           abcC=0            page=0            
+char 'l' id=108         x=235         y=59          width=23          height=13          xadvance=2           abcA=0            abcB=2           abcC=0            page=0            
+char 'm' id=109         x=258         y=59          width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char 'n' id=110         x=281         y=59          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'o' id=111         x=304         y=59          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'p' id=112         x=327         y=59          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'q' id=113         x=350         y=59          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'r' id=114         x=373         y=59          width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char 's' id=115         x=396         y=59          width=23          height=13          xadvance=5           abcA=0            abcB=5           abcC=0            page=0            
+char 't' id=116         x=419         y=59          width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char 'u' id=117         x=442         y=59          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'v' id=118         x=465         y=59          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'w' id=119         x=488         y=59          width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char 'x' id=120         x=5           y=77          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'y' id=121         x=28          y=77          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'z' id=122         x=51          y=77          width=23          height=13          xadvance=5           abcA=0            abcB=5           abcC=0            page=0            
+char '{' id=123         x=74          y=77          width=23          height=13          xadvance=5           abcA=0            abcB=5           abcC=0            page=0            
+char '|' id=124         x=97          y=77          width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char '}' id=125         x=120         y=77          width=23          height=13          xadvance=5           abcA=0            abcB=5           abcC=0            page=0            
+char '~' id=126         x=143         y=77          width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char '' id=127         x=166         y=77          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'Ä' id=128         x=189         y=77          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'Å' id=129         x=212         y=77          width=23          height=13          xadvance=0            abcA=0            abcB=0            abcC=0            page=0            
+char 'Ç' id=130         x=235         y=77          width=23          height=13          xadvance=2           abcA=0            abcB=2           abcC=0            page=0            
+char 'É' id=131         x=258         y=77          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'Ñ' id=132         x=281         y=77          width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char 'Ö' id=133         x=304         y=77          width=23          height=13          xadvance=9           abcA=0            abcB=9           abcC=0            page=0            
+char 'Ü' id=134         x=327         y=77          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'á' id=135         x=350         y=77          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'à' id=136         x=373         y=77          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'â' id=137         x=396         y=77          width=23          height=13          xadvance=15          abcA=0            abcB=15          abcC=0            page=0            
+char 'ä' id=138         x=419         y=77          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'ã' id=139         x=442         y=77          width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char 'å' id=140         x=465         y=77          width=23          height=13          xadvance=11          abcA=0            abcB=11          abcC=0            page=0            
+char 'ç' id=141         x=488         y=77          width=23          height=13          xadvance=0            abcA=0            abcB=0            abcC=0            page=0            
+char 'é' id=142         x=5           y=95          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'è' id=143         x=28          y=95          width=23          height=13          xadvance=0            abcA=0            abcB=0            abcC=0            page=0            
+char 'ê' id=144         x=51          y=95          width=23          height=13          xadvance=0            abcA=0            abcB=0            abcC=0            page=0            
+char 'ë' id=145         x=74          y=95          width=23          height=13          xadvance=2           abcA=0            abcB=2           abcC=0            page=0            
+char 'í' id=146         x=97          y=95          width=23          height=13          xadvance=2           abcA=0            abcB=2           abcC=0            page=0            
+char 'ì' id=147         x=120         y=95          width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char 'î' id=148         x=143         y=95          width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char 'ï' id=149         x=166         y=95          width=23          height=13          xadvance=5           abcA=0            abcB=5           abcC=0            page=0            
+char 'ñ' id=150         x=189         y=95          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'ó' id=151         x=212         y=95          width=23          height=13          xadvance=10          abcA=0            abcB=10          abcC=0            page=0            
+char 'ò' id=152         x=235         y=95          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'ô' id=153         x=258         y=95          width=23          height=13          xadvance=10          abcA=0            abcB=10          abcC=0            page=0            
+char 'ö' id=154         x=281         y=95          width=23          height=13          xadvance=5           abcA=0            abcB=5           abcC=0            page=0            
+char 'õ' id=155         x=304         y=95          width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char 'ú' id=156         x=327         y=95          width=23          height=13          xadvance=10          abcA=0            abcB=10          abcC=0            page=0            
+char 'ù' id=157         x=350         y=95          width=23          height=13          xadvance=0            abcA=0            abcB=0            abcC=0            page=0            
+char 'û' id=158         x=373         y=95          width=23          height=13          xadvance=5           abcA=0            abcB=5           abcC=0            page=0            
+char 'ü' id=159         x=396         y=95          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '†' id=160         x=419         y=95          width=23          height=13          xadvance=3           abcA=0            abcB=3           abcC=0            page=0            
+char '°' id=161         x=442         y=95          width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char '¢' id=162         x=465         y=95          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '£' id=163         x=488         y=95          width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '§' id=164         x=5           y=113         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '•' id=165         x=28          y=113         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '¶' id=166         x=51          y=113         width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char 'ß' id=167         x=74          y=113         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '®' id=168         x=97          y=113         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '©' id=169         x=120         y=113         width=23          height=13          xadvance=10          abcA=0            abcB=10          abcC=0            page=0            
+char '™' id=170         x=143         y=113         width=23          height=13          xadvance=5           abcA=0            abcB=5           abcC=0            page=0            
+char '´' id=171         x=166         y=113         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '¨' id=172         x=189         y=113         width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char '≠' id=173         x=212         y=113         width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char 'Æ' id=174         x=235         y=113         width=23          height=13          xadvance=10          abcA=0            abcB=10          abcC=0            page=0            
+char 'Ø' id=175         x=258         y=113         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '∞' id=176         x=281         y=113         width=23          height=13          xadvance=5           abcA=0            abcB=5           abcC=0            page=0            
+char '±' id=177         x=304         y=113         width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char '≤' id=178         x=327         y=113         width=23          height=13          xadvance=5           abcA=0            abcB=5           abcC=0            page=0            
+char '≥' id=179         x=350         y=113         width=23          height=13          xadvance=5           abcA=0            abcB=5           abcC=0            page=0            
+char '¥' id=180         x=373         y=113         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'µ' id=181         x=396         y=113         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '∂' id=182         x=419         y=113         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '∑' id=183         x=442         y=113         width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char '∏' id=184         x=465         y=113         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'π' id=185         x=488         y=113         width=23          height=13          xadvance=5           abcA=0            abcB=5           abcC=0            page=0            
+char '∫' id=186         x=5           y=131         width=23          height=13          xadvance=5           abcA=0            abcB=5           abcC=0            page=0            
+char 'ª' id=187         x=28          y=131         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'º' id=188         x=51          y=131         width=23          height=13          xadvance=11          abcA=0            abcB=11          abcC=0            page=0            
+char 'Ω' id=189         x=74          y=131         width=23          height=13          xadvance=11          abcA=0            abcB=11          abcC=0            page=0            
+char 'æ' id=190         x=97          y=131         width=23          height=13          xadvance=11          abcA=0            abcB=11          abcC=0            page=0            
+char 'ø' id=191         x=120         y=131         width=23          height=13          xadvance=5           abcA=0            abcB=5           abcC=0            page=0            
+char '¿' id=192         x=143         y=131         width=23          height=13          xadvance=7           abcA=0            abcB=7           abcC=0            page=0            
+char '¡' id=193         x=166         y=131         width=23          height=13          xadvance=7           abcA=0            abcB=7           abcC=0            page=0            
+char '¬' id=194         x=189         y=131         width=23          height=13          xadvance=7           abcA=0            abcB=7           abcC=0            page=0            
+char '√' id=195         x=212         y=131         width=23          height=13          xadvance=7           abcA=0            abcB=7           abcC=0            page=0            
+char 'ƒ' id=196         x=235         y=131         width=23          height=13          xadvance=7           abcA=0            abcB=7           abcC=0            page=0            
+char '≈' id=197         x=258         y=131         width=23          height=13          xadvance=7           abcA=0            abcB=7           abcC=0            page=0            
+char '∆' id=198         x=281         y=131         width=23          height=13          xadvance=10          abcA=0            abcB=10          abcC=0            page=0            
+char '«' id=199         x=304         y=131         width=23          height=13          xadvance=7           abcA=0            abcB=7           abcC=0            page=0            
+char '»' id=200         x=327         y=131         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '…' id=201         x=350         y=131         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char ' ' id=202         x=373         y=131         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'À' id=203         x=396         y=131         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'Ã' id=204         x=419         y=131         width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char 'Õ' id=205         x=442         y=131         width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char 'Œ' id=206         x=465         y=131         width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char 'œ' id=207         x=488         y=131         width=23          height=13          xadvance=4           abcA=0            abcB=4           abcC=0            page=0            
+char '–' id=208         x=5           y=149         width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char '—' id=209         x=28          y=149         width=23          height=13          xadvance=7           abcA=0            abcB=7           abcC=0            page=0            
+char '“' id=210         x=51          y=149         width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char '”' id=211         x=74          y=149         width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char '‘' id=212         x=97          y=149         width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char '’' id=213         x=120         y=149         width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char '÷' id=214         x=143         y=149         width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char '◊' id=215         x=166         y=149         width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char 'ÿ' id=216         x=189         y=149         width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char 'Ÿ' id=217         x=212         y=149         width=23          height=13          xadvance=7           abcA=0            abcB=7           abcC=0            page=0            
+char '⁄' id=218         x=235         y=149         width=23          height=13          xadvance=7           abcA=0            abcB=7           abcC=0            page=0            
+char '€' id=219         x=258         y=149         width=23          height=13          xadvance=7           abcA=0            abcB=7           abcC=0            page=0            
+char '‹' id=220         x=281         y=149         width=23          height=13          xadvance=7           abcA=0            abcB=7           abcC=0            page=0            
+char '›' id=221         x=304         y=149         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'ﬁ' id=222         x=327         y=149         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'ﬂ' id=223         x=350         y=149         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '‡' id=224         x=373         y=149         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '·' id=225         x=396         y=149         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '‚' id=226         x=419         y=149         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '„' id=227         x=442         y=149         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '‰' id=228         x=465         y=149         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'Â' id=229         x=488         y=149         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'Ê' id=230         x=5           y=167         width=23          height=13          xadvance=10          abcA=0            abcB=10          abcC=0            page=0            
+char 'Á' id=231         x=28          y=167         width=23          height=13          xadvance=5           abcA=0            abcB=5           abcC=0            page=0            
+char 'Ë' id=232         x=51          y=167         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'È' id=233         x=74          y=167         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'Í' id=234         x=97          y=167         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'Î' id=235         x=120         y=167         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'Ï' id=236         x=143         y=167         width=23          height=13          xadvance=2           abcA=0            abcB=2           abcC=0            page=0            
+char 'Ì' id=237         x=166         y=167         width=23          height=13          xadvance=2           abcA=0            abcB=2           abcC=0            page=0            
+char 'Ó' id=238         x=189         y=167         width=23          height=13          xadvance=2           abcA=0            abcB=2           abcC=0            page=0            
+char 'Ô' id=239         x=212         y=167         width=23          height=13          xadvance=2           abcA=0            abcB=2           abcC=0            page=0            
+char '' id=240         x=235         y=167         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'Ò' id=241         x=258         y=167         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'Ú' id=242         x=281         y=167         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'Û' id=243         x=304         y=167         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'Ù' id=244         x=327         y=167         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'ı' id=245         x=350         y=167         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'ˆ' id=246         x=373         y=167         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '˜' id=247         x=396         y=167         width=23          height=13          xadvance=8           abcA=0            abcB=8           abcC=0            page=0            
+char '¯' id=248         x=419         y=167         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '˘' id=249         x=442         y=167         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '˙' id=250         x=465         y=167         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '˚' id=251         x=488         y=167         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '¸' id=252         x=5           y=185         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '˝' id=253         x=28          y=185         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char '˛' id=254         x=51          y=185         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+char 'ˇ' id=255         x=74          y=185         width=23          height=13          xadvance=6           abcA=0            abcB=6           abcC=0            page=0            
+Kerning count=670
+KerningPair   ! first=33  î second=148   amount=-1
+KerningPair   ! first=33  í second=146   amount=-1
+KerningPair   ' first=39  A second=65   amount=-1
+KerningPair   ' first=39  ∆ second=198   amount=-1
+KerningPair   ( first=40  T second=84   amount=0
+KerningPair   ( first=40  j second=106   amount=0
+KerningPair   , first=44  ) second=41   amount=0
+KerningPair   , first=44  7 second=55   amount=0
+KerningPair   , first=44  ] second=93   amount=0
+KerningPair   , first=44  } second=125   amount=0
+KerningPair   , first=44  î second=148   amount=-1
+KerningPair   , first=44  í second=146   amount=-1
+KerningPair   - first=45  A second=65   amount=0
+KerningPair   - first=45  I second=73   amount=0
+KerningPair   - first=45  J second=74   amount=-1
+KerningPair   - first=45  S second=83   amount=0
+KerningPair   - first=45  T second=84   amount=-1
+KerningPair   - first=45  V second=86   amount=0
+KerningPair   - first=45  W second=87   amount=0
+KerningPair   - first=45  X second=88   amount=0
+KerningPair   - first=45  Y second=89   amount=-1
+KerningPair   - first=45  Z second=90   amount=0
+KerningPair   - first=45  a second=97   amount=0
+KerningPair   - first=45  v second=118   amount=0
+KerningPair   - first=45  w second=119   amount=0
+KerningPair   - first=45  x second=120   amount=0
+KerningPair   - first=45  y second=121   amount=0
+KerningPair   - first=45  z second=122   amount=0
+KerningPair   - first=45  ∆ second=198   amount=0
+KerningPair   - first=45  Ê second=230   amount=0
+KerningPair   . first=46  ) second=41   amount=-1
+KerningPair   . first=46  , second=44   amount=-1
+KerningPair   . first=46  - second=45   amount=-1
+KerningPair   . first=46  7 second=55   amount=0
+KerningPair   . first=46  ] second=93   amount=-1
+KerningPair   . first=46  } second=125   amount=-1
+KerningPair   . first=46  ñ second=150   amount=-1
+KerningPair   . first=46  ó second=151   amount=-1
+KerningPair   . first=46  î second=148   amount=-1
+KerningPair   . first=46  í second=146   amount=-1
+KerningPair   4 first=52  , second=44   amount=0
+KerningPair   4 first=52  . second=46   amount=0
+KerningPair   7 first=55  , second=44   amount=-1
+KerningPair   7 first=55  . second=46   amount=-1
+KerningPair   : first=58  ó second=151   amount=-1
+KerningPair   A first=65  - second=45   amount=0
+KerningPair   A first=65  S second=83   amount=0
+KerningPair   A first=65  T second=84   amount=-1
+KerningPair   A first=65  U second=85   amount=0
+KerningPair   A first=65  V second=86   amount=0
+KerningPair   A first=65  W second=87   amount=0
+KerningPair   A first=65  Y second=89   amount=0
+KerningPair   A first=65  t second=116   amount=0
+KerningPair   A first=65  u second=117   amount=0
+KerningPair   A first=65  v second=118   amount=0
+KerningPair   A first=65  w second=119   amount=0
+KerningPair   A first=65  y second=121   amount=0
+KerningPair   A first=65  ñ second=150   amount=0
+KerningPair   A first=65  ó second=151   amount=0
+KerningPair   A first=65  ì second=147   amount=0
+KerningPair   A first=65  î second=148   amount=-1
+KerningPair   A first=65  ë second=145   amount=0
+KerningPair   A first=65  í second=146   amount=-1
+KerningPair   B first=66  , second=44   amount=0
+KerningPair   B first=66  - second=45   amount=0
+KerningPair   B first=66  . second=46   amount=0
+KerningPair   B first=66  C second=67   amount=0
+KerningPair   B first=66  G second=71   amount=0
+KerningPair   B first=66  O second=79   amount=0
+KerningPair   B first=66  Q second=81   amount=0
+KerningPair   B first=66  T second=84   amount=0
+KerningPair   B first=66  a second=97   amount=0
+KerningPair   B first=66  e second=101   amount=0
+KerningPair   B first=66  h second=104   amount=0
+KerningPair   B first=66  i second=105   amount=0
+KerningPair   B first=66  j second=106   amount=0
+KerningPair   B first=66  l second=108   amount=0
+KerningPair   B first=66  o second=111   amount=0
+KerningPair   B first=66  r second=114   amount=0
+KerningPair   B first=66  u second=117   amount=0
+KerningPair   B first=66  w second=119   amount=0
+KerningPair   B first=66  y second=121   amount=0
+KerningPair   B first=66  Ö second=133   amount=0
+KerningPair   B first=66  ñ second=150   amount=0
+KerningPair   B first=66  ó second=151   amount=0
+KerningPair   C first=67  - second=45   amount=0
+KerningPair   C first=67  å second=140   amount=0
+KerningPair   C first=67  ñ second=150   amount=0
+KerningPair   C first=67  ó second=151   amount=0
+KerningPair   D first=68  , second=44   amount=0
+KerningPair   D first=68  . second=46   amount=0
+KerningPair   D first=68  J second=74   amount=0
+KerningPair   D first=68  T second=84   amount=0
+KerningPair   D first=68  W second=87   amount=0
+KerningPair   D first=68  X second=88   amount=0
+KerningPair   D first=68  Y second=89   amount=0
+KerningPair   D first=68  Z second=90   amount=0
+KerningPair   D first=68  Ö second=133   amount=0
+KerningPair   F first=70  , second=44   amount=-2
+KerningPair   F first=70  . second=46   amount=-2
+KerningPair   F first=70  : second=58   amount=0
+KerningPair   F first=70  ; second=59   amount=0
+KerningPair   F first=70  ? second=63   amount=0
+KerningPair   F first=70  A second=65   amount=-1
+KerningPair   F first=70  J second=74   amount=0
+KerningPair   F first=70  T second=84   amount=0
+KerningPair   F first=70  a second=97   amount=-1
+KerningPair   F first=70  e second=101   amount=0
+KerningPair   F first=70  o second=111   amount=0
+KerningPair   F first=70  ∆ second=198   amount=-1
+KerningPair   F first=70  Ê second=230   amount=-1
+KerningPair   F first=70  ¯ second=248   amount=0
+KerningPair   F first=70  Ö second=133   amount=-2
+KerningPair   F first=70  ú second=156   amount=0
+KerningPair   I first=73  - second=45   amount=0
+KerningPair   I first=73  a second=97   amount=0
+KerningPair   I first=73  c second=99   amount=0
+KerningPair   I first=73  d second=100   amount=0
+KerningPair   I first=73  e second=101   amount=0
+KerningPair   I first=73  g second=103   amount=0
+KerningPair   I first=73  m second=109   amount=0
+KerningPair   I first=73  n second=110   amount=0
+KerningPair   I first=73  o second=111   amount=0
+KerningPair   I first=73  p second=112   amount=0
+KerningPair   I first=73  r second=114   amount=0
+KerningPair   I first=73  s second=115   amount=0
+KerningPair   I first=73  v second=118   amount=0
+KerningPair   I first=73  ñ second=150   amount=0
+KerningPair   I first=73  ó second=151   amount=0
+KerningPair   J first=74  , second=44   amount=0
+KerningPair   J first=74  . second=46   amount=0
+KerningPair   J first=74  A second=65   amount=0
+KerningPair   J first=74  ∆ second=198   amount=0
+KerningPair   J first=74  Ö second=133   amount=0
+KerningPair   K first=75  - second=45   amount=-1
+KerningPair   K first=75  O second=79   amount=0
+KerningPair   K first=75  a second=97   amount=0
+KerningPair   K first=75  e second=101   amount=0
+KerningPair   K first=75  o second=111   amount=0
+KerningPair   K first=75  u second=117   amount=0
+KerningPair   K first=75  v second=118   amount=0
+KerningPair   K first=75  w second=119   amount=0
+KerningPair   K first=75  y second=121   amount=0
+KerningPair   K first=75  ÿ second=216   amount=0
+KerningPair   K first=75  Ê second=230   amount=0
+KerningPair   K first=75  ¯ second=248   amount=0
+KerningPair   K first=75  å second=140   amount=0
+KerningPair   K first=75  ú second=156   amount=0
+KerningPair   K first=75  ñ second=150   amount=-1
+KerningPair   K first=75  ó second=151   amount=-1
+KerningPair   L first=76  ' second=39   amount=-1
+KerningPair   L first=76  - second=45   amount=-1
+KerningPair   L first=76  A second=65   amount=0
+KerningPair   L first=76  C second=67   amount=0
+KerningPair   L first=76  G second=71   amount=0
+KerningPair   L first=76  J second=74   amount=1
+KerningPair   L first=76  O second=79   amount=0
+KerningPair   L first=76  Q second=81   amount=0
+KerningPair   L first=76  T second=84   amount=-1
+KerningPair   L first=76  V second=86   amount=-1
+KerningPair   L first=76  W second=87   amount=-1
+KerningPair   L first=76  Y second=89   amount=-1
+KerningPair   L first=76  v second=118   amount=-1
+KerningPair   L first=76  y second=121   amount=-1
+KerningPair   L first=76  « second=199   amount=0
+KerningPair   L first=76  ∆ second=198   amount=0
+KerningPair   L first=76  ÿ second=216   amount=0
+KerningPair   L first=76  å second=140   amount=0
+KerningPair   L first=76  ñ second=150   amount=-1
+KerningPair   L first=76  ó second=151   amount=-1
+KerningPair   L first=76  î second=148   amount=-1
+KerningPair   L first=76  í second=146   amount=-1
+KerningPair   O first=79  , second=44   amount=0
+KerningPair   O first=79  . second=46   amount=0
+KerningPair   O first=79  J second=74   amount=0
+KerningPair   O first=79  T second=84   amount=0
+KerningPair   O first=79  X second=88   amount=0
+KerningPair   O first=79  Y second=89   amount=0
+KerningPair   O first=79  Z second=90   amount=0
+KerningPair   O first=79  Ö second=133   amount=0
+KerningPair   P first=80  , second=44   amount=-2
+KerningPair   P first=80  . second=46   amount=-2
+KerningPair   P first=80  A second=65   amount=0
+KerningPair   P first=80  J second=74   amount=0
+KerningPair   P first=80  Y second=89   amount=0
+KerningPair   P first=80  a second=97   amount=0
+KerningPair   P first=80  e second=101   amount=0
+KerningPair   P first=80  o second=111   amount=0
+KerningPair   P first=80  ∆ second=198   amount=0
+KerningPair   P first=80  Ê second=230   amount=0
+KerningPair   P first=80  ¯ second=248   amount=0
+KerningPair   P first=80  Ö second=133   amount=-2
+KerningPair   P first=80  ú second=156   amount=0
+KerningPair   Q first=81  , second=44   amount=0
+KerningPair   Q first=81  . second=46   amount=0
+KerningPair   Q first=81  Ö second=133   amount=0
+KerningPair   R first=82  - second=45   amount=-1
+KerningPair   R first=82  T second=84   amount=0
+KerningPair   R first=82  Y second=89   amount=0
+KerningPair   R first=82  a second=97   amount=0
+KerningPair   R first=82  e second=101   amount=0
+KerningPair   R first=82  o second=111   amount=0
+KerningPair   R first=82  u second=117   amount=0
+KerningPair   R first=82  y second=121   amount=0
+KerningPair   R first=82  Ê second=230   amount=0
+KerningPair   R first=82  ¯ second=248   amount=0
+KerningPair   R first=82  ú second=156   amount=0
+KerningPair   R first=82  ñ second=150   amount=-1
+KerningPair   R first=82  ó second=151   amount=-1
+KerningPair   R first=82  î second=148   amount=0
+KerningPair   R first=82  í second=146   amount=0
+KerningPair   S first=83  , second=44   amount=0
+KerningPair   S first=83  . second=46   amount=0
+KerningPair   S first=83  A second=65   amount=0
+KerningPair   S first=83  S second=83   amount=0
+KerningPair   S first=83  c second=99   amount=0
+KerningPair   S first=83  e second=101   amount=0
+KerningPair   S first=83  o second=111   amount=0
+KerningPair   S first=83  q second=113   amount=0
+KerningPair   S first=83  v second=118   amount=0
+KerningPair   S first=83  w second=119   amount=0
+KerningPair   S first=83  y second=121   amount=0
+KerningPair   S first=83  ∆ second=198   amount=0
+KerningPair   S first=83  Ö second=133   amount=0
+KerningPair   T first=84  ) second=41   amount=0
+KerningPair   T first=84  , second=44   amount=-1
+KerningPair   T first=84  - second=45   amount=-1
+KerningPair   T first=84  . second=46   amount=-1
+KerningPair   T first=84  : second=58   amount=-1
+KerningPair   T first=84  ; second=59   amount=-1
+KerningPair   T first=84  ? second=63   amount=0
+KerningPair   T first=84  A second=65   amount=-1
+KerningPair   T first=84  C second=67   amount=0
+KerningPair   T first=84  G second=71   amount=0
+KerningPair   T first=84  J second=74   amount=0
+KerningPair   T first=84  O second=79   amount=0
+KerningPair   T first=84  S second=83   amount=0
+KerningPair   T first=84  T second=84   amount=-1
+KerningPair   T first=84  Y second=89   amount=0
+KerningPair   T first=84  ] second=93   amount=0
+KerningPair   T first=84  a second=97   amount=-1
+KerningPair   T first=84  c second=99   amount=-1
+KerningPair   T first=84  e second=101   amount=-1
+KerningPair   T first=84  g second=103   amount=-1
+KerningPair   T first=84  o second=111   amount=-1
+KerningPair   T first=84  r second=114   amount=-1
+KerningPair   T first=84  s second=115   amount=-1
+KerningPair   T first=84  u second=117   amount=-1
+KerningPair   T first=84  v second=118   amount=-1
+KerningPair   T first=84  w second=119   amount=-1
+KerningPair   T first=84  y second=121   amount=-1
+KerningPair   T first=84  z second=122   amount=-1
+KerningPair   T first=84  } second=125   amount=0
+KerningPair   T first=84  « second=199   amount=0
+KerningPair   T first=84  ∆ second=198   amount=-1
+KerningPair   T first=84  ÿ second=216   amount=0
+KerningPair   T first=84  Ê second=230   amount=-1
+KerningPair   T first=84  ¯ second=248   amount=-1
+KerningPair   T first=84  Ö second=133   amount=-1
+KerningPair   T first=84  å second=140   amount=0
+KerningPair   T first=84  ú second=156   amount=-1
+KerningPair   T first=84  ñ second=150   amount=-1
+KerningPair   T first=84  ó second=151   amount=-1
+KerningPair   U first=85  , second=44   amount=0
+KerningPair   U first=85  . second=46   amount=0
+KerningPair   U first=85  A second=65   amount=0
+KerningPair   U first=85  ∆ second=198   amount=0
+KerningPair   U first=85  Ö second=133   amount=0
+KerningPair   V first=86  , second=44   amount=-1
+KerningPair   V first=86  - second=45   amount=0
+KerningPair   V first=86  . second=46   amount=-1
+KerningPair   V first=86  : second=58   amount=0
+KerningPair   V first=86  ; second=59   amount=0
+KerningPair   V first=86  A second=65   amount=0
+KerningPair   V first=86  a second=97   amount=-1
+KerningPair   V first=86  e second=101   amount=-1
+KerningPair   V first=86  o second=111   amount=-1
+KerningPair   V first=86  u second=117   amount=0
+KerningPair   V first=86  y second=121   amount=0
+KerningPair   V first=86  ∆ second=198   amount=0
+KerningPair   V first=86  Ê second=230   amount=-1
+KerningPair   V first=86  ¯ second=248   amount=-1
+KerningPair   V first=86  Ö second=133   amount=-1
+KerningPair   V first=86  ú second=156   amount=-1
+KerningPair   V first=86  ñ second=150   amount=0
+KerningPair   V first=86  ó second=151   amount=0
+KerningPair   W first=87  , second=44   amount=-1
+KerningPair   W first=87  - second=45   amount=0
+KerningPair   W first=87  . second=46   amount=-1
+KerningPair   W first=87  : second=58   amount=0
+KerningPair   W first=87  ; second=59   amount=0
+KerningPair   W first=87  A second=65   amount=0
+KerningPair   W first=87  a second=97   amount=0
+KerningPair   W first=87  e second=101   amount=0
+KerningPair   W first=87  o second=111   amount=0
+KerningPair   W first=87  r second=114   amount=0
+KerningPair   W first=87  u second=117   amount=0
+KerningPair   W first=87  y second=121   amount=0
+KerningPair   W first=87  ∆ second=198   amount=0
+KerningPair   W first=87  Ê second=230   amount=0
+KerningPair   W first=87  ¯ second=248   amount=0
+KerningPair   W first=87  Ö second=133   amount=-1
+KerningPair   W first=87  ú second=156   amount=0
+KerningPair   W first=87  ñ second=150   amount=0
+KerningPair   W first=87  ó second=151   amount=0
+KerningPair   X first=88  - second=45   amount=0
+KerningPair   X first=88  C second=67   amount=0
+KerningPair   X first=88  G second=71   amount=0
+KerningPair   X first=88  O second=79   amount=0
+KerningPair   X first=88  a second=97   amount=0
+KerningPair   X first=88  e second=101   amount=0
+KerningPair   X first=88  o second=111   amount=0
+KerningPair   X first=88  u second=117   amount=0
+KerningPair   X first=88  y second=121   amount=0
+KerningPair   X first=88  « second=199   amount=0
+KerningPair   X first=88  ÿ second=216   amount=0
+KerningPair   X first=88  Ê second=230   amount=0
+KerningPair   X first=88  ¯ second=248   amount=0
+KerningPair   X first=88  å second=140   amount=0
+KerningPair   X first=88  ú second=156   amount=0
+KerningPair   X first=88  ñ second=150   amount=0
+KerningPair   X first=88  ó second=151   amount=0
+KerningPair   Y first=89  , second=44   amount=-1
+KerningPair   Y first=89  - second=45   amount=-1
+KerningPair   Y first=89  . second=46   amount=-1
+KerningPair   Y first=89  : second=58   amount=-1
+KerningPair   Y first=89  ; second=59   amount=-1
+KerningPair   Y first=89  A second=65   amount=0
+KerningPair   Y first=89  J second=74   amount=0
+KerningPair   Y first=89  O second=79   amount=0
+KerningPair   Y first=89  a second=97   amount=-1
+KerningPair   Y first=89  d second=100   amount=-1
+KerningPair   Y first=89  e second=101   amount=-1
+KerningPair   Y first=89  g second=103   amount=-1
+KerningPair   Y first=89  m second=109   amount=-1
+KerningPair   Y first=89  n second=110   amount=-1
+KerningPair   Y first=89  o second=111   amount=-1
+KerningPair   Y first=89  p second=112   amount=-1
+KerningPair   Y first=89  q second=113   amount=-1
+KerningPair   Y first=89  r second=114   amount=-1
+KerningPair   Y first=89  s second=115   amount=-1
+KerningPair   Y first=89  u second=117   amount=-1
+KerningPair   Y first=89  v second=118   amount=-1
+KerningPair   Y first=89  ∆ second=198   amount=0
+KerningPair   Y first=89  ÿ second=216   amount=0
+KerningPair   Y first=89  Ê second=230   amount=-1
+KerningPair   Y first=89  ¯ second=248   amount=-1
+KerningPair   Y first=89  Ö second=133   amount=-1
+KerningPair   Y first=89  å second=140   amount=0
+KerningPair   Y first=89  ú second=156   amount=-1
+KerningPair   Y first=89  ñ second=150   amount=-1
+KerningPair   Y first=89  ó second=151   amount=-1
+KerningPair   Z first=90  - second=45   amount=0
+KerningPair   Z first=90  C second=67   amount=0
+KerningPair   Z first=90  G second=71   amount=0
+KerningPair   Z first=90  O second=79   amount=0
+KerningPair   Z first=90  Z second=90   amount=0
+KerningPair   Z first=90  a second=97   amount=0
+KerningPair   Z first=90  e second=101   amount=0
+KerningPair   Z first=90  o second=111   amount=0
+KerningPair   Z first=90  w second=119   amount=0
+KerningPair   Z first=90  y second=121   amount=0
+KerningPair   Z first=90  « second=199   amount=0
+KerningPair   Z first=90  ÿ second=216   amount=0
+KerningPair   Z first=90  Ê second=230   amount=0
+KerningPair   Z first=90  ¯ second=248   amount=0
+KerningPair   Z first=90  å second=140   amount=0
+KerningPair   Z first=90  ú second=156   amount=0
+KerningPair   Z first=90  ñ second=150   amount=0
+KerningPair   Z first=90  ó second=151   amount=0
+KerningPair   [ first=91  T second=84   amount=0
+KerningPair   [ first=91  j second=106   amount=0
+KerningPair   a first=97  v second=118   amount=0
+KerningPair   a first=97  w second=119   amount=0
+KerningPair   a first=97  y second=121   amount=0
+KerningPair   b first=98  , second=44   amount=0
+KerningPair   b first=98  . second=46   amount=0
+KerningPair   b first=98  y second=121   amount=0
+KerningPair   b first=98  Ö second=133   amount=0
+KerningPair   c first=99  - second=45   amount=0
+KerningPair   c first=99  T second=84   amount=-1
+KerningPair   c first=99  c second=99   amount=0
+KerningPair   c first=99  Á second=231   amount=0
+KerningPair   c first=99  ñ second=150   amount=0
+KerningPair   c first=99  ó second=151   amount=0
+KerningPair   e first=101  T second=84   amount=-1
+KerningPair   f first=102  " second=34   amount=0
+KerningPair   f first=102  ' second=39   amount=0
+KerningPair   f first=102  ) second=41   amount=1
+KerningPair   f first=102  * second=42   amount=0
+KerningPair   f first=102  , second=44   amount=-1
+KerningPair   f first=102  - second=45   amount=0
+KerningPair   f first=102  . second=46   amount=-1
+KerningPair   f first=102  ? second=63   amount=1
+KerningPair   f first=102  \ second=92   amount=1
+KerningPair   f first=102  ] second=93   amount=1
+KerningPair   f first=102  a second=97   amount=0
+KerningPair   f first=102  c second=99   amount=0
+KerningPair   f first=102  e second=101   amount=0
+KerningPair   f first=102  f second=102   amount=0
+KerningPair   f first=102  g second=103   amount=0
+KerningPair   f first=102  j second=106   amount=0
+KerningPair   f first=102  m second=109   amount=0
+KerningPair   f first=102  n second=110   amount=0
+KerningPair   f first=102  o second=111   amount=0
+KerningPair   f first=102  p second=112   amount=0
+KerningPair   f first=102  q second=113   amount=0
+KerningPair   f first=102  r second=114   amount=0
+KerningPair   f first=102  s second=115   amount=0
+KerningPair   f first=102  u second=117   amount=0
+KerningPair   f first=102  y second=121   amount=0
+KerningPair   f first=102  } second=125   amount=1
+KerningPair   f first=102  È second=233   amount=0
+KerningPair   f first=102  Ó second=238   amount=1
+KerningPair   f first=102  Ê second=230   amount=0
+KerningPair   f first=102  ¯ second=248   amount=0
+KerningPair   f first=102  Ö second=133   amount=-1
+KerningPair   f first=102  ñ second=150   amount=0
+KerningPair   f first=102  ó second=151   amount=0
+KerningPair   f first=102  î second=148   amount=0
+KerningPair   f first=102  í second=146   amount=0
+KerningPair   g first=103  j second=106   amount=0
+KerningPair   h first=104  v second=118   amount=0
+KerningPair   h first=104  w second=119   amount=0
+KerningPair   h first=104  y second=121   amount=0
+KerningPair   i first=105  f second=102   amount=0
+KerningPair   i first=105  i second=105   amount=0
+KerningPair   i first=105  l second=108   amount=0
+KerningPair   i first=105  t second=116   amount=0
+KerningPair   k first=107  - second=45   amount=-1
+KerningPair   k first=107  e second=101   amount=0
+KerningPair   k first=107  o second=111   amount=0
+KerningPair   k first=107  ¯ second=248   amount=0
+KerningPair   k first=107  ú second=156   amount=0
+KerningPair   k first=107  ñ second=150   amount=-1
+KerningPair   k first=107  ó second=151   amount=-1
+KerningPair   l first=108  f second=102   amount=0
+KerningPair   l first=108  i second=105   amount=0
+KerningPair   l first=108  l second=108   amount=0
+KerningPair   l first=108  t second=116   amount=0
+KerningPair   l first=108  Ó second=238   amount=0
+KerningPair   l first=108  Ô second=239   amount=0
+KerningPair   l first=108  ∑ second=183   amount=0
+KerningPair   m first=109  v second=118   amount=0
+KerningPair   m first=109  w second=119   amount=0
+KerningPair   m first=109  y second=121   amount=0
+KerningPair   n first=110  v second=118   amount=0
+KerningPair   n first=110  w second=119   amount=0
+KerningPair   n first=110  y second=121   amount=0
+KerningPair   o first=111  , second=44   amount=0
+KerningPair   o first=111  . second=46   amount=0
+KerningPair   o first=111  v second=118   amount=0
+KerningPair   o first=111  x second=120   amount=0
+KerningPair   o first=111  y second=121   amount=0
+KerningPair   o first=111  Ö second=133   amount=0
+KerningPair   p first=112  , second=44   amount=0
+KerningPair   p first=112  . second=46   amount=0
+KerningPair   p first=112  y second=121   amount=0
+KerningPair   p first=112  Ö second=133   amount=0
+KerningPair   r first=114  , second=44   amount=-1
+KerningPair   r first=114  - second=45   amount=0
+KerningPair   r first=114  . second=46   amount=-1
+KerningPair   r first=114  a second=97   amount=0
+KerningPair   r first=114  c second=99   amount=0
+KerningPair   r first=114  d second=100   amount=0
+KerningPair   r first=114  e second=101   amount=0
+KerningPair   r first=114  g second=103   amount=0
+KerningPair   r first=114  o second=111   amount=0
+KerningPair   r first=114  q second=113   amount=0
+KerningPair   r first=114  Á second=231   amount=0
+KerningPair   r first=114  È second=233   amount=0
+KerningPair   r first=114  Ê second=230   amount=0
+KerningPair   r first=114  ¯ second=248   amount=0
+KerningPair   r first=114  Ö second=133   amount=-1
+KerningPair   r first=114  ú second=156   amount=0
+KerningPair   r first=114  ñ second=150   amount=0
+KerningPair   r first=114  ó second=151   amount=0
+KerningPair   r first=114  î second=148   amount=0
+KerningPair   r first=114  í second=146   amount=0
+KerningPair   t first=116  - second=45   amount=0
+KerningPair   t first=116  l second=108   amount=0
+KerningPair   t first=116  t second=116   amount=0
+KerningPair   t first=116  v second=118   amount=0
+KerningPair   t first=116  y second=121   amount=0
+KerningPair   t first=116  ñ second=150   amount=0
+KerningPair   t first=116  ó second=151   amount=0
+KerningPair   t first=116  î second=148   amount=0
+KerningPair   t first=116  í second=146   amount=0
+KerningPair   v first=118  , second=44   amount=-1
+KerningPair   v first=118  - second=45   amount=0
+KerningPair   v first=118  . second=46   amount=-1
+KerningPair   v first=118  a second=97   amount=0
+KerningPair   v first=118  e second=101   amount=0
+KerningPair   v first=118  o second=111   amount=0
+KerningPair   v first=118  Ê second=230   amount=0
+KerningPair   v first=118  ¯ second=248   amount=0
+KerningPair   v first=118  Ö second=133   amount=-1
+KerningPair   v first=118  ú second=156   amount=0
+KerningPair   v first=118  ñ second=150   amount=0
+KerningPair   v first=118  ó second=151   amount=0
+KerningPair   v first=118  í second=146   amount=0
+KerningPair   w first=119  , second=44   amount=0
+KerningPair   w first=119  - second=45   amount=0
+KerningPair   w first=119  . second=46   amount=0
+KerningPair   w first=119  a second=97   amount=0
+KerningPair   w first=119  Ê second=230   amount=0
+KerningPair   w first=119  Ö second=133   amount=0
+KerningPair   w first=119  ñ second=150   amount=0
+KerningPair   w first=119  ó second=151   amount=0
+KerningPair   w first=119  í second=146   amount=0
+KerningPair   x first=120  - second=45   amount=0
+KerningPair   x first=120  c second=99   amount=0
+KerningPair   x first=120  d second=100   amount=0
+KerningPair   x first=120  e second=101   amount=0
+KerningPair   x first=120  g second=103   amount=0
+KerningPair   x first=120  o second=111   amount=0
+KerningPair   x first=120  Á second=231   amount=0
+KerningPair   x first=120  ¯ second=248   amount=0
+KerningPair   x first=120  ú second=156   amount=0
+KerningPair   x first=120  ñ second=150   amount=0
+KerningPair   x first=120  ó second=151   amount=0
+KerningPair   y first=121  , second=44   amount=-1
+KerningPair   y first=121  - second=45   amount=0
+KerningPair   y first=121  . second=46   amount=-1
+KerningPair   y first=121  a second=97   amount=0
+KerningPair   y first=121  c second=99   amount=0
+KerningPair   y first=121  d second=100   amount=0
+KerningPair   y first=121  e second=101   amount=0
+KerningPair   y first=121  g second=103   amount=0
+KerningPair   y first=121  o second=111   amount=0
+KerningPair   y first=121  q second=113   amount=0
+KerningPair   y first=121  Á second=231   amount=0
+KerningPair   y first=121  Ê second=230   amount=0
+KerningPair   y first=121  ¯ second=248   amount=0
+KerningPair   y first=121  Ö second=133   amount=-1
+KerningPair   y first=121  ú second=156   amount=0
+KerningPair   y first=121  ñ second=150   amount=0
+KerningPair   y first=121  ó second=151   amount=0
+KerningPair   y first=121  í second=146   amount=0
+KerningPair   z first=122  - second=45   amount=0
+KerningPair   z first=122  c second=99   amount=0
+KerningPair   z first=122  d second=100   amount=0
+KerningPair   z first=122  e second=101   amount=0
+KerningPair   z first=122  g second=103   amount=0
+KerningPair   z first=122  o second=111   amount=0
+KerningPair   z first=122  q second=113   amount=0
+KerningPair   z first=122  Á second=231   amount=0
+KerningPair   z first=122  ¯ second=248   amount=0
+KerningPair   z first=122  ñ second=150   amount=0
+KerningPair   z first=122  ó second=151   amount=0
+KerningPair   { first=123  T second=84   amount=0
+KerningPair   { first=123  j second=106   amount=0
+KerningPair   « first=199  - second=45   amount=0
+KerningPair   « first=199  å second=140   amount=0
+KerningPair   « first=199  ñ second=150   amount=0
+KerningPair   « first=199  ó second=151   amount=0
+KerningPair   Á first=231  - second=45   amount=0
+KerningPair   Á first=231  ñ second=150   amount=0
+KerningPair   Á first=231  ó second=151   amount=0
+KerningPair   Ì first=237  í second=146   amount=0
+KerningPair   Ó first=238  l second=108   amount=0
+KerningPair   Ô first=239  f second=102   amount=0
+KerningPair   Ô first=239  l second=108   amount=0
+KerningPair   ÿ first=216  , second=44   amount=0
+KerningPair   ÿ first=216  . second=46   amount=0
+KerningPair   ÿ first=216  T second=84   amount=0
+KerningPair   ÿ first=216  X second=88   amount=0
+KerningPair   ÿ first=216  Y second=89   amount=0
+KerningPair   ÿ first=216  Z second=90   amount=0
+KerningPair   ÿ first=216  Ö second=133   amount=0
+KerningPair   ¯ first=248  , second=44   amount=0
+KerningPair   ¯ first=248  . second=46   amount=0
+KerningPair   ¯ first=248  v second=118   amount=0
+KerningPair   ¯ first=248  x second=120   amount=0
+KerningPair   ¯ first=248  y second=121   amount=0
+KerningPair   ¯ first=248  Ö second=133   amount=0
+KerningPair   ø first=191  J second=74   amount=0
+KerningPair   Ö first=133  î second=148   amount=-1
+KerningPair   Ö first=133  í second=146   amount=-1
+KerningPair   ñ first=150  A second=65   amount=0
+KerningPair   ñ first=150  I second=73   amount=0
+KerningPair   ñ first=150  J second=74   amount=-1
+KerningPair   ñ first=150  S second=83   amount=0
+KerningPair   ñ first=150  T second=84   amount=-1
+KerningPair   ñ first=150  V second=86   amount=0
+KerningPair   ñ first=150  W second=87   amount=0
+KerningPair   ñ first=150  X second=88   amount=0
+KerningPair   ñ first=150  Y second=89   amount=-1
+KerningPair   ñ first=150  Z second=90   amount=0
+KerningPair   ñ first=150  a second=97   amount=0
+KerningPair   ñ first=150  v second=118   amount=0
+KerningPair   ñ first=150  w second=119   amount=0
+KerningPair   ñ first=150  x second=120   amount=0
+KerningPair   ñ first=150  y second=121   amount=0
+KerningPair   ñ first=150  z second=122   amount=0
+KerningPair   ñ first=150  ∆ second=198   amount=0
+KerningPair   ñ first=150  Ê second=230   amount=0
+KerningPair   ó first=151  A second=65   amount=0
+KerningPair   ó first=151  I second=73   amount=0
+KerningPair   ó first=151  J second=74   amount=-1
+KerningPair   ó first=151  S second=83   amount=0
+KerningPair   ó first=151  T second=84   amount=-1
+KerningPair   ó first=151  V second=86   amount=0
+KerningPair   ó first=151  W second=87   amount=0
+KerningPair   ó first=151  X second=88   amount=0
+KerningPair   ó first=151  Y second=89   amount=-1
+KerningPair   ó first=151  Z second=90   amount=0
+KerningPair   ó first=151  a second=97   amount=0
+KerningPair   ó first=151  v second=118   amount=0
+KerningPair   ó first=151  w second=119   amount=0
+KerningPair   ó first=151  x second=120   amount=0
+KerningPair   ó first=151  y second=121   amount=0
+KerningPair   ó first=151  z second=122   amount=0
+KerningPair   ó first=151  ∆ second=198   amount=0
+KerningPair   ó first=151  Ê second=230   amount=0
+KerningPair   ì first=147  A second=65   amount=-1
+KerningPair   ì first=147  ∆ second=198   amount=-1
+KerningPair   ì first=147  ë second=145   amount=0
+KerningPair   î first=148  , second=44   amount=-1
+KerningPair   î first=148  . second=46   amount=-1
+KerningPair   î first=148  A second=65   amount=-1
+KerningPair   î first=148  T second=84   amount=1
+KerningPair   î first=148  V second=86   amount=1
+KerningPair   î first=148  W second=87   amount=0
+KerningPair   î first=148  Y second=89   amount=1
+KerningPair   î first=148  s second=115   amount=0
+KerningPair   î first=148  t second=116   amount=0
+KerningPair   î first=148  ∆ second=198   amount=-1
+KerningPair   î first=148  Ö second=133   amount=-1
+KerningPair   î first=148  í second=146   amount=0
+KerningPair   ë first=145  A second=65   amount=-1
+KerningPair   ë first=145  ∆ second=198   amount=-1
+KerningPair   ë first=145  ì second=147   amount=0
+KerningPair   í first=146  , second=44   amount=-1
+KerningPair   í first=146  . second=46   amount=-1
+KerningPair   í first=146  2 second=50   amount=0
+KerningPair   í first=146  3 second=51   amount=0
+KerningPair   í first=146  4 second=52   amount=0
+KerningPair   í first=146  5 second=53   amount=0
+KerningPair   í first=146  7 second=55   amount=0
+KerningPair   í first=146  8 second=56   amount=0
+KerningPair   í first=146  9 second=57   amount=0
+KerningPair   í first=146  A second=65   amount=-1
+KerningPair   í first=146  S second=83   amount=0
+KerningPair   í first=146  T second=84   amount=1
+KerningPair   í first=146  V second=86   amount=1
+KerningPair   í first=146  W second=87   amount=0
+KerningPair   í first=146  Y second=89   amount=1
+KerningPair   í first=146  h second=104   amount=0
+KerningPair   í first=146  i second=105   amount=0
+KerningPair   í first=146  l second=108   amount=0
+KerningPair   í first=146  s second=115   amount=0
+KerningPair   í first=146  t second=116   amount=0
+KerningPair   í first=146  Ï second=236   amount=0
+KerningPair   í first=146  Ó second=238   amount=1
+KerningPair   í first=146  Ô second=239   amount=1
+KerningPair   í first=146  ∆ second=198   amount=-1
+KerningPair   í first=146  Ö second=133   amount=-1
+KerningPair   í first=146  ì second=147   amount=1
+KerningPair   í first=146  î second=148   amount=0
+KerningPair   í first=146  ë second=145   amount=1
+KerningPair   ∑ first=183  l second=108   amount=0
+KerningPair   Ç first=130  T second=84   amount=-1
+KerningPair   Ç first=130  V second=86   amount=-1
+KerningPair   Ç first=130  W second=87   amount=-1
+KerningPair   Ç first=130  Y second=89   amount=-1
+KerningPair   Ñ first=132  T second=84   amount=-1
+KerningPair   Ñ first=132  V second=86   amount=-1
+KerningPair   Ñ first=132  W second=87   amount=-1
+KerningPair   Ñ first=132  Y second=89   amount=-1
