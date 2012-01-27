@@ -38,16 +38,25 @@ namespace nux
 
   void ColorLayer::Renderlayer(GraphicsEngine &graphics_engine)
   {
+    unsigned int current_red_mask;
+    unsigned int current_green_mask;
+    unsigned int current_blue_mask;
+    unsigned int current_alpha_mask;
     unsigned int current_alpha_blend;
     unsigned int current_src_blend_factor;
     unsigned int current_dest_blend_factor;
 
+    // Get the current color mask and blend states. They will be restored later.
+    graphics_engine.GetRenderStates().GetColorMask(current_red_mask, current_green_mask, current_blue_mask, current_alpha_mask);
     // Get the current blend states. They will be restored later.
     graphics_engine.GetRenderStates().GetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
     
+    graphics_engine.GetRenderStates().SetColorMask(GL_TRUE, GL_TRUE, GL_TRUE, m_write_alpha ? GL_TRUE : GL_FALSE);
     graphics_engine.GetRenderStates().SetBlend(m_rop.Blend, m_rop.SrcBlend, m_rop.DstBlend);
     graphics_engine.QRP_Color(geometry_.x, geometry_.y, geometry_.GetWidth(), geometry_.GetHeight(), _color);
 
+    // Restore Color mask and blend states.
+    graphics_engine.GetRenderStates().SetColorMask(current_red_mask, current_green_mask, current_blue_mask, current_alpha_mask);
     // Restore the blend state
     graphics_engine.GetRenderStates().SetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
   }
