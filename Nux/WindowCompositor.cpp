@@ -915,11 +915,6 @@ namespace
         &base_window);
     }
 
-    if (focus_area)
-      SetKeyFocusArea(focus_area);
-    else
-      SetKeyFocusArea(NULL);
-
     KeyNavDirection direction = KEY_NAV_NONE;
 
     switch(event.GetKeySym())
@@ -950,6 +945,15 @@ namespace
     default:
       direction = KEY_NAV_NONE;
       break;
+    }
+
+    if (focus_area)
+    {
+      SetKeyFocusArea(focus_area, direction);
+    }
+    else
+    {
+      SetKeyFocusArea(NULL, direction);
     }
 
     if (key_focus_area_)
@@ -990,7 +994,10 @@ namespace
         {
           if (key_focus_area_ && key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
           {
-            static_cast<InputArea*>(key_focus_area_)->OnKeyNavFocusActivate.emit(key_focus_area_);
+            // Signal emitted from the WindowCompositor.
+            key_nav_focus_activate.emit(key_focus_area_);
+            // Signal emitted from the area itsel.
+            static_cast<InputArea*>(key_focus_area_)->key_nav_focus_activate.emit(key_focus_area_);
           }
         }
         else
@@ -1010,7 +1017,7 @@ namespace
 
           if (key_nav_focus)
           {
-            SetKeyFocusArea(key_nav_focus);
+            SetKeyFocusArea(key_nav_focus, direction);
           }
         }
       }
@@ -1816,7 +1823,7 @@ namespace
     }
   }
   
-  void WindowCompositor::SetKeyFocusArea(InputArea* area)
+  void WindowCompositor::SetKeyFocusArea(InputArea* area, KeyNavDirection direction)
   {
     InputArea* keyboard_grab_area = GetKeyboardGrabArea();
 
@@ -1834,7 +1841,9 @@ namespace
     }
 
     if (area && (area->AcceptKeyNavFocus() == false))
+    {
       return;
+    }
 
     if (key_focus_area_)
     {
@@ -1843,7 +1852,10 @@ namespace
 
       if (key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
       {
-        static_cast<InputArea*>(key_focus_area_)->OnKeyNavFocusChange.emit(key_focus_area_);
+        // Signal emitted from the WindowCompositor.
+        key_nav_focus_change.emit(key_focus_area_, false, direction);
+        // Signal emitted from the area itself.
+        static_cast<InputArea*>(key_focus_area_)->key_nav_focus_change.emit(key_focus_area_, false, direction);
       }
 
       if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
@@ -1861,7 +1873,10 @@ namespace
 
       if (key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
       {
-        static_cast<InputArea*>(key_focus_area_)->OnKeyNavFocusChange.emit(key_focus_area_);
+        // Signal emitted from the WindowCompositor.
+        key_nav_focus_change.emit(key_focus_area_, true, direction);
+        // Signal emitted from the area itself.
+        static_cast<InputArea*>(key_focus_area_)->key_nav_focus_change.emit(key_focus_area_, true, direction);
       }
 
       if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
@@ -2158,7 +2173,10 @@ namespace
 
         if (key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
         {
-          static_cast<InputArea*>(key_focus_area_)->OnKeyNavFocusChange.emit(key_focus_area_);
+          // Signal emitted from the WindowCompositor.
+          key_nav_focus_change.emit(key_focus_area_, false, KEY_NAV_NONE);
+          // Signal emitted from the area itself.
+          static_cast<InputArea*>(key_focus_area_)->key_nav_focus_change.emit(key_focus_area_, false, KEY_NAV_NONE);
         }
 
         if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
@@ -2226,7 +2244,10 @@ namespace
 
         if (key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
         {
-          static_cast<InputArea*>(key_focus_area_)->OnKeyNavFocusChange.emit(key_focus_area_);
+          // Signal emitted from the WindowCompositor.
+          key_nav_focus_change.emit(key_focus_area_, false, KEY_NAV_NONE);
+          // Signal emitted from the area itself.
+          static_cast<InputArea*>(key_focus_area_)->key_nav_focus_change.emit(key_focus_area_, false, KEY_NAV_NONE);
         }
 
         if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
