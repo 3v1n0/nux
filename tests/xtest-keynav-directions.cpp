@@ -124,7 +124,6 @@ void TestingThread(nux::NThread* thread, void* user_data)
   test.ViewSendMouseClick(keynav_direction_test->view0_, 1);
   
   nux::SleepForMilliseconds(500);
-  //test.TestReportMsg(keynav_direction_test->focus_view_->has_focus_, "Mouse down: focus_view_ got the focus");
   test.SendFakeKeyEvent(XK_Down, 0);
   nux::SleepForMilliseconds(500);
   test.TestReportMsg(keynav_direction_test->view1_->has_focus_ && (keynav_direction_test->view1_->key_nav_direction_ == nux::KEY_NAV_DOWN),
