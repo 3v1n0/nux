@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Inalogic Inc.
+ * Copyright 2012 Inalogic Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 3, as published
@@ -14,7 +14,7 @@
  * version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
- * Authored by: Andrea Azzarone <azzaronea@gmail.com>
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
  */
  
