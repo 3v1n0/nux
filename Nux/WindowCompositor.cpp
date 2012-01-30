@@ -417,6 +417,7 @@ namespace
         }
         else if (hit_view && (event.type == NUX_MOUSE_MOVE))
         {
+          bool emit_delta = true;
           if (hit_view != mouse_over_area_)
           {
             if (mouse_over_area_ != NULL)
@@ -433,10 +434,11 @@ namespace
             // The area we found under the mouse pointer receives a "mouse enter signal".
             SetMouseOverArea(hit_view);
             mouse_over_area_->EmitMouseEnterSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
+            emit_delta = false;
           }
 
           // Send a "mouse mouse signal".
-          mouse_over_area_->EmitMouseMoveSignal(hit_view_x, hit_view_y, dx, dy, event.GetMouseState(), event.GetKeyState());
+          mouse_over_area_->EmitMouseMoveSignal(hit_view_x, hit_view_y, emit_delta ? dx : 0, emit_delta ? dy : 0, event.GetMouseState(), event.GetKeyState());
         }
         else if (hit_view && ((event.type == NUX_MOUSE_PRESSED) || (event.type == NUX_MOUSE_DOUBLECLICK)))
         {
