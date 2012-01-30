@@ -114,7 +114,9 @@ namespace nux
       }
       case RTTEXTURE:
       {
-        _texture_2d_array.push_back(NUX_STATIC_CAST(IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID());
+        int id = NUX_STATIC_CAST(IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID();
+        if (id)
+          _texture_2d_array.push_back(NUX_STATIC_CAST(IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID());
         m_NumTex2D++;
         m_GPUSizeTex2D += GetTextureSize(NUX_REINTERPRET_CAST(IOpenGLBaseTexture *, GraphicsObject));
         m_TotalGPUSize += m_GPUSizeTex2D;
@@ -122,7 +124,9 @@ namespace nux
       }
       case RTTEXTURERECTANGLE:
       {
-        _texture_rect_array.push_back(NUX_STATIC_CAST(IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID());
+        int id = NUX_STATIC_CAST(IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID();
+        if (id)
+          _texture_rect_array.push_back(NUX_STATIC_CAST(IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID());
         m_NumTexRectangle++;
         m_GPUSizeTexRectangle += GetTextureSize(NUX_REINTERPRET_CAST(IOpenGLBaseTexture *, GraphicsObject));
         m_TotalGPUSize += m_GPUSizeTexRectangle;
@@ -183,11 +187,8 @@ namespace nux
       }
       case RTTEXTURE:
       {
-        std::vector<int>::iterator it;
-        it = std::find(_texture_2d_array.begin(), _texture_2d_array.end(), NUX_STATIC_CAST(IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID());
-
-        if (it != _texture_2d_array.end())
-          _texture_2d_array.erase(it);
+        int id = NUX_STATIC_CAST(IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID();
+        _texture_2d_array.erase(std::remove(_texture_2d_array.begin(), _texture_2d_array.end(), id), _texture_2d_array.end());
 
         m_NumTex2D--;
         m_GPUSizeTex2D -= GetTextureSize(NUX_REINTERPRET_CAST(IOpenGLBaseTexture *, GraphicsObject));
@@ -196,11 +197,8 @@ namespace nux
       }
       case RTTEXTURERECTANGLE:
       {
-        std::vector<int>::iterator it;
-        it = std::find(_texture_rect_array.begin(), _texture_rect_array.end(), NUX_STATIC_CAST(IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID());
-
-        if (it != _texture_rect_array.end())
-          _texture_rect_array.erase(it);
+        int id = NUX_STATIC_CAST(IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID();
+        _texture_rect_array.erase(std::remove(_texture_rect_array.begin(), _texture_rect_array.end(), id), _texture_rect_array.end());
 
         m_NumTexRectangle--;
         m_GPUSizeTexRectangle -= GetTextureSize(NUX_REINTERPRET_CAST(IOpenGLBaseTexture *, GraphicsObject));
