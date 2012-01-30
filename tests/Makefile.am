@@ -12,7 +12,8 @@ check_PROGRAMS = \
   xtest-hlayout-key-navigation \
   xtest-vlayout-key-navigation \
   xtest-scrollbar \
-  xtest-focus-on-mouse-down
+  xtest-focus-on-mouse-down \
+  xtest-keynav-directions
 
 # Please keep alphabetical
 test_nux_SOURCES = \
@@ -205,6 +206,14 @@ xtest_scrollbar_CPPFLAGS = $(TestFlags)
 xtest_scrollbar_LDADD = $(TestLibs)
 xtest_scrollbar_LDFLAGS = -lpthread -lXtst
 
+xtest_keynav_directions_SOURCES = xtest-keynav-directions.cpp \
+  nux_automated_test_framework.cpp \
+  nux_automated_test_framework.h
+
+xtest_keynav_directions_CPPFLAGS = $(TestFlags)
+xtest_keynav_directions_LDADD = $(TestLibs)
+xtest_keynav_directions_LDFLAGS = -lpthread -lXtst
+
 
 #run make test as part of make check
 check-local: test gtest test-apps
@@ -219,7 +228,7 @@ gtest: gtest-nux-core gtest-nux
 check-headless: gtest-nux-core
 	@gtester --verbose -k -o=test-nux-results.xml ./gtest-nux-core
 
-test-apps: test-graphics-display test-empty-window xtest-button xtest-mouse-events xtest-mouse-buttons xtest-hgrid-key-navigation xtest-hlayout-key-navigation xtest-vlayout-key-navigation xtest-scrollbar xtest-focus-on-mouse-down
+test-apps: test-graphics-display test-empty-window xtest-button xtest-mouse-events xtest-mouse-buttons xtest-hgrid-key-navigation xtest-hlayout-key-navigation xtest-vlayout-key-navigation xtest-scrollbar xtest-focus-on-mouse-down xtest-keynav-directions
 	./test-graphics-display
 	./test-empty-window
 	./xtest-button
@@ -230,6 +239,7 @@ test-apps: test-graphics-display test-empty-window xtest-button xtest-mouse-even
 	./xtest-vlayout-key-navigation
 	./xtest-scrollbar
 	./xtest-focus-on-mouse-down
+	./xtest-keynav-directions
 
 check-report:
 	@gtester -k -o=test-nux-results.xml -k ./test-nux \

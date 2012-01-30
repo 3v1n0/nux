@@ -341,12 +341,17 @@ namespace nux
     sigc::signal<void, Area*> ChildFocusChanged; // sends parent + child
 
     /*!
-        This signal is propagated upward so all parent of this area can reconfigure themselves.
-        For instance, scroll views will translate their content to make the focused object visible.
+        This signal is received whether the area receiving or loosing the keyboard focus.
+        If the second parameter is true, it means the area is receiving the focus.
+        The third parameter of this signal indicates the keyboard action that triggered this area 
+        to receive or loose the keyboard focus.
     */
-    sigc::signal<void, Area*> OnKeyNavChangeReconfigure; 
-    sigc::signal<void, Area*> OnKeyNavFocusChange;
-    sigc::signal<void, Area*> OnKeyNavFocusActivate;
+    sigc::signal<void, Area*, bool, KeyNavDirection> key_nav_focus_change;
+
+    /*!
+        This signal is received when the area has the key focus and the ENTER key has been pressed.
+    */
+    sigc::signal<void, Area*> key_nav_focus_activate;
 
     //! Queue a relayout
     /*!
@@ -496,7 +501,16 @@ namespace nux
     void ResetUpwardPathToKeyFocusArea();
 
     //! Return True if the the area knows what to do with the key event.
-    virtual bool InspectKeyEvent(unsigned int eventType,
+    /*!
+        For a View to receive the key_up and key_down signal, it must override this function and return true.
+        
+        @param even_type Event type is either EVENT_KEY_DOWN or EVENT_KEY_UP.
+        @param keysym The key symbol.
+        @param characters The character string of the key.
+
+        @return bool True if the View wants to received the key events signals.
+    */
+    virtual bool InspectKeyEvent(unsigned int event_type,
       unsigned int keysym,
       const char* character);
 

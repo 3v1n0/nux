@@ -6,6 +6,9 @@ to timing and can generate false negatives. For this reason, in some location of
 
 All test must be over in 20 seconds or less.
 
+Note on the Test: When using the nux::TestView class, a small white square at the top left corner of the TestView area indicate 
+that the view has keyboard focus.
+
 Description of tests:
 ---------------------
 graphics_display_states:
@@ -45,4 +48,5 @@ xtest-vlayout-key-navigation
 xtest-focus-on-mouse-down
   Make sure that AcceptKeyNavFocusOnMouseDown works well.
 
-
+xtest-keynav-direction
+  Test key navigation. Especially test the direction a key nav is coming from when the view is getting the focus.

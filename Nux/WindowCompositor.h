@@ -83,7 +83,21 @@ namespace nux
     bool      _starting_menu_event_cycle;
     bool      _menu_is_active;
 
-    void SetKeyFocusArea(InputArea* area);
+    //! Set the area that has the keyboard focus.
+    /*!
+        Set the area that has the keyboard focus.
+
+        @param The area that that gets the keyboard focus.
+        @param The key nav direction that initiated the focus to the provided area.
+    */
+    void SetKeyFocusArea(InputArea* area, KeyNavDirection direction = KEY_NAV_NONE);
+
+    //! Return the area that has the keyboard focus.
+    /*!
+        Return the area that has the keyboard focus.
+
+        @return The area that has the keyboard focus.
+    */    
     InputArea* GetKeyFocusArea();
 
     //! Signal emitted when a BaseWindow becomes visible.
@@ -125,6 +139,7 @@ namespace nux
 
     //! Get the area upon which the mouse button is currently down.
     Area* GetMouseOwnerArea();
+
     //! Set the area upon which the mouse button is currently down.
     void SetMouseOwnerArea(Area* area);
 
@@ -171,6 +186,23 @@ namespace nux
     sigc::connection mouse_owner_view_connection_;
     sigc::connection mouse_owner_basewindow_connection_;
     sigc::connection key_focus_area_connection_;
+
+    /*!
+        This signal is similar to Area::key_nav_focus_change. It is emitted from the WindowCompositor.
+        The user only needs to listen to this signal to find out the area that has received the keyboard focus.\n
+        The signal is received whether the area receiving or loosing the keyboard focus.\n
+        If the second parameter is true, it means the area is receiving the focus.\n
+        The third parameter of this signal indicates the keyboard action that triggered this area \n
+        to receive or loose the keyboard focus.
+    */
+    sigc::signal<void, Area*, bool, KeyNavDirection> key_nav_focus_change;
+
+    /*!
+        This signal is similar to Area::key_nav_focus_activate. It is emitted from the WindowCompositor.
+        The user only needs to listen to this signal to find out the area that has has been activated
+        through the keyboard (ENTER key has been pressed).\n
+    */
+    sigc::signal<void, Area*> key_nav_focus_activate;
 
     //====================================
   
