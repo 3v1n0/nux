@@ -5,14 +5,14 @@ check_PROGRAMS = \
   gtest-nux-core \
   test-graphics-display \
   test-empty-window \
-  button-xtest \
-  mouse-events-test \
-  mouse-buttons-test \
-  hgrid-key-navigation-test \
-  hlayout-key-navigation-test \
-  vlayout-key-navigation-test \
-  scrollbar-test \
-  focus-on-mouse-down-test
+  xtest-button \
+  xtest-mouse-events \
+  xtest-mouse-buttons \
+  xtest-hgrid-key-navigation \
+  xtest-hlayout-key-navigation \
+  xtest-vlayout-key-navigation \
+  xtest-scrollbar \
+  xtest-focus-on-mouse-down
 
 # Please keep alphabetical
 test_nux_SOURCES = \
@@ -139,101 +139,71 @@ test_empty_window_CPPFLAGS = $(TestFlags)
 test_empty_window_LDADD = $(TestLibs)
 test_empty_window_LDFLAGS = -lpthread
 
-button_xtest_SOURCES = button-xtest.cpp \
-  nux_test_framework.cpp \
-  nux_test_framework.h \
+xtest_button_SOURCES = xtest-button.cpp \
   nux_automated_test_framework.cpp \
   nux_automated_test_framework.h
 
-button_xtest_CPPFLAGS = $(TestFlags)
-button_xtest_LDADD = $(TestLibs)
-button_xtest_LDFLAGS = -lpthread -lXtst
+xtest_button_CPPFLAGS = $(TestFlags)
+xtest_button_LDADD = $(TestLibs)
+xtest_button_LDFLAGS = -lpthread -lXtst
 
-mouse_events_test_SOURCES = mouse-events-test.cpp \
-  nux_test_framework.cpp \
-  nux_test_framework.h \
+xtest_mouse_events_SOURCES = xtest-mouse-events.cpp \
   nux_automated_test_framework.cpp \
-  nux_automated_test_framework.h \
-  test-view.cpp \
-  test-view.h
+  nux_automated_test_framework.h
 
-mouse_events_test_CPPFLAGS = $(TestFlags)
-mouse_events_test_LDADD = $(TestLibs)
-mouse_events_test_LDFLAGS = -lpthread -lXtst
+xtest_mouse_events_CPPFLAGS = $(TestFlags)
+xtest_mouse_events_LDADD = $(TestLibs)
+xtest_mouse_events_LDFLAGS = -lpthread -lXtst
 
-mouse_buttons_test_SOURCES = mouse-buttons-test.cpp \
-  nux_test_framework.cpp \
-  nux_test_framework.h \
+xtest_mouse_buttons_SOURCES = xtest-mouse-buttons.cpp \
   nux_automated_test_framework.cpp \
-  nux_automated_test_framework.h \
-  test-view.cpp \
-  test-view.h
+  nux_automated_test_framework.h
 
-mouse_buttons_test_CPPFLAGS = $(TestFlags)
-mouse_buttons_test_LDADD = $(TestLibs)
-mouse_buttons_test_LDFLAGS = -lpthread -lXtst
+xtest_mouse_buttons_CPPFLAGS = $(TestFlags)
+xtest_mouse_buttons_LDADD = $(TestLibs)
+xtest_mouse_buttons_LDFLAGS = -lpthread -lXtst
 
-hgrid_key_navigation_test_SOURCES = hgrid-key-navigation-test.cpp \
-  nux_test_framework.cpp \
-  nux_test_framework.h \
+xtest_hgrid_key_navigation_SOURCES = xtest-hgrid-key-navigation.cpp \
   nux_automated_test_framework.cpp \
-  nux_automated_test_framework.h \
-  test-view.cpp \
-  test-view.h
+  nux_automated_test_framework.h
 
-hgrid_key_navigation_test_CPPFLAGS = $(TestFlags)
-hgrid_key_navigation_test_LDADD = $(TestLibs)
-hgrid_key_navigation_test_LDFLAGS = -lpthread -lXtst
+xtest_hgrid_key_navigation_CPPFLAGS = $(TestFlags)
+xtest_hgrid_key_navigation_LDADD = $(TestLibs)
+xtest_hgrid_key_navigation_LDFLAGS = -lpthread -lXtst
 
-hlayout_key_navigation_test_SOURCES = hlayout-key-navigation-test.cpp \
-  nux_test_framework.cpp \
-  nux_test_framework.h \
+xtest_hlayout_key_navigation_SOURCES = xtest-hlayout-key-navigation.cpp \
   nux_automated_test_framework.cpp \
-  nux_automated_test_framework.h \
-  test-view.cpp \
-  test-view.h
+  nux_automated_test_framework.h
 
-hlayout_key_navigation_test_CPPFLAGS = $(TestFlags)
-hlayout_key_navigation_test_LDADD = $(TestLibs)
-hlayout_key_navigation_test_LDFLAGS = -lpthread -lXtst
+xtest_hlayout_key_navigation_CPPFLAGS = $(TestFlags)
+xtest_hlayout_key_navigation_LDADD = $(TestLibs)
+xtest_hlayout_key_navigation_LDFLAGS = -lpthread -lXtst
 
-vlayout_key_navigation_test_SOURCES = vlayout-key-navigation-test.cpp \
-  nux_test_framework.cpp \
-  nux_test_framework.h \
+xtest_vlayout_key_navigation_SOURCES = xtest-vlayout-key-navigation.cpp \
   nux_automated_test_framework.cpp \
-  nux_automated_test_framework.h \
-  test-view.cpp \
-  test-view.h
+  nux_automated_test_framework.h
 
-vlayout_key_navigation_test_CPPFLAGS = $(TestFlags)
-vlayout_key_navigation_test_LDADD = $(TestLibs)
-vlayout_key_navigation_test_LDFLAGS = -lpthread -lXtst
+xtest_vlayout_key_navigation_CPPFLAGS = $(TestFlags)
+xtest_vlayout_key_navigation_LDADD = $(TestLibs)
+xtest_vlayout_key_navigation_LDFLAGS = -lpthread -lXtst
 
-focus_on_mouse_down_test_SOURCES = focus-on-mouse-down-test.cpp \
-  nux_test_framework.cpp \
-  nux_test_framework.h \
+xtest_focus_on_mouse_down_SOURCES = xtest-focus-on-mouse-down.cpp \
   nux_automated_test_framework.cpp \
-  nux_automated_test_framework.h \
-  test-view.cpp \
-  test-view.h
+  nux_automated_test_framework.h
 
-focus_on_mouse_down_test_CPPFLAGS = $(TestFlags)
-focus_on_mouse_down_test_LDADD = $(TestLibs)
-focus_on_mouse_down_test_LDFLAGS = -lpthread -lXtst
+xtest_focus_on_mouse_down_CPPFLAGS = $(TestFlags)
+xtest_focus_on_mouse_down_LDADD = $(TestLibs)
+xtest_focus_on_mouse_down_LDFLAGS = -lpthread -lXtst
 
-scrollbar_test_SOURCES = scrollbar-test.cpp \
-  nux_test_framework.cpp \
-  nux_test_framework.h \
+xtest_scrollbar_SOURCES = xtest-scrollbar.cpp \
   nux_automated_test_framework.cpp \
   nux_automated_test_framework.h \
   test-scrollview.cpp \
-  test-scrollview.h \
-  test-view.cpp \
-  test-view.h
+  test-scrollview.h
 
-scrollbar_test_CPPFLAGS = $(TestFlags)
-scrollbar_test_LDADD = $(TestLibs)
-scrollbar_test_LDFLAGS = -lpthread -lXtst
+xtest_scrollbar_CPPFLAGS = $(TestFlags)
+xtest_scrollbar_LDADD = $(TestLibs)
+xtest_scrollbar_LDFLAGS = -lpthread -lXtst
 
 
 #run make test as part of make check
@@ -249,17 +219,17 @@ gtest: gtest-nux-core gtest-nux
 check-headless: gtest-nux-core
 	@gtester --verbose -k -o=test-nux-results.xml ./gtest-nux-core
 
-test-apps: test-graphics-display test-empty-window button-xtest mouse-events-test mouse-buttons-test hgrid-key-navigation-test hlayout-key-navigation-test vlayout-key-navigation-test scrollbar-test focus-on-mouse-down-test
+test-apps: test-graphics-display test-empty-window xtest-button xtest-mouse-events xtest-mouse-buttons xtest-hgrid-key-navigation xtest-hlayout-key-navigation xtest-vlayout-key-navigation xtest-scrollbar xtest-focus-on-mouse-down
 	./test-graphics-display
 	./test-empty-window
-	./button-xtest
-	./mouse-events-test
-	./mouse-buttons-test
-	./hgrid-key-navigation-test
-	./hlayout-key-navigation-test
-	./vlayout-key-navigation-test
-	./scrollbar-test
-	./focus-on-mouse-down-test
+	./xtest-button
+	./xtest-mouse-events
+	./xtest-mouse-buttons
+	./xtest-hgrid-key-navigation
+	./xtest-hlayout-key-navigation
+	./xtest-vlayout-key-navigation
+	./xtest-scrollbar
+	./xtest-focus-on-mouse-down
 
 check-report:
 	@gtester -k -o=test-nux-results.xml -k ./test-nux \

@@ -21,16 +21,16 @@
 #include "Nux/Nux.h"
 #include "Nux/WindowThread.h"
 #include "Nux/HLayout.h"
+#include "Nux/ProgramFramework/ProgramTemplate.h"
+#include "Nux/ProgramFramework/TestView.h"
 #include <X11/extensions/XTest.h>
 #include <X11/keysym.h> 
-#include "nux_test_framework.h"
 #include "nux_automated_test_framework.h"
-#include "test-view.h"
 
 unsigned int const NUM_VIEWS = 5;
 unsigned int const ID_UNFOCUSABLE_VIEW = 2; // Please don't make this the last/first one :)
 
-class HLayoutKeyNavigationTest : public NuxTestFramework
+class HLayoutKeyNavigationTest : public ProgramTemplate
 {
 public:
   HLayoutKeyNavigationTest(const char* program_name, int window_width, int window_height, int program_life_span);
@@ -45,11 +45,11 @@ public:
   TestView* views_[NUM_VIEWS];
 };
 
-HLayoutKeyNavigationTest::HLayoutKeyNavigationTest(const char *program_name,
+HLayoutKeyNavigationTest::HLayoutKeyNavigationTest(const char* program_name,
                                                    int window_width,
                                                    int window_height,
                                                    int program_life_span)
-  : NuxTestFramework(program_name, window_width, window_height, program_life_span)
+: ProgramTemplate(program_name, window_width, window_height, program_life_span)
 {
 }
 
@@ -89,9 +89,9 @@ void HLayoutKeyNavigationTest::UserInterfaceSetup()
   static_cast<nux::WindowThread*>(window_thread_)->SetWindowBackgroundPaintLayer(&background);
 }
 
-HLayoutKeyNavigationTest *key_navigation_test = NULL;
+HLayoutKeyNavigationTest* key_navigation_test = NULL;
 
-void TestingThread(nux::NThread *thread, void *user_data)
+void TestingThread(nux::NThread* thread, void* user_data)
 {
   while (key_navigation_test->ReadyToGo() == false)
   {
@@ -101,7 +101,7 @@ void TestingThread(nux::NThread *thread, void *user_data)
 
   nux::SleepForMilliseconds(1000);
 
-  nux::WindowThread *wnd_thread = static_cast<nux::WindowThread*>(user_data);
+  nux::WindowThread* wnd_thread = static_cast<nux::WindowThread*>(user_data);
 
   NuxAutomatedTestFramework test(wnd_thread);
 
@@ -179,7 +179,7 @@ void TestingThread(nux::NThread *thread, void *user_data)
   nuxDebugMsg("Exit testing thread");
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   int xstatus = XInitThreads();
   nuxAssertMsg(xstatus > 0, "XInitThreads has failed");

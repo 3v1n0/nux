@@ -21,14 +21,14 @@
 #include "Nux/Nux.h"
 #include "Nux/WindowThread.h"
 #include "Nux/VLayout.h"
+#include "Nux/ProgramFramework/ProgramTemplate.h"
+#include "Nux/ProgramFramework/TestView.h"
 #include <X11/extensions/XTest.h>
 #include <X11/keysym.h> 
-#include "nux_test_framework.h"
 #include "nux_automated_test_framework.h"
 #include "test-scrollview.h"
-#include "test-view.h"
 
-class ScrollBarTest : public NuxTestFramework
+class ScrollBarTest: public ProgramTemplate
 {
 public:
   ScrollBarTest(const char* program_name, int window_width, int window_height, int program_life_span);
@@ -42,11 +42,11 @@ public:
   TestView* test_view_;
 };
 
-ScrollBarTest::ScrollBarTest(const char *program_name,
+ScrollBarTest::ScrollBarTest(const char* program_name,
                              int window_width,
                              int window_height,
                              int program_life_span)
-  : NuxTestFramework(program_name, window_width, window_height, program_life_span)
+: ProgramTemplate(program_name, window_width, window_height, program_life_span)
 {
 }
 
@@ -77,7 +77,7 @@ void ScrollBarTest::UserInterfaceSetup()
 
 ScrollBarTest* scrollbar_test;
 
-void TestingThread(nux::NThread *thread, void *user_data)
+void TestingThread(nux::NThread* thread, void* user_data)
 {
   while (scrollbar_test->ReadyToGo() == false)
   {
@@ -86,7 +86,7 @@ void TestingThread(nux::NThread *thread, void *user_data)
   }
   nux::SleepForMilliseconds(1000);
 
-  nux::WindowThread *wnd_thread = static_cast<nux::WindowThread*>(user_data);
+  nux::WindowThread* wnd_thread = static_cast<nux::WindowThread*>(user_data);
   NuxAutomatedTestFramework test(wnd_thread);
   test.Startup();
 
@@ -113,7 +113,7 @@ void TestingThread(nux::NThread *thread, void *user_data)
   nuxDebugMsg("Exit testing thread");
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   int xstatus = XInitThreads();
   nuxAssertMsg(xstatus > 0, "XInitThreads has failed");
@@ -133,6 +133,4 @@ int main(int argc, char **argv)
 
   return 0;
 }
-
-
 

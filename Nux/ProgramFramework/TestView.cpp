@@ -1,6 +1,25 @@
+/*
+ * Copyright 2012 Inalogic Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 3, as published
+ * by the  Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * version 3 along with this program.  If not, see
+ * <http://www.gnu.org/licenses/>
+ *
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
+ *
+ */
 
 #include "Nux/Nux.h"
-#include "test-view.h"
+#include "TestView.h"
 
 /*
   TestView:
@@ -11,8 +30,8 @@
 NUX_IMPLEMENT_OBJECT_TYPE(TestView);
 
 TestView::TestView(NUX_FILE_LINE_DECL)
-  : nux::View(NUX_FILE_LINE_PARAM)
-  , can_focus_(true)
+: nux::View(NUX_FILE_LINE_PARAM)
+, can_focus_(true)
 {
   ResetEvents();
 
@@ -66,7 +85,7 @@ nux::Color TestView::GetColor() const
   return current_color_;
 }
 
-void TestView::Draw(nux::GraphicsEngine &graphics_engine, bool force_draw)
+void TestView::Draw(nux::GraphicsEngine& graphics_engine, bool force_draw)
 {
   nux::Geometry geo = GetGeometry();
   graphics_engine.QRP_Color(geo.x, geo.y, geo.width, geo.height, current_color_);
