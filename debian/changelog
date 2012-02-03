@@ -1,6 +1,7 @@
 nux (2.2.0-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream release.
+  * Cherry-pick an additional fix for boot time
 
  -- Didier Roche <didrocks@ubuntu.com>  Fri, 03 Feb 2012 08:28:41 +0100
 

@@ -267,6 +267,9 @@ namespace nux
     pango_font_name_ = std::string(os.str());
 #endif
 
+    // reset cache
+    no_clip_size_.width = 0;
+    no_clip_size_.height = 0;
     // Changing the font can cause the StaticView to resize itself.
     Size sz = GetTextSizeNoClip();
     // Calling SetBaseSize will trigger a layout request of this view and all of its parents.
@@ -294,6 +297,10 @@ namespace nux
       return;
 
     text_ = text;
+
+    // reset cache
+    no_clip_size_.width = 0;
+    no_clip_size_.height = 0;
 
     // Changing the font can cause the StaticView to resize itself.
     Size sz = GetTextSizeNoClip();
@@ -332,6 +339,10 @@ namespace nux
     os << font_name_ << " " << font_size_;
     pango_font_name_ = std::string(os.str());
 #endif
+    
+    // reset cache
+    no_clip_size_.width = 0;
+    no_clip_size_.height = 0;
 
     // Changing the font can cause the StaticView to resize itself.
     Size sz = GetTextSizeNoClip();
@@ -377,7 +388,9 @@ namespace nux
   
   Size StaticText::GetTextSizeNoClip()
   {
-    return ComputeTextSize(false, false);
+    if (no_clip_size_.width == 0)
+      no_clip_size_ = ComputeTextSize(false, false);
+    return no_clip_size_;
   }
 
 #if defined(NUX_STATIC_TEXT_USE_DIRECT_WRITE)
