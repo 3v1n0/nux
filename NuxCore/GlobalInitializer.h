@@ -19,7 +19,6 @@
  *
  */
 
-
 #ifndef NGLOBALINITIALIZER_H
 #define NGLOBALINITIALIZER_H
 
@@ -29,33 +28,25 @@
 #ifdef _WIN32
 #define NUX_GLOBAL_OBJECT_INIT_SEQUENCE()                       \
         NUX_GLOBAL_OBJECT_VARIABLE(NGlobalData);                \
-        NUX_GLOBAL_OBJECT_VARIABLE(NCPU);                       \
         NUX_GLOBAL_OBJECT_VARIABLE(NProcess);                   \
-        NUX_GLOBAL_OBJECT_VARIABLE(NullOutput);                \
+        NUX_GLOBAL_OBJECT_VARIABLE(NullOutput);                 \
         NUX_GLOBAL_OBJECT_VARIABLE(UniqueIndex);                \
         NUX_GLOBAL_OBJECT_VARIABLE(NFileManagerWindows);        \
         NUX_GLOBAL_OBJECT_VARIABLE(VisualOutputConsole);        \
         NUX_GLOBAL_OBJECT_VARIABLE(PrintfOutputConsole);        \
-        NUX_GLOBAL_OBJECT_VARIABLE(LogFileOutput);             \
+        NUX_GLOBAL_OBJECT_VARIABLE(LogFileOutput);              \
         NUX_GLOBAL_OBJECT_VARIABLE(LogOutputRedirector);        \
         NUX_GLOBAL_OBJECT_VARIABLE(ObjectStats);
-
-//NUX_GLOBAL_OBJECT_VARIABLE(NDefaultMemoryAllocator);
-//NUX_GLOBAL_OBJECT_VARIABLE(MemHook);
-
 #elif (defined NUX_OS_LINUX)
 #define NUX_GLOBAL_OBJECT_INIT_SEQUENCE()                       \
         NUX_GLOBAL_OBJECT_VARIABLE(NGlobalData);                \
-        NUX_GLOBAL_OBJECT_VARIABLE(NullOutput);                \
+        NUX_GLOBAL_OBJECT_VARIABLE(NullOutput);                 \
         NUX_GLOBAL_OBJECT_VARIABLE(UniqueIndex);                \
         NUX_GLOBAL_OBJECT_VARIABLE(NFileManagerGNU);            \
         NUX_GLOBAL_OBJECT_VARIABLE(PrintfOutputConsole);        \
-        NUX_GLOBAL_OBJECT_VARIABLE(LogFileOutput);             \
+        NUX_GLOBAL_OBJECT_VARIABLE(LogFileOutput);              \
         NUX_GLOBAL_OBJECT_VARIABLE(LogOutputRedirector);        \
         NUX_GLOBAL_OBJECT_VARIABLE(ObjectStats);
-
-//NUX_GLOBAL_OBJECT_VARIABLE(NDefaultMemoryAllocator);
-//NUX_GLOBAL_OBJECT_VARIABLE(MemHook);
 #endif
 
 namespace nux
@@ -91,13 +82,7 @@ namespace nux
     NUX_GLOBAL_OBJECT_INIT_SEQUENCE();
   };
 
-// Hide these functions
-// extern NUX_DLL_ENTRY void SystemStart();
-// extern NUX_DLL_ENTRY void SystemShutdown();
-
-
-
-// Nifty Counter idiom. See http://www-d0.fnal.gov/KAI/doc/tutorials/static_initialization.html
+  // Nifty Counter idiom. See http://www-d0.fnal.gov/KAI/doc/tutorials/static_initialization.html
   class GlobalInitializer
   {
   public:

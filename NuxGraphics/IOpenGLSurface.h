@@ -48,8 +48,15 @@ namespace nux
     //! Copy the render target into the texture mip level. 
     void CopyRenderTarget(int x, int y, int width, int height);
 
-    //! Return the a pointer to the texture mip level data.
-    void* GetSurfaceData(int &width, int &height, int &format);
+    //! Return the mipmap data.
+    /*!
+        Return the mipmap data.
+
+        @param width Returns the width in pixel of the image data.
+        @param height Returns the height in pixel of the image data.
+        @param stride Returns the row stride of the image data.
+    */
+    unsigned char* GetSurfaceData(int &width, int &height, int &stride);
 
   private:
     virtual ~IOpenGLSurface();

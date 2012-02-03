@@ -94,6 +94,8 @@ namespace nux
     void RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvKeyEvent(
       unsigned long    eventType  ,   /*event type*/
       unsigned long    keysym     ,   /*event keysym*/
@@ -380,6 +382,10 @@ namespace nux
     Color _text_color;
 
     CairoGraphics::Alignment align_;
+    
+#if defined(NUX_OS_LINUX)
+    Cursor caret_cursor_;
+#endif
 
     std::list<Rect> last_selection_region_;
     std::list<Rect> selection_region_;

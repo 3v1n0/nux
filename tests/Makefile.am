@@ -246,6 +246,9 @@ gtest: gtest-nux-core gtest-nux
 	./gtest-nux-core
 	./gtest-nux
 
+check-headless: gtest-nux-core
+	@gtester --verbose -k -o=test-nux-results.xml ./gtest-nux-core
+
 test-apps: test-graphics-display test-empty-window button-xtest mouse-events-test mouse-buttons-test hgrid-key-navigation-test hlayout-key-navigation-test vlayout-key-navigation-test scrollbar-test focus-on-mouse-down-test
 	./test-graphics-display
 	./test-empty-window
@@ -274,7 +277,7 @@ full-report:
 clean-generic:
 	rm -f test-nux-results.xml test-nux-results.html
 
-.PHONY: check-report full-report gtest test
+.PHONY: check check-report full-report gtest test check-headless
 
 endif
 

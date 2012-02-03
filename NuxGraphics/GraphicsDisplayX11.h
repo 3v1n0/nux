@@ -35,6 +35,7 @@
 /* keysym.h contains keysymbols which we use to resolv what keys that are being pressed */
 #include <X11/keysym.h>
 
+
 #include <X11/extensions/xf86vmode.h>
 #include <X11/extensions/Xinerama.h>
 
@@ -94,6 +95,7 @@ namespace nux
     EGLSurface  m_GLSurface;
     EGLConfig   _fb_config;
 #endif
+
     XSetWindowAttributes m_X11Attr;
 
     int m_NumVideoModes;
@@ -230,6 +232,17 @@ namespace nux
 
 #if defined(NUX_OS_LINUX)
     void InjectXEvent(Event *evt, XEvent xevent);
+
+    typedef struct _EventFilterArg
+    {
+      bool   (*filter)    (XEvent event, void * data);
+      void * data;
+    } EventFilterArg;
+
+    void AddEventFilter (EventFilterArg arg);
+    void RemoveEventFilter (void *owner);
+
+    std::list<EventFilterArg> _event_filters;
 #endif
     
     Event &GetCurrentEvent();
@@ -375,7 +388,7 @@ namespace nux
     Window _drag_window;
     Window _drag_source;
     long _drag_drop_timestamp;
-    
+
     void * _dnd_source_data;
     DndSourceFuncs _dnd_source_funcs;
 

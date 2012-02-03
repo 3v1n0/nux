@@ -2165,10 +2165,12 @@ namespace nux
     {
       prevFBO->Activate(true);
       SetViewport(0, 0, previous_width, previous_height);
+      SetOrthographicProjectionMatrix(previous_width, previous_height);
     }
     else
     {
       SetViewport(0, 0, previous_width, previous_height);
+      SetOrthographicProjectionMatrix(previous_width, previous_height);
     }
 
     return _offscreen_color_rt0;
@@ -2214,10 +2216,12 @@ namespace nux
     {
       prevFBO->Activate(true);
       SetViewport(0, 0, previous_width, previous_height);
+      SetOrthographicProjectionMatrix(previous_width, previous_height);
     }
     else
     {
       SetViewport(0, 0, previous_width, previous_height);
+      SetOrthographicProjectionMatrix(previous_width, previous_height);
     }
 
     return _offscreen_color_rt1;
@@ -2263,10 +2267,12 @@ namespace nux
     {
       prevFBO->Activate(true);
       SetViewport(0, 0, previous_width, previous_height);
+      SetOrthographicProjectionMatrix(previous_width, previous_height);
     }
     else
     {
       SetViewport(0, 0, previous_width, previous_height);
+      SetOrthographicProjectionMatrix(previous_width, previous_height);
     }
 
     return _offscreen_color_rt1;
@@ -2313,10 +2319,12 @@ namespace nux
     {
       prevFBO->Activate(true);
       SetViewport(0, 0, previous_width, previous_height);
+      SetOrthographicProjectionMatrix(previous_width, previous_height);
     }
     else
     {
       SetViewport(0, 0, previous_width, previous_height);
+      SetOrthographicProjectionMatrix(previous_width, previous_height);
     }
 
     return _offscreen_color_rt1;
@@ -2383,10 +2391,12 @@ namespace nux
     {
       prevFBO->Activate(true);
       SetViewport(0, 0, previous_width, previous_height);
+      SetOrthographicProjectionMatrix(previous_width, previous_height);
     }
     else
     {
       SetViewport(0, 0, previous_width, previous_height);
+      SetOrthographicProjectionMatrix(previous_width, previous_height);
     }
     return _offscreen_color_rt3;
   }
@@ -2447,10 +2457,12 @@ namespace nux
     {
       prevFBO->Activate(true);
       SetViewport(0, 0, previous_width, previous_height);
+      SetOrthographicProjectionMatrix(previous_width, previous_height);
     }
     else
     {
       SetViewport(0, 0, previous_width, previous_height);
+      SetOrthographicProjectionMatrix(previous_width, previous_height);
     }
 
     return _offscreen_color_rt0;
@@ -2512,10 +2524,12 @@ namespace nux
     {
       prevFBO->Activate(true);
       SetViewport(0, 0, previous_width, previous_height);
+      SetOrthographicProjectionMatrix(previous_width, previous_height);
     }
     else
     {
       SetViewport(0, 0, previous_width, previous_height);
+      SetOrthographicProjectionMatrix(previous_width, previous_height);
     }
   }
 
@@ -2552,10 +2566,12 @@ namespace nux
     {
       prevFBO->Activate(true);
       SetViewport(0, 0, previous_width, previous_height);
+      SetOrthographicProjectionMatrix(previous_width, previous_height);
     }
     else
     {
       SetViewport(0, 0, previous_width, previous_height);
+      SetOrthographicProjectionMatrix(previous_width, previous_height);
     }
 
     return _offscreen_color_rt0;
@@ -2594,10 +2610,12 @@ namespace nux
     {
       prevFBO->Activate(true);
       SetViewport(0, 0, previous_width, previous_height);
+      SetOrthographicProjectionMatrix(previous_width, previous_height);
     }
     else
     {
       SetViewport(0, 0, previous_width, previous_height);
+      SetOrthographicProjectionMatrix(previous_width, previous_height);
     }
   }
 
@@ -2754,10 +2772,12 @@ namespace nux
     {
       prevFBO->Activate(true);
       SetViewport(0, 0, previous_width, previous_height);
+      SetOrthographicProjectionMatrix(previous_width, previous_height);
     }
     else
     {
       SetViewport(0, 0, previous_width, previous_height);
+      SetOrthographicProjectionMatrix(previous_width, previous_height);
     }
     return _offscreen_color_rt0;
   }
@@ -2809,10 +2829,12 @@ namespace nux
     {
       prevFBO->Activate(true);
       SetViewport(0, 0, previous_width, previous_height);
+      SetOrthographicProjectionMatrix(previous_width, previous_height);
     }
     else
     {
       SetViewport(0, 0, previous_width, previous_height);
+      SetOrthographicProjectionMatrix(previous_width, previous_height);
     }
   }
 

@@ -105,8 +105,6 @@ am__objects_1 = libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.lo \
 	libnux_core_@NUX_API_VERSION@_la-FileName.lo \
 	libnux_core_@NUX_API_VERSION@_la-ThreadGNU.lo \
 	libnux_core_@NUX_API_VERSION@_la-Parsing.lo \
-	libnux_core_@NUX_API_VERSION@_la-CPU.lo \
-	libnux_core_@NUX_API_VERSION@_la-Error.lo \
 	libnux_core_@NUX_API_VERSION@_la-Logger.lo \
 	libnux_core_@NUX_API_VERSION@_la-LoggingWriter.lo \
 	libnux_core_@NUX_API_VERSION@_la-NUniqueIndex.lo \
@@ -138,7 +136,6 @@ am__objects_1 = libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.lo \
 	libnux_core_@NUX_API_VERSION@_la-Line3D.lo \
 	libnux_core_@NUX_API_VERSION@_la-Vector2.lo \
 	libnux_core_@NUX_API_VERSION@_la-RollingFileAppender.lo \
-	libnux_core_@NUX_API_VERSION@_la-CRC32.lo \
 	libnux_core_@NUX_API_VERSION@_la-InitiallyUnownedObject.lo
 am__objects_2 =
 am_libnux_core_@NUX_API_VERSION@_la_OBJECTS = $(am__objects_1) \
@@ -425,8 +422,6 @@ source_cpp = \
   $(srcdir)/FileName.cpp \
   $(srcdir)/ThreadGNU.cpp \
   $(srcdir)/Parsing.cpp \
-  $(srcdir)/CPU.cpp \
-  $(srcdir)/Error.cpp \
   $(srcdir)/Logger.cpp \
   $(srcdir)/LoggingWriter.cpp \
   $(srcdir)/NUniqueIndex.cpp \
@@ -458,7 +453,6 @@ source_cpp = \
   $(srcdir)/Math/Line3D.cpp \
   $(srcdir)/Math/Vector2.cpp \
   $(srcdir)/RollingFileAppender.cpp \
-  $(srcdir)/CRC32.cpp \
   $(srcdir)/InitiallyUnownedObject.cpp
 
 source_file_manager_h = \
@@ -504,7 +498,6 @@ source_h = \
   $(srcdir)/AsyncFileWriter.h \
   $(srcdir)/SystemTypes.h \
   $(srcdir)/Point.h \
-  $(srcdir)/CPU.h \
   $(srcdir)/FilePath.h \
   $(srcdir)/System.h \
   $(srcdir)/Parsing.h \
@@ -533,7 +526,6 @@ source_h = \
   $(srcdir)/Size-inl.h \
   $(srcdir)/Exception.h \
   $(srcdir)/TimeFunctions.h \
-  $(srcdir)/CRC32.h \
   $(srcdir)/Macros.h \
   $(srcdir)/ThreadGNU.h \
   $(srcdir)/TextString.h \
@@ -649,13 +641,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Algo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Bezier.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-CPU.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-CRC32.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Color.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Colors.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Complex.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Constants.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Error.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Exception.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-FileIO.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-FileName.Plo@am__quote@
@@ -922,22 +911,6 @@ libnux_core_@NUX_API_VERSION@_la-Parsing.lo: $(srcdir)/Parsing.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-Parsing.lo `test -f '$(srcdir)/Parsing.cpp' || echo '$(srcdir)/'`$(srcdir)/Parsing.cpp
 
-libnux_core_@NUX_API_VERSION@_la-CPU.lo: $(srcdir)/CPU.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-CPU.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-CPU.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-CPU.lo `test -f '$(srcdir)/CPU.cpp' || echo '$(srcdir)/'`$(srcdir)/CPU.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-CPU.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-CPU.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/CPU.cpp' object='libnux_core_@NUX_API_VERSION@_la-CPU.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-CPU.lo `test -f '$(srcdir)/CPU.cpp' || echo '$(srcdir)/'`$(srcdir)/CPU.cpp
-
-libnux_core_@NUX_API_VERSION@_la-Error.lo: $(srcdir)/Error.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-Error.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Error.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-Error.lo `test -f '$(srcdir)/Error.cpp' || echo '$(srcdir)/'`$(srcdir)/Error.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Error.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Error.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Error.cpp' object='libnux_core_@NUX_API_VERSION@_la-Error.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-Error.lo `test -f '$(srcdir)/Error.cpp' || echo '$(srcdir)/'`$(srcdir)/Error.cpp
-
 libnux_core_@NUX_API_VERSION@_la-Logger.lo: $(srcdir)/Logger.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-Logger.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Logger.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-Logger.lo `test -f '$(srcdir)/Logger.cpp' || echo '$(srcdir)/'`$(srcdir)/Logger.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Logger.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Logger.Plo
@@ -1185,14 +1158,6 @@ libnux_core_@NUX_API_VERSION@_la-RollingFileAppender.lo: $(srcdir)/RollingFileAp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/RollingFileAppender.cpp' object='libnux_core_@NUX_API_VERSION@_la-RollingFileAppender.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-RollingFileAppender.lo `test -f '$(srcdir)/RollingFileAppender.cpp' || echo '$(srcdir)/'`$(srcdir)/RollingFileAppender.cpp
-
-libnux_core_@NUX_API_VERSION@_la-CRC32.lo: $(srcdir)/CRC32.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-CRC32.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-CRC32.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-CRC32.lo `test -f '$(srcdir)/CRC32.cpp' || echo '$(srcdir)/'`$(srcdir)/CRC32.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-CRC32.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-CRC32.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/CRC32.cpp' object='libnux_core_@NUX_API_VERSION@_la-CRC32.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-CRC32.lo `test -f '$(srcdir)/CRC32.cpp' || echo '$(srcdir)/'`$(srcdir)/CRC32.cpp
 
 libnux_core_@NUX_API_VERSION@_la-InitiallyUnownedObject.lo: $(srcdir)/InitiallyUnownedObject.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-InitiallyUnownedObject.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-InitiallyUnownedObject.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-InitiallyUnownedObject.lo `test -f '$(srcdir)/InitiallyUnownedObject.cpp' || echo '$(srcdir)/'`$(srcdir)/InitiallyUnownedObject.cpp
