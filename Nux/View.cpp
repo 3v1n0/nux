@@ -157,7 +157,7 @@ namespace nux
   {
   }
 
-  void View::ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw)
+  void View::ProcessDraw(GraphicsEngine& graphics_engine, bool force_draw)
   {
     full_view_draw_cmd_ = false;
 
@@ -165,20 +165,30 @@ namespace nux
 
     if (force_draw)
     {
+      GetPainter().PaintBackground(graphics_engine, GetGeometry());
+      GetPainter().PushPaintLayerStack();
+
       draw_cmd_queued_ = true;
       full_view_draw_cmd_ = true;
       Draw(graphics_engine, force_draw);
       DrawContent(graphics_engine, force_draw);
       PostDraw(graphics_engine, force_draw);
+
+      GetPainter().PopPaintLayerStack();
     }
     else
     {
       if (draw_cmd_queued_)
       {
+        GetPainter().PaintBackground(graphics_engine, GetGeometry());
+        GetPainter().PushPaintLayerStack();
+
         full_view_draw_cmd_ = true;
         Draw(graphics_engine, false);
         DrawContent(graphics_engine, false);
         PostDraw(graphics_engine, false);
+
+        GetPainter().PopPaintLayerStack();
       }
       else
       {

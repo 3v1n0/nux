@@ -710,7 +710,6 @@ namespace nux
 #include "Character/NTChar.h"
 
 #include "TimeFunctions.h"
-#include "CPU.h"
 #include "Platform.h"
 #include "FileManager/NSerializer.h"
 #include "Process.h"
@@ -719,7 +718,6 @@ namespace nux
 #include "FileManager/NFileManagerGeneric.h"
 
 #ifdef NUX_OS_WINDOWS
-    #include "FileManager/NFileManagerStandardAnsi.h"
     #include "FileManager/NFileManagerWindows.h"
 #elif defined NUX_OS_LINUX
     #include "FileManager/NFileManagerGNU.h"

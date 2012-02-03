@@ -254,11 +254,13 @@ namespace nux
     return 0;
   }
 
-  void* IOpenGLBaseTexture::GetSurfaceData(int level, int &width, int &height, int &format)
+  unsigned char* IOpenGLBaseTexture::GetSurfaceData(int level, int &width, int &height, int &stride)
   {
+    // Make this call a pure virtual once it has been implemented for IOpenGLCubeTexture,
+    // IOpenGLVolumeTexture and IOpenGLAnimatedTexture.
     width = 0;
     height = 0;
-    format = BITFMT_UNKNOWN;
+    stride = 0;
     return 0;
   }
 

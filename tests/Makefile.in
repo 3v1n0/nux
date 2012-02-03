@@ -1853,6 +1853,9 @@ uninstall-am:
 @BUILD_TESTS_TRUE@	./gtest-nux-core
 @BUILD_TESTS_TRUE@	./gtest-nux
 
+@BUILD_TESTS_TRUE@check-headless: gtest-nux-core
+@BUILD_TESTS_TRUE@	@gtester --verbose -k -o=test-nux-results.xml ./gtest-nux-core
+
 @BUILD_TESTS_TRUE@test-apps: test-graphics-display test-empty-window button-xtest mouse-events-test mouse-buttons-test hgrid-key-navigation-test hlayout-key-navigation-test vlayout-key-navigation-test scrollbar-test focus-on-mouse-down-test
 @BUILD_TESTS_TRUE@	./test-graphics-display
 @BUILD_TESTS_TRUE@	./test-empty-window
@@ -1881,7 +1884,7 @@ uninstall-am:
 @BUILD_TESTS_TRUE@clean-generic:
 @BUILD_TESTS_TRUE@	rm -f test-nux-results.xml test-nux-results.html
 
-@BUILD_TESTS_TRUE@.PHONY: check-report full-report gtest test
+@BUILD_TESTS_TRUE@.PHONY: check check-report full-report gtest test check-headless
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

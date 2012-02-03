@@ -256,10 +256,10 @@ top_srcdir = @top_srcdir@
 PKGDATADIR = "$(pkgdatadir)/@NUX_API_VERSION@"
 fontdir = $(PKGDATADIR)/Fonts
 dist_font_DATA = \
-  Fonts/Ubuntu_size_10_bold_page_0.png \
-  Fonts/Ubuntu_size_10_bold.txt \
-  Fonts/Ubuntu_size_10_page_0.png \
-  Fonts/Ubuntu_size_10.txt
+  Fonts/nuxfont_size_8_bold_page_0.png \
+  Fonts/nuxfont_size_8_bold.txt \
+  Fonts/nuxfont_size_8_page_0.png \
+  Fonts/nuxfont_size_8.txt
 
 uitexturesdir = $(PKGDATADIR)/UITextures
 dist_uitextures_DATA = \
