@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Inalogic Inc.
+ * Copyright 2012 Inalogic Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 3, as published
@@ -18,15 +18,15 @@
  *
  */
 
-#include "Nux/Nux.h"
-#include "Nux/VLayout.h"
-#include "Nux/HLayout.h"
-#include "Nux/WindowThread.h"
-#include "Nux/TextEntry.h"
-#include "nux_test_framework.h"
+#include "Nux.h"
+#include "VLayout.h"
+#include "HLayout.h"
+#include "WindowThread.h"
+#include "TextEntry.h"
+#include "ProgramTemplate.h"
 
 
-NuxTestFramework::NuxTestFramework(const char* program_name,
+ProgramTemplate::ProgramTemplate(const char* program_name,
   int window_width,
   int window_height,
   int program_life_span)
@@ -53,21 +53,21 @@ NuxTestFramework::NuxTestFramework(const char* program_name,
   }
 }
 
-NuxTestFramework::~NuxTestFramework()
+ProgramTemplate::~ProgramTemplate()
 {
   if (window_thread_)
     delete window_thread_;
 }
 
-void NuxTestFramework::Startup()
+void ProgramTemplate::Startup()
 {
   nux::NuxInitialize(0);
   window_thread_ = nux::CreateGUIThread(program_name_.c_str(), window_width_, window_height_, NULL, NULL, NULL);
 
-  window_thread_->window_configuration.connect(sigc::mem_fun(this, &NuxTestFramework::WaitForConfigureEvent));
+  window_thread_->window_configuration.connect(sigc::mem_fun(this, &ProgramTemplate::WaitForConfigureEvent));
 }
 
-void NuxTestFramework::UserInterfaceSetup()
+void ProgramTemplate::UserInterfaceSetup()
 {
   // nux::VLayout *MainVLayout = new nux::VLayout(NUX_TRACKER_LOCATION);
   // nux::TextEntry *text_entry_0 = new nux::TextEntry(TEXT("0123456789abcdefghij"), NUX_TRACKER_LOCATION);
@@ -81,7 +81,7 @@ void NuxTestFramework::UserInterfaceSetup()
   // window_thread_->SetWindowBackgroundPaintLayer(&background);
 }
 
-void NuxTestFramework::Run()
+void ProgramTemplate::Run()
 {
   if (window_thread_ == NULL)
     return;
@@ -89,30 +89,30 @@ void NuxTestFramework::Run()
   if (program_life_span_ > 0)
   {
     timeout_signal_ = new nux::TimeOutSignal();
-    timeout_signal_->time_expires.connect(sigc::mem_fun(this, &NuxTestFramework::ProgramExitCall));
+    timeout_signal_->time_expires.connect(sigc::mem_fun(this, &ProgramTemplate::ProgramExitCall));
     window_thread_->GetTimerHandler().AddTimerHandler(program_life_span_, timeout_signal_, NULL, NULL);
   }
 
   window_thread_->Run(NULL);
 }
 
-bool NuxTestFramework::ReadyToGo()
+bool ProgramTemplate::ReadyToGo()
 {
   return window_thread_;
 }
 
-nux::WindowThread* NuxTestFramework::GetWindowThread()
+nux::WindowThread* ProgramTemplate::GetWindowThread()
 {
   return window_thread_;
 }
 
-void NuxTestFramework::ProgramExitCall(void *data)
+void ProgramTemplate::ProgramExitCall(void *data)
 {
   if (window_thread_)
     window_thread_->ExitMainLoop();
 }
 
-void NuxTestFramework::WaitForConfigureEvent(int x, int y, int width, int height)
+void ProgramTemplate::WaitForConfigureEvent(int x, int y, int width, int height)
 {
   ready_to_go_ = true;
 }
@@ -120,7 +120,7 @@ void NuxTestFramework::WaitForConfigureEvent(int x, int y, int width, int height
 
 // int main(int argc, char **argv)
 // {
-//     NuxTestFramework test("Text Entry", 300, 300, 3000);
+//     ProgramTemplate test("Text Entry", 300, 300, 3000);
 //     test.Startup();
 //     test.UserInterfaceSetup();
 //     test.Run();
