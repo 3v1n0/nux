@@ -301,13 +301,17 @@ namespace nux
   {
       nuxAssert(data->context->context_ == context);
 
-      gboolean processed = FALSE;
+      GError *error = NULL;
+      gboolean processed = ibus_input_context_process_key_event_async_finish (
+                            context,
+                            res,
+                            &error);
 
-      if (!ibus_input_context_process_key_event_async_finish(context,
-        res,
-        &processed,
-        NULL))
-        processed = FALSE;
+      if (error != NULL)
+      {
+        g_warning ("Process Key Event failed: %s.", error->message); 
+        g_error_free (error);
+      }
 
       if (processed == FALSE)
         data->context->ForwardKeyEvent(data->event);

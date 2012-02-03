@@ -14,12 +14,14 @@ libnux_@NUX_API_VERSION@_la_CPPFLAGS= \
   -DG_LOG_DOMAIN=\"Nux\" \
   $(GCC_FLAGS) \
   $(NUX_CFLAGS) \
+  $(IBUS_CFLAGS) \
   $(MAINTAINER_CFLAGS)
 
 libnux_@NUX_API_VERSION@_la_LIBADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
+  $(IBUS_LIBS) \
   $(NUX_LIBS)
 
 libnux_@NUX_API_VERSION@_la_LDFLAGS = \
@@ -58,6 +60,8 @@ source_cpp = \
   $(srcdir)/HScrollBar.cpp \
   $(srcdir)/HSplitter.cpp \
   $(srcdir)/IntegerValidator.cpp \
+  $(srcdir)/InputMethodContext.cpp \
+  $(srcdir)/InputMethodIBus.cpp \
   $(srcdir)/View.cpp \
   $(srcdir)/KeyboardHandler.cpp \
   $(srcdir)/LayeredLayout.cpp \
@@ -138,6 +142,8 @@ source_h = \
   $(srcdir)/HScrollBar.h \
   $(srcdir)/HSplitter.h \
   $(srcdir)/IntegerValidator.h \
+  $(srcdir)/InputMethodContext.h \
+  $(srcdir)/InputMethodIBus.h \
   $(srcdir)/View.h \
   $(srcdir)/KeyboardHandler.h \
   $(srcdir)/LayeredLayout.h \

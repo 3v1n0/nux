@@ -186,6 +186,16 @@ PKG_CHECK_MODULES(UNITY_SUPPORT_TEST,
 AC_SUBST(UNITY_SUPPORT_TEST_CFLAGS)
 AC_SUBST(UNITY_SUPPORT_TEST_LIBS)
 
+PKG_CHECK_MODULES(IBUS,
+                  glib-2.0 >= 2.25.14
+                  gio-2.0
+                  ibus-1.0
+                  gobject-2.0
+                  )
+
+AC_SUBST(IBUS_CFLAGS)
+AC_SUBST(IBUS_LIBS)
+
 dnl ************************************
 dnl Enable/disable tests
 dnl ************************************
