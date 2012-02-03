@@ -1,4 +1,4 @@
-nux (2.2.0-0ubuntu1) UNRELEASED; urgency=low
+nux (2.2.0-0ubuntu1) precise; urgency=low
 
   * New upstream release.
     - Dash - Behaviour of the 'All' button in the Dash filters broken in
@@ -10,7 +10,7 @@ nux (2.2.0-0ubuntu1) UNRELEASED; urgency=low
       nux::GridHLayout::KeyNavIterationRowOrder() (LP: #916088)
   * Cherry-pick an additional fix for boot time
 
- -- Didier Roche <didrocks@ubuntu.com>  Fri, 03 Feb 2012 08:28:41 +0100
+ -- Didier Roche <didrocks@ubuntu.com>  Fri, 03 Feb 2012 11:35:48 +0100
 
 nux (2.0.0-0ubuntu2) precise; urgency=low
 
