@@ -386,6 +386,11 @@ namespace nux
     int clicks;
     int is_click;
 
+#if defined(NUX_OS_WINDOWS)
+    int win32_keycode; // Not used. Just a place holder.
+    int win32_keysym;
+#endif
+
 #if defined(NUX_OS_LINUX)
     Time          x11_timestamp;  //!< X11 timestamp.
     Window        x11_window;     //!< X11 window.
