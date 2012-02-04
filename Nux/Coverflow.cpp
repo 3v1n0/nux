@@ -128,7 +128,10 @@ namespace nux
     float GetCameraDriftFactor();
     void MaybeQueueDraw();
 
+    void Get3DBoundingBox(float distance_from_camera, nux::Point2& top_left_corner, nux::Point2& bottom_right_corner);
+    void GetCoverScreenCoord(Cover const& cover, nux::Vector4& P0, nux::Vector4& P1, nux::Vector4& P2, nux::Vector4& P3);
     bool TestMouseOverCover(int x, int y, Cover const& cover);
+    bool TestCoverVisible(Cover const& cover);
 
     static gboolean OnAnimationTimeout(gpointer data);
 
@@ -150,6 +153,7 @@ namespace nux
     gint64 last_draw_time_;
     bool mouse_inside_view_;
     nux::Point2 mouse_position_;
+    float vertical_view_angle_;
   };
 
   Coverflow::Impl::Impl(Coverflow* parent)
@@ -160,6 +164,7 @@ namespace nux
    , camera_drift_factor_(0)
    , last_draw_time_(0)
    , mouse_inside_view_(false)
+   , vertical_view_angle_(40)
   {
     mouse_position_ = nux::Point2(0, 0);
 
@@ -269,7 +274,19 @@ namespace nux
     }
   }
 
-  bool Coverflow::Impl::TestMouseOverCover(int x, int y, Cover const& cover)
+  void Coverflow::Impl::Get3DBoundingBox(float distance_from_camera, nux::Point2& top_left_corner, nux::Point2& bottom_right_corner)
+  {
+    int width = parent_->GetBaseWidth();
+    int height = parent_->GetBaseHeight();
+
+    top_left_corner.y = std::tan(DEGTORAD(vertical_view_angle_) * 0.5f) * distance_from_camera;
+    top_left_corner.x = -top_left_corner.y * (width / (float)height);
+
+    bottom_right_corner.x = -top_left_corner.x;
+    bottom_right_corner.y = -top_left_corner.y;
+  }
+
+  void Coverflow::Impl::GetCoverScreenCoord(Cover const& cover, nux::Vector4& out_p0, nux::Vector4& out_p1, nux::Vector4& out_p2, nux::Vector4& out_p3)
   {
     int width = parent_->GetBaseWidth();
     int height = parent_->GetBaseHeight();
@@ -278,7 +295,6 @@ namespace nux
 
     auto texture = cover.item->GetTexture()->GetDeviceTexture();
     float ratio = texture->GetWidth()/(float)texture->GetHeight();
-
 
     float fx = cover_width/2.0f;
     float fy = (cover_width/2.0f) * (1.0f/ratio);
@@ -297,36 +313,73 @@ namespace nux
     nux::Vector4 p2(fx, -fy, 0.0f, 1.0f);
     nux::Vector4 p3(fx, fy, 0.0f, 1.0f);
 
-    nux::Vector4 P0 = combined_matrix * p0;
-    nux::Vector4 P1 = combined_matrix * p1;
-    nux::Vector4 P2 = combined_matrix * p2;
-    nux::Vector4 P3 = combined_matrix * p3;
+    nux::Vector4 p0_proj = combined_matrix * p0;
+    nux::Vector4 p1_proj = combined_matrix * p1;
+    nux::Vector4 p2_proj = combined_matrix * p2;
+    nux::Vector4 p3_proj = combined_matrix * p3;
 
-    P0 = P0/P0.w;
-    P1 = P1/P1.w;
-    P2 = P2/P2.w;
-    P3 = P3/P3.w;
+    p0_proj.x = p0_proj.x/p0_proj.w; p0_proj.y = p0_proj.y/p0_proj.w; p0_proj.z = p0_proj.z/p0_proj.w;
+    p1_proj.x = p1_proj.x/p1_proj.w; p1_proj.y = p1_proj.y/p1_proj.w; p1_proj.z = p1_proj.z/p1_proj.w;
+    p2_proj.x = p2_proj.x/p2_proj.w; p2_proj.y = p2_proj.y/p2_proj.w; p2_proj.z = p2_proj.z/p2_proj.w;
+    p3_proj.x = p3_proj.x/p3_proj.w; p3_proj.y = p3_proj.y/p3_proj.w; p3_proj.z = p3_proj.z/p3_proj.w;
 
-    P0.x = width * (P0.x + 1.0f)/2.0f;
-    P1.x = width * (P1.x + 1.0f)/2.0f;
-    P2.x = width * (P2.x + 1.0f)/2.0f;
-    P3.x = width * (P3.x + 1.0f)/2.0f;
+    p0_proj.x = width * (p0_proj.x + 1.0f)/2.0f;
+    p1_proj.x = width * (p1_proj.x + 1.0f)/2.0f;
+    p2_proj.x = width * (p2_proj.x + 1.0f)/2.0f;
+    p3_proj.x = width * (p3_proj.x + 1.0f)/2.0f;
 
-    P0.y = -height * (P0.y - 1.0f)/2.0f;
-    P1.y = -height * (P1.y - 1.0f)/2.0f;
-    P2.y = -height * (P2.y - 1.0f)/2.0f;
-    P3.y = -height * (P3.y - 1.0f)/2.0f;
+    p0_proj.y = -height * (p0_proj.y - 1.0f)/2.0f;
+    p1_proj.y = -height * (p1_proj.y - 1.0f)/2.0f;
+    p2_proj.y = -height * (p2_proj.y - 1.0f)/2.0f;
+    p3_proj.y = -height * (p3_proj.y - 1.0f)/2.0f;
 
+    out_p0.x = p0_proj.x; out_p0.y = p0_proj.y;
+    out_p1.x = p1_proj.x; out_p1.y = p1_proj.y;
+    out_p2.x = p2_proj.x; out_p2.y = p2_proj.y;
+    out_p3.x = p3_proj.x; out_p3.y = p3_proj.y;
+  }
+
+  bool Coverflow::Impl::TestMouseOverCover(int x, int y, Cover const& cover)
+  {
+    nux::Vector4 P0;
+    nux::Vector4 P1;
+    nux::Vector4 P2;
+    nux::Vector4 P3;
+
+    GetCoverScreenCoord(cover, P0, P1, P2, P3);
     // The polygon is convex and P0->P1->P2->P3 follows the right hand rule
-    bool test01 = ((y - P0.y) * (P1.x - P0.x) - (x -  P0.x) * ( P1.y -  P0.y)) <= 0.0f;
-    bool test12 = ((y - P1.y) * (P2.x - P1.x) - (x -  P1.x) * ( P2.y -  P1.y)) <= 0.0f;
-    bool test23 = ((y - P2.y) * (P3.x - P2.x) - (x -  P2.x) * ( P3.y -  P2.y)) <= 0.0f;
-    bool test30 = ((y - P3.y) * (P0.x - P3.x) - (x -  P3.x) * ( P0.y -  P3.y)) <= 0.0f;
-
-
+    bool test01 = ((y - P0.y) * (P1.x - P0.x) - (x - P0.x) * (P1.y - P0.y)) <= 0.0f;
+    bool test12 = ((y - P1.y) * (P2.x - P1.x) - (x - P1.x) * (P2.y - P1.y)) <= 0.0f;
+    bool test23 = ((y - P2.y) * (P3.x - P2.x) - (x - P2.x) * (P3.y - P2.y)) <= 0.0f;
+    bool test30 = ((y - P3.y) * (P0.x - P3.x) - (x - P3.x) * (P0.y - P3.y)) <= 0.0f;
 
     if (test01 && test12 && test23 && test30)
     {
+      return true;
+    }
+
+    return false;
+  }
+
+  bool Coverflow::Impl::TestCoverVisible(Cover const& cover)
+  {
+    int width = parent_->GetBaseWidth();
+    int height = parent_->GetBaseHeight();
+
+    nux::Vector4 P0;
+    nux::Vector4 P1;
+    nux::Vector4 P2;
+    nux::Vector4 P3;
+
+    GetCoverScreenCoord(cover, P0, P1, P2, P3);
+    bool test0 = ((P0.x >= 0) && (P0.x < width)) && ((P0.y >= 0) && (P0.y < height));
+    bool test1 = ((P1.x >= 0) && (P1.x < width)) && ((P1.y >= 0) && (P1.y < height));
+    bool test2 = ((P2.x >= 0) && (P2.x < width)) && ((P2.y >= 0) && (P2.y < height));
+    bool test3 = ((P3.x >= 0) && (P3.x < width)) && ((P3.y >= 0) && (P3.y < height));
+
+    if (test0 || test1 || test2 || test3)
+    {
+      // The quad is convex. If any of its vertices is inside the view, then the quad is visible.
       return true;
     }
 
