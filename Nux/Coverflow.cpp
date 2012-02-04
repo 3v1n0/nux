@@ -268,6 +268,8 @@ namespace nux
     auto covers = last_covers_;
     for (auto cover : covers)
     {
+      if (cover.item->GetTexture().IsNull())
+        continue;
       if (cover.position.rot > 0 && TestMouseOverCover(mouse_position_.x, mouse_position_.y, cover))
       {
         best = cover;
@@ -277,6 +279,8 @@ namespace nux
     for (auto rit = covers.rbegin(); rit != covers.rend(); ++rit)
     {
       Cover cover = *rit;
+      if (cover.item->GetTexture().IsNull())
+        continue;
       if (cover.position.rot <= 0 && TestMouseOverCover(mouse_position_.x, mouse_position_.y, cover))
       {
         best = cover;
@@ -321,6 +325,9 @@ namespace nux
 
   void Coverflow::Impl::GetCoverScreenCoord(Cover const& cover, nux::Vector4& out_p0, nux::Vector4& out_p1, nux::Vector4& out_p2, nux::Vector4& out_p3)
   {
+    if (cover.item->GetTexture().IsNull())
+      return;
+
     int width = parent_->GetBaseWidth();
     int height = parent_->GetBaseHeight();
 
@@ -797,6 +804,12 @@ namespace nux
   Coverflow::~Coverflow()
   {
     delete pimpl;
+  }
+
+  void Coverflow::SetCameraDistance(float distance)
+  {
+    pimpl->camera_position_.z = distance;
+    QueueDraw();
   }
 
   bool Coverflow::InspectKeyEvent(unsigned int eventType, unsigned int keysym, const char* character)

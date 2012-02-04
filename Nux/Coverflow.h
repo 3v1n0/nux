@@ -62,6 +62,8 @@ namespace nux
     Property<CoverflowModel::Ptr> model;
 
     bool AcceptKeyNavFocus();
+
+    void SetCameraDistance(float distance);
   protected:
     virtual bool InspectKeyEvent(unsigned int eventType, unsigned int keysym, const char* character);
     virtual void ClientDraw(nux::GraphicsEngine& graphics_engine, nux::DrawAreaContext &ctx, bool force_draw);
