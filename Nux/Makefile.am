@@ -45,6 +45,9 @@ source_cpp = \
   $(srcdir)/ColorEditor.cpp \
   $(srcdir)/ColorPickerDialog.cpp \
   $(srcdir)/ColorPreview.cpp \
+  $(srcdir)/Coverflow.cpp \
+  $(srcdir)/CoverflowItem.cpp \
+  $(srcdir)/CoverflowModel.cpp \
   $(srcdir)/Dialog.cpp \
   $(srcdir)/DoubleValidator.cpp \
   $(srcdir)/EditTextBox.cpp \
@@ -125,6 +128,9 @@ source_h = \
   $(srcdir)/ColorEditor.h \
   $(srcdir)/ColorPickerDialog.h \
   $(srcdir)/ColorPreview.h \
+  $(srcdir)/Coverflow.h \
+  $(srcdir)/CoverflowItem.h \
+  $(srcdir)/CoverflowModel.h \
   $(srcdir)/Dialog.h \
   $(srcdir)/DoubleValidator.h \
   $(srcdir)/EditTextBox.h \
