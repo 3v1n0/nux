@@ -47,6 +47,8 @@ public:
   bool registered_mouse_enter_;
   bool registered_mouse_leave_;
 
+  nux::KeyNavDirection key_nav_direction_; //!< The key nav direction received when the view obtained the focus.
+  
 protected:
   nux::Color current_color_;
   nux::Color normal_color_;
@@ -68,7 +70,7 @@ protected:
   void OnMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
   void OnMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags);
   void OnMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags);
-  void OnKeyNavFocusChange(nux::Area* area);
+  void OnKeyNavFocusChange(nux::Area* area, bool has_focus, nux::KeyNavDirection direction);
 
   void Draw(nux::GraphicsEngine& graphics_engine, bool force_draw);
 };
