@@ -504,6 +504,9 @@ namespace nux
 
   void Coverflow::Impl::DrawCoverHighlight(nux::GraphicsEngine& graphics_engine, Cover const& cover)
   {
+    if (cover.item->GetTexture().IsNull())
+      return;
+    
     int width = parent_->GetBaseWidth();
     int height = parent_->GetBaseHeight();
 
@@ -584,6 +587,9 @@ namespace nux
 
   void Coverflow::Impl::DrawCover(nux::GraphicsEngine& graphics_engine, Cover const& cover)
   {
+    if (cover.item->GetTexture().IsNull())
+      return;
+      
     bool mouse_over_cover = false;
     if (mouse_inside_view_)
     {
