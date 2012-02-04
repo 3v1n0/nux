@@ -53,6 +53,7 @@ public:
   void SelectIndex(size_t index);
 
   void SetSelection(size_t selection);
+  void SetSelection(CoverflowItem::Ptr const& item);
 
   sigc::signal<void, CoverflowModel*, CoverflowItem::Ptr, size_t> selection_changed;
   sigc::signal<void, CoverflowModel*, CoverflowItem::Ptr> item_added;

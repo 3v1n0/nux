@@ -100,21 +100,22 @@ namespace nux
     Impl(Coverflow* parent);
     ~Impl();
 
-    void RecvKeyDown(unsigned long eventType,
+    void HandleKeyDown(unsigned long eventType,
                      unsigned long keysym,
                      unsigned long state,
                      const char* character,
                      unsigned short keyCount);
-    void RecvKeyUp(unsigned int keysym,
+    void HandleKeyUp(unsigned int keysym,
                    unsigned long x11_key_code,
                    unsigned long special_keys_state);
 
-    void RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void HandleMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void HandleMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void HandleMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void HandleMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void HandleMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void HandleMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void HandleMouseClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
 
     void DrawCover(nux::GraphicsEngine& graphics_engine, Cover const& cover);
     void DrawCoverHighlight(nux::GraphicsEngine& graphics_engine, Cover const& cover);
@@ -154,6 +155,7 @@ namespace nux
     bool mouse_inside_view_;
     nux::Point2 mouse_position_;
     float vertical_view_angle_;
+    CoverList last_covers_;
   };
 
   Coverflow::Impl::Impl(Coverflow* parent)
@@ -168,11 +170,12 @@ namespace nux
   {
     mouse_position_ = nux::Point2(0, 0);
 
-    parent_->key_down.connect(sigc::mem_fun(this, &Impl::RecvKeyDown));
-    parent_->key_up.connect(sigc::mem_fun(this, &Impl::RecvKeyUp));
-    parent_->mouse_move.connect(sigc::mem_fun(this, &Impl::RecvMouseMove));
-    parent_->mouse_enter.connect(sigc::mem_fun(this, &Impl::RecvMouseEnter));
-    parent_->mouse_leave.connect(sigc::mem_fun(this, &Impl::RecvMouseLeave));
+    parent_->key_down.connect(sigc::mem_fun(this, &Impl::HandleKeyDown));
+    parent_->key_up.connect(sigc::mem_fun(this, &Impl::HandleKeyUp));
+    parent_->mouse_move.connect(sigc::mem_fun(this, &Impl::HandleMouseMove));
+    parent_->mouse_enter.connect(sigc::mem_fun(this, &Impl::HandleMouseEnter));
+    parent_->mouse_leave.connect(sigc::mem_fun(this, &Impl::HandleMouseLeave));
+    parent_->mouse_click.connect(sigc::mem_fun(this, &Impl::HandleMouseClick));
 
     camera_position_.x = 0.0f;
     camera_position_.y = 0.0f;
@@ -241,7 +244,7 @@ namespace nux
     }
   }
 
-  void Coverflow::Impl::RecvKeyDown(unsigned long   eventType  , /*event type*/
+  void Coverflow::Impl::HandleKeyDown(unsigned long   eventType  , /*event type*/
                                   unsigned long   keysym     , /*event keysym*/
                                   unsigned long   state      , /*event state*/
                                   const char*     character  , /*character*/
@@ -259,7 +262,41 @@ namespace nux
     }
   }
 
-  void Coverflow::Impl::RecvKeyUp(unsigned int keysym,
+  void Coverflow::Impl::HandleMouseClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  {
+    Cover best;
+    auto covers = last_covers_;
+    for (auto cover : covers)
+    {
+      if (cover.item->GetTexture().IsNull())
+        continue;
+      if (cover.position.rot > 0 && TestMouseOverCover(mouse_position_.x, mouse_position_.y, cover))
+      {
+        best = cover;
+      }
+    }
+
+    for (auto rit = covers.rbegin(); rit != covers.rend(); ++rit)
+    {
+      Cover cover = *rit;
+      if (cover.item->GetTexture().IsNull())
+        continue;
+      if (cover.position.rot <= 0 && TestMouseOverCover(mouse_position_.x, mouse_position_.y, cover))
+      {
+        best = cover;
+      }
+    }
+
+    if (best.item)
+    {
+      if (abs(best.position.rot) <= .001)
+        best.item->Activate();
+      else
+        parent_->model()->SetSelection(best.item);
+    }
+  }
+
+  void Coverflow::Impl::HandleKeyUp(unsigned int keysym,
                                   unsigned long x11_key_code,
                                   unsigned long special_keys_state)
   {
@@ -288,6 +325,9 @@ namespace nux
 
   void Coverflow::Impl::GetCoverScreenCoord(Cover const& cover, nux::Vector4& out_p0, nux::Vector4& out_p1, nux::Vector4& out_p2, nux::Vector4& out_p3)
   {
+    if (cover.item->GetTexture().IsNull())
+      return;
+
     int width = parent_->GetBaseWidth();
     int height = parent_->GetBaseHeight();
 
@@ -386,14 +426,14 @@ namespace nux
     return false;
   }
 
-  void Coverflow::Impl::RecvMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void Coverflow::Impl::HandleMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
     mouse_position_.x = x;
     mouse_position_.y = y;
     parent_->QueueDraw();
   }
 
-  void Coverflow::Impl::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void Coverflow::Impl::HandleMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     mouse_position_.x = x;
     mouse_position_.y = y;
@@ -401,7 +441,7 @@ namespace nux
     parent_->QueueDraw();
   }
 
-  void Coverflow::Impl::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void Coverflow::Impl::HandleMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     mouse_position_.x = 0xFFFFFFFF;
     mouse_position_.y = 0xFFFFFFFF;
@@ -409,17 +449,17 @@ namespace nux
     parent_->QueueDraw();
   }
 
-  void Coverflow::Impl::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void Coverflow::Impl::HandleMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     parent_->QueueDraw();
   }
 
-  void Coverflow::Impl::RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void Coverflow::Impl::HandleMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     parent_->QueueDraw();
   }
 
-  void Coverflow::Impl::RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void Coverflow::Impl::HandleMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
     parent_->QueueDraw();
   }
@@ -589,12 +629,6 @@ namespace nux
   {
     if (cover.item->GetTexture().IsNull())
       return;
-      
-    bool mouse_over_cover = false;
-    if (mouse_inside_view_)
-    {
-      mouse_over_cover = TestMouseOverCover(mouse_position_.x, mouse_position_.y, cover);
-    }
 
     int width = parent_->GetBaseWidth();
     int height = parent_->GetBaseHeight();
@@ -615,10 +649,6 @@ namespace nux
     {
       nux::TexCoordXForm texxform;
       nux::Color color = nux::color::White;
-      if (mouse_over_cover)
-      {
-        color = nux::Color(1.0f, 0.0f, 0.0f, 1.0f);
-      }
 
       QRP_Compute_Texture_Coord(width, height, texture, texxform);
 
@@ -776,6 +806,12 @@ namespace nux
     delete pimpl;
   }
 
+  void Coverflow::SetCameraDistance(float distance)
+  {
+    pimpl->camera_position_.z = distance;
+    QueueDraw();
+  }
+
   bool Coverflow::InspectKeyEvent(unsigned int eventType, unsigned int keysym, const char* character)
   {
     return true;
@@ -787,14 +823,15 @@ namespace nux
     float animation_progress = std::min(1.0f, (current_time - model()->SelectionChangedTime()) / static_cast<float>(animation_length() * 1000));
     gint64 timestep = (current_time - pimpl->last_draw_time_) / 1000;
 
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    nux::GetPainter().PaintBackground(graphics_engine, GetGeometry());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT  | GL_STENCIL_BUFFER_BIT);
 
     glViewport(0, 0, ctx.width, ctx.height);
 
     pimpl->perspective_.Perspective(DEGTORAD(pimpl->vertical_view_angle_), (float)ctx.width / (float)ctx.height, 1.0, 200.0);
 
-    graphics_engine.GetRenderStates().SetBlend(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    graphics_engine.GetRenderStates().SetBlend(true);
+    graphics_engine.GetRenderStates().SetPremultipliedBlend(SRC_OVER);
 
     auto covers = pimpl->GetCoverList(EaseSin(animation_progress), timestep);
     for (auto cover : covers)
@@ -812,7 +849,7 @@ namespace nux
         pimpl->DrawCover(graphics_engine, cover);
     }
 
-    graphics_engine.GetRenderStates().SetBlend(false);
+    //graphics_engine.GetRenderStates().SetBlend(false);
 
     if (animation_progress < 1.0f && !pimpl->animation_handle_)
     {
@@ -820,6 +857,7 @@ namespace nux
     }
 
     pimpl->last_draw_time_ = current_time;
+    pimpl->last_covers_ = covers;
   }
 
   bool Coverflow::AcceptKeyNavFocus()

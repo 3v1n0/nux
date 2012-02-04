@@ -107,4 +107,18 @@ void CoverflowModel::SetSelection(size_t selection)
   selection_changed.emit(this, Selection(), selection_index_);
 }
 
+void CoverflowModel::SetSelection(CoverflowItem::Ptr const& selection)
+{
+  size_t i = 0;
+  for (auto item : items_)
+  {
+    if (selection == item)
+    {
+      SetSelection(i);
+      break;
+    }
+    ++i;
+  }
+}
+
 }
