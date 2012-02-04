@@ -139,11 +139,6 @@ namespace nux
         texxform0.FlipVCoord(true);
         GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(x, y, w, h, m_MainColorRT, texxform0, Color(color::White));
       }
-
-      // // go back to 2D in case that was changed by the client.
-      // graphics_engine.SetViewport(0, 0, window_width, window_height);
-      // graphics_engine.ApplyClippingRectangle();
-      // graphics_engine.Push2DWindow(window_width, window_height);
     }
     else
     {
