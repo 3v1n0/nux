@@ -834,7 +834,8 @@ namespace nux
 
     pimpl->perspective_.Perspective(DEGTORAD(perspective), (float)ctx.width / (float)ctx.height, 1.0, 200.0);
 
-    graphics_engine.GetRenderStates().SetBlend(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    graphics_engine.GetRenderStates().SetBlend(true);
+    graphics_engine.GetRenderStates().SetPremultipliedBlend(SRC_OVER);
 
     auto covers = pimpl->GetCoverList(EaseSin(animation_progress), timestep);
     for (auto cover : covers)
