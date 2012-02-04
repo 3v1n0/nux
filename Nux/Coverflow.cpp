@@ -786,17 +786,13 @@ namespace nux
     gint64 current_time = g_get_monotonic_time();
     float animation_progress = std::min(1.0f, (current_time - model()->SelectionChangedTime()) / static_cast<float>(animation_length() * 1000));
     gint64 timestep = (current_time - pimpl->last_draw_time_) / 1000;
-    float perspective = 40.0f;
 
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT  | GL_STENCIL_BUFFER_BIT);
 
     glViewport(0, 0, ctx.width, ctx.height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(perspective, (float)ctx.width / (float)ctx.height, 1.0, 200.0);
 
-    pimpl->perspective_.Perspective(DEGTORAD(perspective), (float)ctx.width / (float)ctx.height, 1.0, 200.0);
+    pimpl->perspective_.Perspective(DEGTORAD(pimpl->vertical_view_angle_), (float)ctx.width / (float)ctx.height, 1.0, 200.0);
 
     graphics_engine.GetRenderStates().SetBlend(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
