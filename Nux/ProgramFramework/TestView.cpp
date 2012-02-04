@@ -35,6 +35,7 @@ TestView::TestView(NUX_FILE_LINE_DECL)
 {
   ResetEvents();
 
+  key_nav_direction_ = nux::KEY_NAV_NONE;
   normal_color_ = nux::color::Green;
   mouse_down_color_ = nux::color::Red;
   mouse_drag_color_ = nux::color::Yellow;
@@ -56,8 +57,7 @@ TestView::TestView(NUX_FILE_LINE_DECL)
   mouse_move.connect(sigc::mem_fun(this, &TestView::OnMouseMove));
   mouse_enter.connect(sigc::mem_fun(this, &TestView::OnMouseEnter));
   mouse_leave.connect(sigc::mem_fun(this, &TestView::OnMouseLeave));
-  
-  Area::OnKeyNavFocusChange.connect(sigc::mem_fun(this, &TestView::OnKeyNavFocusChange));
+  key_nav_focus_change.connect(sigc::mem_fun(this, &TestView::OnKeyNavFocusChange));
 }
 
 TestView::~TestView()
@@ -89,6 +89,9 @@ void TestView::Draw(nux::GraphicsEngine& graphics_engine, bool force_draw)
 {
   nux::Geometry geo = GetGeometry();
   graphics_engine.QRP_Color(geo.x, geo.y, geo.width, geo.height, current_color_);
+
+if (has_focus_)
+  graphics_engine.QRP_Color(geo.x, geo.y, 20, 20, with_key_focus_color_);  
 }
 
 void TestView::OnMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -156,10 +159,11 @@ void TestView::OnMouseLeave(int x, int y, unsigned long button_flags, unsigned l
   QueueDraw();
 }
 
-void TestView::OnKeyNavFocusChange(nux::Area* area)
+void TestView::OnKeyNavFocusChange(nux::Area* area, bool has_focus, nux::KeyNavDirection direction)
 {
   has_focus_ = HasKeyFocus();
   
-  current_color_ = (has_focus_) ? with_key_focus_color_ : without_key_focus_color_;
+  has_focus_ = has_focus;
+  key_nav_direction_ = direction;
   QueueDraw();
 }
