@@ -824,7 +824,7 @@ namespace nux
     gint64 timestep = (current_time - pimpl->last_draw_time_) / 1000;
     float perspective = 40.0f;
 
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    nux::GetPainter().PaintBackground(graphics_engine, GetGeometry());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT  | GL_STENCIL_BUFFER_BIT);
 
     glViewport(0, 0, ctx.width, ctx.height);
@@ -852,7 +852,7 @@ namespace nux
         pimpl->DrawCover(graphics_engine, cover);
     }
 
-    graphics_engine.GetRenderStates().SetBlend(false);
+    //graphics_engine.GetRenderStates().SetBlend(false);
 
     if (animation_progress < 1.0f && !pimpl->animation_handle_)
     {
