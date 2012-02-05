@@ -125,7 +125,7 @@ namespace nux
     void OnItemAdded(CoverflowModel* owner, CoverflowItem::Ptr new_item);
     void OnItemRemoved(CoverflowModel* owner, CoverflowItem::Ptr old_item);
 
-    void SetPosition(float position);
+    void SetPosition(float position, bool animate);
 
     float GetCameraDriftFactor();
     void MaybeQueueDraw();
@@ -483,7 +483,7 @@ namespace nux
 
   void Coverflow::Impl::HandleMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    SetPosition(std::floor(position_ + 0.5f));
+    SetPosition(std::floor(position_ + 0.5f), true);
     for (auto cover : last_covers_)
       if (cover.selected)
         parent_->model()->SetSelection(cover.item);
@@ -492,7 +492,7 @@ namespace nux
 
   void Coverflow::Impl::HandleMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    SetPosition(position_ - (dx * 0.01));
+    SetPosition(position_ - (dx * 0.01), false);
     mouse_position_set_ = true;
     parent_->QueueDraw();
   }
@@ -550,22 +550,29 @@ namespace nux
     return results;
   }
 
-  void Coverflow::Impl::SetPosition(float position)
+  void Coverflow::Impl::SetPosition(float position, bool animate)
   {
     position = std::max(0.0f, std::min((float)parent_->model()->Items().size() - 1.0f, position));
     if (position == position_)
       return;
 
-    position_set_time_ = g_get_monotonic_time();
-    saved_position_ = last_position_;
-    position_ = position;
+    if (animate)
+    {
+      position_set_time_ = g_get_monotonic_time();
+      saved_position_ = last_position_;
+    }
+    else
+    {
+      position_set_time_ = 0;
+    }
 
+    position_ = position;
     MaybeQueueDraw();
   }
 
   void Coverflow::Impl::OnSelectionChange(CoverflowModel* owner, CoverflowItem::Ptr selection, size_t index)
   {
-    SetPosition(static_cast<float>(index));
+    SetPosition(static_cast<float>(index), true);
     MaybeQueueDraw();
   }
 
