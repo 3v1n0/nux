@@ -47,7 +47,11 @@ namespace nux
     
     Property<float> folding_angle;
 
+    Property<float> folding_depth;
+
     Property<float> folding_rate;
+
+    Property<float> fov;
 
     Property<float> pinching;
 

@@ -153,7 +153,6 @@ namespace nux
     gint64 last_draw_time_;
     bool mouse_inside_view_;
     nux::Point2 mouse_position_;
-    float vertical_view_angle_;
     CoverList last_covers_;
   };
 
@@ -165,7 +164,6 @@ namespace nux
    , camera_drift_factor_(0)
    , last_draw_time_(0)
    , mouse_inside_view_(false)
-   , vertical_view_angle_(40)
   {
     mouse_position_ = nux::Point2(0, 0);
 
@@ -315,7 +313,7 @@ namespace nux
     int width = parent_->GetBaseWidth();
     int height = parent_->GetBaseHeight();
 
-    top_left_corner.y = std::tan(DEGTORAD(vertical_view_angle_) * 0.5f) * distance_from_camera;
+    top_left_corner.y = std::tan(DEGTORAD(parent_->fov()) * 0.5f) * distance_from_camera;
     top_left_corner.x = -top_left_corner.y * (width / (float)height);
 
     bottom_right_corner.x = -top_left_corner.x;
@@ -493,18 +491,21 @@ namespace nux
       if (x < flat_left)
       {
         cover.position.rot = (atan((x - flat_left) * parent_->folding_rate) / (nux::Const::pi / 2)) * -parent_->folding_angle;
-        float scale_in_factor = neg_pinch + (1.0f - (abs(cover.position.rot) / parent_->folding_angle)) * parent_->pinching;
+        float scale_in_factor = neg_pinch + (1.0f - (std::abs(cover.position.rot) / parent_->folding_angle)) * parent_->pinching;
         cover.position.x = flat_left - ((flat_left - x) * scale_in_factor);
       }
       else if (x > flat_right)
       {
         cover.position.rot = (atan((x - flat_right) * parent_->folding_rate) / (nux::Const::pi / 2)) * -parent_->folding_angle;
-        float scale_in_factor = neg_pinch+ (1.0f - (abs(cover.position.rot) / parent_->folding_angle)) * parent_->pinching;
+        float scale_in_factor = neg_pinch+ (1.0f - (std::abs(cover.position.rot) / parent_->folding_angle)) * parent_->pinching;
         cover.position.x = flat_right + ((x - flat_right) * scale_in_factor);
       }
 
       if (i == selection && parent_->pop_out_selected)
         cover.position.z = 0.3f;
+      
+      float fold_progress = std::abs(cover.position.rot / parent_->folding_angle());
+      cover.position.z -= parent_->folding_depth() * fold_progress;
 
       results.push_back(cover);
       ++i;
@@ -784,7 +785,9 @@ namespace nux
     , camera_motion_drift_enabled(false)
     , flat_icons(2)
     , folding_angle(90.0f)
+    , folding_depth(0.0f)
     , folding_rate(2)
+    , fov(40)
     , pinching(.6)
     , pop_out_selected(false)
     , reflection_fadeout_distance(4.0f)
@@ -827,7 +830,7 @@ namespace nux
 
     glViewport(0, 0, ctx.width, ctx.height);
 
-    pimpl->perspective_.Perspective(DEGTORAD(pimpl->vertical_view_angle_), (float)ctx.width / (float)ctx.height, 1.0, 200.0);
+    pimpl->perspective_.Perspective(DEGTORAD(pimpl->parent_->fov()), (float)ctx.width / (float)ctx.height, 1.0, 200.0);
 
     graphics_engine.GetRenderStates().SetBlend(true);
     graphics_engine.GetRenderStates().SetPremultipliedBlend(SRC_OVER);
