@@ -125,9 +125,12 @@ namespace nux
     void OnItemAdded(CoverflowModel* owner, CoverflowItem::Ptr new_item);
     void OnItemRemoved(CoverflowModel* owner, CoverflowItem::Ptr old_item);
 
+    void SetPosition(float position);
+
     float GetCameraDriftFactor();
     void MaybeQueueDraw();
 
+    bool CoverAtPoint(int x, int y, Cover& out_cover);
     void Get3DBoundingBox(float distance_from_camera, nux::Point2& top_left_corner, nux::Point2& bottom_right_corner);
     void GetCoverScreenCoord(Cover const& cover, nux::Vector4& P0, nux::Vector4& P1, nux::Vector4& P2, nux::Vector4& P3);
     bool TestMouseOverCover(int x, int y, Cover const& cover);
@@ -147,11 +150,15 @@ namespace nux
 
     Coverflow* parent_;
     guint animation_handle_;
+    float position_;
     float last_position_;
     float saved_position_;
     float camera_drift_factor_;
     gint64 last_draw_time_;
+    gint64 position_set_time_;
     bool mouse_inside_view_;
+    bool mouse_position_set_;
+    nux::Point2 mouse_down_position_;
     nux::Point2 mouse_position_;
     CoverList last_covers_;
   };
@@ -159,11 +166,14 @@ namespace nux
   Coverflow::Impl::Impl(Coverflow* parent)
    : parent_(parent)
    , animation_handle_(0)
+   , position_(0)
    , last_position_(0)
    , saved_position_(0)
    , camera_drift_factor_(0)
    , last_draw_time_(0)
+   , position_set_time_(0)
    , mouse_inside_view_(false)
+   , mouse_position_set_(false)
   {
     mouse_position_ = nux::Point2(0, 0);
 
@@ -173,6 +183,9 @@ namespace nux
     parent_->mouse_enter.connect(sigc::mem_fun(this, &Impl::HandleMouseEnter));
     parent_->mouse_leave.connect(sigc::mem_fun(this, &Impl::HandleMouseLeave));
     parent_->mouse_click.connect(sigc::mem_fun(this, &Impl::HandleMouseClick));
+    parent_->mouse_drag.connect(sigc::mem_fun(this, &Impl::HandleMouseDrag));
+    parent_->mouse_up.connect(sigc::mem_fun(this, &Impl::HandleMouseUp));
+    parent_->mouse_down.connect(sigc::mem_fun(this, &Impl::HandleMouseDown));
 
     camera_position_.x = 0.0f;
     camera_position_.y = 0.0f;
@@ -238,73 +251,6 @@ namespace nux
     {
       g_source_remove(animation_handle_);
       animation_handle_ = 0;
-    }
-  }
-
-  void Coverflow::Impl::HandleKeyDown(unsigned long   eventType  , /*event type*/
-                                  unsigned long   keysym     , /*event keysym*/
-                                  unsigned long   state      , /*event state*/
-                                  const char*     character  , /*character*/
-                                  unsigned short  keyCount     /*key repeat count*/)
-  {
-    switch (keysym)
-    {
-      case NUX_VK_LEFT:
-        parent_->model()->SelectPrev();
-        break;
-      case NUX_VK_RIGHT:
-        parent_->model()->SelectNext();
-        break;
-
-    }
-  }
-
-  void Coverflow::Impl::HandleMouseClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
-  {
-    Cover best;
-    auto covers = last_covers_;
-    for (auto cover : covers)
-    {
-      if (cover.item->GetTexture().IsNull())
-        continue;
-      if (cover.position.rot > 0 && TestMouseOverCover(mouse_position_.x, mouse_position_.y, cover))
-      {
-        best = cover;
-      }
-    }
-
-    for (auto rit = covers.rbegin(); rit != covers.rend(); ++rit)
-    {
-      Cover cover = *rit;
-      if (cover.item->GetTexture().IsNull())
-        continue;
-      if (cover.position.rot <= 0 && TestMouseOverCover(mouse_position_.x, mouse_position_.y, cover))
-      {
-        best = cover;
-      }
-    }
-
-    if (best.item)
-    {
-      if (abs(best.position.rot) <= .001)
-        best.item->Activate();
-      else
-        parent_->model()->SetSelection(best.item);
-    }
-  }
-
-  void Coverflow::Impl::HandleKeyUp(unsigned int keysym,
-                                  unsigned long x11_key_code,
-                                  unsigned long special_keys_state)
-  {
-    switch (keysym)
-    {
-      case NUX_VK_ENTER:
-      case NUX_KP_ENTER:
-        parent_->model()->Selection()->Activate();
-        break;
-      default:
-        break;
     }
   }
 
@@ -423,6 +369,88 @@ namespace nux
     return false;
   }
 
+  bool Coverflow::Impl::CoverAtPoint(int x, int y, Cover& out_cover)
+  {
+    Cover best;
+    auto covers = last_covers_;
+    for (auto cover : covers)
+    {
+      if (cover.item->GetTexture().IsNull())
+        continue;
+      if (cover.position.rot > 0 && TestMouseOverCover(mouse_position_.x, mouse_position_.y, cover))
+      {
+        best = cover;
+      }
+    }
+
+    for (auto rit = covers.rbegin(); rit != covers.rend(); ++rit)
+    {
+      Cover cover = *rit;
+      if (cover.item->GetTexture().IsNull())
+        continue;
+      if (cover.position.rot <= 0 && TestMouseOverCover(mouse_position_.x, mouse_position_.y, cover))
+      {
+        best = cover;
+      }
+    }
+
+    if (best.item)
+    {
+      out_cover = best;
+      return true;
+    }
+
+    return false;
+  }
+
+  void Coverflow::Impl::HandleKeyDown(unsigned long   eventType  , /*event type*/
+                                  unsigned long   keysym     , /*event keysym*/
+                                  unsigned long   state      , /*event state*/
+                                  const char*     character  , /*character*/
+                                  unsigned short  keyCount     /*key repeat count*/)
+  {
+    switch (keysym)
+    {
+      case NUX_VK_LEFT:
+        parent_->model()->SelectPrev();
+        break;
+      case NUX_VK_RIGHT:
+        parent_->model()->SelectNext();
+        break;
+
+    }
+  }
+
+  void Coverflow::Impl::HandleMouseClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  {
+    if (std::abs(mouse_down_position_.x - x) > 10 || std::abs(mouse_down_position_.y - y) > 10)
+      return;
+
+    Cover best;
+    if (CoverAtPoint(x, y, best))
+    {
+      if (abs(best.position.rot) <= .001)
+        best.item->Activate();
+      else
+        parent_->model()->SetSelection(best.item);
+    }
+  }
+
+  void Coverflow::Impl::HandleKeyUp(unsigned int keysym,
+                                  unsigned long x11_key_code,
+                                  unsigned long special_keys_state)
+  {
+    switch (keysym)
+    {
+      case NUX_VK_ENTER:
+      case NUX_KP_ENTER:
+        parent_->model()->Selection()->Activate();
+        break;
+      default:
+        break;
+    }
+  }
+
   void Coverflow::Impl::HandleMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
     mouse_position_.x = x;
@@ -448,27 +476,34 @@ namespace nux
 
   void Coverflow::Impl::HandleMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
+    mouse_down_position_.x = x;
+    mouse_down_position_.y = y;
     parent_->QueueDraw();
   }
 
   void Coverflow::Impl::HandleMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
+    SetPosition(std::floor(position_ + 0.5f));
+    for (auto cover : last_covers_)
+      if (cover.selected)
+        parent_->model()->SetSelection(cover.item);
     parent_->QueueDraw();
   }
 
   void Coverflow::Impl::HandleMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
+    SetPosition(position_ - (dx * 0.01));
+    mouse_position_set_ = true;
     parent_->QueueDraw();
   }
 
   CoverList Coverflow::Impl::GetCoverList(float animation_progress, gint64 timestep)
   {
     CoverList results;
-    size_t selection = parent_->model()->SelectionIndex();
 
     animation_progress = std::min<float>(1.0f, animation_progress);
 
-    float coverflow_position = selection - (((float)selection - saved_position_) * (1.0f - animation_progress));
+    float coverflow_position = position_ - ((position_ - saved_position_) * (1.0f - animation_progress));
 
     size_t i = 0;
     float flat_right = parent_->space_between_icons * (parent_->flat_icons) + .1;
@@ -479,7 +514,7 @@ namespace nux
 
       Cover cover;
       cover.opacity = 1.0f;
-      cover.selected = i == selection;
+      cover.selected = i == floor(coverflow_position + 0.5);
       cover.item = item;
       cover.position = { 0, 0, 0, 0 };
 
@@ -501,7 +536,7 @@ namespace nux
         cover.position.x = flat_right + ((x - flat_right) * scale_in_factor);
       }
 
-      if (i == selection && parent_->pop_out_selected)
+      if (cover.selected && parent_->pop_out_selected)
         cover.position.z = 0.3f;
       
       float fold_progress = std::abs(cover.position.rot / parent_->folding_angle());
@@ -511,19 +546,27 @@ namespace nux
       ++i;
     }
 
-    if (parent_->camera_motion_drift_enabled)
-    {
-      camera_drift_factor_ = (coverflow_position - last_position_) * 10.0f * (16.0f / timestep);
-      camera_drift_factor_ = std::max(-1.0f ,std::min(1.0f, camera_drift_factor_));
-    }
     last_position_ = coverflow_position;
     return results;
   }
 
+  void Coverflow::Impl::SetPosition(float position)
+  {
+    position = std::max(0.0f, std::min((float)parent_->model()->Items().size() - 1.0f, position));
+    if (position == position_)
+      return;
+
+    position_set_time_ = g_get_monotonic_time();
+    saved_position_ = last_position_;
+    position_ = position;
+
+    MaybeQueueDraw();
+  }
+
   void Coverflow::Impl::OnSelectionChange(CoverflowModel* owner, CoverflowItem::Ptr selection, size_t index)
   {
+    SetPosition(static_cast<float>(index));
     MaybeQueueDraw();
-    saved_position_ = last_position_;
   }
 
   void Coverflow::Impl::OnItemAdded(CoverflowModel* owner, CoverflowItem::Ptr new_item)
@@ -822,7 +865,7 @@ namespace nux
   void Coverflow::ClientDraw(nux::GraphicsEngine& graphics_engine, nux::DrawAreaContext &ctx, bool force_draw)
   {
     gint64 current_time = g_get_monotonic_time();
-    float animation_progress = std::min(1.0f, (current_time - model()->SelectionChangedTime()) / static_cast<float>(animation_length() * 1000));
+    float animation_progress = std::min(1.0f, (current_time - pimpl->position_set_time_) / static_cast<float>(animation_length() * 1000));
     gint64 timestep = (current_time - pimpl->last_draw_time_) / 1000;
 
     nux::GetPainter().PaintBackground(graphics_engine, GetGeometry());
