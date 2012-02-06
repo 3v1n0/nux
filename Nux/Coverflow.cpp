@@ -275,8 +275,8 @@ namespace nux
     int width = parent_->GetBaseWidth();
     int height = parent_->GetBaseHeight();
 
-    top_left_corner.y = std::tan(DEGTORAD(parent_->fov()) * 0.5f) * distance_from_camera;
-    top_left_corner.x = -top_left_corner.y * (width / (float)height);
+    top_left_corner.x = -std::tan(DEGTORAD(parent_->fov() * 0.5f)) * distance_from_camera;
+    top_left_corner.y = top_left_corner.x * (height / (float)width);
 
     bottom_right_corner.x = -top_left_corner.x;
     bottom_right_corner.y = -top_left_corner.y;
@@ -534,12 +534,21 @@ namespace nux
         self->parent_->QueueDraw();
         return TRUE;
       }, this);
+    } 
+    else if (!velocity_handle_)
+    {
+      SetPosition(RoundFloor(position_), true);
     }
   }
 
   void Coverflow::Impl::HandleMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    SetPosition(position_ - (dx * 0.01f), false);
+    nux::Point2 top_left, bottom_right;
+    Get3DBoundingBox(camera_position_.z, top_left, bottom_right);
+    nux::Geometry geo = parent_->GetGeometry();
+
+    float scalar = (((float)bottom_right.x - (float)top_left.x) / (float)geo.width) / parent_->space_between_icons;
+    SetPosition(position_ - (dx * scalar), false);
 
     VelocityEvent ve;
     ve.velocity = position_ - last_position_;
