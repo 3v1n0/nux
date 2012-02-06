@@ -45,6 +45,7 @@ test_nux_LDADD = \
 gtest_nux_core_SOURCES = \
   Helpers.h \
   Helpers.cpp \
+  gtest-nuxcore-color.cpp \
   test_object.cpp \
   test_main.cpp \
   test_async_file_writer.cpp \

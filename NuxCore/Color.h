@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Inalogic® Inc.
+ * Copyright 2012 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -81,14 +81,16 @@ namespace color
   //|      blue      |      green    |     red      |     alpha     |
   //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-enum Model {
+  enum Model
+  {
     RGB,
     HSV,
     HLS,
     YUV
-};
+  };
 
-enum Channel {
+  enum Channel
+  {
     RED,
     GREEN,
     BLUE,
@@ -96,94 +98,120 @@ enum Channel {
     SATURATION,
     LIGHT,
     VALUE
-};
+  };
 
-enum Format {
+  enum Format
+  {
     FLOAT,
     HEX,
     INT
-};
+  };
 
-struct RedGreenBlue;
+  class RedGreenBlue;
 
-struct Color
-{
+  class Color
+  {
+  public:
     Color();
-    explicit Color (unsigned int c);
+    explicit Color(unsigned int c);
     Color(int r, int g, int b);
     Color(float r, float g, float b, float a = 1.0f);
     Color(RedGreenBlue const& rgb, float a = 1.0f);
+    
+    //! Returns the pre-multiplied version of this color.
+    /*!
+        Returns the pre-multiplied version of this color. If this color is already pre-multiplied
+        then *this is returned.\n
+        The premultiplied color is Color(red * alpha, green * alpha, blue * alpha, alpha).
+
+        @return The pre-multiplied version of this color.
+    */
+    Color GetPremultiplied();
+
+    //! Sets a pre-multiplied color
+    /*!
+        Sets a pre-multiplied color
+
+        @param r Red value.
+        @param g Green value.
+        @param b Blue value.
+        @param a Alpha value.
+    */
+    void SetPremultiplied(float r, float g, float b, float a);
+
+    //! Returns True if this color is pre-multiplied.
+    /*!
+        Returns True if this color is pre-multiplied.
+
+        @return True is this color is pre-multiplied.
+    */
+    bool IsPremultiplied();
 
     float red;
     float green;
     float blue;
     float alpha;
-};
 
-bool operator == (Color const& lhs, Color const& rhs);
-bool operator != (Color const& lhs, Color const& rhs);
+  protected:
+    bool premultiplied_; //!< True if the rgb components have been pre-multiplied with the alpha component.
 
-Color ClampVal(Color const&);
-Color Saturate(Color const&);
-Color Complement(Color const&);
-Color Luminance(Color const&);
-Color OneMinusLuminance(Color const&);
-Color MakeOpaque(Color const&);
+  };
 
-Color operator + (Color const&, Color const&);
-Color operator + (float, Color const&);
-Color operator + (Color const&, float);
+  bool operator == (Color const& lhs, Color const& rhs);
+  bool operator != (Color const& lhs, Color const& rhs);
 
-Color operator - (Color const&, Color const&);
-Color operator - (float, Color const&);
-Color operator - (Color const&, float);
+  Color operator + (Color const&, Color const&);
+  Color operator + (float, Color const&);
+  Color operator + (Color const&, float);
 
-Color operator * (float, Color const&);
-Color operator * (Color const&, float);
+  Color operator - (Color const&, Color const&);
+  Color operator - (float, Color const&);
+  Color operator - (Color const&, float);
 
-Color RandomColor();
-unsigned int RandomColorINT();
+  Color operator * (float, Color const&);
+  Color operator * (Color const&, float);
 
-struct HueSaturationValue;
-struct HueLightnessSaturation;
+  Color RandomColor();
+  unsigned int RandomColorINT();
 
-struct RedGreenBlue
-{
-  RedGreenBlue(float r, float g, float b);
-  RedGreenBlue(HueSaturationValue const&);
-  RedGreenBlue(HueLightnessSaturation const&);
+  class HueSaturationValue;
+  class HueLightnessSaturation;
 
-  float red;
-  float green;
-  float blue;
-};
+  class RedGreenBlue
+  {
+  public:
+    RedGreenBlue(float r, float g, float b);
+    RedGreenBlue(HueSaturationValue const&);
+    RedGreenBlue(HueLightnessSaturation const&);
 
-struct HueSaturationValue
-{
-  HueSaturationValue(float h, float s, float v);
-  HueSaturationValue(Color const&);
-  HueSaturationValue(RedGreenBlue const&);
+    float red;
+    float green;
+    float blue;
+  };
 
-  float hue;
-  float saturation;
-  float value;
-};
+  class HueSaturationValue
+  {
+  public:
+    HueSaturationValue(float h, float s, float v);
+    HueSaturationValue(Color const&);
+    HueSaturationValue(RedGreenBlue const&);
 
-struct HueLightnessSaturation
-{
-  HueLightnessSaturation(float h, float l, float s);
-  HueLightnessSaturation(Color const&);
-  HueLightnessSaturation(RedGreenBlue const&);
+    float hue;
+    float saturation;
+    float value;
+  };
 
-  float hue;
-  float lightness;
-  float saturation;
-};
+  class HueLightnessSaturation
+  {
+  public:
+    HueLightnessSaturation(float h, float l, float s);
+    HueLightnessSaturation(Color const&);
+    HueLightnessSaturation(RedGreenBlue const&);
 
-//  void RGBtoHSV ( float r, float g, float b, float &h, float &s, float &v );
-//  void HSVtoRGB ( float &r, float &g, float &b, float h, float s, float v );
-//  void HLStoRGB (float &r, float &g, float &b, float hue, float light, float satur);
-//  void RGBtoHLS (float rr, float gg, float bb, float &hue, float &light, float &satur);
+    float hue;
+    float lightness;
+    float saturation;
+  };
 
 }
 using color::Color;
