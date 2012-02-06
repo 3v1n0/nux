@@ -475,7 +475,7 @@ namespace nux
   {
     mouse_position_.x = x;
     mouse_position_.y = y;
-    parent_->QueueDraw();
+    MaybeQueueDraw();
   }
 
   void Coverflow::Impl::HandleMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -483,7 +483,7 @@ namespace nux
     mouse_position_.x = x;
     mouse_position_.y = y;
     mouse_inside_view_ = true;
-    parent_->QueueDraw();
+    MaybeQueueDraw();
   }
 
   void Coverflow::Impl::HandleMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -491,19 +491,19 @@ namespace nux
     mouse_position_.x = 0xFFFFFFFF;
     mouse_position_.y = 0xFFFFFFFF;
     mouse_inside_view_ = false;
-    parent_->QueueDraw();
+    MaybeQueueDraw();
   }
 
   void Coverflow::Impl::HandleMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     mouse_down_position_.x = x;
     mouse_down_position_.y = y;
-    parent_->QueueDraw();
+    MaybeQueueDraw();
   }
 
   void Coverflow::Impl::HandleMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    parent_->QueueDraw();
+    MaybeQueueDraw();
 
     velocity_ = 0;
     gint64 current_time = g_get_monotonic_time();
@@ -529,9 +529,9 @@ namespace nux
           return FALSE;
         }
 
-        self->SetPosition(self->position_ + self->velocity_, true);
+        self->SetPosition(self->position_ + self->velocity_, false);
         self->velocity_ = (std::max(0.0f, std::abs(self->velocity_) - 0.1f)) * (self->velocity_ / std::abs(self->velocity_));
-        self->parent_->QueueDraw();
+        self->MaybeQueueDraw();
         return TRUE;
       }, this);
     } 
@@ -927,7 +927,7 @@ namespace nux
   void Coverflow::SetCameraDistance(float distance)
   {
     pimpl->camera_position_.z = distance;
-    QueueDraw();
+    pimpl->MaybeQueueDraw();
   }
 
   bool Coverflow::InspectKeyEvent(unsigned int eventType, unsigned int keysym, const char* character)
