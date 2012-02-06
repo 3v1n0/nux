@@ -36,6 +36,7 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
 
     text_entry_0->SetMaximumWidth(300);
     text_entry_0->SetMinimumHeight (20);
+    text_entry_0->SetCompletion("test completion");
 
     text_entry_1->SetMaximumWidth(300);
     text_entry_1->SetMinimumHeight (20);
