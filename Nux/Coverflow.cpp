@@ -84,6 +84,12 @@ namespace
     float rot;
   };
 
+  struct VelocityEvent
+  {
+    float velocity;
+    gint64 time;
+  };
+
   struct Cover
   {
     Vec4 position;
@@ -153,15 +159,19 @@ namespace nux
     nux::Matrix4 perspective_;
     nux::Matrix4 modelview_;
 
+    std::vector<VelocityEvent> velocity_events_;
+
     Coverflow* parent_;
     guint animation_handle_;
-    float position_;
-    float last_position_;
-    float saved_position_;
     float camera_drift_factor_;
     gint64 last_draw_time_;
-    gint64 position_set_time_;
+    float last_position_;
     bool mouse_inside_view_;
+    float position_;
+    gint64 position_set_time_;
+    float saved_position_;
+    float velocity_;
+    guint velocity_handle_;
     nux::Point2 mouse_down_position_;
     nux::Point2 mouse_position_;
     CoverList last_covers_;
@@ -170,13 +180,15 @@ namespace nux
   Coverflow::Impl::Impl(Coverflow* parent)
    : parent_(parent)
    , animation_handle_(0)
-   , position_(0)
-   , last_position_(0)
-   , saved_position_(0)
    , camera_drift_factor_(0)
    , last_draw_time_(0)
-   , position_set_time_(0)
+   , last_position_(0)
    , mouse_inside_view_(false)
+   , position_(0)
+   , position_set_time_(0)
+   , saved_position_(0)
+   , velocity_(0)
+   , velocity_handle_(0)
   {
     mouse_position_ = nux::Point2(0, 0);
 
@@ -491,14 +503,48 @@ namespace nux
 
   void Coverflow::Impl::HandleMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    SetPosition(RoundFloor(position_), true);
     parent_->QueueDraw();
+
+    velocity_ = 0;
+    gint64 current_time = g_get_monotonic_time();
+    for (auto event : velocity_events_)
+    {
+      int ms = (current_time - event.time) / 1000;
+      if (ms > 32)
+        continue;
+      
+      velocity_ += event.velocity;
+    }
+    velocity_ = velocity_ / 2; // 16ms timestep
+    velocity_events_.clear();
+
+    if (velocity_ != 0 && !velocity_handle_)
+    {
+      velocity_handle_ = g_timeout_add(16, [](gpointer data) -> gboolean {
+        Coverflow::Impl* self = static_cast<Coverflow::Impl*>(data);
+        if (self->velocity_ == 0)
+        {
+          self->SetPosition(RoundFloor(self->position_), true);
+          self->velocity_handle_ = 0;
+          return FALSE;
+        }
+
+        self->SetPosition(self->position_ + self->velocity_, true);
+        self->velocity_ = (std::max(0.0f, std::abs(self->velocity_) - 0.1f)) * (self->velocity_ / std::abs(self->velocity_));
+        self->parent_->QueueDraw();
+        return TRUE;
+      }, this);
+    }
   }
 
   void Coverflow::Impl::HandleMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    SetPosition(position_ - (dx * 0.01), false);
-    parent_->QueueDraw();
+    SetPosition(position_ - (dx * 0.01f), false);
+
+    VelocityEvent ve;
+    ve.velocity = position_ - last_position_;
+    ve.time = g_get_monotonic_time();
+    velocity_events_.push_back(ve);
   }
 
   void Coverflow::Impl::HandleMouseWheel(int x, int y, int wheel_delta, unsigned long button_flags, unsigned long key_flags)
