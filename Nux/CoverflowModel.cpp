@@ -23,31 +23,6 @@ namespace nux
 { 
 
 
-CoverflowModel::CoverflowModel()
-: selection_changed_time_(0)
-, selection_index_(0)
-{
-  
-}
-
-CoverflowItem::Ptr CoverflowModel::Selection() const
-{
-  if (selection_index_ >= items_.size())
-    return CoverflowItem::Ptr();
-  
-  return items_[selection_index_];
-}
-
-size_t CoverflowModel::SelectionIndex() const
-{
-  return selection_index_;
-}
-
-gint64 CoverflowModel::SelectionChangedTime() const
-{
-  return selection_changed_time_;
-}
-
 CoverflowModel::CoverflowItemList const& CoverflowModel::Items() const
 {
   return items_;
@@ -68,57 +43,20 @@ void CoverflowModel::InsertItem(CoverflowItem::Ptr const& item, size_t index)
 void CoverflowModel::RemoveItem(CoverflowItem::Ptr const& item)
 {
   items_.erase(std::remove(items_.begin(), items_.end(), item), items_.end());
-  
-  if (selection_index_ >= items_.size())
-    selection_index_ = items_.size() - 1;
   item_removed.emit(this, item);
-  selection_changed.emit(this, Selection(), selection_index_);
 }
 
-void CoverflowModel::SelectNext()
-{
-  if (selection_index_ >= items_.size() - 1)
-    return;
-
-  SetSelection(selection_index_ + 1);
-}
-
-void CoverflowModel::SelectPrev()
-{
-  if (selection_index_ == 0)
-    return;
-
-  SetSelection(selection_index_ - 1);
-}
-
-void CoverflowModel::SelectIndex(size_t index)
-{
-  if (index < items_.size() && index != selection_index_)
-    SetSelection(index);
-}
-
-void CoverflowModel::SetSelection(size_t selection)
-{
-  if (selection == selection_index_)
-    return;
-  
-  selection_index_ = selection;
-  selection_changed_time_ = g_get_monotonic_time();
-  selection_changed.emit(this, Selection(), selection_index_);
-}
-
-void CoverflowModel::SetSelection(CoverflowItem::Ptr const& selection)
+size_t CoverflowModel::IndexOf(CoverflowItem::Ptr const& item)
 {
   size_t i = 0;
-  for (auto item : items_)
+  for (auto compare : items_)
   {
-    if (selection == item)
-    {
-      SetSelection(i);
-      break;
-    }
+    if (item == compare)
+      return i;
     ++i;
   }
+
+  return 0;
 }
 
 }

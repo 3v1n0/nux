@@ -42,6 +42,11 @@ namespace
     return sin(x * nux::Const::pi / 2.0f);
   }
 
+  float RoundFloor(float x)
+  {
+    return std::floor(x + 0.5f);
+  }
+
   std::string texture_vertex_code = "attribute vec4 iVertex;                                  \n\
                                     attribute vec4 iTextureCoord0;                            \n\
                                     attribute vec4 iVertexColor;                              \n\
@@ -115,13 +120,13 @@ namespace nux
     void HandleMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     void HandleMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     void HandleMouseClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void HandleMouseWheel(int x, int y, int wheel_delta, unsigned long button_flags, unsigned long key_flags);
 
     void DrawCover(nux::GraphicsEngine& graphics_engine, Cover const& cover);
     void DrawCoverHighlight(nux::GraphicsEngine& graphics_engine, Cover const& cover);
 
     CoverList GetCoverList(float animation_progress, gint64 timestep);
 
-    void OnSelectionChange(CoverflowModel* owner, CoverflowItem::Ptr selection, size_t index);
     void OnItemAdded(CoverflowModel* owner, CoverflowItem::Ptr new_item);
     void OnItemRemoved(CoverflowModel* owner, CoverflowItem::Ptr old_item);
 
@@ -157,7 +162,6 @@ namespace nux
     gint64 last_draw_time_;
     gint64 position_set_time_;
     bool mouse_inside_view_;
-    bool mouse_position_set_;
     nux::Point2 mouse_down_position_;
     nux::Point2 mouse_position_;
     CoverList last_covers_;
@@ -173,7 +177,6 @@ namespace nux
    , last_draw_time_(0)
    , position_set_time_(0)
    , mouse_inside_view_(false)
-   , mouse_position_set_(false)
   {
     mouse_position_ = nux::Point2(0, 0);
 
@@ -186,6 +189,7 @@ namespace nux
     parent_->mouse_drag.connect(sigc::mem_fun(this, &Impl::HandleMouseDrag));
     parent_->mouse_up.connect(sigc::mem_fun(this, &Impl::HandleMouseUp));
     parent_->mouse_down.connect(sigc::mem_fun(this, &Impl::HandleMouseDown));
+    parent_->mouse_wheel.connect(sigc::mem_fun(this, &Impl::HandleMouseWheel));
 
     camera_position_.x = 0.0f;
     camera_position_.y = 0.0f;
@@ -412,10 +416,10 @@ namespace nux
     switch (keysym)
     {
       case NUX_VK_LEFT:
-        parent_->model()->SelectPrev();
+        SetPosition(RoundFloor(position_ - 1.0f), true);
         break;
       case NUX_VK_RIGHT:
-        parent_->model()->SelectNext();
+        SetPosition(RoundFloor(position_ + 1.0f), true);
         break;
 
     }
@@ -432,7 +436,7 @@ namespace nux
       if (abs(best.position.rot) <= .001)
         best.item->Activate();
       else
-        parent_->model()->SetSelection(best.item);
+        SetPosition((float)parent_->model()->IndexOf(best.item), true);
     }
   }
 
@@ -444,8 +448,12 @@ namespace nux
     {
       case NUX_VK_ENTER:
       case NUX_KP_ENTER:
-        parent_->model()->Selection()->Activate();
+      {
+        Cover best;
+        if (CoverAtPoint(0, 0, best))
+          best.item->Activate();
         break;
+      }
       default:
         break;
     }
@@ -483,18 +491,19 @@ namespace nux
 
   void Coverflow::Impl::HandleMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
-    SetPosition(std::floor(position_ + 0.5f), true);
-    for (auto cover : last_covers_)
-      if (cover.selected)
-        parent_->model()->SetSelection(cover.item);
+    SetPosition(RoundFloor(position_), true);
     parent_->QueueDraw();
   }
 
   void Coverflow::Impl::HandleMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
     SetPosition(position_ - (dx * 0.01), false);
-    mouse_position_set_ = true;
     parent_->QueueDraw();
+  }
+
+  void Coverflow::Impl::HandleMouseWheel(int x, int y, int wheel_delta, unsigned long button_flags, unsigned long key_flags)
+  {
+    // do nothing yet
   }
 
   CoverList Coverflow::Impl::GetCoverList(float animation_progress, gint64 timestep)
@@ -514,7 +523,7 @@ namespace nux
 
       Cover cover;
       cover.opacity = 1.0f;
-      cover.selected = i == floor(coverflow_position + 0.5);
+      cover.selected = i == RoundFloor(coverflow_position);
       cover.item = item;
       cover.position = { 0, 0, 0, 0 };
 
@@ -567,12 +576,6 @@ namespace nux
     }
 
     position_ = position;
-    MaybeQueueDraw();
-  }
-
-  void Coverflow::Impl::OnSelectionChange(CoverflowModel* owner, CoverflowItem::Ptr selection, size_t index)
-  {
-    SetPosition(static_cast<float>(index), true);
     MaybeQueueDraw();
   }
 
@@ -677,7 +680,7 @@ namespace nux
 
   void Coverflow::Impl::DrawCover(nux::GraphicsEngine& graphics_engine, Cover const& cover)
   {
-    if (cover.item->GetTexture().IsNull())
+    if (cover.item->GetTexture().IsNull() || !TestCoverVisible(cover))
       return;
 
     int width = parent_->GetBaseWidth();
@@ -837,7 +840,7 @@ namespace nux
     , folding_angle(90.0f)
     , folding_depth(0.0f)
     , folding_rate(2)
-    , fov(40)
+    , fov(60)
     , pinching(.6)
     , pop_out_selected(false)
     , reflection_fadeout_distance(4.0f)
@@ -848,7 +851,6 @@ namespace nux
   {
     SetAcceptKeyboardEvent(true);
 
-    model()->selection_changed.connect(sigc::mem_fun(pimpl, &Coverflow::Impl::OnSelectionChange));
     model()->item_added.connect(sigc::mem_fun(pimpl, &Coverflow::Impl::OnItemAdded));
     model()->item_removed.connect(sigc::mem_fun(pimpl, &Coverflow::Impl::OnItemRemoved));
   }
@@ -880,7 +882,8 @@ namespace nux
 
     glViewport(0, 0, ctx.width, ctx.height);
 
-    pimpl->perspective_.Perspective(DEGTORAD(pimpl->parent_->fov()), (float)ctx.width / (float)ctx.height, 1.0, 200.0);
+    float v_fov = fov() * ((float)ctx.height / (float)ctx.width);
+    pimpl->perspective_.Perspective(DEGTORAD(v_fov), (float)ctx.width / (float)ctx.height, 1.0, 200.0);
 
     graphics_engine.GetRenderStates().SetBlend(true);
     graphics_engine.GetRenderStates().SetPremultipliedBlend(SRC_OVER);

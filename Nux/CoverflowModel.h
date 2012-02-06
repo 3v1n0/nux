@@ -35,34 +35,19 @@ public:
   typedef std::shared_ptr<CoverflowModel> Ptr;
   typedef std::vector<CoverflowItem::Ptr> CoverflowItemList;
 
-  CoverflowModel();
-
-  CoverflowItem::Ptr Selection() const;
-  size_t SelectionIndex() const;
-
-  gint64 SelectionChangedTime() const;
-
   CoverflowItemList const& Items() const;
 
   void AddItem(CoverflowItem::Ptr const& item);
   void InsertItem(CoverflowItem::Ptr const& item, size_t index);
   void RemoveItem(CoverflowItem::Ptr const& item);
 
-  void SelectNext();
-  void SelectPrev();
-  void SelectIndex(size_t index);
+  size_t IndexOf(CoverflowItem::Ptr const& item);
 
-  void SetSelection(size_t selection);
-  void SetSelection(CoverflowItem::Ptr const& item);
-
-  sigc::signal<void, CoverflowModel*, CoverflowItem::Ptr, size_t> selection_changed;
   sigc::signal<void, CoverflowModel*, CoverflowItem::Ptr> item_added;
   sigc::signal<void, CoverflowModel*, CoverflowItem::Ptr> item_removed;
 
 private:
   CoverflowItemList items_;
-  gint64 selection_changed_time_;
-  size_t selection_index_;
 };
 
 }
