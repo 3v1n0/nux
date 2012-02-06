@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Inalogic® Inc.
+ * Copyright 2012 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -35,186 +35,188 @@ namespace nux
 {
 namespace color
 {
-
   Color::Color()
-    : red(0)
-    , green(0)
-    , blue(0)
-    , alpha(1)
+  : red(0.0f)
+  , green(0.0f)
+  , blue(0.0f)
+  , alpha(1.0f)
+  , premultiplied_(false)
   {
   }
 
-Color::Color(RedGreenBlue const& rgb, float a)
-    : red(rgb.red)
-    , green(rgb.green)
-    , blue(rgb.blue)
-    , alpha(a)
-{}
+  Color::Color(RedGreenBlue const& rgb, float a)
+  : red(rgb.red)
+  , green(rgb.green)
+  , blue(rgb.blue)
+  , alpha(a)
+  , premultiplied_(false)
+  {}
 
   Color::Color (unsigned int c)
-    : red(NUX_RGBA_GET_RED(c) / 255.f)
-    , green(NUX_RGBA_GET_GREEN(c) / 255.f)
-    , blue(NUX_RGBA_GET_BLUE(c) / 255.f)
-    , alpha(NUX_RGBA_GET_ALPHA(c) / 255.f)
-  {
-  }
+  : red(NUX_RGBA_GET_RED(c) / 255.0f)
+  , green(NUX_RGBA_GET_GREEN(c) / 255.0f)
+  , blue(NUX_RGBA_GET_BLUE(c) / 255.0f)
+  , alpha(NUX_RGBA_GET_ALPHA(c) / 255.0f)
+  , premultiplied_(false)
+  {}
 
   Color::Color(int r, int g, int b)
-    : red(r / 255.f)
-    , green(g / 255.f)
-    , blue(b / 255.f)
-    , alpha(1)
+  : red(r / 255.0f)
+  , green(g / 255.0f)
+  , blue(b / 255.0f)
+  , alpha(1.0f)
+  , premultiplied_(false)
+  {}
+
+  Color::Color(float r, float g, float b, float a)
+  : red(r)
+  , green(g)
+  , blue(b)
+  , alpha(a)
+  , premultiplied_(false)
+  {}
+
+  Color Color::GetPremultiplied()
   {
+    if (premultiplied_)
+    {
+      // Already pre-multiplied. Return *this;
+      return *this;
+    }
+
+    Color c;
+    c.SetPremultiplied(red, green, blue, alpha);
+    return c;
   }
 
-  Color::Color (float r, float g, float b, float a)
-    : red(r)
-    , green(g)
-    , blue(b)
-    , alpha(a)
+  void Color::SetPremultiplied(float r, float g, float b, float a)
   {
+    red   = r * a;
+    green = g * a;
+    blue  = b * a;
+    alpha = a;
+    premultiplied_ = true;
   }
 
-bool operator == (const Color &lhs, const Color &rhs)
-{
-  return (lhs.red == rhs.red &&
-          lhs.green == rhs.green &&
-          lhs.blue == rhs.blue &&
-          lhs.alpha == rhs.alpha);
-}
+  bool Color::IsPremultiplied()
+  {
+    return premultiplied_;
+  }
 
-bool operator != (const Color &lhs, const Color &rhs)
-{
-  return !(lhs == rhs);
-}
+  bool operator == (const Color& lhs, const Color& rhs)
+  {
+    return (lhs.red == rhs.red &&
+            lhs.green == rhs.green &&
+            lhs.blue == rhs.blue &&
+            lhs.alpha == rhs.alpha);
+  }
 
-Color ClampVal(Color const& c)
-{
-  return Color(std::max(0.0f, std::min(1.0f, c.red)),
-               std::max(0.0f, std::min(1.0f, c.green)),
-               std::max(0.0f, std::min(1.0f, c.blue)),
-               std::max(0.0f, std::min(1.0f, c.alpha)));
-}
+  bool operator != (const Color& lhs, const Color& rhs)
+  {
+    return !(lhs == rhs);
+  }
 
-Color Luminance(Color const& c)
-{
-  float L = 0.30f * c.red + 0.59f * c.green + 0.11f * c.blue;
-  return Color(L, L, L);
-}
+  Color RandomColor()
+  {
+    return Color(RandomColorINT());
+  }
 
-Color OneMinusLuminance(Color const& c)
-{
-  float L = 1.0f - (0.30f * c.red + 0.59f * c.green + 0.11f * c.blue);
-  return Color(L, L, L);
-}
+  unsigned int RandomColorINT()
+  {
+    // std::rand isn't defined to be more random than 2^15, so we need
+    // to generate the full unsigned in chunks.
+    return (((std::rand() % 255) << 24) |
+            ((std::rand() % 255) << 16) |
+            ((std::rand() % 255) << 8) |
+            (std::rand() % 255));
+  }
 
-Color RandomColor()
-{
-  return Color(RandomColorINT());
-}
+  Color operator + (Color const& lhs, Color const& rhs)
+  {
+    return Color(lhs.red + rhs.red,
+                 lhs.green + rhs.green,
+                 lhs.blue + rhs.blue,
+                 lhs.alpha + rhs.alpha);
+  }
 
-Color MakeOpaque(Color const& c)
-{
-  return Color(c.red, c.green, c.blue, 1.0f);
-}
+  Color operator - (Color const& lhs, Color const& rhs)
+  {
+    return Color(lhs.red - rhs.red,
+                 lhs.green - rhs.green,
+                 lhs.blue - rhs.blue,
+                 lhs.alpha - rhs.alpha);
+  }
 
-unsigned int RandomColorINT()
-{
-  // std::rand isn't defined to be more random than 2^15, so we need
-  // to generate the full unsigned in chunks.
-  return (((std::rand() % 255) << 24) |
-          ((std::rand() % 255) << 16) |
-          ((std::rand() % 255) << 8) |
-          (std::rand() % 255));
-}
+  Color operator + (float scalar, Color const& c)
+  {
+    return Color(c.red + scalar,
+                 c.green + scalar,
+                 c.blue + scalar,
+                 c.alpha + scalar);
+  }
 
-Color operator + (Color const& lhs, Color const& rhs)
-{
-  return Color(lhs.red + rhs.red,
-               lhs.green + rhs.green,
-               lhs.blue + rhs.blue,
-               lhs.alpha + rhs.alpha);
-}
+  Color operator + (Color const& c, float scalar)
+  {
+    return scalar + c;
+  }
 
-Color operator - (Color const& lhs, Color const& rhs)
-{
-  return Color(lhs.red - rhs.red,
-               lhs.green - rhs.green,
-               lhs.blue - rhs.blue,
-               lhs.alpha - rhs.alpha);
-}
-
-Color operator + (float scalar, Color const& c)
-{
-  return Color(c.red + scalar,
-               c.green + scalar,
-               c.blue + scalar,
-               c.alpha + scalar);
-}
-
-Color operator + (Color const& c, float scalar)
-{
-  return scalar + c;
-}
-
-Color operator - (float scalar, Color const& c)
-{
-  return Color(scalar - c.red,
-               scalar - c.green,
-               scalar - c.blue,
-               scalar - c.alpha);
-}
+  Color operator - (float scalar, Color const& c)
+  {
+    return Color(scalar - c.red,
+                 scalar - c.green,
+                 scalar - c.blue,
+                 scalar - c.alpha);
+  }
 
 
-Color operator - (Color const& c, float scalar)
-{
-  return Color(c.red - scalar,
-               c.green - scalar,
-               c.blue - scalar,
-               c.alpha - scalar);
-}
+  Color operator - (Color const& c, float scalar)
+  {
+    return Color(c.red - scalar,
+                 c.green - scalar,
+                 c.blue - scalar,
+                 c.alpha - scalar);
+  }
 
-Color operator * (float scalar, Color const& c)
-{
-  return Color(c.red * scalar,
-               c.green * scalar,
-               c.blue * scalar,
-               c.alpha * scalar);
-}
+  Color operator * (float scalar, Color const& c)
+  {
+    return Color(c.red * scalar,
+                 c.green * scalar,
+                 c.blue * scalar,
+                 c.alpha * scalar);
+  }
 
-Color operator * (Color const& c, float scalar)
-{
-  return scalar * c;
-}
+  Color operator * (Color const& c, float scalar)
+  {
+    return scalar * c;
+  }
 
-// The Hue/Saturation/Value model was created by A. R. Smith in 1978. It is
-// based on such intuitive color characteristics as tint, shade and tone (or
-// family, purety and intensity). The coordinate system is cylindrical, and
-// the colors are defined inside a hexcone.  The hue value H runs from 0 to
-// 360º. The saturation S is the degree of strength or purity and is from 0 to
-// 1. Purity is how much white is added to the color, so S=1 makes the purest
-// color (no white). Brightness V also ranges from 0 to 1, where 0 is the
-// black.  There is no transformation matrix for RGB/HSV conversion, but the
-// algorithm follows:
+  // The Hue/Saturation/Value model was created by A. R. Smith in 1978. It is
+  // based on such intuitive color characteristics as tint, shade and tone (or
+  // family, purety and intensity). The coordinate system is cylindrical, and
+  // the colors are defined inside a hexcone.  The hue value H runs from 0 to
+  // 360º. The saturation S is the degree of strength or purity and is from 0 to
+  // 1. Purity is how much white is added to the color, so S=1 makes the purest
+  // color (no white). Brightness V also ranges from 0 to 1, where 0 is the
+  // black.  There is no transformation matrix for RGB/HSV conversion, but the
+  // algorithm follows:
 
-// r,g,b values are from 0 to 1
-// h = [0,360], s = [0,1], v = [0,1]
-//		if s == 0, then h = -1 (undefined)
-
-  void RGBtoHSV ( float r, float g, float b, float &h, float &s, float &v )
+  // r,g,b values are from 0 to 1
+  // h = [0,360], s = [0,1], v = [0,1]
+  //    if s == 0, then h = -1 (undefined)
+  void RGBtoHSV(float r, float g, float b, float& h, float& s, float& v)
   {
     float mini, maxi, delta;
 
     mini = std::min(std::min(r, g), b);
     maxi = std::max(std::max(r, g), b);
-    v = maxi;   // v
+    v = maxi;
 
     delta = maxi - mini;
 
 
-    if ( maxi != 0 )
+    if (maxi != 0)
     {
-      s = delta / maxi; // s
+      s = delta / maxi;
     }
     else
     {
@@ -231,24 +233,24 @@ Color operator * (Color const& c, float scalar)
       return;
     }
 
-    if ( r == maxi)
-      h = ( g - b ) / delta;      // between yellow & magenta
-    else if ( g == maxi)
-      h = 2 + ( b - r ) / delta;  // between cyan & yellow
+    if (r == maxi)
+      h = (g - b) / delta;      // between yellow & magenta
+    else if (g == maxi)
+      h = 2 + (b - r) / delta;  // between cyan & yellow
     else
-      h = 4 + ( r - g ) / delta;  // between magenta & cyan
+      h = 4 + (r - g) / delta;  // between magenta & cyan
 
     h *= 60;  // degrees
 
-    if ( h < 0 )
+    if (h < 0)
       h += 360;
 
     // convert h from [0, 360] to [0, 1]
-    h = (h) / 360.0f;
+    h = h / 360.0f;
 
   }
 
-  void HSVtoRGB ( float &r, float &g, float &b, float h, float s, float v )
+  void HSVtoRGB(float& r, float& g, float& b, float h, float s, float v )
   {
     int i;
     float f, p, q, t;
@@ -256,19 +258,19 @@ Color operator * (Color const& c, float scalar)
     // convert h from [0, 1] to [0, 360]
     h = h * 360.0f;
 
-    if ( s == 0 )
+    if (s == 0)
     {
       // achromatic (grey)
       r = g = b = v;
       return;
     }
 
-    h /= 60;        // sector 0 to 5
-    i = (int) std::floor ( h );
-    f = h - i;      // factorial part of h
-    p = v * ( 1 - s );
-    q = v * ( 1 - s * f );
-    t = v * ( 1 - s * ( 1 - f ) );
+    h /= 60.0f;         // sector 0 to 5
+    i = (int) std::floor(h);
+    f = h - i;          // factorial part of h
+    p = v * (1 - s);
+    q = v * (1 - s * f);
+    t = v * (1 - s * (1 - f));
 
     switch ( i )
     {
@@ -297,7 +299,7 @@ Color operator * (Color const& c, float scalar)
         g = p;
         b = v;
         break;
-      default:		// case 5:
+      default:    // case 5:
         r = v;
         g = p;
         b = q;
@@ -305,30 +307,34 @@ Color operator * (Color const& c, float scalar)
     }
   }
 
-/////////////////////////
-// HLS-RGB Conversions //
-/////////////////////////
+  /////////////////////////
+  // HLS-RGB Conversions //
+  /////////////////////////
 
-  float HLStoRGB1 (float rn1, float rn2, float huei)
+  // Static function. Auxiliary to HLS2RGB().
+  static float HLStoRGB_(float rn1, float rn2, float huei)
   {
-    // Static method. Auxiliary to HLS2RGB().
-
     float hue = huei;
 
-    if (hue > 360) hue = hue - 360;
+    if (hue > 360.0f)
+      hue = hue - 360.0f;
 
-    if (hue < 0)   hue = hue + 360;
+    if (hue < 0.0f)
+      hue = hue + 360.0f;
 
-    if (hue < 60 ) return rn1 + (rn2 - rn1) * hue / 60;
+    if (hue < 60.0f )
+      return rn1 + (rn2 - rn1) * hue / 60.0f;
 
-    if (hue < 180) return rn2;
+    if (hue < 180.0f)
+      return rn2;
 
-    if (hue < 240) return rn1 + (rn2 - rn1) * (240 - hue) / 60;
+    if (hue < 240.0f)
+      return rn1 + (rn2 - rn1) * (240.0f - hue) / 60.0f;
 
     return rn1;
   }
 
-  void HLStoRGB (float &r, float &g, float &b, float hue, float light, float satur)
+  void HLStoRGB(float& r, float& g, float& b, float hue, float light, float satur)
   {
     // Static method to compute RGB from HLS. The l and s are between [0,1]
     // and h is between [0, 1]. The returned r,g,b triplet is between [0,1].
@@ -337,17 +343,23 @@ Color operator * (Color const& c, float scalar)
     float rh, rl, rs, rm1, rm2;
     rh = rl = rs = 0;
 
-    if (hue   > 0) rh = hue;
+    if (hue   > 0)
+      rh = hue;
 
-    if (rh > 360) rh = 360;
+    if (rh > 360.0f)
+      rh = 360.0f;
 
-    if (light > 0) rl = light;
+    if (light > 0)
+      rl = light;
 
-    if (rl > 1)   rl = 1;
+    if (rl > 1)
+      rl = 1;
 
-    if (satur > 0) rs = satur;
+    if (satur > 0)
+      rs = satur;
 
-    if (rs > 1)   rs = 1;
+    if (rs > 1)
+      rs = 1.0f;
 
     if (rl <= 0.5f)
       rm2 = rl * (1.0f + rs);
@@ -364,34 +376,13 @@ Color operator * (Color const& c, float scalar)
       return;
     }
 
-    r = HLStoRGB1 (rm1, rm2, rh + 120);
-    g = HLStoRGB1 (rm1, rm2, rh);
-    b = HLStoRGB1 (rm1, rm2, rh - 120);
+    r = HLStoRGB_(rm1, rm2, rh + 120);
+    g = HLStoRGB_(rm1, rm2, rh);
+    b = HLStoRGB_(rm1, rm2, rh - 120);
   }
 
-  void HLStoRGBi (int h, int l, int s, int &r, int &g, int &b)
-  {
-    // Static method to compute RGB from HLS. The h,l,s are between [0,255].
-    // The returned r,g,b triplet is between [0,255].
-
-    float hh, ll, ss;
-    float rr, gg, bb;
-    hh = ll = ss = 0;
-    rr = gg = bb = 0;
-
-    hh = float (h) * 360 / 255;
-    ll = float (l) / 255;
-    ss = float (s) / 255;
-
-    HLStoRGB (hh, ll, ss, rr, gg, bb);
-
-    r = (int) (rr * 255);
-    g = (int) (gg * 255);
-    b = (int) (bb * 255);
-  }
-
-  void RGBtoHLS (float rr, float gg, float bb,
-                 float &hue, float &light, float &satur)
+  void RGBtoHLS(float rr, float gg, float bb,
+                float& hue, float& light, float& satur)
   {
     // Static method to compute HLS from RGB. The r,g,b triplet is between
     // [0,1], hue is between [0,1], light and satur are [0,1].
@@ -399,29 +390,39 @@ Color operator * (Color const& c, float scalar)
     float rnorm, gnorm, bnorm, minval, maxval, msum, mdiff, r, g, b;
     r = g = b = 0;
 
-    if (rr > 0) r = rr;
+    if (rr > 0)
+      r = rr;
 
-    if (r > 1) r = 1;
+    if (r > 1)
+      r = 1;
 
-    if (gg > 0) g = gg;
+    if (gg > 0)
+      g = gg;
 
-    if (g > 1) g = 1;
+    if (g > 1)
+      g = 1;
 
-    if (bb > 0) b = bb;
+    if (bb > 0)
+      b = bb;
 
-    if (b > 1) b = 1;
+    if (b > 1)
+      b = 1;
 
     minval = r;
 
-    if (g < minval) minval = g;
+    if (g < minval)
+      minval = g;
 
-    if (b < minval) minval = b;
+    if (b < minval)
+      minval = b;
 
     maxval = r;
 
-    if (g > maxval) maxval = g;
+    if (g > maxval)
+      maxval = g;
 
-    if (b > maxval) maxval = b;
+    if (b > maxval)
+      maxval = b;
 
     rnorm = gnorm = bnorm = 0;
     mdiff = maxval - minval;
@@ -458,74 +459,52 @@ Color operator * (Color const& c, float scalar)
     hue = hue / 360.0f;
   }
 
-
-  void RGBtoHLSi (int r, int g, int b, int &h, int &l, int &s)
-  {
-    // Static method to compute HLS from RGB. The r,g,b triplet is between
-    // [0,255], hue, light and satur are between [0,255].
-
-    float rr, gg, bb, hue, light, satur;
-
-    rr = float (r) / 255;
-    gg = float (g) / 255;
-    bb = float (b) / 255;
-
-    RGBtoHLS (rr, gg, bb, hue, light, satur);
-
-    h = (int) (hue / 360 * 255);
-    l = (int) (light * 255);
-    s = (int) (satur * 255);
-  }
-
-
-RedGreenBlue::RedGreenBlue(float r, float g, float b)
+  RedGreenBlue::RedGreenBlue(float r, float g, float b)
   : red(r)
   , green(g)
   , blue(b)
-{}
+  {}
 
-RedGreenBlue::RedGreenBlue(HueSaturationValue const& hsv)
-{
-  HSVtoRGB(red, green, blue, hsv.hue, hsv.saturation, hsv.value);
-}
+  RedGreenBlue::RedGreenBlue(HueSaturationValue const& hsv)
+  {
+    HSVtoRGB(red, green, blue, hsv.hue, hsv.saturation, hsv.value);
+  }
 
-RedGreenBlue::RedGreenBlue(HueLightnessSaturation const& hls)
-{
-  HLStoRGB(red, green, blue, hls.hue, hls.lightness, hls.saturation);
-}
+  RedGreenBlue::RedGreenBlue(HueLightnessSaturation const& hls)
+  {
+    HLStoRGB(red, green, blue, hls.hue, hls.lightness, hls.saturation);
+  }
 
-HueSaturationValue::HueSaturationValue(float h, float s, float v)
+  HueSaturationValue::HueSaturationValue(float h, float s, float v)
   : hue(h)
   , saturation(s)
   , value(v)
-{}
+  {}
 
-HueSaturationValue::HueSaturationValue(RedGreenBlue const& rgb)
-{
-  RGBtoHSV(rgb.red, rgb.green, rgb.blue, hue, saturation, value);
-}
+  HueSaturationValue::HueSaturationValue(RedGreenBlue const& rgb)
+  {
+    RGBtoHSV(rgb.red, rgb.green, rgb.blue, hue, saturation, value);
+  }
 
-HueSaturationValue::HueSaturationValue(Color const& c)
-{
-  RGBtoHSV(c.red, c.green, c.blue, hue, saturation, value);
-}
+  HueSaturationValue::HueSaturationValue(Color const& c)
+  {
+    RGBtoHSV(c.red, c.green, c.blue, hue, saturation, value);
+  }
 
-HueLightnessSaturation::HueLightnessSaturation(float h, float l, float s)
+  HueLightnessSaturation::HueLightnessSaturation(float h, float l, float s)
   : hue(h)
   , lightness(l)
   , saturation(s)
-{}
+  {}
 
-HueLightnessSaturation::HueLightnessSaturation(RedGreenBlue const& rgb)
-{
-  RGBtoHLS(rgb.red, rgb.green, rgb.blue, hue, lightness, saturation);
-}
+  HueLightnessSaturation::HueLightnessSaturation(RedGreenBlue const& rgb)
+  {
+    RGBtoHLS(rgb.red, rgb.green, rgb.blue, hue, lightness, saturation);
+  }
 
-HueLightnessSaturation::HueLightnessSaturation(Color const& c)
-{
-  RGBtoHLS(c.red, c.green, c.blue, hue, lightness, saturation);
-}
-
-
+  HueLightnessSaturation::HueLightnessSaturation(Color const& c)
+  {
+    RGBtoHLS(c.red, c.green, c.blue, hue, lightness, saturation);
+  }
 }
 }
