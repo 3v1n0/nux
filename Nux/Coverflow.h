@@ -43,6 +43,8 @@ namespace nux
     
     Property<bool> camera_motion_drift_enabled;
 
+    Property<float> edge_fade;
+
     Property<int> flat_icons;
     
     Property<float> folding_angle;

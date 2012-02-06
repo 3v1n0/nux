@@ -606,6 +606,13 @@ namespace nux
       float fold_progress = std::abs(cover.position.rot / parent_->folding_angle());
       cover.position.z -= parent_->folding_depth() * fold_progress;
 
+      nux::Point2 top_left, bottom_right;
+      Get3DBoundingBox(camera_position_.z, top_left, bottom_right);
+
+      float window_width = bottom_right.x - top_left.x;
+      float distance_from_edge = std::max(0.0f, std::abs(bottom_right.x) - std::abs(cover.position.x));
+      cover.opacity = std::min(1.0f, distance_from_edge / (window_width * parent_->edge_fade));
+
       results.push_back(cover);
       ++i;
     }
@@ -782,6 +789,7 @@ namespace nux
       cover_shader_program_->SetUniformLocMatrix4fv((GLint) VPMatrixLocation, 1, true, (GLfloat*) &(MVPMatrix.m));
 
       {
+        color = color * cover.opacity;
         float VtxBuffer[] =
         {
           -fx, fy,  0.0f, 1.0f, texxform.u0, texxform.v0, 0, 0, color.red, color.green, color.blue, color.alpha,
@@ -832,7 +840,7 @@ namespace nux
         texxform.flip_v_coord = true;
         QRP_Compute_Texture_Coord(width, height, texture, texxform);
 
-        float opacity_start = opacity*parent_->reflection_strength;
+        float opacity_start = opacity*parent_->reflection_strength * cover.opacity;
         float opacity_end   = 0.0f;
         float VtxBuffer[] =
         {
@@ -891,6 +899,7 @@ namespace nux
     : animation_length(250)
     , camera_motion_drift_angle(30.0f)
     , camera_motion_drift_enabled(false)
+    , edge_fade(0.07)
     , flat_icons(2)
     , folding_angle(90.0f)
     , folding_depth(0.0f)
