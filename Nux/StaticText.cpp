@@ -1,3 +1,24 @@
+/*
+ * Copyright 2012 Inalogic® Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License, as
+ * published by the  Free Software Foundation; either version 2.1 or 3.0
+ * of the License.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
+ * License for more details.
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License along with this program. If not, see <http://www.gnu.org/licenses/>
+ *
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
+ *
+ */
+
 #include "Nux.h"
 #include "Layout.h"
 #include "HLayout.h"
@@ -29,13 +50,13 @@ namespace nux
 
   NUX_IMPLEMENT_OBJECT_TYPE(StaticText);
 
-  StaticText::StaticText(const std::string &text, NUX_FILE_LINE_DECL)
-    : View(NUX_FILE_LINE_PARAM)
+  StaticText::StaticText(const std::string& text, NUX_FILE_LINE_DECL)
+  : View(NUX_FILE_LINE_PARAM)
+  , text_width_(0)
+  , text_height_(0)
   {
     padding_x_ = 0;
     padding_y_ = 0;
-    text_width_ = 0;
-    text_height_ = 0;
     update_text_rendering_ = true;
     text_alignment_ = ALIGN_CENTER;
 
@@ -64,7 +85,7 @@ namespace nux
     dpy_ = 96.0f;
 #endif
 
-    _size_match_text = true;
+    size_match_text_ = true;
     text_color_ = color::White;
     clip_to_width_ = 0;
 
@@ -164,12 +185,12 @@ namespace nux
 
   void StaticText::SetSizeMatchText(bool size_match_text)
   {
-    _size_match_text = size_match_text;
+    size_match_text_ = size_match_text;
   }
 
   bool StaticText::GetSizeMatchText() const
   {
-    return _size_match_text;
+    return size_match_text_;
   }
 
    void StaticText::SetClipping(int clipping)
@@ -291,7 +312,7 @@ namespace nux
     return GetFontSize();
   }
 
-  void StaticText::SetText(const std::string &text)
+  void StaticText::SetText(const std::string& text)
   {
     if (text_ == text)
       return;
@@ -317,7 +338,7 @@ namespace nux
     return text_;
   }
 
-  void StaticText::SetTextColor(const Color &text_color)
+  void StaticText::SetTextColor(const Color& text_color)
   {
     text_color_ = text_color;
   }
@@ -327,7 +348,7 @@ namespace nux
     return text_color_;
   }
 
-  void StaticText::SetFontName(const std::string &font_name)
+  void StaticText::SetFontName(const std::string& font_name)
   {
     if (font_name_ == font_name)
       return;
@@ -356,7 +377,7 @@ namespace nux
     return font_name_;
   }
 
-  void StaticText::GetTextLayoutSize(int &width, int &height) const
+  void StaticText::GetTextLayoutSize(int& width, int& height) const
   {
     if (text_ == "")
     {
@@ -386,6 +407,11 @@ namespace nux
     return text_alignment_;
   }
   
+  ObjectPtr<nux::IOpenGLBaseTexture> StaticText::GetTextTexture() const
+  {
+    return dw_texture_;
+  }
+
   Size StaticText::GetTextSizeNoClip()
   {
     if (no_clip_size_.width == 0)
@@ -397,10 +423,10 @@ namespace nux
   Size StaticText::ComputeTextSize(bool assign, bool with_clipping)
   {
     HRESULT hr;
-    IDWriteFactory *pDWriteFactory = GetGraphicsDisplay()->GetDirectWriteFactory();
+    IDWriteFactory* pDWriteFactory = GetGraphicsDisplay()->GetDirectWriteFactory();
 
-    ID2D1RenderTarget *pRT = NULL;
-    IDWriteTextFormat *pTextFormat = NULL;
+    ID2D1RenderTarget* pRT = NULL;
+    IDWriteTextFormat* pTextFormat = NULL;
 
     hr = pDWriteFactory->CreateTextFormat(
         ANSICHAR_TO_UNICHAR(font_name_.c_str()),                  // Font family name.
@@ -489,12 +515,12 @@ namespace nux
 
     HRESULT hr;
 
-    ID2D1Factory *pD2DFactory = GetGraphicsDisplay()->GetDirect2DFactory();
-    IDWriteFactory *pDWriteFactory = GetGraphicsDisplay()->GetDirectWriteFactory();
-    IWICImagingFactory *pWICFactory = GetGraphicsDisplay()->GetWICFactory();
+    ID2D1Factory* pD2DFactory = GetGraphicsDisplay()->GetDirect2DFactory();
+    IDWriteFactory* pDWriteFactory = GetGraphicsDisplay()->GetDirectWriteFactory();
+    IWICImagingFactory* pWICFactory = GetGraphicsDisplay()->GetWICFactory();
 
-    ID2D1RenderTarget *pRT = NULL;
-    IDWriteTextFormat *pTextFormat = NULL;
+    ID2D1RenderTarget* pRT = NULL;
+    IDWriteTextFormat* pTextFormat = NULL;
 
     hr = pDWriteFactory->CreateTextFormat(
       ANSICHAR_TO_UNICHAR(font_name_.c_str()),                  // Font family name.
@@ -534,7 +560,7 @@ namespace nux
       &pTextLayout_                         // The IDWriteTextLayout interface pointer.
       );
 
-    IDWriteInlineObject *inlineObject = nullptr;
+    IDWriteInlineObject* inlineObject = nullptr;
     if (SUCCEEDED(hr))
     {
       pDWriteFactory->CreateEllipsisTrimmingSign(
@@ -544,7 +570,7 @@ namespace nux
     DWRITE_TRIMMING trimming = {DWRITE_TRIMMING_GRANULARITY_CHARACTER, 0, 0};
     hr = pTextLayout_->SetTrimming(&trimming, inlineObject);
 
-    IWICBitmap *pWICBitmap = NULL;
+    IWICBitmap* pWICBitmap = NULL;
     if (SUCCEEDED(hr))
     {
       hr = pWICFactory->CreateBitmap(
@@ -574,11 +600,11 @@ namespace nux
         &pRT);
     }
 
-    ID2D1SolidColorBrush *pBrush;
+    ID2D1SolidColorBrush* pBrush;
     hr = pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF(color.red, color.green, color.blue, color.alpha)), &pBrush);
 
     // Create the text renderer
-    CustomTextRenderer *pTextRenderer_ = new (std::nothrow) CustomTextRenderer(
+    CustomTextRenderer* pTextRenderer_ = new (std::nothrow) CustomTextRenderer(
       pD2DFactory,
       pRT,
       pBrush,
@@ -779,11 +805,11 @@ namespace nux
 
   void StaticText::RasterizeText(void* cairo_context, Color color)
   {
-    cairo_t *cairo_ctx = (cairo_t*) cairo_context;
+    cairo_t* cairo_ctx = (cairo_t*) cairo_context;
 
-    PangoLayout           *pango_layout  = NULL;
-    PangoFontDescription  *font_desc     = NULL;
-    PangoContext          *pango_ctx     = NULL;
+    PangoLayout*          pango_layout  = NULL;
+    PangoFontDescription* font_desc     = NULL;
+    PangoContext*         pango_ctx     = NULL;
     int                   dpi            = 96;
 
     // Create layout.
@@ -848,7 +874,7 @@ namespace nux
     }
 
     cairo_graphics_ = new CairoGraphics(CAIRO_FORMAT_ARGB32, sz.width, sz.height);
-    cairo_t *cairo_ctx = cairo_graphics_->GetContext();
+    cairo_t* cairo_ctx = cairo_graphics_->GetContext();
     cairo_set_operator(cairo_ctx, CAIRO_OPERATOR_CLEAR);
     cairo_paint(cairo_ctx);
     cairo_set_operator(cairo_ctx, CAIRO_OPERATOR_OVER);
@@ -860,7 +886,7 @@ namespace nux
     // NTexture2D is the high level representation of an image that is backed by
     // an actual opengl texture.
 
-    BaseTexture *rasterized_text_texture = NULL;
+    BaseTexture* rasterized_text_texture = NULL;
 
     rasterized_text_texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
     rasterized_text_texture->Update(bitmap);

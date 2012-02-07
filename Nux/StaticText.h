@@ -1,19 +1,44 @@
+/*
+ * Copyright 2012 Inalogic® Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License, as
+ * published by the  Free Software Foundation; either version 2.1 or 3.0
+ * of the License.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
+ * License for more details.
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License along with this program. If not, see <http://www.gnu.org/licenses/>
+ *
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
+ *
+ */
+
 #ifndef STATICTEXT_H
 #define STATICTEXT_H
 
 #include "NuxCore/Size.h"
 
-   #if defined(NUX_OS_WINDOWS)
-     #define NUX_STATIC_TEXT_USE_DIRECT_WRITE
-   #elif defined(NUX_OS_LINUX)
-     #define NUX_STATIC_TEXT_USE_CAIRO
-   #else
-     #error Not implemented.
-   #endif
+#if defined(NUX_OS_WINDOWS)
+  #define NUX_STATIC_TEXT_USE_DIRECT_WRITE
+#elif defined(NUX_OS_LINUX)
+  #define NUX_STATIC_TEXT_USE_CAIRO
+#else
+  #error Not implemented.
+#endif
 
 namespace nux
 {
   class CairoGraphics;
+
+  /*!
+      A View that renders as static text.
+  */
   class StaticText: public View
   {
     NUX_DECLARE_OBJECT_TYPE(StaticText, View);
@@ -35,7 +60,7 @@ namespace nux
       ALIGN_RIGHT,
     };
 
-    StaticText(const std::string &text, NUX_FILE_LINE_PROTO);
+    StaticText(const std::string& text, NUX_FILE_LINE_PROTO);
     virtual ~StaticText();
 
     //! Set size of widget according to the text extent.
@@ -48,7 +73,7 @@ namespace nux
     bool GetSizeMatchText() const;
 
     //! Set the text string.
-    void SetText(const std::string &text);
+    void SetText(const std::string& text);
 
     //! Get the text string.
     std::string GetText() const;
@@ -59,7 +84,7 @@ namespace nux
 
         @param text_color The text color.
     */
-    void SetTextColor(const Color &text_color);
+    void SetTextColor(const Color& text_color);
     
     //! Get text color.
     /*!
@@ -75,7 +100,7 @@ namespace nux
 
         @param font_name The font name.
     */
-    void SetFontName(const std::string &font_name);
+    void SetFontName(const std::string& font_name);
 
     //! Get the font name.
     /*!
@@ -100,7 +125,7 @@ namespace nux
     int GetFontSize() const;
     int GetTextPointSize() const; //deprecated: use GetFontSize
 
-    void GetTextLayoutSize(int &width, int &height) const;
+    void GetTextLayoutSize(int& width, int& height) const;
 
     Size GetTextLayoutSize() const;
 
@@ -116,6 +141,15 @@ namespace nux
     */
     TextAlignment GetTextAlignment() const;
 
+    //! Returns the device texture for the text.
+    /*!
+        Returns the device texture for the text. The device texture may be used \n
+        for direct rendering.
+
+        @return A smart point for the device texture.
+    */
+    ObjectPtr<nux::IOpenGLBaseTexture> GetTextTexture() const;
+
     sigc::signal<void, StaticText*> text_changed;
 
   protected:
@@ -129,12 +163,9 @@ namespace nux
     std::string text_;
     Color text_color_;
 
-    BaseTexture *rasterized_text_texture_;
+    BaseTexture* rasterized_text_texture_;
 
-    int _pre_layout_width;
-    int _pre_layout_height;
-
-    bool _size_match_text;
+    bool size_match_text_;
 
     int clip_to_width_; //!< Wrapping of line.
 
@@ -167,7 +198,7 @@ namespace nux
     void RasterizeText(void* cairo_context, Color color);
     void UpdateTextRendering();
 
-    CairoGraphics *cairo_graphics_;
+    CairoGraphics* cairo_graphics_;
 #endif
 
   private:
@@ -190,9 +221,10 @@ namespace nux
         @return The full text size.
     */
     Size GetTextSizeNoClip();
-    float padding_x_; //!< Adds a padding around the entire text box.
-    float padding_y_; //!< Adds a padding around the entire text box.
-    Size no_clip_size_; //! Cacne of the GetTextSizeNoClip results so we don't recompute them constantly.
+
+    float padding_x_;   //!< Adds a padding around the entire text box.
+    float padding_y_;   //!< Adds a padding around the entire text box.
+    Size no_clip_size_; //! Cache of the GetTextSizeNoClip results so we don't recompute them constantly.
   };
 
 }
