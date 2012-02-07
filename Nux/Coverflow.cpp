@@ -530,7 +530,7 @@ namespace nux
         }
 
         self->SetPosition(self->position_ + self->velocity_, false);
-        self->velocity_ = (std::max(0.0f, std::abs(self->velocity_) - 0.1f)) * (self->velocity_ / std::abs(self->velocity_));
+        self->velocity_ = (std::max(0.0f, std::abs(self->velocity_) - self->parent_->kinetic_scroll_rate)) * (self->velocity_ / std::abs(self->velocity_));
         self->MaybeQueueDraw();
         return TRUE;
       }, this);
@@ -548,7 +548,7 @@ namespace nux
     nux::Geometry geo = parent_->GetGeometry();
 
     float scalar = (((float)bottom_right.x - (float)top_left.x) / (float)geo.width) / parent_->space_between_icons;
-    SetPosition(position_ - (dx * scalar), false);
+    SetPosition(position_ - (dx * scalar * parent_->mouse_drag_rate), false);
 
     VelocityEvent ve;
     ve.velocity = position_ - last_position_;
@@ -905,6 +905,8 @@ namespace nux
     , folding_depth(0.0f)
     , folding_rate(2)
     , fov(60)
+    , kinetic_scroll_rate(0.1f)
+    , mouse_drag_rate(1)
     , pinching(.6)
     , pop_out_selected(false)
     , reflection_fadeout_distance(4.0f)

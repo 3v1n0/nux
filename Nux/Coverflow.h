@@ -55,6 +55,10 @@ namespace nux
 
     Property<float> fov;
 
+    Property<float> kinetic_scroll_rate;
+
+    Property<float> mouse_drag_rate;
+
     Property<float> pinching;
 
     Property<bool> pop_out_selected;
