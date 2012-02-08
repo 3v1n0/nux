@@ -385,7 +385,7 @@ Level get_logging_level(std::string level)
 }
 
 #if defined(NUX_OS_LINUX)
-std::string Backtrace(int levels)
+std::string backtrace(int levels)
 {
   std::ostringstream sout;
   void* trace[256];

@@ -91,7 +91,7 @@ Level get_logging_level(std::string level);
  *   nux::logging::configure_logging(::getenv("MY_APP_LOGGING_CONFIG"));
  */
 void configure_logging(const char* config_string);
-std::string Backtrace(int levels = -1);
+std::string backtrace(int levels = -1);
 
 std::string dump_logging_levels(std::string const& prefix = "");
 

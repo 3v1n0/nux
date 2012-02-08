@@ -249,9 +249,11 @@ bool debug_object_allocation_stack()
     reference_count_->Set(1);
     SetOwnedReference(OwnTheReference);
 #ifdef NUX_DEBUG
+ #if defined(NUX_OS_LINUX)
     if (debug_object_allocation_stack()) {
       allocation_stacktrace_ = logging::backtrace();
     }
+ #endif
 #endif
   }
 
