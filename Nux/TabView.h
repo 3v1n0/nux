@@ -34,17 +34,16 @@ namespace nux
   class TabView : public View
   {
   public:
-    TabView (NUX_FILE_LINE_PROTO);
+    TabView(NUX_FILE_LINE_PROTO);
     ~TabView();
 
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
-    void AddTab (const char *tab_name, Layout *tab_layout);
-    void SetActiveTad (int index);
+    void AddTab(const char *tab_name, Layout *tab_layout);
+    void SetActiveTad(int index);
     //! Return true if this object can break the layout.
     /*
         Return true if this object can break the layout, meaning, the layout can be done on the composition layout only without
@@ -64,12 +63,12 @@ namespace nux
     class TabElement
     {
     public:
-      TabElement (NString TabName, Layout *TabLayout);
+      TabElement(NString TabName, Layout *TabLayout);
       ~TabElement();
 
-      void SetIndex (int index);
+      void SetIndex(int index);
       int GetIndex() const;
-      void SetGeometry (const Geometry &geo);
+      void SetGeometry(const Geometry &geo);
       Geometry const& GetGeometry() const;
       const NString &GetName() const;
 
@@ -80,29 +79,29 @@ namespace nux
     };
 
   public:
-    void RecvTabMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags, TabElement *);
-    void RecvTabMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags, TabElement *);
+    void RecvTabMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags, TabElement *);
+    void RecvTabMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags, TabElement *);
 
-    void RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags);
 
   protected:
     virtual bool AcceptKeyNavFocus();
   private:
 
-    void RecvTabRightTimerExpired (void *v);
-    void RecvTabLeftTimerExpired (void *v);
-    void RecvTabRightMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvTabLeftMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvTabButtonMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvTabRightTimerExpired(void *v);
+    void RecvTabLeftTimerExpired(void *v);
+    void RecvTabRightMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvTabLeftMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvTabButtonMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
 
     virtual void PreLayoutManagement();
-    virtual long PostLayoutManagement (long LayoutResult);
-    virtual void PositionChildLayout (float offsetX, float offsetY);
+    virtual long PostLayoutManagement(long LayoutResult);
+    virtual void ComputeContentPosition(float offsetX, float offsetY);
 
-    void TranslateLeft (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void TranslateRight (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void TranslateTabLayout (int offset);
+    void TranslateLeft(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void TranslateRight(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void TranslateTabLayout(int offset);
 
     InputArea   *_scroll_right;
     InputArea   *_scroll_left;

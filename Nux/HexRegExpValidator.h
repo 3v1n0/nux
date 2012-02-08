@@ -31,8 +31,8 @@ namespace nux
   class HexRegExpValidator : public Validator
   {
   public:
-    HexRegExpValidator (int Minimum = INT_MIN, int Maximum = INT_MAX);
-    HexRegExpValidator (const HexRegExpValidator &validator);
+    HexRegExpValidator(int Minimum = INT_MIN, int Maximum = INT_MAX);
+    HexRegExpValidator(const HexRegExpValidator &validator);
     HexRegExpValidator &operator= (const HexRegExpValidator &rhs);
     virtual ~HexRegExpValidator();
 
@@ -41,17 +41,17 @@ namespace nux
     /*!
         @return The input value clamped to the range [m_Minimum, m_Maximum].
     */
-    int GetClampedValue (int i) const;
+    int GetClampedValue(int i) const;
 
-    virtual void Alternative (const TCHAR *str);
+    virtual void Alternative(const char *str);
 
-    void SetMinimum (int value);
+    void SetMinimum(int value);
     int GetMinimum() const;
-    void SetMaximum (int value);
+    void SetMaximum(int value);
     int GetMaximum() const;
 
-    NString ToString (int i);
-    int ToInteger (const TCHAR *str);
+    NString ToString(int i);
+    int ToInteger(const char *str);
 
   private:
     int m_Minimum;

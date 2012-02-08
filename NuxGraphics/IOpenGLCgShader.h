@@ -30,20 +30,20 @@ namespace nux
 
   class ICgShader:  public IOpenGLResource
   {
-    NUX_DECLARE_OBJECT_TYPE (ICgShader, IOpenGLResource);
+    NUX_DECLARE_OBJECT_TYPE(ICgShader, IOpenGLResource);
 
   public:
-    ICgShader (NString ShaderName, OpenGLResourceType ResourceType);
+    ICgShader(NString ShaderName, OpenGLResourceType ResourceType);
     virtual ~ICgShader();
 
-    virtual void CreateProgram (const ANSICHAR *ShaderCode, const ANSICHAR *EntryPoint) = 0;
-    virtual void CreateProgramFromFileShaderCode (const TCHAR *Filename, const TCHAR *EntryPoint) = 0;
+    virtual void CreateProgram(const ANSICHAR *ShaderCode, const ANSICHAR *EntryPoint) = 0;
+    virtual void CreateProgramFromFileShaderCode(const char *Filename, const char *EntryPoint) = 0;
     virtual void BindProgram() = 0;
     const char *GetProgramString();
     const char *GetProgramBinary();
     virtual bool Compile() = 0;
     virtual bool IsValid() = 0;
-    CGparameter GetNamedParameter (const TCHAR *parameter);
+    CGparameter GetNamedParameter(const char *parameter);
 
     NString _ShaderName;
     NString _ShaderCode;
@@ -53,32 +53,32 @@ namespace nux
 
   class ICgVertexShader:  public ICgShader
   {
-    NUX_DECLARE_OBJECT_TYPE (ICgVertexShader, ICgShader);
+    NUX_DECLARE_OBJECT_TYPE(ICgVertexShader, ICgShader);
   public:
     virtual ~ICgVertexShader();
-    virtual void CreateProgram (const ANSICHAR *ShaderCode, const ANSICHAR *EntryPoint);
-    virtual void CreateProgramFromFileShaderCode (const TCHAR *Filename, const TCHAR *EntryPoint);
+    virtual void CreateProgram(const ANSICHAR *ShaderCode, const ANSICHAR *EntryPoint);
+    virtual void CreateProgramFromFileShaderCode(const char *Filename, const char *EntryPoint);
     virtual void BindProgram();
     virtual bool Compile();
     virtual bool IsValid();
   private:
-    ICgVertexShader (NString ShaderName = NString ("VertexProgram") );
+    ICgVertexShader(NString ShaderName = NString("VertexProgram"));
     int _ready;
     friend class GpuDevice;
   };
 
   class ICgPixelShader:  public ICgShader
   {
-    NUX_DECLARE_OBJECT_TYPE (ICgPixelShader, ICgShader);
+    NUX_DECLARE_OBJECT_TYPE(ICgPixelShader, ICgShader);
   public:
     virtual ~ICgPixelShader();
-    virtual void CreateProgram (const ANSICHAR *ShaderCode, const ANSICHAR *EntryPoint);
-    virtual void CreateProgramFromFileShaderCode (const TCHAR *Filename, const TCHAR *EntryPoint);
+    virtual void CreateProgram(const ANSICHAR *ShaderCode, const ANSICHAR *EntryPoint);
+    virtual void CreateProgramFromFileShaderCode(const char *Filename, const char *EntryPoint);
     virtual void BindProgram();
     virtual bool Compile();
     virtual bool IsValid();
   private:
-    ICgPixelShader (NString ShaderName = NString ("PixelProgram") );
+    ICgPixelShader(NString ShaderName = NString("PixelProgram"));
     int _ready;
     friend class GpuDevice;
   };

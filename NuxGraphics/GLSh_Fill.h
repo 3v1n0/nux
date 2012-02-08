@@ -44,10 +44,10 @@ namespace nux
     ~GLSh_Fill();
 
     void CacheShader();
-    void SetColor (FLOAT R, FLOAT G, FLOAT B, FLOAT A);
-    void Render (INT x, INT y, INT z, INT width, INT height);
+    void SetColor(FLOAT R, FLOAT G, FLOAT B, FLOAT A);
+    void Render(INT x, INT y, INT z, INT width, INT height);
 
-    void SetTransformMatrix (const Matrix4 &TransformMatrix);
+    void SetTransformMatrix(const Matrix4 &TransformMatrix);
 
   private:
     FLOAT _R, _G, _B, _A;

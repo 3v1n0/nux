@@ -216,6 +216,7 @@ namespace nux
     sigc::signal <void, Object *> object_destroyed;
 
     std::string GetAllocationLoation() const;
+    std::string GetTypeName() const;
 
   protected:
     //! Private destructor.
@@ -233,13 +234,14 @@ namespace nux
     Object (const Object &);
     Object &operator = (const Object &);
 
-    std::string allocation_file_name_;
-    int allocation_line_number_;
-    std::string allocation_stacktrace_;
-
     NThreadSafeCounter* reference_count_;
     //!< Number of ObjectPtr hosting the object.
     NThreadSafeCounter* objectptr_count_;
+
+    std::string allocation_file_name_;
+    int allocation_line_number_;
+    std::string allocation_stacktrace_;
+    std::string virtual_type_name_;
 
     template <typename T>
     friend class ObjectPtr;

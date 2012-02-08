@@ -49,8 +49,8 @@ namespace nux
      * Load file, parse it
      * Lines beginning with:
      * '#'  are comments can be ignored
-     * 'v'  are vertices positions (3 floats that can be positive or negative)
-     * 'vt' are vertices texcoords (2 floats that can be positive or negative)
+     * 'v'  are vertices positions(3 floats that can be positive or negative)
+     * 'vt' are vertices texcoords(2 floats that can be positive or negative)
      * 'vn' are vertices normals   (3 floats that can be positive or negative)
      * 'f'  are faces, 3 values that contain 3 values which are separated by / and <space>
      */
@@ -60,36 +60,36 @@ namespace nux
 
     std::string line_stream;    // No longer depending on char arrays thanks to: Dale Weiler
 
-    while(std::getline(filestream, line_stream))
+    while (std::getline(filestream, line_stream))
     {
       std::stringstream str_stream(line_stream);
       std::string type_str;
       str_stream >> type_str;
 
-      if(type_str == TOKEN_VERTEX_POS)
+      if (type_str == TOKEN_VERTEX_POS)
       {
         nux::Vector4 pos;
         str_stream >> pos.x >> pos.y >> pos.z;
         pos.w = 1.0f;
         positions.push_back(pos);
       }
-      else if(type_str == TOKEN_VERTEX_TEX)
+      else if (type_str == TOKEN_VERTEX_TEX)
       {
         nux::Vector2 tex;
         str_stream >> tex.x >> tex.y;
         texcoords.push_back(tex);
       }
-      else if(type_str == TOKEN_VERTEX_NOR)
+      else if (type_str == TOKEN_VERTEX_NOR)
       {
         nux::Vector3 nor;
         str_stream >> nor.x >> nor.y >> nor.z;
         normals.push_back(nor);
       }
-      else if(type_str == TOKEN_FACE)
+      else if (type_str == TOKEN_FACE)
       {
         _ObjMeshFaceIndex face_index;
         char interupt;
-        for(int i = 0; i < 3; ++i)
+        for (int i = 0; i < 3; ++i)
         {
           str_stream >> face_index.pos_index[i] >> interupt
                        >> face_index.tex_index[i]  >> interupt
@@ -109,7 +109,7 @@ namespace nux
     size_t i = 0;
 
     float* vertex_buffer = (float*)md->_vertex_data;
-//     for(i = 0; i < positions.size(); i++)
+//     for (i = 0; i < positions.size(); i++)
 //     {
 //       vertex_buffer[9*i + 0] = positions[i].x;
 //       vertex_buffer[9*i + 1] = positions[i].y;
@@ -125,13 +125,13 @@ namespace nux
 //     }
 
     int* index_buffer = (int*)md->_index_data;
-    for(i = 0; i < faces.size(); i++)
+    for (i = 0; i < faces.size(); i++)
     {
       index_buffer[3*i + 0] = 3*i + 0;  //faces[i].pos_index[0]-1;
       index_buffer[3*i + 1] = 3*i + 1;  //faces[i].pos_index[1]-1;
       index_buffer[3*i + 2] = 3*i + 2;  //faces[i].pos_index[2]-1;
 
-      for(int j = 0; j < 3; j++)
+      for (int j = 0; j < 3; j++)
       {
         int vi    = faces[i].pos_index[j]-1;
         int ni    = faces[i].nor_index[j]-1;

@@ -41,12 +41,14 @@ namespace nux
     bool operator == (const Rect &p) const;
     bool operator != (const Rect &p) const;
 
-    bool IsNull() const
-    {
-      return ( (width == 0) || (height == 0) );
-    }
-    bool IsInside (const Point &p) const;
-    Rect Intersect (const Rect &) const;
+    //! Return true is the area of this rectangle is Null.
+    /*!
+        Return true is the area of this rectangle is Null.
+    */
+    bool IsNull() const;
+
+    bool IsInside(const Point &p) const;
+    Rect Intersect(const Rect &) const;
 
     // expand the width by factor_x and the height by factor_y
     void Expand (int factor_x, int factor_y);

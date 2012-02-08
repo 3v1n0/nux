@@ -38,15 +38,16 @@ namespace {
 logging::Logger logger("nux.inputarea");
 }
 
-  NUX_IMPLEMENT_OBJECT_TYPE (InputArea);
+  NUX_IMPLEMENT_OBJECT_TYPE(InputArea);
 
-  InputArea::InputArea (NUX_FILE_LINE_DECL)
-    :   Area (NUX_FILE_LINE_PARAM)
-    ,   m_AreaColor (color::Green)
+  InputArea::InputArea(NUX_FILE_LINE_DECL)
+  : Area(NUX_FILE_LINE_PARAM)
+  , area_color_(color::Green)
+  , accept_key_nav_focus_on_mouse_down_(true)
   {
     SetGeometry(0, 0, 1, 1);
-    _has_keyboard_focus = false;
 
+    mouse_in_ = false;
     _capture_mouse_down_any_where_else = false;
     _double_click = false;
 
@@ -62,61 +63,30 @@ logging::Logger logger("nux.inputarea");
   {
   }
 
-  // TODO: DEPRECATED
-  bool InputArea::ForceStartFocus (int x, int y)
+  
+  void InputArea::OnDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
-    return false;
+    graphics_engine.QRP_Color(GetBaseX(), GetBaseY(), GetBaseWidth(), GetBaseHeight(), area_color_);
   }
 
-  // TODO: DEPRECATED
-  void InputArea::ForceStopFocus (int x, int y)
+  void InputArea::SetBaseString(const char *Caption)
   {
-  }
-
-  // TODO: DEPRECATED
-  long InputArea::OnEvent (Event &event, long TraverseInfo, long ProcessEventInfo)
-  {
-    return 0;
-  }
-
-  void InputArea::OnDraw (GraphicsEngine &GfxContext, bool force_draw)
-  {
-    GfxContext.QRP_Color (GetBaseX(), GetBaseY(), GetBaseWidth(), GetBaseHeight(), m_AreaColor);
-  }
-
-  void InputArea::SetBaseString (const TCHAR *Caption)
-  {
-    Area::SetBaseString (Caption);
+    Area::SetBaseString(Caption);
   }
 
   bool InputArea::HasKeyboardFocus()
   {
-    return GetWindowCompositor ().GetKeyFocusArea () == this;
+    return GetWindowThread()->GetWindowCompositor().GetKeyFocusArea() == this;
   }
 
-  void InputArea::SetKeyboardFocus (bool b)
+  void InputArea::SetAcceptKeyNavFocusOnMouseDown(bool accept)
   {
-    _has_keyboard_focus = b;
-  }
-
-  int InputArea::GetMouseX()
-  {
-    return _event_processor._mouse_positionx - GetRootX();
-  }
-
-  int InputArea::GetMouseY()
-  {
-    return _event_processor._mouse_positiony - GetRootY();
+    accept_key_nav_focus_on_mouse_down_ = accept;
   }
 
   bool InputArea::IsMouseInside()
   {
-    return _event_processor.MouseIn();
-  }
-
-  bool InputArea::HasMouseFocus()
-  {
-    return (_event_processor._state & AREA_MOUSE_STATUS_FOCUS ? true : false);
+    return mouse_in_;
   }
 
   // TODO: DEPRECATED
@@ -125,7 +95,7 @@ logging::Logger logger("nux.inputarea");
     return false;
   }
 
-  void InputArea::CaptureMouseDownAnyWhereElse (bool b)
+  void InputArea::CaptureMouseDownAnyWhereElse(bool b)
   {
     _capture_mouse_down_any_where_else = b;
   }
@@ -135,7 +105,7 @@ logging::Logger logger("nux.inputarea");
     return _capture_mouse_down_any_where_else;
   }
 
-  void InputArea::EnableDoubleClick (bool double_click)
+  void InputArea::EnableDoubleClick(bool double_click)
   {
     _double_click = double_click;
   }
@@ -155,83 +125,77 @@ logging::Logger logger("nux.inputarea");
     return _keyboard_receiver_ignore_mouse_down_outside;
   }
 
-  void InputArea::SetAreaMousePosition (int x, int y)
+  void InputArea::HandleDndMove(Event &event)
   {
-    _event_processor._mouse_positionx = x;
-    _event_processor._mouse_positiony = y;
-  }
-
-  void InputArea::HandleDndMove (Event &event)
-  {
-#if defined (NUX_OS_LINUX)
+#if defined(NUX_OS_LINUX)
     std::list<char *> mimes;
 
-    mimes = GetWindow ().GetDndMimeTypes ();
+    mimes = GetWindowThread()->GetGraphicsDisplay().GetDndMimeTypes();
     std::list<char *>::iterator it;
-    ProcessDndMove (event.e_x, event.e_y, mimes);
+    ProcessDndMove(event.x, event.y, mimes);
 
-    for (it = mimes.begin (); it != mimes.end (); it++)
-      g_free (*it);
+    for (it = mimes.begin(); it != mimes.end(); it++)
+      g_free(*it);
 #endif
   }
 
-  void InputArea::HandleDndDrop (Event &event)
+  void InputArea::HandleDndDrop(Event &event)
   {
-#if defined (NUX_OS_LINUX)
-    ProcessDndDrop (event.e_x, event.e_y);
+#if defined(NUX_OS_LINUX)
+    ProcessDndDrop(event.x, event.y);
 #endif
   }
 
-#if defined (NUX_OS_LINUX)
-  void InputArea::SendDndStatus (bool accept, DndAction action, Geometry region)
+#if defined(NUX_OS_LINUX)
+  void InputArea::SendDndStatus(bool accept, DndAction action, Geometry region)
   {
-    GetWindow ().SendDndStatus (accept, action, Rect (region.x, region.y, region.width, region.height));
+    GetWindowThread()->GetGraphicsDisplay().SendDndStatus(accept, action, Rect(region.x, region.y, region.width, region.height));
   }
 
-  void InputArea::SendDndFinished (bool accepted, DndAction action)
+  void InputArea::SendDndFinished(bool accepted, DndAction action)
   {
-    GetWindow ().SendDndFinished (accepted, action);
+    GetWindowThread()->GetGraphicsDisplay().SendDndFinished(accepted, action);
   }
 
-  void InputArea::ProcessDndMove (int x, int y, std::list<char *>mimes)
+  void InputArea::ProcessDndMove(int x, int y, std::list<char *>mimes)
   {
     // must learn to deal with x/y offsets
-    Area *parent = GetToplevel ();
+    Area *parent = GetToplevel();
 
     if (parent)
     {
-      x += parent->GetGeometry ().x;
-      y += parent->GetGeometry ().y;
+      x += parent->GetGeometry().x;
+      y += parent->GetGeometry().y;
     }
 
-    SendDndStatus (false, DNDACTION_NONE, Geometry (x, y, GetGeometry ().width, GetGeometry ().height));
+    SendDndStatus(false, DNDACTION_NONE, Geometry(x, y, GetGeometry().width, GetGeometry().height));
   }
 
-  void InputArea::ProcessDndDrop (int x, int y)
+  void InputArea::ProcessDndDrop(int x, int y)
   {
-    SendDndFinished (false, DNDACTION_NONE);
+    SendDndFinished(false, DNDACTION_NONE);
   }
 
-  void InputArea::ProcessDndEnter ()
+  void InputArea::ProcessDndEnter()
   {
   }
 
-  void InputArea::ProcessDndLeave ()
+  void InputArea::ProcessDndLeave()
   {
   }
   
-  void InputArea::SetDndEnabled (bool as_source, bool as_target)
+  void InputArea::SetDndEnabled(bool as_source, bool as_target)
   {
     _dnd_enabled_as_source = as_source;
     _dnd_enabled_as_target = as_target;
   }
   
-  bool InputArea::DndSourceDragBegin ()
+  bool InputArea::DndSourceDragBegin()
   {
     return false;
   }
   
-  NBitmapData * InputArea::DndSourceGetDragImage ()
+  NBitmapData * InputArea::DndSourceGetDragImage()
   {
     return 0;
   }
@@ -239,8 +203,8 @@ logging::Logger logger("nux.inputarea");
   std::list<const char *> InputArea::DndSourceGetDragTypes()
   {
     std::list<const char *> types;
-    types.push_back ("text/plain;charset=utf-8");
-    types.push_back ("UTF8_STRING");
+    types.push_back("text/plain;charset=utf-8");
+    types.push_back("UTF8_STRING");
     return types;
   }
     
@@ -248,9 +212,9 @@ logging::Logger logger("nux.inputarea");
   {
     *format = 8;
 
-    if (g_str_equal (type, "text/plain;charset=utf-8") || g_str_equal (type, "UTF8_STRING"))
+    if (g_str_equal(type, "text/plain;charset=utf-8") || g_str_equal(type, "UTF8_STRING"))
     {
-      *size = (int) strlen ("this is just a test");
+      *size = (int) strlen("this is just a test");
       return "this is just a test";
     }
     
@@ -261,7 +225,7 @@ logging::Logger logger("nux.inputarea");
   void InputArea::InnerDndSourceDragFinished(DndAction result, void *data) 
   { 
     InputArea *self = static_cast<InputArea *> (data);
-    self->DndSourceDragFinished (result);
+    self->DndSourceDragFinished(result);
   }
   
   void InputArea::DndSourceDragFinished(DndAction result)
@@ -279,49 +243,43 @@ logging::Logger logger("nux.inputarea");
     funcs.drag_finished = &InputArea::InnerDndSourceDragFinished;
     
     if (DndSourceDragBegin())
-      GetWindow().StartDndDrag(funcs, this);
+      GetWindowThread()->GetGraphicsDisplay().StartDndDrag(funcs, this);
   }
 #endif
 
-  void InputArea::DoSetFocused(bool focused)
-  {
-    Area::DoSetFocused(focused);
-    SetKeyboardFocus(focused);
-  }
-  
   void InputArea::GrabPointer()
   {
-    GetWindowCompositor().GrabPointerAdd (this);
+    GetWindowThread()->GetWindowCompositor().GrabPointerAdd(this);
   }
   
   void InputArea::UnGrabPointer()
   {
-    GetWindowCompositor ().GrabPointerRemove (this);
+    GetWindowThread()->GetWindowCompositor().GrabPointerRemove(this);
   }
 
   void InputArea::GrabKeyboard()
   {
-    GetWindowCompositor().GrabKeyboardAdd (this);
+    GetWindowThread()->GetWindowCompositor().GrabKeyboardAdd(this);
   }
   
   void InputArea::UnGrabKeyboard()
   {
-    GetWindowCompositor().GrabKeyboardRemove (this);
+    GetWindowThread()->GetWindowCompositor().GrabKeyboardRemove(this);
   }
   
   bool InputArea::OwnsPointerGrab()
   {
-    return GetWindowCompositor().GetPointerGrabArea() == this;
+    return GetWindowThread()->GetWindowCompositor().GetPointerGrabArea() == this;
   }
   
-  bool InputArea::OwnsKeyboardGrab ()
+  bool InputArea::OwnsKeyboardGrab()
   {
-    return GetWindowCompositor ().GetKeyboardGrabArea() == this;
+    return GetWindowThread()->GetWindowCompositor().GetKeyboardGrabArea() == this;
   }
 
   bool InputArea::IsMouseOwner()
   {
-    return (GetWindowCompositor().GetMouseOwnerArea() == this);
+    return (GetWindowThread()->GetWindowCompositor().GetMouseOwnerArea() == this);
   }
 
   // == Signals with 1 to 1 mapping to input device ==
@@ -376,13 +334,13 @@ logging::Logger logger("nux.inputarea");
 
   void InputArea::EmitMouseEnterSignal(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
   {
-    _event_processor._current_mouse_in = true;
+    mouse_in_ = true;
     mouse_enter.emit(x, y, mouse_button_state, special_keys_state);
   }
 
   void InputArea::EmitMouseLeaveSignal(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
   {
-    _event_processor._current_mouse_in = false;
+    mouse_in_ = false;
     mouse_leave.emit(x, y, mouse_button_state, special_keys_state);
   }
 
@@ -414,7 +372,7 @@ logging::Logger logger("nux.inputarea");
 
   Area* InputArea::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
-    if(TestMousePointerInclusion(mouse_position, event_type))
+    if (TestMousePointerInclusion(mouse_position, event_type))
     {
       return this;
     }
@@ -439,6 +397,11 @@ logging::Logger logger("nux.inputarea");
   bool InputArea::AcceptKeyNavFocus()
   {
     return false;
+  }
+  
+  bool InputArea::AcceptKeyNavFocusOnMouseDown()
+  {
+    return accept_key_nav_focus_on_mouse_down_;
   }
 }
 

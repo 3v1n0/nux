@@ -39,11 +39,11 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (SystemThread);
+  NUX_IMPLEMENT_OBJECT_TYPE(SystemThread);
 
 
-  SystemThread::SystemThread (AbstractThread *Parent/* = 0*/)
-    :   AbstractThread (Parent)
+  SystemThread::SystemThread(AbstractThread *Parent/* = 0*/)
+    :   AbstractThread(Parent)
   {
 
   }
@@ -52,105 +52,105 @@ namespace nux
   {
   }
 
-  ThreadState SystemThread::Start (void *arg)
+  ThreadState SystemThread::Start(void *arg)
   {
-    if (!m_Parent)
+    if (!parent_)
     {
       return NThread::Start();
     }
     else
     {
-      if (m_Parent->Type().IsObjectType (SystemThread::StaticObjectType) )
-        return static_cast<SystemThread *> (m_Parent)->StartChildThread (this, true);
+      if (parent_->Type().IsObjectType(SystemThread::StaticObjectType))
+        return static_cast<SystemThread *> (parent_)->StartChildThread(this, true);
 
-      if (m_Parent->Type().IsObjectType (WindowThread::StaticObjectType) )
-        return static_cast<WindowThread *> (m_Parent)->StartChildThread (this, true);
+      if (parent_->Type().IsObjectType(WindowThread::StaticObjectType))
+        return static_cast<WindowThread *> (parent_)->StartChildThread(this, true);
 
-      nuxAssertMsg (0, TEXT ("[WindowThread::Start] This should not happen.") );
+      nuxAssertMsg(0, "[WindowThread::Start] This should not happen.");
       return THREAD_START_ERROR;
     }
   }
 
-  t_u32 SystemThread::Run (void *arg)
+  int SystemThread::Run(void *arg)
   {
-    if (m_UserInitFunc)
+    if (user_init_func_)
     {
-      (*m_UserInitFunc) (this, m_InitData);
+      (*user_init_func_) (this, initialization_data_);
     }
 
-    if (m_Parent)
+    if (parent_)
     {
-      if (m_Parent->Type().IsObjectType (SystemThread::StaticObjectType) )
-        static_cast<SystemThread *> (m_Parent)->ChildHasFinished (this);
+      if (parent_->Type().IsObjectType(SystemThread::StaticObjectType))
+        static_cast<SystemThread *> (parent_)->ChildHasFinished(this);
 
-      if (m_Parent->Type().IsObjectType (WindowThread::StaticObjectType) )
-        static_cast<WindowThread *> (m_Parent)->ChildHasFinished (this);
+      if (parent_->Type().IsObjectType(WindowThread::StaticObjectType))
+        static_cast<WindowThread *> (parent_)->ChildHasFinished(this);
     }
 
-    SetThreadState (THREADSTOP);
-    TerminateAllChildThread();
+    SetThreadState(THREADSTOP);
+    TerminateChildThreads();
     return 0;
   }
 
-  ThreadState SystemThread::StartChildThread (NThread *thread, bool Modal)
+  ThreadState SystemThread::StartChildThread(AbstractThread *thread, bool Modal)
   {
     ThreadState state = thread->NThread::Start();
     //if(state == THREADRUNNING)
-    AddChildThread (thread);
+    AddChildThread(thread);
     return state;
   }
 
-  void SystemThread::AddChildThread (NThread *thread)
+  void SystemThread::AddChildThread(AbstractThread *thread)
   {
-    nuxAssert (thread);
-    std::list<NThread *>::iterator it;
-    it = find (m_ChildThread.begin(), m_ChildThread.end(), thread);
+    nuxAssert(thread);
+    std::list<AbstractThread*>::iterator it;
+    it = find(children_thread_list_.begin(), children_thread_list_.end(), thread);
 
-    if (it == m_ChildThread.end() )
+    if (it == children_thread_list_.end())
     {
-      m_ChildThread.push_back (thread);
+      children_thread_list_.push_back(thread);
     }
   }
 
-  void SystemThread::RemoveChildThread (NThread *window)
+  void SystemThread::RemoveChildThread(AbstractThread *window)
   {
-    nuxAssert (window);
-    std::list<NThread *>::iterator it;
-    it = find (m_ChildThread.begin(), m_ChildThread.end(), window);
+    nuxAssert(window);
+    std::list<AbstractThread*>::iterator it;
+    it = find(children_thread_list_.begin(), children_thread_list_.end(), window);
 
-    if (it != m_ChildThread.end() )
+    if (it != children_thread_list_.end())
     {
-      m_ChildThread.erase (it);
+      children_thread_list_.erase(it);
     }
   }
 
-  void SystemThread::ChildHasFinished (NThread *thread)
+  void SystemThread::ChildHasFinished(AbstractThread *thread)
   {
-    RemoveChildThread (thread);
+    RemoveChildThread(thread);
 
-    if (thread->Type().IsObjectType (WindowThread::StaticObjectType) )
+    if (thread->Type().IsObjectType(WindowThread::StaticObjectType))
     {
       //SuspendChildGraphics(static_cast<WindowThread*>(thread));
     }
 
-    thread->SetThreadState (THREADSTOP);
+    thread->SetThreadState(THREADSTOP);
   }
 
-  void SystemThread::TerminateAllChildThread()
+  void SystemThread::TerminateChildThreads()
   {
-    std::list<NThread *>::iterator it;
+    std::list<AbstractThread*>::iterator it;
 
-    for (it = m_ChildThread.begin(); it != m_ChildThread.end(); it++)
+    for (it = children_thread_list_.begin(); it != children_thread_list_.end(); it++)
     {
-      (*it)->SetThreadState (THREADSTOP);
+      (*it)->SetThreadState(THREADSTOP);
     }
 
-    m_ChildThread.clear();
+    children_thread_list_.clear();
   }
 
   bool SystemThread::ThreadCtor()
   {
-    SetThreadState (THREADRUNNING);
+    SetThreadState(THREADRUNNING);
 
     return true;
   }

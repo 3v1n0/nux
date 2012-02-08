@@ -41,9 +41,9 @@ namespace nux
     ~GLSh_DrawFunction();
 
     void SetBackgroundColor(Color const& color);
-    void SetTextureFunction (ObjectPtr<IOpenGLBaseTexture> device_texture);
-    void Render (int x, int y, int z, int width, int height, int WindowWidth, int WindowHeight);
-    void SetScreenPositionOffset (float x, float y);
+    void SetTextureFunction(ObjectPtr<IOpenGLBaseTexture> device_texture);
+    void Render(int x, int y, int z, int width, int height, int WindowWidth, int WindowHeight);
+    void SetScreenPositionOffset(float x, float y);
 
   private:
     Color background_color_;

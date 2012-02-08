@@ -34,7 +34,7 @@ namespace nux
 
   class NuxGlobalSingletonInitializer
   {
-    NUX_DISABLE_OBJECT_COPY (NuxGlobalSingletonInitializer);
+    NUX_DISABLE_OBJECT_COPY(NuxGlobalSingletonInitializer);
     NuxGlobalSingletonInitializer *operator & ();
     const NuxGlobalSingletonInitializer *operator & () const;
 

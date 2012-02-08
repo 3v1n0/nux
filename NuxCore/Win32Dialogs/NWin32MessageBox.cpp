@@ -86,7 +86,7 @@ namespace nux
 
 //#define VARARG_BODY( FuncRet, FuncName, FmtType, ExtraParamDecl )
   VARARG_BODY (unsigned int, inlWin32MessageBox, const TCHAR *, VARARG_EXTRA (HWND OwnerWindowHandle) VARARG_EXTRA (const TCHAR *Caption) VARARG_EXTRA (MessageBoxType Type) VARARG_EXTRA (MessageBoxIcon Icon) VARARG_EXTRA (MessageBoxModal Modal) )
-//BOOL inlWin32MessageBox(HWND OwnerWindowHandle, const TCHAR* Caption, const TCHAR* Message, MessageBoxType Type, t_u32 Modal)
+//BOOL inlWin32MessageBox(HWND OwnerWindowHandle, const TCHAR* Caption, const TCHAR* Message, MessageBoxType Type, unsigned int Modal)
   {
     //    TCHAR TempStr[4096]=TEXT("");
     //    GET_VARARGS( TempStr, NUX_ARRAY_COUNT(TempStr), Fmt, Fmt );
@@ -101,7 +101,7 @@ namespace nux
     }
     else
     {
-      t_u32 Win32Modal = 0;
+      unsigned int Win32Modal = 0;
 
       switch (Modal)
       {
@@ -119,7 +119,7 @@ namespace nux
           break;
       }
 
-      t_u32 Win32Icon = 0;
+      unsigned int Win32Icon = 0;
 
       switch (Icon)
       {

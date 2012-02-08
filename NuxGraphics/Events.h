@@ -42,11 +42,11 @@ namespace nux
 
   #define NUX_BackSpace       NUX_VK_BACK
   #define NUX_Tab             NUX_VK_TAB
-  #define NUX_Clear   	    NUX_VK_CLEAR
+  #define NUX_Clear           NUX_VK_CLEAR
   #define NUX_Enter           NUX_VK_ENTER
   #define NUX_Shift_L         NUX_VK_SHIFT
   #define NUX_Control_L       NUX_VK_CONTROL
-  #define NUX_Alt_L	        NUX_VK_MENU
+  #define NUX_Alt_L           NUX_VK_MENU
   #define NUX_Pause           NUX_VK_PAUSE
   #define NUX_Caps_Lock       NUX_VK_CAPITAL
   #define NUX_Escape          NUX_VK_ESCAPE
@@ -59,7 +59,7 @@ namespace nux
   #define NUX_Up              NUX_VK_UP
   #define NUX_Right           NUX_VK_RIGHT
   #define NUX_Down            NUX_VK_DOWN
-  #define NUX_Print	        NUX_VK_SNAPSHOT
+  #define NUX_Print           NUX_VK_SNAPSHOT
   #define NUX_Insert          NUX_VK_INSERT
   #define NUX_Delete          NUX_VK_DELETE
   #define NUX_LWin            NUX_VK_LWIN
@@ -114,34 +114,9 @@ namespace nux
 #define NUX_F23    NUX_VK_F23
 #define NUX_F24    NUX_VK_F24
 
-  enum MouseButton
-  {
-    NUX_INVALID_MOUSE_BUTTON = 0,
-    NUX_MOUSE_BUTTON1 = 1,
-    NUX_MOUSE_BUTTON2 = 2,
-    NUX_MOUSE_BUTTON3 = 3,
-    NUX_MOUSE_BUTTON4 = 4,
-    NUX_MOUSE_BUTTON5 = 5,
-    NUX_MOUSE_BUTTON6 = 6,
-    NUX_LEFT_MOUSE = NUX_MOUSE_BUTTON1,   // Deprecated
-    NUX_MIDDLE_MOUSE = NUX_MOUSE_BUTTON2, // Deprecated
-    NUX_RIGHT_MOUSE = NUX_MOUSE_BUTTON3,  // Deprecated
-  };
-
-  enum KeyModifier
-  {
-    NUX_STATE_SHIFT	      = 0x00010000,
-    NUX_STATE_CAPS_LOCK	  = 0x00020000,
-    NUX_STATE_CTRL		    = 0x00040000,
-    NUX_STATE_ALT		      = 0x00080000,
-    NUX_STATE_NUMLOCK	    = 0x00100000,
-    NUX_STATE_META		    = 0x00400000,
-    NUX_STATE_SCROLLLOCK	= 0x00800000,
-  };
-
 // These flags describe the mouse button responsible for the mouse event.
 // They are valid only for the current frame.
-// Go in e_mouse_state.
+// Go in mouse_state.
 #define NUX_EVENT_BUTTON1_UP        0x00001000
 #define NUX_EVENT_BUTTON2_UP        0x00002000
 #define NUX_EVENT_BUTTON3_UP        0x00004000
@@ -160,7 +135,7 @@ namespace nux
 #define NUX_EVENT_MOUSEWHEEL        0x00100000
 // These flags describe the state of the mouse buttons.
 // They persist over several frame until the mouse buttons change state.
-// Go in e_mouse_state.
+// Go in mouse_state.
 #define NUX_STATE_BUTTON1_DOWN      0x01000000
 #define NUX_STATE_BUTTON2_DOWN      0x02000000
 #define NUX_STATE_BUTTON3_DOWN      0x04000000
@@ -168,7 +143,7 @@ namespace nux
 
 // These flags are set if the event is a double click.
 // They are valid only for the current frame.
-// Go in e_mouse_state.
+// Go in mouse_state.
 #define NUX_EVENT_BUTTON1_DBLCLICK  0x10000000
 #define NUX_EVENT_BUTTON2_DBLCLICK  0x20000000
 #define NUX_EVENT_BUTTON3_DBLCLICK  0x40000000
@@ -181,39 +156,112 @@ namespace nux
   struct EventToNameStruct
   {
     int event;
-    const TCHAR *EventName;
+    const char *EventName;
   };
 
-  enum NuxEventType
+  enum MouseButton
   {
-    // events
-    NUX_NO_EVENT         = 0,
-    NUX_MOUSE_PRESSED,
-    NUX_MOUSE_RELEASED,
-    NUX_MOUSE_MOVE,
-    NUX_MOUSE_DOUBLECLICK,
-    NUX_MOUSE_WHEEL,
-    NUX_MOUSEWHEEL = NUX_MOUSE_WHEEL, //!< Deprecated. Use NUX_MOUSE_WHEEL.
-    NUX_KEYDOWN,
-    NUX_KEYUP,
-    NUX_SIZE_CONFIGURATION,
-    NUX_WINDOW_MAP,
-    NUX_WINDOW_UNMAP,
-    NUX_WINDOW_CONFIGURATION,
-    NUX_WINDOW_ENTER_FOCUS,
-    NUX_WINDOW_EXIT_FOCUS,
-    NUX_WINDOW_DIRTY,
-    NUX_WINDOW_MOUSELEAVE,
-    NUX_DESTROY_WINDOW,
-    NUX_TERMINATE_APP,
-    NUX_TAKE_FOCUS, // ClientMessage for window with WM_TAKE_FOCUS protocol-atom set
-    NUX_DND_MOVE,
-    NUX_DND_DROP,
-    NUX_DND_ENTER,  //!< Synthetic event generated when the dnd action enters an InputArea. This is not the event sent when the dnd action enters the window.
-    NUX_DND_LEAVE,  //!< Synthetic event generated when the dnd action leaves an InputArea. This is not the event sent when the dnd action leaves the window.
-    NUX_DND_ENTER_WINDOW,  //!< Emitted when the DND action goes inside (XdndLeave) a window.
-    NUX_DND_LEAVE_WINDOW,   //!< Emitted when the DND action goes outside (XdndEnter) a window.
+    MOUSE_BUTTON_INVALID = 0,
+    MOUSE_BUTTON1 = 1,
+    MOUSE_BUTTON2 = 2,
+    MOUSE_BUTTON3 = 3,
+    MOUSE_BUTTON4 = 4,
+    MOUSE_BUTTON5 = 5,
+    MOUSE_BUTTON6 = 6,
+    MOUSE_BUTTON7 = 7,
+
+    // The following values are deprecated. Use the ones above.
+    NUX_INVALID_MOUSE_BUTTON = MOUSE_BUTTON_INVALID,
+    NUX_MOUSE_BUTTON1 = MOUSE_BUTTON1,
+    NUX_MOUSE_BUTTON2 = MOUSE_BUTTON2,
+    NUX_MOUSE_BUTTON3 = MOUSE_BUTTON3,
+    NUX_MOUSE_BUTTON4 = MOUSE_BUTTON4,
+    NUX_MOUSE_BUTTON5 = MOUSE_BUTTON5,
+    NUX_MOUSE_BUTTON6 = MOUSE_BUTTON6,
+    NUX_LEFT_MOUSE    = NUX_MOUSE_BUTTON1,   // Deprecated
+    NUX_MIDDLE_MOUSE  = NUX_MOUSE_BUTTON2, // Deprecated
+    NUX_RIGHT_MOUSE   = NUX_MOUSE_BUTTON3,  // Deprecated
   };
+
+  enum KeyModifier
+  {
+    KEY_MODIFIER_SHIFT       = 0x00010000,
+    KEY_MODIFIER_CAPS_LOCK   = 0x00020000,
+    KEY_MODIFIER_CTRL        = 0x00040000,
+    KEY_MODIFIER_ALT         = 0x00080000,
+    KEY_MODIFIER_NUMLOCK     = 0x00100000,
+    KEY_MODIFIER_SUPER       = 0x00200000,
+    KEY_MODIFIER_SCROLLLOCK  = 0x00400000,
+
+    // The following values are deprecated. Use the ones above.
+    NUX_STATE_SHIFT       = KEY_MODIFIER_SHIFT,
+    NUX_STATE_CAPS_LOCK   = KEY_MODIFIER_CAPS_LOCK,
+    NUX_STATE_CTRL        = KEY_MODIFIER_CTRL,
+    NUX_STATE_ALT         = KEY_MODIFIER_ALT,
+    NUX_STATE_NUMLOCK     = KEY_MODIFIER_NUMLOCK,
+    NUX_STATE_SUPER       = KEY_MODIFIER_SUPER,
+    NUX_STATE_SCROLLLOCK  = KEY_MODIFIER_SCROLLLOCK,
+  };
+
+  enum EventType
+  {
+    EVENT_NONE         = 0,
+    EVENT_MOUSE_DOWN,
+    EVENT_MOUSE_UP,
+    EVENT_MOUSE_MOVE,
+    EVENT_MOUSE_DOUBLECLICK,
+    EVENT_MOUSE_WHEEL,
+    EVENT_KEY_DOWN,
+    EVENT_KEY_UP,
+    EVENT_WINDOW_SIZE_CONFIGURATION,
+    EVENT_WINDOW_MAP,
+    EVENT_WINDOW_UNMAP,
+    EVENT_NC_WINDOW_CONFIGURATION,  //!< Non-client event on the window borders.
+    EVENT_WINDOW_ENTER_FOCUS,
+    EVENT_WINDOW_EXIT_FOCUS,
+    EVENT_WINDOW_DIRTY,
+    EVENT_WINDOW_MOUSELEAVE,
+    EVENT_DESTROY_WINDOW,
+    EVENT_TERMINATE_APP,
+    EVENT_TAKE_FOCUS, // ClientMessage for window with WM_TAKE_FOCUS protocol-atom set
+    EVENT_DND_MOVE,
+    EVENT_DND_DROP,
+    EVENT_DND_ENTER,  //!< Synthetic event generated when the dnd action enters an InputArea. This is not the event sent when the dnd action enters the window.
+    EVENT_DND_LEAVE,  //!< Synthetic event generated when the dnd action leaves an InputArea. This is not the event sent when the dnd action leaves the window.
+    EVENT_DND_ENTER_WINDOW,  //!< Emitted when the DND action goes inside(XdndLeave) a window.
+    EVENT_DND_LEAVE_WINDOW,   //!< Emitted when the DND action goes outside(XdndEnter) a window.
+
+
+    // The following values are deprecated. Use the ones above.
+    NUX_NO_EVENT                  = EVENT_NONE,
+    NUX_MOUSE_PRESSED             = EVENT_MOUSE_DOWN,
+    NUX_MOUSE_RELEASED            = EVENT_MOUSE_UP,
+    NUX_MOUSE_MOVE                = EVENT_MOUSE_MOVE,
+    NUX_MOUSE_DOUBLECLICK         = EVENT_MOUSE_DOUBLECLICK,
+    NUX_MOUSE_WHEEL               = EVENT_MOUSE_WHEEL,
+    NUX_MOUSEWHEEL                = EVENT_MOUSE_WHEEL, //!< Deprecated. Use NUX_MOUSE_WHEEL.
+    NUX_KEYDOWN                   = EVENT_KEY_DOWN,
+    NUX_KEYUP                     = EVENT_KEY_UP,
+    NUX_SIZE_CONFIGURATION        = EVENT_WINDOW_SIZE_CONFIGURATION,
+    NUX_WINDOW_MAP                = EVENT_WINDOW_MAP,
+    NUX_WINDOW_UNMAP              = EVENT_WINDOW_UNMAP,
+    NUX_NC_WINDOW_CONFIGURATION   = EVENT_NC_WINDOW_CONFIGURATION,
+    NUX_WINDOW_ENTER_FOCUS        = EVENT_WINDOW_ENTER_FOCUS,
+    NUX_WINDOW_EXIT_FOCUS         = EVENT_WINDOW_EXIT_FOCUS,
+    NUX_WINDOW_DIRTY              = EVENT_WINDOW_DIRTY,
+    NUX_WINDOW_MOUSELEAVE         = EVENT_WINDOW_MOUSELEAVE,
+    NUX_DESTROY_WINDOW            = EVENT_DESTROY_WINDOW,
+    NUX_TERMINATE_APP             = EVENT_TERMINATE_APP,
+    NUX_TAKE_FOCUS                = EVENT_TAKE_FOCUS,         // ClientMessage for window with WM_TAKE_FOCUS protocol-atom set
+    NUX_DND_MOVE                  = EVENT_DND_MOVE,
+    NUX_DND_DROP                  = EVENT_DND_DROP,
+    NUX_DND_ENTER                 = EVENT_DND_ENTER,          //!< Synthetic event generated when the dnd action enters an InputArea. This is not the event sent when the dnd action enters the window.
+    NUX_DND_LEAVE                 = EVENT_DND_LEAVE,          //!< Synthetic event generated when the dnd action leaves an InputArea. This is not the event sent when the dnd action leaves the window.
+    NUX_DND_ENTER_WINDOW          = EVENT_DND_ENTER_WINDOW,   //!< Emitted when the DND action goes inside(XdndLeave) a window.
+    NUX_DND_LEAVE_WINDOW          = EVENT_DND_LEAVE_WINDOW,   //!< Emitted when the DND action goes outside(XdndEnter) a window.
+  };
+
+  typedef EventType NuxEventType; // NuxEventType is deprecated.
 
   //! Returns index of the mouse button that triggered an event.
   /*!
@@ -232,7 +280,7 @@ namespace nux
       True is the button is pressed. False otherwise.
 
       @param button_state The mouse button states of an event.
-      @param button Button to query (1 for left mouse button).
+      @param button Button to query(1 for left mouse button).
       @return True is the button is pressed. False otherwise.
   */
   bool GetButtonState(unsigned long button_state, MouseButton button);
@@ -254,9 +302,9 @@ namespace nux
   class Event
   {
   public:
-    Event ();
+    Event();
 
-    // Because an event is save in e_event instead of calling immediately the handling function,
+    // Because an event is save in event_type instead of calling immediately the handling function,
     // we must clear the previous event each time before we test for new event in Gfx_OpenGLImpl::get_event.
     void Reset();
 
@@ -266,8 +314,16 @@ namespace nux
     int GetRootY() const;
     int GetDeltaX() const;
     int GetDeltaY() const;
-    unsigned long GetKeyState()	const;
+    unsigned long GetKeyState()  const;
     unsigned long GetMouseState() const;
+
+    bool IsShiftDown() const;
+    bool IsControlDown() const;
+    bool IsCapsLockDown() const;
+    bool IsAltDown() const;
+    bool IsNumLockDown() const;
+    bool IsScrollLockDown() const;
+    bool IsSuperKeyDown() const;
 
     //! Returns index of the mouse button that triggered this event.
     /*!
@@ -284,7 +340,7 @@ namespace nux
         Returns the state of a mouse button.
         True is the button is pressed. False otherwise.
 
-        @param button_index Button index to query (1 for left mouse button).
+        @param button_index Button index to query(1 for left mouse button).
         @return True is the button is pressed. False otherwise.
     */
     bool GetButtonState(MouseButton button) const;
@@ -306,7 +362,7 @@ namespace nux
     */
     unsigned long GetKeySym() const;
     unsigned short GetKeyRepeatCount() const;
-    const TCHAR* GetText() const;
+    const char* GetText() const;
 
     //! Return the state of the Virtual key
     /*!
@@ -314,42 +370,43 @@ namespace nux
         @param VirtualKey virtual key code.
         @return 1 if the key is pressed, 0 if the key is released.
     */
-    unsigned long GetVirtualKeyState (unsigned long VirtualKey) const;
+    unsigned long GetVirtualKeyState(unsigned long VirtualKey) const;
 
     unsigned long VirtualKeycodeState[NUX_MAX_VK];
     int width, height;
     unsigned int ascii_code;
     int virtual_code;
 
-    int e_x;
-    int e_y;
-    int e_x_root;
-    int e_y_root;
-    int e_dx;
-    int e_dy;
-    int e_clicks;
-    int e_is_click;
+    int x;
+    int y;
+    int x_root;
+    int y_root;
+    int dx;
+    int dy;
+    int clicks;
+    int is_click;
 
-#if defined(NUX_OS_LINUX)
-    Time e_x11_timestamp; //! X11 timestamp
-    Window e_x11_window; //!< X11 window.
-    unsigned int e_x11_state;
+#if defined(NUX_OS_WINDOWS)
+    int win32_keycode; // Not used. Just a place holder.
+    int win32_keysym;
 #endif
 
+#if defined(NUX_OS_LINUX)
+    Time          x11_timestamp;  //!< X11 timestamp.
+    Window        x11_window;     //!< X11 window.
+    unsigned int  x11_key_state;  //!< X11 key state (xevent.xkey.state).
+    unsigned int  x11_keycode;    //!< X11 raw keycode.
+    KeySym        x11_keysym;     //!< X11 keysym.
+#endif
 
-    int e_x11_keycode;  //!< X11 raw keycode.
-    int e_keysym;       //!< Key symbol.
-    int e_wheeldelta;
+    int wheel_delta;              //!< Wheel delta.
 
-    TCHAR           e_text [NUX_EVENT_TEXT_BUFFER_SIZE];
-    unsigned long   e_key_modifiers;   // key modifiers
-    unsigned long   e_mouse_state;
-    unsigned short  e_key_repeat_count; // number of time a key is repeated;    
-    int             e_length;
-    NuxEventType    e_event;
+    char            text[NUX_EVENT_TEXT_BUFFER_SIZE];
+    unsigned long   key_modifiers;    //!< Key modifiers. A bitwise inclusive OR of values in KeyModifier.
+    unsigned long   mouse_state;
+    unsigned short  key_repeat_count; //!< Number of time a key is repeated;
+    EventType    type;
   };
-
-  typedef Event IEvent;
 };
 
 #endif // EVENTS_H

@@ -34,55 +34,54 @@ namespace nux
   class BaseKeyboardHandler;
   class TextLine;
   class Validator;
-  class TimerFunctor;
+
 
   class EditTextBox : public View
   {
   public:
-    EditTextBox (const TCHAR *Caption, NUX_FILE_LINE_PROTO);
+    EditTextBox(const char *Caption, NUX_FILE_LINE_PROTO);
     ~EditTextBox();
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     //! Return True if the the area knows what to do with the key event.
     virtual bool InspectKeyEvent(unsigned int eventType,
       unsigned int keysym,
       const char* character);
 
-    void SetText (const TCHAR &Caption);
-    void SetText (const TCHAR *Caption);
-    void SetText (const tstring &Caption);
-    void SetText (const NString &Caption);
-    const TCHAR *GetText() const;
-    t_u32 GetTextSize() const
+    void SetText(const char &Caption);
+    void SetText(const char *Caption);
+    void SetText(const tstring &Caption);
+    void SetText(const NString &Caption);
+    const char *GetText() const;
+    unsigned int GetTextSize() const
     {
-      return (t_u32) m_Text.Length();
+      return (unsigned int) m_Text.Length();
     }
 
-    void SetDoubleValue (double d);
-    void SetIntegerValue (int i);
+    void SetDoubleValue(double d);
+    void SetIntegerValue(int i);
 
     //! Return a caption string striping out the prefix and the suffix
     virtual NString GetCleanText() const;
 
-    void SetTextBackgroundColor (const Color &color);
+    void SetTextBackgroundColor(const Color &color);
     Color GetTextBackgroundColor() const;
 
-    void SetSelectedTextColor (Color color)
+    void SetSelectedTextColor(Color color)
     {
       m_SelectedTextColor = color;
     }
-    void SetSelectedTextBackgroundColor (Color color)
+    void SetSelectedTextBackgroundColor(Color color)
     {
       m_SelectedTextBackgroundColor = color;
     }
-    void SetTextBlinkColor (Color color)
+    void SetTextBlinkColor(Color color)
     {
       m_TextBlinkColor = color;
     }
-    void SetCursorColor (Color color)
+    void SetCursorColor(Color color)
     {
       m_CursorColor = color;
     }
@@ -104,9 +103,9 @@ namespace nux
       return m_CursorColor;
     }
 
-    void SetKeyEntryType (BaseKeyboardHandler::eKeyEntryType keytype)
+    void SetKeyEntryType(BaseKeyboardHandler::eKeyEntryType keytype)
     {
-      m_KeyboardHandler.SetKeyEntryType (keytype);
+      m_KeyboardHandler.SetKeyEntryType(keytype);
     }
     BaseKeyboardHandler::eKeyEntryType GetKeyEntryType()
     {
@@ -114,34 +113,34 @@ namespace nux
     }
 
     //  Receivers
-    void RecvMouseDoubleClick (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    void RecvKeyEvent (
+    void RecvMouseDoubleClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void RecvKeyEvent(
       unsigned long    eventType  ,   /*event type*/
       unsigned long    keysym     ,   /*event keysym*/
       unsigned long    state      ,   /*event state*/
-      const TCHAR*     character  ,   /*character*/
+      const char*     character  ,   /*character*/
       unsigned short   keyCount       /*key repeat count*/);
 
     void RecvStartKeyFocus();
     void RecvEndKeyFocus();
 
 
-    void SetPrefix (const tstring &p)
+    void SetPrefix(const tstring &p)
     {
       m_Prefix = p;
     };
-    void SetPrefix (const TCHAR *p)
+    void SetPrefix(const char *p)
     {
       m_Prefix = p;
     };
-    void SetPrefix (const TCHAR &p)
+    void SetPrefix(const char &p)
     {
       m_Prefix = p;
     };
-    void SetPrefix (const NString &p)
+    void SetPrefix(const NString &p)
     {
       m_Prefix = p;
     };
@@ -150,19 +149,19 @@ namespace nux
       return m_Prefix;
     };
 
-    void SetSuffix (const tstring &s)
+    void SetSuffix(const tstring &s)
     {
       m_Suffix = s;
     };
-    void SetSuffix (const TCHAR *s)
+    void SetSuffix(const char *s)
     {
       m_Suffix = s;
     };
-    void SetSuffix (const TCHAR &s)
+    void SetSuffix(const char &s)
     {
       m_Suffix = s;
     };
-    void SetSuffix (const NString &s)
+    void SetSuffix(const NString &s)
     {
       m_Suffix = s;
     };
@@ -171,7 +170,7 @@ namespace nux
       return m_Suffix;
     };
 
-    void SetValidator (const Validator *validator);
+    void SetValidator(const Validator *validator);
 
     sigc::signal< void, EditTextBox *, unsigned int > sigCharacter; // Emitted every time a character typed
     sigc::signal< void, EditTextBox * > sigEditChange; // Emitted every time a character typed
@@ -190,12 +189,12 @@ namespace nux
     bool IsEmpty();
 
   private:
-    bool ValidateKeyboardEntry (const TCHAR *text) const;
+    bool ValidateKeyboardEntry(const char *text) const;
     void EscapeKeyboardFocus();
     void EnteringKeyboardFocus();
     void QuitingKeyboardFocus();
 
-    virtual long PostLayoutManagement (long LayoutResult);
+    virtual long PostLayoutManagement(long LayoutResult);
 
     NString m_Text;
     HLayout *hlayout;
@@ -215,13 +214,13 @@ namespace nux
     NString m_Prefix;
 
     bool BlinkCursor;
-    void BlinkCursorTimerInterrupt (void *v);
-    void StopBlinkCursor (bool BlinkState = false);
-    void StartBlinkCursor (bool BlinkState = false);
+    void BlinkCursorTimerInterrupt(void *v);
+    void StopBlinkCursor(bool BlinkState = false);
+    void StartBlinkCursor(bool BlinkState = false);
     TimerFunctor *m_BlinkTimerFunctor;
     TimerHandle m_BlinkTimerHandler;
 
-    void ScrollTimerInterrupt (void *v);
+    void ScrollTimerInterrupt(void *v);
     TimerFunctor *m_ScrollTimerFunctor;
     TimerHandle m_ScrollTimerHandler;
 

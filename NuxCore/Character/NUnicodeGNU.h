@@ -300,8 +300,8 @@ namespace nux
       AnsicharToUnicharConvertion convert;
       return convert.Convert (Source);
 #else
-      t_u32 length = strlen (Source) + 1;
-      t_u32 size = length;
+      unsigned int length = strlen (Source) + 1;
+      unsigned int size = length;
       TCHAR *Dest = new TCHAR[size];
       STRNCPY_S (Dest, size, Source, length);
       return Dest;

@@ -33,16 +33,16 @@ namespace nux
 {
   class VertexBuffer: public ResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (VertexBuffer, ResourceData);
+    NUX_DECLARE_OBJECT_TYPE(VertexBuffer, ResourceData);
 
   public:
     VertexBuffer();
     virtual ~VertexBuffer();
-    VertexBuffer (int Size, int Stride);
+    VertexBuffer(int Size, int Stride);
     //! Copy constructor
-    VertexBuffer (const VertexBuffer &);
+    VertexBuffer(const VertexBuffer&);
     //! Assignment constructor
-    VertexBuffer &operator = (const VertexBuffer &);
+    VertexBuffer& operator = (const VertexBuffer&);
 
     //! Allocate space for a "num_element", each of size "size".
     /*!
@@ -63,20 +63,20 @@ namespace nux
 
   class IndexBuffer: public ResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (IndexBuffer, ResourceData);
+    NUX_DECLARE_OBJECT_TYPE(IndexBuffer, ResourceData);
 
     // IndexBuffer is very similar to MeshBuffer except that vertex indices
     // are not inter-mixed with other vertex data. So the Stride here should be 2 bytes or 4 bytes.
   public:
     IndexBuffer();
     virtual ~IndexBuffer();
-    IndexBuffer (int Size, int Stride);
+    IndexBuffer(int Size, int Stride);
     //! Copy constructor
-    IndexBuffer (const IndexBuffer &);
+    IndexBuffer(const IndexBuffer&);
     //! Assignment constructor
-    IndexBuffer &operator = (const IndexBuffer &);
+    IndexBuffer& operator = (const IndexBuffer&);
 
-    void Allocate (int Size, int Stride);
+    void Allocate(int Size, int Stride);
     int GetSize() const;
     int GetStride() const;
     int GetNumIndex() const;
@@ -91,7 +91,7 @@ namespace nux
 
   class VertexDeclaration: public ResourceData
   {
-    NUX_DECLARE_OBJECT_TYPE (NVertexDeclaration, ResourceData);
+    NUX_DECLARE_OBJECT_TYPE(NVertexDeclaration, ResourceData);
 
   public:
     VertexDeclaration();
@@ -151,62 +151,6 @@ namespace nux
     ObjectPtr<IOpenGLVertexDeclaration> _declaration;
   };
 
-//   class NMeshComponent
-//   {
-//   public:
-//     NMeshComponent();
-//     NMeshComponent (const NMeshComponent &);
-//     NMeshComponent (int StreamIndex/*ObjectPtr<BaseMeshBuffer> VtxBuffer*/, int Offset, ATTRIB_DECL_TYPE Type);
-// 
-//     NMeshComponent &operator = (const NMeshComponent &);
-// 
-//     virtual ~NMeshComponent();
-// 
-//     int GetStreamIndex() const;
-// //     int GetStride();
-//     int GetOffset();
-//   private:
-//     ATTRIB_DECL_TYPE _Type;
-//     int _StreamIndex;
-//     int _Offset;
-//   };
-// 
-//   class NMesh: public ResourceData
-//   {
-//     NUX_DECLARE_OBJECT_TYPE (NStaticMesh, ResourceData);
-// 
-//     NMesh();
-//     virtual ~NMesh();
-//   };
-// 
-//   class NStaticMesh: public NMesh
-//   {
-//     NUX_DECLARE_OBJECT_TYPE (NStaticMesh, NMesh);
-//   public:
-//     NStaticMesh(NMeshObject *Object);
-//     ~NStaticMesh();
-// 
-//     int GetNumStreams() const;
-// 
-//     std::vector<BaseMeshBuffer*> m_pVertexStreamArray; // up to 8 stream of buffers on most GPU
-//     NIndexBuffer *m_pIndex;
-//     NVertexDeclaration *m_pVertexDeclaration;
-//   };
-// 
-//   class NGLStaticMesh: public CachedResourceData
-//   {
-//     NUX_DECLARE_OBJECT_TYPE(NGLStaticMesh, CachedResourceData);
-//   public:
-//     NGLStaticMesh(NResourceSet *ResourceManager, NStaticMesh *);
-//     ~NGLStaticMesh();
-//     bool UpdateResource(ResourceData *Resource);
-// 
-//     std::vector<ObjectPtr<CachedVertexBuffer> > m_VertexBufferArray;
-//     ObjectPtr<CachedIndexBuffer> m_Index;
-//     ObjectPtr<CachedVertexDeclaration> m_VertexDeclaration;
-//   };
-
-
   class CachedMeshBuffer;
 
   class MeshBuffer: public ResourceData
@@ -218,12 +162,12 @@ namespace nux
 
     bool Update(const MeshData* mesh_data);
 
-    //ObjectPtr <CachedMeshBuffer> GetCachedMeshBuffer();
+    ObjectPtr<CachedMeshBuffer> GetCachedMeshBuffer();
 
   public:
-    VertexBuffer      *_vertex_buffer;
-    IndexBuffer       *_index_buffer;
-    VertexDeclaration *_vertex_declaration;
+    VertexBuffer*       _vertex_buffer;
+    IndexBuffer*        _index_buffer;
+    VertexDeclaration*  _vertex_declaration;
     NuxMeshPrimitiveType _mesh_primitive_type;
   };
 

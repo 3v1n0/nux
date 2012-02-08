@@ -25,12 +25,12 @@
 
 // check if a value lies within a closed interval
 #ifndef IN_BOUNDS
-#define IN_BOUNDS( x, lo, hi ) ( (x) >= (lo) && (x) <= (hi) )
+#define IN_BOUNDS( x, lo, hi ) ((x) >= (lo) && (x) <= (hi))
 #endif
 
 //check if a 2D point lies within a 2D box
 #ifndef PT_IN_BOX
-#define PT_IN_BOX( x, y, lo_x, hi_x, lo_y, hi_y ) ( IN_BOUNDS(x,lo_x,hi_x) && IN_BOUNDS(y,lo_y,hi_y) )
+#define PT_IN_BOX( x, y, lo_x, hi_x, lo_y, hi_y ) ( IN_BOUNDS(x,lo_x,hi_x) && IN_BOUNDS(y,lo_y,hi_y))
 #endif
 
 namespace nux

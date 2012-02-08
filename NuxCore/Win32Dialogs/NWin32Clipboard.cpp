@@ -50,7 +50,7 @@ namespace nux
       // The actual size of the memory allocated can be larger than the requested size.
       // To determine the actual number of bytes allocated, use the GlobalSize or LocalSize function.
       // If the amount allocated is greater than the amount requested, the process can use the entire amount.
-      t_u32 Size = ::GlobalSize (hClipboardData);
+      unsigned int Size = ::GlobalSize (hClipboardData);
 
       // Calling GlobalLock returns to me a pointer to the
       // data associated with the handle returned from

@@ -28,7 +28,7 @@ namespace nux
 
 // Virtual key codes
 // The following table shows the symbolic constant names, hexadecimal values, and mouse or keyboard equivalents for the virtual-key codes used by the system. The codes are listed in numeric order.
-// Symbolic constant name 	                                Value (hex)            Mouse or keyboard equivalents
+// Symbolic constant name 	                                Value(hex)            Mouse or keyboard equivalents
 
 
 #define NUX_VK_SPACE               0x020
@@ -135,8 +135,8 @@ namespace nux
 #define NUX_VK_LCONTROL                                 0xA2                   //   Left CONTROL key
 #define NUX_VK_RCONTROL                                 0xA3                   //   Right CONTROL key
 #define NUX_VK_CAPITAL                                  0x14                   //   CAPS LOCK key
-#define NUX_VK_LSUPER                                   0x5B                   //   Left Windows key (Microsoft Natural Keyboard)
-#define NUX_VK_RSUPER                                   0x5C                   //   Right Windows key (Microsoft Natural Keyboard)
+#define NUX_VK_LSUPER                                   0x5B                   //   Left Windows key(Microsoft Natural Keyboard)
+#define NUX_VK_RSUPER                                   0x5C                   //   Right Windows key(Microsoft Natural Keyboard)
 #define NUX_VK_LALT                                     0xA4                   //   Left MENU key
 #define NUX_VK_RALT                                     0xA5                   //   Right MENU key
 

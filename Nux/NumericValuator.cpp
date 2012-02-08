@@ -33,8 +33,8 @@ namespace nux
   const int BTN_HEIGHT = 14;
 
   NumericValuator::NumericValuator()
-    :   m_DoubleValidator (0.0, 100.0)
-    ,   m_Step (0.1f)
+    :   m_DoubleValidator(0.0, 100.0)
+    ,   m_Step(0.1f)
   {
     InitializeLayout();
     InitializeWidgets();
@@ -46,75 +46,65 @@ namespace nux
 
   void NumericValuator::InitializeWidgets()
   {
-    m_EditLine->SetValidator (&m_DoubleValidator);
-    m_EditLine->SetText (NString::Printf (TEXT ("%d"), m_DoubleValidator.GetMinimum ()));
+    m_EditLine->SetValidator(&m_DoubleValidator);
+    m_EditLine->SetText(NString::Printf("%d", m_DoubleValidator.GetMinimum()));
 
-    m_EditLine->SetMinimumSize (2 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
-    m_EditLine->SetGeometry (Geometry (0, 0, 2 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT) );
+    m_EditLine->SetMinimumSize(2 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
+    m_EditLine->SetGeometry(Geometry(0, 0, 2 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT));
 
-    m_SpinnerDownBtn->SetMinimumSize (BTN_WIDTH, BTN_HEIGHT);
-    m_SpinnerDownBtn->SetGeometry (Geometry (0, 0, BTN_WIDTH, BTN_HEIGHT) );
-    m_SpinnerUpBtn->SetMinimumSize (BTN_WIDTH, BTN_HEIGHT);
-    m_SpinnerUpBtn->SetGeometry (Geometry (0, 0, BTN_WIDTH, BTN_HEIGHT) );
+    m_SpinnerDownBtn->SetMinimumSize(BTN_WIDTH, BTN_HEIGHT);
+    m_SpinnerDownBtn->SetGeometry(Geometry(0, 0, BTN_WIDTH, BTN_HEIGHT));
+    m_SpinnerUpBtn->SetMinimumSize(BTN_WIDTH, BTN_HEIGHT);
+    m_SpinnerUpBtn->SetGeometry(Geometry(0, 0, BTN_WIDTH, BTN_HEIGHT));
 
-    hlayout->AddView (m_SpinnerDownBtn, 0);
-    hlayout->AddView (m_EditLine, 1);
-    hlayout->AddView (m_SpinnerUpBtn, 0);
-    hlayout->SetContentDistribution (eStackLeft);
+    hlayout->AddView(m_SpinnerDownBtn, 0);
+    hlayout->AddView(m_EditLine, 1);
+    hlayout->AddView(m_SpinnerUpBtn, 0);
+    hlayout->SetContentDistribution(eStackLeft);
 
-    SetCompositionLayout (hlayout);
+    SetCompositionLayout(hlayout);
   }
 
   void NumericValuator::InitializeLayout()
   {
-    hlayout = new HLayout (NUX_TRACKER_LOCATION);
+    hlayout = new HLayout(NUX_TRACKER_LOCATION);
   }
 
-  long NumericValuator::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-    ret = m_SpinnerDownBtn->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = m_SpinnerUpBtn->OnEvent (ievent, ret, ProcessEventInfo);
-    ret = m_EditLine->ProcessEvent (ievent, ret, ProcessEventInfo);
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-    return ret;
-  };
-
-  void NumericValuator::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void NumericValuator::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
 
-    GeometryPositioning gp (eHALeft, eVACenter);
-    Geometry GeoPo = ComputeGeometryPositioning (m_SpinnerUpBtn->GetGeometry(), GetTheme().GetImageGeometry (eTRIANGLE_RIGHT), gp);
-    GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eTRIANGLE_RIGHT);
+    GeometryPositioning gp(eHALeft, eVACenter);
+    Geometry GeoPo = ComputeGeometryPositioning(m_SpinnerUpBtn->GetGeometry(), GetTheme().GetImageGeometry(eTRIANGLE_RIGHT), gp);
+    GetPainter().PaintShape(graphics_engine, GeoPo, Color(0xFFFFFFFF), eTRIANGLE_RIGHT);
 
-    GeoPo = ComputeGeometryPositioning (m_SpinnerDownBtn->GetGeometry(), GetTheme().GetImageGeometry (eTRIANGLE_LEFT), gp);
-    GetPainter().PaintShape (GfxContext, GeoPo, Color (0xFFFFFFFF), eTRIANGLE_LEFT);
+    GeoPo = ComputeGeometryPositioning(m_SpinnerDownBtn->GetGeometry(), GetTheme().GetImageGeometry(eTRIANGLE_LEFT), gp);
+    GetPainter().PaintShape(graphics_engine, GeoPo, Color(0xFFFFFFFF), eTRIANGLE_LEFT);
 
     m_EditLine->QueueDraw();
   }
 
-  void NumericValuator::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void NumericValuator::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
-    m_EditLine->ProcessDraw (GfxContext, force_draw);
+    m_EditLine->ProcessDraw(graphics_engine, force_draw);
   }
 
-  void NumericValuator::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void NumericValuator::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void NumericValuator::SetValue (float value)
+  void NumericValuator::SetValue(float value)
   {
     m_fValue = value;
 
-    if (m_fValue < m_DoubleValidator.GetMinimum() )
+    if (m_fValue < m_DoubleValidator.GetMinimum())
       m_fValue = m_DoubleValidator.GetMinimum();
 
-    if (m_fValue > m_DoubleValidator.GetMaximum() )
+    if (m_fValue > m_DoubleValidator.GetMaximum())
       m_fValue = m_DoubleValidator.GetMaximum();
 
-    m_EditLine->SetText (NString::Printf ("%f", m_fValue) );
+    m_EditLine->SetText(NString::Printf("%f", m_fValue));
   }
 
   float NumericValuator::GetValue() const
@@ -122,7 +112,7 @@ namespace nux
     return m_fValue;
   }
 
-  void NumericValuator::SetStep (float f)
+  void NumericValuator::SetStep(float f)
   {
     m_Step = f;
   }
@@ -135,26 +125,26 @@ namespace nux
 
   void NumericValuator::ImplementIncrementBtn()
   {
-    SetValue (m_fValue + m_Step);
+    SetValue(m_fValue + m_Step);
     sigIncrement.emit();
-    sigValueChanged.emit (m_fValue);
+    sigValueChanged.emit(m_fValue);
 
-    if (m_fValue < m_DoubleValidator.GetMaximum() )
+    if (m_fValue < m_DoubleValidator.GetMaximum())
     {
-      m_UpTimerHandler = GetTimer().AddTimerHandler (100, m_UpTimerCallback, 0);
+      m_UpTimerHandler = GetTimer().AddTimerHandler(100, m_UpTimerCallback, 0);
       QueueDraw();
     }
   }
 
   void NumericValuator::ImplementDecrementBtn()
   {
-    SetValue (m_fValue - m_Step);
+    SetValue(m_fValue - m_Step);
     sigDecrement.emit();
-    sigValueChanged.emit (m_fValue);
+    sigValueChanged.emit(m_fValue);
 
-    if (m_fValue > m_DoubleValidator.GetMinimum() )
+    if (m_fValue > m_DoubleValidator.GetMinimum())
     {
-      m_DownTimerHandler = GetTimer().AddTimerHandler (100, m_DownTimerCallback, 0);
+      m_DownTimerHandler = GetTimer().AddTimerHandler(100, m_DownTimerCallback, 0);
       QueueDraw();
     }
   }
@@ -162,20 +152,20 @@ namespace nux
   void NumericValuator::ImplementValidateEntry()
   {
     double ret = 0;
-    ret = CharToDouble (m_EditLine->GetCleanText().GetTCharPtr() );
+    ret = CharToDouble(m_EditLine->GetCleanText().GetTCharPtr());
     {
       m_fValue = ret;
 
-      if (m_fValue < m_DoubleValidator.GetMinimum() )
+      if (m_fValue < m_DoubleValidator.GetMinimum())
       {
         m_fValue = m_DoubleValidator.GetMinimum();
-        m_EditLine->SetText (NString::Printf ("%f", m_fValue) );
+        m_EditLine->SetText(NString::Printf("%f", m_fValue));
       }
 
-      if (m_fValue > m_DoubleValidator.GetMaximum() )
+      if (m_fValue > m_DoubleValidator.GetMaximum())
       {
         m_fValue = m_DoubleValidator.GetMaximum();
-        m_EditLine->SetText (NString::Printf ("%f", m_fValue) );
+        m_EditLine->SetText(NString::Printf("%f", m_fValue));
       }
     }
 //     else

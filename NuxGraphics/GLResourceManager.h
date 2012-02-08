@@ -67,11 +67,11 @@ namespace nux
   //! Base class for all types of resources.
   class ResourceData: public Object
   {
-    NUX_DECLARE_OBJECT_TYPE (ResourceData, Object);
+    NUX_DECLARE_OBJECT_TYPE(ResourceData, Object);
   public:
-    ResourceData (NUX_FILE_LINE_PROTO);
-    virtual ~ResourceData ();
-    int GetResourceIndex () const;
+    ResourceData(NUX_FILE_LINE_PROTO);
+    virtual ~ResourceData();
+    int GetResourceIndex() const;
 
   private:
     int m_ResourceIndex;
@@ -92,10 +92,10 @@ namespace nux
     virtual void Flush() {}
 
     // FreeResource - Called when a potentially cached resource has been freed.
-    virtual void FreeResource (ResourceData *Resource) {}
+    virtual void FreeResource(ResourceData *Resource) {}
 
     // FlushResource - Removes a resource from the set.
-    virtual void FlushResource (CachedResourceData *Resource) {}
+    virtual void FlushResource(CachedResourceData *Resource) {}
 
     friend class CachedResourceData;
   };
@@ -109,10 +109,10 @@ namespace nux
 
   class CachedResourceData: public Object
   {
-    NUX_DECLARE_OBJECT_TYPE (CachedResourceData, Object);
+    NUX_DECLARE_OBJECT_TYPE(CachedResourceData, Object);
 
   public:
-    CachedResourceData (NResourceSet *InSet);
+    CachedResourceData(NResourceSet *InSet);
     virtual ~CachedResourceData();
 
     //! Returns the size in bytes of the resource.
@@ -138,7 +138,7 @@ namespace nux
     /*!
         Updates the resource.
     */
-    virtual bool UpdateResource (ResourceData *Resource) = 0;
+    virtual bool UpdateResource(ResourceData *Resource) = 0;
 
   protected:
     NResourceSet       *Set;
@@ -162,8 +162,8 @@ namespace nux
   class NResourceFactory
   {
   public:
-    NResourceFactory (NObjectType *Type)
-      :   m_ResourceType (Type)
+    NResourceFactory(NObjectType *Type)
+      :   m_ResourceType(Type)
     {}
 
     // Returns the resource type for this factory
@@ -176,12 +176,12 @@ namespace nux
       Returns true if the given ResourceData is created by this factory.
       @param  Resource - the resource in question.
     */
-    bool BuildsThisResource (ResourceData *Resource)
+    bool BuildsThisResource(ResourceData *Resource)
     {
-      return Resource->Type().IsObjectType (Type() );
+      return Resource->Type().IsObjectType(Type());
     }
 
-    virtual CachedResourceData *BuildResource (NResourceSet *ResourceManager, ResourceData *Resource)
+    virtual CachedResourceData *BuildResource(NResourceSet *ResourceManager, ResourceData *Resource)
     {
       return NULL;
     }
@@ -199,11 +199,11 @@ namespace nux
         Constructor.
         @param  type - resource class type to associate w/ this factory.
     */
-    TGLResourceFactory (NObjectType *Type)
-      :   NResourceFactory (Type)
+    TGLResourceFactory(NObjectType *Type)
+      :   NResourceFactory(Type)
     {}
 
-    virtual	~TGLResourceFactory (void)
+    virtual	~TGLResourceFactory(void)
     {}
 
     //! Create a new resource.
@@ -223,8 +223,8 @@ namespace nux
   class NResourceUpdater
   {
   public:
-    NResourceUpdater (NObjectType *Type)
-      :   m_ResourceType (Type)
+    NResourceUpdater(NObjectType *Type)
+      :   m_ResourceType(Type)
     {}
 
     //! Returns the resource type for this factory.
@@ -237,14 +237,14 @@ namespace nux
         Returns true if the given ResourceData can be updated by this factory.
         @param  Resource    The resource in question.
     */
-    bool UpdatesThisResource (ResourceData *Resource)
+    bool UpdatesThisResource(ResourceData *Resource)
     {
-      return Resource->Type().IsObjectType (Type() );
+      return Resource->Type().IsObjectType(Type());
     }
 
-    virtual bool UpdateResource (ObjectPtr< CachedResourceData > DeviceResource, ResourceData *Resource) const
+    virtual bool UpdateResource(ObjectPtr< CachedResourceData > DeviceResource, ResourceData *Resource) const
     {
-      return DeviceResource->UpdateResource (Resource);
+      return DeviceResource->UpdateResource(Resource);
     }
 
   private:
@@ -287,20 +287,20 @@ namespace nux
       ResourceMap.clear();
     }
 
-    void AddCachedResource (const IdType &Id, ObjectPtr< ResourceType > Resource)
+    void AddCachedResource(const IdType &Id, ObjectPtr< ResourceType > Resource)
     {
       typedef std::map< IdType, ObjectPtr< ResourceType > >  MapType;
-      ResourceMap.insert (typename MapType::value_type (Id, Resource) );
+      ResourceMap.insert(typename MapType::value_type(Id, Resource));
       Resource->_cached = 1;
     }
 
-    ObjectPtr<ResourceType> FindCachedResourceById (const IdType &Id)
+    ObjectPtr<ResourceType> FindCachedResourceById(const IdType &Id)
     {
       typedef std::map< IdType, ObjectPtr< ResourceType > >  MapType;
-      typename MapType::iterator it = ResourceMap.find (Id);
+      typename MapType::iterator it = ResourceMap.find(Id);
 
-      if (it != ResourceMap.end() )
-        return (*it).second;
+      if (it != ResourceMap.end())
+        return(*it).second;
 
       return ObjectPtr<ResourceType> (0);
     }
@@ -316,17 +316,17 @@ namespace nux
       typedef std::map<IdType, ObjectPtr<ResourceType> >  MapType;
       typename MapType::iterator it = ResourceMap.find(Id);
 
-      if(it != ResourceMap.end())
+      if (it != ResourceMap.end())
         CachedResource = (*it).second;
 
-      if(CachedResource.IsValid())
+      if (CachedResource.IsValid())
       {
         ResourceMap.erase(it);
         CachedResource->_cached = false;
       }
     }
 
-    virtual void FlushResource (CachedResourceData *Resource)
+    virtual void FlushResource(CachedResourceData *Resource)
     {
       typedef std::map< IdType, ObjectPtr< ResourceType > >  MapType;
       typename MapType::iterator it;
@@ -337,7 +337,7 @@ namespace nux
 
         if (CachedResource == Resource)
         {
-          ResourceMap.erase (it);
+          ResourceMap.erase(it);
           CachedResource->_cached = 0; // Make sure that if the following line deletes the resource, it doesn't try to remove itself from the TDynamicMap we're iterating over.
           return;
         }
@@ -347,13 +347,13 @@ namespace nux
     // Register CachedResourceData with the corresponding ResourceData
     virtual void InitializeResourceFactories() = 0;
 
-    std::vector<NResourceFactory *>&	GetResourceFactories (void)
+    std::vector<NResourceFactory *>&	GetResourceFactories(void)
     {
-      return (ResourceFactories);
+      return(ResourceFactories);
     }
-    std::vector<NResourceUpdater *>&	GetResourceUpdaters (void)
+    std::vector<NResourceUpdater *>&	GetResourceUpdaters(void)
     {
-      return (ResourceUpdaters);
+      return(ResourceUpdaters);
     }
   };
 
@@ -364,11 +364,11 @@ namespace nux
       :   TResourceCache<int, CachedResourceData>()
     {}
 
-    ObjectPtr< CachedResourceData > GetCachedResource (ResourceData *Source);
-    bool         IsCachedResource (ResourceData *Source);
+    ObjectPtr< CachedResourceData > GetCachedResource(ResourceData *Source);
+    bool         IsCachedResource(ResourceData *Source);
 
     virtual void InitializeResourceFactories();
-//     virtual void FreeResource (ResourceData *Resource)
+//     virtual void FreeResource(ResourceData *Resource)
 //     {
 //       FlushResourceId(Resource->GetResourceIndex());
 //     }

@@ -57,7 +57,7 @@ namespace nux
     else return false; // No match.
   }
 
-  bool Parse_tchar (const TCHAR *Stream, const TCHAR *Match, TCHAR *Value, t_int Size, t_int MaxLen)
+  bool Parse_tchar (const TCHAR *Stream, const TCHAR *Match, TCHAR *Value, int Size, int MaxLen)
   {
     const TCHAR *Found = Strfind (Stream, Match);
     const TCHAR *Start;
@@ -217,7 +217,7 @@ namespace nux
       return false;
 
     Temp += StringLength (Match);
-    Value = (t_u16) CharToInteger (Temp);
+    Value = (unsigned short) CharToInteger (Temp);
     return Value != 0 || IsDigitChar (Temp[0]);
   }
 
@@ -229,7 +229,7 @@ namespace nux
       return false;
 
     Temp += StringLength (Match);
-    Value = (t_s16) CharToInteger (Temp);
+    Value = (short) CharToInteger (Temp);
     return Value != 0 || IsDigitChar (Temp[0]);
   }
 
@@ -244,7 +244,7 @@ namespace nux
     return true;
   }
 
-  bool Parse_int (const TCHAR *Stream, const TCHAR *Match, t_int &Value)
+  bool Parse_int (const TCHAR *Stream, const TCHAR *Match, int &Value)
   {
     const TCHAR *Temp = Strfind (Stream, Match);
 
@@ -296,9 +296,9 @@ namespace nux
     }
   }
 
-  bool ParseToken (const TCHAR *Str, TCHAR *TokenBuffer, t_int BufferSize)
+  bool ParseToken (const TCHAR *Str, TCHAR *TokenBuffer, int BufferSize)
   {
-    t_int sz = 0;
+    int sz = 0;
 
     while ( (*Str == TEXT (' ') ) || (*Str == CHAR_TAB) )
     {
@@ -384,7 +384,7 @@ namespace nux
 // Get a line of Stream (everything up to, but not including, CR/LF.
 // Returns 0 if ok, nonzero if at end of stream and returned 0-length string.
 //
-  bool ParseLine (const TCHAR **Stream, TCHAR *LineBuffer, t_int BufferSize)
+  bool ParseLine (const TCHAR **Stream, TCHAR *LineBuffer, int BufferSize)
   {
     TCHAR *tmp = LineBuffer;
     *tmp = 0;

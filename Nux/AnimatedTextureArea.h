@@ -32,16 +32,15 @@ namespace nux
   class AnimatedTextureArea : public View
   {
   public:
-    AnimatedTextureArea (NUX_FILE_LINE_PROTO);
+    AnimatedTextureArea(NUX_FILE_LINE_PROTO);
     ~AnimatedTextureArea();
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
-    void SetTexture (TextureFrameAnimation *Texture);
-    void RecvMouseDown (int x, int y, long button_flags, long key_flags);
-    void RecvMouseDrag (int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void SetTexture(TextureFrameAnimation *Texture);
+    void RecvMouseDown(int x, int y, long button_flags, long key_flags);
+    void RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
     sigc::signal<void, int, int> sigMouseDown;
     sigc::signal<void, int, int> sigMouseDrag;
@@ -51,7 +50,7 @@ namespace nux
 
 
   private:
-    void TimerNextFrame (void *v);
+    void TimerNextFrame(void *v);
     TimerFunctor *m_TimerFunctor;
     TimerHandle m_TimerHandler;
 

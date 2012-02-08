@@ -45,7 +45,7 @@ namespace nux
       {
         UpperCaseString = _tcsdup (Source); // Duplicate string. Allocated with malloc.
 
-        t_size i = 0;
+        size_t i = 0;
 
         while (UpperCaseString[i])
         {
@@ -93,7 +93,7 @@ namespace nux
       {
         LowerCaseString = _tcsdup (Source); // Duplicate string. Allocated with malloc.
 
-        t_size i = 0;
+        size_t i = 0;
 
         while (LowerCaseString[i])
         {
@@ -173,7 +173,7 @@ namespace nux
   template<typename T>
   struct LexicographicCompare
   {
-    t_u32 operator() (const T &lhs, const T &rhs)
+    unsigned int operator() (const T &lhs, const T &rhs)
     {
       if (lhs < rhs) return -1;
 
@@ -191,7 +191,7 @@ namespace nux
   struct LexicographicCompareWithConversion
   {
     LexicographicCompareWithConversion() {}
-    t_u32 operator() (const T &lhs, const T &rhs)
+    unsigned int operator() (const T &lhs, const T &rhs)
     {
       T newlhs = m_ConversionFunctor (lhs);
       T newrhs = m_ConversionFunctor (rhs);
@@ -213,11 +213,11 @@ namespace nux
       @return 0, -1, +1 according to the comparison functor
   */
   template<typename T, typename U>
-  static t_s32 StringCompareWithOperator (const T *lhs, const T *rhs, U functor)
+  static int StringCompareWithOperator (const T *lhs, const T *rhs, U functor)
   {
     nuxAssert (lhs);
     nuxAssert (rhs);
-    t_s32 result = 0;
+    int result = 0;
 
     while ( (*lhs || *rhs) && !result)
     {
@@ -236,12 +236,12 @@ namespace nux
       @return 0, -1, +1 according to the comparison functor
   */
   template<typename T, typename U>
-  static t_s32 StringCompareWithOperator (const T *lhs, const T *rhs, t_u32 numCharToCompare, U functor)
+  static int StringCompareWithOperator (const T *lhs, const T *rhs, unsigned int numCharToCompare, U functor)
   {
     nuxAssert (lhs);
     nuxAssert (rhs);
 
-    t_s32 result = 0;
+    int result = 0;
 
     while ( (*lhs || *rhs) && !result && numCharToCompare)
     {
@@ -259,7 +259,7 @@ namespace nux
       @return 0 if equal, -1 if(lhs<rhs), +1 if(lhs>rhs)
   */
   template<typename T>
-  static t_s32 StringCompare (const T *lhs, const T *rhs)
+  static int StringCompare (const T *lhs, const T *rhs)
   {
     return StringCompareWithOperator (lhs, rhs, LexicographicCompare<T>() );
   }
@@ -271,7 +271,7 @@ namespace nux
       @return 0 if equal, -1 if(lhs<rhs), +1 if(lhs>rhs)
   */
   template<class T>
-  static t_s32 StringCompare (const T *lhs, const T *rhs, t_u32 len)
+  static int StringCompare (const T *lhs, const T *rhs, unsigned int len)
   {
     return StringCompareWithOperator (lhs, rhs, len, LexicographicCompare<T>() );
   }
@@ -284,7 +284,7 @@ namespace nux
       @return 0 if equal, -1 if(lhs<rhs), +1 if(lhs>rhs)
   */
   template<typename T>
-  static t_s32 StringCompareCaseInsensitive (const T *lhs, const T *rhs)
+  static int StringCompareCaseInsensitive (const T *lhs, const T *rhs)
   {
     return StringCompareWithOperator (lhs, rhs, LexicographicCompareWithConversion<T, ToLowerCaseFunctor<T> >() );
   }
@@ -297,7 +297,7 @@ namespace nux
   @return The number of char copied
   */
   template<typename T>
-  static t_u32 StringCopy (T *dest, const T *src)
+  static unsigned int StringCopy (T *dest, const T *src)
   {
     nuxAssert (src);
     nuxAssert (dest);
@@ -310,7 +310,7 @@ namespace nux
     }
 
     *dest = 0;
-    return (t_u32) (src - origin);
+    return (unsigned int) (src - origin);
   }
 
   /*!
@@ -320,7 +320,7 @@ namespace nux
   @return The number of char copied
   */
   template<typename T>
-  static t_u32 StringCopy (T *dest, t_u32 bufferSize, const T *src, t_u32 lengthToCopy = 0xFFFFFFFF)
+  static unsigned int StringCopy (T *dest, unsigned int bufferSize, const T *src, unsigned int lengthToCopy = 0xFFFFFFFF)
   {
     nuxAssert (src);
     nuxAssert (dest);
@@ -338,7 +338,7 @@ namespace nux
     }
 
     // Terminate string with Null char
-    t_u32 NumCharCopied = (t_u32) (src - origin);
+    unsigned int NumCharCopied = (unsigned int) (src - origin);
 
     if (dest < MaxNullCharPosition)
     {
@@ -407,7 +407,7 @@ namespace nux
 
 //! Returns a TCHAR length.
   template<class T>
-  static t_size StringLength (const T *s)
+  static size_t StringLength (const T *s)
   {
     nuxAssert (s);
     const T *end = s;
@@ -417,11 +417,11 @@ namespace nux
       ++end;
     }
 
-    return (t_size) (end - s);
+    return (size_t) (end - s);
   }
 
   template<class T>
-  t_size ToCharString (char *buffer, t_size bufferlen, const char *format, T value)
+  size_t ToCharString (char *buffer, size_t bufferlen, const char *format, T value)
   {
     nuxAssert (bufferlen);
     nuxAssert (buffer);
@@ -438,7 +438,7 @@ namespace nux
   }
 
   template<class T>
-  t_s32 ToTCharString (TCHAR *buffer, t_size bufferlen, const TCHAR *format, T value)
+  int ToTCharString (TCHAR *buffer, size_t bufferlen, const TCHAR *format, T value)
   {
     nuxAssert (bufferlen);
     nuxAssert (buffer);
@@ -454,30 +454,30 @@ namespace nux
     return res;
   }
 
-  t_size ValueToLiteralString (char *buffer, t_size len, t_u16     value);
-  t_size ValueToLiteralString (char *buffer, t_size len, t_s16     value);
-  t_size ValueToLiteralString (char *buffer, t_size len, t_u32     value);
-  t_size ValueToLiteralString (char *buffer, t_size len, t_s32     value);
-  t_size ValueToLiteralString (char *buffer, t_size len, t_ulong   value);
-  t_size ValueToLiteralString (char *buffer, t_size len, t_long    value);
-  t_size ValueToLiteralString (char *buffer, t_size len, t_u64     value);
-  t_size ValueToLiteralString (char *buffer, t_size len, t_s64     value);
-  t_size ValueToLiteralString (char *buffer, t_size len, t_float   value);
-  t_size ValueToLiteralString (char *buffer, t_size len, t_double  value);
-  t_size ValueToLiteralString (char *buffer, t_size len, t_u8      value);
-  t_size ValueToLiteralString (char *buffer, t_size len, t_s8      value);
-  t_size ValueToLiteralString (char *buffer, t_size len, t_schar   value);
+  size_t ValueToLiteralString (char *buffer, size_t len, unsigned short     value);
+  size_t ValueToLiteralString (char *buffer, size_t len, short     value);
+  size_t ValueToLiteralString (char *buffer, size_t len, unsigned int     value);
+  size_t ValueToLiteralString (char *buffer, size_t len, int     value);
+  size_t ValueToLiteralString (char *buffer, size_t len, unsigned long   value);
+  size_t ValueToLiteralString (char *buffer, size_t len, long    value);
+  size_t ValueToLiteralString (char *buffer, size_t len, unsigned long long     value);
+  size_t ValueToLiteralString (char *buffer, size_t len, long long     value);
+  size_t ValueToLiteralString (char *buffer, size_t len, float   value);
+  size_t ValueToLiteralString (char *buffer, size_t len, double  value);
+  size_t ValueToLiteralString (char *buffer, size_t len, t_u8      value);
+  size_t ValueToLiteralString (char *buffer, size_t len, t_s8      value);
+  size_t ValueToLiteralString (char *buffer, size_t len, t_schar   value);
 
   template<class T>
-  bool FromCharString (const char *buffer, t_size bufferlen, const char *format, T &value)
+  bool FromCharString (const char *buffer, size_t bufferlen, const char *format, T &value)
   {
     nuxAssert (buffer);
     nuxAssert (bufferlen);
 
 #if defined(NUX_OS_WINDOWS)
-    t_size res = _snscanf_s (buffer, bufferlen, format, &value);
+    size_t res = _snscanf_s (buffer, bufferlen, format, &value);
 #elif defined(NUX_OS_LINUX)
-    t_size res = sscanf (buffer, format, &value);
+    size_t res = sscanf (buffer, format, &value);
 #endif
 
     nuxAssert (res != 0);
@@ -485,43 +485,43 @@ namespace nux
   }
 
   template<class T>
-  bool FromTCharString (const TCHAR *buffer, t_size bufferlen, const TCHAR *format, T &value)
+  bool FromTCharString (const TCHAR *buffer, size_t bufferlen, const TCHAR *format, T &value)
   {
     nuxAssert (buffer);
     nuxAssert (bufferlen);
 
 #if defined(NUX_OS_WINDOWS)
-    t_size res = _snwscanf_s (buffer, bufferlen, format, &value);
+    size_t res = _snwscanf_s (buffer, bufferlen, format, &value);
 #elif defined(NUX_OS_LINUX)
-    t_size res = swscanf (buffer, format, &value);
+    size_t res = swscanf (buffer, format, &value);
 #endif
 
     nuxAssert (res != 0);
     return res != 0;
   }
 
-  bool ValueFromLiteralString (const char *buffer, t_size len, t_u16 &value);
-  bool ValueFromLiteralString (const char *buffer, t_size len, t_s16 &value);
-  bool ValueFromLiteralString (const char *buffer, t_size len, t_u32 &value);
-  bool ValueFromLiteralString (const char *buffer, t_size len, t_s32 &value);
-  bool ValueFromLiteralString (const char *buffer, t_size len, t_ulong &value);
-  bool ValueFromLiteralString (const char *buffer, t_size len, t_long &value);
-  bool ValueFromLiteralString (const char *buffer, t_size len, t_u64 &value);
-  bool ValueFromLiteralString (const char *buffer, t_size len, t_s64 &value);
-  bool ValueFromLiteralString (const char *buffer, t_size len, t_float &value);
-  bool ValueFromLiteralString (const char *buffer, t_size len, t_double &value);
-  bool ValueFromLiteralString (const char *buffer, t_size len, t_u8 &value);
-  bool ValueFromLiteralString (const char *buffer, t_size len, t_s8 &value);
-  bool ValueFromLiteralString (const char *buffer, t_size len, t_schar &value);
+  bool ValueFromLiteralString (const char *buffer, size_t len, unsigned short &value);
+  bool ValueFromLiteralString (const char *buffer, size_t len, short &value);
+  bool ValueFromLiteralString (const char *buffer, size_t len, unsigned int &value);
+  bool ValueFromLiteralString (const char *buffer, size_t len, int &value);
+  bool ValueFromLiteralString (const char *buffer, size_t len, unsigned long &value);
+  bool ValueFromLiteralString (const char *buffer, size_t len, long &value);
+  bool ValueFromLiteralString (const char *buffer, size_t len, unsigned long long &value);
+  bool ValueFromLiteralString (const char *buffer, size_t len, long long &value);
+  bool ValueFromLiteralString (const char *buffer, size_t len, float &value);
+  bool ValueFromLiteralString (const char *buffer, size_t len, double &value);
+  bool ValueFromLiteralString (const char *buffer, size_t len, t_u8 &value);
+  bool ValueFromLiteralString (const char *buffer, size_t len, t_s8 &value);
+  bool ValueFromLiteralString (const char *buffer, size_t len, t_schar &value);
 
 
   /*-----------------------------------------------------------------------------
   String functions.
   -----------------------------------------------------------------------------*/
 // Copy Src into Dest. Check length of Dest. Dest is NULL terminated.
-  TCHAR *Strncpy ( TCHAR *Dest, t_size Size, const TCHAR *Src, t_size Max);
+  TCHAR *Strncpy ( TCHAR *Dest, size_t Size, const TCHAR *Src, size_t Max);
   /** Concatenate a string with length checking. */
-  TCHAR *Strncat ( TCHAR *Dest, t_size Size, const TCHAR *Src, t_size Max);
+  TCHAR *Strncat ( TCHAR *Dest, size_t Size, const TCHAR *Src, size_t Max);
 
 // Search a string inside a string. Return a pointer to the beginning of the searched string if it is found.
 // Else, return NULL;
@@ -531,49 +531,49 @@ namespace nux
 
 #ifdef WIN32_SECURE
   //! Copy a string. Return 0 if successful
-  inline int inlTCharStringCopy ( TCHAR *Dest, t_size numberOfElements, const TCHAR *Src )
+  inline int inlTCharStringCopy ( TCHAR *Dest, size_t numberOfElements, const TCHAR *Src )
   {
     return _tcscpy_s ( Dest, numberOfElements, Src );
   }
-  inline int inlCharStringCopy ( char *Dest, t_size numberOfElements, const char *Src )
+  inline int inlCharStringCopy ( char *Dest, size_t numberOfElements, const char *Src )
   {
     return strcpy_s ( Dest, numberOfElements, Src );
   }
 
   //! Append a string. Return 0 if successful.
-  inline int inlTCharStringConcat ( TCHAR *Dest, t_size numberOfElements, const TCHAR *Src )
+  inline int inlTCharStringConcat ( TCHAR *Dest, size_t numberOfElements, const TCHAR *Src )
   {
     return _tcscat_s ( Dest, numberOfElements, Src );
   }
-  inline int inlCharStringConcat ( char *Dest, t_size numberOfElements, const char *Src )
+  inline int inlCharStringConcat ( char *Dest, size_t numberOfElements, const char *Src )
   {
     return strcat_s ( Dest, numberOfElements, Src );
   }
   //! Convert a string to uppercase.  Returns a pointer to the altered string. Return 0 if not successful.
-  inline int inlStrupr (TCHAR *String, t_size numberOfElements)
+  inline int inlStrupr (TCHAR *String, size_t numberOfElements)
   {
     return _tcsupr_s ( String, numberOfElements );
   }
 #else
   //! Copy a string.
-  inline TCHAR *inlStringCopy (TCHAR *Dest, t_size numberOfElements, const TCHAR *Src)
+  inline TCHAR *inlStringCopy (TCHAR *Dest, size_t numberOfElements, const TCHAR *Src)
   {
     return _tcscpy ( Dest, Src );
   }
   //! Append a string.
-  inline TCHAR *inlTCharStringConcat (TCHAR *Dest, t_size numberOfElements, const TCHAR *Src)
+  inline TCHAR *inlTCharStringConcat (TCHAR *Dest, size_t numberOfElements, const TCHAR *Src)
   {
     return _tcscat ( Dest, Src );
   }
   //! Convert a string to uppercase. Returns a pointer to the altered string. Return 0 if not successful.
-  inline TCHAR *inlStrupr (TCHAR *String, t_size numberOfElements)
+  inline TCHAR *inlStrupr (TCHAR *String, size_t numberOfElements)
   {
     nuxAssert (String);
 
     if (String == 0)
       return NULL;
 
-    t_size i = 0;
+    size_t i = 0;
 
     while (String[i])
     {
@@ -617,11 +617,11 @@ namespace nux
   {
     return _tcstoul ( Start, End, Base );
   }
-  inline int TCharStringNCompare ( const TCHAR *A, const TCHAR *B, t_size Count )
+  inline int TCharStringNCompare ( const TCHAR *A, const TCHAR *B, size_t Count )
   {
     return _tcsncmp ( A, B, Count );
   }
-  inline int TCharStringNICompare ( const TCHAR *A, const TCHAR *B, t_size Count )
+  inline int TCharStringNICompare ( const TCHAR *A, const TCHAR *B, size_t Count )
   {
     return _tcsncmp ( (TCHAR *) TCharToLowerCase (A), (TCHAR *) TCharToLowerCase (B), Count );
   }
@@ -665,30 +665,30 @@ namespace nux
     //const TCHAR* GetTChar() const;
     const TCHAR *GetTCharPtr() const;
 
-    t_size Length() const;
-    t_size Size() const;
+    size_t Length() const;
+    size_t Size() const;
     void Clear();
     bool IsEmpty() const;
 
-    void Erase (t_size Pos, t_size count);
-    NString &Insert (t_size Pos, const TCHAR *Ptr);
-    NString &Insert (t_size Pos, const TCHAR *Ptr, t_size Count);
-    NString &Insert (t_size Pos, const tstring &Str);
-    NString &Insert (t_size Pos, const tstring &Str, t_size Offset, t_size Count);
-    NString &Insert (t_size Pos, const NString &Str);
-    NString &Insert (t_size Pos, const NString &Str, t_size Offset, t_size Count);
-    NString &Insert (t_size Pos, int Count, const TCHAR &Ch);
+    void Erase (size_t Pos, size_t count);
+    NString &Insert (size_t Pos, const TCHAR *Ptr);
+    NString &Insert (size_t Pos, const TCHAR *Ptr, size_t Count);
+    NString &Insert (size_t Pos, const tstring &Str);
+    NString &Insert (size_t Pos, const tstring &Str, size_t Offset, size_t Count);
+    NString &Insert (size_t Pos, const NString &Str);
+    NString &Insert (size_t Pos, const NString &Str, size_t Offset, size_t Count);
+    NString &Insert (size_t Pos, int Count, const TCHAR &Ch);
 
-    const TCHAR &operator[] (t_size ChPos) const;
-    TCHAR &operator[] (t_size ChPos);
+    const TCHAR &operator[] (size_t ChPos) const;
+    TCHAR &operator[] (size_t ChPos);
 
-    NString &Replace (t_size Pos1, t_size Num1, const TCHAR *Ptr);
-    NString &Replace (t_size Pos1, t_size Num1, const TCHAR *Ptr, t_size Num2);
-    NString &Replace (t_size Pos1, t_size Num1, const tstring &Str);
-    NString &Replace (t_size Pos1, t_size Num1, const tstring &Str, t_size Pos2, t_size Num2);
-    NString &Replace (t_size Pos1, t_size Num1, const NString &Str);
-    NString &Replace (t_size Pos1, t_size Num1, const NString &Str, t_size Pos2, t_size Num2);
-    NString &Replace (t_size Pos1, t_size Num1, t_size Count, TCHAR Ch);
+    NString &Replace (size_t Pos1, size_t Num1, const TCHAR *Ptr);
+    NString &Replace (size_t Pos1, size_t Num1, const TCHAR *Ptr, size_t Num2);
+    NString &Replace (size_t Pos1, size_t Num1, const tstring &Str);
+    NString &Replace (size_t Pos1, size_t Num1, const tstring &Str, size_t Pos2, size_t Num2);
+    NString &Replace (size_t Pos1, size_t Num1, const NString &Str);
+    NString &Replace (size_t Pos1, size_t Num1, const NString &Str, size_t Pos2, size_t Num2);
+    NString &Replace (size_t Pos1, size_t Num1, size_t Count, TCHAR Ch);
 
     //! Reverse the string
     void Reverse();
@@ -697,54 +697,54 @@ namespace nux
     NString &SearchAndReplace (TCHAR ChOut, TCHAR ChIn);
 
     //! Return The last position of the substring suffix or -1 if it is not found.
-    t_size FindLastOccurence (const TCHAR &suffix) const;
+    size_t FindLastOccurence (const TCHAR &suffix) const;
     //! Return The last position of the substring suffix or -1 if it is not found.
-    t_size FindLastOccurence (const TCHAR *suffix) const;
+    size_t FindLastOccurence (const TCHAR *suffix) const;
     //! Return The last position of the substring suffix or -1 if it is not found.
-    t_size FindLastOccurence (const tstring &suffix) const;
+    size_t FindLastOccurence (const tstring &suffix) const;
     //! Return The last position of the substring suffix or -1 if it is not found.
-    t_size FindLastOccurence (const NString &suffix) const;
+    size_t FindLastOccurence (const NString &suffix) const;
 
     //! Return the position of the first occurrence of the substring suffix or -1 if it is not found.
-    t_size FindFirstOccurence (const TCHAR &suffix) const;
+    size_t FindFirstOccurence (const TCHAR &suffix) const;
     //! Return the position of the first occurrence of the substring suffix or -1 if it is not found.
-    t_size FindFirstOccurence (const TCHAR *suffix) const;
+    size_t FindFirstOccurence (const TCHAR *suffix) const;
     //! Return the position of the first occurrence of the substring suffix or -1 if it is not found.
-    t_size FindFirstOccurence (const tstring &suffix) const;
+    size_t FindFirstOccurence (const tstring &suffix) const;
     //! Return the position of the first occurrence of the substring suffix or -1 if it is not found.
-    t_size FindFirstOccurence (const NString &suffix) const;
+    size_t FindFirstOccurence (const NString &suffix) const;
 
     //! Return the position of the first occurrence of the substring suffix or -1 if it is not found.
-    t_size FindNextOccurence (const TCHAR &suffix, t_size start = 0) const;
+    size_t FindNextOccurence (const TCHAR &suffix, size_t start = 0) const;
     //! Return the position of the first occurrence of the substring suffix or -1 if it is not found.
-    t_size FindNextOccurence (const TCHAR *suffix, t_size start = 0) const;
+    size_t FindNextOccurence (const TCHAR *suffix, size_t start = 0) const;
     //! Return the position of the first occurrence of the substring suffix or -1 if it is not found.
-    t_size FindNextOccurence (const tstring &suffix, t_size start = 0) const;
+    size_t FindNextOccurence (const tstring &suffix, size_t start = 0) const;
     //! Return the position of the first occurrence of the substring suffix or -1 if it is not found.
-    t_size FindNextOccurence (const NString &suffix, t_size start = 0) const;
+    size_t FindNextOccurence (const NString &suffix, size_t start = 0) const;
 
     //! Return the position of the first occurrence of the substring suffix or -1 if it is not found.
-    t_size FindFirstOccurenceOf (const TCHAR &str) const;
+    size_t FindFirstOccurenceOf (const TCHAR &str) const;
     //! Return the position of the first occurrence of the substring suffix or -1 if it is not found.
-    t_size FindFirstOccurenceOf (const TCHAR *str) const;
+    size_t FindFirstOccurenceOf (const TCHAR *str) const;
     //! Return the position of the first occurrence of the substring suffix or -1 if it is not found.
-    t_size FindFirstOccurenceOf (const tstring &str) const;
+    size_t FindFirstOccurenceOf (const tstring &str) const;
     //! Return the position of the first occurrence of the substring suffix or -1 if it is not found.
-    t_size FindFirstOccurenceOf (const NString &str) const;
+    size_t FindFirstOccurenceOf (const NString &str) const;
 
     //! Return the position of the last occurrence of the substring suffix or -1 if it is not found.
-    t_size FindLastOccurenceOf (const TCHAR &str) const;
+    size_t FindLastOccurenceOf (const TCHAR &str) const;
     //! Return the position of the last occurrence of the substring suffix or -1 if it is not found.
-    t_size FindLastOccurenceOf (const TCHAR *str) const;
+    size_t FindLastOccurenceOf (const TCHAR *str) const;
     //! Return the position of the last occurrence of the substring suffix or -1 if it is not found.
-    t_size FindLastOccurenceOf (const tstring &str) const;
+    size_t FindLastOccurenceOf (const tstring &str) const;
     //! Return the position of the last occurrence of the substring suffix or -1 if it is not found.
-    t_size FindLastOccurenceOf (const NString &str) const;
+    size_t FindLastOccurenceOf (const NString &str) const;
 
     //! Searches this string for the first match of a substring.
-    t_size Find (NString str, int start = 0);
+    size_t Find (NString str, int start = 0);
     //! Searches this string for the first match of a character.
-    t_size Find (TCHAR c, int start = 0);
+    size_t Find (TCHAR c, int start = 0);
 
     //! Return True if the string is terminated by the character 'suffix'
     bool IsSuffix (const TCHAR &suffix);
@@ -783,19 +783,19 @@ namespace nux
     void RemovePrefix (const NString &prefix);
 
     //! Return an NString of the first count characters.
-    NString GetSubString (t_size count) const;
+    NString GetSubString (size_t count) const;
     //! Return an NString of the first count characters starting at position start.
-    NString GetSubString (t_size start, t_size count) const;
+    NString GetSubString (size_t start, size_t count) const;
 
 
     //! Extracts the first N characters..
-    NString Mid (t_size count) const;
+    NString Mid (size_t count) const;
     //! Extracts the middle part of a string.
-    NString Mid (t_size start, t_size count) const;
+    NString Mid (size_t start, size_t count) const;
     //! Extracts the left part of a string. At most N characters are extracted.
-    NString Left (t_size N) const;
+    NString Left (size_t N) const;
     //! Extracts the right part of a string. At most N characters are extracted.
-    NString Right (t_size N) const;
+    NString Right (size_t N) const;
 
     //! Trims all leading and trailing whitespace characters from the string.
     NString Trim() const;

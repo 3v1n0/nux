@@ -29,31 +29,31 @@ namespace nux
   class IOpenGLBaseTexture;
   class IOpenGLRectangleTexture: public IOpenGLBaseTexture
   {
-    NUX_DECLARE_OBJECT_TYPE (IOpenGLRectangleTexture, IOpenGLBaseTexture);
+    NUX_DECLARE_OBJECT_TYPE(IOpenGLRectangleTexture, IOpenGLBaseTexture);
 
   public:
     virtual ~IOpenGLRectangleTexture();
 
-    void GetSurfaceLevel (int Level, ObjectPtr<IOpenGLSurface>& surface);
-    ObjectPtr<IOpenGLSurface> GetSurfaceLevel (int Level);
+    void GetSurfaceLevel(int Level, ObjectPtr<IOpenGLSurface>& surface);
+    ObjectPtr<IOpenGLSurface> GetSurfaceLevel(int Level);
 
-    int LockRect (
+    int LockRect(
       int Level,
       SURFACE_LOCKED_RECT *pLockedRect,
       const SURFACE_RECT *pRect);
 
-    int UnlockRect (
+    int UnlockRect(
       int Level
     );
-    unsigned int EnableGammaCorrection (bool b);
+    unsigned int EnableGammaCorrection(bool b);
 
-    int GetLevelDesc (
+    int GetLevelDesc(
       int Level,
       SURFACE_DESC *pDesc
     )
     {
-      nuxAssert (Level >= 0);
-      nuxAssert (Level < _NumMipLevel);
+      nuxAssert(Level >= 0);
+      nuxAssert(Level < _NumMipLevel);
 
       if ((Level < 0) || (Level > _NumMipLevel))
       {
@@ -73,8 +73,19 @@ namespace nux
       return OGL_OK;;
     }
 
-    //! Return the a pointer to the texture mip level data.
-    virtual void* GetSurfaceData (int level, int &width, int &height, int &format);
+    //! Return a pointer to a mipmap level data.
+    /*!
+        Return a pointer to a mipmap level data. The data is in the RGBA format.\n
+        Inherited from IOpenGLBaseTexture.
+
+        @param level The requested texture mipmap level data.
+        @param width Returns the width in pixel of the image data.
+        @param height Returns the height in pixel of the image data.
+        @param stride Returns the row stride of the image data.
+
+        @return A pointer to RGBA data. The caller must dlete the data by calling delete [].
+    */
+    unsigned char* GetSurfaceData(int level, int &width, int &height, int &stride);
 
   private:
 
@@ -82,7 +93,7 @@ namespace nux
     // render target texture and surface; Only GpuDevice uses it in its constructor.
     // Do not use it otherwise!!!
 
-    IOpenGLRectangleTexture (
+    IOpenGLRectangleTexture(
       unsigned int Width
       , unsigned int Height
       , unsigned int Levels

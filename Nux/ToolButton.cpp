@@ -31,125 +31,117 @@
 namespace nux
 {
 
-  ToolButton::ToolButton (const TCHAR *BitmapFilename, NUX_FILE_LINE_DECL)
-    :   View (NUX_FILE_LINE_PARAM)
-    ,   m_ActionItem (0)
+  ToolButton::ToolButton(const char *BitmapFilename, NUX_FILE_LINE_DECL)
+    :   View(NUX_FILE_LINE_PARAM)
+    ,   m_ActionItem(0)
   {
     m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
 
     if (BitmapFilename)
-      m_Texture->Update (BitmapFilename);
+      m_Texture->Update(BitmapFilename);
 
     // Set Original State
-    SetBaseString (TEXT ("ToolButton") );
+    SetBaseString("ToolButton");
 
     // Set Signals
-    mouse_click.connect (sigc::mem_fun (this, &ToolButton::EmitClick) );
-    mouse_double_click.connect (sigc::mem_fun (this, &ToolButton::RecvMouseDoubleClick) );
-    mouse_down.connect (sigc::mem_fun (this, &ToolButton::RecvMouseDown) );
-    mouse_up.connect (sigc::mem_fun (this, &ToolButton::RecvMouseUp) );
-    mouse_enter.connect (sigc::mem_fun (this, &ToolButton::RecvMouseEnter) );
-    mouse_leave.connect (sigc::mem_fun (this, &ToolButton::RecvMouseLeave) );
+    mouse_click.connect(sigc::mem_fun(this, &ToolButton::EmitClick));
+    mouse_double_click.connect(sigc::mem_fun(this, &ToolButton::RecvMouseDoubleClick));
+    mouse_down.connect(sigc::mem_fun(this, &ToolButton::RecvMouseDown));
+    mouse_up.connect(sigc::mem_fun(this, &ToolButton::RecvMouseUp));
+    mouse_enter.connect(sigc::mem_fun(this, &ToolButton::RecvMouseEnter));
+    mouse_leave.connect(sigc::mem_fun(this, &ToolButton::RecvMouseLeave));
 
-    SetMinimumSize (28, 28);
-    SetGeometry (Geometry (0, 0, 24, 24) );
+    SetMinimumSize(28, 28);
+    SetGeometry(Geometry(0, 0, 24, 24));
   }
 
   ToolButton::~ToolButton()
   {
-    m_Texture->UnReference ();
+    m_Texture->UnReference();
   }
 
-  long ToolButton::ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
-  {
-    long ret = TraverseInfo;
-
-    ret = PostProcessEvent2 (ievent, ret, ProcessEventInfo);
-    return ret;
-  }
-
-  void ToolButton::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void ToolButton::Draw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     Geometry base = GetGeometry();
 
-    if (IsMouseInside() && !IsMouseOwner() )
+    if (IsMouseInside() && !IsMouseOwner())
     {
-      GetPainter().PaintBackground (GfxContext, base);
-      GetPainter().PaintShape (GfxContext, base, Color (COLOR_BACKGROUND_SECONDARY),  eSHAPE_CORNER_ROUND2);
+      GetPainter().PaintBackground(graphics_engine, base);
+      GetPainter().PaintShape(graphics_engine, base, Color(COLOR_BACKGROUND_SECONDARY),  eSHAPE_CORNER_ROUND2);
     }
-    else if (IsMouseOwner() )
+    else if (IsMouseOwner())
     {
-      GetPainter().PaintBackground (GfxContext, base);
-      GetPainter().PaintShape (GfxContext, base, Color (0xFF2A2A2A),  eSHAPE_CORNER_ROUND2);
+      GetPainter().PaintBackground(graphics_engine, base);
+      GetPainter().PaintShape(graphics_engine, base, Color(0xFF2A2A2A),  eSHAPE_CORNER_ROUND2);
     }
     else
     {
-      GetPainter().PaintBackground (GfxContext, base);
-      GetPainter().PaintShape (GfxContext, base, Color (COLOR_BACKGROUND_PRIMARY),  eSHAPE_CORNER_ROUND2);
+      GetPainter().PaintBackground(graphics_engine, base);
+      GetPainter().PaintShape(graphics_engine, base, Color(COLOR_BACKGROUND_PRIMARY),  eSHAPE_CORNER_ROUND2);
     }
 
     if (m_Texture)
-      GetPainter().Draw2DTextureAligned (GfxContext, m_Texture, base, TextureAlignmentStyle (eTACenter, eTACenter) );
+      GetPainter().Draw2DTextureAligned(graphics_engine, m_Texture, base, TextureAlignmentStyle(eTACenter, eTACenter));
   }
 
-  void ToolButton::DrawContent (GraphicsEngine &GfxContext, bool force_draw)
+  void ToolButton::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void ToolButton::PostDraw (GraphicsEngine &GfxContext, bool force_draw)
+  void ToolButton::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
 
   }
 
-  void ToolButton::SetState (bool b)
+  void ToolButton::SetState(bool b)
   {
 
   }
 
-  void ToolButton::SetBitmap (const BaseTexture* Texture)
+  void ToolButton::SetBitmap(const BaseTexture* Texture)
   {
-    nuxAssert (Texture);
-    NUX_RETURN_IF_NULL (Texture);
+    nuxAssert(Texture);
+    NUX_RETURN_IF_NULL(Texture);
 
     if (m_Texture)
-      m_Texture->UnReference ();
+      m_Texture->UnReference();
     m_Texture = Texture->Clone();
   }
 
-  void ToolButton::EmitClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ToolButton::EmitClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     sigClick.emit();
-    if(m_ActionItem)
+    if (m_ActionItem)
       m_ActionItem->Trigger();
   }
 
-  void ToolButton::RecvMouseDoubleClick (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ToolButton::RecvMouseDoubleClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     QueueDraw();
   }
 
-  void ToolButton::RecvMouseDown (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ToolButton::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     QueueDraw();
   }
 
-  void ToolButton::RecvMouseUp (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ToolButton::RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     QueueDraw();
   }
 
-  void ToolButton::RecvMouseEnter (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ToolButton::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     QueueDraw();
   }
 
-  void ToolButton::RecvMouseLeave (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ToolButton::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     QueueDraw();
   }
 
-  void ToolButton::SetAction (ActionItem *action)
+  void ToolButton::SetAction(ActionItem *action)
   {
     m_ActionItem = action;
   }

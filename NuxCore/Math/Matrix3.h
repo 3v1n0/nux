@@ -43,7 +43,7 @@ namespace nux
       T a20, T a21, T a22);
 
     Matrix3x3<T>&   operator = (const Matrix3x3<T>&);
-    t_bool          operator == (const Matrix3x3<T>&);
+    bool          operator == (const Matrix3x3<T>&);
     Matrix3x3<T>    operator * (const Matrix3x3<T>&) const;
     Matrix3x3<T>    operator + (const Matrix3x3<T>&) const;
     Matrix3x3<T>    operator - (const Matrix3x3<T>&) const;
@@ -195,7 +195,7 @@ namespace nux
   }
 
   template <typename T>
-  t_bool Matrix3x3<T>::operator == (const Matrix3x3<T>& M)
+  bool Matrix3x3<T>::operator == (const Matrix3x3<T>& M)
   {
     for (int i = 0; i < 3; i++)
       for (int j = 0; j < 3; j++)

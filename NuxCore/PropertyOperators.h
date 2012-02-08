@@ -35,7 +35,7 @@ namespace nux {
  * It adds boolean operators for properties.  The challenge has been making
  * operators that work for properties and only properties.  Since we don't
  * want to add explicit methods for each type of property we have, we have the
- * default template arguement VT which gets the ValueType from the Property
+ * default template argument VT which gets the ValueType from the Property
  * definition.  Since things like std::_list_iterator<foo> doesn't have a
  * ValueType typedef, these functions are discarded from the possible choices,
  * but since the Property templates do, they are valid, and get chosen.

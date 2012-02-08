@@ -94,8 +94,8 @@ void RenderTexturePowerOfTwo ()
   m_GraphicsContext->SetContext(0, 0, w, h);
   m_GraphicsContext->Push2DWindow(w, h);
 
-  nux::IEvent event;
-  memset(&event, 0, sizeof(nux::IEvent));
+  nux::Event event;
+  memset(&event, 0, sizeof(nux::Event));
 
   
   {
@@ -103,7 +103,7 @@ void RenderTexturePowerOfTwo ()
     CHECKGL( glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT) );
 
     m_GLWindow->GetSystemEvent(&event);
-    if(event.e_event == nux::NUX_SIZE_CONFIGURATION)
+    if(event.type == nux::NUX_SIZE_CONFIGURATION)
     {
       m_GraphicsContext->DisableAllTextureMode(0);
       m_GraphicsContext->DisableAllTextureMode(1);

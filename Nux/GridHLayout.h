@@ -39,14 +39,19 @@ namespace nux
     //  12  13  ..  ..  ..  ..
     // This is a left to right fill, going down.
 
-    NUX_DECLARE_OBJECT_TYPE (GridHLayout, Layout);
+    NUX_DECLARE_OBJECT_TYPE(GridHLayout, Layout);
   public:
-    GridHLayout (NUX_FILE_LINE_PROTO);
-    ~GridHLayout ();
 
-    virtual long ComputeLayout2 ();
+    enum FillingOrder
+    {
+      FILL_HORIZONTAL,
+      FILL_VERTICAL
+    };
 
-    virtual void GetCompositeList (std::list<Area *> *ViewList);
+    GridHLayout(NUX_FILE_LINE_PROTO);
+    ~GridHLayout();
+
+    virtual void GetCompositeList(std::list<Area *> *ViewList);
     
     //! Control the visibility of elements on the bottom edge.
     /*!
@@ -54,7 +59,7 @@ namespace nux
         @param partial_visibility If True, the layout will position elements at its bottom edge
         even if they are partially visible.
     */
-    void EnablePartialVisibility (bool partial_visibility);
+    void EnablePartialVisibility(bool partial_visibility);
 
     //! Set the size of the grid element.
     /*!
@@ -62,36 +67,36 @@ namespace nux
         @param width  Width of elements.
         @param height Height of elements.
     */
-    void SetChildrenSize (int width, int height);
+    void SetChildrenSize(int width, int height);
 
     //! Get the size of the grid element.
     /*!
         @return Size of the grid elements.
     */
-    Size GetChildrenSize () const;
+    Size GetChildrenSize() const;
 
 
     //! Force the grid elements size.
     /*!
         Force the grid elements size to be the one provided by SetChildrenSize.
     */
-    void ForceChildrenSize (bool force);
+    void ForceChildrenSize(bool force);
 
     //! Get the number of columns in the grid.
-    int GetNumColumn () const;
+    int GetNumColumn() const;
 
     //! Get the number of rows in the grid.
-    int GetNumRow () const;
+    int GetNumRow() const;
 
     //! Make the grid width match the size of its content.
     /*!
         @param match_content If True, force the height of the layout to match the height of the content. This can also be achieve 
         if the stretch factor of this layout is set to 0;
     */
-    void SetHeightMatchContent (bool match_content);
+    void MatchContentSize(bool match_content);
 
     //! Return True if the grid width match the size of its content.
-    bool GetHeightMatchContent () const;
+    bool IsMatchingContentSize() const;
 
     //! Draw Element
     /*!
@@ -102,23 +107,36 @@ namespace nux
       @param ProcessEventInfo
       @return The state of the Process Event.
     */
-    virtual void ProcessDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw);
+
+    void SetSpaceBetweenChildren(int horizontal_space, int vertical_space);
+
+    void SetFillingOrder(FillingOrder order);
+    FillingOrder GetFillingOrder() const;
 
   protected:
-    int GetChildPos (Area *child);
-    Area* GetChildAtPosition (int pos);
-    virtual long DoFocusUp  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusDown (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusLeft  (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual long DoFocusRight (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    
+    long ComputeLayoutRowOrder();
+    long ComputeLayoutColumnOrder();
+
+    virtual long ComputeContentSize();
+
+    int GetChildPos(Area *child);
+    Area* GetChildAtPosition(int pos);
+
+    Area* KeyNavIterationRowOrder(KeyNavDirection direction);
+    Area* KeyNavIterationColumnOrder(KeyNavDirection direction);
     virtual Area* KeyNavIteration(KeyNavDirection direction);
+
+    FillingOrder filling_order_;
+    int m_v_in_margin;
+    int m_h_in_margin;
+
   private:
     Size _children_size;
     bool _dynamic_column;
     bool _force_children_size;
     bool _partial_visibility;
-    bool _height_match_content; //!< If True, for the height of the layout to match the height of the content.
+    bool match_content_size_; //!< If True, for the height of the layout to match the height of the content.
 
     int _num_row;
     int _num_column;
@@ -129,7 +147,7 @@ namespace nux
 //         @param offset_space     The space at the left of all elements.
 //         @param element_margin   The margin between elements.
 //     */
-//     void ComputeStacking (t_s32 remaining_width, t_s32 &offset_space, t_s32 &element_margin);
+//     void ComputeStacking(int remaining_width, int &offset_space, int &element_margin);
   };
 }
 

@@ -23,9 +23,9 @@
 #ifndef GRAPHICSDISPLAY_H
 #define GRAPHICSDISPLAY_H
 
-#if defined (NUX_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
   #include "GraphicsDisplayWin.h"
-#elif defined (NUX_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
   #include "GraphicsDisplayX11.h"
 #else
   #error "GraphicsDisplay.h" is not implemented for this platform.

@@ -26,36 +26,38 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLRectangleTexture);
+  NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLRectangleTexture);
 
-  IOpenGLRectangleTexture::IOpenGLRectangleTexture (
+  IOpenGLRectangleTexture::IOpenGLRectangleTexture(
     unsigned int Width
     , unsigned int Height
     , unsigned int Levels
     , BitmapFormat PixelFormat, bool Dummy, NUX_FILE_LINE_DECL)
-    : IOpenGLBaseTexture (RTTEXTURERECTANGLE, Width, Height, 1, Levels, PixelFormat, NUX_FILE_LINE_PARAM)
+    : IOpenGLBaseTexture(RTTEXTURERECTANGLE, Width, Height, 1, Levels, PixelFormat, NUX_FILE_LINE_PARAM)
   {
+#ifndef NUX_OPENGLES_20
     if (Dummy == false)
     {
-      glGenTextures (1, &_OpenGLID);
-      CHECKGL ( glBindTexture (GL_TEXTURE_RECTANGLE_ARB, _OpenGLID) );
+      glGenTextures(1, &_OpenGLID);
+      CHECKGL(glBindTexture(GL_TEXTURE_RECTANGLE_ARB, _OpenGLID));
     }
 
     //_SurfaceArray.Empty(Levels);
     for (unsigned int l = 0; l < Levels; l++)
     {
-      IOpenGLSurface *surface = new IOpenGLSurface (this, _OpenGLID, GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_RECTANGLE_ARB, l, 0, NUX_TRACKER_LOCATION);
+      IOpenGLSurface *surface = new IOpenGLSurface(this, _OpenGLID, GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_RECTANGLE_ARB, l, 0, NUX_FILE_LINE_PARAM);
 
       if (Dummy == false) surface->InitializeLevel();
 
-      _SurfaceArray.push_back (ObjectPtr<IOpenGLSurface> (surface));
-      surface->UnReference ();
+      _SurfaceArray.push_back(ObjectPtr<IOpenGLSurface> (surface));
+      surface->UnReference();
     }
 
-    SetFiltering (GL_NEAREST, GL_NEAREST);
-    SetWrap (GL_CLAMP, GL_CLAMP, GL_CLAMP);
+    SetFiltering(GL_NEAREST, GL_NEAREST);
+    SetWrap(GL_CLAMP, GL_CLAMP, GL_CLAMP);
     SetRenderStates();
-    GRunTimeStats.Register (this);
+    GRunTimeStats.Register(this);
+#endif
   }
 
   IOpenGLRectangleTexture::~IOpenGLRectangleTexture()
@@ -66,12 +68,12 @@ namespace nux
     }
 
     _SurfaceArray.clear();
-    CHECKGL ( glDeleteTextures (1, &_OpenGLID) );
+    CHECKGL(glDeleteTextures(1, &_OpenGLID));
     _OpenGLID = 0;
-    GRunTimeStats.UnRegister (this);
+    GRunTimeStats.UnRegister(this);
   }
 
-  ObjectPtr<IOpenGLSurface> IOpenGLRectangleTexture::GetSurfaceLevel (int Level)
+  ObjectPtr<IOpenGLSurface> IOpenGLRectangleTexture::GetSurfaceLevel(int Level)
   {
     if (Level < _NumMipLevel)
     {
@@ -79,31 +81,31 @@ namespace nux
     }
     else
     {
-      nuxAssertMsg (0, TEXT ("[IOpenGLRectangleTexture::GetSurfaceLevel] Invalid surface level") );
+      nuxAssertMsg(0, "[IOpenGLRectangleTexture::GetSurfaceLevel] Invalid surface level");
     }
 
     return ObjectPtr<IOpenGLSurface> (0);
   }
 
-  void IOpenGLRectangleTexture::GetSurfaceLevel (int Level, ObjectPtr<IOpenGLSurface>& surface)
+  void IOpenGLRectangleTexture::GetSurfaceLevel(int Level, ObjectPtr<IOpenGLSurface>& surface)
   {
-    surface = GetSurfaceLevel (Level);
+    surface = GetSurfaceLevel(Level);
   }
 
-  int IOpenGLRectangleTexture::LockRect (
+  int IOpenGLRectangleTexture::LockRect(
     int Level,
     SURFACE_LOCKED_RECT *pLockedRect,
     const SURFACE_RECT *pRect)
   {
-    nuxAssertMsg (pLockedRect, TEXT ("[IOpenGLRectangleTexture::LockRect] Invalid parameter 'pLockedRect'.") );
-    nuxAssertMsg (Level >= 0, TEXT ("[IOpenGLRectangleTexture::LockRect] Invalid mipmap level.") );
-    nuxAssertMsg (Level < _NumMipLevel, TEXT ("[IOpenGLRectangleTexture::LockRect] Invalid mipmap level.") );
+    nuxAssertMsg(pLockedRect, "[IOpenGLRectangleTexture::LockRect] Invalid parameter 'pLockedRect'.");
+    nuxAssertMsg(Level >= 0, "[IOpenGLRectangleTexture::LockRect] Invalid mipmap level.");
+    nuxAssertMsg(Level < _NumMipLevel, "[IOpenGLRectangleTexture::LockRect] Invalid mipmap level.");
 
 
     if (Level < _NumMipLevel)
     {
       ObjectPtr<IOpenGLSurface> pSurfaceLevel = _SurfaceArray[Level];
-      return pSurfaceLevel->LockRect (pLockedRect, pRect);
+      return pSurfaceLevel->LockRect(pLockedRect, pRect);
     }
     else
     {
@@ -115,12 +117,12 @@ namespace nux
     return OGL_OK;
   }
 
-  int IOpenGLRectangleTexture::UnlockRect (
+  int IOpenGLRectangleTexture::UnlockRect(
     int Level
   )
   {
-    nuxAssertMsg (Level >= 0, TEXT ("[IOpenGLRectangleTexture::LockRect] Invalid mipmap level.") );
-    nuxAssertMsg (Level < _NumMipLevel, TEXT ("[IOpenGLRectangleTexture::LockRect] Invalid mipmap level.") );
+    nuxAssertMsg(Level >= 0, "[IOpenGLRectangleTexture::LockRect] Invalid mipmap level.");
+    nuxAssertMsg(Level < _NumMipLevel, "[IOpenGLRectangleTexture::LockRect] Invalid mipmap level.");
 
     if (Level < _NumMipLevel)
     {
@@ -135,28 +137,32 @@ namespace nux
     return OGL_OK;
   }
 
-  unsigned int IOpenGLRectangleTexture::EnableGammaCorrection (bool b)
+  unsigned int IOpenGLRectangleTexture::EnableGammaCorrection(bool b)
   {
-    nuxAssert (_OpenGLID);
+    nuxAssert(_OpenGLID);
     return OGL_OK;
   }
 
-  void* IOpenGLRectangleTexture::GetSurfaceData (int level, int &width, int &height, int &format)
+  unsigned char* IOpenGLRectangleTexture::GetSurfaceData(int level, int &width, int &height, int &stride)
   {
-    nuxAssertMsg (level >= 0, TEXT ("[IOpenGLRectangleTexture::LockRect] Invalid mipmap level.") );
-    nuxAssertMsg (level < _NumMipLevel, TEXT ("[IOpenGLRectangleTexture::LockRect] Invalid mipmap level.") );
+    width = 0;
+    height = 0;
+    stride = 0;
 
-    if (level < _NumMipLevel)
+    if (level < 0)
     {
-      ObjectPtr<IOpenGLSurface> pSurfaceLevel = _SurfaceArray [level];
-      return pSurfaceLevel->GetSurfaceData (width, height, format);
+      nuxAssertMsg(level >= 0, "[IOpenGLRectangleTexture::GetSurfaceData] Invalid mipmap level.");
+      return NULL;
     }
-    else
+
+    if (level >= _NumMipLevel)
     {
-      width = 0;
-      height = 0;
-      format = BITFMT_UNKNOWN;
-      return 0;
+      nuxAssertMsg(level < _NumMipLevel, "[IOpenGLRectangleTexture::GetSurfaceData] Invalid mipmap level.");
+      return NULL;
     }
+
+    ObjectPtr<IOpenGLSurface> pSurfaceLevel = _SurfaceArray[level];
+    return pSurfaceLevel->GetSurfaceData(width, height, stride);
   }
 }
+

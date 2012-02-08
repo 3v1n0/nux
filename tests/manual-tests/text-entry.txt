@@ -1,0 +1,24 @@
+Text Entry - Mouse cursor
+-----------
+This test makes sure that the mouse pointer changes when it is inside a 
+text entry area.
+
+#. Make sure you're running Unity 3d;
+#. Press Super
+#. Move the cursor on dash text entry.
+
+Outcome
+  The caret mouse cursor should be shown.
+  
+
+Text Entry - Drag
+-----------
+This test makes sure that the drag inside the dash works well.
+
+#. Make sure you're running Unity 3d;
+#. Press Super
+#. Type something inside dash search bar.
+#. Use mouse drag to select part of the test.
+
+Outcome
+  It should work.

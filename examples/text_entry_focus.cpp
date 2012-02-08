@@ -36,6 +36,7 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
 
     text_entry_0->SetMaximumWidth(300);
     text_entry_0->SetMinimumHeight (20);
+    text_entry_0->SetCompletion("test completion");
 
     text_entry_1->SetMaximumWidth(300);
     text_entry_1->SetMinimumHeight (20);
@@ -50,7 +51,6 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
     MainVLayout->SetVerticalInternalMargin(10);
 
     MainVLayout->SetContentDistribution(nux::eStackCenter);
-		MainVLayout->SetFocused (true);    
     nux::GetWindowThread ()->SetLayout(MainVLayout);
     nux::ColorLayer background(nux::Color(0xFF4D4D4D));
     static_cast<nux::WindowThread*>(thread)->SetWindowBackgroundPaintLayer(&background);

@@ -31,32 +31,26 @@ namespace nux
 
   class SystemThread: public AbstractThread
   {
-    NUX_DECLARE_OBJECT_TYPE (SystemThread, AbstractThread);
+    NUX_DECLARE_OBJECT_TYPE(SystemThread, AbstractThread);
   public:
-    SystemThread (AbstractThread *Parent = 0);
+    SystemThread(AbstractThread *Parent = 0);
     ~SystemThread();
 
-    virtual ThreadState Start (void *arg);
+    virtual ThreadState Start(void *arg);
 
   protected:
-    virtual unsigned int Run (void *arg);
+    virtual int Run(void *arg);
 
-    virtual ThreadState StartChildThread (NThread *thread, bool Modal);
-    virtual void AddChildThread (NThread *);
-    virtual void RemoveChildThread (NThread *);
-    virtual void ChildHasFinished (NThread *app);
-    virtual void TerminateAllChildThread();
+    virtual ThreadState StartChildThread(AbstractThread *thread, bool Modal);
+    virtual void AddChildThread(AbstractThread *);
+    virtual void RemoveChildThread(AbstractThread *);
+    virtual void ChildHasFinished(AbstractThread *app);
+    virtual void TerminateChildThreads();
 
 //    std::list<NThread*> m_ChildThread;
 //    SystemThread* m_Parent;
 //    ThreadUserInitFunc m_UserInitFunc;
 //    ThreadUserExitFunc m_UserExitFunc;
-
-    /*!
-    This pointer maybe set by the user in ThreadInitFunc and reused in ThreadExitFunc
-    */
-    void *m_InitData;
-    void *m_ExitData;
 
     /*!
         Info: Constructor-like function.
@@ -82,7 +76,7 @@ namespace nux
         This pointer maybe set by the user in ThreadInitFunc and reused in ThreadExitFunc
     */
   private:
-    SystemThread (const SystemThread &);
+    SystemThread(const SystemThread &);
     // Does not make sense for a singleton. This is a self assignment.
     SystemThread &operator= (const SystemThread &);
     // Declare operator adress-of as private
@@ -90,7 +84,7 @@ namespace nux
 
     NString m_ThreadName;
 
-    friend SystemThread *CreateSystemThread (AbstractThread *Parent, ThreadUserInitFunc UserInitFunc, void *InitData);
+    friend SystemThread *CreateSystemThread(AbstractThread *Parent, ThreadUserInitFunc UserInitFunc, void *InitData);
     
     friend class WindowThread;
   };

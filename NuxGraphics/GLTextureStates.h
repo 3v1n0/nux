@@ -66,34 +66,34 @@ namespace nux
   class GLTextureStates
   {
   public:
-    GLTextureStates (GLuint Type = GL_TEXTURE_2D);
+    GLTextureStates(GLuint Type = GL_TEXTURE_2D);
     ~GLTextureStates();
 
     void ResetDefault();
     void ResetStateChangeToDefault();
     void SetRenderStates();
 
-    void SetType (GLuint Type);
+    void SetType(GLuint Type);
 
-    void SetFiltering (
+    void SetFiltering(
       unsigned int MIN = GL_NEAREST,
       unsigned int MAG = GL_NEAREST/*,
         unsigned int MIP = GL_NEAREST*/);
 
-    void SetWrap (
+    void SetWrap(
       unsigned int U = GL_REPEAT,
       unsigned int V = GL_REPEAT,
       unsigned int W = GL_REPEAT);
 
-    void SetLOD (
+    void SetLOD(
       float MinLod = -1000.0f,
       float MaxLod = +1000.0f);
 
-    void SetMipLevel (
+    void SetMipLevel(
       unsigned int MinMip = 0,
       unsigned int MaxMip = 1000);
 
-    void SetBorderColor (
+    void SetBorderColor(
       float R,
       float G,
       float B,
@@ -131,17 +131,17 @@ namespace nux
 //         (MIN == GL_LINEAR_MIPMAP_NEAREST) ||
 //         (MIN == GL_NEAREST_MIPMAP_LINEAR) ||
 //         (MIN == GL_LINEAR_MIPMAP_LINEAR),
-//         TEXT("Error[GLTextureStates::SetFiltering]: Invalid Min. Filter State"));
+//         "Error[GLTextureStates::SetFiltering]: Invalid Min. Filter State");
 //
 //     nuxAssertMsg(
 //         (MAG == GL_LINEAR) ||
 //         (MAG == GL_NEAREST),
-//         TEXT("Error[GLTextureStates::SetFiltering]: Invalid Mag. Filter State"));
+//         "Error[GLTextureStates::SetFiltering]: Invalid Mag. Filter State");
 //
 // //    nuxAssertMsg(
 // //        (MIP == GL_LINEAR) ||
 // //        (MIP == GL_NEAREST),
-// //        TEXT("Error[GLTextureStates::SetFiltering]: Invalid Mipmap Filter State"));
+// //        "Error[GLTextureStates::SetFiltering]: Invalid Mipmap Filter State");
 //
 //     SET_TS_VALUE(m_TextureStateChanges[GFXTS_MINFILTER], MIN);
 //     SET_TS_VALUE(m_TextureStateChanges[GFXTS_MAGFILTER], MAG);
@@ -157,17 +157,17 @@ namespace nux
 //         (U == GL_CLAMP) ||
 //         (U == GL_CLAMP_TO_EDGE) ||
 //         (U == GL_REPEAT),
-//         TEXT("Error[GLTextureStates::SetWrap]: Invalid U Wrap State"));
+//         "Error[GLTextureStates::SetWrap]: Invalid U Wrap State");
 //     nuxAssertMsg(
 //         (V == GL_CLAMP) ||
 //         (V == GL_CLAMP_TO_EDGE) ||
 //         (V == GL_REPEAT),
-//         TEXT("Error[GLTextureStates::SetWrap]: Invalid V Wrap State"));
+//         "Error[GLTextureStates::SetWrap]: Invalid V Wrap State");
 //     nuxAssertMsg(
 //         (W == GL_CLAMP) ||
 //         (W == GL_CLAMP_TO_EDGE) ||
 //         (W == GL_REPEAT),
-//         TEXT("Error[GLTextureStates::SetWrap]: Invalid W Wrap State"));
+//         "Error[GLTextureStates::SetWrap]: Invalid W Wrap State");
 //
 //     SET_TS_VALUE(m_TextureStateChanges[GFXTS_ADDRESSU], U);
 //     SET_TS_VALUE(m_TextureStateChanges[GFXTS_ADDRESSV], V);

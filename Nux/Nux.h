@@ -71,78 +71,171 @@
 
 namespace nux
 {
-
   class WindowThread;
   class SystemThread;
-//class BasePainter;
   class WindowCompositor;
   class TimerHandler;
-//class Theme;
 
-  void NuxInitialize (const TCHAR *CommandLine);
+  void NuxInitialize(const char *CommandLine);
 
-//! Create a main graphics thread. This thread has a window and no parent window (The Parent parameter should always be null).
-  WindowThread *CreateGUIThread (const TCHAR *WindowTitle,
-                                 t_u32 width,
-                                 t_u32 height,
-                                 WindowThread *Parent = NULL,
-                                 ThreadUserInitFunc UserInitFunc = NULL,
-                                 void *InitData = NULL);
+  //! Create a Nux window.
+  /*!
+      Create a Nux window. The window 
+
+      @param window_title The window title.
+      @param width The window width.
+      @param height The window height.
+      @param parent The window height parent. Should be NULL.
+      @param user_init_func Initialization function to be called before starting the window loop.
+      @param data Parameter to the initialization function.
+  */
+  WindowThread *CreateGUIThread(const char *window_title,
+                                int width,
+                                int height,
+                                WindowThread *parent = NULL,
+                                ThreadUserInitFunc user_init_func = NULL,
+                                void *data = NULL);
+
+  //! Create the only Nux window for the current system thread.
+  /*!
+      There can be only one NuxWindow per system thread. This function creates the only Nux window allowed in the current thread. \n
+      The first time this function is called in the current system thread, it returns a valid pointer
+      to a NuxWindow object. The next time it is called, the system detects that a NuxWindow has already
+      been created in the thread and it returns NULL. \n
+      When CreateNuxWindow successfully returns, the NuxWindow internals (GraphicsDisplay, Compositor, Painter, TimerManager)
+      have been initialized. Calling nux::GetThreadNuxWindow() returns a pointer to the NuxWindow that has been successfully created
+      in the current thread. \n
+      To start the main loop of a NuxWindow created with CreateNuxWindow, call NuxWindow::Run(); \n
+      The modal parameter specifies if the window is blocking while it is active. This is valid only if the parent thread is a WindowThread.
+
+      @param window_title The window title.
+      @param width The window width.
+      @param height The window height.
+      @param window_border_style The window border style.
+      @param parent The window parent.
+      @param modal Modality of the window.
+      @param user_init_func Initialization function to be called before starting the window loop.
+      @param data Parameter to the initialization function.
+
+      @return A valid pointer to a NuxWindow if the window has been successfully created. NULL otherwise.
+  */
+  WindowThread *CreateNuxWindow(const char *window_title,
+    int width,
+    int height,
+    WindowStyle window_border_style = WINDOWSTYLE_NORMAL,
+    AbstractThread *parent = NULL,
+    bool modal = false,
+    ThreadUserInitFunc user_init_func = NULL,
+    void *data = NULL);
+
+  //! Create a Nux window to be run in a new thread.
+  /*!
+      Create a Nux window that will run in a new thread. 
+      Unlike CreateNuxWindow, CreateNuxWindowNewThread should always successfully return a valid NuxWindow pointer.
+      However, the internal objects of the NuxWindow (GraphicsDisplay, Compositor, Painter, TimerManager) have not been initialized yet.
+      So, calling NuxWindow::GetWindowCompositor(), NuxWindow::GetGraphicsDisplay() will fail. \n
+      To start the main loop of a NuxWindow created with CreateNuxWindow, call NuxWindow::Run(); \n
+      The modal parameter specifies if the window is blocking its parent window while it is active. This is valid only if the parent thread is a WindowThread.
+
+
+      @param window_title The window title.
+      @param width The window width.
+      @param height The window height.
+      @param window_border_style The window border style.
+      @param parent The window parent.
+      @param modal Modality of the window.
+      @param user_init_func Initialization function to be called before starting the window loop.
+      @param data Parameter to the initialization function.
+
+      @return A valid pointer to a NuxWindow if the window has been successfully created. NULL otherwise.
+  */
+  WindowThread *CreateNuxWindowNewThread(const char *window_title,
+    int width,
+    int height,
+    WindowStyle window_border_style = WINDOWSTYLE_NORMAL,
+    AbstractThread *parent = NULL,
+    bool modal = false,
+    ThreadUserInitFunc user_init_func = NULL,
+    void *data = NULL);
 
 #if defined(NUX_OS_WINDOWS)
   //! Create a main graphics thread. This thread has a window and no parent window.
-  WindowThread *CreateFromForeignWindow (HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext,
-                                         ThreadUserInitFunc UserInitFunc,
-                                         void *InitData);
+  WindowThread *CreateFromForeignWindow(HWND WindowHandle, HDC WindowDCHandle,
+                                        HGLRC OpenGLRenderingContext,
+                                        ThreadUserInitFunc user_init_func,
+                                        void *data);
 #elif defined(NUX_OS_LINUX)
   //! Create a main graphics thread. This thread has a window and no parent window.
+#ifdef NUX_OPENGLES_20
+  WindowThread *CreateFromForeignWindow (Window X11Window, EGLContext OpenGLContext,
+                                         ThreadUserInitFunc user_init_func,
+                                         void *data);
+#else
   WindowThread *CreateFromForeignWindow (Window X11Window, GLXContext OpenGLContext,
-                                         ThreadUserInitFunc UserInitFunc,
-                                         void *InitData);
+                                         ThreadUserInitFunc user_init_func,
+                                         void *data);
+#endif
 #endif
 
-// Create a window thread that is a child of the Parent. This thread has a window.
-  WindowThread *CreateWindowThread (WindowStyle WndStyle,
-                                    const TCHAR *WindowTitle,
-                                    t_u32 width,
-                                    t_u32 height,
-                                    WindowThread *Parent,
-                                    ThreadUserInitFunc UserInitFunc = NULL,
-                                    void *InitData = NULL);
+  // Create a window thread that is a child of the Parent. This thread has a window.
+  /*!
+      @param window_style The window style.
+      @param window_title The window title.
+      @param width The window width.
+      @param height The window height.
+      @param parent The window parent.
+      @param user_init_func Initialization function to be called before starting the window loop.
+      @param data Parameter to the initialization function.
+  */
+  WindowThread *CreateWindowThread(WindowStyle window_style,
+                                   const char *window_title,
+                                   int width,
+                                   int height,
+                                   WindowThread *parent,
+                                   ThreadUserInitFunc user_init_func = NULL,
+                                   void *data = NULL);
 
-// Create a Modal window thread that is a child of the Parent. This thread has a window.
-  WindowThread *CreateModalWindowThread (WindowStyle WndStyle,
-                                         const TCHAR *WindowTitle,
-                                         t_u32 width,
-                                         t_u32 height,
-                                         WindowThread *Parent,
-                                         ThreadUserInitFunc UserInitFunc = NULL,
-                                         void *InitData = NULL);
+  // Create a Modal window thread that is a child of the Parent. This thread has a window.
+  /*!
+      @param window_style The window style.
+      @param window_title The window title.
+      @param width The window width.
+      @param height The window height.
+      @param parent The window height parent. Should be NULL.
+      @param user_init_func Initialization function to be called before starting the window loop.
+      @param data Parameter to the initialization function.
+  */
+  WindowThread *CreateModalWindowThread(WindowStyle window_style,
+                                        const char *window_title,
+                                        int width,
+                                        int height,
+                                        WindowThread *parent,
+                                        ThreadUserInitFunc user_init_func = NULL,
+                                        void *data = NULL);
 
 // Create a simple thread
-  SystemThread *CreateSystemThread (AbstractThread *Parent = NULL,
-                                    ThreadUserInitFunc UserInitFunc = NULL, void *InitData = NULL);
+  SystemThread *CreateSystemThread(AbstractThread *parent = NULL,
+                                   ThreadUserInitFunc user_init_func = NULL,
+                                   void *data = NULL);
 
-  ThreadState GetThreadState (unsigned int ThreadID);
+/*  ThreadState GetThreadState(unsigned int ThreadID);*/
 
 
   ObjectPtr<FontTexture> GetSysFont();
   ObjectPtr<FontTexture> GetSysBoldFont();
 
-  NThread           *GetThreadApplication (); // deprecated
-  WindowThread      *GetGraphicsThread (); // deprecated
-  WindowThread      *GetWindowThread ();
-  GraphicsDisplay   &GetWindow ();
-  GraphicsEngine    &GetGraphicsEngine ();
-  WindowCompositor  &GetWindowCompositor ();
-  BasePainter       &GetPainter ();
-  UXTheme           &GetTheme ();
-  TimerHandler      &GetTimer ();
+  WindowThread      *GetWindowThread();
+  WindowThread      *GetThreadNuxWindow();
 
-#define  gPainter nux::GetPainter () // deprecated
-#define  gTheme   nux::GetTheme () // deprecated
+  WindowCompositor  &GetWindowCompositor();
+  BasePainter       &GetPainter();
+  UXTheme           &GetTheme();
+  TimerHandler      &GetTimer();
 
-  inlDeclareThreadLocalStorage (NThread *, 0, ThreadLocal_InalogicAppImpl);
+#define  gPainter nux::GetPainter() // deprecated
+#define  gTheme   nux::GetTheme()   // deprecated
+
+  inlDeclareThreadLocalStorage(NThread *, 0, ThreadLocal_InalogicAppImpl);
 
 }
 

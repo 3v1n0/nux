@@ -27,9 +27,9 @@
 namespace nux
 {
 
-  t_int Factorial (t_int n)
+  int Factorial (int n)
   {
-    t_int i = 1;
+    int i = 1;
 
     while (0 < n)
     {
@@ -40,7 +40,7 @@ namespace nux
     return i;
   }
 
-  t_double BinomialCoefficient (t_int n, t_int k)
+  double BinomialCoefficient (int n, int k)
   {
     if (n < 0)
       NUX_BREAK_ASM_INT3;
@@ -48,21 +48,21 @@ namespace nux
     if (k < 0 || k > n)
       return 0.0;
 
-    t_double d = (t_double) Factorial (n) / (t_double) (Factorial (n - k) * Factorial (k) );
+    double d = (double) Factorial (n) / (double) (Factorial (n - k) * Factorial (k) );
     return d;
   }
 
-  t_double Power (t_double x, t_double y)
+  double Power (double x, double y)
   {
     return std::pow (x, y);
   }
 
-  t_double Log2 (t_double d)
+  double Log2 (double d)
   {
     return std::log (d) / std::log (2.0);
   }
 
-  t_double Floor (t_double d)
+  double Floor (double d)
   {
     return std::floor (d);
   }

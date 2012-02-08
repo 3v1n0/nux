@@ -26,53 +26,55 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLVolumeTexture);
+  NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLVolumeTexture);
 
-  IOpenGLVolumeTexture::IOpenGLVolumeTexture (
+  IOpenGLVolumeTexture::IOpenGLVolumeTexture(
     int Width
     , int Height
     , int Depth
     , int Levels
     , BitmapFormat PixelFormat)
-    : IOpenGLBaseTexture (RTVOLUMETEXTURE, Width, Height, Depth, Levels, PixelFormat)
+    : IOpenGLBaseTexture(RTVOLUMETEXTURE, Width, Height, Depth, Levels, PixelFormat)
   {
-    CHECKGL ( glGenTextures (1, &_OpenGLID) );
-    CHECKGL ( glBindTexture (GL_TEXTURE_3D, _OpenGLID) );
+#ifndef NUX_OPENGLES_20
+    CHECKGL(glGenTextures(1, &_OpenGLID));
+    CHECKGL(glBindTexture(GL_TEXTURE_3D, _OpenGLID));
 
     _VolumeSurfaceArray = new std::vector< ObjectPtr<IOpenGLSurface> >[_NumMipLevel];
 
-    for (t_s32 mip = 0; mip < _NumMipLevel; mip++)
+    for (int mip = 0; mip < _NumMipLevel; mip++)
     {
-      for (t_s32 slice = 0; slice < ImageSurface::GetLevelDim (_PixelFormat, _Depth, mip); slice++)
+      for (int slice = 0; slice < ImageSurface::GetLevelDim(_PixelFormat, _Depth, mip); slice++)
       {
         //IOpenGLSurface* surface = new IOpenGLSurface(this, _OpenGLID, GL_TEXTURE_3D, GL_TEXTURE_3D, mip, slice);
         //surface->InitializeLevel();
-        IOpenGLSurface* surface = new IOpenGLSurface (this, _OpenGLID, GL_TEXTURE_3D, GL_TEXTURE_3D, mip, slice);
-        _VolumeSurfaceArray[mip].push_back (ObjectPtr<IOpenGLSurface> (surface));
-        surface->UnReference ();
+        IOpenGLSurface* surface = new IOpenGLSurface(this, _OpenGLID, GL_TEXTURE_3D, GL_TEXTURE_3D, mip, slice);
+        _VolumeSurfaceArray[mip].push_back(ObjectPtr<IOpenGLSurface> (surface));
+        surface->UnReference();
       }
     }
 
     for (int mip = 0; mip < _NumMipLevel; mip++)
     {
-      IOpenGLVolume *volume = new IOpenGLVolume (this, _OpenGLID, GL_TEXTURE_3D, GL_TEXTURE_3D, mip);
+      IOpenGLVolume *volume = new IOpenGLVolume(this, _OpenGLID, GL_TEXTURE_3D, GL_TEXTURE_3D, mip);
       volume->InitializeLevel();
-      _VolumeArray.push_back (ObjectPtr<IOpenGLVolume> (volume));
+      _VolumeArray.push_back(ObjectPtr<IOpenGLVolume> (volume));
     }
 
-    CHECKGL ( glBindTexture (GL_TEXTURE_3D, _OpenGLID) );
-    SetFiltering (GL_NEAREST, GL_NEAREST);
-    SetWrap (GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+    CHECKGL(glBindTexture(GL_TEXTURE_3D, _OpenGLID));
+    SetFiltering(GL_NEAREST, GL_NEAREST);
+    SetWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
     SetRenderStates();
-    GRunTimeStats.Register (this);
+    GRunTimeStats.Register(this);
+#endif
   }
 
   IOpenGLVolumeTexture::~IOpenGLVolumeTexture()
   {
 
-    for (t_s32 mip = 0; mip < _NumMipLevel; mip++)
+    for (int mip = 0; mip < _NumMipLevel; mip++)
     {
-      for (t_s32 slice = 0; slice < ImageSurface::GetLevelDim (_PixelFormat, _Depth, mip); slice++)
+      for (int slice = 0; slice < ImageSurface::GetLevelDim(_PixelFormat, _Depth, mip); slice++)
       {
         // destroying a surface
         _VolumeSurfaceArray[mip][slice] = ObjectPtr<IOpenGLSurface> (0);
@@ -81,7 +83,7 @@ namespace nux
       _VolumeSurfaceArray[mip].clear();
     }
 
-    NUX_SAFE_DELETE_ARRAY (_VolumeSurfaceArray);
+    NUX_SAFE_DELETE_ARRAY(_VolumeSurfaceArray);
 
 
     for (int mip = 0; mip < _NumMipLevel; mip++)
@@ -90,22 +92,22 @@ namespace nux
       _VolumeArray[mip] = ObjectPtr<IOpenGLVolume> (0);
     }
 
-    CHECKGL ( glDeleteTextures (1, &_OpenGLID) );
+    CHECKGL(glDeleteTextures(1, &_OpenGLID));
     _OpenGLID = 0;
-    GRunTimeStats.UnRegister (this);
+    GRunTimeStats.UnRegister(this);
   }
 
-  int IOpenGLVolumeTexture::LockRect (
+  int IOpenGLVolumeTexture::LockRect(
     int Slice,
     int Level,
     SURFACE_LOCKED_RECT *pLockedRect,
     const SURFACE_RECT *pRect)
   {
-    nuxAssertMsg (pLockedRect, TEXT ("[IOpenGLVolumeTexture::LockRect] Invalid parameter 'pLockedRect'.") );
-    nuxAssertMsg (Level >= 0, TEXT ("[IOpenGLVolumeTexture::LockRect] Invalid mipmap level.") );
-    nuxAssertMsg (Level < _NumMipLevel, TEXT ("[IOpenGLVolumeTexture::LockRect] Invalid mipmap level.") );
-    nuxAssertMsg (Slice >= 0, TEXT ("[IOpenGLVolumeTexture::LockRect] Invalid slice index.") );
-    nuxAssertMsg (Slice < ImageSurface::GetLevelDim (_PixelFormat, _Depth, Level), TEXT ("[IOpenGLVolumeTexture::LockRect] Invalid slice index.") );
+    nuxAssertMsg(pLockedRect, "[IOpenGLVolumeTexture::LockRect] Invalid parameter 'pLockedRect'.");
+    nuxAssertMsg(Level >= 0, "[IOpenGLVolumeTexture::LockRect] Invalid mipmap level.");
+    nuxAssertMsg(Level < _NumMipLevel, "[IOpenGLVolumeTexture::LockRect] Invalid mipmap level.");
+    nuxAssertMsg(Slice >= 0, "[IOpenGLVolumeTexture::LockRect] Invalid slice index.");
+    nuxAssertMsg(Slice < ImageSurface::GetLevelDim(_PixelFormat, _Depth, Level), "[IOpenGLVolumeTexture::LockRect] Invalid slice index.");
 
     if (Slice < 0)
       Slice = 0;
@@ -116,7 +118,7 @@ namespace nux
     if (Level < _NumMipLevel)
     {
       ObjectPtr<IOpenGLSurface> pVolumeSurfaceLevel = _VolumeSurfaceArray[Level][Slice];
-      return pVolumeSurfaceLevel->LockRect (pLockedRect, pRect);
+      return pVolumeSurfaceLevel->LockRect(pLockedRect, pRect);
     }
     else
     {
@@ -128,13 +130,13 @@ namespace nux
     return OGL_OK;
   }
 
-  int IOpenGLVolumeTexture::UnlockRect (
+  int IOpenGLVolumeTexture::UnlockRect(
     int Slice,
     int Level
   )
   {
-    nuxAssertMsg (Level >= 0, TEXT ("[IOpenGLVolumeTexture::LockRect] Invalid mipmap level.") );
-    nuxAssertMsg (Level < _NumMipLevel, TEXT ("[IOpenGLVolumeTexture::LockRect] Invalid mipmap level.") );
+    nuxAssertMsg(Level >= 0, "[IOpenGLVolumeTexture::LockRect] Invalid mipmap level.");
+    nuxAssertMsg(Level < _NumMipLevel, "[IOpenGLVolumeTexture::LockRect] Invalid mipmap level.");
 
     if (Level < _NumMipLevel)
     {
@@ -149,31 +151,32 @@ namespace nux
     return OGL_OK;
   }
 
-  int IOpenGLVolumeTexture::LockBox (int Level,
+  int IOpenGLVolumeTexture::LockBox(int Level,
                                      VOLUME_LOCKED_BOX *pLockedVolume,
                                      const VOLUME_BOX *pBox)
   {
-    nuxAssertMsg (pLockedVolume, TEXT ("[IOpenGLVolumeTexture::LockBox] Invalid parameter 'pLockedRect'.") );
-    nuxAssertMsg (Level >= 0, TEXT ("[IOpenGLVolumeTexture::LockBox] Invalid mipmap level.") );
-    nuxAssertMsg (Level < _NumMipLevel, TEXT ("[IOpenGLVolumeTexture::LockBox] Invalid mipmap level.") );
+    nuxAssertMsg(pLockedVolume, "[IOpenGLVolumeTexture::LockBox] Invalid parameter 'pLockedRect'.");
+    nuxAssertMsg(Level >= 0, "[IOpenGLVolumeTexture::LockBox] Invalid mipmap level.");
+    nuxAssertMsg(Level < _NumMipLevel, "[IOpenGLVolumeTexture::LockBox] Invalid mipmap level.");
 
     if (pBox)
     {
-      nuxAssertMsg (pBox->Front >= 0, TEXT ("[IOpenGLVolumeTexture::LockBox] Invalid slice index.") );
-      nuxAssertMsg (pBox->Front < pBox->Back, TEXT ("[IOpenGLVolumeTexture::LockBox] Invalid slice index.") );
-      nuxAssertMsg (pBox->Back <= ImageSurface::GetLevelDim (_PixelFormat, _Depth, Level),
-                    TEXT ("[IOpenGLVolumeTexture::LockBox] Invalid slice index.") );
+      nuxAssertMsg(pBox->Front >= 0, "[IOpenGLVolumeTexture::LockBox] Invalid slice index.");
+      nuxAssertMsg(pBox->Front < pBox->Back, "[IOpenGLVolumeTexture::LockBox] Invalid slice index.");
+      nuxAssertMsg(pBox->Back <= ImageSurface::GetLevelDim(_PixelFormat, _Depth, Level),
+                    "[IOpenGLVolumeTexture::LockBox] Invalid slice index.");
     }
 
-    return _VolumeArray[Level]->LockBox (pLockedVolume, pBox);
+    return _VolumeArray[Level]->LockBox(pLockedVolume, pBox);
   }
 
-  int IOpenGLVolumeTexture::UnlockBox (int Level)
+  int IOpenGLVolumeTexture::UnlockBox(int Level)
   {
-    nuxAssertMsg (Level >= 0, TEXT ("[IOpenGLVolumeTexture::LockBox] Invalid mipmap level.") );
-    nuxAssertMsg (Level < _NumMipLevel, TEXT ("[IOpenGLVolumeTexture::LockBox] Invalid mipmap level.") );
+    nuxAssertMsg(Level >= 0, "[IOpenGLVolumeTexture::LockBox] Invalid mipmap level.");
+    nuxAssertMsg(Level < _NumMipLevel, "[IOpenGLVolumeTexture::LockBox] Invalid mipmap level.");
 
     return _VolumeArray[Level]->UnlockBox();
   }
 
 }
+

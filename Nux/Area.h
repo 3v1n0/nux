@@ -26,7 +26,6 @@
 #include <sigc++/sigc++.h>
 #include "NuxCore/InitiallyUnownedObject.h"
 #include "NuxGraphics/Events.h"
-#include "Focusable.h"
 #include "Utils.h"
 #include "WidgetMetrics.h"
 
@@ -65,11 +64,14 @@ namespace nux
 //! Policy for and element position in the minor dimension of a layout.
   typedef enum
   {
-    MINOR_POSITION_TOP,           //!< Place the element on the top side of the layout (Hlayout)
-    MINOR_POSITION_BOTTOM,        //!< Place the element on the bottom side of the layout (Hlayout)
-    MINOR_POSITION_LEFT,          //!< Place the element on the left side of the layout (Vlayout)
-    MINOR_POSITION_RIGHT,         //!< Place the element on the right side of the layout (Hlayout)
-    MINOR_POSITION_CENTER,        //!< Place the element at the center of the layout (Hlayout and VLayout)
+    MINOR_POSITION_START,         //!< Place the element at the start of the layout(Hlayout and VLayout)
+    MINOR_POSITION_CENTER,        //!< Place the element at the center of the layout(Hlayout and VLayout)
+    MINOR_POSITION_END,           //!< Place the element at the end of the layout(Hlayout and VLayout)
+    MINOR_POSITION_TOP = MINOR_POSITION_START,   //!< Deprecated.
+    MINOR_POSITION_LEFT = MINOR_POSITION_START,  //!< Deprecated.
+    MINOR_POSITION_BOTTOM = MINOR_POSITION_END,  //!< Deprecated.
+    MINOR_POSITION_RIGHT = MINOR_POSITION_END,   //!< Deprecated.
+
     eAbove = MINOR_POSITION_TOP,      //!< Deprecated.
     eBelow = MINOR_POSITION_BOTTOM,   //!< Deprecated.
     eLeft = MINOR_POSITION_LEFT,      //!< Deprecated.
@@ -84,19 +86,23 @@ namespace nux
   */
   typedef enum
   {
-    MAJOR_POSITION_TOP,      //!< Stack elements at the top (for VLayout only).
-    MAJOR_POSITION_BOTTOM,   //!< Stack elements at the bottom (for VLayout only).
-    MAJOR_POSITION_LEFT,     //!< Stack elements at the left (for HLayout only).
-    MAJOR_POSITION_RIGHT,    //!< Stack elements at the right (for HLayout only).
-    MAJOR_POSITION_CENTER,   //!< Stack elements in the center of the layout (for HLayout and VLayout).
-    MAJOR_POSITION_EXPAND,   //!< Spread elements evenly inside the layout (for HLayout and VLayout).
+    MAJOR_POSITION_CENTER,   //!< Stack elements in the center of the layout(for HLayout and VLayout).
+    MAJOR_POSITION_START,    //!< Stack elements at the begining of the layout(for HLayout and VLayout).
+    MAJOR_POSITION_END,      //!< Stack elements at the end of the layout(for HLayout and VLayout).
+    MAJOR_POSITION_SPREAD,   //!< Spread elements evenly inside the layout(for HLayout and VLayout).
+
+    MAJOR_POSITION_TOP = MAJOR_POSITION_START,    //!< Deprecated.
+    MAJOR_POSITION_BOTTOM = MAJOR_POSITION_END,   //!< Deprecated.
+    MAJOR_POSITION_LEFT = MAJOR_POSITION_START,   //!< Deprecated.
+    MAJOR_POSITION_RIGHT = MAJOR_POSITION_END,    //!< Deprecated.
+
 
     eStackTop = MAJOR_POSITION_TOP,         //!< Deprecated.
     eStackBottom = MAJOR_POSITION_BOTTOM,   //!< Deprecated.
     eStackLeft = MAJOR_POSITION_LEFT,       //!< Deprecated.
     eStackRight = MAJOR_POSITION_RIGHT,     //!< Deprecated.
     eStackCenter = MAJOR_POSITION_CENTER,   //!< Deprecated.
-    eStackExpand = MAJOR_POSITION_EXPAND,   //!< Deprecated.
+    eStackExpand = MAJOR_POSITION_SPREAD,   //!< Deprecated.
   }  LayoutContentDistribution;
 
   //! For internal use only.
@@ -138,21 +144,11 @@ namespace nux
   class View;
   class Area;
 
-  class Area: public InitiallyUnownedObject, public Focusable
+  class Area: public InitiallyUnownedObject
   {
-    NUX_DECLARE_OBJECT_TYPE (Area, InitiallyUnownedObject);
+    NUX_DECLARE_OBJECT_TYPE(Area, InitiallyUnownedObject);
   public:
-    class LayoutProperties
-    {
-      public:
-      virtual ~LayoutProperties ()
-      {
-
-      }
-    };
-
-  public:
-    Area (NUX_FILE_LINE_DECL);
+    Area(NUX_FILE_LINE_DECL);
     virtual ~Area();
 
     int GetBaseX() const;
@@ -171,29 +167,29 @@ namespace nux
         The size is adjusted to respect the min and max size policy
         \sa SetWidth(), SetHeight(), SetMinimumSize(), SetMaximumSize().
     */
-    void SetBaseSize (int w, int h);
+    virtual void SetBaseSize(int w, int h);
 
-    void SetMinimumSize(int w, int h);
-    void SetMaximumSize(int w, int h);
-    void SetMinMaxSize(int w, int h);
+    virtual void SetMinimumSize(int w, int h);
+    virtual void SetMaximumSize(int w, int h);
+    virtual void SetMinMaxSize(int w, int h);
 
-    void SetMinimumWidth(int w);
-    void SetMaximumWidth(int w);
-    void SetMinimumHeight(int h);
-    void SetMaximumHeight(int h);
+    virtual void SetMinimumWidth(int w);
+    virtual void SetMaximumWidth(int w);
+    virtual void SetMinimumHeight(int h);
+    virtual void SetMaximumHeight(int h);
 
-    int GetMinimumWidth() const;
-    int GetMaximumWidth() const;
-    int GetMinimumHeight() const;
-    int GetMaximumHeight() const;
+    virtual int GetMinimumWidth() const;
+    virtual int GetMaximumWidth() const;
+    virtual int GetMinimumHeight() const;
+    virtual int GetMaximumHeight() const;
 
-    void ApplyMinWidth();
-    void ApplyMinHeight();
-    void ApplyMaxWidth();
-    void ApplyMaxHeight();
+    virtual void ApplyMinWidth();
+    virtual void ApplyMinHeight();
+    virtual void ApplyMaxWidth();
+    virtual void ApplyMaxHeight();
 
-    Size GetMinimumSize() const;
-    Size GetMaximumSize() const;
+    virtual Size GetMinimumSize() const;
+    virtual Size GetMaximumSize() const;
 
     //! Get the geometry of the object.
     /*!
@@ -212,7 +208,7 @@ namespace nux
 
         \sa SetBaseWidth(), SetBaseHeight(), SetBaseX(), SetBaseY().
     */
-    void SetGeometry (int x, int y, int w, int h);
+    void SetGeometry(int x, int y, int w, int h);
 
     //! Set the geometry of the object.
     /*!
@@ -222,32 +218,36 @@ namespace nux
         @param geo Geometry object.
         \sa SetWidth(), SetHeight(), SetX(), SetY().
     */
-    void SetGeometry (const Geometry &geo);
+    void SetGeometry(const Geometry &geo);
 
-    void IncreaseSize (int x, int y);
+    void IncreaseSize(int x, int y);
 
-    void SetBaseString (const TCHAR *Caption);
+    void SetBaseString(const char *Caption);
     const NString &GetBaseString() const;
 
-    //! Return the Top level parent of this area.
-    /*!
-        The top Level parent is either a BaseWindow or the main layout.
+    //! Deprecated. Use GetToplevel.
+    Area* GetToplevel();
 
-        @return The top level parent or Null.
+    //! Return the root parent of the rendering tree for this area.
+    /*!
+        The root parent of the rendering tree is either a BaseWindow or the main layout.
+        If the object isn't hooked to the rendering tree the function returns NULL.
+
+        @return The root parent of the rendering tree or NULL.
     */
-    Area * GetToplevel ();
+    Area* GetRootParent();
 
     //! Return the Top level BaseWindow of this area.
     /*!
         @return The top level BaseWindow or NULL.
     */
-    Area * GetTopLevelViewWindow ();
+    Area* GetTopLevelViewWindow();
 
     //! Return true is this area has a top level parent.
     /*!
         @return True if this area has a top level parent.
     */
-    bool HasTopLevelParent ();
+    bool HasTopLevelParent();
 
     //! Return true is area is a child of the given parent in the widget tree.
     /*!
@@ -260,7 +260,7 @@ namespace nux
         Test if a point is inside the area.
 
         @param p A 2D point.
-        @param event_type The type of mouse event (a parameter of FindAreaUnderMouse).
+        @param event_type The type of mouse event(a parameter of FindAreaUnderMouse).
 
         @return True if p is located inside the Area.
     */
@@ -270,7 +270,7 @@ namespace nux
         Test if a point is inside the area and if the area accepts mouse wheel events.
 
         @param p A 2D point.
-        @param event_type The type of mouse event (a parameter of FindAreaUnderMouse).
+        @param event_type The type of mouse event(a parameter of FindAreaUnderMouse).
         @param filter_mouse_wheel_event If the event type is NUX_MOUSE_WHEEL and the mouse is over this area and this
         area does not accept mouse wheel events, then return false.
 
@@ -278,34 +278,23 @@ namespace nux
     */
     bool TestMousePointerInclusionFilterMouseWheel(const Point& mouse_position, NuxEventType event);
 
-    virtual long ComputeChildLayout ();
-    virtual void PositionChildLayout (float offsetX, float offsetY);
-    virtual long ComputeLayout2 ();
-    virtual void ComputePosition2 (float offsetX, float offsetY);
-
-    virtual bool IsArea () const;
-    virtual bool IsInputArea () const;
-    virtual bool IsView () const;
-    virtual bool IsLayout () const;
-    virtual bool IsSpaceLayout () const;
-    virtual bool IsViewWindow () const;
-
-    //! Set the layout properties for this area
+    //! Test if the mouse pointer is inside the area.
     /*!
-        Allows the Layout managing this area to store the properties specifc to this area. Layouts
-        should create a sub-class of LayoutProperties. The LayoutProperties of an area will
-        be deleted upon destruction.
-        @param properties the LayoutProperties sub-class  associated with this area. Can be NULL to
-         unset.
+        Return true if the mouse pointer is inside the area.
+        
+        @return True if the mouse pointer is inside the area.
     */
-    void SetLayoutProperties (LayoutProperties *properties);
+    bool IsMousePointerInside() const;
 
-    //! Get the layout properties for this area
-    /*!
-        Retrieves the LayoutProperties sub-class with this area. See SetLayoutProperties
-        @return LayoutProperties sub-class associated with this area.
-    */
-    LayoutProperties * GetLayoutProperties ();
+    virtual long ComputeContentSize();
+    virtual void ComputeContentPosition(float offsetX, float offsetY);
+
+    virtual bool IsArea() const;
+    virtual bool IsInputArea() const;
+    virtual bool IsView() const;
+    virtual bool IsLayout() const;
+    virtual bool IsSpaceLayout() const;
+    virtual bool IsViewWindow() const;
 
     Area * GetParentObject() const;
 
@@ -314,150 +303,186 @@ namespace nux
         If visible, an area will be drawn. Default: true.
         @param visible if the area is visible to the user
     */
-    void SetVisible  (bool visible);
+    void SetVisible(bool visible);
 
     //! Get the visibility of the area
     /*!
         Gets whether the area is visible to the user and will be visible to the user. Default is true.
         @return whether the area is visible
     */
-    bool IsVisible ();
+    bool IsVisible();
 
-    //! Set sensitivity of the area
+    //! Deprecated. Use SetInputEventSensitivity.
+    void SetSensitive(bool);
+
+    //! Set input event sensitivity of the area.
     /*!
-        If sensitive, an area will receive input events. Default is true.
-        @param  if the area should receive input events
-    */
-    void SetSensitive  (bool sensitive);
+        A insensitive Area will not receive input events.\n
+        If the Area has a layout, the event will be passed down to it. Sensitivity only control an area's ability to receive input events(keyboard, mouse, touch).
+        An area that is not sensitive will return false in \a TestMousePointerInclusion, \a TestMousePointerInclusionFilterMouseWheel and \a AcceptKeyNavFocus.\n
+        Sensitivity does not affect layouts since they do not process events.
 
-    //! Get whether the area is sensitive
+        By default, an area is sensitive.
+
+        @param sensitive If the area should receive input events
+    */
+    void SetInputEventSensitivity(bool sensitive);
+
+    //! Deprecated. Use GetInputEventSensitivity.
+    bool IsSensitive() const;
+
+    //! Get input event sensitivity of the area is sensitive
     /*!
         Gets whether the area is sensitive to input events
         @return whether the area is visible
     */
-    bool IsSensitive ();
+    bool GetInputEventSensitivity() const;
 
-    virtual bool DoGetFocused ();
-    virtual void DoSetFocused (bool focused);
-    virtual bool DoCanFocus ();
-    virtual void DoActivateFocus ();
-    
-    sigc::signal<void, Area *> FocusActivated;
-    sigc::signal<void, Area *> FocusChanged;
     sigc::signal<void, Area*> ChildFocusChanged; // sends parent + child
 
     /*!
-        This signal is propagated upward so all parent of this area can reconfigure themselves.
-        For instance, scroll views will translate their content to make the focused object visible.
+        This signal is received whether the area receiving or loosing the keyboard focus.
+        If the second parameter is true, it means the area is receiving the focus.
+        The third parameter of this signal indicates the keyboard action that triggered this area 
+        to receive or loose the keyboard focus.
     */
-    sigc::signal<void, Area*> OnKeyNavChangeReconfigure; 
-    sigc::signal<void, Area*> OnKeyNavFocusChange;
-    sigc::signal<void, Area*> OnKeyNavFocusActivate;
+    sigc::signal<void, Area*, bool, KeyNavDirection> key_nav_focus_change;
+
+    /*!
+        This signal is received when the area has the key focus and the ENTER key has been pressed.
+    */
+    sigc::signal<void, Area*> key_nav_focus_activate;
 
     //! Queue a relayout
     /*!
         Queues a relayout before the next paint cycle. This is safe to call multiple times within a cycle.
     */
-    void QueueRelayout ();
+    void QueueRelayout();
 
-    virtual unsigned int GetStretchFactor();
-    virtual void SetStretchFactor (unsigned int sf);
+    //! Get the area scale factor.
+    /*!
+        The scale factor is used to control the layout of area objects inside HLayout and VLayout.
+        \sa HLayout, VLayout.
+
+        @return the Area scale factor.
+    */
+    virtual unsigned int GetScaleFactor();
+
+    //! Set the area scale factor.
+    /*!
+        The scale factor is used to control the layout of area objects inside HLayout and VLayout.
+        \sa HLayout, VLayout.
+
+        @param the scale factor.
+    */
+    virtual void SetScaleFactor(unsigned int sf);
 
     virtual MinorDimensionPosition GetPositioning();
-    virtual void SetPositioning (MinorDimensionPosition p);
+    virtual void SetPositioning(MinorDimensionPosition p);
 
     virtual MinorDimensionSize GetExtend();
-    virtual void SetExtend (MinorDimensionSize ext);
+    virtual void SetExtend(MinorDimensionSize ext);
 
     virtual float GetPercentage();
-    virtual void SetPercentage (float f);
+    virtual void SetPercentage(float f);
     virtual bool IsLayoutDone();
-    virtual void SetLayoutDone (bool b);
+    virtual void SetLayoutDone(bool b);
 
-    void Set2DMatrix (const Matrix4 &mat);
-    void Set2DTranslation (float tx, float ty, float tz);
-    Matrix4 Get2DMatrix () const;
+    void Set2DMatrix(const Matrix4 &mat);
+    void Set2DTranslation(float tx, float ty, float tz);
+    Matrix4 Get2DMatrix() const;
 
-    Matrix4 Get3DMatrix () const;
-    bool Is3DArea () const;
+    Matrix4 Get3DMatrix() const;
+    bool Is3DArea() const;
 
-    //! Return the position of this object with regard to its top left corner of the physical window.
+    //! Return the position of this object with regard to the top left corner of the physical window.
     /*!
         Return the position of the Area inside the physical window.
         For the main layout set in WindowThread, The following functions are equivalent:
-        \li GetGeometry ()
-        \li GetRootGeometry ()
-        \li GetAbsoluteGeometry ()
+        \li GetGeometry()
+        \li GetRootGeometry()
+        \li GetAbsoluteGeometry()
     */
-    virtual Geometry GetAbsoluteGeometry () const;
+    virtual Geometry GetAbsoluteGeometry() const;
 
     //! Return the area absolute x coordinate.
-    int GetAbsoluteX () const;
+    int GetAbsoluteX() const;
     
     //! Return the area absolute y coordinate.
-    int GetAbsoluteY () const;
+    int GetAbsoluteY() const;
     
     //! Return the area absolute width.
     /*!
-        As long as _2d_xform contains only translations, the absolute width is the same as value returned by GetBaseWidth ();
+        As long as _2d_xform contains only translations, the absolute width is the same as value returned by GetBaseWidth();
     */
-    int GetAbsoluteWidth () const;
+    int GetAbsoluteWidth() const;
     
     //! Return the area absolute height.
     /*!
-        As long as _2d_xform contains only translations, the absolute height is the same as value returned by GetBaseHeight ();
+        As long as _2d_xform contains only translations, the absolute height is the same as value returned by GetBaseHeight();
     */
-    int GetAbsoluteHeight () const;
+    int GetAbsoluteHeight() const;
 
-    //! Return the position of this object with regard to its top level parent (the main layout or a BaseWindow).
+    //! Return the position of this object with regard to its top level parent(the main layout or a BaseWindow).
     /*!
         Return the position of the Area inside the physical window.
-        For the main layout set in WindowThread or for a BaseWindow, GetRootGeometry () is equivalent to GetGeometry ().
+        For the main layout set in WindowThread or for a BaseWindow, GetRootGeometry() is equivalent to GetGeometry().
     */
-    virtual Geometry GetRootGeometry () const;
+    virtual Geometry GetRootGeometry() const;
 
     //! Return the area root x coordinate.
-    int GetRootX () const;
+    int GetRootX() const;
 
     //! Return the area root y coordinate.
-    int GetRootY () const;
+    int GetRootY() const;
 
     //! Return the area root width.
     /*!
-        As long as _2d_xform contains only translations, the root width is the same as value returned by GetBaseWidth ();
+        As long as _2d_xform contains only translations, the root width is the same as value returned by GetBaseWidth();
     */
-    int GetRootWidth () const;
+    int GetRootWidth() const;
 
     //! Return the area root height.
     /*!
-        As long as _2d_xform contains only translations, the root width is the same as value returned by GetBaseWidth ();
+        As long as _2d_xform contains only translations, the root width is the same as value returned by GetBaseWidth();
     */
-    int GetRootHeight () const;
+    int GetRootHeight() const;
 
     sigc::signal<void, int, int, int, int> OnResize; //!< Signal emitted when an area is resized.
     sigc::signal<void, Area *, bool> OnVisibleChanged;
     sigc::signal<void, Area *, bool> OnSensitiveChanged;
+
+    /*!
+        This signal is only meant to inform of a change of size. When receiving this signal don't do anything
+        that could change the size of this object. Or you risk creating an infinite loop.
+    */
     sigc::signal<void, Area *, Geometry&> OnGeometryChanged;
 
     /*!
-        SetParentObject/UnParentObject are protected API. it is not meant to be used directly by users.
+        SetParentObject/UnParentObject are protected API. They are not meant to be used directly by users.
         Users add widgets to layouts and layout have to be attached to a composition for objects to be rendered.
         Setting a parent to and child widget does not mean that when the parent is rendered, the child is also rendered.
-        For instance, setting a button the be the child of a check-box means absolutely nothing is terms of rendering.
-        A widget with a parent cannot be added to a added to a layout for rendering. The widget has to be un-parented first.
-        A layout with a parent cannot be added to a widget or another layout for rendering. The layout has to be un-parented first.
-        In essence only View and Layouts should be calling SetParentObject/UnParentObject.
+        For instance, setting a button to be the child of a check-box means absolutely nothing is terms of rendering.
+        The check-box draw function would have to be aware of the existence of the button in order to render it.\n
+        A view with a parent cannot be parented to another area for rendering. It has to be un-parented first.\n
+        A layout with a parent cannot be parented to another area for rendering. It has to be un-parented first.\n
+        In essence only View and Layouts should be calling SetParentObject/UnParentObject.\n
+        SetParentObject returns true if it was successful.
+        
+
+        @param parent The object that will become the parent of this area.
+        @return True if the object is successfully parented. 
     */
-    virtual void SetParentObject (Area *);
+    virtual bool SetParentObject(Area *parent);
 
     //! Un-parent and area
     /*!
         For un-parented areas the following functions are equivalent:
-          \li GetGeometry ()
-          \li GetRootGeometry ()
-          \li GetAbsoluteGeometry ()
+          \li GetGeometry()
+          \li GetRootGeometry()
+          \li GetAbsoluteGeometry()
     */
-    virtual void UnParentObject ();
+    virtual void UnParentObject();
 
     /*!
         Return the area under the mouse pointer.
@@ -476,7 +501,16 @@ namespace nux
     void ResetUpwardPathToKeyFocusArea();
 
     //! Return True if the the area knows what to do with the key event.
-    virtual bool InspectKeyEvent(unsigned int eventType,
+    /*!
+        For a View to receive the key_up and key_down signal, it must override this function and return true.
+        
+        @param even_type Event type is either EVENT_KEY_DOWN or EVENT_KEY_UP.
+        @param keysym The key symbol.
+        @param characters The character string of the key.
+
+        @return bool True if the View wants to received the key events signals.
+    */
+    virtual bool InspectKeyEvent(unsigned int event_type,
       unsigned int keysym,
       const char* character);
 
@@ -491,7 +525,7 @@ namespace nux
         When the geometry of an area changes, the new geometry can be recursively propagated to all its 
         parent so a layout reconfiguration is initiated.
         \sa ReconfigureParentLayout()
-        \sa _on_geometry_changeg_reconfigure_parent_layout
+        \sa on_geometry_change_reconfigure_parent_layout_
 
         @param reconfigure_parent_layout Set it to True to reconfigure this area parent layouts.
     */
@@ -528,36 +562,44 @@ namespace nux
     bool AcceptMouseWheelEvent() const;
 
   protected:
-    bool _is_focused;
     /*
         This function is reimplemented in Layout as it need to perform some special operations.
         It does nothing for Area and View classes.
     */
     //virtual void RemoveChildObject(smptr(Area));
 
-    virtual void GeometryChangePending () {}
-    virtual void GeometryChanged () {}
+    /*!
+        This signal is only meant to inform that the size is about to change. When overriding this function,
+        don't do anything that could change the size of this object. Or you risk creating an infinite loop.
+    */
+    virtual void GeometryChangePending() {}
+    
+    /*!
+        This signal is only meant to inform that the size has changed. When overriding this function,
+        don't do anything that could change the size of this object. Or you risk creating an infinite loop.
+    */
+    virtual void GeometryChanged() {}
 
     //! Request a Layout recompute after a change of size
     /*
         When an object size changes, it is necessary for its parent structure to initiate a layout
         re computation in order preserve the layout structure defined by the user through the API.
     */
-    virtual void RequestBottomUpLayoutComputation (Area *bo_initiator);
+    virtual void RequestBottomUpLayoutComputation(Area *bo_initiator);
 
     //! Return the absolute geometry starting with a relative geometry passed as argument.
-    void InnerGetAbsoluteGeometry (Geometry &geometry);
+    void InnerGetAbsoluteGeometry(Geometry &geometry);
 
     //! Return the absolute geometry starting with a relative geometry passed as argument.
-    void InnerGetRootGeometry (Geometry &geometry);
+    void InnerGetRootGeometry(Geometry &geometry);
 
 //     //! Add a "secondary" child to this Area. The
 //     /*!
 //         @return True if the child has been added; False otherwise;
 //     */
-//     bool Secondary (Area *child);
+//     bool Secondary(Area *child);
    
-    bool _on_geometry_changeg_reconfigure_parent_layout;
+    bool on_geometry_change_reconfigure_parent_layout_;
 
     bool                    has_key_focus_;
 
@@ -568,32 +610,32 @@ namespace nux
     void CheckMaxSize();
 
 
-    Geometry                _geometry;        //!< The area geometry.
+    Geometry                geometry_;        //!< The area geometry.
 
     //! Define a parent child structure
     /*
         An object of the class Area may have another of the class Layout as Parent.
         An object of the class View may have an object of the class Layout as parent.
         An object of the class Layout may have a parent of the class Layout or View as parent.
-        A Area cannot have children (that may change later).
+        A Area cannot have children(that may change later).
     */
-    Area                    *_parent_area;
-    
+    Area                    *parent_area_;
 
-    LayoutProperties        *_layout_properties;
-    bool                    _visible;
-    bool                    _sensitive;
+    bool              visible_;       //!< Visible state of the area.
+    bool              sensitive_;     //!< Input sensitive state of the area
+    bool              view_enabled_;  //!< The enable state of a view.
 
     NString                 _base_string;     //!< A text string property for this area.
 
-    Size                    _min_size;        //!< A text string property for this area.
-    Size                    _max_size;        //!< A text string property for this area.
+    Size                    min_size_;        //!< A text string property for this area.
+    Size                    max_size_;        //!< A text string property for this area.
 
-    unsigned int            _stretch_factor;  //!< Factor for element expansion.
-    MinorDimensionPosition  _positioning;     //!< Area position hint
-    MinorDimensionSize      _extend;          //!< Area dimension hint
-    float                   _percentage;      //!< Area size percentage value.
-    bool                    _layout_done;     //!< Area layout status flag.
+    // Parameters used in layouts
+    unsigned int            scale_factor_;          //!< Factor for element expansion.
+    MinorDimensionPosition  minor_axis_position_;   //!< Area position hint
+    MinorDimensionSize      minor_axis_size_;       //!< Area dimension hint
+    float                   minor_axis_size_scale_; //!< Area size percentage value.
+    bool                    layout_done_;           //!< Area layout status flag.
 
 
     Matrix4                 _2d_xform;        //!< 2D transformation matrix for this area and its children. Contains only translations.
@@ -602,8 +644,10 @@ namespace nux
 
     std::list<Area*>        _children_list;
 
-    bool                    _accept_mouse_wheel_event;
-    bool                    _accept_keyboard_event;
+    bool                    accept_mouse_wheel_event_;
+    bool                    accept_keyboard_event_;
+
+    WindowThread*           window_thread_;
 
     friend class Layout;
     friend class View;

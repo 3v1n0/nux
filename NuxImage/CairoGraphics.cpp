@@ -28,12 +28,12 @@
 namespace nux
 {
 
-  CairoGraphics::CairoGraphics (cairo_format_t format, int width, int height)
-    :   _width (0)
-    ,   _height (0)
+  CairoGraphics::CairoGraphics(cairo_format_t format, int width, int height)
+    :   _width(0)
+    ,   _height(0)
   {
-    nuxAssert (width >= 0);
-    nuxAssert (height >= 0);
+    nuxAssert(width >= 0);
+    nuxAssert(height >= 0);
 
     _width = width;
     _height = height;
@@ -44,13 +44,16 @@ namespace nux
     if (_height <= 0)
       _height = 1;
 
-    _cairo_surface = cairo_image_surface_create (format, _width, _height);
+    _cairo_surface = cairo_image_surface_create(format, _width, _height);
     m_surface_format = format;
 
-    _cr = cairo_create (_cairo_surface);
-    if (cairo_status (_cr) == CAIRO_STATUS_NO_MEMORY)
+    _cr = cairo_create(_cairo_surface);
+    if (cairo_status(_cr) == CAIRO_STATUS_NO_MEMORY)
     {
-      nuxAssertMsg (0, TEXT ("[CairoGraphics::GetContext] Cairo context error.") );
+      // If memory cannot be allocated, a special cairo_t object will be returned
+      // on which cairo_status() returns CAIRO_STATUS_NO_MEMORY.
+      // You can use this object normally, but no drawing will be done. 
+      nuxAssertMsg(0, "[CairoGraphics::GetContext] Cairo context error.");
     }
 
     _opacity = 1.0f;
@@ -59,16 +62,22 @@ namespace nux
 
   CairoGraphics::~CairoGraphics()
   {
-    cairo_destroy (_cr);
-    cairo_surface_destroy (_cairo_surface);
+    if (_cr)
+    {
+      cairo_destroy(_cr);
+    }
+    cairo_surface_destroy(_cairo_surface);
   }
 
   cairo_t *CairoGraphics::GetContext()
   { 
-    cairo_t *cr = cairo_create (_cairo_surface);
-    if (cairo_status (cr) == CAIRO_STATUS_NO_MEMORY)
+    cairo_t *cr = cairo_create(_cairo_surface);
+    if (cairo_status(cr) == CAIRO_STATUS_NO_MEMORY)
     {
-      nuxAssertMsg (0, TEXT ("[CairoGraphics::GetContext] Cairo context error.") );
+      // If memory cannot be allocated, a special cairo_t object will be returned
+      // on which cairo_status() returns CAIRO_STATUS_NO_MEMORY.
+      // You can use this object normally, but no drawing will be done. 
+      nuxAssertMsg(0, "[CairoGraphics::GetContext] Cairo context error.");
     }
     return cr;
   }
@@ -78,20 +87,20 @@ namespace nux
     return _cr;
   }
 
-  cairo_surface_t* CairoGraphics::GetSurface ()
+  cairo_surface_t* CairoGraphics::GetSurface()
   {
     return _cairo_surface;
   }
 
   NBitmapData *CairoGraphics::GetBitmap()
   {
-    if ( (_width <= 0) || (_height <= 0) )
+    if ((_width <= 0) || (_height <= 0))
     {
-      nuxDebugMsg (TEXT ("[CairoGraphics::GetBitmap] Invalid surface.") );
+      nuxDebugMsg("[CairoGraphics::GetBitmap] Invalid surface.");
     }
 
-    NUX_RETURN_VALUE_IF_NULL (_width, 0);
-    NUX_RETURN_VALUE_IF_NULL (_height, 0);
+    NUX_RETURN_VALUE_IF_NULL(_width, 0);
+    NUX_RETURN_VALUE_IF_NULL(_height, 0);
 
     BitmapFormat bitmap_format = BITFMT_UNKNOWN;
 
@@ -119,20 +128,20 @@ namespace nux
     if (m_surface_format == CAIRO_FORMAT_A1)
       bitmap_format = BITFMT_A8;
 
-    NTextureData *bitmap_data = new NTextureData (bitmap_format, _width, _height, 1);
-    t_u8 *ptr = cairo_image_surface_get_data (_cairo_surface);
-    int stride = cairo_image_surface_get_stride (_cairo_surface);
+    NTextureData *bitmap_data = new NTextureData(bitmap_format, _width, _height, 1);
+    t_u8 *ptr = cairo_image_surface_get_data(_cairo_surface);
+    int stride = cairo_image_surface_get_stride(_cairo_surface);
 
     if (ptr == NULL || stride == 0)
     {
       // _cairo_surface is not a valid surface
-      nuxError (TEXT ("[CairoGraphics::GetBitmap] Invalid surface"));
+      nuxError("[CairoGraphics::GetBitmap] Invalid surface");
       return bitmap_data; // just returns because we will segfault otherwise
     }
 
     if (m_surface_format == CAIRO_FORMAT_A1)
     {
-      t_u8 *temp = new t_u8[bitmap_data->GetSurface (0).GetPitch() ];
+      t_u8 *temp = new t_u8[bitmap_data->GetSurface(0).GetPitch() ];
 
       for (int j = 0; j < _height; j++)
       {
@@ -141,14 +150,14 @@ namespace nux
           // Get the byte
           int a = ptr[j * stride + i/8];
           // Get the position in the byte
-          int b = (i - 8 * (i / 8) );
+          int b = (i - 8 * (i / 8));
           // Shift the byte and get the last bit
           int c = (a >> b) & 0x1;
           // If the last bit is set, put 1, otherwise put 0
           temp[i] = c ? 0xFF : 0x0;
         }
 
-        Memcpy ( bitmap_data->GetSurface (0).GetPtrRawData() + j * bitmap_data->GetSurface (0).GetPitch(),
+        Memcpy( bitmap_data->GetSurface(0).GetPtrRawData() + j * bitmap_data->GetSurface(0).GetPitch(),
                  (const void *) (&temp[0]),
                  _width);
       }
@@ -157,7 +166,7 @@ namespace nux
     {
       for (int j = 0; j < _height; j++)
       {
-        Memcpy (bitmap_data->GetSurface (0).GetPtrRawData() + j * bitmap_data->GetSurface (0).GetPitch(),
+        Memcpy(bitmap_data->GetSurface(0).GetPtrRawData() + j * bitmap_data->GetSurface(0).GetPitch(),
                 (const void *) (&ptr[j * stride]),
                 _width * GPixelFormats[bitmap_format].NumComponents);
       }
@@ -166,17 +175,17 @@ namespace nux
     return bitmap_data;
   }
 
-  int CairoGraphics::GetWidth () const
+  int CairoGraphics::GetWidth() const
   {
     return _width;
   }
 
-  int CairoGraphics::GetHeight () const
+  int CairoGraphics::GetHeight() const
   {
     return _height;
   }
 
-  bool CairoGraphics::PushState ()
+  bool CairoGraphics::PushState()
   {
     nuxAssert(_cr);
     _opacity_stack.push(_opacity);
@@ -184,7 +193,7 @@ namespace nux
     return true;
   }
 
-  bool CairoGraphics::PopState ()
+  bool CairoGraphics::PopState()
   {
     nuxAssert(_cr);
     if (_opacity_stack.empty())
@@ -198,7 +207,7 @@ namespace nux
     return true;
   }
 
-  bool CairoGraphics::ClearCanvas ()
+  bool CairoGraphics::ClearCanvas()
   {
     // Clear the surface.
     nuxAssert(_cr);
@@ -248,6 +257,12 @@ namespace nux
     return true;
   }
 
+  void CairoGraphics::TranslateCoordinates(double tx, double ty)
+  {
+    nuxAssert(_cr);
+    cairo_translate(_cr, tx, ty);
+  }
+
   bool CairoGraphics::DrawFilledRect(double x, double y, double w, double h,
                                      const Color &c)
   {
@@ -286,18 +301,18 @@ namespace nux
   }
 
   static inline double
-  _align (double val)
+  _align(double val)
   {
     double fract = val - (int) val;
 
     if (fract != 0.5f)
-      return (double) ((int) val + 0.5f);
+      return(double) ((int) val + 0.5f);
     else
       return val;
   }
 
   bool
-  CairoGraphics::DrawRoundedRectangle (cairo_t* cr,
+  CairoGraphics::DrawRoundedRectangle(cairo_t* cr,
                                        double   aspect,
                                        double   x,
                                        double   y,
@@ -311,45 +326,45 @@ namespace nux
     if (align)
     {
       // top-left, right of the corner
-      cairo_move_to (cr, _align (x + radius), _align (y));
+      cairo_move_to(cr, _align(x + radius), _align(y));
 
       // top-right, left of the corner
-      cairo_line_to (cr, _align (x + width - radius), _align (y));
+      cairo_line_to(cr, _align(x + width - radius), _align(y));
 
       // top-right, below the corner
-      cairo_arc (cr,
-                 _align (x + width - radius),
-                 _align (y + radius),
+      cairo_arc(cr,
+                 _align(x + width - radius),
+                 _align(y + radius),
                  radius,
                  -90.0f * G_PI / 180.0f,
                  0.0f * G_PI / 180.0f);
 
       // bottom-right, above the corner
-      cairo_line_to (cr, _align (x + width), _align (y + height - radius));
+      cairo_line_to(cr, _align(x + width), _align(y + height - radius));
 
       // bottom-right, left of the corner
-      cairo_arc (cr,
-                 _align (x + width - radius),
-                 _align (y + height - radius),
+      cairo_arc(cr,
+                 _align(x + width - radius),
+                 _align(y + height - radius),
                  radius,
                  0.0f * G_PI / 180.0f,
                  90.0f * G_PI / 180.0f);
 
       // bottom-left, right of the corner
-      cairo_line_to (cr, _align (x + radius), _align (y + height));
+      cairo_line_to(cr, _align(x + radius), _align(y + height));
 
       // bottom-left, above the corner
-      cairo_arc (cr,
-                 _align (x + radius),
-                 _align (y + height - radius),
+      cairo_arc(cr,
+                 _align(x + radius),
+                 _align(y + height - radius),
                  radius,
                  90.0f * G_PI / 180.0f,
                  180.0f * G_PI / 180.0f);
 
       // top-left, right of the corner
-      cairo_arc (cr,
-                 _align (x + radius),
-                 _align (y + radius),
+      cairo_arc(cr,
+                 _align(x + radius),
+                 _align(y + radius),
                  radius,
                  180.0f * G_PI / 180.0f,
                  270.0f * G_PI / 180.0f);
@@ -357,13 +372,13 @@ namespace nux
     else
     {
       // top-left, right of the corner
-      cairo_move_to (cr, x + radius, y);
+      cairo_move_to(cr, x + radius, y);
 
       // top-right, left of the corner
-      cairo_line_to (cr, x + width - radius, y);
+      cairo_line_to(cr, x + width - radius, y);
 
       // top-right, below the corner
-      cairo_arc (cr,
+      cairo_arc(cr,
                  x + width - radius,
                  y + radius,
                  radius,
@@ -371,10 +386,10 @@ namespace nux
                  0.0f * G_PI / 180.0f);
 
       // bottom-right, above the corner
-      cairo_line_to (cr, x + width, y + height - radius);
+      cairo_line_to(cr, x + width, y + height - radius);
 
       // bottom-right, left of the corner
-      cairo_arc (cr,
+      cairo_arc(cr,
                  x + width - radius,
                  y + height - radius,
                  radius,
@@ -382,10 +397,10 @@ namespace nux
                  90.0f * G_PI / 180.0f);
 
       // bottom-left, right of the corner
-      cairo_line_to (cr, x + radius, y + height);
+      cairo_line_to(cr, x + radius, y + height);
 
       // bottom-left, above the corner
-      cairo_arc (cr,
+      cairo_arc(cr,
                  x + radius,
                  y + height - radius,
                  radius,
@@ -393,7 +408,7 @@ namespace nux
                  180.0f * G_PI / 180.0f);
 
       // top-left, right of the corner
-      cairo_arc (cr,
+      cairo_arc(cr,
                  x + radius,
                  y + radius,
                  radius,
@@ -404,7 +419,7 @@ namespace nux
     return true;
   }
 
-  static inline void _blurinner (guchar* pixel,
+  static inline void _blurinner(guchar* pixel,
                                  gint*   zR,
                                  gint*   zG,
                                  gint*   zB,
@@ -434,7 +449,7 @@ namespace nux
     *(pixel + 3) = *zA >> zprec;
   }
 
-  static inline void _blurrow (guchar* pixels,
+  static inline void _blurrow(guchar* pixels,
                                gint    width,
                                gint    height,
                                gint    channels,
@@ -458,15 +473,15 @@ namespace nux
     zA = *(scanline + 3) << zprec;
 
     for (index = 0; index < width; index ++)
-      _blurinner (&scanline[index * channels], &zR, &zG, &zB, &zA, alpha, aprec,
+      _blurinner(&scanline[index * channels], &zR, &zG, &zB, &zA, alpha, aprec,
       zprec);
 
     for (index = width - 2; index >= 0; index--)
-      _blurinner (&scanline[index * channels], &zR, &zG, &zB, &zA, alpha, aprec,
+      _blurinner(&scanline[index * channels], &zR, &zG, &zB, &zA, alpha, aprec,
       zprec);
   }
 
-  static inline void _blurcol (guchar* pixels,
+  static inline void _blurcol(guchar* pixels,
                                gint    width,
                                gint    height,
                                gint    channels,
@@ -492,11 +507,11 @@ namespace nux
     zA = *((guchar*) ptr + 3) << zprec;
 
     for (index = width; index < (height - 1) * width; index += width)
-      _blurinner ((guchar*) &ptr[index * channels], &zR, &zG, &zB, &zA, alpha,
+      _blurinner((guchar*) &ptr[index * channels], &zR, &zG, &zB, &zA, alpha,
       aprec, zprec);
 
     for (index = (height - 2) * width; index >= 0; index -= width)
-      _blurinner ((guchar*) &ptr[index * channels], &zR, &zG, &zB, &zA, alpha,
+      _blurinner((guchar*) &ptr[index * channels], &zR, &zG, &zB, &zA, alpha,
       aprec, zprec);
   }
 
@@ -514,7 +529,7 @@ namespace nux
   //
   // zprec = precision of state parameters zR,zG,zB and zA in fp format 8.zprec
   //
-  void _expblur (guchar* pixels,
+  void _expblur(guchar* pixels,
                  gint    width,
                  gint    height,
                  gint    channels,
@@ -532,20 +547,20 @@ namespace nux
     // calculate the alpha such that 90% of 
     // the kernel is within the radius.
     // (Kernel extends to infinity)
-    alpha = (gint) ((1 << aprec) * (1.0f - expf (-2.3f / (radius + 1.f))));
+    alpha = (gint) ((1 << aprec) * (1.0f - expf(-2.3f / (radius + 1.f))));
 
     for (; row < height; row++)
-      _blurrow (pixels, width, height, channels, row, alpha, aprec, zprec);
+      _blurrow(pixels, width, height, channels, row, alpha, aprec, zprec);
 
-    for(; col < width; col++)
-      _blurcol (pixels, width, height, channels, col, alpha, aprec, zprec);
+    for (; col < width; col++)
+      _blurcol(pixels, width, height, channels, col, alpha, aprec, zprec);
 
     return;
   }
 
-  // if called like BlurSurface (radius) or BlurSurface (radius, NULL) it will
+  // if called like BlurSurface(radius) or BlurSurface(radius, NULL) it will
   // try to blur the image-surface of the internal cairo-context
-  bool CairoGraphics::BlurSurface (unsigned int radius, cairo_surface_t* surf)
+  bool CairoGraphics::BlurSurface(unsigned int radius, cairo_surface_t* surf)
   {
     cairo_surface_t* surface;
     guchar*          pixels;
@@ -556,32 +571,32 @@ namespace nux
     if (surf)
       surface = surf;
     else
-      surface = cairo_get_target (_cr);
+      surface = cairo_get_target(_cr);
 
     // don't do anything if we're not dealing with an image-surface
-      if (cairo_surface_get_type (surface) != CAIRO_SURFACE_TYPE_IMAGE)
+      if (cairo_surface_get_type(surface) != CAIRO_SURFACE_TYPE_IMAGE)
       return false;
 
     // before we mess with the surface execute any pending drawing
-    cairo_surface_flush (surface);
+    cairo_surface_flush(surface);
 
-    pixels = cairo_image_surface_get_data (surface);
-    width  = cairo_image_surface_get_width (surface);
-    height = cairo_image_surface_get_height (surface);
-    format = cairo_image_surface_get_format (surface);
+    pixels = cairo_image_surface_get_data(surface);
+    width  = cairo_image_surface_get_width(surface);
+    height = cairo_image_surface_get_height(surface);
+    format = cairo_image_surface_get_format(surface);
 
-    switch (format)
+    switch(format)
     {
       case CAIRO_FORMAT_ARGB32:
-        _expblur (pixels, width, height, 4, radius, 16, 7);
+        _expblur(pixels, width, height, 4, radius, 16, 7);
       break;
 
       case CAIRO_FORMAT_RGB24:
-        _expblur (pixels, width, height, 3, radius, 16, 7);
+        _expblur(pixels, width, height, 3, radius, 16, 7);
       break;
 
       case CAIRO_FORMAT_A8:
-        _expblur (pixels, width, height, 1, radius, 16, 7);
+        _expblur(pixels, width, height, 1, radius, 16, 7);
       break;
 
       default :
@@ -590,7 +605,7 @@ namespace nux
     }
 
     // inform cairo we altered the surfaces contents
-    cairo_surface_mark_dirty (surface);
+    cairo_surface_mark_dirty(surface);
 
     return true;
   }

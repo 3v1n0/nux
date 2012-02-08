@@ -34,7 +34,6 @@ namespace nux
   class HLayout;
   class StaticTextBox;
   class ColorEditor;
-  class TimerFunctor;
   class TimerHandle;
   class ColorDialogProxy;
 
@@ -43,10 +42,9 @@ namespace nux
   public:
     ColorPreview(Color const& c = nux::color::Transparent, NUX_FILE_LINE_PROTO);
     ~ColorPreview();
-    virtual long ProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
-    virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void PostDraw (GraphicsEngine &GfxContext, bool force_draw);
+    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     sigc::signal< void, ColorEditor * > sigColorChanged;
 
@@ -54,8 +52,8 @@ namespace nux
     Color const& GetRGBColor() const;
 
   private:
-    void RecvTimer (void *v);
-    void RecvClick (int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvTimer(void *v);
+    void RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
 
     TimerFunctor       *m_ChangeDetectionTimer;
     TimerHandle         m_ChangeTimerHandler;

@@ -30,10 +30,10 @@
 namespace nux
 {
 
-  NUX_IMPLEMENT_OBJECT_TYPE (IOpenGLFrameBufferObject);
+  NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLFrameBufferObject);
 
-  IOpenGLFrameBufferObject::IOpenGLFrameBufferObject (NUX_FILE_LINE_DECL)
-    :   IOpenGLResource (RTFRAMEBUFFEROBJECT, NUX_FILE_LINE_PARAM)
+  IOpenGLFrameBufferObject::IOpenGLFrameBufferObject(NUX_FILE_LINE_DECL)
+    :   IOpenGLResource(RTFRAMEBUFFEROBJECT, NUX_FILE_LINE_PARAM)
   {
     _Width = 1;
     _Height = 1;
@@ -42,11 +42,11 @@ namespace nux
 
     for (int i = 0; i < 1 /*GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment()*/; i++)
     {
-      _Color_AttachmentArray.push_back (ObjectPtr<IOpenGLSurface> (0) );
+      _Color_AttachmentArray.push_back(ObjectPtr<IOpenGLSurface> (0));
     }
 
-    FormatFrameBufferObject (_Width, _Height, _PixelFormat);
-    GRunTimeStats.Register (this);
+    FormatFrameBufferObject(_Width, _Height, _PixelFormat);
+    GRunTimeStats.Register(this);
   }
 
   IOpenGLFrameBufferObject::~IOpenGLFrameBufferObject()
@@ -54,10 +54,10 @@ namespace nux
     // IOpenGLFrameBufferObject is an abstraction. Is does not have an opengl id.
     // _Fbo has an opengl id that is destroyed when the destructor is called.
     _OpenGLID = 0;
-    GRunTimeStats.UnRegister (this);
+    GRunTimeStats.UnRegister(this);
   }
 
-  int IOpenGLFrameBufferObject::FormatFrameBufferObject (int Width, int Height, BitmapFormat PixelFormat)
+  int IOpenGLFrameBufferObject::FormatFrameBufferObject(int Width, int Height, BitmapFormat PixelFormat)
   {
     Deactivate();
 
@@ -69,11 +69,11 @@ namespace nux
     _Depth_Attachment = ObjectPtr<IOpenGLSurface> (0);
     _Stencil_Attachment = ObjectPtr<IOpenGLSurface> (0);
 
-    if ( (_Width == Width) && (_Height == Height) && (_PixelFormat == PixelFormat) )
+    if ((_Width == Width) && (_Height == Height) && (_PixelFormat == PixelFormat))
       return 1;
 
 // #ifndef NUX_OPENGLES_20
-//     _Rbo.Set (GL_DEPTH_COMPONENT, Width, Height);
+//     _Rbo.Set(GL_DEPTH_COMPONENT, Width, Height);
 // #endif
 
     // Clear clipping region stack
@@ -85,11 +85,11 @@ namespace nux
     return 1;
   }
 
-  int IOpenGLFrameBufferObject::SetRenderTarget (int ColorAttachmentIndex, ObjectPtr<IOpenGLSurface> pRenderTargetSurface)
+  int IOpenGLFrameBufferObject::SetRenderTarget(int ColorAttachmentIndex, ObjectPtr<IOpenGLSurface> pRenderTargetSurface)
   {
-    nuxAssert (ColorAttachmentIndex < 1 /*GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment()*/);
+    nuxAssert(ColorAttachmentIndex < 1 /*GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment()*/);
 
-    if (pRenderTargetSurface.IsNull() )
+    if (pRenderTargetSurface.IsNull())
     {
       _Color_AttachmentArray[ColorAttachmentIndex] = ObjectPtr<IOpenGLSurface> (0);
       return 1;
@@ -100,9 +100,9 @@ namespace nux
       return 1;
     }
 
-    if (! (_Width == pRenderTargetSurface->GetWidth() && _Height == pRenderTargetSurface->GetHeight() ) )
+    if (! (_Width == pRenderTargetSurface->GetWidth() && _Height == pRenderTargetSurface->GetHeight()))
     {
-      nuxAssertMsg (0, TEXT ("[IOpenGLFrameBufferObject::SetRenderTarget] Invalid surface size.") );
+      nuxAssertMsg(0, "[IOpenGLFrameBufferObject::SetRenderTarget] Invalid surface size.");
       return 0;
     }
 
@@ -116,20 +116,20 @@ namespace nux
     return 1;
   }
 
-  int IOpenGLFrameBufferObject::SetDepthSurface (ObjectPtr<IOpenGLSurface> pDepthSurface)
+  int IOpenGLFrameBufferObject::SetDepthSurface(ObjectPtr<IOpenGLSurface> pDepthSurface)
   {
     //nuxAssert(pDepthSurface.IsValid());
 
-    if (pDepthSurface.IsNull() )
+    if (pDepthSurface.IsNull())
     {
       _Depth_Attachment = ObjectPtr<IOpenGLSurface> (0);
       _Stencil_Attachment = ObjectPtr<IOpenGLSurface> (0);
       return 1;
     }
 
-    if (! (_Width == pDepthSurface->GetWidth() && _Height == pDepthSurface->GetHeight() ) )
+    if (! (_Width == pDepthSurface->GetWidth() && _Height == pDepthSurface->GetHeight()))
     {
-      nuxAssertMsg (0, TEXT ("The depth surface size is not compatible with the frame buffer size.") );
+      nuxAssertMsg(0, "The depth surface size is not compatible with the frame buffer size.");
       return 0;
     }
 
@@ -150,9 +150,9 @@ namespace nux
     return 1;
   }
 
-  ObjectPtr<IOpenGLSurface> IOpenGLFrameBufferObject::GetRenderTarget (int ColorAttachmentIndex)
+  ObjectPtr<IOpenGLSurface> IOpenGLFrameBufferObject::GetRenderTarget(int ColorAttachmentIndex)
   {
-    nuxAssert (ColorAttachmentIndex < 1 /*GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment()*/);
+    nuxAssert(ColorAttachmentIndex < 1 /*GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment()*/);
     return _Color_AttachmentArray[ColorAttachmentIndex];
   }
 
@@ -161,59 +161,59 @@ namespace nux
     return _Depth_Attachment;
   }
 
-  int IOpenGLFrameBufferObject::Activate (bool WithClippingStack)
+  int IOpenGLFrameBufferObject::Activate(bool WithClippingStack)
   {
     GLuint NumBuffers = 0;
     _Fbo.Bind();
 
-    if (GetGraphicsDisplay()->GetGpuDevice() )
-      GetGraphicsDisplay()->GetGpuDevice()->SetCurrentFrameBufferObject (ObjectPtr<IOpenGLFrameBufferObject> (this));
+    if (GetGraphicsDisplay()->GetGpuDevice())
+      GetGraphicsDisplay()->GetGpuDevice()->SetCurrentFrameBufferObject(ObjectPtr<IOpenGLFrameBufferObject> (this));
 
     for (int i = 0; i < 1 /*GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment()*/; i++)
     {
-      if (_Color_AttachmentArray[i].IsValid() )
+      if (_Color_AttachmentArray[i].IsValid())
       {
         GLenum target   = _Color_AttachmentArray[i]->GetSurfaceTarget();
         GLenum glID     = _Color_AttachmentArray[i]->GetOpenGLID();
         GLint level     = _Color_AttachmentArray[i]->GetMipLevel();
-        CHECKGL ( glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + i, target, glID, level) );
+        CHECKGL(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + i, target, glID, level));
 
 #ifndef NUX_OPENGLES_20
-        CHECKGL ( glDrawBuffer (GL_COLOR_ATTACHMENT0 + i) );
+        CHECKGL(glDrawBuffer(GL_COLOR_ATTACHMENT0 + i));
 #endif
         NumBuffers++;
       }
       else
       {
-        CHECKGL ( glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, 0, 0) );
+        CHECKGL(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, 0, 0));
       }
     }
 
-    if(_Depth_Attachment.IsValid())
+    if (_Depth_Attachment.IsValid())
     {
         GLenum target   = _Depth_Attachment->GetSurfaceTarget();
         GLenum glID     = _Depth_Attachment->GetOpenGLID();
         GLint level     = _Depth_Attachment->GetMipLevel();
-        CHECKGL( glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, target, glID, level) );
+        CHECKGL(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, target, glID, level));
     }
     else
     {
-        CHECKGL( glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, 0, 0) );
+        CHECKGL(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, 0, 0));
         // On the PC you need to bing the same D24S8 surface to the depth and the stencil attachment.
     }
 
 // #ifndef NUX_OPENGLES_20
-//     _Rbo.Set (GL_DEPTH_COMPONENT, _Width, _Height);
-//     CHECKGL ( glFramebufferRenderbufferEXT (GL_FRAMEBUFFER_EXT,
+//     _Rbo.Set(GL_DEPTH_COMPONENT, _Width, _Height);
+//     CHECKGL(glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
 //                                             GL_DEPTH_ATTACHMENT_EXT,
 //                                             GL_RENDERBUFFER_EXT,
-//                                             _Rbo.GetId() ) );
+//                                             _Rbo.GetId()));
 // #endif
 
-    nuxAssert ( _Fbo.IsValid() == true );
+    nuxAssert( _Fbo.IsValid() == true );
 
     if (GetGraphicsDisplay()->GetGraphicsEngine())
-      GetGraphicsDisplay()->GetGraphicsEngine()->SetViewport (0, 0, _Width, _Height);
+      GetGraphicsDisplay()->GetGraphicsEngine()->SetViewport(0, 0, _Width, _Height);
 
     if (WithClippingStack)
       ApplyClippingRegion();
@@ -225,17 +225,17 @@ namespace nux
 // Restore the original opengl back buffer as defined when creating the opengl context(color + depth + stencil).
   int IOpenGLFrameBufferObject::Deactivate()
   {
-    CHECKGL ( glBindFramebufferEXT ( GL_FRAMEBUFFER_EXT, 0 ) );
+    CHECKGL(glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, 0 ));
 
 #ifndef NUX_OPENGLES_20
-    CHECKGL ( glBindRenderbufferEXT (GL_RENDERBUFFER_EXT, 0) );
+    CHECKGL(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0));
 #endif
 
-    if(GetGraphicsDisplay()->GetGpuDevice())
-      GetGraphicsDisplay()->GetGpuDevice()->SetCurrentFrameBufferObject (ObjectPtr<IOpenGLFrameBufferObject> (0));
+    if (GetGraphicsDisplay()->GetGpuDevice())
+      GetGraphicsDisplay()->GetGpuDevice()->SetCurrentFrameBufferObject(ObjectPtr<IOpenGLFrameBufferObject> (0));
 
-    if(GetGraphicsDisplay()->GetGraphicsEngine())
-      GetGraphicsDisplay()->GetGraphicsEngine()->SetScissor (0, 0, _Width, _Height);
+    if (GetGraphicsDisplay()->GetGraphicsEngine())
+      GetGraphicsDisplay()->GetGraphicsEngine()->SetScissor(0, 0, _Width, _Height);
 
     _IsActive = false;
     return 1;
@@ -244,7 +244,7 @@ namespace nux
   void IOpenGLFrameBufferObject::PushClippingRegion(Rect rect)
   {
     Rect r0;
-    if(GetGraphicsDisplay()->GetGraphicsEngine())
+    if (GetGraphicsDisplay()->GetGraphicsEngine())
     {
       r0 = GetGraphicsDisplay()->GetGraphicsEngine()->ModelViewXFormRect(rect);
     }
@@ -254,7 +254,7 @@ namespace nux
 
     if (stacksize == 0)
     {
-      current_clip_rect = Rect (0, 0, _Width, _Height);
+      current_clip_rect = Rect(0, 0, _Width, _Height);
     }
     else
     {
@@ -264,44 +264,44 @@ namespace nux
     Rect r1;
 
     if (GetGraphicsDisplay()->GetGraphicsEngine())
-      r1 = GetGraphicsDisplay()->GetGraphicsEngine()->GetViewportRect ();
+      r1 = GetGraphicsDisplay()->GetGraphicsEngine()->GetViewportRect();
 
-    r0.OffsetPosition (r1.x, _Height - (r1.y + r1.GetHeight ()));
+    r0.OffsetPosition(r1.x, _Height - (r1.y + r1.GetHeight()));
 
     Rect Intersection = current_clip_rect.Intersect(r0);
 
-    if (!Intersection.IsNull ())
+    if (!Intersection.IsNull())
     {
       _clipping_rect = Intersection;
-      _ClippingRegionStack.push_back (Intersection);
+      _ClippingRegionStack.push_back(Intersection);
 
-      SetOpenGLClippingRectangle (Intersection.x + GetGraphicsDisplay()->GetGraphicsEngine()->GetViewportX (),
-                         _Height - Intersection.y - Intersection.GetHeight () - GetGraphicsDisplay()->GetGraphicsEngine()->GetViewportY (),
-                         Intersection.GetWidth (), Intersection.GetHeight ());
+      SetOpenGLClippingRectangle(Intersection.x + GetGraphicsDisplay()->GetGraphicsEngine()->GetViewportX(),
+                         _Height - Intersection.y - Intersection.GetHeight() - GetGraphicsDisplay()->GetGraphicsEngine()->GetViewportY(),
+                         Intersection.GetWidth(), Intersection.GetHeight());
     }
     else
     {
-      _clipping_rect = Rect (0, 0, 0, 0);
-      _ClippingRegionStack.push_back (Rect (0, 0, 0, 0));
-      SetOpenGLClippingRectangle (0, 0, 0, 0);
+      _clipping_rect = Rect(0, 0, 0, 0);
+      _ClippingRegionStack.push_back(Rect(0, 0, 0, 0));
+      SetOpenGLClippingRectangle(0, 0, 0, 0);
     }
   }
 
-  void IOpenGLFrameBufferObject::PopClippingRegion ()
+  void IOpenGLFrameBufferObject::PopClippingRegion()
   {
-    _ClippingRegionStack.pop_back ();
-    int stacksize = (int) _ClippingRegionStack.size ();
+    _ClippingRegionStack.pop_back();
+    int stacksize = (int) _ClippingRegionStack.size();
 
     if (stacksize == 0)
     {
-      _clipping_rect = Rect (0, 0, _Width, _Height);
-      SetOpenGLClippingRectangle (0, 0, _Width, _Height);
+      _clipping_rect = Rect(0, 0, _Width, _Height);
+      SetOpenGLClippingRectangle(0, 0, _Width, _Height);
     }
     else
     {
       _clipping_rect = _ClippingRegionStack [stacksize-1];
       Rect current_clip_rect = _ClippingRegionStack [stacksize-1];
-      SetOpenGLClippingRectangle (current_clip_rect.x, _Height - current_clip_rect.y - current_clip_rect.GetHeight(), current_clip_rect.GetWidth(), current_clip_rect.GetHeight() );
+      SetOpenGLClippingRectangle(current_clip_rect.x, _Height - current_clip_rect.y - current_clip_rect.GetHeight(), current_clip_rect.GetWidth(), current_clip_rect.GetHeight());
     }
   }
 
@@ -309,8 +309,8 @@ namespace nux
   {
     _ClippingRegionStack.clear();
     {
-      _clipping_rect = Rect (0, 0, _Width, _Height);
-      SetOpenGLClippingRectangle (0, 0, _Width, _Height);
+      _clipping_rect = Rect(0, 0, _Width, _Height);
+      SetOpenGLClippingRectangle(0, 0, _Width, _Height);
     }
   }
 
@@ -320,32 +320,32 @@ namespace nux
 
     if (stacksize == 0)
     {
-      _clipping_rect = Rect (0, 0, _Width, _Height);
-      SetOpenGLClippingRectangle (0, 0, _Width, _Height);
+      _clipping_rect = Rect(0, 0, _Width, _Height);
+      SetOpenGLClippingRectangle(0, 0, _Width, _Height);
     }
     else
     {
       _clipping_rect = _ClippingRegionStack [stacksize-1];
       Rect current_clip_rect = _ClippingRegionStack [stacksize-1];
-      SetOpenGLClippingRectangle (current_clip_rect.x, _Height - current_clip_rect.y - current_clip_rect.GetHeight(), current_clip_rect.GetWidth(), current_clip_rect.GetHeight() );
+      SetOpenGLClippingRectangle(current_clip_rect.x, _Height - current_clip_rect.y - current_clip_rect.GetHeight(), current_clip_rect.GetWidth(), current_clip_rect.GetHeight());
     }
   }
 
-  void IOpenGLFrameBufferObject::SetClippingRectangle (const Rect &rect)
+  void IOpenGLFrameBufferObject::SetClippingRectangle(const Rect &rect)
   {
     if (GetGraphicsDisplay()->GetGraphicsEngine())
     {
       _clipping_rect = rect;
-      GetGraphicsDisplay()->GetGraphicsEngine()->SetScissor (rect.x, _Height - rect.y - rect.height, rect.width, rect.height);
+      GetGraphicsDisplay()->GetGraphicsEngine()->SetScissor(rect.x, _Height - rect.y - rect.height, rect.width, rect.height);
     }
   }
 
-  void IOpenGLFrameBufferObject::SetOpenGLClippingRectangle (int x, int y, int width, int height)
+  void IOpenGLFrameBufferObject::SetOpenGLClippingRectangle(int x, int y, int width, int height)
   {
     if (GetGraphicsDisplay()->GetGraphicsEngine())
     {
-      _clipping_rect = Rect (x, y, width, height);
-      GetGraphicsDisplay()->GetGraphicsEngine()->SetScissor (x, y, width, height);
+      _clipping_rect = Rect(x, y, width, height);
+      GetGraphicsDisplay()->GetGraphicsEngine()->SetScissor(x, y, width, height);
     }
   }
 
@@ -357,7 +357,7 @@ namespace nux
 // 
 //     if (stacksize == 0)
 //     {
-//       return Rect (0, 0, _Width, _Height);
+//       return Rect(0, 0, _Width, _Height);
 //     }
 //     else
 //     {
@@ -366,8 +366,9 @@ namespace nux
 //     }
   }
 
-  int IOpenGLFrameBufferObject::GetNumberOfClippingRegions () const
+  int IOpenGLFrameBufferObject::GetNumberOfClippingRegions() const
   {
-    return _ClippingRegionStack.size ();
+    return _ClippingRegionStack.size();
   }
 }
+

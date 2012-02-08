@@ -27,27 +27,27 @@
 namespace nux
 {
 
-  NUX_DECLSPEC_DLL t_double *Bernstein (t_int n, t_double t)
+  NUX_DECLSPEC_DLL double *Bernstein (int n, double t)
   {
     if (n < 0)
     {
       NUX_BREAK_ASM_INT3;
     }
 
-    t_double *bernstein;
-    t_int i;
+    double *bernstein;
+    int i;
 
-    bernstein = new t_double[n+1];
+    bernstein = new double[n+1];
 
     for (i = 0; i <= n; i++ )
     {
-      bernstein[i] = BinomialCoefficient (n, i) * PowerInt<t_double> (t, i) * PowerInt<t_double> (1.0 - t, n - i);
+      bernstein[i] = BinomialCoefficient (n, i) * PowerInt<double> (t, i) * PowerInt<double> (1.0 - t, n - i);
     }
 
     return bernstein;
   }
 
-  NUX_DECLSPEC_DLL void Bezier_XY (t_int n, t_double t, t_double xcon[], t_double ycon[], t_double *xval, t_double *yval)
+  NUX_DECLSPEC_DLL void Bezier_XY (int n, double t, double xcon[], double ycon[], double *xval, double *yval)
   {
     if (n < 0)
     {
@@ -72,7 +72,7 @@ namespace nux
     delete [] bval;
   }
 
-  NUX_DECLSPEC_DLL void Bezier_XYZ (t_int n, t_double t, t_double xcon[], t_double ycon[], t_double zcon[], t_double *xval, t_double *yval, t_double *zval)
+  NUX_DECLSPEC_DLL void Bezier_XYZ (int n, double t, double xcon[], double ycon[], double zcon[], double *xval, double *yval, double *zval)
   {
     if (n < 0)
       NUX_BREAK_ASM_INT3;

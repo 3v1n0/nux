@@ -33,7 +33,7 @@ namespace nux
   struct TexWrapMapping
   {
     TexWrap tex_wrap_mode;
-    t_u32 opengl_wrap_mode;
+    unsigned int opengl_wrap_mode;
   };
 
   struct TexWrapMapping TexWrapMappingArray [] =
@@ -43,13 +43,15 @@ namespace nux
     {TEXWRAP_CLAMP_TO_EDGE,                 GL_CLAMP_TO_EDGE},
     {TEXWRAP_CLAMP_TO_BORDER,               GL_CLAMP_TO_BORDER},
     {TEXWRAP_MIRRORED_REPEAT,               GL_MIRRORED_REPEAT},
+#ifndef NUX_OPENGLES_20
     {TEXWRAP_MIRROR_CLAMP_EXT,              GL_MIRROR_CLAMP_EXT},
     {TEXWRAP_MIRROR_CLAMP_TO_EDGE_EXT,      GL_MIRROR_CLAMP_TO_EDGE_EXT},
     {TEXWRAP_MIRROR_CLAMP_TO_BORDER_EXT,    GL_MIRROR_CLAMP_TO_BORDER_EXT},
+#endif
     {TEXWRAP_UNKNOWN,                       0}
   };
 
-  GLenum TexWrapGLMapping (TexWrap tex_wrap_mode)
+  GLenum TexWrapGLMapping(TexWrap tex_wrap_mode)
   {
     int i = 0;
 
@@ -63,14 +65,14 @@ namespace nux
       ++i;
     }
 
-    nuxAssertMsg (0, TEXT ("[TexWrapGLMapping] Invalid texture wrap mode.") );
+    nuxAssertMsg(0, "[TexWrapGLMapping] Invalid texture wrap mode.");
     return GL_CLAMP;
   }
 
   struct TexFilterMapping
   {
     TexFilter tex_filter_mode;
-    t_u32 opengl_filter_mode;
+    unsigned int opengl_filter_mode;
   };
 
   struct TexFilterMapping TexFilterMappingArray [] =
@@ -84,7 +86,7 @@ namespace nux
     {TEXFILTER_UNKNOWN,                 0},
   };
 
-  GLenum TexFilterGLMapping (TexFilter tex_filter_mode)
+  GLenum TexFilterGLMapping(TexFilter tex_filter_mode)
   {
     int i = 0;
 
@@ -98,14 +100,14 @@ namespace nux
       ++i;
     }
 
-    nuxAssertMsg (0, TEXT ("[TexFilterGLMapping] Invalid texture filter mode.") );
+    nuxAssertMsg(0, "[TexFilterGLMapping] Invalid texture filter mode.");
     return GL_REPEAT;
   }
 
   struct RopBlendMapping
   {
     RopBlend rop_blend_mode;
-    t_u32 opengl_blend_op;
+    unsigned int opengl_blend_op;
   };
 
   struct RopBlendMapping RopBlendMappingArray [] =
@@ -128,7 +130,7 @@ namespace nux
     {ROPBLEND_UNKNOWN,                          0},
   };
 
-  GLenum RopBlendGLMapping (RopBlend rop_blend_mode)
+  GLenum RopBlendGLMapping(RopBlend rop_blend_mode)
   {
     int i = 0;
 
@@ -142,7 +144,7 @@ namespace nux
       ++i;
     }
 
-    nuxAssertMsg (0, TEXT ("[RopBlendGLMapping] Invalid texture ROP operation.") );
+    nuxAssertMsg(0, "[RopBlendGLMapping] Invalid texture ROP operation.");
     return ROPBLEND_ONE;
   }
 
@@ -162,59 +164,66 @@ namespace nux
     m_tex_coord_type = TexCoordXForm::OFFSET_SCALE_COORD;
   }
 
-  void TexCoordXForm::FlipUCoord (bool b)
+  void TexCoordXForm::FlipUCoord(bool b)
   {
     flip_u_coord = b;
   }
 
-  void TexCoordXForm::FlipVCoord (bool b)
+  void TexCoordXForm::FlipVCoord(bool b)
   {
     flip_v_coord = b;
   }
 
-  void TexCoordXForm::FlipUVCoord (bool flip_u, bool flip_v)
+  void TexCoordXForm::FlipUVCoord(bool flip_u, bool flip_v)
   {
     flip_u_coord = flip_u;
     flip_v_coord = flip_v;
   }
 
-  void TexCoordXForm::SetFilter (TexFilter minfitter, TexFilter magfilter)
+  void TexCoordXForm::SetFilter(TexFilter minfitter, TexFilter magfilter)
   {
     min_filter = minfitter;
     mag_filter = magfilter;
   }
 
-  void TexCoordXForm::SetWrap (TexWrap u_wrap, TexWrap v_wrap)
+  void TexCoordXForm::SetWrap(TexWrap u_wrap, TexWrap v_wrap)
   {
     uwrap = u_wrap;
     vwrap = v_wrap;
   }
 
-  void TexCoordXForm::SetTexCoordType (TexCoordType tex_coord_type)
+  void TexCoordXForm::SetTexCoordType(TexCoordType tex_coord_type)
   {
     m_tex_coord_type = tex_coord_type;
   }
 
-  void QRP_Compute_Texture_Coord (t_int32 quad_width, t_int32 quad_height, ObjectPtr<IOpenGLBaseTexture> tex, TexCoordXForm &texxform)
+  void QRP_Compute_Texture_Coord(int quad_width, int quad_height, ObjectPtr<IOpenGLBaseTexture> tex, TexCoordXForm &texxform)
   {
     float tex_width = tex->GetWidth();
     float tex_height = tex->GetHeight();
 
-    if (tex->Type().IsDerivedFromType (IOpenGLTexture2D::StaticObjectType) )
+    if (tex->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType))
     {
       if (texxform.m_tex_coord_type == TexCoordXForm::OFFSET_SCALE_COORD)
       {
-        texxform.u0 = texxform.uoffset;
-        texxform.v0 = texxform.voffset;
-        texxform.u1 = texxform.u0 + texxform.uscale;
-        texxform.v1 = texxform.v0 + texxform.vscale;
+        // Scale and offset the texture coordinates.
+        // Ensure precise alignment between pixels and the texture coordinates
+        // With a scale of 1.0 for both uscale and vscale, the texture is scaled over the entire surface of the quad.
+        // If the texture and the quad have the same size, then the texture is mapped 1 to 1 with the pixels of the quad.
+        texxform.u0 = texxform.uoffset + texxform.uscale * (tex_width / (float)quad_width)   * (1.0f / (2.0f * tex_width));
+        texxform.v0 = texxform.voffset + texxform.vscale * (tex_height / (float)quad_height) * (1.0f / (2.0f * tex_height));
+        texxform.u1 = texxform.uoffset + texxform.uscale * (tex_width / (float)quad_width)   * (2.0f * quad_width - 1.0f) / (2.0f * tex_width);
+        texxform.v1 = texxform.voffset + texxform.vscale * (tex_height / (float)quad_height) * (2.0f * quad_height - 1.0f) / (2.0f * tex_height);
       }
       else if (texxform.m_tex_coord_type == TexCoordXForm::OFFSET_COORD)
       {
-        texxform.u0 = texxform.uoffset;
-        texxform.v0 = texxform.voffset;
-        texxform.u1 = texxform.u0 + (float) quad_width / tex_width;
-        texxform.v1 = texxform.v0 + (float) quad_height / tex_height;
+        // Offset the texture coordinates but preserve the proportion of the of the texture over the quad.
+        // If the texture size is smaller than the quad, it will be tiled over it.
+        // Ensure precise alignment between pixels and the texture coordinates
+        texxform.u0 = texxform.uoffset + (1.0f / (2.0f * tex_width));
+        texxform.v0 = texxform.voffset + (1.0f / (2.0f * tex_height));
+        texxform.u1 = texxform.uoffset + (2.0f * quad_width - 1.0f) / (2.0f * tex_width);
+        texxform.v1 = texxform.voffset + (2.0f * quad_height - 1.0f) / (2.0f * tex_height);
       }
       else if (texxform.m_tex_coord_type == TexCoordXForm::UNNORMALIZED_COORD)
       {
@@ -228,12 +237,12 @@ namespace nux
         // Use provided texture coordinates as is.
       }
     }
-    else if (tex->Type().IsDerivedFromType (IOpenGLRectangleTexture::StaticObjectType) )
+    else if (tex->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       if (texxform.m_tex_coord_type == TexCoordXForm::OFFSET_SCALE_COORD)
       {
-        texxform.u0 = t_int32 (texxform.uoffset * tex_width);
-        texxform.v0 = t_int32 (texxform.voffset * tex_height);
+        texxform.u0 = int(texxform.uoffset * tex_width);
+        texxform.v0 = int(texxform.voffset * tex_height);
         texxform.u1 = texxform.u0 + tex_width * texxform.uscale;
         texxform.v1 = texxform.v0 + tex_height * texxform.vscale;
       }
@@ -271,11 +280,11 @@ namespace nux
       texxform.v1 = temp;
     }
 
-    if (tex->Type().IsDerivedFromType (IOpenGLRectangleTexture::StaticObjectType) )
+    if (tex->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
       // A chance to avoid some potential errors! Rectangle textures support only GL_CLAMP, GL_CLAMP_TO_EDGE, and GL_CLAMP_TO_BORDER.
       // See http://www.opengl.org/registry/specs/ARB/texture_rectangle.txt
-      if(texxform.uwrap != TEXWRAP_CLAMP ||
+      if (texxform.uwrap != TEXWRAP_CLAMP ||
         texxform.uwrap != TEXWRAP_CLAMP_TO_EDGE ||
         texxform.uwrap != TEXWRAP_CLAMP_TO_BORDER ||
         texxform.vwrap != TEXWRAP_CLAMP ||
@@ -286,195 +295,230 @@ namespace nux
         texxform.vwrap = TEXWRAP_CLAMP;
       }
     }
-    tex->SetWrap (TexWrapGLMapping (texxform.uwrap), TexWrapGLMapping (texxform.vwrap), GL_CLAMP);
-    tex->SetFiltering (TexFilterGLMapping (texxform.min_filter), TexFilterGLMapping (texxform.mag_filter) );
+
+#ifdef NUX_OPENGLES_20
+    // Enforce OpenGL ES 2.0 texture restrictions
+    // 1. There is neither CLAMP nor CLAMP_TO_BORDER
+    // 2. For NPOT textures, only CLAMP_TO_EDGE is supported
+    // 3. For NPOT textures, only NEAREST and LINEAR are supported
+    //
+    // The last two constraints are relaxed by the GL_OES_texture_npot
+    // extension which unfortunately is not supported by all implementations.
+    //
+    // Notes: we have mapped GL_CLAMP to GL_CLAMP_TO_EDGE in OpenGLMapping.h
+    // so we also "support" TEXWRAP_CLAMP.
+    if (texxform.uwrap == TEXWRAP_CLAMP_TO_BORDER ||
+        texxform.vwrap == TEXWRAP_CLAMP_TO_BORDER ||
+        (!tex->IsPowerOfTwo() &&
+         ((texxform.uwrap != TEXWRAP_CLAMP &&
+           texxform.uwrap != TEXWRAP_CLAMP_TO_EDGE) ||
+          (texxform.vwrap != TEXWRAP_CLAMP &&
+           texxform.vwrap != TEXWRAP_CLAMP_TO_EDGE))))
+    {
+      texxform.uwrap = TEXWRAP_CLAMP_TO_EDGE;
+      texxform.vwrap = TEXWRAP_CLAMP_TO_EDGE;
+    }
+
+    if (!tex->IsPowerOfTwo() &&
+        ((texxform.min_filter != TEXFILTER_NEAREST &&
+          texxform.min_filter != TEXFILTER_LINEAR) ||
+         (texxform.mag_filter != TEXFILTER_NEAREST &&
+          texxform.mag_filter != TEXFILTER_LINEAR)))
+    {
+      texxform.min_filter = TEXFILTER_LINEAR;
+      texxform.mag_filter = TEXFILTER_LINEAR;
+    }
+#endif
+
+    tex->SetWrap(TexWrapGLMapping(texxform.uwrap), TexWrapGLMapping(texxform.vwrap), GL_CLAMP);
+    tex->SetFiltering(TexFilterGLMapping(texxform.min_filter), TexFilterGLMapping(texxform.mag_filter));
   }
 
 
-  void GraphicsEngine::QRP_Color (int x, int y, int width, int height, const Color &color)
+  void GraphicsEngine::QRP_Color(int x, int y, int width, int height, const Color &color)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath ())
-      QRP_GLSL_Color (x, y, width, height, color, color, color, color);
+    if (UsingGLSLCodePath())
+      QRP_GLSL_Color(x, y, width, height, color, color, color, color);
     else
-      QRP_ASM_Color (x, y, width, height, color, color, color, color);
+      QRP_ASM_Color(x, y, width, height, color, color, color, color);
 #else
-    QRP_GLSL_Color (x, y, width, height, color, color, color, color);
+    QRP_GLSL_Color(x, y, width, height, color, color, color, color);
 #endif
   }
 
-  void GraphicsEngine::QRP_Color (int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3)
+  void GraphicsEngine::QRP_Color(int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath ())
-      QRP_GLSL_Color (x, y, width, height, c0, c1, c2, c3);
+    if (UsingGLSLCodePath())
+      QRP_GLSL_Color(x, y, width, height, c0, c1, c2, c3);
     else
-      QRP_ASM_Color (x, y, width, height, c0, c1, c2, c3);
+      QRP_ASM_Color(x, y, width, height, c0, c1, c2, c3);
 #else
-    QRP_GLSL_Color (x, y, width, height, c0, c1, c2, c3);
+    QRP_GLSL_Color(x, y, width, height, c0, c1, c2, c3);
 #endif
   }
 
-  void GraphicsEngine::QRP_1Tex (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color0)
+  void GraphicsEngine::QRP_1Tex(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color0)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath ())
-      QRP_GLSL_1Tex (x, y, width, height, DeviceTexture, texxform0, color0);
+    if (UsingGLSLCodePath())
+      QRP_GLSL_1Tex(x, y, width, height, DeviceTexture, texxform0, color0);
     else
-      QRP_ASM_1Tex (x, y, width, height, DeviceTexture, texxform0, color0);
+      QRP_ASM_1Tex(x, y, width, height, DeviceTexture, texxform0, color0);
 #else
-    QRP_GLSL_1Tex (x, y, width, height, DeviceTexture, texxform0, color0);
+    QRP_GLSL_1Tex(x, y, width, height, DeviceTexture, texxform0, color0);
 #endif
   }
 
-  void GraphicsEngine::QRP_Pixelate (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &c0, int pixel_size)
+  void GraphicsEngine::QRP_Pixelate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &c0, int pixel_size)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath ())
-      QRP_GLSL_Pixelate (x, y, width, height, DeviceTexture, texxform, c0, pixel_size);
+    if (UsingGLSLCodePath())
+      QRP_GLSL_Pixelate(x, y, width, height, DeviceTexture, texxform, c0, pixel_size);
     else
-      QRP_ASM_Pixelate (x, y, width, height, DeviceTexture, texxform, c0, pixel_size);
+      QRP_ASM_Pixelate(x, y, width, height, DeviceTexture, texxform, c0, pixel_size);
 #else
-    QRP_GLSL_Pixelate (x, y, width, height, DeviceTexture, texxform, c0, pixel_size);
+    QRP_GLSL_Pixelate(x, y, width, height, DeviceTexture, texxform, c0, pixel_size);
 #endif
   }
 
   // Render the texture alpha into RGB and modulated by a color.
-  void GraphicsEngine::QRP_ColorModTexAlpha (int x, int y, int width, int height,
+  void GraphicsEngine::QRP_ColorModTexAlpha(int x, int y, int width, int height,
     ObjectPtr< IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &color)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath ())
-      QRP_GLSL_ColorModTexAlpha (x, y, width, height, DeviceTexture, texxform, color);
+    if (UsingGLSLCodePath())
+      QRP_GLSL_ColorModTexAlpha(x, y, width, height, DeviceTexture, texxform, color);
     else
-      QRP_ASM_ColorModTexAlpha (x, y, width, height, DeviceTexture, texxform, color);
+      QRP_ASM_ColorModTexAlpha(x, y, width, height, DeviceTexture, texxform, color);
 #else
-    QRP_GLSL_ColorModTexAlpha (x, y, width, height, DeviceTexture, texxform, color);
+    QRP_GLSL_ColorModTexAlpha(x, y, width, height, DeviceTexture, texxform, color);
 #endif
   }
 
   // Blend 2 textures together
-  void GraphicsEngine::QRP_2Tex (int x, int y, int width, int height,
+  void GraphicsEngine::QRP_2Tex(int x, int y, int width, int height,
     ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
     ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath ())
-      QRP_GLSL_2Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
+    if (UsingGLSLCodePath())
+      QRP_GLSL_2Tex(x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
     else
-      QRP_ASM_2Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
+      QRP_ASM_2Tex(x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
 #else
-    QRP_GLSL_2Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
+    QRP_GLSL_2Tex(x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
 #endif
   }
 
 
-  void GraphicsEngine::QRP_2TexMod (int x, int y, int width, int height,
+  void GraphicsEngine::QRP_2TexMod(int x, int y, int width, int height,
     ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
     ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath ())
-      QRP_GLSL_2TexMod (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
+    if (UsingGLSLCodePath())
+      QRP_GLSL_2TexMod(x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
     else
-      QRP_ASM_2TexMod (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
+      QRP_ASM_2TexMod(x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
 #else
-    QRP_GLSL_2TexMod (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
+    QRP_GLSL_2TexMod(x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1);
 #endif
   }
 
-  void GraphicsEngine::QRP_4Tex (int x, int y, int width, int height,
+  void GraphicsEngine::QRP_4Tex(int x, int y, int width, int height,
     ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
     ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1,
     ObjectPtr<IOpenGLBaseTexture> DeviceTexture2, TexCoordXForm &texxform2, const Color &color2,
     ObjectPtr<IOpenGLBaseTexture> DeviceTexture3, TexCoordXForm &texxform3, const Color &color3)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath ())
-      QRP_GLSL_4Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1,
+    if (UsingGLSLCodePath())
+      QRP_GLSL_4Tex(x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1,
       DeviceTexture2, texxform2, color2, DeviceTexture3, texxform3, color3);
     else
-      QRP_ASM_4Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1,
+      QRP_ASM_4Tex(x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1,
       DeviceTexture2, texxform2, color2, DeviceTexture3, texxform3, color3);
 #else
-    QRP_GLSL_4Tex (x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1,
+    QRP_GLSL_4Tex(x, y, width, height, DeviceTexture0, texxform0, color0, DeviceTexture1, texxform1, color1,
       DeviceTexture2, texxform2, color2, DeviceTexture3, texxform3, color3);
 #endif
   }
 
-  void GraphicsEngine::QRP_Triangle (int x0, int y0,
+  void GraphicsEngine::QRP_Triangle(int x0, int y0,
     int x1, int y1,
     int x2, int y2,
     Color c0)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath ())
-      QRP_GLSL_Triangle (x0, y0, x1, y1, x2, y2, c0, c0, c0);
+    if (UsingGLSLCodePath())
+      QRP_GLSL_Triangle(x0, y0, x1, y1, x2, y2, c0, c0, c0);
     else
-      QRP_ASM_Triangle (x0, y0, x1, y1, x2, y2, c0, c0, c0);
+      QRP_ASM_Triangle(x0, y0, x1, y1, x2, y2, c0, c0, c0);
 #else
-    QRP_GLSL_Triangle (x0, y0, x1, y1, x2, y2, c0, c0, c0);
+    QRP_GLSL_Triangle(x0, y0, x1, y1, x2, y2, c0, c0, c0);
 #endif
   }
 
-  void GraphicsEngine::QRP_Triangle (int x0, int y0,
+  void GraphicsEngine::QRP_Triangle(int x0, int y0,
     int x1, int y1,
     int x2, int y2,
     Color c0, Color c1, Color c2)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath ())
-      QRP_GLSL_Triangle (x0, y0, x1, y1, x2, y2, c0, c1, c2);
+    if (UsingGLSLCodePath())
+      QRP_GLSL_Triangle(x0, y0, x1, y1, x2, y2, c0, c1, c2);
     else
-      QRP_ASM_Triangle (x0, y0, x1, y1, x2, y2, c0, c1, c2);
+      QRP_ASM_Triangle(x0, y0, x1, y1, x2, y2, c0, c1, c2);
 #else
-    QRP_GLSL_Triangle (x0, y0, x1, y1, x2, y2, c0, c1, c2);
+    QRP_GLSL_Triangle(x0, y0, x1, y1, x2, y2, c0, c1, c2);
 #endif
   }
 
-  void GraphicsEngine::QRP_Line (int x0, int y0,
+  void GraphicsEngine::QRP_Line(int x0, int y0,
     int x1, int y1, Color c0)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath ())
-      QRP_GLSL_Line (x0, y0, x1, y1, c0, c0);
+    if (UsingGLSLCodePath())
+      QRP_GLSL_Line(x0, y0, x1, y1, c0, c0);
     else
-      QRP_ASM_Line (x0, y0, x1, y1, c0, c0);
+      QRP_ASM_Line(x0, y0, x1, y1, c0, c0);
 #else
-    QRP_GLSL_Line (x0, y0, x1, y1, c0, c0);
+    QRP_GLSL_Line(x0, y0, x1, y1, c0, c0);
 #endif
   }
 
-  void GraphicsEngine::QRP_Line (int x0, int y0,
+  void GraphicsEngine::QRP_Line(int x0, int y0,
     int x1, int y1, Color c0, Color c1)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath ())
-      QRP_GLSL_Line (x0, y0, x1, y1, c0, c1);
+    if (UsingGLSLCodePath())
+      QRP_GLSL_Line(x0, y0, x1, y1, c0, c1);
     else
-      QRP_ASM_Line (x0, y0, x1, y1, c0, c1);
+      QRP_ASM_Line(x0, y0, x1, y1, c0, c1);
 #else
-    QRP_GLSL_Line (x0, y0, x1, y1, c0, c1);
+    QRP_GLSL_Line(x0, y0, x1, y1, c0, c1);
 #endif
   }
 
-  void GraphicsEngine::QRP_QuadWireframe (int x0, int y0, int width, int height,
+  void GraphicsEngine::QRP_QuadWireframe(int x0, int y0, int width, int height,
     Color c0,
     Color c1,
     Color c2,
     Color c3)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath ())
-      QRP_GLSL_QuadWireframe (x0, y0, width, height, c0, c1, c2, c3);
+    if (UsingGLSLCodePath())
+      QRP_GLSL_QuadWireframe(x0, y0, width, height, c0, c1, c2, c3);
     else
-      QRP_ASM_QuadWireframe (x0, y0, width, height, c0, c1, c2, c3);
+      QRP_ASM_QuadWireframe(x0, y0, width, height, c0, c1, c2, c3);
 #else
-    QRP_GLSL_QuadWireframe (x0, y0, width, height, c0, c1, c2, c3);
+    QRP_GLSL_QuadWireframe(x0, y0, width, height, c0, c1, c2, c3);
 #endif
   }
 
-  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GetBlurTexture (
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GetBlurTexture(
     int x, int y,
     int buffer_width, int buffer_height,
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
@@ -482,131 +526,131 @@ namespace nux
     float sigma, int num_pass)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath ())
-      return QRP_GLSL_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
+    if (UsingGLSLCodePath())
+      return QRP_GLSL_GetBlurTexture(x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
     else
-      return QRP_ASM_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
+      return QRP_ASM_GetBlurTexture(x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
 #else
-    return QRP_GLSL_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
+    return QRP_GLSL_GetBlurTexture(x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
 #endif
   }
 
-  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GetAlphaTexture (
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GetAlphaTexture(
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color& c0)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath ())
-      return QRP_GLSL_GetAlphaTexture (device_texture, texxform, c0);
+    if (UsingGLSLCodePath())
+      return QRP_GLSL_GetAlphaTexture(device_texture, texxform, c0);
     else
-      return QRP_ASM_GetAlphaTexture (device_texture, texxform, c0);
+      return QRP_ASM_GetAlphaTexture(device_texture, texxform, c0);
 #else
-    return QRP_GLSL_GetAlphaTexture (device_texture, texxform, c0);
+    return QRP_GLSL_GetAlphaTexture(device_texture, texxform, c0);
 #endif
   }
 
-  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GetColorMatrixTexture (
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GetColorMatrixTexture(
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
     const Color& c0, Matrix4 color_matrix, Vector4 offset)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath ())
-      return QRP_GLSL_GetColorMatrixTexture (device_texture, texxform, c0, color_matrix, offset);
+    if (UsingGLSLCodePath())
+      return QRP_GLSL_GetColorMatrixTexture(device_texture, texxform, c0, color_matrix, offset);
     else
-      return QRP_ASM_GetColorMatrixTexture (device_texture, texxform, c0, color_matrix, offset);
+      return QRP_ASM_GetColorMatrixTexture(device_texture, texxform, c0, color_matrix, offset);
 #else
-    return QRP_GLSL_GetColorMatrixTexture (device_texture, texxform, c0, color_matrix, offset);
+    return QRP_GLSL_GetColorMatrixTexture(device_texture, texxform, c0, color_matrix, offset);
 #endif
   }
 
-  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GetPower (
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GetPower(
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color& c0, const Vector4 &exponent)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath ())
-      return QRP_GLSL_GetPower (device_texture, texxform, c0, exponent);
+    if (UsingGLSLCodePath())
+      return QRP_GLSL_GetPower(device_texture, texxform, c0, exponent);
     else
-      return QRP_ASM_GetPower (device_texture, texxform, c0, exponent);
+      return QRP_ASM_GetPower(device_texture, texxform, c0, exponent);
 #else
-    return QRP_GLSL_GetPower (device_texture, texxform, c0, exponent);
+    return QRP_GLSL_GetPower(device_texture, texxform, c0, exponent);
 #endif
   }
 
-  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GetLQBlur (
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GetLQBlur(
     int x, int y,
     int buffer_width, int buffer_height,
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
     const Color& c0)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath ())
-      return QRP_GLSL_GetLQBlur (x, y, buffer_width, buffer_height, device_texture, texxform, c0);
+    if (UsingGLSLCodePath())
+      return QRP_GLSL_GetLQBlur(x, y, buffer_width, buffer_height, device_texture, texxform, c0);
     else
-      return QRP_ASM_GetLQBlur (x, y, buffer_width, buffer_height, device_texture, texxform, c0);
+      return QRP_ASM_GetLQBlur(x, y, buffer_width, buffer_height, device_texture, texxform, c0);
 #else
-    return QRP_GLSL_GetLQBlur (x, y, buffer_width, buffer_height, device_texture, texxform, c0);
+    return QRP_GLSL_GetLQBlur(x, y, buffer_width, buffer_height, device_texture, texxform, c0);
 #endif
   }
 
-  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GetHQBlur (
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GetHQBlur(
     int x, int y, int buffer_width, int buffer_height,
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
     const Color& c0,
     float sigma, int num_pass)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath() && (_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion () >= 2))
-      return QRP_GLSL_GetHQBlur (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
+    if (UsingGLSLCodePath() && (_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion() >= 2))
+      return QRP_GLSL_GetHQBlur(x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
     else
-      return QRP_ASM_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
+      return QRP_ASM_GetBlurTexture(x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
 #else
-    return QRP_ASM_GetBlurTexture (x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
+    return QRP_GLSL_GetBlurTexture(x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
 #endif
   }
 
-  void GraphicsEngine::QRP_DisturbedTexture (
+  void GraphicsEngine::QRP_DisturbedTexture(
     int x, int y, int width, int height,
     ObjectPtr<IOpenGLBaseTexture> distorsion_texture, TexCoordXForm &texxform0, const Color& c0,
     ObjectPtr<IOpenGLBaseTexture> src_device_texture, TexCoordXForm &texxform1, const Color& c1)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath ())
-      QRP_GLSL_DisturbedTexture (x, y, width, height, distorsion_texture, texxform0, c0, src_device_texture, texxform1, c1);
+    if (UsingGLSLCodePath())
+      QRP_GLSL_DisturbedTexture(x, y, width, height, distorsion_texture, texxform0, c0, src_device_texture, texxform1, c1);
     else
     {
       // NUXTODO
-      //QRP_ASM_DisturbedTexture (x, y, width, height, distorsion_texture, texxform0, c0, src_device_texture, texxform1, c1);
+      //QRP_ASM_DisturbedTexture(x, y, width, height, distorsion_texture, texxform0, c0, src_device_texture, texxform1, c1);
     }
 #else
-    QRP_GLSL_DisturbedTexture (x, y, width, height, distorsion_texture, texxform0, c0, src_device_texture, texxform1, c1);
+    QRP_GLSL_DisturbedTexture(x, y, width, height, distorsion_texture, texxform0, c0, src_device_texture, texxform1, c1);
 #endif
   }
 
-  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GetPixelBlocks (
+  ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GetPixelBlocks(
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color& color, int pixel_size)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath() && (_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion () >= 2))
-      return QRP_GLSL_GetPixelBlocks (device_texture, texxform, color, pixel_size);
+    if (UsingGLSLCodePath() && (_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion() >= 2))
+      return QRP_GLSL_GetPixelBlocks(device_texture, texxform, color, pixel_size);
     else
-      return QRP_ASM_GetPixelBlocks (device_texture, texxform, color, pixel_size);
+      return QRP_ASM_GetPixelBlocks(device_texture, texxform, color, pixel_size);
 #else
-    return QRP_GLSL_GetPixelBlocks (device_texture, texxform, color, pixel_size);
+    return QRP_GLSL_GetPixelBlocks(device_texture, texxform, color, pixel_size);
 #endif
   }
 
-  void GraphicsEngine::QRP_GetCopyTexture (
+  void GraphicsEngine::QRP_GetCopyTexture(
     int width, int height,
     ObjectPtr<IOpenGLBaseTexture>& dst_device_texture,
     ObjectPtr<IOpenGLBaseTexture>& src_device_texture,
     TexCoordXForm &texxform0, const Color& c0)
   {
 #ifndef NUX_OPENGLES_20
-    if (UsingGLSLCodePath() && (_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion () >= 2))
-      return QRP_GLSL_GetCopyTexture (width, height, dst_device_texture, src_device_texture, texxform0, c0);
+    if (UsingGLSLCodePath() && (_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion() >= 2))
+      return QRP_GLSL_GetCopyTexture(width, height, dst_device_texture, src_device_texture, texxform0, c0);
     else
-      return QRP_ASM_GetCopyTexture (width, height, dst_device_texture, src_device_texture, texxform0, c0);
+      return QRP_ASM_GetCopyTexture(width, height, dst_device_texture, src_device_texture, texxform0, c0);
 #else
-    return QRP_GLSL_GetCopyTexture (width, height, dst_device_texture, src_device_texture, texxform0, c0);
+    return QRP_GLSL_GetCopyTexture(width, height, dst_device_texture, src_device_texture, texxform0, c0);
 #endif
   }
 }
