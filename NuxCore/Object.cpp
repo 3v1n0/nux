@@ -74,7 +74,7 @@ bool debug_object_allocation_stack()
       std::stringstream sout;
       sout << "\t" << ++index << " Undeleted object: Type "
            << obj->GetTypeName() << ", "
-           << obj->GetAllocationLoation() << "\n";
+           << obj->GetAllocationLocation() << "\n";
       if (debug_object_allocation_stack())
       {
         sout << obj->allocation_stacktrace_ << "\n\n";
@@ -90,7 +90,7 @@ bool debug_object_allocation_stack()
       Object* obj = static_cast<Object*>(ptr);
       std::cerr << "\t" << ++index << " Undeleted object: Type "
                 << obj->GetTypeName() << ", "
-                << obj->GetAllocationLoation() << "\n";
+                << obj->GetAllocationLocation() << "\n";
       if (debug_object_allocation_stack())
       {
         std::cerr << obj->allocation_stacktrace_ << "\n\n";
@@ -243,12 +243,18 @@ bool debug_object_allocation_stack()
   Object::Object(bool OwnTheReference, NUX_FILE_LINE_DECL)
     : reference_count_(new NThreadSafeCounter())
     , objectptr_count_(new NThreadSafeCounter())
-    , allocation_file_name_(__Nux_FileName__)
-    , allocation_line_number_(__Nux_LineNumber__)
   {
     reference_count_->Set(1);
     SetOwnedReference(OwnTheReference);
 #ifdef NUX_DEBUG
+    std::ostringstream sout;
+    if (__Nux_FileName__)
+      sout << __Nux_FileName__;
+    else
+      sout << "<unspecified file>";
+    sout << ":" << __Nux_LineNumber__;
+    allocation_location_ = sout.str();
+
  #if defined(NUX_OS_LINUX)
     if (debug_object_allocation_stack()) {
       allocation_stacktrace_ = logging::backtrace();
@@ -270,7 +276,7 @@ bool debug_object_allocation_stack()
       {
         LOG_WARN(logger) << "Invalid object destruction, still has "
                          << reference_count_->GetValue() << " references."
-                         << "\nObject allocated at: " << GetAllocationLoation() << "\n";
+                         << "\nObject allocated at: " << GetAllocationLocation() << "\n";
       }
     }
     delete reference_count_;
@@ -286,7 +292,7 @@ bool debug_object_allocation_stack()
     if (!IsHeapAllocated())
     {
       LOG_WARN(logger) << "Trying to reference an object that was not heap allocated."
-                       << "\nObject allocated at: " << GetAllocationLoation() << "\n";
+                       << "\nObject allocated at: " << GetAllocationLocation() << "\n";
       return false;
     }
 
@@ -310,7 +316,7 @@ bool debug_object_allocation_stack()
     if (!IsHeapAllocated())
     {
       LOG_WARN(logger) << "Trying to un-reference an object that was not heap allocated."
-                       << "\nObject allocated at: " << GetAllocationLoation() << "\n";
+                       << "\nObject allocated at: " << GetAllocationLocation() << "\n";
       return false;
     }
 
@@ -322,7 +328,12 @@ bool debug_object_allocation_stack()
       // it.  This method should not be called directly in that case.
       LOG_WARN(logger) << "There are ObjectPtr hosting this object. "
                        << "Release all of them to destroy this object. "
-                       << "\nObject allocated at: " << GetAllocationLoation() << "\n";
+                       << "\nObject allocated at: " << GetAllocationLocation() << "\n";
+ #if defined(NUX_OS_LINUX)
+      if (debug_object_allocation_stack()) {
+        LOG_WARN(logger) << logging::backtrace();
+    }
+ #endif
       return false;
     }
 
@@ -367,7 +378,7 @@ bool debug_object_allocation_stack()
     ++delete_depth;
     std::string obj_type = GetTypeName();
     LOG_TRACE(logger) << "Depth: " << delete_depth << ", about to delete "
-                      << obj_type << " allocated at " << GetAllocationLoation();
+                      << obj_type << " allocated at " << GetAllocationLocation();
 #endif
     // Weak smart pointers will clear their pointers when they get this signal.
     object_destroyed.emit(this);
@@ -383,11 +394,9 @@ bool debug_object_allocation_stack()
     return reference_count_->GetValue();
   }
 
-std::string Object::GetAllocationLoation() const
+std::string Object::GetAllocationLocation() const
 {
-  std::ostringstream sout;
-  sout << allocation_file_name_ << ":" << allocation_line_number_;
-  return sout.str();
+  return allocation_location_;
 }
 
 std::string Object::GetTypeName() const

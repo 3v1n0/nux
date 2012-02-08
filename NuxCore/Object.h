@@ -215,7 +215,7 @@ namespace nux
     //! Signal emitted immediately before the object is destroyed.
     sigc::signal <void, Object *> object_destroyed;
 
-    std::string GetAllocationLoation() const;
+    std::string GetAllocationLocation() const;
     std::string GetTypeName() const;
 
   protected:
@@ -238,8 +238,7 @@ namespace nux
     //!< Number of ObjectPtr hosting the object.
     NThreadSafeCounter* objectptr_count_;
 
-    std::string allocation_file_name_;
-    int allocation_line_number_;
+    std::string allocation_location_;
     std::string allocation_stacktrace_;
     std::string virtual_type_name_;
 
