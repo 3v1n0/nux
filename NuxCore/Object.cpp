@@ -205,6 +205,13 @@ bool debug_object_allocation_stack()
       GObjectStats._allocation_list.erase (i);
       ::operator delete (ptr);
     }
+#ifdef NUX_DEBUG
+    else
+    {
+      // Complain quite loudly as this should never happen.
+      LOG_ERROR(logger) << "Attempting to delete a pointer we can't find.";
+    }
+#endif
   }
 
   bool Trackable::IsHeapAllocated()
