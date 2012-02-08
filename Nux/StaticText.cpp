@@ -407,8 +407,14 @@ namespace nux
     return text_alignment_;
   }
   
-  ObjectPtr<nux::IOpenGLBaseTexture> StaticText::GetTextTexture() const
+  ObjectPtr<nux::IOpenGLBaseTexture> StaticText::GetTextTexture()
   {
+    if (update_text_rendering_)
+    {
+      // If the text rendering needs to be updated, do it here.
+      UpdateTextRendering();
+    }
+
     return dw_texture_;
   }
 

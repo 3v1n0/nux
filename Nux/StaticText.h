@@ -148,7 +148,7 @@ namespace nux
 
         @return A smart point for the device texture.
     */
-    ObjectPtr<nux::IOpenGLBaseTexture> GetTextTexture() const;
+    ObjectPtr<nux::IOpenGLBaseTexture> GetTextTexture();
 
     sigc::signal<void, StaticText*> text_changed;
 
