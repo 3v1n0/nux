@@ -71,6 +71,8 @@ namespace nux
 
     Property<CoverflowModel::Ptr> model;
 
+    Property<bool> show_covers_label;
+
     bool AcceptKeyNavFocus();
 
     void SetCameraDistance(float distance);

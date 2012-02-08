@@ -20,6 +20,7 @@
 
 #include "Nux/Nux.h"
 #include "Nux/HLayout.h"
+#include "Nux/StaticText.h"
 
 #include "NuxGraphics/GraphicsDisplay.h"
 #include "NuxGraphics/GLShader.h"
@@ -127,6 +128,7 @@ namespace nux
     void HandleMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     void HandleMouseClick(int x, int y, unsigned long button_flags, unsigned long key_flags);
     void HandleMouseWheel(int x, int y, int wheel_delta, unsigned long button_flags, unsigned long key_flags);
+    void HandleGeometryChange(Area* area, Geometry geo);
 
     void DrawCover(nux::GraphicsEngine& graphics_engine, Cover const& cover);
     void DrawCoverHighlight(nux::GraphicsEngine& graphics_engine, Cover const& cover);
@@ -144,6 +146,8 @@ namespace nux
     bool CoverAtPoint(int x, int y, Cover& out_cover);
     void Get3DBoundingBox(float distance_from_camera, nux::Point2& top_left_corner, nux::Point2& bottom_right_corner);
     void GetCoverScreenCoord(Cover const& cover, nux::Vector4& P0, nux::Vector4& P1, nux::Vector4& P2, nux::Vector4& P3);
+    void GetFlatCoverScreenSize(float& flat_screen_width, float& flat_screen_height);
+
     bool TestMouseOverCover(int x, int y, Cover const& cover);
     bool TestCoverVisible(Cover const& cover);
 
@@ -154,8 +158,7 @@ namespace nux
 
     nux::ObjectPtr<nux::IOpenGLShaderProgram> cover_shader_program_;
     nux::ObjectPtr<nux::IOpenGLShaderProgram> highlight_shader_program_;
-    nux::ObjectPtr<nux::IOpenGLBaseTexture> cover_texture_;
-
+    
     nux::Matrix4 perspective_;
     nux::Matrix4 modelview_;
 
@@ -175,6 +178,12 @@ namespace nux
     nux::Point2 mouse_down_position_;
     nux::Point2 mouse_position_;
     CoverList last_covers_;
+    StaticText* cover_text_label_;
+    float flat_screen_width_;
+    float flat_screen_height_;
+    float cover_width_in_3d_space_;
+    float near_clip_plan_;
+    float far_clip_plan_;
   };
 
   Coverflow::Impl::Impl(Coverflow* parent)
@@ -189,6 +198,12 @@ namespace nux
    , saved_position_(0)
    , velocity_(0)
    , velocity_handle_(0)
+   , cover_text_label_(NULL)
+   , flat_screen_width_(0.0f)
+   , flat_screen_height_(0.0f)
+   , cover_width_in_3d_space_(1.0f)
+   , near_clip_plan_(1.0f)
+   , far_clip_plan_(200.0f)
   {
     mouse_position_ = nux::Point2(0, 0);
 
@@ -202,6 +217,8 @@ namespace nux
     parent_->mouse_up.connect(sigc::mem_fun(this, &Impl::HandleMouseUp));
     parent_->mouse_down.connect(sigc::mem_fun(this, &Impl::HandleMouseDown));
     parent_->mouse_wheel.connect(sigc::mem_fun(this, &Impl::HandleMouseWheel));
+    parent_->OnGeometryChanged.connect(sigc::mem_fun(this, &Impl::HandleGeometryChange));
+
 
     camera_position_.x = 0.0f;
     camera_position_.y = 0.0f;
@@ -259,6 +276,10 @@ namespace nux
       vertex_shader_prog_.Release();
       fragment_shader_prog_.Release();
     }
+
+    cover_text_label_ = new StaticText("Cover Label", NUX_TRACKER_LOCATION);
+    cover_text_label_->SetTextColor(color::Aubergine);
+    cover_text_label_->SetFontSize(24);
   }
 
   Coverflow::Impl::~Impl()
@@ -267,6 +288,11 @@ namespace nux
     {
       g_source_remove(animation_handle_);
       animation_handle_ = 0;
+    }
+
+    if (cover_text_label_)
+    {
+      cover_text_label_->UnReference();
     }
   }
 
@@ -290,13 +316,11 @@ namespace nux
     int width = parent_->GetBaseWidth();
     int height = parent_->GetBaseHeight();
 
-    float cover_width = 1.0f;
-
     auto texture = cover.item->GetTexture()->GetDeviceTexture();
     float ratio = texture->GetWidth()/(float)texture->GetHeight();
-
-    float fx = cover_width/2.0f;
-    float fy = (cover_width/2.0f) * (1.0f/ratio);
+    
+    float fx = cover_width_in_3d_space_/2.0f;
+    float fy = (cover_width_in_3d_space_/2.0f) * (1.0f/ratio);
 
     modelview_ = nux::Matrix4::TRANSLATE(-camera_position_.x, -camera_position_.y, -camera_position_.z) *
       nux::Matrix4::ROTATEX(DEGTORAD(-camera_rotation_.x)) *
@@ -336,6 +360,58 @@ namespace nux
     out_p1.x = p1_proj.x; out_p1.y = p1_proj.y;
     out_p2.x = p2_proj.x; out_p2.y = p2_proj.y;
     out_p3.x = p3_proj.x; out_p3.y = p3_proj.y;
+  }
+
+  void Coverflow::Impl::GetFlatCoverScreenSize(float& flat_screen_width, float& flat_screen_height)
+  {
+    // BIG ASSUMPTION:
+    //  The ratio of the texture.width/texture.height = 1.0f;
+    float ratio = 1.0f;
+
+    int width = parent_->GetBaseWidth();
+    int height = parent_->GetBaseHeight();
+
+    float v_fov = parent_->fov() * ((float)height / (float)width);
+    perspective_.Perspective(DEGTORAD(v_fov), (float)width / (float)height, near_clip_plan_, far_clip_plan_);
+
+    float fx = cover_width_in_3d_space_ / 2.0f;
+    float fy = (cover_width_in_3d_space_ / 2.0f) * (1.0f / ratio);
+
+    modelview_ = nux::Matrix4::TRANSLATE(-camera_position_.x, -camera_position_.y, -camera_position_.z) *
+      nux::Matrix4::ROTATEX(DEGTORAD(-camera_rotation_.x)) *
+      nux::Matrix4::ROTATEY(DEGTORAD(-camera_rotation_.y)) *
+      nux::Matrix4::ROTATEZ(DEGTORAD(-camera_rotation_.z));
+
+    nux::Matrix4 m = nux::Matrix4::ROTATEY(DEGTORAD(0.0f));
+    nux::Matrix4 combined_matrix = perspective_ * modelview_;
+
+    nux::Vector4 p0(-fx, fy, 0.0f, 1.0f);
+    nux::Vector4 p1(-fx, -fy, 0.0f, 1.0f);
+    nux::Vector4 p2(fx, -fy, 0.0f, 1.0f);
+    nux::Vector4 p3(fx, fy, 0.0f, 1.0f);
+
+    nux::Vector4 p0_proj = combined_matrix * p0;
+    nux::Vector4 p1_proj = combined_matrix * p1;
+    nux::Vector4 p2_proj = combined_matrix * p2;
+    nux::Vector4 p3_proj = combined_matrix * p3;
+
+    p0_proj.x = p0_proj.x/p0_proj.w; p0_proj.y = p0_proj.y/p0_proj.w; p0_proj.z = p0_proj.z/p0_proj.w;
+    p1_proj.x = p1_proj.x/p1_proj.w; p1_proj.y = p1_proj.y/p1_proj.w; p1_proj.z = p1_proj.z/p1_proj.w;
+    p2_proj.x = p2_proj.x/p2_proj.w; p2_proj.y = p2_proj.y/p2_proj.w; p2_proj.z = p2_proj.z/p2_proj.w;
+    p3_proj.x = p3_proj.x/p3_proj.w; p3_proj.y = p3_proj.y/p3_proj.w; p3_proj.z = p3_proj.z/p3_proj.w;
+
+    p0_proj.x = width * (p0_proj.x + 1.0f)/2.0f;
+    p1_proj.x = width * (p1_proj.x + 1.0f)/2.0f;
+    p2_proj.x = width * (p2_proj.x + 1.0f)/2.0f;
+    p3_proj.x = width * (p3_proj.x + 1.0f)/2.0f;
+
+    p0_proj.y = -height * (p0_proj.y - 1.0f)/2.0f;
+    p1_proj.y = -height * (p1_proj.y - 1.0f)/2.0f;
+    p2_proj.y = -height * (p2_proj.y - 1.0f)/2.0f;
+    p3_proj.y = -height * (p3_proj.y - 1.0f)/2.0f;
+
+    flat_screen_width = p3_proj.x - p0_proj.x;
+    flat_screen_height = p1_proj.y - p0_proj.y;
   }
 
   bool Coverflow::Impl::TestMouseOverCover(int x, int y, Cover const& cover)
@@ -561,6 +637,13 @@ namespace nux
     // do nothing yet
   }
 
+  void Coverflow::Impl::HandleGeometryChange(Area* area, Geometry geo)
+  {
+    GetFlatCoverScreenSize(flat_screen_width_, flat_screen_height_);
+
+    cover_text_label_->SetMaximumWidth(flat_screen_width_);
+  }
+
   CoverList Coverflow::Impl::GetCoverList(float animation_progress, gint64 timestep)
   {
     CoverList results;
@@ -665,8 +748,6 @@ namespace nux
     int width = parent_->GetBaseWidth();
     int height = parent_->GetBaseHeight();
 
-    float cover_width = 1.0f;
-
     auto texture = cover.item->GetTexture()->GetDeviceTexture();
 
     modelview_ = nux::Matrix4::TRANSLATE(-camera_position_.x, -camera_position_.y, -camera_position_.z) *
@@ -685,8 +766,8 @@ namespace nux
 
     float ratio = texture->GetWidth()/(float)texture->GetHeight();
 
-    float fx = (cover_width/2.0f);
-    float fy = (cover_width/2.0f) * (1.0f/ratio);
+    float fx = (cover_width_in_3d_space_/2.0f);
+    float fy = (cover_width_in_3d_space_/2.0f) * (1.0f/ratio);
 
     highlight_shader_program_->Begin();
 
@@ -748,8 +829,6 @@ namespace nux
     int width = parent_->GetBaseWidth();
     int height = parent_->GetBaseHeight();
 
-    float cover_width = 1.0f;
-
     auto texture = cover.item->GetTexture()->GetDeviceTexture();
 
     modelview_ = nux::Matrix4::TRANSLATE(-camera_position_.x, -camera_position_.y, -camera_position_.z) *
@@ -761,6 +840,7 @@ namespace nux
     nux::Matrix4 m = nux::Matrix4::ROTATEY(DEGTORAD(cover.position.rot));
     nux::Matrix4 combined_matrix = modelview_ * m;
 
+    float cover_bottom = 0.0f;
     {
       nux::TexCoordXForm texxform;
       nux::Color color = nux::color::White;
@@ -769,8 +849,10 @@ namespace nux
 
       float ratio = texture->GetWidth()/(float)texture->GetHeight();
 
-      float fx = cover_width/2.0f;
-      float fy = (cover_width/2.0f) * (1.0f/ratio);
+      float fx = cover_width_in_3d_space_/2.0f;
+      float fy = (cover_width_in_3d_space_/2.0f) * (1.0f/ratio);
+      
+      cover_bottom = -fy;
 
       cover_shader_program_->Begin();
 
@@ -816,8 +898,8 @@ namespace nux
         CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
       }
 
+      // **** Reflection opacity ****
       {
-        // Reflection opacity
         float angular_opacity = 1.0f;
         if (parent_->folding_angle == 0)
         {
@@ -848,6 +930,74 @@ namespace nux
           -fx, -fy-2*fy, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
           fx,  -fy-2*fy, 0.0f, 1.0f, texxform.u1, texxform.v1, 0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
           fx,  -fy,      0.0f, 1.0f, texxform.u1, texxform.v0, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
+        };
+
+        CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+        CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer));
+
+        if (TextureCoord0Location != -1)
+        {
+          CHECKGL(glEnableVertexAttribArrayARB(TextureCoord0Location));
+          CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4));
+        }
+
+        if (VertexColorLocation != -1)
+        {
+          CHECKGL(glEnableVertexAttribArrayARB(VertexColorLocation));
+          CHECKGL(glVertexAttribPointerARB((GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8));
+        }
+
+        CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
+      }
+
+      // **** Render Cover label ****
+      if (parent_->show_covers_label())
+      {
+        auto label_texture = cover_text_label_->GetTextTexture();
+
+        QRP_Compute_Texture_Coord(label_texture->GetWidth(), label_texture->GetHeight(), label_texture, texxform);
+
+        ratio = label_texture->GetWidth() / (float)label_texture->GetHeight();
+
+        //float offset = cover_bottom;
+        float fx = cover_width_in_3d_space_ / 2.0f;
+        float fy = (cover_width_in_3d_space_) * (1.0f / ratio);
+        
+        label_texture->SetFiltering(GL_LINEAR, GL_LINEAR);
+        graphics_engine.SetTexture(GL_TEXTURE0, label_texture);
+        CHECKGL(glUniform1iARB(TextureObjectLocation, 0));
+
+        
+        float angular_opacity = 1.0f;
+        if (parent_->folding_angle == 0)
+        {
+          angular_opacity = 1.0f;
+        }
+        else
+        {
+          float rotation_ratio = std::abs(cover.position.rot / parent_->folding_angle);
+          angular_opacity = 1.0f - rotation_ratio;
+        }
+
+        float opacity = 1.0f - std::abs(cover.position.x) / (parent_->reflection_fadeout_distance);
+        if (opacity < 0.0f)
+        {
+          opacity = 0.0f;
+        }
+
+        //opacity *= angular_opacity;
+
+        texxform.flip_v_coord = true;
+        QRP_Compute_Texture_Coord(width, height, texture, texxform);
+
+        float opacity_start = angular_opacity;
+        float opacity_end   = angular_opacity;
+        float VtxBuffer[] =
+        {
+          -fx, cover_bottom,    0.0f, 1.0f, texxform.u0, texxform.v1, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
+          -fx, cover_bottom-fy, 0.0f, 1.0f, texxform.u0, texxform.v0, 0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
+          fx,  cover_bottom-fy, 0.0f, 1.0f, texxform.u1, texxform.v0, 0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
+          fx,  cover_bottom,    0.0f, 1.0f, texxform.u1, texxform.v1, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
         };
 
         CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
@@ -913,6 +1063,7 @@ namespace nux
     , reflection_strength(0.45f)
     , space_between_icons(1.25f)
     , model(CoverflowModel::Ptr(new CoverflowModel()))
+    , show_covers_label(false)
     , pimpl(new Impl(this))
   {
     SetAcceptKeyboardEvent(true);
@@ -949,7 +1100,7 @@ namespace nux
     glViewport(0, 0, ctx.width, ctx.height);
 
     float v_fov = fov() * ((float)ctx.height / (float)ctx.width);
-    pimpl->perspective_.Perspective(DEGTORAD(v_fov), (float)ctx.width / (float)ctx.height, 1.0, 200.0);
+    pimpl->perspective_.Perspective(DEGTORAD(v_fov), (float)ctx.width / (float)ctx.height, pimpl->near_clip_plan_, pimpl->far_clip_plan_);
 
     graphics_engine.GetRenderStates().SetBlend(true);
     graphics_engine.GetRenderStates().SetPremultipliedBlend(SRC_OVER);
