@@ -83,5 +83,6 @@ dist_uitextures_DATA = \
   UITextures/VectorYLabel.tga \
   UITextures/VectorZLabel.tga \
   UITextures/VScrollBar.tga \
-  UITextures/WindowSizeGrip.tga
+  UITextures/WindowSizeGrip.tga \
+  UITextures/nux.png
   

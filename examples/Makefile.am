@@ -8,7 +8,8 @@ if BUILD_EXAMPLES
 # installed. For each individual example, add it's binary name here
 
 noinst_PROGRAMS = text_entry_focus \
-  shortcut_keys
+  shortcut_keys \
+  coverflow
 
 #button \
 #                  cairo \
@@ -40,6 +41,7 @@ AM_CPPFLAGS = \
 	-DLIBDIR=\""$(libdir)"\" \
   -DDATADIR=\""$(datadir)"\" \
   -DG_LOG_DOMAIN=\"NuxExamples\" \
+  -DPKGDATADIR=\""$(pkgdatadir)/@NUX_API_VERSION@"\" \
   $(GCC_FLAGS) \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
@@ -101,6 +103,8 @@ text_entry_focus_LDADD = $(ALL_LIBS)
 shortcut_keys_SOURCES = shortcut-keys.cpp line-separator.cpp line-separator.h abstract-separator.h abstract-separator.cpp
 shortcut_keys_LDADD = $(ALL_LIBS)
 
+coverflow_SOURCES = coverflow.cpp
+coverflow_LDADD = $(ALL_LIBS)
 
 # To distribute source add the source code here
 #sourceexampledir = "$(pkgdatadir)/examples"
