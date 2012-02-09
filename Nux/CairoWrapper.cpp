@@ -48,10 +48,10 @@ namespace nux
     : parent_(parent)
     , geometry_(geo)
     , draw_canvas_callback_(callback)
-    , cr_(nullptr)
-    , surface_(nullptr)
-    , bitmap_(nullptr)
-    , texture_(nullptr)
+    , cr_(0)
+    , surface_(0)
+    , bitmap_(0)
+    , texture_(0)
   {
   }
 
@@ -65,25 +65,25 @@ namespace nux
     if (surface_)
     {
       cairo_surface_destroy (surface_);
-      surface_ = nullptr;
+      surface_ = 0;
     }
 
     if (cr_)
     {
       cairo_destroy (cr_);
-      cr_ = nullptr;
+      cr_ = 0;
     }
 
     if (bitmap_)
     {
       delete bitmap_;
-      bitmap_ = nullptr;
+      bitmap_ = 0;
     }
 
     if (texture_)
     {
       texture_->UnReference ();
-      texture_ = nullptr;
+      texture_ = 0;
     }
   }
 
