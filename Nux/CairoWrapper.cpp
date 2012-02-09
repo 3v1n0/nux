@@ -119,7 +119,7 @@ namespace nux
     if (texture_)
         texture_->UnReference ();
 
-    if (GetGraphicsDisplay()->GetGraphicsEngine() == NULL)
+    if (GetGraphicsDisplay()->GetGraphicsEngine() == 0)
       return false;
 
     texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
@@ -139,7 +139,7 @@ namespace nux
     if (bitmap_)
     {
       delete bitmap_;
-      bitmap_ = NULL;
+      bitmap_ = 0;
     }
 
     BitmapFormat bitmap_format = BITFMT_B8G8R8A8;
@@ -150,7 +150,7 @@ namespace nux
     t_u8* ptr = cairo_image_surface_get_data (surface_);
     int stride = cairo_image_surface_get_stride (surface_);
 
-    if (ptr == NULL || stride == 0)
+    if (ptr == 0 || stride == 0)
     {
       g_debug ("Invalid surface!");
       return false;
