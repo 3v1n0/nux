@@ -132,6 +132,12 @@ namespace nux
     void SetText(const char *text);
     std::string const& GetText() const;
 
+    void SetCompletion(const char *text); // Should use std::string, does not for consistancy
+    std::string const& GetCompletion() const;
+
+    void SetCompletionColor(const Color &color);
+    Color const& GetCompletionColor() const;
+
     void SetTextColor(const Color &color);
     Color const& GetTextColor() const;
     void SetFontFamily(const char *font);
@@ -293,6 +299,12 @@ namespace nux
      *  If this is empty, then the edit control is visible
      */
     std::string password_char_;
+
+    /** The completion string */
+    std::string completion_;
+
+    /** The completion colour */
+    Color completion_color_;
 
     /** Last time of mouse double click event. */
     unsigned long long last_dblclick_time_;

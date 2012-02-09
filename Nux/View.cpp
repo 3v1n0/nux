@@ -33,7 +33,6 @@ namespace nux
   View::View(NUX_FILE_LINE_DECL)
     :   InputArea(NUX_FILE_LINE_PARAM)
   {
-    _font = GetSysFont();
     view_layout_ = NULL;
     draw_cmd_queued_        = false;
     m_TextColor         = Color(1.0f, 1.0f, 1.0f, 1.0f);
@@ -369,6 +368,8 @@ namespace nux
 
   ObjectPtr<FontTexture> View::GetFont()
   {
+    if (!_font.IsValid())
+      _font = GetSysFont();
     return _font;
   }
 
