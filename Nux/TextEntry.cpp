@@ -199,6 +199,8 @@ namespace nux
     // Password conceled character
     password_char_ = "*";
 
+    ime_ = IMEContext::Create(this);
+
     mouse_down.connect(sigc::mem_fun(this, &TextEntry::RecvMouseDown));
     mouse_drag.connect(sigc::mem_fun(this, &TextEntry::RecvMouseDrag));
     mouse_up.connect(sigc::mem_fun(this, &TextEntry::RecvMouseUp));

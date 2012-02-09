@@ -25,6 +25,7 @@
 #include "pango/pango.h"
 #include "pango/pangocairo.h"
 #include "NuxImage/CairoGraphics.h"
+#include "Nux/InputMethodContext.h"
 
 namespace nux
 {
@@ -462,6 +463,8 @@ namespace nux
     std::list<Rect> content_region_;
 
     PangoWrapMode wrap_mode_;
+
+    IMEContext* ime_;
 
   protected:
     bool text_input_mode_;
