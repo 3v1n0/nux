@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Inalogic® Inc.
+ * Copyright 2010-2012 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -41,8 +41,7 @@ namespace color
   , blue(0.0f)
   , alpha(1.0f)
   , premultiplied_(false)
-  {
-  }
+  {}
 
   Color::Color(RedGreenBlue const& rgb, float a)
   : red(rgb.red)
@@ -108,7 +107,8 @@ namespace color
     return (lhs.red == rhs.red &&
             lhs.green == rhs.green &&
             lhs.blue == rhs.blue &&
-            lhs.alpha == rhs.alpha);
+            lhs.alpha == rhs.alpha &&
+            lhs.premultiplied_ == rhs.premultiplied_);
   }
 
   bool operator != (const Color& lhs, const Color& rhs)
