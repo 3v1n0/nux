@@ -196,31 +196,7 @@ namespace nux
     if (create_rendering_data)
     {
 #ifndef NUX_OPENGLES_20
-      if (UsingGLSLCodePath() &&
-        _graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader() &&
-        _graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Vertex_Shader() &&
-        opengl_14_support)
-      {
-        InitSlColorShader();
-        InitSlTextureShader();
-        InitSlPixelateShader();
-        InitSlColorModTexMaskAlpha();
-        InitSl2TextureAdd();
-        InitSl2TextureMod();
-        InitSl4TextureAdd();
-
-        InitSLPower();
-        InitSLAlphaReplicate();
-        InitSLHorizontalGaussFilter();
-        InitSLVerticalGaussFilter();
-        InitSLColorMatrixFilter();
-
-        InitSl2TextureDepRead();
-
-        InitSLHorizontalHQGaussFilter(1);
-        InitSLVerticalHQGaussFilter(1);
-      }
-      else if (_graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader() &&
+      if (_graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader() &&
         _graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Vertex_Program() &&
         opengl_14_support)
       {
@@ -240,20 +216,6 @@ namespace nux
 
         //InitAsm2TextureDepRead(); // NUXTODO: fix the shader
       }
-#else
-      InitSlColorShader();
-      InitSlTextureShader();
-      InitSlPixelateShader();
-      InitSlColorModTexMaskAlpha();
-      InitSl2TextureAdd();
-      InitSl2TextureMod();
-      InitSl4TextureAdd();
-
-      InitSLPower();
-      InitSLAlphaReplicate();
-      InitSLHorizontalGaussFilter();
-      InitSLVerticalGaussFilter();
-      InitSLColorMatrixFilter();
 #endif
 
       GpuInfo& gpu_info = _graphics_display.GetGpuDevice()->GetGpuInfo();
