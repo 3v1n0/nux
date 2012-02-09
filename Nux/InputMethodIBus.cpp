@@ -131,7 +131,7 @@ namespace nux
     nuxAssert(bus_ != NULL);
     nuxAssert(ibus_bus_is_connected(bus_));
 
-    context_ = ibus_bus_create_input_context(bus_, "chrome");
+    context_ = ibus_bus_create_input_context(bus_, "ibus");
 
     // connect input context signals
     g_signal_connect(context_, "commit-text",         G_CALLBACK(OnCommitText_),        this);
@@ -160,6 +160,7 @@ namespace nux
 
   void IBusIMEContext::DestroyContext()
   {
+    nuxDebugMsg("***IBusIMEContext::DestroyContext***");
     if (!context_)
       return;
 
@@ -182,16 +183,19 @@ namespace nux
 
   void IBusIMEContext::OnDisconnected(IBusBus *bus)
   {
+    nuxDebugMsg("***IBusIMEContext::OnDisonnected***");
   }
 
   void IBusIMEContext::OnCommitText(IBusInputContext *context, IBusText* text)
   {
+    nuxDebugMsg("***IBusIMEContext::OnCommitText***");
     nuxAssert(context_ == context);
     IMEContext::CommitText(ANSICHAR_TO_UNICHAR(text->text));
   }
 
   void IBusIMEContext::OnForwardKeyEvent(IBusInputContext *context, guint keyval, guint keycode, guint state)
   {
+    nuxDebugMsg("***IBusIMEContext::OnForwardKeyEvent***");
     nuxAssert(context_ == context);
 
     int flags = 0;
@@ -218,6 +222,7 @@ namespace nux
 
   void IBusIMEContext::OnUpdatePreeditText(IBusInputContext *context, IBusText* text, guint cursor_pos, gboolean visible)
   {
+    nuxDebugMsg("***IBusIMEContext::OnUpdatePreeditText***");
     nuxAssert(context_ == context);
     nuxAssert(IBUS_IS_TEXT(text));
 
@@ -267,11 +272,13 @@ namespace nux
 
   void IBusIMEContext::OnShowPreeditText(IBusInputContext *context)
   {
+    nuxDebugMsg("***IBusIMEContext::OnShowPreeditText***");
     nuxAssert(context_ == context);
   }
 
   void IBusIMEContext::OnHidePreeditText(IBusInputContext *context)
   {
+    nuxDebugMsg("***IBusIMEContext::OnHidePreeditText***");
     nuxAssert(context_ == context);
 
     EndComposition();
@@ -279,16 +286,19 @@ namespace nux
 
   void IBusIMEContext::OnEnable(IBusInputContext *context)
   {
+    nuxDebugMsg("***IBusIMEContext::OnEnable***");
     nuxAssert(context_ == context);
   }
 
   void IBusIMEContext::OnDisable(IBusInputContext *context)
   {
+    nuxDebugMsg("***IBusIMEContext::OnDisable***");
     nuxAssert(context_ == context);
   }
 
   void IBusIMEContext::OnDestroy(IBusInputContext *context)
   {
+    nuxDebugMsg("***IBusIMEContext::OnDestroy***");
     nuxAssert(context_ == context);
 
     g_object_unref(context_);
@@ -299,6 +309,7 @@ namespace nux
 
   void IBusIMEContext::ProcessKeyEventDone(IBusInputContext *context, GAsyncResult* res, ProcessKeyEventData *data)
   {
+    nuxDebugMsg("***IBusIMEContext::ProcessKeyEventDone***");
       nuxAssert(data->context->context_ == context);
 
       GError *error = NULL;

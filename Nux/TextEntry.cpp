@@ -199,8 +199,6 @@ namespace nux
     // Password conceled character
     password_char_ = "*";
 
-    ime_ = IMEContext::Create(this);
-
     mouse_down.connect(sigc::mem_fun(this, &TextEntry::RecvMouseDown));
     mouse_drag.connect(sigc::mem_fun(this, &TextEntry::RecvMouseDrag));
     mouse_up.connect(sigc::mem_fun(this, &TextEntry::RecvMouseUp));
@@ -213,6 +211,8 @@ namespace nux
 
     SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     SetText(text);
+
+    ime_ = IMEContext::Create (this);
 
     SetAcceptKeyboardEvent(true);
     EnableDoubleClick(true);
@@ -312,6 +312,10 @@ namespace nux
     const char      *character,   /*character*/
     unsigned short  keyCount      /*key repeat count*/)
   {
+
+    KeyEvent event((NuxEventType)event_type, keysym, 0, state); 
+    ime_->FilterKeyEvent(event);
+
     if (event_type == NUX_KEYDOWN)
     {
       text_input_mode_ = true;
