@@ -256,36 +256,6 @@ namespace nux
       InitSLColorMatrixFilter();
 #endif
 
-#if defined(NUX_OS_WINDOWS)
-      if (_normal_font.IsNull())
-      {
-        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/Tahoma_size_8.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
-        _normal_font = ObjectPtr<FontTexture> (fnt);
-        fnt->UnReference();
-      }
-
-      if (_bold_font.IsNull())
-      {
-        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/Tahoma_size_8_bold.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
-        _bold_font = ObjectPtr<FontTexture> (fnt);
-        fnt->UnReference();
-      }
-#else
-      if (_normal_font.IsNull())
-      {
-        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/nuxfont_size_8.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
-        _normal_font = ObjectPtr<FontTexture> (fnt);
-        fnt->UnReference();
-      }
-
-      if (_bold_font.IsNull())
-      {
-        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/nuxfont_size_8_bold.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
-        _bold_font = ObjectPtr<FontTexture> (fnt);
-        fnt->UnReference();
-      }
-#endif
-
       GpuInfo& gpu_info = _graphics_display.GetGpuDevice()->GetGpuInfo();
 
       if ((gpu_info.Support_ARB_Vertex_Program() && gpu_info.Support_ARB_Fragment_Program())
@@ -364,11 +334,41 @@ namespace nux
 
   ObjectPtr<FontTexture> GraphicsEngine::GetFont()
   {
+#if defined(NUX_OS_WINDOWS)
+      if (_normal_font.IsNull())
+      {
+        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/Tahoma_size_8.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+        _normal_font = ObjectPtr<FontTexture> (fnt);
+        fnt->UnReference();
+      }
+#else
+      if (_normal_font.IsNull())
+      {
+        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/nuxfont_size_8.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+        _normal_font = ObjectPtr<FontTexture> (fnt);
+        fnt->UnReference();
+      }
+#endif
     return _normal_font;
   }
 
   ObjectPtr<FontTexture> GraphicsEngine::GetBoldFont()
   {
+    #if defined(NUX_OS_WINDOWS)
+      if (_bold_font.IsNull())
+      {
+        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/Tahoma_size_8_bold.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+        _bold_font = ObjectPtr<FontTexture> (fnt);
+        fnt->UnReference();
+      }
+#else
+      if (_bold_font.IsNull())
+      {
+        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/nuxfont_size_8_bold.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+        _bold_font = ObjectPtr<FontTexture> (fnt);
+        fnt->UnReference();
+      }
+#endif
     return _bold_font;
   }
 
