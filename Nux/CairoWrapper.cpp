@@ -208,6 +208,7 @@ namespace nux
 
   CairoWrapper::~CairoWrapper ()
   {
+    delete pimpl;
   }
 
   bool CairoWrapper::Invalidate (Geometry const& geom)
