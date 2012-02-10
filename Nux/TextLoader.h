@@ -17,31 +17,45 @@
  * Authored by: Jason Smith <jason.smith@canonical.com>
  */
 
-#ifndef NUX_COVERFLOWITEM_H
-#define NUX_COVERFLOWITEM_H
+#ifndef NUX_TEXTLOADER_H
+#define NUX_TEXTLOADER_H
 
-#include <memory>
-#include <string>
+#include <Nux/Nux.h> // FIXME
 
-#include <Nux/Nux.h>
-#include <sigc++/sigc++.h>
+namespace nux {
 
-namespace nux
+class TextLoader
 {
-
-class CoverflowItem : public InitiallyUnownedObject
-{
-  NUX_DECLARE_OBJECT_TYPE(CoverflowItem, InitiallyUnownedObject);
 public:
-  typedef ObjectPtr<CoverflowItem> Ptr;
+  enum TextAlignment
+  {
+    ALIGN_CENTER = 0,
+    ALIGN_LEFT,
+    ALIGN_RIGHT,
+  };
 
-  CoverflowItem(std::string const& name);
+  TextLoader();
+  ~TextLoader();
 
-  Property<std::string> name;
-  Property<ObjectPtr<BaseTexture> > text_texture;
+  Property<TextAlignment> alignment;
 
-  virtual ObjectPtr<BaseTexture> GetTexture() const = 0;
-  virtual void Activate() {}
+  Property<Color> color;
+
+  Property<std::string> font_name;
+
+  Property<int> height;
+  
+  Property<std::string> text;
+  
+  Property<int> font_size;
+
+  Property<int> width;
+
+  ObjectPtr<BaseTexture> CreateTexture();
+
+private:
+  struct Impl;
+  Impl* pimpl;
 };
 
 }

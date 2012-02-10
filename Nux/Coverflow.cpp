@@ -29,6 +29,8 @@
 #include "NuxGraphics/GLShader.h"
 #include "NuxGraphics/GraphicsEngine.h"
 
+#include "Nux/TextLoader.h"
+
 #include <glib.h>
 
 #include "Coverflow.h"
@@ -179,12 +181,12 @@ namespace nux
     nux::Point2 mouse_down_position_;
     nux::Point2 mouse_position_;
     CoverList last_covers_;
-    StaticText* cover_text_label_;
     float flat_screen_width_;
     float flat_screen_height_;
     float cover_width_in_3d_space_;
     float near_clip_plan_;
     float far_clip_plan_;
+    TextLoader text_loader_;
   };
 
   Coverflow::Impl::Impl(Coverflow* parent)
@@ -199,7 +201,6 @@ namespace nux
    , saved_position_(0)
    , velocity_(0)
    , velocity_handle_(0)
-   , cover_text_label_(NULL)
    , flat_screen_width_(0.0f)
    , flat_screen_height_(0.0f)
    , cover_width_in_3d_space_(1.0f)
@@ -278,9 +279,7 @@ namespace nux
       fragment_shader_prog_.Release();
     }
 
-    cover_text_label_ = new StaticText("Cover Label", NUX_TRACKER_LOCATION);
-    cover_text_label_->SetTextColor(color::Aubergine);
-    cover_text_label_->SetFontSize(24);
+    text_loader_.font_size = 24;
   }
 
   Coverflow::Impl::~Impl()
@@ -289,11 +288,6 @@ namespace nux
     {
       g_source_remove(animation_handle_);
       animation_handle_ = 0;
-    }
-
-    if (cover_text_label_)
-    {
-      cover_text_label_->UnReference();
     }
   }
 
@@ -633,8 +627,6 @@ namespace nux
   void Coverflow::Impl::HandleGeometryChange(Area* area, Geometry geo)
   {
     GetFlatCoverScreenSize(flat_screen_width_, flat_screen_height_);
-
-    cover_text_label_->SetMaximumWidth(flat_screen_width_);
   }
 
   CoverList Coverflow::Impl::GetCoverList(float animation_progress, gint64 timestep)
@@ -949,69 +941,77 @@ namespace nux
       // **** Render Cover label ****
       if (parent_->show_covers_label())
       {
-        ObjectPtr<IOpenGLBaseTexture> label_texture = cover_text_label_->GetTextTexture();
-
-        QRP_Compute_Texture_Coord(label_texture->GetWidth(), label_texture->GetHeight(), label_texture, texxform);
-
-        ratio = label_texture->GetWidth() / (float)label_texture->GetHeight();
-
-        //float offset = cover_bottom;
-        float fx = cover_width_in_3d_space_ / 2.0f;
-        float fy = (cover_width_in_3d_space_) * (1.0f / ratio);
-        
-        label_texture->SetFiltering(GL_LINEAR, GL_LINEAR);
-        graphics_engine.SetTexture(GL_TEXTURE0, label_texture);
-        CHECKGL(glUniform1iARB(TextureObjectLocation, 0));
-
-        
-        float angular_opacity = 1.0f;
-        if (parent_->folding_angle == 0)
+        if (!cover.item->text_texture().IsValid())
         {
-          angular_opacity = 1.0f;
-        }
-        else
-        {
-          float rotation_ratio = std::abs(cover.position.rot / parent_->folding_angle);
-          angular_opacity = 1.0f - rotation_ratio;
+          text_loader_.text = cover.item->name();
+          cover.item->text_texture = text_loader_.CreateTexture();
         }
 
-        float opacity = 1.0f - std::abs(cover.position.x) / (parent_->reflection_fadeout_distance);
-        if (opacity < 0.0f)
+        if (cover.item->text_texture().IsValid())
         {
-          opacity = 0.0f;
+          ObjectPtr<IOpenGLBaseTexture> label_texture = cover.item->text_texture()->GetDeviceTexture();
+          QRP_Compute_Texture_Coord(label_texture->GetWidth(), label_texture->GetHeight(), label_texture, texxform);
+
+          ratio = label_texture->GetWidth() / (float)label_texture->GetHeight();
+
+          //float offset = cover_bottom;
+          float fx = cover_width_in_3d_space_ / 2.0f;
+          float fy = (cover_width_in_3d_space_) * (1.0f / ratio);
+          
+          label_texture->SetFiltering(GL_LINEAR, GL_LINEAR);
+          graphics_engine.SetTexture(GL_TEXTURE0, label_texture);
+          CHECKGL(glUniform1iARB(TextureObjectLocation, 0));
+
+          
+          float angular_opacity = 1.0f;
+          if (parent_->folding_angle == 0)
+          {
+            angular_opacity = 1.0f;
+          }
+          else
+          {
+            float rotation_ratio = std::abs(cover.position.rot / parent_->folding_angle);
+            angular_opacity = 1.0f - rotation_ratio;
+          }
+
+          float opacity = 1.0f - std::abs(cover.position.x) / (parent_->reflection_fadeout_distance);
+          if (opacity < 0.0f)
+          {
+            opacity = 0.0f;
+          }
+
+          //opacity *= angular_opacity;
+
+          texxform.flip_v_coord = true;
+          QRP_Compute_Texture_Coord(width, height, texture, texxform);
+
+          float opacity_start = opacity * angular_opacity;
+          float opacity_end   = opacity * angular_opacity;
+          float VtxBuffer[] =
+          {
+            -fx, cover_bottom,    0.0f, 1.0f, texxform.u0, texxform.v1, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
+            -fx, cover_bottom-fy, 0.0f, 1.0f, texxform.u0, texxform.v0, 0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
+            fx,  cover_bottom-fy, 0.0f, 1.0f, texxform.u1, texxform.v0, 0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
+            fx,  cover_bottom,    0.0f, 1.0f, texxform.u1, texxform.v1, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
+          };
+
+          CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+          CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer));
+
+          if (TextureCoord0Location != -1)
+          {
+            CHECKGL(glEnableVertexAttribArrayARB(TextureCoord0Location));
+            CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4));
+          }
+
+          if (VertexColorLocation != -1)
+          {
+            CHECKGL(glEnableVertexAttribArrayARB(VertexColorLocation));
+            CHECKGL(glVertexAttribPointerARB((GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8));
+          }
+
+          CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
         }
-
-        //opacity *= angular_opacity;
-
-        texxform.flip_v_coord = true;
-        QRP_Compute_Texture_Coord(width, height, texture, texxform);
-
-        float opacity_start = opacity * angular_opacity;
-        float opacity_end   = opacity * angular_opacity;
-        float VtxBuffer[] =
-        {
-          -fx, cover_bottom,    0.0f, 1.0f, texxform.u0, texxform.v1, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
-          -fx, cover_bottom-fy, 0.0f, 1.0f, texxform.u0, texxform.v0, 0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
-          fx,  cover_bottom-fy, 0.0f, 1.0f, texxform.u1, texxform.v0, 0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
-          fx,  cover_bottom,    0.0f, 1.0f, texxform.u1, texxform.v1, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
-        };
-
-        CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
-        CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer));
-
-        if (TextureCoord0Location != -1)
-        {
-          CHECKGL(glEnableVertexAttribArrayARB(TextureCoord0Location));
-          CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4));
-        }
-
-        if (VertexColorLocation != -1)
-        {
-          CHECKGL(glEnableVertexAttribArrayARB(VertexColorLocation));
-          CHECKGL(glVertexAttribPointerARB((GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8));
-        }
-
-        CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
       }
 
       CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));

@@ -91,6 +91,7 @@ source_cpp = \
   $(srcdir)/SystemThread.cpp \
   $(srcdir)/TabView.cpp \
   $(srcdir)/TextEntry.cpp \
+  $(srcdir)/TextLoader.cpp \
   $(srcdir)/TextureArea.cpp \
   $(srcdir)/Timeline.cpp \
   $(srcdir)/TimelineEasings.cpp \
@@ -174,6 +175,7 @@ source_h = \
   $(srcdir)/SystemThread.h \
   $(srcdir)/TabView.h \
   $(srcdir)/TextEntry.h \
+  $(srcdir)/TextLoader.h \
   $(srcdir)/TextureArea.h \
   $(srcdir)/Timeline.h \
   $(srcdir)/TimelineEasings.h \
