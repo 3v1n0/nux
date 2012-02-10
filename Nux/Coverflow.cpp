@@ -945,7 +945,7 @@ namespace nux
         {
           nux::Point2 top_left, bottom_right;
           Get3DBoundingBox(camera_position_.z, top_left, bottom_right);
-          int individual_width = width / (bottom_right.x - top_left.x);
+          int individual_width = (int) RoundFloor((float)width / (bottom_right.x - top_left.x));
 
           text_loader_.text = cover.item->name();
           text_loader_.width = individual_width;
@@ -964,7 +964,7 @@ namespace nux
           float fx = cover_width_in_3d_space_ / 2.0f;
           float fy = (cover_width_in_3d_space_) * (1.0f / ratio);
           
-          label_texture->SetFiltering(GL_LINEAR, GL_LINEAR);
+          label_texture->SetFiltering(GL_NEAREST, GL_NEAREST);
           graphics_engine.SetTexture(GL_TEXTURE0, label_texture);
           CHECKGL(glUniform1iARB(TextureObjectLocation, 0));
 
