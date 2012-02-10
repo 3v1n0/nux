@@ -1081,7 +1081,7 @@ namespace nux
     , reflection_strength(0.45f)
     , space_between_icons(1.25f)
     , model(CoverflowModel::Ptr(new CoverflowModel()))
-    , show_covers_label(false)
+    , show_covers_label(true)
     , pimpl(new Impl(this))
   {
     SetAcceptKeyboardEvent(true);
