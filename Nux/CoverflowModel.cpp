@@ -21,8 +21,7 @@
 
 namespace nux
 { 
-
-
+NUX_IMPLEMENT_OBJECT_TYPE(CoverflowModel);
 CoverflowModel::CoverflowItemList const& CoverflowModel::Items() const
 {
   return items_;
@@ -49,8 +48,12 @@ void CoverflowModel::RemoveItem(CoverflowItem::Ptr const& item)
 size_t CoverflowModel::IndexOf(CoverflowItem::Ptr const& item)
 {
   size_t i = 0;
-  for (auto compare : items_)
+
+  CoverflowItemList::iterator it;
+
+  for (it = items_.begin(); it != items_.end(); ++it)
   {
+    CoverflowItem::Ptr compare = *it;
     if (item == compare)
       return i;
     ++i;

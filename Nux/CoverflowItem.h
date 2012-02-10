@@ -29,10 +29,11 @@
 namespace nux
 {
 
-class CoverflowItem : public sigc::trackable
+class CoverflowItem : public InitiallyUnownedObject
 {
+  NUX_DECLARE_OBJECT_TYPE(CoverflowItem, InitiallyUnownedObject);
 public:
-  typedef std::shared_ptr<CoverflowItem> Ptr;
+  typedef ObjectPtr<CoverflowItem> Ptr;
 
   CoverflowItem(std::string const& name);
 

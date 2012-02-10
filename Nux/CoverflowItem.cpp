@@ -21,11 +21,10 @@
 
 namespace nux
 {
-
+NUX_IMPLEMENT_OBJECT_TYPE(CoverflowItem);
 CoverflowItem::CoverflowItem(std::string const& name_)
-  : name(name_)
+: name(name_)
 {
 }
-
 
 }

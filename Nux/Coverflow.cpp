@@ -152,6 +152,7 @@ namespace nux
     bool TestCoverVisible(Cover const& cover);
 
     static gboolean OnAnimationTimeout(gpointer data);
+    static gboolean OnTimeout(gpointer data);
 
     nux::Vector3 camera_position_;
     nux::Vector3 camera_rotation_;
@@ -301,8 +302,8 @@ namespace nux
     int width = parent_->GetBaseWidth();
     int height = parent_->GetBaseHeight();
 
-    top_left_corner.x = -std::tan(DEGTORAD(parent_->fov() * 0.5f)) * distance_from_camera;
-    top_left_corner.y = top_left_corner.x * (height / (float)width);
+    top_left_corner.y = std::tan(DEGTORAD(parent_->fov() * 0.5f)) * distance_from_camera;
+    top_left_corner.x = -top_left_corner.y * (width / (float)height);
 
     bottom_right_corner.x = -top_left_corner.x;
     bottom_right_corner.y = -top_left_corner.y;
@@ -316,7 +317,7 @@ namespace nux
     int width = parent_->GetBaseWidth();
     int height = parent_->GetBaseHeight();
 
-    auto texture = cover.item->GetTexture()->GetDeviceTexture();
+    ObjectPtr<IOpenGLBaseTexture> texture = cover.item->GetTexture()->GetDeviceTexture();
     float ratio = texture->GetWidth()/(float)texture->GetHeight();
     
     float fx = cover_width_in_3d_space_/2.0f;
@@ -371,8 +372,7 @@ namespace nux
     int width = parent_->GetBaseWidth();
     int height = parent_->GetBaseHeight();
 
-    float v_fov = parent_->fov() * ((float)height / (float)width);
-    perspective_.Perspective(DEGTORAD(v_fov), (float)width / (float)height, near_clip_plan_, far_clip_plan_);
+    perspective_.Perspective(DEGTORAD(parent_->fov()), (float)width / (float)height, near_clip_plan_, far_clip_plan_);
 
     float fx = cover_width_in_3d_space_ / 2.0f;
     float fy = (cover_width_in_3d_space_ / 2.0f) * (1.0f / ratio);
@@ -464,9 +464,11 @@ namespace nux
   bool Coverflow::Impl::CoverAtPoint(int x, int y, Cover& out_cover)
   {
     Cover best;
-    auto covers = last_covers_;
-    for (auto cover : covers)
+
+    CoverList::iterator it;
+    for (it = last_covers_.begin(); it != last_covers_.end(); ++it)
     {
+      Cover cover = *it;
       if (cover.item->GetTexture().IsNull())
         continue;
       if (cover.position.rot > 0 && TestMouseOverCover(mouse_position_.x, mouse_position_.y, cover))
@@ -475,7 +477,8 @@ namespace nux
       }
     }
 
-    for (auto rit = covers.rbegin(); rit != covers.rend(); ++rit)
+    CoverList::reverse_iterator rit;
+    for (rit = last_covers_.rbegin(); rit != last_covers_.rend(); ++rit)
     {
       Cover cover = *rit;
       if (cover.item->GetTexture().IsNull())
@@ -583,8 +586,11 @@ namespace nux
 
     velocity_ = 0;
     gint64 current_time = g_get_monotonic_time();
-    for (auto event : velocity_events_)
+
+    std::vector<VelocityEvent>::iterator it;
+    for (it = velocity_events_.begin(); it != velocity_events_.end(); ++it)
     {
+      VelocityEvent event = *it;
       int ms = (current_time - event.time) / 1000;
       if (ms > 32)
         continue;
@@ -596,20 +602,7 @@ namespace nux
 
     if (velocity_ != 0 && !velocity_handle_)
     {
-      velocity_handle_ = g_timeout_add(16, [](gpointer data) -> gboolean {
-        Coverflow::Impl* self = static_cast<Coverflow::Impl*>(data);
-        if (self->velocity_ == 0)
-        {
-          self->SetPosition(RoundFloor(self->position_), true);
-          self->velocity_handle_ = 0;
-          return FALSE;
-        }
-
-        self->SetPosition(self->position_ + self->velocity_, false);
-        self->velocity_ = (std::max(0.0f, std::abs(self->velocity_) - self->parent_->kinetic_scroll_rate)) * (self->velocity_ / std::abs(self->velocity_));
-        self->MaybeQueueDraw();
-        return TRUE;
-      }, this);
+      velocity_handle_ = g_timeout_add(16, &Coverflow::Impl::OnTimeout, this);
     } 
     else if (!velocity_handle_)
     {
@@ -655,8 +648,11 @@ namespace nux
     size_t i = 0;
     float flat_right = parent_->space_between_icons * (parent_->flat_icons) + .1;
     float flat_left = -flat_right;
-    for (auto item : parent_->model()->Items())
+
+    CoverflowModel::CoverflowItemList::const_iterator it;
+    for (it = parent_->model()->Items().begin(); it != parent_->model()->Items().end(); ++it)
     {
+      CoverflowItem::Ptr item = *it;
       float item_position = (float)i - coverflow_position;
 
       Cover cover;
@@ -748,7 +744,7 @@ namespace nux
     int width = parent_->GetBaseWidth();
     int height = parent_->GetBaseHeight();
 
-    auto texture = cover.item->GetTexture()->GetDeviceTexture();
+    ObjectPtr<IOpenGLBaseTexture> texture = cover.item->GetTexture()->GetDeviceTexture();
 
     modelview_ = nux::Matrix4::TRANSLATE(-camera_position_.x, -camera_position_.y, -camera_position_.z) *
                  nux::Matrix4::ROTATEX(DEGTORAD(-camera_rotation_.x)) *
@@ -829,7 +825,7 @@ namespace nux
     int width = parent_->GetBaseWidth();
     int height = parent_->GetBaseHeight();
 
-    auto texture = cover.item->GetTexture()->GetDeviceTexture();
+    ObjectPtr<IOpenGLBaseTexture> texture = cover.item->GetTexture()->GetDeviceTexture();
 
     modelview_ = nux::Matrix4::TRANSLATE(-camera_position_.x, -camera_position_.y, -camera_position_.z) *
       nux::Matrix4::ROTATEX(DEGTORAD(-camera_rotation_.x)) *
@@ -953,7 +949,7 @@ namespace nux
       // **** Render Cover label ****
       if (parent_->show_covers_label())
       {
-        auto label_texture = cover_text_label_->GetTextTexture();
+        ObjectPtr<IOpenGLBaseTexture> label_texture = cover_text_label_->GetTextTexture();
 
         QRP_Compute_Texture_Coord(label_texture->GetWidth(), label_texture->GetHeight(), label_texture, texxform);
 
@@ -990,8 +986,8 @@ namespace nux
         texxform.flip_v_coord = true;
         QRP_Compute_Texture_Coord(width, height, texture, texxform);
 
-        float opacity_start = angular_opacity;
-        float opacity_end   = angular_opacity;
+        float opacity_start = opacity * angular_opacity;
+        float opacity_end   = opacity * angular_opacity;
         float VtxBuffer[] =
         {
           -fx, cover_bottom,    0.0f, 1.0f, texxform.u0, texxform.v1, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
@@ -1043,6 +1039,22 @@ namespace nux
     return FALSE;
   }
 
+  gboolean Coverflow::Impl::OnTimeout(gpointer data)
+  {
+    Coverflow::Impl* self = static_cast<Coverflow::Impl*>(data);
+    if (self->velocity_ == 0)
+    {
+      self->SetPosition(RoundFloor(self->position_), true);
+      self->velocity_handle_ = 0;
+      return FALSE;
+    }
+
+    self->SetPosition(self->position_ + self->velocity_, false);
+    self->velocity_ = (std::max(0.0f, std::abs(self->velocity_) - self->parent_->kinetic_scroll_rate)) * (self->velocity_ / std::abs(self->velocity_));
+    self->MaybeQueueDraw();
+    return TRUE;
+  }
+
   NUX_IMPLEMENT_OBJECT_TYPE(Coverflow);
 
   Coverflow::Coverflow()
@@ -1054,7 +1066,7 @@ namespace nux
     , folding_angle(90.0f)
     , folding_depth(0.0f)
     , folding_rate(2)
-    , fov(60)
+    , fov(45)
     , kinetic_scroll_rate(0.1f)
     , mouse_drag_rate(1)
     , pinching(.6)
@@ -1099,22 +1111,24 @@ namespace nux
 
     glViewport(0, 0, ctx.width, ctx.height);
 
-    float v_fov = fov() * ((float)ctx.height / (float)ctx.width);
-    pimpl->perspective_.Perspective(DEGTORAD(v_fov), (float)ctx.width / (float)ctx.height, pimpl->near_clip_plan_, pimpl->far_clip_plan_);
+    pimpl->perspective_.Perspective(DEGTORAD(fov()), (float)ctx.width / (float)ctx.height, pimpl->near_clip_plan_, pimpl->far_clip_plan_);
 
     graphics_engine.GetRenderStates().SetBlend(true);
     graphics_engine.GetRenderStates().SetPremultipliedBlend(SRC_OVER);
 
-    auto covers = pimpl->GetCoverList(EaseSin(animation_progress), timestep);
-    for (auto cover : covers)
+    CoverList covers = pimpl->GetCoverList(EaseSin(animation_progress), timestep);
+    CoverList::iterator it;
+    for (it = covers.begin(); it != covers.end(); ++it)
     {
+      Cover cover = *it;
       if (cover.position.rot > 0)
         pimpl->DrawCover(graphics_engine, cover);
       else
         break;
     }
 
-    for (auto rit = covers.rbegin(); rit != covers.rend(); ++rit)
+    CoverList::reverse_iterator rit;
+    for (rit = covers.rbegin(); rit != covers.rend(); ++rit)
     {
       Cover cover = *rit;
       if (cover.position.rot <= 0)
