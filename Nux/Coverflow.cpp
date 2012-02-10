@@ -651,7 +651,7 @@ namespace nux
       cover.opacity = 1.0f;
       cover.selected = i == RoundFloor(coverflow_position);
       cover.item = item;
-      cover.position = { 0, 0, 0, 0 };
+      cover.position = { 0, -0.5f, 0, 0 };  // This position refers to the bottom center of the cover.
 
       float x = item_position * parent_->space_between_icons;
       cover.position.x = x;
@@ -742,7 +742,7 @@ namespace nux
                  nux::Matrix4::ROTATEX(DEGTORAD(-camera_rotation_.x)) *
                  nux::Matrix4::ROTATEY(DEGTORAD(camera_drift_factor_ * parent_->camera_motion_drift_angle + -camera_rotation_.y)) *
                  nux::Matrix4::ROTATEZ(DEGTORAD(-camera_rotation_.z)) *
-                 nux::Matrix4::TRANSLATE(cover.position.x, cover.position.y, cover.position.z);
+                 nux::Matrix4::TRANSLATE(cover.position.x, 0.0f, cover.position.z);
 
     nux::Matrix4 m = nux::Matrix4::ROTATEY(DEGTORAD(cover.position.rot));
     nux::Matrix4 combined_matrix = modelview_ * m;
@@ -754,9 +754,10 @@ namespace nux
 
     float ratio = texture->GetWidth()/(float)texture->GetHeight();
 
-    float fx = (cover_width_in_3d_space_/2.0f);
-    float fy = (cover_width_in_3d_space_/2.0f) * (1.0f/ratio);
-
+    float fx = cover_width_in_3d_space_/2.0f;
+    float fy_top = cover.position.y + (cover_width_in_3d_space_) * (1.0f/ratio);
+    float fy_bot = cover.position.y;
+    
     highlight_shader_program_->Begin();
 
     int TextureObjectLocation = highlight_shader_program_->GetUniformLocationARB("TextureObject0");
@@ -775,10 +776,10 @@ namespace nux
 
     float VtxBuffer[] =
     {
-      -fx, fy,  0.0f, 1.0f, texxform.u0, texxform.v0, 0, 0, color.red, color.green, color.blue, color.alpha,
-      -fx, -fy, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 0, color.red, color.green, color.blue, color.alpha,
-      fx,  -fy, 0.0f, 1.0f, texxform.u1, texxform.v1, 0, 0, color.red, color.green, color.blue, color.alpha,
-      fx,  fy,  0.0f, 1.0f, texxform.u1, texxform.v0, 0, 0, color.red, color.green, color.blue, color.alpha,
+      -fx, fy_top,  0.0f, 1.0f, texxform.u0, texxform.v0, 0, 0, color.red, color.green, color.blue, color.alpha,
+      -fx, fy_bot, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 0, color.red, color.green, color.blue, color.alpha,
+      fx,  fy_bot, 0.0f, 1.0f, texxform.u1, texxform.v1, 0, 0, color.red, color.green, color.blue, color.alpha,
+      fx,  fy_top,  0.0f, 1.0f, texxform.u1, texxform.v0, 0, 0, color.red, color.green, color.blue, color.alpha,      
     };
 
     CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
@@ -819,16 +820,20 @@ namespace nux
 
     ObjectPtr<IOpenGLBaseTexture> texture = cover.item->GetTexture()->GetDeviceTexture();
 
+    // Note that (cover.position.x, cover.position.y, cover.position.z) is the position of the bottom 
+    // center of the cover in 3d space.
+    // We translate the cover to an y coordinate of 0.0 in the matrix below and we take care of rendering 
+    // the cover at the right location in Y.
+
     modelview_ = nux::Matrix4::TRANSLATE(-camera_position_.x, -camera_position_.y, -camera_position_.z) *
       nux::Matrix4::ROTATEX(DEGTORAD(-camera_rotation_.x)) *
       nux::Matrix4::ROTATEY(DEGTORAD(camera_drift_factor_ * parent_->camera_motion_drift_angle + -camera_rotation_.y)) *
       nux::Matrix4::ROTATEZ(DEGTORAD(-camera_rotation_.z)) *
-      nux::Matrix4::TRANSLATE(cover.position.x, cover.position.y, cover.position.z);
+      nux::Matrix4::TRANSLATE(cover.position.x, 0.0f, cover.position.z);
 
     nux::Matrix4 m = nux::Matrix4::ROTATEY(DEGTORAD(cover.position.rot));
     nux::Matrix4 combined_matrix = modelview_ * m;
 
-    float cover_bottom = 0.0f;
     {
       nux::TexCoordXForm texxform;
       nux::Color color = nux::color::White;
@@ -838,9 +843,10 @@ namespace nux
       float ratio = texture->GetWidth()/(float)texture->GetHeight();
 
       float fx = cover_width_in_3d_space_/2.0f;
-      float fy = (cover_width_in_3d_space_/2.0f) * (1.0f/ratio);
-      
-      cover_bottom = -fy;
+
+      float fy_top = cover.position.y + (cover_width_in_3d_space_) * (1.0f/ratio);
+      float fy_bot = cover.position.y;
+      float fy_bot_reflex = cover.position.y - (cover_width_in_3d_space_) * (1.0f/ratio);;
 
       cover_shader_program_->Begin();
 
@@ -862,10 +868,10 @@ namespace nux
         color = color * cover.opacity;
         float VtxBuffer[] =
         {
-          -fx, fy,  0.0f, 1.0f, texxform.u0, texxform.v0, 0, 0, color.red, color.green, color.blue, color.alpha,
-          -fx, -fy, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 0, color.red, color.green, color.blue, color.alpha,
-          fx,  -fy, 0.0f, 1.0f, texxform.u1, texxform.v1, 0, 0, color.red, color.green, color.blue, color.alpha,
-          fx,  fy,  0.0f, 1.0f, texxform.u1, texxform.v0, 0, 0, color.red, color.green, color.blue, color.alpha,
+          -fx, fy_top,  0.0f, 1.0f, texxform.u0, texxform.v0, 0, 0, color.red, color.green, color.blue, color.alpha,
+          -fx, fy_bot, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 0, color.red, color.green, color.blue, color.alpha,
+          fx,  fy_bot, 0.0f, 1.0f, texxform.u1, texxform.v1, 0, 0, color.red, color.green, color.blue, color.alpha,
+          fx,  fy_top,  0.0f, 1.0f, texxform.u1, texxform.v0, 0, 0, color.red, color.green, color.blue, color.alpha,
         };
 
         CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
@@ -914,10 +920,10 @@ namespace nux
         float opacity_end   = 0.0f;
         float VtxBuffer[] =
         {
-          -fx, -fy,      0.0f, 1.0f, texxform.u0, texxform.v0, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
-          -fx, -fy-2*fy, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
-          fx,  -fy-2*fy, 0.0f, 1.0f, texxform.u1, texxform.v1, 0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
-          fx,  -fy,      0.0f, 1.0f, texxform.u1, texxform.v0, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
+          -fx, fy_bot,                  0.0f, 1.0f, texxform.u0, texxform.v0, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
+          -fx, fy_bot_reflex,  0.0f, 1.0f, texxform.u0, texxform.v1, 0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
+          fx,  fy_bot_reflex,  0.0f, 1.0f, texxform.u1, texxform.v1, 0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
+          fx,  fy_bot,                  0.0f, 1.0f, texxform.u1, texxform.v0, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
         };
 
         CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
@@ -962,15 +968,15 @@ namespace nux
 
           ratio = label_texture->GetWidth() / (float)label_texture->GetHeight();
 
-          float offset = cover_bottom * 1.2f;
+          
           float fx = cover_width_in_3d_space_ / 2.0f;
-          float fy = (cover_width_in_3d_space_) * (1.0f / ratio);
+          float fy_top_text = fy_bot - 0.05f;    // push it down a bit
+          float fy_bot_text = fy_top_text - (cover_width_in_3d_space_) * (1.0f/ratio);
           
           label_texture->SetFiltering(GL_NEAREST, GL_NEAREST);
           graphics_engine.SetTexture(GL_TEXTURE0, label_texture);
           CHECKGL(glUniform1iARB(TextureObjectLocation, 0));
 
-          
           float angular_opacity = 1.0f;
           if (parent_->folding_angle == 0)
           {
@@ -997,10 +1003,10 @@ namespace nux
           float opacity_end   = opacity * angular_opacity;
           float VtxBuffer[] =
           {
-            -fx, offset,    0.0f, 1.0f, texxform.u0, texxform.v1, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
-            -fx, offset-fy, 0.0f, 1.0f, texxform.u0, texxform.v0, 0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
-            fx,  offset-fy, 0.0f, 1.0f, texxform.u1, texxform.v0, 0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
-            fx,  offset,    0.0f, 1.0f, texxform.u1, texxform.v1, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
+            -fx, fy_top_text, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
+            -fx, fy_bot_text, 0.0f, 1.0f, texxform.u0, texxform.v0, 0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
+            fx,  fy_bot_text, 0.0f, 1.0f, texxform.u1, texxform.v0, 0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
+            fx,  fy_top_text, 0.0f, 1.0f, texxform.u1, texxform.v1, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
           };
 
           CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
@@ -1033,10 +1039,10 @@ namespace nux
       cover_shader_program_->End();
     }
 
-    if (cover.selected)
-    {
-      DrawCoverHighlight(graphics_engine, cover);
-    }
+    // if (cover.selected)
+    // {
+    //   DrawCoverHighlight(graphics_engine, cover);
+    // }
   }
 
   gboolean Coverflow::Impl::OnAnimationTimeout(gpointer data)
