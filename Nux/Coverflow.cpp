@@ -947,10 +947,12 @@ namespace nux
           Get3DBoundingBox(camera_position_.z, top_left, bottom_right);
           int individual_width = (int) RoundFloor((float)width / (bottom_right.x - top_left.x));
 
-          text_loader_.text = cover.item->name();
+          char *escaped_text = g_markup_escape_text(cover.item->name().c_str(), -1);
+          text_loader_.text = escaped_text;
           text_loader_.width = individual_width;
           text_loader_.minimum_width = individual_width;
           cover.item->text_texture = text_loader_.CreateTexture();
+          g_free(escaped_text);
         }
 
         if (cover.item->text_texture().IsValid())
@@ -960,7 +962,7 @@ namespace nux
 
           ratio = label_texture->GetWidth() / (float)label_texture->GetHeight();
 
-          //float offset = cover_bottom;
+          float offset = cover_bottom * 1.2f;
           float fx = cover_width_in_3d_space_ / 2.0f;
           float fy = (cover_width_in_3d_space_) * (1.0f / ratio);
           
@@ -995,10 +997,10 @@ namespace nux
           float opacity_end   = opacity * angular_opacity;
           float VtxBuffer[] =
           {
-            -fx, cover_bottom,    0.0f, 1.0f, texxform.u0, texxform.v1, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
-            -fx, cover_bottom-fy, 0.0f, 1.0f, texxform.u0, texxform.v0, 0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
-            fx,  cover_bottom-fy, 0.0f, 1.0f, texxform.u1, texxform.v0, 0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
-            fx,  cover_bottom,    0.0f, 1.0f, texxform.u1, texxform.v1, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
+            -fx, offset,    0.0f, 1.0f, texxform.u0, texxform.v1, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
+            -fx, offset-fy, 0.0f, 1.0f, texxform.u0, texxform.v0, 0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
+            fx,  offset-fy, 0.0f, 1.0f, texxform.u1, texxform.v0, 0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
+            fx,  offset,    0.0f, 1.0f, texxform.u1, texxform.v1, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
           };
 
           CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
