@@ -279,7 +279,7 @@ namespace nux
       fragment_shader_prog_.Release();
     }
 
-    text_loader_.font_size = 24;
+    text_loader_.font_size = 10;
   }
 
   Coverflow::Impl::~Impl()
@@ -943,7 +943,13 @@ namespace nux
       {
         if (!cover.item->text_texture().IsValid())
         {
+          nux::Point2 top_left, bottom_right;
+          Get3DBoundingBox(camera_position_.z, top_left, bottom_right);
+          int individual_width = width / (bottom_right.x - top_left.x);
+
           text_loader_.text = cover.item->name();
+          text_loader_.width = individual_width;
+          text_loader_.minimum_width = individual_width;
           cover.item->text_texture = text_loader_.CreateTexture();
         }
 

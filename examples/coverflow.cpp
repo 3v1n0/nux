@@ -130,8 +130,9 @@ void CoverflowThread(nux::NThread* thread, void* InitData)
   std::string base_path = PKGDATADIR"/UITextures/";
   while(movie_list[i] != NULL)
   {
+    std::string name = "Nux The Movie";
     std::string movie_path = base_path + movie_list[i];
-    nux::CoverflowItem::Ptr item(new nux::BasicCoverflowItem(movie_path, movie_path));
+    nux::CoverflowItem::Ptr item(new nux::BasicCoverflowItem(name, movie_path));
     model->AddItem(item);
     i++;
   }

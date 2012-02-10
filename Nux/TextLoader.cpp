@@ -121,6 +121,8 @@ Size TextLoader::Impl::ComputeTextSize()
   padding_x_ = text_width - logical_rect.width / PANGO_SCALE;
   padding_y_ = text_height - logical_rect.height / PANGO_SCALE;
 
+  text_width = std::min<int>(text_width, parent_->width());
+
   // clean up
   pango_font_description_free(font_desc);
   g_object_unref(pango_layout);
@@ -144,6 +146,7 @@ void TextLoader::Impl::RasterizeText(void* cairo_context, Color color)
   {
     pango_layout_set_wrap     (pango_layout, PANGO_WRAP_WORD_CHAR);
     pango_layout_set_ellipsize(pango_layout, PANGO_ELLIPSIZE_END);
+    pango_layout_set_alignment(pango_layout, (PangoAlignment)parent_->alignment());
     pango_layout_set_markup   (pango_layout, parent_->text().c_str(), -1);
 
     // Sets the width to which the lines of the PangoLayout should wrap or ellipsized. The default value is -1: no width set.
@@ -189,9 +192,9 @@ void TextLoader::Impl::RasterizeText(void* cairo_context, Color color)
 TextLoader::TextLoader()
   : alignment(TextAlignment::ALIGN_CENTER)
   , font_name("Ubuntu")
-  , height(-1)
   , font_size(10)
   , width(-1)
+  , minimum_width(0)
   , pimpl(new TextLoader::Impl(this))
 {
 
@@ -210,7 +213,7 @@ ObjectPtr<BaseTexture> TextLoader::CreateTexture()
   if (sz.width == 0 || sz.height == 0)
     return result;
 
-  CairoGraphics* cairo_graphics = new CairoGraphics(CAIRO_FORMAT_ARGB32, sz.width, sz.height);
+  CairoGraphics* cairo_graphics = new CairoGraphics(CAIRO_FORMAT_ARGB32, std::max<int>(sz.width, minimum_width()), sz.height);
   cairo_t* cairo_ctx = cairo_graphics->GetContext();
   cairo_set_operator(cairo_ctx, CAIRO_OPERATOR_CLEAR);
   cairo_paint(cairo_ctx);

@@ -29,8 +29,8 @@ class TextLoader
 public:
   enum TextAlignment
   {
-    ALIGN_CENTER = 0,
     ALIGN_LEFT,
+    ALIGN_CENTER,
     ALIGN_RIGHT,
   };
 
@@ -43,13 +43,13 @@ public:
 
   Property<std::string> font_name;
 
-  Property<int> height;
-  
   Property<std::string> text;
   
   Property<int> font_size;
 
   Property<int> width;
+
+  Property<int> minimum_width;
 
   ObjectPtr<BaseTexture> CreateTexture();
 
