@@ -280,6 +280,7 @@ namespace nux
     }
 
     text_loader_.font_size = 10;
+    text_loader_.lines = 2;
   }
 
   Coverflow::Impl::~Impl()

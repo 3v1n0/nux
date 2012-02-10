@@ -51,6 +51,8 @@ public:
 
   Property<int> minimum_width;
 
+  Property<int> lines;
+
   ObjectPtr<BaseTexture> CreateTexture();
 
 private:
