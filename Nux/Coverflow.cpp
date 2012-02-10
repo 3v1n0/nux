@@ -939,7 +939,7 @@ namespace nux
       }
 
       // **** Render Cover label ****
-      if (parent_->show_covers_label())
+      if (parent_->show_labels())
       {
         if (!cover.item->text_texture().IsValid())
         {
@@ -1081,7 +1081,7 @@ namespace nux
     , reflection_strength(0.45f)
     , space_between_icons(1.25f)
     , model(CoverflowModel::Ptr(new CoverflowModel()))
-    , show_covers_label(true)
+    , show_labels(true)
     , pimpl(new Impl(this))
   {
     SetAcceptKeyboardEvent(true);

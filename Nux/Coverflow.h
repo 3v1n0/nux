@@ -71,7 +71,7 @@ namespace nux
 
     Property<CoverflowModel::Ptr> model;
 
-    Property<bool> show_covers_label;
+    Property<bool> show_labels;
 
     bool AcceptKeyNavFocus();
 

@@ -119,7 +119,6 @@ void CoverflowThread(nux::NThread* thread, void* InitData)
 {
   nux::Coverflow* coverflow = new nux::Coverflow();
   coverflow->fov = 45;
-  coverflow->show_covers_label = true;
   nux::HLayout* main_layout(new nux::HLayout(NUX_TRACKER_LOCATION));
   main_layout->AddView(coverflow, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_FULL);
 
