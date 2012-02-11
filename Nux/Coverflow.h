@@ -73,6 +73,10 @@ namespace nux
 
     Property<bool> show_labels;
 
+    Property<bool> show_drop_shadow;
+    
+    Property<bool> show_reflection;
+
     bool AcceptKeyNavFocus();
 
     void SetCameraDistance(float distance);

@@ -926,6 +926,7 @@ namespace nux
       CHECKGL(glUniform1iARB(TextureObjectLocation, 0));
 
       // **** Render the cover drop shadow ****
+      if (parent_->show_drop_shadow)
       {
         Color color = ref_color * cover.opacity * angular_opacity;
         float VtxBuffer[] =
@@ -989,7 +990,7 @@ namespace nux
       }
 
       // **** Reflection opacity ****
-      if (0)
+      if (parent_->show_reflection)
       {
         texxform.flip_v_coord = true;
         QRP_Compute_Texture_Coord(width, height, texture, texxform);
@@ -1156,6 +1157,8 @@ namespace nux
     , space_between_icons(1.25f)
     , model(CoverflowModel::Ptr(new CoverflowModel()))
     , show_labels(true)
+    , show_drop_shadow(true)
+    , show_reflection(false)
     , pimpl(new Impl(this))
   {
     SetAcceptKeyboardEvent(true);
