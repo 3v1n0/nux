@@ -29,6 +29,13 @@
 #include "NuxGraphics/GLShader.h"
 #include "NuxGraphics/GraphicsEngine.h"
 
+#include "NuxGraphics/IOpenGLBaseTexture.h"
+
+/*#include "NuxGraphics/GLResource.h"
+#include "NuxGraphics/FontTexture.h"
+#include "NuxGraphics/NuxGraphicsResources.h"
+#include "NuxGraphics/GLResourceManager.h"*/
+
 #include "Nux/TextLoader.h"
 
 #include <glib.h>
@@ -187,6 +194,7 @@ namespace nux
     float near_clip_plan_;
     float far_clip_plan_;
     TextLoader text_loader_;
+    ObjectPtr<IOpenGLBaseTexture> drop_shadow_texture_;
   };
 
   Coverflow::Impl::Impl(Coverflow* parent)
@@ -280,6 +288,10 @@ namespace nux
     }
 
     text_loader_.font_size = 10;
+
+    BaseTexture* texture = LoadTextureFromFile(PKGDATADIR"/UITextures/coverflow.oval-shadow.png");
+    drop_shadow_texture_ = texture->GetDeviceTexture();
+    texture->UnReference();
   }
 
   Coverflow::Impl::~Impl()
@@ -836,17 +848,23 @@ namespace nux
 
     {
       nux::TexCoordXForm texxform;
-      nux::Color color = nux::color::White;
+      nux::Color ref_color = nux::color::White;
 
       QRP_Compute_Texture_Coord(width, height, texture, texxform);
 
       float ratio = texture->GetWidth()/(float)texture->GetHeight();
+      float drop_shadow_ratio = drop_shadow_texture_->GetWidth()/(float)drop_shadow_texture_->GetHeight();
 
       float fx = cover_width_in_3d_space_/2.0f;
 
       float fy_top = cover.position.y + (cover_width_in_3d_space_) * (1.0f/ratio);
       float fy_bot = cover.position.y;
-      float fy_bot_reflex = cover.position.y - (cover_width_in_3d_space_) * (1.0f/ratio);;
+      float fy_bot_reflex = cover.position.y - (cover_width_in_3d_space_) * (1.0f/ratio);
+
+      float fx_shadow = 0.5 * (1.1 * cover_width_in_3d_space_);
+      float fy_top_shadow = fy_bot + 0.5 * (1.4 * cover_width_in_3d_space_) * (1.0f/drop_shadow_ratio);
+      float fy_bot_shadow = fy_bot - 0.5 * (1.4 * cover_width_in_3d_space_) * (1.0f/drop_shadow_ratio);
+      
 
       cover_shader_program_->Begin();
 
@@ -855,17 +873,72 @@ namespace nux
       int TextureCoord0Location = cover_shader_program_->GetAttributeLocation("iTextureCoord0");
       int VertexColorLocation = cover_shader_program_->GetAttributeLocation("iVertexColor");
 
-      texture->SetFiltering (GL_LINEAR, GL_LINEAR);
-      graphics_engine.SetTexture(GL_TEXTURE0, texture);
-      CHECKGL(glUniform1iARB(TextureObjectLocation, 0));
-
       int VPMatrixLocation = cover_shader_program_->GetUniformLocationARB("ViewProjectionMatrix");
       nux::Matrix4 MVPMatrix = perspective_ * combined_matrix;
 
       cover_shader_program_->SetUniformLocMatrix4fv((GLint) VPMatrixLocation, 1, true, (GLfloat*) &(MVPMatrix.m));
 
+      // *** Compute the opacities ***
+      float angular_opacity = 1.0f;
+      if (parent_->folding_angle == 0)
       {
-        color = color * cover.opacity;
+        angular_opacity = 1.0f;
+      }
+      else
+      {
+        float rotation_ratio = std::abs(cover.position.rot / parent_->folding_angle);
+        angular_opacity = 1.0f - rotation_ratio;
+      }
+
+      float opacity = 1.0f - std::abs(cover.position.x) / (parent_->reflection_fadeout_distance);
+      if (opacity < 0.0f)
+      {
+        opacity = 0.0f;
+      }
+
+      opacity *= angular_opacity;
+
+      drop_shadow_texture_->SetFiltering (GL_LINEAR, GL_LINEAR);
+      graphics_engine.SetTexture(GL_TEXTURE0, drop_shadow_texture_);
+      CHECKGL(glUniform1iARB(TextureObjectLocation, 0));
+
+      // **** Render the cover drop shadow ****
+      {
+        Color color = ref_color * cover.opacity * angular_opacity;
+        float VtxBuffer[] =
+        {
+          -fx_shadow, fy_top_shadow,  0.0f, 1.0f, texxform.u0, texxform.v0, 0, 0, color.red, color.green, color.blue, color.alpha,
+          -fx_shadow, fy_bot_shadow, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 0, color.red, color.green, color.blue, color.alpha,
+          fx_shadow,  fy_bot_shadow, 0.0f, 1.0f, texxform.u1, texxform.v1, 0, 0, color.red, color.green, color.blue, color.alpha,
+          fx_shadow,  fy_top_shadow,  0.0f, 1.0f, texxform.u1, texxform.v0, 0, 0, color.red, color.green, color.blue, color.alpha,
+        };
+
+        CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+        CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer));
+
+        if (TextureCoord0Location != -1)
+        {
+          CHECKGL(glEnableVertexAttribArrayARB(TextureCoord0Location));
+          CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4));
+        }
+
+        if (VertexColorLocation != -1)
+        {
+          CHECKGL(glEnableVertexAttribArrayARB(VertexColorLocation));
+          CHECKGL(glVertexAttribPointerARB((GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8));
+        }
+
+        CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
+      }
+      
+
+      texture->SetFiltering (GL_LINEAR, GL_LINEAR);
+      graphics_engine.SetTexture(GL_TEXTURE0, texture);
+      CHECKGL(glUniform1iARB(TextureObjectLocation, 0));
+
+      // **** Render the cover ****
+      {
+        Color color = ref_color * cover.opacity;
         float VtxBuffer[] =
         {
           -fx, fy_top,  0.0f, 1.0f, texxform.u0, texxform.v0, 0, 0, color.red, color.green, color.blue, color.alpha,
@@ -893,26 +966,8 @@ namespace nux
       }
 
       // **** Reflection opacity ****
+      if (0)
       {
-        float angular_opacity = 1.0f;
-        if (parent_->folding_angle == 0)
-        {
-          angular_opacity = 1.0f;
-        }
-        else
-        {
-          float rotation_ratio = std::abs(cover.position.rot / parent_->folding_angle);
-          angular_opacity = 1.0f - rotation_ratio;
-        }
-
-        float opacity = 1.0f - std::abs(cover.position.x) / (parent_->reflection_fadeout_distance);
-        if (opacity < 0.0f)
-        {
-          opacity = 0.0f;
-        }
-
-        opacity *= angular_opacity;
-
         texxform.flip_v_coord = true;
         QRP_Compute_Texture_Coord(width, height, texture, texxform);
 
@@ -977,30 +1032,18 @@ namespace nux
           graphics_engine.SetTexture(GL_TEXTURE0, label_texture);
           CHECKGL(glUniform1iARB(TextureObjectLocation, 0));
 
-          float angular_opacity = 1.0f;
-          if (parent_->folding_angle == 0)
-          {
-            angular_opacity = 1.0f;
-          }
-          else
-          {
-            float rotation_ratio = std::abs(cover.position.rot / parent_->folding_angle);
-            angular_opacity = 1.0f - rotation_ratio;
-          }
-
-          float opacity = 1.0f - std::abs(cover.position.x) / (parent_->reflection_fadeout_distance);
-          if (opacity < 0.0f)
-          {
-            opacity = 0.0f;
-          }
-
-          //opacity *= angular_opacity;
-
           texxform.flip_v_coord = true;
           QRP_Compute_Texture_Coord(width, height, texture, texxform);
 
-          float opacity_start = opacity * angular_opacity;
-          float opacity_end   = opacity * angular_opacity;
+          float opacity_start = angular_opacity;
+          float opacity_end   = angular_opacity;
+
+          if (cover.position.rot != 0.0f)
+          {
+            opacity_start = 0.4f * angular_opacity;
+            opacity_end   = 0.4f * angular_opacity;            
+          }
+
           float VtxBuffer[] =
           {
             -fx, fy_top_text, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,

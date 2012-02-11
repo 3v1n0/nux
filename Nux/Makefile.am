@@ -11,6 +11,7 @@ libnux_@NUX_API_VERSION@_la_CPPFLAGS= \
   -DPREFIX=\""$(prefix)"\" \
 	-DLIBDIR=\""$(libdir)"\" \
   -DDATADIR=\""$(datadir)"\" \
+  -DPKGDATADIR=\""$(pkgdatadir)/@NUX_API_VERSION@"\" \
   -DG_LOG_DOMAIN=\"Nux\" \
   $(GCC_FLAGS) \
   $(NUX_CFLAGS) \
