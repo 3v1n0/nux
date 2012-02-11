@@ -1189,15 +1189,16 @@ namespace nux
     float animation_progress = std::min(1.0f, (current_time - pimpl->position_set_time_) / static_cast<float>(animation_length() * 1000));
     gint64 timestep = (current_time - pimpl->last_draw_time_) / 1000;
 
+    graphics_engine.GetRenderStates().SetBlend(true);
+    graphics_engine.GetRenderStates().SetPremultipliedBlend(SRC_OVER);
+    graphics_engine.GetRenderStates().SetColorMask(true, true, true, true);
+
     nux::GetPainter().PaintBackground(graphics_engine, GetGeometry());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT  | GL_STENCIL_BUFFER_BIT);
 
     glViewport(0, 0, ctx.width, ctx.height);
 
     pimpl->perspective_.Perspective(DEGTORAD(fov()), (float)ctx.width / (float)ctx.height, pimpl->near_clip_plan_, pimpl->far_clip_plan_);
-
-    graphics_engine.GetRenderStates().SetBlend(true);
-    graphics_engine.GetRenderStates().SetPremultipliedBlend(SRC_OVER);
 
     if (camera_motion_drift_enabled)
     {
