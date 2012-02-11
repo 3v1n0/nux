@@ -985,17 +985,11 @@ namespace nux
           }
           else
           {
-            float rotation_ratio = std::abs(cover.position.rot / parent_->folding_angle);
+            float rotation_ratio = std::min<float>(1.0f, std::abs((cover.position.rot * 2.0f) / parent_->folding_angle));
             angular_opacity = 1.0f - rotation_ratio;
           }
 
-          float opacity = 1.0f - std::abs(cover.position.x) / (parent_->reflection_fadeout_distance);
-          if (opacity < 0.0f)
-          {
-            opacity = 0.0f;
-          }
-
-          //opacity *= angular_opacity;
+          float opacity = 1.0f;
 
           texxform.flip_v_coord = true;
           QRP_Compute_Texture_Coord(width, height, texture, texxform);
