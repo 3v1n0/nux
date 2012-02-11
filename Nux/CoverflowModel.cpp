@@ -35,7 +35,7 @@ void CoverflowModel::AddItem(CoverflowItem::Ptr const& item)
 
 void CoverflowModel::InsertItem(CoverflowItem::Ptr const& item, size_t index)
 {
-  items_.insert(items_.begin() + std::max(index, items_.size()), item);
+  items_.insert(items_.begin() + std::max<float>(index, items_.size()), item);
   item_added.emit(this, item);
 }
 

@@ -18,9 +18,10 @@
  *              Jay Taoko <jay.taoko@canonical.com>
  */
 
-#include "Nux/Nux.h"
-#include "Nux/HLayout.h"
-#include "Nux/StaticText.h"
+#include "Nux.h"
+#include "HLayout.h"
+#include "StaticText.h"
+#include "TextLoader.h"
 
 #include "NuxGraphics/GraphicsDisplay.h"
 #include "NuxGraphics/GLShader.h"
@@ -31,12 +32,6 @@
 
 #include "NuxGraphics/IOpenGLBaseTexture.h"
 
-/*#include "NuxGraphics/GLResource.h"
-#include "NuxGraphics/FontTexture.h"
-#include "NuxGraphics/NuxGraphicsResources.h"
-#include "NuxGraphics/GLResourceManager.h"*/
-
-#include "Nux/TextLoader.h"
 
 #include <glib.h>
 
@@ -86,7 +81,7 @@ namespace
                                       {                                                       \n\
                                         gl_FragColor = varyVertexColor;                       \n\
                                       }";
-  struct Vec4
+  struct Vec4_
   {
     float x;
     float y;
@@ -102,7 +97,7 @@ namespace
 
   struct Cover
   {
-    Vec4 position;
+    Vec4_ position;
     float opacity;
     bool selected;
     bool mouse_over;
@@ -676,7 +671,12 @@ namespace nux
       cover.opacity = 1.0f;
       cover.selected = i == RoundFloor(coverflow_position);
       cover.item = item;
-      cover.position = { 0, -0.5f + parent_->y_offset, 0, 0 };  // This position refers to the bottom center of the cover.
+
+      // This position refers to the bottom center of the cover.
+      cover.position.x    = 0;
+      cover.position.y    = -0.5f + parent_->y_offset;
+      cover.position.z    = 0;
+      cover.position.rot  = 0;
 
       float x = item_position * parent_->space_between_icons;
       cover.position.x = x;
@@ -706,8 +706,8 @@ namespace nux
       Get3DBoundingBox(camera_position_.z, top_left, bottom_right);
 
       float window_width = bottom_right.x - top_left.x;
-      float distance_from_edge = std::max(0.0f, std::abs(bottom_right.x) - std::abs(cover.position.x));
-      cover.opacity = std::min(1.0f, distance_from_edge / (window_width * parent_->edge_fade));
+      float distance_from_edge = std::max<float>(0.0f, std::abs(bottom_right.x) - std::abs(cover.position.x));
+      cover.opacity = std::min<float>(1.0f, distance_from_edge / (window_width * parent_->edge_fade));
 
       results.push_back(cover);
       ++i;
@@ -719,9 +719,9 @@ namespace nux
 
   void Coverflow::Impl::SetPosition(float position, bool animate)
   {
-    float min = std::min((float)parent_->flat_icons,(float)parent_->model()->Items().size() - 1.0f);
-    float max = std::max(0.0f, (float)parent_->model()->Items().size() - 1.0f - (float)parent_->flat_icons);
-    position = std::max(min, std::min(max, position));
+    float min = std::min<float>((float)parent_->flat_icons,(float)parent_->model()->Items().size() - 1.0f);
+    float max = std::max<float>(0.0f, (float)parent_->model()->Items().size() - 1.0f - (float)parent_->flat_icons);
+    position = std::max<float>(min, std::min<float>(max, position));
     if (position == position_)
       return;
 
@@ -1131,7 +1131,7 @@ namespace nux
     }
 
     self->SetPosition(self->position_ + self->velocity_, false);
-    self->velocity_ = (std::max(0.0f, std::abs(self->velocity_) - self->parent_->kinetic_scroll_rate)) * (self->velocity_ / std::abs(self->velocity_));
+    self->velocity_ = (std::max<float>(0.0f, std::abs(self->velocity_) - self->parent_->kinetic_scroll_rate)) * (self->velocity_ / std::abs(self->velocity_));
     self->MaybeQueueDraw();
     return TRUE;
   }
@@ -1186,7 +1186,7 @@ namespace nux
   void Coverflow::ClientDraw(nux::GraphicsEngine& graphics_engine, nux::DrawAreaContext &ctx, bool force_draw)
   {
     gint64 current_time = g_get_monotonic_time();
-    float animation_progress = std::min(1.0f, (current_time - pimpl->position_set_time_) / static_cast<float>(animation_length() * 1000));
+    float animation_progress = std::min<float>(1.0f, (current_time - pimpl->position_set_time_) / static_cast<float>(animation_length() * 1000));
     gint64 timestep = (current_time - pimpl->last_draw_time_) / 1000;
 
     graphics_engine.GetRenderStates().SetBlend(true);
@@ -1203,7 +1203,7 @@ namespace nux
     if (camera_motion_drift_enabled)
     {
       float current_velocity = pimpl->GetCurrentVelocity(250);
-      pimpl->camera_drift_factor_ = std::max(-1.0f, std::min(1.0f, current_velocity / 1.5f));
+      pimpl->camera_drift_factor_ = std::max<float>(-1.0f, std::min<float>(1.0f, current_velocity / 1.5f));
     }
 
     CoverList covers = pimpl->GetCoverList(EaseSin(animation_progress), timestep);
