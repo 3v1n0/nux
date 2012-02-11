@@ -22,7 +22,7 @@
 #include "Nux/WindowThread.h"
 #include "Nux/VLayout.h"
 #include "Nux/TextEntry.h"
-#include "Nux/InputMethodContext.h"
+#include "Nux/InputMethodIBus.h"
 #include <X11/extensions/XTest.h>
 #include <X11/keysym.h> 
 #include "nux_test_framework.h"
@@ -130,7 +130,7 @@ int main(int argc, char **argv)
   int xstatus = XInitThreads();
   nuxAssertMsg(xstatus > 0, "XInitThreads has failed");
 
-  test_textentry = new TextTextEntry("Button XTest", 300, 300, 10000);
+  test_textentry = new TextTextEntry("Button XTest", 300, 300, 0);
   test_textentry->Startup();
   test_textentry->UserInterfaceSetup();
 
