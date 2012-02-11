@@ -90,6 +90,8 @@ namespace nux
     void CreateContext();
     void DestroyContext();
 
+    void UpdateCursorLocation();
+
     // Event handlers for IBusBus:
     //CHROMEG_CALLBACK_0(IBusIMEContext, void, OnConnected, IBusBus*);
     static void OnConnected_(IBusBus* bus, void* data) {nuxDebugMsg("***IBusIMEContext::OnConnected***"); reinterpret_cast<IBusIMEContext*>(data)->OnConnected(bus);}

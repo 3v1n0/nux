@@ -140,12 +140,7 @@ namespace nux
 
     if (is_focused_)
       ibus_input_context_focus_in(context_);
-
-    ibus_input_context_set_cursor_location(context_,
-      caret_rect_.x,
-      caret_rect_.y,
-      caret_rect_.width,
-      caret_rect_.height);
+    UpdateCursorLocation();
   }
 
   void IBusIMEContext::DestroyContext()
@@ -157,6 +152,19 @@ namespace nux
     ibus_proxy_destroy(reinterpret_cast<IBusProxy *>(context_));
 
     nuxAssert(!context_);
+  }
+
+  void IBusIMEContext::UpdateCursorLocation()
+  {
+    nux::Rect strong, weak;
+    text_entry_->GetCursorRects(&strong, &weak);
+    nux::Geometry geo = text_entry_->GetGeometry();
+
+    ibus_input_context_set_cursor_location(context_,
+      strong.x + geo.x,
+      strong.y + geo.y,
+      strong.width,
+      strong.height);
   }
 
   void IBusIMEContext::OnConnected(IBusBus *bus)
@@ -189,7 +197,7 @@ namespace nux
       std::string new_text(text->text);
       text_entry_->SetText((old_text + new_text).c_str());
       text_entry_->SetCursor(cursor + new_text.length());
-      // Need to Update Cursor Location!! 
+      UpdateCursorLocation();
     }
 
   }
@@ -273,7 +281,7 @@ namespace nux
         text_entry_->preedit_cursor_ = preedit.length();
         text_entry_->QueueRefresh (true, text_entry_->MINIMAL_ADJUST);
         text_entry_->sigTextChanged.emit(text_entry_);
-        // FIXME UPDATE CURSOR LOCATION HERE!!
+        UpdateCursorLocation();
       }
     }
   }

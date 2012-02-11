@@ -1632,6 +1632,11 @@ namespace nux
     QueueRefresh(true, CENTER_CURSOR);
   }
 
+  bool TextEntry::im_active()
+  {
+    return ime_active_;
+  }
+
   void TextEntry::DeleteSelection()
   {
     int start, end;

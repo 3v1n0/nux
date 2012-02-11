@@ -160,6 +160,8 @@ namespace nux
     CairoGraphics::Alignment GetAlign() const;
     void SetAlign(CairoGraphics::Alignment align);
 
+    bool im_active();
+
   protected:
     bool _block_focus; // used to selectively ignore focus key events
     TimeOutSignal *cursor_blink_signal_;
@@ -466,7 +468,7 @@ namespace nux
 
     PangoWrapMode wrap_mode_;
 
-    IBusIMEContext *ime_;
+    IBusIMEContext* ime_;
     bool ime_active_;
 
     friend class IBusIMEContext;
