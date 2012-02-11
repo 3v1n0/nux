@@ -85,6 +85,10 @@ Size TextLoader::Impl::ComputeTextSize()
     pango_layout_set_wrap     (pango_layout, PANGO_WRAP_WORD_CHAR);
     pango_layout_set_ellipsize(pango_layout, PANGO_ELLIPSIZE_END);
     pango_layout_set_markup   (pango_layout, parent_->text().c_str(), -1);
+    pango_layout_set_height   (pango_layout, -parent_->lines());
+
+    // Sets the width to which the lines of the PangoLayout should wrap or ellipsized. The default value is -1: no width set.
+    pango_layout_set_width(pango_layout, parent_->width * PANGO_SCALE);
   }
 
   // Create font description: "[FAMILY-LIST] [STYLE-OPTIONS] [SIZE]"
@@ -148,6 +152,7 @@ void TextLoader::Impl::RasterizeText(void* cairo_context, Color color)
     pango_layout_set_ellipsize(pango_layout, PANGO_ELLIPSIZE_END);
     pango_layout_set_alignment(pango_layout, (PangoAlignment)parent_->alignment());
     pango_layout_set_markup   (pango_layout, parent_->text().c_str(), -1);
+    pango_layout_set_height   (pango_layout, -parent_->lines());
 
     // Sets the width to which the lines of the PangoLayout should wrap or ellipsized. The default value is -1: no width set.
     pango_layout_set_width(pango_layout, parent_->width * PANGO_SCALE);
@@ -195,6 +200,7 @@ TextLoader::TextLoader()
   , font_size(10)
   , width(-1)
   , minimum_width(0)
+  , lines(1)
   , pimpl(new TextLoader::Impl(this))
 {
 

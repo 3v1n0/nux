@@ -149,7 +149,8 @@ namespace nux
 
     void SetPosition(float position, bool animate);
 
-    float GetCameraDriftFactor();
+    float GetCurrentVelocity(int ms);
+
     void MaybeQueueDraw();
 
     bool CoverAtPoint(int x, int y, Cover& out_cover);
@@ -161,7 +162,7 @@ namespace nux
     bool TestCoverVisible(Cover const& cover);
 
     static gboolean OnAnimationTimeout(gpointer data);
-    static gboolean OnTimeout(gpointer data);
+    static gboolean OnVelocityTimeout(gpointer data);
 
     nux::Vector3 camera_position_;
     nux::Vector3 camera_rotation_;
@@ -292,6 +293,8 @@ namespace nux
     BaseTexture* texture = LoadTextureFromFile(PKGDATADIR"/UITextures/coverflow.oval-shadow.png");
     drop_shadow_texture_ = texture->GetDeviceTexture();
     texture->UnReference();
+
+    text_loader_.lines = 2;
   }
 
   Coverflow::Impl::~Impl()
@@ -581,34 +584,49 @@ namespace nux
 
   void Coverflow::Impl::HandleMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
+    velocity_ = 0; // stop an current velocity based animations
     mouse_down_position_.x = x;
     mouse_down_position_.y = y;
     MaybeQueueDraw();
   }
 
-  void Coverflow::Impl::HandleMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  bool TooOld (VelocityEvent event)
   {
-    MaybeQueueDraw();
-
-    velocity_ = 0;
     gint64 current_time = g_get_monotonic_time();
+    int ms = (current_time - event.time) / 1000;
+    return ms > 1000;
+  }
+
+  float Coverflow::Impl::GetCurrentVelocity(int cutoff_ms)
+  {
+    gint64 current_time = g_get_monotonic_time();
+    float result = 0.0f;
 
     std::vector<VelocityEvent>::iterator it;
     for (it = velocity_events_.begin(); it != velocity_events_.end(); ++it)
     {
       VelocityEvent event = *it;
       int ms = (current_time - event.time) / 1000;
-      if (ms > 32)
+      if (ms > cutoff_ms)
         continue;
       
-      velocity_ += event.velocity;
+      result += event.velocity;
     }
-    velocity_ = velocity_ / 2; // 16ms timestep
-    velocity_events_.clear();
+    result = result / (cutoff_ms / 16); // 16ms timestep
+
+    velocity_events_.erase(std::remove_if(velocity_events_.begin(), velocity_events_.end(), &TooOld), velocity_events_.end());
+
+    return result;
+  }
+
+  void Coverflow::Impl::HandleMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  {
+    MaybeQueueDraw();
+    velocity_ = GetCurrentVelocity(32);
 
     if (velocity_ != 0 && !velocity_handle_)
     {
-      velocity_handle_ = g_timeout_add(16, &Coverflow::Impl::OnTimeout, this);
+      velocity_handle_ = g_timeout_add(16, &Coverflow::Impl::OnVelocityTimeout, this);
     } 
     else if (!velocity_handle_)
     {
@@ -624,11 +642,6 @@ namespace nux
 
     float scalar = (((float)bottom_right.x - (float)top_left.x) / (float)geo.width) / parent_->space_between_icons;
     SetPosition(position_ - (dx * scalar * parent_->mouse_drag_rate), false);
-
-    VelocityEvent ve;
-    ve.velocity = position_ - last_position_;
-    ve.time = g_get_monotonic_time();
-    velocity_events_.push_back(ve);
   }
 
   void Coverflow::Impl::HandleMouseWheel(int x, int y, int wheel_delta, unsigned long button_flags, unsigned long key_flags)
@@ -706,7 +719,9 @@ namespace nux
 
   void Coverflow::Impl::SetPosition(float position, bool animate)
   {
-    position = std::max(0.0f, std::min((float)parent_->model()->Items().size() - 1.0f, position));
+    float min = std::min((float)parent_->flat_icons,(float)parent_->model()->Items().size() - 1.0f);
+    float max = std::max(0.0f, (float)parent_->model()->Items().size() - 1.0f - (float)parent_->flat_icons);
+    position = std::max(min, std::min(max, position));
     if (position == position_)
       return;
 
@@ -721,16 +736,24 @@ namespace nux
     }
 
     position_ = position;
+    
+    VelocityEvent ve;
+    ve.velocity = position_ - last_position_;
+    ve.time = g_get_monotonic_time();
+    velocity_events_.push_back(ve);
+  
     MaybeQueueDraw();
   }
 
   void Coverflow::Impl::OnItemAdded(CoverflowModel* owner, CoverflowItem::Ptr new_item)
   {
+    SetPosition(position_, true);
     MaybeQueueDraw();
   }
 
   void Coverflow::Impl::OnItemRemoved(CoverflowModel* owner, CoverflowItem::Ptr old_item)
   {
+    SetPosition(position_, true);
     MaybeQueueDraw();
   }
 
@@ -1096,7 +1119,7 @@ namespace nux
     return FALSE;
   }
 
-  gboolean Coverflow::Impl::OnTimeout(gpointer data)
+  gboolean Coverflow::Impl::OnVelocityTimeout(gpointer data)
   {
     Coverflow::Impl* self = static_cast<Coverflow::Impl*>(data);
     if (self->velocity_ == 0)
@@ -1116,7 +1139,7 @@ namespace nux
 
   Coverflow::Coverflow()
     : animation_length(250)
-    , camera_motion_drift_angle(30.0f)
+    , camera_motion_drift_angle(10.0f)
     , camera_motion_drift_enabled(false)
     , edge_fade(0.07)
     , flat_icons(2)
@@ -1173,6 +1196,12 @@ namespace nux
     graphics_engine.GetRenderStates().SetBlend(true);
     graphics_engine.GetRenderStates().SetPremultipliedBlend(SRC_OVER);
 
+    if (camera_motion_drift_enabled)
+    {
+      float current_velocity = pimpl->GetCurrentVelocity(250);
+      pimpl->camera_drift_factor_ = std::max(-1.0f, std::min(1.0f, current_velocity / 1.5f));
+    }
+
     CoverList covers = pimpl->GetCoverList(EaseSin(animation_progress), timestep);
     CoverList::iterator it;
     for (it = covers.begin(); it != covers.end(); ++it)
@@ -1194,7 +1223,7 @@ namespace nux
 
     //graphics_engine.GetRenderStates().SetBlend(false);
 
-    if (animation_progress < 1.0f && !pimpl->animation_handle_)
+    if ((pimpl->camera_drift_factor_ != 0 || animation_progress < 1.0f) && !pimpl->animation_handle_)
     {
       pimpl->animation_handle_ = g_timeout_add(0, &Coverflow::Impl::OnAnimationTimeout, pimpl);
     }
