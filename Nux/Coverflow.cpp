@@ -695,7 +695,9 @@ namespace nux
 
   void Coverflow::Impl::SetPosition(float position, bool animate)
   {
-    position = std::max(0.0f, std::min((float)parent_->model()->Items().size() - 1.0f, position));
+    float min = std::min((float)parent_->flat_icons,(float)parent_->model()->Items().size() - 1.0f);
+    float max = std::max(0.0f, (float)parent_->model()->Items().size() - 1.0f - (float)parent_->flat_icons);
+    position = std::max(min, std::min(max, position));
     if (position == position_)
       return;
 
@@ -715,11 +717,13 @@ namespace nux
 
   void Coverflow::Impl::OnItemAdded(CoverflowModel* owner, CoverflowItem::Ptr new_item)
   {
+    SetPosition(position_, true);
     MaybeQueueDraw();
   }
 
   void Coverflow::Impl::OnItemRemoved(CoverflowModel* owner, CoverflowItem::Ptr old_item)
   {
+    SetPosition(position_, true);
     MaybeQueueDraw();
   }
 
