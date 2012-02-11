@@ -571,6 +571,7 @@ namespace nux
 
   void Coverflow::Impl::HandleMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
+    velocity_ = 0; // stop an current velocity based animations
     mouse_down_position_.x = x;
     mouse_down_position_.y = y;
     MaybeQueueDraw();
