@@ -60,7 +60,6 @@ source_cpp = \
   $(srcdir)/HScrollBar.cpp \
   $(srcdir)/HSplitter.cpp \
   $(srcdir)/IntegerValidator.cpp \
-  $(srcdir)/InputMethodContext.cpp \
   $(srcdir)/InputMethodIBus.cpp \
   $(srcdir)/View.cpp \
   $(srcdir)/KeyboardHandler.cpp \
@@ -142,7 +141,6 @@ source_h = \
   $(srcdir)/HScrollBar.h \
   $(srcdir)/HSplitter.h \
   $(srcdir)/IntegerValidator.h \
-  $(srcdir)/InputMethodContext.h \
   $(srcdir)/InputMethodIBus.h \
   $(srcdir)/View.h \
   $(srcdir)/KeyboardHandler.h \
