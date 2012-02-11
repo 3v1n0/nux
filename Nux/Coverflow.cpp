@@ -676,7 +676,7 @@ namespace nux
       cover.opacity = 1.0f;
       cover.selected = i == RoundFloor(coverflow_position);
       cover.item = item;
-      cover.position = { 0, -0.5f, 0, 0 };  // This position refers to the bottom center of the cover.
+      cover.position = { 0, -0.5f + parent_->y_offset, 0, 0 };  // This position refers to the bottom center of the cover.
 
       float x = item_position * parent_->space_between_icons;
       cover.position.x = x;

@@ -77,6 +77,8 @@ namespace nux
     
     Property<bool> show_reflection;
 
+    Property<float> y_offset;
+
     bool AcceptKeyNavFocus();
 
     void SetCameraDistance(float distance);
