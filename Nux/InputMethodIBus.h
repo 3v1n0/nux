@@ -1,12 +1,60 @@
 #ifndef INPUTMETHODIBUS_H
 #define INPUTMETHODIBUS_H
 
-#include "InputMethodContext.h"
+#include <ibus.h>
+
+#include <Nux/TextEntry.h>
 
 namespace nux
 {
 
   class IBusIMEContext;
+  class TextEntry;
+
+  class KeyEvent
+  {
+  public:
+
+    KeyEvent(NuxEventType type,
+      unsigned int key_code,
+      unsigned int mouse_state, unsigned int event_flags)
+      : type_(type)
+      , key_code_(key_code)
+      , key_modifiers_(event_flags)
+      , mouse_state_(mouse_state)
+    {
+    }
+
+    NuxEventType type() const {return type_;}
+    unsigned int key_code() const {return key_code_;}
+    unsigned int flags() const {return key_modifiers_;}
+    unsigned int MouseState() const {return mouse_state_;}
+
+
+    bool IsShiftDown() const { return (key_modifiers_ & KEY_MODIFIER_SHIFT) != 0; }
+    bool IsControlDown() const { return (key_modifiers_ & KEY_MODIFIER_CTRL) != 0; }
+    bool IsCapsLockDown() const { return (key_modifiers_ & KEY_MODIFIER_CAPS_LOCK) != 0; }
+    bool IsAltDown() const { return (key_modifiers_ & KEY_MODIFIER_ALT) != 0; }
+
+//     bool IsMouseEvent() const {
+//       return type_ == EVENT_MOUSE_DOWN ||
+//         type_ == EVENT_MOUSE_DRAGGED ||
+//         type_ == EVENT_MOUSE_UP ||
+//         type_ == EVENT_MOUSE_MOVE ||
+//         type_ == EVENT_MOUSE_ENTER ||
+//         type_ == EVENT_MOUSE_LEAVE ||
+//         type_ == EVENT_MOUSE_WHEEL;
+//     }
+
+  private:
+    EventType type_;
+    unsigned int key_code_;
+    unsigned int key_modifiers_;
+    unsigned int mouse_state_;
+
+    KeyEvent(const KeyEvent&);
+    void operator = (const KeyEvent&);
+  };
 
   class ProcessKeyEventData
   {
@@ -24,10 +72,10 @@ namespace nux
   };
 
   // Implements IMEContext to integrate ibus input method framework
-  class IBusIMEContext : public IMEContext
+  class IBusIMEContext
   {
   public:
-    explicit IBusIMEContext(View* view);
+    explicit IBusIMEContext(TextEntry* text_entry);
     virtual ~IBusIMEContext();
 
     // views::IMEContext implementations:
@@ -90,6 +138,7 @@ namespace nux
       GAsyncResult* res,
       ProcessKeyEventData* data);
 
+    TextEntry* text_entry_;
     IBusInputContext* context_;
     bool is_focused_;
     Rect caret_rect_;

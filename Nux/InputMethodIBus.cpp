@@ -1,25 +1,15 @@
 #include "Nux.h"
-#include <ibus.h>
 
 #include "InputMethodIBus.h"
-
-// #include "base/logging.h"
-// #include "base/utf_string_conversions.h"
-// #include "third_party/skia/include/core/SkColor.h"
-// #include "ui/base/gtk/gtk_signal.h"
-// #include "ui/base/keycodes/keyboard_code_conversion_gtk.h"
-// #include "ui/gfx/rect.h"
-// #include "views/events/event.h"
-// #include "views/ime/ime_context.h"
 
 namespace nux
 {
   IBusBus* IBusIMEContext::bus_ = NULL;
 
-  IBusIMEContext::IBusIMEContext(View* view)
-    : IMEContext(view),
-    context_(NULL),
-    is_focused_(false)
+  IBusIMEContext::IBusIMEContext(TextEntry* text_entry) 
+    : text_entry_(text_entry),
+      context_(NULL),
+      is_focused_(false)
   {
     // init ibus
     if (!bus_)
@@ -189,8 +179,19 @@ namespace nux
   void IBusIMEContext::OnCommitText(IBusInputContext *context, IBusText* text)
   {
     nuxDebugMsg("***IBusIMEContext::OnCommitText***");
+    printf ("OnCommit %s\n", text->text);
     nuxAssert(context_ == context);
-    IMEContext::CommitText(ANSICHAR_TO_UNICHAR(text->text));
+    
+    if (text->text)
+    {
+      int cursor = text_entry_->cursor_;
+      std::string old_text(text_entry_->GetText());
+      std::string new_text(text->text);
+      text_entry_->SetText((old_text + new_text).c_str());
+      text_entry_->SetCursor(cursor + new_text.length());
+      // Need to Update Cursor Location!! 
+    }
+
   }
 
   void IBusIMEContext::OnForwardKeyEvent(IBusInputContext *context, guint keyval, guint keycode, guint state)
@@ -217,10 +218,10 @@ namespace nux
     if (state & IBUS_BUTTON3_MASK)
       mouse_state |= MOUSE_BUTTON3;
 
-    ForwardKeyEvent(KeyEvent(state & IBUS_RELEASE_MASK ? EVENT_KEY_DOWN : EVENT_KEY_UP, keyval /* todo(jaytaoko): ui::WindowsKeyCodeForGdkKeyCode(keyval)*/, mouse_state, flags));
+    //ForwardKeyEvent(KeyEvent(state & IBUS_RELEASE_MASK ? EVENT_KEY_DOWN : EVENT_KEY_UP, keyval /* todo(jaytaoko): ui::WindowsKeyCodeForGdkKeyCode(keyval)*/, mouse_state, flags));
   }
 
-  void IBusIMEContext::OnUpdatePreeditText(IBusInputContext *context, IBusText* text, guint cursor_pos, gboolean visible)
+  void IBusIMEContext::OnUpdatePreeditText(IBusInputContext* context, IBusText* text, guint cursor_pos, gboolean visible)
   {
     nuxDebugMsg("***IBusIMEContext::OnUpdatePreeditText***");
     nuxAssert(context_ == context);
@@ -228,45 +229,52 @@ namespace nux
 
     if (visible)
     {
-      CompositionAttributeList attributes;
-      IBusAttrList *attrs = text->attrs;
+      IBusAttrList* attrs = text->attrs;
       if (attrs)
       {
+        PangoAttrList* preedit_attrs = pango_attr_list_new();
         int i = 0;
         while (1)
         {
-          IBusAttribute *attr = ibus_attr_list_get(attrs, i++);
+          IBusAttribute* attr = ibus_attr_list_get(attrs, i++);
+          PangoAttribute* pango_attr;
           if (!attr)
             break;
-          if (attr->type == IBUS_ATTR_TYPE_UNDERLINE || attr->type == IBUS_ATTR_TYPE_BACKGROUND)
+          switch (attr->type)
           {
-            CompositionAttribute attribute(attr->start_index,
-              attr->end_index,
-              color::Black,
-              false);
-            if (attr->type == IBUS_ATTR_TYPE_BACKGROUND)
-            {
-              attribute.thick =  true;
-            } else if (attr->type == IBUS_ATTR_TYPE_UNDERLINE)
-            {
-              if (attr->value == IBUS_ATTR_UNDERLINE_DOUBLE)
-              {
-                attribute.thick = true;
-              } else if (attr->value == IBUS_ATTR_UNDERLINE_ERROR)
-              {
-                attribute.color = color::Red;
-              }
-            }
-            attributes.push_back(attribute);
+             case IBUS_ATTR_TYPE_UNDERLINE:
+              pango_attr = pango_attr_underline_new ((PangoUnderline)attr->value);
+              break;
+            case IBUS_ATTR_TYPE_FOREGROUND:
+              pango_attr = pango_attr_foreground_new (
+                            ((attr->value & 0xff0000) >> 8) | 0xff,
+                            ((attr->value & 0x00ff00)) | 0xff,
+                            ((attr->value & 0x0000ff) << 8) | 0xff);
+              break;
+            case IBUS_ATTR_TYPE_BACKGROUND:
+              pango_attr = pango_attr_background_new (
+                            ((attr->value & 0xff0000) >> 8) | 0xff,
+                            ((attr->value & 0x00ff00)) | 0xff,
+                            ((attr->value & 0x0000ff) << 8) | 0xff);
+              break;
+            default:
+              continue;
           }
+          pango_attr->start_index = g_utf8_offset_to_pointer (text->text, attr->start_index) - text->text;
+          pango_attr->end_index = g_utf8_offset_to_pointer (text->text, attr->end_index) - text->text;
+          pango_attr_list_insert (preedit_attrs, pango_attr);
         }
+        text_entry_->preedit_attrs_ = preedit_attrs;
       }
-
-      SetComposition(ANSICHAR_TO_UNICHAR(text->text), attributes, cursor_pos);
-    }
-    else
-    {
-      EndComposition();
+      if (text->text)
+      {
+        std::string preedit(text->text);
+        text_entry_->preedit_ = preedit;
+        text_entry_->preedit_cursor_ = preedit.length();
+        text_entry_->QueueRefresh (true, text_entry_->MINIMAL_ADJUST);
+        text_entry_->sigTextChanged.emit(text_entry_);
+        // FIXME UPDATE CURSOR LOCATION HERE!!
+      }
     }
   }
 
@@ -281,19 +289,28 @@ namespace nux
     nuxDebugMsg("***IBusIMEContext::OnHidePreeditText***");
     nuxAssert(context_ == context);
 
-    EndComposition();
+    text_entry_->ResetPreedit();
+    text_entry_->QueueRefresh (true, text_entry_->MINIMAL_ADJUST);
+    text_entry_->sigTextChanged.emit(text_entry_);
   }
 
   void IBusIMEContext::OnEnable(IBusInputContext *context)
   {
     nuxDebugMsg("***IBusIMEContext::OnEnable***");
     nuxAssert(context_ == context);
+
+    text_entry_->ime_active_ = true;
   }
 
   void IBusIMEContext::OnDisable(IBusInputContext *context)
   {
     nuxDebugMsg("***IBusIMEContext::OnDisable***");
     nuxAssert(context_ == context);
+
+    text_entry_->ime_active_ = false;
+    text_entry_->ResetPreedit();
+    text_entry_->QueueRefresh (true, text_entry_->MINIMAL_ADJUST);
+    text_entry_->sigTextChanged.emit(text_entry_);
   }
 
   void IBusIMEContext::OnDestroy(IBusInputContext *context)
@@ -303,8 +320,6 @@ namespace nux
 
     g_object_unref(context_);
     context_ = NULL;
-
-    EndComposition();
   }
 
   void IBusIMEContext::ProcessKeyEventDone(IBusInputContext *context, GAsyncResult* res, ProcessKeyEventData *data)
@@ -324,15 +339,10 @@ namespace nux
         g_error_free (error);
       }
 
+      // Need to forward this event somewhere..
       if (processed == FALSE)
-        data->context->ForwardKeyEvent(data->event);
+        printf ("Processed %i\n", processed);
 
       delete data;
   }
-
-  IMEContext* IMEContext::Create(View* view)
-  {
-    return new IBusIMEContext(view);
-  }
-
 }

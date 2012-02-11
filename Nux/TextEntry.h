@@ -26,11 +26,12 @@
 #include "pango/pangocairo.h"
 #include "NuxImage/CairoGraphics.h"
 
-#include "Nux/InputMethodContext.h"
+#include "Nux/InputMethodIBus.h"
 
 namespace nux
 {
   class CairoGraphics;
+  class IBusIMEContext;
 
   class CairoFont
   {
@@ -465,7 +466,10 @@ namespace nux
 
     PangoWrapMode wrap_mode_;
 
-    IMEContext *ime_;
+    IBusIMEContext *ime_;
+    bool ime_active_;
+
+    friend class IBusIMEContext;
 
   protected:
     bool text_input_mode_;

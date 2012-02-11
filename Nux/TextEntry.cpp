@@ -212,7 +212,7 @@ namespace nux
     SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     SetText(text);
 
-    ime_ = IMEContext::Create (this);
+    ime_ = new IBusIMEContext(this);
 
     SetAcceptKeyboardEvent(true);
     EnableDoubleClick(true);
@@ -228,6 +228,9 @@ namespace nux
 
     if (_texture2D)
       _texture2D->UnReference();
+
+    if (ime_)
+      delete ime_;
   }
 
   void TextEntry::PreLayoutManagement()
@@ -461,7 +464,7 @@ namespace nux
 //       }
     }
 
-    if (character != 0 && (strlen(character) != 0))
+    if (character != 0 && (strlen(character) != 0) && !ime_active_)
     {
       EnterText(character);
     }
@@ -2197,7 +2200,8 @@ namespace nux
     unsigned int key_sym,
     const char* character)
   {
-    if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == true) && (text_input_mode_ == false))
+    if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == true) && (text_input_mode_ == false)
+        && (ime_active_ == false));
     {
       if (key_sym == NUX_VK_ENTER ||
         key_sym == NUX_KP_ENTER ||
@@ -2213,7 +2217,8 @@ namespace nux
       }
     }
 
-    if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == true) && (text_input_mode_ == true))
+    if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == true) && (text_input_mode_ == true)
+        && (ime_active_ == false));
     {
       // Enable to exit the TextEntry when in write mode(hack for unity dash)
       if (key_sym == NUX_VK_UP ||
