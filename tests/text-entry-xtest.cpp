@@ -21,7 +21,7 @@
 #include "Nux/Nux.h"
 #include "Nux/WindowThread.h"
 #include "Nux/VLayout.h"
-#include "Nux/TextEntry.h"
+#include "Nux/TextEntryIM.h"
 #include "Nux/InputMethodIBus.h"
 #include <X11/extensions/XTest.h>
 #include <X11/keysym.h> 
@@ -36,9 +36,9 @@ public:
 
   virtual void UserInterfaceSetup();
 
-  void TextEntryClick(nux::TextEntry *text_entry);
+  void TextEntryClick(nux::TextEntryIM *text_entry);
   void ResetEvents();
-  nux::TextEntry *text_entry_;
+  nux::TextEntryIM *text_entry_;
 
   bool clicked_;
 };
@@ -63,7 +63,7 @@ void TextTextEntry::ResetEvents()
   clicked_ = false;
 }
 
-void TextTextEntry::TextEntryClick(nux::TextEntry *text_entry)
+void TextTextEntry::TextEntryClick(nux::TextEntryIM *text_entry)
 {
   if (text_entry_ == text_entry)
   {
@@ -74,7 +74,7 @@ void TextTextEntry::TextEntryClick(nux::TextEntry *text_entry)
 void TextTextEntry::UserInterfaceSetup()
 {
   nux::VLayout *main_layout = new nux::VLayout(NUX_TRACKER_LOCATION);
-  text_entry_ = new nux::TextEntry("NUX", NUX_TRACKER_LOCATION);
+  text_entry_ = new nux::TextEntryIM("NUX", NUX_TRACKER_LOCATION);
   //text_entry_->SetLabelFontSize(76);
 
   main_layout->AddView(text_entry_, 0, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_FULL);

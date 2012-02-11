@@ -3,13 +3,13 @@
 
 #include <ibus.h>
 
-#include <Nux/TextEntry.h>
+#include <Nux/TextEntryIM.h>
 
 namespace nux
 {
 
   class IBusIMEContext;
-  class TextEntry;
+  class TextEntryIM;
 
   class KeyEvent
   {
@@ -75,7 +75,7 @@ namespace nux
   class IBusIMEContext
   {
   public:
-    explicit IBusIMEContext(TextEntry* text_entry);
+    explicit IBusIMEContext(TextEntryIM* text_entry);
     virtual ~IBusIMEContext();
 
     // views::IMEContext implementations:
@@ -140,7 +140,7 @@ namespace nux
       GAsyncResult* res,
       ProcessKeyEventData* data);
 
-    TextEntry* text_entry_;
+    TextEntryIM* text_entry_;
     IBusInputContext* context_;
     bool is_focused_;
     Rect caret_rect_;

@@ -6,7 +6,7 @@ namespace nux
 {
   IBusBus* IBusIMEContext::bus_ = NULL;
 
-  IBusIMEContext::IBusIMEContext(TextEntry* text_entry) 
+  IBusIMEContext::IBusIMEContext(TextEntryIM* text_entry) 
     : text_entry_(text_entry),
       context_(NULL),
       is_focused_(false)
@@ -68,6 +68,7 @@ namespace nux
       ibus_input_context_reset(context_);
   }
 
+  // FIXME Need to get the key_code form nux NOT just the keysym
   bool IBusIMEContext::FilterKeyEvent(const KeyEvent& event)
   {
     guint keyval = event.key_code(); // todo(jaytaoko): ui::GdkKeyCodeForWindowsKeyCode(event.key_code(), event.IsShiftDown() ^ event.IsCapsLockDown());
@@ -347,7 +348,7 @@ namespace nux
         g_error_free (error);
       }
 
-      // Need to forward this event somewhere..
+      // FIXME Need to forward this event somewhere..
       if (processed == FALSE)
         printf ("Processed %i\n", processed);
 
