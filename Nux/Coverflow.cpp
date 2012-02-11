@@ -1157,7 +1157,7 @@ namespace nux
     , space_between_icons(1.25f)
     , model(CoverflowModel::Ptr(new CoverflowModel()))
     , show_labels(true)
-    , show_drop_shadow(true)
+    , show_drop_shadow(false)
     , show_reflection(false)
     , pimpl(new Impl(this))
   {
