@@ -82,6 +82,9 @@ namespace nux
     bool AcceptKeyNavFocus();
 
     void SetCameraDistance(float distance);
+
+    float ViewportWidthAtDepth(float depth);
+    float ViewportHeightAtDepth(float depth);
   protected:
     virtual bool InspectKeyEvent(unsigned int eventType, unsigned int keysym, const char* character);
     virtual void ClientDraw(nux::GraphicsEngine& graphics_engine, nux::DrawAreaContext &ctx, bool force_draw);

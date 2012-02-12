@@ -1241,4 +1241,20 @@ namespace nux
     return true;
   }
 
+  float Coverflow::ViewportWidthAtDepth(float depth)
+  {
+    nux::Point2 top_left;
+    nux::Point2 bottom_right;
+    pimpl->Get3DBoundingBox(pimpl->camera_position_.z + depth, top_left, bottom_right);
+    return bottom_right.x - top_left.x;
+  }
+
+  float Coverflow::ViewportHeightAtDepth(float depth)
+  {
+    nux::Point2 top_left;
+    nux::Point2 bottom_right;
+    pimpl->Get3DBoundingBox(pimpl->camera_position_.z + depth, top_left, bottom_right);
+    return top_left.y - bottom_right.y;
+  }
+
 } // namespace nux
