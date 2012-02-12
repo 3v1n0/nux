@@ -1,16 +1,17 @@
 #ifndef INPUTMETHODIBUS_H
 #define INPUTMETHODIBUS_H
 
-#include <ibus.h>
-
 #include <Nux/TextEntryIM.h>
+#include <ibus.h>
 
 namespace nux
 {
 
   class IBusIMEContext;
   class TextEntryIM;
-
+  
+  // FIXME This class should be reworked to replace the mouse_state
+  // with the hardware key_code. 
   class KeyEvent
   {
   public:
@@ -30,21 +31,10 @@ namespace nux
     unsigned int flags() const {return key_modifiers_;}
     unsigned int MouseState() const {return mouse_state_;}
 
-
     bool IsShiftDown() const { return (key_modifiers_ & KEY_MODIFIER_SHIFT) != 0; }
     bool IsControlDown() const { return (key_modifiers_ & KEY_MODIFIER_CTRL) != 0; }
     bool IsCapsLockDown() const { return (key_modifiers_ & KEY_MODIFIER_CAPS_LOCK) != 0; }
     bool IsAltDown() const { return (key_modifiers_ & KEY_MODIFIER_ALT) != 0; }
-
-//     bool IsMouseEvent() const {
-//       return type_ == EVENT_MOUSE_DOWN ||
-//         type_ == EVENT_MOUSE_DRAGGED ||
-//         type_ == EVENT_MOUSE_UP ||
-//         type_ == EVENT_MOUSE_MOVE ||
-//         type_ == EVENT_MOUSE_ENTER ||
-//         type_ == EVENT_MOUSE_LEAVE ||
-//         type_ == EVENT_MOUSE_WHEEL;
-//     }
 
   private:
     EventType type_;
@@ -56,6 +46,7 @@ namespace nux
     void operator = (const KeyEvent&);
   };
 
+  // Used for passing data to ProcessKeyEventDone function()
   class ProcessKeyEventData
   {
   public:
@@ -66,7 +57,6 @@ namespace nux
     {
 
     }
-
     IBusIMEContext* context;
     KeyEvent event;
   };
@@ -83,7 +73,6 @@ namespace nux
     virtual void Blur();
     virtual void Reset();
     virtual bool FilterKeyEvent(const KeyEvent& event);
-    virtual void SetCursorLocation(const Rect& caret_rect);
     virtual void SetSurrounding(const std::wstring& text, int cursor_pos);
 
   private:
@@ -134,8 +123,6 @@ namespace nux
     static void OnDestroy_(IBusInputContext* context, void* data) {reinterpret_cast<IBusIMEContext*>(data)->OnDestroy(context);}
     void OnDestroy(IBusInputContext *context);
 
-
-
     static void ProcessKeyEventDone(IBusInputContext* context,
       GAsyncResult* res,
       ProcessKeyEventData* data);
@@ -143,7 +130,6 @@ namespace nux
     TextEntryIM* text_entry_;
     IBusInputContext* context_;
     bool is_focused_;
-    Rect caret_rect_;
 
     static IBusBus* bus_;
 

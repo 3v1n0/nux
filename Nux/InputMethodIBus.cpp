@@ -88,8 +88,12 @@ namespace nux
       if (event.IsCapsLockDown())
         modifiers |= IBUS_LOCK_MASK;
 
+      // FIXME Not the best way to get the x11_key_code. Should be able to get it from TextEntry::ProcessKeyEvent
+      // The x11_keycode is needed for the ibus-hangul engine!
+      nux::Event cur_event = nux::GetWindowThread()->GetGraphicsDisplay().GetCurrentEvent(); 
+
       ibus_input_context_process_key_event_async(context_,
-        keyval, 0, modifiers,
+        keyval, cur_event.x11_keycode - 8, modifiers,
         -1,
         NULL,
         reinterpret_cast<GAsyncReadyCallback>(ProcessKeyEventDone),
@@ -98,19 +102,6 @@ namespace nux
     }
 
     return false;
-  }
-
-  void IBusIMEContext::SetCursorLocation(const Rect& caret_rect)
-  {
-    if (context_ && caret_rect_ != caret_rect)
-    {
-      caret_rect_ = caret_rect;
-      ibus_input_context_set_cursor_location(context_,
-        caret_rect_.x,
-        caret_rect_.y,
-        caret_rect_.width,
-        caret_rect_.height);
-    }
   }
 
   void IBusIMEContext::SetSurrounding(const std::wstring& text, int cursor_pos)
@@ -122,7 +113,7 @@ namespace nux
     nuxAssert(bus_ != NULL);
     nuxAssert(ibus_bus_is_connected(bus_));
 
-    context_ = ibus_bus_create_input_context(bus_, "ibus");
+    context_ = ibus_bus_create_input_context(bus_, "nux");
 
     // connect input context signals
     g_signal_connect(context_, "commit-text",         G_CALLBACK(OnCommitText_),        this);
@@ -141,6 +132,7 @@ namespace nux
 
     if (is_focused_)
       ibus_input_context_focus_in(context_);
+
     UpdateCursorLocation();
   }
 
@@ -155,6 +147,9 @@ namespace nux
     nuxAssert(!context_);
   }
 
+  // FIXME Also need to figure out how to get the pop up window
+  // for a possible ibus-engine to always be on top of the active
+  // window
   void IBusIMEContext::UpdateCursorLocation()
   {
     nux::Rect strong, weak;
@@ -190,17 +185,20 @@ namespace nux
     nuxDebugMsg("***IBusIMEContext::OnCommitText***");
     printf ("OnCommit %s\n", text->text);
     nuxAssert(context_ == context);
+
+    text_entry_->DeleteSelection();
     
     if (text->text)
     {
       int cursor = text_entry_->cursor_;
-      std::string old_text(text_entry_->GetText());
-      std::string new_text(text->text);
-      text_entry_->SetText((old_text + new_text).c_str());
-      text_entry_->SetCursor(cursor + new_text.length());
+      std::string new_text(text_entry_->GetText());
+      std::string commit_text (text->text);
+      new_text.insert (cursor, commit_text);
+
+      text_entry_->SetText(new_text.c_str());
+      text_entry_->SetCursor(cursor + commit_text.length());
       UpdateCursorLocation();
     }
-
   }
 
   void IBusIMEContext::OnForwardKeyEvent(IBusInputContext *context, guint keyval, guint keycode, guint state)
