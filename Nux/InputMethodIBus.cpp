@@ -278,7 +278,7 @@ namespace nux
         std::string preedit(text->text);
         text_entry_->preedit_ = preedit;
         text_entry_->preedit_cursor_ = preedit.length();
-        text_entry_->QueueRefresh (true, text_entry_->MINIMAL_ADJUST);
+        text_entry_->QueueRefresh (true, true);
         text_entry_->sigTextChanged.emit(text_entry_);
         UpdateCursorLocation();
       }
@@ -297,7 +297,7 @@ namespace nux
     nuxAssert(context_ == context);
 
     text_entry_->ResetPreedit();
-    text_entry_->QueueRefresh (true, text_entry_->MINIMAL_ADJUST);
+    text_entry_->QueueRefresh (true, true);
     text_entry_->sigTextChanged.emit(text_entry_);
   }
 
@@ -316,7 +316,7 @@ namespace nux
 
     text_entry_->ime_active_ = false;
     text_entry_->ResetPreedit();
-    text_entry_->QueueRefresh (true, text_entry_->MINIMAL_ADJUST);
+    text_entry_->QueueRefresh (true, true);
     text_entry_->sigTextChanged.emit(text_entry_);
   }
 

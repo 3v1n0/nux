@@ -119,14 +119,12 @@ TestFlags = -I$(srcdir) \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \
-  $(IBUS_CFLAGS) \
   $(MAINTAINER_CFLAGS)
 
 TestLibs = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
   $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-  $(IBUS_LIBS) \
   $(NUX_LIBS)
 
 
