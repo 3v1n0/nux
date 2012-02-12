@@ -7,10 +7,9 @@ if BUILD_EXAMPLES
 # This tells automake that we want to build binaries, but they shouldn't be
 # installed. For each individual example, add it's binary name here
 
-noinst_PROGRAMS = \
-  text-entry \
-  text_entry_focus \
-  shortcut_keys
+noinst_PROGRAMS = text_entry_focus \
+  shortcut_keys \
+  coverflow
 
 #button \
 #                  cairo \
@@ -42,6 +41,7 @@ AM_CPPFLAGS = \
 	-DLIBDIR=\""$(libdir)"\" \
   -DDATADIR=\""$(datadir)"\" \
   -DG_LOG_DOMAIN=\"NuxExamples\" \
+  -DPKGDATADIR=\""$(pkgdatadir)/@NUX_API_VERSION@"\" \
   $(GCC_FLAGS) \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
@@ -97,15 +97,14 @@ ALL_LIBS = \
 #tiles_view_SOURCES = tiles_view.cpp
 #tiles_view_LDADD = $(ALL_LIBS)
 
-shortcut_keys_SOURCES = shortcut-keys.cpp line-separator.cpp line-separator.h abstract-separator.h abstract-separator.cpp
-shortcut_keys_LDADD = $(ALL_LIBS)
-
-text_entry_SOURCES = text-entry.cpp
-text_entry_LDADD = $(ALL_LIBS)
-
 text_entry_focus_SOURCES = text_entry_focus.cpp
 text_entry_focus_LDADD = $(ALL_LIBS)
 
+shortcut_keys_SOURCES = shortcut-keys.cpp line-separator.cpp line-separator.h abstract-separator.h abstract-separator.cpp
+shortcut_keys_LDADD = $(ALL_LIBS)
+
+coverflow_SOURCES = coverflow.cpp
+coverflow_LDADD = $(ALL_LIBS)
 
 # To distribute source add the source code here
 #sourceexampledir = "$(pkgdatadir)/examples"
@@ -113,6 +112,7 @@ text_entry_focus_LDADD = $(ALL_LIBS)
 #                    
 
 endif
+
 
 
 
