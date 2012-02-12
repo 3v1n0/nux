@@ -1,3 +1,22 @@
+/*
+ * Copyright 2012 Inalogic Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 3, as published
+ * by the  Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * version 3 along with this program.  If not, see
+ * <http://www.gnu.org/licenses/>
+ *
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
+ *
+ */
 
 #ifndef TEST_VIEW_H
 #define TEST_VIEW_H
@@ -28,6 +47,8 @@ public:
   bool registered_mouse_enter_;
   bool registered_mouse_leave_;
 
+  nux::KeyNavDirection key_nav_direction_; //!< The key nav direction received when the view obtained the focus.
+  
 protected:
   nux::Color current_color_;
   nux::Color normal_color_;
@@ -49,9 +70,9 @@ protected:
   void OnMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
   void OnMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags);
   void OnMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags);
-  void OnKeyNavFocusChange(nux::Area* area);
+  void OnKeyNavFocusChange(nux::Area* area, bool has_focus, nux::KeyNavDirection direction);
 
-  void Draw(nux::GraphicsEngine &graphics_engine, bool force_draw);
+  void Draw(nux::GraphicsEngine& graphics_engine, bool force_draw);
 };
 
 #endif // TEST_VIEW_H

@@ -77,15 +77,15 @@ namespace nux
 #define NUX_EXT_Control_R   (0xff00 | NUX_VK_CONTROL)
 #define NUX_EXT_Alt_R       (0xff00 | NUX_VK_MENU)
 
+#define NUX_KP_DOWN         0xFF99
+#define NUX_KP_UP           0xFF97
+#define NUX_KP_LEFT         0xFF96
+#define NUX_KP_RIGHT        0xFF98
+
 // #define NUX_KP_PAGE_UP     (0xff00 | NUX_VK_PAGE_UP)
 // #define NUX_KP_PAGE_DOWN   (0xff00 | NUX_VK_PAGE_DOWN)
 // #define NUX_KP_END         (0xff00 | NUX_VK_END)
 // #define NUX_KP_HOME        (0xff00 | NUX_VK_HOME)
-// #define NUX_KP_LEFT        (0xff00 | NUX_VK_LEFT)
-// #define NUX_KP_UP          (0xff00 | NUX_VK_UP)
-// #define NUX_KP_RIGHT       (0xff00 | NUX_VK_RIGHT)
-// #define NUX_KP_DOWN        (0xff00 | NUX_VK_DOWN)
-// 
 // #define NUX_KP_INSERT      (0xff00 | NUX_VK_INSERT)
 // #define NUX_KP_DELETE      (0xff00 | NUX_VK_DELETE)
 
@@ -266,7 +266,7 @@ namespace nux
   //! Returns index of the mouse button that triggered an event.
   /*!
       Given the mouse button states of and event, returns the index of the button that
-      triggered an event. The index of the left mouse button is 1 and the index for the right 
+      triggered an event. The index of the left mouse button is 1 and the index for the right
       mouse button is 2. If 0 is returned, then a mouse button didn't triggered the event.
 
       @param button_state The mouse button states of an event.
@@ -284,7 +284,7 @@ namespace nux
       @return True is the button is pressed. False otherwise.
   */
   bool GetButtonState(unsigned long button_state, MouseButton button);
-    
+
   //! Returns the state of a special key: CTRL, Shift, Alt, NumLock...
   /*!
       Given the key modifiers states of and event, returns the state of a key modifier.
@@ -328,7 +328,7 @@ namespace nux
     //! Returns index of the mouse button that triggered this event.
     /*!
         Returns the index of the button that triggered this event.
-        The index of the left mouse button is 1 and the index for the right 
+        The index of the left mouse button is 1 and the index for the right
         mouse button is 2. If 0 is returned, then a mouse button didn't triggered the event.
 
         @return The button that triggered the event.
@@ -385,6 +385,11 @@ namespace nux
     int dy;
     int clicks;
     int is_click;
+
+#if defined(NUX_OS_WINDOWS)
+    int win32_keycode; // Not used. Just a place holder.
+    int win32_keysym;
+#endif
 
 #if defined(NUX_OS_LINUX)
     Time          x11_timestamp;  //!< X11 timestamp.

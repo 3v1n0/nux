@@ -6,18 +6,21 @@ to timing and can generate false negatives. For this reason, in some location of
 
 All test must be over in 20 seconds or less.
 
+Note on the Test: When using the nux::TestView class, a small white square at the top left corner of the TestView area indicate 
+that the view has keyboard focus.
+
 Description of tests:
 ---------------------
 graphics_display_states:
 	Test the graphics display states after it has been created.
 
-empty_window button_xtest:
+empty_window:
 	Display an empty window and close it after 3 seconds.
 
-button_xtest:
+xtest-button:
 	Using XTest, love the mouse around the boundaries of a button view and simulate click and drag mouse events. The program close itself after a delay.
 
-mouse_events_test:
+xtest-mouse-events:
 	Test the following mouse events:
 		- mouse down
 		- mouse up
@@ -29,20 +32,21 @@ mouse_events_test:
 		- mouse move
 
 
-mouse_buttons_tests:
+xtest-mouse-buttons:
 	Make sure that only physical mouse button 1, 2 and 3 generate mouse-down and mouse-up events.
 	The artificial button event 4 and 5 should not generate mouse-down or mouse-up events.
 	
-hgrid_key_navigation_test
+xtest-hgrid-key-navigation
   Make sure that the key navigation works well in a GridHLayout. 
   
-hlayout_key_navigation_test
+xtest-hlayout-key-navigation
   Make sure that the key naviagation works well in a HLayout.
   
-vlayout_key_navigation_test
+xtest-vlayout-key-navigation
   Make sure that the key navigation works well in a VLayout.
 
-focus_on_mouse_down_test
+xtest-focus-on-mouse-down
   Make sure that AcceptKeyNavFocusOnMouseDown works well.
 
-
+xtest-keynav-direction
+  Test key navigation. Especially test the direction a key nav is coming from when the view is getting the focus.

@@ -184,12 +184,26 @@ source_h = \
   $(srcdir)/WindowCompositor.h \
   $(srcdir)/WindowThread.h
 
+nuxprogramframework_cpp = \
+  $(srcdir)/ProgramFramework/ProgramTemplate.cpp \
+  $(srcdir)/ProgramFramework/TestView.cpp
+
+nuxprogramframework_h = \
+  $(srcdir)/ProgramFramework/ProgramTemplate.h \
+  $(srcdir)/ProgramFramework/TestView.h
+
+
 libnux_@NUX_API_VERSION@_la_SOURCES = \
   $(source_cpp) \
-  $(source_h)
+  $(source_h) \
+  $(nuxprogramframework_cpp) \
+  $(nuxprogramframework_h)
 
 nuxdir = $(includedir)/Nux-@NUX_API_VERSION@/Nux
 nux_HEADERS = $(source_h)
+
+nuxprogramframeworkdir      = $(includedir)/Nux-@NUX_API_VERSION@/Nux/ProgramFramework
+nuxprogramframework_HEADERS = $(nuxprogramframework_h)
 
 # pkg-config file
 nux-@NUX_API_VERSION@.pc: nux.pc

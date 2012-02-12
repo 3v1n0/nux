@@ -166,7 +166,6 @@ namespace nux
     void InitializeLayout();
 
     Color m_TextColor;
-    ObjectPtr<FontTexture> _font;
 
     //! Deprecated. Use GetLayout();
     virtual Layout* GetCompositionLayout();
@@ -201,6 +200,7 @@ namespace nux
     bool full_view_draw_cmd_; //<! True if Draw is called before ContentDraw. It is read-only and can be accessed by calling IsFullRedraw();
 
   private:
+    ObjectPtr<FontTexture> _font;
 
     friend class WindowCompositor;
     friend class Layout;

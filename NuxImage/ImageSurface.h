@@ -149,7 +149,7 @@ namespace nux
         Sum up all the image elements and divide by the number of elements.
         @return The average color of the image.
     */
-    struct Color AverageColor();
+    Color AverageColor();
 
   private:
     void FlipDXTVertical();
@@ -282,6 +282,9 @@ namespace nux
     int m_NumMipmap;
     std::vector<ImageSurface *> m_MipSurfaceArray;
     void ClearData();
+#if defined(NUX_OS_WINDOWS)
+    friend NBitmapData *read_tga_file(const TCHAR *file_name);
+#endif
   };
 
   class NCubemapData: public NBitmapData
