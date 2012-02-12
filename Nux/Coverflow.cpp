@@ -325,21 +325,22 @@ namespace nux
     float ratio = texture->GetWidth()/(float)texture->GetHeight();
     
     float fx = cover_width_in_3d_space_/2.0f;
-    float fy = (cover_width_in_3d_space_/2.0f) * (1.0f/ratio);
+    float fy_top = cover.position.y + (cover_width_in_3d_space_) * (1.0f/ratio);
+    float fy_bot = cover.position.y;
 
     modelview_ = nux::Matrix4::TRANSLATE(-camera_position_.x, -camera_position_.y, -camera_position_.z) *
       nux::Matrix4::ROTATEX(DEGTORAD(-camera_rotation_.x)) *
       nux::Matrix4::ROTATEY(DEGTORAD(-camera_rotation_.y)) *
       nux::Matrix4::ROTATEZ(DEGTORAD(-camera_rotation_.z)) *
-      nux::Matrix4::TRANSLATE(cover.position.x, cover.position.y, cover.position.z);
+      nux::Matrix4::TRANSLATE(cover.position.x, 0.0f, cover.position.z);
 
     nux::Matrix4 m = nux::Matrix4::ROTATEY(DEGTORAD(cover.position.rot));
     nux::Matrix4 combined_matrix = perspective_ * modelview_ * m;
 
-    nux::Vector4 p0(-fx, fy, 0.0f, 1.0f);
-    nux::Vector4 p1(-fx, -fy, 0.0f, 1.0f);
-    nux::Vector4 p2(fx, -fy, 0.0f, 1.0f);
-    nux::Vector4 p3(fx, fy, 0.0f, 1.0f);
+    nux::Vector4 p0(-fx, fy_top, 0.0f, 1.0f);
+    nux::Vector4 p1(-fx, fy_bot, 0.0f, 1.0f);
+    nux::Vector4 p2(fx, fy_bot, 0.0f, 1.0f);
+    nux::Vector4 p3(fx, fy_top, 0.0f, 1.0f);
 
     nux::Vector4 p0_proj = combined_matrix * p0;
     nux::Vector4 p1_proj = combined_matrix * p1;
