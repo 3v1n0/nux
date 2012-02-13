@@ -327,11 +327,22 @@ namespace nux
     float fy_top = cover.position.y + (cover_width_in_3d_space_) * (1.0f/ratio);
     float fy_bot = cover.position.y;
 
-    modelview_ = nux::Matrix4::TRANSLATE(-camera_position_.x, -camera_position_.y, -camera_position_.z) *
-      nux::Matrix4::ROTATEX(DEGTORAD(-camera_rotation_.x)) *
-      nux::Matrix4::ROTATEY(DEGTORAD(-camera_rotation_.y)) *
-      nux::Matrix4::ROTATEZ(DEGTORAD(-camera_rotation_.z)) *
-      nux::Matrix4::TRANSLATE(0.0f, 0.0f, cover.position.z);
+    if (parent_->true_perspective)
+    {
+      modelview_ = nux::Matrix4::TRANSLATE(-camera_position_.x, -camera_position_.y, -camera_position_.z) *
+        nux::Matrix4::ROTATEX(DEGTORAD(-camera_rotation_.x)) *
+        nux::Matrix4::ROTATEY(DEGTORAD(-camera_rotation_.y)) *
+        nux::Matrix4::ROTATEZ(DEGTORAD(-camera_rotation_.z)) *
+        nux::Matrix4::TRANSLATE(cover.position.x, 0.0f, cover.position.z);
+    }
+    else
+    {
+      modelview_ = nux::Matrix4::TRANSLATE(-camera_position_.x, -camera_position_.y, -camera_position_.z) *
+        nux::Matrix4::ROTATEX(DEGTORAD(-camera_rotation_.x)) *
+        nux::Matrix4::ROTATEY(DEGTORAD(-camera_rotation_.y)) *
+        nux::Matrix4::ROTATEZ(DEGTORAD(-camera_rotation_.z)) *
+        nux::Matrix4::TRANSLATE(0.0f, 0.0f, cover.position.z);
+    }
 
     nux::Matrix4 m = nux::Matrix4::ROTATEY(DEGTORAD(cover.position.rot));
     nux::Matrix4 combined_matrix = perspective_ * modelview_ * m;
@@ -361,9 +372,14 @@ namespace nux
     p2_proj.y = -height * (p2_proj.y - 1.0f)/2.0f;
     p3_proj.y = -height * (p3_proj.y - 1.0f)/2.0f;
 
-    nux::Point2 top_left, bottom_right;
-    Get3DBoundingBox(camera_position_.z, top_left, bottom_right);
-    float scalar = parent_->GetGeometry().width / (bottom_right.x - top_left.x);
+    float scalar = 0.0f;
+
+    if (!parent_->true_perspective)
+    {
+      nux::Point2 top_left, bottom_right;
+      Get3DBoundingBox(camera_position_.z, top_left, bottom_right);
+      scalar = parent_->GetGeometry().width / (bottom_right.x - top_left.x);
+    }
 
     out_p0.x = p0_proj.x + cover.position.x * scalar; out_p0.y = p0_proj.y;
     out_p1.x = p1_proj.x + cover.position.x * scalar; out_p1.y = p1_proj.y;
@@ -782,16 +798,27 @@ namespace nux
     // We translate the cover to an y coordinate of 0.0 in the matrix below and we take care of rendering 
     // the cover at the right location in Y.
 
-    modelview_ = nux::Matrix4::TRANSLATE(-camera_position_.x, -camera_position_.y, -camera_position_.z) *
-      nux::Matrix4::ROTATEX(DEGTORAD(-camera_rotation_.x)) *
-      nux::Matrix4::ROTATEY(DEGTORAD(camera_drift_factor_ * parent_->camera_motion_drift_angle + -camera_rotation_.y)) *
-      nux::Matrix4::ROTATEZ(DEGTORAD(-camera_rotation_.z)) *
-      nux::Matrix4::TRANSLATE(0.0f, 0.0f, cover.position.z);
+    if (parent_->true_perspective)
+    {
+      modelview_ = nux::Matrix4::TRANSLATE(-camera_position_.x, -camera_position_.y, -camera_position_.z) *
+        nux::Matrix4::ROTATEX(DEGTORAD(-camera_rotation_.x)) *
+        nux::Matrix4::ROTATEY(DEGTORAD(camera_drift_factor_ * parent_->camera_motion_drift_angle + -camera_rotation_.y)) *
+        nux::Matrix4::ROTATEZ(DEGTORAD(-camera_rotation_.z)) *
+        nux::Matrix4::TRANSLATE(cover.position.x, 0.0f, cover.position.z);
+    }
+    else
+    {
+      modelview_ = nux::Matrix4::TRANSLATE(-camera_position_.x, -camera_position_.y, -camera_position_.z) *
+        nux::Matrix4::ROTATEX(DEGTORAD(-camera_rotation_.x)) *
+        nux::Matrix4::ROTATEY(DEGTORAD(camera_drift_factor_ * parent_->camera_motion_drift_angle + -camera_rotation_.y)) *
+        nux::Matrix4::ROTATEZ(DEGTORAD(-camera_rotation_.z)) *
+        nux::Matrix4::TRANSLATE(0.0f, 0.0f, cover.position.z);
 
-    nux::Point2 top_left, bottom_right;
-    Get3DBoundingBox(camera_position_.z, top_left, bottom_right);
-    float scalar = ctx.width / (bottom_right.x - top_left.x);
-    glViewport((int) (cover.position.x * scalar), 0.0f, ctx.width, ctx.height);
+      nux::Point2 top_left, bottom_right;
+      Get3DBoundingBox(camera_position_.z, top_left, bottom_right);
+      float scalar = ctx.width / (bottom_right.x - top_left.x);
+      glViewport((int) (cover.position.x * scalar), 0.0f, ctx.width, ctx.height);
+    }
 
     nux::Matrix4 m = nux::Matrix4::ROTATEY(DEGTORAD(cover.position.rot));
     nux::Matrix4 combined_matrix = modelview_ * m;
@@ -1086,6 +1113,7 @@ namespace nux
     , show_labels(true)
     , show_drop_shadow(false)
     , show_reflection(false)
+    , true_perspective(true)
     , pimpl(new Impl(this))
   {
     SetAcceptKeyboardEvent(true);

@@ -77,6 +77,8 @@ namespace nux
     
     Property<bool> show_reflection;
 
+    Property<bool> true_perspective;
+
     Property<float> y_offset;
 
     bool AcceptKeyNavFocus();
