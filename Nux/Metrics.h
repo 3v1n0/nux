@@ -21,17 +21,20 @@
 
 #include <X11/Xlib.h>
 
-class Metrics
+namespace nux
 {
-  public:
-    Metrics (Display* dpy, int src, double points);
-    ~Metrics ();
+  class Metrics
+  {
+    public:
+      Metrics (Display* dpy, int scr, double points);
+      ~Metrics ();
 
-    double Pixel2EM (int value);
-    int EM2Pixel (double value);
+      double Pixel2EM (int value);
+      int EM2Pixel (double value);
 
-  private:
-    double pixel_per_em_;
-};
+    private:
+      double pixels_per_em_;
+  };
+}
 
 #endif // METRICS_H

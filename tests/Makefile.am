@@ -81,6 +81,7 @@ gtest_nux_core_LDFLAGS = \
 
 gtest_nux_SOURCES = \
   test-nux-main.cpp \
+  test-nux-metrics.cpp \
   test-nux-statictext.cpp \
   test-nux-windowthread.cpp
 
