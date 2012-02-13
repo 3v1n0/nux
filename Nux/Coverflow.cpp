@@ -734,7 +734,7 @@ namespace nux
         cover.position.x = flat_right + ((x - flat_right) * scale_in_factor);
       }
 
-      if (cover.selected)
+      if (cover.selected && parent_->pop_out_selected)
         cover.position.z = 0.3f;
       
       float fold_progress = std::abs(cover.position.rot / parent_->folding_angle());
