@@ -137,8 +137,8 @@ namespace nux
 {
 
 // Variable arguments.
-  t_u32 GetVariableArgs (TCHAR *Dest, t_u32 Size, t_u32 Count, const TCHAR*& Fmt, va_list ArgPtr);
-  t_u32 GetVariableArgsAnsi (ANSICHAR *Dest, t_u32 Size, t_u32 Count, const ANSICHAR*& Fmt, va_list ArgPtr);
+  unsigned int GetVariableArgs (TCHAR *Dest, unsigned int Size, unsigned int Count, const TCHAR*& Fmt, va_list ArgPtr);
+  unsigned int GetVariableArgsAnsi (ANSICHAR *Dest, unsigned int Size, unsigned int Count, const ANSICHAR*& Fmt, va_list ArgPtr);
 
 
 #define GET_VARARGS(msg, size, len, fmt)            \
@@ -164,7 +164,7 @@ namespace nux
 }
 
 //////////////////////////////////////////////////////////////////////////
-//	Check macros for assertions.                                        //
+//  Check macros for assertions.                                        //
 //////////////////////////////////////////////////////////////////////////
   typedef enum
   {
@@ -176,6 +176,7 @@ namespace nux
 
   } MessageSeverity;
 
+#define nuxOkMsg(str, ...)        { nux::LogOutputSeverityMessage(nux::NUX_MSG_SEVERITY_INFO, str, ##__VA_ARGS__);}
 #define nuxWarningMsg(str, ...)   { nux::LogOutputSeverityMessage(nux::NUX_MSG_SEVERITY_WARNING, str, ##__VA_ARGS__);}
 #define nuxAlertMsg(str, ...)     { nux::LogOutputSeverityMessage(nux::NUX_MSG_SEVERITY_ALERT, str, ##__VA_ARGS__);}
 #define nuxCriticalMsg(str, ...)  { nux::LogOutputSeverityMessage(nux::NUX_MSG_SEVERITY_CRITICAL, str, ##__VA_ARGS__);}
@@ -388,18 +389,18 @@ namespace nux
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  extern const t_bool GNoDialog;         // Set to true to disable the popping of dialog box. The message will go to the log.
+  extern const bool GNoDialog;         // Set to true to disable the popping of dialog box. The message will go to the log.
 
 #ifdef NUX_VISUAL_STUDIO_2003
   //Visual Studio C++ 2003 doesn't support it, but there is a workaround:
-#pragma warning(disable: 4002)		// Warning: too many actual parameters for macro 'ident'
-#pragma warning(disable: 4003)		// Warning: not enough actual parameters for macro 'ident'
+#pragma warning(disable: 4002)    // Warning: too many actual parameters for macro 'ident'
+#pragma warning(disable: 4003)    // Warning: not enough actual parameters for macro 'ident'
   template <typename T>
-  inline const T 		&VARG ( const T &t )
+  inline const T   &VARG ( const T &t )
   {
     return t;
   }
-  inline const TCHAR 	*VARG( )
+  inline const TCHAR  *VARG( )
   {
     return TEXT ("");
   }
@@ -508,19 +509,19 @@ namespace nux
   {
     return b;
   }
-  static inline t_u32        VAType (t_u32 ui)
+  static inline unsigned int        VAType (unsigned int ui)
   {
     return ui;
   }
-  static inline t_int         VAType (t_s32 i)
+  static inline int         VAType (int i)
   {
     return i;
   }
-  static inline t_u64         VAType (t_u64 qw)
+  static inline unsigned long long         VAType (unsigned long long qw)
   {
-    return qw;  // possible conflict with t_size when compiling in 64 bits
+    return qw;  // possible conflict with size_t when compiling in 64 bits
   }
-  static inline t_s64         VAType (t_s64 sqw)
+  static inline long long         VAType (long long sqw)
   {
     return sqw;
   }
@@ -565,7 +566,7 @@ namespace nux
   //  If this is a pure virtual function then PURE is equal to: ==0
   //  ExtraParamDecl is declaration for additional parameters: VARARG_EXTRA(TCHAR* Dest) VARARG_EXTRA(INT Size) VARARG_EXTRA(INT Count)
   //  ExtraParam is the parameters presented in ExtraParamDecl: VARARG_EXTRA(Dest) VARARG_EXTRA(Size) VARARG_EXTRA(Count)
-#define VARARG_DECL( FuncRet, StaticFuncRet, Return, FuncName, Pure, FmtType, ExtraParamDecl, ExtraParam )	\
+#define VARARG_DECL( FuncRet, StaticFuncRet, Return, FuncName, Pure, FmtType, ExtraParamDecl, ExtraParam ) \
     FuncRet FuncName##__VA(ExtraParamDecl FmtType Fmt, ... ) Pure;  \
     StaticFuncRet FuncName(ExtraParamDecl FmtType Fmt) {Return FuncName##__VA(ExtraParam (Fmt));} \
     template<class T1> \
@@ -607,14 +608,14 @@ namespace nux
     template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8,class T9,class T10,class T11,class T12,class T13,class T14,class T15,class T16,class T17,class T18,class T19> \
     StaticFuncRet FuncName(ExtraParamDecl FmtType Fmt,T1 V1,T2 V2,T3 V3,T4 V4,T5 V5,T6 V6,T7 V7,T8 V8,T9 V9,T10 V10,T11 V11,T12 V12,T13 V13,T14 V14,T15 V15,T16 V16,T17 V17,T18 V18,T19 V19) {T1 v1=VAType(V1);T2 v2=VAType(V2);T3 v3=VAType(V3);T4 v4=VAType(V4);T5 v5=VAType(V5);T6 v6=VAType(V6);T7 v7=VAType(V7);T8 v8=VAType(V8);T9 v9=VAType(V9);T10 v10=VAType(V10);T11 v11=VAType(V11);T12 v12=VAType(V12);T13 v13=VAType(V13);T14 v14=VAType(V14);T15 v15=VAType(V15);T16 v16=VAType(V16);T17 v17=VAType(V17);T18 v18=VAType(V18);T19 v19=VAType(V19);Return FuncName##__VA(ExtraParam (Fmt),(v1),(v2),(v3),(v4),(v5),(v6),(v7),(v8),(v9),(v10),(v11),(v12),(v13),(v14),(v15),(v16),(v17),(v18),(v19));}
 
-#define VARARG_BODY( FuncRet, FuncName, FmtType, ExtraParamDecl )		\
+#define VARARG_BODY( FuncRet, FuncName, FmtType, ExtraParamDecl ) \
     FuncRet FuncName##__VA( ExtraParamDecl  FmtType Fmt, ... )
 
 #else  // !_MSC_VER
 
-#define VARARG_DECL( FuncRet, StaticFuncRet, Return, FuncName, Pure, FmtType, ExtraParamDecl, ExtraParam )	\
+#define VARARG_DECL( FuncRet, StaticFuncRet, Return, FuncName, Pure, FmtType, ExtraParamDecl, ExtraParam ) \
     FuncRet FuncName( ExtraParamDecl FmtType Fmt, ... ) Pure
-#define VARARG_BODY( FuncRet, FuncName, FmtType, ExtraParamDecl )		\
+#define VARARG_BODY( FuncRet, FuncName, FmtType, ExtraParamDecl ) \
     FuncRet FuncName( ExtraParamDecl FmtType Fmt, ... )
 
 #endif // _MSC_VER
@@ -709,7 +710,6 @@ namespace nux
 #include "Character/NTChar.h"
 
 #include "TimeFunctions.h"
-#include "CPU.h"
 #include "Platform.h"
 #include "FileManager/NSerializer.h"
 #include "Process.h"
@@ -718,7 +718,6 @@ namespace nux
 #include "FileManager/NFileManagerGeneric.h"
 
 #ifdef NUX_OS_WINDOWS
-    #include "FileManager/NFileManagerStandardAnsi.h"
     #include "FileManager/NFileManagerWindows.h"
 #elif defined NUX_OS_LINUX
     #include "FileManager/NFileManagerGNU.h"

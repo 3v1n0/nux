@@ -223,7 +223,7 @@ namespace nux
     }
 
     bool unadjusted_layout = false;
-    t_size num_element = 0;
+    size_t num_element = 0;
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
@@ -360,23 +360,25 @@ namespace nux
 
       for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
+        if (!(*it)->IsVisible())
+          continue;
+
         bool larger_height  = false;
         bool smaller_height = false;
         bool smaller_width  = false;
         bool larger_width   = false;
         int ret = 0;
-
-        if (!(*it)->IsVisible())
-          continue;
-
+        
         if (((*it)->IsLayout() || (*it)->IsView()) /*&& ((*it)->IsLayoutDone() == false)*/ /*&& ((*it)->GetScaleFactor() != 0)*/)
         {
+          Geometry pre_geo = (*it)->GetGeometry();
           ret = (*it)->ComputeContentSize();
+          Geometry post_geo = (*it)->GetGeometry();
 
-          larger_height   = (ret & eLargerHeight)   ? true : false;
-          smaller_height  = (ret & eSmallerHeight)  ? true : false;
-          smaller_width   = (ret & eSmallerWidth)   ? true : false;
-          larger_width    = (ret & eLargerWidth)    ? true : false;
+          larger_width    = (pre_geo.width < post_geo.width)    ? true : false;
+          smaller_width   = (pre_geo.width > post_geo.width)    ? true : false;
+          larger_height   = (pre_geo.height < post_geo.height)  ? true : false;
+          smaller_height  = (pre_geo.height > post_geo.height)  ? true : false;
 
           if ((larger_height || smaller_height) && ((*it)->IsLayoutDone() == false))
           {
@@ -718,8 +720,8 @@ namespace nux
           // For fixed element, reset their size to the same so it is checked against
           // the min and max. This is necessary in case you have set the size of the element first then latter,
           // you define its MinimumSize and/or MaximumSize size.
-          t_u32 w = (*it)->GetBaseWidth();
-          t_u32 h = (*it)->GetBaseHeight();
+          unsigned int w = (*it)->GetBaseWidth();
+          unsigned int h = (*it)->GetBaseHeight();
           (*it)->SetBaseWidth(w);
           (*it)->SetBaseHeight(h);
         }
@@ -728,10 +730,10 @@ namespace nux
     while (need_recompute);
   }
 
-  t_u32 VLayout::GetMaxStretchFactor()
+  unsigned int VLayout::GetMaxStretchFactor()
   {
-    t_u32 value = 0;
-    t_u32 sf;
+    unsigned int value = 0;
+    unsigned int sf;
     std::list<Area *>::iterator it;
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
@@ -759,7 +761,7 @@ namespace nux
   {
     std::list<Area *>::iterator it;
     {
-      t_u32 num_element = 0;
+      unsigned int num_element = 0;
 
       for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
@@ -791,7 +793,6 @@ namespace nux
         (*it)->SetBaseX(current_x);
         (*it)->SetBaseY(current_y);
 
-        MinorDimensionSize extend = (*it)->GetExtend();
         MinorDimensionPosition positioning = (*it)->GetPositioning();
 
         if ((*it)->GetBaseWidth() < width)

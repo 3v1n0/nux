@@ -54,8 +54,8 @@ namespace nux
       UL_MAP(ZTESTENABLE                  ,           GL_FALSE        ,       1);
       UL_MAP(ZWRITEENABLE                 ,           GL_TRUE         ,       1);
       UL_MAP(ZFUNC                        ,           GL_LESS         ,       1);
-      UL_MAP_FLOAT(ZNEAR                  ,           static_cast<t_u32> (0.0f)            ,       1);
-      UL_MAP_FLOAT(ZFAR                   ,           static_cast<t_u32> (1.0f)            ,       1);
+      UL_MAP_FLOAT(ZNEAR                  ,           static_cast<unsigned int> (0.0f)            ,       1);
+      UL_MAP_FLOAT(ZFAR                   ,           static_cast<unsigned int> (1.0f)            ,       1);
 
       UL_MAP(ALPHABLENDENABLE             ,           GL_FALSE        ,       1);
       UL_MAP(BLENDOP                      ,           GL_FUNC_ADD     ,       1);
@@ -245,7 +245,7 @@ namespace nux
 
   void GpuRenderStates::ResetStateChangeToDefault()
   {
-    for (t_u32 i = 0; i < GFXRS_MAX_RENDERSTATES; i++)
+    for (unsigned int i = 0; i < GFXRS_MAX_RENDERSTATES; i++)
     {
       if (m_RenderStateChanges[i].Checked &&
           ((m_RenderStateChanges[i].iValue != s_StateLUT.default_render_state[i].iValue) ||
@@ -259,7 +259,7 @@ namespace nux
 
   void GpuRenderStates::CheckStateChange()
   {
-    for (t_u32 i = 0; i < GFXRS_MAX_RENDERSTATES; i++)
+    for (unsigned int i = 0; i < GFXRS_MAX_RENDERSTATES; i++)
     {
       if (m_RenderStateChanges[i].Checked &&
           ((m_RenderStateChanges[i].iValue != s_StateLUT.default_render_state[i].iValue) ||
@@ -272,13 +272,13 @@ namespace nux
     }
   }
 
-  void GpuRenderStates::SetRenderStates(t_u32 rs, t_u32 value)
+  void GpuRenderStates::SetRenderStates(unsigned int rs, unsigned int value)
   {
 #define RS_VALUE(a)      (a).iValue
 
     if (value != m_RenderStateChanges[rs].iValue)
     {
-      m_RenderStateChanges[rs].iValue = static_cast<t_u32> (value);
+      m_RenderStateChanges[rs].iValue = static_cast<unsigned int> (value);
 
       if (rs == GFXRS_ALPHATESTENABLE ||
           rs == GFXRS_ALPHATESTREF ||

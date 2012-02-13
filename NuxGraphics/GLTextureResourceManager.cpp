@@ -414,7 +414,7 @@ namespace nux
     m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(SourceTexture->GetWidth(),
                 SourceTexture->GetHeight(),
                 SourceTexture->GetNumMipLevel(),
-                SourceTexture->GetFormat());
+                SourceTexture->GetFormat(), NUX_TRACKER_LOCATION);
 
     for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
     {
@@ -446,7 +446,7 @@ namespace nux
       m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetNumMipLevel(),
-                  SourceTexture->GetFormat());
+                  SourceTexture->GetFormat(), NUX_TRACKER_LOCATION);
 
       for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
       {
@@ -467,9 +467,9 @@ namespace nux
     SURFACE_LOCKED_RECT LockedRect;
     ObjectPtr < IOpenGLTexture2D > Texture2D = m_Texture; //m_Texture.CastRef<IOpenGLTexture2D>();
 
-    OGL_CALL( Texture2D->LockRect( MipLevel, &LockedRect, NULL));
-    SourceTexture->GetData( LockedRect.pBits, MipLevel, LockedRect.Pitch );
-    OGL_CALL( Texture2D->UnlockRect( MipLevel ));
+    OGL_CALL(Texture2D->LockRect(MipLevel, &LockedRect, NULL));
+    SourceTexture->GetData(LockedRect.pBits, MipLevel, LockedRect.Pitch);
+    OGL_CALL(Texture2D->UnlockRect(MipLevel));
   }
 
   TextureRectangle::TextureRectangle(NUX_FILE_LINE_DECL)
@@ -566,7 +566,7 @@ namespace nux
     m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateRectangleTexture(SourceTexture->GetWidth(),
                 SourceTexture->GetHeight(),
                 SourceTexture->GetNumMipLevel(),
-                SourceTexture->GetFormat());
+                SourceTexture->GetFormat(), NUX_TRACKER_LOCATION);
 
     for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
     {
@@ -598,7 +598,7 @@ namespace nux
       m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateRectangleTexture(SourceTexture->GetWidth(),
                   SourceTexture->GetHeight(),
                   SourceTexture->GetNumMipLevel(),
-                  SourceTexture->GetFormat());
+                  SourceTexture->GetFormat(), NUX_TRACKER_LOCATION);
 
       for (int i = 0; i < SourceTexture->GetNumMipLevel(); i++)
       {
@@ -835,7 +835,7 @@ namespace nux
 //     int                 RowByteSize = _image.GetSurface(MipIndex, slice).GetPitch();
 //     int                 NumRows     = _image.GetSurface(MipIndex, slice).GetBlockHeight();
 
-    for (t_s32 slice = 0; slice < ImageSurface::GetLevelDim(_image.GetFormat(), _image.GetDepth(), MipIndex); slice++)
+    for (int slice = 0; slice < ImageSurface::GetLevelDim(_image.GetFormat(), _image.GetDepth(), MipIndex); slice++)
     {
       const BYTE         *Src         = _image.GetSurface(MipIndex, slice).GetPtrRawData();
       int                 RowByteSize = _image.GetSurface(MipIndex, slice).GetPitch();

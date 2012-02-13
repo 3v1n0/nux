@@ -45,7 +45,7 @@ namespace nux
     //_SurfaceArray.Empty(Levels);
     for (unsigned int l = 0; l < Levels; l++)
     {
-      IOpenGLSurface *surface = new IOpenGLSurface(this, _OpenGLID, GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_RECTANGLE_ARB, l, 0, NUX_TRACKER_LOCATION);
+      IOpenGLSurface *surface = new IOpenGLSurface(this, _OpenGLID, GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_RECTANGLE_ARB, l, 0, NUX_FILE_LINE_PARAM);
 
       if (Dummy == false) surface->InitializeLevel();
 
@@ -143,23 +143,26 @@ namespace nux
     return OGL_OK;
   }
 
-  void* IOpenGLRectangleTexture::GetSurfaceData(int level, int &width, int &height, int &format)
+  unsigned char* IOpenGLRectangleTexture::GetSurfaceData(int level, int &width, int &height, int &stride)
   {
-    nuxAssertMsg(level >= 0, "[IOpenGLRectangleTexture::LockRect] Invalid mipmap level.");
-    nuxAssertMsg(level < _NumMipLevel, "[IOpenGLRectangleTexture::LockRect] Invalid mipmap level.");
+    width = 0;
+    height = 0;
+    stride = 0;
 
-    if (level < _NumMipLevel)
+    if (level < 0)
     {
-      ObjectPtr<IOpenGLSurface> pSurfaceLevel = _SurfaceArray [level];
-      return pSurfaceLevel->GetSurfaceData(width, height, format);
+      nuxAssertMsg(level >= 0, "[IOpenGLRectangleTexture::GetSurfaceData] Invalid mipmap level.");
+      return NULL;
     }
-    else
+
+    if (level >= _NumMipLevel)
     {
-      width = 0;
-      height = 0;
-      format = BITFMT_UNKNOWN;
-      return 0;
+      nuxAssertMsg(level < _NumMipLevel, "[IOpenGLRectangleTexture::GetSurfaceData] Invalid mipmap level.");
+      return NULL;
     }
+
+    ObjectPtr<IOpenGLSurface> pSurfaceLevel = _SurfaceArray[level];
+    return pSurfaceLevel->GetSurfaceData(width, height, stride);
   }
 }
 

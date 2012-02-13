@@ -117,10 +117,10 @@ namespace nux
         Set the left/right and top/bottom padding of the layout. \n
         Valid only for HLayout, VLayouts, HGridLayouts and VGridLayout.
 
-        @param left_right_padding The left/right padding value of the layout.
         @param top_bottom_padding The top/bottom padding value of the layout.
+        @param left_right_padding The left/right padding value of the layout.
     */
-    void SetPadding(int left_right_padding, int top_bottom_padding);
+    void SetPadding(int top_bottom_padding, int left_right_padding);
 
     virtual unsigned int GetMaxStretchFactor();
     unsigned int GetMinStretchFactor();
@@ -143,7 +143,26 @@ namespace nux
     //! Deprecated. Use SetTopBottomPadding,
     void SetVerticalExternalMargin(int m);
 
+    //! Set the left/right/top/bottom padding of the layout.
+    /*!
+        Set the left/right and top/bottom padding of the layout. \n
+        Valid only for HLayout, VLayouts, HGridLayouts and VGridLayout.
+
+        @param top The top padding value of the layout.
+        @param right The right padding value of the layout.
+        @param bottom The bottom padding value of the layout.
+        @param left The left padding value of the layout.
+    */
     void SetPadding(int top, int right, int bottom, int left);
+
+    //! Set the left/right/top/bottom padding of the layout.
+    /*!
+        Set the left/right/top/bottom padding of the layout. \n
+        Valid only for HLayout, VLayouts, HGridLayouts and VGridLayout.
+
+        @param padding The top/right/bottom/left padding value of the layout.
+    */
+    void SetPadding(int padding);
 
     int GetLeftPadding() const;
     int GetRightPadding() const;

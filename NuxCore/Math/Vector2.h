@@ -43,11 +43,9 @@ namespace nux
     inline Vec2 (const Vec2 &);
 
     inline Vec2<T>& operator = (const Vec2<T>&);
-    inline Vec2<T>& operator = (const Vec4<T>&);
-    inline Vec2<T>& operator = (const Vec3<T>&);
 
-    inline t_bool operator == (const Vec2<T>&) const;
-    inline t_bool operator != (const Vec2<T>&) const;
+    inline bool operator == (const Vec2<T>&) const;
+    inline bool operator != (const Vec2<T>&) const;
     inline Vec2<T> operator+ (const Vec2<T>&) const;
     inline Vec2<T> operator* (const Vec2<T>&) const;
     inline Vec2<T> operator- (const Vec2<T>&) const;
@@ -101,16 +99,16 @@ namespace nux
     y = fy;
   }
 
-//Vec2<T>::Vec2(t_double fx, t_double fy)
+//Vec2<T>::Vec2(double fx, double fy)
 //{
-//    x = t_float(fx);
-//    y = t_float(fy);
+//    x = float(fx);
+//    y = float(fy);
 //}
 //
-//Vec2<T>::Vec2(t_int fx, t_int fy)
+//Vec2<T>::Vec2(int fx, int fy)
 //{
-//    x = t_float(fx);
-//    y = t_float(fy);
+//    x = float(fx);
+//    y = float(fy);
 //}
 
   template <typename T>
@@ -129,23 +127,7 @@ namespace nux
   }
 
   template <typename T>
-  Vec2<T>& Vec2<T>::operator = (const Vec3<T>& v)
-  {
-    x = v.x;
-    y = v.y;
-    return *this;
-  }
-
-  template <typename T>
-  Vec2<T>& Vec2<T>::operator = (const Vec4<T>& v)
-  {
-    x = v.x;
-    y = v.y;
-    return *this;
-  }
-
-  template <typename T>
-  t_bool Vec2<T>::operator == (const Vec2<T>& v) const
+  bool Vec2<T>::operator == (const Vec2<T>& v) const
   {
     if ( (x == v.x) &&
          (y == v.y) )
@@ -157,7 +139,7 @@ namespace nux
   }
 
   template <typename T>
-  t_bool Vec2<T>::operator != (const Vec2<T>& v) const
+  bool Vec2<T>::operator != (const Vec2<T>& v) const
   {
     return ! (*this == v);
   }

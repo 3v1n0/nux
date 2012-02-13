@@ -28,7 +28,6 @@
 #include "ScrollView.h"
 #include "BaseWindow.h"
 #include "InputArea.h"
-#include "MouseHandler.h"
 #include "Layout.h"
 #include "HLayout.h"
 #include "VLayout.h"

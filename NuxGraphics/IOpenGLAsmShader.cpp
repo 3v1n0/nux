@@ -78,7 +78,7 @@ namespace nux
   {
     m_CompiledAndReady = false;
 #ifndef NUX_OPENGLES_20
-    t_size CodeSize = _ShaderCode.Size();
+    size_t CodeSize = _ShaderCode.Size();
 
     if (CodeSize == 0)
     {
@@ -147,7 +147,7 @@ namespace nux
   {
     m_CompiledAndReady = false;
 #ifndef NUX_OPENGLES_20
-    t_size CodeSize = _ShaderCode.Size();
+    size_t CodeSize = _ShaderCode.Size();
 
     if (CodeSize == 0)
     {
@@ -275,82 +275,82 @@ namespace nux
   }
 
 #ifndef NUX_OPENGLES_20
-  void IOpenGLAsmShaderProgram::SetVertexEnvParameter4dARB(t_uint32 index, double x, double y, double z, double w)
+  void IOpenGLAsmShaderProgram::SetVertexEnvParameter4dARB(unsigned int index, double x, double y, double z, double w)
   {
     CHECKGL(glProgramEnvParameter4dARB(GL_VERTEX_PROGRAM_ARB, index, x, y, z, w));
   }
 
-  void IOpenGLAsmShaderProgram::SetVertexEnvParameter4dvARB(t_uint32 index, const double *params)
+  void IOpenGLAsmShaderProgram::SetVertexEnvParameter4dvARB(unsigned int index, const double *params)
   {
     CHECKGL(glProgramEnvParameter4dvARB(GL_VERTEX_PROGRAM_ARB, index, params));
   }
 
-  void IOpenGLAsmShaderProgram::SetVertexEnvParameter4fARB(t_uint32 index, float x, float y, float z, float w)
+  void IOpenGLAsmShaderProgram::SetVertexEnvParameter4fARB(unsigned int index, float x, float y, float z, float w)
   {
     CHECKGL(glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB, index, x, y, z, w));
   }
 
-  void IOpenGLAsmShaderProgram::SetVertexEnvParameter4fvARB(t_uint32 index, const float *params)
+  void IOpenGLAsmShaderProgram::SetVertexEnvParameter4fvARB(unsigned int index, const float *params)
   {
     CHECKGL(glProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, index, params));
   }
 
-  void IOpenGLAsmShaderProgram::SetVertexLocalParameter4dARB(t_uint32 index, double x, double y, double z, double w)
+  void IOpenGLAsmShaderProgram::SetVertexLocalParameter4dARB(unsigned int index, double x, double y, double z, double w)
   {
     CHECKGL(glProgramEnvParameter4dARB(GL_VERTEX_PROGRAM_ARB, index, x, y, z, w));
   }
 
-  void IOpenGLAsmShaderProgram::SetVertexLocalParameter4dvARB(t_uint32 index, const double *params)
+  void IOpenGLAsmShaderProgram::SetVertexLocalParameter4dvARB(unsigned int index, const double *params)
   {
     CHECKGL(glProgramEnvParameter4dvARB(GL_VERTEX_PROGRAM_ARB, index, params));
   }
 
-  void IOpenGLAsmShaderProgram::SetVertexLocalParameter4fARB(t_uint32 index, float x, float y, float z, float w)
+  void IOpenGLAsmShaderProgram::SetVertexLocalParameter4fARB(unsigned int index, float x, float y, float z, float w)
   {
     CHECKGL(glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB, index, x, y, z, w));
   }
 
-  void IOpenGLAsmShaderProgram::SetVertexLocalParameter4fvARB(t_uint32 index, const float *params)
+  void IOpenGLAsmShaderProgram::SetVertexLocalParameter4fvARB(unsigned int index, const float *params)
   {
     CHECKGL(glProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, index, params));
   }
 
-  void IOpenGLAsmShaderProgram::SetFragmentEnvParameter4dARB(t_uint32 index, double x, double y, double z, double w)
+  void IOpenGLAsmShaderProgram::SetFragmentEnvParameter4dARB(unsigned int index, double x, double y, double z, double w)
   {
     CHECKGL(glProgramEnvParameter4dARB(GL_FRAGMENT_PROGRAM_ARB, index, x, y, z, w));
   }
 
-  void IOpenGLAsmShaderProgram::SetFragmentEnvParameter4dvARB(t_uint32 index, const double *params)
+  void IOpenGLAsmShaderProgram::SetFragmentEnvParameter4dvARB(unsigned int index, const double *params)
   {
     CHECKGL(glProgramEnvParameter4dvARB(GL_FRAGMENT_PROGRAM_ARB, index, params));
   }
 
-  void IOpenGLAsmShaderProgram::SetFragmentEnvParameter4fARB(t_uint32 index, float x, float y, float z, float w)
+  void IOpenGLAsmShaderProgram::SetFragmentEnvParameter4fARB(unsigned int index, float x, float y, float z, float w)
   {
     CHECKGL(glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, index, x, y, z, w));
   }
 
-  void IOpenGLAsmShaderProgram::SetFragmentEnvParameter4fvARB(t_uint32 index, const float *params)
+  void IOpenGLAsmShaderProgram::SetFragmentEnvParameter4fvARB(unsigned int index, const float *params)
   {
     CHECKGL(glProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, index, params));
   }
 
-  void IOpenGLAsmShaderProgram::SetFragmentLocalParameter4dARB(t_uint32 index, double x, double y, double z, double w)
+  void IOpenGLAsmShaderProgram::SetFragmentLocalParameter4dARB(unsigned int index, double x, double y, double z, double w)
   {
     CHECKGL(glProgramEnvParameter4dARB(GL_FRAGMENT_PROGRAM_ARB, index, x, y, z, w));
   }
 
-  void IOpenGLAsmShaderProgram::SetFragmentLocalParameter4dvARB(t_uint32 index, const double *params)
+  void IOpenGLAsmShaderProgram::SetFragmentLocalParameter4dvARB(unsigned int index, const double *params)
   {
     CHECKGL(glProgramEnvParameter4dvARB(GL_FRAGMENT_PROGRAM_ARB, index, params));
   }
 
-  void IOpenGLAsmShaderProgram::SetFragmentLocalParameter4fARB(t_uint32 index, float x, float y, float z, float w)
+  void IOpenGLAsmShaderProgram::SetFragmentLocalParameter4fARB(unsigned int index, float x, float y, float z, float w)
   {
     CHECKGL(glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, index, x, y, z, w));
   }
 
-  void IOpenGLAsmShaderProgram::SetFragmentLocalParameter4fvARB(t_uint32 index, const float *params)
+  void IOpenGLAsmShaderProgram::SetFragmentLocalParameter4fvARB(unsigned int index, const float *params)
   {
     CHECKGL(glProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, index, params));
   }

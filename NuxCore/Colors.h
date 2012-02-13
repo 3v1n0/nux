@@ -28,6 +28,13 @@ namespace nux
 {
   namespace color
   {
+    // Definition of Luma coefficients as per ITU-R Recommendation BT.709
+    // http://en.wikipedia.org/wiki/Rec._709
+
+    extern const float LumaRed;
+    extern const float LumaGreen;
+    extern const float LumaBlue;
+
     // X11 color names from:http://en.wikipedia.org/wiki/Web_colors
     extern const Color Transparent;
 

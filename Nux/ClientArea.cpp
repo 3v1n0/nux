@@ -47,11 +47,11 @@ namespace nux
     mouse_move.connect(sigc::mem_fun(this, &ClientArea::RecvMouseMove));
     key_down.connect(sigc::mem_fun(this, &ClientArea::RecvKeyEvent));
 
-    if (GetWindowThread()->GetWindow().HasFrameBufferSupport())
+    if (GetWindowThread()->GetGraphicsDisplay().HasFrameBufferSupport())
     {
       m_FrameBufferObject = GetGraphicsDisplay()->GetGpuDevice()->CreateFrameBufferObject();
-      m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_R8G8B8A8);
-      m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_D24S8);
+      m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+      m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
     }
   }
 
@@ -64,7 +64,7 @@ namespace nux
     if ((IsRedrawNeeded() == false) && (force_draw == false))
       return;
 
-    if (GetWindowThread()->GetWindow().HasFrameBufferSupport())
+    if (GetWindowThread()->GetGraphicsDisplay().HasFrameBufferSupport())
     {
       int buffer_width = GetBaseWidth();
       int buffer_height = GetBaseHeight();
@@ -92,8 +92,8 @@ namespace nux
       if ((m_FrameBufferObject->GetWidth() != buffer_width) || (m_FrameBufferObject->GetHeight() != buffer_height))
       {
         m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
-        m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_R8G8B8A8);
-        m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_D24S8);
+        m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+        m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
       }
 
       m_FrameBufferObject->SetRenderTarget(0, m_MainColorRT->GetSurfaceLevel(0));
@@ -107,13 +107,27 @@ namespace nux
 
       // Restore the main frame buffer object
       prevFBO->Activate();
-      graphics_engine.SetViewport(0, 0, window_width, window_height);
-      graphics_engine.ApplyClippingRectangle();
-      graphics_engine.Push2DWindow(window_width, window_height);
 
+      Area* view_window = GetTopLevelViewWindow();
+      if (view_window)
+      {
+        graphics_engine.SetViewport(0, 0, view_window->GetBaseWidth(), view_window->GetBaseHeight());
+        graphics_engine.ApplyClippingRectangle();
+        graphics_engine.ApplyModelViewMatrix();
+        graphics_engine.SetOrthographicProjectionMatrix(view_window->GetBaseWidth(), view_window->GetBaseHeight());
+
+      }
+      else
+      {
+        graphics_engine.SetViewport(0, 0, window_width, window_height);
+        graphics_engine.ApplyClippingRectangle();
+        graphics_engine.ApplyModelViewMatrix();
+        graphics_engine.SetOrthographicProjectionMatrix(window_width, window_height);
+      }
+            
       // Copy the client frame buffer into the main frame buffer.
       {
-        t_u32 w, h;
+        unsigned int w, h;
         w = m_MainColorRT->GetWidth();
         h = m_MainColorRT->GetHeight();
         int x = m_ctx.x;
@@ -125,11 +139,6 @@ namespace nux
         texxform0.FlipVCoord(true);
         GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(x, y, w, h, m_MainColorRT, texxform0, Color(color::White));
       }
-
-      // go back to 2D in case that was changed by the client.
-      graphics_engine.SetViewport(0, 0, window_width, window_height);
-      graphics_engine.ApplyClippingRectangle();
-      graphics_engine.Push2DWindow(window_width, window_height);
     }
     else
     {
@@ -201,7 +210,7 @@ namespace nux
 
   void ClientArea::SetClientViewport(GraphicsEngine &graphics_engine)
   {
-    if (GetWindowThread()->GetWindow().HasFrameBufferSupport())
+    if (GetWindowThread()->GetGraphicsDisplay().HasFrameBufferSupport())
     {
       graphics_engine.SetViewport(0, 0, m_FrameBufferObject->GetWidth(), m_FrameBufferObject->GetHeight());
       m_FrameBufferObject->EmptyClippingRegion();

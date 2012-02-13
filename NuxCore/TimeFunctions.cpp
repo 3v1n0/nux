@@ -42,18 +42,18 @@ namespace nux
   }
 
 
-  t_s64 TimeStamp::GetJulianDayNumber (void) const
+  long long TimeStamp::GetJulianDayNumber (void) const
   {
-    t_s64 JDN =  m_Day - 32075L +
+    long long JDN =  m_Day - 32075L +
                  1461L * (m_Year  + 4800L + (m_Month  - 14L) / 12L) / 4L +
                  367L * (m_Month - 2L - ( (m_Month - 14L) / 12L) * 12L) / 12L -
                  3L * ( (m_Year + 4900L - (m_Month  - 14L) / 12L) / 100L) / 4L;
     return JDN;
   }
 
-  t_f64 TimeStamp::GetJulianDate() const
+  double TimeStamp::GetJulianDate() const
   {
-    t_f64 JD = GetJulianDayNumber() + (m_Hour - 12) / 1440.0f + m_Minute / 1440.0f + m_Second / 86400.0f;
+    double JD = GetJulianDayNumber() + (m_Hour - 12) / 1440.0f + m_Minute / 1440.0f + m_Second / 86400.0f;
     return JD;
   }
 
@@ -83,7 +83,7 @@ namespace nux
 
   bool TimeStamp::operator < (TimeStamp &Other) const
   {
-    t_f64 JD = GetJulianDate();
+    double JD = GetJulianDate();
 
     if (JD < Other.GetJulianDate() )
       return true;
@@ -93,7 +93,7 @@ namespace nux
 
   bool TimeStamp::operator >  (TimeStamp &Other) const
   {
-    t_f64 JD = GetJulianDate();
+    double JD = GetJulianDate();
 
     if (JD > Other.GetJulianDate() )
       return true;
@@ -103,7 +103,7 @@ namespace nux
 
   bool TimeStamp::operator >= (TimeStamp &Other) const
   {
-    t_f64 JD = GetJulianDate();
+    double JD = GetJulianDate();
 
     if (JD >= Other.GetJulianDate() )
       return true;
@@ -113,7 +113,7 @@ namespace nux
 
   bool TimeStamp::operator <= (TimeStamp &Other) const
   {
-    t_f64 JD = GetJulianDate();
+    double JD = GetJulianDate();
 
     if (JD <= Other.GetJulianDate() )
       return true;
@@ -228,12 +228,12 @@ namespace nux
 #endif
   }
 
-  t_long GetTimeZone()
+  long GetTimeZone()
   {
 #if (defined _WIN32)
-    t_long seconds = 0;
+    long seconds = 0;
     _get_timezone (&seconds);
-    t_long hour = seconds / 3600;
+    long hour = seconds / 3600;
     return hour;
 #else
     return 0;

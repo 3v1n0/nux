@@ -141,17 +141,17 @@ namespace nux
 
   FxStructure::FxStructure()
   {
-    src_texture = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(1, 1, 1, nux::BITFMT_R8G8B8A8);
-    dst_texture = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(1, 1, 1, nux::BITFMT_R8G8B8A8);
-    temp_texture = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(1, 1, 1, nux::BITFMT_R8G8B8A8);
+    src_texture = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(1, 1, 1, nux::BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+    dst_texture = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(1, 1, 1, nux::BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+    temp_texture = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(1, 1, 1, nux::BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
   }
 
   FxStructure::~FxStructure()
   {
   }
 
-  GraphicsEngine::GraphicsEngine(GraphicsDisplay &GlWindow, bool create_rendering_data)
-    :   _graphics_display(GlWindow)
+  GraphicsEngine::GraphicsEngine(GraphicsDisplay& GlWindow, bool create_rendering_data)
+  : _graphics_display(GlWindow)
   {
     _scissor.x = 0;
     _scissor.y = 0;
@@ -196,31 +196,7 @@ namespace nux
     if (create_rendering_data)
     {
 #ifndef NUX_OPENGLES_20
-      if (UsingGLSLCodePath() &&
-        _graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader() &&
-        _graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Vertex_Shader() &&
-        opengl_14_support)
-      {
-        InitSlColorShader();
-        InitSlTextureShader();
-        InitSlPixelateShader();
-        InitSlColorModTexMaskAlpha();
-        InitSl2TextureAdd();
-        InitSl2TextureMod();
-        InitSl4TextureAdd();
-
-        InitSLPower();
-        InitSLAlphaReplicate();
-        InitSLHorizontalGaussFilter();
-        InitSLVerticalGaussFilter();
-        InitSLColorMatrixFilter();
-
-        InitSl2TextureDepRead();
-
-        InitSLHorizontalHQGaussFilter(1);
-        InitSLVerticalHQGaussFilter(1);
-      }
-      else if (_graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader() &&
+      if (_graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader() &&
         _graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Vertex_Program() &&
         opengl_14_support)
       {
@@ -240,50 +216,6 @@ namespace nux
 
         //InitAsm2TextureDepRead(); // NUXTODO: fix the shader
       }
-#else
-      InitSlColorShader();
-      InitSlTextureShader();
-      InitSlPixelateShader();
-      InitSlColorModTexMaskAlpha();
-      InitSl2TextureAdd();
-      InitSl2TextureMod();
-      InitSl4TextureAdd();
-
-      InitSLPower();
-      InitSLAlphaReplicate();
-      InitSLHorizontalGaussFilter();
-      InitSLVerticalGaussFilter();
-      InitSLColorMatrixFilter();
-#endif
-
-#if defined(NUX_OS_WINDOWS)
-      if (_normal_font.IsNull())
-      {
-        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/Tahoma_size_8.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
-        _normal_font = ObjectPtr<FontTexture> (fnt);
-        fnt->UnReference();
-      }
-
-      if (_bold_font.IsNull())
-      {
-        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/Tahoma_size_8_bold.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
-        _bold_font = ObjectPtr<FontTexture> (fnt);
-        fnt->UnReference();
-      }
-#else
-      if (_normal_font.IsNull())
-      {
-        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/Ubuntu_size_10.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
-        _normal_font = ObjectPtr<FontTexture> (fnt);
-        fnt->UnReference();
-      }
-
-      if (_bold_font.IsNull())
-      {
-        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/Ubuntu_size_10_bold.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
-        _bold_font = ObjectPtr<FontTexture> (fnt);
-        fnt->UnReference();
-      }
 #endif
 
       GpuInfo& gpu_info = _graphics_display.GetGpuDevice()->GetGpuInfo();
@@ -297,10 +229,10 @@ namespace nux
       if (gpu_info.Support_EXT_Framebuffer_Object())
         _offscreen_fbo = _graphics_display.GetGpuDevice()->CreateFrameBufferObject();
 
-      _offscreen_color_rt0  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
-      _offscreen_color_rt1  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
-      _offscreen_color_rt2  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
-      _offscreen_color_rt3  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8);
+      _offscreen_color_rt0  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+      _offscreen_color_rt1  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+      _offscreen_color_rt2  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+      _offscreen_color_rt3  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
     }
   }
 
@@ -327,7 +259,7 @@ namespace nux
       (_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion() >= 2))
 #endif
     {
-      NString renderer_string = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char *, glGetString(GL_RENDERER)));
+      NString renderer_string = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char* , glGetString(GL_RENDERER)));
       CHECKGL_MSG(glGetString(GL_RENDERER));
 
       // Exclude Geforce FX from using GLSL
@@ -364,11 +296,41 @@ namespace nux
 
   ObjectPtr<FontTexture> GraphicsEngine::GetFont()
   {
+#if defined(NUX_OS_WINDOWS)
+      if (_normal_font.IsNull())
+      {
+        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/Tahoma_size_8.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+        _normal_font = ObjectPtr<FontTexture> (fnt);
+        fnt->UnReference();
+      }
+#else
+      if (_normal_font.IsNull())
+      {
+        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/nuxfont_size_8.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+        _normal_font = ObjectPtr<FontTexture> (fnt);
+        fnt->UnReference();
+      }
+#endif
     return _normal_font;
   }
 
   ObjectPtr<FontTexture> GraphicsEngine::GetBoldFont()
   {
+    #if defined(NUX_OS_WINDOWS)
+      if (_bold_font.IsNull())
+      {
+        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/Tahoma_size_8_bold.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+        _bold_font = ObjectPtr<FontTexture> (fnt);
+        fnt->UnReference();
+      }
+#else
+      if (_bold_font.IsNull())
+      {
+        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/nuxfont_size_8_bold.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+        _bold_font = ObjectPtr<FontTexture> (fnt);
+        fnt->UnReference();
+      }
+#endif
     return _bold_font;
   }
 
@@ -398,7 +360,7 @@ namespace nux
     }
   }
 
-  void GraphicsEngine::GetContextSize(int &w, int &h) const
+  void GraphicsEngine::GetContextSize(int& w, int& h) const
   {
     w = m_CurrrentContext.width;
     h = m_CurrrentContext.height;
@@ -424,7 +386,7 @@ namespace nux
     return m_CurrrentContext.y;
   }
 
-  void GraphicsEngine::GetWindowSize(int &w, int &h) const
+  void GraphicsEngine::GetWindowSize(int& w, int& h) const
   {
     _graphics_display.GetWindowSize(w, h);
   }
@@ -439,8 +401,8 @@ namespace nux
     return _graphics_display.GetWindowHeight();
   }
 
-  int GraphicsEngine::RenderColorText(ObjectPtr<FontTexture> Font, int x, int y, const NString &Str,
-                                        const Color &TextColor,
+  int GraphicsEngine::RenderColorText(ObjectPtr<FontTexture> Font, int x, int y, const NString& Str,
+                                        const Color& TextColor,
                                         bool WriteAlphaChannel,
                                         int NumCharacter)
   {
@@ -450,8 +412,8 @@ namespace nux
     return 0;
   }
 
-  int GraphicsEngine::RenderColorTextLineStatic(ObjectPtr<FontTexture> Font, const PageBBox &pageSize, const NString &Str,
-      const Color &TextColor,
+  int GraphicsEngine::RenderColorTextLineStatic(ObjectPtr<FontTexture> Font, const PageBBox& pageSize, const NString& Str,
+      const Color& TextColor,
       bool WriteAlphaChannel,
       TextAlignment alignment)
   {
@@ -461,13 +423,13 @@ namespace nux
     return 0;
   }
 
-  int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const PageBBox &pageSize, const NString &Str,
-      const Color &TextColor,
+  int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const PageBBox& pageSize, const NString& Str,
+      const Color& TextColor,
       bool WriteAlphaChannel,
-      const Color &SelectedTextColor,
-      const Color &SelectedTextBackgroundColor,
-      const Color &TextBlinkColor,
-      const Color &CursorColor,
+      const Color& SelectedTextColor,
+      const Color& SelectedTextBackgroundColor,
+      const Color& TextBlinkColor,
+      const Color& CursorColor,
       bool ShowCursor, unsigned int CursorPosition, int offset, int selection_start, int selection_end)
   {
     if (_font_renderer)
@@ -483,7 +445,7 @@ namespace nux
     return 0;
   }
 
-  void GraphicsEngine::SetTexture(int TextureUnit, BaseTexture *Texture)
+  void GraphicsEngine::SetTexture(int TextureUnit, BaseTexture* Texture)
   {
     nuxAssertMsg(Texture != 0, "[GraphicsEngine::SetTexture] Texture is NULL.");
 
@@ -696,7 +658,7 @@ namespace nux
 //     }
   }
 
-  void GraphicsEngine::SetClippingRectangle(const Rect &rect)
+  void GraphicsEngine::SetClippingRectangle(const Rect& rect)
   {
     _clipping_rect = rect;
     SetOpenGLClippingRectangle(rect.x, _viewport.height - rect.y - rect.height, rect.width, rect.height);
@@ -808,7 +770,7 @@ namespace nux
 //    glTranslatef(0.375, 0.375, 0.0);
   /* render all primitives at integer positions */
 
-  const float RASTERIZATION_OFFSET = 0.375f;
+  const float RASTERIZATION_OFFSET = 0.0f;
   void GraphicsEngine::Push2DWindow(int w, int h)
   {
 #ifndef NUX_OPENGLES_20
@@ -935,7 +897,7 @@ namespace nux
     PushModelViewMatrix(Matrix4::IDENTITY());
   }
 
-  void GraphicsEngine::PushModelViewMatrix(const Matrix4 &matrix)
+  void GraphicsEngine::PushModelViewMatrix(const Matrix4& matrix)
   {
     if (_model_view_stack.empty())
       _model_view_matrix = matrix;
@@ -975,7 +937,7 @@ namespace nux
     _model_view_matrix = Matrix4::IDENTITY();
   }
 
-  void GraphicsEngine::SetModelViewMatrix(const Matrix4 &matrix)
+  void GraphicsEngine::SetModelViewMatrix(const Matrix4& matrix)
   {
     _model_view_matrix = matrix;
   }
@@ -1001,7 +963,7 @@ namespace nux
     return(int)_model_view_stack.size();
   }
 
-  void GraphicsEngine::PushPorterDuffBlend(const PorterDuffOperator &porter_duff_op)
+  void GraphicsEngine::PushPorterDuffBlend(const PorterDuffOperator& porter_duff_op)
   {
     BlendOperator blend_op;
     blend_op.SetPorterDuffOperator(porter_duff_op);
@@ -1054,7 +1016,7 @@ namespace nux
     return mat;
   }
 
-  void GraphicsEngine::SetProjectionMatrix(const Matrix4 &matrix)
+  void GraphicsEngine::SetProjectionMatrix(const Matrix4& matrix)
   {
     _projection_matrix = matrix;
   }
@@ -1149,7 +1111,7 @@ namespace nux
     return _viewport.y;
   }
 
-  void  GraphicsEngine::GetViewportSize(int &viewport_width, int &viewport_height) const
+  void  GraphicsEngine::GetViewportSize(int& viewport_width, int& viewport_height) const
   {
     viewport_width = _viewport.width;
     viewport_height = _viewport.height;
@@ -1278,12 +1240,12 @@ namespace nux
     m_line_stats            = 0;
   }
 
-  ObjectPtr< CachedResourceData > GraphicsEngine::CacheResource(ResourceData *Resource)
+  ObjectPtr< CachedResourceData > GraphicsEngine::CacheResource(ResourceData* Resource)
   {
     return ResourceCache.GetCachedResource(Resource);
   }
 
-  bool GraphicsEngine::FlushCachedResourceData(ResourceData *Resource)
+  bool GraphicsEngine::FlushCachedResourceData(ResourceData* Resource)
   {
     if (!IsResourceCached(Resource))
       return false;
@@ -1292,16 +1254,16 @@ namespace nux
     return true;
   }
 
-  void GraphicsEngine::UpdateResource(ResourceData *Resource)
+  void GraphicsEngine::UpdateResource(ResourceData* Resource)
   {
     ObjectPtr<CachedResourceData> GLResource = ResourceCache.FindCachedResourceById(Resource->GetResourceIndex()); //(CachedResourceData*)(*(ResourceCache.ResourceMap.find(Resource->ResourceIndex))).second;
 
     if (GLResource.IsValid())
     {
       // Iterate through all resource updater types(list is sorted by subclass depth).
-      for (t_u32 i = 0; i < ResourceCache.GetResourceUpdaters().size(); ++i)
+      for (unsigned int i = 0; i < ResourceCache.GetResourceUpdaters().size(); ++i)
       {
-        NResourceUpdater *ResourceUpdater = ResourceCache.GetResourceUpdaters() [i];
+        NResourceUpdater* ResourceUpdater = ResourceCache.GetResourceUpdaters() [i];
         nuxAssert(ResourceUpdater);
 
         // Check if the updater is valid for updating the resource.
@@ -1314,7 +1276,7 @@ namespace nux
     }
   }
 
-  bool GraphicsEngine::IsResourceCached(ResourceData *Resource)
+  bool GraphicsEngine::IsResourceCached(ResourceData* Resource)
   {
     return ResourceCache.IsCachedResource(Resource);
   }
@@ -1327,13 +1289,13 @@ namespace nux
   {
     if ((colorbuffer.IsValid() == false) || (colorbuffer->GetWidth() != width) || (colorbuffer->GetHeight() != height))
     {
-      colorbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_R8G8B8A8);
+      colorbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
     }
 
     if ((depthbuffer.IsValid()) && ((depthbuffer->GetWidth() != width) || (depthbuffer->GetHeight() != height)))
     {
       // Generate a new depth texture only if a valid one was passed to this function.
-      depthbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_D24S8);
+      depthbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
     }
 
     fbo->FormatFrameBufferObject(width, height, BITFMT_R8G8B8A8);
@@ -1421,7 +1383,7 @@ namespace nux
       Y = bb_height - Y - H;
     }
 
-    ObjectPtr <IOpenGLBaseTexture> device_texture = _graphics_display.GetGpuDevice()->CreateSystemCapableDeviceTexture(W, H, 1, BITFMT_R8G8B8A8);
+    ObjectPtr <IOpenGLBaseTexture> device_texture = _graphics_display.GetGpuDevice()->CreateSystemCapableDeviceTexture(W, H, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
     ObjectPtr <IOpenGLSurface> sfc = device_texture->GetSurfaceLevel(0);
 
     sfc->CopyRenderTarget(X, Y, W, H);

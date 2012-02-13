@@ -41,6 +41,11 @@ namespace nux
 
   public:
 
+    /*
+        If ComputeContentSize is called while outside of the layout process (\sa IsInsideLayoutCycle) then the parents of 
+        this object maybe added to the layout queue if this view size changes. \sa Area::ReconfigureParentLayout.
+
+    */
     virtual long ComputeContentSize();
     virtual void ComputeContentPosition(float offsetX, float offsetY);
 
@@ -123,7 +128,8 @@ namespace nux
 
     //! Set the default layout for this view.
     /*!
-        Set the default layout for this view.
+        Set the default layout for this view. Assigns a scale factor of 1 to the layout.
+
         @param layout A Layout object.
     */
     virtual bool SetLayout(Layout *layout);
@@ -160,7 +166,6 @@ namespace nux
     void InitializeLayout();
 
     Color m_TextColor;
-    ObjectPtr<FontTexture> _font;
 
     //! Deprecated. Use GetLayout();
     virtual Layout* GetCompositionLayout();
@@ -195,6 +200,7 @@ namespace nux
     bool full_view_draw_cmd_; //<! True if Draw is called before ContentDraw. It is read-only and can be accessed by calling IsFullRedraw();
 
   private:
+    ObjectPtr<FontTexture> _font;
 
     friend class WindowCompositor;
     friend class Layout;

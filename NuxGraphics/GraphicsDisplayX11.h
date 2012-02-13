@@ -35,6 +35,7 @@
 /* keysym.h contains keysymbols which we use to resolv what keys that are being pressed */
 #include <X11/keysym.h>
 
+
 #include <X11/extensions/xf86vmode.h>
 #include <X11/extensions/Xinerama.h>
 
@@ -78,8 +79,6 @@ namespace nux
 // This will become GLWindow
   class GraphicsDisplay : public GraphicSystem
   {
-    friend class GraphicsEngine;
-
   private:
     Display     *m_X11Display;
     int         m_X11Screen;
@@ -90,11 +89,13 @@ namespace nux
 #ifndef NUX_OPENGLES_20
     GLXContext  m_GLCtx;
     GLXFBConfig _fb_config;
+    GLXWindow   glx_window_;
 #else
     EGLContext  m_GLCtx;
     EGLSurface  m_GLSurface;
     EGLConfig   _fb_config;
 #endif
+
     XSetWindowAttributes m_X11Attr;
 
     int m_NumVideoModes;
@@ -136,6 +137,13 @@ namespace nux
     int m_BestMode;
 
     bool m_CreatedFromForeignWindow;
+    Time last_click_time_;
+    /*!
+        Maximum time allowed between the end of the last click (mouse up) and the next mouse down
+        to be considered as a double click event.
+    */
+    static int double_click_time_delay; 
+    int double_click_counter_;
 
   public:
     typedef void(*GrabReleaseCallback) (bool replaced, void *user_data);
@@ -224,6 +232,17 @@ namespace nux
 
 #if defined(NUX_OS_LINUX)
     void InjectXEvent(Event *evt, XEvent xevent);
+
+    typedef struct _EventFilterArg
+    {
+      bool   (*filter)    (XEvent event, void * data);
+      void * data;
+    } EventFilterArg;
+
+    void AddEventFilter (EventFilterArg arg);
+    void RemoveEventFilter (void *owner);
+
+    std::list<EventFilterArg> _event_filters;
 #endif
     
     Event &GetCurrentEvent();
@@ -369,7 +388,7 @@ namespace nux
     Window _drag_window;
     Window _drag_source;
     long _drag_drop_timestamp;
-    
+
     void * _dnd_source_data;
     DndSourceFuncs _dnd_source_funcs;
 
@@ -436,7 +455,13 @@ namespace nux
     GLEWContext m_GLEWContext;
     GLXEWContext m_GLXEWContext;
 #endif
+
+    int MouseMove(XEvent xevent, Event *event);
+    int MousePress(XEvent xevent, Event *event);
+    int MouseRelease(XEvent xevent, Event *event);
+
     friend class DisplayAccessController;
+    friend class GraphicsEngine;
   };
 
 }

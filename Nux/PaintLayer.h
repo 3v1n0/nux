@@ -81,6 +81,7 @@ namespace nux
   {
   public:
     TextureLayer(ObjectPtr< IOpenGLBaseTexture > device_texture, TexCoordXForm texxform, const Color &color, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default);
+    virtual ~TextureLayer();
     virtual void Renderlayer(GraphicsEngine &graphics_engine);
     virtual AbstractPaintLayer *Clone() const;
 

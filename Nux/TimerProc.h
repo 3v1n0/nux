@@ -28,12 +28,14 @@ namespace nux
 
   class TimerHandler;
   class WindowThread;
-  
-  class TimerFunctor : public sigc::trackable
+
+  //! A timeout callback. Fires a signal when a timer expires.
+  class TimeOutSignal : public sigc::trackable
   {
   public:
     sigc::signal<void, void *> time_expires;
   };
+  typedef TimeOutSignal TimerFunctor;
 
   class TimerObject;
 
@@ -46,7 +48,8 @@ namespace nux
     TimerHandle(const TimerHandle &);
 
     TimerHandle &operator = (const TimerHandle &);
-    bool IsValid() const;
+    bool IsValid() const; //!<deprecated. use Activated().
+    bool Activated() const;
 
     //! return a factor between 0.0f and 1.0f representing the progress of the timer.
     float GetProgress() const;
@@ -62,6 +65,7 @@ namespace nux
     friend class TimerHandler;
   };
 
+  //! A timer manager class created by WindowThread.
   class TimerHandler
   {
   public:
@@ -73,7 +77,7 @@ namespace nux
       TIMERTYPE_ITERATION,
     };
 
-    TimerHandler();
+    TimerHandler(WindowThread *window_thread);
     ~TimerHandler();
 
     //! Add a timer callback.
@@ -82,12 +86,12 @@ namespace nux
       The returned TimerObject should not be deleted by the caller.
 
       @param Milliseconds   Period delay before the callback is executed.
-      @param Callback       The callback to execute when the timer expires.
+      @param timeout_signal       The callback to execute when the timer expires.
       @param Data           The callback data
-      @param window_thread  Thread safety mesure. Pass the WindowThread associated to this TimerHandler if it is called from a diferent thread than the one where the main thread was created.
+      @param window_thread  Thread safety mesure. Pass the WindowThread associated to this TimerHandler if it is called from a different thread than the one where the main thread was created.
       @return               A handle to the timer.
     */
-    TimerHandle AddTimerHandler (unsigned int Period, TimerFunctor *Callback, void *Data, WindowThread* window_thread = NULL);
+    TimerHandle AddTimerHandler (unsigned int Period, TimeOutSignal *timeout_signal, void *Data, WindowThread* window_thread = NULL);
     //! Add a periodic timer callback.
     /*!
       Add a timer callback to the timer manager. Every time the timer expires, the callback function is executed.
@@ -95,11 +99,11 @@ namespace nux
 
       @param Milliseconds   Period delay before the callback is executed.
       @param Duration       The duration over which the timer is repeated.
-      @param Callback       The callback to execute when the timer expires.
+      @param timeout_signal       The callback to execute when the timer expires.
       @param Data           The callback data
       @return               A handle to the timer.
     */
-    TimerHandle AddPeriodicTimerHandler (unsigned int Period, int Duration, TimerFunctor *Callback, void *Data);
+    TimerHandle AddPeriodicTimerHandler (unsigned int Period, int Duration, TimeOutSignal *timeout_signal, void *Data);
     //! Add a timer callback to be called a finite number of time.
     /*!
       Add a timer callback to the timer manager. The timer callback will be call N times exactly.
@@ -108,11 +112,11 @@ namespace nux
 
       @param Milliseconds       Period delay before the callback is executed.
       @param NumberOfIteration  The number of time to repeat the the wait period.
-      @param Callback           The callback to execute when the timer expires.
+      @param timeout_signal           The callback to execute when the timer expires.
       @param Data               The callback data
       @return                   A handle to the timer.
     */
-    TimerHandle AddCountIterationTimerHandler (unsigned int Period, int NumberOfIteration, TimerFunctor *Callback, void *Data);
+    TimerHandle AddCountIterationTimerHandler (unsigned int Period, int NumberOfIteration, TimeOutSignal *timeout_signal, void *Data);
 
     //! Search for a timer handle.
     /*!
@@ -137,7 +141,7 @@ namespace nux
     int DelayUntilNextTimerExpires();
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-    int ExecTimerHandler (t_u32 timer_id);
+    int ExecTimerHandler (unsigned int timer_id);
 #else
     int ExecTimerHandler();
 #endif
@@ -146,9 +150,11 @@ namespace nux
     void StartEarlyTimerObjects();
 
   private:
+    WindowThread *window_thread_; //!< The WindowThread to which this object belongs.
+
     bool m_IsProceesingTimers;
     TimerObject *AddHandle (TimerObject *handle);
-    t_u32 GetNumPendingHandler();
+    unsigned int GetNumPendingHandler();
 
     //! Single linked list of timer delays.
     TimerObject *m_timer_object_queue;

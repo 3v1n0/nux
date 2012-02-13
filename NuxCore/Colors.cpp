@@ -26,6 +26,18 @@ namespace nux
 {
   namespace color
   {
+    // Definition of Luma coefficients as per ITU-R Recommendation BT.601
+    // http://en.wikipedia.org/wiki/Rec._601
+    const float LumaRed   = 0.299f;
+    const float LumaGreen = 0.587f;
+    const float LumaBlue  = 0.114f;
+
+    //     // Definition of Luma coefficients as per ITU-R Recommendation BT.709
+    //     // http://en.wikipedia.org/wiki/Rec._709
+    //     float LumaRed   = 0.2126f;
+    //     float LumaGreen = 0.7152f;
+    //     float LumaBlue  = 0.0722f;
+
     const Color Transparent(0, 0, 0, 0);
 
     //Red colors

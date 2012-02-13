@@ -28,7 +28,7 @@ namespace nux
 // Copy a string with length checking.
 //warning: Behavior differs from strncpy; last character is zeroed.
 //
-  TCHAR *Strncpy (TCHAR *Dest, t_size Size, const TCHAR *Src, t_size MaxLen)
+  TCHAR *Strncpy (TCHAR *Dest, size_t Size, const TCHAR *Src, size_t MaxLen)
   {
     nuxAssert (MaxLen >= 0);
     STRNCPY_S (Dest, Size, Src, MaxLen);
@@ -39,9 +39,9 @@ namespace nux
 //
 // Concatenate a string with length checking
 //
-  TCHAR *Strncat (TCHAR *Dest, t_size Size, const TCHAR *Src, t_size MaxLen)
+  TCHAR *Strncat (TCHAR *Dest, size_t Size, const TCHAR *Src, size_t MaxLen)
   {
-    t_size Len = StringLength (Dest);
+    size_t Len = StringLength (Dest);
     nuxAssert (Size >= Len);
     TCHAR *NewDest = Dest + Len;
 
@@ -70,7 +70,7 @@ namespace nux
 
     bool AlphaNum = 0;
     TCHAR First = ( (*Find < TEXT ('a') ) || (*Find > TEXT ('z') ) ) ? (*Find) : (*Find + TEXT ('A') - TEXT ('a') );
-    t_size Len = StringLength (Find++) - 1;
+    size_t Len = StringLength (Find++) - 1;
     TCHAR chr = *Str++;
 
     while (chr)
@@ -99,7 +99,7 @@ namespace nux
     if (CharString == 0)
       return false;
 
-    t_size Size = StringLength (CharString);
+    size_t Size = StringLength (CharString);
 
     if (Size == 0)
       return false;
@@ -148,7 +148,7 @@ namespace nux
     if (str == 0)
       return 0;
 
-    t_size len = StringLength (str);
+    size_t len = StringLength (str);
 
     if (len >= 0)
     {
@@ -209,120 +209,120 @@ namespace nux
 // }
 
 
-  t_size ValueToLiteralString (char *buffer, t_u32 len, t_u16     value)
+  size_t ValueToLiteralString (char *buffer, unsigned int len, unsigned short     value)
   {
     return ToCharString (buffer, len, "%hu",     value);
   }
-  t_size ValueToLiteralString (char *buffer, t_u32 len, t_s16     value)
+  size_t ValueToLiteralString (char *buffer, unsigned int len, short     value)
   {
     return ToCharString (buffer, len, "%hi",     value);
   }
-  t_size ValueToLiteralString (char *buffer, t_u32 len, t_u32     value)
+  size_t ValueToLiteralString (char *buffer, unsigned int len, unsigned int     value)
   {
     return ToCharString (buffer, len, "%lu",     value);
   }
-  t_size ValueToLiteralString (char *buffer, t_u32 len, t_s32     value)
+  size_t ValueToLiteralString (char *buffer, unsigned int len, int     value)
   {
     return ToCharString (buffer, len, "%li",     value);
   }
-  t_size ValueToLiteralString (char *buffer, t_u32 len, t_ulong   value)
+  size_t ValueToLiteralString (char *buffer, unsigned int len, unsigned long   value)
   {
     return ToCharString (buffer, len, "%lu",     value);
   }
-  t_size ValueToLiteralString (char *buffer, t_u32 len, t_long    value)
+  size_t ValueToLiteralString (char *buffer, unsigned int len, long    value)
   {
     return ToCharString (buffer, len, "%li",     value);
   }
-  t_size ValueToLiteralString (char *buffer, t_u32 len, t_u64     value)
+  size_t ValueToLiteralString (char *buffer, unsigned int len, unsigned long long     value)
   {
     return ToCharString (buffer, len, "%I64u",   value);
   }
-  t_size ValueToLiteralString (char *buffer, t_u32 len, t_s64     value)
+  size_t ValueToLiteralString (char *buffer, unsigned int len, long long     value)
   {
     return ToCharString (buffer, len, "%I64i",   value);
   }
-  t_size ValueToLiteralString (char *buffer, t_u32 len, t_float   value)
+  size_t ValueToLiteralString (char *buffer, unsigned int len, float   value)
   {
     return ToCharString (buffer, len, "%.10g",   value);
   }
-  t_size ValueToLiteralString (char *buffer, t_u32 len, t_double  value)
+  size_t ValueToLiteralString (char *buffer, unsigned int len, double  value)
   {
     return ToCharString (buffer, len, "%.20lg",  value);
   }
-  t_size ValueToLiteralString (char *buffer, t_u32 len, t_u8      value)
+  size_t ValueToLiteralString (char *buffer, unsigned int len, t_u8      value)
   {
-    return ValueToLiteralString (buffer, len,    (t_u32) value);
+    return ValueToLiteralString (buffer, len,    (unsigned int) value);
   }
-  t_size ValueToLiteralString (char *buffer, t_u32 len, t_char    value)
+  size_t ValueToLiteralString (char *buffer, unsigned int len, t_char    value)
   {
-    return ValueToLiteralString (buffer, len,    (t_s32) value);
+    return ValueToLiteralString (buffer, len,    (int) value);
   }
-  t_size ValueToLiteralString (char *buffer, t_u32 len, t_s8      value)
+  size_t ValueToLiteralString (char *buffer, unsigned int len, t_s8      value)
   {
-    return ValueToLiteralString (buffer, len,    (t_s32) value);
+    return ValueToLiteralString (buffer, len,    (int) value);
   }
 
-  bool ValueFromLiteralString (const char *buffer, t_u32 len, t_u16    &value)
+  bool ValueFromLiteralString (const char *buffer, unsigned int len, unsigned short    &value)
   {
     return FromCharString (buffer, len, "%hu", value );
   }
-  bool ValueFromLiteralString (const char *buffer, t_u32 len, t_s16    &value)
+  bool ValueFromLiteralString (const char *buffer, unsigned int len, short    &value)
   {
     return FromCharString (buffer, len, "%hi", value );
   }
-  bool ValueFromLiteralString (const char *buffer, t_u32 len, t_u32    &value)
+  bool ValueFromLiteralString (const char *buffer, unsigned int len, unsigned int    &value)
   {
     return FromCharString (buffer, len, "%lu", value );
   }
-  bool ValueFromLiteralString (const char *buffer, t_u32 len, t_s32    &value)
+  bool ValueFromLiteralString (const char *buffer, unsigned int len, int    &value)
   {
     return FromCharString (buffer, len, "%li", value );
   }
-  bool ValueFromLiteralString (const char *buffer, t_u32 len, t_ulong  &value)
+  bool ValueFromLiteralString (const char *buffer, unsigned int len, unsigned long  &value)
   {
     return FromCharString (buffer, len, "%lu", value );
   }
-  bool ValueFromLiteralString (const char *buffer, t_u32 len, t_long   &value)
+  bool ValueFromLiteralString (const char *buffer, unsigned int len, long   &value)
   {
     return FromCharString (buffer, len, "%li", value );
   }
-  bool ValueFromLiteralString (const char *buffer, t_u32 len, t_u64    &value)
+  bool ValueFromLiteralString (const char *buffer, unsigned int len, unsigned long long    &value)
   {
     return FromCharString (buffer, len, "%I64u", value );
   }
-  bool ValueFromLiteralString (const char *buffer, t_u32 len, t_s64    &value)
+  bool ValueFromLiteralString (const char *buffer, unsigned int len, long long    &value)
   {
     return FromCharString (buffer, len, "%I64i", value );
   }
-  bool ValueFromLiteralString (const char *buffer, t_u32 len, t_float  &value)
+  bool ValueFromLiteralString (const char *buffer, unsigned int len, float  &value)
   {
     return FromCharString (buffer, len, "%g", value );
   }
-  bool ValueFromLiteralString (const char *buffer, t_u32 len, t_double &value)
+  bool ValueFromLiteralString (const char *buffer, unsigned int len, double &value)
   {
     return FromCharString (buffer, len, "%lg", value );
   }
-  bool ValueFromLiteralString (const char *buffer, t_u32 len, t_u8     &value)
+  bool ValueFromLiteralString (const char *buffer, unsigned int len, t_u8     &value)
   {
-    t_u32 tmp = 0;
+    unsigned int tmp = 0;
     bool result;
     result = ValueFromLiteralString (buffer, len, tmp);
     value = (t_u8) tmp;
     return result;
   }
 
-  bool ValueFromLiteralString (const char *buffer, t_u32 len, t_char &value)
+  bool ValueFromLiteralString (const char *buffer, unsigned int len, t_char &value)
   {
-    t_s32 tmp = 0;
+    int tmp = 0;
     bool result;
     result = ValueFromLiteralString (buffer, len, tmp);
     value = (t_char) tmp;
     return result;
   }
 
-  bool ValueFromLiteralString (const char *buffer, t_u32 len, t_s8 &value)
+  bool ValueFromLiteralString (const char *buffer, unsigned int len, t_s8 &value)
   {
-    t_s32 tmp = 0;
+    int tmp = 0;
     bool result;
     result = ValueFromLiteralString (buffer, len, tmp);
     value = (t_s8) tmp;
@@ -420,12 +420,12 @@ namespace nux
     return m_string.c_str();
   }
 
-  t_size NString::Length() const
+  size_t NString::Length() const
   {
     return m_string.length();
   }
 
-  t_size NString::Size() const
+  size_t NString::Size() const
   {
     return m_string.size();
   }
@@ -440,100 +440,100 @@ namespace nux
     return m_string.empty();
   }
 
-  void NString::Erase (t_size Pos, t_size Count)
+  void NString::Erase (size_t Pos, size_t Count)
   {
     m_string.erase (Pos, Count);
   }
 
-  NString &NString::Insert (t_size Pos, const TCHAR *Ptr)
+  NString &NString::Insert (size_t Pos, const TCHAR *Ptr)
   {
     m_string.insert (Pos, Ptr);
     return *this;
   }
 
-  NString &NString::Insert (t_size Pos, const TCHAR *Ptr, t_size Count)
+  NString &NString::Insert (size_t Pos, const TCHAR *Ptr, size_t Count)
   {
     m_string.insert (Pos, Ptr, Count);
     return *this;
   }
 
-  NString &NString::Insert (t_size Pos, const tstring &Str)
+  NString &NString::Insert (size_t Pos, const tstring &Str)
   {
     m_string.insert (Pos, Str);
     return *this;
   }
 
-  NString &NString::Insert (t_size Pos, const tstring &Str, t_size Offset, t_size Count)
+  NString &NString::Insert (size_t Pos, const tstring &Str, size_t Offset, size_t Count)
   {
     m_string.insert (Pos, Str, Offset, Count);
     return *this;
   }
 
-  NString &NString::Insert (t_size Pos, const NString &Str)
+  NString &NString::Insert (size_t Pos, const NString &Str)
   {
     m_string.insert (Pos, Str.m_string);
     return *this;
   }
 
-  NString &NString::Insert (t_size Pos, const NString &Str, t_size Offset, t_size Count)
+  NString &NString::Insert (size_t Pos, const NString &Str, size_t Offset, size_t Count)
   {
     m_string.insert (Pos, Str.m_string, Offset, Count);
     return *this;
   }
 
-  NString &NString::Insert (t_size Pos, int Count, const TCHAR &Ch)
+  NString &NString::Insert (size_t Pos, int Count, const TCHAR &Ch)
   {
     m_string.insert (Pos, Count, Ch);
     return *this;
   }
 
-  const TCHAR &NString::operator[] (t_size ChPos) const
+  const TCHAR &NString::operator[] (size_t ChPos) const
   {
     return m_string[ChPos];
   }
 
-  TCHAR &NString::operator[] (t_size ChPos)
+  TCHAR &NString::operator[] (size_t ChPos)
   {
     return m_string[ChPos];
   }
 
-  NString &NString::Replace (t_size Pos1, t_size Num1, const TCHAR *Ptr)
+  NString &NString::Replace (size_t Pos1, size_t Num1, const TCHAR *Ptr)
   {
     m_string.replace (Pos1, Num1, Ptr);
     return *this;
   }
 
-  NString &NString::Replace (t_size Pos1, t_size Num1, const TCHAR *Ptr, t_size Num2)
+  NString &NString::Replace (size_t Pos1, size_t Num1, const TCHAR *Ptr, size_t Num2)
   {
     m_string.replace (Pos1, Num1, Ptr, Num2);
     return *this;
   }
 
-  NString &NString::Replace (t_size Pos1, t_size Num1, const tstring &Str)
+  NString &NString::Replace (size_t Pos1, size_t Num1, const tstring &Str)
   {
     m_string.replace (Pos1, Num1, Str);
     return *this;
   }
 
-  NString &NString::Replace (t_size Pos1, t_size Num1, const tstring &Str, t_size Pos2, t_size Num2)
+  NString &NString::Replace (size_t Pos1, size_t Num1, const tstring &Str, size_t Pos2, size_t Num2)
   {
     m_string.replace (Pos1, Num1, Str, Pos2, Num2);
     return *this;
   }
 
-  NString &NString::Replace (t_size Pos1, t_size Num1, const NString &Str)
+  NString &NString::Replace (size_t Pos1, size_t Num1, const NString &Str)
   {
     m_string.replace (Pos1, Num1, Str.m_string);
     return *this;
   }
 
-  NString &NString::Replace (t_size Pos1, t_size Num1, const NString &Str, t_size Pos2, t_size Num2)
+  NString &NString::Replace (size_t Pos1, size_t Num1, const NString &Str, size_t Pos2, size_t Num2)
   {
     m_string.replace (Pos1, Num1, Str.m_string, Pos2, Num2);
     return *this;
   }
 
-  NString &NString::Replace (t_size Pos1, t_size Num1, t_size Count, TCHAR Ch)
+  NString &NString::Replace (size_t Pos1, size_t Num1, size_t Count, TCHAR Ch)
   {
     m_string.replace (Pos1, Num1, Count, Ch);
     return *this;
@@ -542,9 +542,9 @@ namespace nux
   void NString::Reverse()
   {
     NString rev;
-    t_size l = Length();
+    size_t l = Length();
 
-    for (t_size i = l - 1; i >= 0; i--)
+    for (size_t i = l - 1; i >= 0; i--)
     {
       rev += m_string[i];
     }
@@ -554,7 +554,7 @@ namespace nux
 
   NString &NString::SearchAndReplace (TCHAR ChOut, TCHAR ChIn)
   {
-    for (t_size i = 0; i < Length(); i++)
+    for (size_t i = 0; i < Length(); i++)
       if (m_string[i] == ChOut)
         m_string[i] = ChIn;
 
@@ -562,10 +562,10 @@ namespace nux
   }
 
 //! Return The last position of the substring suffix or -1 if it is not found.
-  t_size NString::FindLastOccurence (const TCHAR &suffix) const
+  size_t NString::FindLastOccurence (const TCHAR &suffix) const
   {
-    t_size start = 0;
-    t_size pos = 0;
+    size_t start = 0;
+    size_t pos = 0;
 
     do
     {
@@ -580,10 +580,10 @@ namespace nux
   }
 
 //! Return The last position of the substring suffix or -1 if it is not found.
-  t_size NString::FindLastOccurence (const TCHAR *suffix) const
+  size_t NString::FindLastOccurence (const TCHAR *suffix) const
   {
-    t_size start = 0;
-    t_size pos = 0;
+    size_t start = 0;
+    size_t pos = 0;
 
     do
     {
@@ -598,10 +598,10 @@ namespace nux
   }
 
 //! Return The last position of the substring suffix or -1 if it is not found.
-  t_size NString::FindLastOccurence (const tstring &suffix) const
+  size_t NString::FindLastOccurence (const tstring &suffix) const
   {
-    t_size start = 0;
-    t_size pos = 0;
+    size_t start = 0;
+    size_t pos = 0;
 
     do
     {
@@ -616,10 +616,10 @@ namespace nux
   }
 
 //! Return The last position of the substring suffix or -1 if it is not found.
-  t_size NString::FindLastOccurence (const NString &suffix) const
+  size_t NString::FindLastOccurence (const NString &suffix) const
   {
-    t_size start = 0;
-    t_size pos = 0;
+    size_t start = 0;
+    size_t pos = 0;
 
     do
     {
@@ -635,147 +635,147 @@ namespace nux
 
 
 //! Return the position of the first occurrence of the substring suffix or -1 if it is not found.
-  t_size NString::FindFirstOccurence (const TCHAR &suffix)  const
+  size_t NString::FindFirstOccurence (const TCHAR &suffix)  const
   {
-    t_size pos = 0;
+    size_t pos = 0;
     pos = m_string.find (suffix, pos);
     return (pos != tstring::npos) ? pos : -1;
   }
 
 //! Return the position of the first occurrence of the substring suffix or -1 if it is not found.
-  t_size NString::FindFirstOccurence (const TCHAR *suffix)  const
+  size_t NString::FindFirstOccurence (const TCHAR *suffix)  const
   {
-    t_size pos = 0;
+    size_t pos = 0;
     pos = m_string.find (suffix, pos);
     return (pos != tstring::npos) ? pos : -1;
   }
 
 //! Return the position of the first occurrence of the substring suffix or -1 if it is not found.
-  t_size NString::FindFirstOccurence (const tstring &suffix)  const
+  size_t NString::FindFirstOccurence (const tstring &suffix)  const
   {
-    t_size pos = 0;
+    size_t pos = 0;
     pos = m_string.find (suffix, pos);
     return (pos != tstring::npos) ? pos : -1;
   }
 
 //! Return the position of the first occurrence of the substring suffix or -1 if it is not found.
-  t_size NString::FindFirstOccurence (const NString &suffix) const
+  size_t NString::FindFirstOccurence (const NString &suffix) const
   {
-    t_size pos = 0;
+    size_t pos = 0;
     pos = m_string.find (suffix.m_string, pos);
     return (pos != tstring::npos) ? pos : -1;
   }
 
 //! Return the position of the first occurrence of the substring suffix or -1 if it is not found.
-  t_size NString::FindNextOccurence (const TCHAR &suffix, t_size start) const
+  size_t NString::FindNextOccurence (const TCHAR &suffix, size_t start) const
   {
-    t_size pos = 0;
+    size_t pos = 0;
     pos = m_string.find (suffix, start);
     return (pos != tstring::npos) ? pos : -1;
   }
 
 //! Return the position of the first occurrence of the substring suffix or -1 if it is not found.
-  t_size NString::FindNextOccurence (const TCHAR *suffix, t_size start) const
+  size_t NString::FindNextOccurence (const TCHAR *suffix, size_t start) const
   {
-    t_size pos = 0;
+    size_t pos = 0;
     pos = m_string.find (suffix, start);
     return (pos != tstring::npos) ? pos : -1;
   }
 
 //! Return the position of the first occurrence of the substring suffix or -1 if it is not found.
-  t_size NString::FindNextOccurence (const tstring &suffix, t_size start) const
+  size_t NString::FindNextOccurence (const tstring &suffix, size_t start) const
   {
-    t_size pos = 0;
+    size_t pos = 0;
     pos = m_string.find (suffix, start);
     return (pos != tstring::npos) ? pos : -1;
   }
 
 //! Return the position of the first occurrence of the substring suffix or -1 if it is not found.
-  t_size NString::FindNextOccurence (const NString &suffix, t_size start) const
+  size_t NString::FindNextOccurence (const NString &suffix, size_t start) const
   {
-    t_size pos = 0;
+    size_t pos = 0;
     pos = m_string.find (suffix.m_string, start);
     return (pos != tstring::npos) ? pos : -1;
   }
 
 //! Searches through a string for the first character that matches any element of a specified string. Return -1 if it is not found.
-  t_size NString::FindFirstOccurenceOf (const TCHAR &str) const
+  size_t NString::FindFirstOccurenceOf (const TCHAR &str) const
   {
-    t_size pos = 0;
+    size_t pos = 0;
     pos = m_string.find_first_of (str, pos);
     return (pos != tstring::npos) ? pos : -1;
   }
 //! Searches through a string for the first character that matches any element of a specified string. Return -1 if it is not found.
-  t_size NString::FindFirstOccurenceOf (const TCHAR *str) const
+  size_t NString::FindFirstOccurenceOf (const TCHAR *str) const
   {
-    t_size pos = 0;
+    size_t pos = 0;
     pos = m_string.find_first_of (str, pos);
     return (pos != tstring::npos) ? pos : -1;
   }
 //! Searches through a string for the first character that matches any element of a specified string. Return -1 if it is not found.
-  t_size NString::FindFirstOccurenceOf (const tstring &str) const
+  size_t NString::FindFirstOccurenceOf (const tstring &str) const
   {
-    t_size pos = 0;
+    size_t pos = 0;
     pos = m_string.find_first_of (str, pos);
     return (pos != tstring::npos) ? pos : -1;
   }
 //! Searches through a string for the first character that matches any element of a specified string. Return -1 if it is not found.
-  t_size NString::FindFirstOccurenceOf (const NString &str) const
+  size_t NString::FindFirstOccurenceOf (const NString &str) const
   {
-    t_size pos = 0;
+    size_t pos = 0;
     pos = m_string.find_first_of (str.m_string, pos);
     return (pos != tstring::npos) ? pos : -1;
   }
 
 //! Searches through a string for the last character that matches any element of a specified string. Return -1 if it is not found.
-  t_size NString::FindLastOccurenceOf (const TCHAR &str) const
+  size_t NString::FindLastOccurenceOf (const TCHAR &str) const
   {
-    t_size pos = 0;
+    size_t pos = 0;
     pos = m_string.find_last_of (str, pos);
     return (pos != tstring::npos) ? pos : -1;
   }
 //! Searches through a string for the last character that matches any element of a specified string. Return -1 if it is not found.
-  t_size NString::FindLastOccurenceOf (const TCHAR *str) const
+  size_t NString::FindLastOccurenceOf (const TCHAR *str) const
   {
-    t_size pos = 0;
+    size_t pos = 0;
     pos = m_string.find_last_of (str, pos);
     return (pos != tstring::npos) ? pos : -1;
   }
 //! Searches through a string for the last character that matches any element of a specified string. Return -1 if it is not found.
-  t_size NString::FindLastOccurenceOf (const tstring &str) const
+  size_t NString::FindLastOccurenceOf (const tstring &str) const
   {
-    t_size pos = 0;
+    size_t pos = 0;
     pos = m_string.find_last_of (str, pos);
     return (pos != tstring::npos) ? pos : -1;
   }
 //! Searches through a string for the last character that matches any element of a specified string. Return -1 if it is not found.
-  t_size NString::FindLastOccurenceOf (const NString &str) const
+  size_t NString::FindLastOccurenceOf (const NString &str) const
   {
-    t_size pos = 0;
+    size_t pos = 0;
     pos = m_string.find_last_of (str.m_string, pos);
     return (pos != tstring::npos) ? pos : -1;
   }
 
-  t_size NString::Find (NString str, int start)
+  size_t NString::Find (NString str, int start)
   {
-    t_size pos = m_string.find (str.m_string, start);
+    size_t pos = m_string.find (str.m_string, start);
     return (pos != tstring::npos) ? pos : -1;
   }
 
-  t_size NString::Find (TCHAR c, int start)
+  size_t NString::Find (TCHAR c, int start)
   {
-    t_size pos = m_string.find (c, start);
+    size_t pos = m_string.find (c, start);
     return (pos != tstring::npos) ? pos : -1;
   }
 
   bool NString::IsSuffix (const TCHAR &suffix)
   {
-    t_size l = m_string.length() - 1;
+    size_t l = m_string.length() - 1;
 
     if (l < 0)
       return false;
 
-    t_size pos = FindLastOccurence (suffix);
+    size_t pos = FindLastOccurence (suffix);
 
     if (pos == tstring::npos)
       return false;
@@ -785,17 +785,17 @@ namespace nux
 
   bool NString::IsSuffix (const TCHAR *suffix)
   {
-    t_size sl = StringLength (suffix);
+    size_t sl = StringLength (suffix);
 
     if (sl == 0)
       return false;
 
-    t_size l = m_string.length() - sl;
+    size_t l = m_string.length() - sl;
 
     if (l < 0)
       return false;
 
-    t_size pos = FindLastOccurence (suffix);
+    size_t pos = FindLastOccurence (suffix);
 
     if (pos == tstring::npos)
       return false;
@@ -806,17 +806,17 @@ namespace nux
 //! Return True is the the string is terminated by the tstring 'suffix'
   bool NString::IsSuffix (const tstring &suffix)
   {
-    t_size sl = suffix.length();
+    size_t sl = suffix.length();
 
     if (sl == 0)
       return false;
 
-    t_size l = m_string.length() - sl;
+    size_t l = m_string.length() - sl;
 
     if (l < 0)
       return false;
 
-    t_size pos = FindLastOccurence (suffix);
+    size_t pos = FindLastOccurence (suffix);
 
     if (pos == tstring::npos)
       return false;
@@ -827,17 +827,17 @@ namespace nux
 //! Return True is the the string is terminated by the NString 'suffix'
   bool NString::IsSuffix (const NString &suffix)
   {
-    t_size sl = suffix.Length();
+    size_t sl = suffix.Length();
 
     if (sl == 0)
       return false;
 
-    t_size l = m_string.length() - sl;
+    size_t l = m_string.length() - sl;
 
     if (l < 0)
       return false;
 
-    t_size pos = FindLastOccurence (suffix);
+    size_t pos = FindLastOccurence (suffix);
 
     if (pos == tstring::npos)
       return false;
@@ -848,12 +848,12 @@ namespace nux
 //! Return True if the string start with the character contained in prefix
   bool NString::IsPrefix (const TCHAR &prefix)
   {
-    t_size l = m_string.length() - 1;
+    size_t l = m_string.length() - 1;
 
     if (l < 0)
       return false;
 
-    t_size pos = FindFirstOccurence (prefix);
+    size_t pos = FindFirstOccurence (prefix);
 
     if (pos == tstring::npos)
       return false;
@@ -864,12 +864,12 @@ namespace nux
 //! Return True if the string start with the character string contained in prefix
   bool NString::IsPrefix (const TCHAR *prefix)
   {
-    t_size sl = StringLength (prefix);
+    size_t sl = StringLength (prefix);
 
     if (sl == 0)
       return false;
 
-    t_size pos = FindFirstOccurence (prefix);
+    size_t pos = FindFirstOccurence (prefix);
 
     if (pos == tstring::npos)
       return false;
@@ -880,12 +880,12 @@ namespace nux
 //! Return True if the string start with the tstring contained in prefix
   bool NString::IsPrefix (const tstring &prefix)
   {
-    t_size sl = prefix.length();
+    size_t sl = prefix.length();
 
     if (sl == 0)
       return false;
 
-    t_size pos = FindFirstOccurence (prefix);
+    size_t pos = FindFirstOccurence (prefix);
 
     if (pos == tstring::npos)
       return false;
@@ -895,12 +895,12 @@ namespace nux
 //! Return True if the string start with the NString contained in prefix
   bool NString::IsPrefix (const NString &prefix)
   {
-    t_size sl = prefix.Length();
+    size_t sl = prefix.Length();
 
     if (sl == 0)
       return false;
 
-    t_size pos = FindFirstOccurence (prefix);
+    size_t pos = FindFirstOccurence (prefix);
 
     if (pos == tstring::npos)
       return false;
@@ -913,7 +913,7 @@ namespace nux
   {
     if (IsSuffix (suffix) )
     {
-      t_size pos = FindLastOccurence (suffix);
+      size_t pos = FindLastOccurence (suffix);
       *this = NString (m_string.substr (0, pos) );
     }
   }
@@ -923,7 +923,7 @@ namespace nux
   {
     if (IsSuffix (suffix) )
     {
-      t_size pos = FindLastOccurence (suffix);
+      size_t pos = FindLastOccurence (suffix);
       *this = NString (m_string.substr (0, pos) );
     }
   }
@@ -933,7 +933,7 @@ namespace nux
   {
     if (IsSuffix (suffix) )
     {
-      t_size pos = FindLastOccurence (suffix);
+      size_t pos = FindLastOccurence (suffix);
       *this = NString (m_string.substr (0, pos) );
     }
   }
@@ -943,7 +943,7 @@ namespace nux
   {
     if (IsSuffix (suffix) )
     {
-      t_size pos = FindLastOccurence (suffix);
+      size_t pos = FindLastOccurence (suffix);
       *this = NString (m_string.substr (0, pos) );
     }
   }
@@ -962,7 +962,7 @@ namespace nux
   {
     if (IsPrefix (prefix) )
     {
-      t_size l = StringLength (prefix);
+      size_t l = StringLength (prefix);
       *this = NString (m_string.substr (l) );
     }
   }
@@ -972,7 +972,7 @@ namespace nux
   {
     if (IsPrefix (prefix) )
     {
-      t_size l = prefix.length();
+      size_t l = prefix.length();
       *this = NString (m_string.substr (l) );
     }
   }
@@ -982,35 +982,35 @@ namespace nux
   {
     if (IsPrefix (prefix) )
     {
-      t_size l = prefix.Length();
+      size_t l = prefix.Length();
       *this = NString (m_string.substr (l) );
     }
   }
 
-  NString NString::GetSubString (t_size count) const
+  NString NString::GetSubString (size_t count) const
   {
     nuxAssert (count >= 0);
     return NString (m_string.substr (0, count) );
   }
 
-  NString NString::GetSubString (t_size start, t_size count) const
+  NString NString::GetSubString (size_t start, size_t count) const
   {
     nuxAssert (start >= 0);
     nuxAssert (count >= 0);
     return NString (m_string.substr (start, count) );
   }
 
-  NString NString::Mid (t_size count) const
+  NString NString::Mid (size_t count) const
   {
     return GetSubString (count);
   }
 
-  NString NString::Mid (t_size start, t_size count) const
+  NString NString::Mid (size_t start, size_t count) const
   {
     return GetSubString (start, count);
   }
 
-  NString NString::Left (t_size N) const
+  NString NString::Left (size_t N) const
   {
     if (N >= Length() )
       return *this;
@@ -1018,7 +1018,7 @@ namespace nux
     return GetSubString (0, N);
   }
 
-  NString NString::Right (t_size N) const
+  NString NString::Right (size_t N) const
   {
     if (N >= Length() )
       return *this;
@@ -1033,8 +1033,8 @@ namespace nux
 
   NString NString::TrimLeft() const
   {
-    t_size n = 0;
-    t_size L = Length() - 1;
+    size_t n = 0;
+    size_t L = Length() - 1;
 
     while (n <= L)
     {
@@ -1053,7 +1053,7 @@ namespace nux
 
   NString NString::TrimRight() const
   {
-    t_size L = Length() - 1;
+    size_t L = Length() - 1;
 
     while (0 <= L)
     {
@@ -1072,8 +1072,8 @@ namespace nux
 
   NString NString::TrimLeft (NString str) const
   {
-    t_size n = 0;
-    t_size L = Length();
+    size_t n = 0;
+    size_t L = Length();
 
     if (L == 0)
       return *this;
@@ -1081,9 +1081,9 @@ namespace nux
     while (n < L)
     {
       bool trim = false;
-      t_size sz = str.Length();
+      size_t sz = str.Length();
 
-      for (t_size i = 0; i < sz; i++)
+      for (size_t i = 0; i < sz; i++)
       {
         if (m_string[n] == str[i])
         {
@@ -1107,7 +1107,7 @@ namespace nux
 
   NString NString::TrimRight (NString str) const
   {
-    t_size L = Length();
+    size_t L = Length();
 
     if (L == 0)
       return *this;
@@ -1117,9 +1117,9 @@ namespace nux
     while (0 <= L)
     {
       bool trim = false;
-      t_size sz = str.Length();
+      size_t sz = str.Length();
 
-      for (t_size i = 0; i < sz; i++)
+      for (size_t i = 0; i < sz; i++)
       {
         if (m_string[L] == str[i])
         {
@@ -1188,11 +1188,11 @@ namespace nux
 
   void NString::SplitAtFirstOccurenceOf (const TCHAR *SplitString, NString &Left, NString &Right)
   {
-    t_size start = FindFirstOccurence (SplitString);
+    size_t start = FindFirstOccurence (SplitString);
 
     if (start != tstring::npos)
     {
-      t_size size = StringLength (SplitString);
+      size_t size = StringLength (SplitString);
       Left = GetSubString (0, start);
       Right = GetSubString (start + size, Length() - (start + size) );
     }
@@ -1215,11 +1215,11 @@ namespace nux
 
   void NString::SplitAtLastOccurenceOf (const TCHAR *SplitString, NString &Left, NString &Right)
   {
-    t_size start = FindLastOccurence (SplitString);
+    size_t start = FindLastOccurence (SplitString);
 
     if (start != tstring::npos)
     {
-      t_size size = StringLength (SplitString);
+      size_t size = StringLength (SplitString);
       Left = GetSubString (0, start);
       Right = GetSubString (start + size, Length() - (start + size) );
     }
@@ -1345,9 +1345,9 @@ namespace nux
   */
   VARARG_BODY (NString, NString::Printf, const TCHAR *, VARARG_NONE)
   {
-    t_u32  BufferSize  = 1024;
+    unsigned int  BufferSize  = 1024;
     TCHAR *Buffer      = NULL;
-    t_size Result      = tstring::npos;
+    size_t Result      = tstring::npos;
 
     while (Result == tstring::npos)
     {

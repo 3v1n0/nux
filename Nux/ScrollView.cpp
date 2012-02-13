@@ -100,6 +100,9 @@ namespace nux
                                                      &ScrollView::ScrollUp));
       _vscrollbar->OnScrollDown.connect(sigc::mem_fun(this,
                                                        &ScrollView::ScrollDown));
+      _vscrollbar->mouse_wheel.connect(sigc::mem_fun(this,
+                                                     &ScrollView::RecvMouseWheel));
+      
       _vscrollbar->UnReference();
     }
 
@@ -113,6 +116,8 @@ namespace nux
                                                    &ScrollView::ScrollUp));
     _vscrollbar->OnScrollDown.connect(sigc::mem_fun(this,
                                                      &ScrollView::ScrollDown));
+    _vscrollbar->mouse_wheel.connect(sigc::mem_fun(this,
+                                                   &ScrollView::RecvMouseWheel));
   }
 
   ScrollView::~ScrollView()

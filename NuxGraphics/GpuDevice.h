@@ -48,8 +48,8 @@ namespace nux
   {
     WORD Stream;
     ObjectPtr<IOpenGLVertexBuffer> VertexBuffer;
-    t_u16 StreamOffset;
-    t_u16 StreamStride;
+    unsigned short StreamOffset;
+    unsigned short StreamStride;
 
     STREAMSOURCE()
     {
@@ -166,6 +166,11 @@ namespace nux
     friend class GpuDevice;
   };
 
+  //! The interface to the GPU.
+  /*!
+      This is the object that serves as the interface between the program and the GPU device.
+      The GpuDevice creates the opengl primitives used for rendering.
+  */
   class GpuDevice
   {
   private:
@@ -177,6 +182,7 @@ namespace nux
       , unsigned int Levels
       , BitmapFormat PixelFormat
       , IOpenGLTexture2D **ppTexture
+      , NUX_FILE_LINE_PROTO
     );
 
     int CreateRectangleTexture(
@@ -185,6 +191,7 @@ namespace nux
       , unsigned int Levels
       , BitmapFormat PixelFormat
       , IOpenGLRectangleTexture **ppTexture
+      , NUX_FILE_LINE_PROTO
     );
 
     int CreateCubeTexture(
@@ -192,6 +199,7 @@ namespace nux
       , unsigned int Levels
       , BitmapFormat PixelFormat
       , IOpenGLCubeTexture **ppCubeTexture
+      , NUX_FILE_LINE_PROTO
     );
 
     int CreateVolumeTexture(
@@ -201,6 +209,7 @@ namespace nux
       , unsigned int Levels
       , BitmapFormat PixelFormat
       , IOpenGLVolumeTexture **ppVolumeTexture
+      , NUX_FILE_LINE_PROTO
     );
 
     int CreateAnimatedTexture(
@@ -270,31 +279,31 @@ namespace nux
       int Width,
       int Height,
       int Levels,
-      BitmapFormat PixelFormat);
+      BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
 
     ObjectPtr<IOpenGLTexture2D> CreateTexture2DFromID(int id,
       int Width,
       int Height,
       int Levels,
-      BitmapFormat PixelFormat);
+      BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
 
     ObjectPtr<IOpenGLRectangleTexture> CreateRectangleTexture(
       int Width
       , int Height
       , int Levels
-      , BitmapFormat PixelFormat);
+      , BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
 
     ObjectPtr<IOpenGLCubeTexture> CreateCubeTexture(
       int EdgeLength
       , int Levels
-      , BitmapFormat PixelFormat);
+      , BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
 
     ObjectPtr<IOpenGLVolumeTexture> CreateVolumeTexture(
       int Width
       , int Height
       , int Depth
       , int Levels
-      , BitmapFormat PixelFormat);
+      , BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
 
     ObjectPtr<IOpenGLAnimatedTexture> CreateAnimatedTexture(
       int Width
@@ -458,13 +467,13 @@ namespace nux
       int Width
       , int Height
       , int Levels
-      , BitmapFormat PixelFormat);
+      , BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
 
     //! Created a cached texture
     /*!
       @return A cached texture. Depending on the system capabilities, returns a Texture2D or TextureRectangle.
     */
-    BaseTexture* CreateSystemCapableTexture();
+    BaseTexture* CreateSystemCapableTexture(NUX_FILE_LINE_PROTO);
 
     bool SUPPORT_GL_ARB_TEXTURE_NON_POWER_OF_TWO() const
     {
@@ -529,7 +538,7 @@ namespace nux
 
 #elif defined(NUX_OS_LINUX)
     #ifdef NUX_OPENGLES_20
-        GpuDevice(t_u32 DeviceWidth, t_u32 DeviceHeight,
+        GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight,
           BitmapFormat DeviceFormat,
           Display *display,
           Window window,
@@ -540,7 +549,7 @@ namespace nux
           int req_opengl_minor = 0,
           bool opengl_es_20 = true);
     #else
-        GpuDevice(t_u32 DeviceWidth, t_u32 DeviceHeight,
+        GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight,
           BitmapFormat DeviceFormat,
           Display *display,
           Window window,

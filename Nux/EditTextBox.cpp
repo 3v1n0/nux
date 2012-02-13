@@ -96,8 +96,8 @@ namespace nux
     Geometry base = GetGeometry();
     Event &event = GetGraphicsDisplay()->GetCurrentEvent();
 
-    int X = event.e_x;
-    m_KeyboardHandler.CaretAutoScroll(event.e_x, event.e_y, base);
+    int X = event.x;
+    m_KeyboardHandler.CaretAutoScroll(event.x, event.y, base);
 
     if (((X < base.x) && (m_KeyboardHandler.GetCursorPosition() > 0)) ||
          ((X > base.x + base.GetWidth()) && (m_KeyboardHandler.GetCursorPosition() < m_KeyboardHandler.GetLength())))
@@ -319,7 +319,7 @@ namespace nux
     unsigned long   eventType  , /*event type*/
     unsigned long   keysym     , /*event keysym*/
     unsigned long   state      , /*event state*/
-    const char*    character  , /*character*/
+    const char*     character  , /*character*/
     unsigned short  keyCount     /*key repeat count*/)
   {
     
@@ -388,7 +388,7 @@ namespace nux
 
   void EditTextBox::EscapeKeyboardFocus()
   {
-    SetKeyboardFocus(false);
+    // todo(jaytaoko): SetKeyboardFocus(false);
     // Revert back the caption text
     m_Text = m_temporary_caption;
     sigEscapeKeyboardFocus.emit(this);

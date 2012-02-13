@@ -34,31 +34,31 @@ namespace nux
 
   NUX_IMPLEMENT_GLOBAL_OBJECT(RenderingStats);
 
-  t_u32 RenderingStats::m_NumTex2D = 0;
-  t_u32 RenderingStats::m_GPUSizeTex2D = 0;
-  t_u32 RenderingStats::m_NumTexRectangle = 0;
-  t_u32 RenderingStats::m_GPUSizeTexRectangle = 0;
-  t_u32 RenderingStats::m_NumTexCube = 0;
-  t_u32 RenderingStats::m_GPUSizeTexCube = 0;
-  t_u32 RenderingStats::m_NumTexVolume = 0;
-  t_u32 RenderingStats::m_GPUSizeTexVolume = 0;
+  unsigned int RenderingStats::m_NumTex2D = 0;
+  unsigned int RenderingStats::m_GPUSizeTex2D = 0;
+  unsigned int RenderingStats::m_NumTexRectangle = 0;
+  unsigned int RenderingStats::m_GPUSizeTexRectangle = 0;
+  unsigned int RenderingStats::m_NumTexCube = 0;
+  unsigned int RenderingStats::m_GPUSizeTexCube = 0;
+  unsigned int RenderingStats::m_NumTexVolume = 0;
+  unsigned int RenderingStats::m_GPUSizeTexVolume = 0;
 
-  t_u32 RenderingStats::m_NumTexAnimated = 0;
-  t_u32 RenderingStats::m_GPUSizeTexAnimated = 0;
+  unsigned int RenderingStats::m_NumTexAnimated = 0;
+  unsigned int RenderingStats::m_GPUSizeTexAnimated = 0;
 
-  t_u32 RenderingStats::m_NumPBO = 0; // Counted as Vertex Buffer
-  t_u32 RenderingStats::m_GPUSizePBO = 0; // Counted as Vertex Buffer
-  t_u32 RenderingStats::m_NumQueryObject = 0;
-  t_u32 RenderingStats::m_NumFrameBufferObject = 0;
-  t_u32 RenderingStats::m_NumVertexBuffer = 0;
-  t_u32 RenderingStats::m_GPUSizeVertexBuffer = 0;
-  t_u32 RenderingStats::m_NumIndexBuffer = 0;
-  t_u32 RenderingStats::m_GPUSizeIndexBuffer = 0;
-  t_u32 RenderingStats::m_NumVertexShader = 0;
-  t_u32 RenderingStats::m_NumPixelShader = 0;
-  t_u32 RenderingStats::m_NumShaderProgram = 0;
+  unsigned int RenderingStats::m_NumPBO = 0; // Counted as Vertex Buffer
+  unsigned int RenderingStats::m_GPUSizePBO = 0; // Counted as Vertex Buffer
+  unsigned int RenderingStats::m_NumQueryObject = 0;
+  unsigned int RenderingStats::m_NumFrameBufferObject = 0;
+  unsigned int RenderingStats::m_NumVertexBuffer = 0;
+  unsigned int RenderingStats::m_GPUSizeVertexBuffer = 0;
+  unsigned int RenderingStats::m_NumIndexBuffer = 0;
+  unsigned int RenderingStats::m_GPUSizeIndexBuffer = 0;
+  unsigned int RenderingStats::m_NumVertexShader = 0;
+  unsigned int RenderingStats::m_NumPixelShader = 0;
+  unsigned int RenderingStats::m_NumShaderProgram = 0;
 
-  t_u32 RenderingStats::m_TotalGPUSize = 0;
+  unsigned int RenderingStats::m_TotalGPUSize = 0;
 
   void RenderingStats::Constructor()
   {
@@ -114,7 +114,9 @@ namespace nux
       }
       case RTTEXTURE:
       {
-        _texture_2d_array.push_back(NUX_STATIC_CAST(IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID());
+        int id = NUX_STATIC_CAST(IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID();
+        if (id)
+          _texture_2d_array.push_back(NUX_STATIC_CAST(IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID());
         m_NumTex2D++;
         m_GPUSizeTex2D += GetTextureSize(NUX_REINTERPRET_CAST(IOpenGLBaseTexture *, GraphicsObject));
         m_TotalGPUSize += m_GPUSizeTex2D;
@@ -122,7 +124,9 @@ namespace nux
       }
       case RTTEXTURERECTANGLE:
       {
-        _texture_rect_array.push_back(NUX_STATIC_CAST(IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID());
+        int id = NUX_STATIC_CAST(IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID();
+        if (id)
+          _texture_rect_array.push_back(NUX_STATIC_CAST(IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID());
         m_NumTexRectangle++;
         m_GPUSizeTexRectangle += GetTextureSize(NUX_REINTERPRET_CAST(IOpenGLBaseTexture *, GraphicsObject));
         m_TotalGPUSize += m_GPUSizeTexRectangle;
@@ -183,11 +187,8 @@ namespace nux
       }
       case RTTEXTURE:
       {
-        std::vector<int>::iterator it;
-        it = std::find(_texture_2d_array.begin(), _texture_2d_array.end(), NUX_STATIC_CAST(IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID());
-
-        if (it != _texture_2d_array.end())
-          _texture_2d_array.erase(it);
+        int id = NUX_STATIC_CAST(IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID();
+        _texture_2d_array.erase(std::remove(_texture_2d_array.begin(), _texture_2d_array.end(), id), _texture_2d_array.end());
 
         m_NumTex2D--;
         m_GPUSizeTex2D -= GetTextureSize(NUX_REINTERPRET_CAST(IOpenGLBaseTexture *, GraphicsObject));
@@ -196,11 +197,8 @@ namespace nux
       }
       case RTTEXTURERECTANGLE:
       {
-        std::vector<int>::iterator it;
-        it = std::find(_texture_rect_array.begin(), _texture_rect_array.end(), NUX_STATIC_CAST(IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID());
-
-        if (it != _texture_rect_array.end())
-          _texture_rect_array.erase(it);
+        int id = NUX_STATIC_CAST(IOpenGLBaseTexture *, GraphicsObject)->GetOpenGLID();
+        _texture_rect_array.erase(std::remove(_texture_rect_array.begin(), _texture_rect_array.end(), id), _texture_rect_array.end());
 
         m_NumTexRectangle--;
         m_GPUSizeTexRectangle -= GetTextureSize(NUX_REINTERPRET_CAST(IOpenGLBaseTexture *, GraphicsObject));

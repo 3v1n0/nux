@@ -26,9 +26,9 @@ namespace nux
 {
 
 // Choose the size so it is a power of 2. Example (size-1)= 11111111.
-  const t_int  NGNUSerialFileReader::sBufferSize = 1024;
+  const int  NGNUSerialFileReader::sBufferSize = 1024;
 
-  NGNUSerialFileReader::NGNUSerialFileReader (t_int InFileDescriptor, LogOutputDevice &InError, t_int InSize)
+  NGNUSerialFileReader::NGNUSerialFileReader (int InFileDescriptor, LogOutputDevice &InError, int InSize)
     :   m_FileDescriptor    (InFileDescriptor)
     ,   m_Error             (InError)
     ,   m_FileSize          (InSize)
@@ -48,7 +48,7 @@ namespace nux
     }
   }
 
-  bool NGNUSerialFileReader::Precache (t_int PrecacheOffset, t_int PrecacheSize)
+  bool NGNUSerialFileReader::Precache (int PrecacheOffset, int PrecacheSize)
   {
     // Only pre-cache at current position and avoid work if pre-caching same offset twice.
     if ( (m_FilePos == PrecacheOffset) && (!m_BufferBase || !m_BufferCount || m_BufferBase != m_FilePos) )
@@ -56,8 +56,8 @@ namespace nux
       m_BufferBase = m_FilePos;
       // (sBufferSize - 1) contains only '1', i.e 1111111111.
       // So (m_FilePos & (sBufferSize-1)) is equal to m_FilePos if m_FilePos <= (sBufferSize-1).
-      m_BufferCount = Min<t_s64> (Min<t_s64> (PrecacheSize, (t_int) (sBufferSize - (m_FilePos & (sBufferSize - 1) ) ) ), m_FileSize - m_FilePos);
-      t_s64 Count = 0;
+      m_BufferCount = Min<long long> (Min<long long> (PrecacheSize, (int) (sBufferSize - (m_FilePos & (sBufferSize - 1) ) ) ), m_FileSize - m_FilePos);
+      long long Count = 0;
       //GTotalBytesReadViaFileManager += m_BufferCount;
       Count = read (m_FileDescriptor, m_Buffer, m_BufferCount);
 
@@ -77,7 +77,7 @@ namespace nux
     return TRUE;
   }
 
-  t_s64 NGNUSerialFileReader::Seek (t_s64 InPos, NSerializer::SeekPos seekpos)
+  long long NGNUSerialFileReader::Seek (long long InPos, NSerializer::SeekPos seekpos)
   {
     nuxAssert (InPos >= 0);
     nuxAssert (InPos <= m_FileSize);
@@ -85,8 +85,8 @@ namespace nux
     Flush();
     // Because we precache our reads, we must perform Seek accordingly.
 
-    t_s64 pos = m_FilePos;
-    t_s64 filepos = 0;
+    long long pos = m_FilePos;
+    long long filepos = 0;
 
     // Set the file pointer to m_FilePos.
     filepos = lseek (m_FileDescriptor, pos, SEEK_SET);
@@ -114,7 +114,7 @@ namespace nux
     return filepos;
   }
 
-  t_s64 NGNUSerialFileReader::Tell()
+  long long NGNUSerialFileReader::Tell()
   {
     //     Flush();
     //     LARGE_INTEGER pos;
@@ -126,7 +126,7 @@ namespace nux
     return m_FilePos;
   }
 
-  t_s64 NGNUSerialFileReader::GetFileSize()
+  long long NGNUSerialFileReader::GetFileSize()
   {
     return m_FileSize;
   }
@@ -148,19 +148,19 @@ namespace nux
     return !m_ErrorCode;
   }
 
-  void NGNUSerialFileReader::SerializeFinal (void *Dest, t_s64 Length)
+  void NGNUSerialFileReader::SerializeFinal (void *Dest, long long Length)
   {
     nuxAssert (Dest);
 
     while (Length > 0)
     {
-      t_int DataSize = Min<t_s64> (Length, m_BufferBase + m_BufferCount - m_FilePos);
+      int DataSize = Min<long long> (Length, m_BufferBase + m_BufferCount - m_FilePos);
 
       if (DataSize == 0)
       {
         if (Length >= sBufferSize)
         {
-          t_s64 Count = 0;
+          long long Count = 0;
           //GTotalBytesReadViaFileManager += Length;
           Count = read (m_FileDescriptor, Dest, Length);
 
@@ -182,7 +182,7 @@ namespace nux
         }
 
         Precache (m_FilePos, t_s32_max);
-        DataSize = Min<t_s64> (Length, m_BufferBase + m_BufferCount - m_FilePos);
+        DataSize = Min<long long> (Length, m_BufferBase + m_BufferCount - m_FilePos);
 
         if (DataSize <= 0)
         {
@@ -202,9 +202,9 @@ namespace nux
   }
 //////////////////////////////////////////////////////////////////////////
 // Choose the size so it is a power of 2. Example (size-1)= 11111111.
-  const t_int  NGNUSerialFileWriter::sBufferSize = 32;
+  const int  NGNUSerialFileWriter::sBufferSize = 32;
 
-  NGNUSerialFileWriter::NGNUSerialFileWriter (t_int InFileDescriptor, LogOutputDevice &InError, t_int InPos)
+  NGNUSerialFileWriter::NGNUSerialFileWriter (int InFileDescriptor, LogOutputDevice &InError, int InPos)
     :   m_FileDescriptor (InFileDescriptor)
     ,   m_Error         (InError)
     ,   m_BufferCount   (0)
@@ -223,7 +223,7 @@ namespace nux
     m_FileDescriptor = 0;
   }
 
-  t_s64 NGNUSerialFileWriter::Seek (t_s64 InPos, NSerializer::SeekPos seekpos)
+  long long NGNUSerialFileWriter::Seek (long long InPos, NSerializer::SeekPos seekpos)
   {
     NScopeLock Scope (&m_CriticalSection);
     nuxAssert (m_FileDescriptor);
@@ -232,8 +232,8 @@ namespace nux
       return -1;
 
     _Flush();
-    t_s64 pos = InPos;
-    t_s64 filepos = 0;
+    long long pos = InPos;
+    long long filepos = 0;
     filepos = lseek (m_FileDescriptor, pos, (seekpos == SeekStart) ? SEEK_SET : (seekpos == SeekCurrent) ? SEEK_CUR : SEEK_END);
 
     if (filepos == -1)
@@ -246,7 +246,7 @@ namespace nux
     return filepos;
   }
 
-  t_s64 NGNUSerialFileWriter::Tell()
+  long long NGNUSerialFileWriter::Tell()
   {
     NScopeLock Scope (&m_CriticalSection);
     nuxAssert (m_FileDescriptor);
@@ -255,8 +255,8 @@ namespace nux
       return -1;
 
     _Flush();
-    t_s64 pos = 0;
-    t_s64 filepos = 0;
+    long long pos = 0;
+    long long filepos = 0;
     filepos = lseek (m_FileDescriptor, pos, SEEK_CUR);
 
     if (filepos == -1)
@@ -289,7 +289,7 @@ namespace nux
     return !m_ErrorCode;
   }
 
-  t_s64 NGNUSerialFileWriter::GetFileSize()
+  long long NGNUSerialFileWriter::GetFileSize()
   {
     NScopeLock Scope (&m_CriticalSection);
     nuxAssert (m_FileDescriptor);
@@ -308,7 +308,7 @@ namespace nux
     return sb.st_size;
   }
 
-  void NGNUSerialFileWriter::SerializeFinal (void *V, t_s64 Length)
+  void NGNUSerialFileWriter::SerializeFinal (void *V, long long Length)
   {
     // This method is not re-entrant by itself. It relies on m_Buffer and other variables
     // that belong to this object. Therefore, it is not thread safe. We add a critical section
@@ -321,7 +321,7 @@ namespace nux
     NUX_RETURN_IF_NULL (m_FileDescriptor);
 
     m_Pos += Length;
-    t_int FreeSpace;
+    int FreeSpace;
 
     while (Length > (FreeSpace = sBufferSize - m_BufferCount) )
     {
@@ -356,7 +356,7 @@ namespace nux
     //GTotalBytesWrittenViaFileManager += m_BufferCount;
     if (m_BufferCount)
     {
-      t_s64 Result = 0;
+      long long Result = 0;
       Result = write (m_FileDescriptor, m_Buffer, m_BufferCount);
 
       if (Result == -1)
@@ -381,7 +381,7 @@ namespace nux
 
   NSerializer *NFileManagerGNU::CreateFileReader (const TCHAR *Filename, DWORD Flags, LogOutputDevice &Error)
   {
-    t_int FileDesc = open (TCHAR_TO_ANSI (Filename), O_RDONLY);
+    int FileDesc = open (TCHAR_TO_ANSI (Filename), O_RDONLY);
 
     if (FileDesc == -1)
     {
@@ -446,7 +446,7 @@ namespace nux
     ModeFlags |= (Flags & NSerializer::Append) ? O_APPEND : O_TRUNC;
     ModeFlags |= (Flags & NSerializer::NoOverWrite) ? (O_CREAT | O_EXCL) /*fail if the file already exist*/ : O_CREAT /*create the file if it does not exist*/;
 
-    t_int FileDesc = open (TCHAR_TO_ANSI (Filename), ModeFlags, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+    int FileDesc = open (TCHAR_TO_ANSI (Filename), ModeFlags, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 
     if (FileDesc == -1)
     {
@@ -458,7 +458,7 @@ namespace nux
       return NULL;
     }
 
-    t_s64 Pos = 0;
+    long long Pos = 0;
 
     if (Flags & NSerializer::Append)
     {
@@ -489,7 +489,7 @@ namespace nux
     return new NGNUSerialFileWriter (FileDesc, Error, 0);
   }
 
-  t_s64 NFileManagerGNU::FileSize (const TCHAR *Filename)
+  long long NFileManagerGNU::FileSize (const TCHAR *Filename)
   {
     struct stat sb;
 
@@ -634,7 +634,7 @@ namespace nux
   /*!
       @return TRUE is the file exist.
   */
-  bool NFileManagerGNU::GetFileAttribute (const TCHAR *Filename, bool &isDirectory, bool &isReadOnly, bool &isHidden, t_s64 &Size)
+  bool NFileManagerGNU::GetFileAttribute (const TCHAR *Filename, bool &isDirectory, bool &isReadOnly, bool &isHidden, long long &Size)
   {
     isDirectory = false;
     isReadOnly = false;

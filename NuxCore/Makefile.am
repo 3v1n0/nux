@@ -49,8 +49,6 @@ source_cpp = \
   $(srcdir)/FileName.cpp \
   $(srcdir)/ThreadGNU.cpp \
   $(srcdir)/Parsing.cpp \
-  $(srcdir)/CPU.cpp \
-  $(srcdir)/Error.cpp \
   $(srcdir)/Logger.cpp \
   $(srcdir)/LoggingWriter.cpp \
   $(srcdir)/NUniqueIndex.cpp \
@@ -73,16 +71,12 @@ source_cpp = \
   $(srcdir)/Math/Matrix2.cpp \
   $(srcdir)/Math/Trigonometry.cpp \
   $(srcdir)/Math/Tweening.cpp \
-  $(srcdir)/Math/Vector4.cpp \
   $(srcdir)/Math/Complex.cpp \
   $(srcdir)/Math/Point3D.cpp \
   $(srcdir)/Math/Matrix4.cpp \
   $(srcdir)/Math/Matrix3.cpp \
-  $(srcdir)/Math/Vector3.cpp \
   $(srcdir)/Math/Line3D.cpp \
-  $(srcdir)/Math/Vector2.cpp \
   $(srcdir)/RollingFileAppender.cpp \
-  $(srcdir)/CRC32.cpp \
   $(srcdir)/InitiallyUnownedObject.cpp
 
 source_file_manager_h = \
@@ -128,7 +122,6 @@ source_h = \
   $(srcdir)/AsyncFileWriter.h \
   $(srcdir)/SystemTypes.h \
   $(srcdir)/Point.h \
-  $(srcdir)/CPU.h \
   $(srcdir)/FilePath.h \
   $(srcdir)/System.h \
   $(srcdir)/Parsing.h \
@@ -157,7 +150,6 @@ source_h = \
   $(srcdir)/Size-inl.h \
   $(srcdir)/Exception.h \
   $(srcdir)/TimeFunctions.h \
-  $(srcdir)/CRC32.h \
   $(srcdir)/Macros.h \
   $(srcdir)/ThreadGNU.h \
   $(srcdir)/TextString.h \

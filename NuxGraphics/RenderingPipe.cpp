@@ -33,7 +33,7 @@ namespace nux
   struct TexWrapMapping
   {
     TexWrap tex_wrap_mode;
-    t_u32 opengl_wrap_mode;
+    unsigned int opengl_wrap_mode;
   };
 
   struct TexWrapMapping TexWrapMappingArray [] =
@@ -72,7 +72,7 @@ namespace nux
   struct TexFilterMapping
   {
     TexFilter tex_filter_mode;
-    t_u32 opengl_filter_mode;
+    unsigned int opengl_filter_mode;
   };
 
   struct TexFilterMapping TexFilterMappingArray [] =
@@ -107,7 +107,7 @@ namespace nux
   struct RopBlendMapping
   {
     RopBlend rop_blend_mode;
-    t_u32 opengl_blend_op;
+    unsigned int opengl_blend_op;
   };
 
   struct RopBlendMapping RopBlendMappingArray [] =
@@ -197,7 +197,7 @@ namespace nux
     m_tex_coord_type = tex_coord_type;
   }
 
-  void QRP_Compute_Texture_Coord(t_int32 quad_width, t_int32 quad_height, ObjectPtr<IOpenGLBaseTexture> tex, TexCoordXForm &texxform)
+  void QRP_Compute_Texture_Coord(int quad_width, int quad_height, ObjectPtr<IOpenGLBaseTexture> tex, TexCoordXForm &texxform)
   {
     float tex_width = tex->GetWidth();
     float tex_height = tex->GetHeight();
@@ -206,17 +206,24 @@ namespace nux
     {
       if (texxform.m_tex_coord_type == TexCoordXForm::OFFSET_SCALE_COORD)
       {
-        texxform.u0 = texxform.uoffset;
-        texxform.v0 = texxform.voffset;
-        texxform.u1 = texxform.u0 + texxform.uscale;
-        texxform.v1 = texxform.v0 + texxform.vscale;
+        // Scale and offset the texture coordinates.
+        // Ensure precise alignment between pixels and the texture coordinates
+        // With a scale of 1.0 for both uscale and vscale, the texture is scaled over the entire surface of the quad.
+        // If the texture and the quad have the same size, then the texture is mapped 1 to 1 with the pixels of the quad.
+        texxform.u0 = texxform.uoffset + texxform.uscale * (tex_width / (float)quad_width)   * (1.0f / (2.0f * tex_width));
+        texxform.v0 = texxform.voffset + texxform.vscale * (tex_height / (float)quad_height) * (1.0f / (2.0f * tex_height));
+        texxform.u1 = texxform.uoffset + texxform.uscale * (tex_width / (float)quad_width)   * (2.0f * quad_width - 1.0f) / (2.0f * tex_width);
+        texxform.v1 = texxform.voffset + texxform.vscale * (tex_height / (float)quad_height) * (2.0f * quad_height - 1.0f) / (2.0f * tex_height);
       }
       else if (texxform.m_tex_coord_type == TexCoordXForm::OFFSET_COORD)
       {
-        texxform.u0 = texxform.uoffset;
-        texxform.v0 = texxform.voffset;
-        texxform.u1 = texxform.u0 + (float) quad_width / tex_width;
-        texxform.v1 = texxform.v0 + (float) quad_height / tex_height;
+        // Offset the texture coordinates but preserve the proportion of the of the texture over the quad.
+        // If the texture size is smaller than the quad, it will be tiled over it.
+        // Ensure precise alignment between pixels and the texture coordinates
+        texxform.u0 = texxform.uoffset + (1.0f / (2.0f * tex_width));
+        texxform.v0 = texxform.voffset + (1.0f / (2.0f * tex_height));
+        texxform.u1 = texxform.uoffset + (2.0f * quad_width - 1.0f) / (2.0f * tex_width);
+        texxform.v1 = texxform.voffset + (2.0f * quad_height - 1.0f) / (2.0f * tex_height);
       }
       else if (texxform.m_tex_coord_type == TexCoordXForm::UNNORMALIZED_COORD)
       {
@@ -234,8 +241,8 @@ namespace nux
     {
       if (texxform.m_tex_coord_type == TexCoordXForm::OFFSET_SCALE_COORD)
       {
-        texxform.u0 = t_int32(texxform.uoffset * tex_width);
-        texxform.v0 = t_int32(texxform.voffset * tex_height);
+        texxform.u0 = int(texxform.uoffset * tex_width);
+        texxform.v0 = int(texxform.voffset * tex_height);
         texxform.u1 = texxform.u0 + tex_width * texxform.uscale;
         texxform.v1 = texxform.v0 + tex_height * texxform.vscale;
       }

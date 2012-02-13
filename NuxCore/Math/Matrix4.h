@@ -55,7 +55,7 @@ namespace nux
       T a30, T a31, T a32, T a33);
 
     Matrix4x4<T>& operator = (const Matrix4x4<T>&);
-    t_bool operator == (const Matrix4x4<T>&);
+    bool operator == (const Matrix4x4<T>&);
     Matrix4x4<T> operator * (const Matrix4x4<T>&) const;
     Matrix4x4<T> operator + (const Matrix4x4<T>&) const;
     Matrix4x4<T> operator - (const Matrix4x4<T>&) const;
@@ -264,7 +264,7 @@ namespace nux
   }
 
   template <typename T>
-  t_bool Matrix4x4<T>::operator == (const Matrix4x4<T>& M)
+  bool Matrix4x4<T>::operator == (const Matrix4x4<T>& M)
   {
     for (int i = 0; i < 4; i++)
       for (int j = 0; j < 4; j++)
@@ -1227,52 +1227,50 @@ namespace nux
   void Matrix4x4<T>::Rotate (T angle, Vector3 axis)
   {
     //See Quaternion::from_angle_axis() and Quaternion::get_matrix()
-
-
     // note: adapted from david eberly's code without permission
     //TODO: make sure it is correct
-    /*if (axis.LengthSquared() < EpsilonMicro)
+    
+    if (axis.LengthSquared() < Const::EpsilonMicro)
     {
-    Identity();
+      Identity();
     }
     else
     {
-    axis.Normalize();
+      axis.Normalize();
 
-    T fCos = (T) cos(angle);
-    T fSin = (T) sin(angle);
-    T fOneMinusCos = 1.0f-fCos;
-    T fX2 = axis.x*axis.x;
-    T fY2 = axis.y*axis.y;
-    T fZ2 = axis.z*axis.z;
-    T fXYM = axis.x*axis.y*fOneMinusCos;
-    T fXZM = axis.x*axis.z*fOneMinusCos;
-    T fYZM = axis.y*axis.z*fOneMinusCos;
-    T fXSin = axis.x*fSin;
-    T fYSin = axis.y*fSin;
-    T fZSin = axis.z*fSin;
+      T fCos = (T) cos(angle);
+      T fSin = (T) sin(angle);
+      T fOneMinusCos = 1.0f-fCos;
+      T fX2 = axis.x*axis.x;
+      T fY2 = axis.y*axis.y;
+      T fZ2 = axis.z*axis.z;
+      T fXYM = axis.x*axis.y*fOneMinusCos;
+      T fXZM = axis.x*axis.z*fOneMinusCos;
+      T fYZM = axis.y*axis.z*fOneMinusCos;
+      T fXSin = axis.x*fSin;
+      T fYSin = axis.y*fSin;
+      T fZSin = axis.z*fSin;
 
-    m[0][0] = fX2*fOneMinusCos+fCos;
-    m[0][1] = fXYM-fZSin;
-    m[0][2] = fXZM+fYSin;
-    m[0][3] = 0;
+      m[0][0] = fX2*fOneMinusCos+fCos;
+      m[0][1] = fXYM-fZSin;
+      m[0][2] = fXZM+fYSin;
+      m[0][3] = 0;
 
-    m[1][0] = fXYM+fZSin;
-    m[1][1] = fY2*fOneMinusCos+fCos;
-    m[1][2] = fYZM-fXSin;
-    m[1][3] = 0;
+      m[1][0] = fXYM+fZSin;
+      m[1][1] = fY2*fOneMinusCos+fCos;
+      m[1][2] = fYZM-fXSin;
+      m[1][3] = 0;
 
-    m[2][0] = fXZM-fYSin;
-    m[2][1] = fYZM+fXSin;
-    m[2][2] = fZ2*fOneMinusCos+fCos;
-    m[2][3] = 0;
+      m[2][0] = fXZM-fYSin;
+      m[2][1] = fYZM+fXSin;
+      m[2][2] = fZ2*fOneMinusCos+fCos;
+      m[2][3] = 0;
 
-    m[3][0] = 0;
-    m[3][1] = 0;
-    m[3][2] = 0;
-    m[3][3] = 1;
+      m[3][0] = 0;
+      m[3][1] = 0;
+      m[3][2] = 0;
+      m[3][3] = 1;
     }
-    */
   }
 
   template <typename T>

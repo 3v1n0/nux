@@ -35,7 +35,6 @@
 #endif
 
 #include "InputArea.h"
-#include "MouseHandler.h"
 #include "PaintLayer.h"
 
 namespace nux
@@ -101,7 +100,7 @@ namespace nux
         \sa SetAlwaysOnFrontWindow();
     */
     void PushToFront();
-      
+
     //! Push the view to the back of the ViewWindow stack.
     /*!
         Push this view to the back of the ViewWindow stack. Does it even if the view is hidden.
@@ -156,8 +155,13 @@ namespace nux
                             bool        take_focus = False,
                             bool        override_redirect = False);
     bool InputWindowEnabled();
+
     void InputWindowEnableStruts(bool enable);
     bool InputWindowStrutsEnabled();
+
+    void InputWindowEnableOverlayStruts(bool enable);
+    bool InputWindowOverlayStrutsEnabled();
+
     void SetInputFocus();
     Window GetInputWindowId();
     #endif
@@ -183,7 +187,7 @@ namespace nux
       return _name;
     }
   protected:
-    
+
     void SetAcceptKeyNavFocus(bool accept);
     bool accept_key_nav_focus_;
     virtual bool AcceptKeyNavFocus();
@@ -227,18 +231,18 @@ namespace nux
 
     bool _entering_visible_state;  //!< the window is about to be made visible during event processing
     bool _entering_hidden_state;   //!< the window is about to be made hidden during event processing
-    
+
     bool ChildNeedsRedraw();
 
     #if defined(NUX_OS_LINUX)
     bool m_input_window_enabled;
     XInputWindow *m_input_window;
     #endif
-    
+
   private:
     //! Contains the background of the texture. Can be used to blur. It is set by the window compositor.
     ObjectPtr<BaseTexture> _background_texture;
-   
+
     NString _name;
     bool _size_match_layout;
     bool _is_visible;

@@ -91,8 +91,6 @@ namespace nux
     float m_color_factor;
 
   protected:
-    void RecvMouseWheel(int x, int y, int wheel_delta,  long button_flags, unsigned long key_flags);
-
     // When the Scrollbar is used standalone, it is necessary to call ComputeScrolling at the end of the layout.
     virtual long PostLayoutManagement(long LayoutResult);
 

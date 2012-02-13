@@ -278,7 +278,7 @@ namespace nux
     */
     bool TestMousePointerInclusionFilterMouseWheel(const Point& mouse_position, NuxEventType event);
 
-    //! Test if the muse pointer is inside the area.
+    //! Test if the mouse pointer is inside the area.
     /*!
         Return true if the mouse pointer is inside the area.
         
@@ -341,12 +341,17 @@ namespace nux
     sigc::signal<void, Area*> ChildFocusChanged; // sends parent + child
 
     /*!
-        This signal is propagated upward so all parent of this area can reconfigure themselves.
-        For instance, scroll views will translate their content to make the focused object visible.
+        This signal is received whether the area receiving or loosing the keyboard focus.
+        If the second parameter is true, it means the area is receiving the focus.
+        The third parameter of this signal indicates the keyboard action that triggered this area 
+        to receive or loose the keyboard focus.
     */
-    sigc::signal<void, Area*> OnKeyNavChangeReconfigure; 
-    sigc::signal<void, Area*> OnKeyNavFocusChange;
-    sigc::signal<void, Area*> OnKeyNavFocusActivate;
+    sigc::signal<void, Area*, bool, KeyNavDirection> key_nav_focus_change;
+
+    /*!
+        This signal is received when the area has the key focus and the ENTER key has been pressed.
+    */
+    sigc::signal<void, Area*> key_nav_focus_activate;
 
     //! Queue a relayout
     /*!
@@ -390,7 +395,7 @@ namespace nux
     Matrix4 Get3DMatrix() const;
     bool Is3DArea() const;
 
-    //! Return the position of this object with regard to its top left corner of the physical window.
+    //! Return the position of this object with regard to the top left corner of the physical window.
     /*!
         Return the position of the Area inside the physical window.
         For the main layout set in WindowThread, The following functions are equivalent:
@@ -496,7 +501,16 @@ namespace nux
     void ResetUpwardPathToKeyFocusArea();
 
     //! Return True if the the area knows what to do with the key event.
-    virtual bool InspectKeyEvent(unsigned int eventType,
+    /*!
+        For a View to receive the key_up and key_down signal, it must override this function and return true.
+        
+        @param even_type Event type is either EVENT_KEY_DOWN or EVENT_KEY_UP.
+        @param keysym The key symbol.
+        @param characters The character string of the key.
+
+        @return bool True if the View wants to received the key events signals.
+    */
+    virtual bool InspectKeyEvent(unsigned int event_type,
       unsigned int keysym,
       const char* character);
 
@@ -630,8 +644,10 @@ namespace nux
 
     std::list<Area*>        _children_list;
 
-    bool                    _accept_mouse_wheel_event;
-    bool                    _accept_keyboard_event;
+    bool                    accept_mouse_wheel_event_;
+    bool                    accept_keyboard_event_;
+
+    WindowThread*           window_thread_;
 
     friend class Layout;
     friend class View;

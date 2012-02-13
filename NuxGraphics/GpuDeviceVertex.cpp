@@ -160,7 +160,7 @@ namespace nux
         vtxelement.Type,
         GL_FALSE,
         vtxelement.stride_,
-        (void*)&vtxelement.Offset));
+        (void*)vtxelement.Offset));
 
       VertexDeclaration->_valid_vertex_input[shader_attribute_location] = 1;
       ++decl;
@@ -384,7 +384,7 @@ namespace nux
 //       InvalidateVertexBuffer();
 //       InvalidateVertexBuffer();
 // 
-//       t_size ptr = * (t_size *) pVertexStreamZeroData + _StreamSource[vtxelement.Stream].StreamOffset;
+//       size_t ptr = * (size_t *) pVertexStreamZeroData + _StreamSource[vtxelement.Stream].StreamOffset;
 //       CHECKGL(glEnableClientState(GL_VERTEX_ARRAY));
 //       CHECKGL(glVertexPointer( vtxelement.NumComponent,
 //                                   vtxelement.Type,

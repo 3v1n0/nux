@@ -37,73 +37,66 @@
 
 namespace nux
 {
-  // Compute the frame rate every FRAME_RATE_PERIODE;
-  #define FRAME_RATE_PERIODE    10
-
-  EventToNameStruct EventToName[] =
-  {
-    {NUX_NO_EVENT,               "NUX_NO_EVENT" },
-    {NUX_MOUSE_PRESSED,          "NUX_MOUSE_PRESSED" },
-    {NUX_MOUSE_RELEASED,         "NUX_MOUSE_RELEASED" },
-    {NUX_KEYDOWN,                "NUX_KEYDOWN" },
-    {NUX_KEYUP,                  "NUX_KEYUP" },
-    {NUX_MOUSE_MOVE,             "NUX_MOUSE_MOVE" },
-    {NUX_SIZE_CONFIGURATION,     "NUX_SIZE_CONFIGURATION" },
-    {NUX_WINDOW_CONFIGURATION,   "NUX_WINDOW_CONFIGURATION" },
-    {NUX_WINDOW_MAP,             "NUX_WINDOW_MAP" },
-    {NUX_WINDOW_UNMAP,           "NUX_WINDOW_UNMAP" },
-    {NUX_WINDOW_ENTER_FOCUS,     "NUX_WINDOW_ENTER_FOCUS" },
-    {NUX_WINDOW_EXIT_FOCUS,      "NUX_WINDOW_EXIT_FOCUS" },
-    {NUX_WINDOW_DIRTY,           "NUX_WINDOW_DIRTY" },
-    {NUX_WINDOW_MOUSELEAVE,      "NUX_WINDOW_MOUSELEAVE" },
-    {NUX_TERMINATE_APP,          "NUX_TERMINATE_APP" },
-    {NUX_TAKE_FOCUS,             "NUX_TAKE_FOCUS" }
-  };
+  int GraphicsDisplay::double_click_time_delay = 400; // milliseconds
 
   GraphicsDisplay::GraphicsDisplay()
+    : m_X11Display(NULL)
+    , m_X11Screen(0)
+    , m_ParentWindow(0)
+    , m_GLCtx(0)
+#ifndef NUX_OPENGLES_20    
+    , glx_window_(0)
+#endif
+    , m_NumVideoModes(0)
+    , m_BorderPixel(0)
+    , _x11_major(0)
+    , _x11_minor(0)
+    , _glx_major(0)
+    , _glx_minor(0)
+    , _has_glx_13(false)
+    , m_X11RepeatKey(true)
+    , m_ViewportSize(Size(0,0))
+    , m_WindowSize(Size(0,0))
+    , m_WindowPosition(Point(0,0)) 
+    , m_Fullscreen(false)
+    , m_ScreenBitDepth(32)
+    , m_GfxInterfaceCreated(false)
+    , m_BestMode(-1)
+    , m_CreatedFromForeignWindow(false)
+    , last_click_time_(0)
+    , double_click_counter_(0)
+    , m_num_device_modes(0)
+    , m_pEvent(NULL)
+    , _last_dnd_position(Point(0, 0)) //DND
+    , m_PauseGraphicsRendering(false)
+    , m_FrameTime(0) 
+    , m_DeviceFactory(0)
+    , m_GraphicsContext(0)
+    , m_Style(WINDOWSTYLE_NORMAL)
+    , _drag_display(NULL)
+    , _drag_drop_timestamp(0)
+    , _dnd_source_data(NULL)
+    , _global_pointer_grab_data(0)
+    , _global_pointer_grab_active(false)
+    , _global_pointer_grab_callback(0)
+    , _global_keyboard_grab_data(0)
+    , _global_keyboard_grab_active(false)
+    , _global_keyboard_grab_callback(0)
+    , _dnd_is_drag_source(false)
+    , _dnd_source_target_accepts_drop(false)
+    , _dnd_source_grab_active(false)
+    , _dnd_source_drop_sent(false)
   {
-    m_CreatedFromForeignWindow      = false;
-    m_ParentWindow                  = 0;
-    m_GLCtx                         = 0;
-    m_Fullscreen                    = false;
-    m_GfxInterfaceCreated           = false;
-    m_pEvent                        = NULL;
-    m_ScreenBitDepth                = 32;
-    m_BestMode                      = -1;
-    m_num_device_modes              = 0;
-    m_DeviceFactory                 = 0;
-    m_GraphicsContext               = 0;
-    m_Style                         = WINDOWSTYLE_NORMAL;
-    m_PauseGraphicsRendering        = false;
-
     inlSetThreadLocalStorage(_TLS_GraphicsDisplay, this);
 
     m_X11LastEvent.type = -1;
-    m_X11RepeatKey = true;
 
-    m_GfxInterfaceCreated = false;
     m_pEvent = new Event();
 
-    m_WindowSize = Size(0,0);
-
-    _has_glx_13 = false;
-    _glx_major = 0;
-    _glx_minor = 0;
-    
-    _dnd_is_drag_source = false;
-    _dnd_source_grab_active = false;
     _dnd_source_funcs.get_drag_image = 0;
     _dnd_source_funcs.get_drag_types = 0;
     _dnd_source_funcs.get_data_for_type = 0;
     _dnd_source_funcs.drag_finished = 0;
-    
-    _global_keyboard_grab_data = 0;
-    _global_keyboard_grab_callback = 0;
-    _global_pointer_grab_data = 0;
-    _global_pointer_grab_callback = 0;
-
-    // DND
-    _last_dnd_position = Point(0, 0);
   }
 
   GraphicsDisplay::~GraphicsDisplay()
@@ -112,10 +105,11 @@ namespace nux
     NUX_SAFE_DELETE( m_DeviceFactory );
 
     if (m_CreatedFromForeignWindow == false)
+    {
       DestroyOpenGLWindow();
-
+    }
+    
     NUX_SAFE_DELETE( m_pEvent );
-
     inlSetThreadLocalStorage(_TLS_GraphicsDisplay, 0);
   }
 
@@ -311,30 +305,53 @@ namespace nux
     }
     else
     {
-        static int DoubleBufferAttributes[] =
+        int DoubleBufferAttributes[] =
         {
           //GLX_X_RENDERABLE, True,
           GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
           GLX_RENDER_TYPE,   GLX_RGBA_BIT,
-          //GLX_X_VISUAL_TYPE, GLX_TRUE_COLOR,
+          GLX_X_VISUAL_TYPE, GLX_TRUE_COLOR,
           GLX_DOUBLEBUFFER,  True,
           GLX_RED_SIZE,      8,     /* the maximum number of bits per component    */
           GLX_GREEN_SIZE,    8, 
           GLX_BLUE_SIZE,     8,
-          //GLX_ALPHA_SIZE,    8,
-          //GLX_DEPTH_SIZE,    24,
-          //GLX_STENCIL_SIZE,  8,
+          GLX_ALPHA_SIZE,    8,
+          GLX_DEPTH_SIZE,    24,
+          GLX_STENCIL_SIZE,  8,
           None
         };
 
-        //XSetWindowAttributes  swa;
-        GLXFBConfig           *fbconfigs;
-        //GLXContext            context;
-        //GLXWindow             glxWin;
-        int                   fbcount;
+        GLXFBConfig *fbconfigs = NULL;
+        int         fbcount;
+
+        #define GET_PROC(proc_type, proc_name, check)       \
+        do                                                  \
+        {                                                   \
+          proc_name = (proc_type) glXGetProcAddress((const GLubyte *) #proc_name); \
+        } while (0)
+
+        /* initialize GLX 1.3 function pointers */
+        GET_PROC(PFNGLXGETFBCONFIGSPROC,              glXGetFBConfigs, false);
+        GET_PROC(PFNGLXGETFBCONFIGATTRIBPROC,         glXGetFBConfigAttrib, false);
+        GET_PROC(PFNGLXGETVISUALFROMFBCONFIGPROC,     glXGetVisualFromFBConfig, false);
+        GET_PROC(PFNGLXCREATEWINDOWPROC,              glXCreateWindow, false);
+        GET_PROC(PFNGLXDESTROYWINDOWPROC,             glXDestroyWindow, false);
+        GET_PROC(PFNGLXCREATEPIXMAPPROC,              glXCreatePixmap, false);
+        GET_PROC(PFNGLXDESTROYPIXMAPPROC,             glXDestroyPixmap, false);
+        GET_PROC(PFNGLXCREATEPBUFFERPROC,             glXCreatePbuffer, false);
+        GET_PROC(PFNGLXDESTROYPBUFFERPROC,            glXDestroyPbuffer, false);
+        GET_PROC(PFNGLXCREATENEWCONTEXTPROC,          glXCreateNewContext, false);
+        GET_PROC(PFNGLXMAKECONTEXTCURRENTPROC,        glXMakeContextCurrent, false);
+        GET_PROC(PFNGLXCHOOSEFBCONFIGPROC,            glXChooseFBConfig, false);
+        
+        /* GLX_SGIX_pbuffer */
+        GET_PROC(PFNGLXCREATEGLXPBUFFERSGIXPROC,      glXCreateGLXPbufferSGIX, false);
+        GET_PROC(PFNGLXDESTROYGLXPBUFFERSGIXPROC,     glXDestroyGLXPbufferSGIX, false);
+        #undef GET_PROC
+
 
         // Request a double buffer configuration
-        fbconfigs = glXChooseFBConfig(m_X11Display, DefaultScreen(m_X11Display), DoubleBufferAttributes, &fbcount );
+        fbconfigs = glXChooseFBConfig(m_X11Display, DefaultScreen(m_X11Display), DoubleBufferAttributes, &fbcount);
 
         if (fbconfigs == NULL)
         {
@@ -342,28 +359,45 @@ namespace nux
           return false;
         }
 
-        // Select the best config
-        int best_fbc = -1, worst_fbc = -1, best_num_samp = -1, worst_num_samp = 999;
-        for (int i = 0; i < fbcount; i++)
+        // Select best multi-sample config.
+        if ((_glx_major >= 1) && (_glx_minor >= 4))
         {
-          XVisualInfo *vi = glXGetVisualFromFBConfig(m_X11Display, fbconfigs[i]);
-          if (vi)
+          int best_fbc = -1, worst_fbc = -1, best_num_samp = -1, worst_num_samp = 999;
+          for (int i = 0; i < fbcount; i++)
           {
-            int samp_buf, samples;
-            glXGetFBConfigAttrib(m_X11Display, fbconfigs[i], GLX_SAMPLE_BUFFERS, &samp_buf);
-            glXGetFBConfigAttrib(m_X11Display, fbconfigs[i], GLX_SAMPLES       , &samples);
+            XVisualInfo *vi = glXGetVisualFromFBConfig(m_X11Display, fbconfigs[i]);
+            if (vi)
+            {
+              int sample_buf, samples;
+              glXGetFBConfigAttrib(m_X11Display, fbconfigs[i], GLX_SAMPLE_BUFFERS, &sample_buf);
+              glXGetFBConfigAttrib(m_X11Display, fbconfigs[i], GLX_SAMPLES       , &samples);
 
-            nuxDebugMsg("Matching fbconfig %d, visual ID 0x%2x: SAMPLE_BUFFERS = %d SAMPLES = %d\n", i, vi->visualid, samp_buf, samples);
+              //nuxDebugMsg("Matching fbconfig %d, visual ID 0x%2x: SAMPLE_BUFFERS = %d SAMPLES = %d\n", i, vi->visualid, sample_buf, samples);
 
-            if (((best_fbc < 0) || samp_buf) && (samples > best_num_samp))
-              best_fbc = i, best_num_samp = samples;
-            if ((worst_fbc < 0) || (!samp_buf) || (samples < worst_num_samp))
-              worst_fbc = i, worst_num_samp = samples;
+              if (((best_fbc < 0) || sample_buf) && (samples > best_num_samp))
+              {
+                best_fbc = i;
+                best_num_samp = samples; 
+              }
+
+              if ((worst_fbc < 0) || (!sample_buf) || (samples < worst_num_samp))
+              {
+                worst_fbc = i;
+                worst_num_samp = samples;
+              }
+            }
+            XFree(vi);
           }
-          XFree(vi);
-        }
 
-        _fb_config = fbconfigs[best_fbc];
+          nuxAssertMsg(best_fbc >= 0, "[GraphicsDisplay::CreateOpenGLWindow] Invalid frame buffer config.");
+
+          _fb_config = fbconfigs[best_fbc];
+        }
+        else
+        {
+          // Choose the first one
+          _fb_config = fbconfigs[0];
+        }
 
         XFree(fbconfigs);
 
@@ -534,7 +568,7 @@ namespace nux
     }
 
 #ifndef NUX_OPENGLES_20
-    if (0 /*_has_glx_13*/)
+    if (_has_glx_13)
     {
       XFree(m_X11VisualInfo);
       m_X11VisualInfo = 0;
@@ -542,17 +576,22 @@ namespace nux
       /* Create a GLX context for OpenGL rendering */
       m_GLCtx = glXCreateNewContext(m_X11Display, _fb_config, GLX_RGBA_TYPE, NULL, True);
 
+      if (m_GLCtx == 0)
+      {
+        nuxDebugMsg("[GraphicsDisplay::CreateOpenGLWindow] m_GLCtx is null");
+      }
+
       /* Create a GLX window to associate the frame buffer configuration
       ** with the created X window */
-      GLXWindow glxWin = glXCreateWindow(m_X11Display, _fb_config, m_X11Window, NULL );
-      
+      glx_window_ = glXCreateWindow(m_X11Display, _fb_config, m_X11Window, NULL);
+
       // Map the window to the screen, and wait for it to appear */
       XMapWindow(m_X11Display, m_X11Window);
       XEvent event;
       XIfEvent(m_X11Display, &event, WaitForNotify, (XPointer) m_X11Window);
 
       /* Bind the GLX context to the Window */
-      glXMakeContextCurrent(m_X11Display, glxWin, glxWin, m_GLCtx);
+      glXMakeContextCurrent(m_X11Display, glx_window_, glx_window_, m_GLCtx);
     }
 #else
     m_GLSurface = eglCreateWindowSurface(dpy, config, (EGLNativeWindowType)m_X11Window, 0);
@@ -576,16 +615,13 @@ namespace nux
 #endif
 
     MakeGLContextCurrent();
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    SwapBuffer();
 
     m_GfxInterfaceCreated = true;
 
     m_DeviceFactory = new GpuDevice(m_ViewportSize.width, m_ViewportSize.height, BITFMT_R8G8B8A8,
         m_X11Display,
         m_X11Window,
-        0,
+        _has_glx_13,
         _fb_config,
         m_GLCtx,
         1, 0, false);
@@ -593,8 +629,13 @@ namespace nux
     m_GraphicsContext = new GraphicsEngine(*this);
 
     //EnableVSyncSwapControl();
-    DisableVSyncSwapControl();
+    //DisableVSyncSwapControl();
+        
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    SwapBuffer();
     
+       
     InitGlobalGrabWindow();
 
     return TRUE;
@@ -647,108 +688,6 @@ namespace nux
 
     return true;
   }
-
-// bool GraphicsDisplay::CreateVisual(unsigned int WindowWidth, unsigned int WindowHeight, XVisualInfo& ChosenVisual, XVisualInfo& Template, unsigned long Mask)
-// {
-//     // Get all the visuals matching the template
-//     Template.screen = m_X11Screen;
-//     int NunberOfVisuals = 0;
-//     XVisualInfo* VisualsArray = XGetVisualInfo(m_X11Display, Mask | VisualScreenMask, &Template, &NunberOfVisuals);
-//
-//     if (!VisualsArray || (NunberOfVisuals == 0))
-//     {
-//         if (VisualsArray)
-//             XFree(VisualsArray);
-//         nuxDebugMsg("[GraphicsDisplay::CreateVisual] There is no matching visuals.");
-//         return false;
-//     }
-//
-//     // Find the best visual
-//     int          BestScore  = 0xFFFF;
-//     XVisualInfo* BestVisual = NULL;
-//     while (!BestVisual)
-//     {
-//         for (int i = 0; i < NunberOfVisuals; ++i)
-//         {
-//             // Get the current visual attributes
-//             int RGBA, DoubleBuffer, Red, Green, Blue, Alpha, Depth, Stencil, MultiSampling, Samples;
-//             glXGetConfig(ourDisplay, &Visuals[i], GLX_RGBA,               &RGBA);
-//             glXGetConfig(ourDisplay, &Visuals[i], GLX_DOUBLEBUFFER,       &DoubleBuffer);
-//             glXGetConfig(ourDisplay, &Visuals[i], GLX_RED_SIZE,           &Red);
-//             glXGetConfig(ourDisplay, &Visuals[i], GLX_GREEN_SIZE,         &Green);
-//             glXGetConfig(ourDisplay, &Visuals[i], GLX_BLUE_SIZE,          &Blue);
-//             glXGetConfig(ourDisplay, &Visuals[i], GLX_ALPHA_SIZE,         &Alpha);
-//             glXGetConfig(ourDisplay, &Visuals[i], GLX_DEPTH_SIZE,         &Depth);
-//             glXGetConfig(ourDisplay, &Visuals[i], GLX_STENCIL_SIZE,       &Stencil);
-//             glXGetConfig(ourDisplay, &Visuals[i], GLX_SAMPLE_BUFFERS_ARB, &MultiSampling);
-//             glXGetConfig(ourDisplay, &Visuals[i], GLX_SAMPLES_ARB,        &Samples);
-//
-//             // First check the mandatory parameters
-//             if ((RGBA == 0) || (DoubleBuffer == 0))
-//                 continue;
-//
-//             // Evaluate the current configuration
-//             int Color = Red + Green + Blue + Alpha;
-//             int Score = EvaluateConfig(Mode, Params, Color, Depth, Stencil, MultiSampling ? Samples : 0);
-//
-//             // Keep it if it's better than the current best
-//             if (Score < BestScore)
-//             {
-//                 BestScore  = Score;
-//                 BestVisual = &Visuals[i];
-//             }
-//         }
-//
-//         // If no visual has been found, try a lower level of antialiasing
-//         if (!BestVisual)
-//         {
-//             if (Params.AntialiasingLevel > 2)
-//             {
-//                 std::cerr << "Failed to find a pixel format supporting "
-//                     << Params.AntialiasingLevel << " antialiasing levels ; trying with 2 levels" << std::endl;
-//                 Params.AntialiasingLevel = 2;
-//             }
-//             else if (Params.AntialiasingLevel > 0)
-//             {
-//                 std::cerr << "Failed to find a pixel format supporting antialiasing ; antialiasing will be disabled" << std::endl;
-//                 Params.AntialiasingLevel = 0;
-//             }
-//             else
-//             {
-//                 std::cerr << "Failed to find a suitable pixel format for the window -- cannot create OpenGL context" << std::endl;
-//                 return false;
-//             }
-//         }
-//     }
-//
-//     // Create the OpenGL context
-//     myGLContext = glXCreateContext(ourDisplay, BestVisual, glXGetCurrentContext(), true);
-//     if (myGLContext == NULL)
-//     {
-//         std::cerr << "Failed to create an OpenGL context for this window" << std::endl;
-//         return false;
-//     }
-//
-//     // Update the creation settings from the chosen format
-//     int Depth, Stencil;
-//     glXGetConfig(ourDisplay, BestVisual, GLX_DEPTH_SIZE,   &Depth);
-//     glXGetConfig(ourDisplay, BestVisual, GLX_STENCIL_SIZE, &Stencil);
-//     Params.DepthBits   = static_cast<unsigned int>(Depth);
-//     Params.StencilBits = static_cast<unsigned int>(Stencil);
-//
-//     // Assign the chosen visual, and free the temporary visuals array
-//     ChosenVisual = *BestVisual;
-//     XFree(Visuals);
-//
-//     // Activate the context
-//     SetActive(true);
-//
-//     // Enable multisampling if needed
-//     if (Params.AntialiasingLevel > 0)
-//         glEnable(GL_MULTISAMPLE_ARB);
-//
-//     return true;
-// }
 
   GraphicsEngine* GraphicsDisplay::GetGraphicsEngine() const
   {
@@ -924,36 +863,27 @@ namespace nux
 
   Rect GraphicsDisplay::GetWindowGeometry()
   {
-    XWindowAttributes attrib;
-    int status = XGetWindowAttributes(m_X11Display, m_X11Window, &attrib);
-
-    if (status == 0)
-    {
-      nuxAssert("[GraphicsDisplay::GetWindowGeometry] Failed to get the window attributes.");
-      return Rect(0, 0, 0, 0);
-    }
-
-    return Rect(attrib.x, attrib.y, attrib.width, attrib.height);
+    return Rect(m_WindowPosition.x, m_WindowPosition.y, m_WindowSize.width, m_WindowSize.height);
   }
 
   Rect GraphicsDisplay::GetNCWindowGeometry()
   {
-    XWindowAttributes attrib;
-    int status = XGetWindowAttributes(m_X11Display, m_X11Window, &attrib);
-
-    if (status == 0)
-    {
-      nuxAssert("[GraphicsDisplay::GetWindowGeometry] Failed to get the window attributes.");
-      return Rect(0, 0, 0, 0);
-    }
-
-    return Rect(attrib.x, attrib.y, attrib.width, attrib.height);
+    return Rect(m_WindowPosition.x, m_WindowPosition.y, m_WindowSize.width, m_WindowSize.height);
   }
 
   void GraphicsDisplay::MakeGLContextCurrent()
   {
 #ifndef NUX_OPENGLES_20
-    if (!glXMakeCurrent(m_X11Display, m_X11Window, m_GLCtx))
+    if (_has_glx_13)
+    {
+      nuxDebugMsg("Has glx 1.3");
+      if (!glXMakeContextCurrent(m_X11Display, glx_window_, glx_window_, m_GLCtx))
+      {
+        nuxDebugMsg("Destroy");
+        DestroyOpenGLWindow();
+      }
+    }
+    else if (!glXMakeCurrent(m_X11Display, m_X11Window, m_GLCtx))
     {
       DestroyOpenGLWindow();
     }
@@ -997,47 +927,53 @@ namespace nux
     if (glswap)
     {
 #ifndef NUX_OPENGLES_20
-      glXSwapBuffers(m_X11Display, m_X11Window);
+      if (_has_glx_13)
+        glXSwapBuffers(m_X11Display, glx_window_);
+      else
+        glXSwapBuffers(m_X11Display, m_X11Window);
 #else
       eglSwapBuffers(eglGetDisplay((EGLNativeDisplayType)m_X11Display), m_GLSurface);
 #endif
     }
 
     m_FrameTime = m_Timer.PassedMilliseconds();
-
-//     if (16.6f - m_FrameTime > 0)
-//     {
-//         SleepForMilliseconds(16.6f - m_FrameTime);
-//         m_FrameTime = m_Timer.PassedMilliseconds();
-//     }
-//
-//     m_Timer.Reset();
-//     m_PeriodeTime += m_FrameTime;
-//
-//     m_FrameCounter++;
-//     m_FramePeriodeCounter++;
-//     if (m_FramePeriodeCounter >= FRAME_RATE_PERIODE)
-//     {
-//         //nuxDebugMsg("[GraphicsDisplay::SwapBuffer] Frametime: %f", m_FrameTime);
-//         m_FrameRate = m_FramePeriodeCounter / (m_PeriodeTime / 1000.0f);
-//         m_PeriodeTime = 0.0f;
-//         m_FramePeriodeCounter = 0;
-//     }
   }
 
   void GraphicsDisplay::DestroyOpenGLWindow()
   {
     if (m_GfxInterfaceCreated == true)
     {
+      if (m_GLCtx == 0)
+      {
+        nuxDebugMsg("[GraphicsDisplay::DestroyOpenGLWindow] m_GLCtx is null");
+      }
+
       if (m_GLCtx)
       {
 #ifndef NUX_OPENGLES_20
-        if (!glXMakeCurrent(m_X11Display, None, NULL))
+
+        // Release the current context
+        if (_has_glx_13)
         {
-          nuxAssert("[GraphicsDisplay::DestroyOpenGLWindow] glXMakeCurrent failed.");
+          if (!glXMakeContextCurrent(m_X11Display, None, None, NULL))
+          {
+            nuxAssert("[GraphicsDisplay::DestroyOpenGLWindow] glXMakeContextCurrent failed.");
+          }
+        }
+        else
+        {
+          if (!glXMakeCurrent(m_X11Display, None, NULL))
+          {
+            nuxAssert("[GraphicsDisplay::DestroyOpenGLWindow] glXMakeCurrent failed.");
+          }
         }
 
         glXDestroyContext(m_X11Display, m_GLCtx);
+
+        if (_has_glx_13)
+        {
+          glXDestroyWindow(m_X11Display, glx_window_);
+        }
 #else
         EGLDisplay dpy = eglGetDisplay((EGLNativeDisplayType)m_X11Display);
 
@@ -1061,104 +997,20 @@ namespace nux
         XF86VidModeSetViewPort(m_X11Display, m_X11Screen, 0, 0);
       }
 
+      XDestroyWindow(m_X11Display, m_X11Window);
+      XFreeColormap(m_X11Display, m_X11Colormap);
       XCloseDisplay(m_X11Display);
     }
 
     m_GfxInterfaceCreated = false;
   }
 
-// // convert a MSWindows VK_x to an INL keysym or and extended INL keysym:
-// static const struct {unsigned short vk, fltk, extended;} vktab[] = {
-//     {NUX_VK_BACK,	    NUX_BackSpace},
-//     {NUX_VK_TAB,	    NUX_Tab},
-//     {NUX_VK_CLEAR,	    NUX_Clear,	    0xff0b/*XK_Clear*/},
-//     {NUX_VK_ENTER,	    NUX_Enter,	    NUX_KP_ENTER},
-//     {NUX_VK_SHIFT,	    NUX_Shift_L,	NUX_EXT_Shift_R},
-//     {NUX_VK_CONTROL,	NUX_Control_L,	NUX_EXT_Control_R},
-//     {NUX_VK_MENU,	    NUX_Alt_L,	    NUX_EXT_Alt_R},
-//     {NUX_VK_PAUSE,	    NUX_Pause},
-//     {NUX_VK_CAPITAL,	NUX_Caps_Lock},
-//     {NUX_VK_ESCAPE,	    NUX_Escape},
-//     {NUX_VK_SPACE,	    ' '},
-//     {NUX_VK_PAGE_UP,	NUX_Page_Up     /*KP+'9'*/,	    NUX_KP_PAGE_UP},
-//     {NUX_VK_PAGE_DOWN,  NUX_Page_Down   /*KP+'3'*/,	    NUX_KP_PAGE_DOWN},
-//     {NUX_VK_END,	    NUX_End         /*KP+'1'*/,	    NUX_KP_END},
-//     {NUX_VK_HOME,	    NUX_Home        /*KP+'7'*/,	    NUX_KP_HOME},
-//     {NUX_VK_LEFT,	    NUX_Left        /*KP+'4'*/,	    NUX_KP_LEFT},
-//     {NUX_VK_UP,	        NUX_Up          /*KP+'8'*/,	    NUX_KP_UP},
-//     {NUX_VK_RIGHT,	    NUX_Right       /*KP+'6'*/,	    NUX_KP_RIGHT},
-//     {NUX_VK_DOWN,	    NUX_Down        /*KP+'2'*/,	    NUX_KP_DOWN},
-//     {NUX_VK_SNAPSHOT,	NUX_Print},	    // does not work on NT
-//     {NUX_VK_INSERT,	    NUX_Insert      /*KP+'0'*/,	    NUX_KP_INSERT},
-//     {NUX_VK_DELETE,	    NUX_Delete      /*KP+'.'*/,	    NUX_KP_DELETE},
-//     {NUX_VK_LWIN,	    NUX_LWin        /*Meta_L*/},
-//     {NUX_VK_RWIN,	    NUX_RWin        /*Meta_R*/},
-//     {NUX_VK_APPS,	    NUX_VK_APPS     /*Menu*/},
-//     {NUX_VK_MULTIPLY,	NUX_Multiply    /*KP+'*'*/},
-//     {NUX_VK_ADD,	    NUX_Add         /*KP+'+'*/},
-//     {NUX_VK_SUBTRACT,	NUX_Subtract    /*KP+'-'*/},
-//     {NUX_VK_DECIMAL,	NUX_Decimal     /*KP+'.'*/},
-//     {NUX_VK_DIVIDE,	    NUX_Divide      /*KP+'/'*/},
-//     {NUX_VK_NUMLOCK,	NUX_Numlock     /*Num_Lock*/},
-//     {NUX_VK_SCROLL,	    NUX_Scroll      /*Scroll_Lock*/},
-//     {0xba,	';'},
-//     {0xbb,	'='},
-//     {0xbc,	','},
-//     {0xbd,	'-'},
-//     {0xbe,	'.'},
-//     {0xbf,	'/'},
-//     {0xc0,	'`'},
-//     {0xdb,	'['},
-//     {0xdc,	'\\'},
-//     {0xdd,	']'},
-//     {0xde,	'\''}
-// };
-// static int ms2fltk(int vk, int extended)
-// {
-//     static unsigned short vklut[256];
-//     static unsigned short extendedlut[256];
-//     if (!vklut[1])
-//     {
-//         // init the table
-//         unsigned int i;
-//         for (i = 0; i < 256; i++)
-//         {
-//             vklut[i] = i; //tolower(i);
-//         }
-// //        for (i=VK_F1; i<=VK_F16; i++)
-// //        {
-// //            vklut[i] = i+(FL_F-(VK_F1-1));   // (FL_F + 1 -> VK_F1) ... (FL_F + 16 -> VK_F16)
-// //        }
-// //        for (i=VK_NUMPAD0; i<=VK_NUMPAD9; i++)
-// //        {
-// //            vklut[i] = i+(FL_KP+'0'-VK_NUMPAD0);    // (FL_KP + '0' -> VK_NUMPAD0) ... (FL_KP + '9' = VK_NUMPAD9)
-// //        }
-//         for (i = 0; i < sizeof(vktab)/sizeof(*vktab); i++)
-//         {
-//             vklut[vktab[i].vk] = vktab[i].fltk;
-//             extendedlut[vktab[i].vk] = vktab[i].extended;
-//         }
-//         for (i = 0; i < 256; i++)
-//         {
-//             if (!extendedlut[i])
-//                 extendedlut[i] = vklut[i];
-//         }
-//     }
-//
-//     return extended ? extendedlut[vk] : vklut[vk];
-// }
-
-  static int mouse_move(XEvent xevent, Event *m_pEvent)
+  int GraphicsDisplay::MouseMove(XEvent xevent, Event *m_pEvent)
   {
-//     m_pEvent->e_x = xevent.xmotion.x;
-//     m_pEvent->e_y = xevent.xmotion.y;
-//     m_pEvent->e_x_root = 0;
-//     m_pEvent->e_y_root = 0;
-
     // Erase mouse event and mouse doubleclick events. Keep the mouse states.
-    t_uint32 _mouse_state = m_pEvent->e_mouse_state & 0x0F000000;
+    unsigned int _mouse_state = m_pEvent->mouse_state & 0x0F000000;
 
-    m_pEvent->e_event = NUX_MOUSE_MOVE;
+    m_pEvent->type = NUX_MOUSE_MOVE;
 
     if (xevent.type == MotionNotify)
     {
@@ -1172,23 +1024,27 @@ namespace nux
       _mouse_state |= (xevent.xcrossing.state & Button2Mask) ? NUX_STATE_BUTTON2_DOWN : 0;
       _mouse_state |= (xevent.xcrossing.state & Button3Mask) ? NUX_STATE_BUTTON3_DOWN : 0;
     }
-
-    m_pEvent->e_mouse_state = _mouse_state;
+    m_pEvent->mouse_state = _mouse_state;
 
     return 0;
   }
 
-  static int mouse_press(XEvent xevent, Event *m_pEvent)
+  int GraphicsDisplay::MousePress(XEvent xevent, Event *m_pEvent)
   {
-//     m_pEvent->e_x = xevent.xbutton.x;
-//     m_pEvent->e_y = xevent.xbutton.y;
-//     m_pEvent->e_x_root = 0;
-//     m_pEvent->e_y_root = 0;
-
     // Erase mouse event and mouse double-click events. Keep the mouse states.
-    ulong _mouse_state = m_pEvent->e_mouse_state & 0x0F000000;
+    ulong _mouse_state = m_pEvent->mouse_state & 0x0F000000;
 
-    m_pEvent->e_event = NUX_MOUSE_PRESSED;
+    bool double_click = false;
+    Time current_time = xevent.xbutton.time;
+    if ((double_click_counter_ == 1) && ((int)current_time - (int)last_click_time_ < double_click_time_delay))
+    {
+      double_click = true;
+      double_click_counter_ = 0;
+    }
+    else
+    {
+      double_click_counter_ = 1;
+    }
 
     // State of the button before the event
     _mouse_state |= (xevent.xbutton.state & Button1Mask) ? NUX_STATE_BUTTON1_DOWN : 0;
@@ -1199,18 +1055,33 @@ namespace nux
     {
       if (xevent.xbutton.button == Button1)
       {
+        if (double_click)
+          m_pEvent->type = NUX_MOUSE_DOUBLECLICK;
+        else
+          m_pEvent->type = NUX_MOUSE_PRESSED;
+
         _mouse_state |= NUX_EVENT_BUTTON1_DOWN;
         _mouse_state |= NUX_STATE_BUTTON1_DOWN;
       }
 
       if (xevent.xbutton.button == Button2)
       {
+        if (double_click)
+          m_pEvent->type = NUX_MOUSE_DOUBLECLICK;
+        else
+          m_pEvent->type = NUX_MOUSE_PRESSED;
+
         _mouse_state |= NUX_EVENT_BUTTON2_DOWN;
         _mouse_state |= NUX_STATE_BUTTON2_DOWN;
       }
 
       if (xevent.xbutton.button == Button3)
       {
+        if (double_click)
+          m_pEvent->type = NUX_MOUSE_DOUBLECLICK;
+        else
+          m_pEvent->type = NUX_MOUSE_PRESSED;
+
         _mouse_state |= NUX_EVENT_BUTTON3_DOWN;
         _mouse_state |= NUX_STATE_BUTTON3_DOWN;
       }
@@ -1218,37 +1089,45 @@ namespace nux
       if (xevent.xbutton.button == Button4)
       {
         _mouse_state |= NUX_EVENT_MOUSEWHEEL;
-        m_pEvent->e_event = NUX_MOUSE_WHEEL;
-        m_pEvent->e_wheeldelta = NUX_MOUSEWHEEL_DELTA;
+        m_pEvent->type = NUX_MOUSE_WHEEL;
+        m_pEvent->wheel_delta = NUX_MOUSEWHEEL_DELTA;
         return 1;
       }
 
       if (xevent.xbutton.button == Button5)
       {
         _mouse_state |= NUX_EVENT_MOUSEWHEEL;
-        m_pEvent->e_event = NUX_MOUSE_WHEEL;
-        m_pEvent->e_wheeldelta = -NUX_MOUSEWHEEL_DELTA;
+        m_pEvent->type = NUX_MOUSE_WHEEL;
+        m_pEvent->wheel_delta = -NUX_MOUSEWHEEL_DELTA;
         return 1;
       }
 
+      if (xevent.xbutton.button == 6)
+      {
+        _mouse_state |= NUX_EVENT_MOUSEWHEEL;
+        m_pEvent->type = NUX_MOUSE_WHEEL;
+        m_pEvent->wheel_delta = NUX_MOUSEWHEEL_DELTA;
+        return 1;
+      }
+
+      if (xevent.xbutton.button == 7)
+      {
+        _mouse_state |= NUX_EVENT_MOUSEWHEEL;
+        m_pEvent->type = NUX_MOUSE_WHEEL;
+        m_pEvent->wheel_delta = -NUX_MOUSEWHEEL_DELTA;
+        return 1;
+      }
     }
 
-    m_pEvent->e_mouse_state = _mouse_state;
+    m_pEvent->mouse_state = _mouse_state;
 
     return 0;
   }
 
-  static int mouse_release(XEvent xevent, Event *m_pEvent)
+  int GraphicsDisplay::MouseRelease(XEvent xevent, Event *m_pEvent)
   {
-//     m_pEvent->e_x = xevent.xbutton.x;
-//     m_pEvent->e_y = xevent.xbutton.y;
-//     m_pEvent->e_x_root = 0;
-//     m_pEvent->e_y_root = 0;
-
     // Erase mouse event and mouse double-click events. Keep the mouse states.
-    ulong _mouse_state = m_pEvent->e_mouse_state & 0x0F000000;
-
-    m_pEvent->e_event = NUX_MOUSE_RELEASED;
+    ulong _mouse_state = m_pEvent->mouse_state & 0x0F000000;
 
     // State of the button before the event
     _mouse_state |= (xevent.xbutton.state & Button1Mask) ? NUX_STATE_BUTTON1_DOWN : 0;
@@ -1259,24 +1138,28 @@ namespace nux
     {
       if (xevent.xbutton.button == Button1)
       {
+        m_pEvent->type = NUX_MOUSE_RELEASED;
         _mouse_state |= NUX_EVENT_BUTTON1_UP;
         _mouse_state &= ~NUX_STATE_BUTTON1_DOWN;
       }
 
       if (xevent.xbutton.button == Button2)
       {
+        m_pEvent->type = NUX_MOUSE_RELEASED;
         _mouse_state |= NUX_EVENT_BUTTON2_UP;
         _mouse_state &= ~NUX_STATE_BUTTON2_DOWN;
       }
 
       if (xevent.xbutton.button == Button3)
       {
+        m_pEvent->type = NUX_MOUSE_RELEASED;
         _mouse_state |= NUX_EVENT_BUTTON3_UP;
         _mouse_state &= ~NUX_STATE_BUTTON3_DOWN;
       }
     }
 
-    m_pEvent->e_mouse_state = _mouse_state;
+    m_pEvent->mouse_state = _mouse_state;
+    last_click_time_ = xevent.xbutton.time;
 
     return 0;
   }
@@ -1288,24 +1171,46 @@ namespace nux
     // For CapsLock, we don't want to know if the key is pressed Down or Up.
     // We really want to know the state of the the CapsLock: on(keyboard light is on) or off?
     if (modifier_key_state & LockMask)
-      state |= NUX_STATE_CAPS_LOCK;
-
-    // For NumLock, we don't want to know if the key is pressed Down or Up.
-    // We really want to know the state of the the NumLock: on(keyboard light is on) or off?
-    if (modifier_key_state & Mod5Mask)
-      state |= NUX_STATE_NUMLOCK;
-
-//     if (modifier_key_state & 0x8000)
-//         state |= NUX_STATE_SCROLLLOCK;
+    {
+      state |= KEY_MODIFIER_CAPS_LOCK;
+    }
 
     if (modifier_key_state & ControlMask)
-      state |= NUX_STATE_CTRL;
+    {
+      state |= KEY_MODIFIER_CTRL;
+    }
 
     if (modifier_key_state & ShiftMask)
-      state |= NUX_STATE_SHIFT;
+    {
+      state |= KEY_MODIFIER_SHIFT;
+    }
 
     if (modifier_key_state & Mod1Mask)
-      state |= NUX_STATE_ALT;
+    {
+      state |= KEY_MODIFIER_ALT;
+    }
+
+    if (modifier_key_state & Mod2Mask)
+    {
+      state |= KEY_MODIFIER_NUMLOCK;
+    }
+
+    // todo(jaytaoko): find out which key enable mod3mask
+    // if (modifier_key_state & Mod3Mask)
+    // {
+
+    // }
+
+    if (modifier_key_state & Mod4Mask)
+    {
+      state |= KEY_MODIFIER_SUPER;
+    }
+
+    // todo(jaytaoko): find out which key enable mod5mask
+    // if (modifier_key_state & Mod5Mask)
+    // {
+
+    // }
 
     return state;
   }
@@ -1314,7 +1219,7 @@ namespace nux
   {
     m_pEvent->Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
-    m_pEvent->e_mouse_state &= 0x0F000000;
+    m_pEvent->mouse_state &= 0x0F000000;
     bool bProcessEvent = true;
 
     // Process event matching this window
@@ -1323,6 +1228,19 @@ namespace nux
     if (XPending(m_X11Display))
     {
       XNextEvent(m_X11Display, &xevent);
+
+      if (!_event_filters.empty())
+      {
+        for (auto filter : _event_filters)
+        {
+          bool result = filter.filter(xevent, filter.data);
+          if (result)
+          {
+            memcpy(evt, m_pEvent, sizeof(Event));
+            return;
+          }
+        }
+      }
       // Detect auto repeat keys. X11 sends a combination of KeyRelease/KeyPress(at the same time) when a key auto repeats.
       // Here, we make sure we process only the keyRelease when the key is effectively released.
       if ((xevent.type == KeyPress) || (xevent.type == KeyRelease))
@@ -1365,35 +1283,6 @@ namespace nux
         while (XCheckTypedEvent(m_X11Display, MotionNotify, &xevent));
       }
 
-      /*if(previous_event_motion == true)
-      {
-          if (xevent.type == MotionNotify)
-          {
-
-              if ((motion_x == xevent.xmotion.x) && (motion_y == xevent.xmotion.y))
-              {
-                  //printf("skipmotion\n");
-                  bProcessEvent = false;
-              }
-              else
-              {
-                  motion_x = xevent.xmotion.x;
-                  motion_y = xevent.xmotion.y;
-              }
-          }
-          else
-          {
-              previous_event_motion = false;
-          }
-      }
-      else if (xevent.type == MotionNotify)
-      {
-          //printf("motion\n");
-          previous_event_motion = true;
-          motion_x = xevent.xmotion.x;
-          motion_y = xevent.xmotion.y;
-      }*/
-
       if (bProcessEvent)
         ProcessXEvent(xevent, false);
 
@@ -1411,11 +1300,29 @@ namespace nux
   {
     m_pEvent->Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
-    m_pEvent->e_mouse_state &= 0x0F000000;
+    m_pEvent->mouse_state &= 0x0F000000;
     
     // We could do some checks here to make sure the xevent is really what it pretends to be.
     ProcessXEvent(xevent, false);
     memcpy(evt, m_pEvent, sizeof(Event));
+  }
+
+  void GraphicsDisplay::AddEventFilter(EventFilterArg arg)
+  {
+    _event_filters.push_back(arg);
+  }
+
+  void GraphicsDisplay::RemoveEventFilter(void *owner)
+  {
+    std::list<EventFilterArg>::iterator it;
+    for (it = _event_filters.begin(); it != _event_filters.end(); ++it)
+    {
+      if ((*it).data == owner)
+      {
+        _event_filters.erase(it);
+        break;
+      }
+    }
   }
 #endif
 
@@ -1423,7 +1330,7 @@ namespace nux
   {
     m_pEvent->Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
-    m_pEvent->e_mouse_state &= 0x0F000000;
+    m_pEvent->mouse_state &= 0x0F000000;
     bool bProcessEvent = true;
 
     // Process event matching this window
@@ -1503,6 +1410,7 @@ namespace nux
 
   void GraphicsDisplay::RecalcXYPosition(Window TheMainWindow, XEvent xevent, int &x_recalc, int &y_recalc)
   {
+    x_recalc = y_recalc = 0;
     int main_window_x = m_WindowPosition.x;
     int main_window_y = m_WindowPosition.y;
     bool same = (TheMainWindow == xevent.xany.window);
@@ -1555,11 +1463,6 @@ namespace nux
         }
         break;
       }
-      
-      default:
-      {
-        x_recalc = y_recalc = 0;
-      }
     }
   }
 
@@ -1573,9 +1476,8 @@ namespace nux
     bool local_from_server = !foreign;
     foreign = foreign || xevent.xany.window != m_X11Window;
 
-    m_pEvent->e_event = NUX_NO_EVENT;
-    m_pEvent->e_x11_window = xevent.xany.window;
-
+    m_pEvent->type = NUX_NO_EVENT;
+    m_pEvent->x11_window = xevent.xany.window;
 
     switch(xevent.type)
     {
@@ -1584,7 +1486,7 @@ namespace nux
         if (foreign)
           break;
           
-        m_pEvent->e_event = NUX_DESTROY_WINDOW;
+        m_pEvent->type = NUX_DESTROY_WINDOW;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: DestroyNotify event.");
         break;
       }
@@ -1594,7 +1496,7 @@ namespace nux
         if (foreign)
           break;
         
-        m_pEvent->e_event = NUX_WINDOW_DIRTY;
+        m_pEvent->type = NUX_WINDOW_DIRTY;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: Expose event.");
         break;
       }
@@ -1605,13 +1507,18 @@ namespace nux
         if (foreign)
           break;
         
-        m_pEvent->e_event = NUX_SIZE_CONFIGURATION;
+        m_pEvent->type = NUX_SIZE_CONFIGURATION;
         m_pEvent->width =  xevent.xconfigure.width;
         m_pEvent->height = xevent.xconfigure.height;
         m_WindowSize = Size(xevent.xconfigure.width, xevent.xconfigure.height);
-        m_WindowPosition = Point(xevent.xconfigure.x, xevent.xconfigure.y);
 
-        //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: ConfigureNotify event.");
+        int x, y;
+        Window child_return;
+
+        XTranslateCoordinates(m_X11Display, m_X11Window, RootWindow(m_X11Display, 0), 0, 0, &x, &y, &child_return);
+        m_WindowPosition = Point(x, y);
+
+        //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: ConfigureNotify event. %d %d", x, y);
         break;
       }
 
@@ -1620,11 +1527,11 @@ namespace nux
         if (!local_from_server)
           break;
           
-        m_pEvent->e_event = NUX_WINDOW_ENTER_FOCUS;
-        m_pEvent->e_mouse_state = 0;
+        m_pEvent->type = NUX_WINDOW_ENTER_FOCUS;
+        m_pEvent->mouse_state = 0;
 
-        m_pEvent->e_dx = 0;
-        m_pEvent->e_dy = 0;
+        m_pEvent->dx = 0;
+        m_pEvent->dy = 0;
         m_pEvent->virtual_code = 0;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: FocusIn event.");
         break;
@@ -1635,11 +1542,11 @@ namespace nux
         if (!local_from_server)
           break;
           
-        m_pEvent->e_event = NUX_WINDOW_EXIT_FOCUS;
-        m_pEvent->e_mouse_state = 0;
+        m_pEvent->type = NUX_WINDOW_EXIT_FOCUS;
+        m_pEvent->mouse_state = 0;
 
-        m_pEvent->e_dx = 0;
-        m_pEvent->e_dy = 0;
+        m_pEvent->dx = 0;
+        m_pEvent->dy = 0;
         m_pEvent->virtual_code = 0;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: FocusOut event.");
         break;
@@ -1652,16 +1559,16 @@ namespace nux
         KeySym keysym = NoSymbol;
         keysym = XKeycodeToKeysym(xevent.xany.display, keycode, 0);
 
-        m_pEvent->e_key_modifiers = GetModifierKeyState(xevent.xkey.state);
-        m_pEvent->e_key_repeat_count = 0;
-        m_pEvent->e_keysym = keysym;
-        m_pEvent->e_x11_keycode = xevent.xkey.keycode;
-        m_pEvent->e_event = NUX_KEYDOWN;
-        m_pEvent->e_x11_timestamp = xevent.xkey.time;
-        m_pEvent->e_x11_state = xevent.xkey.state;
+        m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
+        m_pEvent->key_repeat_count = 0;
+        m_pEvent->x11_keysym = keysym;
+        m_pEvent->x11_keycode = xevent.xkey.keycode;
+        m_pEvent->type = NUX_KEYDOWN;
+        m_pEvent->x11_timestamp = xevent.xkey.time;
+        m_pEvent->x11_key_state = xevent.xkey.state;
 
         char buffer[NUX_EVENT_TEXT_BUFFER_SIZE];
-        Memset(m_pEvent->e_text, 0, NUX_EVENT_TEXT_BUFFER_SIZE);
+        Memset(m_pEvent->text, 0, NUX_EVENT_TEXT_BUFFER_SIZE);
 
         bool skip = false;
         if ((keysym == NUX_VK_BACKSPACE) ||
@@ -1672,10 +1579,10 @@ namespace nux
          skip = true; 
         }
         
-        int num_char_stored = XLookupString(&xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->e_keysym, NULL);
+        int num_char_stored = XLookupString(&xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->x11_keysym, NULL);
         if (num_char_stored && (!skip))
         {
-          Memcpy(m_pEvent->e_text, buffer, num_char_stored);
+          Memcpy(m_pEvent->text, buffer, num_char_stored);
         }
 
         break;
@@ -1688,13 +1595,13 @@ namespace nux
         KeySym keysym = NoSymbol;
         keysym = XKeycodeToKeysym(xevent.xany.display, keycode, 0);
 
-        m_pEvent->e_key_modifiers = GetModifierKeyState(xevent.xkey.state);
-        m_pEvent->e_key_repeat_count = 0;
-        m_pEvent->e_keysym = keysym;
-        m_pEvent->e_x11_keycode = xevent.xkey.keycode;
-        m_pEvent->e_event = NUX_KEYUP;
-        m_pEvent->e_x11_timestamp = xevent.xkey.time;
-        m_pEvent->e_x11_state = xevent.xkey.state;
+        m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
+        m_pEvent->key_repeat_count = 0;
+        m_pEvent->x11_keysym = keysym;
+        m_pEvent->x11_keycode = xevent.xkey.keycode;
+        m_pEvent->type = NUX_KEYUP;
+        m_pEvent->x11_timestamp = xevent.xkey.time;
+        m_pEvent->x11_key_state = xevent.xkey.state;
         break;
       }
 
@@ -1706,12 +1613,12 @@ namespace nux
           break;
         }
         
-        m_pEvent->e_x = x_recalc;
-        m_pEvent->e_y = y_recalc;
-        m_pEvent->e_x_root = 0;
-        m_pEvent->e_y_root = 0;
-        m_pEvent->e_key_modifiers = GetModifierKeyState(xevent.xkey.state);
-        mouse_press(xevent, m_pEvent);
+        m_pEvent->x = x_recalc;
+        m_pEvent->y = y_recalc;
+        m_pEvent->x_root = 0;
+        m_pEvent->y_root = 0;
+        m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
+        MousePress(xevent, m_pEvent);
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: ButtonPress event.");
         break;
       }
@@ -1724,12 +1631,12 @@ namespace nux
           // fall through on purpose
         }
       
-        m_pEvent->e_x = x_recalc;
-        m_pEvent->e_y = y_recalc;
-        m_pEvent->e_x_root = 0;
-        m_pEvent->e_y_root = 0;
-        m_pEvent->e_key_modifiers = GetModifierKeyState(xevent.xkey.state);
-        mouse_release(xevent, m_pEvent);
+        m_pEvent->x = x_recalc;
+        m_pEvent->y = y_recalc;
+        m_pEvent->x_root = 0;
+        m_pEvent->y_root = 0;
+        m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
+        MouseRelease(xevent, m_pEvent);
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: ButtonRelease event.");
         break;
       }
@@ -1742,12 +1649,12 @@ namespace nux
           break;
         }
       
-        m_pEvent->e_x = x_recalc;
-        m_pEvent->e_y = y_recalc;
-        m_pEvent->e_x_root = 0;
-        m_pEvent->e_y_root = 0;
-        m_pEvent->e_key_modifiers = GetModifierKeyState(xevent.xkey.state);
-        mouse_move(xevent, m_pEvent);
+        m_pEvent->x = x_recalc;
+        m_pEvent->y = y_recalc;
+        m_pEvent->x_root = 0;
+        m_pEvent->y_root = 0;
+        m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
+        MouseMove(xevent, m_pEvent);
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: MotionNotify event.");
         break;
       }
@@ -1758,12 +1665,12 @@ namespace nux
         if (xevent.xcrossing.mode != NotifyNormal || !local_from_server)
           break;
           
-        m_pEvent->e_x = -1;
-        m_pEvent->e_y = -1;
-        m_pEvent->e_x_root = 0;
-        m_pEvent->e_y_root = 0;
-        m_pEvent->e_key_modifiers = GetModifierKeyState(xevent.xkey.state);
-        m_pEvent->e_event = NUX_WINDOW_MOUSELEAVE;
+        m_pEvent->x = -1;
+        m_pEvent->y = -1;
+        m_pEvent->x_root = 0;
+        m_pEvent->y_root = 0;
+        m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
+        m_pEvent->type = NUX_WINDOW_MOUSELEAVE;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: LeaveNotify event.");
         break;
       }
@@ -1773,12 +1680,12 @@ namespace nux
         if (xevent.xcrossing.mode != NotifyNormal || !local_from_server)
           break;
           
-        m_pEvent->e_x = x_recalc;
-        m_pEvent->e_y = y_recalc;
-        m_pEvent->e_x_root = 0;
-        m_pEvent->e_y_root = 0;
-        m_pEvent->e_key_modifiers = GetModifierKeyState(xevent.xkey.state);
-        mouse_move(xevent, m_pEvent);
+        m_pEvent->x = x_recalc;
+        m_pEvent->y = y_recalc;
+        m_pEvent->x_root = 0;
+        m_pEvent->y_root = 0;
+        m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
+        MouseMove(xevent, m_pEvent);
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: EnterNotify event.");
         break;
       }
@@ -1799,13 +1706,7 @@ namespace nux
         else
         {
           //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: MapNotify event.");
-          m_pEvent->e_event = NUX_WINDOW_MAP;
-
-          XSetInputFocus(xevent.xany.display,
-                          xevent.xany.window,
-                          RevertToParent,
-                          CurrentTime);
-
+          m_pEvent->type = NUX_WINDOW_MAP;
         }
         
         break;
@@ -1814,7 +1715,7 @@ namespace nux
       case UnmapNotify:
       {
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: UnmapNotify event.");
-        m_pEvent->e_event = NUX_WINDOW_UNMAP;
+        m_pEvent->type = NUX_WINDOW_UNMAP;
         break;
       }
 
@@ -1825,7 +1726,7 @@ namespace nux
 
         if ((xevent.xclient.format == 32) && ((xevent.xclient.data.l[0]) == static_cast<long> (m_WMDeleteWindow)))
         {
-          m_pEvent->e_event = NUX_TERMINATE_APP;
+          m_pEvent->type = NUX_TERMINATE_APP;
           //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: ClientMessage event: Close Application.");
         }
         
@@ -1836,17 +1737,17 @@ namespace nux
         else if (xevent.xclient.message_type == XInternAtom(xevent.xany.display, "XdndEnter", false))
         {
           HandleXDndEnter(xevent);
-          m_pEvent->e_event = NUX_DND_ENTER_WINDOW;
+          m_pEvent->type = NUX_DND_ENTER_WINDOW;
         }
         else if (xevent.xclient.message_type == XInternAtom(xevent.xany.display, "XdndStatus", false))
         {
           HandleXDndStatus(xevent);
-          m_pEvent->e_event = NUX_NO_EVENT;
+          m_pEvent->type = NUX_NO_EVENT;
         }
         else if (xevent.xclient.message_type == XInternAtom(xevent.xany.display, "XdndLeave", false))
         {
           HandleXDndLeave(xevent);
-          m_pEvent->e_event = NUX_DND_LEAVE_WINDOW;
+          m_pEvent->type = NUX_DND_LEAVE_WINDOW;
         }
         else if (xevent.xclient.message_type == XInternAtom(xevent.xany.display, "XdndDrop", false))
         {
@@ -1855,7 +1756,7 @@ namespace nux
         else if (xevent.xclient.message_type == XInternAtom(xevent.xany.display, "XdndFinished", false))
         {
           HandleXDndFinished(xevent);
-          m_pEvent->e_event = NUX_NO_EVENT;
+          m_pEvent->type = NUX_NO_EVENT;
         }
         
         break;
@@ -2414,9 +2315,9 @@ namespace nux
 
     RecalcXYPosition(x, y, x_recalc, y_recalc);
 
-    nux_event->e_event = NUX_DND_MOVE;
-    nux_event->e_x = x_recalc;
-    nux_event->e_y = y_recalc;
+    nux_event->type = NUX_DND_MOVE;
+    nux_event->x = x_recalc;
+    nux_event->y = y_recalc;
 
     // Store the last DND position;
     _last_dnd_position = Point(x_recalc, y_recalc);
@@ -2569,11 +2470,11 @@ namespace nux
     const long *l = event.xclient.data.l;
     _drag_drop_timestamp = l[2];
     
-    nux_event->e_event = NUX_DND_DROP;
+    nux_event->type = NUX_DND_DROP;
 
     // The drop does not provide(x, y) coordinates of the location of the drop. Use the last DND position.
-    nux_event->e_x = _last_dnd_position.x;
-    nux_event->e_y = _last_dnd_position.y;
+    nux_event->x = _last_dnd_position.x;
+    nux_event->y = _last_dnd_position.y;
   }
   
   void GraphicsDisplay::HandleXDndFinished(XEvent event)
@@ -2815,7 +2716,10 @@ namespace nux
     if (GetGpuDevice()->GetGpuInfo().Support_EXT_Swap_Control())
     {
       GLXDrawable drawable = glXGetCurrentDrawable();
-      glXSwapIntervalEXT(m_X11Display, drawable, 0);
+      if (drawable != None)
+      {
+        glXSwapIntervalEXT(m_X11Display, drawable, 0);
+      }
     }
 #endif
   }
@@ -2830,32 +2734,6 @@ namespace nux
     m_Timer.Reset();
   }
 
-  /*
-  bool GraphicsDisplay::StartOpenFileDialog(FileDialogOption& fdo)
-  {
-      return Win32OpenFileDialog(GetWindowHandle(), fdo);
-  }
-
-  bool GraphicsDisplay::StartSaveFileDialog(FileDialogOption& fdo)
-  {
-      return Win32SaveFileDialog(GetWindowHandle(), fdo);
-  }
-
-  bool GraphicsDisplay::StartColorDialog(ColorDialogOption& cdo)
-  {
-      return Win32ColorDialog(GetWindowHandle(), cdo);
-  }
-  */
-  /*void GraphicsDisplay::SetWindowCursor(HCURSOR cursor)
-  {
-      m_Cursor = cursor;
-  }
-
-  HCURSOR GraphicsDisplay::GetWindowCursor() const
-  {
-      return m_Cursor;
-  }*/
-
   void GraphicsDisplay::PauseThreadGraphicsRendering()
   {
     m_PauseGraphicsRendering = true;
@@ -2868,5 +2746,3 @@ namespace nux
   }
 
 }
-
-

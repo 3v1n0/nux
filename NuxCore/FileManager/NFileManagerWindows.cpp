@@ -27,7 +27,7 @@ namespace nux
 {
 
 // Choose the size so it is a power of 2. Example (size-1)= 11111111.
-  const t_int  NWindowsSerialFileReader::sBufferSize = 1024;
+  const int  NWindowsSerialFileReader::sBufferSize = 1024;
 
   NWindowsSerialFileReader::NWindowsSerialFileReader (HANDLE InHandle, LogOutputDevice &InError)
     :   m_FileHandle    (InHandle)
@@ -49,7 +49,7 @@ namespace nux
     }
   }
 
-  bool NWindowsSerialFileReader::Precache (t_int PrecacheOffset, t_int PrecacheSize)
+  bool NWindowsSerialFileReader::Precache (int PrecacheOffset, int PrecacheSize)
   {
     // Only pre-cache at current position and avoid work if pre-caching same offset twice.
     if ( (m_FilePos == PrecacheOffset) && (!m_BufferBase || !m_BufferCount || m_BufferBase != m_FilePos) )
@@ -57,8 +57,8 @@ namespace nux
       m_BufferBase = m_FilePos;
       // (sBufferSize - 1) contains only '1', i.e 1111111111.
       // So (m_FilePos & (sBufferSize-1)) is equal to m_FilePos if m_FilePos <= (sBufferSize-1).
-      m_BufferCount = Min<t_s64> (Min<t_s64> (PrecacheSize, (t_int) (sBufferSize - (m_FilePos & (sBufferSize - 1) ) ) ), m_FileSize - m_FilePos);
-      t_u32 Count = 0;
+      m_BufferCount = Min<long long> (Min<long long> (PrecacheSize, (int) (sBufferSize - (m_FilePos & (sBufferSize - 1) ) ) ), m_FileSize - m_FilePos);
+      unsigned int Count = 0;
       //GTotalBytesReadViaFileManager += m_BufferCount;
       ::ReadFile (m_FileHandle, m_Buffer, m_BufferCount, NUX_REINTERPRET_CAST (DWORD *, &Count), NULL);
 
@@ -72,7 +72,7 @@ namespace nux
     return TRUE;
   }
 
-  t_s64 NWindowsSerialFileReader::Seek (t_s64 InPos, NSerializer::SeekPos seekpos)
+  long long NWindowsSerialFileReader::Seek (long long InPos, NSerializer::SeekPos seekpos)
   {
     nuxAssert (InPos >= 0);
     nuxAssert (InPos <= m_FileSize);
@@ -109,7 +109,7 @@ namespace nux
     return filepos.QuadPart;
   }
 
-  t_s64 NWindowsSerialFileReader::Tell()
+  long long NWindowsSerialFileReader::Tell()
   {
 //     Flush();
 //     LARGE_INTEGER pos;
@@ -121,14 +121,14 @@ namespace nux
     return m_FilePos;
   }
 
-  t_s64 NWindowsSerialFileReader::GetFileSize()
+  long long NWindowsSerialFileReader::GetFileSize()
   {
     nuxAssert (m_FileHandle);
 
     if (m_FileHandle == NULL)
       return -1;
 
-    t_s64 Size = 0;
+    long long Size = 0;
 
     if (::GetFileSizeEx (m_FileHandle, NUX_REINTERPRET_CAST (PLARGE_INTEGER, &Size) ) == 0)
     {
@@ -150,19 +150,19 @@ namespace nux
     return !m_ErrorCode;
   }
 
-  void NWindowsSerialFileReader::SerializeFinal (void *Dest, t_s64 Length)
+  void NWindowsSerialFileReader::SerializeFinal (void *Dest, long long Length)
   {
     nuxAssert (Dest);
 
     while (Length > 0)
     {
-      t_int DataSize = Min<t_s64> (Length, m_BufferBase + m_BufferCount - m_FilePos);
+      int DataSize = Min<long long> (Length, m_BufferBase + m_BufferCount - m_FilePos);
 
       if (DataSize == 0)
       {
         if (Length >= sBufferSize)
         {
-          t_int Count = 0;
+          int Count = 0;
           //GTotalBytesReadViaFileManager += Length;
           ReadFile (m_FileHandle, Dest, Length, (DWORD *) &Count, NULL);
 
@@ -178,7 +178,7 @@ namespace nux
         }
 
         Precache (m_FilePos, t_s32_max);
-        DataSize = Min<t_s64> (Length, m_BufferBase + m_BufferCount - m_FilePos);
+        DataSize = Min<long long> (Length, m_BufferBase + m_BufferCount - m_FilePos);
 
         if (DataSize <= 0)
         {
@@ -198,7 +198,7 @@ namespace nux
   }
 //////////////////////////////////////////////////////////////////////////
 // Choose the size so it is a power of 2. Example (size-1)= 11111111.
-  const t_int  NWindowsSerialFileWriter::sBufferSize = 32;
+  const int  NWindowsSerialFileWriter::sBufferSize = 32;
 //NCriticalSection NWindowsSerialFileWriter::m_CriticalSection;
 
   NWindowsSerialFileWriter::NWindowsSerialFileWriter (HANDLE InHandle, LogOutputDevice &InError)
@@ -220,7 +220,7 @@ namespace nux
     m_FileHandle = NULL;
   }
 
-  t_s64 NWindowsSerialFileWriter::Seek (t_s64 InPos, NSerializer::SeekPos seekpos)
+  long long NWindowsSerialFileWriter::Seek (long long InPos, NSerializer::SeekPos seekpos)
   {
     NScopeLock Scope (&m_CriticalSection);
     nuxAssert (m_FileHandle);
@@ -245,7 +245,7 @@ namespace nux
     return filepos.QuadPart;
   }
 
-  t_s64 NWindowsSerialFileWriter::Tell()
+  long long NWindowsSerialFileWriter::Tell()
   {
     NScopeLock Scope (&m_CriticalSection);
     nuxAssert (m_FileHandle);
@@ -282,14 +282,14 @@ namespace nux
     return !m_ErrorCode;
   }
 
-  t_s64 NWindowsSerialFileWriter::GetFileSize()
+  long long NWindowsSerialFileWriter::GetFileSize()
   {
     nuxAssert (m_FileHandle);
 
     if (m_FileHandle == NULL)
       return -1;
 
-    t_s64 Size = 0;
+    long long Size = 0;
 
     if (::GetFileSizeEx (m_FileHandle, NUX_REINTERPRET_CAST (PLARGE_INTEGER, &Size) ) == 0)
     {
@@ -299,7 +299,7 @@ namespace nux
     return Size;
   }
 
-  void NWindowsSerialFileWriter::SerializeFinal (void *V, t_s64 Length)
+  void NWindowsSerialFileWriter::SerializeFinal (void *V, long long Length)
   {
     // This method is not re-entrant by itself. It relies on m_Buffer and other variables
     // that belong to this object. Therefore, it is not thread safe. We add a critical section
@@ -312,7 +312,7 @@ namespace nux
     NUX_RETURN_IF_NULL (m_FileHandle);
 
     m_Pos += Length;
-    t_int FreeSpace;
+    int FreeSpace;
 
     while (Length > (FreeSpace = sBufferSize - m_BufferCount) )
     {
@@ -347,7 +347,7 @@ namespace nux
     //GTotalBytesWrittenViaFileManager += m_BufferCount;
     if (m_BufferCount)
     {
-      t_int Result = 0;
+      int Result = 0;
 
       if (!WriteFile (m_FileHandle, m_Buffer, m_BufferCount, (DWORD *) &Result, NULL) )
       {
@@ -419,7 +419,7 @@ namespace nux
     Create          |= (Flags & NSerializer::NoOverWrite) ? CREATE_NEW /*fail if the file already exist*/ : CREATE_ALWAYS /*create the file if it does not exist*/;
     HANDLE Handle    = ::CreateFile (Filename, Access, SharedModeFlags, NULL, Create, FILE_ATTRIBUTE_NORMAL, NULL);
 
-    t_int Pos = 0;
+    int Pos = 0;
 
     if (Handle == INVALID_HANDLE_VALUE)
     {
@@ -454,7 +454,7 @@ namespace nux
   /*!
       @return Size of the File. Return -1 if an error occurs.
   */
-  t_s64 NFileManagerWindows::FileSize (const TCHAR *Filename)
+  long long NFileManagerWindows::FileSize (const TCHAR *Filename)
   {
     HANDLE Handle = ::CreateFile (Filename, 0, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
@@ -475,7 +475,7 @@ namespace nux
       return -1;
     }
 
-    t_s64 Size = 0;
+    long long Size = 0;
 
     if (::GetFileSizeEx (Handle, NUX_REINTERPRET_CAST (PLARGE_INTEGER, &Size) ) == 0)
     {
@@ -613,7 +613,7 @@ namespace nux
   /*!
       @return TRUE is the file exist.
   */
-  bool NFileManagerWindows::GetFileAttribute (const TCHAR *Filename, bool &isDirectory, bool &isReadOnly, bool &isHidden, t_s64 &Size)
+  bool NFileManagerWindows::GetFileAttribute (const TCHAR *Filename, bool &isDirectory, bool &isReadOnly, bool &isHidden, long long &Size)
   {
     isDirectory = false;
     isReadOnly = false;
@@ -626,7 +626,7 @@ namespace nux
       isDirectory = ( (FileAttrData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0);
       isReadOnly = ( (FileAttrData.dwFileAttributes & FILE_ATTRIBUTE_READONLY) != 0);
       isHidden = ( (FileAttrData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) != 0);
-      Size = FileAttrData.nFileSizeLow | ( (t_s64) (FileAttrData.nFileSizeHigh) << 32);
+      Size = FileAttrData.nFileSizeLow | ( (long long) (FileAttrData.nFileSizeHigh) << 32);
     }
     else
     {

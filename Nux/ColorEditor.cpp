@@ -111,7 +111,7 @@ namespace nux
 
     if (m_Thread)
     {
-      m_DialogThreadID = m_Thread->GetThreadId();
+      //todo(jaytaoko): m_DialogThreadID = m_Thread->GetThreadId();
       m_Thread->Start(0);
     }
 
@@ -361,6 +361,7 @@ namespace nux
     delete m_HueShader;
     delete m_SaturationShader;
     delete m_ValueShader;
+    radiogroup->UnReference();
   }
 
   void ColorEditor::PreLayoutManagement()
@@ -503,7 +504,10 @@ namespace nux
       Geometry basepickermarker = Geometry(channel_area_->GetBaseX(), channel_area_->GetBaseY() + m_VertMarkerPosition.y, 5, 5);
 
       Color color(rgb_.red, rgb_.green, rgb_.blue);
-      GetPainter().Paint2DQuadWireframe(graphics_engine, pickermarker, OneMinusLuminance(rgb_));
+      float luma = color::LumaRed * rgb_.red + color::LumaGreen * rgb_.green + color::LumaBlue * rgb_.blue;
+      Color one_minus_luma(1.0f - luma, 1.0f - luma, 1.0f - luma);
+
+      GetPainter().Paint2DQuadWireframe(graphics_engine, pickermarker, one_minus_luma);
 
       GetPainter().Paint2DQuadColor(graphics_engine, channel_area_->GetGeometry(), BaseChannelTop, BaseChannelBottom, BaseChannelBottom, BaseChannelTop);
       // Draw Marker on Base Chanel Area
@@ -555,7 +559,10 @@ namespace nux
         GetPainter().Paint2DQuadVGradient(graphics_engine, p, Color(1.0f * v, 1.0f * v, s * v), Color(1.0f * v, s * v, s * v));
 
         Geometry pickermarker = Geometry(GetBaseX() + m_MarkerPosition.x - 2, GetBaseY() + m_MarkerPosition.y - 2, 5, 5);
-        GetPainter().Paint2DQuadWireframe(graphics_engine, pickermarker, OneMinusLuminance(rgb_));
+
+        float luma = color::LumaRed * rgb_.red + color::LumaGreen * rgb_.green + color::LumaBlue * rgb_.blue;
+        Color one_minus_luma(1.0f - luma, 1.0f - luma, 1.0f - luma);
+        GetPainter().Paint2DQuadWireframe(graphics_engine, pickermarker, one_minus_luma);
       }
       else if (color_channel_ == color::SATURATION)
       {
@@ -577,7 +584,11 @@ namespace nux
 
         //Geometry pickermarker = Geometry(GetX() + x - 2, GetY() + y -2, 5, 5);
         Geometry pickermarker = Geometry(GetBaseX() + m_MarkerPosition.x - 2, GetBaseY() + m_MarkerPosition.y - 2, 5, 5);
-        GetPainter().Paint2DQuadWireframe(graphics_engine, pickermarker, OneMinusLuminance(rgb_));
+
+        float luma = color::LumaRed * rgb_.red + color::LumaGreen * rgb_.green + color::LumaBlue * rgb_.blue;
+        Color one_minus_luma(1.0f - luma, 1.0f - luma, 1.0f - luma);
+
+        GetPainter().Paint2DQuadWireframe(graphics_engine, pickermarker, one_minus_luma);
         GetPainter().Paint2DQuadColor(graphics_engine, channel_area_->GetGeometry(), BaseChannelTop, BaseChannelBottom, BaseChannelBottom, BaseChannelTop);
       }
       else if (color_channel_ == color::VALUE)
@@ -597,7 +608,11 @@ namespace nux
 
         //Geometry pickermarker = Geometry(GetX() + x - 2, GetY() + y -2, 5, 5);
         Geometry pickermarker = Geometry(GetBaseX() + m_MarkerPosition.x - 2, GetBaseY() + m_MarkerPosition.y - 2, 5, 5);
-        GetPainter().Paint2DQuadWireframe(graphics_engine, pickermarker, OneMinusLuminance(rgb_));
+
+        float luma = color::LumaRed * rgb_.red + color::LumaGreen * rgb_.green + color::LumaBlue * rgb_.blue;
+        Color one_minus_luma(1.0f - luma, 1.0f - luma, 1.0f - luma);
+
+        GetPainter().Paint2DQuadWireframe(graphics_engine, pickermarker, one_minus_luma);
         GetPainter().Paint2DQuadColor(graphics_engine, channel_area_->GetGeometry(), BaseChannelTop, BaseChannelBottom, BaseChannelBottom, BaseChannelTop);
       }
 

@@ -34,7 +34,7 @@ namespace nux
   class IOpenGLResource;
   class IOpenGLBaseTexture;
 
-  t_s32 GetTextureSize(IOpenGLBaseTexture *pTexture);
+  int GetTextureSize(IOpenGLBaseTexture *pTexture);
 
 // todo: It should not be possible to create an object of type IOpenGLBaseTexture directly.
   class IOpenGLBaseTexture: public IOpenGLResource
@@ -44,10 +44,10 @@ namespace nux
   public:
 
     IOpenGLBaseTexture(OpenGLResourceType ResourceType,
-                        t_u32 Width,
-                        t_u32 Height,
-                        t_u32 Depth,
-                        t_u32 NumMipLevel,
+                        unsigned int Width,
+                        unsigned int Height,
+                        unsigned int Depth,
+                        unsigned int NumMipLevel,
                         BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
 
     virtual ~IOpenGLBaseTexture();
@@ -56,7 +56,7 @@ namespace nux
     {
       return _PixelFormat;
     }
-    t_s32 GetNumMipLevel() const
+    int GetNumMipLevel() const
     {
       return _NumMipLevel;
     }
@@ -65,7 +65,7 @@ namespace nux
       return _IsPOT;
     }
 
-    t_s32 GetWidth() const
+    int GetWidth() const
     {
       if (_ResourceType == RTTEXTURE)
         return _Width;
@@ -79,7 +79,7 @@ namespace nux
       return 0;
     }
 
-    t_s32 GetHeight() const
+    int GetHeight() const
     {
       if (_ResourceType == RTTEXTURE)
         return _Height;
@@ -93,7 +93,7 @@ namespace nux
       return 0;
     }
 
-    t_s32 GetDepth() const
+    int GetDepth() const
     {
       if (_ResourceType == RTTEXTURE)
         return 1;
@@ -120,10 +120,10 @@ namespace nux
     //GLTextureStates& GetTextureStates() {return _TextureStates;}
 
     void SetRenderStates();
-    void SetFiltering(t_u32 MIN = GL_NEAREST, t_u32 MAG = GL_NEAREST/*, t_u32 MIP = GL_NEAREST*/);
-    void SetWrap(t_u32 U = GL_REPEAT, t_u32 V = GL_REPEAT, t_u32 W = GL_REPEAT);
+    void SetFiltering(unsigned int MIN = GL_NEAREST, unsigned int MAG = GL_NEAREST/*, unsigned int MIP = GL_NEAREST*/);
+    void SetWrap(unsigned int U = GL_REPEAT, unsigned int V = GL_REPEAT, unsigned int W = GL_REPEAT);
     void SetLOD(float MinLod = -1000.0f, float MaxLod = +1000.0f);
-    void SetMipLevel(t_u32 MinMip = 0, t_u32 MaxMip = 1000);
+    void SetMipLevel(unsigned int MinMip = 0, unsigned int MaxMip = 1000);
     void SetBorderColor(float R, float G, float B, float A);
 
     int BindTexture();
@@ -136,24 +136,32 @@ namespace nux
       SURFACE_LOCKED_RECT *pLockedRect,
       const SURFACE_RECT *pRect);
 
-    virtual int UnlockRect(
-      int Level
-      );
+    virtual int UnlockRect(int Level);
 
-    //! Return the a pointer to the texture mip level data.
-    virtual void* GetSurfaceData(int level, int &width, int &height, int &format);
+    //! Return a pointer to a mipmap level data.
+    /*!
+        Return a pointer to a mipmap level data. The data is in the RGBA format.\n
+
+        @param level The requested texture mipmap level data.
+        @param width Returns the width in pixel of the image data.
+        @param height Returns the height in pixel of the image data.
+        @param stride Returns the row stride of the image data.
+
+        @return A pointer to RGBA data. The caller must delete the data by calling delete [].
+    */
+    virtual unsigned char* GetSurfaceData(int level, int &width, int &height, int &stride);
 
   protected:
     GLTextureStates _TextureStates;
     bool            _IsPOT;             // is power of two?
-    t_s32           _NumMipLevel;
+    int           _NumMipLevel;
     BitmapFormat    _PixelFormat;
 
     // These parameters are scalable across textures, cube textures and volume textures.
     // For texture and cube texture _Depth is equal to 1.
     // For cube texture, _Width = _Height
-    t_s32        _Width;
-    t_s32        _Height;
+    int        _Width;
+    int        _Height;
     int         _Depth;
     int         _RowMemoryAlignment;
 
@@ -161,10 +169,10 @@ namespace nux
     friend class IOpenGLVolume;
     friend void GetTextureDesc(
       IOpenGLBaseTexture *pTexture,
-      t_u32 Level,
+      unsigned int Level,
       TEXTURE_DESC *pDesc
     );
-    friend t_s32 GetTextureSize(IOpenGLBaseTexture *pTexture);
+    friend int GetTextureSize(IOpenGLBaseTexture *pTexture);
   };
 
 }

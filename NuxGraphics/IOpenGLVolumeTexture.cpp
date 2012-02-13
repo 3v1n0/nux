@@ -42,9 +42,9 @@ namespace nux
 
     _VolumeSurfaceArray = new std::vector< ObjectPtr<IOpenGLSurface> >[_NumMipLevel];
 
-    for (t_s32 mip = 0; mip < _NumMipLevel; mip++)
+    for (int mip = 0; mip < _NumMipLevel; mip++)
     {
-      for (t_s32 slice = 0; slice < ImageSurface::GetLevelDim(_PixelFormat, _Depth, mip); slice++)
+      for (int slice = 0; slice < ImageSurface::GetLevelDim(_PixelFormat, _Depth, mip); slice++)
       {
         //IOpenGLSurface* surface = new IOpenGLSurface(this, _OpenGLID, GL_TEXTURE_3D, GL_TEXTURE_3D, mip, slice);
         //surface->InitializeLevel();
@@ -72,9 +72,9 @@ namespace nux
   IOpenGLVolumeTexture::~IOpenGLVolumeTexture()
   {
 
-    for (t_s32 mip = 0; mip < _NumMipLevel; mip++)
+    for (int mip = 0; mip < _NumMipLevel; mip++)
     {
-      for (t_s32 slice = 0; slice < ImageSurface::GetLevelDim(_PixelFormat, _Depth, mip); slice++)
+      for (int slice = 0; slice < ImageSurface::GetLevelDim(_PixelFormat, _Depth, mip); slice++)
       {
         // destroying a surface
         _VolumeSurfaceArray[mip][slice] = ObjectPtr<IOpenGLSurface> (0);

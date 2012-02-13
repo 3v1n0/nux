@@ -99,10 +99,10 @@ namespace nux
     if (_object_destroyed)
       return;
 
-    t_int   BufferSize	= 1024;
-    t_int   NewBufferSize	= 0;
+    int   BufferSize	= 1024;
+    int   NewBufferSize	= 0;
     TCHAR  *Buffer		= NULL;
-    t_int   Result		= -1;
+    int   Result		= -1;
 
     while (Result == -1)
     {
@@ -257,7 +257,7 @@ namespace nux
 
   void LogFileOutput::SerializeRaw (const TCHAR *log_data)
   {
-    t_u32 s = (t_u32) StringLength (log_data) * sizeof (TCHAR);
+    unsigned int s = (unsigned int) StringLength (log_data) * sizeof (TCHAR);
     m_LogSerializer->Serialize (NUX_CONST_CAST (TCHAR *, log_data), s);
   }
 
@@ -301,7 +301,7 @@ namespace nux
     if (!_enabled)
       return;
 
-    for (t_u32 OutputDeviceIndex = 0; OutputDeviceIndex < OutputDevices.size(); OutputDeviceIndex++)
+    for (unsigned int OutputDeviceIndex = 0; OutputDeviceIndex < OutputDevices.size(); OutputDeviceIndex++)
     {
       OutputDevices[OutputDeviceIndex]->Serialize (log_data, log_prefix, severity);
     }
@@ -309,7 +309,7 @@ namespace nux
 
   void LogOutputRedirector::Flush()
   {
-    for (t_u32 OutputDeviceIndex = 0; OutputDeviceIndex < OutputDevices.size(); OutputDeviceIndex++)
+    for (unsigned int OutputDeviceIndex = 0; OutputDeviceIndex < OutputDevices.size(); OutputDeviceIndex++)
     {
       OutputDevices[OutputDeviceIndex]->Flush();
     }
@@ -317,7 +317,7 @@ namespace nux
 
   void LogOutputRedirector::Shutdown()
   {
-    for (t_u32 OutputDeviceIndex = 0; OutputDeviceIndex < OutputDevices.size(); OutputDeviceIndex++)
+    for (unsigned int OutputDeviceIndex = 0; OutputDeviceIndex < OutputDevices.size(); OutputDeviceIndex++)
     {
       OutputDevices[OutputDeviceIndex]->Shutdown();
       // do not delete the output device. This is the responsibility of the owwners.

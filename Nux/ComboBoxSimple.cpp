@@ -232,14 +232,14 @@ namespace nux
 
     // When the menu is closing check if the mouse is still inside the combo box surface 
     // and set the _current_mouse_in flag accordingly.  
-    if (!_combo_box_area->TestMousePointerInclusion(GetWindowCompositor().GetMousePosition(), NUX_NO_EVENT))
+    if (!_combo_box_area->TestMousePointerInclusion(GetWindowThread()->GetWindowCompositor().GetMousePosition(), NUX_NO_EVENT))
     {
-      _combo_box_area->_event_processor._current_mouse_in = false;
+      _combo_box_area->mouse_in_ = false;
     }
 
-    if (!_combo_box_opening_area->TestMousePointerInclusion(GetWindowCompositor().GetMousePosition(), NUX_NO_EVENT))
+    if (!_combo_box_opening_area->TestMousePointerInclusion(GetWindowThread()->GetWindowCompositor().GetMousePosition(), NUX_NO_EVENT))
     {
-      _combo_box_opening_area->_event_processor._current_mouse_in = false;
+      _combo_box_opening_area->mouse_in_ = false;
     }
 
     QueueDraw();

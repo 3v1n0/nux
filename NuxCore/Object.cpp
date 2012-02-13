@@ -55,15 +55,20 @@ logging::Logger logger("nux.core.object");
     int index = 0;
 
 #if defined(NUX_OS_WINDOWS)
-	// Visual Studio does not support range based for loops.
-	for (AllocationList::iterator ptr = _allocation_list.begin(); ptr != _allocation_list.end(); ++ptr)
-	{
-		Object* obj = static_cast<Object*>(*ptr);
-		std::cerr << "\t" << ++index << " Undeleted object: Type "
-			<< obj->Type().name << ", "
-			<< obj->GetAllocationLoation() << "\n";
-	}
+  // Visual Studio does not support range based for loops.
+  for (AllocationList::iterator ptr = _allocation_list.begin(); ptr != _allocation_list.end(); ++ptr)
+  {
+    Object* obj = static_cast<Object*>(*ptr);
+    
+    std::stringstream sout;
+    sout << "\t" << ++index << " Undeleted object: Type "
+      << obj->Type().name << ", "
+      << obj->GetAllocationLoation() << "\n";
 
+    OutputDebugString (sout.str().c_str());
+
+    std::cerr << sout.str().c_str();
+  }
 #else
     for (auto ptr : _allocation_list)
     {
@@ -300,21 +305,7 @@ logging::Logger logger("nux.core.object");
 
   bool Object::SinkReference()
   {
-    if (!IsHeapAllocated())
-    {
-      LOG_WARN(logger) << "Trying to sink an object that was not heap allocated."
-                       << "\nObject allocated at: " << GetAllocationLoation();
-      return false;
-    }
-
-    if (!OwnsTheReference())
-    {
-      SetOwnedReference(true);
-      // The ref count remains at 1. Exit the method.
-      return true;
-    }
-
-    return false;
+    return Reference();
   }
 
   bool Object::Dispose()

@@ -29,7 +29,7 @@
 namespace nux
 {
 
-  static const t_s32 VERROR = 0;
+  static const int VERROR = 0;
   NUX_IMPLEMENT_OBJECT_TYPE(GridVLayout);
 
   GridVLayout::GridVLayout(NUX_FILE_LINE_DECL)
@@ -161,7 +161,7 @@ namespace nux
       return eCompliantHeight | eCompliantWidth;
     }
 
-    t_s32 num_elements = 0;
+    int num_elements = 0;
 
     std::list<Area *>::iterator it;
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
@@ -174,7 +174,7 @@ namespace nux
       }
     }
 
-    t_s32 original_width = GetBaseWidth();
+    int original_width = GetBaseWidth();
 
     nux::Geometry base = GetGeometry();
     it = elements.begin();

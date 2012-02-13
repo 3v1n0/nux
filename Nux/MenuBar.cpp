@@ -28,11 +28,11 @@
 namespace nux
 {
 
-  static const t_u32 MENU_MINIMUM_WIDTH = 10;
-  static const t_u32 MENU_MINIMUM_HEIGHT = 16;
+  static const unsigned int MENU_MINIMUM_WIDTH = 10;
+  static const unsigned int MENU_MINIMUM_HEIGHT = 16;
 
-  static const t_u32 MENUBAR_ICON_WIDTH = 24;
-  static const t_u32 MENUBAR_ICON_HEIGHT = 24;
+  static const unsigned int MENUBAR_ICON_WIDTH = 24;
+  static const unsigned int MENUBAR_ICON_HEIGHT = 24;
 
   NUX_IMPLEMENT_ROOT_OBJECT_TYPE(MenuBarItem);
   NUX_IMPLEMENT_OBJECT_TYPE(MenuBar);
@@ -213,7 +213,7 @@ namespace nux
     //menubar_item->area->SetMinimumSize(DEFAULT_WIDGET_WIDTH, 40);
     if (!icon)
     {
-      menubar_item->area->SetMinimumSize(Max(MENU_MINIMUM_WIDTH, (t_u32) (10 + GetFont()->GetStringWidth(MenuLabel))), Max(MENU_MINIMUM_WIDTH, (t_u32) 16));
+      menubar_item->area->SetMinimumSize(Max(MENU_MINIMUM_WIDTH, (unsigned int) (10 + GetFont()->GetStringWidth(MenuLabel))), Max(MENU_MINIMUM_WIDTH, (unsigned int) 16));
     }
     else
     {
@@ -261,7 +261,7 @@ namespace nux
   }
   void MenuBar::EmitItemMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item)
   {
-    m_MenuBarWindow = GetWindowCompositor().GetProcessingTopView();
+    m_MenuBarWindow = GetWindowThread()->GetWindowCompositor().GetProcessingTopView();
 
     if (m_MenuIsActive == false)
     {
@@ -331,9 +331,9 @@ namespace nux
   {
     // TODO: Port to new event architecture
 //     // Transition between one menu bar item to another
-//     if (GetWindowCompositor().GetMouseFocusArea() == menubar_item->area)
+//     if (GetWindowThread()->GetWindowCompositor().GetMouseFocusArea() == menubar_item->area)
 //     {
-//       if (!menubar_item->area->IsMouseInside()) // can also test GetWindowCompositor().GetMouseOverArea() != &menubar_item->area
+//       if (!menubar_item->area->IsMouseInside()) // can also test GetWindowThread()->GetWindowCompositor().GetMouseOverArea() != &menubar_item->area
 //       {
 //         std::list< MenuBarItem * >::iterator it;
 //         // compute window coordinates x and y;
@@ -356,8 +356,8 @@ namespace nux
 //               m_IsOpeningMenu = true;
 //               area->ForceStartFocus(0, 0);
 // 
-//               GetWindowCompositor().SetMouseFocusArea(area);
-//               GetWindowCompositor().SetMouseOverArea(area);
+//               GetWindowThread()->GetWindowCompositor().SetMouseFocusArea(area);
+//               GetWindowThread()->GetWindowCompositor().SetMouseOverArea(area);
 //             }
 // 
 //             break;

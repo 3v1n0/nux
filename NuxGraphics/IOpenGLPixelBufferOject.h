@@ -49,7 +49,7 @@ namespace nux
     void BindPackPixelBufferObject();
     void BindUnpackPixelBufferObject();
 
-    t_u32 GetSize();
+    unsigned int GetSize();
 
   private:
     IOpenGLPixelBufferObject(unsigned int Size, VBO_USAGE Usage, NUX_FILE_LINE_PROTO);

@@ -707,7 +707,7 @@ namespace nux
       m_NextMouseUpMeanStop = true;
       // Find on which item the mouse is
       std::vector< MenuItem * >::iterator item_iterator;
-      t_u32 i = 0;
+      unsigned int i = 0;
       m_HighlightedItem = -1;
 
       for (item_iterator = m_MenuItemVector.begin(), i = 0; item_iterator != m_MenuItemVector.end(); item_iterator++, i++)
@@ -920,8 +920,8 @@ namespace nux
     base.SetX(MenuXPosition);
     base.SetY(MenuYPosition);
 
-    int WindowWidth = GetGraphicsEngine().GetWindowWidth();
-    int WindowHeight = GetGraphicsEngine().GetWindowHeight();
+    int WindowWidth = GetWindowThread()->GetGraphicsEngine().GetWindowWidth();
+    int WindowHeight = GetWindowThread()->GetGraphicsEngine().GetWindowHeight();
 
     // Correct the position of the MenuPage if is going out of the screen
     // The first page of a menu chain has less opportunities to be adjusted than its child pages.
@@ -962,10 +962,10 @@ namespace nux
     if (GetParentMenu() == 0)
     {
       // This is the head of the menu chain
-      m_MenuWindow = GetWindowCompositor().GetProcessingTopView();
+      m_MenuWindow = GetWindowThread()->GetWindowCompositor().GetProcessingTopView();
     }
 
-    GetWindowCompositor().AddMenu(this, m_MenuWindow/*, OverrideCurrentMenuChain*/);
+    GetWindowThread()->GetWindowCompositor().AddMenu(this, m_MenuWindow/*, OverrideCurrentMenuChain*/);
     m_NextMouseUpMeanStop = false;
 
     StopActionSubMenu();
@@ -985,7 +985,7 @@ namespace nux
     // (where the menu is about to disappear).
     QueueDraw();
 
-    /*Area *top_area = GetWindowCompositor().GetProcessingTopView();
+    /*Area *top_area = GetWindowThread()->GetWindowCompositor().GetProcessingTopView();
     if (top_area)
     {
       if (top_area->IsView())

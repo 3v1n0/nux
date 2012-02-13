@@ -270,7 +270,7 @@ namespace nux
   }
 
 #if defined(NUX_OS_WINDOWS)
-  GpuDevice::GpuDevice(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat,
+  GpuDevice::GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
     HDC device_context,
     HGLRC &opengl_rendering_context,
     int req_opengl_major,
@@ -278,7 +278,7 @@ namespace nux
     bool opengl_es_20)
 #elif defined(NUX_OS_LINUX)
 #ifdef NUX_OPENGLES_20
-  GpuDevice::GpuDevice(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat,
+  GpuDevice::GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
     Display *display,
     Window window,
     bool has_glx_13_support,
@@ -288,7 +288,7 @@ namespace nux
     int req_opengl_minor,
     bool opengl_es_20)
 #else
-  GpuDevice::GpuDevice(t_u32 DeviceWidth, t_u32 DeviceHeight, BitmapFormat DeviceFormat,
+  GpuDevice::GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
     Display *display,
     Window window,
     bool has_glx_13_support,
@@ -339,7 +339,9 @@ namespace nux
     if (((_opengl_major >= 3) && (req_opengl_major >= 3)) || (_opengl_major >= 3) || opengl_es_20)
 #elif defined(NUX_OS_LINUX)
     //bool opengl_es_context_created = false;
-    if (has_glx_13_support && (((_opengl_major >= 3) && (req_opengl_major >= 3)) || ((_opengl_major >= 3) && opengl_es_20)))
+    if (has_glx_13_support &&
+    (((_opengl_major >= 3) && (req_opengl_major >= 3)) ||
+    ((_opengl_major >= 3) && opengl_es_20)))
 #endif
     {
       // Create a new Opengl Rendering Context
@@ -502,10 +504,6 @@ namespace nux
       {
         nuxDebugMsg("[GpuDevice::GpuDevice] Using highest default OpenGL version.");
       }
-    }
-    else
-    {
-      opengl_rendering_context = 0;
     }
 
     _board_vendor_string = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char *, glGetString(GL_VENDOR)));
@@ -732,9 +730,9 @@ namespace nux
 
   int GpuDevice::AllocateUnpackPixelBufferIndex(int *index)
   {
-    t_u32 num = (t_u32) _PixelBufferArray.size();
+    unsigned int num = (unsigned int) _PixelBufferArray.size();
 
-    for (t_u32 i = 0; i < num; i++)
+    for (unsigned int i = 0; i < num; i++)
     {
       if (_PixelBufferArray[i].IsReserved == FALSE)
       {
@@ -755,7 +753,7 @@ namespace nux
 
   int GpuDevice::FreeUnpackPixelBufferIndex(const int index)
   {
-    t_s32 num = (t_s32) _PixelBufferArray.size();
+    int num = (int) _PixelBufferArray.size();
     nuxAssertMsg((index >= 0) && (index < num), "[GpuDevice::FreeUnpackPixelBufferIndex] Trying to Free a pixel buffer index that does not exist.");
 
     if ((index < 0) || (index >= num))
@@ -822,7 +820,7 @@ namespace nux
 
   int GpuDevice::BindUnpackPixelBufferIndex(const int index)
   {
-    t_s32 num = (t_s32) _PixelBufferArray.size();
+    int num = (int) _PixelBufferArray.size();
     nuxAssertMsg((index >= 0) && (index < num), "[GpuDevice::BindUnpackPixelBufferIndex] Trying to bind an invalid pixel buffer index.");
 
     if ((index < 0) || (index >= num))
@@ -843,7 +841,7 @@ namespace nux
 
   int GpuDevice::BindPackPixelBufferIndex(const int index)
   {
-    t_s32 num = (t_s32) _PixelBufferArray.size();
+    int num = (int) _PixelBufferArray.size();
     nuxAssertMsg((index >= 0) && (index < num), "[GpuDevice::BindPackPixelBufferIndex] Trying to bind an invalid pixel buffer index.");
 
     if ((index < 0) || (index >= num))
@@ -862,7 +860,7 @@ namespace nux
     return OGL_OK;
   }
 
-  int GpuDevice::FormatFrameBufferObject(t_u32 Width, t_u32 Height, BitmapFormat PixelFormat)
+  int GpuDevice::FormatFrameBufferObject(unsigned int Width, unsigned int Height, BitmapFormat PixelFormat)
   {
     if (!GetGpuInfo().Support_EXT_Framebuffer_Object())
     {
@@ -873,7 +871,7 @@ namespace nux
     return _FrameBufferObject->FormatFrameBufferObject(Width, Height, PixelFormat);
   }
 
-  int GpuDevice::SetColorRenderTargetSurface(t_u32 ColorAttachmentIndex, ObjectPtr<IOpenGLSurface> pRenderTargetSurface)
+  int GpuDevice::SetColorRenderTargetSurface(unsigned int ColorAttachmentIndex, ObjectPtr<IOpenGLSurface> pRenderTargetSurface)
   {
     if (!GetGpuInfo().Support_EXT_Framebuffer_Object())
     {
@@ -895,7 +893,7 @@ namespace nux
     return _FrameBufferObject->SetDepthSurface(pDepthSurface);
   }
 
-  ObjectPtr<IOpenGLSurface> GpuDevice::GetColorRenderTargetSurface(t_u32 ColorAttachmentIndex)
+  ObjectPtr<IOpenGLSurface> GpuDevice::GetColorRenderTargetSurface(unsigned int ColorAttachmentIndex)
   {
     if (!GetGpuInfo().Support_EXT_Framebuffer_Object())
     {
@@ -955,16 +953,17 @@ namespace nux
     int Width
     , int Height
     , int Levels
-    , BitmapFormat PixelFormat)
+    , BitmapFormat PixelFormat
+    , NUX_FILE_LINE_DECL)
   {
     if (GetGpuInfo().Support_ARB_Texture_Non_Power_Of_Two())
     {
-      return CreateTexture(Width, Height, Levels, PixelFormat);
+      return CreateTexture(Width, Height, Levels, PixelFormat, NUX_FILE_LINE_PARAM);
     }
 
     if (GetGpuInfo().Support_EXT_Texture_Rectangle() || GetGpuInfo().Support_ARB_Texture_Rectangle())
     {
-      return CreateRectangleTexture(Width, Height, Levels, PixelFormat);
+      return CreateRectangleTexture(Width, Height, Levels, PixelFormat, NUX_FILE_LINE_PARAM);
     }
 
     nuxAssertMsg(0, "[NuxGraphicsResources::CreateSystemCapableDeviceTexture] No support for non power of two textures or rectangle textures");
@@ -972,16 +971,16 @@ namespace nux
     return ObjectPtr<IOpenGLBaseTexture>();
   }
 
-  BaseTexture* GpuDevice::CreateSystemCapableTexture()
+  BaseTexture* GpuDevice::CreateSystemCapableTexture(NUX_FILE_LINE_DECL)
   {
     if (GetGpuInfo().Support_ARB_Texture_Non_Power_Of_Two())
     {
-      return new Texture2D(NUX_TRACKER_LOCATION);
+      return new Texture2D(NUX_FILE_LINE_PARAM);
     }
 
     if (GetGpuInfo().Support_EXT_Texture_Rectangle() || GetGpuInfo().Support_ARB_Texture_Rectangle())
     {
-      return new TextureRectangle(NUX_TRACKER_LOCATION);
+      return new TextureRectangle(NUX_FILE_LINE_PARAM);
     }
 
     nuxAssertMsg(0, "[NuxGraphicsResources::CreateSystemCapableTexture] No support for non power of two textures or rectangle textures");

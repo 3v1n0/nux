@@ -306,8 +306,8 @@ namespace nux
     {
       if ((*it)->style == style)
       {
-        t_u32 width = (*it)->texture->GetWidth();
-        t_u32 height = (*it)->texture->GetHeight();
+        unsigned int width = (*it)->texture->GetWidth();
+        unsigned int height = (*it)->texture->GetHeight();
         return Rect(0, 0, width, height);
       }
     }

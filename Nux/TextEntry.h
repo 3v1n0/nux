@@ -94,6 +94,8 @@ namespace nux
     void RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvKeyEvent(
       unsigned long    eventType  ,   /*event type*/
       unsigned long    keysym     ,   /*event keysym*/
@@ -129,6 +131,12 @@ namespace nux
 
     void SetText(const char *text);
     std::string const& GetText() const;
+
+    void SetCompletion(const char *text); // Should use std::string, does not for consistancy
+    std::string const& GetCompletion() const;
+
+    void SetCompletionColor(const Color &color);
+    Color const& GetCompletionColor() const;
 
     void SetTextColor(const Color &color);
     Color const& GetTextColor() const;
@@ -281,9 +289,9 @@ namespace nux
     PangoLayout* cached_layout_;
 
     /** The text content of the edit control */
-    std::string _text;
+    std::string text_;
     /** The preedit text of the edit control */
-    std::string _preedit;
+    std::string preedit_;
     /** Attribute list of the preedit text */
     PangoAttrList *preedit_attrs_;
     /**
@@ -292,8 +300,14 @@ namespace nux
      */
     std::string password_char_;
 
+    /** The completion string */
+    std::string completion_;
+
+    /** The completion colour */
+    Color completion_color_;
+
     /** Last time of mouse double click event. */
-    t_u64 last_dblclick_time_;
+    unsigned long long last_dblclick_time_;
 
     /** The current cursor position in number of bytes. */
     int cursor_;
@@ -380,6 +394,10 @@ namespace nux
     Color _text_color;
 
     CairoGraphics::Alignment align_;
+    
+#if defined(NUX_OS_LINUX)
+    Cursor caret_cursor_;
+#endif
 
     std::list<Rect> last_selection_region_;
     std::list<Rect> selection_region_;

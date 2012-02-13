@@ -31,9 +31,87 @@ namespace nux
 
   NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLSurface);
 
+  IOpenGLSurface::IOpenGLSurface(IOpenGLBaseTexture *DeviceBaseTexture
+    , GLenum OpenGLID
+    , GLenum TextureTarget
+    , GLenum SurfaceTarget
+    , int MipLevel
+    , int Slice
+    , NUX_FILE_LINE_DECL)
+    : IOpenGLResource(RTSURFACE, NUX_FILE_LINE_PARAM)
+    , _STextureTarget(TextureTarget)
+    , _SSurfaceTarget(SurfaceTarget)
+    , _SMipLevel(MipLevel)
+    , _SSlice(Slice)
+    , _BaseTexture(DeviceBaseTexture)
+    , _AllocatedUnpackBuffer(0xFFFFFFFF)
+  {
+    // IOpenGLSurface surfaces are created inside a IOpenGLTexture2D, IOpenGLCubeTexture and IOpenGLVolumeTexture.
+    // They reside within those classes. The reference counting starts once a call to GetSurfaceLevel,
+    // GetCubeMapSurface or GetVolumeLevel is made to the container object.
+    _RefCount = 0;
+    _OpenGLID = OpenGLID;
+    _LockedRect.pBits = 0;
+    _LockedRect.Pitch = 0;
+    _CompressedDataSize = 0;
+    _Initialized = 0;
+  }
+
   IOpenGLSurface::~IOpenGLSurface()
   {
 
+  }
+
+  BitmapFormat IOpenGLSurface::GetPixelFormat() const
+  {
+    if (_BaseTexture == 0)
+    {
+      nuxAssert(0);  // should not happen
+      return BITFMT_UNKNOWN;
+    }
+
+    return _BaseTexture->GetPixelFormat();
+  }
+
+  int IOpenGLSurface::GetWidth() const
+  {
+    if (_BaseTexture == 0)
+    {
+      nuxAssert(0);  // should not happen
+      return 0;
+    }
+
+    return ImageSurface::GetLevelDim(_BaseTexture->_PixelFormat, _BaseTexture->_Width, _SMipLevel);
+  }
+
+  int IOpenGLSurface::GetHeight() const
+  {
+    if (_BaseTexture == 0)
+    {
+      nuxAssert(0);  // should not happen
+      return 0;
+    }
+
+    return ImageSurface::GetLevelDim(_BaseTexture->_PixelFormat, _BaseTexture->_Height, _SMipLevel);
+  }
+
+  int IOpenGLSurface::GetMipLevel() const
+  {
+    return _SMipLevel;
+  }
+
+  int IOpenGLSurface::GetSurfaceTarget() const
+  {
+    return _SSurfaceTarget;
+  }
+
+  int IOpenGLSurface::GetDesc(SURFACE_DESC *pDesc)
+  {
+    pDesc->Width    = GetWidth();
+    pDesc->Height   = GetHeight();
+    pDesc->PixelFormat   = GetPixelFormat();
+    pDesc->Type     = _ResourceType;
+    return OGL_OK;
   }
 
   int IOpenGLSurface::RefCount() const
@@ -601,37 +679,57 @@ namespace nux
     }
   }
 
-  void* IOpenGLSurface::GetSurfaceData(int &width, int &height, int &format)
+  unsigned char* IOpenGLSurface::GetSurfaceData(int &width, int &height, int &stride)
   {
     width = 0;
     height = 0;
-    format = BITFMT_UNKNOWN;
+    stride = 0;
+    
+    if (_BaseTexture->_OpenGLID == 0)
+    {
+      return NULL;
+    }
 
 #ifndef NUX_OPENGLES_20
-    // Because we use SubImage when unlocking surfaces, we must first get some dummy data in the surface before we can make a lock.
-    int texwidth = ImageSurface::GetLevelWidth(_BaseTexture->_PixelFormat, _BaseTexture->_Width, _SMipLevel);
-    int texheight = ImageSurface::GetLevelHeight(_BaseTexture->_PixelFormat, _BaseTexture->_Height, _SMipLevel);
-
-    nuxAssert(texwidth > 0); // Should never happen
-    nuxAssert(texheight > 0); // Should never happen
-
     CHECKGL(glBindTexture(_STextureTarget, _BaseTexture->_OpenGLID));
 
+    // Despite a 1 byte pack alignment not being the most optimum, do it for simplicity.
     CHECKGL(glPixelStorei(GL_PACK_ALIGNMENT, 1));
-    int size = texwidth * texheight * 4; // assume a memory alignment of 1
 
-    unsigned char *img = new unsigned char [size];
+    // We want RGBA data
+    int mip_level_size = GetWidth() * GetHeight() * 4;
+    unsigned char* img = new unsigned char[mip_level_size];
+
+    // Internal OpenGL textures are in the RGBA format.
+    // If the selected texture image does not contain four components, the following mappings are applied:
+    // - Single-component textures are treated as RGBA buffers with red set to the single-component value, green set to 0, blue set to 0, and alpha set to 1.
+    //   - red set to component zero
+    //   - green set to 0
+    //   - blue set to 0
+    //   - alpha set to 1.0
+    // - Two-component textures are treated as RGBA buffers with:
+    //   - red set to component zero
+    //   - green set to 0
+    //   - blue set to 0
+    //   - alpha set to component one
+    // 
+    // - Three-component textures are treated as RGBA buffers with:
+    //   - red set to component zero
+    //   - green set to component one
+    //   - blue set to component two
+    //   - alpha set to 1.0
 
     CHECKGL(glGetTexImage(_STextureTarget, _SMipLevel, GL_RGBA, GL_UNSIGNED_BYTE, img));
 
-    width = _BaseTexture->_Width;
-    height = _BaseTexture->_Height;
-    format = BITFMT_R8G8B8A8;
+    width = GetWidth();
+    height = GetHeight(); 
+    stride = width * 4;
+
     return img;
 #else
-//FIXME: need to render to framebuffer and use glReadPixels
+    //FIXME: need to render to framebuffer and use glReadPixels
     return NULL;
 #endif
   }
-
 }
+

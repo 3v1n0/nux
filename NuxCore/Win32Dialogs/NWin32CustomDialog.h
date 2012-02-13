@@ -56,8 +56,8 @@ namespace nux
     std::vector<NString> FilterDesc;
     std::vector<NString> Filters;
     TCHAR *FormattedFilter;
-    t_u32 FilterLength;
-    t_u32 NumFilters;
+    unsigned int FilterLength;
+    unsigned int NumFilters;
     NString DialogTitle;
     NString InitialDirectory;
   };
@@ -69,8 +69,8 @@ namespace nux
     ColorDialogOption();
     ~ColorDialogOption();
 
-    void SetCustomColor (t_u32 index, t_u32 RGBColor);
-    void SetCustomColor (t_u32 index, BYTE R, BYTE G, BYTE B);
+    void SetCustomColor (unsigned int index, unsigned int RGBColor);
+    void SetCustomColor (unsigned int index, BYTE R, BYTE G, BYTE B);
 
 
   public:

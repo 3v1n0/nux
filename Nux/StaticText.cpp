@@ -1,3 +1,24 @@
+/*
+ * Copyright 2012 Inalogic® Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License, as
+ * published by the  Free Software Foundation; either version 2.1 or 3.0
+ * of the License.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
+ * License for more details.
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License along with this program. If not, see <http://www.gnu.org/licenses/>
+ *
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
+ *
+ */
+
 #include "Nux.h"
 #include "Layout.h"
 #include "HLayout.h"
@@ -29,14 +50,15 @@ namespace nux
 
   NUX_IMPLEMENT_OBJECT_TYPE(StaticText);
 
-  StaticText::StaticText(const std::string &text, NUX_FILE_LINE_DECL)
-    : View(NUX_FILE_LINE_PARAM)
+  StaticText::StaticText(const std::string& text, NUX_FILE_LINE_DECL)
+  : View(NUX_FILE_LINE_PARAM)
+  , text_width_(0)
+  , text_height_(0)
   {
     padding_x_ = 0;
     padding_y_ = 0;
-    text_width_ = 0;
-    text_height_ = 0;
     update_text_rendering_ = true;
+    text_alignment_ = ALIGN_CENTER;
 
 #if defined(NUX_STATIC_TEXT_USE_DIRECT_WRITE)
     layout_left_ = 0;
@@ -53,7 +75,8 @@ namespace nux
     font_name_ = "Tahoma";
 
 #elif defined(NUX_STATIC_TEXT_USE_CAIRO)
-    font_size_ = 12;
+    cairo_graphics_ = NULL;
+    font_size_ = 10;
     font_name_ = "Ubuntu";
     std::ostringstream os;
     os << font_name_ << " " << font_size_;
@@ -62,7 +85,7 @@ namespace nux
     dpy_ = 96.0f;
 #endif
 
-    _size_match_text = true;
+    size_match_text_ = true;
     text_color_ = color::White;
     clip_to_width_ = 0;
 
@@ -84,7 +107,6 @@ namespace nux
   void StaticText::ApplyMinWidth()
   {
     Size sz = GetTextSizeNoClip();
-    int width = GetBaseWidth();
 
     if ((sz.width <= GetMaximumWidth()) && (sz.width >= GetMinimumWidth()))
     {
@@ -163,12 +185,12 @@ namespace nux
 
   void StaticText::SetSizeMatchText(bool size_match_text)
   {
-    _size_match_text = size_match_text;
+    size_match_text_ = size_match_text;
   }
 
   bool StaticText::GetSizeMatchText() const
   {
-    return _size_match_text;
+    return size_match_text_;
   }
 
    void StaticText::SetClipping(int clipping)
@@ -208,7 +230,7 @@ namespace nux
     nux::GetPainter().PaintBackground(graphics_engine, base);
 
     // Get the current blend states. They will be restored later.
-    t_u32 alpha = 0, src = 0, dest = 0;
+    unsigned int alpha = 0, src = 0, dest = 0;
     graphics_engine.GetRenderStates().GetBlend(alpha, src, dest);
 
     graphics_engine.GetRenderStates().SetBlend(true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -226,7 +248,18 @@ namespace nux
     // width of the view, then center the text horizontally.
     if (dw_texture_->GetWidth() < base.width)
     {
-      x = base.x + (base.width - dw_texture_->GetWidth()) / 2;
+      if (text_alignment_ == ALIGN_CENTER)
+      {
+        x = base.x + (base.width - dw_texture_->GetWidth()) / 2;
+      }
+      else if (text_alignment_ == ALIGN_LEFT)
+      {
+        x = base.x;
+      }
+      else if (text_alignment_ == ALIGN_RIGHT)
+      {
+        x = base.x + base.width - dw_texture_->GetWidth();
+      }
     }
 
     graphics_engine.QRP_1Tex(x,
@@ -241,40 +274,61 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void StaticText::SetTextPointSize(int pt_size)
+  void StaticText::SetFontSize(int font_size)
   {
+    if (font_size <= 0)
+      return;
+      
 #if defined(NUX_STATIC_TEXT_USE_DIRECT_WRITE)
-    font_size_ = pt_size;
+    font_size_ = font_size;
 #elif defined(NUX_STATIC_TEXT_USE_CAIRO)
-    font_size_ = pt_size;
+    font_size_ = font_size;
     std::ostringstream os;
     os << font_name_ << " " << font_size_;
     pango_font_name_ = std::string(os.str());
 #endif
 
+    // reset cache
+    no_clip_size_.width = 0;
+    no_clip_size_.height = 0;
     // Changing the font can cause the StaticView to resize itself.
     Size sz = GetTextSizeNoClip();
     // Calling SetBaseSize will trigger a layout request of this view and all of its parents.
     SetBaseSize(sz.width, sz.height);
   }
 
-  int StaticText::GetTextPointSize() const
+  void StaticText::SetTextPointSize(int font_size)
+  {
+    SetFontSize(font_size);
+  }
+
+  int StaticText::GetFontSize() const
   {
     return font_size_;
   }
 
-  void StaticText::SetText(const std::string &text)
+  int StaticText::GetTextPointSize() const
+  {
+    return GetFontSize();
+  }
+
+  void StaticText::SetText(const std::string& text)
   {
     if (text_ == text)
       return;
 
     text_ = text;
 
+    // reset cache
+    no_clip_size_.width = 0;
+    no_clip_size_.height = 0;
+
     // Changing the font can cause the StaticView to resize itself.
     Size sz = GetTextSizeNoClip();
     // Calling SetBaseSize will trigger a layout request of this view and all of its parents.
     SetBaseSize(sz.width, sz.height);
 
+    update_text_rendering_ = true;
     text_changed.emit(this);
     QueueDraw();
   }
@@ -284,15 +338,17 @@ namespace nux
     return text_;
   }
 
-  void StaticText::SetTextColor(const Color &textColor)
+  void StaticText::SetTextColor(const Color& text_color)
   {
-    if (text_color_ == textColor)
-      return;
-
-    text_color_ = textColor;
+    text_color_ = text_color;
   }
 
-  void StaticText::SetFontName(const std::string &font_name)
+  Color StaticText::GetTextColor() const
+  {
+    return text_color_;
+  }
+
+  void StaticText::SetFontName(const std::string& font_name)
   {
     if (font_name_ == font_name)
       return;
@@ -304,6 +360,10 @@ namespace nux
     os << font_name_ << " " << font_size_;
     pango_font_name_ = std::string(os.str());
 #endif
+    
+    // reset cache
+    no_clip_size_.width = 0;
+    no_clip_size_.height = 0;
 
     // Changing the font can cause the StaticView to resize itself.
     Size sz = GetTextSizeNoClip();
@@ -312,7 +372,12 @@ namespace nux
     QueueDraw();
   }
 
-  void StaticText::GetTextLayoutSize(int &width, int &height) const
+  std::string StaticText::GetFontName() const
+  {
+    return font_name_;
+  }
+
+  void StaticText::GetTextLayoutSize(int& width, int& height) const
   {
     if (text_ == "")
     {
@@ -332,19 +397,42 @@ namespace nux
     return sz;
   }
 
+  void StaticText::SetTextAlignment(TextAlignment alignment)
+  {
+    text_alignment_ = alignment;
+  }
+
+  StaticText::TextAlignment StaticText::GetTextAlignment() const
+  {
+    return text_alignment_;
+  }
+  
+  ObjectPtr<nux::IOpenGLBaseTexture> StaticText::GetTextTexture()
+  {
+    if (update_text_rendering_)
+    {
+      // If the text rendering needs to be updated, do it here.
+      UpdateTextRendering();
+    }
+
+    return dw_texture_;
+  }
+
   Size StaticText::GetTextSizeNoClip()
   {
-    return ComputeTextSize(false, false);
+    if (no_clip_size_.width == 0)
+      no_clip_size_ = ComputeTextSize(false, false);
+    return no_clip_size_;
   }
 
 #if defined(NUX_STATIC_TEXT_USE_DIRECT_WRITE)
   Size StaticText::ComputeTextSize(bool assign, bool with_clipping)
   {
     HRESULT hr;
-    IDWriteFactory *pDWriteFactory = GetGraphicsDisplay()->GetDirectWriteFactory();
+    IDWriteFactory* pDWriteFactory = GetGraphicsDisplay()->GetDirectWriteFactory();
 
-    ID2D1RenderTarget *pRT = NULL;
-    IDWriteTextFormat *pTextFormat = NULL;
+    ID2D1RenderTarget* pRT = NULL;
+    IDWriteTextFormat* pTextFormat = NULL;
 
     hr = pDWriteFactory->CreateTextFormat(
         ANSICHAR_TO_UNICHAR(font_name_.c_str()),                  // Font family name.
@@ -433,12 +521,12 @@ namespace nux
 
     HRESULT hr;
 
-    ID2D1Factory *pD2DFactory = GetGraphicsDisplay()->GetDirect2DFactory();
-    IDWriteFactory *pDWriteFactory = GetGraphicsDisplay()->GetDirectWriteFactory();
-    IWICImagingFactory *pWICFactory = GetGraphicsDisplay()->GetWICFactory();
+    ID2D1Factory* pD2DFactory = GetGraphicsDisplay()->GetDirect2DFactory();
+    IDWriteFactory* pDWriteFactory = GetGraphicsDisplay()->GetDirectWriteFactory();
+    IWICImagingFactory* pWICFactory = GetGraphicsDisplay()->GetWICFactory();
 
-    ID2D1RenderTarget *pRT = NULL;
-    IDWriteTextFormat *pTextFormat = NULL;
+    ID2D1RenderTarget* pRT = NULL;
+    IDWriteTextFormat* pTextFormat = NULL;
 
     hr = pDWriteFactory->CreateTextFormat(
       ANSICHAR_TO_UNICHAR(font_name_.c_str()),                  // Font family name.
@@ -478,7 +566,7 @@ namespace nux
       &pTextLayout_                         // The IDWriteTextLayout interface pointer.
       );
 
-    IDWriteInlineObject *inlineObject = nullptr;
+    IDWriteInlineObject* inlineObject = nullptr;
     if (SUCCEEDED(hr))
     {
       pDWriteFactory->CreateEllipsisTrimmingSign(
@@ -488,7 +576,7 @@ namespace nux
     DWRITE_TRIMMING trimming = {DWRITE_TRIMMING_GRANULARITY_CHARACTER, 0, 0};
     hr = pTextLayout_->SetTrimming(&trimming, inlineObject);
 
-    IWICBitmap *pWICBitmap = NULL;
+    IWICBitmap* pWICBitmap = NULL;
     if (SUCCEEDED(hr))
     {
       hr = pWICFactory->CreateBitmap(
@@ -518,11 +606,11 @@ namespace nux
         &pRT);
     }
 
-    ID2D1SolidColorBrush *pBrush;
+    ID2D1SolidColorBrush* pBrush;
     hr = pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF(color.red, color.green, color.blue, color.alpha)), &pBrush);
 
     // Create the text renderer
-    CustomTextRenderer *pTextRenderer_ = new (std::nothrow) CustomTextRenderer(
+    CustomTextRenderer* pTextRenderer_ = new (std::nothrow) CustomTextRenderer(
       pD2DFactory,
       pRT,
       pBrush,
@@ -575,7 +663,7 @@ namespace nux
       unsigned int width, height;
       pWICBitmap->GetSize(&width, &height);
 
-      dw_texture_ = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(width, height, 1, nux::BITFMT_B8G8R8A8);
+      dw_texture_ = nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture(width, height, 1, nux::BITFMT_B8G8R8A8, NUX_TRACKER_LOCATION);
 
       nux::SURFACE_LOCKED_RECT lock_rect;
       dw_texture_->LockRect(0, &lock_rect, NULL);
@@ -728,7 +816,7 @@ namespace nux
     PangoLayout*          pango_layout  = NULL;
     PangoFontDescription* font_desc     = NULL;
     PangoContext*         pango_ctx     = NULL;
-    int                   dpi           = 96;
+    int                   dpi            = 96;
 
     // Create layout.
     pango_layout = pango_cairo_create_layout(cairo_ctx);
@@ -755,7 +843,7 @@ namespace nux
     CairoFontOptions font_options;
     {
       cairo_font_options_set_antialias      (font_options, CAIRO_ANTIALIAS_DEFAULT);
-      cairo_font_options_set_subpixel_order(font_options, CAIRO_SUBPIXEL_ORDER_DEFAULT);
+      cairo_font_options_set_subpixel_order (font_options, CAIRO_SUBPIXEL_ORDER_DEFAULT);
       cairo_font_options_set_hint_style     (font_options, CAIRO_HINT_STYLE_DEFAULT);
       cairo_font_options_set_hint_metrics   (font_options, CAIRO_HINT_METRICS_ON);
       cairo_set_font_options(cairo_ctx, font_options);
@@ -792,7 +880,7 @@ namespace nux
     }
 
     cairo_graphics_ = new CairoGraphics(CAIRO_FORMAT_ARGB32, sz.width, sz.height);
-    cairo_t *cairo_ctx = cairo_graphics_->GetContext();
+    cairo_t* cairo_ctx = cairo_graphics_->GetContext();
     cairo_set_operator(cairo_ctx, CAIRO_OPERATOR_CLEAR);
     cairo_paint(cairo_ctx);
     cairo_set_operator(cairo_ctx, CAIRO_OPERATOR_OVER);
@@ -804,7 +892,7 @@ namespace nux
     // NTexture2D is the high level representation of an image that is backed by
     // an actual opengl texture.
 
-    BaseTexture *rasterized_text_texture = NULL;
+    BaseTexture* rasterized_text_texture = NULL;
 
     rasterized_text_texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
     rasterized_text_texture->Update(bitmap);
@@ -816,7 +904,7 @@ namespace nux
     delete bitmap;
     cairo_destroy(cairo_ctx);
     delete cairo_graphics_;
-    cairo_graphics_ = 0;
+    cairo_graphics_ = NULL;
 
     update_text_rendering_ = false;
   }

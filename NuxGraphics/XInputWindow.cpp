@@ -34,10 +34,12 @@ namespace nux
                              bool        take_focus,
                              int         override_redirect)
     : strutsEnabled_(false)
+    , overlayStrutsEnabled_(false)
     , display_(GetGraphicsDisplay()->GetX11Display())
     , geometry_(0, 0, 1, 1)
     , shown_(false)
     , mapped_(false)
+    , overlay_strut_atom_(0)
   {
     XSetWindowAttributes attrib;
 
@@ -101,7 +103,7 @@ namespace nux
     return native_windows_;
   }
 
-  void XInputWindow::SetStruts()
+  std::vector<long int> XInputWindow::GetStrutsData()
   {
     int n_info;
     XineramaScreenInfo *info = XineramaQueryScreens(display_, &n_info);
@@ -109,11 +111,11 @@ namespace nux
     Region             total_screen_region = XCreateRegion();
     Region             input_window_region = XCreateRegion();
     Region             intersection = XCreateRegion();
-    XineramaScreenInfo monitor;
+    XRectangle         monitor;
     XRectangle         tmp_rect;
     int largestWidth = 0, largestHeight = 0;
     int screenWidth, screenHeight;
-    long int data[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    std::vector<long int> data(12, 0);
 
     /* Find the screen that this region intersects */
     tmp_rect.x = geometry_.x;
@@ -122,6 +124,13 @@ namespace nux
     tmp_rect.height = geometry_.height;
 
     XUnionRectWithRegion(&tmp_rect, input_window_region, input_window_region);
+
+    /* If there is no Xinerama data available just use the geometry we have */
+    if (!info)
+    {
+      monitor = tmp_rect;
+      n_info = 0;
+    }
 
     for (int i = 0; i < n_info; i++)
     {
@@ -146,7 +155,10 @@ namespace nux
           largestWidth = width;
           largestHeight = height;
 
-          monitor = info[i];
+          monitor.x      = info[i].x_org;
+          monitor.y      = info[i].y_org;
+          monitor.width  = info[i].width;
+          monitor.height = info[i].height;
         }
       }
 
@@ -165,7 +177,7 @@ namespace nux
 
     if (geometry_.width > geometry_.height)
     {
-      if (geometry_.y - monitor.y_org < monitor.height / 2)
+      if (geometry_.y - monitor.y < monitor.height / 2)
       {
         /* top */
         data[2] = geometry_.y + geometry_.height;
@@ -182,7 +194,7 @@ namespace nux
     }
     else
     {
-      if (geometry_.x - monitor.x_org < monitor.width / 2)
+      if (geometry_.x - monitor.x < monitor.width / 2)
       {
         /* left */
         data[0] = geometry_.x + geometry_.width;
@@ -198,16 +210,37 @@ namespace nux
       }
     }
 
+    return data;
+  }
+
+  void XInputWindow::SetStruts()
+  {
+    std::vector<long int> data(GetStrutsData());
+
     XChangeProperty(display_, window_,
                     XInternAtom(display_, "_NET_WM_STRUT_PARTIAL", 0),
                     XA_CARDINAL, 32, PropModeReplace,
-                    (unsigned char *) data, 12);
+                    (unsigned char*) &data[0], 12);
   }
 
   void XInputWindow::UnsetStruts()
   {
     XDeleteProperty(display_, window_,
                     XInternAtom(display_, "_NET_WM_STRUT_PARTIAL", 0));
+  }
+
+  void XInputWindow::SetOverlayStruts()
+  {
+    std::vector<long int> data(GetStrutsData());
+
+    XChangeProperty(display_, window_, overlay_strut_atom_,
+                    XA_CARDINAL, 32, PropModeReplace,
+                    (unsigned char*) &data[0], 12);
+  }
+
+  void XInputWindow::UnsetOverlayStruts()
+  {
+    XDeleteProperty(display_, window_, overlay_strut_atom_);
   }
 
   void XInputWindow::EnableStruts(bool enable)
@@ -225,6 +258,26 @@ namespace nux
   bool XInputWindow::StrutsEnabled()
   {
     return strutsEnabled_;
+  }
+
+  void XInputWindow::EnableOverlayStruts(bool enable)
+  {
+    if (overlayStrutsEnabled_ == enable)
+      return;
+
+    if (!overlay_strut_atom_)
+      overlay_strut_atom_ = XInternAtom(display_, "_COMPIZ_NET_OVERLAY_STRUT", 0);
+
+    overlayStrutsEnabled_ = enable;
+    if (enable)
+      SetOverlayStruts();
+    else
+      UnsetOverlayStruts();
+  }
+
+  bool XInputWindow::OverlayStrutsEnabled()
+  {
+    return overlayStrutsEnabled_;
   }
 
   void XInputWindow::EnsureInputs()
@@ -283,6 +336,8 @@ namespace nux
 
     if (strutsEnabled_)
       SetStruts();
+    if (overlayStrutsEnabled_)
+      SetOverlayStruts();
   }
 
   //! Set the position and size of the window
@@ -325,10 +380,14 @@ namespace nux
     {
       XMapRaised(display_, window_);
       mapped_ = true;
+
+      XEvent xevent;
+      while (XCheckTypedWindowEvent(display_, window_, MapNotify, &xevent));
+      XSetInputFocus(display_, window_, RevertToParent, CurrentTime);
+
     }
     XMoveResizeWindow(display_, window_,
                       geometry_.x, geometry_.y,
                       geometry_.width, geometry_.height);
   }
 }
-

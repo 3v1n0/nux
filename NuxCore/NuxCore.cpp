@@ -37,21 +37,21 @@ namespace nux
 
 
 // Set to true to disable the popping of dialog box. The message will go to the log.
-  const t_bool GNoDialog          = false;
+  const bool GNoDialog          = false;
 
   /*-----------------------------------------------------------------------------
   Formatted printing and messages.
   -----------------------------------------------------------------------------*/
 
-  t_u32 GetVariableArgs ( TCHAR *Dest, t_u32 Size, t_u32 Count, const TCHAR*& Fmt, va_list ArgPtr )
+  unsigned int GetVariableArgs ( TCHAR *Dest, unsigned int Size, unsigned int Count, const TCHAR*& Fmt, va_list ArgPtr )
   {
-    t_u32 Result = VSNTPRINTF_S (Dest, Size, Count, Fmt, ArgPtr);
+    unsigned int Result = VSNTPRINTF_S (Dest, Size, Count, Fmt, ArgPtr);
     va_end (ArgPtr);
     return Result;
   }
-  t_u32 GetVariableArgsAnsi ( ANSICHAR *Dest, t_u32 Size, t_u32 Count, const ANSICHAR*& Fmt, va_list ArgPtr)
+  unsigned int GetVariableArgsAnsi ( ANSICHAR *Dest, unsigned int Size, unsigned int Count, const ANSICHAR*& Fmt, va_list ArgPtr)
   {
-    t_u32 Result = VSNPRINTF_S (Dest, Size, Count, Fmt, ArgPtr);
+    unsigned int Result = VSNPRINTF_S (Dest, Size, Count, Fmt, ArgPtr);
     va_end (ArgPtr);
     return Result;
   }

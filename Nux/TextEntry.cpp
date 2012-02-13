@@ -1,5 +1,3 @@
-
-
 /*
   Copyright 2008 Google Inc.
 
@@ -30,6 +28,10 @@
 
 #include "TextEntry.h"
 
+#if defined(NUX_OS_LINUX)
+#include <X11/cursorfont.h>
+#endif
+
 namespace nux
 {
   static const int kInnerBorderX = 2;
@@ -45,14 +47,14 @@ namespace nux
   static const Color kDefaultBackgroundColor(1, 1, 1, 1.0f);
   static const Color kDefaultSelectionBackgroundColor(0.5, 0.5, 0.5, 1.0f);
   static const Color kDefaultSelectionTextColor(1, 1, 1, 1.0f);
-  static const t_u64 kTripleClickTimeout = 500;
+  static const unsigned long long kTripleClickTimeout = 500;
   static const std::string kDefaultFontName = "Ubuntu";
 
-  static t_u64 GetCurrentTime()
+  static unsigned long long GetCurrentTime()
   {
     GTimeVal tv;
     g_get_current_time(&tv);
-    return static_cast<t_u64>(tv.tv_sec) * 1000 + tv.tv_usec / 1000;
+    return static_cast<unsigned long long>(tv.tv_sec) * 1000 + tv.tv_usec / 1000;
   }
 
   static std::string CleanupLineBreaks(const char *source)
@@ -114,6 +116,7 @@ namespace nux
     , canvas_(nullptr)
     , cached_layout_(nullptr)
     , preedit_attrs_(nullptr)
+    , completion_color_(color::Gray)
     , last_dblclick_time_(0)
     , cursor_(0)
     , preedit_cursor_(0)
@@ -147,9 +150,11 @@ namespace nux
     , font_dpi_(96.0)
     , _text_color(color::White)
     , align_(CairoGraphics::ALIGN_LEFT)
+#if defined(NUX_OS_LINUX)
+    , caret_cursor_(None)
+#endif
     , text_input_mode_(false)
     , key_nav_mode_(false)
-
   {
     cairo_font_options_set_antialias(font_options_, CAIRO_ANTIALIAS_SUBPIXEL);
     cairo_font_options_set_hint_style(font_options_, CAIRO_HINT_STYLE_FULL);
@@ -160,6 +165,8 @@ namespace nux
     mouse_drag.connect(sigc::mem_fun(this, &TextEntry::RecvMouseDrag));
     mouse_up.connect(sigc::mem_fun(this, &TextEntry::RecvMouseUp));
     mouse_double_click.connect(sigc::mem_fun(this, &TextEntry::RecvMouseDoubleClick));
+    mouse_enter.connect(sigc::mem_fun(this, &TextEntry::RecvMouseEnter));
+    mouse_leave.connect(sigc::mem_fun(this, &TextEntry::RecvMouseLeave));
 
     key_down.connect(sigc::mem_fun(this, &TextEntry::RecvKeyEvent));
 
@@ -181,6 +188,9 @@ namespace nux
     cairo_font_options_destroy(font_options_);
     if (_texture2D)
       _texture2D->UnReference();
+
+    if (canvas_)
+      delete canvas_;
   }
 
   void TextEntry::PreLayoutManagement()
@@ -212,7 +222,7 @@ namespace nux
 
   void TextEntry::ProcessMouseEvent(int event_type, int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    if (GetEventButton(button_flags) != 1)
+    if (GetEventButton(button_flags) != 1 && event_type != NUX_MOUSE_MOVE)
       return;
 
     //ResetImContext();
@@ -224,7 +234,7 @@ namespace nux
     int sel_start, sel_end;
     GetSelectionBounds(&sel_start, &sel_end);
 
-    t_u64 current_time = GetCurrentTime();
+    unsigned long long current_time = GetCurrentTime();
 
     if ((event_type == NUX_MOUSE_PRESSED) && (current_time - last_dblclick_time_ <= kTripleClickTimeout))
     {
@@ -372,7 +382,7 @@ namespace nux
       else if ((keyval == NUX_VK_a) && ctrl)
       {
         // Select all
-        int text_length = static_cast<int>(_text.length());
+        int text_length = static_cast<int>(text_.length());
         SetSelectionBounds(0, text_length);
         QueueRefresh(false, true);
         return;
@@ -443,6 +453,41 @@ namespace nux
   void TextEntry::RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
     ProcessMouseEvent(NUX_MOUSE_MOVE, x, y, dx, dy, button_flags, key_flags);
+  }
+  
+  void TextEntry::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  {
+#if defined(NUX_OS_LINUX)
+    if (caret_cursor_ == None)
+    {
+      Display* display = nux::GetGraphicsDisplay()->GetX11Display();
+      nux::BaseWindow* window = static_cast<nux::BaseWindow*>(GetTopLevelViewWindow());
+    
+      if (display && window)
+      {
+        caret_cursor_ = XCreateFontCursor(display, XC_xterm);
+        XDefineCursor(display, window->GetInputWindowId(), caret_cursor_);
+      }
+    }
+#endif
+  }
+  
+  void TextEntry::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  {
+#if defined(NUX_OS_LINUX)
+    if (caret_cursor_ != None)
+    {
+      Display* display = nux::GetGraphicsDisplay()->GetX11Display();
+      nux::BaseWindow* window = static_cast<nux::BaseWindow*>(GetTopLevelViewWindow());
+      
+      if (display && window)
+      {
+        XUndefineCursor(display, window->GetInputWindowId());
+        XFreeCursor(display, caret_cursor_);
+        caret_cursor_ = None;
+      }
+    }
+#endif
   }
 
   void TextEntry::RecvKeyEvent(
@@ -518,10 +563,10 @@ namespace nux
     g_utf8_validate(text, -1, &end);
 
     std::string txt((text && *text && end > text) ? std::string(text, end) : "");
-    if (txt == _text)
+    if (txt == text_)
       return; // prevent some redraws
 
-    _text = multiline_ ? txt : CleanupLineBreaks(txt.c_str());
+    text_ = multiline_ ? txt : CleanupLineBreaks(txt.c_str());
     cursor_ = 0;
     selection_bound_ = 0;
     need_im_reset_ = true;
@@ -532,7 +577,35 @@ namespace nux
 
   std::string const& TextEntry::GetText() const
   {
-    return _text;
+    return text_;
+  }
+
+  void TextEntry::SetCompletion(const char *text)
+  {
+    const char *end = NULL;
+    g_utf8_validate(text, -1, &end);
+    std::string txt((text && *text && end > text) ? std::string(text, end) : "");
+    if (txt == completion_)
+      return;
+
+    completion_ = txt;
+    QueueRefresh(true, true);
+  }
+
+  std::string const& TextEntry::GetCompletion() const
+  {
+    return completion_;
+  }
+
+  void TextEntry::SetCompletionColor(const Color &color)
+  {
+    completion_color_ = color;
+    QueueRefresh(true, true);
+  }
+
+  Color const& TextEntry::GetCompletionColor() const
+  {
+    return completion_color_;
   }
 
   void TextEntry::SetTextColor(const Color &text_color)
@@ -734,10 +807,10 @@ namespace nux
 
   void TextEntry::ResetPreedit() {
     // Reset layout if there were some content in preedit string
-    if (_preedit.length())
+    if (preedit_.length())
       ResetLayout();
 
-    _preedit.clear();
+    preedit_.clear();
     preedit_cursor_ = 0;
     if (preedit_attrs_) {
       pango_attr_list_unref(preedit_attrs_);
@@ -1078,26 +1151,26 @@ namespace nux
 
     pango_layout_set_single_paragraph_mode(layout, !multiline_);
 
-    if (_preedit.length())
+    if (preedit_.length())
     {
       size_t cursor_index = static_cast<size_t>(cursor_);
-      size_t text_length = _text.length();
-      size_t preedit_length = _preedit.length();
+      size_t text_length = text_.length();
+      size_t preedit_length = preedit_.length();
       if (visible_)
       {
-        tmp_string = _text;
-        tmp_string.insert(cursor_index, _preedit);
+        tmp_string = text_;
+        tmp_string.insert(cursor_index, preedit_);
       }
       else
       {
-        size_t nchars = g_utf8_strlen(_text.c_str(), text_length);
-        size_t preedit_nchars = g_utf8_strlen(_preedit.c_str(), preedit_length);
+        size_t nchars = g_utf8_strlen(text_.c_str(), text_length);
+        size_t preedit_nchars = g_utf8_strlen(preedit_.c_str(), preedit_length);
         nchars += preedit_nchars;
         tmp_string.reserve(password_char_.length() * nchars);
         for (size_t i = 0; i < nchars; ++i)
           tmp_string.append(password_char_);
         size_t cursor_offset =
-            g_utf8_pointer_to_offset(_text.c_str(), _text.c_str() + cursor_index);
+            g_utf8_pointer_to_offset(text_.c_str(), text_.c_str() + cursor_index);
         /* Fix cursor index and preedit_length */
         cursor_index = cursor_offset * password_char_.length();
         preedit_length = preedit_nchars * password_char_.length();
@@ -1111,15 +1184,22 @@ namespace nux
     {
       if (visible_)
       {
-        tmp_string = _text;
+        tmp_string = text_;
       }
       else
       {
-        size_t nchars = g_utf8_strlen(_text.c_str(), _text.length());
+        size_t nchars = g_utf8_strlen(text_.c_str(), text_.length());
         tmp_string.reserve(password_char_.length() * nchars);
         for (size_t i = 0; i < nchars; ++i)
           tmp_string.append(password_char_);
       }
+    }
+
+    int pre_completion_length = tmp_string.length();
+
+    if (!completion_.empty() && !wrap_)
+    {
+      tmp_string = text_ + completion_;
     }
 
     pango_layout_set_text(layout, tmp_string.c_str(),
@@ -1131,13 +1211,22 @@ namespace nux
     {
       attr = pango_attr_underline_new(PANGO_UNDERLINE_SINGLE);
       attr->start_index = 0;
-      attr->end_index = static_cast<guint>(tmp_string.length());
+      attr->end_index = static_cast<guint>(pre_completion_length);
       pango_attr_list_insert(tmp_attrs, attr);
     }
     if (strikeout_)
     {
       attr = pango_attr_strikethrough_new(TRUE);
       attr->start_index = 0;
+      attr->end_index = static_cast<guint>(pre_completion_length);
+      pango_attr_list_insert(tmp_attrs, attr);
+    }
+    if (!completion_.empty() && !wrap_)
+    {
+      attr = pango_attr_foreground_new(65535 * completion_color_.red, 
+                                       65535 * completion_color_.green,
+                                       65535 * completion_color_.blue);
+      attr->start_index = static_cast<guint>(pre_completion_length);
       attr->end_index = static_cast<guint>(tmp_string.length());
       pango_attr_list_insert(tmp_attrs, attr);
     }
@@ -1251,21 +1340,21 @@ namespace nux
         if (text_index == cursor_ && consider_preedit_cursor)
           return text_index + preedit_cursor_;
 
-        return text_index + static_cast<int>(_preedit.length());
+        return text_index + static_cast<int>(preedit_.length());
       }
 
-      const char *text = _text.c_str();
+      const char *text = text_.c_str();
       int offset = static_cast<int>(
         g_utf8_pointer_to_offset(text, text + text_index));
       int preedit_offset = 0;
       int preedit_chars = 0;
-      if (_preedit.length())
+      if (preedit_.length())
       {
-        const char *preedit_text = _preedit.c_str();
+        const char *preedit_text = preedit_.c_str();
         preedit_offset = static_cast<int>(g_utf8_pointer_to_offset(
           preedit_text, preedit_text + preedit_cursor_));
         preedit_chars = static_cast<int>(g_utf8_strlen(
-          preedit_text, _preedit.length()));
+          preedit_text, preedit_.length()));
       }
 
       int password_char_length = static_cast<int>(password_char_.length());
@@ -1287,7 +1376,7 @@ namespace nux
       if (layout_index < cursor_)
         return layout_index;
 
-      int preedit_length = static_cast<int>(_preedit.length());
+      int preedit_length = static_cast<int>(preedit_.length());
       if (layout_index >= cursor_ + preedit_length)
         return layout_index - preedit_length;
 
@@ -1299,11 +1388,11 @@ namespace nux
 
     int offset = layout_index / password_char_length;
 
-    const char *text = _text.c_str();
+    const char *text = text_.c_str();
     int cursor_offset = static_cast<int>(
       g_utf8_pointer_to_offset(text, text + cursor_));
     int preedit_chars = static_cast<int>(
-      g_utf8_strlen(_preedit.c_str(), _preedit.length()));
+      g_utf8_strlen(preedit_.c_str(), preedit_.length()));
 
     if (offset < cursor_offset)
       return static_cast<int>(g_utf8_offset_to_pointer(text, offset) - text);
@@ -1317,16 +1406,16 @@ namespace nux
 
   int TextEntry::GetCharLength(int index)
   {
-    const char *text = _text.c_str();
+    const char *text = text_.c_str();
     const char *ptr = text + index;
-    const char *end = text + _text.length();
+    const char *end = text + text_.length();
     const char *next = g_utf8_find_next_char(ptr, end);
     return static_cast<int>(next ? static_cast<int>(next - ptr) : end - ptr);
   }
 
   int TextEntry::GetPrevCharLength(int index)
   {
-    const char *text = _text.c_str();
+    const char *text = text_.c_str();
     const char *ptr = text + index;
     const char *prev = g_utf8_find_prev_char(text, ptr);
     return static_cast<int>(prev ? static_cast<int>(ptr - prev) : ptr - text);
@@ -1340,7 +1429,7 @@ namespace nux
     {
       DeleteSelection();
     }
-    else if (overwrite_ && cursor_ != static_cast<int>(_text.length()))
+    else if (overwrite_ && cursor_ != static_cast<int>(text_.length()))
     {
       DeleteText(cursor_, cursor_ + GetCharLength(cursor_));
     }
@@ -1358,7 +1447,7 @@ namespace nux
     {
       size_t len = end - str;
 
-      _text.insert(cursor_, str, len);
+      text_.insert(cursor_, str, len);
       cursor_ += static_cast<int>(len);
       selection_bound_ += static_cast<int>(len);
     }
@@ -1371,7 +1460,7 @@ namespace nux
   {
     if (readonly_) return;
 
-    int text_length = static_cast<int>(_text.length());
+    int text_length = static_cast<int>(text_.length());
     if (start < 0)
       start = 0;
     else if (start > text_length)
@@ -1387,7 +1476,7 @@ namespace nux
     else if (start == end)
       return;
 
-    _text.erase(start, end - start);
+    text_.erase(start, end - start);
 
     if (cursor_ >= end)
       cursor_ -= (end - start);
@@ -1413,7 +1502,7 @@ namespace nux
   }
 
   void TextEntry::Select(int start, int end) {
-    int text_length = static_cast<int>(_text.length());
+    int text_length = static_cast<int>(text_.length());
     if (start == -1)
       start = text_length;
     if (end == -1)
@@ -1426,7 +1515,7 @@ namespace nux
   }
 
   void TextEntry::SelectAll() {
-    SetSelectionBounds(0, static_cast<int>(_text.length()));
+    SetSelectionBounds(0, static_cast<int>(text_.length()));
     QueueRefresh(false, true);
   }
 
@@ -1526,7 +1615,7 @@ namespace nux
     }
     else
     {
-      if (cursor_ == static_cast<int>(_text.length()))
+      if (cursor_ == static_cast<int>(text_.length()))
         return;
       if (step == VISUALLY)
       {
@@ -1629,7 +1718,7 @@ namespace nux
       break;
     case BUFFER:
       nuxAssert(count == -1 || count == 1);
-      new_cursor = static_cast<int>(count == -1 ? 0 : _text.length());
+      new_cursor = static_cast<int>(count == -1 ? 0 : text_.length());
       break;
     }
 
@@ -1644,9 +1733,9 @@ namespace nux
   int TextEntry::MoveVisually(int current_index, int count)
   {
     nuxAssert(current_index >= 0 &&
-      current_index <= static_cast<int>(_text.length()));
+      current_index <= static_cast<int>(text_.length()));
     nuxAssert(count);
-    nuxAssert(_preedit.length() == 0);
+    nuxAssert(preedit_.length() == 0);
 
     PangoLayout *layout = EnsureLayout();
     const char *text = pango_layout_get_text(layout);
@@ -1678,13 +1767,13 @@ namespace nux
   int TextEntry::MoveWords(int current_index, int count)
   {
     nuxAssert(current_index >= 0 &&
-      current_index <= static_cast<int>(_text.length()));
+      current_index <= static_cast<int>(text_.length()));
     nuxAssert(count);
-    nuxAssert(_preedit.length() == 0);
+    nuxAssert(preedit_.length() == 0);
 
     if (!visible_)
     {
-      return static_cast<int>(count > 0 ? _text.length() : 0);
+      return static_cast<int>(count > 0 ? text_.length() : 0);
     }
 
     // The cursor movement direction shall be determined by the direction of
@@ -1789,9 +1878,9 @@ namespace nux
   int TextEntry::MoveDisplayLines(int current_index, int count)
   {
     nuxAssert(current_index >= 0 &&
-      current_index <= static_cast<int>(_text.length()));
+      current_index <= static_cast<int>(text_.length()));
     nuxAssert(count);
-    nuxAssert(_preedit.length() == 0);
+    nuxAssert(preedit_.length() == 0);
 
     PangoLayout *layout = EnsureLayout();
     const char *text = pango_layout_get_text(layout);
@@ -1821,7 +1910,7 @@ namespace nux
     }
     else if (line_index >= n_lines)
     {
-      return static_cast<int>(_text.length());
+      return static_cast<int>(text_.length());
     }
 
     int trailing;
@@ -1853,9 +1942,9 @@ namespace nux
   int TextEntry::MovePages(int current_index, int count)
   {
     nuxAssert(current_index >= 0 &&
-      current_index <= static_cast<int>(_text.length()));
+      current_index <= static_cast<int>(text_.length()));
     nuxAssert(count);
-    nuxAssert(_preedit.length() == 0);
+    nuxAssert(preedit_.length() == 0);
 
     // Transfer pages to display lines.
     PangoLayout *layout = EnsureLayout();
@@ -1870,9 +1959,9 @@ namespace nux
   int TextEntry::MoveLineEnds(int current_index, int count)
   {
     nuxAssert(current_index >= 0 &&
-      current_index <= static_cast<int>(_text.length()));
+      current_index <= static_cast<int>(text_.length()));
     nuxAssert(count);
-    nuxAssert(_preedit.length() == 0);
+    nuxAssert(preedit_.length() == 0);
 
     PangoLayout *layout = EnsureLayout();
     int index = TextIndexToLayoutIndex(current_index, false);
@@ -1939,7 +2028,7 @@ namespace nux
     }
     else if (y >= height)
     {
-      return static_cast<int>(_text.length());
+      return static_cast<int>(text_.length());
     }
 
     int trailing;
@@ -1953,7 +2042,7 @@ namespace nux
 
     // Adjust the offset if preedit is not empty and if the offset is after
     // current cursor.
-    int preedit_length = static_cast<int>(_preedit.length());
+    int preedit_length = static_cast<int>(preedit_.length());
     if (preedit_length && index > cursor_)
     {
       if (index >= cursor_ + preedit_length)
@@ -1961,7 +2050,7 @@ namespace nux
       else
         index = cursor_;
     }
-    return Clamp(index, 0, static_cast<int>(_text.length()));
+    return Clamp(index, 0, static_cast<int>(text_.length()));
   }
 
   bool TextEntry::GetSelectionBounds(int *start, int *end)

@@ -108,8 +108,6 @@ namespace nux
 
     BaseTexture *texture = LoadTextureFromFile(filename.c_str());
 
-    BitmapFormat format = texture->GetFormat();
-
     if (texture)
     {
       TexCoordXForm texxform;
@@ -119,7 +117,7 @@ namespace nux
       rop.DstBlend = GL_ONE_MINUS_SRC_ALPHA;
 
       paint_layer_ = new TextureLayer(texture->GetDeviceTexture(), texxform, color::White, true, rop);
-      delete texture;
+      texture->UnReference();
     }
     else
     {
