@@ -134,8 +134,7 @@ namespace nux
     void HandleMouseWheel(int x, int y, int wheel_delta, unsigned long button_flags, unsigned long key_flags);
     void HandleGeometryChange(Area* area, Geometry geo);
 
-    void DrawCover(nux::GraphicsEngine& graphics_engine, Cover const& cover);
-    void DrawCoverHighlight(nux::GraphicsEngine& graphics_engine, Cover const& cover);
+    void DrawCover(nux::GraphicsEngine& graphics_engine, nux::DrawAreaContext &ctx, Cover const& cover);
 
     CoverList GetCoverList(float animation_progress, gint64 timestep);
 
@@ -332,7 +331,7 @@ namespace nux
       nux::Matrix4::ROTATEX(DEGTORAD(-camera_rotation_.x)) *
       nux::Matrix4::ROTATEY(DEGTORAD(-camera_rotation_.y)) *
       nux::Matrix4::ROTATEZ(DEGTORAD(-camera_rotation_.z)) *
-      nux::Matrix4::TRANSLATE(cover.position.x, 0.0f, cover.position.z);
+      nux::Matrix4::TRANSLATE(0.0f, 0.0f, cover.position.z);
 
     nux::Matrix4 m = nux::Matrix4::ROTATEY(DEGTORAD(cover.position.rot));
     nux::Matrix4 combined_matrix = perspective_ * modelview_ * m;
@@ -362,10 +361,14 @@ namespace nux
     p2_proj.y = -height * (p2_proj.y - 1.0f)/2.0f;
     p3_proj.y = -height * (p3_proj.y - 1.0f)/2.0f;
 
-    out_p0.x = p0_proj.x; out_p0.y = p0_proj.y;
-    out_p1.x = p1_proj.x; out_p1.y = p1_proj.y;
-    out_p2.x = p2_proj.x; out_p2.y = p2_proj.y;
-    out_p3.x = p3_proj.x; out_p3.y = p3_proj.y;
+    nux::Point2 top_left, bottom_right;
+    Get3DBoundingBox(camera_position_.z, top_left, bottom_right);
+    float scalar = parent_->GetGeometry().width / (bottom_right.x - top_left.x);
+
+    out_p0.x = p0_proj.x + cover.position.x * scalar; out_p0.y = p0_proj.y;
+    out_p1.x = p1_proj.x + cover.position.x * scalar; out_p1.y = p1_proj.y;
+    out_p2.x = p2_proj.x + cover.position.x * scalar; out_p2.y = p2_proj.y;
+    out_p3.x = p3_proj.x + cover.position.x * scalar; out_p3.y = p3_proj.y;
   }
 
   void Coverflow::Impl::GetFlatCoverScreenSize(float& flat_screen_width, float& flat_screen_height)
@@ -764,89 +767,7 @@ namespace nux
       parent_->QueueDraw();
   }
 
-  void Coverflow::Impl::DrawCoverHighlight(nux::GraphicsEngine& graphics_engine, Cover const& cover)
-  {
-    if (cover.item->GetTexture().IsNull())
-      return;
-    
-    int width = parent_->GetBaseWidth();
-    int height = parent_->GetBaseHeight();
-
-    ObjectPtr<IOpenGLBaseTexture> texture = cover.item->GetTexture()->GetDeviceTexture();
-
-    modelview_ = nux::Matrix4::TRANSLATE(-camera_position_.x, -camera_position_.y, -camera_position_.z) *
-                 nux::Matrix4::ROTATEX(DEGTORAD(-camera_rotation_.x)) *
-                 nux::Matrix4::ROTATEY(DEGTORAD(camera_drift_factor_ * parent_->camera_motion_drift_angle + -camera_rotation_.y)) *
-                 nux::Matrix4::ROTATEZ(DEGTORAD(-camera_rotation_.z)) *
-                 nux::Matrix4::TRANSLATE(cover.position.x, 0.0f, cover.position.z);
-
-    nux::Matrix4 m = nux::Matrix4::ROTATEY(DEGTORAD(cover.position.rot));
-    nux::Matrix4 combined_matrix = modelview_ * m;
-
-    nux::TexCoordXForm texxform;
-    nux::Color color = nux::color::Red;
-
-    QRP_Compute_Texture_Coord(width, height, texture, texxform);
-
-    float ratio = texture->GetWidth()/(float)texture->GetHeight();
-
-    float fx = cover_width_in_3d_space_/2.0f;
-    float fy_top = cover.position.y + (cover_width_in_3d_space_) * (1.0f/ratio);
-    float fy_bot = cover.position.y;
-    
-    highlight_shader_program_->Begin();
-
-    int TextureObjectLocation = highlight_shader_program_->GetUniformLocationARB("TextureObject0");
-    int VertexLocation        = highlight_shader_program_->GetAttributeLocation ("iVertex");
-    int TextureCoord0Location = highlight_shader_program_->GetAttributeLocation ("iTextureCoord0");
-    int VertexColorLocation   = highlight_shader_program_->GetAttributeLocation ("iVertexColor");
-
-    texture->SetFiltering (GL_LINEAR, GL_LINEAR);
-    graphics_engine.SetTexture(GL_TEXTURE0, texture);
-    CHECKGL(glUniform1iARB(TextureObjectLocation, 0));
-
-    int VPMatrixLocation = highlight_shader_program_->GetUniformLocationARB("ViewProjectionMatrix");
-    nux::Matrix4 MVPMatrix = perspective_ * combined_matrix;
-
-    highlight_shader_program_->SetUniformLocMatrix4fv((GLint) VPMatrixLocation, 1, true, (GLfloat*) &(MVPMatrix.m));
-
-    float VtxBuffer[] =
-    {
-      -fx, fy_top,  0.0f, 1.0f, texxform.u0, texxform.v0, 0, 0, color.red, color.green, color.blue, color.alpha,
-      -fx, fy_bot, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 0, color.red, color.green, color.blue, color.alpha,
-      fx,  fy_bot, 0.0f, 1.0f, texxform.u1, texxform.v1, 0, 0, color.red, color.green, color.blue, color.alpha,
-      fx,  fy_top,  0.0f, 1.0f, texxform.u1, texxform.v0, 0, 0, color.red, color.green, color.blue, color.alpha,      
-    };
-
-    CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
-    CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer));
-
-    if (TextureCoord0Location != -1)
-    {
-      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord0Location));
-      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4));
-    }
-
-    if (VertexColorLocation != -1)
-    {
-      CHECKGL(glEnableVertexAttribArrayARB(VertexColorLocation));
-      CHECKGL(glVertexAttribPointerARB((GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8));
-    }
-
-    CHECKGL(glDrawArrays(GL_LINE_LOOP, 0, 4)); // Compatible with OpenGL ES 2.0.
-
-    CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));
-
-    if (TextureCoord0Location != -1)
-      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord0Location));
-
-    if (VertexColorLocation != -1)
-      CHECKGL(glDisableVertexAttribArrayARB(VertexColorLocation));
-
-    highlight_shader_program_->End();
-  }
-
-  void Coverflow::Impl::DrawCover(nux::GraphicsEngine& graphics_engine, Cover const& cover)
+  void Coverflow::Impl::DrawCover(nux::GraphicsEngine& graphics_engine, nux::DrawAreaContext &ctx, Cover const& cover)
   {
     if (cover.item->GetTexture().IsNull() || !TestCoverVisible(cover))
       return;
@@ -865,7 +786,12 @@ namespace nux
       nux::Matrix4::ROTATEX(DEGTORAD(-camera_rotation_.x)) *
       nux::Matrix4::ROTATEY(DEGTORAD(camera_drift_factor_ * parent_->camera_motion_drift_angle + -camera_rotation_.y)) *
       nux::Matrix4::ROTATEZ(DEGTORAD(-camera_rotation_.z)) *
-      nux::Matrix4::TRANSLATE(cover.position.x, 0.0f, cover.position.z);
+      nux::Matrix4::TRANSLATE(0.0f, 0.0f, cover.position.z);
+
+    nux::Point2 top_left, bottom_right;
+    Get3DBoundingBox(camera_position_.z, top_left, bottom_right);
+    float scalar = ctx.width / (bottom_right.x - top_left.x);
+    glViewport((int) (cover.position.x * scalar), 0.0f, ctx.width, ctx.height);
 
     nux::Matrix4 m = nux::Matrix4::ROTATEY(DEGTORAD(cover.position.rot));
     nux::Matrix4 combined_matrix = modelview_ * m;
@@ -1213,7 +1139,7 @@ namespace nux
     {
       Cover cover = *it;
       if (cover.position.rot > 0)
-        pimpl->DrawCover(graphics_engine, cover);
+        pimpl->DrawCover(graphics_engine, ctx, cover);
       else
         break;
     }
@@ -1223,7 +1149,7 @@ namespace nux
     {
       Cover cover = *rit;
       if (cover.position.rot <= 0)
-        pimpl->DrawCover(graphics_engine, cover);
+        pimpl->DrawCover(graphics_engine, ctx, cover);
     }
 
     //graphics_engine.GetRenderStates().SetBlend(false);
