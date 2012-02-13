@@ -836,7 +836,7 @@ namespace nux
 
       float fy_top = cover.position.y + (cover_width_in_3d_space_) * (1.0f/ratio);
       float fy_bot = cover.position.y;
-      float fy_bot_reflex = cover.position.y - (cover_width_in_3d_space_) * (1.0f/ratio);
+      float fy_bot_reflec = cover.position.y - (cover_width_in_3d_space_) * (1.0f/ratio) * parent_->reflection_size;
 
       float fx_shadow = 0.5 * (1.1 * cover_width_in_3d_space_);
       float fy_top_shadow = fy_bot + 0.5 * (1.4 * cover_width_in_3d_space_) * (1.0f/drop_shadow_ratio);
@@ -949,14 +949,17 @@ namespace nux
         texxform.flip_v_coord = true;
         QRP_Compute_Texture_Coord(width, height, texture, texxform);
 
+        // texture offset use to prevent the texture from scaling when the reflection size changes.
+        float toff = 1.0f - parent_->reflection_size;
+
         float opacity_start = opacity*parent_->reflection_strength * cover.opacity;
         float opacity_end   = 0.0f;
         float VtxBuffer[] =
         {
-          -fx, fy_bot,                  0.0f, 1.0f, texxform.u0, texxform.v0, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
-          -fx, fy_bot_reflex,  0.0f, 1.0f, texxform.u0, texxform.v1, 0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
-          fx,  fy_bot_reflex,  0.0f, 1.0f, texxform.u1, texxform.v1, 0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
-          fx,  fy_bot,                  0.0f, 1.0f, texxform.u1, texxform.v0, 0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
+          -fx, fy_bot,        0.0f, 1.0f, texxform.u0, texxform.v0,         0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
+          -fx, fy_bot_reflec, 0.0f, 1.0f, texxform.u0, texxform.v1 + toff,  0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
+          fx,  fy_bot_reflec, 0.0f, 1.0f, texxform.u1, texxform.v1 + toff,  0, 0, opacity_end,   opacity_end,   opacity_end,   opacity_end,
+          fx,  fy_bot,        0.0f, 1.0f, texxform.u1, texxform.v0,         0, 0, opacity_start, opacity_start, opacity_start, opacity_start,
         };
 
         CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
@@ -1114,6 +1117,7 @@ namespace nux
     , show_drop_shadow(false)
     , show_reflection(false)
     , true_perspective(true)
+    , reflection_size(1.0f)
     , pimpl(new Impl(this))
   {
     SetAcceptKeyboardEvent(true);
