@@ -121,6 +121,8 @@ void CoverflowThread(nux::NThread* thread, void* InitData)
   coverflow->fov = 45;
   coverflow->true_perspective = false;
   coverflow->folding_angle = 45;
+  coverflow->reflection_size = 0.5f;
+  coverflow->show_reflection = true;
   nux::HLayout* main_layout(new nux::HLayout(NUX_TRACKER_LOCATION));
   main_layout->AddView(coverflow, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_FULL);
 

@@ -81,6 +81,8 @@ namespace nux
 
     Property<float> y_offset;
 
+    Property<float> reflection_size;
+
     bool AcceptKeyNavFocus();
 
     void SetCameraDistance(float distance);
