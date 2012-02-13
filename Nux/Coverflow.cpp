@@ -155,7 +155,6 @@ namespace nux
     bool CoverAtPoint(int x, int y, Cover& out_cover);
     void Get3DBoundingBox(float distance_from_camera, nux::Point2& top_left_corner, nux::Point2& bottom_right_corner);
     void GetCoverScreenCoord(Cover const& cover, nux::Vector4& P0, nux::Vector4& P1, nux::Vector4& P2, nux::Vector4& P3);
-    void GetFlatCoverScreenSize(float& flat_screen_width, float& flat_screen_height);
 
     bool TestMouseOverCover(int x, int y, Cover const& cover);
     bool TestCoverVisible(Cover const& cover);
@@ -188,8 +187,6 @@ namespace nux
     nux::Point2 mouse_down_position_;
     nux::Point2 mouse_position_;
     CoverList last_covers_;
-    float flat_screen_width_;
-    float flat_screen_height_;
     float cover_width_in_3d_space_;
     float near_clip_plan_;
     float far_clip_plan_;
@@ -211,8 +208,6 @@ namespace nux
    , saved_position_(0)
    , velocity_(0)
    , velocity_handle_(0)
-   , flat_screen_width_(0.0f)
-   , flat_screen_height_(0.0f)
    , cover_width_in_3d_space_(1.0f)
    , near_clip_plan_(1.0f)
    , far_clip_plan_(200.0f)
@@ -399,57 +394,6 @@ namespace nux
     out_p1.x = p1_proj.x + cover.position.x * scalar; out_p1.y = p1_proj.y;
     out_p2.x = p2_proj.x + cover.position.x * scalar; out_p2.y = p2_proj.y;
     out_p3.x = p3_proj.x + cover.position.x * scalar; out_p3.y = p3_proj.y;
-  }
-
-  void Coverflow::Impl::GetFlatCoverScreenSize(float& flat_screen_width, float& flat_screen_height)
-  {
-    // BIG ASSUMPTION:
-    //  The ratio of the texture.width/texture.height = 1.0f;
-    float ratio = 1.0f;
-
-    int width = parent_->GetBaseWidth();
-    int height = parent_->GetBaseHeight();
-
-    perspective_.Perspective(DEGTORAD(parent_->fov()), (float)width / (float)height, near_clip_plan_, far_clip_plan_);
-
-    float fx = cover_width_in_3d_space_ / 2.0f;
-    float fy = (cover_width_in_3d_space_ / 2.0f) * (1.0f / ratio);
-
-    modelview_ = nux::Matrix4::TRANSLATE(-camera_position_.x, -camera_position_.y, -camera_position_.z) *
-      nux::Matrix4::ROTATEX(DEGTORAD(-camera_rotation_.x)) *
-      nux::Matrix4::ROTATEY(DEGTORAD(-camera_rotation_.y)) *
-      nux::Matrix4::ROTATEZ(DEGTORAD(-camera_rotation_.z));
-
-    nux::Matrix4 m = nux::Matrix4::ROTATEY(DEGTORAD(0.0f));
-    nux::Matrix4 combined_matrix = perspective_ * modelview_;
-
-    nux::Vector4 p0(-fx, fy, 0.0f, 1.0f);
-    nux::Vector4 p1(-fx, -fy, 0.0f, 1.0f);
-    nux::Vector4 p2(fx, -fy, 0.0f, 1.0f);
-    nux::Vector4 p3(fx, fy, 0.0f, 1.0f);
-
-    nux::Vector4 p0_proj = combined_matrix * p0;
-    nux::Vector4 p1_proj = combined_matrix * p1;
-    nux::Vector4 p2_proj = combined_matrix * p2;
-    nux::Vector4 p3_proj = combined_matrix * p3;
-
-    p0_proj.x = p0_proj.x/p0_proj.w; p0_proj.y = p0_proj.y/p0_proj.w; p0_proj.z = p0_proj.z/p0_proj.w;
-    p1_proj.x = p1_proj.x/p1_proj.w; p1_proj.y = p1_proj.y/p1_proj.w; p1_proj.z = p1_proj.z/p1_proj.w;
-    p2_proj.x = p2_proj.x/p2_proj.w; p2_proj.y = p2_proj.y/p2_proj.w; p2_proj.z = p2_proj.z/p2_proj.w;
-    p3_proj.x = p3_proj.x/p3_proj.w; p3_proj.y = p3_proj.y/p3_proj.w; p3_proj.z = p3_proj.z/p3_proj.w;
-
-    p0_proj.x = width * (p0_proj.x + 1.0f)/2.0f;
-    p1_proj.x = width * (p1_proj.x + 1.0f)/2.0f;
-    p2_proj.x = width * (p2_proj.x + 1.0f)/2.0f;
-    p3_proj.x = width * (p3_proj.x + 1.0f)/2.0f;
-
-    p0_proj.y = -height * (p0_proj.y - 1.0f)/2.0f;
-    p1_proj.y = -height * (p1_proj.y - 1.0f)/2.0f;
-    p2_proj.y = -height * (p2_proj.y - 1.0f)/2.0f;
-    p3_proj.y = -height * (p3_proj.y - 1.0f)/2.0f;
-
-    flat_screen_width = p3_proj.x - p0_proj.x;
-    flat_screen_height = p1_proj.y - p0_proj.y;
   }
 
   bool Coverflow::Impl::TestMouseOverCover(int x, int y, Cover const& cover)
@@ -684,7 +628,6 @@ namespace nux
 
   void Coverflow::Impl::HandleGeometryChange(Area* area, Geometry geo)
   {
-    GetFlatCoverScreenSize(flat_screen_width_, flat_screen_height_);
   }
 
   CoverList Coverflow::Impl::GetCoverList(float animation_progress, gint64 timestep)
