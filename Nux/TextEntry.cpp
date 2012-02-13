@@ -188,6 +188,9 @@ namespace nux
     cairo_font_options_destroy(font_options_);
     if (_texture2D)
       _texture2D->UnReference();
+
+    if (canvas_)
+      delete canvas_;
   }
 
   void TextEntry::PreLayoutManagement()
