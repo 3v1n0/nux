@@ -25,21 +25,24 @@ namespace nux
   {
     double xres = 0.0;
     double yres = 0.0;
-    double dpi  = 72.0;
+    double dpi  = 96.0; // default DPI if no Display provided (e.g. unit-test)
 
-    // determine current system DPI, remember that: 1 inch == 2.54 cm == 25.4 mm
-    xres = ((((double) DisplayWidth(dpy,scr)) * 25.4) /
-            ((double) DisplayWidthMM(dpy,scr)));
-    yres = ((((double) DisplayHeight(dpy,scr)) * 25.4) /
-            ((double) DisplayHeightMM(dpy,scr)));
-    dpi = (xres + yres) / 2.0; 
+    if (dpy)
+    {
+      // determine current system DPI, remember that: 1 inch == 2.54 cm == 25.4 mm
+      xres = ((((double) DisplayWidth(dpy,scr)) * 25.4) /
+              ((double) DisplayWidthMM(dpy,scr)));
+      yres = ((((double) DisplayHeight(dpy,scr)) * 25.4) /
+              ((double) DisplayHeightMM(dpy,scr)));
+      dpi = (xres + yres) / 2.0; 
+    }
 
     // update stored ppe
     pixels_per_em_ = points * dpi / 72.0;
 
     // sanity-check
     if (pixels_per_em_ == 0.0)
-      pixels_per_em_ = 10.0; // assume points == 10.0, dpi == 72.0
+      pixels_per_em_ = 10.0; // assume points == 10.0, dpi == 96.0
   }
 
   Metrics::~Metrics ()
