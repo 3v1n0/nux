@@ -46,12 +46,12 @@ namespace nux
   {
   }
 
-  inline double Metrics::Pixel2EM (int value)
+  double Metrics::Pixel2EM (int value)
   {
     return (double) value / pixels_per_em_;
   }
 
-  inline int Metrics::EM2Pixel (double value)
+  int Metrics::EM2Pixel (double value)
   {
     return (int) (value * pixels_per_em_);
   }
