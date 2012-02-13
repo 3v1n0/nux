@@ -36,6 +36,9 @@ public:
   typedef ObjectPtr<CoverflowModel> Ptr;
   typedef std::vector<CoverflowItem::Ptr> CoverflowItemList;
 
+  CoverflowModel();
+  ~CoverflowModel();
+
   CoverflowItemList const& Items() const;
 
   void AddItem(CoverflowItem::Ptr const& item);
@@ -44,11 +47,22 @@ public:
 
   size_t IndexOf(CoverflowItem::Ptr const& item);
 
+  CoverflowItem::Ptr Selection();
+  size_t SelectionIndex();
+
+  void SetSelection(size_t index);
+  void SetSelection(CoverflowItem::Ptr item);
+
+  void SelectNext();
+  void SelectPrev();
+
   sigc::signal<void, CoverflowModel*, CoverflowItem::Ptr> item_added;
   sigc::signal<void, CoverflowModel*, CoverflowItem::Ptr> item_removed;
+  sigc::signal<void, CoverflowModel*, CoverflowItem::Ptr> selection_changed;
 
 private:
-  CoverflowItemList items_;
+  struct Impl;
+  Impl* pimpl;
 };
 
 }
