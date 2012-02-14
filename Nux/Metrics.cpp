@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Canonical Ltd
+ * Copyright (C) 2012 Canonical Ltd
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -16,12 +16,11 @@
  * Authored by: Mirco Müller <mirco.mueller@canonical.com
  */
 
-#include "Metrics.h"
-#include "config.h"
+#include "Nux/Metrics.h"
 
 namespace nux
 {
-  Metrics::Metrics (Display* dpy, int scr, double points)
+  Metrics::Metrics(Display* dpy, int scr, double points)
   {
     double xres = 0.0;
     double yres = 0.0;
@@ -30,10 +29,10 @@ namespace nux
     if (dpy)
     {
       // determine current system DPI, remember that: 1 inch == 2.54 cm == 25.4 mm
-      xres = ((((double) DisplayWidth(dpy,scr)) * 25.4) /
-              ((double) DisplayWidthMM(dpy,scr)));
-      yres = ((((double) DisplayHeight(dpy,scr)) * 25.4) /
-              ((double) DisplayHeightMM(dpy,scr)));
+      xres = ((static_cast<double> DisplayWidth(dpy,scr) * 25.4) /
+              (static_cast<double> DisplayWidthMM(dpy,scr)));
+      yres = ((static_cast<double> DisplayHeight(dpy,scr) * 25.4) /
+              (static_cast<double> DisplayHeightMM(dpy,scr)));
       dpi = (xres + yres) / 2.0; 
     }
 
@@ -45,18 +44,14 @@ namespace nux
       pixels_per_em_ = 10.0; // assume points == 10.0, dpi == 96.0
   }
 
-  Metrics::~Metrics ()
+  double Metrics::Pixel2EM(int value)
   {
+    return static_cast<double> (value) / pixels_per_em_;
   }
 
-  double Metrics::Pixel2EM (int value)
+  int Metrics::EM2Pixel(double value)
   {
-    return (double) value / pixels_per_em_;
-  }
-
-  int Metrics::EM2Pixel (double value)
-  {
-    return (int) (value * pixels_per_em_);
+    return static_cast<int> (value * pixels_per_em_);
   }
 } // nux namespace
 

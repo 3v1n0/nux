@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Canonical Ltd
+ * Copyright (C) 2012 Canonical Ltd
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -16,8 +16,8 @@
  * Authored by: Mirco Müller <mirco.mueller@canonical.com
  */
 
-#ifndef METRICS_H
-#define METRICS_H
+#ifndef NUX_METRICS_H
+#define NUX_METRICS_H
 
 #include <X11/Xlib.h>
 
@@ -26,15 +26,14 @@ namespace nux
   class Metrics
   {
     public:
-      Metrics (Display* dpy, int scr, double points);
-      ~Metrics ();
+      Metrics(Display* dpy, int scr, double points);
 
-      double Pixel2EM (int value);
-      int EM2Pixel (double value);
+      double Pixel2EM(int value);
+      int EM2Pixel(double value);
 
     private:
       double pixels_per_em_;
   };
 }
 
-#endif // METRICS_H
+#endif // NUX_METRICS_H
