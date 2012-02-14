@@ -212,7 +212,7 @@ namespace nux
     {
         SelectLine();
     }
-    else if (event_type == NUX_MOUSE_DOUBLECLICK)
+    else if (event_type == NUX_MOUSE_DOUBLECLICK && !ime_active_)
     {
       SelectWord();
       last_dblclick_time_ = current_time;
