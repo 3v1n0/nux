@@ -120,7 +120,6 @@ namespace nux
 
     // connect input context signals
     g_signal_connect(context_, "commit-text",         G_CALLBACK(OnCommitText_),        this);
-    g_signal_connect(context_, "forward-key-event",   G_CALLBACK(OnForwardKeyEvent_),   this);
     g_signal_connect(context_, "update-preedit-text", G_CALLBACK(OnUpdatePreeditText_), this);
     g_signal_connect(context_, "show-preedit-text",   G_CALLBACK(OnShowPreeditText_),   this);
     g_signal_connect(context_, "hide-preedit-text",   G_CALLBACK(OnHidePreeditText_),   this);
@@ -166,35 +165,6 @@ namespace nux
       strong.height);
   }
 
-  // Some of the ibus-engines dont handle deleteing of preeidt
-  // so just in case that happens we have to handle it
-  void IBusIMEContext::DeleteAPreedit()
-  {
-    if (g_utf8_validate(text_entry_->preedit_.c_str(), -1, NULL))
-    { 
-      glong size = g_utf8_strlen(text_entry_->preedit_.c_str(), -1); 
-      if (size == 1)
-      {
-        text_entry_->ResetPreedit();
-        text_entry_->QueueRefresh (true, true);
-        text_entry_->sigTextChanged.emit(text_entry_);
-      }
-      else
-      {
-        // Remove one preeidt char
-        char tmp[size];
-        g_utf8_strncpy(tmp, text_entry_->preedit_.c_str(), size-1);
-        text_entry_->preedit_ = std::string(tmp);
-
-        text_entry_->preedit_cursor_ = text_entry_->preedit_.length();
-        text_entry_->QueueRefresh (true, true);
-        text_entry_->sigTextChanged.emit(text_entry_);
-        UpdateCursorLocation();
-      }
-    }
-    
-  }
-
   void IBusIMEContext::OnConnected(IBusBus *bus)
   {
     nuxDebugMsg("***IBusIMEContext::OnConnected***");
@@ -231,33 +201,6 @@ namespace nux
       text_entry_->SetCursor(cursor + commit_text.length());
       UpdateCursorLocation();
     }
-  }
-
-  void IBusIMEContext::OnForwardKeyEvent(IBusInputContext *context, guint keyval, guint keycode, guint state)
-  {
-    nuxDebugMsg("***IBusIMEContext::OnForwardKeyEvent***");
-    nuxAssert(context_ == context);
-
-    int flags = 0;
-
-    if (state & IBUS_LOCK_MASK)
-      flags |= KEY_MODIFIER_CAPS_LOCK;
-    if (state & IBUS_CONTROL_MASK)
-      flags |= KEY_MODIFIER_CTRL;
-    if (state & IBUS_SHIFT_MASK)
-      flags |= KEY_MODIFIER_SHIFT;
-    if (state & IBUS_MOD1_MASK)
-      flags |= KEY_MODIFIER_ALT;
-
-    int mouse_state = 0;
-    if (state & IBUS_BUTTON1_MASK)
-      mouse_state |= MOUSE_BUTTON1;
-    if (state & IBUS_BUTTON2_MASK)
-      mouse_state |= MOUSE_BUTTON2;
-    if (state & IBUS_BUTTON3_MASK)
-      mouse_state |= MOUSE_BUTTON3;
-
-    //ForwardKeyEvent(KeyEvent(state & IBUS_RELEASE_MASK ? EVENT_KEY_DOWN : EVENT_KEY_UP, keyval /* todo(jaytaoko): ui::WindowsKeyCodeForGdkKeyCode(keyval)*/, mouse_state, flags));
   }
 
   void IBusIMEContext::OnUpdatePreeditText(IBusInputContext* context, IBusText* text, guint cursor_pos, gboolean visible)
@@ -314,6 +257,10 @@ namespace nux
         text_entry_->sigTextChanged.emit(text_entry_);
         UpdateCursorLocation();
       }
+    }
+    else
+    {
+      OnHidePreeditText(context_);
     }
   }
 
@@ -378,12 +325,8 @@ namespace nux
         g_error_free (error);
       }
 
-      // FIXME Need to forward this event somewhere..
       if (processed == FALSE)
-      { 
-        printf ("Processed %i - %i - %i %s\n", data->event.type(), data->event.key_sym(), data->event.key_code(), data->event.character().c_str());
         data->context->text_entry_->ProcessKeyEvent(data->event.type(), data->event.key_sym(), data->event.flags() | IBUS_IGNORED_MASK, data->event.character().c_str(), 0);
-      }
 
       delete data;
   }

@@ -78,8 +78,6 @@ namespace nux
     virtual bool FilterKeyEvent(const KeyEvent& event);
     virtual void SetSurrounding(const std::wstring& text, int cursor_pos);
 
-    void DeleteAPreedit();
-
   private:
     void CreateContext();
     void DestroyContext();
@@ -99,10 +97,6 @@ namespace nux
     //CHROMEG_CALLBACK_1(IBusIMEContext, void, OnCommitText, IBusInputContext*, IBusText*);
     static void OnCommitText_(IBusInputContext* context, IBusText* text, void* data) {reinterpret_cast<IBusIMEContext*>(data)->OnCommitText(context, text);}
     void OnCommitText(IBusInputContext *context, IBusText* text);
-
-    //CHROMEG_CALLBACK_3(IBusIMEContext, void, OnForwardKeyEvent, IBusInputContext*, guint, guint, guint);
-    static void OnForwardKeyEvent_(IBusInputContext* context, guint keyval, guint keycode, guint state, void* data) {reinterpret_cast<IBusIMEContext*>(data)->OnForwardKeyEvent(context, keyval, keycode, state);}
-    void OnForwardKeyEvent(IBusInputContext *context, guint keyval, guint keycode, guint state);
 
     //CHROMEG_CALLBACK_3(IBusIMEContext, void, OnUpdatePreeditText, IBusInputContext*, IBusText*, guint, gboolean);
     static void OnUpdatePreeditText_(IBusInputContext* context, IBusText* text, guint cursor_pos, gboolean visible, void* data) {reinterpret_cast<IBusIMEContext*>(data)->OnUpdatePreeditText(context, text, cursor_pos, visible);}

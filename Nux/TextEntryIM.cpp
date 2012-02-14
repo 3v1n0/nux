@@ -160,6 +160,9 @@ namespace nux
     cairo_font_options_destroy(font_options_);
     if (_texture2D)
       _texture2D->UnReference();
+
+    if (ime_)
+      delete ime_;
   }
 
   void TextEntryIM::PreLayoutManagement()
@@ -366,18 +369,14 @@ namespace nux
       }
       else if (keyval == NUX_VK_BACKSPACE)
       {
-        if (preedit_.length() > 0)
-          ime_->DeleteAPreedit(); 
-        else if (!ctrl)
+        if (!ctrl)
           BackSpace(VISUALLY);
         else
           BackSpace(WORDS);
       }
       else if ((keyval == NUX_VK_DELETE) && (!shift))
       {
-        if (preedit_.length() > 0)
-          ime_->DeleteAPreedit(); 
-        else if (!ctrl)
+        if (!ctrl)
           Delete(VISUALLY);
         else
           Delete(WORDS);
