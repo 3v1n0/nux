@@ -249,8 +249,6 @@ namespace nux
     unsigned short   keyCount       /*key repeat count*/)
   {
 
-    KeyEvent event((NuxEventType)event_type, keysym, 0, state); 
-    ime_->FilterKeyEvent(event);
 
     if (event_type == NUX_KEYDOWN)
       text_input_mode_ = true;
@@ -271,6 +269,10 @@ namespace nux
 
     if (event_type == NUX_KEYUP)
       return;
+    
+    // FIXME Have to get the current event fot he x11_keycode for ibus-hangul/korean input
+    nux::Event cur_event = nux::GetWindowThread()->GetGraphicsDisplay().GetCurrentEvent(); 
+    KeyEvent event((NuxEventType)event_type, keysym,cur_event.x11_keycode, state, character); 
 
     // we need to ignore some characters
     if (keysym == NUX_VK_TAB)
@@ -399,7 +401,7 @@ namespace nux
 //       }
     }
 
-    if (character != 0 && (strlen(character) != 0) && !ime_active_)
+    if (!ime_->FilterKeyEvent(event) && character != 0 && (strlen(character) != 0))
     {
       EnterText(character);
     }

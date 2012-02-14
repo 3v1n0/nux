@@ -71,10 +71,13 @@ namespace nux
   // FIXME Need to get the key_code form nux NOT just the keysym
   bool IBusIMEContext::FilterKeyEvent(const KeyEvent& event)
   {
-    guint keyval = event.key_code(); // todo(jaytaoko): ui::GdkKeyCodeForWindowsKeyCode(event.key_code(), event.IsShiftDown() ^ event.IsCapsLockDown());
+    guint keyval = event.key_sym(); // todo(jaytaoko): ui::GdkKeyCodeForWindowsKeyCode(event.key_code(), event.IsShiftDown() ^ event.IsCapsLockDown());
 
     if (context_) {
       guint modifiers = 0;
+
+      if (event.flags() & IBUS_IGNORED_MASK)
+        return false;
 
       if (event.type() == EVENT_KEY_UP)
         modifiers |= IBUS_RELEASE_MASK;
@@ -90,10 +93,10 @@ namespace nux
 
       // FIXME Not the best way to get the x11_key_code. Should be able to get it from TextEntry::ProcessKeyEvent
       // The x11_keycode is needed for the ibus-hangul engine!
-      nux::Event cur_event = nux::GetWindowThread()->GetGraphicsDisplay().GetCurrentEvent(); 
+      //nux::Event cur_event = nux::GetWindowThread()->GetGraphicsDisplay().GetCurrentEvent(); 
 
       ibus_input_context_process_key_event_async(context_,
-        keyval, cur_event.x11_keycode - 8, modifiers,
+        keyval, event.key_code() - 8, modifiers,
         -1,
         NULL,
         reinterpret_cast<GAsyncReadyCallback>(ProcessKeyEventDone),
@@ -348,7 +351,10 @@ namespace nux
 
       // FIXME Need to forward this event somewhere..
       if (processed == FALSE)
-        printf ("Processed %i\n", processed);
+      { 
+        printf ("Processed %i - %i - %i %s\n", data->event.type(), data->event.key_sym(), data->event.key_code(), data->event.character().c_str());
+        data->context->text_entry_->ProcessKeyEvent(data->event.type(), data->event.key_sym(), data->event.flags() | IBUS_IGNORED_MASK, data->event.character().c_str(), 0);
+      }
 
       delete data;
   }

@@ -1,4 +1,4 @@
-#ifndef INPUTMETHODIBUS_H
+#ifndef INPUTMETHODIBUS_H 
 #define INPUTMETHODIBUS_H
 
 #include <Nux/TextEntryIM.h>
@@ -17,19 +17,21 @@ namespace nux
   public:
 
     KeyEvent(NuxEventType type,
-      unsigned int key_code,
-      unsigned int mouse_state, unsigned int event_flags)
+      unsigned int key_sym,
+      unsigned int key_code, unsigned int event_flags, const char* character)
       : type_(type)
+      , key_sym_(key_sym)
       , key_code_(key_code)
       , key_modifiers_(event_flags)
-      , mouse_state_(mouse_state)
+      , character_(character)
     {
     }
 
     NuxEventType type() const {return type_;}
+    unsigned int key_sym() const {return key_sym_;}
     unsigned int key_code() const {return key_code_;}
     unsigned int flags() const {return key_modifiers_;}
-    unsigned int MouseState() const {return mouse_state_;}
+    std::string character() const {return character_;}
 
     bool IsShiftDown() const { return (key_modifiers_ & KEY_MODIFIER_SHIFT) != 0; }
     bool IsControlDown() const { return (key_modifiers_ & KEY_MODIFIER_CTRL) != 0; }
@@ -38,9 +40,10 @@ namespace nux
 
   private:
     EventType type_;
+    unsigned int key_sym_;
     unsigned int key_code_;
     unsigned int key_modifiers_;
-    unsigned int mouse_state_;
+    std::string character_;
 
     KeyEvent(const KeyEvent&);
     void operator = (const KeyEvent&);
@@ -53,7 +56,7 @@ namespace nux
     ProcessKeyEventData(IBusIMEContext* context,
       const KeyEvent& event)
       : context(context)
-      , event(event.type(), event.key_code(), event.MouseState(), event.flags())
+      , event(event.type(), event.key_sym(), event.key_code(), event.flags(), event.character().c_str())
     {
 
     }
