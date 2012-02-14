@@ -248,7 +248,7 @@ namespace nux
     const char*     character  ,   /*character*/
     unsigned short   keyCount       /*key repeat count*/)
   {
-
+    bool retval = FALSE;
 
     if (event_type == NUX_KEYDOWN)
       text_input_mode_ = true;
@@ -267,13 +267,16 @@ namespace nux
 //         return EVENT_RESULT_HANDLED;
 //     }
 
-    if (event_type == NUX_KEYUP)
-      return;
-    
     // FIXME Have to get the current event fot he x11_keycode for ibus-hangul/korean input
     nux::Event cur_event = nux::GetWindowThread()->GetGraphicsDisplay().GetCurrentEvent(); 
     KeyEvent event((NuxEventType)event_type, keysym,cur_event.x11_keycode, state, character); 
 
+    retval = ime_->FilterKeyEvent(event); 
+
+    if (event_type == NUX_KEYUP)
+      return;
+    
+  
     // we need to ignore some characters
     if (keysym == NUX_VK_TAB)
       return;
@@ -289,8 +292,7 @@ namespace nux
     bool ctrl = (state & NUX_STATE_CTRL);
 
     // DLOG("TextEntryIM::key_down(%d, shift:%d ctrl:%d)", keyval, shift, ctrl);
-
-    if (event_type == NUX_KEYDOWN)
+    if (event_type == NUX_KEYDOWN && !retval)
     {
       if (keyval == NUX_VK_LEFT)
       {
@@ -364,14 +366,18 @@ namespace nux
       }
       else if (keyval == NUX_VK_BACKSPACE)
       {
-        if (!ctrl)
+        if (preedit_.length() > 0)
+          ime_->DeleteAPreedit(); 
+        else if (!ctrl)
           BackSpace(VISUALLY);
         else
           BackSpace(WORDS);
       }
       else if ((keyval == NUX_VK_DELETE) && (!shift))
       {
-        if (!ctrl)
+        if (preedit_.length() > 0)
+          ime_->DeleteAPreedit(); 
+        else if (!ctrl)
           Delete(VISUALLY);
         else
           Delete(WORDS);
@@ -401,7 +407,8 @@ namespace nux
 //       }
     }
 
-    if (!ime_->FilterKeyEvent(event) && character != 0 && (strlen(character) != 0))
+    //if (!ime_->FilterKeyEvent(event) && character != 0 && (strlen(character) != 0))
+    if (!retval && character != 0 && (strlen(character) != 0))
     {
       EnterText(character);
     }
@@ -1669,9 +1676,6 @@ namespace nux
 
   void TextEntryIM::MoveCursor(MovementStep step, int count, bool extend_selection)
   {
-    if (ime_active_)
-      return; 
-
     ResetImContext();
     int new_cursor = 0;
     // Clear selection first if not extend it.

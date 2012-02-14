@@ -166,6 +166,35 @@ namespace nux
       strong.height);
   }
 
+  // Some of the ibus-engines dont handle deleteing of preeidt
+  // so just in case that happens we have to handle it
+  void IBusIMEContext::DeleteAPreedit()
+  {
+    if (g_utf8_validate(text_entry_->preedit_.c_str(), -1, NULL))
+    { 
+      glong size = g_utf8_strlen(text_entry_->preedit_.c_str(), -1); 
+      if (size == 1)
+      {
+        text_entry_->ResetPreedit();
+        text_entry_->QueueRefresh (true, true);
+        text_entry_->sigTextChanged.emit(text_entry_);
+      }
+      else
+      {
+        // Remove one preeidt char
+        char tmp[size];
+        g_utf8_strncpy(tmp, text_entry_->preedit_.c_str(), size-1);
+        text_entry_->preedit_ = std::string(tmp);
+
+        text_entry_->preedit_cursor_ = text_entry_->preedit_.length();
+        text_entry_->QueueRefresh (true, true);
+        text_entry_->sigTextChanged.emit(text_entry_);
+        UpdateCursorLocation();
+      }
+    }
+    
+  }
+
   void IBusIMEContext::OnConnected(IBusBus *bus)
   {
     nuxDebugMsg("***IBusIMEContext::OnConnected***");

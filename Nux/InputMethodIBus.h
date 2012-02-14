@@ -78,6 +78,8 @@ namespace nux
     virtual bool FilterKeyEvent(const KeyEvent& event);
     virtual void SetSurrounding(const std::wstring& text, int cursor_pos);
 
+    void DeleteAPreedit();
+
   private:
     void CreateContext();
     void DestroyContext();
