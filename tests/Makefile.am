@@ -13,7 +13,8 @@ check_PROGRAMS = \
   xtest-vlayout-key-navigation \
   xtest-scrollbar \
   xtest-focus-on-mouse-down \
-  xtest-keynav-directions
+  xtest-keynav-directions \
+  xtest-text-entry
 
 # Please keep alphabetical
 test_nux_SOURCES = \
@@ -97,7 +98,8 @@ gtest_nux_CPPFLAGS = \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \
-  $(MAINTAINER_CFLAGS)
+  $(MAINTAINER_CFLAGS) \
+  $(IBUS_CFLAGS)
 
 gtest_nux_LDADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
@@ -121,7 +123,8 @@ TestFlags = -I$(srcdir) \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \
-  $(MAINTAINER_CFLAGS)
+  $(MAINTAINER_CFLAGS) \
+  $(IBUS_CFLAGS)
 
 TestLibs = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
@@ -215,6 +218,14 @@ xtest_keynav_directions_SOURCES = xtest-keynav-directions.cpp \
 xtest_keynav_directions_CPPFLAGS = $(TestFlags)
 xtest_keynav_directions_LDADD = $(TestLibs)
 xtest_keynav_directions_LDFLAGS = -lpthread -lXtst
+
+xtest_text_entry_SOURCES = xtest-text-entry.cpp \
+  nux_automated_test_framework.cpp \
+  nux_automated_test_framework.h
+
+xtest_text_entry_CPPFLAGS = $(TestFlags)
+xtest_text_entry_LDADD = $(TestLibs)
+xtest_text_entry_LDFLAGS = -lpthread -lXtst
 
 
 #run make test as part of make check

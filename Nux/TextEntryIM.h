@@ -40,9 +40,9 @@ namespace nux
     ~TextEntryIM();
 
     Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
-    virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
+    virtual void Draw(GraphicsEngine& graphics_engine, bool force_draw);
+    virtual void DrawContent(GraphicsEngine& graphics_engine, bool force_draw);
+    virtual void PostDraw(GraphicsEngine& graphics_engine, bool force_draw);
 
     void PreLayoutManagement();
     long PostLayoutManagement(long layoutResult);
@@ -84,24 +84,26 @@ namespace nux
     /*!
         This signal is emitted when the text has changed.
     */
-    sigc::signal <void, TextEntryIM*> sigTextChanged;
+    sigc::signal <void, TextEntryIM*> sigTextChanged; // deprecated, use changed.
+    sigc::signal <void, TextEntryIM*> changed;
     sigc::signal <void> activated;
     sigc::signal <void, int> cursor_moved;
 
-    void SetText(const char *text);
+    void SetText(const char* text);
     std::string const& GetText() const;
+    std::string GetTextSelection() const;
 
-    void SetCompletion(const char *text); // Should use std::string, does not for consistancy
+    void SetCompletion(const char* text); // Should use std::string, does not for consistancy
     std::string const& GetCompletion() const;
 
-    void SetCompletionColor(const Color &color);
+    void SetCompletionColor(const Color& color);
     Color const& GetCompletionColor() const;
 
-    void SetTextColor(const Color &color);
+    void SetTextColor(const Color& color);
     Color const& GetTextColor() const;
-    void SetFontFamily(const char *font);
+    void SetFontFamily(const char* font);
     void SetFontSize(double font_size);
-    void SetFontOptions(const cairo_font_options_t *options);
+    void SetFontOptions(const cairo_font_options_t* options);
 
     /** Select text between start and end. */
     void Select(int start, int end);
@@ -113,6 +115,9 @@ namespace nux
 
     bool im_active();
 
+    void MoveCursorToLineStart();
+    void MoveCursorToLineEnd();
+    
   protected:
     bool _block_focus; // used to selectively ignore focus keyevents
 
@@ -156,17 +161,17 @@ namespace nux
     void ResetPreedit();
     /** Send out a request to blink the cursor if necessary */
     void QueueCursorBlink();
-    static bool CursorBlinkCallback(TextEntryIM *data);
+    static bool CursorBlinkCallback(TextEntryIM* data);
 
     void ShowCursor();
     void HideCursor();
 
     /** Draw the Cursor to the canvas */
-    void DrawCursor(CairoGraphics *canvas);
+    void DrawCursor(CairoGraphics* canvas);
     /** Draw the text to the canvas */
-    void DrawText(CairoGraphics *canvas);
+    void DrawText(CairoGraphics* canvas);
 
-    void GetCursorRects(Rect *strong, Rect *weak);
+    void GetCursorRects(Rect* strong, Rect* weak);
 
     void UpdateCursorRegion();
 
@@ -191,7 +196,7 @@ namespace nux
      * coordinate in the layout */
     int XYToTextIndex(int x, int y);
     /** Get the offset range that is currently selected,in number of characters.*/
-    bool GetSelectionBounds(int *start, int *end);
+    bool GetSelectionBounds(int* start, int* end) const;
     /** Set the offest range that should be selected, in number of characters. */
     void SetSelectionBounds(int selection_bound, int cursor);
 
@@ -208,7 +213,7 @@ namespace nux
     int GetPrevCharLength(int index);
 
     /** Insert text at current caret position */
-    void EnterText(const char *str);
+    void EnterText(const char* str);
     /** Delete text in a specified range, in number of characters. */
     void DeleteText(int start, int end);
 
@@ -240,8 +245,8 @@ namespace nux
     /**
      * Gets the cursor location in pango layout. The unit is pixel.
      */
-    void GetCursorLocationInLayout(int *strong_x, int *strong_y, int *strong_height,
-                                   int *weak_x, int *weak_y, int *weak_height);
+    void GetCursorLocationInLayout(int* strong_x, int* strong_y, int* strong_height,
+                                   int* weak_x, int* weak_y, int* weak_height);
 
     /** The CairoCanvas which hold cairo_t inside */
     CairoGraphics* canvas_;
@@ -254,7 +259,7 @@ namespace nux
     /** The preedit text of the edit control */
     std::string preedit_;
     /** Attribute list of the preedit text */
-    PangoAttrList *preedit_attrs_;
+    PangoAttrList* preedit_attrs_;
     /**
      *  The character that should be displayed in invisible mode.
      *  If this is empty, then the edit control is visible
@@ -348,7 +353,7 @@ namespace nux
     /** The font size of the text */
     double font_size_;
 
-    cairo_font_options_t *font_options_;
+    cairo_font_options_t* font_options_;
     double font_dpi_;
 
     /** The text color of the edit control */

@@ -367,6 +367,24 @@ void NuxAutomatedTestFramework::ViewSendReturn()
   SendFakeKeyEvent(XK_Return, 0);
 }
 
+void NuxAutomatedTestFramework::ViewSendIBusToggle()
+{
+  KeyCode modcode0 = 0;
+  KeyCode modcode1 = 0;
+
+  modcode0 = XKeysymToKeycode(display_, XK_Control_L);
+  XTestFakeKeyEvent(display_, modcode0, True, 0);
+
+  modcode1 = XKeysymToKeycode(display_, XK_space);
+  XTestFakeKeyEvent(display_, modcode1, True, 0);
+
+  // release
+  /* Generate modkey release */
+  XTestFakeKeyEvent(display_, modcode1, False, 0);
+  XTestFakeKeyEvent(display_, modcode0, False, 0);
+
+}
+
 void NuxAutomatedTestFramework::PutMouseAt(int x, int y)
 {
   XTestFakeMotionEvent(display_, XScreenNumberOfScreen(DefaultScreenOfDisplay(display_)), x, y, CurrentTime);  

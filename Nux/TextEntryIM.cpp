@@ -538,9 +538,9 @@ namespace nux
     // intentionally left empty
   }
 
-  void TextEntryIM::SetText(const char *text)
+  void TextEntryIM::SetText(const char* text)
   {
-    const char *end = NULL;
+    const char* end = NULL;
     g_utf8_validate(text, -1, &end);
 
     std::string txt((text && *text && end > text) ? std::string(text, end) : "");
@@ -553,7 +553,8 @@ namespace nux
     need_im_reset_ = true;
     //ResetImContext();
     QueueRefresh(true, true);
-    sigTextChanged.emit(this);
+    sigTextChanged.emit(this);  // soon to be deprectated
+    changed.emit(this);
   }
 
   std::string const& TextEntryIM::GetText() const
@@ -561,9 +562,28 @@ namespace nux
     return text_;
   }
 
-  void TextEntryIM::SetCompletion(const char *text)
+  std::string TextEntryIM::GetTextSelection() const
   {
-    const char *end = NULL;
+    if (text_.size() == 0)
+    {
+      return std::string("");
+    }
+
+    int selection_start = 0;
+    int selection_end = 0;
+    if (GetSelectionBounds(&selection_start, &selection_end))
+    {
+      return text_.substr(selection_start, selection_end);
+    }
+    else
+    {
+      return std::string("");
+    }
+  }
+
+  void TextEntryIM::SetCompletion(const char* text)
+  {
+    const char* end = NULL;
     g_utf8_validate(text, -1, &end);
     std::string txt((text && *text && end > text) ? std::string(text, end) : "");
     if (txt == completion_)
@@ -607,7 +627,7 @@ namespace nux
   void TextEntryIM::MainDraw()
   {
 
-    CairoGraphics *edit_canvas = EnsureCanvas();
+    CairoGraphics* edit_canvas = EnsureCanvas();
 
     if (update_canvas_ || !last_selection_region_.empty() || !selection_region_.empty())
     {
@@ -714,7 +734,7 @@ namespace nux
     int display_width = GetBaseWidth() - kInnerBorderX * 2;
     int display_height = GetBaseHeight() - kInnerBorderY * 2;
 
-    PangoLayout *layout = EnsureLayout();
+    PangoLayout* layout = EnsureLayout();
     int text_width, text_height;
     pango_layout_get_pixel_size(layout, &text_width, &text_height);
 
@@ -1436,7 +1456,8 @@ namespace nux
     }
 
     ResetLayout();
-    sigTextChanged.emit(this);
+    sigTextChanged.emit(this);   // soon to be deprectated
+    changed.emit(this);
   }
 
   void TextEntryIM::DeleteText(int start, int end)
@@ -1467,7 +1488,8 @@ namespace nux
       selection_bound_ -= (end - start);
 
     ResetLayout();
-    sigTextChanged.emit(this);
+    sigTextChanged.emit(this);   // soon to be deprectated
+    changed.emit(this);
   }
 
   void TextEntryIM::SelectWord()
@@ -1654,8 +1676,8 @@ namespace nux
           continue;
         if (end_index < line->start_index)
           break;
-        draw_start = Max<int>(start_index, line->start_index);
-        draw_end = Min<int>(end_index, line->start_index + line->length);
+        draw_start = std::max<int>(start_index, line->start_index);
+        draw_end = std::min<int>(end_index, line->start_index + line->length);
         pango_layout_line_get_x_ranges(line, draw_start, draw_end,
           &ranges, &n_ranges);
         pango_layout_line_get_pixel_extents(line, NULL, &line_extents);
@@ -1725,8 +1747,8 @@ namespace nux
     nuxAssert(count);
     nuxAssert(preedit_.length() == 0);
 
-    PangoLayout *layout = EnsureLayout();
-    const char *text = pango_layout_get_text(layout);
+    PangoLayout* layout = EnsureLayout();
+    const char* text = pango_layout_get_text(layout);
     int index = TextIndexToLayoutIndex(current_index, false);
     int new_index = 0;
     int new_trailing = 0;
@@ -1766,11 +1788,11 @@ namespace nux
 
     // The cursor movement direction shall be determined by the direction of
     // current text line.
-    PangoLayout *layout = EnsureLayout();
+    PangoLayout* layout = EnsureLayout();
     int n_log_attrs;
-    PangoLogAttr *log_attrs;
+    PangoLogAttr* log_attrs;
     pango_layout_get_log_attrs(layout, &log_attrs, &n_log_attrs);
-    const char *text = pango_layout_get_text(layout);
+    const char* text = pango_layout_get_text(layout);
     int index = TextIndexToLayoutIndex(current_index, false);
     int line_index;
     pango_layout_index_to_line_x(layout, index, FALSE, &line_index, NULL);
@@ -1783,12 +1805,12 @@ namespace nux
     }
 
 #if PANGO_VERSION_CHECK(1,16,0)
-    PangoLayoutLine *line = pango_layout_get_line_readonly(layout, line_index);
+    PangoLayoutLine* line = pango_layout_get_line_readonly(layout, line_index);
 #else
-    PangoLayoutLine *line = pango_layout_get_line(layout, line_index);
+    PangoLayoutLine* line = pango_layout_get_line(layout, line_index);
 #endif
     bool rtl = (line->resolved_dir == PANGO_DIRECTION_RTL);
-    const char *ptr = text + index;
+    const char* ptr = text + index;
     int offset = static_cast<int>(g_utf8_pointer_to_offset(text, ptr));
     while (count != 0)
     {
@@ -2041,12 +2063,17 @@ namespace nux
     return Clamp(index, 0, static_cast<int>(text_.length()));
   }
 
-  bool TextEntryIM::GetSelectionBounds(int *start, int *end)
+  bool TextEntryIM::GetSelectionBounds(int* start, int* end) const
   {
     if (start)
-      *start = Min<int>(selection_bound_, cursor_);
+    {
+      *start = std::min<int>(selection_bound_, cursor_);
+    }
+
     if (end)
-      *end = Max<int>(selection_bound_, cursor_);
+    {
+      *end = std::max<int>(selection_bound_, cursor_);
+    }
 
     return (selection_bound_ != cursor_);
   }
@@ -2128,4 +2155,17 @@ namespace nux
 
     return true;
   }
+
+  /// Public API
+
+  void TextEntryIM::MoveCursorToLineStart()
+  {
+    MoveCursor(DISPLAY_LINE_ENDS, -1, 0);
+  }
+
+  void TextEntryIM::MoveCursorToLineEnd()
+  {
+    MoveCursor(DISPLAY_LINE_ENDS, 1, 0);
+  }
+
 }

@@ -81,6 +81,8 @@ public:
   //! Simulate Return key.
   void ViewSendReturn();
 
+  void ViewSendIBusToggle();
+
   //! Put the mouse pointer anywhere on the display.
   void PutMouseAt(int x, int y);
 
