@@ -22,17 +22,17 @@
 #include "Nux/VLayout.h"
 #include "Nux/HLayout.h"
 #include "Nux/WindowThread.h"
-#include "Nux/TextEntry.h"
+#include "Nux/TextEntryIM.h"
  
 void ThreadWidgetInit(nux::NThread* thread, void* InitData)
 {
     nux::VLayout* MainVLayout = new nux::VLayout(NUX_TRACKER_LOCATION);
 
-    nux::TextEntry* text_entry_0 = new nux::TextEntry(TEXT("0123456789 abcdefghijklmnopqrstuvwxyz"), NUX_TRACKER_LOCATION);
+    nux::TextEntryIM* text_entry_0 = new nux::TextEntryIM(TEXT("0123456789 abcdefghijklmnopqrstuvwxyz"), NUX_TRACKER_LOCATION);
 
-    nux::TextEntry* text_entry_1 = new nux::TextEntry(TEXT("0123456789 abcdefghijklmnopqrstuvwxyz"), NUX_TRACKER_LOCATION);
+    nux::TextEntryIM* text_entry_1 = new nux::TextEntryIM(TEXT("0123456789 abcdefghijklmnopqrstuvwxyz"), NUX_TRACKER_LOCATION);
 
-    nux::TextEntry* text_entry_2 = new nux::TextEntry(TEXT("0123456789 abcdefghijklmnopqrstuvwxyz"), NUX_TRACKER_LOCATION);
+    nux::TextEntryIM* text_entry_2 = new nux::TextEntryIM(TEXT("0123456789 abcdefghijklmnopqrstuvwxyz"), NUX_TRACKER_LOCATION);
 
     text_entry_0->SetMaximumWidth(300);
     text_entry_0->SetMinimumHeight (20);

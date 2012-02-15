@@ -71,10 +71,13 @@ namespace nux
   // FIXME Need to get the key_code form nux NOT just the keysym
   bool IBusIMEContext::FilterKeyEvent(const KeyEvent& event)
   {
-    guint keyval = event.key_code(); // todo(jaytaoko): ui::GdkKeyCodeForWindowsKeyCode(event.key_code(), event.IsShiftDown() ^ event.IsCapsLockDown());
+    guint keyval = event.key_sym(); // todo(jaytaoko): ui::GdkKeyCodeForWindowsKeyCode(event.key_code(), event.IsShiftDown() ^ event.IsCapsLockDown());
 
     if (context_) {
       guint modifiers = 0;
+
+      if (event.flags() & IBUS_IGNORED_MASK)
+        return false;
 
       if (event.type() == EVENT_KEY_UP)
         modifiers |= IBUS_RELEASE_MASK;
@@ -90,10 +93,10 @@ namespace nux
 
       // FIXME Not the best way to get the x11_key_code. Should be able to get it from TextEntry::ProcessKeyEvent
       // The x11_keycode is needed for the ibus-hangul engine!
-      nux::Event cur_event = nux::GetWindowThread()->GetGraphicsDisplay().GetCurrentEvent(); 
+      //nux::Event cur_event = nux::GetWindowThread()->GetGraphicsDisplay().GetCurrentEvent(); 
 
       ibus_input_context_process_key_event_async(context_,
-        keyval, cur_event.x11_keycode - 8, modifiers,
+        keyval, event.key_code() - 8, modifiers,
         -1,
         NULL,
         reinterpret_cast<GAsyncReadyCallback>(ProcessKeyEventDone),
@@ -117,7 +120,6 @@ namespace nux
 
     // connect input context signals
     g_signal_connect(context_, "commit-text",         G_CALLBACK(OnCommitText_),        this);
-    g_signal_connect(context_, "forward-key-event",   G_CALLBACK(OnForwardKeyEvent_),   this);
     g_signal_connect(context_, "update-preedit-text", G_CALLBACK(OnUpdatePreeditText_), this);
     g_signal_connect(context_, "show-preedit-text",   G_CALLBACK(OnShowPreeditText_),   this);
     g_signal_connect(context_, "hide-preedit-text",   G_CALLBACK(OnHidePreeditText_),   this);
@@ -201,33 +203,6 @@ namespace nux
     }
   }
 
-  void IBusIMEContext::OnForwardKeyEvent(IBusInputContext *context, guint keyval, guint keycode, guint state)
-  {
-    nuxDebugMsg("***IBusIMEContext::OnForwardKeyEvent***");
-    nuxAssert(context_ == context);
-
-    int flags = 0;
-
-    if (state & IBUS_LOCK_MASK)
-      flags |= KEY_MODIFIER_CAPS_LOCK;
-    if (state & IBUS_CONTROL_MASK)
-      flags |= KEY_MODIFIER_CTRL;
-    if (state & IBUS_SHIFT_MASK)
-      flags |= KEY_MODIFIER_SHIFT;
-    if (state & IBUS_MOD1_MASK)
-      flags |= KEY_MODIFIER_ALT;
-
-    int mouse_state = 0;
-    if (state & IBUS_BUTTON1_MASK)
-      mouse_state |= MOUSE_BUTTON1;
-    if (state & IBUS_BUTTON2_MASK)
-      mouse_state |= MOUSE_BUTTON2;
-    if (state & IBUS_BUTTON3_MASK)
-      mouse_state |= MOUSE_BUTTON3;
-
-    //ForwardKeyEvent(KeyEvent(state & IBUS_RELEASE_MASK ? EVENT_KEY_DOWN : EVENT_KEY_UP, keyval /* todo(jaytaoko): ui::WindowsKeyCodeForGdkKeyCode(keyval)*/, mouse_state, flags));
-  }
-
   void IBusIMEContext::OnUpdatePreeditText(IBusInputContext* context, IBusText* text, guint cursor_pos, gboolean visible)
   {
     nuxDebugMsg("***IBusIMEContext::OnUpdatePreeditText***");
@@ -282,6 +257,10 @@ namespace nux
         text_entry_->sigTextChanged.emit(text_entry_);
         UpdateCursorLocation();
       }
+    }
+    else
+    {
+      OnHidePreeditText(context_);
     }
   }
 
@@ -346,9 +325,8 @@ namespace nux
         g_error_free (error);
       }
 
-      // FIXME Need to forward this event somewhere..
       if (processed == FALSE)
-        printf ("Processed %i\n", processed);
+        data->context->text_entry_->ProcessKeyEvent(data->event.type(), data->event.key_sym(), data->event.flags() | IBUS_IGNORED_MASK, data->event.character().c_str(), 0);
 
       delete data;
   }

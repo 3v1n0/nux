@@ -15,13 +15,15 @@ libnux_@NUX_API_VERSION@_la_CPPFLAGS= \
   -DG_LOG_DOMAIN=\"Nux\" \
   $(GCC_FLAGS) \
   $(NUX_CFLAGS) \
+  $(IBUS_CFLAGS) \
   $(MAINTAINER_CFLAGS)
 
 libnux_@NUX_API_VERSION@_la_LIBADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
-  $(NUX_LIBS)
+  $(NUX_LIBS) \
+  $(IBUS_LIBS) 
 
 libnux_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
@@ -93,6 +95,8 @@ source_cpp = \
   $(srcdir)/SystemThread.cpp \
   $(srcdir)/TabView.cpp \
   $(srcdir)/TextEntry.cpp \
+  $(srcdir)/TextEntryIM.cpp \
+  $(srcdir)/InputMethodIBus.cpp \
   $(srcdir)/TextLoader.cpp \
   $(srcdir)/TextureArea.cpp \
   $(srcdir)/Timeline.cpp \
@@ -178,6 +182,8 @@ source_h = \
   $(srcdir)/SystemThread.h \
   $(srcdir)/TabView.h \
   $(srcdir)/TextEntry.h \
+  $(srcdir)/TextEntryIM.h \
+  $(srcdir)/InputMethodIBus.h \
   $(srcdir)/TextLoader.h \
   $(srcdir)/TextureArea.h \
   $(srcdir)/Timeline.h \
