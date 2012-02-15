@@ -87,6 +87,22 @@ void TextTextEntry::UserInterfaceSetup()
   static_cast<nux::WindowThread*>(window_thread_)->SetWindowBackgroundPaintLayer(&background);
 }
 
+bool IsEngineActive (IBusBus* bus_, gchar* engine)
+{
+    GList* engines = ibus_bus_list_active_engines(bus_);
+    GList* start = engines;
+    // Iterates through the active engines
+    do
+    {
+      IBusEngineDesc *engine_desc = IBUS_ENGINE_DESC (engines->data);
+
+      if (g_strcmp0(ibus_engine_desc_get_name(engine_desc), engine) == 0)
+        return true;
+    } while ((engines = g_list_next(engines)) != NULL);
+    g_list_free(start);
+    return false;
+}
+
 TextTextEntry* test_textentry = NULL;
 
 void TestingThread(nux::NThread* thread, void* user_data)
@@ -214,13 +230,37 @@ void TestingThread(nux::NThread* thread, void* user_data)
   {
     // CTRL+Space to initiate iBus
     test.ViewSendIBusToggle();
+    
+    IBusBus* bus_;
+    ibus_init();
+    bus_ = ibus_bus_new();
+  
+    if (IsEngineActive(bus_,"pinyin"))
+    {
+      // Type random stuff
+      test.ViewSendString("qwerty");
+      nux::SleepForMilliseconds(500);
 
-    // Type random stuff
-    test.ViewSendString("qwerty");
-    nux::SleepForMilliseconds(500);
+      test.ViewSendChar('1');
+      nux::SleepForMilliseconds(500);
+    }
+    else
+    {
+      test.TestReportMsg(false,"Pinyin is NOT an active input method" );
+    }
+    
+    if (IsEngineActive(bus_,"hangul"))
+    {   
+      // Type random stuff
+      test.ViewSendString("asdabc");
+      nux::SleepForMilliseconds(500);
+    }
+    else
+    {
+      test.TestReportMsg(false,"Hangul is NOT an active input method" );
+    }
 
-    test.ViewSendChar('1');
-    nux::SleepForMilliseconds(500);
+    g_object_unref (bus_); 
 
     // CTRL+Space to initiate iBus
     test.ViewSendIBusToggle();
