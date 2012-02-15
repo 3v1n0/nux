@@ -87,20 +87,38 @@ void TextTextEntry::UserInterfaceSetup()
   static_cast<nux::WindowThread*>(window_thread_)->SetWindowBackgroundPaintLayer(&background);
 }
 
-bool IsEngineActive (IBusBus* bus_, gchar* engine)
+bool SetEngineActive (IBusBus* bus_, gchar* engine)
 {
     GList* engines = ibus_bus_list_active_engines(bus_);
     GList* start = engines;
+
+    bool found = false;
+    gboolean global_flag = ibus_bus_get_use_global_engine(bus_);
+
     // Iterates through the active engines
     do
     {
       IBusEngineDesc *engine_desc = IBUS_ENGINE_DESC (engines->data);
 
+      // Found Engine, make it active!
       if (g_strcmp0(ibus_engine_desc_get_name(engine_desc), engine) == 0)
-        return true;
+      {
+        found = true; 
+
+        // Set ibus to use global engines
+        if (!global_flag)
+          ibus_config_set_value (ibus_bus_get_config(bus_), "general", "use_global_engine", g_variant_new_boolean(true));
+
+        // Set and activate the engine
+        ibus_bus_set_global_engine(bus_,engine);
+      }
     } while ((engines = g_list_next(engines)) != NULL);
+
+    // Restores the global setting back to what it was 
+    ibus_config_set_value (ibus_bus_get_config(bus_), "general", "use_global_engine", g_variant_new_boolean(global_flag));
+
     g_list_free(start);
-    return false;
+    return found;
 }
 
 TextTextEntry* test_textentry = NULL;
@@ -229,13 +247,14 @@ void TestingThread(nux::NThread* thread, void* user_data)
   // Simulate key '1' to select the first IM option
   {
     // CTRL+Space to initiate iBus
-    test.ViewSendIBusToggle();
+    //test.ViewSendIBusToggle();
     
     IBusBus* bus_;
     ibus_init();
     bus_ = ibus_bus_new();
+    bool active = false;
   
-    if (IsEngineActive(bus_,"pinyin"))
+    if (SetEngineActive(bus_,"pinyin"))
     {
       // Type random stuff
       test.ViewSendString("qwerty");
@@ -243,17 +262,33 @@ void TestingThread(nux::NThread* thread, void* user_data)
 
       test.ViewSendChar('1');
       nux::SleepForMilliseconds(500);
+
+      test.ViewSendCtrlA();
+      nux::SleepForMilliseconds(500);
+      
+      test.ViewSendDelete();
+      nux::SleepForMilliseconds(500);
+
+      active = true;
     }
     else
     {
       test.TestReportMsg(false,"Pinyin is NOT an active input method" );
     }
     
-    if (IsEngineActive(bus_,"hangul"))
+    if (SetEngineActive(bus_,"hangul"))
     {   
       // Type random stuff
       test.ViewSendString("asdabc");
       nux::SleepForMilliseconds(500);
+
+      test.ViewSendCtrlA();
+      nux::SleepForMilliseconds(500);
+
+      test.ViewSendDelete();
+      nux::SleepForMilliseconds(500);
+
+      active = true;
     }
     else
     {
@@ -262,8 +297,9 @@ void TestingThread(nux::NThread* thread, void* user_data)
 
     g_object_unref (bus_); 
 
-    // CTRL+Space to initiate iBus
-    test.ViewSendIBusToggle();
+    // CTRL+Space to deactivate iBus
+    if (active)
+      test.ViewSendIBusToggle();
   }
 
   if (test.WhenDoneTerminateProgram())
