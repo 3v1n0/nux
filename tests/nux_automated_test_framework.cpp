@@ -259,7 +259,16 @@ void NuxAutomatedTestFramework::ViewSendChar(const char c)
   }
 
   std::string s(1, c);
-  SendFakeKeyEvent(XStringToKeysym(s.c_str()), modifier);
+
+  if (c == ' ')
+  {
+    SendFakeKeyEvent(XK_space, modifier);
+  }
+  else
+  {   
+    SendFakeKeyEvent(XStringToKeysym(s.c_str()), modifier);
+  }
+
   nux::SleepForMilliseconds(300);
 }
 
@@ -282,7 +291,15 @@ void NuxAutomatedTestFramework::ViewSendString(const std::string &str)
     }
 
     std::string s(1, c);
-    SendFakeKeyEvent(XStringToKeysym(s.c_str()), modifier);
+
+    if (c == ' ')
+    {
+      SendFakeKeyEvent(XK_space, modifier);
+    }
+    else
+    {   
+      SendFakeKeyEvent(XStringToKeysym(s.c_str()), modifier);
+    }
     nux::SleepForMilliseconds(300);
   }
 }
