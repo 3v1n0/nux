@@ -87,7 +87,7 @@ void TextTextEntry::UserInterfaceSetup()
   static_cast<nux::WindowThread*>(window_thread_)->SetWindowBackgroundPaintLayer(&background);
 }
 
-bool SetEngineActive (IBusBus* bus_, gchar* engine)
+bool SetEngineActive (IBusBus* bus_, std::string engine)
 {
     GList* engines = ibus_bus_list_active_engines(bus_);
     GList* start = engines;
@@ -101,7 +101,7 @@ bool SetEngineActive (IBusBus* bus_, gchar* engine)
       IBusEngineDesc *engine_desc = IBUS_ENGINE_DESC (engines->data);
 
       // Found Engine, make it active!
-      if (g_strcmp0(ibus_engine_desc_get_name(engine_desc), engine) == 0)
+      if (g_strcmp0(ibus_engine_desc_get_name(engine_desc), engine.c_str()) == 0)
       {
         found = true; 
 
@@ -110,7 +110,7 @@ bool SetEngineActive (IBusBus* bus_, gchar* engine)
           ibus_config_set_value (ibus_bus_get_config(bus_), "general", "use_global_engine", g_variant_new_boolean(true));
 
         // Set and activate the engine
-        ibus_bus_set_global_engine(bus_,engine);
+        ibus_bus_set_global_engine(bus_,engine.c_str());
       }
     } while ((engines = g_list_next(engines)) != NULL);
 
@@ -254,20 +254,25 @@ void TestingThread(nux::NThread* thread, void* user_data)
     bus_ = ibus_bus_new();
     bool active = false;
   
+    // Test for ibus-pinyin 
     if (SetEngineActive(bus_,"pinyin"))
     {
       // Type random stuff
-      test.ViewSendString("qwerty");
-      nux::SleepForMilliseconds(500);
+      {
+        test.ViewSendString("qwerty");
+        nux::SleepForMilliseconds(500);
+        test.TestReportMsg(test_textentry->text_entry_->GetText() == "", "TextEntry is only Preedit");
 
-      test.ViewSendChar('1');
-      nux::SleepForMilliseconds(500);
+        test.ViewSendChar('1');
+        nux::SleepForMilliseconds(500);
+        test.TestReportMsg(test_textentry->text_entry_->GetText() == "请问儿童有", "TextEntry is \"请问儿童有\"");
 
-      test.ViewSendCtrlA();
-      nux::SleepForMilliseconds(500);
-      
-      test.ViewSendDelete();
-      nux::SleepForMilliseconds(500);
+        test.ViewSendCtrlA();
+        nux::SleepForMilliseconds(500);
+        
+        test.ViewSendDelete();
+        nux::SleepForMilliseconds(500);
+      }
 
       active = true;
     }
@@ -275,18 +280,22 @@ void TestingThread(nux::NThread* thread, void* user_data)
     {
       test.TestReportMsg(false,"Pinyin is NOT an active input method" );
     }
-    
+
+    // Test for ibus-hangul    
     if (SetEngineActive(bus_,"hangul"))
     {   
-      // Type random stuff
-      test.ViewSendString("asdabc");
-      nux::SleepForMilliseconds(500);
+      // Test for the the space in ibus-hangul working correctlly 
+      {
+        test.ViewSendString("asd abc ");
+        nux::SleepForMilliseconds(500);
+        test.TestReportMsg(test_textentry->text_entry_->GetText() == "ㅁㄴㅇ 뮻 ", "TextEntry is \"ㅁㄴㅇ 뮻 \"");
 
-      test.ViewSendCtrlA();
-      nux::SleepForMilliseconds(500);
+        test.ViewSendCtrlA();
+        nux::SleepForMilliseconds(500);
 
-      test.ViewSendDelete();
-      nux::SleepForMilliseconds(500);
+        test.ViewSendDelete();
+        nux::SleepForMilliseconds(500);
+      }
 
       active = true;
     }

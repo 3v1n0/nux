@@ -184,8 +184,7 @@ namespace nux
 
   void IBusIMEContext::OnCommitText(IBusInputContext *context, IBusText* text)
   {
-    nuxDebugMsg("***IBusIMEContext::OnCommitText***");
-    printf ("OnCommit %s\n", text->text);
+    nuxDebugMsg("***IBusIMEContext::OnCommitText::%s***", text->text);
     nuxAssert(context_ == context);
 
     text_entry_->DeleteSelection();
