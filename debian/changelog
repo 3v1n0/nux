@@ -1,8 +1,15 @@
-nux (2.4.0-0ubuntu1) UNRELEASED; urgency=low
+nux (2.4.0-0ubuntu1) precise; urgency=low
 
   * New upstream release.
+    - Dash - Behaviour of the 'All' button in the Dash filters broken in
+      several ways   (LP: #841864)
+    - Launcher, Spread - Clicking on a Launcher app icon a second time to
+      close a spread is broken (LP: #893670)
+    - launcher not hiding in one design-specified case (LP: #919162)
+    - compiz crashed with SIGSEGV in
+      nux::GridHLayout::KeyNavIterationRowOrder() (LP: #916088)
 
- -- Didier Roche <didrocks@ubuntu.com>  Fri, 17 Feb 2012 11:26:25 +0100
+ -- Didier Roche <didrocks@ubuntu.com>  Fri, 17 Feb 2012 13:31:49 +0100
 
 nux (2.2.0-0ubuntu1) precise; urgency=low
 
