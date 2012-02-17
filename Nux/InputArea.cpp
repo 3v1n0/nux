@@ -43,6 +43,8 @@ logging::Logger logger("nux.inputarea");
   InputArea::InputArea(NUX_FILE_LINE_DECL)
   : Area(NUX_FILE_LINE_PARAM)
   , area_color_(color::Green)
+  , accept_key_nav_focus_on_mouse_down_(true)
+  , accept_key_nav_focus_on_mouse_enter_(false)
   {
     SetGeometry(0, 0, 1, 1);
 
@@ -391,6 +393,26 @@ logging::Logger logger("nux.inputarea");
   bool InputArea::AcceptKeyNavFocus()
   {
     return false;
+  }
+  
+  bool InputArea::AcceptKeyNavFocusOnMouseDown() const
+  {
+    return accept_key_nav_focus_on_mouse_down_;
+  }
+
+  bool InputArea::AcceptKeyNavFocusOnMouseEnter() const
+  {
+    return accept_key_nav_focus_on_mouse_enter_;
+  }
+
+  void InputArea::SetAcceptKeyNavFocusOnMouseDown(bool accept)
+  {
+    accept_key_nav_focus_on_mouse_down_ = accept;
+  }
+
+  void InputArea::SetAcceptKeyNavFocusOnMouseEnter(bool accept)
+  {
+    accept_key_nav_focus_on_mouse_enter_ = accept;
   }
 }
 

@@ -39,8 +39,6 @@ namespace nux
     ,   geometry_(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT)
     ,   min_size_(AREA_MIN_WIDTH, AREA_MIN_HEIGHT)
     ,   max_size_(AREA_MAX_WIDTH, AREA_MAX_HEIGHT)
-    ,   accept_key_nav_focus_on_mouse_down_(true)
-    ,   accept_key_nav_focus_on_mouse_enter_(false)
   {
     window_thread_ = GetWindowThread();
     visible_ = true;
@@ -1007,26 +1005,6 @@ namespace nux
       return false;
 
     return true;
-  }
-  
-  bool Area::AcceptKeyNavFocusOnMouseDown() const
-  {
-    return accept_key_nav_focus_on_mouse_down_;
-  }
-
-  bool Area::AcceptKeyNavFocusOnMouseEnter() const
-  {
-    return accept_key_nav_focus_on_mouse_enter_;
-  }
-
-  void Area::SetAcceptKeyNavFocusOnMouseDown(bool accept)
-  {
-    accept_key_nav_focus_on_mouse_down_ = accept;
-  }
-
-  void Area::SetAcceptKeyNavFocusOnMouseEnter(bool accept)
-  {
-    accept_key_nav_focus_on_mouse_enter_ = accept;
   }
 
   Area* Area::KeyNavIteration(KeyNavDirection direction)
