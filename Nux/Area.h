@@ -515,7 +515,7 @@ namespace nux
       const char* character);
 
     virtual bool AcceptKeyNavFocus();
-    
+
     virtual Area* KeyNavIteration(KeyNavDirection direction);
 
     bool HasKeyFocus() const;
