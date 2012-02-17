@@ -426,14 +426,15 @@ namespace
               // The area from the previous cycle receive a "mouse leave signal".
               Geometry geo = mouse_over_area_->GetAbsoluteGeometry();
               int x = event.x - geo.x;
-              int y = event.y - geo.y; 
+              int y = event.y - geo.y;
 
               mouse_over_area_->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
             }
             // The area we found under the mouse pointer receives a "mouse enter signal".
             SetMouseOverArea(hit_view);
 
-            if (mouse_over_area_ != GetKeyFocusArea() && mouse_over_area_->AcceptKeyNavFocusOnMouseEnter())
+            if (mouse_over_area_ != GetKeyFocusArea() &&
+                mouse_over_area_ && mouse_over_area_->AcceptKeyNavFocusOnMouseEnter())
             {
               SetKeyFocusArea(mouse_over_area_);
             }
@@ -482,7 +483,8 @@ namespace
           // In the case of a mouse down event, if there is currently a keyboard event receiver and it is different
           // from the area returned by GetAreaUnderMouse, then stop that receiver from receiving anymore keyboard events and switch
           // make mouse_over_area_ the new receiver(if it accept keyboard events).
-          if (mouse_over_area_ != GetKeyFocusArea() and mouse_over_area_->AcceptKeyNavFocusOnMouseDown())
+          if (mouse_over_area_ != GetKeyFocusArea() && 
+              mouse_over_area_ && mouse_over_area_->AcceptKeyNavFocusOnMouseDown())
           {
             InputArea* grab_area = GetKeyboardGrabArea();
             if (grab_area)
