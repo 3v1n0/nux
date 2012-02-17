@@ -992,7 +992,7 @@ namespace nux
     next_object_to_key_focus_area_ = NULL;
   }
 
-  bool Area::InspectKeyEvent(unsigned int eventType,
+  bool Area::InspectKeyEvent(unsigned int event_type,
     unsigned int keysym,
     const char* character)
   {

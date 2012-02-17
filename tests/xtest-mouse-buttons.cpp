@@ -22,29 +22,29 @@
 #include "Nux/WindowThread.h"
 #include "Nux/VLayout.h"
 #include "Nux/Layout.h"
+#include "Nux/ProgramFramework/ProgramTemplate.h"
+#include "Nux/ProgramFramework/TestView.h"
 #include <X11/extensions/XTest.h>
 #include <X11/keysym.h> 
-#include "nux_test_framework.h"
 #include "nux_automated_test_framework.h"
-#include "test-view.h"
 
-class ButtonEventsTest: public NuxTestFramework
+class ButtonEventsTest: public ProgramTemplate
 {
 public:
-  ButtonEventsTest(const char *program_name, int window_width, int window_height, int program_life_span);
+  ButtonEventsTest(const char* program_name, int window_width, int window_height, int program_life_span);
   ~ButtonEventsTest();
 
   virtual void UserInterfaceSetup();
   
   void ResetEvents();
-  TestView *test_view_;
+  TestView* test_view_;
 };
 
-ButtonEventsTest::ButtonEventsTest(const char *program_name,
+ButtonEventsTest::ButtonEventsTest(const char* program_name,
   int window_width,
   int window_height,
   int program_life_span)
-  : NuxTestFramework(program_name, window_width, window_height, program_life_span)
+: ProgramTemplate(program_name, window_width, window_height, program_life_span)
 {
   ResetEvents();
   test_view_ = NULL;
@@ -63,7 +63,7 @@ void ButtonEventsTest::ResetEvents()
 
 void ButtonEventsTest::UserInterfaceSetup()
 {
-  nux::VLayout *main_layout = new nux::VLayout(NUX_TRACKER_LOCATION);
+  nux::VLayout* main_layout = new nux::VLayout(NUX_TRACKER_LOCATION);
   test_view_ = new TestView(NUX_TRACKER_LOCATION);
 
   main_layout->AddView(test_view_, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_FULL);
@@ -75,9 +75,9 @@ void ButtonEventsTest::UserInterfaceSetup()
   static_cast<nux::WindowThread*>(window_thread_)->SetWindowBackgroundPaintLayer(&background);
 }
 
-ButtonEventsTest *button_event_test = NULL;
+ButtonEventsTest* button_event_test = NULL;
 
-void TestingThread(nux::NThread *thread, void *user_data)
+void TestingThread(nux::NThread* thread, void* user_data)
 {
   while (button_event_test->ReadyToGo() == false)
   {
@@ -87,7 +87,7 @@ void TestingThread(nux::NThread *thread, void *user_data)
 
   nux::SleepForMilliseconds(1000);
 
-  nux::WindowThread *wnd_thread = static_cast<nux::WindowThread*>(user_data);
+  nux::WindowThread* wnd_thread = static_cast<nux::WindowThread*>(user_data);
 
   NuxAutomatedTestFramework test(wnd_thread);
 
@@ -152,7 +152,7 @@ void TestingThread(nux::NThread *thread, void *user_data)
   nuxDebugMsg("Exit testing thread");
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   int xstatus = XInitThreads();
   nuxAssertMsg(xstatus > 0, "XInitThreads has failed");
@@ -161,7 +161,7 @@ int main(int argc, char **argv)
   button_event_test->Startup();
   button_event_test->UserInterfaceSetup();
 
-  nux::SystemThread *test_thread = nux::CreateSystemThread(button_event_test->GetWindowThread(), &TestingThread, button_event_test->GetWindowThread());
+  nux::SystemThread* test_thread = nux::CreateSystemThread(button_event_test->GetWindowThread(), &TestingThread, button_event_test->GetWindowThread());
 
   test_thread->Start(button_event_test);
 

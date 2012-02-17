@@ -116,6 +116,7 @@ namespace nux
     , canvas_(nullptr)
     , cached_layout_(nullptr)
     , preedit_attrs_(nullptr)
+    , completion_color_(color::Gray)
     , last_dblclick_time_(0)
     , cursor_(0)
     , preedit_cursor_(0)
@@ -181,12 +182,17 @@ namespace nux
 
   TextEntry::~TextEntry()
   {
+    ResetLayout();
+
     if (cursor_blink_timer_)
       g_source_remove(cursor_blink_timer_);
 
     cairo_font_options_destroy(font_options_);
     if (_texture2D)
       _texture2D->UnReference();
+
+    if (canvas_)
+      delete canvas_;
   }
 
   void TextEntry::PreLayoutManagement()
@@ -450,7 +456,7 @@ namespace nux
   {
     ProcessMouseEvent(NUX_MOUSE_MOVE, x, y, dx, dy, button_flags, key_flags);
   }
-  
+
   void TextEntry::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
 #if defined(NUX_OS_LINUX)
@@ -458,7 +464,7 @@ namespace nux
     {
       Display* display = nux::GetGraphicsDisplay()->GetX11Display();
       nux::BaseWindow* window = static_cast<nux::BaseWindow*>(GetTopLevelViewWindow());
-    
+
       if (display && window)
       {
         caret_cursor_ = XCreateFontCursor(display, XC_xterm);
@@ -467,7 +473,7 @@ namespace nux
     }
 #endif
   }
-  
+
   void TextEntry::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
 #if defined(NUX_OS_LINUX)
@@ -475,7 +481,7 @@ namespace nux
     {
       Display* display = nux::GetGraphicsDisplay()->GetX11Display();
       nux::BaseWindow* window = static_cast<nux::BaseWindow*>(GetTopLevelViewWindow());
-      
+
       if (display && window)
       {
         XUndefineCursor(display, window->GetInputWindowId());
@@ -574,6 +580,34 @@ namespace nux
   std::string const& TextEntry::GetText() const
   {
     return text_;
+  }
+
+  void TextEntry::SetCompletion(const char *text)
+  {
+    const char *end = NULL;
+    g_utf8_validate(text, -1, &end);
+    std::string txt((text && *text && end > text) ? std::string(text, end) : "");
+    if (txt == completion_)
+      return;
+
+    completion_ = txt;
+    QueueRefresh(true, true);
+  }
+
+  std::string const& TextEntry::GetCompletion() const
+  {
+    return completion_;
+  }
+
+  void TextEntry::SetCompletionColor(const Color &color)
+  {
+    completion_color_ = color;
+    QueueRefresh(true, true);
+  }
+
+  Color const& TextEntry::GetCompletionColor() const
+  {
+    return completion_color_;
   }
 
   void TextEntry::SetTextColor(const Color &text_color)
@@ -1163,6 +1197,13 @@ namespace nux
       }
     }
 
+    int pre_completion_length = tmp_string.length();
+
+    if (!completion_.empty() && !wrap_)
+    {
+      tmp_string = text_ + completion_;
+    }
+
     pango_layout_set_text(layout, tmp_string.c_str(),
                           static_cast<int>(tmp_string.length()));
 
@@ -1172,13 +1213,22 @@ namespace nux
     {
       attr = pango_attr_underline_new(PANGO_UNDERLINE_SINGLE);
       attr->start_index = 0;
-      attr->end_index = static_cast<guint>(tmp_string.length());
+      attr->end_index = static_cast<guint>(pre_completion_length);
       pango_attr_list_insert(tmp_attrs, attr);
     }
     if (strikeout_)
     {
       attr = pango_attr_strikethrough_new(TRUE);
       attr->start_index = 0;
+      attr->end_index = static_cast<guint>(pre_completion_length);
+      pango_attr_list_insert(tmp_attrs, attr);
+    }
+    if (!completion_.empty() && !wrap_)
+    {
+      attr = pango_attr_foreground_new(65535 * completion_color_.red,
+                                       65535 * completion_color_.green,
+                                       65535 * completion_color_.blue);
+      attr->start_index = static_cast<guint>(pre_completion_length);
       attr->end_index = static_cast<guint>(tmp_string.length());
       pango_attr_list_insert(tmp_attrs, attr);
     }

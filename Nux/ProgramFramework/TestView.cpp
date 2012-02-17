@@ -1,6 +1,25 @@
+/*
+ * Copyright 2012 Inalogic Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 3, as published
+ * by the  Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * version 3 along with this program.  If not, see
+ * <http://www.gnu.org/licenses/>
+ *
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
+ *
+ */
 
 #include "Nux/Nux.h"
-#include "test-view.h"
+#include "TestView.h"
 
 /*
   TestView:
@@ -11,11 +30,12 @@
 NUX_IMPLEMENT_OBJECT_TYPE(TestView);
 
 TestView::TestView(NUX_FILE_LINE_DECL)
-  : nux::View(NUX_FILE_LINE_PARAM)
-  , can_focus_(true)
+: nux::View(NUX_FILE_LINE_PARAM)
+, can_focus_(true)
 {
   ResetEvents();
 
+  key_nav_direction_ = nux::KEY_NAV_NONE;
   normal_color_ = nux::color::Green;
   mouse_down_color_ = nux::color::Red;
   mouse_drag_color_ = nux::color::Yellow;
@@ -37,8 +57,7 @@ TestView::TestView(NUX_FILE_LINE_DECL)
   mouse_move.connect(sigc::mem_fun(this, &TestView::OnMouseMove));
   mouse_enter.connect(sigc::mem_fun(this, &TestView::OnMouseEnter));
   mouse_leave.connect(sigc::mem_fun(this, &TestView::OnMouseLeave));
-  
-  Area::OnKeyNavFocusChange.connect(sigc::mem_fun(this, &TestView::OnKeyNavFocusChange));
+  key_nav_focus_change.connect(sigc::mem_fun(this, &TestView::OnKeyNavFocusChange));
 }
 
 TestView::~TestView()
@@ -66,10 +85,13 @@ nux::Color TestView::GetColor() const
   return current_color_;
 }
 
-void TestView::Draw(nux::GraphicsEngine &graphics_engine, bool force_draw)
+void TestView::Draw(nux::GraphicsEngine& graphics_engine, bool force_draw)
 {
   nux::Geometry geo = GetGeometry();
   graphics_engine.QRP_Color(geo.x, geo.y, geo.width, geo.height, current_color_);
+
+if (has_focus_)
+  graphics_engine.QRP_Color(geo.x, geo.y, 20, 20, with_key_focus_color_);  
 }
 
 void TestView::OnMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -137,10 +159,11 @@ void TestView::OnMouseLeave(int x, int y, unsigned long button_flags, unsigned l
   QueueDraw();
 }
 
-void TestView::OnKeyNavFocusChange(nux::Area* area)
+void TestView::OnKeyNavFocusChange(nux::Area* area, bool has_focus, nux::KeyNavDirection direction)
 {
   has_focus_ = HasKeyFocus();
   
-  current_color_ = (has_focus_) ? with_key_focus_color_ : without_key_focus_color_;
+  has_focus_ = has_focus;
+  key_nav_direction_ = direction;
   QueueDraw();
 }

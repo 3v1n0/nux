@@ -43,15 +43,8 @@ namespace nux
       bool               Recreate ();
 
     private:
-      bool               CreateBitmap ();
-
-    private:
-      Geometry           geometry_;
-      DrawCanvasCallback draw_canvas_callback_;
-      cairo_t*           cr_;
-      cairo_surface_t*   surface_;
-      NBitmapData*       bitmap_;
-      BaseTexture*       texture_;
+      struct Impl;
+      Impl* pimpl;
   };
 }
 
