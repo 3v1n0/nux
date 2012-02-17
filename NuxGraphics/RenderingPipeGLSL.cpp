@@ -875,7 +875,8 @@ namespace nux
 
   void GraphicsEngine::QRP_GLSL_Color(int x, int y, int width, int height, const Color &c0, const Color &c1, const Color &c2, const Color &c3)
   {
-    NUX_RETURN_IF_FALSE(m_SlColor.IsValid());
+    if (!m_SlColor.IsValid())
+      InitSlColorShader();
 
     m_quad_tex_stats++;
 
@@ -922,7 +923,8 @@ namespace nux
 
   void GraphicsEngine::QRP_GLSL_1Tex(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color0)
   {
-    NUX_RETURN_IF_FALSE(m_SlTextureModColor.IsValid());
+    if (!m_SlTextureModColor.IsValid())
+        InitSlTextureShader();
 
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord(width, height, DeviceTexture, texxform0);
@@ -996,7 +998,8 @@ namespace nux
   void GraphicsEngine::QRP_GLSL_ColorModTexAlpha(int x, int y, int width, int height,
       ObjectPtr< IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &color)
   {
-    NUX_RETURN_IF_FALSE(m_SlColorModTexMaskAlpha.IsValid());
+    if (!m_SlColorModTexMaskAlpha.IsValid())
+        InitSlColorModTexMaskAlpha();
 
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord(width, height, DeviceTexture, texxform);
@@ -1083,7 +1086,8 @@ namespace nux
                                        ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
                                        ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1)
   {
-    NUX_RETURN_IF_FALSE(m_Sl2TextureAdd.IsValid());
+    if (!m_Sl2TextureAdd.IsValid())
+        InitSl2TextureAdd();
 
     ObjectPtr<IOpenGLShaderProgram> ShaderProg;
     ShaderProg = m_Sl2TextureAdd;
@@ -1160,7 +1164,8 @@ namespace nux
     ObjectPtr<IOpenGLBaseTexture> distorsion_texture, TexCoordXForm &texxform0, const Color& c0,
     ObjectPtr<IOpenGLBaseTexture> src_device_texture, TexCoordXForm &texxform1, const Color& c1)
   {
-    NUX_RETURN_IF_FALSE(m_Sl2TextureDepRead.IsValid());
+    if (!m_Sl2TextureDepRead.IsValid())
+        InitSl2TextureDepRead();
 
     ObjectPtr<IOpenGLShaderProgram> ShaderProg = m_Sl2TextureDepRead;
 
@@ -1235,7 +1240,8 @@ namespace nux
     ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm &texxform0, const Color &color0,
     ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm &texxform1, const Color &color1)
   {
-    NUX_RETURN_IF_FALSE(m_Sl2TextureMod.IsValid());
+    if (!m_Sl2TextureMod.IsValid())
+        InitSl2TextureMod();
 
     ObjectPtr<IOpenGLShaderProgram> ShaderProg;
     {
@@ -1315,7 +1321,8 @@ namespace nux
                                        ObjectPtr<IOpenGLBaseTexture> DeviceTexture2, TexCoordXForm &texxform2, const Color &color2,
                                        ObjectPtr<IOpenGLBaseTexture> DeviceTexture3, TexCoordXForm &texxform3, const Color &color3)
   {
-    NUX_RETURN_IF_FALSE(m_Sl4TextureAdd.IsValid());
+    if (!m_Sl4TextureAdd.IsValid())
+        InitSl4TextureAdd();
 
     QRP_Compute_Texture_Coord(width, height, DeviceTexture0, texxform0);
     QRP_Compute_Texture_Coord(width, height, DeviceTexture1, texxform1);
@@ -1431,7 +1438,8 @@ namespace nux
       int x2, int y2,
       Color c0, Color c1, Color c2)
   {
-    NUX_RETURN_IF_FALSE(m_SlColor.IsValid());
+    if (!m_SlColor.IsValid())
+      InitSlColorShader();
 
     float VtxBuffer[] =
     {
@@ -1479,7 +1487,8 @@ namespace nux
   void GraphicsEngine::QRP_GLSL_Line(int x0, int y0,
                                        int x1, int y1, Color c0, Color c1)
   {
-    NUX_RETURN_IF_FALSE(m_SlColor.IsValid());
+    if (!m_SlColor.IsValid())
+      InitSlColorShader();
 
     float VtxBuffer[] =
     {
@@ -1542,7 +1551,8 @@ namespace nux
       Color c2,
       Color c3)
   {
-    NUX_RETURN_IF_FALSE(m_SlColor.IsValid());
+    if (!m_SlColor.IsValid())
+      InitSlColorShader();
 
     float fx0 = x0, fy0 = y0;
     float VtxBuffer[] =
@@ -1605,7 +1615,8 @@ namespace nux
 
   void GraphicsEngine::QRP_GLSL_Power(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0, Vector4 exponent)
   {
-    NUX_RETURN_IF_FALSE(_component_exponentiation_prog.IsValid());
+    if (!_component_exponentiation_prog.IsValid())
+        InitSLPower();
 
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord(width, height, device_texture, texxform0);
@@ -1671,7 +1682,8 @@ namespace nux
 
   void GraphicsEngine::QRP_GLSL_AlphaReplicate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0)
   {
-    NUX_RETURN_IF_FALSE(_alpha_replicate_prog.IsValid());
+    if (!_alpha_replicate_prog.IsValid())
+        InitSLAlphaReplicate();
 
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord(width, height, device_texture, texxform0);
@@ -1734,7 +1746,8 @@ namespace nux
 
   void GraphicsEngine::QRP_GLSL_HorizontalGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0, float sigma)
   {
-    NUX_RETURN_IF_FALSE(_horizontal_gauss_filter_prog.IsValid());
+    if (!_horizontal_gauss_filter_prog.IsValid())
+        InitSLHorizontalGaussFilter();
 
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord(width, height, device_texture, texxform0);
@@ -1805,7 +1818,8 @@ namespace nux
 
   void GraphicsEngine::QRP_GLSL_VerticalGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0, float sigma)
   {
-    NUX_RETURN_IF_FALSE(_vertical_gauss_filter_prog.IsValid());
+    if (!_vertical_gauss_filter_prog.IsValid())
+        InitSLVerticalGaussFilter();
 
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord(width, height, device_texture, texxform0);
@@ -2035,7 +2049,8 @@ namespace nux
     Matrix4 color_matrix,
     Vector4 offset)
   {
-    NUX_RETURN_IF_FALSE(_color_matrix_filter_prog.IsValid());
+    if (!_color_matrix_filter_prog.IsValid())
+        InitSLColorMatrixFilter();
 
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord(width, height, device_texture, texxform0);
@@ -2673,7 +2688,8 @@ namespace nux
 
   void GraphicsEngine::QRP_GLSL_Pixelate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color0, int pixel_size)
   {
-    NUX_RETURN_IF_FALSE(m_SLPixelate.IsValid());
+    if (!m_SLPixelate.IsValid())
+        InitSlPixelateShader();
 
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord(width, height, DeviceTexture, texxform0);

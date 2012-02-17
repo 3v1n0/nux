@@ -21,18 +21,18 @@
 #include "Nux/Nux.h"
 #include "Nux/WindowThread.h"
 #include "Nux/GridHLayout.h"
+#include "Nux/ProgramFramework/ProgramTemplate.h"
+#include "Nux/ProgramFramework/TestView.h"
 #include <X11/extensions/XTest.h>
 #include <X11/keysym.h> 
-#include "nux_test_framework.h"
 #include "nux_automated_test_framework.h"
-#include "test-view.h"
 
 
 // 0  1  2  3
 // 4  5  6  7
 // 8  9 10 
 
-class HGridKeyNavigationTest: public NuxTestFramework
+class HGridKeyNavigationTest: public ProgramTemplate
 {
 public:
   HGridKeyNavigationTest(const char* program_name, int window_width, int window_height, int program_life_span);
@@ -47,11 +47,11 @@ public:
   TestView* tiles_[11];
 };
 
-HGridKeyNavigationTest::HGridKeyNavigationTest(const char *program_name,
+HGridKeyNavigationTest::HGridKeyNavigationTest(const char* program_name,
                                                int window_width,
                                                int window_height,
                                                int program_life_span)
-  : NuxTestFramework(program_name, window_width, window_height, program_life_span)
+: ProgramTemplate(program_name, window_width, window_height, program_life_span)
 {
 }
 
@@ -93,9 +93,9 @@ void HGridKeyNavigationTest::UserInterfaceSetup()
   static_cast<nux::WindowThread*>(window_thread_)->SetWindowBackgroundPaintLayer(&background);
 }
 
-HGridKeyNavigationTest *key_navigation_test = NULL;
+HGridKeyNavigationTest* key_navigation_test = NULL;
 
-void TestingThread(nux::NThread *thread, void *user_data)
+void TestingThread(nux::NThread* thread, void* user_data)
 {
   while (key_navigation_test->ReadyToGo() == false)
   {
@@ -105,7 +105,7 @@ void TestingThread(nux::NThread *thread, void *user_data)
 
   nux::SleepForMilliseconds(1000);
 
-  nux::WindowThread *wnd_thread = static_cast<nux::WindowThread*>(user_data);
+  nux::WindowThread* wnd_thread = static_cast<nux::WindowThread*>(user_data);
 
   NuxAutomatedTestFramework test(wnd_thread);
 
@@ -119,7 +119,7 @@ void TestingThread(nux::NThread *thread, void *user_data)
 
 
   // Rigth key
-  for (int i=0; i<10; ++i)
+  for (int i=0; i<3; ++i)
   {
     test.SendFakeKeyEvent(XK_Right, 0);
     nux::SleepForMilliseconds(500);
@@ -130,10 +130,10 @@ void TestingThread(nux::NThread *thread, void *user_data)
   // Another right key, should do nothing
   test.SendFakeKeyEvent(XK_Right, 0);
   nux::SleepForMilliseconds(500);
-  test.TestReportMsg(key_navigation_test->tiles_[10]->has_focus_, "Right key, last element");
+  test.TestReportMsg(key_navigation_test->tiles_[3]->has_focus_, "Right key, last element");
   
   // Left key
-  for (int i=10; i>0; --i)
+  for (int i=3; i>0; --i)
   {
     test.SendFakeKeyEvent(XK_Left, 0);
     nux::SleepForMilliseconds(500);
@@ -182,7 +182,7 @@ void TestingThread(nux::NThread *thread, void *user_data)
   nuxDebugMsg("Exit testing thread");
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   int xstatus = XInitThreads();
   nuxAssertMsg(xstatus > 0, "XInitThreads has failed");

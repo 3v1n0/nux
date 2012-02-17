@@ -917,41 +917,48 @@ namespace
         &base_window);
     }
 
-    if (focus_area)
-      SetKeyFocusArea(focus_area);
-    else
-      SetKeyFocusArea(NULL);
-
     KeyNavDirection direction = KEY_NAV_NONE;
 
-    switch(event.GetKeySym())
+    if (event.type == EVENT_KEY_DOWN)
     {
-    case NUX_VK_UP:
-      direction = KEY_NAV_UP;
-      break;
-    case NUX_VK_DOWN:
-      direction = KEY_NAV_DOWN;
-      break;
-    case NUX_VK_LEFT:
-      direction = KEY_NAV_LEFT;
-      break;
-    case NUX_VK_RIGHT:
-      direction = KEY_NAV_RIGHT;
-      break;
-    case NUX_VK_LEFT_TAB:
-      direction = KEY_NAV_TAB_PREVIOUS;
-      break;
-    case NUX_VK_TAB:
-      direction = KEY_NAV_TAB_NEXT;
-      break;
-    case NUX_VK_ENTER:
-    case NUX_KP_ENTER:
-      // Not sure if Enter should be a navigation key
-      direction = KEY_NAV_ENTER;
-      break;
-    default:
-      direction = KEY_NAV_NONE;
-      break;
+      switch(event.GetKeySym())
+      {
+      case NUX_VK_UP:
+        direction = KEY_NAV_UP;
+        break;
+      case NUX_VK_DOWN:
+        direction = KEY_NAV_DOWN;
+        break;
+      case NUX_VK_LEFT:
+        direction = KEY_NAV_LEFT;
+        break;
+      case NUX_VK_RIGHT:
+        direction = KEY_NAV_RIGHT;
+        break;
+      case NUX_VK_LEFT_TAB:
+        direction = KEY_NAV_TAB_PREVIOUS;
+        break;
+      case NUX_VK_TAB:
+        direction = KEY_NAV_TAB_NEXT;
+        break;
+      case NUX_VK_ENTER:
+      case NUX_KP_ENTER:
+        // Not sure if Enter should be a navigation key
+        direction = KEY_NAV_ENTER;
+        break;
+      default:
+        direction = KEY_NAV_NONE;
+        break;
+      }
+    }
+
+    if (focus_area)
+    {
+      SetKeyFocusArea(focus_area, direction);
+    }
+    else
+    {
+      SetKeyFocusArea(NULL, KEY_NAV_NONE);
     }
 
     if (key_focus_area_)
@@ -961,7 +968,11 @@ namespace
         SendKeyEvent(key_focus_area_,
                     event.type,
                     event.GetKeySym(),
+#if defined(NUX_OS_WINDOWS)
+                    event.win32_keycode,
+#elif defined(NUX_OS_LINUX)
                     event.x11_keycode,
+#endif
                     event.GetKeyState(),
                     event.GetText(),
                     event.GetKeyRepeatCount());
@@ -980,7 +991,11 @@ namespace
           SendKeyEvent(static_cast<InputArea*>(parent),
             event.type,
             event.GetKeySym(),
+#if defined(NUX_OS_WINDOWS)
+            event.win32_keycode,
+#elif defined(NUX_OS_LINUX)
             event.x11_keycode,
+#endif
             event.GetKeyState(),
             event.GetText(),
             event.GetKeyRepeatCount());
@@ -992,7 +1007,10 @@ namespace
         {
           if (key_focus_area_ && key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
           {
-            static_cast<InputArea*>(key_focus_area_)->OnKeyNavFocusActivate.emit(key_focus_area_);
+            // Signal emitted from the WindowCompositor.
+            key_nav_focus_activate.emit(key_focus_area_);
+            // Signal emitted from the area itsel.
+            static_cast<InputArea*>(key_focus_area_)->key_nav_focus_activate.emit(key_focus_area_);
           }
         }
         else
@@ -1012,7 +1030,7 @@ namespace
 
           if (key_nav_focus)
           {
-            SetKeyFocusArea(key_nav_focus);
+            SetKeyFocusArea(key_nav_focus, direction);
           }
         }
       }
@@ -1818,7 +1836,7 @@ namespace
     }
   }
   
-  void WindowCompositor::SetKeyFocusArea(InputArea* area)
+  void WindowCompositor::SetKeyFocusArea(InputArea* area, KeyNavDirection direction)
   {
     InputArea* keyboard_grab_area = GetKeyboardGrabArea();
 
@@ -1836,7 +1854,9 @@ namespace
     }
 
     if (area && (area->AcceptKeyNavFocus() == false))
+    {
       return;
+    }
 
     if (key_focus_area_)
     {
@@ -1845,7 +1865,10 @@ namespace
 
       if (key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
       {
-        static_cast<InputArea*>(key_focus_area_)->OnKeyNavFocusChange.emit(key_focus_area_);
+        // Signal emitted from the WindowCompositor.
+        key_nav_focus_change.emit(key_focus_area_, false, direction);
+        // Signal emitted from the area itself.
+        static_cast<InputArea*>(key_focus_area_)->key_nav_focus_change.emit(key_focus_area_, false, direction);
       }
 
       if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
@@ -1863,7 +1886,10 @@ namespace
 
       if (key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
       {
-        static_cast<InputArea*>(key_focus_area_)->OnKeyNavFocusChange.emit(key_focus_area_);
+        // Signal emitted from the WindowCompositor.
+        key_nav_focus_change.emit(key_focus_area_, true, direction);
+        // Signal emitted from the area itself.
+        static_cast<InputArea*>(key_focus_area_)->key_nav_focus_change.emit(key_focus_area_, true, direction);
       }
 
       if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
@@ -2160,7 +2186,10 @@ namespace
 
         if (key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
         {
-          static_cast<InputArea*>(key_focus_area_)->OnKeyNavFocusChange.emit(key_focus_area_);
+          // Signal emitted from the WindowCompositor.
+          key_nav_focus_change.emit(key_focus_area_, false, KEY_NAV_NONE);
+          // Signal emitted from the area itself.
+          static_cast<InputArea*>(key_focus_area_)->key_nav_focus_change.emit(key_focus_area_, false, KEY_NAV_NONE);
         }
 
         if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
@@ -2228,7 +2257,10 @@ namespace
 
         if (key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
         {
-          static_cast<InputArea*>(key_focus_area_)->OnKeyNavFocusChange.emit(key_focus_area_);
+          // Signal emitted from the WindowCompositor.
+          key_nav_focus_change.emit(key_focus_area_, false, KEY_NAV_NONE);
+          // Signal emitted from the area itself.
+          static_cast<InputArea*>(key_focus_area_)->key_nav_focus_change.emit(key_focus_area_, false, KEY_NAV_NONE);
         }
 
         if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))

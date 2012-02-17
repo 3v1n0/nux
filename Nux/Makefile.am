@@ -11,6 +11,7 @@ libnux_@NUX_API_VERSION@_la_CPPFLAGS= \
   -DPREFIX=\""$(prefix)"\" \
 	-DLIBDIR=\""$(libdir)"\" \
   -DDATADIR=\""$(datadir)"\" \
+  -DPKGDATADIR=\""$(pkgdatadir)/@NUX_API_VERSION@"\" \
   -DG_LOG_DOMAIN=\"Nux\" \
   $(GCC_FLAGS) \
   $(NUX_CFLAGS) \
@@ -45,6 +46,9 @@ source_cpp = \
   $(srcdir)/ColorEditor.cpp \
   $(srcdir)/ColorPickerDialog.cpp \
   $(srcdir)/ColorPreview.cpp \
+  $(srcdir)/Coverflow.cpp \
+  $(srcdir)/CoverflowItem.cpp \
+  $(srcdir)/CoverflowModel.cpp \
   $(srcdir)/Dialog.cpp \
   $(srcdir)/DoubleValidator.cpp \
   $(srcdir)/EditTextBox.cpp \
@@ -66,6 +70,7 @@ source_cpp = \
   $(srcdir)/MainLoopGLib.cpp \
   $(srcdir)/MenuPage.cpp \
   $(srcdir)/MenuBar.cpp \
+  $(srcdir)/Metrics.cpp \
   $(srcdir)/MouseAreaCtrl.cpp \
   $(srcdir)/NumericValuator.cpp \
   $(srcdir)/Nux.cpp \
@@ -88,6 +93,7 @@ source_cpp = \
   $(srcdir)/SystemThread.cpp \
   $(srcdir)/TabView.cpp \
   $(srcdir)/TextEntry.cpp \
+  $(srcdir)/TextLoader.cpp \
   $(srcdir)/TextureArea.cpp \
   $(srcdir)/Timeline.cpp \
   $(srcdir)/TimelineEasings.cpp \
@@ -125,6 +131,9 @@ source_h = \
   $(srcdir)/ColorEditor.h \
   $(srcdir)/ColorPickerDialog.h \
   $(srcdir)/ColorPreview.h \
+  $(srcdir)/Coverflow.h \
+  $(srcdir)/CoverflowItem.h \
+  $(srcdir)/CoverflowModel.h \
   $(srcdir)/Dialog.h \
   $(srcdir)/DoubleValidator.h \
   $(srcdir)/EditTextBox.h \
@@ -145,6 +154,7 @@ source_h = \
   $(srcdir)/LinearLayout.h \
   $(srcdir)/MenuPage.h \
   $(srcdir)/MenuBar.h \
+  $(srcdir)/Metrics.h \
   $(srcdir)/MouseAreaCtrl.h \
   $(srcdir)/NumericValuator.h \
   $(srcdir)/Nux.h \
@@ -168,6 +178,7 @@ source_h = \
   $(srcdir)/SystemThread.h \
   $(srcdir)/TabView.h \
   $(srcdir)/TextEntry.h \
+  $(srcdir)/TextLoader.h \
   $(srcdir)/TextureArea.h \
   $(srcdir)/Timeline.h \
   $(srcdir)/TimelineEasings.h \
@@ -184,12 +195,26 @@ source_h = \
   $(srcdir)/WindowCompositor.h \
   $(srcdir)/WindowThread.h
 
+nuxprogramframework_cpp = \
+  $(srcdir)/ProgramFramework/ProgramTemplate.cpp \
+  $(srcdir)/ProgramFramework/TestView.cpp
+
+nuxprogramframework_h = \
+  $(srcdir)/ProgramFramework/ProgramTemplate.h \
+  $(srcdir)/ProgramFramework/TestView.h
+
+
 libnux_@NUX_API_VERSION@_la_SOURCES = \
   $(source_cpp) \
-  $(source_h)
+  $(source_h) \
+  $(nuxprogramframework_cpp) \
+  $(nuxprogramframework_h)
 
 nuxdir = $(includedir)/Nux-@NUX_API_VERSION@/Nux
 nux_HEADERS = $(source_h)
+
+nuxprogramframeworkdir      = $(includedir)/Nux-@NUX_API_VERSION@/Nux/ProgramFramework
+nuxprogramframework_HEADERS = $(nuxprogramframework_h)
 
 # pkg-config file
 nux-@NUX_API_VERSION@.pc: nux.pc
