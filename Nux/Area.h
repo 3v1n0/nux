@@ -515,7 +515,12 @@ namespace nux
       const char* character);
 
     virtual bool AcceptKeyNavFocus();
-    
+    virtual bool AcceptKeyNavFocusOnMouseDown() const;
+    virtual bool AcceptKeyNavFocusOnMouseEnter() const;
+
+    void SetAcceptKeyNavFocusOnMouseDown(bool accept);
+    void SetAcceptKeyNavFocusOnMouseEnter(bool accept);
+
     virtual Area* KeyNavIteration(KeyNavDirection direction);
 
     bool HasKeyFocus() const;
@@ -646,6 +651,9 @@ namespace nux
 
     bool                    accept_mouse_wheel_event_;
     bool                    accept_keyboard_event_;
+
+    bool accept_key_nav_focus_on_mouse_down_;
+    bool accept_key_nav_focus_on_mouse_enter_;
 
     WindowThread*           window_thread_;
 

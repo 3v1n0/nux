@@ -426,13 +426,19 @@ namespace
               // The area from the previous cycle receive a "mouse leave signal".
               Geometry geo = mouse_over_area_->GetAbsoluteGeometry();
               int x = event.x - geo.x;
-              int y = event.y - geo.y;
+              int y = event.y - geo.y; 
 
               mouse_over_area_->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
             }
-
             // The area we found under the mouse pointer receives a "mouse enter signal".
             SetMouseOverArea(hit_view);
+
+            if (mouse_over_area_ != GetKeyFocusArea() && mouse_over_area_->AcceptKeyNavFocusOnMouseEnter())
+            {
+              SetKeyFocusArea(mouse_over_area_);
+            }
+          
+          
             mouse_over_area_->EmitMouseEnterSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
             emit_delta = false;
           }

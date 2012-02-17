@@ -70,6 +70,7 @@ source_cpp = \
   $(srcdir)/MainLoopGLib.cpp \
   $(srcdir)/MenuPage.cpp \
   $(srcdir)/MenuBar.cpp \
+  $(srcdir)/Metrics.cpp \
   $(srcdir)/MouseAreaCtrl.cpp \
   $(srcdir)/NumericValuator.cpp \
   $(srcdir)/Nux.cpp \
@@ -153,6 +154,7 @@ source_h = \
   $(srcdir)/LinearLayout.h \
   $(srcdir)/MenuPage.h \
   $(srcdir)/MenuBar.h \
+  $(srcdir)/Metrics.h \
   $(srcdir)/MouseAreaCtrl.h \
   $(srcdir)/NumericValuator.h \
   $(srcdir)/Nux.h \
