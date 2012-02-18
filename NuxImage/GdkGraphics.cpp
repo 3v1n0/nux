@@ -107,7 +107,7 @@ logging::Logger logger("nux.image");
     }
 
     ImageSurface& image_surface = texture->GetSurface(0);
-    t_u8* dest = image_surface.GetPtrRawData();
+    unsigned char* dest = image_surface.GetPtrRawData();
     int dest_pitch = image_surface.GetPitch();
 
     guchar* src = gdk_pixbuf_get_pixels(pixbuf_);

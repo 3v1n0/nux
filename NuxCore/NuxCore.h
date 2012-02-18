@@ -505,7 +505,7 @@ namespace nux
   {
     return dw;
   }
-  static inline t_byte        VAType (t_byte b)
+  static inline unsigned char        VAType (unsigned char b)
   {
     return b;
   }

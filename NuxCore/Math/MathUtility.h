@@ -224,8 +224,8 @@ namespace nux
   inline unsigned short ReverseByteOrdering (unsigned short value)
   {
     unsigned short temp;
-    t_u8 *src = (t_u8 *) &value;
-    t_u8 *dest = (t_u8 *) &temp;
+    unsigned char *src = (unsigned char *) &value;
+    unsigned char *dest = (unsigned char *) &temp;
 
     dest[0] = src[1];
     dest[1] = src[0];
@@ -240,8 +240,8 @@ namespace nux
   inline unsigned int ReverseByteOrdering (unsigned int value)
   {
     unsigned int temp;
-    t_u8 *src = (t_u8 *) &value;
-    t_u8 *dest = (t_u8 *) &temp;
+    unsigned char *src = (unsigned char *) &value;
+    unsigned char *dest = (unsigned char *) &temp;
 
     dest[0] = src[3];
     dest[1] = src[2];
@@ -258,8 +258,8 @@ namespace nux
   inline unsigned long long ReverseByteOrdering (unsigned long long value)
   {
     unsigned long long temp;
-    t_u8 *src = (t_u8 *) &value;
-    t_u8 *dest = (t_u8 *) &temp;
+    unsigned char *src = (unsigned char *) &value;
+    unsigned char *dest = (unsigned char *) &temp;
 
     dest[0] = src[7];
     dest[1] = src[6];
