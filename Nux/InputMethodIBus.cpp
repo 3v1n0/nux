@@ -156,13 +156,18 @@ namespace nux
   {
     nux::Rect strong, weak;
     text_entry_->GetCursorRects(&strong, &weak);
-    nux::Geometry geo = text_entry_->GetGeometry();
+    
+    // Get the position of the TextEntry in the Window.
+    nux::Geometry geo = text_entry_->GetAbsoluteGeometry();
+
+    // Get the Geometry of the window on the display.
+    nux::Geometry window_geo = nux::GetGraphicsDisplay()->GetWindowGeometry();
 
     ibus_input_context_set_cursor_location(context_,
-      strong.x + geo.x,
-      strong.y + geo.y,
-      strong.width,
-      strong.height);
+      geo.x + window_geo.x,
+      geo.y + window_geo.y,
+      0,
+      geo.height);
   }
 
   void IBusIMEContext::OnConnected(IBusBus *bus)
