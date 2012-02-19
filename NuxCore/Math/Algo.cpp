@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Inalogic® Inc.
+ * Copyright 2010-2012 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -81,7 +81,7 @@ namespace nux
             double xinters = (pt.y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
 
             //overlies on a ray
-            if(fabs(pt.x - xinters) < Const::dbl_epsilon) return onedge;
+            if(fabs(pt.x - xinters) < constants::dbl_epsilon) return onedge;
 
             //before ray
             if(pt.x < xinters) ++__count;

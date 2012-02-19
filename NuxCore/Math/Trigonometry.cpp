@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Inalogic® Inc.
+ * Copyright 2010-2012 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -34,9 +34,9 @@ namespace nux
   Vector3 SphericalToCartesianXBaseDeg (float r, float theta, float phi)
   {
     Vector3 v;
-    v.x = r * std::cos (theta * Const::pi / 180.0f) * std::sin (phi * Const::pi / 180.0f);
-    v.y = r * std::sin (theta * Const::pi / 180.0f) * std::sin (phi * Const::pi / 180.0f);
-    v.z = r * std::cos (phi * Const::pi / 180.0f);
+    v.x = r * std::cos (theta * constants::pi / 180.0f) * std::sin (phi * constants::pi / 180.0f);
+    v.y = r * std::sin (theta * constants::pi / 180.0f) * std::sin (phi * constants::pi / 180.0f);
+    v.z = r * std::cos (phi * constants::pi / 180.0f);
     return v;
   }
 
@@ -56,9 +56,9 @@ namespace nux
   Vector3 SphericalToCartesianZBaseDeg (float r, float theta, float phi)
   {
     Vector3 v;
-    v.z = r * std::cos (theta * Const::pi / 180.0f) * std::sin (phi * Const::pi / 180.0f);
-    v.x = r * std::sin (theta * Const::pi / 180.0f) * std::sin (phi * Const::pi / 180.0f);
-    v.y = r * std::cos (phi * Const::pi / 180.0f);
+    v.z = r * std::cos (theta * constants::pi / 180.0f) * std::sin (phi * constants::pi / 180.0f);
+    v.x = r * std::sin (theta * constants::pi / 180.0f) * std::sin (phi * constants::pi / 180.0f);
+    v.y = r * std::cos (phi * constants::pi / 180.0f);
     return v;
   }
 
