@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Inalogic® Inc.
+ * Copyright 2010-2012 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -32,8 +32,8 @@
 
 #include "Constants.h"
 
-#define DEGTORAD(d) (d) * nux::Const::pi / 180.0f
-#define RADTODEG(d) (d) * 180.0f / nux::Const::pi
+#define DEGTORAD(d) (d) * nux::constants::pi / 180.0f
+#define RADTODEG(d) (d) * 180.0f / nux::constants::pi
 
 namespace nux
 {
@@ -164,7 +164,7 @@ namespace nux
   */
   inline double RandomGaussian()
   {
-    return std::sqrt (-2 * std::log ((double) (1e-10 + (1 - 2e-10) * std::rand()))) * std::cos ((double) (2 * 3.14f/*Const::pi*/*std::rand()));
+    return std::sqrt (-2 * std::log ((double) (1e-10 + (1 - 2e-10) * std::rand()))) * std::cos ((double) (2 * constants::pi * std::rand()));
   }
 
   inline unsigned int RandomUInt()
