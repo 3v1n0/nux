@@ -27,7 +27,6 @@ namespace nux
   namespace constants
   {
     extern const float pi;
-    extern const float Pi;
     extern const float e;
     extern const float sqrt2;
     extern const float sqrt3;

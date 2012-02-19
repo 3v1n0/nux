@@ -28,7 +28,6 @@ namespace nux
   namespace constants
   {
     const float pi       = 3.1415926535f;
-    const float Pi       = 3.1415926535f;
     const float e        = 2.7182817f;
     const float sqrt2    = 1.414214f;
     const float sqrt3    = 1.732051f;
