@@ -69,6 +69,8 @@ namespace nux
                           unsigned long x11_key_code,
                           unsigned long special_keys_state);
 
+    virtual bool AcceptKeyNavFocus() const;
+    
   protected:
 
   private:
@@ -336,9 +338,6 @@ namespace nux
 
       virtual void EmitMouseClickSignal       (int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state);
       virtual void EmitMouseDoubleClickSignal(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state);
-
-      virtual void EmitStartKeyboardFocus();
-      virtual void EmitEndKeyboardFocus();
 
       virtual void EmitMouseDownOutsideArea   (int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state);
 
