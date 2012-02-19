@@ -41,7 +41,7 @@ struct NObjectType
 
   NObjectType()
     : name("Null_Type")
-    , super(nullptr)
+    , super(NULL)
   {
   }
 

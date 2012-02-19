@@ -29,7 +29,7 @@ namespace nux
 
   static void SystemStart()
   {
-    static t_u8 StaticBuffer [sizeof (GlobalSingletonInitializer)];
+    static unsigned char StaticBuffer [sizeof (GlobalSingletonInitializer)];
     // Placement new in our reserved buffer.
     GGlobalInitializer =  new (StaticBuffer) GlobalSingletonInitializer ();
 

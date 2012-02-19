@@ -129,7 +129,7 @@ namespace nux
       bitmap_format = BITFMT_A8;
 
     NTextureData *bitmap_data = new NTextureData(bitmap_format, _width, _height, 1);
-    t_u8 *ptr = cairo_image_surface_get_data(_cairo_surface);
+    unsigned char *ptr = cairo_image_surface_get_data(_cairo_surface);
     int stride = cairo_image_surface_get_stride(_cairo_surface);
 
     if (ptr == NULL || stride == 0)
@@ -141,7 +141,7 @@ namespace nux
 
     if (m_surface_format == CAIRO_FORMAT_A1)
     {
-      t_u8 *temp = new t_u8[bitmap_data->GetSurface(0).GetPitch() ];
+      unsigned char *temp = new unsigned char[bitmap_data->GetSurface(0).GetPitch() ];
 
       for (int j = 0; j < _height; j++)
       {

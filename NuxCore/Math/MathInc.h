@@ -23,8 +23,6 @@
 #ifndef MATHINC_H
 #define MATHINC_H
 
-#include "../SystemTypes.h"
-
 #include "Constants.h"
 #include "MathUtility.h"
 #include "Complex.h"

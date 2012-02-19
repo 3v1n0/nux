@@ -62,9 +62,6 @@
 #include <new>
 #include <set>
 
-#include "SystemTypes.h"
-
-
 // WIN32_SECURE if define for the latest version of Visual Studio starting at VS 2005. We use it for security improvement.
 #if (defined NUX_VISUAL_STUDIO_2005) || (defined NUX_VISUAL_STUDIO_2008) || (defined NUX_VISUAL_STUDIO_2010)
 #define WIN32_SECURE
@@ -505,7 +502,7 @@ namespace nux
   {
     return dw;
   }
-  static inline t_byte        VAType (t_byte b)
+  static inline unsigned char        VAType (unsigned char b)
   {
     return b;
   }

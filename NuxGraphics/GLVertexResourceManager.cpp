@@ -283,7 +283,7 @@ namespace nux
       return;
     }
 
-    t_byte* pData;
+    unsigned char* pData;
 
     _vertex_buffer->Lock(0, 0, (void**) &pData);
     Memcpy(pData, SourceVtxBuffer->GetPtrRawData(), SourceVtxBuffer->GetSize());
@@ -373,7 +373,7 @@ namespace nux
       return;
     }
 
-    t_byte* pData;
+    unsigned char* pData;
     _index_buffer->Lock(0, 0, (void**) &pData);
     Memcpy(pData, SourceIdxBuffer->GetPtrRawData(), SourceIdxBuffer->GetSize());
     _index_buffer->Unlock();

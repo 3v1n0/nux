@@ -181,7 +181,7 @@ namespace nux
           return;
         }
 
-        Precache (m_FilePos, t_s32_max);
+        Precache (m_FilePos, 0x7FFFFFFF);
         DataSize = Min<long long> (Length, m_BufferBase + m_BufferCount - m_FilePos);
 
         if (DataSize <= 0)
