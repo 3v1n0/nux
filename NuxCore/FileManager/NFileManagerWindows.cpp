@@ -150,7 +150,7 @@ namespace nux
     return !m_ErrorCode;
   }
 
-  void NWindowsSerialFileReader::SerializeFinal (void *Dest, long long Length)
+  void NWindowsSerialFileReader::SerializeFinal (void* Dest, long long Length)
   {
     nuxAssert (Dest);
 
@@ -164,7 +164,7 @@ namespace nux
         {
           int Count = 0;
           //GTotalBytesReadViaFileManager += Length;
-          ReadFile (m_FileHandle, Dest, Length, (DWORD *) &Count, NULL);
+          ReadFile (m_FileHandle, Dest, Length, (DWORD*) &Count, NULL);
 
           if (Count != Length)
           {
@@ -177,7 +177,7 @@ namespace nux
           return;
         }
 
-        Precache (m_FilePos, t_s32_max);
+        Precache (m_FilePos, 0x7FFFFFFF);
         DataSize = Min<long long> (Length, m_BufferBase + m_BufferCount - m_FilePos);
 
         if (DataSize <= 0)
@@ -753,7 +753,7 @@ namespace nux
 
     if (_tstat (Filename, &FileInfo) == 0)
     {
-      time_t	CurrentTime,
+      time_t  CurrentTime,
               FileTime;
       FileTime = FileInfo.st_mtime;
       time (&CurrentTime);
@@ -847,7 +847,7 @@ namespace nux
       Timestamp.Second    = pTime.tm_sec;
       Timestamp.Year      = pTime.tm_year + 1900;
 #else
-      time_t	FileTime;
+      time_t  FileTime;
       // FileTime represents seconds elapsed since midnight (00:00:00), January 1, 1970, coordinated universal time (UTC).
       FileTime = FileInfo.st_mtime;
       // gmtime can express time up to 03:14:07 January 19, 2038, UTC
