@@ -37,7 +37,7 @@ public:
   virtual void UserInterfaceSetup();
   
   void ResetEvents();
-  TestView* test_view_;
+  nux::TestView* test_view_;
 };
 
 ButtonEventsTest::ButtonEventsTest(const char* program_name,
@@ -64,7 +64,7 @@ void ButtonEventsTest::ResetEvents()
 void ButtonEventsTest::UserInterfaceSetup()
 {
   nux::VLayout* main_layout = new nux::VLayout(NUX_TRACKER_LOCATION);
-  test_view_ = new TestView(NUX_TRACKER_LOCATION);
+  test_view_ = new nux::TestView(NUX_TRACKER_LOCATION);
 
   main_layout->AddView(test_view_, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_FULL);
   main_layout->SetPadding(10, 10);

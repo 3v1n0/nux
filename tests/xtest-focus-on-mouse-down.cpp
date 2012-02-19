@@ -35,8 +35,8 @@ public:
 
   virtual void UserInterfaceSetup();
   
-  TestView* focus_view_;
-  TestView* no_focus_view_;
+  nux::TestView* focus_view_;
+  nux::TestView* no_focus_view_;
 };
 
 FocusOnMouseDownTest::FocusOnMouseDownTest(const char* program_name,
@@ -59,12 +59,12 @@ void FocusOnMouseDownTest::UserInterfaceSetup()
   main_layout->SetSpaceBetweenChildren(10);
   main_layout->SetPadding(10, 10);
   
-  focus_view_ = new TestView(NUX_TRACKER_LOCATION);
+  focus_view_ = new nux::TestView(NUX_TRACKER_LOCATION);
   focus_view_->can_focus_ = true;
   focus_view_->SetAcceptKeyNavFocusOnMouseDown(true);
   main_layout->AddView(focus_view_, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_FULL);
     
-  no_focus_view_ = new TestView(NUX_TRACKER_LOCATION);
+  no_focus_view_ = new nux::TestView(NUX_TRACKER_LOCATION);
   no_focus_view_->can_focus_ = true;
   no_focus_view_->SetAcceptKeyNavFocusOnMouseDown(false);
   main_layout->AddView(no_focus_view_, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_FULL);
