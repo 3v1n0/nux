@@ -33,7 +33,7 @@ namespace nux
 
   static void SystemStart()
   {
-    static t_u8 StaticBuffer[sizeof(NuxGraphicsGlobalSingletonInitializer) ];
+    static unsigned char StaticBuffer[sizeof(NuxGraphicsGlobalSingletonInitializer) ];
     // Placement new in our reserved buffer.
     GNuxGraphicsGlobalInitializer =  new(StaticBuffer) NuxGraphicsGlobalSingletonInitializer();
 

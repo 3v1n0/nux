@@ -195,7 +195,7 @@ logging::Logger logger("nux.image");
     m_Pitch = surface.m_Pitch;
     Alignment_ = surface.Alignment_;
 
-    RawData_ = new t_u8[surface.GetSize()];
+    RawData_ = new unsigned char[surface.GetSize()];
     Memcpy(RawData_, surface.RawData_, surface.GetSize());
   }
 
@@ -213,7 +213,7 @@ logging::Logger logger("nux.image");
 
     delete [] RawData_;
 
-    RawData_ = new t_u8[surface.GetSize() ];
+    RawData_ = new unsigned char[surface.GetSize() ];
     Memcpy(RawData_, surface.RawData_, surface.GetSize());
     return *this;
   }
@@ -298,7 +298,7 @@ logging::Logger logger("nux.image");
 
       block = GPixelFormats[format].BlockSizeY;
       shift = Log2(GPixelFormats[format].BlockSizeY);
-      RawData_ = new t_u8[m_Pitch * Align((height + (block-1)) >> shift, block) ];
+      RawData_ = new unsigned char[m_Pitch * Align((height + (block-1)) >> shift, block) ];
     }
     else
     {
@@ -308,7 +308,7 @@ logging::Logger logger("nux.image");
 
       block = GPixelFormats[format].BlockSizeY;
       shift = Log2(GPixelFormats[format].BlockSizeY);
-      RawData_ = new t_u8[m_Pitch * Align((height + (block-1)) >> shift, block) ];
+      RawData_ = new unsigned char[m_Pitch * Align((height + (block-1)) >> shift, block) ];
     }
 
     Clear();
@@ -430,10 +430,10 @@ logging::Logger logger("nux.image");
     if ((format_ == BITFMT_DXT1) || (format_ == BITFMT_DXT2)  || (format_ == BITFMT_DXT3)  || (format_ == BITFMT_DXT4) || (format_ == BITFMT_DXT5))
       return;
 
-    RawData_[j *m_Pitch + i *bpe_ + 0] = (t_u8) (value & 0xff);
-    RawData_[j *m_Pitch + i *bpe_ + 1] = (t_u8) ((value & 0xff00) >> 8);
-    RawData_[j *m_Pitch + i *bpe_ + 2] = (t_u8) ((value & 0xff0000) >> 16);
-    RawData_[j *m_Pitch + i *bpe_ + 3] = (t_u8) ((value & 0xff000000) >> 24);
+    RawData_[j *m_Pitch + i *bpe_ + 0] = (unsigned char) (value & 0xff);
+    RawData_[j *m_Pitch + i *bpe_ + 1] = (unsigned char) ((value & 0xff00) >> 8);
+    RawData_[j *m_Pitch + i *bpe_ + 2] = (unsigned char) ((value & 0xff0000) >> 16);
+    RawData_[j *m_Pitch + i *bpe_ + 3] = (unsigned char) ((value & 0xff000000) >> 24);
   }
 
   void ImageSurface::Write24b(int i, int j, unsigned int value)
@@ -445,9 +445,9 @@ logging::Logger logger("nux.image");
     if ((format_ == BITFMT_DXT1) || (format_ == BITFMT_DXT2)  || (format_ == BITFMT_DXT3)  || (format_ == BITFMT_DXT4) || (format_ == BITFMT_DXT5))
       return;
 
-    RawData_[j *m_Pitch + i *bpe_ + 0] = (t_u8) (value & 0xff);
-    RawData_[j *m_Pitch + i *bpe_ + 1] = (t_u8) ((value & 0xff00) >> 8);
-    RawData_[j *m_Pitch + i *bpe_ + 2] = (t_u8) ((value & 0xff0000) >> 16);
+    RawData_[j *m_Pitch + i *bpe_ + 0] = (unsigned char) (value & 0xff);
+    RawData_[j *m_Pitch + i *bpe_ + 1] = (unsigned char) ((value & 0xff00) >> 8);
+    RawData_[j *m_Pitch + i *bpe_ + 2] = (unsigned char) ((value & 0xff0000) >> 16);
   }
 
   void ImageSurface::Write16b(int i, int j, unsigned short value)
@@ -459,11 +459,11 @@ logging::Logger logger("nux.image");
     if ((format_ == BITFMT_DXT1) || (format_ == BITFMT_DXT2)  || (format_ == BITFMT_DXT3)  || (format_ == BITFMT_DXT4) || (format_ == BITFMT_DXT5))
       return;
 
-    RawData_[j *m_Pitch + i *bpe_ + 0] = (t_u8) (value & 0xff);
-    RawData_[j *m_Pitch + i *bpe_ + 1] = (t_u8) ((value & 0xff00) >> 8);
+    RawData_[j *m_Pitch + i *bpe_ + 0] = (unsigned char) (value & 0xff);
+    RawData_[j *m_Pitch + i *bpe_ + 1] = (unsigned char) ((value & 0xff00) >> 8);
   }
 
-  void ImageSurface::Write8b(int i, int j, t_u8 value)
+  void ImageSurface::Write8b(int i, int j, unsigned char value)
   {
     nuxAssert(i < width_);
     nuxAssert(j < height_);
@@ -472,10 +472,10 @@ logging::Logger logger("nux.image");
     if ((format_ == BITFMT_DXT1) || (format_ == BITFMT_DXT2)  || (format_ == BITFMT_DXT3)  || (format_ == BITFMT_DXT4) || (format_ == BITFMT_DXT5))
       return;
 
-    RawData_[j *m_Pitch + i *bpe_ + 0] = (t_u8) (value & 0xff);
+    RawData_[j *m_Pitch + i *bpe_ + 0] = (unsigned char) (value & 0xff);
   }
 
-  void ImageSurface::Write(int i, int j, t_u8 r, t_u8 g, t_u8 b, t_u8 a)
+  void ImageSurface::Write(int i, int j, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
   {
     nuxAssert(i < width_);
     nuxAssert(j < height_);
@@ -555,7 +555,7 @@ logging::Logger logger("nux.image");
       return;
 
     int i, j, k;
-    t_u8 *flip_data;
+    unsigned char *flip_data;
 
     if (RawData_ == 0)
       return;
@@ -563,7 +563,7 @@ logging::Logger logger("nux.image");
     if (width_ == 0 || height_ == 0)
       return;
 
-    flip_data =  new t_u8[m_Pitch*height_];
+    flip_data =  new unsigned char[m_Pitch*height_];
 
     for (j = 0; j < height_; j++)
     {
@@ -584,7 +584,7 @@ logging::Logger logger("nux.image");
   {
 
     int i, j, k;
-    t_u8 *flip_data;
+    unsigned char *flip_data;
 
     if (RawData_ == 0)
       return;
@@ -598,7 +598,7 @@ logging::Logger logger("nux.image");
     }
     else
     {
-      flip_data =  new t_u8[m_Pitch*height_];
+      flip_data =  new unsigned char[m_Pitch*height_];
 
       for (j = 0; j < height_; j++)
       {
@@ -831,12 +831,12 @@ logging::Logger logger("nux.image");
     *pBits = *pBits | (gBits[0][3] << 21);
   }
 
-  const t_u8 *ImageSurface::GetPtrRawData() const
+  const unsigned char *ImageSurface::GetPtrRawData() const
   {
     return RawData_;
   }
 
-  t_u8 *ImageSurface::GetPtrRawData()
+  unsigned char *ImageSurface::GetPtrRawData()
   {
     return RawData_;
   }

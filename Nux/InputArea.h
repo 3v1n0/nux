@@ -59,7 +59,6 @@ namespace nux
     virtual void OverlayDrawing(GraphicsEngine &graphics_engine) {}
 
     bool HasKeyboardFocus();
-    void SetAcceptKeyNavFocusOnMouseDown(bool accept);
 
     bool MouseFocusOnOtherArea();
     void CaptureMouseDownAnyWhereElse(bool b);
@@ -81,6 +80,9 @@ namespace nux
     virtual void SetBaseString(const char *Caption);
 
     void SetKeyboardReceiverIgnoreMouseDownOutside(bool ignore_mouse_down_outside);
+
+    void SetAcceptKeyNavFocusOnMouseDown(bool accept);
+    void SetAcceptKeyNavFocusOnMouseEnter(bool accept);
 
     bool KeyboardReceiverIgnoreMouseDownOutside();
 
@@ -147,14 +149,16 @@ namespace nux
     
     int _dnd_safety_x;
     int _dnd_safety_y;
-    
-    bool accept_key_nav_focus_on_mouse_down_;
 
   protected:
     bool _capture_mouse_down_any_where_else;
     bool _double_click;     //!< If True, this InputArea can emit the signal mouse_double_click. Default is false.
 
     bool _keyboard_receiver_ignore_mouse_down_outside;
+
+    bool accept_key_nav_focus_on_mouse_down_;
+    bool accept_key_nav_focus_on_mouse_enter_;
+
 
 #if defined(NUX_OS_LINUX)
     // DnD support
@@ -307,7 +311,8 @@ namespace nux
     protected:
 
       virtual bool AcceptKeyNavFocus();
-      virtual bool AcceptKeyNavFocusOnMouseDown();
+      virtual bool AcceptKeyNavFocusOnMouseDown() const;
+      virtual bool AcceptKeyNavFocusOnMouseEnter() const;
 
       // == Signals with 1 to 1 mapping to input device ==
       virtual void EmitMouseDownSignal        (int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state);

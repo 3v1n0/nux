@@ -111,7 +111,7 @@ size_t CoverflowModel::SelectionIndex()
 
 void CoverflowModel::SetSelection(size_t index)
 {
-  index = std::min(index, pimpl->items_.size() - 1);
+  index = std::min<size_t>(index, pimpl->items_.size() - 1);
   if (index != pimpl->selection_index_)
   {
     pimpl->selection_index_ = index;

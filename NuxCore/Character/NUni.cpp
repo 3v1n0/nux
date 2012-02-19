@@ -69,24 +69,24 @@ namespace nux
 
   static const int halfShift  = 10; /* used for shifting by 10 bits */
 
-  static const t_UTF32 halfBase = 0x0010000UL;
-  static const t_UTF32 halfMask = 0x3FFUL;
+  static const unsigned int halfBase = 0x0010000UL;
+  static const unsigned int halfMask = 0x3FFUL;
 
-#define UNI_SUR_HIGH_START  (t_UTF32)0xD800
-#define UNI_SUR_HIGH_END    (t_UTF32)0xDBFF
-#define UNI_SUR_LOW_START   (t_UTF32)0xDC00
-#define UNI_SUR_LOW_END     (t_UTF32)0xDFFF
+#define UNI_SUR_HIGH_START  (unsigned int)0xD800
+#define UNI_SUR_HIGH_END    (unsigned int)0xDBFF
+#define UNI_SUR_LOW_START   (unsigned int)0xDC00
+#define UNI_SUR_LOW_END     (unsigned int)0xDFFF
 
 
-  ConversionResult ConvertUTF32toUTF16 (const t_UTF32 **sourceStart, const t_UTF32 *sourceEnd, t_UTF16 **targetStart, t_UTF16 *targetEnd, ConversionFlags flags)
+  ConversionResult ConvertUTF32toUTF16 (const unsigned int **sourceStart, const unsigned int *sourceEnd, wchar_t **targetStart, wchar_t *targetEnd, ConversionFlags flags)
   {
     ConversionResult result = conversionOK;
-    const t_UTF32 *source = *sourceStart;
-    t_UTF16 *target = *targetStart;
+    const unsigned int *source = *sourceStart;
+    wchar_t *target = *targetStart;
 
     while (source < sourceEnd)
     {
-      t_UTF32 ch;
+      unsigned int ch;
 
       if (target >= targetEnd)
       {
@@ -114,7 +114,7 @@ namespace nux
         }
         else
         {
-          *target++ = (t_UTF16) ch; /* normal case */
+          *target++ = (wchar_t) ch; /* normal case */
         }
       }
       else if (ch > UNI_MAX_LEGAL_UTF32)
@@ -139,8 +139,8 @@ namespace nux
         }
 
         ch -= halfBase;
-        *target++ = (t_UTF16) ( (ch >> halfShift) + UNI_SUR_HIGH_START);
-        *target++ = (t_UTF16) ( (ch & halfMask) + UNI_SUR_LOW_START);
+        *target++ = (wchar_t) ( (ch >> halfShift) + UNI_SUR_HIGH_START);
+        *target++ = (wchar_t) ( (ch & halfMask) + UNI_SUR_LOW_START);
       }
     }
 
@@ -151,16 +151,16 @@ namespace nux
 
   /* --------------------------------------------------------------------- */
 
-  ConversionResult ConvertUTF16toUTF32 (const t_UTF16 **sourceStart, const t_UTF16 *sourceEnd, t_UTF32 **targetStart, t_UTF32 *targetEnd, ConversionFlags flags)
+  ConversionResult ConvertUTF16toUTF32 (const wchar_t **sourceStart, const wchar_t *sourceEnd, unsigned int **targetStart, unsigned int *targetEnd, ConversionFlags flags)
   {
     ConversionResult result = conversionOK;
-    const t_UTF16 *source = *sourceStart;
-    t_UTF32 *target = *targetStart;
-    t_UTF32 ch, ch2;
+    const wchar_t *source = *sourceStart;
+    unsigned int *target = *targetStart;
+    unsigned int ch, ch2;
 
     while (source < sourceEnd)
     {
-      const t_UTF16 *oldSource = source; /*  In case we have to back up because of target overflow. */
+      const wchar_t *oldSource = source; /*  In case we have to back up because of target overflow. */
       ch = *source++;
 
       /* If we have a surrogate pair, convert to UTF32 first. */
@@ -253,7 +253,7 @@ namespace nux
   * This table contains as many values as there might be trailing bytes
   * in a UTF-8 sequence.
   */
-  static const t_UTF32 offsetsFromUTF8[6] = { 0x00000000UL, 0x00003080UL, 0x000E2080UL,
+  static const unsigned int offsetsFromUTF8[6] = { 0x00000000UL, 0x00003080UL, 0x000E2080UL,
       0x03C82080UL, 0xFA082080UL, 0x82082080UL
                                             };
 
@@ -264,7 +264,7 @@ namespace nux
   * (I.e., one byte sequence, two byte... etc.). Remember that sequencs
   * for *legal* UTF-8 will be 4 or fewer bytes total.
   */
-  static const t_UTF8 firstByteMark[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
+  static const unsigned char firstByteMark[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
 
   /* --------------------------------------------------------------------- */
 
@@ -278,19 +278,19 @@ namespace nux
 
   /* --------------------------------------------------------------------- */
 
-  ConversionResult ConvertUTF16toUTF8 (const t_UTF16 **sourceStart, const t_UTF16 *sourceEnd, t_UTF8 **targetStart, t_UTF8 *targetEnd, ConversionFlags flags)
+  ConversionResult ConvertUTF16toUTF8 (const wchar_t **sourceStart, const wchar_t *sourceEnd, unsigned char **targetStart, unsigned char *targetEnd, ConversionFlags flags)
   {
     ConversionResult result = conversionOK;
-    const t_UTF16 *source = *sourceStart;
-    t_UTF8 *target = *targetStart;
+    const wchar_t *source = *sourceStart;
+    unsigned char *target = *targetStart;
 
     while (source < sourceEnd)
     {
-      t_UTF32 ch;
+      unsigned int ch;
       unsigned short bytesToWrite = 0;
-      const t_UTF32 byteMask = 0xBF;
-      const t_UTF32 byteMark = 0x80;
-      const t_UTF16 *oldSource = source; /* In case we have to back up because of target overflow. */
+      const unsigned int byteMask = 0xBF;
+      const unsigned int byteMark = 0x80;
+      const wchar_t *oldSource = source; /* In case we have to back up because of target overflow. */
       ch = *source++;
 
       /* If we have a surrogate pair, convert to UTF32 first. */
@@ -299,7 +299,7 @@ namespace nux
         /* If the 16 bits following the high surrogate are in the source buffer... */
         if (source < sourceEnd)
         {
-          t_UTF32 ch2 = *source;
+          unsigned int ch2 = *source;
 
           /* If it's a low surrogate, convert to UTF32. */
           if (ch2 >= UNI_SUR_LOW_START && ch2 <= UNI_SUR_LOW_END)
@@ -334,19 +334,19 @@ namespace nux
       }
 
       /* Figure out how many bytes the result will require */
-      if (ch < (t_UTF32) 0x80)
+      if (ch < (unsigned int) 0x80)
       {
         bytesToWrite = 1;
       }
-      else if (ch < (t_UTF32) 0x800)
+      else if (ch < (unsigned int) 0x800)
       {
         bytesToWrite = 2;
       }
-      else if (ch < (t_UTF32) 0x10000)
+      else if (ch < (unsigned int) 0x10000)
       {
         bytesToWrite = 3;
       }
-      else if (ch < (t_UTF32) 0x110000)
+      else if (ch < (unsigned int) 0x110000)
       {
         bytesToWrite = 4;
       }
@@ -369,16 +369,16 @@ namespace nux
       switch (bytesToWrite)   /* note: everything falls through. */
       {
         case 4:
-          *--target = (t_UTF8) ( (ch | byteMark) & byteMask);
+          *--target = (unsigned char) ( (ch | byteMark) & byteMask);
           ch >>= 6;
         case 3:
-          *--target = (t_UTF8) ( (ch | byteMark) & byteMask);
+          *--target = (unsigned char) ( (ch | byteMark) & byteMask);
           ch >>= 6;
         case 2:
-          *--target = (t_UTF8) ( (ch | byteMark) & byteMask);
+          *--target = (unsigned char) ( (ch | byteMark) & byteMask);
           ch >>= 6;
         case 1:
-          *--target =  (t_UTF8) (ch | firstByteMark[bytesToWrite]);
+          *--target =  (unsigned char) (ch | firstByteMark[bytesToWrite]);
       }
 
       target += bytesToWrite;
@@ -402,10 +402,10 @@ namespace nux
   * definition of UTF-8 goes up to 4-byte sequences.
   */
 
-  static bool isLegalUTF8 (const t_UTF8 *source, int length)
+  static bool isLegalUTF8 (const unsigned char *source, int length)
   {
-    t_UTF8 a;
-    const t_UTF8 *srcptr = source + length;
+    unsigned char a;
+    const unsigned char *srcptr = source + length;
 
     switch (length)
     {
@@ -469,7 +469,7 @@ namespace nux
   * This is not used here; it's just exported.
   */
 
-  bool isLegalUTF8Sequence (const t_UTF8 *source, const t_UTF8 *sourceEnd)
+  bool isLegalUTF8Sequence (const unsigned char *source, const unsigned char *sourceEnd)
   {
     int length;
 
@@ -508,8 +508,8 @@ namespace nux
   bool
   tr_utf8_validate ( const char *str, int max_len, const char **end )
   {
-    const t_UTF8 *source = (const t_UTF8 *) str;
-    const t_UTF8 *sourceEnd;
+    const unsigned char *source = (const unsigned char *) str;
+    const unsigned char *sourceEnd;
 
     if ( max_len == 0 )
       return true;
@@ -564,15 +564,15 @@ namespace nux
 
   /* --------------------------------------------------------------------- */
 
-  ConversionResult ConvertUTF8toUTF16 (const t_UTF8 **sourceStart, const t_UTF8 *sourceEnd, t_UTF16 **targetStart, t_UTF16 *targetEnd, ConversionFlags flags)
+  ConversionResult ConvertUTF8toUTF16 (const unsigned char **sourceStart, const unsigned char *sourceEnd, wchar_t **targetStart, wchar_t *targetEnd, ConversionFlags flags)
   {
     ConversionResult result = conversionOK;
-    const t_UTF8 *source = *sourceStart;
-    t_UTF16 *target = *targetStart;
+    const unsigned char *source = *sourceStart;
+    wchar_t *target = *targetStart;
 
     while (source < sourceEnd)
     {
-      t_UTF32 ch = 0;
+      unsigned int ch = 0;
       unsigned short extraBytesToRead = trailingBytesForUTF8[*source];
 
       if (source + extraBytesToRead >= sourceEnd)
@@ -639,7 +639,7 @@ namespace nux
         }
         else
         {
-          *target++ = (t_UTF16) ch; /* normal case */
+          *target++ = (wchar_t) ch; /* normal case */
         }
       }
       else if (ch > UNI_MAX_UTF16)
@@ -666,8 +666,8 @@ namespace nux
         }
 
         ch -= halfBase;
-        *target++ = (t_UTF16) ( (ch >> halfShift) + UNI_SUR_HIGH_START);
-        *target++ = (t_UTF16) ( (ch & halfMask) + UNI_SUR_LOW_START);
+        *target++ = (wchar_t) ( (ch >> halfShift) + UNI_SUR_HIGH_START);
+        *target++ = (wchar_t) ( (ch & halfMask) + UNI_SUR_LOW_START);
       }
     }
 
@@ -679,19 +679,19 @@ namespace nux
   /* --------------------------------------------------------------------- */
 
   ConversionResult ConvertUTF32toUTF8 (
-    const t_UTF32 **sourceStart, const t_UTF32 *sourceEnd,
-    t_UTF8 **targetStart, t_UTF8 *targetEnd, ConversionFlags flags)
+    const unsigned int **sourceStart, const unsigned int *sourceEnd,
+    unsigned char **targetStart, unsigned char *targetEnd, ConversionFlags flags)
   {
     ConversionResult result = conversionOK;
-    const t_UTF32 *source = *sourceStart;
-    t_UTF8 *target = *targetStart;
+    const unsigned int *source = *sourceStart;
+    unsigned char *target = *targetStart;
 
     while (source < sourceEnd)
     {
-      t_UTF32 ch;
+      unsigned int ch;
       unsigned short bytesToWrite = 0;
-      const t_UTF32 byteMask = 0xBF;
-      const t_UTF32 byteMark = 0x80;
+      const unsigned int byteMask = 0xBF;
+      const unsigned int byteMark = 0x80;
       ch = *source++;
 
       if (flags == strictConversion )
@@ -709,15 +709,15 @@ namespace nux
        * Figure out how many bytes the result will require. Turn any
        * illegally large UTF32 things (> Plane 17) into replacement chars.
        */
-      if (ch < (t_UTF32) 0x80)
+      if (ch < (unsigned int) 0x80)
       {
         bytesToWrite = 1;
       }
-      else if (ch < (t_UTF32) 0x800)
+      else if (ch < (unsigned int) 0x800)
       {
         bytesToWrite = 2;
       }
-      else if (ch < (t_UTF32) 0x10000)
+      else if (ch < (unsigned int) 0x10000)
       {
         bytesToWrite = 3;
       }
@@ -745,16 +745,16 @@ namespace nux
       switch (bytesToWrite)   /* note: everything falls through. */
       {
         case 4:
-          *--target = (t_UTF8) ( (ch | byteMark) & byteMask);
+          *--target = (unsigned char) ( (ch | byteMark) & byteMask);
           ch >>= 6;
         case 3:
-          *--target = (t_UTF8) ( (ch | byteMark) & byteMask);
+          *--target = (unsigned char) ( (ch | byteMark) & byteMask);
           ch >>= 6;
         case 2:
-          *--target = (t_UTF8) ( (ch | byteMark) & byteMask);
+          *--target = (unsigned char) ( (ch | byteMark) & byteMask);
           ch >>= 6;
         case 1:
-          *--target = (t_UTF8) (ch | firstByteMark[bytesToWrite]);
+          *--target = (unsigned char) (ch | firstByteMark[bytesToWrite]);
       }
 
       target += bytesToWrite;
@@ -768,16 +768,16 @@ namespace nux
   /* --------------------------------------------------------------------- */
 
   ConversionResult ConvertUTF8toUTF32 (
-    const t_UTF8 **sourceStart, const t_UTF8 *sourceEnd,
-    t_UTF32 **targetStart, t_UTF32 *targetEnd, ConversionFlags flags)
+    const unsigned char **sourceStart, const unsigned char *sourceEnd,
+    unsigned int **targetStart, unsigned int *targetEnd, ConversionFlags flags)
   {
     ConversionResult result = conversionOK;
-    const t_UTF8 *source = *sourceStart;
-    t_UTF32 *target = *targetStart;
+    const unsigned char *source = *sourceStart;
+    unsigned int *target = *targetStart;
 
     while (source < sourceEnd)
     {
-      t_UTF32 ch = 0;
+      unsigned int ch = 0;
       unsigned short extraBytesToRead = trailingBytesForUTF8[*source];
 
       if (source + extraBytesToRead >= sourceEnd)

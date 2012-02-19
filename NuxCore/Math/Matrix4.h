@@ -1230,7 +1230,7 @@ namespace nux
     // note: adapted from david eberly's code without permission
     //TODO: make sure it is correct
     
-    if (axis.LengthSquared() < Const::EpsilonMicro)
+    if (axis.LengthSquared() < constants::epsilon_micro)
     {
       Identity();
     }
