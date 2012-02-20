@@ -39,7 +39,7 @@ public:
   nux::VLayout* layout_;
   TestScrollView* scroll_view_;
   nux::VLayout* in_layout_;
-  TestView* test_view_;
+  nux::TestView* test_view_;
 };
 
 ScrollBarTest::ScrollBarTest(const char* program_name,
@@ -65,7 +65,7 @@ void ScrollBarTest::UserInterfaceSetup()
   in_layout_ = new nux::VLayout(NUX_TRACKER_LOCATION);
   scroll_view_->SetLayout(in_layout_);
   
-  test_view_ = new TestView();
+  test_view_ = new nux::TestView();
   test_view_->SetMinimumHeight(1000);
   in_layout_->AddView(test_view_);
   

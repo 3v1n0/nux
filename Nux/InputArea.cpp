@@ -350,17 +350,6 @@ logging::Logger logger("nux.inputarea");
     mouse_double_click.emit(x, y, mouse_button_state, special_keys_state);
   }
 
-
-  void InputArea::EmitStartKeyboardFocus()
-  {
-    begin_key_focus.emit();
-  }
-
-  void InputArea::EmitEndKeyboardFocus()
-  {
-    end_key_focus.emit();
-  }
-
   void InputArea::EmitMouseDownOutsideArea(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
   {
     mouse_down_outside_pointer_grab_area.emit(x, y, mouse_button_state, special_keys_state);
@@ -414,5 +403,13 @@ logging::Logger logger("nux.inputarea");
   {
     accept_key_nav_focus_on_mouse_enter_ = accept;
   }
+
+  bool InputArea::AcceptKeyNavFocus() const
+  {
+    if (GetInputEventSensitivity() == false)
+      return false;
+
+    return true;
+  }  
 }
 

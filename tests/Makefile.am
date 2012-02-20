@@ -84,7 +84,9 @@ gtest_nux_SOURCES = \
   test-nux-main.cpp \
   test-nux-metrics.cpp \
   test-nux-statictext.cpp \
+  gtest-nux-windowcompositor.cpp \
   test-nux-windowthread.cpp
+
 
 gtest_nux_CPPFLAGS = \
   -I$(srcdir) \
