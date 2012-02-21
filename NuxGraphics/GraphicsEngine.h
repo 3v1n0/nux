@@ -935,7 +935,10 @@ namespace nux
     ObjectPtr<IOpenGLShaderProgram> _blend_tex_tex_prog[BLEND_MODE_LAST];
     
     const char *const GetBlendModeBlendFunc (BlendMode blend_mode);
-    const char *const GetBlendModeName (BlendMode blend_mode);
+    const char *const GetBlendModeString (BlendMode blend_mode);
+    
+    ObjectPtr<IOpenGLShaderProgram> GetBlendTexColorProgram (BlendMode blend_mode);
+
 
 
     //! Test the gpu features and set variables such as \e _use_glsl_shaders.
