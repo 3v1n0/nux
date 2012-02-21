@@ -615,7 +615,18 @@ namespace nux
         return NULL;
       }
 
+      if ((direction == KEY_NAV_LEFT) && position % nun_column == 0)
+      {
+        return NULL;
+      }
+
       if ((direction == KEY_NAV_RIGHT) && (it_next == _layout_element_list.end()))
+      {
+        // last item
+        return NULL;
+      }
+
+      if ((direction == KEY_NAV_RIGHT) && position % nun_column == nun_column - 1)
       {
         // last item
         return NULL;

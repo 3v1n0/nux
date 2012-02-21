@@ -34,10 +34,10 @@ namespace nux
     size_t utf8size = 6 * utf16size;
     ANSICHAR *utf8string = new ANSICHAR[utf8size+1];
 
-    const t_UTF16 *source_start = utf16string.c_str();
-    const t_UTF16 *source_end = source_start + utf16size;
-    t_UTF8 *target_start = reinterpret_cast<t_UTF8 *> (utf8string);
-    t_UTF8 *target_end = target_start + utf8size;
+    const wchar_t *source_start = utf16string.c_str();
+    const wchar_t *source_end = source_start + utf16size;
+    unsigned char *target_start = reinterpret_cast<unsigned char *> (utf8string);
+    unsigned char *target_end = target_start + utf8size;
 
     ConversionResult res = ConvertUTF16toUTF8 (&source_start, source_end, &target_start, target_end, lenientConversion);
 
@@ -59,10 +59,10 @@ namespace nux
     size_t utf16size = utf8size;
     UNICHAR *utf16string = new UNICHAR[utf16size+1];
 
-    const t_UTF8 *source_start = reinterpret_cast<const t_UTF8 *> (utf8string.c_str() );
-    const t_UTF8 *source_end = source_start + utf8size;
-    t_UTF16 *target_start = reinterpret_cast<t_UTF16 *> (utf16string);
-    t_UTF16 *target_end = target_start + utf16size;
+    const unsigned char *source_start = reinterpret_cast<const unsigned char *> (utf8string.c_str() );
+    const unsigned char *source_end = source_start + utf8size;
+    wchar_t *target_start = reinterpret_cast<wchar_t *> (utf16string);
+    wchar_t *target_end = target_start + utf16size;
 
     ConversionResult res = ConvertUTF8toUTF16 (&source_start, source_end, &target_start, target_end, lenientConversion);
 

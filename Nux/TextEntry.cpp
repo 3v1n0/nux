@@ -112,10 +112,10 @@ namespace nux
   TextEntry::TextEntry(const char* text, NUX_FILE_LINE_DECL)
     : View(NUX_FILE_LINE_PARAM)
     , _size_match_text(true)
-    , _texture2D(nullptr)
-    , canvas_(nullptr)
-    , cached_layout_(nullptr)
-    , preedit_attrs_(nullptr)
+    , _texture2D(NULL)
+    , canvas_(NULL)
+    , cached_layout_(NULL)
+    , preedit_attrs_(NULL)
     , completion_color_(color::Gray)
     , last_dblclick_time_(0)
     , cursor_(0)
@@ -182,6 +182,8 @@ namespace nux
 
   TextEntry::~TextEntry()
   {
+    ResetLayout();
+
     if (cursor_blink_timer_)
       g_source_remove(cursor_blink_timer_);
 
@@ -454,7 +456,7 @@ namespace nux
   {
     ProcessMouseEvent(NUX_MOUSE_MOVE, x, y, dx, dy, button_flags, key_flags);
   }
-  
+
   void TextEntry::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
 #if defined(NUX_OS_LINUX)
@@ -462,7 +464,7 @@ namespace nux
     {
       Display* display = nux::GetGraphicsDisplay()->GetX11Display();
       nux::BaseWindow* window = static_cast<nux::BaseWindow*>(GetTopLevelViewWindow());
-    
+
       if (display && window)
       {
         caret_cursor_ = XCreateFontCursor(display, XC_xterm);
@@ -471,7 +473,7 @@ namespace nux
     }
 #endif
   }
-  
+
   void TextEntry::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
 #if defined(NUX_OS_LINUX)
@@ -479,7 +481,7 @@ namespace nux
     {
       Display* display = nux::GetGraphicsDisplay()->GetX11Display();
       nux::BaseWindow* window = static_cast<nux::BaseWindow*>(GetTopLevelViewWindow());
-      
+
       if (display && window)
       {
         XUndefineCursor(display, window->GetInputWindowId());
@@ -1223,7 +1225,7 @@ namespace nux
     }
     if (!completion_.empty() && !wrap_)
     {
-      attr = pango_attr_foreground_new(65535 * completion_color_.red, 
+      attr = pango_attr_foreground_new(65535 * completion_color_.red,
                                        65535 * completion_color_.green,
                                        65535 * completion_color_.blue);
       attr->start_index = static_cast<guint>(pre_completion_length);

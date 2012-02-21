@@ -35,10 +35,10 @@ public:
 
   virtual void UserInterfaceSetup();
   
-  TestView* view0_;
-  TestView* view1_;
-  TestView* view2_;
-  TestView* view3_;
+  nux::TestView* view0_;
+  nux::TestView* view1_;
+  nux::TestView* view2_;
+  nux::TestView* view3_;
 
 };
 
@@ -69,22 +69,22 @@ void KeyNavDirectionTest::UserInterfaceSetup()
   layout0->SetSpaceBetweenChildren(10);
   layout1->SetSpaceBetweenChildren(10);
 
-  view0_ = new TestView(NUX_TRACKER_LOCATION);
+  view0_ = new nux::TestView(NUX_TRACKER_LOCATION);
   view0_->can_focus_ = true;
   view0_->SetAcceptKeyNavFocusOnMouseDown(true);
   layout0->AddView(view0_, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_FULL);
     
-  view1_ = new TestView(NUX_TRACKER_LOCATION);
+  view1_ = new nux::TestView(NUX_TRACKER_LOCATION);
   view1_->can_focus_ = true;
   view1_->SetAcceptKeyNavFocusOnMouseDown(true);
   layout0->AddView(view1_, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_FULL);
 
-  view2_ = new TestView(NUX_TRACKER_LOCATION);
+  view2_ = new nux::TestView(NUX_TRACKER_LOCATION);
   view2_->can_focus_ = true;
   view2_->SetAcceptKeyNavFocusOnMouseDown(true);
   layout1->AddView(view2_, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_FULL);
     
-  view3_ = new TestView(NUX_TRACKER_LOCATION);
+  view3_ = new nux::TestView(NUX_TRACKER_LOCATION);
   view3_->can_focus_ = true;
   view3_->SetAcceptKeyNavFocusOnMouseDown(true);
   layout1->AddView(view3_, 1, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_FULL);

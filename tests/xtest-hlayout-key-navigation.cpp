@@ -38,11 +38,11 @@ public:
 
   virtual void UserInterfaceSetup();
   
-  TestView* CreateView();
-  void AddView(TestView* view);
+  nux::TestView* CreateView();
+  void AddView(nux::TestView* view);
   
   nux::HLayout* hlayout_;
-  TestView* views_[NUM_VIEWS];
+  nux::TestView* views_[NUM_VIEWS];
 };
 
 HLayoutKeyNavigationTest::HLayoutKeyNavigationTest(const char* program_name,
@@ -57,13 +57,13 @@ HLayoutKeyNavigationTest::~HLayoutKeyNavigationTest()
 {
 }
 
-TestView* HLayoutKeyNavigationTest::CreateView()
+nux::TestView* HLayoutKeyNavigationTest::CreateView()
 {
-  TestView* view = new TestView();
+  nux::TestView* view = new nux::TestView();
   return view;
 }
 
-void HLayoutKeyNavigationTest::AddView(TestView* view)
+void HLayoutKeyNavigationTest::AddView(nux::TestView* view)
 {
   hlayout_->AddView(view, 1);
 }

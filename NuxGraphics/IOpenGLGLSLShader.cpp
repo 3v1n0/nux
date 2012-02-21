@@ -314,7 +314,7 @@ namespace nux
     Memset(ShaderSource, 0, CodeSize + 1);
     Memcpy(ShaderSource, _ShaderCode.m_string.c_str(), CodeSize);
     CHECKGL(glShaderSource(_OpenGLID, 1, (const GLcharARB **) &ShaderSource, &CodeSize));
-    delete [] ShaderSource;
+    //    delete [] ShaderSource;
 
     // compile pixel shader object
     CHECKGL(glCompileShader(_OpenGLID));
@@ -339,6 +339,8 @@ namespace nux
       {
         nuxError("[IOpenGLPixelShader::Compile] glCompileShader: %s", InfoLogBuffer);
       }
+      printf("Compile error; %s \n", InfoLogBuffer);
+      printf("Code was: %s \n", ShaderSource);
 
       delete[] InfoLogBuffer;
     }

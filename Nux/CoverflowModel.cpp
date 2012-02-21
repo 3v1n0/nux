@@ -21,28 +21,63 @@
 
 namespace nux
 { 
+
+struct CoverflowModel::Impl
+{
+  Impl(CoverflowModel *parent);
+  ~Impl();
+
+  CoverflowModel* parent_;
+  size_t selection_index_;
+  CoverflowItemList items_;
+};
+
+CoverflowModel::Impl::Impl(CoverflowModel* parent)
+  : parent_(parent)
+  , selection_index_(0)
+{
+}
+
+CoverflowModel::Impl::~Impl()
+{
+}
+
 NUX_IMPLEMENT_OBJECT_TYPE(CoverflowModel);
+
+CoverflowModel::CoverflowModel()
+  : pimpl(new CoverflowModel::Impl(this))
+{
+}
+
+CoverflowModel::~CoverflowModel()
+{
+  delete pimpl;
+}
+
 CoverflowModel::CoverflowItemList const& CoverflowModel::Items() const
 {
-  return items_;
+  return pimpl->items_;
 }
 
 void CoverflowModel::AddItem(CoverflowItem::Ptr const& item)
 {
-  items_.push_back(item);
+  pimpl->items_.push_back(item);
   item_added.emit(this, item);
+  SetSelection(pimpl->selection_index_); // perform bounds check
 }
 
 void CoverflowModel::InsertItem(CoverflowItem::Ptr const& item, size_t index)
 {
-  items_.insert(items_.begin() + std::max<float>(index, items_.size()), item);
+  pimpl->items_.insert(pimpl->items_.begin() + std::max<float>(index, pimpl->items_.size()), item);
   item_added.emit(this, item);
+  SetSelection(pimpl->selection_index_); // perform bounds check
 }
 
 void CoverflowModel::RemoveItem(CoverflowItem::Ptr const& item)
 {
-  items_.erase(std::remove(items_.begin(), items_.end(), item), items_.end());
+  pimpl->items_.erase(std::remove(pimpl->items_.begin(), pimpl->items_.end(), item), pimpl->items_.end());
   item_removed.emit(this, item);
+  SetSelection(pimpl->selection_index_); // perform bounds check
 }
 
 size_t CoverflowModel::IndexOf(CoverflowItem::Ptr const& item)
@@ -51,7 +86,7 @@ size_t CoverflowModel::IndexOf(CoverflowItem::Ptr const& item)
 
   CoverflowItemList::iterator it;
 
-  for (it = items_.begin(); it != items_.end(); ++it)
+  for (it = pimpl->items_.begin(); it != pimpl->items_.end(); ++it)
   {
     CoverflowItem::Ptr compare = *it;
     if (item == compare)
@@ -61,5 +96,46 @@ size_t CoverflowModel::IndexOf(CoverflowItem::Ptr const& item)
 
   return 0;
 }
+
+CoverflowItem::Ptr CoverflowModel::Selection()
+{
+  if (pimpl->selection_index_ >= pimpl->items_.size())
+    return CoverflowItem::Ptr();
+  return pimpl->items_[pimpl->selection_index_];
+}
+
+size_t CoverflowModel::SelectionIndex()
+{
+  return pimpl->selection_index_;
+}
+
+void CoverflowModel::SetSelection(size_t index)
+{
+  index = std::min<size_t>(index, pimpl->items_.size() - 1);
+  if (index != pimpl->selection_index_)
+  {
+    pimpl->selection_index_ = index;
+    selection_changed.emit(this, Selection());
+  }
+}
+
+void CoverflowModel::SetSelection(CoverflowItem::Ptr item)
+{
+  SetSelection(IndexOf(item));
+}
+
+void CoverflowModel::SelectNext()
+{
+  SetSelection(pimpl->selection_index_ + 1);
+}
+
+void CoverflowModel::SelectPrev()
+{
+  if (pimpl->selection_index_ == 0)
+    return;
+
+  SetSelection(pimpl->selection_index_ - 1);
+}
+
 
 }

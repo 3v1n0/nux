@@ -48,5 +48,8 @@ xtest-vlayout-key-navigation
 xtest-focus-on-mouse-down
   Make sure that AcceptKeyNavFocusOnMouseDown works well.
 
+xtest-focus-on-mouse-enter
+  Make sure that AcceptKeyNavFocusOnMouseEnter works well.
+
 xtest-keynav-direction
   Test key navigation. Especially test the direction a key nav is coming from when the view is getting the focus.
