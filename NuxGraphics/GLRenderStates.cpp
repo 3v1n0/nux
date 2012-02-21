@@ -213,19 +213,19 @@ namespace nux
     HW__EnableStencil( render_state_changes_[GFXRS_STENCILENABLE].iValue );
 
     HW__SetStencilFunc(
-      s_StateLUT.default_render_state[GFXRS_FRONT_STENCILFUNC].iValue,
-      s_StateLUT.default_render_state[GFXRS_FRONT_STENCILREF].iValue,
-      s_StateLUT.default_render_state[GFXRS_FRONT_STENCILMASK].iValue);
+      render_state_changes_[GFXRS_FRONT_STENCILFUNC].iValue,
+      render_state_changes_[GFXRS_FRONT_STENCILREF].iValue,
+      render_state_changes_[GFXRS_FRONT_STENCILMASK].iValue);
     HW__SetStencilOp(
-      s_StateLUT.default_render_state[GFXRS_FRONT_STENCILFAIL].iValue,
-      s_StateLUT.default_render_state[GFXRS_FRONT_STENCILZFAIL].iValue,
-      s_StateLUT.default_render_state[GFXRS_FRONT_STENCILZPASS].iValue);
+      render_state_changes_[GFXRS_FRONT_STENCILFAIL].iValue,
+      render_state_changes_[GFXRS_FRONT_STENCILZFAIL].iValue,
+      render_state_changes_[GFXRS_FRONT_STENCILZPASS].iValue);
 
-    HW__EnableLineSmooth(s_StateLUT.default_render_state[GFXRS_LINESMOOTHENABLE].iValue);
-    HW__SetLineWidth(s_StateLUT.default_render_state[GFXRS_LINEWIDTH].iValue, s_StateLUT.default_render_state[GFXRS_LINEHINT].iValue);
+    HW__EnableLineSmooth(render_state_changes_[GFXRS_LINESMOOTHENABLE].iValue);
+    HW__SetLineWidth(render_state_changes_[GFXRS_LINEWIDTH].iValue, render_state_changes_[GFXRS_LINEHINT].iValue);
 
-    HW__EnablePointSmooth(s_StateLUT.default_render_state[GFXRS_POINTSMOOTHENABLE].iValue);
-    HW__SetPointSize(s_StateLUT.default_render_state[GFXRS_POINTSIZE].iValue, s_StateLUT.default_render_state[GFXRS_POINTHINT].iValue);
+    HW__EnablePointSmooth(render_state_changes_[GFXRS_POINTSMOOTHENABLE].iValue);
+    HW__SetPointSize(render_state_changes_[GFXRS_POINTSIZE].iValue, render_state_changes_[GFXRS_POINTHINT].iValue);
         
 #if 0
     HW__EnableTwoSidedStencil( s_StateLUT.default_render_state[GFXRS_TWOSIDEDSTENCILENABLE].iValue );
