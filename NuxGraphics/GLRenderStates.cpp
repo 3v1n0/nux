@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Inalogic® Inc.
+ * Copyright 2010-2012 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -115,7 +115,7 @@ namespace nux
   {
     _gpu_brand = board;
     _gpu_info = info;
-    Memcpy(&m_RenderStateChanges, &s_StateLUT.default_render_state, sizeof(m_RenderStateChanges));
+    Memcpy(&render_state_changes_, &s_StateLUT.default_render_state, sizeof(render_state_changes_));
   }
 
   GpuRenderStates::~GpuRenderStates()
@@ -155,6 +155,12 @@ namespace nux
       s_StateLUT.default_render_state[GFXRS_FRONT_STENCILZFAIL].iValue,
       s_StateLUT.default_render_state[GFXRS_FRONT_STENCILZPASS].iValue);
 
+    HW__EnableLineSmooth(s_StateLUT.default_render_state[GFXRS_LINESMOOTHENABLE].iValue);
+    HW__SetLineWidth(s_StateLUT.default_render_state[GFXRS_LINEWIDTH].iValue, s_StateLUT.default_render_state[GFXRS_LINEHINT].iValue);
+
+    HW__EnablePointSmooth(s_StateLUT.default_render_state[GFXRS_POINTSMOOTHENABLE].iValue);
+    HW__SetPointSize(s_StateLUT.default_render_state[GFXRS_POINTSIZE].iValue, s_StateLUT.default_render_state[GFXRS_POINTHINT].iValue);
+
 #if 0
     HW__EnableTwoSidedStencil( s_StateLUT.default_render_state[GFXRS_TWOSIDEDSTENCILENABLE].iValue );
 
@@ -184,27 +190,27 @@ namespace nux
 
   void GpuRenderStates::SubmitChangeStates()
   {
-    HW__EnableCulling( m_RenderStateChanges[GFXRS_CULLFACEENABLE].iValue );
-    HW__SetFrontFace( m_RenderStateChanges[GFXRS_FRONTFACE].iValue );
-    HW__SetCullFace( m_RenderStateChanges[GFXRS_CULLFACE].iValue );
+    HW__EnableCulling( render_state_changes_[GFXRS_CULLFACEENABLE].iValue );
+    HW__SetFrontFace( render_state_changes_[GFXRS_FRONTFACE].iValue );
+    HW__SetCullFace( render_state_changes_[GFXRS_CULLFACE].iValue );
 
-    HW__SetDepthMask( m_RenderStateChanges[GFXRS_ZWRITEENABLE].iValue );
-    HW__SetDepthFunc( m_RenderStateChanges[GFXRS_ZFUNC].iValue );
-    HW__SetEnableDepthTest( m_RenderStateChanges[GFXRS_ZTESTENABLE].iValue );
-    HW__SetDepthRange( m_RenderStateChanges[GFXRS_ZNEAR].fValue, m_RenderStateChanges[GFXRS_ZFAR].fValue );
+    HW__SetDepthMask( render_state_changes_[GFXRS_ZWRITEENABLE].iValue );
+    HW__SetDepthFunc( render_state_changes_[GFXRS_ZFUNC].iValue );
+    HW__SetEnableDepthTest( render_state_changes_[GFXRS_ZTESTENABLE].iValue );
+    HW__SetDepthRange( render_state_changes_[GFXRS_ZNEAR].fValue, render_state_changes_[GFXRS_ZFAR].fValue );
 
-    HW__EnableAlphaBlend( m_RenderStateChanges[GFXRS_ALPHABLENDENABLE].iValue );
-    HW__SetAlphaBlendOp( m_RenderStateChanges[GFXRS_BLENDOP].iValue, m_RenderStateChanges[GFXRS_BLENDOPALPHA].iValue );
+    HW__EnableAlphaBlend( render_state_changes_[GFXRS_ALPHABLENDENABLE].iValue );
+    HW__SetAlphaBlendOp( render_state_changes_[GFXRS_BLENDOP].iValue, render_state_changes_[GFXRS_BLENDOPALPHA].iValue );
     HW__SetSeparateAlphaBlendFactors(
-      m_RenderStateChanges[GFXRS_SRCBLEND].iValue, m_RenderStateChanges[GFXRS_DESTBLEND].iValue,
-      m_RenderStateChanges[GFXRS_SRCBLENDALPHA].iValue, m_RenderStateChanges[GFXRS_DESTBLENDALPHA ].iValue );
+      render_state_changes_[GFXRS_SRCBLEND].iValue, render_state_changes_[GFXRS_DESTBLEND].iValue,
+      render_state_changes_[GFXRS_SRCBLENDALPHA].iValue, render_state_changes_[GFXRS_DESTBLENDALPHA ].iValue );
 
 
-    HW__EnableAlphaTest( m_RenderStateChanges[GFXRS_ALPHATESTENABLE].iValue );
-    HW__SetAlphaTestFunc( m_RenderStateChanges[GFXRS_ALPHATESTFUNC].iValue, m_RenderStateChanges[GFXRS_ALPHATESTREF].iValue );
+    HW__EnableAlphaTest( render_state_changes_[GFXRS_ALPHATESTENABLE].iValue );
+    HW__SetAlphaTestFunc( render_state_changes_[GFXRS_ALPHATESTFUNC].iValue, render_state_changes_[GFXRS_ALPHATESTREF].iValue );
 
 
-    HW__EnableStencil( m_RenderStateChanges[GFXRS_STENCILENABLE].iValue );
+    HW__EnableStencil( render_state_changes_[GFXRS_STENCILENABLE].iValue );
 
     HW__SetStencilFunc(
       s_StateLUT.default_render_state[GFXRS_FRONT_STENCILFUNC].iValue,
@@ -215,31 +221,37 @@ namespace nux
       s_StateLUT.default_render_state[GFXRS_FRONT_STENCILZFAIL].iValue,
       s_StateLUT.default_render_state[GFXRS_FRONT_STENCILZPASS].iValue);
 
+    HW__EnableLineSmooth(s_StateLUT.default_render_state[GFXRS_LINESMOOTHENABLE].iValue);
+    HW__SetLineWidth(s_StateLUT.default_render_state[GFXRS_LINEWIDTH].iValue, s_StateLUT.default_render_state[GFXRS_LINEHINT].iValue);
+
+    HW__EnablePointSmooth(s_StateLUT.default_render_state[GFXRS_POINTSMOOTHENABLE].iValue);
+    HW__SetPointSize(s_StateLUT.default_render_state[GFXRS_POINTSIZE].iValue, s_StateLUT.default_render_state[GFXRS_POINTHINT].iValue);
+        
 #if 0
     HW__EnableTwoSidedStencil( s_StateLUT.default_render_state[GFXRS_TWOSIDEDSTENCILENABLE].iValue );
 
     HW__SetFrontFaceStencilFunc(
-      m_RenderStateChanges[GFXRS_FRONT_STENCILFUNC].iValue,
-      m_RenderStateChanges[GFXRS_FRONT_STENCILREF].iValue,
-      m_RenderStateChanges[GFXRS_FRONT_STENCILMASK].iValue );
+      render_state_changes_[GFXRS_FRONT_STENCILFUNC].iValue,
+      render_state_changes_[GFXRS_FRONT_STENCILREF].iValue,
+      render_state_changes_[GFXRS_FRONT_STENCILMASK].iValue );
     HW__SetFrontFaceStencilOp(
-      m_RenderStateChanges[GFXRS_FRONT_STENCILFAIL].iValue,
-      m_RenderStateChanges[GFXRS_FRONT_STENCILZFAIL].iValue,
-      m_RenderStateChanges[GFXRS_FRONT_STENCILZPASS].iValue );
+      render_state_changes_[GFXRS_FRONT_STENCILFAIL].iValue,
+      render_state_changes_[GFXRS_FRONT_STENCILZFAIL].iValue,
+      render_state_changes_[GFXRS_FRONT_STENCILZPASS].iValue );
 
     HW__SetBackFaceStencilFunc(
-      m_RenderStateChanges[GFXRS_BACK_STENCILFUNC].iValue,
-      m_RenderStateChanges[GFXRS_BACK_STENCILREF].iValue,
-      m_RenderStateChanges[GFXRS_BACK_STENCILMASK].iValue );
+      render_state_changes_[GFXRS_BACK_STENCILFUNC].iValue,
+      render_state_changes_[GFXRS_BACK_STENCILREF].iValue,
+      render_state_changes_[GFXRS_BACK_STENCILMASK].iValue );
     HW__SetBackFaceStencilOp(
-      m_RenderStateChanges[GFXRS_BACK_STENCILFAIL].iValue,
-      m_RenderStateChanges[GFXRS_BACK_STENCILZFAIL].iValue,
-      m_RenderStateChanges[GFXRS_BACK_STENCILZPASS].iValue );
+      render_state_changes_[GFXRS_BACK_STENCILFAIL].iValue,
+      render_state_changes_[GFXRS_BACK_STENCILZFAIL].iValue,
+      render_state_changes_[GFXRS_BACK_STENCILZPASS].iValue );
 #endif
 
-    HW__EnableScissor( m_RenderStateChanges[GFXRS_SCISSORTESTENABLE].iValue );
+    HW__EnableScissor( render_state_changes_[GFXRS_SCISSORTESTENABLE].iValue );
 
-    HW__EnableFog( m_RenderStateChanges[GFXRS_FOGENABLE].iValue );
+    HW__EnableFog( render_state_changes_[GFXRS_FOGENABLE].iValue );
 
   }
 
@@ -247,12 +259,12 @@ namespace nux
   {
     for (unsigned int i = 0; i < GFXRS_MAX_RENDERSTATES; i++)
     {
-      if (m_RenderStateChanges[i].Checked &&
-          ((m_RenderStateChanges[i].iValue != s_StateLUT.default_render_state[i].iValue) ||
-            (m_RenderStateChanges[i].fValue != s_StateLUT.default_render_state[i].fValue)))
+      if (render_state_changes_[i].Checked &&
+          ((render_state_changes_[i].iValue != s_StateLUT.default_render_state[i].iValue) ||
+            (render_state_changes_[i].fValue != s_StateLUT.default_render_state[i].fValue)))
       {
-        m_RenderStateChanges[i].iValue = s_StateLUT.default_render_state[i].iValue;
-        m_RenderStateChanges[i].fValue = s_StateLUT.default_render_state[i].fValue;
+        render_state_changes_[i].iValue = s_StateLUT.default_render_state[i].iValue;
+        render_state_changes_[i].fValue = s_StateLUT.default_render_state[i].fValue;
       }
     }
   }
@@ -261,167 +273,15 @@ namespace nux
   {
     for (unsigned int i = 0; i < GFXRS_MAX_RENDERSTATES; i++)
     {
-      if (m_RenderStateChanges[i].Checked &&
-          ((m_RenderStateChanges[i].iValue != s_StateLUT.default_render_state[i].iValue) ||
-            (m_RenderStateChanges[i].fValue != s_StateLUT.default_render_state[i].fValue)))
+      if (render_state_changes_[i].Checked &&
+          ((render_state_changes_[i].iValue != s_StateLUT.default_render_state[i].iValue) ||
+            (render_state_changes_[i].fValue != s_StateLUT.default_render_state[i].fValue)))
       {
-        m_RenderStateChanges[i].iValue = s_StateLUT.default_render_state[i].iValue;
-        m_RenderStateChanges[i].fValue = s_StateLUT.default_render_state[i].fValue;
+        render_state_changes_[i].iValue = s_StateLUT.default_render_state[i].iValue;
+        render_state_changes_[i].fValue = s_StateLUT.default_render_state[i].fValue;
         nuxError("[GpuRenderStates::Check] Render state doesn't have default value");
       }
     }
   }
-
-  void GpuRenderStates::SetRenderStates(unsigned int rs, unsigned int value)
-  {
-#define RS_VALUE(a)      (a).iValue
-
-    if (value != m_RenderStateChanges[rs].iValue)
-    {
-      m_RenderStateChanges[rs].iValue = static_cast<unsigned int> (value);
-
-      if (rs == GFXRS_ALPHATESTENABLE ||
-          rs == GFXRS_ALPHATESTREF ||
-          rs == GFXRS_ALPHATESTFUNC)
-      {
-        HW__EnableAlphaTest(RS_VALUE(m_RenderStateChanges[GFXRS_ALPHATESTENABLE]));
-        HW__SetAlphaTestFunc(
-          RS_VALUE(m_RenderStateChanges[GFXRS_ALPHATESTFUNC]),
-          RS_VALUE(m_RenderStateChanges[GFXRS_ALPHATESTREF]));
-      }
-
-      if (rs == GFXRS_STENCILENABLE          ||
-          rs == GFXRS_TWOSIDEDSTENCILENABLE ||
-          rs == GFXRS_FRONT_STENCILFAIL           ||
-          rs == GFXRS_FRONT_STENCILZFAIL          ||
-          rs == GFXRS_FRONT_STENCILZPASS           ||
-          rs == GFXRS_FRONT_STENCILFUNC           ||
-          rs == GFXRS_FRONT_STENCILREF            ||
-          rs == GFXRS_FRONT_STENCILMASK           ||
-          rs == GFXRS_FRONT_STENCILWRITEMASK      ||
-          rs == GFXRS_BACK_STENCILFAIL           ||
-          rs == GFXRS_BACK_STENCILZFAIL          ||
-          rs == GFXRS_BACK_STENCILZPASS           ||
-          rs == GFXRS_BACK_STENCILFUNC           ||
-          rs == GFXRS_BACK_STENCILREF            ||
-          rs == GFXRS_BACK_STENCILMASK           ||
-          rs == GFXRS_BACK_STENCILWRITEMASK)
-      {
-        HW__EnableStencil(RS_VALUE(m_RenderStateChanges[GFXRS_STENCILENABLE]));
-
-        HW__SetStencilFunc(
-          s_StateLUT.default_render_state[GFXRS_FRONT_STENCILFUNC].iValue,
-          s_StateLUT.default_render_state[GFXRS_FRONT_STENCILREF].iValue,
-          s_StateLUT.default_render_state[GFXRS_FRONT_STENCILMASK].iValue);
-        HW__SetStencilOp(
-          s_StateLUT.default_render_state[GFXRS_FRONT_STENCILFAIL].iValue,
-          s_StateLUT.default_render_state[GFXRS_FRONT_STENCILZFAIL].iValue,
-          s_StateLUT.default_render_state[GFXRS_FRONT_STENCILZPASS].iValue);
-
-#if 0
-        HW__EnableTwoSidedStencil(RS_VALUE(m_RenderStateChanges[GFXRS_TWOSIDEDSTENCILENABLE]));
-
-        HW__SetFrontFaceStencilFunc(
-          RS_VALUE(m_RenderStateChanges[GFXRS_FRONT_STENCILFUNC]),
-          RS_VALUE(m_RenderStateChanges[GFXRS_FRONT_STENCILREF]),
-          RS_VALUE(m_RenderStateChanges[GFXRS_FRONT_STENCILMASK]));
-        HW__SetFrontFaceStencilOp(
-          RS_VALUE(m_RenderStateChanges[GFXRS_FRONT_STENCILFAIL]),
-          RS_VALUE(m_RenderStateChanges[GFXRS_FRONT_STENCILZFAIL]),
-          RS_VALUE(m_RenderStateChanges[GFXRS_FRONT_STENCILZPASS]));
-        HW__SetStencilFrontFaceWriteMask(
-          RS_VALUE(m_RenderStateChanges[GFXRS_FRONT_STENCILWRITEMASK]));
-
-        HW__SetBackFaceStencilFunc(
-          RS_VALUE(m_RenderStateChanges[GFXRS_BACK_STENCILFUNC]),
-          RS_VALUE(m_RenderStateChanges[GFXRS_BACK_STENCILREF]),
-          RS_VALUE(m_RenderStateChanges[GFXRS_BACK_STENCILMASK]));
-        HW__SetBackFaceStencilOp(
-          RS_VALUE(m_RenderStateChanges[GFXRS_BACK_STENCILFAIL]),
-          RS_VALUE(m_RenderStateChanges[GFXRS_BACK_STENCILZFAIL]),
-          RS_VALUE(m_RenderStateChanges[GFXRS_BACK_STENCILZPASS]));
-        HW__SetStencilBackFaceWriteMask(
-          RS_VALUE(m_RenderStateChanges[GFXRS_BACK_STENCILWRITEMASK]));
-#endif
-      }
-
-      if (rs == GFXRS_ALPHABLENDENABLE   ||
-          rs == GFXRS_BLENDOP           ||
-          rs == GFXRS_BLENDOPALPHA      ||
-          rs == GFXRS_SRCBLEND          ||
-          rs == GFXRS_DESTBLEND         ||
-          rs == GFXRS_SRCBLENDALPHA     ||
-          rs == GFXRS_DESTBLENDALPHA)
-      {
-        HW__EnableAlphaBlend(
-          RS_VALUE(m_RenderStateChanges[GFXRS_ALPHABLENDENABLE]));
-
-        HW__SetSeparateAlphaBlendFactors(
-          RS_VALUE(m_RenderStateChanges[GFXRS_SRCBLEND]),
-          RS_VALUE(m_RenderStateChanges[GFXRS_DESTBLEND]),
-          RS_VALUE(m_RenderStateChanges[GFXRS_SRCBLENDALPHA]),
-          RS_VALUE(m_RenderStateChanges[GFXRS_DESTBLENDALPHA]));
-        HW__SetAlphaBlendOp(
-          RS_VALUE(m_RenderStateChanges[GFXRS_BLENDOP]),
-          RS_VALUE(m_RenderStateChanges[GFXRS_BLENDOPALPHA]));
-      }
-
-      if (rs == GFXRS_COLORWRITEENABLE_R    ||
-          rs == GFXRS_COLORWRITEENABLE_G   ||
-          rs == GFXRS_COLORWRITEENABLE_B   ||
-          rs == GFXRS_COLORWRITEENABLE_A)
-      {
-        HW__SetColorMask(
-          RS_VALUE(m_RenderStateChanges[GFXRS_COLORWRITEENABLE_R]),
-          RS_VALUE(m_RenderStateChanges[GFXRS_COLORWRITEENABLE_G]),
-          RS_VALUE(m_RenderStateChanges[GFXRS_COLORWRITEENABLE_B]),
-          RS_VALUE(m_RenderStateChanges[GFXRS_COLORWRITEENABLE_A]));
-      }
-
-      if (rs == GFXRS_ZTESTENABLE    ||
-          rs == GFXRS_ZWRITEENABLE   ||
-          rs == GFXRS_ZFUNC   ||
-          rs == GFXRS_ZNEAR   ||
-          rs == GFXRS_ZFAR)
-      {
-        HW__SetEnableDepthTest(RS_VALUE(m_RenderStateChanges[GFXRS_ZTESTENABLE]));
-        HW__SetDepthMask(RS_VALUE(m_RenderStateChanges[GFXRS_ZWRITEENABLE]));
-        HW__SetDepthFunc(RS_VALUE(m_RenderStateChanges[GFXRS_ZFUNC]));
-        HW__SetDepthRange(
-          RS_VALUE(m_RenderStateChanges[GFXRS_ZNEAR]),
-          RS_VALUE(m_RenderStateChanges[GFXRS_ZFAR]));
-      }
-
-      if (rs == GFXRS_POLYGONOFFSETENABLE    ||
-          rs == GFXRS_POLYGONOFFSETFACTOR   ||
-          rs == GFXRS_POLYGONOFFSETUNITS)
-      {
-        HW__EnablePolygonOffset(RS_VALUE(m_RenderStateChanges[GFXRS_POLYGONOFFSETENABLE]));
-        HW__SetPolygonOffset(
-          RS_VALUE(m_RenderStateChanges[GFXRS_POLYGONOFFSETFACTOR]),
-          RS_VALUE(m_RenderStateChanges[GFXRS_POLYGONOFFSETUNITS]));
-      }
-
-      if (rs == GFXRS_FRONT_POLYGONMODE    ||
-          rs == GFXRS_BACK_POLYGONMODE)
-      {
-        HW__SetPolygonMode(
-          RS_VALUE(m_RenderStateChanges[GFXRS_FRONT_POLYGONMODE]),
-          RS_VALUE(m_RenderStateChanges[GFXRS_BACK_POLYGONMODE]));
-      }
-
-      if (rs == GFXRS_CULLFACEENABLE     ||
-          rs == GFXRS_CULLFACE          ||
-          rs == GFXRS_FRONTFACE)
-      {
-        HW__EnableCulling(RS_VALUE(m_RenderStateChanges[GFXRS_CULLFACEENABLE]));
-        HW__SetFrontFace(RS_VALUE(m_RenderStateChanges[GFXRS_FRONTFACE]));
-        HW__SetCullFace(RS_VALUE(m_RenderStateChanges[GFXRS_CULLFACE]));
-      }
-    }
-
-#undef RS_VALUE
-  }
-
 }
 
