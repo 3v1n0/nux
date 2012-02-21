@@ -274,6 +274,29 @@ void TestingThread(nux::NThread* thread, void* user_data)
         nux::SleepForMilliseconds(500);
       }
 
+      // Testing Cursor in the preedit window
+      {
+        test.ViewSendString("ming");
+        nux::SleepForMilliseconds(500);
+        test.TestReportMsg(test_textentry->text_entry_->GetText() == "", "TextEntry is only Preedit");
+
+        test.ViewSendLeft();
+        nux::SleepForMilliseconds(500);
+
+        test.ViewSendDelete();
+        nux::SleepForMilliseconds(500);
+
+        test.ViewSendChar('1');
+        nux::SleepForMilliseconds(500);
+        test.TestReportMsg(test_textentry->text_entry_->GetText() == "民", "TextEntry is \"民\"");
+
+        test.ViewSendCtrlA();
+        nux::SleepForMilliseconds(500);
+        
+        test.ViewSendDelete();
+        nux::SleepForMilliseconds(500);
+      }
+
       active = true;
     }
     else
@@ -323,7 +346,7 @@ int main(int argc, char** argv)
   int xstatus = XInitThreads();
   nuxAssertMsg(xstatus > 0, "XInitThreads has failed");
 
-  test_textentry = new TextTextEntry("Text Entry", 600, 200, 30000);
+  test_textentry = new TextTextEntry("Text Entry", 600, 200, 35000);
   test_textentry->Startup();
   test_textentry->UserInterfaceSetup();
 

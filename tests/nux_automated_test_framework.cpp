@@ -384,6 +384,26 @@ void NuxAutomatedTestFramework::ViewSendReturn()
   SendFakeKeyEvent(XK_Return, 0);
 }
 
+void NuxAutomatedTestFramework::ViewSendRight()
+{
+  SendFakeKeyEvent(XK_Right, 0);
+}
+
+void NuxAutomatedTestFramework::ViewSendLeft()
+{
+  SendFakeKeyEvent(XK_Left, 0);
+}
+
+void NuxAutomatedTestFramework::ViewSendUp()
+{
+  SendFakeKeyEvent(XK_Up, 0);
+}
+
+void NuxAutomatedTestFramework::ViewSendDown()
+{
+  SendFakeKeyEvent(XK_Down, 0);
+}
+
 void NuxAutomatedTestFramework::ViewSendIBusToggle()
 {
   KeyCode modcode0 = 0;

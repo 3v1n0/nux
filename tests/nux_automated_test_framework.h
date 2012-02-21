@@ -80,6 +80,14 @@ public:
   void ViewSendTab();
   //! Simulate Return key.
   void ViewSendReturn();
+  //! Simulate Left arrow key.
+  void ViewSendLeft();
+  //! Simulate Right arrow key.
+  void ViewSendRight();
+  //! Simulate Up arrow key.
+  void ViewSendUp();
+  //! Simulate Down arrow key.
+  void ViewSendDown();
 
   void ViewSendIBusToggle();
 

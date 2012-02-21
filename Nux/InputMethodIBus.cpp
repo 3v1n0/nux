@@ -68,7 +68,6 @@ namespace nux
       ibus_input_context_reset(context_);
   }
 
-  // FIXME Need to get the key_code form nux NOT just the keysym
   bool IBusIMEContext::FilterKeyEvent(const KeyEvent& event)
   {
     guint keyval = event.key_sym(); // todo(jaytaoko): ui::GdkKeyCodeForWindowsKeyCode(event.key_code(), event.IsShiftDown() ^ event.IsCapsLockDown());
@@ -91,10 +90,6 @@ namespace nux
       if (event.IsCapsLockDown())
         modifiers |= IBUS_LOCK_MASK;
 
-      // FIXME Not the best way to get the x11_key_code. Should be able to get it from TextEntry::ProcessKeyEvent
-      // The x11_keycode is needed for the ibus-hangul engine!
-      //nux::Event cur_event = nux::GetWindowThread()->GetGraphicsDisplay().GetCurrentEvent(); 
-
       ibus_input_context_process_key_event_async(context_,
         keyval, event.key_code() - 8, modifiers,
         -1,
@@ -103,7 +98,6 @@ namespace nux
         new ProcessKeyEventData(this, event));
       return true;
     }
-
     return false;
   }
 
@@ -149,9 +143,6 @@ namespace nux
     nuxAssert(!context_);
   }
 
-  // FIXME Also need to figure out how to get the pop up window
-  // for a possible ibus-engine to always be on top of the active
-  // window
   void IBusIMEContext::UpdateCursorLocation()
   {
     nux::Rect strong, weak;
@@ -164,7 +155,7 @@ namespace nux
     nux::Geometry window_geo = nux::GetGraphicsDisplay()->GetWindowGeometry();
 
     ibus_input_context_set_cursor_location(context_,
-      geo.x + window_geo.x,
+      geo.x + window_geo.x + strong.x,
       geo.y + window_geo.y,
       0,
       geo.height);
@@ -213,6 +204,9 @@ namespace nux
     nuxAssert(context_ == context);
     nuxAssert(IBUS_IS_TEXT(text));
 
+    if (text_entry_->preedit_.empty())
+      UpdateCursorLocation();
+
     if (visible)
     {
       IBusAttrList* attrs = text->attrs;
@@ -259,7 +253,6 @@ namespace nux
         text_entry_->preedit_cursor_ = preedit.length();
         text_entry_->QueueRefresh (true, true);
         text_entry_->sigTextChanged.emit(text_entry_);
-        UpdateCursorLocation();
       }
     }
     else
@@ -290,6 +283,7 @@ namespace nux
     nuxAssert(context_ == context);
 
     text_entry_->ime_active_ = true;
+    UpdateCursorLocation();
   }
 
   void IBusIMEContext::OnDisable(IBusInputContext *context)
@@ -330,7 +324,13 @@ namespace nux
       }
 
       if (processed == FALSE)
-        data->context->text_entry_->ProcessKeyEvent(data->event.type(), data->event.key_sym(), data->event.flags() | IBUS_IGNORED_MASK, data->event.character().c_str(), 0);
+      {
+        data->context->text_entry_->ProcessKeyEvent(data->event.type(),
+                                                    data->event.key_sym(),
+                                                    data->event.flags() | IBUS_IGNORED_MASK,
+                                                    data->event.character().c_str(),
+                                                    0);
+      }
 
       delete data;
   }
