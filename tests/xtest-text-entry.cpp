@@ -327,6 +327,33 @@ void TestingThread(nux::NThread* thread, void* user_data)
       test.TestReportMsg(false,"Hangul is NOT an active input method" );
     }
 
+    // Checking for ibus-anthy - Japanese
+    if (SetEngineActive(bus_,"anthy"))
+    {   
+      {
+        test.ViewSendString("shisutemu ");
+        nux::SleepForMilliseconds(500);
+        test.TestReportMsg(test_textentry->text_entry_->GetText() == "", "TextEntry is only Preedit");
+
+        // Ctrl + J commits for ibus-anthy
+        test.ViewSendKeyCombo(XK_Control_L, 0, 0, 'j');
+        nux::SleepForMilliseconds(500);
+        test.TestReportMsg(test_textentry->text_entry_->GetText() == "システム", "TextEntry is \"システム\"");
+
+        test.ViewSendCtrlA();
+        nux::SleepForMilliseconds(500);
+
+        test.ViewSendDelete();
+        nux::SleepForMilliseconds(500);
+      }
+
+      active = true;
+    }
+    else
+    {
+      test.TestReportMsg(false,"Anthy is NOT an active input method" );
+    }
+
     g_object_unref (bus_); 
 
     // CTRL+Space to deactivate iBus
@@ -346,7 +373,7 @@ int main(int argc, char** argv)
   int xstatus = XInitThreads();
   nuxAssertMsg(xstatus > 0, "XInitThreads has failed");
 
-  test_textentry = new TextTextEntry("Text Entry", 600, 200, 35000);
+  test_textentry = new TextTextEntry("Text Entry", 600, 200, 40000);
   test_textentry->Startup();
   test_textentry->UserInterfaceSetup();
 

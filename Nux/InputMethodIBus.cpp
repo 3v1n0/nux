@@ -110,7 +110,11 @@ namespace nux
     nuxAssert(bus_ != NULL);
     nuxAssert(ibus_bus_is_connected(bus_));
 
-    context_ = ibus_bus_create_input_context(bus_, "nux");
+    if (!(context_ = ibus_bus_create_input_context(bus_, "nux")))
+    {
+      nuxDebugMsg("[IBusIMEContext::IBusIMEContext] Cannot create InputContext");
+      return;
+    }
 
     // connect input context signals
     g_signal_connect(context_, "commit-text",         G_CALLBACK(OnCommitText_),        this);
