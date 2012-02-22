@@ -176,6 +176,9 @@ namespace nux
   void IBusIMEContext::OnDisconnected(IBusBus *bus)
   {
     nuxDebugMsg("***IBusIMEContext::OnDisonnected***");
+
+    if (context_)
+      DestroyContext();
   }
 
   void IBusIMEContext::OnCommitText(IBusInputContext *context, IBusText* text)

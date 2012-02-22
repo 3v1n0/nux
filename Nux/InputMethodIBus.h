@@ -90,7 +90,7 @@ namespace nux
     void OnConnected(IBusBus *bus);
 
     //CHROMEG_CALLBACK_0(IBusIMEContext, void, OnDisconnected, IBusBus*);
-    static void OnDisconnected_(IBusBus* bus, void* data) {reinterpret_cast<IBusIMEContext*>(data)->OnConnected(bus);}
+    static void OnDisconnected_(IBusBus* bus, void* data) {reinterpret_cast<IBusIMEContext*>(data)->OnDisconnected(bus);}
     void OnDisconnected(IBusBus *bus);
 
 //     // Event handlers for IBusIMEContext:
