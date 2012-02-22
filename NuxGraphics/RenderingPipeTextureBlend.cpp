@@ -127,7 +127,7 @@ vec3 BlendScreen(vec3 B /*background layer*/, vec3 L /*foreground layer*/)      
   return(1.0 - (1.0 - B) * (1.0 - L));                                                        \n\
 }";
 
-static const char * const BlendOverlayShader = "#version 110                                         \n\
+static const char * const BlendOverlayShader = "                                         \n\
 float _BlendOverlay(float B /*background layer*/, float L /*foreground layer*/)               \n\
 {                                                                                             \n\
   if (L < 0.5)                                                                                \n\
@@ -396,7 +396,7 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetBlendTexColorProgram (BlendMo
                      void main()                                                 \n\
                      {                                                           \n\
                      vec4 v = SampleTexture(TextureObject0, varyTexCoord0);      \n\
-                     gl_FragColor = mix(v,%s(v,color0),opacity); \n\
+                     gl_FragColor.rgb = mix(v.rgb,%s(v.rgb,color0),0.8); \n\
                      gl_FragColor.a = 1.0; \n\
                      }";
 
