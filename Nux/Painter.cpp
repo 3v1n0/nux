@@ -957,6 +957,19 @@ namespace nux
     PaintBackground(graphics_engine, geo);
   }
 
+  void BasePainter::PushDrawColorizeTextureLayer(GraphicsEngine &graphics_engine, Geometry geo,
+						 ObjectPtr<IOpenGLBaseTexture> DeviceTexture,
+						 TexCoordXForm texxform,
+						 const Color &color,
+						 bool WriteAlpha,
+						 const ROPConfig &ROP,
+						 const Color &blend_color,
+						 GraphicsEngine::BlendMode blend_mode)
+  {
+    PushColorizeTextureLayer(graphics_engine, geo, DeviceTexture, texxform, color, WriteAlpha, ROP, blend_color, blend_mode);
+    PaintBackground(graphics_engine, geo);
+  }
+
   void BasePainter::PopBackground(int level)
   {
     PopPaintLayer(level);
