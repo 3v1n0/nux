@@ -25,9 +25,6 @@
 #include "pango/pango.h"
 #include "pango/pangocairo.h"
 #include "NuxImage/CairoGraphics.h"
-#if defined(NUX_OS_LINUX)
-#include "InputMethodIBus.h"
-#endif
 
 namespace nux
 {
