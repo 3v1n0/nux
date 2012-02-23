@@ -24,7 +24,6 @@
 #define GLRESOURCE_H
 
 #include "NuxCore/NuxCore.h"
-#include "NuxCore/SystemTypes.h"
 #include "NuxCore/Error.h"
 #include "NuxCore/FilePath.h"
 #include "NuxCore/Color.h"

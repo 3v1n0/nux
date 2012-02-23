@@ -999,14 +999,6 @@ namespace nux
     return false;
   }
 
-  bool Area::AcceptKeyNavFocus()
-  {
-    if (GetInputEventSensitivity() == false)
-      return false;
-
-    return true;
-  }
-
   Area* Area::KeyNavIteration(KeyNavDirection direction)
   {
     return NULL;

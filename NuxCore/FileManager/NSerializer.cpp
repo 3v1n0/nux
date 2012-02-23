@@ -30,7 +30,7 @@ namespace nux
 // {
 //     for(unsigned long long i = 0; i < Length; i++)
 //     {
-//         t_u8* bytebuffer = (t_u8*)(&buffer[i]);
+//         unsigned char* bytebuffer = (unsigned char*)(&buffer[i]);
 //         Serialize(bytebuffer, ElementSize);
 //     }
 // }
@@ -47,26 +47,26 @@ namespace nux
 //     return Sr;
 // }
 
-  void NSerializer::Serialize (t_char   &data)
+  void NSerializer::Serialize (char   &data)
   {
-    SerializeFinal (&data, sizeof (t_char)   );
+    SerializeFinal (&data, sizeof (char)   );
   }
+
   void NSerializer::Serialize (wchar_t  &data)
   {
     SerializeFinal (&data, sizeof (wchar_t)   );
   }
+
   void NSerializer::Serialize (bool   &data)
   {
     SerializeFinal (&data, sizeof (bool)    );
   }
-  void NSerializer::Serialize (t_s8     &data)
+
+  void NSerializer::Serialize (unsigned char     &data)
   {
-    SerializeFinal (&data, sizeof (t_s8)      );
+    SerializeFinal (&data, sizeof (unsigned char)      );
   }
-  void NSerializer::Serialize (t_u8     &data)
-  {
-    SerializeFinal (&data, sizeof (t_u8)      );
-  }
+
   void NSerializer::Serialize (unsigned short    &data)
   {
     SerializeFinal (&data, sizeof (unsigned short)     );
@@ -108,10 +108,6 @@ namespace nux
     SerializeFinal (&data, sizeof (long long)     );
   }
 
-  void NSerializer::Serialize (t_char   *buffer, unsigned int len, unsigned int stride)
-  {
-    SerializeFinal (buffer, len * stride);
-  }
   void NSerializer::Serialize (wchar_t  *buffer, unsigned int len, unsigned int stride)
   {
     SerializeFinal (buffer, len * stride);
@@ -120,11 +116,11 @@ namespace nux
   {
     SerializeFinal (buffer, len * stride);
   }
-  void NSerializer::Serialize (t_s8     *buffer, unsigned int len, unsigned int stride)
+  void NSerializer::Serialize (char   *buffer, unsigned int len, unsigned int stride)
   {
     SerializeFinal (buffer, len * stride);
   }
-  void NSerializer::Serialize (t_u8     *buffer, unsigned int len, unsigned int stride)
+  void NSerializer::Serialize (unsigned char     *buffer, unsigned int len, unsigned int stride)
   {
     SerializeFinal (buffer, len * stride);
   }
