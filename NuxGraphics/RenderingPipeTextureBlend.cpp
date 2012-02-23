@@ -41,20 +41,6 @@ namespace nux
   // and attribute location. One has to make sure that the vertex attribute get index 0. So use the vertex attribute first. All of this does not make any sense.
   // Need more info from driver developers.
 
-  static const char * const LayerBlendingVertexShader ="                   \n\
-                      uniform mat4 ViewProjectionMatrix;                      \n \
-                      attribute vec4 AVertex;                                 \n \
-                      attribute vec4 MyTextureCoord0;                         \n \
-                      attribute vec4 MyTextureCoord1;                         \n \
-                      varying vec4 varyTexCoord0;                             \n \
-                      varying vec4 varyTexCoord1;                             \n\
-                      void main()                                             \n \
-                      {                                                       \n\
-                      varyTexCoord0 = MyTextureCoord0;                        \n\
-                      varyTexCoord1 = MyTextureCoord1;                        \n\
-                      gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
-                      }";
-
   static const char * const BlendNormalShader = "                                          \n\
 vec3 BlendNormal(vec3 B /*background layer*/, vec3 L /*foreground layer*/)                    \n\
 {                                                                                             \n\
@@ -302,19 +288,6 @@ vec3 BlendOpacity(vec3 B /*background layer*/, vec3 L /*foreground layer*/)     
   return O * L + (1 - O) * B;                                                                             \n\
 }";
 
-// Noise Shader: http://www.ozone3d.net/blogs/lab/20110427/glsl-random-generator/
-// varying vec3 v;
-// float rand(vec2 n)
-// {
-//   return 0.5 + 0.5 *
-//     fract(sin(dot(n.xy, vec2(12.9898, 78.233)))* 43758.5453);
-// }
-// void main(void)
-// {
-//   float x = rand(v.xz);
-//   gl_FragColor = vec4(x, x, x, 1.0);
-// }
-
 #ifndef NUX_OPENGLES_20
 #define VertexShaderHeader "#version 110 \n"
 #else
@@ -327,30 +300,37 @@ vec3 BlendOpacity(vec3 B /*background layer*/, vec3 L /*foreground layer*/)     
 #define FragmentShaderHeader "precision mediump float; \n"
 #endif
 
-const char *const
-GraphicsEngine::GetBlendModeBlendFunc (BlendMode blend_mode)
-{
-switch (blend_mode)
+  const char *const
+  GraphicsEngine::GetBlendModeBlendFunc (BlendMode blend_mode)
   {
- case BLEND_MODE_OVERLAY:
-   return BlendOverlayShader;
-   break;
- default:
-   return NULL;
+    switch (blend_mode)
+      {
+      case BLEND_MODE_NORMAL:
+	return BlendNormalShader;
+        break;
+      case BLEND_MODE_OVERLAY:
+	return BlendOverlayShader;
+	break;
+	
+      default:
+	return NULL;
+      }
   }
-}
 
 const char *const
 GraphicsEngine::GetBlendModeString (BlendMode blend_mode)
 {
-switch (blend_mode)
-  {
- case BLEND_MODE_OVERLAY:
-return "BlendOverlay";
-break;
- default:
-return NULL;
-  }
+  switch (blend_mode)
+    {
+    case BLEND_MODE_NORMAL:
+      return "BlendNormal";
+      break;
+    case BLEND_MODE_OVERLAY:
+      return "BlendOverlay";
+      break;
+    default:
+      return NULL;
+    }
 }
 
 ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetBlendTexColorProgram (BlendMode blend_mode)
@@ -400,7 +380,6 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetBlendTexColorProgram (BlendMo
                      gl_FragColor.a = 1.0; \n\
                      }";
 
-    //                     gl_FragColor = %s(v*varyVertexColor, blendColor);                           
     int l = PSString.Size();
     l += strlen (GetBlendModeBlendFunc (blend_mode));
     l += strlen (GetBlendModeString (blend_mode)) + 1;
