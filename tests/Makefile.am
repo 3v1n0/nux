@@ -252,9 +252,10 @@ gtest: gtest-nux-core gtest-nux
 check-headless: gtest-nux-core
 	@gtester --verbose -k -o=test-nux-results.xml ./gtest-nux-core
 
-test-apps: test-graphics-display test-empty-window xtest-button xtest-mouse-events xtest-mouse-buttons xtest-hgrid-key-navigation xtest-hlayout-key-navigation xtest-vlayout-key-navigation xtest-scrollbar xtest-focus-on-mouse-down xtest-focus-on-mouse-enter xtest-keynav-directions
+test-apps: test-graphics-display test-empty-window xtest-text-entry xtest-button xtest-mouse-events xtest-mouse-buttons xtest-hgrid-key-navigation xtest-hlayout-key-navigation xtest-vlayout-key-navigation xtest-scrollbar xtest-focus-on-mouse-down xtest-focus-on-mouse-enter xtest-keynav-directions
 	./test-graphics-display
 	./test-empty-window
+	./xtest-text-entry
 	./xtest-button
 	./xtest-mouse-events
 	./xtest-mouse-buttons
