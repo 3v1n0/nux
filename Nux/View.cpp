@@ -385,12 +385,12 @@ namespace nux
 
   void View::EnableView()
   {
-    view_enabled_ = false;
+    view_enabled_ = true;
   }
 
   void View::DisableView()
   {
-    view_enabled_ = true;
+    view_enabled_ = false;
   }
 
   void View::SetEnableView(bool enable)

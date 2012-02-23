@@ -30,6 +30,7 @@
 
 #if defined(NUX_OS_LINUX)
 #include <X11/cursorfont.h>
+#include "InputMethodIBus.h"
 #endif
 
 namespace nux
@@ -76,8 +77,8 @@ namespace nux
     return result;
   }
 
-// Calculate pixel size based on the Windows DPI of 96 for compatibility
-// reasons.
+  // Calculate pixel size based on the Windows DPI of 96 for compatibility
+  // reasons.
   CairoFont::CairoFont(const std::string &family,
                        /*PangoFontDescription *font,*/
                        double pt_size,
@@ -112,10 +113,10 @@ namespace nux
   TextEntry::TextEntry(const char* text, NUX_FILE_LINE_DECL)
     : View(NUX_FILE_LINE_PARAM)
     , _size_match_text(true)
-    , _texture2D(NULL)
-    , canvas_(NULL)
-    , cached_layout_(NULL)
-    , preedit_attrs_(NULL)
+    , _texture2D(nullptr)
+    , canvas_(nullptr)
+    , cached_layout_(nullptr)
+    , preedit_attrs_(nullptr)
     , completion_color_(color::Gray)
     , last_dblclick_time_(0)
     , cursor_(0)
@@ -152,7 +153,9 @@ namespace nux
     , align_(CairoGraphics::ALIGN_LEFT)
 #if defined(NUX_OS_LINUX)
     , caret_cursor_(None)
-#endif
+    , ime_(new IBusIMEContext(this))
+#endif    
+    , ime_active_(false)
     , text_input_mode_(false)
     , key_nav_mode_(false)
   {
@@ -182,8 +185,6 @@ namespace nux
 
   TextEntry::~TextEntry()
   {
-    ResetLayout();
-
     if (cursor_blink_timer_)
       g_source_remove(cursor_blink_timer_);
 
@@ -191,8 +192,10 @@ namespace nux
     if (_texture2D)
       _texture2D->UnReference();
 
-    if (canvas_)
-      delete canvas_;
+#if defined(NUX_OS_LINUX)
+    if (ime_)
+      delete ime_;
+#endif
   }
 
   void TextEntry::PreLayoutManagement()
@@ -242,7 +245,7 @@ namespace nux
     {
         SelectLine();
     }
-    else if (event_type == NUX_MOUSE_DOUBLECLICK)
+    else if (event_type == NUX_MOUSE_DOUBLECLICK && !ime_active_)
     {
       SelectWord();
       last_dblclick_time_ = current_time;
@@ -281,26 +284,25 @@ namespace nux
     const char*     character  ,   /*character*/
     unsigned short   keyCount       /*key repeat count*/)
   {
+    bool retval = FALSE;
+
     if (event_type == NUX_KEYDOWN)
       text_input_mode_ = true;
 
-//     GdkEventKey *gdk_event = static_cast<GdkEventKey *>(event.GetOriginalEvent());
-//     ASSERT(gdk_event);
-//
-//     Event::Type type = event.GetType();
-    // Cause the cursor to stop blinking for a while.
     cursor_blink_status_ = 4;
 
-//     if (!readonly_ /*&& im_context_*/ && type != Event::EVENT_KEY_PRESS && 0/*&& gtk_im_context_filter_keypress(im_context_, gdk_event)*/)
-//     {
-//         need_im_reset_ = true;
-//         QueueRefresh(false, true);
-//         return EVENT_RESULT_HANDLED;
-//     }
+    // FIXME Have to get the current event fot he x11_keycode for ibus-hangul/korean input
+    nux::Event cur_event = nux::GetWindowThread()->GetGraphicsDisplay().GetCurrentEvent(); 
+    KeyEvent event((NuxEventType)event_type, keysym,cur_event.x11_keycode, state, character); 
+
+#if defined(NUX_OS_LINUX)
+    retval = ime_->FilterKeyEvent(event); 
+#endif
 
     if (event_type == NUX_KEYUP)
       return;
-
+    
+  
     // we need to ignore some characters
     if (keysym == NUX_VK_TAB)
       return;
@@ -316,8 +318,7 @@ namespace nux
     bool ctrl = (state & NUX_STATE_CTRL);
 
     // DLOG("TextEntry::key_down(%d, shift:%d ctrl:%d)", keyval, shift, ctrl);
-
-    if (event_type == NUX_KEYDOWN)
+    if (event_type == NUX_KEYDOWN && !retval)
     {
       if (keyval == NUX_VK_LEFT)
       {
@@ -428,7 +429,7 @@ namespace nux
 //       }
     }
 
-    if (character != 0 && (strlen(character) != 0))
+    if (!retval && character != 0 && (strlen(character) != 0))
     {
       EnterText(character);
     }
@@ -456,7 +457,7 @@ namespace nux
   {
     ProcessMouseEvent(NUX_MOUSE_MOVE, x, y, dx, dy, button_flags, key_flags);
   }
-
+  
   void TextEntry::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
 #if defined(NUX_OS_LINUX)
@@ -464,7 +465,7 @@ namespace nux
     {
       Display* display = nux::GetGraphicsDisplay()->GetX11Display();
       nux::BaseWindow* window = static_cast<nux::BaseWindow*>(GetTopLevelViewWindow());
-
+    
       if (display && window)
       {
         caret_cursor_ = XCreateFontCursor(display, XC_xterm);
@@ -473,7 +474,7 @@ namespace nux
     }
 #endif
   }
-
+  
   void TextEntry::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
 #if defined(NUX_OS_LINUX)
@@ -481,7 +482,7 @@ namespace nux
     {
       Display* display = nux::GetGraphicsDisplay()->GetX11Display();
       nux::BaseWindow* window = static_cast<nux::BaseWindow*>(GetTopLevelViewWindow());
-
+      
       if (display && window)
       {
         XUndefineCursor(display, window->GetInputWindowId());
@@ -559,9 +560,9 @@ namespace nux
     // intentionally left empty
   }
 
-  void TextEntry::SetText(const char *text)
+  void TextEntry::SetText(const char* text)
   {
-    const char *end = NULL;
+    const char* end = NULL;
     g_utf8_validate(text, -1, &end);
 
     std::string txt((text && *text && end > text) ? std::string(text, end) : "");
@@ -574,7 +575,7 @@ namespace nux
     need_im_reset_ = true;
     //ResetImContext();
     QueueRefresh(true, true);
-    sigTextChanged.emit(this);
+    text_changed.emit(this);
   }
 
   std::string const& TextEntry::GetText() const
@@ -582,9 +583,28 @@ namespace nux
     return text_;
   }
 
-  void TextEntry::SetCompletion(const char *text)
+  std::string TextEntry::GetTextSelection() const
   {
-    const char *end = NULL;
+    if (text_.size() == 0)
+    {
+      return std::string("");
+    }
+
+    int selection_start = 0;
+    int selection_end = 0;
+    if (GetSelectionBounds(&selection_start, &selection_end))
+    {
+      return text_.substr(selection_start, selection_end);
+    }
+    else
+    {
+      return std::string("");
+    }
+  }
+
+  void TextEntry::SetCompletion(const char* text)
+  {
+    const char* end = NULL;
     g_utf8_validate(text, -1, &end);
     std::string txt((text && *text && end > text) ? std::string(text, end) : "");
     if (txt == completion_)
@@ -628,7 +648,7 @@ namespace nux
   void TextEntry::MainDraw()
   {
 
-    CairoGraphics *edit_canvas = EnsureCanvas();
+    CairoGraphics* edit_canvas = EnsureCanvas();
 
     if (update_canvas_ || !last_selection_region_.empty() || !selection_region_.empty())
     {
@@ -677,6 +697,9 @@ namespace nux
       if (!readonly_ /*&& im_context_*/)
       {
         need_im_reset_ = true;
+#if defined(NUX_OS_LINUX)
+        ime_->Focus();
+#endif        
         //gtk_im_context_focus_in(im_context_);
         //UpdateIMCursorLocation();
       }
@@ -696,6 +719,9 @@ namespace nux
       if (!readonly_ /*&& im_context_*/)
       {
         need_im_reset_ = true;
+#if defined(NUX_OS_LINUX)        
+        ime_->Blur();
+#endif
         //gtk_im_context_focus_out(im_context_);
       }
       cursor_visible_ = false; // hide cursor when losing focus
@@ -733,7 +759,7 @@ namespace nux
     int display_width = GetBaseWidth() - kInnerBorderX * 2;
     int display_height = GetBaseHeight() - kInnerBorderY * 2;
 
-    PangoLayout *layout = EnsureLayout();
+    PangoLayout* layout = EnsureLayout();
     int text_width, text_height;
     pango_layout_get_pixel_size(layout, &text_width, &text_height);
 
@@ -1199,7 +1225,7 @@ namespace nux
 
     int pre_completion_length = tmp_string.length();
 
-    if (!completion_.empty() && !wrap_)
+    if (!completion_.empty() && !wrap_ && preedit_.empty())
     {
       tmp_string = text_ + completion_;
     }
@@ -1225,7 +1251,7 @@ namespace nux
     }
     if (!completion_.empty() && !wrap_)
     {
-      attr = pango_attr_foreground_new(65535 * completion_color_.red,
+      attr = pango_attr_foreground_new(65535 * completion_color_.red, 
                                        65535 * completion_color_.green,
                                        65535 * completion_color_.blue);
       attr->start_index = static_cast<guint>(pre_completion_length);
@@ -1455,7 +1481,7 @@ namespace nux
     }
 
     ResetLayout();
-    sigTextChanged.emit(this);
+    text_changed.emit(this);
   }
 
   void TextEntry::DeleteText(int start, int end)
@@ -1486,7 +1512,7 @@ namespace nux
       selection_bound_ -= (end - start);
 
     ResetLayout();
-    sigTextChanged.emit(this);
+    text_changed.emit(this);
   }
 
   void TextEntry::SelectWord()
@@ -1530,6 +1556,11 @@ namespace nux
   {
     align_ = align;
     QueueRefresh(true, true);
+  }
+
+  bool TextEntry::im_active()
+  {
+    return ime_active_;
   }
 
   void TextEntry::DeleteSelection()
@@ -1668,8 +1699,8 @@ namespace nux
           continue;
         if (end_index < line->start_index)
           break;
-        draw_start = Max<int>(start_index, line->start_index);
-        draw_end = Min<int>(end_index, line->start_index + line->length);
+        draw_start = std::max<int>(start_index, line->start_index);
+        draw_end = std::min<int>(end_index, line->start_index + line->length);
         pango_layout_line_get_x_ranges(line, draw_start, draw_end,
           &ranges, &n_ranges);
         pango_layout_line_get_pixel_extents(line, NULL, &line_extents);
@@ -1739,8 +1770,8 @@ namespace nux
     nuxAssert(count);
     nuxAssert(preedit_.length() == 0);
 
-    PangoLayout *layout = EnsureLayout();
-    const char *text = pango_layout_get_text(layout);
+    PangoLayout* layout = EnsureLayout();
+    const char* text = pango_layout_get_text(layout);
     int index = TextIndexToLayoutIndex(current_index, false);
     int new_index = 0;
     int new_trailing = 0;
@@ -1780,11 +1811,11 @@ namespace nux
 
     // The cursor movement direction shall be determined by the direction of
     // current text line.
-    PangoLayout *layout = EnsureLayout();
+    PangoLayout* layout = EnsureLayout();
     int n_log_attrs;
-    PangoLogAttr *log_attrs;
+    PangoLogAttr* log_attrs;
     pango_layout_get_log_attrs(layout, &log_attrs, &n_log_attrs);
-    const char *text = pango_layout_get_text(layout);
+    const char* text = pango_layout_get_text(layout);
     int index = TextIndexToLayoutIndex(current_index, false);
     int line_index;
     pango_layout_index_to_line_x(layout, index, FALSE, &line_index, NULL);
@@ -1797,12 +1828,12 @@ namespace nux
     }
 
 #if PANGO_VERSION_CHECK(1,16,0)
-    PangoLayoutLine *line = pango_layout_get_line_readonly(layout, line_index);
+    PangoLayoutLine* line = pango_layout_get_line_readonly(layout, line_index);
 #else
-    PangoLayoutLine *line = pango_layout_get_line(layout, line_index);
+    PangoLayoutLine* line = pango_layout_get_line(layout, line_index);
 #endif
     bool rtl = (line->resolved_dir == PANGO_DIRECTION_RTL);
-    const char *ptr = text + index;
+    const char* ptr = text + index;
     int offset = static_cast<int>(g_utf8_pointer_to_offset(text, ptr));
     while (count != 0)
     {
@@ -2055,12 +2086,17 @@ namespace nux
     return Clamp(index, 0, static_cast<int>(text_.length()));
   }
 
-  bool TextEntry::GetSelectionBounds(int *start, int *end)
+  bool TextEntry::GetSelectionBounds(int* start, int* end) const
   {
     if (start)
-      *start = Min<int>(selection_bound_, cursor_);
+    {
+      *start = std::min<int>(selection_bound_, cursor_);
+    }
+
     if (end)
-      *end = Max<int>(selection_bound_, cursor_);
+    {
+      *end = std::max<int>(selection_bound_, cursor_);
+    }
 
     return (selection_bound_ != cursor_);
   }
@@ -2108,7 +2144,7 @@ namespace nux
     unsigned int key_sym,
     const char* character)
   {
-    if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == true) && (text_input_mode_ == false))
+    if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == true) && (text_input_mode_ == false) && (ime_active_ == false))
     {
       if (key_sym == NUX_VK_ENTER ||
         key_sym == NUX_KP_ENTER ||
@@ -2124,7 +2160,7 @@ namespace nux
       }
     }
 
-    if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == true) && (text_input_mode_ == true))
+    if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == true) && (text_input_mode_ == true) && (ime_active_ == false))
     {
       // Enable to exit the TextEntry when in write mode(hack for unity dash)
       if (key_sym == NUX_VK_UP ||
@@ -2142,4 +2178,17 @@ namespace nux
 
     return true;
   }
+
+  /// Public API
+
+  void TextEntry::MoveCursorToLineStart()
+  {
+    MoveCursor(DISPLAY_LINE_ENDS, -1, 0);
+  }
+
+  void TextEntry::MoveCursorToLineEnd()
+  {
+    MoveCursor(DISPLAY_LINE_ENDS, 1, 0);
+  }
+
 }

@@ -1,14 +1,14 @@
-#ifndef INPUTMETHODIBUS_H
+#ifndef INPUTMETHODIBUS_H 
 #define INPUTMETHODIBUS_H
 
-#include <Nux/TextEntryIM.h>
+#include <Nux/TextEntry.h>
 #include <ibus.h>
 
 namespace nux
 {
 
   class IBusIMEContext;
-  class TextEntryIM;
+  class TextEntry;
   
   // FIXME This class should be reworked to replace the mouse_state
   // with the hardware key_code. 
@@ -17,19 +17,21 @@ namespace nux
   public:
 
     KeyEvent(NuxEventType type,
-      unsigned int key_code,
-      unsigned int mouse_state, unsigned int event_flags)
+      unsigned int key_sym,
+      unsigned int key_code, unsigned int event_flags, const char* character)
       : type_(type)
+      , key_sym_(key_sym)
       , key_code_(key_code)
       , key_modifiers_(event_flags)
-      , mouse_state_(mouse_state)
+      , character_(character)
     {
     }
 
     NuxEventType type() const {return type_;}
+    unsigned int key_sym() const {return key_sym_;}
     unsigned int key_code() const {return key_code_;}
     unsigned int flags() const {return key_modifiers_;}
-    unsigned int MouseState() const {return mouse_state_;}
+    std::string character() const {return character_;}
 
     bool IsShiftDown() const { return (key_modifiers_ & KEY_MODIFIER_SHIFT) != 0; }
     bool IsControlDown() const { return (key_modifiers_ & KEY_MODIFIER_CTRL) != 0; }
@@ -38,9 +40,10 @@ namespace nux
 
   private:
     EventType type_;
+    unsigned int key_sym_;
     unsigned int key_code_;
     unsigned int key_modifiers_;
-    unsigned int mouse_state_;
+    std::string character_;
 
     KeyEvent(const KeyEvent&);
     void operator = (const KeyEvent&);
@@ -53,7 +56,7 @@ namespace nux
     ProcessKeyEventData(IBusIMEContext* context,
       const KeyEvent& event)
       : context(context)
-      , event(event.type(), event.key_code(), event.MouseState(), event.flags())
+      , event(event.type(), event.key_sym(), event.key_code(), event.flags(), event.character().c_str())
     {
 
     }
@@ -65,7 +68,7 @@ namespace nux
   class IBusIMEContext
   {
   public:
-    explicit IBusIMEContext(TextEntryIM* text_entry);
+    explicit IBusIMEContext(TextEntry* text_entry);
     virtual ~IBusIMEContext();
 
     // views::IMEContext implementations:
@@ -87,17 +90,13 @@ namespace nux
     void OnConnected(IBusBus *bus);
 
     //CHROMEG_CALLBACK_0(IBusIMEContext, void, OnDisconnected, IBusBus*);
-    static void OnDisconnected_(IBusBus* bus, void* data) {reinterpret_cast<IBusIMEContext*>(data)->OnConnected(bus);}
+    static void OnDisconnected_(IBusBus* bus, void* data) {reinterpret_cast<IBusIMEContext*>(data)->OnDisconnected(bus);}
     void OnDisconnected(IBusBus *bus);
 
 //     // Event handlers for IBusIMEContext:
     //CHROMEG_CALLBACK_1(IBusIMEContext, void, OnCommitText, IBusInputContext*, IBusText*);
     static void OnCommitText_(IBusInputContext* context, IBusText* text, void* data) {reinterpret_cast<IBusIMEContext*>(data)->OnCommitText(context, text);}
     void OnCommitText(IBusInputContext *context, IBusText* text);
-
-    //CHROMEG_CALLBACK_3(IBusIMEContext, void, OnForwardKeyEvent, IBusInputContext*, guint, guint, guint);
-    static void OnForwardKeyEvent_(IBusInputContext* context, guint keyval, guint keycode, guint state, void* data) {reinterpret_cast<IBusIMEContext*>(data)->OnForwardKeyEvent(context, keyval, keycode, state);}
-    void OnForwardKeyEvent(IBusInputContext *context, guint keyval, guint keycode, guint state);
 
     //CHROMEG_CALLBACK_3(IBusIMEContext, void, OnUpdatePreeditText, IBusInputContext*, IBusText*, guint, gboolean);
     static void OnUpdatePreeditText_(IBusInputContext* context, IBusText* text, guint cursor_pos, gboolean visible, void* data) {reinterpret_cast<IBusIMEContext*>(data)->OnUpdatePreeditText(context, text, cursor_pos, visible);}
@@ -127,7 +126,7 @@ namespace nux
       GAsyncResult* res,
       ProcessKeyEventData* data);
 
-    TextEntryIM* text_entry_;
+    TextEntry* text_entry_;
     IBusInputContext* context_;
     bool is_focused_;
 
