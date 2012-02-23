@@ -22,6 +22,7 @@
 #include "Nux/WindowThread.h"
 #include "Nux/VLayout.h"
 #include "Nux/TextEntry.h"
+#include "Nux/InputMethodIBus.h"
 #include "Nux/ProgramFramework/ProgramTemplate.h"
 #include "Nux/ProgramFramework/TestView.h"
 #include <X11/extensions/XTest.h>
@@ -90,8 +91,10 @@ void TextTextEntry::UserInterfaceSetup()
 bool SetEngineActive (IBusBus* bus_, std::string engine)
 {
     GList* engines = ibus_bus_list_active_engines(bus_);
-    GList* start = engines;
+    if (!engines)
+      return false;
 
+    GList* start = engines;
     bool found = false;
     gboolean global_flag = ibus_bus_get_use_global_engine(bus_);
 
@@ -101,21 +104,27 @@ bool SetEngineActive (IBusBus* bus_, std::string engine)
       IBusEngineDesc *engine_desc = IBUS_ENGINE_DESC (engines->data);
 
       // Found Engine, make it active!
-      if (g_strcmp0(ibus_engine_desc_get_name(engine_desc), engine.c_str()) == 0)
+      if (engine == ibus_engine_desc_get_name(engine_desc))
       {
-        found = true; 
+        found = true;
 
         // Set ibus to use global engines
         if (!global_flag)
-          ibus_config_set_value (ibus_bus_get_config(bus_), "general", "use_global_engine", g_variant_new_boolean(true));
+          ibus_config_set_value(ibus_bus_get_config(bus_),
+                                "general",
+                                "use_global_engine",
+                                g_variant_new_boolean(true));
 
         // Set and activate the engine
-        ibus_bus_set_global_engine(bus_,engine.c_str());
+        ibus_bus_set_global_engine(bus_, engine.c_str());
       }
     } while ((engines = g_list_next(engines)) != NULL);
 
-    // Restores the global setting back to what it was 
-    ibus_config_set_value (ibus_bus_get_config(bus_), "general", "use_global_engine", g_variant_new_boolean(global_flag));
+    // Restores the global setting back to what it was
+    ibus_config_set_value(ibus_bus_get_config(bus_),
+                          "general",
+                          "use_global_engine",
+                          g_variant_new_boolean(global_flag));
 
     g_list_free(start);
     return found;
@@ -255,7 +264,7 @@ void TestingThread(nux::NThread* thread, void* user_data)
     bool active = false;
   
     // Test for ibus-pinyin 
-    if (SetEngineActive(bus_,"pinyin"))
+    if (bus_ && SetEngineActive(bus_,"pinyin"))
     {
       // Type random stuff
       {
@@ -305,7 +314,7 @@ void TestingThread(nux::NThread* thread, void* user_data)
     }
 
     // Test for ibus-hangul    
-    if (SetEngineActive(bus_,"hangul"))
+    if (bus_ && SetEngineActive(bus_,"hangul"))
     {   
       // Test for the the space in ibus-hangul working correctlly 
       {
@@ -328,8 +337,8 @@ void TestingThread(nux::NThread* thread, void* user_data)
     }
 
     // Checking for ibus-anthy - Japanese
-    if (SetEngineActive(bus_,"anthy"))
-    {   
+    if (bus_ && SetEngineActive(bus_,"anthy"))
+    {
       {
         test.ViewSendString("shisutemu ");
         nux::SleepForMilliseconds(500);
@@ -344,6 +353,7 @@ void TestingThread(nux::NThread* thread, void* user_data)
         nux::SleepForMilliseconds(500);
 
         test.ViewSendDelete();
+
         nux::SleepForMilliseconds(500);
       }
 

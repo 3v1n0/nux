@@ -30,6 +30,7 @@
 
 #if defined(NUX_OS_LINUX)
 #include <X11/cursorfont.h>
+#include "InputMethodIBus.h"
 #endif
 
 namespace nux
