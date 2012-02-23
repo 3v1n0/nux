@@ -396,7 +396,7 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetBlendTexColorProgram (BlendMo
                      void main()                                                 \n\
                      {                                                           \n\
                      vec4 v = SampleTexture(TextureObject0, varyTexCoord0);      \n\
-                     gl_FragColor.rgb = mix(v.rgb,%s(v.rgb,color0),0.8); \n\
+                     gl_FragColor.rgb = mix(v.rgb,%s(v.rgb,color0),color0.a); \n\
                      gl_FragColor.a = 1.0; \n\
                      }";
 
