@@ -271,6 +271,15 @@ namespace nux
                            bool WriteAlpha = false,
                            const ROPConfig &ROP = ROPConfig::Default);
 
+    void PushColorizeTextureLayer(GraphicsEngine &graphics_engine, Geometry geo,
+				  ObjectPtr<IOpenGLBaseTexture> DeviceTexture,
+				  TexCoordXForm texxform,
+				  const Color &color,
+				  bool WriteAlpha,
+				  const ROPConfig &ROP,
+				  const Color &blend_color,
+				  GraphicsEngine::BlendMode blend_mode);
+
     void PushDrawColorLayer(GraphicsEngine &graphics_engine, const Geometry &geo,
                              Color color,
                              bool WriteAlpha = false,

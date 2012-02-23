@@ -133,6 +133,21 @@ namespace nux
     m_write_alpha = write_alpha;
     m_rop = ROP;
     m_texxform = texxform;
+    
+    m_color_blend_mode = GraphicsEngine::BLEND_MODE_LAST;
+  }
+  
+  TextureLayer::TextureLayer(ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm texxform, const Color &color0,
+			     bool write_alpha, const ROPConfig &ROP, const Color &blend_color, GraphicsEngine::BlendMode color_blend_mode)
+  {
+    m_device_texture = device_texture;
+    m_color = color0;
+    m_write_alpha = write_alpha;
+    m_rop = ROP;
+    m_texxform = texxform;
+    
+    m_blend_color = blend_color;
+    m_color_blend_mode = color_blend_mode;
   }
 
   TextureLayer::~TextureLayer()
@@ -157,9 +172,17 @@ namespace nux
     
     graphics_engine.GetRenderStates().SetColorMask(GL_TRUE, GL_TRUE, GL_TRUE, m_write_alpha ? GL_TRUE : GL_FALSE);
     graphics_engine.GetRenderStates().SetBlend(m_rop.Blend, m_rop.SrcBlend, m_rop.DstBlend);
-    
-    graphics_engine.QRP_1Tex(geometry_.x, geometry_.y, geometry_.GetWidth(), geometry_.GetHeight(), m_device_texture,
-                              m_texxform, m_color);
+
+    if (m_color_blend_mode == GraphicsEngine::BLEND_MODE_LAST)
+      {
+	graphics_engine.QRP_1Tex(geometry_.x, geometry_.y, geometry_.GetWidth(), geometry_.GetHeight(), m_device_texture,
+				 m_texxform, m_color);
+      }
+    else
+      {
+	graphics_engine.QRP_GLSL_1TexBlendColor(geometry_.x, geometry_.y, geometry_.GetWidth(), geometry_.GetHeight(), m_device_texture,
+						m_texxform, m_color, m_blend_color, m_color_blend_mode);
+      }
     
     // Restore Color mask and blend states.
     graphics_engine.GetRenderStates().SetColorMask(current_red_mask, current_green_mask, current_blue_mask, current_alpha_mask);

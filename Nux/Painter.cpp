@@ -931,6 +931,21 @@ namespace nux
     active_paint_layer_stack_.push_front(tl);
   }
 
+  void BasePainter::PushColorizeTextureLayer(GraphicsEngine &graphics_engine, Geometry geo,
+					     ObjectPtr<IOpenGLBaseTexture> DeviceTexture,
+					     TexCoordXForm texxform,
+					     const Color &color,
+					     bool WriteAlpha,
+					     const ROPConfig &ROP,
+					     const Color &blend_color,
+					     GraphicsEngine::BlendMode blend_mode)
+  {
+    TextureLayer *tl = new TextureLayer(DeviceTexture, texxform, color, WriteAlpha, ROP, blend_color, blend_mode);
+    tl->SetModelViewMatrix(window_thread_->GetGraphicsEngine().GetModelViewMatrix());
+    tl->SetGeometry(geo);
+    active_paint_layer_stack_.push_front(tl);
+  }
+
   void BasePainter::PushDrawTextureLayer(GraphicsEngine &graphics_engine, Geometry geo,
                                           ObjectPtr<IOpenGLBaseTexture> DeviceTexture,
                                           TexCoordXForm texxform,
