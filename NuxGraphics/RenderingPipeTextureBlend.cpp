@@ -383,7 +383,7 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetBlendTexColorProgram (BlendMo
 
     PSString =  
                     FragmentShaderHeader
-                     "uniform vec3 color0;                                    \n\
+                     "uniform vec4 color0;                                    \n\
                      uniform float BlendOpacity; \n\
                      uniform sampler2D TextureObject0;                           \n\
                      varying vec4 varyTexCoord0;                                 \n\
@@ -396,7 +396,7 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetBlendTexColorProgram (BlendMo
                      void main()                                                 \n\
                      {                                                           \n\
                      vec4 v = SampleTexture(TextureObject0, varyTexCoord0);      \n\
-                     gl_FragColor.rgb = mix(v.rgb,%s(v.rgb,color0),0.8); \n\
+                     gl_FragColor.rgb = mix(v.rgb,%s(v.rgb,color0.rgb),color0.a); \n\
                      gl_FragColor.a = 1.0; \n\
                      }";
 
@@ -477,7 +477,7 @@ void GraphicsEngine::QRP_GLSL_1TexBlendColor (int x, int y, int width, int heigh
     
     if (BlendColorLocation != -1)
       {
-	CHECKGL(glUniform3fARB(BlendColorLocation, blend_color.red, blend_color.green, blend_color.blue));
+	CHECKGL(glUniform4fARB(BlendColorLocation, blend_color.red, blend_color.green, blend_color.blue, blend_color.alpha));
       } 
     if (OpacityLocation != -1)
       {
