@@ -25,7 +25,9 @@
 #include "pango/pango.h"
 #include "pango/pangocairo.h"
 #include "NuxImage/CairoGraphics.h"
+#if defined(NUX_OS_LINUX)
 #include "InputMethodIBus.h"
+#endif
 
 namespace nux
 {
@@ -84,8 +86,7 @@ namespace nux
     /*!
         This signal is emitted when the text has changed.
     */
-    sigc::signal <void, TextEntryIM*> sigTextChanged; // deprecated, use changed.
-    sigc::signal <void, TextEntryIM*> changed;
+    sigc::signal <void, TextEntryIM*> text_changed;
     sigc::signal <void> activated;
     sigc::signal <void, int> cursor_moved;
 
@@ -370,10 +371,11 @@ namespace nux
     std::list<Rect> last_cursor_region_;
     std::list<Rect> cursor_region_;
 
+#if defined(NUX_OS_LINUX)
     IBusIMEContext* ime_;
-    bool ime_active_;
-
     friend class IBusIMEContext;
+#endif
+    bool ime_active_;
 
   protected:
     bool text_input_mode_;

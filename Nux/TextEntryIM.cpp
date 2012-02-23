@@ -122,8 +122,8 @@ namespace nux
     , align_(CairoGraphics::ALIGN_LEFT)
 #if defined(NUX_OS_LINUX)
     , caret_cursor_(None)
-#endif
     , ime_(new IBusIMEContext(this))
+#endif    
     , ime_active_(false)
     , text_input_mode_(false)
     , key_nav_mode_(false)
@@ -161,8 +161,10 @@ namespace nux
     if (_texture2D)
       _texture2D->UnReference();
 
+#if defined(NUX_OS_LINUX)
     if (ime_)
       delete ime_;
+#endif
   }
 
   void TextEntryIM::PreLayoutManagement()
@@ -256,25 +258,15 @@ namespace nux
     if (event_type == NUX_KEYDOWN)
       text_input_mode_ = true;
 
-//     GdkEventKey *gdk_event = static_cast<GdkEventKey *>(event.GetOriginalEvent());
-//     ASSERT(gdk_event);
-//
-//     Event::Type type = event.GetType();
-    // Cause the cursor to stop blinking for a while.
     cursor_blink_status_ = 4;
-
-//     if (!readonly_ /*&& im_context_*/ && type != Event::EVENT_KEY_PRESS && 0/*&& gtk_im_context_filter_keypress(im_context_, gdk_event)*/)
-//     {
-//         need_im_reset_ = true;
-//         QueueRefresh(false, true);
-//         return EVENT_RESULT_HANDLED;
-//     }
 
     // FIXME Have to get the current event fot he x11_keycode for ibus-hangul/korean input
     nux::Event cur_event = nux::GetWindowThread()->GetGraphicsDisplay().GetCurrentEvent(); 
     KeyEvent event((NuxEventType)event_type, keysym,cur_event.x11_keycode, state, character); 
 
+#if defined(NUX_OS_LINUX)
     retval = ime_->FilterKeyEvent(event); 
+#endif
 
     if (event_type == NUX_KEYUP)
       return;
@@ -406,7 +398,6 @@ namespace nux
 //       }
     }
 
-    //if (!ime_->FilterKeyEvent(event) && character != 0 && (strlen(character) != 0))
     if (!retval && character != 0 && (strlen(character) != 0))
     {
       EnterText(character);
@@ -553,8 +544,7 @@ namespace nux
     need_im_reset_ = true;
     //ResetImContext();
     QueueRefresh(true, true);
-    sigTextChanged.emit(this);  // soon to be deprectated
-    changed.emit(this);
+    text_changed.emit(this);
   }
 
   std::string const& TextEntryIM::GetText() const
@@ -676,7 +666,9 @@ namespace nux
       if (!readonly_ /*&& im_context_*/)
       {
         need_im_reset_ = true;
+#if defined(NUX_OS_LINUX)
         ime_->Focus();
+#endif        
         //gtk_im_context_focus_in(im_context_);
         //UpdateIMCursorLocation();
       }
@@ -696,7 +688,9 @@ namespace nux
       if (!readonly_ /*&& im_context_*/)
       {
         need_im_reset_ = true;
+#if defined(NUX_OS_LINUX)        
         ime_->Blur();
+#endif
         //gtk_im_context_focus_out(im_context_);
       }
       cursor_visible_ = false; // hide cursor when losing focus
@@ -1200,7 +1194,7 @@ namespace nux
 
     int pre_completion_length = tmp_string.length();
 
-    if (!completion_.empty() && !wrap_)
+    if (!completion_.empty() && !wrap_ && preedit_.empty())
     {
       tmp_string = text_ + completion_;
     }
@@ -1456,8 +1450,7 @@ namespace nux
     }
 
     ResetLayout();
-    sigTextChanged.emit(this);   // soon to be deprectated
-    changed.emit(this);
+    text_changed.emit(this);
   }
 
   void TextEntryIM::DeleteText(int start, int end)
@@ -1488,8 +1481,7 @@ namespace nux
       selection_bound_ -= (end - start);
 
     ResetLayout();
-    sigTextChanged.emit(this);   // soon to be deprectated
-    changed.emit(this);
+    text_changed.emit(this);
   }
 
   void TextEntryIM::SelectWord()
