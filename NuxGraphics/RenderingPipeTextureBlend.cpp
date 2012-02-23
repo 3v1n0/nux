@@ -150,7 +150,7 @@ float _BlendSoftLight(float B /*background layer*/, float L /*foreground layer*/
 }                                                                                                   \n\
 vec3 BlendSoftLight(vec3 B /*background layer*/, vec3 L /*foreground layer*/)                       \n\
 {                                                                                                   \n\
-  return vec3(_BlendSoftLight(B.r + L.r), _BlendSoftLight(B.g + L.g), _BlendSoftLight(B.b + L.b));  \n\
+  return vec3(_BlendSoftLight(B.r, L.r), _BlendSoftLight(B.g, L.g), _BlendSoftLight(B.b, L.b));  \n\
 }";
 
   static const char * const BlendHardLightShader = "#version 110                                             \n\
@@ -163,7 +163,7 @@ float _BlendHardLight(float B /*background layer*/, float L /*foreground layer*/
 }                                                                                                   \n\
 vec3 BlendHardLight(vec3 B /*background layer*/, vec3 L /*foreground layer*/)                       \n\
 {                                                                                                   \n\
-  return vec3(_BlendHardLight(B.r + L.r), _BlendHardLight(B.g + L.g), _BlendHardLight(B.b + L.b));  \n\
+  return vec3(_BlendHardLight(B.r, L.r), _BlendHardLight(B.g, L.g), _BlendHardLight(B.b, L.b));  \n\
 }";
 
   static const char * const BlendColorDodgeShader = "#version 110                                              \n\
@@ -176,7 +176,7 @@ float _BlendColorDodge(float B /*background layer*/, float L /*foreground layer*
 }                                                                                                     \n\
 vec3 BlendColorDodge(vec3 B /*background layer*/, vec3 L /*foreground layer*/)                        \n\
 {                                                                                                     \n\
-  return vec3(_BlendColorDodge(B.r + L.r), _BlendColorDodge(B.g + L.g), _BlendColorDodge(B.b + L.b)); \n\
+  return vec3(_BlendColorDodge(B.r, L.r), _BlendColorDodge(B.g, L.g), _BlendColorDodge(B.b, L.b)); \n\
 }";
 
   static const char * const BlendLinearDodgeShader = "#version 110                                                 \n\
@@ -186,7 +186,7 @@ float _BlendLinearDodge(float B /*background layer*/, float L /*foreground layer
 }                                                                                                         \n\
 vec3 BlendLinearDodge(vec3 B /*background layer*/, vec3 L /*foreground layer*/)                           \n\
 {                                                                                                         \n\
-  return vec3(_BlendLinearDodge(B.r + L.r), _BlendLinearDodge(B.g + L.g), _BlendLinearDodge(B.b + L.b));  \n\
+  return vec3(_BlendLinearDodge(B.r, L.r), _BlendLinearDodge(B.g, L.g), _BlendLinearDodge(B.b, L.b));  \n\
 }";
 
   static const char * const BlendColorBurnShader = "#version 110                                                   \n\
@@ -199,7 +199,7 @@ float _BlendColorBurn(float B /*background layer*/, float L /*foreground layer*/
 }                                                                                                         \n\
 vec3 BlendColorBurn(vec3 B /*background layer*/, vec3 L /*foreground layer*/)                             \n\
 {                                                                                                         \n\
-  return vec3(_BlendColorBurn(B.r + L.r), _BlendColorBurn(B.g + L.g), _BlendColorBurn(B.b + L.b));        \n\
+  return vec3(_BlendColorBurn(B.r, L.r), _BlendColorBurn(B.g, L.g), _BlendColorBurn(B.b, L.b));        \n\
 }";
 
   static const char * const BlendLinearBurnShader = "#version 110                                                  \n\
@@ -209,7 +209,7 @@ float _BlendLinearBurn(float B /*background layer*/, float L /*foreground layer*
 }                                                                                                         \n\
 vec3 BlendLinearBurn(vec3 B /*background layer*/, vec3 L /*foreground layer*/)                            \n\
 {                                                                                                         \n\
-  return vec3(_BlendLinearBurn(B.r + L.r), _BlendLinearBurn(B.g + L.g), _BlendLinearBurn(B.b + L.b));     \n\
+  return vec3(_BlendLinearBurn(B.r, L.r), _BlendLinearBurn(B.g, L.g), _BlendLinearBurn(B.b, L.b));     \n\
 }";
 
   static const char * const BlendLinearLightShader = "#version 110                                                 \n\
@@ -222,7 +222,7 @@ float _BlendLinearLight(float B /*background layer*/, float L /*foreground layer
 }                                                                                                         \n\
 vec3 BlendLinearLight(vec3 B /*background layer*/, vec3 L /*foreground layer*/)                           \n\
 {                                                                                                         \n\
-  return vec3(_BlendLinearLight(B.r + L.r), _BlendLinearLight(B.g + L.g), _BlendLinearLight(B.b + L.b));  \n\
+  return vec3(_BlendLinearLight(B.r, L.r), _BlendLinearLight(B.g, L.g), _BlendLinearLight(B.b, L.b));  \n\
 }";
 
   static const char * const BlendVividLightShader = "#version 110                                                  \n\
