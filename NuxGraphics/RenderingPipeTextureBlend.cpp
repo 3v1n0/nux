@@ -398,7 +398,6 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetBlendTexColorProgram (BlendMo
                      vec4 v = SampleTexture(TextureObject0, varyTexCoord0);      \n\
                      gl_FragColor.rgb = mix(v.rgb,%s(v.rgb,color0),BlendOpacity); \n\
                      gl_FragColor.a = 1.0; \n\
-                     gl_FragColor *= varyVertexColor; \n\
                      }";
 
     //                     gl_FragColor = %s(v*varyVertexColor, blendColor);                           
