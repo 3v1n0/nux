@@ -53,3 +53,6 @@ xtest-focus-on-mouse-enter
 
 xtest-keynav-direction
   Test key navigation. Especially test the direction a key nav is coming from when the view is getting the focus.
+
+xtest-text-entry
+  Simulate various operations on the text entry

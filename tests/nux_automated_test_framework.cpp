@@ -259,7 +259,16 @@ void NuxAutomatedTestFramework::ViewSendChar(const char c)
   }
 
   std::string s(1, c);
-  SendFakeKeyEvent(XStringToKeysym(s.c_str()), modifier);
+
+  if (c == ' ')
+  {
+    SendFakeKeyEvent(XK_space, modifier);
+  }
+  else
+  {   
+    SendFakeKeyEvent(XStringToKeysym(s.c_str()), modifier);
+  }
+
   nux::SleepForMilliseconds(300);
 }
 
@@ -282,7 +291,15 @@ void NuxAutomatedTestFramework::ViewSendString(const std::string &str)
     }
 
     std::string s(1, c);
-    SendFakeKeyEvent(XStringToKeysym(s.c_str()), modifier);
+
+    if (c == ' ')
+    {
+      SendFakeKeyEvent(XK_space, modifier);
+    }
+    else
+    {   
+      SendFakeKeyEvent(XStringToKeysym(s.c_str()), modifier);
+    }
     nux::SleepForMilliseconds(300);
   }
 }
@@ -365,6 +382,44 @@ void NuxAutomatedTestFramework::ViewSendTab()
 void NuxAutomatedTestFramework::ViewSendReturn()
 {
   SendFakeKeyEvent(XK_Return, 0);
+}
+
+void NuxAutomatedTestFramework::ViewSendRight()
+{
+  SendFakeKeyEvent(XK_Right, 0);
+}
+
+void NuxAutomatedTestFramework::ViewSendLeft()
+{
+  SendFakeKeyEvent(XK_Left, 0);
+}
+
+void NuxAutomatedTestFramework::ViewSendUp()
+{
+  SendFakeKeyEvent(XK_Up, 0);
+}
+
+void NuxAutomatedTestFramework::ViewSendDown()
+{
+  SendFakeKeyEvent(XK_Down, 0);
+}
+
+void NuxAutomatedTestFramework::ViewSendIBusToggle()
+{
+  KeyCode modcode0 = 0;
+  KeyCode modcode1 = 0;
+
+  modcode0 = XKeysymToKeycode(display_, XK_Control_L);
+  XTestFakeKeyEvent(display_, modcode0, True, 0);
+
+  modcode1 = XKeysymToKeycode(display_, XK_space);
+  XTestFakeKeyEvent(display_, modcode1, True, 0);
+
+  // release
+  /* Generate modkey release */
+  XTestFakeKeyEvent(display_, modcode1, False, 0);
+  XTestFakeKeyEvent(display_, modcode0, False, 0);
+
 }
 
 void NuxAutomatedTestFramework::PutMouseAt(int x, int y)

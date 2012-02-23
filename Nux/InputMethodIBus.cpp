@@ -6,7 +6,7 @@ namespace nux
 {
   IBusBus* IBusIMEContext::bus_ = NULL;
 
-  IBusIMEContext::IBusIMEContext(TextEntryIM* text_entry) 
+  IBusIMEContext::IBusIMEContext(TextEntry* text_entry) 
     : text_entry_(text_entry),
       context_(NULL),
       is_focused_(false)
@@ -68,13 +68,15 @@ namespace nux
       ibus_input_context_reset(context_);
   }
 
-  // FIXME Need to get the key_code form nux NOT just the keysym
   bool IBusIMEContext::FilterKeyEvent(const KeyEvent& event)
   {
-    guint keyval = event.key_code(); // todo(jaytaoko): ui::GdkKeyCodeForWindowsKeyCode(event.key_code(), event.IsShiftDown() ^ event.IsCapsLockDown());
+    guint keyval = event.key_sym(); // todo(jaytaoko): ui::GdkKeyCodeForWindowsKeyCode(event.key_code(), event.IsShiftDown() ^ event.IsCapsLockDown());
 
     if (context_) {
       guint modifiers = 0;
+
+      if (event.flags() & IBUS_IGNORED_MASK)
+        return false;
 
       if (event.type() == EVENT_KEY_UP)
         modifiers |= IBUS_RELEASE_MASK;
@@ -88,19 +90,14 @@ namespace nux
       if (event.IsCapsLockDown())
         modifiers |= IBUS_LOCK_MASK;
 
-      // FIXME Not the best way to get the x11_key_code. Should be able to get it from TextEntry::ProcessKeyEvent
-      // The x11_keycode is needed for the ibus-hangul engine!
-      nux::Event cur_event = nux::GetWindowThread()->GetGraphicsDisplay().GetCurrentEvent(); 
-
       ibus_input_context_process_key_event_async(context_,
-        keyval, cur_event.x11_keycode - 8, modifiers,
+        keyval, event.key_code() - 8, modifiers,
         -1,
         NULL,
         reinterpret_cast<GAsyncReadyCallback>(ProcessKeyEventDone),
         new ProcessKeyEventData(this, event));
       return true;
     }
-
     return false;
   }
 
@@ -113,11 +110,14 @@ namespace nux
     nuxAssert(bus_ != NULL);
     nuxAssert(ibus_bus_is_connected(bus_));
 
-    context_ = ibus_bus_create_input_context(bus_, "nux");
+    if (!(context_ = ibus_bus_create_input_context(bus_, "nux")))
+    {
+      nuxDebugMsg("[IBusIMEContext::IBusIMEContext] Cannot create InputContext");
+      return;
+    }
 
     // connect input context signals
     g_signal_connect(context_, "commit-text",         G_CALLBACK(OnCommitText_),        this);
-    g_signal_connect(context_, "forward-key-event",   G_CALLBACK(OnForwardKeyEvent_),   this);
     g_signal_connect(context_, "update-preedit-text", G_CALLBACK(OnUpdatePreeditText_), this);
     g_signal_connect(context_, "show-preedit-text",   G_CALLBACK(OnShowPreeditText_),   this);
     g_signal_connect(context_, "hide-preedit-text",   G_CALLBACK(OnHidePreeditText_),   this);
@@ -138,7 +138,7 @@ namespace nux
 
   void IBusIMEContext::DestroyContext()
   {
-    nuxDebugMsg("***IBusIMEContext::DestroyContext***");
+    //nuxDebugMsg("***IBusIMEContext::DestroyContext***");
     if (!context_)
       return;
 
@@ -147,25 +147,27 @@ namespace nux
     nuxAssert(!context_);
   }
 
-  // FIXME Also need to figure out how to get the pop up window
-  // for a possible ibus-engine to always be on top of the active
-  // window
   void IBusIMEContext::UpdateCursorLocation()
   {
     nux::Rect strong, weak;
     text_entry_->GetCursorRects(&strong, &weak);
-    nux::Geometry geo = text_entry_->GetGeometry();
+    
+    // Get the position of the TextEntry in the Window.
+    nux::Geometry geo = text_entry_->GetAbsoluteGeometry();
+
+    // Get the Geometry of the window on the display.
+    nux::Geometry window_geo = nux::GetGraphicsDisplay()->GetWindowGeometry();
 
     ibus_input_context_set_cursor_location(context_,
-      strong.x + geo.x,
-      strong.y + geo.y,
-      strong.width,
-      strong.height);
+      geo.x + window_geo.x + strong.x,
+      geo.y + window_geo.y,
+      0,
+      geo.height);
   }
 
   void IBusIMEContext::OnConnected(IBusBus *bus)
   {
-    nuxDebugMsg("***IBusIMEContext::OnConnected***");
+    //nuxDebugMsg("***IBusIMEContext::OnConnected***");
 
     nuxAssert(bus_ == bus);
     nuxAssert(ibus_bus_is_connected(bus_));
@@ -177,13 +179,15 @@ namespace nux
 
   void IBusIMEContext::OnDisconnected(IBusBus *bus)
   {
-    nuxDebugMsg("***IBusIMEContext::OnDisonnected***");
+    //nuxDebugMsg("***IBusIMEContext::OnDisonnected***");
+
+    if (context_)
+      DestroyContext();
   }
 
   void IBusIMEContext::OnCommitText(IBusInputContext *context, IBusText* text)
   {
-    nuxDebugMsg("***IBusIMEContext::OnCommitText***");
-    printf ("OnCommit %s\n", text->text);
+    //nuxDebugMsg("***IBusIMEContext::OnCommitText::%s***", text->text);
     nuxAssert(context_ == context);
 
     text_entry_->DeleteSelection();
@@ -201,38 +205,14 @@ namespace nux
     }
   }
 
-  void IBusIMEContext::OnForwardKeyEvent(IBusInputContext *context, guint keyval, guint keycode, guint state)
-  {
-    nuxDebugMsg("***IBusIMEContext::OnForwardKeyEvent***");
-    nuxAssert(context_ == context);
-
-    int flags = 0;
-
-    if (state & IBUS_LOCK_MASK)
-      flags |= KEY_MODIFIER_CAPS_LOCK;
-    if (state & IBUS_CONTROL_MASK)
-      flags |= KEY_MODIFIER_CTRL;
-    if (state & IBUS_SHIFT_MASK)
-      flags |= KEY_MODIFIER_SHIFT;
-    if (state & IBUS_MOD1_MASK)
-      flags |= KEY_MODIFIER_ALT;
-
-    int mouse_state = 0;
-    if (state & IBUS_BUTTON1_MASK)
-      mouse_state |= MOUSE_BUTTON1;
-    if (state & IBUS_BUTTON2_MASK)
-      mouse_state |= MOUSE_BUTTON2;
-    if (state & IBUS_BUTTON3_MASK)
-      mouse_state |= MOUSE_BUTTON3;
-
-    //ForwardKeyEvent(KeyEvent(state & IBUS_RELEASE_MASK ? EVENT_KEY_DOWN : EVENT_KEY_UP, keyval /* todo(jaytaoko): ui::WindowsKeyCodeForGdkKeyCode(keyval)*/, mouse_state, flags));
-  }
-
   void IBusIMEContext::OnUpdatePreeditText(IBusInputContext* context, IBusText* text, guint cursor_pos, gboolean visible)
   {
-    nuxDebugMsg("***IBusIMEContext::OnUpdatePreeditText***");
+    //nuxDebugMsg("***IBusIMEContext::OnUpdatePreeditText***");
     nuxAssert(context_ == context);
     nuxAssert(IBUS_IS_TEXT(text));
+
+    if (text_entry_->preedit_.empty())
+      UpdateCursorLocation();
 
     if (visible)
     {
@@ -279,50 +259,54 @@ namespace nux
         text_entry_->preedit_ = preedit;
         text_entry_->preedit_cursor_ = preedit.length();
         text_entry_->QueueRefresh (true, true);
-        text_entry_->sigTextChanged.emit(text_entry_);
-        UpdateCursorLocation();
+        text_entry_->text_changed.emit(text_entry_);
       }
+    }
+    else
+    {
+      OnHidePreeditText(context_);
     }
   }
 
   void IBusIMEContext::OnShowPreeditText(IBusInputContext *context)
   {
-    nuxDebugMsg("***IBusIMEContext::OnShowPreeditText***");
+    //nuxDebugMsg("***IBusIMEContext::OnShowPreeditText***");
     nuxAssert(context_ == context);
   }
 
   void IBusIMEContext::OnHidePreeditText(IBusInputContext *context)
   {
-    nuxDebugMsg("***IBusIMEContext::OnHidePreeditText***");
+    //nuxDebugMsg("***IBusIMEContext::OnHidePreeditText***");
     nuxAssert(context_ == context);
 
     text_entry_->ResetPreedit();
     text_entry_->QueueRefresh (true, true);
-    text_entry_->sigTextChanged.emit(text_entry_);
+    text_entry_->text_changed.emit(text_entry_);
   }
 
   void IBusIMEContext::OnEnable(IBusInputContext *context)
   {
-    nuxDebugMsg("***IBusIMEContext::OnEnable***");
+    //nuxDebugMsg("***IBusIMEContext::OnEnable***");
     nuxAssert(context_ == context);
 
     text_entry_->ime_active_ = true;
+    UpdateCursorLocation();
   }
 
   void IBusIMEContext::OnDisable(IBusInputContext *context)
   {
-    nuxDebugMsg("***IBusIMEContext::OnDisable***");
+    //nuxDebugMsg("***IBusIMEContext::OnDisable***");
     nuxAssert(context_ == context);
 
     text_entry_->ime_active_ = false;
     text_entry_->ResetPreedit();
     text_entry_->QueueRefresh (true, true);
-    text_entry_->sigTextChanged.emit(text_entry_);
+    text_entry_->text_changed.emit(text_entry_);
   }
 
   void IBusIMEContext::OnDestroy(IBusInputContext *context)
   {
-    nuxDebugMsg("***IBusIMEContext::OnDestroy***");
+    //nuxDebugMsg("***IBusIMEContext::OnDestroy***");
     nuxAssert(context_ == context);
 
     g_object_unref(context_);
@@ -331,7 +315,7 @@ namespace nux
 
   void IBusIMEContext::ProcessKeyEventDone(IBusInputContext *context, GAsyncResult* res, ProcessKeyEventData *data)
   {
-    nuxDebugMsg("***IBusIMEContext::ProcessKeyEventDone***");
+    //nuxDebugMsg("***IBusIMEContext::ProcessKeyEventDone***");
       nuxAssert(data->context->context_ == context);
 
       GError *error = NULL;
@@ -346,9 +330,14 @@ namespace nux
         g_error_free (error);
       }
 
-      // FIXME Need to forward this event somewhere..
       if (processed == FALSE)
-        printf ("Processed %i\n", processed);
+      {
+        data->context->text_entry_->ProcessKeyEvent(data->event.type(),
+                                                    data->event.key_sym(),
+                                                    data->event.flags() | IBUS_IGNORED_MASK,
+                                                    data->event.character().c_str(),
+                                                    0);
+      }
 
       delete data;
   }
