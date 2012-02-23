@@ -1,14 +1,14 @@
 #ifndef INPUTMETHODIBUS_H 
 #define INPUTMETHODIBUS_H
 
-#include <Nux/TextEntryIM.h>
+#include <Nux/TextEntry.h>
 #include <ibus.h>
 
 namespace nux
 {
 
   class IBusIMEContext;
-  class TextEntryIM;
+  class TextEntry;
   
   // FIXME This class should be reworked to replace the mouse_state
   // with the hardware key_code. 
@@ -68,7 +68,7 @@ namespace nux
   class IBusIMEContext
   {
   public:
-    explicit IBusIMEContext(TextEntryIM* text_entry);
+    explicit IBusIMEContext(TextEntry* text_entry);
     virtual ~IBusIMEContext();
 
     // views::IMEContext implementations:
@@ -126,7 +126,7 @@ namespace nux
       GAsyncResult* res,
       ProcessKeyEventData* data);
 
-    TextEntryIM* text_entry_;
+    TextEntry* text_entry_;
     IBusInputContext* context_;
     bool is_focused_;
 

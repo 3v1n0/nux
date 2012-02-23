@@ -95,7 +95,6 @@ source_cpp = \
   $(srcdir)/SystemThread.cpp \
   $(srcdir)/TabView.cpp \
   $(srcdir)/TextEntry.cpp \
-  $(srcdir)/TextEntryIM.cpp \
   $(srcdir)/InputMethodIBus.cpp \
   $(srcdir)/TextLoader.cpp \
   $(srcdir)/TextureArea.cpp \
@@ -182,7 +181,6 @@ source_h = \
   $(srcdir)/SystemThread.h \
   $(srcdir)/TabView.h \
   $(srcdir)/TextEntry.h \
-  $(srcdir)/TextEntryIM.h \
   $(srcdir)/InputMethodIBus.h \
   $(srcdir)/TextLoader.h \
   $(srcdir)/TextureArea.h \

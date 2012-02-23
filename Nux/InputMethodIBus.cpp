@@ -6,7 +6,7 @@ namespace nux
 {
   IBusBus* IBusIMEContext::bus_ = NULL;
 
-  IBusIMEContext::IBusIMEContext(TextEntryIM* text_entry) 
+  IBusIMEContext::IBusIMEContext(TextEntry* text_entry) 
     : text_entry_(text_entry),
       context_(NULL),
       is_focused_(false)
