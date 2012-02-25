@@ -744,6 +744,15 @@ namespace nux
 			    ObjectPtr<IOpenGLBaseTexture> Tex0,
 			    TexCoordXForm& texxform, const Color& color0,
 			    const Color&blend_color, BlendMode blend_mode);
+    void QRP_GLSL_ColorBlend1Tex (int x, int y, int width, int height,
+				  const Color &base_color,
+				  ObjectPtr<IOpenGLBaseTexture> DeviceTexture,
+				  TexCoordXForm &texxform0, const Color & color0,
+				  BlendMode blend_mode);
+    void QRP_GLSL_2TexBlend(int x, int y, int width, int height,
+			    ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm& texxform0, const Color &color0,
+			    ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm& texxform1, const Color &color1,
+			    BlendMode blend_mode);
 
 
   private:
@@ -932,12 +941,15 @@ namespace nux
 
     // Blend modes
     ObjectPtr<IOpenGLShaderProgram> _blend_tex_color_prog[BLEND_MODE_LAST];
+    ObjectPtr<IOpenGLShaderProgram> _blend_color_tex_prog[BLEND_MODE_LAST];
     ObjectPtr<IOpenGLShaderProgram> _blend_tex_tex_prog[BLEND_MODE_LAST];
     
-    const char *const GetBlendModeBlendFunc (BlendMode blend_mode);
-    const char *const GetBlendModeString (BlendMode blend_mode);
+    const char* const GetBlendModeBlendFunc (BlendMode blend_mode);
+    const char* const GetBlendModeString (BlendMode blend_mode);
     
-    ObjectPtr<IOpenGLShaderProgram> GetBlendTexColorProgram (BlendMode blend_mode);
+    ObjectPtr <IOpenGLShaderProgram> GetBlendTexColorProgram (BlendMode blend_mode);
+    ObjectPtr <IOpenGLShaderProgram> GetBlendColorTexProgram (BlendMode blend_mode);
+    ObjectPtr <IOpenGLShaderProgram> GetBlendTexTexProgram (BlendMode blend_mode);
 
 
 
