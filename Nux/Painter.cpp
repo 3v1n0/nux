@@ -930,6 +930,113 @@ namespace nux
     tl->SetGeometry(geo);
     active_paint_layer_stack_.push_front(tl);
   }
+  
+  void BasePainter::PushCompositionLayer (GraphicsEngine &graphics_engine,
+					  Geometry geo,
+					  ObjectPtr <IOpenGLBaseTexture> texture0,
+					  TexCoordXForm texxform0,
+					  const Color &color0,
+					  ObjectPtr <IOpenGLBaseTexture> texture1,
+					  TexCoordXForm texxform1,
+					  const Color &color1, 
+					  GraphicsEngine::BlendMode blend_mode,
+					  bool WriteAlpha,
+					  const ROPConfig &ROP)
+  {
+    CompositionLayer *cl = new CompositionLayer (texture0, texxform0, color0,
+						 texture1, texxform1, color1,
+						 blend_mode, WriteAlpha, ROP);
+    cl->SetModelViewMatrix(window_thread_->GetGraphicsEngine().GetModelViewMatrix());
+    cl->SetGeometry(geo);
+    
+    active_paint_layer_stack_.push_front(cl);
+  }
+
+  void BasePainter::PushCompositionLayer (GraphicsEngine &graphics_engine,
+					  Geometry geo,
+					  ObjectPtr <IOpenGLBaseTexture> texture0,
+					  TexCoordXForm texxform0,
+					  const Color& color0,
+					  const Color& blend_color,
+					  GraphicsEngine::BlendMode blend_mode,
+					  bool WriteAlpha,
+					  const ROPConfig &ROP)
+  {
+    CompositionLayer *cl = new CompositionLayer (texture0, texxform0, color0, blend_color,
+						 blend_mode, WriteAlpha, ROP);
+    cl->SetModelViewMatrix(window_thread_->GetGraphicsEngine().GetModelViewMatrix());
+    cl->SetGeometry(geo);
+
+    active_paint_layer_stack_.push_front(cl);
+  }
+
+  void BasePainter::PushCompositionLayer (GraphicsEngine &graphics_engine,
+					  Geometry geo,
+					  const Color& base_color,
+					  ObjectPtr <IOpenGLBaseTexture> texture0,
+					  TexCoordXForm texxform0,
+					  const Color& color0,
+					  GraphicsEngine::BlendMode blend_mode,
+					  bool WriteAlpha,
+					  const ROPConfig &ROP)
+  {
+    CompositionLayer *cl = new CompositionLayer (base_color, texture0, texxform0,
+						 color0, blend_mode,
+						 WriteAlpha, ROP);
+
+    cl->SetModelViewMatrix(window_thread_->GetGraphicsEngine().GetModelViewMatrix());
+    cl->SetGeometry(geo);
+
+    active_paint_layer_stack_.push_front(cl);
+  }
+
+    
+  void BasePainter::PushDrawCompositionLayer (GraphicsEngine &graphics_engine,
+					      Geometry geo,
+					      ObjectPtr <IOpenGLBaseTexture> texture0,
+					      TexCoordXForm texxform0,
+					      const Color &color0,
+					      const Color& blend_color,
+					      GraphicsEngine::BlendMode blend_mode,
+					      bool WriteAlpha,
+					      const ROPConfig &ROP)
+  {
+    PushCompositionLayer(graphics_engine, geo, texture0, texxform0,
+			 color0, blend_color, blend_mode, WriteAlpha, ROP);
+    PaintBackground(graphics_engine, geo);
+  }
+  
+  void BasePainter::PushDrawCompositionLayer (GraphicsEngine &graphics_engine,
+					      Geometry geo,
+					      ObjectPtr <IOpenGLBaseTexture> texture0,
+					      TexCoordXForm texxform0,
+					      const Color &color0,
+					      ObjectPtr <IOpenGLBaseTexture> texture1,
+					      TexCoordXForm texxform1,
+					      const Color &color1, 
+					      GraphicsEngine::BlendMode blend_mode,
+					      bool WriteAlpha,
+					      const ROPConfig &ROP)
+  {
+    PushCompositionLayer(graphics_engine, geo, texture0, texxform0,
+			 color0, texture1, texxform1, color1, blend_mode,
+			 WriteAlpha, ROP);
+    PaintBackground(graphics_engine, geo);
+  }
+    
+  void BasePainter::PushDrawCompositionLayer (GraphicsEngine &graphics_engine,
+					      Geometry geo,
+					      const Color& base_color,
+					      ObjectPtr <IOpenGLBaseTexture> texture0,
+					      TexCoordXForm texxform0,
+					      const Color &color0,
+					      GraphicsEngine::BlendMode blend_mode,
+					      bool WriteAlpha,
+					      const ROPConfig &ROP)
+  {
+    PushCompositionLayer(graphics_engine, geo, base_color, texture0,
+			 texxform0, color0, blend_mode, WriteAlpha, ROP);
+  }
 
   void BasePainter::PushColorizeTextureLayer(GraphicsEngine &graphics_engine, Geometry geo,
 					     ObjectPtr<IOpenGLBaseTexture> DeviceTexture,

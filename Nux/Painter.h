@@ -306,7 +306,7 @@ namespace nux
                                bool WriteAlpha = false,
                                const ROPConfig &ROP = ROPConfig::Default);
 
-    void PushDrawColorizeTextureLayer(GraphicsEngine &graphics_engine, Geometry geo,
+    void PushDrawColorizeTextureLayer(GraphicsEngine& graphics_engine, Geometry geo,
 				  ObjectPtr<IOpenGLBaseTexture> DeviceTexture,
 				  TexCoordXForm texxform,
 				  const Color &color,
@@ -314,6 +314,70 @@ namespace nux
 				  const ROPConfig &ROP,
 				  const Color &blend_color,
 				  GraphicsEngine::BlendMode blend_mode);
+    
+    void PushCompositionLayer (GraphicsEngine &graphics_engine,
+			       Geometry geo,
+			       ObjectPtr <IOpenGLBaseTexture> texture0,
+			       TexCoordXForm texxform0,
+			       const Color &color0,
+			       ObjectPtr <IOpenGLBaseTexture> texture1,
+			       TexCoordXForm texxform1,
+			       const Color &color1, 
+			       GraphicsEngine::BlendMode blend_mode,
+			       bool WriteAlpha,
+			       const ROPConfig &ROP);
+
+    void PushDrawCompositionLayer (GraphicsEngine &graphics_engine,
+			       Geometry geo,
+			       ObjectPtr <IOpenGLBaseTexture> texture0,
+			       TexCoordXForm texxform0,
+			       const Color &color0,
+			       ObjectPtr <IOpenGLBaseTexture> texture1,
+			       TexCoordXForm texxform1,
+			       const Color &color1, 
+			       GraphicsEngine::BlendMode blend_mode,
+			       bool WriteAlpha,
+			       const ROPConfig &ROP);
+
+    void PushCompositionLayer (GraphicsEngine &graphics_engine,
+			       Geometry geo,
+			       ObjectPtr <IOpenGLBaseTexture> texture0,
+			       TexCoordXForm texxform0,
+			       const Color& color0,
+			       const Color& blend_color,
+			       GraphicsEngine::BlendMode blend_mode,
+			       bool WriteAlpha,
+			       const ROPConfig &ROP);
+    
+    void PushDrawCompositionLayer (GraphicsEngine &graphics_engine,
+				   Geometry geo,
+				   ObjectPtr <IOpenGLBaseTexture> texture0,
+				   TexCoordXForm texxform0,
+				   const Color &color0,
+				   const Color& blend_color,
+				   GraphicsEngine::BlendMode blend_mode,
+				   bool WriteAlpha,
+				   const ROPConfig &ROP);
+
+    void PushCompositionLayer (GraphicsEngine &graphics_engine,
+			       Geometry geo,
+			       const Color& base_color,
+			       ObjectPtr <IOpenGLBaseTexture> texture0,
+			       TexCoordXForm texxform0,
+			       const Color& color0,
+			       GraphicsEngine::BlendMode blend_mode,
+			       bool WriteAlpha,
+			       const ROPConfig &ROP);
+    
+    void PushDrawCompositionLayer (GraphicsEngine &graphics_engine,
+				   Geometry geo,
+				   const Color& base_color,
+				   ObjectPtr <IOpenGLBaseTexture> texture0,
+				   TexCoordXForm texxform0,
+				   const Color &color0,
+				   GraphicsEngine::BlendMode blend_mode,
+				   bool WriteAlpha,
+				   const ROPConfig &ROP);
 
 
     void PushLayer(GraphicsEngine &graphics_engine, const Geometry &geo, AbstractPaintLayer *layer);
