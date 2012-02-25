@@ -76,6 +76,48 @@ namespace nux
     ROPConfig m_rop;
     unsigned long m_corners;
   };
+  
+  class CompositionLayer: public AbstractPaintLayer
+  {
+  public:
+    CompositionLayer(ObjectPtr <IOpenGLBaseTexture> texture0, TexCoordXForm texxform0, const Color &color0,
+		     ObjectPtr <IOpenGLBaseTexture> texture1, TexCoordXForm texxform1, const Color &color1,
+		     GraphicsEngine::BlendMode blend_mode,
+		     bool write_alpha, const ROPConfig &ROP);
+    CompositionLayer(ObjectPtr <IOpenGLBaseTexture> texture0, TexCoordXForm texxform0, const Color &color0,
+		     const Color &blend_color, GraphicsEngine::BlendMode blend_mode,
+		     bool write_alpha, const ROPConfig &ROP);
+    CompositionLayer(const Color &base_color, ObjectPtr <IOpenGLBaseTexture> texture0, 
+		     TexCoordXForm texxform0, const Color &color0,
+		     GraphicsEngine::BlendMode blend_mode,
+		     bool write_alpha, const ROPConfig &ROP);
+    
+    virtual ~CompositionLayer();
+    
+    virtual void Renderlayer(GraphicsEngine &graphics_engine);
+    
+    virtual AbstractPaintLayer *Clone() const;
+
+  private:
+    ObjectPtr <IOpenGLBaseTexture > m_source_texture;
+    Color m_source_texture_color;
+    TexCoordXForm m_source_texture_texxform;
+    
+    ObjectPtr <IOpenGLBaseTexture> m_foreground_texture;
+    Color m_foreground_texture_color;
+    TexCoordXForm m_foreground_texture_texxform;
+    
+    Color m_source_color;
+    Color m_foreground_color;
+    
+    bool m_write_alpha;
+    ROPConfig m_rop;
+
+    GraphicsEngine::BlendMode m_blend_mode;
+    
+    
+    
+  };
 
   class TextureLayer: public AbstractPaintLayer
   {
