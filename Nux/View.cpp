@@ -36,9 +36,6 @@ namespace nux
     view_layout_ = NULL;
     draw_cmd_queued_        = false;
     m_TextColor         = Color(1.0f, 1.0f, 1.0f, 1.0f);
-
-    // Set widget default size;
-    SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
   }
 
   View::~View()
