@@ -31,7 +31,6 @@
 #include "GraphicsEngine.h"
 #include "GLWindowManager.h"
 #include "Events.h"
-#include "IniFile.h"
 
 #include "GraphicsDisplay.h"
 

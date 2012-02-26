@@ -2,16 +2,16 @@
 #include <gmock/gmock.h>
 
 #include "Nux/Nux.h"
-#include "Nux/Metrics.h"
+#include "Nux/EMMetrics.h"
 
 namespace {
   TEST(TestMetrics, TestCreate)
   {
     // Test fallback (no display) of constructor, DPI of 96.0 will be used
-    nux::Metrics* metrics5  = new nux::Metrics(NULL, 0,  5.0);
-    nux::Metrics* metrics10 = new nux::Metrics(NULL, 0, 10.0);
-    nux::Metrics* metrics15 = new nux::Metrics(NULL, 0, 15.0);
-    nux::Metrics* metrics20 = new nux::Metrics(NULL, 0, 20.0);
+    nux::EMMetrics* metrics5  = new nux::EMMetrics(NULL, 0,  5.0);
+    nux::EMMetrics* metrics10 = new nux::EMMetrics(NULL, 0, 10.0);
+    nux::EMMetrics* metrics15 = new nux::EMMetrics(NULL, 0, 15.0);
+    nux::EMMetrics* metrics20 = new nux::EMMetrics(NULL, 0, 20.0);
 
     // Test conversion from pixel to EM (testing fallback-case) 5-point font
     EXPECT_EQ(metrics5->Pixel2EM(30), 4.5);

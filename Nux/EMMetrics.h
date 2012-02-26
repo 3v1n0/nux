@@ -16,17 +16,17 @@
  * Authored by: Mirco Müller <mirco.mueller@canonical.com
  */
 
-#ifndef NUX_METRICS_H
-#define NUX_METRICS_H
+#ifndef NUX_EMMETRICS_H
+#define NUX_EMMETRICS_H
 
 #include <X11/Xlib.h>
 
 namespace nux
 {
-  class Metrics
+  class EMMetrics
   {
     public:
-      Metrics(Display* dpy, int scr, double points);
+      EMMetrics(Display* dpy, int scr, double points);
 
       double Pixel2EM(int value);
       int EM2Pixel(double value);
@@ -36,4 +36,4 @@ namespace nux
   };
 }
 
-#endif // NUX_METRICS_H
+#endif // NUX_EMMETRICS_H
