@@ -16,11 +16,11 @@
  * Authored by: Mirco Müller <mirco.mueller@canonical.com
  */
 
-#include "Nux/Metrics.h"
+#include "Nux/EMMetrics.h"
 
 namespace nux
 {
-  Metrics::Metrics(Display* dpy, int scr, double points)
+  EMMetrics::EMMetrics(Display* dpy, int scr, double points)
   {
     double xres = 0.0;
     double yres = 0.0;
@@ -44,12 +44,12 @@ namespace nux
       pixels_per_em_ = 10.0; // assume points == 10.0, dpi == 96.0
   }
 
-  double Metrics::Pixel2EM(int value)
+  double EMMetrics::Pixel2EM(int value)
   {
     return static_cast<double> (value) / pixels_per_em_;
   }
 
-  int Metrics::EM2Pixel(double value)
+  int EMMetrics::EM2Pixel(double value)
   {
     return static_cast<int> (value * pixels_per_em_);
   }
