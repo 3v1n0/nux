@@ -33,24 +33,24 @@ class OwnedObject: public nux::Object
 {
 public:
   OwnedObject(NUX_FILE_LINE_PROTO)
-    : nux::Object (true, NUX_FILE_LINE_PARAM)
+  : nux::Object(true, NUX_FILE_LINE_PARAM)
   {
   }
 
-  ~OwnedObject () {}
+  ~OwnedObject() {}
 
-  int array [ARRAY_SIZE];
+  int array[ARRAY_SIZE];
 };
 
 class ChildOwnedObject: public OwnedObject
 {
 public:
   ChildOwnedObject(NUX_FILE_LINE_PROTO)
-    : OwnedObject (NUX_FILE_LINE_PARAM)
+  : OwnedObject(NUX_FILE_LINE_PARAM)
   {
   }
 
-  ~ChildOwnedObject () {}
+  ~ChildOwnedObject() {}
 
   int array [ARRAY_SIZE];
 };
@@ -60,11 +60,11 @@ class UnOwnedObject: public nux::Object
 {
 public:
   UnOwnedObject(NUX_FILE_LINE_PROTO)
-    : nux::Object (false, NUX_FILE_LINE_PARAM)
+  : nux::Object(false, NUX_FILE_LINE_PARAM)
   {
   }
 
-  ~UnOwnedObject () {}
+  ~UnOwnedObject() {}
 
   int array [ARRAY_SIZE];
 };
@@ -84,7 +84,7 @@ public:
 
 TEST(TestObject, TestObject) {
 
-  OwnedObject *a = new OwnedObject (NUX_TRACKER_LOCATION);
+  OwnedObject* a = new OwnedObject(NUX_TRACKER_LOCATION);
   OwnedObject b(NUX_TRACKER_LOCATION);
 
   EXPECT_THAT(a, NotNull());
@@ -125,17 +125,12 @@ TEST(TestObject, TestObjectReference) {
 
 TEST(TestObject, TestObjectPtr) {
 
-  OwnedObject *a = new OwnedObject (NUX_TRACKER_LOCATION);  // ref count = 1, owned
+  OwnedObject* a = new OwnedObject(NUX_TRACKER_LOCATION);  // ref count = 1, owned
 
-  nux::ObjectPtr<OwnedObject> object_ptr (a); // ref count = 2
+  nux::ObjectPtr<OwnedObject> object_ptr(a); // ref count = 2
 
   EXPECT_THAT(a->GetReferenceCount(), Eq(2));
   EXPECT_FALSE(a->UnReference()); // ref count = 1
-  EXPECT_THAT(a->GetReferenceCount(), Eq(1));
-
-  // Calling UnReference repeatedly should not destroy the object when there
-  // are ObjectPtr's hosting it.
-  EXPECT_FALSE(a->UnReference());
   EXPECT_THAT(a->GetReferenceCount(), Eq(1));
 
   object_ptr.Release();
@@ -166,23 +161,19 @@ TEST(TestObject, TestObjectPtrGetPointer) {
 
 TEST(TestObject, TestObjectPtr1) {
 
-  ChildOwnedObject *c = new ChildOwnedObject (NUX_TRACKER_LOCATION);  // ref count = 1, owned
+  ChildOwnedObject* c = new ChildOwnedObject(NUX_TRACKER_LOCATION);  // ref count = 1, owned
 
-  nux::ObjectPtr<OwnedObject> object_ptr0 (c); // ref count = 2
+  nux::ObjectPtr<OwnedObject> object_ptr0(c); // ref count = 2
 
   EXPECT_THAT(c->GetReferenceCount(), Eq(2));
 
-  nux::ObjectPtr<OwnedObject> object_ptr1 (object_ptr0); // ref count = 3
+  nux::ObjectPtr<OwnedObject> object_ptr1(object_ptr0); // ref count = 3
 
   EXPECT_THAT(c->GetReferenceCount(), Eq(3));
 
   EXPECT_FALSE(c->UnReference()); // ref count = 2
-  EXPECT_FALSE(c->UnReference()); // ref count = 2
-  EXPECT_FALSE(c->UnReference()); // ref count = 2
 
-  EXPECT_THAT(c->GetReferenceCount(), Eq(2));
-
-  object_ptr1.Release ();
+  object_ptr1.Release();
 
   EXPECT_THAT(c->GetReferenceCount(), Eq(1));
 
