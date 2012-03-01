@@ -158,6 +158,8 @@ namespace nux
     , ime_active_(false)
     , text_input_mode_(false)
     , key_nav_mode_(false)
+    , lose_key_focus_on_key_nav_direction_up_(true)
+    , lose_key_focus_on_key_nav_direction_down_(true)
   {
     cairo_font_options_set_antialias(font_options_, CAIRO_ANTIALIAS_SUBPIXEL);
     cairo_font_options_set_hint_style(font_options_, CAIRO_HINT_STYLE_FULL);
@@ -299,6 +301,18 @@ namespace nux
     retval = ime_->FilterKeyEvent(event); 
 #endif
 
+    if (keysym == NUX_VK_UP && !multiline_)
+    {
+      // Ignore key navigation direction 'up' if we are not in multi-line.
+      return;
+    }
+
+    if (keysym == NUX_VK_DOWN && !multiline_)
+    {
+      // Ignore key navigation direction 'down' if we are not in multi-line.
+      return;
+    }
+
     if (event_type == NUX_KEYUP)
       return;
     
@@ -336,10 +350,12 @@ namespace nux
       }
       else if (keyval == NUX_VK_UP)
       {
+        // move cursor to start of line
         MoveCursor(DISPLAY_LINES, -1, shift);
       }
       else if (keyval == NUX_VK_DOWN)
       {
+        // move cursor to end of line
         MoveCursor(DISPLAY_LINES, 1, shift);
       }
       else if (keyval == NUX_VK_HOME)
@@ -2156,6 +2172,34 @@ namespace nux
         key_sym == NUX_VK_TAB ||
         key_sym == NUX_VK_ESCAPE)
       {
+        if (multiline_ && (key_sym == NUX_VK_UP))
+        {
+          // Navigate between the lines of the text entry.
+          // This will move the cursor one line up.
+          return true;
+        }
+        
+        if (multiline_ && (key_sym == NUX_VK_DOWN))
+        {
+          // Navigate between the lines of the text entry.
+          // This will move the cursor one line down.          
+          return true;
+        }
+                
+        if ((!multiline_) && (!lose_key_focus_on_key_nav_direction_up_) && (key_sym == NUX_VK_UP))
+        {
+          // By returning true, the text entry signals that it want to receinve the signal for this event.
+          // Otherwise, the parent view of the text entry would be looking for another view to receive keynav focus to.
+          return true;
+        }
+
+        if ((!multiline_) && (!lose_key_focus_on_key_nav_direction_down_) && (key_sym == NUX_VK_DOWN))
+        {
+          // By returning true, the text entry signals that it want to receinve the signal for this event.
+          // Otherwise, the parent view of the text entry would be looking for another view to receive keynav focus to.
+          return true;
+        }
+
         return false;
       }
     }
@@ -2167,6 +2211,20 @@ namespace nux
       key_sym == NUX_VK_DOWN ||
       key_sym == NUX_VK_ESCAPE)
       {
+        if ((!multiline_) && (!lose_key_focus_on_key_nav_direction_up_) && NUX_VK_UP)
+        {
+          // By returning true, the text entry signals that it want to receinve the signal for this event.
+          // Otherwise, the parent view of the text entry would be looking for another view to receive keynav focus to.
+          return true;
+        }
+
+        if ((!multiline_) && (!lose_key_focus_on_key_nav_direction_down_) && NUX_VK_DOWN)
+        {
+          // By returning true, the text entry signals that it want to receinve the signal for this event.
+          // Otherwise, the parent view of the text entry would be looking for another view to receive keynav focus to.
+          return true;
+        }
+
         return false;
       }
     }
@@ -2189,6 +2247,26 @@ namespace nux
   void TextEntry::MoveCursorToLineEnd()
   {
     MoveCursor(DISPLAY_LINE_ENDS, 1, 0);
+  }
+
+  void TextEntry::SetLoseKeyFocusOnKeyNavDirectionUp(bool b)
+  {
+    lose_key_focus_on_key_nav_direction_up_ = b;
+  }
+
+  bool TextEntry::GetLoseKeyFocusOnKeyNavDirectionUp() const
+  {
+    return lose_key_focus_on_key_nav_direction_up_;
+  }
+
+  void TextEntry::SetLoseKeyFocusOnKeyNavDirectionDown(bool b)
+  {
+    lose_key_focus_on_key_nav_direction_down_ = b;
+  }  
+
+  bool TextEntry::GetLoseKeyFocusOnKeyNavDirectionDown() const
+  {
+    return lose_key_focus_on_key_nav_direction_down_;
   }
 
 }

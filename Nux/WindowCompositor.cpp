@@ -1883,6 +1883,9 @@ namespace
         key_nav_focus_change.emit(key_focus_area_, false, direction);
         // Signal emitted from the area itself.
         static_cast<InputArea*>(key_focus_area_)->key_nav_focus_change.emit(key_focus_area_, false, direction);
+        // nuxDebugMsg("[WindowCompositor::SetKeyFocusArea] Area type '%s' named '%s': Lost key nav focus.",
+        //   key_focus_area_->Type().name,
+        //   key_focus_area_->GetBaseString().GetTCharPtr());
       }
 
       if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
@@ -1908,6 +1911,9 @@ namespace
         key_nav_focus_change.emit(key_focus_area_, true, direction);
         // Signal emitted from the area itself.
         static_cast<InputArea*>(key_focus_area_)->key_nav_focus_change.emit(key_focus_area_, true, direction);
+        // nuxDebugMsg("[WindowCompositor::SetKeyFocusArea] Area type '%s' named '%s': Has key nav focus.",
+        //   key_focus_area_->Type().name,
+        //   key_focus_area_->GetBaseString().GetTCharPtr());
       }
 
       if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
@@ -2207,6 +2213,10 @@ namespace
           key_nav_focus_change.emit(key_focus_area_, false, KEY_NAV_NONE);
           // Signal emitted from the area itself.
           static_cast<InputArea*>(key_focus_area_)->key_nav_focus_change.emit(key_focus_area_, false, KEY_NAV_NONE);
+          // nuxDebugMsg("[WindowCompositor::GrabKeyboardAdd] Area type '%s' named '%s': Lost key nav focus.",
+          //   key_focus_area_->Type().name,
+          //   key_focus_area_->GetBaseString().GetTCharPtr());
+
         }
 
         if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
@@ -2278,6 +2288,9 @@ namespace
           key_nav_focus_change.emit(key_focus_area_, false, KEY_NAV_NONE);
           // Signal emitted from the area itself.
           static_cast<InputArea*>(key_focus_area_)->key_nav_focus_change.emit(key_focus_area_, false, KEY_NAV_NONE);
+          // nuxDebugMsg("[WindowCompositor::GrabKeyboardRemove] Area type '%s' named '%s': Lost key nav focus.",
+          //   key_focus_area_->Type().name,
+          //   key_focus_area_->GetBaseString().GetTCharPtr());          
         }
 
         if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))

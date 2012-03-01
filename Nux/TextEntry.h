@@ -158,6 +158,33 @@ namespace nux
 
     void MoveCursorToLineStart();
     void MoveCursorToLineEnd();
+
+
+    /*!
+        When the text entry is in single line mode, the keyboard arrow up/down may be used 
+        to navigate to another view. If the parameter of this function is set to true then 
+        the text entry returns false on NUX_VK_UP in InspectKeyEvent(). This allows the parent of the
+        text entry to look for another view that can receive the keyboard focus. The default value is true.\n
+        In multi-line mode, keyboard arrow up/down are used to navigate in the text.
+
+        @param b True to allow the key navigation to move away from the text entry on NUX_VK_UP.
+    */
+    void SetLoseKeyFocusOnKeyNavDirectionUp(bool b);
+
+    bool GetLoseKeyFocusOnKeyNavDirectionUp() const;
+
+    /*!
+        When the text entry is in single line mode, the keyboard arrow up/down may be used 
+        to navigate to another view. If the parameter of this function is set to true then 
+        the text entry returns false on NUX_VK_DOWN in InspectKeyEvent(). This allows the parent of the
+        text entry to look for another view that can receive the keyboard focus.  The default value is true.\n
+        In multi-line mode, keyboard arrow up/down are used to navigate in the text.
+
+        @param b True to allow the key navigation to move away from the text entry on NUX_VK_DOWN.
+    */    
+    void SetLoseKeyFocusOnKeyNavDirectionDown(bool b);
+
+    bool GetLoseKeyFocusOnKeyNavDirectionDown() const;
     
   protected:
     bool _block_focus; // used to selectively ignore focus keyevents
@@ -417,9 +444,11 @@ namespace nux
 #endif
     bool ime_active_;
 
-  protected:
     bool text_input_mode_;
     bool key_nav_mode_;
+
+    bool lose_key_focus_on_key_nav_direction_up_;
+    bool lose_key_focus_on_key_nav_direction_down_;
 
     virtual bool InspectKeyEvent(unsigned int eventType,
       unsigned int keysym,
