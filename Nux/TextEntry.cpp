@@ -301,13 +301,13 @@ namespace nux
     retval = ime_->FilterKeyEvent(event); 
 #endif
 
-    if (keysym == NUX_VK_UP && !multiline_)
+    if ((!multiline_) && (!lose_key_focus_on_key_nav_direction_up_) && (key_sym == NUX_VK_UP)
     {
       // Ignore key navigation direction 'up' if we are not in multi-line.
       return;
     }
 
-    if (keysym == NUX_VK_DOWN && !multiline_)
+    if ((!multiline_) && (!lose_key_focus_on_key_nav_direction_up_) && (key_sym == NUX_VK_DOWN)
     {
       // Ignore key navigation direction 'down' if we are not in multi-line.
       return;
@@ -2188,14 +2188,14 @@ namespace nux
                 
         if ((!multiline_) && (!lose_key_focus_on_key_nav_direction_up_) && (key_sym == NUX_VK_UP))
         {
-          // By returning true, the text entry signals that it want to receinve the signal for this event.
+          // By returning true, the text entry signals that it want to receive the signal for this event.
           // Otherwise, the parent view of the text entry would be looking for another view to receive keynav focus to.
           return true;
         }
 
         if ((!multiline_) && (!lose_key_focus_on_key_nav_direction_down_) && (key_sym == NUX_VK_DOWN))
         {
-          // By returning true, the text entry signals that it want to receinve the signal for this event.
+          // By returning true, the text entry signals that it want to receive the signal for this event.
           // Otherwise, the parent view of the text entry would be looking for another view to receive keynav focus to.
           return true;
         }
