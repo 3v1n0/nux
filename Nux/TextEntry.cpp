@@ -301,13 +301,13 @@ namespace nux
     retval = ime_->FilterKeyEvent(event); 
 #endif
 
-    if ((!multiline_) && (!lose_key_focus_on_key_nav_direction_up_) && (key_sym == NUX_VK_UP)
+    if ((!multiline_) && (!lose_key_focus_on_key_nav_direction_up_) && (keysym == NUX_VK_UP))
     {
       // Ignore key navigation direction 'up' if we are not in multi-line.
       return;
     }
 
-    if ((!multiline_) && (!lose_key_focus_on_key_nav_direction_up_) && (key_sym == NUX_VK_DOWN)
+    if ((!multiline_) && (!lose_key_focus_on_key_nav_direction_up_) && (keysym == NUX_VK_DOWN))
     {
       // Ignore key navigation direction 'down' if we are not in multi-line.
       return;
