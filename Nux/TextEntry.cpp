@@ -590,6 +590,8 @@ namespace nux
     selection_bound_ = 0;
     need_im_reset_ = true;
     //ResetImContext();
+
+    text_input_mode_ = true;
     QueueRefresh(true, true);
     text_changed.emit(this);
   }
@@ -1497,6 +1499,7 @@ namespace nux
     }
 
     ResetLayout();
+    text_input_mode_ = true;
     text_changed.emit(this);
   }
 
@@ -1528,6 +1531,7 @@ namespace nux
       selection_bound_ -= (end - start);
 
     ResetLayout();
+    text_input_mode_ = true;
     text_changed.emit(this);
   }
 
