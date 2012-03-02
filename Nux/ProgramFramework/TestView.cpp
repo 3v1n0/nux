@@ -61,6 +61,7 @@ TestView::TestView(NUX_FILE_LINE_DECL)
   key_nav_focus_change.connect(sigc::mem_fun(this, &TestView::OnKeyNavFocusChange));
   begin_key_focus.connect(sigc::mem_fun(this, &TestView::OnBeginKeyFocus));
   end_key_focus.connect(sigc::mem_fun(this, &TestView::OnEndKeyFocus));
+  object_destroyed.connect(sigc::mem_fun(this, &TestView::OnObjectDestroyed));
 
 }
 
@@ -81,6 +82,7 @@ void TestView::ResetEvents()
   registered_mouse_move_          = false;
   registered_mouse_enter_         = false;
   registered_mouse_leave_         = false;
+  registered_object_destroyed_    = false;
     
 }
 
@@ -186,6 +188,11 @@ void TestView::OnBeginKeyFocus()
 void TestView::OnEndKeyFocus()
 {
   registered_end_keynav_focus_ = true;
+}
+
+void TestView::OnObjectDestroyed(nux::Object* object)
+{
+  registered_object_destroyed_ = true;
 }
 
 }

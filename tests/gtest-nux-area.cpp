@@ -7,6 +7,7 @@
 #include <glib.h>
 
 #include "Nux/Nux.h"
+#include "Nux/HLayout.h"
 #include "Nux/StaticText.h"
 #include "Nux/ProgramFramework/TestView.h"
 
@@ -71,4 +72,38 @@ TEST(TestArea, TestAreaGeometry)
   test_view->UnReference();
   delete wnd_thread;
 }
+
+static bool object_destroyed = false;
+void OnObjectDestroyed(nux::Object* object)
+{
+  object_destroyed = true;
+}
+
+TEST(TestArea, TestUnParentKeyFocus)
+{
+  nux::NuxInitialize(0);
+  nux::WindowThread *wnd_thread = nux::CreateNuxWindow("Area Test", 300, 200,
+    nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL);
+
+  nux::HLayout* layout = new nux::HLayout();
+  nux::TestView* test_view = new nux::TestView("");
+  test_view->object_destroyed.connect(sigc::ptr_fun(&OnObjectDestroyed));
+
+  test_view->Reference();
+  
+  layout->AddView(test_view, 1);
+
+  wnd_thread->SetLayout(layout);
+
+  EXPECT_EQ(test_view->HasKeyFocus(), false);
+  nux::GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(test_view);
+  EXPECT_EQ(test_view->HasKeyFocus(), true);
+  layout->RemoveChildObject(test_view);
+  EXPECT_EQ(test_view->HasKeyFocus(), false);
+  test_view->UnReference();
+  EXPECT_EQ(object_destroyed, true);
+
+  delete wnd_thread;
+}
+
 }
