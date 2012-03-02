@@ -48,6 +48,7 @@ public:
   bool registered_mouse_move_;
   bool registered_mouse_enter_;
   bool registered_mouse_leave_;
+  bool registered_object_destroyed_;
   
   bool registered_begin_keynav_focus_;
   bool registered_end_keynav_focus_;
@@ -78,6 +79,7 @@ protected:
   void OnKeyNavFocusChange(nux::Area* area, bool has_focus, nux::KeyNavDirection direction);
   void OnBeginKeyFocus();
   void OnEndKeyFocus();
+  void OnObjectDestroyed(Object* object);
 
   void Draw(nux::GraphicsEngine& graphics_engine, bool force_draw);
 };
