@@ -56,3 +56,6 @@ xtest-keynav-direction
 
 xtest-text-entry
   Simulate various operations on the text entry
+
+xtest-text-entry-logic
+  Test the state of TextEntry::text_input_mode_ before and after some text is typed in.

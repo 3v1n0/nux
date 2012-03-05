@@ -201,11 +201,13 @@ source_h = \
 
 nuxprogramframework_cpp = \
   $(srcdir)/ProgramFramework/ProgramTemplate.cpp \
-  $(srcdir)/ProgramFramework/TestView.cpp
+  $(srcdir)/ProgramFramework/TestView.cpp \
+  $(srcdir)/ProgramFramework/TestTextEntry.cpp
 
 nuxprogramframework_h = \
   $(srcdir)/ProgramFramework/ProgramTemplate.h \
-  $(srcdir)/ProgramFramework/TestView.h
+  $(srcdir)/ProgramFramework/TestView.h \
+  $(srcdir)/ProgramFramework/TestTextEntry.h
 
 
 libnux_@NUX_API_VERSION@_la_SOURCES = \

@@ -2273,4 +2273,9 @@ namespace nux
     return lose_key_focus_on_key_nav_direction_down_;
   }
 
+  bool TextEntry::IsInTextInputMode() const
+  {
+    return text_input_mode_;
+  }
+
 }

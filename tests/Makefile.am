@@ -14,7 +14,8 @@ check_PROGRAMS = \
   xtest-focus-on-mouse-down \
   xtest-keynav-directions \
   xtest-text-entry \
-  xtest-focus-on-mouse-enter 
+  xtest-text-entry-logic \
+  xtest-focus-on-mouse-enter
 
 # Please keep alphabetical
 # test_nux_SOURCES = \
@@ -85,6 +86,7 @@ gtest_nux_SOURCES = \
   gtest-nux-emmetrics.cpp \
   gtest-nux-main.cpp \
   gtest-nux-statictext.cpp \
+  gtest-nux-textentry.cpp \
   gtest-nux-view.cpp \
   gtest-nux-windowcompositor.cpp \
   gtest-nux-windowthread.cpp
@@ -238,6 +240,13 @@ xtest_text_entry_CPPFLAGS = $(TestFlags)
 xtest_text_entry_LDADD = $(TestLibs)
 xtest_text_entry_LDFLAGS = -lpthread -lXtst
 
+xtest_text_entry_logic_SOURCES = xtest-text-entry-logic.cpp \
+  nux_automated_test_framework.cpp \
+  nux_automated_test_framework.h
+
+xtest_text_entry_logic_CPPFLAGS = $(TestFlags)
+xtest_text_entry_logic_LDADD = $(TestLibs)
+xtest_text_entry_logic_LDFLAGS = -lpthread -lXtst
 
 #run make test as part of make check
 check-local: test gtest test-apps
@@ -252,7 +261,7 @@ gtest: gtest-nuxcore gtest-nux
 check-headless: gtest-nuxcore
 	@gtester --verbose -k -o=test-nux-results.xml ./gtest-nuxcore
 
-test-apps: test-graphics-display test-empty-window xtest-text-entry xtest-button xtest-mouse-events xtest-mouse-buttons xtest-hgrid-key-navigation xtest-hlayout-key-navigation xtest-vlayout-key-navigation xtest-scrollbar xtest-focus-on-mouse-down xtest-focus-on-mouse-enter xtest-keynav-directions
+test-apps: test-graphics-display test-empty-window xtest-text-entry xtest-button xtest-mouse-events xtest-mouse-buttons xtest-hgrid-key-navigation xtest-hlayout-key-navigation xtest-vlayout-key-navigation xtest-scrollbar xtest-focus-on-mouse-down xtest-focus-on-mouse-enter xtest-keynav-directions xtest-text-entry-logic
 	./test-graphics-display
 	./test-empty-window
 	./xtest-text-entry
@@ -266,6 +275,7 @@ test-apps: test-graphics-display test-empty-window xtest-text-entry xtest-button
 	./xtest-focus-on-mouse-down
 	./xtest-focus-on-mouse-enter
 	./xtest-keynav-directions
+	./xtest-text-entry-logic
 
 check-report:
 	@gtester -k -o=test-nux-results.xml -k ./test-nux \
