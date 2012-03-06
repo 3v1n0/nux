@@ -186,6 +186,27 @@ namespace nux
 
     bool GetLoseKeyFocusOnKeyNavDirectionDown() const;
     
+    /*!
+        Return True if the text has been modified after the text entry has received the keyboard focus.\n
+        If the text entry already has characters typed in and it gets the keyboard focus, this function return false
+        while the text has not been modified. The text can be modified either by typing new characters or addind text
+        through TextEntry::SetText, TextEntry::EnterText, TextEntry::DeleteText.
+        If this text entry does not have the keyboard focus, this function returns false.
+
+        @return True after the text entry has received the keyboard focus and text has been typed in.
+    */
+    bool IsInTextInputMode() const;
+
+    /*!
+        Insert text at current caret position.
+    */
+    void EnterText(const char* str);
+    
+    /*!
+        Delete text in a specified range, in number of characters.
+    */
+    void DeleteText(int start, int end);
+
   protected:
     bool _block_focus; // used to selectively ignore focus keyevents
 
@@ -279,11 +300,6 @@ namespace nux
 
     /** Get previous char length before index, in number of bytes. */
     int GetPrevCharLength(int index);
-
-    /** Insert text at current caret position */
-    void EnterText(const char* str);
-    /** Delete text in a specified range, in number of characters. */
-    void DeleteText(int start, int end);
 
     /** Select the current word under cursor */
     void SelectWord();
@@ -444,7 +460,7 @@ namespace nux
 #endif
     bool ime_active_;
 
-    bool text_input_mode_;
+    bool text_input_mode_;    //!< Transient state of the TextEntry. \sa IsInTextInputMode.
     bool key_nav_mode_;
 
     bool lose_key_focus_on_key_nav_direction_up_;
