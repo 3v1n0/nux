@@ -293,6 +293,7 @@ namespace nux
     {
       nuxDebugMsg("Multi key detected.");
       composition_mode_ = true;
+      composition_string_.clear();
       return;
     }
 
@@ -316,6 +317,8 @@ namespace nux
         EnterText("©");
         composition_mode_ = false;
         composition_string_.clear();
+
+        return;
       }
       */
     }
