@@ -160,6 +160,7 @@ namespace nux
     , key_nav_mode_(false)
     , lose_key_focus_on_key_nav_direction_up_(true)
     , lose_key_focus_on_key_nav_direction_down_(true)
+    , composition_mode_(false)
   {
     cairo_font_options_set_antialias(font_options_, CAIRO_ANTIALIAS_SUBPIXEL);
     cairo_font_options_set_hint_style(font_options_, CAIRO_HINT_STYLE_FULL);
@@ -287,6 +288,37 @@ namespace nux
     unsigned short   keyCount       /*key repeat count*/)
   {
     bool retval = FALSE;
+
+    if (keysym == XK_Multi_key)
+    {
+      nuxDebugMsg("Multi key detected.");
+      composition_mode_ = true;
+      return;
+    }
+
+    if (composition_mode_)
+    {
+      /*
+      composition_string_ += character;
+
+      match = LookForMatch(composition_string_);
+      if (match == keep_searching)
+      {
+        return;
+      }
+      else if (match == no_match)
+      {
+        composition_mode_ = false;
+        composition_string_.clear();
+      }
+      else if (match == there_is_a_match)
+      {
+        EnterText("©");
+        composition_mode_ = false;
+        composition_string_.clear();
+      }
+      */
+    }
 
     if (event_type == NUX_KEYDOWN)
       text_input_mode_ = true;
@@ -521,8 +553,10 @@ namespace nux
 
   void TextEntry::RecvStartKeyFocus()
   {
-    key_nav_mode_           = true;
-    text_input_mode_        = false;
+    key_nav_mode_     = true;
+    text_input_mode_  = false;
+    composition_mode_ = false;
+    composition_string_.clear();
 
     FocusInx();
   }
@@ -531,6 +565,8 @@ namespace nux
   {
     key_nav_mode_     = false;
     text_input_mode_  = false;
+    composition_mode_ = false;
+    composition_string_.clear();
 
     FocusOutx();
   }
