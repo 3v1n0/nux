@@ -27,6 +27,7 @@
 #include "NuxImage/CairoGraphics.h"
 
 #include "TextEntry.h"
+#include "TextEntryComposeSeqs.h"
 
 #if defined(NUX_OS_LINUX)
 #include <X11/cursorfont.h>
@@ -299,28 +300,25 @@ namespace nux
 
     if (composition_mode_)
     {
-      /*
       composition_string_ += character;
 
-      match = LookForMatch(composition_string_);
-      if (match == keep_searching)
+      int match = LookForMatch();
+      if (match == PARTIAL)
       {
         return;
       }
-      else if (match == no_match)
+      else if (match == NO_MATCH)
       {
         composition_mode_ = false;
         composition_string_.clear();
       }
-      else if (match == there_is_a_match)
+      else if (match == MATCH)
       {
         EnterText("©");
         composition_mode_ = false;
         composition_string_.clear();
-
         return;
       }
-      */
     }
 
     if (event_type == NUX_KEYDOWN)
@@ -1164,6 +1162,24 @@ namespace nux
       cached_layout_ = CreateLayout();
     }
     return cached_layout_;
+  }
+
+  int TextEntry::LookForMatch()
+  {
+    int search_state = NO_MATCH;
+    // Check if the string we have is a match,partial match or doesnt match
+    for (int i = 0; nux_compose_seqs_compact[i] != "\0"; i++)
+    {
+      if (nux_compose_seqs_compact[i].compare(composition_string_) == 0)
+      {
+        return MATCH;
+      }
+      else if (nux_compose_seqs_compact[i].find(composition_string_) != std::string::npos)
+      {
+        search_state = PARTIAL;
+      }
+    }
+    return search_state;
   }
 
   void TextEntry::QueueTextDraw()
