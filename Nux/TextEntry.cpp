@@ -306,7 +306,7 @@ namespace nux
 
     if (composition_mode_)
     {
-      if (!(*character) && keysym != NUX_VK_SHIFT)
+      if (strncmp(character, "", 1) == 0 && keysym != NUX_VK_SHIFT)
       {
         composition_mode_ = false;
         composition_string_.clear();
