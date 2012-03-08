@@ -1191,10 +1191,10 @@ namespace nux
     {
       if (nux_compose_seqs_compact[i].compare(composition_string_) == 0)
       {
-        do
-        { 
-          ++i;
-        } while (nux_compose_seqs_compact[i].compare("::") != 0);
+        // advance to the next sequence after :: 
+        while (nux_compose_seqs_compact[++i].compare("::") != 0)
+        {
+        }
 
         str = nux_compose_seqs_compact[++i];
         return MATCH;
