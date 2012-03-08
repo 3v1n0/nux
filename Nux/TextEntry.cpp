@@ -27,6 +27,7 @@
 #include "NuxImage/CairoGraphics.h"
 
 #include "TextEntry.h"
+#include "TextEntryComposeSeqs.h"
 
 #if defined(NUX_OS_LINUX)
 #include <X11/cursorfont.h>
@@ -160,6 +161,7 @@ namespace nux
     , key_nav_mode_(false)
     , lose_key_focus_on_key_nav_direction_up_(true)
     , lose_key_focus_on_key_nav_direction_down_(true)
+    , composition_mode_(false)
   {
     cairo_font_options_set_antialias(font_options_, CAIRO_ANTIALIAS_SUBPIXEL);
     cairo_font_options_set_hint_style(font_options_, CAIRO_HINT_STYLE_FULL);
@@ -287,6 +289,54 @@ namespace nux
     unsigned short   keyCount       /*key repeat count*/)
   {
     bool retval = FALSE;
+
+    if (keysym == XK_Multi_key)
+    {
+      if (composition_mode_)
+      {
+      	composition_mode_ = false;
+      }
+      else
+      {
+        composition_mode_ = true;
+      }
+      composition_string_.clear();
+      return;
+    }
+
+    if (composition_mode_)
+    {
+      if (strncmp(character, "", 1) == 0 && keysym != NUX_VK_SHIFT)
+      {
+        composition_mode_ = false;
+        composition_string_.clear();
+        return;
+      }
+        
+      composition_string_ += character;
+      
+      std::string composition_match;
+
+      int match = LookForMatch(composition_match);
+
+      if (match == PARTIAL)
+      {
+        return;
+      }
+      else if (match == NO_MATCH)
+      {
+        composition_mode_ = false;
+        composition_string_.clear();
+      }
+      else if (match == MATCH)
+      {
+        EnterText(composition_match.c_str());
+        composition_mode_ = false;
+        composition_string_.clear();
+        QueueRefresh(false, true);
+        return;
+      }
+    }
 
     if (event_type == NUX_KEYDOWN)
       text_input_mode_ = true;
@@ -521,8 +571,10 @@ namespace nux
 
   void TextEntry::RecvStartKeyFocus()
   {
-    key_nav_mode_           = true;
-    text_input_mode_        = false;
+    key_nav_mode_     = true;
+    text_input_mode_  = false;
+    composition_mode_ = false;
+    composition_string_.clear();
 
     FocusInx();
   }
@@ -531,6 +583,8 @@ namespace nux
   {
     key_nav_mode_     = false;
     text_input_mode_  = false;
+    composition_mode_ = false;
+    composition_string_.clear();
 
     FocusOutx();
   }
@@ -1125,6 +1179,32 @@ namespace nux
       cached_layout_ = CreateLayout();
     }
     return cached_layout_;
+  }
+
+  int TextEntry::LookForMatch(std::string& str)
+  {
+    str.clear();
+    int search_state = NO_MATCH;
+
+    // Check if the string we have is a match,partial match or doesnt match
+    for (int i = 0; nux_compose_seqs_compact[i] != "\0"; i++)
+    {
+      if (nux_compose_seqs_compact[i].compare(composition_string_) == 0)
+      {
+        // advance to the next sequence after :: 
+        while (nux_compose_seqs_compact[++i].compare("::") != 0)
+        {
+        }
+
+        str = nux_compose_seqs_compact[++i];
+        return MATCH;
+      }
+      else if (nux_compose_seqs_compact[i].find(composition_string_) != std::string::npos)
+      {
+        search_state = PARTIAL;
+      }
+    }
+    return search_state;
   }
 
   void TextEntry::QueueTextDraw()

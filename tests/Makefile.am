@@ -14,6 +14,7 @@ check_PROGRAMS = \
   xtest-focus-on-mouse-down \
   xtest-keynav-directions \
   xtest-text-entry \
+  xtest-text-entry-deadkeys \
   xtest-text-entry-logic \
   xtest-focus-on-mouse-enter
 
@@ -248,6 +249,14 @@ xtest_text_entry_logic_CPPFLAGS = $(TestFlags)
 xtest_text_entry_logic_LDADD = $(TestLibs)
 xtest_text_entry_logic_LDFLAGS = -lpthread -lXtst
 
+xtest_text_entry_deadkeys_SOURCES = xtest-text-entry-deadkeys.cpp \
+  nux_automated_test_framework.cpp \
+  nux_automated_test_framework.h
+
+xtest_text_entry_deadkeys_CPPFLAGS = $(TestFlags)
+xtest_text_entry_deadkeys_LDADD = $(TestLibs)
+xtest_text_entry_deadkeys_LDFLAGS = -lpthread -lXtst
+
 #run make test as part of make check
 check-local: test gtest test-apps
 
@@ -261,7 +270,7 @@ gtest: gtest-nuxcore gtest-nux
 check-headless: gtest-nuxcore
 	@gtester --verbose -k -o=test-nux-results.xml ./gtest-nuxcore
 
-test-apps: test-graphics-display test-empty-window xtest-text-entry xtest-button xtest-mouse-events xtest-mouse-buttons xtest-hgrid-key-navigation xtest-hlayout-key-navigation xtest-vlayout-key-navigation xtest-scrollbar xtest-focus-on-mouse-down xtest-focus-on-mouse-enter xtest-keynav-directions xtest-text-entry-logic
+test-apps: test-graphics-display test-empty-window xtest-text-entry xtest-button xtest-mouse-events xtest-mouse-buttons xtest-hgrid-key-navigation xtest-hlayout-key-navigation xtest-vlayout-key-navigation xtest-scrollbar xtest-focus-on-mouse-down xtest-focus-on-mouse-enter xtest-keynav-directions xtest-text-entry-logic xtest-text-entry-deadkeys
 	./test-graphics-display
 	./test-empty-window
 	./xtest-text-entry
@@ -276,6 +285,7 @@ test-apps: test-graphics-display test-empty-window xtest-text-entry xtest-button
 	./xtest-focus-on-mouse-enter
 	./xtest-keynav-directions
 	./xtest-text-entry-logic
+	./xtest-text-entry-deadkeys
 
 check-report:
 	@gtester -k -o=test-nux-results.xml -k ./test-nux \

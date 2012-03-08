@@ -296,12 +296,114 @@ void NuxAutomatedTestFramework::ViewSendString(const std::string &str)
     {
       SendFakeKeyEvent(XK_space, modifier);
     }
+    else if (c == '^')
+    {
+      SendFakeKeyEvent(XK_asciicircum, XK_Shift_L);
+    }
+    else if (c == '~')
+    {
+      SendFakeKeyEvent(XK_asciitilde, XK_Shift_L);
+    }
+    else if (c == '`')
+    {
+      SendFakeKeyEvent(XK_asciitilde, 0);
+    }
+    else if (c == '=')
+    {
+      SendFakeKeyEvent(XK_equal, 0);
+    }
+    else if (c == '\"')
+    {
+      SendFakeKeyEvent(XK_quotedbl, XK_Shift_L);
+    }
+    else if (c == '!')
+    {
+      SendFakeKeyEvent(XK_exclam, XK_Shift_L);
+    }
+    else if (c == '|')
+    {
+      SendFakeKeyEvent(XK_bar, XK_Shift_L);
+    }
+    else if (c == '/')
+    {
+      SendFakeKeyEvent(XK_slash, 0);
+    }
+    else if (c == '\\')
+    {
+      SendFakeKeyEvent(XK_backslash, 0);
+    }
+    else if (c == '-')
+    {
+      SendFakeKeyEvent(XK_minus, 0);
+    }
+    else if (c == '+')
+    {
+      SendFakeKeyEvent(XK_plus, XK_Shift_L);
+    }
+    else if (c == ',')
+    {
+      SendFakeKeyEvent(XK_comma, 0);
+    }
+    else if (c == '_')
+    {
+      SendFakeKeyEvent(XK_underscore, XK_Shift_L);
+    }
+    else if (c == '<')
+    { 
+      SendFakeKeyEvent(XK_comma, XK_Shift_L);
+    }
+    else if (c == '>')
+    {
+      SendFakeKeyEvent(XK_greater, XK_Shift_L);
+    }
+    else if (c == '.')
+    {
+      SendFakeKeyEvent(XK_period, 0);
+    }
+    else if (c == '?')
+    {
+      SendFakeKeyEvent(XK_question, XK_Shift_L);
+    }
+    else if (c == '\'')
+    {
+      SendFakeKeyEvent(XK_quoteright, 0);
+    }
+    else if (c == ';')
+    {
+      SendFakeKeyEvent(XK_semicolon, 0);
+    }
+    else if (c == ':')
+    {
+      SendFakeKeyEvent(XK_colon, XK_Shift_L);
+    }
+    else if (c == '%')
+    {
+      SendFakeKeyEvent(XK_percent, XK_Shift_L);
+    }
+    else if (c == '(')
+    {
+      SendFakeKeyEvent(XK_parenleft, XK_Shift_L);
+    }
+    else if (c == ')')
+    {
+      SendFakeKeyEvent(XK_parenright, XK_Shift_L);
+    }
     else
     {   
       SendFakeKeyEvent(XStringToKeysym(s.c_str()), modifier);
     }
     nux::SleepForMilliseconds(300);
   }
+}
+
+void NuxAutomatedTestFramework::ViewSendCompositionKeys(const std::string& str)
+{
+  int l = str.length();
+  if (l == 0)
+    return;
+  
+  SendFakeKeyEvent(XK_Multi_key, 0);
+  ViewSendString(str);
 }
 
 void NuxAutomatedTestFramework::ViewSendKeyCombo(KeySym modsym0, KeySym modsym1, KeySym modsym2, const char c)
@@ -311,8 +413,12 @@ void NuxAutomatedTestFramework::ViewSendKeyCombo(KeySym modsym0, KeySym modsym1,
   KeyCode modcode1 = 0;
   KeyCode modcode2 = 0;
   
-  std::string s(1, c);
-  keycode = XKeysymToKeycode(display_, XStringToKeysym(s.c_str()));
+  if (c != 0)
+  {
+    printf("ViewSendKeyCombo");
+    std::string s(1, c);
+    keycode = XKeysymToKeycode(display_, XStringToKeysym(s.c_str()));
+  }
   XTestGrabControl(display_, True);
   
   /* Generate modkey press */
@@ -333,8 +439,11 @@ void NuxAutomatedTestFramework::ViewSendKeyCombo(KeySym modsym0, KeySym modsym1,
   }
       
   /* Generate regular key press and release */
-  XTestFakeKeyEvent(display_, keycode, True, 0);
-  XTestFakeKeyEvent(display_, keycode, False, 0);
+  if (keycode)
+  {
+    XTestFakeKeyEvent(display_, keycode, True, 0);
+    XTestFakeKeyEvent(display_, keycode, False, 0);
+  }
   
   /* Generate modkey release */
   if (modsym0 != 0)

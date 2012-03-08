@@ -224,6 +224,15 @@ namespace nux
       BUFFER
     };
 
+    /**
+     * Enum used for the search state of the compose list
+     */
+    enum SearchState {
+      NO_MATCH,
+      PARTIAL,
+      MATCH
+    };
+    
     void QueueTextDraw();
     /** Remove the cached layout. */
     void ResetLayout();
@@ -331,6 +340,8 @@ namespace nux
      */
     void GetCursorLocationInLayout(int* strong_x, int* strong_y, int* strong_height,
                                    int* weak_x, int* weak_y, int* weak_height);
+
+    int LookForMatch(std::string& str);
 
     /** The CairoCanvas which hold cairo_t inside */
     CairoGraphics* canvas_;
@@ -458,6 +469,7 @@ namespace nux
     IBusIMEContext* ime_;
     friend class IBusIMEContext;
 #endif
+
     bool ime_active_;
 
     bool text_input_mode_;    //!< Transient state of the TextEntry. \sa IsInTextInputMode.
@@ -465,6 +477,9 @@ namespace nux
 
     bool lose_key_focus_on_key_nav_direction_up_;
     bool lose_key_focus_on_key_nav_direction_down_;
+
+    bool composition_mode_;
+    std::string composition_string_;
 
     virtual bool InspectKeyEvent(unsigned int eventType,
       unsigned int keysym,
