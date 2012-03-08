@@ -292,7 +292,6 @@ namespace nux
 
     if (keysym == XK_Multi_key)
     {
-      nuxDebugMsg("Multi key detected.");
       composition_mode_ = true;
       composition_string_.clear();
       return;
@@ -302,7 +301,8 @@ namespace nux
     {
       composition_string_ += character;
 
-      int match = LookForMatch();
+      std::string composition_match;
+      int match = LookForMatch(composition_match);
       if (match == PARTIAL)
       {
         return;
@@ -314,9 +314,10 @@ namespace nux
       }
       else if (match == MATCH)
       {
-        EnterText("©");
+        EnterText(composition_match.c_str());
         composition_mode_ = false;
         composition_string_.clear();
+        QueueRefresh(false, true);
         return;
       }
     }
@@ -1164,14 +1165,21 @@ namespace nux
     return cached_layout_;
   }
 
-  int TextEntry::LookForMatch()
+  int TextEntry::LookForMatch(std::string& str)
   {
+    str.clear();
     int search_state = NO_MATCH;
     // Check if the string we have is a match,partial match or doesnt match
     for (int i = 0; nux_compose_seqs_compact[i] != "\0"; i++)
     {
       if (nux_compose_seqs_compact[i].compare(composition_string_) == 0)
       {
+        do
+        { 
+          ++i;
+        } while (nux_compose_seqs_compact[i].compare("::") != 0);
+
+        str = nux_compose_seqs_compact[++i];
         return MATCH;
       }
       else if (nux_compose_seqs_compact[i].find(composition_string_) != std::string::npos)

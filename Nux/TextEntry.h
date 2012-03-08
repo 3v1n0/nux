@@ -341,7 +341,7 @@ namespace nux
     void GetCursorLocationInLayout(int* strong_x, int* strong_y, int* strong_height,
                                    int* weak_x, int* weak_y, int* weak_height);
 
-    int LookForMatch();
+    int LookForMatch(std::string& str);
 
     /** The CairoCanvas which hold cairo_t inside */
     CairoGraphics* canvas_;

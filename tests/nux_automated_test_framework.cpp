@@ -296,12 +296,46 @@ void NuxAutomatedTestFramework::ViewSendString(const std::string &str)
     {
       SendFakeKeyEvent(XK_space, modifier);
     }
+    else if (c == '^')
+    {
+      SendFakeKeyEvent(XK_asciicircum, XK_Shift_L);
+    }
+    else if (c == '~')
+    {
+      SendFakeKeyEvent(XK_asciitilde, XK_Shift_L);
+    }
+    else if (c == '`')
+    {
+      SendFakeKeyEvent(XK_asciitilde, 0);
+    }
+    // else if (c == '´')
+    // {
+    //   SendFakeKeyEvent(XK_quotedbl, XK_Alt_R);
+    // }
+    else if (c == '=')
+    {
+      SendFakeKeyEvent(XK_equal, 0);
+    }
+    else if (c == '\"')
+    {
+      SendFakeKeyEvent(XK_quotedbl, XK_Shift_L);
+    }
     else
     {   
       SendFakeKeyEvent(XStringToKeysym(s.c_str()), modifier);
     }
     nux::SleepForMilliseconds(300);
   }
+}
+
+void NuxAutomatedTestFramework::ViewSendCompositionKeys(const std::string& str)
+{
+  int l = str.length();
+  if (l == 0)
+    return;
+  
+  SendFakeKeyEvent(XK_Multi_key, 0);
+  ViewSendString(str);
 }
 
 void NuxAutomatedTestFramework::ViewSendKeyCombo(KeySym modsym0, KeySym modsym1, KeySym modsym2, const char c)
@@ -311,8 +345,12 @@ void NuxAutomatedTestFramework::ViewSendKeyCombo(KeySym modsym0, KeySym modsym1,
   KeyCode modcode1 = 0;
   KeyCode modcode2 = 0;
   
-  std::string s(1, c);
-  keycode = XKeysymToKeycode(display_, XStringToKeysym(s.c_str()));
+  if (c != 0)
+  {
+    printf("ViewSendKeyCombo");
+    std::string s(1, c);
+    keycode = XKeysymToKeycode(display_, XStringToKeysym(s.c_str()));
+  }
   XTestGrabControl(display_, True);
   
   /* Generate modkey press */
@@ -333,8 +371,11 @@ void NuxAutomatedTestFramework::ViewSendKeyCombo(KeySym modsym0, KeySym modsym1,
   }
       
   /* Generate regular key press and release */
-  XTestFakeKeyEvent(display_, keycode, True, 0);
-  XTestFakeKeyEvent(display_, keycode, False, 0);
+  if (keycode)
+  {
+    XTestFakeKeyEvent(display_, keycode, True, 0);
+    XTestFakeKeyEvent(display_, keycode, False, 0);
+  }
   
   /* Generate modkey release */
   if (modsym0 != 0)

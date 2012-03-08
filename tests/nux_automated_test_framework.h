@@ -88,6 +88,8 @@ public:
   void ViewSendUp();
   //! Simulate Down arrow key.
   void ViewSendDown();
+  //! Simulate composition keys.
+  void ViewSendCompositionKeys(const std::string &str);
 
   void ViewSendIBusToggle();
 
