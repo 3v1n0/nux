@@ -308,10 +308,6 @@ void NuxAutomatedTestFramework::ViewSendString(const std::string &str)
     {
       SendFakeKeyEvent(XK_asciitilde, 0);
     }
-    // else if (c == '´')
-    // {
-    //   SendFakeKeyEvent(XK_quotedbl, XK_Alt_R);
-    // }
     else if (c == '=')
     {
       SendFakeKeyEvent(XK_equal, 0);
@@ -319,6 +315,78 @@ void NuxAutomatedTestFramework::ViewSendString(const std::string &str)
     else if (c == '\"')
     {
       SendFakeKeyEvent(XK_quotedbl, XK_Shift_L);
+    }
+    else if (c == '!')
+    {
+      SendFakeKeyEvent(XK_exclam, XK_Shift_L);
+    }
+    else if (c == '|')
+    {
+      SendFakeKeyEvent(XK_bar, XK_Shift_L);
+    }
+    else if (c == '/')
+    {
+      SendFakeKeyEvent(XK_slash, 0);
+    }
+    else if (c == '\\')
+    {
+      SendFakeKeyEvent(XK_backslash, 0);
+    }
+    else if (c == '-')
+    {
+      SendFakeKeyEvent(XK_minus, 0);
+    }
+    else if (c == '+')
+    {
+      SendFakeKeyEvent(XK_plus, XK_Shift_L);
+    }
+    else if (c == ',')
+    {
+      SendFakeKeyEvent(XK_comma, 0);
+    }
+    else if (c == '_')
+    {
+      SendFakeKeyEvent(XK_underscore, XK_Shift_L);
+    }
+    else if (c == '<')
+    { 
+      SendFakeKeyEvent(XK_comma, XK_Shift_L);
+    }
+    else if (c == '>')
+    {
+      SendFakeKeyEvent(XK_greater, XK_Shift_L);
+    }
+    else if (c == '.')
+    {
+      SendFakeKeyEvent(XK_period, 0);
+    }
+    else if (c == '?')
+    {
+      SendFakeKeyEvent(XK_question, XK_Shift_L);
+    }
+    else if (c == '\'')
+    {
+      SendFakeKeyEvent(XK_quoteright, 0);
+    }
+    else if (c == ';')
+    {
+      SendFakeKeyEvent(XK_semicolon, 0);
+    }
+    else if (c == ':')
+    {
+      SendFakeKeyEvent(XK_colon, XK_Shift_L);
+    }
+    else if (c == '%')
+    {
+      SendFakeKeyEvent(XK_percent, XK_Shift_L);
+    }
+    else if (c == '(')
+    {
+      SendFakeKeyEvent(XK_parenleft, XK_Shift_L);
+    }
+    else if (c == ')')
+    {
+      SendFakeKeyEvent(XK_parenright, XK_Shift_L);
     }
     else
     {   

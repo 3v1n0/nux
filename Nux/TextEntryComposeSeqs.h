@@ -1,5 +1,5 @@
 static const std::string nux_compose_seqs_compact[] = {
-"  ", "::", "&nbsp;",		//nobreakspace # NO-BREAK SPACE
+"  ", "::", " ",		//nobreakspace # NO-BREAK SPACE
 "!!", "::", "¡",		//exclamdown # INVERTED EXCLAMATION MARK
 "|c", "c|", "c/", "/c", "::", "¢",		//CENT SIGN
 "L-", "-L", "::", "£",		//POUND SIGN
@@ -284,7 +284,7 @@ static const std::string nux_compose_seqs_compact[] = {
 ",\"", "\",", "::", "„",    //DOUBLE LOW-9 QUOTATION MARK
 "\%o", "::", "‰",		//PER MILLE SIGN
 ".<", "::", "‹",		//SINGLE LEFT-POINTING ANGLE QUOTATION MARK
-".>>", "::", "›",		//SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
+".>", "::", "›",		//SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
 "^0", "::", "⁰",		//SUPERSCRIPT ZERO
 "^_i", "::", "ⁱ",		//SUPERSCRIPT LATIN SMALL LETTER I
 "^4", "::", "⁴",		//SUPERSCRIPT FOUR
@@ -324,7 +324,6 @@ static const std::string nux_compose_seqs_compact[] = {
 "W=", "=W", "::", "₩",		//WON SIGN
 "d-", "::", "₫",		//DONG SIGN
 "C=", "=C", "c=", "=c", "E=", "=E", "::", "€",		//EuroSign # EURO SIGN
-"^SM", "::", "℠",		//SERVICE MARK
 "^TM", "::", "™",		//TRADE MARK SIGN
 "\"\\", "::", "〝",      //REVERSED DOUBLE PRIME QUOTATION MARK
 "\"/", "::", "〞",       //DOUBLE PRIME QUOTATION MARK
