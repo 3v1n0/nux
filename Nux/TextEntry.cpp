@@ -292,24 +292,33 @@ namespace nux
 
     if (keysym == XK_Multi_key)
     {
-      if (composition_mode_ && event_type == NUX_KEYUP)
+      if (composition_mode_)
       {
       	composition_mode_ = false;
       }
-      else if (!composition_mode_)
+      else
       {
         composition_mode_ = true;
-        composition_string_.clear();
-        return;
       }
+      composition_string_.clear();
+      return;
     }
 
     if (composition_mode_)
     {
+      if (!(*character) && keysym != NUX_VK_SHIFT)
+      {
+        composition_mode_ = false;
+        composition_string_.clear();
+        return;
+      }
+        
       composition_string_ += character;
-
+      
       std::string composition_match;
+
       int match = LookForMatch(composition_match);
+
       if (match == PARTIAL)
       {
         return;
@@ -1176,9 +1185,6 @@ namespace nux
   {
     str.clear();
     int search_state = NO_MATCH;
-
-    if (composition_string_.empty())
-      return search_state;
 
     // Check if the string we have is a match,partial match or doesnt match
     for (int i = 0; nux_compose_seqs_compact[i] != "\0"; i++)
