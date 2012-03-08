@@ -292,9 +292,16 @@ namespace nux
 
     if (keysym == XK_Multi_key)
     {
-      composition_mode_ = true;
-      composition_string_.clear();
-      return;
+      if (composition_mode_ && event_type == NUX_KEYUP)
+      {
+      	composition_mode_ = false;
+      }
+      else if (!composition_mode_)
+      {
+        composition_mode_ = true;
+        composition_string_.clear();
+        return;
+      }
     }
 
     if (composition_mode_)
@@ -1169,6 +1176,10 @@ namespace nux
   {
     str.clear();
     int search_state = NO_MATCH;
+
+    if (composition_string_.empty())
+      return search_state;
+
     // Check if the string we have is a match,partial match or doesnt match
     for (int i = 0; nux_compose_seqs_compact[i] != "\0"; i++)
     {

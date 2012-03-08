@@ -1,5 +1,5 @@
 static const std::string nux_compose_seqs_compact[] = {
-", , ", "::", "&nbsp;",		//nobreakspace # NO-BREAK SPACE
+"  ", "::", "&nbsp;",		//nobreakspace # NO-BREAK SPACE
 "!!", "::", "¡",		//exclamdown # INVERTED EXCLAMATION MARK
 "|c", "c|", "c/", "/c", "::", "¢",		//CENT SIGN
 "L-", "-L", "::", "£",		//POUND SIGN
