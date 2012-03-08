@@ -276,13 +276,13 @@ static const std::string nux_compose_seqs_compact[] = {
 " .", "::", " ",		//PUNCTUATION SPACE
 "--.", "::", "–",		//EN DASH
 "---", "::", "—",		//EM DASH
-"<'", "'<", "‘",    //LEFT SINGLE QUOTATION MARK
-">'", "'>", "’",    //RIGHT SINGLE QUOTATION MARK
-",'", "',", "‚",    //SINGLE LOW-9 QUOTATION MARK
-"<"", ""<", "“",    //LEFT DOUBLE QUOTATION MARK
-">"", "">", "”",    //RIGHT DOUBLE QUOTATION MARK
-","", "",", "„",    //DOUBLE LOW-9 QUOTATION MARK
-"%o", "::", "‰",		//PER MILLE SIGN
+"<'", "'<", "::", "‘",    //LEFT SINGLE QUOTATION MARK
+">'", "'>", "::", "’",    //RIGHT SINGLE QUOTATION MARK
+",'", "',", "::", "‚",    //SINGLE LOW-9 QUOTATION MARK
+"<\"", "\"<", "::", "“",    //LEFT DOUBLE QUOTATION MARK
+">\"", "\">", "::", "”",    //RIGHT DOUBLE QUOTATION MARK
+",\"", "\",", "::", "„",    //DOUBLE LOW-9 QUOTATION MARK
+"\%o", "::", "‰",		//PER MILLE SIGN
 ".<", "::", "‹",		//SINGLE LEFT-POINTING ANGLE QUOTATION MARK
 ".>>", "::", "›",		//SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
 "^0", "::", "⁰",		//SUPERSCRIPT ZERO
@@ -326,7 +326,7 @@ static const std::string nux_compose_seqs_compact[] = {
 "C=", "=C", "c=", "=c", "E=", "=E", "::", "€",		//EuroSign # EURO SIGN
 "^SM", "::", "℠",		//SERVICE MARK
 "^TM", "::", "™",		//TRADE MARK SIGN
-"\"\\", "〝",      //REVERSED DOUBLE PRIME QUOTATION MARK
-"\"/", "〞",       //DOUBLE PRIME QUOTATION MARK
+"\"\\", "::", "〝",      //REVERSED DOUBLE PRIME QUOTATION MARK
+"\"/", "::", "〞",       //DOUBLE PRIME QUOTATION MARK
 "\0"              //NULL so we know when to end
 };
