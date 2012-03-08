@@ -273,7 +273,7 @@ static const std::string nux_compose_seqs_compact[] = {
 "`y", "::", "ỳ",		//LATIN SMALL LETTER Y WITH GRAVE
 "~Y", "::", "Ỹ",		//LATIN CAPITAL LETTER Y WITH TILDE
 "~y", "::", "ỹ",		//LATIN SMALL LETTER Y WITH TILDE
-", .", "::", " ",		//PUNCTUATION SPACE
+" .", "::", " ",		//PUNCTUATION SPACE
 "--.", "::", "–",		//EN DASH
 "---", "::", "—",		//EM DASH
 "<'", "'<", "‘",    //LEFT SINGLE QUOTATION MARK
