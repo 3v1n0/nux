@@ -19,7 +19,7 @@ static const std::string nux_compose_seqs_compact[] = {
 "mu", "::", "µ",		//MICRO SIGN
 "p!", "P!", "PP", "::", "¶",		//paragraph # PILCROW SIGN
 "..", "::", "·",		//MIDDLE DOT
-",, ", ", ,", "::", "¸",		//cedilla # CEDILLA
+", ", " ,", "::", "¸",		//cedilla # CEDILLA
 "^1", "::", "¹",		//SUPERSCRIPT ONE
 "^_o", "::", "º",		//MASCULINE ORDINAL INDICATOR
 ">>", "::", "»",		//guillemotright # RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
