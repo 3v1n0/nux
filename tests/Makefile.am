@@ -15,7 +15,7 @@ check_PROGRAMS = \
   xtest-keynav-directions \
   xtest-text-entry \
   xtest-text-entry-deadkeys \
-  xtest-text-entry-compositionkeys\
+  xtest-text-entry-compositionkeys \
   xtest-text-entry-logic \
   xtest-focus-on-mouse-enter
 
