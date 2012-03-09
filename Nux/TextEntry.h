@@ -232,6 +232,12 @@ namespace nux
       PARTIAL,
       MATCH
     };
+
+    /** Checks for possible dead key sequences */
+    bool HandledDeadKeys(int keysym, int state, const char* character);
+
+    /** Checks for possible composition sequences */
+    bool HandledComposition(int keysym, const char* character);
     
     void QueueTextDraw();
     /** Remove the cached layout. */
@@ -477,6 +483,9 @@ namespace nux
 
     bool lose_key_focus_on_key_nav_direction_up_;
     bool lose_key_focus_on_key_nav_direction_down_;
+
+    bool dead_key_mode_;
+    std::string dead_key_string_;
 
     bool composition_mode_;
     std::string composition_string_;

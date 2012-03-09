@@ -161,6 +161,7 @@ namespace nux
     , key_nav_mode_(false)
     , lose_key_focus_on_key_nav_direction_up_(true)
     , lose_key_focus_on_key_nav_direction_down_(true)
+    , dead_key_mode_(false)
     , composition_mode_(false)
   {
     cairo_font_options_set_antialias(font_options_, CAIRO_ANTIALIAS_SUBPIXEL);
@@ -290,54 +291,23 @@ namespace nux
   {
     bool retval = FALSE;
 
-    if (keysym == XK_Multi_key)
+    if (dead_key_mode_ && keysym == XK_space)
     {
-      if (composition_mode_)
-      {
-      	composition_mode_ = false;
-      }
-      else
-      {
-        composition_mode_ = true;
-      }
-      composition_string_.clear();
+      dead_key_mode_ = false;
+      EnterText(dead_key_string_.c_str());
+      QueueRefresh(false, true);
       return;
     }
 
-    if (composition_mode_)
+    if (HandledDeadKeys(keysym, state, character))
     {
-      if (strncmp(character, "", 1) == 0 && keysym != NUX_VK_SHIFT)
-      {
-        composition_mode_ = false;
-        composition_string_.clear();
-        return;
-      }
-        
-      composition_string_ += character;
-      
-      std::string composition_match;
-
-      int match = LookForMatch(composition_match);
-
-      if (match == PARTIAL)
-      {
-        return;
-      }
-      else if (match == NO_MATCH)
-      {
-        composition_mode_ = false;
-        composition_string_.clear();
-      }
-      else if (match == MATCH)
-      {
-        EnterText(composition_match.c_str());
-        composition_mode_ = false;
-        composition_string_.clear();
-        QueueRefresh(false, true);
-        return;
-      }
+      return;
     }
-
+    else if (HandledComposition(keysym, character))
+    {
+      return;
+    }
+    
     if (event_type == NUX_KEYDOWN)
       text_input_mode_ = true;
 
@@ -628,6 +598,91 @@ namespace nux
   void TextEntry::PostDraw(GraphicsEngine& gfxContext, bool forceDraw)
   {
     // intentionally left empty
+  }
+
+  bool TextEntry::HandledDeadKeys(int keysym, int state, const char* character)
+  {
+    /* Checks if the keysym between the first and last dead key */
+    if ((keysym >= XK_dead_grave) && (keysym <= XK_dead_stroke) && !dead_key_mode_)
+    {
+      int key = keysym - XK_dead_grave;
+      dead_key_mode_ = true;
+
+      if (dead_keys_map[key])
+      {
+        composition_mode_ = true;
+        composition_string_.clear();
+        
+        dead_key_string_ = character;
+
+        std::string dead_key;
+        dead_key = dead_keys_map[key];
+        HandledComposition(keysym, dead_key.c_str());
+
+        return true;
+      }
+    }
+    else if (dead_key_mode_ && (state & IBUS_IGNORED_MASK))
+    {
+      dead_key_mode_ = false;
+    }
+    return false;
+  }
+
+  bool TextEntry::HandledComposition(int keysym, const char* character)
+  {
+    if (keysym == XK_Multi_key)
+    {
+      if (composition_mode_)
+      {
+        composition_mode_ = false;
+      }
+      else
+      {
+        composition_mode_ = true;
+      }
+      composition_string_.clear();
+      return true;
+    }
+
+    if (composition_mode_)
+    {
+      if (strncmp(character, "", 1) == 0 && keysym != NUX_VK_SHIFT)
+      {
+        composition_mode_ = false;
+        composition_string_.clear();
+        return true;
+      }
+        
+      composition_string_ += character;
+      
+      std::string composition_match;
+
+      int match = LookForMatch(composition_match);
+
+      if (match == PARTIAL)
+      {
+        return true;
+      }
+      else if (match == NO_MATCH)
+      {
+        composition_mode_ = false;
+        composition_string_.clear();
+      }
+      else if (match == MATCH)
+      {
+        EnterText(composition_match.c_str());
+        composition_mode_ = false;
+        composition_string_.clear();
+        QueueRefresh(false, true);
+
+        if (dead_key_mode_)
+          dead_key_mode_ = false;
+
+        return true;
+      }
+    } 
+    return false;
   }
 
   void TextEntry::SetText(const char* text)
