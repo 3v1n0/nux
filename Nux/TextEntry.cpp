@@ -161,6 +161,7 @@ namespace nux
     , key_nav_mode_(false)
     , lose_key_focus_on_key_nav_direction_up_(true)
     , lose_key_focus_on_key_nav_direction_down_(true)
+    , dead_key_mode_(false)
     , composition_mode_(false)
   {
     cairo_font_options_set_antialias(font_options_, CAIRO_ANTIALIAS_SUBPIXEL);
@@ -290,7 +291,15 @@ namespace nux
   {
     bool retval = FALSE;
 
-    if (HandledDeadKeys(keysym))
+    if (dead_key_mode_ && keysym == XK_space)
+    {
+      dead_key_mode_ = false;
+      EnterText(dead_key_string_.c_str());
+      QueueRefresh(false, true);
+      return;
+    }
+
+    if (HandledDeadKeys(keysym, state, character))
     {
       return;
     }
@@ -591,17 +600,20 @@ namespace nux
     // intentionally left empty
   }
 
-  bool TextEntry::HandledDeadKeys(int keysym)
+  bool TextEntry::HandledDeadKeys(int keysym, int state, const char* character)
   {
     /* Checks if the keysym between the first and last dead key */
-    if ((keysym >= XK_dead_grave) && (keysym <= XK_dead_stroke))
+    if ((keysym >= XK_dead_grave) && (keysym <= XK_dead_stroke) && !dead_key_mode_)
     {
       int key = keysym - XK_dead_grave;
+      dead_key_mode_ = true;
 
       if (dead_keys_map[key])
       {
         composition_mode_ = true;
         composition_string_.clear();
+        
+        dead_key_string_ = character;
 
         std::string dead_key;
         dead_key = dead_keys_map[key];
@@ -609,6 +621,10 @@ namespace nux
 
         return true;
       }
+    }
+    else if (dead_key_mode_ && (state & IBUS_IGNORED_MASK))
+    {
+      dead_key_mode_ = false;
     }
     return false;
   }
@@ -659,6 +675,10 @@ namespace nux
         composition_mode_ = false;
         composition_string_.clear();
         QueueRefresh(false, true);
+
+        if (dead_key_mode_)
+          dead_key_mode_ = false;
+
         return true;
       }
     } 
