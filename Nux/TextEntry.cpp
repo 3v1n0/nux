@@ -543,6 +543,7 @@ namespace nux
   {
     key_nav_mode_     = true;
     text_input_mode_  = false;
+    dead_key_mode_    = false;
     composition_mode_ = false;
     composition_string_.clear();
 
@@ -553,6 +554,7 @@ namespace nux
   {
     key_nav_mode_     = false;
     text_input_mode_  = false;
+    dead_key_mode_    = false;
     composition_mode_ = false;
     composition_string_.clear();
 
