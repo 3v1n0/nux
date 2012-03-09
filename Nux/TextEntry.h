@@ -481,6 +481,7 @@ namespace nux
     bool lose_key_focus_on_key_nav_direction_up_;
     bool lose_key_focus_on_key_nav_direction_down_;
 
+    bool dead_key_mode_;
     bool composition_mode_;
     std::string composition_string_;
 

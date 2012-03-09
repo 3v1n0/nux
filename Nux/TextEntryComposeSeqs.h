@@ -329,3 +329,31 @@ static const std::string nux_compose_seqs_compact[] = {
 "\"/", "::", "〞",       //DOUBLE PRIME QUOTATION MARK
 "\0"              //NULL so we know when to end
 };
+
+/* 
+ * These are a mapping between dead keys and its composition sequence
+ * All NULL chars dont match anything as of yet. To be filled in later
+ */
+static const char dead_keys_map[] = {
+'`',    //XK_dead_grave
+'\'',   //XK_dead_acute
+'^',    //XK_dead_circumflex
+'~',    //XK_dead_tilde
+'_',    //XK_dead_macron
+'b',    //XK_dead_breve
+'\0',   //XK_dead_abovedot
+'"',    //XK_dead_diaeresis
+'o',    //XK_dead_abovering
+'=',    //XK_dead_doubleacute
+'c',    //XK_dead_caron
+',',    //XK_dead_cedilla 
+';',    //XK_dead_ogonek
+'\0',   //XK_dead_iota
+'\0',   //XK_dead_voiced_sound
+'\0',   //XK_dead_semivoiced_sound
+'\0',   //XK_dead_belowdot
+'\0',   //XK_dead_hook
+'\0',   //XK_dead_horn
+'\\'    //XK_dead_stroke
+};
+                           
