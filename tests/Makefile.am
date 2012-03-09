@@ -258,13 +258,13 @@ xtest_text_entry_deadkeys_CPPFLAGS = $(TestFlags)
 xtest_text_entry_deadkeys_LDADD = $(TestLibs)
 xtest_text_entry_deadkeys_LDFLAGS = -lpthread -lXtst
 
-xtest_text_entry_compostionkeys_SOURCES = xtest-text-entry-compositionkeys.cpp \
+xtest_text_entry_compositionkeys_SOURCES = xtest-text-entry-compositionkeys.cpp \
   nux_automated_test_framework.cpp \
   nux_automated_test_framework.h
 
-xtest_text_entry_compostionkeys_CPPFLAGS = $(TestFlags)
-xtest_text_entry_compostionkeys_LDADD = $(TestLibs)
-xtest_text_entry_compostionkeys_LDFLAGS = -lpthread -lXtst
+xtest_text_entry_compositionkeys_CPPFLAGS = $(TestFlags)
+xtest_text_entry_compositionkeys_LDADD = $(TestLibs)
+xtest_text_entry_compositionkeys_LDFLAGS = -lpthread -lXtst
 
 #run make test as part of make check
 check-local: test gtest test-apps
