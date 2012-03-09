@@ -299,13 +299,17 @@ namespace nux
 
       if (dead_keys_map[key])
       {
-        //composition_mode_ = true;
-        //composition_string_+=map[key];
-        printf("map: %c\n", dead_keys_map[key]);
+        composition_mode_ = true;
+        composition_string_.clear();
+
+        std::string dead_key;
+        dead_key = dead_keys_map[key];
+        HandledComposition(keysym, dead_key.c_str());
+
+        return;
       }
     }
-
-    if (HandledComposition(keysym, character))
+    else if (HandledComposition(keysym, character))
     {
       return;
     }
@@ -605,7 +609,6 @@ namespace nux
 
   bool TextEntry::HandledComposition(int keysym, const char* character)
   {
-    printf("hand %s - %s \n", composition_string_.c_str(), character);
     if (keysym == XK_Multi_key)
     {
       if (composition_mode_)
