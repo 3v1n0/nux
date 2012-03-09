@@ -289,32 +289,16 @@ namespace nux
     unsigned short   keyCount       /*key repeat count*/)
   {
     bool retval = FALSE;
-   
-    /* Checks if the keysym is a dead key */
-    if ((keysym >= 0xfe50) && (keysym <= 0xfe63))
+
+    if (HandledDeadKeys(keysym))
     {
-      // Gets the key for the dead_key_map
-      int key = keysym - 0xfe50;
-      dead_key_mode_ = true;
-
-      if (dead_keys_map[key])
-      {
-        composition_mode_ = true;
-        composition_string_.clear();
-
-        std::string dead_key;
-        dead_key = dead_keys_map[key];
-        HandledComposition(keysym, dead_key.c_str());
-
-        return;
-      }
+      return;
     }
     else if (HandledComposition(keysym, character))
     {
       return;
     }
     
-
     if (event_type == NUX_KEYDOWN)
       text_input_mode_ = true;
 
@@ -605,6 +589,28 @@ namespace nux
   void TextEntry::PostDraw(GraphicsEngine& gfxContext, bool forceDraw)
   {
     // intentionally left empty
+  }
+
+  bool TextEntry::HandledDeadKeys(int keysym)
+  {
+    /* Checks if the keysym between the first and last dead key */
+    if ((keysym >= XK_dead_grave) && (keysym <= XK_dead_stroke))
+    {
+      int key = keysym - XK_dead_grave;
+
+      if (dead_keys_map[key])
+      {
+        composition_mode_ = true;
+        composition_string_.clear();
+
+        std::string dead_key;
+        dead_key = dead_keys_map[key];
+        HandledComposition(keysym, dead_key.c_str());
+
+        return true;
+      }
+    }
+    return false;
   }
 
   bool TextEntry::HandledComposition(int keysym, const char* character)

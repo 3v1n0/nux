@@ -233,6 +233,9 @@ namespace nux
       MATCH
     };
 
+    /** Checks for possible dead key sequences */
+    bool HandledDeadKeys(int keysym);
+
     /** Checks for possible composition sequences */
     bool HandledComposition(int keysym, const char* character);
     
