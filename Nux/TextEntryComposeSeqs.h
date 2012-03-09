@@ -357,7 +357,7 @@ static const std::string nux_compose_seqs_compact[] = {
  * These are a mapping between dead keys and its composition sequence
  * All NULL chars dont match anything as of yet. To be filled in later
  */
-static const char dead_keys_map[] = {
+static const char dead_keys_map[20] = {
 '`',    //XK_dead_grave
 '\'',   //XK_dead_acute
 '^',    //XK_dead_circumflex
@@ -379,4 +379,3 @@ static const char dead_keys_map[] = {
 '\0',   //XK_dead_horn
 '\\'    //XK_dead_stroke
 };
-                           

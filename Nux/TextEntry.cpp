@@ -289,26 +289,13 @@ namespace nux
     unsigned short   keyCount       /*key repeat count*/)
   {
     bool retval = FALSE;
-     
-    if (keysym == XK_Multi_key)
-    {
-      if (composition_mode_)
-      {
-        composition_mode_ = false;
-      }
-      else
-      {
-        composition_mode_ = true;
-      }
-      composition_string_.clear();
-      return;
-    }
-    
+   
     /* Checks if the keysym is a dead key */
     if ((keysym >= 0xfe50) && (keysym <= 0xfe63))
     {
       // Gets the key for the dead_key_map
       int key = keysym - 0xfe50;
+      dead_key_mode_ = true;
 
       if (dead_keys_map[key])
       {
@@ -316,7 +303,6 @@ namespace nux
         //composition_string_+=map[key];
         printf("map: %c\n", dead_keys_map[key]);
       }
-
     }
 
     if (HandledComposition(keysym, character))
@@ -620,7 +606,6 @@ namespace nux
   bool TextEntry::HandledComposition(int keysym, const char* character)
   {
     printf("hand %s - %s \n", composition_string_.c_str(), character);
-    /*
     if (keysym == XK_Multi_key)
     {
       if (composition_mode_)
@@ -634,7 +619,6 @@ namespace nux
       composition_string_.clear();
       return true;
     }
-    */
 
     if (composition_mode_)
     {
