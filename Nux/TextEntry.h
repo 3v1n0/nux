@@ -232,6 +232,9 @@ namespace nux
       PARTIAL,
       MATCH
     };
+
+    /** Checks for possible composition sequences */
+    bool HandledComposition(int keysym, const char* character);
     
     void QueueTextDraw();
     /** Remove the cached layout. */

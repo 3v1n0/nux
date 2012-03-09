@@ -289,54 +289,19 @@ namespace nux
     unsigned short   keyCount       /*key repeat count*/)
   {
     bool retval = FALSE;
-
-    if (keysym == XK_Multi_key)
+ 
+    
+    /* Checks if the keysym is a dead key */
+    if ((keysym >= 0xfe50) && (keysym <= 0xfe63))
     {
-      if (composition_mode_)
-      {
-      	composition_mode_ = false;
-      }
-      else
-      {
-        composition_mode_ = true;
-      }
-      composition_string_.clear();
+      printf("DeadKey!!\n"); 
+    }
+
+    if (HandledComposition(keysym, character))
+    {
       return;
     }
-
-    if (composition_mode_)
-    {
-      if (strncmp(character, "", 1) == 0 && keysym != NUX_VK_SHIFT)
-      {
-        composition_mode_ = false;
-        composition_string_.clear();
-        return;
-      }
-        
-      composition_string_ += character;
-      
-      std::string composition_match;
-
-      int match = LookForMatch(composition_match);
-
-      if (match == PARTIAL)
-      {
-        return;
-      }
-      else if (match == NO_MATCH)
-      {
-        composition_mode_ = false;
-        composition_string_.clear();
-      }
-      else if (match == MATCH)
-      {
-        EnterText(composition_match.c_str());
-        composition_mode_ = false;
-        composition_string_.clear();
-        QueueRefresh(false, true);
-        return;
-      }
-    }
+    
 
     if (event_type == NUX_KEYDOWN)
       text_input_mode_ = true;
@@ -628,6 +593,58 @@ namespace nux
   void TextEntry::PostDraw(GraphicsEngine& gfxContext, bool forceDraw)
   {
     // intentionally left empty
+  }
+
+  bool TextEntry::HandledComposition(int keysym, const char* character)
+  {
+    if (keysym == XK_Multi_key)
+    {
+      if (composition_mode_)
+      {
+        composition_mode_ = false;
+      }
+      else
+      {
+        composition_mode_ = true;
+      }
+      composition_string_.clear();
+      return true;
+    }
+
+    if (composition_mode_)
+    {
+      if (strncmp(character, "", 1) == 0 && keysym != NUX_VK_SHIFT)
+      {
+        composition_mode_ = false;
+        composition_string_.clear();
+        return true;
+      }
+        
+      composition_string_ += character;
+      
+      std::string composition_match;
+
+      int match = LookForMatch(composition_match);
+
+      if (match == PARTIAL)
+      {
+        return true;
+      }
+      else if (match == NO_MATCH)
+      {
+        composition_mode_ = false;
+        composition_string_.clear();
+      }
+      else if (match == MATCH)
+      {
+        EnterText(composition_match.c_str());
+        composition_mode_ = false;
+        composition_string_.clear();
+        QueueRefresh(false, true);
+        return true;
+      }
+    } 
+    return false;
   }
 
   void TextEntry::SetText(const char* text)
