@@ -709,6 +709,52 @@ namespace nux
     */
     int BlendStackDepth();
 
+    typedef enum
+    {
+      BLEND_MODE_NORMAL,
+      BLEND_MODE_LIGHTEN,
+      BLEND_MODE_DARKEN,
+      BLEND_MODE_MULTIPLY,
+      BLEND_MODE_AVERAGE,
+      BLEND_MODE_ADD,
+      BLEND_MODE_SUBTRACT,
+      BLEND_MODE_DIFFERENCE,
+      BLEND_MODE_NEGATION,
+      BLEND_MODE_EXCLUSION,
+      BLEND_MODE_SCREEN,
+      BLEND_MODE_OVERLAY,
+      BLEND_MODE_SOFT_LIGHT,
+      BLEND_MODE_HARD_LIGHT,
+      BLEND_MODE_COLOR_DODGE,
+      BLEND_MODE_LINEAR_DODGE,
+      BLEND_MODE_COLOR_BURN,
+      BLEND_MODE_LINEAR_BLUR,
+      BLEND_MODE_LINEAR_LIGHT,
+      BLEND_MODE_VIVID_LIGHT,
+      BLEND_MODE_PIN_LIGHT,
+      BLEND_MODE_HARD_MIX,
+      BLEND_MODE_REFLECT,
+      BLEND_MODE_GLOW,
+      BLEND_MODE_PHOENIX,
+      BLEND_MODE_OPACITY,
+      BLEND_MODE_LAST
+    } BlendMode;
+
+    void QRP_GLSL_1TexBlendColor(int x, int y, int width, int height,
+			    ObjectPtr<IOpenGLBaseTexture> Tex0,
+			    TexCoordXForm& texxform, const Color& color0,
+			    const Color&blend_color, BlendMode blend_mode);
+    void QRP_GLSL_ColorBlend1Tex (int x, int y, int width, int height,
+				  const Color &base_color,
+				  ObjectPtr<IOpenGLBaseTexture> DeviceTexture,
+				  TexCoordXForm &texxform0, const Color & color0,
+				  BlendMode blend_mode);
+    void QRP_GLSL_2TexBlend(int x, int y, int width, int height,
+			    ObjectPtr<IOpenGLBaseTexture> DeviceTexture0, TexCoordXForm& texxform0, const Color &color0,
+			    ObjectPtr<IOpenGLBaseTexture> DeviceTexture1, TexCoordXForm& texxform1, const Color &color1,
+			    BlendMode blend_mode);
+
+
   private:
 
     ObjectPtr<FontTexture> _normal_font;    //!< The normal font renderer
@@ -892,6 +938,19 @@ namespace nux
     ObjectPtr<IOpenGLShaderProgram> _shader_layer_blend_lighten;
     ObjectPtr<IOpenGLShaderProgram> _shader_layer_blend_darken;
     ObjectPtr<IOpenGLShaderProgram> _shader_layer_blend_multiply;
+
+    // Blend modes
+    ObjectPtr<IOpenGLShaderProgram> _blend_tex_color_prog[BLEND_MODE_LAST];
+    ObjectPtr<IOpenGLShaderProgram> _blend_color_tex_prog[BLEND_MODE_LAST];
+    ObjectPtr<IOpenGLShaderProgram> _blend_tex_tex_prog[BLEND_MODE_LAST];
+    
+    const char* const GetBlendModeBlendFunc (BlendMode blend_mode);
+    const char* const GetBlendModeString (BlendMode blend_mode);
+    
+    ObjectPtr <IOpenGLShaderProgram> GetBlendTexColorProgram (BlendMode blend_mode);
+    ObjectPtr <IOpenGLShaderProgram> GetBlendColorTexProgram (BlendMode blend_mode);
+    ObjectPtr <IOpenGLShaderProgram> GetBlendTexTexProgram (BlendMode blend_mode);
+
 
 
     //! Test the gpu features and set variables such as \e _use_glsl_shaders.
