@@ -291,6 +291,7 @@ namespace nux
   {
     bool retval = FALSE;
 
+#if defined(NUX_OS_LINUX)
     if (dead_key_mode_ && keysym == XK_space)
     {
       dead_key_mode_ = false;
@@ -307,7 +308,8 @@ namespace nux
     {
       return;
     }
-    
+#endif
+
     if (event_type == NUX_KEYDOWN)
       text_input_mode_ = true;
 
@@ -604,6 +606,7 @@ namespace nux
 
   bool TextEntry::HandledDeadKeys(int keysym, int state, const char* character)
   {
+#if defined(NUX_OS_LINUX)    
     /* Checks if the keysym between the first and last dead key */
     if ((keysym >= XK_dead_grave) && (keysym <= XK_dead_stroke) && !dead_key_mode_)
     {
@@ -629,10 +632,14 @@ namespace nux
       dead_key_mode_ = false;
     }
     return false;
+#else
+    return false;
+#endif        
   }
 
   bool TextEntry::HandledComposition(int keysym, const char* character)
   {
+#if defined(NUX_OS_LINUX)
     if (keysym == XK_Multi_key)
     {
       if (composition_mode_)
@@ -685,6 +692,9 @@ namespace nux
       }
     } 
     return false;
+#else
+    return false;
+#endif    
   }
 
   void TextEntry::SetText(const char* text)
