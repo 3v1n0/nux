@@ -80,6 +80,18 @@ public:
   void ViewSendTab();
   //! Simulate Return key.
   void ViewSendReturn();
+  //! Simulate Left arrow key.
+  void ViewSendLeft();
+  //! Simulate Right arrow key.
+  void ViewSendRight();
+  //! Simulate Up arrow key.
+  void ViewSendUp();
+  //! Simulate Down arrow key.
+  void ViewSendDown();
+  //! Simulate composition keys.
+  void ViewSendCompositionKeys(const std::string &str);
+
+  void ViewSendIBusToggle();
 
   //! Put the mouse pointer anywhere on the display.
   void PutMouseAt(int x, int y);

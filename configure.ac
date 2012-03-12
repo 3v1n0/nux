@@ -14,7 +14,7 @@
 #   - Increase interface_version to the next odd number
 # 
 m4_define([nux_major_version], [2])
-m4_define([nux_minor_version], [4])
+m4_define([nux_minor_version], [6])
 m4_define([nux_micro_version], [0])
 
 m4_define([nux_api_version], [2.0])
@@ -22,7 +22,7 @@ m4_define([nux_api_version], [2.0])
 # The number format is : year/month/day
 # e.g.: december 5th, 2011 is: 20111205
 # To make more than one API change in a day, add a number to the date. Like 20111205.xx
-m4_define([nux_abi_version], [20120212.01])
+m4_define([nux_abi_version], [20120309.01])
 
 m4_define([nux_version],
           [nux_major_version.nux_minor_version.nux_micro_version])
@@ -185,6 +185,16 @@ PKG_CHECK_MODULES(UNITY_SUPPORT_TEST,
                   )
 AC_SUBST(UNITY_SUPPORT_TEST_CFLAGS)
 AC_SUBST(UNITY_SUPPORT_TEST_LIBS)
+
+PKG_CHECK_MODULES(IBUS,
+                  glib-2.0 >= 2.25.14
+                  gio-2.0
+                  ibus-1.0
+                  gobject-2.0
+                  )
+
+AC_SUBST(IBUS_CFLAGS)
+AC_SUBST(IBUS_LIBS)
 
 dnl ************************************
 dnl Enable/disable tests

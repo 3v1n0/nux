@@ -44,7 +44,7 @@ namespace
 {
   float EaseSin(float x)
   {
-    return sin(x * nux::Const::pi / 2.0f);
+    return sin(x * nux::constants::pi / 2.0f);
   }
 
   float RoundFloor(float x)
@@ -666,13 +666,13 @@ namespace nux
 
       if (x < flat_left)
       {
-        cover.position.rot = (atan((x - flat_left) * parent_->folding_rate) / (nux::Const::pi / 2)) * -parent_->folding_angle;
+        cover.position.rot = (atan((x - flat_left) * parent_->folding_rate) / (nux::constants::pi / 2)) * -parent_->folding_angle;
         float scale_in_factor = neg_pinch + (1.0f - (std::abs(cover.position.rot) / parent_->folding_angle)) * parent_->pinching;
         cover.position.x = flat_left - ((flat_left - x) * scale_in_factor);
       }
       else if (x > flat_right)
       {
-        cover.position.rot = (atan((x - flat_right) * parent_->folding_rate) / (nux::Const::pi / 2)) * -parent_->folding_angle;
+        cover.position.rot = (atan((x - flat_right) * parent_->folding_rate) / (nux::constants::pi / 2)) * -parent_->folding_angle;
         float scale_in_factor = neg_pinch+ (1.0f - (std::abs(cover.position.rot) / parent_->folding_angle)) * parent_->pinching;
         cover.position.x = flat_right + ((x - flat_right) * scale_in_factor);
       }

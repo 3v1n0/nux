@@ -430,9 +430,16 @@ namespace
 
               mouse_over_area_->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
             }
-
             // The area we found under the mouse pointer receives a "mouse enter signal".
             SetMouseOverArea(hit_view);
+
+            if (mouse_over_area_ != GetKeyFocusArea() &&
+                mouse_over_area_ && mouse_over_area_->AcceptKeyNavFocusOnMouseEnter())
+            {
+              SetKeyFocusArea(mouse_over_area_);
+            }
+          
+          
             mouse_over_area_->EmitMouseEnterSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
             emit_delta = false;
           }
@@ -476,7 +483,8 @@ namespace
           // In the case of a mouse down event, if there is currently a keyboard event receiver and it is different
           // from the area returned by GetAreaUnderMouse, then stop that receiver from receiving anymore keyboard events and switch
           // make mouse_over_area_ the new receiver(if it accept keyboard events).
-          if (mouse_over_area_ != GetKeyFocusArea() and mouse_over_area_->AcceptKeyNavFocusOnMouseDown())
+          if (mouse_over_area_ != GetKeyFocusArea() && 
+              mouse_over_area_ && mouse_over_area_->AcceptKeyNavFocusOnMouseDown())
           {
             InputArea* grab_area = GetKeyboardGrabArea();
             if (grab_area)
@@ -1836,7 +1844,7 @@ namespace
     }
   }
   
-  void WindowCompositor::SetKeyFocusArea(InputArea* area, KeyNavDirection direction)
+  bool WindowCompositor::SetKeyFocusArea(InputArea* area, KeyNavDirection direction)
   {
     InputArea* keyboard_grab_area = GetKeyboardGrabArea();
 
@@ -1845,22 +1853,28 @@ namespace
       // There is a keyboard grab pending. Only an area that is a child of the area that has
       // the keyboard grab can be set to receive keyboard events.
       nuxDebugMsg("[WindowCompositor::SetKeyFocusArea] There is a keyboard grab pending. Cannot change the keyboard event receiver.");
-      return;
+      return false;
     }
 
     if (key_focus_area_ == area)
     {
-      return;
+      // Already has the keyboard focus.
+      return true;
     }
 
     if (area && (area->AcceptKeyNavFocus() == false))
     {
-      return;
+      // Area does not want the keyboard focus.
+      return false;
     }
 
     if (key_focus_area_)
     {
-      key_focus_area_->EmitEndKeyboardFocus();
+      // This is the area that has the keyboard focus. Emit the signal 'end_key_focus'.
+      key_focus_area_->end_key_focus.emit();
+
+      // From the area that has the keyboard focus to the top level parent, delete the path that
+      // leads to the keyboard focus area.
       key_focus_area_->ResetUpwardPathToKeyFocusArea();
 
       if (key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
@@ -1869,6 +1883,9 @@ namespace
         key_nav_focus_change.emit(key_focus_area_, false, direction);
         // Signal emitted from the area itself.
         static_cast<InputArea*>(key_focus_area_)->key_nav_focus_change.emit(key_focus_area_, false, direction);
+        // nuxDebugMsg("[WindowCompositor::SetKeyFocusArea] Area type '%s' named '%s': Lost key nav focus.",
+        //   key_focus_area_->Type().name,
+        //   key_focus_area_->GetBaseString().GetTCharPtr());
       }
 
       if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
@@ -1881,8 +1898,12 @@ namespace
     {
       key_focus_area_ = area;
 
+      // From the area that has the keyboard focus to the top level parent, mark the path that
+      // leads to the keyboard focus area.
       key_focus_area_->SetPathToKeyFocusArea();
-      key_focus_area_->EmitStartKeyboardFocus();
+
+      // Emit the signal 'begin_key_focus'.
+      key_focus_area_->begin_key_focus.emit();
 
       if (key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
       {
@@ -1890,6 +1911,9 @@ namespace
         key_nav_focus_change.emit(key_focus_area_, true, direction);
         // Signal emitted from the area itself.
         static_cast<InputArea*>(key_focus_area_)->key_nav_focus_change.emit(key_focus_area_, true, direction);
+        // nuxDebugMsg("[WindowCompositor::SetKeyFocusArea] Area type '%s' named '%s': Has key nav focus.",
+        //   key_focus_area_->Type().name,
+        //   key_focus_area_->GetBaseString().GetTCharPtr());
       }
 
       if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
@@ -1905,20 +1929,19 @@ namespace
       key_focus_area_ = NULL;
     }
 
-    // Even if the the area parameter cannot receive keyboard events, it will get the
-    // keyboard navigatiuon focus.
-
-    if (key_focus_area_)
-    {
-      key_focus_area_->begin_key_focus.emit();
-    }
-
-
     key_focus_area_connection_.disconnect();
+
     if (area)
     {
       key_focus_area_connection_ = area->object_destroyed.connect(sigc::mem_fun(this, &WindowCompositor::OnKeyNavFocusDestroyed));
     }
+
+    if (key_focus_area_ == NULL)
+    {
+      return false;
+    }
+
+    return true;
   }
 
   InputArea* WindowCompositor::GetKeyFocusArea()
@@ -2181,7 +2204,7 @@ namespace
       // If there is any area with the key focus, cancel it.
       if (key_focus_area_)
       {
-        key_focus_area_->EmitEndKeyboardFocus();
+        key_focus_area_->end_key_focus.emit();
         key_focus_area_->ResetUpwardPathToKeyFocusArea();
 
         if (key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
@@ -2190,6 +2213,10 @@ namespace
           key_nav_focus_change.emit(key_focus_area_, false, KEY_NAV_NONE);
           // Signal emitted from the area itself.
           static_cast<InputArea*>(key_focus_area_)->key_nav_focus_change.emit(key_focus_area_, false, KEY_NAV_NONE);
+          // nuxDebugMsg("[WindowCompositor::GrabKeyboardAdd] Area type '%s' named '%s': Lost key nav focus.",
+          //   key_focus_area_->Type().name,
+          //   key_focus_area_->GetBaseString().GetTCharPtr());
+
         }
 
         if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
@@ -2252,7 +2279,7 @@ namespace
       // If there is any area with the key focus, cancel it.
       if (key_focus_area_)
       {
-        key_focus_area_->EmitEndKeyboardFocus();
+        key_focus_area_->end_key_focus.emit();
         key_focus_area_->ResetUpwardPathToKeyFocusArea();
 
         if (key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
@@ -2261,6 +2288,9 @@ namespace
           key_nav_focus_change.emit(key_focus_area_, false, KEY_NAV_NONE);
           // Signal emitted from the area itself.
           static_cast<InputArea*>(key_focus_area_)->key_nav_focus_change.emit(key_focus_area_, false, KEY_NAV_NONE);
+          // nuxDebugMsg("[WindowCompositor::GrabKeyboardRemove] Area type '%s' named '%s': Lost key nav focus.",
+          //   key_focus_area_->Type().name,
+          //   key_focus_area_->GetBaseString().GetTCharPtr());          
         }
 
         if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))

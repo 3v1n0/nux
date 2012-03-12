@@ -36,9 +36,6 @@ namespace nux
     view_layout_ = NULL;
     draw_cmd_queued_        = false;
     m_TextColor         = Color(1.0f, 1.0f, 1.0f, 1.0f);
-
-    // Set widget default size;
-    SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
   }
 
   View::~View()
@@ -385,12 +382,12 @@ namespace nux
 
   void View::EnableView()
   {
-    view_enabled_ = false;
+    view_enabled_ = true;
   }
 
   void View::DisableView()
   {
-    view_enabled_ = true;
+    view_enabled_ = false;
   }
 
   void View::SetEnableView(bool enable)

@@ -147,7 +147,7 @@ namespace nux
                                 geometry_.width,
                                 geometry_.height,
                                 1);
-    t_u8* ptr = cairo_image_surface_get_data (surface_);
+    unsigned char* ptr = cairo_image_surface_get_data (surface_);
     int stride = cairo_image_surface_get_stride (surface_);
 
     if (ptr == 0 || stride == 0)

@@ -32,7 +32,7 @@ namespace nux
 
   bool MemIsZero ( const void *V, size_t Count )
   {
-    t_u8 *B = (t_u8 *) V;
+    unsigned char *B = (unsigned char *) V;
 
     while ( Count-- > 0 )
       if ( *B++ != 0 )

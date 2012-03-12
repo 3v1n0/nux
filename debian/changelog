@@ -1,9 +1,10 @@
-nux (2.4.0-0ubuntu3) UNRELEASED; urgency=low
+nux (2.6.0-0ubuntu1) UNRELEASED; urgency=low
 
   * debian/control:
     - build-dep on libibus-1.0-dev for ibus support
+  * New upstream release.
 
- -- Didier Roche <didrocks@ubuntu.com>  Mon, 27 Feb 2012 12:27:57 +0100
+ -- Didier Roche <didrocks@ubuntu.com>  Mon, 12 Mar 2012 09:57:17 +0100
 
 nux (2.4.0-0ubuntu2) precise; urgency=low
 

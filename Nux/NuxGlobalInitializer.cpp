@@ -26,11 +26,11 @@
 namespace nux
 {
 
-  static NuxGlobalSingletonInitializer *GNuxGlobalInitializer   = 0;
+  static NuxGlobalSingletonInitializer* GNuxGlobalInitializer   = 0;
 
   static void SystemStart()
   {
-    static t_u8 StaticBuffer[sizeof(NuxGlobalSingletonInitializer) ];
+    static unsigned char StaticBuffer[sizeof(NuxGlobalSingletonInitializer) ];
     // Placement new in our reserved buffer.
     GNuxGlobalInitializer =  new(StaticBuffer) NuxGlobalSingletonInitializer();
 

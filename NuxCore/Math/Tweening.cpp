@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Inalogic® Inc.
+ * Copyright 2010-2012 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -166,10 +166,10 @@ namespace nux
       s = p / 4;
     }
     else
-      s = p / (2 * nux::Const::pi) * std::asin (c / a);
+      s = p / (2 * constants::pi) * std::asin (c / a);
 
     t -= 1.0;
-    return - (a * std::pow (2, 10 * t) * std::sin ( (t * d - s) * (2 * nux::Const::pi) / p ) ) + b;
+    return - (a * std::pow (2, 10 * t) * std::sin ( (t * d - s) * (2 * constants::pi) / p ) ) + b;
   }
 
   double ElasticEaseOut (double t, double b, double c, double d, double a, double p)
@@ -191,9 +191,9 @@ namespace nux
       s = p / 4;
     }
     else
-      s = p / (2 * nux::Const::pi) * std::asin (c / a);
+      s = p / (2 * constants::pi) * std::asin (c / a);
 
-    return (a * std::pow (2, -10 * t) * std::sin ( (t * d - s) * (2 * nux::Const::pi) / p ) + c + b);
+    return (a * std::pow (2, -10 * t) * std::sin ( (t * d - s) * (2 * constants::pi) / p ) + c + b);
   }
 
   double ElasticEaseInOut (double t, double b, double c, double d, double a, double p)
@@ -216,17 +216,17 @@ namespace nux
     }
     else
     {
-      s = p / (2 * nux::Const::pi) * std::asin (c / a);
+      s = p / (2 * constants::pi) * std::asin (c / a);
     }
 
     if (t < 1.0)
     {
       t -= 1;
-      return -0.5 * (a * std::pow (2, 10.0 * t) * std::sin ( (t * d - s) * (2 * nux::Const::pi) / p ) ) + b;
+      return -0.5 * (a * std::pow (2, 10.0 * t) * std::sin ( (t * d - s) * (2 * constants::pi) / p ) ) + b;
     }
 
     t -= 1;
-    return a * std::pow (2, -10 * t) * std::sin ( (t * d - s) * (2 * nux::Const::pi) / p ) * .5 + c + b;
+    return a * std::pow (2, -10 * t) * std::sin ( (t * d - s) * (2 * constants::pi) / p ) * .5 + c + b;
   }
 
 // Expo
@@ -350,17 +350,17 @@ namespace nux
 // Sine
   double SineEaseIn (double t, double b, double c, double d)
   {
-    return -c * std::cos (t / d * (nux::Const::pi / 2) ) + c + b;
+    return -c * std::cos (t / d * (constants::pi / 2) ) + c + b;
   }
 
   double SineEaseOut (double t, double b, double c, double d)
   {
-    return c * std::sin (t / d * (nux::Const::pi / 2) ) + b;
+    return c * std::sin (t / d * (constants::pi / 2) ) + b;
   }
 
   double SineEaseInOut (double t, double b, double c, double d)
   {
-    return -c / 2 * (std::cos (nux::Const::pi * t / d) - 1) + b;
+    return -c / 2 * (std::cos (constants::pi * t / d) - 1) + b;
   }
 
 }

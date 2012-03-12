@@ -120,7 +120,6 @@ source_tiny_xml_h = \
 
 source_h = \
   $(srcdir)/AsyncFileWriter.h \
-  $(srcdir)/SystemTypes.h \
   $(srcdir)/Point.h \
   $(srcdir)/FilePath.h \
   $(srcdir)/System.h \

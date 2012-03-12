@@ -15,13 +15,15 @@ libnux_@NUX_API_VERSION@_la_CPPFLAGS= \
   -DG_LOG_DOMAIN=\"Nux\" \
   $(GCC_FLAGS) \
   $(NUX_CFLAGS) \
+  $(IBUS_CFLAGS) \
   $(MAINTAINER_CFLAGS)
 
 libnux_@NUX_API_VERSION@_la_LIBADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
-  $(NUX_LIBS)
+  $(NUX_LIBS) \
+  $(IBUS_LIBS) 
 
 libnux_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
@@ -70,7 +72,7 @@ source_cpp = \
   $(srcdir)/MainLoopGLib.cpp \
   $(srcdir)/MenuPage.cpp \
   $(srcdir)/MenuBar.cpp \
-  $(srcdir)/Metrics.cpp \
+  $(srcdir)/EMMetrics.cpp \
   $(srcdir)/MouseAreaCtrl.cpp \
   $(srcdir)/NumericValuator.cpp \
   $(srcdir)/Nux.cpp \
@@ -93,6 +95,7 @@ source_cpp = \
   $(srcdir)/SystemThread.cpp \
   $(srcdir)/TabView.cpp \
   $(srcdir)/TextEntry.cpp \
+  $(srcdir)/InputMethodIBus.cpp \
   $(srcdir)/TextLoader.cpp \
   $(srcdir)/TextureArea.cpp \
   $(srcdir)/Timeline.cpp \
@@ -154,7 +157,7 @@ source_h = \
   $(srcdir)/LinearLayout.h \
   $(srcdir)/MenuPage.h \
   $(srcdir)/MenuBar.h \
-  $(srcdir)/Metrics.h \
+  $(srcdir)/EMMetrics.h \
   $(srcdir)/MouseAreaCtrl.h \
   $(srcdir)/NumericValuator.h \
   $(srcdir)/Nux.h \
@@ -178,6 +181,8 @@ source_h = \
   $(srcdir)/SystemThread.h \
   $(srcdir)/TabView.h \
   $(srcdir)/TextEntry.h \
+  $(srcdir)/TextEntryComposeSeqs.h \
+  $(srcdir)/InputMethodIBus.h \
   $(srcdir)/TextLoader.h \
   $(srcdir)/TextureArea.h \
   $(srcdir)/Timeline.h \
@@ -197,11 +202,13 @@ source_h = \
 
 nuxprogramframework_cpp = \
   $(srcdir)/ProgramFramework/ProgramTemplate.cpp \
-  $(srcdir)/ProgramFramework/TestView.cpp
+  $(srcdir)/ProgramFramework/TestView.cpp \
+  $(srcdir)/ProgramFramework/TestTextEntry.cpp
 
 nuxprogramframework_h = \
   $(srcdir)/ProgramFramework/ProgramTemplate.h \
-  $(srcdir)/ProgramFramework/TestView.h
+  $(srcdir)/ProgramFramework/TestView.h \
+  $(srcdir)/ProgramFramework/TestTextEntry.h
 
 
 libnux_@NUX_API_VERSION@_la_SOURCES = \
