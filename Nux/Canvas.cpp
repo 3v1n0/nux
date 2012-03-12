@@ -84,8 +84,8 @@ namespace nux
                                                     _last_width,
                                                     _last_height,
                                                     1);
-    t_u8*         ptr           = cairo_image_surface_get_data (_surface);
-    int           stride        = cairo_image_surface_get_stride (_surface);
+    unsigned char*  ptr           = cairo_image_surface_get_data (_surface);
+    int             stride        = cairo_image_surface_get_stride (_surface);
 
     if (ptr == NULL || stride == 0) {
       g_debug ("Invalid surface!");

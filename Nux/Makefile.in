@@ -86,7 +86,7 @@ libnux_@NUX_API_VERSION@_la_DEPENDENCIES =  \
 	$(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
 	$(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
 	$(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am__objects_1 = libnux_@NUX_API_VERSION@_la-AbstractButton.lo \
 	libnux_@NUX_API_VERSION@_la-AbstractCheckedButton.lo \
 	libnux_@NUX_API_VERSION@_la-AbstractComboBox.lo \
@@ -130,7 +130,7 @@ am__objects_1 = libnux_@NUX_API_VERSION@_la-AbstractButton.lo \
 	libnux_@NUX_API_VERSION@_la-MainLoopGLib.lo \
 	libnux_@NUX_API_VERSION@_la-MenuPage.lo \
 	libnux_@NUX_API_VERSION@_la-MenuBar.lo \
-	libnux_@NUX_API_VERSION@_la-Metrics.lo \
+	libnux_@NUX_API_VERSION@_la-EMMetrics.lo \
 	libnux_@NUX_API_VERSION@_la-MouseAreaCtrl.lo \
 	libnux_@NUX_API_VERSION@_la-NumericValuator.lo \
 	libnux_@NUX_API_VERSION@_la-Nux.lo \
@@ -153,6 +153,7 @@ am__objects_1 = libnux_@NUX_API_VERSION@_la-AbstractButton.lo \
 	libnux_@NUX_API_VERSION@_la-SystemThread.lo \
 	libnux_@NUX_API_VERSION@_la-TabView.lo \
 	libnux_@NUX_API_VERSION@_la-TextEntry.lo \
+	libnux_@NUX_API_VERSION@_la-InputMethodIBus.lo \
 	libnux_@NUX_API_VERSION@_la-TextLoader.lo \
 	libnux_@NUX_API_VERSION@_la-TextureArea.lo \
 	libnux_@NUX_API_VERSION@_la-Timeline.lo \
@@ -171,7 +172,8 @@ am__objects_1 = libnux_@NUX_API_VERSION@_la-AbstractButton.lo \
 	libnux_@NUX_API_VERSION@_la-WindowThread.lo
 am__objects_2 =
 am__objects_3 = libnux_@NUX_API_VERSION@_la-ProgramTemplate.lo \
-	libnux_@NUX_API_VERSION@_la-TestView.lo
+	libnux_@NUX_API_VERSION@_la-TestView.lo \
+	libnux_@NUX_API_VERSION@_la-TestTextEntry.lo
 am_libnux_@NUX_API_VERSION@_la_OBJECTS = $(am__objects_1) \
 	$(am__objects_2) $(am__objects_3) $(am__objects_2)
 libnux_@NUX_API_VERSION@_la_OBJECTS =  \
@@ -288,6 +290,8 @@ FGREP = @FGREP@
 GCC_FLAGS = @GCC_FLAGS@
 GL_PKGS = @GL_PKGS@
 GREP = @GREP@
+IBUS_CFLAGS = @IBUS_CFLAGS@
+IBUS_LIBS = @IBUS_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -419,13 +423,15 @@ libnux_@NUX_API_VERSION@_la_CPPFLAGS = \
   -DG_LOG_DOMAIN=\"Nux\" \
   $(GCC_FLAGS) \
   $(NUX_CFLAGS) \
+  $(IBUS_CFLAGS) \
   $(MAINTAINER_CFLAGS)
 
 libnux_@NUX_API_VERSION@_la_LIBADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
-  $(NUX_LIBS)
+  $(NUX_LIBS) \
+  $(IBUS_LIBS) 
 
 libnux_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
@@ -474,7 +480,7 @@ source_cpp = \
   $(srcdir)/MainLoopGLib.cpp \
   $(srcdir)/MenuPage.cpp \
   $(srcdir)/MenuBar.cpp \
-  $(srcdir)/Metrics.cpp \
+  $(srcdir)/EMMetrics.cpp \
   $(srcdir)/MouseAreaCtrl.cpp \
   $(srcdir)/NumericValuator.cpp \
   $(srcdir)/Nux.cpp \
@@ -497,6 +503,7 @@ source_cpp = \
   $(srcdir)/SystemThread.cpp \
   $(srcdir)/TabView.cpp \
   $(srcdir)/TextEntry.cpp \
+  $(srcdir)/InputMethodIBus.cpp \
   $(srcdir)/TextLoader.cpp \
   $(srcdir)/TextureArea.cpp \
   $(srcdir)/Timeline.cpp \
@@ -558,7 +565,7 @@ source_h = \
   $(srcdir)/LinearLayout.h \
   $(srcdir)/MenuPage.h \
   $(srcdir)/MenuBar.h \
-  $(srcdir)/Metrics.h \
+  $(srcdir)/EMMetrics.h \
   $(srcdir)/MouseAreaCtrl.h \
   $(srcdir)/NumericValuator.h \
   $(srcdir)/Nux.h \
@@ -582,6 +589,8 @@ source_h = \
   $(srcdir)/SystemThread.h \
   $(srcdir)/TabView.h \
   $(srcdir)/TextEntry.h \
+  $(srcdir)/TextEntryComposeSeqs.h \
+  $(srcdir)/InputMethodIBus.h \
   $(srcdir)/TextLoader.h \
   $(srcdir)/TextureArea.h \
   $(srcdir)/Timeline.h \
@@ -601,11 +610,13 @@ source_h = \
 
 nuxprogramframework_cpp = \
   $(srcdir)/ProgramFramework/ProgramTemplate.cpp \
-  $(srcdir)/ProgramFramework/TestView.cpp
+  $(srcdir)/ProgramFramework/TestView.cpp \
+  $(srcdir)/ProgramFramework/TestTextEntry.cpp
 
 nuxprogramframework_h = \
   $(srcdir)/ProgramFramework/ProgramTemplate.h \
-  $(srcdir)/ProgramFramework/TestView.h
+  $(srcdir)/ProgramFramework/TestView.h \
+  $(srcdir)/ProgramFramework/TestTextEntry.h
 
 libnux_@NUX_API_VERSION@_la_SOURCES = \
   $(source_cpp) \
@@ -719,6 +730,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-CoverflowModel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Dialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-DoubleValidator.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-EMMetrics.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-EditTextBox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-FileSelector.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-FloatingWindow.Plo@am__quote@
@@ -730,6 +742,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-HSplitter.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-HexRegExpValidator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-InputArea.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-InputMethodIBus.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-IntegerValidator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-KeyboardHandler.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-LayeredLayout.Plo@am__quote@
@@ -738,7 +751,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-MainLoopGLib.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-MenuBar.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-MenuPage.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Metrics.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-MouseAreaCtrl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-NumericValuator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Nux.Plo@am__quote@
@@ -762,6 +774,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-StaticTextBox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-SystemThread.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TabView.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TestTextEntry.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TestView.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TextEntry.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TextLoader.Plo@am__quote@
@@ -1104,12 +1117,12 @@ libnux_@NUX_API_VERSION@_la-MenuBar.lo: $(srcdir)/MenuBar.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-MenuBar.lo `test -f '$(srcdir)/MenuBar.cpp' || echo '$(srcdir)/'`$(srcdir)/MenuBar.cpp
 
-libnux_@NUX_API_VERSION@_la-Metrics.lo: $(srcdir)/Metrics.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Metrics.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Metrics.Tpo -c -o libnux_@NUX_API_VERSION@_la-Metrics.lo `test -f '$(srcdir)/Metrics.cpp' || echo '$(srcdir)/'`$(srcdir)/Metrics.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Metrics.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Metrics.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(srcdir)/Metrics.cpp' object='libnux_@NUX_API_VERSION@_la-Metrics.lo' libtool=yes @AMDEPBACKSLASH@
+libnux_@NUX_API_VERSION@_la-EMMetrics.lo: $(srcdir)/EMMetrics.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-EMMetrics.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-EMMetrics.Tpo -c -o libnux_@NUX_API_VERSION@_la-EMMetrics.lo `test -f '$(srcdir)/EMMetrics.cpp' || echo '$(srcdir)/'`$(srcdir)/EMMetrics.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-EMMetrics.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-EMMetrics.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(srcdir)/EMMetrics.cpp' object='libnux_@NUX_API_VERSION@_la-EMMetrics.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-Metrics.lo `test -f '$(srcdir)/Metrics.cpp' || echo '$(srcdir)/'`$(srcdir)/Metrics.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-EMMetrics.lo `test -f '$(srcdir)/EMMetrics.cpp' || echo '$(srcdir)/'`$(srcdir)/EMMetrics.cpp
 
 libnux_@NUX_API_VERSION@_la-MouseAreaCtrl.lo: $(srcdir)/MouseAreaCtrl.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-MouseAreaCtrl.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-MouseAreaCtrl.Tpo -c -o libnux_@NUX_API_VERSION@_la-MouseAreaCtrl.lo `test -f '$(srcdir)/MouseAreaCtrl.cpp' || echo '$(srcdir)/'`$(srcdir)/MouseAreaCtrl.cpp
@@ -1265,6 +1278,13 @@ libnux_@NUX_API_VERSION@_la-TextEntry.lo: $(srcdir)/TextEntry.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-TextEntry.lo `test -f '$(srcdir)/TextEntry.cpp' || echo '$(srcdir)/'`$(srcdir)/TextEntry.cpp
 
+libnux_@NUX_API_VERSION@_la-InputMethodIBus.lo: $(srcdir)/InputMethodIBus.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-InputMethodIBus.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-InputMethodIBus.Tpo -c -o libnux_@NUX_API_VERSION@_la-InputMethodIBus.lo `test -f '$(srcdir)/InputMethodIBus.cpp' || echo '$(srcdir)/'`$(srcdir)/InputMethodIBus.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-InputMethodIBus.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-InputMethodIBus.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(srcdir)/InputMethodIBus.cpp' object='libnux_@NUX_API_VERSION@_la-InputMethodIBus.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-InputMethodIBus.lo `test -f '$(srcdir)/InputMethodIBus.cpp' || echo '$(srcdir)/'`$(srcdir)/InputMethodIBus.cpp
+
 libnux_@NUX_API_VERSION@_la-TextLoader.lo: $(srcdir)/TextLoader.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-TextLoader.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TextLoader.Tpo -c -o libnux_@NUX_API_VERSION@_la-TextLoader.lo `test -f '$(srcdir)/TextLoader.cpp' || echo '$(srcdir)/'`$(srcdir)/TextLoader.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TextLoader.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TextLoader.Plo
@@ -1390,6 +1410,13 @@ libnux_@NUX_API_VERSION@_la-TestView.lo: $(srcdir)/ProgramFramework/TestView.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(srcdir)/ProgramFramework/TestView.cpp' object='libnux_@NUX_API_VERSION@_la-TestView.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-TestView.lo `test -f '$(srcdir)/ProgramFramework/TestView.cpp' || echo '$(srcdir)/'`$(srcdir)/ProgramFramework/TestView.cpp
+
+libnux_@NUX_API_VERSION@_la-TestTextEntry.lo: $(srcdir)/ProgramFramework/TestTextEntry.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-TestTextEntry.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TestTextEntry.Tpo -c -o libnux_@NUX_API_VERSION@_la-TestTextEntry.lo `test -f '$(srcdir)/ProgramFramework/TestTextEntry.cpp' || echo '$(srcdir)/'`$(srcdir)/ProgramFramework/TestTextEntry.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TestTextEntry.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TestTextEntry.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(srcdir)/ProgramFramework/TestTextEntry.cpp' object='libnux_@NUX_API_VERSION@_la-TestTextEntry.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-TestTextEntry.lo `test -f '$(srcdir)/ProgramFramework/TestTextEntry.cpp' || echo '$(srcdir)/'`$(srcdir)/ProgramFramework/TestTextEntry.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

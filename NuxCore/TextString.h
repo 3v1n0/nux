@@ -464,9 +464,9 @@ namespace nux
   size_t ValueToLiteralString (char *buffer, size_t len, long long     value);
   size_t ValueToLiteralString (char *buffer, size_t len, float   value);
   size_t ValueToLiteralString (char *buffer, size_t len, double  value);
-  size_t ValueToLiteralString (char *buffer, size_t len, t_u8      value);
-  size_t ValueToLiteralString (char *buffer, size_t len, t_s8      value);
-  size_t ValueToLiteralString (char *buffer, size_t len, t_schar   value);
+  size_t ValueToLiteralString (char *buffer, size_t len, unsigned char      value);
+  size_t ValueToLiteralString (char *buffer, size_t len, char      value);
+  size_t ValueToLiteralString (char *buffer, size_t len, char   value);
 
   template<class T>
   bool FromCharString (const char *buffer, size_t bufferlen, const char *format, T &value)
@@ -510,9 +510,8 @@ namespace nux
   bool ValueFromLiteralString (const char *buffer, size_t len, long long &value);
   bool ValueFromLiteralString (const char *buffer, size_t len, float &value);
   bool ValueFromLiteralString (const char *buffer, size_t len, double &value);
-  bool ValueFromLiteralString (const char *buffer, size_t len, t_u8 &value);
-  bool ValueFromLiteralString (const char *buffer, size_t len, t_s8 &value);
-  bool ValueFromLiteralString (const char *buffer, size_t len, t_schar &value);
+  bool ValueFromLiteralString (const char *buffer, size_t len, unsigned char &value);
+  bool ValueFromLiteralString (const char *buffer, size_t len, char &value);
 
 
   /*-----------------------------------------------------------------------------

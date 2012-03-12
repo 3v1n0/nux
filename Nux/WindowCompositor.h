@@ -85,12 +85,15 @@ namespace nux
 
     //! Set the area that has the keyboard focus.
     /*!
-        Set the area that has the keyboard focus.
+        Set the area that has the keyboard focus. If the \i area parameter is NULL, \n
+        the area that has the keyboard focus looses it and the function returns false.
 
         @param The area that that gets the keyboard focus.
         @param The key nav direction that initiated the focus to the provided area.
+
+        @return True if the area succeeded to get the keyboard focus or it already has it.
     */
-    void SetKeyFocusArea(InputArea* area, KeyNavDirection direction = KEY_NAV_NONE);
+    bool SetKeyFocusArea(InputArea* area, KeyNavDirection direction = KEY_NAV_NONE);
 
     //! Return the area that has the keyboard focus.
     /*!

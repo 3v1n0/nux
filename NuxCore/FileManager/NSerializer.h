@@ -55,7 +55,7 @@ namespace nux
 //     {
 //         for(unsigned long long i = 0; i < NumberOfElements; i++)
 //         {
-//             t_u8* bytebuffer = (t_u8*)(&buffer[i]);
+//             unsigned char* bytebuffer = (unsigned char*)(&buffer[i]);
 //             Serialize(bytebuffer, ElementSize);
 //         }
 //     }
@@ -86,12 +86,12 @@ namespace nux
       {
         // Transferring between memory and file, so flip the byte order.
         for ( INT i = Length - 1; i >= 0; i-- )
-          Serialize ( (t_u8 *) V + i, 1 );
+          Serialize ( (unsigned char *) V + i, 1 );
       }
       else
       {
         // Transferring around within memory, so keep the byte order.
-        Serialize ( (t_u8 *) V, Length);
+        Serialize ( (unsigned char *) V, Length);
       }
 
       return *this;
@@ -108,11 +108,10 @@ namespace nux
       return m_ErrorCode;
     }
 
-    virtual void Serialize (t_char   &data);
+    virtual void Serialize (char   &data);
     virtual void Serialize (wchar_t  &data);
     virtual void Serialize (bool   &data);
-    virtual void Serialize (t_s8     &data);
-    virtual void Serialize (t_u8     &data);
+    virtual void Serialize (unsigned char     &data);
     virtual void Serialize (unsigned short    &data);
     virtual void Serialize (short    &data);
     virtual void Serialize (unsigned int &data);
@@ -124,11 +123,10 @@ namespace nux
     virtual void Serialize (unsigned long long    &data);
     virtual void Serialize (long long    &data);
 
-    virtual void Serialize (t_char   *buffer, unsigned int len, unsigned int stride = sizeof (t_char) );
     virtual void Serialize (wchar_t  *buffer, unsigned int len, unsigned int stride = sizeof (wchar_t) );
     virtual void Serialize (bool   *buffer, unsigned int len, unsigned int stride = sizeof (bool)  );
-    virtual void Serialize (t_s8     *buffer, unsigned int len, unsigned int stride = sizeof (t_s8)    );
-    virtual void Serialize (t_u8     *buffer, unsigned int len, unsigned int stride = sizeof (t_u8)    );
+    virtual void Serialize (char   *buffer, unsigned int len, unsigned int stride = sizeof (char) );
+    virtual void Serialize (unsigned char     *buffer, unsigned int len, unsigned int stride = sizeof (unsigned char)    );
     virtual void Serialize (unsigned short    *buffer, unsigned int len, unsigned int stride = sizeof (unsigned short)   );
     virtual void Serialize (short    *buffer, unsigned int len, unsigned int stride = sizeof (short)   );
     virtual void Serialize (unsigned int *buffer, unsigned int len, unsigned int stride = sizeof (unsigned int) );
@@ -152,22 +150,17 @@ namespace nux
     bool m_ErrorCode;
   };
 
-  NUX_INLINE NSerializer &operator << (NSerializer &Sr, t_char     &v)
-  {
-    Sr.Serialize (v);
-    return Sr;
-  }
   NUX_INLINE NSerializer &operator << (NSerializer &Sr, bool      &v)
   {
     Sr.Serialize (v);
     return Sr;
   }
-  NUX_INLINE NSerializer &operator << (NSerializer &Sr, t_s8        &v)
+  NUX_INLINE NSerializer &operator << (NSerializer &Sr, char     &v)
   {
     Sr.Serialize (v);
     return Sr;
   }
-  NUX_INLINE NSerializer &operator << (NSerializer &Sr, t_u8        &v)
+  NUX_INLINE NSerializer &operator << (NSerializer &Sr, unsigned char        &v)
   {
     Sr.Serialize (v);
     return Sr;

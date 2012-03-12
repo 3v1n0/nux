@@ -23,6 +23,7 @@
 
 #include "Nux/TextureArea.h"
 
+namespace nux {
 class TestView: public nux::View
 {
   NUX_DECLARE_OBJECT_TYPE(TestView, View);
@@ -34,6 +35,7 @@ public:
   bool AcceptKeyNavFocus() {return can_focus_;}
 
   void ResetEvents();
+  void ResetKeyFocusEvents();
 
   bool can_focus_;
 
@@ -46,6 +48,10 @@ public:
   bool registered_mouse_move_;
   bool registered_mouse_enter_;
   bool registered_mouse_leave_;
+  bool registered_object_destroyed_;
+  
+  bool registered_begin_keynav_focus_;
+  bool registered_end_keynav_focus_;
 
   nux::KeyNavDirection key_nav_direction_; //!< The key nav direction received when the view obtained the focus.
   
@@ -71,9 +77,13 @@ protected:
   void OnMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags);
   void OnMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags);
   void OnKeyNavFocusChange(nux::Area* area, bool has_focus, nux::KeyNavDirection direction);
+  void OnBeginKeyFocus();
+  void OnEndKeyFocus();
+  void OnObjectDestroyed(Object* object);
 
   void Draw(nux::GraphicsEngine& graphics_engine, bool force_draw);
 };
 
+}
 #endif // TEST_VIEW_H
 

@@ -31,7 +31,6 @@
 #include "GraphicsEngine.h"
 #include "GLWindowManager.h"
 #include "Events.h"
-#include "IniFile.h"
 
 #include "GraphicsDisplay.h"
 
@@ -1527,18 +1526,18 @@ namespace nux
           return 0;
         }
 
-        t_UTF16 *utf16_str = new t_UTF16 [4];
-        Memset(utf16_str, 0, sizeof(t_UTF16) * 4);
+        wchar_t *utf16_str = new wchar_t [4];
+        Memset(utf16_str, 0, sizeof(wchar_t) * 4);
         Memcpy(utf16_str, (int*) &wParam, sizeof(wParam));
-        t_UTF16 *temp0 = utf16_str;
+        wchar_t *temp0 = utf16_str;
 
-        t_UTF8 *utf8_str = new t_UTF8 [NUX_EVENT_TEXT_BUFFER_SIZE];
-        Memset(utf8_str, 0, sizeof(t_UTF8) * NUX_EVENT_TEXT_BUFFER_SIZE);
-        t_UTF8 *temp1 = utf8_str;
+        unsigned char *utf8_str = new unsigned char [NUX_EVENT_TEXT_BUFFER_SIZE];
+        Memset(utf8_str, 0, sizeof(unsigned char) * NUX_EVENT_TEXT_BUFFER_SIZE);
+        unsigned char *temp1 = utf8_str;
 
 
-        ConversionResult res = ConvertUTF16toUTF8((const nux::t_UTF16 **) &temp0,
-          utf16_str + sizeof(t_UTF16) * 4,
+        ConversionResult res = ConvertUTF16toUTF8((const wchar_t **) &temp0,
+          utf16_str + sizeof(wchar_t) * 4,
           &temp1,
           utf8_str + NUX_EVENT_TEXT_BUFFER_SIZE,
           lenientConversion);
@@ -1576,18 +1575,18 @@ namespace nux
           event_->key_repeat_count = (int) (lParam & 0xff);
         }
 
-        t_UTF32 *utf32_str = new t_UTF32 [4];
-        Memset(utf32_str, 0, sizeof(t_UTF32) * 4);
+        unsigned int *utf32_str = new unsigned int [4];
+        Memset(utf32_str, 0, sizeof(unsigned int) * 4);
         Memcpy(utf32_str, (int*) &wParam, sizeof(wParam));
-        t_UTF32 *temp0 = utf32_str;
+        unsigned int *temp0 = utf32_str;
 
-        t_UTF8 *utf8_str = new t_UTF8 [NUX_EVENT_TEXT_BUFFER_SIZE];
-        Memset(utf8_str, 0, sizeof(t_UTF8) * NUX_EVENT_TEXT_BUFFER_SIZE);
-        t_UTF8 *temp1 = utf8_str;
+        unsigned char *utf8_str = new unsigned char [NUX_EVENT_TEXT_BUFFER_SIZE];
+        Memset(utf8_str, 0, sizeof(unsigned char) * NUX_EVENT_TEXT_BUFFER_SIZE);
+        unsigned char *temp1 = utf8_str;
 
 
-        ConversionResult res = ConvertUTF32toUTF8((const nux::t_UTF32 **) &temp0,
-          utf32_str + sizeof(t_UTF32) * 4,
+        ConversionResult res = ConvertUTF32toUTF8((const unsigned int**) &temp0,
+          utf32_str + sizeof(unsigned int) * 4,
           &temp1,
           utf8_str + NUX_EVENT_TEXT_BUFFER_SIZE,
           lenientConversion);

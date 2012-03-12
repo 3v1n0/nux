@@ -296,6 +296,12 @@ namespace nux
 
   void Area::UnParentObject()
   {
+    // If the area is on the path to the key focus area, or has focus, reset it.
+    if (has_key_focus_ || next_object_to_key_focus_area_)
+    {
+      GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(NULL, KEY_NAV_NONE);
+    }
+
     if (parent_area_)
     {
       parent_area_ = 0;
@@ -997,14 +1003,6 @@ namespace nux
     const char* character)
   {
     return false;
-  }
-
-  bool Area::AcceptKeyNavFocus()
-  {
-    if (GetInputEventSensitivity() == false)
-      return false;
-
-    return true;
   }
 
   Area* Area::KeyNavIteration(KeyNavDirection direction)

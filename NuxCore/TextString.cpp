@@ -249,15 +249,11 @@ namespace nux
   {
     return ToCharString (buffer, len, "%.20lg",  value);
   }
-  size_t ValueToLiteralString (char *buffer, unsigned int len, t_u8      value)
+  size_t ValueToLiteralString (char *buffer, unsigned int len, unsigned char      value)
   {
     return ValueToLiteralString (buffer, len,    (unsigned int) value);
   }
-  size_t ValueToLiteralString (char *buffer, unsigned int len, t_char    value)
-  {
-    return ValueToLiteralString (buffer, len,    (int) value);
-  }
-  size_t ValueToLiteralString (char *buffer, unsigned int len, t_s8      value)
+  size_t ValueToLiteralString (char *buffer, unsigned int len, char    value)
   {
     return ValueToLiteralString (buffer, len,    (int) value);
   }
@@ -302,30 +298,21 @@ namespace nux
   {
     return FromCharString (buffer, len, "%lg", value );
   }
-  bool ValueFromLiteralString (const char *buffer, unsigned int len, t_u8     &value)
+  bool ValueFromLiteralString (const char *buffer, unsigned int len, unsigned char     &value)
   {
     unsigned int tmp = 0;
     bool result;
     result = ValueFromLiteralString (buffer, len, tmp);
-    value = (t_u8) tmp;
+    value = (unsigned char) tmp;
     return result;
   }
 
-  bool ValueFromLiteralString (const char *buffer, unsigned int len, t_char &value)
+  bool ValueFromLiteralString (const char *buffer, unsigned int len, char &value)
   {
     int tmp = 0;
     bool result;
     result = ValueFromLiteralString (buffer, len, tmp);
-    value = (t_char) tmp;
-    return result;
-  }
-
-  bool ValueFromLiteralString (const char *buffer, unsigned int len, t_s8 &value)
-  {
-    int tmp = 0;
-    bool result;
-    result = ValueFromLiteralString (buffer, len, tmp);
-    value = (t_s8) tmp;
+    value = (char) tmp;
     return result;
   }
 

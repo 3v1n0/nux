@@ -26,7 +26,7 @@
     This class is a Nux view that processes all mouse events that it receives. It is meant for testing simulated
     mouse events. 
 */
-
+namespace nux {
 NUX_IMPLEMENT_OBJECT_TYPE(TestView);
 
 TestView::TestView(NUX_FILE_LINE_DECL)
@@ -34,6 +34,7 @@ TestView::TestView(NUX_FILE_LINE_DECL)
 , can_focus_(true)
 {
   ResetEvents();
+  ResetKeyFocusEvents();
 
   key_nav_direction_ = nux::KEY_NAV_NONE;
   normal_color_ = nux::color::Green;
@@ -58,6 +59,10 @@ TestView::TestView(NUX_FILE_LINE_DECL)
   mouse_enter.connect(sigc::mem_fun(this, &TestView::OnMouseEnter));
   mouse_leave.connect(sigc::mem_fun(this, &TestView::OnMouseLeave));
   key_nav_focus_change.connect(sigc::mem_fun(this, &TestView::OnKeyNavFocusChange));
+  begin_key_focus.connect(sigc::mem_fun(this, &TestView::OnBeginKeyFocus));
+  end_key_focus.connect(sigc::mem_fun(this, &TestView::OnEndKeyFocus));
+  object_destroyed.connect(sigc::mem_fun(this, &TestView::OnObjectDestroyed));
+
 }
 
 TestView::~TestView()
@@ -77,7 +82,14 @@ void TestView::ResetEvents()
   registered_mouse_move_          = false;
   registered_mouse_enter_         = false;
   registered_mouse_leave_         = false;
+  registered_object_destroyed_    = false;
     
+}
+
+void TestView::ResetKeyFocusEvents()
+{
+  registered_begin_keynav_focus_ = false;
+  registered_end_keynav_focus_ = false;
 }
 
 nux::Color TestView::GetColor() const
@@ -166,4 +178,21 @@ void TestView::OnKeyNavFocusChange(nux::Area* area, bool has_focus, nux::KeyNavD
   has_focus_ = has_focus;
   key_nav_direction_ = direction;
   QueueDraw();
+}
+
+void TestView::OnBeginKeyFocus()
+{
+  registered_begin_keynav_focus_ = true;
+}
+
+void TestView::OnEndKeyFocus()
+{
+  registered_end_keynav_focus_ = true;
+}
+
+void TestView::OnObjectDestroyed(nux::Object* object)
+{
+  registered_object_destroyed_ = true;
+}
+
 }

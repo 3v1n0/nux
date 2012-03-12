@@ -112,9 +112,9 @@
     bit mask & shift operations.
 ------------------------------------------------------------------------ */
 
-//typedef unsigned long   t_UTF32;  /* at least 32 bits */
-//typedef unsigned short  t_UTF16;  /* at least 16 bits */
-//typedef unsigned char   t_UTF8;   /* typically 8 bits */
+//typedef unsigned long   unsigned int;  /* at least 32 bits */
+//typedef unsigned short  wchar_t;  /* at least 16 bits */
+//typedef unsigned char   unsigned char;   /* typically 8 bits */
 //typedef unsigned char   Boolean; /* 0 or 1 */
 
 
@@ -122,11 +122,11 @@ namespace nux
 {
 
   /* Some fundamental constants */
-#define UNI_REPLACEMENT_CHAR (t_UTF32)0x0000FFFD
-#define UNI_MAX_BMP (t_UTF32)0x0000FFFF
-#define UNI_MAX_UTF16 (t_UTF32)0x0010FFFF
-#define UNI_MAX_UTF32 (t_UTF32)0x7FFFFFFF
-#define UNI_MAX_LEGAL_UTF32 (t_UTF32)0x0010FFFF
+#define UNI_REPLACEMENT_CHAR (unsigned int)0x0000FFFD
+#define UNI_MAX_BMP (unsigned int)0x0000FFFF
+#define UNI_MAX_UTF16 (unsigned int)0x0010FFFF
+#define UNI_MAX_UTF32 (unsigned int)0x7FFFFFFF
+#define UNI_MAX_LEGAL_UTF32 (unsigned int)0x0010FFFF
 
   typedef enum
   {
@@ -143,30 +143,30 @@ namespace nux
   } ConversionFlags;
 
   ConversionResult ConvertUTF8toUTF16 (
-    const t_UTF8 **sourceStart, const t_UTF8 *sourceEnd,
-    t_UTF16 **targetStart, t_UTF16 *targetEnd, ConversionFlags flags);
+    const unsigned char **sourceStart, const unsigned char *sourceEnd,
+    wchar_t **targetStart, wchar_t *targetEnd, ConversionFlags flags);
 
   ConversionResult ConvertUTF16toUTF8 (
-    const t_UTF16 **sourceStart, const t_UTF16 *sourceEnd,
-    t_UTF8 **targetStart, t_UTF8 *targetEnd, ConversionFlags flags);
+    const wchar_t **sourceStart, const wchar_t *sourceEnd,
+    unsigned char **targetStart, unsigned char *targetEnd, ConversionFlags flags);
 
   ConversionResult ConvertUTF8toUTF32 (
-    const t_UTF8 **sourceStart, const t_UTF8 *sourceEnd,
-    t_UTF32 **targetStart, t_UTF32 *targetEnd, ConversionFlags flags);
+    const unsigned char **sourceStart, const unsigned char *sourceEnd,
+    unsigned int **targetStart, unsigned int *targetEnd, ConversionFlags flags);
 
   ConversionResult ConvertUTF32toUTF8 (
-    const t_UTF32 **sourceStart, const t_UTF32 *sourceEnd,
-    t_UTF8 **targetStart, t_UTF8 *targetEnd, ConversionFlags flags);
+    const unsigned int **sourceStart, const unsigned int *sourceEnd,
+    unsigned char **targetStart, unsigned char *targetEnd, ConversionFlags flags);
 
   ConversionResult ConvertUTF16toUTF32 (
-    const t_UTF16 **sourceStart, const t_UTF16 *sourceEnd,
-    t_UTF32 **targetStart, t_UTF32 *targetEnd, ConversionFlags flags);
+    const wchar_t **sourceStart, const wchar_t *sourceEnd,
+    unsigned int **targetStart, unsigned int *targetEnd, ConversionFlags flags);
 
   ConversionResult ConvertUTF32toUTF16 (
-    const t_UTF32 **sourceStart, const t_UTF32 *sourceEnd,
-    t_UTF16 **targetStart, t_UTF16 *targetEnd, ConversionFlags flags);
+    const unsigned int **sourceStart, const unsigned int *sourceEnd,
+    wchar_t **targetStart, wchar_t *targetEnd, ConversionFlags flags);
 
-  bool isLegalUTF8Sequence (const t_UTF8 *source, const t_UTF8 *sourceEnd);
+  bool isLegalUTF8Sequence (const unsigned char *source, const unsigned char *sourceEnd);
 
 
   /* intended to work the same as g_utf8_validate */

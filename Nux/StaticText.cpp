@@ -566,7 +566,7 @@ namespace nux
       &pTextLayout_                         // The IDWriteTextLayout interface pointer.
       );
 
-    IDWriteInlineObject* inlineObject = nullptr;
+    IDWriteInlineObject* inlineObject = NULL;
     if (SUCCEEDED(hr))
     {
       pDWriteFactory->CreateEllipsisTrimmingSign(

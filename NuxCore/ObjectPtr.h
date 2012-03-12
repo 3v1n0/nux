@@ -42,7 +42,7 @@ namespace nux
   public:
     //! Constructor
     ObjectPtr()
-      : ptr_(nullptr)
+      : ptr_(NULL)
     {
     }
 
@@ -66,7 +66,7 @@ namespace nux
     */
     template <typename O>
     ObjectPtr(ObjectPtr<O> const& other)
-      : ptr_(nullptr)
+      : ptr_(NULL)
     {
       if (other.ptr_ &&
           other.ptr_->Type().IsDerivedFromType(T::StaticObjectType))
@@ -87,7 +87,7 @@ namespace nux
         longer have a reference on ptr.
     */
     explicit ObjectPtr(T *ptr, bool WarnMissuse = false)
-      : ptr_(nullptr)
+      : ptr_(NULL)
     {
       if (ptr)
       {
@@ -113,7 +113,7 @@ namespace nux
     */
     template <typename O>
     explicit ObjectPtr(O *ptr, bool WarnMissuse = false)
-      : ptr_(nullptr)
+      : ptr_(NULL)
     {
       if (ptr &&
           ptr->Type().IsDerivedFromType(T::StaticObjectType))
@@ -328,7 +328,7 @@ namespace nux
       // Decrease the number of strong reference on the hosted pointer.
       ptr_->objectptr_count_->Decrement();
       bool destroyed = ptr_->UnReference();
-      ptr_ = nullptr;
+      ptr_ = NULL;
       return destroyed;
     }
 
@@ -356,7 +356,7 @@ namespace nux
   public:
     //! Constructor
     ObjectWeakPtr()
-      : ptr_(nullptr)
+      : ptr_(NULL)
     {
     }
 
@@ -386,7 +386,7 @@ namespace nux
     */
     template <typename O>
     explicit ObjectWeakPtr(O* ptr, bool WarnMissuse = false)
-      : ptr_(nullptr)
+      : ptr_(NULL)
     {
       if (ptr &&
           (ptr->Type().IsDerivedFromType(T::StaticObjectType)))
@@ -412,7 +412,7 @@ namespace nux
     */
     template <typename O>
     ObjectWeakPtr(const ObjectWeakPtr<O>& other)
-      : ptr_(nullptr)
+      : ptr_(NULL)
     {
       if (other.ptr_ &&
           (other.ptr_->Type().IsDerivedFromType(T::StaticObjectType)))
@@ -428,7 +428,7 @@ namespace nux
     */
     template <typename O>
     ObjectWeakPtr(const ObjectPtr<O> &other)
-      : ptr_(nullptr)
+      : ptr_(NULL)
     {
       if (other.ptr_ &&
           (other.ptr_->Type().IsDerivedFromType(T::StaticObjectType)))
@@ -636,7 +636,7 @@ namespace nux
     bool Release()
     {
         Disconnect();
-        ptr_ = nullptr;
+        ptr_ = NULL;
         return false;
     }
 
@@ -668,7 +668,7 @@ namespace nux
 
     void TargetDestroyed(Object* ptr)
     {
-        ptr_ = nullptr;
+        ptr_ = NULL;
         // rese the connetion too
         destroy_listener_ = sigc::connection();
     }

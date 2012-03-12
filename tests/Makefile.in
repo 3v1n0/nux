@@ -33,8 +33,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@BUILD_TESTS_TRUE@check_PROGRAMS = test-nux$(EXEEXT) \
-@BUILD_TESTS_TRUE@	gtest-nux$(EXEEXT) gtest-nux-core$(EXEEXT) \
+@BUILD_TESTS_TRUE@check_PROGRAMS = gtest-nux$(EXEEXT) \
+@BUILD_TESTS_TRUE@	gtest-nuxcore$(EXEEXT) \
 @BUILD_TESTS_TRUE@	test-graphics-display$(EXEEXT) \
 @BUILD_TESTS_TRUE@	test-empty-window$(EXEEXT) \
 @BUILD_TESTS_TRUE@	xtest-button$(EXEEXT) \
@@ -45,7 +45,12 @@ host_triplet = @host@
 @BUILD_TESTS_TRUE@	xtest-vlayout-key-navigation$(EXEEXT) \
 @BUILD_TESTS_TRUE@	xtest-scrollbar$(EXEEXT) \
 @BUILD_TESTS_TRUE@	xtest-focus-on-mouse-down$(EXEEXT) \
-@BUILD_TESTS_TRUE@	xtest-keynav-directions$(EXEEXT)
+@BUILD_TESTS_TRUE@	xtest-keynav-directions$(EXEEXT) \
+@BUILD_TESTS_TRUE@	xtest-text-entry$(EXEEXT) \
+@BUILD_TESTS_TRUE@	xtest-text-entry-deadkeys$(EXEEXT) \
+@BUILD_TESTS_TRUE@	xtest-text-entry-compositionkeys$(EXEEXT) \
+@BUILD_TESTS_TRUE@	xtest-text-entry-logic$(EXEEXT) \
+@BUILD_TESTS_TRUE@	xtest-focus-on-mouse-enter$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -59,13 +64,21 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__gtest_nux_SOURCES_DIST = test-nux-main.cpp test-nux-metrics.cpp \
-	test-nux-statictext.cpp test-nux-windowthread.cpp
+am__gtest_nux_SOURCES_DIST = gtest-nux-area.cpp \
+	gtest-nux-cairo-wrapper.cpp gtest-nux-emmetrics.cpp \
+	gtest-nux-main.cpp gtest-nux-statictext.cpp \
+	gtest-nux-textentry.cpp gtest-nux-view.cpp \
+	gtest-nux-windowcompositor.cpp gtest-nux-windowthread.cpp
 @BUILD_TESTS_TRUE@am_gtest_nux_OBJECTS =  \
-@BUILD_TESTS_TRUE@	gtest_nux-test-nux-main.$(OBJEXT) \
-@BUILD_TESTS_TRUE@	gtest_nux-test-nux-metrics.$(OBJEXT) \
-@BUILD_TESTS_TRUE@	gtest_nux-test-nux-statictext.$(OBJEXT) \
-@BUILD_TESTS_TRUE@	gtest_nux-test-nux-windowthread.$(OBJEXT)
+@BUILD_TESTS_TRUE@	gtest_nux-gtest-nux-area.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	gtest_nux-gtest-nux-cairo-wrapper.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	gtest_nux-gtest-nux-emmetrics.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	gtest_nux-gtest-nux-main.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	gtest_nux-gtest-nux-statictext.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	gtest_nux-gtest-nux-textentry.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	gtest_nux-gtest-nux-view.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	gtest_nux-gtest-nux-windowcompositor.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	gtest_nux-gtest-nux-windowthread.$(OBJEXT)
 gtest_nux_OBJECTS = $(am_gtest_nux_OBJECTS)
 am__DEPENDENCIES_1 =
 @BUILD_TESTS_TRUE@gtest_nux_DEPENDENCIES = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
@@ -79,31 +92,30 @@ am__v_lt_0 = --silent
 gtest_nux_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(gtest_nux_LDFLAGS) $(LDFLAGS) -o $@
-am__gtest_nux_core_SOURCES_DIST = Helpers.h Helpers.cpp \
-	gtest-nuxcore-color.cpp test_object.cpp test_main.cpp \
-	test_async_file_writer.cpp test_logger.cpp \
-	test_cairo_wrapper.cpp test_properties.cpp \
-	test_rolling_file_appender.cpp
-@BUILD_TESTS_TRUE@am_gtest_nux_core_OBJECTS =  \
-@BUILD_TESTS_TRUE@	gtest_nux_core-Helpers.$(OBJEXT) \
-@BUILD_TESTS_TRUE@	gtest_nux_core-gtest-nuxcore-color.$(OBJEXT) \
-@BUILD_TESTS_TRUE@	gtest_nux_core-test_object.$(OBJEXT) \
-@BUILD_TESTS_TRUE@	gtest_nux_core-test_main.$(OBJEXT) \
-@BUILD_TESTS_TRUE@	gtest_nux_core-test_async_file_writer.$(OBJEXT) \
-@BUILD_TESTS_TRUE@	gtest_nux_core-test_logger.$(OBJEXT) \
-@BUILD_TESTS_TRUE@	gtest_nux_core-test_cairo_wrapper.$(OBJEXT) \
-@BUILD_TESTS_TRUE@	gtest_nux_core-test_properties.$(OBJEXT) \
-@BUILD_TESTS_TRUE@	gtest_nux_core-test_rolling_file_appender.$(OBJEXT)
-gtest_nux_core_OBJECTS = $(am_gtest_nux_core_OBJECTS)
-@BUILD_TESTS_TRUE@gtest_nux_core_DEPENDENCIES = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
+am__gtest_nuxcore_SOURCES_DIST = Helpers.h Helpers.cpp \
+	gtest-nuxcore-async-file-writer.cpp gtest-nuxcore-color.cpp \
+	gtest-nuxcore-logger.cpp gtest-nuxcore-main.cpp \
+	gtest-nuxcore-object.cpp gtest-nuxcore-properties.cpp \
+	gtest-nuxcore-rolling-file-appender.cpp
+@BUILD_TESTS_TRUE@am_gtest_nuxcore_OBJECTS =  \
+@BUILD_TESTS_TRUE@	gtest_nuxcore-Helpers.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	gtest_nuxcore-gtest-nuxcore-async-file-writer.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	gtest_nuxcore-gtest-nuxcore-color.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	gtest_nuxcore-gtest-nuxcore-logger.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	gtest_nuxcore-gtest-nuxcore-main.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	gtest_nuxcore-gtest-nuxcore-object.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	gtest_nuxcore-gtest-nuxcore-properties.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	gtest_nuxcore-gtest-nuxcore-rolling-file-appender.$(OBJEXT)
+gtest_nuxcore_OBJECTS = $(am_gtest_nuxcore_OBJECTS)
+@BUILD_TESTS_TRUE@gtest_nuxcore_DEPENDENCIES = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@	$(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@	$(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@	$(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_1)
-gtest_nux_core_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+gtest_nuxcore_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
-	$(AM_CXXFLAGS) $(CXXFLAGS) $(gtest_nux_core_LDFLAGS) \
-	$(LDFLAGS) -o $@
+	$(AM_CXXFLAGS) $(CXXFLAGS) $(gtest_nuxcore_LDFLAGS) $(LDFLAGS) \
+	-o $@
 am__test_empty_window_SOURCES_DIST = test_empty_window.cpp
 @BUILD_TESTS_TRUE@am_test_empty_window_OBJECTS = test_empty_window-test_empty_window.$(OBJEXT)
 test_empty_window_OBJECTS = $(am_test_empty_window_OBJECTS)
@@ -127,18 +139,6 @@ test_graphics_display_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
 	$(AM_CXXFLAGS) $(CXXFLAGS) $(test_graphics_display_LDFLAGS) \
 	$(LDFLAGS) -o $@
-am__test_nux_SOURCES_DIST = test-canvas.cpp test-nux.cpp \
-	test-system.cpp
-@BUILD_TESTS_TRUE@am_test_nux_OBJECTS =  \
-@BUILD_TESTS_TRUE@	test_nux-test-canvas.$(OBJEXT) \
-@BUILD_TESTS_TRUE@	test_nux-test-nux.$(OBJEXT) \
-@BUILD_TESTS_TRUE@	test_nux-test-system.$(OBJEXT)
-test_nux_OBJECTS = $(am_test_nux_OBJECTS)
-@BUILD_TESTS_TRUE@test_nux_DEPENDENCIES = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-@BUILD_TESTS_TRUE@	$(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
-@BUILD_TESTS_TRUE@	$(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
-@BUILD_TESTS_TRUE@	$(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-@BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_1)
 am__xtest_button_SOURCES_DIST = xtest-button.cpp \
 	nux_automated_test_framework.cpp \
 	nux_automated_test_framework.h
@@ -163,6 +163,20 @@ xtest_focus_on_mouse_down_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
 	$(AM_CXXFLAGS) $(CXXFLAGS) \
 	$(xtest_focus_on_mouse_down_LDFLAGS) $(LDFLAGS) -o $@
+am__xtest_focus_on_mouse_enter_SOURCES_DIST =  \
+	xtest-focus-on-mouse-enter.cpp \
+	nux_automated_test_framework.cpp \
+	nux_automated_test_framework.h
+@BUILD_TESTS_TRUE@am_xtest_focus_on_mouse_enter_OBJECTS = xtest_focus_on_mouse_enter-xtest-focus-on-mouse-enter.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	xtest_focus_on_mouse_enter-nux_automated_test_framework.$(OBJEXT)
+xtest_focus_on_mouse_enter_OBJECTS =  \
+	$(am_xtest_focus_on_mouse_enter_OBJECTS)
+@BUILD_TESTS_TRUE@xtest_focus_on_mouse_enter_DEPENDENCIES =  \
+@BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_2)
+xtest_focus_on_mouse_enter_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(AM_CXXFLAGS) $(CXXFLAGS) \
+	$(xtest_focus_on_mouse_enter_LDFLAGS) $(LDFLAGS) -o $@
 am__xtest_hgrid_key_navigation_SOURCES_DIST =  \
 	xtest-hgrid-key-navigation.cpp \
 	nux_automated_test_framework.cpp \
@@ -243,6 +257,58 @@ xtest_scrollbar_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
 	$(AM_CXXFLAGS) $(CXXFLAGS) $(xtest_scrollbar_LDFLAGS) \
 	$(LDFLAGS) -o $@
+am__xtest_text_entry_SOURCES_DIST = xtest-text-entry.cpp \
+	nux_automated_test_framework.cpp \
+	nux_automated_test_framework.h
+@BUILD_TESTS_TRUE@am_xtest_text_entry_OBJECTS =  \
+@BUILD_TESTS_TRUE@	xtest_text_entry-xtest-text-entry.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	xtest_text_entry-nux_automated_test_framework.$(OBJEXT)
+xtest_text_entry_OBJECTS = $(am_xtest_text_entry_OBJECTS)
+@BUILD_TESTS_TRUE@xtest_text_entry_DEPENDENCIES =  \
+@BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_2)
+xtest_text_entry_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(AM_CXXFLAGS) $(CXXFLAGS) $(xtest_text_entry_LDFLAGS) \
+	$(LDFLAGS) -o $@
+am__xtest_text_entry_compositionkeys_SOURCES_DIST =  \
+	xtest-text-entry-compositionkeys.cpp \
+	nux_automated_test_framework.cpp \
+	nux_automated_test_framework.h
+@BUILD_TESTS_TRUE@am_xtest_text_entry_compositionkeys_OBJECTS = xtest_text_entry_compositionkeys-xtest-text-entry-compositionkeys.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	xtest_text_entry_compositionkeys-nux_automated_test_framework.$(OBJEXT)
+xtest_text_entry_compositionkeys_OBJECTS =  \
+	$(am_xtest_text_entry_compositionkeys_OBJECTS)
+@BUILD_TESTS_TRUE@xtest_text_entry_compositionkeys_DEPENDENCIES =  \
+@BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_2)
+xtest_text_entry_compositionkeys_LINK = $(LIBTOOL) $(AM_V_lt) \
+	--tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
+	$(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
+	$(xtest_text_entry_compositionkeys_LDFLAGS) $(LDFLAGS) -o $@
+am__xtest_text_entry_deadkeys_SOURCES_DIST =  \
+	xtest-text-entry-deadkeys.cpp nux_automated_test_framework.cpp \
+	nux_automated_test_framework.h
+@BUILD_TESTS_TRUE@am_xtest_text_entry_deadkeys_OBJECTS = xtest_text_entry_deadkeys-xtest-text-entry-deadkeys.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	xtest_text_entry_deadkeys-nux_automated_test_framework.$(OBJEXT)
+xtest_text_entry_deadkeys_OBJECTS =  \
+	$(am_xtest_text_entry_deadkeys_OBJECTS)
+@BUILD_TESTS_TRUE@xtest_text_entry_deadkeys_DEPENDENCIES =  \
+@BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_2)
+xtest_text_entry_deadkeys_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(AM_CXXFLAGS) $(CXXFLAGS) \
+	$(xtest_text_entry_deadkeys_LDFLAGS) $(LDFLAGS) -o $@
+am__xtest_text_entry_logic_SOURCES_DIST = xtest-text-entry-logic.cpp \
+	nux_automated_test_framework.cpp \
+	nux_automated_test_framework.h
+@BUILD_TESTS_TRUE@am_xtest_text_entry_logic_OBJECTS = xtest_text_entry_logic-xtest-text-entry-logic.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	xtest_text_entry_logic-nux_automated_test_framework.$(OBJEXT)
+xtest_text_entry_logic_OBJECTS = $(am_xtest_text_entry_logic_OBJECTS)
+@BUILD_TESTS_TRUE@xtest_text_entry_logic_DEPENDENCIES =  \
+@BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_2)
+xtest_text_entry_logic_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(AM_CXXFLAGS) $(CXXFLAGS) $(xtest_text_entry_logic_LDFLAGS) \
+	$(LDFLAGS) -o $@
 am__xtest_vlayout_key_navigation_SOURCES_DIST =  \
 	xtest-vlayout-key-navigation.cpp \
 	nux_automated_test_framework.cpp \
@@ -299,28 +365,36 @@ am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_@AM_V@)
 am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(gtest_nux_SOURCES) $(gtest_nux_core_SOURCES) \
+SOURCES = $(gtest_nux_SOURCES) $(gtest_nuxcore_SOURCES) \
 	$(test_empty_window_SOURCES) $(test_graphics_display_SOURCES) \
-	$(test_nux_SOURCES) $(xtest_button_SOURCES) \
-	$(xtest_focus_on_mouse_down_SOURCES) \
+	$(xtest_button_SOURCES) $(xtest_focus_on_mouse_down_SOURCES) \
+	$(xtest_focus_on_mouse_enter_SOURCES) \
 	$(xtest_hgrid_key_navigation_SOURCES) \
 	$(xtest_hlayout_key_navigation_SOURCES) \
 	$(xtest_keynav_directions_SOURCES) \
 	$(xtest_mouse_buttons_SOURCES) $(xtest_mouse_events_SOURCES) \
-	$(xtest_scrollbar_SOURCES) \
+	$(xtest_scrollbar_SOURCES) $(xtest_text_entry_SOURCES) \
+	$(xtest_text_entry_compositionkeys_SOURCES) \
+	$(xtest_text_entry_deadkeys_SOURCES) \
+	$(xtest_text_entry_logic_SOURCES) \
 	$(xtest_vlayout_key_navigation_SOURCES)
 DIST_SOURCES = $(am__gtest_nux_SOURCES_DIST) \
-	$(am__gtest_nux_core_SOURCES_DIST) \
+	$(am__gtest_nuxcore_SOURCES_DIST) \
 	$(am__test_empty_window_SOURCES_DIST) \
 	$(am__test_graphics_display_SOURCES_DIST) \
-	$(am__test_nux_SOURCES_DIST) $(am__xtest_button_SOURCES_DIST) \
+	$(am__xtest_button_SOURCES_DIST) \
 	$(am__xtest_focus_on_mouse_down_SOURCES_DIST) \
+	$(am__xtest_focus_on_mouse_enter_SOURCES_DIST) \
 	$(am__xtest_hgrid_key_navigation_SOURCES_DIST) \
 	$(am__xtest_hlayout_key_navigation_SOURCES_DIST) \
 	$(am__xtest_keynav_directions_SOURCES_DIST) \
 	$(am__xtest_mouse_buttons_SOURCES_DIST) \
 	$(am__xtest_mouse_events_SOURCES_DIST) \
 	$(am__xtest_scrollbar_SOURCES_DIST) \
+	$(am__xtest_text_entry_SOURCES_DIST) \
+	$(am__xtest_text_entry_compositionkeys_SOURCES_DIST) \
+	$(am__xtest_text_entry_deadkeys_SOURCES_DIST) \
+	$(am__xtest_text_entry_logic_SOURCES_DIST) \
 	$(am__xtest_vlayout_key_navigation_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
@@ -381,6 +455,8 @@ FGREP = @FGREP@
 GCC_FLAGS = @GCC_FLAGS@
 GL_PKGS = @GL_PKGS@
 GREP = @GREP@
+IBUS_CFLAGS = @IBUS_CFLAGS@
+IBUS_LIBS = @IBUS_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -498,45 +574,43 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
 # Please keep alphabetical
-@BUILD_TESTS_TRUE@test_nux_SOURCES = \
-@BUILD_TESTS_TRUE@  test-canvas.cpp \
-@BUILD_TESTS_TRUE@  test-nux.cpp \
-@BUILD_TESTS_TRUE@  test-system.cpp
+# test_nux_SOURCES = \
+# test-canvas.cpp \
+# test-nux.cpp \
+# test-system.cpp
 
-@BUILD_TESTS_TRUE@test_nux_CPPFLAGS = \
-@BUILD_TESTS_TRUE@  -I$(srcdir) \
-@BUILD_TESTS_TRUE@  -I$(top_srcdir) \
-@BUILD_TESTS_TRUE@  -DPREFIX=\""$(prefix)"\" \
-@BUILD_TESTS_TRUE@	-DLIBDIR=\""$(libdir)"\" \
-@BUILD_TESTS_TRUE@  -DDATADIR=\""$(datadir)"\" \
-@BUILD_TESTS_TRUE@  -DG_LOG_DOMAIN=\"NuxTests\" \
-@BUILD_TESTS_TRUE@  -DTESTDIR=\""$(top_srcdir)/tests"\" \
-@BUILD_TESTS_TRUE@  $(GCC_FLAGS) \
-@BUILD_TESTS_TRUE@  $(NUX_CORE_CFLAGS) \
-@BUILD_TESTS_TRUE@  $(NUX_EXAMPLES_CFLAGS) \
-@BUILD_TESTS_TRUE@  $(NUX_CFLAGS) \
-@BUILD_TESTS_TRUE@  $(MAINTAINER_CFLAGS)
+#test_nux_CPPFLAGS = \
+#  -I$(srcdir) \
+#  -I$(top_srcdir) \
+#  -DPREFIX=\""$(prefix)"\" \
+#	-DLIBDIR=\""$(libdir)"\" \
+#  -DDATADIR=\""$(datadir)"\" \
+#  -DG_LOG_DOMAIN=\"NuxTests\" \
+#  -DTESTDIR=\""$(top_srcdir)/tests"\" \
+#  $(GCC_FLAGS) \
+#  $(NUX_CORE_CFLAGS) \
+#  $(NUX_EXAMPLES_CFLAGS) \
+#  $(NUX_CFLAGS) \
+#  $(MAINTAINER_CFLAGS)
 
-@BUILD_TESTS_TRUE@test_nux_LDADD = \
-@BUILD_TESTS_TRUE@  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-@BUILD_TESTS_TRUE@  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
-@BUILD_TESTS_TRUE@  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
-@BUILD_TESTS_TRUE@  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-@BUILD_TESTS_TRUE@  $(NUX_LIBS)
-
-@BUILD_TESTS_TRUE@gtest_nux_core_SOURCES = \
+#test_nux_LDADD = \
+#  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
+#  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
+#  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
+#  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
+#  $(NUX_LIBS)
+@BUILD_TESTS_TRUE@gtest_nuxcore_SOURCES = \
 @BUILD_TESTS_TRUE@  Helpers.h \
 @BUILD_TESTS_TRUE@  Helpers.cpp \
+@BUILD_TESTS_TRUE@  gtest-nuxcore-async-file-writer.cpp \
 @BUILD_TESTS_TRUE@  gtest-nuxcore-color.cpp \
-@BUILD_TESTS_TRUE@  test_object.cpp \
-@BUILD_TESTS_TRUE@  test_main.cpp \
-@BUILD_TESTS_TRUE@  test_async_file_writer.cpp \
-@BUILD_TESTS_TRUE@  test_logger.cpp \
-@BUILD_TESTS_TRUE@  test_cairo_wrapper.cpp \
-@BUILD_TESTS_TRUE@  test_properties.cpp \
-@BUILD_TESTS_TRUE@  test_rolling_file_appender.cpp
+@BUILD_TESTS_TRUE@  gtest-nuxcore-logger.cpp \
+@BUILD_TESTS_TRUE@  gtest-nuxcore-main.cpp \
+@BUILD_TESTS_TRUE@  gtest-nuxcore-object.cpp \
+@BUILD_TESTS_TRUE@  gtest-nuxcore-properties.cpp \
+@BUILD_TESTS_TRUE@  gtest-nuxcore-rolling-file-appender.cpp
 
-@BUILD_TESTS_TRUE@gtest_nux_core_CPPFLAGS = \
+@BUILD_TESTS_TRUE@gtest_nuxcore_CPPFLAGS = \
 @BUILD_TESTS_TRUE@  -I$(srcdir) \
 @BUILD_TESTS_TRUE@  -I$(top_srcdir) \
 @BUILD_TESTS_TRUE@  -DPREFIX=\""$(prefix)"\" \
@@ -550,22 +624,27 @@ top_srcdir = @top_srcdir@
 @BUILD_TESTS_TRUE@  $(NUX_CFLAGS) \
 @BUILD_TESTS_TRUE@  $(MAINTAINER_CFLAGS)
 
-@BUILD_TESTS_TRUE@gtest_nux_core_LDADD = \
+@BUILD_TESTS_TRUE@gtest_nuxcore_LDADD = \
 @BUILD_TESTS_TRUE@  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@  $(NUX_LIBS)
 
-@BUILD_TESTS_TRUE@gtest_nux_core_LDFLAGS = \
+@BUILD_TESTS_TRUE@gtest_nuxcore_LDFLAGS = \
 @BUILD_TESTS_TRUE@  -lpthread -lgtest -lgmock \
 @BUILD_TESTS_TRUE@  -lboost_filesystem -lboost_system
 
 @BUILD_TESTS_TRUE@gtest_nux_SOURCES = \
-@BUILD_TESTS_TRUE@  test-nux-main.cpp \
-@BUILD_TESTS_TRUE@  test-nux-metrics.cpp \
-@BUILD_TESTS_TRUE@  test-nux-statictext.cpp \
-@BUILD_TESTS_TRUE@  test-nux-windowthread.cpp
+@BUILD_TESTS_TRUE@  gtest-nux-area.cpp \
+@BUILD_TESTS_TRUE@  gtest-nux-cairo-wrapper.cpp \
+@BUILD_TESTS_TRUE@  gtest-nux-emmetrics.cpp \
+@BUILD_TESTS_TRUE@  gtest-nux-main.cpp \
+@BUILD_TESTS_TRUE@  gtest-nux-statictext.cpp \
+@BUILD_TESTS_TRUE@  gtest-nux-textentry.cpp \
+@BUILD_TESTS_TRUE@  gtest-nux-view.cpp \
+@BUILD_TESTS_TRUE@  gtest-nux-windowcompositor.cpp \
+@BUILD_TESTS_TRUE@  gtest-nux-windowthread.cpp
 
 @BUILD_TESTS_TRUE@gtest_nux_CPPFLAGS = \
 @BUILD_TESTS_TRUE@  -I$(srcdir) \
@@ -579,7 +658,8 @@ top_srcdir = @top_srcdir@
 @BUILD_TESTS_TRUE@  $(NUX_CORE_CFLAGS) \
 @BUILD_TESTS_TRUE@  $(NUX_EXAMPLES_CFLAGS) \
 @BUILD_TESTS_TRUE@  $(NUX_CFLAGS) \
-@BUILD_TESTS_TRUE@  $(MAINTAINER_CFLAGS)
+@BUILD_TESTS_TRUE@  $(MAINTAINER_CFLAGS) \
+@BUILD_TESTS_TRUE@  $(IBUS_CFLAGS)
 
 @BUILD_TESTS_TRUE@gtest_nux_LDADD = \
 @BUILD_TESTS_TRUE@  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
@@ -603,7 +683,8 @@ top_srcdir = @top_srcdir@
 @BUILD_TESTS_TRUE@  $(NUX_CORE_CFLAGS) \
 @BUILD_TESTS_TRUE@  $(NUX_EXAMPLES_CFLAGS) \
 @BUILD_TESTS_TRUE@  $(NUX_CFLAGS) \
-@BUILD_TESTS_TRUE@  $(MAINTAINER_CFLAGS)
+@BUILD_TESTS_TRUE@  $(MAINTAINER_CFLAGS) \
+@BUILD_TESTS_TRUE@  $(IBUS_CFLAGS)
 
 @BUILD_TESTS_TRUE@TestLibs = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
@@ -668,6 +749,13 @@ top_srcdir = @top_srcdir@
 @BUILD_TESTS_TRUE@xtest_focus_on_mouse_down_CPPFLAGS = $(TestFlags)
 @BUILD_TESTS_TRUE@xtest_focus_on_mouse_down_LDADD = $(TestLibs)
 @BUILD_TESTS_TRUE@xtest_focus_on_mouse_down_LDFLAGS = -lpthread -lXtst
+@BUILD_TESTS_TRUE@xtest_focus_on_mouse_enter_SOURCES = xtest-focus-on-mouse-enter.cpp \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.cpp \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.h
+
+@BUILD_TESTS_TRUE@xtest_focus_on_mouse_enter_CPPFLAGS = $(TestFlags)
+@BUILD_TESTS_TRUE@xtest_focus_on_mouse_enter_LDADD = $(TestLibs)
+@BUILD_TESTS_TRUE@xtest_focus_on_mouse_enter_LDFLAGS = -lpthread -lXtst
 @BUILD_TESTS_TRUE@xtest_scrollbar_SOURCES = xtest-scrollbar.cpp \
 @BUILD_TESTS_TRUE@  nux_automated_test_framework.cpp \
 @BUILD_TESTS_TRUE@  nux_automated_test_framework.h \
@@ -684,6 +772,34 @@ top_srcdir = @top_srcdir@
 @BUILD_TESTS_TRUE@xtest_keynav_directions_CPPFLAGS = $(TestFlags)
 @BUILD_TESTS_TRUE@xtest_keynav_directions_LDADD = $(TestLibs)
 @BUILD_TESTS_TRUE@xtest_keynav_directions_LDFLAGS = -lpthread -lXtst
+@BUILD_TESTS_TRUE@xtest_text_entry_SOURCES = xtest-text-entry.cpp \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.cpp \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.h
+
+@BUILD_TESTS_TRUE@xtest_text_entry_CPPFLAGS = $(TestFlags)
+@BUILD_TESTS_TRUE@xtest_text_entry_LDADD = $(TestLibs)
+@BUILD_TESTS_TRUE@xtest_text_entry_LDFLAGS = -lpthread -lXtst
+@BUILD_TESTS_TRUE@xtest_text_entry_logic_SOURCES = xtest-text-entry-logic.cpp \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.cpp \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.h
+
+@BUILD_TESTS_TRUE@xtest_text_entry_logic_CPPFLAGS = $(TestFlags)
+@BUILD_TESTS_TRUE@xtest_text_entry_logic_LDADD = $(TestLibs)
+@BUILD_TESTS_TRUE@xtest_text_entry_logic_LDFLAGS = -lpthread -lXtst
+@BUILD_TESTS_TRUE@xtest_text_entry_deadkeys_SOURCES = xtest-text-entry-deadkeys.cpp \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.cpp \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.h
+
+@BUILD_TESTS_TRUE@xtest_text_entry_deadkeys_CPPFLAGS = $(TestFlags)
+@BUILD_TESTS_TRUE@xtest_text_entry_deadkeys_LDADD = $(TestLibs)
+@BUILD_TESTS_TRUE@xtest_text_entry_deadkeys_LDFLAGS = -lpthread -lXtst
+@BUILD_TESTS_TRUE@xtest_text_entry_compositionkeys_SOURCES = xtest-text-entry-compositionkeys.cpp \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.cpp \
+@BUILD_TESTS_TRUE@  nux_automated_test_framework.h
+
+@BUILD_TESTS_TRUE@xtest_text_entry_compositionkeys_CPPFLAGS = $(TestFlags)
+@BUILD_TESTS_TRUE@xtest_text_entry_compositionkeys_LDADD = $(TestLibs)
+@BUILD_TESTS_TRUE@xtest_text_entry_compositionkeys_LDFLAGS = -lpthread -lXtst
 all: all-am
 
 .SUFFIXES:
@@ -730,24 +846,24 @@ clean-checkPROGRAMS:
 gtest-nux$(EXEEXT): $(gtest_nux_OBJECTS) $(gtest_nux_DEPENDENCIES) $(EXTRA_gtest_nux_DEPENDENCIES) 
 	@rm -f gtest-nux$(EXEEXT)
 	$(AM_V_CXXLD)$(gtest_nux_LINK) $(gtest_nux_OBJECTS) $(gtest_nux_LDADD) $(LIBS)
-gtest-nux-core$(EXEEXT): $(gtest_nux_core_OBJECTS) $(gtest_nux_core_DEPENDENCIES) $(EXTRA_gtest_nux_core_DEPENDENCIES) 
-	@rm -f gtest-nux-core$(EXEEXT)
-	$(AM_V_CXXLD)$(gtest_nux_core_LINK) $(gtest_nux_core_OBJECTS) $(gtest_nux_core_LDADD) $(LIBS)
+gtest-nuxcore$(EXEEXT): $(gtest_nuxcore_OBJECTS) $(gtest_nuxcore_DEPENDENCIES) $(EXTRA_gtest_nuxcore_DEPENDENCIES) 
+	@rm -f gtest-nuxcore$(EXEEXT)
+	$(AM_V_CXXLD)$(gtest_nuxcore_LINK) $(gtest_nuxcore_OBJECTS) $(gtest_nuxcore_LDADD) $(LIBS)
 test-empty-window$(EXEEXT): $(test_empty_window_OBJECTS) $(test_empty_window_DEPENDENCIES) $(EXTRA_test_empty_window_DEPENDENCIES) 
 	@rm -f test-empty-window$(EXEEXT)
 	$(AM_V_CXXLD)$(test_empty_window_LINK) $(test_empty_window_OBJECTS) $(test_empty_window_LDADD) $(LIBS)
 test-graphics-display$(EXEEXT): $(test_graphics_display_OBJECTS) $(test_graphics_display_DEPENDENCIES) $(EXTRA_test_graphics_display_DEPENDENCIES) 
 	@rm -f test-graphics-display$(EXEEXT)
 	$(AM_V_CXXLD)$(test_graphics_display_LINK) $(test_graphics_display_OBJECTS) $(test_graphics_display_LDADD) $(LIBS)
-test-nux$(EXEEXT): $(test_nux_OBJECTS) $(test_nux_DEPENDENCIES) $(EXTRA_test_nux_DEPENDENCIES) 
-	@rm -f test-nux$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_nux_OBJECTS) $(test_nux_LDADD) $(LIBS)
 xtest-button$(EXEEXT): $(xtest_button_OBJECTS) $(xtest_button_DEPENDENCIES) $(EXTRA_xtest_button_DEPENDENCIES) 
 	@rm -f xtest-button$(EXEEXT)
 	$(AM_V_CXXLD)$(xtest_button_LINK) $(xtest_button_OBJECTS) $(xtest_button_LDADD) $(LIBS)
 xtest-focus-on-mouse-down$(EXEEXT): $(xtest_focus_on_mouse_down_OBJECTS) $(xtest_focus_on_mouse_down_DEPENDENCIES) $(EXTRA_xtest_focus_on_mouse_down_DEPENDENCIES) 
 	@rm -f xtest-focus-on-mouse-down$(EXEEXT)
 	$(AM_V_CXXLD)$(xtest_focus_on_mouse_down_LINK) $(xtest_focus_on_mouse_down_OBJECTS) $(xtest_focus_on_mouse_down_LDADD) $(LIBS)
+xtest-focus-on-mouse-enter$(EXEEXT): $(xtest_focus_on_mouse_enter_OBJECTS) $(xtest_focus_on_mouse_enter_DEPENDENCIES) $(EXTRA_xtest_focus_on_mouse_enter_DEPENDENCIES) 
+	@rm -f xtest-focus-on-mouse-enter$(EXEEXT)
+	$(AM_V_CXXLD)$(xtest_focus_on_mouse_enter_LINK) $(xtest_focus_on_mouse_enter_OBJECTS) $(xtest_focus_on_mouse_enter_LDADD) $(LIBS)
 xtest-hgrid-key-navigation$(EXEEXT): $(xtest_hgrid_key_navigation_OBJECTS) $(xtest_hgrid_key_navigation_DEPENDENCIES) $(EXTRA_xtest_hgrid_key_navigation_DEPENDENCIES) 
 	@rm -f xtest-hgrid-key-navigation$(EXEEXT)
 	$(AM_V_CXXLD)$(xtest_hgrid_key_navigation_LINK) $(xtest_hgrid_key_navigation_OBJECTS) $(xtest_hgrid_key_navigation_LDADD) $(LIBS)
@@ -766,6 +882,18 @@ xtest-mouse-events$(EXEEXT): $(xtest_mouse_events_OBJECTS) $(xtest_mouse_events_
 xtest-scrollbar$(EXEEXT): $(xtest_scrollbar_OBJECTS) $(xtest_scrollbar_DEPENDENCIES) $(EXTRA_xtest_scrollbar_DEPENDENCIES) 
 	@rm -f xtest-scrollbar$(EXEEXT)
 	$(AM_V_CXXLD)$(xtest_scrollbar_LINK) $(xtest_scrollbar_OBJECTS) $(xtest_scrollbar_LDADD) $(LIBS)
+xtest-text-entry$(EXEEXT): $(xtest_text_entry_OBJECTS) $(xtest_text_entry_DEPENDENCIES) $(EXTRA_xtest_text_entry_DEPENDENCIES) 
+	@rm -f xtest-text-entry$(EXEEXT)
+	$(AM_V_CXXLD)$(xtest_text_entry_LINK) $(xtest_text_entry_OBJECTS) $(xtest_text_entry_LDADD) $(LIBS)
+xtest-text-entry-compositionkeys$(EXEEXT): $(xtest_text_entry_compositionkeys_OBJECTS) $(xtest_text_entry_compositionkeys_DEPENDENCIES) $(EXTRA_xtest_text_entry_compositionkeys_DEPENDENCIES) 
+	@rm -f xtest-text-entry-compositionkeys$(EXEEXT)
+	$(AM_V_CXXLD)$(xtest_text_entry_compositionkeys_LINK) $(xtest_text_entry_compositionkeys_OBJECTS) $(xtest_text_entry_compositionkeys_LDADD) $(LIBS)
+xtest-text-entry-deadkeys$(EXEEXT): $(xtest_text_entry_deadkeys_OBJECTS) $(xtest_text_entry_deadkeys_DEPENDENCIES) $(EXTRA_xtest_text_entry_deadkeys_DEPENDENCIES) 
+	@rm -f xtest-text-entry-deadkeys$(EXEEXT)
+	$(AM_V_CXXLD)$(xtest_text_entry_deadkeys_LINK) $(xtest_text_entry_deadkeys_OBJECTS) $(xtest_text_entry_deadkeys_LDADD) $(LIBS)
+xtest-text-entry-logic$(EXEEXT): $(xtest_text_entry_logic_OBJECTS) $(xtest_text_entry_logic_DEPENDENCIES) $(EXTRA_xtest_text_entry_logic_DEPENDENCIES) 
+	@rm -f xtest-text-entry-logic$(EXEEXT)
+	$(AM_V_CXXLD)$(xtest_text_entry_logic_LINK) $(xtest_text_entry_logic_OBJECTS) $(xtest_text_entry_logic_LDADD) $(LIBS)
 xtest-vlayout-key-navigation$(EXEEXT): $(xtest_vlayout_key_navigation_OBJECTS) $(xtest_vlayout_key_navigation_DEPENDENCIES) $(EXTRA_xtest_vlayout_key_navigation_DEPENDENCIES) 
 	@rm -f xtest-vlayout-key-navigation$(EXEEXT)
 	$(AM_V_CXXLD)$(xtest_vlayout_key_navigation_LINK) $(xtest_vlayout_key_navigation_OBJECTS) $(xtest_vlayout_key_navigation_LDADD) $(LIBS)
@@ -776,28 +904,31 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-test-nux-main.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-test-nux-metrics.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-test-nux-statictext.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-test-nux-windowthread.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-Helpers.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-gtest-nuxcore-color.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-test_async_file_writer.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-test_cairo_wrapper.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-test_logger.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-test_main.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-test_object.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-test_properties.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux_core-test_rolling_file_appender.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-gtest-nux-area.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-gtest-nux-cairo-wrapper.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-gtest-nux-emmetrics.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-gtest-nux-main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-gtest-nux-statictext.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-gtest-nux-textentry.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-gtest-nux-view.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-gtest-nux-windowcompositor.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-gtest-nux-windowthread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nuxcore-Helpers.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nuxcore-gtest-nuxcore-async-file-writer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nuxcore-gtest-nuxcore-color.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nuxcore-gtest-nuxcore-logger.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nuxcore-gtest-nuxcore-main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nuxcore-gtest-nuxcore-object.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nuxcore-gtest-nuxcore-properties.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nuxcore-gtest-nuxcore-rolling-file-appender.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_empty_window-test_empty_window.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_graphics_display-test_graphics_display.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_nux-test-canvas.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_nux-test-nux.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_nux-test-system.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_button-nux_automated_test_framework.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_button-xtest-button.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_focus_on_mouse_down-nux_automated_test_framework.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_focus_on_mouse_down-xtest-focus-on-mouse-down.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_focus_on_mouse_enter-nux_automated_test_framework.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_focus_on_mouse_enter-xtest-focus-on-mouse-enter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_hgrid_key_navigation-nux_automated_test_framework.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_hgrid_key_navigation-xtest-hgrid-key-navigation.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_hlayout_key_navigation-nux_automated_test_framework.Po@am__quote@
@@ -811,6 +942,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_scrollbar-nux_automated_test_framework.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_scrollbar-test-scrollview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_scrollbar-xtest-scrollbar.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_text_entry-nux_automated_test_framework.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_text_entry-xtest-text-entry.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_text_entry_compositionkeys-nux_automated_test_framework.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_text_entry_compositionkeys-xtest-text-entry-compositionkeys.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_text_entry_deadkeys-nux_automated_test_framework.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_text_entry_deadkeys-xtest-text-entry-deadkeys.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_text_entry_logic-nux_automated_test_framework.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_text_entry_logic-xtest-text-entry-logic.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_vlayout_key_navigation-nux_automated_test_framework.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_vlayout_key_navigation-xtest-vlayout-key-navigation.Po@am__quote@
 
@@ -835,187 +974,243 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
 
-gtest_nux-test-nux-main.o: test-nux-main.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-test-nux-main.o -MD -MP -MF $(DEPDIR)/gtest_nux-test-nux-main.Tpo -c -o gtest_nux-test-nux-main.o `test -f 'test-nux-main.cpp' || echo '$(srcdir)/'`test-nux-main.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-test-nux-main.Tpo $(DEPDIR)/gtest_nux-test-nux-main.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test-nux-main.cpp' object='gtest_nux-test-nux-main.o' libtool=no @AMDEPBACKSLASH@
+gtest_nux-gtest-nux-area.o: gtest-nux-area.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-area.o -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-area.Tpo -c -o gtest_nux-gtest-nux-area.o `test -f 'gtest-nux-area.cpp' || echo '$(srcdir)/'`gtest-nux-area.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-gtest-nux-area.Tpo $(DEPDIR)/gtest_nux-gtest-nux-area.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-area.cpp' object='gtest_nux-gtest-nux-area.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-test-nux-main.o `test -f 'test-nux-main.cpp' || echo '$(srcdir)/'`test-nux-main.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-area.o `test -f 'gtest-nux-area.cpp' || echo '$(srcdir)/'`gtest-nux-area.cpp
 
-gtest_nux-test-nux-main.obj: test-nux-main.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-test-nux-main.obj -MD -MP -MF $(DEPDIR)/gtest_nux-test-nux-main.Tpo -c -o gtest_nux-test-nux-main.obj `if test -f 'test-nux-main.cpp'; then $(CYGPATH_W) 'test-nux-main.cpp'; else $(CYGPATH_W) '$(srcdir)/test-nux-main.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-test-nux-main.Tpo $(DEPDIR)/gtest_nux-test-nux-main.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test-nux-main.cpp' object='gtest_nux-test-nux-main.obj' libtool=no @AMDEPBACKSLASH@
+gtest_nux-gtest-nux-area.obj: gtest-nux-area.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-area.obj -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-area.Tpo -c -o gtest_nux-gtest-nux-area.obj `if test -f 'gtest-nux-area.cpp'; then $(CYGPATH_W) 'gtest-nux-area.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-area.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-gtest-nux-area.Tpo $(DEPDIR)/gtest_nux-gtest-nux-area.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-area.cpp' object='gtest_nux-gtest-nux-area.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-test-nux-main.obj `if test -f 'test-nux-main.cpp'; then $(CYGPATH_W) 'test-nux-main.cpp'; else $(CYGPATH_W) '$(srcdir)/test-nux-main.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-area.obj `if test -f 'gtest-nux-area.cpp'; then $(CYGPATH_W) 'gtest-nux-area.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-area.cpp'; fi`
 
-gtest_nux-test-nux-metrics.o: test-nux-metrics.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-test-nux-metrics.o -MD -MP -MF $(DEPDIR)/gtest_nux-test-nux-metrics.Tpo -c -o gtest_nux-test-nux-metrics.o `test -f 'test-nux-metrics.cpp' || echo '$(srcdir)/'`test-nux-metrics.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-test-nux-metrics.Tpo $(DEPDIR)/gtest_nux-test-nux-metrics.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test-nux-metrics.cpp' object='gtest_nux-test-nux-metrics.o' libtool=no @AMDEPBACKSLASH@
+gtest_nux-gtest-nux-cairo-wrapper.o: gtest-nux-cairo-wrapper.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-cairo-wrapper.o -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-cairo-wrapper.Tpo -c -o gtest_nux-gtest-nux-cairo-wrapper.o `test -f 'gtest-nux-cairo-wrapper.cpp' || echo '$(srcdir)/'`gtest-nux-cairo-wrapper.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-gtest-nux-cairo-wrapper.Tpo $(DEPDIR)/gtest_nux-gtest-nux-cairo-wrapper.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-cairo-wrapper.cpp' object='gtest_nux-gtest-nux-cairo-wrapper.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-test-nux-metrics.o `test -f 'test-nux-metrics.cpp' || echo '$(srcdir)/'`test-nux-metrics.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-cairo-wrapper.o `test -f 'gtest-nux-cairo-wrapper.cpp' || echo '$(srcdir)/'`gtest-nux-cairo-wrapper.cpp
 
-gtest_nux-test-nux-metrics.obj: test-nux-metrics.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-test-nux-metrics.obj -MD -MP -MF $(DEPDIR)/gtest_nux-test-nux-metrics.Tpo -c -o gtest_nux-test-nux-metrics.obj `if test -f 'test-nux-metrics.cpp'; then $(CYGPATH_W) 'test-nux-metrics.cpp'; else $(CYGPATH_W) '$(srcdir)/test-nux-metrics.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-test-nux-metrics.Tpo $(DEPDIR)/gtest_nux-test-nux-metrics.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test-nux-metrics.cpp' object='gtest_nux-test-nux-metrics.obj' libtool=no @AMDEPBACKSLASH@
+gtest_nux-gtest-nux-cairo-wrapper.obj: gtest-nux-cairo-wrapper.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-cairo-wrapper.obj -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-cairo-wrapper.Tpo -c -o gtest_nux-gtest-nux-cairo-wrapper.obj `if test -f 'gtest-nux-cairo-wrapper.cpp'; then $(CYGPATH_W) 'gtest-nux-cairo-wrapper.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-cairo-wrapper.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-gtest-nux-cairo-wrapper.Tpo $(DEPDIR)/gtest_nux-gtest-nux-cairo-wrapper.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-cairo-wrapper.cpp' object='gtest_nux-gtest-nux-cairo-wrapper.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-test-nux-metrics.obj `if test -f 'test-nux-metrics.cpp'; then $(CYGPATH_W) 'test-nux-metrics.cpp'; else $(CYGPATH_W) '$(srcdir)/test-nux-metrics.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-cairo-wrapper.obj `if test -f 'gtest-nux-cairo-wrapper.cpp'; then $(CYGPATH_W) 'gtest-nux-cairo-wrapper.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-cairo-wrapper.cpp'; fi`
 
-gtest_nux-test-nux-statictext.o: test-nux-statictext.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-test-nux-statictext.o -MD -MP -MF $(DEPDIR)/gtest_nux-test-nux-statictext.Tpo -c -o gtest_nux-test-nux-statictext.o `test -f 'test-nux-statictext.cpp' || echo '$(srcdir)/'`test-nux-statictext.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-test-nux-statictext.Tpo $(DEPDIR)/gtest_nux-test-nux-statictext.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test-nux-statictext.cpp' object='gtest_nux-test-nux-statictext.o' libtool=no @AMDEPBACKSLASH@
+gtest_nux-gtest-nux-emmetrics.o: gtest-nux-emmetrics.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-emmetrics.o -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-emmetrics.Tpo -c -o gtest_nux-gtest-nux-emmetrics.o `test -f 'gtest-nux-emmetrics.cpp' || echo '$(srcdir)/'`gtest-nux-emmetrics.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-gtest-nux-emmetrics.Tpo $(DEPDIR)/gtest_nux-gtest-nux-emmetrics.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-emmetrics.cpp' object='gtest_nux-gtest-nux-emmetrics.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-test-nux-statictext.o `test -f 'test-nux-statictext.cpp' || echo '$(srcdir)/'`test-nux-statictext.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-emmetrics.o `test -f 'gtest-nux-emmetrics.cpp' || echo '$(srcdir)/'`gtest-nux-emmetrics.cpp
 
-gtest_nux-test-nux-statictext.obj: test-nux-statictext.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-test-nux-statictext.obj -MD -MP -MF $(DEPDIR)/gtest_nux-test-nux-statictext.Tpo -c -o gtest_nux-test-nux-statictext.obj `if test -f 'test-nux-statictext.cpp'; then $(CYGPATH_W) 'test-nux-statictext.cpp'; else $(CYGPATH_W) '$(srcdir)/test-nux-statictext.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-test-nux-statictext.Tpo $(DEPDIR)/gtest_nux-test-nux-statictext.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test-nux-statictext.cpp' object='gtest_nux-test-nux-statictext.obj' libtool=no @AMDEPBACKSLASH@
+gtest_nux-gtest-nux-emmetrics.obj: gtest-nux-emmetrics.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-emmetrics.obj -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-emmetrics.Tpo -c -o gtest_nux-gtest-nux-emmetrics.obj `if test -f 'gtest-nux-emmetrics.cpp'; then $(CYGPATH_W) 'gtest-nux-emmetrics.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-emmetrics.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-gtest-nux-emmetrics.Tpo $(DEPDIR)/gtest_nux-gtest-nux-emmetrics.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-emmetrics.cpp' object='gtest_nux-gtest-nux-emmetrics.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-test-nux-statictext.obj `if test -f 'test-nux-statictext.cpp'; then $(CYGPATH_W) 'test-nux-statictext.cpp'; else $(CYGPATH_W) '$(srcdir)/test-nux-statictext.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-emmetrics.obj `if test -f 'gtest-nux-emmetrics.cpp'; then $(CYGPATH_W) 'gtest-nux-emmetrics.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-emmetrics.cpp'; fi`
 
-gtest_nux-test-nux-windowthread.o: test-nux-windowthread.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-test-nux-windowthread.o -MD -MP -MF $(DEPDIR)/gtest_nux-test-nux-windowthread.Tpo -c -o gtest_nux-test-nux-windowthread.o `test -f 'test-nux-windowthread.cpp' || echo '$(srcdir)/'`test-nux-windowthread.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-test-nux-windowthread.Tpo $(DEPDIR)/gtest_nux-test-nux-windowthread.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test-nux-windowthread.cpp' object='gtest_nux-test-nux-windowthread.o' libtool=no @AMDEPBACKSLASH@
+gtest_nux-gtest-nux-main.o: gtest-nux-main.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-main.o -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-main.Tpo -c -o gtest_nux-gtest-nux-main.o `test -f 'gtest-nux-main.cpp' || echo '$(srcdir)/'`gtest-nux-main.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-gtest-nux-main.Tpo $(DEPDIR)/gtest_nux-gtest-nux-main.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-main.cpp' object='gtest_nux-gtest-nux-main.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-test-nux-windowthread.o `test -f 'test-nux-windowthread.cpp' || echo '$(srcdir)/'`test-nux-windowthread.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-main.o `test -f 'gtest-nux-main.cpp' || echo '$(srcdir)/'`gtest-nux-main.cpp
 
-gtest_nux-test-nux-windowthread.obj: test-nux-windowthread.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-test-nux-windowthread.obj -MD -MP -MF $(DEPDIR)/gtest_nux-test-nux-windowthread.Tpo -c -o gtest_nux-test-nux-windowthread.obj `if test -f 'test-nux-windowthread.cpp'; then $(CYGPATH_W) 'test-nux-windowthread.cpp'; else $(CYGPATH_W) '$(srcdir)/test-nux-windowthread.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-test-nux-windowthread.Tpo $(DEPDIR)/gtest_nux-test-nux-windowthread.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test-nux-windowthread.cpp' object='gtest_nux-test-nux-windowthread.obj' libtool=no @AMDEPBACKSLASH@
+gtest_nux-gtest-nux-main.obj: gtest-nux-main.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-main.obj -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-main.Tpo -c -o gtest_nux-gtest-nux-main.obj `if test -f 'gtest-nux-main.cpp'; then $(CYGPATH_W) 'gtest-nux-main.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-main.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-gtest-nux-main.Tpo $(DEPDIR)/gtest_nux-gtest-nux-main.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-main.cpp' object='gtest_nux-gtest-nux-main.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-test-nux-windowthread.obj `if test -f 'test-nux-windowthread.cpp'; then $(CYGPATH_W) 'test-nux-windowthread.cpp'; else $(CYGPATH_W) '$(srcdir)/test-nux-windowthread.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-main.obj `if test -f 'gtest-nux-main.cpp'; then $(CYGPATH_W) 'gtest-nux-main.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-main.cpp'; fi`
 
-gtest_nux_core-Helpers.o: Helpers.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-Helpers.o -MD -MP -MF $(DEPDIR)/gtest_nux_core-Helpers.Tpo -c -o gtest_nux_core-Helpers.o `test -f 'Helpers.cpp' || echo '$(srcdir)/'`Helpers.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-Helpers.Tpo $(DEPDIR)/gtest_nux_core-Helpers.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Helpers.cpp' object='gtest_nux_core-Helpers.o' libtool=no @AMDEPBACKSLASH@
+gtest_nux-gtest-nux-statictext.o: gtest-nux-statictext.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-statictext.o -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-statictext.Tpo -c -o gtest_nux-gtest-nux-statictext.o `test -f 'gtest-nux-statictext.cpp' || echo '$(srcdir)/'`gtest-nux-statictext.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-gtest-nux-statictext.Tpo $(DEPDIR)/gtest_nux-gtest-nux-statictext.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-statictext.cpp' object='gtest_nux-gtest-nux-statictext.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-Helpers.o `test -f 'Helpers.cpp' || echo '$(srcdir)/'`Helpers.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-statictext.o `test -f 'gtest-nux-statictext.cpp' || echo '$(srcdir)/'`gtest-nux-statictext.cpp
 
-gtest_nux_core-Helpers.obj: Helpers.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-Helpers.obj -MD -MP -MF $(DEPDIR)/gtest_nux_core-Helpers.Tpo -c -o gtest_nux_core-Helpers.obj `if test -f 'Helpers.cpp'; then $(CYGPATH_W) 'Helpers.cpp'; else $(CYGPATH_W) '$(srcdir)/Helpers.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-Helpers.Tpo $(DEPDIR)/gtest_nux_core-Helpers.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Helpers.cpp' object='gtest_nux_core-Helpers.obj' libtool=no @AMDEPBACKSLASH@
+gtest_nux-gtest-nux-statictext.obj: gtest-nux-statictext.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-statictext.obj -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-statictext.Tpo -c -o gtest_nux-gtest-nux-statictext.obj `if test -f 'gtest-nux-statictext.cpp'; then $(CYGPATH_W) 'gtest-nux-statictext.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-statictext.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-gtest-nux-statictext.Tpo $(DEPDIR)/gtest_nux-gtest-nux-statictext.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-statictext.cpp' object='gtest_nux-gtest-nux-statictext.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-Helpers.obj `if test -f 'Helpers.cpp'; then $(CYGPATH_W) 'Helpers.cpp'; else $(CYGPATH_W) '$(srcdir)/Helpers.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-statictext.obj `if test -f 'gtest-nux-statictext.cpp'; then $(CYGPATH_W) 'gtest-nux-statictext.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-statictext.cpp'; fi`
 
-gtest_nux_core-gtest-nuxcore-color.o: gtest-nuxcore-color.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-gtest-nuxcore-color.o -MD -MP -MF $(DEPDIR)/gtest_nux_core-gtest-nuxcore-color.Tpo -c -o gtest_nux_core-gtest-nuxcore-color.o `test -f 'gtest-nuxcore-color.cpp' || echo '$(srcdir)/'`gtest-nuxcore-color.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-gtest-nuxcore-color.Tpo $(DEPDIR)/gtest_nux_core-gtest-nuxcore-color.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nuxcore-color.cpp' object='gtest_nux_core-gtest-nuxcore-color.o' libtool=no @AMDEPBACKSLASH@
+gtest_nux-gtest-nux-textentry.o: gtest-nux-textentry.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-textentry.o -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-textentry.Tpo -c -o gtest_nux-gtest-nux-textentry.o `test -f 'gtest-nux-textentry.cpp' || echo '$(srcdir)/'`gtest-nux-textentry.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-gtest-nux-textentry.Tpo $(DEPDIR)/gtest_nux-gtest-nux-textentry.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-textentry.cpp' object='gtest_nux-gtest-nux-textentry.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-gtest-nuxcore-color.o `test -f 'gtest-nuxcore-color.cpp' || echo '$(srcdir)/'`gtest-nuxcore-color.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-textentry.o `test -f 'gtest-nux-textentry.cpp' || echo '$(srcdir)/'`gtest-nux-textentry.cpp
 
-gtest_nux_core-gtest-nuxcore-color.obj: gtest-nuxcore-color.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-gtest-nuxcore-color.obj -MD -MP -MF $(DEPDIR)/gtest_nux_core-gtest-nuxcore-color.Tpo -c -o gtest_nux_core-gtest-nuxcore-color.obj `if test -f 'gtest-nuxcore-color.cpp'; then $(CYGPATH_W) 'gtest-nuxcore-color.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nuxcore-color.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-gtest-nuxcore-color.Tpo $(DEPDIR)/gtest_nux_core-gtest-nuxcore-color.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nuxcore-color.cpp' object='gtest_nux_core-gtest-nuxcore-color.obj' libtool=no @AMDEPBACKSLASH@
+gtest_nux-gtest-nux-textentry.obj: gtest-nux-textentry.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-textentry.obj -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-textentry.Tpo -c -o gtest_nux-gtest-nux-textentry.obj `if test -f 'gtest-nux-textentry.cpp'; then $(CYGPATH_W) 'gtest-nux-textentry.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-textentry.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-gtest-nux-textentry.Tpo $(DEPDIR)/gtest_nux-gtest-nux-textentry.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-textentry.cpp' object='gtest_nux-gtest-nux-textentry.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-gtest-nuxcore-color.obj `if test -f 'gtest-nuxcore-color.cpp'; then $(CYGPATH_W) 'gtest-nuxcore-color.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nuxcore-color.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-textentry.obj `if test -f 'gtest-nux-textentry.cpp'; then $(CYGPATH_W) 'gtest-nux-textentry.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-textentry.cpp'; fi`
 
-gtest_nux_core-test_object.o: test_object.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-test_object.o -MD -MP -MF $(DEPDIR)/gtest_nux_core-test_object.Tpo -c -o gtest_nux_core-test_object.o `test -f 'test_object.cpp' || echo '$(srcdir)/'`test_object.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-test_object.Tpo $(DEPDIR)/gtest_nux_core-test_object.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_object.cpp' object='gtest_nux_core-test_object.o' libtool=no @AMDEPBACKSLASH@
+gtest_nux-gtest-nux-view.o: gtest-nux-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-view.o -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-view.Tpo -c -o gtest_nux-gtest-nux-view.o `test -f 'gtest-nux-view.cpp' || echo '$(srcdir)/'`gtest-nux-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-gtest-nux-view.Tpo $(DEPDIR)/gtest_nux-gtest-nux-view.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-view.cpp' object='gtest_nux-gtest-nux-view.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_object.o `test -f 'test_object.cpp' || echo '$(srcdir)/'`test_object.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-view.o `test -f 'gtest-nux-view.cpp' || echo '$(srcdir)/'`gtest-nux-view.cpp
 
-gtest_nux_core-test_object.obj: test_object.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-test_object.obj -MD -MP -MF $(DEPDIR)/gtest_nux_core-test_object.Tpo -c -o gtest_nux_core-test_object.obj `if test -f 'test_object.cpp'; then $(CYGPATH_W) 'test_object.cpp'; else $(CYGPATH_W) '$(srcdir)/test_object.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-test_object.Tpo $(DEPDIR)/gtest_nux_core-test_object.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_object.cpp' object='gtest_nux_core-test_object.obj' libtool=no @AMDEPBACKSLASH@
+gtest_nux-gtest-nux-view.obj: gtest-nux-view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-view.obj -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-view.Tpo -c -o gtest_nux-gtest-nux-view.obj `if test -f 'gtest-nux-view.cpp'; then $(CYGPATH_W) 'gtest-nux-view.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-view.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-gtest-nux-view.Tpo $(DEPDIR)/gtest_nux-gtest-nux-view.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-view.cpp' object='gtest_nux-gtest-nux-view.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_object.obj `if test -f 'test_object.cpp'; then $(CYGPATH_W) 'test_object.cpp'; else $(CYGPATH_W) '$(srcdir)/test_object.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-view.obj `if test -f 'gtest-nux-view.cpp'; then $(CYGPATH_W) 'gtest-nux-view.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-view.cpp'; fi`
 
-gtest_nux_core-test_main.o: test_main.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-test_main.o -MD -MP -MF $(DEPDIR)/gtest_nux_core-test_main.Tpo -c -o gtest_nux_core-test_main.o `test -f 'test_main.cpp' || echo '$(srcdir)/'`test_main.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-test_main.Tpo $(DEPDIR)/gtest_nux_core-test_main.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_main.cpp' object='gtest_nux_core-test_main.o' libtool=no @AMDEPBACKSLASH@
+gtest_nux-gtest-nux-windowcompositor.o: gtest-nux-windowcompositor.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-windowcompositor.o -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-windowcompositor.Tpo -c -o gtest_nux-gtest-nux-windowcompositor.o `test -f 'gtest-nux-windowcompositor.cpp' || echo '$(srcdir)/'`gtest-nux-windowcompositor.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-gtest-nux-windowcompositor.Tpo $(DEPDIR)/gtest_nux-gtest-nux-windowcompositor.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-windowcompositor.cpp' object='gtest_nux-gtest-nux-windowcompositor.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_main.o `test -f 'test_main.cpp' || echo '$(srcdir)/'`test_main.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-windowcompositor.o `test -f 'gtest-nux-windowcompositor.cpp' || echo '$(srcdir)/'`gtest-nux-windowcompositor.cpp
 
-gtest_nux_core-test_main.obj: test_main.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-test_main.obj -MD -MP -MF $(DEPDIR)/gtest_nux_core-test_main.Tpo -c -o gtest_nux_core-test_main.obj `if test -f 'test_main.cpp'; then $(CYGPATH_W) 'test_main.cpp'; else $(CYGPATH_W) '$(srcdir)/test_main.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-test_main.Tpo $(DEPDIR)/gtest_nux_core-test_main.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_main.cpp' object='gtest_nux_core-test_main.obj' libtool=no @AMDEPBACKSLASH@
+gtest_nux-gtest-nux-windowcompositor.obj: gtest-nux-windowcompositor.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-windowcompositor.obj -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-windowcompositor.Tpo -c -o gtest_nux-gtest-nux-windowcompositor.obj `if test -f 'gtest-nux-windowcompositor.cpp'; then $(CYGPATH_W) 'gtest-nux-windowcompositor.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-windowcompositor.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-gtest-nux-windowcompositor.Tpo $(DEPDIR)/gtest_nux-gtest-nux-windowcompositor.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-windowcompositor.cpp' object='gtest_nux-gtest-nux-windowcompositor.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_main.obj `if test -f 'test_main.cpp'; then $(CYGPATH_W) 'test_main.cpp'; else $(CYGPATH_W) '$(srcdir)/test_main.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-windowcompositor.obj `if test -f 'gtest-nux-windowcompositor.cpp'; then $(CYGPATH_W) 'gtest-nux-windowcompositor.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-windowcompositor.cpp'; fi`
 
-gtest_nux_core-test_async_file_writer.o: test_async_file_writer.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-test_async_file_writer.o -MD -MP -MF $(DEPDIR)/gtest_nux_core-test_async_file_writer.Tpo -c -o gtest_nux_core-test_async_file_writer.o `test -f 'test_async_file_writer.cpp' || echo '$(srcdir)/'`test_async_file_writer.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-test_async_file_writer.Tpo $(DEPDIR)/gtest_nux_core-test_async_file_writer.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_async_file_writer.cpp' object='gtest_nux_core-test_async_file_writer.o' libtool=no @AMDEPBACKSLASH@
+gtest_nux-gtest-nux-windowthread.o: gtest-nux-windowthread.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-windowthread.o -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-windowthread.Tpo -c -o gtest_nux-gtest-nux-windowthread.o `test -f 'gtest-nux-windowthread.cpp' || echo '$(srcdir)/'`gtest-nux-windowthread.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-gtest-nux-windowthread.Tpo $(DEPDIR)/gtest_nux-gtest-nux-windowthread.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-windowthread.cpp' object='gtest_nux-gtest-nux-windowthread.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_async_file_writer.o `test -f 'test_async_file_writer.cpp' || echo '$(srcdir)/'`test_async_file_writer.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-windowthread.o `test -f 'gtest-nux-windowthread.cpp' || echo '$(srcdir)/'`gtest-nux-windowthread.cpp
 
-gtest_nux_core-test_async_file_writer.obj: test_async_file_writer.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-test_async_file_writer.obj -MD -MP -MF $(DEPDIR)/gtest_nux_core-test_async_file_writer.Tpo -c -o gtest_nux_core-test_async_file_writer.obj `if test -f 'test_async_file_writer.cpp'; then $(CYGPATH_W) 'test_async_file_writer.cpp'; else $(CYGPATH_W) '$(srcdir)/test_async_file_writer.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-test_async_file_writer.Tpo $(DEPDIR)/gtest_nux_core-test_async_file_writer.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_async_file_writer.cpp' object='gtest_nux_core-test_async_file_writer.obj' libtool=no @AMDEPBACKSLASH@
+gtest_nux-gtest-nux-windowthread.obj: gtest-nux-windowthread.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-windowthread.obj -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-windowthread.Tpo -c -o gtest_nux-gtest-nux-windowthread.obj `if test -f 'gtest-nux-windowthread.cpp'; then $(CYGPATH_W) 'gtest-nux-windowthread.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-windowthread.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-gtest-nux-windowthread.Tpo $(DEPDIR)/gtest_nux-gtest-nux-windowthread.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-windowthread.cpp' object='gtest_nux-gtest-nux-windowthread.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_async_file_writer.obj `if test -f 'test_async_file_writer.cpp'; then $(CYGPATH_W) 'test_async_file_writer.cpp'; else $(CYGPATH_W) '$(srcdir)/test_async_file_writer.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-windowthread.obj `if test -f 'gtest-nux-windowthread.cpp'; then $(CYGPATH_W) 'gtest-nux-windowthread.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-windowthread.cpp'; fi`
 
-gtest_nux_core-test_logger.o: test_logger.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-test_logger.o -MD -MP -MF $(DEPDIR)/gtest_nux_core-test_logger.Tpo -c -o gtest_nux_core-test_logger.o `test -f 'test_logger.cpp' || echo '$(srcdir)/'`test_logger.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-test_logger.Tpo $(DEPDIR)/gtest_nux_core-test_logger.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_logger.cpp' object='gtest_nux_core-test_logger.o' libtool=no @AMDEPBACKSLASH@
+gtest_nuxcore-Helpers.o: Helpers.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nuxcore-Helpers.o -MD -MP -MF $(DEPDIR)/gtest_nuxcore-Helpers.Tpo -c -o gtest_nuxcore-Helpers.o `test -f 'Helpers.cpp' || echo '$(srcdir)/'`Helpers.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nuxcore-Helpers.Tpo $(DEPDIR)/gtest_nuxcore-Helpers.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Helpers.cpp' object='gtest_nuxcore-Helpers.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_logger.o `test -f 'test_logger.cpp' || echo '$(srcdir)/'`test_logger.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nuxcore-Helpers.o `test -f 'Helpers.cpp' || echo '$(srcdir)/'`Helpers.cpp
 
-gtest_nux_core-test_logger.obj: test_logger.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-test_logger.obj -MD -MP -MF $(DEPDIR)/gtest_nux_core-test_logger.Tpo -c -o gtest_nux_core-test_logger.obj `if test -f 'test_logger.cpp'; then $(CYGPATH_W) 'test_logger.cpp'; else $(CYGPATH_W) '$(srcdir)/test_logger.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-test_logger.Tpo $(DEPDIR)/gtest_nux_core-test_logger.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_logger.cpp' object='gtest_nux_core-test_logger.obj' libtool=no @AMDEPBACKSLASH@
+gtest_nuxcore-Helpers.obj: Helpers.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nuxcore-Helpers.obj -MD -MP -MF $(DEPDIR)/gtest_nuxcore-Helpers.Tpo -c -o gtest_nuxcore-Helpers.obj `if test -f 'Helpers.cpp'; then $(CYGPATH_W) 'Helpers.cpp'; else $(CYGPATH_W) '$(srcdir)/Helpers.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nuxcore-Helpers.Tpo $(DEPDIR)/gtest_nuxcore-Helpers.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Helpers.cpp' object='gtest_nuxcore-Helpers.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_logger.obj `if test -f 'test_logger.cpp'; then $(CYGPATH_W) 'test_logger.cpp'; else $(CYGPATH_W) '$(srcdir)/test_logger.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nuxcore-Helpers.obj `if test -f 'Helpers.cpp'; then $(CYGPATH_W) 'Helpers.cpp'; else $(CYGPATH_W) '$(srcdir)/Helpers.cpp'; fi`
 
-gtest_nux_core-test_cairo_wrapper.o: test_cairo_wrapper.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-test_cairo_wrapper.o -MD -MP -MF $(DEPDIR)/gtest_nux_core-test_cairo_wrapper.Tpo -c -o gtest_nux_core-test_cairo_wrapper.o `test -f 'test_cairo_wrapper.cpp' || echo '$(srcdir)/'`test_cairo_wrapper.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-test_cairo_wrapper.Tpo $(DEPDIR)/gtest_nux_core-test_cairo_wrapper.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_cairo_wrapper.cpp' object='gtest_nux_core-test_cairo_wrapper.o' libtool=no @AMDEPBACKSLASH@
+gtest_nuxcore-gtest-nuxcore-async-file-writer.o: gtest-nuxcore-async-file-writer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nuxcore-gtest-nuxcore-async-file-writer.o -MD -MP -MF $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-async-file-writer.Tpo -c -o gtest_nuxcore-gtest-nuxcore-async-file-writer.o `test -f 'gtest-nuxcore-async-file-writer.cpp' || echo '$(srcdir)/'`gtest-nuxcore-async-file-writer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-async-file-writer.Tpo $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-async-file-writer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nuxcore-async-file-writer.cpp' object='gtest_nuxcore-gtest-nuxcore-async-file-writer.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_cairo_wrapper.o `test -f 'test_cairo_wrapper.cpp' || echo '$(srcdir)/'`test_cairo_wrapper.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nuxcore-gtest-nuxcore-async-file-writer.o `test -f 'gtest-nuxcore-async-file-writer.cpp' || echo '$(srcdir)/'`gtest-nuxcore-async-file-writer.cpp
 
-gtest_nux_core-test_cairo_wrapper.obj: test_cairo_wrapper.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-test_cairo_wrapper.obj -MD -MP -MF $(DEPDIR)/gtest_nux_core-test_cairo_wrapper.Tpo -c -o gtest_nux_core-test_cairo_wrapper.obj `if test -f 'test_cairo_wrapper.cpp'; then $(CYGPATH_W) 'test_cairo_wrapper.cpp'; else $(CYGPATH_W) '$(srcdir)/test_cairo_wrapper.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-test_cairo_wrapper.Tpo $(DEPDIR)/gtest_nux_core-test_cairo_wrapper.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_cairo_wrapper.cpp' object='gtest_nux_core-test_cairo_wrapper.obj' libtool=no @AMDEPBACKSLASH@
+gtest_nuxcore-gtest-nuxcore-async-file-writer.obj: gtest-nuxcore-async-file-writer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nuxcore-gtest-nuxcore-async-file-writer.obj -MD -MP -MF $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-async-file-writer.Tpo -c -o gtest_nuxcore-gtest-nuxcore-async-file-writer.obj `if test -f 'gtest-nuxcore-async-file-writer.cpp'; then $(CYGPATH_W) 'gtest-nuxcore-async-file-writer.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nuxcore-async-file-writer.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-async-file-writer.Tpo $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-async-file-writer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nuxcore-async-file-writer.cpp' object='gtest_nuxcore-gtest-nuxcore-async-file-writer.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_cairo_wrapper.obj `if test -f 'test_cairo_wrapper.cpp'; then $(CYGPATH_W) 'test_cairo_wrapper.cpp'; else $(CYGPATH_W) '$(srcdir)/test_cairo_wrapper.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nuxcore-gtest-nuxcore-async-file-writer.obj `if test -f 'gtest-nuxcore-async-file-writer.cpp'; then $(CYGPATH_W) 'gtest-nuxcore-async-file-writer.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nuxcore-async-file-writer.cpp'; fi`
 
-gtest_nux_core-test_properties.o: test_properties.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-test_properties.o -MD -MP -MF $(DEPDIR)/gtest_nux_core-test_properties.Tpo -c -o gtest_nux_core-test_properties.o `test -f 'test_properties.cpp' || echo '$(srcdir)/'`test_properties.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-test_properties.Tpo $(DEPDIR)/gtest_nux_core-test_properties.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_properties.cpp' object='gtest_nux_core-test_properties.o' libtool=no @AMDEPBACKSLASH@
+gtest_nuxcore-gtest-nuxcore-color.o: gtest-nuxcore-color.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nuxcore-gtest-nuxcore-color.o -MD -MP -MF $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-color.Tpo -c -o gtest_nuxcore-gtest-nuxcore-color.o `test -f 'gtest-nuxcore-color.cpp' || echo '$(srcdir)/'`gtest-nuxcore-color.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-color.Tpo $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-color.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nuxcore-color.cpp' object='gtest_nuxcore-gtest-nuxcore-color.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_properties.o `test -f 'test_properties.cpp' || echo '$(srcdir)/'`test_properties.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nuxcore-gtest-nuxcore-color.o `test -f 'gtest-nuxcore-color.cpp' || echo '$(srcdir)/'`gtest-nuxcore-color.cpp
 
-gtest_nux_core-test_properties.obj: test_properties.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-test_properties.obj -MD -MP -MF $(DEPDIR)/gtest_nux_core-test_properties.Tpo -c -o gtest_nux_core-test_properties.obj `if test -f 'test_properties.cpp'; then $(CYGPATH_W) 'test_properties.cpp'; else $(CYGPATH_W) '$(srcdir)/test_properties.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-test_properties.Tpo $(DEPDIR)/gtest_nux_core-test_properties.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_properties.cpp' object='gtest_nux_core-test_properties.obj' libtool=no @AMDEPBACKSLASH@
+gtest_nuxcore-gtest-nuxcore-color.obj: gtest-nuxcore-color.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nuxcore-gtest-nuxcore-color.obj -MD -MP -MF $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-color.Tpo -c -o gtest_nuxcore-gtest-nuxcore-color.obj `if test -f 'gtest-nuxcore-color.cpp'; then $(CYGPATH_W) 'gtest-nuxcore-color.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nuxcore-color.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-color.Tpo $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-color.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nuxcore-color.cpp' object='gtest_nuxcore-gtest-nuxcore-color.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_properties.obj `if test -f 'test_properties.cpp'; then $(CYGPATH_W) 'test_properties.cpp'; else $(CYGPATH_W) '$(srcdir)/test_properties.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nuxcore-gtest-nuxcore-color.obj `if test -f 'gtest-nuxcore-color.cpp'; then $(CYGPATH_W) 'gtest-nuxcore-color.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nuxcore-color.cpp'; fi`
 
-gtest_nux_core-test_rolling_file_appender.o: test_rolling_file_appender.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-test_rolling_file_appender.o -MD -MP -MF $(DEPDIR)/gtest_nux_core-test_rolling_file_appender.Tpo -c -o gtest_nux_core-test_rolling_file_appender.o `test -f 'test_rolling_file_appender.cpp' || echo '$(srcdir)/'`test_rolling_file_appender.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-test_rolling_file_appender.Tpo $(DEPDIR)/gtest_nux_core-test_rolling_file_appender.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_rolling_file_appender.cpp' object='gtest_nux_core-test_rolling_file_appender.o' libtool=no @AMDEPBACKSLASH@
+gtest_nuxcore-gtest-nuxcore-logger.o: gtest-nuxcore-logger.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nuxcore-gtest-nuxcore-logger.o -MD -MP -MF $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-logger.Tpo -c -o gtest_nuxcore-gtest-nuxcore-logger.o `test -f 'gtest-nuxcore-logger.cpp' || echo '$(srcdir)/'`gtest-nuxcore-logger.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-logger.Tpo $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-logger.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nuxcore-logger.cpp' object='gtest_nuxcore-gtest-nuxcore-logger.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_rolling_file_appender.o `test -f 'test_rolling_file_appender.cpp' || echo '$(srcdir)/'`test_rolling_file_appender.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nuxcore-gtest-nuxcore-logger.o `test -f 'gtest-nuxcore-logger.cpp' || echo '$(srcdir)/'`gtest-nuxcore-logger.cpp
 
-gtest_nux_core-test_rolling_file_appender.obj: test_rolling_file_appender.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux_core-test_rolling_file_appender.obj -MD -MP -MF $(DEPDIR)/gtest_nux_core-test_rolling_file_appender.Tpo -c -o gtest_nux_core-test_rolling_file_appender.obj `if test -f 'test_rolling_file_appender.cpp'; then $(CYGPATH_W) 'test_rolling_file_appender.cpp'; else $(CYGPATH_W) '$(srcdir)/test_rolling_file_appender.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux_core-test_rolling_file_appender.Tpo $(DEPDIR)/gtest_nux_core-test_rolling_file_appender.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_rolling_file_appender.cpp' object='gtest_nux_core-test_rolling_file_appender.obj' libtool=no @AMDEPBACKSLASH@
+gtest_nuxcore-gtest-nuxcore-logger.obj: gtest-nuxcore-logger.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nuxcore-gtest-nuxcore-logger.obj -MD -MP -MF $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-logger.Tpo -c -o gtest_nuxcore-gtest-nuxcore-logger.obj `if test -f 'gtest-nuxcore-logger.cpp'; then $(CYGPATH_W) 'gtest-nuxcore-logger.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nuxcore-logger.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-logger.Tpo $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-logger.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nuxcore-logger.cpp' object='gtest_nuxcore-gtest-nuxcore-logger.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_core_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux_core-test_rolling_file_appender.obj `if test -f 'test_rolling_file_appender.cpp'; then $(CYGPATH_W) 'test_rolling_file_appender.cpp'; else $(CYGPATH_W) '$(srcdir)/test_rolling_file_appender.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nuxcore-gtest-nuxcore-logger.obj `if test -f 'gtest-nuxcore-logger.cpp'; then $(CYGPATH_W) 'gtest-nuxcore-logger.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nuxcore-logger.cpp'; fi`
+
+gtest_nuxcore-gtest-nuxcore-main.o: gtest-nuxcore-main.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nuxcore-gtest-nuxcore-main.o -MD -MP -MF $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-main.Tpo -c -o gtest_nuxcore-gtest-nuxcore-main.o `test -f 'gtest-nuxcore-main.cpp' || echo '$(srcdir)/'`gtest-nuxcore-main.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-main.Tpo $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-main.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nuxcore-main.cpp' object='gtest_nuxcore-gtest-nuxcore-main.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nuxcore-gtest-nuxcore-main.o `test -f 'gtest-nuxcore-main.cpp' || echo '$(srcdir)/'`gtest-nuxcore-main.cpp
+
+gtest_nuxcore-gtest-nuxcore-main.obj: gtest-nuxcore-main.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nuxcore-gtest-nuxcore-main.obj -MD -MP -MF $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-main.Tpo -c -o gtest_nuxcore-gtest-nuxcore-main.obj `if test -f 'gtest-nuxcore-main.cpp'; then $(CYGPATH_W) 'gtest-nuxcore-main.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nuxcore-main.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-main.Tpo $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-main.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nuxcore-main.cpp' object='gtest_nuxcore-gtest-nuxcore-main.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nuxcore-gtest-nuxcore-main.obj `if test -f 'gtest-nuxcore-main.cpp'; then $(CYGPATH_W) 'gtest-nuxcore-main.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nuxcore-main.cpp'; fi`
+
+gtest_nuxcore-gtest-nuxcore-object.o: gtest-nuxcore-object.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nuxcore-gtest-nuxcore-object.o -MD -MP -MF $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-object.Tpo -c -o gtest_nuxcore-gtest-nuxcore-object.o `test -f 'gtest-nuxcore-object.cpp' || echo '$(srcdir)/'`gtest-nuxcore-object.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-object.Tpo $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-object.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nuxcore-object.cpp' object='gtest_nuxcore-gtest-nuxcore-object.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nuxcore-gtest-nuxcore-object.o `test -f 'gtest-nuxcore-object.cpp' || echo '$(srcdir)/'`gtest-nuxcore-object.cpp
+
+gtest_nuxcore-gtest-nuxcore-object.obj: gtest-nuxcore-object.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nuxcore-gtest-nuxcore-object.obj -MD -MP -MF $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-object.Tpo -c -o gtest_nuxcore-gtest-nuxcore-object.obj `if test -f 'gtest-nuxcore-object.cpp'; then $(CYGPATH_W) 'gtest-nuxcore-object.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nuxcore-object.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-object.Tpo $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-object.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nuxcore-object.cpp' object='gtest_nuxcore-gtest-nuxcore-object.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nuxcore-gtest-nuxcore-object.obj `if test -f 'gtest-nuxcore-object.cpp'; then $(CYGPATH_W) 'gtest-nuxcore-object.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nuxcore-object.cpp'; fi`
+
+gtest_nuxcore-gtest-nuxcore-properties.o: gtest-nuxcore-properties.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nuxcore-gtest-nuxcore-properties.o -MD -MP -MF $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-properties.Tpo -c -o gtest_nuxcore-gtest-nuxcore-properties.o `test -f 'gtest-nuxcore-properties.cpp' || echo '$(srcdir)/'`gtest-nuxcore-properties.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-properties.Tpo $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-properties.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nuxcore-properties.cpp' object='gtest_nuxcore-gtest-nuxcore-properties.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nuxcore-gtest-nuxcore-properties.o `test -f 'gtest-nuxcore-properties.cpp' || echo '$(srcdir)/'`gtest-nuxcore-properties.cpp
+
+gtest_nuxcore-gtest-nuxcore-properties.obj: gtest-nuxcore-properties.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nuxcore-gtest-nuxcore-properties.obj -MD -MP -MF $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-properties.Tpo -c -o gtest_nuxcore-gtest-nuxcore-properties.obj `if test -f 'gtest-nuxcore-properties.cpp'; then $(CYGPATH_W) 'gtest-nuxcore-properties.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nuxcore-properties.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-properties.Tpo $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-properties.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nuxcore-properties.cpp' object='gtest_nuxcore-gtest-nuxcore-properties.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nuxcore-gtest-nuxcore-properties.obj `if test -f 'gtest-nuxcore-properties.cpp'; then $(CYGPATH_W) 'gtest-nuxcore-properties.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nuxcore-properties.cpp'; fi`
+
+gtest_nuxcore-gtest-nuxcore-rolling-file-appender.o: gtest-nuxcore-rolling-file-appender.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nuxcore-gtest-nuxcore-rolling-file-appender.o -MD -MP -MF $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-rolling-file-appender.Tpo -c -o gtest_nuxcore-gtest-nuxcore-rolling-file-appender.o `test -f 'gtest-nuxcore-rolling-file-appender.cpp' || echo '$(srcdir)/'`gtest-nuxcore-rolling-file-appender.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-rolling-file-appender.Tpo $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-rolling-file-appender.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nuxcore-rolling-file-appender.cpp' object='gtest_nuxcore-gtest-nuxcore-rolling-file-appender.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nuxcore-gtest-nuxcore-rolling-file-appender.o `test -f 'gtest-nuxcore-rolling-file-appender.cpp' || echo '$(srcdir)/'`gtest-nuxcore-rolling-file-appender.cpp
+
+gtest_nuxcore-gtest-nuxcore-rolling-file-appender.obj: gtest-nuxcore-rolling-file-appender.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nuxcore-gtest-nuxcore-rolling-file-appender.obj -MD -MP -MF $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-rolling-file-appender.Tpo -c -o gtest_nuxcore-gtest-nuxcore-rolling-file-appender.obj `if test -f 'gtest-nuxcore-rolling-file-appender.cpp'; then $(CYGPATH_W) 'gtest-nuxcore-rolling-file-appender.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nuxcore-rolling-file-appender.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-rolling-file-appender.Tpo $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-rolling-file-appender.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nuxcore-rolling-file-appender.cpp' object='gtest_nuxcore-gtest-nuxcore-rolling-file-appender.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nuxcore-gtest-nuxcore-rolling-file-appender.obj `if test -f 'gtest-nuxcore-rolling-file-appender.cpp'; then $(CYGPATH_W) 'gtest-nuxcore-rolling-file-appender.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nuxcore-rolling-file-appender.cpp'; fi`
 
 test_empty_window-test_empty_window.o: test_empty_window.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_empty_window_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_empty_window-test_empty_window.o -MD -MP -MF $(DEPDIR)/test_empty_window-test_empty_window.Tpo -c -o test_empty_window-test_empty_window.o `test -f 'test_empty_window.cpp' || echo '$(srcdir)/'`test_empty_window.cpp
@@ -1044,48 +1239,6 @@ test_graphics_display-test_graphics_display.obj: test_graphics_display.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_graphics_display.cpp' object='test_graphics_display-test_graphics_display.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_graphics_display_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_graphics_display-test_graphics_display.obj `if test -f 'test_graphics_display.cpp'; then $(CYGPATH_W) 'test_graphics_display.cpp'; else $(CYGPATH_W) '$(srcdir)/test_graphics_display.cpp'; fi`
-
-test_nux-test-canvas.o: test-canvas.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_nux-test-canvas.o -MD -MP -MF $(DEPDIR)/test_nux-test-canvas.Tpo -c -o test_nux-test-canvas.o `test -f 'test-canvas.cpp' || echo '$(srcdir)/'`test-canvas.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_nux-test-canvas.Tpo $(DEPDIR)/test_nux-test-canvas.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test-canvas.cpp' object='test_nux-test-canvas.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_nux-test-canvas.o `test -f 'test-canvas.cpp' || echo '$(srcdir)/'`test-canvas.cpp
-
-test_nux-test-canvas.obj: test-canvas.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_nux-test-canvas.obj -MD -MP -MF $(DEPDIR)/test_nux-test-canvas.Tpo -c -o test_nux-test-canvas.obj `if test -f 'test-canvas.cpp'; then $(CYGPATH_W) 'test-canvas.cpp'; else $(CYGPATH_W) '$(srcdir)/test-canvas.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_nux-test-canvas.Tpo $(DEPDIR)/test_nux-test-canvas.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test-canvas.cpp' object='test_nux-test-canvas.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_nux-test-canvas.obj `if test -f 'test-canvas.cpp'; then $(CYGPATH_W) 'test-canvas.cpp'; else $(CYGPATH_W) '$(srcdir)/test-canvas.cpp'; fi`
-
-test_nux-test-nux.o: test-nux.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_nux-test-nux.o -MD -MP -MF $(DEPDIR)/test_nux-test-nux.Tpo -c -o test_nux-test-nux.o `test -f 'test-nux.cpp' || echo '$(srcdir)/'`test-nux.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_nux-test-nux.Tpo $(DEPDIR)/test_nux-test-nux.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test-nux.cpp' object='test_nux-test-nux.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_nux-test-nux.o `test -f 'test-nux.cpp' || echo '$(srcdir)/'`test-nux.cpp
-
-test_nux-test-nux.obj: test-nux.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_nux-test-nux.obj -MD -MP -MF $(DEPDIR)/test_nux-test-nux.Tpo -c -o test_nux-test-nux.obj `if test -f 'test-nux.cpp'; then $(CYGPATH_W) 'test-nux.cpp'; else $(CYGPATH_W) '$(srcdir)/test-nux.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_nux-test-nux.Tpo $(DEPDIR)/test_nux-test-nux.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test-nux.cpp' object='test_nux-test-nux.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_nux-test-nux.obj `if test -f 'test-nux.cpp'; then $(CYGPATH_W) 'test-nux.cpp'; else $(CYGPATH_W) '$(srcdir)/test-nux.cpp'; fi`
-
-test_nux-test-system.o: test-system.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_nux-test-system.o -MD -MP -MF $(DEPDIR)/test_nux-test-system.Tpo -c -o test_nux-test-system.o `test -f 'test-system.cpp' || echo '$(srcdir)/'`test-system.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_nux-test-system.Tpo $(DEPDIR)/test_nux-test-system.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test-system.cpp' object='test_nux-test-system.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_nux-test-system.o `test -f 'test-system.cpp' || echo '$(srcdir)/'`test-system.cpp
-
-test_nux-test-system.obj: test-system.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_nux-test-system.obj -MD -MP -MF $(DEPDIR)/test_nux-test-system.Tpo -c -o test_nux-test-system.obj `if test -f 'test-system.cpp'; then $(CYGPATH_W) 'test-system.cpp'; else $(CYGPATH_W) '$(srcdir)/test-system.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_nux-test-system.Tpo $(DEPDIR)/test_nux-test-system.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test-system.cpp' object='test_nux-test-system.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_nux-test-system.obj `if test -f 'test-system.cpp'; then $(CYGPATH_W) 'test-system.cpp'; else $(CYGPATH_W) '$(srcdir)/test-system.cpp'; fi`
 
 xtest_button-xtest-button.o: xtest-button.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_button_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_button-xtest-button.o -MD -MP -MF $(DEPDIR)/xtest_button-xtest-button.Tpo -c -o xtest_button-xtest-button.o `test -f 'xtest-button.cpp' || echo '$(srcdir)/'`xtest-button.cpp
@@ -1142,6 +1295,34 @@ xtest_focus_on_mouse_down-nux_automated_test_framework.obj: nux_automated_test_f
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='nux_automated_test_framework.cpp' object='xtest_focus_on_mouse_down-nux_automated_test_framework.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_focus_on_mouse_down_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_focus_on_mouse_down-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+
+xtest_focus_on_mouse_enter-xtest-focus-on-mouse-enter.o: xtest-focus-on-mouse-enter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_focus_on_mouse_enter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_focus_on_mouse_enter-xtest-focus-on-mouse-enter.o -MD -MP -MF $(DEPDIR)/xtest_focus_on_mouse_enter-xtest-focus-on-mouse-enter.Tpo -c -o xtest_focus_on_mouse_enter-xtest-focus-on-mouse-enter.o `test -f 'xtest-focus-on-mouse-enter.cpp' || echo '$(srcdir)/'`xtest-focus-on-mouse-enter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xtest_focus_on_mouse_enter-xtest-focus-on-mouse-enter.Tpo $(DEPDIR)/xtest_focus_on_mouse_enter-xtest-focus-on-mouse-enter.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='xtest-focus-on-mouse-enter.cpp' object='xtest_focus_on_mouse_enter-xtest-focus-on-mouse-enter.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_focus_on_mouse_enter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_focus_on_mouse_enter-xtest-focus-on-mouse-enter.o `test -f 'xtest-focus-on-mouse-enter.cpp' || echo '$(srcdir)/'`xtest-focus-on-mouse-enter.cpp
+
+xtest_focus_on_mouse_enter-xtest-focus-on-mouse-enter.obj: xtest-focus-on-mouse-enter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_focus_on_mouse_enter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_focus_on_mouse_enter-xtest-focus-on-mouse-enter.obj -MD -MP -MF $(DEPDIR)/xtest_focus_on_mouse_enter-xtest-focus-on-mouse-enter.Tpo -c -o xtest_focus_on_mouse_enter-xtest-focus-on-mouse-enter.obj `if test -f 'xtest-focus-on-mouse-enter.cpp'; then $(CYGPATH_W) 'xtest-focus-on-mouse-enter.cpp'; else $(CYGPATH_W) '$(srcdir)/xtest-focus-on-mouse-enter.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xtest_focus_on_mouse_enter-xtest-focus-on-mouse-enter.Tpo $(DEPDIR)/xtest_focus_on_mouse_enter-xtest-focus-on-mouse-enter.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='xtest-focus-on-mouse-enter.cpp' object='xtest_focus_on_mouse_enter-xtest-focus-on-mouse-enter.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_focus_on_mouse_enter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_focus_on_mouse_enter-xtest-focus-on-mouse-enter.obj `if test -f 'xtest-focus-on-mouse-enter.cpp'; then $(CYGPATH_W) 'xtest-focus-on-mouse-enter.cpp'; else $(CYGPATH_W) '$(srcdir)/xtest-focus-on-mouse-enter.cpp'; fi`
+
+xtest_focus_on_mouse_enter-nux_automated_test_framework.o: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_focus_on_mouse_enter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_focus_on_mouse_enter-nux_automated_test_framework.o -MD -MP -MF $(DEPDIR)/xtest_focus_on_mouse_enter-nux_automated_test_framework.Tpo -c -o xtest_focus_on_mouse_enter-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xtest_focus_on_mouse_enter-nux_automated_test_framework.Tpo $(DEPDIR)/xtest_focus_on_mouse_enter-nux_automated_test_framework.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='nux_automated_test_framework.cpp' object='xtest_focus_on_mouse_enter-nux_automated_test_framework.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_focus_on_mouse_enter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_focus_on_mouse_enter-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+
+xtest_focus_on_mouse_enter-nux_automated_test_framework.obj: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_focus_on_mouse_enter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_focus_on_mouse_enter-nux_automated_test_framework.obj -MD -MP -MF $(DEPDIR)/xtest_focus_on_mouse_enter-nux_automated_test_framework.Tpo -c -o xtest_focus_on_mouse_enter-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xtest_focus_on_mouse_enter-nux_automated_test_framework.Tpo $(DEPDIR)/xtest_focus_on_mouse_enter-nux_automated_test_framework.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='nux_automated_test_framework.cpp' object='xtest_focus_on_mouse_enter-nux_automated_test_framework.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_focus_on_mouse_enter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_focus_on_mouse_enter-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
 
 xtest_hgrid_key_navigation-xtest-hgrid-key-navigation.o: xtest-hgrid-key-navigation.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_hgrid_key_navigation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_hgrid_key_navigation-xtest-hgrid-key-navigation.o -MD -MP -MF $(DEPDIR)/xtest_hgrid_key_navigation-xtest-hgrid-key-navigation.Tpo -c -o xtest_hgrid_key_navigation-xtest-hgrid-key-navigation.o `test -f 'xtest-hgrid-key-navigation.cpp' || echo '$(srcdir)/'`xtest-hgrid-key-navigation.cpp
@@ -1324,6 +1505,118 @@ xtest_scrollbar-test-scrollview.obj: test-scrollview.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test-scrollview.cpp' object='xtest_scrollbar-test-scrollview.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_scrollbar_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_scrollbar-test-scrollview.obj `if test -f 'test-scrollview.cpp'; then $(CYGPATH_W) 'test-scrollview.cpp'; else $(CYGPATH_W) '$(srcdir)/test-scrollview.cpp'; fi`
+
+xtest_text_entry-xtest-text-entry.o: xtest-text-entry.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_text_entry-xtest-text-entry.o -MD -MP -MF $(DEPDIR)/xtest_text_entry-xtest-text-entry.Tpo -c -o xtest_text_entry-xtest-text-entry.o `test -f 'xtest-text-entry.cpp' || echo '$(srcdir)/'`xtest-text-entry.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xtest_text_entry-xtest-text-entry.Tpo $(DEPDIR)/xtest_text_entry-xtest-text-entry.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='xtest-text-entry.cpp' object='xtest_text_entry-xtest-text-entry.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_text_entry-xtest-text-entry.o `test -f 'xtest-text-entry.cpp' || echo '$(srcdir)/'`xtest-text-entry.cpp
+
+xtest_text_entry-xtest-text-entry.obj: xtest-text-entry.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_text_entry-xtest-text-entry.obj -MD -MP -MF $(DEPDIR)/xtest_text_entry-xtest-text-entry.Tpo -c -o xtest_text_entry-xtest-text-entry.obj `if test -f 'xtest-text-entry.cpp'; then $(CYGPATH_W) 'xtest-text-entry.cpp'; else $(CYGPATH_W) '$(srcdir)/xtest-text-entry.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xtest_text_entry-xtest-text-entry.Tpo $(DEPDIR)/xtest_text_entry-xtest-text-entry.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='xtest-text-entry.cpp' object='xtest_text_entry-xtest-text-entry.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_text_entry-xtest-text-entry.obj `if test -f 'xtest-text-entry.cpp'; then $(CYGPATH_W) 'xtest-text-entry.cpp'; else $(CYGPATH_W) '$(srcdir)/xtest-text-entry.cpp'; fi`
+
+xtest_text_entry-nux_automated_test_framework.o: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_text_entry-nux_automated_test_framework.o -MD -MP -MF $(DEPDIR)/xtest_text_entry-nux_automated_test_framework.Tpo -c -o xtest_text_entry-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xtest_text_entry-nux_automated_test_framework.Tpo $(DEPDIR)/xtest_text_entry-nux_automated_test_framework.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='nux_automated_test_framework.cpp' object='xtest_text_entry-nux_automated_test_framework.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_text_entry-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+
+xtest_text_entry-nux_automated_test_framework.obj: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_text_entry-nux_automated_test_framework.obj -MD -MP -MF $(DEPDIR)/xtest_text_entry-nux_automated_test_framework.Tpo -c -o xtest_text_entry-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xtest_text_entry-nux_automated_test_framework.Tpo $(DEPDIR)/xtest_text_entry-nux_automated_test_framework.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='nux_automated_test_framework.cpp' object='xtest_text_entry-nux_automated_test_framework.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_text_entry-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+
+xtest_text_entry_compositionkeys-xtest-text-entry-compositionkeys.o: xtest-text-entry-compositionkeys.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_compositionkeys_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_text_entry_compositionkeys-xtest-text-entry-compositionkeys.o -MD -MP -MF $(DEPDIR)/xtest_text_entry_compositionkeys-xtest-text-entry-compositionkeys.Tpo -c -o xtest_text_entry_compositionkeys-xtest-text-entry-compositionkeys.o `test -f 'xtest-text-entry-compositionkeys.cpp' || echo '$(srcdir)/'`xtest-text-entry-compositionkeys.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xtest_text_entry_compositionkeys-xtest-text-entry-compositionkeys.Tpo $(DEPDIR)/xtest_text_entry_compositionkeys-xtest-text-entry-compositionkeys.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='xtest-text-entry-compositionkeys.cpp' object='xtest_text_entry_compositionkeys-xtest-text-entry-compositionkeys.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_compositionkeys_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_text_entry_compositionkeys-xtest-text-entry-compositionkeys.o `test -f 'xtest-text-entry-compositionkeys.cpp' || echo '$(srcdir)/'`xtest-text-entry-compositionkeys.cpp
+
+xtest_text_entry_compositionkeys-xtest-text-entry-compositionkeys.obj: xtest-text-entry-compositionkeys.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_compositionkeys_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_text_entry_compositionkeys-xtest-text-entry-compositionkeys.obj -MD -MP -MF $(DEPDIR)/xtest_text_entry_compositionkeys-xtest-text-entry-compositionkeys.Tpo -c -o xtest_text_entry_compositionkeys-xtest-text-entry-compositionkeys.obj `if test -f 'xtest-text-entry-compositionkeys.cpp'; then $(CYGPATH_W) 'xtest-text-entry-compositionkeys.cpp'; else $(CYGPATH_W) '$(srcdir)/xtest-text-entry-compositionkeys.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xtest_text_entry_compositionkeys-xtest-text-entry-compositionkeys.Tpo $(DEPDIR)/xtest_text_entry_compositionkeys-xtest-text-entry-compositionkeys.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='xtest-text-entry-compositionkeys.cpp' object='xtest_text_entry_compositionkeys-xtest-text-entry-compositionkeys.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_compositionkeys_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_text_entry_compositionkeys-xtest-text-entry-compositionkeys.obj `if test -f 'xtest-text-entry-compositionkeys.cpp'; then $(CYGPATH_W) 'xtest-text-entry-compositionkeys.cpp'; else $(CYGPATH_W) '$(srcdir)/xtest-text-entry-compositionkeys.cpp'; fi`
+
+xtest_text_entry_compositionkeys-nux_automated_test_framework.o: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_compositionkeys_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_text_entry_compositionkeys-nux_automated_test_framework.o -MD -MP -MF $(DEPDIR)/xtest_text_entry_compositionkeys-nux_automated_test_framework.Tpo -c -o xtest_text_entry_compositionkeys-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xtest_text_entry_compositionkeys-nux_automated_test_framework.Tpo $(DEPDIR)/xtest_text_entry_compositionkeys-nux_automated_test_framework.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='nux_automated_test_framework.cpp' object='xtest_text_entry_compositionkeys-nux_automated_test_framework.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_compositionkeys_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_text_entry_compositionkeys-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+
+xtest_text_entry_compositionkeys-nux_automated_test_framework.obj: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_compositionkeys_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_text_entry_compositionkeys-nux_automated_test_framework.obj -MD -MP -MF $(DEPDIR)/xtest_text_entry_compositionkeys-nux_automated_test_framework.Tpo -c -o xtest_text_entry_compositionkeys-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xtest_text_entry_compositionkeys-nux_automated_test_framework.Tpo $(DEPDIR)/xtest_text_entry_compositionkeys-nux_automated_test_framework.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='nux_automated_test_framework.cpp' object='xtest_text_entry_compositionkeys-nux_automated_test_framework.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_compositionkeys_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_text_entry_compositionkeys-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+
+xtest_text_entry_deadkeys-xtest-text-entry-deadkeys.o: xtest-text-entry-deadkeys.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_deadkeys_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_text_entry_deadkeys-xtest-text-entry-deadkeys.o -MD -MP -MF $(DEPDIR)/xtest_text_entry_deadkeys-xtest-text-entry-deadkeys.Tpo -c -o xtest_text_entry_deadkeys-xtest-text-entry-deadkeys.o `test -f 'xtest-text-entry-deadkeys.cpp' || echo '$(srcdir)/'`xtest-text-entry-deadkeys.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xtest_text_entry_deadkeys-xtest-text-entry-deadkeys.Tpo $(DEPDIR)/xtest_text_entry_deadkeys-xtest-text-entry-deadkeys.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='xtest-text-entry-deadkeys.cpp' object='xtest_text_entry_deadkeys-xtest-text-entry-deadkeys.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_deadkeys_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_text_entry_deadkeys-xtest-text-entry-deadkeys.o `test -f 'xtest-text-entry-deadkeys.cpp' || echo '$(srcdir)/'`xtest-text-entry-deadkeys.cpp
+
+xtest_text_entry_deadkeys-xtest-text-entry-deadkeys.obj: xtest-text-entry-deadkeys.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_deadkeys_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_text_entry_deadkeys-xtest-text-entry-deadkeys.obj -MD -MP -MF $(DEPDIR)/xtest_text_entry_deadkeys-xtest-text-entry-deadkeys.Tpo -c -o xtest_text_entry_deadkeys-xtest-text-entry-deadkeys.obj `if test -f 'xtest-text-entry-deadkeys.cpp'; then $(CYGPATH_W) 'xtest-text-entry-deadkeys.cpp'; else $(CYGPATH_W) '$(srcdir)/xtest-text-entry-deadkeys.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xtest_text_entry_deadkeys-xtest-text-entry-deadkeys.Tpo $(DEPDIR)/xtest_text_entry_deadkeys-xtest-text-entry-deadkeys.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='xtest-text-entry-deadkeys.cpp' object='xtest_text_entry_deadkeys-xtest-text-entry-deadkeys.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_deadkeys_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_text_entry_deadkeys-xtest-text-entry-deadkeys.obj `if test -f 'xtest-text-entry-deadkeys.cpp'; then $(CYGPATH_W) 'xtest-text-entry-deadkeys.cpp'; else $(CYGPATH_W) '$(srcdir)/xtest-text-entry-deadkeys.cpp'; fi`
+
+xtest_text_entry_deadkeys-nux_automated_test_framework.o: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_deadkeys_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_text_entry_deadkeys-nux_automated_test_framework.o -MD -MP -MF $(DEPDIR)/xtest_text_entry_deadkeys-nux_automated_test_framework.Tpo -c -o xtest_text_entry_deadkeys-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xtest_text_entry_deadkeys-nux_automated_test_framework.Tpo $(DEPDIR)/xtest_text_entry_deadkeys-nux_automated_test_framework.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='nux_automated_test_framework.cpp' object='xtest_text_entry_deadkeys-nux_automated_test_framework.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_deadkeys_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_text_entry_deadkeys-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+
+xtest_text_entry_deadkeys-nux_automated_test_framework.obj: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_deadkeys_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_text_entry_deadkeys-nux_automated_test_framework.obj -MD -MP -MF $(DEPDIR)/xtest_text_entry_deadkeys-nux_automated_test_framework.Tpo -c -o xtest_text_entry_deadkeys-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xtest_text_entry_deadkeys-nux_automated_test_framework.Tpo $(DEPDIR)/xtest_text_entry_deadkeys-nux_automated_test_framework.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='nux_automated_test_framework.cpp' object='xtest_text_entry_deadkeys-nux_automated_test_framework.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_deadkeys_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_text_entry_deadkeys-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+
+xtest_text_entry_logic-xtest-text-entry-logic.o: xtest-text-entry-logic.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_logic_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_text_entry_logic-xtest-text-entry-logic.o -MD -MP -MF $(DEPDIR)/xtest_text_entry_logic-xtest-text-entry-logic.Tpo -c -o xtest_text_entry_logic-xtest-text-entry-logic.o `test -f 'xtest-text-entry-logic.cpp' || echo '$(srcdir)/'`xtest-text-entry-logic.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xtest_text_entry_logic-xtest-text-entry-logic.Tpo $(DEPDIR)/xtest_text_entry_logic-xtest-text-entry-logic.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='xtest-text-entry-logic.cpp' object='xtest_text_entry_logic-xtest-text-entry-logic.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_logic_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_text_entry_logic-xtest-text-entry-logic.o `test -f 'xtest-text-entry-logic.cpp' || echo '$(srcdir)/'`xtest-text-entry-logic.cpp
+
+xtest_text_entry_logic-xtest-text-entry-logic.obj: xtest-text-entry-logic.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_logic_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_text_entry_logic-xtest-text-entry-logic.obj -MD -MP -MF $(DEPDIR)/xtest_text_entry_logic-xtest-text-entry-logic.Tpo -c -o xtest_text_entry_logic-xtest-text-entry-logic.obj `if test -f 'xtest-text-entry-logic.cpp'; then $(CYGPATH_W) 'xtest-text-entry-logic.cpp'; else $(CYGPATH_W) '$(srcdir)/xtest-text-entry-logic.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xtest_text_entry_logic-xtest-text-entry-logic.Tpo $(DEPDIR)/xtest_text_entry_logic-xtest-text-entry-logic.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='xtest-text-entry-logic.cpp' object='xtest_text_entry_logic-xtest-text-entry-logic.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_logic_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_text_entry_logic-xtest-text-entry-logic.obj `if test -f 'xtest-text-entry-logic.cpp'; then $(CYGPATH_W) 'xtest-text-entry-logic.cpp'; else $(CYGPATH_W) '$(srcdir)/xtest-text-entry-logic.cpp'; fi`
+
+xtest_text_entry_logic-nux_automated_test_framework.o: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_logic_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_text_entry_logic-nux_automated_test_framework.o -MD -MP -MF $(DEPDIR)/xtest_text_entry_logic-nux_automated_test_framework.Tpo -c -o xtest_text_entry_logic-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xtest_text_entry_logic-nux_automated_test_framework.Tpo $(DEPDIR)/xtest_text_entry_logic-nux_automated_test_framework.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='nux_automated_test_framework.cpp' object='xtest_text_entry_logic-nux_automated_test_framework.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_logic_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_text_entry_logic-nux_automated_test_framework.o `test -f 'nux_automated_test_framework.cpp' || echo '$(srcdir)/'`nux_automated_test_framework.cpp
+
+xtest_text_entry_logic-nux_automated_test_framework.obj: nux_automated_test_framework.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_logic_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_text_entry_logic-nux_automated_test_framework.obj -MD -MP -MF $(DEPDIR)/xtest_text_entry_logic-nux_automated_test_framework.Tpo -c -o xtest_text_entry_logic-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xtest_text_entry_logic-nux_automated_test_framework.Tpo $(DEPDIR)/xtest_text_entry_logic-nux_automated_test_framework.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='nux_automated_test_framework.cpp' object='xtest_text_entry_logic-nux_automated_test_framework.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_text_entry_logic_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_text_entry_logic-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
 
 xtest_vlayout_key_navigation-xtest-vlayout-key-navigation.o: xtest-vlayout-key-navigation.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_vlayout_key_navigation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xtest_vlayout_key_navigation-xtest-vlayout-key-navigation.o -MD -MP -MF $(DEPDIR)/xtest_vlayout_key_navigation-xtest-vlayout-key-navigation.Tpo -c -o xtest_vlayout_key_navigation-xtest-vlayout-key-navigation.o `test -f 'xtest-vlayout-key-navigation.cpp' || echo '$(srcdir)/'`xtest-vlayout-key-navigation.cpp
@@ -1570,18 +1863,19 @@ uninstall-am:
 @BUILD_TESTS_TRUE@check-local: test gtest test-apps
 
 @BUILD_TESTS_TRUE@test:
-@BUILD_TESTS_TRUE@	@gtester --verbose -k -o=test-nux-results.xml ./test-nux
+@BUILD_TESTS_TRUE@	@gtester --verbose -k -o=gtest-nux-results.xml ./gtest-nux
 
-@BUILD_TESTS_TRUE@gtest: gtest-nux-core gtest-nux
-@BUILD_TESTS_TRUE@	./gtest-nux-core
+@BUILD_TESTS_TRUE@gtest: gtest-nuxcore gtest-nux
+@BUILD_TESTS_TRUE@	./gtest-nuxcore
 @BUILD_TESTS_TRUE@	./gtest-nux
 
-@BUILD_TESTS_TRUE@check-headless: gtest-nux-core
-@BUILD_TESTS_TRUE@	@gtester --verbose -k -o=test-nux-results.xml ./gtest-nux-core
+@BUILD_TESTS_TRUE@check-headless: gtest-nuxcore
+@BUILD_TESTS_TRUE@	@gtester --verbose -k -o=test-nux-results.xml ./gtest-nuxcore
 
-@BUILD_TESTS_TRUE@test-apps: test-graphics-display test-empty-window xtest-button xtest-mouse-events xtest-mouse-buttons xtest-hgrid-key-navigation xtest-hlayout-key-navigation xtest-vlayout-key-navigation xtest-scrollbar xtest-focus-on-mouse-down xtest-keynav-directions
+@BUILD_TESTS_TRUE@test-apps: test-graphics-display test-empty-window xtest-text-entry xtest-button xtest-mouse-events xtest-mouse-buttons xtest-hgrid-key-navigation xtest-hlayout-key-navigation xtest-vlayout-key-navigation xtest-scrollbar xtest-focus-on-mouse-down xtest-focus-on-mouse-enter xtest-keynav-directions xtest-text-entry-logic xtest-text-entry-deadkeys xtest-text-entry-compositionkeys
 @BUILD_TESTS_TRUE@	./test-graphics-display
 @BUILD_TESTS_TRUE@	./test-empty-window
+@BUILD_TESTS_TRUE@	./xtest-text-entry
 @BUILD_TESTS_TRUE@	./xtest-button
 @BUILD_TESTS_TRUE@	./xtest-mouse-events
 @BUILD_TESTS_TRUE@	./xtest-mouse-buttons
@@ -1590,7 +1884,11 @@ uninstall-am:
 @BUILD_TESTS_TRUE@	./xtest-vlayout-key-navigation
 @BUILD_TESTS_TRUE@	./xtest-scrollbar
 @BUILD_TESTS_TRUE@	./xtest-focus-on-mouse-down
+@BUILD_TESTS_TRUE@	./xtest-focus-on-mouse-enter
 @BUILD_TESTS_TRUE@	./xtest-keynav-directions
+@BUILD_TESTS_TRUE@	./xtest-text-entry-logic
+@BUILD_TESTS_TRUE@	./xtest-text-entry-deadkeys
+@BUILD_TESTS_TRUE@	./xtest-text-entry-compositionkeys
 
 @BUILD_TESTS_TRUE@check-report:
 @BUILD_TESTS_TRUE@	@gtester -k -o=test-nux-results.xml -k ./test-nux \

@@ -46,6 +46,7 @@ AM_CPPFLAGS = \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \
+  $(IBUS_CFLAGS) \
   $(MAINTAINER_CFLAGS)
 
 ALL_LIBS = \
@@ -54,7 +55,8 @@ ALL_LIBS = \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
   $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
   $(NUX_EXAMPLES_LIBS) \
-  $(NUX_LIBS)
+  $(NUX_LIBS) \
+  $(IBUS_LIBS) 
 
 # This is the individual executable build. For every $exe in noinst_PROGRAMS
 # you need a $exe_SOURCES and $exe_LDADD so it builds

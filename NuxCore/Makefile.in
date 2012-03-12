@@ -260,6 +260,8 @@ FGREP = @FGREP@
 GCC_FLAGS = @GCC_FLAGS@
 GL_PKGS = @GL_PKGS@
 GREP = @GREP@
+IBUS_CFLAGS = @IBUS_CFLAGS@
+IBUS_LIBS = @IBUS_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -496,7 +498,6 @@ source_tiny_xml_h = \
 
 source_h = \
   $(srcdir)/AsyncFileWriter.h \
-  $(srcdir)/SystemTypes.h \
   $(srcdir)/Point.h \
   $(srcdir)/FilePath.h \
   $(srcdir)/System.h \
