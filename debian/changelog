@@ -1,8 +1,13 @@
 nux (2.6.0-0ubuntu1) UNRELEASED; urgency=low
 
+  * New upstream release.
+    - Restore OpenGL default line width and point size (LP: #937444)
+    - [unity-5.6] can't enter accents (^o->) in the dash since recent updates
+      (LP: #944674)
+    - SetEnableView / ViewEnable / ViewDisable give inverted results
+      (LP: #938823)
   * debian/control:
     - build-dep on libibus-1.0-dev for ibus support
-  * New upstream release.
 
  -- Didier Roche <didrocks@ubuntu.com>  Mon, 12 Mar 2012 09:57:17 +0100
 
