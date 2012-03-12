@@ -181,6 +181,7 @@ source_h = \
   $(srcdir)/SystemThread.h \
   $(srcdir)/TabView.h \
   $(srcdir)/TextEntry.h \
+  $(srcdir)/TextEntryComposeSeqs.h \
   $(srcdir)/InputMethodIBus.h \
   $(srcdir)/TextLoader.h \
   $(srcdir)/TextureArea.h \
