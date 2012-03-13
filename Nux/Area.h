@@ -609,6 +609,17 @@ namespace nux
     //! If this variable is true, then this area has the keyboard focus.
     bool has_key_focus_;
 
+    void SetNextObjectToKeyFocusArea(Area*);
+
+    //! Gets the next object in the chain that ends with the area that has the keyboard focus.
+    /*!
+        Gets the next object in the chain that ends with the area that has the keyboard focus.
+        The next object is a child of this area.
+
+        @return An area that is the next object in the chain that leads to the area that has the keyboard focus.
+    */
+    Area* GetNextObjectToKeyFocusArea();
+
     //! If this variable is not NULL, then this area is part of the keyboard focus chain.
     Area* next_object_to_key_focus_area_;
 
