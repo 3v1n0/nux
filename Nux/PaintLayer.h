@@ -86,7 +86,7 @@ namespace nux
     */
     CompositionLayer(ObjectPtr <IOpenGLBaseTexture> texture0, TexCoordXForm texxform0, const Color& color0,
 		     ObjectPtr <IOpenGLBaseTexture> texture1, TexCoordXForm texxform1, const Color& color1,
-		     GraphicsEngine::BlendMode blend_mode,
+		     LayerBlendMode layer_blend_mode,
 		     bool write_alpha, const ROPConfig& ROP);
 
     //! Layer blend operation.
@@ -94,7 +94,7 @@ namespace nux
         Blend(texture0*color0, blend_color);
     */
     CompositionLayer(ObjectPtr <IOpenGLBaseTexture> texture0, TexCoordXForm texxform0, const Color& color0,
-		     const Color& blend_color, GraphicsEngine::BlendMode blend_mode,
+		     const Color& blend_color, LayerBlendMode layer_blend_mode,
 		     bool write_alpha, const ROPConfig& ROP);
 
     //! Layer blend operation.
@@ -103,7 +103,7 @@ namespace nux
     */
     CompositionLayer(const Color& base_color, ObjectPtr <IOpenGLBaseTexture> texture0, 
 		     TexCoordXForm texxform0, const Color& color0,
-		     GraphicsEngine::BlendMode blend_mode,
+		     LayerBlendMode layer_blend_mode,
 		     bool write_alpha, const ROPConfig& ROP);
     
     virtual ~CompositionLayer();
@@ -127,7 +127,7 @@ namespace nux
     bool m_write_alpha;
     ROPConfig m_rop;
 
-    GraphicsEngine::BlendMode m_blend_mode;
+    LayerBlendMode m_blend_mode;
     
     
     
@@ -138,7 +138,7 @@ namespace nux
   public:
     TextureLayer(ObjectPtr< IOpenGLBaseTexture > device_texture, TexCoordXForm texxform, const Color& color, bool WriteAlpha = false, const ROPConfig& ROP = ROPConfig::Default);
     TextureLayer(ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm texxform, const Color& color0,
-		 bool write_alpha, const ROPConfig& ROP, const Color& blend_color, GraphicsEngine::BlendMode color_blend_mode);
+		 bool write_alpha, const ROPConfig& ROP, const Color& blend_color, LayerBlendMode color_blend_mode);
     virtual ~TextureLayer();
     virtual void Renderlayer(GraphicsEngine& graphics_engine);
     virtual AbstractPaintLayer* Clone() const;
@@ -153,7 +153,7 @@ namespace nux
     TexCoordXForm m_texxform;
     
     Color m_blend_color;
-    GraphicsEngine::BlendMode m_color_blend_mode;
+    LayerBlendMode m_color_blend_mode;
   };
 
 }

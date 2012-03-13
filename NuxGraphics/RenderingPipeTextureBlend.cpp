@@ -34,14 +34,14 @@
 namespace nux
 {
   const char* const
-  GraphicsEngine::GetBlendModeBlendFunc (BlendMode blend_mode)
+  GraphicsEngine::GetBlendModeBlendFunc(LayerBlendMode layer_blend_mode)
   {
-    switch (blend_mode)
+    switch (layer_blend_mode)
       {
-      case BLEND_MODE_NORMAL:
+      case LAYER_BLEND_MODE_NORMAL:
 	return BlendNormalShader;
         break;
-      case BLEND_MODE_OVERLAY:
+      case LAYER_BLEND_MODE_OVERLAY:
 	return BlendOverlayShader;
 	break;
 	
@@ -51,14 +51,14 @@ namespace nux
   }
 
 const char* const
-GraphicsEngine::GetBlendModeString (BlendMode blend_mode)
+GraphicsEngine::GetBlendModeString(LayerBlendMode layer_blend_mode)
 {
-  switch (blend_mode)
+  switch (layer_blend_mode)
     {
-    case BLEND_MODE_NORMAL:
+    case LAYER_BLEND_MODE_NORMAL:
       return "BlendNormal";
       break;
-    case BLEND_MODE_OVERLAY:
+    case LAYER_BLEND_MODE_OVERLAY:
       return "BlendOverlay";
       break;
     default:
@@ -66,11 +66,11 @@ GraphicsEngine::GetBlendModeString (BlendMode blend_mode)
     }
 }
 
-ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetColorBlendOverTexProgram(BlendMode blend_mode)
+ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetColorBlendOverTexProgram(LayerBlendMode layer_blend_mode)
 {
-  if (blend_tex_color_prog_[blend_mode].IsValid())
+  if (blend_tex_color_prog_[layer_blend_mode].IsValid())
   {
-    return blend_tex_color_prog_[blend_mode];
+    return blend_tex_color_prog_[layer_blend_mode];
   }
   
   ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
@@ -109,33 +109,33 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetColorBlendOverTexProgram(Blen
                     }";
 
     int l = PSString.Size();
-    l += strlen (GetBlendModeBlendFunc (blend_mode));
-    l += strlen (GetBlendModeString (blend_mode)) + 1;
+    l += strlen(GetBlendModeBlendFunc(layer_blend_mode));
+    l += strlen(GetBlendModeString(layer_blend_mode)) + 1;
     
     char* shader_prog = new char[l];
-    sprintf(shader_prog, PSString.GetTCharPtr(), GetBlendModeBlendFunc (blend_mode),
-	    GetBlendModeString (blend_mode));
+    sprintf(shader_prog, PSString.GetTCharPtr(), GetBlendModeBlendFunc(layer_blend_mode),
+	    GetBlendModeString(layer_blend_mode));
     
-    blend_tex_color_prog_[blend_mode] = _graphics_display.m_DeviceFactory->CreateShaderProgram();
+    blend_tex_color_prog_[layer_blend_mode] = _graphics_display.m_DeviceFactory->CreateShaderProgram();
     VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
     PS->SetShaderCode(shader_prog, "#define SAMPLERTEX2D");
     
     delete [] shader_prog;
     
-    blend_tex_color_prog_[blend_mode]->ClearShaderObjects();
-    blend_tex_color_prog_[blend_mode]->AddShaderObject(VS);
-    blend_tex_color_prog_[blend_mode]->AddShaderObject(PS);
-    CHECKGL(glBindAttribLocation(blend_tex_color_prog_[blend_mode]->GetOpenGLID(), 0, "AVertex"));
-    blend_tex_color_prog_[blend_mode]->Link();
+    blend_tex_color_prog_[layer_blend_mode]->ClearShaderObjects();
+    blend_tex_color_prog_[layer_blend_mode]->AddShaderObject(VS);
+    blend_tex_color_prog_[layer_blend_mode]->AddShaderObject(PS);
+    CHECKGL(glBindAttribLocation(blend_tex_color_prog_[layer_blend_mode]->GetOpenGLID(), 0, "AVertex"));
+    blend_tex_color_prog_[layer_blend_mode]->Link();
     
-    return blend_tex_color_prog_[blend_mode];    
+    return blend_tex_color_prog_[layer_blend_mode];    
 }
 
-  ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetTexBlendOverColorProgram(BlendMode blend_mode)
+  ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetTexBlendOverColorProgram(LayerBlendMode layer_blend_mode)
 {
-  if (blend_color_tex_prog_[blend_mode].IsValid())
+  if (blend_color_tex_prog_[layer_blend_mode].IsValid())
   {
-    return blend_color_tex_prog_[blend_mode];
+    return blend_color_tex_prog_[layer_blend_mode];
   }
   
   ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
@@ -175,33 +175,33 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetColorBlendOverTexProgram(Blen
                 }";
 
     int l = PSString.Size();
-    l += strlen (GetBlendModeBlendFunc (blend_mode));
-    l += strlen (GetBlendModeString (blend_mode)) + 1;
+    l += strlen(GetBlendModeBlendFunc(layer_blend_mode));
+    l += strlen(GetBlendModeString(layer_blend_mode)) + 1;
     
     char* shader_prog = new char[l];
-    sprintf(shader_prog, PSString.GetTCharPtr(), GetBlendModeBlendFunc (blend_mode),
-	    GetBlendModeString (blend_mode));
+    sprintf(shader_prog, PSString.GetTCharPtr(), GetBlendModeBlendFunc(layer_blend_mode),
+	    GetBlendModeString(layer_blend_mode));
     
-    blend_color_tex_prog_[blend_mode] = _graphics_display.m_DeviceFactory->CreateShaderProgram();
+    blend_color_tex_prog_[layer_blend_mode] = _graphics_display.m_DeviceFactory->CreateShaderProgram();
     VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
     PS->SetShaderCode(shader_prog, "#define SAMPLERTEX2D");
     
     delete [] shader_prog;
     
-    blend_color_tex_prog_[blend_mode]->ClearShaderObjects();
-    blend_color_tex_prog_[blend_mode]->AddShaderObject(VS);
-    blend_color_tex_prog_[blend_mode]->AddShaderObject(PS);
-    CHECKGL(glBindAttribLocation(blend_color_tex_prog_[blend_mode]->GetOpenGLID(), 0, "AVertex"));
-    blend_color_tex_prog_[blend_mode]->Link();
+    blend_color_tex_prog_[layer_blend_mode]->ClearShaderObjects();
+    blend_color_tex_prog_[layer_blend_mode]->AddShaderObject(VS);
+    blend_color_tex_prog_[layer_blend_mode]->AddShaderObject(PS);
+    CHECKGL(glBindAttribLocation(blend_color_tex_prog_[layer_blend_mode]->GetOpenGLID(), 0, "AVertex"));
+    blend_color_tex_prog_[layer_blend_mode]->Link();
     
-    return blend_color_tex_prog_[blend_mode];
+    return blend_color_tex_prog_[layer_blend_mode];
 }
 
-ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetBlendTexTexProgram (BlendMode blend_mode)
+ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetBlendTexTexProgram(LayerBlendMode layer_blend_mode)
 {
-  if (blend_tex_tex_prog_[blend_mode].IsValid())
+  if (blend_tex_tex_prog_[layer_blend_mode].IsValid())
   {
-    return blend_tex_tex_prog_[blend_mode];
+    return blend_tex_tex_prog_[layer_blend_mode];
   }
 
   ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
@@ -240,37 +240,37 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetBlendTexTexProgram (BlendMode
                     }";
 
     int l = PSString.Size();
-    l += strlen (GetBlendModeBlendFunc (blend_mode));
-    l += strlen (GetBlendModeString (blend_mode)) + 1;
+    l += strlen(GetBlendModeBlendFunc(layer_blend_mode));
+    l += strlen(GetBlendModeString(layer_blend_mode)) + 1;
     
     char* shader_prog = new char[l];
-    sprintf(shader_prog, PSString.GetTCharPtr(), GetBlendModeBlendFunc (blend_mode),
-	    GetBlendModeString (blend_mode));
+    sprintf(shader_prog, PSString.GetTCharPtr(), GetBlendModeBlendFunc(layer_blend_mode),
+	    GetBlendModeString(layer_blend_mode));
     
-    blend_tex_tex_prog_[blend_mode] = _graphics_display.m_DeviceFactory->CreateShaderProgram();
+    blend_tex_tex_prog_[layer_blend_mode] = _graphics_display.m_DeviceFactory->CreateShaderProgram();
     VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
     PS->SetShaderCode(shader_prog, "#define SAMPLERTEX2D");
     
     delete [] shader_prog;
     
-    blend_tex_tex_prog_[blend_mode]->ClearShaderObjects();
-    blend_tex_tex_prog_[blend_mode]->AddShaderObject(VS);
-    blend_tex_tex_prog_[blend_mode]->AddShaderObject(PS);
-    CHECKGL(glBindAttribLocation(blend_tex_tex_prog_[blend_mode]->GetOpenGLID(), 0, "AVertex"));
-    blend_tex_tex_prog_[blend_mode]->Link();
+    blend_tex_tex_prog_[layer_blend_mode]->ClearShaderObjects();
+    blend_tex_tex_prog_[layer_blend_mode]->AddShaderObject(VS);
+    blend_tex_tex_prog_[layer_blend_mode]->AddShaderObject(PS);
+    CHECKGL(glBindAttribLocation(blend_tex_tex_prog_[layer_blend_mode]->GetOpenGLID(), 0, "AVertex"));
+    blend_tex_tex_prog_[layer_blend_mode]->Link();
     
-    return blend_tex_tex_prog_[blend_mode];    
+    return blend_tex_tex_prog_[layer_blend_mode];    
 }
 
 void GraphicsEngine::QRP_GLSL_ColorBlendOverTex(int x, int y, int width, int height,
           ObjectPtr<IOpenGLBaseTexture> bkg_device_texture, TexCoordXForm& texxform, const Color& color0,
           const Color& foreground_color,
-          BlendMode blend_mode)
+          LayerBlendMode layer_blend_mode)
 {
   if (!UsingGLSLCodePath())
     return;
 
-    ObjectPtr<IOpenGLShaderProgram> ShaderProg = GetColorBlendOverTexProgram(blend_mode);
+    ObjectPtr<IOpenGLShaderProgram> ShaderProg = GetColorBlendOverTexProgram(layer_blend_mode);
 
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord(width, height, bkg_device_texture, texxform);
@@ -336,12 +336,12 @@ void GraphicsEngine::QRP_GLSL_ColorBlendOverTex(int x, int y, int width, int hei
 void GraphicsEngine::QRP_GLSL_TexBlendOverColor(int x, int y, int width, int height,
           const Color& background_color,
           ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& texxform0, const Color& color0,
-          BlendMode blend_mode)
+          LayerBlendMode layer_blend_mode)
 {
   if (!UsingGLSLCodePath())
     return;
 
-    ObjectPtr<IOpenGLShaderProgram> ShaderProg = GetTexBlendOverColorProgram(blend_mode);
+    ObjectPtr<IOpenGLShaderProgram> ShaderProg = GetTexBlendOverColorProgram(layer_blend_mode);
 
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord(width, height, frg_device_texture, texxform0);
@@ -412,12 +412,12 @@ void GraphicsEngine::QRP_GLSL_TexBlendOverColor(int x, int y, int width, int hei
 void GraphicsEngine::QRP_GLSL_TexBlendOverTex(int x, int y, int width, int height,
           ObjectPtr<IOpenGLBaseTexture> bkg_device_texture, TexCoordXForm& texxform0, const Color& color0,
           ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& texxform1, const Color& color1,
-          BlendMode blend_mode)
+          LayerBlendMode layer_blend_mode)
 {
   if (!UsingGLSLCodePath())
     return;
 
-  ObjectPtr <IOpenGLShaderProgram> ShaderProg = GetBlendTexTexProgram (blend_mode);
+  ObjectPtr <IOpenGLShaderProgram> ShaderProg = GetBlendTexTexProgram(layer_blend_mode);
   QRP_Compute_Texture_Coord(width, height, bkg_device_texture, texxform0);
   QRP_Compute_Texture_Coord(width, height, frg_device_texture, texxform1);
 

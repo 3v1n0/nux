@@ -278,7 +278,7 @@ namespace nux
 				  bool WriteAlpha,
 				  const ROPConfig &ROP,
 				  const Color &blend_color,
-				  GraphicsEngine::BlendMode blend_mode);
+				  LayerBlendMode layer_blend_mode);
 
     void PushDrawColorLayer(GraphicsEngine &graphics_engine, const Geometry &geo,
                              Color color,
@@ -313,7 +313,7 @@ namespace nux
 				  bool WriteAlpha,
 				  const ROPConfig &ROP,
 				  const Color &blend_color,
-				  GraphicsEngine::BlendMode blend_mode);
+				  LayerBlendMode layer_blend_mode);
     
     void PushCompositionLayer (GraphicsEngine &graphics_engine,
 			       Geometry geo,
@@ -323,7 +323,7 @@ namespace nux
 			       ObjectPtr <IOpenGLBaseTexture> texture1,
 			       TexCoordXForm texxform1,
 			       const Color &color1, 
-			       GraphicsEngine::BlendMode blend_mode,
+			       LayerBlendMode layer_blend_mode,
 			       bool WriteAlpha,
 			       const ROPConfig &ROP);
 
@@ -335,7 +335,7 @@ namespace nux
 			       ObjectPtr <IOpenGLBaseTexture> texture1,
 			       TexCoordXForm texxform1,
 			       const Color &color1, 
-			       GraphicsEngine::BlendMode blend_mode,
+			       LayerBlendMode layer_blend_mode,
 			       bool WriteAlpha,
 			       const ROPConfig &ROP);
 
@@ -345,7 +345,7 @@ namespace nux
 			       TexCoordXForm texxform0,
 			       const Color& color0,
 			       const Color& blend_color,
-			       GraphicsEngine::BlendMode blend_mode,
+			       LayerBlendMode layer_blend_mode,
 			       bool WriteAlpha,
 			       const ROPConfig &ROP);
     
@@ -355,7 +355,7 @@ namespace nux
 				   TexCoordXForm texxform0,
 				   const Color &color0,
 				   const Color& blend_color,
-				   GraphicsEngine::BlendMode blend_mode,
+				   LayerBlendMode layer_blend_mode,
 				   bool WriteAlpha,
 				   const ROPConfig &ROP);
 
@@ -365,7 +365,7 @@ namespace nux
 			       ObjectPtr <IOpenGLBaseTexture> texture0,
 			       TexCoordXForm texxform0,
 			       const Color& color0,
-			       GraphicsEngine::BlendMode blend_mode,
+			       LayerBlendMode layer_blend_mode,
 			       bool WriteAlpha,
 			       const ROPConfig &ROP);
     
@@ -375,7 +375,7 @@ namespace nux
 				   ObjectPtr <IOpenGLBaseTexture> texture0,
 				   TexCoordXForm texxform0,
 				   const Color &color0,
-				   GraphicsEngine::BlendMode blend_mode,
+				   LayerBlendMode layer_blend_mode,
 				   bool WriteAlpha,
 				   const ROPConfig &ROP);
 

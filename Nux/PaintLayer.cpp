@@ -129,7 +129,7 @@ namespace nux
   
   CompositionLayer::CompositionLayer (ObjectPtr <IOpenGLBaseTexture> texture0, TexCoordXForm texxform0, const Color& color0,
               ObjectPtr <IOpenGLBaseTexture> texture1, TexCoordXForm texxform1, const Color& color1,
-              GraphicsEngine::BlendMode blend_mode, bool write_alpha, const ROPConfig& ROP)
+              LayerBlendMode layer_blend_mode, bool write_alpha, const ROPConfig& ROP)
   {
     m_source_texture = texture0;
     m_source_texture_color = color0;
@@ -139,14 +139,14 @@ namespace nux
     m_foreground_texture_color = color1;
     m_foreground_texture_texxform = texxform1;
     
-    m_blend_mode = blend_mode;
+    m_blend_mode = layer_blend_mode;
     
     m_rop = ROP;
     m_write_alpha = write_alpha;
   }
 
   CompositionLayer::CompositionLayer (ObjectPtr <IOpenGLBaseTexture> texture0, TexCoordXForm texxform0, const Color& color0,
-          const Color& blend_color, GraphicsEngine::BlendMode blend_mode,
+          const Color& blend_color, LayerBlendMode layer_blend_mode,
           bool write_alpha, const ROPConfig& ROP)
   {
     m_source_texture = texture0;
@@ -155,7 +155,7 @@ namespace nux
     
     m_foreground_color = blend_color;
     
-    m_blend_mode = blend_mode;
+    m_blend_mode = layer_blend_mode;
     
     m_write_alpha = write_alpha;
     m_rop = ROP;
@@ -163,7 +163,7 @@ namespace nux
 
   CompositionLayer::CompositionLayer(const Color&base_color, ObjectPtr<IOpenGLBaseTexture> texture0,
           TexCoordXForm texxform0, const Color& color0,
-          GraphicsEngine::BlendMode blend_mode,
+          LayerBlendMode layer_blend_mode,
           bool write_alpha, const ROPConfig& ROP)
   {
     m_source_color = base_color;
@@ -172,7 +172,7 @@ namespace nux
     m_foreground_texture_texxform = texxform0;
     m_foreground_texture_color = color0;
     
-    m_blend_mode = blend_mode;
+    m_blend_mode = layer_blend_mode;
     m_write_alpha = write_alpha;
     
     m_rop = ROP;
@@ -251,11 +251,11 @@ namespace nux
     m_rop = ROP;
     m_texxform = texxform;
     
-    m_color_blend_mode = GraphicsEngine::BLEND_MODE_LAST;
+    m_color_blend_mode = LAYER_BLEND_MODE_LAST;
   }
   
   TextureLayer::TextureLayer(ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm texxform, const Color& color0,
-            bool write_alpha, const ROPConfig& ROP, const Color& blend_color, GraphicsEngine::BlendMode color_blend_mode)
+            bool write_alpha, const ROPConfig& ROP, const Color& blend_color, LayerBlendMode color_blend_mode)
   {
     m_device_texture = device_texture;
     m_color = color0;
@@ -289,7 +289,7 @@ namespace nux
     graphics_engine.GetRenderStates().SetColorMask(GL_TRUE, GL_TRUE, GL_TRUE, m_write_alpha ? GL_TRUE : GL_FALSE);
     graphics_engine.GetRenderStates().SetBlend(m_rop.Blend, m_rop.SrcBlend, m_rop.DstBlend);
 
-    if (m_color_blend_mode == GraphicsEngine::BLEND_MODE_LAST)
+    if (m_color_blend_mode == LAYER_BLEND_MODE_LAST)
     {
       graphics_engine.QRP_1Tex(geometry_.x, geometry_.y, geometry_.GetWidth(), geometry_.GetHeight(), m_device_texture,
         m_texxform, m_color);

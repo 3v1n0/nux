@@ -112,6 +112,38 @@ namespace nux
     ObjectPtr<IOpenGLBaseTexture> temp_texture;
   };
 
+  typedef enum
+  {
+    LAYER_BLEND_MODE_NORMAL,
+    LAYER_BLEND_MODE_LIGHTEN,
+    LAYER_BLEND_MODE_DARKEN,
+    LAYER_BLEND_MODE_MULTIPLY,
+    LAYER_BLEND_MODE_AVERAGE,
+    LAYER_BLEND_MODE_ADD,
+    LAYER_BLEND_MODE_SUBTRACT,
+    LAYER_BLEND_MODE_DIFFERENCE,
+    LAYER_BLEND_MODE_NEGATION,
+    LAYER_BLEND_MODE_EXCLUSION,
+    LAYER_BLEND_MODE_SCREEN,
+    LAYER_BLEND_MODE_OVERLAY,
+    LAYER_BLEND_MODE_SOFT_LIGHT,
+    LAYER_BLEND_MODE_HARD_LIGHT,
+    LAYER_BLEND_MODE_COLOR_DODGE,
+    LAYER_BLEND_MODE_LINEAR_DODGE,
+    LAYER_BLEND_MODE_COLOR_BURN,
+    LAYER_BLEND_MODE_LINEAR_BLUR,
+    LAYER_BLEND_MODE_LINEAR_LIGHT,
+    LAYER_BLEND_MODE_VIVID_LIGHT,
+    LAYER_BLEND_MODE_PIN_LIGHT,
+    LAYER_BLEND_MODE_HARD_MIX,
+    LAYER_BLEND_MODE_REFLECT,
+    LAYER_BLEND_MODE_GLOW,
+    LAYER_BLEND_MODE_PHOENIX,
+    LAYER_BLEND_MODE_OPACITY,
+    LAYER_BLEND_MODE_LAST
+  } LayerBlendMode;
+
+
   //! Rendering engine class
   /*!
       This is the object that renders the graphics primitives.
@@ -720,37 +752,6 @@ namespace nux
     */
     int BlendStackDepth();
 
-    typedef enum
-    {
-      BLEND_MODE_NORMAL,
-      BLEND_MODE_LIGHTEN,
-      BLEND_MODE_DARKEN,
-      BLEND_MODE_MULTIPLY,
-      BLEND_MODE_AVERAGE,
-      BLEND_MODE_ADD,
-      BLEND_MODE_SUBTRACT,
-      BLEND_MODE_DIFFERENCE,
-      BLEND_MODE_NEGATION,
-      BLEND_MODE_EXCLUSION,
-      BLEND_MODE_SCREEN,
-      BLEND_MODE_OVERLAY,
-      BLEND_MODE_SOFT_LIGHT,
-      BLEND_MODE_HARD_LIGHT,
-      BLEND_MODE_COLOR_DODGE,
-      BLEND_MODE_LINEAR_DODGE,
-      BLEND_MODE_COLOR_BURN,
-      BLEND_MODE_LINEAR_BLUR,
-      BLEND_MODE_LINEAR_LIGHT,
-      BLEND_MODE_VIVID_LIGHT,
-      BLEND_MODE_PIN_LIGHT,
-      BLEND_MODE_HARD_MIX,
-      BLEND_MODE_REFLECT,
-      BLEND_MODE_GLOW,
-      BLEND_MODE_PHOENIX,
-      BLEND_MODE_OPACITY,
-      BLEND_MODE_LAST
-    } BlendMode;
-
     //! Blends a color over a texture layer.
     /*!
         Blends a color over a texture layer.
@@ -761,7 +762,7 @@ namespace nux
     void QRP_GLSL_ColorBlendOverTex(int x, int y, int width, int height,
           ObjectPtr<IOpenGLBaseTexture> bkg_device_texture, TexCoordXForm& texxform, const Color& color0,
           const Color& foreground_color,
-          BlendMode blend_mode);
+          LayerBlendMode layer_blend_mode);
 
     //! Blends a texture over a color layer.
     /*!
@@ -773,7 +774,7 @@ namespace nux
     void QRP_GLSL_TexBlendOverColor(int x, int y, int width, int height,
           const Color& background_color,
           ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& texxform0, const Color& color0,
-          BlendMode blend_mode);
+          LayerBlendMode layer_blend_mode);
 
     //! Blends a texture over a texture layer.
     /*!
@@ -785,7 +786,7 @@ namespace nux
     void QRP_GLSL_TexBlendOverTex(int x, int y, int width, int height,
           ObjectPtr<IOpenGLBaseTexture> bkg_device_texture, TexCoordXForm& texxform0, const Color& color0,
           ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& texxform1, const Color& color1,
-          BlendMode blend_mode);
+          LayerBlendMode layer_blend_mode);
 
 
   private:
@@ -973,16 +974,16 @@ namespace nux
     ObjectPtr<IOpenGLShaderProgram> shader_layer_blend_multiply_;
 
     // Blend modes
-    ObjectPtr<IOpenGLShaderProgram> blend_tex_color_prog_[BLEND_MODE_LAST];
-    ObjectPtr<IOpenGLShaderProgram> blend_color_tex_prog_[BLEND_MODE_LAST];
-    ObjectPtr<IOpenGLShaderProgram> blend_tex_tex_prog_[BLEND_MODE_LAST];
+    ObjectPtr<IOpenGLShaderProgram> blend_tex_color_prog_[LAYER_BLEND_MODE_LAST];
+    ObjectPtr<IOpenGLShaderProgram> blend_color_tex_prog_[LAYER_BLEND_MODE_LAST];
+    ObjectPtr<IOpenGLShaderProgram> blend_tex_tex_prog_[LAYER_BLEND_MODE_LAST];
     
-    const char* const GetBlendModeBlendFunc(BlendMode blend_mode);
-    const char* const GetBlendModeString(BlendMode blend_mode);
+    const char* const GetBlendModeBlendFunc(LayerBlendMode layer_blend_mode);
+    const char* const GetBlendModeString(LayerBlendMode layer_blend_mode);
     
-    ObjectPtr <IOpenGLShaderProgram> GetColorBlendOverTexProgram(BlendMode blend_mode);
-    ObjectPtr <IOpenGLShaderProgram> GetTexBlendOverColorProgram(BlendMode blend_mode);
-    ObjectPtr <IOpenGLShaderProgram> GetBlendTexTexProgram(BlendMode blend_mode);
+    ObjectPtr <IOpenGLShaderProgram> GetColorBlendOverTexProgram(LayerBlendMode layer_blend_mode);
+    ObjectPtr <IOpenGLShaderProgram> GetTexBlendOverColorProgram(LayerBlendMode layer_blend_mode);
+    ObjectPtr <IOpenGLShaderProgram> GetBlendTexTexProgram(LayerBlendMode layer_blend_mode);
 
 
 

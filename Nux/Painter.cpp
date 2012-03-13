@@ -939,13 +939,13 @@ namespace nux
 					  ObjectPtr <IOpenGLBaseTexture> texture1,
 					  TexCoordXForm texxform1,
 					  const Color &color1, 
-					  GraphicsEngine::BlendMode blend_mode,
+					  LayerBlendMode layer_blend_mode,
 					  bool WriteAlpha,
 					  const ROPConfig &ROP)
   {
     CompositionLayer *cl = new CompositionLayer (texture0, texxform0, color0,
 						 texture1, texxform1, color1,
-						 blend_mode, WriteAlpha, ROP);
+						 layer_blend_mode, WriteAlpha, ROP);
     cl->SetModelViewMatrix(window_thread_->GetGraphicsEngine().GetModelViewMatrix());
     cl->SetGeometry(geo);
     
@@ -958,12 +958,12 @@ namespace nux
 					  TexCoordXForm texxform0,
 					  const Color& color0,
 					  const Color& blend_color,
-					  GraphicsEngine::BlendMode blend_mode,
+					  LayerBlendMode layer_blend_mode,
 					  bool WriteAlpha,
 					  const ROPConfig &ROP)
   {
     CompositionLayer *cl = new CompositionLayer (texture0, texxform0, color0, blend_color,
-						 blend_mode, WriteAlpha, ROP);
+						 layer_blend_mode, WriteAlpha, ROP);
     cl->SetModelViewMatrix(window_thread_->GetGraphicsEngine().GetModelViewMatrix());
     cl->SetGeometry(geo);
 
@@ -976,12 +976,12 @@ namespace nux
 					  ObjectPtr <IOpenGLBaseTexture> texture0,
 					  TexCoordXForm texxform0,
 					  const Color& color0,
-					  GraphicsEngine::BlendMode blend_mode,
+					  LayerBlendMode layer_blend_mode,
 					  bool WriteAlpha,
 					  const ROPConfig &ROP)
   {
     CompositionLayer *cl = new CompositionLayer (base_color, texture0, texxform0,
-						 color0, blend_mode,
+						 color0, layer_blend_mode,
 						 WriteAlpha, ROP);
 
     cl->SetModelViewMatrix(window_thread_->GetGraphicsEngine().GetModelViewMatrix());
@@ -997,12 +997,12 @@ namespace nux
 					      TexCoordXForm texxform0,
 					      const Color &color0,
 					      const Color& blend_color,
-					      GraphicsEngine::BlendMode blend_mode,
+					      LayerBlendMode layer_blend_mode,
 					      bool WriteAlpha,
 					      const ROPConfig &ROP)
   {
     PushCompositionLayer(graphics_engine, geo, texture0, texxform0,
-			 color0, blend_color, blend_mode, WriteAlpha, ROP);
+			 color0, blend_color, layer_blend_mode, WriteAlpha, ROP);
     PaintBackground(graphics_engine, geo);
   }
   
@@ -1014,12 +1014,12 @@ namespace nux
 					      ObjectPtr <IOpenGLBaseTexture> texture1,
 					      TexCoordXForm texxform1,
 					      const Color &color1, 
-					      GraphicsEngine::BlendMode blend_mode,
+					      LayerBlendMode layer_blend_mode,
 					      bool WriteAlpha,
 					      const ROPConfig &ROP)
   {
     PushCompositionLayer(graphics_engine, geo, texture0, texxform0,
-			 color0, texture1, texxform1, color1, blend_mode,
+			 color0, texture1, texxform1, color1, layer_blend_mode,
 			 WriteAlpha, ROP);
     PaintBackground(graphics_engine, geo);
   }
@@ -1030,12 +1030,12 @@ namespace nux
 					      ObjectPtr <IOpenGLBaseTexture> texture0,
 					      TexCoordXForm texxform0,
 					      const Color &color0,
-					      GraphicsEngine::BlendMode blend_mode,
+					      LayerBlendMode layer_blend_mode,
 					      bool WriteAlpha,
 					      const ROPConfig &ROP)
   {
     PushCompositionLayer(graphics_engine, geo, base_color, texture0,
-			 texxform0, color0, blend_mode, WriteAlpha, ROP);
+			 texxform0, color0, layer_blend_mode, WriteAlpha, ROP);
   }
 
   void BasePainter::PushColorizeTextureLayer(GraphicsEngine &graphics_engine, Geometry geo,
@@ -1045,9 +1045,9 @@ namespace nux
 					     bool WriteAlpha,
 					     const ROPConfig &ROP,
 					     const Color &blend_color,
-					     GraphicsEngine::BlendMode blend_mode)
+					     LayerBlendMode layer_blend_mode)
   {
-    TextureLayer *tl = new TextureLayer(DeviceTexture, texxform, color, WriteAlpha, ROP, blend_color, blend_mode);
+    TextureLayer *tl = new TextureLayer(DeviceTexture, texxform, color, WriteAlpha, ROP, blend_color, layer_blend_mode);
     tl->SetModelViewMatrix(window_thread_->GetGraphicsEngine().GetModelViewMatrix());
     tl->SetGeometry(geo);
     active_paint_layer_stack_.push_front(tl);
@@ -1071,9 +1071,9 @@ namespace nux
 						 bool WriteAlpha,
 						 const ROPConfig &ROP,
 						 const Color &blend_color,
-						 GraphicsEngine::BlendMode blend_mode)
+						 LayerBlendMode layer_blend_mode)
   {
-    PushColorizeTextureLayer(graphics_engine, geo, DeviceTexture, texxform, color, WriteAlpha, ROP, blend_color, blend_mode);
+    PushColorizeTextureLayer(graphics_engine, geo, DeviceTexture, texxform, color, WriteAlpha, ROP, blend_color, layer_blend_mode);
     PaintBackground(graphics_engine, geo);
   }
 
