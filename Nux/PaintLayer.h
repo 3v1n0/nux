@@ -34,12 +34,12 @@ namespace nux
   class ColorLayer: public AbstractPaintLayer
   {
   public:
-    ColorLayer(const Color &color, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default);
+    ColorLayer(const Color& color, bool WriteAlpha = false, const ROPConfig& ROP = ROPConfig::Default);
 
-    void SetColor(const Color &color);
+    void SetColor(const Color& color);
     Color GetColor() const;
-    virtual void Renderlayer(GraphicsEngine &graphics_engine);
-    virtual AbstractPaintLayer *Clone() const;
+    virtual void Renderlayer(GraphicsEngine& graphics_engine);
+    virtual AbstractPaintLayer* Clone() const;
 
   private:
     Color _color;
@@ -50,9 +50,9 @@ namespace nux
   class ShapeLayer: public AbstractPaintLayer
   {
   public:
-    ShapeLayer(UXStyleImageRef imageStyle, const Color &color, unsigned long Corners = eAllCorners, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default);
-    virtual void Renderlayer(GraphicsEngine &graphics_engine);
-    virtual AbstractPaintLayer *Clone() const;
+    ShapeLayer(UXStyleImageRef imageStyle, const Color& color, unsigned long Corners = eAllCorners, bool WriteAlpha = false, const ROPConfig& ROP = ROPConfig::Default);
+    virtual void Renderlayer(GraphicsEngine& graphics_engine);
+    virtual AbstractPaintLayer* Clone() const;
 
   private:
     UXStyleImageRef m_image_style;
@@ -65,9 +65,9 @@ namespace nux
   class SliceScaledTextureLayer: public AbstractPaintLayer
   {
   public:
-    SliceScaledTextureLayer(UXStyleImageRef imageStyle, const Color &color, unsigned long Corners = eAllCorners, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default);
-    virtual void Renderlayer(GraphicsEngine &graphics_engine);
-    virtual AbstractPaintLayer *Clone() const;
+    SliceScaledTextureLayer(UXStyleImageRef imageStyle, const Color& color, unsigned long Corners = eAllCorners, bool WriteAlpha = false, const ROPConfig& ROP = ROPConfig::Default);
+    virtual void Renderlayer(GraphicsEngine& graphics_engine);
+    virtual AbstractPaintLayer* Clone() const;
 
   private:
     UXStyleImageRef m_image_style;
@@ -76,14 +76,72 @@ namespace nux
     ROPConfig m_rop;
     unsigned long m_corners;
   };
+  
+  class CompositionLayer: public AbstractPaintLayer
+  {
+  public:
+    //! Layer blend operation.
+    /*!
+        Blend(texture0*color0, texture1*color1);
+    */
+    CompositionLayer(ObjectPtr <IOpenGLBaseTexture> texture0, TexCoordXForm texxform0, const Color& color0,
+		     ObjectPtr <IOpenGLBaseTexture> texture1, TexCoordXForm texxform1, const Color& color1,
+		     LayerBlendMode layer_blend_mode,
+		     bool write_alpha, const ROPConfig& ROP);
+
+    //! Layer blend operation.
+    /*!
+        Blend(texture0*color0, blend_color);
+    */
+    CompositionLayer(ObjectPtr <IOpenGLBaseTexture> texture0, TexCoordXForm texxform0, const Color& color0,
+		     const Color& blend_color, LayerBlendMode layer_blend_mode,
+		     bool write_alpha, const ROPConfig& ROP);
+
+    //! Layer blend operation.
+    /*!
+        Blend(texture0*color0, color0);
+    */
+    CompositionLayer(const Color& base_color, ObjectPtr <IOpenGLBaseTexture> texture0, 
+		     TexCoordXForm texxform0, const Color& color0,
+		     LayerBlendMode layer_blend_mode,
+		     bool write_alpha, const ROPConfig& ROP);
+    
+    virtual ~CompositionLayer();
+    
+    virtual void Renderlayer(GraphicsEngine& graphics_engine);
+    
+    virtual AbstractPaintLayer* Clone() const;
+
+  private:
+    ObjectPtr <IOpenGLBaseTexture > m_source_texture;
+    Color m_source_texture_color;
+    TexCoordXForm m_source_texture_texxform;
+    
+    ObjectPtr <IOpenGLBaseTexture> m_foreground_texture;
+    Color m_foreground_texture_color;
+    TexCoordXForm m_foreground_texture_texxform;
+    
+    Color m_source_color;
+    Color m_foreground_color;
+    
+    bool m_write_alpha;
+    ROPConfig m_rop;
+
+    LayerBlendMode m_blend_mode;
+    
+    
+    
+  };
 
   class TextureLayer: public AbstractPaintLayer
   {
   public:
-    TextureLayer(ObjectPtr< IOpenGLBaseTexture > device_texture, TexCoordXForm texxform, const Color &color, bool WriteAlpha = false, const ROPConfig &ROP = ROPConfig::Default);
+    TextureLayer(ObjectPtr< IOpenGLBaseTexture > device_texture, TexCoordXForm texxform, const Color& color, bool WriteAlpha = false, const ROPConfig& ROP = ROPConfig::Default);
+    TextureLayer(ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm texxform, const Color& color0,
+		 bool write_alpha, const ROPConfig& ROP, const Color& blend_color, LayerBlendMode color_blend_mode);
     virtual ~TextureLayer();
-    virtual void Renderlayer(GraphicsEngine &graphics_engine);
-    virtual AbstractPaintLayer *Clone() const;
+    virtual void Renderlayer(GraphicsEngine& graphics_engine);
+    virtual AbstractPaintLayer* Clone() const;
 
     virtual ObjectPtr< IOpenGLBaseTexture> GetDeviceTexture();
 
@@ -93,6 +151,9 @@ namespace nux
     bool m_write_alpha;
     ROPConfig m_rop;
     TexCoordXForm m_texxform;
+    
+    Color m_blend_color;
+    LayerBlendMode m_color_blend_mode;
   };
 
 }
