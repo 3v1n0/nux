@@ -31,27 +31,6 @@
 
 namespace nux
 {
-#ifndef NUX_OPENGLES_20
-  #define VertexShaderHeader "#version 110               \n"
-#else
-  #define VertexShaderHeader 
-#endif
-
-#ifndef NUX_OPENGLES_20
-  #define FragmentShaderHeader "#version 110               \n"
-#else
-  #define FragmentShaderHeader "precision mediump float;   \n"
-#endif
-
-// For some strange reason, make sure that the attribute holding the vertex position has a name that comes first in alphabetic order before all
-// other attributes. Otherwise you get a bug on NVidia! Why is that???
-// [Update]: it seems that the vertex attributes have to be declared in alphabetic order in the shader. It does not matter if the vertex
-// attribute is declared first in the alphabetic order.
-
-// For some other strange reason, on Intel GMA, the order in which attributes are used in the vertex shaders, is the order used to associated them with a
-// and attribute location. One has to make sure that the vertex attribute get index 0. So use the vertex attribute first. All of this does not make any sense.
-// Need more info from driver developers.
-
   void GraphicsEngine::InitSlColorShader()
   {
     ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
@@ -60,7 +39,7 @@ namespace nux
     NString PSString;
 
     VSString =  
-                     VertexShaderHeader
+                     NUX_VERTEX_SHADER_HEADER
                      "uniform mat4 ViewProjectionMatrix;                \n\
                      attribute vec4 AVertex;                            \n\
                      attribute vec4 VertexColor;                        \n\
@@ -74,7 +53,7 @@ namespace nux
     VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
 
     PSString =  
-                    FragmentShaderHeader
+                    NUX_FRAGMENT_SHADER_HEADER
                     "varying vec4 vColor;           \n\
                      void main()                    \n\
                      {                              \n\
@@ -97,7 +76,7 @@ namespace nux
     NString PSString;
 
     VSString =  
-                     VertexShaderHeader
+                     NUX_VERTEX_SHADER_HEADER
                      "attribute vec4 AVertex;                                 \n\
                      attribute vec4 MyTextureCoord0;                         \n\
                      attribute vec4 VertexColor;                             \n\
@@ -112,7 +91,7 @@ namespace nux
                      }";
 
     PSString =  
-                    FragmentShaderHeader
+                    NUX_FRAGMENT_SHADER_HEADER
                      "varying vec4 varyTexCoord0;                                 \n\
                      varying vec4 varyVertexColor;                               \n\
                      uniform sampler2D TextureObject0;                           \n\
@@ -146,7 +125,7 @@ namespace nux
     NString PSString;
 
     VSString =  
-                     VertexShaderHeader
+                     NUX_VERTEX_SHADER_HEADER
                      "attribute vec4 AVertex;                                 \n\
                      attribute vec4 MyTextureCoord0;                         \n\
                      attribute vec4 VertexColor;                             \n\
@@ -161,7 +140,7 @@ namespace nux
                      }";
 
     PSString =  
-                    FragmentShaderHeader
+                    NUX_FRAGMENT_SHADER_HEADER
                     "varying vec4 varyTexCoord0;                                        \n\
                      varying vec4 varyVertexColor;                                      \n\
                      uniform sampler2D TextureObject0;                                  \n\
@@ -198,7 +177,7 @@ namespace nux
     // other  attributes. Otherwise you get a bug on NVidia! Why is that???
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    VSString =        VertexShaderHeader
+    VSString =        NUX_VERTEX_SHADER_HEADER
                       "uniform mat4 ViewProjectionMatrix;                      \n\
                       attribute vec4 AVertex;                                 \n\
                       attribute vec4 MyTextureCoord0;                         \n\
@@ -212,7 +191,7 @@ namespace nux
                       gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
                       }";
 
-    PSString =      FragmentShaderHeader
+    PSString =      NUX_FRAGMENT_SHADER_HEADER
                     "varying vec4 varyTexCoord0;                                 \n\
                     varying vec4 varyTexCoord1;                                 \n\
                     uniform vec4 color0;                                        \n\
@@ -261,7 +240,7 @@ namespace nux
     // other  attributes. Otherwise you get a bug on NVidia! Why is that???
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    VSString =          VertexShaderHeader
+    VSString =          NUX_VERTEX_SHADER_HEADER
                         "uniform mat4 ViewProjectionMatrix;                      \n\
                         attribute vec4 AVertex;                                 \n\
                         attribute vec4 MyTextureCoord0;                         \n\
@@ -275,7 +254,7 @@ namespace nux
                         gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
                         }";
 
-    PSString =      FragmentShaderHeader
+    PSString =      NUX_FRAGMENT_SHADER_HEADER
                     "varying vec4 varyTexCoord0;                                 \n\
                     varying vec4 varyTexCoord1;                                 \n\
                     uniform vec4 color0;                                        \n\
@@ -316,7 +295,7 @@ namespace nux
     // other  attributes. Otherwise you get a bug on NVidia! Why is that???
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    VSString =           VertexShaderHeader
+    VSString =           NUX_VERTEX_SHADER_HEADER
                          "uniform mat4 ViewProjectionMatrix;                      \n\
                          attribute vec4 AVertex;                                 \n\
                          attribute vec4 MyTextureCoord0;                         \n\
@@ -330,7 +309,7 @@ namespace nux
                          gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
                          }";
 
-    PSString =           FragmentShaderHeader
+    PSString =           NUX_FRAGMENT_SHADER_HEADER
                          "varying vec4 varyTexCoord0;                                 \n\
                          varying vec4 varyTexCoord1;                                 \n\
                          uniform vec4 color0;                                        \n\
@@ -379,7 +358,7 @@ namespace nux
     // other  attributes. Otherwise you get a bug on NVidia! Why is that???
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    VSString =          VertexShaderHeader
+    VSString =          NUX_VERTEX_SHADER_HEADER
                         "uniform mat4 ViewProjectionMatrix;                      \n\
                         attribute vec4 AVertex;                                 \n\
                         attribute vec4 MyTextureCoord0;                         \n\
@@ -399,7 +378,7 @@ namespace nux
                         gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
                         }";
 
-    PSString =          FragmentShaderHeader
+    PSString =          NUX_FRAGMENT_SHADER_HEADER
                         "varying vec4 varyTexCoord0;                                 \n\
                         varying vec4 varyTexCoord1;                                 \n\
                         varying vec4 varyTexCoord2;                                 \n\
@@ -444,7 +423,7 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString =  VertexShaderHeader
+    VSString =  NUX_VERTEX_SHADER_HEADER
         "uniform mat4 ViewProjectionMatrix;                  \n\
         attribute vec4 AVertex;                             \n\
         attribute vec4 MyTextureCoord0;                     \n\
@@ -455,7 +434,7 @@ namespace nux
           gl_Position =  ViewProjectionMatrix * (AVertex);  \n\
         }";
 
-    PSString =  FragmentShaderHeader
+    PSString =  NUX_FRAGMENT_SHADER_HEADER
         "varying vec4 varyTexCoord0;                                                                           \n\
         uniform sampler2D TextureObject0;                                                                     \n\
         uniform vec2 TextureSize0;                                                                            \n\
@@ -493,7 +472,7 @@ namespace nux
     NString PSString;
 
 
-    VSString = VertexShaderHeader
+    VSString = NUX_VERTEX_SHADER_HEADER
         "uniform mat4 ViewProjectionMatrix;                  \n\
         attribute vec4 AVertex;                             \n\
         attribute vec4 MyTextureCoord0;                     \n\
@@ -504,7 +483,7 @@ namespace nux
           gl_Position =  ViewProjectionMatrix * (AVertex);  \n\
         }";
 
-    PSString = FragmentShaderHeader
+    PSString = NUX_FRAGMENT_SHADER_HEADER
         "varying vec4 varyTexCoord0;                                   \n\
         uniform sampler2D TextureObject0;                             \n\
         uniform vec4 color0;                                          \n\
@@ -537,7 +516,7 @@ namespace nux
     NString PSString;
 
 
-    VSString = VertexShaderHeader
+    VSString = NUX_VERTEX_SHADER_HEADER
         "uniform mat4 ViewProjectionMatrix;  \n\
         attribute vec4 AVertex;             \n\
         attribute vec4 MyTextureCoord0;     \n\
@@ -552,7 +531,7 @@ namespace nux
         }";
 
 
-    PSString = FragmentShaderHeader
+    PSString = NUX_FRAGMENT_SHADER_HEADER
         "varying vec4 varyTexCoord0;                                   \n\
         varying vec4 varyVertexColor;                                 \n\
         uniform sampler2D TextureObject0;                             \n\
@@ -606,7 +585,7 @@ namespace nux
     NString VSString;
     NString PSString;
 
-    VSString = VertexShaderHeader
+    VSString = NUX_VERTEX_SHADER_HEADER
         "uniform mat4 ViewProjectionMatrix;  \n\
         attribute vec4 AVertex;             \n\
         attribute vec4 MyTextureCoord0;     \n\
@@ -621,7 +600,7 @@ namespace nux
         }";
 
 
-    PSString = FragmentShaderHeader
+    PSString = NUX_FRAGMENT_SHADER_HEADER
         "varying vec4 varyTexCoord0;                                   \n\
         varying vec4 varyVertexColor;                                 \n\
         uniform sampler2D TextureObject0;                             \n\
@@ -682,7 +661,7 @@ namespace nux
     NString PSString;
 
 
-    VSString = VertexShaderHeader
+    VSString = NUX_VERTEX_SHADER_HEADER
                      "uniform mat4 ViewProjectionMatrix;   \n\
                      attribute vec4 AVertex;              \n\
                      attribute vec4 MyTextureCoord0;      \n\
@@ -697,7 +676,7 @@ namespace nux
                      }";
 
 
-    PSString =       FragmentShaderHeader
+    PSString =       NUX_FRAGMENT_SHADER_HEADER
                      "varying vec4 varyTexCoord0;                                  \n\
                      varying vec4 varyVertexColor;                                \n\
                      uniform sampler2D TextureObject0;                            \n\
@@ -755,7 +734,7 @@ namespace nux
     NString PSString;
 
     VSString = 
-                      VertexShaderHeader
+                      NUX_VERTEX_SHADER_HEADER
                      "uniform mat4 ViewProjectionMatrix;   \n\
                      attribute vec4 AVertex;              \n\
                      attribute vec4 MyTextureCoord0;      \n\
@@ -771,7 +750,7 @@ namespace nux
 
 
     PSString = 
-                    FragmentShaderHeader
+                    NUX_FRAGMENT_SHADER_HEADER
                      "varying vec4 varyTexCoord0;                                  \n\
                      varying vec4 varyVertexColor;                                \n\
                      uniform sampler2D TextureObject0;                            \n\
@@ -822,7 +801,7 @@ namespace nux
 
 
     VSString = 
-                      VertexShaderHeader
+                      NUX_VERTEX_SHADER_HEADER
         "uniform mat4 ViewProjectionMatrix;  \n\
         attribute vec4 AVertex;             \n\
         attribute vec4 MyTextureCoord0;     \n\
@@ -834,7 +813,7 @@ namespace nux
         }";
 
     PSString = 
-                    FragmentShaderHeader
+                    NUX_FRAGMENT_SHADER_HEADER
         "varying vec4 varyTexCoord0;                                 \n\
         uniform sampler2D TextureObject0;                           \n\
         uniform vec4 color0;                                        \n\
@@ -2642,7 +2621,7 @@ namespace nux
     NString PSString;
 
     VSString =  
-                      VertexShaderHeader
+                      NUX_VERTEX_SHADER_HEADER
                       "attribute vec4 AVertex;                                 \n\
                       attribute vec4 MyTextureCoord0;                         \n\
                       attribute vec4 VertexColor;                             \n\
@@ -2657,7 +2636,7 @@ namespace nux
                       }";
 
     PSString =  
-                    FragmentShaderHeader
+                    NUX_FRAGMENT_SHADER_HEADER
                       "varying vec4 varyTexCoord0;                                 \n\
                       varying vec4 varyVertexColor;                               \n\
                       uniform vec4 pixel_size;                                    \n\
