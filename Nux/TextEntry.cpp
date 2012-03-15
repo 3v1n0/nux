@@ -289,6 +289,7 @@ namespace nux
     const char*     character  ,   /*character*/
     unsigned short   keyCount       /*key repeat count*/)
   {
+#if defined(NUX_OS_LINUX)
     if (dead_key_mode_ && keysym == XK_space)
     {
       dead_key_mode_ = false;
