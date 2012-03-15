@@ -282,7 +282,6 @@ namespace nux
         text_entry_->preedit_ = preedit;
         text_entry_->preedit_cursor_ = preedit.length();
         text_entry_->QueueRefresh (true, true);
-        text_entry_->text_changed.emit(text_entry_);
       }
     }
     else
@@ -304,7 +303,6 @@ namespace nux
 
     text_entry_->ResetPreedit();
     text_entry_->QueueRefresh (true, true);
-    text_entry_->text_changed.emit(text_entry_);
   }
 
   void IBusIMEContext::OnEnable(IBusInputContext *context)
@@ -313,6 +311,7 @@ namespace nux
     nuxAssert(context_ == context);
 
     text_entry_->ime_active_ = true;
+    text_entry_->text_changed.emit(text_entry_);
     UpdateCursorLocation();
   }
 
@@ -324,7 +323,6 @@ namespace nux
     text_entry_->ime_active_ = false;
     text_entry_->ResetPreedit();
     text_entry_->QueueRefresh (true, true);
-    text_entry_->text_changed.emit(text_entry_);
   }
 
   void IBusIMEContext::OnDestroy(IBusInputContext *context)

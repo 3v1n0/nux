@@ -954,6 +954,16 @@ namespace nux
     return NULL;
   }
 
+  void Area::SetNextObjectToKeyFocusArea(Area* area)
+  {
+    next_object_to_key_focus_area_ = area;
+  }
+
+  Area* Area::GetNextObjectToKeyFocusArea()
+  {
+    return next_object_to_key_focus_area_;
+  }
+
   void Area::SetPathToKeyFocusArea()
   {
     has_key_focus_ = true;
