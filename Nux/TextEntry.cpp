@@ -289,8 +289,6 @@ namespace nux
     const char*     character  ,   /*character*/
     unsigned short   keyCount       /*key repeat count*/)
   {
-    bool retval = FALSE;
-
     if (dead_key_mode_ && keysym == XK_space)
     {
       dead_key_mode_ = false;
@@ -318,7 +316,10 @@ namespace nux
     KeyEvent event((NuxEventType)event_type, keysym,cur_event.x11_keycode, state, character); 
 
 #if defined(NUX_OS_LINUX)
-    retval = ime_->FilterKeyEvent(event); 
+    if (ime_->FilterKeyEvent(event))
+    {
+      return;
+    }
 #endif
 
     if ((!multiline_) && (!lose_key_focus_on_key_nav_direction_up_) && (keysym == NUX_VK_UP))
@@ -341,7 +342,7 @@ namespace nux
     if (keysym == NUX_VK_TAB)
       return;
 
-    if ((keysym == NUX_VK_ENTER || keysym == NUX_KP_ENTER) && !retval)
+    if (keysym == NUX_VK_ENTER || keysym == NUX_KP_ENTER)
     {
       activated.emit();
       return;
@@ -352,7 +353,7 @@ namespace nux
     bool ctrl = (state & NUX_STATE_CTRL);
 
     // DLOG("TextEntry::key_down(%d, shift:%d ctrl:%d)", keyval, shift, ctrl);
-    if (event_type == NUX_KEYDOWN && !retval)
+    if (event_type == NUX_KEYDOWN)
     {
       if (keyval == NUX_VK_LEFT)
       {
@@ -465,7 +466,7 @@ namespace nux
 //       }
     }
 
-    if (!retval && character != 0 && (strlen(character) != 0))
+    if (character != 0 && strlen(character) != 0)
     {
       EnterText(character);
     }
