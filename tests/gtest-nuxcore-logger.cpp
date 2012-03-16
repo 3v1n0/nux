@@ -10,13 +10,6 @@
 using namespace nux::logging;
 using namespace testing;
 
-namespace nux {
-namespace logging {
-// Declare the hidden function so we can call it.
-void reset_logging();
-}
-}
-
 
 namespace {
 
@@ -238,7 +231,7 @@ TEST(TestLogStream, TestDebugMacro) {
   std::string result = out.str();
 
   EXPECT_THAT(result, StartsWith("DEBUG"));
-  EXPECT_THAT(result, HasSubstr(" test.module test_logger.cpp"));
+  EXPECT_THAT(result, HasSubstr(" test.module gtest-nuxcore-logger.cpp"));
   EXPECT_THAT(result, EndsWith("1 Is output now.\n"));
   // Also only one line.
   EXPECT_THAT(counter, Eq(1));

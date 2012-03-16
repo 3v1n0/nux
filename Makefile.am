@@ -11,3 +11,5 @@ endif
 DISTCLEANFILES = doc/html/* doc/*
 EXTRA_DIST = $(DX_CONFIG) autogen.sh COPYING.gpl .bzrignore
 
+check-headless:
+	cd tests; $(MAKE) check-headless

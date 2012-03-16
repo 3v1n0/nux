@@ -71,14 +71,11 @@ source_cpp = \
   $(srcdir)/Math/Matrix2.cpp \
   $(srcdir)/Math/Trigonometry.cpp \
   $(srcdir)/Math/Tweening.cpp \
-  $(srcdir)/Math/Vector4.cpp \
   $(srcdir)/Math/Complex.cpp \
   $(srcdir)/Math/Point3D.cpp \
   $(srcdir)/Math/Matrix4.cpp \
   $(srcdir)/Math/Matrix3.cpp \
-  $(srcdir)/Math/Vector3.cpp \
   $(srcdir)/Math/Line3D.cpp \
-  $(srcdir)/Math/Vector2.cpp \
   $(srcdir)/RollingFileAppender.cpp \
   $(srcdir)/InitiallyUnownedObject.cpp
 
@@ -123,7 +120,6 @@ source_tiny_xml_h = \
 
 source_h = \
   $(srcdir)/AsyncFileWriter.h \
-  $(srcdir)/SystemTypes.h \
   $(srcdir)/Point.h \
   $(srcdir)/FilePath.h \
   $(srcdir)/System.h \

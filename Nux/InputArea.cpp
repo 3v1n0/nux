@@ -44,6 +44,7 @@ logging::Logger logger("nux.inputarea");
   : Area(NUX_FILE_LINE_PARAM)
   , area_color_(color::Green)
   , accept_key_nav_focus_on_mouse_down_(true)
+  , accept_key_nav_focus_on_mouse_enter_(false)
   {
     SetGeometry(0, 0, 1, 1);
 
@@ -77,11 +78,6 @@ logging::Logger logger("nux.inputarea");
   bool InputArea::HasKeyboardFocus()
   {
     return GetWindowThread()->GetWindowCompositor().GetKeyFocusArea() == this;
-  }
-
-  void InputArea::SetAcceptKeyNavFocusOnMouseDown(bool accept)
-  {
-    accept_key_nav_focus_on_mouse_down_ = accept;
   }
 
   bool InputArea::IsMouseInside()
@@ -354,17 +350,6 @@ logging::Logger logger("nux.inputarea");
     mouse_double_click.emit(x, y, mouse_button_state, special_keys_state);
   }
 
-
-  void InputArea::EmitStartKeyboardFocus()
-  {
-    begin_key_focus.emit();
-  }
-
-  void InputArea::EmitEndKeyboardFocus()
-  {
-    end_key_focus.emit();
-  }
-
   void InputArea::EmitMouseDownOutsideArea(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
   {
     mouse_down_outside_pointer_grab_area.emit(x, y, mouse_button_state, special_keys_state);
@@ -399,9 +384,32 @@ logging::Logger logger("nux.inputarea");
     return false;
   }
   
-  bool InputArea::AcceptKeyNavFocusOnMouseDown()
+  bool InputArea::AcceptKeyNavFocusOnMouseDown() const
   {
     return accept_key_nav_focus_on_mouse_down_;
   }
+
+  bool InputArea::AcceptKeyNavFocusOnMouseEnter() const
+  {
+    return accept_key_nav_focus_on_mouse_enter_;
+  }
+
+  void InputArea::SetAcceptKeyNavFocusOnMouseDown(bool accept)
+  {
+    accept_key_nav_focus_on_mouse_down_ = accept;
+  }
+
+  void InputArea::SetAcceptKeyNavFocusOnMouseEnter(bool accept)
+  {
+    accept_key_nav_focus_on_mouse_enter_ = accept;
+  }
+
+  bool InputArea::AcceptKeyNavFocus() const
+  {
+    if (GetInputEventSensitivity() == false)
+      return false;
+
+    return true;
+  }  
 }
 

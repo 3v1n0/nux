@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Inalogic® Inc.
+ * Copyright 2010-2012 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -31,6 +31,9 @@
 #include <ctime>
 
 #include "Constants.h"
+
+#define DEGTORAD(d) (d) * nux::constants::pi / 180.0f
+#define RADTODEG(d) (d) * 180.0f / nux::constants::pi
 
 namespace nux
 {
@@ -161,7 +164,7 @@ namespace nux
   */
   inline double RandomGaussian()
   {
-    return std::sqrt (-2 * std::log ((double) (1e-10 + (1 - 2e-10) * std::rand()))) * std::cos ((double) (2 * 3.14f/*Const::pi*/*std::rand()));
+    return std::sqrt (-2 * std::log ((double) (1e-10 + (1 - 2e-10) * std::rand()))) * std::cos ((double) (2 * constants::pi * std::rand()));
   }
 
   inline unsigned int RandomUInt()
@@ -224,8 +227,8 @@ namespace nux
   inline unsigned short ReverseByteOrdering (unsigned short value)
   {
     unsigned short temp;
-    t_u8 *src = (t_u8 *) &value;
-    t_u8 *dest = (t_u8 *) &temp;
+    unsigned char *src = (unsigned char *) &value;
+    unsigned char *dest = (unsigned char *) &temp;
 
     dest[0] = src[1];
     dest[1] = src[0];
@@ -240,8 +243,8 @@ namespace nux
   inline unsigned int ReverseByteOrdering (unsigned int value)
   {
     unsigned int temp;
-    t_u8 *src = (t_u8 *) &value;
-    t_u8 *dest = (t_u8 *) &temp;
+    unsigned char *src = (unsigned char *) &value;
+    unsigned char *dest = (unsigned char *) &temp;
 
     dest[0] = src[3];
     dest[1] = src[2];
@@ -258,8 +261,8 @@ namespace nux
   inline unsigned long long ReverseByteOrdering (unsigned long long value)
   {
     unsigned long long temp;
-    t_u8 *src = (t_u8 *) &value;
-    t_u8 *dest = (t_u8 *) &temp;
+    unsigned char *src = (unsigned char *) &value;
+    unsigned char *dest = (unsigned char *) &temp;
 
     dest[0] = src[7];
     dest[1] = src[6];

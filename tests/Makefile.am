@@ -1,8 +1,7 @@
 if BUILD_TESTS
 check_PROGRAMS = \
-  test-nux \
   gtest-nux \
-  gtest-nux-core \
+  gtest-nuxcore \
   test-graphics-display \
   test-empty-window \
   xtest-button \
@@ -13,47 +12,52 @@ check_PROGRAMS = \
   xtest-vlayout-key-navigation \
   xtest-scrollbar \
   xtest-focus-on-mouse-down \
-  xtest-keynav-directions
+  xtest-keynav-directions \
+  xtest-text-entry \
+  xtest-text-entry-deadkeys \
+  xtest-text-entry-compositionkeys \
+  xtest-text-entry-logic \
+  xtest-focus-on-mouse-enter
 
 # Please keep alphabetical
-test_nux_SOURCES = \
-  test-canvas.cpp \
-  test-nux.cpp \
-  test-system.cpp
+# test_nux_SOURCES = \
+# test-canvas.cpp \
+# test-nux.cpp \
+# test-system.cpp
 
-test_nux_CPPFLAGS = \
-  -I$(srcdir) \
-  -I$(top_srcdir) \
-  -DPREFIX=\""$(prefix)"\" \
-	-DLIBDIR=\""$(libdir)"\" \
-  -DDATADIR=\""$(datadir)"\" \
-  -DG_LOG_DOMAIN=\"NuxTests\" \
-  -DTESTDIR=\""$(top_srcdir)/tests"\" \
-  $(GCC_FLAGS) \
-  $(NUX_CORE_CFLAGS) \
-  $(NUX_EXAMPLES_CFLAGS) \
-  $(NUX_CFLAGS) \
-  $(MAINTAINER_CFLAGS)
+#test_nux_CPPFLAGS = \
+#  -I$(srcdir) \
+#  -I$(top_srcdir) \
+#  -DPREFIX=\""$(prefix)"\" \
+#	-DLIBDIR=\""$(libdir)"\" \
+#  -DDATADIR=\""$(datadir)"\" \
+#  -DG_LOG_DOMAIN=\"NuxTests\" \
+#  -DTESTDIR=\""$(top_srcdir)/tests"\" \
+#  $(GCC_FLAGS) \
+#  $(NUX_CORE_CFLAGS) \
+#  $(NUX_EXAMPLES_CFLAGS) \
+#  $(NUX_CFLAGS) \
+#  $(MAINTAINER_CFLAGS)
 
-test_nux_LDADD = \
-  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
-  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
-  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-  $(NUX_LIBS)
+#test_nux_LDADD = \
+#  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
+#  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
+#  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
+#  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
+#  $(NUX_LIBS)
 
-gtest_nux_core_SOURCES = \
+gtest_nuxcore_SOURCES = \
   Helpers.h \
   Helpers.cpp \
-  test_object.cpp \
-  test_main.cpp \
-  test_async_file_writer.cpp \
-  test_logger.cpp \
-  test_cairo_wrapper.cpp \
-  test_properties.cpp \
-  test_rolling_file_appender.cpp
+  gtest-nuxcore-async-file-writer.cpp \
+  gtest-nuxcore-color.cpp \
+  gtest-nuxcore-logger.cpp \
+  gtest-nuxcore-main.cpp \
+  gtest-nuxcore-object.cpp \
+  gtest-nuxcore-properties.cpp \
+  gtest-nuxcore-rolling-file-appender.cpp
 
-gtest_nux_core_CPPFLAGS = \
+gtest_nuxcore_CPPFLAGS = \
   -I$(srcdir) \
   -I$(top_srcdir) \
   -DPREFIX=\""$(prefix)"\" \
@@ -67,21 +71,27 @@ gtest_nux_core_CPPFLAGS = \
   $(NUX_CFLAGS) \
   $(MAINTAINER_CFLAGS)
 
-gtest_nux_core_LDADD = \
+gtest_nuxcore_LDADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
   $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
   $(NUX_LIBS)
 
-gtest_nux_core_LDFLAGS = \
+gtest_nuxcore_LDFLAGS = \
   -lpthread -lgtest -lgmock \
   -lboost_filesystem -lboost_system
 
 gtest_nux_SOURCES = \
-  test-nux-main.cpp \
-  test-nux-statictext.cpp \
-  test-nux-windowthread.cpp
+  gtest-nux-area.cpp \
+  gtest-nux-cairo-wrapper.cpp \
+  gtest-nux-emmetrics.cpp \
+  gtest-nux-main.cpp \
+  gtest-nux-statictext.cpp \
+  gtest-nux-textentry.cpp \
+  gtest-nux-view.cpp \
+  gtest-nux-windowcompositor.cpp \
+  gtest-nux-windowthread.cpp
 
 gtest_nux_CPPFLAGS = \
   -I$(srcdir) \
@@ -95,7 +105,8 @@ gtest_nux_CPPFLAGS = \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \
-  $(MAINTAINER_CFLAGS)
+  $(MAINTAINER_CFLAGS) \
+  $(IBUS_CFLAGS)
 
 gtest_nux_LDADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
@@ -119,7 +130,8 @@ TestFlags = -I$(srcdir) \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \
-  $(MAINTAINER_CFLAGS)
+  $(MAINTAINER_CFLAGS) \
+  $(IBUS_CFLAGS)
 
 TestLibs = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
@@ -196,6 +208,14 @@ xtest_focus_on_mouse_down_CPPFLAGS = $(TestFlags)
 xtest_focus_on_mouse_down_LDADD = $(TestLibs)
 xtest_focus_on_mouse_down_LDFLAGS = -lpthread -lXtst
 
+xtest_focus_on_mouse_enter_SOURCES = xtest-focus-on-mouse-enter.cpp \
+  nux_automated_test_framework.cpp \
+  nux_automated_test_framework.h
+
+xtest_focus_on_mouse_enter_CPPFLAGS = $(TestFlags)
+xtest_focus_on_mouse_enter_LDADD = $(TestLibs)
+xtest_focus_on_mouse_enter_LDFLAGS = -lpthread -lXtst
+
 xtest_scrollbar_SOURCES = xtest-scrollbar.cpp \
   nux_automated_test_framework.cpp \
   nux_automated_test_framework.h \
@@ -214,23 +234,55 @@ xtest_keynav_directions_CPPFLAGS = $(TestFlags)
 xtest_keynav_directions_LDADD = $(TestLibs)
 xtest_keynav_directions_LDFLAGS = -lpthread -lXtst
 
+xtest_text_entry_SOURCES = xtest-text-entry.cpp \
+  nux_automated_test_framework.cpp \
+  nux_automated_test_framework.h
+
+xtest_text_entry_CPPFLAGS = $(TestFlags)
+xtest_text_entry_LDADD = $(TestLibs)
+xtest_text_entry_LDFLAGS = -lpthread -lXtst
+
+xtest_text_entry_logic_SOURCES = xtest-text-entry-logic.cpp \
+  nux_automated_test_framework.cpp \
+  nux_automated_test_framework.h
+
+xtest_text_entry_logic_CPPFLAGS = $(TestFlags)
+xtest_text_entry_logic_LDADD = $(TestLibs)
+xtest_text_entry_logic_LDFLAGS = -lpthread -lXtst
+
+xtest_text_entry_deadkeys_SOURCES = xtest-text-entry-deadkeys.cpp \
+  nux_automated_test_framework.cpp \
+  nux_automated_test_framework.h
+
+xtest_text_entry_deadkeys_CPPFLAGS = $(TestFlags)
+xtest_text_entry_deadkeys_LDADD = $(TestLibs)
+xtest_text_entry_deadkeys_LDFLAGS = -lpthread -lXtst
+
+xtest_text_entry_compositionkeys_SOURCES = xtest-text-entry-compositionkeys.cpp \
+  nux_automated_test_framework.cpp \
+  nux_automated_test_framework.h
+
+xtest_text_entry_compositionkeys_CPPFLAGS = $(TestFlags)
+xtest_text_entry_compositionkeys_LDADD = $(TestLibs)
+xtest_text_entry_compositionkeys_LDFLAGS = -lpthread -lXtst
 
 #run make test as part of make check
 check-local: test gtest test-apps
 
 test:
-	@gtester --verbose -k -o=test-nux-results.xml ./test-nux
+	@gtester --verbose -k -o=gtest-nux-results.xml ./gtest-nux
 
-gtest: gtest-nux-core gtest-nux
-	./gtest-nux-core
+gtest: gtest-nuxcore gtest-nux
+	./gtest-nuxcore
 	./gtest-nux
 
-check-headless: gtest-nux-core
-	@gtester --verbose -k -o=test-nux-results.xml ./gtest-nux-core
+check-headless: gtest-nuxcore
+	@gtester --verbose -k -o=test-nux-results.xml ./gtest-nuxcore
 
-test-apps: test-graphics-display test-empty-window xtest-button xtest-mouse-events xtest-mouse-buttons xtest-hgrid-key-navigation xtest-hlayout-key-navigation xtest-vlayout-key-navigation xtest-scrollbar xtest-focus-on-mouse-down xtest-keynav-directions
+test-apps: test-graphics-display test-empty-window xtest-text-entry xtest-button xtest-mouse-events xtest-mouse-buttons xtest-hgrid-key-navigation xtest-hlayout-key-navigation xtest-vlayout-key-navigation xtest-scrollbar xtest-focus-on-mouse-down xtest-focus-on-mouse-enter xtest-keynav-directions xtest-text-entry-logic xtest-text-entry-deadkeys xtest-text-entry-compositionkeys
 	./test-graphics-display
 	./test-empty-window
+	./xtest-text-entry
 	./xtest-button
 	./xtest-mouse-events
 	./xtest-mouse-buttons
@@ -239,7 +291,12 @@ test-apps: test-graphics-display test-empty-window xtest-button xtest-mouse-even
 	./xtest-vlayout-key-navigation
 	./xtest-scrollbar
 	./xtest-focus-on-mouse-down
+	./xtest-focus-on-mouse-enter
 	./xtest-keynav-directions
+	./xtest-text-entry-logic
+	./xtest-text-entry-deadkeys
+	./xtest-text-entry-compositionkeys
+  
 
 check-report:
 	@gtester -k -o=test-nux-results.xml -k ./test-nux \

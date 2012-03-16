@@ -40,11 +40,11 @@ public:
 
   virtual void UserInterfaceSetup();
   
-  TestView* CreateTile();
-  void AddTile(TestView* tile);
+  nux::TestView* CreateTile();
+  void AddTile(nux::TestView* tile);
   
   nux::GridHLayout* grid_layout_;
-  TestView* tiles_[11];
+  nux::TestView* tiles_[11];
 };
 
 HGridKeyNavigationTest::HGridKeyNavigationTest(const char* program_name,
@@ -59,13 +59,13 @@ HGridKeyNavigationTest::~HGridKeyNavigationTest()
 {
 }
 
-TestView* HGridKeyNavigationTest::CreateTile()
+nux::TestView* HGridKeyNavigationTest::CreateTile()
 {
-  TestView* tile = new TestView();
+  nux::TestView* tile = new nux::TestView();
   return tile;
 }
 
-void HGridKeyNavigationTest::AddTile(TestView* tile)
+void HGridKeyNavigationTest::AddTile(nux::TestView* tile)
 {
   grid_layout_->AddView(tile, 1);
 }
@@ -119,7 +119,7 @@ void TestingThread(nux::NThread* thread, void* user_data)
 
 
   // Rigth key
-  for (int i=0; i<10; ++i)
+  for (int i=0; i<3; ++i)
   {
     test.SendFakeKeyEvent(XK_Right, 0);
     nux::SleepForMilliseconds(500);
@@ -130,10 +130,10 @@ void TestingThread(nux::NThread* thread, void* user_data)
   // Another right key, should do nothing
   test.SendFakeKeyEvent(XK_Right, 0);
   nux::SleepForMilliseconds(500);
-  test.TestReportMsg(key_navigation_test->tiles_[10]->has_focus_, "Right key, last element");
+  test.TestReportMsg(key_navigation_test->tiles_[3]->has_focus_, "Right key, last element");
   
   // Left key
-  for (int i=10; i>0; --i)
+  for (int i=3; i>0; --i)
   {
     test.SendFakeKeyEvent(XK_Left, 0);
     nux::SleepForMilliseconds(500);

@@ -339,6 +339,8 @@ namespace nux
       {
         nuxError("[IOpenGLPixelShader::Compile] glCompileShader: %s", InfoLogBuffer);
       }
+      
+      printf("Error: %s \n COMPILE \n", InfoLogBuffer);
 
       delete[] InfoLogBuffer;
     }

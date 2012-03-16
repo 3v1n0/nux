@@ -8,7 +8,8 @@ if BUILD_EXAMPLES
 # installed. For each individual example, add it's binary name here
 
 noinst_PROGRAMS = text_entry_focus \
-  shortcut_keys
+  shortcut_keys \
+  coverflow
 
 #button \
 #                  cairo \
@@ -40,10 +41,12 @@ AM_CPPFLAGS = \
 	-DLIBDIR=\""$(libdir)"\" \
   -DDATADIR=\""$(datadir)"\" \
   -DG_LOG_DOMAIN=\"NuxExamples\" \
+  -DPKGDATADIR=\""$(pkgdatadir)/@NUX_API_VERSION@"\" \
   $(GCC_FLAGS) \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \
+  $(IBUS_CFLAGS) \
   $(MAINTAINER_CFLAGS)
 
 ALL_LIBS = \
@@ -52,7 +55,8 @@ ALL_LIBS = \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
   $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
   $(NUX_EXAMPLES_LIBS) \
-  $(NUX_LIBS)
+  $(NUX_LIBS) \
+  $(IBUS_LIBS) 
 
 # This is the individual executable build. For every $exe in noinst_PROGRAMS
 # you need a $exe_SOURCES and $exe_LDADD so it builds
@@ -101,6 +105,8 @@ text_entry_focus_LDADD = $(ALL_LIBS)
 shortcut_keys_SOURCES = shortcut-keys.cpp line-separator.cpp line-separator.h abstract-separator.h abstract-separator.cpp
 shortcut_keys_LDADD = $(ALL_LIBS)
 
+coverflow_SOURCES = coverflow.cpp
+coverflow_LDADD = $(ALL_LIBS)
 
 # To distribute source add the source code here
 #sourceexampledir = "$(pkgdatadir)/examples"
@@ -108,6 +114,7 @@ shortcut_keys_LDADD = $(ALL_LIBS)
 #                    
 
 endif
+
 
 
 

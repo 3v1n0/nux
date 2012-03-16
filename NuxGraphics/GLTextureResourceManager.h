@@ -50,7 +50,7 @@ namespace nux
    * Note that if there's no alpha channel, the argument is ignored.
    * @return The resulting texture.
    */
-  BaseTexture *CreateTexture2DFromFile(const char *filename, int max_size,
+  BaseTexture* CreateTexture2DFromFile(const char* filename, int max_size,
                                         bool premultiply);
 
   /*!
@@ -62,15 +62,15 @@ namespace nux
    * Note that if there's no alpha channel, the argument is ignored.
    * @return The resulting texture.
    */
-  BaseTexture *CreateTexture2DFromPixbuf(GdkPixbuf *pixbuf, bool premultiply);
+  BaseTexture* CreateTexture2DFromPixbuf(GdkPixbuf* pixbuf, bool premultiply);
 
   // FIXME(loicm) Should be deprecated.
-  BaseTexture *CreateTextureFromPixbuf(GdkPixbuf *pixbuf);
+  BaseTexture* CreateTextureFromPixbuf(GdkPixbuf* pixbuf);
 
-  BaseTexture *CreateTextureFromFile(const char *TextureFilename);
-  BaseTexture *CreateTextureFromBitmapData(const NBitmapData *BitmapData);
+  BaseTexture* CreateTextureFromFile(const char* TextureFilename);
+  BaseTexture* CreateTextureFromBitmapData(const NBitmapData* BitmapData);
 
-  BaseTexture* LoadTextureFromFile(const std::string &filename);
+  BaseTexture* LoadTextureFromFile(const std::string& filename);
 
   //! Abstract base class for textures.
   class BaseTexture: public ResourceData
@@ -90,7 +90,7 @@ namespace nux
       GetDeviceTexture() or GetCachedTexture() is called.
       @return True if there was no error during the update.
     */
-    virtual bool Update(const NBitmapData *BitmapData, bool UpdateAndCacheResource = true) = 0;
+    virtual bool Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource = true) = 0;
 
     /*!
       Update the texture with the provided filename. In doing so, if the texture as been cached in the resource manager, then
@@ -102,9 +102,9 @@ namespace nux
       GetDeviceTexture() or GetCachedTexture() is called.
       @return True if there was no error during the update.
     */
-    virtual bool Update(const char *filename, bool UpdateAndCacheResource = true) = 0;
+    virtual bool Update(const char* filename, bool UpdateAndCacheResource = true) = 0;
 
-    virtual void GetData(void *Buffer, int MipIndex, int StrideY, int face = 0) = 0;
+    virtual void GetData(void* Buffer, int MipIndex, int StrideY, int face = 0) = 0;
 
     /*!
       @return The texture width.
@@ -178,9 +178,9 @@ namespace nux
 
   public:
     Texture2D(NUX_FILE_LINE_PROTO);
-    Texture2D(const Texture2D &texture, NUX_FILE_LINE_PROTO);
-    Texture2D(const NTextureData &BaseTexture, NUX_FILE_LINE_PROTO);
-    Texture2D &operator = (const Texture2D &texture);
+    Texture2D(const Texture2D& texture, NUX_FILE_LINE_PROTO);
+    Texture2D(const NTextureData& BaseTexture, NUX_FILE_LINE_PROTO);
+    Texture2D& operator = (const Texture2D& texture);
     ~Texture2D();
 
     /*!
@@ -191,7 +191,7 @@ namespace nux
         GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource(this);
         @return True is there was not error.
     */
-    virtual bool Update(const NBitmapData *BitmapData, bool UpdateAndCacheResource = true);
+    virtual bool Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource = true);
 
     /*!
         Update the hardware resources associated to this object with the data associated to the file name.
@@ -201,7 +201,7 @@ namespace nux
         GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource(this);
         @return True is there was not error.
     */
-    virtual bool Update(const char *Filename, bool UpdateAndCacheResource = true);
+    virtual bool Update(const char* Filename, bool UpdateAndCacheResource = true);
 
     /*!
       @return True if the texture storage contains valid bitmap data.
@@ -211,7 +211,7 @@ namespace nux
       return _image.IsNull();
     }
 
-    void GetData(void *Buffer, int MipIndex, int StrideY, int face = 0);
+    void GetData(void* Buffer, int MipIndex, int StrideY, int face = 0);
 
     /*!
       @return The number of mip maps in the texture.
@@ -268,13 +268,13 @@ namespace nux
 
   public:
     TextureRectangle(NUX_FILE_LINE_PROTO);
-    TextureRectangle(const TextureRectangle &texture);
+    TextureRectangle(const TextureRectangle& texture);
     TextureRectangle(const NTextureData& Image);
-    TextureRectangle &operator = (const TextureRectangle &texture);
+    TextureRectangle& operator = (const TextureRectangle& texture);
     ~TextureRectangle();
 
-    virtual bool Update(const NBitmapData *BitmapData, bool UpdateAndCacheResource = true);
-    virtual bool Update(const char *filename, bool UpdateAndCacheResource = true);
+    virtual bool Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource = true);
+    virtual bool Update(const char* filename, bool UpdateAndCacheResource = true);
 
     /*!
       @return True if the texture storage contains valid bitmap data.
@@ -284,7 +284,7 @@ namespace nux
       return _image.IsNull();
     }
 
-    void GetData(void *Buffer, int MipIndex, int StrideY, int face = 0);
+    void GetData(void* Buffer, int MipIndex, int StrideY, int face = 0);
 
     /*!
       @return The number of mip maps in the texture.
@@ -343,12 +343,12 @@ namespace nux
   public:
     TextureCube(NUX_FILE_LINE_PROTO);
     //Texture2D(const NTextureData& Image);
-    TextureCube(const TextureCube &texture);
-    TextureCube &operator = (const TextureCube &texture);
+    TextureCube(const TextureCube& texture);
+    TextureCube& operator = (const TextureCube& texture);
     ~TextureCube();
 
-    virtual bool Update(const NBitmapData *BitmapData, bool UpdateAndCacheResource = true);
-    virtual bool Update(const char *filename, bool UpdateAndCacheResource = true);
+    virtual bool Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource = true);
+    virtual bool Update(const char* filename, bool UpdateAndCacheResource = true);
 
     /*!
       @return True if the texture storage contains valid bitmap data.
@@ -357,7 +357,7 @@ namespace nux
     {
       return _image.IsNull();
     }
-    void GetData(void *Buffer, int MipIndex, int StrideY, int face = 0);
+    void GetData(void* Buffer, int MipIndex, int StrideY, int face = 0);
 
     /*!
       @return The number of mip maps in the texture.
@@ -416,12 +416,12 @@ namespace nux
   public:
     TextureVolume(NUX_FILE_LINE_PROTO);
     //Texture2D(const NTextureData& Image);
-    TextureVolume(const TextureVolume &texture);
-    TextureVolume &operator = (const TextureVolume &texture);
+    TextureVolume(const TextureVolume& texture);
+    TextureVolume& operator = (const TextureVolume& texture);
     ~TextureVolume();
 
-    virtual bool Update(const NBitmapData *BitmapData, bool UpdateAndCacheResource = true);
-    virtual bool Update(const char *filename, bool UpdateAndCacheResource = true);
+    virtual bool Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource = true);
+    virtual bool Update(const char* filename, bool UpdateAndCacheResource = true);
 
     /*!
       @return True if the texture storage contains valid bitmap data.
@@ -430,7 +430,7 @@ namespace nux
     {
       return _image.IsNull();
     }
-    void GetData(void *Buffer, int MipIndex, int StrideY, int slice = 0);
+    void GetData(void* Buffer, int MipIndex, int StrideY, int slice = 0);
     
     /*!
       @return The number of mip maps in the texture.
@@ -497,12 +497,12 @@ namespace nux
 
   public:
     TextureFrameAnimation(NUX_FILE_LINE_PROTO);
-    TextureFrameAnimation(const TextureFrameAnimation &texture);
-    TextureFrameAnimation &operator = (const TextureFrameAnimation &texture);
+    TextureFrameAnimation(const TextureFrameAnimation& texture);
+    TextureFrameAnimation& operator = (const TextureFrameAnimation& texture);
     ~TextureFrameAnimation();
 
-    virtual bool Update(const NBitmapData *BitmapData, bool UpdateAndCacheResource = true);
-    virtual bool Update(const char *filename, bool UpdateAndCacheResource = true);
+    virtual bool Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource = true);
+    virtual bool Update(const char* filename, bool UpdateAndCacheResource = true);
 
     /*!
       @return True if the texture storage contains valid bitmap data.
@@ -511,7 +511,7 @@ namespace nux
     {
       return _image.IsNull();
     }
-    void GetData(void *Buffer, int MipIndex, int StrideY, int slice = 0);
+    void GetData(void* Buffer, int MipIndex, int StrideY, int slice = 0);
     int GetFrameTime(int Frame);
 
     /*!
@@ -578,16 +578,16 @@ namespace nux
   public:
     ObjectPtr < IOpenGLBaseTexture > m_Texture;
 
-    CachedBaseTexture(NResourceSet *ResourceManager);
+    CachedBaseTexture(NResourceSet* ResourceManager);
     ~CachedBaseTexture();
 
-    virtual void LoadMipLevel(BaseTexture *SourceTexture, int MipLevel) = 0;
+    virtual void LoadMipLevel(BaseTexture* SourceTexture, int MipLevel) = 0;
 
-    virtual bool UpdateResource(ResourceData *Resource);
+    virtual bool UpdateResource(ResourceData* Resource);
 
-    bool RecreateTexture(BaseTexture *Source);
+    bool RecreateTexture(BaseTexture* Source);
 
-    virtual void UpdateTexture(BaseTexture *Source) = 0;
+    virtual void UpdateTexture(BaseTexture* Source) = 0;
 
     unsigned int SourceWidth;
     unsigned int SourceHeight;
@@ -599,55 +599,55 @@ namespace nux
   {
     NUX_DECLARE_OBJECT_TYPE(CachedTexture2D, CachedBaseTexture);
   public:
-    CachedTexture2D(NResourceSet *ResourceManager, Texture2D *SourceTexture);
+    CachedTexture2D(NResourceSet* ResourceManager, Texture2D* SourceTexture);
     ~CachedTexture2D();
 
-    virtual void UpdateTexture(BaseTexture *Source);
-    virtual void LoadMipLevel(BaseTexture *SourceTexture, int MipLevel);
+    virtual void UpdateTexture(BaseTexture* Source);
+    virtual void LoadMipLevel(BaseTexture* SourceTexture, int MipLevel);
   };
 
   class CachedTextureRectangle: public CachedBaseTexture
   {
     NUX_DECLARE_OBJECT_TYPE(CachedTextureRectangle, CachedBaseTexture);
   public:
-    CachedTextureRectangle(NResourceSet *ResourceManager, TextureRectangle *SourceTexture);
+    CachedTextureRectangle(NResourceSet* ResourceManager, TextureRectangle* SourceTexture);
     ~CachedTextureRectangle();
 
-    virtual void UpdateTexture(BaseTexture *Source);
-    virtual void LoadMipLevel(BaseTexture *SourceTexture, int MipLevel);
+    virtual void UpdateTexture(BaseTexture* Source);
+    virtual void LoadMipLevel(BaseTexture* SourceTexture, int MipLevel);
   };
 
   class CachedTextureCube: public CachedBaseTexture
   {
     NUX_DECLARE_OBJECT_TYPE(CachedTextureCube, CachedBaseTexture);
   public:
-    CachedTextureCube(NResourceSet *ResourceManager, TextureCube *SourceTexture);
+    CachedTextureCube(NResourceSet* ResourceManager, TextureCube* SourceTexture);
     ~CachedTextureCube();
 
-    virtual void UpdateTexture(BaseTexture *Source);
-    virtual void LoadMipLevel(BaseTexture *SourceTexture, int MipLevel);
+    virtual void UpdateTexture(BaseTexture* Source);
+    virtual void LoadMipLevel(BaseTexture* SourceTexture, int MipLevel);
   };
 
   class CachedTextureVolume: public CachedBaseTexture
   {
     NUX_DECLARE_OBJECT_TYPE(CachedTextureVolume, CachedBaseTexture);
   public:
-    CachedTextureVolume(NResourceSet *ResourceManager, TextureVolume *SourceTexture);
+    CachedTextureVolume(NResourceSet* ResourceManager, TextureVolume* SourceTexture);
     ~CachedTextureVolume();
 
-    virtual void UpdateTexture(BaseTexture *Source);
-    virtual void LoadMipLevel(BaseTexture *SourceTexture, int MipLevel);
+    virtual void UpdateTexture(BaseTexture* Source);
+    virtual void LoadMipLevel(BaseTexture* SourceTexture, int MipLevel);
   };
 
   class CachedTextureFrameAnimation: public CachedBaseTexture
   {
     NUX_DECLARE_OBJECT_TYPE(CachedTextureFrameAnimation, CachedBaseTexture);
   public:
-    CachedTextureFrameAnimation(NResourceSet *ResourceManager, TextureFrameAnimation *SourceTexture);
+    CachedTextureFrameAnimation(NResourceSet* ResourceManager, TextureFrameAnimation* SourceTexture);
     ~CachedTextureFrameAnimation();
 
-    virtual void UpdateTexture(BaseTexture *Source);
-    virtual void LoadMipLevel(BaseTexture *SourceTexture, int MipLevel);
+    virtual void UpdateTexture(BaseTexture* Source);
+    virtual void LoadMipLevel(BaseTexture* SourceTexture, int MipLevel);
   };
 
 }

@@ -496,8 +496,21 @@ namespace nux
         unsigned long x11_key_code,
         unsigned long special_keys_state);
 
+    /*!
+        Mark the path from this area to its top level parent as the one to follow \n
+        to get to the area that has the keyboard.
+    */
     void SetPathToKeyFocusArea();
+
+    /*!
+        Erase the path from this area to the child area that has the keyboard.
+    */
     void ResetDownwardPathToKeyFocusArea();
+
+    /*!
+        Erase the path that marks this object as part of the keyboard focus chain, \n
+        from this area to its top level parent.
+    */
     void ResetUpwardPathToKeyFocusArea();
 
     //! Return True if the the area knows what to do with the key event.
@@ -514,8 +527,6 @@ namespace nux
       unsigned int keysym,
       const char* character);
 
-    virtual bool AcceptKeyNavFocus();
-    
     virtual Area* KeyNavIteration(KeyNavDirection direction);
 
     bool HasKeyFocus() const;
@@ -593,17 +604,25 @@ namespace nux
     //! Return the absolute geometry starting with a relative geometry passed as argument.
     void InnerGetRootGeometry(Geometry &geometry);
 
-//     //! Add a "secondary" child to this Area. The
-//     /*!
-//         @return True if the child has been added; False otherwise;
-//     */
-//     bool Secondary(Area *child);
-   
     bool on_geometry_change_reconfigure_parent_layout_;
 
-    bool                    has_key_focus_;
+    //! If this variable is true, then this area has the keyboard focus.
+    bool has_key_focus_;
 
-    Area                    *next_object_to_key_focus_area_;
+    void SetNextObjectToKeyFocusArea(Area*);
+
+    //! Gets the next object in the chain that ends with the area that has the keyboard focus.
+    /*!
+        Gets the next object in the chain that ends with the area that has the keyboard focus.
+        The next object is a child of this area.
+
+        @return An area that is the next object in the chain that leads to the area that has the keyboard focus.
+    */
+    Area* GetNextObjectToKeyFocusArea();
+
+    //! If this variable is not NULL, then this area is part of the keyboard focus chain.
+    Area* next_object_to_key_focus_area_;
+
   private:
     void ReconfigureParentLayout(Area *child = 0);
     void CheckMinSize();
@@ -619,7 +638,7 @@ namespace nux
         An object of the class Layout may have a parent of the class Layout or View as parent.
         A Area cannot have children(that may change later).
     */
-    Area                    *parent_area_;
+    Area*             parent_area_;
 
     bool              visible_;       //!< Visible state of the area.
     bool              sensitive_;     //!< Input sensitive state of the area

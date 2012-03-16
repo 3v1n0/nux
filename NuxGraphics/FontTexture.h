@@ -147,7 +147,7 @@ namespace nux
     : italic(false), bold(false), LineHeight(0), Base(0), Width(0), Height(0)
         , Pages(0), FontHeight(0), Ascent(0), Descent(0), AvgCharWidth(0)
         , MaxCharWidth(0), InternalLeading(0), ExternalLeading(0)
-        , NumChar(0), NumKerningPairs(0), Kerning(nullptr)
+        , NumChar(0), NumKerningPairs(0), Kerning(NULL)
     {}
 
     ~Charset()

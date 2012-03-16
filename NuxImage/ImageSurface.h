@@ -106,8 +106,8 @@ namespace nux
     void Write32b(int i, int j, unsigned int value);
     void Write24b(int i, int j, unsigned int value);
     void Write16b(int i, int j, unsigned short value);
-    void Write8b(int i, int j, t_u8 value);
-    void Write(int i, int j, t_u8 r, t_u8 g, t_u8 b, t_u8 a);
+    void Write8b(int i, int j, unsigned char value);
+    void Write(int i, int j, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
     //! Read an element of the surface.
     /*!
         Return a 32 bits value representing the image element at coordinates(i, j).
@@ -128,8 +128,8 @@ namespace nux
     int GetAlignment() const;
     int GetSize() const;
     BitmapFormat GetFormat() const;
-    const t_u8 *GetPtrRawData() const;
-    t_u8 *GetPtrRawData();
+    const unsigned char *GetPtrRawData() const;
+    unsigned char *GetPtrRawData();
 
     static int GetLevelPitch(BitmapFormat format, int width, int height, int miplevel);
     static int GetLevelPitchNoMemAlignment(BitmapFormat format, int width, int height, int miplevel);
@@ -149,7 +149,7 @@ namespace nux
         Sum up all the image elements and divide by the number of elements.
         @return The average color of the image.
     */
-    struct Color AverageColor();
+    Color AverageColor();
 
   private:
     void FlipDXTVertical();
@@ -166,7 +166,7 @@ namespace nux
     int m_Pitch;          //!< Image pitch.
     int bpe_;             //!< Number of byte per element.
     int Alignment_;       //!< Data alignment.
-    t_u8    *RawData_;
+    unsigned char    *RawData_;
   };
 
 

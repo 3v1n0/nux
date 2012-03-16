@@ -263,7 +263,7 @@ namespace nux
 
       //Release the previous vertex buffer if any.
       _vertex_buffer.Release();
-      _vertex_buffer = GetGraphicsDisplay()->GetGpuDevice()->CreateVertexBuffer(_Size, VBO_USAGE_DYNAMIC);
+      _vertex_buffer = GetGraphicsDisplay()->GetGpuDevice()->CreateVertexBuffer(_Size, VBO_USAGE_STATIC);
       LoadVertexData(SourceVtxBuffer);
     }
     else
@@ -283,7 +283,7 @@ namespace nux
       return;
     }
 
-    t_byte* pData;
+    unsigned char* pData;
 
     _vertex_buffer->Lock(0, 0, (void**) &pData);
     Memcpy(pData, SourceVtxBuffer->GetPtrRawData(), SourceVtxBuffer->GetSize());
@@ -351,7 +351,7 @@ namespace nux
 
       //Release the previous vertex buffer if any.
       _index_buffer.Release();
-      _index_buffer = GetGraphicsDisplay()->GetGpuDevice()->CreateIndexBuffer(_Size, VBO_USAGE_DYNAMIC,
+      _index_buffer = GetGraphicsDisplay()->GetGpuDevice()->CreateIndexBuffer(_Size, VBO_USAGE_STATIC,
                     (SourceIdxBuffer->GetStride() == 2) ? INDEX_FORMAT_USHORT : INDEX_FORMAT_UINT);
       LoadIndexData(SourceIdxBuffer);
     }
@@ -373,7 +373,7 @@ namespace nux
       return;
     }
 
-    t_byte* pData;
+    unsigned char* pData;
     _index_buffer->Lock(0, 0, (void**) &pData);
     Memcpy(pData, SourceIdxBuffer->GetPtrRawData(), SourceIdxBuffer->GetSize());
     _index_buffer->Unlock();
