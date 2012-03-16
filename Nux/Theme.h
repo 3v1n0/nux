@@ -40,6 +40,8 @@ namespace nux
     eSHAPE_CORNER_ROUND1,
     eSHAPE_CORNER_ROUND2,
     eSHAPE_CORNER_ROUND4,
+    eSHAPE_CORNER_ROUND5,
+    eSHAPE_CORNER_ROUND6,
     eSHAPE_CORNER_ROUND10,
 
     eSHAPE_CORNER_ROUND10_SHADOW,
@@ -150,8 +152,6 @@ namespace nux
     std::list<PainterImage *> m_PainterImageList;
 
   };
-
-
 }
 
 #endif // UXTHEME_H
