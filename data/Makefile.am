@@ -52,6 +52,8 @@ dist_uitextures_DATA = \
   UITextures/RoundCorner_1pxrad.tga \
   UITextures/RoundCorner_2pxrad.tga \
   UITextures/RoundCorner_4pxrad.tga \
+  UITextures/RoundCorner_5pxrad.tga \
+  UITextures/RoundCorner_6pxrad.tga \
   UITextures/RoundCorner_4px_shadow.tga \
   UITextures/ScrollBarTriangleDown.tga \
   UITextures/ScrollBarTriangleLeft.tga \
