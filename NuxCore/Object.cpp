@@ -264,7 +264,7 @@ bool debug_object_allocation_stack()
 
  #if defined(NUX_OS_LINUX)
     if (debug_object_allocation_stack()) {
-      allocation_stacktrace_ = logging::backtrace();
+      allocation_stacktrace_ = logging::Backtrace();
     }
  #endif
 #endif
@@ -292,10 +292,6 @@ bool debug_object_allocation_stack()
 
   bool Object::Reference()
   {
-#ifdef NUX_DEBUG
-    if (virtual_type_name_.empty())
-      virtual_type_name_ = Type().name;
-#endif
     if (!IsHeapAllocated())
     {
       LOG_WARN(logger) << "Trying to reference an object that was not heap allocated."
@@ -315,11 +311,6 @@ bool debug_object_allocation_stack()
 
   bool Object::UnReference()
   {
-#ifdef NUX_DEBUG
-    if (virtual_type_name_.empty())
-      virtual_type_name_ = Type().name;
-#endif
-
     if (!IsHeapAllocated())
     {
       LOG_WARN(logger) << "Trying to un-reference an object that was not heap allocated."
@@ -408,9 +399,7 @@ std::string Object::GetAllocationLocation() const
 
 std::string Object::GetTypeName() const
 {
-  if (virtual_type_name_.empty())
-    return "Typename not specified";
-  return virtual_type_name_;
+  return Type().name;
 }
 
 }

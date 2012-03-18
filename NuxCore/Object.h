@@ -240,7 +240,6 @@ namespace nux
 
     std::string allocation_location_;
     std::string allocation_stacktrace_;
-    std::string virtual_type_name_;
 
     template <typename T>
     friend class ObjectPtr;
