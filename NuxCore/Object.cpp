@@ -328,9 +328,7 @@ bool debug_object_allocation_stack()
                        << "Release all of them to destroy this object. "
                        << "\nObject allocated at: " << GetAllocationLocation() << "\n";
  #if defined(NUX_OS_LINUX)
-      if (debug_object_allocation_stack()) {
-        LOG_WARN(logger) << logging::backtrace();
-    }
+      LOG_WARN(logger) << "UnReference occuring here: \n" << logging::Backtrace();
  #endif
       return false;
     }
