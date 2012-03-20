@@ -200,6 +200,13 @@ dnl ************************************
 dnl Enable/disable tests
 dnl ************************************
 
+CHECK_GTEST
+AS_IF([test "x$have_gtest" != xyes],
+      AC_MSG_ERROR([package 'gtest' not found]))
+
+AC_SUBST([GTEST_CPPFLAGS])
+
+
 AC_ARG_ENABLE([tests],
               [AC_HELP_STRING([--enable-tests=@<:@no/yes@:>@],
               [Enable Nux Testing @<:@default=yes@:>@])],
@@ -224,7 +231,6 @@ AS_IF([test "x$enable_tests" = "xyes"],
       ]
 )
 AM_CONDITIONAL(BUILD_TESTS, [test "x$enable_tests" = "xyes"])
-
 
 dnl ===========================================================================
 

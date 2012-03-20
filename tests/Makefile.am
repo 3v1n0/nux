@@ -1,4 +1,11 @@
 if BUILD_TESTS
+
+nodist_libgtest_a_SOURCES = $(GTEST_SOURCE)/src/gtest-all.cc
+
+libgtest_a_CPPFLAGS = $(GTEST_CPPFLAGS) -w
+libgtest_a_CXXFLAGS = $(GTEST_CXXFLAGS) $(AM_CXXFLAGS)
+check_LIBRARIES = libgtest.a
+
 check_PROGRAMS = \
   gtest-nux \
   gtest-nuxcore \
@@ -76,10 +83,11 @@ gtest_nuxcore_LDADD = \
   $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
   $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-  $(NUX_LIBS)
+  $(NUX_LIBS) \
+  libgtest.a
 
 gtest_nuxcore_LDFLAGS = \
-  -lpthread -lgtest -lgmock \
+  -lpthread -lgmock \
   -lboost_filesystem -lboost_system
 
 gtest_nux_SOURCES = \
@@ -113,10 +121,11 @@ gtest_nux_LDADD = \
   $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
   $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-  $(NUX_LIBS)
+  $(NUX_LIBS) \
+  libgtest.a
 
 gtest_nux_LDFLAGS = \
-  -lpthread -lgtest -lgmock \
+  -lpthread -lgmock \
   -lboost_filesystem -lboost_system
 
 TestFlags = -I$(srcdir) \
