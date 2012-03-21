@@ -26,33 +26,6 @@ check_PROGRAMS = \
   xtest-text-entry-logic \
   xtest-focus-on-mouse-enter
 
-# Please keep alphabetical
-# test_nux_SOURCES = \
-# test-canvas.cpp \
-# test-nux.cpp \
-# test-system.cpp
-
-#test_nux_CPPFLAGS = \
-#  -I$(srcdir) \
-#  -I$(top_srcdir) \
-#  -DPREFIX=\""$(prefix)"\" \
-#	-DLIBDIR=\""$(libdir)"\" \
-#  -DDATADIR=\""$(datadir)"\" \
-#  -DG_LOG_DOMAIN=\"NuxTests\" \
-#  -DTESTDIR=\""$(top_srcdir)/tests"\" \
-#  $(GCC_FLAGS) \
-#  $(NUX_CORE_CFLAGS) \
-#  $(NUX_EXAMPLES_CFLAGS) \
-#  $(NUX_CFLAGS) \
-#  $(MAINTAINER_CFLAGS)
-
-#test_nux_LDADD = \
-#  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-#  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
-#  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
-#  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-#  $(NUX_LIBS)
-
 gtest_nuxcore_SOURCES = \
   Helpers.h \
   Helpers.cpp \
