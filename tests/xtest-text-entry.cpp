@@ -308,10 +308,6 @@ void TestingThread(nux::NThread* thread, void* user_data)
 
       active = true;
     }
-    else
-    {
-      test.TestReportMsg(false,"Pinyin is NOT an active input method" );
-    }
 
     // Test for ibus-hangul    
     if (bus_ && SetEngineActive(bus_,"hangul"))
@@ -330,10 +326,6 @@ void TestingThread(nux::NThread* thread, void* user_data)
       }
 
       active = true;
-    }
-    else
-    {
-      test.TestReportMsg(false,"Hangul is NOT an active input method" );
     }
 
     // Checking for ibus-anthy - Japanese
@@ -358,10 +350,6 @@ void TestingThread(nux::NThread* thread, void* user_data)
       }
 
       active = true;
-    }
-    else
-    {
-      test.TestReportMsg(false,"Anthy is NOT an active input method" );
     }
 
     g_object_unref (bus_); 

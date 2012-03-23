@@ -137,6 +137,7 @@ am__objects_1 = libnux_graphics_@NUX_API_VERSION@_la-Events.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-RenderingPipe.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeAsm.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeGLSL.lo \
+	libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeTextureBlend.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-GLRenderingAPI.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-RunTimeStats.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-XInputWindow.lo
@@ -458,6 +459,7 @@ source_h = \
   $(srcdir)/RenderingPipe.h \
   $(srcdir)/RenderingPipeAsm.h \
   $(srcdir)/RenderingPipeGLSL.h \
+  $(srcdir)/RenderingPipeTextureBlendShaderSource.h \
   $(srcdir)/RunTimeStats.h \
   $(srcdir)/VirtualKeyCodesX11.h \
   $(srcdir)/XInputWindow.h
@@ -515,6 +517,7 @@ source_cpp = \
   $(srcdir)/RenderingPipe.cpp \
   $(srcdir)/RenderingPipeAsm.cpp \
   $(srcdir)/RenderingPipeGLSL.cpp \
+  $(srcdir)/RenderingPipeTextureBlend.cpp \
   $(srcdir)/GLRenderingAPI.cpp \
   $(srcdir)/RunTimeStats.cpp \
   $(srcdir)/XInputWindow.cpp
@@ -658,6 +661,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-RenderingPipe.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeAsm.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeGLSL.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeTextureBlend.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-RunTimeStats.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-XInputWindow.Plo@am__quote@
 
@@ -1045,6 +1049,13 @@ libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeGLSL.lo: $(srcdir)/RenderingPi
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(srcdir)/RenderingPipeGLSL.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeGLSL.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeGLSL.lo `test -f '$(srcdir)/RenderingPipeGLSL.cpp' || echo '$(srcdir)/'`$(srcdir)/RenderingPipeGLSL.cpp
+
+libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeTextureBlend.lo: $(srcdir)/RenderingPipeTextureBlend.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeTextureBlend.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeTextureBlend.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeTextureBlend.lo `test -f '$(srcdir)/RenderingPipeTextureBlend.cpp' || echo '$(srcdir)/'`$(srcdir)/RenderingPipeTextureBlend.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeTextureBlend.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeTextureBlend.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(srcdir)/RenderingPipeTextureBlend.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeTextureBlend.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeTextureBlend.lo `test -f '$(srcdir)/RenderingPipeTextureBlend.cpp' || echo '$(srcdir)/'`$(srcdir)/RenderingPipeTextureBlend.cpp
 
 libnux_graphics_@NUX_API_VERSION@_la-GLRenderingAPI.lo: $(srcdir)/GLRenderingAPI.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GLRenderingAPI.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLRenderingAPI.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GLRenderingAPI.lo `test -f '$(srcdir)/GLRenderingAPI.cpp' || echo '$(srcdir)/'`$(srcdir)/GLRenderingAPI.cpp

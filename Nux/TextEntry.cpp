@@ -289,8 +289,8 @@ namespace nux
     const char*     character  ,   /*character*/
     unsigned short   keyCount       /*key repeat count*/)
   {
-    bool retval = FALSE;
-
+    bool im_filtered = false;
+#if defined(NUX_OS_LINUX)
     if (dead_key_mode_ && keysym == XK_space)
     {
       dead_key_mode_ = false;
@@ -307,7 +307,8 @@ namespace nux
     {
       return;
     }
-    
+#endif
+
     if (event_type == NUX_KEYDOWN)
       text_input_mode_ = true;
 
@@ -318,7 +319,7 @@ namespace nux
     KeyEvent event((NuxEventType)event_type, keysym,cur_event.x11_keycode, state, character); 
 
 #if defined(NUX_OS_LINUX)
-    retval = ime_->FilterKeyEvent(event); 
+    im_filtered = ime_->FilterKeyEvent(event);
 #endif
 
     if ((!multiline_) && (!lose_key_focus_on_key_nav_direction_up_) && (keysym == NUX_VK_UP))
@@ -341,7 +342,7 @@ namespace nux
     if (keysym == NUX_VK_TAB)
       return;
 
-    if (keysym == NUX_VK_ENTER || keysym == NUX_KP_ENTER)
+    if ((keysym == NUX_VK_ENTER || keysym == NUX_KP_ENTER) && !im_filtered)
     {
       activated.emit();
       return;
@@ -352,7 +353,7 @@ namespace nux
     bool ctrl = (state & NUX_STATE_CTRL);
 
     // DLOG("TextEntry::key_down(%d, shift:%d ctrl:%d)", keyval, shift, ctrl);
-    if (event_type == NUX_KEYDOWN && !retval)
+    if (event_type == NUX_KEYDOWN && !im_filtered)
     {
       if (keyval == NUX_VK_LEFT)
       {
@@ -465,12 +466,15 @@ namespace nux
 //       }
     }
 
-    if (!retval && character != 0 && (strlen(character) != 0))
+    if ((character != 0 && strlen(character) != 0) && !im_filtered)
     {
       EnterText(character);
     }
 
-    QueueRefresh(false, true);
+    if (!im_filtered)
+    {
+      QueueRefresh(false, true);
+    }
     return;
   }
 
@@ -543,6 +547,7 @@ namespace nux
   {
     key_nav_mode_     = true;
     text_input_mode_  = false;
+    dead_key_mode_    = false;
     composition_mode_ = false;
     composition_string_.clear();
 
@@ -553,6 +558,7 @@ namespace nux
   {
     key_nav_mode_     = false;
     text_input_mode_  = false;
+    dead_key_mode_    = false;
     composition_mode_ = false;
     composition_string_.clear();
 
@@ -602,6 +608,7 @@ namespace nux
 
   bool TextEntry::HandledDeadKeys(int keysym, int state, const char* character)
   {
+#if defined(NUX_OS_LINUX)    
     /* Checks if the keysym between the first and last dead key */
     if ((keysym >= XK_dead_grave) && (keysym <= XK_dead_stroke) && !dead_key_mode_)
     {
@@ -627,10 +634,14 @@ namespace nux
       dead_key_mode_ = false;
     }
     return false;
+#else
+    return false;
+#endif        
   }
 
   bool TextEntry::HandledComposition(int keysym, const char* character)
   {
+#if defined(NUX_OS_LINUX)
     if (keysym == XK_Multi_key)
     {
       if (composition_mode_)
@@ -683,6 +694,9 @@ namespace nux
       }
     } 
     return false;
+#else
+    return false;
+#endif    
   }
 
   void TextEntry::SetText(const char* text)

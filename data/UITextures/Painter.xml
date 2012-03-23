@@ -7,6 +7,8 @@
   <Image Name="Stroke_1pxrad_2px.tga" type="Stroke" style="eSTROKE_CORNER_ROUND1" border_left="1" border_right="1" border_top="1" border_bottom="1" border_only="true" />
 
   <Image Name="RoundCorner_10pxrad.tga" type="Shape" style="eSHAPE_CORNER_ROUND10"  border_left="10" border_right="10" border_top="10" border_bottom="10" border_only="false" />
+  <Image Name="RoundCorner_6pxrad.tga" type="Shape" style="eSHAPE_CORNER_ROUND6"    border_left="6"  border_right="6"  border_top="6"  border_bottom="6" border_only="false" />
+  <Image Name="RoundCorner_5pxrad.tga" type="Shape" style="eSHAPE_CORNER_ROUND5"    border_left="5"  border_right="5"  border_top="5"  border_bottom="5" border_only="false" />
   <Image Name="RoundCorner_4pxrad.tga" type="Shape" style="eSHAPE_CORNER_ROUND4"    border_left="4"  border_right="4"  border_top="4"  border_bottom="4" border_only="false" />
   <Image Name="RoundCorner_2pxrad.tga" type="Shape" style="eSHAPE_CORNER_ROUND2"    border_left="2"  border_right="2"  border_top="2"  border_bottom="2" border_only="false" />
   <Image Name="RoundCorner_1pxrad.tga" type="Shape" style="eSHAPE_CORNER_ROUND1"    border_left="1"  border_right="1"  border_top="1"  border_bottom="1" border_only="false" />
