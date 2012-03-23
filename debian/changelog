@@ -1,6 +1,12 @@
 nux (2.8.0-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream release.
+    - No glow: remove internal glow/shadow from Alt-tab switcher border and
+      <Super> shortcut window (LP: #940493)
+    - As soon as you start to drag a dash icon, the icon is drawn for a moment
+      at (100, 100) (LP: #947362)
+    - Unity launches selected application on commit pre-edit texts with ibus
+      (LP: #954901)
 
  -- Didier Roche <didrocks@ubuntu.com>  Fri, 23 Mar 2012 13:22:19 +0100
 
