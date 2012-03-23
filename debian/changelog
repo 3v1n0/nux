@@ -1,4 +1,4 @@
-nux (2.8.0-0ubuntu1) UNRELEASED; urgency=low
+nux (2.8.0-0ubuntu1) precise-proposed; urgency=low
 
   * New upstream release.
     - No glow: remove internal glow/shadow from Alt-tab switcher border and
@@ -8,7 +8,7 @@ nux (2.8.0-0ubuntu1) UNRELEASED; urgency=low
     - Unity launches selected application on commit pre-edit texts with ibus
       (LP: #954901)
 
- -- Didier Roche <didrocks@ubuntu.com>  Fri, 23 Mar 2012 13:22:19 +0100
+ -- Didier Roche <didrocks@ubuntu.com>  Fri, 23 Mar 2012 14:47:36 +0100
 
 nux (2.6.0-0ubuntu1) precise; urgency=low
 
