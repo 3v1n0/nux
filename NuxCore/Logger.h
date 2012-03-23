@@ -93,6 +93,7 @@ Level get_logging_level(std::string level);
 void configure_logging(const char* config_string);
 std::string Backtrace(int levels = -1);
 
+void reset_logging();
 std::string dump_logging_levels(std::string const& prefix = "");
 
 class LogStream : public std::ostream

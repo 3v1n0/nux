@@ -82,6 +82,7 @@ source_h = \
   $(srcdir)/RenderingPipe.h \
   $(srcdir)/RenderingPipeAsm.h \
   $(srcdir)/RenderingPipeGLSL.h \
+  $(srcdir)/RenderingPipeTextureBlendShaderSource.h \
   $(srcdir)/RunTimeStats.h \
   $(srcdir)/VirtualKeyCodesX11.h \
   $(srcdir)/XInputWindow.h
@@ -139,6 +140,7 @@ source_cpp = \
   $(srcdir)/RenderingPipe.cpp \
   $(srcdir)/RenderingPipeAsm.cpp \
   $(srcdir)/RenderingPipeGLSL.cpp \
+  $(srcdir)/RenderingPipeTextureBlend.cpp \
   $(srcdir)/GLRenderingAPI.cpp \
   $(srcdir)/RunTimeStats.cpp \
   $(srcdir)/XInputWindow.cpp

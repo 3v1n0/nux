@@ -2114,7 +2114,7 @@ namespace nux
     // Second this window will grab and own the XdndSelection Selection
     _dnd_source_window = XCreateWindow(display, 
                                         root, 
-                                        100, 100, 
+                                        -1000, -1000, 
                                         width, height, 
                                         0,
                                         vinfo.depth,

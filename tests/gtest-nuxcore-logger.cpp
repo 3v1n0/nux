@@ -10,13 +10,6 @@
 using namespace nux::logging;
 using namespace testing;
 
-namespace nux {
-namespace logging {
-// Declare the hidden function so we can call it.
-void reset_logging();
-}
-}
-
 
 namespace {
 
