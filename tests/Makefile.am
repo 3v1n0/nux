@@ -1,4 +1,11 @@
 if BUILD_TESTS
+
+nodist_libgtest_a_SOURCES = $(GTEST_SOURCE)/src/gtest-all.cc
+
+libgtest_a_CPPFLAGS = $(GTEST_CPPFLAGS) -w
+libgtest_a_CXXFLAGS = $(GTEST_CXXFLAGS) $(AM_CXXFLAGS)
+check_LIBRARIES = libgtest.a
+
 check_PROGRAMS = \
   gtest-nux \
   gtest-nuxcore \
@@ -18,33 +25,6 @@ check_PROGRAMS = \
   xtest-text-entry-compositionkeys \
   xtest-text-entry-logic \
   xtest-focus-on-mouse-enter
-
-# Please keep alphabetical
-# test_nux_SOURCES = \
-# test-canvas.cpp \
-# test-nux.cpp \
-# test-system.cpp
-
-#test_nux_CPPFLAGS = \
-#  -I$(srcdir) \
-#  -I$(top_srcdir) \
-#  -DPREFIX=\""$(prefix)"\" \
-#	-DLIBDIR=\""$(libdir)"\" \
-#  -DDATADIR=\""$(datadir)"\" \
-#  -DG_LOG_DOMAIN=\"NuxTests\" \
-#  -DTESTDIR=\""$(top_srcdir)/tests"\" \
-#  $(GCC_FLAGS) \
-#  $(NUX_CORE_CFLAGS) \
-#  $(NUX_EXAMPLES_CFLAGS) \
-#  $(NUX_CFLAGS) \
-#  $(MAINTAINER_CFLAGS)
-
-#test_nux_LDADD = \
-#  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-#  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
-#  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
-#  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-#  $(NUX_LIBS)
 
 gtest_nuxcore_SOURCES = \
   Helpers.h \
@@ -76,10 +56,11 @@ gtest_nuxcore_LDADD = \
   $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
   $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-  $(NUX_LIBS)
+  $(NUX_LIBS) \
+  libgtest.a
 
 gtest_nuxcore_LDFLAGS = \
-  -lpthread -lgtest -lgmock \
+  -lpthread -lgmock \
   -lboost_filesystem -lboost_system
 
 gtest_nux_SOURCES = \
@@ -113,10 +94,11 @@ gtest_nux_LDADD = \
   $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
   $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-  $(NUX_LIBS)
+  $(NUX_LIBS) \
+  libgtest.a
 
 gtest_nux_LDFLAGS = \
-  -lpthread -lgtest -lgmock \
+  -lpthread -lgmock \
   -lboost_filesystem -lboost_system
 
 TestFlags = -I$(srcdir) \
