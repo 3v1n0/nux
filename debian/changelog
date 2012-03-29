@@ -1,3 +1,11 @@
+nux (2.8.0-0ubuntu2) UNRELEASED; urgency=low
+
+  * debian/rules:
+    - remove disable-tests are now tests are only build if the right build-dep
+      are here.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 29 Mar 2012 18:30:19 +0200
+
 nux (2.8.0-0ubuntu1) precise-proposed; urgency=low
 
   * New upstream release.
