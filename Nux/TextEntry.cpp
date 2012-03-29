@@ -155,7 +155,7 @@ namespace nux
 #if defined(NUX_OS_LINUX)
     , caret_cursor_(None)
     , ime_(new IBusIMEContext(this))
-#endif    
+#endif
     , ime_active_(false)
     , text_input_mode_(false)
     , key_nav_mode_(false)
@@ -201,6 +201,8 @@ namespace nux
     if (ime_)
       delete ime_;
 #endif
+    delete canvas_;
+    ResetLayout();
   }
 
   void TextEntry::PreLayoutManagement()
@@ -315,8 +317,8 @@ namespace nux
     cursor_blink_status_ = 4;
 
     // FIXME Have to get the current event fot he x11_keycode for ibus-hangul/korean input
-    nux::Event cur_event = nux::GetWindowThread()->GetGraphicsDisplay().GetCurrentEvent(); 
-    KeyEvent event((NuxEventType)event_type, keysym,cur_event.x11_keycode, state, character); 
+    nux::Event cur_event = nux::GetWindowThread()->GetGraphicsDisplay().GetCurrentEvent();
+    KeyEvent event((NuxEventType)event_type, keysym,cur_event.x11_keycode, state, character);
 
 #if defined(NUX_OS_LINUX)
     im_filtered = ime_->FilterKeyEvent(event);
@@ -336,8 +338,8 @@ namespace nux
 
     if (event_type == NUX_KEYUP)
       return;
-    
-  
+
+
     // we need to ignore some characters
     if (keysym == NUX_VK_TAB)
       return;
@@ -497,7 +499,7 @@ namespace nux
   {
     ProcessMouseEvent(NUX_MOUSE_MOVE, x, y, dx, dy, button_flags, key_flags);
   }
-  
+
   void TextEntry::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
 #if defined(NUX_OS_LINUX)
@@ -505,7 +507,7 @@ namespace nux
     {
       Display* display = nux::GetGraphicsDisplay()->GetX11Display();
       nux::BaseWindow* window = static_cast<nux::BaseWindow*>(GetTopLevelViewWindow());
-    
+
       if (display && window)
       {
         caret_cursor_ = XCreateFontCursor(display, XC_xterm);
@@ -514,7 +516,7 @@ namespace nux
     }
 #endif
   }
-  
+
   void TextEntry::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
 #if defined(NUX_OS_LINUX)
@@ -522,7 +524,7 @@ namespace nux
     {
       Display* display = nux::GetGraphicsDisplay()->GetX11Display();
       nux::BaseWindow* window = static_cast<nux::BaseWindow*>(GetTopLevelViewWindow());
-      
+
       if (display && window)
       {
         XUndefineCursor(display, window->GetInputWindowId());
@@ -608,7 +610,7 @@ namespace nux
 
   bool TextEntry::HandledDeadKeys(int keysym, int state, const char* character)
   {
-#if defined(NUX_OS_LINUX)    
+#if defined(NUX_OS_LINUX)
     /* Checks if the keysym between the first and last dead key */
     if ((keysym >= XK_dead_grave) && (keysym <= XK_dead_stroke) && !dead_key_mode_)
     {
@@ -619,7 +621,7 @@ namespace nux
       {
         composition_mode_ = true;
         composition_string_.clear();
-        
+
         dead_key_string_ = character;
 
         std::string dead_key;
@@ -636,7 +638,7 @@ namespace nux
     return false;
 #else
     return false;
-#endif        
+#endif
   }
 
   bool TextEntry::HandledComposition(int keysym, const char* character)
@@ -664,9 +666,9 @@ namespace nux
         composition_string_.clear();
         return true;
       }
-        
+
       composition_string_ += character;
-      
+
       std::string composition_match;
 
       int match = LookForMatch(composition_match);
@@ -692,11 +694,11 @@ namespace nux
 
         return true;
       }
-    } 
+    }
     return false;
 #else
     return false;
-#endif    
+#endif
   }
 
   void TextEntry::SetText(const char* text)
@@ -840,7 +842,7 @@ namespace nux
         need_im_reset_ = true;
 #if defined(NUX_OS_LINUX)
         ime_->Focus();
-#endif        
+#endif
         //gtk_im_context_focus_in(im_context_);
         //UpdateIMCursorLocation();
       }
@@ -860,7 +862,7 @@ namespace nux
       if (!readonly_ /*&& im_context_*/)
       {
         need_im_reset_ = true;
-#if defined(NUX_OS_LINUX)        
+#if defined(NUX_OS_LINUX)
         ime_->Blur();
 #endif
         //gtk_im_context_focus_out(im_context_);
@@ -1260,7 +1262,7 @@ namespace nux
     {
       if (nux_compose_seqs_compact[i].compare(composition_string_) == 0)
       {
-        // advance to the next sequence after :: 
+        // advance to the next sequence after ::
         while (nux_compose_seqs_compact[++i].compare("::") != 0)
         {
         }
@@ -1418,7 +1420,7 @@ namespace nux
     }
     if (!completion_.empty() && !wrap_)
     {
-      attr = pango_attr_foreground_new(65535 * completion_color_.red, 
+      attr = pango_attr_foreground_new(65535 * completion_color_.red,
                                        65535 * completion_color_.green,
                                        65535 * completion_color_.blue);
       attr->start_index = static_cast<guint>(pre_completion_length);
@@ -2331,14 +2333,14 @@ namespace nux
           // This will move the cursor one line up.
           return true;
         }
-        
+
         if (multiline_ && (key_sym == NUX_VK_DOWN))
         {
           // Navigate between the lines of the text entry.
-          // This will move the cursor one line down.          
+          // This will move the cursor one line down.
           return true;
         }
-                
+
         if ((!multiline_) && (!lose_key_focus_on_key_nav_direction_up_) && (key_sym == NUX_VK_UP))
         {
           // By returning true, the text entry signals that it want to receive the signal for this event.
@@ -2415,7 +2417,7 @@ namespace nux
   void TextEntry::SetLoseKeyFocusOnKeyNavDirectionDown(bool b)
   {
     lose_key_focus_on_key_nav_direction_down_ = b;
-  }  
+  }
 
   bool TextEntry::GetLoseKeyFocusOnKeyNavDirectionDown() const
   {
