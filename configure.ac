@@ -200,36 +200,42 @@ dnl ************************************
 dnl Enable/disable tests
 dnl ************************************
 
-CHECK_GTEST
-AS_IF([test "x$have_gtest" != xyes],
-      AC_MSG_ERROR([package 'gtest' not found]))
-
-AC_SUBST([GTEST_CPPFLAGS])
-
 
 AC_ARG_ENABLE([tests],
               [AC_HELP_STRING([--enable-tests=@<:@no/yes@:>@],
               [Enable Nux Testing @<:@default=yes@:>@])],
               [],
               [enable_tests=yes])
+
 AS_IF([test "x$enable_tests" = "xyes"],
       [
-       # Check for googletest and googlemock
-       AC_LANG_PUSH([C++])
-       AC_CHECK_HEADER([gtest/gtest.h],
-                       [],
-                       [AC_MSG_ERROR([you are missing google-test, apt-get install libgtest-dev])])
-       AC_CHECK_HEADER([gmock/gmock.h],
-                       [],
-                       [AC_MSG_ERROR([you are missing google-mock, apt-get install google-mock])])
-       AC_LANG_POP([C++])
+        # Check for google gtest
+        CHECK_GTEST
+        AS_IF([test "x$have_gtest" = "xyes"],
+          [AC_SUBST([GTEST_CPPFLAGS])],
+          [AC_MSG_WARN([you are missing google-test, apt-get install libgtest-dev])])
 
-       #Check for libxtst
-       AC_CHECK_HEADER([X11/extensions/XTest.h],
-                       [],
-                       [AC_MSG_ERROR([you are missing libxtst-dev, apt-get install libxtst-dev])])
+        # Check for googlemock
+        AC_LANG_PUSH([C++])
+        AC_CHECK_HEADER([gmock/gmock.h],
+                       [have_gmock=yes],
+                       [AC_MSG_WARN([you are missing google-mock, apt-get install google-mock])])
+        AC_LANG_POP([C++])
+
+        #Check for libxtst
+        AC_CHECK_HEADER([X11/extensions/XTest.h],
+                       [have_xtest=yes],
+                       [AC_MSG_WARN([you are missing libxtst-dev, apt-get install libxtst-dev])])
       ]
 )
+
+AS_IF([test "x$have_xtest" = "xyes" &&
+       test "x$have_gmock" = "xyes" &&
+       test "x$have_gtest" = "xyes"],
+  [],
+  [enable_tests=no]
+)
+
 AM_CONDITIONAL(BUILD_TESTS, [test "x$enable_tests" = "xyes"])
 
 dnl ===========================================================================
