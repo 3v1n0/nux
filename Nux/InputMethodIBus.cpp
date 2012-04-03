@@ -193,11 +193,12 @@ namespace nux
     //nuxDebugMsg("***IBusIMEContext::OnConnected***");
 
     nuxAssert(bus_ == bus);
-    nuxAssert(ibus_bus_is_connected(bus_));
-
-    if (context_)
-      DestroyContext();
-    CreateContext();
+    if (ibus_bus_is_connected(bus_))
+    {
+      if (context_)
+        DestroyContext();
+      CreateContext();
+    }
   }
 
   void IBusIMEContext::OnDisconnected(IBusBus *bus)
