@@ -54,11 +54,8 @@ AC_DEFUN([CHECK_GTEST],
                  [have_gtest_source=yes],
                  [have_gtest_source=no])
 
-  AS_IF([test "x$ac_cv_header_gtest_gtest_h" = xyes -a \
-              "x$have_gtest_source" = xyes],
-        [have_gtest=yes]
-        [AC_SUBST(GTEST_CPPFLAGS)]
-        [AC_SUBST(GTEST_SOURCE)],
+  AS_IF([test "x$ac_cv_header_gtest_gtest_h" = "xyes" && test "x$have_gtest_source" = "xyes"],
+        [have_gtest=yes] [AC_SUBST(GTEST_CPPFLAGS)] [AC_SUBST(GTEST_SOURCE)],
         [have_gtest=no])
 ]) # CHECK_GTEST
 
