@@ -327,8 +327,6 @@ namespace nux
 #endif
 
 #ifndef NUX_OPENGLES_20
-
-///////////////////////////////////
     if (1)
     {
       _glsl_version_string = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char *, glGetString(GL_SHADING_LANGUAGE_VERSION)));
@@ -348,8 +346,6 @@ namespace nux
       CHECKGL(glGetIntegerv(GL_MAJOR_VERSION, &_opengl_major));
       CHECKGL(glGetIntegerv(GL_MINOR_VERSION, &_opengl_minor));
     }
-
-///////////////////////////////////    
 #else
     _opengl_major = 2;
     _opengl_minor = 0;
