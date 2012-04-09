@@ -327,8 +327,29 @@ namespace nux
 #endif
 
 #ifndef NUX_OPENGLES_20
-    CHECKGL(glGetIntegerv(GL_MAJOR_VERSION, &_opengl_major));
-    CHECKGL(glGetIntegerv(GL_MINOR_VERSION, &_opengl_minor));
+
+///////////////////////////////////
+    if (1)
+    {
+      _glsl_version_string = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char *, glGetString(GL_SHADING_LANGUAGE_VERSION)));
+      CHECKGL_MSG(glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+      NString glsl_major;
+      NString glsl_minor;
+      char split = '.';
+      _glsl_version_string.SplitAtFirstOccurenceOf(split, glsl_major, glsl_minor);
+
+      _opengl_major = (char)glsl_major.GetTCharPtr()[0] - '0';
+      _opengl_major = (char)glsl_minor.GetTCharPtr()[0] - '0';
+    }
+
+    if (_opengl_major >= 3)
+    {
+      CHECKGL(glGetIntegerv(GL_MAJOR_VERSION, &_opengl_major));
+      CHECKGL(glGetIntegerv(GL_MINOR_VERSION, &_opengl_minor));
+    }
+
+///////////////////////////////////    
 #else
     _opengl_major = 2;
     _opengl_minor = 0;
@@ -512,39 +533,13 @@ namespace nux
     CHECKGL_MSG(glGetString(GL_RENDERER));
     _openGL_version_string = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char *, glGetString(GL_VERSION)));
     CHECKGL_MSG(glGetString(GL_VERSION));
-#ifndef NUX_OPENGLES_20
-    if (GLEW_VERSION_2_0)
-#else
-    if (1)
-#endif
-    {
-      _glsl_version_string = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char *, glGetString(GL_SHADING_LANGUAGE_VERSION)));
-      CHECKGL_MSG(glGetString(GL_SHADING_LANGUAGE_VERSION));
-
-      NString glsl_major;
-      NString glsl_minor;
-      char split = '.';
-      _glsl_version_string.SplitAtFirstOccurenceOf(split, glsl_major, glsl_minor);
-
-    }
 
     nuxDebugMsg("Gpu Vendor: %s", _board_vendor_string.GetTCharPtr());
     nuxDebugMsg("Gpu Renderer: %s", _board_renderer_string.GetTCharPtr());
     nuxDebugMsg("Gpu OpenGL Version: %s", _openGL_version_string.GetTCharPtr());
+    nuxDebugMsg("Gpu OpenGL Major Version: %d", _opengl_major);
+    nuxDebugMsg("Gpu OpenGL Minor Version: %d", _opengl_minor);
     nuxDebugMsg("Gpu GLSL Version: %s", _glsl_version_string.GetTCharPtr());
-
-#ifndef NUX_OPENGLES_20
-    // Get the version supported by the context that was set.
-    int new_opengl_major;
-    int new_opengl_minor;
-    CHECKGL(glGetIntegerv(GL_MAJOR_VERSION, &new_opengl_major));
-    CHECKGL(glGetIntegerv(GL_MINOR_VERSION, &new_opengl_minor));
-
-    if ((new_opengl_major != _opengl_major) || (new_opengl_minor != _opengl_minor))
-    {
-      nuxDebugMsg("The Gpu supports OpenGL %d.%d but version %d.%d has been requested.", _opengl_major, _opengl_minor, new_opengl_major, new_opengl_minor);
-    }
-#endif
 
     NString TempStr = (const char *) TCharToUpperCase(_board_vendor_string.GetTCharPtr());
 
