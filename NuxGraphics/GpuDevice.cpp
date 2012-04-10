@@ -329,7 +329,7 @@ namespace nux
 #ifndef NUX_OPENGLES_20
     if (1)
     {
-      _glsl_version_string = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char *, glGetString(GL_SHADING_LANGUAGE_VERSION)));
+      _glsl_version_string = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char *, glGetString(GL_VERSION)));
       CHECKGL_MSG(glGetString(GL_VERSION));
 
       NString opengl_major;
