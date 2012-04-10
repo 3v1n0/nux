@@ -338,7 +338,7 @@ namespace nux
       _glsl_version_string.SplitAtFirstOccurenceOf(split, opengl_major, opengl_minor);
 
       _opengl_major = (char)opengl_major.GetTCharPtr()[0] - '0';
-      _opengl_major = (char)opengl_minor.GetTCharPtr()[0] - '0';
+      _opengl_minor = (char)opengl_minor.GetTCharPtr()[0] - '0';
     }
 
     if (_opengl_major >= 3)
