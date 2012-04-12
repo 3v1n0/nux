@@ -1,4 +1,4 @@
-nux (2.10.0-0ubuntu1) UNRELEASED; urgency=low
+nux (2.10.0-0ubuntu1) precise; urgency=low
 
   * New upstream release.
     - compiz crashed with SIGSEGV in g_datalist_id_set_data_full() from ...
@@ -19,7 +19,7 @@ nux (2.10.0-0ubuntu1) UNRELEASED; urgency=low
       the .h files even if the pc file check failed.
     - bump Standards-Version to latest
 
- -- Didier Roche <didrocks@ubuntu.com>  Thu, 12 Apr 2012 09:38:28 +0200
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 12 Apr 2012 15:14:45 +0200
 
 nux (2.8.0-0ubuntu2) precise; urgency=low
 
