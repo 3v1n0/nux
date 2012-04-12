@@ -3,6 +3,8 @@
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
+DEB_HOST_ARCH := $(shell dpkg-architecture -qDEB_HOST_ARCH)
+gles2_architectures := armel armhf
 
 %:
 	dh $@ --with quilt
@@ -10,7 +12,11 @@
 # build documentation as I didn't find a proper way to avoid make clean to not
 # remove doc/
 override_dh_auto_configure:
+ifeq ($(DEB_HOST_ARCH),$(findstring $(DEB_HOST_ARCH), $(gles2_architectures)))
+	dh_auto_configure -- --enable-documentation=no --enable-opengles-20
+else
 	dh_auto_configure -- --enable-documentation=no
+endif
 NUX_ABIVERSION := $(shell sed -rn 's/^\#define[[:space:]]+NUX_ABIVERSION[[:space:]]+//p' Nux/ABI.h )
 
 override_dh_install:

@@ -1,4 +1,4 @@
-nux (2.8.0-0ubuntu2) UNRELEASED; urgency=low
+nux (2.8.0-0ubuntu3) UNRELEASED; urgency=low
 
   * debian/rules:
     - remove disable-tests are now tests are only build if the right build-dep
@@ -8,6 +8,12 @@ nux (2.8.0-0ubuntu2) UNRELEASED; urgency=low
       the .h files even if the pc file check failed.
 
  -- Didier Roche <didrocks@ubuntu.com>  Tue, 03 Apr 2012 17:13:50 +0200
+
+nux (2.8.0-0ubuntu2) precise; urgency=low
+
+  * Enabling build with OpenGL ES2.0 support for ARM (LP: #979438)
+
+ -- Ricardo Salveti de Araujo <ricardo.salveti@linaro.org>  Wed, 11 Apr 2012 19:03:56 -0300
 
 nux (2.8.0-0ubuntu1) precise-proposed; urgency=low
 
