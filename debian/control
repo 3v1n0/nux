@@ -28,7 +28,7 @@ Build-Depends: debhelper (>= 7.0.50~),
                libutouch-geis-dev,
                libibus-1.0-dev,
                libxtst-dev,
-Standards-Version: 3.9.2
+Standards-Version: 3.9.3
 Section: libs
 Homepage: http://launchpad.net/nux
 Vcs-Bzr: https://code.launchpad.net/~ubuntu-desktop/nux/ubuntu

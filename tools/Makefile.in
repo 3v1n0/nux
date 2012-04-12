@@ -39,9 +39,10 @@ subdir = tools
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_doxygen.m4 \
-	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
-	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
-	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/configure.ac
+	$(top_srcdir)/m4/gtest.m4 $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -148,6 +149,8 @@ FGREP = @FGREP@
 GCC_FLAGS = @GCC_FLAGS@
 GL_PKGS = @GL_PKGS@
 GREP = @GREP@
+GTEST_CPPFLAGS = @GTEST_CPPFLAGS@
+GTEST_SOURCE = @GTEST_SOURCE@
 IBUS_CFLAGS = @IBUS_CFLAGS@
 IBUS_LIBS = @IBUS_LIBS@
 INSTALL = @INSTALL@

@@ -31,7 +31,7 @@ namespace nux
   /*!
   LayeredLayout works either as a bin layout, showing only one layer at a time, or it works
   as a composite layout, drawing all children in order(and you are able to modify the order).
-  
+
   The layout also allows two modes of input. In INPUT_MODE_ACTIVE, the layout will only send
   events to the active layer, even if in composite drawing mode. In INPUT_MODE_COMPOSITE, the
   layout will send events to all the layers, in the stacking order from top to bottom. This
@@ -172,7 +172,7 @@ namespace nux
 
     //! Raises the paint and input depth of area to the top of the layout
     /*!
-    Area will be drawn above all other layers and will be the first receive events  
+    Area will be drawn above all other layers and will be the first receive events
     \param area area to raise
     */
     void RaiseTop(Area *area);
@@ -200,7 +200,7 @@ namespace nux
 //          unset.
 //     */
 //     void SetLayoutProperties(LayoutProperties *properties);
-// 
+//
 //     //! Get the layout properties for this area
 //     /*!
 //         Retrieves the LayoutProperties sub-class with this area. See SetLayoutProperties
@@ -233,14 +233,15 @@ namespace nux
 
     virtual Area* KeyNavIteration(KeyNavDirection direction);
     void OnLayerGeometryChanged(Area* area, Geometry geo);
-    
+
   private:
     void PaintOne(Area *area, GraphicsEngine &graphics_engine, bool force_draw);
     void ChildQueueDraw(Area *area);
     void ChildVisibilityChanged(Area *area, bool visible);
-    
+
   private:
-    std::map<Area*, LayeredChildProperties*> area_property_map_;
+    typedef std::map<Area*, std::shared_ptr<LayeredChildProperties> > AreaPropertyMap;
+    AreaPropertyMap area_property_map_;
     int                       m_active_index;
     Area                      *m_active_area;
     bool                      m_paint_all;

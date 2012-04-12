@@ -55,15 +55,28 @@ subdir = tests
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_doxygen.m4 \
-	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
-	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
-	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/configure.ac
+	$(top_srcdir)/m4/gtest.m4 $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+ARFLAGS = cru
+AM_V_AR = $(am__v_AR_@AM_V@)
+am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
+am__v_AR_0 = @echo "  AR    " $@;
+AM_V_at = $(am__v_at_@AM_V@)
+am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+am__v_at_0 = @
+libgtest_a_AR = $(AR) $(ARFLAGS)
+libgtest_a_LIBADD =
+@BUILD_TESTS_TRUE@nodist_libgtest_a_OBJECTS =  \
+@BUILD_TESTS_TRUE@	libgtest_a-gtest-all.$(OBJEXT)
+libgtest_a_OBJECTS = $(nodist_libgtest_a_OBJECTS)
 am__gtest_nux_SOURCES_DIST = gtest-nux-area.cpp \
 	gtest-nux-cairo-wrapper.cpp gtest-nux-emmetrics.cpp \
 	gtest-nux-main.cpp gtest-nux-statictext.cpp \
@@ -85,7 +98,7 @@ am__DEPENDENCIES_1 =
 @BUILD_TESTS_TRUE@	$(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@	$(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@	$(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-@BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_1)
+@BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_1) libgtest.a
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -111,7 +124,7 @@ gtest_nuxcore_OBJECTS = $(am_gtest_nuxcore_OBJECTS)
 @BUILD_TESTS_TRUE@	$(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@	$(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@	$(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-@BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_1)
+@BUILD_TESTS_TRUE@	$(am__DEPENDENCIES_1) libgtest.a
 gtest_nuxcore_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
 	$(AM_CXXFLAGS) $(CXXFLAGS) $(gtest_nuxcore_LDFLAGS) $(LDFLAGS) \
@@ -336,9 +349,6 @@ LTCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 AM_V_CXX = $(am__v_CXX_@AM_V@)
 am__v_CXX_ = $(am__v_CXX_@AM_DEFAULT_V@)
 am__v_CXX_0 = @echo "  CXX   " $@;
-AM_V_at = $(am__v_at_@AM_V@)
-am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
-am__v_at_0 = @
 CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -365,9 +375,10 @@ am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_@AM_V@)
 am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(gtest_nux_SOURCES) $(gtest_nuxcore_SOURCES) \
-	$(test_empty_window_SOURCES) $(test_graphics_display_SOURCES) \
-	$(xtest_button_SOURCES) $(xtest_focus_on_mouse_down_SOURCES) \
+SOURCES = $(nodist_libgtest_a_SOURCES) $(gtest_nux_SOURCES) \
+	$(gtest_nuxcore_SOURCES) $(test_empty_window_SOURCES) \
+	$(test_graphics_display_SOURCES) $(xtest_button_SOURCES) \
+	$(xtest_focus_on_mouse_down_SOURCES) \
 	$(xtest_focus_on_mouse_enter_SOURCES) \
 	$(xtest_hgrid_key_navigation_SOURCES) \
 	$(xtest_hlayout_key_navigation_SOURCES) \
@@ -455,6 +466,8 @@ FGREP = @FGREP@
 GCC_FLAGS = @GCC_FLAGS@
 GL_PKGS = @GL_PKGS@
 GREP = @GREP@
+GTEST_CPPFLAGS = @GTEST_CPPFLAGS@
+GTEST_SOURCE = @GTEST_SOURCE@
 IBUS_CFLAGS = @IBUS_CFLAGS@
 IBUS_LIBS = @IBUS_LIBS@
 INSTALL = @INSTALL@
@@ -572,33 +585,10 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-
-# Please keep alphabetical
-# test_nux_SOURCES = \
-# test-canvas.cpp \
-# test-nux.cpp \
-# test-system.cpp
-
-#test_nux_CPPFLAGS = \
-#  -I$(srcdir) \
-#  -I$(top_srcdir) \
-#  -DPREFIX=\""$(prefix)"\" \
-#	-DLIBDIR=\""$(libdir)"\" \
-#  -DDATADIR=\""$(datadir)"\" \
-#  -DG_LOG_DOMAIN=\"NuxTests\" \
-#  -DTESTDIR=\""$(top_srcdir)/tests"\" \
-#  $(GCC_FLAGS) \
-#  $(NUX_CORE_CFLAGS) \
-#  $(NUX_EXAMPLES_CFLAGS) \
-#  $(NUX_CFLAGS) \
-#  $(MAINTAINER_CFLAGS)
-
-#test_nux_LDADD = \
-#  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-#  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
-#  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
-#  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-#  $(NUX_LIBS)
+@BUILD_TESTS_TRUE@nodist_libgtest_a_SOURCES = $(GTEST_SOURCE)/src/gtest-all.cc
+@BUILD_TESTS_TRUE@libgtest_a_CPPFLAGS = $(GTEST_CPPFLAGS) -w
+@BUILD_TESTS_TRUE@libgtest_a_CXXFLAGS = $(GTEST_CXXFLAGS) $(AM_CXXFLAGS)
+@BUILD_TESTS_TRUE@check_LIBRARIES = libgtest.a
 @BUILD_TESTS_TRUE@gtest_nuxcore_SOURCES = \
 @BUILD_TESTS_TRUE@  Helpers.h \
 @BUILD_TESTS_TRUE@  Helpers.cpp \
@@ -629,10 +619,11 @@ top_srcdir = @top_srcdir@
 @BUILD_TESTS_TRUE@  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-@BUILD_TESTS_TRUE@  $(NUX_LIBS)
+@BUILD_TESTS_TRUE@  $(NUX_LIBS) \
+@BUILD_TESTS_TRUE@  libgtest.a
 
 @BUILD_TESTS_TRUE@gtest_nuxcore_LDFLAGS = \
-@BUILD_TESTS_TRUE@  -lpthread -lgtest -lgmock \
+@BUILD_TESTS_TRUE@  -lpthread -lgmock \
 @BUILD_TESTS_TRUE@  -lboost_filesystem -lboost_system
 
 @BUILD_TESTS_TRUE@gtest_nux_SOURCES = \
@@ -666,10 +657,11 @@ top_srcdir = @top_srcdir@
 @BUILD_TESTS_TRUE@  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
 @BUILD_TESTS_TRUE@  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-@BUILD_TESTS_TRUE@  $(NUX_LIBS)
+@BUILD_TESTS_TRUE@  $(NUX_LIBS) \
+@BUILD_TESTS_TRUE@  libgtest.a
 
 @BUILD_TESTS_TRUE@gtest_nux_LDFLAGS = \
-@BUILD_TESTS_TRUE@  -lpthread -lgtest -lgmock \
+@BUILD_TESTS_TRUE@  -lpthread -lgmock \
 @BUILD_TESTS_TRUE@  -lboost_filesystem -lboost_system
 
 @BUILD_TESTS_TRUE@TestFlags = -I$(srcdir) \
@@ -803,7 +795,7 @@ top_srcdir = @top_srcdir@
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .cpp .lo .o .obj
+.SUFFIXES: .cc .cpp .lo .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -834,6 +826,13 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
+
+clean-checkLIBRARIES:
+	-test -z "$(check_LIBRARIES)" || rm -f $(check_LIBRARIES)
+libgtest.a: $(libgtest_a_OBJECTS) $(libgtest_a_DEPENDENCIES) $(EXTRA_libgtest_a_DEPENDENCIES) 
+	$(AM_V_at)-rm -f libgtest.a
+	$(AM_V_AR)$(libgtest_a_AR) libgtest.a $(libgtest_a_OBJECTS) $(libgtest_a_LIBADD)
+	$(AM_V_at)$(RANLIB) libgtest.a
 
 clean-checkPROGRAMS:
 	@list='$(check_PROGRAMS)'; test -n "$$list" || exit 0; \
@@ -921,6 +920,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nuxcore-gtest-nuxcore-object.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nuxcore-gtest-nuxcore-properties.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nuxcore-gtest-nuxcore-rolling-file-appender.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgtest_a-gtest-all.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_empty_window-test_empty_window.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_graphics_display-test_graphics_display.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_button-nux_automated_test_framework.Po@am__quote@
@@ -953,26 +953,40 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_vlayout_key_navigation-nux_automated_test_framework.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtest_vlayout_key_navigation-xtest-vlayout-key-navigation.Po@am__quote@
 
-.cpp.o:
+.cc.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ $<
 
-.cpp.obj:
+.cc.obj:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
-.cpp.lo:
+.cc.lo:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
+
+libgtest_a-gtest-all.o: $(GTEST_SOURCE)/src/gtest-all.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libgtest_a_CPPFLAGS) $(CPPFLAGS) $(libgtest_a_CXXFLAGS) $(CXXFLAGS) -MT libgtest_a-gtest-all.o -MD -MP -MF $(DEPDIR)/libgtest_a-gtest-all.Tpo -c -o libgtest_a-gtest-all.o `test -f '$(GTEST_SOURCE)/src/gtest-all.cc' || echo '$(srcdir)/'`$(GTEST_SOURCE)/src/gtest-all.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgtest_a-gtest-all.Tpo $(DEPDIR)/libgtest_a-gtest-all.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(GTEST_SOURCE)/src/gtest-all.cc' object='libgtest_a-gtest-all.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libgtest_a_CPPFLAGS) $(CPPFLAGS) $(libgtest_a_CXXFLAGS) $(CXXFLAGS) -c -o libgtest_a-gtest-all.o `test -f '$(GTEST_SOURCE)/src/gtest-all.cc' || echo '$(srcdir)/'`$(GTEST_SOURCE)/src/gtest-all.cc
+
+libgtest_a-gtest-all.obj: $(GTEST_SOURCE)/src/gtest-all.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libgtest_a_CPPFLAGS) $(CPPFLAGS) $(libgtest_a_CXXFLAGS) $(CXXFLAGS) -MT libgtest_a-gtest-all.obj -MD -MP -MF $(DEPDIR)/libgtest_a-gtest-all.Tpo -c -o libgtest_a-gtest-all.obj `if test -f '$(GTEST_SOURCE)/src/gtest-all.cc'; then $(CYGPATH_W) '$(GTEST_SOURCE)/src/gtest-all.cc'; else $(CYGPATH_W) '$(srcdir)/$(GTEST_SOURCE)/src/gtest-all.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgtest_a-gtest-all.Tpo $(DEPDIR)/libgtest_a-gtest-all.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(GTEST_SOURCE)/src/gtest-all.cc' object='libgtest_a-gtest-all.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libgtest_a_CPPFLAGS) $(CPPFLAGS) $(libgtest_a_CXXFLAGS) $(CXXFLAGS) -c -o libgtest_a-gtest-all.obj `if test -f '$(GTEST_SOURCE)/src/gtest-all.cc'; then $(CYGPATH_W) '$(GTEST_SOURCE)/src/gtest-all.cc'; else $(CYGPATH_W) '$(srcdir)/$(GTEST_SOURCE)/src/gtest-all.cc'; fi`
 
 gtest_nux-gtest-nux-area.o: gtest-nux-area.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-area.o -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-area.Tpo -c -o gtest_nux-gtest-nux-area.o `test -f 'gtest-nux-area.cpp' || echo '$(srcdir)/'`gtest-nux-area.cpp
@@ -1646,6 +1660,27 @@ xtest_vlayout_key_navigation-nux_automated_test_framework.obj: nux_automated_tes
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xtest_vlayout_key_navigation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xtest_vlayout_key_navigation-nux_automated_test_framework.obj `if test -f 'nux_automated_test_framework.cpp'; then $(CYGPATH_W) 'nux_automated_test_framework.cpp'; else $(CYGPATH_W) '$(srcdir)/nux_automated_test_framework.cpp'; fi`
 
+.cpp.o:
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ $<
+
+.cpp.obj:
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.cpp.lo:
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
+
 mostlyclean-libtool:
 	-rm -f *.lo
 
@@ -1736,7 +1771,7 @@ distdir: $(DISTFILES)
 	done
 @BUILD_TESTS_FALSE@check-local:
 check-am: all-am
-	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
+	$(MAKE) $(AM_MAKEFLAGS) $(check_LIBRARIES) $(check_PROGRAMS)
 	$(MAKE) $(AM_MAKEFLAGS) check-local
 check: check-am
 all-am: Makefile
@@ -1773,8 +1808,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-checkPROGRAMS clean-generic clean-libtool \
-	mostlyclean-am
+clean-am: clean-checkLIBRARIES clean-checkPROGRAMS clean-generic \
+	clean-libtool mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -1845,15 +1880,15 @@ uninstall-am:
 .MAKE: check-am install-am install-strip
 
 .PHONY: CTAGS GTAGS all all-am check check-am check-local clean \
-	clean-checkPROGRAMS clean-generic clean-libtool ctags \
-	distclean distclean-compile distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+	clean-checkLIBRARIES clean-checkPROGRAMS clean-generic \
+	clean-libtool ctags distclean distclean-compile \
+	distclean-generic distclean-libtool distclean-tags distdir dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags uninstall uninstall-am

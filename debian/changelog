@@ -1,13 +1,15 @@
-nux (2.8.0-0ubuntu3) UNRELEASED; urgency=low
+nux (2.10.0-0ubuntu1) UNRELEASED; urgency=low
 
+  * New upstream release.
   * debian/rules:
     - remove disable-tests are now tests are only build if the right build-dep
       are here.
   * debian/control:
     - add libxtst-dev as nux Makefile rules are broken and still try to include
       the .h files even if the pc file check failed.
+    - bump Standards-Version to latest
 
- -- Didier Roche <didrocks@ubuntu.com>  Tue, 03 Apr 2012 17:13:50 +0200
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 12 Apr 2012 09:38:28 +0200
 
 nux (2.8.0-0ubuntu2) precise; urgency=low
 
