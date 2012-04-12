@@ -14,7 +14,7 @@
 #   - Increase interface_version to the next odd number
 # 
 m4_define([nux_major_version], [2])
-m4_define([nux_minor_version], [8])
+m4_define([nux_minor_version], [10])
 m4_define([nux_micro_version], [0])
 
 m4_define([nux_api_version], [2.0])
@@ -22,7 +22,7 @@ m4_define([nux_api_version], [2.0])
 # The number format is : year/month/day
 # e.g.: december 5th, 2011 is: 20111205
 # To make more than one API change in a day, add a number to the date. Like 20111205.xx
-m4_define([nux_abi_version], [20120316.01])
+m4_define([nux_abi_version], [20120411.01])
 
 m4_define([nux_version],
           [nux_major_version.nux_minor_version.nux_micro_version])
@@ -200,31 +200,43 @@ dnl ************************************
 dnl Enable/disable tests
 dnl ************************************
 
+
 AC_ARG_ENABLE([tests],
               [AC_HELP_STRING([--enable-tests=@<:@no/yes@:>@],
               [Enable Nux Testing @<:@default=yes@:>@])],
               [],
               [enable_tests=yes])
+
 AS_IF([test "x$enable_tests" = "xyes"],
       [
-       # Check for googletest and googlemock
-       AC_LANG_PUSH([C++])
-       AC_CHECK_HEADER([gtest/gtest.h],
-                       [],
-                       [AC_MSG_ERROR([you are missing google-test, apt-get install libgtest-dev])])
-       AC_CHECK_HEADER([gmock/gmock.h],
-                       [],
-                       [AC_MSG_ERROR([you are missing google-mock, apt-get install google-mock])])
-       AC_LANG_POP([C++])
+        # Check for google gtest
+        CHECK_GTEST
+        AS_IF([test "x$have_gtest" = "xyes"],
+          [AC_SUBST([GTEST_CPPFLAGS])],
+          [AC_MSG_WARN([you are missing google-test, apt-get install libgtest-dev])])
 
-       #Check for libxtst
-       AC_CHECK_HEADER([X11/extensions/XTest.h],
-                       [],
-                       [AC_MSG_ERROR([you are missing libxtst-dev, apt-get install libxtst-dev])])
+        # Check for googlemock
+        AC_LANG_PUSH([C++])
+        AC_CHECK_HEADER([gmock/gmock.h],
+                       [have_gmock=yes],
+                       [AC_MSG_WARN([you are missing google-mock, apt-get install google-mock])])
+        AC_LANG_POP([C++])
+
+        #Check for libxtst
+        AC_CHECK_HEADER([X11/extensions/XTest.h],
+                       [have_xtest=yes],
+                       [AC_MSG_WARN([you are missing libxtst-dev, apt-get install libxtst-dev])])
       ]
 )
-AM_CONDITIONAL(BUILD_TESTS, [test "x$enable_tests" = "xyes"])
 
+AS_IF([test "x$have_xtest" = "xyes" &&
+       test "x$have_gmock" = "xyes" &&
+       test "x$have_gtest" = "xyes"],
+  [],
+  [enable_tests=no]
+)
+
+AM_CONDITIONAL(BUILD_TESTS, [test "x$enable_tests" = "xyes"])
 
 dnl ===========================================================================
 

@@ -166,6 +166,16 @@ namespace nux
     // Evaluate the features provided by the GPU.
     EvaluateGpuCaps();
 
+    if (UsingGLSLCodePath())
+    {
+      nuxDebugMsg("The GraphicsEngine is using the GLSL shader code path.");
+    }
+    else
+    {
+      nuxDebugMsg("The GraphicsEngine is using the assenbly shader code path."); 
+    }
+
+
     GlWindow.m_GraphicsContext = this;
     ResetStats();
 

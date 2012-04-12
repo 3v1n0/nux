@@ -337,7 +337,7 @@ namespace
     else if (event.type == NUX_DND_DROP)
     {
       InputArea* current_dnd_area = GetDnDArea();
-      if (current_dnd_area->GetGeometry().IsPointInside(event.x - event.x_root, event.y - event.y_root))
+      if (current_dnd_area->GetAbsoluteGeometry().IsPointInside(event.x - event.x_root, event.y - event.y_root))
         current_dnd_area->HandleDndDrop(event);
     }
   }
