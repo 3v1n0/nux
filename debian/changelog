@@ -1,6 +1,16 @@
 nux (2.10.0-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream release.
+    - compiz crashed with SIGSEGV in g_datalist_id_set_data_full() from ...
+      from unity::PanelTray::~PanelTray() from ... from
+      unity::panel::Controller::Impl::OnScreenChanged (LP: #921316)
+    - Far left character in panel (and launcher popups) distorted
+      (LP: #927441)
+    - [dash] Dash does not render "panel line" (LP: #926344)
+    - [multi-monitor] DND doesn't work for the launchers in other monitors
+      (LP: #965025)
+    - Unity dash can't select items using keyboard when ibus is active
+      (LP: #973344)
   * debian/rules:
     - remove disable-tests are now tests are only build if the right build-dep
       are here.
