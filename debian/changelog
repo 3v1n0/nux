@@ -1,4 +1,4 @@
-nux (2.10.0-0ubuntu1) precise; urgency=low
+nux (2.10.0-0ubuntu1) precise-proposed; urgency=low
 
   * New upstream release.
     - compiz crashed with SIGSEGV in g_datalist_id_set_data_full() from ...
