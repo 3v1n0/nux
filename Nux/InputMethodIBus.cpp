@@ -29,7 +29,7 @@ namespace nux
 {
   IBusBus* IBusIMEContext::bus_ = NULL;
 
-  IBusIMEContext::IBusIMEContext(TextEntry* text_entry) 
+  IBusIMEContext::IBusIMEContext(TextEntry* text_entry)
     : text_entry_(text_entry),
       context_(NULL),
       is_focused_(false)
@@ -166,7 +166,7 @@ namespace nux
     //nuxDebugMsg("***IBusIMEContext::DestroyContext***");
     if (!context_)
       return;
-     
+
     text_entry_->ResetPreedit();
     ibus_proxy_destroy(reinterpret_cast<IBusProxy *>(context_));
 
@@ -177,7 +177,7 @@ namespace nux
   {
     nux::Rect strong, weak;
     text_entry_->GetCursorRects(&strong, &weak);
-    
+
     // Get the position of the TextEntry in the Window.
     nux::Geometry geo = text_entry_->GetAbsoluteGeometry();
 
@@ -218,7 +218,7 @@ namespace nux
     nuxAssert(context_ == context);
 
     text_entry_->DeleteSelection();
-    
+
     if (text->text)
     {
       int cursor = text_entry_->cursor_;
@@ -350,7 +350,7 @@ namespace nux
 
       if (error != NULL)
       {
-        g_warning ("Process Key Event failed: %s.", error->message); 
+        g_warning ("Process Key Event failed: %s.", error->message);
         g_error_free (error);
       }
 
