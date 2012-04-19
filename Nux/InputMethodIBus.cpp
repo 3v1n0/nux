@@ -139,6 +139,8 @@ namespace nux
       return;
     }
 
+    text_entry_->ime_active_ = false;
+
     // connect input context signals
     g_signal_connect(context_, "commit-text",         G_CALLBACK(OnCommitText_),        this);
     g_signal_connect(context_, "update-preedit-text", G_CALLBACK(OnUpdatePreeditText_), this);
@@ -164,7 +166,8 @@ namespace nux
     //nuxDebugMsg("***IBusIMEContext::DestroyContext***");
     if (!context_)
       return;
-
+     
+    text_entry_->ResetPreedit();
     ibus_proxy_destroy(reinterpret_cast<IBusProxy *>(context_));
 
     nuxAssert(!context_);
@@ -320,7 +323,6 @@ namespace nux
   {
     //nuxDebugMsg("***IBusIMEContext::OnDisable***");
     nuxAssert(context_ == context);
-
     text_entry_->ime_active_ = false;
     text_entry_->ResetPreedit();
     text_entry_->QueueRefresh (true, true);
