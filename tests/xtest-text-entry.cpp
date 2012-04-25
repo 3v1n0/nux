@@ -38,10 +38,15 @@ public:
   virtual void UserInterfaceSetup();
 
   void TextEntryClick(nux::TextEntry* text_entry);
+  void OnActivated();
+  void OnCursorMoved(int);
   void ResetEvents();
+
   nux::TextEntry* text_entry_;
 
   bool clicked_;
+  bool activated_;
+  bool cursor_moved_;
 };
 
 TextTextEntry::TextTextEntry(const char* program_name,
@@ -49,6 +54,9 @@ TextTextEntry::TextTextEntry(const char* program_name,
   int window_height,
   int program_life_span)
   : ProgramTemplate(program_name, window_width, window_height, program_life_span)
+  , clicked_(false)
+  , activated_(false)
+  , cursor_moved_(false)
 {
   ResetEvents();
   text_entry_ = NULL;
@@ -62,6 +70,8 @@ TextTextEntry::~TextTextEntry()
 void TextTextEntry::ResetEvents()
 {
   clicked_ = false;
+  activated_ = false;
+  cursor_moved_ = false;
 }
 
 void TextTextEntry::TextEntryClick(nux::TextEntry* text_entry)
@@ -72,10 +82,22 @@ void TextTextEntry::TextEntryClick(nux::TextEntry* text_entry)
   }
 }
 
+void TextTextEntry::OnActivated()
+{
+  activated_ = true;
+}
+
+void TextTextEntry::OnCursorMoved(int position)
+{
+  cursor_moved_ = true;
+}
+
 void TextTextEntry::UserInterfaceSetup()
 {
   nux::VLayout* main_layout = new nux::VLayout(NUX_TRACKER_LOCATION);
   text_entry_ = new nux::TextEntry("", NUX_TRACKER_LOCATION);
+  text_entry_->activated.connect(sigc::mem_fun(this, &TextTextEntry::OnActivated));
+  text_entry_->cursor_moved.connect(sigc::mem_fun(this, &TextTextEntry::OnCursorMoved));
   text_entry_->SetFontSize(76);
 
   main_layout->AddView(text_entry_, 0, nux::MINOR_POSITION_CENTER, nux::MINOR_SIZE_FULL);
@@ -154,6 +176,46 @@ void TestingThread(nux::NThread* thread, void* user_data)
   test.ViewSendMouseMotionToCenter(test_textentry->text_entry_);
 
   test.ViewSendMouseClick(0, 1);
+
+  // Type "Nux"
+  // The cursor is at the end of the line
+  // Unset/Set the focus on the text entry
+  // Move the cursor
+  {
+    test.ViewSendString("Nux");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "Nux", "Typed \"Nux\"");
+
+    test_textentry->GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(NULL); 
+    test_textentry->GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(test_textentry->text_entry_);
+
+    test_textentry->ResetEvents();
+    test.ViewSendLeft();
+    nux::SleepForMilliseconds(500);
+    test.TestReportMsg(test_textentry->cursor_moved_, "Cursor moved.");
+
+    test.ViewSendCtrlA();   
+    test.ViewSendDelete();
+  }
+
+  // Type "Nux"
+  // The cursor is at the end of the line
+  // Unset/Set the focus on the text entry
+  // Press enter
+  {
+    test.ViewSendString("Nux");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "Nux", "Typed \"Nux\"");
+
+    test_textentry->GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(NULL); 
+    test_textentry->GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(test_textentry->text_entry_);
+
+    test_textentry->ResetEvents();
+    test.ViewSendReturn();
+    nux::SleepForMilliseconds(500);
+    test.TestReportMsg(test_textentry->activated_, "Activated.");
+
+    test.ViewSendCtrlA();   
+    test.ViewSendDelete();
+  }
 
   // Type "Nux"
   // The cursor is at the end of the line
