@@ -1,4 +1,4 @@
-nux (2.12.0-0ubuntu1) UNRELEASED; urgency=low
+nux (2.12.0-0ubuntu1) precise-proposed; urgency=low
 
   * New upstream release.
     - [regression] Dash - Arrow keys not working in the search bar on second
