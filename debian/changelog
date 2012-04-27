@@ -1,6 +1,10 @@
 nux (2.12.0-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream release.
+    - [regression] Dash - Arrow keys not working in the search bar on second
+      use (LP: #987294)
+    - dash doesn't ever respond to <enter> when the previous search is
+      recalled (LP: #980184)
 
  -- Didier Roche <didrocks@ubuntu.com>  Fri, 27 Apr 2012 07:57:55 +0200
 
