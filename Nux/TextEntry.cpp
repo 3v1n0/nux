@@ -2327,6 +2327,14 @@ namespace nux
         key_sym == NUX_VK_TAB ||
         key_sym == NUX_VK_ESCAPE)
       {
+        if (key_sym == NUX_VK_LEFT ||
+            key_sym == NUX_VK_RIGHT ||
+            key_sym == NUX_VK_ENTER ||
+            key_sym == NUX_KP_ENTER)
+        {
+          return true;
+        }
+
         if (multiline_ && (key_sym == NUX_VK_UP))
         {
           // Navigate between the lines of the text entry.
