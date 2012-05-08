@@ -840,8 +840,6 @@ namespace nux
         _delta_y = - (m_ViewContentHeight > m_ViewHeight ? m_ViewContentHeight - m_ViewHeight : 0);
       }
 
-      std::cout << last_delta_y << "  " << _delta_y << std::endl;
-
       if (last_delta_y != _delta_y)
       {
         QueueDraw();
