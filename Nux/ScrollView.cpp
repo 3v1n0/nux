@@ -799,48 +799,60 @@ namespace nux
 
   void ScrollView::ScrollUp(float stepy, int mousedy)
   {
+    if (m_ViewContentHeight <= m_ViewHeight)
+      return;
+
     if (view_layout_)
     {
-      _delta_y += (float) stepy * (float) mousedy;
+      auto last_delta_y = _delta_y;
+      _delta_y += stepy * mousedy;
 
       if (_delta_y > 0)
       {
         _delta_y = 0;
       }
+
+      if (last_delta_y != _delta_y)
+      {
+        QueueDraw();
+        _vscrollbar->QueueDraw();
+      }
+
       view_layout_->Set2DTranslation(_delta_x, _delta_y, 0);
+      _vscrollbar->SetContentOffset(_delta_x, _delta_y);
+
       scrolling.emit(_delta_x, _delta_y);
     }
-
-    if (view_layout_)
-    {
-      _vscrollbar->SetContentOffset(_delta_x, _delta_y);
-      _vscrollbar->QueueDraw();
-    }
-
-    QueueDraw();
   }
 
   void ScrollView::ScrollDown(float stepy, int mousedy)
   {
+    if (m_ViewContentHeight <= m_ViewHeight)
+      return;
+
     if (view_layout_)
     {
-      _delta_y -= (float) stepy * (float) mousedy;
+      auto last_delta_y = _delta_y;
+      _delta_y -= stepy * mousedy;
 
       if (m_ViewY + _delta_y + m_ViewContentHeight < m_ViewY + m_ViewHeight)
       {
         _delta_y = - (m_ViewContentHeight > m_ViewHeight ? m_ViewContentHeight - m_ViewHeight : 0);
       }
+
+      std::cout << last_delta_y << "  " << _delta_y << std::endl;
+
+      if (last_delta_y != _delta_y)
+      {
+        QueueDraw();
+        _vscrollbar->QueueDraw();
+      }
+
       view_layout_->Set2DTranslation(_delta_x, _delta_y, 0);
+     _vscrollbar->SetContentOffset(_delta_x, _delta_y);
+
       scrolling.emit(_delta_x, _delta_y);
     }
-
-    if (view_layout_)
-    {
-      _vscrollbar->SetContentOffset(_delta_x, _delta_y);
-      _vscrollbar->QueueDraw();
-    }
-
-    QueueDraw();
   }
 
   void ScrollView::SetSizeMatchContent(bool b)
@@ -930,7 +942,6 @@ namespace nux
     {
       ScrollUp(abs(wheel_delta / NUX_MOUSEWHEEL_DELTA), m_MouseWheelScrollSize);
     }
-    QueueDraw();
   }
 
   bool ScrollView::AcceptKeyNavFocus()

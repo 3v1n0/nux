@@ -69,6 +69,7 @@ gtest_nux_SOURCES = \
   gtest-nux-emmetrics.cpp \
   gtest-nux-main.cpp \
   gtest-nux-statictext.cpp \
+  gtest-nux-scrollview.cpp \
   gtest-nux-textentry.cpp \
   gtest-nux-view.cpp \
   gtest-nux-windowcompositor.cpp \
