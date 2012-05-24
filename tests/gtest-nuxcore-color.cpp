@@ -105,19 +105,41 @@ namespace {
   
   TEST(TestColor, TestColorConstructorHex)
   {
-    nux::Color c0("#aabbcc");
+    nux::Color c0("#abc");
     EXPECT_EQ(c0.red,    0xaa / 255.0f);
     EXPECT_EQ(c0.green,  0xbb / 255.0f);
     EXPECT_EQ(c0.blue,   0xcc / 255.0f);
     EXPECT_EQ(c0.alpha,  1.0f);
     EXPECT_EQ(c0.IsPremultiplied(), false);
-    
-    nux::Color c1("abcdef");
-    EXPECT_EQ(c1.red,    0xab / 255.0f );
-    EXPECT_EQ(c1.green,  0xcd / 255.0f);
-    EXPECT_EQ(c1.blue,   0xef / 255.0f);
-    EXPECT_EQ(c1.alpha,  1.0f);
+
+    nux::Color c1("#abcd");
+    EXPECT_EQ(c1.red,    0xaa / 255.0f);
+    EXPECT_EQ(c1.green,  0xbb / 255.0f);
+    EXPECT_EQ(c1.blue,   0xcc / 255.0f);
+    EXPECT_EQ(c1.alpha,  0xdd / 255.0f);
     EXPECT_EQ(c1.IsPremultiplied(), false);
+
+    nux::Color c2("#aabbcc");
+    EXPECT_EQ(c2.red,    0xaa / 255.0f);
+    EXPECT_EQ(c2.green,  0xbb / 255.0f);
+    EXPECT_EQ(c2.blue,   0xcc / 255.0f);
+    EXPECT_EQ(c2.alpha,  1.0f);
+    EXPECT_EQ(c2.IsPremultiplied(), false);
+
+
+    nux::Color c3("#aabbccdd");
+    EXPECT_EQ(c3.red,    0xaa / 255.0f);
+    EXPECT_EQ(c3.green,  0xbb / 255.0f);
+    EXPECT_EQ(c3.blue,   0xcc / 255.0f);
+    EXPECT_EQ(c3.alpha,  0xdd / 255.0f);
+    EXPECT_EQ(c3.IsPremultiplied(), false);
+    
+    nux::Color c4("abcdef");
+    EXPECT_EQ(c4.red,    0xab / 255.0f );
+    EXPECT_EQ(c4.green,  0xcd / 255.0f);
+    EXPECT_EQ(c4.blue,   0xef / 255.0f);
+    EXPECT_EQ(c4.alpha,  1.0f);
+    EXPECT_EQ(c4.IsPremultiplied(), false);
   }
 
   TEST(TestColor, TestColorConstructorHexInvalid)

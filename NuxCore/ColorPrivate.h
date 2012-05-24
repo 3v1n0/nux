@@ -25,13 +25,10 @@ namespace nux
 {
 namespace color
 {
-namespace impl
-{
 
-bool IsValidHex(std::string const& hex);
-int HexToDec(std::string const& hex);
-bool HexToRGB(std::string hex, float& r, float& g, float& b);
+bool IsValidHex(std::string hex);
+int HexToInt(std::string const& hex);
+bool HexToRGBA(std::string hex, float& r, float& g, float& b, float& a);
 
-} // namespace impl
 } // namespace color
 } // namespace nux

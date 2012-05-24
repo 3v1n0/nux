@@ -83,7 +83,7 @@ namespace color
   , alpha(1.0f)
   , premultiplied_(false)
   {
-    impl::HexToRGB(hex, red, green, blue);
+    HexToRGBA(hex, red, green, blue, alpha);
   }
 
   Color Color::GetPremultiplied()
