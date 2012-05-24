@@ -119,7 +119,19 @@ namespace color
     Color(int r, int g, int b);
     Color(float r, float g, float b, float a = 1.0f);
     Color(RedGreenBlue const& rgb, float a = 1.0f);
-    Color(std::string const& rgb);
+
+    //! Constructor - Initializes the color using an hex string 
+    /*!
+        Initializes the color using an hex string, which may be in one of these formats:
+
+        #RGB (each of R, G, B, A is a single hex digit)
+        #RGBA
+        #RRGGBB
+        #RRGGBBAA
+
+        The color is #ffffffff if hex cannot be parsed.
+    */
+    Color(std::string const& hex);
     
     //! Returns the pre-multiplied version of this color.
     /*!
