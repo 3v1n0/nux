@@ -23,6 +23,8 @@
 #ifndef COLOR_H
 #define COLOR_H
 
+#include <string>
+
 namespace nux
 {
 namespace color
@@ -117,6 +119,7 @@ namespace color
     Color(int r, int g, int b);
     Color(float r, float g, float b, float a = 1.0f);
     Color(RedGreenBlue const& rgb, float a = 1.0f);
+    Color(std::string const& rgb);
     
     //! Returns the pre-multiplied version of this color.
     /*!

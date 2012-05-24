@@ -29,8 +29,11 @@ check_PROGRAMS = \
 gtest_nuxcore_SOURCES = \
   Helpers.h \
   Helpers.cpp \
+  $(top_builddir)/NuxCore/ColorPrivate.cpp \
+  $(top_builddir)/NuxCore/ColorPrivate.h \
   gtest-nuxcore-async-file-writer.cpp \
   gtest-nuxcore-color.cpp \
+  gtest-nuxcore-colorprivate.cpp \
   gtest-nuxcore-logger.cpp \
   gtest-nuxcore-main.cpp \
   gtest-nuxcore-object.cpp \
