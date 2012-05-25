@@ -804,7 +804,7 @@ namespace nux
 
     if (view_layout_)
     {
-      auto last_delta_y = _delta_y;
+      int last_delta_y = _delta_y;
       _delta_y += stepy * mousedy;
 
       if (_delta_y > 0)
@@ -832,7 +832,7 @@ namespace nux
 
     if (view_layout_)
     {
-      auto last_delta_y = _delta_y;
+      int last_delta_y = _delta_y;
       _delta_y -= stepy * mousedy;
 
       if (m_ViewY + _delta_y + m_ViewContentHeight < m_ViewY + m_ViewHeight)
