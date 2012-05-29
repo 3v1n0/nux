@@ -141,16 +141,6 @@ PKG_CHECK_MODULES(NUX_CORE, glib-2.0 >= 2.25.14 gthread-2.0 sigc++-2.0 gio-2.0)
 AC_SUBST(NUX_CORE_CFLAGS)
 AC_SUBST(NUX_CORE_LIBS)
 
-PKG_CHECK_MODULES(NUX_IMAGE,
-                  glib-2.0 >= 2.25.14
-                  gdk-pixbuf-2.0
-                  cairo >= 1.9.14
-                  libpng >= 1.2.44
-                  sigc++-2.0
-                  )
-AC_SUBST(NUX_IMAGE_CFLAGS)
-AC_SUBST(NUX_IMAGE_LIBS)
-
 PKG_CHECK_MODULES(NUX_GRAPHICS,
                   glib-2.0 >= 2.25.14
                   gdk-pixbuf-2.0
