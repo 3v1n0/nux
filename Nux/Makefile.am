@@ -116,7 +116,8 @@ source_cpp = \
 
 if HAVE_UTOUCH_GEIS
 source_cpp += \
-  $(srcdir)/GeisAdapter.cpp
+  $(srcdir)/GeisAdapter.cpp \
+  $(srcdir)/GesturesSubscription.cpp
 endif
 
 source_h = \
@@ -208,7 +209,8 @@ source_h = \
 
 if HAVE_UTOUCH_GEIS
 source_h += \
-  $(srcdir)/GeisAdapter.h
+  $(srcdir)/GeisAdapter.h \
+  $(srcdir)/GesturesSubscription.h
 endif
 
 nuxprogramframework_cpp = \
