@@ -63,5 +63,7 @@ Logs
 **/nux.log
 **/nux.log.*
 examples/cairo_wrapper
+examples/gestures
 examples/tiles_view
 test-graphics-display
+Nux/Features.h
