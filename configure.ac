@@ -150,7 +150,6 @@ PKG_CHECK_MODULES(NUX_GRAPHICS,
                   xxf86vm
                   sigc++-2.0
 		              xinerama
-                  libutouch-geis
                   )
 AC_SUBST(NUX_GRAPHICS_CFLAGS)
 AC_SUBST(NUX_GRAPHICS_LIBS)
@@ -187,6 +186,55 @@ PKG_CHECK_MODULES(IBUS,
 
 AC_SUBST(IBUS_CFLAGS)
 AC_SUBST(IBUS_LIBS)
+
+dnl **************************************
+dnl Enable/disable gestures (utouch-geis)
+dnl **************************************
+
+AC_ARG_ENABLE(gestures,
+              AC_HELP_STRING(--disable-gestures, Disables multitouch gestures support (default: auto-detect)),
+              [],
+              [enable_gestures=auto])
+
+
+# Check for utouch-geis as an optional dependency
+AS_IF([test "x$enable_gestures" = "xauto"],
+      [
+        PKG_CHECK_MODULES(UTOUCH_GEIS,
+                          libutouch-geis,
+                          [have_utouch_geis=yes],
+                          [have_utouch_geis=no])
+      ])
+
+
+AS_IF([test "x$enable_gestures" = "xyes"],
+      [
+        PKG_CHECK_MODULES(UTOUCH_GEIS,
+                          libutouch-geis,
+                          [have_utouch_geis=yes],
+                          [
+                            AC_MSG_ERROR([libutouch-geis not found!])
+                            have_utouch_geis=no
+                          ])
+      ])
+
+AS_IF([test "x$enable_gestures" = "xno"],
+      [have_utouch_geis=no])
+
+AS_IF([test "x$have_utouch_geis" = "xyes"],
+      [
+        NUX_GESTURES_SUPPORT="NUX_GESTURES_SUPPORT"
+        AM_CONDITIONAL(HAVE_UTOUCH_GEIS, true)
+      ],
+      [
+        NUX_GESTURES_SUPPORT="NUX_NO_GESTURES_SUPPORT"
+        AM_CONDITIONAL(HAVE_UTOUCH_GEIS, false)
+      ])
+
+AC_SUBST(NUX_GESTURES_SUPPORT)
+
+AC_SUBST(UTOUCH_GEIS_CFLAGS)
+AC_SUBST(UTOUCH_GEIS_LIBS)
 
 dnl ************************************
 dnl Enable/disable tests
@@ -331,6 +379,7 @@ AC_CONFIG_FILES([
   Nux/Makefile
   Nux/nux.pc
   Nux/ABI.h
+  Nux/Features.h
   examples/Makefile
   tests/Makefile
   tools/Makefile
@@ -366,6 +415,7 @@ echo -e "${GREEN} • Misc Options:${RESET}"
 echo -e "        Build Examples     : ${BOLD_WHITE}${enable_examples}${RESET}"
 echo -e "        Build Gpu Tests    : ${BOLD_WHITE}${enable_gputests}${RESET}"
 echo -e "        Build Nux Tests    : ${BOLD_WHITE}${enable_tests}${RESET}"
+echo -e "        Gestures support   : ${BOLD_WHITE}${have_utouch_geis}${RESET}"
 echo ""
 
 echo -e "${RESET}"

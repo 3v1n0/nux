@@ -1,0 +1,14 @@
+/* This file specifies which optional features are available on this specific
+   build of NUX libraries
+
+   Generated from Features.h.in by configure.
+ */
+
+#ifndef NUX_FEATURES_H
+#define NUX_FEATURES_H
+
+// Whether NUX was built with gestures support. I.e., whether the gestures
+// API is available.
+#define @NUX_GESTURES_SUPPORT@
+
+#endif
