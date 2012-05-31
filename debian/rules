@@ -7,7 +7,7 @@ DEB_HOST_ARCH := $(shell dpkg-architecture -qDEB_HOST_ARCH)
 gles2_architectures := armel armhf
 
 %:
-	dh $@ --with quilt
+	dh $@ --with quilt --parallel
 
 # build documentation as I didn't find a proper way to avoid make clean to not
 # remove doc/
