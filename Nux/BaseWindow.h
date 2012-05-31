@@ -26,6 +26,7 @@
 
 #include <boost/scoped_ptr.hpp>
 #include "ScrollView.h"
+#include "Features.h"
 
 #if defined(NUX_OS_WINDOWS)
 #include "NuxGraphics/Events.h"
@@ -45,6 +46,10 @@ namespace nux
 
   class HLayout;
   class PopUpWindow;
+
+#ifdef NUX_GESTURES_SUPPORT
+    class GestureEvent;
+#endif
 
   //typedef TopView BaseWindow;
 
@@ -186,6 +191,11 @@ namespace nux
     {
       return _name;
     }
+
+#ifdef NUX_GESTURES_SUPPORT
+    virtual Area* GetInputAreaHitByGesture(const nux::GestureEvent &event);
+#endif
+
   protected:
 
     void SetAcceptKeyNavFocus(bool accept);

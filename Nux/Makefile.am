@@ -117,6 +117,7 @@ source_cpp = \
 if HAVE_UTOUCH_GEIS
 source_cpp += \
   $(srcdir)/GeisAdapter.cpp \
+  $(srcdir)/Gesture.cpp \
   $(srcdir)/GesturesSubscription.cpp
 endif
 
@@ -210,6 +211,7 @@ source_h = \
 if HAVE_UTOUCH_GEIS
 source_h += \
   $(srcdir)/GeisAdapter.h \
+  $(srcdir)/Gesture.h \
   $(srcdir)/GesturesSubscription.h
 endif
 

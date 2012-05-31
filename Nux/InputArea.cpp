@@ -27,10 +27,15 @@
 
 #include "NuxCore/Logger.h"
 
+#include "Features.h"
 #include "Nux.h"
 #include "InputArea.h"
 #include "NuxGraphics/GraphicsEngine.h"
 #include "WindowCompositor.h"
+
+#ifdef NUX_GESTURES_SUPPORT
+#include "GesturesSubscription.h"
+#endif
 
 namespace nux
 {
@@ -411,5 +416,80 @@ logging::Logger logger("nux.inputarea");
 
     return true;
   }  
-}
 
+#ifdef NUX_GESTURES_SUPPORT
+  void InputArea::CreateGesturesSubscription(GestureClass gesture_class,
+                                             unsigned int num_touches)
+  {
+    GesturesSubscription *subscription = new GesturesSubscription(
+        gesture_class, num_touches);
+    
+    for (auto other_sub : gestures_subscriptions_)
+    {
+      if (other_sub.get() == subscription)
+        return;
+    }
+
+    gestures_subscriptions_.push_back(ShGesturesSubscription(subscription));
+  }
+
+  void InputArea::AddGesturesSubscription(
+      std::shared_ptr<nux::GesturesSubscription> &subscription)
+  {
+    for (auto sub : gestures_subscriptions_)
+    {
+      if (sub.get() == subscription.get())
+        return;
+    }
+
+    gestures_subscriptions_.push_back(subscription);
+  }
+
+  void InputArea::RemoveGesturesSubscription(
+      std::shared_ptr<nux::GesturesSubscription> &subscription)
+  {
+    std::list<std::shared_ptr<nux::GesturesSubscription> >::iterator it;
+    for (it = gestures_subscriptions_.begin();
+        it != gestures_subscriptions_.end(); ++it)
+    {
+      if (it->get() == subscription.get())
+      {
+        gestures_subscriptions_.erase(it);
+        return;
+      }
+      ++it;
+    }
+  }
+
+  const std::list<ShGesturesSubscription>&
+  InputArea::GetGesturesSubscriptions() const
+  {
+    return gestures_subscriptions_;
+  }
+
+  bool InputArea::HasSubscriptionForGesture(const nux::GestureEvent &event) const
+  {
+    for (const auto subscription : gestures_subscriptions_)
+    {
+      if (subscription->MatchesGesture(event))
+        return true;
+    }
+
+    return false;
+  }
+
+  Area* InputArea::GetInputAreaHitByGesture(const nux::GestureEvent &event)
+  {
+    if (!IsVisible())
+      return nullptr;
+
+    if (!HasSubscriptionForGesture(event))
+      return nullptr;
+
+    if (!IsGestureInsideArea(event))
+      return nullptr;
+
+    return this;
+  }
+#endif // NUX_GESTURES_SUPPORT
+}

@@ -1086,6 +1086,20 @@ namespace
       {
         DndEventCycle(event);
       }
+#ifdef NUX_GESTURES_SUPPORT
+      else if (event.type == EVENT_GESTURE_BEGIN)
+      {
+        ProcessGestureBegin(static_cast<GestureEvent&>(event));
+      }
+      else if (event.type == EVENT_GESTURE_UPDATE)
+      {
+        ProcessGestureUpdate(static_cast<GestureEvent&>(event));
+      }
+      else if (event.type == EVENT_GESTURE_END)
+      {
+        ProcessGestureEnd(static_cast<GestureEvent&>(event));
+      }
+#endif
     }
     inside_event_cycle_ = false;
   }
@@ -2412,5 +2426,166 @@ namespace
 
     return ok;
   }
+
+#ifdef NUX_GESTURES_SUPPORT
+  void WindowCompositor::ProcessGestureBegin(GestureEvent &event)
+  {
+    InputArea *target_area = LocateGestureTarget(event);
+
+    if (!target_area)
+    {
+      event.Reject();
+      return;
+    }
+
+    std::shared_ptr<Gesture> existing_gesture =
+      gesture_set_.Get(target_area);
+
+    if (existing_gesture)
+    {
+      // There's a conflict here.
+      // The target area for this new gesture already has a gesture.
+
+      if (existing_gesture->IsDeliveringEvents())
+      {
+        // An area can have only one gesture at a time.
+        event.Reject();
+        return;
+      }
+      else
+      {
+        // Since the existing gesture hasn't been delivered to the target yet,
+        // we can choose which will continue.
+        // The rule is that the gesture with the most touches has precedence over
+        // the other.
+        int existing_num_touches = existing_gesture->GetTouches().size();
+        int new_num_touches = event.GetTouches().size();
+        if (new_num_touches < existing_num_touches)
+        {
+          event.Reject();
+        }
+        else if (new_num_touches == existing_num_touches)
+        {
+          // It means that there are more fingers on the target area
+          // than the target area can handle
+          // (i.e. three fingers over an area that handles only two-fingers'
+          // gestures)
+          event.Reject();
+          existing_gesture->Reject();
+          gesture_set_.Remove(existing_gesture);
+        }
+        else // new_num_touches > existing_num_touches
+        {
+          existing_gesture->Reject();
+          gesture_set_.Remove(existing_gesture);
+          gesture_set_.Add(new Gesture(event, target_area));
+        }
+      }
+    }
+    else
+    {
+      std::shared_ptr<Gesture> gesture(new Gesture(event, target_area));
+      gesture_set_.Add(gesture);
+
+      if (event.IsConstructionFinished())
+      {
+        event.Accept();
+        gesture->EnableEventDelivery();
+      }
+    }
+  }
+
+  void WindowCompositor::ProcessGestureUpdate(GestureEvent &event)
+  {
+    std::shared_ptr<Gesture> gesture = gesture_set_.Get(event.GetGestureId());
+    if (!gesture)
+    {
+      LOG_WARNING(logger) << "Got GestureUpdate event from unexpected/unwanted"
+                             " gesture with id "
+                          << event.GetGestureId() << "\n";
+      return;
+    }
+
+    if (event.IsConstructionFinished() && !gesture->IsConstructionFinished())
+    {
+      // This is the first update for this gesture signaling that
+      // its construction has finished.
+      gesture->Update(event);
+      ResolveBufferedGestureThatFinishedConstruction(gesture);
+    }
+    else
+    {
+      gesture->Update(event);
+    }
+  }
+
+  void WindowCompositor::ProcessGestureEnd(GestureEvent &event)
+  {
+    std::shared_ptr<Gesture> gesture = gesture_set_.Get(event.GetGestureId());
+    if (!gesture)
+    {
+      LOG_WARNING(logger) << "Got GestureEnd event from unexpected/unwanted"
+                             " gesture with id "
+                          << event.GetGestureId() << "\n";
+      return;
+    }
+
+    gesture->Update(event);
+
+    // We no longer have to keep track of it.
+    gesture_set_.Remove(gesture);
+  }
+
+  void WindowCompositor::ResolveBufferedGestureThatFinishedConstruction(
+      std::shared_ptr<Gesture> &gesture)
+  {
+    std::vector< std::shared_ptr<Gesture> > conflicting_gestures =
+      gesture_set_.GetConflictingGestures(gesture);
+
+    if (conflicting_gestures.size() == 0)
+    {
+      gesture->Accept();
+      gesture->EnableEventDelivery(); // will flush all queued events
+    }
+    else
+    {
+      // That shouldn't happen. All conflicting gestures should have been
+      // dealt with when they begun.
+      LOG_WARNING(logger) << "Blindly rejecting conflicting gestures.";
+      for (auto conflicting_gesture : conflicting_gestures)
+      {
+        conflicting_gesture->Reject();
+        gesture_set_.Remove(conflicting_gesture);
+      }
+    }
+  }
+
+  InputArea *WindowCompositor::LocateGestureTarget(GestureEvent &event)
+  {
+    InputArea *input_area = nullptr;
+
+    for (auto window : _view_window_list)
+    {
+      if (!window.IsValid())
+        continue;
+
+      input_area = static_cast<InputArea*>(window->GetInputAreaHitByGesture(event));
+      if (input_area)
+        break;
+    }
+
+    // If a target InputArea wasn't found in any of the BaseWindows, then check
+    // the InputAreas in the layout of the main window.
+    if (!input_area)
+    {
+      Layout* main_window_layout = window_thread_->GetLayout();
+      if (main_window_layout)
+        input_area = static_cast<InputArea*>(
+            main_window_layout->GetInputAreaHitByGesture(event));
+    }
+
+    return input_area;
+  }
+#endif
 }
 

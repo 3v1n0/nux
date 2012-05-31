@@ -23,12 +23,18 @@
 #ifndef WINDOWCOMPOSITOR_H
 #define WINDOWCOMPOSITOR_H
 
+#include "Features.h"
 #include "BaseWindow.h"
 
 #include <sigc++/trackable.h>
 #include <sigc++/connection.h>
 
 #include <NuxCore/ObjectPtr.h>
+
+#ifdef NUX_GESTURES_SUPPORT
+#include <unordered_map>
+#include "Gesture.h"
+#endif
 
 namespace nux
 {
@@ -641,6 +647,19 @@ namespace nux
 
   private:
     WindowThread* window_thread_; //!< The WindowThread to which this object belongs.
+
+#ifdef NUX_GESTURES_SUPPORT
+    void ProcessGestureBegin(GestureEvent &event);
+    void ProcessGestureUpdate(GestureEvent &event);
+    void ProcessGestureEnd(GestureEvent &event);
+
+    void ResolveBufferedGestureThatFinishedConstruction(
+        std::shared_ptr<Gesture> &gesture);
+
+    GestureSet gesture_set_;
+
+    InputArea *LocateGestureTarget(GestureEvent &event);
+#endif
 
     //! Perform some action before destruction.
     /*!
