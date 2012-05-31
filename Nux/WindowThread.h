@@ -24,6 +24,11 @@
 #define WINDOWTHREAD_H
 
 #include "TimerProc.h"
+#include "Features.h"
+
+#ifdef NUX_GESTURES_SUPPORT
+#include "GeisAdapter.h"
+#endif
 
 namespace nux
 {
@@ -313,6 +318,15 @@ namespace nux
 
     std::vector<Geometry> GetDrawList();
 
+#ifdef NUX_GESTURES_SUPPORT
+    /*!
+      Simple wrapper for ProcessEvent for connection with GeisAdapter::event_ready
+    */
+    void ProcessGestureEvent(GestureEvent &event) { ProcessEvent(event); }
+
+    GeisAdapter *GetGeisAdapter() const {return geis_adapter_.get();}
+#endif
+
   protected:
 
     /*!
@@ -421,32 +435,20 @@ namespace nux
     */
     void DisableMouseKeyboardInput();
 
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-
-    /*!
-        Entire frame of goes through this function. It does the following:
-          * get the input events from the mouse, keyboard, touchpad
-          * processes the input events
-          * resizes views
-          * draw the frame
-        This function is called when there is an input event or when a timer has expired.
-
-        @param timer_id The id of the timer that has has expired.
-    */
-    unsigned int ExecutionLoop(unsigned int timer_id);
-#else
-    /*!
-        Entire frame of goes through this function. It does the following:
-          * get the input events from the mouse, keyboard, touchpad
-          * processes the input events
-          * resizes views
-          * draw the frame
-        This function is called when there is an input event or when a timer has expired.
-
-        @param timer_id The id of the timer that has has expired.
-    */
+#if (!defined(NUX_OS_LINUX) && !defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) || defined(NUX_DISABLE_GLIB_LOOP)
+    //! Calls ProcessEvent in a loop
     unsigned int ExecutionLoop();
 #endif
+
+    /*!
+        It does the following:
+          * processes the input events
+          * resizes views
+          * draw the frame
+        This function is called when there is an input event, a gesture event or
+        when a timer has expired.
+    */
+    unsigned int ProcessEvent(Event &event);
 
     virtual ThreadState StartChildThread(AbstractThread *thread, bool Modal);
     virtual void AddChildThread(AbstractThread *);
@@ -461,6 +463,12 @@ namespace nux
     WindowThread *modal_window_thread_;
 
   private:
+    /*!
+      Internally called by ProcessEvent end ExecutionLopp after early return
+      check.
+     */
+    unsigned int DoProcessEvent(Event &event);
+
     //! Execute the main loop of this thread.
     /*!
         Execute the main loop of this thread.
@@ -608,6 +616,14 @@ namespace nux
     bool AddChildWindowGlibLoop(WindowThread* wnd_thread);
 
     unsigned int AddGLibTimeout(unsigned int duration);
+#else // no GLIB loop
+    Event input_event_;
+    GestureEvent gesture_event_;
+    Event *FetchNextEvent();
+#endif
+
+#ifdef NUX_GESTURES_SUPPORT
+    std::unique_ptr<GeisAdapter> geis_adapter_;
 #endif
 
     /*!

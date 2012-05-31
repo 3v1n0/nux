@@ -16,13 +16,15 @@ libnux_@NUX_API_VERSION@_la_CPPFLAGS= \
   $(GCC_FLAGS) \
   $(NUX_CFLAGS) \
   $(IBUS_CFLAGS) \
+  $(UTOUCH_GEIS_CFLAGS) \
   $(MAINTAINER_CFLAGS)
 
 libnux_@NUX_API_VERSION@_la_LIBADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
   $(NUX_LIBS) \
-  $(IBUS_LIBS) 
+  $(IBUS_LIBS) \
+  $(UTOUCH_GEIS_LIBS)
 
 libnux_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
@@ -112,6 +114,11 @@ source_cpp = \
   $(srcdir)/WindowCompositor.cpp \
   $(srcdir)/WindowThread.cpp
 
+if HAVE_UTOUCH_GEIS
+source_cpp += \
+  $(srcdir)/GeisAdapter.cpp
+endif
+
 source_h = \
   $(builddir)/ABI.h \
   $(srcdir)/AbstractButton.h \
@@ -198,6 +205,11 @@ source_h = \
   $(srcdir)/WidgetMetrics.h \
   $(srcdir)/WindowCompositor.h \
   $(srcdir)/WindowThread.h
+
+if HAVE_UTOUCH_GEIS
+source_h += \
+  $(srcdir)/GeisAdapter.h
+endif
 
 nuxprogramframework_cpp = \
   $(srcdir)/ProgramFramework/ProgramTemplate.cpp \
