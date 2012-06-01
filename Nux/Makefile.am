@@ -148,6 +148,7 @@ source_h = \
   $(srcdir)/Dialog.h \
   $(srcdir)/DoubleValidator.h \
   $(srcdir)/EditTextBox.h \
+  $(builddir)/Features.h \
   $(srcdir)/FileSelector.h \
   $(srcdir)/FloatingWindow.h \
   $(srcdir)/GridHLayout.h \
