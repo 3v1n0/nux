@@ -137,7 +137,12 @@ AC_SUBST(MAINTAINER_CFLAGS)
 
 dnl ===========================================================================
 
-PKG_CHECK_MODULES(NUX_CORE, glib-2.0 >= 2.25.14 gthread-2.0 sigc++-2.0 gio-2.0)
+PKG_CHECK_MODULES(NUX_CORE,
+                  glib-2.0 >= 2.25.14
+                  gthread-2.0
+                  sigc++-2.0
+                  gio-2.0
+                  tinyxml)
 AC_SUBST(NUX_CORE_CFLAGS)
 AC_SUBST(NUX_CORE_LIBS)
 
@@ -172,6 +177,7 @@ PKG_CHECK_MODULES(NUX,
                   pango
                   pangocairo
                   libpcre
+                  tinyxml
                   )
 AC_SUBST(NUX_CFLAGS)
 AC_SUBST(NUX_LIBS)
