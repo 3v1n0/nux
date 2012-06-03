@@ -147,11 +147,11 @@ namespace nux
 
       unsigned int line_size = (unsigned int) Line.length();
       char *tc = new char[line_size+1];
-      const char *Stream = tc;
+      const char *s = tc;
       Memcpy(tc, Line.c_str(), line_size + 1);
       tc[line_size] = 0;
 
-      if ( ParseCommand(&Stream, "common") /*Read == "common"*/)
+      if ( ParseCommand(&s, "common") /*Read == "common"*/)
       {
         Parse_bool(tc, "Bold=",        m_Charset.bold);
         Parse_bool(tc, "Italic=",      m_Charset.italic);
@@ -169,7 +169,7 @@ namespace nux
         // Constant for now... Should be read from the font file
         m_Charset.NumChar = 256;
       }
-      else if (ParseCommand(&Stream, "char"))
+      else if (ParseCommand(&s, "char"))
       {
 
         unsigned short CharID = 0;
@@ -187,14 +187,14 @@ namespace nux
         Parse_s16(tc, "abcC=", m_Charset.Chars[CharID].abcC);
         Parse_u16(tc, "page=", m_Charset.Chars[CharID].page);
       }
-      else if ( ParseCommand(&Stream, "Kerning"))
+      else if ( ParseCommand(&s, "Kerning"))
       {
         Parse_u16(tc, "count=", m_Charset.NumKerningPairs);
 
         if (m_Charset.NumKerningPairs > 0)
           m_Charset.Kerning = new KerningPair[m_Charset.NumKerningPairs];
       }
-      else if ( ParseCommand(&Stream, "KerningPair"))
+      else if ( ParseCommand(&s, "KerningPair"))
       {
         if (KerningIndex < m_Charset.NumKerningPairs)
         {
@@ -204,11 +204,11 @@ namespace nux
           KerningIndex++;
         }
       }
-      else if ( ParseCommand(&Stream, "Texture"))
+      else if ( ParseCommand(&s, "Texture"))
       {
         char texture[256];
 
-        if (ParseLine(&Stream, texture, 256))
+        if (ParseLine(&s, texture, 256))
         {
 //                 FilePath FontPath;
 //                 FontPath.AddSearchPath(""); // for case where fully qualified path is given
