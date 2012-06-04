@@ -2,7 +2,7 @@ nux (2.12.0-0ubuntu2) UNRELEASED; urgency=low
 
   * debian/control:
     - build and dep on unversionned version of boost (transition to 1.49
-      in quantal)
+      in quantal) (LP: #1008219)
   * debian/rules:
     - build in parallel
 
