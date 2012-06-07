@@ -592,7 +592,11 @@ logging::Logger logger("nux.windows.thread");
     }
 
     // Call event inspectors.
-    CallEventInspectors(&event);
+    bool event_discarded = CallEventInspectors(&event);
+    if (event_discarded)
+    {
+      return 1;
+    }
 
     if ((event.type == NUX_TERMINATE_APP) || (this->GetThreadState() == THREADSTOP))
     {
