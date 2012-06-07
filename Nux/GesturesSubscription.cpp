@@ -32,20 +32,13 @@ namespace
   logging::Logger logger("nux.gestures_subscription");
 }
 
-GesturesSubscription::GesturesSubscription(GestureClass gesture_class,
-                                           unsigned int num_touches)
-  : gesture_class_(gesture_class),
-    num_touches_(num_touches),
+GesturesSubscription::GesturesSubscription()
+  : gesture_class_(TOUCH_GESTURE),
+    num_touches_(2),
+    window_id_(GetWindowThread()->GetGraphicsDisplay().GetWindowHandle()),
     sub_(nullptr),
     is_active_(false)
 {
-  GeisAdapter *geis_adapter = GetWindowThread()->GetGeisAdapter();
-
-  if (geis_adapter->IsInitComplete())
-    CreateGeisSubscription();
-  else
-    geis_adapter->init_complete.connect(
-        sigc::mem_fun(this, &GesturesSubscription::CreateGeisSubscription));
 }
 
 GesturesSubscription::~GesturesSubscription()
@@ -56,28 +49,55 @@ GesturesSubscription::~GesturesSubscription()
 
 void GesturesSubscription::Activate()
 {
-  GeisStatus status = geis_subscription_activate(sub_);
-  if (status == GEIS_STATUS_SUCCESS)
+  if (is_active_)
+    return;
+
+  is_active_ = true;
+
+  if (sub_)
   {
-    is_active_ = true;
+    GeisStatus status = geis_subscription_activate(sub_);
+    if (status != GEIS_STATUS_SUCCESS)
+    {
+      LOG_ERROR(logger) << "Failed to activate Geis subscription.";
+    }
   }
   else
   {
-    LOG_ERROR(logger) << "Failed to activate Geis subscription.";
+    CreateGeisSubscriptionWhenPossible();
   }
 }
 
 void GesturesSubscription::Deactivate()
 {
-  GeisStatus status = geis_subscription_deactivate(sub_);
-  if (status == GEIS_STATUS_SUCCESS)
+  if (!is_active_)
+    return;
+
+  is_active_ = false;
+
+  if (sub_)
   {
-    is_active_ = false;
+    GeisStatus status = geis_subscription_deactivate(sub_);
+    if (status != GEIS_STATUS_SUCCESS)
+    {
+      LOG_ERROR(logger) << "Failed to deactivate Geis subscription.";
+    }
   }
-  else
-  {
-    LOG_ERROR(logger) << "Failed to activate Geis subscription.";
-  }
+}
+
+void GesturesSubscription::SetGestureClass(GestureClass gesture_class)
+{
+  SetProperty(gesture_class_, gesture_class);
+}
+
+void GesturesSubscription::SetNumTouches(unsigned int num_touches)
+{
+  SetProperty(num_touches_, num_touches);
+}
+
+void GesturesSubscription::SetWindowId(int window_id)
+{
+  SetProperty(window_id_, window_id);
 }
 
 GeisString GesturesSubscription::MapToGeisGestureClass(GestureClass nux_gesture_class)
@@ -100,7 +120,6 @@ GeisString GesturesSubscription::MapToGeisGestureClass(GestureClass nux_gesture_
       return GEIS_GESTURE_TOUCH;
   }
 }
-
 
 void GesturesSubscription::CreateGeisSubscription()
 {
@@ -137,7 +156,7 @@ void GesturesSubscription::CreateGeisSubscription()
   status = geis_filter_add_term(filter,
       GEIS_FILTER_REGION,
       GEIS_REGION_ATTRIBUTE_WINDOWID, GEIS_FILTER_OP_EQ,
-      GetWindowThread()->GetGraphicsDisplay().GetWindowHandle(),
+      window_id_,
       nullptr);
   if (status != GEIS_STATUS_SUCCESS)
   {
@@ -153,14 +172,15 @@ void GesturesSubscription::CreateGeisSubscription()
   }
   filter = nullptr; // it now belongs to the subscription
 
-  status = geis_subscription_activate(sub_);
-  if (status != GEIS_STATUS_SUCCESS)
+  if (is_active_)
   {
-    LOG_ERROR(logger) << "Failed to activate Geis subscription.";
-    goto cleanup;
+    status = geis_subscription_activate(sub_);
+    if (status != GEIS_STATUS_SUCCESS)
+    {
+      LOG_ERROR(logger) << "Failed to activate Geis subscription.";
+      goto cleanup;
+    }
   }
-
-  is_active_ = true;
 
 cleanup:
   if (status != GEIS_STATUS_SUCCESS)
@@ -169,6 +189,31 @@ cleanup:
     geis_subscription_delete(sub_);
     sub_ = nullptr;
   }
+}
+
+void GesturesSubscription::CreateGeisSubscriptionWhenPossible()
+{
+  GeisAdapter *geis_adapter = GetWindowThread()->GetGeisAdapter();
+
+  if (geis_adapter->IsInitComplete())
+    CreateGeisSubscription();
+  else
+    geis_adapter->init_complete.connect(
+        sigc::mem_fun(this, &GesturesSubscription::CreateGeisSubscription));
+}
+
+void GesturesSubscription::UpdateGeisSubscription()
+{
+  nuxAssert(sub_ != nullptr);
+
+  if (is_active_)
+    geis_subscription_deactivate(sub_);
+
+  geis_subscription_delete(sub_);
+
+  // Recreate the subscription only once it's active again
+  if (is_active_)
+    CreateGeisSubscription();
 }
 
 bool GesturesSubscription::MatchesGesture(const GestureEvent &event) const

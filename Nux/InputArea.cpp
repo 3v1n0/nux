@@ -421,15 +421,11 @@ logging::Logger logger("nux.inputarea");
   void InputArea::CreateGesturesSubscription(GestureClass gesture_class,
                                              unsigned int num_touches)
   {
-    GesturesSubscription *subscription = new GesturesSubscription(
-        gesture_class, num_touches);
+    GesturesSubscription *subscription = new GesturesSubscription;
+    subscription->SetGestureClass(gesture_class);
+    subscription->SetNumTouches(num_touches);
+    subscription->Activate();
     
-    for (auto other_sub : gestures_subscriptions_)
-    {
-      if (other_sub.get() == subscription)
-        return;
-    }
-
     gestures_subscriptions_.push_back(ShGesturesSubscription(subscription));
   }
 

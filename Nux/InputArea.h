@@ -207,7 +207,16 @@ namespace nux
   public:
 
 #ifdef NUX_GESTURES_SUPPORT
-    //! Creates a new gesture subscription for this input area.
+    //! Creates a new gesture subscription for this input area and activates it
+    /*
+      Convenience function.
+      It's the same as doing the following:
+        ShGesturesSubscription sub(new GesturesSubscription);
+        sub->SetGestureClass(gesture_class);
+        sub->SetNumTouches(num_touches);
+        sub->Activate();
+        input_area->AddGesturesSubscription(sub);
+     */
     void CreateGesturesSubscription(GestureClass gesture_class,
                                     unsigned int num_touches);
 
