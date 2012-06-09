@@ -76,6 +76,7 @@ namespace nux
     , _drag_display(NULL)
     , _drag_drop_timestamp(0)
     , _dnd_source_data(NULL)
+    , _dnd_source_window(0)
     , _global_pointer_grab_data(0)
     , _global_pointer_grab_active(false)
     , _global_pointer_grab_callback(0)
