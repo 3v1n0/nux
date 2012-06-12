@@ -54,16 +54,16 @@ TEST(TestView, TestQueueDraw)
   hlayout->AddView(test_view3);
 
   hlayout->ComputeContentSize();
+  EXPECT_EQ(main_view->calls_to_queue_draw_, 0);
   EXPECT_EQ(test_view1->calls_to_queue_draw_, 0);
-  EXPECT_EQ(test_view1->calls_to_queue_draw_, 0);
-  EXPECT_EQ(test_view1->calls_to_queue_draw_, 0);
-  EXPECT_EQ(test_view1->calls_to_queue_draw_, 0);
+  EXPECT_EQ(test_view2->calls_to_queue_draw_, 0);
+  EXPECT_EQ(test_view3->calls_to_queue_draw_, 0);
 
   main_view->QueueDraw();
+  EXPECT_EQ(main_view->calls_to_queue_draw_, 1);
   EXPECT_EQ(test_view1->calls_to_queue_draw_, 1);
-  EXPECT_EQ(test_view1->calls_to_queue_draw_, 1);
-  EXPECT_EQ(test_view1->calls_to_queue_draw_, 1);
-  EXPECT_EQ(test_view1->calls_to_queue_draw_, 1);
+  EXPECT_EQ(test_view2->calls_to_queue_draw_, 1);
+  EXPECT_EQ(test_view3->calls_to_queue_draw_, 1);
 
   main_view->UnReference();
   delete wnd_thread;
