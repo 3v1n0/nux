@@ -37,6 +37,8 @@ public:
   void ResetEvents();
   void ResetKeyFocusEvents();
 
+  void QueueDraw();
+
   bool can_focus_;
 
   bool has_focus_;
@@ -52,6 +54,8 @@ public:
   
   bool registered_begin_keynav_focus_;
   bool registered_end_keynav_focus_;
+
+  unsigned int calls_to_queue_draw_;
 
   nux::KeyNavDirection key_nav_direction_; //!< The key nav direction received when the view obtained the focus.
   

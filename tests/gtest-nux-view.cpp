@@ -7,6 +7,7 @@
 #include <glib.h>
 
 #include "Nux/Nux.h"
+#include "Nux/HLayout.h"
 #include "Nux/StaticText.h"
 #include "Nux/ProgramFramework/TestView.h"
 
@@ -31,6 +32,40 @@ TEST(TestView, TestViewEnable)
 
 
   test_view->UnReference();
+  delete wnd_thread;
+}
+
+TEST(TestView, TestQueueDraw)
+{
+  nux::NuxInitialize(0);
+  nux::WindowThread *wnd_thread = nux::CreateNuxWindow("View Test", 300, 200,
+    nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL);
+
+  nux::TestView* main_view = new nux::TestView("");
+
+  nux::HLayout* hlayout = new nux::HLayout("");
+  main_view->SetLayout(hlayout);
+
+  nux::TestView* test_view1 = new nux::TestView("");
+  hlayout->AddView(test_view1);
+  nux::TestView* test_view2 = new nux::TestView("");
+  hlayout->AddView(test_view2);
+  nux::TestView* test_view3 = new nux::TestView("");
+  hlayout->AddView(test_view3);
+
+  hlayout->ComputeContentSize();
+  EXPECT_EQ(test_view1->calls_to_queue_draw_, 0);
+  EXPECT_EQ(test_view1->calls_to_queue_draw_, 0);
+  EXPECT_EQ(test_view1->calls_to_queue_draw_, 0);
+  EXPECT_EQ(test_view1->calls_to_queue_draw_, 0);
+
+  main_view->QueueDraw();
+  EXPECT_EQ(test_view1->calls_to_queue_draw_, 1);
+  EXPECT_EQ(test_view1->calls_to_queue_draw_, 1);
+  EXPECT_EQ(test_view1->calls_to_queue_draw_, 1);
+  EXPECT_EQ(test_view1->calls_to_queue_draw_, 1);
+
+  main_view->UnReference();
   delete wnd_thread;
 }
 
