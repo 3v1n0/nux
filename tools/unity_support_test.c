@@ -845,7 +845,7 @@ int main (int argc, char* argv[]) {
 
   // drop result file
   if (results.result != 5) {
-    sprintf(resultfilename, "/tmp/unity_support_test.%i", results.result);
+    snprintf(resultfilename, sizeof(resultfilename), "/tmp/unity_support_test.%i", results.result);
     resultfile = open(resultfilename, O_CREAT|O_WRONLY|O_EXCL, 0666);
     if (resultfile > 0)
       close(resultfile);
