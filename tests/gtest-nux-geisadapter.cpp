@@ -162,3 +162,69 @@ TEST_F(GeisAdapterTest, EmitsWellFormedNuxGestureEvent)
   }
 
 }
+
+/*
+  Checks that when a Tap Update GeisEvent is received, GeisAdpater generates
+  two events from it: A Tap Begin and a Tap End.
+ */
+TEST_F(GeisAdapterTest, SplitTapUpdateIntoTapBeginAndTapEnd)
+{
+  nux::GeisAdapter geis_adapter;
+  Geis geis = geis_adapter.GetGeisInstance();
+
+  struct _GeisGestureClass tap_class;
+  tap_class.id = 12;
+  tap_class.name = GEIS_GESTURE_TAP;
+  AddGestureClass(geis, &tap_class);
+
+  struct _GeisDevice device;
+  device.id = 7;
+  device.attributes.AddBoolean(GEIS_DEVICE_ATTRIBUTE_DIRECT_TOUCH, true);
+  AddDevice(geis, &device);
+
+  FinishInitialization(geis);
+
+  struct _GeisFrame frame;
+  frame.id = 321;
+  frame.class_ids.insert(tap_class.id);
+  frame.attributes.AddInteger(GEIS_GESTURE_ATTRIBUTE_DEVICE_ID, device.id);
+  frame.attributes.AddFloat(GEIS_GESTURE_ATTRIBUTE_FOCUS_X, 87.3f);
+  frame.attributes.AddFloat(GEIS_GESTURE_ATTRIBUTE_FOCUS_Y, 123.4f);
+
+  struct _GeisGroup group;
+  group.vector.push_back(&frame);
+
+  struct _GeisGroupSet group_set;
+  group_set.vector.push_back(&group);
+
+  struct _GeisTouch touch;
+  touch.id = 0;
+  touch.attributes.AddFloat(GEIS_TOUCH_ATTRIBUTE_ID, 123);
+  touch.attributes.AddFloat(GEIS_TOUCH_ATTRIBUTE_X, 777.7f);
+  touch.attributes.AddFloat(GEIS_TOUCH_ATTRIBUTE_Y, 888.8f);
+
+  struct _GeisTouchSet touch_set;
+  touch_set.vector.push_back(&touch);
+
+  GeisEvent event = new struct _GeisEvent;
+  event->type = GEIS_EVENT_GESTURE_UPDATE;
+  event->attributes.AddPointer(GEIS_EVENT_ATTRIBUTE_GROUPSET, &group_set);
+  event->attributes.AddPointer(GEIS_EVENT_ATTRIBUTE_TOUCHSET, &touch_set);
+  event->attributes.AddBoolean(GEIS_EVENT_ATTRIBUTE_CONSTRUCTION_FINISHED, false);
+  geis->pending_events.push_back(event);
+
+  geis_adapter.event_ready.connect(sigc::mem_fun(this,
+      &GeisAdapterTest::StoreNuxGestureEvent));
+
+  geis_adapter.ProcessGeisEvents();
+
+  ASSERT_EQ(2, gesture_events.size());
+
+  ASSERT_EQ(nux::EVENT_GESTURE_BEGIN, gesture_events.front().type);
+  ASSERT_EQ(nux::TAP_GESTURE, gesture_events.front().GetGestureClasses());
+  ASSERT_TRUE(gesture_events.front().IsConstructionFinished());
+
+  ASSERT_EQ(nux::EVENT_GESTURE_END, gesture_events.back().type);
+  ASSERT_EQ(nux::TAP_GESTURE, gesture_events.back().GetGestureClasses());
+  ASSERT_TRUE(gesture_events.back().IsConstructionFinished());
+}

@@ -29,6 +29,7 @@
 #include <glib.h>
 
 #include <map>
+#include <memory>
 
 #include "NuxGraphics/GestureEvent.h"
 
@@ -92,6 +93,8 @@ private:
   void FillNuxEventGestureAttributes(GestureEvent &nux_event, GeisFrame frame);
   void FillNuxEventTouches(GestureEvent &nux_event, GeisTouchSet touch_set);
 
+  void SplitUpdateIntoBeginAndEnd(GestureEvent &nux_event);
+
   Geis geis_;
 
   GeisGestureClass class_drag_;
@@ -106,6 +109,11 @@ private:
   std::map<int, Device> devices_;
 
   GestureEvent nux_event_;
+
+  /* Sometimes a single GeisEvent can yield two GestureEvents. When that
+     happens, that second GestureEvent will be temporarily held here until
+     it's consumed. */
+  std::unique_ptr<GestureEvent> pending_next_event_;
 
   friend class GeisAdapterTest;
 };

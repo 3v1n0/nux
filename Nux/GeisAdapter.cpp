@@ -169,7 +169,22 @@ void GeisAdapter::ProcessGeisEvents()
         break;
       case GEIS_EVENT_GESTURE_UPDATE:
         FillNuxEvent(nux_event_, event, EVENT_GESTURE_UPDATE);
-        event_ready.emit(nux_event_);
+        if (nux_event_.GetGestureClasses() == TAP_GESTURE)
+        {
+          // Geis sends a single Update event for a tap gesture and nothing more,
+          // but it's better to be consistent with the rule that all gestures
+          // must begin and end (with any number of updates in between).
+          // Otherwise code in upper layers will have to add special cases just
+          // for the tap gesture.
+          nuxAssert(!pending_next_event_);
+          SplitUpdateIntoBeginAndEnd(nux_event_);
+          nuxAssert(pending_next_event_);
+          event_ready.emit(nux_event_);
+          event_ready.emit(*pending_next_event_);
+          pending_next_event_.reset();
+        }
+        else
+          event_ready.emit(nux_event_);
         break;
       case GEIS_EVENT_GESTURE_END:
         FillNuxEvent(nux_event_, event, EVENT_GESTURE_END);
@@ -196,8 +211,29 @@ void GeisAdapter::ProcessGeisEvents()
   }
 }
 
+void GeisAdapter::SplitUpdateIntoBeginAndEnd(GestureEvent &nux_event)
+{
+  nux_event.type = EVENT_GESTURE_BEGIN;
+
+  // Work around a bug in geis. A very quick gesture (e.g. a quick tap)
+  // will end with its is_construction_finished still set to false.
+  // https://bugs.launchpad.net/utouch-grail/+bug/1012315
+  nux_event.is_construction_finished_ = true;
+
+  pending_next_event_.reset(new GestureEvent);
+  *pending_next_event_ = nux_event;
+  pending_next_event_->type = EVENT_GESTURE_END;
+}
+
 bool GeisAdapter::ProcessNextEvent(GestureEvent *nux_event)
 {
+  if (pending_next_event_)
+  {
+    *nux_event = *pending_next_event_;
+    pending_next_event_.reset();
+    return true;
+  }
+
   GeisEvent event = nullptr;
   GeisStatus status = GEIS_STATUS_UNKNOWN_ERROR;
   bool filled_nux_event = false;
@@ -225,6 +261,15 @@ bool GeisAdapter::ProcessNextEvent(GestureEvent *nux_event)
         break;
       case GEIS_EVENT_GESTURE_UPDATE:
         FillNuxEvent(*nux_event, event, EVENT_GESTURE_UPDATE);
+        if (nux_event->GetGestureClasses() == TAP_GESTURE)
+        {
+          // Geis sends a single Update event for a tap gesture and nothing more,
+          // but it's better to be consistent with the rule that all gestures
+          // must begin and end (with any number of updates in between).
+          // Otherwise code in upper layers will have to add special cases just
+          // for the tap gesture.
+          SplitUpdateIntoBeginAndEnd(*nux_event);
+        }
         filled_nux_event = true;
         break;
       case GEIS_EVENT_GESTURE_END:
@@ -370,6 +415,12 @@ void GeisAdapter::FillNuxEvent(GestureEvent &nux_event,
   {
     nux_event.gesture_classes_ |= TOUCH_GESTURE;
   }
+
+  // Work around a bug in geis. A very quick gesture (e.g. a quick tap)
+  // will end with its is_construction_finished still set to false.
+  // https://bugs.launchpad.net/utouch-grail/+bug/1012315
+  if (nux_event_type == EVENT_GESTURE_END)
+    nux_event.is_construction_finished_ = true;
 }
 
 void GeisAdapter::FillNuxEventGestureAttributes(GestureEvent &nux_event, GeisFrame frame)
