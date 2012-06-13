@@ -409,12 +409,14 @@ namespace nux
 
   void View::GeometryChangePending()
   {
-    QueueDraw();
+    if (IsLayoutDone())
+      QueueDraw();
   }
 
   void View::GeometryChanged()
   {
-    QueueDraw();
+    if (IsLayoutDone())
+      QueueDraw();
   }
 
   Area* View::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
