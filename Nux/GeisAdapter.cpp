@@ -51,7 +51,7 @@ namespace
   static gboolean geis_source_check(GSource *source)
   {
     gboolean retval;
-    GeisAdapterEventSource *event_source = (GeisAdapterEventSource*) source;
+    GeisAdapterEventSource *event_source = reinterpret_cast<GeisAdapterEventSource*>(source);
 
     if ((event_source->event_poll_fd.revents & G_IO_IN))
     {
@@ -118,7 +118,7 @@ void GeisAdapter::CreateGSource(GMainContext *context)
 {
   GSource *source = g_source_new(&geis_source_funcs,
                                  sizeof(GeisAdapterEventSource));
-  GeisAdapterEventSource *event_source = (GeisAdapterEventSource*) source;
+  GeisAdapterEventSource *event_source = reinterpret_cast<GeisAdapterEventSource*>(source);
 
   g_source_set_priority(source, G_PRIORITY_DEFAULT);
 
