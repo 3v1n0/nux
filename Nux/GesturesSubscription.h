@@ -67,14 +67,14 @@ namespace nux
        */
       bool IsActive() const {return is_active_;}
 
-      //! Sets the class of gestures this subscription is interested on
-      void SetGestureClass(GestureClass gesture_class);
+      //! Sets the classes of gestures this subscription is interested on
+      void SetGestureClasses(int gesture_classes);
 
       //! Returns the gesture class that this subscription is interested on
       /*!
-        By default it's set to TOUCH_GESTURE
+        By default it's set to DRAG_GESTURE|PINCH_GESTURE|ROTATE_GESTURE
        */
-      GestureClass GetGestureClass() const {return gesture_class_;}
+      int GetGestureClasses() const {return gesture_classes_;}
 
       //! The subscription will be interested in gestures with the given number of touches
       void SetNumTouches(unsigned int num_touches);
@@ -103,7 +103,8 @@ namespace nux
       bool MatchesGesture(const GestureEvent &event) const;
 
     private:
-      static GeisString MapToGeisGestureClass(GestureClass nux_gesture_class);
+      std::vector<const char *> CreateGeisGestureClasses();
+      GeisStatus AddGestureClassAndNumTouchesTerm(GeisFilter filter);
       void CreateGeisSubscription();
       void CreateGeisSubscriptionWhenPossible();
       void UpdateGeisSubscription();
@@ -120,7 +121,8 @@ namespace nux
           UpdateGeisSubscription();
       }
 
-      GestureClass gesture_class_;
+      int gesture_classes_;
+      int unwanted_gesture_classes_;
       unsigned int num_touches_;
       int window_id_;
       GeisSubscription sub_;

@@ -212,12 +212,12 @@ namespace nux
       Convenience function.
       It's the same as doing the following:
         ShGesturesSubscription sub(new GesturesSubscription);
-        sub->SetGestureClass(gesture_class);
+        sub->SetGestureClasses(gesture_classes);
         sub->SetNumTouches(num_touches);
         sub->Activate();
         input_area->AddGesturesSubscription(sub);
      */
-    void CreateGesturesSubscription(GestureClass gesture_class,
+    void CreateGesturesSubscription(int gesture_classes,
                                     unsigned int num_touches);
 
     //! Adds a gestures subscription to this input area.

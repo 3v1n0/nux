@@ -418,14 +418,14 @@ logging::Logger logger("nux.inputarea");
   }  
 
 #ifdef NUX_GESTURES_SUPPORT
-  void InputArea::CreateGesturesSubscription(GestureClass gesture_class,
+  void InputArea::CreateGesturesSubscription(int gesture_classes,
                                              unsigned int num_touches)
   {
     GesturesSubscription *subscription = new GesturesSubscription;
-    subscription->SetGestureClass(gesture_class);
+    subscription->SetGestureClasses(gesture_classes);
     subscription->SetNumTouches(num_touches);
     subscription->Activate();
-    
+
     gestures_subscriptions_.push_back(ShGesturesSubscription(subscription));
   }
 

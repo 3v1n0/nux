@@ -40,7 +40,7 @@ namespace nux
     ROTATE_GESTURE = 4, //! A rotation gesture
     TAP_GESTURE    = 8, //! A tap gesture.
     TOUCH_GESTURE  = 16 /*! A touch gesture. It merely groups two or more touch
-                            points and send their information, with interpreting
+                            points and send their information, without interpreting
                             what gestures the touch points are performing. */
   };
 

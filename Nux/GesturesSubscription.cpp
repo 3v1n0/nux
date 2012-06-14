@@ -33,7 +33,7 @@ namespace
 }
 
 GesturesSubscription::GesturesSubscription()
-  : gesture_class_(TOUCH_GESTURE),
+  : gesture_classes_(DRAG_GESTURE|PINCH_GESTURE|ROTATE_GESTURE),
     num_touches_(2),
     window_id_(GetWindowThread()->GetGraphicsDisplay().GetWindowHandle()),
     sub_(nullptr),
@@ -85,9 +85,13 @@ void GesturesSubscription::Deactivate()
   }
 }
 
-void GesturesSubscription::SetGestureClass(GestureClass gesture_class)
+void GesturesSubscription::SetGestureClasses(int gesture_classes)
 {
-  SetProperty(gesture_class_, gesture_class);
+  SetProperty(gesture_classes_, gesture_classes);
+
+  #define NUX_ALL_GESTURES (DRAG_GESTURE|PINCH_GESTURE|TAP_GESTURE|TOUCH_GESTURE);
+  unwanted_gesture_classes_ = ~gesture_classes & NUX_ALL_GESTURES;
+  #undef NUX_ALL_GESTURES
 }
 
 void GesturesSubscription::SetNumTouches(unsigned int num_touches)
@@ -100,25 +104,85 @@ void GesturesSubscription::SetWindowId(int window_id)
   SetProperty(window_id_, window_id);
 }
 
-GeisString GesturesSubscription::MapToGeisGestureClass(GestureClass nux_gesture_class)
+std::vector<const char *> GesturesSubscription::CreateGeisGestureClasses()
 {
-  switch (nux_gesture_class)
+  std::vector<const char *> geis_gesture_classes;
+
+  #define ADD_GESTURE(name) \
+    if (gesture_classes_ & name##_GESTURE) \
+      geis_gesture_classes.push_back(GEIS_GESTURE_##name);
+
+  ADD_GESTURE(DRAG)
+  ADD_GESTURE(PINCH)
+  ADD_GESTURE(ROTATE)
+  ADD_GESTURE(TAP)
+  ADD_GESTURE(TOUCH)
+
+  #undef ADD_GESTURE
+
+  return geis_gesture_classes;
+}
+
+GeisStatus GesturesSubscription::AddGestureClassAndNumTouchesTerm(GeisFilter filter)
+{
+  GeisStatus status = GEIS_STATUS_UNKNOWN_ERROR;
+  std::vector<const char *> geis_gesture_classes = CreateGeisGestureClasses();
+
+  switch (geis_gesture_classes.size())
   {
-    case DRAG_GESTURE:
-      return GEIS_GESTURE_DRAG;
+    case 1:
+      status = geis_filter_add_term(filter,
+          GEIS_FILTER_CLASS,
+          GEIS_CLASS_ATTRIBUTE_NAME, GEIS_FILTER_OP_EQ, geis_gesture_classes[0],
+          GEIS_GESTURE_ATTRIBUTE_TOUCHES, GEIS_FILTER_OP_EQ, num_touches_,
+          nullptr);
       break;
-    case PINCH_GESTURE:
-      return GEIS_GESTURE_PINCH;
+    case 2:
+      status = geis_filter_add_term(filter,
+          GEIS_FILTER_CLASS,
+          GEIS_CLASS_ATTRIBUTE_NAME, GEIS_FILTER_OP_EQ, geis_gesture_classes[0],
+          GEIS_CLASS_ATTRIBUTE_NAME, GEIS_FILTER_OP_EQ, geis_gesture_classes[1],
+          GEIS_GESTURE_ATTRIBUTE_TOUCHES, GEIS_FILTER_OP_EQ, num_touches_,
+          nullptr);
       break;
-    case ROTATE_GESTURE:
-      return GEIS_GESTURE_ROTATE;
+    case 3:
+      status = geis_filter_add_term(filter,
+          GEIS_FILTER_CLASS,
+          GEIS_CLASS_ATTRIBUTE_NAME, GEIS_FILTER_OP_EQ, geis_gesture_classes[0],
+          GEIS_CLASS_ATTRIBUTE_NAME, GEIS_FILTER_OP_EQ, geis_gesture_classes[1],
+          GEIS_CLASS_ATTRIBUTE_NAME, GEIS_FILTER_OP_EQ, geis_gesture_classes[2],
+          GEIS_GESTURE_ATTRIBUTE_TOUCHES, GEIS_FILTER_OP_EQ, num_touches_,
+          nullptr);
       break;
-    case TAP_GESTURE:
-      return GEIS_GESTURE_TAP;
+    case 4:
+      status = geis_filter_add_term(filter,
+          GEIS_FILTER_CLASS,
+          GEIS_CLASS_ATTRIBUTE_NAME, GEIS_FILTER_OP_EQ, geis_gesture_classes[0],
+          GEIS_CLASS_ATTRIBUTE_NAME, GEIS_FILTER_OP_EQ, geis_gesture_classes[1],
+          GEIS_CLASS_ATTRIBUTE_NAME, GEIS_FILTER_OP_EQ, geis_gesture_classes[2],
+          GEIS_CLASS_ATTRIBUTE_NAME, GEIS_FILTER_OP_EQ, geis_gesture_classes[3],
+          GEIS_GESTURE_ATTRIBUTE_TOUCHES, GEIS_FILTER_OP_EQ, num_touches_,
+          nullptr);
       break;
-    default: // TOUCH_GESTURE
-      return GEIS_GESTURE_TOUCH;
+    case 5:
+      status = geis_filter_add_term(filter,
+          GEIS_FILTER_CLASS,
+          GEIS_CLASS_ATTRIBUTE_NAME, GEIS_FILTER_OP_EQ, geis_gesture_classes[0],
+          GEIS_CLASS_ATTRIBUTE_NAME, GEIS_FILTER_OP_EQ, geis_gesture_classes[1],
+          GEIS_CLASS_ATTRIBUTE_NAME, GEIS_FILTER_OP_EQ, geis_gesture_classes[2],
+          GEIS_CLASS_ATTRIBUTE_NAME, GEIS_FILTER_OP_EQ, geis_gesture_classes[4],
+          GEIS_GESTURE_ATTRIBUTE_TOUCHES, GEIS_FILTER_OP_EQ, num_touches_,
+          nullptr);
+      break;
+    default:
+      status = geis_filter_add_term(filter,
+          GEIS_FILTER_CLASS,
+          GEIS_GESTURE_ATTRIBUTE_TOUCHES, GEIS_FILTER_OP_EQ, num_touches_,
+          nullptr);
+      break;
   }
+
+  return status;
 }
 
 void GesturesSubscription::CreateGeisSubscription()
@@ -141,15 +205,10 @@ void GesturesSubscription::CreateGeisSubscription()
     goto cleanup;
   }
 
-  status = geis_filter_add_term(filter,
-      GEIS_FILTER_CLASS,
-      GEIS_CLASS_ATTRIBUTE_NAME, GEIS_FILTER_OP_EQ,
-      MapToGeisGestureClass(gesture_class_),
-      GEIS_GESTURE_ATTRIBUTE_TOUCHES, GEIS_FILTER_OP_EQ, num_touches_,
-      nullptr);
+  status = AddGestureClassAndNumTouchesTerm(filter);
   if (status != GEIS_STATUS_SUCCESS)
   {
-    LOG_ERROR(logger) << "Failed to add term to Geis filter.";
+    LOG_ERROR(logger) << "Failed to add gesture term to Geis filter.";
     goto cleanup;
   }
 
@@ -221,7 +280,10 @@ bool GesturesSubscription::MatchesGesture(const GestureEvent &event) const
   if (event.GetTouches().size() != num_touches_)
     return false;
 
-  if ((event.GetGestureClasses() & gesture_class_) == 0)
+  if ((event.GetGestureClasses() & gesture_classes_) == 0)
+    return false;
+
+  if ((event.GetGestureClasses() & unwanted_gesture_classes_) != 0)
     return false;
 
   return true;
