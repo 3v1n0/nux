@@ -364,6 +364,79 @@ TEST(TestWindowCompositor, GestureEventsDelivery_3)
   delete wnd_thread;
 }
 
+/*
+  Check that if a gesture gets its construction finished only on its end event,
+  it still gets accepted and delivered.
+ */
+TEST(TestWindowCompositor, GestureEventsDelivery_4)
+{
+  nux::NuxInitialize(0);
+  nux::WindowThread *wnd_thread = nux::CreateNuxWindow("Nux Window", 500, 500,
+    nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL);
+  nux::WindowCompositor &wnd_compositor = wnd_thread->GetWindowCompositor();
+  nux::FakeGestureEvent fake_event;
+
+  TestWindow *window = new TestWindow;
+  window->SetBaseXY(10, 10);
+  window->SetBaseWidth(90);
+  window->SetBaseHeight(90);
+  window->ShowWindow(true);
+  window->CreateGesturesSubscription(nux::DRAG_GESTURE, 2);
+
+  TestInputArea *target_input_area = new TestInputArea;
+  target_input_area->CreateGesturesSubscription(nux::PINCH_GESTURE, 2);
+
+  TestInputArea *other_input_area = new TestInputArea;
+  other_input_area->CreateGesturesSubscription(nux::PINCH_GESTURE, 2);
+
+  nux::VLayout *root_layout = new nux::VLayout;
+  root_layout->AddView(target_input_area); // should have geometry (0, 0, 500, 250)
+  root_layout->AddView(other_input_area); // should have geometry (0, 250, 500, 250)
+  wnd_thread->SetLayout(root_layout);
+
+  g_gesture_event_accept_count = 0;
+  g_gesture_event_reject_count = 0;
+  fake_event.type = nux::EVENT_GESTURE_BEGIN;
+  fake_event.gesture_id = 0;
+  fake_event.gesture_classes = nux::PINCH_GESTURE | nux::ROTATE_GESTURE;
+  fake_event.is_direct_touch = false;
+  fake_event.focus.x = 30.0f; // hits window and target_input_area behind it
+  fake_event.focus.y = 30.0f;
+  // in touch device's coordinate system (because it's not a direct device).
+  // Thus not used by WindowCompositor
+  fake_event.touches.push_back(nux::TouchPoint(0, 10.0f, 10.0f));
+  fake_event.touches.push_back(nux::TouchPoint(1, 20.0f, 20.0f));
+  fake_event.is_construction_finished = false;
+  wnd_compositor.ProcessEvent(fake_event.ToGestureEvent()); 
+
+  // shouldn't be accepted right away because is_construction_finished == false
+  ASSERT_EQ(0, g_gesture_event_accept_count);
+  ASSERT_EQ(0, g_gesture_event_reject_count);
+  ASSERT_EQ(0, window->gesture_events_received.size());
+  ASSERT_EQ(0, target_input_area->gesture_events_received.size());
+  ASSERT_EQ(0, other_input_area->gesture_events_received.size());
+
+  g_gesture_event_accept_count = 0;
+  g_gesture_event_reject_count = 0;
+  fake_event.type = nux::EVENT_GESTURE_END;
+  fake_event.focus.x += 2.0f;
+  fake_event.focus.y += 2.0f;
+  fake_event.touches.clear();
+  fake_event.touches.push_back(nux::TouchPoint(0, 11.0f, 11.0f));
+  fake_event.touches.push_back(nux::TouchPoint(1, 21.0f, 21.0f));
+  fake_event.is_construction_finished = true;
+  wnd_compositor.ProcessEvent(fake_event.ToGestureEvent()); 
+
+  ASSERT_EQ(1, g_gesture_event_accept_count);
+  ASSERT_EQ(0, g_gesture_event_reject_count);
+  ASSERT_EQ(0, window->gesture_events_received.size());
+  ASSERT_EQ(2, target_input_area->gesture_events_received.size());
+  ASSERT_EQ(0, other_input_area->gesture_events_received.size());
+
+  window->Dispose();
+  delete wnd_thread;
+}
+
 #endif // NUX_GESTURES_SUPPORT
 
 }

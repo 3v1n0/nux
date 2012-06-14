@@ -2530,7 +2530,17 @@ namespace
       return;
     }
 
-    gesture->Update(event);
+    if (event.IsConstructionFinished() && !gesture->IsConstructionFinished())
+    {
+      // This is the first update for this gesture signaling that
+      // its construction has finished.
+      gesture->Update(event);
+      ResolveBufferedGestureThatFinishedConstruction(gesture);
+    }
+    else
+    {
+      gesture->Update(event);
+    }
 
     // We no longer have to keep track of it.
     gesture_set_.Remove(gesture);
