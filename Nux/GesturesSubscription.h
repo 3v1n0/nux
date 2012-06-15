@@ -99,6 +99,40 @@ namespace nux
        */
       int GetWindowId() const {return window_id_;}
 
+      //! Sets the recognition threshold for a given gesture class
+      /*!
+        For the pinch gesture class, the threshold is the current
+        radius divided by the initial radius and should be bigger than one.
+        Its default value is 1.1.
+
+        For the drag gesture class, the threshold is in meters and represents
+        the minimum amount of movement required for a drag to be recognized.
+        Its default value is 0.0026
+
+        For the tap gesture class, the threshold is in meters and represents
+        the maximum amount of movement allowed for a tap to be recognized.
+        Its default value is 0.0026
+
+        For the rotate gesture class, the threshold is in radians and represents
+        the mimimum amout of rotation required for a rotation gesture to be
+        recognized. Its default value is (2*PI)/50.
+
+        It has no effect or meaning for the touch gesture class.
+       */
+      void SetRecognitionThreshold(GestureClass gesture_class, float threshold);
+
+      //! Sets the recognition timeout for a given gesture class
+      /*!
+        The timeout is in milliseconds.
+        Setting 0 (zero) means that the recognition never times out.
+
+        The default timeout for drag, pinch and rotate gesture classes is 0 (zero).
+        Fot taps it's 300.
+
+        It has no effect or meaning for the touch gesture class.
+       */
+      void SetRecognitionTimeout(GestureClass gesture_class, int timeout);
+
       //! Returns whether the gesture from the given event matches this subscription
       bool MatchesGesture(const GestureEvent &event) const;
 
@@ -108,6 +142,7 @@ namespace nux
       void CreateGeisSubscription();
       void CreateGeisSubscriptionWhenPossible();
       void UpdateGeisSubscription();
+      void ConfigureGeisSubscription();
 
       template<typename T>
       void SetProperty(T& prop, T new_value)
@@ -127,6 +162,15 @@ namespace nux
       int window_id_;
       GeisSubscription sub_;
       bool is_active_;
+
+      float drag_threshold_;
+      int drag_timeout_;
+      float pinch_threshold_;
+      int pinch_timeout_;
+      float rotate_threshold_;
+      int rotate_timeout_;
+      float tap_threshold_;
+      int tap_timeout_;
   };
 
   typedef std::shared_ptr<GesturesSubscription> ShGesturesSubscription;

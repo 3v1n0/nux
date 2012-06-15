@@ -37,7 +37,15 @@ GesturesSubscription::GesturesSubscription()
     num_touches_(2),
     window_id_(GetWindowThread()->GetGraphicsDisplay().GetWindowHandle()),
     sub_(nullptr),
-    is_active_(false)
+    is_active_(false),
+    drag_threshold_(0.0026f),
+    drag_timeout_(0),
+    pinch_threshold_(1.1f),
+    pinch_timeout_(0),
+    rotate_threshold_(2.0f*3.1415926f/50.0f),
+    rotate_timeout_(0),
+    tap_threshold_(0.0026f),
+    tap_timeout_(300)
 {
 }
 
@@ -61,6 +69,8 @@ void GesturesSubscription::Activate()
     {
       LOG_ERROR(logger) << "Failed to activate Geis subscription.";
     }
+    // configuration only works on active subscription (should be fixed in geis)
+    ConfigureGeisSubscription();
   }
   else
   {
@@ -102,6 +112,56 @@ void GesturesSubscription::SetNumTouches(unsigned int num_touches)
 void GesturesSubscription::SetWindowId(int window_id)
 {
   SetProperty(window_id_, window_id);
+}
+
+void GesturesSubscription::SetRecognitionThreshold(GestureClass gesture_class,
+                                                   float threshold)
+{
+  if (threshold < 0.0f)
+    return;
+
+  switch(gesture_class)
+  {
+    case DRAG_GESTURE:
+      SetProperty(drag_threshold_, threshold);
+      break;
+    case PINCH_GESTURE:
+      SetProperty(pinch_threshold_, threshold);
+      break;
+    case TAP_GESTURE:
+      SetProperty(tap_threshold_, threshold);
+      break;
+    case ROTATE_GESTURE:
+      SetProperty(rotate_threshold_, threshold);
+      break;
+    default:
+      break;
+  }
+}
+
+void GesturesSubscription::SetRecognitionTimeout(GestureClass gesture_class,
+                                                 int timeout)
+{
+  if (timeout < 0)
+    return;
+
+  switch(gesture_class)
+  {
+    case DRAG_GESTURE:
+      SetProperty(drag_timeout_, timeout);
+      break;
+    case PINCH_GESTURE:
+      SetProperty(pinch_timeout_, timeout);
+      break;
+    case TAP_GESTURE:
+      SetProperty(tap_timeout_, timeout);
+      break;
+    case ROTATE_GESTURE:
+      SetProperty(rotate_timeout_, timeout);
+      break;
+    default:
+      break;
+  }
 }
 
 std::vector<const char *> GesturesSubscription::CreateGeisGestureClasses()
@@ -239,6 +299,8 @@ void GesturesSubscription::CreateGeisSubscription()
       LOG_ERROR(logger) << "Failed to activate Geis subscription.";
       goto cleanup;
     }
+    // configuration only works on active subscription (should be fixed in geis)
+    ConfigureGeisSubscription();
   }
 
 cleanup:
@@ -287,6 +349,31 @@ bool GesturesSubscription::MatchesGesture(const GestureEvent &event) const
     return false;
 
   return true;
+}
+
+void GesturesSubscription::ConfigureGeisSubscription()
+{
+  nuxAssert(sub_);
+  GeisStatus status;
+
+  auto setGeisConfig = [&](const char *name, GeisPointer var)
+  {
+    status = geis_subscription_set_configuration(sub_, name, var);
+    if (status != GEIS_STATUS_SUCCESS)
+    {
+      LOG_ERROR(logger) << "Failed to set Geis subscription configuration "
+        << name;
+    }
+  };
+
+  setGeisConfig(GEIS_CONFIG_DRAG_THRESHOLD, &drag_threshold_);
+  setGeisConfig(GEIS_CONFIG_DRAG_TIMEOUT, &drag_timeout_);
+  setGeisConfig(GEIS_CONFIG_PINCH_THRESHOLD, &pinch_threshold_);
+  setGeisConfig(GEIS_CONFIG_PINCH_TIMEOUT, &pinch_timeout_);
+  setGeisConfig(GEIS_CONFIG_TAP_THRESHOLD, &tap_threshold_);
+  setGeisConfig(GEIS_CONFIG_TAP_TIMEOUT, &tap_timeout_);
+  setGeisConfig(GEIS_CONFIG_ROTATE_THRESHOLD, &rotate_threshold_);
+  setGeisConfig(GEIS_CONFIG_ROTATE_TIMEOUT, &rotate_timeout_);
 }
 
 } // namespace nux
