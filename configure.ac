@@ -201,7 +201,7 @@ AC_ARG_ENABLE(gestures,
 AS_IF([test "x$enable_gestures" = "xauto"],
       [
         PKG_CHECK_MODULES(UTOUCH_GEIS,
-                          libutouch-geis,
+                          [libutouch-geis >= 2.2.10],
                           [have_utouch_geis=yes],
                           [have_utouch_geis=no])
       ])
@@ -210,7 +210,7 @@ AS_IF([test "x$enable_gestures" = "xauto"],
 AS_IF([test "x$enable_gestures" = "xyes"],
       [
         PKG_CHECK_MODULES(UTOUCH_GEIS,
-                          libutouch-geis,
+                          [libutouch-geis >= 2.2.10],
                           [have_utouch_geis=yes],
                           [
                             AC_MSG_ERROR([libutouch-geis not found!])
