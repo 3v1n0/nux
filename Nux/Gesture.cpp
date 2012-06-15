@@ -71,26 +71,23 @@ void Gesture::Update(const GestureEvent& event)
   }
 }
 
-#define GET_LATEST_EVENT \
-  if (event_delivery_enabled_)\
-  {\
-    nuxAssert(queued_events_.size() == 0);\
-    return last_event_;\
-  }\
-  else\
-  {\
-    nuxAssert(queued_events_.size() > 0);\
-    return queued_events_[queued_events_.size()-1];\
-  }\
-
 GestureEvent &Gesture::GetLatestEvent()
 {
-  GET_LATEST_EVENT
+  return const_cast<GestureEvent&>(const_cast<Gesture*>(this)->GetLatestEvent());
 }
 
 const GestureEvent &Gesture::GetLatestEvent() const
 {
-  GET_LATEST_EVENT
+  if (event_delivery_enabled_)
+  {
+    nuxAssert(queued_events_.size() == 0);
+    return last_event_;
+  }
+  else
+  {
+    nuxAssert(queued_events_.size() > 0);
+    return queued_events_[queued_events_.size()-1];
+  }
 }
 
 bool Gesture::IsConstructionFinished() const
