@@ -145,6 +145,7 @@ void GeisAdapter::ProcessGeisEvents()
 {
   GeisEvent event = nullptr;
   GeisStatus status = GEIS_STATUS_UNKNOWN_ERROR;
+  GestureEvent nux_event;
 
   status = geis_dispatch_events(geis_);
   if (status != GEIS_STATUS_SUCCESS)
@@ -164,12 +165,12 @@ void GeisAdapter::ProcessGeisEvents()
     switch (geis_event_type(event))
     {
       case GEIS_EVENT_GESTURE_BEGIN:
-        FillNuxEvent(nux_event_, event, EVENT_GESTURE_BEGIN);
-        event_ready.emit(nux_event_);
+        FillNuxEvent(nux_event, event, EVENT_GESTURE_BEGIN);
+        event_ready.emit(nux_event);
         break;
       case GEIS_EVENT_GESTURE_UPDATE:
-        FillNuxEvent(nux_event_, event, EVENT_GESTURE_UPDATE);
-        if (nux_event_.GetGestureClasses() == TAP_GESTURE)
+        FillNuxEvent(nux_event, event, EVENT_GESTURE_UPDATE);
+        if (nux_event.GetGestureClasses() == TAP_GESTURE)
         {
           // Geis sends a single Update event for a tap gesture and nothing more,
           // but it's better to be consistent with the rule that all gestures
@@ -177,18 +178,18 @@ void GeisAdapter::ProcessGeisEvents()
           // Otherwise code in upper layers will have to add special cases just
           // for the tap gesture.
           nuxAssert(!pending_next_event_);
-          SplitUpdateIntoBeginAndEnd(nux_event_);
+          SplitUpdateIntoBeginAndEnd(nux_event);
           nuxAssert(pending_next_event_);
-          event_ready.emit(nux_event_);
+          event_ready.emit(nux_event);
           event_ready.emit(*pending_next_event_);
           pending_next_event_.reset();
         }
         else
-          event_ready.emit(nux_event_);
+          event_ready.emit(nux_event);
         break;
       case GEIS_EVENT_GESTURE_END:
-        FillNuxEvent(nux_event_, event, EVENT_GESTURE_END);
-        event_ready.emit(nux_event_);
+        FillNuxEvent(nux_event, event, EVENT_GESTURE_END);
+        event_ready.emit(nux_event);
         break;
       case GEIS_EVENT_CLASS_AVAILABLE:
         this->ProcessEventClassAvailable(event);

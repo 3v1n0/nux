@@ -108,8 +108,6 @@ private:
   /* maps a device id to its corresponding device */
   std::map<int, Device> devices_;
 
-  GestureEvent nux_event_;
-
   /* Sometimes a single GeisEvent can yield two GestureEvents. When that
      happens, that second GestureEvent will be temporarily held here until
      it's consumed. */
