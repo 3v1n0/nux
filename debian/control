@@ -33,7 +33,7 @@ Build-Depends: debhelper (>= 7.0.50~),
 Standards-Version: 3.9.3
 Section: libs
 Homepage: http://launchpad.net/nux
-Vcs-Bzr: https://code.launchpad.net/~ubuntu-desktop/nux/ubuntu
+Vcs-Bzr: https://code.launchpad.net/+branch/ubuntu/nux
 
 Package: libnux-2.0-0
 Section: libs
