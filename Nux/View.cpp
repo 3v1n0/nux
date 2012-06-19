@@ -216,6 +216,9 @@ namespace nux
 
   void View::QueueDraw()
   {
+    if (draw_cmd_queued_)
+      return;
+
     //GetWindowCompositor()..AddToDrawList(this);
     WindowThread* application = GetWindowThread();
     if (application)

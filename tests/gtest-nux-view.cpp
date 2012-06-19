@@ -65,6 +65,17 @@ TEST(TestView, TestQueueDraw)
   EXPECT_EQ(test_view2->calls_to_queue_draw_, 1);
   EXPECT_EQ(test_view3->calls_to_queue_draw_, 1);
 
+  int old_size = wnd_thread->GetDrawList().size();
+  main_view->QueueDraw();
+  test_view2->QueueDraw();
+  int new_size = wnd_thread->GetDrawList().size();
+  EXPECT_EQ(old_size, new_size);  // LP: #1014610
+
+  EXPECT_EQ(main_view->calls_to_queue_draw_, 2);
+  EXPECT_EQ(test_view1->calls_to_queue_draw_, 1);
+  EXPECT_EQ(test_view2->calls_to_queue_draw_, 2);
+  EXPECT_EQ(test_view3->calls_to_queue_draw_, 1);
+
   main_view->UnReference();
   delete wnd_thread;
 }
