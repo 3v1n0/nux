@@ -278,6 +278,11 @@ namespace nux
           pango_attr->end_index = g_utf8_offset_to_pointer (text->text, attr->end_index) - text->text;
           pango_attr_list_insert (preedit_attrs, pango_attr);
         }
+        if (text_entry_->preedit_attrs_)
+        {
+          pango_attr_list_unref(text_entry_->preedit_attrs_);
+          text_entry_->preedit_attrs_ = NULL;
+        }
         text_entry_->preedit_attrs_ = preedit_attrs;
       }
       if (text->text)
