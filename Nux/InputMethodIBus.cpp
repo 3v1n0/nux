@@ -480,7 +480,6 @@ namespace nux
 
         if (ev.x11_keysym)
         {
-          g_print("Added event with modifier %lx -> %lx\n",ev.key_modifiers, ev.x11_keysym);
           hotkeys_.push_back(ev);
         }
 
