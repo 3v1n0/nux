@@ -405,7 +405,7 @@ namespace nux
 
     for (int i = 0; keybindings && keybindings[i]; ++i)
     {
-      gchar **binding = g_strsplit (keybindings[i], "+", -1);
+      gchar** binding = g_strsplit (keybindings[i], "+", -1);
 
       if (binding)
       {
