@@ -412,7 +412,7 @@ namespace nux
         Event ev;
         ev.type = EVENT_KEY_DOWN;
 
-        for(int j = 0; binding && binding[j]; ++j)
+        for (int j = 0; binding && binding[j]; ++j)
         {
           if (strcmp(binding[j], "Release") == 0)
           {
