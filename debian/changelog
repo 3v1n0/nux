@@ -10,6 +10,9 @@ nux (2.12.0-0ubuntu2) UNRELEASED; urgency=low
   * debian/rules:
     - build in parallel
     - force 4.6 build for now
+  * Note that right now, armhf/armel are building with opengl as opengles is
+    not yet backed into upstream and opengles drivers are broken in quantal
+    kernel
 
  -- Didier Roche <didrocks@ubuntu.com>  Thu, 31 May 2012 10:22:35 +0200
 

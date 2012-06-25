@@ -7,7 +7,7 @@ export CXX=g++-4.6
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 DEB_HOST_ARCH := $(shell dpkg-architecture -qDEB_HOST_ARCH)
-gles2_architectures := armel armhf
+gles2_architectures := xxxxarmel xxxxarmhf
 
 %:
 	dh $@ --with quilt --parallel
