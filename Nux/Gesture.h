@@ -71,7 +71,7 @@ class InputAreaTarget : public GestureTarget
 {
   public:
     InputAreaTarget(InputArea *input_area);
-    virtual GestureDeliveryRequest GestureEvent(const GestureEvent &event);
+    virtual GestureDeliveryRequest GestureEvent(const nux::GestureEvent &event);
 
   private:
     virtual bool Equals(const GestureTarget& other) const;
