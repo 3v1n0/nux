@@ -104,12 +104,15 @@ namespace nux
     bool IsConnected() const;
     bool IsHotkeyEvent(EventType type, unsigned long keysym, unsigned long modifiers) const;
 
+  protected:
+    static std::vector<Event> ParseIBusHotkeys(const gchar** keybindings);
+
   private:
     void CreateContext();
     void DestroyContext();
 
     void UpdateCursorLocation();
-    void UpdateHotkeys();
+    static void UpdateHotkeys();
 
     // Event handlers for IBusBus:
     //CHROMEG_CALLBACK_0(IBusIMEContext, void, OnConnected, IBusBus*);
@@ -161,7 +164,7 @@ namespace nux
     bool is_focused_;
 
     static IBusBus* bus_;
-    std::vector<Event> hotkeys_;
+    static std::vector<Event> hotkeys_;
 
     IBusIMEContext(const IBusIMEContext&);
     void operator = (const IBusIMEContext&);

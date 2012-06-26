@@ -27,6 +27,9 @@
 
 namespace nux
 {
+
+  std::vector<Event> IBusIMEContext::hotkeys_;
+
   IBusBus* IBusIMEContext::bus_ = NULL;
 
   IBusIMEContext::IBusIMEContext(TextEntry* text_entry)
@@ -395,13 +398,9 @@ namespace nux
       delete data;
   }
 
-  void IBusIMEContext::UpdateHotkeys()
+  std::vector<Event> IBusIMEContext::ParseIBusHotkeys(const gchar** keybindings)
   {
-    IBusConfig* conf = ibus_bus_get_config(bus_);
-    GVariant* val = ibus_config_get_value(conf, "general", "hotkey/trigger");
-    const gchar** keybindings = g_variant_get_strv(val, NULL);
-
-    hotkeys_.clear();
+    std::vector<Event> hotkeys;
 
     for (int i = 0; keybindings && keybindings[i]; ++i)
     {
@@ -480,12 +479,23 @@ namespace nux
 
         if (ev.x11_keysym)
         {
-          hotkeys_.push_back(ev);
+          hotkeys.push_back(ev);
         }
 
         g_strfreev(binding);
       }
     }
+
+    return hotkeys;
+  }
+
+  void IBusIMEContext::UpdateHotkeys()
+  {
+    IBusConfig* conf = ibus_bus_get_config(bus_);
+    GVariant* val = ibus_config_get_value(conf, "general", "hotkey/trigger");
+    const gchar** keybindings = g_variant_get_strv(val, NULL);
+
+    hotkeys_ = ParseIBusHotkeys(keybindings);
 
     g_variant_unref(val);
   }
