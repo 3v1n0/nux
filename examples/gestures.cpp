@@ -42,10 +42,12 @@ class GesturalWindow : public FloatingWindow
 
   virtual ~GesturalWindow() {}
 
-  virtual void GestureEvent(const nux::GestureEvent &event)
+  virtual GestureDeliveryRequest GestureEvent(const nux::GestureEvent &event)
   {
     std::cout << "GesturalWindow got GestureEvent "
               << ++event_count << "\n";
+
+    return GestureDeliveryRequest::NONE;
   }
 
   int event_count;

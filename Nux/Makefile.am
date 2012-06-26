@@ -118,6 +118,7 @@ if HAVE_UTOUCH_GEIS
 source_cpp += \
   $(srcdir)/GeisAdapter.cpp \
   $(srcdir)/Gesture.cpp \
+  $(srcdir)/GestureBroker.cpp \
   $(srcdir)/GesturesSubscription.cpp
 endif
 
@@ -213,6 +214,7 @@ if HAVE_UTOUCH_GEIS
 source_h += \
   $(srcdir)/GeisAdapter.h \
   $(srcdir)/Gesture.h \
+  $(srcdir)/GestureBroker.h \
   $(srcdir)/GesturesSubscription.h
 endif
 

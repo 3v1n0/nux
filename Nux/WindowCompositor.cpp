@@ -91,6 +91,10 @@ namespace
     m_MenuRemoved = false;
     m_ModalWindow = NULL;
     m_Background = new ColorLayer(Color(0xFF4D4D4D));
+
+#ifdef NUX_GESTURES_SUPPORT
+    gesture_broker_.reset(new DefaultGestureBroker(this));
+#endif
   }
 
   void WindowCompositor::BeforeDestructor()
@@ -1089,15 +1093,15 @@ namespace
 #ifdef NUX_GESTURES_SUPPORT
       else if (event.type == EVENT_GESTURE_BEGIN)
       {
-        ProcessGestureBegin(static_cast<GestureEvent&>(event));
+        gesture_broker_->ProcessGestureBegin(static_cast<GestureEvent&>(event));
       }
       else if (event.type == EVENT_GESTURE_UPDATE)
       {
-        ProcessGestureUpdate(static_cast<GestureEvent&>(event));
+        gesture_broker_->ProcessGestureUpdate(static_cast<GestureEvent&>(event));
       }
       else if (event.type == EVENT_GESTURE_END)
       {
-        ProcessGestureEnd(static_cast<GestureEvent&>(event));
+        gesture_broker_->ProcessGestureEnd(static_cast<GestureEvent&>(event));
       }
 #endif
     }
@@ -2428,149 +2432,12 @@ namespace
   }
 
 #ifdef NUX_GESTURES_SUPPORT
-  void WindowCompositor::ProcessGestureBegin(GestureEvent &event)
+  void WindowCompositor::SetGestureBroker(std::unique_ptr<GestureBroker> gesture_broker)
   {
-    InputArea *target_area = LocateGestureTarget(event);
-
-    if (!target_area)
-    {
-      event.Reject();
-      return;
-    }
-
-    std::shared_ptr<Gesture> existing_gesture =
-      gesture_set_.Get(target_area);
-
-    if (existing_gesture)
-    {
-      // There's a conflict here.
-      // The target area for this new gesture already has a gesture.
-
-      if (existing_gesture->IsDeliveringEvents())
-      {
-        // An area can have only one gesture at a time.
-        event.Reject();
-        return;
-      }
-      else
-      {
-        // Since the existing gesture hasn't been delivered to the target yet,
-        // we can choose which will continue.
-        // The rule is that the gesture with the most touches has precedence over
-        // the other.
-        int existing_num_touches = existing_gesture->GetTouches().size();
-        int new_num_touches = event.GetTouches().size();
-        if (new_num_touches < existing_num_touches)
-        {
-          event.Reject();
-        }
-        else if (new_num_touches == existing_num_touches)
-        {
-          // It means that there are more fingers on the target area
-          // than the target area can handle
-          // (i.e. three fingers over an area that handles only two-fingers'
-          // gestures)
-          event.Reject();
-          existing_gesture->Reject();
-          gesture_set_.Remove(existing_gesture);
-        }
-        else // new_num_touches > existing_num_touches
-        {
-          existing_gesture->Reject();
-          gesture_set_.Remove(existing_gesture);
-          gesture_set_.Add(new Gesture(event, target_area));
-        }
-      }
-    }
-    else
-    {
-      std::shared_ptr<Gesture> gesture(new Gesture(event, target_area));
-      gesture_set_.Add(gesture);
-
-      if (event.IsConstructionFinished())
-      {
-        event.Accept();
-        gesture->EnableEventDelivery();
-      }
-    }
+    gesture_broker_ = std::move(gesture_broker);
   }
 
-  void WindowCompositor::ProcessGestureUpdate(GestureEvent &event)
-  {
-    std::shared_ptr<Gesture> gesture = gesture_set_.Get(event.GetGestureId());
-    if (!gesture)
-    {
-      LOG_WARNING(logger) << "Got GestureUpdate event from unexpected/unwanted"
-                             " gesture with id "
-                          << event.GetGestureId() << "\n";
-      return;
-    }
-
-    if (event.IsConstructionFinished() && !gesture->IsConstructionFinished())
-    {
-      // This is the first update for this gesture signaling that
-      // its construction has finished.
-      gesture->Update(event);
-      ResolveBufferedGestureThatFinishedConstruction(gesture);
-    }
-    else
-    {
-      gesture->Update(event);
-    }
-  }
-
-  void WindowCompositor::ProcessGestureEnd(GestureEvent &event)
-  {
-    std::shared_ptr<Gesture> gesture = gesture_set_.Get(event.GetGestureId());
-    if (!gesture)
-    {
-      LOG_WARNING(logger) << "Got GestureEnd event from unexpected/unwanted"
-                             " gesture with id "
-                          << event.GetGestureId() << "\n";
-      return;
-    }
-
-    if (event.IsConstructionFinished() && !gesture->IsConstructionFinished())
-    {
-      // This is the first update for this gesture signaling that
-      // its construction has finished.
-      gesture->Update(event);
-      ResolveBufferedGestureThatFinishedConstruction(gesture);
-    }
-    else
-    {
-      gesture->Update(event);
-    }
-
-    // We no longer have to keep track of it.
-    gesture_set_.Remove(gesture);
-  }
-
-  void WindowCompositor::ResolveBufferedGestureThatFinishedConstruction(
-      std::shared_ptr<Gesture> &gesture)
-  {
-    std::vector< std::shared_ptr<Gesture> > conflicting_gestures =
-      gesture_set_.GetConflictingGestures(gesture);
-
-    if (conflicting_gestures.size() == 0)
-    {
-      gesture->Accept();
-      gesture->EnableEventDelivery(); // will flush all queued events
-    }
-    else
-    {
-      // That shouldn't happen. All conflicting gestures should have been
-      // dealt with when they begun.
-      LOG_WARNING(logger) << "Blindly rejecting conflicting gestures.";
-      for (auto conflicting_gesture : conflicting_gestures)
-      {
-        conflicting_gesture->Reject();
-        gesture_set_.Remove(conflicting_gesture);
-      }
-    }
-  }
-
-  InputArea *WindowCompositor::LocateGestureTarget(GestureEvent &event)
+  InputArea *WindowCompositor::LocateGestureTarget(const GestureEvent &event)
   {
     InputArea *input_area = nullptr;
 
@@ -2595,6 +2462,23 @@ namespace
     }
 
     return input_area;
+  }
+
+  DefaultGestureBroker::DefaultGestureBroker(WindowCompositor *window_compositor)
+    : window_compositor_(window_compositor)
+  {
+  }
+
+  std::vector<ShPtGestureTarget>
+  DefaultGestureBroker::FindGestureTargets(const nux::GestureEvent &event)
+  {
+    std::vector<ShPtGestureTarget> targets;
+
+    InputArea *target_area = window_compositor_->LocateGestureTarget(event);
+    if (target_area)
+      targets.push_back(ShPtGestureTarget(new InputAreaTarget(target_area)));
+
+    return targets;
   }
 #endif
 }

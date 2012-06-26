@@ -14,76 +14,10 @@
 #include "Nux/ProgramFramework/TestView.h"
 #ifdef NUX_GESTURES_SUPPORT
 #include "NuxGraphics/GestureEvent.h"
+#include "FakeGestureEvent.h"
 #endif
 
 using namespace testing;
-
-
-#ifdef NUX_GESTURES_SUPPORT
-namespace nux {
-class FakeGestureEvent
-{
-  public:
-    nux::EventType type;
-
-    int gesture_id;
-    int gesture_classes;
-    bool is_direct_touch;
-    int timestamp;
-    nux::Point2D<float> focus;
-    nux::Point2D<float> delta;
-    float angle;
-    float angle_delta;
-    float angular_velocity;
-    int tap_duration;
-    nux::Point2D<float> velocity;
-    float radius;
-    float radius_delta;
-    float radial_velocity;
-    std::vector<nux::TouchPoint> touches;
-    bool is_construction_finished;
-
-    nux::GestureEvent &ToGestureEvent()
-    {
-      event_.type = type;
-
-      event_.gesture_id_ = gesture_id;
-      event_.gesture_classes_ = gesture_classes;
-      event_.is_direct_touch_ = is_direct_touch;
-      event_.timestamp_ = timestamp;
-      event_.focus_ = focus;
-      event_.delta_ = delta;
-      event_.angle_ = angle;
-      event_.angle_delta_ = angle_delta;
-      event_.angular_velocity_ = angular_velocity;
-      event_.tap_duration_ = tap_duration;
-      event_.velocity_ = velocity;
-      event_.radius_ = radius;
-      event_.radius_delta_ = radius_delta;
-      event_.radial_velocity_ = radial_velocity;
-      event_.touches_ = touches;
-      event_.is_construction_finished_ = is_construction_finished;
-
-      return event_;
-    }
-
-  private:
-    nux::GestureEvent event_;
-};
-} // namespace nux
-
-int g_gesture_event_accept_count;
-void nux::GestureEvent::Accept()
-{
-  ++g_gesture_event_accept_count;
-}
-
-int g_gesture_event_reject_count;
-void nux::GestureEvent::Reject()
-{
-  ++g_gesture_event_reject_count;
-}
-#endif // NUX_GESTURES_SUPPORT
 
 namespace {
 
@@ -91,9 +25,10 @@ namespace {
 class TestWindow : public nux::BaseWindow
 {
   public:
-  virtual void GestureEvent(const nux::GestureEvent &event)
+  virtual nux::GestureDeliveryRequest GestureEvent(const nux::GestureEvent &event)
   {
     gesture_events_received.push_back(event);
+    return nux::GestureDeliveryRequest::NONE;
   }
 
   std::list<nux::GestureEvent> gesture_events_received;
@@ -102,9 +37,10 @@ class TestWindow : public nux::BaseWindow
 class TestInputArea : public nux::InputArea
 {
   public:
-  virtual void GestureEvent(const nux::GestureEvent &event)
+  virtual nux::GestureDeliveryRequest GestureEvent(const nux::GestureEvent &event)
   {
     gesture_events_received.push_back(event);
+    return nux::GestureDeliveryRequest::NONE;
   }
 
   std::list<nux::GestureEvent> gesture_events_received;
@@ -189,8 +125,8 @@ TEST(TestWindowCompositor, GestureEventsDelivery_1)
   innocent_window->SetBaseHeight(100);
   innocent_window->ShowWindow(true);
 
-  g_gesture_event_accept_count = 0;
-  g_gesture_event_reject_count = 0;
+  g_gesture_acceptance[0] = 0;
+
   fake_event.type = nux::EVENT_GESTURE_BEGIN;
   fake_event.gesture_id = 0;
   fake_event.gesture_classes = nux::PINCH_GESTURE | nux::ROTATE_GESTURE;
@@ -204,13 +140,10 @@ TEST(TestWindowCompositor, GestureEventsDelivery_1)
   fake_event.is_construction_finished = false;
   wnd_compositor.ProcessEvent(fake_event.ToGestureEvent()); 
 
-  ASSERT_EQ(0, g_gesture_event_accept_count);
-  ASSERT_EQ(0, g_gesture_event_reject_count);
+  ASSERT_EQ(0, g_gesture_acceptance[0]);
   ASSERT_EQ(0, target_window->gesture_events_received.size());
   ASSERT_EQ(0, innocent_window->gesture_events_received.size());
 
-  g_gesture_event_accept_count = 0;
-  g_gesture_event_reject_count = 0;
   fake_event.type = nux::EVENT_GESTURE_UPDATE;
   fake_event.focus.x += 2.0f;
   fake_event.focus.y += 2.0f;
@@ -220,8 +153,7 @@ TEST(TestWindowCompositor, GestureEventsDelivery_1)
   fake_event.is_construction_finished = true;
   wnd_compositor.ProcessEvent(fake_event.ToGestureEvent()); 
 
-  ASSERT_EQ(1, g_gesture_event_accept_count);
-  ASSERT_EQ(0, g_gesture_event_reject_count);
+  ASSERT_EQ(1, g_gesture_acceptance[0]);
   ASSERT_EQ(2, target_window->gesture_events_received.size());
   ASSERT_EQ(0, innocent_window->gesture_events_received.size());
 
@@ -260,8 +192,7 @@ TEST(TestWindowCompositor, GestureEventsDelivery_2)
   innocent_window->SetBaseHeight(100);
   innocent_window->ShowWindow(true);
 
-  g_gesture_event_accept_count = 0;
-  g_gesture_event_reject_count = 0;
+  g_gesture_acceptance[0] = 0;
   fake_event.type = nux::EVENT_GESTURE_BEGIN;
   fake_event.gesture_id = 0;
   fake_event.gesture_classes = nux::PINCH_GESTURE | nux::ROTATE_GESTURE;
@@ -275,8 +206,7 @@ TEST(TestWindowCompositor, GestureEventsDelivery_2)
   fake_event.is_construction_finished = false;
   wnd_compositor.ProcessEvent(fake_event.ToGestureEvent()); 
 
-  ASSERT_EQ(0, g_gesture_event_accept_count);
-  ASSERT_EQ(1, g_gesture_event_reject_count);
+  ASSERT_EQ(-1, g_gesture_acceptance[0]);
   ASSERT_EQ(0, subscribed_window->gesture_events_received.size());
   ASSERT_EQ(0, innocent_window->gesture_events_received.size());
 
@@ -321,8 +251,8 @@ TEST(TestWindowCompositor, GestureEventsDelivery_3)
   root_layout->AddView(other_input_area); // should have geometry (0, 250, 500, 250)
   wnd_thread->SetLayout(root_layout);
 
-  g_gesture_event_accept_count = 0;
-  g_gesture_event_reject_count = 0;
+  g_gesture_acceptance[0] = 0;
+
   fake_event.type = nux::EVENT_GESTURE_BEGIN;
   fake_event.gesture_id = 0;
   fake_event.gesture_classes = nux::PINCH_GESTURE | nux::ROTATE_GESTURE;
@@ -337,14 +267,11 @@ TEST(TestWindowCompositor, GestureEventsDelivery_3)
   wnd_compositor.ProcessEvent(fake_event.ToGestureEvent()); 
 
   // shouldn't be accepted right away because is_construction_finished == false
-  ASSERT_EQ(0, g_gesture_event_accept_count);
-  ASSERT_EQ(0, g_gesture_event_reject_count);
+  ASSERT_EQ(0, g_gesture_acceptance[0]);
   ASSERT_EQ(0, window->gesture_events_received.size());
   ASSERT_EQ(0, target_input_area->gesture_events_received.size());
   ASSERT_EQ(0, other_input_area->gesture_events_received.size());
 
-  g_gesture_event_accept_count = 0;
-  g_gesture_event_reject_count = 0;
   fake_event.type = nux::EVENT_GESTURE_UPDATE;
   fake_event.focus.x += 2.0f;
   fake_event.focus.y += 2.0f;
@@ -354,8 +281,7 @@ TEST(TestWindowCompositor, GestureEventsDelivery_3)
   fake_event.is_construction_finished = true;
   wnd_compositor.ProcessEvent(fake_event.ToGestureEvent()); 
 
-  ASSERT_EQ(1, g_gesture_event_accept_count);
-  ASSERT_EQ(0, g_gesture_event_reject_count);
+  ASSERT_EQ(1, g_gesture_acceptance[0]);
   ASSERT_EQ(0, window->gesture_events_received.size());
   ASSERT_EQ(2, target_input_area->gesture_events_received.size());
   ASSERT_EQ(0, other_input_area->gesture_events_received.size());
@@ -394,8 +320,8 @@ TEST(TestWindowCompositor, GestureEventsDelivery_4)
   root_layout->AddView(other_input_area); // should have geometry (0, 250, 500, 250)
   wnd_thread->SetLayout(root_layout);
 
-  g_gesture_event_accept_count = 0;
-  g_gesture_event_reject_count = 0;
+  g_gesture_acceptance[0] = 0;
+
   fake_event.type = nux::EVENT_GESTURE_BEGIN;
   fake_event.gesture_id = 0;
   fake_event.gesture_classes = nux::PINCH_GESTURE | nux::ROTATE_GESTURE;
@@ -410,14 +336,11 @@ TEST(TestWindowCompositor, GestureEventsDelivery_4)
   wnd_compositor.ProcessEvent(fake_event.ToGestureEvent()); 
 
   // shouldn't be accepted right away because is_construction_finished == false
-  ASSERT_EQ(0, g_gesture_event_accept_count);
-  ASSERT_EQ(0, g_gesture_event_reject_count);
+  ASSERT_EQ(0, g_gesture_acceptance[0]);
   ASSERT_EQ(0, window->gesture_events_received.size());
   ASSERT_EQ(0, target_input_area->gesture_events_received.size());
   ASSERT_EQ(0, other_input_area->gesture_events_received.size());
 
-  g_gesture_event_accept_count = 0;
-  g_gesture_event_reject_count = 0;
   fake_event.type = nux::EVENT_GESTURE_END;
   fake_event.focus.x += 2.0f;
   fake_event.focus.y += 2.0f;
@@ -427,8 +350,7 @@ TEST(TestWindowCompositor, GestureEventsDelivery_4)
   fake_event.is_construction_finished = true;
   wnd_compositor.ProcessEvent(fake_event.ToGestureEvent()); 
 
-  ASSERT_EQ(1, g_gesture_event_accept_count);
-  ASSERT_EQ(0, g_gesture_event_reject_count);
+  ASSERT_EQ(1, g_gesture_acceptance[0]);
   ASSERT_EQ(0, window->gesture_events_received.size());
   ASSERT_EQ(2, target_input_area->gesture_events_received.size());
   ASSERT_EQ(0, other_input_area->gesture_events_received.size());

@@ -233,6 +233,7 @@ namespace nux
     EVENT_GESTURE_BEGIN, //!< Emitted when a gesture begins. Event class is GestureEvent.
     EVENT_GESTURE_UPDATE, //!< Emitted when a gesture is updated. Event class is GestureEvent.
     EVENT_GESTURE_END, //!< Emitted when a gesture ends. Event class is GestureEvent.
+    EVENT_GESTURE_LOST, //!< Emitted when a gesture target loses a gesture. Event class is GestureEvent.
 
 
     // The following values are deprecated. Use the ones above.

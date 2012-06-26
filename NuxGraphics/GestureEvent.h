@@ -144,6 +144,18 @@ namespace nux
     friend class GeisAdapter;
     friend class FakeGestureEvent;
   };
+
+  //! Enumerates possible requests regarding delivery of gesture events.
+  enum class GestureDeliveryRequest
+  {
+    NONE, /*!< No request. Continue with current delivery policy. */
+    EXCLUSIVITY /*!< From this moment onwards, deliver events from the related
+                  gesture only to this target. Other targets for this gesture
+                  will receive an event of type EVENT_GESTURE_LOST instead of
+                  this event.
+                  Note that it doesn't affect targets that come before this
+                  one in the order of delivery. */
+  };
 } // namespace nux
 
 #endif // NUX_GESTURES_SUPPORT

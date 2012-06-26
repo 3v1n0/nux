@@ -34,6 +34,7 @@
 #ifdef NUX_GESTURES_SUPPORT
 #include <unordered_map>
 #include "Gesture.h"
+#include "GestureBroker.h"
 #endif
 
 namespace nux
@@ -413,6 +414,12 @@ namespace nux
     */
     RenderTargetTextures& GetWindowBuffer(BaseWindow* window);
 
+#ifdef NUX_GESTURES_SUPPORT
+    InputArea *LocateGestureTarget(const GestureEvent &event);
+
+    void SetGestureBroker(std::unique_ptr<GestureBroker> gesture_broker);
+#endif
+
   private:
     //! Render the interface.
     void Draw(bool SizeConfigurationEvent, bool force_draw);
@@ -649,16 +656,7 @@ namespace nux
     WindowThread* window_thread_; //!< The WindowThread to which this object belongs.
 
 #ifdef NUX_GESTURES_SUPPORT
-    void ProcessGestureBegin(GestureEvent &event);
-    void ProcessGestureUpdate(GestureEvent &event);
-    void ProcessGestureEnd(GestureEvent &event);
-
-    void ResolveBufferedGestureThatFinishedConstruction(
-        std::shared_ptr<Gesture> &gesture);
-
-    GestureSet gesture_set_;
-
-    InputArea *LocateGestureTarget(GestureEvent &event);
+    std::unique_ptr<GestureBroker> gesture_broker_;
 #endif
 
     //! Perform some action before destruction.
@@ -686,6 +684,18 @@ namespace nux
     friend class View;
   };
 
+#ifdef NUX_GESTURES_SUPPORT
+  class DefaultGestureBroker : public GestureBroker
+  {
+    public:
+      DefaultGestureBroker(WindowCompositor *window_compositor);
+    private:
+      std::vector<ShPtGestureTarget>
+      virtual FindGestureTargets(const nux::GestureEvent &event);
+
+      WindowCompositor *window_compositor_;
+  };
+#endif
 }
 #endif // WINDOWCOMPOSITOR_H
 

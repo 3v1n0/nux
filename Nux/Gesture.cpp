@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Canonical Ltd.
+ * Copyright (C) 2012 - Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -16,23 +16,69 @@
  * License along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  * Authored by: Daniel d'Andrada <daniel.dandrada@canonical.com>
- *
  */
 
 #include "Gesture.h"
-#include "InputArea.h"
+#include "Nux/InputArea.h"
 
 using namespace nux;
+
+/*****************************************************************************
+ * InputAreaTarget
+ *****************************************************************************/
+
+InputAreaTarget::InputAreaTarget(InputArea *input_area)
+  : input_area_(input_area)
+{
+}
+
+GestureDeliveryRequest InputAreaTarget::GestureEvent(const nux::GestureEvent &event)
+{
+  if (input_area_.IsValid())
+    return input_area_->GestureEvent(event);
+  else
+    return GestureDeliveryRequest::NONE;
+}
+
+bool InputAreaTarget::Equals(const GestureTarget& other) const
+{
+  const InputAreaTarget *input_area_target = dynamic_cast<const InputAreaTarget *>(&other);
+
+  if (input_area_target)
+  {
+    return input_area_ == input_area_target->input_area_;
+  }
+  else
+  {
+    return false;
+  }
+}
 
 /*****************************************************************************
  * Gesture
  *****************************************************************************/
 
-Gesture::Gesture(const GestureEvent &event, InputArea *area)
-      : target_area_(area), event_delivery_enabled_(false)
+Gesture::Gesture(const nux::GestureEvent &event)
+      : event_delivery_enabled_(false),
+        acceptance_status_(AcceptanceStatus::UNDECIDED)
 {
   queued_events_.reserve(20);
   queued_events_.push_back(event);
+}
+
+void Gesture::AddTarget(ShPtGestureTarget target)
+{
+  target_list_.push_back(target);
+}
+
+void Gesture::RemoveTarget(ShPtGestureTarget target)
+{
+  auto check_same_target = [&](const ShPtGestureTarget& other_target)
+  {
+    return *other_target == *target;
+  };
+
+  target_list_.remove_if(check_same_target);
 }
 
 void Gesture::EnableEventDelivery()
@@ -45,24 +91,20 @@ void Gesture::EnableEventDelivery()
   if (queued_events_.size() == 0)
     return;
 
-  if (!target_area_.IsValid())
-    return;
-
   // Deliver all queued events but keep the last one
   last_event_ = queued_events_[queued_events_.size()-1];
   for (auto event : queued_events_)
   {
-    target_area_->GestureEvent(event);
+    DeliverEvent(event);
   }
   queued_events_.clear();
 }
 
-void Gesture::Update(const GestureEvent& event)
+void Gesture::Update(const nux::GestureEvent& event)
 {
   if (event_delivery_enabled_)
   {
-    if (target_area_.IsValid())
-      target_area_->GestureEvent(event);
+    DeliverEvent(event);
     last_event_ = event;
   }
   else
@@ -71,12 +113,63 @@ void Gesture::Update(const GestureEvent& event)
   }
 }
 
-GestureEvent &Gesture::GetLatestEvent()
+void Gesture::DeliverEvent(const GestureEvent &event)
 {
-  return const_cast<GestureEvent&>(const_cast<Gesture*>(this)->GetLatestEvent());
+  auto it = target_list_.begin();
+  while (it != target_list_.end())
+  {
+    GestureDeliveryRequest request = (*it)->GestureEvent(event);
+
+    switch(request)
+    {
+      case GestureDeliveryRequest::EXCLUSIVITY:
+        ExecuteTargetExclusivityRequest(event, it);
+        break;
+
+      default: // NONE
+        ++it;
+    }
+  }
 }
 
-const GestureEvent &Gesture::GetLatestEvent() const
+void Gesture::ExecuteTargetExclusivityRequest(const GestureEvent &event,
+    std::list<ShPtGestureTarget>::iterator &it_requestor)
+{
+
+  // Don't send gesture lost events for a gesture begin.
+  // Targets can't lose a gesture they never knew about.
+  if (event.type != EVENT_GESTURE_BEGIN)
+  {
+    GestureEvent event_lost = event;
+    event_lost.type = EVENT_GESTURE_LOST;
+    auto other_it = target_list_.rbegin();
+    while (*other_it != *it_requestor)
+    {
+      (*other_it)->GestureEvent(event_lost);
+      ++other_it;
+    }
+  }
+
+  ++it_requestor;
+  target_list_.erase(it_requestor, target_list_.end());
+  it_requestor = target_list_.end();
+}
+
+nux::GestureEvent &Gesture::GetLatestEvent()
+{
+  if (event_delivery_enabled_)
+  {
+    nuxAssert(queued_events_.size() == 0);
+    return last_event_;
+  }
+  else
+  {
+    nuxAssert(queued_events_.size() > 0);
+    return queued_events_[queued_events_.size()-1];
+  }
+}
+
+const nux::GestureEvent &Gesture::GetLatestEvent() const
 {
   if (event_delivery_enabled_)
   {
@@ -125,12 +218,16 @@ bool Gesture::HasTouchesInCommon(
 
 void Gesture::Reject()
 {
+  g_assert(acceptance_status_ == AcceptanceStatus::UNDECIDED);
   GetLatestEvent().Reject();
+  acceptance_status_ = AcceptanceStatus::REJECTED;
 }
 
 void Gesture::Accept()
 {
+  g_assert(acceptance_status_ == AcceptanceStatus::UNDECIDED);
   GetLatestEvent().Accept();
+  acceptance_status_ = AcceptanceStatus::ACCEPTED;
 }
 
 /*****************************************************************************
@@ -147,7 +244,7 @@ void GestureSet::Add(std::shared_ptr<Gesture> &gesture)
   map_id_to_gesture_[gesture->GetId()] = gesture;
 }
 
-std::shared_ptr<Gesture> GestureSet::Get(int gesture_id)
+std::shared_ptr<Gesture> GestureSet::FindFromGestureId(int gesture_id)
 {
   std::map<int, std::shared_ptr<Gesture> >::iterator it
     = map_id_to_gesture_.find(gesture_id);
@@ -158,12 +255,17 @@ std::shared_ptr<Gesture> GestureSet::Get(int gesture_id)
     return std::shared_ptr<Gesture>();
 }
 
-std::shared_ptr<Gesture> GestureSet::Get(InputArea *area)
+std::shared_ptr<Gesture> GestureSet::FindFromTarget(ShPtGestureTarget wanted_target)
 {
   for (auto it : map_id_to_gesture_)
   {
-    if (it.second->GetTargetArea() == area)
-      return it.second;
+    std::shared_ptr<Gesture> &gesture = it.second;
+    const std::list<ShPtGestureTarget> &target_list = gesture->GetTargetList();
+    for (auto target : target_list)
+    {
+      if (*target == *wanted_target)
+        return gesture;
+    }
   }
   return nullptr;
 }

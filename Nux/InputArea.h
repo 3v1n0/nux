@@ -381,9 +381,12 @@ namespace nux
       been accepted. Therefore you shouldn't call GestureEvent::Accept()
       or GestureEvent::Reject() from here as there's no point in doing so.
 
-      Default implementation does nothing.
+      Default implementation just returns GestureDeliveryRequest::NONE.
      */
-    virtual void GestureEvent(const GestureEvent &event) {}
+    virtual GestureDeliveryRequest GestureEvent(const GestureEvent &event)
+    {
+      return GestureDeliveryRequest::NONE;
+    }
 #endif
 
     protected:
