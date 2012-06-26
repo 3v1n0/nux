@@ -24,7 +24,7 @@
 #include "cairo/cairo.h"
 #include "pango/pango.h"
 #include "pango/pangocairo.h"
-#include "NuxImage/CairoGraphics.h"
+#include "NuxGraphics/CairoGraphics.h"
 
 #include "TextEntry.h"
 #include "TextEntryComposeSeqs.h"
@@ -316,11 +316,11 @@ namespace nux
 
     cursor_blink_status_ = 4;
 
-    // FIXME Have to get the current event fot he x11_keycode for ibus-hangul/korean input
+#if defined(NUX_OS_LINUX)
+    // FIXME Have to get the current event for the x11_keycode for ibus-hangul/korean input
     nux::Event cur_event = nux::GetWindowThread()->GetGraphicsDisplay().GetCurrentEvent();
     KeyEvent event((NuxEventType)event_type, keysym,cur_event.x11_keycode, state, character);
 
-#if defined(NUX_OS_LINUX)
     im_filtered = ime_->FilterKeyEvent(event);
 #endif
 
