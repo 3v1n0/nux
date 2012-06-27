@@ -155,6 +155,7 @@ namespace nux
     void SetAlign(CairoGraphics::Alignment align);
 
     bool im_active();
+    bool im_running();
 
     void MoveCursorToLineStart();
     void MoveCursorToLineEnd();

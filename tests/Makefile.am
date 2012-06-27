@@ -74,6 +74,7 @@ gtest_nux_SOURCES = \
   gtest-nux-statictext.cpp \
   gtest-nux-scrollview.cpp \
   gtest-nux-textentry.cpp \
+  gtest-nux-inputmethodibus.cpp \
   gtest-nux-view.cpp \
   gtest-nux-windowcompositor.cpp \
   gtest-nux-windowthread.cpp
