@@ -313,6 +313,29 @@ void TestingThread(nux::NThread* thread, void* user_data)
     test.TestReportMsg(test_textentry->text_entry_->GetText() == "", "TextEntry is empty");
   }
 
+  // Send invalid keys
+  {
+    test.ViewSendKeyCombo(XK_Control_L, 0, 0, 'r');
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "", "Invalid key: TextEntry is empty");
+    nux::SleepForMilliseconds(500);
+
+    test.ViewSendKeyCombo(XK_Control_L, 0, 0, 'w');
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "", "Invalid key: TextEntry is empty");
+    nux::SleepForMilliseconds(500);
+
+    test.ViewSendKeyCombo(XK_Control_L, 0, 0, 'g');
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "", "Invalid key: TextEntry is empty");
+    nux::SleepForMilliseconds(500);
+
+    test.ViewSendKeyCombo(XK_Control_L, 0, 0, 'h');
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "", "Invalid key: TextEntry is empty");
+    nux::SleepForMilliseconds(500);
+
+    nux::SleepForMilliseconds(500);
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+  }
+
   // Toggle IBus
   // Type "qwerty"
   // Simulate key '1' to select the first IM option
