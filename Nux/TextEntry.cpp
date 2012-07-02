@@ -464,13 +464,16 @@ namespace nux
 //       }
     }
 
-    if (character && strlen(character) && !im_filtered)
-    {
-      EnterText(character);
-    }
-
     if (!im_filtered)
     {
+      if (character)
+      {
+        unsigned int utf_char = g_utf8_get_char(character);
+
+        if (g_unichar_isprint(utf_char))
+          EnterText(character);
+      }
+
       QueueRefresh(false, true);
     }
   }
