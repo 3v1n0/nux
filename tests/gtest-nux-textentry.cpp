@@ -14,37 +14,36 @@ using namespace testing;
 
 namespace {
 
-TEST(TestTextEntry, TestSetText)
+class TestTextEntry : public Test
 {
-  nux::NuxInitialize(0);
-  nux::WindowThread* wnd_thread = nux::CreateNuxWindow("Nux Window", 300, 200,
-    nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL);
+public:
+  virtual void SetUp()
+  {
+    nux::NuxInitialize(0);
+    wnd_thread.reset(nux::CreateNuxWindow("Nux Window", 300, 200,
+                     nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL));
 
-  nux::TextEntry* text_entry = new nux::TextEntry("");
-  
-  nux::GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(text_entry);
+    text_entry = new nux::TextEntry("");
+    nux::GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(text_entry.GetPointer());
+  }
 
+  std::unique_ptr<nux::WindowThread> wnd_thread;
+  nux::ObjectPtr<nux::TextEntry> text_entry;
+};
+
+
+TEST_F(TestTextEntry, TestSetText)
+{
   EXPECT_EQ(text_entry->IsInTextInputMode(), false);
 
   text_entry->SetText("Nux");
   EXPECT_EQ(text_entry->GetText() == std::string("Nux"), true);
 
   EXPECT_EQ(text_entry->IsInTextInputMode(), true);
-
-  text_entry->UnReference();
-  delete wnd_thread;
 }
 
-TEST(TestTextEntry, TestEnterText)
+TEST_F(TestTextEntry, TestEnterText)
 {
-  nux::NuxInitialize(0);
-  nux::WindowThread* wnd_thread = nux::CreateNuxWindow("Nux Window", 300, 200,
-    nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL);
-
-  nux::TextEntry* text_entry = new nux::TextEntry("");
-  
-  nux::GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(text_entry);
-
   EXPECT_EQ(text_entry->IsInTextInputMode(), false);
 
   text_entry->EnterText("Nux");
@@ -52,21 +51,10 @@ TEST(TestTextEntry, TestEnterText)
   EXPECT_EQ(text_entry->GetText() == std::string("Nux"), true);
 
   EXPECT_EQ(text_entry->IsInTextInputMode(), true);
-
-  text_entry->UnReference();
-  delete wnd_thread;
 }
 
-TEST(TestTextEntry, TestDeleteText)
+TEST_F(TestTextEntry, TestDeleteText)
 {
-  nux::NuxInitialize(0);
-  nux::WindowThread* wnd_thread = nux::CreateNuxWindow("Nux Window", 300, 200,
-    nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL);
-
-  nux::TextEntry* text_entry = new nux::TextEntry("");
-  
-  nux::GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(text_entry);
-
   EXPECT_EQ(text_entry->IsInTextInputMode(), false);
 
   text_entry->EnterText("Nux");
@@ -77,7 +65,7 @@ TEST(TestTextEntry, TestDeleteText)
 
   nux::GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(NULL);
 
-  nux::GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(text_entry);
+  nux::GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(text_entry.GetPointer());
 
   EXPECT_EQ(text_entry->IsInTextInputMode(), false);
 
@@ -86,10 +74,6 @@ TEST(TestTextEntry, TestDeleteText)
   EXPECT_EQ(text_entry->GetText() == std::string(""), true);
 
   EXPECT_EQ(text_entry->IsInTextInputMode(), true);
-
-
-  text_entry->UnReference();
-  delete wnd_thread;
 }
 
 }
