@@ -126,7 +126,7 @@ TEST_F(TestTextEntry, InvalidKeys)
                                             "", "", ""};
   for (auto c : invalid_chars)
   {
-    KeySym keysym = g_utf8_get_char(c.c_str());
+    unsigned int keysym = g_utf8_get_char(c.c_str());
     text_entry->DeleteText(0, std::numeric_limits<int>::max());
     text_entry->key_down.emit(NUX_KEYDOWN, keysym, 0, c.c_str(), 1);
     EXPECT_EQ(text_entry->GetText(), "");
