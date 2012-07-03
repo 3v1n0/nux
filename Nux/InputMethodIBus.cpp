@@ -506,7 +506,7 @@ namespace nux
     {
       if (ev.x11_keysym == keysym && (ev.type == type || type == EVENT_KEY_DOWN))
       {
-        if (type == EVENT_KEY_UP)
+        if (ev.type == EVENT_KEY_UP)
           return (modifiers & ev.key_modifiers);
         else
           return (ev.key_modifiers == modifiers);
