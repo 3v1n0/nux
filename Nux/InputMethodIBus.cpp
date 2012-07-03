@@ -122,6 +122,7 @@ namespace nux
         NULL,
         reinterpret_cast<GAsyncReadyCallback>(ProcessKeyEventDone),
         new ProcessKeyEventData(this, event));
+
       return true;
     }
     return false;
@@ -372,7 +373,8 @@ namespace nux
   void IBusIMEContext::ProcessKeyEventDone(IBusInputContext *context, GAsyncResult* res, ProcessKeyEventData *data)
   {
     //nuxDebugMsg("***IBusIMEContext::ProcessKeyEventDone***");
-      nuxAssert(data->context->context_ == context);
+      std::unique_ptr<ProcessKeyEventData> key_ev(data);
+      nuxAssert(key_ev->context->context_ == context);
 
       GError *error = NULL;
       gboolean processed = ibus_input_context_process_key_event_async_finish (
@@ -380,22 +382,20 @@ namespace nux
                             res,
                             &error);
 
-      if (error != NULL)
+      if (error)
       {
         g_warning ("Process Key Event failed: %s.", error->message);
         g_error_free (error);
       }
 
-      if (processed == FALSE)
+      if (!processed)
       {
-        data->context->text_entry_->ProcessKeyEvent(data->event.type(),
-                                                    data->event.key_sym(),
-                                                    data->event.flags() | IBUS_IGNORED_MASK,
-                                                    data->event.character().c_str(),
-                                                    0);
+        key_ev->context->text_entry_->ProcessKeyEvent(key_ev->event.type(),
+                                                      key_ev->event.key_sym(),
+                                                      key_ev->event.flags() | IBUS_IGNORED_MASK,
+                                                      key_ev->event.character().c_str(),
+                                                      0);
       }
-
-      delete data;
   }
 
   std::vector<Event> IBusIMEContext::ParseIBusHotkeys(const gchar** keybindings)
@@ -506,7 +506,7 @@ namespace nux
     {
       if (ev.x11_keysym == keysym && (ev.type == type || type == EVENT_KEY_DOWN))
       {
-        if (type == EVENT_KEY_UP)
+        if (ev.type == EVENT_KEY_UP)
           return (modifiers & ev.key_modifiers);
         else
           return (ev.key_modifiers == modifiers);

@@ -353,13 +353,13 @@ void TestingThread(nux::NThread* thread, void* user_data)
     {
       // Type random stuff
       {
-        test.ViewSendString("qwerty");
+        test.ViewSendString("ninhao");
         nux::SleepForMilliseconds(500);
         test.TestReportMsg(test_textentry->text_entry_->GetText() == "", "TextEntry is only Preedit");
 
         test.ViewSendChar('1');
         nux::SleepForMilliseconds(500);
-        test.TestReportMsg(test_textentry->text_entry_->GetText() == "请问儿童有", "TextEntry is \"请问儿童有\"");
+        test.TestReportMsg(test_textentry->text_entry_->GetText() == "您好", "TextEntry is \"您好\"");
 
         test.ViewSendCtrlA();
         nux::SleepForMilliseconds(500);

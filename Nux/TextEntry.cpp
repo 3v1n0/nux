@@ -237,15 +237,26 @@ namespace nux
 
   void TextEntry::ProcessMouseEvent(int event_type, int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    if (GetEventButton(button_flags) != 1 && event_type != NUX_MOUSE_MOVE)
-      return;
-
-    //ResetImContext();
-    //Event::Type type = event.GetType();
-
     int X = static_cast<int>(x /*round(event.GetX())*/) - kInnerBorderX - scroll_offset_x_;
     int Y = static_cast<int>(y /*round(event.GetY())*/) - kInnerBorderY - scroll_offset_y_;
     int index = XYToTextIndex(X, Y);
+    MouseButton button = GetEventButton(button_flags);
+
+    if (event_type == NUX_MOUSE_PRESSED && (button == 2 || button == 3))
+    {
+      SetCursor(index);
+#if defined(NUX_OS_LINUX)
+      if (button == 2)
+        PastePrimaryClipboard();
+#endif
+      QueueRefresh(false, true);
+
+      return;
+    }
+
+    if (button != 1 && event_type != NUX_MOUSE_MOVE)
+      return;
+
     int sel_start, sel_end;
     GetSelectionBounds(&sel_start, &sel_end);
 
@@ -253,7 +264,7 @@ namespace nux
 
     if ((event_type == NUX_MOUSE_PRESSED) && (current_time - last_dblclick_time_ <= kTripleClickTimeout))
     {
-        SelectLine();
+      SelectLine();
     }
     else if (event_type == NUX_MOUSE_DOUBLECLICK && !ime_active_)
     {
@@ -294,7 +305,22 @@ namespace nux
     const char*      character ,   /*character*/
     unsigned short   keyCount      /*key repeat count*/)
   {
-    bool im_filtered = false;
+#if defined(NUX_OS_LINUX)
+    if (im_running())
+    {
+      // FIXME Have to get the current event for the x11_keycode for ibus-hangul/korean input
+      nux::Event const& cur_event = GetGraphicsDisplay()->GetCurrentEvent();
+      KeyEvent event(static_cast<EventType>(event_type), keysym, cur_event.x11_keycode, state, character);
+
+      if (ime_->FilterKeyEvent(event))
+        return;
+    }
+#endif
+
+    /* Ignore all the keyup events to make Composition and Dead keys to work,
+     * as no one (IBus a part) needs them */
+    if (event_type == NUX_KEYUP)
+      return;
 
 #if defined(NUX_OS_LINUX)
     if (dead_key_mode_ && keysym == XK_space)
@@ -313,17 +339,10 @@ namespace nux
     {
       return;
     }
-
-    // FIXME Have to get the current event fot he x11_keycode for ibus-hangul/korean input
-    nux::Event const& cur_event = GetGraphicsDisplay()->GetCurrentEvent();
-    KeyEvent event(static_cast<EventType>(event_type), keysym, cur_event.x11_keycode, state, character);
-    im_filtered = ime_->FilterKeyEvent(event);
 #endif
 
     if (event_type == NUX_KEYDOWN)
       text_input_mode_ = true;
-    else if (event_type == NUX_KEYUP)
-      return;
 
     cursor_blink_status_ = 4;
 
@@ -343,7 +362,7 @@ namespace nux
     if (keysym == NUX_VK_TAB)
       return;
 
-    if ((keysym == NUX_VK_ENTER || keysym == NUX_KP_ENTER) && !im_filtered)
+    if ((keysym == NUX_VK_ENTER || keysym == NUX_KP_ENTER))
     {
       activated.emit();
       return;
@@ -354,7 +373,7 @@ namespace nux
     bool ctrl = (state & NUX_STATE_CTRL);
 
     // DLOG("TextEntry::key_down(%d, shift:%d ctrl:%d)", keyval, shift, ctrl);
-    if (event_type == NUX_KEYDOWN && !im_filtered)
+    if (event_type == NUX_KEYDOWN)
     {
       if (keyval == NUX_VK_LEFT)
       {
@@ -464,18 +483,15 @@ namespace nux
 //       }
     }
 
-    if (!im_filtered)
+    if (character)
     {
-      if (character)
-      {
-        unsigned int utf_char = g_utf8_get_char(character);
+      unsigned int utf_char = g_utf8_get_char(character);
 
-        if (g_unichar_isprint(utf_char))
-          EnterText(character);
-      }
-
-      QueueRefresh(false, true);
+      if (g_unichar_isprint(utf_char))
+        EnterText(character);
     }
+
+    QueueRefresh(false, true);
   }
 
   void TextEntry::RecvMouseDoubleClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -610,7 +626,7 @@ namespace nux
   {
 #if defined(NUX_OS_LINUX)
     /* Checks if the keysym between the first and last dead key */
-    if ((keysym >= XK_dead_grave) && (keysym <= XK_dead_stroke) && !dead_key_mode_)
+    if (character && (keysym >= XK_dead_grave) && (keysym <= XK_dead_stroke) && !dead_key_mode_)
     {
       int key = keysym - XK_dead_grave;
       dead_key_mode_ = true;
@@ -656,7 +672,7 @@ namespace nux
       return true;
     }
 
-    if (composition_mode_)
+    if (composition_mode_ && character)
     {
       if (strncmp(character, "", 1) == 0 && keysym != NUX_VK_SHIFT)
       {
@@ -1782,6 +1798,7 @@ namespace nux
   {
     CopyClipboard();
     DeleteSelection();
+    QueueRefresh(true, true);
   }
 
   void TextEntry::PasteClipboard()
@@ -1794,6 +1811,13 @@ namespace nux
 //         PasteCallback, this);
 //     }
   }
+
+#if defined(NUX_OS_LINUX)
+  void TextEntry::PastePrimaryClipboard()
+  {
+    // TODO
+  }
+#endif
 
   void TextEntry::BackSpace(MovementStep step)
   {
