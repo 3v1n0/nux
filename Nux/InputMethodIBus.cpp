@@ -27,6 +27,9 @@
 
 namespace nux
 {
+
+  std::vector<Event> IBusIMEContext::hotkeys_;
+
   IBusBus* IBusIMEContext::bus_ = NULL;
 
   IBusIMEContext::IBusIMEContext(TextEntry* text_entry)
@@ -159,11 +162,23 @@ namespace nux
       ibus_input_context_focus_in(context_);
 
     UpdateCursorLocation();
+
+    IBusConfig* bus_conf = ibus_bus_get_config(bus_);
+    g_signal_handlers_disconnect_by_func(bus_conf, reinterpret_cast<gpointer>(OnConfigChanged_), this);
+    g_signal_connect(bus_conf, "value-changed", G_CALLBACK(OnConfigChanged_), this);
+    UpdateHotkeys();
   }
 
   void IBusIMEContext::DestroyContext()
   {
     //nuxDebugMsg("***IBusIMEContext::DestroyContext***");
+
+    if (ibus_bus_is_connected(bus_))
+    {
+      IBusConfig* bus_conf = ibus_bus_get_config(bus_);
+      g_signal_handlers_disconnect_by_func(bus_conf, reinterpret_cast<gpointer>(OnConfigChanged_), this);
+    }
+
     if (!context_)
       return;
 
@@ -171,6 +186,11 @@ namespace nux
     ibus_proxy_destroy(reinterpret_cast<IBusProxy *>(context_));
 
     nuxAssert(!context_);
+  }
+
+  bool IBusIMEContext::IsConnected() const
+  {
+    return context_;
   }
 
   void IBusIMEContext::UpdateCursorLocation()
@@ -194,12 +214,10 @@ namespace nux
   void IBusIMEContext::OnConnected(IBusBus *bus)
   {
     //nuxDebugMsg("***IBusIMEContext::OnConnected***");
-
     nuxAssert(bus_ == bus);
     if (ibus_bus_is_connected(bus_))
     {
-      if (context_)
-        DestroyContext();
+      DestroyContext();
       CreateContext();
     }
   }
@@ -207,9 +225,18 @@ namespace nux
   void IBusIMEContext::OnDisconnected(IBusBus *bus)
   {
     //nuxDebugMsg("***IBusIMEContext::OnDisonnected***");
+    hotkeys_.clear();
 
-    if (context_)
-      DestroyContext();
+    DestroyContext();
+  }
+
+  void IBusIMEContext::OnConfigChanged(IBusConfig* config, gchar* section, gchar* name, GVariant* value)
+  {
+    if (g_strcmp0(section, "general/hotkey") == 0)
+    {
+      if (g_strcmp0(name, "trigger") == 0)
+        UpdateHotkeys();
+    }
   }
 
   void IBusIMEContext::OnCommitText(IBusInputContext *context, IBusText* text)
@@ -369,5 +396,123 @@ namespace nux
       }
 
       delete data;
+  }
+
+  std::vector<Event> IBusIMEContext::ParseIBusHotkeys(const gchar** keybindings)
+  {
+    std::vector<Event> hotkeys;
+
+    for (int i = 0; keybindings && keybindings[i]; ++i)
+    {
+      gchar** binding = g_strsplit (keybindings[i], "+", -1);
+
+      if (binding)
+      {
+        Event ev;
+        ev.type = EVENT_KEY_DOWN;
+
+        for (int j = 0; binding && binding[j]; ++j)
+        {
+          if (strcmp(binding[j], "Release") == 0)
+          {
+            ev.type = EVENT_KEY_UP;
+            continue;
+          }
+
+          KeySym key = XStringToKeysym(binding[j]);
+          bool is_modifier = false;
+
+          if (key)
+          {
+            switch (key)
+            {
+              case XK_Caps_Lock:
+              case XK_Shift_Lock:
+              case XK_Num_Lock:
+              case XK_Scroll_Lock:
+                is_modifier = true;
+            }
+          }
+          else
+          {
+            // Checking if the current key is a generic modifier key
+            key = XStringToKeysym((std::string(binding[j]) + "_L").c_str());
+            is_modifier = (key != 0);
+          }
+
+          if (is_modifier)
+          {
+            switch (key)
+            {
+              case XK_Control_L:
+              case XK_Control_R:
+                ev.key_modifiers |= KEY_MODIFIER_CTRL;
+                break;
+              case XK_Shift_L:
+              case XK_Shift_R:
+              case XK_Shift_Lock:
+                ev.key_modifiers |= KEY_MODIFIER_SHIFT;
+                break;
+              case XK_Alt_L:
+              case XK_Alt_R:
+                ev.key_modifiers |= KEY_MODIFIER_ALT;
+                break;
+              case XK_Super_L:
+              case XK_Super_R:
+                ev.key_modifiers |= KEY_MODIFIER_SUPER;
+              case XK_Caps_Lock:
+                ev.key_modifiers |= KEY_MODIFIER_CAPS_LOCK;
+                break;
+              case XK_Num_Lock:
+                ev.key_modifiers |= KEY_MODIFIER_NUMLOCK;
+                break;
+              case XK_Scroll_Lock:
+                ev.key_modifiers |= KEY_MODIFIER_SCROLLLOCK;
+                break;
+              // FIXME add support to Hyper and Meta keys in nux::Event
+            }
+          }
+
+          if (!is_modifier && key)
+            ev.x11_keysym = key;
+        }
+
+        if (ev.x11_keysym)
+        {
+          hotkeys.push_back(ev);
+        }
+
+        g_strfreev(binding);
+      }
+    }
+
+    return hotkeys;
+  }
+
+  void IBusIMEContext::UpdateHotkeys()
+  {
+    IBusConfig* conf = ibus_bus_get_config(bus_);
+    GVariant* val = ibus_config_get_value(conf, "general", "hotkey/trigger");
+    const gchar** keybindings = g_variant_get_strv(val, NULL);
+
+    hotkeys_ = ParseIBusHotkeys(keybindings);
+
+    g_variant_unref(val);
+  }
+
+  bool IBusIMEContext::IsHotkeyEvent(EventType type, unsigned long keysym, unsigned long modifiers) const
+  {
+    for (Event const& ev : hotkeys_)
+    {
+      if (ev.type == type && ev.x11_keysym == keysym)
+      {
+        if (type == EVENT_KEY_UP)
+          return (modifiers & ev.key_modifiers);
+        else
+          return (ev.key_modifiers == modifiers);
+      }
+    }
+
+    return false;
   }
 }
