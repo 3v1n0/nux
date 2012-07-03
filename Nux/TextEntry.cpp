@@ -306,6 +306,23 @@ namespace nux
     unsigned short   keyCount      /*key repeat count*/)
   {
 #if defined(NUX_OS_LINUX)
+    if (im_running())
+    {
+      // FIXME Have to get the current event for the x11_keycode for ibus-hangul/korean input
+      nux::Event const& cur_event = GetGraphicsDisplay()->GetCurrentEvent();
+      KeyEvent event(static_cast<EventType>(event_type), keysym, cur_event.x11_keycode, state, character);
+
+      if (ime_->FilterKeyEvent(event))
+        return;
+    }
+#endif
+
+    /* Ignore all the keyup events to make Composition and Dead keys to work,
+     * as no one (IBus a part) needs them */
+    if (event_type == NUX_KEYUP)
+      return;
+
+#if defined(NUX_OS_LINUX)
     if (dead_key_mode_ && keysym == XK_space)
     {
       dead_key_mode_ = false;
@@ -322,19 +339,10 @@ namespace nux
     {
       return;
     }
-
-    // FIXME Have to get the current event fot he x11_keycode for ibus-hangul/korean input
-    nux::Event const& cur_event = GetGraphicsDisplay()->GetCurrentEvent();
-    KeyEvent event(static_cast<EventType>(event_type), keysym, cur_event.x11_keycode, state, character);
-
-    if (ime_->FilterKeyEvent(event))
-      return;
 #endif
 
     if (event_type == NUX_KEYDOWN)
       text_input_mode_ = true;
-    else if (event_type == NUX_KEYUP)
-      return;
 
     cursor_blink_status_ = 4;
 
