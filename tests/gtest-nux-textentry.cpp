@@ -1,50 +1,67 @@
-#include <string>
-#include <fstream>
-
-#include <iostream>
 #include <gmock/gmock.h>
-#include <boost/filesystem.hpp>
-#include <glib.h>
 
 #include "Nux/Nux.h"
 #include "Nux/TextEntry.h"
+#if defined(NUX_OS_LINUX)
+#include "Nux/InputMethodIBus.h"
+#endif
 
 
 using namespace testing;
+using namespace nux;
 
 namespace {
 
-TEST(TestTextEntry, TestSetText)
+class MockTextEntry : public nux::TextEntry
 {
-  nux::NuxInitialize(0);
-  nux::WindowThread* wnd_thread = nux::CreateNuxWindow("Nux Window", 300, 200,
-    nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL);
+public:
+  MockTextEntry(const char* text) : nux::TextEntry(text)
+  {}
 
-  nux::TextEntry* text_entry = new nux::TextEntry("");
-  
-  nux::GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(text_entry);
+  bool InspectKeyEvent(nux::Event const& event)
+  {
+    return nux::TextEntry::InspectKeyEvent(event);
+  }
 
+  nux::IBusIMEContext* ime() const
+  {
+#if defined(NUX_OS_LINUX)
+    return ime_;
+#else
+    return nullptr;
+#endif
+  }
+};
+
+class TestTextEntry : public Test
+{
+public:
+  virtual void SetUp()
+  {
+    nux::NuxInitialize(0);
+    wnd_thread.reset(nux::CreateNuxWindow("Nux Window", 300, 200,
+                     nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL));
+
+    text_entry = new MockTextEntry("");
+    nux::GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(text_entry.GetPointer());
+  }
+
+  std::unique_ptr<nux::WindowThread> wnd_thread;
+  nux::ObjectPtr<MockTextEntry> text_entry;
+};
+
+TEST_F(TestTextEntry, TestSetText)
+{
   EXPECT_EQ(text_entry->IsInTextInputMode(), false);
 
   text_entry->SetText("Nux");
   EXPECT_EQ(text_entry->GetText() == std::string("Nux"), true);
 
   EXPECT_EQ(text_entry->IsInTextInputMode(), true);
-
-  text_entry->UnReference();
-  delete wnd_thread;
 }
 
-TEST(TestTextEntry, TestEnterText)
+TEST_F(TestTextEntry, TestEnterText)
 {
-  nux::NuxInitialize(0);
-  nux::WindowThread* wnd_thread = nux::CreateNuxWindow("Nux Window", 300, 200,
-    nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL);
-
-  nux::TextEntry* text_entry = new nux::TextEntry("");
-  
-  nux::GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(text_entry);
-
   EXPECT_EQ(text_entry->IsInTextInputMode(), false);
 
   text_entry->EnterText("Nux");
@@ -52,21 +69,10 @@ TEST(TestTextEntry, TestEnterText)
   EXPECT_EQ(text_entry->GetText() == std::string("Nux"), true);
 
   EXPECT_EQ(text_entry->IsInTextInputMode(), true);
-
-  text_entry->UnReference();
-  delete wnd_thread;
 }
 
-TEST(TestTextEntry, TestDeleteText)
+TEST_F(TestTextEntry, TestDeleteText)
 {
-  nux::NuxInitialize(0);
-  nux::WindowThread* wnd_thread = nux::CreateNuxWindow("Nux Window", 300, 200,
-    nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL);
-
-  nux::TextEntry* text_entry = new nux::TextEntry("");
-  
-  nux::GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(text_entry);
-
   EXPECT_EQ(text_entry->IsInTextInputMode(), false);
 
   text_entry->EnterText("Nux");
@@ -77,7 +83,7 @@ TEST(TestTextEntry, TestDeleteText)
 
   nux::GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(NULL);
 
-  nux::GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(text_entry);
+  nux::GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(text_entry.GetPointer());
 
   EXPECT_EQ(text_entry->IsInTextInputMode(), false);
 
@@ -86,10 +92,65 @@ TEST(TestTextEntry, TestDeleteText)
   EXPECT_EQ(text_entry->GetText() == std::string(""), true);
 
   EXPECT_EQ(text_entry->IsInTextInputMode(), true);
+}
 
+#if defined(NUX_OS_LINUX)
+class TestEvent : public nux::Event
+{
+public:
+  TestEvent(nux::KeyModifier keymod, unsigned long keysym)
+  {
+    type = nux::NUX_KEYDOWN;
+    key_modifiers = keymod;
+    x11_keysym = keysym;
+  }
 
-  text_entry->UnReference();
-  delete wnd_thread;
+  TestEvent(unsigned long keysym)
+  {
+    type = nux::NUX_KEYDOWN;
+    x11_keysym = keysym;
+  }
+};
+
+TEST_F(TestTextEntry, AltLinuxKeybindings)
+{
+  for (unsigned long keysym = 0; keysym < XK_VoidSymbol; ++keysym)
+  {
+    TestEvent event(KEY_MODIFIER_ALT, keysym);
+
+    if (text_entry->ime()->IsHotkeyEvent(event.type, event.GetKeySym(), event.key_modifiers))
+      EXPECT_TRUE(text_entry->InspectKeyEvent(event));
+    else
+      EXPECT_FALSE(text_entry->InspectKeyEvent(event));
+  }
+}
+
+TEST_F(TestTextEntry, SuperLinuxKeybindings)
+{
+  for (unsigned long keysym = 0; keysym < XK_VoidSymbol; ++keysym)
+  {
+    TestEvent event(KEY_MODIFIER_SUPER, keysym);
+
+    if (text_entry->ime()->IsHotkeyEvent(event.type, event.GetKeySym(), event.key_modifiers))
+      EXPECT_TRUE(text_entry->InspectKeyEvent(event));
+    else
+      EXPECT_FALSE(text_entry->InspectKeyEvent(event));
+  }
+}
+#endif
+
+TEST_F(TestTextEntry, InvalidKeys)
+{
+  std::vector<std::string> invalid_chars = {"", "", "", "", "",
+                                            "", "", "", "", "",
+                                            "", "", ""};
+  for (auto c : invalid_chars)
+  {
+    unsigned int keysym = g_utf8_get_char(c.c_str());
+    text_entry->DeleteText(0, std::numeric_limits<int>::max());
+    text_entry->key_down.emit(NUX_KEYDOWN, keysym, 0, c.c_str(), 1);
+    EXPECT_EQ(text_entry->GetText(), "");
+  }
 }
 
 }
