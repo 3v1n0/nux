@@ -620,7 +620,7 @@ namespace nux
   {
 #if defined(NUX_OS_LINUX)
     /* Checks if the keysym between the first and last dead key */
-    if ((keysym >= XK_dead_grave) && (keysym <= XK_dead_stroke) && !dead_key_mode_)
+    if (character && (keysym >= XK_dead_grave) && (keysym <= XK_dead_stroke) && !dead_key_mode_)
     {
       int key = keysym - XK_dead_grave;
       dead_key_mode_ = true;
@@ -666,7 +666,7 @@ namespace nux
       return true;
     }
 
-    if (composition_mode_)
+    if (composition_mode_ && character)
     {
       if (strncmp(character, "", 1) == 0 && keysym != NUX_VK_SHIFT)
       {
@@ -1792,6 +1792,7 @@ namespace nux
   {
     CopyClipboard();
     DeleteSelection();
+    QueueRefresh(true, true);
   }
 
   void TextEntry::PasteClipboard()
