@@ -304,8 +304,6 @@ namespace nux
     const char*      character ,   /*character*/
     unsigned short   keyCount      /*key repeat count*/)
   {
-    bool im_filtered = false;
-
 #if defined(NUX_OS_LINUX)
     if (dead_key_mode_ && keysym == XK_space)
     {
@@ -327,7 +325,9 @@ namespace nux
     // FIXME Have to get the current event fot he x11_keycode for ibus-hangul/korean input
     nux::Event const& cur_event = GetGraphicsDisplay()->GetCurrentEvent();
     KeyEvent event(static_cast<EventType>(event_type), keysym, cur_event.x11_keycode, state, character);
-    im_filtered = ime_->FilterKeyEvent(event);
+
+    if (ime_->FilterKeyEvent(event))
+      return;
 #endif
 
     if (event_type == NUX_KEYDOWN)
@@ -353,7 +353,7 @@ namespace nux
     if (keysym == NUX_VK_TAB)
       return;
 
-    if ((keysym == NUX_VK_ENTER || keysym == NUX_KP_ENTER) && !im_filtered)
+    if ((keysym == NUX_VK_ENTER || keysym == NUX_KP_ENTER))
     {
       activated.emit();
       return;
@@ -364,7 +364,7 @@ namespace nux
     bool ctrl = (state & NUX_STATE_CTRL);
 
     // DLOG("TextEntry::key_down(%d, shift:%d ctrl:%d)", keyval, shift, ctrl);
-    if (event_type == NUX_KEYDOWN && !im_filtered)
+    if (event_type == NUX_KEYDOWN)
     {
       if (keyval == NUX_VK_LEFT)
       {
@@ -474,18 +474,15 @@ namespace nux
 //       }
     }
 
-    if (!im_filtered)
+    if (character)
     {
-      if (character)
-      {
-        unsigned int utf_char = g_utf8_get_char(character);
+      unsigned int utf_char = g_utf8_get_char(character);
 
-        if (g_unichar_isprint(utf_char))
-          EnterText(character);
-      }
-
-      QueueRefresh(false, true);
+      if (g_unichar_isprint(utf_char))
+        EnterText(character);
     }
+
+    QueueRefresh(false, true);
   }
 
   void TextEntry::RecvMouseDoubleClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
