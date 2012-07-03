@@ -246,7 +246,8 @@ namespace nux
     {
       SetCursor(index);
 #if defined(NUX_OS_LINUX)
-      PastePrimaryClipboard();
+      if (button == 2)
+        PastePrimaryClipboard();
 #endif
       QueueRefresh(false, true);
 
