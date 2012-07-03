@@ -17,12 +17,12 @@ m4_define([nux_major_version], [3])
 m4_define([nux_minor_version], [0])
 m4_define([nux_micro_version], [0])
 
-m4_define([nux_api_version], [2.0])
+m4_define([nux_api_version], [3.0])
 # Increase the number (to the current date) everytime you propose a branch that breaks the API or ABI
 # The number format is : year/month/day
 # e.g.: december 5th, 2011 is: 20111205
 # To make more than one API change in a day, add a number to the date. Like 20111205.xx
-m4_define([nux_abi_version], [20120411.01])
+m4_define([nux_abi_version], [20120525.01])
 
 m4_define([nux_version],
           [nux_major_version.nux_minor_version.nux_micro_version])
@@ -141,19 +141,11 @@ PKG_CHECK_MODULES(NUX_CORE, glib-2.0 >= 2.25.14 gthread-2.0 sigc++-2.0 gio-2.0)
 AC_SUBST(NUX_CORE_CFLAGS)
 AC_SUBST(NUX_CORE_LIBS)
 
-PKG_CHECK_MODULES(NUX_IMAGE,
+PKG_CHECK_MODULES(NUX_GRAPHICS,
                   glib-2.0 >= 2.25.14
                   gdk-pixbuf-2.0
                   cairo >= 1.9.14
                   libpng >= 1.2.44
-                  sigc++-2.0
-                  )
-AC_SUBST(NUX_IMAGE_CFLAGS)
-AC_SUBST(NUX_IMAGE_LIBS)
-
-PKG_CHECK_MODULES(NUX_GRAPHICS,
-                  glib-2.0 >= 2.25.14
-                  gdk-pixbuf-2.0
                   $GL_PKGS
                   xxf86vm
                   sigc++-2.0
@@ -334,8 +326,6 @@ AC_CONFIG_FILES([
   data/Makefile
   NuxCore/Makefile
   NuxCore/nux-core.pc
-  NuxImage/Makefile
-  NuxImage/nux-image.pc
   NuxGraphics/Makefile
   NuxGraphics/nux-graphics.pc
   Nux/Makefile
