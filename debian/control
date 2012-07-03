@@ -33,10 +33,10 @@ Section: libs
 Homepage: http://launchpad.net/nux
 Vcs-Bzr: https://code.launchpad.net/+branch/ubuntu/nux
 
-Package: libnux-2.0-0
+Package: libnux-3.0-0
 Section: libs
 Architecture: any
-Depends: libnux-2.0-common (= ${source:Version}),
+Depends: libnux-3.0-common (= ${source:Version}),
          ${shlibs:Depends},
          ${misc:Depends}
 Provides: libnux-abiversion-${nuxabiversion}
@@ -57,10 +57,10 @@ Description: Visual rendering toolkit for real-time applications - tools
  .
  This package contains various tools for nux
 
-Package: libnux-2.0-dev
+Package: libnux-3.0-dev
 Section: libdevel
 Architecture: any
-Depends: libnux-2.0-0 (= ${binary:Version}),
+Depends: libnux-3.0-0 (= ${binary:Version}),
          libglib2.0-dev (>= 2.25.14),
          libgdk-pixbuf2.0-dev,
          libcairo2-dev (>= 1.9.14),
@@ -80,7 +80,7 @@ Description: Visual rendering toolkit for real-time applications - dev files
  .
  This package contains files that are needed to build applications.
 
-Package: libnux-2.0-common
+Package: libnux-3.0-common
 Section: libs
 Architecture: all
 Depends: ${misc:Depends}
