@@ -74,7 +74,7 @@ public:
     key_modifiers = keymod;
 #if defined(NUX_OS_LINUX)
     x11_keysym = keysym;
-#elif NUX_OS_WINDOWS
+#elif defined(NUX_OS_WINDOWS)
     win32_keysym = keysym;
 #endif
   }
@@ -84,7 +84,7 @@ public:
     type = NUX_KEYDOWN;
 #if defined(NUX_OS_LINUX)
     x11_keysym = keysym;
-#elif NUX_OS_WINDOWS
+#elif defined(NUX_OS_WINDOWS)
     win32_keysym = keysym;
 #endif
   }
