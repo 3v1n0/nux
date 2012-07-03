@@ -2,6 +2,9 @@
 
 #include "Nux/Nux.h"
 #include "Nux/TextEntry.h"
+#if defined(NUX_OS_LINUX)
+#include "Nux/InputMethodIBus.h"
+#endif
 
 
 using namespace testing;
@@ -18,6 +21,15 @@ public:
   bool InspectKeyEvent(nux::Event const& event)
   {
     return nux::TextEntry::InspectKeyEvent(event);
+  }
+
+  nux::IBusIMEContext* ime() const
+  {
+#if defined(NUX_OS_LINUX)
+    return ime_;
+#else
+    return nullptr;
+#endif
   }
 };
 
@@ -105,7 +117,11 @@ TEST_F(TestTextEntry, AltLinuxKeybindings)
   for (unsigned long keysym = 0; keysym < XK_VoidSymbol; ++keysym)
   {
     TestEvent event(KEY_MODIFIER_ALT, keysym);
-    EXPECT_FALSE(text_entry->InspectKeyEvent(event));
+
+    if (text_entry->ime()->IsHotkeyEvent(event.type, event.GetKeySym(), event.key_modifiers))
+      EXPECT_TRUE(text_entry->InspectKeyEvent(event));
+    else
+      EXPECT_FALSE(text_entry->InspectKeyEvent(event));
   }
 }
 
@@ -114,7 +130,11 @@ TEST_F(TestTextEntry, SuperLinuxKeybindings)
   for (unsigned long keysym = 0; keysym < XK_VoidSymbol; ++keysym)
   {
     TestEvent event(KEY_MODIFIER_SUPER, keysym);
-    EXPECT_FALSE(text_entry->InspectKeyEvent(event));
+
+    if (text_entry->ime()->IsHotkeyEvent(event.type, event.GetKeySym(), event.key_modifiers))
+      EXPECT_TRUE(text_entry->InspectKeyEvent(event));
+    else
+      EXPECT_FALSE(text_entry->InspectKeyEvent(event));
   }
 }
 #endif
