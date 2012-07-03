@@ -491,9 +491,8 @@ namespace nux
     bool composition_mode_;
     std::string composition_string_;
 
-    virtual bool InspectKeyEvent(unsigned int eventType,
-      unsigned int keysym,
-      const char* character);
+    virtual bool InspectKeyEvent(Event const& event);
+    virtual bool InspectKeyEvent(unsigned int eventType, unsigned int keysym, const char* character);
 };
 }
 

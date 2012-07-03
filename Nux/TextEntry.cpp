@@ -316,7 +316,7 @@ namespace nux
 
     // FIXME Have to get the current event fot he x11_keycode for ibus-hangul/korean input
     nux::Event const& cur_event = GetGraphicsDisplay()->GetCurrentEvent();
-    KeyEvent event(static_cast<EventType>(event_type), keysym,cur_event.x11_keycode, state, character);
+    KeyEvent event(static_cast<EventType>(event_type), keysym, cur_event.x11_keycode, state, character);
     im_filtered = ime_->FilterKeyEvent(event);
 #endif
 
@@ -2320,15 +2320,28 @@ namespace nux
 
   bool TextEntry::InspectKeyEvent(unsigned int eventType, unsigned int key_sym, const char* character)
   {
+    nux::Event const& cur_event = GetGraphicsDisplay()->GetCurrentEvent();
+
+    return InspectKeyEvent(cur_event);
+  }
+
+  bool TextEntry::InspectKeyEvent(nux::Event const& event)
+  {
+    unsigned int eventType = event.type;
+    unsigned int key_sym = event.GetKeySym();
+
 #if defined(NUX_OS_LINUX)
     if (im_running())
     {
       // Always allow IBus hotkey events
-      nux::Event const& cur_event = GetGraphicsDisplay()->GetCurrentEvent();
-      if (ime_->IsHotkeyEvent(static_cast<EventType>(eventType), key_sym, cur_event.key_modifiers))
+      if (ime_->IsHotkeyEvent(static_cast<EventType>(eventType), key_sym, event.key_modifiers))
         return true;
     }
 #endif
+
+    // Ignore events when Alt or Super are pressed
+    if (event.GetKeyModifierState(KEY_MODIFIER_SUPER) || event.GetKeyModifierState(KEY_MODIFIER_ALT))
+      return false;
 
     if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == true) && (text_input_mode_ == false) && (ime_active_ == false))
     {
@@ -2391,14 +2404,14 @@ namespace nux
       {
         if ((!multiline_) && (!lose_key_focus_on_key_nav_direction_up_) && NUX_VK_UP)
         {
-          // By returning true, the text entry signals that it want to receinve the signal for this event.
+          // By returning true, the text entry signals that it want to receive the signal for this event.
           // Otherwise, the parent view of the text entry would be looking for another view to receive keynav focus to.
           return true;
         }
 
         if ((!multiline_) && (!lose_key_focus_on_key_nav_direction_down_) && NUX_VK_DOWN)
         {
-          // By returning true, the text entry signals that it want to receinve the signal for this event.
+          // By returning true, the text entry signals that it want to receive the signal for this event.
           // Otherwise, the parent view of the text entry would be looking for another view to receive keynav focus to.
           return true;
         }
