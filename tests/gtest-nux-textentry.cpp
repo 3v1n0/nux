@@ -254,6 +254,12 @@ TEST_F(TestTextEntry, PastePrimaryClipboard)
 {
   EXPECT_CALL(*text_entry, PastePrimaryClipboard());
   text_entry->mouse_down.emit(0, 0, NUX_EVENT_BUTTON2_DOWN, 0);
+
+  EXPECT_CALL(*text_entry, PastePrimaryClipboard()).Times(0);
+  text_entry->mouse_down.emit(0, 0, NUX_EVENT_BUTTON1_DOWN, 0);
+
+  EXPECT_CALL(*text_entry, PastePrimaryClipboard()).Times(0);
+  text_entry->mouse_down.emit(0, 0, NUX_EVENT_BUTTON3_DOWN, 0);
 }
 #endif
 
