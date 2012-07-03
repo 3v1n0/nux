@@ -237,15 +237,25 @@ namespace nux
 
   void TextEntry::ProcessMouseEvent(int event_type, int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    if (GetEventButton(button_flags) != 1 && event_type != NUX_MOUSE_MOVE)
-      return;
-
-    //ResetImContext();
-    //Event::Type type = event.GetType();
-
     int X = static_cast<int>(x /*round(event.GetX())*/) - kInnerBorderX - scroll_offset_x_;
     int Y = static_cast<int>(y /*round(event.GetY())*/) - kInnerBorderY - scroll_offset_y_;
     int index = XYToTextIndex(X, Y);
+    MouseButton button = GetEventButton(button_flags);
+
+    if (event_type == NUX_MOUSE_PRESSED && (button == 2 || button == 3))
+    {
+      SetCursor(index);
+#if defined(NUX_OS_LINUX)
+      PastePrimaryClipboard();
+#endif
+      QueueRefresh(false, true);
+
+      return;
+    }
+
+    if (button != 1 && event_type != NUX_MOUSE_MOVE)
+      return;
+
     int sel_start, sel_end;
     GetSelectionBounds(&sel_start, &sel_end);
 
@@ -253,7 +263,7 @@ namespace nux
 
     if ((event_type == NUX_MOUSE_PRESSED) && (current_time - last_dblclick_time_ <= kTripleClickTimeout))
     {
-        SelectLine();
+      SelectLine();
     }
     else if (event_type == NUX_MOUSE_DOUBLECLICK && !ime_active_)
     {
