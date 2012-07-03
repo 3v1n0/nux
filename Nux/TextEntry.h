@@ -325,11 +325,15 @@ namespace nux
     void DeleteSelection();
 
     /** Cut the current selected text to the clipboard */
-    void CutClipboard();
+    virtual void CutClipboard();
     /** Copy the current selected text to the clipboard */
-    void CopyClipboard();
+    virtual void CopyClipboard();
     /** Paste the text in the clipboard to current offset */
-    void PasteClipboard();
+    virtual void PasteClipboard();
+#if defined(NUX_OS_LINUX)
+    /** Paste the text in the primary clipboard to current offset */
+    virtual void PastePrimaryClipboard();
+#endif
     /** Delete a character before the offset of the cursor */
     void BackSpace(MovementStep step);
     /** Delete a character at the offset of the cursor */

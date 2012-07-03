@@ -1795,6 +1795,13 @@ namespace nux
 //     }
   }
 
+#if defined(NUX_OS_LINUX)
+  void TextEntry::PastePrimaryClipboard()
+  {
+    // TODO
+  }
+#endif
+
   void TextEntry::BackSpace(MovementStep step)
   {
     if (GetSelectionBounds(NULL, NULL))
