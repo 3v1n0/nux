@@ -31,20 +31,20 @@ using namespace nux;
 
 namespace {
 
-class MockTextEntry : public nux::TextEntry
+class MockTextEntry : public TextEntry
 {
 public:
-  MockTextEntry() : nux::TextEntry("")
+  MockTextEntry() : TextEntry("")
   {}
 
-  bool InspectKeyEvent(nux::Event const& event)
+  bool InspectKeyEvent(Event const& event)
   {
-    return nux::TextEntry::InspectKeyEvent(event);
+    return TextEntry::InspectKeyEvent(event);
   }
 
   bool GetSelectionBounds(int* start, int* end) const
   {
-    return nux::TextEntry::GetSelectionBounds(start, end);
+    return TextEntry::GetSelectionBounds(start, end);
   }
 
   int GetCursor() const
@@ -54,7 +54,7 @@ public:
 
   void SetCursor(int cursor)
   {
-    nux::TextEntry::SetCursor(cursor);
+    TextEntry::SetCursor(cursor);
   }
 
   MOCK_METHOD0(CutClipboard, void());
@@ -65,12 +65,12 @@ public:
 #endif
 };
 
-class TestEvent : public nux::Event
+class TestEvent : public Event
 {
 public:
-  TestEvent(nux::KeyModifier keymod, unsigned long keysym)
+  TestEvent(KeyModifier keymod, unsigned long keysym)
   {
-    type = nux::NUX_KEYDOWN;
+    type = NUX_KEYDOWN;
     key_modifiers = keymod;
 #if defined(NUX_OS_LINUX)
     x11_keysym = keysym;
@@ -81,7 +81,7 @@ public:
 
   TestEvent(unsigned long keysym)
   {
-    type = nux::NUX_KEYDOWN;
+    type = NUX_KEYDOWN;
 #if defined(NUX_OS_LINUX)
     x11_keysym = keysym;
 #elif NUX_OS_WINDOWS
@@ -95,19 +95,19 @@ class TestTextEntry : public Test
 public:
   virtual void SetUp()
   {
-    nux::NuxInitialize(0);
-    wnd_thread.reset(nux::CreateNuxWindow("Nux Window", 300, 200,
-                     nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL));
+    NuxInitialize(0);
+    wnd_thread.reset(CreateNuxWindow("Nux Window", 300, 200, WINDOWSTYLE_NORMAL,
+                     nullptr, false, NULL, NULL));
 
     text_entry = new MockTextEntry();
     HLayout* layout = new HLayout();
     layout->AddView(text_entry);
     wnd_thread->SetLayout(layout);
 
-    nux::GetWindowCompositor().SetKeyFocusArea(text_entry);
+    GetWindowCompositor().SetKeyFocusArea(text_entry);
   }
 
-  std::unique_ptr<nux::WindowThread> wnd_thread;
+  std::unique_ptr<WindowThread> wnd_thread;
   MockTextEntry* text_entry;
 };
 
@@ -142,9 +142,9 @@ TEST_F(TestTextEntry, TestDeleteText)
 
   EXPECT_EQ(text_entry->IsInTextInputMode(), true);
 
-  nux::GetWindowCompositor().SetKeyFocusArea(nullptr);
+  GetWindowCompositor().SetKeyFocusArea(nullptr);
 
-  nux::GetWindowCompositor().SetKeyFocusArea(text_entry);
+  GetWindowCompositor().SetKeyFocusArea(text_entry);
 
   EXPECT_EQ(text_entry->IsInTextInputMode(), false);
 
@@ -193,42 +193,49 @@ TEST_F(TestTextEntry, CopyCtrlC)
 {
   EXPECT_CALL(*text_entry, CopyClipboard());
   TestEvent event(KEY_MODIFIER_CTRL, NUX_VK_c);
-  nux::GetWindowCompositor().ProcessEvent(event);
+  GetWindowCompositor().ProcessEvent(event);
 }
 
 TEST_F(TestTextEntry, CopyCtrlIns)
 {
   EXPECT_CALL(*text_entry, CopyClipboard());
   TestEvent event(KEY_MODIFIER_CTRL, NUX_VK_INSERT);
-  nux::GetWindowCompositor().ProcessEvent(event);
+  GetWindowCompositor().ProcessEvent(event);
 }
 
 TEST_F(TestTextEntry, PasteCtrlV)
 {
   EXPECT_CALL(*text_entry, PasteClipboard());
   TestEvent event(KEY_MODIFIER_CTRL, NUX_VK_v);
-  nux::GetWindowCompositor().ProcessEvent(event);
+  GetWindowCompositor().ProcessEvent(event);
 }
 
 TEST_F(TestTextEntry, PasteShiftIns)
 {
   EXPECT_CALL(*text_entry, PasteClipboard());
   TestEvent event(KEY_MODIFIER_SHIFT, NUX_VK_INSERT);
-  nux::GetWindowCompositor().ProcessEvent(event);
+  GetWindowCompositor().ProcessEvent(event);
 }
+
+#if defined(NUX_OS_LINUX)
+TEST_F(TestTextEntry, PastePrimaryClipboard)
+{
+  text_entry->mouse_down.emit(0, 0, NUX_EVENT_BUTTON2_DOWN, 0);
+}
+#endif
 
 TEST_F(TestTextEntry, CutCtrlX)
 {
   EXPECT_CALL(*text_entry, CutClipboard());
   TestEvent event(KEY_MODIFIER_CTRL, NUX_VK_x);
-  nux::GetWindowCompositor().ProcessEvent(event);
+  GetWindowCompositor().ProcessEvent(event);
 }
 
 TEST_F(TestTextEntry, CutShiftDel)
 {
   EXPECT_CALL(*text_entry, CutClipboard());
   TestEvent event(KEY_MODIFIER_SHIFT, NUX_VK_DELETE);
-  nux::GetWindowCompositor().ProcessEvent(event);
+  GetWindowCompositor().ProcessEvent(event);
 }
 
 TEST_F(TestTextEntry, CtrlA)
@@ -241,7 +248,7 @@ TEST_F(TestTextEntry, CtrlA)
   ASSERT_EQ(start, end);
   ASSERT_EQ(start, test_str.length());
 
-  nux::GetWindowCompositor().ProcessEvent(selectall);
+  GetWindowCompositor().ProcessEvent(selectall);
   EXPECT_TRUE(text_entry->GetSelectionBounds(&start, &end));
   EXPECT_EQ(start, 0);
   EXPECT_EQ(end, test_str.length());
@@ -256,19 +263,19 @@ TEST_F(TestTextEntry, MoveKeys)
   ASSERT_EQ(text_entry->GetCursor(), 0);
 
   TestEvent right(NUX_VK_RIGHT);
-  nux::GetWindowCompositor().ProcessEvent(right);
+  GetWindowCompositor().ProcessEvent(right);
   EXPECT_EQ(text_entry->GetCursor(), 1);
 
   TestEvent end(NUX_VK_END);
-  nux::GetWindowCompositor().ProcessEvent(end);
+  GetWindowCompositor().ProcessEvent(end);
   EXPECT_EQ(text_entry->GetCursor(), test_str.length());
 
   TestEvent left(NUX_VK_LEFT);
-  nux::GetWindowCompositor().ProcessEvent(left);
+  GetWindowCompositor().ProcessEvent(left);
   EXPECT_EQ(text_entry->GetCursor(), 2);
 
   TestEvent home(NUX_VK_HOME);
-  nux::GetWindowCompositor().ProcessEvent(home);
+  GetWindowCompositor().ProcessEvent(home);
   EXPECT_EQ(text_entry->GetCursor(), 0);
 }
 
@@ -281,19 +288,19 @@ TEST_F(TestTextEntry, CtrlMoveKeys)
   ASSERT_EQ(text_entry->GetCursor(), 0);
 
   TestEvent right(KEY_MODIFIER_CTRL, NUX_VK_RIGHT);
-  nux::GetWindowCompositor().ProcessEvent(right);
+  GetWindowCompositor().ProcessEvent(right);
   EXPECT_EQ(text_entry->GetCursor(), 3);
 
   TestEvent left(KEY_MODIFIER_CTRL, NUX_VK_LEFT);
-  nux::GetWindowCompositor().ProcessEvent(left);
+  GetWindowCompositor().ProcessEvent(left);
   EXPECT_EQ(text_entry->GetCursor(), 0);
 
   TestEvent end(KEY_MODIFIER_CTRL, NUX_VK_END);
-  nux::GetWindowCompositor().ProcessEvent(end);
+  GetWindowCompositor().ProcessEvent(end);
   EXPECT_EQ(text_entry->GetCursor(), test_str.length());
 
   TestEvent home(KEY_MODIFIER_CTRL, NUX_VK_HOME);
-  nux::GetWindowCompositor().ProcessEvent(home);
+  GetWindowCompositor().ProcessEvent(home);
   EXPECT_EQ(text_entry->GetCursor(), 0);
 }
 
@@ -304,12 +311,12 @@ TEST_F(TestTextEntry, DeleteKeys)
   text_entry->SetCursor(0);
 
   TestEvent del(NUX_VK_DELETE);
-  nux::GetWindowCompositor().ProcessEvent(del);
+  GetWindowCompositor().ProcessEvent(del);
   EXPECT_EQ(text_entry->GetText(), "ux");
 
   text_entry->SetCursor(std::string(text_entry->GetText()).length());
   TestEvent backspace(NUX_VK_BACKSPACE);
-  nux::GetWindowCompositor().ProcessEvent(backspace);
+  GetWindowCompositor().ProcessEvent(backspace);
   EXPECT_EQ(text_entry->GetText(), "u");
 }
 
@@ -320,12 +327,12 @@ TEST_F(TestTextEntry, CtrlDeleteKeys)
   text_entry->SetCursor(0);
 
   TestEvent del(KEY_MODIFIER_CTRL, NUX_VK_DELETE);
-  nux::GetWindowCompositor().ProcessEvent(del);
+  GetWindowCompositor().ProcessEvent(del);
   EXPECT_EQ(text_entry->GetText(), " Text Entry");
 
   text_entry->SetCursor(std::string(text_entry->GetText()).length());
   TestEvent backspace(KEY_MODIFIER_CTRL, NUX_VK_BACKSPACE);
-  nux::GetWindowCompositor().ProcessEvent(backspace);
+  GetWindowCompositor().ProcessEvent(backspace);
   EXPECT_EQ(text_entry->GetText(), " Text ");
 }
 }
