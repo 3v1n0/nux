@@ -504,7 +504,7 @@ namespace nux
   {
     for (Event const& ev : hotkeys_)
     {
-      if (ev.type == type && ev.x11_keysym == keysym)
+      if (ev.x11_keysym == keysym && (ev.type == type || type == EVENT_KEY_DOWN))
       {
         if (type == EVENT_KEY_UP)
           return (modifiers & ev.key_modifiers);
