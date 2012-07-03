@@ -220,6 +220,7 @@ TEST_F(TestTextEntry, PasteShiftIns)
 #if defined(NUX_OS_LINUX)
 TEST_F(TestTextEntry, PastePrimaryClipboard)
 {
+  EXPECT_CALL(*text_entry, PastePrimaryClipboard());
   text_entry->mouse_down.emit(0, 0, NUX_EVENT_BUTTON2_DOWN, 0);
 }
 #endif
