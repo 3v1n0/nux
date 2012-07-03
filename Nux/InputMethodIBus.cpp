@@ -374,7 +374,7 @@ namespace nux
   {
     //nuxDebugMsg("***IBusIMEContext::ProcessKeyEventDone***");
       std::unique_ptr<ProcessKeyEventData> key_ev(data);
-      nuxAssert(key_event->context->context_ == context);
+      nuxAssert(key_ev->context->context_ == context);
 
       GError *error = NULL;
       gboolean processed = ibus_input_context_process_key_event_async_finish (
