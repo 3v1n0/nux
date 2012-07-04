@@ -61,6 +61,11 @@ public:
     TextEntry::SetCursor(cursor);
   }
 
+  bool InCompositionMode() const
+  {
+    return composition_mode_;
+  }
+
   nux::IBusIMEContext* ime() const
   {
 #if defined(NUX_OS_LINUX)
@@ -81,22 +86,23 @@ public:
 class TestEvent : public Event
 {
 public:
-  TestEvent(KeyModifier keymod, unsigned long keysym)
+  TestEvent(KeyModifier keymod, unsigned long keysym, EventType type = NUX_KEYDOWN)
   {
-    type = NUX_KEYDOWN;
+    Init(keysym, type);
     key_modifiers = keymod;
-#if defined(NUX_OS_LINUX)
-    x11_keysym = keysym;
-#elif defined(NUX_OS_WINDOWS)
-    win32_keysym = keysym;
-#endif
   }
 
-  TestEvent(unsigned long keysym)
+  TestEvent(unsigned long keysym, EventType type = NUX_KEYDOWN)
   {
-    type = NUX_KEYDOWN;
+    Init(keysym, type);
+  }
+
+  void Init(unsigned long keysym, EventType etype)
+  {
+    type = etype;
 #if defined(NUX_OS_LINUX)
     x11_keysym = keysym;
+    g_unichar_to_utf8(x11_keysym, text);
 #elif defined(NUX_OS_WINDOWS)
     win32_keysym = keysym;
 #endif
@@ -377,4 +383,58 @@ TEST_F(TestTextEntry, CtrlDeleteKeys)
   EXPECT_EQ(text_entry->GetText(), " Text ");
 }
 
+#if defined(NUX_OS_LINUX)
+TEST_F(TestTextEntry, CompositionStart)
+{
+  ASSERT_FALSE(text_entry->InCompositionMode());
+  TestEvent compose(XK_Multi_key);
+  SendEvent(compose);
+  EXPECT_TRUE(text_entry->InCompositionMode());
+}
+
+TEST_F(TestTextEntry, CompositionWrite)
+{
+  ASSERT_FALSE(text_entry->InCompositionMode());
+  TestEvent compose(XK_Multi_key);
+  SendEvent(compose);
+
+  TestEvent tilde(XK_asciitilde);
+  SendEvent(tilde);
+  EXPECT_TRUE(text_entry->InCompositionMode());
+
+  TestEvent n(TestEvent(XK_n));
+  SendEvent(n);
+  EXPECT_FALSE(text_entry->InCompositionMode());
+
+  EXPECT_EQ(text_entry->GetText(), "ñ");
+}
+
+TEST_F(TestTextEntry, CompositionIgnoreModifiers)
+{
+  ASSERT_FALSE(text_entry->InCompositionMode());
+  TestEvent compose(XK_Multi_key);
+  SendEvent(compose);
+
+  TestEvent tilde(XK_asciitilde);
+  SendEvent(tilde);
+  EXPECT_TRUE(text_entry->InCompositionMode());
+
+  for (auto keysym = XK_Shift_L; keysym <= XK_Hyper_R; ++keysym)
+  {
+    TestEvent modifier(keysym);
+    SendEvent(modifier);
+    EXPECT_TRUE(text_entry->InCompositionMode());
+  }
+
+  TestEvent AltGr(XK_ISO_Level3_Shift);
+  SendEvent(AltGr);
+  EXPECT_TRUE(text_entry->InCompositionMode());
+
+  TestEvent n(TestEvent(XK_n));
+  SendEvent(n);
+  EXPECT_FALSE(text_entry->InCompositionMode());
+
+  EXPECT_EQ(text_entry->GetText(), "ñ");
+}
+#endif
 }
