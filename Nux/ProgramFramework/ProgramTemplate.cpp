@@ -89,8 +89,8 @@ void ProgramTemplate::Run()
   if (program_life_span_ > 0)
   {
     timeout_signal_ = new nux::TimeOutSignal();
-    timeout_signal_->time_expires.connect(sigc::mem_fun(this, &ProgramTemplate::ProgramExitCall));
-    window_thread_->GetTimerHandler().AddTimerHandler(program_life_span_, timeout_signal_, NULL, NULL);
+    timeout_signal_->tick.connect(sigc::mem_fun(this, &ProgramTemplate::ProgramExitCall));
+    window_thread_->GetTimerHandler().AddOneShotTimer(program_life_span_, timeout_signal_, NULL, NULL);
   }
 
   window_thread_->Run(NULL);

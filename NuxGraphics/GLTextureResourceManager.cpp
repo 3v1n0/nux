@@ -211,7 +211,7 @@ namespace nux
       nuxDebugMsg("[CreateTextureFromFile] Invalid texture format type for file(%s)", TextureFilename);
     }
 
-    delete BitmapData;
+    //delete BitmapData;
     return texture;
   }
 
@@ -255,6 +255,7 @@ namespace nux
       return NULL;
 
     BaseTexture* texture = CreateTextureFromBitmapData(bitmap);
+    delete bitmap;
     return texture;
   }
 

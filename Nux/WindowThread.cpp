@@ -105,7 +105,7 @@ logging::Logger logger("nux.windows.thread");
     _inside_main_loop = false;
     _inside_timer_loop = false;
     async_wake_up_signal_ = new TimerFunctor();
-    async_wake_up_signal_->time_expires.connect(sigc::mem_fun(this, &WindowThread::AsyncWakeUpCallback));
+    async_wake_up_signal_->tick.connect(sigc::mem_fun(this, &WindowThread::AsyncWakeUpCallback));
   }
 
   WindowThread::~WindowThread()
@@ -152,7 +152,7 @@ logging::Logger logger("nux.windows.thread");
       return TimerHandle();
 
     // Use "this->" because if called from a different thread, GetTimer and GetWindowThread are invalid.
-    TimerHandle handle = this->GetTimerHandler().AddTimerHandler(time_ms, timeout_signal, user_data, this);
+    TimerHandle handle = this->GetTimerHandler().AddOneShotTimer(time_ms, timeout_signal, user_data, this);
 
     return handle;
   }
@@ -196,7 +196,7 @@ logging::Logger logger("nux.windows.thread");
       if ((_inside_main_loop == false) && (_inside_timer_loop == false) && (_pending_wake_up_timer == false))
       {
         _pending_wake_up_timer = true;
-        async_wake_up_timer_handle_ = this->GetTimerHandler().AddTimerHandler(0, async_wake_up_signal_, this);
+        async_wake_up_timer_handle_ = this->GetTimerHandler().AddOneShotTimer(0, async_wake_up_signal_, this);
       }
     }
   }

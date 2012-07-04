@@ -29,7 +29,6 @@
 
 #if defined(NUX_OS_WINDOWS)
   #include "GdiImageLoader.h"
-  #include "DDS.h"
 #endif
 
 #include "ImageSurface.h"
@@ -82,13 +81,6 @@ logging::Logger logger("nux.image");
 #if defined(NUX_OS_WINDOWS)
     BitmapData = GdiLoadImageFile(filename);
     if (BitmapData) return BitmapData;
-
-    BitmapData = read_tga_file(filename);
-    if (BitmapData) return BitmapData;
-
-    BitmapData = LoadFileFormat_DDS(filename);
-    if (BitmapData) return BitmapData;
-
 #elif defined(NUX_OS_LINUX)
     GdkGraphics gdkgraphics;
     gdkgraphics.LoadImage(filename);

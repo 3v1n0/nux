@@ -289,7 +289,7 @@ namespace nux
         return 0;
       }
 
-      GSource *timeout_source;
+      GSource* timeout_source;
 
       //create a new time-out source
       timeout_source = g_timeout_source_new(duration);
