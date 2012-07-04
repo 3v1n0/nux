@@ -29,8 +29,11 @@ check_PROGRAMS = \
 gtest_nuxcore_SOURCES = \
   Helpers.h \
   Helpers.cpp \
+  $(top_builddir)/NuxCore/ColorPrivate.cpp \
+  $(top_builddir)/NuxCore/ColorPrivate.h \
   gtest-nuxcore-async-file-writer.cpp \
   gtest-nuxcore-color.cpp \
+  gtest-nuxcore-colorprivate.cpp \
   gtest-nuxcore-logger.cpp \
   gtest-nuxcore-main.cpp \
   gtest-nuxcore-object.cpp \
@@ -53,7 +56,6 @@ gtest_nuxcore_CPPFLAGS = \
 
 gtest_nuxcore_LDADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
   $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
   $(NUX_LIBS) \
@@ -69,7 +71,9 @@ gtest_nux_SOURCES = \
   gtest-nux-emmetrics.cpp \
   gtest-nux-main.cpp \
   gtest-nux-statictext.cpp \
+  gtest-nux-scrollview.cpp \
   gtest-nux-textentry.cpp \
+  gtest-nux-inputmethodibus.cpp \
   gtest-nux-view.cpp \
   gtest-nux-windowcompositor.cpp \
   gtest-nux-windowthread.cpp
@@ -91,7 +95,6 @@ gtest_nux_CPPFLAGS = \
 
 gtest_nux_LDADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
   $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
   $(NUX_LIBS) \
@@ -116,7 +119,6 @@ TestFlags = -I$(srcdir) \
   $(IBUS_CFLAGS)
 
 TestLibs = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
   $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
   $(NUX_LIBS)

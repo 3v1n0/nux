@@ -828,7 +828,7 @@ namespace nux
     return ret;
   }
 
-  void TextureVolume::GetData(void* Buffer, int MipIndex, int StrideY, int slice)
+  void TextureVolume::GetData(void* Buffer, int MipIndex, int StrideY, int face)
   {
     BYTE               *Dest        = (BYTE *) Buffer;
 //     const BYTE*         Src         = _image.GetSurface(MipIndex, slice).GetPtrRawData();

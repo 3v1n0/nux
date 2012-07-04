@@ -39,6 +39,7 @@ namespace nux
     ,   geometry_(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT)
     ,   min_size_(AREA_MIN_WIDTH, AREA_MIN_HEIGHT)
     ,   max_size_(AREA_MAX_WIDTH, AREA_MAX_HEIGHT)
+    ,   layout_done_(true)
   {
     window_thread_ = GetWindowThread();
     visible_ = true;

@@ -21,7 +21,7 @@
 */
 
 
-#ifndef INPUTMETHODIBUS_H 
+#ifndef INPUTMETHODIBUS_H
 #define INPUTMETHODIBUS_H
 
 #include <Nux/TextEntry.h>
@@ -32,9 +32,9 @@ namespace nux
 
   class IBusIMEContext;
   class TextEntry;
-  
+
   // FIXME This class should be reworked to replace the mouse_state
-  // with the hardware key_code. 
+  // with the hardware key_code.
   class KeyEvent
   {
   public:
@@ -46,7 +46,7 @@ namespace nux
       , key_sym_(key_sym)
       , key_code_(key_code)
       , key_modifiers_(event_flags)
-      , character_(character)
+      , character_(character ? character : "")
     {
     }
 
@@ -101,24 +101,34 @@ namespace nux
     virtual bool FilterKeyEvent(const KeyEvent& event);
     virtual void SetSurrounding(const std::wstring& text, int cursor_pos);
 
+    bool IsConnected() const;
+    bool IsHotkeyEvent(EventType type, unsigned long keysym, unsigned long modifiers) const;
+
+  protected:
+    static std::vector<Event> ParseIBusHotkeys(const gchar** keybindings);
+
   private:
     void CreateContext();
     void DestroyContext();
 
     void UpdateCursorLocation();
+    static void UpdateHotkeys();
 
     // Event handlers for IBusBus:
     //CHROMEG_CALLBACK_0(IBusIMEContext, void, OnConnected, IBusBus*);
-    static void OnConnected_(IBusBus* bus, void* data) {nuxDebugMsg("***IBusIMEContext::OnConnected***"); reinterpret_cast<IBusIMEContext*>(data)->OnConnected(bus);}
+    static void OnConnected_(IBusBus* bus, void* data) {nuxDebugMsg("***IBusIMEContext::OnConnected***"); static_cast<IBusIMEContext*>(data)->OnConnected(bus);}
     void OnConnected(IBusBus *bus);
 
     //CHROMEG_CALLBACK_0(IBusIMEContext, void, OnDisconnected, IBusBus*);
-    static void OnDisconnected_(IBusBus* bus, void* data) {reinterpret_cast<IBusIMEContext*>(data)->OnDisconnected(bus);}
+    static void OnDisconnected_(IBusBus* bus, void* data) {static_cast<IBusIMEContext*>(data)->OnDisconnected(bus);}
     void OnDisconnected(IBusBus *bus);
+
+    static void OnConfigChanged_(IBusConfig* config, gchar* section, gchar* name, GVariant* value, gpointer data) {static_cast<IBusIMEContext*>(data)->OnConfigChanged(config, section, name, value);}
+    void OnConfigChanged(IBusConfig* config, gchar* section, gchar* name, GVariant* value);
 
 //     // Event handlers for IBusIMEContext:
     //CHROMEG_CALLBACK_1(IBusIMEContext, void, OnCommitText, IBusInputContext*, IBusText*);
-    static void OnCommitText_(IBusInputContext* context, IBusText* text, void* data) {reinterpret_cast<IBusIMEContext*>(data)->OnCommitText(context, text);}
+    static void OnCommitText_(IBusInputContext* context, IBusText* text, void* data) {static_cast<IBusIMEContext*>(data)->OnCommitText(context, text);}
     void OnCommitText(IBusInputContext *context, IBusText* text);
 
     //CHROMEG_CALLBACK_3(IBusIMEContext, void, OnUpdatePreeditText, IBusInputContext*, IBusText*, guint, gboolean);
@@ -126,23 +136,23 @@ namespace nux
     void OnUpdatePreeditText(IBusInputContext *context, IBusText* text, guint cursor_pos, gboolean visible);
 
     //CHROMEG_CALLBACK_0(IBusIMEContext, void, OnShowPreeditText, IBusInputContext*);
-    static void OnShowPreeditText_(IBusInputContext* context, void* data) {reinterpret_cast<IBusIMEContext*>(data)->OnShowPreeditText(context);}
+    static void OnShowPreeditText_(IBusInputContext* context, void* data) {static_cast<IBusIMEContext*>(data)->OnShowPreeditText(context);}
     void OnShowPreeditText(IBusInputContext *context);
 
 //     CHROMEG_CALLBACK_0(IBusIMEContext, void, OnHidePreeditText, IBusInputContext*);
-    static void OnHidePreeditText_(IBusInputContext* context, void* data) {reinterpret_cast<IBusIMEContext*>(data)->OnHidePreeditText(context);}
+    static void OnHidePreeditText_(IBusInputContext* context, void* data) {static_cast<IBusIMEContext*>(data)->OnHidePreeditText(context);}
     void OnHidePreeditText(IBusInputContext *context);
 
 //     CHROMEG_CALLBACK_0(IBusIMEContext, void, OnEnable, IBusInputContext*);
-    static void OnEnable_(IBusInputContext* context, void* data) {reinterpret_cast<IBusIMEContext*>(data)->OnEnable(context);}
+    static void OnEnable_(IBusInputContext* context, void* data) {static_cast<IBusIMEContext*>(data)->OnEnable(context);}
     void OnEnable(IBusInputContext *context);
 
 //     CHROMEG_CALLBACK_0(IBusIMEContext, void, OnDisable, IBusInputContext*);
-    static void OnDisable_(IBusInputContext* context, void* data) {reinterpret_cast<IBusIMEContext*>(data)->OnDisable(context);}
+    static void OnDisable_(IBusInputContext* context, void* data) {static_cast<IBusIMEContext*>(data)->OnDisable(context);}
     void OnDisable(IBusInputContext *context);
 
 //     CHROMEG_CALLBACK_0(IBusIMEContext, void, OnDestroy, IBusInputContext*);
-    static void OnDestroy_(IBusInputContext* context, void* data) {reinterpret_cast<IBusIMEContext*>(data)->OnDestroy(context);}
+    static void OnDestroy_(IBusInputContext* context, void* data) {static_cast<IBusIMEContext*>(data)->OnDestroy(context);}
     void OnDestroy(IBusInputContext *context);
 
     static void ProcessKeyEventDone(IBusInputContext* context,
@@ -154,6 +164,7 @@ namespace nux
     bool is_focused_;
 
     static IBusBus* bus_;
+    static std::vector<Event> hotkeys_;
 
     IBusIMEContext(const IBusIMEContext&);
     void operator = (const IBusIMEContext&);

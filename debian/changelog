@@ -1,3 +1,25 @@
+nux (3.0.0-0ubuntu1) UNRELEASED; urgency=low
+
+  * New upstream release.
+    - Conditional jump or move depends on uninitialised value(s) 
+      nux::GraphicsDisplay::ProcessXEvent(_XEvent, bool) (LP: #983321)
+    - Coverity PW.PARAMETER_HIDDEN - CID 10653 (LP: #937588)
+    - Coverity SECURE_CODING - CID 10659 (LP: #937564)
+    - Coverity PW.PARAMETER_HIDDEN - CID 10651 (LP: #937576)
+    - Coverity PW.PARAMETER_HIDDEN - CID 10652 (LP: #937586)
+    - QueueDraw is very expensive (LP: #994884)
+    - Unity is slow and pausing occasionally (when its DrawList size spikes, 
+      to almost 6000!) (LP: #1014610)
+    - IBus hotkey using Release modifier doesn't work in unity (LP: #1016665)
+    - Nothing should be written into the dash/hud searchbar when holding super,
+      ctrl or Alt (LP: #1013751)
+    - IBus can't be activated on dash or HUD since r2428 (LP: #1016354)
+  * debian/control, debian/libnux-3.0-0.install,
+    debian/libnux-3.0-common.install, debian/libnux-3.0-dev.install:
+    - switch to nux-3.0
+
+ -- Łukasz 'sil2100' Zemczak <lukasz.zemczak@canonical.com>  Tue, 03 Jul 2012 12:07:19 +0200
+
 nux (2.12.0-0ubuntu2) quantal-proposed; urgency=low
 
   * debian/control:
