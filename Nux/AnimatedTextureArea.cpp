@@ -21,7 +21,7 @@
 
 
 #include "Nux.h"
-#include "NuxImage/ImageSurface.h"
+#include "NuxGraphics/ImageSurface.h"
 #include "AnimatedTextureArea.h"
 
 namespace nux
@@ -71,9 +71,9 @@ namespace nux
 
   }
 
-  void AnimatedTextureArea::SetTexture(TextureFrameAnimation *Texture)
+  void AnimatedTextureArea::SetTexture(TextureFrameAnimation *t)
   {
-    m_UserTexture = Texture;
+    m_UserTexture = t;
 
     if (m_UserTexture)
     {

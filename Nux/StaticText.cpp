@@ -28,7 +28,7 @@
 #include "cairo/cairo.h"
 #include "pango/pango.h"
 #include "pango/pangocairo.h"
-#include "NuxImage/CairoGraphics.h"
+#include "NuxGraphics/CairoGraphics.h"
 #include "NuxGraphics/GraphicsDisplay.h"
 
 #include "StaticText.h"

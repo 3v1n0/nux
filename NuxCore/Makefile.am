@@ -45,6 +45,7 @@ source_cpp = \
   $(srcdir)/Character/NUni.cpp \
   $(srcdir)/Character/NUnicode.cpp \
   $(srcdir)/Color.cpp \
+  $(srcdir)/ColorPrivate.cpp \
   $(srcdir)/Colors.cpp \
   $(srcdir)/FileName.cpp \
   $(srcdir)/ThreadGNU.cpp \

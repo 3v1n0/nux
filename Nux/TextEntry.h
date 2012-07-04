@@ -24,7 +24,7 @@
 #include "cairo/cairo.h"
 #include "pango/pango.h"
 #include "pango/pangocairo.h"
-#include "NuxImage/CairoGraphics.h"
+#include "NuxGraphics/CairoGraphics.h"
 
 namespace nux
 {
@@ -155,6 +155,7 @@ namespace nux
     void SetAlign(CairoGraphics::Alignment align);
 
     bool im_active();
+    bool im_running();
 
     void MoveCursorToLineStart();
     void MoveCursorToLineEnd();
@@ -324,11 +325,15 @@ namespace nux
     void DeleteSelection();
 
     /** Cut the current selected text to the clipboard */
-    void CutClipboard();
+    virtual void CutClipboard();
     /** Copy the current selected text to the clipboard */
-    void CopyClipboard();
+    virtual void CopyClipboard();
     /** Paste the text in the clipboard to current offset */
-    void PasteClipboard();
+    virtual void PasteClipboard();
+#if defined(NUX_OS_LINUX)
+    /** Paste the text in the primary clipboard to current offset */
+    virtual void PastePrimaryClipboard();
+#endif
     /** Delete a character before the offset of the cursor */
     void BackSpace(MovementStep step);
     /** Delete a character at the offset of the cursor */
@@ -490,9 +495,8 @@ namespace nux
     bool composition_mode_;
     std::string composition_string_;
 
-    virtual bool InspectKeyEvent(unsigned int eventType,
-      unsigned int keysym,
-      const char* character);
+    virtual bool InspectKeyEvent(Event const& event);
+    virtual bool InspectKeyEvent(unsigned int eventType, unsigned int keysym, const char* character);
 };
 }
 
