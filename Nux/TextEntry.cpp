@@ -672,9 +672,19 @@ namespace nux
       return true;
     }
 
-    if (composition_mode_ && character)
+    if (composition_mode_)
     {
-      if (strncmp(character, "", 1) == 0 && keysym != NUX_VK_SHIFT)
+      /* Excluding meta keys and shifts as composition cancellation */
+      if ((keysym >= XK_Shift_L && keysym <= XK_Hyper_R) ||
+          keysym == XK_ISO_Level3_Shift)
+      {
+        return true;
+      }
+
+      if (!character)
+        return true;
+
+      if (strncmp(character, "", 1) == 0)
       {
         composition_mode_ = false;
         composition_string_.clear();
