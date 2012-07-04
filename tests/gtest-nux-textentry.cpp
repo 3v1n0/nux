@@ -70,12 +70,6 @@ public:
 #endif
   }
 
-  void WaitEvent()
-  {
-    if (im_running())
-      Utils::WaitForTimeoutMSec(100);
-  }
-
   MOCK_METHOD0(CutClipboard, void());
   MOCK_METHOD0(CopyClipboard, void());
   MOCK_METHOD0(PasteClipboard, void());
@@ -124,6 +118,18 @@ public:
     wnd_thread->SetLayout(layout);
 
     GetWindowCompositor().SetKeyFocusArea(text_entry);
+  }
+
+  void WaitEvent()
+  {
+    if (text_entry->im_running())
+      Utils::WaitForTimeoutMSec(100);
+  }
+
+  void SendEvent(Event& event)
+  {
+    GetWindowCompositor().ProcessEvent(event);
+    WaitEvent();
   }
 
   std::unique_ptr<WindowThread> wnd_thread;
@@ -212,7 +218,7 @@ TEST_F(TestTextEntry, InvalidKeys)
     unsigned int keysym = g_utf8_get_char(c.c_str());
     text_entry->DeleteText(0, std::numeric_limits<int>::max());
     text_entry->key_down.emit(NUX_KEYDOWN, keysym, 0, c.c_str(), 1);
-    text_entry->WaitEvent();
+    WaitEvent();
     EXPECT_EQ(text_entry->GetText(), "");
   }
 }
@@ -221,32 +227,28 @@ TEST_F(TestTextEntry, CopyCtrlC)
 {
   EXPECT_CALL(*text_entry, CopyClipboard());
   TestEvent event(KEY_MODIFIER_CTRL, NUX_VK_c);
-  GetWindowCompositor().ProcessEvent(event);
-  text_entry->WaitEvent();
+  SendEvent(event);
 }
 
 TEST_F(TestTextEntry, CopyCtrlIns)
 {
   EXPECT_CALL(*text_entry, CopyClipboard());
   TestEvent event(KEY_MODIFIER_CTRL, NUX_VK_INSERT);
-  GetWindowCompositor().ProcessEvent(event);
-  text_entry->WaitEvent();
+  SendEvent(event);
 }
 
 TEST_F(TestTextEntry, PasteCtrlV)
 {
   EXPECT_CALL(*text_entry, PasteClipboard());
   TestEvent event(KEY_MODIFIER_CTRL, NUX_VK_v);
-  GetWindowCompositor().ProcessEvent(event);
-  text_entry->WaitEvent();
+  SendEvent(event);
 }
 
 TEST_F(TestTextEntry, PasteShiftIns)
 {
   EXPECT_CALL(*text_entry, PasteClipboard());
   TestEvent event(KEY_MODIFIER_SHIFT, NUX_VK_INSERT);
-  GetWindowCompositor().ProcessEvent(event);
-  text_entry->WaitEvent();
+  SendEvent(event);
 }
 
 #if defined(NUX_OS_LINUX)
@@ -267,16 +269,14 @@ TEST_F(TestTextEntry, CutCtrlX)
 {
   EXPECT_CALL(*text_entry, CutClipboard());
   TestEvent event(KEY_MODIFIER_CTRL, NUX_VK_x);
-  GetWindowCompositor().ProcessEvent(event);
-  text_entry->WaitEvent();
+  SendEvent(event);
 }
 
 TEST_F(TestTextEntry, CutShiftDel)
 {
   EXPECT_CALL(*text_entry, CutClipboard());
   TestEvent event(KEY_MODIFIER_SHIFT, NUX_VK_DELETE);
-  GetWindowCompositor().ProcessEvent(event);
-  text_entry->WaitEvent();
+  SendEvent(event);
 }
 
 TEST_F(TestTextEntry, CtrlA)
@@ -289,8 +289,7 @@ TEST_F(TestTextEntry, CtrlA)
   ASSERT_EQ(start, end);
   ASSERT_EQ(start, test_str.length());
 
-  GetWindowCompositor().ProcessEvent(selectall);
-  text_entry->WaitEvent();
+  SendEvent(selectall);
   EXPECT_TRUE(text_entry->GetSelectionBounds(&start, &end));
   EXPECT_EQ(start, 0);
   EXPECT_EQ(end, test_str.length());
@@ -305,23 +304,19 @@ TEST_F(TestTextEntry, MoveKeys)
   ASSERT_EQ(text_entry->GetCursor(), 0);
 
   TestEvent right(NUX_VK_RIGHT);
-  GetWindowCompositor().ProcessEvent(right);
-  text_entry->WaitEvent();
+  SendEvent(right);
   EXPECT_EQ(text_entry->GetCursor(), 1);
 
   TestEvent end(NUX_VK_END);
-  GetWindowCompositor().ProcessEvent(end);
-  text_entry->WaitEvent();
+  SendEvent(end);
   EXPECT_EQ(text_entry->GetCursor(), test_str.length());
 
   TestEvent left(NUX_VK_LEFT);
-  GetWindowCompositor().ProcessEvent(left);
-  text_entry->WaitEvent();
+  SendEvent(left);
   EXPECT_EQ(text_entry->GetCursor(), 2);
 
   TestEvent home(NUX_VK_HOME);
-  GetWindowCompositor().ProcessEvent(home);
-  text_entry->WaitEvent();
+  SendEvent(home);
   EXPECT_EQ(text_entry->GetCursor(), 0);
 }
 
@@ -334,23 +329,19 @@ TEST_F(TestTextEntry, CtrlMoveKeys)
   ASSERT_EQ(text_entry->GetCursor(), 0);
 
   TestEvent right(KEY_MODIFIER_CTRL, NUX_VK_RIGHT);
-  GetWindowCompositor().ProcessEvent(right);
-  text_entry->WaitEvent();
+  SendEvent(right);
   EXPECT_EQ(text_entry->GetCursor(), 3);
 
   TestEvent left(KEY_MODIFIER_CTRL, NUX_VK_LEFT);
-  GetWindowCompositor().ProcessEvent(left);
-  text_entry->WaitEvent();
+  SendEvent(left);
   EXPECT_EQ(text_entry->GetCursor(), 0);
 
   TestEvent end(KEY_MODIFIER_CTRL, NUX_VK_END);
-  GetWindowCompositor().ProcessEvent(end);
-  text_entry->WaitEvent();
+  SendEvent(end);
   EXPECT_EQ(text_entry->GetCursor(), test_str.length());
 
   TestEvent home(KEY_MODIFIER_CTRL, NUX_VK_HOME);
-  GetWindowCompositor().ProcessEvent(home);
-  text_entry->WaitEvent();
+  SendEvent(home);
   EXPECT_EQ(text_entry->GetCursor(), 0);
 }
 
@@ -361,14 +352,12 @@ TEST_F(TestTextEntry, DeleteKeys)
   text_entry->SetCursor(0);
 
   TestEvent del(NUX_VK_DELETE);
-  GetWindowCompositor().ProcessEvent(del);
-  text_entry->WaitEvent();
+  SendEvent(del);
   EXPECT_EQ(text_entry->GetText(), "ux");
 
   text_entry->SetCursor(std::string(text_entry->GetText()).length());
   TestEvent backspace(NUX_VK_BACKSPACE);
-  GetWindowCompositor().ProcessEvent(backspace);
-  text_entry->WaitEvent();
+  SendEvent(backspace);
   EXPECT_EQ(text_entry->GetText(), "u");
 }
 
@@ -379,14 +368,13 @@ TEST_F(TestTextEntry, CtrlDeleteKeys)
   text_entry->SetCursor(0);
 
   TestEvent del(KEY_MODIFIER_CTRL, NUX_VK_DELETE);
-  GetWindowCompositor().ProcessEvent(del);
-  text_entry->WaitEvent();
+  SendEvent(del);
   EXPECT_EQ(text_entry->GetText(), " Text Entry");
 
   text_entry->SetCursor(std::string(text_entry->GetText()).length());
   TestEvent backspace(KEY_MODIFIER_CTRL, NUX_VK_BACKSPACE);
-  GetWindowCompositor().ProcessEvent(backspace);
-  text_entry->WaitEvent();
+  SendEvent(backspace);
   EXPECT_EQ(text_entry->GetText(), " Text ");
 }
+
 }
