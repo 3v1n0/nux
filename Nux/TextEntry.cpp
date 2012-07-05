@@ -712,10 +712,9 @@ namespace nux
         return true;
       }
 
-      int match = NO_MATCH;
       std::string composition_match;
       composition_string_ += character;
-      match = LookForMatch(composition_match);
+      SearchState match = GetCompositionForString(composition_string_, composition_match);
 
       if (match == PARTIAL)
       {
@@ -1295,17 +1294,17 @@ namespace nux
     return cached_layout_;
   }
 
-  int TextEntry::LookForMatch(std::string& str)
+  TextEntry::SearchState TextEntry::GetCompositionForString(std::string const& input, std::string& composition)
   {
-    str.clear();
-    int search_state = NO_MATCH;
+    composition.clear();
+    SearchState search_state = NO_MATCH;
 
     /* If we have two dead keys concatenated, then we should just write one */
-    if (dead_key_mode_ && composition_string_.length() == 2)
+    if (dead_key_mode_ && input.length() == 2)
     {
-      if (composition_string_[0] == composition_string_[1])
+      if (input[0] == input[1])
       {
-        str = composition_string_[0];
+        composition = input[0];
         return MATCH;
       }
     }
@@ -1313,16 +1312,16 @@ namespace nux
     /* Check if the string we have is a match, partial match or doesn't match */
     for (int i = 0; nux_compose_seqs_compact[i] != "\0"; i++)
     {
-      if (nux_compose_seqs_compact[i] == composition_string_)
+      if (nux_compose_seqs_compact[i] == input)
       {
         // advance to the next sequence after ::
         while (nux_compose_seqs_compact[++i] != "::")
         {}
 
-        str = nux_compose_seqs_compact[++i];
+        composition = nux_compose_seqs_compact[++i];
         return MATCH;
       }
-      else if (nux_compose_seqs_compact[i].find(composition_string_) == 0)
+      else if (nux_compose_seqs_compact[i].find(input) == 0)
       {
         search_state = PARTIAL;
       }
