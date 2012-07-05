@@ -1173,7 +1173,7 @@ logging::Logger logger("nux.image");
     {
       for (int s = 0; s < ImageSurface::GetLevelDim(object.GetFormat(), object.GetDepth(), mip); s++)
       {
-        m_MipSurfaceArray[mip].push_back(new ImageSurface(object.GetSurface(mip, s)));
+        m_MipSurfaceArray[mip].push_back(new ImageSurface(object.GetSurface(s, mip)));
       }
     }
   }
@@ -1192,7 +1192,7 @@ logging::Logger logger("nux.image");
     {
       for (int s = 0; s < ImageSurface::GetLevelDim(copy.GetFormat(), copy.GetDepth(), mip); s++)
       {
-        m_MipSurfaceArray[mip].push_back(new ImageSurface(copy.GetSurface(mip, s)));
+        m_MipSurfaceArray[mip].push_back(new ImageSurface(copy.GetSurface(s, mip)));
       }
     }
 

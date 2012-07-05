@@ -364,13 +364,13 @@ namespace nux
     virtual void AllocateCheckBoardTexture(int width, int height, int slice, int NumMipmap, Color color0, Color color1, int TileWidth = 4, int TileHeight = 4);
     virtual void AllocateColorTexture(int width, int height, int slice, int NumMipmap, Color color0 = Color(0xFFFFFFF));
 
-    virtual const ImageSurface &GetSurface(int MipLevel, int slice) const
+    virtual const ImageSurface &GetSurface(int slice, int MipLevel) const
     {
       return *m_MipSurfaceArray[MipLevel][slice];
     };
-    virtual ImageSurface &GetSurface(int MipLevel, int slice)
+    virtual ImageSurface &GetSurface(int slice, int MipLevel)
     {
-      return const_cast<ImageSurface &> ((const_cast< const NVolumeData * > (this))->GetSurface(MipLevel, slice));
+      return const_cast<ImageSurface &> ((const_cast< const NVolumeData * > (this))->GetSurface(slice, MipLevel));
     }
     virtual const ImageSurface &GetSurface(int MipLevel) const
     {

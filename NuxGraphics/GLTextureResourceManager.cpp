@@ -838,9 +838,9 @@ namespace nux
 
     for (int slice = 0; slice < ImageSurface::GetLevelDim(_image.GetFormat(), _image.GetDepth(), MipIndex); slice++)
     {
-      const BYTE         *Src         = _image.GetSurface(MipIndex, slice).GetPtrRawData();
-      int                 RowByteSize = _image.GetSurface(MipIndex, slice).GetPitch();
-      int                 NumRows     = _image.GetSurface(MipIndex, slice).GetBlockHeight();
+      const BYTE         *Src         = _image.GetSurface(slice, MipIndex).GetPtrRawData();
+      int                 RowByteSize = _image.GetSurface(slice, MipIndex).GetPitch();
+      int                 NumRows     = _image.GetSurface(slice, MipIndex).GetBlockHeight();
 
       for ( int Y = 0; Y < NumRows; Y++ )
       {
