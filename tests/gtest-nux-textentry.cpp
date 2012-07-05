@@ -71,6 +71,18 @@ public:
     return dead_key_mode_;
   }
 
+  enum class CompositionResult
+  {
+    NO_MATCH,
+    PARTIAL,
+    MATCH
+  };
+
+  CompositionResult GetCompositionForString(std::string const& input, std::string& composition)
+  {
+    return static_cast<CompositionResult>(TextEntry::GetCompositionForString(input, composition));
+  }
+
   nux::IBusIMEContext* ime() const
   {
 #if defined(NUX_OS_LINUX)
@@ -509,6 +521,28 @@ TEST_F(TestTextEntry, CompositionDeadKeysMix)
   EXPECT_FALSE(text_entry->InDeadKeyMode());
 
   EXPECT_EQ(text_entry->GetText(), "");
+}
+
+TEST_F(TestTextEntry, CompositionResultValid)
+{
+  std::string composed;
+  auto result = text_entry->GetCompositionForString("o", composed);
+
+  EXPECT_EQ(result, MockTextEntry::CompositionResult::PARTIAL);
+  EXPECT_TRUE(composed.empty());
+
+  result = text_entry->GetCompositionForString("ox", composed);
+  EXPECT_EQ(result, MockTextEntry::CompositionResult::MATCH);
+  EXPECT_EQ(composed, "¤");
+}
+
+TEST_F(TestTextEntry, CompositionResultInValid)
+{
+  std::string composed;
+  auto result = text_entry->GetCompositionForString("nux", composed);
+
+  EXPECT_EQ(result, MockTextEntry::CompositionResult::NO_MATCH);
+  EXPECT_TRUE(composed.empty());
 }
 #endif
 }
