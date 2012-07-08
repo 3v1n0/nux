@@ -22,7 +22,7 @@ output_file = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_OUTPUT
 keys_match = re.compile("(?P<keybinding><[^:]+)[\s]*:[\s]*\"(\\\)?(?P<char>.*)\"[\s]*(?P<charcode>[^\s]+)?[\s]*#[\s]*(?P<desc>.+)")
 unicode_keys = re.compile("^U[0-9A-Fa-f]{4,6}$");
 
-combinations = {u"": ["ubuntu", "circle", "((u))", "((o))"]}
+combinations = {u"": ["ubuntu", "ucircle"]}
 descriptions = {u"": "UBUNTU CIRCLE"}
 
 dead_to_char_map = { "dead_grave": 'grave',
@@ -77,7 +77,6 @@ static const char* compose_map[] = {
 
     for c in combinations.keys():
         if not len(combinations[c]):
-            print combinations[c]
             continue
 
         for k in combinations[c]:
