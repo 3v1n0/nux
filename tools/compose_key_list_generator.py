@@ -23,7 +23,7 @@ keys_match = re.compile("(?P<keybinding><[^:]+)[\s]*:[\s]*\"(\\\)?(?P<char>.*)\"
 unicode_keys = re.compile("^U[0-9A-Fa-f]{4,6}$");
 
 combinations = {u"": ["ubuntu", "circle", "((u))", "((o))"]}
-descriptions = {u"": "UBUNTU CYRCLE"}
+descriptions = {u"": "UBUNTU CIRCLE"}
 
 dead_to_char_map = { "dead_grave": 'grave',
                      "dead_acute": 'acute',
