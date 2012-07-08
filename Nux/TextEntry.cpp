@@ -696,8 +696,7 @@ namespace nux
     if (composition_mode_)
     {
       /* Excluding meta keys and shifts as composition cancellation */
-      if ((keysym >= XK_Shift_L && keysym <= XK_Hyper_R) ||
-          keysym == XK_ISO_Level3_Shift)
+      if (IsModifierKey(keysym))
       {
         return true;
       }
