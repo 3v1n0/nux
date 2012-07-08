@@ -78,7 +78,6 @@ static const char* compose_map[] = {
     for c in combinations.keys():
         if not len(combinations[c]):
             print combinations[c]
-            print "No way to make "+c.encode('utf-8')
             continue
 
         for k in combinations[c]:
