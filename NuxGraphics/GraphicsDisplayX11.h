@@ -67,6 +67,15 @@ namespace nux
     
     DNDACTION_NONE,
   };
+
+  struct XimClientData
+  {
+    XIM m_xim;
+    XIC m_xic;
+    Window *window;
+    Display **display;
+    int focus_stat;
+  };
   
 #define NUX_THREADMSG                           (WM_APP+0)
 #define NUX_THREADMSG_START_RENDERING           (WM_APP+1)  // Connection established // start at WM_APP
@@ -84,6 +93,7 @@ namespace nux
     int         m_X11Screen;
     Window      m_X11Window;
     XVisualInfo *m_X11VisualInfo;
+    struct XimClientData m_ximData;
 
     int         m_ParentWindow;
 #ifndef NUX_OPENGLES_20
@@ -342,10 +352,15 @@ namespace nux
     
     void * KeyboardGrabData() { return _global_keyboard_grab_data; }
     void * PointerGrabData() { return _global_pointer_grab_data; }
+    void XICFocus();
+    void XICUnFocus();
 
   private:
     void InitGlobalGrabWindow();
   
+    void InitXIM(struct XimClientData *client_data);
+    static void XIMEndCallback(Display *dpy, XPointer client_data, XPointer call_data);
+    static void XIMStartCallback(Display *dpy, XPointer client_data, XPointer call_data);
     void HandleXDndPosition(XEvent event, Event* nux_event);
     void HandleXDndEnter    (XEvent event);
     void HandleXDndStatus   (XEvent event);

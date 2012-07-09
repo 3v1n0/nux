@@ -183,6 +183,111 @@ namespace nux
     return(event->type == MapNotify) && (event->xmap.window == (Window) arg);
   }
 
+  void GraphicsDisplay::XICFocus()
+  {
+    if (m_ximData.m_xic)
+    {
+      XSetICFocus(m_ximData.m_xic);
+      m_ximData.focus_stat=1;
+    }
+  }
+
+  void GraphicsDisplay::XICUnFocus()
+  {
+    if (m_ximData.m_xic)
+    {
+      XUnsetICFocus(m_ximData.m_xic);
+      m_ximData.focus_stat=0;
+    }
+  }
+
+  void GraphicsDisplay::XIMEndCallback(Display *dpy, XPointer client_data, XPointer call_data)
+  {
+    struct XimClientData *data;
+
+    data = (struct XimClientData*)client_data;
+    data->m_xim = NULL;
+    data->m_xic = NULL;
+  }
+
+  void GraphicsDisplay::XIMStartCallback(Display *dpy, XPointer client_data, XPointer call_data)
+  {
+    int i;
+    XIMCallback destroy;
+    XIMStyles *xim_styles = NULL;
+    XIMStyle root_style = (XIMPreeditNothing|XIMStatusNothing);
+    Window win;
+    struct XimClientData *data;
+
+    data = (struct XimClientData*)client_data;
+    win = * (data->window);
+
+    data->m_xim = XOpenIM(dpy, NULL, NULL, NULL);
+    if (! (data->m_xim))
+    {
+      nuxDebugMsg("[GraphicsDisplay::XIMStartCallback] Failed to open IM.");
+      return;
+    }
+    memset(&destroy, 0, sizeof(destroy));
+    destroy.callback = (XIMProc)((GraphicsDisplay::XIMEndCallback));
+    destroy.client_data = (XPointer)data;
+    XSetIMValues((data->m_xim), XNDestroyCallback, &destroy, NULL);
+    XGetIMValues((data->m_xim), XNQueryInputStyle, &xim_styles, NULL);
+    for (i=0; i<xim_styles->count_styles; i++)
+    {
+      if (xim_styles->supported_styles[i] == root_style)
+      {
+	break;
+      }
+    }
+    if (i>=xim_styles->count_styles)
+    {
+      nuxDebugMsg("[GraphicsDisplay::XIMStartCallback] root styles not supported.");
+      return;
+    }
+    data->m_xic = XCreateIC(data->m_xim, XNInputStyle, root_style, XNClientWindow, win, XNFocusWindow, win, NULL);
+    if (!(data->m_xic))
+    {
+      nuxDebugMsg("[GraphicsDisplay::XIMStartCallback] failed to register xic");
+    }
+    return;
+  }
+
+  void GraphicsDisplay::InitXIM(struct XimClientData *data)
+  {
+    const char *xmodifier;
+
+    /* don't do anything if we are using ibus */
+    xmodifier = getenv("XMODIFIERS");
+    if (xmodifier && strstr(xmodifier,"ibus") != NULL)
+    {
+      nuxDebugMsg("[GraphicsDisplay::InitXIM] ibus natively supported");
+      return;
+    }
+
+    if (setlocale(LC_ALL, "") == NULL)
+    {
+      nuxDebugMsg("[GraphicsDisplay::InitXIM] cannot setlocale");
+    }
+
+    if (!XSupportsLocale())
+    {
+      nuxDebugMsg("[GraphicsDisplay::InitXIM] no supported locale");
+    }
+
+    if (XSetLocaleModifiers("") == NULL)
+    {
+      nuxDebugMsg("[GraphicsDisplay::InitXIM] XSetLocaleModifiers failed.");
+    }
+
+    if (!XRegisterIMInstantiateCallback(*(data->display), NULL, NULL, NULL, GraphicsDisplay::XIMStartCallback, (XPointer)(data)))
+    {
+      nuxDebugMsg("[GraphicsDisplay::InitXIM] Cannot Register IM Init callback");
+    }
+  }
+
+
+
 // TODO: change windowWidth, windowHeight, to window_size;
   static NCriticalSection CreateOpenGLWindow_CriticalSection;
   bool GraphicsDisplay::CreateOpenGLWindow(const char *WindowTitle,
@@ -565,6 +670,19 @@ namespace nux
 
       XSetStandardProperties(m_X11Display, m_X11Window, WindowTitle, WindowTitle, None, NULL, 0, NULL);
       //XMapRaised(m_X11Display, m_X11Window);
+    }
+
+    // XIM support
+    memset(&m_ximData,0,sizeof(m_ximData));
+    m_ximData.window = &m_X11Window;
+    m_ximData.display = &m_X11Display;
+    InitXIM(&m_ximData);
+
+    long im_event_mask=0;
+    if (m_ximData.m_xic)
+    {
+      XGetICValues(m_ximData.m_xic, XNFilterEvents, &im_event_mask, NULL);
+      m_X11Attr.event_mask |= im_event_mask;
     }
 
 #ifndef NUX_OPENGLES_20
@@ -1228,6 +1346,8 @@ namespace nux
     if (XPending(m_X11Display))
     {
       XNextEvent(m_X11Display, &xevent);
+      if (XFilterEvent(&xevent, None) == True)
+	return;
 
       if (!_event_filters.empty())
       {
@@ -1534,6 +1654,10 @@ namespace nux
         m_pEvent->dy = 0;
         m_pEvent->virtual_code = 0;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: FocusIn event.");
+        if (m_ximData.m_xic && m_ximData.focus_stat==1)
+        {
+          XSetICFocus(m_ximData.m_xic);
+        }
         break;
       }
 
@@ -1549,6 +1673,11 @@ namespace nux
         m_pEvent->dy = 0;
         m_pEvent->virtual_code = 0;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: FocusOut event.");
+
+        if (m_ximData.m_xic)
+        {
+          XUnsetICFocus(m_ximData.m_xic);
+        }
         break;
       }
 
@@ -1579,7 +1708,15 @@ namespace nux
          skip = true; 
         }
         
-        int num_char_stored = XLookupString(&xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->x11_keysym, NULL);
+        int num_char_stored = 0;
+        if (m_ximData.m_xic)
+        {
+          num_char_stored = XmbLookupString(m_ximData.m_xic, &xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->x11_keysym, NULL);
+        }
+        else
+        {
+          num_char_stored = XLookupString(&xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->x11_keysym, NULL);
+        }
         if (num_char_stored && (!skip))
         {
           Memcpy(m_pEvent->text, buffer, num_char_stored);
