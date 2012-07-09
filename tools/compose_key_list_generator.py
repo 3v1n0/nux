@@ -60,7 +60,8 @@ def make_cpp_output(output_file):
 
 struct ComposeSequence
 {
-  std::vector<KeySym> symbols;
+  typedef std::vector<KeySym> KeySymVector;
+  std::vector<KeySymVector> symbols;
   const char* result;
 };
 
@@ -70,16 +71,23 @@ static const ComposeSequence NUX_COMPOSE_SEQUENCIES[] = {
     keyarray = ""
 
     for c in combinations.keys():
-        if not len(combinations[c]):
+        thiscombo = combinations[c]
+        if not len(thiscombo):
             continue
 
         first = True
-        for combo in combinations[c]:
+        keyarray += "  {{"
+
+        for combo in thiscombo:
             # Add 'XK_' prefix to key names
-            combo = ["XK_" + k for k in combo]
-            desc = " // " + descriptions[c] if first else ""
-            keyarray += "  {{%s}, \"%s\"},%s\n" % (", ".join(combo), escape_char(c), desc)
+            xcombo = ["XK_" + k for k in combo]
+            keyarray += "    " if not first else ""
+            keyarray += "{%s}" % (", ".join(xcombo))
+            keyarray += ",\n" if combo != thiscombo[-1] else "},\n"
+
             first = False
+
+        keyarray += "   \"%s\"}, // %s\n" % (escape_char(c), descriptions[c])
 
     output = keycode % (keyarray)
 
