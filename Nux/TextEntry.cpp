@@ -371,6 +371,7 @@ namespace nux
     unsigned int keyval = keysym;
     bool shift = (state & NUX_STATE_SHIFT);
     bool ctrl = (state & NUX_STATE_CTRL);
+    bool handled = false;
 
     // DLOG("TextEntry::key_down(%d, shift:%d ctrl:%d)", keyval, shift, ctrl);
     if (event_type == NUX_KEYDOWN)
@@ -381,6 +382,8 @@ namespace nux
           MoveCursor(VISUALLY, -1, shift);
         else
           MoveCursor(WORDS, -1, shift);
+
+        handled = true;
       }
       else if (keyval == NUX_VK_RIGHT)
       {
@@ -388,16 +391,20 @@ namespace nux
           MoveCursor(VISUALLY, 1, shift);
         else
           MoveCursor(WORDS, 1, shift);
+
+        handled = true;
       }
       else if (keyval == NUX_VK_UP)
       {
         // move cursor to start of line
         MoveCursor(DISPLAY_LINES, -1, shift);
+        handled = true;
       }
       else if (keyval == NUX_VK_DOWN)
       {
         // move cursor to end of line
         MoveCursor(DISPLAY_LINES, 1, shift);
+        handled = true;
       }
       else if (keyval == NUX_VK_HOME)
       {
@@ -405,6 +412,8 @@ namespace nux
           MoveCursor(DISPLAY_LINE_ENDS, -1, shift);
         else
           MoveCursor(BUFFER, -1, shift);
+
+        handled = true;
       }
       else if (keyval == NUX_VK_END)
       {
@@ -412,6 +421,8 @@ namespace nux
           MoveCursor(DISPLAY_LINE_ENDS, 1, shift);
         else
           MoveCursor(BUFFER, 1, shift);
+
+        handled = true;
       }
       else if (keyval == NUX_VK_PAGE_UP)
       {
@@ -419,6 +430,8 @@ namespace nux
           MoveCursor(PAGES, -1, shift);
         else
           MoveCursor(BUFFER, -1, shift);
+
+        handled = true;
       }
       else if (keyval == NUX_VK_PAGE_DOWN)
       {
@@ -426,23 +439,28 @@ namespace nux
           MoveCursor(PAGES, 1, shift);
         else
           MoveCursor(BUFFER, 1, shift);
+
+        handled = true;
       }
       else if (((keyval == NUX_VK_x) && ctrl && !shift) || ((keyval == NUX_VK_DELETE) && shift && !ctrl))
       {
         CutClipboard();
+        handled = true;
       }
       else if (((keyval == NUX_VK_c) && ctrl && (!shift)) || ((keyval == NUX_VK_INSERT) && ctrl && (!shift)))
       {
         CopyClipboard();
+        handled = true;
       }
       else if (((keyval == NUX_VK_v) && ctrl && (!shift)) || ((keyval == NUX_VK_INSERT) && shift && (!ctrl)))
       {
         PasteClipboard();
+        handled = true;
       }
       else if ((keyval == NUX_VK_a) && ctrl)
       {
         SelectAll();
-        return;
+        handled = true;
       }
       else if (keyval == NUX_VK_BACKSPACE)
       {
@@ -450,6 +468,8 @@ namespace nux
           BackSpace(VISUALLY);
         else
           BackSpace(WORDS);
+
+        handled = true;
       }
       else if ((keyval == NUX_VK_DELETE) && (!shift))
       {
@@ -457,10 +477,13 @@ namespace nux
           Delete(VISUALLY);
         else
           Delete(WORDS);
+
+        handled = true;
       }
       else if ((keyval == NUX_VK_INSERT) && (!shift) && (!ctrl))
       {
         ToggleOverwrite();
+        handled = true;
       }
 //       else
 //       {
@@ -483,7 +506,7 @@ namespace nux
 //       }
     }
 
-    if (character)
+    if (!handled && character)
     {
       unsigned int utf_char = g_utf8_get_char(character);
 
@@ -672,9 +695,19 @@ namespace nux
       return true;
     }
 
-    if (composition_mode_ && character)
+    if (composition_mode_)
     {
-      if (strncmp(character, "", 1) == 0 && keysym != NUX_VK_SHIFT)
+      /* Excluding meta keys and shifts as composition cancellation */
+      if ((keysym >= XK_Shift_L && keysym <= XK_Hyper_R) ||
+          keysym == XK_ISO_Level3_Shift)
+      {
+        return true;
+      }
+
+      if (!character)
+        return true;
+
+      if (strncmp(character, "", 1) == 0)
       {
         composition_mode_ = false;
         composition_string_.clear();
