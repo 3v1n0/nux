@@ -164,9 +164,12 @@ namespace nux
     }
     else
     {
+      unsigned char* dest_u8 = bitmap_data->GetSurface(0).GetPtrRawData();
+      const int pitch = bitmap_data->GetSurface(0).GetPitch();
+
       for (int j = 0; j < _height; j++)
       {
-        Memcpy(bitmap_data->GetSurface(0).GetPtrRawData() + j * bitmap_data->GetSurface(0).GetPitch(),
+        Memcpy(dest_u8 + j * pitch,
                 (const void *) (&ptr[j * stride]),
                 _width * GPixelFormats[bitmap_format].NumComponents);
       }
