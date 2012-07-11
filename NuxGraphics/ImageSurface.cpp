@@ -29,7 +29,6 @@
 
 #if defined(NUX_OS_WINDOWS)
   #include "GdiImageLoader.h"
-  #include "DDS.h"
 #endif
 
 #include "ImageSurface.h"
@@ -82,13 +81,6 @@ logging::Logger logger("nux.image");
 #if defined(NUX_OS_WINDOWS)
     BitmapData = GdiLoadImageFile(filename);
     if (BitmapData) return BitmapData;
-
-    BitmapData = read_tga_file(filename);
-    if (BitmapData) return BitmapData;
-
-    BitmapData = LoadFileFormat_DDS(filename);
-    if (BitmapData) return BitmapData;
-
 #elif defined(NUX_OS_LINUX)
     GdkGraphics gdkgraphics;
     gdkgraphics.LoadImage(filename);
@@ -1181,7 +1173,7 @@ logging::Logger logger("nux.image");
     {
       for (int s = 0; s < ImageSurface::GetLevelDim(object.GetFormat(), object.GetDepth(), mip); s++)
       {
-        m_MipSurfaceArray[mip].push_back(new ImageSurface(object.GetSurface(mip, s)));
+        m_MipSurfaceArray[mip].push_back(new ImageSurface(object.GetSurface(s, mip)));
       }
     }
   }
@@ -1200,7 +1192,7 @@ logging::Logger logger("nux.image");
     {
       for (int s = 0; s < ImageSurface::GetLevelDim(copy.GetFormat(), copy.GetDepth(), mip); s++)
       {
-        m_MipSurfaceArray[mip].push_back(new ImageSurface(copy.GetSurface(mip, s)));
+        m_MipSurfaceArray[mip].push_back(new ImageSurface(copy.GetSurface(s, mip)));
       }
     }
 

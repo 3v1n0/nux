@@ -70,10 +70,10 @@ namespace nux
     SetLayout(hlayout);
 
     m_BlinkTimerFunctor = new TimerFunctor();
-    m_BlinkTimerFunctor->time_expires.connect(sigc::mem_fun(this, &EditTextBox::BlinkCursorTimerInterrupt));
+    m_BlinkTimerFunctor->tick.connect(sigc::mem_fun(this, &EditTextBox::BlinkCursorTimerInterrupt));
 
     m_ScrollTimerFunctor = new TimerFunctor();
-    m_ScrollTimerFunctor->time_expires.connect(sigc::mem_fun(this, &EditTextBox::ScrollTimerInterrupt));
+    m_ScrollTimerFunctor->tick.connect(sigc::mem_fun(this, &EditTextBox::ScrollTimerInterrupt));
 
     SetAcceptKeyboardEvent(true);
     EnableDoubleClick(true);
@@ -102,7 +102,7 @@ namespace nux
     if (((X < base.x) && (m_KeyboardHandler.GetCursorPosition() > 0)) ||
          ((X > base.x + base.GetWidth()) && (m_KeyboardHandler.GetCursorPosition() < m_KeyboardHandler.GetLength())))
     {
-      m_ScrollTimerHandler = GetTimer().AddTimerHandler(50, m_ScrollTimerFunctor, this);
+      m_ScrollTimerHandler = GetTimer().AddOneShotTimer(50, m_ScrollTimerFunctor, this);
     }
     else
     {
@@ -120,7 +120,7 @@ namespace nux
   void EditTextBox::BlinkCursorTimerInterrupt(void *v)
   {
     GetTimer().RemoveTimerHandler(m_BlinkTimerHandler);
-    m_BlinkTimerHandler = GetTimer().AddTimerHandler(500, m_BlinkTimerFunctor, this);
+    m_BlinkTimerHandler = GetTimer().AddOneShotTimer(500, m_BlinkTimerFunctor, this);
     BlinkCursor = !BlinkCursor;
     QueueDraw();
   }
@@ -135,7 +135,7 @@ namespace nux
 
   void EditTextBox::StartBlinkCursor(bool BlinkState)
   {
-    m_BlinkTimerHandler = GetTimer().AddTimerHandler(500, m_BlinkTimerFunctor, this);
+    m_BlinkTimerHandler = GetTimer().AddOneShotTimer(500, m_BlinkTimerFunctor, this);
     BlinkCursor = BlinkState;
     QueueDraw();
   }
@@ -292,7 +292,7 @@ namespace nux
 
     if ((!m_ScrollTimerHandler.IsValid()) && ((X < base.x) || (X > base.x + base.GetWidth())))
     {
-      m_ScrollTimerHandler = GetTimer().AddTimerHandler(25, m_ScrollTimerFunctor, this);
+      m_ScrollTimerHandler = GetTimer().AddOneShotTimer(25, m_ScrollTimerFunctor, this);
     }
     else if ((X >= base.x) && (X < base.x + base.GetWidth()))
     {
@@ -439,7 +439,7 @@ namespace nux
     text_input_mode_  = false;
     
     EnteringKeyboardFocus();
-    m_BlinkTimerHandler = GetTimer().AddTimerHandler(500, m_BlinkTimerFunctor, this);
+    m_BlinkTimerHandler = GetTimer().AddOneShotTimer(500, m_BlinkTimerFunctor, this);
   }
 
   void EditTextBox::RecvEndKeyFocus()

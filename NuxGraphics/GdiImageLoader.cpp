@@ -59,6 +59,9 @@ namespace nux
       (pixel_format == PixelFormat32bppPARGB) ||
       (pixel_format == PixelFormat32bppRGB))
     {
+      if (pixel_format == PixelFormat32bppARGB)
+        pixel_format = PixelFormat32bppPARGB; // request conversion to pre-multiplied RGBA
+
       bitmap_format = BITFMT_B8G8R8A8;
       channels = 4;
     }
