@@ -650,7 +650,7 @@ namespace nux
   {
 #if defined(NUX_OS_LINUX)
     /* Checks if the keysym between the first and last dead key */
-    if (character && (keysym >= XK_dead_grave) && (keysym <= XK_dead_stroke))
+    if (character && (keysym >= XK_dead_grave) && (keysym <= XK_dead_currency))
     {
       int key = keysym - XK_dead_grave;
 
@@ -696,8 +696,7 @@ namespace nux
     if (composition_mode_)
     {
       /* Excluding meta keys and shifts as composition cancellation */
-      if ((keysym >= XK_Shift_L && keysym <= XK_Hyper_R) ||
-          keysym == XK_ISO_Level3_Shift)
+      if (IsModifierKey(keysym))
       {
         return true;
       }
@@ -1312,7 +1311,8 @@ namespace nux
     /* Check if the string we have is a match, partial match or doesn't match */
     for (int i = 0; nux_compose_seqs_compact[i] != "\0"; i++)
     {
-      if (nux_compose_seqs_compact[i] == input)
+      if (nux_compose_seqs_compact[i] == input &&
+          (i == 0 || (i > 0 && nux_compose_seqs_compact[i-1] != "::")))
       {
         // advance to the next sequence after ::
         while (nux_compose_seqs_compact[++i] != "::")
