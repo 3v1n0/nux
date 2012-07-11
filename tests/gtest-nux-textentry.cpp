@@ -66,6 +66,23 @@ public:
     return composition_mode_;
   }
 
+  bool InDeadKeyMode() const
+  {
+    return dead_key_mode_;
+  }
+
+  enum class CompositionResult
+  {
+    NO_MATCH,
+    PARTIAL,
+    MATCH
+  };
+
+  CompositionResult GetCompositionForString(std::string const& input, std::string& composition)
+  {
+    return static_cast<CompositionResult>(TextEntry::GetCompositionForString(input, composition));
+  }
+
   nux::IBusIMEContext* ime() const
   {
 #if defined(NUX_OS_LINUX)
@@ -435,6 +452,97 @@ TEST_F(TestTextEntry, CompositionIgnoreModifiers)
   EXPECT_FALSE(text_entry->InCompositionMode());
 
   EXPECT_EQ(text_entry->GetText(), "ñ");
+}
+
+TEST_F(TestTextEntry, CompositionDeadKey)
+{
+  ASSERT_FALSE(text_entry->InCompositionMode());
+  TestEvent dead_key(XK_dead_circumflex);
+  SendEvent(dead_key);
+  EXPECT_TRUE(text_entry->InDeadKeyMode());
+  EXPECT_TRUE(text_entry->InCompositionMode());
+
+  TestEvent a(XK_a);
+  SendEvent(a);
+  EXPECT_FALSE(text_entry->InCompositionMode());
+  EXPECT_FALSE(text_entry->InDeadKeyMode());
+
+  EXPECT_EQ(text_entry->GetText(), "â");
+}
+
+TEST_F(TestTextEntry, CompositionDeadKeyRepeat)
+{
+  ASSERT_FALSE(text_entry->InCompositionMode());
+  TestEvent dead_key(XK_dead_grave);
+  SendEvent(dead_key);
+  EXPECT_TRUE(text_entry->InDeadKeyMode());
+  EXPECT_TRUE(text_entry->InCompositionMode());
+
+  SendEvent(dead_key);
+  EXPECT_FALSE(text_entry->InCompositionMode());
+  EXPECT_FALSE(text_entry->InDeadKeyMode());
+
+  EXPECT_EQ(text_entry->GetText(), "`");
+}
+
+TEST_F(TestTextEntry, CompositionDeadKeyComplex)
+{
+  ASSERT_FALSE(text_entry->InCompositionMode());
+  TestEvent dead_key(XK_dead_circumflex);
+  SendEvent(dead_key);
+  EXPECT_TRUE(text_entry->InDeadKeyMode());
+  EXPECT_TRUE(text_entry->InCompositionMode());
+
+  SendEvent(dead_key);
+  EXPECT_FALSE(text_entry->InCompositionMode());
+  EXPECT_FALSE(text_entry->InDeadKeyMode());
+  EXPECT_EQ(text_entry->GetText(), "^");
+
+  SendEvent(dead_key);
+  TestEvent o(XK_o);
+  SendEvent(o);
+  EXPECT_FALSE(text_entry->InCompositionMode());
+  EXPECT_FALSE(text_entry->InDeadKeyMode());
+
+  EXPECT_EQ(text_entry->GetText(), "^ô");
+}
+
+TEST_F(TestTextEntry, CompositionDeadKeysMix)
+{
+  ASSERT_FALSE(text_entry->InCompositionMode());
+  TestEvent dead_key1(XK_dead_grave);
+  SendEvent(dead_key1);
+  EXPECT_TRUE(text_entry->InDeadKeyMode());
+  EXPECT_TRUE(text_entry->InCompositionMode());
+
+  TestEvent dead_key2(XK_dead_circumflex);
+  SendEvent(dead_key2);
+  EXPECT_FALSE(text_entry->InCompositionMode());
+  EXPECT_FALSE(text_entry->InDeadKeyMode());
+
+  EXPECT_EQ(text_entry->GetText(), "");
+}
+
+TEST_F(TestTextEntry, CompositionResultValid)
+{
+  std::string composed;
+  auto result = text_entry->GetCompositionForString("o", composed);
+
+  EXPECT_EQ(result, MockTextEntry::CompositionResult::PARTIAL);
+  EXPECT_TRUE(composed.empty());
+
+  result = text_entry->GetCompositionForString("ox", composed);
+  EXPECT_EQ(result, MockTextEntry::CompositionResult::MATCH);
+  EXPECT_EQ(composed, "¤");
+}
+
+TEST_F(TestTextEntry, CompositionResultInValid)
+{
+  std::string composed;
+  auto result = text_entry->GetCompositionForString("nux", composed);
+
+  EXPECT_EQ(result, MockTextEntry::CompositionResult::NO_MATCH);
+  EXPECT_TRUE(composed.empty());
 }
 #endif
 }
