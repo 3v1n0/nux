@@ -22,6 +22,8 @@
 #ifndef NUX_CORE_ANIMATION_CONTROLLER_H
 #define NUX_CORE_ANIMATION_CONTROLLER_H
 
+#include <sigc++/signal.h>
+
 namespace nux
 {
 namespace animation

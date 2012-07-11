@@ -65,3 +65,7 @@ Logs
 examples/cairo_wrapper
 examples/tiles_view
 test-graphics-display
+Nux/ABI.h
+examples/coverflow
+examples/shortcut_keys
+tests/gtest-nuxcore

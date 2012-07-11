@@ -25,6 +25,8 @@ libnux_core_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
 
 source_cpp = \
+  $(srcdir)/Animation.cpp \
+  $(srcdir)/AnimationController.cpp \
   $(srcdir)/AsyncFileWriter.cpp \
   $(srcdir)/TextString.cpp \
   $(srcdir)/TimeFunctions.cpp \
