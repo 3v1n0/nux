@@ -20,8 +20,8 @@
  */
 
 
+#include "tinyxml.h"
 #include "Nux.h"
-#include "NuxCore/TinyXML/tinyxml.h"
 #include "Theme.h"
 
 
