@@ -1,4 +1,4 @@
-SUBDIRS = data NuxCore NuxImage NuxGraphics Nux examples gputests tests tools
+SUBDIRS = data NuxCore NuxGraphics Nux examples gputests tests tools
 
 CXXFLAGS += -fno-permissive
 

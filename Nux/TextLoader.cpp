@@ -18,7 +18,7 @@
  */
 
 #include "TextLoader.h"
-#include "NuxImage/CairoGraphics.h"
+#include "NuxGraphics/CairoGraphics.h"
 
 #include <cairo/cairo.h>
 #include <pango/pango.h>

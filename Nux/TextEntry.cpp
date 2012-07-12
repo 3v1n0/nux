@@ -24,7 +24,7 @@
 #include "cairo/cairo.h"
 #include "pango/pango.h"
 #include "pango/pangocairo.h"
-#include "NuxImage/CairoGraphics.h"
+#include "NuxGraphics/CairoGraphics.h"
 
 #include "TextEntry.h"
 #include "TextEntryComposeSeqs.h"
@@ -237,15 +237,26 @@ namespace nux
 
   void TextEntry::ProcessMouseEvent(int event_type, int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
   {
-    if (GetEventButton(button_flags) != 1 && event_type != NUX_MOUSE_MOVE)
-      return;
-
-    //ResetImContext();
-    //Event::Type type = event.GetType();
-
     int X = static_cast<int>(x /*round(event.GetX())*/) - kInnerBorderX - scroll_offset_x_;
     int Y = static_cast<int>(y /*round(event.GetY())*/) - kInnerBorderY - scroll_offset_y_;
     int index = XYToTextIndex(X, Y);
+    MouseButton button = GetEventButton(button_flags);
+
+    if (event_type == NUX_MOUSE_PRESSED && (button == 2 || button == 3))
+    {
+      SetCursor(index);
+#if defined(NUX_OS_LINUX)
+      if (button == 2)
+        PastePrimaryClipboard();
+#endif
+      QueueRefresh(false, true);
+
+      return;
+    }
+
+    if (button != 1 && event_type != NUX_MOUSE_MOVE)
+      return;
+
     int sel_start, sel_end;
     GetSelectionBounds(&sel_start, &sel_end);
 
@@ -253,7 +264,7 @@ namespace nux
 
     if ((event_type == NUX_MOUSE_PRESSED) && (current_time - last_dblclick_time_ <= kTripleClickTimeout))
     {
-        SelectLine();
+      SelectLine();
     }
     else if (event_type == NUX_MOUSE_DOUBLECLICK && !ime_active_)
     {
@@ -294,12 +305,28 @@ namespace nux
     const char*      character ,   /*character*/
     unsigned short   keyCount      /*key repeat count*/)
   {
-    bool im_filtered = false;
+#if defined(NUX_OS_LINUX)
+    if (im_running())
+    {
+      // FIXME Have to get the current event for the x11_keycode for ibus-hangul/korean input
+      nux::Event const& cur_event = GetGraphicsDisplay()->GetCurrentEvent();
+      KeyEvent event(static_cast<EventType>(event_type), keysym, cur_event.x11_keycode, state, character);
+
+      if (ime_->FilterKeyEvent(event))
+        return;
+    }
+#endif
+
+    /* Ignore all the keyup events to make Composition and Dead keys to work,
+     * as no one (IBus a part) needs them */
+    if (event_type == NUX_KEYUP)
+      return;
 
 #if defined(NUX_OS_LINUX)
     if (dead_key_mode_ && keysym == XK_space)
     {
       dead_key_mode_ = false;
+      composition_mode_ = false;
       EnterText(dead_key_string_.c_str());
       QueueRefresh(false, true);
       return;
@@ -313,17 +340,10 @@ namespace nux
     {
       return;
     }
-
-    // FIXME Have to get the current event fot he x11_keycode for ibus-hangul/korean input
-    nux::Event const& cur_event = GetGraphicsDisplay()->GetCurrentEvent();
-    KeyEvent event(static_cast<EventType>(event_type), keysym,cur_event.x11_keycode, state, character);
-    im_filtered = ime_->FilterKeyEvent(event);
 #endif
 
     if (event_type == NUX_KEYDOWN)
       text_input_mode_ = true;
-    else if (event_type == NUX_KEYUP)
-      return;
 
     cursor_blink_status_ = 4;
 
@@ -343,7 +363,7 @@ namespace nux
     if (keysym == NUX_VK_TAB)
       return;
 
-    if ((keysym == NUX_VK_ENTER || keysym == NUX_KP_ENTER) && !im_filtered)
+    if ((keysym == NUX_VK_ENTER || keysym == NUX_KP_ENTER))
     {
       activated.emit();
       return;
@@ -352,9 +372,10 @@ namespace nux
     unsigned int keyval = keysym;
     bool shift = (state & NUX_STATE_SHIFT);
     bool ctrl = (state & NUX_STATE_CTRL);
+    bool handled = false;
 
     // DLOG("TextEntry::key_down(%d, shift:%d ctrl:%d)", keyval, shift, ctrl);
-    if (event_type == NUX_KEYDOWN && !im_filtered)
+    if (event_type == NUX_KEYDOWN)
     {
       if (keyval == NUX_VK_LEFT)
       {
@@ -362,6 +383,8 @@ namespace nux
           MoveCursor(VISUALLY, -1, shift);
         else
           MoveCursor(WORDS, -1, shift);
+
+        handled = true;
       }
       else if (keyval == NUX_VK_RIGHT)
       {
@@ -369,16 +392,20 @@ namespace nux
           MoveCursor(VISUALLY, 1, shift);
         else
           MoveCursor(WORDS, 1, shift);
+
+        handled = true;
       }
       else if (keyval == NUX_VK_UP)
       {
         // move cursor to start of line
         MoveCursor(DISPLAY_LINES, -1, shift);
+        handled = true;
       }
       else if (keyval == NUX_VK_DOWN)
       {
         // move cursor to end of line
         MoveCursor(DISPLAY_LINES, 1, shift);
+        handled = true;
       }
       else if (keyval == NUX_VK_HOME)
       {
@@ -386,6 +413,8 @@ namespace nux
           MoveCursor(DISPLAY_LINE_ENDS, -1, shift);
         else
           MoveCursor(BUFFER, -1, shift);
+
+        handled = true;
       }
       else if (keyval == NUX_VK_END)
       {
@@ -393,6 +422,8 @@ namespace nux
           MoveCursor(DISPLAY_LINE_ENDS, 1, shift);
         else
           MoveCursor(BUFFER, 1, shift);
+
+        handled = true;
       }
       else if (keyval == NUX_VK_PAGE_UP)
       {
@@ -400,6 +431,8 @@ namespace nux
           MoveCursor(PAGES, -1, shift);
         else
           MoveCursor(BUFFER, -1, shift);
+
+        handled = true;
       }
       else if (keyval == NUX_VK_PAGE_DOWN)
       {
@@ -407,23 +440,28 @@ namespace nux
           MoveCursor(PAGES, 1, shift);
         else
           MoveCursor(BUFFER, 1, shift);
+
+        handled = true;
       }
       else if (((keyval == NUX_VK_x) && ctrl && !shift) || ((keyval == NUX_VK_DELETE) && shift && !ctrl))
       {
         CutClipboard();
+        handled = true;
       }
       else if (((keyval == NUX_VK_c) && ctrl && (!shift)) || ((keyval == NUX_VK_INSERT) && ctrl && (!shift)))
       {
         CopyClipboard();
+        handled = true;
       }
       else if (((keyval == NUX_VK_v) && ctrl && (!shift)) || ((keyval == NUX_VK_INSERT) && shift && (!ctrl)))
       {
         PasteClipboard();
+        handled = true;
       }
       else if ((keyval == NUX_VK_a) && ctrl)
       {
         SelectAll();
-        return;
+        handled = true;
       }
       else if (keyval == NUX_VK_BACKSPACE)
       {
@@ -431,6 +469,8 @@ namespace nux
           BackSpace(VISUALLY);
         else
           BackSpace(WORDS);
+
+        handled = true;
       }
       else if ((keyval == NUX_VK_DELETE) && (!shift))
       {
@@ -438,10 +478,13 @@ namespace nux
           Delete(VISUALLY);
         else
           Delete(WORDS);
+
+        handled = true;
       }
       else if ((keyval == NUX_VK_INSERT) && (!shift) && (!ctrl))
       {
         ToggleOverwrite();
+        handled = true;
       }
 //       else
 //       {
@@ -464,15 +507,15 @@ namespace nux
 //       }
     }
 
-    if (character && strlen(character) && !im_filtered)
+    if (!handled && character)
     {
-      EnterText(character);
+      unsigned int utf_char = g_utf8_get_char(character);
+
+      if (g_unichar_isprint(utf_char))
+        EnterText(character);
     }
 
-    if (!im_filtered)
-    {
-      QueueRefresh(false, true);
-    }
+    QueueRefresh(false, true);
   }
 
   void TextEntry::RecvMouseDoubleClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -607,18 +650,21 @@ namespace nux
   {
 #if defined(NUX_OS_LINUX)
     /* Checks if the keysym between the first and last dead key */
-    if ((keysym >= XK_dead_grave) && (keysym <= XK_dead_stroke) && !dead_key_mode_)
+    if (character && (keysym >= XK_dead_grave) && (keysym <= XK_dead_currency))
     {
       int key = keysym - XK_dead_grave;
-      dead_key_mode_ = true;
 
       if (dead_keys_map[key])
       {
         composition_mode_ = true;
-        composition_string_.clear();
 
-        dead_key_string_ = character;
+        if (!dead_key_mode_)
+        {
+          composition_string_.clear();
+          dead_key_string_ = character;
+        }
 
+        dead_key_mode_ = true;
         std::string dead_key;
         dead_key = dead_keys_map[key];
         HandledComposition(keysym, dead_key.c_str());
@@ -626,14 +672,8 @@ namespace nux
         return true;
       }
     }
-    else if (dead_key_mode_ && (state & IBUS_IGNORED_MASK))
-    {
-      dead_key_mode_ = false;
-    }
-    return false;
-#else
-    return false;
 #endif
+    return false;
   }
 
   bool TextEntry::HandledComposition(int keysym, const char* character)
@@ -655,18 +695,25 @@ namespace nux
 
     if (composition_mode_)
     {
-      if (strncmp(character, "", 1) == 0 && keysym != NUX_VK_SHIFT)
+      /* Excluding meta keys and shifts as composition cancellation */
+      if (IsModifierKey(keysym))
+      {
+        return true;
+      }
+
+      if (!character)
+        return true;
+
+      if (strncmp(character, "", 1) == 0)
       {
         composition_mode_ = false;
         composition_string_.clear();
         return true;
       }
 
-      composition_string_ += character;
-
       std::string composition_match;
-
-      int match = LookForMatch(composition_match);
+      composition_string_ += character;
+      SearchState match = GetCompositionForString(composition_string_, composition_match);
 
       if (match == PARTIAL)
       {
@@ -674,6 +721,7 @@ namespace nux
       }
       else if (match == NO_MATCH)
       {
+        dead_key_mode_ = false;
         composition_mode_ = false;
         composition_string_.clear();
       }
@@ -681,11 +729,9 @@ namespace nux
       {
         EnterText(composition_match.c_str());
         composition_mode_ = false;
+        dead_key_mode_ = false;
         composition_string_.clear();
         QueueRefresh(false, true);
-
-        if (dead_key_mode_)
-          dead_key_mode_ = false;
 
         return true;
       }
@@ -1247,25 +1293,35 @@ namespace nux
     return cached_layout_;
   }
 
-  int TextEntry::LookForMatch(std::string& str)
+  TextEntry::SearchState TextEntry::GetCompositionForString(std::string const& input, std::string& composition)
   {
-    str.clear();
-    int search_state = NO_MATCH;
+    composition.clear();
+    SearchState search_state = NO_MATCH;
 
-    // Check if the string we have is a match,partial match or doesnt match
-    for (int i = 0; nux_compose_seqs_compact[i] != "\0"; i++)
+    /* If we have two dead keys concatenated, then we should just write one */
+    if (dead_key_mode_ && input.length() == 2)
     {
-      if (nux_compose_seqs_compact[i].compare(composition_string_) == 0)
+      if (input[0] == input[1])
       {
-        // advance to the next sequence after ::
-        while (nux_compose_seqs_compact[++i].compare("::") != 0)
-        {
-        }
-
-        str = nux_compose_seqs_compact[++i];
+        composition = input[0];
         return MATCH;
       }
-      else if (nux_compose_seqs_compact[i].find(composition_string_) != std::string::npos)
+    }
+
+    /* Check if the string we have is a match, partial match or doesn't match */
+    for (int i = 0; nux_compose_seqs_compact[i] != "\0"; i++)
+    {
+      if (nux_compose_seqs_compact[i] == input &&
+          (i == 0 || (i > 0 && nux_compose_seqs_compact[i-1] != "::")))
+      {
+        // advance to the next sequence after ::
+        while (nux_compose_seqs_compact[++i] != "::")
+        {}
+
+        composition = nux_compose_seqs_compact[++i];
+        return MATCH;
+      }
+      else if (nux_compose_seqs_compact[i].find(input) == 0)
       {
         search_state = PARTIAL;
       }
@@ -1779,6 +1835,7 @@ namespace nux
   {
     CopyClipboard();
     DeleteSelection();
+    QueueRefresh(true, true);
   }
 
   void TextEntry::PasteClipboard()
@@ -1791,6 +1848,13 @@ namespace nux
 //         PasteCallback, this);
 //     }
   }
+
+#if defined(NUX_OS_LINUX)
+  void TextEntry::PastePrimaryClipboard()
+  {
+    // TODO
+  }
+#endif
 
   void TextEntry::BackSpace(MovementStep step)
   {
@@ -2317,15 +2381,28 @@ namespace nux
 
   bool TextEntry::InspectKeyEvent(unsigned int eventType, unsigned int key_sym, const char* character)
   {
+    nux::Event const& cur_event = GetGraphicsDisplay()->GetCurrentEvent();
+
+    return InspectKeyEvent(cur_event);
+  }
+
+  bool TextEntry::InspectKeyEvent(nux::Event const& event)
+  {
+    unsigned int eventType = event.type;
+    unsigned int key_sym = event.GetKeySym();
+
 #if defined(NUX_OS_LINUX)
     if (im_running())
     {
       // Always allow IBus hotkey events
-      nux::Event const& cur_event = GetGraphicsDisplay()->GetCurrentEvent();
-      if (ime_->IsHotkeyEvent(static_cast<EventType>(eventType), key_sym, cur_event.key_modifiers))
+      if (ime_->IsHotkeyEvent(static_cast<EventType>(eventType), key_sym, event.key_modifiers))
         return true;
     }
 #endif
+
+    // Ignore events when Alt or Super are pressed
+    if (event.GetKeyModifierState(KEY_MODIFIER_SUPER) || event.GetKeyModifierState(KEY_MODIFIER_ALT))
+      return false;
 
     if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == true) && (text_input_mode_ == false) && (ime_active_ == false))
     {
@@ -2388,14 +2465,14 @@ namespace nux
       {
         if ((!multiline_) && (!lose_key_focus_on_key_nav_direction_up_) && NUX_VK_UP)
         {
-          // By returning true, the text entry signals that it want to receinve the signal for this event.
+          // By returning true, the text entry signals that it want to receive the signal for this event.
           // Otherwise, the parent view of the text entry would be looking for another view to receive keynav focus to.
           return true;
         }
 
         if ((!multiline_) && (!lose_key_focus_on_key_nav_direction_down_) && NUX_VK_DOWN)
         {
-          // By returning true, the text entry signals that it want to receinve the signal for this event.
+          // By returning true, the text entry signals that it want to receive the signal for this event.
           // Otherwise, the parent view of the text entry would be looking for another view to receive keynav focus to.
           return true;
         }
