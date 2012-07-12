@@ -131,7 +131,7 @@ namespace nux
 
     if (m_fValue < m_DoubleValidator.GetMaximum())
     {
-      m_UpTimerHandler = GetTimer().AddTimerHandler(100, m_UpTimerCallback, 0);
+      m_UpTimerHandler = GetTimer().AddOneShotTimer(100, m_UpTimerCallback, 0);
       QueueDraw();
     }
   }
@@ -144,7 +144,7 @@ namespace nux
 
     if (m_fValue > m_DoubleValidator.GetMinimum())
     {
-      m_DownTimerHandler = GetTimer().AddTimerHandler(100, m_DownTimerCallback, 0);
+      m_DownTimerHandler = GetTimer().AddOneShotTimer(100, m_DownTimerCallback, 0);
       QueueDraw();
     }
   }
