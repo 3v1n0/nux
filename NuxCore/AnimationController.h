@@ -62,7 +62,7 @@ private:
   Controller& operator=(Controller const&) = delete;
 };
 
-class AnimationController : public Controller
+class AnimationController : public Controller, public sigc::trackable
 {
 public:
   AnimationController(TickSource& tick_source);

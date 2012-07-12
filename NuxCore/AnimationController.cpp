@@ -75,6 +75,7 @@ struct na::AnimationController::Impl
 na::AnimationController::AnimationController(na::TickSource& tick_source)
   : pimpl(new Impl)
 {
+  tick_source.tick.connect(sigc::mem_fun(this, &na::AnimationController::OnTick));
 }
 
 na::AnimationController::~AnimationController()

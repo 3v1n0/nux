@@ -57,6 +57,49 @@ TEST(TestAnimationController, CreatingSecondControllerEmitsWarning) {
 }
 
 
+class MockAnimationController : public na::AnimationController
+{
+public:
+  MockAnimationController(na::TickSource& tick_source)
+    : na::AnimationController(tick_source)
+    {}
+
+  // tick is expected to be ever increasing
+  virtual void OnTick(long long tick)
+    {
+      ticks.push_back(tick);
+    }
+
+  std::vector<long long> ticks;
+};
+
+
+TEST(TestAnimationController, TicksOnSourceAreListenedTo) {
+
+  na::TickSource source;
+  MockAnimationController controller(source);
+
+  source.tick.emit(10);
+  source.tick.emit(100);
+  source.tick.emit(10000);
+
+  ASSERT_THAT(controller.ticks.size(), Eq(3));
+  ASSERT_THAT(controller.ticks[0], Eq(10));
+  ASSERT_THAT(controller.ticks[1], Eq(100));
+  ASSERT_THAT(controller.ticks[2], Eq(10000));
+}
+
+TEST(TestAnimationController, TicksAfterControllerDtorIgnored) {
+
+  na::TickSource source;
+  {
+    MockAnimationController controller(source);
+
+    source.tick.emit(10);
+  }
+  source.tick.emit(100);
+}
+
 
 
 } // anon namespace
