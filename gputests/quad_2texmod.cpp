@@ -20,7 +20,7 @@
 
 
 #include "NuxCore/NuxCore.h"
-#include "NuxImage/BitmapFormats.h"
+#include "NuxGraphics/BitmapFormats.h"
 #include "NuxGraphics/GraphicsDisplay.h"
 #include "NuxGraphics/GLWindowManager.h"
 #include "NuxGraphics/GraphicsEngine.h"

@@ -20,16 +20,18 @@ libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS= \
 
 libnux_graphics_@NUX_API_VERSION@_la_LIBADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
   $(NUX_GRAPHICS_LIBS)
 
 libnux_graphics_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
 
 source_h = \
+  $(srcdir)/BitmapFormats.h \
+  $(srcdir)/CairoGraphics.h \
   $(srcdir)/Events.h \
   $(srcdir)/FontTexture.h \
   $(srcdir)/FontRenderer.h \
+  $(srcdir)/GdkGraphics.h \
   $(srcdir)/GraphicsDisplayX11.h \
   $(srcdir)/Gfx_Interface.h \
   $(srcdir)/GLDeviceFrameBufferObject.h \
@@ -57,6 +59,7 @@ source_h = \
   $(srcdir)/GraphicsEngine.h \
   $(srcdir)/MeshData.h \
   $(srcdir)/MeshFileLoader-OBJ.h \
+  $(srcdir)/ImageSurface.h \
   $(srcdir)/IOpenGLAnimatedTexture.h \
   $(srcdir)/IOpenGLAsmShader.h \
   $(srcdir)/IOpenGLBaseTexture.h \
@@ -88,9 +91,12 @@ source_h = \
   $(srcdir)/XInputWindow.h
 
 source_cpp = \
+  $(srcdir)/BitmapFormats.cpp \
+  $(srcdir)/CairoGraphics.cpp \
   $(srcdir)/Events.cpp \
   $(srcdir)/FontRenderer.cpp \
   $(srcdir)/FontTexture.cpp \
+  $(srcdir)/GdkGraphics.cpp \
   $(srcdir)/GLDeviceFrameBufferObject.cpp \
   $(srcdir)/GLDeviceObjects.cpp \
   $(srcdir)/GLError.cpp \
@@ -118,6 +124,7 @@ source_cpp = \
   $(srcdir)/GraphicsEngine.cpp \
   $(srcdir)/MeshData.cpp \
   $(srcdir)/MeshFileLoader-OBJ.cpp \
+  $(srcdir)/ImageSurface.cpp \
   $(srcdir)/IOpenGLAnimatedTexture.cpp \
   $(srcdir)/IOpenGLAsmShader.cpp \
   $(srcdir)/IOpenGLBaseTexture.cpp \

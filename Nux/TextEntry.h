@@ -24,7 +24,7 @@
 #include "cairo/cairo.h"
 #include "pango/pango.h"
 #include "pango/pangocairo.h"
-#include "NuxImage/CairoGraphics.h"
+#include "NuxGraphics/CairoGraphics.h"
 
 namespace nux
 {
