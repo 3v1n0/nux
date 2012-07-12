@@ -2437,4 +2437,101 @@ namespace nux
     return text_input_mode_;
   }
 
+  void TextEntry::SetVisibility(bool visible)
+  {
+    if (visible_ != visible)
+    {
+      visible_ = visible;
+
+      if (!readonly_)
+      {
+        if (focused_)
+        {
+          //gtk_im_context_focus_out(im_context_);
+        }
+
+        //InitImContext();
+        ResetPreedit();
+
+        if (focused_)
+        {
+          //gtk_im_context_focus_in(im_context_);
+        }
+      }
+
+      ResetLayout();
+    }    
+  }
+
+  typedef unsigned short  UTF16Char;
+  typedef unsigned int    UTF32Char;
+  typedef	unsigned char   UTF8Char;
+  static const UTF8Char kTrailingBytesForUTF8[256] = {
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+    2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2, 3,3,3,3,3,3,3,3,4,4,4,4,5,5,5,5
+  };
+
+
+  http://google-gadgets-for-linux.googlecode.com/svn-history/r97/trunk/ggadget/unicode_utils.cc
+  size_t GetUTF8CharLength(const char *src)
+  {
+    return src ? (kTrailingBytesForUTF8[static_cast<UTF8Char>(*src)] + 1) : 0;
+  }
+
+  bool IsLegalUTF8Char(const char *src, size_t length)
+  {
+    if (!src || !length) return false;
+
+    const UTF8Char *srcptr = reinterpret_cast<const UTF8Char*>(src);
+    UTF8Char a;
+    UTF8Char ch = *srcptr;
+    srcptr += length;
+    switch (length)
+    {
+    default: return false;
+      // Everything else falls through when "true"...
+    case 4: if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
+    case 3: if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
+    case 2: if ((a = (*--srcptr)) > 0xBF) return false;
+      switch (ch) {
+        // No fall-through in this inner switch
+      case 0xE0: if (a < 0xA0) return false; break;
+      case 0xED: if (a > 0x9F) return false; break;
+      case 0xF0: if (a < 0x90) return false; break;
+      case 0xF4: if (a > 0x8F) return false; break;
+      default:   if (a < 0x80) return false;
+      }
+    case 1: if (ch >= 0x80 && ch < 0xC2) return false;
+    }
+  
+    if (ch > 0xF4) return false;
+    return true;
+  }
+
+  void TextEntry::SetPasswordChar(const char* c)
+  {
+    if (c == NULL || *c == 0 || !IsLegalUTF8Char(c, GetUTF8CharLength(c)))
+    {
+      SetVisibility(true);
+      password_char_.clear();
+    }
+    else
+    {
+      SetVisibility(false);
+      password_char_.assign(c, GetUTF8CharLength(c));
+    }
+    QueueRefresh(true, true);
+  }
+
+  std::string TextEntry::GetPasswordChar()
+  {
+    return password_char_;
+  }
+
 }
