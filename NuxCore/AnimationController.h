@@ -46,26 +46,39 @@ public:
  * it set as the default controller.  It is expected that there is only one
  * animation controller.
  */
-class AnimationController
+class Controller
 {
 public:
-  static AnimationController& Instance();
+  static Controller* Instance();
 
-  AnimationController(TickSource& tick_source);
+  Controller();
+  ~Controller();
 
-  // tick is expected to be ever increasing
-  void OnTick(long long tick);
-
-  void AddAnimation(Animation* animation);
-  void RemoveAnimation(Animation* animation);
+  virtual void AddAnimation(Animation* animation) = 0;
+  virtual void RemoveAnimation(Animation* animation) = 0;
 
 private:
-
-  long long last_tick_;
-
-  AnimationController(AnimationController const&) = delete;
-  AnimationController& operator=(AnimationController const&) = delete;
+  Controller(Controller const&) = delete;
+  Controller& operator=(Controller const&) = delete;
 };
+
+class AnimationController : public Controller
+{
+public:
+  AnimationController(TickSource& tick_source);
+  ~AnimationController();
+
+  // tick is expected to be ever increasing
+  virtual void OnTick(long long tick);
+
+  virtual void AddAnimation(Animation* animation);
+  virtual void RemoveAnimation(Animation* animation);
+
+private:
+  struct Impl;
+  Impl* pimpl;
+};
+
 
 
 }} // close namespaces

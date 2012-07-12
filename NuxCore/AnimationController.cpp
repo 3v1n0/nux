@@ -22,25 +22,64 @@
 
 #include "AnimationController.h"
 
+#include "Logger.h"
+
 namespace na = nux::animation;
+namespace nl = nux::logging;
 
 namespace
 {
-na::AnimationController* instance;
+// Yes I know the compiler does that, but can't help being explicit.
+na::Controller* controller_instance = nullptr;
+nl::Logger logger("nux.animation");
 }
 
 na::TickSource::~TickSource()
 {}
 
 
-na::AnimationController& na::AnimationController::Instance()
+na::Controller* na::Controller::Instance()
 {
-  return *instance;
+  return controller_instance;
 }
 
-na::AnimationController::AnimationController(na::TickSource& tick_source)
-  : last_tick_(0)
+na::Controller::Controller()
 {
+  if (controller_instance)
+  {
+    LOG_WARNING(logger) << "Multiple animation controllers created.";
+  }
+  else
+  {
+    controller_instance = this;
+  }
+}
+
+na::Controller::~Controller()
+{
+  if (controller_instance == this)
+  {
+    controller_instance = nullptr;
+  }
+}
+
+struct na::AnimationController::Impl
+{
+  Impl()
+    : last_tick_(0)
+    {}
+
+  long long last_tick_;
+};
+
+na::AnimationController::AnimationController(na::TickSource& tick_source)
+  : pimpl(new Impl)
+{
+}
+
+na::AnimationController::~AnimationController()
+{
+  delete pimpl;
 }
 
 // tick is expected to be ever increasing

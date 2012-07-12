@@ -23,6 +23,7 @@
 #define NUX_TESTS_FILE_HELPERS_H
 
 #include <string>
+#include <sstream>
 #include <glib.h>
 #include <sigc++/sigc++.h>
 
@@ -54,6 +55,17 @@ public:
   }
 
   bool happened;
+};
+
+
+class CaptureLogOutput
+{
+public:
+  CaptureLogOutput();
+  ~CaptureLogOutput();
+  std::string GetOutput();
+private:
+  std::ostringstream sout_;
 };
 
 
