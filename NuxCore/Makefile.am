@@ -28,6 +28,7 @@ source_cpp = \
   $(srcdir)/Animation.cpp \
   $(srcdir)/AnimationController.cpp \
   $(srcdir)/AsyncFileWriter.cpp \
+  $(srcdir)/EasingCurve.cpp \
   $(srcdir)/TextString.cpp \
   $(srcdir)/TimeFunctions.cpp \
   $(srcdir)/Template.cpp \
@@ -122,7 +123,10 @@ source_tiny_xml_h = \
   $(srcdir)/TinyXML/tinyxml.h
 
 source_h = \
+  $(srcdir)/Animation.h \
+  $(srcdir)/AnimationController.h \
   $(srcdir)/AsyncFileWriter.h \
+  $(srcdir)/EasingCurve.h \
   $(srcdir)/Point.h \
   $(srcdir)/FilePath.h \
   $(srcdir)/System.h \

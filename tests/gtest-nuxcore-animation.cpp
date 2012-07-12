@@ -1,5 +1,6 @@
 #include "NuxCore/Animation.h"
 #include "NuxCore/AnimationController.h"
+#include "NuxCore/EasingCurve.h"
 
 #include "Helpers.h"
 
@@ -101,5 +102,76 @@ TEST(TestAnimationController, TicksAfterControllerDtorIgnored) {
 }
 
 
+TEST(TestEasingCurve, TestLinear) {
+
+  na::EasingCurve curve;
+  ASSERT_THAT(curve.ValueForProgress(-0.5), DoubleEq(0));
+  ASSERT_THAT(curve.ValueForProgress(0.0), DoubleEq(0));
+  ASSERT_THAT(curve.ValueForProgress(0.1), DoubleEq(0.1));
+  ASSERT_THAT(curve.ValueForProgress(0.2), DoubleEq(0.2));
+  ASSERT_THAT(curve.ValueForProgress(0.3), DoubleEq(0.3));
+  ASSERT_THAT(curve.ValueForProgress(0.4), DoubleEq(0.4));
+  ASSERT_THAT(curve.ValueForProgress(0.5), DoubleEq(0.5));
+  ASSERT_THAT(curve.ValueForProgress(0.6), DoubleEq(0.6));
+  ASSERT_THAT(curve.ValueForProgress(0.7), DoubleEq(0.7));
+  ASSERT_THAT(curve.ValueForProgress(0.8), DoubleEq(0.8));
+  ASSERT_THAT(curve.ValueForProgress(0.9), DoubleEq(0.9));
+  ASSERT_THAT(curve.ValueForProgress(1.0), DoubleEq(1));
+  ASSERT_THAT(curve.ValueForProgress(1.5), DoubleEq(1));
+}
+
+TEST(TestEasingCurve, TestInQuad) {
+
+  na::EasingCurve curve(na::EasingCurve::Type::InQuad);
+  ASSERT_THAT(curve.ValueForProgress(-0.5), DoubleEq(0));
+  ASSERT_THAT(curve.ValueForProgress(0.0), DoubleEq(0));
+  ASSERT_THAT(curve.ValueForProgress(0.1), DoubleEq(0.01));
+  ASSERT_THAT(curve.ValueForProgress(0.2), DoubleEq(0.04));
+  ASSERT_THAT(curve.ValueForProgress(0.3), DoubleEq(0.09));
+  ASSERT_THAT(curve.ValueForProgress(0.4), DoubleEq(0.16));
+  ASSERT_THAT(curve.ValueForProgress(0.5), DoubleEq(0.25));
+  ASSERT_THAT(curve.ValueForProgress(0.6), DoubleEq(0.36));
+  ASSERT_THAT(curve.ValueForProgress(0.7), DoubleEq(0.49));
+  ASSERT_THAT(curve.ValueForProgress(0.8), DoubleEq(0.64));
+  ASSERT_THAT(curve.ValueForProgress(0.9), DoubleEq(0.81));
+  ASSERT_THAT(curve.ValueForProgress(1.0), DoubleEq(1));
+  ASSERT_THAT(curve.ValueForProgress(1.5), DoubleEq(1));
+}
+
+TEST(TestEasingCurve, TestOutQuad) {
+
+  na::EasingCurve curve(na::EasingCurve::Type::OutQuad);
+  ASSERT_THAT(curve.ValueForProgress(-0.5), DoubleEq(0));
+  ASSERT_THAT(curve.ValueForProgress(0.0), DoubleEq(0));
+  ASSERT_THAT(curve.ValueForProgress(0.1), DoubleEq(0.19));
+  ASSERT_THAT(curve.ValueForProgress(0.2), DoubleEq(0.36));
+  ASSERT_THAT(curve.ValueForProgress(0.3), DoubleEq(0.51));
+  ASSERT_THAT(curve.ValueForProgress(0.4), DoubleEq(0.64));
+  ASSERT_THAT(curve.ValueForProgress(0.5), DoubleEq(0.75));
+  ASSERT_THAT(curve.ValueForProgress(0.6), DoubleEq(0.84));
+  ASSERT_THAT(curve.ValueForProgress(0.7), DoubleEq(0.91));
+  ASSERT_THAT(curve.ValueForProgress(0.8), DoubleEq(0.96));
+  ASSERT_THAT(curve.ValueForProgress(0.9), DoubleEq(0.99));
+  ASSERT_THAT(curve.ValueForProgress(1.0), DoubleEq(1));
+  ASSERT_THAT(curve.ValueForProgress(1.5), DoubleEq(1));
+}
+
+TEST(TestEasingCurve, TestInOutQuad) {
+
+  na::EasingCurve curve(na::EasingCurve::Type::InOutQuad);
+  ASSERT_THAT(curve.ValueForProgress(-0.5), DoubleEq(0));
+  ASSERT_THAT(curve.ValueForProgress(0.0), DoubleEq(0));
+  ASSERT_THAT(curve.ValueForProgress(0.1), DoubleEq(0.02));
+  ASSERT_THAT(curve.ValueForProgress(0.2), DoubleEq(0.08));
+  ASSERT_THAT(curve.ValueForProgress(0.3), DoubleEq(0.18));
+  ASSERT_THAT(curve.ValueForProgress(0.4), DoubleEq(0.32));
+  ASSERT_THAT(curve.ValueForProgress(0.5), DoubleEq(0.5));
+  ASSERT_THAT(curve.ValueForProgress(0.6), DoubleEq(0.68));
+  ASSERT_THAT(curve.ValueForProgress(0.7), DoubleEq(0.82));
+  ASSERT_THAT(curve.ValueForProgress(0.8), DoubleEq(0.92));
+  ASSERT_THAT(curve.ValueForProgress(0.9), DoubleEq(0.98));
+  ASSERT_THAT(curve.ValueForProgress(1.0), DoubleEq(1));
+  ASSERT_THAT(curve.ValueForProgress(1.5), DoubleEq(1));
+}
 
 } // anon namespace
