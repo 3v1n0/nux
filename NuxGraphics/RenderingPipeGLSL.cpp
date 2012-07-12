@@ -20,7 +20,7 @@
  */
 
 #include "NuxCore/NuxCore.h"
-#include "NuxImage/ImageSurface.h"
+#include "ImageSurface.h"
 #include "GpuDevice.h"
 #include "GLDeviceObjects.h"
 #include "GLResourceManager.h"
