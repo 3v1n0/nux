@@ -24,7 +24,7 @@
 #include "cairo/cairo.h"
 #include "pango/pango.h"
 #include "pango/pangocairo.h"
-#include "NuxImage/CairoGraphics.h"
+#include "NuxGraphics/CairoGraphics.h"
 
 namespace nux
 {
@@ -352,7 +352,7 @@ namespace nux
     void GetCursorLocationInLayout(int* strong_x, int* strong_y, int* strong_height,
                                    int* weak_x, int* weak_y, int* weak_height);
 
-    int LookForMatch(std::string& str);
+    SearchState GetCompositionForString(std::string const& input, std::string& composition);
 
     /** The CairoCanvas which hold cairo_t inside */
     CairoGraphics* canvas_;

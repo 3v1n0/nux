@@ -30,7 +30,7 @@
 #include "NuxCore/Rect.h"
 #include "NuxCore/Point.h"
 #include "NuxCore/Size.h"
-#include "NuxImage/BitmapFormats.h"
+#include "BitmapFormats.h"
 #include "NuxCore/Parsing.h"
 #include "NuxCore/Object.h"
 #include "NuxCore/ObjectPtr.h"
@@ -44,7 +44,7 @@
 #include "NuxCore/Math/Spline.h"
 #include "NuxCore/Math/MathFunctions.h"
 
-#include "NuxImage/ImageSurface.h"
+#include "ImageSurface.h"
 
 namespace nux
 {
