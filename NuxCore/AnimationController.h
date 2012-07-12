@@ -35,6 +35,7 @@ class TickSource
 public:
   virtual ~TickSource();
 
+  // tick value is in microseconds
   sigc::signal<void, long long> tick;
 };
 

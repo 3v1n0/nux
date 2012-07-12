@@ -22,14 +22,17 @@
 #ifndef NUX_CORE_ANIMATION_H
 #define NUX_CORE_ANIMATION_H
 
+#include <boost/utility.hpp>
 #include <sigc++/signal.h>
+
+#include "EasingCurve.h"
 
 namespace nux
 {
 namespace animation
 {
 
-class Animation
+class Animation : boost::noncopyable
 {
 public:
   enum State
@@ -39,6 +42,7 @@ public:
     Running,
   };
 
+  Animation();
   virtual ~Animation();
 
   virtual int Duration() const = 0;
@@ -50,11 +54,44 @@ public:
   void Start();
   void Stop();
 
+  State CurrentState() const;
   sigc::signal<void> finished;
+
+private:
+  State state_;
 };
 
 
+template <typename VALUE_TYPE>
+class AnimateValue : public Animation
+{
+public:
+  AnimateValue();
+  AnimateValue(VALUE_TYPE const& start,
+               VALUE_TYPE const& finish,
+               int msec_duration_);
+
+  AnimateValue& SetStartValue(VALUE_TYPE const& start);
+  AnimateValue& SetFinishValue(VALUE_TYPE const& finsih);
+  AnimateValue& SetDuration(int msecs);
+  AnimateValue& SetEasingCurve(EasingCurve const& curve);
+
+  virtual int Duration() const;
+
+  sigc::signal<void, VALUE_TYPE const&> updated;
+  VALUE_TYPE const& GetCurrentValue() const;
+
+private:
+  int msec_duration_;
+  VALUE_TYPE start_value_;
+  VALUE_TYPE finish_value_;
+  VALUE_TYPE current_value_;
+  EasingCurve easing_curve_;
+};
+
 
 }}
+
+#include "Animation-inl.h"
 
 #endif

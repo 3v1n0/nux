@@ -102,6 +102,59 @@ TEST(TestAnimationController, TicksAfterControllerDtorIgnored) {
 }
 
 
+/**
+ * Animation base class testing connections to the AnimationController and
+ * basic control functions.
+ */
+
+class MockAnimation : public na::Animation
+{
+public:
+  MOCK_CONST_METHOD0(Duration, int());
+
+};
+
+class TestTicker : public na::TickSource
+{
+public:
+  TestTicker() : tick_value(0) {}
+
+  void ms_tick(int ms)
+    {
+      tick_value += ms * 1000;
+      tick.emit(tick_value);
+    }
+
+  void multi_tick(int)
+    {}
+
+private:
+  long long tick_value;
+};
+
+class TestAnimation : public Test
+{
+public:
+  TestAnimation()
+    : animation_controller(ticker)
+    {}
+
+protected:
+  TestTicker ticker;
+  na::AnimationController animation_controller;
+};
+
+
+TEST_F(TestAnimation, TestInitialState)
+{
+  MockAnimation animation;
+  ASSERT_THAT(animation.CurrentState(), Eq(na::Animation::Stopped));
+}
+
+/**
+ * Easing curves
+ */
+
 TEST(TestEasingCurve, TestLinear) {
 
   na::EasingCurve curve;

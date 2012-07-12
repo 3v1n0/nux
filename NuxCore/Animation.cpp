@@ -24,6 +24,10 @@
 
 namespace na = nux::animation;
 
+na::Animation::Animation()
+  : state_(Stopped)
+{}
+
 na::Animation::~Animation()
 {}
 
@@ -44,3 +48,8 @@ void na::Animation::Start()
 
 void na::Animation::Stop()
 {}
+
+na::Animation::State na::Animation::CurrentState() const
+{
+  return state_;
+}

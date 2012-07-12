@@ -124,6 +124,7 @@ source_tiny_xml_h = \
 
 source_h = \
   $(srcdir)/Animation.h \
+  $(srcdir)/Animation-inl.h \
   $(srcdir)/AnimationController.h \
   $(srcdir)/AsyncFileWriter.h \
   $(srcdir)/EasingCurve.h \
