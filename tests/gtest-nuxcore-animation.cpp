@@ -293,6 +293,27 @@ TEST(TestAnimateValue, TestAdvanceOnlyRunning)
   ASSERT_THAT(recorder.changed_values, Eq(expected));
 }
 
+TEST(TestAnimateValue, TestUsesEasingFunction)
+{
+  nt::ChangeRecorder<float> recorder;
+  na::AnimateValue<float> animation(10, 20, 1000);
+  animation.SetEasingCurve(na::EasingCurve(na::EasingCurve::Type::OutQuad));
+  animation.updated.connect(recorder.listener());
+
+  animation.Start();
+  for (int i = 0; i < 10; ++i)
+    animation.Advance(200);
+
+  std::vector<float> expected = {10, 13.6, 16.4, 18.4, 19.6, 20};
+
+  ASSERT_THAT(recorder.changed_values.size(), Eq(expected.size()));
+  // Use DoubleEq to check values as calculations may give truncated values.
+  for (std::size_t i = 0; i < expected.size(); ++i)
+  {
+    ASSERT_THAT(recorder.changed_values[i], FloatEq(expected[i]));
+  }
+}
+
 /**
  * Easing curves
  */
