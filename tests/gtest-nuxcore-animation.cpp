@@ -180,6 +180,45 @@ TEST_F(TestAnimation, TestStoppingStoppedDoesntEmitsFinished)
   ASSERT_FALSE(finished_called.happened);
 }
 
+TEST_F(TestAnimation, TestCantPauseStopped)
+{
+  NiceMock<MockAnimation> animation; // don't care about restart here
+  animation.Pause();
+  ASSERT_THAT(animation.CurrentState(), Eq(na::Animation::Stopped));
+}
+
+TEST_F(TestAnimation, TestPause)
+{
+  NiceMock<MockAnimation> animation; // don't care about restart here
+  animation.Start();
+  animation.Pause();
+  ASSERT_THAT(animation.CurrentState(), Eq(na::Animation::Paused));
+}
+
+TEST_F(TestAnimation, TestResume)
+{
+  NiceMock<MockAnimation> animation; // don't care about restart here
+  animation.Start();
+  animation.Pause();
+  animation.Resume();
+  ASSERT_THAT(animation.CurrentState(), Eq(na::Animation::Running));
+}
+
+TEST_F(TestAnimation, TestResumeStarted)
+{
+  NiceMock<MockAnimation> animation; // don't care about restart here
+  animation.Start();
+  animation.Resume();
+  ASSERT_THAT(animation.CurrentState(), Eq(na::Animation::Running));
+}
+
+TEST_F(TestAnimation, TestResumeStopped)
+{
+  NiceMock<MockAnimation> animation; // don't care about restart here
+  animation.Resume();
+  ASSERT_THAT(animation.CurrentState(), Eq(na::Animation::Stopped));
+}
+
 /**
  * Easing curves
  */

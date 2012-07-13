@@ -32,10 +32,20 @@ na::Animation::~Animation()
 {}
 
 void na::Animation::Pause()
-{}
+{
+  if (state_ == Running)
+  {
+    state_ = Paused;
+  }
+}
 
 void na::Animation::Resume()
-{}
+{
+  if (state_ == Paused)
+  {
+    state_ = Running;
+  }
+}
 
 void na::Animation::SetCurrentTime(int msecs)
 {}
