@@ -29,7 +29,8 @@ namespace animation
 
 template <typename VALUE_TYPE>
 AnimateValue<VALUE_TYPE>::AnimateValue()
-  : msec_duration_(0)
+  : msec_current_(0)
+  , msec_duration_(0)
   , start_value_(VALUE_TYPE())
   , finish_value_(VALUE_TYPE())
   , current_value_(start_value_)
@@ -40,7 +41,8 @@ template <typename VALUE_TYPE>
 AnimateValue<VALUE_TYPE>::AnimateValue(VALUE_TYPE const& start,
                                        VALUE_TYPE const& finish,
                                        int msec_duration)
-  : msec_duration_(msec_duration)
+  : msec_current_(0)
+  , msec_duration_(msec_duration)
   , start_value_(start)
   , finish_value_(finish)
   , current_value_(start_value_)
@@ -82,10 +84,53 @@ int AnimateValue<VALUE_TYPE>::Duration() const
 }
 
 template <typename VALUE_TYPE>
+VALUE_TYPE const& AnimateValue<VALUE_TYPE>::GetStartValue() const
+{
+  return start_value_;
+}
+
+template <typename VALUE_TYPE>
+VALUE_TYPE const& AnimateValue<VALUE_TYPE>::GetFinishValue() const
+{
+  return finish_value_;
+}
+
+template <typename VALUE_TYPE>
 VALUE_TYPE const& AnimateValue<VALUE_TYPE>::GetCurrentValue() const
 {
   return current_value_;
 }
+
+template <typename VALUE_TYPE>
+void AnimateValue<VALUE_TYPE>::Advance(int msec)
+{
+  msec_current_ += msec;
+  if (msec_current_ >= msec_duration_)
+  {
+    msec_current_ = msec_duration_;
+    current_value_ = finish_value_;
+    updated.emit(current_value_);
+    Stop();
+  }
+  else
+  {
+    double progress = msec_current_ / static_cast<double>(msec_duration_);
+    double value = easing_curve_.ValueForProgress(progress);
+    // These operators work for most if not all the property types we care
+    // about.  Should we need more, we'll reevaluate then.
+    current_value_ = start_value_ + ((finish_value_ - start_value_) * value);
+    updated.emit(current_value_);
+  }
+}
+
+template <typename VALUE_TYPE>
+void AnimateValue<VALUE_TYPE>::Restart()
+{
+  msec_current_ = 0;
+  current_value_ = start_value_;
+  updated.emit(current_value_);
+}
+
 
 }}
 

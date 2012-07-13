@@ -221,6 +221,23 @@ TEST(TestAnimation, TestResumeStopped)
 }
 
 
+TEST(TestAnimateValue, TestConstruction)
+{
+  na::AnimateValue<int> dafault_int_animation;
+  ASSERT_THAT(dafault_int_animation.CurrentState(), Eq(na::Animation::Stopped));
+  ASSERT_THAT(dafault_int_animation.GetStartValue(), Eq(0));
+  ASSERT_THAT(dafault_int_animation.GetCurrentValue(), Eq(0));
+  ASSERT_THAT(dafault_int_animation.GetFinishValue(), Eq(0));
+  ASSERT_THAT(dafault_int_animation.Duration(), Eq(0));
+
+  na::AnimateValue<int> value_int_animation(10, 20, 1000);
+  ASSERT_THAT(value_int_animation.CurrentState(), Eq(na::Animation::Stopped));
+  ASSERT_THAT(value_int_animation.GetStartValue(), Eq(10));
+  ASSERT_THAT(value_int_animation.GetCurrentValue(), Eq(10));
+  ASSERT_THAT(value_int_animation.GetFinishValue(), Eq(20));
+  ASSERT_THAT(value_int_animation.Duration(), Eq(1000));
+}
+
 
 /**
  * Easing curves

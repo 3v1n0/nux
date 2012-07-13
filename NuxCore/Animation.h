@@ -84,9 +84,19 @@ public:
   virtual int Duration() const;
 
   sigc::signal<void, VALUE_TYPE const&> updated;
+
+  VALUE_TYPE const& GetStartValue() const;
+  VALUE_TYPE const& GetFinishValue() const;
   VALUE_TYPE const& GetCurrentValue() const;
 
+  // Move the animation on so many milliseconds.
+  virtual void Advance(int msec);
+
+protected:
+  virtual void Restart();
+
 private:
+  int msec_current_;
   int msec_duration_;
   VALUE_TYPE start_value_;
   VALUE_TYPE finish_value_;
