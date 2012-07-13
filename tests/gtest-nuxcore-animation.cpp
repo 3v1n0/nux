@@ -2,6 +2,8 @@
 #include "NuxCore/AnimationController.h"
 #include "NuxCore/EasingCurve.h"
 
+#include "NuxCore/Point.h"
+
 #include "Helpers.h"
 
 #include <gmock/gmock.h>
@@ -258,7 +260,7 @@ TEST(TestAnimateValue, TestAdvance)
   animation.finished.connect(finished_called.sigc_callback());
 
   animation.Start();
-  for (int i = 0; i < 10; ++i)
+  for (int i = 0; i < 11; ++i) // Advance one more time than necessary
     animation.Advance(100);
 
   std::vector<int> expected = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
@@ -313,6 +315,37 @@ TEST(TestAnimateValue, TestUsesEasingFunction)
     ASSERT_THAT(recorder.changed_values[i], FloatEq(expected[i]));
   }
 }
+
+TEST(TestAnimateValue, TestAnimatePoint)
+{
+  nt::ChangeRecorder<nux::Point> recorder;
+  na::AnimateValue<nux::Point> animation(nux::Point(10, 10),
+                                         nux::Point(20, 20),
+                                         1000);
+  animation.updated.connect(recorder.listener());
+
+  animation.Start();
+  for (int i = 0; i < 10; ++i)
+    animation.Advance(200);
+
+  std::vector<nux::Point> expected = {nux::Point(10,10),
+                                      nux::Point(12,12),
+                                      nux::Point(14,14),
+                                      nux::Point(16,16),
+                                      nux::Point(18,18),
+                                      nux::Point(20,20)};
+
+  ASSERT_THAT(recorder.changed_values, Eq(expected));
+}
+
+TEST(TestAnimateValue, TestAnimateRect)
+{
+}
+
+TEST(TestAnimateValue, TestAnimateColor)
+{
+}
+
 
 /**
  * Easing curves
