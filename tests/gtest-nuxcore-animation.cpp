@@ -3,6 +3,8 @@
 #include "NuxCore/EasingCurve.h"
 
 #include "NuxCore/Point.h"
+#include "NuxCore/Rect.h"
+#include "NuxCore/Colors.h"
 
 #include "Helpers.h"
 
@@ -309,7 +311,7 @@ TEST(TestAnimateValue, TestUsesEasingFunction)
   std::vector<float> expected = {10, 13.6, 16.4, 18.4, 19.6, 20};
 
   ASSERT_THAT(recorder.changed_values.size(), Eq(expected.size()));
-  // Use DoubleEq to check values as calculations may give truncated values.
+  // Use FloatEq to check values as calculations may give truncated values.
   for (std::size_t i = 0; i < expected.size(); ++i)
   {
     ASSERT_THAT(recorder.changed_values[i], FloatEq(expected[i]));
@@ -340,10 +342,54 @@ TEST(TestAnimateValue, TestAnimatePoint)
 
 TEST(TestAnimateValue, TestAnimateRect)
 {
+  nt::ChangeRecorder<nux::Rect> recorder;
+  na::AnimateValue<nux::Rect> animation(nux::Rect(10, 10, 100, 200),
+                                        nux::Rect(20, 20, 200, 400),
+                                        1000);
+  animation.updated.connect(recorder.listener());
+
+  animation.Start();
+  for (int i = 0; i < 10; ++i)
+    animation.Advance(200);
+
+  std::vector<nux::Rect> expected = {nux::Rect(10, 10, 100, 200),
+                                     nux::Rect(12, 12, 120, 240),
+                                     nux::Rect(14, 14, 140, 280),
+                                     nux::Rect(16, 16, 160, 320),
+                                     nux::Rect(18, 18, 180, 360),
+                                     nux::Rect(20, 20, 200, 400)};
+
+  ASSERT_THAT(recorder.changed_values, Eq(expected));
 }
 
 TEST(TestAnimateValue, TestAnimateColor)
 {
+  nt::ChangeRecorder<nux::Color> recorder;
+  na::AnimateValue<nux::Color> animation(nux::Color(1.0f, 0.0f, 0.0f),
+                                         nux::Color(0.0f, 0.5f, 0.0f),
+                                         1000);
+  animation.updated.connect(recorder.listener());
+
+  animation.Start();
+  for (int i = 0; i < 5; ++i)
+    animation.Advance(250);
+
+  std::vector<nux::Color> expected = {nux::Color(1.0f, 0.0f, 0.0f),
+                                      nux::Color(0.75f, 0.125f, 0.0f),
+                                      nux::Color(0.5f, 0.25f, 0.0f),
+                                      nux::Color(0.25f, 0.375f, 0.0f),
+                                      nux::Color(0.0f, 0.5f, 0.0f)};
+
+  ASSERT_THAT(recorder.changed_values.size(), Eq(expected.size()));
+  // Use FloatEq to check values as calculations may give truncated values.
+  for (std::size_t i = 0; i < expected.size(); ++i)
+  {
+    nux::Color const& c = recorder.changed_values[i];
+    ASSERT_THAT(c.red, FloatEq(expected[i].red));
+    ASSERT_THAT(c.green, FloatEq(expected[i].green));
+    ASSERT_THAT(c.blue, FloatEq(expected[i].blue));
+    ASSERT_THAT(c.alpha, FloatEq(expected[i].alpha));
+  }
 }
 
 

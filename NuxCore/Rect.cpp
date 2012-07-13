@@ -177,5 +177,31 @@ namespace nux
 
     return r;
   }
+
+
+  Rect operator+(Rect const& lhs, Rect const& rhs)
+  {
+    return Rect(lhs.x + rhs.x,
+                lhs.y + rhs.y,
+                lhs.width + rhs.width,
+                lhs.height + rhs.height);
+  }
+
+  Rect operator-(Rect const& lhs, Rect const& rhs)
+  {
+    return Rect(lhs.x - rhs.x,
+                lhs.y - rhs.y,
+                lhs.width - rhs.width,
+                lhs.height - rhs.height);
+  }
+
+  Rect operator*(Rect const& lhs, float scalar)
+  {
+    return Rect(lhs.x * scalar,
+                lhs.y * scalar,
+                lhs.width * scalar,
+                lhs.height * scalar);
+  }
+
 }
 
