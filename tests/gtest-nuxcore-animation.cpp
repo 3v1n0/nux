@@ -269,6 +269,30 @@ TEST(TestAnimateValue, TestAdvance)
   ASSERT_THAT(animation.GetCurrentValue(), Eq(20));
 }
 
+TEST(TestAnimateValue, TestAdvanceOnlyRunning)
+{
+  nt::ChangeRecorder<int> recorder;
+  na::AnimateValue<int> animation(10, 20, 1000);
+  animation.updated.connect(recorder.listener());
+
+  animation.Advance(100);
+  ASSERT_THAT(recorder.changed_values.size(), Eq(0));
+
+  animation.Start();
+  animation.Advance(400);
+  std::vector<int> expected = {10, 14};
+  ASSERT_THAT(recorder.changed_values, Eq(expected));
+
+  animation.Pause();
+  animation.Advance(400);
+  ASSERT_THAT(recorder.changed_values, Eq(expected));
+
+  animation.Resume();
+  animation.Advance(400);
+  expected.push_back(18);
+  ASSERT_THAT(recorder.changed_values, Eq(expected));
+}
+
 /**
  * Easing curves
  */

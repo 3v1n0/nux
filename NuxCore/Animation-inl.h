@@ -104,6 +104,9 @@ VALUE_TYPE const& AnimateValue<VALUE_TYPE>::GetCurrentValue() const
 template <typename VALUE_TYPE>
 void AnimateValue<VALUE_TYPE>::Advance(int msec)
 {
+  if (CurrentState() != Running)
+    return;
+
   msec_current_ += msec;
   if (msec_current_ >= msec_duration_)
   {
