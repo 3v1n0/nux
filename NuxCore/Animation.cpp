@@ -44,10 +44,22 @@ void na::Animation::SetPaused(bool paused)
 {}
 
 void na::Animation::Start()
-{}
+{
+  if (state_ == Stopped)
+  {
+    state_ = Running;
+    Restart();
+  }
+}
 
 void na::Animation::Stop()
-{}
+{
+  if (state_ != Stopped)
+  {
+    state_ = Stopped;
+    finished.emit();
+  }
+}
 
 na::Animation::State na::Animation::CurrentState() const
 {

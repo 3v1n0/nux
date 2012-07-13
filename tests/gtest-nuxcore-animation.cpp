@@ -111,6 +111,7 @@ class MockAnimation : public na::Animation
 {
 public:
   MOCK_CONST_METHOD0(Duration, int());
+  MOCK_METHOD0(Restart, void());
 
 };
 
@@ -149,6 +150,24 @@ TEST_F(TestAnimation, TestInitialState)
 {
   MockAnimation animation;
   ASSERT_THAT(animation.CurrentState(), Eq(na::Animation::Stopped));
+}
+
+TEST_F(TestAnimation, TestStarting)
+{
+  NiceMock<MockAnimation> animation; // don't care about restart here
+  animation.Start();
+  ASSERT_THAT(animation.CurrentState(), Eq(na::Animation::Running));
+}
+
+TEST_F(TestAnimation, TestStoppingEmitsFinished)
+{
+  NiceMock<MockAnimation> animation; // don't care about restart here
+  nt::TestCallback finished_called;
+  animation.finished.connect(finished_called.sigc_callback());
+  animation.Start();
+  animation.Stop();
+  ASSERT_THAT(animation.CurrentState(), Eq(na::Animation::Stopped));
+  ASSERT_TRUE(finished_called.happened);
 }
 
 /**

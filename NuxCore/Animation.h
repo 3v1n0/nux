@@ -57,6 +57,9 @@ public:
   State CurrentState() const;
   sigc::signal<void> finished;
 
+protected:
+  virtual void Restart() = 0;
+
 private:
   State state_;
 };
