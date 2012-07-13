@@ -74,10 +74,10 @@ public:
   AnimateValue();
   AnimateValue(VALUE_TYPE const& start,
                VALUE_TYPE const& finish,
-               int msec_duration_);
+               int msec_duration);
 
   AnimateValue& SetStartValue(VALUE_TYPE const& start);
-  AnimateValue& SetFinishValue(VALUE_TYPE const& finsih);
+  AnimateValue& SetFinishValue(VALUE_TYPE const& finish);
   AnimateValue& SetDuration(int msecs);
   AnimateValue& SetEasingCurve(EasingCurve const& curve);
 

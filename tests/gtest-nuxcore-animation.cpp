@@ -1,7 +1,8 @@
 #include "NuxCore/Animation.h"
 #include "NuxCore/AnimationController.h"
 #include "NuxCore/EasingCurve.h"
-
+#include "NuxCore/Property.h"
+#include "NuxCore/PropertyAnimation.h"
 #include "NuxCore/Point.h"
 #include "NuxCore/Rect.h"
 #include "NuxCore/Colors.h"
@@ -9,6 +10,8 @@
 #include "Helpers.h"
 
 #include <gmock/gmock.h>
+
+#include <boost/shared_ptr.hpp>
 
 namespace na = nux::animation;
 namespace nt = nux::testing;
@@ -563,6 +566,29 @@ TEST_F(TestAnimationHookup, TestTwoAnimation)
   ticker.ms_tick(200);
 }
 
+TEST_F(TestAnimationHookup, TestIntProperty)
+{
+  nux::Property<int> int_property;
+  EXPECT_THAT(int_property(), Eq(0));
 
+  boost::shared_ptr<na::AnimateValue<int> > anim = na::animate_property(int_property, 10, 20, 1000);
+  anim->finished.connect([&anim]() {anim.reset();});
+
+  anim->Start();
+  EXPECT_THAT(int_property(), Eq(10));
+  ticker.ms_tick(200);
+  EXPECT_THAT(int_property(), Eq(12));
+  ticker.ms_tick(200);
+  EXPECT_THAT(int_property(), Eq(14));
+  ticker.ms_tick(300);
+  EXPECT_THAT(int_property(), Eq(17));
+  ticker.ms_tick(200);
+  EXPECT_THAT(int_property(), Eq(19));
+  ticker.ms_tick(200);
+  EXPECT_THAT(int_property(), Eq(20));
+  EXPECT_FALSE(bool(anim));
+  ticker.ms_tick(200);
+  EXPECT_THAT(int_property(), Eq(20));
+}
 
 } // anon namespace
