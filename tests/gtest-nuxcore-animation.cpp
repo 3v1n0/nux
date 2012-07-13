@@ -134,10 +134,10 @@ private:
   long long tick_value;
 };
 
-class TestAnimation : public Test
+class TestAnimationXXX : public Test
 {
 public:
-  TestAnimation()
+  TestAnimationXXX()
     : animation_controller(ticker)
     {}
 
@@ -147,20 +147,20 @@ protected:
 };
 
 
-TEST_F(TestAnimation, TestInitialState)
+TEST(TestAnimation, TestInitialState)
 {
   MockAnimation animation;
   ASSERT_THAT(animation.CurrentState(), Eq(na::Animation::Stopped));
 }
 
-TEST_F(TestAnimation, TestStarting)
+TEST(TestAnimation, TestStarting)
 {
   NiceMock<MockAnimation> animation; // don't care about restart here
   animation.Start();
   ASSERT_THAT(animation.CurrentState(), Eq(na::Animation::Running));
 }
 
-TEST_F(TestAnimation, TestStoppingEmitsFinished)
+TEST(TestAnimation, TestStoppingEmitsFinished)
 {
   NiceMock<MockAnimation> animation; // don't care about restart here
   nt::TestCallback finished_called;
@@ -171,7 +171,7 @@ TEST_F(TestAnimation, TestStoppingEmitsFinished)
   ASSERT_TRUE(finished_called.happened);
 }
 
-TEST_F(TestAnimation, TestStoppingStoppedDoesntEmitsFinished)
+TEST(TestAnimation, TestStoppingStoppedDoesntEmitsFinished)
 {
   NiceMock<MockAnimation> animation; // don't care about restart here
   nt::TestCallback finished_called;
@@ -181,14 +181,14 @@ TEST_F(TestAnimation, TestStoppingStoppedDoesntEmitsFinished)
   ASSERT_FALSE(finished_called.happened);
 }
 
-TEST_F(TestAnimation, TestCantPauseStopped)
+TEST(TestAnimation, TestCantPauseStopped)
 {
   NiceMock<MockAnimation> animation; // don't care about restart here
   animation.Pause();
   ASSERT_THAT(animation.CurrentState(), Eq(na::Animation::Stopped));
 }
 
-TEST_F(TestAnimation, TestPause)
+TEST(TestAnimation, TestPause)
 {
   NiceMock<MockAnimation> animation; // don't care about restart here
   animation.Start();
@@ -196,7 +196,7 @@ TEST_F(TestAnimation, TestPause)
   ASSERT_THAT(animation.CurrentState(), Eq(na::Animation::Paused));
 }
 
-TEST_F(TestAnimation, TestResume)
+TEST(TestAnimation, TestResume)
 {
   NiceMock<MockAnimation> animation; // don't care about restart here
   animation.Start();
@@ -205,7 +205,7 @@ TEST_F(TestAnimation, TestResume)
   ASSERT_THAT(animation.CurrentState(), Eq(na::Animation::Running));
 }
 
-TEST_F(TestAnimation, TestResumeStarted)
+TEST(TestAnimation, TestResumeStarted)
 {
   NiceMock<MockAnimation> animation; // don't care about restart here
   animation.Start();
@@ -213,7 +213,7 @@ TEST_F(TestAnimation, TestResumeStarted)
   ASSERT_THAT(animation.CurrentState(), Eq(na::Animation::Running));
 }
 
-TEST_F(TestAnimation, TestResumeStopped)
+TEST(TestAnimation, TestResumeStopped)
 {
   NiceMock<MockAnimation> animation; // don't care about restart here
   animation.Resume();
