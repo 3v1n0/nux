@@ -161,8 +161,6 @@ namespace nux
     , key_nav_mode_(false)
     , lose_key_focus_on_key_nav_direction_up_(true)
     , lose_key_focus_on_key_nav_direction_down_(true)
-    , dead_key_mode_(false)
-    , composition_mode_(false)
   {
     cairo_font_options_set_antialias(font_options_, CAIRO_ANTIALIAS_SUBPIXEL);
     cairo_font_options_set_hint_style(font_options_, CAIRO_HINT_STYLE_FULL);
@@ -323,23 +321,12 @@ namespace nux
       return;
 
 #if defined(NUX_OS_LINUX)
-    if (dead_key_mode_ && keysym == XK_space)
+    if (IsInCompositionMode() || IsInitialCompositionKeySym(keysym))
     {
-      dead_key_mode_ = false;
-      composition_mode_ = false;
-      EnterText(dead_key_string_.c_str());
-      QueueRefresh(false, true);
-      return;
+      if (HandleComposition(keysym))
+        return;
     }
 
-    if (HandledDeadKeys(keysym, state, character))
-    {
-      return;
-    }
-    else if (HandledComposition(keysym, character))
-    {
-      return;
-    }
 #endif
 
     if (event_type == NUX_KEYDOWN)
@@ -587,9 +574,7 @@ namespace nux
   {
     key_nav_mode_     = true;
     text_input_mode_  = false;
-    dead_key_mode_    = false;
-    composition_mode_ = false;
-    composition_string_.clear();
+    composition_list_.clear();
 
     FocusInx();
   }
@@ -598,9 +583,7 @@ namespace nux
   {
     key_nav_mode_     = false;
     text_input_mode_  = false;
-    dead_key_mode_    = false;
-    composition_mode_ = false;
-    composition_string_.clear();
+    composition_list_.clear();
 
     FocusOutx();
   }
@@ -646,100 +629,101 @@ namespace nux
     // intentionally left empty
   }
 
-  bool TextEntry::HandledDeadKeys(int keysym, int state, const char* character)
+  TextEntry::SearchState TextEntry::GetCompositionForList(std::vector<unsigned long> const& input, std::string& composition)
   {
-#if defined(NUX_OS_LINUX)
-    /* Checks if the keysym between the first and last dead key */
-    if (character && (keysym >= XK_dead_grave) && (keysym <= XK_dead_currency))
+    SearchState search_state = SearchState::NO_MATCH;
+
+    if (input.size() >= ComposeSequence::MAX_SYMBOLS)
+      return search_state;
+
+    for (unsigned i = 0; i < COMPOSE_SEQUENCES_SIZE; ++i)
     {
-      int key = keysym - XK_dead_grave;
+      int j = 0;
+      bool valid_seq = false;
+      ComposeSequence const& seq = COMPOSE_SEQUENCES[i];
 
-      if (dead_keys_map[key])
+      for (auto key : input)
       {
-        composition_mode_ = true;
-
-        if (!dead_key_mode_)
+        if (key != seq.symbols[j])
         {
-          composition_string_.clear();
-          dead_key_string_ = character;
+          if (seq.symbols[j] != XK_VoidSymbol)
+            valid_seq = false;
+
+          break;
         }
 
-        dead_key_mode_ = true;
-        std::string dead_key;
-        dead_key = dead_keys_map[key];
-        HandledComposition(keysym, dead_key.c_str());
-
-        return true;
+        valid_seq = true;
+        ++j;
       }
+
+      if (valid_seq)
+      {
+        if (seq.symbols[j] == XK_VoidSymbol)
+        {
+          search_state = SearchState::MATCH;
+          composition = seq.result;
+          return search_state;
+        }
+        else
+        {
+          search_state = SearchState::PARTIAL;
+        }
+      }
+    }
+
+    return search_state;
+  }
+
+  bool TextEntry::IsInCompositionMode() const
+  {
+    return !composition_list_.empty();
+  }
+
+  bool TextEntry::IsInitialCompositionKeySym(unsigned long keysym) const
+  {
+#if defined(NUX_OS_LINUX)
+    /* Checks if a keysym is a valid initial composition key */
+    if (keysym == XK_Multi_key ||
+        (keysym >= XK_dead_grave && keysym <= XK_dead_currency) ||
+        keysym == XK_Greek_accentdieresis)
+    {
+      return true;
     }
 #endif
     return false;
   }
 
-  bool TextEntry::HandledComposition(int keysym, const char* character)
+  bool TextEntry::HandleComposition(unsigned long keysym)
   {
 #if defined(NUX_OS_LINUX)
-    if (keysym == XK_Multi_key)
+    bool composition_mode = IsInCompositionMode();
+
+    if (composition_mode && IsModifierKey(keysym))
+      return true;
+
+    composition_list_.push_back(keysym);
+    std::string composition_match;
+    auto match = GetCompositionForList(composition_list_, composition_match);
+
+    if (match == SearchState::PARTIAL)
     {
-      if (composition_mode_)
-      {
-        composition_mode_ = false;
-      }
-      else
-      {
-        composition_mode_ = true;
-      }
-      composition_string_.clear();
       return true;
     }
-
-    if (composition_mode_)
+    else if (match == SearchState::MATCH)
     {
-      /* Excluding meta keys and shifts as composition cancellation */
-      if (IsModifierKey(keysym))
-      {
-        return true;
-      }
-
-      if (!character)
-        return true;
-
-      if (strncmp(character, "", 1) == 0)
-      {
-        composition_mode_ = false;
-        composition_string_.clear();
-        return true;
-      }
-
-      std::string composition_match;
-      composition_string_ += character;
-      SearchState match = GetCompositionForString(composition_string_, composition_match);
-
-      if (match == PARTIAL)
-      {
-        return true;
-      }
-      else if (match == NO_MATCH)
-      {
-        dead_key_mode_ = false;
-        composition_mode_ = false;
-        composition_string_.clear();
-      }
-      else if (match == MATCH)
-      {
-        EnterText(composition_match.c_str());
-        composition_mode_ = false;
-        dead_key_mode_ = false;
-        composition_string_.clear();
-        QueueRefresh(false, true);
-
-        return true;
-      }
+      EnterText(composition_match.c_str());
+      composition_list_.clear();
+      QueueRefresh(false, true);
+      return true;
     }
-    return false;
-#else
-    return false;
+    else
+    {
+      composition_list_.clear();
+      return composition_mode;
+    }
 #endif
+
+    return false;
   }
 
   void TextEntry::SetText(const char* text)
@@ -1291,42 +1275,6 @@ namespace nux
       cached_layout_ = CreateLayout();
     }
     return cached_layout_;
-  }
-
-  TextEntry::SearchState TextEntry::GetCompositionForString(std::string const& input, std::string& composition)
-  {
-    composition.clear();
-    SearchState search_state = NO_MATCH;
-
-    /* If we have two dead keys concatenated, then we should just write one */
-    if (dead_key_mode_ && input.length() == 2)
-    {
-      if (input[0] == input[1])
-      {
-        composition = input[0];
-        return MATCH;
-      }
-    }
-
-    /* Check if the string we have is a match, partial match or doesn't match */
-    for (int i = 0; nux_compose_seqs_compact[i] != "\0"; i++)
-    {
-      if (nux_compose_seqs_compact[i] == input &&
-          (i == 0 || (i > 0 && nux_compose_seqs_compact[i-1] != "::")))
-      {
-        // advance to the next sequence after ::
-        while (nux_compose_seqs_compact[++i] != "::")
-        {}
-
-        composition = nux_compose_seqs_compact[++i];
-        return MATCH;
-      }
-      else if (nux_compose_seqs_compact[i].find(input) == 0)
-      {
-        search_state = PARTIAL;
-      }
-    }
-    return search_state;
   }
 
   void TextEntry::QueueTextDraw()

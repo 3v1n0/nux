@@ -228,18 +228,18 @@ namespace nux
     /**
      * Enum used for the search state of the compose list
      */
-    enum SearchState {
+    enum class SearchState {
       NO_MATCH,
       PARTIAL,
       MATCH
     };
 
-    /** Checks for possible dead key sequences */
-    bool HandledDeadKeys(int keysym, int state, const char* character);
-
     /** Checks for possible composition sequences */
-    bool HandledComposition(int keysym, const char* character);
-    
+    bool IsInitialCompositionKeySym(unsigned long keysym) const;
+    bool IsInCompositionMode() const;
+    bool HandleComposition(unsigned long keysym);
+    SearchState GetCompositionForList(std::vector<unsigned long> const& input, std::string& composition);
+
     void QueueTextDraw();
     /** Remove the cached layout. */
     void ResetLayout();
@@ -351,8 +351,6 @@ namespace nux
      */
     void GetCursorLocationInLayout(int* strong_x, int* strong_y, int* strong_height,
                                    int* weak_x, int* weak_y, int* weak_height);
-
-    SearchState GetCompositionForString(std::string const& input, std::string& composition);
 
     /** The CairoCanvas which hold cairo_t inside */
     CairoGraphics* canvas_;
@@ -489,11 +487,7 @@ namespace nux
     bool lose_key_focus_on_key_nav_direction_up_;
     bool lose_key_focus_on_key_nav_direction_down_;
 
-    bool dead_key_mode_;
-    std::string dead_key_string_;
-
-    bool composition_mode_;
-    std::string composition_string_;
+    std::vector<unsigned long> composition_list_;
 
     virtual bool InspectKeyEvent(Event const& event);
     virtual bool InspectKeyEvent(unsigned int eventType, unsigned int keysym, const char* character);
