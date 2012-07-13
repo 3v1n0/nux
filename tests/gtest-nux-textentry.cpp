@@ -64,12 +64,7 @@ public:
 
   bool InCompositionMode() const
   {
-    return composition_mode_;
-  }
-
-  bool InDeadKeyMode() const
-  {
-    return dead_key_mode_;
+    return TextEntry::IsInCompositionMode();
   }
 
   void ClearText()
@@ -85,9 +80,23 @@ public:
     MATCH
   };
 
+  CompositionResult GetCompositionForList(std::vector<unsigned long> const& input, std::string& composition)
+  {
+    return static_cast<CompositionResult>(TextEntry::GetCompositionForList(input, composition));
+  }
+
   CompositionResult GetCompositionForString(std::string const& input, std::string& composition)
   {
-    return static_cast<CompositionResult>(TextEntry::GetCompositionForString(input, composition));
+    std::vector<unsigned long> input_vec;
+#if defined(NUX_OS_LINUX)
+    input_vec.push_back(XK_Multi_key);
+
+    for (auto c : input)
+    {
+      input_vec.push_back(c);
+    }
+#endif
+    return GetCompositionForList(input_vec, composition);
   }
 
   nux::IBusIMEContext* ime() const
@@ -477,26 +486,22 @@ TEST_F(TestTextEntry, CompositionDeadKey)
   ASSERT_FALSE(text_entry->InCompositionMode());
   TestEvent dead_key_cirucmflex(XK_dead_circumflex);
   SendEvent(dead_key_cirucmflex);
-  EXPECT_TRUE(text_entry->InDeadKeyMode());
   EXPECT_TRUE(text_entry->InCompositionMode());
 
   TestEvent a(XK_a);
   SendEvent(a);
   EXPECT_FALSE(text_entry->InCompositionMode());
-  EXPECT_FALSE(text_entry->InDeadKeyMode());
 
   EXPECT_EQ(text_entry->GetText(), "â");
   text_entry->ClearText();
 
   TestEvent dead_key_currency(XK_dead_currency);
   SendEvent(dead_key_currency);
-  EXPECT_TRUE(text_entry->InDeadKeyMode());
   EXPECT_TRUE(text_entry->InCompositionMode());
 
   TestEvent e(XK_e);
   SendEvent(e);
   EXPECT_FALSE(text_entry->InCompositionMode());
-  EXPECT_FALSE(text_entry->InDeadKeyMode());
 
   EXPECT_EQ(text_entry->GetText(), "€");
 }
@@ -506,12 +511,10 @@ TEST_F(TestTextEntry, CompositionDeadKeyRepeat)
   ASSERT_FALSE(text_entry->InCompositionMode());
   TestEvent dead_key(XK_dead_grave);
   SendEvent(dead_key);
-  EXPECT_TRUE(text_entry->InDeadKeyMode());
   EXPECT_TRUE(text_entry->InCompositionMode());
 
   SendEvent(dead_key);
   EXPECT_FALSE(text_entry->InCompositionMode());
-  EXPECT_FALSE(text_entry->InDeadKeyMode());
 
   EXPECT_EQ(text_entry->GetText(), "`");
 }
@@ -521,19 +524,16 @@ TEST_F(TestTextEntry, CompositionDeadKeyComplex)
   ASSERT_FALSE(text_entry->InCompositionMode());
   TestEvent dead_key(XK_dead_circumflex);
   SendEvent(dead_key);
-  EXPECT_TRUE(text_entry->InDeadKeyMode());
   EXPECT_TRUE(text_entry->InCompositionMode());
 
   SendEvent(dead_key);
   EXPECT_FALSE(text_entry->InCompositionMode());
-  EXPECT_FALSE(text_entry->InDeadKeyMode());
   EXPECT_EQ(text_entry->GetText(), "^");
 
   SendEvent(dead_key);
   TestEvent o(XK_o);
   SendEvent(o);
   EXPECT_FALSE(text_entry->InCompositionMode());
-  EXPECT_FALSE(text_entry->InDeadKeyMode());
 
   EXPECT_EQ(text_entry->GetText(), "^ô");
 }
@@ -544,15 +544,33 @@ TEST_F(TestTextEntry, CompositionDeadKeysMix)
   ASSERT_FALSE(text_entry->InCompositionMode());
   TestEvent dead_key1(XK_dead_macron);
   SendEvent(dead_key1);
-  EXPECT_TRUE(text_entry->InDeadKeyMode());
   EXPECT_TRUE(text_entry->InCompositionMode());
 
   TestEvent dead_key2(XK_dead_circumflex);
   SendEvent(dead_key2);
   EXPECT_FALSE(text_entry->InCompositionMode());
-  EXPECT_FALSE(text_entry->InDeadKeyMode());
 
   EXPECT_EQ(text_entry->GetText(), "");
+}
+
+TEST_F(TestTextEntry, CompositionMultipleKeyCancel)
+{
+  std::string composed;
+  auto result = text_entry->GetCompositionForString("iii", composed);
+
+  EXPECT_EQ(result, MockTextEntry::CompositionResult::NO_MATCH);
+  EXPECT_EQ(composed, "");
+
+  TestEvent compose(XK_Multi_key);
+  TestEvent i(XK_i);
+
+  SendEvent(compose);
+  SendEvent(i);
+  SendEvent(i);
+  SendEvent(i);
+
+  EXPECT_FALSE(text_entry->InCompositionMode());
+  EXPECT_EQ(text_entry->GetText(), "i");
 }
 
 TEST_F(TestTextEntry, CompositionResultValid)
@@ -583,25 +601,48 @@ TEST_F(TestTextEntry, CompositionResultInvalid)
 
 TEST_F(TestTextEntry, CompositionSequences)
 {
-  for (int i = 0; nux_compose_seqs_compact[i] != "\0"; ++i)
+  for (unsigned i = 0; i < COMPOSE_SEQUENCES_SIZE; ++i)
   {
-    auto test_str = nux_compose_seqs_compact[i];
+    ComposeSequence const& seq = COMPOSE_SEQUENCES[i];
+    std::vector<unsigned long> input_vec;
+    std::string composed;
 
-    if (test_str == "::")
+    for (unsigned j = 0; j < ComposeSequence::MAX_SYMBOLS && seq.symbols[j] != XK_VoidSymbol; ++j)
     {
-      ++i; // skip the next value (that is the output)
-      continue;
+      input_vec.push_back(seq.symbols[j]);
     }
 
-    // advance to the next sequence after ::
-    int result_idx = i;
-    while (nux_compose_seqs_compact[++result_idx] != "::") {}
-    auto expected_result = nux_compose_seqs_compact[++result_idx];
+    std::string expected_result = seq.result;
+    auto result = text_entry->GetCompositionForList(input_vec, composed);
 
-    std::string composed;
-    auto result = text_entry->GetCompositionForString(test_str, composed);
     EXPECT_EQ(result, MockTextEntry::CompositionResult::MATCH);
     EXPECT_EQ(composed, expected_result);
+  }
+}
+
+TEST_F(TestTextEntry, CompositionSequencesInput)
+{
+  for (unsigned i = 0; i < COMPOSE_SEQUENCES_SIZE; ++i)
+  {
+    ComposeSequence const& seq = COMPOSE_SEQUENCES[i];
+
+    EXPECT_FALSE(text_entry->InCompositionMode());
+
+    for (unsigned j = 0; j < ComposeSequence::MAX_SYMBOLS && seq.symbols[j] != XK_VoidSymbol; ++j)
+    {
+      TestEvent event(seq.symbols[j]);
+      SendEvent(event);
+
+      if (seq.symbols[j+1] != XK_VoidSymbol)
+        EXPECT_TRUE(text_entry->InCompositionMode());
+    }
+
+    std::string expected_result = seq.result;
+
+    EXPECT_FALSE(text_entry->InCompositionMode());
+    EXPECT_EQ(text_entry->GetText(), expected_result);
+
+    text_entry->ClearText();
   }
 }
 #endif
