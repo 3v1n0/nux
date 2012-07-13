@@ -47,15 +47,17 @@ public:
 
   virtual int Duration() const = 0;
 
-  void Pause();
-  void Resume();
-  void SetCurrentTime(int msecs);
-  void SetPaused(bool paused);
   void Start();
   void Stop();
 
+  void Pause();
+  void Resume();
+
   State CurrentState() const;
   sigc::signal<void> finished;
+
+  // Move the animation on so many milliseconds.
+  virtual void Advance(int msec) = 0;
 
 protected:
   virtual void Restart() = 0;

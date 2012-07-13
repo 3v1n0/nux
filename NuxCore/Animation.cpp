@@ -47,12 +47,6 @@ void na::Animation::Resume()
   }
 }
 
-void na::Animation::SetCurrentTime(int msecs)
-{}
-
-void na::Animation::SetPaused(bool paused)
-{}
-
 void na::Animation::Start()
 {
   if (state_ == Stopped)

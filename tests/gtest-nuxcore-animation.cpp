@@ -111,6 +111,7 @@ class MockAnimation : public na::Animation
 {
 public:
   MOCK_CONST_METHOD0(Duration, int());
+  MOCK_METHOD1(Advance, void(int));
   MOCK_METHOD0(Restart, void());
 
 };
@@ -218,6 +219,8 @@ TEST_F(TestAnimation, TestResumeStopped)
   animation.Resume();
   ASSERT_THAT(animation.CurrentState(), Eq(na::Animation::Stopped));
 }
+
+
 
 /**
  * Easing curves
