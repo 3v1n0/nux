@@ -61,7 +61,7 @@ namespace nux
     SetCompositionLayout(m_hlayout);
 
     m_ChangeDetectionTimer = new TimerFunctor();
-    m_ChangeDetectionTimer->time_expires.connect(sigc::mem_fun(this, &ColorPreview::RecvTimer));
+    m_ChangeDetectionTimer->tick.connect(sigc::mem_fun(this, &ColorPreview::RecvTimer));
     m_ChangeTimerHandler = 0;
   }
 
@@ -100,7 +100,7 @@ namespace nux
     m_DialogThreadProxy->SetColor(m_Color);
     m_DialogThreadProxy->Start();
 
-    m_ChangeTimerHandler = GetTimer().AddTimerHandler(33, m_ChangeDetectionTimer, this);
+    m_ChangeTimerHandler = GetTimer().AddOneShotTimer(33, m_ChangeDetectionTimer, this);
   }
 
   void ColorPreview::RecvTimer(void *v)
@@ -114,7 +114,7 @@ namespace nux
 
     if (m_DialogThreadProxy->IsActive())
     {
-      m_ChangeTimerHandler = GetTimer().AddTimerHandler(33, m_ChangeDetectionTimer, this);
+      m_ChangeTimerHandler = GetTimer().AddOneShotTimer(33, m_ChangeDetectionTimer, this);
     }
     else
     {
