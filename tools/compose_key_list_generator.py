@@ -26,7 +26,7 @@ blacklisted_keys = ["EZH", "ezh", "dead_double_grave", "dead_inverted_breve",
                     "dead_greek", "greaterthanequal", "lessthanequal",
                     "underbar", "rightarrow", "leftarrow"]
 
-combinations = {u"": ["ubuntu", "circle"]}
+combinations = {u"": ["ubuntu", "UBUNTU"]}
 descriptions = {u"": "UBUNTU CIRCLE"}
 
 
@@ -55,20 +55,24 @@ def make_cpp_output(output_file):
     keycode = """/* This file has been automatically generated using the
  * compose_key_list_generator.py script.
  */
-#include <vector>
+#include <iostream.h>
 #include <X11/Xutils.h>
 
 struct ComposeSequence
 {
-  typedef std::vector<KeySym> KeySymVector;
-  std::vector<KeySymVector> symbols;
+  const static unsigned int MAX_SYMBOLS = %d;
+  KeySym symbols[MAX_SYMBOLS];
   const char* result;
 };
 
-static const ComposeSequence NUX_COMPOSE_SEQUENCIES[] = {
+static const size_t COMPOSE_SEQUENCES_SIZE = %d;
+
+static const ComposeSequence COMPOSE_SEQUENCES[] = {
 %s};
 """
     keyarray = ""
+    sequencies_size = 0;
+    max_values = 0
 
     for c in combinations.keys():
         thiscombo = combinations[c]
@@ -76,20 +80,26 @@ static const ComposeSequence NUX_COMPOSE_SEQUENCIES[] = {
             continue
 
         first = True
-        keyarray += "  {{"
-
         for combo in thiscombo:
-            # Add 'XK_' prefix to key names
-            xcombo = ["XK_" + k for k in combo]
-            keyarray += "    " if not first else ""
-            keyarray += "{%s}" % (", ".join(xcombo))
-            keyarray += ",\n" if combo != thiscombo[-1] else "},\n"
+            # Fix manually set combinations
+            if (type(combo) is str):
+                combo = [k for k in combo]
+                combo.insert(0, "Multi_key")
 
+            # Add 'XK_' prefix to key names
+            combo = ["XK_" + k for k in combo]
+            combo.append("XK_VoidSymbol")
+
+            combosize = len(combo)
+            if combosize > max_values:
+                max_values = combosize
+
+            desc = " // " + descriptions[c] if first else ""
+            keyarray += "  {{%s}, \"%s\"},%s\n" % (", ".join(combo), escape_char(c), desc)
+            sequencies_size += 1
             first = False
 
-        keyarray += "   \"%s\"}, // %s\n" % (escape_char(c), descriptions[c])
-
-    output = keycode % (keyarray)
+    output = keycode % (max_values, sequencies_size, keyarray)
 
     out = file(output_file, "w")
     out.write(output.encode('utf-8'))
