@@ -170,6 +170,16 @@ TEST_F(TestAnimation, TestStoppingEmitsFinished)
   ASSERT_TRUE(finished_called.happened);
 }
 
+TEST_F(TestAnimation, TestStoppingStoppedDoesntEmitsFinished)
+{
+  NiceMock<MockAnimation> animation; // don't care about restart here
+  nt::TestCallback finished_called;
+  animation.finished.connect(finished_called.sigc_callback());
+  animation.Stop();
+  ASSERT_THAT(animation.CurrentState(), Eq(na::Animation::Stopped));
+  ASSERT_FALSE(finished_called.happened);
+}
+
 /**
  * Easing curves
  */
