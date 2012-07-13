@@ -238,6 +238,17 @@ TEST(TestAnimateValue, TestConstruction)
   ASSERT_THAT(value_int_animation.Duration(), Eq(1000));
 }
 
+TEST(TestAnimateValue, TestStartEmitsInitialValue)
+{
+  nt::ChangeRecorder<int> recorder;
+  na::AnimateValue<int> animation(10, 20, 1000);
+  animation.updated.connect(recorder.listener());
+
+  animation.Start();
+  ASSERT_THAT(recorder.size(), Eq(1));
+  ASSERT_THAT(recorder.changed_values[0], Eq(10));
+
+}
 
 /**
  * Easing curves
