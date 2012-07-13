@@ -247,7 +247,26 @@ TEST(TestAnimateValue, TestStartEmitsInitialValue)
   animation.Start();
   ASSERT_THAT(recorder.size(), Eq(1));
   ASSERT_THAT(recorder.changed_values[0], Eq(10));
+}
 
+TEST(TestAnimateValue, TestAdvance)
+{
+  nt::ChangeRecorder<int> recorder;
+  nt::TestCallback finished_called;
+  na::AnimateValue<int> animation(10, 20, 1000);
+  animation.updated.connect(recorder.listener());
+  animation.finished.connect(finished_called.sigc_callback());
+
+  animation.Start();
+  for (int i = 0; i < 10; ++i)
+    animation.Advance(100);
+
+  std::vector<int> expected = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
+
+  ASSERT_THAT(recorder.changed_values, Eq(expected));
+  ASSERT_TRUE(finished_called.happened);
+  ASSERT_THAT(animation.CurrentState(), Eq(na::Animation::Stopped));
+  ASSERT_THAT(animation.GetCurrentValue(), Eq(20));
 }
 
 /**
