@@ -120,36 +120,6 @@ public:
 
 };
 
-class TestTicker : public na::TickSource
-{
-public:
-  TestTicker() : tick_value(0) {}
-
-  void ms_tick(int ms)
-    {
-      tick_value += ms * 1000;
-      tick.emit(tick_value);
-    }
-
-  void multi_tick(int)
-    {}
-
-private:
-  long long tick_value;
-};
-
-class TestAnimationXXX : public Test
-{
-public:
-  TestAnimationXXX()
-    : animation_controller(ticker)
-    {}
-
-protected:
-  TestTicker ticker;
-  na::AnimationController animation_controller;
-};
-
 
 TEST(TestAnimation, TestInitialState)
 {
@@ -172,6 +142,17 @@ TEST(TestAnimation, TestStoppingEmitsFinished)
   animation.Start();
   animation.Stop();
   ASSERT_THAT(animation.CurrentState(), Eq(na::Animation::Stopped));
+  ASSERT_TRUE(finished_called.happened);
+}
+
+TEST(TestAnimation, TestDestructorStops)
+{
+  nt::TestCallback finished_called;
+  {
+    NiceMock<MockAnimation> animation; // don't care about restart here
+    animation.finished.connect(finished_called.sigc_callback());
+    animation.Start();
+  }
   ASSERT_TRUE(finished_called.happened);
 }
 
@@ -222,174 +203,6 @@ TEST(TestAnimation, TestResumeStopped)
   NiceMock<MockAnimation> animation; // don't care about restart here
   animation.Resume();
   ASSERT_THAT(animation.CurrentState(), Eq(na::Animation::Stopped));
-}
-
-
-TEST(TestAnimateValue, TestConstruction)
-{
-  na::AnimateValue<int> dafault_int_animation;
-  ASSERT_THAT(dafault_int_animation.CurrentState(), Eq(na::Animation::Stopped));
-  ASSERT_THAT(dafault_int_animation.GetStartValue(), Eq(0));
-  ASSERT_THAT(dafault_int_animation.GetCurrentValue(), Eq(0));
-  ASSERT_THAT(dafault_int_animation.GetFinishValue(), Eq(0));
-  ASSERT_THAT(dafault_int_animation.Duration(), Eq(0));
-
-  na::AnimateValue<int> value_int_animation(10, 20, 1000);
-  ASSERT_THAT(value_int_animation.CurrentState(), Eq(na::Animation::Stopped));
-  ASSERT_THAT(value_int_animation.GetStartValue(), Eq(10));
-  ASSERT_THAT(value_int_animation.GetCurrentValue(), Eq(10));
-  ASSERT_THAT(value_int_animation.GetFinishValue(), Eq(20));
-  ASSERT_THAT(value_int_animation.Duration(), Eq(1000));
-}
-
-TEST(TestAnimateValue, TestStartEmitsInitialValue)
-{
-  nt::ChangeRecorder<int> recorder;
-  na::AnimateValue<int> animation(10, 20, 1000);
-  animation.updated.connect(recorder.listener());
-
-  animation.Start();
-  ASSERT_THAT(recorder.size(), Eq(1));
-  ASSERT_THAT(recorder.changed_values[0], Eq(10));
-}
-
-TEST(TestAnimateValue, TestAdvance)
-{
-  nt::ChangeRecorder<int> recorder;
-  nt::TestCallback finished_called;
-  na::AnimateValue<int> animation(10, 20, 1000);
-  animation.updated.connect(recorder.listener());
-  animation.finished.connect(finished_called.sigc_callback());
-
-  animation.Start();
-  for (int i = 0; i < 11; ++i) // Advance one more time than necessary
-    animation.Advance(100);
-
-  std::vector<int> expected = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
-
-  ASSERT_THAT(recorder.changed_values, Eq(expected));
-  ASSERT_TRUE(finished_called.happened);
-  ASSERT_THAT(animation.CurrentState(), Eq(na::Animation::Stopped));
-  ASSERT_THAT(animation.GetCurrentValue(), Eq(20));
-}
-
-TEST(TestAnimateValue, TestAdvanceOnlyRunning)
-{
-  nt::ChangeRecorder<int> recorder;
-  na::AnimateValue<int> animation(10, 20, 1000);
-  animation.updated.connect(recorder.listener());
-
-  animation.Advance(100);
-  ASSERT_THAT(recorder.changed_values.size(), Eq(0));
-
-  animation.Start();
-  animation.Advance(400);
-  std::vector<int> expected = {10, 14};
-  ASSERT_THAT(recorder.changed_values, Eq(expected));
-
-  animation.Pause();
-  animation.Advance(400);
-  ASSERT_THAT(recorder.changed_values, Eq(expected));
-
-  animation.Resume();
-  animation.Advance(400);
-  expected.push_back(18);
-  ASSERT_THAT(recorder.changed_values, Eq(expected));
-}
-
-TEST(TestAnimateValue, TestUsesEasingFunction)
-{
-  nt::ChangeRecorder<float> recorder;
-  na::AnimateValue<float> animation(10, 20, 1000);
-  animation.SetEasingCurve(na::EasingCurve(na::EasingCurve::Type::OutQuad));
-  animation.updated.connect(recorder.listener());
-
-  animation.Start();
-  for (int i = 0; i < 10; ++i)
-    animation.Advance(200);
-
-  std::vector<float> expected = {10, 13.6, 16.4, 18.4, 19.6, 20};
-
-  ASSERT_THAT(recorder.changed_values.size(), Eq(expected.size()));
-  // Use FloatEq to check values as calculations may give truncated values.
-  for (std::size_t i = 0; i < expected.size(); ++i)
-  {
-    ASSERT_THAT(recorder.changed_values[i], FloatEq(expected[i]));
-  }
-}
-
-TEST(TestAnimateValue, TestAnimatePoint)
-{
-  nt::ChangeRecorder<nux::Point> recorder;
-  na::AnimateValue<nux::Point> animation(nux::Point(10, 10),
-                                         nux::Point(20, 20),
-                                         1000);
-  animation.updated.connect(recorder.listener());
-
-  animation.Start();
-  for (int i = 0; i < 10; ++i)
-    animation.Advance(200);
-
-  std::vector<nux::Point> expected = {nux::Point(10,10),
-                                      nux::Point(12,12),
-                                      nux::Point(14,14),
-                                      nux::Point(16,16),
-                                      nux::Point(18,18),
-                                      nux::Point(20,20)};
-
-  ASSERT_THAT(recorder.changed_values, Eq(expected));
-}
-
-TEST(TestAnimateValue, TestAnimateRect)
-{
-  nt::ChangeRecorder<nux::Rect> recorder;
-  na::AnimateValue<nux::Rect> animation(nux::Rect(10, 10, 100, 200),
-                                        nux::Rect(20, 20, 200, 400),
-                                        1000);
-  animation.updated.connect(recorder.listener());
-
-  animation.Start();
-  for (int i = 0; i < 10; ++i)
-    animation.Advance(200);
-
-  std::vector<nux::Rect> expected = {nux::Rect(10, 10, 100, 200),
-                                     nux::Rect(12, 12, 120, 240),
-                                     nux::Rect(14, 14, 140, 280),
-                                     nux::Rect(16, 16, 160, 320),
-                                     nux::Rect(18, 18, 180, 360),
-                                     nux::Rect(20, 20, 200, 400)};
-
-  ASSERT_THAT(recorder.changed_values, Eq(expected));
-}
-
-TEST(TestAnimateValue, TestAnimateColor)
-{
-  nt::ChangeRecorder<nux::Color> recorder;
-  na::AnimateValue<nux::Color> animation(nux::Color(1.0f, 0.0f, 0.0f),
-                                         nux::Color(0.0f, 0.5f, 0.0f),
-                                         1000);
-  animation.updated.connect(recorder.listener());
-
-  animation.Start();
-  for (int i = 0; i < 5; ++i)
-    animation.Advance(250);
-
-  std::vector<nux::Color> expected = {nux::Color(1.0f, 0.0f, 0.0f),
-                                      nux::Color(0.75f, 0.125f, 0.0f),
-                                      nux::Color(0.5f, 0.25f, 0.0f),
-                                      nux::Color(0.25f, 0.375f, 0.0f),
-                                      nux::Color(0.0f, 0.5f, 0.0f)};
-
-  ASSERT_THAT(recorder.changed_values.size(), Eq(expected.size()));
-  // Use FloatEq to check values as calculations may give truncated values.
-  for (std::size_t i = 0; i < expected.size(); ++i)
-  {
-    nux::Color const& c = recorder.changed_values[i];
-    ASSERT_THAT(c.red, FloatEq(expected[i].red));
-    ASSERT_THAT(c.green, FloatEq(expected[i].green));
-    ASSERT_THAT(c.blue, FloatEq(expected[i].blue));
-    ASSERT_THAT(c.alpha, FloatEq(expected[i].alpha));
-  }
 }
 
 
@@ -468,5 +281,288 @@ TEST(TestEasingCurve, TestInOutQuad) {
   ASSERT_THAT(curve.ValueForProgress(1.0), DoubleEq(1));
   ASSERT_THAT(curve.ValueForProgress(1.5), DoubleEq(1));
 }
+
+
+/**
+ * Animating values
+ */
+
+TEST(TestAnimateValue, TestConstruction)
+{
+  na::AnimateValue<int> dafault_int_animation;
+  ASSERT_THAT(dafault_int_animation.CurrentState(), Eq(na::Animation::Stopped));
+  ASSERT_THAT(dafault_int_animation.GetStartValue(), Eq(0));
+  ASSERT_THAT(dafault_int_animation.GetCurrentValue(), Eq(0));
+  ASSERT_THAT(dafault_int_animation.GetFinishValue(), Eq(0));
+  ASSERT_THAT(dafault_int_animation.Duration(), Eq(0));
+
+  na::AnimateValue<int> value_int_animation(10, 20, 1000);
+  ASSERT_THAT(value_int_animation.CurrentState(), Eq(na::Animation::Stopped));
+  ASSERT_THAT(value_int_animation.GetStartValue(), Eq(10));
+  ASSERT_THAT(value_int_animation.GetCurrentValue(), Eq(10));
+  ASSERT_THAT(value_int_animation.GetFinishValue(), Eq(20));
+  ASSERT_THAT(value_int_animation.Duration(), Eq(1000));
+}
+
+TEST(TestAnimateValue, TestStartEmitsInitialValue)
+{
+  nt::ChangeRecorder<int> recorder;
+  na::AnimateValue<int> animation(10, 20, 1000);
+  animation.updated.connect(recorder.listener());
+
+  animation.Start();
+  ASSERT_THAT(recorder.size(), Eq(1));
+  ASSERT_THAT(recorder.changed_values[0], Eq(10));
+}
+
+TEST(TestAnimateValue, TestAdvance)
+{
+  nt::ChangeRecorder<int> recorder;
+  nt::TestCallback finished_called;
+  na::AnimateValue<int> animation(10, 20, 1000);
+  animation.updated.connect(recorder.listener());
+  animation.finished.connect(finished_called.sigc_callback());
+
+  animation.Start();
+  for (int i = 0; i < 11; ++i) // Advance one more time than necessary
+    animation.Advance(100);
+
+  std::vector<int> expected = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
+
+  ASSERT_THAT(recorder.changed_values, Eq(expected));
+  ASSERT_TRUE(finished_called.happened);
+  ASSERT_THAT(animation.CurrentState(), Eq(na::Animation::Stopped));
+  ASSERT_THAT(animation.GetCurrentValue(), Eq(20));
+}
+
+TEST(TestAnimateValue, TestAdvanceOnlyRunning)
+{
+  nt::ChangeRecorder<int> recorder;
+  na::AnimateValue<int> animation(10, 20, 1000);
+  animation.updated.connect(recorder.listener());
+
+  animation.Advance(100);
+  ASSERT_THAT(recorder.size(), Eq(0));
+
+  animation.Start();
+  animation.Advance(400);
+  std::vector<int> expected = {10, 14};
+  ASSERT_THAT(recorder.changed_values, Eq(expected));
+
+  animation.Pause();
+  animation.Advance(400);
+  ASSERT_THAT(recorder.changed_values, Eq(expected));
+
+  animation.Resume();
+  animation.Advance(400);
+  expected.push_back(18);
+  ASSERT_THAT(recorder.changed_values, Eq(expected));
+}
+
+TEST(TestAnimateValue, TestUsesEasingFunction)
+{
+  nt::ChangeRecorder<float> recorder;
+  na::AnimateValue<float> animation(10, 20, 1000);
+  animation.SetEasingCurve(na::EasingCurve(na::EasingCurve::Type::OutQuad));
+  animation.updated.connect(recorder.listener());
+
+  animation.Start();
+  for (int i = 0; i < 10; ++i)
+    animation.Advance(200);
+
+  std::vector<float> expected = {10, 13.6, 16.4, 18.4, 19.6, 20};
+
+  ASSERT_THAT(recorder.size(), Eq(expected.size()));
+  // Use FloatEq to check values as calculations may give truncated values.
+  for (std::size_t i = 0; i < expected.size(); ++i)
+  {
+    ASSERT_THAT(recorder.changed_values[i], FloatEq(expected[i]));
+  }
+}
+
+TEST(TestAnimateValue, TestAnimatePoint)
+{
+  nt::ChangeRecorder<nux::Point> recorder;
+  na::AnimateValue<nux::Point> animation(nux::Point(10, 10),
+                                         nux::Point(20, 20),
+                                         1000);
+  animation.updated.connect(recorder.listener());
+
+  animation.Start();
+  for (int i = 0; i < 10; ++i)
+    animation.Advance(200);
+
+  std::vector<nux::Point> expected = {nux::Point(10,10),
+                                      nux::Point(12,12),
+                                      nux::Point(14,14),
+                                      nux::Point(16,16),
+                                      nux::Point(18,18),
+                                      nux::Point(20,20)};
+
+  ASSERT_THAT(recorder.changed_values, Eq(expected));
+}
+
+TEST(TestAnimateValue, TestAnimateRect)
+{
+  nt::ChangeRecorder<nux::Rect> recorder;
+  na::AnimateValue<nux::Rect> animation(nux::Rect(10, 10, 100, 200),
+                                        nux::Rect(20, 20, 200, 400),
+                                        1000);
+  animation.updated.connect(recorder.listener());
+
+  animation.Start();
+  for (int i = 0; i < 10; ++i)
+    animation.Advance(200);
+
+  std::vector<nux::Rect> expected = {nux::Rect(10, 10, 100, 200),
+                                     nux::Rect(12, 12, 120, 240),
+                                     nux::Rect(14, 14, 140, 280),
+                                     nux::Rect(16, 16, 160, 320),
+                                     nux::Rect(18, 18, 180, 360),
+                                     nux::Rect(20, 20, 200, 400)};
+
+  ASSERT_THAT(recorder.changed_values, Eq(expected));
+}
+
+TEST(TestAnimateValue, TestAnimateColor)
+{
+  nt::ChangeRecorder<nux::Color> recorder;
+  na::AnimateValue<nux::Color> animation(nux::Color(1.0f, 0.0f, 0.0f),
+                                         nux::Color(0.0f, 0.5f, 0.0f),
+                                         1000);
+  animation.updated.connect(recorder.listener());
+
+  animation.Start();
+  for (int i = 0; i < 5; ++i)
+    animation.Advance(250);
+
+  std::vector<nux::Color> expected = {nux::Color(1.0f, 0.0f, 0.0f),
+                                      nux::Color(0.75f, 0.125f, 0.0f),
+                                      nux::Color(0.5f, 0.25f, 0.0f),
+                                      nux::Color(0.25f, 0.375f, 0.0f),
+                                      nux::Color(0.0f, 0.5f, 0.0f)};
+
+  ASSERT_THAT(recorder.size(), Eq(expected.size()));
+  // Use FloatEq to check values as calculations may give truncated values.
+  for (std::size_t i = 0; i < expected.size(); ++i)
+  {
+    nux::Color const& c = recorder.changed_values[i];
+    ASSERT_THAT(c.red, FloatEq(expected[i].red));
+    ASSERT_THAT(c.green, FloatEq(expected[i].green));
+    ASSERT_THAT(c.blue, FloatEq(expected[i].blue));
+    ASSERT_THAT(c.alpha, FloatEq(expected[i].alpha));
+  }
+}
+
+
+/**
+ * Test the ticker hooked up to the animation controller advances animations.
+ */
+
+class TestTicker : public na::TickSource
+{
+public:
+  TestTicker() : tick_value(0) {}
+
+  void ms_tick(int ms)
+    {
+      tick_value += ms * 1000;
+      tick.emit(tick_value);
+    }
+
+private:
+  long long tick_value;
+};
+
+class TestAnimationHookup : public Test
+{
+public:
+  TestAnimationHookup()
+    : animation_controller(ticker)
+    {}
+
+protected:
+  TestTicker ticker;
+  na::AnimationController animation_controller;
+};
+
+
+
+TEST_F(TestAnimationHookup, TestSingleAnimation)
+{
+  nt::ChangeRecorder<int> recorder;
+  na::AnimateValue<int> animation(10, 20, 1000);
+  animation.updated.connect(recorder.listener());
+
+  // Ticking along with no animations has no impact.
+  ticker.ms_tick(100);
+
+  EXPECT_THAT(recorder.size(), Eq(0));
+
+  animation.Start();
+
+  ticker.ms_tick(200);
+
+  std::vector<int> expected = {10, 12};
+  EXPECT_THAT(recorder.changed_values, Eq(expected));
+
+  // Pausing means no advancement
+  animation.Pause();
+  ticker.ms_tick(200);
+  EXPECT_THAT(recorder.changed_values, Eq(expected));
+
+  // Resuming allows updates.
+
+  animation.Resume();
+  ticker.ms_tick(200);
+  expected.push_back(14);
+  EXPECT_THAT(recorder.changed_values, Eq(expected));
+
+  animation.Stop();
+  ticker.ms_tick(200);
+  EXPECT_THAT(recorder.changed_values, Eq(expected));
+}
+
+
+TEST_F(TestAnimationHookup, TestTwoAnimation)
+{
+  nt::ChangeRecorder<int> int_recorder;
+  na::AnimateValue<int>* int_animation;
+
+  nt::ChangeRecorder<double> double_recorder;
+  na::AnimateValue<double>* double_animation;
+
+  int_animation = new na::AnimateValue<int>(0, 100, 2000);
+  int_animation->updated.connect(int_recorder.listener());
+  int_animation->Start();
+  ticker.ms_tick(200);
+
+  double_animation = new na::AnimateValue<double>(0, 10, 1000);
+  double_animation->updated.connect(double_recorder.listener());
+  double_animation->Start();
+  ticker.ms_tick(200);
+  ticker.ms_tick(200);
+
+  // Removing one animation doesn't impact the other.
+  delete double_animation;
+
+  std::vector<double> expected_doubles = {0, 2, 4};
+  EXPECT_THAT(double_recorder.changed_values, Eq(expected_doubles));
+
+  ticker.ms_tick(200);
+  ticker.ms_tick(200);
+  std::vector<int> expected_ints = {0, 10, 20, 30, 40, 50};
+  EXPECT_THAT(int_recorder.changed_values, Eq(expected_ints));
+
+  int_animation->Stop();
+  ticker.ms_tick(200);
+  EXPECT_THAT(int_recorder.changed_values, Eq(expected_ints));
+
+  delete int_animation;
+  // Ticking away with no animations is fine.
+  ticker.ms_tick(200);
+}
+
+
 
 } // anon namespace

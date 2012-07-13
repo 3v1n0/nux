@@ -21,6 +21,7 @@
  */
 
 #include <Animation.h>
+#include <AnimationController.h>
 
 namespace na = nux::animation;
 
@@ -29,7 +30,9 @@ na::Animation::Animation()
 {}
 
 na::Animation::~Animation()
-{}
+{
+  Stop();
+}
 
 void na::Animation::Pause()
 {
@@ -53,6 +56,9 @@ void na::Animation::Start()
   {
     state_ = Running;
     Restart();
+    Controller* controller = Controller::Instance();
+    if (controller)
+      controller->AddAnimation(this);
   }
 }
 
@@ -62,6 +68,9 @@ void na::Animation::Stop()
   {
     state_ = Stopped;
     finished.emit();
+    Controller* controller = Controller::Instance();
+    if (controller)
+      controller->RemoveAnimation(this);
   }
 }
 

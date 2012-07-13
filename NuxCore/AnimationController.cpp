@@ -21,8 +21,11 @@
  */
 
 #include "AnimationController.h"
+#include "Animation.h"
 
 #include "Logger.h"
+
+#include <vector>
 
 namespace na = nux::animation;
 namespace nl = nux::logging;
@@ -67,9 +70,62 @@ struct na::AnimationController::Impl
 {
   Impl()
     : last_tick_(0)
+    , ticking_(false)
     {}
 
+  void Add(Animation* anim)
+    {
+      // never add the same twice
+      Animations::iterator end = animations_.end();
+      Animations::iterator i = std::find(animations_.begin(), end, anim);
+      if (i == end)
+      {
+        animations_.push_back(anim);
+      }
+    }
+
+  void Remove(Animation* anim)
+    {
+      // never add the same twice
+      Animations::iterator end = animations_.end();
+      Animations::iterator i = std::find(animations_.begin(), end, anim);
+      if (i != end)
+      {
+        animations_.erase(i);
+      }
+    }
+
+  void Tick(long long tick)
+    {
+      ticking_ = true;
+
+      int ms_since_last_tick = static_cast<int>((tick - last_tick_) / 1000);
+      last_tick_ = tick;
+      for (Animations::iterator i = animations_.begin(),
+             end = animations_.end(); i != end; ++i)
+      {
+        (*i)->Advance(ms_since_last_tick);
+      }
+
+      ticking_ = false;
+
+      for (AnimationActions::iterator i = pending_.begin(),
+             end = pending_.end(); i != end; ++i)
+      {
+        if (i->second)
+          Add(i->first);
+        else
+          Remove(i->first);
+      }
+      pending_.clear();
+    }
+
   long long last_tick_;
+  typedef std::vector<Animation*> Animations;
+  Animations animations_;
+  typedef std::vector<std::pair<Animation*, bool>> AnimationActions;
+  AnimationActions pending_;
+  bool ticking_;
 };
 
 na::AnimationController::AnimationController(na::TickSource& tick_source)
@@ -86,12 +142,29 @@ na::AnimationController::~AnimationController()
 // tick is expected to be ever increasing
 void na::AnimationController::OnTick(long long tick)
 {
+  pimpl->Tick(tick);
 }
 
 void na::AnimationController::AddAnimation(na::Animation* animation)
 {
+  if (pimpl->ticking_)
+  {
+    pimpl->pending_.push_back(std::make_pair(animation, true));
+  }
+  else
+  {
+    pimpl->Add(animation);
+  }
 }
 
 void na::AnimationController::RemoveAnimation(na::Animation* animation)
 {
+  if (pimpl->ticking_)
+  {
+    pimpl->pending_.push_back(std::make_pair(animation, false));
+  }
+  else
+  {
+    pimpl->Remove(animation);
+  }
 }
