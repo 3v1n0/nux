@@ -7,7 +7,7 @@ int main(int argc, char **argv)
 {
   ::testing::InitGoogleTest(&argc, argv);
   g_type_init();
-  nux::NuxInitialize (0);
+  nux::NuxInitialize(0);
 
   return RUN_ALL_TESTS();
 }

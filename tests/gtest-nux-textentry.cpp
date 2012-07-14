@@ -67,6 +67,11 @@ public:
     return TextEntry::IsInCompositionMode();
   }
 
+  bool HandleComposition(unsigned long keysym)
+  {
+    return TextEntry::HandleComposition(keysym);
+  }
+
   void ClearText()
   {
     TextEntry::DeleteText(0, std::numeric_limits<int>::max());
@@ -147,7 +152,6 @@ class TestTextEntry : public Test
 public:
   virtual void SetUp()
   {
-    NuxInitialize(0);
     wnd_thread.reset(CreateNuxWindow("Nux Window", 300, 200, WINDOWSTYLE_NORMAL,
                      nullptr, false, NULL, NULL));
 
@@ -162,7 +166,7 @@ public:
   void WaitEvent()
   {
     if (text_entry->im_running())
-      Utils::WaitForTimeoutMSec(100);
+      Utils::WaitForTimeoutMSec(20);
   }
 
   void SendEvent(Event& event)
@@ -630,8 +634,16 @@ TEST_F(TestTextEntry, CompositionSequencesInput)
 
     for (unsigned j = 0; j < ComposeSequence::MAX_SYMBOLS && seq.symbols[j] != XK_VoidSymbol; ++j)
     {
-      TestEvent event(seq.symbols[j]);
-      SendEvent(event);
+      // We use a different strategy if ibus is active, to speedup the test
+      if (text_entry->im_running())
+      {
+        text_entry->HandleComposition(seq.symbols[j]);
+      }
+      else
+      {
+        TestEvent event(seq.symbols[j]);
+        SendEvent(event);
+      }
 
       if (seq.symbols[j+1] != XK_VoidSymbol)
         EXPECT_TRUE(text_entry->InCompositionMode());
