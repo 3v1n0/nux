@@ -306,9 +306,9 @@ namespace nux
 #if defined(NUX_OS_LINUX)
     if (im_running())
     {
-      // FIXME Have to get the current event for the x11_keycode for ibus-hangul/korean input
-      nux::Event const& cur_event = GetGraphicsDisplay()->GetCurrentEvent();
-      KeyEvent event(static_cast<EventType>(event_type), keysym, cur_event.x11_keycode, state, character);
+      // FIXME Have to get the x11_keycode for ibus-hangul/korean input
+      KeyCode keycode = XKeysymToKeycode(GetGraphicsDisplay()->GetX11Display(), keysym);
+      KeyEvent event(static_cast<EventType>(event_type), keysym, keycode, state, character);
 
       if (ime_->FilterKeyEvent(event))
         return;
