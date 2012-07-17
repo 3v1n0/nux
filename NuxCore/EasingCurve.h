@@ -37,6 +37,9 @@ public:
     InQuad,
     OutQuad,
     InOutQuad,
+    BackEaseIn,
+    BackEaseOut,
+    BackEaseInOut,
   };
 
   typedef double (*EasingFunction)(double);

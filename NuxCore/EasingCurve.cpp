@@ -40,6 +40,27 @@ double in_quad(double progress)
   return progress * progress;
 }
 
+double reverse(double progress, EasingCurve::EasingFunction func)
+{
+  // invert progress, and pass to ease_in
+  progress = 1 - progress;
+  return 1 - func(progress);
+}
+
+doube in_out(double progress, EasingCurve::EasingFunction func)
+{
+  if (progress > 0.5)
+  {
+    double out_progress = 1 - (progress - 0.5) * 2;
+    return 0.5 - (func(out_progress) / 2);
+  }
+  else
+  {
+    double in_progress = progress * 2;
+    return func(in_progress) / 2;
+  }
+}
+
 double out_quad(double progress)
 {
   double shift = 1 - progress;
@@ -60,6 +81,23 @@ double in_out_quad(double progress)
   }
 }
 
+double back_ease_in(double progress)
+{
+  // (s+1)*t^3 - s*t^2
+  const double overshoot = 1.70158;
+  return (((overshoot + 1) * progress * progress * progress) -
+          (overshoot * progress * progress));
+}
+
+double back_ease_out(double progress)
+{
+  return reverse(progress, back_ease_in);
+}
+
+double back_ease_in_out(double progress)
+{
+  return in_out(progress, back_ease_in);
+}
 
 na::EasingCurve::EasingFunction GetEasingFunction(na::EasingCurve::Type type)
 {
@@ -71,6 +109,12 @@ na::EasingCurve::EasingFunction GetEasingFunction(na::EasingCurve::Type type)
     return out_quad;
   case na::EasingCurve::Type::InOutQuad:
     return in_out_quad;
+  case na::EasingCurve::Type::BackEaseIn:
+    return back_ease_in;
+  case na::EasingCurve::Type::BackEaseOut:
+    return back_ease_out;
+  case na::EasingCurve::Type::BackEaseInOut:
+    return back_ease_in_out;
   case na::EasingCurve::Type::Linear:
   default:
     return linear;
