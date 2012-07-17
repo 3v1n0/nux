@@ -40,6 +40,9 @@ public:
     BackEaseIn,
     BackEaseOut,
     BackEaseInOut,
+    BounceIn,
+    BounceOut,
+    BounceInOut,
   };
 
   typedef double (*EasingFunction)(double);

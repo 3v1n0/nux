@@ -89,6 +89,40 @@ double back_ease_in_out(double progress)
   return in_out(progress, back_ease_in);
 }
 
+double bounce_in(double progress)
+{
+  if (progress < (1 / 2.75))
+  {
+    return 7.5625 * progress * progress;
+  }
+  else if (progress < (2 / 2.75))
+  {
+    progress -= (1.5 / 2.75);
+    return 7.5625 * progress * progress + 0.75;
+  }
+  else if (progress < (2.5 / 2.75) )
+  {
+    progress -= (2.25 / 2.75);
+    return 7.5625 * progress * progress + 0.9375;
+  }
+  else
+  {
+    progress -= (2.625 / 2.75);
+    return 7.5625 * progress * progress + 0.984375;
+  }
+}
+
+double bounce_out(double progress)
+{
+  return reverse(progress, bounce_in);
+}
+
+double bounce_in_out(double progress)
+{
+  return in_out(progress, bounce_out);
+}
+
+
 na::EasingCurve::EasingFunction GetEasingFunction(na::EasingCurve::Type type)
 {
   switch (type)
@@ -105,6 +139,12 @@ na::EasingCurve::EasingFunction GetEasingFunction(na::EasingCurve::Type type)
     return back_ease_out;
   case na::EasingCurve::Type::BackEaseInOut:
     return back_ease_in_out;
+  case na::EasingCurve::Type::BounceIn:
+    return bounce_in;
+  case na::EasingCurve::Type::BounceOut:
+    return bounce_out;
+  case na::EasingCurve::Type::BounceInOut:
+    return bounce_in_out;
   case na::EasingCurve::Type::Linear:
   default:
     return linear;
