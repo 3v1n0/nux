@@ -40,19 +40,19 @@ double in_quad(double progress)
   return progress * progress;
 }
 
-double reverse(double progress, EasingCurve::EasingFunction func)
+double reverse(double progress, na::EasingCurve::EasingFunction func)
 {
   // invert progress, and pass to ease_in
   progress = 1 - progress;
   return 1 - func(progress);
 }
 
-doube in_out(double progress, EasingCurve::EasingFunction func)
+double in_out(double progress, na::EasingCurve::EasingFunction func)
 {
   if (progress > 0.5)
   {
     double out_progress = 1 - (progress - 0.5) * 2;
-    return 0.5 - (func(out_progress) / 2);
+    return 1 - (func(out_progress) / 2);
   }
   else
   {
@@ -63,22 +63,12 @@ doube in_out(double progress, EasingCurve::EasingFunction func)
 
 double out_quad(double progress)
 {
-  double shift = 1 - progress;
-  return 1 - (shift * shift);
+  return reverse(progress, in_quad);
 }
 
 double in_out_quad(double progress)
 {
-  if (progress > 0.5)
-  {
-    double out_progress = (progress - 0.5) * 2;
-    return 0.5 + (out_quad(out_progress) / 2);
-  }
-  else
-  {
-    double in_progress = progress * 2;
-    return in_quad(in_progress) / 2;
-  }
+  return in_out(progress, in_quad);
 }
 
 double back_ease_in(double progress)
