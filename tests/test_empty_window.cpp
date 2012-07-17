@@ -36,8 +36,8 @@ void UserInterfaceInitialization(nux::NThread* thread, void* init_data)
   static_cast<nux::WindowThread*>(thread)->SetWindowBackgroundPaintLayer(&background);
 
   timeout_signal = new nux::TimeOutSignal();
-  timeout_signal->time_expires.connect(sigc::ptr_fun(TimeOutCallback));
-  static_cast<nux::WindowThread*>(thread)->GetTimerHandler().AddTimerHandler(1000, timeout_signal, thread, NULL);
+  timeout_signal->tick.connect(sigc::ptr_fun(TimeOutCallback));
+  static_cast<nux::WindowThread*>(thread)->GetTimerHandler().AddOneShotTimer(1000, timeout_signal, thread, NULL);
 }
 
 int main(int argc, char **argv)

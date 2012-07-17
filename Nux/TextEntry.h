@@ -214,6 +214,7 @@ namespace nux
     }
     void SetVisibility(bool visible);
     void SetPasswordChar(const char* c);
+    bool IsPasswordMode() const;
     std::string GetPasswordChar();
 
   protected:

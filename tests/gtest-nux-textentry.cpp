@@ -604,5 +604,21 @@ TEST_F(TestTextEntry, CompositionSequences)
     EXPECT_EQ(composed, expected_result);
   }
 }
+
+TEST_F(TestTextEntry, PasswordMode)
+{
+  text_entry->SetPasswordMode(true);
+  EXPECT_TRUE(text_entry->IsPasswordMode());
+  
+  text_entry->SetPasswordChar("*");
+  EXPECT_EQ(text_entry->GetPasswordChar(), std::string("*"));
+
+  text_entry->SetText("Nux");
+  EXPECT_EQ(text_entry->GetText(), std::string("Nux"));
+
+  text_entry->SetPasswordMode(false);
+  EXPECT_FALSE(text_entry->IsPasswordMode());
+}
+
 #endif
 }
