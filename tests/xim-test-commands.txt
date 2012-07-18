@@ -1,3 +1,5 @@
+
+// This test GCIN with chewing
 0 gcin
 1 ctrl+space
 1 ctrl+alt+[
@@ -6,7 +8,8 @@
 1 ctrl+space
 3 北市
 4 halt
-0 fcitx
+
+// This test Fcitx with google pinyin 0 fcitx
 1 ctrl+space
 2 dianshi ji1
 3 耟椒晃
