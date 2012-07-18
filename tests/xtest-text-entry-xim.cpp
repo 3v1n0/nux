@@ -216,12 +216,13 @@ void KillCurrentInputMethod()
 /*
   0 - Name of Input method
   1 - what keys we should press
-  2 - what to type + what to expect (split by space)
+  2 - what to type
+  3 - what to expect
   4 - we are done with this IM
 
   CFG (If someone complains that we need to check the input)
   **Note I cheated with Key, Letter and CJK...can be filled in
-  S -> 0 L | 1 K | 2 L C | 4 <halt>
+  S -> 0 L | 1 K | 2 L | 3 C | 4 <halt>
   K -> K+K | <Key>
   L -> LL | <Letter>
   C -> CC | <CJK>
@@ -234,12 +235,14 @@ void KillCurrentInputMethod()
   Abstract Syntax
   IM        = 0 <name>
   KeyStroks = 1 <key> | 1 <key+key> | 1 <key+key+key> | 1 <key+key+key+key>
-  Input     = 2 <input> <cjk>
+  Input     = 2 <input>
+  Expect    = 3 <cjk>
   Halt      = 4 halt
 
   0 -> popen(im_name)
   1 -> RunKeyStrokes(keys)
-  2 -> TypeInputAndCheck(tests)
+  2 -> TypeInput(input)
+  3 -> CheckInput(cjk)
   4 -> pclose(im_name)
 */
 
@@ -252,26 +255,28 @@ bool RunKeyStrokes(const char* keystrokes, NuxAutomatedTestFramework* test)
   return true;
 }
 
-bool TypeInputAndCheck(const char* text, NuxAutomatedTestFramework* test)
+bool TypeInput(const char* text, NuxAutomatedTestFramework* test)
 {
-  std::string str(text), input, equals;
-  input = str.substr(0, str.rfind(" "));
-  equals = str.substr(str.rfind(" ")+1);
-  str = "Text is: " + equals;
+  test->ViewSendString(text);
+  return true;
+}
 
-  printf("equals %s\n", equals.c_str());
+bool CheckInput(const char* text, NuxAutomatedTestFramework* test)
+{
+  std::string cjk(text);
+  std::string message("Text is: " + cjk);
 
-  test->ViewSendString(input);
-  test->TestReportMsg(test_textentry->text_entry_->GetText() == equals, str.c_str());
+  printf("equals %s\n", text);
+  test->TestReportMsg(test_textentry->text_entry_->GetText() == text, message.c_str());
 
   test->ViewSendCtrlA();
   nux::SleepForMilliseconds(500);
 
   test->ViewSendDelete();
   nux::SleepForMilliseconds(500);
-
   return true;
 }
+
 
 
 const char* next_token (const char* cur_command, int* tokens)
@@ -311,7 +316,13 @@ bool RunCommands(const char* raw_cmds, int tokens, NuxAutomatedTestFramework* te
     }
     else if (strcmp(cur_cmd, "2") == 0)
     {
-      TypeInputAndCheck(next_cmd, test);
+      //TypeInput(next_cmd, test);
+      test->ViewSendString(next_cmd);
+      nux::SleepForMilliseconds(500);
+    }
+    else if (strcmp(cur_cmd, "3") == 0)
+    {
+      CheckInput(next_cmd, test);
       nux::SleepForMilliseconds(500);
     }
     else if (strcmp(cur_cmd, "4") == 0)
