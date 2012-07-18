@@ -208,6 +208,15 @@ namespace nux
     */
     void DeleteText(int start, int end);
 
+    void SetPasswordMode(bool visible)
+    {
+      SetVisibility(visible);
+    }
+    void SetVisibility(bool visible);
+    void SetPasswordChar(const char* c);
+    bool IsPasswordMode() const;
+    std::string GetPasswordChar();
+
   protected:
     bool _block_focus; // used to selectively ignore focus keyevents
 
@@ -364,6 +373,7 @@ namespace nux
     std::string preedit_;
     /** Attribute list of the preedit text */
     PangoAttrList* preedit_attrs_;
+
     /**
      *  The character that should be displayed in invisible mode.
      *  If this is empty, then the edit control is visible

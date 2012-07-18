@@ -40,8 +40,8 @@ namespace
 }
 
   WindowCompositor::WindowCompositor(WindowThread* window_thread)
-  : window_thread_(window_thread)  
-  , reference_fbo_(0)
+  : reference_fbo_(0)
+  , window_thread_(window_thread)
   {
     m_FocusAreaWindow           = NULL;
     m_MenuWindow                = NULL;

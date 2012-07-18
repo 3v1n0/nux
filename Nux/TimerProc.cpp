@@ -41,7 +41,6 @@ namespace nux
   */
   static bool TimeIsGreater(TimeStruct t1, TimeStruct t2);
   static void TimeRightNow(TimeStruct *tv);
-  static void Addmillisecs(TimeStruct *tv, unsigned int milliseconds);
 //static unsigned int TimeDiff(TimeStruct t1, TimeStruct t2);
 
   static NThreadSafeCounter TimerUID = 0x01234567;
@@ -805,13 +804,5 @@ namespace nux
 #error TimeRightNow is not implemented for this platform.
 #endif
   }
-
-  void Addmillisecs(TimeStruct *tv, unsigned int milliseconds)
-  {
-    tv->usec += milliseconds * 1000;
-    tv->sec += tv->usec / 1000000;
-    tv->usec = tv->usec % 1000000;
-  }
-
 
 }
