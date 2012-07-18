@@ -217,6 +217,7 @@ void KillCurrentInputMethod()
   0 - Name of Input method
   1 - what keys we should press
   2 - what to type + what to expect (split by space)
+  4 - we are done with this IM
 
   CFG (If someone complains that we need to check the input)
   **Note I cheated with Key, Letter and CJK...can be filled in
@@ -230,25 +231,23 @@ void KillCurrentInputMethod()
   1 ctrl+space
   2 ninhao <CJK>
 
-  Abstract Syntax Tree
-  ' ' -> ''
-  0 -> <name>
-  1 -> <key> | <key+key> | <key+key+key> | <key+key+key+key>
-  2 -> <input' 'cjk>
+  Abstract Syntax
+  IM        = 0 <name>
+  KeyStroks = 1 <key> | 1 <key+key> | 1 <key+key+key> | 1 <key+key+key+key>
+  Input     = 2 <input> <cjk>
+  Halt      = 4 halt
 
-  0 -> StartIM(name)
+  0 -> popen(im_name)
   1 -> RunKeyStrokes(keys)
   2 -> TypeInputAndCheck(tests)
+  4 -> pclose(im_name)
 */
 
 bool RunKeyStrokes(const char* keystrokes, NuxAutomatedTestFramework* test)
 {
   printf("Commm-on!\n");
   nux::SleepForMilliseconds(2000);
-  //test->ViewSendKeyCombo(XK_Control_L, 0, 0, 'a');
-  //test->ViewSendIBusToggle();
-  test->ViewSendKeyCombo(XK_Control_L, XK_Alt_L, 0, 'e');
-  //test->ViewSendIBusToggle();
+  test->ViewSendIBusToggle();
   nux::SleepForMilliseconds(2000);
   return true;
 }
@@ -256,9 +255,11 @@ bool RunKeyStrokes(const char* keystrokes, NuxAutomatedTestFramework* test)
 bool TypeInputAndCheck(const char* text, NuxAutomatedTestFramework* test)
 {
   std::string str(text), input, equals;
-  input = str.substr(0, str.find(" "));
-  equals = str.substr(str.rfind(" "));
+  input = str.substr(0, str.rfind(" "));
+  equals = str.substr(str.rfind(" ")+1);
   str = "Text is: " + equals;
+
+  printf("equals %s\n", equals.c_str());
 
   test->ViewSendString(input);
   test->TestReportMsg(test_textentry->text_entry_->GetText() == equals, str.c_str());

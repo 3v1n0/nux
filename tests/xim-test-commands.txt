@@ -1,6 +1,6 @@
 0 fcitx
 1 ctrl+space
-2 shisutemu しすてむ
+2 dianshi ji1 耟椒晃
 1 1
 4 halt
 0 gcin
