@@ -1,12 +1,13 @@
+0 gcin
+1 ctrl+space
+1 ctrl+alt+[
+2 w91o3g4
+1 enter
+1 ctrl+space
+3 北市
+4 halt
 0 fcitx
 1 ctrl+space
 2 dianshi ji1
 3 耟椒晃
-4 halt
-0 gcin
-1 ctrl+space
-1 ctrl+alt+=
-2 shisutemu
-1 enter
-3 しすてむ
 4 halt

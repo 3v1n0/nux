@@ -2499,7 +2499,7 @@ namespace nux
       }
 
       ResetLayout();
-    }    
+    }
   }
 
   typedef unsigned short  UTF16Char;
@@ -2548,7 +2548,7 @@ namespace nux
       }
     case 1: if (ch >= 0x80 && ch < 0xC2) return false;
     }
-  
+
     if (ch > 0xF4) return false;
     return true;
   }

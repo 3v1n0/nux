@@ -19,7 +19,7 @@
  */
 
 #include <X11/extensions/XTest.h>
-#include <X11/keysym.h> 
+#include <X11/keysym.h>
 
 #ifndef NUX_AUTOMATED_TEST_FRAMEWORK_H
 #define NUX_AUTOMATED_TEST_FRAMEWORK_H
@@ -36,12 +36,12 @@ public:
   //! Simulate a mouse click event on a view.
   /*!
       Move the mouse to the middle of the view (if it isn't there already) and perform a click event.
-  */  
+  */
   void ViewSendMouseClick(nux::View *view, int button);
   //! Simulate a mouse double click event on a view.
   /*!
       Move the mouse to the middle of the view (if it isn't there already) and perform a double click event.
-  */  
+  */
   void ViewSendMouseDoubleClick(nux::View *view, int button);
   //! Simulate a mouse down event on a view.
   void ViewSendMouseDown(nux::View *view, int button);
@@ -90,6 +90,8 @@ public:
   void ViewSendDown();
   //! Simulate composition keys.
   void ViewSendCompositionKeys(const std::string &str);
+  //! Simulate 1-4 key presses.
+  void ViewSendKeys(const std::string &str);
 
   void ViewSendIBusToggle();
 
@@ -119,7 +121,7 @@ public:
 
 private:
   void WindowConfigSignal(int x, int y, int width, int height);
-  
+
   bool ready_to_start_;
   Display* display_;
   nux::WindowThread *window_thread_;
@@ -131,7 +133,7 @@ private:
 
   static int mouse_motion_time_span;    // in milliseconds
   static int mouse_click_time_span;     // in milliseconds
-  static int minimum_sleep_time;        // in milliseconds   
+  static int minimum_sleep_time;        // in milliseconds
   static int safety_border_inside_view; // in pixels
 };
 

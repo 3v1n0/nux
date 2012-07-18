@@ -152,7 +152,7 @@ int TokenizeCommands(char* raw_commands)
 
   // Simple Tokenizer
   // Split on the first space
-  while (*cur_ptr != '\0')
+  while (*cur_ptr != '\0' && *cur_ptr != '\n')
   {
     // Skip whitespace or a random new line
     //while (*cur_ptr == '\n' || *cur_ptr == ' ') {cur_ptr++;}
@@ -248,16 +248,11 @@ void KillCurrentInputMethod()
 
 bool RunKeyStrokes(const char* keystrokes, NuxAutomatedTestFramework* test)
 {
-  printf("Commm-on!\n");
-  nux::SleepForMilliseconds(2000);
-  test->ViewSendIBusToggle();
-  nux::SleepForMilliseconds(2000);
   return true;
 }
 
 bool TypeInput(const char* text, NuxAutomatedTestFramework* test)
 {
-  test->ViewSendString(text);
   return true;
 }
 
@@ -305,13 +300,24 @@ bool RunCommands(const char* raw_cmds, int tokens, NuxAutomatedTestFramework* te
     if (strcmp(cur_cmd, "0") == 0)
     {
       if ((start_im = popen(next_cmd, "r")) == NULL)
-        return false;
-      im_name = next_cmd;
-      nux::SleepForMilliseconds(500);
+      {
+        // Move on to the next test
+        while (strcmp(cur_cmd, "4") != 0)
+        {
+          cur_cmd = next_token(cur_cmd, &tokens);
+        }
+        next_cmd = next_token(cur_cmd, &tokens);
+      }
+      else
+      {
+        im_name = next_cmd;
+        nux::SleepForMilliseconds(500);
+      }
     }
     else if (strcmp(cur_cmd, "1") == 0)
     {
-      RunKeyStrokes(next_cmd, test);
+      //RunKeyStrokes(next_cmd, test);
+      test->ViewSendKeys(next_cmd);
       nux::SleepForMilliseconds(500);
     }
     else if (strcmp(cur_cmd, "2") == 0)
