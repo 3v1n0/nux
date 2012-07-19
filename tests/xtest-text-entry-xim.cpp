@@ -169,7 +169,8 @@ void TokenizeCommands(char* raw_cmds, std::queue<std::string>& token_queue)
         i++;
       }
       token_queue.push(num);
-      i++;
+
+      while (raw_cmds[i] == ' ') {i++;}
 
       std::string cmd = "";
       while (raw_cmds[i] != '\n' && raw_cmds[i] != '\0' && i < size)
@@ -400,7 +401,7 @@ int main(int argc, char** argv)
   int xstatus = XInitThreads();
   nuxAssertMsg(xstatus > 0, "XInitThreads has failed");
 
-  test_textentry = new TextTextEntry("Text Entry", 600, 200, 20000);
+  test_textentry = new TextTextEntry("Text Entry", 600, 200, 40000);
   test_textentry->Startup();
   test_textentry->UserInterfaceSetup();
 
