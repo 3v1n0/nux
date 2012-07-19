@@ -145,45 +145,44 @@ char* ReadInCommands(const char* path)
 */
 // It could be more benifitcal if we actually split the commands into
 // tokens instead of just putting NULLs to split the word....
-void TokenizeCommands(char* raw_commands, std::queue<std::string>& token_queue)
+void TokenizeCommands(char* raw_cmds, std::queue<std::string>& token_queue)
 {
-  char *cur_ptr, *lk_ptr = NULL;
-  cur_ptr = raw_commands;
+  int i = 0;
+  int size = strlen(raw_cmds);
 
-  // Simple Tokenizer
-  // Split on the first space
-  while (*cur_ptr != '\0')// && *cur_ptr != '\n')
+  while (i < size)
   {
-    // Skip whitespace or a random new line
-    while (*cur_ptr == '\n' || *cur_ptr == ' ') {cur_ptr++;}
-
-    // Comment, skip line, restart rules
-    if (*cur_ptr == '/' && *(cur_ptr+1) == '/')
+    if (raw_cmds[i] == '/' && raw_cmds[i+1] == '/')
     {
-      cur_ptr = (strchr(cur_ptr, '\n')+1);
-      continue;
+      while (raw_cmds[i] != '\n' && i < size)
+      {
+        i++;
+      }
+      i++;
     }
-
-    // Find the first space and replace with a null
-    if((lk_ptr = strchr(cur_ptr, ' ')) == NULL)
+    else if (raw_cmds[i] >= '0' && raw_cmds[i] <= '9')
     {
-      fprintf(stderr, "ERROR: %s\n", cur_ptr);
-      return;
-    }
-    *lk_ptr = '\0';
-    std::string tmp1(cur_ptr);
-    token_queue.push(tmp1);
+      std::string num = "";
+      while (raw_cmds[i] != ' ' && i < size)
+      {
+        num += raw_cmds[i];
+        i++;
+      }
+      token_queue.push(num);
+      i++;
 
-    // Find the end of the line and replace it with a Null
-    if ((cur_ptr = strchr(lk_ptr+1, '\n')) == NULL)
-    {
-      fprintf(stderr, "ERROR: %s\n", lk_ptr);
-      return;
+      std::string cmd = "";
+      while (raw_cmds[i] != '\n' && raw_cmds[i] != '\0' && i < size)
+      {
+        cmd += raw_cmds[i];
+        i++;
+      }
+      token_queue.push(cmd);
     }
-    *cur_ptr = '\0';
-    cur_ptr++;
-    std::string tmp2(lk_ptr+1);
-    token_queue.push(tmp2);
+    else
+    {
+      i++;
+    }
   }
 }
 
@@ -401,7 +400,7 @@ int main(int argc, char** argv)
   int xstatus = XInitThreads();
   nuxAssertMsg(xstatus > 0, "XInitThreads has failed");
 
-  test_textentry = new TextTextEntry("Text Entry", 600, 200, 40000);
+  test_textentry = new TextTextEntry("Text Entry", 600, 200, 20000);
   test_textentry->Startup();
   test_textentry->UserInterfaceSetup();
 
