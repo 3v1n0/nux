@@ -1,3 +1,12 @@
+// Author: Brandon Schaefer
+//
+// 0 is the name of the IM
+// 1 is any key squences you need to enter to get the IM
+//   in the correct state while testing
+// 2 is input to the IM, input in how you would type it
+// 3 is the expect result that IM should turn your input into
+// 4 is when we know the test is over and for it to move to the
+//   the next one.
 
 // This test GCIN with chewing
 0 gcin
@@ -9,7 +18,8 @@
 3 北市
 4 halt
 
-// This test Fcitx with google pinyin 0 fcitx
+// This test Fcitx with google pinyin
+0 fcitx
 1 ctrl+space
 2 dianshi ji1
 3 耟椒晃

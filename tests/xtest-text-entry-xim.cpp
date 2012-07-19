@@ -157,11 +157,11 @@ void TokenizeCommands(char* raw_commands, std::queue<std::string>& token_queue)
     // Skip whitespace or a random new line
     while (*cur_ptr == '\n' || *cur_ptr == ' ') {cur_ptr++;}
 
-    // Comment, skip line
+    // Comment, skip line, restart rules
     if (*cur_ptr == '/' && *(cur_ptr+1) == '/')
     {
-      while (*cur_ptr != '\n' && *cur_ptr != '\0') {cur_ptr++;};
-      cur_ptr++;
+      cur_ptr = (strchr(cur_ptr, '\n')+1);
+      continue;
     }
 
     // Find the first space and replace with a null
