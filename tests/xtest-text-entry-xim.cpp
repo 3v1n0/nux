@@ -129,7 +129,7 @@ char* ReadInCommands(const char* path)
   if (file.is_open())
   {
     size = file.tellg();
-    raw_file = new char[size];
+    raw_file = new char[size+1];
     file.seekg (0, std::ios::beg);
     file.read(raw_file, size);
     file.close();
@@ -168,6 +168,7 @@ void TokenizeCommands(char* raw_commands, std::queue<std::string>& token_queue)
     if((lk_ptr = strchr(cur_ptr, ' ')) == NULL)
     {
       fprintf(stderr, "ERROR: %s\n", cur_ptr);
+      return;
     }
     *lk_ptr = '\0';
     std::string tmp1(cur_ptr);
@@ -177,6 +178,7 @@ void TokenizeCommands(char* raw_commands, std::queue<std::string>& token_queue)
     if ((cur_ptr = strchr(lk_ptr+1, '\n')) == NULL)
     {
       fprintf(stderr, "ERROR: %s\n", lk_ptr);
+      return;
     }
     *cur_ptr = '\0';
     cur_ptr++;
