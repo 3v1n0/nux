@@ -104,7 +104,11 @@ TEST(TestTypeTraits, TestConversionHolds) {
 template <typename T>
 struct ChangeRecorder : sigc::trackable
 {
+#if __cplusplus >= 201100L || defined (__GXX_EXPERIMENTAL_CXX0X__)
   typedef std::function<void(T const&)> Listener;
+#else
+  typedef sigc::slot<void, T const&> Listener;
+#endif
 
   Listener listener()
   {

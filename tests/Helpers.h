@@ -25,7 +25,6 @@
 #include <string>
 #include <glib.h>
 #include <sigc++/sigc++.h>
-#include <functional>
 
 
 namespace nux
@@ -41,7 +40,7 @@ class TestCallback
 public:
   TestCallback() : happened(false) {}
 
-  std::function<void()> sigc_callback() {
+  sigc::slot<void> sigc_callback() {
     return sigc::mem_fun(this, &TestCallback::callback);
   }
 
