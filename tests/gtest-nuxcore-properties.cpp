@@ -269,6 +269,33 @@ TEST(TestProperty, TestCustomSetterFunction) {
   EXPECT_THAT(1, Eq(recorder.last()));
 }
 
+TEST(TestProperty, TestCustomSetterFunctionLambda) {
+  nux::Property<float> float_prop;
+  FloatClamp clamp(0, 1);
+  float_prop.SetSetterFunction([&clamp] (float &target, float const& value) {
+    return clamp.Set(target, value);
+  });
+  ChangeRecorder<float> recorder;
+  float_prop.changed.connect(recorder.listener());
+
+  // Since the default value for a float is zero, and we clamp at zero,
+  // setting to a negative value will result in setting to zero, which will
+  // not signal a changed event.
+  float_prop = -2;
+  EXPECT_THAT(float_prop(), Eq(0));
+  EXPECT_THAT(0, Eq(recorder.size()));
+
+  float_prop = 0.5;
+  EXPECT_THAT(float_prop(), Eq(0.5));
+  EXPECT_THAT(1, Eq(recorder.size()));
+  EXPECT_THAT(0.5, Eq(recorder.last()));
+
+  float_prop = 4;
+  EXPECT_THAT(float_prop(), Eq(1));
+  EXPECT_THAT(2, Eq(recorder.size()));
+  EXPECT_THAT(1, Eq(recorder.last()));
+}
+
 
 TEST(TestProperty, TestIntOperators) {
   nux::Property<int> int_prop(42);
@@ -393,6 +420,16 @@ TEST(TestROProperty, TestSetGetter) {
   nux::ROProperty<int> int_prop;
   Incrementer incrementer;
   int_prop.SetGetterFunction(sigc::mem_fun(&incrementer, &Incrementer::value));
+
+  int value = int_prop;
+  EXPECT_THAT(value, Eq(1));
+  EXPECT_THAT(int_prop(), Eq(2));
+  EXPECT_THAT(int_prop.Get(), Eq(3));
+}
+
+TEST(TestROProperty, TestSetGetterLambda) {
+  nux::ROProperty<int> int_prop;
+  int_prop.SetGetterFunction([] { static int value = 0; return ++value; });
 
   int value = int_prop;
   EXPECT_THAT(value, Eq(1));
