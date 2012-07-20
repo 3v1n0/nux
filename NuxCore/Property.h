@@ -27,7 +27,9 @@
 #include <string>
 #include <map>
 #include <sigc++/signal.h>
+#if __cplusplus >= 201100L || defined (__GXX_EXPERIMENTAL_CXX0X__)
 #include <functional>
+#endif
 
 /**
  * Much of this property work is based on the work by Lois Goldthwaite,

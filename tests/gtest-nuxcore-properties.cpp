@@ -273,6 +273,7 @@ TEST(TestProperty, TestCustomSetterFunction) {
   EXPECT_THAT(1, Eq(recorder.last()));
 }
 
+#if __cplusplus >= 201100L || defined (__GXX_EXPERIMENTAL_CXX0X__)
 TEST(TestProperty, TestCustomSetterFunctionLambda) {
   nux::Property<float> float_prop;
   FloatClamp clamp(0, 1);
@@ -299,7 +300,7 @@ TEST(TestProperty, TestCustomSetterFunctionLambda) {
   EXPECT_THAT(2, Eq(recorder.size()));
   EXPECT_THAT(1, Eq(recorder.last()));
 }
-
+#endif
 
 TEST(TestProperty, TestIntOperators) {
   nux::Property<int> int_prop(42);
@@ -431,6 +432,7 @@ TEST(TestROProperty, TestSetGetter) {
   EXPECT_THAT(int_prop.Get(), Eq(3));
 }
 
+#if __cplusplus >= 201100L || defined (__GXX_EXPERIMENTAL_CXX0X__)
 TEST(TestROProperty, TestSetGetterLambda) {
   nux::ROProperty<int> int_prop;
   int_prop.SetGetterFunction([] { static int value = 0; return ++value; });
@@ -440,6 +442,7 @@ TEST(TestROProperty, TestSetGetterLambda) {
   EXPECT_THAT(int_prop(), Eq(2));
   EXPECT_THAT(int_prop.Get(), Eq(3));
 }
+#endif
 
 TEST(TestROProperty, TestChangedEvent) {
   // RO Properties have a changed event, but it is up to the continer of the
