@@ -27,6 +27,7 @@
 #include <string>
 #include <map>
 #include <sigc++/signal.h>
+#include <functional>
 
 /**
  * Much of this property work is based on the work by Lois Goldthwaite,
@@ -68,7 +69,7 @@ class Property : public PropertyChangedSignal<VALUE_TYPE>
 public:
   typedef VALUE_TYPE ValueType;
   typedef PropertyChangedSignal<VALUE_TYPE> SignalBase;
-  typedef sigc::slot<bool, VALUE_TYPE&, VALUE_TYPE const&> SetterFunction;
+  typedef std::function<bool(VALUE_TYPE&, VALUE_TYPE const&)> SetterFunction;
 
   Property();
   explicit Property(VALUE_TYPE const& initial);
@@ -112,7 +113,7 @@ class ROProperty : public PropertyChangedSignal<VALUE_TYPE>
 {
 public:
   typedef VALUE_TYPE ValueType;
-  typedef sigc::slot<VALUE_TYPE> GetterFunction;
+  typedef std::function<VALUE_TYPE()> GetterFunction;
 
   ROProperty();
   explicit ROProperty(GetterFunction getter_function);
@@ -154,8 +155,8 @@ class RWProperty : public PropertyChangedSignal<VALUE_TYPE>
 public:
   typedef VALUE_TYPE ValueType;
   typedef PropertyChangedSignal<VALUE_TYPE> SignalBase;
-  typedef sigc::slot<bool, VALUE_TYPE const&> SetterFunction;
-  typedef sigc::slot<VALUE_TYPE> GetterFunction;
+  typedef std::function<bool(VALUE_TYPE const&)> SetterFunction;
+  typedef std::function<VALUE_TYPE()> GetterFunction;
 
   RWProperty();
   RWProperty(GetterFunction getter_function, SetterFunction setter_function);

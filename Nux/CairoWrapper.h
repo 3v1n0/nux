@@ -25,7 +25,7 @@
 
 namespace nux
 {
-  typedef sigc::slot<void, Geometry const&, cairo_t*> DrawCanvasCallback;
+  typedef std::function<void(Geometry const&, cairo_t*)> DrawCanvasCallback;
 
   class CairoWrapper
   {

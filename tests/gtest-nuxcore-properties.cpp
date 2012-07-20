@@ -104,7 +104,7 @@ TEST(TestTypeTraits, TestConversionHolds) {
 template <typename T>
 struct ChangeRecorder : sigc::trackable
 {
-  typedef sigc::slot<void, T const&> Listener;
+  typedef std::function<void(T const&)> Listener;
 
   Listener listener()
   {
