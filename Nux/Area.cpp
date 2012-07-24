@@ -315,24 +315,44 @@ namespace nux
     return parent_area_;
   }
 
-  int Area::GetBaseX     () const
+  int Area::GetX() const
   {
     return geometry_.x;
   }
 
-  int Area::GetBaseY     () const
+  int Area::GetBaseX() const
+  {
+    return GetX();
+  }
+
+  int Area::GetY() const
   {
     return geometry_.y;
   }
 
-  int Area::GetBaseWidth    () const
+  int Area::GetBaseY() const
+  {
+    return GetY();
+  }
+
+  int Area::GetWidth() const
   {
     return geometry_.width;
   }
 
-  int Area::GetBaseHeight   () const
+  int Area::GetBaseWidth() const
+  {
+    return GetWidth();
+  }
+
+  int Area::GetHeight() const
   {
     return geometry_.height;
+  }
+
+  int Area::GetBaseHeight() const
+  {
+    return GetHeight();
   }
 
   void Area::SetGeometry(int x, int y, int w, int h)
@@ -349,7 +369,7 @@ namespace nux
     ReconfigureParentLayout();
     GeometryChanged();
 
-    OnGeometryChanged.emit(this, geometry_);
+    geometry_changed.emit(this, geometry_);
   }
 
   void Area::SetGeometry(const Geometry &geo)
@@ -362,34 +382,64 @@ namespace nux
     return geometry_;
   }
 
-  void Area::SetBaseX(int x)
+  void Area::SetX(int x)
   {
     SetGeometry(x, geometry_.y, geometry_.width, geometry_.height);
   }
 
-  void Area::SetBaseY    (int y)
+  void Area::SetY    (int y)
   {
     SetGeometry(geometry_.x, y, geometry_.width, geometry_.height);
   }
 
-  void Area::SetBaseXY    (int x, int y)
+  void Area::SetBaseX(int x)
+  {
+    SetX(x);
+  }
+
+  void Area::SetBaseY(int y)
+  {
+    SetY(y);
+  }
+
+  void Area::SetXY(int x, int y)
   {
     SetGeometry(x, y, geometry_.width, geometry_.height);
   }
 
-  void Area::SetBaseSize(int w, int h)
+  void Area::SetBaseXY(int x, int y)
+  {
+    SetXY(x, y);
+  }
+
+  void Area::SetSize(int w, int h)
   {
     SetGeometry(geometry_.x, geometry_.y, w, h);
   }
 
-  void Area::SetBaseWidth(int w)
+  void Area::SetBaseSize(int w, int h)
+  {
+    SetSize(w, h);
+  }
+
+  void Area::SetWidth(int w)
   {
     SetGeometry(geometry_.x, geometry_.y, w, geometry_.height);
   }
 
-  void Area::SetBaseHeight(int h)
+  void Area::SetBaseWidth(int w)
+  {
+    SetWidth(w);
+  }
+
+  void Area::SetHeight(int h)
   {
     SetGeometry(geometry_.x, geometry_.y, geometry_.width, h);
+  }
+
+  void Area::SetBaseHeight(int h)
+  {
+    SetHeight(h);
   }
 
   void Area::IncreaseSize(int x, int y)

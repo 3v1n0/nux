@@ -344,7 +344,6 @@ namespace nux
     Geometry base = GetGeometry();
 
     graphics_engine.PushClippingRectangle(base);
-    GetPainter().PaintBackground(graphics_engine, base);
 
     if (visual_state_ == VISUAL_STATE_PRESSED)
     {
@@ -369,7 +368,7 @@ namespace nux
 
         graphics_engine.PushClippingRectangle(clip_geo);
         GetPainter().PushPaintLayerStack();
-        GetCompositionLayout()->ProcessDraw(graphics_engine, force_draw);
+        GetCompositionLayout()->ProcessDraw(graphics_engine, true);
         GetPainter().PopPaintLayerStack();
         graphics_engine.PopClippingRectangle();
       }

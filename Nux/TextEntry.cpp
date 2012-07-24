@@ -27,9 +27,9 @@
 #include "NuxGraphics/CairoGraphics.h"
 
 #include "TextEntry.h"
-#include "TextEntryComposeSeqs.h"
 
 #if defined(NUX_OS_LINUX)
+#include "TextEntryComposeSeqs.h"
 #include <X11/cursorfont.h>
 #include "InputMethodIBus.h"
 #endif
@@ -633,6 +633,7 @@ namespace nux
   {
     SearchState search_state = SearchState::NO_MATCH;
 
+#if defined(NUX_OS_LINUX)
     if (input.size() >= ComposeSequence::MAX_SYMBOLS)
       return search_state;
 
@@ -670,6 +671,7 @@ namespace nux
         }
       }
     }
+#endif
 
     return search_state;
   }

@@ -151,6 +151,17 @@ namespace nux
     Area(NUX_FILE_LINE_DECL);
     virtual ~Area();
 
+    int GetX() const;
+    int GetY() const;
+    int GetWidth() const;
+    int GetHeight() const;
+
+    void SetX(int x);
+    void SetY(int y);
+    void SetXY(int x, int y);
+    void SetWidth(int w);
+    void SetHeight(int h);
+
     int GetBaseX() const;
     int GetBaseY() const;
     int GetBaseWidth() const;
@@ -167,6 +178,7 @@ namespace nux
         The size is adjusted to respect the min and max size policy
         \sa SetWidth(), SetHeight(), SetMinimumSize(), SetMaximumSize().
     */
+    virtual void SetSize(int w, int h);
     virtual void SetBaseSize(int w, int h);
 
     virtual void SetMinimumSize(int w, int h);
@@ -456,7 +468,7 @@ namespace nux
         This signal is only meant to inform of a change of size. When receiving this signal don't do anything
         that could change the size of this object. Or you risk creating an infinite loop.
     */
-    sigc::signal<void, Area *, Geometry&> OnGeometryChanged;
+    sigc::signal<void, Area *, Geometry&> geometry_changed;
 
     /*!
         SetParentObject/UnParentObject are protected API. They are not meant to be used directly by users.

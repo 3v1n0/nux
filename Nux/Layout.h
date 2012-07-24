@@ -137,10 +137,10 @@ namespace nux
     };
 
 
-    //! Deprecated. Use SetLeftRightPadding.
+    //! Deprecated. Use SetLeftAndRightPadding.
     void SetHorizontalExternalMargin(int m);
 
-    //! Deprecated. Use SetTopBottomPadding,
+    //! Deprecated. Use SetTopAndBottomPadding,
     void SetVerticalExternalMargin(int m);
 
     //! Set the left/right/top/bottom padding of the layout.
@@ -209,6 +209,12 @@ namespace nux
     */
     bool IsQueuedForDraw();
 
+    //! Return true if a draw has been scheduled for a child of this layout
+    /*!
+        @return True if a draw has been scheduled for a child of this layout.
+    */
+    bool ChildQueuedForDraw();
+
     //! Define how elements are spread out inside the layout.
     /*!
         Typically, a layout stacks it elements from left to right(HLayout) or top to bottom(VLayout).
@@ -240,19 +246,24 @@ namespace nux
       return _layout_element_list;
     }
 
-    virtual void ChildViewQueuedDraw(View *view);
-    virtual void ChildLayoutQueuedDraw(Layout *layout);
-    virtual void ChildLayoutChildQueuedDraw(Area *area);
+    virtual void ChildQueueDraw(Area* area);
 
-    sigc::signal<void, Layout*> OnQueueDraw;  //!< Signal emitted when a layout is scheduled for a draw.
-    sigc::signal<void, Area*>   OnChildQueueDraw;
+    sigc::signal<void, Layout*> queue_draw;  //!< Signal emitted when a layout is scheduled for a draw.
+    sigc::signal<void, Area*>   child_queue_draw;
     sigc::signal<void, Layout*, Area*> ViewAdded;
     sigc::signal<void, Layout*, Area*> ViewRemoved;
+
+    /*!
+        When a layout goes through Layout::ProcessDraw, this call isn't necessary. Otherwise, call it
+        to set the value of draw_cmd_queued_ to false. 
+    */
+    virtual void ResetQueueDraw(); 
 
   protected:
     virtual bool AcceptKeyNavFocus();
     
-    bool _queued_draw; //<! The rendering of the layout needs to be refreshed.
+    bool draw_cmd_queued_; //<! The rendering of the layout needs to be refreshed.
+    bool child_draw_cmd_queued_; //<! A child of this layout has requested a draw.
 
     Size m_ContentSize;
     int m_contentWidth;

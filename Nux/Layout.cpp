@@ -41,7 +41,8 @@ namespace nux
     m_contentWidth      = 0;
     m_contentHeight     = 0;
     m_ContentStacking   = eStackExpand;
-    _queued_draw        = false;
+    draw_cmd_queued_        = false;
+    child_draw_cmd_queued_  = false;
 
     SetMinimumSize(1, 1);
   }
@@ -146,13 +147,13 @@ namespace nux
     left_padding_ = left < 0 ? 0 : left;
   }
 
-  //! Deprecated. Use SetLeftRightPadding.
+  //! Deprecated. Use SetLeftAndRightPadding.
   void Layout::SetHorizontalExternalMargin(int padding)
   {
     SetLeftAndRightPadding(padding);
   }
 
-  //! Deprecated. Use SetTopBottomPadding,
+  //! Deprecated. Use SetTopAndBottomPadding,
   void Layout::SetVerticalExternalMargin(int padding)
   {
     SetTopAndBottomPadding(padding);
@@ -229,8 +230,8 @@ namespace nux
 
     layout->SetParentObject(this);
 
-    layout->OnChildQueueDraw.connect(sigc::mem_fun(this, &Layout::ChildLayoutChildQueuedDraw));
-    layout->OnQueueDraw.connect(sigc::mem_fun(this, &Layout::ChildLayoutQueuedDraw));
+    layout->child_queue_draw.connect(sigc::mem_fun(this, &Layout::ChildQueueDraw));
+    layout->queue_draw.connect(sigc::mem_fun(this, &Layout::ChildQueueDraw));
 
     if (index < 0)
       index = NUX_LAYOUT_BEGIN;
@@ -283,6 +284,9 @@ namespace nux
     nuxAssertMsg(bo != 0, "[Layout::AddView] Invalid parameter.");
     NUX_RETURN_IF_TRUE(bo == 0);
 
+    if (!bo->IsView())
+      return;
+
     Area *parent = bo->GetParentObject();
     nuxAssertMsg(parent == 0, "[Layout::AddView] Trying to add an object that already has a parent.");
     NUX_RETURN_IF_TRUE(parent != 0);
@@ -309,7 +313,10 @@ namespace nux
     bo->SetParentObject(this);
 
     if (bo->IsView())
-      static_cast<View *> (bo)->OnQueueDraw.connect(sigc::mem_fun(this, &Layout::ChildViewQueuedDraw));
+    {
+      static_cast<View*> (bo)->queue_draw.connect(sigc::mem_fun(this, &Layout::ChildQueueDraw));
+      static_cast<View*> (bo)->child_queue_draw.connect(sigc::mem_fun(this, &Layout::ChildQueueDraw));
+    }
 
     //if(HasFocusControl() && HasFocusableEntries() == false)
     //{
@@ -527,14 +534,12 @@ namespace nux
     graphics_engine.PopClippingRectangle();
     graphics_engine.PopModelViewMatrix();
 
-    //graphics_engine.PopClipOffset();
-
-    _queued_draw = false;
+    ResetQueueDraw();
   }
 
   void Layout::QueueDraw()
   {
-    if (_queued_draw)
+    if (draw_cmd_queued_)
     {
       // A draw has already been scheduled.
       return;
@@ -556,13 +561,18 @@ namespace nux
       }
     }
 
-    _queued_draw = true;
-    OnQueueDraw.emit(this);
+    draw_cmd_queued_ = true;
+    queue_draw.emit(this);
   }
 
   bool Layout::IsQueuedForDraw()
   {
-    return _queued_draw;
+    return draw_cmd_queued_;
+  }
+
+  bool Layout::ChildQueuedForDraw()
+  {
+    return child_draw_cmd_queued_;
   }
 
   void Layout::SetContentDistribution(LayoutContentDistribution stacking)
@@ -580,23 +590,41 @@ namespace nux
 
   }
 
-  void Layout::ChildViewQueuedDraw(View *view)
+  void Layout::ChildQueueDraw(Area* area)
   {
-    OnChildQueueDraw.emit(view);
-  }
-
-  void Layout::ChildLayoutQueuedDraw(Layout *layout)
-  {
-    OnChildQueueDraw.emit(layout);
-  }
-
-  void Layout::ChildLayoutChildQueuedDraw(Area *area)
-  {
-    OnChildQueueDraw.emit(area);
+    if (child_draw_cmd_queued_)
+      return;
+    child_draw_cmd_queued_ = true;
+    child_queue_draw.emit(area);
   }
 
   bool Layout::AcceptKeyNavFocus()
   {
     return false;
+  }
+
+  void Layout::ResetQueueDraw()
+  {
+    std::list<Area*>::iterator it;
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
+    {
+      if ((*it)->IsLayout())
+      {
+        Layout* layout = NUX_STATIC_CAST(Layout*, (*it));
+        if (layout->ChildQueuedForDraw())
+        {
+          layout->ResetQueueDraw();
+        }
+      }
+      else if ((*it)->IsView())
+      {
+        View* view = NUX_STATIC_CAST(View*, (*it));
+        if (view->GetLayout())
+          view->GetLayout()->ResetQueueDraw();
+      }
+    }
+
+    draw_cmd_queued_ = false;
+    child_draw_cmd_queued_ = false;
   }
 }

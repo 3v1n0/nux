@@ -81,7 +81,7 @@ namespace nux
     virtual void ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw);
     //! Causes a redraw. The widget parameter draw_cmd_queued_ is set to true. The widget Draw(), DrawContent() and PostDraw() are called.
     /*!
-        Emits the signal \i OnQueueDraw.
+        Emits the signal \i queue_draw.
     */
     virtual void QueueDraw();
 
@@ -140,15 +140,44 @@ namespace nux
     void SetFont(ObjectPtr<FontTexture> font);
     ObjectPtr<FontTexture> GetFont();
 
-    sigc::signal<void, View*> OnQueueDraw;  //!< Signal emitted when a view is scheduled for a draw.
+    sigc::signal<void, View*> queue_draw;       //!< Signal emitted when a view is scheduled for a draw.
+    sigc::signal<void, Area*> child_queue_draw; //!< Signal emitted when a child of this view is scheduled for a draw.
 
     virtual Area* KeyNavIteration(KeyNavDirection direction);
     virtual bool AcceptKeyNavFocus();
 
     void IsHitDetectionSkipingChildren(bool skip_children);
 
+    void SetRedirectRenderingToTexture(bool redirect);
+    bool RedirectRenderingToTexture() const;
 
   protected:
+    virtual void ChildViewQueuedDraw(Area* area);
+
+    //! Redirect the rendering of the view to a texture.
+    bool redirect_rendering_to_texture_;
+
+    bool update_backup_texture_;
+    
+    void SetUpdateBackupTexture(bool update);
+    bool UpdateBackupTexture();
+
+    //! The texture that holds the rendering of this view.
+    ObjectPtr<IOpenGLBaseTexture> backup_texture_;
+    ObjectPtr<IOpenGLBaseTexture> backup_depth_texture_;
+    static ObjectPtr<IOpenGLFrameBufferObject> backup_fbo_;
+    ObjectPtr<IOpenGLFrameBufferObject> prev_fbo_;
+    Matrix4 model_view_matrix_;
+    Matrix4 perspective_matrix_;
+
+    void BeginBackupTextureRendering(GraphicsEngine& graphics_engine);
+
+    void EndBackupTextureRendering(GraphicsEngine& graphics_engine);
+
+    /*! Report to a parent view with redirect_rendering_to_texture_ set to true that one of its children
+        needs to be redrawn.
+    */
+    void ReportDrawToRedirectedView();
 
     void OnChildFocusChanged(/*Area *parent,*/ Area *child);
     sigc::connection _on_focus_changed_handler;
@@ -196,6 +225,7 @@ namespace nux
     Layout *view_layout_;
 
     bool draw_cmd_queued_; //<! The rendering of the view needs to be refreshed.
+    bool child_draw_cmd_queued_; //<! A child of this view has requested a draw.
 
     bool full_view_draw_cmd_; //<! True if Draw is called before ContentDraw. It is read-only and can be accessed by calling IsFullRedraw();
 
@@ -206,6 +236,7 @@ namespace nux
     friend class Layout;
     friend class Area;
     friend class LayeredLayout;
+    friend class Canvas;
   };
 
 }

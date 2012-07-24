@@ -81,7 +81,7 @@ namespace nux
       static_text_->ProcessDraw(graphics_engine, true);
     }
     GetPainter().PopPaintLayerStack();
-
+  
     graphics_engine.PopClippingRectangle();
   }
 

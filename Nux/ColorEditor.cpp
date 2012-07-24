@@ -316,18 +316,6 @@ namespace nux
     ctrllayout->SetHorizontalExternalMargin(2);
     ctrllayout->SetVerticalInternalMargin(2);
 
-//     //ctrllayout->AddView(new SpaceLayout(20,20,20,40), 1);
-//     OkButton = new ToggleButton("OK", NUX_TRACKER_LOCATION);
-//     OkButton->SetMinimumWidth(60);
-//     OkButton->SetMinimumHeight(20);
-//
-//     CancelButton = new ToggleButton("Cancel", NUX_TRACKER_LOCATION);
-//     CancelButton->SetMinimumWidth(60);
-//     CancelButton->SetMinimumHeight(20);
-//
-// //    ctrllayout->AddView(OkButton, 1);
-// //    ctrllayout->AddView(CancelButton, 1);
-
     m_hlayout->AddLayout(ctrllayout, 0);
 
     radiogroup = new RadioButtonGroup(NUX_TRACKER_LOCATION);
@@ -379,9 +367,6 @@ namespace nux
   {
     Geometry base = GetGeometry();
 
-    GetPainter().PaintBackground(graphics_engine, base);
-    //GetPainter().Paint2DQuadWireframe(graphics_engine, base, Color(COLOR_BACKGROUND_SECONDARY));
-
     base.OffsetPosition(1, 1);
     base.OffsetSize(-2, -2);
 
@@ -395,23 +380,6 @@ namespace nux
     {
       DrawHSV(graphics_engine, force_draw);
     }
-
-    redcheck->QueueDraw();
-    redtext->QueueDraw();
-    greencheck->QueueDraw();
-    greentext->QueueDraw();
-    bluecheck->QueueDraw();
-    bluetext->QueueDraw();
-
-    huecheck->QueueDraw();
-    hue_text_entry_->QueueDraw();
-    saturationcheck->QueueDraw();
-    saturation_text_entry_->QueueDraw();
-    valuecheck->QueueDraw();
-    value_text_entry_->QueueDraw();
-
-//     OkButton->QueueDraw();
-//     CancelButton->QueueDraw();
 
     graphics_engine.PopClippingRectangle();
   }
