@@ -468,7 +468,7 @@ void NuxAutomatedTestFramework::ViewSendKeys(const std::string& str)
   XTestGrabControl(display_, True);
   KeyCode modcode[MAX_KEYS] = {0};
 
-  // Press the keys from 1,2,3,4
+  // Press the keys from 0,1,2,3
   for (int i = 0; i < MAX_KEYS; i++)
   {
     if (keys_sym[i] != 0)
@@ -478,7 +478,7 @@ void NuxAutomatedTestFramework::ViewSendKeys(const std::string& str)
     }
   }
 
-  // Release the keys from 4,3,2,1
+  // Release the keys from 3,2,1,0
   for (int i = MAX_KEYS-1; i >= 0; i--)
   {
     if (keys_sym[i] != 0)

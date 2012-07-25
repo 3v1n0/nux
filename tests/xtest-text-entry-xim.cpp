@@ -255,6 +255,65 @@ void KillCurrentInputMethod()
   4 -> pclose(im_name)
 */
 
+std::vector<std::string>& GetSplitEnvPath()
+{
+  static std::vector<std::string> split_path;
+
+  if (split_path.empty())
+  {
+    std::string tmp;
+    size_t colon_ptr = 0, start_ptr = 0;
+
+    const std::string env_path(getenv("PATH"));
+
+    if (!env_path.empty())
+    {
+      // Splits the env path var up on (":")
+      while (colon_ptr != std::string::npos)
+      {
+        colon_ptr = env_path.find(":", start_ptr);
+        tmp = env_path.substr(start_ptr, (colon_ptr-start_ptr));
+        start_ptr = colon_ptr+1;
+        split_path.push_back(tmp);
+      }
+    }
+  }
+  return split_path;
+}
+
+bool CheckIMExist(const char* im_name)
+{
+  std::vector<std::string> split_path = GetSplitEnvPath();
+  std::string command("ls ");
+  char buf [128];
+  FILE* path = NULL;
+
+  for (unsigned int i = 0; i < split_path.size(); i++)
+  {
+    if ((path = popen((command + split_path[i]).c_str(),"r")) == NULL)
+      return false;
+
+    while (fgets(buf, 128, path) != NULL)
+    {
+      if (strstr(buf, im_name))
+        return true;
+    }
+  }
+  return false;
+}
+
+FILE* OpenIM(const char* im_name)
+{
+  FILE* open_file = NULL;
+
+  if (CheckIMExist(im_name))
+  {
+    open_file = popen(im_name,"r");
+    nux::SleepForMilliseconds(500);
+  }
+  return open_file;
+}
+
 bool RunKeyStrokes(const char* keystrokes, NuxAutomatedTestFramework* test)
 {
   return true;
@@ -268,7 +327,7 @@ bool TypeInput(const char* text, NuxAutomatedTestFramework* test)
 bool CheckInput(const std::string cjk, NuxAutomatedTestFramework* test)
 {
   std::string message("Test is: " + cjk);
-  printf("equals %s\n", cjk.c_str());
+  //printf("equals %s\n", cjk.c_str());
   test->TestReportMsg(test_textentry->text_entry_->GetText() == cjk, message.c_str());
 
   test->ViewSendCtrlA();
@@ -278,8 +337,6 @@ bool CheckInput(const std::string cjk, NuxAutomatedTestFramework* test)
   nux::SleepForMilliseconds(500);
   return true;
 }
-
-
 
 std::string next_token (std::queue<std::string>& tokens)
 {
@@ -302,23 +359,23 @@ bool RunCommands(std::queue<std::string>& tokens, NuxAutomatedTestFramework* tes
   while (!tokens.empty())
   {
     next_cmd = next_token(tokens);
-    printf("cur_cmd: %s\n", cur_cmd.c_str());
-    printf("next: %s\n", next_cmd.c_str());
+    //printf("cur_cmd: %s\n", cur_cmd.c_str());
+    //printf("next: %s\n", next_cmd.c_str());
     if (cur_cmd == "0")
     {
-      if ((start_im = popen(next_cmd.c_str(), "r")) == NULL)
+      if ((start_im = OpenIM(next_cmd.c_str())) != NULL)
       {
-        // Move on to the next test
+        im_name = next_cmd.c_str();
+      }
+      else
+      {
+        fprintf(stderr, "Command not found: %s\n", next_cmd.c_str());
+        // Skip the test
         while (cur_cmd != "4")
         {
           cur_cmd = next_token(tokens);
         }
         next_cmd = next_token(tokens);
-      }
-      else
-      {
-        im_name = next_cmd.c_str();
-        nux::SleepForMilliseconds(500);
       }
     }
     else if (cur_cmd == "1")
@@ -350,7 +407,7 @@ bool RunCommands(std::queue<std::string>& tokens, NuxAutomatedTestFramework* tes
       return false;
     }
     cur_cmd = next_token(tokens);
-    printf("%i\n", tokens.size());
+    //printf("%i\n", tokens.size());
   }
 
   return true;
