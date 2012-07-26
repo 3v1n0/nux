@@ -19,11 +19,11 @@
  *
  */
 
-
-#include "tinyxml.h"
 #include "Nux.h"
 #include "Theme.h"
-
+#if defined(NUX_OS_WINDOWS)
+  #include "NuxCore/TinyXML/tinyxml.h"
+#endif
 
 namespace nux
 {
@@ -124,59 +124,6 @@ namespace nux
     {eIMAGE_STYLE_NONE, 0}
   };
 
-
-  /*static unsigned long axtoi(const char *s)
-  {
-      int n = 0;         // position in string
-      int m = 0;         // position in digit[] to shift
-      int count;         // loop index
-      unsigned long intValue = 0;  // integer value of hex string
-      int digit[16];      // hold values to convert
-
-      const char *hexStg = s;
-      if ((s[0] == '0') && ((s[1] == 'X') || (s[1] == 'x')))
-      {
-          hexStg = s+2;
-      }
-
-      while (n < 16)
-      {
-          if (hexStg[n]=='\0')
-              break;
-          if (hexStg[n] > 0x29 && hexStg[n] < 0x40 ) //if 0 to 9
-              digit[n] = hexStg[n] & 0x0f;            //convert to int
-          else if (hexStg[n] >='a' && hexStg[n] <= 'f') //if a to f
-              digit[n] = (hexStg[n] & 0x0f) + 9;      //convert to int
-          else if (hexStg[n] >='A' && hexStg[n] <= 'F') //if A to F
-              digit[n] = (hexStg[n] & 0x0f) + 9;      //convert to int
-          else break;
-          n++;
-      }
-      count = n;
-      m = n - 1;
-      n = 0;
-      while (n < count)
-      {
-          // digit[n] is value of hex digit at position n
-          // (m << 2) is the number of positions to shift
-          // OR the bits into return value
-          intValue = intValue | (digit[n] << (m << 2));
-          m--;   // adjust the position to set
-          n++;   // next digit to process
-      }
-      return (intValue);
-  }*/
-
-  /*static unsigned int ReadXMLColorAttribute(TiXmlElement* element, const char* attribute_name)
-  {
-      unsigned int retvalue = 0;
-      if (element)
-      {
-          retvalue = axtoi(element->Attribute(attribute_name));
-      }
-      return retvalue;
-  }*/
-
   static UXStyleImageRef GetStyleImageRef(const char *style_name)
   {
     int i = 0;
@@ -202,13 +149,82 @@ namespace nux
   UXTheme::~UXTheme()
   {
     std::list<PainterImage*>::iterator it;
-    for (it = m_PainterImageList.begin(); it != m_PainterImageList.end(); it++)
+    for (it = painter_image_list_.begin(); it != painter_image_list_.end(); it++)
     {
       (*it)->texture->UnReference();
       delete(*it);
     }
-    m_PainterImageList.clear();
+    painter_image_list_.clear();
   }
+
+#if defined(NUX_OS_LINUX)
+  void UXTheme::ParseStartImage(GMarkupParseContext* context,
+    const gchar*  element_name,
+    const gchar** attribute_names,
+    const gchar** attribute_values,
+    gpointer      user_data,
+    GError**      error)
+  {
+    if (strcmp(element_name, "Image") != 0)
+    {
+      return;
+    }
+
+    const gchar** name_cursor = attribute_names;
+    const gchar** value_cursor = attribute_values;
+
+    UXTheme* theme = static_cast<UXTheme*>(user_data);
+    PainterImage* pimage = new PainterImage;
+    std::memset(pimage, 0, sizeof(PainterImage));
+
+    while (*name_cursor)
+    {
+      if (strcmp(*name_cursor, "style") == 0)
+      {
+        pimage->style = GetStyleImageRef(*value_cursor);
+      }
+      if (strcmp(*name_cursor, "border_left") == 0)
+      {
+        pimage->border_left = CharToInteger(*value_cursor);
+      }
+      if (strcmp(*name_cursor, "border_right") == 0)
+      {
+        pimage->border_right = CharToInteger(*value_cursor);
+      }
+      if (strcmp(*name_cursor, "border_top") == 0)
+      {
+        pimage->border_top = CharToInteger(*value_cursor);
+      }
+      if (strcmp(*name_cursor, "border_bottom") == 0)
+      {
+        pimage->border_bottom = CharToInteger(*value_cursor);
+      }
+
+      if (strcmp(*name_cursor, "Name") == 0)
+      {
+        BaseTexture* device_texture;
+
+        NString texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL(*value_cursor);
+        device_texture = theme->Load2DTextureFile(texture_filename.GetTCharPtr());
+
+        pimage->texture = device_texture;
+      }
+
+      name_cursor++;
+      value_cursor++;
+    }
+
+    theme->painter_image_list_.push_back(pimage);
+  }
+
+  void UXTheme::ParseEndImage(GMarkupParseContext* context,
+    const gchar*  element_name,
+    gpointer      user_data,
+    GError**      error)
+  {
+
+  }
+#endif
 
   void UXTheme::LoadPainterImages()
   {
@@ -220,6 +236,33 @@ namespace nux
       nuxCriticalMsg("[GraphicsEngine::LoadPainterImages] Can't find Painter.xml file.");
       return;
     }
+
+#if defined(NUX_OS_LINUX)
+    /* The list of what handler does what. */
+    GMarkupParser parser = {
+      UXTheme::ParseStartImage,
+      UXTheme::ParseEndImage,
+      NULL,
+      NULL,
+      NULL
+    };
+
+    GMarkupParseContext* context = g_markup_parse_context_new (
+      &parser,
+      G_MARKUP_TREAT_CDATA_AS_TEXT,
+      this,
+      NULL);
+
+    NString str;
+    LoadFileToString(str, painter_filename.GetTCharPtr());
+
+    if (g_markup_parse_context_parse(context, str.GetTCharPtr(), str.Length(), NULL) == FALSE)
+    {
+      nuxCriticalMsg("[GraphicsEngine::LoadPainterImages] Failed to parse data.");
+      return;
+    }
+
+#else
 
     TiXmlDocument doc(painter_filename.GetTCharPtr());
     doc.LoadFile();
@@ -281,15 +324,16 @@ namespace nux
         pimage->texture = Load2DTextureFile(texture_filename.GetTCharPtr());
       }
 
-      m_PainterImageList.push_back(pimage);
+      painter_image_list_.push_back(pimage);
     }
+#endif
   }
 
   const PainterImage *UXTheme::GetImage(UXStyleImageRef style)
   {
     std::list<PainterImage *>::iterator it;
 
-    for (it = m_PainterImageList.begin(); it != m_PainterImageList.end(); it++)
+    for (it = painter_image_list_.begin(); it != painter_image_list_.end(); it++)
     {
       if ((*it)->style == style)
       {
@@ -304,7 +348,7 @@ namespace nux
   {
     std::list<PainterImage *>::iterator it;
 
-    for (it = m_PainterImageList.begin(); it != m_PainterImageList.end(); it++)
+    for (it = painter_image_list_.begin(); it != painter_image_list_.end(); it++)
     {
       if ((*it)->style == style)
       {
@@ -335,6 +379,5 @@ namespace nux
   {
     return 0;
   }
-
 }
 

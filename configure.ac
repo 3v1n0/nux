@@ -22,7 +22,7 @@ m4_define([nux_api_version], [3.0])
 # The number format is : year/month/day
 # e.g.: december 5th, 2011 is: 20111205
 # To make more than one API change in a day, add a number to the date. Like 20111205.xx
-m4_define([nux_abi_version], [20120710.01])
+m4_define([nux_abi_version], [20120725.01])
 
 m4_define([nux_version],
           [nux_major_version.nux_minor_version.nux_micro_version])
@@ -142,7 +142,7 @@ PKG_CHECK_MODULES(NUX_CORE,
                   gthread-2.0
                   sigc++-2.0
                   gio-2.0
-                  tinyxml)
+                  )
 AC_SUBST(NUX_CORE_CFLAGS)
 AC_SUBST(NUX_CORE_LIBS)
 
@@ -169,7 +169,6 @@ PKG_CHECK_MODULES(NUX,
                   pango
                   pangocairo
                   libpcre
-                  tinyxml
                   )
 AC_SUBST(NUX_CFLAGS)
 AC_SUBST(NUX_LIBS)
