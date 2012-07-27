@@ -17,12 +17,12 @@ libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS= \
   $(GCC_FLAGS) \
   $(NUX_GRAPHICS_CFLAGS) \
   $(MAINTAINER_CFLAGS) \
-  $(UTOUCH_GEIS_CFLAGS)
+  $(GEIS_CFLAGS)
 
 libnux_graphics_@NUX_API_VERSION@_la_LIBADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
   $(NUX_GRAPHICS_LIBS) \
-  $(UTOUCH_GEIS_LIBS)
+  $(GEIS_LIBS)
 
 libnux_graphics_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
@@ -92,7 +92,7 @@ source_h = \
   $(srcdir)/VirtualKeyCodesX11.h \
   $(srcdir)/XInputWindow.h
 
-if HAVE_UTOUCH_GEIS
+if HAVE_GEIS
 source_h += \
   $(srcdir)/GestureEvent.h
 endif
@@ -159,7 +159,7 @@ source_cpp = \
   $(srcdir)/RunTimeStats.cpp \
   $(srcdir)/XInputWindow.cpp
 
-if HAVE_UTOUCH_GEIS
+if HAVE_GEIS
 source_cpp += \
   $(srcdir)/GestureEvent.cpp
 endif

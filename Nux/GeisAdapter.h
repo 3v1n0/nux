@@ -37,7 +37,7 @@ namespace nux
 {
 
 /*!
-  This class translates events from utouch-geis into native nux::GestureEvents
+  This class translates events from geis into native nux::GestureEvents
  */
 class GeisAdapter : public sigc::trackable
 {

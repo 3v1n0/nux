@@ -126,7 +126,7 @@ void GeisAdapter::CreateGSource(GMainContext *context)
       &event_source->event_poll_fd.fd);
   if (status != GEIS_STATUS_SUCCESS)
   {
-    LOG_WARNING(logger) << "Failed to get utouch-geis file descriptor."
+    LOG_WARNING(logger) << "Failed to get geis file descriptor."
       " Multitouch gesture support disabled.";
     g_source_destroy(source);
     return;
@@ -218,7 +218,7 @@ void GeisAdapter::SplitUpdateIntoBeginAndEnd(GestureEvent &nux_event)
 
   // Work around a bug in geis. A very quick gesture (e.g. a quick tap)
   // will end with its is_construction_finished still set to false.
-  // https://bugs.launchpad.net/utouch-grail/+bug/1012315
+  // https://bugs.launchpad.net/grail/+bug/1012315
   nux_event.is_construction_finished_ = true;
 
   pending_next_event_.reset(new GestureEvent);
@@ -419,7 +419,7 @@ void GeisAdapter::FillNuxEvent(GestureEvent &nux_event,
 
   // Work around a bug in geis. A very quick gesture (e.g. a quick tap)
   // will end with its is_construction_finished still set to false.
-  // https://bugs.launchpad.net/utouch-grail/+bug/1012315
+  // https://bugs.launchpad.net/grail/+bug/1012315
   if (nux_event_type == EVENT_GESTURE_END)
     nux_event.is_construction_finished_ = true;
 }

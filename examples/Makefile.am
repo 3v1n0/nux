@@ -31,7 +31,7 @@ noinst_PROGRAMS = text_entry_focus \
 #                  timeline \
 #                  tooltip
 
-if HAVE_UTOUCH_GEIS
+if HAVE_GEIS
 noinst_PROGRAMS += gestures
 endif
 
@@ -110,7 +110,7 @@ shortcut_keys_LDADD = $(ALL_LIBS)
 coverflow_SOURCES = coverflow.cpp
 coverflow_LDADD = $(ALL_LIBS)
 
-if HAVE_UTOUCH_GEIS
+if HAVE_GEIS
 gestures_SOURCES = gestures.cpp
 gestures_LDADD = $(ALL_LIBS)
 endif

@@ -78,7 +78,7 @@ gtest_nux_SOURCES = \
   gtest-nux-windowcompositor.cpp \
   gtest-nux-windowthread.cpp
 
-if HAVE_UTOUCH_GEIS
+if HAVE_GEIS
 gtest_nux_SOURCES += \
 	geis_mock.cpp \
   gtest-nux-geisadapter.cpp \

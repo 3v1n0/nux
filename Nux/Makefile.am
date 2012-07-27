@@ -16,7 +16,7 @@ libnux_@NUX_API_VERSION@_la_CPPFLAGS= \
   $(GCC_FLAGS) \
   $(NUX_CFLAGS) \
   $(IBUS_CFLAGS) \
-  $(UTOUCH_GEIS_CFLAGS) \
+  $(GEIS_CFLAGS) \
   $(MAINTAINER_CFLAGS)
 
 libnux_@NUX_API_VERSION@_la_LIBADD = \
@@ -24,7 +24,7 @@ libnux_@NUX_API_VERSION@_la_LIBADD = \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
   $(NUX_LIBS) \
   $(IBUS_LIBS) \
-  $(UTOUCH_GEIS_LIBS)
+  $(GEIS_LIBS)
 
 libnux_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
@@ -114,7 +114,7 @@ source_cpp = \
   $(srcdir)/WindowCompositor.cpp \
   $(srcdir)/WindowThread.cpp
 
-if HAVE_UTOUCH_GEIS
+if HAVE_GEIS
 source_cpp += \
   $(srcdir)/GeisAdapter.cpp \
   $(srcdir)/Gesture.cpp \
@@ -210,7 +210,7 @@ source_h = \
   $(srcdir)/WindowCompositor.h \
   $(srcdir)/WindowThread.h
 
-if HAVE_UTOUCH_GEIS
+if HAVE_GEIS
 source_h += \
   $(srcdir)/GeisAdapter.h \
   $(srcdir)/Gesture.h \

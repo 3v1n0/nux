@@ -187,9 +187,9 @@ PKG_CHECK_MODULES(IBUS,
 AC_SUBST(IBUS_CFLAGS)
 AC_SUBST(IBUS_LIBS)
 
-dnl **************************************
-dnl Enable/disable gestures (utouch-geis)
-dnl **************************************
+dnl *********************************************************
+dnl Enable/disable gestures (geis, from Open Input Framework)
+dnl *********************************************************
 
 AC_ARG_ENABLE(gestures,
               AC_HELP_STRING(--disable-gestures, Disables multitouch gestures support (default: auto-detect)),
@@ -197,44 +197,44 @@ AC_ARG_ENABLE(gestures,
               [enable_gestures=auto])
 
 
-# Check for utouch-geis as an optional dependency
+# Check for geis as an optional dependency
 AS_IF([test "x$enable_gestures" = "xauto"],
       [
-        PKG_CHECK_MODULES(UTOUCH_GEIS,
-                          [libutouch-geis >= 2.2.10],
-                          [have_utouch_geis=yes],
-                          [have_utouch_geis=no])
+        PKG_CHECK_MODULES(GEIS,
+                          [libgeis >= 2.2.10],
+                          [have_geis=yes],
+                          [have_geis=no])
       ])
 
 
 AS_IF([test "x$enable_gestures" = "xyes"],
       [
-        PKG_CHECK_MODULES(UTOUCH_GEIS,
-                          [libutouch-geis >= 2.2.10],
-                          [have_utouch_geis=yes],
+        PKG_CHECK_MODULES(GEIS,
+                          [libgeis >= 2.2.10],
+                          [have_geis=yes],
                           [
-                            AC_MSG_ERROR([libutouch-geis not found!])
-                            have_utouch_geis=no
+                            AC_MSG_ERROR([libgeis not found!])
+                            have_geis=no
                           ])
       ])
 
 AS_IF([test "x$enable_gestures" = "xno"],
-      [have_utouch_geis=no])
+      [have_geis=no])
 
-AS_IF([test "x$have_utouch_geis" = "xyes"],
+AS_IF([test "x$have_geis" = "xyes"],
       [
         NUX_GESTURES_SUPPORT="NUX_GESTURES_SUPPORT"
-        AM_CONDITIONAL(HAVE_UTOUCH_GEIS, true)
+        AM_CONDITIONAL(HAVE_GEIS, true)
       ],
       [
         NUX_GESTURES_SUPPORT="NUX_NO_GESTURES_SUPPORT"
-        AM_CONDITIONAL(HAVE_UTOUCH_GEIS, false)
+        AM_CONDITIONAL(HAVE_GEIS, false)
       ])
 
 AC_SUBST(NUX_GESTURES_SUPPORT)
 
-AC_SUBST(UTOUCH_GEIS_CFLAGS)
-AC_SUBST(UTOUCH_GEIS_LIBS)
+AC_SUBST(GEIS_CFLAGS)
+AC_SUBST(GEIS_LIBS)
 
 dnl ************************************
 dnl Enable/disable tests
@@ -415,7 +415,7 @@ echo -e "${GREEN} • Misc Options:${RESET}"
 echo -e "        Build Examples     : ${BOLD_WHITE}${enable_examples}${RESET}"
 echo -e "        Build Gpu Tests    : ${BOLD_WHITE}${enable_gputests}${RESET}"
 echo -e "        Build Nux Tests    : ${BOLD_WHITE}${enable_tests}${RESET}"
-echo -e "        Gestures support   : ${BOLD_WHITE}${have_utouch_geis}${RESET}"
+echo -e "        Gestures support   : ${BOLD_WHITE}${have_geis}${RESET}"
 echo ""
 
 echo -e "${RESET}"
