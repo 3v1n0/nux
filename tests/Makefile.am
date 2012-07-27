@@ -82,7 +82,6 @@ if HAVE_GEIS
 gtest_nux_SOURCES += \
 	geis_mock.cpp \
   gtest-nux-geisadapter.cpp \
-  gtest-nux-gesture.cpp \
   gtest-nux-gesturebroker.cpp
 endif
 
