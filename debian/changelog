@@ -1,6 +1,8 @@
 nux (3.0.0-0ubuntu2) quantal; urgency=low
 
   * Update build-dep to libgeis-dev for the great renaming transition.
+  * debian/patches/02_libgeis_rename.patch:
+    - Update the upstream source for the libgeis renaming as well.
 
  -- Adam Conrad <adconrad@ubuntu.com>  Mon, 30 Jul 2012 16:04:41 -0600
 

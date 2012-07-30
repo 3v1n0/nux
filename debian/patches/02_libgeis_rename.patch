@@ -1,0 +1,108 @@
+=== modified file 'NuxGraphics/nux-graphics.pc.in'
+--- x/NuxGraphics/nux-graphics.pc.in	2012-05-25 20:36:09 +0000
++++ x/NuxGraphics/nux-graphics.pc.in	2012-07-30 22:46:59 +0000
+@@ -9,4 +9,4 @@
+ Libs: -L${libdir} -lnux-graphics-@NUX_API_VERSION@
+ Cflags: -I${includedir}/Nux-@NUX_API_VERSION@
+ 
+-Requires: glib-2.0 cairo libpng gdk-pixbuf-2.0 nux-core-@NUX_API_VERSION@ @GL_PKGS@ xxf86vm xinerama libutouch-geis
++Requires: glib-2.0 cairo libpng gdk-pixbuf-2.0 nux-core-@NUX_API_VERSION@ @GL_PKGS@ xxf86vm xinerama libgeis
+
+=== modified file 'configure'
+--- x/configure	2012-07-04 09:16:20 +0000
++++ x/configure	2012-07-30 22:46:49 +0000
+@@ -16423,7 +16423,7 @@
+                   xxf86vm
+                   sigc++-2.0
+ 		              xinerama
+-                  libutouch-geis
++                  libgeis
+                   \""; } >&5
+   ($PKG_CONFIG --exists --print-errors "glib-2.0 >= 2.25.14
+                   gdk-pixbuf-2.0
+@@ -16433,7 +16433,7 @@
+                   xxf86vm
+                   sigc++-2.0
+ 		              xinerama
+-                  libutouch-geis
++                  libgeis
+                   ") 2>&5
+   ac_status=$?
+   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+@@ -16446,7 +16446,7 @@
+                   xxf86vm
+                   sigc++-2.0
+ 		              xinerama
+-                  libutouch-geis
++                  libgeis
+                   " 2>/dev/null`
+ 		      test "x$?" != "x0" && pkg_failed=yes
+ else
+@@ -16467,7 +16467,7 @@
+                   xxf86vm
+                   sigc++-2.0
+ 		              xinerama
+-                  libutouch-geis
++                  libgeis
+                   \""; } >&5
+   ($PKG_CONFIG --exists --print-errors "glib-2.0 >= 2.25.14
+                   gdk-pixbuf-2.0
+@@ -16477,7 +16477,7 @@
+                   xxf86vm
+                   sigc++-2.0
+ 		              xinerama
+-                  libutouch-geis
++                  libgeis
+                   ") 2>&5
+   ac_status=$?
+   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+@@ -16490,7 +16490,7 @@
+                   xxf86vm
+                   sigc++-2.0
+ 		              xinerama
+-                  libutouch-geis
++                  libgeis
+                   " 2>/dev/null`
+ 		      test "x$?" != "x0" && pkg_failed=yes
+ else
+@@ -16520,7 +16520,7 @@
+                   xxf86vm
+                   sigc++-2.0
+ 		              xinerama
+-                  libutouch-geis
++                  libgeis
+                   " 2>&1`
+         else
+ 	        NUX_GRAPHICS_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "glib-2.0 >= 2.25.14
+@@ -16531,7 +16531,7 @@
+                   xxf86vm
+                   sigc++-2.0
+ 		              xinerama
+-                  libutouch-geis
++                  libgeis
+                   " 2>&1`
+         fi
+ 	# Put the nasty error message in config.log where it belongs
+@@ -16545,7 +16545,7 @@
+                   xxf86vm
+                   sigc++-2.0
+ 		              xinerama
+-                  libutouch-geis
++                  libgeis
+                   ) were not met:
+ 
+ $NUX_GRAPHICS_PKG_ERRORS
+
+=== modified file 'configure.ac'
+--- x/configure.ac	2012-05-29 15:36:22 +0000
++++ x/configure.ac	2012-07-30 22:46:47 +0000
+@@ -150,7 +150,7 @@
+                   xxf86vm
+                   sigc++-2.0
+ 		              xinerama
+-                  libutouch-geis
++                  libgeis
+                   )
+ AC_SUBST(NUX_GRAPHICS_CFLAGS)
+ AC_SUBST(NUX_GRAPHICS_LIBS)
+
