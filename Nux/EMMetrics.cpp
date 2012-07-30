@@ -29,10 +29,10 @@ namespace nux
     if (dpy)
     {
       // determine current system DPI, remember that: 1 inch == 2.54 cm == 25.4 mm
-      xres = ((static_cast<double> DisplayWidth(dpy,scr) * 25.4) /
-              (static_cast<double> DisplayWidthMM(dpy,scr)));
-      yres = ((static_cast<double> DisplayHeight(dpy,scr) * 25.4) /
-              (static_cast<double> DisplayHeightMM(dpy,scr)));
+      double xres = ((static_cast<double> DisplayWidth(dpy,scr) * 25.4) /
+                     (static_cast<double> DisplayWidthMM(dpy,scr)));
+      double yres = ((static_cast<double> DisplayHeight(dpy,scr) * 25.4) /
+                     (static_cast<double> DisplayHeightMM(dpy,scr)));
       dpi = (xres + yres) / 2.0; 
     }
 
