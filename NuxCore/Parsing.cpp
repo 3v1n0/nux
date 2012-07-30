@@ -60,10 +60,10 @@ namespace nux
   bool Parse_tchar (const TCHAR *Stream, const TCHAR *Match, TCHAR *Value, int Size, int MaxLen)
   {
     const TCHAR *Found = Strfind (Stream, Match);
-    const TCHAR *Start;
 
     if (Found)
     {
+      const TCHAR *Start;
       Start = Found + StringLength (Match);
 
       if (*Start == '\x22') // Character '"'
