@@ -301,7 +301,7 @@ logging::Logger logger("nux.windows.thread");
     StartLayoutCycle();
     std::list<Area *>::iterator it;
 
-    for (it = _queued_layout_list.begin(); it != _queued_layout_list.end(); it++)
+    for (it = _queued_layout_list.begin(); it != _queued_layout_list.end(); ++it)
     {
       Area *area = *it;
 
@@ -753,7 +753,7 @@ logging::Logger logger("nux.windows.thread");
   {
     std::list<AbstractThread*>::iterator it;
 
-    for (it = children_thread_list_.begin(); it != children_thread_list_.end(); it++)
+    for (it = children_thread_list_.begin(); it != children_thread_list_.end(); ++it)
     {
       (*it)->SetThreadState(THREADSTOP);
 
@@ -920,7 +920,7 @@ logging::Logger logger("nux.windows.thread");
   {
     std::list<AbstractThread*>::iterator it;
 
-    for (it = children_thread_list_.begin(); it != children_thread_list_.end(); it++)
+    for (it = children_thread_list_.begin(); it != children_thread_list_.end(); ++it)
     {
       if (NUX_STATIC_CAST(WindowThread *, *it)->Type().IsObjectType(WindowThread::StaticObjectType))
       {
@@ -941,7 +941,7 @@ logging::Logger logger("nux.windows.thread");
   {
     std::list<AbstractThread*>::iterator it;
 
-    for (it = children_thread_list_.begin(); it != children_thread_list_.end(); it++)
+    for (it = children_thread_list_.begin(); it != children_thread_list_.end(); ++it)
     {
       if (NUX_STATIC_CAST(WindowThread *, *it)->Type().IsObjectType(WindowThread::StaticObjectType))
       {
@@ -1442,7 +1442,7 @@ logging::Logger logger("nux.windows.thread");
 
     std::map < int, EventInspectorStorage >::iterator it;
 
-    for (it = _event_inspectors_map.begin(); it != _event_inspectors_map.end(); it++)
+    for (it = _event_inspectors_map.begin(); it != _event_inspectors_map.end(); ++it)
     {
       if ((*it).second._function == function)
       {
@@ -1467,7 +1467,7 @@ logging::Logger logger("nux.windows.thread");
 
     std::map < int, EventInspectorStorage >::iterator it;
 
-    for (it = _event_inspectors_map.begin(); it != _event_inspectors_map.end(); it++)
+    for (it = _event_inspectors_map.begin(); it != _event_inspectors_map.end(); ++it)
     {
       if ((*it).second._uid == event_inspector_id)
       {
@@ -1484,7 +1484,7 @@ logging::Logger logger("nux.windows.thread");
 
     std::map < int, EventInspectorStorage >::iterator it;
 
-    for (it = _event_inspectors_map.begin(); it != _event_inspectors_map.end(); it++)
+    for (it = _event_inspectors_map.begin(); it != _event_inspectors_map.end(); ++it)
     {
       if ((*it).second._function == function)
       {
@@ -1507,7 +1507,7 @@ logging::Logger logger("nux.windows.thread");
     bool discard_event = false;
     std::map < int, EventInspectorStorage >::iterator it;
 
-    for (it = _event_inspectors_map.begin(); it != _event_inspectors_map.end(); it++)
+    for (it = _event_inspectors_map.begin(); it != _event_inspectors_map.end(); ++it)
     {
       EventInspector callback = (*it).second._function;
 
