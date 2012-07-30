@@ -22,8 +22,6 @@ namespace nux
 {
   EMMetrics::EMMetrics(Display* dpy, int scr, double points)
   {
-    double xres = 0.0;
-    double yres = 0.0;
     double dpi  = 96.0; // default DPI if no Display provided (e.g. unit-test)
 
     if (dpy)
