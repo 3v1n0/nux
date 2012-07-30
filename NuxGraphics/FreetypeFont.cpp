@@ -909,13 +909,6 @@ void FontMgr::RenderTextLineStatic (const PageBBox &pageSize, const std::string 
   ComputeGlyphString (stringBBox.x, stringBBox.y, Str.c_str() );
   RenderGlyph (pageSize, Str.c_str(), alignment);
 
-  int bmpX;
-  int bmpY;
-  int bmpWidth;
-  int bmpHeight;
-  float u;
-  float v;
-
   if (trailingchar == 0)
     return;
 
@@ -935,10 +928,10 @@ void FontMgr::RenderTextLineStatic (const PageBBox &pageSize, const std::string 
     int posX = gGlyphs[gNumGlyphs-1].pos.x + last_cd.hadvance;
     int posY = gGlyphs[gNumGlyphs-1].pos.y; // - dot_cd.bitmap_top_bearing;
 
-    bmpWidth = dot_cd.bitmap_width;
-    bmpHeight = dot_cd.bitmap_height;
-    u = float (dot_cd.bitmap_width) / dot_cd.glTexWidth;
-    v = float (dot_cd.bitmap_height) / dot_cd.glTexHeight;
+    int bmpWidth = dot_cd.bitmap_width;
+    int bmpHeight = dot_cd.bitmap_height;
+    float u = float (dot_cd.bitmap_width) / dot_cd.glTexWidth;
+    float v = float (dot_cd.bitmap_height) / dot_cd.glTexHeight;
 
 //        glBindTexture(GL_TEXTURE_2D, dot_gltexid);
 //        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -955,8 +948,8 @@ void FontMgr::RenderTextLineStatic (const PageBBox &pageSize, const std::string 
 
     while (posX + dot_cd.hadvance < page_right_border_posX)
     {
-      bmpX = posX + dot_cd.bitmap_left_bearing;
-      bmpY = posY - dot_cd.bitmap_top_bearing;
+      int bmpX = posX + dot_cd.bitmap_left_bearing;
+      int bmpY = posY - dot_cd.bitmap_top_bearing;
 
       glBegin (GL_QUADS);
       glMultiTexCoord2fARB (GL_TEXTURE0_ARB, 0.0f, 0.0f);
