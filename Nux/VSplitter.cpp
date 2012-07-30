@@ -60,14 +60,14 @@ namespace nux
     // Delete all the interface object: This is a problem... The widget should be destroy by there associated parameters
     //delete vlayout;
     std::vector< Area* >::iterator it0;
-    for (it0 = m_InterfaceObject.begin(); it0 != m_InterfaceObject.end(); it0++)
+    for (it0 = m_InterfaceObject.begin(); it0 != m_InterfaceObject.end(); ++it0)
     {
       (*it0)->UnParentObject();
     }
     m_InterfaceObject.clear();
 
     std::vector< MySplitter* >::iterator it2;
-    for (it2 = m_SplitterObject.begin(); it2 != m_SplitterObject.end(); it2++)
+    for (it2 = m_SplitterObject.begin(); it2 != m_SplitterObject.end(); ++it2)
     {
       (*it2)->UnParentObject();
     }
@@ -85,7 +85,7 @@ namespace nux
     GetPainter().PaintBackground(graphics_engine, base);
     std::vector<MySplitter *>::iterator it_splitter;
 
-    for (it_splitter = m_SplitterObject.begin(); it_splitter != m_SplitterObject.end(); it_splitter++)
+    for (it_splitter = m_SplitterObject.begin(); it_splitter != m_SplitterObject.end(); ++it_splitter)
     {
       Geometry geo = (*it_splitter)->GetGeometry();
       Geometry grip_geo;
@@ -124,7 +124,7 @@ namespace nux
 
     for (it = m_InterfaceObject.begin(), it_splitter = m_SplitterObject.begin();
          it != m_InterfaceObject.end();
-         it++, it_splitter++)
+         ++it, ++it_splitter)
     {
       Geometry sgeo = (*it_splitter)->GetGeometry();
       graphics_engine.PushClippingRectangle(Rect(
@@ -554,7 +554,7 @@ namespace nux
   {
     std::vector<Area *>::iterator it;
 
-    for (it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
+    for (it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); ++it)
     {
       //(*it)->DoneRedraw();
       if ((*it)->Type().IsDerivedFromType(View::StaticObjectType))
@@ -577,7 +577,7 @@ namespace nux
       return NULL;
 
     std::vector<MySplitter*>::iterator splitter_it;
-    for (splitter_it = m_SplitterObject.begin(); splitter_it != m_SplitterObject.end(); splitter_it++)
+    for (splitter_it = m_SplitterObject.begin(); splitter_it != m_SplitterObject.end(); ++splitter_it)
     {
       Area* found_area = (*splitter_it)->FindAreaUnderMouse(mouse_position, event_type);
       if (found_area)
@@ -585,7 +585,7 @@ namespace nux
     }
 
     std::vector<Area *>::iterator it;
-    for (it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); it++)
+    for (it = m_InterfaceObject.begin(); it != m_InterfaceObject.end(); ++it)
     {
       Area* found_area = (*it)->FindAreaUnderMouse(mouse_position, event_type);
 
