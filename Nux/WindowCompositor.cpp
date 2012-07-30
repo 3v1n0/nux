@@ -652,7 +652,7 @@ namespace
         // Find the MenuPage under the mouse
         MenuPage* hit_menu_page = NULL;
         std::list<MenuPage*>::iterator menu_it;
-        for (menu_it = _menu_chain->begin(); menu_it != _menu_chain->end(); menu_it++)
+        for (menu_it = _menu_chain->begin(); menu_it != _menu_chain->end(); ++menu_it)
         {
           // The leaf of the menu chain is in the front of the list.
           hit_menu_page = NUX_STATIC_CAST(MenuPage*, (*menu_it)->FindAreaUnderMouse(Point(event.x, event.y), event.type));
@@ -758,7 +758,7 @@ namespace
       // We should never get here for a NUX_MOUSE_PRESSED event.
       MenuPage* hit_menu_page = NULL;
       std::list<MenuPage*>::iterator menu_it;
-      for (menu_it = _menu_chain->begin(); menu_it != _menu_chain->end(); menu_it++)
+      for (menu_it = _menu_chain->begin(); menu_it != _menu_chain->end(); ++menu_it)
       {
         // The leaf of the menu chain is in the front of the list.
         hit_menu_page = NUX_STATIC_CAST(MenuPage*, (*menu_it)->FindAreaUnderMouse(Point(event.x, event.y), event.type));
@@ -1164,7 +1164,7 @@ namespace
     int top_pos = -1;
     int bot_pos = -1;
 
-    for (it_top = _view_window_list.begin(), i = 0; it_top != _view_window_list.end(); it_top++, i++)
+    for (it_top = _view_window_list.begin(), i = 0; it_top != _view_window_list.end(); ++it_top, ++i)
     {
       if (*it == bottom_floating_view)
       {
@@ -1323,7 +1323,7 @@ namespace
 
     std::list<MenuPage*>::reverse_iterator rev_it_menu;
 
-    for (rev_it_menu = _menu_chain->rbegin(); rev_it_menu != _menu_chain->rend( ); rev_it_menu++)
+    for (rev_it_menu = _menu_chain->rbegin(); rev_it_menu != _menu_chain->rend( ); ++rev_it_menu)
     {
       SetProcessingTopView(m_MenuWindow.GetPointer());
       (*rev_it_menu)->ProcessDraw(window_thread_->GetGraphicsEngine(), force_draw);
@@ -1680,7 +1680,7 @@ namespace
           if (OverrideCurrentMenuChain)
           {
             // Remove the current menu chain
-            for (it = _menu_chain->begin(); it != _menu_chain->end(); it++)
+            for (it = _menu_chain->begin(); it != _menu_chain->end(); ++it)
             {
               // Stop all pages
               (*it)->StopMenu();
@@ -1740,7 +1740,7 @@ namespace
       }
       else
       {
-        menu_it++;
+        ++menu_it;
       }
     }
 
@@ -1959,7 +1959,7 @@ namespace
   {
     WindowList::iterator it;
 
-    for (it = _view_window_list.begin(); it != _view_window_list.end(); it++)
+    for (it = _view_window_list.begin(); it != _view_window_list.end(); ++it)
     {
       if (!(*it).IsValid())
         continue;
