@@ -27,9 +27,7 @@
 
 namespace nux
 {
-
   NUX_IMPLEMENT_OBJECT_TYPE(View);
-  ObjectPtr<IOpenGLFrameBufferObject> View::backup_fbo_;
 
   View::View(NUX_FILE_LINE_DECL)
   : InputArea(NUX_FILE_LINE_PARAM)
@@ -44,6 +42,7 @@ namespace nux
     {
       backup_fbo_ = GetGraphicsDisplay()->GetGpuDevice()->CreateFrameBufferObject();
     }
+    SetRedirectRenderingToTexture(true);
   }
 
   View::~View()
@@ -170,74 +169,103 @@ namespace nux
     bool update_rendering = false;
     full_view_draw_cmd_ = false;
 
-    if (RedirectRenderingToTexture() && (update_backup_texture_ || force_draw || draw_cmd_queued_))
+    if (RedirectRenderingToTexture())
     {
-      model_view_matrix_ = graphics_engine.GetModelViewMatrix();
-      perspective_matrix_ = graphics_engine.GetProjectionMatrix();
-      //prev_fbo_ = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
+      if (update_backup_texture_ || force_draw || draw_cmd_queued_)
+      {
+        update_rendering = true;
+        BeginBackupTextureRendering(graphics_engine);
 
-      update_rendering = true;
-      BeginBackupTextureRendering(graphics_engine);
-    }
+        {
+          graphics_engine.PushModelViewMatrix(Get2DMatrix());
 
-    graphics_engine.PushModelViewMatrix(Get2DMatrix());
+          Geometry translated_geo = GetGeometry();
+          translated_geo.x = 0;
+          translated_geo.y = 0;
+          if (force_draw)
+          {
+            GetPainter().PushPaintLayerStack();
+            GetPainter().PaintAllLayerStack(graphics_engine, translated_geo);
 
-    if (force_draw)
-    {
-      GetPainter().PaintBackground(graphics_engine, GetGeometry());
-      GetPainter().PushPaintLayerStack();
+            draw_cmd_queued_ = true;
+            full_view_draw_cmd_ = true;
+            Draw(graphics_engine, force_draw);
+            DrawContent(graphics_engine, force_draw);
+            PostDraw(graphics_engine, force_draw);
+              
+            GetPainter().PopPaintLayerStack();
+          }
+          else
+          {
+            if (draw_cmd_queued_)
+            {
+              GetPainter().PushPaintLayerStack();
+              GetPainter().PaintAllLayerStack(graphics_engine, translated_geo);
 
-      draw_cmd_queued_ = true;
-      full_view_draw_cmd_ = true;
-      Draw(graphics_engine, force_draw);
-      DrawContent(graphics_engine, force_draw);
-      PostDraw(graphics_engine, force_draw);
+              full_view_draw_cmd_ = true;
+              Draw(graphics_engine, false);
+              DrawContent(graphics_engine, false);
+              PostDraw(graphics_engine, false);
 
-      GetPainter().PopPaintLayerStack();
+              GetPainter().PopPaintLayerStack();
+            }
+            else if (update_backup_texture_)
+            {
+              DrawContent(graphics_engine, false);
+              PostDraw(graphics_engine, false);
+            }
+          }
+          graphics_engine.PopModelViewMatrix();
+        }
+        EndBackupTextureRendering(graphics_engine);
+
+        TexCoordXForm texxform;
+        texxform.uwrap = TEXWRAP_CLAMP;
+        texxform.vwrap = TEXWRAP_CLAMP;
+        texxform.FlipVCoord(true);
+
+        GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(GetX(), GetY(), GetWidth(), GetHeight(), backup_texture_, texxform, Color(color::White));
+      }
     }
     else
     {
-      if (draw_cmd_queued_ || update_backup_texture_)
+      graphics_engine.PushModelViewMatrix(Get2DMatrix());
+
+      if (force_draw)
       {
         GetPainter().PaintBackground(graphics_engine, GetGeometry());
         GetPainter().PushPaintLayerStack();
 
+        draw_cmd_queued_ = true;
         full_view_draw_cmd_ = true;
-        Draw(graphics_engine, false);
-        DrawContent(graphics_engine, false);
-        PostDraw(graphics_engine, false);
+        Draw(graphics_engine, force_draw);
+        DrawContent(graphics_engine, force_draw);
+        PostDraw(graphics_engine, force_draw);
 
         GetPainter().PopPaintLayerStack();
       }
       else
       {
-        DrawContent(graphics_engine, false);
-        PostDraw(graphics_engine, false);
+        if (draw_cmd_queued_)
+        {
+          GetPainter().PaintBackground(graphics_engine, GetGeometry());
+          GetPainter().PushPaintLayerStack();
+
+          full_view_draw_cmd_ = true;
+          Draw(graphics_engine, false);
+          DrawContent(graphics_engine, false);
+          PostDraw(graphics_engine, false);
+
+          GetPainter().PopPaintLayerStack();
+        }
+        else
+        {
+          DrawContent(graphics_engine, false);
+          PostDraw(graphics_engine, false);
+        }
       }
-    }
 
-    graphics_engine.PopModelViewMatrix();
-
-    if (RedirectRenderingToTexture() && update_rendering)
-    {
-      EndBackupTextureRendering(graphics_engine);
-
-//       // Restore the main frame buffer object
-//       if (prev_fbo_.IsValid())
-//       {
-//         prev_fbo_->Activate();
-// 
-//         graphics_engine.SetViewport(0, 0, prev_fbo_->GetWidth(), prev_fbo_->GetHeight());
-//         prev_fbo_->ApplyClippingRegion();
-//         graphics_engine.ApplyModelViewMatrix();
-//         graphics_engine.SetOrthographicProjectionMatrix(prev_fbo_->GetWidth(), prev_fbo_->GetHeight());
-//       }
-
-      TexCoordXForm texxform;
-      texxform.uwrap = TEXWRAP_CLAMP;
-      texxform.vwrap = TEXWRAP_CLAMP;
-      texxform.FlipVCoord(true);
-      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(GetX(), GetY(), GetWidth(), GetHeight(), backup_texture_, texxform, Color(color::White));
+      graphics_engine.PopModelViewMatrix();
     }
 
     if (view_layout_)
@@ -253,14 +281,15 @@ namespace nux
 
   void View::BeginBackupTextureRendering(GraphicsEngine& graphics_engine)
   {
-    ObjectPtr<IOpenGLFrameBufferObject> prev_fbo_ = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
+    prev_fbo_ = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
+    prev_viewport_ = GetGraphicsDisplay()->GetGraphicsEngine()->GetViewportRect();
+    int window_width = GetGraphicsDisplay()->GetGraphicsEngine()->GetWindowWidth ();
+    int window_height = GetGraphicsDisplay()->GetGraphicsEngine()->GetWindowHeight();
 
-    graphics_engine.PushModelViewMatrix(Matrix4::TRANSLATE(-GetX(), -GetY(), 0));
+    Geometry geo_absolute = GetAbsoluteGeometry();
     
     const int width = GetWidth();
     const int height = GetHeight();
-
-    graphics_engine.SetOrthographicProjectionMatrix(width, height);
 
     if (!backup_texture_.IsValid() || (backup_texture_->GetWidth() != width) || (backup_texture_->GetHeight() != height))
     {
@@ -274,13 +303,36 @@ namespace nux
     backup_fbo_->SetDepthSurface(backup_depth_texture_->GetSurfaceLevel(0));
     backup_fbo_->Activate();
 
-    graphics_engine.SetViewport(0, 0, width, height);
+    if (draw_cmd_queued_)
+    {
+      CHECKGL(glClearColor(0, 0, 0, 1));
+      CHECKGL(glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT));
+    }
+
+    Geometry offset_rect = GetGraphicsDisplay()->GetGraphicsEngine()->ModelViewXFormRect(GetGeometry());
+    int x_offset = -offset_rect.x;
+    int y_offset = -offset_rect.y;
+
+    graphics_engine.SetViewport(0, 0,
+      geo_absolute.width, geo_absolute.height);
+    graphics_engine.PushModelViewMatrix(Matrix4::TRANSLATE(x_offset, y_offset, 0));
+    graphics_engine.SetOrthographicProjectionMatrix(geo_absolute.width, geo_absolute.height);
   }
 
   void View::EndBackupTextureRendering(GraphicsEngine& graphics_engine)
   {
     graphics_engine.PopModelViewMatrix();
-    GetWindowThread()->GetWindowCompositor().RestoreRenderingSurface();
+
+    if (prev_fbo_.IsValid())
+    {
+      prev_fbo_->Activate();
+
+      prev_fbo_->ApplyClippingRegion();
+      graphics_engine.ApplyModelViewMatrix();
+    }
+
+    graphics_engine.SetOrthographicProjectionMatrix(prev_viewport_.width, prev_viewport_.height);
+    graphics_engine.SetViewport(prev_viewport_.x, prev_viewport_.y, prev_viewport_.width, prev_viewport_.height);
   }
 
   void View::Draw(GraphicsEngine &graphics_engine, bool force_draw)
@@ -314,12 +366,12 @@ namespace nux
     // needs to be redrawn.
     ReportDrawToRedirectedView();
 
-//     if (view_layout_)
-//     {
-//       // If this view has requested a draw, then all of it children in the view_layout_
-//       // need to be redrawn as well.
-//       view_layout_->QueueDraw();
-//     }
+    if (view_layout_)
+    {
+      // If this view has requested a draw, then all of it children in the view_layout_
+      // need to be redrawn as well.
+      view_layout_->QueueDraw();
+    }
 
     draw_cmd_queued_ = true;
     queue_draw.emit(this);

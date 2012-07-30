@@ -797,7 +797,7 @@ namespace nux
     graphics_engine.GetRenderStates().SetBlend(false);
   }
 
-  void BasePainter::PaintBackground(GraphicsEngine &graphics_engine, const Geometry &geo)
+  void BasePainter::PaintActivePaintLayerStack(GraphicsEngine &graphics_engine, const Geometry &geo)
   {
     if (active_paint_layer_stack_.empty())
     {
@@ -806,7 +806,12 @@ namespace nux
 
     std::list<AbstractPaintLayer *>::const_reverse_iterator rev_it;
 
-    bool first = true;
+    bool clear_background = false;
+    if (pushed_paint_layer_stack_.size() == 0)
+    {
+      // This is the first stack of layers. Clear the background
+      clear_background = true;
+    }
 
     for (rev_it = active_paint_layer_stack_.rbegin(); rev_it != active_paint_layer_stack_.rend(); rev_it++)
     {
@@ -817,10 +822,10 @@ namespace nux
       graphics_engine.PushClippingRectangle(geo);
       graphics_engine.SetModelViewMatrix(layer->GetModelViewMatrix());
 
-      if (first)
+      if (clear_background)
       {
-        Paint2DQuadColor(graphics_engine, layer_geo, Color(0x0));
-        first = false;
+        Paint2DQuadColor(graphics_engine, layer_geo, color::Red);
+        clear_background = false;
       }
 
       RenderSinglePaintLayer(graphics_engine, layer_geo, layer);
@@ -828,6 +833,37 @@ namespace nux
       // restore the model view matrix stack and the clipping rectangle stack.
       graphics_engine.ApplyModelViewMatrix();
       graphics_engine.PopClippingRectangle();
+    }
+  }
+
+  void BasePainter::PaintBackground(GraphicsEngine& graphics_engine, const Geometry& geo)
+  {
+    PaintActivePaintLayerStack(graphics_engine, geo);
+  }
+
+  void BasePainter::PaintAllLayerStack(GraphicsEngine& graphics_engine, const Geometry& geo)
+  {
+    std::list<std::list<AbstractPaintLayer*> >::const_iterator stack_it;
+    std::list<AbstractPaintLayer *>::const_reverse_iterator rev_layer_it;
+
+    bool clear_background = true;
+
+    for (stack_it = pushed_paint_layer_stack_.begin(); stack_it != pushed_paint_layer_stack_.end(); stack_it++)
+    {
+      std::list<AbstractPaintLayer*> stack = (*stack_it);
+      for (rev_layer_it = stack.rbegin(); rev_layer_it != stack.rend(); rev_layer_it++)
+      {
+        AbstractPaintLayer* layer = (*rev_layer_it);
+        Geometry layer_geo = layer->GetGeometry();
+
+        if (clear_background)
+        {
+          Paint2DQuadColor(graphics_engine, layer_geo, Color(0x0));
+          clear_background = false;
+        }
+
+        RenderSinglePaintLayer(graphics_engine, layer_geo, layer);
+      }
     }
   }
 

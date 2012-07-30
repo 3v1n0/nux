@@ -165,8 +165,9 @@ namespace nux
     //! The texture that holds the rendering of this view.
     ObjectPtr<IOpenGLBaseTexture> backup_texture_;
     ObjectPtr<IOpenGLBaseTexture> backup_depth_texture_;
-    static ObjectPtr<IOpenGLFrameBufferObject> backup_fbo_;
+    ObjectPtr<IOpenGLFrameBufferObject> backup_fbo_;
     ObjectPtr<IOpenGLFrameBufferObject> prev_fbo_;
+    Geometry prev_viewport_;
     Matrix4 model_view_matrix_;
     Matrix4 perspective_matrix_;
 

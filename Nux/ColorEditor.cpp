@@ -591,19 +591,20 @@ namespace nux
 
   void ColorEditor::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
-    redcheck->ProcessDraw(graphics_engine, force_draw);
-    redtext->ProcessDraw(graphics_engine, force_draw);
-    greencheck->ProcessDraw(graphics_engine, force_draw);
-    greentext->ProcessDraw(graphics_engine, force_draw);
-    bluecheck->ProcessDraw(graphics_engine, force_draw);
-    bluetext->ProcessDraw(graphics_engine, force_draw);
+    bool force = force_draw || IsFullRedraw();
+    redcheck->ProcessDraw(graphics_engine, force);
+    redtext->ProcessDraw(graphics_engine, force);
+    greencheck->ProcessDraw(graphics_engine, force);
+    greentext->ProcessDraw(graphics_engine, force);
+    bluecheck->ProcessDraw(graphics_engine, force);
+    bluetext->ProcessDraw(graphics_engine, force);
 
-    huecheck->ProcessDraw(graphics_engine, force_draw);
-    hue_text_entry_->ProcessDraw(graphics_engine, force_draw);
-    saturationcheck->ProcessDraw(graphics_engine, force_draw);
-    saturation_text_entry_->ProcessDraw(graphics_engine, force_draw);
-    valuecheck->ProcessDraw(graphics_engine, force_draw);
-    value_text_entry_->ProcessDraw(graphics_engine, force_draw);
+    huecheck->ProcessDraw(graphics_engine, force);
+    hue_text_entry_->ProcessDraw(graphics_engine, force);
+    saturationcheck->ProcessDraw(graphics_engine, force);
+    saturation_text_entry_->ProcessDraw(graphics_engine, force);
+    valuecheck->ProcessDraw(graphics_engine, force);
+    value_text_entry_->ProcessDraw(graphics_engine, force);
   }
 
   void ColorEditor::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -926,7 +927,7 @@ namespace nux
   {
     rgb_ = color::RedGreenBlue(Clamp<double>(r, 0.0, 1.0),
                                Clamp<double>(g, 0.0, 1.0),
-                               Clamp<double> (b, 0.0, 1.0));
+                               Clamp<double>(b, 0.0, 1.0));
     hsv_ = color::HueSaturationValue(rgb_);
     RecvCheckColorModel(true, m_ColorModel, color_channel_);
     sigChange.emit(this);
