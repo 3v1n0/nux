@@ -458,11 +458,9 @@ namespace nux
       return NULL;
     }
 
-    long long Pos = 0;
-
     if (Flags & NSerializer::Append)
     {
-      Pos = lseek (FileDesc, Pos, SEEK_END);
+      long long Pos = lseek (FileDesc, Pos, SEEK_END);
 
       if (Pos == -1)
       {
