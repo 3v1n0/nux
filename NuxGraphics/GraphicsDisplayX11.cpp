@@ -2162,7 +2162,7 @@ namespace nux
     Atom type_atoms[types.size()];
     
     i = 0;
-    for (it = types.begin(); it != types.end(); it++)
+    for (it = types.begin(); it != types.end(); ++it)
     {
       type_atoms[i] = XInternAtom(display, *it, false);
       i++;
