@@ -260,7 +260,7 @@ int FontMgr::get_character_texture_id (const char *font_name, int encoding, Char
 {
   list <FontFamily *>::iterator iter;
 
-  for (iter = m_font_list->begin(); iter != m_font_list->end(); iter++)
+  for (iter = m_font_list->begin(); iter != m_font_list->end(); ++iter)
   {
     if (strcmp ( (*iter)->font_name, font_name) == 0)
     {
@@ -309,7 +309,7 @@ void FontMgr::get_style_texture_size (const char *font_name, int *width, int *he
 {
   list <FontFamily *>::iterator iter;
 
-  for (iter = m_font_list->begin(); iter != m_font_list->end(); iter++)
+  for (iter = m_font_list->begin(); iter != m_font_list->end(); ++iter)
   {
     if (strcmp ( (*iter)->font_name, font_name) == 0)
     {
@@ -337,7 +337,7 @@ void FontMgr::get_style_line_spacing (const char *font_name, int *line_spacing)
 {
   list <FontFamily *>::iterator iter;
 
-  for (iter = m_font_list->begin(); iter != m_font_list->end(); iter++)
+  for (iter = m_font_list->begin(); iter != m_font_list->end(); ++iter)
   {
     if (strcmp ( (*iter)->font_name, font_name) == 0)
     {
@@ -362,7 +362,7 @@ unsigned int FontMgr::get_null_character_texture_id (const char *font_name)
 {
   list <FontFamily *>::iterator iter;
 
-  for (iter = m_font_list->begin(); iter != m_font_list->end(); iter++)
+  for (iter = m_font_list->begin(); iter != m_font_list->end(); ++iter)
   {
     if (strcmp ( (*iter)->font_name, font_name) == 0)
     {
@@ -390,7 +390,7 @@ bool FontMgr::find_font (const char *font_name, const char *style_name)
 {
   list <FontFamily *>::iterator iter;
 
-  for (iter = m_font_list->begin(); iter != m_font_list->end(); iter++)
+  for (iter = m_font_list->begin(); iter != m_font_list->end(); ++iter)
   {
     if (strcmp ( (*iter)->font_name, font_name) == 0)
     {
@@ -405,7 +405,7 @@ FontFamily *FontMgr::get_font_family (const char *font_name)
 {
   list <FontFamily *>::iterator iter;
 
-  for (iter = m_font_list->begin(); iter != m_font_list->end(); iter++)
+  for (iter = m_font_list->begin(); iter != m_font_list->end(); ++iter)
   {
     if (strcmp ( (*iter)->font_name, font_name) == 0)
     {
@@ -421,11 +421,11 @@ FontStyle *FontMgr::get_font_style (char *font_name, char *style_name)
   list <FontFamily *>::iterator iter;
   list <FontStyle *>::iterator iter1;
 
-  for (iter = m_font_list->begin(); iter != m_font_list->end(); iter++)
+  for (iter = m_font_list->begin(); iter != m_font_list->end(); ++iter)
   {
     if (strcmp ( (*iter)->font_name, font_name) == 0)
     {
-      for (iter1 = ( (*iter)->style_list)->begin(); iter1 != ( (*iter)->style_list)->end(); iter1++)
+      for (iter1 = ( (*iter)->style_list)->begin(); iter1 != ( (*iter)->style_list)->end(); ++iter1)
         if (strcmp ( (*iter1)->style_name, style_name) == 0)
         {
           return (*iter1);
