@@ -1221,13 +1221,13 @@ namespace nux
     m_pEvent->Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
     m_pEvent->mouse_state &= 0x0F000000;
-    bool bProcessEvent = true;
 
     // Process event matching this window
     XEvent xevent;
 
     if (XPending(m_X11Display))
     {
+      bool bProcessEvent = true;
       XNextEvent(m_X11Display, &xevent);
 
       if (!_event_filters.empty())
@@ -1332,11 +1332,11 @@ namespace nux
     m_pEvent->Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
     m_pEvent->mouse_state &= 0x0F000000;
-    bool bProcessEvent = true;
 
     // Process event matching this window
     if (true /*(NUX_REINTERPRET_CAST(XAnyEvent*, xevent))->window == m_X11Window*/)
     {
+      bool bProcessEvent = true;
       // Detect auto repeat keys. X11 sends a combination of KeyRelease/KeyPress(at the same time) when a key auto repeats.
       // Here, we make sure we process only the keyRelease when the key is effectively released.
       if ((xevent->type == KeyPress) || (xevent->type == KeyRelease))
@@ -1966,9 +1966,9 @@ namespace nux
       if (XGetWindowProperty(GetX11Display(), result, XInternAtom(GetX11Display(), "XdndAware", false), 0, 1, False,
                              XA_ATOM, &type, &format, &n, &a, &data) == Success) 
       {
-        long dnd_version = 0;
         if (data)
         {
+          long dnd_version = 0;
           dnd_version = ((Atom *)data)[0];
 
           if (dnd_version < 5)
