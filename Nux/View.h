@@ -23,6 +23,7 @@
 #ifndef ABSTRACTOBJECTBASE_H
 #define ABSTRACTOBJECTBASE_H
 
+#include "Features.h"
 #include "Nux.h"
 #include "NuxCore/Property.h"
 
@@ -31,6 +32,9 @@
 namespace nux
 {
   class Layout;
+#ifdef NUX_GESTURES_SUPPORT
+  class GestureEvent;
+#endif
 
   class View: public InputArea
   {
@@ -147,6 +151,9 @@ namespace nux
 
     void IsHitDetectionSkipingChildren(bool skip_children);
 
+#ifdef NUX_GESTURES_SUPPORT
+    virtual Area* GetInputAreaHitByGesture(const nux::GestureEvent &event);
+#endif
 
   protected:
 

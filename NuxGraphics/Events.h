@@ -230,6 +230,10 @@ namespace nux
     EVENT_DND_LEAVE,  //!< Synthetic event generated when the dnd action leaves an InputArea. This is not the event sent when the dnd action leaves the window.
     EVENT_DND_ENTER_WINDOW,  //!< Emitted when the DND action goes inside(XdndLeave) a window.
     EVENT_DND_LEAVE_WINDOW,   //!< Emitted when the DND action goes outside(XdndEnter) a window.
+    EVENT_GESTURE_BEGIN, //!< Emitted when a gesture begins. Event class is GestureEvent.
+    EVENT_GESTURE_UPDATE, //!< Emitted when a gesture is updated. Event class is GestureEvent.
+    EVENT_GESTURE_END, //!< Emitted when a gesture ends. Event class is GestureEvent.
+    EVENT_GESTURE_LOST, //!< Emitted when a gesture target loses a gesture. Event class is GestureEvent.
 
 
     // The following values are deprecated. Use the ones above.
@@ -306,7 +310,7 @@ namespace nux
 
     // Because an event is save in event_type instead of calling immediately the handling function,
     // we must clear the previous event each time before we test for new event in Gfx_OpenGLImpl::get_event.
-    void Reset();
+    /*virtual*/ void Reset();
 
     int GetX() const;
     int GetY() const;

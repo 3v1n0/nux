@@ -78,6 +78,13 @@ gtest_nux_SOURCES = \
   gtest-nux-windowcompositor.cpp \
   gtest-nux-windowthread.cpp
 
+if HAVE_GEIS
+gtest_nux_SOURCES += \
+	geis_mock.cpp \
+  gtest-nux-geisadapter.cpp \
+  gtest-nux-gesturebroker.cpp
+endif
+
 gtest_nux_CPPFLAGS = \
   -I$(srcdir) \
   -I$(top_srcdir) \

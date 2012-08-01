@@ -224,7 +224,10 @@ namespace nux
     void SwapBuffer(bool glswap = true);
 
     // Event methods
-    void GetSystemEvent(Event *evt);
+    /*!
+      Returns true if there was a pending event to be fetched and false otherwise
+     */
+    bool GetSystemEvent(Event *evt);
 
     // Os specific
     int GetGlXMajor() const;
