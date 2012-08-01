@@ -155,7 +155,7 @@ PKG_CHECK_MODULES(NUX_GRAPHICS,
                   xxf86vm
                   sigc++-2.0
 		              xinerama
-                  libutouch-geis
+                  libgeis
                   )
 AC_SUBST(NUX_GRAPHICS_CFLAGS)
 AC_SUBST(NUX_GRAPHICS_LIBS)
