@@ -34,15 +34,14 @@ namespace nux
   , redirect_rendering_to_texture_(false)
   , update_backup_texture_(false)
   {
-    view_layout_ = NULL;
-    draw_cmd_queued_        = false;
-    m_TextColor         = Color(1.0f, 1.0f, 1.0f, 1.0f);
+    view_layout_      = NULL;
+    draw_cmd_queued_  = false;
+    m_TextColor       = Color(1.0f, 1.0f, 1.0f, 1.0f);
 
     if (backup_fbo_.IsNull())
     {
       backup_fbo_ = GetGraphicsDisplay()->GetGpuDevice()->CreateFrameBufferObject();
     }
-    SetRedirectRenderingToTexture(true);
   }
 
   View::~View()
@@ -219,13 +218,14 @@ namespace nux
         }
         EndBackupTextureRendering(graphics_engine);
 
-        TexCoordXForm texxform;
-        texxform.uwrap = TEXWRAP_CLAMP;
-        texxform.vwrap = TEXWRAP_CLAMP;
-        texxform.FlipVCoord(true);
-
-        GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(GetX(), GetY(), GetWidth(), GetHeight(), backup_texture_, texxform, Color(color::White));
       }
+      TexCoordXForm texxform;
+      texxform.uwrap = TEXWRAP_CLAMP;
+      texxform.vwrap = TEXWRAP_CLAMP;
+      texxform.FlipVCoord(true);
+
+      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(GetX(), GetY(), GetWidth(), GetHeight(), backup_texture_, texxform, Color(color::White));
+
     }
     else
     {
@@ -331,6 +331,7 @@ namespace nux
       graphics_engine.ApplyModelViewMatrix();
     }
 
+    prev_fbo_.Release();
     graphics_engine.SetOrthographicProjectionMatrix(prev_viewport_.width, prev_viewport_.height);
     graphics_engine.SetViewport(prev_viewport_.x, prev_viewport_.y, prev_viewport_.width, prev_viewport_.height);
   }
@@ -364,7 +365,7 @@ namespace nux
     
     // Report to a parent view with redirect_rendering_to_texture_ set to true that one of its children
     // needs to be redrawn.
-    ReportDrawToRedirectedView();
+    PrepareParentRedirectedView();
 
     if (view_layout_)
     {
@@ -652,7 +653,10 @@ namespace nux
     if (redirect == false)
     {
       // Free the texture of this view
+      backup_fbo_.Release();
       backup_texture_.Release();
+      backup_depth_texture_.Release();
+      prev_fbo_.Release();
     }
   }
 
@@ -661,17 +665,23 @@ namespace nux
     return redirect_rendering_to_texture_;
   }
 
-  void View::SetUpdateBackupTexture(bool update)
+  void View::SetUpdateBackupTextureForChildRendering(bool update)
   {
     update_backup_texture_ = update;
   }
 
-  bool View::UpdateBackupTexture()
+  ObjectPtr<IOpenGLBaseTexture> View::BackupTexture() const
+  {
+    // if RedirectRenderingToTexture() is false, then backup_texture_ is not a valid smart pointer.
+    return backup_texture_;
+  }
+
+  bool View::UpdateBackupTextureForChildRendering() const
   {
     return update_backup_texture_;
   }
 
-  void View::ReportDrawToRedirectedView()
+  void View::PrepareParentRedirectedView()
   {
     Area* parent = GetParentObject();
 
@@ -683,18 +693,18 @@ namespace nux
     if (parent)
     {
       View* view = static_cast<View*>(parent);
-      if (view->RedirectRenderingToTexture() && (view->UpdateBackupTexture() == false))
+      if (view->RedirectRenderingToTexture() && (view->UpdateBackupTextureForChildRendering() == false))
       {
-        view->SetUpdateBackupTexture(true);
-        view->ReportDrawToRedirectedView();
+        view->SetUpdateBackupTextureForChildRendering(true);
+        view->PrepareParentRedirectedView();
       }
-      else if (view->RedirectRenderingToTexture() && (view->UpdateBackupTexture() == true))
+      else if (view->RedirectRenderingToTexture() && (view->UpdateBackupTextureForChildRendering() == true))
       {
         return;
       }
       else
       {
-        view->ReportDrawToRedirectedView();
+        view->PrepareParentRedirectedView();
       }
     }
 

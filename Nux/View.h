@@ -146,10 +146,26 @@ namespace nux
     virtual Area* KeyNavIteration(KeyNavDirection direction);
     virtual bool AcceptKeyNavFocus();
 
-    void IsHitDetectionSkipingChildren(bool skip_children);
-
+    //! Redirect the rendering of this view to a texture.
+    /*!
+        Redirect the rendering of this view to a texture. \sa BackupTexture().
+        @param redirect If true, redirect the rendering of this view to a texture.
+    */
     void SetRedirectRenderingToTexture(bool redirect);
+
+    /*!
+        @return True if the rendering of this view is done in a texture.
+    */
     bool RedirectRenderingToTexture() const;
+
+    //! Return the texture of this View if RedirectRenderingToTexture is enabled.
+    /*
+        Return the texture of this View if RedirectRenderingToTexture is enabled.
+        If RedirectRenderingToTexture() is false, then backup_texture_ is not a valid smart pointer.
+
+        @return the device texture that contains the rendering of this view.
+    */
+    ObjectPtr<IOpenGLBaseTexture> BackupTexture() const;
 
   protected:
     virtual void ChildViewQueuedDraw(Area* area);
@@ -159,8 +175,12 @@ namespace nux
 
     bool update_backup_texture_;
     
-    void SetUpdateBackupTexture(bool update);
-    bool UpdateBackupTexture();
+    /*!
+        Inform this view that one of its children has requested a draw. This view must have its rendering redirected to a texture.
+        @param update True if this view is redirected and one of its children has requested a draw.
+    */
+    void SetUpdateBackupTextureForChildRendering(bool update);
+    bool UpdateBackupTextureForChildRendering() const;
 
     //! The texture that holds the rendering of this view.
     ObjectPtr<IOpenGLBaseTexture> backup_texture_;
@@ -175,10 +195,11 @@ namespace nux
 
     void EndBackupTextureRendering(GraphicsEngine& graphics_engine);
 
-    /*! Report to a parent view with redirect_rendering_to_texture_ set to true that one of its children
+    /*! 
+        Report to a parent view with redirect_rendering_to_texture_ set to true that one of its children
         needs to be redrawn.
     */
-    void ReportDrawToRedirectedView();
+    void PrepareParentRedirectedView();
 
     void OnChildFocusChanged(/*Area *parent,*/ Area *child);
     sigc::connection _on_focus_changed_handler;

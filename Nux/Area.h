@@ -232,8 +232,6 @@ namespace nux
     */
     void SetGeometry(const Geometry &geo);
 
-    void IncreaseSize(int x, int y);
-
     void SetBaseString(const char *Caption);
     const NString &GetBaseString() const;
 
@@ -468,7 +466,17 @@ namespace nux
         This signal is only meant to inform of a change of size. When receiving this signal don't do anything
         that could change the size of this object. Or you risk creating an infinite loop.
     */
-    sigc::signal<void, Area *, Geometry&> geometry_changed;
+    sigc::signal<void, Area*, Geometry&> geometry_changed;
+
+    /*!
+        This signal emitted when the size of the area has changed. It is emitted after geometry_changed.
+    */
+    sigc::signal<void, Area*, int, int> size_changed;
+
+    /*!
+        This signal emitted when the position of the area has changed. It is emitted after geometry_changed.
+    */
+    sigc::signal<void, Area*, int, int> position_changed;
 
     /*!
         SetParentObject/UnParentObject are protected API. They are not meant to be used directly by users.

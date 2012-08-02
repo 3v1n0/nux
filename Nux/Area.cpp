@@ -360,6 +360,15 @@ namespace nux
     h = nux::Clamp<int> (h, min_size_.height, max_size_.height);
     w = nux::Clamp<int> (w, min_size_.width, max_size_.width);
 
+    bool detected_size_change = false;
+    bool detected_position_change = false;
+
+    if (geometry_.x != x || geometry_.y != y)
+      detected_position_change = true;
+
+    if (geometry_.width != w || geometry_.height != h)
+      detected_size_change = true;
+
     nux::Geometry geometry(x, y, w, h);
     if (geometry_ == geometry)
       return;
@@ -370,6 +379,12 @@ namespace nux
     GeometryChanged();
 
     geometry_changed.emit(this, geometry_);
+
+    if (detected_position_change)
+      position_changed.emit(this, x, y);
+
+    if (detected_size_change)
+      size_changed.emit(this, w, h);
   }
 
   void Area::SetGeometry(const Geometry &geo)
@@ -440,12 +455,6 @@ namespace nux
   void Area::SetBaseHeight(int h)
   {
     SetHeight(h);
-  }
-
-  void Area::IncreaseSize(int x, int y)
-  {
-    geometry_.OffsetPosition(x, y);
-    OnResize.emit(geometry_.x, geometry_.y, geometry_.width, geometry_.height );
   }
 
   long Area::ComputeContentSize()
