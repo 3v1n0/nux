@@ -248,9 +248,6 @@ namespace nux
     int CreateFrameBufferObject(
       IOpenGLFrameBufferObject **ppFrameBufferObject);
 
-    int CreateVertexShader(
-      IOpenGLVertexShader **ppVertexShader);
-
     int CreatePixelShader(
       IOpenGLPixelShader **ppPixelShader);
 

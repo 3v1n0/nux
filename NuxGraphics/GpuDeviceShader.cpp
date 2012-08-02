@@ -42,18 +42,9 @@ namespace nux
 
   ObjectPtr<IOpenGLVertexShader> GpuDevice::CreateVertexShader()
   {
-    IOpenGLVertexShader *ptr;
-    CreateVertexShader((IOpenGLVertexShader **) &ptr);
-    ObjectPtr<IOpenGLVertexShader> h = ObjectPtr<IOpenGLVertexShader> (ptr);
-    ptr->UnReference();
-    return h;
-  }
-
-  int GpuDevice::CreateVertexShader(IOpenGLVertexShader **ppVertexShader)
-  {
-    *ppVertexShader = new IOpenGLVertexShader();
-
-    return OGL_OK;
+    ObjectPtr<IOpenGLVertexShader> result;
+    result.Adopt(new IOpenGLVertexShader());
+    return result;
   }
 
   ObjectPtr<IOpenGLPixelShader> GpuDevice::CreatePixelShader()
