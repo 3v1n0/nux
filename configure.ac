@@ -225,9 +225,7 @@ AS_IF([test "x$enable_gestures" = "xyes"],
       ])
 
 AS_IF([test "x$enable_gestures" = "xno"],
-      [have_geis=no
-      GEIS_PKGS=""
-      ])
+      [have_geis=no])
 
 AS_IF([test "x$have_geis" = "xyes"],
       [
@@ -237,6 +235,7 @@ AS_IF([test "x$have_geis" = "xyes"],
       [
         NUX_GESTURES_SUPPORT="NUX_NO_GESTURES_SUPPORT"
         AM_CONDITIONAL(HAVE_GEIS, false)
+        GEIS_PKGS=""
       ])
 
 AC_SUBST(NUX_GESTURES_SUPPORT)
