@@ -41,39 +41,36 @@ namespace
 
   bool ExtractShaderString3(const NString &ShaderToken, const NString &ShaderSource, NString &RetSource, NString ShaderPreprocessorDefines);
 
-  IOpenGLAsmShader::IOpenGLAsmShader(std::string const& shader_name, OpenGLResourceType ResourceType)
+  IOpenGLAsmShader::IOpenGLAsmShader(std::string const& shader_name, GLint shader_type, OpenGLResourceType ResourceType)
     : IOpenGLResource(ResourceType)
     , shader_name_(shader_name)
+    , shader_type_(shader_type)
     , compiled_and_ready_(false)
   {
+#ifndef NUX_OPENGLES_20
+    CHECKGL(glGenProgramsARB(1, GetOpenGLIDAsInParam()));
+#endif
   }
 
   IOpenGLAsmShader::~IOpenGLAsmShader()
   {
-  }
-
-  IOpenGLAsmVertexShader::IOpenGLAsmVertexShader()
-    : IOpenGLAsmShader("VertexProgram", RT_GLSL_VERTEXSHADER)
-  {
 #ifndef NUX_OPENGLES_20
-    CHECKGL(glGenProgramsARB(1, &_OpenGLID));
+    CHECKGL(glDeleteProgramsARB(1, GetOpenGLIDAsInParam()));
 #endif
   }
-
-  IOpenGLAsmVertexShader::~IOpenGLAsmVertexShader()
-  {
-#ifndef NUX_OPENGLES_20
-    CHECKGL(glDeleteProgramsARB(1, &_OpenGLID));
-#endif
-  }
-
-  void IOpenGLAsmVertexShader::SetShaderCode(std::string const& shader_code)
+  
+  void IOpenGLAsmShader::SetShaderCode(std::string const& shader_code)
   {
     compiled_and_ready_ = false;
     shader_code_ = shader_code;
   }
-
-  bool IOpenGLAsmVertexShader::Compile()
+  
+  bool IOpenGLAsmShader::IsValid()
+  {
+    return compiled_and_ready_;
+  }
+  
+  bool IOpenGLAsmShader::Compile()
   {
     if (compiled_and_ready_)
     {
@@ -82,69 +79,11 @@ namespace
 #ifndef NUX_OPENGLES_20
     if (shader_code_.empty())
     {
-      LOG_DEBUG(logger) << "Vertex shader source code is empty.";
+      LOG_DEBUG(logger) << shader_name_ << " source code is empty.";
     }
 
-    CHECKGL(glBindProgramARB(GL_VERTEX_PROGRAM_ARB, _OpenGLID));
-    glProgramStringARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB, shader_code_.size(), shader_code_.c_str());
-
-    if ( GL_INVALID_OPERATION == glGetError())
-    {
-      // Find the error position
-      GLint errPos;
-      glGetIntegerv( GL_PROGRAM_ERROR_POSITION_ARB, &errPos );
-      // Print implementation-dependent program
-      // errors and warnings string.
-      LOG_ERROR(logger) << "Error in vertex shader at position: " << errPos << "\n\t" << glGetString(GL_PROGRAM_ERROR_STRING_ARB);
-      
-      return false;
-    }
-
-    compiled_and_ready_ = true;
-#endif
-    return compiled_and_ready_;
-  }
-
-  bool IOpenGLAsmVertexShader::IsValid()
-  {
-    return compiled_and_ready_;
-  }
-
-  IOpenGLAsmPixelShader::IOpenGLAsmPixelShader()
-    : IOpenGLAsmShader("PixelProgram", RT_GLSL_PIXELSHADER)
-  {
-#ifndef NUX_OPENGLES_20
-    CHECKGL(glGenProgramsARB(1, &_OpenGLID));
-#endif
-  }
-
-  IOpenGLAsmPixelShader::~IOpenGLAsmPixelShader()
-  {
-#ifndef NUX_OPENGLES_20
-    CHECKGL(glDeleteProgramsARB(1, &_OpenGLID));
-#endif
-  }
-
-  void IOpenGLAsmPixelShader::SetShaderCode(std::string const& shader_code)
-  {
-    compiled_and_ready_ = false;
-    shader_code_ = shader_code;
-  }
-
-  bool IOpenGLAsmPixelShader::Compile()
-  {
-    if (compiled_and_ready_)
-    {
-      return true;
-    }
-#ifndef NUX_OPENGLES_20
-    if (shader_code_.empty())
-    {
-      LOG_DEBUG(logger) << "Pixel shader source code is empty.";
-    }
-
-    CHECKGL(glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, _OpenGLID));
-    glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB, shader_code_.size(), shader_code_.c_str());
+    CHECKGL(glBindProgramARB(shader_type_, GetOpenGLID()));
+    glProgramStringARB(shader_type_, GL_PROGRAM_FORMAT_ASCII_ARB, shader_code_.size(), shader_code_.c_str());
 
     if (GL_INVALID_OPERATION == glGetError())
     {
@@ -154,7 +93,7 @@ namespace
       // Print implementation-dependent program
       // errors and warnings string.
 
-      LOG_ERROR(logger) << "Error in pixel shader at position: " << errPos << "\n\t" << glGetString(GL_PROGRAM_ERROR_STRING_ARB);
+      LOG_ERROR(logger) << "Error in " << shader_name_ << " at position: " << errPos << "\n\t" << glGetString(GL_PROGRAM_ERROR_STRING_ARB);
       
       return false;
     }
@@ -164,9 +103,14 @@ namespace
     return compiled_and_ready_;
   }
 
-  bool IOpenGLAsmPixelShader::IsValid()
+  IOpenGLAsmVertexShader::IOpenGLAsmVertexShader()
+    : IOpenGLAsmShader("VertexProgram", GL_VERTEX_PROGRAM_ARB, RT_GLSL_VERTEXSHADER)
   {
-    return compiled_and_ready_;
+  }
+
+  IOpenGLAsmPixelShader::IOpenGLAsmPixelShader()
+    : IOpenGLAsmShader("PixelProgram", GL_FRAGMENT_PROGRAM_ARB, RT_GLSL_PIXELSHADER)
+  {
   }
 
   IOpenGLAsmShaderProgram::IOpenGLAsmShaderProgram(NString ShaderProgramName)

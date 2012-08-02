@@ -52,16 +52,18 @@ namespace nux
   class IOpenGLAsmShader:  public IOpenGLResource
   {
     NUX_DECLARE_OBJECT_TYPE(IOpenGLAsmShader, IOpenGLResource);
-    IOpenGLAsmShader(std::string const& shader_name, OpenGLResourceType ResourceType);
+    IOpenGLAsmShader(std::string const& shader_name, GLint shader_type, OpenGLResourceType ResourceType);
     virtual ~IOpenGLAsmShader();
   public:
-    virtual void SetShaderCode(std::string const& shader_code) = 0;
-    virtual bool Compile() = 0;
-    virtual bool IsValid() = 0;
+    void SetShaderCode(std::string const& shader_code);
+    bool Compile();
+    bool IsValid();
     
   protected:
     std::string shader_name_;
     std::string shader_code_;
+    
+    GLint shader_type_;
     
     bool compiled_and_ready_;
   };
@@ -69,27 +71,17 @@ namespace nux
   class IOpenGLAsmVertexShader : public IOpenGLAsmShader
   {
     NUX_DECLARE_OBJECT_TYPE(IOpenGLAsmVertexShader, IOpenGLAsmShader);
+    
   public:
-    virtual ~IOpenGLAsmVertexShader();
-    virtual void SetShaderCode(std::string const& shader_code);
-    virtual bool Compile();
-    virtual bool IsValid();
-  private:
     IOpenGLAsmVertexShader();
-    friend class GpuDevice;
   };
 
   class IOpenGLAsmPixelShader : public IOpenGLAsmShader
   {
     NUX_DECLARE_OBJECT_TYPE(IOpenGLAsmPixelShader, IOpenGLAsmShader);
+    
   public:
-    virtual ~IOpenGLAsmPixelShader();
-    virtual void SetShaderCode(std::string const& shader_code);
-    virtual bool Compile();
-    virtual bool IsValid();
-  private:
     IOpenGLAsmPixelShader();
-    friend class GpuDevice;
   };
 
 

@@ -98,11 +98,15 @@ namespace nux
       return _ResourceType;
     }
 
-    int GetOpenGLID() const
+    GLuint GetOpenGLID() const
     {
       return _OpenGLID;
     }
 
+    GLuint* GetOpenGLIDAsInParam()
+    {
+      return &_OpenGLID;
+    }
   private:
     GLuint _OpenGLID;
     int _RefCount;
@@ -127,8 +131,6 @@ namespace nux
     friend class IOpenGLPixelShader;
     friend class IOpenGLGeometryShader;
     friend class IOpenGLShaderProgram;
-    friend class IOpenGLAsmVertexShader;
-    friend class IOpenGLAsmPixelShader;
     friend class IOpenGLAsmShaderProgram;
     friend class IOpenGLPixelBufferObject;
   };
