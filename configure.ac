@@ -242,7 +242,7 @@ AC_SUBST(NUX_GESTURES_SUPPORT)
 
 AC_SUBST(GEIS_CFLAGS)
 AC_SUBST(GEIS_LIBS)
-AC_SUBST(GEIS_PKG)
+AC_SUBST(GEIS_PKGS)
 
 dnl ************************************
 dnl Enable/disable tests
