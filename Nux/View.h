@@ -85,7 +85,7 @@ namespace nux
     virtual void ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw);
     //! Causes a redraw. The widget parameter draw_cmd_queued_ is set to true. The widget Draw(), DrawContent() and PostDraw() are called.
     /*!
-        Emits the signal \i OnQueueDraw.
+        Emits the signal \i queue_draw.
     */
     virtual void QueueDraw();
 
@@ -144,18 +144,70 @@ namespace nux
     void SetFont(ObjectPtr<FontTexture> font);
     ObjectPtr<FontTexture> GetFont();
 
-    sigc::signal<void, View*> OnQueueDraw;  //!< Signal emitted when a view is scheduled for a draw.
+    sigc::signal<void, View*> queue_draw;       //!< Signal emitted when a view is scheduled for a draw.
+    sigc::signal<void, Area*> child_queue_draw; //!< Signal emitted when a child of this view is scheduled for a draw.
 
     virtual Area* KeyNavIteration(KeyNavDirection direction);
     virtual bool AcceptKeyNavFocus();
-
-    void IsHitDetectionSkipingChildren(bool skip_children);
 
 #ifdef NUX_GESTURES_SUPPORT
     virtual Area* GetInputAreaHitByGesture(const nux::GestureEvent &event);
 #endif
 
+    //! Redirect the rendering of this view to a texture.
+    /*!
+        Redirect the rendering of this view to a texture. \sa BackupTexture().
+        @param redirect If true, redirect the rendering of this view to a texture.
+    */
+    void SetRedirectRenderingToTexture(bool redirect);
+
+    /*!
+        @return True if the rendering of this view is done in a texture.
+    */
+    bool RedirectRenderingToTexture() const;
+
+    //! Return the texture of this View if RedirectRenderingToTexture is enabled.
+    /*
+        Return the texture of this View if RedirectRenderingToTexture is enabled.
+        If RedirectRenderingToTexture() is false, then backup_texture_ is not a valid smart pointer.
+
+        @return the device texture that contains the rendering of this view.
+    */
+    ObjectPtr<IOpenGLBaseTexture> BackupTexture() const;
+
   protected:
+    virtual void ChildViewQueuedDraw(Area* area);
+
+    //! Redirect the rendering of the view to a texture.
+    bool redirect_rendering_to_texture_;
+
+    bool update_backup_texture_;
+    
+    /*!
+        Inform this view that one of its children has requested a draw. This view must have its rendering redirected to a texture.
+        @param update True if this view is redirected and one of its children has requested a draw.
+    */
+    void SetUpdateBackupTextureForChildRendering(bool update);
+    bool UpdateBackupTextureForChildRendering() const;
+
+    //! The texture that holds the rendering of this view.
+    ObjectPtr<IOpenGLBaseTexture> backup_texture_;
+    ObjectPtr<IOpenGLBaseTexture> backup_depth_texture_;
+    ObjectPtr<IOpenGLFrameBufferObject> backup_fbo_;
+    ObjectPtr<IOpenGLFrameBufferObject> prev_fbo_;
+    Geometry prev_viewport_;
+    Matrix4 model_view_matrix_;
+    Matrix4 perspective_matrix_;
+
+    void BeginBackupTextureRendering(GraphicsEngine& graphics_engine);
+
+    void EndBackupTextureRendering(GraphicsEngine& graphics_engine);
+
+    /*! 
+        Report to a parent view with redirect_rendering_to_texture_ set to true that one of its children
+        needs to be redrawn.
+    */
+    void PrepareParentRedirectedView();
 
     void OnChildFocusChanged(/*Area *parent,*/ Area *child);
     sigc::connection _on_focus_changed_handler;
@@ -203,6 +255,7 @@ namespace nux
     Layout *view_layout_;
 
     bool draw_cmd_queued_; //<! The rendering of the view needs to be refreshed.
+    bool child_draw_cmd_queued_; //<! A child of this view has requested a draw.
 
     bool full_view_draw_cmd_; //<! True if Draw is called before ContentDraw. It is read-only and can be accessed by calling IsFullRedraw();
 
@@ -213,8 +266,8 @@ namespace nux
     friend class Layout;
     friend class Area;
     friend class LayeredLayout;
+    friend class Canvas;
   };
-
 }
 
 #endif // ABSTRACTOBJECTBASE_H

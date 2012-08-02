@@ -27,19 +27,29 @@
 
 namespace nux
 {
-
   NUX_IMPLEMENT_OBJECT_TYPE(View);
 
   View::View(NUX_FILE_LINE_DECL)
-    :   InputArea(NUX_FILE_LINE_PARAM)
+  : InputArea(NUX_FILE_LINE_PARAM)
+  , redirect_rendering_to_texture_(false)
+  , update_backup_texture_(false)
   {
-    view_layout_ = NULL;
-    draw_cmd_queued_        = false;
-    m_TextColor         = Color(1.0f, 1.0f, 1.0f, 1.0f);
+    view_layout_      = NULL;
+    draw_cmd_queued_  = false;
+    m_TextColor       = Color(1.0f, 1.0f, 1.0f, 1.0f);
+
+    if (backup_fbo_.IsNull())
+    {
+      backup_fbo_ = GetGraphicsDisplay()->GetGpuDevice()->CreateFrameBufferObject();
+    }
   }
 
   View::~View()
   {
+    backup_fbo_.Release();
+    backup_texture_.Release();
+    backup_depth_texture_.Release();
+    
     // It is possible that the window thread has been deleted before the view
     // itself, so check prior to calling.
     WindowThread* wt = GetWindowThread();
@@ -155,48 +165,175 @@ namespace nux
 
   void View::ProcessDraw(GraphicsEngine& graphics_engine, bool force_draw)
   {
+    bool update_rendering = false;
     full_view_draw_cmd_ = false;
 
-    graphics_engine.PushModelViewMatrix(Get2DMatrix());
-
-    if (force_draw)
+    if (RedirectRenderingToTexture())
     {
-      GetPainter().PaintBackground(graphics_engine, GetGeometry());
-      GetPainter().PushPaintLayerStack();
+      if (update_backup_texture_ || force_draw || draw_cmd_queued_)
+      {
+        update_rendering = true;
+        BeginBackupTextureRendering(graphics_engine);
 
-      draw_cmd_queued_ = true;
-      full_view_draw_cmd_ = true;
-      Draw(graphics_engine, force_draw);
-      DrawContent(graphics_engine, force_draw);
-      PostDraw(graphics_engine, force_draw);
+        {
+          graphics_engine.PushModelViewMatrix(Get2DMatrix());
 
-      GetPainter().PopPaintLayerStack();
+          Geometry translated_geo = GetGeometry();
+          translated_geo.x = 0;
+          translated_geo.y = 0;
+          if (force_draw)
+          {
+            GetPainter().PushPaintLayerStack();
+            GetPainter().PaintAllLayerStack(graphics_engine, translated_geo);
+
+            draw_cmd_queued_ = true;
+            full_view_draw_cmd_ = true;
+            Draw(graphics_engine, force_draw);
+            DrawContent(graphics_engine, force_draw);
+            PostDraw(graphics_engine, force_draw);
+              
+            GetPainter().PopPaintLayerStack();
+          }
+          else
+          {
+            if (draw_cmd_queued_)
+            {
+              GetPainter().PushPaintLayerStack();
+              GetPainter().PaintAllLayerStack(graphics_engine, translated_geo);
+
+              full_view_draw_cmd_ = true;
+              Draw(graphics_engine, false);
+              DrawContent(graphics_engine, false);
+              PostDraw(graphics_engine, false);
+
+              GetPainter().PopPaintLayerStack();
+            }
+            else if (update_backup_texture_)
+            {
+              DrawContent(graphics_engine, false);
+              PostDraw(graphics_engine, false);
+            }
+          }
+          graphics_engine.PopModelViewMatrix();
+        }
+        EndBackupTextureRendering(graphics_engine);
+
+      }
+      TexCoordXForm texxform;
+      texxform.uwrap = TEXWRAP_CLAMP;
+      texxform.vwrap = TEXWRAP_CLAMP;
+      texxform.FlipVCoord(true);
+
+      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(GetX(), GetY(), GetWidth(), GetHeight(), backup_texture_, texxform, Color(color::White));
+
     }
     else
     {
-      if (draw_cmd_queued_)
+      graphics_engine.PushModelViewMatrix(Get2DMatrix());
+
+      if (force_draw)
       {
         GetPainter().PaintBackground(graphics_engine, GetGeometry());
         GetPainter().PushPaintLayerStack();
 
+        draw_cmd_queued_ = true;
         full_view_draw_cmd_ = true;
-        Draw(graphics_engine, false);
-        DrawContent(graphics_engine, false);
-        PostDraw(graphics_engine, false);
+        Draw(graphics_engine, force_draw);
+        DrawContent(graphics_engine, force_draw);
+        PostDraw(graphics_engine, force_draw);
 
         GetPainter().PopPaintLayerStack();
       }
       else
       {
-        DrawContent(graphics_engine, false);
-        PostDraw(graphics_engine, false);
+        if (draw_cmd_queued_)
+        {
+          GetPainter().PaintBackground(graphics_engine, GetGeometry());
+          GetPainter().PushPaintLayerStack();
+
+          full_view_draw_cmd_ = true;
+          Draw(graphics_engine, false);
+          DrawContent(graphics_engine, false);
+          PostDraw(graphics_engine, false);
+
+          GetPainter().PopPaintLayerStack();
+        }
+        else
+        {
+          DrawContent(graphics_engine, false);
+          PostDraw(graphics_engine, false);
+        }
       }
+
+      graphics_engine.PopModelViewMatrix();
     }
 
-    graphics_engine.PopModelViewMatrix();
+    if (view_layout_)
+    {
+      view_layout_->ResetQueueDraw();
+    }
 
     draw_cmd_queued_ = false;
+    child_draw_cmd_queued_ = false;
     full_view_draw_cmd_ = false;
+    update_backup_texture_ = false;
+  }
+
+  void View::BeginBackupTextureRendering(GraphicsEngine& graphics_engine)
+  {
+    prev_fbo_ = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
+    prev_viewport_ = GetGraphicsDisplay()->GetGraphicsEngine()->GetViewportRect();
+    int window_width = GetGraphicsDisplay()->GetGraphicsEngine()->GetWindowWidth ();
+    int window_height = GetGraphicsDisplay()->GetGraphicsEngine()->GetWindowHeight();
+
+    Geometry geo_absolute = GetAbsoluteGeometry();
+    
+    const int width = GetWidth();
+    const int height = GetHeight();
+
+    if (!backup_texture_.IsValid() || (backup_texture_->GetWidth() != width) || (backup_texture_->GetHeight() != height))
+    {
+      backup_texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+      backup_depth_texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
+    }
+
+    backup_fbo_->FormatFrameBufferObject(width, height, BITFMT_R8G8B8A8);
+    backup_fbo_->EmptyClippingRegion();
+    backup_fbo_->SetRenderTarget(0, backup_texture_->GetSurfaceLevel(0));
+    backup_fbo_->SetDepthSurface(backup_depth_texture_->GetSurfaceLevel(0));
+    backup_fbo_->Activate();
+
+    if (draw_cmd_queued_)
+    {
+      CHECKGL(glClearColor(0, 0, 0, 1));
+      CHECKGL(glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT));
+    }
+
+    Geometry offset_rect = GetGraphicsDisplay()->GetGraphicsEngine()->ModelViewXFormRect(GetGeometry());
+    int x_offset = -offset_rect.x;
+    int y_offset = -offset_rect.y;
+
+    graphics_engine.SetViewport(0, 0,
+      geo_absolute.width, geo_absolute.height);
+    graphics_engine.PushModelViewMatrix(Matrix4::TRANSLATE(x_offset, y_offset, 0));
+    graphics_engine.SetOrthographicProjectionMatrix(geo_absolute.width, geo_absolute.height);
+  }
+
+  void View::EndBackupTextureRendering(GraphicsEngine& graphics_engine)
+  {
+    graphics_engine.PopModelViewMatrix();
+
+    if (prev_fbo_.IsValid())
+    {
+      prev_fbo_->Activate();
+
+      prev_fbo_->ApplyClippingRegion();
+      graphics_engine.ApplyModelViewMatrix();
+    }
+
+    prev_fbo_.Release();
+    graphics_engine.SetOrthographicProjectionMatrix(prev_viewport_.width, prev_viewport_.height);
+    graphics_engine.SetViewport(prev_viewport_.x, prev_viewport_.y, prev_viewport_.width, prev_viewport_.height);
   }
 
   void View::Draw(GraphicsEngine &graphics_engine, bool force_draw)
@@ -219,19 +356,26 @@ namespace nux
     if (draw_cmd_queued_)
       return;
 
-    //GetWindowCompositor()..AddToDrawList(this);
     WindowThread* application = GetWindowThread();
     if (application)
     {
       application->AddToDrawList(this);
       application->RequestRedraw();
-      //GetWindowCompositor().AddToDrawList(this);
     }
+    
+    // Report to a parent view with redirect_rendering_to_texture_ set to true that one of its children
+    // needs to be redrawn.
+    PrepareParentRedirectedView();
+
     if (view_layout_)
+    {
+      // If this view has requested a draw, then all of it children in the view_layout_
+      // need to be redrawn as well.
       view_layout_->QueueDraw();
+    }
 
     draw_cmd_queued_ = true;
-    OnQueueDraw.emit(this);
+    queue_draw.emit(this);
   }
 
   void View::NeedSoftRedraw()
@@ -310,7 +454,17 @@ namespace nux
 
     LayoutAdded.emit(this, view_layout_);
 
+    view_layout_->queue_draw.connect(sigc::mem_fun(this, &View::ChildViewQueuedDraw));
+    view_layout_->child_queue_draw.connect(sigc::mem_fun(this, &View::ChildViewQueuedDraw));
     return true;
+  }
+
+  void View::ChildViewQueuedDraw(Area* area)
+  {
+    if (child_draw_cmd_queued_)
+      return;
+    child_draw_cmd_queued_ = true;
+    child_queue_draw.emit(area);
   }
 
   void View::OnChildFocusChanged(/*Area *parent,*/ Area *child)
@@ -412,14 +566,12 @@ namespace nux
 
   void View::GeometryChangePending()
   {
-    if (IsLayoutDone())
-      QueueDraw();
+    QueueDraw();
   }
 
   void View::GeometryChanged()
   {
-    if (IsLayoutDone())
-      QueueDraw();
+    QueueDraw();
   }
 
   Area* View::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
@@ -483,6 +635,79 @@ namespace nux
   bool View::AcceptKeyNavFocus()
   {
     return true;
+  }
+
+  void View::SetRedirectRenderingToTexture(bool redirect)
+  {
+    if (redirect_rendering_to_texture_ == redirect)
+    {
+      return;
+    }
+
+    if ((redirect_rendering_to_texture_ == false) && redirect)
+    {
+      update_backup_texture_ = true;
+    }
+
+    redirect_rendering_to_texture_ = redirect;
+    if (redirect == false)
+    {
+      // Free the texture of this view
+      backup_fbo_.Release();
+      backup_texture_.Release();
+      backup_depth_texture_.Release();
+      prev_fbo_.Release();
+    }
+  }
+
+  bool View::RedirectRenderingToTexture() const
+  {
+    return redirect_rendering_to_texture_;
+  }
+
+  void View::SetUpdateBackupTextureForChildRendering(bool update)
+  {
+    update_backup_texture_ = update;
+  }
+
+  ObjectPtr<IOpenGLBaseTexture> View::BackupTexture() const
+  {
+    // if RedirectRenderingToTexture() is false, then backup_texture_ is not a valid smart pointer.
+    return backup_texture_;
+  }
+
+  bool View::UpdateBackupTextureForChildRendering() const
+  {
+    return update_backup_texture_;
+  }
+
+  void View::PrepareParentRedirectedView()
+  {
+    Area* parent = GetParentObject();
+
+    while (parent && !parent->Type().IsDerivedFromType(View::StaticObjectType))
+    {
+      parent = parent->GetParentObject();
+    }
+
+    if (parent)
+    {
+      View* view = static_cast<View*>(parent);
+      if (view->RedirectRenderingToTexture() && (view->UpdateBackupTextureForChildRendering() == false))
+      {
+        view->SetUpdateBackupTextureForChildRendering(true);
+        view->PrepareParentRedirectedView();
+      }
+      else if (view->RedirectRenderingToTexture() && (view->UpdateBackupTextureForChildRendering() == true))
+      {
+        return;
+      }
+      else
+      {
+        view->PrepareParentRedirectedView();
+      }
+    }
+
   }
 
 #ifdef NUX_GESTURES_SUPPORT

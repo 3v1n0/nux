@@ -1036,6 +1036,11 @@ namespace nux
     _projection_matrix.Orthographic(0, viewport_width, viewport_height, 0, -1.0f, 1.0f);
   }
 
+  void GraphicsEngine::SetOrthographicProjectionMatrix(int left, int right, int bottom, int top)
+  {
+    _projection_matrix.Orthographic(left, right, bottom, top, -1.0f, 1.0f);
+  }
+
   void GraphicsEngine::ResetProjectionMatrix()
   {
     _projection_matrix = Matrix4::IDENTITY();
