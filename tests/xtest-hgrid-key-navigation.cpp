@@ -42,9 +42,11 @@ public:
   
   nux::TestView* CreateTile();
   void AddTile(nux::TestView* tile);
-  
+
+  nux::VLayout* vlayout_;
   nux::GridHLayout* grid_layout_;
   nux::TestView* tiles_[11];
+  nux::TestView* bottom_view_;
 };
 
 HGridKeyNavigationTest::HGridKeyNavigationTest(const char* program_name,
@@ -71,23 +73,29 @@ void HGridKeyNavigationTest::AddTile(nux::TestView* tile)
 }
 
 void HGridKeyNavigationTest::UserInterfaceSetup()
-{  
+{
+  vlayout_ = new nux::VLayout(NUX_TRACKER_LOCATION);
+
   grid_layout_ = new nux::GridHLayout(NUX_TRACKER_LOCATION);
   grid_layout_->ForceChildrenSize(true);
   grid_layout_->SetChildrenSize(100, 100);
   grid_layout_->EnablePartialVisibility(false);
   grid_layout_->SetPadding(20, 20);
   grid_layout_->SetSpaceBetweenChildren(10, 10);
+  vlayout_->AddLayout(grid_layout_);
   
   for (int i=0; i<11; ++i)
   {
     tiles_[i] = CreateTile();
     AddTile(tiles_[i]);
   }
+
+  bottom_view_ = CreateTile();
+  vlayout_->AddView(bottom_view_);
+
+  nux::GetWindowCompositor().SetKeyFocusArea(bottom_view_);
   
-  nux::GetWindowCompositor().SetKeyFocusArea(tiles_[0]);
-  
-  static_cast<nux::WindowThread*>(window_thread_)->SetLayout(grid_layout_);
+  static_cast<nux::WindowThread*>(window_thread_)->SetLayout(vlayout_);
   
   nux::ColorLayer background(nux::Color(0xFF4D4D4D));
   static_cast<nux::WindowThread*>(window_thread_)->SetWindowBackgroundPaintLayer(&background);
@@ -115,8 +123,17 @@ void TestingThread(nux::NThread* thread, void* user_data)
   test.PutMouseAt(0, 0);
 
   test.TestReportMsg(key_navigation_test->grid_layout_, "TestView created");
-  test.TestReportMsg(key_navigation_test->tiles_[0]->has_focus_, "Top left tile has key focus");
+  test.TestReportMsg(key_navigation_test->bottom_view_->has_focus_, "bottom_view has key focus");
 
+  // Up key, must focus (last row, first column) item
+  test.SendFakeKeyEvent(XK_Up, 0);
+  nux::SleepForMilliseconds(500);
+  test.TestReportMsg(key_navigation_test->tiles_[8]->has_focus_, "KEY_NAV_UP test");
+
+  key_navigation_test->bottom_view_->can_focus_ = false;
+  for (int i = 0; i < 2; ++i)
+    test.SendFakeKeyEvent(XK_Up, 0);
+  nux::SleepForMilliseconds(500);
 
   // Rigth key
   for (int i=0; i<3; ++i)
@@ -169,7 +186,7 @@ void TestingThread(nux::NThread* thread, void* user_data)
     test.TestReportMsg(key_navigation_test->tiles_[4*(i-1)]->has_focus_, "Up: key focus in");
   }
   
-  // Another down key, should do nothing
+  // Another up key, should do nothing
   test.SendFakeKeyEvent(XK_Up, 0);
   nux::SleepForMilliseconds(500);
   test.TestReportMsg(key_navigation_test->tiles_[0]->has_focus_, "Up key, first row");

@@ -1216,11 +1216,13 @@ namespace nux
     return state;
   }
 
-  void GraphicsDisplay::GetSystemEvent(Event *evt)
+  bool GraphicsDisplay::GetSystemEvent(Event *evt)
   {
     m_pEvent->Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
     m_pEvent->mouse_state &= 0x0F000000;
+
+    bool got_event;
 
     // Process event matching this window
     XEvent xevent;
@@ -1238,7 +1240,7 @@ namespace nux
           if (result)
           {
             memcpy(evt, m_pEvent, sizeof(Event));
-            return;
+            return true;
           }
         }
       }
@@ -1289,11 +1291,15 @@ namespace nux
 
       memcpy(evt, m_pEvent, sizeof(Event));
 
+      got_event = true;
     }
     else
     {
       memcpy(evt, m_pEvent, sizeof(Event));
+      got_event = false;
     }
+
+    return got_event;
   }
   
 #if defined(NUX_OS_LINUX)

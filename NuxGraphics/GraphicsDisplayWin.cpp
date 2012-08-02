@@ -1131,12 +1131,13 @@ namespace nux
   }
 
 //---------------------------------------------------------------------------------------------------------
-  void GraphicsDisplay::GetSystemEvent(Event *evt)
+  bool GraphicsDisplay::GetSystemEvent(Event *evt)
   {
     MSG		msg;
     event_->Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
     event_->mouse_state &= 0x0F000000;
+    bool got_event;
 
     // Always set the second parameter of PeekMessage to NULL. Indeed, many services creates
     // windows on the program behalf. If pass the main window as filter, we will miss all the
@@ -1154,10 +1155,12 @@ namespace nux
       DispatchMessage(&msg);
 
       memcpy(evt, event_, sizeof(Event));
+      got_event = true;
     }
     else
     {
       memcpy(evt, event_, sizeof(Event));
+      got_event = false;
     }
 
     if (msg.message == WM_QUIT)
@@ -1175,6 +1178,8 @@ namespace nux
       event_->type = NUX_NO_EVENT;
       memcpy(evt, event_, sizeof(Event));
     }
+
+    return got_event;
   }
 
   void GraphicsDisplay::ProcessForeignWin32Event(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, Event *event)
