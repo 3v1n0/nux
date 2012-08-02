@@ -25,10 +25,15 @@
 #include "GpuDevice.h"
 #include "GLDeviceObjects.h"
 #include "IOpenGLAsmShader.h"
+#include "NuxCore/Logger.h"
 
 namespace nux
 {
 
+namespace
+{
+  logging::Logger logger("nux.graphics");
+}
   NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLAsmShader);
   NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLAsmVertexShader);
   NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLAsmPixelShader);
@@ -36,21 +41,19 @@ namespace nux
 
   bool ExtractShaderString3(const NString &ShaderToken, const NString &ShaderSource, NString &RetSource, NString ShaderPreprocessorDefines);
 
-  IOpenGLAsmShader::IOpenGLAsmShader(NString ShaderName, OpenGLResourceType ResourceType)
-    :   IOpenGLResource(ResourceType)
-    ,   _ShaderName(ShaderName)
+  IOpenGLAsmShader::IOpenGLAsmShader(std::string const& shader_name, OpenGLResourceType ResourceType)
+    : IOpenGLResource(ResourceType)
+    , shader_name_(shader_name)
+    , compiled_and_ready_(false)
   {
-
   }
 
   IOpenGLAsmShader::~IOpenGLAsmShader()
   {
-
   }
 
-  IOpenGLAsmVertexShader::IOpenGLAsmVertexShader(NString ShaderName)
-    :   IOpenGLAsmShader(ShaderName, RT_GLSL_VERTEXSHADER)
-    ,   m_CompiledAndReady(false)
+  IOpenGLAsmVertexShader::IOpenGLAsmVertexShader()
+    : IOpenGLAsmShader("VertexProgram", RT_GLSL_VERTEXSHADER)
   {
 #ifndef NUX_OPENGLES_20
     CHECKGL(glGenProgramsARB(1, &_OpenGLID));
@@ -61,36 +64,29 @@ namespace nux
   {
 #ifndef NUX_OPENGLES_20
     CHECKGL(glDeleteProgramsARB(1, &_OpenGLID));
-    _OpenGLID = 0;
-    m_CompiledAndReady = false;
 #endif
   }
 
-  void IOpenGLAsmVertexShader::SetShaderCode(const char *ShaderCode)
+  void IOpenGLAsmVertexShader::SetShaderCode(std::string const& shader_code)
   {
-    nuxAssertMsg(ShaderCode, "[IOpenGLAsmVertexShader::SetShaderCode] Invalid shader code.");
-    NUX_RETURN_IF_NULL(ShaderCode);
-    m_CompiledAndReady = false;
-    _ShaderCode = ShaderCode;
+    compiled_and_ready_ = false;
+    shader_code_ = shader_code;
   }
 
   bool IOpenGLAsmVertexShader::Compile()
   {
-    m_CompiledAndReady = false;
-#ifndef NUX_OPENGLES_20
-    size_t CodeSize = _ShaderCode.Size();
-
-    if (CodeSize == 0)
+    if (compiled_and_ready_)
     {
-      nuxDebugMsg("[IOpenGLAsmVertexShader::Compile] Vertex shader source code is empty.");
+      return true;
+    }
+#ifndef NUX_OPENGLES_20
+    if (shader_code_.empty())
+    {
+      LOG_DEBUG(logger) << "Vertex shader source code is empty.";
     }
 
-    char *ShaderSource = new char[CodeSize+1];
-    Memset(ShaderSource, 0, CodeSize + 1);
-    Memcpy(ShaderSource, TCHAR_TO_ANSI(_ShaderCode.GetTCharPtr()), CodeSize);
-
     CHECKGL(glBindProgramARB(GL_VERTEX_PROGRAM_ARB, _OpenGLID));
-    glProgramStringARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB, CodeSize, ShaderSource);
+    glProgramStringARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB, shader_code_.size(), shader_code_.c_str());
 
     if ( GL_INVALID_OPERATION == glGetError())
     {
@@ -99,27 +95,23 @@ namespace nux
       glGetIntegerv( GL_PROGRAM_ERROR_POSITION_ARB, &errPos );
       // Print implementation-dependent program
       // errors and warnings string.
-      const unsigned char *ErrorString;
-      ErrorString = NUX_STATIC_CAST(const unsigned char *, glGetString(GL_PROGRAM_ERROR_STRING_ARB));
-      nuxError("[IOpenGLAsmVertexShader::Compile] Error in vertex shader at position: %d\n%s\n", errPos, ErrorString );
-      return m_CompiledAndReady;
+      LOG_ERROR(logger) << "Error in vertex shader at position: " << errPos << "\n\t" << glGetString(GL_PROGRAM_ERROR_STRING_ARB);
+      
+      return false;
     }
 
-    delete[] ShaderSource;
-
-    m_CompiledAndReady = true;
+    compiled_and_ready_ = true;
 #endif
-    return m_CompiledAndReady;
+    return compiled_and_ready_;
   }
 
   bool IOpenGLAsmVertexShader::IsValid()
   {
-    return m_CompiledAndReady;
+    return compiled_and_ready_;
   }
 
-  IOpenGLAsmPixelShader::IOpenGLAsmPixelShader(NString ShaderName)
-    :   IOpenGLAsmShader(ShaderName, RT_GLSL_PIXELSHADER)
-    ,   m_CompiledAndReady(false)
+  IOpenGLAsmPixelShader::IOpenGLAsmPixelShader()
+    : IOpenGLAsmShader("PixelProgram", RT_GLSL_PIXELSHADER)
   {
 #ifndef NUX_OPENGLES_20
     CHECKGL(glGenProgramsARB(1, &_OpenGLID));
@@ -130,59 +122,51 @@ namespace nux
   {
 #ifndef NUX_OPENGLES_20
     CHECKGL(glDeleteProgramsARB(1, &_OpenGLID));
-    _OpenGLID = 0;
-    m_CompiledAndReady = false;
 #endif
   }
 
-  void IOpenGLAsmPixelShader::SetShaderCode(const char *ShaderCode)
+  void IOpenGLAsmPixelShader::SetShaderCode(std::string const& shader_code)
   {
-    nuxAssertMsg(ShaderCode, "[IOpenGLAsmPixelShader::SetShaderCode] Invalid shader code.");
-    NUX_RETURN_IF_NULL(ShaderCode);
-    m_CompiledAndReady = false;
-    _ShaderCode = ShaderCode;
+    compiled_and_ready_ = false;
+    shader_code_ = shader_code;
   }
 
   bool IOpenGLAsmPixelShader::Compile()
   {
-    m_CompiledAndReady = false;
-#ifndef NUX_OPENGLES_20
-    size_t CodeSize = _ShaderCode.Size();
-
-    if (CodeSize == 0)
+    if (compiled_and_ready_)
     {
-      nuxDebugMsg("[IOpenGLAsmPixelShader::Compile] Vertex shader source code is empty.");
+      return true;
+    }
+#ifndef NUX_OPENGLES_20
+    if (shader_code_.empty())
+    {
+      LOG_DEBUG(logger) << "Pixel shader source code is empty.";
     }
 
-    char *ShaderSource = new char[CodeSize+1];
-    Memset(ShaderSource, 0, CodeSize + 1);
-    Memcpy(ShaderSource, TCHAR_TO_ANSI(_ShaderCode.GetTCharPtr()), CodeSize);
-
     CHECKGL(glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, _OpenGLID));
-    glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB, CodeSize, ShaderSource);
+    glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB, shader_code_.size(), shader_code_.c_str());
 
-    if ( GL_INVALID_OPERATION == glGetError())
+    if (GL_INVALID_OPERATION == glGetError())
     {
       // Find the error position
       GLint errPos;
       glGetIntegerv( GL_PROGRAM_ERROR_POSITION_ARB, &errPos );
       // Print implementation-dependent program
       // errors and warnings string.
-      const unsigned char *ErrorString;
-      ErrorString = NUX_STATIC_CAST(const unsigned char *, glGetString(GL_PROGRAM_ERROR_STRING_ARB));
-      nuxError("[IOpenGLAsmPixelShader::Compile] Error in fragment shader at position: %d\n%s\n", errPos, ErrorString );
+
+      LOG_ERROR(logger) << "Error in pixel shader at position: " << errPos << "\n\t" << glGetString(GL_PROGRAM_ERROR_STRING_ARB);
+      
+      return false;
     }
 
-    delete[] ShaderSource;
-
-    m_CompiledAndReady = true;
+    compiled_and_ready_ = true;
 #endif
-    return m_CompiledAndReady;
+    return compiled_and_ready_;
   }
 
   bool IOpenGLAsmPixelShader::IsValid()
   {
-    return m_CompiledAndReady;
+    return compiled_and_ready_;
   }
 
   IOpenGLAsmShaderProgram::IOpenGLAsmShaderProgram(NString ShaderProgramName)
