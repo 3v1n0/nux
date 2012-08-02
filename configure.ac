@@ -196,6 +196,7 @@ dnl *********************************************************
 dnl Enable/disable gestures (geis, from Open Input Framework)
 dnl *********************************************************
 
+GEIS_PKGS="libgeis"
 AC_ARG_ENABLE(gestures,
               AC_HELP_STRING(--disable-gestures, Disables multitouch gestures support (default: auto-detect)),
               [],
@@ -234,12 +235,14 @@ AS_IF([test "x$have_geis" = "xyes"],
       [
         NUX_GESTURES_SUPPORT="NUX_NO_GESTURES_SUPPORT"
         AM_CONDITIONAL(HAVE_GEIS, false)
+        GEIS_PKGS=""
       ])
 
 AC_SUBST(NUX_GESTURES_SUPPORT)
 
 AC_SUBST(GEIS_CFLAGS)
 AC_SUBST(GEIS_LIBS)
+AC_SUBST(GEIS_PKGS)
 
 dnl ************************************
 dnl Enable/disable tests
