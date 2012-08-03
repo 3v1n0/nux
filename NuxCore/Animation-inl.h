@@ -57,9 +57,9 @@ AnimateValue<VALUE_TYPE>& AnimateValue<VALUE_TYPE>::SetStartValue(VALUE_TYPE con
 }
 
 template <typename VALUE_TYPE>
-AnimateValue<VALUE_TYPE>& AnimateValue<VALUE_TYPE>::SetFinishValue(VALUE_TYPE const& finsih)
+AnimateValue<VALUE_TYPE>& AnimateValue<VALUE_TYPE>::SetFinishValue(VALUE_TYPE const& finish)
 {
-  finish_value_ = finsih;
+  finish_value_ = finish;
   return *this;
 }
 
