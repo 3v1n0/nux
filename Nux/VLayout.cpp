@@ -73,7 +73,7 @@ namespace nux
   {
     std::list<Area *>::iterator it;
 
-    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); ++it)
     {
       if ((*it)->IsView())
       {
@@ -102,7 +102,7 @@ namespace nux
 
     std::list<Area *>::iterator it;
 
-    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); ++it)
     {
       // gather all the space used by elements
       if ((*it)->IsVisible())
@@ -186,7 +186,7 @@ namespace nux
 
     std::list<Area *>::iterator it;
 
-    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); ++it)
     {
       (*it)->SetLayoutDone(false);
     }
@@ -225,7 +225,7 @@ namespace nux
     bool unadjusted_layout = false;
     size_t num_element = 0;
 
-    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); ++it)
     {
       if ((*it)->IsVisible())
         num_element++;
@@ -255,7 +255,7 @@ namespace nux
       ComputeStacking(height, offset_space, space_after_element);
       current_y += offset_space;
 
-      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
+      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); ++it)
       {
         if (!(*it)->IsVisible())
           continue;
@@ -358,7 +358,7 @@ namespace nux
       // We check if that is the case and force a recompute.
       std::vector<int> FullSizeUnadjusted;
 
-      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
+      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); ++it)
       {
         if (!(*it)->IsVisible())
           continue;
@@ -459,7 +459,7 @@ namespace nux
       int temp = m_contentWidth;
       std::vector<int>::iterator IntIterator = FullSizeUnadjusted.begin();
 
-      for (IntIterator = FullSizeUnadjusted.begin(); IntIterator != FullSizeUnadjusted.end(); IntIterator++)
+      for (IntIterator = FullSizeUnadjusted.begin(); IntIterator != FullSizeUnadjusted.end(); ++IntIterator)
       {
         if ((*IntIterator) < temp)
         {
@@ -533,7 +533,7 @@ namespace nux
       int max_stretchfactor = GetMaxStretchFactor();
       std::list<Area *>::iterator it;
 
-      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
+      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); ++it)
       {
         if (!(*it)->IsVisible())
           continue;
@@ -551,7 +551,7 @@ namespace nux
         {
           // It is unlikely that we get here!
           int h = 0;
-          for (it = _layout_element_list.begin(); it != _layout_element_list.end() && !need_recompute; it++)
+          for (it = _layout_element_list.begin(); it != _layout_element_list.end() && !need_recompute; ++it)
           {
             if (!(*it)->IsVisible())
               continue;
@@ -563,7 +563,7 @@ namespace nux
         return;
       }
 
-      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
+      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); ++it)
       {
         if (!(*it)->IsVisible())
           continue;
@@ -576,7 +576,7 @@ namespace nux
 
       if (available_height <= 2)
       {
-        for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
+        for (it = _layout_element_list.begin(); it != _layout_element_list.end(); ++it)
         {
           if (!(*it)->IsVisible())
             continue;
@@ -610,7 +610,7 @@ namespace nux
       Area *LastElementThatCanBeResized = 0;
       int total_distributed_size = 0;
 
-      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
+      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); ++it)
       {
         if (!(*it)->IsVisible())
           continue;
@@ -640,7 +640,7 @@ namespace nux
       //
       need_recompute = false;;
 
-      for (it = _layout_element_list.begin(); it != _layout_element_list.end() && !need_recompute; it++)
+      for (it = _layout_element_list.begin(); it != _layout_element_list.end() && !need_recompute; ++it)
       {
         if (!(*it)->IsVisible())
           continue;
@@ -736,7 +736,7 @@ namespace nux
     unsigned int sf;
     std::list<Area *>::iterator it;
 
-    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); ++it)
     {
       if (!(*it)->IsVisible())
         continue;
@@ -763,7 +763,7 @@ namespace nux
     {
       unsigned int num_element = 0;
 
-      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
+      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); ++it)
       {
         if ((*it)->IsVisible())
           num_element++;
@@ -784,7 +784,7 @@ namespace nux
       ComputeStacking(height, offset_space, element_margin);
       current_y += offset_space;
 
-      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
+      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); ++it)
       {
         if (!(*it)->IsVisible())
           continue;
@@ -832,7 +832,7 @@ namespace nux
       }
     }
 
-    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
+    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); ++it)
     {
       if (!(*it)->IsVisible())
         continue;

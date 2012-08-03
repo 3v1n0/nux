@@ -905,7 +905,7 @@ namespace nux
   static int mouse_event(HWND window, Event *event, int what, int button,
                           WPARAM wParam, LPARAM lParam)
   {
-    static int px, py, pmx, pmy;
+    static int pmx, pmy;
     event->x = (signed short) LOWORD(lParam);
     event->y = (signed short) HIWORD(lParam);
     event->x_root = 0;
@@ -1020,6 +1020,7 @@ namespace nux
 
     switch(what)
     {
+      static int px, py;
       case 1: // double-click
 
         if (event->is_click)
