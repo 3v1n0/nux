@@ -34,6 +34,8 @@
 #include "GraphicsDisplay.h"
 
 #include <X11/extensions/shape.h>
+#include <X11/Xlibint.h>
+//#include <X11/Xlcint.h>
 
 namespace nux
 {
@@ -44,7 +46,7 @@ namespace nux
     , m_X11Screen(0)
     , m_ParentWindow(0)
     , m_GLCtx(0)
-#ifndef NUX_OPENGLES_20    
+#ifndef NUX_OPENGLES_20
     , glx_window_(0)
 #endif
     , m_NumVideoModes(0)
@@ -57,7 +59,7 @@ namespace nux
     , m_X11RepeatKey(true)
     , m_ViewportSize(Size(0,0))
     , m_WindowSize(Size(0,0))
-    , m_WindowPosition(Point(0,0)) 
+    , m_WindowPosition(Point(0,0))
     , m_Fullscreen(false)
     , m_ScreenBitDepth(32)
     , m_GfxInterfaceCreated(false)
@@ -69,7 +71,7 @@ namespace nux
     , m_pEvent(NULL)
     , _last_dnd_position(Point(0, 0)) //DND
     , m_PauseGraphicsRendering(false)
-    , m_FrameTime(0) 
+    , m_FrameTime(0)
     , m_DeviceFactory(0)
     , m_GraphicsContext(0)
     , m_Style(WINDOWSTYLE_NORMAL)
@@ -109,7 +111,7 @@ namespace nux
     {
       DestroyOpenGLWindow();
     }
-    
+
     NUX_SAFE_DELETE( m_pEvent );
     inlSetThreadLocalStorage(_TLS_GraphicsDisplay, 0);
   }
@@ -186,8 +188,9 @@ namespace nux
 
   void GraphicsDisplay::XICFocus()
   {
-    if (m_ximData.m_xic)
+    if (m_ximData.m_xic && m_ximData.focus_stat == 0)
     {
+      printf("XIC-Focus --- NUX -____--\n");
       XSetICFocus(m_ximData.m_xic);
       m_ximData.focus_stat=1;
     }
@@ -195,8 +198,9 @@ namespace nux
 
   void GraphicsDisplay::XICUnFocus()
   {
-    if (m_ximData.m_xic)
+    if (m_ximData.m_xic && m_ximData.focus_stat == 1)
     {
+      printf("XIC-UNFocus --- NUX -____--\n");
       XUnsetICFocus(m_ximData.m_xic);
       m_ximData.focus_stat=0;
     }
@@ -234,6 +238,7 @@ namespace nux
     destroy.client_data = (XPointer)data;
     XSetIMValues((data->m_xim), XNDestroyCallback, &destroy, NULL);
     XGetIMValues((data->m_xim), XNQueryInputStyle, &xim_styles, NULL);
+    printf("%i -- %s\n", XDisplayOfIM(data->m_xim), XLocaleOfIM(data->m_xim));
     for (i=0; i<xim_styles->count_styles; i++)
     {
       if (xim_styles->supported_styles[i] == root_style)
@@ -376,7 +381,7 @@ namespace nux
     }
 
     _has_glx_13 = false; // force old way. this is temporary...
- 
+
     if (_has_glx_13 == false)
     {
       // Find an OpenGL capable visual.
@@ -419,7 +424,7 @@ namespace nux
           GLX_X_VISUAL_TYPE, GLX_TRUE_COLOR,
           GLX_DOUBLEBUFFER,  True,
           GLX_RED_SIZE,      8,     /* the maximum number of bits per component    */
-          GLX_GREEN_SIZE,    8, 
+          GLX_GREEN_SIZE,    8,
           GLX_BLUE_SIZE,     8,
           GLX_ALPHA_SIZE,    8,
           GLX_DEPTH_SIZE,    24,
@@ -449,7 +454,7 @@ namespace nux
         GET_PROC(PFNGLXCREATENEWCONTEXTPROC,          glXCreateNewContext, false);
         GET_PROC(PFNGLXMAKECONTEXTCURRENTPROC,        glXMakeContextCurrent, false);
         GET_PROC(PFNGLXCHOOSEFBCONFIGPROC,            glXChooseFBConfig, false);
-        
+
         /* GLX_SGIX_pbuffer */
         GET_PROC(PFNGLXCREATEGLXPBUFFERSGIXPROC,      glXCreateGLXPbufferSGIX, false);
         GET_PROC(PFNGLXDESTROYGLXPBUFFERSGIXPROC,     glXDestroyGLXPbufferSGIX, false);
@@ -483,7 +488,7 @@ namespace nux
               if (((best_fbc < 0) || sample_buf) && (samples > best_num_samp))
               {
                 best_fbc = i;
-                best_num_samp = samples; 
+                best_num_samp = samples;
               }
 
               if ((worst_fbc < 0) || (!sample_buf) || (samples < worst_num_samp))
@@ -749,12 +754,12 @@ namespace nux
 
     //EnableVSyncSwapControl();
     //DisableVSyncSwapControl();
-        
+
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     SwapBuffer();
-    
-       
+
+
     InitGlobalGrabWindow();
 
     return TRUE;
@@ -790,6 +795,19 @@ namespace nux
     m_ViewportSize = Size(width_return, height_return);
 
     m_GfxInterfaceCreated = true;
+
+    // XIM support
+    memset(&m_ximData,0,sizeof(m_ximData));
+    m_ximData.window = &m_X11Window;
+    m_ximData.display = &m_X11Display;
+    InitXIM(&m_ximData);
+
+    long im_event_mask=0;
+    if (m_ximData.m_xic)
+    {
+      XGetICValues(m_ximData.m_xic, XNFilterEvents, &im_event_mask, NULL);
+      m_X11Attr.event_mask |= im_event_mask;
+    }
 
     // m_DeviceFactory = new GpuDevice(m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
     m_DeviceFactory = new GpuDevice(m_ViewportSize.width, m_ViewportSize.height, BITFMT_R8G8B8A8,
@@ -1347,8 +1365,12 @@ namespace nux
     if (XPending(m_X11Display))
     {
       XNextEvent(m_X11Display, &xevent);
+     // printf("Event....%p\n", xevent.xany.display->im_filters);
       if (XFilterEvent(&xevent, None) == True)
-	return;
+      {
+        printf("XFilterJustReturnedTrue!!! %i\n", xevent.type);
+	      return;
+      }
 
       if (!_event_filters.empty())
       {
@@ -1415,14 +1437,14 @@ namespace nux
       memcpy(evt, m_pEvent, sizeof(Event));
     }
   }
-  
+
 #if defined(NUX_OS_LINUX)
   void GraphicsDisplay::InjectXEvent(Event *evt, XEvent xevent)
   {
     m_pEvent->Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
     m_pEvent->mouse_state &= 0x0F000000;
-    
+
     // We could do some checks here to make sure the xevent is really what it pretends to be.
     ProcessXEvent(xevent, false);
     memcpy(evt, m_pEvent, sizeof(Event));
@@ -1519,12 +1541,12 @@ namespace nux
   {
     return XPending(m_X11Display) ? true : false;
   }
-  
+
   void GraphicsDisplay::RecalcXYPosition(int x_root, int y_root, int &x_recalc, int &y_recalc)
   {
     int main_window_x = m_WindowPosition.x;
     int main_window_y = m_WindowPosition.y;
-  
+
     x_recalc = x_root - main_window_x;
     y_recalc = y_root - main_window_y;
   }
@@ -1535,7 +1557,7 @@ namespace nux
     int main_window_x = m_WindowPosition.x;
     int main_window_y = m_WindowPosition.y;
     bool same = (TheMainWindow == xevent.xany.window);
-    
+
     switch(xevent.type)
     {
       case ButtonPress:
@@ -1593,7 +1615,7 @@ namespace nux
     int y_recalc = 0;
 
     RecalcXYPosition(m_X11Window, xevent, x_recalc, y_recalc);
-    
+
     bool local_from_server = !foreign;
     foreign = foreign || xevent.xany.window != m_X11Window;
 
@@ -1606,7 +1628,7 @@ namespace nux
       {
         if (foreign)
           break;
-          
+
         m_pEvent->type = NUX_DESTROY_WINDOW;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: DestroyNotify event.");
         break;
@@ -1616,7 +1638,7 @@ namespace nux
       {
         if (foreign)
           break;
-        
+
         m_pEvent->type = NUX_WINDOW_DIRTY;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: Expose event.");
         break;
@@ -1627,7 +1649,7 @@ namespace nux
       {
         if (foreign)
           break;
-        
+
         m_pEvent->type = NUX_SIZE_CONFIGURATION;
         m_pEvent->width =  xevent.xconfigure.width;
         m_pEvent->height = xevent.xconfigure.height;
@@ -1647,7 +1669,7 @@ namespace nux
       {
         if (!local_from_server)
           break;
-          
+
         m_pEvent->type = NUX_WINDOW_ENTER_FOCUS;
         m_pEvent->mouse_state = 0;
 
@@ -1666,7 +1688,7 @@ namespace nux
       {
         if (!local_from_server)
           break;
-          
+
         m_pEvent->type = NUX_WINDOW_EXIT_FOCUS;
         m_pEvent->mouse_state = 0;
 
@@ -1684,6 +1706,7 @@ namespace nux
 
       case KeyPress:
       {
+        printf("ProcessXEvents....KeyPress\n");
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: KeyPress event.");
         KeyCode keycode = xevent.xkey.keycode;
         KeySym keysym = NoSymbol;
@@ -1706,9 +1729,9 @@ namespace nux
             (keysym == NUX_VK_ESCAPE))
         {
           //temporary fix for TextEntry widget: filter some keys
-         skip = true; 
+         skip = true;
         }
-        
+
         int num_char_stored = 0;
         if (m_ximData.m_xic)
         {
@@ -1750,7 +1773,7 @@ namespace nux
           HandleDndDragSourceEvent(xevent);
           break;
         }
-        
+
         m_pEvent->x = x_recalc;
         m_pEvent->y = y_recalc;
         m_pEvent->x_root = 0;
@@ -1768,7 +1791,7 @@ namespace nux
           HandleDndDragSourceEvent(xevent);
           // fall through on purpose
         }
-      
+
         m_pEvent->x = x_recalc;
         m_pEvent->y = y_recalc;
         m_pEvent->x_root = 0;
@@ -1786,7 +1809,7 @@ namespace nux
           HandleDndDragSourceEvent(xevent);
           break;
         }
-      
+
         m_pEvent->x = x_recalc;
         m_pEvent->y = y_recalc;
         m_pEvent->x_root = 0;
@@ -1802,7 +1825,7 @@ namespace nux
       {
         if (xevent.xcrossing.mode != NotifyNormal || !local_from_server)
           break;
-          
+
         m_pEvent->x = -1;
         m_pEvent->y = -1;
         m_pEvent->x_root = 0;
@@ -1817,7 +1840,7 @@ namespace nux
       {
         if (xevent.xcrossing.mode != NotifyNormal || !local_from_server)
           break;
-          
+
         m_pEvent->x = x_recalc;
         m_pEvent->y = y_recalc;
         m_pEvent->x_root = 0;
@@ -1827,26 +1850,26 @@ namespace nux
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: EnterNotify event.");
         break;
       }
-      
+
       case SelectionRequest:
       {
         if (xevent.xselectionrequest.selection == XInternAtom(xevent.xany.display, "XdndSelection", false))
            HandleDndSelectionRequest(xevent);
         break;
       }
-      
+
       case MapNotify:
       {
         if (xevent.xmap.window == _dnd_source_window)
         {
           DrawDndSourceWindow();
-        } 
+        }
         else
         {
           //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: MapNotify event.");
           m_pEvent->type = NUX_WINDOW_MAP;
         }
-        
+
         break;
       }
 
@@ -1867,7 +1890,7 @@ namespace nux
           m_pEvent->type = NUX_TERMINATE_APP;
           //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: ClientMessage event: Close Application.");
         }
-        
+
         if (xevent.xclient.message_type == XInternAtom(xevent.xany.display, "XdndPosition", false))
         {
           HandleXDndPosition(xevent, m_pEvent);
@@ -1896,16 +1919,16 @@ namespace nux
           HandleXDndFinished(xevent);
           m_pEvent->type = NUX_NO_EVENT;
         }
-        
+
         break;
       }
     }
   }
-  
+
   void GraphicsDisplay::HandleDndSelectionRequest(XEvent xevent)
   {
     XEvent result;
-    
+
     if (!_dnd_source_funcs.get_data_for_type)
       return;
 
@@ -1920,28 +1943,28 @@ namespace nux
     int format, size;
     char *type = XGetAtomName(xevent.xany.display, xevent.xselectionrequest.target);
     const unsigned char *data = (const unsigned char *) (*(_dnd_source_funcs.get_data_for_type)) (type, &size, &format, _dnd_source_data);
-    
+
     XFree(type);
-    
-    XChangeProperty(xevent.xany.display,  
-                     xevent.xselectionrequest.requestor, 
+
+    XChangeProperty(xevent.xany.display,
+                     xevent.xselectionrequest.requestor,
                      xevent.xselectionrequest.property,
-                     xevent.xselectionrequest.target, 
-                     format, 
-                     PropModeReplace, 
+                     xevent.xselectionrequest.target,
+                     format,
+                     PropModeReplace,
                      data,
                      size);
     XSendEvent(xevent.xany.display, xevent.xselectionrequest.requestor, False, 0, &result);
   }
-  
+
   gboolean
   GraphicsDisplay::OnDragEndTimeout(gpointer data)
   {
     static_cast<GraphicsDisplay*> (data)->EndDndDrag(DNDACTION_NONE);
-    
+
     return false;
   }
-  
+
   void GraphicsDisplay::HandleDndDragSourceEvent(XEvent xevent)
   {
     if (_dnd_source_drop_sent)
@@ -1953,7 +1976,7 @@ namespace nux
         break;
 
       case ButtonRelease:
-      
+
         if (!_dnd_source_target_window || !_dnd_source_target_accepts_drop)
         {
           SetDndSourceTargetWindow(None);
@@ -1973,7 +1996,7 @@ namespace nux
 
       case MotionNotify:
         Window target = GetDndTargetWindowForPos(xevent.xmotion.x_root, xevent.xmotion.y_root);
-        
+
         if (_dnd_source_window)
         {
           Window rw;
@@ -1982,17 +2005,17 @@ namespace nux
           XGetGeometry(GetX11Display(), _dnd_source_window, &rw, &x, &y, &w, &h, &b, &d);
           XMoveWindow(GetX11Display(), _dnd_source_window, xevent.xmotion.x_root - (w / 2), xevent.xmotion.y_root - (h / 2));
         }
-        
+
         if (target != _dnd_source_target_window)
           SetDndSourceTargetWindow(target);
-        
+
         if (_dnd_source_target_window)
           SendDndSourcePosition(_dnd_source_target_window, xevent.xmotion.x_root, xevent.xmotion.y_root, xevent.xmotion.time);
-        
+
         break;
     }
   }
-  
+
   void GraphicsDisplay::SendDndSourceDrop(Window target, Time time)
   {
     XClientMessageEvent drop_message;
@@ -2004,10 +2027,10 @@ namespace nux
     drop_message.data.l[0] = _dnd_source_window;
     drop_message.data.l[1] = 0;
     drop_message.data.l[2] = time;
-    
+
     XSendEvent(GetX11Display(), target, False, NoEventMask, (XEvent *) &drop_message);
   }
-  
+
   void GraphicsDisplay::SendDndSourcePosition(Window target, int x, int y, Time time)
   {
     XClientMessageEvent position_message;
@@ -2021,10 +2044,10 @@ namespace nux
     position_message.data.l[2] = (x << 16) + y;
     position_message.data.l[3] = time;
     position_message.data.l[4] = XInternAtom(GetX11Display(), "XdndActionCopy", false); //fixme
-    
+
     XSendEvent(GetX11Display(), target, False, NoEventMask, (XEvent *) &position_message);
   }
-  
+
   void GraphicsDisplay::SendDndSourceEnter(Window target)
   {
     XClientMessageEvent enter_message;
@@ -2038,10 +2061,10 @@ namespace nux
     enter_message.data.l[2] = None; // fixme, these should contain the first 3 atoms
     enter_message.data.l[3] = None;
     enter_message.data.l[4] = None;
-    
+
     XSendEvent(GetX11Display(), target, False, NoEventMask, (XEvent *) &enter_message);
   }
-  
+
   void GraphicsDisplay::SendDndSourceLeave(Window target)
   {
     XClientMessageEvent leave_message;
@@ -2052,38 +2075,38 @@ namespace nux
     leave_message.message_type = XInternAtom(GetX11Display(), "XdndLeave", false);
     leave_message.data.l[0] = _dnd_source_window;
     leave_message.data.l[1] = 0; // flags
-    
+
     XSendEvent(GetX11Display(), target, False, NoEventMask, (XEvent *) &leave_message);
   }
-  
+
   void GraphicsDisplay::SetDndSourceTargetWindow(Window target)
   {
     if (target == _dnd_source_target_window || !_dnd_source_grab_active)
       return;
-    
+
     if (_dnd_source_target_window)
       SendDndSourceLeave(_dnd_source_target_window);
-    
+
     if (target)
       SendDndSourceEnter(target);
-    
+
     _dnd_source_target_accepts_drop = false;
     _dnd_source_target_window = target;
   }
-  
+
   // This function hilariously inefficient
   Window GraphicsDisplay::GetDndTargetWindowForPos(int pos_x, int pos_y)
   {
     Window result = 0;
-    
+
     Window root_window = DefaultRootWindow(GetX11Display());
-    
+
     int cur_x, cur_y;
     XTranslateCoordinates(GetX11Display(), root_window, root_window, pos_x, pos_y, &cur_x, &cur_y, &result);
-    
+
     if (!result)
       return result;
-      
+
     Window src = root_window;
     while (true)
     {
@@ -2091,17 +2114,17 @@ namespace nux
       Window child;
       int new_x, new_y;
       XTranslateCoordinates(GetX11Display(), src, result, cur_x, cur_y, &new_x, &new_y, &child);
-      
+
       cur_x = new_x;
       cur_y = new_y;
-    
+
       // Check if our current window is XdndAware
       Atom type = 0;
       int format;
       unsigned long n, a;
       unsigned char *data = 0;
       if (XGetWindowProperty(GetX11Display(), result, XInternAtom(GetX11Display(), "XdndAware", false), 0, 1, False,
-                             XA_ATOM, &type, &format, &n, &a, &data) == Success) 
+                             XA_ATOM, &type, &format, &n, &a, &data) == Success)
       {
         long dnd_version = 0;
         if (data)
@@ -2115,67 +2138,67 @@ namespace nux
           break; // result is the winner
         }
       }
-      
+
       // Find child window if any and ignore translation
       XTranslateCoordinates(GetX11Display(), result, result, cur_x, cur_y, &new_x, &new_y, &child);
-      
+
       // there is no child window, stop
       if (!child)
       {
         result = 0;
         break;
       }
-      
+
       src = result;
       result = child;
     }
-    
+
     return result;
   }
-  
+
   void GraphicsDisplay::EndDndDrag(DndAction action)
   {
     Display *display = GetX11Display();
-    
+
     if (_dnd_source_funcs.drag_finished)
       (*(_dnd_source_funcs.drag_finished)) (action, _dnd_source_data);
     _dnd_is_drag_source = false;
-    
+
     if (_dnd_source_window)
       XDestroyWindow(display, _dnd_source_window);
     _dnd_source_window = 0;
-    
+
     GrabDndSelection(display, None, CurrentTime);
     UngrabPointer(this);
     _dnd_source_grab_active = false;
-    
+
     _dnd_source_funcs.get_drag_image = 0;
     _dnd_source_funcs.get_drag_types = 0;
     _dnd_source_funcs.get_data_for_type = 0;
     _dnd_source_funcs.drag_finished = 0;
-    
+
     _dnd_source_data = 0;
   }
-  
+
   void GraphicsDisplay::DrawDndSourceWindow()
   {
     if (!_dnd_source_funcs.get_drag_image || !_dnd_source_data || !_dnd_source_window)
       return;
-    
+
     Display *display = GetX11Display();
     NBitmapData *data = (*(_dnd_source_funcs.get_drag_image)) (_dnd_source_data);
     XImage *image;
-    
+
     image = XGetImage(display, _dnd_source_window, 0, 0, data->GetWidth(), data->GetHeight(), AllPlanes, ZPixmap);
     GC gc = XCreateGC(display, _dnd_source_window, 0, NULL);
-    
+
     BitmapFormat format = data->GetFormat();
-    
+
     /* draw some shit */
     if (data->IsTextureData())
     {
       ImageSurface surface = data->GetSurface(0);
-      
+
       int x, y;
       for (y = 0; y < data->GetHeight(); y++)
       {
@@ -2183,7 +2206,7 @@ namespace nux
         {
           long pixel = (long) surface.Read(x, y);
 	  long a;
-	  
+
 	  if (format  == BITFMT_R8G8B8)
 	    a = 255;
 	  else
@@ -2191,46 +2214,46 @@ namespace nux
           long r = (((pixel >> 16) & 0xff) * a) / 255;
           long g = (((pixel >> 8)  & 0xff) * a) / 255;
           long b = (((pixel >> 0)  & 0xff) * a) / 255;
-          
+
           long result_pixel = (a << 24) | (b << 16) | (g << 8) | (r << 0);
-          
+
           XPutPixel(image, x, y, result_pixel);
         }
       }
     }
-    
+
     /* upload */
     XPutImage(display, _dnd_source_window, gc, image, 0, 0, 0, 0, data->GetWidth(), data->GetHeight());
-    
+
     XDestroyImage(image);
   }
-  
+
   void GraphicsDisplay::StartDndDrag(const DndSourceFuncs &funcs, void *user_data)
   {
     Display *display = GetX11Display();
-    
+
     if (!display || !GrabPointer(NULL, this, true))
     {
       if (funcs.drag_finished)
         (*(funcs.drag_finished)) (DNDACTION_NONE, user_data);
       return;
     }
-  
+
     _dnd_source_funcs = funcs;
     _dnd_source_data = user_data;
     _dnd_source_grab_active = true;
     _dnd_source_drop_sent = false;
-    
+
     int width = 100, height = 100;
     if (_dnd_source_funcs.get_drag_image)
     {
       NBitmapData *data = (*(_dnd_source_funcs.get_drag_image)) (_dnd_source_data);
       width = data->GetWidth();
       height = data->GetHeight();
-      
+
       delete data;
     }
-    
+
     Window root = DefaultRootWindow(display);
     XVisualInfo vinfo;
     if (!XMatchVisualInfo(display, XDefaultScreen(display), 32, TrueColor, &vinfo))
@@ -2239,34 +2262,34 @@ namespace nux
       EndDndDrag(DNDACTION_NONE);
       return;
     }
-    
+
     XSetWindowAttributes attribs;
     attribs.override_redirect = true;
     attribs.background_pixel = 0;
     attribs.border_pixel = 0;
     attribs.colormap = XCreateColormap(display, root, vinfo.visual, AllocNone);
-    
+
     unsigned long attrib_mask = CWOverrideRedirect | CWBackPixel | CWBorderPixel | CWColormap;
     // make a window which will serve two purposes:
     // First this window will be used to display feedback to the user
     // Second this window will grab and own the XdndSelection Selection
-    _dnd_source_window = XCreateWindow(display, 
-                                        root, 
-                                        -1000, -1000, 
-                                        width, height, 
+    _dnd_source_window = XCreateWindow(display,
+                                        root,
+                                        -1000, -1000,
+                                        width, height,
                                         0,
                                         vinfo.depth,
                                         InputOutput,
-                                        vinfo.visual, 
+                                        vinfo.visual,
                                         attrib_mask,
                                         &attribs);
-                                        
+
     XSelectInput(display, _dnd_source_window, StructureNotifyMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask | PointerMotionMask);
     XMapRaised(display, _dnd_source_window);
-    
+
     Atom atom_type[1];
     atom_type[0] = XInternAtom(display, "_NET_WM_WINDOW_TYPE_DND", false);
-    XChangeProperty(display, _dnd_source_window, XInternAtom(display, "_NET_WM_WINDOW_TYPE", false), 
+    XChangeProperty(display, _dnd_source_window, XInternAtom(display, "_NET_WM_WINDOW_TYPE", false),
                      XA_ATOM, 32, PropModeReplace, (unsigned char*) atom_type, 1);
 
     Atom data[32];
@@ -2286,43 +2309,43 @@ namespace nux
       XShapeCombineRegion(display, _dnd_source_window, ShapeInput, 0, 0, region, ShapeSet);
       XDestroyRegion(region);
     }
-    
+
     XFlush(display);
-    
+
     _dnd_is_drag_source = true;
     _dnd_source_target_window = 0;
-    
-    
+
+
     std::list<const char *> types = _dnd_source_funcs.get_drag_types(_dnd_source_data);
     std::list<const char *>::iterator it;
-    
+
     Atom type_atoms[types.size()];
-    
+
     i = 0;
     for (it = types.begin(); it != types.end(); it++)
     {
       type_atoms[i] = XInternAtom(display, *it, false);
       i++;
     }
-    
+
     XChangeProperty(display, _dnd_source_window, XInternAtom(display, "XdndTypeList", false),
                     XA_ATOM, 32, PropModeReplace, (unsigned char *)type_atoms, i);
-    
+
     GrabDndSelection(display, _dnd_source_window, CurrentTime);
   }
-  
+
   bool GraphicsDisplay::GrabDndSelection(Display *display, Window window, Time time)
   {
     XSetSelectionOwner(GetX11Display(), XInternAtom(display, "XdndSelection", false), window, time);
     Window owner = XGetSelectionOwner(display, XInternAtom(display, "XdndSelection", false));
     return owner == window;
   }
-  
+
   void GraphicsDisplay::SendDndStatus(bool accept, DndAction action, Rect region)
   {
     if (!_drag_window || !_drag_display || !_drag_source)
       return;
-  
+
     Atom a;
     switch(action)
     {
@@ -2347,12 +2370,12 @@ namespace nux
     }
     SendXDndStatus(_drag_display, _drag_window, _drag_source, accept, a, region);
   }
-  
+
   void GraphicsDisplay::SendDndFinished(bool accepted, DndAction performed_action)
   {
     if (!_drag_window || !_drag_display || !_drag_source)
       return;
-    
+
     Atom a;
     switch(performed_action)
     {
@@ -2377,30 +2400,30 @@ namespace nux
     }
     SendXDndFinished(_drag_display, _drag_window, _drag_source, accepted, a);
   }
-  
+
   std::list<char *> GraphicsDisplay::GetDndMimeTypes()
   {
     std::list<char *> result;
-    
+
     if (!_drag_display)
       return result;
-    
+
     Atom a;
     int i;
     for (i = 0; i <= _xdnd_max_type; i++)
     {
       a = _xdnd_types[i];
-      
+
       if (!a)
         break;
-      
+
       char *name = XGetAtomName(_drag_display, a);
       result.push_back(g_strdup(name));
       XFree(name);
     }
     return result;
   }
-  
+
   char * GraphicsDisplay::GetDndData(char *property)
   {
     if (_dnd_is_drag_source)
@@ -2414,7 +2437,7 @@ namespace nux
       return GetXDndData(_drag_display, _drag_window, a, _drag_drop_timestamp);
     }
   }
-  
+
   void GraphicsDisplay::SendXDndStatus(Display *display, Window source, Window target, bool accept, Atom action, Rect box)
   {
     XClientMessageEvent response;
@@ -2427,7 +2450,7 @@ namespace nux
     response.data.l[1] = 0; // flags
     response.data.l[2] = (box.x << 16) | box.y; // x, y
     response.data.l[3] = (box.width << 16) | box.height; // w, h
-    
+
     if (accept)
     {
       response.data.l[4] = action;
@@ -2437,17 +2460,17 @@ namespace nux
     {
       response.data.l[4] = None;
     }
-    
+
     XSendEvent(display, target, False, NoEventMask, (XEvent *) &response);
   }
-  
+
   void GraphicsDisplay::HandleXDndPosition(XEvent event, Event* nux_event)
   {
     const unsigned long *l = (const unsigned long *)event.xclient.data.l;
-  
+
     int x = (l[2] & 0xffff0000) >> 16;
     int y = l[2] & 0x0000ffff;
-    
+
     int x_recalc = 0;
     int y_recalc = 0;
 
@@ -2460,21 +2483,21 @@ namespace nux
     // Store the last DND position;
     _last_dnd_position = Point(x_recalc, y_recalc);
   }
-  
+
   void GraphicsDisplay::HandleXDndEnter(XEvent event)
   {
     const long *l = event.xclient.data.l;
     int version = (int)(((unsigned long)(l[1])) >> 24);
-    
+
     if (version > xdnd_version)
       return;
-    
+
     _drag_source = l[0];
     _drag_window = event.xany.window;
     _drag_display = event.xany.display;
-    
+
     int j = 0;
-    if (l[1] & 1) 
+    if (l[1] & 1)
     {
       unsigned char *retval = 0;
       unsigned long n, a;
@@ -2484,37 +2507,37 @@ namespace nux
       XGetWindowProperty(_drag_display, _drag_source, XInternAtom(_drag_display, "XdndTypeList", false), 0,
                          _xdnd_max_type, False, XA_ATOM, &type, &f, &n, &a, &retval);
 
-      if (retval) 
+      if (retval)
       {
         Atom *data = (Atom *)retval;
         for (; j < _xdnd_max_type && j < (int)n; j++)
           _xdnd_types[j] = data[j];
-        
+
         XFree((uchar*)data);
       }
-    } 
-    else 
+    }
+    else
     {
       // xdnd supports up to 3 types without using XdndTypelist
       int i;
-      for (i = 2; i < 5; i++) 
+      for (i = 2; i < 5; i++)
         _xdnd_types[j++] = l[i];
     }
-    
+
     _xdnd_types[j] = 0;
   }
-  
+
   void GraphicsDisplay::HandleXDndStatus(XEvent event)
   {
     const unsigned long *l = (const unsigned long *)event.xclient.data.l;
-    
+
     // should protect against stray messages
     if (l[1] & 1)
       _dnd_source_target_accepts_drop = true;
     else
       _dnd_source_target_accepts_drop = false;
   }
-  
+
   void GraphicsDisplay::HandleXDndLeave(XEvent event)
   {
     // reset the key things
@@ -2523,7 +2546,7 @@ namespace nux
     _drag_window = 0;
     _drag_drop_timestamp = 0;
   }
-  
+
   bool GraphicsDisplay::GetXDndSelectionEvent(Display *display, Window target, Atom property, long time, XEvent *result, int attempts)
   {
     // request the selection
@@ -2534,7 +2557,7 @@ namespace nux
                        target,
                        time);
     XFlush(display);
-    
+
     int i;
     for (i = 0; i < attempts; i++)
     {
@@ -2542,18 +2565,18 @@ namespace nux
       {
         return true;
       }
-      
+
       XFlush(display);
-      
+
       struct timeval usleep_tv;
       usleep_tv.tv_sec = 0;
       usleep_tv.tv_usec = 50000;
       select(0, 0, 0, 0, &usleep_tv);
     }
-    
+
     return false;
   }
-  
+
   void GraphicsDisplay::SendXDndFinished(Display *display, Window source, Window target, bool result, Atom action)
   {
     XClientMessageEvent response;
@@ -2565,10 +2588,10 @@ namespace nux
     response.data.l[0] = source;
     response.data.l[1] = result ? 1 : 0; // flags
     response.data.l[2] = action; // action
-    
+
     XSendEvent(display, target, False, NoEventMask, (XEvent *) &response);
   }
-  
+
   char * GraphicsDisplay::GetXDndData(Display *display, Window requestor, Atom property, long time)
   {
     char *result = 0;
@@ -2581,47 +2604,47 @@ namespace nux
       unsigned long  bytes_left; // bytes_after
       unsigned long  length;     // nitems
       int   format;
-      
-      if (XGetWindowProperty(display, 
-                             requestor, 
-                             XInternAtom(display, "XdndSelection", false), 
-                             0, 
+
+      if (XGetWindowProperty(display,
+                             requestor,
+                             XInternAtom(display, "XdndSelection", false),
+                             0,
                              10000,
                              False,
-                             AnyPropertyType, 
-                             &type, 
-                             &format, 
-                             &length, 
-                             &bytes_left, 
+                             AnyPropertyType,
+                             &type,
+                             &format,
+                             &length,
+                             &bytes_left,
                              &buffer) == Success)
       {
         result = g_strdup((char *) buffer);
         XFree(buffer);
       }
     }
-    
+
     return result;
   }
-  
+
   void GraphicsDisplay::HandleXDndDrop(XEvent event, Event *nux_event)
   {
     const long *l = event.xclient.data.l;
     _drag_drop_timestamp = l[2];
-    
+
     nux_event->type = NUX_DND_DROP;
 
     // The drop does not provide(x, y) coordinates of the location of the drop. Use the last DND position.
     nux_event->x = _last_dnd_position.x;
     nux_event->y = _last_dnd_position.y;
   }
-  
+
   void GraphicsDisplay::HandleXDndFinished(XEvent event)
   {
     const unsigned long *l = (const unsigned long *)event.xclient.data.l;
-    
+
     if (l[0] != _dnd_source_target_window)
       return;
-    
+
     bool accepted = l[1] & 1;
     DndAction result = DNDACTION_NONE;
 
@@ -2636,12 +2659,12 @@ namespace nux
       else if (l[2] == XInternAtom(GetX11Display(), "XdndActionMove", false))
         result = DNDACTION_MOVE;
       else if (l[2] == XInternAtom(GetX11Display(), "XdndActionPrivate", false))
-        result = DNDACTION_PRIVATE;  
+        result = DNDACTION_PRIVATE;
     }
-    
+
     EndDndDrag(result);
   }
-  
+
   void GraphicsDisplay::InitGlobalGrabWindow()
   {
     Display *display = GetX11Display();
@@ -2658,13 +2681,13 @@ namespace nux
                                          CopyFromParent,                 // Visual
                                          CWOverrideRedirect,
                                          &attribs);
-    
+
     XSelectInput(display, _global_grab_window, StructureNotifyMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask | PointerMotionMask);
     XMapRaised(display, _global_grab_window);
-    
+
     Atom atom_type[1];
     atom_type[0] = XInternAtom(display, "_NET_WM_WINDOW_TYPE_UTILITY", false);
-    XChangeProperty(display, _global_grab_window, XInternAtom(display, "_NET_WM_WINDOW_TYPE", false), 
+    XChangeProperty(display, _global_grab_window, XInternAtom(display, "_NET_WM_WINDOW_TYPE", false),
                      XA_ATOM, 32, PropModeReplace, (unsigned char*) atom_type, 1);
 
     Atom data[32];
@@ -2685,59 +2708,59 @@ namespace nux
     {
       if (!replace_existing || _dnd_source_grab_active) // prevent grabbing over DND grabs
         return false;
-      
+
       if (_global_pointer_grab_callback)
         (*_global_pointer_grab_callback) (true, _global_pointer_grab_data);
     }
-    
+
     if (!_global_pointer_grab_active)
     {
-      int result = XGrabPointer(GetX11Display(), 
-                                _global_grab_window, 
-                                True, 
-                                   ButtonPressMask | 
-                                   ButtonReleaseMask | 
-                                   PointerMotionMask | 
-                                   ButtonMotionMask , 
+      int result = XGrabPointer(GetX11Display(),
+                                _global_grab_window,
+                                True,
+                                   ButtonPressMask |
+                                   ButtonReleaseMask |
+                                   PointerMotionMask |
+                                   ButtonMotionMask ,
                                 GrabModeAsync,
-                                GrabModeAsync, 
+                                GrabModeAsync,
                                 None,
-                                None, 
+                                None,
                                 CurrentTime);
-                                      
+
       if (result == GrabSuccess)
         _global_pointer_grab_active = true;
     }
-    
+
     if (_global_pointer_grab_active)
     {
       _global_pointer_grab_callback = callback;
       _global_pointer_grab_data = data;
     }
-    
+
     return _global_pointer_grab_active;
   }
-  
+
   bool GraphicsDisplay::UngrabPointer(void *data)
   {
     if (data != _global_pointer_grab_data || !_global_pointer_grab_active)
       return false;
-    
+
     _global_pointer_grab_active = false;
     XUngrabPointer(GetX11Display(), CurrentTime);
-    
+
     if (_global_pointer_grab_callback)
       (*_global_pointer_grab_callback) (false, data);
-    
+
     _global_pointer_grab_data = false;
     _global_pointer_grab_callback = 0;
-    
+
     return true;
   }
-  
+
   bool GraphicsDisplay::PointerIsGrabbed()
   {
-    return _global_pointer_grab_active;  
+    return _global_pointer_grab_active;
   }
 
   bool GraphicsDisplay::GrabKeyboard(GrabReleaseCallback callback, void *data, bool replace_existing)
@@ -2746,53 +2769,53 @@ namespace nux
     {
       if (!replace_existing)
         return false; // fail case
-      
+
       if (_global_keyboard_grab_callback)
         (*_global_keyboard_grab_callback) (true, _global_keyboard_grab_data);
     }
-    
+
     if (!_global_keyboard_grab_active)
     {
-      int result = XGrabKeyboard(GetX11Display(), 
-                                _global_grab_window, 
-                                True, 
+      int result = XGrabKeyboard(GetX11Display(),
+                                _global_grab_window,
+                                True,
                                 GrabModeAsync,
-                                GrabModeAsync, 
+                                GrabModeAsync,
                                 CurrentTime);
-                                      
+
       if (result == GrabSuccess)
         _global_keyboard_grab_active = true;
     }
-    
+
     if (_global_keyboard_grab_active)
     {
       _global_keyboard_grab_callback = callback;
       _global_keyboard_grab_data = data;
     }
-    
+
     return _global_keyboard_grab_active;
   }
-  
+
   bool GraphicsDisplay::UngrabKeyboard(void *data)
   {
     if (data != _global_keyboard_grab_data || !_global_keyboard_grab_active)
       return false;
-    
+
     _global_keyboard_grab_active = false;
     XUngrabKeyboard(GetX11Display(), CurrentTime);
-    
+
     if (_global_keyboard_grab_callback)
       (*_global_keyboard_grab_callback) (false, data);
-    
+
     _global_keyboard_grab_data = false;
     _global_keyboard_grab_callback = 0;
-    
+
     return true;
   }
-  
+
   bool GraphicsDisplay::KeyboardIsGrabbed()
   {
-    return _global_keyboard_grab_active;  
+    return _global_keyboard_grab_active;
   }
 
   void GraphicsDisplay::ShowWindow()
