@@ -40,6 +40,7 @@ endif
 AM_CPPFLAGS = \
   -I$(srcdir) \
   -I$(top_srcdir) \
+  -I$(top_builddir)/Nux \
   -DPREFIX=\""$(prefix)"\" \
 	-DLIBDIR=\""$(libdir)"\" \
   -DDATADIR=\""$(datadir)"\" \
