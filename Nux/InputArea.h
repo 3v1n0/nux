@@ -32,8 +32,17 @@
 #endif
 #include "NuxGraphics/GraphicsDisplay.h"
 
+#ifdef NUX_GESTURES_SUPPORT
+#include <list>
+#include <memory>
+#include "Nux/GesturesSubscription.h"
+#endif
+
 namespace nux
 {
+#ifdef NUX_GESTURES_SUPPORT
+  class GestureEvent;
+#endif
   class WindowCompositor;
   class InputArea;
 
@@ -194,6 +203,52 @@ namespace nux
 #endif
 
   public:
+
+#ifdef NUX_GESTURES_SUPPORT
+    //! Creates a new gesture subscription for this input area and activates it
+    /*
+      Convenience function.
+      It's the same as doing the following:
+        ShGesturesSubscription sub(new GesturesSubscription);
+        sub->SetGestureClasses(gesture_classes);
+        sub->SetNumTouches(num_touches);
+        sub->Activate();
+        input_area->AddGesturesSubscription(sub);
+     */
+    void CreateGesturesSubscription(int gesture_classes,
+                                    unsigned int num_touches);
+
+    //! Adds a gestures subscription to this input area.
+    /*!
+      A single subscription can be shared among multiple InputAreas.
+     */
+    void AddGesturesSubscription(ShGesturesSubscription &subscription);
+
+    //! Removes a gestures subscription from this input area.
+    void RemoveGesturesSubscription(ShGesturesSubscription &subscription);
+
+    //! Returns all multitouch gestures subscriptions that this area cares about.
+    /*!
+      An input area will receive GestureEvents for multitouch gestures that
+      hit his area and matches any active subscription present in this list.
+     */
+    const std::list<ShGesturesSubscription> &GetGesturesSubscriptions() const;
+
+    //! Returns whether this area has a subscription that matches the gesture event
+    bool HasSubscriptionForGesture(const GestureEvent &event) const;
+
+    //! Returns the InputArea hit by the given gesture
+    /*!
+      If this area or any of its children is hit by the gesture from the given
+      event, that area will be returned. Otherwise, it returns nullptr.
+     */
+    virtual Area* GetInputAreaHitByGesture(const GestureEvent &event);
+
+  private:
+    std::list<ShGesturesSubscription> gestures_subscriptions_;
+#endif // NUX_GESTURES_SUPPORT
+
+  public:
     //! Signal emitted when the Mouse moves over the InputArea surface.
     sigc::signal<void, int, int, int, int, unsigned long, unsigned long> mouse_move;  // send the current position inside the area
     
@@ -309,6 +364,28 @@ namespace nux
 
     sigc::signal<void, InputArea*> start_keyboard_grab;
     sigc::signal<void, InputArea*> end_keyboard_grab;
+
+#ifdef NUX_GESTURES_SUPPORT
+    //! Called whenever a GestureEvent is received
+    /*!
+      You should reimplement this method to handle gestures. Typically you would
+      add code to make this area react to the gestures received.
+
+      In order to receive events from a given kind of gesture, an area has to
+      have a corresponding gesture subscription. See CreateGesturesSubscription()
+      and AddGesturesSubscription().
+
+      This method is called only with gestures that have already
+      been accepted. Therefore you shouldn't call GestureEvent::Accept()
+      or GestureEvent::Reject() from here as there's no point in doing so.
+
+      Default implementation just returns GestureDeliveryRequest::NONE.
+     */
+    virtual GestureDeliveryRequest GestureEvent(const GestureEvent &event)
+    {
+      return GestureDeliveryRequest::NONE;
+    }
+#endif
 
     protected:
 

@@ -706,9 +706,15 @@ namespace nux
     }
     else
     {
-      std::list<Area*>::iterator it;
-      it = _layout_element_list.begin();
-      return (*it)->KeyNavIteration(direction);
+      Area* area = NULL;
+
+      if (direction == KEY_NAV_UP)
+        area = GetChildAtPosition(GetNumColumn() * (GetNumRow() - 1));
+      else
+        area = _layout_element_list.front();
+
+      if (area)
+      return area->KeyNavIteration(direction);
     }
 
     return NULL;

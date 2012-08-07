@@ -603,6 +603,7 @@ namespace nux
     return false;
   }
 
+
   void Layout::ResetQueueDraw()
   {
     std::list<Area*>::iterator it;
@@ -627,4 +628,24 @@ namespace nux
     draw_cmd_queued_ = false;
     child_draw_cmd_queued_ = false;
   }
+
+#ifdef NUX_GESTURES_SUPPORT
+  Area* Layout::GetInputAreaHitByGesture(const GestureEvent &event)
+  {
+    if (!IsVisible())
+      return nullptr;
+
+    if (!IsGestureInsideArea(event))
+      return nullptr;
+
+    for (const auto area : _layout_element_list)
+    {
+      Area *area_hit = area->GetInputAreaHitByGesture(event);
+      if (area_hit)
+        return area_hit;
+    }
+
+    return nullptr;
+  }
+#endif
 }

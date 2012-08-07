@@ -30,10 +30,6 @@ source_cpp = \
   $(srcdir)/TimeFunctions.cpp \
   $(srcdir)/Template.cpp \
   $(srcdir)/FilePath.cpp \
-  $(srcdir)/TinyXML/tinyxmlparser.cpp \
-  $(srcdir)/TinyXML/tinyxml.cpp \
-  $(srcdir)/TinyXML/tinystr.cpp \
-  $(srcdir)/TinyXML/tinyxmlerror.cpp \
   $(srcdir)/FileManager/NSerializer.cpp \
   $(srcdir)/FileManager/NFileManagerGeneric.cpp \
   $(srcdir)/FileManager/NFileManagerGNU.cpp \
@@ -115,10 +111,6 @@ source_math_h = \
   $(srcdir)/Math/Matrix4.h \
   $(srcdir)/Math/MathUtility.h
 
-source_tiny_xml_h = \
-  $(srcdir)/TinyXML/tinystr.h \
-  $(srcdir)/TinyXML/tinyxml.h
-
 source_h = \
   $(srcdir)/AsyncFileWriter.h \
   $(srcdir)/Point.h \
@@ -169,8 +161,7 @@ libnux_core_@NUX_API_VERSION@_la_SOURCES = \
   $(source_character_h) \
   $(source_file_manager_h) \
   $(source_math_h) \
-  $(source_memory_h) \
-  $(source_tiny_xml_h)
+  $(source_memory_h)
 
 nux_coredir = $(includedir)/Nux-@NUX_API_VERSION@/NuxCore
 nux_core_HEADERS = $(source_h)
@@ -186,9 +177,6 @@ nux_math_HEADERS = $(source_math_h)
 
 nux_memorydir = $(nux_coredir)/Memory
 nux_memory_HEADERS = $(source_memory_h)
-
-nux_tiny_xmldir = $(nux_coredir)/TinyXML
-nux_tiny_xml_HEADERS = $(source_tiny_xml_h)
 
 # pkg-config file
 nux-core-@NUX_API_VERSION@.pc: nux-core.pc

@@ -253,6 +253,10 @@ namespace nux
     sigc::signal<void, Layout*, Area*> ViewAdded;
     sigc::signal<void, Layout*, Area*> ViewRemoved;
 
+#ifdef NUX_GESTURES_SUPPORT
+    virtual Area* GetInputAreaHitByGesture(const GestureEvent &event);
+#endif
+    
     /*!
         When a layout goes through Layout::ProcessDraw, this call isn't necessary. Otherwise, call it
         to set the value of draw_cmd_queued_ to false. 

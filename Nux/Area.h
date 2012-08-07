@@ -33,6 +33,9 @@ namespace nux
 {
   class WindowThread;
   class GraphicsEngine;
+#ifdef NUX_GESTURES_SUPPORT
+  class GestureEvent;
+#endif // NUX_GESTURES_SUPPORT
 
 // In a Horizontal/Vertical Layout, the following enum have the respective meanings:
 // eFull: the object has the full height/width of the parent layout(minus margins)
@@ -642,6 +645,21 @@ namespace nux
 
     //! If this variable is not NULL, then this area is part of the keyboard focus chain.
     Area* next_object_to_key_focus_area_;
+
+
+#ifdef NUX_GESTURES_SUPPORT
+    //! Returns the InputArea hit by the given gesture
+    virtual Area* GetInputAreaHitByGesture(const GestureEvent &event);
+
+    //! Returns whether the gesture from the given event is fully inside this area.
+    /*!
+      For getures from direct devices (e.g. touchscreens), it checks whether all
+      touch points lie within this area's boundaries. For gestures from indirect
+      devices (e.g. touchpads) it checks whether the gesture's focus point lies
+      inside this area.
+     */
+    bool IsGestureInsideArea(const GestureEvent &event) const;
+#endif // NUX_GESTURES_SUPPORT
 
   private:
     void ReconfigureParentLayout(Area *child = 0);

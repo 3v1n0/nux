@@ -31,6 +31,9 @@
 namespace nux
 {
   class Layout;
+#ifdef NUX_GESTURES_SUPPORT
+  class GestureEvent;
+#endif
 
   class View: public InputArea
   {
@@ -146,6 +149,10 @@ namespace nux
     virtual Area* KeyNavIteration(KeyNavDirection direction);
     virtual bool AcceptKeyNavFocus();
 
+#ifdef NUX_GESTURES_SUPPORT
+    virtual Area* GetInputAreaHitByGesture(const nux::GestureEvent &event);
+#endif
+
     //! Redirect the rendering of this view to a texture.
     /*!
         Redirect the rendering of this view to a texture. \sa BackupTexture().
@@ -260,7 +267,6 @@ namespace nux
     friend class LayeredLayout;
     friend class Canvas;
   };
-
 }
 
 #endif // ABSTRACTOBJECTBASE_H

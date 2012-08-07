@@ -61,7 +61,9 @@ namespace nux
     }
     else
     {
-      return_code = dd->window_thread->ExecutionLoop(0);
+      Event event;
+      dd->window_thread->GetGraphicsDisplay().GetSystemEvent(&event);
+      return_code = dd->window_thread->ProcessEvent(event);
     }
 
     if ((return_code == 0) && !dd->window_thread->IsEmbeddedWindow())
@@ -125,7 +127,10 @@ namespace nux
   {
     nux_glib_threads_lock();
     WindowThread *window_thread = NUX_STATIC_CAST(WindowThread *, user_data);
-    unsigned int return_code = window_thread->ExecutionLoop(0);
+
+    Event event;
+    window_thread->GetGraphicsDisplay().GetSystemEvent(&event);
+    unsigned int return_code = window_thread->ProcessEvent(event);
 
     if (return_code == 0 && !window_thread->IsEmbeddedWindow())
     {
@@ -255,6 +260,20 @@ namespace nux
       g_source_attach(source, NULL);
     else
       g_source_attach(source, main_loop_glib_context_);
+
+#ifdef NUX_GESTURES_SUPPORT
+    //TODO: Some people say that it's much faster to share a GSource among many
+    // file descriptors than having a separate GSource for each file descriptor.
+    // See if it would be better to have GeisAdapter sharing the same GSource with
+    // WindowThread/Nux/X
+    if (IsEmbeddedWindow())
+      geis_adapter_->CreateGSource(nullptr);
+    else
+      geis_adapter_->CreateGSource(main_loop_glib_context_);
+
+    geis_adapter_->event_ready.connect(
+        sigc::mem_fun(this, &WindowThread::ProcessGestureEvent));
+#endif
 
     if (_Timelines->size() > 0)
       StartMasterClock();

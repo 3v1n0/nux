@@ -153,6 +153,8 @@ namespace nux
   GraphicsEngine::GraphicsEngine(GraphicsDisplay& GlWindow, bool create_rendering_data)
   : _graphics_display(GlWindow)
   {
+
+    IOpenGLShaderProgram::SetShaderTracking(true);
     _scissor.x = 0;
     _scissor.y = 0;
     _clip_offset_x = 0;
