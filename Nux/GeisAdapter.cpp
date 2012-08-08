@@ -91,7 +91,9 @@ GeisAdapter::GeisAdapter() :
   , class_touch_(nullptr)
   , is_init_complete_(false)
 {
-  geis_ = geis_new(GEIS_INIT_NO_ATOMIC_GESTURES, nullptr);
+  geis_ = geis_new(GEIS_INIT_NO_ATOMIC_GESTURES, 
+                   GEIS_INIT_GRAIL_BACKEND,
+                   nullptr);
   if (!geis_)
   {
     LOG_WARNING(logger) << "Couldn't create a Geis instance."
