@@ -66,6 +66,7 @@ gtest_nuxcore_LDFLAGS = \
   -lboost_filesystem -lboost_system
 
 gtest_nux_SOURCES = \
+  FakeGestureEvent.h \
   gtest-nux-area.cpp \
   gtest-nux-cairo-wrapper.cpp \
   gtest-nux-emmetrics.cpp \
@@ -81,6 +82,7 @@ gtest_nux_SOURCES = \
 
 if HAVE_GEIS
 gtest_nux_SOURCES += \
+  geis_mock.h \
 	geis_mock.cpp \
   gtest-nux-geisadapter.cpp \
   gtest-nux-gesturebroker.cpp
