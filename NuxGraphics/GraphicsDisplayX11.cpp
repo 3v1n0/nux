@@ -1371,7 +1371,7 @@ namespace nux
       if (XFilterEvent(&xevent, None) == True)
       {
         printf("XFilterJustReturnedTrue!!! %i\n", xevent.type);
-	      return;
+	      return true;
       }
 
       if (!_event_filters.empty())
