@@ -14,7 +14,7 @@
 #   - Increase interface_version to the next odd number
 # 
 m4_define([nux_major_version], [3])
-m4_define([nux_minor_version], [0])
+m4_define([nux_minor_version], [2])
 m4_define([nux_micro_version], [0])
 
 m4_define([nux_api_version], [3.0])
