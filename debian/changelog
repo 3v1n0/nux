@@ -1,4 +1,4 @@
-nux (3.2.0-0ubuntu1) UNRELEASED; urgency=low
+nux (3.2.0-0ubuntu1) quantal-proposed; urgency=low
 
   [ Łukasz 'sil2100' Zemczak ]
   * New upstream release.
