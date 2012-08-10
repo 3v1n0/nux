@@ -5,6 +5,9 @@ nux (3.2.0-0ubuntu1) UNRELEASED; urgency=low
     - REGRESSION: can't type characters with accent (dead keys) (LP: #961741)
     - still some accent issues with unity/nux (LP: #950740)
     - nux source bundles tinyxml (LP: #789303)
+    - Support for automation (LP: #685199)
+    - add alpha function on a NuxBaseWindow (LP: #718827)
+    - Timestamp field on the event structure is always 0 (LP: #735645)
 
   [ Adam Conrad ]
   * Removed debian/patches/02_libgeis_rename.patch
