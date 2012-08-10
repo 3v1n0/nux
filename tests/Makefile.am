@@ -66,6 +66,7 @@ gtest_nuxcore_LDFLAGS = \
   -lboost_filesystem -lboost_system
 
 gtest_nux_SOURCES = \
+  FakeGestureEvent.h \
   gtest-nux-area.cpp \
   gtest-nux-cairo-wrapper.cpp \
   gtest-nux-emmetrics.cpp \
@@ -73,10 +74,19 @@ gtest_nux_SOURCES = \
   gtest-nux-statictext.cpp \
   gtest-nux-scrollview.cpp \
   gtest-nux-textentry.cpp \
+  gtest-nux-utils.h \
   gtest-nux-inputmethodibus.cpp \
   gtest-nux-view.cpp \
   gtest-nux-windowcompositor.cpp \
   gtest-nux-windowthread.cpp
+
+if HAVE_GEIS
+gtest_nux_SOURCES += \
+  geis_mock.h \
+	geis_mock.cpp \
+  gtest-nux-geisadapter.cpp \
+  gtest-nux-gesturebroker.cpp
+endif
 
 gtest_nux_CPPFLAGS = \
   -I$(srcdir) \

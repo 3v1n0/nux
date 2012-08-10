@@ -484,4 +484,27 @@ namespace nux
   {
     return true;
   }
+
+#ifdef NUX_GESTURES_SUPPORT
+  Area* View::GetInputAreaHitByGesture(const nux::GestureEvent &event)
+  {
+    if (!IsVisible())
+      return nullptr;
+
+    if (!IsGestureInsideArea(event))
+      return nullptr;
+
+    if (view_layout_)
+    {
+      Area *area = view_layout_->GetInputAreaHitByGesture(event);
+      if (area)
+        return area;
+    }
+
+    if (HasSubscriptionForGesture(event))
+      return this;
+    else
+      return nullptr;
+  }
+#endif
 }

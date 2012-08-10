@@ -53,7 +53,7 @@ namespace nux
   FontTexture::~FontTexture()
   {
     std::vector<BaseTexture*>::iterator it;
-    for (it = TextureArray.begin(); it != TextureArray.end(); it++)
+    for (it = TextureArray.begin(); it != TextureArray.end(); ++it)
     {
       (*it)->UnReference();
     }

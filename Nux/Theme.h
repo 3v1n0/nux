@@ -26,7 +26,6 @@
 
 namespace nux
 {
-
   enum UXStyleImageRef
   {
     eIMAGE_STYLE_NONE = 0,
@@ -142,16 +141,28 @@ namespace nux
     const PainterImage *GetImage(UXStyleImageRef style);
     Rect GetImageGeometry(UXStyleImageRef style);
 
-
   private:
-    void LoadPainterImages();
-    BaseTexture *Load2DTextureFile(const char *filename);
-    //BaseTexture *Load2DRectangleTextureFile(const char *filename);
-    BaseTexture *Load2DTextureFileGenerateAlpha(const char *filename, int red, int green, int blue);
+#if defined(NUX_OS_LINUX)
+    static void ParseStartImage(GMarkupParseContext* context,
+      const gchar*  element_name,
+      const gchar** attribute_names,
+      const gchar** attribute_values,
+      gpointer      user_data,
+      GError**      error);
 
-    std::list<PainterImage *> m_PainterImageList;
+    static void ParseEndImage(GMarkupParseContext* context,
+      const gchar*  element_name,
+      gpointer      user_data,
+      GError**      error);
+#endif
+
+    void LoadPainterImages();
+    BaseTexture* Load2DTextureFile(const char* filename);
+    BaseTexture* Load2DTextureFileGenerateAlpha(const char* filename, int red, int green, int blue);
+    std::list<PainterImage*> painter_image_list_;
 
   };
 }
 
 #endif // UXTHEME_H
+

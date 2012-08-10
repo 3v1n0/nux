@@ -161,8 +161,6 @@ namespace nux
     , key_nav_mode_(false)
     , lose_key_focus_on_key_nav_direction_up_(true)
     , lose_key_focus_on_key_nav_direction_down_(true)
-    , dead_key_mode_(false)
-    , composition_mode_(false)
   {
     cairo_font_options_set_antialias(font_options_, CAIRO_ANTIALIAS_SUBPIXEL);
     cairo_font_options_set_hint_style(font_options_, CAIRO_HINT_STYLE_FULL);
@@ -308,9 +306,9 @@ namespace nux
 #if defined(NUX_OS_LINUX)
     if (im_running())
     {
-      // FIXME Have to get the current event for the x11_keycode for ibus-hangul/korean input
-      nux::Event const& cur_event = GetGraphicsDisplay()->GetCurrentEvent();
-      KeyEvent event(static_cast<EventType>(event_type), keysym, cur_event.x11_keycode, state, character);
+      // FIXME Have to get the x11_keycode for ibus-hangul/korean input
+      KeyCode keycode = XKeysymToKeycode(GetGraphicsDisplay()->GetX11Display(), keysym);
+      KeyEvent event(static_cast<EventType>(event_type), keysym, keycode, state, character);
 
       if (ime_->FilterKeyEvent(event))
         return;
@@ -323,22 +321,12 @@ namespace nux
       return;
 
 #if defined(NUX_OS_LINUX)
-    if (dead_key_mode_ && keysym == XK_space)
+    if (IsInCompositionMode() || IsInitialCompositionKeySym(keysym))
     {
-      dead_key_mode_ = false;
-      EnterText(dead_key_string_.c_str());
-      QueueRefresh(false, true);
-      return;
+      if (HandleComposition(keysym))
+        return;
     }
 
-    if (HandledDeadKeys(keysym, state, character))
-    {
-      return;
-    }
-    else if (HandledComposition(keysym, character))
-    {
-      return;
-    }
 #endif
 
     if (event_type == NUX_KEYDOWN)
@@ -371,6 +359,7 @@ namespace nux
     unsigned int keyval = keysym;
     bool shift = (state & NUX_STATE_SHIFT);
     bool ctrl = (state & NUX_STATE_CTRL);
+    bool handled = false;
 
     // DLOG("TextEntry::key_down(%d, shift:%d ctrl:%d)", keyval, shift, ctrl);
     if (event_type == NUX_KEYDOWN)
@@ -381,6 +370,8 @@ namespace nux
           MoveCursor(VISUALLY, -1, shift);
         else
           MoveCursor(WORDS, -1, shift);
+
+        handled = true;
       }
       else if (keyval == NUX_VK_RIGHT)
       {
@@ -388,16 +379,20 @@ namespace nux
           MoveCursor(VISUALLY, 1, shift);
         else
           MoveCursor(WORDS, 1, shift);
+
+        handled = true;
       }
       else if (keyval == NUX_VK_UP)
       {
         // move cursor to start of line
         MoveCursor(DISPLAY_LINES, -1, shift);
+        handled = true;
       }
       else if (keyval == NUX_VK_DOWN)
       {
         // move cursor to end of line
         MoveCursor(DISPLAY_LINES, 1, shift);
+        handled = true;
       }
       else if (keyval == NUX_VK_HOME)
       {
@@ -405,6 +400,8 @@ namespace nux
           MoveCursor(DISPLAY_LINE_ENDS, -1, shift);
         else
           MoveCursor(BUFFER, -1, shift);
+
+        handled = true;
       }
       else if (keyval == NUX_VK_END)
       {
@@ -412,6 +409,8 @@ namespace nux
           MoveCursor(DISPLAY_LINE_ENDS, 1, shift);
         else
           MoveCursor(BUFFER, 1, shift);
+
+        handled = true;
       }
       else if (keyval == NUX_VK_PAGE_UP)
       {
@@ -419,6 +418,8 @@ namespace nux
           MoveCursor(PAGES, -1, shift);
         else
           MoveCursor(BUFFER, -1, shift);
+
+        handled = true;
       }
       else if (keyval == NUX_VK_PAGE_DOWN)
       {
@@ -426,23 +427,28 @@ namespace nux
           MoveCursor(PAGES, 1, shift);
         else
           MoveCursor(BUFFER, 1, shift);
+
+        handled = true;
       }
       else if (((keyval == NUX_VK_x) && ctrl && !shift) || ((keyval == NUX_VK_DELETE) && shift && !ctrl))
       {
         CutClipboard();
+        handled = true;
       }
       else if (((keyval == NUX_VK_c) && ctrl && (!shift)) || ((keyval == NUX_VK_INSERT) && ctrl && (!shift)))
       {
         CopyClipboard();
+        handled = true;
       }
       else if (((keyval == NUX_VK_v) && ctrl && (!shift)) || ((keyval == NUX_VK_INSERT) && shift && (!ctrl)))
       {
         PasteClipboard();
+        handled = true;
       }
       else if ((keyval == NUX_VK_a) && ctrl)
       {
         SelectAll();
-        return;
+        handled = true;
       }
       else if (keyval == NUX_VK_BACKSPACE)
       {
@@ -450,6 +456,8 @@ namespace nux
           BackSpace(VISUALLY);
         else
           BackSpace(WORDS);
+
+        handled = true;
       }
       else if ((keyval == NUX_VK_DELETE) && (!shift))
       {
@@ -457,10 +465,13 @@ namespace nux
           Delete(VISUALLY);
         else
           Delete(WORDS);
+
+        handled = true;
       }
       else if ((keyval == NUX_VK_INSERT) && (!shift) && (!ctrl))
       {
         ToggleOverwrite();
+        handled = true;
       }
 //       else
 //       {
@@ -483,7 +494,7 @@ namespace nux
 //       }
     }
 
-    if (character)
+    if (!handled && character)
     {
       unsigned int utf_char = g_utf8_get_char(character);
 
@@ -563,9 +574,7 @@ namespace nux
   {
     key_nav_mode_     = true;
     text_input_mode_  = false;
-    dead_key_mode_    = false;
-    composition_mode_ = false;
-    composition_string_.clear();
+    composition_list_.clear();
 
     FocusInx();
   }
@@ -574,9 +583,7 @@ namespace nux
   {
     key_nav_mode_     = false;
     text_input_mode_  = false;
-    dead_key_mode_    = false;
-    composition_mode_ = false;
-    composition_string_.clear();
+    composition_list_.clear();
 
     FocusOutx();
   }
@@ -622,97 +629,101 @@ namespace nux
     // intentionally left empty
   }
 
-  bool TextEntry::HandledDeadKeys(int keysym, int state, const char* character)
+  TextEntry::SearchState TextEntry::GetCompositionForList(std::vector<unsigned long> const& input, std::string& composition)
   {
-#if defined(NUX_OS_LINUX)
-    /* Checks if the keysym between the first and last dead key */
-    if (character && (keysym >= XK_dead_grave) && (keysym <= XK_dead_stroke) && !dead_key_mode_)
+    SearchState search_state = SearchState::NO_MATCH;
+
+    if (input.size() >= ComposeSequence::MAX_SYMBOLS)
+      return search_state;
+
+    for (unsigned i = 0; i < COMPOSE_SEQUENCES_SIZE; ++i)
     {
-      int key = keysym - XK_dead_grave;
-      dead_key_mode_ = true;
+      int j = 0;
+      bool valid_seq = false;
+      ComposeSequence const& seq = COMPOSE_SEQUENCES[i];
 
-      if (dead_keys_map[key])
+      for (auto key : input)
       {
-        composition_mode_ = true;
-        composition_string_.clear();
+        if (key != seq.symbols[j])
+        {
+          if (seq.symbols[j] != XK_VoidSymbol)
+            valid_seq = false;
 
-        dead_key_string_ = character;
+          break;
+        }
 
-        std::string dead_key;
-        dead_key = dead_keys_map[key];
-        HandledComposition(keysym, dead_key.c_str());
+        valid_seq = true;
+        ++j;
+      }
 
-        return true;
+      if (valid_seq)
+      {
+        if (seq.symbols[j] == XK_VoidSymbol)
+        {
+          search_state = SearchState::MATCH;
+          composition = seq.result;
+          return search_state;
+        }
+        else
+        {
+          search_state = SearchState::PARTIAL;
+        }
       }
     }
-    else if (dead_key_mode_ && (state & IBUS_IGNORED_MASK))
-    {
-      dead_key_mode_ = false;
-    }
-    return false;
-#else
-    return false;
-#endif
+
+    return search_state;
   }
 
-  bool TextEntry::HandledComposition(int keysym, const char* character)
+  bool TextEntry::IsInCompositionMode() const
+  {
+    return !composition_list_.empty();
+  }
+
+  bool TextEntry::IsInitialCompositionKeySym(unsigned long keysym) const
   {
 #if defined(NUX_OS_LINUX)
-    if (keysym == XK_Multi_key)
+    /* Checks if a keysym is a valid initial composition key */
+    if (keysym == XK_Multi_key ||
+        (keysym >= XK_dead_grave && keysym <= XK_dead_currency) ||
+        keysym == XK_Greek_accentdieresis)
     {
-      if (composition_mode_)
-      {
-        composition_mode_ = false;
-      }
-      else
-      {
-        composition_mode_ = true;
-      }
-      composition_string_.clear();
       return true;
     }
-
-    if (composition_mode_ && character)
-    {
-      if (strncmp(character, "", 1) == 0 && keysym != NUX_VK_SHIFT)
-      {
-        composition_mode_ = false;
-        composition_string_.clear();
-        return true;
-      }
-
-      composition_string_ += character;
-
-      std::string composition_match;
-
-      int match = LookForMatch(composition_match);
-
-      if (match == PARTIAL)
-      {
-        return true;
-      }
-      else if (match == NO_MATCH)
-      {
-        composition_mode_ = false;
-        composition_string_.clear();
-      }
-      else if (match == MATCH)
-      {
-        EnterText(composition_match.c_str());
-        composition_mode_ = false;
-        composition_string_.clear();
-        QueueRefresh(false, true);
-
-        if (dead_key_mode_)
-          dead_key_mode_ = false;
-
-        return true;
-      }
-    }
-    return false;
-#else
-    return false;
 #endif
+    return false;
+  }
+
+  bool TextEntry::HandleComposition(unsigned long keysym)
+  {
+#if defined(NUX_OS_LINUX)
+    bool composition_mode = IsInCompositionMode();
+
+    if (composition_mode && IsModifierKey(keysym))
+      return true;
+
+    composition_list_.push_back(keysym);
+    std::string composition_match;
+    auto match = GetCompositionForList(composition_list_, composition_match);
+
+    if (match == SearchState::PARTIAL)
+    {
+      return true;
+    }
+    else if (match == SearchState::MATCH)
+    {
+      EnterText(composition_match.c_str());
+      composition_list_.clear();
+      QueueRefresh(false, true);
+      return true;
+    }
+    else
+    {
+      composition_list_.clear();
+      return composition_mode;
+    }
+#endif
+
+    return false;
   }
 
   void TextEntry::SetText(const char* text)
@@ -1264,32 +1275,6 @@ namespace nux
       cached_layout_ = CreateLayout();
     }
     return cached_layout_;
-  }
-
-  int TextEntry::LookForMatch(std::string& str)
-  {
-    str.clear();
-    int search_state = NO_MATCH;
-
-    // Check if the string we have is a match,partial match or doesnt match
-    for (int i = 0; nux_compose_seqs_compact[i] != "\0"; i++)
-    {
-      if (nux_compose_seqs_compact[i].compare(composition_string_) == 0)
-      {
-        // advance to the next sequence after ::
-        while (nux_compose_seqs_compact[++i].compare("::") != 0)
-        {
-        }
-
-        str = nux_compose_seqs_compact[++i];
-        return MATCH;
-      }
-      else if (nux_compose_seqs_compact[i].find(composition_string_) != std::string::npos)
-      {
-        search_state = PARTIAL;
-      }
-    }
-    return search_state;
   }
 
   void TextEntry::QueueTextDraw()
@@ -2489,4 +2474,105 @@ namespace nux
     return text_input_mode_;
   }
 
+  void TextEntry::SetVisibility(bool visible)
+  {
+    if (visible_ != visible)
+    {
+      visible_ = visible;
+
+      if (!readonly_)
+      {
+        if (focused_)
+        {
+          //gtk_im_context_focus_out(im_context_);
+        }
+
+        //InitImContext();
+        ResetPreedit();
+
+        if (focused_)
+        {
+          //gtk_im_context_focus_in(im_context_);
+        }
+      }
+
+      ResetLayout();
+    }    
+  }
+
+  typedef unsigned short  UTF16Char;
+  typedef unsigned int    UTF32Char;
+  typedef	unsigned char   UTF8Char;
+  static const UTF8Char kTrailingBytesForUTF8[256] = {
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+    2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2, 3,3,3,3,3,3,3,3,4,4,4,4,5,5,5,5
+  };
+
+
+  // http://google-gadgets-for-linux.googlecode.com/svn-history/r97/trunk/ggadget/unicode_utils.cc
+  size_t GetUTF8CharLength(const char *src)
+  {
+    return src ? (kTrailingBytesForUTF8[static_cast<UTF8Char>(*src)] + 1) : 0;
+  }
+
+  bool IsLegalUTF8Char(const char *src, size_t length)
+  {
+    if (!src || !length) return false;
+
+    const UTF8Char *srcptr = reinterpret_cast<const UTF8Char*>(src);
+    UTF8Char a;
+    UTF8Char ch = *srcptr;
+    srcptr += length;
+    switch (length)
+    {
+    default: return false;
+      // Everything else falls through when "true"...
+    case 4: if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
+    case 3: if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
+    case 2: if ((a = (*--srcptr)) > 0xBF) return false;
+      switch (ch) {
+        // No fall-through in this inner switch
+      case 0xE0: if (a < 0xA0) return false; break;
+      case 0xED: if (a > 0x9F) return false; break;
+      case 0xF0: if (a < 0x90) return false; break;
+      case 0xF4: if (a > 0x8F) return false; break;
+      default:   if (a < 0x80) return false;
+      }
+    case 1: if (ch >= 0x80 && ch < 0xC2) return false;
+    }
+  
+    if (ch > 0xF4) return false;
+    return true;
+  }
+
+  void TextEntry::SetPasswordChar(const char* c)
+  {
+    if (c == NULL || *c == 0 || !IsLegalUTF8Char(c, GetUTF8CharLength(c)))
+    {
+      SetVisibility(true);
+      password_char_.clear();
+    }
+    else
+    {
+      SetVisibility(false);
+      password_char_.assign(c, GetUTF8CharLength(c));
+    }
+    QueueRefresh(true, true);
+  }
+
+  std::string TextEntry::GetPasswordChar()
+  {
+    return password_char_;
+  }
+
+  bool TextEntry::IsPasswordMode() const
+  {
+    return visible_;
+  }
 }

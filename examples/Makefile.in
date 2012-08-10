@@ -52,7 +52,29 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 @BUILD_EXAMPLES_TRUE@noinst_PROGRAMS = text_entry_focus$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	shortcut_keys$(EXEEXT) coverflow$(EXEEXT)
+@BUILD_EXAMPLES_TRUE@	shortcut_keys$(EXEEXT) coverflow$(EXEEXT) \
+@BUILD_EXAMPLES_TRUE@	$(am__EXEEXT_1)
+
+#button \
+#                  cairo \
+#                  cairo_wrapper \
+#                  canvas \
+#                  checkbox \
+#                  combobox \
+#                  gridlayout \
+#                  layeredlayout \
+#                  moveable_view \
+#                  pango_combobox \
+#                  pangotextedit \
+#                  rotate_texture_area \
+#                  scrollview \
+#                  tab_view \
+#                  textedit \
+#                  tiles_view \
+#                  timegraph \
+#                  timeline \
+#                  tooltip
+@BUILD_EXAMPLES_TRUE@@HAVE_GEIS_TRUE@am__append_1 = gestures
 subdir = examples
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -67,6 +89,7 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+@BUILD_EXAMPLES_TRUE@@HAVE_GEIS_TRUE@am__EXEEXT_1 = gestures$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
 am__coverflow_SOURCES_DIST = coverflow.cpp
 @BUILD_EXAMPLES_TRUE@am_coverflow_OBJECTS = coverflow.$(OBJEXT)
@@ -82,6 +105,12 @@ am__DEPENDENCIES_1 =
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
+am__gestures_SOURCES_DIST = gestures.cpp
+@BUILD_EXAMPLES_TRUE@@HAVE_GEIS_TRUE@am_gestures_OBJECTS =  \
+@BUILD_EXAMPLES_TRUE@@HAVE_GEIS_TRUE@	gestures.$(OBJEXT)
+gestures_OBJECTS = $(am_gestures_OBJECTS)
+@BUILD_EXAMPLES_TRUE@@HAVE_GEIS_TRUE@gestures_DEPENDENCIES =  \
+@BUILD_EXAMPLES_TRUE@@HAVE_GEIS_TRUE@	$(am__DEPENDENCIES_2)
 am__shortcut_keys_SOURCES_DIST = shortcut-keys.cpp line-separator.cpp \
 	line-separator.h abstract-separator.h abstract-separator.cpp
 @BUILD_EXAMPLES_TRUE@am_shortcut_keys_OBJECTS =  \
@@ -139,10 +168,10 @@ am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_@AM_V@)
 am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(coverflow_SOURCES) $(shortcut_keys_SOURCES) \
-	$(text_entry_focus_SOURCES)
+SOURCES = $(coverflow_SOURCES) $(gestures_SOURCES) \
+	$(shortcut_keys_SOURCES) $(text_entry_focus_SOURCES)
 DIST_SOURCES = $(am__coverflow_SOURCES_DIST) \
-	$(am__shortcut_keys_SOURCES_DIST) \
+	$(am__gestures_SOURCES_DIST) $(am__shortcut_keys_SOURCES_DIST) \
 	$(am__text_entry_focus_SOURCES_DIST)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
@@ -206,6 +235,9 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GCC_FLAGS = @GCC_FLAGS@
+GEIS_CFLAGS = @GEIS_CFLAGS@
+GEIS_LIBS = @GEIS_LIBS@
+GEIS_PKGS = @GEIS_PKGS@
 GL_PKGS = @GL_PKGS@
 GREP = @GREP@
 GTEST_CPPFLAGS = @GTEST_CPPFLAGS@
@@ -238,6 +270,7 @@ NUX_CORE_CFLAGS = @NUX_CORE_CFLAGS@
 NUX_CORE_LIBS = @NUX_CORE_LIBS@
 NUX_EXAMPLES_CFLAGS = @NUX_EXAMPLES_CFLAGS@
 NUX_EXAMPLES_LIBS = @NUX_EXAMPLES_LIBS@
+NUX_GESTURES_SUPPORT = @NUX_GESTURES_SUPPORT@
 NUX_GPUTESTS_CFLAGS = @NUX_GPUTESTS_CFLAGS@
 NUX_GPUTESTS_LIBS = @NUX_GPUTESTS_LIBS@
 NUX_GRAPHICS_CFLAGS = @NUX_GRAPHICS_CFLAGS@
@@ -329,31 +362,12 @@ CLEANFILES =
 DISTCLEANFILES = 
 EXTRA_DIST = 
 
-#button \
-#                  cairo \
-#                  cairo_wrapper \
-#                  canvas \
-#                  checkbox \
-#                  combobox \
-#                  gridlayout \
-#                  layeredlayout \
-#                  moveable_view \
-#                  pango_combobox \
-#                  pangotextedit \
-#                  rotate_texture_area \
-#                  scrollview \
-#                  tab_view \
-#                  textedit \
-#                  tiles_view \
-#                  timegraph \
-#                  timeline \
-#                  tooltip
-
 # We only have to do this AM_ once to affect all the binaries we build from
 # this Makefile
 @BUILD_EXAMPLES_TRUE@AM_CPPFLAGS = \
 @BUILD_EXAMPLES_TRUE@  -I$(srcdir) \
 @BUILD_EXAMPLES_TRUE@  -I$(top_srcdir) \
+@BUILD_EXAMPLES_TRUE@  -I$(top_builddir)/Nux \
 @BUILD_EXAMPLES_TRUE@  -DPREFIX=\""$(prefix)"\" \
 @BUILD_EXAMPLES_TRUE@	-DLIBDIR=\""$(libdir)"\" \
 @BUILD_EXAMPLES_TRUE@  -DDATADIR=\""$(datadir)"\" \
@@ -421,6 +435,8 @@ EXTRA_DIST =
 @BUILD_EXAMPLES_TRUE@shortcut_keys_LDADD = $(ALL_LIBS)
 @BUILD_EXAMPLES_TRUE@coverflow_SOURCES = coverflow.cpp
 @BUILD_EXAMPLES_TRUE@coverflow_LDADD = $(ALL_LIBS)
+@BUILD_EXAMPLES_TRUE@@HAVE_GEIS_TRUE@gestures_SOURCES = gestures.cpp
+@BUILD_EXAMPLES_TRUE@@HAVE_GEIS_TRUE@gestures_LDADD = $(ALL_LIBS)
 all: all-am
 
 .SUFFIXES:
@@ -467,6 +483,9 @@ clean-noinstPROGRAMS:
 coverflow$(EXEEXT): $(coverflow_OBJECTS) $(coverflow_DEPENDENCIES) $(EXTRA_coverflow_DEPENDENCIES) 
 	@rm -f coverflow$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(coverflow_OBJECTS) $(coverflow_LDADD) $(LIBS)
+gestures$(EXEEXT): $(gestures_OBJECTS) $(gestures_DEPENDENCIES) $(EXTRA_gestures_DEPENDENCIES) 
+	@rm -f gestures$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(gestures_OBJECTS) $(gestures_LDADD) $(LIBS)
 shortcut_keys$(EXEEXT): $(shortcut_keys_OBJECTS) $(shortcut_keys_DEPENDENCIES) $(EXTRA_shortcut_keys_DEPENDENCIES) 
 	@rm -f shortcut_keys$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(shortcut_keys_OBJECTS) $(shortcut_keys_LDADD) $(LIBS)
@@ -482,6 +501,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/abstract-separator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/coverflow.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gestures.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/line-separator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/shortcut-keys.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/text_entry_focus.Po@am__quote@
