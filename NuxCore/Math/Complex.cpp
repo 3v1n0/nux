@@ -190,7 +190,7 @@ namespace nux
 
   float ComplexNumber::absolute()
   {
-    float x, y, result, temp;
+    float x, y, result;
 
     x = (float) std::fabs (real_);
     y = (float) std::fabs (imaginary_);
@@ -203,6 +203,7 @@ namespace nux
         result = x;
       else
       {
+        float temp;
         if (x > y)
         {
           temp = y / x;

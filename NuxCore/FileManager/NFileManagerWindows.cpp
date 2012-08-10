@@ -419,8 +419,6 @@ namespace nux
     Create          |= (Flags & NSerializer::NoOverWrite) ? CREATE_NEW /*fail if the file already exist*/ : CREATE_ALWAYS /*create the file if it does not exist*/;
     HANDLE Handle    = ::CreateFile (Filename, Access, SharedModeFlags, NULL, Create, FILE_ATTRIBUTE_NORMAL, NULL);
 
-    int Pos = 0;
-
     if (Handle == INVALID_HANDLE_VALUE)
     {
       if (Flags & NSerializer::OutputErrorIfFail)
@@ -431,7 +429,7 @@ namespace nux
 
     if ( (Flags & NSerializer::Append) && (Handle != INVALID_HANDLE_VALUE) )
     {
-      Pos = ::SetFilePointer (Handle, 0, 0, FILE_END);
+      int Pos = ::SetFilePointer (Handle, 0, 0, FILE_END);
     }
 
     return Handle;

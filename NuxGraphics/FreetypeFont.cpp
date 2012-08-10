@@ -260,7 +260,7 @@ int FontMgr::get_character_texture_id (const char *font_name, int encoding, Char
 {
   list <FontFamily *>::iterator iter;
 
-  for (iter = m_font_list->begin(); iter != m_font_list->end(); iter++)
+  for (iter = m_font_list->begin(); iter != m_font_list->end(); ++iter)
   {
     if (strcmp ( (*iter)->font_name, font_name) == 0)
     {
@@ -309,7 +309,7 @@ void FontMgr::get_style_texture_size (const char *font_name, int *width, int *he
 {
   list <FontFamily *>::iterator iter;
 
-  for (iter = m_font_list->begin(); iter != m_font_list->end(); iter++)
+  for (iter = m_font_list->begin(); iter != m_font_list->end(); ++iter)
   {
     if (strcmp ( (*iter)->font_name, font_name) == 0)
     {
@@ -337,7 +337,7 @@ void FontMgr::get_style_line_spacing (const char *font_name, int *line_spacing)
 {
   list <FontFamily *>::iterator iter;
 
-  for (iter = m_font_list->begin(); iter != m_font_list->end(); iter++)
+  for (iter = m_font_list->begin(); iter != m_font_list->end(); ++iter)
   {
     if (strcmp ( (*iter)->font_name, font_name) == 0)
     {
@@ -362,7 +362,7 @@ unsigned int FontMgr::get_null_character_texture_id (const char *font_name)
 {
   list <FontFamily *>::iterator iter;
 
-  for (iter = m_font_list->begin(); iter != m_font_list->end(); iter++)
+  for (iter = m_font_list->begin(); iter != m_font_list->end(); ++iter)
   {
     if (strcmp ( (*iter)->font_name, font_name) == 0)
     {
@@ -390,7 +390,7 @@ bool FontMgr::find_font (const char *font_name, const char *style_name)
 {
   list <FontFamily *>::iterator iter;
 
-  for (iter = m_font_list->begin(); iter != m_font_list->end(); iter++)
+  for (iter = m_font_list->begin(); iter != m_font_list->end(); ++iter)
   {
     if (strcmp ( (*iter)->font_name, font_name) == 0)
     {
@@ -405,7 +405,7 @@ FontFamily *FontMgr::get_font_family (const char *font_name)
 {
   list <FontFamily *>::iterator iter;
 
-  for (iter = m_font_list->begin(); iter != m_font_list->end(); iter++)
+  for (iter = m_font_list->begin(); iter != m_font_list->end(); ++iter)
   {
     if (strcmp ( (*iter)->font_name, font_name) == 0)
     {
@@ -421,11 +421,11 @@ FontStyle *FontMgr::get_font_style (char *font_name, char *style_name)
   list <FontFamily *>::iterator iter;
   list <FontStyle *>::iterator iter1;
 
-  for (iter = m_font_list->begin(); iter != m_font_list->end(); iter++)
+  for (iter = m_font_list->begin(); iter != m_font_list->end(); ++iter)
   {
     if (strcmp ( (*iter)->font_name, font_name) == 0)
     {
-      for (iter1 = ( (*iter)->style_list)->begin(); iter1 != ( (*iter)->style_list)->end(); iter1++)
+      for (iter1 = ( (*iter)->style_list)->begin(); iter1 != ( (*iter)->style_list)->end(); ++iter1)
         if (strcmp ( (*iter1)->style_name, style_name) == 0)
         {
           return (*iter1);
@@ -909,13 +909,6 @@ void FontMgr::RenderTextLineStatic (const PageBBox &pageSize, const std::string 
   ComputeGlyphString (stringBBox.x, stringBBox.y, Str.c_str() );
   RenderGlyph (pageSize, Str.c_str(), alignment);
 
-  int bmpX;
-  int bmpY;
-  int bmpWidth;
-  int bmpHeight;
-  float u;
-  float v;
-
   if (trailingchar == 0)
     return;
 
@@ -935,10 +928,10 @@ void FontMgr::RenderTextLineStatic (const PageBBox &pageSize, const std::string 
     int posX = gGlyphs[gNumGlyphs-1].pos.x + last_cd.hadvance;
     int posY = gGlyphs[gNumGlyphs-1].pos.y; // - dot_cd.bitmap_top_bearing;
 
-    bmpWidth = dot_cd.bitmap_width;
-    bmpHeight = dot_cd.bitmap_height;
-    u = float (dot_cd.bitmap_width) / dot_cd.glTexWidth;
-    v = float (dot_cd.bitmap_height) / dot_cd.glTexHeight;
+    int bmpWidth = dot_cd.bitmap_width;
+    int bmpHeight = dot_cd.bitmap_height;
+    float u = float (dot_cd.bitmap_width) / dot_cd.glTexWidth;
+    float v = float (dot_cd.bitmap_height) / dot_cd.glTexHeight;
 
 //        glBindTexture(GL_TEXTURE_2D, dot_gltexid);
 //        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -955,8 +948,8 @@ void FontMgr::RenderTextLineStatic (const PageBBox &pageSize, const std::string 
 
     while (posX + dot_cd.hadvance < page_right_border_posX)
     {
-      bmpX = posX + dot_cd.bitmap_left_bearing;
-      bmpY = posY - dot_cd.bitmap_top_bearing;
+      int bmpX = posX + dot_cd.bitmap_left_bearing;
+      int bmpY = posY - dot_cd.bitmap_top_bearing;
 
       glBegin (GL_QUADS);
       glMultiTexCoord2fARB (GL_TEXTURE0_ARB, 0.0f, 0.0f);

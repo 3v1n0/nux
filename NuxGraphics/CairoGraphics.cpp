@@ -634,7 +634,7 @@ namespace nux
     cairo_set_antialias(_cr, CAIRO_ANTIALIAS_NONE);
     
     std::list<Rect>::iterator it;
-    for (it = region.begin(); it != region.end(); it++)
+    for (it = region.begin(); it != region.end(); ++it)
     {
       Rect rect = (*it);
 

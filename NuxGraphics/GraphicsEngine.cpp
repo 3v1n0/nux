@@ -718,7 +718,7 @@ namespace nux
     _clip_offset_y = 0;
 
     std::list<Point>::iterator it;
-    for (it = _clip_offset_stack.begin(); it != _clip_offset_stack.end(); it++)
+    for (it = _clip_offset_stack.begin(); it != _clip_offset_stack.end(); ++it)
     {
       _clip_offset_x += (*it).x;
       _clip_offset_y += (*it).y;
@@ -739,7 +739,7 @@ namespace nux
     _clip_offset_y = 0;
 
     std::list<Point>::iterator it;
-    for (it = _clip_offset_stack.begin(); it != _clip_offset_stack.end(); it++)
+    for (it = _clip_offset_stack.begin(); it != _clip_offset_stack.end(); ++it)
     {
       _clip_offset_x += (*it).x;
       _clip_offset_y += (*it).y;
@@ -789,7 +789,7 @@ namespace nux
       Matrix4 temp;
       std::list<Matrix4>::iterator it;
 
-      for (it = m_2DModelViewMatricesStack.begin(); it != m_2DModelViewMatricesStack.end(); it++)
+      for (it = m_2DModelViewMatricesStack.begin(); it != m_2DModelViewMatricesStack.end(); ++it)
       {
         temp = _model_view_matrix;
         _model_view_matrix = temp * (*it);
@@ -848,7 +848,7 @@ namespace nux
       Matrix4 temp;
       std::list<Matrix4>::iterator it;
 
-      for (it = m_2DModelViewMatricesStack.begin(); it != m_2DModelViewMatricesStack.end(); it++)
+      for (it = m_2DModelViewMatricesStack.begin(); it != m_2DModelViewMatricesStack.end(); ++it)
       {
         temp = _model_view_matrix;
         _model_view_matrix = (*it) * temp;
@@ -876,7 +876,7 @@ namespace nux
       Matrix4 temp;
       std::list<Matrix4>::iterator it;
 
-      for (it = m_2DModelViewMatricesStack.begin(); it != m_2DModelViewMatricesStack.end(); it++)
+      for (it = m_2DModelViewMatricesStack.begin(); it != m_2DModelViewMatricesStack.end(); ++it)
       {
         temp = _model_view_matrix;
         _model_view_matrix = temp * (*it);
@@ -894,7 +894,7 @@ namespace nux
       Matrix4 temp;
       std::list<Matrix4>::iterator it;
 
-      for (it = m_2DModelViewMatricesStack.begin(); it != m_2DModelViewMatricesStack.end(); it++)
+      for (it = m_2DModelViewMatricesStack.begin(); it != m_2DModelViewMatricesStack.end(); ++it)
       {
         temp = _model_view_matrix;
         _model_view_matrix = temp * (*it);

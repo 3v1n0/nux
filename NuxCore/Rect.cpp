@@ -120,6 +120,12 @@ namespace nux
              (y <= p.y) && (y + height > p.y) );
   }
 
+  bool Rect::IsInside(const Point2D<float> &p) const
+  {
+    return ( (x <= (int)p.x) && (x + width > (int)p.x) &&
+             (y <= (int)p.y) && (y + height > (int)p.y) );
+  }
+
   bool Rect::IsPointInside (int x_, int y_) const
   {
     return ( (x <= x_) && (x + width > x_) &&

@@ -249,6 +249,10 @@ namespace nux
     sigc::signal<void, Layout*, Area*> ViewAdded;
     sigc::signal<void, Layout*, Area*> ViewRemoved;
 
+#ifdef NUX_GESTURES_SUPPORT
+    virtual Area* GetInputAreaHitByGesture(const GestureEvent &event);
+#endif
+
   protected:
     virtual bool AcceptKeyNavFocus();
     

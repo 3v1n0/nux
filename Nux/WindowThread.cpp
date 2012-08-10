@@ -19,7 +19,7 @@
  *
  */
 
-
+#include "Features.h"
 #include "Nux.h"
 #include "Layout.h"
 #include "NuxCore/Logger.h"
@@ -61,6 +61,9 @@ logging::Logger logger("nux.windows.thread");
     , embedded_window_(false)
     , window_size_configuration_event_(false)
     , force_rendering_(false)
+#ifdef NUX_GESTURES_SUPPORT
+    , geis_adapter_(new GeisAdapter)
+#endif
   {
     // Thread specific objects
     graphics_display_       = NULL;
@@ -301,7 +304,7 @@ logging::Logger logger("nux.windows.thread");
     StartLayoutCycle();
     std::list<Area *>::iterator it;
 
-    for (it = _queued_layout_list.begin(); it != _queued_layout_list.end(); it++)
+    for (it = _queued_layout_list.begin(); it != _queued_layout_list.end(); ++it)
     {
       Area *area = *it;
 
@@ -493,13 +496,51 @@ logging::Logger logger("nux.windows.thread");
 
   extern EventToNameStruct EventToName[];
 
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-  unsigned int WindowThread::ExecutionLoop(unsigned int timer_id)
-#else
-  unsigned int WindowThread::ExecutionLoop()
-#endif
+#if (!defined(NUX_OS_LINUX) && !defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) || defined(NUX_DISABLE_GLIB_LOOP)
+#ifdef NUX_GESTURES_SUPPORT
+  Event *WindowThread::FetchNextEvent()
   {
+    Event *event;
+
+    if (check_geis_first_)
+    {
+      if (geis_adapter_->ProcessNextEvent(&gesture_event_))
+      {
+        event = &gesture_event_;
+      }
+      else
+      {
+        graphics_display_->GetSystemEvent(&input_event_);
+        event = &input_event;
+      }
+    }
+    else
+    {
+      if (graphics_display_->GetSystemEvent(&input_event_))
+      {
+        event = &input_event_;
+      }
+      else
+      {
+        geis_adapter_->ProcessNextEvent(&gesture_event_);
+        event = &gesture_event_;
+      }
+    }
+
+    // If we are running in a loop and both event buffers (X and GEIS) happens
+    // to have pending events, let's take one from each alternately so that no
+    // buffer overflows.
+    check_geis_first_ = !check_geis_first_;
+
+    return event;
+  }
+#endif // NUX_GESTURES_SUPPORT
+
+  unsigned int WindowThread::ExecutionLoop()
+  {
+#ifndef NUX_GESTURES_SUPPORT
     Event event;
+#endif
 
     if (!IsEmbeddedWindow() && graphics_display_->IsPauseThreadGraphicsRendering())
     {
@@ -507,190 +548,218 @@ logging::Logger logger("nux.windows.thread");
       return 0;
     }
 
-#if (!defined(NUX_OS_LINUX) && !defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) || defined(NUX_DISABLE_GLIB_LOOP)
     while (true)
-#endif
     {
-      _inside_main_loop = true;
+#ifdef NUX_GESTURES_SUPPORT
+      int result = DoProcessEvent(*FetchNextEvent());
+#else
+      graphics_display_->GetSystemEvent(&event);
+      int result = DoProcessEvent(event);
+#endif
+      if (result != 1)
+        return result;
+    }
+
+    return 1;
+  }
+#endif // GLIB loop or not
+
+  unsigned int WindowThread::ProcessEvent(Event &event)
+  {
+    if (!IsEmbeddedWindow() && graphics_display_->IsPauseThreadGraphicsRendering())
+    {
+      // Do not sleep. Just return and let the GraphicsDisplay::SwapBuffer do the sleep if necessary.
+      return 0;
+    }
+
+    return DoProcessEvent(event);
+  }
+
+  unsigned int WindowThread::DoProcessEvent(Event &event)
+  {
+    _inside_main_loop = true;
+
+    if (first_pass_)
+    {
+      // Reset the timers that were called before the mainloop got initialized.
+      GetTimer().StartEarlyTimerObjects();
+    }
+
+    if ((event.type == NUX_DND_ENTER_WINDOW) ||
+        (event.type == NUX_DND_LEAVE_WINDOW))
+    {
+      GetWindowCompositor().ResetDnDArea();
+    }
+
+    // Call event inspectors.
+    bool event_discarded = CallEventInspectors(&event);
+    if (event_discarded)
+    {
+      return 1;
+    }
+
+    if ((event.type == NUX_TERMINATE_APP) || (this->GetThreadState() == THREADSTOP))
+    {
+      return 0;
+    }
+
+    if (event.type == NUX_SIZE_CONFIGURATION)
+    {
+      window_size_configuration_event_ = true;
+      Rect r = graphics_display_->GetWindowGeometry();
+      window_configuration.emit(r.x, r.y, r.width, r.height);
+    }
+
+    int w, h;
+    // Call gGfx_OpenGL.getWindowSize after the gGfx_OpenGL.get_event.
+    // Otherwise, w and h may not be correct for the current frame if a resizing happened.
+    graphics_display_->GetWindowSize(w, h);
+
+    if ((event.type == NUX_MOUSE_PRESSED) ||
+        (event.type == NUX_MOUSE_RELEASED) ||
+        (event.type == NUX_MOUSE_DOUBLECLICK) ||
+        (event.type == NUX_MOUSE_MOVE) ||
+        (event.type == NUX_SIZE_CONFIGURATION) ||
+        (event.type == NUX_KEYDOWN) ||
+        (event.type == NUX_KEYUP) ||
+        (event.type == NUX_NC_WINDOW_CONFIGURATION) ||
+        (event.type == NUX_WINDOW_ENTER_FOCUS) ||
+        (event.type == NUX_WINDOW_EXIT_FOCUS) ||
+        (event.type == NUX_WINDOW_MOUSELEAVE) ||
+        (event.type == NUX_DND_MOVE) ||
+        (event.type == NUX_DND_DROP) ||
+        (event.type == NUX_DND_ENTER) ||
+        (event.type == NUX_DND_LEAVE) ||
+        (event.type == NUX_MOUSE_WHEEL) ||
+        event.type == EVENT_GESTURE_BEGIN ||
+        event.type == EVENT_GESTURE_UPDATE ||
+        event.type == EVENT_GESTURE_END)
+    {
+      //DISPATCH EVENT HERE
+      //event.Application = Application;
+      window_compositor_->ProcessEvent(event);
+    }
+
+    if (event.type == NUX_SIZE_CONFIGURATION)
+    {
+      if (!graphics_display_->isWindowMinimized())
+      {
+        graphics_display_->SetViewPort(0, 0, event.width, event.height);
+        ReconfigureLayout();
+        window_compositor_->FormatRenderTargets(event.width, event.height);
+      }
+      window_compositor_->FloatingAreaConfigureNotify(event.width, event.height);
+      window_size_configuration_event_ = true;
+    }
+
+    // Some action may have caused layouts and areas to request a recompute. 
+    // Process them here before the Draw section.
+    if (!graphics_display_->isWindowMinimized() && !IsEmbeddedWindow())
+    {
+      if (queue_main_layout_)
+      {
+        ReconfigureLayout();
+      }
+      else 
+      {
+        // Compute the layouts that have been queued.
+        ComputeQueuedLayout();
+      }
+    }
+
+    _inside_main_loop = false;
+
+    if (!graphics_display_->IsPauseThreadGraphicsRendering() || IsEmbeddedWindow())
+    {
+      bool SwapGLBuffer = false;
+
+      // Warn the host window manager to initiate a draw cycle.
+      bool request_draw_cycle_to_host_wm = false;
 
       if (first_pass_)
       {
-        // Reset the timers that were called before the mainloop got initialized.
-        GetTimer().StartEarlyTimerObjects();
+        if (IsEmbeddedWindow())
+        {
+          request_draw_cycle_to_host_wm = true;
+          force_rendering_ = true;
+        }
+        else
+        {
+          window_compositor_->Draw(window_size_configuration_event_, true);
+        }
+        first_pass_ = false;
       }
-
-      memset(&event, 0, sizeof(Event));
-      graphics_display_->GetSystemEvent(&event);
-
-      if ((event.type == NUX_DND_ENTER_WINDOW) ||
-        (event.type == NUX_DND_LEAVE_WINDOW))
+      else
       {
-        GetWindowCompositor().ResetDnDArea();
-      }
-
-      // Call event inspectors.
-      CallEventInspectors(&event);
-
-      if ((event.type == NUX_TERMINATE_APP) || (this->GetThreadState() == THREADSTOP))
-      {
-          return 0;
-      }
-      
-      if (event.type == NUX_SIZE_CONFIGURATION)
-      {
-        window_size_configuration_event_ = true;
-        Rect r = graphics_display_->GetWindowGeometry();
-        window_configuration.emit(r.x, r.y, r.width, r.height);
-      }
-
-      int w, h;
-      // Call gGfx_OpenGL.getWindowSize after the gGfx_OpenGL.get_event.
-      // Otherwise, w and h may not be correct for the current frame if a resizing happened.
-      graphics_display_->GetWindowSize(w, h);
-
-      if ((event.type == NUX_MOUSE_PRESSED) ||
+        bool b = (event.type == NUX_MOUSE_PRESSED) ||
           (event.type == NUX_MOUSE_RELEASED) ||
           (event.type == NUX_MOUSE_DOUBLECLICK) ||
-          (event.type == NUX_MOUSE_MOVE) ||
+          //(event.type == NUX_MOUSE_MOVE) ||
           (event.type == NUX_SIZE_CONFIGURATION) ||
           (event.type == NUX_KEYDOWN) ||
           (event.type == NUX_KEYUP) ||
           (event.type == NUX_NC_WINDOW_CONFIGURATION) ||
           (event.type == NUX_WINDOW_ENTER_FOCUS) ||
           (event.type == NUX_WINDOW_EXIT_FOCUS) ||
-          (event.type == NUX_WINDOW_MOUSELEAVE) ||
-          (event.type == NUX_DND_MOVE) ||
-          (event.type == NUX_DND_DROP) ||
-          (event.type == NUX_DND_ENTER) ||
-          (event.type == NUX_DND_LEAVE) ||
-          (event.type == NUX_MOUSE_WHEEL))
-      {
-          //DISPATCH EVENT HERE
-          //event.Application = Application;
-          window_compositor_->ProcessEvent(event);
-      }
+          (event.type == NUX_WINDOW_DIRTY);
 
-      if (event.type == NUX_SIZE_CONFIGURATION)
-      {
-          if (!graphics_display_->isWindowMinimized())
-          {
-              graphics_display_->SetViewPort(0, 0, event.width, event.height);
-              ReconfigureLayout();
-              window_compositor_->FormatRenderTargets(event.width, event.height);
-          }
-          window_compositor_->FloatingAreaConfigureNotify(event.width, event.height);
-          window_size_configuration_event_ = true;
-      }
-
-      // Some action may have caused layouts and areas to request a recompute. 
-      // Process them here before the Draw section.
-      if (!graphics_display_->isWindowMinimized() && !IsEmbeddedWindow())
-      {
-        if (queue_main_layout_)
+        if (b && window_compositor_->IsTooltipActive())
         {
-          ReconfigureLayout();
+          // Cancel the tooltip since an event that should cause the tooltip to disappear has occurred.
+          window_compositor_->CancelTooltip();
+          b |= true;
         }
-        else 
+
+        if (!window_compositor_->ValidateMouseInsideTooltipArea(event.x, event.y) && window_compositor_->IsTooltipActive())
         {
-          // Compute the layouts that have been queued.
-          ComputeQueuedLayout();
+          // Cancel the tooltip since an event that should cause the tooltip to disappear has occurred.
+          window_compositor_->CancelTooltip();
+          b |= true;
         }
-      }
-      
-      _inside_main_loop = false;
 
-      if (!graphics_display_->IsPauseThreadGraphicsRendering() || IsEmbeddedWindow())
-      {
-        bool SwapGLBuffer = false;
-        
-        // Warn the host window manager to initiate a draw cycle.
-        bool request_draw_cycle_to_host_wm = false;
-
-        if (first_pass_)
+        if (b || IsRedrawNeeded())
         {
           if (IsEmbeddedWindow())
           {
             request_draw_cycle_to_host_wm = true;
-            force_rendering_ = true;
           }
           else
           {
-            window_compositor_->Draw(window_size_configuration_event_, true);
+            window_compositor_->Draw(window_size_configuration_event_, false);
           }
-          first_pass_ = false;
+          SwapGLBuffer = true;
         }
-        else
+        else if (window_compositor_->GetWidgetDrawingOverlay() != 0)
         {
-          bool b = (event.type == NUX_MOUSE_PRESSED) ||
-                   (event.type == NUX_MOUSE_RELEASED) ||
-                   (event.type == NUX_MOUSE_DOUBLECLICK) ||
-                   //(event.type == NUX_MOUSE_MOVE) ||
-                   (event.type == NUX_SIZE_CONFIGURATION) ||
-                   (event.type == NUX_KEYDOWN) ||
-                   (event.type == NUX_KEYUP) ||
-                   (event.type == NUX_NC_WINDOW_CONFIGURATION) ||
-                   (event.type == NUX_WINDOW_ENTER_FOCUS) ||
-                   (event.type == NUX_WINDOW_EXIT_FOCUS) ||
-                   (event.type == NUX_WINDOW_DIRTY);
-
-          if (b && window_compositor_->IsTooltipActive())
+          if (IsEmbeddedWindow())
           {
-            // Cancel the tooltip since an event that should cause the tooltip to disappear has occurred.
-            window_compositor_->CancelTooltip();
-            b |= true;
+            request_draw_cycle_to_host_wm = true;
           }
-
-          if (!window_compositor_->ValidateMouseInsideTooltipArea(event.x, event.y) && window_compositor_->IsTooltipActive())
+          else
           {
-            // Cancel the tooltip since an event that should cause the tooltip to disappear has occurred.
-            window_compositor_->CancelTooltip();
-            b |= true;
+            window_compositor_->Draw(window_size_configuration_event_, false);
           }
-
-          if (b || IsRedrawNeeded())
-          {
-            if (IsEmbeddedWindow())
-            {
-              request_draw_cycle_to_host_wm = true;
-            }
-            else
-            {
-              window_compositor_->Draw(window_size_configuration_event_, false);
-            }
-            SwapGLBuffer = true;
-          }
-          else if (window_compositor_->GetWidgetDrawingOverlay() != 0)
-          {
-            if (IsEmbeddedWindow())
-            {
-              request_draw_cycle_to_host_wm = true;
-            }
-            else
-            {
-              window_compositor_->Draw(window_size_configuration_event_, false);
-            }
-            SwapGLBuffer = false;
-          }
-
+          SwapGLBuffer = false;
         }
 
-        if (!IsEmbeddedWindow())
-        {
-          if (SwapGLBuffer)
-          {
-            // Something was rendered! Swap the rendering buffer!
-            graphics_display_->SwapBuffer(true);
-          }
-
-          ClearRedrawFlag();
-          GetWindowThread()->GetGraphicsEngine().ResetStats();
-        }
-        else if (IsEmbeddedWindow() && (_draw_requested_to_host_wm == false) && request_draw_cycle_to_host_wm)
-        {
-          RequestRedraw();
-        }
-        window_size_configuration_event_ = false;
       }
+
+      if (!IsEmbeddedWindow())
+      {
+        if (SwapGLBuffer)
+        {
+          // Something was rendered! Swap the rendering buffer!
+          graphics_display_->SwapBuffer(true);
+        }
+
+        ClearRedrawFlag();
+        GetWindowThread()->GetGraphicsEngine().ResetStats();
+      }
+      else if (IsEmbeddedWindow() && (_draw_requested_to_host_wm == false) && request_draw_cycle_to_host_wm)
+      {
+        RequestRedraw();
+      }
+      window_size_configuration_event_ = false;
     }
 
     return 1;
@@ -753,7 +822,7 @@ logging::Logger logger("nux.windows.thread");
   {
     std::list<AbstractThread*>::iterator it;
 
-    for (it = children_thread_list_.begin(); it != children_thread_list_.end(); it++)
+    for (it = children_thread_list_.begin(); it != children_thread_list_.end(); ++it)
     {
       (*it)->SetThreadState(THREADSTOP);
 
@@ -920,7 +989,7 @@ logging::Logger logger("nux.windows.thread");
   {
     std::list<AbstractThread*>::iterator it;
 
-    for (it = children_thread_list_.begin(); it != children_thread_list_.end(); it++)
+    for (it = children_thread_list_.begin(); it != children_thread_list_.end(); ++it)
     {
       if (NUX_STATIC_CAST(WindowThread *, *it)->Type().IsObjectType(WindowThread::StaticObjectType))
       {
@@ -941,7 +1010,7 @@ logging::Logger logger("nux.windows.thread");
   {
     std::list<AbstractThread*>::iterator it;
 
-    for (it = children_thread_list_.begin(); it != children_thread_list_.end(); it++)
+    for (it = children_thread_list_.begin(); it != children_thread_list_.end(); ++it)
     {
       if (NUX_STATIC_CAST(WindowThread *, *it)->Type().IsObjectType(WindowThread::StaticObjectType))
       {
@@ -1442,7 +1511,7 @@ logging::Logger logger("nux.windows.thread");
 
     std::map < int, EventInspectorStorage >::iterator it;
 
-    for (it = _event_inspectors_map.begin(); it != _event_inspectors_map.end(); it++)
+    for (it = _event_inspectors_map.begin(); it != _event_inspectors_map.end(); ++it)
     {
       if ((*it).second._function == function)
       {
@@ -1467,7 +1536,7 @@ logging::Logger logger("nux.windows.thread");
 
     std::map < int, EventInspectorStorage >::iterator it;
 
-    for (it = _event_inspectors_map.begin(); it != _event_inspectors_map.end(); it++)
+    for (it = _event_inspectors_map.begin(); it != _event_inspectors_map.end(); ++it)
     {
       if ((*it).second._uid == event_inspector_id)
       {
@@ -1484,7 +1553,7 @@ logging::Logger logger("nux.windows.thread");
 
     std::map < int, EventInspectorStorage >::iterator it;
 
-    for (it = _event_inspectors_map.begin(); it != _event_inspectors_map.end(); it++)
+    for (it = _event_inspectors_map.begin(); it != _event_inspectors_map.end(); ++it)
     {
       if ((*it).second._function == function)
       {
@@ -1507,7 +1576,7 @@ logging::Logger logger("nux.windows.thread");
     bool discard_event = false;
     std::map < int, EventInspectorStorage >::iterator it;
 
-    for (it = _event_inspectors_map.begin(); it != _event_inspectors_map.end(); it++)
+    for (it = _event_inspectors_map.begin(); it != _event_inspectors_map.end(); ++it)
     {
       EventInspector callback = (*it).second._function;
 
