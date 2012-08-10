@@ -511,4 +511,27 @@ namespace nux
   {
     return accept_key_nav_focus_;
   }
+
+#ifdef NUX_GESTURES_SUPPORT
+  Area* BaseWindow::GetInputAreaHitByGesture(const nux::GestureEvent &event)
+  {
+    if (!IsVisible())
+      return nullptr;
+
+    if (!IsGestureInsideArea(event))
+      return nullptr;
+
+    if (m_layout)
+    {
+      Area *area_hit = m_layout->GetInputAreaHitByGesture(event);
+      if (area_hit)
+        return area_hit;
+    }
+
+    if (HasSubscriptionForGesture(event))
+      return this;
+    else
+      return nullptr;
+  }
+#endif
 }

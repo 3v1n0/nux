@@ -33,7 +33,8 @@ namespace nux
   class TimeOutSignal : public sigc::trackable
   {
   public:
-    sigc::signal<void, void *> time_expires;
+    sigc::signal<void, void *> tick;
+    sigc::signal<void, void *> expired;
   };
   typedef TimeOutSignal TimerFunctor;
 
@@ -77,6 +78,13 @@ namespace nux
       TIMERTYPE_ITERATION,
     };
 
+    typedef enum
+    {
+      TIMER_STATE_STOPED,
+      TIMER_STATE_PAUSED,
+      TIMER_STATE_RUNNING,
+    } TimerState;
+
     TimerHandler(WindowThread *window_thread);
     ~TimerHandler();
 
@@ -85,38 +93,38 @@ namespace nux
       Add a timer callback to the timer manager. When the timer expires, the callback function is executed.
       The returned TimerObject should not be deleted by the caller.
 
-      @param Milliseconds   Period delay before the callback is executed.
-      @param timeout_signal       The callback to execute when the timer expires.
+      @param Milliseconds   period Time before the timer ticks. The timer ticks only once and then it expires.
+      @param timeout_signal The callback to execute when the timer expires.
       @param Data           The callback data
-      @param window_thread  Thread safety mesure. Pass the WindowThread associated to this TimerHandler if it is called from a different thread than the one where the main thread was created.
+      @param window_thread  Thread safety measure. Pass the WindowThread associated to this TimerHandler if it is called from a different thread than the one where the main thread was created.
       @return               A handle to the timer.
     */
-    TimerHandle AddTimerHandler (unsigned int Period, TimeOutSignal *timeout_signal, void *Data, WindowThread* window_thread = NULL);
+    TimerHandle AddOneShotTimer(unsigned int period, TimeOutSignal *timeout_signal, void *Data, WindowThread* window_thread = NULL);
     //! Add a periodic timer callback.
     /*!
       Add a timer callback to the timer manager. Every time the timer expires, the callback function is executed.
       The returned TimerHandle should not be deleted by the caller.
 
-      @param Milliseconds   Period delay before the callback is executed.
+      @param Milliseconds   period Time between the timer ticks. The timer will tick 'NumberOfIteration' times.
       @param Duration       The duration over which the timer is repeated.
-      @param timeout_signal       The callback to execute when the timer expires.
+      @param timeout_signal The callback to execute when the timer expires.
       @param Data           The callback data
       @return               A handle to the timer.
     */
-    TimerHandle AddPeriodicTimerHandler (unsigned int Period, int Duration, TimeOutSignal *timeout_signal, void *Data);
+    TimerHandle AddDurationTimer(unsigned int period, int Duration, TimeOutSignal *timeout_signal, void *Data);
     //! Add a timer callback to be called a finite number of time.
     /*!
       Add a timer callback to the timer manager. The timer callback will be call N times exactly.
       Every time the timer expires, the callback function is executed.
       The returned TimerHandle should not be deleted by the caller.
 
-      @param Milliseconds       Period delay before the callback is executed.
-      @param NumberOfIteration  The number of time to repeat the the wait period.
-      @param timeout_signal           The callback to execute when the timer expires.
+      @param Milliseconds       period Time between the timer ticks. The timer will tick 'NumberOfIteration' times.
+      @param NumberOfIteration  The number of time to repeat the wait period.
+      @param timeout_signal     The callback to execute when the timer expires.
       @param Data               The callback data
       @return                   A handle to the timer.
     */
-    TimerHandle AddCountIterationTimerHandler (unsigned int Period, int NumberOfIteration, TimeOutSignal *timeout_signal, void *Data);
+    TimerHandle AddIterativeTimer(unsigned int period, int NumberOfIteration, TimeOutSignal *timeout_signal, void *Data);
 
     //! Search for a timer handle.
     /*!
@@ -125,14 +133,31 @@ namespace nux
       @param handle             Timer handle to search.
       @return                   Return true if the timer is found; false otherwise.
     */
-    bool FindTimerHandle (TimerHandle &handle);
+    bool FindTimerHandle(TimerHandle& handle);
 
     //! Remove a timer;
     /*!
-      @param handle Timer handle to search.
-      @return Return True if the timer is found.
+        This call stops the timer.
+        @param handle Timer handle to search.
+        @return Return True if the timer is found.
     */
-    bool RemoveTimerHandler (TimerHandle &handle);
+    bool RemoveTimerHandler(TimerHandle& handle);
+
+    //! Pause a timer.
+    /*!
+        This call pauses a timer.
+        @param handle Timer handle to look for.
+        @return True if the timer is paused.
+    */
+    bool PauseTimer(TimerHandle& handle);
+
+    //! Resume the execution of a timer.
+    /*!
+        This call resumes the execution of a timer.
+        @param handle Timer handle to look for.
+        @return True if the timer execution has resumed..
+    */
+    bool ResumeTimer(TimerHandle& handle);
 
     //! Return the delay until the next timer expires.
     /*!
@@ -150,14 +175,20 @@ namespace nux
     void StartEarlyTimerObjects();
 
   private:
+    // Prevent copy constructor.
+    TimerHandler(const TimerHandler&);
+
+    // Prevent assignment operator.
+    TimerHandler& operator = (const TimerHandler&);
+
     WindowThread *window_thread_; //!< The WindowThread to which this object belongs.
 
-    bool m_IsProceesingTimers;
-    TimerObject *AddHandle (TimerObject *handle);
+    bool is_processing_timers_;
+    TimerObject* AddHandle(TimerObject *handle);
     unsigned int GetNumPendingHandler();
 
     //! Single linked list of timer delays.
-    TimerObject *m_timer_object_queue;
+    TimerObject* timer_object_queue_;
     std::list<TimerObject*> _early_timer_objects;  //!< timer objects that couldn't be started because the main loop is not runing yet.
   };
 

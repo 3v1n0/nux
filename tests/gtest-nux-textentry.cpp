@@ -28,6 +28,7 @@
 #include "Nux/HLayout.h"
 #if defined(NUX_OS_LINUX)
 #include "Nux/InputMethodIBus.h"
+#include "Nux/TextEntryComposeSeqs.h"
 #endif
 
 using namespace testing;
@@ -61,6 +62,48 @@ public:
     TextEntry::SetCursor(cursor);
   }
 
+  bool InCompositionMode() const
+  {
+    return TextEntry::IsInCompositionMode();
+  }
+
+  bool HandleComposition(unsigned long keysym)
+  {
+    return TextEntry::HandleComposition(keysym);
+  }
+
+  void ClearText()
+  {
+    TextEntry::DeleteText(0, std::numeric_limits<int>::max());
+    ASSERT_TRUE(GetText().empty());
+  }
+
+  enum class CompositionResult
+  {
+    NO_MATCH,
+    PARTIAL,
+    MATCH
+  };
+
+  CompositionResult GetCompositionForList(std::vector<unsigned long> const& input, std::string& composition)
+  {
+    return static_cast<CompositionResult>(TextEntry::GetCompositionForList(input, composition));
+  }
+
+  CompositionResult GetCompositionForString(std::string const& input, std::string& composition)
+  {
+    std::vector<unsigned long> input_vec;
+#if defined(NUX_OS_LINUX)
+    input_vec.push_back(XK_Multi_key);
+
+    for (auto c : input)
+    {
+      input_vec.push_back(c);
+    }
+#endif
+    return GetCompositionForList(input_vec, composition);
+  }
+
   nux::IBusIMEContext* ime() const
   {
 #if defined(NUX_OS_LINUX)
@@ -68,12 +111,6 @@ public:
 #else
     return nullptr;
 #endif
-  }
-
-  void WaitEvent()
-  {
-    if (im_running())
-      Utils::WaitForTimeoutMSec(100);
   }
 
   MOCK_METHOD0(CutClipboard, void());
@@ -87,22 +124,23 @@ public:
 class TestEvent : public Event
 {
 public:
-  TestEvent(KeyModifier keymod, unsigned long keysym)
+  TestEvent(KeyModifier keymod, unsigned long keysym, EventType type = NUX_KEYDOWN)
   {
-    type = NUX_KEYDOWN;
+    Init(keysym, type);
     key_modifiers = keymod;
-#if defined(NUX_OS_LINUX)
-    x11_keysym = keysym;
-#elif defined(NUX_OS_WINDOWS)
-    win32_keysym = keysym;
-#endif
   }
 
-  TestEvent(unsigned long keysym)
+  TestEvent(unsigned long keysym, EventType type = NUX_KEYDOWN)
   {
-    type = NUX_KEYDOWN;
+    Init(keysym, type);
+  }
+
+  void Init(unsigned long keysym, EventType etype)
+  {
+    type = etype;
 #if defined(NUX_OS_LINUX)
     x11_keysym = keysym;
+    g_unichar_to_utf8(x11_keysym, text);
 #elif defined(NUX_OS_WINDOWS)
     win32_keysym = keysym;
 #endif
@@ -114,7 +152,6 @@ class TestTextEntry : public Test
 public:
   virtual void SetUp()
   {
-    NuxInitialize(0);
     wnd_thread.reset(CreateNuxWindow("Nux Window", 300, 200, WINDOWSTYLE_NORMAL,
                      nullptr, false, NULL, NULL));
 
@@ -124,6 +161,18 @@ public:
     wnd_thread->SetLayout(layout);
 
     GetWindowCompositor().SetKeyFocusArea(text_entry);
+  }
+
+  void WaitEvent()
+  {
+    if (text_entry->im_running())
+      Utils::WaitForTimeoutMSec(20);
+  }
+
+  void SendEvent(Event& event)
+  {
+    GetWindowCompositor().ProcessEvent(event);
+    WaitEvent();
   }
 
   std::unique_ptr<WindowThread> wnd_thread;
@@ -210,9 +259,9 @@ TEST_F(TestTextEntry, InvalidKeys)
   for (auto c : invalid_chars)
   {
     unsigned int keysym = g_utf8_get_char(c.c_str());
-    text_entry->DeleteText(0, std::numeric_limits<int>::max());
+    text_entry->ClearText();
     text_entry->key_down.emit(NUX_KEYDOWN, keysym, 0, c.c_str(), 1);
-    text_entry->WaitEvent();
+    WaitEvent();
     EXPECT_EQ(text_entry->GetText(), "");
   }
 }
@@ -221,32 +270,28 @@ TEST_F(TestTextEntry, CopyCtrlC)
 {
   EXPECT_CALL(*text_entry, CopyClipboard());
   TestEvent event(KEY_MODIFIER_CTRL, NUX_VK_c);
-  GetWindowCompositor().ProcessEvent(event);
-  text_entry->WaitEvent();
+  SendEvent(event);
 }
 
 TEST_F(TestTextEntry, CopyCtrlIns)
 {
   EXPECT_CALL(*text_entry, CopyClipboard());
   TestEvent event(KEY_MODIFIER_CTRL, NUX_VK_INSERT);
-  GetWindowCompositor().ProcessEvent(event);
-  text_entry->WaitEvent();
+  SendEvent(event);
 }
 
 TEST_F(TestTextEntry, PasteCtrlV)
 {
   EXPECT_CALL(*text_entry, PasteClipboard());
   TestEvent event(KEY_MODIFIER_CTRL, NUX_VK_v);
-  GetWindowCompositor().ProcessEvent(event);
-  text_entry->WaitEvent();
+  SendEvent(event);
 }
 
 TEST_F(TestTextEntry, PasteShiftIns)
 {
   EXPECT_CALL(*text_entry, PasteClipboard());
   TestEvent event(KEY_MODIFIER_SHIFT, NUX_VK_INSERT);
-  GetWindowCompositor().ProcessEvent(event);
-  text_entry->WaitEvent();
+  SendEvent(event);
 }
 
 #if defined(NUX_OS_LINUX)
@@ -267,16 +312,14 @@ TEST_F(TestTextEntry, CutCtrlX)
 {
   EXPECT_CALL(*text_entry, CutClipboard());
   TestEvent event(KEY_MODIFIER_CTRL, NUX_VK_x);
-  GetWindowCompositor().ProcessEvent(event);
-  text_entry->WaitEvent();
+  SendEvent(event);
 }
 
 TEST_F(TestTextEntry, CutShiftDel)
 {
   EXPECT_CALL(*text_entry, CutClipboard());
   TestEvent event(KEY_MODIFIER_SHIFT, NUX_VK_DELETE);
-  GetWindowCompositor().ProcessEvent(event);
-  text_entry->WaitEvent();
+  SendEvent(event);
 }
 
 TEST_F(TestTextEntry, CtrlA)
@@ -289,8 +332,7 @@ TEST_F(TestTextEntry, CtrlA)
   ASSERT_EQ(start, end);
   ASSERT_EQ(start, test_str.length());
 
-  GetWindowCompositor().ProcessEvent(selectall);
-  text_entry->WaitEvent();
+  SendEvent(selectall);
   EXPECT_TRUE(text_entry->GetSelectionBounds(&start, &end));
   EXPECT_EQ(start, 0);
   EXPECT_EQ(end, test_str.length());
@@ -305,23 +347,19 @@ TEST_F(TestTextEntry, MoveKeys)
   ASSERT_EQ(text_entry->GetCursor(), 0);
 
   TestEvent right(NUX_VK_RIGHT);
-  GetWindowCompositor().ProcessEvent(right);
-  text_entry->WaitEvent();
+  SendEvent(right);
   EXPECT_EQ(text_entry->GetCursor(), 1);
 
   TestEvent end(NUX_VK_END);
-  GetWindowCompositor().ProcessEvent(end);
-  text_entry->WaitEvent();
+  SendEvent(end);
   EXPECT_EQ(text_entry->GetCursor(), test_str.length());
 
   TestEvent left(NUX_VK_LEFT);
-  GetWindowCompositor().ProcessEvent(left);
-  text_entry->WaitEvent();
+  SendEvent(left);
   EXPECT_EQ(text_entry->GetCursor(), 2);
 
   TestEvent home(NUX_VK_HOME);
-  GetWindowCompositor().ProcessEvent(home);
-  text_entry->WaitEvent();
+  SendEvent(home);
   EXPECT_EQ(text_entry->GetCursor(), 0);
 }
 
@@ -334,23 +372,19 @@ TEST_F(TestTextEntry, CtrlMoveKeys)
   ASSERT_EQ(text_entry->GetCursor(), 0);
 
   TestEvent right(KEY_MODIFIER_CTRL, NUX_VK_RIGHT);
-  GetWindowCompositor().ProcessEvent(right);
-  text_entry->WaitEvent();
+  SendEvent(right);
   EXPECT_EQ(text_entry->GetCursor(), 3);
 
   TestEvent left(KEY_MODIFIER_CTRL, NUX_VK_LEFT);
-  GetWindowCompositor().ProcessEvent(left);
-  text_entry->WaitEvent();
+  SendEvent(left);
   EXPECT_EQ(text_entry->GetCursor(), 0);
 
   TestEvent end(KEY_MODIFIER_CTRL, NUX_VK_END);
-  GetWindowCompositor().ProcessEvent(end);
-  text_entry->WaitEvent();
+  SendEvent(end);
   EXPECT_EQ(text_entry->GetCursor(), test_str.length());
 
   TestEvent home(KEY_MODIFIER_CTRL, NUX_VK_HOME);
-  GetWindowCompositor().ProcessEvent(home);
-  text_entry->WaitEvent();
+  SendEvent(home);
   EXPECT_EQ(text_entry->GetCursor(), 0);
 }
 
@@ -361,14 +395,12 @@ TEST_F(TestTextEntry, DeleteKeys)
   text_entry->SetCursor(0);
 
   TestEvent del(NUX_VK_DELETE);
-  GetWindowCompositor().ProcessEvent(del);
-  text_entry->WaitEvent();
+  SendEvent(del);
   EXPECT_EQ(text_entry->GetText(), "ux");
 
   text_entry->SetCursor(std::string(text_entry->GetText()).length());
   TestEvent backspace(NUX_VK_BACKSPACE);
-  GetWindowCompositor().ProcessEvent(backspace);
-  text_entry->WaitEvent();
+  SendEvent(backspace);
   EXPECT_EQ(text_entry->GetText(), "u");
 }
 
@@ -379,14 +411,267 @@ TEST_F(TestTextEntry, CtrlDeleteKeys)
   text_entry->SetCursor(0);
 
   TestEvent del(KEY_MODIFIER_CTRL, NUX_VK_DELETE);
-  GetWindowCompositor().ProcessEvent(del);
-  text_entry->WaitEvent();
+  SendEvent(del);
   EXPECT_EQ(text_entry->GetText(), " Text Entry");
 
   text_entry->SetCursor(std::string(text_entry->GetText()).length());
   TestEvent backspace(KEY_MODIFIER_CTRL, NUX_VK_BACKSPACE);
-  GetWindowCompositor().ProcessEvent(backspace);
-  text_entry->WaitEvent();
+  SendEvent(backspace);
   EXPECT_EQ(text_entry->GetText(), " Text ");
 }
+
+#if defined(NUX_OS_LINUX)
+TEST_F(TestTextEntry, CompositionStart)
+{
+  ASSERT_FALSE(text_entry->InCompositionMode());
+  TestEvent compose(XK_Multi_key);
+  SendEvent(compose);
+  EXPECT_TRUE(text_entry->InCompositionMode());
+}
+
+TEST_F(TestTextEntry, CompositionWrite)
+{
+  ASSERT_FALSE(text_entry->InCompositionMode());
+  TestEvent compose(XK_Multi_key);
+  SendEvent(compose);
+
+  TestEvent tilde(XK_asciitilde);
+  SendEvent(tilde);
+  EXPECT_TRUE(text_entry->InCompositionMode());
+
+  TestEvent n(TestEvent(XK_n));
+  SendEvent(n);
+  EXPECT_FALSE(text_entry->InCompositionMode());
+
+  EXPECT_EQ(text_entry->GetText(), "ñ");
+  text_entry->ClearText();
+
+  SendEvent(compose);
+  TestEvent less(XK_less);
+  SendEvent(less);
+  EXPECT_TRUE(text_entry->InCompositionMode());
+
+  TestEvent three(TestEvent(XK_3));
+  SendEvent(three);
+  EXPECT_FALSE(text_entry->InCompositionMode());
+  EXPECT_EQ(text_entry->GetText(), "♥");
+}
+
+TEST_F(TestTextEntry, CompositionIgnoreModifiers)
+{
+  ASSERT_FALSE(text_entry->InCompositionMode());
+  TestEvent compose(XK_Multi_key);
+  SendEvent(compose);
+
+  TestEvent tilde(XK_asciitilde);
+  SendEvent(tilde);
+  EXPECT_TRUE(text_entry->InCompositionMode());
+
+  for (auto keysym = XK_Shift_L; keysym <= XK_Hyper_R; ++keysym)
+  {
+    TestEvent modifier(keysym);
+    SendEvent(modifier);
+    EXPECT_TRUE(text_entry->InCompositionMode());
+  }
+
+  TestEvent AltGr(XK_ISO_Level3_Shift);
+  SendEvent(AltGr);
+  EXPECT_TRUE(text_entry->InCompositionMode());
+
+  TestEvent n(TestEvent(XK_n));
+  SendEvent(n);
+  EXPECT_FALSE(text_entry->InCompositionMode());
+
+  EXPECT_EQ(text_entry->GetText(), "ñ");
+}
+
+TEST_F(TestTextEntry, CompositionDeadKey)
+{
+  ASSERT_FALSE(text_entry->InCompositionMode());
+  TestEvent dead_key_cirucmflex(XK_dead_circumflex);
+  SendEvent(dead_key_cirucmflex);
+  EXPECT_TRUE(text_entry->InCompositionMode());
+
+  TestEvent a(XK_a);
+  SendEvent(a);
+  EXPECT_FALSE(text_entry->InCompositionMode());
+
+  EXPECT_EQ(text_entry->GetText(), "â");
+  text_entry->ClearText();
+
+  TestEvent dead_key_currency(XK_dead_currency);
+  SendEvent(dead_key_currency);
+  EXPECT_TRUE(text_entry->InCompositionMode());
+
+  TestEvent e(XK_e);
+  SendEvent(e);
+  EXPECT_FALSE(text_entry->InCompositionMode());
+
+  EXPECT_EQ(text_entry->GetText(), "€");
+}
+
+TEST_F(TestTextEntry, CompositionDeadKeyRepeat)
+{
+  ASSERT_FALSE(text_entry->InCompositionMode());
+  TestEvent dead_key(XK_dead_grave);
+  SendEvent(dead_key);
+  EXPECT_TRUE(text_entry->InCompositionMode());
+
+  SendEvent(dead_key);
+  EXPECT_FALSE(text_entry->InCompositionMode());
+
+  EXPECT_EQ(text_entry->GetText(), "`");
+}
+
+TEST_F(TestTextEntry, CompositionDeadKeyComplex)
+{
+  ASSERT_FALSE(text_entry->InCompositionMode());
+  TestEvent dead_key(XK_dead_circumflex);
+  SendEvent(dead_key);
+  EXPECT_TRUE(text_entry->InCompositionMode());
+
+  SendEvent(dead_key);
+  EXPECT_FALSE(text_entry->InCompositionMode());
+  EXPECT_EQ(text_entry->GetText(), "^");
+
+  SendEvent(dead_key);
+  TestEvent o(XK_o);
+  SendEvent(o);
+  EXPECT_FALSE(text_entry->InCompositionMode());
+
+  EXPECT_EQ(text_entry->GetText(), "^ô");
+}
+
+TEST_F(TestTextEntry, CompositionDeadKeysMix)
+{
+  // Make sure that the two dead keys we use here aren't used any sequence
+  ASSERT_FALSE(text_entry->InCompositionMode());
+  TestEvent dead_key1(XK_dead_macron);
+  SendEvent(dead_key1);
+  EXPECT_TRUE(text_entry->InCompositionMode());
+
+  TestEvent dead_key2(XK_dead_circumflex);
+  SendEvent(dead_key2);
+  EXPECT_FALSE(text_entry->InCompositionMode());
+
+  EXPECT_EQ(text_entry->GetText(), "");
+}
+
+TEST_F(TestTextEntry, CompositionMultipleKeyCancel)
+{
+  std::string composed;
+  auto result = text_entry->GetCompositionForString("iii", composed);
+
+  EXPECT_EQ(result, MockTextEntry::CompositionResult::NO_MATCH);
+  EXPECT_EQ(composed, "");
+
+  TestEvent compose(XK_Multi_key);
+  TestEvent i(XK_i);
+
+  SendEvent(compose);
+  SendEvent(i);
+  SendEvent(i);
+  SendEvent(i);
+
+  EXPECT_FALSE(text_entry->InCompositionMode());
+  EXPECT_EQ(text_entry->GetText(), "i");
+}
+
+TEST_F(TestTextEntry, CompositionResultValid)
+{
+  std::string composed;
+  auto result = text_entry->GetCompositionForString("o", composed);
+
+  EXPECT_EQ(result, MockTextEntry::CompositionResult::PARTIAL);
+  EXPECT_TRUE(composed.empty());
+
+  result = text_entry->GetCompositionForString("ox", composed);
+  EXPECT_EQ(result, MockTextEntry::CompositionResult::MATCH);
+  EXPECT_EQ(composed, "¤");
+
+  result = text_entry->GetCompositionForString("ubuntu", composed);
+  EXPECT_EQ(result, MockTextEntry::CompositionResult::MATCH);
+  EXPECT_EQ(composed, "");
+}
+
+TEST_F(TestTextEntry, CompositionResultInvalid)
+{
+  std::string composed;
+  auto result = text_entry->GetCompositionForString("nux", composed);
+
+  EXPECT_EQ(result, MockTextEntry::CompositionResult::NO_MATCH);
+  EXPECT_TRUE(composed.empty());
+}
+
+TEST_F(TestTextEntry, CompositionSequences)
+{
+  for (unsigned i = 0; i < COMPOSE_SEQUENCES_SIZE; ++i)
+  {
+    ComposeSequence const& seq = COMPOSE_SEQUENCES[i];
+    std::vector<unsigned long> input_vec;
+    std::string composed;
+
+    for (unsigned j = 0; j < ComposeSequence::MAX_SYMBOLS && seq.symbols[j] != XK_VoidSymbol; ++j)
+    {
+      input_vec.push_back(seq.symbols[j]);
+    }
+
+    std::string expected_result = seq.result;
+    auto result = text_entry->GetCompositionForList(input_vec, composed);
+
+    EXPECT_EQ(result, MockTextEntry::CompositionResult::MATCH);
+    EXPECT_EQ(composed, expected_result);
+  }
+}
+
+TEST_F(TestTextEntry, CompositionSequencesInput)
+{
+  for (unsigned i = 0; i < COMPOSE_SEQUENCES_SIZE; ++i)
+  {
+    ComposeSequence const& seq = COMPOSE_SEQUENCES[i];
+
+    EXPECT_FALSE(text_entry->InCompositionMode());
+
+    for (unsigned j = 0; j < ComposeSequence::MAX_SYMBOLS && seq.symbols[j] != XK_VoidSymbol; ++j)
+    {
+      // We use a different strategy if ibus is active, to speedup the test
+      if (text_entry->im_running())
+      {
+        text_entry->HandleComposition(seq.symbols[j]);
+      }
+      else
+      {
+        TestEvent event(seq.symbols[j]);
+        SendEvent(event);
+      }
+
+      if (seq.symbols[j+1] != XK_VoidSymbol)
+        EXPECT_TRUE(text_entry->InCompositionMode());
+    }
+
+    std::string expected_result = seq.result;
+
+    EXPECT_FALSE(text_entry->InCompositionMode());
+    EXPECT_EQ(text_entry->GetText(), expected_result);
+
+    text_entry->ClearText();
+  }
+}
+
+TEST_F(TestTextEntry, PasswordMode)
+{
+  text_entry->SetPasswordMode(true);
+  EXPECT_TRUE(text_entry->IsPasswordMode());
+  
+  text_entry->SetPasswordChar("*");
+  EXPECT_EQ(text_entry->GetPasswordChar(), std::string("*"));
+
+  text_entry->SetText("Nux");
+  EXPECT_EQ(text_entry->GetText(), std::string("Nux"));
+
+  text_entry->SetPasswordMode(false);
+  EXPECT_FALSE(text_entry->IsPasswordMode());
+}
+
+#endif
 }

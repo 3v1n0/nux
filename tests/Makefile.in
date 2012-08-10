@@ -68,6 +68,12 @@ host_triplet = @host@
 @BUILD_TESTS_TRUE@	xtest-text-entry-compositionkeys$(EXEEXT) \
 @BUILD_TESTS_TRUE@	xtest-text-entry-logic$(EXEEXT) \
 @BUILD_TESTS_TRUE@	xtest-focus-on-mouse-enter$(EXEEXT)
+@BUILD_TESTS_TRUE@@HAVE_GEIS_TRUE@am__append_1 = \
+@BUILD_TESTS_TRUE@@HAVE_GEIS_TRUE@  geis_mock.h \
+@BUILD_TESTS_TRUE@@HAVE_GEIS_TRUE@	geis_mock.cpp \
+@BUILD_TESTS_TRUE@@HAVE_GEIS_TRUE@  gtest-nux-geisadapter.cpp \
+@BUILD_TESTS_TRUE@@HAVE_GEIS_TRUE@  gtest-nux-gesturebroker.cpp
+
 subdir = tests
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -94,12 +100,17 @@ libgtest_a_LIBADD =
 @BUILD_TESTS_TRUE@nodist_libgtest_a_OBJECTS =  \
 @BUILD_TESTS_TRUE@	libgtest_a-gtest-all.$(OBJEXT)
 libgtest_a_OBJECTS = $(nodist_libgtest_a_OBJECTS)
-am__gtest_nux_SOURCES_DIST = gtest-nux-area.cpp \
+am__gtest_nux_SOURCES_DIST = FakeGestureEvent.h gtest-nux-area.cpp \
 	gtest-nux-cairo-wrapper.cpp gtest-nux-emmetrics.cpp \
 	gtest-nux-main.cpp gtest-nux-statictext.cpp \
 	gtest-nux-scrollview.cpp gtest-nux-textentry.cpp \
-	gtest-nux-inputmethodibus.cpp gtest-nux-view.cpp \
-	gtest-nux-windowcompositor.cpp gtest-nux-windowthread.cpp
+	gtest-nux-utils.h gtest-nux-inputmethodibus.cpp \
+	gtest-nux-view.cpp gtest-nux-windowcompositor.cpp \
+	gtest-nux-windowthread.cpp geis_mock.h geis_mock.cpp \
+	gtest-nux-geisadapter.cpp gtest-nux-gesturebroker.cpp
+@BUILD_TESTS_TRUE@@HAVE_GEIS_TRUE@am__objects_1 = gtest_nux-geis_mock.$(OBJEXT) \
+@BUILD_TESTS_TRUE@@HAVE_GEIS_TRUE@	gtest_nux-gtest-nux-geisadapter.$(OBJEXT) \
+@BUILD_TESTS_TRUE@@HAVE_GEIS_TRUE@	gtest_nux-gtest-nux-gesturebroker.$(OBJEXT)
 @BUILD_TESTS_TRUE@am_gtest_nux_OBJECTS =  \
 @BUILD_TESTS_TRUE@	gtest_nux-gtest-nux-area.$(OBJEXT) \
 @BUILD_TESTS_TRUE@	gtest_nux-gtest-nux-cairo-wrapper.$(OBJEXT) \
@@ -111,7 +122,8 @@ am__gtest_nux_SOURCES_DIST = gtest-nux-area.cpp \
 @BUILD_TESTS_TRUE@	gtest_nux-gtest-nux-inputmethodibus.$(OBJEXT) \
 @BUILD_TESTS_TRUE@	gtest_nux-gtest-nux-view.$(OBJEXT) \
 @BUILD_TESTS_TRUE@	gtest_nux-gtest-nux-windowcompositor.$(OBJEXT) \
-@BUILD_TESTS_TRUE@	gtest_nux-gtest-nux-windowthread.$(OBJEXT)
+@BUILD_TESTS_TRUE@	gtest_nux-gtest-nux-windowthread.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	$(am__objects_1)
 gtest_nux_OBJECTS = $(am_gtest_nux_OBJECTS)
 am__DEPENDENCIES_1 =
 @BUILD_TESTS_TRUE@gtest_nux_DEPENDENCIES = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
@@ -491,6 +503,9 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GCC_FLAGS = @GCC_FLAGS@
+GEIS_CFLAGS = @GEIS_CFLAGS@
+GEIS_LIBS = @GEIS_LIBS@
+GEIS_PKGS = @GEIS_PKGS@
 GL_PKGS = @GL_PKGS@
 GREP = @GREP@
 GTEST_CPPFLAGS = @GTEST_CPPFLAGS@
@@ -523,6 +538,7 @@ NUX_CORE_CFLAGS = @NUX_CORE_CFLAGS@
 NUX_CORE_LIBS = @NUX_CORE_LIBS@
 NUX_EXAMPLES_CFLAGS = @NUX_EXAMPLES_CFLAGS@
 NUX_EXAMPLES_LIBS = @NUX_EXAMPLES_LIBS@
+NUX_GESTURES_SUPPORT = @NUX_GESTURES_SUPPORT@
 NUX_GPUTESTS_CFLAGS = @NUX_GPUTESTS_CFLAGS@
 NUX_GPUTESTS_LIBS = @NUX_GPUTESTS_LIBS@
 NUX_GRAPHICS_CFLAGS = @NUX_GRAPHICS_CFLAGS@
@@ -653,19 +669,17 @@ top_srcdir = @top_srcdir@
 @BUILD_TESTS_TRUE@  -lpthread -lgmock \
 @BUILD_TESTS_TRUE@  -lboost_filesystem -lboost_system
 
-@BUILD_TESTS_TRUE@gtest_nux_SOURCES = \
-@BUILD_TESTS_TRUE@  gtest-nux-area.cpp \
-@BUILD_TESTS_TRUE@  gtest-nux-cairo-wrapper.cpp \
-@BUILD_TESTS_TRUE@  gtest-nux-emmetrics.cpp \
-@BUILD_TESTS_TRUE@  gtest-nux-main.cpp \
-@BUILD_TESTS_TRUE@  gtest-nux-statictext.cpp \
-@BUILD_TESTS_TRUE@  gtest-nux-scrollview.cpp \
-@BUILD_TESTS_TRUE@  gtest-nux-textentry.cpp \
-@BUILD_TESTS_TRUE@  gtest-nux-inputmethodibus.cpp \
-@BUILD_TESTS_TRUE@  gtest-nux-view.cpp \
-@BUILD_TESTS_TRUE@  gtest-nux-windowcompositor.cpp \
-@BUILD_TESTS_TRUE@  gtest-nux-windowthread.cpp
-
+@BUILD_TESTS_TRUE@gtest_nux_SOURCES = FakeGestureEvent.h \
+@BUILD_TESTS_TRUE@	gtest-nux-area.cpp \
+@BUILD_TESTS_TRUE@	gtest-nux-cairo-wrapper.cpp \
+@BUILD_TESTS_TRUE@	gtest-nux-emmetrics.cpp gtest-nux-main.cpp \
+@BUILD_TESTS_TRUE@	gtest-nux-statictext.cpp \
+@BUILD_TESTS_TRUE@	gtest-nux-scrollview.cpp \
+@BUILD_TESTS_TRUE@	gtest-nux-textentry.cpp gtest-nux-utils.h \
+@BUILD_TESTS_TRUE@	gtest-nux-inputmethodibus.cpp \
+@BUILD_TESTS_TRUE@	gtest-nux-view.cpp \
+@BUILD_TESTS_TRUE@	gtest-nux-windowcompositor.cpp \
+@BUILD_TESTS_TRUE@	gtest-nux-windowthread.cpp $(am__append_1)
 @BUILD_TESTS_TRUE@gtest_nux_CPPFLAGS = \
 @BUILD_TESTS_TRUE@  -I$(srcdir) \
 @BUILD_TESTS_TRUE@  -I$(top_srcdir) \
@@ -930,9 +944,12 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-geis_mock.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-gtest-nux-area.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-gtest-nux-cairo-wrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-gtest-nux-emmetrics.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-gtest-nux-geisadapter.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-gtest-nux-gesturebroker.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-gtest-nux-inputmethodibus.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-gtest-nux-main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-gtest-nux-scrollview.Po@am__quote@
@@ -1172,6 +1189,48 @@ gtest_nux-gtest-nux-windowthread.obj: gtest-nux-windowthread.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-windowthread.cpp' object='gtest_nux-gtest-nux-windowthread.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-windowthread.obj `if test -f 'gtest-nux-windowthread.cpp'; then $(CYGPATH_W) 'gtest-nux-windowthread.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-windowthread.cpp'; fi`
+
+gtest_nux-geis_mock.o: geis_mock.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-geis_mock.o -MD -MP -MF $(DEPDIR)/gtest_nux-geis_mock.Tpo -c -o gtest_nux-geis_mock.o `test -f 'geis_mock.cpp' || echo '$(srcdir)/'`geis_mock.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-geis_mock.Tpo $(DEPDIR)/gtest_nux-geis_mock.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='geis_mock.cpp' object='gtest_nux-geis_mock.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-geis_mock.o `test -f 'geis_mock.cpp' || echo '$(srcdir)/'`geis_mock.cpp
+
+gtest_nux-geis_mock.obj: geis_mock.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-geis_mock.obj -MD -MP -MF $(DEPDIR)/gtest_nux-geis_mock.Tpo -c -o gtest_nux-geis_mock.obj `if test -f 'geis_mock.cpp'; then $(CYGPATH_W) 'geis_mock.cpp'; else $(CYGPATH_W) '$(srcdir)/geis_mock.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-geis_mock.Tpo $(DEPDIR)/gtest_nux-geis_mock.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='geis_mock.cpp' object='gtest_nux-geis_mock.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-geis_mock.obj `if test -f 'geis_mock.cpp'; then $(CYGPATH_W) 'geis_mock.cpp'; else $(CYGPATH_W) '$(srcdir)/geis_mock.cpp'; fi`
+
+gtest_nux-gtest-nux-geisadapter.o: gtest-nux-geisadapter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-geisadapter.o -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-geisadapter.Tpo -c -o gtest_nux-gtest-nux-geisadapter.o `test -f 'gtest-nux-geisadapter.cpp' || echo '$(srcdir)/'`gtest-nux-geisadapter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-gtest-nux-geisadapter.Tpo $(DEPDIR)/gtest_nux-gtest-nux-geisadapter.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-geisadapter.cpp' object='gtest_nux-gtest-nux-geisadapter.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-geisadapter.o `test -f 'gtest-nux-geisadapter.cpp' || echo '$(srcdir)/'`gtest-nux-geisadapter.cpp
+
+gtest_nux-gtest-nux-geisadapter.obj: gtest-nux-geisadapter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-geisadapter.obj -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-geisadapter.Tpo -c -o gtest_nux-gtest-nux-geisadapter.obj `if test -f 'gtest-nux-geisadapter.cpp'; then $(CYGPATH_W) 'gtest-nux-geisadapter.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-geisadapter.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-gtest-nux-geisadapter.Tpo $(DEPDIR)/gtest_nux-gtest-nux-geisadapter.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-geisadapter.cpp' object='gtest_nux-gtest-nux-geisadapter.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-geisadapter.obj `if test -f 'gtest-nux-geisadapter.cpp'; then $(CYGPATH_W) 'gtest-nux-geisadapter.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-geisadapter.cpp'; fi`
+
+gtest_nux-gtest-nux-gesturebroker.o: gtest-nux-gesturebroker.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-gesturebroker.o -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-gesturebroker.Tpo -c -o gtest_nux-gtest-nux-gesturebroker.o `test -f 'gtest-nux-gesturebroker.cpp' || echo '$(srcdir)/'`gtest-nux-gesturebroker.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-gtest-nux-gesturebroker.Tpo $(DEPDIR)/gtest_nux-gtest-nux-gesturebroker.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-gesturebroker.cpp' object='gtest_nux-gtest-nux-gesturebroker.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-gesturebroker.o `test -f 'gtest-nux-gesturebroker.cpp' || echo '$(srcdir)/'`gtest-nux-gesturebroker.cpp
+
+gtest_nux-gtest-nux-gesturebroker.obj: gtest-nux-gesturebroker.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nux-gtest-nux-gesturebroker.obj -MD -MP -MF $(DEPDIR)/gtest_nux-gtest-nux-gesturebroker.Tpo -c -o gtest_nux-gtest-nux-gesturebroker.obj `if test -f 'gtest-nux-gesturebroker.cpp'; then $(CYGPATH_W) 'gtest-nux-gesturebroker.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-gesturebroker.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nux-gtest-nux-gesturebroker.Tpo $(DEPDIR)/gtest_nux-gtest-nux-gesturebroker.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nux-gesturebroker.cpp' object='gtest_nux-gtest-nux-gesturebroker.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nux_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nux-gtest-nux-gesturebroker.obj `if test -f 'gtest-nux-gesturebroker.cpp'; then $(CYGPATH_W) 'gtest-nux-gesturebroker.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nux-gesturebroker.cpp'; fi`
 
 gtest_nuxcore-Helpers.o: Helpers.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nuxcore-Helpers.o -MD -MP -MF $(DEPDIR)/gtest_nuxcore-Helpers.Tpo -c -o gtest_nuxcore-Helpers.o `test -f 'Helpers.cpp' || echo '$(srcdir)/'`Helpers.cpp

@@ -53,9 +53,22 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@HAVE_GEIS_TRUE@am__append_1 = \
+@HAVE_GEIS_TRUE@  $(srcdir)/GeisAdapter.cpp \
+@HAVE_GEIS_TRUE@  $(srcdir)/Gesture.cpp \
+@HAVE_GEIS_TRUE@  $(srcdir)/GestureBroker.cpp \
+@HAVE_GEIS_TRUE@  $(srcdir)/GesturesSubscription.cpp
+
+@HAVE_GEIS_TRUE@am__append_2 = \
+@HAVE_GEIS_TRUE@  $(srcdir)/GeisAdapter.h \
+@HAVE_GEIS_TRUE@  $(srcdir)/Gesture.h \
+@HAVE_GEIS_TRUE@  $(srcdir)/GestureBroker.h \
+@HAVE_GEIS_TRUE@  $(srcdir)/GesturesSubscription.h
+
 subdir = Nux
-DIST_COMMON = $(nux_HEADERS) $(nuxprogramframework_HEADERS) \
-	$(srcdir)/ABI.h.in $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
+DIST_COMMON = $(am__nux_HEADERS_DIST) $(nuxprogramframework_HEADERS) \
+	$(srcdir)/ABI.h.in $(srcdir)/Features.h.in \
+	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/nux.pc.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_doxygen.m4 \
@@ -67,7 +80,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = nux.pc ABI.h
+CONFIG_CLEAN_FILES = nux.pc ABI.h Features.h
 CONFIG_CLEAN_VPATH_FILES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -103,8 +116,109 @@ am__DEPENDENCIES_1 =
 libnux_@NUX_API_VERSION@_la_DEPENDENCIES =  \
 	$(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
 	$(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
-am__objects_1 = libnux_@NUX_API_VERSION@_la-AbstractButton.lo \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+am__libnux_@NUX_API_VERSION@_la_SOURCES_DIST =  \
+	$(srcdir)/AbstractButton.cpp \
+	$(srcdir)/AbstractCheckedButton.cpp \
+	$(srcdir)/AbstractComboBox.cpp \
+	$(srcdir)/AbstractPaintLayer.cpp $(srcdir)/AbstractThread.cpp \
+	$(srcdir)/ActionItem.cpp $(srcdir)/AnimatedTextureArea.cpp \
+	$(srcdir)/PaintLayer.cpp $(srcdir)/InputArea.cpp \
+	$(srcdir)/Area.cpp $(srcdir)/BaseWindow.cpp \
+	$(srcdir)/Button.cpp $(srcdir)/Canvas.cpp \
+	$(srcdir)/CairoWrapper.cpp $(srcdir)/CheckBox.cpp \
+	$(srcdir)/ClientArea.cpp $(srcdir)/ColorEditor.cpp \
+	$(srcdir)/ColorPickerDialog.cpp $(srcdir)/ColorPreview.cpp \
+	$(srcdir)/Coverflow.cpp $(srcdir)/CoverflowItem.cpp \
+	$(srcdir)/CoverflowModel.cpp $(srcdir)/Dialog.cpp \
+	$(srcdir)/DoubleValidator.cpp $(srcdir)/EditTextBox.cpp \
+	$(srcdir)/FileSelector.cpp $(srcdir)/FloatingWindow.cpp \
+	$(srcdir)/GridHLayout.cpp $(srcdir)/GroupBox.cpp \
+	$(srcdir)/GroupBox2.cpp $(srcdir)/HexRegExpValidator.cpp \
+	$(srcdir)/HLayout.cpp $(srcdir)/HScrollBar.cpp \
+	$(srcdir)/HSplitter.cpp $(srcdir)/IntegerValidator.cpp \
+	$(srcdir)/View.cpp $(srcdir)/KeyboardHandler.cpp \
+	$(srcdir)/LayeredLayout.cpp $(srcdir)/Layout.cpp \
+	$(srcdir)/LinearLayout.cpp $(srcdir)/MainLoopGLib.cpp \
+	$(srcdir)/MenuPage.cpp $(srcdir)/MenuBar.cpp \
+	$(srcdir)/EMMetrics.cpp $(srcdir)/MouseAreaCtrl.cpp \
+	$(srcdir)/NumericValuator.cpp $(srcdir)/Nux.cpp \
+	$(srcdir)/NuxGlobalInitializer.cpp $(srcdir)/Painter.cpp \
+	$(srcdir)/Panel.cpp $(srcdir)/PopUpWindow.cpp \
+	$(srcdir)/RadioButton.cpp $(srcdir)/RadioButtonGroup.cpp \
+	$(srcdir)/RangeValue.cpp $(srcdir)/RangeValueInteger.cpp \
+	$(srcdir)/RGBValuator.cpp $(srcdir)/ScrollBar.cpp \
+	$(srcdir)/ScrollView.cpp $(srcdir)/SpinBox.cpp \
+	$(srcdir)/SpinBoxDouble.cpp $(srcdir)/SpinBox_Logic.cpp \
+	$(srcdir)/StaticText.cpp $(srcdir)/StaticTextBox.cpp \
+	$(srcdir)/SystemThread.cpp $(srcdir)/TabView.cpp \
+	$(srcdir)/TextEntry.cpp $(srcdir)/InputMethodIBus.cpp \
+	$(srcdir)/TextLoader.cpp $(srcdir)/TextureArea.cpp \
+	$(srcdir)/Timeline.cpp $(srcdir)/TimelineEasings.cpp \
+	$(srcdir)/TimerProc.cpp $(srcdir)/ToggleButton.cpp \
+	$(srcdir)/ToolButton.cpp $(srcdir)/Utils.cpp \
+	$(srcdir)/Theme.cpp $(srcdir)/Validator.cpp \
+	$(srcdir)/VLayout.cpp $(srcdir)/VScrollBar.cpp \
+	$(srcdir)/VSplitter.cpp $(srcdir)/WidgetMetrics.cpp \
+	$(srcdir)/WindowCompositor.cpp $(srcdir)/WindowThread.cpp \
+	$(srcdir)/GeisAdapter.cpp $(srcdir)/Gesture.cpp \
+	$(srcdir)/GestureBroker.cpp $(srcdir)/GesturesSubscription.cpp \
+	$(builddir)/ABI.h $(srcdir)/AbstractButton.h \
+	$(srcdir)/AbstractCheckedButton.h $(srcdir)/AbstractComboBox.h \
+	$(srcdir)/AbstractPaintLayer.h $(srcdir)/AbstractThread.h \
+	$(srcdir)/ActionItem.h $(srcdir)/AnimatedTextureArea.h \
+	$(srcdir)/PaintLayer.h $(srcdir)/InputArea.h $(srcdir)/Area.h \
+	$(srcdir)/BaseWindow.h $(srcdir)/Button.h $(srcdir)/Canvas.h \
+	$(srcdir)/CairoWrapper.h $(srcdir)/CheckBox.h \
+	$(srcdir)/ClientArea.h $(srcdir)/ColorEditor.h \
+	$(srcdir)/ColorPickerDialog.h $(srcdir)/ColorPreview.h \
+	$(srcdir)/Coverflow.h $(srcdir)/CoverflowItem.h \
+	$(srcdir)/CoverflowModel.h $(srcdir)/Dialog.h \
+	$(srcdir)/DoubleValidator.h $(srcdir)/EditTextBox.h \
+	$(builddir)/Features.h $(srcdir)/FileSelector.h \
+	$(srcdir)/FloatingWindow.h $(srcdir)/GridHLayout.h \
+	$(srcdir)/GroupBox.h $(srcdir)/GroupBox2.h \
+	$(srcdir)/HexRegExpValidator.h $(srcdir)/HLayout.h \
+	$(srcdir)/HScrollBar.h $(srcdir)/HSplitter.h \
+	$(srcdir)/IntegerValidator.h $(srcdir)/View.h \
+	$(srcdir)/KeyboardHandler.h $(srcdir)/LayeredLayout.h \
+	$(srcdir)/Layout.h $(srcdir)/LinearLayout.h \
+	$(srcdir)/MenuPage.h $(srcdir)/MenuBar.h $(srcdir)/EMMetrics.h \
+	$(srcdir)/MouseAreaCtrl.h $(srcdir)/NumericValuator.h \
+	$(srcdir)/Nux.h $(srcdir)/NuxGlobalInitializer.h \
+	$(srcdir)/Painter.h $(srcdir)/Panel.h $(srcdir)/PopUpWindow.h \
+	$(srcdir)/RadioButton.h $(srcdir)/RadioButtonGroup.h \
+	$(srcdir)/RangeValue.h $(srcdir)/RangeValueInteger.h \
+	$(srcdir)/Readme.txt $(srcdir)/RGBValuator.h \
+	$(srcdir)/ScrollBar.h $(srcdir)/ScrollView.h \
+	$(srcdir)/SpinBox.h $(srcdir)/SpinBoxDouble.h \
+	$(srcdir)/SpinBox_Logic.h $(srcdir)/StaticText.h \
+	$(srcdir)/StaticTextBox.h $(srcdir)/SystemThread.h \
+	$(srcdir)/TabView.h $(srcdir)/TextEntry.h \
+	$(srcdir)/TextEntryComposeSeqs.h $(srcdir)/InputMethodIBus.h \
+	$(srcdir)/TextLoader.h $(srcdir)/TextureArea.h \
+	$(srcdir)/Timeline.h $(srcdir)/TimelineEasings.h \
+	$(srcdir)/TimerProc.h $(srcdir)/ToolButton.h \
+	$(srcdir)/ToggleButton.h $(srcdir)/Theme.h $(srcdir)/Utils.h \
+	$(srcdir)/Validator.h $(srcdir)/VLayout.h \
+	$(srcdir)/VScrollBar.h $(srcdir)/VSplitter.h \
+	$(srcdir)/WidgetMetrics.h $(srcdir)/WindowCompositor.h \
+	$(srcdir)/WindowThread.h $(srcdir)/GeisAdapter.h \
+	$(srcdir)/Gesture.h $(srcdir)/GestureBroker.h \
+	$(srcdir)/GesturesSubscription.h \
+	$(srcdir)/ProgramFramework/ProgramTemplate.cpp \
+	$(srcdir)/ProgramFramework/TestView.cpp \
+	$(srcdir)/ProgramFramework/TestTextEntry.cpp \
+	$(srcdir)/ProgramFramework/ProgramTemplate.h \
+	$(srcdir)/ProgramFramework/TestView.h \
+	$(srcdir)/ProgramFramework/TestTextEntry.h
+@HAVE_GEIS_TRUE@am__objects_1 =  \
+@HAVE_GEIS_TRUE@	libnux_@NUX_API_VERSION@_la-GeisAdapter.lo \
+@HAVE_GEIS_TRUE@	libnux_@NUX_API_VERSION@_la-Gesture.lo \
+@HAVE_GEIS_TRUE@	libnux_@NUX_API_VERSION@_la-GestureBroker.lo \
+@HAVE_GEIS_TRUE@	libnux_@NUX_API_VERSION@_la-GesturesSubscription.lo
+am__objects_2 = libnux_@NUX_API_VERSION@_la-AbstractButton.lo \
 	libnux_@NUX_API_VERSION@_la-AbstractCheckedButton.lo \
 	libnux_@NUX_API_VERSION@_la-AbstractComboBox.lo \
 	libnux_@NUX_API_VERSION@_la-AbstractPaintLayer.lo \
@@ -186,13 +300,14 @@ am__objects_1 = libnux_@NUX_API_VERSION@_la-AbstractButton.lo \
 	libnux_@NUX_API_VERSION@_la-VSplitter.lo \
 	libnux_@NUX_API_VERSION@_la-WidgetMetrics.lo \
 	libnux_@NUX_API_VERSION@_la-WindowCompositor.lo \
-	libnux_@NUX_API_VERSION@_la-WindowThread.lo
-am__objects_2 =
-am__objects_3 = libnux_@NUX_API_VERSION@_la-ProgramTemplate.lo \
+	libnux_@NUX_API_VERSION@_la-WindowThread.lo $(am__objects_1)
+am__objects_3 =
+am__objects_4 = $(am__objects_3)
+am__objects_5 = libnux_@NUX_API_VERSION@_la-ProgramTemplate.lo \
 	libnux_@NUX_API_VERSION@_la-TestView.lo \
 	libnux_@NUX_API_VERSION@_la-TestTextEntry.lo
-am_libnux_@NUX_API_VERSION@_la_OBJECTS = $(am__objects_1) \
-	$(am__objects_2) $(am__objects_3) $(am__objects_2)
+am_libnux_@NUX_API_VERSION@_la_OBJECTS = $(am__objects_2) \
+	$(am__objects_4) $(am__objects_5) $(am__objects_3)
 libnux_@NUX_API_VERSION@_la_OBJECTS =  \
 	$(am_libnux_@NUX_API_VERSION@_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -245,13 +360,56 @@ AM_V_GEN = $(am__v_GEN_@AM_V@)
 am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
 am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libnux_@NUX_API_VERSION@_la_SOURCES)
-DIST_SOURCES = $(libnux_@NUX_API_VERSION@_la_SOURCES)
+DIST_SOURCES = $(am__libnux_@NUX_API_VERSION@_la_SOURCES_DIST)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
 DATA = $(pkgconfig_DATA)
+am__nux_HEADERS_DIST = $(builddir)/ABI.h $(srcdir)/AbstractButton.h \
+	$(srcdir)/AbstractCheckedButton.h $(srcdir)/AbstractComboBox.h \
+	$(srcdir)/AbstractPaintLayer.h $(srcdir)/AbstractThread.h \
+	$(srcdir)/ActionItem.h $(srcdir)/AnimatedTextureArea.h \
+	$(srcdir)/PaintLayer.h $(srcdir)/InputArea.h $(srcdir)/Area.h \
+	$(srcdir)/BaseWindow.h $(srcdir)/Button.h $(srcdir)/Canvas.h \
+	$(srcdir)/CairoWrapper.h $(srcdir)/CheckBox.h \
+	$(srcdir)/ClientArea.h $(srcdir)/ColorEditor.h \
+	$(srcdir)/ColorPickerDialog.h $(srcdir)/ColorPreview.h \
+	$(srcdir)/Coverflow.h $(srcdir)/CoverflowItem.h \
+	$(srcdir)/CoverflowModel.h $(srcdir)/Dialog.h \
+	$(srcdir)/DoubleValidator.h $(srcdir)/EditTextBox.h \
+	$(builddir)/Features.h $(srcdir)/FileSelector.h \
+	$(srcdir)/FloatingWindow.h $(srcdir)/GridHLayout.h \
+	$(srcdir)/GroupBox.h $(srcdir)/GroupBox2.h \
+	$(srcdir)/HexRegExpValidator.h $(srcdir)/HLayout.h \
+	$(srcdir)/HScrollBar.h $(srcdir)/HSplitter.h \
+	$(srcdir)/IntegerValidator.h $(srcdir)/View.h \
+	$(srcdir)/KeyboardHandler.h $(srcdir)/LayeredLayout.h \
+	$(srcdir)/Layout.h $(srcdir)/LinearLayout.h \
+	$(srcdir)/MenuPage.h $(srcdir)/MenuBar.h $(srcdir)/EMMetrics.h \
+	$(srcdir)/MouseAreaCtrl.h $(srcdir)/NumericValuator.h \
+	$(srcdir)/Nux.h $(srcdir)/NuxGlobalInitializer.h \
+	$(srcdir)/Painter.h $(srcdir)/Panel.h $(srcdir)/PopUpWindow.h \
+	$(srcdir)/RadioButton.h $(srcdir)/RadioButtonGroup.h \
+	$(srcdir)/RangeValue.h $(srcdir)/RangeValueInteger.h \
+	$(srcdir)/Readme.txt $(srcdir)/RGBValuator.h \
+	$(srcdir)/ScrollBar.h $(srcdir)/ScrollView.h \
+	$(srcdir)/SpinBox.h $(srcdir)/SpinBoxDouble.h \
+	$(srcdir)/SpinBox_Logic.h $(srcdir)/StaticText.h \
+	$(srcdir)/StaticTextBox.h $(srcdir)/SystemThread.h \
+	$(srcdir)/TabView.h $(srcdir)/TextEntry.h \
+	$(srcdir)/TextEntryComposeSeqs.h $(srcdir)/InputMethodIBus.h \
+	$(srcdir)/TextLoader.h $(srcdir)/TextureArea.h \
+	$(srcdir)/Timeline.h $(srcdir)/TimelineEasings.h \
+	$(srcdir)/TimerProc.h $(srcdir)/ToolButton.h \
+	$(srcdir)/ToggleButton.h $(srcdir)/Theme.h $(srcdir)/Utils.h \
+	$(srcdir)/Validator.h $(srcdir)/VLayout.h \
+	$(srcdir)/VScrollBar.h $(srcdir)/VSplitter.h \
+	$(srcdir)/WidgetMetrics.h $(srcdir)/WindowCompositor.h \
+	$(srcdir)/WindowThread.h $(srcdir)/GeisAdapter.h \
+	$(srcdir)/Gesture.h $(srcdir)/GestureBroker.h \
+	$(srcdir)/GesturesSubscription.h
 HEADERS = $(nux_HEADERS) $(nuxprogramframework_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -310,6 +468,9 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GCC_FLAGS = @GCC_FLAGS@
+GEIS_CFLAGS = @GEIS_CFLAGS@
+GEIS_LIBS = @GEIS_LIBS@
+GEIS_PKGS = @GEIS_PKGS@
 GL_PKGS = @GL_PKGS@
 GREP = @GREP@
 GTEST_CPPFLAGS = @GTEST_CPPFLAGS@
@@ -342,6 +503,7 @@ NUX_CORE_CFLAGS = @NUX_CORE_CFLAGS@
 NUX_CORE_LIBS = @NUX_CORE_LIBS@
 NUX_EXAMPLES_CFLAGS = @NUX_EXAMPLES_CFLAGS@
 NUX_EXAMPLES_LIBS = @NUX_EXAMPLES_LIBS@
+NUX_GESTURES_SUPPORT = @NUX_GESTURES_SUPPORT@
 NUX_GPUTESTS_CFLAGS = @NUX_GPUTESTS_CFLAGS@
 NUX_GPUTESTS_LIBS = @NUX_GPUTESTS_LIBS@
 NUX_GRAPHICS_CFLAGS = @NUX_GRAPHICS_CFLAGS@
@@ -446,189 +608,104 @@ libnux_@NUX_API_VERSION@_la_CPPFLAGS = \
   $(GCC_FLAGS) \
   $(NUX_CFLAGS) \
   $(IBUS_CFLAGS) \
+  $(GEIS_CFLAGS) \
   $(MAINTAINER_CFLAGS)
 
 libnux_@NUX_API_VERSION@_la_LIBADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
   $(NUX_LIBS) \
-  $(IBUS_LIBS) 
+  $(IBUS_LIBS) \
+  $(GEIS_LIBS)
 
 libnux_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
 
-source_cpp = \
-  $(srcdir)/AbstractButton.cpp \
-  $(srcdir)/AbstractCheckedButton.cpp \
-  $(srcdir)/AbstractComboBox.cpp \
-  $(srcdir)/AbstractPaintLayer.cpp \
-  $(srcdir)/AbstractThread.cpp \
-  $(srcdir)/ActionItem.cpp \
-  $(srcdir)/AnimatedTextureArea.cpp \
-  $(srcdir)/PaintLayer.cpp \
-  $(srcdir)/InputArea.cpp \
-  $(srcdir)/Area.cpp \
-  $(srcdir)/BaseWindow.cpp \
-  $(srcdir)/Button.cpp \
-  $(srcdir)/Canvas.cpp \
-  $(srcdir)/CairoWrapper.cpp \
-  $(srcdir)/CheckBox.cpp \
-  $(srcdir)/ClientArea.cpp \
-  $(srcdir)/ColorEditor.cpp \
-  $(srcdir)/ColorPickerDialog.cpp \
-  $(srcdir)/ColorPreview.cpp \
-  $(srcdir)/Coverflow.cpp \
-  $(srcdir)/CoverflowItem.cpp \
-  $(srcdir)/CoverflowModel.cpp \
-  $(srcdir)/Dialog.cpp \
-  $(srcdir)/DoubleValidator.cpp \
-  $(srcdir)/EditTextBox.cpp \
-  $(srcdir)/FileSelector.cpp \
-  $(srcdir)/FloatingWindow.cpp \
-  $(srcdir)/GridHLayout.cpp \
-  $(srcdir)/GroupBox.cpp \
-  $(srcdir)/GroupBox2.cpp \
-  $(srcdir)/HexRegExpValidator.cpp \
-  $(srcdir)/HLayout.cpp \
-  $(srcdir)/HScrollBar.cpp \
-  $(srcdir)/HSplitter.cpp \
-  $(srcdir)/IntegerValidator.cpp \
-  $(srcdir)/View.cpp \
-  $(srcdir)/KeyboardHandler.cpp \
-  $(srcdir)/LayeredLayout.cpp \
-  $(srcdir)/Layout.cpp \
-  $(srcdir)/LinearLayout.cpp \
-  $(srcdir)/MainLoopGLib.cpp \
-  $(srcdir)/MenuPage.cpp \
-  $(srcdir)/MenuBar.cpp \
-  $(srcdir)/EMMetrics.cpp \
-  $(srcdir)/MouseAreaCtrl.cpp \
-  $(srcdir)/NumericValuator.cpp \
-  $(srcdir)/Nux.cpp \
-  $(srcdir)/NuxGlobalInitializer.cpp \
-  $(srcdir)/Painter.cpp \
-  $(srcdir)/Panel.cpp \
-  $(srcdir)/PopUpWindow.cpp \
-  $(srcdir)/RadioButton.cpp \
-  $(srcdir)/RadioButtonGroup.cpp \
-  $(srcdir)/RangeValue.cpp \
-  $(srcdir)/RangeValueInteger.cpp \
-  $(srcdir)/RGBValuator.cpp \
-  $(srcdir)/ScrollBar.cpp \
-  $(srcdir)/ScrollView.cpp \
-  $(srcdir)/SpinBox.cpp \
-  $(srcdir)/SpinBoxDouble.cpp \
-  $(srcdir)/SpinBox_Logic.cpp \
-  $(srcdir)/StaticText.cpp \
-  $(srcdir)/StaticTextBox.cpp \
-  $(srcdir)/SystemThread.cpp \
-  $(srcdir)/TabView.cpp \
-  $(srcdir)/TextEntry.cpp \
-  $(srcdir)/InputMethodIBus.cpp \
-  $(srcdir)/TextLoader.cpp \
-  $(srcdir)/TextureArea.cpp \
-  $(srcdir)/Timeline.cpp \
-  $(srcdir)/TimelineEasings.cpp \
-  $(srcdir)/TimerProc.cpp \
-  $(srcdir)/ToggleButton.cpp \
-  $(srcdir)/ToolButton.cpp \
-  $(srcdir)/Utils.cpp \
-  $(srcdir)/Theme.cpp \
-  $(srcdir)/Validator.cpp \
-  $(srcdir)/VLayout.cpp \
-  $(srcdir)/VScrollBar.cpp \
-  $(srcdir)/VSplitter.cpp \
-  $(srcdir)/WidgetMetrics.cpp \
-  $(srcdir)/WindowCompositor.cpp \
-  $(srcdir)/WindowThread.cpp
-
-source_h = \
-  $(builddir)/ABI.h \
-  $(srcdir)/AbstractButton.h \
-  $(srcdir)/AbstractCheckedButton.h \
-  $(srcdir)/AbstractComboBox.h \
-  $(srcdir)/AbstractPaintLayer.h \
-  $(srcdir)/AbstractThread.h \
-  $(srcdir)/ActionItem.h \
-  $(srcdir)/AnimatedTextureArea.h \
-  $(srcdir)/PaintLayer.h \
-  $(srcdir)/InputArea.h \
-  $(srcdir)/Area.h \
-  $(srcdir)/BaseWindow.h \
-  $(srcdir)/Button.h \
-  $(srcdir)/Canvas.h \
-  $(srcdir)/CairoWrapper.h \
-  $(srcdir)/CheckBox.h \
-  $(srcdir)/ClientArea.h \
-  $(srcdir)/ColorEditor.h \
-  $(srcdir)/ColorPickerDialog.h \
-  $(srcdir)/ColorPreview.h \
-  $(srcdir)/Coverflow.h \
-  $(srcdir)/CoverflowItem.h \
-  $(srcdir)/CoverflowModel.h \
-  $(srcdir)/Dialog.h \
-  $(srcdir)/DoubleValidator.h \
-  $(srcdir)/EditTextBox.h \
-  $(srcdir)/FileSelector.h \
-  $(srcdir)/FloatingWindow.h \
-  $(srcdir)/GridHLayout.h \
-  $(srcdir)/GroupBox.h \
-  $(srcdir)/GroupBox2.h \
-  $(srcdir)/HexRegExpValidator.h \
-  $(srcdir)/HLayout.h \
-  $(srcdir)/HScrollBar.h \
-  $(srcdir)/HSplitter.h \
-  $(srcdir)/IntegerValidator.h \
-  $(srcdir)/View.h \
-  $(srcdir)/KeyboardHandler.h \
-  $(srcdir)/LayeredLayout.h \
-  $(srcdir)/Layout.h \
-  $(srcdir)/LinearLayout.h \
-  $(srcdir)/MenuPage.h \
-  $(srcdir)/MenuBar.h \
-  $(srcdir)/EMMetrics.h \
-  $(srcdir)/MouseAreaCtrl.h \
-  $(srcdir)/NumericValuator.h \
-  $(srcdir)/Nux.h \
-  $(srcdir)/NuxGlobalInitializer.h \
-  $(srcdir)/Painter.h \
-  $(srcdir)/Panel.h \
-  $(srcdir)/PopUpWindow.h \
-  $(srcdir)/RadioButton.h \
-  $(srcdir)/RadioButtonGroup.h \
-  $(srcdir)/RangeValue.h \
-  $(srcdir)/RangeValueInteger.h \
-  $(srcdir)/Readme.txt \
-  $(srcdir)/RGBValuator.h \
-  $(srcdir)/ScrollBar.h \
-  $(srcdir)/ScrollView.h \
-  $(srcdir)/SpinBox.h \
-  $(srcdir)/SpinBoxDouble.h \
-  $(srcdir)/SpinBox_Logic.h \
-  $(srcdir)/StaticText.h \
-  $(srcdir)/StaticTextBox.h \
-  $(srcdir)/SystemThread.h \
-  $(srcdir)/TabView.h \
-  $(srcdir)/TextEntry.h \
-  $(srcdir)/TextEntryComposeSeqs.h \
-  $(srcdir)/InputMethodIBus.h \
-  $(srcdir)/TextLoader.h \
-  $(srcdir)/TextureArea.h \
-  $(srcdir)/Timeline.h \
-  $(srcdir)/TimelineEasings.h \
-  $(srcdir)/TimerProc.h \
-  $(srcdir)/ToolButton.h \
-  $(srcdir)/ToggleButton.h \
-  $(srcdir)/Theme.h \
-  $(srcdir)/Utils.h \
-  $(srcdir)/Validator.h \
-  $(srcdir)/VLayout.h \
-  $(srcdir)/VScrollBar.h \
-  $(srcdir)/VSplitter.h \
-  $(srcdir)/WidgetMetrics.h \
-  $(srcdir)/WindowCompositor.h \
-  $(srcdir)/WindowThread.h
-
+source_cpp = $(srcdir)/AbstractButton.cpp \
+	$(srcdir)/AbstractCheckedButton.cpp \
+	$(srcdir)/AbstractComboBox.cpp \
+	$(srcdir)/AbstractPaintLayer.cpp $(srcdir)/AbstractThread.cpp \
+	$(srcdir)/ActionItem.cpp $(srcdir)/AnimatedTextureArea.cpp \
+	$(srcdir)/PaintLayer.cpp $(srcdir)/InputArea.cpp \
+	$(srcdir)/Area.cpp $(srcdir)/BaseWindow.cpp \
+	$(srcdir)/Button.cpp $(srcdir)/Canvas.cpp \
+	$(srcdir)/CairoWrapper.cpp $(srcdir)/CheckBox.cpp \
+	$(srcdir)/ClientArea.cpp $(srcdir)/ColorEditor.cpp \
+	$(srcdir)/ColorPickerDialog.cpp $(srcdir)/ColorPreview.cpp \
+	$(srcdir)/Coverflow.cpp $(srcdir)/CoverflowItem.cpp \
+	$(srcdir)/CoverflowModel.cpp $(srcdir)/Dialog.cpp \
+	$(srcdir)/DoubleValidator.cpp $(srcdir)/EditTextBox.cpp \
+	$(srcdir)/FileSelector.cpp $(srcdir)/FloatingWindow.cpp \
+	$(srcdir)/GridHLayout.cpp $(srcdir)/GroupBox.cpp \
+	$(srcdir)/GroupBox2.cpp $(srcdir)/HexRegExpValidator.cpp \
+	$(srcdir)/HLayout.cpp $(srcdir)/HScrollBar.cpp \
+	$(srcdir)/HSplitter.cpp $(srcdir)/IntegerValidator.cpp \
+	$(srcdir)/View.cpp $(srcdir)/KeyboardHandler.cpp \
+	$(srcdir)/LayeredLayout.cpp $(srcdir)/Layout.cpp \
+	$(srcdir)/LinearLayout.cpp $(srcdir)/MainLoopGLib.cpp \
+	$(srcdir)/MenuPage.cpp $(srcdir)/MenuBar.cpp \
+	$(srcdir)/EMMetrics.cpp $(srcdir)/MouseAreaCtrl.cpp \
+	$(srcdir)/NumericValuator.cpp $(srcdir)/Nux.cpp \
+	$(srcdir)/NuxGlobalInitializer.cpp $(srcdir)/Painter.cpp \
+	$(srcdir)/Panel.cpp $(srcdir)/PopUpWindow.cpp \
+	$(srcdir)/RadioButton.cpp $(srcdir)/RadioButtonGroup.cpp \
+	$(srcdir)/RangeValue.cpp $(srcdir)/RangeValueInteger.cpp \
+	$(srcdir)/RGBValuator.cpp $(srcdir)/ScrollBar.cpp \
+	$(srcdir)/ScrollView.cpp $(srcdir)/SpinBox.cpp \
+	$(srcdir)/SpinBoxDouble.cpp $(srcdir)/SpinBox_Logic.cpp \
+	$(srcdir)/StaticText.cpp $(srcdir)/StaticTextBox.cpp \
+	$(srcdir)/SystemThread.cpp $(srcdir)/TabView.cpp \
+	$(srcdir)/TextEntry.cpp $(srcdir)/InputMethodIBus.cpp \
+	$(srcdir)/TextLoader.cpp $(srcdir)/TextureArea.cpp \
+	$(srcdir)/Timeline.cpp $(srcdir)/TimelineEasings.cpp \
+	$(srcdir)/TimerProc.cpp $(srcdir)/ToggleButton.cpp \
+	$(srcdir)/ToolButton.cpp $(srcdir)/Utils.cpp \
+	$(srcdir)/Theme.cpp $(srcdir)/Validator.cpp \
+	$(srcdir)/VLayout.cpp $(srcdir)/VScrollBar.cpp \
+	$(srcdir)/VSplitter.cpp $(srcdir)/WidgetMetrics.cpp \
+	$(srcdir)/WindowCompositor.cpp $(srcdir)/WindowThread.cpp \
+	$(am__append_1)
+source_h = $(builddir)/ABI.h $(srcdir)/AbstractButton.h \
+	$(srcdir)/AbstractCheckedButton.h $(srcdir)/AbstractComboBox.h \
+	$(srcdir)/AbstractPaintLayer.h $(srcdir)/AbstractThread.h \
+	$(srcdir)/ActionItem.h $(srcdir)/AnimatedTextureArea.h \
+	$(srcdir)/PaintLayer.h $(srcdir)/InputArea.h $(srcdir)/Area.h \
+	$(srcdir)/BaseWindow.h $(srcdir)/Button.h $(srcdir)/Canvas.h \
+	$(srcdir)/CairoWrapper.h $(srcdir)/CheckBox.h \
+	$(srcdir)/ClientArea.h $(srcdir)/ColorEditor.h \
+	$(srcdir)/ColorPickerDialog.h $(srcdir)/ColorPreview.h \
+	$(srcdir)/Coverflow.h $(srcdir)/CoverflowItem.h \
+	$(srcdir)/CoverflowModel.h $(srcdir)/Dialog.h \
+	$(srcdir)/DoubleValidator.h $(srcdir)/EditTextBox.h \
+	$(builddir)/Features.h $(srcdir)/FileSelector.h \
+	$(srcdir)/FloatingWindow.h $(srcdir)/GridHLayout.h \
+	$(srcdir)/GroupBox.h $(srcdir)/GroupBox2.h \
+	$(srcdir)/HexRegExpValidator.h $(srcdir)/HLayout.h \
+	$(srcdir)/HScrollBar.h $(srcdir)/HSplitter.h \
+	$(srcdir)/IntegerValidator.h $(srcdir)/View.h \
+	$(srcdir)/KeyboardHandler.h $(srcdir)/LayeredLayout.h \
+	$(srcdir)/Layout.h $(srcdir)/LinearLayout.h \
+	$(srcdir)/MenuPage.h $(srcdir)/MenuBar.h $(srcdir)/EMMetrics.h \
+	$(srcdir)/MouseAreaCtrl.h $(srcdir)/NumericValuator.h \
+	$(srcdir)/Nux.h $(srcdir)/NuxGlobalInitializer.h \
+	$(srcdir)/Painter.h $(srcdir)/Panel.h $(srcdir)/PopUpWindow.h \
+	$(srcdir)/RadioButton.h $(srcdir)/RadioButtonGroup.h \
+	$(srcdir)/RangeValue.h $(srcdir)/RangeValueInteger.h \
+	$(srcdir)/Readme.txt $(srcdir)/RGBValuator.h \
+	$(srcdir)/ScrollBar.h $(srcdir)/ScrollView.h \
+	$(srcdir)/SpinBox.h $(srcdir)/SpinBoxDouble.h \
+	$(srcdir)/SpinBox_Logic.h $(srcdir)/StaticText.h \
+	$(srcdir)/StaticTextBox.h $(srcdir)/SystemThread.h \
+	$(srcdir)/TabView.h $(srcdir)/TextEntry.h \
+	$(srcdir)/TextEntryComposeSeqs.h $(srcdir)/InputMethodIBus.h \
+	$(srcdir)/TextLoader.h $(srcdir)/TextureArea.h \
+	$(srcdir)/Timeline.h $(srcdir)/TimelineEasings.h \
+	$(srcdir)/TimerProc.h $(srcdir)/ToolButton.h \
+	$(srcdir)/ToggleButton.h $(srcdir)/Theme.h $(srcdir)/Utils.h \
+	$(srcdir)/Validator.h $(srcdir)/VLayout.h \
+	$(srcdir)/VScrollBar.h $(srcdir)/VSplitter.h \
+	$(srcdir)/WidgetMetrics.h $(srcdir)/WindowCompositor.h \
+	$(srcdir)/WindowThread.h $(am__append_2)
 nuxprogramframework_cpp = \
   $(srcdir)/ProgramFramework/ProgramTemplate.cpp \
   $(srcdir)/ProgramFramework/TestView.cpp \
@@ -688,6 +765,8 @@ $(am__aclocal_m4_deps):
 nux.pc: $(top_builddir)/config.status $(srcdir)/nux.pc.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 ABI.h: $(top_builddir)/config.status $(srcdir)/ABI.h.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+Features.h: $(top_builddir)/config.status $(srcdir)/Features.h.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 install-libLTLIBRARIES: $(lib_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
@@ -756,6 +835,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-EditTextBox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-FileSelector.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-FloatingWindow.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-GeisAdapter.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Gesture.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-GestureBroker.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-GesturesSubscription.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-GridHLayout.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-GroupBox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-GroupBox2.Plo@am__quote@
@@ -1418,6 +1501,34 @@ libnux_@NUX_API_VERSION@_la-WindowThread.lo: $(srcdir)/WindowThread.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(srcdir)/WindowThread.cpp' object='libnux_@NUX_API_VERSION@_la-WindowThread.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-WindowThread.lo `test -f '$(srcdir)/WindowThread.cpp' || echo '$(srcdir)/'`$(srcdir)/WindowThread.cpp
+
+libnux_@NUX_API_VERSION@_la-GeisAdapter.lo: $(srcdir)/GeisAdapter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-GeisAdapter.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GeisAdapter.Tpo -c -o libnux_@NUX_API_VERSION@_la-GeisAdapter.lo `test -f '$(srcdir)/GeisAdapter.cpp' || echo '$(srcdir)/'`$(srcdir)/GeisAdapter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GeisAdapter.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GeisAdapter.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(srcdir)/GeisAdapter.cpp' object='libnux_@NUX_API_VERSION@_la-GeisAdapter.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-GeisAdapter.lo `test -f '$(srcdir)/GeisAdapter.cpp' || echo '$(srcdir)/'`$(srcdir)/GeisAdapter.cpp
+
+libnux_@NUX_API_VERSION@_la-Gesture.lo: $(srcdir)/Gesture.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Gesture.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Gesture.Tpo -c -o libnux_@NUX_API_VERSION@_la-Gesture.lo `test -f '$(srcdir)/Gesture.cpp' || echo '$(srcdir)/'`$(srcdir)/Gesture.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Gesture.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Gesture.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(srcdir)/Gesture.cpp' object='libnux_@NUX_API_VERSION@_la-Gesture.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-Gesture.lo `test -f '$(srcdir)/Gesture.cpp' || echo '$(srcdir)/'`$(srcdir)/Gesture.cpp
+
+libnux_@NUX_API_VERSION@_la-GestureBroker.lo: $(srcdir)/GestureBroker.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-GestureBroker.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GestureBroker.Tpo -c -o libnux_@NUX_API_VERSION@_la-GestureBroker.lo `test -f '$(srcdir)/GestureBroker.cpp' || echo '$(srcdir)/'`$(srcdir)/GestureBroker.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GestureBroker.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GestureBroker.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(srcdir)/GestureBroker.cpp' object='libnux_@NUX_API_VERSION@_la-GestureBroker.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-GestureBroker.lo `test -f '$(srcdir)/GestureBroker.cpp' || echo '$(srcdir)/'`$(srcdir)/GestureBroker.cpp
+
+libnux_@NUX_API_VERSION@_la-GesturesSubscription.lo: $(srcdir)/GesturesSubscription.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-GesturesSubscription.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GesturesSubscription.Tpo -c -o libnux_@NUX_API_VERSION@_la-GesturesSubscription.lo `test -f '$(srcdir)/GesturesSubscription.cpp' || echo '$(srcdir)/'`$(srcdir)/GesturesSubscription.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GesturesSubscription.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-GesturesSubscription.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(srcdir)/GesturesSubscription.cpp' object='libnux_@NUX_API_VERSION@_la-GesturesSubscription.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-GesturesSubscription.lo `test -f '$(srcdir)/GesturesSubscription.cpp' || echo '$(srcdir)/'`$(srcdir)/GesturesSubscription.cpp
 
 libnux_@NUX_API_VERSION@_la-ProgramTemplate.lo: $(srcdir)/ProgramFramework/ProgramTemplate.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-ProgramTemplate.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-ProgramTemplate.Tpo -c -o libnux_@NUX_API_VERSION@_la-ProgramTemplate.lo `test -f '$(srcdir)/ProgramFramework/ProgramTemplate.cpp' || echo '$(srcdir)/'`$(srcdir)/ProgramFramework/ProgramTemplate.cpp
