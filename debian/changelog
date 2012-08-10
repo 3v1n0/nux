@@ -12,6 +12,10 @@ nux (3.2.0-0ubuntu1) UNRELEASED; urgency=low
   [ Adam Conrad ]
   * Removed debian/patches/02_libgeis_rename.patch
 
+  [ Didier Roche ]
+  * debian/control:
+    - build-dep on a recent geis
+
  -- Łukasz 'sil2100' Zemczak <lukasz.zemczak@canonical.com>  Fri, 10 Aug 2012 11:47:53 +0200
 
 nux (3.0.0-0ubuntu2) quantal; urgency=low
