@@ -1,11 +1,14 @@
 #include "NuxCore/Logger.h"
 #include "NuxCore/LoggingWriter.h"
 
+#include "Helpers.h"
+
 #include <cstdlib>
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+namespace nt = nux::testing;
 
 using namespace nux::logging;
 using namespace testing;
@@ -152,17 +155,17 @@ private:
 };
 
 TEST(TestLoggingWriter, TestWriteMessage) {
-  std::stringstream out;
-  Writer& writer = Writer::Instance();
-  writer.SetOutputStream(out);
+
+  nt::CaptureLogOutput log_output;
 
   // set a known timezone
   UseTimezone timezone(":Antarctica/Vostok");
   // This time is known to be: 2010-09-10 12:34:45 (UTC+12)
   std::time_t when = 1284078885;
-  writer.WriteMessage(Level::Error, "test.module", "testfile.cpp",
-                      1234, when, "my message");
-  std::string result = out.str();
+  Writer::Instance().WriteMessage(Level::Error, "test.module", "testfile.cpp",
+                                  1234, when, "my message");
+
+  std::string result = log_output.GetOutput();
   // Vostok is UTC+6
   EXPECT_THAT(result, Eq("ERROR 2010-09-10 06:34:45 test.module testfile.cpp:1234 my message\n"));
 }
@@ -173,14 +176,13 @@ TEST(TestLogStream, TestSimpleConstruction) {
 }
 
 TEST(TestLogStream, TestOutput) {
-  // First test is to make sure a LogStream can be constructed and destructed.
-  std::stringstream out;
-  Writer::Instance().SetOutputStream(out);
+
+  nt::CaptureLogOutput log_output;
 
   LogStream test(Level::Debug, "module", "filename", 42);
   test << "testing message" << std::flush;
 
-  std::string result = out.str();
+  std::string result = log_output.GetOutput();
 
   EXPECT_THAT(result, StartsWith("DEBUG"));
   EXPECT_THAT(result, HasSubstr("module filename:42"));
@@ -189,25 +191,23 @@ TEST(TestLogStream, TestOutput) {
 
 TEST(TestLogStream, TestShortenedFilename) {
   // Filenames only show the last path segment.
-  std::stringstream out;
-  Writer::Instance().SetOutputStream(out);
+  nt::CaptureLogOutput log_output;
 
   LogStream test(Level::Debug, "module", "/some/absolute/filename", 42);
   test << "testing message" << std::flush;
 
-  std::string result = out.str();
+  std::string result = log_output.GetOutput();
 
   EXPECT_THAT(result, HasSubstr("module filename:42"));
 }
 
 TEST(TestLogStream, TestTemporary) {
   // First test is to make sure a LogStream can be constructed and destructed.
-  std::stringstream out;
-  Writer::Instance().SetOutputStream(out);
+  nt::CaptureLogOutput log_output;
 
   LogStream(Level::Debug, "module", "filename", 42).stream() << "testing message";
 
-  std::string result = out.str();
+  std::string result = log_output.GetOutput();
 
   EXPECT_THAT(result, StartsWith("DEBUG"));
   EXPECT_THAT(result, HasSubstr(" module filename:42"));
@@ -216,8 +216,7 @@ TEST(TestLogStream, TestTemporary) {
 
 TEST(TestLogStream, TestDebugMacro) {
   // First test is to make sure a LogStream can be constructed and destructed.
-  std::stringstream out;
-  Writer::Instance().SetOutputStream(out);
+  nt::CaptureLogOutput log_output;
   int counter = 0;
 
   Logger logger("test.module");
@@ -228,7 +227,7 @@ TEST(TestLogStream, TestDebugMacro) {
 
   LOG_DEBUG(logger) << ++counter << " Is output now.";
 
-  std::string result = out.str();
+  std::string result = log_output.GetOutput();
 
   EXPECT_THAT(result, StartsWith("DEBUG"));
   EXPECT_THAT(result, HasSubstr(" test.module gtest-nuxcore-logger.cpp"));
@@ -238,8 +237,7 @@ TEST(TestLogStream, TestDebugMacro) {
 }
 
 TEST(TestLogStream, TestBlockTracer) {
-  std::stringstream out;
-  Writer::Instance().SetOutputStream(out);
+  nt::CaptureLogOutput log_output;
 
   Logger logger("test");
   logger.SetLogLevel(Level::Debug);
@@ -247,7 +245,7 @@ TEST(TestLogStream, TestBlockTracer) {
     BlockTracer tracer(logger, Level::Debug, "func_name", "file_name", 42);
   }
 
-  std::string result = out.str();
+  std::string result = log_output.GetOutput();
 
   EXPECT_THAT(result, MatchesRegex("DEBUG .+ test file_name:42 \\+func_name\n"
                                    "DEBUG .+ test file_name:42 -func_name\n"));

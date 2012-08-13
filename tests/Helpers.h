@@ -23,6 +23,8 @@
 #define NUX_TESTS_FILE_HELPERS_H
 
 #include <string>
+#include <sstream>
+#include <vector>
 #include <glib.h>
 #include <sigc++/sigc++.h>
 
@@ -56,6 +58,38 @@ public:
   bool happened;
 };
 
+
+class CaptureLogOutput
+{
+public:
+  CaptureLogOutput();
+  ~CaptureLogOutput();
+  std::string GetOutput();
+private:
+  std::ostringstream sout_;
+};
+
+
+template <typename T>
+struct ChangeRecorder : sigc::trackable
+{
+  typedef sigc::slot<void, T const&> Listener;
+
+  Listener listener()
+  {
+    return sigc::mem_fun(this, &ChangeRecorder<T>::value_changed);
+  }
+
+  void value_changed(T const& value)
+    {
+      changed_values.push_back(value);
+    }
+  typedef std::vector<T> ChangedValues;
+  ChangedValues changed_values;
+
+  int size() const { return changed_values.size(); }
+  T last() const { return *changed_values.rbegin(); }
+};
 
 }
 }

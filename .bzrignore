@@ -67,3 +67,8 @@ examples/gestures
 examples/tiles_view
 test-graphics-display
 Nux/Features.h
+Nux/ABI.h
+examples/coverflow
+examples/shortcut_keys
+tests/gtest-nuxcore
+
