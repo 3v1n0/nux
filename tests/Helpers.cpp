@@ -22,6 +22,8 @@
 
 #include "Helpers.h"
 
+#include "NuxCore/LoggingWriter.h"
+
 #include <fstream>
 #include <stdexcept>
 
@@ -45,6 +47,21 @@ void PumpGObjectMainLoop()
   while (g_main_context_pending(context)) {
     g_main_context_iteration(context, false);
   }
+}
+
+CaptureLogOutput::CaptureLogOutput()
+{
+  logging::Writer::Instance().SetOutputStream(sout_);
+}
+
+CaptureLogOutput::~CaptureLogOutput()
+{
+  logging::Writer::Instance().SetOutputStream(std::cout);
+}
+
+std::string CaptureLogOutput::GetOutput()
+{
+  return sout_.str();
 }
 
 
