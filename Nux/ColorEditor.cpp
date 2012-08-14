@@ -316,18 +316,6 @@ namespace nux
     ctrllayout->SetHorizontalExternalMargin(2);
     ctrllayout->SetVerticalInternalMargin(2);
 
-//     //ctrllayout->AddView(new SpaceLayout(20,20,20,40), 1);
-//     OkButton = new ToggleButton("OK", NUX_TRACKER_LOCATION);
-//     OkButton->SetMinimumWidth(60);
-//     OkButton->SetMinimumHeight(20);
-//
-//     CancelButton = new ToggleButton("Cancel", NUX_TRACKER_LOCATION);
-//     CancelButton->SetMinimumWidth(60);
-//     CancelButton->SetMinimumHeight(20);
-//
-// //    ctrllayout->AddView(OkButton, 1);
-// //    ctrllayout->AddView(CancelButton, 1);
-
     m_hlayout->AddLayout(ctrllayout, 0);
 
     radiogroup = new RadioButtonGroup(NUX_TRACKER_LOCATION);
@@ -379,9 +367,6 @@ namespace nux
   {
     Geometry base = GetGeometry();
 
-    GetPainter().PaintBackground(graphics_engine, base);
-    //GetPainter().Paint2DQuadWireframe(graphics_engine, base, Color(COLOR_BACKGROUND_SECONDARY));
-
     base.OffsetPosition(1, 1);
     base.OffsetSize(-2, -2);
 
@@ -395,23 +380,6 @@ namespace nux
     {
       DrawHSV(graphics_engine, force_draw);
     }
-
-    redcheck->QueueDraw();
-    redtext->QueueDraw();
-    greencheck->QueueDraw();
-    greentext->QueueDraw();
-    bluecheck->QueueDraw();
-    bluetext->QueueDraw();
-
-    huecheck->QueueDraw();
-    hue_text_entry_->QueueDraw();
-    saturationcheck->QueueDraw();
-    saturation_text_entry_->QueueDraw();
-    valuecheck->QueueDraw();
-    value_text_entry_->QueueDraw();
-
-//     OkButton->QueueDraw();
-//     CancelButton->QueueDraw();
 
     graphics_engine.PopClippingRectangle();
   }
@@ -623,19 +591,20 @@ namespace nux
 
   void ColorEditor::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
-    redcheck->ProcessDraw(graphics_engine, force_draw);
-    redtext->ProcessDraw(graphics_engine, force_draw);
-    greencheck->ProcessDraw(graphics_engine, force_draw);
-    greentext->ProcessDraw(graphics_engine, force_draw);
-    bluecheck->ProcessDraw(graphics_engine, force_draw);
-    bluetext->ProcessDraw(graphics_engine, force_draw);
+    bool force = force_draw || IsFullRedraw();
+    redcheck->ProcessDraw(graphics_engine, force);
+    redtext->ProcessDraw(graphics_engine, force);
+    greencheck->ProcessDraw(graphics_engine, force);
+    greentext->ProcessDraw(graphics_engine, force);
+    bluecheck->ProcessDraw(graphics_engine, force);
+    bluetext->ProcessDraw(graphics_engine, force);
 
-    huecheck->ProcessDraw(graphics_engine, force_draw);
-    hue_text_entry_->ProcessDraw(graphics_engine, force_draw);
-    saturationcheck->ProcessDraw(graphics_engine, force_draw);
-    saturation_text_entry_->ProcessDraw(graphics_engine, force_draw);
-    valuecheck->ProcessDraw(graphics_engine, force_draw);
-    value_text_entry_->ProcessDraw(graphics_engine, force_draw);
+    huecheck->ProcessDraw(graphics_engine, force);
+    hue_text_entry_->ProcessDraw(graphics_engine, force);
+    saturationcheck->ProcessDraw(graphics_engine, force);
+    saturation_text_entry_->ProcessDraw(graphics_engine, force);
+    valuecheck->ProcessDraw(graphics_engine, force);
+    value_text_entry_->ProcessDraw(graphics_engine, force);
   }
 
   void ColorEditor::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
@@ -958,7 +927,7 @@ namespace nux
   {
     rgb_ = color::RedGreenBlue(Clamp<double>(r, 0.0, 1.0),
                                Clamp<double>(g, 0.0, 1.0),
-                               Clamp<double> (b, 0.0, 1.0));
+                               Clamp<double>(b, 0.0, 1.0));
     hsv_ = color::HueSaturationValue(rgb_);
     RecvCheckColorModel(true, m_ColorModel, color_channel_);
     sigChange.emit(this);

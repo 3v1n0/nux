@@ -24,7 +24,6 @@
 #define BASEOBJECT_H
 
 #include <sigc++/sigc++.h>
-#include "Features.h"
 #include "NuxCore/InitiallyUnownedObject.h"
 #include "NuxGraphics/Events.h"
 #include "Utils.h"
@@ -155,6 +154,17 @@ namespace nux
     Area(NUX_FILE_LINE_DECL);
     virtual ~Area();
 
+    int GetX() const;
+    int GetY() const;
+    int GetWidth() const;
+    int GetHeight() const;
+
+    void SetX(int x);
+    void SetY(int y);
+    void SetXY(int x, int y);
+    void SetWidth(int w);
+    void SetHeight(int h);
+
     int GetBaseX() const;
     int GetBaseY() const;
     int GetBaseWidth() const;
@@ -171,6 +181,7 @@ namespace nux
         The size is adjusted to respect the min and max size policy
         \sa SetWidth(), SetHeight(), SetMinimumSize(), SetMaximumSize().
     */
+    virtual void SetSize(int w, int h);
     virtual void SetBaseSize(int w, int h);
 
     virtual void SetMinimumSize(int w, int h);
@@ -212,7 +223,7 @@ namespace nux
 
         \sa SetBaseWidth(), SetBaseHeight(), SetBaseX(), SetBaseY().
     */
-    void SetGeometry(int x, int y, int w, int h);
+    virtual void SetGeometry(int x, int y, int w, int h);
 
     //! Set the geometry of the object.
     /*!
@@ -222,12 +233,10 @@ namespace nux
         @param geo Geometry object.
         \sa SetWidth(), SetHeight(), SetX(), SetY().
     */
-    void SetGeometry(const Geometry &geo);
+    virtual void SetGeometry(const Geometry& geo);
 
-    void IncreaseSize(int x, int y);
-
-    void SetBaseString(const char *Caption);
-    const NString &GetBaseString() const;
+    void SetBaseString(const char* Caption);
+    const NString& GetBaseString() const;
 
     //! Deprecated. Use GetToplevel.
     Area* GetToplevel();
@@ -460,7 +469,17 @@ namespace nux
         This signal is only meant to inform of a change of size. When receiving this signal don't do anything
         that could change the size of this object. Or you risk creating an infinite loop.
     */
-    sigc::signal<void, Area *, Geometry&> OnGeometryChanged;
+    sigc::signal<void, Area*, Geometry&> geometry_changed;
+
+    /*!
+        This signal emitted when the size of the area has changed. It is emitted after geometry_changed.
+    */
+    sigc::signal<void, Area*, int, int> size_changed;
+
+    /*!
+        This signal emitted when the position of the area has changed. It is emitted after geometry_changed.
+    */
+    sigc::signal<void, Area*, int, int> position_changed;
 
     /*!
         SetParentObject/UnParentObject are protected API. They are not meant to be used directly by users.
@@ -587,13 +606,13 @@ namespace nux
         This signal is only meant to inform that the size is about to change. When overriding this function,
         don't do anything that could change the size of this object. Or you risk creating an infinite loop.
     */
-    virtual void GeometryChangePending() {}
+    virtual void GeometryChangePending(bool position_about_to_change, bool size_about_to_change) {}
     
     /*!
         This signal is only meant to inform that the size has changed. When overriding this function,
         don't do anything that could change the size of this object. Or you risk creating an infinite loop.
     */
-    virtual void GeometryChanged() {}
+    virtual void GeometryChanged(bool position_has_changed, bool size_has_changed) {}
 
     //! Request a Layout recompute after a change of size
     /*

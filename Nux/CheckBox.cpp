@@ -43,8 +43,6 @@ namespace nux
     Geometry base = GetGeometry();
     graphics_engine.PushClippingRectangle(base);
 
-    GetPainter().PaintBackground(graphics_engine, base);
-
     InteractState is;
     is.is_on = active_;
 

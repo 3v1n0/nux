@@ -623,6 +623,17 @@ namespace nux
     */
     void SetOrthographicProjectionMatrix(int viewport_width, int viewport_height);
 
+    //! Set orthographic projection matrix.
+    /*!
+        The default projection matrix used by nux.
+
+        @param left coordinate of viewport location.
+        @param right coordinate of viewport location.
+        @param top coordinate of viewport location.
+        @param bottom coordinate of viewport location.
+    */
+    void SetOrthographicProjectionMatrix(int left, int right, int bottom, int top);
+
     //! Reset the projection matrix to identity.
     void ResetProjectionMatrix();
 
