@@ -344,20 +344,36 @@ namespace nux
     Geometry base = GetGeometry();
 
     graphics_engine.PushClippingRectangle(base);
-    GetPainter().PaintBackground(graphics_engine, base);
+
+    UXStyleImageRef ref_style = eIMAGE_STYLE_NONE;
 
     if (visual_state_ == VISUAL_STATE_PRESSED)
     {
-      GetPainter().PaintTextureShape(graphics_engine, base, eBUTTON_FOCUS);
+      ref_style = eBUTTON_FOCUS;
     }
     else if (visual_state_ == VISUAL_STATE_PRELIGHT)
     {
-      GetPainter().PaintTextureShape(graphics_engine, base, eBUTTON_PRELIGHT);
+      ref_style = eBUTTON_PRELIGHT;
     }
     else
     {
-      GetPainter().PaintTextureShape(graphics_engine, base, eBUTTON_NORMAL);
+      ref_style = eBUTTON_NORMAL;
     }
+
+    const PainterImage *pimage = GetTheme().GetImage(ref_style);
+    BaseTexture* texture = NULL;
+    if (pimage != NULL)
+    {
+      texture = pimage->texture;
+    }
+
+    TexCoordXForm texxform;
+    ROPConfig rop;
+    rop.Blend = true;
+    rop.SrcBlend = GL_ONE;
+    rop.DstBlend = GL_ONE_MINUS_SRC_ALPHA;
+
+    GetPainter().PushDrawSliceScaledTextureLayer(graphics_engine, base, ref_style, color::White, eAllCorners, true, rop);
 
     if (GetCompositionLayout())
     {
@@ -368,13 +384,14 @@ namespace nux
         clip_geo.OffsetSize(-left_clip_ - right_clip_, -top_clip_ - bottom_clip_);
 
         graphics_engine.PushClippingRectangle(clip_geo);
-        GetPainter().PushPaintLayerStack();
-        GetCompositionLayout()->ProcessDraw(graphics_engine, force_draw);
-        GetPainter().PopPaintLayerStack();
+
+        GetCompositionLayout()->ProcessDraw(graphics_engine, true);
+
         graphics_engine.PopClippingRectangle();
       }
       GetPainter().PopPaintLayerStack();
     }
+    GetPainter().PopPaintLayer();
     graphics_engine.PopClippingRectangle();
   }
 

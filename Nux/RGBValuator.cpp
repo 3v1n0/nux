@@ -152,10 +152,6 @@ namespace nux
     alpha_valuator_->mouse_drag.connect(sigc::mem_fun(this, &RGBValuator::OnReceiveMouseDrag_Alpha));
     m_ColorModel->click.connect(sigc::mem_fun(this, &RGBValuator::OnChangeColorModel));
     m_ColorFormat->click.connect(sigc::mem_fun(this, &RGBValuator::OnChangeColorFormat));
-//    m_ColorModel->mouse_down.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
-//    m_ColorModel->mouse_up.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
-//    m_ColorModel->mouse_enter.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
-
 
     m_ColorModel->SetFont(GetSysBoldFont());
     m_ColorFormat->SetFont(GetSysBoldFont());
@@ -427,13 +423,6 @@ namespace nux
     DrawGreenMarker(graphics_engine);
     DrawBlueMarker(graphics_engine);
     DrawAlphaMarker(graphics_engine);
-
-    red_caption_->QueueDraw();
-    green_caption_->QueueDraw();
-    blue_caption_->QueueDraw();
-    alpha_caption_->QueueDraw();
-    m_ColorModel->QueueDraw();
-    m_ColorFormat->QueueDraw();
 
     GetPainter().PopBackground();
     graphics_engine.PopClippingRectangle();
