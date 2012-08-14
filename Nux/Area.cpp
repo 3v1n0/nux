@@ -377,10 +377,10 @@ namespace nux
     if (geometry_ == geometry)
       return;
 
-    GeometryChangePending();
+    GeometryChangePending(detected_position_change, detected_size_change);
     geometry_ = geometry;
     ReconfigureParentLayout();
-    GeometryChanged();
+    GeometryChanged(detected_position_change, detected_size_change);
 
     geometry_changed.emit(this, geometry_);
 

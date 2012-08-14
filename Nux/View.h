@@ -100,6 +100,9 @@ namespace nux
     bool SearchInAllSubNodes(Area *bo);
     bool SearchInFirstSubNodes(Area *bo);
 
+    
+/*    void SetGeometry(int x, int y, int w, int h);*/
+
     //! Set Geometry
     /*
         Set the Geometry of the View and the geometry of the Default Background Area.
@@ -107,7 +110,7 @@ namespace nux
         For others, they have to overwrite the function and do the appropriate computations
         for their component.
     */
-    virtual void SetGeometry(const Geometry &geo);
+    void SetGeometry(const Geometry &geo);
 
     //! Return true if this object can break the layout.
     /*
@@ -202,11 +205,13 @@ namespace nux
 
     void EndBackupTextureRendering(GraphicsEngine& graphics_engine);
 
-    /*! 
+    /*!
         Report to a parent view with redirect_rendering_to_texture_ set to true that one of its children
         needs to be redrawn.
     */
     void PrepareParentRedirectedView();
+
+    bool HasParentRedirectedView();
 
     void OnChildFocusChanged(/*Area *parent,*/ Area *child);
     sigc::connection _on_focus_changed_handler;
@@ -242,8 +247,8 @@ namespace nux
     */
     bool IsFullRedraw() const;
 
-    virtual void GeometryChangePending();
-    virtual void GeometryChanged();
+    virtual void GeometryChangePending(bool position_about_to_change, bool size_about_to_change);
+    virtual void GeometryChanged(bool position_has_changed, bool size_has_changed);
 
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
 

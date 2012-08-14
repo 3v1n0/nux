@@ -508,9 +508,16 @@ namespace nux
     return false;
   }
 
-  void View::SetGeometry(const Geometry &geo)
+//   void View::SetGeometry(int x, int y, int w, int h)
+//   {
+//     Area::SetGeometry(x, y, w, h);
+//     ComputeContentSize();
+//     PostResizeGeometry();
+//   }
+
+  void View::SetGeometry(const Geometry& geo)
   {
-    Area::SetGeometry(geo);
+    Area::SetGeometry(geo.x, geo.y, geo.width, geo.height);
     ComputeContentSize();
     PostResizeGeometry();
   }
@@ -564,13 +571,19 @@ namespace nux
     return view_enabled_;
   }
 
-  void View::GeometryChangePending()
+  void View::GeometryChangePending(bool position_about_to_change, bool size_about_to_change)
   {
-    QueueDraw();
+
   }
 
-  void View::GeometryChanged()
+  void View::GeometryChanged(bool position_has_changed, bool size_has_changed)
   {
+    if (RedirectRenderingToTexture() || HasParentRedirectedView())
+    {
+      if (size_has_changed)
+        QueueDraw();
+      return;
+    }
     QueueDraw();
   }
 
@@ -707,7 +720,30 @@ namespace nux
         view->PrepareParentRedirectedView();
       }
     }
+  }
 
+  bool View::HasParentRedirectedView()
+  {
+    Area* parent = GetParentObject();
+
+    while (parent && !parent->Type().IsDerivedFromType(View::StaticObjectType))
+    {
+      parent = parent->GetParentObject();
+    }
+
+    if (parent)
+    {
+      View* view = static_cast<View*>(parent);
+      if (view->RedirectRenderingToTexture())
+      {
+        return true;
+      }
+      else
+      {
+        return view->HasParentRedirectedView();
+      }
+    }
+    return false;
   }
 
 #ifdef NUX_GESTURES_SUPPORT

@@ -223,7 +223,7 @@ namespace nux
 
         \sa SetBaseWidth(), SetBaseHeight(), SetBaseX(), SetBaseY().
     */
-    void SetGeometry(int x, int y, int w, int h);
+    virtual void SetGeometry(int x, int y, int w, int h);
 
     //! Set the geometry of the object.
     /*!
@@ -233,10 +233,10 @@ namespace nux
         @param geo Geometry object.
         \sa SetWidth(), SetHeight(), SetX(), SetY().
     */
-    void SetGeometry(const Geometry &geo);
+    virtual void SetGeometry(const Geometry& geo);
 
-    void SetBaseString(const char *Caption);
-    const NString &GetBaseString() const;
+    void SetBaseString(const char* Caption);
+    const NString& GetBaseString() const;
 
     //! Deprecated. Use GetToplevel.
     Area* GetToplevel();
@@ -606,13 +606,13 @@ namespace nux
         This signal is only meant to inform that the size is about to change. When overriding this function,
         don't do anything that could change the size of this object. Or you risk creating an infinite loop.
     */
-    virtual void GeometryChangePending() {}
+    virtual void GeometryChangePending(bool position_about_to_change, bool size_about_to_change) {}
     
     /*!
         This signal is only meant to inform that the size has changed. When overriding this function,
         don't do anything that could change the size of this object. Or you risk creating an infinite loop.
     */
-    virtual void GeometryChanged() {}
+    virtual void GeometryChanged(bool position_has_changed, bool size_has_changed) {}
 
     //! Request a Layout recompute after a change of size
     /*

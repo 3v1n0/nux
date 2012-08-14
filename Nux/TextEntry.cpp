@@ -220,10 +220,8 @@ namespace nux
 
   void TextEntry::GeometryChanged()
   {
-
       update_canvas_ = true;
-      View::GeometryChanged();
-
+      View::GeometryChanged(true, true);
   }
 
   Area* TextEntry::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
