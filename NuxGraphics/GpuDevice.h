@@ -328,6 +328,12 @@ namespace nux
     ObjectPtr<IOpenGLVertexDeclaration> CreateVertexDeclaration(
       const VERTEXELEMENT *pVertexElements);
 
+    //! Create an return an ObjectPtr that encapsulates OpenGL framebuffer object.
+    /*!
+        Create an return an ObjectPtr that encapsulates OpenGL framebuffer object.
+        This function has side effects. It will change the framebuffer object that 
+        is set in the GPU. 
+    */
     ObjectPtr<IOpenGLFrameBufferObject> CreateFrameBufferObject();
 
     ObjectPtr<IOpenGLShaderProgram> CreateShaderProgram();

@@ -37,11 +37,6 @@ namespace nux
     view_layout_      = NULL;
     draw_cmd_queued_  = false;
     m_TextColor       = Color(1.0f, 1.0f, 1.0f, 1.0f);
-
-    if (backup_fbo_.IsNull())
-    {
-      backup_fbo_ = GetGraphicsDisplay()->GetGpuDevice()->CreateFrameBufferObject();
-    }
   }
 
   View::~View()
@@ -291,6 +286,11 @@ namespace nux
     const int width = GetWidth();
     const int height = GetHeight();
 
+    if (backup_fbo_.IsNull())
+    {
+      backup_fbo_ = GetGraphicsDisplay()->GetGpuDevice()->CreateFrameBufferObject();
+    }
+    
     if (!backup_texture_.IsValid() || (backup_texture_->GetWidth() != width) || (backup_texture_->GetHeight() != height))
     {
       backup_texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);

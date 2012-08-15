@@ -824,7 +824,7 @@ namespace nux
 
       if (clear_background)
       {
-        Paint2DQuadColor(graphics_engine, layer_geo, color::Red);
+        Paint2DQuadColor(graphics_engine, layer_geo, Color(0x0));
         clear_background = false;
       }
 
