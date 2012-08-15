@@ -160,14 +160,12 @@ namespace nux
 
   void View::ProcessDraw(GraphicsEngine& graphics_engine, bool force_draw)
   {
-    bool update_rendering = false;
     full_view_draw_cmd_ = false;
 
     if (RedirectRenderingToTexture())
     {
       if (update_backup_texture_ || force_draw || draw_cmd_queued_)
       {
-        update_rendering = true;
         BeginBackupTextureRendering(graphics_engine);
 
         {
@@ -278,8 +276,6 @@ namespace nux
   {
     prev_fbo_ = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
     prev_viewport_ = GetGraphicsDisplay()->GetGraphicsEngine()->GetViewportRect();
-    int window_width = GetGraphicsDisplay()->GetGraphicsEngine()->GetWindowWidth ();
-    int window_height = GetGraphicsDisplay()->GetGraphicsEngine()->GetWindowHeight();
 
     Geometry geo_absolute = GetAbsoluteGeometry();
     
@@ -290,7 +286,7 @@ namespace nux
     {
       backup_fbo_ = GetGraphicsDisplay()->GetGpuDevice()->CreateFrameBufferObject();
     }
-    
+
     if (!backup_texture_.IsValid() || (backup_texture_->GetWidth() != width) || (backup_texture_->GetHeight() != height))
     {
       backup_texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
@@ -573,7 +569,8 @@ namespace nux
 
   void View::GeometryChangePending(bool position_about_to_change, bool size_about_to_change)
   {
-
+    if (IsLayoutDone())
+      QueueDraw();
   }
 
   void View::GeometryChanged(bool position_has_changed, bool size_has_changed)
@@ -584,7 +581,8 @@ namespace nux
         QueueDraw();
       return;
     }
-    QueueDraw();
+    if (IsLayoutDone())
+      QueueDraw();
   }
 
   Area* View::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
