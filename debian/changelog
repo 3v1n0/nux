@@ -1,3 +1,13 @@
+nux (3.2.0-0ubuntu2) UNRELEASED; urgency=low
+
+  * debian/50_check_unity_support,
+    debian/nux-tools.install:
+    - remove unity-2d check while logging, which was the second attempt to
+      fallback to it if the first didn't catch it (autologin mode). Now that
+      unity-2d is deprecated because of the gsettings transition (LP: #1035261)
+
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 15 Aug 2012 08:30:11 +0200
+
 nux (3.2.0-0ubuntu1) quantal-proposed; urgency=low
 
   [ Łukasz 'sil2100' Zemczak ]
