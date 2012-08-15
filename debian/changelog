@@ -1,9 +1,9 @@
-nux (3.2.0-0ubuntu3) UNRELEASED; urgency=low
+nux (3.2.0-0ubuntu3) quantal; urgency=low
 
   * debian/nux-tools.maintscript:
     - remove the conffile
 
- -- Didier Roche <didrocks@ubuntu.com>  Wed, 15 Aug 2012 14:38:54 +0200
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 15 Aug 2012 14:42:58 +0200
 
 nux (3.2.0-0ubuntu2) quantal; urgency=low
 
