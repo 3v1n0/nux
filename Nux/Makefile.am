@@ -171,6 +171,7 @@ source_h = \
   $(srcdir)/MouseAreaCtrl.h \
   $(srcdir)/NumericValuator.h \
   $(srcdir)/Nux.h \
+  $(srcdir)/NuxTimerTickSource.h \
   $(srcdir)/NuxGlobalInitializer.h \
   $(srcdir)/Painter.h \
   $(srcdir)/Panel.h \
