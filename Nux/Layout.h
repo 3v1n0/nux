@@ -264,6 +264,12 @@ namespace nux
     virtual void ResetQueueDraw(); 
 
   protected:
+    void BeginBackupTextureRendering(GraphicsEngine& graphics_engine);
+    void EndBackupTextureRendering(GraphicsEngine& graphics_engine);
+
+    virtual void GeometryChangePending(bool position_about_to_change, bool size_about_to_change);
+    virtual void GeometryChanged(bool position_has_changed, bool size_has_changed);
+
     virtual bool AcceptKeyNavFocus();
     
     bool draw_cmd_queued_; //<! The rendering of the layout needs to be refreshed.

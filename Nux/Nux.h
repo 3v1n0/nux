@@ -63,6 +63,7 @@
 #include "Theme.h"
 #include "Painter.h"
 #include "View.h"
+#include "BasicView.h"
 #include "AbstractThread.h"
 #include "WindowThread.h"
 #include "WindowCompositor.h"

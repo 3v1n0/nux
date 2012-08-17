@@ -369,6 +369,18 @@ namespace nux
 #endif
   }
 
+  void GraphicsEngine::QRP_1TexPremultiply(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color0)
+  {
+#ifndef NUX_OPENGLES_20
+    if (UsingGLSLCodePath())
+      QRP_GLSL_1TexPremultiply(x, y, width, height, DeviceTexture, texxform0, color0);
+    else
+      QRP_ASM_1TexPremultiply(x, y, width, height, DeviceTexture, texxform0, color0);
+#else
+    QRP_GLSL_1TexPremultiply(x, y, width, height, DeviceTexture, texxform0, color0);
+#endif
+  }
+
   void GraphicsEngine::QRP_Pixelate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &c0, int pixel_size)
   {
 #ifndef NUX_OPENGLES_20

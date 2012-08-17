@@ -39,11 +39,13 @@ namespace nux
   NUX_IMPLEMENT_OBJECT_TYPE(Area);
 
   Area::Area(NUX_FILE_LINE_DECL)
-    :   InitiallyUnownedObject(NUX_FILE_LINE_PARAM)
-    ,   geometry_(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT)
-    ,   min_size_(AREA_MIN_WIDTH, AREA_MIN_HEIGHT)
-    ,   max_size_(AREA_MAX_WIDTH, AREA_MAX_HEIGHT)
-    ,   layout_done_(true)
+    : InitiallyUnownedObject(NUX_FILE_LINE_PARAM)
+    , geometry_(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT)
+    , min_size_(AREA_MIN_WIDTH, AREA_MIN_HEIGHT)
+    , max_size_(AREA_MAX_WIDTH, AREA_MAX_HEIGHT)
+    , layout_done_(true)
+    , redirect_rendering_to_texture_(false)
+    , update_backup_texture_(false)
   {
     window_thread_ = GetWindowThread();
     visible_ = true;
@@ -1099,6 +1101,99 @@ namespace nux
 
     return false;
   }
+
+  /*** Support for redirected rendering ***/
+  void Area::SetRedirectRenderingToTexture(bool redirect)
+  {
+    if (redirect_rendering_to_texture_ == redirect)
+    {
+      return;
+    }
+
+    if ((redirect_rendering_to_texture_ == false) && redirect)
+    {
+      update_backup_texture_ = true;
+    }
+
+    redirect_rendering_to_texture_ = redirect;
+    if (redirect == false)
+    {
+      // Free the texture of this view
+      backup_fbo_.Release();
+      backup_texture_.Release();
+      backup_depth_texture_.Release();
+      prev_fbo_.Release();
+    }
+  }
+
+  bool Area::RedirectRenderingToTexture() const
+  {
+    return redirect_rendering_to_texture_;
+  }
+
+  void Area::SetUpdateBackupTextureForChildRendering(bool update)
+  {
+    update_backup_texture_ = update;
+  }
+
+  ObjectPtr<IOpenGLBaseTexture> Area::BackupTexture() const
+  {
+    // if RedirectRenderingToTexture() is false, then backup_texture_ is not a valid smart pointer.
+    return backup_texture_;
+  }
+
+  bool Area::UpdateBackupTextureForChildRendering() const
+  {
+    return update_backup_texture_;
+  }
+
+  void Area::PrepareParentRedirectedView()
+  {
+    Area* parent = GetParentObject();
+
+    while (parent)
+    {
+      if (parent->RedirectRenderingToTexture() && (parent->UpdateBackupTextureForChildRendering() == false))
+      {
+        parent->SetUpdateBackupTextureForChildRendering(true);
+        parent->PrepareParentRedirectedView();
+      }
+      else if (parent->RedirectRenderingToTexture() && (parent->UpdateBackupTextureForChildRendering() == true))
+      {
+        break;
+      }
+      else
+      {
+        parent->PrepareParentRedirectedView();
+        break;
+      }
+    }
+  }
+
+  bool Area::HasParentRedirectedView()
+  {
+    Area* parent = GetParentObject();
+
+    while (parent && !parent->Type().IsDerivedFromType(View::StaticObjectType))
+    {
+      parent = parent->GetParentObject();
+    }
+
+    if (parent)
+    {
+      View* view = static_cast<View*>(parent);
+      if (view->RedirectRenderingToTexture())
+      {
+        return true;
+      }
+      else
+      {
+        return view->HasParentRedirectedView();
+      }
+    }
+    return false;
+  }
+
 
 #ifdef NUX_GESTURES_SUPPORT
   Area* Area::GetInputAreaHitByGesture(const GestureEvent &event)

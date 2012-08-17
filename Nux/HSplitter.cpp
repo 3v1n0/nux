@@ -143,11 +143,6 @@ namespace nux
           View *ic = static_cast<View *>(*it);
           ic->ProcessDraw(graphics_engine, true);
         }
-        else if ((*it)->Type().IsObjectType(InputArea::StaticObjectType))
-        {
-          InputArea *base_area = static_cast<InputArea *>(*it);
-          base_area->OnDraw(graphics_engine, true);
-        }
         else if ((*it)->Type().IsObjectType(HLayout::StaticObjectType))
         {
           HLayout *layout = static_cast<HLayout *>(*it);
@@ -165,11 +160,6 @@ namespace nux
         {
           View *ic = static_cast<View *>(*it);
           ic->ProcessDraw(graphics_engine, false);
-        }
-        else if ((*it)->Type().IsObjectType(InputArea::StaticObjectType))
-        {
-          InputArea *base_area = static_cast<InputArea *>(*it);
-          base_area->OnDraw(graphics_engine, false);
         }
         else if ((*it)->Type().IsObjectType(HLayout::StaticObjectType))
         {
@@ -358,11 +348,6 @@ namespace nux
         // if we are already computing the layout from the main window down, we need to call
         // ComputeElementLayout to force the computing of this element layout.
         GetWindowThread()->ComputeElementLayout(ic);
-      }
-      else if (m_InterfaceObject[i]->Type().IsObjectType(InputArea::StaticObjectType))
-      {
-        InputArea *base_area = static_cast<InputArea *>(m_InterfaceObject[i]);
-        base_area->SetGeometry(Geometry(x, accheight, w, splitter_geo.y - accheight));
       }
       else if (m_InterfaceObject[i]->Type().IsDerivedFromType(Layout::StaticObjectType))
       {
@@ -565,11 +550,6 @@ namespace nux
       {
         View *ic = static_cast<View *>(*it);
         ic->DoneRedraw();
-      }
-
-      else if ((*it)->Type().IsObjectType(InputArea::StaticObjectType))
-      {
-        //InputArea* base_area = NUX_STATIC_CAST(InputArea*, (*it));
       }
     }
   }

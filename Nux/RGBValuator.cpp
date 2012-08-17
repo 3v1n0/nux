@@ -120,16 +120,16 @@ namespace nux
     blue_caption_       = new EditTextBox("", NUX_TRACKER_LOCATION);
     alpha_caption_      = new EditTextBox("", NUX_TRACKER_LOCATION);
 
-    red_valuator_       = new InputArea(NUX_TRACKER_LOCATION);
-    green_valuator_     = new InputArea(NUX_TRACKER_LOCATION);
-    blue_valuator_      = new InputArea(NUX_TRACKER_LOCATION);
-    alpha_valuator_     = new InputArea(NUX_TRACKER_LOCATION);
-    color_square_       = new InputArea(NUX_TRACKER_LOCATION);
+    red_valuator_       = new BasicView(NUX_TRACKER_LOCATION);
+    green_valuator_     = new BasicView(NUX_TRACKER_LOCATION);
+    blue_valuator_      = new BasicView(NUX_TRACKER_LOCATION);
+    alpha_valuator_     = new BasicView(NUX_TRACKER_LOCATION);
+    color_square_       = new BasicView(NUX_TRACKER_LOCATION);
 
-    m_ComponentLabel0   = new InputArea(NUX_TRACKER_LOCATION);
-    m_ComponentLabel1   = new InputArea(NUX_TRACKER_LOCATION);
-    m_ComponentLabel2   = new InputArea(NUX_TRACKER_LOCATION);
-    m_ComponentAlpha    = new InputArea(NUX_TRACKER_LOCATION);
+    m_ComponentLabel0   = new BasicView(NUX_TRACKER_LOCATION);
+    m_ComponentLabel1   = new BasicView(NUX_TRACKER_LOCATION);
+    m_ComponentLabel2   = new BasicView(NUX_TRACKER_LOCATION);
+    m_ComponentAlpha    = new BasicView(NUX_TRACKER_LOCATION);
   }
 
   void RGBValuator::InitializeWidgets()

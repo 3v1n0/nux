@@ -163,11 +163,6 @@ namespace nux
       Layout *layout = NUX_STATIC_CAST(Layout *, _area);
       layout->ProcessDraw(graphics_engine, force_draw);
     }
-    else if (_area->IsArea())
-    {
-      InputArea *area = NUX_STATIC_CAST(InputArea *, _area);
-      area->OnDraw(graphics_engine, force_draw);
-    }
   }
 
   void LayeredLayout::ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw)

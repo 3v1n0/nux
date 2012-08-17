@@ -31,8 +31,8 @@ namespace nux
 
   View::View(NUX_FILE_LINE_DECL)
   : InputArea(NUX_FILE_LINE_PARAM)
-  , redirect_rendering_to_texture_(false)
-  , update_backup_texture_(false)
+//   , redirect_rendering_to_texture_(false)
+//   , update_backup_texture_(false)
   {
     view_layout_      = NULL;
     draw_cmd_queued_  = false;
@@ -217,8 +217,7 @@ namespace nux
       texxform.vwrap = TEXWRAP_CLAMP;
       texxform.FlipVCoord(true);
 
-      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(GetX(), GetY(), GetWidth(), GetHeight(), backup_texture_, texxform, Color(color::White));
-
+      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1TexPremultiply(GetX(), GetY(), GetWidth(), GetHeight(), backup_texture_, texxform, Color(color::White));
     }
     else
     {
@@ -274,9 +273,12 @@ namespace nux
 
   void View::BeginBackupTextureRendering(GraphicsEngine& graphics_engine)
   {
+    // Get the current fbo...
     prev_fbo_ = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
+    // ... and the size of the view port rectangle.
     prev_viewport_ = GetGraphicsDisplay()->GetGraphicsEngine()->GetViewportRect();
-
+    
+    // Get the position of this view relatively to the top left corner of the physical window.
     Geometry geo_absolute = GetAbsoluteGeometry();
     
     const int width = GetWidth();
@@ -284,11 +286,13 @@ namespace nux
 
     if (backup_fbo_.IsNull())
     {
+      // Create the fbo before using it for the first time.
       backup_fbo_ = GetGraphicsDisplay()->GetGpuDevice()->CreateFrameBufferObject();
     }
 
     if (!backup_texture_.IsValid() || (backup_texture_->GetWidth() != width) || (backup_texture_->GetHeight() != height))
     {
+      // Create or resize the color and depth textures before using them.
       backup_texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
       backup_depth_texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
     }
@@ -301,10 +305,12 @@ namespace nux
 
     if (draw_cmd_queued_)
     {
-      CHECKGL(glClearColor(0, 0, 0, 1));
+      CHECKGL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
       CHECKGL(glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT));
     }
 
+    // Transform the geometry of this area through the current model view matrix. This gives the
+    // the position of the layout relatively to its parent.
     Geometry offset_rect = GetGraphicsDisplay()->GetGraphicsEngine()->ModelViewXFormRect(GetGeometry());
     int x_offset = -offset_rect.x;
     int y_offset = -offset_rect.y;
@@ -321,13 +327,17 @@ namespace nux
 
     if (prev_fbo_.IsValid())
     {
+      // Restore the previous fbo
       prev_fbo_->Activate();
 
       prev_fbo_->ApplyClippingRegion();
-      graphics_engine.ApplyModelViewMatrix();
     }
 
+    // Release the reference on the previous fbo
     prev_fbo_.Release();
+
+    // Restore the matrices and the view port.
+    graphics_engine.ApplyModelViewMatrix();
     graphics_engine.SetOrthographicProjectionMatrix(prev_viewport_.width, prev_viewport_.height);
     graphics_engine.SetViewport(prev_viewport_.x, prev_viewport_.y, prev_viewport_.width, prev_viewport_.height);
   }
@@ -646,102 +656,6 @@ namespace nux
   bool View::AcceptKeyNavFocus()
   {
     return true;
-  }
-
-  void View::SetRedirectRenderingToTexture(bool redirect)
-  {
-    if (redirect_rendering_to_texture_ == redirect)
-    {
-      return;
-    }
-
-    if ((redirect_rendering_to_texture_ == false) && redirect)
-    {
-      update_backup_texture_ = true;
-    }
-
-    redirect_rendering_to_texture_ = redirect;
-    if (redirect == false)
-    {
-      // Free the texture of this view
-      backup_fbo_.Release();
-      backup_texture_.Release();
-      backup_depth_texture_.Release();
-      prev_fbo_.Release();
-    }
-  }
-
-  bool View::RedirectRenderingToTexture() const
-  {
-    return redirect_rendering_to_texture_;
-  }
-
-  void View::SetUpdateBackupTextureForChildRendering(bool update)
-  {
-    update_backup_texture_ = update;
-  }
-
-  ObjectPtr<IOpenGLBaseTexture> View::BackupTexture() const
-  {
-    // if RedirectRenderingToTexture() is false, then backup_texture_ is not a valid smart pointer.
-    return backup_texture_;
-  }
-
-  bool View::UpdateBackupTextureForChildRendering() const
-  {
-    return update_backup_texture_;
-  }
-
-  void View::PrepareParentRedirectedView()
-  {
-    Area* parent = GetParentObject();
-
-    while (parent && !parent->Type().IsDerivedFromType(View::StaticObjectType))
-    {
-      parent = parent->GetParentObject();
-    }
-
-    if (parent)
-    {
-      View* view = static_cast<View*>(parent);
-      if (view->RedirectRenderingToTexture() && (view->UpdateBackupTextureForChildRendering() == false))
-      {
-        view->SetUpdateBackupTextureForChildRendering(true);
-        view->PrepareParentRedirectedView();
-      }
-      else if (view->RedirectRenderingToTexture() && (view->UpdateBackupTextureForChildRendering() == true))
-      {
-        return;
-      }
-      else
-      {
-        view->PrepareParentRedirectedView();
-      }
-    }
-  }
-
-  bool View::HasParentRedirectedView()
-  {
-    Area* parent = GetParentObject();
-
-    while (parent && !parent->Type().IsDerivedFromType(View::StaticObjectType))
-    {
-      parent = parent->GetParentObject();
-    }
-
-    if (parent)
-    {
-      View* view = static_cast<View*>(parent);
-      if (view->RedirectRenderingToTexture())
-      {
-        return true;
-      }
-      else
-      {
-        return view->HasParentRedirectedView();
-      }
-    }
-    return false;
   }
 
 #ifdef NUX_GESTURES_SUPPORT

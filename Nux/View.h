@@ -47,7 +47,6 @@ namespace nux
     /*
         If ComputeContentSize is called while outside of the layout process (\sa IsInsideLayoutCycle) then the parents of 
         this object maybe added to the layout queue if this view size changes. \sa Area::ReconfigureParentLayout.
-
     */
     virtual long ComputeContentSize();
     virtual void ComputeContentPosition(float offsetX, float offsetY);
@@ -152,66 +151,22 @@ namespace nux
     virtual Area* KeyNavIteration(KeyNavDirection direction);
     virtual bool AcceptKeyNavFocus();
 
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+
+    virtual Area* FindKeyFocusArea(unsigned int key_symbol,
+      unsigned long x11_key_code,
+      unsigned long special_keys_state);
+
 #ifdef NUX_GESTURES_SUPPORT
     virtual Area* GetInputAreaHitByGesture(const nux::GestureEvent &event);
 #endif
 
-    //! Redirect the rendering of this view to a texture.
-    /*!
-        Redirect the rendering of this view to a texture. \sa BackupTexture().
-        @param redirect If true, redirect the rendering of this view to a texture.
-    */
-    void SetRedirectRenderingToTexture(bool redirect);
-
-    /*!
-        @return True if the rendering of this view is done in a texture.
-    */
-    bool RedirectRenderingToTexture() const;
-
-    //! Return the texture of this View if RedirectRenderingToTexture is enabled.
-    /*
-        Return the texture of this View if RedirectRenderingToTexture is enabled.
-        If RedirectRenderingToTexture() is false, then backup_texture_ is not a valid smart pointer.
-
-        @return the device texture that contains the rendering of this view.
-    */
-    ObjectPtr<IOpenGLBaseTexture> BackupTexture() const;
-
   protected:
     virtual void ChildViewQueuedDraw(Area* area);
-
-    //! Redirect the rendering of the view to a texture.
-    bool redirect_rendering_to_texture_;
-
-    bool update_backup_texture_;
-    
-    /*!
-        Inform this view that one of its children has requested a draw. This view must have its rendering redirected to a texture.
-        @param update True if this view is redirected and one of its children has requested a draw.
-    */
-    void SetUpdateBackupTextureForChildRendering(bool update);
-    bool UpdateBackupTextureForChildRendering() const;
-
-    //! The texture that holds the rendering of this view.
-    ObjectPtr<IOpenGLBaseTexture> backup_texture_;
-    ObjectPtr<IOpenGLBaseTexture> backup_depth_texture_;
-    ObjectPtr<IOpenGLFrameBufferObject> backup_fbo_;
-    ObjectPtr<IOpenGLFrameBufferObject> prev_fbo_;
-    Geometry prev_viewport_;
-    Matrix4 model_view_matrix_;
-    Matrix4 perspective_matrix_;
 
     void BeginBackupTextureRendering(GraphicsEngine& graphics_engine);
 
     void EndBackupTextureRendering(GraphicsEngine& graphics_engine);
-
-    /*!
-        Report to a parent view with redirect_rendering_to_texture_ set to true that one of its children
-        needs to be redrawn.
-    */
-    void PrepareParentRedirectedView();
-
-    bool HasParentRedirectedView();
 
     void OnChildFocusChanged(/*Area *parent,*/ Area *child);
     sigc::connection _on_focus_changed_handler;
@@ -250,12 +205,6 @@ namespace nux
     virtual void GeometryChangePending(bool position_about_to_change, bool size_about_to_change);
     virtual void GeometryChanged(bool position_has_changed, bool size_has_changed);
 
-    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
-
-    virtual Area* FindKeyFocusArea(unsigned int key_symbol,
-                          unsigned long x11_key_code,
-                          unsigned long special_keys_state);
-
     Layout *view_layout_;
 
     bool draw_cmd_queued_; //<! The rendering of the view needs to be refreshed.
@@ -271,6 +220,8 @@ namespace nux
     friend class Area;
     friend class LayeredLayout;
     friend class Canvas;
+    friend class VSplitter;
+    friend class HSplitter;
   };
 }
 

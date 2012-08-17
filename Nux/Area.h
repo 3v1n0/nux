@@ -33,6 +33,9 @@ namespace nux
 {
   class WindowThread;
   class GraphicsEngine;
+  class IOpenGLBaseTexture;
+  class IOpenGLFrameBufferObject;
+
 #ifdef NUX_GESTURES_SUPPORT
   class GestureEvent;
 #endif // NUX_GESTURES_SUPPORT
@@ -646,6 +649,64 @@ namespace nux
     //! If this variable is not NULL, then this area is part of the keyboard focus chain.
     Area* next_object_to_key_focus_area_;
 
+    
+    /**********************************************/
+    /*** Begin support for redirected rendering ***/
+    /**********************************************/
+public:
+    //! Redirect the rendering of this view to a texture.
+    /*!
+        Redirect the rendering of this view to a texture. \sa BackupTexture().
+        @param redirect If true, redirect the rendering of this view to a texture.
+    */
+    virtual void SetRedirectRenderingToTexture(bool redirect);
+
+    /*!
+        @return True if the rendering of this view is done in a texture.
+    */
+    virtual bool RedirectRenderingToTexture() const;
+
+    //! Return the texture of this View if RedirectRenderingToTexture is enabled.
+    /*
+        Return the texture of this View if RedirectRenderingToTexture is enabled.
+        If RedirectRenderingToTexture() is false, then backup_texture_ is not a valid smart pointer.
+
+        @return the device texture that contains the rendering of this view.
+    */
+    ObjectPtr<IOpenGLBaseTexture> BackupTexture() const;
+
+protected:
+    //! Redirect the rendering of the view to a texture.
+    bool redirect_rendering_to_texture_;
+    bool update_backup_texture_;
+    //! The texture that holds the rendering of this view.
+    ObjectPtr<IOpenGLBaseTexture> backup_texture_;
+    ObjectPtr<IOpenGLBaseTexture> backup_depth_texture_;
+    ObjectPtr<IOpenGLFrameBufferObject> backup_fbo_;
+    ObjectPtr<IOpenGLFrameBufferObject> prev_fbo_;
+    Geometry prev_viewport_;
+    Matrix4 model_view_matrix_;
+    Matrix4 perspective_matrix_;
+
+    /*!
+        Implemented in nux::View and nux::Layout.
+        Report to a parent view with redirect_rendering_to_texture_ set to true that one of its children
+        needs to be redrawn.
+    */
+    virtual void PrepareParentRedirectedView();
+
+    virtual bool HasParentRedirectedView();
+
+    /*!
+        Inform this view that one of its children has requested a draw. This view must have its rendering redirected to a texture.
+        @param update True if this view is redirected and one of its children has requested a draw.
+    */
+    virtual void SetUpdateBackupTextureForChildRendering(bool update);
+    virtual bool UpdateBackupTextureForChildRendering() const;
+
+    /********************************************/
+    /*** End support for redirected rendering ***/
+    /********************************************/
 
 #ifdef NUX_GESTURES_SUPPORT
     //! Returns the InputArea hit by the given gesture

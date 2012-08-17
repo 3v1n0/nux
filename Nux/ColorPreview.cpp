@@ -38,7 +38,7 @@ namespace nux
   {
     //setSize(200, 100);
     m_hlayout           = new HLayout(NUX_TRACKER_LOCATION);
-    m_ColorArea         = new InputArea(NUX_TRACKER_LOCATION);
+    m_ColorArea         = new BasicView(NUX_TRACKER_LOCATION);
     m_ColorValue        = new StaticTextBox("", NUX_TRACKER_LOCATION);
     m_DialogThreadProxy = new ColorDialogProxy(true);
 

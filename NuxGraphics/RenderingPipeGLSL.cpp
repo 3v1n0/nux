@@ -2833,5 +2833,118 @@ namespace nux
     }
   }
 
+  void GraphicsEngine::InitSlTexturePremultiplyShader()
+  {
+    ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
+    ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
+    std::string VSString;
+    std::string PSString;
+
+    VSString =  
+      NUX_VERTEX_SHADER_HEADER
+      "attribute vec4 i_vertex;                               \n\
+      attribute vec4 i_texture_coord0;                        \n\
+      attribute vec4 i_vertex_color;                          \n\
+      uniform mat4 ViewProjectionMatrix;                      \n\
+      varying vec4 varyTexCoord0;                             \n\
+      varying vec4 varyVertexColor;                           \n\
+      void main()                                             \n\
+      {                                                       \n\
+      gl_Position =  ViewProjectionMatrix * (i_vertex);       \n\
+      varyTexCoord0 = i_texture_coord0;                       \n\
+      varyVertexColor = i_vertex_color;                       \n\
+      }";
+
+    PSString =  
+      NUX_FRAGMENT_SHADER_HEADER
+      "varying vec4 varyTexCoord0;                                \n\
+      varying vec4 varyVertexColor;                               \n\
+      uniform sampler2D TextureObject0;                           \n\
+      void main()                                                 \n\
+      {                                                           \n\
+        vec4 tex = texture2D(TextureObject0, varyTexCoord0.st);   \n\
+        gl_FragColor = vec4(tex.r * tex.a, tex.g * tex.a, tex.b * tex.a, tex.a) * varyVertexColor;    \n\
+      }";
+
+    // Textured 2D Primitive Shader
+    m_SlTexturePremultiplyModColor = _graphics_display.m_DeviceFactory->CreateShaderProgram();
+    VS->SetShaderCode(VSString.c_str());
+    PS->SetShaderCode(PSString.c_str());
+
+    m_SlTexturePremultiplyModColor->ClearShaderObjects();
+    m_SlTexturePremultiplyModColor->AddShaderObject(VS);
+    m_SlTexturePremultiplyModColor->AddShaderObject(PS);
+    //CHECKGL(glBindAttribLocation(m_SlTexturePremultiplyModColor->GetOpenGLID(), 0, "i_vertex"));
+    m_SlTexturePremultiplyModColor->Link();
+  }
+
+  void GraphicsEngine::QRP_GLSL_1TexPremultiply(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color0)
+  {
+    if (DeviceTexture.IsNull() || (!DeviceTexture->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType)))
+    {
+      return;
+    }
+
+    if (!m_SlTexturePremultiplyModColor.IsValid())
+      InitSlTexturePremultiplyShader();
+
+    m_quad_tex_stats++;
+
+    QRP_Compute_Texture_Coord(width, height, DeviceTexture, texxform0);
+    float fx = x, fy = y;
+    float VtxBuffer[] =
+    {
+      fx,          fy,          0.0f, 1.0f, texxform0.u0, texxform0.v0, 0, 0, color0.red, color0.green, color0.blue, color0.alpha,
+      fx,          fy + height, 0.0f, 1.0f, texxform0.u0, texxform0.v1, 0, 0, color0.red, color0.green, color0.blue, color0.alpha,
+      fx + width,  fy + height, 0.0f, 1.0f, texxform0.u1, texxform0.v1, 0, 0, color0.red, color0.green, color0.blue, color0.alpha,
+      fx + width,  fy,          0.0f, 1.0f, texxform0.u1, texxform0.v0, 0, 0, color0.red, color0.green, color0.blue, color0.alpha,
+    };
+
+    ObjectPtr<IOpenGLShaderProgram> ShaderProg = m_SlTexturePremultiplyModColor;
+
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
+    ShaderProg->Begin();
+
+    int TextureObjectLocation = ShaderProg->GetUniformLocationARB("TextureObject0");
+    int VertexLocation = ShaderProg->GetAttributeLocation("i_vertex");
+    int TextureCoord0Location = ShaderProg->GetAttributeLocation("i_texture_coord0");
+    int VertexColorLocation = ShaderProg->GetAttributeLocation("i_vertex_color");
+
+    SetTexture(GL_TEXTURE0, DeviceTexture);
+    CHECKGL(glUniform1iARB(TextureObjectLocation, 0));
+
+    int     VPMatrixLocation = ShaderProg->GetUniformLocationARB("ViewProjectionMatrix");
+    Matrix4 MVPMatrix = GetOpenGLModelViewProjectionMatrix();
+    ShaderProg->SetUniformLocMatrix4fv((GLint) VPMatrixLocation, 1, false, (GLfloat *) & (MVPMatrix.m));
+
+    CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+    CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer));
+
+    if (TextureCoord0Location != -1)
+    {
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord0Location));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4));
+    }
+
+    if (VertexColorLocation != -1)
+    {
+      CHECKGL(glEnableVertexAttribArrayARB(VertexColorLocation));
+      CHECKGL(glVertexAttribPointerARB((GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8));
+    }
+
+    CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
+
+    CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));
+
+    if (TextureCoord0Location != -1)
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord0Location));
+
+    if (VertexColorLocation != -1)
+      CHECKGL(glDisableVertexAttribArrayARB(VertexColorLocation));
+
+    ShaderProg->End();
+  }
+
 }
 

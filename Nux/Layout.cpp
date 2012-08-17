@@ -499,42 +499,174 @@ namespace nux
   void Layout::ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     std::list<Area *>::iterator it;
-    graphics_engine.PushModelViewMatrix(Get2DMatrix());
 
-    // Clip against the padding region.
-    Geometry clip_geo = GetGeometry();
-    clip_geo.OffsetPosition(left_padding_, top_padding_);
-    clip_geo.OffsetSize(-left_padding_ - right_padding_, -top_padding_ - bottom_padding_);
-
-    graphics_engine.PushClippingRectangle(clip_geo);
-
-    for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
+    if (RedirectRenderingToTexture())
     {
-      if (!(*it)->IsVisible())
-        continue;
+      if (update_backup_texture_ || force_draw || draw_cmd_queued_)
+      {
+        BeginBackupTextureRendering(graphics_engine);
 
-      if ((*it)->IsView())
-      {
-        View *ic = NUX_STATIC_CAST(View*, (*it));
-        ic->ProcessDraw(graphics_engine, force_draw);
+        {
+          graphics_engine.PushModelViewMatrix(Get2DMatrix());
+
+
+          Geometry translated_geo = GetGeometry();
+          translated_geo.x = 0;
+          translated_geo.y = 0;
+          if (force_draw || draw_cmd_queued_)
+          {
+            GetPainter().PushPaintLayerStack();
+            GetPainter().PaintAllLayerStack(graphics_engine, translated_geo);
+          }
+
+          for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
+          {
+            if (!(*it)->IsVisible())
+              continue;
+
+            if ((*it)->IsView())
+            {
+              View* view = static_cast<View*>(*it);
+              view->ProcessDraw(graphics_engine, force_draw);
+            }
+            else if ((*it)->IsLayout())
+            {
+              Layout* layout = static_cast<Layout*>(*it);
+              layout->ProcessDraw(graphics_engine, force_draw);
+            }
+          }
+
+          if (force_draw || draw_cmd_queued_)
+          {
+            GetPainter().PopPaintLayerStack();
+          }
+
+          graphics_engine.PopModelViewMatrix();
+        }
+
+        EndBackupTextureRendering(graphics_engine);
       }
-      else if ((*it)->IsLayout())
+
+      unsigned int current_alpha_blend;
+      unsigned int current_src_blend_factor;
+      unsigned int current_dest_blend_factor;
+      // Be a good citizen, get a copy of the current GPU sates according to Nux
+      //graphics_engine.GetRenderStates().GetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
+
+      TexCoordXForm texxform;
+      texxform.uwrap = TEXWRAP_CLAMP;
+      texxform.vwrap = TEXWRAP_CLAMP;
+      texxform.FlipVCoord(true);
+
+      //graphics_engine.GetRenderStates().SetBlend(true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(GetX(), GetY(), GetWidth(), GetHeight(), backup_texture_, texxform, Color(color::White));
+
+      // Be a good citizen, restore the Nux blending states.
+      //graphics_engine.GetRenderStates().SetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
+    }
+    else
+    {
+      graphics_engine.PushModelViewMatrix(Get2DMatrix());
+
+      // Clip against the padding region.
+      Geometry clip_geo = GetGeometry();
+      clip_geo.OffsetPosition(left_padding_, top_padding_);
+      clip_geo.OffsetSize(-left_padding_ - right_padding_, -top_padding_ - bottom_padding_);
+
+      graphics_engine.PushClippingRectangle(clip_geo);
+
+      for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
       {
-        Layout *layout = NUX_STATIC_CAST(Layout*, (*it));
-        layout->ProcessDraw(graphics_engine, force_draw);
+        if (!(*it)->IsVisible())
+          continue;
+
+        if ((*it)->IsView())
+        {
+          View* view = static_cast<View*>(*it);
+          view->ProcessDraw(graphics_engine, force_draw);
+        }
+        else if ((*it)->IsLayout())
+        {
+          Layout* layout = static_cast<Layout*>(*it);
+          layout->ProcessDraw(graphics_engine, force_draw);
+        }
       }
-      // InputArea should be tested last
-      else if ((*it)->IsInputArea())
-      {
-        InputArea *input_area = NUX_STATIC_CAST(InputArea*, (*it));
-        input_area->OnDraw(graphics_engine, force_draw);
-      }
+
+      graphics_engine.PopClippingRectangle();
+      graphics_engine.PopModelViewMatrix();
     }
 
-    graphics_engine.PopClippingRectangle();
+    ResetQueueDraw();
+  }
+
+  void Layout::BeginBackupTextureRendering(GraphicsEngine& graphics_engine)
+  {
+    // Get the current fbo...
+    prev_fbo_ = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
+    // ... and the size of the view port rectangle.
+    prev_viewport_ = GetGraphicsDisplay()->GetGraphicsEngine()->GetViewportRect();
+
+    // Get the position of this layout relatively to the top left corner of the physical window.
+    Geometry geo_absolute = GetAbsoluteGeometry();
+
+    const int width = GetWidth();
+    const int height = GetHeight();
+
+    if (backup_fbo_.IsNull())
+    {
+      // Create the fbo before using it for the first time.
+      backup_fbo_ = GetGraphicsDisplay()->GetGpuDevice()->CreateFrameBufferObject();
+    }
+
+    if (!backup_texture_.IsValid() || (backup_texture_->GetWidth() != width) || (backup_texture_->GetHeight() != height))
+    {
+      // Create or resize the color and depth textures before using them.
+      backup_texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+      backup_depth_texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
+    }
+
+    backup_fbo_->FormatFrameBufferObject(width, height, BITFMT_R8G8B8A8);
+    backup_fbo_->EmptyClippingRegion();
+    backup_fbo_->SetRenderTarget(0, backup_texture_->GetSurfaceLevel(0));
+    backup_fbo_->SetDepthSurface(backup_depth_texture_->GetSurfaceLevel(0));
+    backup_fbo_->Activate();
+
+    if (draw_cmd_queued_)
+    {
+      CHECKGL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
+      CHECKGL(glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT));
+    }
+
+    // Transform the geometry of this area through the current model view matrix. This gives the
+    // the position of the layout relatively to its parent.
+    Geometry offset_rect = GetGraphicsDisplay()->GetGraphicsEngine()->ModelViewXFormRect(GetGeometry());
+    int x_offset = -offset_rect.x;
+    int y_offset = -offset_rect.y;
+
+    graphics_engine.SetViewport(0, 0, geo_absolute.width, geo_absolute.height);
+    graphics_engine.PushModelViewMatrix(Matrix4::TRANSLATE(x_offset, y_offset, 0));
+    graphics_engine.SetOrthographicProjectionMatrix(geo_absolute.width, geo_absolute.height);
+  }
+
+  void Layout::EndBackupTextureRendering(GraphicsEngine& graphics_engine)
+  {
     graphics_engine.PopModelViewMatrix();
 
-    ResetQueueDraw();
+    if (prev_fbo_.IsValid())
+    {
+      // Restore the previous fbo
+      prev_fbo_->Activate();
+
+      prev_fbo_->ApplyClippingRegion();
+    }
+
+    // Release the reference on the previous fbo
+    prev_fbo_.Release();
+
+    // Restore the matrices and the view port.
+    graphics_engine.ApplyModelViewMatrix();
+    graphics_engine.SetOrthographicProjectionMatrix(prev_viewport_.width, prev_viewport_.height);
+    graphics_engine.SetViewport(prev_viewport_.x, prev_viewport_.y, prev_viewport_.width, prev_viewport_.height);
   }
 
   void Layout::QueueDraw()
@@ -545,18 +677,22 @@ namespace nux
       return;
     }
 
-    std::list<Area *>::iterator it;
+    // Report to a parent view with redirect_rendering_to_texture_ set to true that one of its children
+    // needs to be redrawn.
+    PrepareParentRedirectedView();
+
+    std::list<Area*>::iterator it;
 
     for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
     {
       if ((*it)->IsView())
       {
-        View *ic = NUX_STATIC_CAST(View *, (*it));
-        ic->QueueDraw();
+        View* view = static_cast<View*>(*it);
+        view->QueueDraw();
       }
       else if ((*it)->IsLayout())
       {
-        Layout *layout = NUX_STATIC_CAST(Layout *, (*it));
+        Layout* layout = static_cast<Layout*>(*it);
         layout->QueueDraw();
       }
     }
@@ -603,7 +739,6 @@ namespace nux
     return false;
   }
 
-
   void Layout::ResetQueueDraw()
   {
     std::list<Area*>::iterator it;
@@ -621,12 +756,35 @@ namespace nux
       {
         View* view = NUX_STATIC_CAST(View*, (*it));
         if (view->GetLayout())
+        {
           view->GetLayout()->ResetQueueDraw();
+          view->draw_cmd_queued_ = false;
+          view->child_draw_cmd_queued_ = false;
+        }
       }
     }
 
     draw_cmd_queued_ = false;
     child_draw_cmd_queued_ = false;
+    update_backup_texture_ = false;
+  }
+
+  void Layout::GeometryChangePending(bool position_about_to_change, bool size_about_to_change)
+  {
+    if (IsLayoutDone())
+      QueueDraw();
+  }
+
+  void Layout::GeometryChanged(bool position_has_changed, bool size_has_changed)
+  {
+    if (RedirectRenderingToTexture() || HasParentRedirectedView())
+    {
+      if (size_has_changed)
+        QueueDraw();
+      return;
+    }
+    if (IsLayoutDone())
+      QueueDraw();
   }
 
 #ifdef NUX_GESTURES_SUPPORT

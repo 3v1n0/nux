@@ -98,10 +98,10 @@ namespace nux
     bool AtMaximum();
 
     VLayout *vlayout;
-    InputArea *_slider;
-    InputArea *_scroll_up_button;
-    InputArea *_scroll_down_button;
-    InputArea *_track;
+    BasicView *_slider;
+    BasicView *_scroll_up_button;
+    BasicView *_scroll_down_button;
+    BasicView *_track;
 
     int content_width_;
     int content_height_;

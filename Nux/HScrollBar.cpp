@@ -52,10 +52,10 @@ namespace nux
     m_RightTimerHandler = 0;
 
     hlayout = new HLayout(NUX_TRACKER_LOCATION);
-    _scroll_left_button = new InputArea(NUX_TRACKER_LOCATION);
-    _track = new InputArea(NUX_TRACKER_LOCATION);
-    _scroll_right_button = new InputArea(NUX_TRACKER_LOCATION);
-    _slider = new InputArea(NUX_TRACKER_LOCATION);
+    _scroll_left_button = new BasicView(NUX_TRACKER_LOCATION);
+    _track = new BasicView(NUX_TRACKER_LOCATION);
+    _scroll_right_button = new BasicView(NUX_TRACKER_LOCATION);
+    _slider = new BasicView(NUX_TRACKER_LOCATION);
     _slider->SetParentObject(this);
 
     // Set Original State
