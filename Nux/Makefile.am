@@ -41,6 +41,7 @@ source_cpp = \
   $(srcdir)/InputArea.cpp \
   $(srcdir)/Area.cpp \
   $(srcdir)/BaseWindow.cpp \
+  $(srcdir)/BasicView.cpp \
   $(srcdir)/Button.cpp \
   $(srcdir)/Canvas.cpp \
   $(srcdir)/CairoWrapper.cpp \
@@ -135,6 +136,7 @@ source_h = \
   $(srcdir)/InputArea.h \
   $(srcdir)/Area.h \
   $(srcdir)/BaseWindow.h \
+  $(srcdir)/BasicView.h \
   $(srcdir)/Button.h \
   $(srcdir)/Canvas.h \
   $(srcdir)/CairoWrapper.h \
