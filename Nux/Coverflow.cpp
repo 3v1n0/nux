@@ -507,7 +507,9 @@ namespace nux
     if (CoverAtPoint(x, y, best))
     {
       if (abs(best.position.rot) <= .001)
-        best.item->Activate();
+      {
+        best.item->Activate(nux::GetEventButton(button_flags));
+      }
       else
       {
         SetPosition((float)parent_->model()->IndexOf(best.item), true);
@@ -527,7 +529,7 @@ namespace nux
       {
         Cover best;
         if (CoverAtPoint(0, 0, best))
-          best.item->Activate();
+          best.item->Activate(1);
         break;
       }
       default:
