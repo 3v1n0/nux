@@ -371,12 +371,6 @@ namespace nux
 
   void XInputWindow::Hide()
   {
-    if (xim_client_)
-    {
-      GetGraphicsDisplay()->SetCurrentXIMClient(NULL);
-      xim_client_->FocusOutXIC();
-    }
-
     XMoveResizeWindow(display_, window_,
                       -100 - geometry_.width,
                       -100 - geometry_.height,
