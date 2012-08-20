@@ -1,4 +1,4 @@
-CLEANFILES = 
+CLEANFILES =
 DISTCLEANFILES =
 EXTRA_DIST = $(srcdir)/GraphicsDisplayWin.cpp \
              $(srcdir)/GraphicsDisplayWin.h
@@ -90,7 +90,8 @@ source_h = \
   $(srcdir)/RenderingPipeTextureBlendShaderSource.h \
   $(srcdir)/RunTimeStats.h \
   $(srcdir)/VirtualKeyCodesX11.h \
-  $(srcdir)/XInputWindow.h
+  $(srcdir)/XInputWindow.h \
+  $(srcdir)/XIMClient.h
 
 if HAVE_GEIS
 source_h += \
@@ -157,7 +158,8 @@ source_cpp = \
   $(srcdir)/RenderingPipeTextureBlend.cpp \
   $(srcdir)/GLRenderingAPI.cpp \
   $(srcdir)/RunTimeStats.cpp \
-  $(srcdir)/XInputWindow.cpp
+  $(srcdir)/XInputWindow.cpp \
+  $(srcdir)/XIMClient.cpp
 
 if HAVE_GEIS
 source_cpp += \

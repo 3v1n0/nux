@@ -35,7 +35,6 @@
 
 #include <X11/extensions/shape.h>
 #include <X11/Xlibint.h>
-//#include <X11/Xlcint.h>
 
 namespace nux
 {
@@ -44,6 +43,8 @@ namespace nux
   GraphicsDisplay::GraphicsDisplay()
     : m_X11Display(NULL)
     , m_X11Screen(0)
+    , m_current_xim_client(NULL)
+    , m_default_xim_client(NULL)
     , m_ParentWindow(0)
     , m_GLCtx(0)
 #ifndef NUX_OPENGLES_20
@@ -106,6 +107,11 @@ namespace nux
   {
     NUX_SAFE_DELETE( m_GraphicsContext );
     NUX_SAFE_DELETE( m_DeviceFactory );
+
+    if (m_default_xim_client)
+    {
+      delete m_default_xim_client;
+    }
 
     if (m_CreatedFromForeignWindow == false)
     {
@@ -188,111 +194,27 @@ namespace nux
 
   void GraphicsDisplay::XICFocus()
   {
-    if (m_ximData.m_xic && m_ximData.focus_stat == 0)
-    {
-      printf("XIC-Focus --- NUX -____--\n");
-      XSetICFocus(m_ximData.m_xic);
-      m_ximData.focus_stat=1;
-    }
+    if (m_current_xim_client && !m_current_xim_client->IsFocused())
+      m_current_xim_client->FocusInXIC();
   }
 
   void GraphicsDisplay::XICUnFocus()
   {
-    if (m_ximData.m_xic && m_ximData.focus_stat == 1)
-    {
-      printf("XIC-UNFocus --- NUX -____--\n");
-      XUnsetICFocus(m_ximData.m_xic);
-      m_ximData.focus_stat=0;
-    }
+    if (m_current_xim_client && m_current_xim_client->IsFocused())
+      m_current_xim_client->FocusOutXIC();
   }
 
-  void GraphicsDisplay::XIMEndCallback(Display *dpy, XPointer client_data, XPointer call_data)
+  void GraphicsDisplay::SetCurrentXIMClient(XIMClient* xim_client)
   {
-    struct XimClientData *data;
-
-    data = (struct XimClientData*)client_data;
-    data->m_xim = NULL;
-    data->m_xic = NULL;
-  }
-
-  void GraphicsDisplay::XIMStartCallback(Display *dpy, XPointer client_data, XPointer call_data)
-  {
-    int i;
-    XIMCallback destroy;
-    XIMStyles *xim_styles = NULL;
-    XIMStyle root_style = (XIMPreeditNothing|XIMStatusNothing);
-    Window win;
-    struct XimClientData *data;
-
-    data = (struct XimClientData*)client_data;
-    win = * (data->window);
-
-    data->m_xim = XOpenIM(dpy, NULL, NULL, NULL);
-    if (! (data->m_xim))
+    if (xim_client)
     {
-      nuxDebugMsg("[GraphicsDisplay::XIMStartCallback] Failed to open IM.");
-      return;
+      m_current_xim_client = xim_client;
     }
-    memset(&destroy, 0, sizeof(destroy));
-    destroy.callback = (XIMProc)((GraphicsDisplay::XIMEndCallback));
-    destroy.client_data = (XPointer)data;
-    XSetIMValues((data->m_xim), XNDestroyCallback, &destroy, NULL);
-    XGetIMValues((data->m_xim), XNQueryInputStyle, &xim_styles, NULL);
-    printf("%i -- %s\n", XDisplayOfIM(data->m_xim), XLocaleOfIM(data->m_xim));
-    for (i=0; i<xim_styles->count_styles; i++)
+    else
     {
-      if (xim_styles->supported_styles[i] == root_style)
-      {
-	break;
-      }
-    }
-    if (i>=xim_styles->count_styles)
-    {
-      nuxDebugMsg("[GraphicsDisplay::XIMStartCallback] root styles not supported.");
-      return;
-    }
-    data->m_xic = XCreateIC(data->m_xim, XNInputStyle, root_style, XNClientWindow, win, XNFocusWindow, win, NULL);
-    if (!(data->m_xic))
-    {
-      nuxDebugMsg("[GraphicsDisplay::XIMStartCallback] failed to register xic");
-    }
-    return;
-  }
-
-  void GraphicsDisplay::InitXIM(struct XimClientData *data)
-  {
-    const char *xmodifier;
-
-    /* don't do anything if we are using ibus */
-    xmodifier = getenv("XMODIFIERS");
-    if (xmodifier && strstr(xmodifier,"ibus") != NULL)
-    {
-      nuxDebugMsg("[GraphicsDisplay::InitXIM] ibus natively supported");
-      return;
-    }
-
-    if (setlocale(LC_ALL, "") == NULL)
-    {
-      nuxDebugMsg("[GraphicsDisplay::InitXIM] cannot setlocale");
-    }
-
-    if (!XSupportsLocale())
-    {
-      nuxDebugMsg("[GraphicsDisplay::InitXIM] no supported locale");
-    }
-
-    if (XSetLocaleModifiers("") == NULL)
-    {
-      nuxDebugMsg("[GraphicsDisplay::InitXIM] XSetLocaleModifiers failed.");
-    }
-
-    if (!XRegisterIMInstantiateCallback(*(data->display), NULL, NULL, NULL, GraphicsDisplay::XIMStartCallback, (XPointer)(data)))
-    {
-      nuxDebugMsg("[GraphicsDisplay::InitXIM] Cannot Register IM Init callback");
+      m_current_xim_client = m_default_xim_client;
     }
   }
-
-
 
 // TODO: change windowWidth, windowHeight, to window_size;
   static NCriticalSection CreateOpenGLWindow_CriticalSection;
@@ -678,16 +600,13 @@ namespace nux
       //XMapRaised(m_X11Display, m_X11Window);
     }
 
-    // XIM support
-    memset(&m_ximData,0,sizeof(m_ximData));
-    m_ximData.window = &m_X11Window;
-    m_ximData.display = &m_X11Display;
-    InitXIM(&m_ximData);
+    m_default_xim_client = new XIMClient(m_X11Display, m_X11Window);
+    m_current_xim_client = m_default_xim_client;
 
-    long im_event_mask=0;
-    if (m_ximData.m_xic)
+    if (m_current_xim_client && m_current_xim_client->GetXIC())
     {
-      XGetICValues(m_ximData.m_xic, XNFilterEvents, &im_event_mask, NULL);
+      long im_event_mask=0;
+      XGetICValues(m_current_xim_client->GetXIC(), XNFilterEvents, &im_event_mask, NULL);
       m_X11Attr.event_mask |= im_event_mask;
     }
 
@@ -796,16 +715,13 @@ namespace nux
 
     m_GfxInterfaceCreated = true;
 
-    // XIM support
-    memset(&m_ximData,0,sizeof(m_ximData));
-    m_ximData.window = &m_X11Window;
-    m_ximData.display = &m_X11Display;
-    InitXIM(&m_ximData);
+    m_default_xim_client = new XIMClient(X11Display, X11Window);
+    m_current_xim_client = m_default_xim_client;
 
-    long im_event_mask=0;
-    if (m_ximData.m_xic)
+    if (m_current_xim_client && m_current_xim_client->GetXIC())
     {
-      XGetICValues(m_ximData.m_xic, XNFilterEvents, &im_event_mask, NULL);
+      long im_event_mask=0;
+      XGetICValues(m_current_xim_client->GetXIC(), XNFilterEvents, &im_event_mask, NULL);
       m_X11Attr.event_mask |= im_event_mask;
     }
 
@@ -1367,12 +1283,8 @@ namespace nux
     {
       bool bProcessEvent = true;
       XNextEvent(m_X11Display, &xevent);
-     // printf("Event....%p\n", xevent.xany.display->im_filters);
       if (XFilterEvent(&xevent, None) == True)
-      {
-        printf("XFilterJustReturnedTrue!!! %i\n", xevent.type);
 	      return true;
-      }
 
       if (!_event_filters.empty())
       {
@@ -1683,9 +1595,10 @@ namespace nux
         m_pEvent->dy = 0;
         m_pEvent->virtual_code = 0;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: FocusIn event.");
-        if (m_ximData.m_xic && m_ximData.focus_stat==1)
+
+        if (m_current_xim_client && m_current_xim_client->IsFocused())
         {
-          XSetICFocus(m_ximData.m_xic);
+          m_current_xim_client->FocusInXIC();
         }
         break;
       }
@@ -1703,16 +1616,15 @@ namespace nux
         m_pEvent->virtual_code = 0;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: FocusOut event.");
 
-        if (m_ximData.m_xic)
+        if (m_current_xim_client && m_current_xim_client->GetXIC())
         {
-          XUnsetICFocus(m_ximData.m_xic);
+          m_current_xim_client->FocusOutXIC();
         }
         break;
       }
 
       case KeyPress:
       {
-        printf("ProcessXEvents....KeyPress\n");
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: KeyPress event.");
         KeyCode keycode = xevent.xkey.keycode;
         KeySym keysym = NoSymbol;
@@ -1739,9 +1651,9 @@ namespace nux
         }
 
         int num_char_stored = 0;
-        if (m_ximData.m_xic)
+        if (m_current_xim_client && m_current_xim_client->GetXIC())
         {
-          num_char_stored = XmbLookupString(m_ximData.m_xic, &xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->x11_keysym, NULL);
+          num_char_stored = XmbLookupString(m_current_xim_client->GetXIC(), &xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->x11_keysym, NULL);
         }
         else
         {
@@ -2758,7 +2670,7 @@ namespace nux
     if (_global_pointer_grab_callback)
       (*_global_pointer_grab_callback) (false, data);
 
-    _global_pointer_grab_data = false;
+    _global_pointer_grab_data = (void*)false;
     _global_pointer_grab_callback = 0;
 
     return true;
@@ -2813,7 +2725,7 @@ namespace nux
     if (_global_keyboard_grab_callback)
       (*_global_keyboard_grab_callback) (false, data);
 
-    _global_keyboard_grab_data = false;
+    _global_keyboard_grab_data = (void*)false;
     _global_keyboard_grab_callback = 0;
 
     return true;

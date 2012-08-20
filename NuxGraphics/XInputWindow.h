@@ -35,6 +35,8 @@
 #include "NuxCore/NuxCore.h"
 #include "NuxCore/Rect.h"
 
+#include "XIMClient.h"
+
 namespace nux
 {
 
@@ -94,6 +96,7 @@ namespace nux
     bool overlayStrutsEnabled_;
     Window window_;
     Display *display_;
+    XIMClient *xim_client_;
     Rect geometry_;
     bool shown_;
     bool mapped_;

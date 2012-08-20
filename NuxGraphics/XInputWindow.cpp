@@ -23,6 +23,7 @@
 #include "GraphicsDisplayX11.h"
 #include "GLThread.h"
 
+
 // Jay, what is this for?  It isn't referenced anywhere.
 #define xdnd_version 5
 
@@ -36,6 +37,7 @@ namespace nux
     : strutsEnabled_(false)
     , overlayStrutsEnabled_(false)
     , display_(GetGraphicsDisplay()->GetX11Display())
+    , xim_client_(NULL)
     , geometry_(0, 0, 1, 1)
     , shown_(false)
     , mapped_(false)
@@ -61,6 +63,8 @@ namespace nux
                             geometry_.width, geometry_.height, 0,
                             CopyFromParent, InputOutput, CopyFromParent,
                             CWOverrideRedirect | CWEventMask, &attrib);
+
+    xim_client_ = new XIMClient(display_, window_);
 
     native_windows_.push_back(window_);
 
@@ -93,6 +97,9 @@ namespace nux
 
   XInputWindow::~XInputWindow()
   {
+    if (xim_client_)
+      delete xim_client_;
+
     native_windows_.erase(std::find(native_windows_.begin(), native_windows_.end(), window_));
     XDestroyWindow(display_, window_);
   }
@@ -364,6 +371,12 @@ namespace nux
 
   void XInputWindow::Hide()
   {
+    if (xim_client_)
+    {
+      GetGraphicsDisplay()->SetCurrentXIMClient(NULL);
+      xim_client_->FocusOutXIC();
+    }
+
     XMoveResizeWindow(display_, window_,
                       -100 - geometry_.width,
                       -100 - geometry_.height,
@@ -374,8 +387,13 @@ namespace nux
 
   void XInputWindow::Show()
   {
-    shown_ = true;
+    if (xim_client_)
+    {
+      GetGraphicsDisplay()->SetCurrentXIMClient(xim_client_);
+      xim_client_->FocusInXIC();
+    }
 
+    shown_ = true;
     if (!mapped_)
     {
       XMapRaised(display_, window_);
