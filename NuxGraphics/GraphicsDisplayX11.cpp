@@ -34,7 +34,6 @@
 #include "GraphicsDisplay.h"
 
 #include <X11/extensions/shape.h>
-#include <X11/Xlibint.h>
 
 namespace nux
 {
