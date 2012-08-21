@@ -209,9 +209,13 @@ namespace nux
     {
       m_current_xim_client = xim_client;
     }
-    else
+    else if (m_default_xim_client)
     {
       m_current_xim_client = m_default_xim_client;
+    }
+    else
+    {
+      m_current_xim_client = NULL;
     }
   }
 
@@ -599,16 +603,6 @@ namespace nux
       //XMapRaised(m_X11Display, m_X11Window);
     }
 
-    m_default_xim_client = new XIMClient(m_X11Display, m_X11Window);
-    m_current_xim_client = m_default_xim_client;
-
-    if (m_current_xim_client && m_current_xim_client->GetXIC())
-    {
-      long im_event_mask=0;
-      XGetICValues(m_current_xim_client->GetXIC(), XNFilterEvents, &im_event_mask, NULL);
-      m_X11Attr.event_mask |= im_event_mask;
-    }
-
 #ifndef NUX_OPENGLES_20
     if (_has_glx_13)
     {
@@ -716,13 +710,6 @@ namespace nux
 
     m_default_xim_client = new XIMClient(X11Display, X11Window);
     m_current_xim_client = m_default_xim_client;
-
-    if (m_current_xim_client && m_current_xim_client->GetXIC())
-    {
-      long im_event_mask=0;
-      XGetICValues(m_current_xim_client->GetXIC(), XNFilterEvents, &im_event_mask, NULL);
-      m_X11Attr.event_mask |= im_event_mask;
-    }
 
     // m_DeviceFactory = new GpuDevice(m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
     m_DeviceFactory = new GpuDevice(m_ViewportSize.width, m_ViewportSize.height, BITFMT_R8G8B8A8,
@@ -1282,6 +1269,7 @@ namespace nux
     {
       bool bProcessEvent = true;
       XNextEvent(m_X11Display, &xevent);
+
       if (XFilterEvent(&xevent, None) == True)
 	      return true;
 

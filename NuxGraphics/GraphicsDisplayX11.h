@@ -352,7 +352,7 @@ namespace nux
     void XICFocus();
     void XICUnFocus();
 
-    void SetCurrentXIMClient(XIMClient* xim_client);
+    void SetCurrentXIMClient(XIMClient* xim_client = NULL);
   private:
     void InitGlobalGrabWindow();
 

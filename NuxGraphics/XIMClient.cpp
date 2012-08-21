@@ -39,6 +39,15 @@ XIMClient::XIMClient(Display* display, Window window)
   SetupCallback();
 }
 
+XIMClient::~XIMClient()
+{
+  if (xic_)
+    XDestroyIC(xic_);
+
+  if (xim_)
+    XCloseIM(xim_);
+}
+
 void XIMClient::SetupCallback()
 {
   const char *xmodifier;
@@ -52,7 +61,9 @@ void XIMClient::SetupCallback()
   }
 
   if (setlocale(LC_ALL, "") == NULL)
+  {
     nuxDebugMsg("[GraphicsDisplay::InitXIM] cannot setlocale");
+  }
 
   if (XSupportsLocale())
   {
@@ -73,13 +84,21 @@ void XIMClient::SetupXIMClientCallback(Display *dpy, XPointer client_data, XPoin
   self->SetupXIMClient();
 }
 
+// FIXME We need to have a list of the xics...and only have 1 XIM
+// will need to make an XIMClientController class....otherwise a hang will happen
+void XIMClient::EndXIMClientCallback(Display *dpy, XPointer client_data, XPointer call_data)
+{
+  XIMClient* self = (XIMClient*)client_data;
+  self->xim_ = NULL;
+  XDestroyIC(self->xic_);
+  self->xic_ = NULL;
+}
+
 void XIMClient::SetupXIMClient()
 {
   SetupXIM();
-  if (CheckRootStyleSupport())
-  {
+  if (xim_ && CheckRootStyleSupport())
     SetupXIC();
-  }
 }
 
 void XIMClient::SetupXIM()
@@ -87,6 +106,11 @@ void XIMClient::SetupXIM()
   xim_ = XOpenIM(display_, NULL, NULL, NULL);
   if (xim_)
   {
+    XIMCallback destroy_callback;
+    destroy_callback.client_data = (XPointer)this;
+    destroy_callback.callback = (XIMProc)XIMClient::EndXIMClientCallback;
+    XSetIMValues (xim_, XNDestroyCallback, &destroy_callback, NULL);
+
     XUnregisterIMInstantiateCallback (display_, NULL, NULL, NULL,
                                       XIMClient::SetupXIMClientCallback,
                                       (XPointer)this);
@@ -123,6 +147,19 @@ void XIMClient::SetupXIC()
 XIC& XIMClient::GetXIC()
 {
   return xic_;
+}
+
+void XIMClient::ResetXIC()
+{
+  if (!xim_)
+    SetupXIMClient();
+
+  if (xim_ && CheckRootStyleSupport())
+  {
+    if (xic_)
+      XDestroyIC(xic_);
+    SetupXIC();
+  }
 }
 
 void XIMClient::FocusInXIC()

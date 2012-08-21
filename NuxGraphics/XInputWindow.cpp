@@ -377,14 +377,23 @@ namespace nux
                       geometry_.width,
                       geometry_.height);
     shown_ = false;
+
+    if (xim_client_ && xim_client_->GetXIC())
+    {
+      xim_client_->FocusOutXIC();
+    }
   }
 
   void XInputWindow::Show()
   {
     if (xim_client_)
     {
-      GetGraphicsDisplay()->SetCurrentXIMClient(xim_client_);
-      xim_client_->FocusInXIC();
+      xim_client_->ResetXIC();
+      if (xim_client_->GetXIC())
+      {
+        xim_client_->FocusInXIC();
+        GetGraphicsDisplay()->SetCurrentXIMClient(xim_client_);
+      }
     }
 
     shown_ = true;

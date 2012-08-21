@@ -37,9 +37,11 @@ class XIMClient
 {
 public:
   XIMClient(Display* display, Window window);
+  ~XIMClient();
 
   XIC& GetXIC();
 
+  void ResetXIC();
   void FocusInXIC();
   void FocusOutXIC();
   bool IsFocused() const;
@@ -47,6 +49,7 @@ private:
 
   void SetupCallback();
   static void SetupXIMClientCallback(Display *dpy, XPointer client_data, XPointer call_data);
+  static void EndXIMClientCallback(Display *dpy, XPointer client_data, XPointer call_data);
 
   void SetupXIMClient();
   void SetupXIM();
