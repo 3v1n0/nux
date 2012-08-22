@@ -34,8 +34,8 @@
 
 #include "NuxCore/NuxCore.h"
 #include "NuxCore/Rect.h"
+#include "XIMController.h"
 
-#include "XIMClient.h"
 
 namespace nux
 {
@@ -96,7 +96,8 @@ namespace nux
     bool overlayStrutsEnabled_;
     Window window_;
     Display *display_;
-    XIMClient *xim_client_;
+    //FIXME for Unity to work
+    //XIMController *xim_controller_;
     Rect geometry_;
     bool shown_;
     bool mapped_;

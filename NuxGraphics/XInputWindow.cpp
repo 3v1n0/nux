@@ -37,7 +37,7 @@ namespace nux
     : strutsEnabled_(false)
     , overlayStrutsEnabled_(false)
     , display_(GetGraphicsDisplay()->GetX11Display())
-    , xim_client_(NULL)
+    //, xim_controller_(GetGraphicsDisplay()->GetXIMController())
     , geometry_(0, 0, 1, 1)
     , shown_(false)
     , mapped_(false)
@@ -64,7 +64,8 @@ namespace nux
                             CopyFromParent, InputOutput, CopyFromParent,
                             CWOverrideRedirect | CWEventMask, &attrib);
 
-    xim_client_ = new XIMClient(display_, window_);
+   // FIXME This is allows XIM in unity
+   // xim_controller_->AddXICClient(window_);
 
     native_windows_.push_back(window_);
 
@@ -97,9 +98,6 @@ namespace nux
 
   XInputWindow::~XInputWindow()
   {
-    if (xim_client_)
-      delete xim_client_;
-
     native_windows_.erase(std::find(native_windows_.begin(), native_windows_.end(), window_));
     XDestroyWindow(display_, window_);
   }
@@ -377,24 +375,12 @@ namespace nux
                       geometry_.width,
                       geometry_.height);
     shown_ = false;
-
-    if (xim_client_ && xim_client_->GetXIC())
-    {
-      xim_client_->FocusOutXIC();
-    }
   }
 
   void XInputWindow::Show()
   {
-    if (xim_client_)
-    {
-      xim_client_->ResetXIC();
-      if (xim_client_->GetXIC())
-      {
-        xim_client_->FocusInXIC();
-        GetGraphicsDisplay()->SetCurrentXIMClient(xim_client_);
-      }
-    }
+    // FIXME This is allows XIM in unity
+    //xim_controller_->SetCurrentXICClient(window_);
 
     shown_ = true;
     if (!mapped_)

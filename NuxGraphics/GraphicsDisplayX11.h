@@ -27,7 +27,7 @@
 #include "GLTimer.h"
 #include "GLDeviceObjects.h"
 #include "GLRenderStates.h"
-#include "XIMClient.h"
+#include "XIMController.h"
 
 /* Xlib.h is the default header that is included and has the core functionallity */
 #include <X11/Xlib.h>
@@ -86,8 +86,7 @@ namespace nux
     Window      m_X11Window;
     XVisualInfo *m_X11VisualInfo;
 
-    XIMClient   *m_current_xim_client;
-    XIMClient   *m_default_xim_client;
+    XIMController *m_xim_controller;
 
     int         m_ParentWindow;
 #ifndef NUX_OPENGLES_20
@@ -290,6 +289,8 @@ namespace nux
 
     GpuDevice* GetGpuDevice() const;
 
+    XIMController* GetXIMController() const;
+
     // Dialog
     /*bool StartOpenFileDialog(FileDialogOption& fdo);
     bool StartSaveFileDialog(FileDialogOption& fdo);
@@ -352,7 +353,6 @@ namespace nux
     void XICFocus();
     void XICUnFocus();
 
-    void SetCurrentXIMClient(XIMClient* xim_client = NULL);
   private:
     void InitGlobalGrabWindow();
 

@@ -19,39 +19,72 @@
 *
 */
 
-#include <stdlib.h>
-#include <string.h>
-
-#include "XIMClient.h"
+#include "XIMController.h"
 #include "NuxCore/NuxCore.h"
+#include "GraphicsDisplayX11.h"
 
-#include <X11/extensions/shape.h>
-#include <X11/Xlibint.h>
 
-XIMClient::XIMClient(Display* display, Window window)
+XIMController::XIMController(Display* display)
   : display_(display),
-    window_(window),
     xim_(NULL),
-    xic_(NULL),
-    default_style_((XIMPreeditNothing|XIMStatusNothing)),
-    focused_(false)
+    xim_style_(0),
+    current_xic_(xic_clients_.end())
 {
-  SetupCallback();
+  InitXIMCallback();
 }
 
-XIMClient::~XIMClient()
+XIMController::~XIMController()
 {
-  if (xic_)
-    XDestroyIC(xic_);
-
   if (xim_)
     XCloseIM(xim_);
 }
 
-void XIMClient::SetupCallback()
+void XIMController::AddXICClient(Window window)
+{
+  xic_clients_.insert(std::make_pair(window, XICClient(window)));
+}
+
+void XIMController::SetCurrentXICClient(Window window)
+{
+  current_xic_ = xic_clients_.find(window);
+  (current_xic_->second).ResetXIC(xim_, xim_style_);
+}
+
+bool XIMController::HasXICClientForWindow(Window window)
+{
+  return (xic_clients_.find(window) != xic_clients_.end());
+}
+
+bool XIMController::IsCurrentXIMValid()
+{
+  if (xim_ && current_xic_ != xic_clients_.end() && (current_xic_->second).GetXIC() != NULL)
+    return true;
+  return false;
+}
+
+XIC& XIMController::GetXIC() const
+{
+  return (current_xic_->second).GetXIC();
+}
+
+void XIMController::FocusInXIC()
+{
+  (current_xic_->second).FocusInXIC();
+}
+
+void XIMController::FocusOutXIC()
+{
+  (current_xic_->second).FocusOutXIC();
+}
+
+bool XIMController::IsXICFocused() const
+{
+  return (current_xic_->second).IsFocused();
+}
+
+void XIMController::InitXIMCallback()
 {
   const char *xmodifier;
-
   /* don't do anything if we are using ibus */
   xmodifier = getenv("XMODIFIERS");
   if (xmodifier && strstr(xmodifier,"ibus") != NULL)
@@ -71,48 +104,46 @@ void XIMClient::SetupCallback()
     {
       nuxDebugMsg("[GraphicsDisplay::InitXIM] XSetLocaleModifiers failed.");
     }
-
     XRegisterIMInstantiateCallback(display_, NULL, NULL, NULL,
-                                   XIMClient::SetupXIMClientCallback,
+                                   XIMController::SetupXIMClientCallback,
                                    (XPointer)this);
   }
 }
 
-void XIMClient::SetupXIMClientCallback(Display *dpy, XPointer client_data, XPointer call_data)
+void XIMController::SetupXIMClientCallback(Display *dpy, XPointer client_data, XPointer call_data)
 {
-  XIMClient* self = (XIMClient*)client_data;
+  XIMController* self = (XIMController*)client_data;
   self->SetupXIMClient();
 }
 
-// FIXME We need to have a list of the xics...and only have 1 XIM
-// will need to make an XIMClientController class....otherwise a hang will happen
-void XIMClient::EndXIMClientCallback(Display *dpy, XPointer client_data, XPointer call_data)
+void XIMController::EndXIMClientCallback(Display *dpy, XPointer client_data, XPointer call_data)
 {
-  XIMClient* self = (XIMClient*)client_data;
+  XIMController* self = (XIMController*)client_data;
   self->xim_ = NULL;
-  XDestroyIC(self->xic_);
-  self->xic_ = NULL;
+  self->xim_style_ = 0;
+  for (auto xic : self->xic_clients_)
+    (xic.second).Destroy();
 }
 
-void XIMClient::SetupXIMClient()
+void XIMController::SetupXIMClient()
 {
   SetupXIM();
-  if (xim_ && CheckRootStyleSupport())
-    SetupXIC();
+  if (!xim_style_ && xim_)
+    SetupRootStyle();
 }
 
-void XIMClient::SetupXIM()
+void XIMController::SetupXIM()
 {
   xim_ = XOpenIM(display_, NULL, NULL, NULL);
   if (xim_)
   {
     XIMCallback destroy_callback;
     destroy_callback.client_data = (XPointer)this;
-    destroy_callback.callback = (XIMProc)XIMClient::EndXIMClientCallback;
+    destroy_callback.callback = (XIMProc)XIMController::EndXIMClientCallback;
     XSetIMValues (xim_, XNDestroyCallback, &destroy_callback, NULL);
 
     XUnregisterIMInstantiateCallback (display_, NULL, NULL, NULL,
-                                      XIMClient::SetupXIMClientCallback,
+                                      XIMController::SetupXIMClientCallback,
                                       (XPointer)this);
   }
   else
@@ -121,66 +152,20 @@ void XIMClient::SetupXIM()
   }
 }
 
-bool XIMClient::CheckRootStyleSupport() const
+void XIMController::SetupRootStyle()
 {
   int i;
   XIMStyles *xim_styles = NULL;
+  XIMStyle root_style = (XIMPreeditNothing|XIMStatusNothing);
 
   XGetIMValues(xim_, XNQueryInputStyle, &xim_styles, NULL);
 
   for (i = 0; i < xim_styles->count_styles; ++i)
-    if (xim_styles->supported_styles[i] == default_style_)
+    if (xim_styles->supported_styles[i] == root_style)
       break;
 
   if (i >= xim_styles->count_styles)
-    return false;
-  return true;
+    xim_style_ = 0;
+  xim_style_ = root_style;
 }
 
-void XIMClient::SetupXIC()
-{
-  xic_ = XCreateIC(xim_, XNInputStyle, default_style_, XNClientWindow, window_, NULL);
-  if (!xic_)
-    nuxDebugMsg("[GraphicsDisplay::XIMStartCallback] failed to register xic");
-}
-
-XIC& XIMClient::GetXIC()
-{
-  return xic_;
-}
-
-void XIMClient::ResetXIC()
-{
-  if (!xim_)
-    SetupXIMClient();
-
-  if (xim_ && CheckRootStyleSupport())
-  {
-    if (xic_)
-      XDestroyIC(xic_);
-    SetupXIC();
-  }
-}
-
-void XIMClient::FocusInXIC()
-{
-  if (xic_ && !focused_)
-  {
-    XSetICFocus(xic_);
-    focused_ = true;
-  }
-}
-
-void XIMClient::FocusOutXIC()
-{
-  if (xic_ && focused_)
-  {
-    XUnsetICFocus(xic_);
-    focused_ = false;
-  }
-}
-
-bool XIMClient::IsFocused() const
-{
-  return focused_;
-}

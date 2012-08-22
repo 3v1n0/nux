@@ -19,51 +19,32 @@
 *
 */
 
-#ifndef XIMCLIENT_H
-#define XIMCLIENT_H
+#ifndef XICCLIENT_H
+#define XICCLIENT_H
 
 /* Xlib.h is the default header that is included and has the core functionallity */
 #include <X11/Xlib.h>
-/* Xatom.h includes functionallity for creating new protocol messages */
-#include <X11/Xatom.h>
-/* keysym.h contains keysymbols which we use to resolv what keys that are being pressed */
-#include <X11/keysym.h>
 
-
-#include <X11/extensions/xf86vmode.h>
-#include <X11/extensions/Xinerama.h>
-
-class XIMClient
+class XICClient
 {
 public:
-  XIMClient(Display* display, Window window);
-  ~XIMClient();
+  XICClient(Window window);
+  ~XICClient();
 
   XIC& GetXIC();
 
-  void ResetXIC();
+  void ResetXIC(XIM xim, XIMStyle style);
   void FocusInXIC();
   void FocusOutXIC();
   bool IsFocused() const;
+
+  void Destroy();
 private:
+  void SetupXIC(XIM xim, XIMStyle style);
 
-  void SetupCallback();
-  static void SetupXIMClientCallback(Display *dpy, XPointer client_data, XPointer call_data);
-  static void EndXIMClientCallback(Display *dpy, XPointer client_data, XPointer call_data);
-
-  void SetupXIMClient();
-  void SetupXIM();
-  bool CheckRootStyleSupport() const;
-  void SetupXIC();
-
-  Display *display_;
   Window window_;
-
-  XIM xim_;
   XIC xic_;
-  XIMStyle default_style_;
-
   bool focused_;
 };
 
-#endif // XIMClient.h
+#endif // XICClient.h

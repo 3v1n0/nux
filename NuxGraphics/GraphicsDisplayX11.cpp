@@ -42,8 +42,7 @@ namespace nux
   GraphicsDisplay::GraphicsDisplay()
     : m_X11Display(NULL)
     , m_X11Screen(0)
-    , m_current_xim_client(NULL)
-    , m_default_xim_client(NULL)
+    , m_xim_controller(NULL)
     , m_ParentWindow(0)
     , m_GLCtx(0)
 #ifndef NUX_OPENGLES_20
@@ -107,9 +106,9 @@ namespace nux
     NUX_SAFE_DELETE( m_GraphicsContext );
     NUX_SAFE_DELETE( m_DeviceFactory );
 
-    if (m_default_xim_client)
+    if (m_xim_controller)
     {
-      delete m_default_xim_client;
+      delete m_xim_controller;
     }
 
     if (m_CreatedFromForeignWindow == false)
@@ -193,33 +192,17 @@ namespace nux
 
   void GraphicsDisplay::XICFocus()
   {
-    if (m_current_xim_client && !m_current_xim_client->IsFocused())
-      m_current_xim_client->FocusInXIC();
+    if (m_xim_controller->IsCurrentXIMValid() && !m_xim_controller->IsXICFocused())
+      m_xim_controller->FocusInXIC();
   }
 
   void GraphicsDisplay::XICUnFocus()
   {
-    if (m_current_xim_client && m_current_xim_client->IsFocused())
-      m_current_xim_client->FocusOutXIC();
+    if (m_xim_controller->IsCurrentXIMValid() && m_xim_controller->IsXICFocused())
+      m_xim_controller->FocusOutXIC();
   }
 
-  void GraphicsDisplay::SetCurrentXIMClient(XIMClient* xim_client)
-  {
-    if (xim_client)
-    {
-      m_current_xim_client = xim_client;
-    }
-    else if (m_default_xim_client)
-    {
-      m_current_xim_client = m_default_xim_client;
-    }
-    else
-    {
-      m_current_xim_client = NULL;
-    }
-  }
-
-// TODO: change windowWidth, windowHeight, to window_size;
+  // TODO: change windowWidth, windowHeight, to window_size;
   static NCriticalSection CreateOpenGLWindow_CriticalSection;
   bool GraphicsDisplay::CreateOpenGLWindow(const char *WindowTitle,
                                          unsigned int WindowWidth,
@@ -603,6 +586,10 @@ namespace nux
       //XMapRaised(m_X11Display, m_X11Window);
     }
 
+    m_xim_controller = new XIMController(m_X11Display);
+    m_xim_controller->AddXICClient(m_X11Window);
+    m_xim_controller->SetCurrentXICClient(m_X11Window);
+
 #ifndef NUX_OPENGLES_20
     if (_has_glx_13)
     {
@@ -708,8 +695,7 @@ namespace nux
 
     m_GfxInterfaceCreated = true;
 
-    m_default_xim_client = new XIMClient(X11Display, X11Window);
-    m_current_xim_client = m_default_xim_client;
+    m_xim_controller = new XIMController(m_X11Display);
 
     // m_DeviceFactory = new GpuDevice(m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
     m_DeviceFactory = new GpuDevice(m_ViewportSize.width, m_ViewportSize.height, BITFMT_R8G8B8A8,
@@ -736,6 +722,11 @@ namespace nux
   GpuDevice* GraphicsDisplay::GetGpuDevice() const
   {
     return m_DeviceFactory;
+  }
+
+  XIMController* GraphicsDisplay::GetXIMController() const
+  {
+    return m_xim_controller;
   }
 
   int GraphicsDisplay::GetGlXMajor() const
@@ -1583,9 +1574,9 @@ namespace nux
         m_pEvent->virtual_code = 0;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: FocusIn event.");
 
-        if (m_current_xim_client && m_current_xim_client->IsFocused())
+        if (m_xim_controller->IsCurrentXIMValid() && m_xim_controller->IsXICFocused())
         {
-          m_current_xim_client->FocusInXIC();
+          m_xim_controller->FocusInXIC();
         }
         break;
       }
@@ -1603,9 +1594,9 @@ namespace nux
         m_pEvent->virtual_code = 0;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: FocusOut event.");
 
-        if (m_current_xim_client && m_current_xim_client->GetXIC())
+        if (m_xim_controller->IsCurrentXIMValid())
         {
-          m_current_xim_client->FocusOutXIC();
+          m_xim_controller->FocusOutXIC();
         }
         break;
       }
@@ -1638,9 +1629,9 @@ namespace nux
         }
 
         int num_char_stored = 0;
-        if (m_current_xim_client && m_current_xim_client->GetXIC())
+        if (m_xim_controller->IsCurrentXIMValid())
         {
-          num_char_stored = XmbLookupString(m_current_xim_client->GetXIC(), &xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->x11_keysym, NULL);
+          num_char_stored = XmbLookupString(m_xim_controller->GetXIC(), &xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->x11_keysym, NULL);
         }
         else
         {

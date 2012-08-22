@@ -91,7 +91,8 @@ source_h = \
   $(srcdir)/RunTimeStats.h \
   $(srcdir)/VirtualKeyCodesX11.h \
   $(srcdir)/XInputWindow.h \
-  $(srcdir)/XIMClient.h
+  $(srcdir)/XICClient.h \
+  $(srcdir)/XIMController.h
 
 if HAVE_GEIS
 source_h += \
@@ -159,7 +160,8 @@ source_cpp = \
   $(srcdir)/GLRenderingAPI.cpp \
   $(srcdir)/RunTimeStats.cpp \
   $(srcdir)/XInputWindow.cpp \
-  $(srcdir)/XIMClient.cpp
+  $(srcdir)/XICClient.cpp \
+  $(srcdir)/XIMController.cpp
 
 if HAVE_GEIS
 source_cpp += \
