@@ -788,6 +788,9 @@ namespace nux
           ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& texxform1, const Color& color1,
           LayerBlendMode layer_blend_mode);
 
+    void QRP_GLSL_ColorBlendOverColor(int x, int y, int width, int height,
+          const Color& color0, const Color& color1,
+          LayerBlendMode layer_blend_mode);
 
   private:
 
@@ -977,13 +980,15 @@ namespace nux
     ObjectPtr<IOpenGLShaderProgram> blend_tex_color_prog_[LAYER_BLEND_MODE_LAST];
     ObjectPtr<IOpenGLShaderProgram> blend_color_tex_prog_[LAYER_BLEND_MODE_LAST];
     ObjectPtr<IOpenGLShaderProgram> blend_tex_tex_prog_[LAYER_BLEND_MODE_LAST];
+    ObjectPtr<IOpenGLShaderProgram> blend_color_color_prog_[LAYER_BLEND_MODE_LAST];
     
     const char* const GetBlendModeBlendFunc(LayerBlendMode layer_blend_mode);
     const char* const GetBlendModeString(LayerBlendMode layer_blend_mode);
     
-    ObjectPtr <IOpenGLShaderProgram> GetColorBlendOverTexProgram(LayerBlendMode layer_blend_mode);
-    ObjectPtr <IOpenGLShaderProgram> GetTexBlendOverColorProgram(LayerBlendMode layer_blend_mode);
-    ObjectPtr <IOpenGLShaderProgram> GetBlendTexTexProgram(LayerBlendMode layer_blend_mode);
+    ObjectPtr<IOpenGLShaderProgram> GetColorBlendOverTexProgram(LayerBlendMode layer_blend_mode);
+    ObjectPtr<IOpenGLShaderProgram> GetTexBlendOverColorProgram(LayerBlendMode layer_blend_mode);
+    ObjectPtr<IOpenGLShaderProgram> GetBlendTexTexProgram(LayerBlendMode layer_blend_mode);
+    ObjectPtr<IOpenGLShaderProgram> GetBlendColorColorProgram(LayerBlendMode layer_blend_mode);
 
 
 
