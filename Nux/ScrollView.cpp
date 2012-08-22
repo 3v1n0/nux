@@ -176,6 +176,7 @@ namespace nux
 
     if (mouse_inside == false)
     {
+      printf("mouse not inside %d\n", (int)this);
       // The mouse pointer is not over this Area. return NULL.
       return NULL;
     }
@@ -186,12 +187,22 @@ namespace nux
     // for the area that is below the mouse.
 
     // Test the vertical scrollbar
-    found_area = _vscrollbar->FindAreaUnderMouse(mouse_position, event_type);
-    NUX_RETURN_VALUE_IF_NOTNULL(found_area, found_area);
+    if (m_vertical_scrollbar_enable)
+    {
+      found_area = _vscrollbar->FindAreaUnderMouse(mouse_position, event_type);
+      if (found_area)
+        printf("inside vscrollbar %d\n", (int)this);
+      NUX_RETURN_VALUE_IF_NOTNULL(found_area, found_area);
+    }
 
     // Test the horizontal scrollbar
-    found_area = _hscrollbar->FindAreaUnderMouse(mouse_position, event_type);
-    NUX_RETURN_VALUE_IF_NOTNULL(found_area, found_area);
+    if (m_horizontal_scrollbar_enable)
+    {
+      found_area = _hscrollbar->FindAreaUnderMouse(mouse_position, event_type);
+      if (found_area)
+        printf("inside hscrollbar %d\n", (int)this);
+      NUX_RETURN_VALUE_IF_NOTNULL(found_area, found_area);
+    }
 
     // If the code gets here, it means that no area has been found yet.
     // Test the layout of the ScrollView
