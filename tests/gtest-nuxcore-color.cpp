@@ -298,5 +298,19 @@ namespace {
     EXPECT_NEAR(rgb.green,      200/255.0f, epsilon);
     EXPECT_NEAR(rgb.blue,       239/255.0f, epsilon);
   }
+
+
+TEST(TestColor, TestSubtraction)
+{
+  nux::Color start = nux::Color(1.0f, 0.0f, 0.0f);
+  nux::Color finish = nux::Color(0.0f, 0.5f, 0.0f);
+  nux::Color difference = finish - start;
+
+  EXPECT_THAT(difference.red, FloatEq(-1));
+  EXPECT_THAT(difference.green, FloatEq(0.5));
+  EXPECT_THAT(difference.blue, FloatEq(0));
+  EXPECT_THAT(difference.alpha, FloatEq(0));
+}
+
 }
 

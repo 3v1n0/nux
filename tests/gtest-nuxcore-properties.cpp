@@ -7,7 +7,11 @@
 #include <vector>
 #include <stdexcept>
 
+#include "Helpers.h"
+
 using namespace testing;
+
+namespace nt = nux::testing;
 
 namespace {
 
@@ -101,27 +105,6 @@ TEST(TestTypeTraits, TestConversionHolds) {
 }
 
 
-template <typename T>
-struct ChangeRecorder : sigc::trackable
-{
-  typedef sigc::slot<void, T const&> Listener;
-
-  Listener listener()
-  {
-    return sigc::mem_fun(this, &ChangeRecorder<T>::value_changed);
-  }
-
-  void value_changed(T const& value)
-    {
-      changed_values.push_back(value);
-    }
-  typedef std::vector<T> ChangedValues;
-  ChangedValues changed_values;
-
-  int size() const { return changed_values.size(); }
-  T last() const { return *changed_values.rbegin(); }
-};
-
 
 TEST(TestProperty, TestDefaultConstructor) {
   nux::Property<std::string> string_prop;
@@ -168,7 +151,7 @@ TEST(TestProperty, TestAssignment) {
 
 TEST(TestProperty, TestChanged) {
   nux::Property<std::string> string_prop;
-  ChangeRecorder<std::string> recorder;
+  nt::ChangeRecorder<std::string> recorder;
   string_prop.changed.connect(recorder.listener());
 
   string_prop = "Hello world" ;
@@ -181,7 +164,7 @@ TEST(TestProperty, TestChanged) {
 
 TEST(TestProperty, TestEnableAndDisableNotifications) {
   nux::Property<std::string> string_prop;
-  ChangeRecorder<std::string> recorder;
+  nt::ChangeRecorder<std::string> recorder;
   string_prop.changed.connect(recorder.listener());
 
   string_prop.DisableNotifications();
@@ -248,7 +231,7 @@ TEST(TestProperty, TestCustomSetterFunction) {
   nux::Property<float> float_prop;
   FloatClamp clamp(0, 1);
   float_prop.SetSetterFunction(sigc::mem_fun(&clamp, &FloatClamp::Set));
-  ChangeRecorder<float> recorder;
+  nt::ChangeRecorder<float> recorder;
   float_prop.changed.connect(recorder.listener());
 
   // Since the default value for a float is zero, and we clamp at zero,
@@ -405,7 +388,7 @@ TEST(TestROProperty, TestChangedEvent) {
   // property to emit the events as nothing is done automatically.
   nux::ROProperty<int> int_prop;
 
-  ChangeRecorder<int> recorder;
+  nt::ChangeRecorder<int> recorder;
   int_prop.changed.connect(recorder.listener());
 
   int_prop.EmitChanged(42);
@@ -515,7 +498,7 @@ TEST(TestROProperty, TestStringOperators) {
 
 TEST(TestRWProperty, TestDefaultConstructor) {
   nux::RWProperty<int> int_prop;
-  ChangeRecorder<int> recorder;
+  nt::ChangeRecorder<int> recorder;
   int_prop.changed.connect(recorder.listener());
 
   int_prop = 42;
@@ -538,7 +521,7 @@ TEST(TestRWProperty, TestFunctionConstructor) {
   Incrementer incrementer;
   nux::RWProperty<int> int_prop(sigc::mem_fun(&incrementer, &Incrementer::value),
                                 sigc::ptr_fun(&is_even));
-  ChangeRecorder<int> recorder;
+  nt::ChangeRecorder<int> recorder;
   int_prop.changed.connect(recorder.listener());
 
   int_prop = 42;
@@ -600,7 +583,7 @@ HiddenImpl::HiddenImpl()
 
 TEST(TestRWProperty, TestPimplClassExample) {
   HiddenImpl hidden;
-  ChangeRecorder<std::string> recorder;
+  nt::ChangeRecorder<std::string> recorder;
   hidden.name.changed.connect(recorder.listener());
 
   hidden.name = "NewName";
@@ -733,7 +716,7 @@ struct TestProperties : nux::Introspectable
 
 TEST(TestIntrospectableProperty, TestSimplePropertyAccess) {
   TestProperties props;
-  ChangeRecorder<std::string> recorder;
+  nt::ChangeRecorder<std::string> recorder;
   props.name.changed.connect(recorder.listener());
   EXPECT_EQ("", props.name());
   EXPECT_EQ(0, props.index());
@@ -753,8 +736,8 @@ TEST(TestIntrospectableProperty, TestSimplePropertyAccess) {
 
 TEST(TestIntrospectableProperty, TestPropertyAccessByName) {
   TestProperties props;
-  ChangeRecorder<std::string> name_recorder;
-  ChangeRecorder<int> index_recorder;
+  nt::ChangeRecorder<std::string> name_recorder;
+  nt::ChangeRecorder<int> index_recorder;
   props.name.changed.connect(name_recorder.listener());
   props.index.changed.connect(index_recorder.listener());
 

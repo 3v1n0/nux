@@ -28,6 +28,30 @@ namespace nux
     return !(lhs == rhs);
   }
 
+  template<typename T>
+  Point2D<T> operator -(const Point2D<T>& lhs, const Point2D<T>& rhs)
+  {
+    return Point2D<T>(lhs.x - rhs.x, lhs.y - rhs.y);
+  }
+
+  template<typename T>
+  Point2D<T> operator +(const Point2D<T>& lhs, const Point2D<T>& rhs)
+  {
+    return Point2D<T>(lhs.x + rhs.x, lhs.y + rhs.y);
+  }
+
+  template<typename T, typename S>
+  Point2D<T> operator *(const Point2D<T>& lhs, S rhs)
+  {
+    return Point2D<T>(lhs.x * rhs, lhs.y * rhs);
+  }
+
+  template<typename T, typename S>
+  Point2D<T> operator *(S lhs, const Point2D<T>& rhs)
+  {
+    return Point2D<T>(rhs.x * lhs, rhs.y * lhs);
+  }
+
 }
 
 
