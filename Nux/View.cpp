@@ -331,6 +331,7 @@ namespace nux
       backup_fbo_->Activate();
       graphics_engine.SetViewport(0, 0, width, height);
       
+      // Clear surface
       GetGraphicsDisplay()->GetGraphicsEngine()->QRP_Color(0, 0, xform_geo.width, xform_geo.height, Color(0x0));
 
       TexCoordXForm texxform;

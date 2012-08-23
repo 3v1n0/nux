@@ -532,12 +532,12 @@ namespace nux
       }
 
       TexCoordXForm texxform;
-
+      Geometry xform_geo = GetGraphicsDisplay()->GetGraphicsEngine()->ModelViewXFormRect(GetGeometry());
       if (force_draw || draw_cmd_queued_)
       {
         texxform.FlipVCoord(true);
         // Draw the background of this view.
-        GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(GetX(), GetY(), GetWidth(), GetHeight(), background_texture_, texxform, color::White);
+        //GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(xform_geo.x, xform_geo.y, background_texture_->GetWidth(), background_texture_->GetHeight(), background_texture_, texxform, color::White);
       }
 
       texxform.uwrap = TEXWRAP_CLAMP;
@@ -550,7 +550,7 @@ namespace nux
       // Be a good citizen, get a copy of the current GPU sates according to Nux
       graphics_engine.GetRenderStates().GetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
       graphics_engine.GetRenderStates().SetBlend(true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(GetX(), GetY(), GetWidth(), GetHeight(), backup_texture_, texxform, Color(color::White));
+      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1TexPremultiply(GetX(), GetY(), GetWidth(), GetHeight(), backup_texture_, texxform, Color(color::White));
       // Be a good citizen, restore the Nux blending states.
       graphics_engine.GetRenderStates().SetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
     }
@@ -607,11 +607,16 @@ namespace nux
     // ... and the size of the view port rectangle.
     prev_viewport_ = GetGraphicsDisplay()->GetGraphicsEngine()->GetViewportRect();
 
-    // Get the position of this layout relatively to the top left corner of the physical window.
-    Geometry geo_absolute = GetAbsoluteGeometry();
-
     const int width = GetWidth();
     const int height = GetHeight();
+
+    // Compute intersection with active fbo.
+    Geometry intersection = xform_geo;
+    if (active_fbo_texture.IsValid())
+    {
+      Geometry active_fbo_geo(0, 0, active_fbo_texture->GetWidth(), active_fbo_texture->GetHeight());
+      intersection = active_fbo_geo.Intersect(xform_geo);
+    }
 
     if (backup_fbo_.IsNull())
     {
@@ -624,26 +629,32 @@ namespace nux
       // Create or resize the color and depth textures before using them.
       backup_texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
       backup_depth_texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
-      background_texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+      //background_texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
     }
 
-    backup_fbo_->FormatFrameBufferObject(width, height, BITFMT_R8G8B8A8);
-    backup_fbo_->EmptyClippingRegion();
+    if (!background_texture_.IsValid() || (background_texture_->GetWidth() != intersection.width) || (background_texture_->GetHeight() != intersection.height))
+    {
+      background_texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(intersection.width, intersection.height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+    }
 
-    graphics_engine.SetViewport(0, 0, width, height);
-    graphics_engine.SetOrthographicProjectionMatrix(width, height);
     
     // Draw the background on the previous fbo texture
     if (force_draw || draw_cmd_queued_)
     {
+      backup_fbo_->FormatFrameBufferObject(intersection.width, intersection.height, BITFMT_R8G8B8A8);
+      backup_fbo_->EmptyClippingRegion();
+
+      graphics_engine.SetViewport(0, 0, intersection.width, intersection.height);
+      graphics_engine.SetOrthographicProjectionMatrix(intersection.width, intersection.height);
+
       // Set the background texture in the fbo
       backup_fbo_->SetTextureAttachment(0, background_texture_, 0);
       backup_fbo_->SetDepthTextureAttachment(ObjectPtr<IOpenGLBaseTexture>(0), 0);
       backup_fbo_->Activate();
-      graphics_engine.SetViewport(0, 0, width, height);
+      graphics_engine.SetViewport(0, 0, background_texture_->GetWidth(), background_texture_->GetHeight());
 
       // Clear surface
-      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_Color(0, 0, xform_geo.width, xform_geo.height, Color(0x0));
+      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_Color(0, 0, intersection.width, intersection.height, Color(0x0));
 
       TexCoordXForm texxform;
       texxform.uoffset = xform_geo.x / (float) active_fbo_texture->GetWidth();
@@ -652,10 +663,12 @@ namespace nux
       texxform.flip_v_coord = true;
 
       // Copy the texture from the previous fbo attachment into our background texture.
-      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(0, 0, xform_geo.width, xform_geo.height,
+      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(0, 0, intersection.width, intersection.height,
         active_fbo_texture, texxform, color::White);
     }
 
+    backup_fbo_->FormatFrameBufferObject(width, height, BITFMT_R8G8B8A8);
+    backup_fbo_->EmptyClippingRegion();
     backup_fbo_->SetTextureAttachment(0, backup_texture_, 0);
     backup_fbo_->SetDepthTextureAttachment(backup_depth_texture_, 0);
     backup_fbo_->Activate();
@@ -665,8 +678,8 @@ namespace nux
       GetGraphicsDisplay()->GetGraphicsEngine()->QRP_Color(0, 0, xform_geo.width, xform_geo.height, Color(0x0));
     }
 
-    graphics_engine.SetViewport(0, 0, geo_absolute.width, geo_absolute.height);
-    graphics_engine.SetOrthographicProjectionMatrix(geo_absolute.width, geo_absolute.height);
+    graphics_engine.SetViewport(0, 0, width, height);
+    graphics_engine.SetOrthographicProjectionMatrix(width, height);
     // Transform the geometry of this area through the current model view matrix. This gives the
     // the position of the view in the active fbo texture.
     Geometry offset_rect = GetGraphicsDisplay()->GetGraphicsEngine()->ModelViewXFormRect(GetGeometry());
