@@ -232,6 +232,12 @@ namespace nux
           m_foreground_texture_color,
           m_blend_mode);
       }
+      //When both textures aren't valid assume we are blending two colours.
+      else if (m_source_texture.IsValid() == false && m_foreground_texture.IsValid() == false)
+      {
+        graphics_engine.QRP_GLSL_ColorBlendOverColor(geometry_.x, geometry_.y, geometry_.GetWidth(),
+        geometry_.GetHeight(), m_source_color, m_foreground_color, m_blend_mode);
+      }
     }
 
     graphics_engine.GetRenderStates().SetColorMask(current_red_mask, current_green_mask, current_blue_mask, current_alpha_mask);
