@@ -545,14 +545,14 @@ void GraphicsEngine::QRP_GLSL_ColorBlendOverColor(int x, int y, int width, int h
   float fx = x, fy = y;
   float vertexBuffer[] =
   {
-      fx,          fy,          0.0f, 1.0f, color0.red, color0.green, color0.blue, color0.alpha, color1.red, color1.green, color1.blue, color1.alpha,
-      fx,          fy + height, 0.0f, 1.0f, color0.red, color0.green, color0.blue, color0.alpha, color1.red, color1.green, color1.blue, color1.alpha,
-      fx + width,  fy + height, 0.0f, 1.0f, color0.red, color0.green, color0.blue, color0.alpha, color1.red, color1.green, color1.blue, color1.alpha,
-      fx + width,  fy,          0.0f, 1.0f, color0.red, color0.green, color0.blue, color0.alpha, color1.red, color1.green, color1.blue, color1.alpha,
+      fx,          fy,          0.0f, 1.0f,
+      fx,          fy + height, 0.0f, 1.0f,
+      fx + width,  fy + height, 0.0f, 1.0f,
+      fx + width,  fy,          0.0f, 1.0f,
   };
 
   CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
-  CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
+  //CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
   shader_prog->Begin();
 
   int vertexLocation = shader_prog->GetAttributeLocation("vertexPos");
