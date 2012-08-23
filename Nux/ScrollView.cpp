@@ -176,7 +176,6 @@ namespace nux
 
     if (mouse_inside == false)
     {
-      printf("mouse not inside %d\n", (int)this);
       // The mouse pointer is not over this Area. return NULL.
       return NULL;
     }
@@ -190,8 +189,6 @@ namespace nux
     if (m_vertical_scrollbar_enable)
     {
       found_area = _vscrollbar->FindAreaUnderMouse(mouse_position, event_type);
-      if (found_area)
-        printf("inside vscrollbar %d\n", (int)this);
       NUX_RETURN_VALUE_IF_NOTNULL(found_area, found_area);
     }
 
@@ -199,8 +196,6 @@ namespace nux
     if (m_horizontal_scrollbar_enable)
     {
       found_area = _hscrollbar->FindAreaUnderMouse(mouse_position, event_type);
-      if (found_area)
-        printf("inside hscrollbar %d\n", (int)this);
       NUX_RETURN_VALUE_IF_NOTNULL(found_area, found_area);
     }
 
