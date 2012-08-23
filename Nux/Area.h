@@ -682,6 +682,7 @@ protected:
     //! The texture that holds the rendering of this view.
     ObjectPtr<IOpenGLBaseTexture> backup_texture_;
     ObjectPtr<IOpenGLBaseTexture> backup_depth_texture_;
+    ObjectPtr<IOpenGLBaseTexture> background_texture_;
     ObjectPtr<IOpenGLFrameBufferObject> backup_fbo_;
     ObjectPtr<IOpenGLFrameBufferObject> prev_fbo_;
     Geometry prev_viewport_;

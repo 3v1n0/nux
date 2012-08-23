@@ -856,6 +856,7 @@ namespace nux
         AbstractPaintLayer* layer = (*rev_layer_it);
         Geometry layer_geo = layer->GetGeometry();
 
+        graphics_engine.PushClippingRectangle(geo);
         if (clear_background)
         {
           Paint2DQuadColor(graphics_engine, layer_geo, Color(0x0));
@@ -863,6 +864,7 @@ namespace nux
         }
 
         RenderSinglePaintLayer(graphics_engine, layer_geo, layer);
+        graphics_engine.PopClippingRectangle();
       }
     }
   }

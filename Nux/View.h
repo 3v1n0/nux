@@ -164,9 +164,9 @@ namespace nux
   protected:
     virtual void ChildViewQueuedDraw(Area* area);
 
-    void BeginBackupTextureRendering(GraphicsEngine& graphics_engine);
+    void BeginBackupTextureRendering(GraphicsEngine& graphics_engine, bool force_draw);
 
-    void EndBackupTextureRendering(GraphicsEngine& graphics_engine);
+    void EndBackupTextureRendering(GraphicsEngine& graphics_engine, bool force_draw);
 
     void OnChildFocusChanged(/*Area *parent,*/ Area *child);
     sigc::connection _on_focus_changed_handler;

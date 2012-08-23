@@ -264,8 +264,8 @@ namespace nux
     virtual void ResetQueueDraw(); 
 
   protected:
-    void BeginBackupTextureRendering(GraphicsEngine& graphics_engine);
-    void EndBackupTextureRendering(GraphicsEngine& graphics_engine);
+    void BeginBackupTextureRendering(GraphicsEngine& graphics_engine, bool force_draw);
+    void EndBackupTextureRendering(GraphicsEngine& graphics_engine, bool force_draw);
 
     virtual void GeometryChangePending(bool position_about_to_change, bool size_about_to_change);
     virtual void GeometryChanged(bool position_has_changed, bool size_has_changed);

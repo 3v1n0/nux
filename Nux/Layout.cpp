@@ -504,20 +504,10 @@ namespace nux
     {
       if (update_backup_texture_ || force_draw || draw_cmd_queued_)
       {
-        BeginBackupTextureRendering(graphics_engine);
-
+        GetPainter().PushPaintLayerStack();
+        BeginBackupTextureRendering(graphics_engine, force_draw);
         {
           graphics_engine.PushModelViewMatrix(Get2DMatrix());
-
-
-          Geometry translated_geo = GetGeometry();
-          translated_geo.x = 0;
-          translated_geo.y = 0;
-          if (force_draw || draw_cmd_queued_)
-          {
-            GetPainter().PushPaintLayerStack();
-            GetPainter().PaintAllLayerStack(graphics_engine, translated_geo);
-          }
 
           for (it = _layout_element_list.begin(); it != _layout_element_list.end(); it++)
           {
@@ -535,34 +525,34 @@ namespace nux
               layout->ProcessDraw(graphics_engine, force_draw);
             }
           }
-
-          if (force_draw || draw_cmd_queued_)
-          {
-            GetPainter().PopPaintLayerStack();
-          }
-
           graphics_engine.PopModelViewMatrix();
         }
-
-        EndBackupTextureRendering(graphics_engine);
+        EndBackupTextureRendering(graphics_engine, force_draw);
+        GetPainter().PopPaintLayerStack();
       }
+
+      TexCoordXForm texxform;
+
+      if (force_draw || draw_cmd_queued_)
+      {
+        texxform.FlipVCoord(true);
+        // Draw the background of this view.
+        GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(GetX(), GetY(), GetWidth(), GetHeight(), background_texture_, texxform, color::White);
+      }
+
+      texxform.uwrap = TEXWRAP_CLAMP;
+      texxform.vwrap = TEXWRAP_CLAMP;
+      texxform.FlipVCoord(true);
 
       unsigned int current_alpha_blend;
       unsigned int current_src_blend_factor;
       unsigned int current_dest_blend_factor;
       // Be a good citizen, get a copy of the current GPU sates according to Nux
-      //graphics_engine.GetRenderStates().GetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
-
-      TexCoordXForm texxform;
-      texxform.uwrap = TEXWRAP_CLAMP;
-      texxform.vwrap = TEXWRAP_CLAMP;
-      texxform.FlipVCoord(true);
-
-      //graphics_engine.GetRenderStates().SetBlend(true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+      graphics_engine.GetRenderStates().GetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
+      graphics_engine.GetRenderStates().SetBlend(true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
       GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(GetX(), GetY(), GetWidth(), GetHeight(), backup_texture_, texxform, Color(color::White));
-
       // Be a good citizen, restore the Nux blending states.
-      //graphics_engine.GetRenderStates().SetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
+      graphics_engine.GetRenderStates().SetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
     }
     else
     {
@@ -599,8 +589,19 @@ namespace nux
     ResetQueueDraw();
   }
 
-  void Layout::BeginBackupTextureRendering(GraphicsEngine& graphics_engine)
+  void Layout::BeginBackupTextureRendering(GraphicsEngine& graphics_engine, bool force_draw)
   {
+    ObjectPtr<IOpenGLBaseTexture> active_fbo_texture;
+    Geometry xform_geo;
+    if (force_draw || draw_cmd_queued_)
+    {
+      // Get the active fbo color texture
+      active_fbo_texture = GetGraphicsDisplay()->GetGpuDevice()->ActiveFboTextureAttachment(0);
+
+      // Compute position in the active fbo texture.
+      xform_geo = GetGraphicsDisplay()->GetGraphicsEngine()->ModelViewXFormRect(GetGeometry());
+    }
+
     // Get the current fbo...
     prev_fbo_ = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
     // ... and the size of the view port rectangle.
@@ -627,28 +628,53 @@ namespace nux
 
     backup_fbo_->FormatFrameBufferObject(width, height, BITFMT_R8G8B8A8);
     backup_fbo_->EmptyClippingRegion();
-    backup_fbo_->SetRenderTarget(0, backup_texture_->GetSurfaceLevel(0));
-    backup_fbo_->SetDepthSurface(backup_depth_texture_->GetSurfaceLevel(0));
-    backup_fbo_->Activate();
 
-    if (draw_cmd_queued_)
+    graphics_engine.SetViewport(0, 0, width, height);
+    graphics_engine.SetOrthographicProjectionMatrix(width, height);
+    
+    // Draw the background on the previous fbo texture
+    if (force_draw || draw_cmd_queued_)
     {
-      CHECKGL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
-      CHECKGL(glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT));
+      // Set the background texture in the fbo
+      backup_fbo_->SetTextureAttachment(0, background_texture_, 0);
+      backup_fbo_->SetDepthTextureAttachment(ObjectPtr<IOpenGLBaseTexture>(0), 0);
+      backup_fbo_->Activate();
+      graphics_engine.SetViewport(0, 0, width, height);
+
+      // Clear surface
+      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_Color(0, 0, xform_geo.width, xform_geo.height, Color(0x0));
+
+      TexCoordXForm texxform;
+      texxform.uoffset = xform_geo.x / (float) active_fbo_texture->GetWidth();
+      texxform.voffset = xform_geo.y / (float) active_fbo_texture->GetHeight();
+      texxform.SetTexCoordType(TexCoordXForm::OFFSET_COORD);
+      texxform.flip_v_coord = true;
+
+      // Copy the texture from the previous fbo attachment into our background texture.
+      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(0, 0, xform_geo.width, xform_geo.height,
+        active_fbo_texture, texxform, color::White);
     }
 
+    backup_fbo_->SetTextureAttachment(0, backup_texture_, 0);
+    backup_fbo_->SetDepthTextureAttachment(backup_depth_texture_, 0);
+    backup_fbo_->Activate();
+
+    if (force_draw || draw_cmd_queued_)
+    {
+      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_Color(0, 0, xform_geo.width, xform_geo.height, Color(0x0));
+    }
+
+    graphics_engine.SetViewport(0, 0, geo_absolute.width, geo_absolute.height);
+    graphics_engine.SetOrthographicProjectionMatrix(geo_absolute.width, geo_absolute.height);
     // Transform the geometry of this area through the current model view matrix. This gives the
-    // the position of the layout relatively to its parent.
+    // the position of the view in the active fbo texture.
     Geometry offset_rect = GetGraphicsDisplay()->GetGraphicsEngine()->ModelViewXFormRect(GetGeometry());
     int x_offset = -offset_rect.x;
     int y_offset = -offset_rect.y;
-
-    graphics_engine.SetViewport(0, 0, geo_absolute.width, geo_absolute.height);
     graphics_engine.PushModelViewMatrix(Matrix4::TRANSLATE(x_offset, y_offset, 0));
-    graphics_engine.SetOrthographicProjectionMatrix(geo_absolute.width, geo_absolute.height);
   }
 
-  void Layout::EndBackupTextureRendering(GraphicsEngine& graphics_engine)
+  void Layout::EndBackupTextureRendering(GraphicsEngine& graphics_engine, bool force_draw)
   {
     graphics_engine.PopModelViewMatrix();
 

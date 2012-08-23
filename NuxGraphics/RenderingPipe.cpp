@@ -266,17 +266,16 @@ namespace nux
 
     if (texxform.flip_u_coord)
     {
-      float temp = texxform.u0;
-      texxform.u0 = texxform.u1;
-      texxform.u1 = temp;
+      texxform.u0 = 1.0f - texxform.u0;
+      texxform.u1 = 1.0f - texxform.u1;
     }
 
     if (texxform.flip_v_coord)
     {
-      float temp = texxform.v0;
-      texxform.v0 = texxform.v1;
-      texxform.v1 = temp;
+      texxform.v0 = 1.0f - texxform.v0;
+      texxform.v1 = 1.0f - texxform.v1;
     }
+
 
     if (tex->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {

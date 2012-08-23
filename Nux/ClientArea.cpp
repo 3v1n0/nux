@@ -96,8 +96,8 @@ namespace nux
         m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
       }
 
-      m_FrameBufferObject->SetRenderTarget(0, m_MainColorRT->GetSurfaceLevel(0));
-      m_FrameBufferObject->SetDepthSurface(m_MainDepthRT->GetSurfaceLevel(0));
+      m_FrameBufferObject->SetTextureAttachment(0, m_MainColorRT, 0);
+      m_FrameBufferObject->SetDepthTextureAttachment(m_MainDepthRT, 0);
       m_FrameBufferObject->Activate();
 
       graphics_engine.SetViewport(0, 0, buffer_width, buffer_height);

@@ -418,13 +418,16 @@ namespace nux
   public:
     void SetCurrentFrameBufferObject(ObjectPtr<IOpenGLFrameBufferObject> fbo);
     ObjectPtr<IOpenGLFrameBufferObject> GetCurrentFrameBufferObject();
+    ObjectPtr<IOpenGLBaseTexture> ActiveFboTextureAttachment(int color_attachment_index);
+    ObjectPtr<IOpenGLBaseTexture> ActiveFboDepthTextureAttachment();
+
 
     int GetOpenGLMajorVersion() const;
     int GetOpenGLMinorVersion() const;
   private:
     // Default FrameBufferobject
     ObjectPtr<IOpenGLFrameBufferObject> _FrameBufferObject;
-    ObjectPtr<IOpenGLFrameBufferObject> _CurrentFrameBufferObject;
+    ObjectPtr<IOpenGLFrameBufferObject> active_framebuffer_object_;
 
     struct PixelBufferObject
     {

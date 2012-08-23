@@ -371,6 +371,7 @@ namespace nux
     base.OffsetSize(-2, -2);
 
     graphics_engine.PushClippingRectangle(base);
+    GetPainter().PushDrawShapeLayer(graphics_engine, base, eSHAPE_CORNER_ROUND4, Color(0xFF000000), eAllCorners, true);
 
     if (m_ColorModel == color::RGB)
     {
@@ -381,7 +382,31 @@ namespace nux
       DrawHSV(graphics_engine, force_draw);
     }
 
+    GetPainter().PopBackground();
     graphics_engine.PopClippingRectangle();
+  }
+
+  void ColorEditor::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
+  {
+    Geometry base = GetGeometry();
+    GetPainter().PushShapeLayer(graphics_engine, base, eSHAPE_CORNER_ROUND4, Color(0xFF000000), eAllCorners, true);
+
+    bool force = force_draw || IsFullRedraw();
+    redcheck->ProcessDraw(graphics_engine, force);
+    redtext->ProcessDraw(graphics_engine, force);
+    greencheck->ProcessDraw(graphics_engine, force);
+    greentext->ProcessDraw(graphics_engine, force);
+    bluecheck->ProcessDraw(graphics_engine, force);
+    bluetext->ProcessDraw(graphics_engine, force);
+
+    huecheck->ProcessDraw(graphics_engine, force);
+    hue_text_entry_->ProcessDraw(graphics_engine, force);
+    saturationcheck->ProcessDraw(graphics_engine, force);
+    saturation_text_entry_->ProcessDraw(graphics_engine, force);
+    valuecheck->ProcessDraw(graphics_engine, force);
+    value_text_entry_->ProcessDraw(graphics_engine, force);
+
+    GetPainter().PopBackground();
   }
 
 // Draw Marker on Base Chanel Area
@@ -587,24 +612,6 @@ namespace nux
       // Draw Marker on Base Chanel Area
       DrawBaseChannelMarker(graphics_engine);
     }
-  }
-
-  void ColorEditor::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-    bool force = force_draw || IsFullRedraw();
-    redcheck->ProcessDraw(graphics_engine, force);
-    redtext->ProcessDraw(graphics_engine, force);
-    greencheck->ProcessDraw(graphics_engine, force);
-    greentext->ProcessDraw(graphics_engine, force);
-    bluecheck->ProcessDraw(graphics_engine, force);
-    bluetext->ProcessDraw(graphics_engine, force);
-
-    huecheck->ProcessDraw(graphics_engine, force);
-    hue_text_entry_->ProcessDraw(graphics_engine, force);
-    saturationcheck->ProcessDraw(graphics_engine, force);
-    saturation_text_entry_->ProcessDraw(graphics_engine, force);
-    valuecheck->ProcessDraw(graphics_engine, force);
-    value_text_entry_->ProcessDraw(graphics_engine, force);
   }
 
   void ColorEditor::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)

@@ -399,7 +399,7 @@ namespace nux
     Geometry base = GetGeometry();
 
     graphics_engine.PushClippingRectangle(base);
-    GetPainter().PushDrawShapeLayer(graphics_engine, vlayout->GetGeometry(), eSHAPE_CORNER_ROUND4, Color(0xFF000000), eAllCorners);
+    GetPainter().PushDrawShapeLayer(graphics_engine, vlayout->GetGeometry(), eSHAPE_CORNER_ROUND4, Color(0xFF000000), eAllCorners, true);
 
     if (m_color_model == color::RGB)
     {
