@@ -96,8 +96,6 @@ namespace nux
     bool overlayStrutsEnabled_;
     Window window_;
     Display *display_;
-    //FIXME for Unity to work
-    //XIMController *xim_controller_;
     Rect geometry_;
     bool shown_;
     bool mapped_;

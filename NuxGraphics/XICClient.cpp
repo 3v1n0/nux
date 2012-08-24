@@ -23,39 +23,65 @@
 #include "XICClient.h"
 #include "NuxCore/NuxCore.h"
 
-XICClient::XICClient(Window window)
-  : window_(window),
-    xic_(NULL),
+XICClient::XICClient()
+  : xic_(NULL),
+    xim_style_(0),
     focused_(false)
 {
 }
 
 XICClient::~XICClient()
 {
-  if (xic_)
-    XDestroyIC(xic_);
 }
 
-void XICClient::SetupXIC(XIM xim, XIMStyle style)
+void XICClient::ResetXIC(XIM xim, Window window)
 {
-  xic_ = XCreateIC(xim, XNInputStyle, style, XNClientWindow, window_, NULL);
+  if (!xim_style_)
+    SetupXIMStyle(xim);
+  SetupXIC(xim, window);
+}
+
+void XICClient::SetupXIC(XIM xim, Window window)
+{
+  xic_ = XCreateIC(xim, XNInputStyle, xim_style_, XNClientWindow, window, XNFocusWindow, window, NULL);
   if (!xic_)
     nuxDebugMsg("[GraphicsDisplay::XIMStartCallback] failed to register xic");
 }
 
-XIC& XICClient::GetXIC()
+void XICClient::SetupXIMStyle(XIM xim)
+{
+  int i;
+  XIMStyles *xim_styles = NULL;
+  XIMStyle root_style = (XIMPreeditNothing|XIMStatusNothing);
+
+  XGetIMValues(xim, XNQueryInputStyle, &xim_styles, NULL);
+
+  for (i = 0; i < xim_styles->count_styles; ++i)
+    if (xim_styles->supported_styles[i] == root_style)
+      break;
+
+  if (i >= xim_styles->count_styles)
+    xim_style_ = 0;
+  xim_style_ = root_style;
+}
+
+bool XICClient::HasXIC() const
+{
+  if (xic_ == NULL)
+    return false;
+  return true;
+}
+
+XIC XICClient::GetXIC() const
 {
   return xic_;
 }
 
-void XICClient::ResetXIC(XIM xim, XIMStyle style)
+void XICClient::Reinitialize()
 {
-  if (xim)
-  {
-    if (xic_)
-      XDestroyIC(xic_);
-    SetupXIC(xim, style);
-  }
+  xic_ = NULL;
+  xim_style_ = 0;
+  focused_ = false;
 }
 
 void XICClient::FocusInXIC()
@@ -81,7 +107,7 @@ bool XICClient::IsFocused() const
   return focused_;
 }
 
-void XICClient::Destroy()
+void XICClient::DestroyXIC()
 {
   if (xic_)
   {

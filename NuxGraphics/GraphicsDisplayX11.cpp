@@ -192,14 +192,12 @@ namespace nux
 
   void GraphicsDisplay::XICFocus()
   {
-    if (m_xim_controller->IsCurrentXIMValid() && !m_xim_controller->IsXICFocused())
-      m_xim_controller->FocusInXIC();
+    m_xim_controller->FocusInXIC();
   }
 
   void GraphicsDisplay::XICUnFocus()
   {
-    if (m_xim_controller->IsCurrentXIMValid() && m_xim_controller->IsXICFocused())
-      m_xim_controller->FocusOutXIC();
+    m_xim_controller->FocusOutXIC();
   }
 
   // TODO: change windowWidth, windowHeight, to window_size;
@@ -587,8 +585,14 @@ namespace nux
     }
 
     m_xim_controller = new XIMController(m_X11Display);
-    m_xim_controller->AddXICClient(m_X11Window);
-    m_xim_controller->SetCurrentXICClient(m_X11Window);
+    m_xim_controller->SetFocusedWindow(m_X11Window);
+
+    if (m_xim_controller->IsXICValid())
+    {
+      long im_event_mask=0;
+      XGetICValues(m_xim_controller->GetXIC(), XNFilterEvents, &im_event_mask, NULL);
+      m_X11Attr.event_mask |= im_event_mask;
+    }
 
 #ifndef NUX_OPENGLES_20
     if (_has_glx_13)
@@ -724,9 +728,9 @@ namespace nux
     return m_DeviceFactory;
   }
 
-  XIMController* GraphicsDisplay::GetXIMController() const
+  void GraphicsDisplay::SetFocusedWindowForXIMController(Window window)
   {
-    return m_xim_controller;
+    m_xim_controller->SetFocusedWindow(window);
   }
 
   int GraphicsDisplay::GetGlXMajor() const
@@ -1262,7 +1266,7 @@ namespace nux
       XNextEvent(m_X11Display, &xevent);
 
       if (XFilterEvent(&xevent, None) == True)
-	      return true;
+        return true;
 
       if (!_event_filters.empty())
       {
@@ -1574,10 +1578,7 @@ namespace nux
         m_pEvent->virtual_code = 0;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: FocusIn event.");
 
-        if (m_xim_controller->IsCurrentXIMValid() && m_xim_controller->IsXICFocused())
-        {
-          m_xim_controller->FocusInXIC();
-        }
+        m_xim_controller->FocusInXIC();
         break;
       }
 
@@ -1594,10 +1595,7 @@ namespace nux
         m_pEvent->virtual_code = 0;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: FocusOut event.");
 
-        if (m_xim_controller->IsCurrentXIMValid())
-        {
-          m_xim_controller->FocusOutXIC();
-        }
+        m_xim_controller->FocusOutXIC();
         break;
       }
 
@@ -1629,7 +1627,7 @@ namespace nux
         }
 
         int num_char_stored = 0;
-        if (m_xim_controller->IsCurrentXIMValid())
+        if (m_xim_controller->IsXICValid())
         {
           num_char_stored = XmbLookupString(m_xim_controller->GetXIC(), &xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->x11_keysym, NULL);
         }

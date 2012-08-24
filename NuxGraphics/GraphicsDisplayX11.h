@@ -289,7 +289,7 @@ namespace nux
 
     GpuDevice* GetGpuDevice() const;
 
-    XIMController* GetXIMController() const;
+    void SetFocusedWindowForXIMController(Window window);
 
     // Dialog
     /*bool StartOpenFileDialog(FileDialogOption& fdo);

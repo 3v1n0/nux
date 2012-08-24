@@ -26,60 +26,47 @@
 
 XIMController::XIMController(Display* display)
   : display_(display),
-    xim_(NULL),
-    xim_style_(0),
-    current_xic_(xic_clients_.end())
+    window_(0),
+    xim_(NULL)
 {
   InitXIMCallback();
 }
 
 XIMController::~XIMController()
 {
+  /* The XIC must be destroyed before the XIM */
+  if (xic_client_.HasXIC())
+    xic_client_.DestroyXIC();
+
   if (xim_)
     XCloseIM(xim_);
 }
 
-void XIMController::AddXICClient(Window window)
+void XIMController::SetFocusedWindow(Window window)
 {
-  xic_clients_.insert(std::make_pair(window, XICClient(window)));
+  window_ = window;
+  if (xim_)
+    xic_client_.ResetXIC(xim_, window);
 }
 
-void XIMController::SetCurrentXICClient(Window window)
+bool XIMController::IsXICValid() const
 {
-  current_xic_ = xic_clients_.find(window);
-  (current_xic_->second).ResetXIC(xim_, xim_style_);
+  return xic_client_.HasXIC();
 }
 
-bool XIMController::HasXICClientForWindow(Window window)
+XIC XIMController::GetXIC() const
 {
-  return (xic_clients_.find(window) != xic_clients_.end());
-}
-
-bool XIMController::IsCurrentXIMValid()
-{
-  if (xim_ && current_xic_ != xic_clients_.end() && (current_xic_->second).GetXIC() != NULL)
-    return true;
-  return false;
-}
-
-XIC& XIMController::GetXIC() const
-{
-  return (current_xic_->second).GetXIC();
+  return xic_client_.GetXIC();
 }
 
 void XIMController::FocusInXIC()
 {
-  (current_xic_->second).FocusInXIC();
+  xic_client_.FocusInXIC();
 }
 
 void XIMController::FocusOutXIC()
 {
-  (current_xic_->second).FocusOutXIC();
-}
-
-bool XIMController::IsXICFocused() const
-{
-  return (current_xic_->second).IsFocused();
+  xic_client_.FocusOutXIC();
 }
 
 void XIMController::InitXIMCallback()
@@ -113,23 +100,15 @@ void XIMController::InitXIMCallback()
 void XIMController::SetupXIMClientCallback(Display *dpy, XPointer client_data, XPointer call_data)
 {
   XIMController* self = (XIMController*)client_data;
-  self->SetupXIMClient();
+  self->SetupXIM();
 }
 
 void XIMController::EndXIMClientCallback(Display *dpy, XPointer client_data, XPointer call_data)
 {
   XIMController* self = (XIMController*)client_data;
   self->xim_ = NULL;
-  self->xim_style_ = 0;
-  for (auto xic : self->xic_clients_)
-    (xic.second).Destroy();
-}
-
-void XIMController::SetupXIMClient()
-{
-  SetupXIM();
-  if (!xim_style_ && xim_)
-    SetupRootStyle();
+  self->xic_client_.Reinitialize();
+  self->InitXIMCallback();
 }
 
 void XIMController::SetupXIM()
@@ -137,10 +116,10 @@ void XIMController::SetupXIM()
   xim_ = XOpenIM(display_, NULL, NULL, NULL);
   if (xim_)
   {
-    XIMCallback destroy_callback;
-    destroy_callback.client_data = (XPointer)this;
-    destroy_callback.callback = (XIMProc)XIMController::EndXIMClientCallback;
-    XSetIMValues (xim_, XNDestroyCallback, &destroy_callback, NULL);
+    SetupXIMDestroyedCallback();
+
+    if (window_)
+      xic_client_.ResetXIC(xim_, window_);
 
     XUnregisterIMInstantiateCallback (display_, NULL, NULL, NULL,
                                       XIMController::SetupXIMClientCallback,
@@ -152,20 +131,10 @@ void XIMController::SetupXIM()
   }
 }
 
-void XIMController::SetupRootStyle()
+void XIMController::SetupXIMDestroyedCallback()
 {
-  int i;
-  XIMStyles *xim_styles = NULL;
-  XIMStyle root_style = (XIMPreeditNothing|XIMStatusNothing);
-
-  XGetIMValues(xim_, XNQueryInputStyle, &xim_styles, NULL);
-
-  for (i = 0; i < xim_styles->count_styles; ++i)
-    if (xim_styles->supported_styles[i] == root_style)
-      break;
-
-  if (i >= xim_styles->count_styles)
-    xim_style_ = 0;
-  xim_style_ = root_style;
+  XIMCallback destroy_callback;
+  destroy_callback.callback = (XIMProc)XIMController::EndXIMClientCallback;
+  destroy_callback.client_data = (XPointer)this;
+  XSetIMValues (xim_, XNDestroyCallback, &destroy_callback, NULL);
 }
-

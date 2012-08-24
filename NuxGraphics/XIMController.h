@@ -26,40 +26,32 @@
 
 /* Xlib.h is the default header that is included and has the core functionallity */
 #include <X11/Xlib.h>
-#include <map>
 
-/* XIMController holds a single XIM on a single Display */
 class XIMController
 {
 public:
   XIMController(Display* display);
   ~XIMController();
 
-  void AddXICClient(Window window);
-  void SetCurrentXICClient(Window window);
-  bool HasXICClientForWindow(Window window);
+  void SetFocusedWindow(Window window);
 
-  bool IsCurrentXIMValid();
-  XIC& GetXIC() const;
+  bool IsXICValid() const;
+  XIC GetXIC() const;
 
   void FocusInXIC();
   void FocusOutXIC();
-  bool IsXICFocused() const;
 private:
   void InitXIMCallback();
   static void SetupXIMClientCallback(Display *dpy, XPointer client_data, XPointer call_data);
   static void EndXIMClientCallback(Display *dpy, XPointer client_data, XPointer call_data);
 
-  void SetupXIMClient();
   void SetupXIM();
-  void SetupRootStyle();
+  void SetupXIMDestroyedCallback();
 
   Display* display_;
+  Window window_;
   XIM xim_;
-  XIMStyle xim_style_;
-
-  std::map<Window,XICClient>::iterator current_xic_;
-  std::map<Window, XICClient> xic_clients_;
+  XICClient xic_client_;
 };
 
 #endif // XIMController.h

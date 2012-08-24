@@ -37,7 +37,6 @@ namespace nux
     : strutsEnabled_(false)
     , overlayStrutsEnabled_(false)
     , display_(GetGraphicsDisplay()->GetX11Display())
-    //, xim_controller_(GetGraphicsDisplay()->GetXIMController())
     , geometry_(0, 0, 1, 1)
     , shown_(false)
     , mapped_(false)
@@ -63,9 +62,6 @@ namespace nux
                             geometry_.width, geometry_.height, 0,
                             CopyFromParent, InputOutput, CopyFromParent,
                             CWOverrideRedirect | CWEventMask, &attrib);
-
-   // FIXME This is allows XIM in unity
-   // xim_controller_->AddXICClient(window_);
 
     native_windows_.push_back(window_);
 
@@ -379,8 +375,7 @@ namespace nux
 
   void XInputWindow::Show()
   {
-    // FIXME This is allows XIM in unity
-    //xim_controller_->SetCurrentXICClient(window_);
+    GetGraphicsDisplay()->SetFocusedWindowForXIMController(window_);
 
     shown_ = true;
     if (!mapped_)

@@ -28,22 +28,28 @@
 class XICClient
 {
 public:
-  XICClient(Window window);
+  XICClient();
   ~XICClient();
 
-  XIC& GetXIC();
+  void ResetXIC(XIM xim, Window window);
 
-  void ResetXIC(XIM xim, XIMStyle style);
+  bool HasXIC() const;
+  XIC GetXIC() const;
+
+  void Reinitialize();
+
   void FocusInXIC();
   void FocusOutXIC();
   bool IsFocused() const;
 
-  void Destroy();
+  void DestroyXIC();
 private:
-  void SetupXIC(XIM xim, XIMStyle style);
+  void SetupXIC(XIM xim, Window window);
+  void SetupXIMStyle(XIM xim);
 
-  Window window_;
   XIC xic_;
+  XIMStyle xim_style_;
+
   bool focused_;
 };
 
