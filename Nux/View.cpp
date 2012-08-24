@@ -167,7 +167,7 @@ namespace nux
     {
       if (update_backup_texture_ || force_draw || draw_cmd_queued_)
       {
-        GetPainter().PushPaintLayerStack();
+        GetPainter().PushPaintLayerStack();        
         BeginBackupTextureRendering(graphics_engine, force_draw);
         {
           graphics_engine.PushModelViewMatrix(Get2DMatrix());

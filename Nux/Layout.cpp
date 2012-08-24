@@ -537,7 +537,7 @@ namespace nux
       {
         texxform.FlipVCoord(true);
         // Draw the background of this view.
-        //GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(xform_geo.x, xform_geo.y, background_texture_->GetWidth(), background_texture_->GetHeight(), background_texture_, texxform, color::White);
+        //GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(GetX(), GetY(), background_texture_->GetWidth(), background_texture_->GetHeight(), background_texture_, texxform, color::White);
       }
 
       texxform.uwrap = TEXWRAP_CLAMP;
@@ -550,7 +550,7 @@ namespace nux
       // Be a good citizen, get a copy of the current GPU sates according to Nux
       graphics_engine.GetRenderStates().GetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
       graphics_engine.GetRenderStates().SetBlend(true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1TexPremultiply(GetX(), GetY(), GetWidth(), GetHeight(), backup_texture_, texxform, Color(color::White));
+      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(GetX(), GetY(), GetWidth(), GetHeight(), backup_texture_, texxform, Color(color::White));
       // Be a good citizen, restore the Nux blending states.
       graphics_engine.GetRenderStates().SetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
     }
@@ -654,7 +654,8 @@ namespace nux
       graphics_engine.SetViewport(0, 0, background_texture_->GetWidth(), background_texture_->GetHeight());
 
       // Clear surface
-      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_Color(0, 0, intersection.width, intersection.height, Color(0x0));
+      CHECKGL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
+      CHECKGL(glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT));
 
       TexCoordXForm texxform;
       texxform.uoffset = xform_geo.x / (float) active_fbo_texture->GetWidth();
@@ -675,7 +676,8 @@ namespace nux
 
     if (force_draw || draw_cmd_queued_)
     {
-      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_Color(0, 0, xform_geo.width, xform_geo.height, Color(0x0));
+      CHECKGL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
+      CHECKGL(glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT));
     }
 
     graphics_engine.SetViewport(0, 0, width, height);

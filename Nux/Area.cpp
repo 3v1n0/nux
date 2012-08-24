@@ -1194,6 +1194,29 @@ namespace nux
     return false;
   }
 
+  bool Area::HasParentRedirectedLayout()
+  {
+    Area* parent = GetParentObject();
+
+    while (parent && !parent->Type().IsDerivedFromType(Layout::StaticObjectType))
+    {
+      parent = parent->GetParentObject();
+    }
+
+    if (parent)
+    {
+      Layout* layout = static_cast<Layout*>(parent);
+      if (layout->RedirectRenderingToTexture())
+      {
+        return true;
+      }
+      else
+      {
+        return layout->HasParentRedirectedLayout();
+      }
+    }
+    return false;
+  }
 
 #ifdef NUX_GESTURES_SUPPORT
   Area* Area::GetInputAreaHitByGesture(const GestureEvent &event)

@@ -697,6 +697,7 @@ protected:
     virtual void PrepareParentRedirectedView();
 
     virtual bool HasParentRedirectedView();
+    virtual bool HasParentRedirectedLayout();
 
     /*!
         Inform this view that one of its children has requested a draw. This view must have its rendering redirected to a texture.
