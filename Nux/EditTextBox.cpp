@@ -160,7 +160,7 @@ namespace nux
       {
 
         GetPainter().PaintColorTextLineEdit(graphics_engine, GetGeometry(),
-                                         m_KeyboardHandler.GetTextLine(),
+                                         m_KeyboardHandler.GetTextLine().m_string,
                                          GetTextColor(),
                                          m_WriteAlpha,
                                          m_SelectedTextColor,
@@ -177,7 +177,7 @@ namespace nux
       else
       {
         GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), GetGeometry(),
-                                      m_KeyboardHandler.GetTextLine(),
+                                      m_KeyboardHandler.GetTextLine().m_string,
                                       GetTextColor());
       }
     }

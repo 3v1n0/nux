@@ -565,17 +565,19 @@ namespace nux
 //     Rect GetImageGeometry(UXStyleImageRef style);
 //     std::list<PainterImage*> m_PainterImageList;
 
-    int RenderColorText(ObjectPtr<FontTexture> Font, int x, int y, const NString& Str,
+    int RenderColorText(ObjectPtr<FontTexture> Font, int x, int y, std::string const& Str,
                          const Color& TextColor,
                          bool WriteAlphaChannel,
                          int NumCharacter);
 
-    int RenderColorTextLineStatic(ObjectPtr<FontTexture> Font, const PageBBox& pageSize, const NString& Str,
+    int RenderColorTextLineStatic(ObjectPtr<FontTexture> Font, const PageBBox& pageSize,
+                                  std::string const& Str,
                                    const Color& TextColor,
                                    bool WriteAlphaChannel,
                                    TextAlignment alignment);
 
-    int RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const PageBBox& pageSize, const NString& Str,
+    int RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const PageBBox& pageSize,
+                                std::string const& Str,
                                  const Color& TextColor,
                                  bool WriteAlphaChannel,
                                  const Color& SelectedTextColor,

@@ -90,8 +90,6 @@ namespace nux
   public:
     // Override the virtual methods from Object Base
     // Here, we get a change to update the text of the keyboard handler.
-    virtual void SetBaseString(const char *Caption);
-
     void SetKeyboardReceiverIgnoreMouseDownOutside(bool ignore_mouse_down_outside);
 
     void SetAcceptKeyNavFocusOnMouseDown(bool accept);

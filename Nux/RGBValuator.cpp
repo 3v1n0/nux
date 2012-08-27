@@ -418,10 +418,10 @@ namespace nux
       DrawHLS(graphics_engine);
     }
 
-    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentLabel0->GetGeometry(), m_ComponentLabel0->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
-    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentLabel1->GetGeometry(), m_ComponentLabel1->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
-    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentLabel2->GetGeometry(), m_ComponentLabel2->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
-    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentAlpha->GetGeometry(), m_ComponentAlpha->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
+    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentLabel0->GetGeometry(), m_ComponentLabel0->GetBaseString(), Color(0xFFFFFFFF));
+    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentLabel1->GetGeometry(), m_ComponentLabel1->GetBaseString(), Color(0xFFFFFFFF));
+    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentLabel2->GetGeometry(), m_ComponentLabel2->GetBaseString(), Color(0xFFFFFFFF));
+    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentAlpha->GetGeometry(), m_ComponentAlpha->GetBaseString(), Color(0xFFFFFFFF));
 
     DrawRedMarker(graphics_engine);
     DrawGreenMarker(graphics_engine);
