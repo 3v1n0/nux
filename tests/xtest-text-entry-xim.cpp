@@ -71,7 +71,6 @@ TextTextEntry::TextTextEntry(const char* program_name,
 
 TextTextEntry::~TextTextEntry()
 {
-
 }
 
 void TextTextEntry::ResetEvents()
@@ -137,14 +136,6 @@ char* ReadInCommands(const char* path)
   return raw_file;
 }
 
-
-/* Takes the raw file and replaces the space after the number
- * with a null ('\0') and also at the end of the line of a command
- * this makes it so we don't have to do any copying as we use that
- * raw input as the tokens.
-*/
-// It could be more benifitcal if we actually split the commands into
-// tokens instead of just putting NULLs to split the word....
 void TokenizeCommands(char* raw_cmds, std::queue<std::string>& token_queue)
 {
   int i = 0;
@@ -204,7 +195,7 @@ void KillInputMethod(const char* im_name)
     cur_pid = strtol(pid, &last, 10);
     if (*last == '\0' || *last == '\n')
     {
-      // Make sure its dead
+      // Make sure it's dead
       kill(cur_pid, SIGKILL);
       kill(cur_pid, SIGSTOP);
     }
@@ -243,7 +234,7 @@ void KillCurrentInputMethod()
 
   Abstract Syntax
   IM        = 0 <name>
-  KeyStroks = 1 <key> | 1 <key+key> | 1 <key+key+key> | 1 <key+key+key+key>
+  KeyStrokes= 1 <key> | 1 <key+key> | 1 <key+key+key> | 1 <key+key+key+key>
   Input     = 2 <input>
   Expect    = 3 <cjk>
   Halt      = 4 halt
@@ -327,7 +318,6 @@ bool TypeInput(const char* text, NuxAutomatedTestFramework* test)
 bool CheckInput(const std::string cjk, NuxAutomatedTestFramework* test)
 {
   std::string message("Test is: " + cjk);
-  //printf("equals %s\n", cjk.c_str());
   test->TestReportMsg(test_textentry->text_entry_->GetText() == cjk, message.c_str());
 
   test->ViewSendCtrlA();
@@ -359,8 +349,6 @@ bool RunCommands(std::queue<std::string>& tokens, NuxAutomatedTestFramework* tes
   while (!tokens.empty())
   {
     next_cmd = next_token(tokens);
-    //printf("cur_cmd: %s\n", cur_cmd.c_str());
-    //printf("next: %s\n", next_cmd.c_str());
     if (cur_cmd == "0")
     {
       if ((start_im = OpenIM(next_cmd.c_str())) != NULL)
@@ -370,6 +358,7 @@ bool RunCommands(std::queue<std::string>& tokens, NuxAutomatedTestFramework* tes
       else
       {
         fprintf(stderr, "Command not found: %s\n", next_cmd.c_str());
+
         // Skip the test
         while (cur_cmd != "4")
         {
@@ -380,34 +369,28 @@ bool RunCommands(std::queue<std::string>& tokens, NuxAutomatedTestFramework* tes
     }
     else if (cur_cmd == "1")
     {
-      //RunKeyStrokes(next_cmd, test);
       test->ViewSendKeys(next_cmd);
-      nux::SleepForMilliseconds(500);
     }
     else if (cur_cmd == "2")
     {
-      //TypeInput(next_cmd, test);
       test->ViewSendString(next_cmd);
-      nux::SleepForMilliseconds(500);
     }
     else if (cur_cmd == "3")
     {
       CheckInput(next_cmd, test);
-      nux::SleepForMilliseconds(500);
     }
     else if (cur_cmd == "4")
     {
       KillInputMethod(im_name.c_str());
       pclose(start_im);
-      nux::SleepForMilliseconds(500);
     }
     else
     {
-      fprintf(stderr, "Something bad happened....\n");
+      fprintf(stderr, "Error - Incorrect command: %s\n", cur_cmd.c_str());
       return false;
     }
+    nux::SleepForMilliseconds(500);
     cur_cmd = next_token(tokens);
-    //printf("%i\n", tokens.size());
   }
 
   return true;
