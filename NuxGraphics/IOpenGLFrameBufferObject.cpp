@@ -81,10 +81,13 @@ namespace nux
 //     _Rbo.Set(GL_DEPTH_COMPONENT, Width, Height);
 // #endif
 
-    // Clear clipping region stack
+    nuxAssertMsg(Width>0, "[IOpenGLFrameBufferObject::FormatFrameBufferObject] Invalid surface size.");
+    nuxAssertMsg(Height>0, "[IOpenGLFrameBufferObject::FormatFrameBufferObject] Invalid surface size.");
     attachment_width_  = Width;
     attachment_height_ = Height;
     _PixelFormat = PixelFormat;
+
+    // Clear clipping region stack
     EmptyClippingRegion();
     
     return 1;

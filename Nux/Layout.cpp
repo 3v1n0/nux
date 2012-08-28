@@ -532,12 +532,12 @@ namespace nux
       }
 
       TexCoordXForm texxform;
-      Geometry xform_geo = GetGraphicsDisplay()->GetGraphicsEngine()->ModelViewXFormRect(GetGeometry());
+      //Geometry xform_geo = GetGraphicsDisplay()->GetGraphicsEngine()->ModelViewXFormRect(GetGeometry());
       if (force_draw || draw_cmd_queued_)
       {
         texxform.FlipVCoord(true);
         // Draw the background of this view.
-        //GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(xform_geo.x, xform_geo.y, background_texture_->GetWidth(), background_texture_->GetHeight(), background_texture_, texxform, color::White);
+        GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(GetX(), GetY(), background_texture_->GetWidth(), background_texture_->GetHeight(), background_texture_, texxform, color::White);
       }
 
       texxform.uwrap = TEXWRAP_CLAMP;
@@ -550,7 +550,7 @@ namespace nux
       // Be a good citizen, get a copy of the current GPU sates according to Nux
       graphics_engine.GetRenderStates().GetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
       graphics_engine.GetRenderStates().SetBlend(true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1TexPremultiply(GetX(), GetY(), GetWidth(), GetHeight(), backup_texture_, texxform, Color(color::White));
+      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(GetX(), GetY(), GetWidth(), GetHeight(), backup_texture_, texxform, Color(color::White));
       // Be a good citizen, restore the Nux blending states.
       graphics_engine.GetRenderStates().SetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
     }
@@ -592,20 +592,20 @@ namespace nux
   void Layout::BeginBackupTextureRendering(GraphicsEngine& graphics_engine, bool force_draw)
   {
     ObjectPtr<IOpenGLBaseTexture> active_fbo_texture;
-    Geometry xform_geo;
     if (force_draw || draw_cmd_queued_)
     {
       // Get the active fbo color texture
       active_fbo_texture = GetGraphicsDisplay()->GetGpuDevice()->ActiveFboTextureAttachment(0);
-
-      // Compute position in the active fbo texture.
-      xform_geo = GetGraphicsDisplay()->GetGraphicsEngine()->ModelViewXFormRect(GetGeometry());
     }
+
+    Geometry xform_geo;
+    // Compute position in the active fbo texture.
+    xform_geo = graphics_engine.ModelViewXFormRect(GetGeometry());
 
     // Get the current fbo...
     prev_fbo_ = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
     // ... and the size of the view port rectangle.
-    prev_viewport_ = GetGraphicsDisplay()->GetGraphicsEngine()->GetViewportRect();
+    prev_viewport_ = graphics_engine.GetViewportRect();
 
     const int width = GetWidth();
     const int height = GetHeight();
@@ -629,7 +629,6 @@ namespace nux
       // Create or resize the color and depth textures before using them.
       backup_texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
       backup_depth_texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
-      //background_texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
     }
 
     if (!background_texture_.IsValid() || (background_texture_->GetWidth() != intersection.width) || (background_texture_->GetHeight() != intersection.height))
@@ -637,7 +636,6 @@ namespace nux
       background_texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(intersection.width, intersection.height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
     }
 
-    
     // Draw the background on the previous fbo texture
     if (force_draw || draw_cmd_queued_)
     {
@@ -654,7 +652,8 @@ namespace nux
       graphics_engine.SetViewport(0, 0, background_texture_->GetWidth(), background_texture_->GetHeight());
 
       // Clear surface
-      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_Color(0, 0, intersection.width, intersection.height, Color(0x0));
+      CHECKGL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
+      CHECKGL(glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT));
 
       TexCoordXForm texxform;
       texxform.uoffset = xform_geo.x / (float) active_fbo_texture->GetWidth();
@@ -662,9 +661,13 @@ namespace nux
       texxform.SetTexCoordType(TexCoordXForm::OFFSET_COORD);
       texxform.flip_v_coord = true;
 
+      // Temporarily change the model-view matrix to copy the texture background texture.
+      // This way we are not affceted by the regular model-view matrix.
+      graphics_engine.SetModelViewMatrix(Matrix4::IDENTITY());
       // Copy the texture from the previous fbo attachment into our background texture.
-      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(0, 0, intersection.width, intersection.height,
-        active_fbo_texture, texxform, color::White);
+      graphics_engine.QRP_1Tex(0, 0, intersection.width, intersection.height, active_fbo_texture, texxform, color::White);
+      // Restore the model-view matrix.
+      graphics_engine.ApplyModelViewMatrix();
     }
 
     backup_fbo_->FormatFrameBufferObject(width, height, BITFMT_R8G8B8A8);
@@ -675,14 +678,15 @@ namespace nux
 
     if (force_draw || draw_cmd_queued_)
     {
-      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_Color(0, 0, xform_geo.width, xform_geo.height, Color(0x0));
+      CHECKGL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
+      CHECKGL(glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT));
     }
 
     graphics_engine.SetViewport(0, 0, width, height);
     graphics_engine.SetOrthographicProjectionMatrix(width, height);
     // Transform the geometry of this area through the current model view matrix. This gives the
     // the position of the view in the active fbo texture.
-    Geometry offset_rect = GetGraphicsDisplay()->GetGraphicsEngine()->ModelViewXFormRect(GetGeometry());
+    Geometry offset_rect = graphics_engine.ModelViewXFormRect(GetGeometry());
     int x_offset = -offset_rect.x;
     int y_offset = -offset_rect.y;
     graphics_engine.PushModelViewMatrix(Matrix4::TRANSLATE(x_offset, y_offset, 0));
@@ -706,7 +710,7 @@ namespace nux
     // Restore the matrices and the view port.
     graphics_engine.ApplyModelViewMatrix();
     graphics_engine.SetOrthographicProjectionMatrix(prev_viewport_.width, prev_viewport_.height);
-    graphics_engine.SetViewport(prev_viewport_.x, prev_viewport_.y, prev_viewport_.width, prev_viewport_.height);
+    //graphics_engine.SetViewport(prev_viewport_.x, prev_viewport_.y, prev_viewport_.width, prev_viewport_.height);
   }
 
   void Layout::QueueDraw()
@@ -817,7 +821,7 @@ namespace nux
 
   void Layout::GeometryChanged(bool position_has_changed, bool size_has_changed)
   {
-    if (RedirectRenderingToTexture() || HasParentRedirectedView())
+    if (RedirectedAncestor())
     {
       if (size_has_changed)
         QueueDraw();

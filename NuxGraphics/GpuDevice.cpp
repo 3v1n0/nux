@@ -962,6 +962,11 @@ namespace nux
     , BitmapFormat PixelFormat
     , NUX_FILE_LINE_DECL)
   {
+    if ((Width <= 0) || (Height <= 0))
+    {
+      return ObjectPtr<IOpenGLBaseTexture>(0);
+    }
+
     if (GetGpuInfo().Support_ARB_Texture_Non_Power_Of_Two())
     {
       return CreateTexture(Width, Height, Levels, PixelFormat, NUX_FILE_LINE_PARAM);

@@ -1194,6 +1194,21 @@ namespace nux
     return false;
   }
 
+  Area* Area::RedirectedAncestor()
+  {
+    Area* parent = GetParentObject();
+
+    while (parent)
+    {
+      if (parent->RedirectRenderingToTexture())
+      {
+        return parent;
+      }
+      parent = parent->GetParentObject();
+    }
+
+    return NULL;
+  }
 
 #ifdef NUX_GESTURES_SUPPORT
   Area* Area::GetInputAreaHitByGesture(const GestureEvent &event)
