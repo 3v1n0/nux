@@ -305,16 +305,6 @@ FILE* OpenIM(const char* im_name)
   return open_file;
 }
 
-bool RunKeyStrokes(const char* keystrokes, NuxAutomatedTestFramework* test)
-{
-  return true;
-}
-
-bool TypeInput(const char* text, NuxAutomatedTestFramework* test)
-{
-  return true;
-}
-
 bool CheckInput(const std::string cjk, NuxAutomatedTestFramework* test)
 {
   std::string message("Test is: " + cjk);
@@ -354,6 +344,7 @@ bool RunCommands(std::queue<std::string>& tokens, NuxAutomatedTestFramework* tes
       if ((start_im = OpenIM(next_cmd.c_str())) != NULL)
       {
         im_name = next_cmd.c_str();
+        nux::SleepForMilliseconds(500);
       }
       else
       {

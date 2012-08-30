@@ -458,6 +458,10 @@ void NuxAutomatedTestFramework::ViewSendKeys(const std::string& str)
     {
       keys_sym[i] = XK_bracketleft;
     }
+    else if (keys[i] =="shift")
+    {
+      keys_sym[i] = XK_Shift_L;
+    }
     else
     {
       // If nothing is found try and find it...
