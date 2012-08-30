@@ -1483,8 +1483,8 @@ namespace
             }
 
             m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
-            m_FrameBufferObject->SetRenderTarget( 0, rt.color_rt->GetSurfaceLevel(0));
-            m_FrameBufferObject->SetDepthSurface( rt.depth_rt->GetSurfaceLevel(0));
+            m_FrameBufferObject->SetTextureAttachment(0, rt.color_rt, 0);
+            m_FrameBufferObject->SetDepthTextureAttachment(rt.depth_rt, 0);
             m_FrameBufferObject->Activate();
             graphics_engine.SetViewport(0, 0, buffer_width, buffer_height);
             graphics_engine.SetOrthographicProjectionMatrix(buffer_width, buffer_height);
@@ -1551,8 +1551,8 @@ namespace
     }
 
     m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
-    m_FrameBufferObject->SetRenderTarget(0, m_MainColorRT->GetSurfaceLevel(0));
-    m_FrameBufferObject->SetDepthSurface(m_MainDepthRT->GetSurfaceLevel(0));
+    m_FrameBufferObject->SetTextureAttachment(0, m_MainColorRT, 0);
+    m_FrameBufferObject->SetDepthTextureAttachment(m_MainDepthRT, 0);
     m_FrameBufferObject->Activate();
 
     window_thread_->GetGraphicsEngine().EmptyClippingRegion();
@@ -1628,8 +1628,8 @@ namespace
       nuxAssert(m_MainColorRT->GetWidth() == window_width);
       nuxAssert(m_MainColorRT->GetHeight() == window_height);
       m_FrameBufferObject->FormatFrameBufferObject(window_width, window_height, BITFMT_R8G8B8A8);
-      m_FrameBufferObject->SetRenderTarget( 0, m_MainColorRT->GetSurfaceLevel(0));
-      m_FrameBufferObject->SetDepthSurface( m_MainDepthRT->GetSurfaceLevel(0));
+      m_FrameBufferObject->SetTextureAttachment(0, m_MainColorRT, 0);
+      m_FrameBufferObject->SetDepthTextureAttachment(m_MainDepthRT, 0);
       m_FrameBufferObject->Activate();
     }
     else
@@ -2001,8 +2001,8 @@ namespace
 
     // Clear the buffer the first time...
     m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
-    m_FrameBufferObject->SetRenderTarget(0, m_MainColorRT->GetSurfaceLevel(0));
-    m_FrameBufferObject->SetDepthSurface(m_MainDepthRT->GetSurfaceLevel(0));
+    m_FrameBufferObject->SetTextureAttachment(0, m_MainColorRT, 0);
+    m_FrameBufferObject->SetDepthTextureAttachment(m_MainDepthRT, 0);
     m_FrameBufferObject->Activate();
 
     CHECKGL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
@@ -2044,8 +2044,8 @@ namespace
       }
 
       m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
-      m_FrameBufferObject->SetRenderTarget(0, rt.color_rt->GetSurfaceLevel(0));
-      m_FrameBufferObject->SetDepthSurface(rt.depth_rt->GetSurfaceLevel(0));
+      m_FrameBufferObject->SetTextureAttachment(0, rt.color_rt, 0);
+      m_FrameBufferObject->SetDepthTextureAttachment(rt.depth_rt, 0);
       m_FrameBufferObject->Activate();
 
       window_thread_->GetGraphicsEngine().SetViewport(0, 0, buffer_width, buffer_height);
@@ -2062,8 +2062,8 @@ namespace
       nuxAssert(buffer_height >= 1);
       // Restore Main Frame Buffer
       m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
-      m_FrameBufferObject->SetRenderTarget(0, m_MainColorRT->GetSurfaceLevel(0));
-      m_FrameBufferObject->SetDepthSurface(m_MainDepthRT->GetSurfaceLevel(0));
+      m_FrameBufferObject->SetTextureAttachment(0, m_MainColorRT, 0);
+      m_FrameBufferObject->SetDepthTextureAttachment(m_MainDepthRT, 0);
       m_FrameBufferObject->Activate();
 
       window_thread_->GetGraphicsEngine().SetViewport(0, 0, buffer_width, buffer_height);

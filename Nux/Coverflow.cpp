@@ -224,7 +224,7 @@ namespace nux
     parent_->mouse_up.connect(sigc::mem_fun(this, &Impl::HandleMouseUp));
     parent_->mouse_down.connect(sigc::mem_fun(this, &Impl::HandleMouseDown));
     parent_->mouse_wheel.connect(sigc::mem_fun(this, &Impl::HandleMouseWheel));
-    parent_->OnGeometryChanged.connect(sigc::mem_fun(this, &Impl::HandleGeometryChange));
+    parent_->geometry_changed.connect(sigc::mem_fun(this, &Impl::HandleGeometryChange));
 
 
     camera_position_.x = 0.0f;

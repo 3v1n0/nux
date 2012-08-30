@@ -19,7 +19,6 @@
  *
  */
 
-#include "Features.h"
 #include "Nux.h"
 #include "Layout.h"
 #include "NuxCore/Logger.h"
