@@ -34,7 +34,6 @@
 
 #include "NuxCore/NuxCore.h"
 #include "NuxCore/Rect.h"
-#include "XIMController.h"
 
 
 namespace nux

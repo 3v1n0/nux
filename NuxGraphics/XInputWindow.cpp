@@ -22,6 +22,7 @@
 #include "XInputWindow.h"
 #include "GraphicsDisplayX11.h"
 #include "GLThread.h"
+#include "XIMController.h"
 
 
 // Jay, what is this for?  It isn't referenced anywhere.
