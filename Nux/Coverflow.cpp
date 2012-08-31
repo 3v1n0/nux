@@ -1087,7 +1087,6 @@ namespace nux
     graphics_engine.GetRenderStates().SetPremultipliedBlend(SRC_OVER);
     graphics_engine.GetRenderStates().SetColorMask(true, true, true, true);
 
-    nux::GetPainter().PaintBackground(graphics_engine, GetGeometry());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT  | GL_STENCIL_BUFFER_BIT);
 
     glViewport(0, 0, ctx.width, ctx.height);

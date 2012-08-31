@@ -710,7 +710,7 @@ namespace nux
     // Restore the matrices and the view port.
     graphics_engine.ApplyModelViewMatrix();
     graphics_engine.SetOrthographicProjectionMatrix(prev_viewport_.width, prev_viewport_.height);
-    //graphics_engine.SetViewport(prev_viewport_.x, prev_viewport_.y, prev_viewport_.width, prev_viewport_.height);
+    graphics_engine.SetViewport(prev_viewport_.x, prev_viewport_.y, prev_viewport_.width, prev_viewport_.height);
   }
 
   void Layout::QueueDraw()
