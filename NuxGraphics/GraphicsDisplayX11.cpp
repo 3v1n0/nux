@@ -35,6 +35,7 @@
 
 #include <X11/extensions/shape.h>
 
+
 namespace nux
 {
   int GraphicsDisplay::double_click_time_delay = 400; // milliseconds
@@ -42,7 +43,6 @@ namespace nux
   GraphicsDisplay::GraphicsDisplay()
     : m_X11Display(NULL)
     , m_X11Screen(0)
-    , m_xim_controller(NULL)
     , m_ParentWindow(0)
     , m_GLCtx(0)
 #ifndef NUX_OPENGLES_20
@@ -105,11 +105,6 @@ namespace nux
   {
     NUX_SAFE_DELETE( m_GraphicsContext );
     NUX_SAFE_DELETE( m_DeviceFactory );
-
-    if (m_xim_controller)
-    {
-      delete m_xim_controller;
-    }
 
     if (m_CreatedFromForeignWindow == false)
     {
@@ -584,7 +579,7 @@ namespace nux
       //XMapRaised(m_X11Display, m_X11Window);
     }
 
-    m_xim_controller = new XIMController(m_X11Display);
+    m_xim_controller.reset(new XIMController(m_X11Display));
     m_xim_controller->SetFocusedWindow(m_X11Window);
 
     if (m_xim_controller->IsXICValid())
@@ -699,7 +694,7 @@ namespace nux
 
     m_GfxInterfaceCreated = true;
 
-    m_xim_controller = new XIMController(m_X11Display);
+    m_xim_controller.reset(new XIMController(m_X11Display));
 
     // m_DeviceFactory = new GpuDevice(m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
     m_DeviceFactory = new GpuDevice(m_ViewportSize.width, m_ViewportSize.height, BITFMT_R8G8B8A8,

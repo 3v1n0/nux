@@ -36,9 +36,10 @@
 /* keysym.h contains keysymbols which we use to resolv what keys that are being pressed */
 #include <X11/keysym.h>
 
-
 #include <X11/extensions/xf86vmode.h>
 #include <X11/extensions/Xinerama.h>
+
+#include <boost/shared_ptr.hpp>
 
 namespace nux
 {
@@ -86,7 +87,7 @@ namespace nux
     Window      m_X11Window;
     XVisualInfo *m_X11VisualInfo;
 
-    XIMController *m_xim_controller;
+    boost::shared_ptr<XIMController> m_xim_controller;
 
     int         m_ParentWindow;
 #ifndef NUX_OPENGLES_20
