@@ -67,8 +67,8 @@ logging::Logger logger("nux.inputarea");
 
   InputArea::~InputArea()
   {
-    while (GetWindowCompositor().GrabPointerRemove(this)) {}
-    while (GetWindowCompositor().GrabKeyboardRemove(this)) {}
+    while (GetWindowCompositor().GrabPointerRemove(this));
+    while (GetWindowCompositor().GrabKeyboardRemove(this));
   }
 
   void InputArea::OnDraw(GraphicsEngine &graphics_engine, bool force_draw)
