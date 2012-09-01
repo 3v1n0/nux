@@ -29,18 +29,26 @@ TEST(TestInputArea, UngrabsOnDestroy)
   nux::WindowThread *wnd_thread = nux::CreateNuxWindow("Area Test", 300, 200,
     nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL);
 
-  nux::InputArea* area = new nux::InputArea("");
+  nux::InputArea* area1 = new nux::InputArea("Area1");
+  nux::InputArea* area2 = new nux::InputArea("Area2");
 
   // Adding some grabs
-  area->GrabKeyboard();
-  area->GrabPointer();
-  area->GrabPointer();
+  area1->GrabKeyboard();
+  area1->GrabPointer();
+  area2->GrabPointer();
+  area2->GrabKeyboard();
+  area1->GrabKeyboard();
 
   // This should cleanup the references in the compositor
-  area->UnReference();
+  area1->UnReference();
 
-  EXPECT_FALSE(nux::GetWindowCompositor().IsInKeyboardGrabStack(area));
-  EXPECT_FALSE(nux::GetWindowCompositor().IsInPointerGrabStack(area));
+  EXPECT_FALSE(nux::GetWindowCompositor().IsInKeyboardGrabStack(area1));
+  EXPECT_FALSE(nux::GetWindowCompositor().IsInPointerGrabStack(area1));
+
+  area2->UnReference();
+
+  EXPECT_FALSE(nux::GetWindowCompositor().IsInKeyboardGrabStack(area2));
+  EXPECT_FALSE(nux::GetWindowCompositor().IsInPointerGrabStack(area2));
   delete wnd_thread;
 }
 
