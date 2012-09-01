@@ -19,18 +19,41 @@
  */
 
 #include <gmock/gmock.h>
+#include <boost/shared_ptr.hpp>
 #include "Nux/Nux.h"
 
 namespace {
 
-TEST(TestInputArea, UngrabsOnDestroy)
+struct TestInputArea : public testing::Test
 {
-  nux::NuxInitialize(0);
-  nux::WindowThread *wnd_thread = nux::CreateNuxWindow("Area Test", 300, 200,
-    nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL);
+  void SetUp()
+  {
+    nux::NuxInitialize(0);
+    wnd_thread.reset(nux::CreateNuxWindow("InputArea Test", 300, 200, nux::WINDOWSTYLE_NORMAL,
+                                          NULL, false, NULL, NULL));
+    area = new nux::InputArea("InputArea");
+  }
 
-  nux::InputArea* area1 = new nux::InputArea("Area1");
-  nux::InputArea* area2 = new nux::InputArea("Area2");
+  boost::shared_ptr<nux::WindowThread> wnd_thread;
+  nux::ObjectPtr<nux::InputArea> area;
+};
+
+TEST_F(TestInputArea, GrabKeyboard)
+{
+  area->GrabKeyboard();
+  EXPECT_TRUE(nux::GetWindowCompositor().IsInKeyboardGrabStack(area.GetPointer()));
+}
+
+TEST_F(TestInputArea, GrabPointer)
+{
+  area->GrabPointer();
+  EXPECT_TRUE(nux::GetWindowCompositor().IsInPointerGrabStack(area.GetPointer()));
+}
+
+TEST_F(TestInputArea, UngrabsOnDestroy)
+{
+  nux::InputArea* area1 = new nux::InputArea("InputArea1");
+  nux::InputArea* area2 = new nux::InputArea("InputArea2");
 
   // Adding some grabs
   area1->GrabKeyboard();
@@ -38,6 +61,11 @@ TEST(TestInputArea, UngrabsOnDestroy)
   area2->GrabPointer();
   area2->GrabKeyboard();
   area1->GrabKeyboard();
+
+  ASSERT_TRUE(nux::GetWindowCompositor().IsInKeyboardGrabStack(area1));
+  ASSERT_TRUE(nux::GetWindowCompositor().IsInPointerGrabStack(area1));
+  ASSERT_TRUE(nux::GetWindowCompositor().IsInKeyboardGrabStack(area2));
+  ASSERT_TRUE(nux::GetWindowCompositor().IsInPointerGrabStack(area2));
 
   // This should cleanup the references in the compositor
   area1->UnReference();
@@ -49,7 +77,6 @@ TEST(TestInputArea, UngrabsOnDestroy)
 
   EXPECT_FALSE(nux::GetWindowCompositor().IsInKeyboardGrabStack(area2));
   EXPECT_FALSE(nux::GetWindowCompositor().IsInPointerGrabStack(area2));
-  delete wnd_thread;
 }
 
 }
