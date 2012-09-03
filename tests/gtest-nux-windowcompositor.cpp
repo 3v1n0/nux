@@ -46,6 +46,44 @@ class TestInputArea : public nux::InputArea
   std::list<nux::GestureEvent> gesture_events_received;
 };
 #endif
+
+struct TestBaseWindow : public nux::BaseWindow
+{
+  TestBaseWindow() : input_area(new nux::InputArea())
+  {
+    ShowWindow(true);
+  }
+
+  nux::Area* FindAreaUnderMouse(const nux::Point& mouse_position, nux::NuxEventType event_type)
+  {
+    return input_area.GetPointer();
+  }
+
+  Area* FindKeyFocusArea(unsigned int key_symbol, unsigned long x11_key_code, unsigned long special_keys_state)
+  {
+    return input_area.GetPointer();
+  }
+
+  nux::ObjectPtr<nux::InputArea> input_area;
+};
+
+struct TestHLayout : public nux::HLayout
+{
+  TestHLayout() : input_area(new nux::InputArea()) {}
+
+  nux::Area* FindAreaUnderMouse(const nux::Point& mouse_position, nux::NuxEventType event_type)
+  {
+    return input_area.GetPointer();
+  }
+
+  Area* FindKeyFocusArea(unsigned int key_symbol, unsigned long x11_key_code, unsigned long special_keys_state)
+  {
+    return input_area.GetPointer();
+  }
+
+  nux::ObjectPtr<nux::InputArea> input_area;
+};
+
 }
 
 namespace nux
@@ -85,6 +123,21 @@ struct TestWindowCompositor : public testing::Test
   void SetMouseOverArea(InputArea* area)
   {
     nux::GetWindowCompositor().mouse_over_area_ = area;
+  }
+
+  void GetAreaUnderMouse(const Point& mouse_position, NuxEventType event_type,
+                         ObjectWeakPtr<InputArea>& area,
+                         ObjectWeakPtr<BaseWindow>& window)
+  {
+    return nux::GetWindowCompositor().GetAreaUnderMouse(mouse_position, event_type, area, window);
+  }
+
+  void FindKeyFocusArea(NuxEventType event_type, unsigned int key_symbol,
+                        unsigned int state,
+                        ObjectWeakPtr<InputArea>& key_focus_area,
+                        ObjectWeakPtr<BaseWindow>& window)
+  {
+    return nux::GetWindowCompositor().FindKeyFocusArea(event_type, key_symbol, state, key_focus_area, window);
   }
 
   boost::shared_ptr<nux::WindowThread> wnd_thread;
@@ -414,6 +467,75 @@ TEST_F(TestWindowCompositor, MouseOwnerAreaAutomaticallyUnsets)
   EXPECT_EQ(GetMouseOwnerArea(), nullptr);
 }
 
+TEST_F(TestWindowCompositor, GetAreaUnderMouse)
+{
+  ObjectWeakPtr<InputArea> area;
+  ObjectWeakPtr<BaseWindow> window;
+
+  TestBaseWindow* test_win = new TestBaseWindow();
+
+  GetAreaUnderMouse(Point(1, 2), NUX_MOUSE_MOVE, area, window);
+
+  EXPECT_EQ(area.GetPointer(), test_win->input_area.GetPointer());
+  EXPECT_EQ(window.GetPointer(), test_win);
+
+  test_win->UnReference();
+  EXPECT_EQ(area.GetPointer(), nullptr);
+  EXPECT_EQ(window.GetPointer(), nullptr);
+}
+
+TEST_F(TestWindowCompositor, GetAreaUnderMouseFallback)
+{
+  ObjectWeakPtr<InputArea> area;
+  ObjectWeakPtr<BaseWindow> window;
+
+  TestHLayout* layout = new TestHLayout();
+  wnd_thread->SetLayout(layout);
+
+  GetAreaUnderMouse(Point(1, 2), NUX_MOUSE_MOVE, area, window);
+
+  EXPECT_EQ(area.GetPointer(), layout->input_area.GetPointer());
+  EXPECT_EQ(window.GetPointer(), nullptr);
+
+  wnd_thread->SetLayout(nullptr);
+  layout->UnReference();
+  EXPECT_EQ(area.GetPointer(), nullptr);
+}
+
+TEST_F(TestWindowCompositor, GetFocusedArea)
+{
+  ObjectWeakPtr<InputArea> area;
+  ObjectWeakPtr<BaseWindow> window;
+
+  TestBaseWindow* test_win = new TestBaseWindow();
+
+  FindKeyFocusArea(NUX_KEYUP, 0, 0, area, window);
+
+  EXPECT_EQ(area.GetPointer(), test_win->input_area.GetPointer());
+  EXPECT_EQ(window.GetPointer(), test_win);
+
+  test_win->UnReference();
+  EXPECT_EQ(area.GetPointer(), nullptr);
+  EXPECT_EQ(window.GetPointer(), nullptr);
+}
+
+TEST_F(TestWindowCompositor, GetFocusedAreaFallback)
+{
+  ObjectWeakPtr<InputArea> area;
+  ObjectWeakPtr<BaseWindow> window;
+
+  TestHLayout* layout = new TestHLayout();
+  wnd_thread->SetLayout(layout);
+
+  FindKeyFocusArea(NUX_KEYUP, 0, 0, area, window);
+
+  EXPECT_EQ(area.GetPointer(), layout->input_area.GetPointer());
+  EXPECT_EQ(window.GetPointer(), nullptr);
+
+  wnd_thread->SetLayout(nullptr);
+  layout->UnReference();
+  EXPECT_EQ(area.GetPointer(), nullptr);
+}
 
 #endif // NUX_GESTURES_SUPPORT
 
