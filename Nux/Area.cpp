@@ -68,6 +68,8 @@ namespace nux
 
   Area::~Area()
   {
+    ResetDownwardPathToKeyFocusArea();
+    ResetUpwardPathToKeyFocusArea()
   }
 
   const NString &Area::GetBaseString() const
