@@ -46,18 +46,57 @@ class TestInputArea : public nux::InputArea
   std::list<nux::GestureEvent> gesture_events_received;
 };
 #endif
+}
 
-TEST(TestWindowCompositor, TestSetKeyFocusArea)
+namespace nux
 {
-  nux::NuxInitialize(0);
-  nux::WindowThread *wnd_thread = nux::CreateNuxWindow("Nux Window", 300, 200,
-    nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL);
+struct TestWindowCompositor : public testing::Test
+{
+  TestWindowCompositor()
+  {}
 
+  void SetUp()
+  {
+    nux::NuxInitialize(0);
+    wnd_thread.reset(nux::CreateNuxWindow("WindowCompositor Test", 300, 200, nux::WINDOWSTYLE_NORMAL,
+                                          NULL, false, NULL, NULL));
+  }
+
+  void ForceSetKeyFocusArea(nux::InputArea* area)
+  {
+    nux::GetWindowCompositor().key_focus_area_ = area;
+  }
+
+  ObjectWeakPtr<InputArea> const& GetMouseOwnerArea() const
+  {
+    return nux::GetWindowCompositor().GetMouseOwnerArea();
+  }
+
+  void SetMouseOwnerArea(InputArea* area)
+  {
+    nux::GetWindowCompositor().mouse_owner_area_ = area;
+  }
+
+  InputArea* GetMouseOverArea()
+  {
+    return nux::GetWindowCompositor().mouse_over_area_.GetPointer();
+  }
+
+  void SetMouseOverArea(InputArea* area)
+  {
+    nux::GetWindowCompositor().mouse_over_area_ = area;
+  }
+
+  boost::shared_ptr<nux::WindowThread> wnd_thread;
+};
+
+TEST_F(TestWindowCompositor, TestSetKeyFocusArea)
+{
   nux::TestView* test_view0 = new nux::TestView();
   nux::TestView* test_view1 = new nux::TestView();
 
   nux::HLayout* layout = new nux::HLayout();
-  
+
   layout->AddView(test_view0, 1);
   layout->AddView(test_view1, 1);
 
@@ -89,8 +128,6 @@ TEST(TestWindowCompositor, TestSetKeyFocusArea)
     EXPECT_EQ(test_view1->registered_begin_keynav_focus_, true);
     EXPECT_EQ(test_view1->registered_end_keynav_focus_, false);
   }
-
-  delete wnd_thread;
 }
 
 #ifdef NUX_GESTURES_SUPPORT
@@ -104,11 +141,8 @@ TEST(TestWindowCompositor, TestSetKeyFocusArea)
   Check that the gesture got accepted, that window A got the gesture
   events and that window B didn't get anything.
  */
-TEST(TestWindowCompositor, GestureEventsDelivery_1)
+TEST_F(TestWindowCompositor, GestureEventsDelivery_1)
 {
-  nux::NuxInitialize(0);
-  nux::WindowThread *wnd_thread = nux::CreateNuxWindow("Nux Window", 500, 500,
-    nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL);
   nux::WindowCompositor &wnd_compositor = wnd_thread->GetWindowCompositor();
   nux::FakeGestureEvent fake_event;
 
@@ -159,7 +193,6 @@ TEST(TestWindowCompositor, GestureEventsDelivery_1)
 
   target_window->Dispose();
   innocent_window->Dispose();
-  delete wnd_thread;
 }
 
 /*
@@ -171,13 +204,10 @@ TEST(TestWindowCompositor, GestureEventsDelivery_1)
   Check that the gesture got rejected and that no window got
   any gesture event.
 */
-TEST(TestWindowCompositor, GestureEventsDelivery_2)
+TEST_F(TestWindowCompositor, GestureEventsDelivery_2)
 {
-  nux::NuxInitialize(0);
-  nux::WindowThread *wnd_thread = nux::CreateNuxWindow("Nux Window", 500, 500,
-    nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL);
-  nux::WindowCompositor &wnd_compositor = wnd_thread->GetWindowCompositor();
   nux::FakeGestureEvent fake_event;
+  nux::WindowCompositor& wnd_compositor = nux::GetWindowCompositor();
 
   TestWindow *subscribed_window = new TestWindow;
   subscribed_window->SetBaseXY(10, 10);
@@ -212,7 +242,6 @@ TEST(TestWindowCompositor, GestureEventsDelivery_2)
 
   subscribed_window->Dispose();
   innocent_window->Dispose();
-  delete wnd_thread;
 }
 
 /*
@@ -225,13 +254,10 @@ TEST(TestWindowCompositor, GestureEventsDelivery_2)
   Check that the gesture gets accepted and that only the input area behind that
   window gets the gesture events.
  */
-TEST(TestWindowCompositor, GestureEventsDelivery_3)
+TEST_F(TestWindowCompositor, GestureEventsDelivery_3)
 {
-  nux::NuxInitialize(0);
-  nux::WindowThread *wnd_thread = nux::CreateNuxWindow("Nux Window", 500, 500,
-    nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL);
-  nux::WindowCompositor &wnd_compositor = wnd_thread->GetWindowCompositor();
   nux::FakeGestureEvent fake_event;
+  nux::WindowCompositor& wnd_compositor = nux::GetWindowCompositor();
 
   TestWindow *window = new TestWindow;
   window->SetBaseXY(10, 10);
@@ -287,20 +313,16 @@ TEST(TestWindowCompositor, GestureEventsDelivery_3)
   ASSERT_EQ(0, other_input_area->gesture_events_received.size());
 
   window->Dispose();
-  delete wnd_thread;
 }
 
 /*
   Check that if a gesture gets its construction finished only on its end event,
   it still gets accepted and delivered.
  */
-TEST(TestWindowCompositor, GestureEventsDelivery_4)
+TEST_F(TestWindowCompositor, GestureEventsDelivery_4)
 {
-  nux::NuxInitialize(0);
-  nux::WindowThread *wnd_thread = nux::CreateNuxWindow("Nux Window", 500, 500,
-    nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL);
-  nux::WindowCompositor &wnd_compositor = wnd_thread->GetWindowCompositor();
   nux::FakeGestureEvent fake_event;
+  nux::WindowCompositor& wnd_compositor = nux::GetWindowCompositor();
 
   TestWindow *window = new TestWindow;
   window->SetBaseXY(10, 10);
@@ -356,8 +378,42 @@ TEST(TestWindowCompositor, GestureEventsDelivery_4)
   ASSERT_EQ(0, other_input_area->gesture_events_received.size());
 
   window->Dispose();
-  delete wnd_thread;
 }
+
+TEST_F(TestWindowCompositor, KeyFocusAreaAutomaticallyUnsets)
+{
+  nux::WindowCompositor& wnd_compositor = nux::GetWindowCompositor();
+  nux::InputArea* test_area = new TestInputArea();
+
+  ForceSetKeyFocusArea(test_area);
+  ASSERT_EQ(wnd_compositor.GetKeyFocusArea(), test_area);
+
+  test_area->UnReference();
+  EXPECT_EQ(wnd_compositor.GetKeyFocusArea(), nullptr);
+}
+
+TEST_F(TestWindowCompositor, MouseOverAreaAutomaticallyUnsets)
+{
+  nux::InputArea* test_area = new TestInputArea();
+
+  SetMouseOverArea(test_area);
+  ASSERT_EQ(GetMouseOverArea(), test_area);
+
+  test_area->UnReference();
+  EXPECT_EQ(GetMouseOverArea(), nullptr);
+}
+
+TEST_F(TestWindowCompositor, MouseOwnerAreaAutomaticallyUnsets)
+{
+  nux::InputArea* test_area = new TestInputArea();
+
+  SetMouseOwnerArea(test_area);
+  ASSERT_EQ(GetMouseOwnerArea(), test_area);
+
+  test_area->UnReference();
+  EXPECT_EQ(GetMouseOwnerArea(), nullptr);
+}
+
 
 #endif // NUX_GESTURES_SUPPORT
 

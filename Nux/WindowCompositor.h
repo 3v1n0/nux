@@ -665,6 +665,7 @@ namespace nux
     friend class VSplitter;
     friend class TableCtrl;
     friend class View;
+    friend class TestWindowCompositor;
   };
 
 #ifdef NUX_GESTURES_SUPPORT
