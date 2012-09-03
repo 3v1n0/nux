@@ -175,10 +175,9 @@ namespace
 
     if (it != _view_window_list.end())
     {
-      auto old_size = _view_window_list.size();
       _view_window_list.erase(it);
 
-      if (_view_window_list.size())
+      if (!_view_window_list.empty())
         m_SelectedWindow = _view_window_list.front();
     }
     _window_to_texture_map.erase(window.GetPointer());
@@ -200,10 +199,10 @@ namespace
 
   void WindowCompositor::GetAreaUnderMouse(const Point& mouse_position,
                                            NuxEventType event_type,
-                                           InputArea** area_under_mouse_pointer,
-                                           BaseWindow** window)
+                                           ObjectWeakPtr<InputArea>& area_under_mouse_pointer,
+                                           ObjectWeakPtr<BaseWindow>& window)
   {
-    *area_under_mouse_pointer = NULL;
+    area_under_mouse_pointer = NULL;
 
     // Go through the list of BaseWindo and find the first area over which the
     // mouse pointer is.
@@ -212,11 +211,11 @@ namespace
     {
       if ((*window_it).IsValid() && (*window_it)->IsVisible())
       {
-        InputArea* area = static_cast<InputArea*>((*window_it)->FindAreaUnderMouse(mouse_position, event_type));
+        Area* area = (*window_it)->FindAreaUnderMouse(mouse_position, event_type);
         if (area)
         {
-          *area_under_mouse_pointer = area;
-          *window = (*window_it).GetPointer();
+          area_under_mouse_pointer = static_cast<InputArea*>(area);
+          window = *window_it;
           return;
         }
       }
@@ -224,11 +223,11 @@ namespace
 
     // If area_under_mouse_pointer is NULL, then the mouse pointer is not over
     // any of the BaseWindow. Try the main window layout.
-    if (*area_under_mouse_pointer == NULL)
+    if (!area_under_mouse_pointer.IsValid())
     {
       Layout* main_window_layout = window_thread_->GetLayout();
       if (main_window_layout)
-        *area_under_mouse_pointer = static_cast<InputArea*>(main_window_layout->FindAreaUnderMouse(mouse_position, event_type));
+        area_under_mouse_pointer = static_cast<InputArea*>(main_window_layout->FindAreaUnderMouse(mouse_position, event_type));
     }
   }
 
@@ -265,14 +264,14 @@ namespace
   {
     if (event.type == NUX_DND_MOVE)
     {
-      InputArea* hit_area = NULL;
-      BaseWindow* hit_base_window = NULL;
+      ObjectWeakPtr<InputArea> hit_area;
+      ObjectWeakPtr<BaseWindow> hit_base_window;
 
-      GetAreaUnderMouse(Point(event.x, event.y), event.type, &hit_area, &hit_base_window);
+      GetAreaUnderMouse(Point(event.x, event.y), event.type, hit_area, hit_base_window);
 
-      if (hit_area)
+      if (hit_area.IsValid())
       {
-        SetDnDArea(hit_area);
+        SetDnDArea(hit_area.GetPointer());
         hit_area->HandleDndMove(event);
       }
       else
@@ -320,8 +319,8 @@ namespace
         (event.type == NUX_WINDOW_MOUSELEAVE) ||
         (event.type == NUX_MOUSE_RELEASED))
       {
-        InputArea* hit_view = NULL;         // The view under the mouse
-        BaseWindow* hit_base_window = NULL; // The BaseWindow below the mouse pointer.
+        ObjectWeakPtr<InputArea> hit_view; // The view under the mouse
+        ObjectWeakPtr<BaseWindow> hit_base_window; // The BaseWindow below the mouse pointer.
 
         // Look for the area below the mouse pointer in the BaseWindow.
         Area* pointer_grab_area = GetPointerGrabArea();
@@ -329,7 +328,7 @@ namespace
         {
           // If there is a pending mouse pointer grab, test that area only
           hit_view = NUX_STATIC_CAST(InputArea*, pointer_grab_area->FindAreaUnderMouse(Point(event.x, event.y), event.type));
-          if ((hit_view == NULL) && (event.type == NUX_MOUSE_PRESSED))
+          if (!hit_view.IsValid() && event.type == NUX_MOUSE_PRESSED)
           {
             Geometry geo = pointer_grab_area->GetAbsoluteGeometry();
             int x = event.x - geo.x;
@@ -340,16 +339,15 @@ namespace
         }
         else
         {
-          GetAreaUnderMouse(Point(event.x, event.y), event.type, &hit_view, &hit_base_window);
-          mouse_owner_base_window_ = hit_base_window;
-          SetMouseOwnerBaseWindow(hit_base_window);
+          GetAreaUnderMouse(Point(event.x, event.y), event.type, hit_view, hit_base_window);
+          SetMouseOwnerBaseWindow(hit_base_window.GetPointer());
         }
 
         Geometry hit_view_geo;
         int hit_view_x = 0;
         int hit_view_y = 0;
 
-        if (hit_view)
+        if (hit_view.IsValid())
         {
           hit_view_geo = hit_view->GetAbsoluteGeometry();
           hit_view_x = event.x - hit_view_geo.x;
@@ -370,7 +368,7 @@ namespace
             SetMouseOverArea(NULL);
           }
         }
-        else if (hit_view && (event.type == NUX_MOUSE_MOVE))
+        else if (hit_view.IsValid() && event.type == NUX_MOUSE_MOVE)
         {
           bool emit_delta = true;
           if (hit_view != mouse_over_area_)
@@ -386,7 +384,7 @@ namespace
               mouse_over_area_->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
             }
             // The area we found under the mouse pointer receives a "mouse enter signal".
-            SetMouseOverArea(hit_view);
+            SetMouseOverArea(hit_view.GetPointer());
 
             if (mouse_over_area_.IsValid() && mouse_over_area_ != GetKeyFocusArea() &&
                 mouse_over_area_->AcceptKeyNavFocusOnMouseEnter())
@@ -402,9 +400,9 @@ namespace
           // Send a "mouse mouse signal".
           mouse_over_area_->EmitMouseMoveSignal(hit_view_x, hit_view_y, emit_delta ? dx : 0, emit_delta ? dy : 0, event.GetMouseState(), event.GetKeyState());
         }
-        else if (hit_view && ((event.type == NUX_MOUSE_PRESSED) || (event.type == NUX_MOUSE_DOUBLECLICK)))
+        else if (hit_view.IsValid() && (event.type == NUX_MOUSE_PRESSED || event.type == NUX_MOUSE_DOUBLECLICK))
         {
-          if ((event.type == NUX_MOUSE_DOUBLECLICK) && (!hit_view->DoubleClickEnabled()))
+          if (event.type == NUX_MOUSE_DOUBLECLICK && !hit_view->DoubleClickEnabled())
           {
             // If the area does not accept double click events, transform the event into a mouse pressed.
             event.type = NUX_MOUSE_PRESSED;
@@ -431,8 +429,8 @@ namespace
             emit_double_click_signal = true;
           }
 
-          SetMouseOverArea(hit_view);
-          SetMouseOwnerArea(hit_view);
+          SetMouseOverArea(hit_view.GetPointer());
+          SetMouseOwnerArea(hit_view.GetPointer());
           _mouse_position_on_owner = Point(hit_view_x, hit_view_y);
 
           // In the case of a mouse down event, if there is currently a keyboard event receiver and it is different
@@ -468,11 +466,11 @@ namespace
             mouse_over_area_->EmitMouseDownSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
           }
         }
-        else if (hit_view && (event.type == NUX_MOUSE_WHEEL))
+        else if (hit_view.IsValid() && (event.type == NUX_MOUSE_WHEEL))
         {
           hit_view->EmitMouseWheelSignal(hit_view_x, hit_view_y, event.wheel_delta, event.GetMouseState(), event.GetKeyState());
         }
-        else if (hit_view && (event.type == NUX_MOUSE_RELEASED))
+        else if (hit_view.IsValid() && (event.type == NUX_MOUSE_RELEASED))
         {
           // We only get a NUX_MOUSE_RELEASED event when the mouse was pressed
           // over another area and released here. There are a few situations that can cause 
@@ -484,7 +482,7 @@ namespace
 
           hit_view->EmitMouseUpSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
         }
-        else if (hit_view == NULL)
+        else if (!hit_view.IsValid())
         {
           if (mouse_over_area_.IsValid())
           {
@@ -521,11 +519,10 @@ namespace
     {
       // Context: The left mouse button down over an area. All events goes to that area.
       // But we still need to know where the mouse is.
+      ObjectWeakPtr<InputArea> hit_view; // The view under the mouse
+      ObjectWeakPtr<BaseWindow> hit_base_window; // The BaseWindow below the mouse pointer.
 
-      InputArea* hit_view = NULL;         // The view under the mouse
-      BaseWindow* hit_base_window = NULL; // The BaseWindow below the mouse pointer.
-
-      GetAreaUnderMouse(Point(event.x, event.y), event.type, &hit_view, &hit_base_window);
+      GetAreaUnderMouse(Point(event.x, event.y), event.type, hit_view, hit_base_window);
 
       Geometry const& mouse_owner_geo = mouse_owner_area_->GetAbsoluteGeometry();
       int mouse_owner_x = event.x - mouse_owner_geo.x;
@@ -559,7 +556,7 @@ namespace
         if (mouse_over_area_ == mouse_owner_area_ && hit_view != mouse_owner_area_)
         {
           mouse_owner_area_->EmitMouseLeaveSignal(mouse_owner_x, mouse_owner_y, event.GetMouseState(), event.GetKeyState());
-          SetMouseOverArea(hit_view);
+          SetMouseOverArea(hit_view.GetPointer());
         }
         else if (mouse_over_area_ != mouse_owner_area_ && hit_view == mouse_owner_area_)
         {
@@ -580,7 +577,7 @@ namespace
         }
         else
         {
-          SetMouseOverArea(hit_view);
+          SetMouseOverArea(hit_view.GetPointer());
         }
 
         SetMouseOwnerArea(NULL);
