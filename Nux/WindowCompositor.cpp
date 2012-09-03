@@ -202,6 +202,7 @@ namespace
                                            ObjectWeakPtr<InputArea>& area_under_mouse_pointer,
                                            ObjectWeakPtr<BaseWindow>& window)
   {
+    window = NULL;
     area_under_mouse_pointer = NULL;
 
     // Go through the list of BaseWindo and find the first area over which the
@@ -771,36 +772,36 @@ namespace
   void WindowCompositor::FindKeyFocusArea(NuxEventType event_type,
     unsigned int key_symbol,
     unsigned int special_keys_state,
-    InputArea** key_focus_area,
-    BaseWindow** window)
+    ObjectWeakPtr<InputArea>& key_focus_area,
+    ObjectWeakPtr<BaseWindow>& window)
   {
-    *key_focus_area = NULL;
-    *window = NULL;
+    key_focus_area = NULL;
+    window = NULL;
 
     // Go through the list of BaseWindos and find the first area over which the mouse pointer is.
     WindowList::iterator window_it;
     window_it = _view_window_list.begin();
-    while ((*key_focus_area == NULL) && (window_it != _view_window_list.end()))
+    while (!key_focus_area.IsValid() && window_it != _view_window_list.end())
     {
       if ((*window_it).IsValid() && (*window_it)->IsVisible())
       {
-        *key_focus_area = NUX_STATIC_CAST(InputArea*, (*window_it)->FindKeyFocusArea(event_type, key_symbol, special_keys_state));
-        if (key_focus_area)
+        key_focus_area = NUX_STATIC_CAST(InputArea*, (*window_it)->FindKeyFocusArea(event_type, key_symbol, special_keys_state));
+        if (key_focus_area.IsValid())
         {
           // We have found an area. We are going to exit the while loop.
-          *window = (*window_it).GetPointer();
+          window = *window_it;
         }
       }
       ++window_it;
     }
 
     // If key_focus_area is NULL, then try the main window layout.
-    if (*key_focus_area == NULL)
+    if (!key_focus_area.IsValid())
     {
       Layout* main_window_layout = window_thread_->GetLayout();
       if (main_window_layout)
       {
-        *key_focus_area = NUX_STATIC_CAST(InputArea*, main_window_layout->FindKeyFocusArea(event_type, key_symbol, special_keys_state));
+        key_focus_area = NUX_STATIC_CAST(InputArea*, main_window_layout->FindKeyFocusArea(event_type, key_symbol, special_keys_state));
       }
     }
   }
@@ -809,21 +810,21 @@ namespace
     unsigned int key_symbol,
     unsigned int special_keys_state,
     InputArea* root_search_area,
-    InputArea** key_focus_area,
-    BaseWindow** window)
+    ObjectWeakPtr<InputArea>& key_focus_area,
+    ObjectWeakPtr<BaseWindow>& window)
   {
-    *key_focus_area = NULL;
-    *window = NULL;
+    key_focus_area = NULL;
+    window = NULL;
 
     if (root_search_area == NULL)
     {
       return;
     }
 
-    *key_focus_area = NUX_STATIC_CAST(InputArea*, root_search_area->FindKeyFocusArea(event_type, key_symbol, special_keys_state));
-    if (key_focus_area)
+    key_focus_area = NUX_STATIC_CAST(InputArea*, root_search_area->FindKeyFocusArea(event_type, key_symbol, special_keys_state));
+    if (key_focus_area.IsValid())
     {
-      *window = NUX_STATIC_CAST(BaseWindow*, root_search_area->GetTopLevelViewWindow());
+      window = NUX_STATIC_CAST(BaseWindow*, root_search_area->GetTopLevelViewWindow());
     }
   }
 
@@ -856,25 +857,21 @@ namespace
   {
     InputArea* keyboard_event_grab_view = GetKeyboardGrabArea();
 
-    InputArea* focus_area = NULL;   // The view under the mouse
-    BaseWindow* base_window = NULL; // The BaseWindow below the mouse pointer.
+    ObjectWeakPtr<InputArea> focus_area;   // The view under the mouse
+    ObjectWeakPtr<BaseWindow> base_window; // The BaseWindow below the mouse pointer.
 
     if (keyboard_event_grab_view)
     {
       // There is a keyboard grab.
       // Find the key focus area, under the keyboard grab area. That is to say, the key focus area is in the widget tree 
       // whose root is the keyboard grab area. This phase is known as the capture phase.
-      
       FindKeyFocusAreaFrom(event.type, event.GetKeySym(), event.GetKeyState(),
-        keyboard_event_grab_view,
-        &focus_area,
-        &base_window);
+                           keyboard_event_grab_view, focus_area, base_window);
     }
     else
     {
       FindKeyFocusArea(event.type, event.GetKeySym(), event.GetKeyState(),
-        &focus_area,
-        &base_window);
+                       focus_area, base_window);
     }
 
     KeyNavDirection direction = KEY_NAV_NONE;
@@ -912,9 +909,9 @@ namespace
       }
     }
 
-    if (focus_area)
+    if (focus_area.IsValid())
     {
-      SetKeyFocusArea(focus_area, direction);
+      SetKeyFocusArea(focus_area.GetPointer(), direction);
     }
     else
     {
@@ -962,7 +959,7 @@ namespace
         }
       }
       else if (event.type == NUX_KEYDOWN)
-      {        
+      {
         if (direction == KEY_NAV_ENTER)
         {
           if (key_focus_area_.IsValid() && key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
@@ -977,10 +974,10 @@ namespace
         {
           InputArea* key_nav_focus = NULL;
           Area* parent = key_focus_area_->GetParentObject();
-          
+
           if (parent)
             key_nav_focus = NUX_STATIC_CAST(InputArea*, parent->KeyNavIteration(direction));
-          
+
           while (key_nav_focus == NULL && parent != NULL)
           {
             parent = parent->GetParentObject();

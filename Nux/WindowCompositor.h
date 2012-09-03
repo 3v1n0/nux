@@ -134,16 +134,16 @@ namespace nux
     void FindKeyFocusArea(NuxEventType event_type,
                           unsigned int key_symbol,
                           unsigned int special_keys_state,
-                          InputArea** key_focus_area,
-                          BaseWindow** window);
-    
+                          ObjectWeakPtr<InputArea>& key_focus_area,
+                          ObjectWeakPtr<BaseWindow>& window);
+
     //! Traverse the widget tree and found the area has the key focus, but start from a specified widget.
     void FindKeyFocusAreaFrom(NuxEventType event_type,
       unsigned int key_symbol,
       unsigned int special_keys_state,
       InputArea* root_search_area,
-      InputArea** key_focus_area,
-      BaseWindow** window);
+      ObjectWeakPtr<InputArea>& key_focus_area,
+      ObjectWeakPtr<BaseWindow>& window);
 
     void ResetMousePointerAreas();
 
