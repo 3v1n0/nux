@@ -209,7 +209,6 @@ namespace nux
       {
         texxform.FlipVCoord(true);
         // Draw the background of this view.
-        //GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(GetX(), GetY(), GetWidth(), GetHeight(), background_texture_, texxform, color::White);
         GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(GetX(), GetY(), background_texture_->GetWidth(), background_texture_->GetHeight(), background_texture_, texxform, color::White);
       }
 

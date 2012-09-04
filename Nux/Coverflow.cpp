@@ -286,7 +286,8 @@ namespace nux
 
     text_loader_.font_size = 10;
 
-    BaseTexture* texture = LoadTextureFromFile(PKGDATADIR"/UITextures/coverflow.oval-shadow.png");
+    NString resource_path = NUX_FIND_RESOURCE_LOCATION_NOFAIL("UITextures/coverflow.oval-shadow.png");
+    BaseTexture* texture = LoadTextureFromFile(resource_path.GetTCharPtr());
     drop_shadow_texture_ = texture->GetDeviceTexture();
     texture->UnReference();
 

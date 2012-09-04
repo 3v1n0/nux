@@ -199,7 +199,7 @@ namespace nux
     /*!
         Mark all element in the layout as dirty. This will also mark all sub elements as dirty.
         InputArea element are not marked as dirty(they don't have the flags).
-        Emits the signal \i OnQueueDraw.
+        Emits the signal \i queue_draw.
     */
     virtual void QueueDraw();
 

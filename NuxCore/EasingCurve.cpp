@@ -20,6 +20,7 @@
  *
  */
 
+#include "NuxCore.h"
 #include "EasingCurve.h"
 
 namespace na = nux::animation;
