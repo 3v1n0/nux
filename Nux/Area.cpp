@@ -46,6 +46,7 @@ namespace nux
     , layout_done_(true)
     , redirect_rendering_to_texture_(false)
     , update_backup_texture_(false)
+    , copy_previous_fbo_for_background_(true)
   {
     window_thread_ = GetWindowThread();
     visible_ = true;
@@ -1208,6 +1209,11 @@ namespace nux
     }
 
     return NULL;
+  }
+
+  void Area::SetCopyPreviousFboTexture(bool copy_background)
+  {
+    copy_previous_fbo_for_background_ = copy_background;
   }
 
 #ifdef NUX_GESTURES_SUPPORT

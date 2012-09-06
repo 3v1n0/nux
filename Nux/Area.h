@@ -675,6 +675,11 @@ public:
     */
     ObjectPtr<IOpenGLBaseTexture> BackupTexture() const;
 
+    /*!
+        The use of this function is a bit arcan but it gives more rendering
+        options to redirected areas.
+    */
+    void SetCopyPreviousFboTexture(bool copy);
 protected:
     //! Redirect the rendering of the view to a texture.
     bool redirect_rendering_to_texture_;
@@ -688,6 +693,11 @@ protected:
     Geometry prev_viewport_;
     Matrix4 model_view_matrix_;
     Matrix4 perspective_matrix_;
+    /*!
+        If true, copy the area in the previous fbo texture
+        into background_texture_.
+    */
+    bool copy_previous_fbo_for_background_;
 
     /*!
         Implemented in nux::View and nux::Layout.

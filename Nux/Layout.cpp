@@ -531,10 +531,17 @@ namespace nux
         GetPainter().PopPaintLayerStack();
       }
 
+      unsigned int current_alpha_blend;
+      unsigned int current_src_blend_factor;
+      unsigned int current_dest_blend_factor;
+      // Be a good citizen, get a copy of the current GPU sates according to Nux
+      graphics_engine.GetRenderStates().GetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
+
       TexCoordXForm texxform;
       //Geometry xform_geo = GetGraphicsDisplay()->GetGraphicsEngine()->ModelViewXFormRect(GetGeometry());
-      if (force_draw || draw_cmd_queued_)
+      if ((force_draw || draw_cmd_queued_) && background_texture_.IsValid())
       {
+        graphics_engine.GetRenderStates().SetBlend(false);
         texxform.FlipVCoord(true);
         // Draw the background of this view.
         GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(GetX(), GetY(), background_texture_->GetWidth(), background_texture_->GetHeight(), background_texture_, texxform, color::White);
@@ -544,11 +551,6 @@ namespace nux
       texxform.vwrap = TEXWRAP_CLAMP;
       texxform.FlipVCoord(true);
 
-      unsigned int current_alpha_blend;
-      unsigned int current_src_blend_factor;
-      unsigned int current_dest_blend_factor;
-      // Be a good citizen, get a copy of the current GPU sates according to Nux
-      graphics_engine.GetRenderStates().GetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
       graphics_engine.GetRenderStates().SetBlend(true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
       GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(GetX(), GetY(), GetWidth(), GetHeight(), backup_texture_, texxform, Color(color::White));
       // Be a good citizen, restore the Nux blending states.
@@ -637,7 +639,7 @@ namespace nux
     }
 
     // Draw the background on the previous fbo texture
-    if (force_draw || draw_cmd_queued_)
+    if ((force_draw || draw_cmd_queued_) && background_texture_.IsValid())
     {
       backup_fbo_->FormatFrameBufferObject(intersection.width, intersection.height, BITFMT_R8G8B8A8);
       backup_fbo_->EmptyClippingRegion();
@@ -665,7 +667,14 @@ namespace nux
       // This way we are not affceted by the regular model-view matrix.
       graphics_engine.SetModelViewMatrix(Matrix4::IDENTITY());
       // Copy the texture from the previous fbo attachment into our background texture.
-      graphics_engine.QRP_1Tex(0, 0, intersection.width, intersection.height, active_fbo_texture, texxform, color::White);
+      if (copy_previous_fbo_for_background_)
+      {
+        graphics_engine.QRP_1Tex(0, 0, intersection.width, intersection.height, active_fbo_texture, texxform, color::White);
+      }
+      else
+      {
+        graphics_engine.QRP_Color(0, 0, intersection.width, intersection.height, Color(0.0f, 0.0f, 0.0f, 0.0f));
+      }
       // Restore the model-view matrix.
       graphics_engine.ApplyModelViewMatrix();
     }

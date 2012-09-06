@@ -33,7 +33,7 @@ class EasingCurve
 public:
 #if defined(NUX_OS_WINDOWS) && !defined(NUX_VISUAL_STUDIO_VC11)
   enum Type
-#elif defined(NUX_OS_LINUX)
+#else
   enum class Type
 #endif
   {
