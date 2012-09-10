@@ -20,7 +20,7 @@
 
 #include "Nux/Nux.h"
 #include <X11/extensions/XTest.h>
-#include <X11/keysym.h> 
+#include <X11/keysym.h>
 #include "nux_automated_test_framework.h"
 
 
@@ -104,7 +104,7 @@ void NuxAutomatedTestFramework::ViewSendMouseDoubleClick(nux::View *view, int bu
     r = window_thread_->GetGraphicsDisplay().GetWindowGeometry();
     r.OffsetPosition(r.width/2, r.height/2);
   }
-    
+
   // Send the mouse to the center of the view
   SendFakeMouseMotionEvent(r.x, r.y, NuxAutomatedTestFramework::mouse_motion_time_span);
 
@@ -119,11 +119,11 @@ void NuxAutomatedTestFramework::ViewSendMouseDoubleClick(nux::View *view, int bu
 void NuxAutomatedTestFramework::ViewSendMouseDown(nux::View *view, int button)
 {
   XEvent event;
-  /* Get the current pointer position */  
-  XQueryPointer(display_, RootWindow(display_, 0),  
-        &event.xbutton.root, &event.xbutton.window,  
-        &event.xbutton.x_root, &event.xbutton.y_root,  
-        &event.xbutton.x, &event.xbutton.y,  
+  /* Get the current pointer position */
+  XQueryPointer(display_, RootWindow(display_, 0),
+        &event.xbutton.root, &event.xbutton.window,
+        &event.xbutton.x_root, &event.xbutton.y_root,
+        &event.xbutton.x, &event.xbutton.y,
         &event.xbutton.state);
 
   int current_x = event.xbutton.x - window_x_;
@@ -169,7 +169,7 @@ void NuxAutomatedTestFramework::ViewSendMouseDrag(nux::View *view, int button_in
   // Go to first point
   SendFakeMouseMotionEvent(r0.x, r0.y, NuxAutomatedTestFramework::mouse_motion_time_span);
   nux::SleepForMilliseconds(minimum_sleep_time);
-  
+
   // Mouse down
   ViewSendMouseDown(view, button_index);
 
@@ -265,7 +265,7 @@ void NuxAutomatedTestFramework::ViewSendChar(const char c)
     SendFakeKeyEvent(XK_space, modifier);
   }
   else
-  {   
+  {
     SendFakeKeyEvent(XStringToKeysym(s.c_str()), modifier);
   }
 
@@ -277,7 +277,7 @@ void NuxAutomatedTestFramework::ViewSendString(const std::string &str)
   int l = str.length();
   if (l == 0)
     return;
-  
+
   int i = 0;
 
   while (i < l)
@@ -349,7 +349,7 @@ void NuxAutomatedTestFramework::ViewSendString(const std::string &str)
       SendFakeKeyEvent(XK_underscore, XK_Shift_L);
     }
     else if (c == '<')
-    { 
+    {
       SendFakeKeyEvent(XK_comma, XK_Shift_L);
     }
     else if (c == '>')
@@ -389,7 +389,7 @@ void NuxAutomatedTestFramework::ViewSendString(const std::string &str)
       SendFakeKeyEvent(XK_parenright, XK_Shift_L);
     }
     else
-    {   
+    {
       SendFakeKeyEvent(XStringToKeysym(s.c_str()), modifier);
     }
     nux::SleepForMilliseconds(300);
@@ -401,7 +401,7 @@ void NuxAutomatedTestFramework::ViewSendCompositionKeys(const std::string& str)
   int l = str.length();
   if (l == 0)
     return;
-  
+
   SendFakeKeyEvent(XK_Multi_key, 0);
   ViewSendString(str);
 }
@@ -412,7 +412,7 @@ void NuxAutomatedTestFramework::ViewSendKeyCombo(KeySym modsym0, KeySym modsym1,
   KeyCode modcode0 = 0;
   KeyCode modcode1 = 0;
   KeyCode modcode2 = 0;
-  
+
   if (c != 0)
   {
     printf("ViewSendKeyCombo");
@@ -420,7 +420,7 @@ void NuxAutomatedTestFramework::ViewSendKeyCombo(KeySym modsym0, KeySym modsym1,
     keycode = XKeysymToKeycode(display_, XStringToKeysym(s.c_str()));
   }
   XTestGrabControl(display_, True);
-  
+
   /* Generate modkey press */
   if (modsym0 != 0)
   {
@@ -437,14 +437,14 @@ void NuxAutomatedTestFramework::ViewSendKeyCombo(KeySym modsym0, KeySym modsym1,
     modcode2 = XKeysymToKeycode(display_, modsym2);
     XTestFakeKeyEvent(display_, modcode2, True, 0);
   }
-      
+
   /* Generate regular key press and release */
   if (keycode)
   {
     XTestFakeKeyEvent(display_, keycode, True, 0);
     XTestFakeKeyEvent(display_, keycode, False, 0);
   }
-  
+
   /* Generate modkey release */
   if (modsym0 != 0)
   {
@@ -458,9 +458,9 @@ void NuxAutomatedTestFramework::ViewSendKeyCombo(KeySym modsym0, KeySym modsym1,
   {
     XTestFakeKeyEvent(display_, modcode2, False, 0);
   }
-    
+
   XSync(display_, False);
-  XTestGrabControl(display_, False);  
+  XTestGrabControl(display_, False);
 }
 
 void NuxAutomatedTestFramework::ViewSendCtrlA()
@@ -475,12 +475,12 @@ void NuxAutomatedTestFramework::ViewSendDelete()
 
 void NuxAutomatedTestFramework::ViewSendBackspace()
 {
-  SendFakeKeyEvent(XK_BackSpace, 0);  
+  SendFakeKeyEvent(XK_BackSpace, 0);
 }
 
 void NuxAutomatedTestFramework::ViewSendEscape()
 {
-  SendFakeKeyEvent(XK_Escape, 0);  
+  SendFakeKeyEvent(XK_Escape, 0);
 }
 
 void NuxAutomatedTestFramework::ViewSendTab()
@@ -533,7 +533,7 @@ void NuxAutomatedTestFramework::ViewSendIBusToggle()
 
 void NuxAutomatedTestFramework::PutMouseAt(int x, int y)
 {
-  XTestFakeMotionEvent(display_, XScreenNumberOfScreen(DefaultScreenOfDisplay(display_)), x, y, CurrentTime);  
+  XTestFakeMotionEvent(display_, XScreenNumberOfScreen(DefaultScreenOfDisplay(display_)), x, y, CurrentTime);
   XSync(display_, False);
 }
 
@@ -541,21 +541,21 @@ void NuxAutomatedTestFramework::SendFakeKeyEvent(KeySym keysym, KeySym modsym)
 {
   KeyCode keycode = 0;
   KeyCode modcode = 0;
-  
+
   keycode = XKeysymToKeycode(display_, keysym);
   XTestGrabControl(display_, True);
-  
+
   /* Generate modkey press */
   if (modsym != 0)
   {
     modcode = XKeysymToKeycode(display_, modsym);
     XTestFakeKeyEvent(display_, modcode, True, 0);
   }
-  
+
   /* Generate regular key press and release */
   XTestFakeKeyEvent(display_, keycode, True, 0);
   XTestFakeKeyEvent(display_, keycode, False, 0);
-  
+
   /* Generate modkey release */
   if (modsym != 0)
   {
@@ -569,7 +569,7 @@ void NuxAutomatedTestFramework::SendFakeKeyEvent(KeySym keysym, KeySym modsym)
 void NuxAutomatedTestFramework::SendFakeMouseEvent(int mouse_button_index, bool pressed)
 {
   XTestFakeButtonEvent(display_, mouse_button_index, pressed,  CurrentTime);
-  XSync(display_, False);  
+  XSync(display_, False);
 }
 
 void NuxAutomatedTestFramework::SendFakeMouseMotionEvent(int x, int y, int ms_delay)
@@ -607,7 +607,7 @@ void NuxAutomatedTestFramework::SendFakeMouseMotionEvent(int x, int y, int ms_de
     usleep(16*1000);
   }
 
-  XTestFakeMotionEvent(display_, XScreenNumberOfScreen(DefaultScreenOfDisplay(display_)), x, y, CurrentTime);  
+  XTestFakeMotionEvent(display_, XScreenNumberOfScreen(DefaultScreenOfDisplay(display_)), x, y, CurrentTime);
   XSync(display_, False);
   nux::SleepForMilliseconds(NuxAutomatedTestFramework::minimum_sleep_time);
 }
@@ -621,5 +621,5 @@ void NuxAutomatedTestFramework::TestReportMsg(bool b, const char* msg)
   else
   {
     nuxAlertMsg("%s: %s", msg, "Failed");
-  }  
+  }
 }
