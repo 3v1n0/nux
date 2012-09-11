@@ -23,7 +23,7 @@
 #include <memory>
 #include <string>
 
-#include <Nux/Nux.h>
+#include "Nux.h"
 #include <sigc++/sigc++.h>
 
 namespace nux

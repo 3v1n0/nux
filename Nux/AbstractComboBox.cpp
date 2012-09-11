@@ -37,8 +37,8 @@ namespace nux
     ,   m_MenuIsActive(false)
   {
     m_hlayout   = new HLayout(NUX_TRACKER_LOCATION);
-    _combo_box_area = new InputArea(NUX_TRACKER_LOCATION);
-    _combo_box_opening_area    = new InputArea(NUX_TRACKER_LOCATION);
+    _combo_box_area = new BasicView(NUX_TRACKER_LOCATION);
+    _combo_box_opening_area    = new BasicView(NUX_TRACKER_LOCATION);
 
     m_hlayout->AddView(_combo_box_area, 1);
     m_hlayout->AddView(_combo_box_opening_area, 0);

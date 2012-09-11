@@ -237,7 +237,7 @@ namespace nux
     /**
      * Enum used for the search state of the compose list
      */
-    enum class SearchState {
+    enum SearchState {
       NO_MATCH,
       PARTIAL,
       MATCH

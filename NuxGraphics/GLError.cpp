@@ -32,6 +32,7 @@ namespace nux
 // WARNING: never call glGetError between glBegin and glEnd.
   int CheckGLError(const char *GLcall, const char *file, int line)
   {
+    return 0;
     GLenum glErr;
     int    retCode = 0;
 
