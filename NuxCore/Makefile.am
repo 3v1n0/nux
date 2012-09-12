@@ -19,7 +19,7 @@ libnux_core_@NUX_API_VERSION@_la_CPPFLAGS= \
   $(MAINTAINER_CFLAGS)
 
 libnux_core_@NUX_API_VERSION@_la_LIBADD = \
-  $(NUX_CORE_LIBS)
+  $(NUX_CORE_LIBS) -lpthread
 
 libnux_core_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
