@@ -23,17 +23,25 @@
 #include "FontTexture.h"
 #include "GLError.h"
 
+#include "NuxCore/Logger.h"
+
 namespace nux
 {
+namespace
+{
+logging::Logger logger("nux.gl");
 #ifdef NUX_DEBUG
-  static bool bBreakOnGLErrors = FALSE;
+bool BreakOnGLErrors = false;
 #endif
+}
+
 
 // WARNING: never call glGetError between glBegin and glEnd.
-  int CheckGLError(const char *GLcall, const char *file, int line)
+  void CheckGLError(const char *GLcall, const char *file, int line)
   {
     GLenum glErr;
-    int    retCode = 0;
+    bool errorLogged = false;
+    std::string error_msg;
 
     while ((glErr = glGetError()) != GL_NO_ERROR)
     {
@@ -41,43 +49,45 @@ namespace nux
       switch(glErr)
       {
         case GL_INVALID_ENUM:
-          nuxWarningMsg("[CheckGLError] GL_INVALID_ENUM error in File %s at line: %d", file, line);
+          error_msg += "[CheckGLError] GL_INVALID_ENUM";
           break;
         case GL_INVALID_VALUE:
-          nuxWarningMsg("[CheckGLError] GL_INVALID_VALUE error in File %s at line: %d", file, line);
+          error_msg += "[CheckGLError] GL_INVALID_VALUE";
           break;
         case GL_INVALID_OPERATION:
-          nuxWarningMsg("[CheckGLError] GL_INVALID_OPERATION error in File %s at line: %d", file, line);
+          error_msg += "[CheckGLError] GL_INVALID_OPERATION";
           break;
 #ifndef NUX_OPENGLES_20
         case GL_STACK_OVERFLOW:
-          nuxWarningMsg("[CheckGLError] GL_STACK_OVERFLOW error in File %s at line: %d", file, line);
+          error_msg += "[CheckGLError] GL_STACK_OVERFLOW";
           break;
         case GL_STACK_UNDERFLOW:
-          nuxWarningMsg("[CheckGLError] GL_STACK_UNDERFLOW error in File %s at line: %d", file, line);
+          error_msg += "[CheckGLError] GL_STACK_UNDERFLOW";
           break;
 #endif
         case GL_OUT_OF_MEMORY:
-          nuxWarningMsg("[CheckGLError] GL_OUT_OF_MEMORY error in File %s at line: %d", file, line);
+          error_msg += "[CheckGLError] GL_OUT_OF_MEMORY";
           break;
         default:
-          nuxWarningMsg("[CheckGLError] UNKNOWN ERROR in File %s at line: %d", file, line);
+          error_msg += "[CheckGLError] UNKNOWN ERROR, ";
       }
 
+      if (logger.IsWarningEnabled())
+      {
+        logging::LogStream(logging::Warning, logger.module(), file, line).stream()
 #ifndef NUX_OPENGLES_20
-      nuxWarningMsg("[CheckGLError] OpenGL Error %d( %s )  in File %s at line: %d \n", glErr, ANSI_TO_TCHAR(gluErrorString(glErr)), ANSI_TO_TCHAR(file), line);
+          << "[CheckGLError] OpenGL Error " << glErr << " (" << gluErrorString(glErr) << ")";
+#else
+          << error_msg;
 #endif
-      retCode = 1;
+      }
 
 #ifdef NUX_DEBUG
-
       // break on errors if asked to
-      if (bBreakOnGLErrors)
-#endif
+      if (BreakOnGLErrors)
         inlDebugBreak();
+#endif
     }
-
-    return retCode;
   }
 
 }
