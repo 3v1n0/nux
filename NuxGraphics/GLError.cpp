@@ -72,7 +72,7 @@ bool BreakOnGLErrors = false;
           error_msg += "[CheckGLError] UNKNOWN ERROR, ";
       }
 
-      if (logger.IsWarningEnabled())
+      if (logger.IsWarningEnabled() && !error_msg.empty())
       {
         logging::LogStream(logging::Warning, logger.module(), file, line).stream()
 #ifndef NUX_OPENGLES_20
