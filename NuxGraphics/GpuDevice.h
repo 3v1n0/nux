@@ -133,7 +133,8 @@ namespace nux
     bool _support_opengl_version_40;
     bool _support_opengl_version_41;
 
-    int _opengl_max_texture_units;
+    int _opengl_max_texture_size;
+	int _opengl_max_texture_units;
     int _opengl_max_texture_coords;
     int _opengl_max_texture_image_units;
     int _opengl_max_fb_attachment;

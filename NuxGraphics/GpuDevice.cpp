@@ -215,6 +215,7 @@ namespace nux
 
     // See: http://developer.nvidia.com/object/General_FAQ.html
     // The value of GL_MAX_TEXTURE_UNITS is 4 for GeForce FX and GeForce 6 Series GPUs. Why is that, since those GPUs have 16 texture units?
+	CHECKGL(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &_opengl_max_texture_size));
     CHECKGL(glGetIntegerv(GL_MAX_TEXTURE_UNITS, &_opengl_max_texture_units));
     CHECKGL(glGetIntegerv(GL_MAX_TEXTURE_COORDS, &_opengl_max_texture_coords));
     CHECKGL(glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS_ARB, &_opengl_max_texture_image_units));
