@@ -42,6 +42,10 @@ namespace nux
 			BitmapFormat PixelFormat,
 			NUX_FILE_LINE_DECL)
 	{
+		if((!Width) || (!Height)) {
+			return ObjectPtr<IOpenGLTexture2D>();
+		}
+
 		unsigned int NumTotalMipLevel = 1 + floorf(Log2(Max(Width, Height)));
 		unsigned int NumMipLevel = 0;
 
@@ -56,74 +60,11 @@ namespace nux
 		}
 
 		IOpenGLTexture2D *tex = new IOpenGLTexture2D(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM);
-		ObjectPtr<IOpenGLTexture2D> ptr = ObjectPtr<IOpenGLTexture2D> (tex);
+
+		ObjectPtr<IOpenGLTexture2D> ptr;
 		ptr.Adopt(tex);
 		return ptr;
 	}
-
-/*  ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture(
-    int Width
-    , int Height
-    , int Levels
-    , BitmapFormat PixelFormat
-    , NUX_FILE_LINE_DECL)
-  {
-    IOpenGLTexture2D *ptr;
-    CreateTexture(Width, Height, Levels, PixelFormat, (IOpenGLTexture2D **) &ptr, NUX_FILE_LINE_PARAM);
-    ObjectPtr<IOpenGLTexture2D> h = ObjectPtr<IOpenGLTexture2D> (ptr);
-    ptr->UnReference();
-    return h;
-  }
-
-  int GpuDevice::CreateTexture(
-    unsigned int Width
-    , unsigned int Height
-    , unsigned int Levels
-    , BitmapFormat PixelFormat
-    , IOpenGLTexture2D **ppTexture
-    , NUX_FILE_LINE_DECL
-    )
-  {
-    // From : http://oss.sgi.com/projects/ogl-sample/registry/ARB/texture_non_power_of_two.txt
-    //    The "floor" convention has a relatively straightforward way to
-    //        evaluate(with integer math) means to determine how many mipmap
-    //        levels are required for a complete pyramid:
-    //    numLevels = 1 + floor(log2(max(w, h, d)))
-    unsigned int NumTotalMipLevel    = 1 + floorf(Log2(Max(Width, Height)));
-
-    //    Levels
-    //        [in] Number of levels in the texture. If this is zero, generate all texture sublevels
-    //        down to 1 by 1 pixels for hardware that supports mip-maps textures. Call GetNumMipLevel to see the
-    //        number of levels generated.
-    unsigned int NumMipLevel = 0;
-
-    if (Levels == 0)
-    {
-      NumMipLevel = NumTotalMipLevel;
-    }
-    else if (Levels > NumTotalMipLevel)
-    {
-      NumMipLevel = NumTotalMipLevel;
-    }
-    else
-    {
-      NumMipLevel = Levels;
-    }
-
-
-    //    The "floor" convention can be evaluated incrementally with the
-    //        following recursion:
-    //
-    //    nextLODdim = max(1, currentLODdim >> 1)
-    //
-    //        where currentLODdim is the dimension of a level N and nextLODdim
-    //        is the dimension of level N+1.  The recursion stops when level
-    //        numLevels-1 is reached.
-
-    *ppTexture = new IOpenGLTexture2D(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM);
-
-    return 1;
-  }*/
 
   ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture2DFromID(int id
     , int width
