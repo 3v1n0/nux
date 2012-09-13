@@ -39,7 +39,8 @@ namespace nux
 			BitmapFormat PixelFormat,
 			NUX_FILE_LINE_DECL)
 	{
-		if((!Width) || (!Height)) {
+		int msz = GetGpuInfo().GetMaxTextureSize();
+		if((!Width) || (!Height) || (Width > msz) || (Height > msz)) {
 			return ObjectPtr<IOpenGLTexture2D>();
 		}
 

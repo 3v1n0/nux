@@ -114,6 +114,7 @@ namespace nux
 #endif
 
     int GetMaxFboAttachment() {return _opengl_max_fb_attachment;}
+	int GetMaxTextureSize() {return _opengl_max_texture_size;}
 
 
   private:
@@ -176,15 +177,6 @@ namespace nux
   {
   private:
     static STREAMSOURCE _StreamSource[MAX_NUM_STREAM];
-
-    int CreateTexture(
-      unsigned int Width
-      , unsigned int Height
-      , unsigned int Levels
-      , BitmapFormat PixelFormat
-      , IOpenGLTexture2D **ppTexture
-      , NUX_FILE_LINE_PROTO
-    );
 
     int CreateRectangleTexture(
       unsigned int Width
