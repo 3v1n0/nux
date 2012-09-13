@@ -19,7 +19,6 @@
  *
  */
 
-
 #include "GLResource.h"
 #include "GpuDevice.h"
 #include "GLDeviceObjects.h"
@@ -30,8 +29,6 @@
 #include "GLDeviceFrameBufferObject.h"
 #include "GLTemplatePrimitiveBuffer.h"
 #include "GraphicsEngine.h"
-
-#include "NuxCore/ObjectPtr.h"
 
 namespace nux
 {
