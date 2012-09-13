@@ -31,9 +31,37 @@
 #include "GLTemplatePrimitiveBuffer.h"
 #include "GraphicsEngine.h"
 
+#include "NuxCore/ObjectPtr.h"
+
 namespace nux
 {
-  ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture(
+	ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture(
+			int Width,
+			int Height,
+			int Levels,
+			BitmapFormat PixelFormat,
+			NUX_FILE_LINE_DECL)
+	{
+		unsigned int NumTotalMipLevel = 1 + floorf(Log2(Max(Width, Height)));
+		unsigned int NumMipLevel = 0;
+
+		if(Levels == 0) {
+			NumMipLevel = NumTotalMipLevel;
+		}
+		else if(Levels > (int)NumTotalMipLevel) {
+			NumMipLevel = NumTotalMipLevel;
+		}
+		else {
+			NumMipLevel = Levels;
+		}
+
+		IOpenGLTexture2D *tex = new IOpenGLTexture2D(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM);
+		ObjectPtr<IOpenGLTexture2D> ptr = ObjectPtr<IOpenGLTexture2D> (tex);
+		ptr.Adopt(tex);
+		return ptr;
+	}
+
+/*  ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture(
     int Width
     , int Height
     , int Levels
@@ -95,7 +123,7 @@ namespace nux
     *ppTexture = new IOpenGLTexture2D(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM);
 
     return 1;
-  }
+  }*/
 
   ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture2DFromID(int id
     , int width
