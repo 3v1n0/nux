@@ -49,7 +49,6 @@ bool debug_glerror_stack()
   void CheckGLError(const char *GLcall, const char *file, int line)
   {
     GLenum glErr;
-    bool errorLogged = false;
     std::string error_msg;
 
     while ((glErr = glGetError()) != GL_NO_ERROR)
