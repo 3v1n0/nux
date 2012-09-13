@@ -33,6 +33,15 @@ logging::Logger logger("nux.gl");
 #ifdef NUX_DEBUG
 bool BreakOnGLErrors = false;
 #endif
+
+bool debug_glerror_stack()
+{
+  // If the extra log environment variable is set the stack trace for failing
+  // GLError checks will also get a backtrace.
+  static bool extra_debugging(::getenv("NUX_DEBUG_GLERROR_STACK"));
+  return extra_debugging;
+}
+
 }
 
 
@@ -74,12 +83,16 @@ bool BreakOnGLErrors = false;
 
       if (logger.IsWarningEnabled() && !error_msg.empty())
       {
+        std::string stacktrace;
+        if (debug_glerror_stack())
+          stacktrace = logging::Backtrace();
         logging::LogStream(logging::Warning, logger.module(), file, line).stream()
 #ifndef NUX_OPENGLES_20
-          << "[CheckGLError] OpenGL Error " << glErr << " (" << gluErrorString(glErr) << ")";
+          << "[CheckGLError] OpenGL Error " << glErr << " (" << gluErrorString(glErr) << ")"
 #else
-          << error_msg;
+          << error_msg
 #endif
+          << "\n" << stacktrace;
       }
 
 #ifdef NUX_DEBUG
