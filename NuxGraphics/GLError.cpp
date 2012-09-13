@@ -84,14 +84,14 @@ bool debug_glerror_stack()
       {
         std::string stacktrace;
         if (debug_glerror_stack())
-          stacktrace = logging::Backtrace();
+          stacktrace = "\n" + logging::Backtrace();
         logging::LogStream(logging::Warning, logger.module(), file, line).stream()
 #ifndef NUX_OPENGLES_20
           << "[CheckGLError] OpenGL Error " << glErr << " (" << gluErrorString(glErr) << ")"
 #else
           << error_msg
 #endif
-          << "\n" << stacktrace;
+          << stacktrace;
       }
 
 #ifdef NUX_DEBUG
