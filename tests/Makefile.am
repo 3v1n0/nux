@@ -77,6 +77,7 @@ gtest_nux_SOURCES = \
   gtest-nux-textentry.cpp \
   gtest-nux-utils.h \
   gtest-nux-inputmethodibus.cpp \
+  gtest-nux-input-area.cpp \
   gtest-nux-view.cpp \
   gtest-nux-windowcompositor.cpp \
   gtest-nux-windowthread.cpp
