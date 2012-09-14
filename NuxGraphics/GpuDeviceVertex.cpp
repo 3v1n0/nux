@@ -39,10 +39,8 @@ namespace nux
 			int Length,
 			VBO_USAGE Usage)
 	{
-		IOpenGLVertexBuffer *vbo = new IOpenGLVertexBuffer(Length, Usage, NUX_TRACKER_LOCATION);
 		ObjectPtr<IOpenGLVertexBuffer> ptr;
-		ptr.Adopt(vbo);
-
+		ptr.Adopt(new IOpenGLVertexBuffer(Length, Usage, NUX_TRACKER_LOCATION));
 		return ptr;
 	}
 
@@ -51,10 +49,8 @@ namespace nux
 			VBO_USAGE Usage,
 			INDEX_FORMAT Format)
 	{
-		IOpenGLIndexBuffer *ibo = new IOpenGLIndexBuffer(Length, Usage, Format, NUX_TRACKER_LOCATION);
 		ObjectPtr<IOpenGLIndexBuffer> ptr;
-		ptr.Adopt(ibo);
-
+		ptr.Adopt(new IOpenGLIndexBuffer(Length, Usage, Format, NUX_TRACKER_LOCATION));
 		return ptr;
 	}
 
@@ -62,20 +58,16 @@ namespace nux
 			int Size,
 			VBO_USAGE Usage)
 	{
-		IOpenGLPixelBufferObject *pbo = new IOpenGLPixelBufferObject(Size, Usage, NUX_TRACKER_LOCATION);
 		ObjectPtr<IOpenGLPixelBufferObject> ptr;
-		ptr.Adopt(pbo);
-
+		ptr.Adopt(new IOpenGLPixelBufferObject(Size, Usage, NUX_TRACKER_LOCATION));
 		return ptr;
 	}
 
 	ObjectPtr<IOpenGLVertexDeclaration> GpuDevice::CreateVertexDeclaration(
 			const VERTEXELEMENT *pVertexElements)
 	{
-		IOpenGLVertexDeclaration *vd = new IOpenGLVertexDeclaration(pVertexElements);
 		ObjectPtr<IOpenGLVertexDeclaration> ptr;
-		ptr.Adopt(vd);
-
+		ptr.Adopt(new IOpenGLVertexDeclaration(pVertexElements));
 		return ptr;
 	}
 
