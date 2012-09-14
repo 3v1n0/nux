@@ -40,7 +40,7 @@ namespace nux
 			NUX_FILE_LINE_DECL)
 	{
 		int msz = GetGpuInfo().GetMaxTextureSize();
-		if((!Width) || (!Height) || (Width > msz) || (Height > msz)) {
+		if(!Width || !Height || (Width > msz) || Height > msz) {
 			return ObjectPtr<IOpenGLTexture2D>();
 		}
 
@@ -58,10 +58,50 @@ namespace nux
 		}
 
 		IOpenGLTexture2D *tex = new IOpenGLTexture2D(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM);
-
 		ObjectPtr<IOpenGLTexture2D> ptr;
 		ptr.Adopt(tex);
 		return ptr;
+	}
+
+	ObjectPtr<IOpenGLRectangleTexture> GpuDevice::CreateRectangleTexture(
+			int Width,
+			int Height,
+			int Levels,
+			BitmapFormat PixelFormat,
+			NUX_FILE_LINE_DECL)
+	{
+		int msz = GetGpuInfo().GetMaxTextureSize();
+		if(!Width || !Height || Width > msz || Height > msz) {
+			return ObjectPtr<IOpenGLRectangleTexture>();
+		}
+
+		unsigned int NumTotalMipLevel    = 1 + floorf(Log2(Max(Width, Height)));
+		unsigned int NumMipLevel = 0;
+
+		 if(Levels == 0) {
+			 //Rectangle texture texture don't support mipmaps
+			 NumMipLevel = 1;
+		 }
+		 else if(Levels > NumTotalMipLevel) {
+			 NumMipLevel = 1;
+		 }
+		 else {
+			 NumMipLevel = 1;
+		 }
+
+		//	The "floor" convention can be evaluated incrementally with the
+		//	following recursion:
+		//
+		//	nextLODdim = max(1, currentLODdim >> 1)
+		//
+		//	where currentLODdim is the dimension of a level N and nextLODdim
+		//	is the dimension of level N+1.  The recursion stops when level
+		//	numLevels-1 is reached.
+
+		 IOpenGLRectangleTexture *tex = new IOpenGLRectangleTexture(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM);
+		 ObjectPtr<IOpenGLRectangleTexture> ptr;
+		 ptr.Adopt(tex);
+		 return ptr;
 	}
 
   ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture2DFromID(int id
@@ -79,7 +119,7 @@ namespace nux
     return h;
   }
 
-  ObjectPtr<IOpenGLRectangleTexture> GpuDevice::CreateRectangleTexture(
+ /* ObjectPtr<IOpenGLRectangleTexture> GpuDevice::CreateRectangleTexture(
     int Width
     , int Height
     , int Levels
@@ -145,6 +185,7 @@ namespace nux
 
     return 1;
   }
+*/
 
   ObjectPtr<IOpenGLCubeTexture> GpuDevice::CreateCubeTexture(
     int EdgeLength

@@ -178,15 +178,6 @@ namespace nux
   private:
     static STREAMSOURCE _StreamSource[MAX_NUM_STREAM];
 
-    int CreateRectangleTexture(
-      unsigned int Width
-      , unsigned int Height
-      , unsigned int Levels
-      , BitmapFormat PixelFormat
-      , IOpenGLRectangleTexture **ppTexture
-      , NUX_FILE_LINE_PROTO
-    );
-
     int CreateCubeTexture(
       unsigned int EdgeLength
       , unsigned int Levels
