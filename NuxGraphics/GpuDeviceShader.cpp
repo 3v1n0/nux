@@ -35,55 +35,43 @@ namespace nux
 {
 	ObjectPtr<IOpenGLShaderProgram> GpuDevice::CreateShaderProgram()
 	{
-		IOpenGLShaderProgram *sprog = new IOpenGLShaderProgram();
 		ObjectPtr<IOpenGLShaderProgram> ptr;
-		ptr.Adopt(sprog);
-
+		ptr.Adopt(new IOpenGLShaderProgram());
 		return ptr;
 	}
 
 	ObjectPtr<IOpenGLVertexShader> GpuDevice::CreateVertexShader()
 	{
-		IOpenGLVertexShader *vsdr = new IOpenGLVertexShader();
 		ObjectPtr<IOpenGLVertexShader> ptr;
-		ptr.Adopt(vsdr);
-
+		ptr.Adopt(new IOpenGLVertexShader());
 		return ptr;
 	}
 
 	ObjectPtr<IOpenGLPixelShader> GpuDevice::CreatePixelShader()
 	{
-		IOpenGLPixelShader *fsdr = new IOpenGLPixelShader();
 		ObjectPtr<IOpenGLPixelShader> ptr;
-		ptr.Adopt(fsdr);
-
+		ptr.Adopt(new IOpenGLPixelShader());
 		return ptr;
 	}
 
 	ObjectPtr<IOpenGLAsmShaderProgram> GpuDevice::CreateAsmShaderProgram()
 	{
-		IOpenGLAsmShaderProgram *asprog = new IOpenGLAsmShaderProgram();
 		ObjectPtr<IOpenGLAsmShaderProgram> ptr;
-		ptr.Adopt(asprog);
-
+		ptr.Adopt(new IOpenGLAsmShaderProgram());
 		return ptr;
 	}
 
 	ObjectPtr<IOpenGLAsmVertexShader> GpuDevice::CreateAsmVertexShader()
 	{
-		IOpenGLAsmVertexShader *avsdr = new IOpenGLAsmVertexShader();
 		ObjectPtr<IOpenGLAsmVertexShader> ptr;
-		ptr.Adopt(avsdr);
-
+		ptr.Adopt(new IOpenGLAsmVertexShader());
 		return ptr;
 	}
 
 	ObjectPtr<IOpenGLAsmPixelShader> GpuDevice::CreateAsmPixelShader()
 	{
-		IOpenGLAsmPixelShader* afsdr = new IOpenGLAsmPixelShader();
 		ObjectPtr<IOpenGLAsmPixelShader> ptr;
-		ptr.Adopt(afsdr);
-
+		ptr.Adopt(new IOpenGLAsmPixelShader());
 		return ptr;
 	}
 
@@ -91,19 +79,15 @@ namespace nux
 
 	ObjectPtr<ICgVertexShader> GpuDevice::CreateCGVertexShader()
 	{
-		ICgVertexShader* cvsdr = new ICgVertexShader();
 		ObjectPtr<ICgVertexShader> ptr;
-		ptr.Adopt(cvsdr);
-
+		ptr.Adopt(new ICgVertexShader());
 		return ptr;
 	}
 
 	ObjectPtr<ICgPixelShader> GpuDevice::CreateCGPixelShader()
 	{
-		ICgPixelShader *cfsdr = new ICgPixelShader();
 		ObjectPtr<ICgPixelShader> ptr;
-		ptr.Adopt(cfsdr);
-
+		ptr.Adopt(new ICgPixelShader());
 		return ptr;
 	}
 

@@ -59,7 +59,6 @@ namespace nux
 
 		ObjectPtr<IOpenGLTexture2D> ptr;
 		ptr.Adopt(new IOpenGLTexture2D(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM));
-
 		return ptr;
 	}
 
@@ -90,7 +89,6 @@ namespace nux
 
 		 ObjectPtr<IOpenGLRectangleTexture> ptr;
 		 ptr.Adopt(new IOpenGLRectangleTexture(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM));
-
 		 return ptr;
 	}
 
@@ -115,7 +113,6 @@ namespace nux
 
 		ObjectPtr<IOpenGLCubeTexture> ptr;
 		ptr.Adopt(new IOpenGLCubeTexture(EdgeLength, NumMipLevel, PixelFormat));
-
 		return ptr;
 	}
 
@@ -147,7 +144,6 @@ namespace nux
 
 		ObjectPtr<IOpenGLVolumeTexture> ptr;
 		ptr.Adopt(new IOpenGLVolumeTexture(Width, Height, Depth, NumMipLevel, PixelFormat));
-
 		return ptr;
 	}
 
@@ -164,7 +160,6 @@ namespace nux
 
 		ObjectPtr<IOpenGLAnimatedTexture> ptr;
 		ptr.Adopt(new IOpenGLAnimatedTexture(Width, Height, Depth, PixelFormat));
-
 		return ptr;
 	}
 
@@ -172,7 +167,6 @@ namespace nux
 		IOpenGLQuery *qr = new IOpenGLQuery(Type);
 		ObjectPtr<IOpenGLQuery> ptr;
 		ptr.Adopt(qr);
-
 		return ptr;
 	}
 
