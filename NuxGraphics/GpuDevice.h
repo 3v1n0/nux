@@ -178,13 +178,6 @@ namespace nux
   private:
     static STREAMSOURCE _StreamSource[MAX_NUM_STREAM];
 
-    int CreateVertexDeclaration(
-      const VERTEXELEMENT *pVertexElements,
-      IOpenGLVertexDeclaration **ppDecl);
-
-    int CreateFrameBufferObject(
-      IOpenGLFrameBufferObject **ppFrameBufferObject);
-
   public:
     ObjectPtr<IOpenGLTexture2D> CreateTexture(
       int Width,
