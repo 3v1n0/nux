@@ -33,27 +33,18 @@
 
 namespace nux
 {
+	static STREAMSOURCE _StreamSource[MAX_NUM_STREAM];
 
-  static STREAMSOURCE _StreamSource[MAX_NUM_STREAM];
+	ObjectPtr<IOpenGLVertexBuffer> GpuDevice::CreateVertexBuffer(
+			int Length,
+			VBO_USAGE Usage)
+	{
+		IOpenGLVertexBuffer *vbo = new IOpenGLVertexBuffer(Length, Usage, NUX_TRACKER_LOCATION);
+		ObjectPtr<IOpenGLVertexBuffer> ptr;
+		ptr.Adopt(vbo);
 
-  ObjectPtr<IOpenGLVertexBuffer> GpuDevice::CreateVertexBuffer(int Length,
-      VBO_USAGE Usage)
-  {
-    IOpenGLVertexBuffer *ptr;
-    CreateVertexBuffer(Length, Usage, (IOpenGLVertexBuffer **) &ptr);
-    ObjectPtr<IOpenGLVertexBuffer> h = ObjectPtr<IOpenGLVertexBuffer> (ptr);
-    ptr->UnReference();
-    return h;
-  }
-
-  int GpuDevice::CreateVertexBuffer(unsigned int Length,
-      VBO_USAGE Usage,
-      IOpenGLVertexBuffer **ppVertexBuffer)
-  {
-    *ppVertexBuffer = new IOpenGLVertexBuffer(Length, Usage, NUX_TRACKER_LOCATION);
-
-    return OGL_OK;
-  }
+		return ptr;
+	}
 
   ObjectPtr<IOpenGLIndexBuffer> GpuDevice::CreateIndexBuffer(
     int Length

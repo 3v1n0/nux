@@ -178,12 +178,6 @@ namespace nux
   private:
     static STREAMSOURCE _StreamSource[MAX_NUM_STREAM];
 
-    int CreateVertexBuffer(
-      unsigned int Length
-      , VBO_USAGE Usage    // Dynamic or WriteOnly
-      , IOpenGLVertexBuffer **ppVertexBuffer
-    );
-
     int CreateIndexBuffer(
       unsigned int Length
       , VBO_USAGE Usage    // Dynamic or WriteOnly
