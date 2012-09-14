@@ -35,132 +35,61 @@ namespace nux
 {
   ObjectPtr<IOpenGLShaderProgram> GpuDevice::CreateShaderProgram()
   {
-    IOpenGLShaderProgram *ptr;
-    CreateShaderProgram((IOpenGLShaderProgram **) &ptr);
-    ObjectPtr<IOpenGLShaderProgram> h = ObjectPtr<IOpenGLShaderProgram> (ptr);
-    ptr->UnReference();
-    return h;
-  }
-
-  int GpuDevice::CreateShaderProgram(IOpenGLShaderProgram **ppShaderProgram)
-  {
-    *ppShaderProgram = new IOpenGLShaderProgram();
-
-    return OGL_OK;
+    ObjectPtr<IOpenGLShaderProgram> result;
+    result.Adopt(new IOpenGLShaderProgram());
+    return result;
   }
 
   ObjectPtr<IOpenGLVertexShader> GpuDevice::CreateVertexShader()
   {
-    IOpenGLVertexShader *ptr;
-    CreateVertexShader((IOpenGLVertexShader **) &ptr);
-    ObjectPtr<IOpenGLVertexShader> h = ObjectPtr<IOpenGLVertexShader> (ptr);
-    ptr->UnReference();
-    return h;
-  }
-
-  int GpuDevice::CreateVertexShader(IOpenGLVertexShader **ppVertexShader)
-  {
-    *ppVertexShader = new IOpenGLVertexShader();
-
-    return OGL_OK;
+    ObjectPtr<IOpenGLVertexShader> result;
+    result.Adopt(new IOpenGLVertexShader());
+    return result;
   }
 
   ObjectPtr<IOpenGLPixelShader> GpuDevice::CreatePixelShader()
   {
-    IOpenGLPixelShader *ptr;
-    CreatePixelShader((IOpenGLPixelShader **) &ptr);
-    ObjectPtr<IOpenGLPixelShader> h = ObjectPtr<IOpenGLPixelShader> (ptr);
-    ptr->UnReference();
-    return h;
-  }
-
-  int GpuDevice::CreatePixelShader(IOpenGLPixelShader **ppPixelShader)
-  {
-    *ppPixelShader = new IOpenGLPixelShader();
-
-    return OGL_OK;
+    ObjectPtr<IOpenGLPixelShader> result;
+    result.Adopt(new IOpenGLPixelShader());
+    return result;
   }
 
   ObjectPtr<IOpenGLAsmShaderProgram> GpuDevice::CreateAsmShaderProgram()
   {
-    IOpenGLAsmShaderProgram *ptr;
-    CreateAsmShaderProgram((IOpenGLAsmShaderProgram **) &ptr);
-    ObjectPtr<IOpenGLAsmShaderProgram> h = ObjectPtr<IOpenGLAsmShaderProgram> (ptr);
-    ptr->UnReference();
-    return h;
-  }
-
-  int GpuDevice::CreateAsmShaderProgram(IOpenGLAsmShaderProgram **ppAsmShaderProgram)
-  {
-    *ppAsmShaderProgram = new IOpenGLAsmShaderProgram();
-
-    return OGL_OK;
+    ObjectPtr<IOpenGLAsmShaderProgram> result;
+    result.Adopt(new IOpenGLAsmShaderProgram());
+    return result;
   }
 
   ObjectPtr<IOpenGLAsmVertexShader> GpuDevice::CreateAsmVertexShader()
   {
-    IOpenGLAsmVertexShader *ptr;
-    CreateAsmVertexShader((IOpenGLAsmVertexShader **) &ptr);
-    ObjectPtr<IOpenGLAsmVertexShader> h = ObjectPtr<IOpenGLAsmVertexShader> (ptr);
-    ptr->UnReference();
-    return h;
-  }
-
-  int GpuDevice::CreateAsmVertexShader(IOpenGLAsmVertexShader **ppAsmVertexShader)
-  {
-    *ppAsmVertexShader = new IOpenGLAsmVertexShader();
-
-    return OGL_OK;
+    ObjectPtr<IOpenGLAsmVertexShader> result;
+    result.Adopt(new IOpenGLAsmVertexShader());
+    return result;
   }
 
   ObjectPtr<IOpenGLAsmPixelShader> GpuDevice::CreateAsmPixelShader()
   {
-    IOpenGLAsmPixelShader *ptr;
-    CreateAsmPixelShader((IOpenGLAsmPixelShader **) &ptr);
-    ObjectPtr<IOpenGLAsmPixelShader> h = ObjectPtr<IOpenGLAsmPixelShader> (ptr);
-    ptr->UnReference();
-    return h;
-  }
-
-  int GpuDevice::CreateAsmPixelShader(IOpenGLAsmPixelShader **ppAsmPixelShader)
-  {
-    *ppAsmPixelShader = new IOpenGLAsmPixelShader();
-
-    return OGL_OK;
+    ObjectPtr<IOpenGLAsmPixelShader> result;
+    result.Adopt(new IOpenGLAsmPixelShader());
+    return result;
   }
 
 #if (NUX_ENABLE_CG_SHADERS)
 
   ObjectPtr<ICgVertexShader> GpuDevice::CreateCGVertexShader()
   {
-    ICgVertexShader *ptr;
-    CreateCGVertexShader((ICgVertexShader **) &ptr);
-    ObjectPtr<ICgVertexShader> h = ptr;
-    ptr->UnReference();
-    return h;
-  }
-
-  int GpuDevice::CreateCGVertexShader(ICgVertexShader **ppCgVertexShader)
-  {
-    *ppCgVertexShader = new ICgVertexShader();
-
-    return OGL_OK;
+    ObjectPtr<ICgVertexShader> result;
+    result.Adopt(new ICgVertexShader());
+    return result;
   }
 
   ObjectPtr<ICgPixelShader> GpuDevice::CreateCGPixelShader()
   {
-    ICgPixelShader *ptr;
-    CreateCGPixelShader((ICgPixelShader **) &ptr);
-    ObjectPtr<ICgPixelShader> h = ptr;
-    ptr->UnReference();
-    return h;
+    ObjectPtr<ICgPixelShader> result;
+    result.Adopt(new ICgPixelShader());
+    return result;
   }
 
-  int GpuDevice::CreateCGPixelShader(ICgPixelShader **ppCgPixelShader)
-  {
-    *ppCgPixelShader = new ICgPixelShader();
-
-    return OGL_OK;
-  }
 #endif
 }
