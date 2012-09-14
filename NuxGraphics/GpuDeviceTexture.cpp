@@ -155,45 +155,31 @@ namespace nux
 		return ptr;
 	}
 
-  ObjectPtr<IOpenGLAnimatedTexture> GpuDevice::CreateAnimatedTexture(
-    int Width
-    , int Height
-    , int Depth
-    , BitmapFormat PixelFormat)
-  {
-    IOpenGLAnimatedTexture *ptr;
-    CreateAnimatedTexture(Width, Height, Depth, PixelFormat, (IOpenGLAnimatedTexture **) &ptr);
-    ObjectPtr<IOpenGLAnimatedTexture> h = ObjectPtr<IOpenGLAnimatedTexture> (ptr);
-    ptr->UnReference();
-    return h;
-  }
+	ObjectPtr<IOpenGLAnimatedTexture> GpuDevice::CreateAnimatedTexture(
+			int Width,
+			int Height,
+			int Depth,
+			BitmapFormat PixelFormat)
+	{
+		int msz = GetGpuInfo().GetMaxTextureSize();
+		if(!Width || !Height || Width > msz || Height > msz) {
+			return ObjectPtr<IOpenGLAnimatedTexture>();
+		}
 
-  int GpuDevice::CreateAnimatedTexture(unsigned int Width,
-    unsigned int Height,
-    unsigned int Depth,
-    BitmapFormat PixelFormat,
-    IOpenGLAnimatedTexture **ppAnimatedTexture)
-  {
-    *ppAnimatedTexture = new IOpenGLAnimatedTexture(Width, Height, Depth, PixelFormat);
+		IOpenGLAnimatedTexture *atex = new IOpenGLAnimatedTexture(Width, Height, Depth, PixelFormat);
+		ObjectPtr<IOpenGLAnimatedTexture> ptr;
+		ptr.Adopt(atex);
 
-    return OGL_OK;
-  }
+		return ptr;
+	}
 
-  ObjectPtr<IOpenGLQuery> GpuDevice::CreateQuery(QUERY_TYPE Type)
-  {
-    IOpenGLQuery *ptr;
-    CreateQuery(Type, (IOpenGLQuery **) &ptr);
-    ObjectPtr<IOpenGLQuery> h = ObjectPtr<IOpenGLQuery> (ptr);
-    ptr->UnReference();
-    return h;
-  }
+	ObjectPtr<IOpenGLQuery> GpuDevice::CreateQuery(QUERY_TYPE Type) {
+		IOpenGLQuery *qr = new IOpenGLQuery(Type);
+		ObjectPtr<IOpenGLQuery> ptr;
+		ptr.Adopt(qr);
 
-  int GpuDevice::CreateQuery(QUERY_TYPE Type, IOpenGLQuery **ppQuery)
-  {
-    *ppQuery = new IOpenGLQuery(Type);
-
-    return OGL_OK;
-  }
+		return ptr;
+	}
 
     ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture2DFromID(int id
     , int width

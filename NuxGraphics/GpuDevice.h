@@ -178,24 +178,6 @@ namespace nux
   private:
     static STREAMSOURCE _StreamSource[MAX_NUM_STREAM];
 
-   /* int CreateVolumeTexture(
-      unsigned int Width
-      , unsigned int Height
-      , unsigned int Depth
-      , unsigned int Levels
-      , BitmapFormat PixelFormat
-      , IOpenGLVolumeTexture **ppVolumeTexture
-      , NUX_FILE_LINE_PROTO
-    );*/
-
-    int CreateAnimatedTexture(
-      unsigned int Width
-      , unsigned int Height
-      , unsigned int Depth
-      , BitmapFormat PixelFormat
-      , IOpenGLAnimatedTexture **ppAnimatedTexture
-    );
-
     int CreateVertexBuffer(
       unsigned int Length
       , VBO_USAGE Usage    // Dynamic or WriteOnly
@@ -213,9 +195,9 @@ namespace nux
                                  IOpenGLPixelBufferObject **ppPixelBufferObject
                                 );
 
-    int CreateQuery(
+ /*   int CreateQuery(
       QUERY_TYPE Type,
-      IOpenGLQuery **ppQuery);
+      IOpenGLQuery **ppQuery);*/
 
     int CreateVertexDeclaration(
       const VERTEXELEMENT *pVertexElements,
