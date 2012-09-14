@@ -162,8 +162,8 @@ namespace nux
 
 
     /*!
-        When the text entry is in single line mode, the keyboard arrow up/down may be used 
-        to navigate to another view. If the parameter of this function is set to true then 
+        When the text entry is in single line mode, the keyboard arrow up/down may be used
+        to navigate to another view. If the parameter of this function is set to true then
         the text entry returns false on NUX_VK_UP in InspectKeyEvent(). This allows the parent of the
         text entry to look for another view that can receive the keyboard focus. The default value is true.\n
         In multi-line mode, keyboard arrow up/down are used to navigate in the text.
@@ -175,18 +175,18 @@ namespace nux
     bool GetLoseKeyFocusOnKeyNavDirectionUp() const;
 
     /*!
-        When the text entry is in single line mode, the keyboard arrow up/down may be used 
-        to navigate to another view. If the parameter of this function is set to true then 
+        When the text entry is in single line mode, the keyboard arrow up/down may be used
+        to navigate to another view. If the parameter of this function is set to true then
         the text entry returns false on NUX_VK_DOWN in InspectKeyEvent(). This allows the parent of the
         text entry to look for another view that can receive the keyboard focus.  The default value is true.\n
         In multi-line mode, keyboard arrow up/down are used to navigate in the text.
 
         @param b True to allow the key navigation to move away from the text entry on NUX_VK_DOWN.
-    */    
+    */
     void SetLoseKeyFocusOnKeyNavDirectionDown(bool b);
 
     bool GetLoseKeyFocusOnKeyNavDirectionDown() const;
-    
+
     /*!
         Return True if the text has been modified after the text entry has received the keyboard focus.\n
         If the text entry already has characters typed in and it gets the keyboard focus, this function return false
@@ -202,7 +202,7 @@ namespace nux
         Insert text at current caret position.
     */
     void EnterText(const char* str);
-    
+
     /*!
         Delete text in a specified range, in number of characters.
     */
@@ -474,7 +474,7 @@ namespace nux
     Color _text_color;
 
     CairoGraphics::Alignment align_;
-    
+
 #if defined(NUX_OS_LINUX)
     Cursor caret_cursor_;
 #endif

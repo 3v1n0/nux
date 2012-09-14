@@ -176,7 +176,7 @@ namespace nux
     EmptyBackgroundStack();
   }
 
-  int BasePainter::PaintColorTextLineEdit(GraphicsEngine &graphics_engine, const Geometry &g, const NString &Str,
+int BasePainter::PaintColorTextLineEdit(GraphicsEngine &graphics_engine, const Geometry &g, std::string const& Str,
       Color TextColor,
       bool WriteAlphaChannel,
       Color SelectedTextColor,
@@ -205,12 +205,12 @@ namespace nux
   }
 
   int BasePainter::PaintTextLineStatic(GraphicsEngine &graphics_engine,
-                                        ObjectPtr<FontTexture> Font,
-                                        const Geometry &g,
-                                        const NString &Str,
-                                        const Color &color,
-                                        bool WriteAlphaChannel,
-                                        TextAlignment alignment) const
+                                       ObjectPtr<FontTexture> Font,
+                                       Geometry const& g,
+                                       std::string const& text_line,
+                                       Color const& color,
+                                       bool WriteAlphaChannel,
+                                       TextAlignment alignment) const
   {
     PageBBox page;
     page.xmin = g.x;
@@ -219,7 +219,7 @@ namespace nux
     page.ymax = g.y + g.GetHeight();
     page.x_margin = DEFAULT_TEXT_X_MARGIN;
     page.y_margin = DEFAULT_TEXT_Y_MARGIN;
-    return graphics_engine.RenderColorTextLineStatic(Font, page, Str, color, WriteAlphaChannel, alignment);
+    return graphics_engine.RenderColorTextLineStatic(Font, page, text_line, color, WriteAlphaChannel, alignment);
   }
 
   void BasePainter::Draw2DTexture(GraphicsEngine &graphics_engine, BaseTexture *texture, int x, int y) const

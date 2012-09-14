@@ -248,32 +248,6 @@ namespace nux
     int CreateFrameBufferObject(
       IOpenGLFrameBufferObject **ppFrameBufferObject);
 
-    int CreateShaderProgram(
-      IOpenGLShaderProgram **ppShaderProgram);
-
-    int CreateVertexShader(
-      IOpenGLVertexShader **ppVertexShader);
-
-    int CreatePixelShader(
-      IOpenGLPixelShader **ppPixelShader);
-
-    int CreateAsmShaderProgram(
-      IOpenGLAsmShaderProgram **ppAsmShaderProgram);
-
-    int CreateAsmVertexShader(
-      IOpenGLAsmVertexShader **ppAsmVertexShader);
-
-    int CreateAsmPixelShader(
-      IOpenGLAsmPixelShader **ppAsmPixelShader);
-
-#if (NUX_ENABLE_CG_SHADERS)
-    int CreateCGVertexShader(
-      ICgVertexShader **ppCgVertexShader);
-
-    int CreateCGPixelShader(
-      ICgPixelShader **ppCgPixelShader);
-#endif
-
   public:
     ObjectPtr<IOpenGLTexture2D> CreateTexture(
       int Width,

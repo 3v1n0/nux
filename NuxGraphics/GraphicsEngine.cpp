@@ -411,7 +411,8 @@ namespace nux
     return _graphics_display.GetWindowHeight();
   }
 
-  int GraphicsEngine::RenderColorText(ObjectPtr<FontTexture> Font, int x, int y, const NString& Str,
+  int GraphicsEngine::RenderColorText(ObjectPtr<FontTexture> Font, int x, int y,
+                                      std::string const& Str,
                                         const Color& TextColor,
                                         bool WriteAlphaChannel,
                                         int NumCharacter)
@@ -422,7 +423,7 @@ namespace nux
     return 0;
   }
 
-  int GraphicsEngine::RenderColorTextLineStatic(ObjectPtr<FontTexture> Font, const PageBBox& pageSize, const NString& Str,
+int GraphicsEngine::RenderColorTextLineStatic(ObjectPtr<FontTexture> Font, const PageBBox& pageSize, std::string const& Str,
       const Color& TextColor,
       bool WriteAlphaChannel,
       TextAlignment alignment)
@@ -433,7 +434,7 @@ namespace nux
     return 0;
   }
 
-  int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const PageBBox& pageSize, const NString& Str,
+int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const PageBBox& pageSize, std::string const& Str,
       const Color& TextColor,
       bool WriteAlphaChannel,
       const Color& SelectedTextColor,

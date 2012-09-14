@@ -76,11 +76,6 @@ logging::Logger logger("nux.inputarea");
     graphics_engine.QRP_Color(GetBaseX(), GetBaseY(), GetBaseWidth(), GetBaseHeight(), area_color_);
   }
 
-  void InputArea::SetBaseString(const char *Caption)
-  {
-    Area::SetBaseString(Caption);
-  }
-
   bool InputArea::HasKeyboardFocus()
   {
     return GetWindowThread()->GetWindowCompositor().GetKeyFocusArea() == this;

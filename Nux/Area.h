@@ -23,6 +23,7 @@
 #ifndef BASEOBJECT_H
 #define BASEOBJECT_H
 
+#include <string>
 #include <sigc++/sigc++.h>
 #include "Features.h"
 #include "NuxCore/InitiallyUnownedObject.h"
@@ -226,8 +227,8 @@ namespace nux
 
     void IncreaseSize(int x, int y);
 
-    void SetBaseString(const char *Caption);
-    const NString &GetBaseString() const;
+    void SetBaseString(std::string const& caption);
+    std::string const& GetBaseString() const;
 
     //! Deprecated. Use GetToplevel.
     Area* GetToplevel();
@@ -663,7 +664,7 @@ namespace nux
     bool              sensitive_;     //!< Input sensitive state of the area
     bool              view_enabled_;  //!< The enable state of a view.
 
-    NString                 _base_string;     //!< A text string property for this area.
+    std::string             base_string_;     //!< A text string property for this area.
 
     Size                    min_size_;        //!< A text string property for this area.
     Size                    max_size_;        //!< A text string property for this area.
