@@ -60,6 +60,7 @@ namespace nux
 		IOpenGLTexture2D *tex = new IOpenGLTexture2D(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM);
 		ObjectPtr<IOpenGLTexture2D> ptr;
 		ptr.Adopt(tex);
+
 		return ptr;
 	}
 
@@ -75,11 +76,10 @@ namespace nux
 			return ObjectPtr<IOpenGLRectangleTexture>();
 		}
 
-		unsigned int NumTotalMipLevel    = 1 + floorf(Log2(Max(Width, Height)));
+		unsigned int NumTotalMipLevel = 1 + floorf(Log2(Max(Width, Height)));
 		unsigned int NumMipLevel = 0;
 
 		 if(Levels == 0) {
-			 //Rectangle texture texture don't support mipmaps
 			 NumMipLevel = 1;
 		 }
 		 else if(Levels > NumTotalMipLevel) {
@@ -89,199 +89,71 @@ namespace nux
 			 NumMipLevel = 1;
 		 }
 
-		//	The "floor" convention can be evaluated incrementally with the
-		//	following recursion:
-		//
-		//	nextLODdim = max(1, currentLODdim >> 1)
-		//
-		//	where currentLODdim is the dimension of a level N and nextLODdim
-		//	is the dimension of level N+1.  The recursion stops when level
-		//	numLevels-1 is reached.
-
 		 IOpenGLRectangleTexture *tex = new IOpenGLRectangleTexture(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM);
 		 ObjectPtr<IOpenGLRectangleTexture> ptr;
 		 ptr.Adopt(tex);
+
 		 return ptr;
 	}
 
-  ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture2DFromID(int id
-    , int width
-    , int height
-    , int levels
-    , BitmapFormat pixel_format
-    , NUX_FILE_LINE_DECL)
-  {
-    IOpenGLTexture2D *ptr;
-    ptr = new IOpenGLTexture2D(width, height, levels, pixel_format, true, NUX_FILE_LINE_PARAM); // ref count = 1;
-    ptr->_OpenGLID = id;
-    ObjectPtr<IOpenGLTexture2D> h = ObjectPtr<IOpenGLTexture2D> (ptr); // ref count = 2
-    ptr->UnReference(); // ref count = 1
-    return h;
-  }
+	ObjectPtr<IOpenGLCubeTexture> GpuDevice::CreateCubeTexture(
+			int EdgeLength,
+			int Levels,
+			BitmapFormat PixelFormat,
+			NUX_FILE_LINE_DECL) {
 
- /* ObjectPtr<IOpenGLRectangleTexture> GpuDevice::CreateRectangleTexture(
-    int Width
-    , int Height
-    , int Levels
-    , BitmapFormat PixelFormat
-    , NUX_FILE_LINE_DECL)
-  {
-    IOpenGLRectangleTexture *ptr;
-    CreateRectangleTexture(Width, Height, Levels, PixelFormat, (IOpenGLRectangleTexture **) &ptr, NUX_FILE_LINE_PARAM);
-    ObjectPtr<IOpenGLRectangleTexture> h = ObjectPtr<IOpenGLRectangleTexture> (ptr);
-    ptr->UnReference();
-    return h;
-  }
+		unsigned int NumTotalMipLevel = 1 + floorf(Log2(EdgeLength));
+		unsigned int NumMipLevel = 0;
 
-  int GpuDevice::CreateRectangleTexture(
-    unsigned int Width
-    , unsigned int Height
-    , unsigned int Levels
-    , BitmapFormat PixelFormat
-    , IOpenGLRectangleTexture **ppTexture
-    , NUX_FILE_LINE_DECL
-    )
-  {
+		if(Levels == 0) {
+			NumMipLevel = NumTotalMipLevel;
+		}
+		else if(Levels > NumTotalMipLevel) {
+			NumMipLevel = NumTotalMipLevel;
+		}
+		else {
+			NumMipLevel = Levels;
+		}
 
-    // From : http://oss.sgi.com/projects/ogl-sample/registry/ARB/texture_non_power_of_two.txt
-    //    The "floor" convention has a relatively straightforward way to
-    //        evaluate(with integer math) means to determine how many mipmap
-    //        levels are required for a complete pyramid:
-    //    numLevels = 1 + floor(log2(max(w, h, d)))
-    unsigned int NumTotalMipLevel    = 1 + floorf(Log2(Max(Width, Height)));
+		IOpenGLCubeTexture *ctex = new IOpenGLCubeTexture(EdgeLength, NumMipLevel, PixelFormat);
+		ObjectPtr<IOpenGLCubeTexture> ptr;
+		ptr.Adopt(ctex);
 
-    //    Levels
-    //        [in] Number of levels in the texture. If this is zero, generate all texture sublevels
-    //        down to 1 by 1 pixels for hardware that supports mip-maps textures. Call GetNumMipLevel to see the
-    //        number of levels generated.
-    unsigned int NumMipLevel = 0;
+		return ptr;
+	}
 
-    if (Levels == 0)
-    {
-      //Rectangle texture texture don't support mipmaps
-      NumMipLevel = 1;
-    }
-    else if (Levels > NumTotalMipLevel)
-    {
-      NumMipLevel = 1;
-    }
-    else
-    {
-      NumMipLevel = 1;
-    }
+	ObjectPtr<IOpenGLVolumeTexture> GpuDevice::CreateVolumeTexture(
+			int Width,
+			int Height,
+			int Depth,
+			int Levels,
+			BitmapFormat PixelFormat,
+			NUX_FILE_LINE_DECL)
+	{
+		int msz = GetGpuInfo().GetMaxTextureSize();
+		if(!Width || !Height || Width > msz || Height > msz) {
+			return ObjectPtr<IOpenGLVolumeTexture>();
+		}
 
+		unsigned int NumTotalMipLevel = 1 + floorf(Log2(Max(Max(Width, Height), Depth)));
+		unsigned int NumMipLevel = 0;
 
-    //    The "floor" convention can be evaluated incrementally with the
-    //        following recursion:
-    //
-    //    nextLODdim = max(1, currentLODdim >> 1)
-    //
-    //        where currentLODdim is the dimension of a level N and nextLODdim
-    //        is the dimension of level N+1.  The recursion stops when level
-    //        numLevels-1 is reached.
+		if(Levels == 0) {
+			NumMipLevel = NumTotalMipLevel;
+		}
+		else if(Levels > NumTotalMipLevel) {
+			NumMipLevel = NumTotalMipLevel;
+		}
+		else {
+			NumMipLevel = Levels;
+		}
 
-    *ppTexture = new IOpenGLRectangleTexture(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM);
+		IOpenGLVolumeTexture *vtex = new IOpenGLVolumeTexture(Width, Height, Depth, NumMipLevel, PixelFormat);
+		ObjectPtr<IOpenGLVolumeTexture> ptr;
+		ptr.Adopt(vtex);
 
-
-    return 1;
-  }
-*/
-
-  ObjectPtr<IOpenGLCubeTexture> GpuDevice::CreateCubeTexture(
-    int EdgeLength
-    , int Levels
-    , BitmapFormat PixelFormat
-    , NUX_FILE_LINE_DECL)
-  {
-    IOpenGLCubeTexture *ptr;
-    CreateCubeTexture(EdgeLength, Levels, PixelFormat, (IOpenGLCubeTexture **) &ptr);
-    ObjectPtr<IOpenGLCubeTexture> h = ObjectPtr<IOpenGLCubeTexture> (ptr);
-    ptr->UnReference();
-    return h;
-  }
-
-  int GpuDevice::CreateCubeTexture(
-    unsigned int EdgeLength
-    , unsigned int Levels
-    , BitmapFormat PixelFormat
-    , IOpenGLCubeTexture **ppCubeTexture
-    , NUX_FILE_LINE_DECL
-    )
-  {
-    unsigned int NumTotalMipLevel    = 1 + floorf(Log2(EdgeLength));
-    //    Levels
-    //        [in] Number of levels in the texture. If this is zero, Direct3D will generate all texture sublevels
-    //        down to 1 by 1 pixels for hardware that supports mipmapped textures. Call GetNumMipLevel to see the
-    //        number of levels generated.
-    unsigned int NumMipLevel = 0;
-
-    if (Levels == 0)
-    {
-      NumMipLevel = NumTotalMipLevel;
-    }
-    else if (Levels > NumTotalMipLevel)
-    {
-      NumMipLevel = NumTotalMipLevel;
-    }
-    else
-    {
-      NumMipLevel = Levels;
-    }
-
-    *ppCubeTexture = new IOpenGLCubeTexture(EdgeLength, NumMipLevel, PixelFormat);
-
-    return 1;
-  }
-
-  ObjectPtr<IOpenGLVolumeTexture> GpuDevice::CreateVolumeTexture(
-    int Width
-    , int Height
-    , int Depth
-    , int Levels
-    , BitmapFormat PixelFormat
-    , NUX_FILE_LINE_DECL)
-  {
-    IOpenGLVolumeTexture *ptr;
-    CreateVolumeTexture(Width, Height, Depth, Levels, PixelFormat, (IOpenGLVolumeTexture **) &ptr, NUX_FILE_LINE_PARAM);
-    ObjectPtr<IOpenGLVolumeTexture> h = ObjectPtr<IOpenGLVolumeTexture> (ptr);
-    ptr->UnReference();
-    return h;
-  }
-
-  int GpuDevice::CreateVolumeTexture(
-    unsigned int Width
-    , unsigned int Height
-    , unsigned int Depth
-    , unsigned int Levels
-    , BitmapFormat PixelFormat
-    , IOpenGLVolumeTexture **ppVolumeTexture
-    , NUX_FILE_LINE_DECL
-    )
-  {
-    unsigned int NumTotalMipLevel = 1 + floorf(Log2(Max(Max(Width, Height), Depth)));
-    //    Levels
-    //        [in] Number of levels in the texture. If this is zero, Direct3D will generate all texture sublevels
-    //        down to 1 by 1 pixels for hardware that supports mipmapped textures. Call GetNumMipLevel to see the
-    //        number of levels generated.
-    unsigned int NumMipLevel = 0;
-
-    if (Levels == 0)
-    {
-      NumMipLevel = NumTotalMipLevel;
-    }
-    else if (Levels > NumTotalMipLevel)
-    {
-      NumMipLevel = NumTotalMipLevel;
-    }
-    else
-    {
-      NumMipLevel = Levels;
-    }
-
-    *ppVolumeTexture = new IOpenGLVolumeTexture(Width, Height, Depth, NumMipLevel, PixelFormat);
-
-    return OGL_OK;
-  }
+		return ptr;
+	}
 
   ObjectPtr<IOpenGLAnimatedTexture> GpuDevice::CreateAnimatedTexture(
     int Width
@@ -322,4 +194,20 @@ namespace nux
 
     return OGL_OK;
   }
+
+    ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture2DFromID(int id
+    , int width
+    , int height
+    , int levels
+    , BitmapFormat pixel_format
+    , NUX_FILE_LINE_DECL)
+  {
+    IOpenGLTexture2D *ptr;
+    ptr = new IOpenGLTexture2D(width, height, levels, pixel_format, true, NUX_FILE_LINE_PARAM); // ref count = 1;
+    ptr->_OpenGLID = id;
+    ObjectPtr<IOpenGLTexture2D> h = ObjectPtr<IOpenGLTexture2D> (ptr); // ref count = 2
+    ptr->UnReference(); // ref count = 1
+    return h;
+  }
+
 }

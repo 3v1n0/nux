@@ -178,15 +178,7 @@ namespace nux
   private:
     static STREAMSOURCE _StreamSource[MAX_NUM_STREAM];
 
-    int CreateCubeTexture(
-      unsigned int EdgeLength
-      , unsigned int Levels
-      , BitmapFormat PixelFormat
-      , IOpenGLCubeTexture **ppCubeTexture
-      , NUX_FILE_LINE_PROTO
-    );
-
-    int CreateVolumeTexture(
+   /* int CreateVolumeTexture(
       unsigned int Width
       , unsigned int Height
       , unsigned int Depth
@@ -194,7 +186,7 @@ namespace nux
       , BitmapFormat PixelFormat
       , IOpenGLVolumeTexture **ppVolumeTexture
       , NUX_FILE_LINE_PROTO
-    );
+    );*/
 
     int CreateAnimatedTexture(
       unsigned int Width
