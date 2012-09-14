@@ -195,10 +195,6 @@ namespace nux
                                  IOpenGLPixelBufferObject **ppPixelBufferObject
                                 );
 
- /*   int CreateQuery(
-      QUERY_TYPE Type,
-      IOpenGLQuery **ppQuery);*/
-
     int CreateVertexDeclaration(
       const VERTEXELEMENT *pVertexElements,
       IOpenGLVertexDeclaration **ppDecl);
