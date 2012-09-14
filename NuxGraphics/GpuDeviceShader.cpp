@@ -35,60 +35,60 @@ namespace nux
 {
 	ObjectPtr<IOpenGLShaderProgram> GpuDevice::CreateShaderProgram()
 	{
-		ObjectPtr<IOpenGLShaderProgram> ptr;
-		ptr.Adopt(new IOpenGLShaderProgram());
-		return ptr;
+		ObjectPtr<IOpenGLShaderProgram> result;
+		result.Adopt(new IOpenGLShaderProgram());
+		return result;
 	}
 
 	ObjectPtr<IOpenGLVertexShader> GpuDevice::CreateVertexShader()
 	{
-		ObjectPtr<IOpenGLVertexShader> ptr;
-		ptr.Adopt(new IOpenGLVertexShader());
-		return ptr;
+		ObjectPtr<IOpenGLVertexShader> result;
+		result.Adopt(new IOpenGLVertexShader());
+		return result;
 	}
 
 	ObjectPtr<IOpenGLPixelShader> GpuDevice::CreatePixelShader()
 	{
-		ObjectPtr<IOpenGLPixelShader> ptr;
-		ptr.Adopt(new IOpenGLPixelShader());
-		return ptr;
+		ObjectPtr<IOpenGLPixelShader> result;
+		result.Adopt(new IOpenGLPixelShader());
+		return result;
 	}
 
 	ObjectPtr<IOpenGLAsmShaderProgram> GpuDevice::CreateAsmShaderProgram()
 	{
-		ObjectPtr<IOpenGLAsmShaderProgram> ptr;
-		ptr.Adopt(new IOpenGLAsmShaderProgram());
-		return ptr;
+		ObjectPtr<IOpenGLAsmShaderProgram> result;
+		result.Adopt(new IOpenGLAsmShaderProgram());
+		return result;
 	}
 
 	ObjectPtr<IOpenGLAsmVertexShader> GpuDevice::CreateAsmVertexShader()
 	{
-		ObjectPtr<IOpenGLAsmVertexShader> ptr;
-		ptr.Adopt(new IOpenGLAsmVertexShader());
-		return ptr;
+		ObjectPtr<IOpenGLAsmVertexShader> result;
+		result.Adopt(new IOpenGLAsmVertexShader());
+		return result;
 	}
 
 	ObjectPtr<IOpenGLAsmPixelShader> GpuDevice::CreateAsmPixelShader()
 	{
-		ObjectPtr<IOpenGLAsmPixelShader> ptr;
-		ptr.Adopt(new IOpenGLAsmPixelShader());
-		return ptr;
+		ObjectPtr<IOpenGLAsmPixelShader> result;
+		result.Adopt(new IOpenGLAsmPixelShader());
+		return result;
 	}
 
 #if (NUX_ENABLE_CG_SHADERS)
 
 	ObjectPtr<ICgVertexShader> GpuDevice::CreateCGVertexShader()
 	{
-		ObjectPtr<ICgVertexShader> ptr;
-		ptr.Adopt(new ICgVertexShader());
-		return ptr;
+		ObjectPtr<ICgVertexShader> result;
+		result.Adopt(new ICgVertexShader());
+		return result;
 	}
 
 	ObjectPtr<ICgPixelShader> GpuDevice::CreateCGPixelShader()
 	{
-		ObjectPtr<ICgPixelShader> ptr;
-		ptr.Adopt(new ICgPixelShader());
-		return ptr;
+		ObjectPtr<ICgPixelShader> result;
+		result.Adopt(new ICgPixelShader());
+		return result;
 	}
 
 #endif

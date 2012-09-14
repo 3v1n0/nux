@@ -57,9 +57,9 @@ namespace nux
 			NumMipLevel = Levels;
 		}
 
-		ObjectPtr<IOpenGLTexture2D> ptr;
-		ptr.Adopt(new IOpenGLTexture2D(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM));
-		return ptr;
+		ObjectPtr<IOpenGLTexture2D> result;
+		result.Adopt(new IOpenGLTexture2D(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM));
+		return result;
 	}
 
 	ObjectPtr<IOpenGLRectangleTexture> GpuDevice::CreateRectangleTexture(
@@ -87,9 +87,9 @@ namespace nux
 			 NumMipLevel = 1;
 		 }
 
-		 ObjectPtr<IOpenGLRectangleTexture> ptr;
-		 ptr.Adopt(new IOpenGLRectangleTexture(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM));
-		 return ptr;
+		 ObjectPtr<IOpenGLRectangleTexture> result;
+		 result.Adopt(new IOpenGLRectangleTexture(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM));
+		 return result;
 	}
 
 	ObjectPtr<IOpenGLCubeTexture> GpuDevice::CreateCubeTexture(
@@ -111,9 +111,9 @@ namespace nux
 			NumMipLevel = Levels;
 		}
 
-		ObjectPtr<IOpenGLCubeTexture> ptr;
-		ptr.Adopt(new IOpenGLCubeTexture(EdgeLength, NumMipLevel, PixelFormat));
-		return ptr;
+		ObjectPtr<IOpenGLCubeTexture> result;
+		result.Adopt(new IOpenGLCubeTexture(EdgeLength, NumMipLevel, PixelFormat));
+		return result;
 	}
 
 	ObjectPtr<IOpenGLVolumeTexture> GpuDevice::CreateVolumeTexture(
@@ -142,9 +142,9 @@ namespace nux
 			NumMipLevel = Levels;
 		}
 
-		ObjectPtr<IOpenGLVolumeTexture> ptr;
-		ptr.Adopt(new IOpenGLVolumeTexture(Width, Height, Depth, NumMipLevel, PixelFormat));
-		return ptr;
+		ObjectPtr<IOpenGLVolumeTexture> result;
+		result.Adopt(new IOpenGLVolumeTexture(Width, Height, Depth, NumMipLevel, PixelFormat));
+		return result;
 	}
 
 	ObjectPtr<IOpenGLAnimatedTexture> GpuDevice::CreateAnimatedTexture(
@@ -158,15 +158,15 @@ namespace nux
 			return ObjectPtr<IOpenGLAnimatedTexture>();
 		}
 
-		ObjectPtr<IOpenGLAnimatedTexture> ptr;
-		ptr.Adopt(new IOpenGLAnimatedTexture(Width, Height, Depth, PixelFormat));
-		return ptr;
+		ObjectPtr<IOpenGLAnimatedTexture> result;
+		result.Adopt(new IOpenGLAnimatedTexture(Width, Height, Depth, PixelFormat));
+		return result;
 	}
 
 	ObjectPtr<IOpenGLQuery> GpuDevice::CreateQuery(QUERY_TYPE Type) {
-		ObjectPtr<IOpenGLQuery> ptr;
-		ptr.Adopt(new IOpenGLQuery(Type));
-		return ptr;
+		ObjectPtr<IOpenGLQuery> result;
+		result.Adopt(new IOpenGLQuery(Type));
+		return result;
 	}
 
     ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture2DFromID(
@@ -182,8 +182,8 @@ namespace nux
 			return ObjectPtr<IOpenGLTexture2D>();
 		}
 
-		ObjectPtr<IOpenGLTexture2D> ptr;
-		ptr.Adopt(new IOpenGLTexture2D(width, height, levels, pixel_format, true, NUX_FILE_LINE_PARAM));
-		return ptr;
+		ObjectPtr<IOpenGLTexture2D> result;
+		result.Adopt(new IOpenGLTexture2D(width, height, levels, pixel_format, true, NUX_FILE_LINE_PARAM));
+		return result;
 	}
 }
