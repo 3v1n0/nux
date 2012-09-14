@@ -82,7 +82,7 @@ namespace nux
 		 if(Levels == 0) {
 			 NumMipLevel = 1;
 		 }
-		 else if(Levels > NumTotalMipLevel) {
+		 else if(Levels > (int)NumTotalMipLevel) {
 			 NumMipLevel = 1;
 		 }
 		 else {
@@ -108,7 +108,7 @@ namespace nux
 		if(Levels == 0) {
 			NumMipLevel = NumTotalMipLevel;
 		}
-		else if(Levels > NumTotalMipLevel) {
+		else if(Levels > (int)NumTotalMipLevel) {
 			NumMipLevel = NumTotalMipLevel;
 		}
 		else {
@@ -141,7 +141,7 @@ namespace nux
 		if(Levels == 0) {
 			NumMipLevel = NumTotalMipLevel;
 		}
-		else if(Levels > NumTotalMipLevel) {
+		else if(Levels > (int)NumTotalMipLevel) {
 			NumMipLevel = NumTotalMipLevel;
 		}
 		else {

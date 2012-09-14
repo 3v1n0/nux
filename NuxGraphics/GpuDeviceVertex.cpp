@@ -46,27 +46,17 @@ namespace nux
 		return ptr;
 	}
 
-  ObjectPtr<IOpenGLIndexBuffer> GpuDevice::CreateIndexBuffer(
-    int Length
-    , VBO_USAGE Usage    // Dynamic or WriteOnly
-    , INDEX_FORMAT Format)
-  {
-    IOpenGLIndexBuffer *ptr;
-    CreateIndexBuffer(Length, Usage, Format, (IOpenGLIndexBuffer **) &ptr);
-    ObjectPtr<IOpenGLIndexBuffer> h = ObjectPtr<IOpenGLIndexBuffer> (ptr);
-    ptr->UnReference();
-    return h;
-  }
+	ObjectPtr<IOpenGLIndexBuffer> GpuDevice::CreateIndexBuffer(
+			int Length,
+			VBO_USAGE Usage,
+			INDEX_FORMAT Format)
+	{
+		IOpenGLIndexBuffer *ibo = new IOpenGLIndexBuffer(Length, Usage, Format, NUX_TRACKER_LOCATION);
+		ObjectPtr<IOpenGLIndexBuffer> ptr;
+		ptr.Adopt(ibo);
 
-  int GpuDevice::CreateIndexBuffer(unsigned int Length,
-                                          VBO_USAGE Usage,
-                                          INDEX_FORMAT Format,
-                                          IOpenGLIndexBuffer **ppIndexBuffer)
-  {
-    *ppIndexBuffer = new IOpenGLIndexBuffer(Length, Usage, Format, NUX_TRACKER_LOCATION);
-
-    return OGL_OK;
-  }
+		return ptr;
+	}
 
   ObjectPtr<IOpenGLPixelBufferObject> GpuDevice::CreatePixelBufferObject(int Size, VBO_USAGE Usage)
   {
