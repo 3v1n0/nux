@@ -58,22 +58,16 @@ namespace nux
 		return ptr;
 	}
 
-  ObjectPtr<IOpenGLPixelBufferObject> GpuDevice::CreatePixelBufferObject(int Size, VBO_USAGE Usage)
-  {
-    IOpenGLPixelBufferObject *ptr;
-    CreatePixelBufferObject(Size, Usage, (IOpenGLPixelBufferObject **) &ptr);
-    ObjectPtr<IOpenGLPixelBufferObject> h = ObjectPtr<IOpenGLPixelBufferObject> (ptr);
-    ptr->UnReference();
-    return h;
-  }
+	ObjectPtr<IOpenGLPixelBufferObject> GpuDevice::CreatePixelBufferObject(
+			int Size,
+			VBO_USAGE Usage)
+	{
+		IOpenGLPixelBufferObject *pbo = new IOpenGLPixelBufferObject(Size, Usage, NUX_TRACKER_LOCATION);
+		ObjectPtr<IOpenGLPixelBufferObject> ptr;
+		ptr.Adopt(pbo);
 
-  int GpuDevice::CreatePixelBufferObject(int Size, VBO_USAGE Usage,
-      IOpenGLPixelBufferObject **ppPixelBufferObject)
-  {
-    *ppPixelBufferObject = new IOpenGLPixelBufferObject(Size, Usage, NUX_TRACKER_LOCATION);
-
-    return OGL_OK;
-  }
+		return ptr;
+	}
 
   ObjectPtr<IOpenGLVertexDeclaration> GpuDevice::CreateVertexDeclaration(
     const VERTEXELEMENT *pVertexElements)
