@@ -380,6 +380,21 @@ namespace nux
 #endif
   }
 
+  void GraphicsEngine::QRP_TexDesaturate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm& texxform0, const Color& color0, float desaturation_factor)
+  {
+#ifndef NUX_OPENGLES_20
+    if (UsingGLSLCodePath())
+      QRP_GLSL_TexDesaturate(x, y, width, height, DeviceTexture, texxform0, color0, desaturation_factor);
+    else
+    {
+      // Todo!
+      //QRP_ASM_TexDesaturate(x, y, width, height, DeviceTexture, texxform0, color0, desaturation_factor);
+    }
+#else
+    QRP_GLSL_TexDesaturate(x, y, width, height, DeviceTexture, texxform0, color0, desaturation_factor);
+#endif
+  }
+
   void GraphicsEngine::QRP_Pixelate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform, const Color &c0, int pixel_size)
   {
 #ifndef NUX_OPENGLES_20

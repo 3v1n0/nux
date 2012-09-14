@@ -187,6 +187,7 @@ namespace nux
 
     SetAcceptKeyboardEvent(true);
     EnableDoubleClick(true);
+    SetPasswordChar("*");
   }
 
   TextEntry::~TextEntry()
@@ -2555,12 +2556,10 @@ namespace nux
   {
     if (c == NULL || *c == 0 || !IsLegalUTF8Char(c, GetUTF8CharLength(c)))
     {
-      SetVisibility(true);
       password_char_.clear();
     }
     else
     {
-      SetVisibility(false);
       password_char_.assign(c, GetUTF8CharLength(c));
     }
     QueueRefresh(true, true);

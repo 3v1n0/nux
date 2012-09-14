@@ -198,6 +198,7 @@ namespace nux
         Shader Output = ve4(tex.r*tex.a, tex.g*tex.a, tex.b*tex.a, tex.a)
     */
     void QRP_1TexPremultiply(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm& texxform, const Color& color0);
+    void QRP_TexDesaturate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm& texxform, const Color& color0, float desaturation_factor);    
     void QRP_Pixelate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm& texxform, const Color& c0, int pixel_size);
     void QRP_Color(int x, int y, int width, int height, const Color& c0);
     void QRP_Color(int x, int y, int width, int height, const Color& c0, const Color& c1, const Color& c2, const Color& c3);
@@ -391,6 +392,7 @@ namespace nux
 
     void QRP_GLSL_1Tex(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm& texxform, const Color& c0);
     void QRP_GLSL_1TexPremultiply(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm& texxform, const Color& c0);
+    void QRP_GLSL_TexDesaturate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm& texxform, const Color& color0, float desaturation_factor);
     void QRP_GLSL_Pixelate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm& texxform, const Color& c0, int pixel_size);
 
     void QRP_GLSL_Color(int x, int y, int width, int height, const Color& c0);
@@ -989,11 +991,12 @@ namespace nux
     //! Gauss vertical filter.
     ObjectPtr<IOpenGLShaderProgram> _vertical_hq_gauss_filter_prog[NUX_MAX_GAUSSIAN_SIGMA];
 
-
-
     void InitSLColorMatrixFilter();
     //! Color matrix filter.
     ObjectPtr<IOpenGLShaderProgram> _color_matrix_filter_prog;
+
+    void InitSLDesaturation();
+    ObjectPtr<IOpenGLShaderProgram> desaturation_prog_;
 
     void InitSlBlendModes();
 
