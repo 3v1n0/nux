@@ -70,14 +70,14 @@ namespace nux
   {
   }
 
-  const NString &Area::GetBaseString() const
+  std::string const& Area::GetBaseString() const
   {
-    return _base_string;
+    return base_string_;
   }
 
-  void Area::SetBaseString(const char *Caption)
+  void Area::SetBaseString(std::string const& caption)
   {
-    _base_string = Caption;
+    base_string_ = caption;
   }
 
   void Area::CheckMinSize()

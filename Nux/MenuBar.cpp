@@ -127,7 +127,7 @@ namespace nux
         }
         else
         {
-          GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
+          GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), item_geometry, area->GetBaseString(), GetTextColor(), true, eAlignTextCenter);
         }
       }
       else
@@ -144,7 +144,7 @@ namespace nux
         }
         else
         {
-          GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
+          GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), item_geometry, area->GetBaseString(), GetTextColor(), true, eAlignTextCenter);
         }
       }
     }
@@ -167,7 +167,7 @@ namespace nux
       }
       else
       {
-        GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
+        GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), item_geometry, area->GetBaseString(), GetTextColor(), true, eAlignTextCenter);
       }
     }
 
