@@ -24,6 +24,8 @@
 #ifndef NUXCORE_OBJECT_H
 #define NUXCORE_OBJECT_H
 
+#include <string>
+
 #include <sigc++/trackable.h>
 #include <sigc++/signal.h>
 #include "ObjectType.h"
@@ -213,7 +215,8 @@ namespace nux
     //! Signal emitted immediately before the object is destroyed.
     sigc::signal <void, Object *> object_destroyed;
 
-    std::string GetAllocationLoation() const;
+    std::string GetAllocationLocation() const;
+    std::string GetTypeName() const;
 
   protected:
     //! Private destructor.
@@ -231,12 +234,12 @@ namespace nux
     Object (const Object &);
     Object &operator = (const Object &);
 
-    const char* allocation_file_name_;
-    int allocation_line_number_;
-
     NThreadSafeCounter* reference_count_;
     //!< Number of ObjectPtr hosting the object.
     NThreadSafeCounter* objectptr_count_;
+
+    std::string allocation_location_;
+    std::string allocation_stacktrace_;
 
     template <typename T>
     friend class ObjectPtr;
