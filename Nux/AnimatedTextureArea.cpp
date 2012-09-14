@@ -21,7 +21,7 @@
 
 
 #include "Nux.h"
-#include "NuxImage/ImageSurface.h"
+#include "NuxGraphics/ImageSurface.h"
 #include "AnimatedTextureArea.h"
 
 namespace nux
@@ -37,7 +37,7 @@ namespace nux
     mouse_drag.connect(sigc::mem_fun(this, &AnimatedTextureArea::RecvMouseDrag));
 
     m_TimerFunctor = new TimerFunctor();
-    m_TimerFunctor->time_expires.connect(sigc::mem_fun(this, &AnimatedTextureArea::TimerNextFrame));
+    m_TimerFunctor->tick.connect(sigc::mem_fun(this, &AnimatedTextureArea::TimerNextFrame));
   }
 
   AnimatedTextureArea::~AnimatedTextureArea()
@@ -71,9 +71,9 @@ namespace nux
 
   }
 
-  void AnimatedTextureArea::SetTexture(TextureFrameAnimation *Texture)
+  void AnimatedTextureArea::SetTexture(TextureFrameAnimation *t)
   {
-    m_UserTexture = Texture;
+    m_UserTexture = t;
 
     if (m_UserTexture)
     {
@@ -106,7 +106,7 @@ namespace nux
       m_TimerHandler = 0;
     }
 
-    m_TimerHandler = GetTimer().AddTimerHandler(41, m_TimerFunctor, 0);
+    m_TimerHandler = GetTimer().AddOneShotTimer(41, m_TimerFunctor, 0);
     QueueDraw();
   }
 
@@ -128,7 +128,7 @@ namespace nux
       ObjectPtr<IOpenGLBaseTexture> Texture2D = Texture->m_Texture; //Texture->m_Texture.CastRef<IOpenGLAnimatedTexture>();
 
       AnimatedTexture->PresentNextFrame();
-      m_TimerHandler = GetTimer().AddTimerHandler(41, m_TimerFunctor, 0);
+      m_TimerHandler = GetTimer().AddOneShotTimer(41, m_TimerFunctor, 0);
     }
 
     QueueDraw();

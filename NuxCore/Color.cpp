@@ -20,6 +20,7 @@
  */
 
 #include "Color.h"
+#include "ColorPrivate.h"
 
 #include <cmath>
 #include <cstdlib>
@@ -74,6 +75,16 @@ namespace color
   , alpha(a)
   , premultiplied_(false)
   {}
+
+  Color::Color(std::string const& hex)
+  : red(0.0f)
+  , green(0.0f)
+  , blue(0.0f)
+  , alpha(1.0f)
+  , premultiplied_(false)
+  {
+    HexToRGBA(hex, red, green, blue, alpha);
+  }
 
   Color Color::GetPremultiplied()
   {

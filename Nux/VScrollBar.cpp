@@ -91,15 +91,15 @@ namespace nux
     vlayout->AddView(_scroll_down_button, 0, eCenter, eFix);
 
     callback = new TimerFunctor;
-    callback->time_expires.connect(sigc::mem_fun(this, &VScrollBar::VScrollBarHandler));
+    callback->tick.connect(sigc::mem_fun(this, &VScrollBar::VScrollBarHandler));
     up_callback = new TimerFunctor;
-    up_callback->time_expires.connect(sigc::mem_fun(this, &VScrollBar::ScrollUp));
+    up_callback->tick.connect(sigc::mem_fun(this, &VScrollBar::ScrollUp));
     down_callback = new TimerFunctor;
-    down_callback->time_expires.connect(sigc::mem_fun(this, &VScrollBar::ScrollDown));
+    down_callback->tick.connect(sigc::mem_fun(this, &VScrollBar::ScrollDown));
     trackup_callback = new TimerFunctor;
-    trackup_callback->time_expires.connect(sigc::mem_fun(this, &VScrollBar::TrackUp));
+    trackup_callback->tick.connect(sigc::mem_fun(this, &VScrollBar::TrackUp));
     trackdown_callback = new TimerFunctor;
-    trackdown_callback->time_expires.connect(sigc::mem_fun(this, &VScrollBar::TrackDown));
+    trackdown_callback->tick.connect(sigc::mem_fun(this, &VScrollBar::TrackDown));
 
     SetLayout(vlayout);
     SetAcceptMouseWheelEvent(true);
@@ -132,7 +132,7 @@ namespace nux
       else
       {
         scrollbar->QueueDraw();
-        GetTimer().AddTimerHandler(10, callback, scrollbar);
+        GetTimer().AddOneShotTimer(10, callback, scrollbar);
       }
     }
 
@@ -148,7 +148,7 @@ namespace nux
       else
       {
         scrollbar->QueueDraw();
-        GetTimer().AddTimerHandler(10, callback, scrollbar);
+        GetTimer().AddOneShotTimer(10, callback, scrollbar);
       }
     }
 
@@ -162,7 +162,7 @@ namespace nux
     if (AtMaximum())
       RecvEndScrollDown(0, 0, 0, 0);
     else
-      m_DownTimerHandler = GetTimer().AddTimerHandler(10, down_callback, this);
+      m_DownTimerHandler = GetTimer().AddOneShotTimer(10, down_callback, this);
 
     QueueDraw();
   }
@@ -174,7 +174,7 @@ namespace nux
     if (AtMaximum())
       RecvEndScrollUp(0, 0, 0, 0);
     else
-      m_UpTimerHandler = GetTimer().AddTimerHandler(10, up_callback, this);
+      m_UpTimerHandler = GetTimer().AddOneShotTimer(10, up_callback, this);
 
     QueueDraw();
   }
@@ -184,7 +184,7 @@ namespace nux
     if (m_TrackMouseCoord.y < _slider->GetBaseY() - _track->GetBaseY())
     {
       OnScrollUp.emit(container_height_, 1);
-      m_TrackUpTimerHandler  = GetTimer().AddTimerHandler(10, trackup_callback, this);
+      m_TrackUpTimerHandler  = GetTimer().AddOneShotTimer(10, trackup_callback, this);
       QueueDraw();
     }
   }
@@ -194,7 +194,7 @@ namespace nux
     if (m_TrackMouseCoord.y > _slider->GetBaseY() + _slider->GetBaseHeight() - _track->GetBaseY())
     {
       OnScrollDown.emit(container_height_, 1);
-      m_TrackDownTimerHandler  = GetTimer().AddTimerHandler(10, trackdown_callback, this);
+      m_TrackDownTimerHandler  = GetTimer().AddOneShotTimer(10, trackdown_callback, this);
       QueueDraw();
     }
   }
@@ -396,14 +396,14 @@ namespace nux
     //sigVScrollBarSliderMouseDown.emit();
     b_MouseDownTimer = true;
     b_MouseUpTimer = false;
-    GetTimer().AddTimerHandler(10, callback, this);
+    GetTimer().AddOneShotTimer(10, callback, this);
   }
 
   void VScrollBar::OnSliderMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
   {
     b_MouseDownTimer = false;
     b_MouseUpTimer = true;
-    GetTimer().AddTimerHandler(10, callback, this);
+    GetTimer().AddOneShotTimer(10, callback, this);
   }
 
   void VScrollBar::OnSliderMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)

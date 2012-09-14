@@ -24,7 +24,7 @@
 #include "cairo/cairo.h"
 #include "pango/pango.h"
 #include "pango/pangocairo.h"
-#include "NuxImage/CairoGraphics.h"
+#include "NuxGraphics/CairoGraphics.h"
 
 namespace nux
 {
@@ -155,14 +155,15 @@ namespace nux
     void SetAlign(CairoGraphics::Alignment align);
 
     bool im_active();
+    bool im_running();
 
     void MoveCursorToLineStart();
     void MoveCursorToLineEnd();
 
 
     /*!
-        When the text entry is in single line mode, the keyboard arrow up/down may be used 
-        to navigate to another view. If the parameter of this function is set to true then 
+        When the text entry is in single line mode, the keyboard arrow up/down may be used
+        to navigate to another view. If the parameter of this function is set to true then
         the text entry returns false on NUX_VK_UP in InspectKeyEvent(). This allows the parent of the
         text entry to look for another view that can receive the keyboard focus. The default value is true.\n
         In multi-line mode, keyboard arrow up/down are used to navigate in the text.
@@ -174,18 +175,18 @@ namespace nux
     bool GetLoseKeyFocusOnKeyNavDirectionUp() const;
 
     /*!
-        When the text entry is in single line mode, the keyboard arrow up/down may be used 
-        to navigate to another view. If the parameter of this function is set to true then 
+        When the text entry is in single line mode, the keyboard arrow up/down may be used
+        to navigate to another view. If the parameter of this function is set to true then
         the text entry returns false on NUX_VK_DOWN in InspectKeyEvent(). This allows the parent of the
         text entry to look for another view that can receive the keyboard focus.  The default value is true.\n
         In multi-line mode, keyboard arrow up/down are used to navigate in the text.
 
         @param b True to allow the key navigation to move away from the text entry on NUX_VK_DOWN.
-    */    
+    */
     void SetLoseKeyFocusOnKeyNavDirectionDown(bool b);
 
     bool GetLoseKeyFocusOnKeyNavDirectionDown() const;
-    
+
     /*!
         Return True if the text has been modified after the text entry has received the keyboard focus.\n
         If the text entry already has characters typed in and it gets the keyboard focus, this function return false
@@ -201,11 +202,20 @@ namespace nux
         Insert text at current caret position.
     */
     void EnterText(const char* str);
-    
+
     /*!
         Delete text in a specified range, in number of characters.
     */
     void DeleteText(int start, int end);
+
+    void SetPasswordMode(bool visible)
+    {
+      SetVisibility(visible);
+    }
+    void SetVisibility(bool visible);
+    void SetPasswordChar(const char* c);
+    bool IsPasswordMode() const;
+    std::string GetPasswordChar();
 
   protected:
     bool _block_focus; // used to selectively ignore focus keyevents
@@ -227,18 +237,18 @@ namespace nux
     /**
      * Enum used for the search state of the compose list
      */
-    enum SearchState {
+    enum class SearchState {
       NO_MATCH,
       PARTIAL,
       MATCH
     };
 
-    /** Checks for possible dead key sequences */
-    bool HandledDeadKeys(int keysym, int state, const char* character);
-
     /** Checks for possible composition sequences */
-    bool HandledComposition(int keysym, const char* character);
-    
+    bool IsInitialCompositionKeySym(unsigned long keysym) const;
+    bool IsInCompositionMode() const;
+    bool HandleComposition(unsigned long keysym);
+    SearchState GetCompositionForList(std::vector<unsigned long> const& input, std::string& composition);
+
     void QueueTextDraw();
     /** Remove the cached layout. */
     void ResetLayout();
@@ -324,11 +334,15 @@ namespace nux
     void DeleteSelection();
 
     /** Cut the current selected text to the clipboard */
-    void CutClipboard();
+    virtual void CutClipboard();
     /** Copy the current selected text to the clipboard */
-    void CopyClipboard();
+    virtual void CopyClipboard();
     /** Paste the text in the clipboard to current offset */
-    void PasteClipboard();
+    virtual void PasteClipboard();
+#if defined(NUX_OS_LINUX)
+    /** Paste the text in the primary clipboard to current offset */
+    virtual void PastePrimaryClipboard();
+#endif
     /** Delete a character before the offset of the cursor */
     void BackSpace(MovementStep step);
     /** Delete a character at the offset of the cursor */
@@ -347,8 +361,6 @@ namespace nux
     void GetCursorLocationInLayout(int* strong_x, int* strong_y, int* strong_height,
                                    int* weak_x, int* weak_y, int* weak_height);
 
-    int LookForMatch(std::string& str);
-
     /** The CairoCanvas which hold cairo_t inside */
     CairoGraphics* canvas_;
 
@@ -361,6 +373,7 @@ namespace nux
     std::string preedit_;
     /** Attribute list of the preedit text */
     PangoAttrList* preedit_attrs_;
+
     /**
      *  The character that should be displayed in invisible mode.
      *  If this is empty, then the edit control is visible
@@ -461,7 +474,7 @@ namespace nux
     Color _text_color;
 
     CairoGraphics::Alignment align_;
-    
+
 #if defined(NUX_OS_LINUX)
     Cursor caret_cursor_;
 #endif
@@ -484,15 +497,10 @@ namespace nux
     bool lose_key_focus_on_key_nav_direction_up_;
     bool lose_key_focus_on_key_nav_direction_down_;
 
-    bool dead_key_mode_;
-    std::string dead_key_string_;
+    std::vector<unsigned long> composition_list_;
 
-    bool composition_mode_;
-    std::string composition_string_;
-
-    virtual bool InspectKeyEvent(unsigned int eventType,
-      unsigned int keysym,
-      const char* character);
+    virtual bool InspectKeyEvent(Event const& event);
+    virtual bool InspectKeyEvent(unsigned int eventType, unsigned int keysym, const char* character);
 };
 }
 

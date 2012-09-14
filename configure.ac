@@ -13,16 +13,16 @@
 #   - Increase micro_version to the next odd number
 #   - Increase interface_version to the next odd number
 # 
-m4_define([nux_major_version], [2])
-m4_define([nux_minor_version], [6])
+m4_define([nux_major_version], [3])
+m4_define([nux_minor_version], [4])
 m4_define([nux_micro_version], [0])
 
-m4_define([nux_api_version], [2.0])
+m4_define([nux_api_version], [3.0])
 # Increase the number (to the current date) everytime you propose a branch that breaks the API or ABI
 # The number format is : year/month/day
 # e.g.: december 5th, 2011 is: 20111205
 # To make more than one API change in a day, add a number to the date. Like 20111205.xx
-m4_define([nux_abi_version], [20120316.01])
+m4_define([nux_abi_version], [20120813.01])
 
 m4_define([nux_version],
           [nux_major_version.nux_minor_version.nux_micro_version])
@@ -137,28 +137,24 @@ AC_SUBST(MAINTAINER_CFLAGS)
 
 dnl ===========================================================================
 
-PKG_CHECK_MODULES(NUX_CORE, glib-2.0 >= 2.25.14 gthread-2.0 sigc++-2.0 gio-2.0)
+PKG_CHECK_MODULES(NUX_CORE,
+                  glib-2.0 >= 2.25.14
+                  gthread-2.0
+                  sigc++-2.0
+                  gio-2.0
+                  )
 AC_SUBST(NUX_CORE_CFLAGS)
 AC_SUBST(NUX_CORE_LIBS)
-
-PKG_CHECK_MODULES(NUX_IMAGE,
-                  glib-2.0 >= 2.25.14
-                  gdk-pixbuf-2.0
-                  cairo >= 1.9.14
-                  libpng >= 1.2.44
-                  sigc++-2.0
-                  )
-AC_SUBST(NUX_IMAGE_CFLAGS)
-AC_SUBST(NUX_IMAGE_LIBS)
 
 PKG_CHECK_MODULES(NUX_GRAPHICS,
                   glib-2.0 >= 2.25.14
                   gdk-pixbuf-2.0
+                  cairo >= 1.9.14
+                  libpng >= 1.2.44
                   $GL_PKGS
                   xxf86vm
                   sigc++-2.0
 		              xinerama
-                  libutouch-geis
                   )
 AC_SUBST(NUX_GRAPHICS_CFLAGS)
 AC_SUBST(NUX_GRAPHICS_LIBS)
@@ -196,35 +192,99 @@ PKG_CHECK_MODULES(IBUS,
 AC_SUBST(IBUS_CFLAGS)
 AC_SUBST(IBUS_LIBS)
 
+dnl *********************************************************
+dnl Enable/disable gestures (geis, from Open Input Framework)
+dnl *********************************************************
+
+GEIS_PKGS="libgeis"
+AC_ARG_ENABLE(gestures,
+              AC_HELP_STRING(--disable-gestures, Disables multitouch gestures support (default: auto-detect)),
+              [],
+              [enable_gestures=auto])
+
+
+# Check for geis as an optional dependency
+AS_IF([test "x$enable_gestures" = "xauto"],
+      [
+        PKG_CHECK_MODULES(GEIS,
+                          [libgeis >= 2.2.10],
+                          [have_geis=yes],
+                          [have_geis=no])
+      ])
+
+
+AS_IF([test "x$enable_gestures" = "xyes"],
+      [
+        PKG_CHECK_MODULES(GEIS,
+                          [libgeis >= 2.2.10],
+                          [have_geis=yes],
+                          [
+                            AC_MSG_ERROR([libgeis not found!])
+                            have_geis=no
+                          ])
+      ])
+
+AS_IF([test "x$enable_gestures" = "xno"],
+      [have_geis=no])
+
+AS_IF([test "x$have_geis" = "xyes"],
+      [
+        NUX_GESTURES_SUPPORT="NUX_GESTURES_SUPPORT"
+        AM_CONDITIONAL(HAVE_GEIS, true)
+      ],
+      [
+        NUX_GESTURES_SUPPORT="NUX_NO_GESTURES_SUPPORT"
+        AM_CONDITIONAL(HAVE_GEIS, false)
+        GEIS_PKGS=""
+      ])
+
+AC_SUBST(NUX_GESTURES_SUPPORT)
+
+AC_SUBST(GEIS_CFLAGS)
+AC_SUBST(GEIS_LIBS)
+AC_SUBST(GEIS_PKGS)
+
 dnl ************************************
 dnl Enable/disable tests
 dnl ************************************
+
 
 AC_ARG_ENABLE([tests],
               [AC_HELP_STRING([--enable-tests=@<:@no/yes@:>@],
               [Enable Nux Testing @<:@default=yes@:>@])],
               [],
               [enable_tests=yes])
+
 AS_IF([test "x$enable_tests" = "xyes"],
       [
-       # Check for googletest and googlemock
-       AC_LANG_PUSH([C++])
-       AC_CHECK_HEADER([gtest/gtest.h],
-                       [],
-                       [AC_MSG_ERROR([you are missing google-test, apt-get install libgtest-dev])])
-       AC_CHECK_HEADER([gmock/gmock.h],
-                       [],
-                       [AC_MSG_ERROR([you are missing google-mock, apt-get install google-mock])])
-       AC_LANG_POP([C++])
+        # Check for google gtest
+        CHECK_GTEST
+        AS_IF([test "x$have_gtest" = "xyes"],
+          [AC_SUBST([GTEST_CPPFLAGS])],
+          [AC_MSG_WARN([you are missing google-test, apt-get install libgtest-dev])])
 
-       #Check for libxtst
-       AC_CHECK_HEADER([X11/extensions/XTest.h],
-                       [],
-                       [AC_MSG_ERROR([you are missing libxtst-dev, apt-get install libxtst-dev])])
+        # Check for googlemock
+        AC_LANG_PUSH([C++])
+        AC_CHECK_HEADER([gmock/gmock.h],
+                       [have_gmock=yes],
+                       [AC_MSG_WARN([you are missing google-mock, apt-get install google-mock])])
+        AC_LANG_POP([C++])
+
+        #Check for libxtst
+        AC_CHECK_HEADER([X11/extensions/XTest.h],
+                       [have_xtest=yes],
+                       [AC_MSG_WARN([you are missing libxtst-dev, apt-get install libxtst-dev])])
       ]
 )
-AM_CONDITIONAL(BUILD_TESTS, [test "x$enable_tests" = "xyes"])
 
+AS_IF([test "x$have_xtest" = "xyes" &&
+       test "x$have_gmock" = "xyes" &&
+       test "x$have_gtest" = "xyes"],
+  [],
+  [enable_tests=no]
+)
+
+AM_CONDITIONAL(BUILD_TESTS, [test "x$enable_tests" = "xyes"])
 
 dnl ===========================================================================
 
@@ -322,13 +382,12 @@ AC_CONFIG_FILES([
   data/Makefile
   NuxCore/Makefile
   NuxCore/nux-core.pc
-  NuxImage/Makefile
-  NuxImage/nux-image.pc
   NuxGraphics/Makefile
   NuxGraphics/nux-graphics.pc
   Nux/Makefile
   Nux/nux.pc
   Nux/ABI.h
+  Nux/Features.h
   examples/Makefile
   tests/Makefile
   tools/Makefile
@@ -364,6 +423,7 @@ echo -e "${GREEN} • Misc Options:${RESET}"
 echo -e "        Build Examples     : ${BOLD_WHITE}${enable_examples}${RESET}"
 echo -e "        Build Gpu Tests    : ${BOLD_WHITE}${enable_gputests}${RESET}"
 echo -e "        Build Nux Tests    : ${BOLD_WHITE}${enable_tests}${RESET}"
+echo -e "        Gestures support   : ${BOLD_WHITE}${have_geis}${RESET}"
 echo ""
 
 echo -e "${RESET}"

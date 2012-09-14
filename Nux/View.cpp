@@ -216,6 +216,9 @@ namespace nux
 
   void View::QueueDraw()
   {
+    if (draw_cmd_queued_)
+      return;
+
     //GetWindowCompositor()..AddToDrawList(this);
     WindowThread* application = GetWindowThread();
     if (application)
@@ -409,12 +412,14 @@ namespace nux
 
   void View::GeometryChangePending()
   {
-    QueueDraw();
+    if (IsLayoutDone())
+      QueueDraw();
   }
 
   void View::GeometryChanged()
   {
-    QueueDraw();
+    if (IsLayoutDone())
+      QueueDraw();
   }
 
   Area* View::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
@@ -479,4 +484,27 @@ namespace nux
   {
     return true;
   }
+
+#ifdef NUX_GESTURES_SUPPORT
+  Area* View::GetInputAreaHitByGesture(const nux::GestureEvent &event)
+  {
+    if (!IsVisible())
+      return nullptr;
+
+    if (!IsGestureInsideArea(event))
+      return nullptr;
+
+    if (view_layout_)
+    {
+      Area *area = view_layout_->GetInputAreaHitByGesture(event);
+      if (area)
+        return area;
+    }
+
+    if (HasSubscriptionForGesture(event))
+      return this;
+    else
+      return nullptr;
+  }
+#endif
 }

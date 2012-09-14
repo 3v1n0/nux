@@ -123,9 +123,9 @@ namespace nux
 
 
     tabright_callback = new TimerFunctor;
-    tabright_callback->time_expires.connect(sigc::mem_fun(this, &TabView::RecvTabRightTimerExpired));
+    tabright_callback->tick.connect(sigc::mem_fun(this, &TabView::RecvTabRightTimerExpired));
     tableft_callback = new TimerFunctor;
-    tableft_callback->time_expires.connect(sigc::mem_fun(this, &TabView::RecvTabLeftTimerExpired));
+    tableft_callback->tick.connect(sigc::mem_fun(this, &TabView::RecvTabLeftTimerExpired));
   }
 
   TabView::~TabView()
@@ -518,13 +518,13 @@ namespace nux
   void TabView::RecvTabRightTimerExpired(void *v)
   {
     TranslateTabLayout(-10);
-    m_TabRightTimerHandler = GetTimer().AddTimerHandler(10, tabright_callback, this);
+    m_TabRightTimerHandler = GetTimer().AddOneShotTimer(10, tabright_callback, this);
   }
 
   void TabView::RecvTabLeftTimerExpired(void *v)
   {
     TranslateTabLayout(10);
-    m_TabLeftTimerHandler = GetTimer().AddTimerHandler(10, tableft_callback, this);
+    m_TabLeftTimerHandler = GetTimer().AddOneShotTimer(10, tableft_callback, this);
   }
 
   bool TabView::AcceptKeyNavFocus()

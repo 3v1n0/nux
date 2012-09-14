@@ -32,6 +32,7 @@ NUX_IMPLEMENT_OBJECT_TYPE(TestView);
 TestView::TestView(NUX_FILE_LINE_DECL)
 : nux::View(NUX_FILE_LINE_PARAM)
 , can_focus_(true)
+, calls_to_queue_draw_(0)
 {
   ResetEvents();
   ResetKeyFocusEvents();
@@ -90,6 +91,12 @@ void TestView::ResetKeyFocusEvents()
 {
   registered_begin_keynav_focus_ = false;
   registered_end_keynav_focus_ = false;
+}
+
+void TestView::QueueDraw()
+{
+  ++calls_to_queue_draw_;
+  nux::View::QueueDraw();
 }
 
 nux::Color TestView::GetColor() const

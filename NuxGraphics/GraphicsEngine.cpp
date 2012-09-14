@@ -22,7 +22,7 @@
 
 #include "NuxCore/NuxCore.h"
 
-#include "NuxImage/ImageSurface.h"
+#include "ImageSurface.h"
 
 #include "GpuDevice.h"
 #include "GLDeviceObjects.h"
@@ -165,6 +165,16 @@ namespace nux
 
     // Evaluate the features provided by the GPU.
     EvaluateGpuCaps();
+
+    if (UsingGLSLCodePath())
+    {
+      nuxDebugMsg("The GraphicsEngine is using the GLSL shader code path.");
+    }
+    else
+    {
+      nuxDebugMsg("The GraphicsEngine is using the assenbly shader code path."); 
+    }
+
 
     GlWindow.m_GraphicsContext = this;
     ResetStats();
@@ -708,7 +718,7 @@ namespace nux
     _clip_offset_y = 0;
 
     std::list<Point>::iterator it;
-    for (it = _clip_offset_stack.begin(); it != _clip_offset_stack.end(); it++)
+    for (it = _clip_offset_stack.begin(); it != _clip_offset_stack.end(); ++it)
     {
       _clip_offset_x += (*it).x;
       _clip_offset_y += (*it).y;
@@ -729,7 +739,7 @@ namespace nux
     _clip_offset_y = 0;
 
     std::list<Point>::iterator it;
-    for (it = _clip_offset_stack.begin(); it != _clip_offset_stack.end(); it++)
+    for (it = _clip_offset_stack.begin(); it != _clip_offset_stack.end(); ++it)
     {
       _clip_offset_x += (*it).x;
       _clip_offset_y += (*it).y;
@@ -779,7 +789,7 @@ namespace nux
       Matrix4 temp;
       std::list<Matrix4>::iterator it;
 
-      for (it = m_2DModelViewMatricesStack.begin(); it != m_2DModelViewMatricesStack.end(); it++)
+      for (it = m_2DModelViewMatricesStack.begin(); it != m_2DModelViewMatricesStack.end(); ++it)
       {
         temp = _model_view_matrix;
         _model_view_matrix = temp * (*it);
@@ -838,7 +848,7 @@ namespace nux
       Matrix4 temp;
       std::list<Matrix4>::iterator it;
 
-      for (it = m_2DModelViewMatricesStack.begin(); it != m_2DModelViewMatricesStack.end(); it++)
+      for (it = m_2DModelViewMatricesStack.begin(); it != m_2DModelViewMatricesStack.end(); ++it)
       {
         temp = _model_view_matrix;
         _model_view_matrix = (*it) * temp;
@@ -866,7 +876,7 @@ namespace nux
       Matrix4 temp;
       std::list<Matrix4>::iterator it;
 
-      for (it = m_2DModelViewMatricesStack.begin(); it != m_2DModelViewMatricesStack.end(); it++)
+      for (it = m_2DModelViewMatricesStack.begin(); it != m_2DModelViewMatricesStack.end(); ++it)
       {
         temp = _model_view_matrix;
         _model_view_matrix = temp * (*it);
@@ -884,7 +894,7 @@ namespace nux
       Matrix4 temp;
       std::list<Matrix4>::iterator it;
 
-      for (it = m_2DModelViewMatricesStack.begin(); it != m_2DModelViewMatricesStack.end(); it++)
+      for (it = m_2DModelViewMatricesStack.begin(); it != m_2DModelViewMatricesStack.end(); ++it)
       {
         temp = _model_view_matrix;
         _model_view_matrix = temp * (*it);

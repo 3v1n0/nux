@@ -64,9 +64,9 @@ namespace nux
     m_EditLine->mouse_leave.connect(sigc::mem_fun(this, &SpinBox_Logic::RecvMouseLeave));
 
     m_UpTimerCallback = new TimerFunctor;
-    m_UpTimerCallback->time_expires.connect(sigc::mem_fun(this, &SpinBox_Logic::TimerSpinUpBtn));
+    m_UpTimerCallback->tick.connect(sigc::mem_fun(this, &SpinBox_Logic::TimerSpinUpBtn));
     m_DownTimerCallback = new TimerFunctor;
-    m_DownTimerCallback->time_expires.connect(sigc::mem_fun(this, &SpinBox_Logic::TimerSpinDownBtn));
+    m_DownTimerCallback->tick.connect(sigc::mem_fun(this, &SpinBox_Logic::TimerSpinDownBtn));
   }
 
   SpinBox_Logic::~SpinBox_Logic()

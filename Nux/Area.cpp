@@ -29,6 +29,10 @@
 #include "BaseWindow.h"
 #include "MenuPage.h"
 
+#ifdef NUX_GESTURES_SUPPORT
+#include "NuxGraphics/GestureEvent.h"
+#endif
+
 namespace nux
 {
 
@@ -39,6 +43,7 @@ namespace nux
     ,   geometry_(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT)
     ,   min_size_(AREA_MIN_WIDTH, AREA_MIN_HEIGHT)
     ,   max_size_(AREA_MAX_WIDTH, AREA_MAX_HEIGHT)
+    ,   layout_done_(true)
   {
     window_thread_ = GetWindowThread();
     visible_ = true;
@@ -1035,5 +1040,34 @@ namespace nux
 
     return false;
   }
+
+#ifdef NUX_GESTURES_SUPPORT
+  Area* Area::GetInputAreaHitByGesture(const GestureEvent &event)
+  {
+    return nullptr;
+  }
+
+  bool Area::IsGestureInsideArea(const nux::GestureEvent &event) const
+  {
+    if (event.IsDirectTouch())
+    {
+      Geometry geometry = GetAbsoluteGeometry();
+      Point p;
+      for (const auto touch_point : event.GetTouches())
+      {
+        p.x = (int)touch_point.x;
+        p.y = (int)touch_point.y;
+        if (!geometry.IsInside(p))
+          return false;
+      }
+      return true;
+    }
+    else
+    {
+      return GetAbsoluteGeometry().IsInside(event.GetFocus());
+    }
+  }
+
+#endif // NUX_GESTURES_SUPPORT
 }
 

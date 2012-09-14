@@ -83,28 +83,36 @@ namespace nux
       unsigned char* pixels_u8 = gdk_pixbuf_get_pixels(pixbuf);
       unsigned int* pixels_u32 = reinterpret_cast<unsigned int*> (pixels_u8);
 
+      unsigned char* dest_u8 = surface.GetPtrRawData ();
+      const int pitch = surface.GetPitch ();
+
       if (premultiply == true)
       {
         // Copy from pixbuf(RGBA) to surface(premultiplied RGBA).
         for (unsigned int i = 0; i < height; i++)
         {
+          unsigned int* dest_u32 = reinterpret_cast<unsigned int*>(dest_u8);
           for (unsigned int j = 0; j < width; j++)
           {
             const unsigned int pixel = pixels_u32[j];
             const unsigned int a = pixel >> 24;
             if (a == 0)
-              surface.Write32b(j, i, 0);
+            {
+              dest_u32[j] = 0;
+            }
             else
             {
               const unsigned int b = (((pixel >> 16) & 0xff) * a) / 255;
               const unsigned int g = (((pixel >> 8) & 0xff) * a) / 255;
               const unsigned int r = ((pixel & 0xff) * a) / 255;
               const unsigned int p = a << 24 | b << 16 | g << 8 | r;
-              surface.Write32b(j, i, p);
+
+              dest_u32[j] = p;
             }
           }
           pixels_u8 += rowstride;
           pixels_u32 = reinterpret_cast<unsigned int*> (pixels_u8);
+          dest_u8 += pitch;
         }
       }
       else
@@ -112,10 +120,9 @@ namespace nux
         // Copy from pixbuf(RGBA) to surface(RGBA).
         for (unsigned int i = 0; i < height; i++)
         {
-          for (unsigned int j = 0; j < width; j++)
-            surface.Write32b(j, i, pixels_u32[j]);
+          Memcpy (dest_u8, pixels_u8, width * 4);
           pixels_u8 += rowstride;
-          pixels_u32 = reinterpret_cast<unsigned int*> (pixels_u8);
+          dest_u8 += pitch;
         }
       }
     }
@@ -123,16 +130,22 @@ namespace nux
     {
       // Copy from pixbuf(RGB) to surface(RGBA).
       unsigned char* pixels = gdk_pixbuf_get_pixels(pixbuf);
+      unsigned char* dest_u8 = surface.GetPtrRawData();
+      const int pitch = surface.GetPitch();
+
       for (unsigned int i = 0; i < height; i++)
       {
+        unsigned int* dest_u32 = reinterpret_cast<unsigned int*>(dest_u8);
         for (unsigned int j = 0; j < width; j++)
         {
           const unsigned char r = pixels[j*3];
           const unsigned char g = pixels[j*3+1];
           const unsigned char b = pixels[j*3+2];
-          surface.Write(j, i, r, g, b, 0xff);
+          const unsigned int p = 0xff000000 | b << 16 | g << 8 | r;
+          dest_u32[j] = p;
         }
         pixels += rowstride;
+        dest_u8 += pitch;
       }
     }
 
@@ -255,6 +268,7 @@ namespace nux
       return NULL;
 
     BaseTexture* texture = CreateTextureFromBitmapData(bitmap);
+    delete bitmap;
     return texture;
   }
 
@@ -828,7 +842,7 @@ namespace nux
     return ret;
   }
 
-  void TextureVolume::GetData(void* Buffer, int MipIndex, int StrideY, int slice)
+  void TextureVolume::GetData(void* Buffer, int MipIndex, int StrideY, int face)
   {
     BYTE               *Dest        = (BYTE *) Buffer;
 //     const BYTE*         Src         = _image.GetSurface(MipIndex, slice).GetPtrRawData();
@@ -837,9 +851,9 @@ namespace nux
 
     for (int slice = 0; slice < ImageSurface::GetLevelDim(_image.GetFormat(), _image.GetDepth(), MipIndex); slice++)
     {
-      const BYTE         *Src         = _image.GetSurface(MipIndex, slice).GetPtrRawData();
-      int                 RowByteSize = _image.GetSurface(MipIndex, slice).GetPitch();
-      int                 NumRows     = _image.GetSurface(MipIndex, slice).GetBlockHeight();
+      const BYTE         *Src         = _image.GetSurface(slice, MipIndex).GetPtrRawData();
+      int                 RowByteSize = _image.GetSurface(slice, MipIndex).GetPitch();
+      int                 NumRows     = _image.GetSurface(slice, MipIndex).GetBlockHeight();
 
       for ( int Y = 0; Y < NumRows; Y++ )
       {

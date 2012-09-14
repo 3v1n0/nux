@@ -102,6 +102,63 @@ namespace {
     EXPECT_EQ(c1.IsPremultiplied(), false);
   }
 
+  
+  TEST(TestColor, TestColorConstructorHex)
+  {
+    nux::Color c0("#abc");
+    EXPECT_EQ(c0.red,    0xaa / 255.0f);
+    EXPECT_EQ(c0.green,  0xbb / 255.0f);
+    EXPECT_EQ(c0.blue,   0xcc / 255.0f);
+    EXPECT_EQ(c0.alpha,  1.0f);
+    EXPECT_EQ(c0.IsPremultiplied(), false);
+
+    nux::Color c1("#abcd");
+    EXPECT_EQ(c1.red,    0xaa / 255.0f);
+    EXPECT_EQ(c1.green,  0xbb / 255.0f);
+    EXPECT_EQ(c1.blue,   0xcc / 255.0f);
+    EXPECT_EQ(c1.alpha,  0xdd / 255.0f);
+    EXPECT_EQ(c1.IsPremultiplied(), false);
+
+    nux::Color c2("#aabbcc");
+    EXPECT_EQ(c2.red,    0xaa / 255.0f);
+    EXPECT_EQ(c2.green,  0xbb / 255.0f);
+    EXPECT_EQ(c2.blue,   0xcc / 255.0f);
+    EXPECT_EQ(c2.alpha,  1.0f);
+    EXPECT_EQ(c2.IsPremultiplied(), false);
+
+
+    nux::Color c3("#aabbccdd");
+    EXPECT_EQ(c3.red,    0xaa / 255.0f);
+    EXPECT_EQ(c3.green,  0xbb / 255.0f);
+    EXPECT_EQ(c3.blue,   0xcc / 255.0f);
+    EXPECT_EQ(c3.alpha,  0xdd / 255.0f);
+    EXPECT_EQ(c3.IsPremultiplied(), false);
+    
+    nux::Color c4("abcdef");
+    EXPECT_EQ(c4.red,    0xab / 255.0f );
+    EXPECT_EQ(c4.green,  0xcd / 255.0f);
+    EXPECT_EQ(c4.blue,   0xef / 255.0f);
+    EXPECT_EQ(c4.alpha,  1.0f);
+    EXPECT_EQ(c4.IsPremultiplied(), false);
+  }
+
+  TEST(TestColor, TestColorConstructorHexInvalid)
+  {
+    nux::Color c0("");
+    EXPECT_EQ(c0.red,    0.0f);
+    EXPECT_EQ(c0.green,  0.0f);
+    EXPECT_EQ(c0.blue,   0.0f);
+    EXPECT_EQ(c0.alpha,  1.0f);
+    EXPECT_EQ(c0.IsPremultiplied(), false);
+    
+    nux::Color c1("#abcdeG");
+    EXPECT_EQ(c0.red,    0.0f);
+    EXPECT_EQ(c0.green,  0.0f);
+    EXPECT_EQ(c0.blue,   0.0f);
+    EXPECT_EQ(c0.alpha,  1.0f);
+    EXPECT_EQ(c1.IsPremultiplied(), false);
+  }
+
 
   TEST(TestColor, TestColorPremultiplied0)
   {
@@ -241,5 +298,19 @@ namespace {
     EXPECT_NEAR(rgb.green,      200/255.0f, epsilon);
     EXPECT_NEAR(rgb.blue,       239/255.0f, epsilon);
   }
+
+
+TEST(TestColor, TestSubtraction)
+{
+  nux::Color start = nux::Color(1.0f, 0.0f, 0.0f);
+  nux::Color finish = nux::Color(0.0f, 0.5f, 0.0f);
+  nux::Color difference = finish - start;
+
+  EXPECT_THAT(difference.red, FloatEq(-1));
+  EXPECT_THAT(difference.green, FloatEq(0.5));
+  EXPECT_THAT(difference.blue, FloatEq(0));
+  EXPECT_THAT(difference.alpha, FloatEq(0));
+}
+
 }
 

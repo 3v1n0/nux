@@ -21,7 +21,7 @@
 
 #include "Nux.h"
 #include "TextureArea.h"
-#include "NuxImage/ImageSurface.h"
+#include "NuxGraphics/ImageSurface.h"
 
 namespace nux
 {

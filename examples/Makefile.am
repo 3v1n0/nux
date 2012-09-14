@@ -31,12 +31,16 @@ noinst_PROGRAMS = text_entry_focus \
 #                  timeline \
 #                  tooltip
 
+if HAVE_GEIS
+noinst_PROGRAMS += gestures
+endif
 
 # We only have to do this AM_ once to affect all the binaries we build from
 # this Makefile
 AM_CPPFLAGS = \
   -I$(srcdir) \
   -I$(top_srcdir) \
+  -I$(top_builddir)/Nux \
   -DPREFIX=\""$(prefix)"\" \
 	-DLIBDIR=\""$(libdir)"\" \
   -DDATADIR=\""$(datadir)"\" \
@@ -51,7 +55,6 @@ AM_CPPFLAGS = \
 
 ALL_LIBS = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
   $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
   $(NUX_EXAMPLES_LIBS) \
@@ -107,6 +110,11 @@ shortcut_keys_LDADD = $(ALL_LIBS)
 
 coverflow_SOURCES = coverflow.cpp
 coverflow_LDADD = $(ALL_LIBS)
+
+if HAVE_GEIS
+gestures_SOURCES = gestures.cpp
+gestures_LDADD = $(ALL_LIBS)
+endif
 
 # To distribute source add the source code here
 #sourceexampledir = "$(pkgdatadir)/examples"

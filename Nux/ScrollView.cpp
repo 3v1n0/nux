@@ -186,12 +186,18 @@ namespace nux
     // for the area that is below the mouse.
 
     // Test the vertical scrollbar
-    found_area = _vscrollbar->FindAreaUnderMouse(mouse_position, event_type);
-    NUX_RETURN_VALUE_IF_NOTNULL(found_area, found_area);
+    if (m_vertical_scrollbar_enable)
+    {
+      found_area = _vscrollbar->FindAreaUnderMouse(mouse_position, event_type);
+      NUX_RETURN_VALUE_IF_NOTNULL(found_area, found_area);
+    }
 
     // Test the horizontal scrollbar
-    found_area = _hscrollbar->FindAreaUnderMouse(mouse_position, event_type);
-    NUX_RETURN_VALUE_IF_NOTNULL(found_area, found_area);
+    if (m_horizontal_scrollbar_enable)
+    {
+      found_area = _hscrollbar->FindAreaUnderMouse(mouse_position, event_type);
+      NUX_RETURN_VALUE_IF_NOTNULL(found_area, found_area);
+    }
 
     // If the code gets here, it means that no area has been found yet.
     // Test the layout of the ScrollView
@@ -799,48 +805,58 @@ namespace nux
 
   void ScrollView::ScrollUp(float stepy, int mousedy)
   {
+    if (m_ViewContentHeight <= m_ViewHeight)
+      return;
+
     if (view_layout_)
     {
-      _delta_y += (float) stepy * (float) mousedy;
+      int last_delta_y = _delta_y;
+      _delta_y += stepy * mousedy;
 
       if (_delta_y > 0)
       {
         _delta_y = 0;
       }
+
+      if (last_delta_y != _delta_y)
+      {
+        QueueDraw();
+        _vscrollbar->QueueDraw();
+      }
+
       view_layout_->Set2DTranslation(_delta_x, _delta_y, 0);
+      _vscrollbar->SetContentOffset(_delta_x, _delta_y);
+
       scrolling.emit(_delta_x, _delta_y);
     }
-
-    if (view_layout_)
-    {
-      _vscrollbar->SetContentOffset(_delta_x, _delta_y);
-      _vscrollbar->QueueDraw();
-    }
-
-    QueueDraw();
   }
 
   void ScrollView::ScrollDown(float stepy, int mousedy)
   {
+    if (m_ViewContentHeight <= m_ViewHeight)
+      return;
+
     if (view_layout_)
     {
-      _delta_y -= (float) stepy * (float) mousedy;
+      int last_delta_y = _delta_y;
+      _delta_y -= stepy * mousedy;
 
       if (m_ViewY + _delta_y + m_ViewContentHeight < m_ViewY + m_ViewHeight)
       {
         _delta_y = - (m_ViewContentHeight > m_ViewHeight ? m_ViewContentHeight - m_ViewHeight : 0);
       }
+
+      if (last_delta_y != _delta_y)
+      {
+        QueueDraw();
+        _vscrollbar->QueueDraw();
+      }
+
       view_layout_->Set2DTranslation(_delta_x, _delta_y, 0);
+     _vscrollbar->SetContentOffset(_delta_x, _delta_y);
+
       scrolling.emit(_delta_x, _delta_y);
     }
-
-    if (view_layout_)
-    {
-      _vscrollbar->SetContentOffset(_delta_x, _delta_y);
-      _vscrollbar->QueueDraw();
-    }
-
-    QueueDraw();
   }
 
   void ScrollView::SetSizeMatchContent(bool b)
@@ -930,7 +946,6 @@ namespace nux
     {
       ScrollUp(abs(wheel_delta / NUX_MOUSEWHEEL_DELTA), m_MouseWheelScrollSize);
     }
-    QueueDraw();
   }
 
   bool ScrollView::AcceptKeyNavFocus()

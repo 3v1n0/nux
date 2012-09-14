@@ -1,4 +1,11 @@
 if BUILD_TESTS
+
+nodist_libgtest_a_SOURCES = $(GTEST_SOURCE)/src/gtest-all.cc
+
+libgtest_a_CPPFLAGS = $(GTEST_CPPFLAGS) -w
+libgtest_a_CXXFLAGS = $(GTEST_CXXFLAGS) $(AM_CXXFLAGS)
+check_LIBRARIES = libgtest.a
+
 check_PROGRAMS = \
   gtest-nux \
   gtest-nuxcore \
@@ -19,38 +26,15 @@ check_PROGRAMS = \
   xtest-text-entry-logic \
   xtest-focus-on-mouse-enter
 
-# Please keep alphabetical
-# test_nux_SOURCES = \
-# test-canvas.cpp \
-# test-nux.cpp \
-# test-system.cpp
-
-#test_nux_CPPFLAGS = \
-#  -I$(srcdir) \
-#  -I$(top_srcdir) \
-#  -DPREFIX=\""$(prefix)"\" \
-#	-DLIBDIR=\""$(libdir)"\" \
-#  -DDATADIR=\""$(datadir)"\" \
-#  -DG_LOG_DOMAIN=\"NuxTests\" \
-#  -DTESTDIR=\""$(top_srcdir)/tests"\" \
-#  $(GCC_FLAGS) \
-#  $(NUX_CORE_CFLAGS) \
-#  $(NUX_EXAMPLES_CFLAGS) \
-#  $(NUX_CFLAGS) \
-#  $(MAINTAINER_CFLAGS)
-
-#test_nux_LDADD = \
-#  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-#  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
-#  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
-#  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-#  $(NUX_LIBS)
-
 gtest_nuxcore_SOURCES = \
   Helpers.h \
   Helpers.cpp \
+  $(top_builddir)/NuxCore/ColorPrivate.cpp \
+  $(top_builddir)/NuxCore/ColorPrivate.h \
+  gtest-nuxcore-animation.cpp \
   gtest-nuxcore-async-file-writer.cpp \
   gtest-nuxcore-color.cpp \
+  gtest-nuxcore-colorprivate.cpp \
   gtest-nuxcore-logger.cpp \
   gtest-nuxcore-main.cpp \
   gtest-nuxcore-object.cpp \
@@ -73,25 +57,37 @@ gtest_nuxcore_CPPFLAGS = \
 
 gtest_nuxcore_LDADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
   $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-  $(NUX_LIBS)
+  $(NUX_LIBS) \
+  libgtest.a
 
 gtest_nuxcore_LDFLAGS = \
-  -lpthread -lgtest -lgmock \
+  -lpthread -lgmock \
   -lboost_filesystem -lboost_system
 
 gtest_nux_SOURCES = \
+  FakeGestureEvent.h \
   gtest-nux-area.cpp \
   gtest-nux-cairo-wrapper.cpp \
   gtest-nux-emmetrics.cpp \
   gtest-nux-main.cpp \
   gtest-nux-statictext.cpp \
+  gtest-nux-scrollview.cpp \
   gtest-nux-textentry.cpp \
+  gtest-nux-utils.h \
+  gtest-nux-inputmethodibus.cpp \
   gtest-nux-view.cpp \
   gtest-nux-windowcompositor.cpp \
   gtest-nux-windowthread.cpp
+
+if HAVE_GEIS
+gtest_nux_SOURCES += \
+  geis_mock.h \
+	geis_mock.cpp \
+  gtest-nux-geisadapter.cpp \
+  gtest-nux-gesturebroker.cpp
+endif
 
 gtest_nux_CPPFLAGS = \
   -I$(srcdir) \
@@ -110,13 +106,13 @@ gtest_nux_CPPFLAGS = \
 
 gtest_nux_LDADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
   $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-  $(NUX_LIBS)
+  $(NUX_LIBS) \
+  libgtest.a
 
 gtest_nux_LDFLAGS = \
-  -lpthread -lgtest -lgmock \
+  -lpthread -lgmock \
   -lboost_filesystem -lboost_system
 
 TestFlags = -I$(srcdir) \
@@ -134,7 +130,6 @@ TestFlags = -I$(srcdir) \
   $(IBUS_CFLAGS)
 
 TestLibs = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-  $(top_builddir)/NuxImage/libnux-image-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
   $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
   $(NUX_LIBS)
