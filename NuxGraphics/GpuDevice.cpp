@@ -640,10 +640,8 @@ namespace nux
 
   ObjectPtr<IOpenGLFrameBufferObject> GpuDevice::CreateFrameBufferObject()
   {
-	  IOpenGLFrameBufferObject *fbo = new IOpenGLFrameBufferObject(NUX_TRACKER_LOCATION);
 	  ObjectPtr<IOpenGLFrameBufferObject> ptr;
-	  ptr.Adopt(fbo);
-
+	  ptr.Adopt(new IOpenGLFrameBufferObject(NUX_TRACKER_LOCATION));
 	  return ptr;
   }
 

@@ -57,9 +57,8 @@ namespace nux
 			NumMipLevel = Levels;
 		}
 
-		IOpenGLTexture2D *tex = new IOpenGLTexture2D(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM);
 		ObjectPtr<IOpenGLTexture2D> ptr;
-		ptr.Adopt(tex);
+		ptr.Adopt(new IOpenGLTexture2D(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM));
 
 		return ptr;
 	}
@@ -89,9 +88,8 @@ namespace nux
 			 NumMipLevel = 1;
 		 }
 
-		 IOpenGLRectangleTexture *tex = new IOpenGLRectangleTexture(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM);
 		 ObjectPtr<IOpenGLRectangleTexture> ptr;
-		 ptr.Adopt(tex);
+		 ptr.Adopt(new IOpenGLRectangleTexture(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM));
 
 		 return ptr;
 	}
@@ -115,9 +113,8 @@ namespace nux
 			NumMipLevel = Levels;
 		}
 
-		IOpenGLCubeTexture *ctex = new IOpenGLCubeTexture(EdgeLength, NumMipLevel, PixelFormat);
 		ObjectPtr<IOpenGLCubeTexture> ptr;
-		ptr.Adopt(ctex);
+		ptr.Adopt(new IOpenGLCubeTexture(EdgeLength, NumMipLevel, PixelFormat));
 
 		return ptr;
 	}
@@ -148,9 +145,8 @@ namespace nux
 			NumMipLevel = Levels;
 		}
 
-		IOpenGLVolumeTexture *vtex = new IOpenGLVolumeTexture(Width, Height, Depth, NumMipLevel, PixelFormat);
 		ObjectPtr<IOpenGLVolumeTexture> ptr;
-		ptr.Adopt(vtex);
+		ptr.Adopt(new IOpenGLVolumeTexture(Width, Height, Depth, NumMipLevel, PixelFormat));
 
 		return ptr;
 	}
@@ -166,9 +162,8 @@ namespace nux
 			return ObjectPtr<IOpenGLAnimatedTexture>();
 		}
 
-		IOpenGLAnimatedTexture *atex = new IOpenGLAnimatedTexture(Width, Height, Depth, PixelFormat);
 		ObjectPtr<IOpenGLAnimatedTexture> ptr;
-		ptr.Adopt(atex);
+		ptr.Adopt(new IOpenGLAnimatedTexture(Width, Height, Depth, PixelFormat));
 
 		return ptr;
 	}
@@ -195,5 +190,4 @@ namespace nux
     ptr->UnReference(); // ref count = 1
     return h;
   }
-
 }
