@@ -33,7 +33,16 @@
 
 namespace nux
 {
-  ObjectPtr<IOpenGLShaderProgram> GpuDevice::CreateShaderProgram()
+	ObjectPtr<IOpenGLShaderProgram> GpuDevice::CreateShaderProgram()
+	{
+		IOpenGLShaderProgram *sprog = new IOpenGLShaderProgram();
+		ObjectPtr<IOpenGLShaderProgram> ptr;
+		ptr.Adopt(sprog);
+
+		return ptr;
+	}
+
+  /*ObjectPtr<IOpenGLShaderProgram> GpuDevice::CreateShaderProgram()
   {
     IOpenGLShaderProgram *ptr;
     CreateShaderProgram((IOpenGLShaderProgram **) &ptr);
@@ -47,7 +56,7 @@ namespace nux
     *ppShaderProgram = new IOpenGLShaderProgram();
 
     return OGL_OK;
-  }
+  }*/
 
   ObjectPtr<IOpenGLVertexShader> GpuDevice::CreateVertexShader()
   {
