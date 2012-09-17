@@ -40,20 +40,24 @@ namespace nux
       NUX_FILE_LINE_DECL)
   {
     int msz = GetGpuInfo().GetMaxTextureSize();
-    if(Width <= 0 || Height <= 0 || Width > msz || Height > msz) {
+    if(Width <= 0 || Height <= 0 || Width > msz || Height > msz)
+    {
       return ObjectPtr<IOpenGLTexture2D>();
     }
 
     unsigned int NumTotalMipLevel = 1 + floorf(Log2(Max(Width, Height)));
     unsigned int NumMipLevel = 0;
 
-    if(Levels == 0) {
+    if(Levels == 0)
+    {
       NumMipLevel = NumTotalMipLevel;
     }
-    else if(Levels > (int)NumTotalMipLevel) {
+    else if(Levels > (int)NumTotalMipLevel)
+    {
       NumMipLevel = NumTotalMipLevel;
     }
-    else {
+    else
+    {
       NumMipLevel = Levels;
     }
 
@@ -70,41 +74,48 @@ namespace nux
       NUX_FILE_LINE_DECL)
   {
     int msz = GetGpuInfo().GetMaxTextureSize();
-    if(Width <= 0 || Height <= 0 || Width > msz || Height > msz) {
+    if(Width <= 0 || Height <= 0 || Width > msz || Height > msz)
+    {
       return ObjectPtr<IOpenGLRectangleTexture>();
     }
 
     unsigned int NumTotalMipLevel = 1 + floorf(Log2(Max(Width, Height)));
     unsigned int NumMipLevel = 0;
 
-     if(Levels == 0) {
-       NumMipLevel = 1;
-     }
-     else if(Levels > (int)NumTotalMipLevel) {
-       NumMipLevel = 1;
-     }
-     else {
-       NumMipLevel = 1;
-     }
+    if(Levels == 0)
+    {
+      NumMipLevel = 1;
+    }
+    else if(Levels > (int)NumTotalMipLevel)
+    {
+      NumMipLevel = 1;
+    }
+    else
+    {
+      NumMipLevel = 1;
+    }
 
-     ObjectPtr<IOpenGLRectangleTexture> result;
-     result.Adopt(new IOpenGLRectangleTexture(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM));
-     return result;
+    ObjectPtr<IOpenGLRectangleTexture> result;
+    result.Adopt(new IOpenGLRectangleTexture(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM));
+    return result;
   }
 
   ObjectPtr<IOpenGLCubeTexture> GpuDevice::CreateCubeTexture(
       int EdgeLength,
       int Levels,
       BitmapFormat PixelFormat,
-      NUX_FILE_LINE_DECL) {
+      NUX_FILE_LINE_DECL)
+  {
 
     unsigned int NumTotalMipLevel = 1 + floorf(Log2(EdgeLength));
     unsigned int NumMipLevel = 0;
 
-    if(Levels == 0) {
+    if(Levels == 0)
+    {
       NumMipLevel = NumTotalMipLevel;
     }
-    else if(Levels > (int)NumTotalMipLevel) {
+    else if(Levels > (int)NumTotalMipLevel)
+    {
       NumMipLevel = NumTotalMipLevel;
     }
     else {
@@ -125,20 +136,24 @@ namespace nux
       NUX_FILE_LINE_DECL)
   {
     int msz = GetGpuInfo().GetMaxTextureSize();
-    if(Width <= 0 || Height <= 0 || Width > msz || Height > msz) {
+    if(Width <= 0 || Height <= 0 || Width > msz || Height > msz)
+    {
       return ObjectPtr<IOpenGLVolumeTexture>();
     }
 
     unsigned int NumTotalMipLevel = 1 + floorf(Log2(Max(Max(Width, Height), Depth)));
     unsigned int NumMipLevel = 0;
 
-    if(Levels == 0) {
+    if(Levels == 0)
+    {
       NumMipLevel = NumTotalMipLevel;
     }
-    else if(Levels > (int)NumTotalMipLevel) {
+    else if(Levels > (int)NumTotalMipLevel)
+    {
       NumMipLevel = NumTotalMipLevel;
     }
-    else {
+    else
+    {
       NumMipLevel = Levels;
     }
 
@@ -154,7 +169,8 @@ namespace nux
       BitmapFormat PixelFormat)
   {
     int msz = GetGpuInfo().GetMaxTextureSize();
-    if(Width <= 0 || Height <= 0 || Width > msz || Height > msz) {
+    if(Width <= 0 || Height <= 0 || Width > msz || Height > msz)
+    {
       return ObjectPtr<IOpenGLAnimatedTexture>();
     }
 
@@ -163,7 +179,8 @@ namespace nux
     return result;
   }
 
-  ObjectPtr<IOpenGLQuery> GpuDevice::CreateQuery(QUERY_TYPE Type) {
+  ObjectPtr<IOpenGLQuery> GpuDevice::CreateQuery(QUERY_TYPE Type)
+  {
     ObjectPtr<IOpenGLQuery> result;
     result.Adopt(new IOpenGLQuery(Type));
     return result;
@@ -178,7 +195,8 @@ namespace nux
       NUX_FILE_LINE_DECL)
   {
     int msz = GetGpuInfo().GetMaxTextureSize();
-    if(width <= 0 || height <=0 || width > msz || height > msz) {
+    if(width <= 0 || height <=0 || width > msz || height > msz)
+    {
       return ObjectPtr<IOpenGLTexture2D>();
     }
 
