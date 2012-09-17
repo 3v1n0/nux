@@ -179,6 +179,7 @@ namespace nux
       static STREAMSOURCE _StreamSource[MAX_NUM_STREAM];
 
     public:
+
       ObjectPtr<IOpenGLTexture2D> CreateTexture(
           int Width,
           int Height,
