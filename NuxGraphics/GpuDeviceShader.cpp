@@ -33,63 +33,63 @@
 
 namespace nux
 {
-    ObjectPtr<IOpenGLShaderProgram> GpuDevice::CreateShaderProgram()
-    {
-        ObjectPtr<IOpenGLShaderProgram> result;
-        result.Adopt(new IOpenGLShaderProgram());
-        return result;
-    }
+  ObjectPtr<IOpenGLShaderProgram> GpuDevice::CreateShaderProgram()
+  {
+    ObjectPtr<IOpenGLShaderProgram> result;
+    result.Adopt(new IOpenGLShaderProgram());
+    return result;
+  }
 
-    ObjectPtr<IOpenGLVertexShader> GpuDevice::CreateVertexShader()
-    {
-        ObjectPtr<IOpenGLVertexShader> result;
-        result.Adopt(new IOpenGLVertexShader());
-        return result;
-    }
+  ObjectPtr<IOpenGLVertexShader> GpuDevice::CreateVertexShader()
+  {
+    ObjectPtr<IOpenGLVertexShader> result;
+    result.Adopt(new IOpenGLVertexShader());
+    return result;
+  }
 
-    ObjectPtr<IOpenGLPixelShader> GpuDevice::CreatePixelShader()
-    {
-        ObjectPtr<IOpenGLPixelShader> result;
-        result.Adopt(new IOpenGLPixelShader());
-        return result;
-    }
+  ObjectPtr<IOpenGLPixelShader> GpuDevice::CreatePixelShader()
+  {
+    ObjectPtr<IOpenGLPixelShader> result;
+    result.Adopt(new IOpenGLPixelShader());
+    return result;
+  }
 
-    ObjectPtr<IOpenGLAsmShaderProgram> GpuDevice::CreateAsmShaderProgram()
-    {
-        ObjectPtr<IOpenGLAsmShaderProgram> result;
-        result.Adopt(new IOpenGLAsmShaderProgram());
-        return result;
-    }
+  ObjectPtr<IOpenGLAsmShaderProgram> GpuDevice::CreateAsmShaderProgram()
+  {
+    ObjectPtr<IOpenGLAsmShaderProgram> result;
+    result.Adopt(new IOpenGLAsmShaderProgram());
+    return result;
+  }
 
-    ObjectPtr<IOpenGLAsmVertexShader> GpuDevice::CreateAsmVertexShader()
-    {
-        ObjectPtr<IOpenGLAsmVertexShader> result;
-        result.Adopt(new IOpenGLAsmVertexShader());
-        return result;
-    }
+  ObjectPtr<IOpenGLAsmVertexShader> GpuDevice::CreateAsmVertexShader()
+  {
+    ObjectPtr<IOpenGLAsmVertexShader> result;
+    result.Adopt(new IOpenGLAsmVertexShader());
+    return result;
+  }
 
-    ObjectPtr<IOpenGLAsmPixelShader> GpuDevice::CreateAsmPixelShader()
-    {
-        ObjectPtr<IOpenGLAsmPixelShader> result;
-        result.Adopt(new IOpenGLAsmPixelShader());
-        return result;
-    }
+  ObjectPtr<IOpenGLAsmPixelShader> GpuDevice::CreateAsmPixelShader()
+  {
+    ObjectPtr<IOpenGLAsmPixelShader> result;
+    result.Adopt(new IOpenGLAsmPixelShader());
+    return result;
+  }
 
 #if (NUX_ENABLE_CG_SHADERS)
 
-    ObjectPtr<ICgVertexShader> GpuDevice::CreateCGVertexShader()
-    {
-        ObjectPtr<ICgVertexShader> result;
-        result.Adopt(new ICgVertexShader());
-        return result;
-    }
+  ObjectPtr<ICgVertexShader> GpuDevice::CreateCGVertexShader()
+  {
+    ObjectPtr<ICgVertexShader> result;
+    result.Adopt(new ICgVertexShader());
+    return result;
+  }
 
-    ObjectPtr<ICgPixelShader> GpuDevice::CreateCGPixelShader()
-    {
-        ObjectPtr<ICgPixelShader> result;
-        result.Adopt(new ICgPixelShader());
-        return result;
-    }
+  ObjectPtr<ICgPixelShader> GpuDevice::CreateCGPixelShader()
+  {
+    ObjectPtr<ICgPixelShader> result;
+    result.Adopt(new ICgPixelShader());
+    return result;
+  }
 
 #endif
 }
