@@ -118,7 +118,8 @@ namespace nux
     {
       NumMipLevel = NumTotalMipLevel;
     }
-    else {
+    else
+    {
       NumMipLevel = Levels;
     }
 
