@@ -20,9 +20,9 @@
 #ifndef COVERFLOWVIEW_H
 #define COVERFLOWVIEW_H
 
-#include "Nux/ClientArea.h"
 #include "NuxCore/Math/Vector4.h"
 #include "CoverflowModel.h"
+#include "ClientArea.h"
 
 #if defined(NUX_OS_WINDOWS)
   #define PKGDATADIR "../../data/"

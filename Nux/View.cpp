@@ -27,19 +27,25 @@
 
 namespace nux
 {
-
   NUX_IMPLEMENT_OBJECT_TYPE(View);
 
   View::View(NUX_FILE_LINE_DECL)
-    :   InputArea(NUX_FILE_LINE_PARAM)
+  : InputArea(NUX_FILE_LINE_PARAM)
+//   , redirect_rendering_to_texture_(false)
+//   , update_backup_texture_(false)
   {
-    view_layout_ = NULL;
-    draw_cmd_queued_        = false;
-    m_TextColor         = Color(1.0f, 1.0f, 1.0f, 1.0f);
+    view_layout_      = NULL;
+    draw_cmd_queued_  = false;
+    m_TextColor       = Color(1.0f, 1.0f, 1.0f, 1.0f);
   }
 
   View::~View()
   {
+    backup_fbo_.Release();
+    backup_texture_.Release();
+    backup_depth_texture_.Release();
+    background_texture_.Release();
+    
     // It is possible that the window thread has been deleted before the view
     // itself, so check prior to calling.
     WindowThread* wt = GetWindowThread();
@@ -157,46 +163,264 @@ namespace nux
   {
     full_view_draw_cmd_ = false;
 
-    graphics_engine.PushModelViewMatrix(Get2DMatrix());
-
-    if (force_draw)
+    if (RedirectRenderingToTexture())
     {
-      GetPainter().PaintBackground(graphics_engine, GetGeometry());
-      GetPainter().PushPaintLayerStack();
+      if (update_backup_texture_ || force_draw || draw_cmd_queued_)
+      {
+        GetPainter().PushPaintLayerStack();        
+        BeginBackupTextureRendering(graphics_engine, force_draw);
+        {
+          graphics_engine.PushModelViewMatrix(Get2DMatrix());
 
-      draw_cmd_queued_ = true;
-      full_view_draw_cmd_ = true;
-      Draw(graphics_engine, force_draw);
-      DrawContent(graphics_engine, force_draw);
-      PostDraw(graphics_engine, force_draw);
+          Geometry translated_geo = GetGeometry();
+          translated_geo.x = 0;
+          translated_geo.y = 0;
+          if (force_draw)
+          {
+            draw_cmd_queued_ = true;
+            full_view_draw_cmd_ = true;
+            Draw(graphics_engine, force_draw);
+            DrawContent(graphics_engine, force_draw);
+            PostDraw(graphics_engine, force_draw);
+          }
+          else
+          {
+            if (draw_cmd_queued_)
+            {
+              full_view_draw_cmd_ = true;
+              Draw(graphics_engine, false);
+              DrawContent(graphics_engine, false);
+              PostDraw(graphics_engine, false);
+            }
+            else if (update_backup_texture_)
+            {
+              DrawContent(graphics_engine, false);
+              PostDraw(graphics_engine, false);
+            }
+          }
+          graphics_engine.PopModelViewMatrix();
+        }
+        EndBackupTextureRendering(graphics_engine, force_draw);
+        GetPainter().PopPaintLayerStack();
+      }
 
-      GetPainter().PopPaintLayerStack();
+      if (PresentRedirectedView())
+      {
+        unsigned int current_alpha_blend;
+        unsigned int current_src_blend_factor;
+        unsigned int current_dest_blend_factor;
+        // Be a good citizen, get a copy of the current GPU sates according to Nux
+        graphics_engine.GetRenderStates().GetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
+
+        TexCoordXForm texxform;
+
+        if ((force_draw || draw_cmd_queued_) && (background_texture_.IsValid()))
+        {
+          graphics_engine.GetRenderStates().SetBlend(false);
+          texxform.FlipVCoord(true);
+          // Draw the background of this view.
+          GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(GetX(), GetY(), background_texture_->GetWidth(), background_texture_->GetHeight(), background_texture_, texxform, color::White);
+        }
+
+        texxform.uwrap = TEXWRAP_CLAMP;
+        texxform.vwrap = TEXWRAP_CLAMP;
+        texxform.FlipVCoord(true);
+
+        graphics_engine.GetRenderStates().SetBlend(true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(GetX(), GetY(), GetWidth(), GetHeight(), backup_texture_, texxform, Color(color::White));
+        // Be a good citizen, restore the Nux blending states.
+        graphics_engine.GetRenderStates().SetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
+      }
     }
     else
     {
-      if (draw_cmd_queued_)
+      graphics_engine.PushModelViewMatrix(Get2DMatrix());
+
+      if (force_draw)
       {
         GetPainter().PaintBackground(graphics_engine, GetGeometry());
         GetPainter().PushPaintLayerStack();
 
+        draw_cmd_queued_ = true;
         full_view_draw_cmd_ = true;
-        Draw(graphics_engine, false);
-        DrawContent(graphics_engine, false);
-        PostDraw(graphics_engine, false);
+        Draw(graphics_engine, force_draw);
+        DrawContent(graphics_engine, force_draw);
+        PostDraw(graphics_engine, force_draw);
 
         GetPainter().PopPaintLayerStack();
       }
       else
       {
-        DrawContent(graphics_engine, false);
-        PostDraw(graphics_engine, false);
+        if (draw_cmd_queued_)
+        {
+          GetPainter().PaintBackground(graphics_engine, GetGeometry());
+          GetPainter().PushPaintLayerStack();
+
+          full_view_draw_cmd_ = true;
+          Draw(graphics_engine, false);
+          DrawContent(graphics_engine, false);
+          PostDraw(graphics_engine, false);
+
+          GetPainter().PopPaintLayerStack();
+        }
+        else
+        {
+          DrawContent(graphics_engine, false);
+          PostDraw(graphics_engine, false);
+        }
       }
+
+      graphics_engine.PopModelViewMatrix();
     }
 
-    graphics_engine.PopModelViewMatrix();
+    if (view_layout_)
+    {
+      view_layout_->ResetQueueDraw();
+    }
 
     draw_cmd_queued_ = false;
+    child_draw_cmd_queued_ = false;
     full_view_draw_cmd_ = false;
+    update_backup_texture_ = false;
+  }
+
+  void View::BeginBackupTextureRendering(GraphicsEngine& graphics_engine, bool force_draw)
+  {
+    ObjectPtr<IOpenGLBaseTexture> active_fbo_texture;
+    if (force_draw || draw_cmd_queued_)
+    {
+      // Get the active fbo color texture
+      active_fbo_texture = GetGraphicsDisplay()->GetGpuDevice()->ActiveFboTextureAttachment(0);
+    }
+
+    Geometry xform_geo;
+    // Compute position in the active fbo texture.
+    xform_geo = graphics_engine.ModelViewXFormRect(GetGeometry());
+
+    // Get the active fbo...
+    prev_fbo_ = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
+    // ... and the size of the view port rectangle.
+    prev_viewport_ = graphics_engine.GetViewportRect();
+    
+    const int width = GetWidth();
+    const int height = GetHeight();
+
+    // Compute intersection with active fbo.
+    Geometry intersection = xform_geo;
+    if (active_fbo_texture.IsValid())
+    {
+      Geometry active_fbo_geo(0, 0, active_fbo_texture->GetWidth(), active_fbo_texture->GetHeight());
+      intersection = active_fbo_geo.Intersect(xform_geo);
+    }
+
+    if (backup_fbo_.IsNull())
+    {
+      // Create the fbo before using it for the first time.
+      backup_fbo_ = GetGraphicsDisplay()->GetGpuDevice()->CreateFrameBufferObject();
+    }
+
+    if (!backup_texture_.IsValid() || (backup_texture_->GetWidth() != width) || (backup_texture_->GetHeight() != height))
+    {
+      // Create or resize the color and depth textures before using them.
+      backup_texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+      backup_depth_texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
+    }
+
+    if (!background_texture_.IsValid() || (background_texture_->GetWidth() != intersection.width) || (background_texture_->GetHeight() != intersection.height))
+    {
+      background_texture_ = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(intersection.width, intersection.height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+    }
+
+    backup_fbo_->FormatFrameBufferObject(width, height, BITFMT_R8G8B8A8);
+    backup_fbo_->EmptyClippingRegion();
+
+    graphics_engine.SetViewport(0, 0, width, height);
+    graphics_engine.SetOrthographicProjectionMatrix(width, height);
+
+    // Draw the background on the previous fbo texture
+    if ((force_draw || draw_cmd_queued_) && background_texture_.IsValid())
+    {
+      backup_fbo_->FormatFrameBufferObject(intersection.width, intersection.height, BITFMT_R8G8B8A8);
+      backup_fbo_->EmptyClippingRegion();
+
+      graphics_engine.SetViewport(0, 0, intersection.width, intersection.height);
+      graphics_engine.SetOrthographicProjectionMatrix(intersection.width, intersection.height);
+
+      // Set the background texture in the fbo
+      backup_fbo_->SetTextureAttachment(0, background_texture_, 0);
+      backup_fbo_->SetDepthTextureAttachment(ObjectPtr<IOpenGLBaseTexture>(0), 0);
+      backup_fbo_->Activate();
+      graphics_engine.SetViewport(0, 0, background_texture_->GetWidth(), background_texture_->GetHeight());
+      
+      // Clear surface
+      // Clear surface
+      CHECKGL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
+      CHECKGL(glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT));
+
+      TexCoordXForm texxform;
+      texxform.uoffset = xform_geo.x / (float) active_fbo_texture->GetWidth();
+      texxform.voffset = xform_geo.y / (float) active_fbo_texture->GetHeight();
+      texxform.SetTexCoordType(TexCoordXForm::OFFSET_COORD);
+      texxform.flip_v_coord = true;
+
+      // Temporarily change the model-view matrix to copy the texture background texture.
+      // This way we are not affceted by the regular model-view matrix.
+      graphics_engine.SetModelViewMatrix(Matrix4::IDENTITY());
+      // Copy the texture from the previous fbo attachment into our background texture.
+      if (copy_previous_fbo_for_background_)
+      {
+        graphics_engine.QRP_1Tex(0, 0, intersection.width, intersection.height, active_fbo_texture, texxform, color::White);
+      }
+      else
+      {
+        graphics_engine.QRP_Color(0, 0, intersection.width, intersection.height, Color(0.0f, 0.0f, 0.0f, 0.0f));
+      }
+      // Restore the model-view matrix.
+      graphics_engine.ApplyModelViewMatrix();
+    }
+
+    backup_fbo_->FormatFrameBufferObject(width, height, BITFMT_R8G8B8A8);
+    backup_fbo_->EmptyClippingRegion();
+    backup_fbo_->SetTextureAttachment(0, backup_texture_, 0);
+    backup_fbo_->SetDepthTextureAttachment(backup_depth_texture_, 0);
+    backup_fbo_->Activate();
+
+    if (force_draw || draw_cmd_queued_)
+    {
+      CHECKGL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
+      CHECKGL(glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT));
+    }
+
+    graphics_engine.SetViewport(0, 0, width, height);
+    graphics_engine.SetOrthographicProjectionMatrix(width, height);
+    // Transform the geometry of this area through the current model view matrix. This gives the
+    // the position of the view in the active fbo texture.
+    Geometry offset_rect = graphics_engine.ModelViewXFormRect(GetGeometry());
+    int x_offset = -offset_rect.x;
+    int y_offset = -offset_rect.y;
+    graphics_engine.PushModelViewMatrix(Matrix4::TRANSLATE(x_offset, y_offset, 0));
+
+  }
+
+  void View::EndBackupTextureRendering(GraphicsEngine& graphics_engine, bool force_draw)
+  {
+    graphics_engine.PopModelViewMatrix();
+
+    if (prev_fbo_.IsValid())
+    {
+      // Restore the previous fbo
+      prev_fbo_->Activate();
+
+      prev_fbo_->ApplyClippingRegion();
+    }
+
+    // Release the reference on the previous fbo
+    prev_fbo_.Release();
+
+    // Restore the matrices and the view port.
+    graphics_engine.ApplyModelViewMatrix();
+    graphics_engine.SetOrthographicProjectionMatrix(prev_viewport_.width, prev_viewport_.height);
+    graphics_engine.SetViewport(prev_viewport_.x, prev_viewport_.y, prev_viewport_.width, prev_viewport_.height);
   }
 
   void View::Draw(GraphicsEngine &graphics_engine, bool force_draw)
@@ -219,19 +443,26 @@ namespace nux
     if (draw_cmd_queued_)
       return;
 
-    //GetWindowCompositor()..AddToDrawList(this);
     WindowThread* application = GetWindowThread();
     if (application)
     {
       application->AddToDrawList(this);
       application->RequestRedraw();
-      //GetWindowCompositor().AddToDrawList(this);
     }
+    
+    // Report to a parent view with redirect_rendering_to_texture_ set to true that one of its children
+    // needs to be redrawn.
+    PrepareParentRedirectedView();
+
     if (view_layout_)
+    {
+      // If this view has requested a draw, then all of it children in the view_layout_
+      // need to be redrawn as well.
       view_layout_->QueueDraw();
+    }
 
     draw_cmd_queued_ = true;
-    OnQueueDraw.emit(this);
+    queue_draw.emit(this);
   }
 
   void View::NeedSoftRedraw()
@@ -310,7 +541,17 @@ namespace nux
 
     LayoutAdded.emit(this, view_layout_);
 
+    view_layout_->queue_draw.connect(sigc::mem_fun(this, &View::ChildViewQueuedDraw));
+    view_layout_->child_queue_draw.connect(sigc::mem_fun(this, &View::ChildViewQueuedDraw));
     return true;
+  }
+
+  void View::ChildViewQueuedDraw(Area* area)
+  {
+    if (child_draw_cmd_queued_)
+      return;
+    child_draw_cmd_queued_ = true;
+    child_queue_draw.emit(area);
   }
 
   void View::OnChildFocusChanged(/*Area *parent,*/ Area *child)
@@ -354,9 +595,16 @@ namespace nux
     return false;
   }
 
-  void View::SetGeometry(const Geometry &geo)
+//   void View::SetGeometry(int x, int y, int w, int h)
+//   {
+//     Area::SetGeometry(x, y, w, h);
+//     ComputeContentSize();
+//     PostResizeGeometry();
+//   }
+
+  void View::SetGeometry(const Geometry& geo)
   {
-    Area::SetGeometry(geo);
+    Area::SetGeometry(geo.x, geo.y, geo.width, geo.height);
     ComputeContentSize();
     PostResizeGeometry();
   }
@@ -410,14 +658,20 @@ namespace nux
     return view_enabled_;
   }
 
-  void View::GeometryChangePending()
+  void View::GeometryChangePending(bool position_about_to_change, bool size_about_to_change)
   {
     if (IsLayoutDone())
       QueueDraw();
   }
 
-  void View::GeometryChanged()
+  void View::GeometryChanged(bool position_has_changed, bool size_has_changed)
   {
+    if (RedirectedAncestor())
+    {
+      if (size_has_changed)
+        QueueDraw();
+      return;
+    }
     if (IsLayoutDone())
       QueueDraw();
   }

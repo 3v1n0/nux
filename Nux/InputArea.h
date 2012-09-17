@@ -23,8 +23,6 @@
 #ifndef INPUTAREA_H
 #define INPUTAREA_H
 
-#include "Features.h"
-
 #include "Area.h"
 
 #if defined(NUX_OS_WINDOWS)

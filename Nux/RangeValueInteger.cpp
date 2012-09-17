@@ -87,7 +87,7 @@ namespace nux
   void RangeValueInteger::InitializeLayout()
   {
     hlayout         = new HLayout(NUX_TRACKER_LOCATION);
-    m_Percentage    = new InputArea(NUX_TRACKER_LOCATION);
+    m_Percentage    = new BasicView(NUX_TRACKER_LOCATION);
     m_ValueString   = new EditTextBox("", NUX_TRACKER_LOCATION);
   }
 

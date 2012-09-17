@@ -23,7 +23,6 @@
 #ifndef WINDOWCOMPOSITOR_H
 #define WINDOWCOMPOSITOR_H
 
-#include "Features.h"
 #include "BaseWindow.h"
 
 #include <sigc++/trackable.h>

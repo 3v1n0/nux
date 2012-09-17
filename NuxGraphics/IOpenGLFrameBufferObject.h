@@ -34,10 +34,16 @@ namespace nux
     virtual ~IOpenGLFrameBufferObject();
 
     int FormatFrameBufferObject(int Width, int Height, BitmapFormat PixelFormat);
-    int SetRenderTarget(int ColorAttachmentIndex, ObjectPtr<IOpenGLSurface> pRenderTargetSurface);
+    int SetRenderTarget(int color_attachment_index, ObjectPtr<IOpenGLSurface> pRenderTargetSurface);
+    int SetTextureAttachment(int color_attachment_index, ObjectPtr<IOpenGLBaseTexture> texture, int surface_level);
     int SetDepthSurface(ObjectPtr<IOpenGLSurface> pDepthSurface);
-    ObjectPtr<IOpenGLSurface> GetRenderTarget(int ColorAttachmentIndex);
+    int SetDepthTextureAttachment(ObjectPtr<IOpenGLBaseTexture> depth_texture, int mip_level);
+    ObjectPtr<IOpenGLSurface> GetRenderTarget(int color_attachment_index);
     ObjectPtr<IOpenGLSurface> GetDepthRenderTarget();
+
+    ObjectPtr<IOpenGLBaseTexture> TextureAttachment(int color_attachment_index);
+    ObjectPtr<IOpenGLBaseTexture> DepthTextureAttachment();
+
 
     int Clear(DWORD Flags, FLOAT red, FLOAT green, FLOAT blue, FLOAT alpha, FLOAT Z, DWORD Stencil);
 
@@ -68,25 +74,34 @@ namespace nux
 
     int GetWidth() const
     {
-      return _Width;
+      return attachment_width_;
     }
     int GetHeight() const
     {
-      return _Height;
+      return attachment_height_;
     }
 
   private:
+    struct Attachment
+    {
+      ObjectPtr<IOpenGLBaseTexture> texture;
+      int level;
+    };
+
     IOpenGLFrameBufferObject(NUX_FILE_LINE_PROTO);
 
-    int             _Width;
-    int             _Height;
+    int             attachment_width_;
+    int             attachment_height_;
     BitmapFormat    _PixelFormat;
     bool            _IsActive;
     Rect            _clipping_rect;
 
-    ObjectPtr<IOpenGLSurface>     _Depth_Attachment;
-    ObjectPtr<IOpenGLSurface>     _Stencil_Attachment;
-    std::vector< ObjectPtr<IOpenGLSurface> > _Color_AttachmentArray;
+    ObjectPtr<IOpenGLSurface>     depth_surface_attachment_;
+    ObjectPtr<IOpenGLSurface>     stencil_surface_attachment_;
+    ObjectPtr<IOpenGLBaseTexture> depth_texture_attachment_;
+    std::vector< ObjectPtr<IOpenGLSurface> > surface_attachment_array_;
+    std::vector< ObjectPtr<IOpenGLBaseTexture> > texture_attachment_array_;
+
 
     GLFramebufferObject _Fbo;   // The framebuffer object used for rendering to the texture
     GLRenderbuffer      _Rbo;

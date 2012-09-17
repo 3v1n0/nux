@@ -20,8 +20,9 @@
  *
  */
 
-#include <Animation.h>
-#include <AnimationController.h>
+#include "NuxCore.h"
+#include "Animation.h"
+#include "AnimationController.h"
 
 namespace na = nux::animation;
 

@@ -55,7 +55,7 @@ namespace nux
     virtual void ComputeContentPosition(float offsetX, float offsetY);
 
     bool bCaptionAvailable;
-    InputArea m_CaptionArea;
+    BasicView m_CaptionArea;
     Layout *m_layout;
   };
 }
