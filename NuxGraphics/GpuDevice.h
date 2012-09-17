@@ -114,7 +114,7 @@ namespace nux
 #endif
 
     int GetMaxFboAttachment() {return _opengl_max_fb_attachment;}
-	int GetMaxTextureSize() {return _opengl_max_texture_size;}
+    int GetMaxTextureSize() {return _opengl_max_texture_size;}
 
 
   private:
@@ -135,7 +135,7 @@ namespace nux
     bool _support_opengl_version_41;
 
     int _opengl_max_texture_size;
-	int _opengl_max_texture_units;
+    int _opengl_max_texture_units;
     int _opengl_max_texture_coords;
     int _opengl_max_texture_image_units;
     int _opengl_max_fb_attachment;
@@ -311,7 +311,7 @@ namespace nux
     void ActivateFrameBuffer();
 
     //! Restore the backbuffer as the render target.
-    void DeactivateFrameBuffer(); 
+    void DeactivateFrameBuffer();
 
   public:
     void SetCurrentFrameBufferObject(ObjectPtr<IOpenGLFrameBufferObject> fbo);
@@ -393,10 +393,10 @@ namespace nux
     {
       return _gpu_info->Support_ARB_Texture_Rectangle();
     }
-    
+
   private:
 
-    // 
+    //
     int _opengl_major;  //!< OpenGL major version.
     int _opengl_minor;  //!< OpenGL minor version.
     int _glsl_version_major;  //!< GLSL major version.
@@ -429,7 +429,7 @@ namespace nux
     GpuInfo *_gpu_info;
 
   public:
-    
+
     ObjectPtr<IOpenGLTexture2D> backup_texture0_;
 
 #if defined(NUX_OS_WINDOWS)
@@ -465,7 +465,7 @@ namespace nux
           bool opengl_es_20 = false);
     #endif
 #endif
-    
+
     ~GpuDevice();
     friend class IOpenGLSurface;
     friend class GraphicsEngine;
@@ -474,4 +474,3 @@ namespace nux
 }
 
 #endif // GLDEVICEFACTORY_H
-

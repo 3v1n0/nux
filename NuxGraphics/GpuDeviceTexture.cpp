@@ -32,158 +32,158 @@
 
 namespace nux
 {
-	ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture(
-			int Width,
-			int Height,
-			int Levels,
-			BitmapFormat PixelFormat,
-			NUX_FILE_LINE_DECL)
-	{
-		int msz = GetGpuInfo().GetMaxTextureSize();
-		if(Width <= 0 || Height <= 0 || Width > msz || Height > msz) {
-			return ObjectPtr<IOpenGLTexture2D>();
-		}
+    ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture(
+            int Width,
+            int Height,
+            int Levels,
+            BitmapFormat PixelFormat,
+            NUX_FILE_LINE_DECL)
+    {
+        int msz = GetGpuInfo().GetMaxTextureSize();
+        if(Width <= 0 || Height <= 0 || Width > msz || Height > msz) {
+            return ObjectPtr<IOpenGLTexture2D>();
+        }
 
-		unsigned int NumTotalMipLevel = 1 + floorf(Log2(Max(Width, Height)));
-		unsigned int NumMipLevel = 0;
+        unsigned int NumTotalMipLevel = 1 + floorf(Log2(Max(Width, Height)));
+        unsigned int NumMipLevel = 0;
 
-		if(Levels == 0) {
-			NumMipLevel = NumTotalMipLevel;
-		}
-		else if(Levels > (int)NumTotalMipLevel) {
-			NumMipLevel = NumTotalMipLevel;
-		}
-		else {
-			NumMipLevel = Levels;
-		}
+        if(Levels == 0) {
+            NumMipLevel = NumTotalMipLevel;
+        }
+        else if(Levels > (int)NumTotalMipLevel) {
+            NumMipLevel = NumTotalMipLevel;
+        }
+        else {
+            NumMipLevel = Levels;
+        }
 
-		ObjectPtr<IOpenGLTexture2D> result;
-		result.Adopt(new IOpenGLTexture2D(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM));
-		return result;
-	}
+        ObjectPtr<IOpenGLTexture2D> result;
+        result.Adopt(new IOpenGLTexture2D(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM));
+        return result;
+    }
 
-	ObjectPtr<IOpenGLRectangleTexture> GpuDevice::CreateRectangleTexture(
-			int Width,
-			int Height,
-			int Levels,
-			BitmapFormat PixelFormat,
-			NUX_FILE_LINE_DECL)
-	{
-		int msz = GetGpuInfo().GetMaxTextureSize();
-		if(Width <= 0 || Height <= 0 || Width > msz || Height > msz) {
-			return ObjectPtr<IOpenGLRectangleTexture>();
-		}
+    ObjectPtr<IOpenGLRectangleTexture> GpuDevice::CreateRectangleTexture(
+            int Width,
+            int Height,
+            int Levels,
+            BitmapFormat PixelFormat,
+            NUX_FILE_LINE_DECL)
+    {
+        int msz = GetGpuInfo().GetMaxTextureSize();
+        if(Width <= 0 || Height <= 0 || Width > msz || Height > msz) {
+            return ObjectPtr<IOpenGLRectangleTexture>();
+        }
 
-		unsigned int NumTotalMipLevel = 1 + floorf(Log2(Max(Width, Height)));
-		unsigned int NumMipLevel = 0;
+        unsigned int NumTotalMipLevel = 1 + floorf(Log2(Max(Width, Height)));
+        unsigned int NumMipLevel = 0;
 
-		 if(Levels == 0) {
-			 NumMipLevel = 1;
-		 }
-		 else if(Levels > (int)NumTotalMipLevel) {
-			 NumMipLevel = 1;
-		 }
-		 else {
-			 NumMipLevel = 1;
-		 }
+         if(Levels == 0) {
+             NumMipLevel = 1;
+         }
+         else if(Levels > (int)NumTotalMipLevel) {
+             NumMipLevel = 1;
+         }
+         else {
+             NumMipLevel = 1;
+         }
 
-		 ObjectPtr<IOpenGLRectangleTexture> result;
-		 result.Adopt(new IOpenGLRectangleTexture(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM));
-		 return result;
-	}
+         ObjectPtr<IOpenGLRectangleTexture> result;
+         result.Adopt(new IOpenGLRectangleTexture(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM));
+         return result;
+    }
 
-	ObjectPtr<IOpenGLCubeTexture> GpuDevice::CreateCubeTexture(
-			int EdgeLength,
-			int Levels,
-			BitmapFormat PixelFormat,
-			NUX_FILE_LINE_DECL) {
+    ObjectPtr<IOpenGLCubeTexture> GpuDevice::CreateCubeTexture(
+            int EdgeLength,
+            int Levels,
+            BitmapFormat PixelFormat,
+            NUX_FILE_LINE_DECL) {
 
-		unsigned int NumTotalMipLevel = 1 + floorf(Log2(EdgeLength));
-		unsigned int NumMipLevel = 0;
+        unsigned int NumTotalMipLevel = 1 + floorf(Log2(EdgeLength));
+        unsigned int NumMipLevel = 0;
 
-		if(Levels == 0) {
-			NumMipLevel = NumTotalMipLevel;
-		}
-		else if(Levels > (int)NumTotalMipLevel) {
-			NumMipLevel = NumTotalMipLevel;
-		}
-		else {
-			NumMipLevel = Levels;
-		}
+        if(Levels == 0) {
+            NumMipLevel = NumTotalMipLevel;
+        }
+        else if(Levels > (int)NumTotalMipLevel) {
+            NumMipLevel = NumTotalMipLevel;
+        }
+        else {
+            NumMipLevel = Levels;
+        }
 
-		ObjectPtr<IOpenGLCubeTexture> result;
-		result.Adopt(new IOpenGLCubeTexture(EdgeLength, NumMipLevel, PixelFormat));
-		return result;
-	}
+        ObjectPtr<IOpenGLCubeTexture> result;
+        result.Adopt(new IOpenGLCubeTexture(EdgeLength, NumMipLevel, PixelFormat));
+        return result;
+    }
 
-	ObjectPtr<IOpenGLVolumeTexture> GpuDevice::CreateVolumeTexture(
-			int Width,
-			int Height,
-			int Depth,
-			int Levels,
-			BitmapFormat PixelFormat,
-			NUX_FILE_LINE_DECL)
-	{
-		int msz = GetGpuInfo().GetMaxTextureSize();
-		if(Width <= 0 || Height <= 0 || Width > msz || Height > msz) {
-			return ObjectPtr<IOpenGLVolumeTexture>();
-		}
+    ObjectPtr<IOpenGLVolumeTexture> GpuDevice::CreateVolumeTexture(
+            int Width,
+            int Height,
+            int Depth,
+            int Levels,
+            BitmapFormat PixelFormat,
+            NUX_FILE_LINE_DECL)
+    {
+        int msz = GetGpuInfo().GetMaxTextureSize();
+        if(Width <= 0 || Height <= 0 || Width > msz || Height > msz) {
+            return ObjectPtr<IOpenGLVolumeTexture>();
+        }
 
-		unsigned int NumTotalMipLevel = 1 + floorf(Log2(Max(Max(Width, Height), Depth)));
-		unsigned int NumMipLevel = 0;
+        unsigned int NumTotalMipLevel = 1 + floorf(Log2(Max(Max(Width, Height), Depth)));
+        unsigned int NumMipLevel = 0;
 
-		if(Levels == 0) {
-			NumMipLevel = NumTotalMipLevel;
-		}
-		else if(Levels > (int)NumTotalMipLevel) {
-			NumMipLevel = NumTotalMipLevel;
-		}
-		else {
-			NumMipLevel = Levels;
-		}
+        if(Levels == 0) {
+            NumMipLevel = NumTotalMipLevel;
+        }
+        else if(Levels > (int)NumTotalMipLevel) {
+            NumMipLevel = NumTotalMipLevel;
+        }
+        else {
+            NumMipLevel = Levels;
+        }
 
-		ObjectPtr<IOpenGLVolumeTexture> result;
-		result.Adopt(new IOpenGLVolumeTexture(Width, Height, Depth, NumMipLevel, PixelFormat));
-		return result;
-	}
+        ObjectPtr<IOpenGLVolumeTexture> result;
+        result.Adopt(new IOpenGLVolumeTexture(Width, Height, Depth, NumMipLevel, PixelFormat));
+        return result;
+    }
 
-	ObjectPtr<IOpenGLAnimatedTexture> GpuDevice::CreateAnimatedTexture(
-			int Width,
-			int Height,
-			int Depth,
-			BitmapFormat PixelFormat)
-	{
-		int msz = GetGpuInfo().GetMaxTextureSize();
-		if(Width <= 0 || Height <= 0 || Width > msz || Height > msz) {
-			return ObjectPtr<IOpenGLAnimatedTexture>();
-		}
+    ObjectPtr<IOpenGLAnimatedTexture> GpuDevice::CreateAnimatedTexture(
+            int Width,
+            int Height,
+            int Depth,
+            BitmapFormat PixelFormat)
+    {
+        int msz = GetGpuInfo().GetMaxTextureSize();
+        if(Width <= 0 || Height <= 0 || Width > msz || Height > msz) {
+            return ObjectPtr<IOpenGLAnimatedTexture>();
+        }
 
-		ObjectPtr<IOpenGLAnimatedTexture> result;
-		result.Adopt(new IOpenGLAnimatedTexture(Width, Height, Depth, PixelFormat));
-		return result;
-	}
+        ObjectPtr<IOpenGLAnimatedTexture> result;
+        result.Adopt(new IOpenGLAnimatedTexture(Width, Height, Depth, PixelFormat));
+        return result;
+    }
 
-	ObjectPtr<IOpenGLQuery> GpuDevice::CreateQuery(QUERY_TYPE Type) {
-		ObjectPtr<IOpenGLQuery> result;
-		result.Adopt(new IOpenGLQuery(Type));
-		return result;
-	}
+    ObjectPtr<IOpenGLQuery> GpuDevice::CreateQuery(QUERY_TYPE Type) {
+        ObjectPtr<IOpenGLQuery> result;
+        result.Adopt(new IOpenGLQuery(Type));
+        return result;
+    }
 
     ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture2DFromID(
-			int id,
-			int width,
-			int height,
-			int levels,
-			BitmapFormat pixel_format,
-			NUX_FILE_LINE_DECL)
-	{
-		int msz = GetGpuInfo().GetMaxTextureSize();
-		if(width <= 0 || height <=0 || width > msz || height > msz) {
-			return ObjectPtr<IOpenGLTexture2D>();
-		}
+            int id,
+            int width,
+            int height,
+            int levels,
+            BitmapFormat pixel_format,
+            NUX_FILE_LINE_DECL)
+    {
+        int msz = GetGpuInfo().GetMaxTextureSize();
+        if(width <= 0 || height <=0 || width > msz || height > msz) {
+            return ObjectPtr<IOpenGLTexture2D>();
+        }
 
-		ObjectPtr<IOpenGLTexture2D> result;
-		result.Adopt(new IOpenGLTexture2D(width, height, levels, pixel_format, true, NUX_FILE_LINE_PARAM));
-		return result;
-	}
+        ObjectPtr<IOpenGLTexture2D> result;
+        result.Adopt(new IOpenGLTexture2D(width, height, levels, pixel_format, true, NUX_FILE_LINE_PARAM));
+        return result;
+    }
 }

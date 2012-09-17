@@ -33,101 +33,101 @@
 
 namespace nux
 {
-	static STREAMSOURCE _StreamSource[MAX_NUM_STREAM];
+    static STREAMSOURCE _StreamSource[MAX_NUM_STREAM];
 
-	ObjectPtr<IOpenGLVertexBuffer> GpuDevice::CreateVertexBuffer(
-			int Length,
-			VBO_USAGE Usage)
-	{
-		ObjectPtr<IOpenGLVertexBuffer> result;
-		result.Adopt(new IOpenGLVertexBuffer(Length, Usage, NUX_TRACKER_LOCATION));
-		return result;
-	}
+    ObjectPtr<IOpenGLVertexBuffer> GpuDevice::CreateVertexBuffer(
+            int Length,
+            VBO_USAGE Usage)
+    {
+        ObjectPtr<IOpenGLVertexBuffer> result;
+        result.Adopt(new IOpenGLVertexBuffer(Length, Usage, NUX_TRACKER_LOCATION));
+        return result;
+    }
 
-	ObjectPtr<IOpenGLIndexBuffer> GpuDevice::CreateIndexBuffer(
-			int Length,
-			VBO_USAGE Usage,
-			INDEX_FORMAT Format)
-	{
-		ObjectPtr<IOpenGLIndexBuffer> result;
-		result.Adopt(new IOpenGLIndexBuffer(Length, Usage, Format, NUX_TRACKER_LOCATION));
-		return result;
-	}
+    ObjectPtr<IOpenGLIndexBuffer> GpuDevice::CreateIndexBuffer(
+            int Length,
+            VBO_USAGE Usage,
+            INDEX_FORMAT Format)
+    {
+        ObjectPtr<IOpenGLIndexBuffer> result;
+        result.Adopt(new IOpenGLIndexBuffer(Length, Usage, Format, NUX_TRACKER_LOCATION));
+        return result;
+    }
 
-	ObjectPtr<IOpenGLPixelBufferObject> GpuDevice::CreatePixelBufferObject(
-			int Size,
-			VBO_USAGE Usage)
-	{
-		ObjectPtr<IOpenGLPixelBufferObject> result;
-		result.Adopt(new IOpenGLPixelBufferObject(Size, Usage, NUX_TRACKER_LOCATION));
-		return result;
-	}
+    ObjectPtr<IOpenGLPixelBufferObject> GpuDevice::CreatePixelBufferObject(
+            int Size,
+            VBO_USAGE Usage)
+    {
+        ObjectPtr<IOpenGLPixelBufferObject> result;
+        result.Adopt(new IOpenGLPixelBufferObject(Size, Usage, NUX_TRACKER_LOCATION));
+        return result;
+    }
 
-	ObjectPtr<IOpenGLVertexDeclaration> GpuDevice::CreateVertexDeclaration(
-			const VERTEXELEMENT *pVertexElements)
-	{
-		ObjectPtr<IOpenGLVertexDeclaration> result;
-		result.Adopt(new IOpenGLVertexDeclaration(pVertexElements));
-		return result;
-	}
+    ObjectPtr<IOpenGLVertexDeclaration> GpuDevice::CreateVertexDeclaration(
+            const VERTEXELEMENT *pVertexElements)
+    {
+        ObjectPtr<IOpenGLVertexDeclaration> result;
+        result.Adopt(new IOpenGLVertexDeclaration(pVertexElements));
+        return result;
+    }
 
-	void GpuDevice::InvalidateVertexBuffer()
-	{
-		CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
-	}
+    void GpuDevice::InvalidateVertexBuffer()
+    {
+        CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    }
 
-	void GpuDevice::InvalidateIndexBuffer() {
-		CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
-	}
+    void GpuDevice::InvalidateIndexBuffer() {
+        CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
+    }
 
-	int GpuDevice::DrawIndexedPrimitive(
-			ObjectPtr<IOpenGLIndexBuffer> IndexBuffer,
-			ObjectPtr<IOpenGLVertexDeclaration> VertexDeclaration,
-			PRIMITIVE_TYPE PrimitiveType,
-			int index_count)
-	{
-		nuxAssert(VertexDeclaration.IsValid());
+    int GpuDevice::DrawIndexedPrimitive(
+            ObjectPtr<IOpenGLIndexBuffer> IndexBuffer,
+            ObjectPtr<IOpenGLVertexDeclaration> VertexDeclaration,
+            PRIMITIVE_TYPE PrimitiveType,
+            int index_count)
+    {
+        nuxAssert(VertexDeclaration.IsValid());
 
-		if(!VertexDeclaration.IsValid())
-			return OGL_ERROR;
+        if(!VertexDeclaration.IsValid())
+            return OGL_ERROR;
 
-		int decl = 0;
+        int decl = 0;
 
-		for(int i = 0; i < 16; i++) {
-			VertexDeclaration->_valid_vertex_input[i] = 0;
-		}
+        for(int i = 0; i < 16; i++) {
+            VertexDeclaration->_valid_vertex_input[i] = 0;
+        }
 
-		while(VertexDeclaration->_declarations_array[decl].Stream != 0xFF) {
-			VERTEXELEMENT vtxelement = VertexDeclaration->_declarations_array[decl];
-			int shader_attribute_location = VertexDeclaration->GetVertexShaderAttributeLocation(decl);
+        while(VertexDeclaration->_declarations_array[decl].Stream != 0xFF) {
+            VERTEXELEMENT vtxelement = VertexDeclaration->_declarations_array[decl];
+            int shader_attribute_location = VertexDeclaration->GetVertexShaderAttributeLocation(decl);
 
-			if (shader_attribute_location == -1) {
-				++decl;
-				continue;
-			}
+            if (shader_attribute_location == -1) {
+                ++decl;
+                continue;
+            }
 
-			VertexDeclaration->GetVertexBuffer(vtxelement.Stream)->BindVertexBuffer();
-			glEnableVertexAttribArrayARB(shader_attribute_location);
+            VertexDeclaration->GetVertexBuffer(vtxelement.Stream)->BindVertexBuffer();
+            glEnableVertexAttribArrayARB(shader_attribute_location);
 
-			CHECKGL(glVertexAttribPointer(shader_attribute_location,
-						vtxelement.NumComponent,
-						vtxelement.Type,
-						GL_FALSE,
-						vtxelement.stride_,
-						(void*)vtxelement.Offset));
+            CHECKGL(glVertexAttribPointer(shader_attribute_location,
+                        vtxelement.NumComponent,
+                        vtxelement.Type,
+                        GL_FALSE,
+                        vtxelement.stride_,
+                        (void*)vtxelement.Offset));
 
-			VertexDeclaration->_valid_vertex_input[shader_attribute_location] = 1;
-			++decl;
-		}
+            VertexDeclaration->_valid_vertex_input[shader_attribute_location] = 1;
+            ++decl;
+        }
 
-		{
-			IndexBuffer->BindIndexBuffer();
+        {
+            IndexBuffer->BindIndexBuffer();
 
-			GLenum primitive = PrimitiveType;
-			GLenum index_format = GL_UNSIGNED_SHORT;
+            GLenum primitive = PrimitiveType;
+            GLenum index_format = GL_UNSIGNED_SHORT;
 
-			if (IndexBuffer->GetStride() == 4)
-				index_format = GL_UNSIGNED_INT;
+            if (IndexBuffer->GetStride() == 4)
+                index_format = GL_UNSIGNED_INT;
 
 //       switch(PrimitiveType)
 //       {
@@ -156,21 +156,21 @@ namespace nux
 //           nuxAssertMsg(0, "[GpuDevice::DrawIndexedPrimitive] Unknown Primitive Type.");
 //       }
 
-			CHECKGL(glDrawElements(primitive,
-						index_count,
-						index_format,
-						0));
-		}
+            CHECKGL(glDrawElements(primitive,
+                        index_count,
+                        index_format,
+                        0));
+        }
 
-		{
-			for(int index = 0; index < 16; index++) {
-				if (VertexDeclaration->_valid_vertex_input[index])
-					glDisableVertexAttribArrayARB(index);
-			}
+        {
+            for(int index = 0; index < 16; index++) {
+                if (VertexDeclaration->_valid_vertex_input[index])
+                    glDisableVertexAttribArrayARB(index);
+            }
 
-			InvalidateVertexBuffer();
-			InvalidateIndexBuffer();
-		}
+            InvalidateVertexBuffer();
+            InvalidateIndexBuffer();
+        }
 
 //    for (int i = 0; i < 8; i++)
 //    {
@@ -183,8 +183,8 @@ namespace nux
 //        CHECKGL(glBindTexture(GL_TEXTURE_2D, 0));
 //    }
 
-		return OGL_OK;
-	}
+        return OGL_OK;
+    }
 
 
 #ifndef NUX_OPENGLES_20
@@ -436,19 +436,18 @@ namespace nux
 
 
   int GpuDevice::SetStreamSource(
-		  unsigned int StreamNumber,
-		  ObjectPtr<IOpenGLVertexBuffer> pStreamData,
-		  unsigned int OffsetInBytes,
-		  unsigned int Stride)
+          unsigned int StreamNumber,
+          ObjectPtr<IOpenGLVertexBuffer> pStreamData,
+          unsigned int OffsetInBytes,
+          unsigned int Stride)
   {
-	  nuxAssert(StreamNumber < MAX_NUM_STREAM);
+      nuxAssert(StreamNumber < MAX_NUM_STREAM);
 
-	  _StreamSource[StreamNumber].Stream = StreamNumber;
-	  _StreamSource[StreamNumber].StreamOffset = OffsetInBytes;
-	  _StreamSource[StreamNumber].VertexBuffer = pStreamData;
-	  _StreamSource[StreamNumber].StreamStride = Stride;
+      _StreamSource[StreamNumber].Stream = StreamNumber;
+      _StreamSource[StreamNumber].StreamOffset = OffsetInBytes;
+      _StreamSource[StreamNumber].VertexBuffer = pStreamData;
+      _StreamSource[StreamNumber].StreamStride = Stride;
 
-	  return OGL_OK;
+      return OGL_OK;
   }
-
 }
