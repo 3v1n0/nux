@@ -417,25 +417,25 @@ namespace nux
               opengl_es_context_created = true;
             }
 #elif defined(NUX_OS_LINUX)
-            /*    int attribs[] =
-                  {
-                  GLX_CONTEXT_MAJOR_VERSION_ARB,  2,
-                  GLX_CONTEXT_MINOR_VERSION_ARB,  0,
-            //GLX_CONTEXT_PROFILE_MASK_ARB,   GLX_CONTEXT_ES2_PROFILE_BIT_EXT,
-            0
+      /*    int attribs[] =
+            {
+              GLX_CONTEXT_MAJOR_VERSION_ARB,  2,
+              GLX_CONTEXT_MINOR_VERSION_ARB,  0,
+              //GLX_CONTEXT_PROFILE_MASK_ARB,   GLX_CONTEXT_ES2_PROFILE_BIT_EXT,
+              0
             };
 
             GLXContext new_opengl_rendering_context = glXCreateContextAttribsARB(display, fb_config, 0, true, attribs);
 
             if (new_opengl_rendering_context == 0)
             {
-            nuxDebugMsg("[GpuDevice::GpuDevice] OpenGL ES 2.0 context creation has failed.");
+              nuxDebugMsg("[GpuDevice::GpuDevice] OpenGL ES 2.0 context creation has failed.");
             }
             else
             {
-            opengl_rendering_context = new_opengl_rendering_context;
-            glXMakeCurrent(display, window, opengl_rendering_context);
-            opengl_es_context_created = true;
+              opengl_rendering_context = new_opengl_rendering_context;
+              glXMakeCurrent(display, window, opengl_rendering_context);
+              opengl_es_context_created = true;
             }*/
 #endif
           }
