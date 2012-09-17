@@ -361,11 +361,11 @@ namespace nux
 
       //! Create a texture that the system supports. Rectangle texture or 2D texture.
       /*!
-        @Width    Texture width.
-        @Height     Texture height.
-        @Levels     Texture number of mipmaps. If 0, all the mipmaps levels are created
+        @Width        Texture width.
+        @Height       Texture height.
+        @Levels       Texture number of mipmaps. If 0, all the mipmaps levels are created
         @PixelFormat  Texture format.
-        @return     A device texture. Depending on the system capabilities returns a ObjectPtr<IOpenGLTexture2D> or ObjectPtr<IOpenGLRectangleTexture>.
+        @return       A device texture. Depending on the system capabilities returns a ObjectPtr<IOpenGLTexture2D> or ObjectPtr<IOpenGLRectangleTexture>.
         */
       ObjectPtr<IOpenGLBaseTexture> CreateSystemCapableDeviceTexture(
           int Width
