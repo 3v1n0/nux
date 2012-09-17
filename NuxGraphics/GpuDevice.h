@@ -181,16 +181,17 @@ namespace nux
     public:
 
       ObjectPtr<IOpenGLTexture2D> CreateTexture(
-          int Width,
-          int Height,
-          int Levels,
-          BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
+          int Width
+          , int Height
+          , int Levels
+          , BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
 
-      ObjectPtr<IOpenGLTexture2D> CreateTexture2DFromID(int id,
-          int Width,
-          int Height,
-          int Levels,
-          BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
+      ObjectPtr<IOpenGLTexture2D> CreateTexture2DFromID(
+          int id
+          , int Width
+          , int Height
+          , int Levels
+          , BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
 
       ObjectPtr<IOpenGLRectangleTexture> CreateRectangleTexture(
           int Width
@@ -255,8 +256,7 @@ namespace nux
           ObjectPtr<IOpenGLIndexBuffer> IndexBuffer,
           ObjectPtr<IOpenGLVertexDeclaration> VertexDeclaration,
           PRIMITIVE_TYPE PrimitiveType,
-          int PrimitiveCount
-          );
+          int PrimitiveCount);
 
       // Draw Primitive without index buffer
       int DrawPrimitive(
@@ -271,8 +271,7 @@ namespace nux
           PRIMITIVE_TYPE PrimitiveType,
           unsigned int PrimitiveCount,
           const void *pVertexStreamZeroData,
-          unsigned int VertexStreamZeroStride
-          );
+          unsigned int VertexStreamZeroStride);
 
       int SetStreamSource(
           unsigned int StreamNumber,
