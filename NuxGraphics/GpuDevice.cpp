@@ -209,9 +209,9 @@ namespace nux
     _support_opengl_version_30 = GLEW_VERSION_3_0 ? true : false;
     _support_opengl_version_31 = GLEW_VERSION_3_1 ? true : false;
     _support_opengl_version_32 = GLEW_VERSION_3_2 ? true : false;
-//      _support_opengl_version_33 = GLEW_VERSION_3_3 ? true : false;
-//      _support_opengl_version_40 = GLEW_VERSION_4_0 ? true : false;
-//      _support_opengl_version_41 = GLEW_VERSION_4_1 ? true : false;
+//     _support_opengl_version_33 = GLEW_VERSION_3_3 ? true : false;
+//     _support_opengl_version_40 = GLEW_VERSION_4_0 ? true : false;
+//     _support_opengl_version_41 = GLEW_VERSION_4_1 ? true : false;
 
     // See: http://developer.nvidia.com/object/General_FAQ.html
     // The value of GL_MAX_TEXTURE_UNITS is 4 for GeForce FX and GeForce 6 Series GPUs. Why is that, since those GPUs have 16 texture units?
@@ -226,9 +226,9 @@ namespace nux
 #endif
 
 #if defined(NUX_OS_WINDOWS)
-    _support_ext_swap_control         = WGLEW_EXT_swap_control ? true : false;
+    _support_ext_swap_control                 = WGLEW_EXT_swap_control ? true : false;
 #elif defined(NUX_OS_LINUX) && !defined(NUX_OPENGLES_20)
-    _support_ext_swap_control         = GLXEW_SGI_swap_control ? true : false;
+    _support_ext_swap_control                 = GLXEW_SGI_swap_control ? true : false;
 #endif
 
 #ifndef NUX_OPENGLES_20
@@ -355,8 +355,8 @@ namespace nux
 #elif defined(NUX_OS_LINUX)
     //bool opengl_es_context_created = false;
     if (has_glx_13_support &&
-        (((_opengl_major >= 3) && (req_opengl_major >= 3)) ||
-         ((_opengl_major >= 3) && opengl_es_20)))
+    (((_opengl_major >= 3) && (req_opengl_major >= 3)) ||
+    ((_opengl_major >= 3) && opengl_es_20)))
 #endif
     {
       // Create a new Opengl Rendering Context
@@ -365,7 +365,7 @@ namespace nux
       for (index = 0; OpenGLVersionTable [index].major != 0; index++)
       {
         if ((OpenGLVersionTable[index].major == req_opengl_major) &&
-            (OpenGLVersionTable[index].minor == req_opengl_minor))
+          (OpenGLVersionTable[index].minor == req_opengl_minor))
         {
           if (_opengl_major == 1)
           {
@@ -776,7 +776,7 @@ namespace nux
     CHECKGL(glBindBufferARB(GL_PIXEL_PACK_BUFFER_ARB, 0));
     return pBits;
 #else
-  return NULL;
+	return NULL;
 #endif
   }
 
@@ -964,6 +964,7 @@ namespace nux
     }
 
     nuxAssertMsg(0, "[NuxGraphicsResources::CreateSystemCapableTexture] No support for non power of two textures or rectangle textures");
+
     return 0;
   }
 }
