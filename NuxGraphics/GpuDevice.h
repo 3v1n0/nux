@@ -441,34 +441,33 @@ namespace nux
       bool opengl_es_20 = false);
 
 #elif defined(NUX_OS_LINUX)
-#ifdef NUX_OPENGLES_20
-    GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight,
-      BitmapFormat DeviceFormat,
-      Display *display,
-      Window window,
-      bool has_new_glx_support,
-      EGLConfig fb_config,
-      EGLContext &opengl_rendering_context,
-      int req_opengl_major = 2,
-      int req_opengl_minor = 0,
-      bool opengl_es_20 = true);
-#else
-    GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight,
-      BitmapFormat DeviceFormat,
-      Display *display,
-      Window window,
-      bool has_new_glx_support,
-      GLXFBConfig fb_config,
-      GLXContext &opengl_rendering_context,
-      int req_opengl_major = 1,   // requested opengl major version.
-      int req_opengl_minor = 0,   // requested opengl minor version.
-      bool opengl_es_20 = false);
+    #ifdef NUX_OPENGLES_20
+        GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight,
+          BitmapFormat DeviceFormat,
+          Display *display,
+          Window window,
+          bool has_new_glx_support,
+          EGLConfig fb_config,
+          EGLContext &opengl_rendering_context,
+          int req_opengl_major = 2,
+          int req_opengl_minor = 0,
+          bool opengl_es_20 = true);
+    #else
+        GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight,
+          BitmapFormat DeviceFormat,
+          Display *display,
+          Window window,
+          bool has_new_glx_support,
+          GLXFBConfig fb_config,
+          GLXContext &opengl_rendering_context,
+          int req_opengl_major = 1,   // requested opengl major version.
+          int req_opengl_minor = 0,   // requested opengl minor version.
+          bool opengl_es_20 = false);
+    #endif
 #endif
-#endif
-
-      ~GpuDevice();
-      friend class IOpenGLSurface;
-      friend class GraphicsEngine;
+    ~GpuDevice();
+    friend class IOpenGLSurface;
+    friend class GraphicsEngine;
   };
 
 }
