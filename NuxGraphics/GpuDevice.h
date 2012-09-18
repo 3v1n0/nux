@@ -221,7 +221,7 @@ namespace nux
 
     ObjectPtr<IOpenGLIndexBuffer> CreateIndexBuffer(
       int Length
-      , VBO_USAGE Usage     // Dynamic or WriteOnly
+      , VBO_USAGE Usage    // Dynamic or WriteOnly
       , INDEX_FORMAT Format);
 
     ObjectPtr<IOpenGLPixelBufferObject> CreatePixelBufferObject(int Size, VBO_USAGE Usage);
