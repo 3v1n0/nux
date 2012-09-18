@@ -379,7 +379,7 @@ namespace nux
     */
     BaseTexture* CreateSystemCapableTexture(NUX_FILE_LINE_PROTO);
 
-    bool SUPPORT_GL_ARB_TEXTURE_NON_POWER_OF_TWO()  const
+    bool SUPPORT_GL_ARB_TEXTURE_NON_POWER_OF_TWO() const
     {
       return _gpu_info->Support_ARB_Texture_Non_Power_Of_Two();
     }
