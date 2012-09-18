@@ -187,7 +187,18 @@ namespace nux
     ///////////////////
 
     // Neutral
+    //! Render a textured quad.
+    /*!
+        Shader Output = ve4(tex.r, tex.g, tex.b, tex.a)
+    */
     void QRP_1Tex(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm& texxform, const Color& color0);
+    //! Render a textured quad. 
+    /*!
+        Multiply the shader rgb output with the texture alpha.
+        Shader Output = ve4(tex.r*tex.a, tex.g*tex.a, tex.b*tex.a, tex.a)
+    */
+    void QRP_1TexPremultiply(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm& texxform, const Color& color0);
+    void QRP_TexDesaturate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm& texxform, const Color& color0, float desaturation_factor);    
     void QRP_Pixelate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm& texxform, const Color& c0, int pixel_size);
     void QRP_Color(int x, int y, int width, int height, const Color& c0);
     void QRP_Color(int x, int y, int width, int height, const Color& c0, const Color& c1, const Color& c2, const Color& c3);
@@ -260,6 +271,7 @@ namespace nux
 
     // ASM
     void QRP_ASM_1Tex(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm& texxform, const Color& color0);
+    void QRP_ASM_1TexPremultiply(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm& texxform, const Color& color0);
     void QRP_ASM_Pixelate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm& texxform, const Color& c0, int pixel_size);
 
     void QRP_ASM_Color(int x, int y, int width, int height, const Color& c0);
@@ -379,6 +391,8 @@ namespace nux
     // GLSL
 
     void QRP_GLSL_1Tex(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm& texxform, const Color& c0);
+    void QRP_GLSL_1TexPremultiply(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm& texxform, const Color& c0);
+    void QRP_GLSL_TexDesaturate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm& texxform, const Color& color0, float desaturation_factor);
     void QRP_GLSL_Pixelate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm& texxform, const Color& c0, int pixel_size);
 
     void QRP_GLSL_Color(int x, int y, int width, int height, const Color& c0);
@@ -625,6 +639,17 @@ namespace nux
     */
     void SetOrthographicProjectionMatrix(int viewport_width, int viewport_height);
 
+    //! Set orthographic projection matrix.
+    /*!
+        The default projection matrix used by nux.
+
+        @param left coordinate of viewport location.
+        @param right coordinate of viewport location.
+        @param top coordinate of viewport location.
+        @param bottom coordinate of viewport location.
+    */
+    void SetOrthographicProjectionMatrix(int left, int right, int bottom, int top);
+
     //! Reset the projection matrix to identity.
     void ResetProjectionMatrix();
 
@@ -819,6 +844,12 @@ namespace nux
     //! Same as m_AsmTextureModColor for rectangle textures.
     ObjectPtr<IOpenGLAsmShaderProgram> m_AsmTextureRectModColor;
 
+    void InitAsmTexturePremultiplyShader();
+    //! Render polygons with a texture modulated by a color.
+    ObjectPtr<IOpenGLAsmShaderProgram> m_AsmTexturePremultiplyModColor;
+    //! Same as m_AsmTextureModColor for rectangle textures.
+    ObjectPtr<IOpenGLAsmShaderProgram> m_AsmTexturePremultiplyRectModColor;
+
     void InitAsmPixelateShader();
     //! Render a pixelated texture over a polygon.
     ObjectPtr<IOpenGLAsmShaderProgram> m_AsmPixelate;
@@ -897,6 +928,10 @@ namespace nux
     //! Render polygons with a texture modulated by a color.
     ObjectPtr<IOpenGLShaderProgram> m_SlTextureModColor;
 
+    void InitSlTexturePremultiplyShader();
+    //! Render polygons with a premultiplied texture modulated by a color.
+    ObjectPtr<IOpenGLShaderProgram> m_SlTexturePremultiplyModColor;
+
     void InitSlPixelateShader();
     //! Render a pixelated texture over a polygon.
     ObjectPtr<IOpenGLShaderProgram> m_SLPixelate;
@@ -958,11 +993,12 @@ namespace nux
     //! Gauss vertical filter.
     ObjectPtr<IOpenGLShaderProgram> _vertical_hq_gauss_filter_prog[NUX_MAX_GAUSSIAN_SIGMA];
 
-
-
     void InitSLColorMatrixFilter();
     //! Color matrix filter.
     ObjectPtr<IOpenGLShaderProgram> _color_matrix_filter_prog;
+
+    void InitSLDesaturation();
+    ObjectPtr<IOpenGLShaderProgram> desaturation_prog_;
 
     void InitSlBlendModes();
 

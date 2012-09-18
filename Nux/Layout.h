@@ -137,10 +137,10 @@ namespace nux
     };
 
 
-    //! Deprecated. Use SetLeftRightPadding.
+    //! Deprecated. Use SetLeftAndRightPadding.
     void SetHorizontalExternalMargin(int m);
 
-    //! Deprecated. Use SetTopBottomPadding,
+    //! Deprecated. Use SetTopAndBottomPadding,
     void SetVerticalExternalMargin(int m);
 
     //! Set the left/right/top/bottom padding of the layout.
@@ -199,7 +199,7 @@ namespace nux
     /*!
         Mark all element in the layout as dirty. This will also mark all sub elements as dirty.
         InputArea element are not marked as dirty(they don't have the flags).
-        Emits the signal \i OnQueueDraw.
+        Emits the signal \i queue_draw.
     */
     virtual void QueueDraw();
 
@@ -208,6 +208,12 @@ namespace nux
         @return True if a draw has been scheduled for this layout.
     */
     bool IsQueuedForDraw();
+
+    //! Return true if a draw has been scheduled for a child of this layout
+    /*!
+        @return True if a draw has been scheduled for a child of this layout.
+    */
+    bool ChildQueuedForDraw();
 
     //! Define how elements are spread out inside the layout.
     /*!
@@ -240,23 +246,34 @@ namespace nux
       return _layout_element_list;
     }
 
-    virtual void ChildViewQueuedDraw(View *view);
-    virtual void ChildLayoutQueuedDraw(Layout *layout);
-    virtual void ChildLayoutChildQueuedDraw(Area *area);
+    virtual void ChildQueueDraw(Area* area);
 
-    sigc::signal<void, Layout*> OnQueueDraw;  //!< Signal emitted when a layout is scheduled for a draw.
-    sigc::signal<void, Area*>   OnChildQueueDraw;
+    sigc::signal<void, Layout*> queue_draw;  //!< Signal emitted when a layout is scheduled for a draw.
+    sigc::signal<void, Area*>   child_queue_draw;
     sigc::signal<void, Layout*, Area*> ViewAdded;
     sigc::signal<void, Layout*, Area*> ViewRemoved;
 
 #ifdef NUX_GESTURES_SUPPORT
     virtual Area* GetInputAreaHitByGesture(const GestureEvent &event);
 #endif
+    
+    /*!
+        When a layout goes through Layout::ProcessDraw, this call isn't necessary. Otherwise, call it
+        to set the value of draw_cmd_queued_ to false. 
+    */
+    virtual void ResetQueueDraw(); 
 
   protected:
+    void BeginBackupTextureRendering(GraphicsEngine& graphics_engine, bool force_draw);
+    void EndBackupTextureRendering(GraphicsEngine& graphics_engine, bool force_draw);
+
+    virtual void GeometryChangePending(bool position_about_to_change, bool size_about_to_change);
+    virtual void GeometryChanged(bool position_has_changed, bool size_has_changed);
+
     virtual bool AcceptKeyNavFocus();
     
-    bool _queued_draw; //<! The rendering of the layout needs to be refreshed.
+    bool draw_cmd_queued_; //<! The rendering of the layout needs to be refreshed.
+    bool child_draw_cmd_queued_; //<! A child of this layout has requested a draw.
 
     Size m_ContentSize;
     int m_contentWidth;

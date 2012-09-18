@@ -27,9 +27,9 @@
 #include "NuxGraphics/CairoGraphics.h"
 
 #include "TextEntry.h"
-#include "TextEntryComposeSeqs.h"
 
 #if defined(NUX_OS_LINUX)
+#include "TextEntryComposeSeqs.h"
 #include <X11/cursorfont.h>
 #include "InputMethodIBus.h"
 #endif
@@ -187,6 +187,7 @@ namespace nux
 
     SetAcceptKeyboardEvent(true);
     EnableDoubleClick(true);
+    SetPasswordChar("*");
   }
 
   TextEntry::~TextEntry()
@@ -220,10 +221,8 @@ namespace nux
 
   void TextEntry::GeometryChanged()
   {
-
       update_canvas_ = true;
-      View::GeometryChanged();
-
+      View::GeometryChanged(true, true);
   }
 
   Area* TextEntry::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
@@ -633,6 +632,7 @@ namespace nux
   {
     SearchState search_state = SearchState::NO_MATCH;
 
+#if defined(NUX_OS_LINUX)
     if (input.size() >= ComposeSequence::MAX_SYMBOLS)
       return search_state;
 
@@ -670,6 +670,7 @@ namespace nux
         }
       }
     }
+#endif
 
     return search_state;
   }
@@ -2555,12 +2556,10 @@ namespace nux
   {
     if (c == NULL || *c == 0 || !IsLegalUTF8Char(c, GetUTF8CharLength(c)))
     {
-      SetVisibility(true);
       password_char_.clear();
     }
     else
     {
-      SetVisibility(false);
       password_char_.assign(c, GetUTF8CharLength(c));
     }
     QueueRefresh(true, true);

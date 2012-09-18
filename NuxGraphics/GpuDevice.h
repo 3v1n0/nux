@@ -302,6 +302,12 @@ namespace nux
     ObjectPtr<IOpenGLVertexDeclaration> CreateVertexDeclaration(
       const VERTEXELEMENT *pVertexElements);
 
+    //! Create an return an ObjectPtr that encapsulates OpenGL framebuffer object.
+    /*!
+        Create an return an ObjectPtr that encapsulates OpenGL framebuffer object.
+        This function has side effects. It will change the framebuffer object that 
+        is set in the GPU. 
+    */
     ObjectPtr<IOpenGLFrameBufferObject> CreateFrameBufferObject();
 
     ObjectPtr<IOpenGLShaderProgram> CreateShaderProgram();
@@ -386,13 +392,16 @@ namespace nux
   public:
     void SetCurrentFrameBufferObject(ObjectPtr<IOpenGLFrameBufferObject> fbo);
     ObjectPtr<IOpenGLFrameBufferObject> GetCurrentFrameBufferObject();
+    ObjectPtr<IOpenGLBaseTexture> ActiveFboTextureAttachment(int color_attachment_index);
+    ObjectPtr<IOpenGLBaseTexture> ActiveFboDepthTextureAttachment();
+
 
     int GetOpenGLMajorVersion() const;
     int GetOpenGLMinorVersion() const;
   private:
     // Default FrameBufferobject
     ObjectPtr<IOpenGLFrameBufferObject> _FrameBufferObject;
-    ObjectPtr<IOpenGLFrameBufferObject> _CurrentFrameBufferObject;
+    ObjectPtr<IOpenGLFrameBufferObject> active_framebuffer_object_;
 
     struct PixelBufferObject
     {

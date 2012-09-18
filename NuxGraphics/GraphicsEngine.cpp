@@ -153,6 +153,8 @@ namespace nux
   GraphicsEngine::GraphicsEngine(GraphicsDisplay& GlWindow, bool create_rendering_data)
   : _graphics_display(GlWindow)
   {
+
+    IOpenGLShaderProgram::SetShaderTracking(true);
     _scissor.x = 0;
     _scissor.y = 0;
     _clip_offset_x = 0;
@@ -1035,6 +1037,11 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
   void GraphicsEngine::SetOrthographicProjectionMatrix(int viewport_width, int viewport_height)
   {
     _projection_matrix.Orthographic(0, viewport_width, viewport_height, 0, -1.0f, 1.0f);
+  }
+
+  void GraphicsEngine::SetOrthographicProjectionMatrix(int left, int right, int bottom, int top)
+  {
+    _projection_matrix.Orthographic(left, right, bottom, top, -1.0f, 1.0f);
   }
 
   void GraphicsEngine::ResetProjectionMatrix()
