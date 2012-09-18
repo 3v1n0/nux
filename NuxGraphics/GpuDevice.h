@@ -185,11 +185,11 @@ namespace nux
       int Levels,
       BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
 
-    ObjectPtr<IOpenGLTexture2D> CreateTexture2DFromID(int id
-      , int Width
-      , int Height
-      , int Levels
-      , BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
+    ObjectPtr<IOpenGLTexture2D> CreateTexture2DFromID(int id, 
+      int Width,
+      int Height,
+      int Levels,
+      BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
 
     ObjectPtr<IOpenGLRectangleTexture> CreateRectangleTexture(
       int Width
@@ -221,7 +221,7 @@ namespace nux
 
     ObjectPtr<IOpenGLIndexBuffer> CreateIndexBuffer(
       int Length
-      , VBO_USAGE Usage   // Dynamic or WriteOnly
+      , VBO_USAGE Usage     // Dynamic or WriteOnly
       , INDEX_FORMAT Format);
 
     ObjectPtr<IOpenGLPixelBufferObject> CreatePixelBufferObject(int Size, VBO_USAGE Usage);
@@ -313,26 +313,26 @@ namespace nux
     //! Restore the backbuffer as the render target.
     void DeactivateFrameBuffer();
 
-    public:
-      void SetCurrentFrameBufferObject(ObjectPtr<IOpenGLFrameBufferObject> fbo);
-      ObjectPtr<IOpenGLFrameBufferObject> GetCurrentFrameBufferObject();
+  public:
+    void SetCurrentFrameBufferObject(ObjectPtr<IOpenGLFrameBufferObject> fbo);
+    ObjectPtr<IOpenGLFrameBufferObject> GetCurrentFrameBufferObject();
 
-      int GetOpenGLMajorVersion() const;
-      int GetOpenGLMinorVersion() const;
-    private:
-      // Default FrameBufferobject
-      ObjectPtr<IOpenGLFrameBufferObject> _FrameBufferObject;
-      ObjectPtr<IOpenGLFrameBufferObject> _CurrentFrameBufferObject;
+    int GetOpenGLMajorVersion() const;
+    int GetOpenGLMinorVersion() const;
+  private:
+    // Default FrameBufferobject
+    ObjectPtr<IOpenGLFrameBufferObject> _FrameBufferObject;
+    ObjectPtr<IOpenGLFrameBufferObject> _CurrentFrameBufferObject;
 
-      struct PixelBufferObject
-      {
-        ObjectPtr<IOpenGLPixelBufferObject> PBO;
-        bool   IsReserved;
-      };
+    struct PixelBufferObject
+    {
+      ObjectPtr<IOpenGLPixelBufferObject> PBO;
+      bool   IsReserved;
+    };
 
-      unsigned int _PixelStoreAlignment;
+    unsigned int _PixelStoreAlignment;
 
-      std::vector<PixelBufferObject> _PixelBufferArray;
+    std::vector<PixelBufferObject> _PixelBufferArray;
 
   public:
 
@@ -379,7 +379,7 @@ namespace nux
     */
     BaseTexture* CreateSystemCapableTexture(NUX_FILE_LINE_PROTO);
 
-    bool SUPPORT_GL_ARB_TEXTURE_NON_POWER_OF_TWO() const
+    bool SUPPORT_GL_ARB_TEXTURE_NON_POWER_OF_TWO()  const
     {
       return _gpu_info->Support_ARB_Texture_Non_Power_Of_Two();
     }
