@@ -143,35 +143,35 @@ namespace nux
     GPixelFormats[BITFMT_A8].Format	                  = GL_LUMINANCE;
     GPixelFormats[BITFMT_A8].type	                    = GL_UNSIGNED_BYTE;
 #else
-    GPixelFormats[ BITFMT_UNKNOWN     ].PlatformFormat  = GL_NONE;              // Not supported for rendering.
+    GPixelFormats[ BITFMT_UNKNOWN		].PlatformFormat	= GL_NONE;							// Not supported for rendering.
 
     // Data in PC system memory: R(LSB) G B A(MSB) ---> GL Format:GL_RGBA - GL Type:GL_UNSIGNED_INT_8_8_8_8_REV
-    GPixelFormats[BITFMT_R8G8B8A8].PlatformFormat       = GL_RGBA;
-    GPixelFormats[BITFMT_R8G8B8A8].Format               = GL_RGBA;
-    GPixelFormats[BITFMT_R8G8B8A8].type                 = GL_UNSIGNED_BYTE;
+    GPixelFormats[BITFMT_R8G8B8A8].PlatformFormat	    = GL_RGBA;
+    GPixelFormats[BITFMT_R8G8B8A8].Format	            = GL_RGBA;
+    GPixelFormats[BITFMT_R8G8B8A8].type	              = GL_UNSIGNED_BYTE;
 
     // Data in PC system memory: B(LSB) G R A(MSB) ---> GL Format:GL_BGRA - GL Type:GL_UNSIGNED_INT_8_8_8_8_REV
-    GPixelFormats[BITFMT_B8G8R8A8].PlatformFormat       = GL_BGRA_EXT;
-    GPixelFormats[BITFMT_B8G8R8A8].Format               = GL_BGRA_EXT;
-    GPixelFormats[BITFMT_B8G8R8A8].type                 = GL_UNSIGNED_BYTE;
+    GPixelFormats[BITFMT_B8G8R8A8].PlatformFormat	    = GL_BGRA_EXT;
+    GPixelFormats[BITFMT_B8G8R8A8].Format	            = GL_BGRA_EXT;
+    GPixelFormats[BITFMT_B8G8R8A8].type	              = GL_UNSIGNED_BYTE;
 
     // Data in PC system memory: R(LSB) G B(MSB) ---> GL Format:GL_RGB - GL Type:GL_UNSIGNED
-    GPixelFormats[BITFMT_R8G8B8].PlatformFormat         = GL_RGB;
-    GPixelFormats[BITFMT_R8G8B8].Format                 = GL_RGB;
-    GPixelFormats[BITFMT_R8G8B8].type                   = GL_UNSIGNED_BYTE;
+    GPixelFormats[BITFMT_R8G8B8].PlatformFormat	      = GL_RGB;
+    GPixelFormats[BITFMT_R8G8B8].Format	              = GL_RGB;
+    GPixelFormats[BITFMT_R8G8B8].type	                = GL_UNSIGNED_BYTE;
 
-    GPixelFormats[BITFMT_R5G6B5].PlatformFormat         = GL_RGB;
-    GPixelFormats[BITFMT_R5G6B5].Format                 = GL_RGB;
-    GPixelFormats[BITFMT_R5G6B5].type                   = GL_UNSIGNED_SHORT_5_6_5;
+    GPixelFormats[BITFMT_R5G6B5].PlatformFormat	      = GL_RGB;
+    GPixelFormats[BITFMT_R5G6B5].Format	              = GL_RGB;
+    GPixelFormats[BITFMT_R5G6B5].type	                = GL_UNSIGNED_SHORT_5_6_5;
 
     // Note: Using GL_DEPTH_COMPONENT24 or GL_DEPTH_COMPONENT for PlatformFormat generate error GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT.
-    GPixelFormats[BITFMT_D24S8].PlatformFormat          = GL_DEPTH_STENCIL_OES;
-    GPixelFormats[BITFMT_D24S8].Format                  = GL_DEPTH_STENCIL_OES;
-    GPixelFormats[BITFMT_D24S8].type                    = GL_UNSIGNED_INT_24_8_OES;
+    GPixelFormats[BITFMT_D24S8].PlatformFormat	      = GL_DEPTH_STENCIL_OES;
+    GPixelFormats[BITFMT_D24S8].Format	              = GL_DEPTH_STENCIL_OES;
+    GPixelFormats[BITFMT_D24S8].type	                = GL_UNSIGNED_INT_24_8_OES;
 
-    GPixelFormats[BITFMT_A8].PlatformFormat             = GL_ALPHA;
-    GPixelFormats[BITFMT_A8].Format                     = GL_ALPHA;
-    GPixelFormats[BITFMT_A8].type                       = GL_UNSIGNED_BYTE;
+    GPixelFormats[BITFMT_A8].PlatformFormat	          = GL_ALPHA;
+    GPixelFormats[BITFMT_A8].Format	                  = GL_ALPHA;
+    GPixelFormats[BITFMT_A8].type	                    = GL_UNSIGNED_BYTE;
 #endif
   }
 
