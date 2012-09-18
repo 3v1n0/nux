@@ -67,7 +67,7 @@ namespace nux
   static void InitTextureFormats()
   {
 #ifndef NUX_OPENGLES_20
-    GPixelFormats[ BITFMT_UNKNOWN     ].PlatformFormat  = GL_NONE;              // Not supported for rendering.
+    GPixelFormats[ BITFMT_UNKNOWN		].PlatformFormat	= GL_NONE;							// Not supported for rendering.
 
     // Data in PC system memory: R(LSB) G B A(MSB) ---> GL Format:GL_RGBA - GL Type:GL_UNSIGNED_INT_8_8_8_8_REV
     GPixelFormats[BITFMT_R8G8B8A8].PlatformFormat     = GL_RGBA8;
@@ -90,90 +90,90 @@ namespace nux
     GPixelFormats[BITFMT_A8R8G8B8].type               = GL_UNSIGNED_INT_8_8_8_8;
 
     // Data in PC system memory: R(LSB) G B(MSB) ---> GL Format:GL_RGB - GL Type:GL_UNSIGNED
-    GPixelFormats[BITFMT_R8G8B8].PlatformFormat     = GL_RGB8;
-    GPixelFormats[BITFMT_R8G8B8].Format             = GL_RGB;
-    GPixelFormats[BITFMT_R8G8B8].type               = GL_UNSIGNED_BYTE;
+    GPixelFormats[BITFMT_R8G8B8].PlatformFormat       = GL_RGB8;
+    GPixelFormats[BITFMT_R8G8B8].Format               = GL_RGB;
+    GPixelFormats[BITFMT_R8G8B8].type                 = GL_UNSIGNED_BYTE;
 
-    GPixelFormats[BITFMT_B8G8R8].PlatformFormat     = GL_RGB8;
-    GPixelFormats[BITFMT_B8G8R8].Format             = GL_BGR;
-    GPixelFormats[BITFMT_B8G8R8].type               = GL_UNSIGNED_BYTE;
+    GPixelFormats[BITFMT_B8G8R8].PlatformFormat       = GL_RGB8;
+    GPixelFormats[BITFMT_B8G8R8].Format               = GL_BGR;
+    GPixelFormats[BITFMT_B8G8R8].type                 = GL_UNSIGNED_BYTE;
 
-    GPixelFormats[BITFMT_R5G6B5].PlatformFormat     = GL_RGB5;
-    GPixelFormats[BITFMT_R5G6B5].Format             = GL_RGB;
-    GPixelFormats[BITFMT_R5G6B5].type               = GL_UNSIGNED_SHORT_5_6_5;
+    GPixelFormats[BITFMT_R5G6B5].PlatformFormat       = GL_RGB5;
+    GPixelFormats[BITFMT_R5G6B5].Format               = GL_RGB;
+    GPixelFormats[BITFMT_R5G6B5].type                 = GL_UNSIGNED_SHORT_5_6_5;
 
-    GPixelFormats[BITFMT_RGBA16F].PlatformFormat    = GL_RGBA16F_ARB;
-    GPixelFormats[BITFMT_RGBA16F].Format            = GL_RGBA;
-    GPixelFormats[BITFMT_RGBA16F].type              = GL_HALF_FLOAT_ARB;
+    GPixelFormats[BITFMT_RGBA16F].PlatformFormat      = GL_RGBA16F_ARB;
+    GPixelFormats[BITFMT_RGBA16F].Format              = GL_RGBA;
+    GPixelFormats[BITFMT_RGBA16F].type                = GL_HALF_FLOAT_ARB;
 
-    GPixelFormats[BITFMT_RGB32F].PlatformFormat     = GL_RGB;
-    GPixelFormats[BITFMT_RGB32F].Format             = GL_RGB;
-    GPixelFormats[BITFMT_RGB32F].type               = GL_FLOAT;
+    GPixelFormats[BITFMT_RGB32F].PlatformFormat       = GL_RGB;
+    GPixelFormats[BITFMT_RGB32F].Format               = GL_RGB;
+    GPixelFormats[BITFMT_RGB32F].type                 = GL_FLOAT;
 
-    GPixelFormats[BITFMT_RGBA32F].PlatformFormat    = GL_RGBA32F_ARB;
-    GPixelFormats[BITFMT_RGBA32F].Format            = GL_RGBA;
-    GPixelFormats[BITFMT_RGBA32F].type              = GL_FLOAT;
+    GPixelFormats[BITFMT_RGBA32F].PlatformFormat      = GL_RGBA32F_ARB;
+    GPixelFormats[BITFMT_RGBA32F].Format              = GL_RGBA;
+    GPixelFormats[BITFMT_RGBA32F].type                = GL_FLOAT;
 
     // Note: Using GL_DEPTH_COMPONENT24 or GL_DEPTH_COMPONENT for PlatformFormat generate error GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT.
-    GPixelFormats[BITFMT_D24S8].PlatformFormat    = GL_DEPTH24_STENCIL8_EXT;
-    GPixelFormats[BITFMT_D24S8].Format        = GL_DEPTH_STENCIL_EXT;   // or GL_DEPTH_STENCIL_NV;
-    GPixelFormats[BITFMT_D24S8].type          = GL_UNSIGNED_INT_24_8_EXT; // or GL_UNSIGNED_INT_24_8_NV;
+    GPixelFormats[BITFMT_D24S8].PlatformFormat          = GL_DEPTH24_STENCIL8_EXT;
+    GPixelFormats[BITFMT_D24S8].Format                  = GL_DEPTH_STENCIL_EXT;   // or GL_DEPTH_STENCIL_NV;
+    GPixelFormats[BITFMT_D24S8].type                    = GL_UNSIGNED_INT_24_8_EXT; // or GL_UNSIGNED_INT_24_8_NV;
 
-    GPixelFormats[BITFMT_DXT1].PlatformFormat       = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-    GPixelFormats[BITFMT_DXT2].PlatformFormat       = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-    GPixelFormats[BITFMT_DXT3].PlatformFormat       = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-    GPixelFormats[BITFMT_DXT4].PlatformFormat       = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-    GPixelFormats[BITFMT_DXT5].PlatformFormat       = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+    GPixelFormats[BITFMT_DXT1].PlatformFormat           = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+    GPixelFormats[BITFMT_DXT2].PlatformFormat           = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+    GPixelFormats[BITFMT_DXT3].PlatformFormat           = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+    GPixelFormats[BITFMT_DXT4].PlatformFormat           = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+    GPixelFormats[BITFMT_DXT5].PlatformFormat           = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 
-    GPixelFormats[BITFMT_R10G10B10A2].PlatformFormat  = GL_RGB10_A2;
-    GPixelFormats[BITFMT_R10G10B10A2].Format          = GL_RGBA;
-    GPixelFormats[BITFMT_R10G10B10A2].type            = GL_UNSIGNED_INT_10_10_10_2;
+    GPixelFormats[BITFMT_R10G10B10A2].PlatformFormat    = GL_RGB10_A2;
+    GPixelFormats[BITFMT_R10G10B10A2].Format            = GL_RGBA;
+    GPixelFormats[BITFMT_R10G10B10A2].type              = GL_UNSIGNED_INT_10_10_10_2;
 
-    GPixelFormats[BITFMT_A2B10G10R10].PlatformFormat  = GL_RGB10_A2;
-    GPixelFormats[BITFMT_A2B10G10R10].Format          = GL_RGBA;
-    GPixelFormats[BITFMT_A2B10G10R10].type            = GL_UNSIGNED_INT_2_10_10_10_REV;
+    GPixelFormats[BITFMT_A2B10G10R10].PlatformFormat    = GL_RGB10_A2;
+    GPixelFormats[BITFMT_A2B10G10R10].Format            = GL_RGBA;
+    GPixelFormats[BITFMT_A2B10G10R10].type              = GL_UNSIGNED_INT_2_10_10_10_REV;
 
-    GPixelFormats[BITFMT_B10G10R10A2].PlatformFormat  = GL_RGB10_A2;
-    GPixelFormats[BITFMT_B10G10R10A2].Format          = GL_BGRA;
-    GPixelFormats[BITFMT_B10G10R10A2].type            = GL_UNSIGNED_INT_10_10_10_2;
+    GPixelFormats[BITFMT_B10G10R10A2].PlatformFormat    = GL_RGB10_A2;
+    GPixelFormats[BITFMT_B10G10R10A2].Format            = GL_BGRA;
+    GPixelFormats[BITFMT_B10G10R10A2].type              = GL_UNSIGNED_INT_10_10_10_2;
 
-    GPixelFormats[BITFMT_A2R10G10B10].PlatformFormat  = GL_RGB10_A2;
-    GPixelFormats[BITFMT_A2R10G10B10].Format          = GL_BGRA;
-    GPixelFormats[BITFMT_A2R10G10B10].type            = GL_UNSIGNED_INT_2_10_10_10_REV;
+    GPixelFormats[BITFMT_A2R10G10B10].PlatformFormat    = GL_RGB10_A2;
+    GPixelFormats[BITFMT_A2R10G10B10].Format            = GL_BGRA;
+    GPixelFormats[BITFMT_A2R10G10B10].type              = GL_UNSIGNED_INT_2_10_10_10_REV;
 
-    GPixelFormats[BITFMT_A8].PlatformFormat       = GL_RGBA8;
-    GPixelFormats[BITFMT_A8].Format               = GL_LUMINANCE;
-    GPixelFormats[BITFMT_A8].type                 = GL_UNSIGNED_BYTE;
+    GPixelFormats[BITFMT_A8].PlatformFormat             = GL_RGBA8;
+    GPixelFormats[BITFMT_A8].Format                     = GL_LUMINANCE;
+    GPixelFormats[BITFMT_A8].type                       = GL_UNSIGNED_BYTE;
 #else
     GPixelFormats[ BITFMT_UNKNOWN     ].PlatformFormat  = GL_NONE;              // Not supported for rendering.
 
     // Data in PC system memory: R(LSB) G B A(MSB) ---> GL Format:GL_RGBA - GL Type:GL_UNSIGNED_INT_8_8_8_8_REV
-    GPixelFormats[BITFMT_R8G8B8A8].PlatformFormat     = GL_RGBA;
-    GPixelFormats[BITFMT_R8G8B8A8].Format             = GL_RGBA;
-    GPixelFormats[BITFMT_R8G8B8A8].type               = GL_UNSIGNED_BYTE;
+    GPixelFormats[BITFMT_R8G8B8A8].PlatformFormat       = GL_RGBA;
+    GPixelFormats[BITFMT_R8G8B8A8].Format               = GL_RGBA;
+    GPixelFormats[BITFMT_R8G8B8A8].type                 = GL_UNSIGNED_BYTE;
 
     // Data in PC system memory: B(LSB) G R A(MSB) ---> GL Format:GL_BGRA - GL Type:GL_UNSIGNED_INT_8_8_8_8_REV
-    GPixelFormats[BITFMT_B8G8R8A8].PlatformFormat     = GL_BGRA_EXT;
-    GPixelFormats[BITFMT_B8G8R8A8].Format             = GL_BGRA_EXT;
-    GPixelFormats[BITFMT_B8G8R8A8].type               = GL_UNSIGNED_BYTE;
+    GPixelFormats[BITFMT_B8G8R8A8].PlatformFormat       = GL_BGRA_EXT;
+    GPixelFormats[BITFMT_B8G8R8A8].Format               = GL_BGRA_EXT;
+    GPixelFormats[BITFMT_B8G8R8A8].type                 = GL_UNSIGNED_BYTE;
 
     // Data in PC system memory: R(LSB) G B(MSB) ---> GL Format:GL_RGB - GL Type:GL_UNSIGNED
-    GPixelFormats[BITFMT_R8G8B8].PlatformFormat     = GL_RGB;
-    GPixelFormats[BITFMT_R8G8B8].Format             = GL_RGB;
-    GPixelFormats[BITFMT_R8G8B8].type               = GL_UNSIGNED_BYTE;
+    GPixelFormats[BITFMT_R8G8B8].PlatformFormat         = GL_RGB;
+    GPixelFormats[BITFMT_R8G8B8].Format                 = GL_RGB;
+    GPixelFormats[BITFMT_R8G8B8].type                   = GL_UNSIGNED_BYTE;
 
-    GPixelFormats[BITFMT_R5G6B5].PlatformFormat     = GL_RGB;
-    GPixelFormats[BITFMT_R5G6B5].Format             = GL_RGB;
-    GPixelFormats[BITFMT_R5G6B5].type               = GL_UNSIGNED_SHORT_5_6_5;
+    GPixelFormats[BITFMT_R5G6B5].PlatformFormat         = GL_RGB;
+    GPixelFormats[BITFMT_R5G6B5].Format                 = GL_RGB;
+    GPixelFormats[BITFMT_R5G6B5].type                   = GL_UNSIGNED_SHORT_5_6_5;
 
     // Note: Using GL_DEPTH_COMPONENT24 or GL_DEPTH_COMPONENT for PlatformFormat generate error GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT.
-    GPixelFormats[BITFMT_D24S8].PlatformFormat    = GL_DEPTH_STENCIL_OES;
-    GPixelFormats[BITFMT_D24S8].Format            = GL_DEPTH_STENCIL_OES;
-    GPixelFormats[BITFMT_D24S8].type              = GL_UNSIGNED_INT_24_8_OES;
+    GPixelFormats[BITFMT_D24S8].PlatformFormat          = GL_DEPTH_STENCIL_OES;
+    GPixelFormats[BITFMT_D24S8].Format                  = GL_DEPTH_STENCIL_OES;
+    GPixelFormats[BITFMT_D24S8].type                    = GL_UNSIGNED_INT_24_8_OES;
 
-    GPixelFormats[BITFMT_A8].PlatformFormat       = GL_ALPHA;
-    GPixelFormats[BITFMT_A8].Format               = GL_ALPHA;
-    GPixelFormats[BITFMT_A8].type                 = GL_UNSIGNED_BYTE;
+    GPixelFormats[BITFMT_A8].PlatformFormat             = GL_ALPHA;
+    GPixelFormats[BITFMT_A8].Format                     = GL_ALPHA;
+    GPixelFormats[BITFMT_A8].type                       = GL_UNSIGNED_BYTE;
 #endif
   }
 
@@ -209,9 +209,9 @@ namespace nux
     _support_opengl_version_30 = GLEW_VERSION_3_0 ? true : false;
     _support_opengl_version_31 = GLEW_VERSION_3_1 ? true : false;
     _support_opengl_version_32 = GLEW_VERSION_3_2 ? true : false;
-//    _support_opengl_version_33 = GLEW_VERSION_3_3 ? true : false;
-//    _support_opengl_version_40 = GLEW_VERSION_4_0 ? true : false;
-//    _support_opengl_version_41 = GLEW_VERSION_4_1 ? true : false;
+//      _support_opengl_version_33 = GLEW_VERSION_3_3 ? true : false;
+//      _support_opengl_version_40 = GLEW_VERSION_4_0 ? true : false;
+//      _support_opengl_version_41 = GLEW_VERSION_4_1 ? true : false;
 
     // See: http://developer.nvidia.com/object/General_FAQ.html
     // The value of GL_MAX_TEXTURE_UNITS is 4 for GeForce FX and GeForce 6 Series GPUs. Why is that, since those GPUs have 16 texture units?
@@ -232,41 +232,41 @@ namespace nux
 #endif
 
 #ifndef NUX_OPENGLES_20
-    _support_arb_vertex_program         = GLEW_ARB_vertex_program ? true : false;
-    _support_arb_fragment_program       = GLEW_ARB_fragment_program ? true : false;
-    _support_ext_framebuffer_object       = GLEW_EXT_framebuffer_object ? true : false;
-    _support_arb_shader_objects         = GLEW_ARB_shader_objects ? true : false;
-    _support_arb_vertex_shader        = GLEW_ARB_vertex_shader ? true : false;
-    _support_arb_fragment_shader        = GLEW_ARB_fragment_shader ? true : false;
-    _support_arb_vertex_buffer_object     = GLEW_ARB_vertex_buffer_object ? true : false;
-    _support_arb_texture_non_power_of_two   = GLEW_ARB_texture_non_power_of_two ? true : false;
-    _support_ext_draw_range_elements      = GLEW_EXT_draw_range_elements ? true : false;
-    _support_ext_stencil_two_side       = GLEW_EXT_stencil_two_side ? true : false;
-    _support_ext_texture_rectangle      = GLEW_EXT_texture_rectangle ? true : false;
-    _support_arb_texture_rectangle      = GLEW_ARB_texture_rectangle ? true : false;
-    _support_nv_texture_rectangle       = GLEW_NV_texture_rectangle ? true : false;
-    _support_arb_pixel_buffer_object      = GLEW_ARB_pixel_buffer_object ? true : false;
-    _support_ext_blend_equation_separate    = GLEW_EXT_blend_equation_separate ? true : false;
-    _support_ext_texture_srgb         = GLEW_EXT_texture_sRGB ? true : false;
-    _support_ext_texture_srgb_decode      = false; //GLEW_EXT_texture_sRGB_decode ? true : false;
-    _support_ext_framebuffer_srgb       = GLEW_EXT_framebuffer_sRGB ? true : false;
-    _support_arb_framebuffer_srgb       = GLEW_ARB_framebuffer_sRGB ? true : false;
+    _support_arb_vertex_program               = GLEW_ARB_vertex_program ? true : false;
+    _support_arb_fragment_program             = GLEW_ARB_fragment_program ? true : false;
+    _support_ext_framebuffer_object           = GLEW_EXT_framebuffer_object ? true : false;
+    _support_arb_shader_objects               = GLEW_ARB_shader_objects ? true : false;
+    _support_arb_vertex_shader                = GLEW_ARB_vertex_shader ? true : false;
+    _support_arb_fragment_shader              = GLEW_ARB_fragment_shader ? true : false;
+    _support_arb_vertex_buffer_object         = GLEW_ARB_vertex_buffer_object ? true : false;
+    _support_arb_texture_non_power_of_two     = GLEW_ARB_texture_non_power_of_two ? true : false;
+    _support_ext_draw_range_elements          = GLEW_EXT_draw_range_elements ? true : false;
+    _support_ext_stencil_two_side             = GLEW_EXT_stencil_two_side ? true : false;
+    _support_ext_texture_rectangle            = GLEW_EXT_texture_rectangle ? true : false;
+    _support_arb_texture_rectangle            = GLEW_ARB_texture_rectangle ? true : false;
+    _support_nv_texture_rectangle             = GLEW_NV_texture_rectangle ? true : false;
+    _support_arb_pixel_buffer_object          = GLEW_ARB_pixel_buffer_object ? true : false;
+    _support_ext_blend_equation_separate      = GLEW_EXT_blend_equation_separate ? true : false;
+    _support_ext_texture_srgb                 = GLEW_EXT_texture_sRGB ? true : false;
+    _support_ext_texture_srgb_decode          = false; //GLEW_EXT_texture_sRGB_decode ? true : false;
+    _support_ext_framebuffer_srgb             = GLEW_EXT_framebuffer_sRGB ? true : false;
+    _support_arb_framebuffer_srgb             = GLEW_ARB_framebuffer_sRGB ? true : false;
 #else
-    _support_arb_vertex_program             = false;
-    _support_arb_fragment_program           = false;
-    _support_arb_shader_objects             = true;
-    _support_arb_vertex_shader              = true;
-    _support_arb_fragment_shader            = true;
-    _support_arb_vertex_buffer_object       = true;
-    _support_arb_texture_non_power_of_two   = true;
-    _support_ext_framebuffer_object         = true;
-    _support_ext_draw_range_elements        = false;
-    _support_ext_stencil_two_side           = false;
-    _support_ext_texture_rectangle          = false;
-    _support_arb_texture_rectangle          = false;
-    _support_nv_texture_rectangle           = false;
-    _support_arb_pixel_buffer_object        = false;
-    _support_ext_blend_equation_separate    = true;
+    _support_arb_vertex_program               = false;
+    _support_arb_fragment_program             = false;
+    _support_arb_shader_objects               = true;
+    _support_arb_vertex_shader                = true;
+    _support_arb_fragment_shader              = true;
+    _support_arb_vertex_buffer_object         = true;
+    _support_arb_texture_non_power_of_two     = true;
+    _support_ext_framebuffer_object           = true;
+    _support_ext_draw_range_elements          = false;
+    _support_ext_stencil_two_side             = false;
+    _support_ext_texture_rectangle            = false;
+    _support_arb_texture_rectangle            = false;
+    _support_nv_texture_rectangle             = false;
+    _support_arb_pixel_buffer_object          = false;
+    _support_ext_blend_equation_separate      = true;
 #endif
   }
 
@@ -303,8 +303,8 @@ namespace nux
   {
     _PixelStoreAlignment  = 4;
     _UsePixelBufferObject = false;
-    _gpu_info       = NULL;
-    _gpu_brand      = GPU_VENDOR_UNKNOWN;
+    _gpu_info             = NULL;
+    _gpu_brand            = GPU_VENDOR_UNKNOWN;
 
 #ifndef NUX_OPENGLES_20
     // OpenGL extension initialization
@@ -459,8 +459,8 @@ namespace nux
         {
           WGL_CONTEXT_MAJOR_VERSION_ARB,  req_opengl_major,
           WGL_CONTEXT_MINOR_VERSION_ARB,  req_opengl_minor,
-          profile_mask,           profile_value,
-          flag_mask,            flag_value,
+          profile_mask,                   profile_value,
+          flag_mask,                      flag_value,
           0
         };
 
@@ -482,16 +482,16 @@ namespace nux
         {
           profile_mask  = GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
           profile_value = GLX_CONTEXT_PROFILE_MASK_ARB;
-          flag_mask   = GLX_CONTEXT_FLAGS_ARB;
-          flag_value  = 0;
+          flag_mask     = GLX_CONTEXT_FLAGS_ARB;
+          flag_value    = 0;
         }
 
         int attribs[] =
         {
           GLX_CONTEXT_MAJOR_VERSION_ARB,  req_opengl_major,
           GLX_CONTEXT_MINOR_VERSION_ARB,  req_opengl_minor,
-          profile_mask,           profile_value,
-          flag_mask,            flag_value,
+          profile_mask,                   profile_value,
+          flag_mask,                      flag_value,
           0
         };
 
@@ -567,9 +567,9 @@ namespace nux
     _gpu_render_states = new GpuRenderStates(_gpu_brand, _gpu_info);
 
 #if defined(NUX_OS_WINDOWS)
-    OGL_EXT_SWAP_CONTROL        = WGLEW_EXT_swap_control ? true : false;
+    OGL_EXT_SWAP_CONTROL                = WGLEW_EXT_swap_control ? true : false;
 #elif defined(NUX_OS_LINUX) && !defined(NUX_OPENGLES_20)
-    OGL_EXT_SWAP_CONTROL        = GLXEW_SGI_swap_control ? true : false;
+    OGL_EXT_SWAP_CONTROL                = GLXEW_SGI_swap_control ? true : false;
 #endif
 
     InitTextureFormats();
@@ -582,13 +582,13 @@ namespace nux
     CHECKGL(glPixelStorei(GL_UNPACK_ALIGNMENT, _PixelStoreAlignment));
     CHECKGL(glPixelStorei(GL_PACK_ALIGNMENT, _PixelStoreAlignment));
 
-//       _DeviceWidth = DeviceWidth;
-//       _DeviceHeight = DeviceHeight;
+//     _DeviceWidth = DeviceWidth;
+//     _DeviceHeight = DeviceHeight;
 //
-//       _ViewportX = 0;
-//       _ViewportY = 0;
-//       _ViewportWidth = DeviceWidth;
-//       _ViewportHeight = DeviceHeight;
+//     _ViewportX = 0;
+//     _ViewportY = 0;
+//     _ViewportWidth = DeviceWidth;
+//     _ViewportHeight = DeviceHeight;
 
     for (int i = 0; i < MAX_NUM_STREAM; i++)
     {
@@ -693,11 +693,11 @@ namespace nux
 #endif
 
     // From lowest priority to highest priority:
-    //    GL_TEXTURE_1D,
-    //    GL_TEXTURE_2D,
-    //    GL_TEXTURE_RECTANGLE_ARB,
-    //    GL_TEXTURE_3D,
-    //    GL_TEXTURE_CUBE_MAP.
+    //      GL_TEXTURE_1D,
+    //      GL_TEXTURE_2D,
+    //      GL_TEXTURE_RECTANGLE_ARB,
+    //      GL_TEXTURE_3D,
+    //      GL_TEXTURE_CUBE_MAP.
 
 #ifndef NUX_OPENGLES_20
     CHECKGL(glDisable(GL_TEXTURE_2D));
@@ -745,9 +745,9 @@ namespace nux
 
 // //     if (0)
 // //     {
-// //       // Can we realloc the memory used by the buffer with much less memory(4x4bytes)???
-// //       CHECKGL(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, OpenGLID));
-// //       CHECKGL(glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, 4*4, NULL, GL_STREAM_DRAW_ARB));
+// //         // Can we realloc the memory used by the buffer with much less memory(4x4bytes)???
+// //         CHECKGL(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, OpenGLID));
+// //         CHECKGL(glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, 4*4, NULL, GL_STREAM_DRAW_ARB));
 // //     }
     return OGL_OK;
   }
@@ -930,11 +930,11 @@ namespace nux
   }
 
   ObjectPtr<IOpenGLBaseTexture> GpuDevice::CreateSystemCapableDeviceTexture(
-      int Width
-      , int Height
-      , int Levels
-      , BitmapFormat PixelFormat
-      , NUX_FILE_LINE_DECL)
+    int Width
+    , int Height
+    , int Levels
+    , BitmapFormat PixelFormat
+    , NUX_FILE_LINE_DECL)
   {
     if (GetGpuInfo().Support_ARB_Texture_Non_Power_Of_Two())
     {
