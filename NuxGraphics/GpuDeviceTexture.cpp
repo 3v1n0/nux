@@ -48,11 +48,11 @@ namespace nux
     unsigned int NumTotalMipLevel = 1 + floorf(Log2(Max(Width, Height)));
     unsigned int NumMipLevel = 0;
 
-    if(Levels == 0)
+    if (Levels == 0)
     {
       NumMipLevel = NumTotalMipLevel;
     }
-    else if(Levels > (int)NumTotalMipLevel)
+    else if (Levels > (int)NumTotalMipLevel)
     {
       NumMipLevel = NumTotalMipLevel;
     }
@@ -100,11 +100,11 @@ namespace nux
     unsigned int NumTotalMipLevel = 1 + floorf(Log2(Max(Width, Height)));
     unsigned int NumMipLevel = 0;
 
-    if(Levels == 0)
+    if (Levels == 0)
     {
       NumMipLevel = 1;
     }
-    else if(Levels > (int)NumTotalMipLevel)
+    else if (Levels > (int)NumTotalMipLevel)
     {
       NumMipLevel = 1;
     }
@@ -128,11 +128,11 @@ namespace nux
     unsigned int NumTotalMipLevel = 1 + floorf(Log2(EdgeLength));
     unsigned int NumMipLevel = 0;
 
-    if(Levels == 0)
+    if (Levels == 0)
     {
       NumMipLevel = NumTotalMipLevel;
     }
-    else if(Levels > (int)NumTotalMipLevel)
+    else if (Levels > (int)NumTotalMipLevel)
     {
       NumMipLevel = NumTotalMipLevel;
     }
@@ -163,11 +163,11 @@ namespace nux
     unsigned int NumTotalMipLevel = 1 + floorf(Log2(Max(Max(Width, Height), Depth)));
     unsigned int NumMipLevel = 0;
 
-    if(Levels == 0)
+    if (Levels == 0)
     {
       NumMipLevel = NumTotalMipLevel;
     }
-    else if(Levels > (int)NumTotalMipLevel)
+    else if (Levels > (int)NumTotalMipLevel)
     {
       NumMipLevel = NumTotalMipLevel;
     }
