@@ -89,28 +89,28 @@ namespace nux
     bool SupportOpenGL40() const    {return _support_opengl_version_40;}
     bool SupportOpenGL41() const    {return _support_opengl_version_41;}
 
-    bool Support_EXT_Swap_Control()              const  {return _support_ext_swap_control;}
-    bool Support_ARB_Texture_Rectangle()         const  {return _support_arb_texture_rectangle;}
-    bool Support_ARB_Vertex_Program()            const  {return _support_arb_vertex_program;}
-    bool Support_ARB_Fragment_Program()          const  {return _support_arb_fragment_program;}
-    bool Support_ARB_Shader_Objects()            const  {return _support_arb_shader_objects;}
-    bool Support_ARB_Vertex_Shader()             const  {return _support_arb_vertex_shader;}
-    bool Support_ARB_Fragment_Shader()           const  {return _support_arb_fragment_shader;}
-    bool Support_ARB_Vertex_Buffer_Object()      const  {return _support_arb_vertex_buffer_object;}
-    bool Support_ARB_Texture_Non_Power_Of_Two()  const  {return _support_arb_texture_non_power_of_two;}
-    bool Support_EXT_Framebuffer_Object()        const  {return _support_ext_framebuffer_object;}
-    bool Support_EXT_Draw_Range_Elements()       const  {return _support_ext_draw_range_elements;}
-    bool Support_EXT_Stencil_Two_Side()          const  {return _support_ext_stencil_two_side;}
-    bool Support_EXT_Texture_Rectangle()         const  {return _support_ext_texture_rectangle;}
-    bool Support_NV_Texture_Rectangle()          const  {return _support_nv_texture_rectangle;}
-    bool Support_ARB_Pixel_Buffer_Object()       const  {return _support_arb_pixel_buffer_object;}
-    bool Support_EXT_Blend_Equation_Separate()   const  {return _support_ext_blend_equation_separate;}
+    bool Support_EXT_Swap_Control()              const    {return _support_ext_swap_control;}
+    bool Support_ARB_Texture_Rectangle()         const    {return _support_arb_texture_rectangle;}
+    bool Support_ARB_Vertex_Program()            const    {return _support_arb_vertex_program;}
+    bool Support_ARB_Fragment_Program()          const    {return _support_arb_fragment_program;}
+    bool Support_ARB_Shader_Objects()            const    {return _support_arb_shader_objects;}
+    bool Support_ARB_Vertex_Shader()             const    {return _support_arb_vertex_shader;}
+    bool Support_ARB_Fragment_Shader()           const    {return _support_arb_fragment_shader;}
+    bool Support_ARB_Vertex_Buffer_Object()      const    {return _support_arb_vertex_buffer_object;}
+    bool Support_ARB_Texture_Non_Power_Of_Two()  const    {return _support_arb_texture_non_power_of_two;}
+    bool Support_EXT_Framebuffer_Object()        const    {return _support_ext_framebuffer_object;}
+    bool Support_EXT_Draw_Range_Elements()       const    {return _support_ext_draw_range_elements;}
+    bool Support_EXT_Stencil_Two_Side()          const    {return _support_ext_stencil_two_side;}
+    bool Support_EXT_Texture_Rectangle()         const    {return _support_ext_texture_rectangle;}
+    bool Support_NV_Texture_Rectangle()          const    {return _support_nv_texture_rectangle;}
+    bool Support_ARB_Pixel_Buffer_Object()       const    {return _support_arb_pixel_buffer_object;}
+    bool Support_EXT_Blend_Equation_Separate()   const    {return _support_ext_blend_equation_separate;}
 
 #ifndef NUX_OPENGLES_20
-    bool Support_EXT_Texture_sRGB()              const  {return _support_ext_texture_srgb;}
-    bool Support_EXT_Texture_Decode()            const  {return _support_ext_texture_srgb_decode;}
-    bool Support_EXT_Framebuffer_sRGB()          const  {return _support_ext_framebuffer_srgb;}
-    bool Support_ARB_Framebuffer_sRGB()          const  {return _support_arb_framebuffer_srgb;}
+    bool Support_EXT_Texture_sRGB()              const    {return _support_ext_texture_srgb;}
+    bool Support_EXT_Texture_Decode()            const    {return _support_ext_texture_srgb_decode;}
+    bool Support_EXT_Framebuffer_sRGB()          const    {return _support_ext_framebuffer_srgb;}
+    bool Support_ARB_Framebuffer_sRGB()          const    {return _support_arb_framebuffer_srgb;}
 #endif
 
     int GetMaxFboAttachment() {return _opengl_max_fb_attachment;}
@@ -185,18 +185,17 @@ namespace nux
       int Levels,
       BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
 
-    ObjectPtr<IOpenGLTexture2D> CreateTexture2DFromID(
-      int id
+    ObjectPtr<IOpenGLTexture2D> CreateTexture2DFromID(int id
       , int Width
       , int Height
       , int Levels
       , BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
 
     ObjectPtr<IOpenGLRectangleTexture> CreateRectangleTexture(
-        int Width
-        , int Height
-        , int Levels
-        , BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
+      int Width
+      , int Height
+      , int Levels
+      , BitmapFormat PixelFormat, NUX_FILE_LINE_PROTO);
 
     ObjectPtr<IOpenGLCubeTexture> CreateCubeTexture(
       int EdgeLength
@@ -222,7 +221,7 @@ namespace nux
 
     ObjectPtr<IOpenGLIndexBuffer> CreateIndexBuffer(
       int Length
-      , VBO_USAGE Usage  // Dynamic or WriteOnly
+      , VBO_USAGE Usage   // Dynamic or WriteOnly
       , INDEX_FORMAT Format);
 
     ObjectPtr<IOpenGLPixelBufferObject> CreatePixelBufferObject(int Size, VBO_USAGE Usage);
@@ -255,7 +254,8 @@ namespace nux
       ObjectPtr<IOpenGLIndexBuffer> IndexBuffer,
       ObjectPtr<IOpenGLVertexDeclaration> VertexDeclaration,
       PRIMITIVE_TYPE PrimitiveType,
-      int PrimitiveCount);
+      int PrimitiveCount
+    );
 
     // Draw Primitive without index buffer
     int DrawPrimitive(
@@ -270,7 +270,8 @@ namespace nux
       PRIMITIVE_TYPE PrimitiveType,
       unsigned int PrimitiveCount,
       const void *pVertexStreamZeroData,
-      unsigned int VertexStreamZeroStride);
+      unsigned int VertexStreamZeroStride
+    );
 
     int SetStreamSource(
       unsigned int StreamNumber,
@@ -278,39 +279,39 @@ namespace nux
       unsigned int OffsetInBytes,
       unsigned int Stride);
 
-      //! Setup a NULL vertex buffer
-      void InvalidateVertexBuffer();
-      //! Setup a NULL index buffer
-      void InvalidateIndexBuffer();
-      //! Setup a NULL texture
-      void InvalidateTextureUnit(int TextureUnitIndex);
+    //! Setup a NULL vertex buffer
+    void InvalidateVertexBuffer();
+    //! Setup a NULL index buffer
+    void InvalidateIndexBuffer();
+    //! Setup a NULL texture
+    void InvalidateTextureUnit(int TextureUnitIndex);
 
-      unsigned int GetPixelStoreAlignment()
-      {
-        return _PixelStoreAlignment;
-      }
+    unsigned int GetPixelStoreAlignment()
+    {
+      return _PixelStoreAlignment;
+    }
 
-      int AllocateUnpackPixelBufferIndex(int *index);
-      int FreeUnpackPixelBufferIndex(const int index);
-      int BindUnpackPixelBufferIndex(const int index);
-      int BindPackPixelBufferIndex(const int index);
-      void *LockUnpackPixelBufferIndex(const int index, const int Size);
-      void *LockPackPixelBufferIndex(const int index, const int Size);
+    int AllocateUnpackPixelBufferIndex(int *index);
+    int FreeUnpackPixelBufferIndex(const int index);
+    int BindUnpackPixelBufferIndex(const int index);
+    int BindPackPixelBufferIndex(const int index);
+    void *LockUnpackPixelBufferIndex(const int index, const int Size);
+    void *LockPackPixelBufferIndex(const int index, const int Size);
 
-      void UnlockUnpackPixelBufferIndex(const int index);
-      void UnlockPackPixelBufferIndex(const int index);
+    void UnlockUnpackPixelBufferIndex(const int index);
+    void UnlockPackPixelBufferIndex(const int index);
 
-      // All these operations are done on the default frame buffer object: _FrameBufferObject.
-      int FormatFrameBufferObject(unsigned int Width, unsigned int Height, BitmapFormat PixelFormat);
-      int SetColorRenderTargetSurface(unsigned int ColorAttachmentIndex, ObjectPtr<IOpenGLSurface> pRenderTargetSurface);
-      int SetDepthRenderTargetSurface(ObjectPtr<IOpenGLSurface> pDepthSurface);
-      ObjectPtr<IOpenGLSurface> GetColorRenderTargetSurface(unsigned int ColorAttachmentIndex);
-      ObjectPtr<IOpenGLSurface> GetDepthRenderTargetSurface();
-      // Activate and Deactivate the default framebuffer: _FrameBufferObject.
-      void ActivateFrameBuffer();
+    // All these operations are done on the default frame buffer object: _FrameBufferObject.
+    int FormatFrameBufferObject(unsigned int Width, unsigned int Height, BitmapFormat PixelFormat);
+    int SetColorRenderTargetSurface(unsigned int ColorAttachmentIndex, ObjectPtr<IOpenGLSurface> pRenderTargetSurface);
+    int SetDepthRenderTargetSurface(ObjectPtr<IOpenGLSurface> pDepthSurface);
+    ObjectPtr<IOpenGLSurface> GetColorRenderTargetSurface(unsigned int ColorAttachmentIndex);
+    ObjectPtr<IOpenGLSurface> GetDepthRenderTargetSurface();
+    // Activate and Deactivate the default framebuffer: _FrameBufferObject.
+    void ActivateFrameBuffer();
 
-      //! Restore the backbuffer as the render target.
-      void DeactivateFrameBuffer();
+    //! Restore the backbuffer as the render target.
+    void DeactivateFrameBuffer();
 
     public:
       void SetCurrentFrameBufferObject(ObjectPtr<IOpenGLFrameBufferObject> fbo);
@@ -333,7 +334,7 @@ namespace nux
 
       std::vector<PixelBufferObject> _PixelBufferArray;
 
-    public:
+  public:
 
 #if (NUX_ENABLE_CG_SHADERS)
     CGcontext GetCgContext()
@@ -365,7 +366,7 @@ namespace nux
       @Levels       Texture number of mipmaps. If 0, all the mipmaps levels are created
       @PixelFormat  Texture format.
       @return       A device texture. Depending on the system capabilities returns a ObjectPtr<IOpenGLTexture2D> or ObjectPtr<IOpenGLRectangleTexture>.
-      */
+    */
     ObjectPtr<IOpenGLBaseTexture> CreateSystemCapableDeviceTexture(
       int Width
       , int Height
@@ -383,7 +384,7 @@ namespace nux
       return _gpu_info->Support_ARB_Texture_Non_Power_Of_Two();
     }
 
-    bool SUPPORT_GL_EXT_TEXTURE_RECTANGLE()  const
+    bool SUPPORT_GL_EXT_TEXTURE_RECTANGLE()    const
     {
       return _gpu_info->Support_EXT_Texture_Rectangle();
     }
@@ -401,11 +402,11 @@ namespace nux
     int _glsl_version_major;  //!< GLSL major version.
     int _glsl_version_minor;  //!< GLSL major version.
 
-    NString _board_vendor_string;   //!< GPU vendor sting.
+    NString _board_vendor_string;     //!< GPU vendor sting.
     NString _board_renderer_string;   //!< GPU renderer sting.
     NString _openGL_version_string;   //!< OpenGL version string.
-    NString _glsl_version_string;   //!< GLSL version string.
-    GpuBrand _gpu_brand;        //!< GPU brand.
+    NString _glsl_version_string;     //!< GLSL version string.
+    GpuBrand _gpu_brand;              //!< GPU brand.
 
     bool _UsePixelBufferObject;
 
