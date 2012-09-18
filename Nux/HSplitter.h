@@ -80,7 +80,7 @@ namespace nux
     virtual Area* KeyNavIteration(KeyNavDirection direction);
 
   private:
-    typedef InputArea MySplitter;
+    typedef BasicView MySplitter;
     std::vector<Area *> m_InterfaceObject;
     std::vector<MySplitter *> m_SplitterObject;
     std::vector<float> m_SplitConfig;

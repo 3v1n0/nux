@@ -26,7 +26,6 @@
 
 #include <boost/scoped_ptr.hpp>
 #include "ScrollView.h"
-#include "Features.h"
 
 #if defined(NUX_OS_WINDOWS)
 #include "NuxGraphics/Events.h"

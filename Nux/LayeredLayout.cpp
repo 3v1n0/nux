@@ -59,7 +59,7 @@ namespace nux
     m_child_draw_queued(false)
   {
     m_ContentStacking = eStackLeft;
-    OnChildQueueDraw.connect(sigc::mem_fun(this, &LayeredLayout::ChildQueueDraw));
+    child_queue_draw.connect(sigc::mem_fun(this, &LayeredLayout::ChildQueueDraw));
   }
 
   LayeredLayout::~LayeredLayout()
@@ -163,11 +163,6 @@ namespace nux
       Layout *layout = NUX_STATIC_CAST(Layout *, _area);
       layout->ProcessDraw(graphics_engine, force_draw);
     }
-    else if (_area->IsArea())
-    {
-      InputArea *area = NUX_STATIC_CAST(InputArea *, _area);
-      area->OnDraw(graphics_engine, force_draw);
-    }
   }
 
   void LayeredLayout::ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw)
@@ -204,7 +199,7 @@ namespace nux
     }
 
     graphics_engine.PopClippingRectangle();
-    _queued_draw = false;
+    draw_cmd_queued_ = false;
   }
 
   Area* LayeredLayout::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)

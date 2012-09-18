@@ -31,7 +31,11 @@ namespace animation
 class EasingCurve
 {
 public:
+#if defined(NUX_OS_WINDOWS) && !defined(NUX_VISUAL_STUDIO_VC11)
+  enum Type
+#else
   enum class Type
+#endif
   {
     Linear,
     InQuad,
@@ -43,6 +47,8 @@ public:
     BounceIn,
     BounceOut,
     BounceInOut,
+    ExpoEaseIn,
+    ExpoEaseOut
   };
 
   typedef double (*EasingFunction)(double);

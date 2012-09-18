@@ -56,6 +56,12 @@ namespace nux
     , NUX_FILE_LINE_DECL
     )
   {
+    if ((Width <= 0) || (Height <= 0))
+    {
+      *ppTexture = NULL;
+      return 0;
+    }
+
     // From : http://oss.sgi.com/projects/ogl-sample/registry/ARB/texture_non_power_of_two.txt
     //    The "floor" convention has a relatively straightforward way to
     //        evaluate(with integer math) means to determine how many mipmap
@@ -135,6 +141,11 @@ namespace nux
     , NUX_FILE_LINE_DECL
     )
   {
+    if ((Width <= 0) || (Height <= 0))
+    {
+      *ppTexture = NULL;
+      return 0;
+    }
 
     // From : http://oss.sgi.com/projects/ogl-sample/registry/ARB/texture_non_power_of_two.txt
     //    The "floor" convention has a relatively straightforward way to

@@ -73,8 +73,8 @@ namespace nux
 
     layout->SetParentObject(this);
 
-    layout->OnChildQueueDraw.connect(sigc::mem_fun(this, &Layout::ChildLayoutChildQueuedDraw));
-    layout->OnQueueDraw.connect(sigc::mem_fun(this, &Layout::ChildLayoutQueuedDraw));
+    layout->child_queue_draw.connect(sigc::mem_fun(this, &Layout::ChildQueueDraw));
+    layout->queue_draw.connect(sigc::mem_fun(this, &Layout::ChildQueueDraw));
 
     if (index < 0)
       index = NUX_LAYOUT_BEGIN;
@@ -153,7 +153,7 @@ namespace nux
     bo->SetParentObject(this);
 
     if (bo->IsView())
-      static_cast<View *> (bo)->OnQueueDraw.connect(sigc::mem_fun(this, &Layout::ChildViewQueuedDraw));
+      (static_cast<View *> (bo))->queue_draw.connect(sigc::mem_fun(this, &Layout::ChildQueueDraw));
 
     //if(HasFocusControl() && HasFocusableEntries() == false)
     //{

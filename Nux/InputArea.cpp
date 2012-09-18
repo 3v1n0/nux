@@ -27,7 +27,6 @@
 
 #include "NuxCore/Logger.h"
 
-#include "Features.h"
 #include "Nux.h"
 #include "InputArea.h"
 #include "NuxGraphics/GraphicsEngine.h"
@@ -73,7 +72,10 @@ logging::Logger logger("nux.inputarea");
 
   void InputArea::OnDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
-    graphics_engine.QRP_Color(GetBaseX(), GetBaseY(), GetBaseWidth(), GetBaseHeight(), area_color_);
+    // Draw Nothing!
+
+    // For debug Only:
+    // graphics_engine.QRP_Color(GetBaseX(), GetBaseY(), GetBaseWidth(), GetBaseHeight(), area_color_);
   }
 
   void InputArea::SetBaseString(const char *Caption)
