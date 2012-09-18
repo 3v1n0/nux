@@ -67,6 +67,8 @@ namespace nux
   static void InitTextureFormats()
   {
 #ifndef NUX_OPENGLES_20
+    GPixelFormats[ BITFMT_UNKNOWN		].PlatformFormat	= GL_NONE;
+
     // Data in PC system memory: R(LSB) G B A(MSB) ---> GL Format:GL_RGBA - GL Type:GL_UNSIGNED_INT_8_8_8_8_REV
     GPixelFormats[BITFMT_R8G8B8A8].PlatformFormat	    = GL_RGBA8;
     GPixelFormats[BITFMT_R8G8B8A8].Format	            = GL_RGBA;
