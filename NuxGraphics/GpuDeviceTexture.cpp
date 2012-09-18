@@ -33,11 +33,11 @@
 namespace nux
 {
   ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture(
-      int Width,
-      int Height,
-      int Levels,
-      BitmapFormat PixelFormat,
-      NUX_FILE_LINE_DECL)
+    int Width
+    , int Height
+    , int Levels
+    , BitmapFormat PixelFormat
+    , NUX_FILE_LINE_DECL)
   {
     int msz = GetGpuInfo().GetMaxTextureSize();
     if(Width <= 0 || Height <= 0 || Width > msz || Height > msz)
@@ -66,12 +66,30 @@ namespace nux
     return result;
   }
 
+  ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture2DFromID(int id
+    , int width
+    , int height
+    , int levels
+    , BitmapFormat pixel_format
+    , NUX_FILE_LINE_DECL)
+  {
+    int msz = GetGpuInfo().GetMaxTextureSize();
+    if(width <= 0 || height <=0 || width > msz || height > msz)
+    {
+      return ObjectPtr<IOpenGLTexture2D>();
+    }
+
+    ObjectPtr<IOpenGLTexture2D> result;
+    result.Adopt(new IOpenGLTexture2D(width, height, levels, pixel_format, true, NUX_FILE_LINE_PARAM));
+    return result;
+  }
+
   ObjectPtr<IOpenGLRectangleTexture> GpuDevice::CreateRectangleTexture(
-      int Width,
-      int Height,
-      int Levels,
-      BitmapFormat PixelFormat,
-      NUX_FILE_LINE_DECL)
+    int Width
+    , int Height
+    , int Levels
+    , BitmapFormat PixelFormat
+    , NUX_FILE_LINE_DECL)
   {
     int msz = GetGpuInfo().GetMaxTextureSize();
     if(Width <= 0 || Height <= 0 || Width > msz || Height > msz)
@@ -101,10 +119,10 @@ namespace nux
   }
 
   ObjectPtr<IOpenGLCubeTexture> GpuDevice::CreateCubeTexture(
-      int EdgeLength,
-      int Levels,
-      BitmapFormat PixelFormat,
-      NUX_FILE_LINE_DECL)
+    int EdgeLength
+    , int Levels
+    , BitmapFormat PixelFormat
+    , NUX_FILE_LINE_DECL)
   {
 
     unsigned int NumTotalMipLevel = 1 + floorf(Log2(EdgeLength));
@@ -129,12 +147,12 @@ namespace nux
   }
 
   ObjectPtr<IOpenGLVolumeTexture> GpuDevice::CreateVolumeTexture(
-      int Width,
-      int Height,
-      int Depth,
-      int Levels,
-      BitmapFormat PixelFormat,
-      NUX_FILE_LINE_DECL)
+    int Width
+    , int Height
+    , int Depth
+    , int Levels
+    , BitmapFormat PixelFormat
+    , NUX_FILE_LINE_DECL)
   {
     int msz = GetGpuInfo().GetMaxTextureSize();
     if(Width <= 0 || Height <= 0 || Width > msz || Height > msz)
@@ -164,10 +182,10 @@ namespace nux
   }
 
   ObjectPtr<IOpenGLAnimatedTexture> GpuDevice::CreateAnimatedTexture(
-      int Width,
-      int Height,
-      int Depth,
-      BitmapFormat PixelFormat)
+    int Width
+    , int Height
+    , int Depth
+    , BitmapFormat PixelFormat)
   {
     int msz = GetGpuInfo().GetMaxTextureSize();
     if(Width <= 0 || Height <= 0 || Width > msz || Height > msz)
@@ -184,25 +202,6 @@ namespace nux
   {
     ObjectPtr<IOpenGLQuery> result;
     result.Adopt(new IOpenGLQuery(Type));
-    return result;
-  }
-
-  ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture2DFromID(
-      int id,
-      int width,
-      int height,
-      int levels,
-      BitmapFormat pixel_format,
-      NUX_FILE_LINE_DECL)
-  {
-    int msz = GetGpuInfo().GetMaxTextureSize();
-    if(width <= 0 || height <=0 || width > msz || height > msz)
-    {
-      return ObjectPtr<IOpenGLTexture2D>();
-    }
-
-    ObjectPtr<IOpenGLTexture2D> result;
-    result.Adopt(new IOpenGLTexture2D(width, height, levels, pixel_format, true, NUX_FILE_LINE_PARAM));
     return result;
   }
 }
