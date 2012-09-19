@@ -224,7 +224,7 @@ namespace nux
     parent_->mouse_up.connect(sigc::mem_fun(this, &Impl::HandleMouseUp));
     parent_->mouse_down.connect(sigc::mem_fun(this, &Impl::HandleMouseDown));
     parent_->mouse_wheel.connect(sigc::mem_fun(this, &Impl::HandleMouseWheel));
-    parent_->OnGeometryChanged.connect(sigc::mem_fun(this, &Impl::HandleGeometryChange));
+    parent_->geometry_changed.connect(sigc::mem_fun(this, &Impl::HandleGeometryChange));
 
 
     camera_position_.x = 0.0f;
@@ -286,7 +286,8 @@ namespace nux
 
     text_loader_.font_size = 10;
 
-    BaseTexture* texture = LoadTextureFromFile(PKGDATADIR"/UITextures/coverflow.oval-shadow.png");
+    NString resource_path = NUX_FIND_RESOURCE_LOCATION_NOFAIL("UITextures/coverflow.oval-shadow.png");
+    BaseTexture* texture = LoadTextureFromFile(resource_path.GetTCharPtr());
     drop_shadow_texture_ = texture->GetDeviceTexture();
     texture->UnReference();
 
@@ -1087,7 +1088,6 @@ namespace nux
     graphics_engine.GetRenderStates().SetPremultipliedBlend(SRC_OVER);
     graphics_engine.GetRenderStates().SetColorMask(true, true, true, true);
 
-    nux::GetPainter().PaintBackground(graphics_engine, GetGeometry());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT  | GL_STENCIL_BUFFER_BIT);
 
     glViewport(0, 0, ctx.width, ctx.height);

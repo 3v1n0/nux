@@ -172,6 +172,7 @@ namespace nux
     w->user_exit_func_ = 0;
     w->initialization_data_ = data;
     w->window_style_ = WINDOWSTYLE_NORMAL;
+    w->embedded_window_ = true;
     w->ThreadCtor(WindowHandle, WindowDCHandle, OpenGLRenderingContext);
     return w;
   }

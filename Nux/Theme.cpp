@@ -22,7 +22,7 @@
 #include "Nux.h"
 #include "Theme.h"
 #if defined(NUX_OS_WINDOWS)
-  #include "NuxCore/TinyXML/tinyxml.h"
+  #include "tinyxml/tinyxml.h"
 #endif
 
 namespace nux

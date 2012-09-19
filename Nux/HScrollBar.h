@@ -99,10 +99,10 @@ namespace nux
     bool AtMaximum();
 
     HLayout *hlayout;
-    InputArea *_slider;
-    InputArea *_scroll_left_button;
-    InputArea *_scroll_right_button;
-    InputArea *_track;
+    BasicView *_slider;
+    BasicView *_scroll_left_button;
+    BasicView *_scroll_right_button;
+    BasicView *_track;
 
     int content_width_;
     int content_height_;

@@ -32,8 +32,8 @@ namespace nux
     ,   m_UpTimerHandler(0)
     ,   m_DownTimerHandler(0)
   {
-    m_SpinnerUpBtn      = new InputArea(NUX_TRACKER_LOCATION);
-    m_SpinnerDownBtn    = new InputArea(NUX_TRACKER_LOCATION);
+    m_SpinnerUpBtn      = new BasicView(NUX_TRACKER_LOCATION);
+    m_SpinnerDownBtn    = new BasicView(NUX_TRACKER_LOCATION);
     m_EditLine          = new EditTextBox("", NUX_TRACKER_LOCATION);
 
     // Set Original State

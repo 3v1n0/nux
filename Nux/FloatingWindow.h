@@ -27,7 +27,7 @@
 
 #include "ScrollView.h"
 #include "BaseWindow.h"
-#include "InputArea.h"
+#include "BasicView.h"
 #include "Layout.h"
 #include "HLayout.h"
 #include "VLayout.h"
@@ -112,12 +112,12 @@ namespace nux
     int _resize_handle_height;
     int _title_bar_height;
 
-    InputArea *_resize_handle;
-    InputArea *_title_bar;
+    BasicView *_resize_handle;
+    BasicView *_title_bar;
     Point _title_bar_mouse_down_location;
 
-    InputArea *_minimize_button;
-    InputArea *_close_button;
+    BasicView *_minimize_button;
+    BasicView *_close_button;
     StaticTextBox *_window_title_bar;
     bool m_hasTitleBar;
 
