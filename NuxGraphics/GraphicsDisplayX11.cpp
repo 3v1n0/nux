@@ -2598,7 +2598,7 @@ namespace nux
     if (_global_pointer_grab_callback)
       (*_global_pointer_grab_callback) (false, data);
 
-    _global_pointer_grab_data = false;
+    _global_pointer_grab_data = 0;
     _global_pointer_grab_callback = 0;
 
     return true;
@@ -2653,7 +2653,7 @@ namespace nux
     if (_global_keyboard_grab_callback)
       (*_global_keyboard_grab_callback) (false, data);
 
-    _global_keyboard_grab_data = false;
+    _global_keyboard_grab_data = 0;
     _global_keyboard_grab_callback = 0;
 
     return true;
