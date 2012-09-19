@@ -1,3 +1,17 @@
+nux (3.4.0-0ubuntu3) quantal-proposed; urgency=low
+
+  * fix armel/armhf build dependencies
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Sun, 02 Sep 2012 12:15:51 +0200
+
+nux (3.4.0-0ubuntu2) quantal-proposed; urgency=low
+
+  * debian/rules: "foo" really isnt a valid architecture, set
+    gles2_architectures to "armel armhf" so that GLES support gets actually
+    enabled on arm builds (LP: #1044709)
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Sun, 02 Sep 2012 11:30:35 +0200
+
 nux (3.4.0-0ubuntu1) quantal-proposed; urgency=low
 
   * New upstream release.
