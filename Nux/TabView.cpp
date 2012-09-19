@@ -45,7 +45,7 @@ namespace nux
     _index = 0;
     _tab_name = TabName;
     _tab_content_layout = TabLayout;
-    _tab_area = new InputArea(NUX_TRACKER_LOCATION);
+    _tab_area = new BasicView(NUX_TRACKER_LOCATION);
 
     _tab_content_layout->Reference();
     _tab_area->Reference();
@@ -100,8 +100,8 @@ namespace nux
     //_tabview_heads_layout->SetParentObject(this);
     _tabview_scroll_button_layout  = new HLayout(NUX_TRACKER_LOCATION);
     _tabview_scroll_button_layout->SetParentObject(this);
-    _scroll_right           = new InputArea(NUX_TRACKER_LOCATION);
-    _scroll_left           = new InputArea(NUX_TRACKER_LOCATION);
+    _scroll_right           = new BasicView(NUX_TRACKER_LOCATION);
+    _scroll_left           = new BasicView(NUX_TRACKER_LOCATION);
 
     _scroll_right->SetMinimumSize(TAB_BUTTON_WIDTH, TAB_BUTTON_HEIGHT);
     _scroll_left->SetMinimumSize(TAB_BUTTON_WIDTH, TAB_BUTTON_HEIGHT);

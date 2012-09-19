@@ -266,17 +266,16 @@ namespace nux
 
     if (texxform.flip_u_coord)
     {
-      float temp = texxform.u0;
-      texxform.u0 = texxform.u1;
-      texxform.u1 = temp;
+      texxform.u0 = 1.0f - texxform.u0;
+      texxform.u1 = 1.0f - texxform.u1;
     }
 
     if (texxform.flip_v_coord)
     {
-      float temp = texxform.v0;
-      texxform.v0 = texxform.v1;
-      texxform.v1 = temp;
+      texxform.v0 = 1.0f - texxform.v0;
+      texxform.v1 = 1.0f - texxform.v1;
     }
+
 
     if (tex->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
     {
@@ -366,6 +365,33 @@ namespace nux
       QRP_ASM_1Tex(x, y, width, height, DeviceTexture, texxform0, color0);
 #else
     QRP_GLSL_1Tex(x, y, width, height, DeviceTexture, texxform0, color0);
+#endif
+  }
+
+  void GraphicsEngine::QRP_1TexPremultiply(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color0)
+  {
+#ifndef NUX_OPENGLES_20
+    if (UsingGLSLCodePath())
+      QRP_GLSL_1TexPremultiply(x, y, width, height, DeviceTexture, texxform0, color0);
+    else
+      QRP_ASM_1TexPremultiply(x, y, width, height, DeviceTexture, texxform0, color0);
+#else
+    QRP_GLSL_1TexPremultiply(x, y, width, height, DeviceTexture, texxform0, color0);
+#endif
+  }
+
+  void GraphicsEngine::QRP_TexDesaturate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm& texxform0, const Color& color0, float desaturation_factor)
+  {
+#ifndef NUX_OPENGLES_20
+    if (UsingGLSLCodePath())
+      QRP_GLSL_TexDesaturate(x, y, width, height, DeviceTexture, texxform0, color0, desaturation_factor);
+    else
+    {
+      // Todo!
+      //QRP_ASM_TexDesaturate(x, y, width, height, DeviceTexture, texxform0, color0, desaturation_factor);
+    }
+#else
+    QRP_GLSL_TexDesaturate(x, y, width, height, DeviceTexture, texxform0, color0, desaturation_factor);
 #endif
   }
 

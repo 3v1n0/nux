@@ -118,7 +118,7 @@ namespace nux
   protected:
     HLayout        *hlayout;
     EditTextBox    *m_ValueString;
-    InputArea       *m_Percentage;
+    BasicView       *m_Percentage;
     Color m_StartColor;
     Color m_EndColor;
     Color m_ProgressColor;
