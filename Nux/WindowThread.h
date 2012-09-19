@@ -24,7 +24,6 @@
 #define WINDOWTHREAD_H
 
 #include "TimerProc.h"
-#include "Features.h"
 
 #ifdef NUX_GESTURES_SUPPORT
 #include "GeisAdapter.h"

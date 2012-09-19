@@ -56,7 +56,7 @@ namespace nux
     WINDOWSTYLE_TOOL,
     WINDOWSTYLE_NOBORDER,
   };
-  
+
   enum DndAction
   {
     DNDACTION_COPY,
@@ -64,10 +64,10 @@ namespace nux
     DNDACTION_LINK,
     DNDACTION_ASK,
     DNDACTION_PRIVATE,
-    
+
     DNDACTION_NONE,
   };
-  
+
 #define NUX_THREADMSG                           (WM_APP+0)
 #define NUX_THREADMSG_START_RENDERING           (WM_APP+1)  // Connection established // start at WM_APP
 #define NUX_THREADMSG_CHILD_WINDOW_TERMINATED   (WM_APP+2)  // General failure - Wait Connection failed
@@ -85,7 +85,7 @@ namespace nux
     Window      m_X11Window;
     XVisualInfo *m_X11VisualInfo;
 
-    int         m_ParentWindow;
+    int         parent_window_;
 #ifndef NUX_OPENGLES_20
     GLXContext  m_GLCtx;
     GLXFBConfig _fb_config;
@@ -118,23 +118,23 @@ namespace nux
 
     char m_WindowClassName[256];
     GLuint      m_PixelFormat;      // Holds The Results After Searching For A Match
-    NString     m_WindowTitle;
+    std::string window_title_;
 
     // size, position
-    Size m_ViewportSize;
-    Size m_WindowSize;
+    Size viewport_size_;
+    Size window_size_;
     Point m_WindowPosition;
 
-    // surface attibute;
-    bool m_Fullscreen;
-    unsigned int m_ScreenBitDepth;
+    //! Full screen mode.
+    bool fullscreen_;
+    //! Screen bit depth
+    unsigned int screen_bit_depth_;
 
-    // verifiy that the interface is properly created
-    bool m_GfxInterfaceCreated;
+    //! State of the graphics interface.
+    bool gfx_interface_created_;
 
     // Device information
     void GetDisplayInfo();
-    int m_BestMode;
 
     bool m_CreatedFromForeignWindow;
     Time last_click_time_;
@@ -142,12 +142,12 @@ namespace nux
         Maximum time allowed between the end of the last click (mouse up) and the next mouse down
         to be considered as a double click event.
     */
-    static int double_click_time_delay; 
+    static int double_click_time_delay;
     int double_click_counter_;
 
   public:
     typedef void(*GrabReleaseCallback) (bool replaced, void *user_data);
-  
+
     typedef struct _DndSourceFuncs
     {
       nux::NBitmapData *       (*get_drag_image)    (void * data);
@@ -155,14 +155,12 @@ namespace nux
       const char *             (*get_data_for_type) (const char * type, int *size, int *format, void * data);
       void                     (*drag_finished)     (DndAction result, void * data);
     } DndSourceFuncs;
-    
+
     bool HasXPendingEvent() const;
     Display *GetX11Display()
     {
       return m_X11Display;
     }
-    // Device
-    int m_num_device_modes;
 
     // Event object
     Event *m_pEvent;
@@ -176,7 +174,7 @@ namespace nux
         @param WindowHeight     Initial window height.
         @param Style            The window style.
         @param ParentWindow     The parent window.
-        @param FullscreenFlag   Full screen flag.
+        @param fullscreen_flag  Full screen flag.
     */
     bool CreateOpenGLWindow(
       const char *WindowTitle,
@@ -184,7 +182,7 @@ namespace nux
       unsigned int WindowHeight,
       WindowStyle Style,
       const GraphicsDisplay *Parent,
-      bool FullscreenFlag = false,
+      bool fullscreen_flag = false,
       bool create_rendering_data = true);
 
     //! Create a GLWindow from a display and window created externally.
@@ -211,7 +209,7 @@ namespace nux
 
     //! Set the window position.
     void SetWindowPosition(int width, int height);
-    
+
     //! Set the OpenGL Viewport.
     void SetViewPort(int x, int y, int width, int height);
 
@@ -247,7 +245,7 @@ namespace nux
 
     std::list<EventFilterArg> _event_filters;
 #endif
-    
+
     Event &GetCurrentEvent();
 
     // That method is deprecated, it always returns false and still here in
@@ -270,7 +268,7 @@ namespace nux
     }
     bool IsChildWindow() const
     {
-      return m_ParentWindow != 0;
+      return parent_window_ != 0;
     }
 
     // Return true if VSync swap control is available
@@ -299,7 +297,7 @@ namespace nux
 
     //! Get the window size and reset the GraphicsEngine and GpuDevice accordingly.
     /*!
-        This is a passive way to set the window size through out the NuxGraphics system. This call gets the 
+        This is a passive way to set the window size through out the NuxGraphics system. This call gets the
         current window size and sets its accordingly to all sub-system.
         \sa SetWindowSize
     */
@@ -327,35 +325,35 @@ namespace nux
     void ProcessXEvent(XEvent xevent, bool foreign);
     void RecalcXYPosition(Window TheMainWindow, XEvent xevent, int &x, int &y);
     void RecalcXYPosition(int x_root, int y_root, int &x_recalc, int &y_recalc);
-    
+
     void              SendDndStatus   (bool accept, DndAction action, Rect region);
     void              SendDndFinished(bool accepted, DndAction performed_action);
     std::list<char *> GetDndMimeTypes();
     char *            GetDndData      (char *property);
 
     void StartDndDrag(const DndSourceFuncs &funcs, void *user_data);
-    
+
     bool GrabPointer   (GrabReleaseCallback callback, void *data, bool replace_existing);
     bool UngrabPointer(void *data);
     bool PointerIsGrabbed();
-    
+
     bool GrabKeyboard   (GrabReleaseCallback callback, void *data, bool replace_existing);
     bool UngrabKeyboard(void *data);
     bool KeyboardIsGrabbed();
-    
+
     void * KeyboardGrabData() { return _global_keyboard_grab_data; }
     void * PointerGrabData() { return _global_pointer_grab_data; }
 
   private:
     void InitGlobalGrabWindow();
-  
+
     void HandleXDndPosition(XEvent event, Event* nux_event);
     void HandleXDndEnter    (XEvent event);
     void HandleXDndStatus   (XEvent event);
     void HandleXDndLeave    (XEvent event);
     void HandleXDndDrop     (XEvent event, Event* nux_event);
     void HandleXDndFinished(XEvent event);
-    
+
     void SendXDndStatus(Display *display, Window source, Window target, bool accept, Atom action, Rect box);
     bool GetXDndSelectionEvent(Display *display, Window target, Atom property, long time, XEvent *result, int attempts);
     void SendXDndFinished(Display *display, Window source, Window target, bool result, Atom action);
@@ -366,17 +364,17 @@ namespace nux
     void HandleDndDragSourceEvent(XEvent event);
     void HandleDndSelectionRequest(XEvent event);
     Window GetDndTargetWindowForPos(int x, int y);
-    
+
     void DrawDndSourceWindow();
-    
+
     void SendDndSourcePosition(Window target, int x, int y, Time time);
     void SendDndSourceEnter(Window target);
     void SendDndSourceLeave(Window target);
     void SendDndSourceDrop(Window target, Time time);
     void SetDndSourceTargetWindow(Window target);
-    
+
     static gboolean OnDragEndTimeout(gpointer data);
-  
+
     Point _last_dnd_position;
 
     bool m_PauseGraphicsRendering;
@@ -397,9 +395,9 @@ namespace nux
 
     Window _dnd_source_window;
     Window _dnd_source_target_window;
-    
+
     Window              _global_grab_window;
-    
+
     void               *_global_pointer_grab_data;
     bool                _global_pointer_grab_active;
     GrabReleaseCallback _global_pointer_grab_callback;

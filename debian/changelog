@@ -1,3 +1,20 @@
+nux (3.6.0-0ubuntu1) UNRELEASED; urgency=low
+
+  * New upstream release.
+    - Partial fix to compiler warnings (LP: #1032313)
+    - InputArea: remove the pending grabs on destroy (it could cause crash 
+      otherwise)
+    - WindowCompostior: use ObjectWeakPtr to handle focus and mouse areas
+      (LP: #1045059)
+    - Introduced "Redirected Views" in Nux. Redirected views allows a view 
+      to be rendered inside its own texture and that texture is latter 
+      composited inside the main rendering. (LP: #1049593)
+    - Added a method to WindowCompositor RestoreMainFramebuffer which 
+      either restores the reference framebuffer or binds us to the backbuffer 
+      depending on what is available (LP: #1036521) (LP: #1036572)
+
+ -- Timo Jyrinki <timo-jyrinki@ubuntu.com>  Wed, 19 Sep 2012 14:46:51 +0300
+
 nux (3.4.0-0ubuntu3) quantal-proposed; urgency=low
 
   * fix armel/armhf build dependencies

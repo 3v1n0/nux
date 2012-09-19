@@ -74,7 +74,7 @@ namespace nux
 
       NString     _tab_name;
       Layout     *_tab_content_layout;
-      InputArea  *_tab_area;
+      BasicView  *_tab_area;
       int         _index;
     };
 
@@ -103,8 +103,8 @@ namespace nux
     void TranslateRight(int x, int y, unsigned long button_flags, unsigned long key_flags);
     void TranslateTabLayout(int offset);
 
-    InputArea   *_scroll_right;
-    InputArea   *_scroll_left;
+    BasicView   *_scroll_right;
+    BasicView   *_scroll_left;
 
     Layout     *_visible_tab_content_layout;
     HLayout    *_tabview_heads_layout;

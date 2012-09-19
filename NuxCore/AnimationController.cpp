@@ -20,6 +20,7 @@
  *
  */
 
+#include "NuxCore.h"
 #include "AnimationController.h"
 #include "Animation.h"
 

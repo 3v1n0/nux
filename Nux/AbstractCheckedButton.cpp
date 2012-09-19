@@ -39,7 +39,7 @@ namespace nux
     static_text_  = new StaticText(label_, NUX_TRACKER_LOCATION);
     static_text_->SetTextColor(label_color_);
     hlayout_      = new HLayout(NUX_TRACKER_LOCATION);
-    check_area_   = new InputArea(NUX_TRACKER_LOCATION);
+    check_area_   = new BasicView(NUX_TRACKER_LOCATION);
 
     check_area_->SetInputEventSensitivity(false);
     static_text_->SetInputEventSensitivity(false);

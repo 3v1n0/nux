@@ -160,7 +160,7 @@ namespace nux
         vtxelement.Type,
         GL_FALSE,
         vtxelement.stride_,
-        (void*)vtxelement.Offset));
+        (void*)vtxelement.Offset)); // TODO: Bug. It doesn't make sense to convert a 4-byte int into an 8-byte pointer.
 
       VertexDeclaration->_valid_vertex_input[shader_attribute_location] = 1;
       ++decl;

@@ -23,7 +23,6 @@
 #ifndef ABSTRACTOBJECTBASE_H
 #define ABSTRACTOBJECTBASE_H
 
-#include "Features.h"
 #include "Nux.h"
 #include "NuxCore/Property.h"
 
@@ -48,7 +47,6 @@ namespace nux
     /*
         If ComputeContentSize is called while outside of the layout process (\sa IsInsideLayoutCycle) then the parents of 
         this object maybe added to the layout queue if this view size changes. \sa Area::ReconfigureParentLayout.
-
     */
     virtual long ComputeContentSize();
     virtual void ComputeContentPosition(float offsetX, float offsetY);
@@ -85,7 +83,7 @@ namespace nux
     virtual void ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw);
     //! Causes a redraw. The widget parameter draw_cmd_queued_ is set to true. The widget Draw(), DrawContent() and PostDraw() are called.
     /*!
-        Emits the signal \i OnQueueDraw.
+        Emits the signal \i queue_draw.
     */
     virtual void QueueDraw();
 
@@ -100,6 +98,9 @@ namespace nux
 
     bool SearchInAllSubNodes(Area *bo);
     bool SearchInFirstSubNodes(Area *bo);
+
+    
+/*    void SetGeometry(int x, int y, int w, int h);*/
 
     //! Set Geometry
     /*
@@ -144,18 +145,28 @@ namespace nux
     void SetFont(ObjectPtr<FontTexture> font);
     ObjectPtr<FontTexture> GetFont();
 
-    sigc::signal<void, View*> OnQueueDraw;  //!< Signal emitted when a view is scheduled for a draw.
+    sigc::signal<void, View*> queue_draw;       //!< Signal emitted when a view is scheduled for a draw.
+    sigc::signal<void, Area*> child_queue_draw; //!< Signal emitted when a child of this view is scheduled for a draw.
 
     virtual Area* KeyNavIteration(KeyNavDirection direction);
     virtual bool AcceptKeyNavFocus();
 
-    void IsHitDetectionSkipingChildren(bool skip_children);
+    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
+
+    virtual Area* FindKeyFocusArea(unsigned int key_symbol,
+      unsigned long x11_key_code,
+      unsigned long special_keys_state);
 
 #ifdef NUX_GESTURES_SUPPORT
     virtual Area* GetInputAreaHitByGesture(const nux::GestureEvent &event);
 #endif
 
   protected:
+    virtual void ChildViewQueuedDraw(Area* area);
+
+    void BeginBackupTextureRendering(GraphicsEngine& graphics_engine, bool force_draw);
+
+    void EndBackupTextureRendering(GraphicsEngine& graphics_engine, bool force_draw);
 
     void OnChildFocusChanged(/*Area *parent,*/ Area *child);
     sigc::connection _on_focus_changed_handler;
@@ -191,18 +202,13 @@ namespace nux
     */
     bool IsFullRedraw() const;
 
-    virtual void GeometryChangePending();
-    virtual void GeometryChanged();
-
-    virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
-
-    virtual Area* FindKeyFocusArea(unsigned int key_symbol,
-                          unsigned long x11_key_code,
-                          unsigned long special_keys_state);
+    virtual void GeometryChangePending(bool position_about_to_change, bool size_about_to_change);
+    virtual void GeometryChanged(bool position_has_changed, bool size_has_changed);
 
     Layout *view_layout_;
 
     bool draw_cmd_queued_; //<! The rendering of the view needs to be refreshed.
+    bool child_draw_cmd_queued_; //<! A child of this view has requested a draw.
 
     bool full_view_draw_cmd_; //<! True if Draw is called before ContentDraw. It is read-only and can be accessed by calling IsFullRedraw();
 
@@ -213,8 +219,10 @@ namespace nux
     friend class Layout;
     friend class Area;
     friend class LayeredLayout;
+    friend class Canvas;
+    friend class VSplitter;
+    friend class HSplitter;
   };
-
 }
 
 #endif // ABSTRACTOBJECTBASE_H

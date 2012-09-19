@@ -99,7 +99,7 @@ namespace nux
   GraphicsDisplay *DisplayAccessController::CreateGLWindow(const char *WindowTitle, unsigned int WindowWidth, unsigned int WindowHeight,
                                                            WindowStyle Style,
                                                            GraphicsDisplay *GLWindow,
-                                                           bool FullscreenFlag,
+                                                           bool fullscreen_flag,
                                                            bool create_rendering_data)
   {
     if (GetGraphicsDisplay())
@@ -110,7 +110,7 @@ namespace nux
     }
 
     GraphicsDisplay *glwindow = new GraphicsDisplay();
-    glwindow->CreateOpenGLWindow(WindowTitle, WindowWidth, WindowHeight, Style, GLWindow, FullscreenFlag, create_rendering_data);
+    glwindow->CreateOpenGLWindow(WindowTitle, WindowWidth, WindowHeight, Style, GLWindow, fullscreen_flag, create_rendering_data);
 
     return glwindow;
   }
