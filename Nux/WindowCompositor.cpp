@@ -2277,80 +2277,104 @@ namespace
     reference_fbo_geometry_ = fbo_geometry;
   }
 
+  namespace
+  {
+    bool CheckExternalFramebufferStatus (GLenum binding)
+    {
+      bool ok = false;
+      // Nux does some sanity checks to make sure that the FBO is in good condition.
+      GLenum status;
+      status = glCheckFramebufferStatusEXT(binding);
+      CHECKGL_MSG(glCheckFramebufferStatusEXT);
+
+      switch(status)
+      {
+        case GL_FRAMEBUFFER_COMPLETE_EXT: // Everything's OK
+          ok = true;
+          break;
+        case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
+          nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT");
+          ok = false;
+          break;
+        case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
+          nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT");
+          ok = false;
+          break;
+          // See issue(87) of http://www.opengl.org/registry/specs/EXT/framebuffer_object.txt
+          //  case GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT:
+          //      nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT");
+          //      ok = false;
+          //      break;
+        case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
+          nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT");
+          ok = false;
+          break;
+  #ifndef NUX_OPENGLES_20
+        case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
+          nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT");
+          ok = false;
+          break;
+        case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
+          nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT");
+          ok = false;
+          break;
+        case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
+          nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT");
+          ok = false;
+          break;
+  #endif
+        //  case GL_FRAMEBUFFER_STATUS_ERROR_EXT:
+        //      nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_STATUS_ERROR_EXT");
+        //      ok = false;
+        //      break;
+        case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
+          nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_UNSUPPORTED_EXT");
+          ok = false;
+          break;
+        default:
+          nuxError("[GLFramebufferObject::IsValid] Unknown ERROR");
+          ok = false;
+      }
+
+      return ok;
+    }
+
+    void SetReferenceFramebufferViewport (const nux::Geometry &reference_fbo_geometry_)
+    {
+      CHECKGL(glViewport(reference_fbo_geometry_.x,
+        reference_fbo_geometry_.y,
+        reference_fbo_geometry_.width,
+        reference_fbo_geometry_.height));
+    }
+  }
+
   bool WindowCompositor::RestoreReferenceFramebuffer()
   {
+    if (!reference_fbo_)
+      return false;
+
     // It is assumed that the reference fbo contains valid textures.
     // Nux does the following:
     //    - Bind the reference fbo (reference_fbo_)
     //    - Call glDrawBuffer with GL_COLOR_ATTACHMENT0
     //    - Set the opengl viewport size (reference_fbo_geometry_)
 
-    bool ok = false;
-
     CHECKGL(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, reference_fbo_));
 #ifndef NUX_OPENGLES_20
     CHECKGL(glDrawBuffer(GL_COLOR_ATTACHMENT0));
+    CHECKGL(glReadBuffer(GL_COLOR_ATTACHMENT0));
 #endif
-    CHECKGL(glViewport(reference_fbo_geometry_.x,
-      reference_fbo_geometry_.y,
-      reference_fbo_geometry_.width,
-      reference_fbo_geometry_.height));
 
-    // Nux does some sanity checks to make sure that the FBO is in good condition.
-    GLenum status;
-    status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-    CHECKGL_MSG(glCheckFramebufferStatusEXT);
+    SetReferenceFramebufferViewport (reference_fbo_geometry_);
 
-    switch(status)
-    {
-      case GL_FRAMEBUFFER_COMPLETE_EXT: // Everything's OK
-        ok = true;
-        break;
-      case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
-        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT");
-        ok = false;
-        break;
-      case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
-        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT");
-        ok = false;
-        break;
-        // See issue(87) of http://www.opengl.org/registry/specs/EXT/framebuffer_object.txt
-        //  case GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT:
-        //      nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT");
-        //      ok = false;
-        //      break;
-      case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
-        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT");
-        ok = false;
-        break;
-#ifndef NUX_OPENGLES_20
-      case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
-        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT");
-        ok = false;
-        break;
-      case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
-        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT");
-        ok = false;
-        break;
-      case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
-        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT");
-        ok = false;
-        break;
-#endif
-      //  case GL_FRAMEBUFFER_STATUS_ERROR_EXT:
-      //      nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_STATUS_ERROR_EXT");
-      //      ok = false;
-      //      break;
-      case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
-        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_UNSUPPORTED_EXT");
-        ok = false;
-        break;
-      default:
-        nuxError("[GLFramebufferObject::IsValid] Unknown ERROR");
-        ok = false;
-    }    
+    return CheckExternalFramebufferStatus (GL_FRAMEBUFFER_EXT);
+  }
 
-    return ok;
+  void WindowCompositor::RestoreMainFramebuffer()
+  {
+    // This is a bit inefficient as we unbind and then rebind
+    nux::GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer ();
+    RestoreReferenceFramebuffer ();
   }
 
 #ifdef NUX_GESTURES_SUPPORT
