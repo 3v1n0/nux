@@ -215,6 +215,7 @@ namespace nux
         @return True if no error was detected.
     */
     bool RestoreReferenceFramebuffer();
+    void RestoreMainFramebuffer();
 
     ObjectPtr<IOpenGLFrameBufferObject>& GetWindowFrameBufferObject()
     {
