@@ -25,7 +25,10 @@ libnux_core_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
 
 source_cpp = \
+  $(srcdir)/Animation.cpp \
+  $(srcdir)/AnimationController.cpp \
   $(srcdir)/AsyncFileWriter.cpp \
+  $(srcdir)/EasingCurve.cpp \
   $(srcdir)/TextString.cpp \
   $(srcdir)/TimeFunctions.cpp \
   $(srcdir)/Template.cpp \
@@ -112,7 +115,11 @@ source_math_h = \
   $(srcdir)/Math/MathUtility.h
 
 source_h = \
+  $(srcdir)/Animation.h \
+  $(srcdir)/Animation-inl.h \
+  $(srcdir)/AnimationController.h \
   $(srcdir)/AsyncFileWriter.h \
+  $(srcdir)/EasingCurve.h \
   $(srcdir)/Point.h \
   $(srcdir)/FilePath.h \
   $(srcdir)/System.h \
@@ -151,6 +158,7 @@ source_h = \
   $(srcdir)/InitiallyUnownedObject.h \
   $(srcdir)/Property.h \
   $(srcdir)/Property-inl.h \
+  $(srcdir)/PropertyAnimation.h \
   $(srcdir)/PropertyOperators.h \
   $(srcdir)/PropertyTraits.h \
   $(srcdir)/Win32Dialogs/NWin32Clipboard.h

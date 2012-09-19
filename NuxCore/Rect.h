@@ -118,6 +118,11 @@ namespace nux
     int width, height;
   };
 
+  Rect operator+(Rect const& lhs, Rect const& rhs);
+  Rect operator-(Rect const& lhs, Rect const& rhs);
+  Rect operator*(Rect const& lhs, float scalar);
+
+
 }
 
 #endif // RECT_H

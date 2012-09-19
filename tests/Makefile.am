@@ -31,6 +31,7 @@ gtest_nuxcore_SOURCES = \
   Helpers.cpp \
   $(top_builddir)/NuxCore/ColorPrivate.cpp \
   $(top_builddir)/NuxCore/ColorPrivate.h \
+  gtest-nuxcore-animation.cpp \
   gtest-nuxcore-async-file-writer.cpp \
   gtest-nuxcore-color.cpp \
   gtest-nuxcore-colorprivate.cpp \
