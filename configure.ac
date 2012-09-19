@@ -116,7 +116,7 @@ AC_CHECK_FUNCS([memset munmap strcasecmp strdup])
 PKG_PROG_PKG_CONFIG
 
 dnl ===========================================================================
-GL_PKGS="gl glu glew glewmx"
+GL_PKGS="gl glu glew glewmx xext x11"
 MAINTAINER_CFLAGS=""
 
 # Enable opengl es 20 code path
