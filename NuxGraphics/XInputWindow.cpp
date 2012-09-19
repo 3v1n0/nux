@@ -125,6 +125,8 @@ namespace nux
 
     XUnionRectWithRegion(&tmp_rect, input_window_region, input_window_region);
 
+    monitor = tmp_rect;
+
     /* If there is no Xinerama data available just use the geometry we have */
     if (!info)
     {
