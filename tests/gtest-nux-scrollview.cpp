@@ -25,6 +25,8 @@
 #include "Nux/Nux.h"
 #include "Nux/ScrollView.h"
 #include "Nux/VLayout.h"
+#include "Nux/HScrollBar.h"
+#include "Nux/VScrollBar.h"
 
 using namespace testing;
 
@@ -39,6 +41,14 @@ public:
   {
      EmitMouseWheelSignal(x, y, wheel_delta, mouse_button_state, special_keys_state);
   }
+
+  nux::Area* FindAreaUnderMouse(const nux::Point& mouse_position, nux::NuxEventType event_type)
+  {
+    return ScrollView::FindAreaUnderMouse(mouse_position, event_type);
+  }
+
+  nux::HScrollBar* GetHScrollbar() const { return _hscrollbar; }
+  nux::VScrollBar* GetVScrollbar() const { return _vscrollbar; }
 };
 
 class TestScrollView : public ::testing::Test
@@ -122,6 +132,68 @@ TEST_F(TestScrollView, TestQueueDrawScrollUpStart)
     .Times(0);
 
   scrollview->FakeMouseWheelSignal(0, 0, NUX_MOUSEWHEEL_DELTA, 0, 0);
+}
+
+
+TEST_F(TestScrollView, TestFindAreaUnderMouseScrollbars)
+{
+  scrollview->m_ViewContentHeight = 500;
+  scrollview->m_ViewHeight = 400;
+  scrollview->EnableVerticalScrollBar(true);
+  scrollview->EnableHorizontalScrollBar(true);
+
+  nux::Area* scroll_area = scrollview.GetPointer();
+  nux::Area* vscrollbar = scrollview->GetVScrollbar();
+  nux::Area* hscrollbar = scrollview->GetHScrollbar();
+
+  EXPECT_CALL(*scrollview, QueueDraw())
+    .Times(0);
+
+  nux::Geometry const& geo_scrollview = scrollview->GetAbsoluteGeometry();
+  nux::Geometry const& geo_vbar = vscrollbar->GetAbsoluteGeometry();
+  nux::Geometry const& geo_hbar = hscrollbar->GetAbsoluteGeometry();
+
+  nux::Area* middle_area = scrollview->FindAreaUnderMouse(geo_scrollview.GetCenter(), nux::NUX_MOUSE_MOVE);
+  EXPECT_EQ(middle_area, scroll_area);
+
+  nux::Area* right_area = scrollview->FindAreaUnderMouse(geo_vbar.GetCenter(), nux::NUX_MOUSE_MOVE);
+  EXPECT_TRUE(right_area == vscrollbar || right_area->IsChildOf(vscrollbar));
+
+  nux::Area* bottom_area = scrollview->FindAreaUnderMouse(geo_hbar.GetCenter(), nux::NUX_MOUSE_MOVE);
+  EXPECT_TRUE(bottom_area == hscrollbar || bottom_area->IsChildOf(hscrollbar));
+}
+
+
+TEST_F(TestScrollView, TestFindAreaUnderMouseNoScrollbars)
+{
+  scrollview->m_ViewContentHeight = 500;
+  scrollview->m_ViewHeight = 400;
+  scrollview->EnableVerticalScrollBar(true);
+  scrollview->EnableHorizontalScrollBar(true);
+
+  nux::Area* scroll_area = scrollview.GetPointer();
+  nux::Area* vscrollbar = scrollview->GetVScrollbar();
+  nux::Area* hscrollbar = scrollview->GetHScrollbar();
+
+  EXPECT_CALL(*scrollview, QueueDraw())
+    .Times(0);
+
+  nux::Geometry const& geo_scrollview = scrollview->GetAbsoluteGeometry();
+  nux::Geometry const& geo_vbar = vscrollbar->GetAbsoluteGeometry();
+  nux::Geometry const& geo_hbar = hscrollbar->GetAbsoluteGeometry();
+
+  // Now, disable the scrollbars.
+  scrollview->EnableVerticalScrollBar(false);
+  scrollview->EnableHorizontalScrollBar(false);
+
+  nux::Area* middle_area = scrollview->FindAreaUnderMouse(geo_scrollview.GetCenter(), nux::NUX_MOUSE_MOVE);
+  EXPECT_EQ(middle_area, scroll_area);
+
+  nux::Area* right_area = scrollview->FindAreaUnderMouse(geo_vbar.GetCenter(), nux::NUX_MOUSE_MOVE);
+  EXPECT_EQ(right_area, scroll_area);
+
+  nux::Area* bottom_area = scrollview->FindAreaUnderMouse(geo_hbar.GetCenter(), nux::NUX_MOUSE_MOVE);
+  EXPECT_EQ(bottom_area, scroll_area);
 }
 
 }

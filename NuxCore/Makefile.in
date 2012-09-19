@@ -104,7 +104,10 @@ am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" \
 LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 libnux_core_@NUX_API_VERSION@_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
-am__objects_1 = libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.lo \
+am__objects_1 = libnux_core_@NUX_API_VERSION@_la-Animation.lo \
+	libnux_core_@NUX_API_VERSION@_la-AnimationController.lo \
+	libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.lo \
+	libnux_core_@NUX_API_VERSION@_la-EasingCurve.lo \
 	libnux_core_@NUX_API_VERSION@_la-TextString.lo \
 	libnux_core_@NUX_API_VERSION@_la-TimeFunctions.lo \
 	libnux_core_@NUX_API_VERSION@_la-Template.lo \
@@ -426,7 +429,10 @@ libnux_core_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
 
 source_cpp = \
+  $(srcdir)/Animation.cpp \
+  $(srcdir)/AnimationController.cpp \
   $(srcdir)/AsyncFileWriter.cpp \
+  $(srcdir)/EasingCurve.cpp \
   $(srcdir)/TextString.cpp \
   $(srcdir)/TimeFunctions.cpp \
   $(srcdir)/Template.cpp \
@@ -513,7 +519,11 @@ source_math_h = \
   $(srcdir)/Math/MathUtility.h
 
 source_h = \
+  $(srcdir)/Animation.h \
+  $(srcdir)/Animation-inl.h \
+  $(srcdir)/AnimationController.h \
   $(srcdir)/AsyncFileWriter.h \
+  $(srcdir)/EasingCurve.h \
   $(srcdir)/Point.h \
   $(srcdir)/FilePath.h \
   $(srcdir)/System.h \
@@ -552,6 +562,7 @@ source_h = \
   $(srcdir)/InitiallyUnownedObject.h \
   $(srcdir)/Property.h \
   $(srcdir)/Property-inl.h \
+  $(srcdir)/PropertyAnimation.h \
   $(srcdir)/PropertyOperators.h \
   $(srcdir)/PropertyTraits.h \
   $(srcdir)/Win32Dialogs/NWin32Clipboard.h
@@ -654,6 +665,8 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Algo.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Animation.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-AnimationController.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Bezier.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Color.Plo@am__quote@
@@ -661,6 +674,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Colors.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Complex.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Constants.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-EasingCurve.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Exception.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-FileIO.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-FileName.Plo@am__quote@
@@ -725,12 +739,33 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
 
+libnux_core_@NUX_API_VERSION@_la-Animation.lo: $(srcdir)/Animation.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-Animation.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Animation.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-Animation.lo `test -f '$(srcdir)/Animation.cpp' || echo '$(srcdir)/'`$(srcdir)/Animation.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Animation.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-Animation.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(srcdir)/Animation.cpp' object='libnux_core_@NUX_API_VERSION@_la-Animation.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-Animation.lo `test -f '$(srcdir)/Animation.cpp' || echo '$(srcdir)/'`$(srcdir)/Animation.cpp
+
+libnux_core_@NUX_API_VERSION@_la-AnimationController.lo: $(srcdir)/AnimationController.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-AnimationController.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-AnimationController.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-AnimationController.lo `test -f '$(srcdir)/AnimationController.cpp' || echo '$(srcdir)/'`$(srcdir)/AnimationController.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-AnimationController.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-AnimationController.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(srcdir)/AnimationController.cpp' object='libnux_core_@NUX_API_VERSION@_la-AnimationController.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-AnimationController.lo `test -f '$(srcdir)/AnimationController.cpp' || echo '$(srcdir)/'`$(srcdir)/AnimationController.cpp
+
 libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.lo: $(srcdir)/AsyncFileWriter.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.lo `test -f '$(srcdir)/AsyncFileWriter.cpp' || echo '$(srcdir)/'`$(srcdir)/AsyncFileWriter.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.Plo
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(srcdir)/AsyncFileWriter.cpp' object='libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-AsyncFileWriter.lo `test -f '$(srcdir)/AsyncFileWriter.cpp' || echo '$(srcdir)/'`$(srcdir)/AsyncFileWriter.cpp
+
+libnux_core_@NUX_API_VERSION@_la-EasingCurve.lo: $(srcdir)/EasingCurve.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-EasingCurve.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-EasingCurve.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-EasingCurve.lo `test -f '$(srcdir)/EasingCurve.cpp' || echo '$(srcdir)/'`$(srcdir)/EasingCurve.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-EasingCurve.Tpo $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-EasingCurve.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(srcdir)/EasingCurve.cpp' object='libnux_core_@NUX_API_VERSION@_la-EasingCurve.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_core_@NUX_API_VERSION@_la-EasingCurve.lo `test -f '$(srcdir)/EasingCurve.cpp' || echo '$(srcdir)/'`$(srcdir)/EasingCurve.cpp
 
 libnux_core_@NUX_API_VERSION@_la-TextString.lo: $(srcdir)/TextString.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_core_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_core_@NUX_API_VERSION@_la-TextString.lo -MD -MP -MF $(DEPDIR)/libnux_core_@NUX_API_VERSION@_la-TextString.Tpo -c -o libnux_core_@NUX_API_VERSION@_la-TextString.lo `test -f '$(srcdir)/TextString.cpp' || echo '$(srcdir)/'`$(srcdir)/TextString.cpp

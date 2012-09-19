@@ -139,6 +139,7 @@ gtest_nux_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 am__gtest_nuxcore_SOURCES_DIST = Helpers.h Helpers.cpp \
 	$(top_builddir)/NuxCore/ColorPrivate.cpp \
 	$(top_builddir)/NuxCore/ColorPrivate.h \
+	gtest-nuxcore-animation.cpp \
 	gtest-nuxcore-async-file-writer.cpp gtest-nuxcore-color.cpp \
 	gtest-nuxcore-colorprivate.cpp gtest-nuxcore-logger.cpp \
 	gtest-nuxcore-main.cpp gtest-nuxcore-object.cpp \
@@ -147,6 +148,7 @@ am__gtest_nuxcore_SOURCES_DIST = Helpers.h Helpers.cpp \
 @BUILD_TESTS_TRUE@am_gtest_nuxcore_OBJECTS =  \
 @BUILD_TESTS_TRUE@	gtest_nuxcore-Helpers.$(OBJEXT) \
 @BUILD_TESTS_TRUE@	gtest_nuxcore-ColorPrivate.$(OBJEXT) \
+@BUILD_TESTS_TRUE@	gtest_nuxcore-gtest-nuxcore-animation.$(OBJEXT) \
 @BUILD_TESTS_TRUE@	gtest_nuxcore-gtest-nuxcore-async-file-writer.$(OBJEXT) \
 @BUILD_TESTS_TRUE@	gtest_nuxcore-gtest-nuxcore-color.$(OBJEXT) \
 @BUILD_TESTS_TRUE@	gtest_nuxcore-gtest-nuxcore-colorprivate.$(OBJEXT) \
@@ -635,6 +637,7 @@ top_srcdir = @top_srcdir@
 @BUILD_TESTS_TRUE@  Helpers.cpp \
 @BUILD_TESTS_TRUE@  $(top_builddir)/NuxCore/ColorPrivate.cpp \
 @BUILD_TESTS_TRUE@  $(top_builddir)/NuxCore/ColorPrivate.h \
+@BUILD_TESTS_TRUE@  gtest-nuxcore-animation.cpp \
 @BUILD_TESTS_TRUE@  gtest-nuxcore-async-file-writer.cpp \
 @BUILD_TESTS_TRUE@  gtest-nuxcore-color.cpp \
 @BUILD_TESTS_TRUE@  gtest-nuxcore-colorprivate.cpp \
@@ -960,6 +963,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nux-gtest-nux-windowthread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nuxcore-ColorPrivate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nuxcore-Helpers.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nuxcore-gtest-nuxcore-animation.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nuxcore-gtest-nuxcore-async-file-writer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nuxcore-gtest-nuxcore-color.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtest_nuxcore-gtest-nuxcore-colorprivate.Po@am__quote@
@@ -1259,6 +1263,20 @@ gtest_nuxcore-ColorPrivate.obj: $(top_builddir)/NuxCore/ColorPrivate.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(top_builddir)/NuxCore/ColorPrivate.cpp' object='gtest_nuxcore-ColorPrivate.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nuxcore-ColorPrivate.obj `if test -f '$(top_builddir)/NuxCore/ColorPrivate.cpp'; then $(CYGPATH_W) '$(top_builddir)/NuxCore/ColorPrivate.cpp'; else $(CYGPATH_W) '$(srcdir)/$(top_builddir)/NuxCore/ColorPrivate.cpp'; fi`
+
+gtest_nuxcore-gtest-nuxcore-animation.o: gtest-nuxcore-animation.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nuxcore-gtest-nuxcore-animation.o -MD -MP -MF $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-animation.Tpo -c -o gtest_nuxcore-gtest-nuxcore-animation.o `test -f 'gtest-nuxcore-animation.cpp' || echo '$(srcdir)/'`gtest-nuxcore-animation.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-animation.Tpo $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-animation.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nuxcore-animation.cpp' object='gtest_nuxcore-gtest-nuxcore-animation.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nuxcore-gtest-nuxcore-animation.o `test -f 'gtest-nuxcore-animation.cpp' || echo '$(srcdir)/'`gtest-nuxcore-animation.cpp
+
+gtest_nuxcore-gtest-nuxcore-animation.obj: gtest-nuxcore-animation.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nuxcore-gtest-nuxcore-animation.obj -MD -MP -MF $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-animation.Tpo -c -o gtest_nuxcore-gtest-nuxcore-animation.obj `if test -f 'gtest-nuxcore-animation.cpp'; then $(CYGPATH_W) 'gtest-nuxcore-animation.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nuxcore-animation.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-animation.Tpo $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-animation.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtest-nuxcore-animation.cpp' object='gtest_nuxcore-gtest-nuxcore-animation.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gtest_nuxcore-gtest-nuxcore-animation.obj `if test -f 'gtest-nuxcore-animation.cpp'; then $(CYGPATH_W) 'gtest-nuxcore-animation.cpp'; else $(CYGPATH_W) '$(srcdir)/gtest-nuxcore-animation.cpp'; fi`
 
 gtest_nuxcore-gtest-nuxcore-async-file-writer.o: gtest-nuxcore-async-file-writer.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gtest_nuxcore_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gtest_nuxcore-gtest-nuxcore-async-file-writer.o -MD -MP -MF $(DEPDIR)/gtest_nuxcore-gtest-nuxcore-async-file-writer.Tpo -c -o gtest_nuxcore-gtest-nuxcore-async-file-writer.o `test -f 'gtest-nuxcore-async-file-writer.cpp' || echo '$(srcdir)/'`gtest-nuxcore-async-file-writer.cpp

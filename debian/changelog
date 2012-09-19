@@ -1,3 +1,12 @@
+nux (3.4.0-0ubuntu1) UNRELEASED; urgency=low
+
+  * New upstream release.
+    - introduced NuxCore animation framework
+    - nux::ScrollView::FindAreaUnderMouse takes scroll-bars into account when
+      they are disabled. (LP: #1039480)
+
+ -- Łukasz 'sil2100' Zemczak <lukasz.zemczak@canonical.com>  Fri, 31 Aug 2012 23:30:24 +0200
+
 nux (3.2.0-0ubuntu3) quantal; urgency=low
 
   * debian/nux-tools.maintscript:
