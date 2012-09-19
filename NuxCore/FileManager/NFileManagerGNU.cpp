@@ -460,7 +460,7 @@ namespace nux
 
     if (Flags & NSerializer::Append)
     {
-      long long Pos = lseek (FileDesc, Pos, SEEK_END);
+      long long Pos = lseek (FileDesc, 0, SEEK_END);
 
       if (Pos == -1)
       {

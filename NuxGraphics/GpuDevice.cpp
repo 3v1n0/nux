@@ -308,6 +308,7 @@ namespace nux
 #ifndef NUX_OPENGLES_20    
     // OpenGL extension initialization
     GLenum Glew_Ok = 0;
+    Glew_Ok = Glew_Ok;  // Suppress compiler warning about set but not used variable.
 #ifdef GLEW_MX
     Glew_Ok = glewContextInit(glewGetContext());
     nuxAssertMsg(Glew_Ok == GLEW_OK, "[GpuDevice::GpuDevice] GL Extensions failed to initialize.");
@@ -322,7 +323,7 @@ namespace nux
 
     nuxAssertMsg(Glew_Ok == GLEW_OK, "[GpuDevice::GpuDevice] OpenGL Extensions failed to initialize.");
 #else
-    Glew_Ok = glewInit();
+    glewInit();
 #endif
 #endif
 
@@ -986,12 +987,12 @@ namespace nux
   {
     if (GetGpuInfo().Support_ARB_Texture_Non_Power_Of_Two())
     {
-      return new Texture2D(NUX_FILE_LINE_PARAM);
+      return new Texture2D(NUX_FILE_LINE_PARAM);  // Why are we creating a texture without a texture here?
     }
 
     if (GetGpuInfo().Support_EXT_Texture_Rectangle() || GetGpuInfo().Support_ARB_Texture_Rectangle())
     {
-      return new TextureRectangle(NUX_FILE_LINE_PARAM);
+      return new TextureRectangle(NUX_FILE_LINE_PARAM);  // Why are we creating a texture without a texture here?
     }
 
     nuxAssertMsg(0, "[NuxGraphicsResources::CreateSystemCapableTexture] No support for non power of two textures or rectangle textures");

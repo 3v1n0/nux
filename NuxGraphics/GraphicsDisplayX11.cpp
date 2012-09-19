@@ -34,6 +34,7 @@
 #include "GraphicsDisplay.h"
 
 #include <X11/extensions/shape.h>
+#include <X11/XKBlib.h>
 
 namespace nux
 {
@@ -177,7 +178,7 @@ namespace nux
     return gfx_interface_created_;
   }
 
-  static Bool WaitForNotify( Display *dpy, XEvent *event, XPointer arg )
+  static Bool WaitForNotify( Display * /* dpy */, XEvent *event, XPointer arg )
   {
     return(event->type == MapNotify) && (event->xmap.window == (Window) arg);
   }
@@ -187,10 +188,10 @@ namespace nux
   bool GraphicsDisplay::CreateOpenGLWindow(const char* window_title,
                                          unsigned int WindowWidth,
                                          unsigned int WindowHeight,
-                                         WindowStyle Style,
-                                         const GraphicsDisplay *Parent,
+                                         WindowStyle /* Style */,
+                                         const GraphicsDisplay * /* Parent */,
                                          bool fullscreen_flag,
-                                         bool create_rendering_data)
+                                         bool /* create_rendering_data */)
   {
     int xinerama_event, xinerama_error;
     int xinerama_major, xinerama_minor;
@@ -1562,7 +1563,7 @@ namespace nux
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: KeyPress event.");
         KeyCode keycode = xevent.xkey.keycode;
         KeySym keysym = NoSymbol;
-        keysym = XKeycodeToKeysym(xevent.xany.display, keycode, 0);
+        keysym = XkbKeycodeToKeysym(xevent.xany.display, keycode, 0, 0);
 
         m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
         m_pEvent->key_repeat_count = 0;
@@ -1598,7 +1599,7 @@ namespace nux
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: KeyRelease event.");
         KeyCode keycode = xevent.xkey.keycode;
         KeySym keysym = NoSymbol;
-        keysym = XKeycodeToKeysym(xevent.xany.display, keycode, 0);
+        keysym = XkbKeycodeToKeysym(xevent.xany.display, keycode, 0, 0);
 
         m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
         m_pEvent->key_repeat_count = 0;
@@ -2382,7 +2383,7 @@ namespace nux
       _dnd_source_target_accepts_drop = false;
   }
 
-  void GraphicsDisplay::HandleXDndLeave(XEvent event)
+  void GraphicsDisplay::HandleXDndLeave(XEvent /* event */)
   {
     // reset the key things
     _xdnd_types[0] = 0;
@@ -2596,7 +2597,7 @@ namespace nux
     if (_global_pointer_grab_callback)
       (*_global_pointer_grab_callback) (false, data);
 
-    _global_pointer_grab_data = false;
+    _global_pointer_grab_data = 0;
     _global_pointer_grab_callback = 0;
 
     return true;

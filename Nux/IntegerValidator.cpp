@@ -118,9 +118,8 @@ namespace nux
     return i;
   }
 
-  void IntegerValidator::Alternative(const char *str)
+  void IntegerValidator::Alternative(const char * /* str */)
   {
-    str = "0";
   }
 
   NString IntegerValidator::ToString(int i)

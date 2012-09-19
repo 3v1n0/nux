@@ -117,9 +117,8 @@ namespace nux
     return i;
   }
 
-  void HexRegExpValidator::Alternative(const char *str)
+  void HexRegExpValidator::Alternative(const char * /* str */)
   {
-    str = "0x0";
   }
 
   NString HexRegExpValidator::ToString(int i)

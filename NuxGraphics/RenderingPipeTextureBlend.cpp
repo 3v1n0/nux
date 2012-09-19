@@ -33,7 +33,7 @@
 
 namespace nux
 {
-  const char* const
+  const char*
   GraphicsEngine::GetBlendModeBlendFunc(LayerBlendMode layer_blend_mode)
   {
     switch (layer_blend_mode)
@@ -50,7 +50,7 @@ namespace nux
       }
   }
 
-const char* const
+const char*
 GraphicsEngine::GetBlendModeString(LayerBlendMode layer_blend_mode)
 {
   switch (layer_blend_mode)
