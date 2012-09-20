@@ -199,10 +199,8 @@ namespace
 
   void WindowCompositor::GetAreaUnderMouse(const Point& mouse_position,
                                            NuxEventType event_type,
-                                           ObjectWeakPtr<InputArea>& area_under_mouse_pointer,
-                                           ObjectWeakPtr<BaseWindow>& window)
+                                           ObjectWeakPtr<InputArea>& area_under_mouse_pointer)
   {
-    window = NULL;
     area_under_mouse_pointer = NULL;
 
     // Go through the list of BaseWindo and find the first area over which the
@@ -216,7 +214,6 @@ namespace
         if (area)
         {
           area_under_mouse_pointer = static_cast<InputArea*>(area);
-          window = *window_it;
           return;
         }
       }
@@ -255,20 +252,13 @@ namespace
     return mouse_owner_area_;
   }
 
-  void WindowCompositor::SetMouseOwnerBaseWindow(BaseWindow* base_window)
-  {
-    if (mouse_owner_base_window_ != base_window)
-      mouse_owner_base_window_ = base_window;
-  }
-
   void WindowCompositor::DndEventCycle(Event& event)
   {
     if (event.type == NUX_DND_MOVE)
     {
       ObjectWeakPtr<InputArea> hit_area;
-      ObjectWeakPtr<BaseWindow> hit_base_window;
 
-      GetAreaUnderMouse(Point(event.x, event.y), event.type, hit_area, hit_base_window);
+      GetAreaUnderMouse(Point(event.x, event.y), event.type, hit_area);
 
       if (hit_area.IsValid())
       {
@@ -321,7 +311,6 @@ namespace
         (event.type == NUX_MOUSE_RELEASED))
       {
         ObjectWeakPtr<InputArea> hit_view; // The view under the mouse
-        ObjectWeakPtr<BaseWindow> hit_base_window; // The BaseWindow below the mouse pointer.
 
         // Look for the area below the mouse pointer in the BaseWindow.
         Area* pointer_grab_area = GetPointerGrabArea();
@@ -340,8 +329,7 @@ namespace
         }
         else
         {
-          GetAreaUnderMouse(Point(event.x, event.y), event.type, hit_view, hit_base_window);
-          SetMouseOwnerBaseWindow(hit_base_window.GetPointer());
+          GetAreaUnderMouse(Point(event.x, event.y), event.type, hit_view);
         }
 
         Geometry hit_view_geo;
@@ -521,9 +509,8 @@ namespace
       // Context: The left mouse button down over an area. All events goes to that area.
       // But we still need to know where the mouse is.
       ObjectWeakPtr<InputArea> hit_view; // The view under the mouse
-      ObjectWeakPtr<BaseWindow> hit_base_window; // The BaseWindow below the mouse pointer.
 
-      GetAreaUnderMouse(Point(event.x, event.y), event.type, hit_view, hit_base_window);
+      GetAreaUnderMouse(Point(event.x, event.y), event.type, hit_view);
 
       Geometry const& mouse_owner_geo = mouse_owner_area_->GetAbsoluteGeometry();
       int mouse_owner_x = event.x - mouse_owner_geo.x;
@@ -1532,13 +1519,6 @@ namespace
         }
       }
       // End 2D Drawing
-    }
-
-    if (key_focus_area_.IsValid())
-    {
-      // key focus test
-      Geometry const& geo = key_focus_area_->GetRootGeometry();
-      //GetGraphicsDisplay()->GetGraphicsEngine()->QRP_Color(geo.x, geo.y, geo.width, geo.height, color::Blue);
     }
 
     window_thread_->GetGraphicsEngine().SetOrthographicProjectionMatrix(buffer_width, buffer_height);

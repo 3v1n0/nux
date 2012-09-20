@@ -126,8 +126,7 @@ namespace nux
     //! Traverse the widget tree and found the area that is right below the mouse pointer.
     void GetAreaUnderMouse(const Point& mouse_position,
                            NuxEventType event_type,
-                           ObjectWeakPtr<InputArea>& area_under_mouse_pointer,
-                           ObjectWeakPtr<BaseWindow>& window);
+                           ObjectWeakPtr<InputArea>& area_under_mouse_pointer);
 
     //! Traverse the widget tree and found the area has the key focus.
     void FindKeyFocusArea(NuxEventType event_type,
@@ -155,9 +154,6 @@ namespace nux
     //! Set the area that is right below the mouse pointer.
     void SetMouseOverArea(InputArea* area);
 
-    //! Set The BaseWindow of the area that is the mouse owner.
-    void SetMouseOwnerBaseWindow(BaseWindow* base_window);
-
     void SendKeyEvent(InputArea* input_area, NuxEventType event_type,
       unsigned int key_sym,
       unsigned long x11_key_code,
@@ -174,7 +170,6 @@ namespace nux
     ObjectWeakPtr<InputArea> key_focus_area_;
     ObjectWeakPtr<InputArea> mouse_owner_area_;
     ObjectWeakPtr<InputArea> mouse_over_area_;
-    ObjectWeakPtr<BaseWindow> mouse_owner_base_window_;
 
     int dnd_safety_x_;
     int dnd_safety_y_;
