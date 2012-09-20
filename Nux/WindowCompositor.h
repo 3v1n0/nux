@@ -72,7 +72,6 @@ namespace nux
     //====================================
     void MouseEventCycle(Event& event);
     void DndEventCycle(Event& event);
-    bool _enable_nux_new_event_architecture;
 
 
     Point _mouse_position_on_owner;

@@ -64,7 +64,6 @@ namespace
     _mouse_owner_menu_page      = NULL;
     _starting_menu_event_cycle  = false;
     _menu_is_active             = false;
-    _enable_nux_new_event_architecture   = true;
     on_menu_closure_continue_with_event_ = false;
 
     m_FrameBufferObject = GetGraphicsDisplay()->GetGpuDevice()->CreateFrameBufferObject();
@@ -981,54 +980,51 @@ namespace
   void WindowCompositor::ProcessEvent(Event& event)
   {
     inside_event_cycle_ = true;
-    if (_enable_nux_new_event_architecture)
+    if (((event.type >= NUX_MOUSE_PRESSED) && (event.type <= NUX_MOUSE_WHEEL)) ||
+    (event.type == NUX_WINDOW_MOUSELEAVE))
     {
-      if (((event.type >= NUX_MOUSE_PRESSED) && (event.type <= NUX_MOUSE_WHEEL)) ||
-      (event.type == NUX_WINDOW_MOUSELEAVE))
+      bool menu_active = false;
+      if (_menu_chain->size())
       {
-        bool menu_active = false;
-        if (_menu_chain->size())
-        {
-          menu_active = true;
-          MenuEventCycle(event);
-          CleanMenu();
-        }
+        menu_active = true;
+        MenuEventCycle(event);
+        CleanMenu();
+      }
 
-        if ((menu_active && on_menu_closure_continue_with_event_) || !(menu_active))
-        {
-          MouseEventCycle(event);
-        }
+      if ((menu_active && on_menu_closure_continue_with_event_) || !(menu_active))
+      {
+        MouseEventCycle(event);
+      }
 
-        on_menu_closure_continue_with_event_ = false;
+      on_menu_closure_continue_with_event_ = false;
 
-        if (_starting_menu_event_cycle)
-        {
-          _starting_menu_event_cycle = false;
-        }
-      }
-      else if ((event.type >= NUX_KEYDOWN) && (event.type <= NUX_KEYUP))
+      if (_starting_menu_event_cycle)
       {
-        KeyboardEventCycle(event);
+        _starting_menu_event_cycle = false;
       }
-      else if ((event.type >= NUX_DND_MOVE) && (event.type <= NUX_DND_LEAVE_WINDOW))
-      {
-        DndEventCycle(event);
-      }
-#ifdef NUX_GESTURES_SUPPORT
-      else if (event.type == EVENT_GESTURE_BEGIN)
-      {
-        gesture_broker_->ProcessGestureBegin(static_cast<GestureEvent&>(event));
-      }
-      else if (event.type == EVENT_GESTURE_UPDATE)
-      {
-        gesture_broker_->ProcessGestureUpdate(static_cast<GestureEvent&>(event));
-      }
-      else if (event.type == EVENT_GESTURE_END)
-      {
-        gesture_broker_->ProcessGestureEnd(static_cast<GestureEvent&>(event));
-      }
-#endif
     }
+    else if ((event.type >= NUX_KEYDOWN) && (event.type <= NUX_KEYUP))
+    {
+      KeyboardEventCycle(event);
+    }
+    else if ((event.type >= NUX_DND_MOVE) && (event.type <= NUX_DND_LEAVE_WINDOW))
+    {
+      DndEventCycle(event);
+    }
+#ifdef NUX_GESTURES_SUPPORT
+    else if (event.type == EVENT_GESTURE_BEGIN)
+    {
+      gesture_broker_->ProcessGestureBegin(static_cast<GestureEvent&>(event));
+    }
+    else if (event.type == EVENT_GESTURE_UPDATE)
+    {
+      gesture_broker_->ProcessGestureUpdate(static_cast<GestureEvent&>(event));
+    }
+    else if (event.type == EVENT_GESTURE_END)
+    {
+      gesture_broker_->ProcessGestureEnd(static_cast<GestureEvent&>(event));
+    }
+#endif
     inside_event_cycle_ = false;
   }
 
