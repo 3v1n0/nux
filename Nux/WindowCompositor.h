@@ -411,12 +411,6 @@ namespace nux
     //! Push a floating view at the bottom of the stack.
     void PushToBack(BaseWindow* bottom_floating_view);
 
-    
-    BaseWindow* GetFocusAreaWindow()
-    {
-      return m_FocusAreaWindow.GetPointer();
-    }
-
     //! Set the top view that is about to be processed(event or rendering).
     /*!
         Before event processing or rendering, this should be called to set the ViewWindow that is about 
@@ -428,11 +422,6 @@ namespace nux
     }
 
     private:
-
-    void SetFocusAreaWindow(BaseWindow* window)
-    {
-      m_FocusAreaWindow = window;
-    }
 
     void EnsureAlwaysOnFrontWindow();
 
@@ -456,7 +445,6 @@ namespace nux
     ObjectPtr<IOpenGLBaseTexture> m_MainDepthRT;
 
     WeakBaseWindowPtr m_CurrentWindow;    //!< BaseWindow where event processing or rendering is happening.
-    WeakBaseWindowPtr m_FocusAreaWindow;  //!< The BaseWindow that contains the _mouse_focus_area.
     WeakBaseWindowPtr m_MenuWindow;       //!< The BaseWindow that owns the menu being displayed;
 
     void SetDnDArea(InputArea* area);
