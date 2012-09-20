@@ -398,11 +398,6 @@ namespace nux
     */
     void PresentBufferToScreen(ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground = false, float opacity=1.0f, bool premultiply = false);
 
-    /*!
-        Set the main color render target as the texture to draw into.
-    */
-    void SetMainColorRT();
-
     //! Push a floating view just above another floating view.
     /*!
         Note that only the top_floating_view is moving. The overall position of the reference view is not changing. 
