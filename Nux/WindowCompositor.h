@@ -248,11 +248,6 @@ namespace nux
     bool IsTooltipActive();
     void CancelTooltip();
 
-    void SetAreaEventRoot(int x, int y)
-    {
-      _event_root = Point(x, y);
-    }
-
     void SetBackgroundPaintLayer(AbstractPaintLayer* bkg);
 
     /*!
@@ -453,11 +448,6 @@ namespace nux
       m_FocusAreaWindow = window;
     }
 
-    void SetCurrentEvent(Event* event)
-    {
-      m_CurrentEvent = event;
-    }
-
     void EnsureAlwaysOnFrontWindow();
 
     void FormatRenderTargets(int width, int height);
@@ -482,10 +472,6 @@ namespace nux
     WeakBaseWindowPtr m_CurrentWindow;    //!< BaseWindow where event processing or rendering is happening.
     WeakBaseWindowPtr m_FocusAreaWindow;  //!< The BaseWindow that contains the _mouse_focus_area.
     WeakBaseWindowPtr m_MenuWindow;       //!< The BaseWindow that owns the menu being displayed;
-    Event* m_CurrentEvent; 
-
-    InputArea* _mouse_over_area;      //!< The base area that has the mouse directly over itself.
-    InputArea* _previous_mouse_over_area;
 
     void SetDnDArea(InputArea* area);
 
@@ -504,7 +490,6 @@ namespace nux
     Geometry    _tooltip_geometry;              //!< The geometry of the entire tooltip It includes the decoration surrounding the text such as round corners.
     Geometry    _tooltip_mainwindow_geometry;   //!< Same as _tooltip_geometry but based on the entire physical window of the application.
     Geometry    _tooltip_text_geometry;         //!< The geometry of the text area of the tooltip.
-    Point _event_root;
 
     bool on_menu_closure_continue_with_event_;
     AbstractPaintLayer* m_Background;
@@ -524,10 +509,6 @@ namespace nux
     WeakBaseWindowPtr m_SelectedWindow;
 
     std::map<BaseWindow*, struct RenderTargetTextures> _window_to_texture_map;
-
-    WeakBaseWindowPtr m_ModalWindow;
-    Point m_MouseLastPos;
-    Point m_MouseCurrentPos;
 
     bool m_PopupRemoved;
     bool m_MenuRemoved;

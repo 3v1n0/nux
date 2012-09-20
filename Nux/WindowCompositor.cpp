@@ -48,7 +48,6 @@ namespace
     m_OverlayWindow             = NULL;
     _tooltip_window             = NULL;
     m_TooltipArea               = NULL;
-    m_ModalWindow               = NULL;
     m_SelectedWindow            = NULL;
     _menu_chain                 = NULL;
     m_Background                = NULL;
@@ -57,7 +56,6 @@ namespace
     OverlayDrawingCommand       = NULL;
     m_CurrentWindow             = NULL;
     m_MenuWindow                = NULL;
-    _mouse_over_area            = NULL;
     _always_on_front_window     = NULL;
     inside_event_cycle_         = false;
     inside_rendering_cycle_     = false;
@@ -81,7 +79,6 @@ namespace
     _menu_chain = new std::list<MenuPage*>;
     m_PopupRemoved = false;
     m_MenuRemoved = false;
-    m_ModalWindow = NULL;
     m_Background = new ColorLayer(Color(0xFF4D4D4D));
 
 #ifdef NUX_GESTURES_SUPPORT
