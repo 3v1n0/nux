@@ -1,4 +1,4 @@
-nux (3.6.0-0ubuntu1) UNRELEASED; urgency=low
+nux (3.6.0-0ubuntu1) quantal-proposed; urgency=low
 
   * New upstream release.
     - Partial fix to compiler warnings (LP: #1032313)
