@@ -61,10 +61,6 @@ namespace
     _always_on_front_window     = NULL;
     inside_event_cycle_         = false;
     inside_rendering_cycle_     = false;
-    _exclusive_input_area       = NULL;
-    _in_exclusive_input_mode    = false;
-    _pending_exclusive_input_mode_action = false;
-
     _dnd_area                   = NULL;
     _mouse_over_menu_page       = NULL;
     _mouse_owner_menu_page      = NULL;
@@ -1170,16 +1166,6 @@ namespace
       _view_window_list.erase(always_top_it);
       _view_window_list.push_front(_always_on_front_window);
     }
-  }
-
-  InputArea* WindowCompositor::GetExclusiveInputArea()
-  {
-    return _exclusive_input_area;
-  }
-
-  bool WindowCompositor::InExclusiveInputMode()
-  {
-    return _in_exclusive_input_mode;
   }
 
   void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)

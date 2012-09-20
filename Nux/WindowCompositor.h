@@ -261,33 +261,6 @@ namespace nux
     */
     void SetAlwaysOnFrontWindow(BaseWindow* window);
 
-
-    //! Enable the exclusive event input mode.
-    /*!
-        Set the exclusive event input area(\sa _exclusive_input_area). The greedy input area gets all input events(mouse and keyboard).
-        The exclusive input mode can only be set if there is no exclusive input area already set.
-        To disable the exclusive input move, call DisableExclusiveInputArea with the current exclusive input area as parameter.
-        The exclusive event input mode can only change once during the processing of one event. The change it again, 
-        you have to wait for the next event cycle.
-        \sa DisableExclusiveInputArea.
-        @return True, if the exclusive input mode was enabled.
-    */
-    bool EnableExclusiveInputArea(InputArea* input_area);
-    
-    //! Disable the exclusive event input mode.
-    /*!
-        Disable the exclusive event input mode. It can only be disable if the current exclusive input area is passed as parameter.
-        \sa EnableExclusiveInputArea.
-        @return True, if the exclusive input mode was disabled.
-    */
-    bool DisableExclusiveInputArea(InputArea* input_area);
-
-    //! Return true if the system is in exclusive input event mode.
-    /*!
-        @return True if the system is in exclusive input mode.
-    */
-    bool InExclusiveInputMode();
-
     //! Set the rendering surface for the current rendering.
     /*!
         This function is used to restore the rendering surface according to the system state. This is necessary after using a custom frame buffer object.
@@ -518,46 +491,6 @@ namespace nux
 
     // DnD support
     InputArea* _dnd_area;   //!< the area where the mouse is located during a DND action.
-
-    //! Set the exclusive input area according to _pending_exclusive_input_mode_action.
-    /*!
-        Following the event processing cycle, it is necessary to setup the exclusive input area is _pending_exclusive_input_mode_action is true.
-        The exclusive input area status always takes effect after the event processing cycle.
-    */
-    void ExecPendingExclusiveInputAreaAction();
-
-    //! Get the input area that has the exclusivity on events.
-    /*!
-        @return The input area that has the exclusivity on all events.
-    */
-    InputArea* GetExclusiveInputArea();
-
-    /*!
-        The exclusive input area gets all events without exception(greedy). The exclusive input area may decide to pass events 
-        down to other areas. If it does, the following restrictions apply:
-          - The other input area cannot have the mouse focus.
-          - They cannot have the keyboard focus.
-          - No synthetic events: 
-            * mouse click
-            * mouse drag
-          - Only atomic events:
-            * mouse down
-            * mouse up
-            * mouse move
-            * mouse enter/leave
-    */
-    InputArea* _exclusive_input_area;
-
-    /*!
-        \a _exclusive_input_area is true when there is an active greedy input area.
-    */
-    bool _in_exclusive_input_mode;
-
-    /*!
-        The exclusive input mode starts after after events have been processed inside ProcessEvent().
-        This flags signals that some action are required to enable/disable the exclusive input mode.
-    */
-    bool _pending_exclusive_input_mode_action;
 
     //! True while events are being processed inside ProcessEvent().
     bool inside_event_cycle_;
