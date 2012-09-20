@@ -77,7 +77,6 @@ namespace
     m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
 
     _menu_chain = new std::list<MenuPage*>;
-    m_PopupRemoved = false;
     m_MenuRemoved = false;
     m_Background = new ColorLayer(Color(0xFF4D4D4D));
 
@@ -1197,7 +1196,7 @@ namespace
           DrawOverlay(true);
         }
       }
-      else if (m_PopupRemoved || m_MenuRemoved)
+      else if (m_MenuRemoved)
       {
         // A popup removed cause the whole window to be dirty(at least some part of it).
         // So exchange DrawList with a real Draw.
@@ -1228,7 +1227,6 @@ namespace
         }
       }
 
-      m_PopupRemoved = false;
       m_MenuRemoved = false;
 
       window_thread_->GetGraphicsEngine().Pop2DWindow();
