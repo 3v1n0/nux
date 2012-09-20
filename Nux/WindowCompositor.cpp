@@ -43,14 +43,12 @@ namespace
   : reference_fbo_(0)
   , window_thread_(window_thread)
   {
-    m_MenuWindow                = NULL;
     m_OverlayWindow             = NULL;
     _tooltip_window             = NULL;
     m_TooltipArea               = NULL;
     _menu_chain                 = NULL;
     m_Background                = NULL;
     _tooltip_window             = NULL;
-    m_OverlayWindow             = NULL;
     OverlayDrawingCommand       = NULL;
     m_CurrentWindow             = NULL;
     m_MenuWindow                = NULL;
