@@ -251,7 +251,6 @@ namespace nux
 
     /*!
         A special BaseWindow that is always on top of all other BaseWindow. It is even above the BaseWindow that is selected.
-        \sa m_SelectedWindow, \sa GetSelectedWindow.
     */
     void SetAlwaysOnFrontWindow(BaseWindow* window);
 
@@ -412,13 +411,6 @@ namespace nux
     //! Push a floating view at the bottom of the stack.
     void PushToBack(BaseWindow* bottom_floating_view);
 
-    /*!
-        Returns the BaseWindow that is at the top of the BaseWindow stack, excluding the BaseWindow that is
-        chosen to be always on to.
-        \sa m_SelectedWindow. \sa SetAlwaysOnFrontWindow
-    */
-    BaseWindow* GetSelectedWindow();
-
     
     BaseWindow* GetFocusAreaWindow()
     {
@@ -494,13 +486,6 @@ namespace nux
     WeakBaseWindowPtr _always_on_front_window;  //!< Floating view that always remains on top.
 
     std::list<MenuPage* >* _menu_chain;
-
-    /*!
-        The BaseWindow where the last mouse down event happened.
-        This BaseWindow will be raised to the top of the stack.
-        \sa GetSelectedWindow.
-    */
-    WeakBaseWindowPtr m_SelectedWindow;
 
     std::map<BaseWindow*, struct RenderTargetTextures> _window_to_texture_map;
 

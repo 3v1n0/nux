@@ -48,7 +48,6 @@ namespace
     m_OverlayWindow             = NULL;
     _tooltip_window             = NULL;
     m_TooltipArea               = NULL;
-    m_SelectedWindow            = NULL;
     _menu_chain                 = NULL;
     m_Background                = NULL;
     _tooltip_window             = NULL;
@@ -103,12 +102,6 @@ namespace
     NUX_SAFE_DELETE(m_Background);
   }
 
-
-  BaseWindow* WindowCompositor::GetSelectedWindow()
-  {
-    return m_SelectedWindow.GetPointer();
-  }
-
   WindowCompositor::RenderTargetTextures& WindowCompositor::GetWindowBuffer(BaseWindow* window)
   {
     static RenderTargetTextures invalid;
@@ -133,7 +126,6 @@ namespace
     if (it == _view_window_list.end())
     {
       _view_window_list.push_front(ObjectWeakPtr<BaseWindow>(window));
-      m_SelectedWindow = window;
 
       RenderTargetTextures rt;
 
@@ -165,12 +157,8 @@ namespace
     }
 
     if (it != _view_window_list.end())
-    {
       _view_window_list.erase(it);
 
-      if (!_view_window_list.empty())
-        m_SelectedWindow = _view_window_list.front();
-    }
     _window_to_texture_map.erase(window.GetPointer());
   }
 
