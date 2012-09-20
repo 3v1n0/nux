@@ -511,8 +511,6 @@ namespace nux
     std::map<BaseWindow*, struct RenderTargetTextures> _window_to_texture_map;
 
     bool m_MenuRemoved;
-    bool m_MouseUp;
-    bool m_MouseDown;
 
     // Window Geometry
     int m_Width;
