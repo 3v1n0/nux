@@ -23,15 +23,18 @@
 #ifndef NFILE_H
 #define NFILE_H
 
+#include <vector>
+#include <string>
+
 namespace nux
 {
 
   bool LoadFileToArray ( std::vector<BYTE>& Result, const TCHAR *Filename, NFileManager &FileManager = GFileManager );
   bool LoadTextFileToAnsiArray ( std::vector<ANSICHAR>& Result, const TCHAR *Filename, NFileManager &FileManager = GFileManager );
   bool LoadTextFileToUnicodeArray ( std::vector<UNICHAR>& Result, const TCHAR *Filename, NFileManager &FileManager = GFileManager );
-  bool LoadFileToString ( NString &Result, const TCHAR *Filename, NFileManager &FileManager = GFileManager );
+  bool LoadFileToString ( std::string &Result, const TCHAR *Filename, NFileManager &FileManager = GFileManager );
   bool SaveArrayToFile ( const std::vector<BYTE>& Array, const TCHAR *Filename, NFileManager &FileManager = GFileManager );
-  bool SaveStringToFile ( const NString &String, const TCHAR *Filename, NFileManager &FileManager = GFileManager );
+  bool SaveStringToFile ( const std::string &String, const TCHAR *Filename, NFileManager &FileManager = GFileManager );
 
 }
 

@@ -114,59 +114,59 @@ namespace nux
     inlSetThreadLocalStorage(_TLS_GraphicsDisplay, 0);
   }
 
-  NString GraphicsDisplay::FindResourceLocation(const char *ResourceFileName, bool ErrorOnFail)
+  std::string GraphicsDisplay::FindResourceLocation(const char *ResourceFileName, bool ErrorOnFail)
   {
-    NString path = m_ResourcePathLocation.GetFile(ResourceFileName);
+    std::string path = m_ResourcePathLocation.GetFile(ResourceFileName);
 
     if (path == "" && ErrorOnFail)
     {
       nuxCriticalMsg("[GraphicsDisplay::FindResourceLocation] Failed to locate resource file: %s.", ResourceFileName);
-      return NString("");
+      return "";
     }
 
     return path;
   }
 
-  NString GraphicsDisplay::FindUITextureLocation(const char *ResourceFileName, bool ErrorOnFail)
+  std::string GraphicsDisplay::FindUITextureLocation(const char *ResourceFileName, bool ErrorOnFail)
   {
     FilePath searchpath;
     searchpath.AddSearchPath(m_UITextureSearchPath);
-    NString path = searchpath.GetFile(ResourceFileName);
+    std::string path = searchpath.GetFile(ResourceFileName);
 
     if ((path == "") && ErrorOnFail)
     {
       nuxCriticalMsg("[GraphicsDisplay::FindResourceLocation] Failed to locate ui texture file: %s.", ResourceFileName);
-      return NString("");
+      return std::string("");
     }
 
     return path;
   }
 
-  NString GraphicsDisplay::FindShaderLocation(const char *ResourceFileName, bool ErrorOnFail)
+  std::string GraphicsDisplay::FindShaderLocation(const char *ResourceFileName, bool ErrorOnFail)
   {
     FilePath searchpath;
     searchpath.AddSearchPath(m_ShaderSearchPath);
-    NString path = searchpath.GetFile(ResourceFileName);
+    std::string path = searchpath.GetFile(ResourceFileName);
 
     if ((path == "") && ErrorOnFail)
     {
       nuxCriticalMsg("[GraphicsDisplay::FindResourceLocation] Failed to locate shader file: %s.", ResourceFileName);
-      return NString("");
+      return std::string("");
     }
 
     return path;
   }
 
-  NString GraphicsDisplay::FindFontLocation(const char *ResourceFileName, bool ErrorOnFail)
+  std::string GraphicsDisplay::FindFontLocation(const char *ResourceFileName, bool ErrorOnFail)
   {
     FilePath searchpath;
     searchpath.AddSearchPath(m_FontSearchPath);
-    NString path = searchpath.GetFile(ResourceFileName);
+    std::string path = searchpath.GetFile(ResourceFileName);
 
     if ((path == "") && ErrorOnFail)
     {
       nuxCriticalMsg("[GraphicsDisplay::FindResourceLocation] Failed to locate font file file: %s.", ResourceFileName);
-      return NString("");
+      return std::string("");
     }
 
     return path;

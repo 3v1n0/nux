@@ -43,7 +43,7 @@ namespace nux
     m_EditLine->SetValidator(&m_IntValidator);
     m_EditLine->SetSuffix("");
     m_EditLine->SetPrefix("");
-    m_EditLine->SetText(NString::Printf("%d", m_IntValidator.GetMinimum()));
+    m_EditLine->SetText(std::to_string(m_IntValidator.GetMinimum()));
 
     m_EditLine->SetMinimumSize(1.5 * DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT);
     m_EditLine->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
@@ -134,7 +134,7 @@ namespace nux
   void SpinBox::SetValue(int value)
   {
     m_iValue = m_IntValidator.GetClampedValue(value);
-    m_EditLine->SetText(NString::Printf("%d", m_iValue));
+    m_EditLine->SetText(std::to_string(m_iValue));
     sigValueChanged.emit(this);
     sigValue.emit(m_iValue);
     QueueDraw();
@@ -221,10 +221,10 @@ namespace nux
   void SpinBox::ImplementValidateEntry()
   {
     double ret = 0;
-    ret = CharToDouble(m_EditLine->GetCleanText().GetTCharPtr());
+    ret = CharToDouble(m_EditLine->GetCleanText().c_str());
     {
       m_iValue = m_IntValidator.GetClampedValue(ret);
-      m_EditLine->SetText(NString::Printf("%d", m_iValue));
+      m_EditLine->SetText(std::to_string(m_iValue));
       sigValueChanged.emit(this);
       sigValue.emit(m_iValue);
 //

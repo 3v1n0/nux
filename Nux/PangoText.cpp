@@ -131,7 +131,7 @@ namespace nux
     // intentionally left empty
   }
 
-  void PangoText::SetText(NString text)
+  void PangoText::SetText(std::string text)
   {
     if (_text != text)
     {

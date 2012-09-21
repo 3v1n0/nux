@@ -53,7 +53,7 @@ namespace nux
     m_EditLine->SetValidator(&m_DoubleValidator);
     m_EditLine->SetSuffix("");
     m_EditLine->SetPrefix("");
-    m_EditLine->SetText(NString::Printf("%.3f", m_DoubleValidator.GetMinimum()));
+    m_EditLine->SetText(std::to_string(m_DoubleValidator.GetMinimum()));
 
     m_EditLine->SetMinimumSize(1.5 * DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT);
     m_EditLine->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
@@ -141,7 +141,7 @@ namespace nux
 //        m_Value = m_DoubleValidator.GetMinimum();
 //    if (m_Value > m_DoubleValidator.GetMaximum())
 //        m_Value = m_DoubleValidator.GetMaximum();
-    m_EditLine->SetText(NString::Printf("%.3f", m_Value));
+    m_EditLine->SetText(std::to_string(m_Value));
     sigValueChanged.emit(this);
     sigValue.emit(m_Value);
     QueueDraw();
@@ -228,10 +228,10 @@ namespace nux
   void SpinBoxDouble::ImplementValidateEntry()
   {
     double ret = 0;
-    ret = CharToDouble(m_EditLine->GetCleanText().GetTCharPtr());
+    ret = CharToDouble(m_EditLine->GetCleanText().c_str());
     {
       m_Value = m_DoubleValidator.GetClampedValue(ret);
-      m_EditLine->SetText(NString::Printf("%.3f", m_Value));
+      m_EditLine->SetText(std::to_string(m_Value));
       sigValueChanged.emit(this);
       sigValue.emit(m_Value);
 //

@@ -53,9 +53,9 @@ namespace nux
     SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     SetLayout(m_hlayout);
 
-    NString Path = NUX_FINDRESOURCELOCATION("Icons/Folder-16x16.png");
+    std::string Path = NUX_FINDRESOURCELOCATION("Icons/Folder-16x16.png");
     m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
-    m_Texture->Update(Path.GetTCharPtr());
+    m_Texture->Update(Path.c_str());
   }
 
   FileSelector::~FileSelector()

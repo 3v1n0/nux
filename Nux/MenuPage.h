@@ -275,7 +275,7 @@ namespace nux
     VLayout* _vlayout;
     bool m_NextMouseUpMeanStop;
     MenuItem *m_SubMenuAction;
-    NString m_Name;
+    std::string m_Name;
 
     bool m_Action_Triggered;
     MenuPage *m_Parent;

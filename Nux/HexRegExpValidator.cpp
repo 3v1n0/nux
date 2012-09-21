@@ -122,10 +122,9 @@ namespace nux
     str = "0x0";
   }
 
-  NString HexRegExpValidator::ToString(int i)
+  std::string HexRegExpValidator::ToString(int i)
   {
-    NString Prec("%d");
-    return NString::Printf(Prec.GetTCharPtr(), i);
+    return std::to_string(i);
   }
 
   int HexRegExpValidator::ToInteger(const char *str)

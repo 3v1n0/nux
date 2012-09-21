@@ -23,6 +23,9 @@
 #include "NuxCore.h"
 #include "Parsing.h"
 
+#include <sstream>
+#include <iomanip>
+
 namespace nux
 {
 
@@ -38,20 +41,35 @@ namespace nux
       // Create string with system time to create a unique filename.
       unsigned int Year, Month, Day, Hour, Min, Sec, MSec;
       GetLocalTime (Year, Month, Day, Hour, Min, Sec, MSec);
-      NString Name, Extension;
-      NString (Filename).SplitAtLastOccurenceOf (TEXT ("."), Name, Extension);
-      NString BackupFilename;
-
-      if (Extension.Size() )
+      std::string Name, Extension;
+      std::string file = Filename;
+      size_t pos = file.rfind('.');
+      if (pos != std::string::npos)
       {
-        BackupFilename = NString::Printf (TEXT ("%s-backup-%i.%02i.%02i-%02i.%02i.%02i.%s"), Name.GetTCharPtr(), Year, Month, Day, Hour, Min, Sec, Extension.GetTCharPtr() );
+        Name = file.substr(0, pos);
+        Extension = file.substr(pos + 1);
       }
       else
       {
-        BackupFilename = NString::Printf (TEXT ("%s-backup-%i.%02i.%02i-%02i.%02i.%02i"), Name.GetTCharPtr(), Year, Month, Day, Hour, Min, Sec);
+        Name = file;
       }
 
-      GFileManager.Copy (BackupFilename.GetTCharPtr(), Filename, true, true, NULL);
+      std::ostringstream s;
+      s << std::setfill('0')
+        << Name << "-backup-" << Year << "."
+        << std::setw(2) << Month << "."
+        << std::setw(2) << Day << "."
+        << std::setw(2) << Hour << "."
+        << std::setw(2) << Min << "."
+        << std::setw(2) << Sec;
+      if (Extension.size() )
+      {
+        s << "." << Extension;
+      }
+
+      std::string BackupFilename = s.str();
+
+      GFileManager.Copy (BackupFilename.c_str(), Filename, true, true, NULL);
     }
   }
 #endif
@@ -142,13 +160,13 @@ namespace nux
     // The Editor requires a fully qualified directory to not end up putting the log in various directories.
     m_Filename = GetProgramDirectory();
 
-    if ( (m_Filename[m_Filename.Size()-1] != NUX_SLASH_CHAR) || (m_Filename[m_Filename.Size()-1] != NUX_BACKSLASH_CHAR) )
+    if ( (m_Filename[m_Filename.size()-1] != NUX_SLASH_CHAR) || (m_Filename[m_Filename.size()-1] != NUX_BACKSLASH_CHAR) )
       m_Filename += (const TCHAR *) NUX_PATH_SEPARATOR_STRING;
 
     m_Filename += GetLogDirectory();
 
     // Create the directory tree where the Logs file will be stored.
-    GFileManager.MakeDirectory (m_Filename.GetTCharPtr(), 1);
+    GFileManager.MakeDirectory (m_Filename.c_str(), 1);
 
     m_Filename += (const TCHAR *) NUX_PATH_SEPARATOR_STRING;
     m_Filename += TEXT ("nux");
@@ -157,11 +175,11 @@ namespace nux
     // if the file already exists, create a backup as we are going to overwrite it
     if (!m_Opened)
     {
-      CreateBackupCopy (m_Filename.GetTCharPtr() );
+      CreateBackupCopy (m_Filename.c_str() );
     }
 
     // Open log file.
-    m_LogSerializer = GFileManager.CreateFileWriter (m_Filename.GetTCharPtr(), NSerializer::Read | NSerializer::Write | NSerializer::OverWriteReadOnly | (m_Opened ? NSerializer::Append : 0) );
+    m_LogSerializer = GFileManager.CreateFileWriter (m_Filename.c_str(), NSerializer::Read | NSerializer::Write | NSerializer::OverWriteReadOnly | (m_Opened ? NSerializer::Append : 0) );
 
     if (m_LogSerializer)
     {
@@ -169,7 +187,7 @@ namespace nux
 #if UNICODE && !NUX_LOG_FILE_ANSI
       m_LogSerializer->Serialize ( (void *) &NUX_UTF16_BE[1], NUX_UTF16_BE[0] /*size*/ );
 #endif
-      LogFunction (NUX_MSG_SEVERITY_NONE, TEXT ("Log file open, %s"), GetFormattedLocalTime().GetTCharPtr());
+      LogFunction (NUX_MSG_SEVERITY_NONE, TEXT ("Log file open, %s"), GetFormattedLocalTime().c_str());
     }
     else
     {
@@ -193,7 +211,7 @@ namespace nux
   {
     if (m_LogSerializer)
     {
-      LogFunction (NUX_MSG_SEVERITY_NONE, TEXT ("Log file closed, %s"), GetFormattedLocalTime().GetTCharPtr());
+      LogFunction (NUX_MSG_SEVERITY_NONE, TEXT ("Log file closed, %s"), GetFormattedLocalTime().c_str());
       Flush();
       delete m_LogSerializer;
       m_LogSerializer = NULL;
@@ -249,8 +267,8 @@ namespace nux
 
       m_LogSerializer->Serialize (ACh, i);
 #else
-      NString Raw = NString (log_prefix) + NString (TEXT (": ") ) + NString (log_data) + NString (NUX_LINE_TERMINATOR);
-      SerializeRaw (Raw.GetTCharPtr() );
+      std::string Raw = std::string (log_prefix) + std::string (TEXT (": ") ) + std::string (log_data) + std::string (NUX_LINE_TERMINATOR);
+      SerializeRaw (Raw.c_str() );
 #endif
     }
   }

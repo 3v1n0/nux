@@ -472,10 +472,10 @@ namespace nux
     int _glsl_version_major;  //!< GLSL major version.
     int _glsl_version_minor;  //!< GLSL major version.
 
-    NString _board_vendor_string;     //!< GPU vendor sting.
-    NString _board_renderer_string;   //!< GPU renderer sting.
-    NString _openGL_version_string;   //!< OpenGL version string.
-    NString _glsl_version_string;     //!< GLSL version string.
+    std::string _board_vendor_string;     //!< GPU vendor sting.
+    std::string _board_renderer_string;   //!< GPU renderer sting.
+    std::string _openGL_version_string;   //!< OpenGL version string.
+    std::string _glsl_version_string;     //!< GLSL version string.
     GpuBrand _gpu_brand;              //!< GPU brand.
 
     bool _UsePixelBufferObject;

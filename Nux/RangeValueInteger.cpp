@@ -169,7 +169,7 @@ namespace nux
       m_Value = value;
 
     m_MarkerPosition = m_Value;
-    m_ValueString->SetText(NString::Printf("%d", m_Value));
+    m_ValueString->SetText(std::to_string(m_Value));
     QueueDraw();
   }
 
@@ -202,7 +202,7 @@ namespace nux
         m_Value++;
     }
 
-    m_ValueString->SetText(NString::Printf("%d", m_Value));
+    m_ValueString->SetText(std::to_string(m_Value));
     sigValueChanged.emit(this);
     sigMouseDown.emit(m_Value);
     sigValueChanged2.emit(m_Value);
@@ -225,7 +225,7 @@ namespace nux
     }
 
     m_MarkerPosition = m_Value;
-    m_ValueString->SetText(NString::Printf("%d", m_Value));
+    m_ValueString->SetText(std::to_string(m_Value));
     sigValueChanged.emit(this);
     sigMouseUp.emit(m_Value);
     sigValueChanged2.emit(m_Value);
@@ -254,7 +254,7 @@ namespace nux
         m_Value++;
     }
 
-    m_ValueString->SetText(NString::Printf("%d", m_Value));
+    m_ValueString->SetText(std::to_string(m_Value));
     sigValueChanged.emit(this);
     sigMouseDrag.emit(m_Value);
     sigValueChanged2.emit(m_Value);
@@ -272,10 +272,10 @@ namespace nux
 
   }
 
-  void RangeValueInteger::OnValidateKeyboardEntry(EditTextBox *textbox, const NString &text)
+  void RangeValueInteger::OnValidateKeyboardEntry(EditTextBox *textbox, const std::string &text)
   {
     int i;
-    i = CharToInteger(text.GetTCharPtr());
+    i = CharToInteger(text.c_str());
     SetValue(i);
     sigValueChanged.emit(this);
     sigSetTypedValue.emit(i);

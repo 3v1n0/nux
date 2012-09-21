@@ -84,7 +84,7 @@ namespace nux
 
   private:
     NSerializer    *m_LogSerializer;
-    NString         m_Filename;
+    std::string         m_Filename;
     bool            m_Opened;
     bool            m_Closed;
 

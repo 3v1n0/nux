@@ -52,7 +52,7 @@ namespace nux
     void SetMaximum(double value);
     double GetMaximum() const;
 
-    NString ToString(double d);
+    std::string ToString(double d);
     double ToDouble(const char *str);
 
   private:

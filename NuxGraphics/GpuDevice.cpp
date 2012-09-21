@@ -32,6 +32,11 @@
 #include "GLTemplatePrimitiveBuffer.h"
 #include "GraphicsEngine.h"
 
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
+#include <vector>
+
 namespace nux
 {
 #if (NUX_ENABLE_CG_SHADERS)
@@ -330,13 +335,11 @@ namespace nux
     _glsl_version_string = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char *, glGetString(GL_VERSION)));
     CHECKGL_MSG(glGetString(GL_VERSION));
 
-    NString opengl_major;
-    NString opengl_minor;
-    char split = '.';
-    _glsl_version_string.SplitAtFirstOccurenceOf(split, opengl_major, opengl_minor);
+    std::vector<std::string> versions;
+    boost::split(versions, _glsl_version_string, boost::algorithm::is_any_of("."));
 
-    _opengl_major = (char)opengl_major.GetTCharPtr()[0] - '0';
-    _opengl_minor = (char)opengl_minor.GetTCharPtr()[0] - '0';
+    _opengl_major = std::stoi(versions[0]);
+    _opengl_minor = std::stoi(versions[1]);
 
     if (_opengl_major >= 3)
     {
@@ -527,24 +530,24 @@ namespace nux
     _openGL_version_string = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char *, glGetString(GL_VERSION)));
     CHECKGL_MSG(glGetString(GL_VERSION));
 
-    nuxDebugMsg("Gpu Vendor: %s", _board_vendor_string.GetTCharPtr());
-    nuxDebugMsg("Gpu Renderer: %s", _board_renderer_string.GetTCharPtr());
-    nuxDebugMsg("Gpu OpenGL Version: %s", _openGL_version_string.GetTCharPtr());
+    nuxDebugMsg("Gpu Vendor: %s", _board_vendor_string.c_str());
+    nuxDebugMsg("Gpu Renderer: %s", _board_renderer_string.c_str());
+    nuxDebugMsg("Gpu OpenGL Version: %s", _openGL_version_string.c_str());
     nuxDebugMsg("Gpu OpenGL Major Version: %d", _opengl_major);
     nuxDebugMsg("Gpu OpenGL Minor Version: %d", _opengl_minor);
-    nuxDebugMsg("Gpu GLSL Version: %s", _glsl_version_string.GetTCharPtr());
+    nuxDebugMsg("Gpu GLSL Version: %s", _glsl_version_string.c_str());
 
-    NString TempStr = (const char *) TCharToUpperCase(_board_vendor_string.GetTCharPtr());
+    std::string TempStr = boost::algorithm::to_upper_copy(_board_vendor_string);
 
-    if (TempStr.FindFirstOccurence("NVIDIA") != tstring::npos)
+    if (TempStr.find("NVIDIA", 0) != std::string::npos)
     {
       _gpu_brand = GPU_BRAND_NVIDIA;
     }
-    else if (TempStr.FindFirstOccurence("ATI") != tstring::npos)
+    else if (TempStr.find("ATI", 0) != std::string::npos)
     {
       _gpu_brand = GPU_BRAND_AMD;
     }
-    else if (TempStr.FindFirstOccurence("TUNGSTEN") != tstring::npos)
+    else if (TempStr.find("TUNGSTEN", 0) != std::string::npos)
     {
       _gpu_brand = GPU_BRAND_INTEL;
     }

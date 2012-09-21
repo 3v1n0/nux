@@ -204,8 +204,8 @@ namespace nux
       {
         BaseTexture* device_texture;
 
-        NString texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL(*value_cursor);
-        device_texture = theme->Load2DTextureFile(texture_filename.GetTCharPtr());
+        std::string texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL(*value_cursor);
+        device_texture = theme->Load2DTextureFile(texture_filename.c_str());
 
         pimage->texture = device_texture;
       }
@@ -228,8 +228,8 @@ namespace nux
 
   void UXTheme::LoadPainterImages()
   {
-    NString file_search = "Painter.xml";
-    NString painter_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL(file_search.GetTCharPtr());
+    std::string file_search = "Painter.xml";
+    std::string painter_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL(file_search.c_str());
 
     if (painter_filename == "")
     {
@@ -253,10 +253,10 @@ namespace nux
       this,
       NULL);
 
-    NString str;
-    LoadFileToString(str, painter_filename.GetTCharPtr());
+    std::string str;
+    LoadFileToString(str, painter_filename.c_str());
 
-    if (g_markup_parse_context_parse(context, str.GetTCharPtr(), str.Length(), NULL) == FALSE)
+    if (g_markup_parse_context_parse(context, str.c_str(), str.length(), NULL) == FALSE)
     {
       nuxCriticalMsg("[GraphicsEngine::LoadPainterImages] Failed to parse data.");
       return;
@@ -264,7 +264,7 @@ namespace nux
 
 #else
 
-    TiXmlDocument doc(painter_filename.GetTCharPtr());
+    TiXmlDocument doc(painter_filename.c_str());
     doc.LoadFile();
 
     TiXmlHandle docHandle( &doc );
@@ -276,9 +276,9 @@ namespace nux
       PainterImage *pimage = new PainterImage;
       Memset(pimage, 0, sizeof(PainterImage));
 
-      NString style = image->Attribute(TCHARToUTF8("style"));
+      std::string style = image->Attribute(TCHARToUTF8("style"));
 
-      pimage->style = GetStyleImageRef(style.GetTCharPtr());
+      pimage->style = GetStyleImageRef(style.c_str());
 
       // If the attributes border_left, border_right, border_top, border_bottom are not present, assume they are equal to 0;
       pimage->border_left = pimage->border_right = pimage->border_top = pimage->border_bottom = 0;
@@ -311,17 +311,17 @@ namespace nux
       {
         BaseTexture* device_texture;
 
-        NString filename = image->Attribute(TCHARToUTF8("Name"));
-        NString texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL(filename.GetTCharPtr());
-        device_texture = Load2DTextureFile(texture_filename.GetTCharPtr());
+        std::string filename = image->Attribute(TCHARToUTF8("Name"));
+        std::string texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL(filename.c_str());
+        device_texture = Load2DTextureFile(texture_filename.c_str());
 
         pimage->texture = device_texture;
       }
       else
       {
-        NString filename = image->Attribute(TCHARToUTF8("Name"));
-        NString texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL(filename.GetTCharPtr());
-        pimage->texture = Load2DTextureFile(texture_filename.GetTCharPtr());
+        std::string filename = image->Attribute(TCHARToUTF8("Name"));
+        std::string texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL(filename.c_str());
+        pimage->texture = Load2DTextureFile(texture_filename.c_str());
       }
 
       painter_image_list_.push_back(pimage);

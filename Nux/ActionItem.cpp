@@ -133,7 +133,7 @@ namespace nux
 
   const char *ActionItem::GetLabel() const
   {
-    return m_Label.GetTCharPtr();
+    return m_Label.c_str();
   }
 
   void ActionItem::SetIcon(const BaseTexture* icon)

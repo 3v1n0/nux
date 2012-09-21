@@ -133,7 +133,7 @@ namespace nux
     return false;
   }
 
-  bool Parse_string (const TCHAR *Stream, const TCHAR *Match, NString &Value)
+  bool Parse_string (const TCHAR *Stream, const TCHAR *Match, std::string &Value)
   {
     TCHAR Temp[4096] = TEXT ("");
 
@@ -336,9 +336,9 @@ namespace nux
     return sz != 0;
   }
 
-  bool ParseToken (const TCHAR *Str, NString &TokenString)
+  bool ParseToken (const TCHAR *Str, std::string &TokenString)
   {
-    TokenString.Clear();
+    TokenString.clear();
 
     // Skip spaces and tabs.
     while (IsWhitespaceChar (*Str) )
@@ -367,10 +367,10 @@ namespace nux
       }
     }
 
-    return TokenString.Length() > 0;
+    return TokenString.length() > 0;
   }
 
-  NString ParseToken (const TCHAR *Str, bool UseEscape)
+  std::string ParseToken (const TCHAR *Str, bool UseEscape)
   {
     TCHAR Buffer[1024];
 
@@ -398,16 +398,16 @@ namespace nux
     return LineBuffer[0] != 0;
   }
 
-  bool ParseLine (const TCHAR **Stream, NString &LineString)
+  bool ParseLine (const TCHAR **Stream, std::string &LineString)
   {
-    LineString.Clear();
+    LineString.clear();
 
     while ( (**Stream != 0) && (**Stream != CHAR_NEW_LINE) && (**Stream != CHAR_CR) && (**Stream != CHAR_FF) )
     {
       LineString += **Stream++;
     }
 
-    return LineString.Size() > 0;
+    return LineString.size() > 0;
   }
 
 }

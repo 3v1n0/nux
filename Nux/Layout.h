@@ -277,7 +277,7 @@ namespace nux
 
     std::list<Area *> _layout_element_list;
 
-    NString m_name;
+    std::string m_name;
 
     LayoutContentDistribution m_ContentStacking;
   };
