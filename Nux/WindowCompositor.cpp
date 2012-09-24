@@ -177,6 +177,16 @@ namespace
                                            NuxEventType event_type,
                                            ObjectWeakPtr<InputArea>& area_under_mouse_pointer)
   {
+    ObjectWeakPtr<BaseWindow> window;
+    GetAreaUnderMouse(mouse_position, event_type, area_under_mouse_pointer, window);
+  }
+
+  void WindowCompositor::GetAreaUnderMouse(const Point& mouse_position,
+                                           NuxEventType event_type,
+                                           ObjectWeakPtr<InputArea>& area_under_mouse_pointer,
+                                           ObjectWeakPtr<BaseWindow>& window)
+  {
+    window = NULL;
     area_under_mouse_pointer = NULL;
 
     // Go through the list of BaseWindo and find the first area over which the
@@ -190,6 +200,7 @@ namespace
         if (area)
         {
           area_under_mouse_pointer = static_cast<InputArea*>(area);
+          window = *window_it;
           return;
         }
       }

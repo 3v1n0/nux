@@ -126,6 +126,10 @@ namespace nux
     void GetAreaUnderMouse(const Point& mouse_position,
                            NuxEventType event_type,
                            ObjectWeakPtr<InputArea>& area_under_mouse_pointer);
+    void GetAreaUnderMouse(const Point& mouse_position,
+                           NuxEventType event_type,
+                           ObjectWeakPtr<InputArea>& area_under_mouse_pointer,
+                           ObjectWeakPtr<BaseWindow>& window);
 
     //! Traverse the widget tree and found the area has the key focus.
     void FindKeyFocusArea(NuxEventType event_type,
