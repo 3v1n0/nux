@@ -72,7 +72,6 @@ namespace nux
     //====================================
     void MouseEventCycle(Event& event);
     void DndEventCycle(Event& event);
-    bool _enable_nux_new_event_architecture;
 
 
     Point _mouse_position_on_owner;
@@ -126,6 +125,9 @@ namespace nux
     //! Traverse the widget tree and found the area that is right below the mouse pointer.
     void GetAreaUnderMouse(const Point& mouse_position,
                            NuxEventType event_type,
+                           ObjectWeakPtr<InputArea>& area_under_mouse_pointer);
+    void GetAreaUnderMouse(const Point& mouse_position,
+                           NuxEventType event_type,
                            ObjectWeakPtr<InputArea>& area_under_mouse_pointer,
                            ObjectWeakPtr<BaseWindow>& window);
 
@@ -155,9 +157,6 @@ namespace nux
     //! Set the area that is right below the mouse pointer.
     void SetMouseOverArea(InputArea* area);
 
-    //! Set The BaseWindow of the area that is the mouse owner.
-    void SetMouseOwnerBaseWindow(BaseWindow* base_window);
-
     void SendKeyEvent(InputArea* input_area, NuxEventType event_type,
       unsigned int key_sym,
       unsigned long x11_key_code,
@@ -174,7 +173,6 @@ namespace nux
     ObjectWeakPtr<InputArea> key_focus_area_;
     ObjectWeakPtr<InputArea> mouse_owner_area_;
     ObjectWeakPtr<InputArea> mouse_over_area_;
-    ObjectWeakPtr<BaseWindow> mouse_owner_base_window_;
 
     int dnd_safety_x_;
     int dnd_safety_y_;
@@ -253,45 +251,12 @@ namespace nux
     bool IsTooltipActive();
     void CancelTooltip();
 
-    void SetAreaEventRoot(int x, int y)
-    {
-      _event_root = Point(x, y);
-    }
-
     void SetBackgroundPaintLayer(AbstractPaintLayer* bkg);
 
     /*!
         A special BaseWindow that is always on top of all other BaseWindow. It is even above the BaseWindow that is selected.
-        \sa m_SelectedWindow, \sa GetSelectedWindow.
     */
     void SetAlwaysOnFrontWindow(BaseWindow* window);
-
-
-    //! Enable the exclusive event input mode.
-    /*!
-        Set the exclusive event input area(\sa _exclusive_input_area). The greedy input area gets all input events(mouse and keyboard).
-        The exclusive input mode can only be set if there is no exclusive input area already set.
-        To disable the exclusive input move, call DisableExclusiveInputArea with the current exclusive input area as parameter.
-        The exclusive event input mode can only change once during the processing of one event. The change it again, 
-        you have to wait for the next event cycle.
-        \sa DisableExclusiveInputArea.
-        @return True, if the exclusive input mode was enabled.
-    */
-    bool EnableExclusiveInputArea(InputArea* input_area);
-    
-    //! Disable the exclusive event input mode.
-    /*!
-        Disable the exclusive event input mode. It can only be disable if the current exclusive input area is passed as parameter.
-        \sa EnableExclusiveInputArea.
-        @return True, if the exclusive input mode was disabled.
-    */
-    bool DisableExclusiveInputArea(InputArea* input_area);
-
-    //! Return true if the system is in exclusive input event mode.
-    /*!
-        @return True if the system is in exclusive input mode.
-    */
-    bool InExclusiveInputMode();
 
     //! Set the rendering surface for the current rendering.
     /*!
@@ -436,11 +401,6 @@ namespace nux
     */
     void PresentBufferToScreen(ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground = false, float opacity=1.0f, bool premultiply = false);
 
-    /*!
-        Set the main color render target as the texture to draw into.
-    */
-    void SetMainColorRT();
-
     //! Push a floating view just above another floating view.
     /*!
         Note that only the top_floating_view is moving. The overall position of the reference view is not changing. 
@@ -455,19 +415,6 @@ namespace nux
     //! Push a floating view at the bottom of the stack.
     void PushToBack(BaseWindow* bottom_floating_view);
 
-    /*!
-        Returns the BaseWindow that is at the top of the BaseWindow stack, excluding the BaseWindow that is
-        chosen to be always on to.
-        \sa m_SelectedWindow. \sa SetAlwaysOnFrontWindow
-    */
-    BaseWindow* GetSelectedWindow();
-
-    
-    BaseWindow* GetFocusAreaWindow()
-    {
-      return m_FocusAreaWindow.GetPointer();
-    }
-
     //! Set the top view that is about to be processed(event or rendering).
     /*!
         Before event processing or rendering, this should be called to set the ViewWindow that is about 
@@ -479,16 +426,6 @@ namespace nux
     }
 
     private:
-
-    void SetFocusAreaWindow(BaseWindow* window)
-    {
-      m_FocusAreaWindow = window;
-    }
-
-    void SetCurrentEvent(Event* event)
-    {
-      m_CurrentEvent = event;
-    }
 
     void EnsureAlwaysOnFrontWindow();
 
@@ -512,57 +449,12 @@ namespace nux
     ObjectPtr<IOpenGLBaseTexture> m_MainDepthRT;
 
     WeakBaseWindowPtr m_CurrentWindow;    //!< BaseWindow where event processing or rendering is happening.
-    WeakBaseWindowPtr m_FocusAreaWindow;  //!< The BaseWindow that contains the _mouse_focus_area.
     WeakBaseWindowPtr m_MenuWindow;       //!< The BaseWindow that owns the menu being displayed;
-    Event* m_CurrentEvent; 
-
-    InputArea* _mouse_over_area;      //!< The base area that has the mouse directly over itself.
-    InputArea* _previous_mouse_over_area;
 
     void SetDnDArea(InputArea* area);
 
     // DnD support
     InputArea* _dnd_area;   //!< the area where the mouse is located during a DND action.
-
-    //! Set the exclusive input area according to _pending_exclusive_input_mode_action.
-    /*!
-        Following the event processing cycle, it is necessary to setup the exclusive input area is _pending_exclusive_input_mode_action is true.
-        The exclusive input area status always takes effect after the event processing cycle.
-    */
-    void ExecPendingExclusiveInputAreaAction();
-
-    //! Get the input area that has the exclusivity on events.
-    /*!
-        @return The input area that has the exclusivity on all events.
-    */
-    InputArea* GetExclusiveInputArea();
-
-    /*!
-        The exclusive input area gets all events without exception(greedy). The exclusive input area may decide to pass events 
-        down to other areas. If it does, the following restrictions apply:
-          - The other input area cannot have the mouse focus.
-          - They cannot have the keyboard focus.
-          - No synthetic events: 
-            * mouse click
-            * mouse drag
-          - Only atomic events:
-            * mouse down
-            * mouse up
-            * mouse move
-            * mouse enter/leave
-    */
-    InputArea* _exclusive_input_area;
-
-    /*!
-        \a _exclusive_input_area is true when there is an active greedy input area.
-    */
-    bool _in_exclusive_input_mode;
-
-    /*!
-        The exclusive input mode starts after after events have been processed inside ProcessEvent().
-        This flags signals that some action are required to enable/disable the exclusive input mode.
-    */
-    bool _pending_exclusive_input_mode_action;
 
     //! True while events are being processed inside ProcessEvent().
     bool inside_event_cycle_;
@@ -576,7 +468,6 @@ namespace nux
     Geometry    _tooltip_geometry;              //!< The geometry of the entire tooltip It includes the decoration surrounding the text such as round corners.
     Geometry    _tooltip_mainwindow_geometry;   //!< Same as _tooltip_geometry but based on the entire physical window of the application.
     Geometry    _tooltip_text_geometry;         //!< The geometry of the text area of the tooltip.
-    Point _event_root;
 
     bool on_menu_closure_continue_with_event_;
     AbstractPaintLayer* m_Background;
@@ -588,23 +479,9 @@ namespace nux
 
     std::list<MenuPage* >* _menu_chain;
 
-    /*!
-        The BaseWindow where the last mouse down event happened.
-        This BaseWindow will be raised to the top of the stack.
-        \sa GetSelectedWindow.
-    */
-    WeakBaseWindowPtr m_SelectedWindow;
-
     std::map<BaseWindow*, struct RenderTargetTextures> _window_to_texture_map;
 
-    WeakBaseWindowPtr m_ModalWindow;
-    Point m_MouseLastPos;
-    Point m_MouseCurrentPos;
-
-    bool m_PopupRemoved;
     bool m_MenuRemoved;
-    bool m_MouseUp;
-    bool m_MouseDown;
 
     // Window Geometry
     int m_Width;

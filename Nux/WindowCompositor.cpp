@@ -43,34 +43,23 @@ namespace
   : reference_fbo_(0)
   , window_thread_(window_thread)
   {
-    m_FocusAreaWindow           = NULL;
-    m_MenuWindow                = NULL;
     m_OverlayWindow             = NULL;
     _tooltip_window             = NULL;
     m_TooltipArea               = NULL;
-    m_ModalWindow               = NULL;
-    m_SelectedWindow            = NULL;
     _menu_chain                 = NULL;
     m_Background                = NULL;
     _tooltip_window             = NULL;
-    m_OverlayWindow             = NULL;
     OverlayDrawingCommand       = NULL;
     m_CurrentWindow             = NULL;
     m_MenuWindow                = NULL;
-    _mouse_over_area            = NULL;
     _always_on_front_window     = NULL;
     inside_event_cycle_         = false;
     inside_rendering_cycle_     = false;
-    _exclusive_input_area       = NULL;
-    _in_exclusive_input_mode    = false;
-    _pending_exclusive_input_mode_action = false;
-
     _dnd_area                   = NULL;
     _mouse_over_menu_page       = NULL;
     _mouse_owner_menu_page      = NULL;
     _starting_menu_event_cycle  = false;
     _menu_is_active             = false;
-    _enable_nux_new_event_architecture   = true;
     on_menu_closure_continue_with_event_ = false;
 
     m_FrameBufferObject = GetGraphicsDisplay()->GetGpuDevice()->CreateFrameBufferObject();
@@ -83,9 +72,7 @@ namespace
     m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
 
     _menu_chain = new std::list<MenuPage*>;
-    m_PopupRemoved = false;
     m_MenuRemoved = false;
-    m_ModalWindow = NULL;
     m_Background = new ColorLayer(Color(0xFF4D4D4D));
 
 #ifdef NUX_GESTURES_SUPPORT
@@ -112,12 +99,6 @@ namespace
     NUX_SAFE_DELETE(m_Background);
   }
 
-
-  BaseWindow* WindowCompositor::GetSelectedWindow()
-  {
-    return m_SelectedWindow.GetPointer();
-  }
-
   WindowCompositor::RenderTargetTextures& WindowCompositor::GetWindowBuffer(BaseWindow* window)
   {
     static RenderTargetTextures invalid;
@@ -142,7 +123,6 @@ namespace
     if (it == _view_window_list.end())
     {
       _view_window_list.push_front(ObjectWeakPtr<BaseWindow>(window));
-      m_SelectedWindow = window;
 
       RenderTargetTextures rt;
 
@@ -174,12 +154,8 @@ namespace
     }
 
     if (it != _view_window_list.end())
-    {
       _view_window_list.erase(it);
 
-      if (!_view_window_list.empty())
-        m_SelectedWindow = _view_window_list.front();
-    }
     _window_to_texture_map.erase(window.GetPointer());
   }
 
@@ -195,6 +171,14 @@ namespace
     SetMouseOwnerArea(NULL);
     _mouse_over_menu_page   = NULL;
     _mouse_owner_menu_page  = NULL;
+  }
+
+  void WindowCompositor::GetAreaUnderMouse(const Point& mouse_position,
+                                           NuxEventType event_type,
+                                           ObjectWeakPtr<InputArea>& area_under_mouse_pointer)
+  {
+    ObjectWeakPtr<BaseWindow> window;
+    GetAreaUnderMouse(mouse_position, event_type, area_under_mouse_pointer, window);
   }
 
   void WindowCompositor::GetAreaUnderMouse(const Point& mouse_position,
@@ -255,20 +239,13 @@ namespace
     return mouse_owner_area_;
   }
 
-  void WindowCompositor::SetMouseOwnerBaseWindow(BaseWindow* base_window)
-  {
-    if (mouse_owner_base_window_ != base_window)
-      mouse_owner_base_window_ = base_window;
-  }
-
   void WindowCompositor::DndEventCycle(Event& event)
   {
     if (event.type == NUX_DND_MOVE)
     {
       ObjectWeakPtr<InputArea> hit_area;
-      ObjectWeakPtr<BaseWindow> hit_base_window;
 
-      GetAreaUnderMouse(Point(event.x, event.y), event.type, hit_area, hit_base_window);
+      GetAreaUnderMouse(Point(event.x, event.y), event.type, hit_area);
 
       if (hit_area.IsValid())
       {
@@ -321,7 +298,6 @@ namespace
         (event.type == NUX_MOUSE_RELEASED))
       {
         ObjectWeakPtr<InputArea> hit_view; // The view under the mouse
-        ObjectWeakPtr<BaseWindow> hit_base_window; // The BaseWindow below the mouse pointer.
 
         // Look for the area below the mouse pointer in the BaseWindow.
         Area* pointer_grab_area = GetPointerGrabArea();
@@ -340,8 +316,7 @@ namespace
         }
         else
         {
-          GetAreaUnderMouse(Point(event.x, event.y), event.type, hit_view, hit_base_window);
-          SetMouseOwnerBaseWindow(hit_base_window.GetPointer());
+          GetAreaUnderMouse(Point(event.x, event.y), event.type, hit_view);
         }
 
         Geometry hit_view_geo;
@@ -521,9 +496,8 @@ namespace
       // Context: The left mouse button down over an area. All events goes to that area.
       // But we still need to know where the mouse is.
       ObjectWeakPtr<InputArea> hit_view; // The view under the mouse
-      ObjectWeakPtr<BaseWindow> hit_base_window; // The BaseWindow below the mouse pointer.
 
-      GetAreaUnderMouse(Point(event.x, event.y), event.type, hit_view, hit_base_window);
+      GetAreaUnderMouse(Point(event.x, event.y), event.type, hit_view);
 
       Geometry const& mouse_owner_geo = mouse_owner_area_->GetAbsoluteGeometry();
       int mouse_owner_x = event.x - mouse_owner_geo.x;
@@ -1002,54 +976,51 @@ namespace
   void WindowCompositor::ProcessEvent(Event& event)
   {
     inside_event_cycle_ = true;
-    if (_enable_nux_new_event_architecture)
+    if (((event.type >= NUX_MOUSE_PRESSED) && (event.type <= NUX_MOUSE_WHEEL)) ||
+    (event.type == NUX_WINDOW_MOUSELEAVE))
     {
-      if (((event.type >= NUX_MOUSE_PRESSED) && (event.type <= NUX_MOUSE_WHEEL)) ||
-      (event.type == NUX_WINDOW_MOUSELEAVE))
+      bool menu_active = false;
+      if (_menu_chain->size())
       {
-        bool menu_active = false;
-        if (_menu_chain->size())
-        {
-          menu_active = true;
-          MenuEventCycle(event);
-          CleanMenu();
-        }
+        menu_active = true;
+        MenuEventCycle(event);
+        CleanMenu();
+      }
 
-        if ((menu_active && on_menu_closure_continue_with_event_) || !(menu_active))
-        {
-          MouseEventCycle(event);
-        }
+      if ((menu_active && on_menu_closure_continue_with_event_) || !(menu_active))
+      {
+        MouseEventCycle(event);
+      }
 
-        on_menu_closure_continue_with_event_ = false;
+      on_menu_closure_continue_with_event_ = false;
 
-        if (_starting_menu_event_cycle)
-        {
-          _starting_menu_event_cycle = false;
-        }
-      }
-      else if ((event.type >= NUX_KEYDOWN) && (event.type <= NUX_KEYUP))
+      if (_starting_menu_event_cycle)
       {
-        KeyboardEventCycle(event);
+        _starting_menu_event_cycle = false;
       }
-      else if ((event.type >= NUX_DND_MOVE) && (event.type <= NUX_DND_LEAVE_WINDOW))
-      {
-        DndEventCycle(event);
-      }
-#ifdef NUX_GESTURES_SUPPORT
-      else if (event.type == EVENT_GESTURE_BEGIN)
-      {
-        gesture_broker_->ProcessGestureBegin(static_cast<GestureEvent&>(event));
-      }
-      else if (event.type == EVENT_GESTURE_UPDATE)
-      {
-        gesture_broker_->ProcessGestureUpdate(static_cast<GestureEvent&>(event));
-      }
-      else if (event.type == EVENT_GESTURE_END)
-      {
-        gesture_broker_->ProcessGestureEnd(static_cast<GestureEvent&>(event));
-      }
-#endif
     }
+    else if ((event.type >= NUX_KEYDOWN) && (event.type <= NUX_KEYUP))
+    {
+      KeyboardEventCycle(event);
+    }
+    else if ((event.type >= NUX_DND_MOVE) && (event.type <= NUX_DND_LEAVE_WINDOW))
+    {
+      DndEventCycle(event);
+    }
+#ifdef NUX_GESTURES_SUPPORT
+    else if (event.type == EVENT_GESTURE_BEGIN)
+    {
+      gesture_broker_->ProcessGestureBegin(static_cast<GestureEvent&>(event));
+    }
+    else if (event.type == EVENT_GESTURE_UPDATE)
+    {
+      gesture_broker_->ProcessGestureUpdate(static_cast<GestureEvent&>(event));
+    }
+    else if (event.type == EVENT_GESTURE_END)
+    {
+      gesture_broker_->ProcessGestureEnd(static_cast<GestureEvent&>(event));
+    }
+#endif
     inside_event_cycle_ = false;
   }
 
@@ -1185,16 +1156,6 @@ namespace
     }
   }
 
-  InputArea* WindowCompositor::GetExclusiveInputArea()
-  {
-    return _exclusive_input_area;
-  }
-
-  bool WindowCompositor::InExclusiveInputMode()
-  {
-    return _in_exclusive_input_mode;
-  }
-
   void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
   {
     inside_rendering_cycle_ = true;
@@ -1227,7 +1188,7 @@ namespace
           DrawOverlay(true);
         }
       }
-      else if (m_PopupRemoved || m_MenuRemoved)
+      else if (m_MenuRemoved)
       {
         // A popup removed cause the whole window to be dirty(at least some part of it).
         // So exchange DrawList with a real Draw.
@@ -1258,7 +1219,6 @@ namespace
         }
       }
 
-      m_PopupRemoved = false;
       m_MenuRemoved = false;
 
       window_thread_->GetGraphicsEngine().Pop2DWindow();
