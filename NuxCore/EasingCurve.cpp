@@ -20,6 +20,7 @@
  *
  */
 
+#include "NuxCore.h"
 #include "EasingCurve.h"
 
 namespace na = nux::animation;
@@ -122,6 +123,15 @@ double bounce_in_out(double progress)
   return in_out(progress, bounce_out);
 }
 
+double expo_ease_in(double progress)
+{
+  return (progress == 0) ? 0.0 : 1.0 * std::pow (2, 10 * (progress / 1.0 - 1) ) + 0.0;
+}
+
+double expo_ease_out(double progress)
+{
+  return reverse(progress, expo_ease_in);
+}
 
 na::EasingCurve::EasingFunction GetEasingFunction(na::EasingCurve::Type type)
 {
@@ -145,6 +155,10 @@ na::EasingCurve::EasingFunction GetEasingFunction(na::EasingCurve::Type type)
     return bounce_out;
   case na::EasingCurve::Type::BounceInOut:
     return bounce_in_out;
+  case na::EasingCurve::Type::ExpoEaseIn:
+    return expo_ease_in;
+  case na::EasingCurve::Type::ExpoEaseOut:
+    return expo_ease_out;
   case na::EasingCurve::Type::Linear:
   default:
     return linear;

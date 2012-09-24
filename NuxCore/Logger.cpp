@@ -400,7 +400,9 @@ std::string Backtrace(int levels)
     n = std::min(n, levels);
   }
 
-  for (int i = 0; i < n; ++i) {
+  // Skip outputting the first string as it is:
+  // nux::logging::backtrace
+  for (int i = 1; i < n; ++i) {
     sout << i << ": " << strings[i] << '\n';
   }
   if (strings) {

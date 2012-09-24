@@ -39,7 +39,7 @@ namespace nux
     ,   bCaptionAvailable(false)
     ,   m_layout(0)
   {
-    m_CaptionArea = new InputArea(NUX_TRACKER_LOCATION);
+    m_CaptionArea = new BasicView(NUX_TRACKER_LOCATION);
     SetMinimumSize(DEFAULT_WIDGET_WIDTH + 5, PRACTICAL_WIDGET_HEIGHT + 5);
     SetBaseSize(DEFAULT_WIDGET_WIDTH + 5, PRACTICAL_WIDGET_HEIGHT + 5);
     SetCaption(Caption);

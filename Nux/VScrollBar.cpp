@@ -52,10 +52,10 @@ namespace nux
     m_DownTimerHandler  = 0;
 
     vlayout         = new VLayout(NUX_TRACKER_LOCATION);
-    _scroll_up_button      = new InputArea(NUX_TRACKER_LOCATION);
-    _track         = new InputArea(NUX_TRACKER_LOCATION);
-    _scroll_down_button   = new InputArea(NUX_TRACKER_LOCATION);
-    _slider      = new InputArea(NUX_TRACKER_LOCATION);
+    _scroll_up_button      = new BasicView(NUX_TRACKER_LOCATION);
+    _track         = new BasicView(NUX_TRACKER_LOCATION);
+    _scroll_down_button   = new BasicView(NUX_TRACKER_LOCATION);
+    _slider      = new BasicView(NUX_TRACKER_LOCATION);
     _slider->SetParentObject(this);
 
     // Set Original State

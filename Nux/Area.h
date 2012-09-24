@@ -23,8 +23,8 @@
 #ifndef BASEOBJECT_H
 #define BASEOBJECT_H
 
+#include <string>
 #include <sigc++/sigc++.h>
-#include "Features.h"
 #include "NuxCore/InitiallyUnownedObject.h"
 #include "NuxGraphics/Events.h"
 #include "Utils.h"
@@ -34,6 +34,9 @@ namespace nux
 {
   class WindowThread;
   class GraphicsEngine;
+  class IOpenGLBaseTexture;
+  class IOpenGLFrameBufferObject;
+
 #ifdef NUX_GESTURES_SUPPORT
   class GestureEvent;
 #endif // NUX_GESTURES_SUPPORT
@@ -155,6 +158,17 @@ namespace nux
     Area(NUX_FILE_LINE_DECL);
     virtual ~Area();
 
+    int GetX() const;
+    int GetY() const;
+    int GetWidth() const;
+    int GetHeight() const;
+
+    void SetX(int x);
+    void SetY(int y);
+    void SetXY(int x, int y);
+    void SetWidth(int w);
+    void SetHeight(int h);
+
     int GetBaseX() const;
     int GetBaseY() const;
     int GetBaseWidth() const;
@@ -171,6 +185,7 @@ namespace nux
         The size is adjusted to respect the min and max size policy
         \sa SetWidth(), SetHeight(), SetMinimumSize(), SetMaximumSize().
     */
+    virtual void SetSize(int w, int h);
     virtual void SetBaseSize(int w, int h);
 
     virtual void SetMinimumSize(int w, int h);
@@ -212,7 +227,7 @@ namespace nux
 
         \sa SetBaseWidth(), SetBaseHeight(), SetBaseX(), SetBaseY().
     */
-    void SetGeometry(int x, int y, int w, int h);
+    virtual void SetGeometry(int x, int y, int w, int h);
 
     //! Set the geometry of the object.
     /*!
@@ -222,12 +237,11 @@ namespace nux
         @param geo Geometry object.
         \sa SetWidth(), SetHeight(), SetX(), SetY().
     */
-    void SetGeometry(const Geometry &geo);
 
-    void IncreaseSize(int x, int y);
+    void SetBaseString(std::string const& caption);
+    std::string const& GetBaseString() const;
 
-    void SetBaseString(const char *Caption);
-    const NString &GetBaseString() const;
+    virtual void SetGeometry(const Geometry& geo);
 
     //! Deprecated. Use GetToplevel.
     Area* GetToplevel();
@@ -460,7 +474,17 @@ namespace nux
         This signal is only meant to inform of a change of size. When receiving this signal don't do anything
         that could change the size of this object. Or you risk creating an infinite loop.
     */
-    sigc::signal<void, Area *, Geometry&> OnGeometryChanged;
+    sigc::signal<void, Area*, Geometry&> geometry_changed;
+
+    /*!
+        This signal emitted when the size of the area has changed. It is emitted after geometry_changed.
+    */
+    sigc::signal<void, Area*, int, int> size_changed;
+
+    /*!
+        This signal emitted when the position of the area has changed. It is emitted after geometry_changed.
+    */
+    sigc::signal<void, Area*, int, int> position_changed;
 
     /*!
         SetParentObject/UnParentObject are protected API. They are not meant to be used directly by users.
@@ -587,13 +611,13 @@ namespace nux
         This signal is only meant to inform that the size is about to change. When overriding this function,
         don't do anything that could change the size of this object. Or you risk creating an infinite loop.
     */
-    virtual void GeometryChangePending() {}
+    virtual void GeometryChangePending(bool position_about_to_change, bool size_about_to_change) {}
     
     /*!
         This signal is only meant to inform that the size has changed. When overriding this function,
         don't do anything that could change the size of this object. Or you risk creating an infinite loop.
     */
-    virtual void GeometryChanged() {}
+    virtual void GeometryChanged(bool position_has_changed, bool size_has_changed) {}
 
     //! Request a Layout recompute after a change of size
     /*
@@ -627,6 +651,88 @@ namespace nux
     //! If this variable is not NULL, then this area is part of the keyboard focus chain.
     Area* next_object_to_key_focus_area_;
 
+    
+    /**********************************************/
+    /*** Begin support for redirected rendering ***/
+    /**********************************************/
+public:
+    //! Redirect the rendering of this view to a texture.
+    /*!
+        Redirect the rendering of this view to a texture. \sa BackupTexture().
+        @param redirect If true, redirect the rendering of this view to a texture.
+    */
+    virtual void SetRedirectRenderingToTexture(bool redirect);
+
+    /*!
+        @return True if the rendering of this view is done in a texture.
+    */
+    virtual bool RedirectRenderingToTexture() const;
+
+    //! Return the texture of this View if RedirectRenderingToTexture is enabled.
+    /*
+        Return the texture of this View if RedirectRenderingToTexture is enabled.
+        If RedirectRenderingToTexture() is false, then backup_texture_ is not a valid smart pointer.
+
+        @return the device texture that contains the rendering of this view.
+    */
+    ObjectPtr<IOpenGLBaseTexture> BackupTexture() const;
+
+    /*!
+        The use of this function is a bit arcan but it gives more rendering
+        options to redirected areas.
+    */
+    void SetCopyPreviousFboTexture(bool copy);
+
+    /*!
+        Activate/Deactivate the presentation of the redirected texture in the rendering tree.
+    */
+    void SetPresentRedirectedView(bool present_redirected_view);
+
+    /*!
+        @return True if the redirected texture is displayed in the rendering tree.
+    */
+    bool PresentRedirectedView() const;
+
+protected:
+    //! Redirect the rendering of the view to a texture.
+    bool redirect_rendering_to_texture_;
+    bool update_backup_texture_;
+    bool present_redirected_view_;
+    //! The texture that holds the rendering of this view.
+    ObjectPtr<IOpenGLBaseTexture> backup_texture_;
+    ObjectPtr<IOpenGLBaseTexture> backup_depth_texture_;
+    ObjectPtr<IOpenGLBaseTexture> background_texture_;
+    ObjectPtr<IOpenGLFrameBufferObject> backup_fbo_;
+    ObjectPtr<IOpenGLFrameBufferObject> prev_fbo_;
+    Geometry prev_viewport_;
+    Matrix4 model_view_matrix_;
+    Matrix4 perspective_matrix_;
+    /*!
+        If true, copy the area in the previous fbo texture
+        into background_texture_.
+    */
+    bool copy_previous_fbo_for_background_;
+
+    /*!
+        Implemented in nux::View and nux::Layout.
+        Report to a parent view with redirect_rendering_to_texture_ set to true that one of its children
+        needs to be redrawn.
+    */
+    virtual void PrepareParentRedirectedView();
+
+    virtual bool HasParentRedirectedView();
+    Area* RedirectedAncestor();
+
+    /*!
+        Inform this view that one of its children has requested a draw. This view must have its rendering redirected to a texture.
+        @param update True if this view is redirected and one of its children has requested a draw.
+    */
+    virtual void SetUpdateBackupTextureForChildRendering(bool update);
+    virtual bool UpdateBackupTextureForChildRendering() const;
+
+    /********************************************/
+    /*** End support for redirected rendering ***/
+    /********************************************/
 
 #ifdef NUX_GESTURES_SUPPORT
     //! Returns the InputArea hit by the given gesture
@@ -663,7 +769,7 @@ namespace nux
     bool              sensitive_;     //!< Input sensitive state of the area
     bool              view_enabled_;  //!< The enable state of a view.
 
-    NString                 _base_string;     //!< A text string property for this area.
+    std::string             base_string_;     //!< A text string property for this area.
 
     Size                    min_size_;        //!< A text string property for this area.
     Size                    max_size_;        //!< A text string property for this area.

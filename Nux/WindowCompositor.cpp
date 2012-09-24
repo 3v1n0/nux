@@ -58,7 +58,6 @@ namespace
     m_CurrentWindow             = NULL;
     m_MenuWindow                = NULL;
     _mouse_over_area            = NULL;
-    key_focus_area_             = NULL;
     _always_on_front_window     = NULL;
     inside_event_cycle_         = false;
     inside_rendering_cycle_     = false;
@@ -67,11 +66,8 @@ namespace
     _pending_exclusive_input_mode_action = false;
 
     _dnd_area                   = NULL;
-    mouse_over_area_            = NULL;
-    mouse_owner_area_           = NULL;
     _mouse_over_menu_page       = NULL;
     _mouse_owner_menu_page      = NULL;
-    mouse_owner_base_window_    = NULL;
     _starting_menu_event_cycle  = false;
     _menu_is_active             = false;
     _enable_nux_new_event_architecture   = true;
@@ -99,12 +95,7 @@ namespace
 
   void WindowCompositor::BeforeDestructor()
   {
-    if (key_focus_area_)
-    {
-      key_focus_area_->ResetDownwardPathToKeyFocusArea();
-      key_focus_area_->ResetUpwardPathToKeyFocusArea();
-      key_focus_area_ = NULL;
-    }
+    key_focus_area_ = NULL;
   }
 
   WindowCompositor::~WindowCompositor()
@@ -186,15 +177,10 @@ namespace
     {
       _view_window_list.erase(it);
 
-      if (_view_window_list.size())
+      if (!_view_window_list.empty())
         m_SelectedWindow = _view_window_list.front();
     }
     _window_to_texture_map.erase(window.GetPointer());
-  }
-
-  Area* WindowCompositor::GetMouseOwnerArea()
-  {
-    return mouse_owner_area_;
   }
 
   //! Get Mouse position relative to the top left corner of the window.
@@ -213,24 +199,24 @@ namespace
 
   void WindowCompositor::GetAreaUnderMouse(const Point& mouse_position,
                                            NuxEventType event_type,
-                                           InputArea** area_under_mouse_pointer,
-                                           BaseWindow** window)
+                                           ObjectWeakPtr<InputArea>& area_under_mouse_pointer,
+                                           ObjectWeakPtr<BaseWindow>& window)
   {
-    *area_under_mouse_pointer = NULL;
+    window = NULL;
+    area_under_mouse_pointer = NULL;
 
     // Go through the list of BaseWindo and find the first area over which the
     // mouse pointer is.
     WindowList::iterator window_it;
-
     for (window_it = _view_window_list.begin(); window_it != _view_window_list.end(); ++window_it)
     {
       if ((*window_it).IsValid() && (*window_it)->IsVisible())
       {
-        InputArea* area = static_cast<InputArea*>((*window_it)->FindAreaUnderMouse(mouse_position, event_type));
+        Area* area = (*window_it)->FindAreaUnderMouse(mouse_position, event_type);
         if (area)
         {
-          *area_under_mouse_pointer = area;
-          *window = (*window_it).GetPointer();
+          area_under_mouse_pointer = static_cast<InputArea*>(area);
+          window = *window_it;
           return;
         }
       }
@@ -238,91 +224,55 @@ namespace
 
     // If area_under_mouse_pointer is NULL, then the mouse pointer is not over
     // any of the BaseWindow. Try the main window layout.
-    if (*area_under_mouse_pointer == NULL)
+    if (!area_under_mouse_pointer.IsValid())
     {
       Layout* main_window_layout = window_thread_->GetLayout();
       if (main_window_layout)
-        *area_under_mouse_pointer = static_cast<InputArea*>(main_window_layout->FindAreaUnderMouse(mouse_position, event_type));
+        area_under_mouse_pointer = static_cast<InputArea*>(main_window_layout->FindAreaUnderMouse(mouse_position, event_type));
     }
   }
 
-  void WindowCompositor::OnMouseOverViewDestroyed(Object* object)
+  void WindowCompositor::SetMouseOverArea(InputArea* area)
   {
-    if (mouse_over_area_ == object)
-    {
-      mouse_over_area_ = NULL;
-    }
+    if (mouse_over_area_ == area)
+      return;
+
+    mouse_over_area_ = area;
   }
 
-  void WindowCompositor::SetMouseOverArea(Area* area)
-  {
-    mouse_over_area_ = static_cast<InputArea*>(area);
-
-    mouse_over_view_connection_.disconnect();
-
-    if (mouse_over_area_)
-    {
-      mouse_over_view_connection_ = mouse_over_area_->object_destroyed.connect(sigc::mem_fun(this, &WindowCompositor::OnMouseOverViewDestroyed));
-    }
-  }
-
-  void WindowCompositor::OnMouseOwnerViewDestroyed(Object* object)
-  {
-    if (mouse_owner_area_ == object)
-    {
-      mouse_owner_area_ = NULL;
-    }
-  }
-
-  void WindowCompositor::SetMouseOwnerArea(Area* area)
+  void WindowCompositor::SetMouseOwnerArea(InputArea* area)
   {
     if (mouse_owner_area_ == area)
       return;
 
-    mouse_owner_area_ = static_cast<InputArea*>(area);
+    mouse_owner_area_ = area;
     dnd_safety_x_ = 0;
     dnd_safety_y_ = 0;
-
-    mouse_owner_view_connection_.disconnect();
-
-    if (mouse_owner_area_)
-    {
-      mouse_owner_view_connection_ = mouse_owner_area_->object_destroyed.connect(sigc::mem_fun(this, &WindowCompositor::OnMouseOwnerViewDestroyed));
-    }
   }
 
-  void WindowCompositor::OnMouseOwnerBaseWindowDestroyed(Object* object)
+  ObjectWeakPtr<InputArea> const& WindowCompositor::GetMouseOwnerArea() const
   {
-    if (mouse_owner_base_window_ == object)
-    {
-      mouse_owner_base_window_ = NULL;
-    }
+    return mouse_owner_area_;
   }
 
   void WindowCompositor::SetMouseOwnerBaseWindow(BaseWindow* base_window)
   {
-    mouse_owner_base_window_ = base_window;
-
-    mouse_owner_basewindow_connection_.disconnect();
-
-    if (mouse_owner_base_window_)
-    {
-      mouse_owner_basewindow_connection_ = mouse_owner_base_window_->object_destroyed.connect(sigc::mem_fun(this, &WindowCompositor::OnMouseOwnerBaseWindowDestroyed));
-    }
+    if (mouse_owner_base_window_ != base_window)
+      mouse_owner_base_window_ = base_window;
   }
 
   void WindowCompositor::DndEventCycle(Event& event)
   {
     if (event.type == NUX_DND_MOVE)
     {
-      InputArea* hit_area = NULL;
-      BaseWindow* hit_base_window = NULL;
+      ObjectWeakPtr<InputArea> hit_area;
+      ObjectWeakPtr<BaseWindow> hit_base_window;
 
-      GetAreaUnderMouse(Point(event.x, event.y), event.type, &hit_area, &hit_base_window);
+      GetAreaUnderMouse(Point(event.x, event.y), event.type, hit_area, hit_base_window);
 
-      if (hit_area)
+      if (hit_area.IsValid())
       {
-        SetDnDArea(hit_area);
+        SetDnDArea(hit_area.GetPointer());
         hit_area->HandleDndMove(event);
       }
       else
@@ -356,7 +306,7 @@ namespace
 
     _mouse_position = Point(event.x, event.y);
 
-    if (mouse_owner_area_ == NULL)
+    if (!mouse_owner_area_.IsValid())
     {
       // Context: The left mouse button is not down over an area.
       // We look for the area where the mouse pointer is located.
@@ -370,8 +320,8 @@ namespace
         (event.type == NUX_WINDOW_MOUSELEAVE) ||
         (event.type == NUX_MOUSE_RELEASED))
       {
-        InputArea* hit_view = NULL;         // The view under the mouse
-        BaseWindow* hit_base_window = NULL; // The BaseWindow below the mouse pointer.
+        ObjectWeakPtr<InputArea> hit_view; // The view under the mouse
+        ObjectWeakPtr<BaseWindow> hit_base_window; // The BaseWindow below the mouse pointer.
 
         // Look for the area below the mouse pointer in the BaseWindow.
         Area* pointer_grab_area = GetPointerGrabArea();
@@ -379,7 +329,7 @@ namespace
         {
           // If there is a pending mouse pointer grab, test that area only
           hit_view = NUX_STATIC_CAST(InputArea*, pointer_grab_area->FindAreaUnderMouse(Point(event.x, event.y), event.type));
-          if ((hit_view == NULL) && (event.type == NUX_MOUSE_PRESSED))
+          if (!hit_view.IsValid() && event.type == NUX_MOUSE_PRESSED)
           {
             Geometry geo = pointer_grab_area->GetAbsoluteGeometry();
             int x = event.x - geo.x;
@@ -390,15 +340,15 @@ namespace
         }
         else
         {
-          GetAreaUnderMouse(Point(event.x, event.y), event.type, &hit_view, &hit_base_window);
-          SetMouseOwnerBaseWindow(hit_base_window);
+          GetAreaUnderMouse(Point(event.x, event.y), event.type, hit_view, hit_base_window);
+          SetMouseOwnerBaseWindow(hit_base_window.GetPointer());
         }
 
         Geometry hit_view_geo;
         int hit_view_x = 0;
         int hit_view_y = 0;
 
-        if (hit_view)
+        if (hit_view.IsValid())
         {
           hit_view_geo = hit_view->GetAbsoluteGeometry();
           hit_view_x = event.x - hit_view_geo.x;
@@ -407,11 +357,11 @@ namespace
 
         if (event.type == NUX_WINDOW_MOUSELEAVE)
         {
-          if (mouse_over_area_ != NULL)
+          if (mouse_over_area_.IsValid())
           {
             // The area where the mouse was in the previous cycle and the area returned by GetAreaUnderMouse are different.
             // The area from the previous cycle receive a "mouse leave signal".
-            Geometry geo = mouse_over_area_->GetAbsoluteGeometry();
+            Geometry const& geo = mouse_over_area_->GetAbsoluteGeometry();
             int x = event.x - geo.x;
             int y = event.y - geo.y;
 
@@ -419,28 +369,28 @@ namespace
             SetMouseOverArea(NULL);
           }
         }
-        else if (hit_view && (event.type == NUX_MOUSE_MOVE))
+        else if (hit_view.IsValid() && event.type == NUX_MOUSE_MOVE)
         {
           bool emit_delta = true;
           if (hit_view != mouse_over_area_)
           {
-            if (mouse_over_area_ != NULL)
+            if (mouse_over_area_.IsValid())
             {
               // The area where the mouse was in the previous cycle and the area returned by GetAreaUnderMouse are different.
               // The area from the previous cycle receive a "mouse leave signal".
-              Geometry geo = mouse_over_area_->GetAbsoluteGeometry();
+              Geometry const& geo = mouse_over_area_->GetAbsoluteGeometry();
               int x = event.x - geo.x;
               int y = event.y - geo.y;
 
               mouse_over_area_->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
             }
             // The area we found under the mouse pointer receives a "mouse enter signal".
-            SetMouseOverArea(hit_view);
+            SetMouseOverArea(hit_view.GetPointer());
 
-            if (mouse_over_area_ != GetKeyFocusArea() &&
-                mouse_over_area_ && mouse_over_area_->AcceptKeyNavFocusOnMouseEnter())
+            if (mouse_over_area_.IsValid() && mouse_over_area_ != GetKeyFocusArea() &&
+                mouse_over_area_->AcceptKeyNavFocusOnMouseEnter())
             {
-              SetKeyFocusArea(mouse_over_area_);
+              SetKeyFocusArea(mouse_over_area_.GetPointer());
             }
           
           
@@ -451,16 +401,16 @@ namespace
           // Send a "mouse mouse signal".
           mouse_over_area_->EmitMouseMoveSignal(hit_view_x, hit_view_y, emit_delta ? dx : 0, emit_delta ? dy : 0, event.GetMouseState(), event.GetKeyState());
         }
-        else if (hit_view && ((event.type == NUX_MOUSE_PRESSED) || (event.type == NUX_MOUSE_DOUBLECLICK)))
+        else if (hit_view.IsValid() && (event.type == NUX_MOUSE_PRESSED || event.type == NUX_MOUSE_DOUBLECLICK))
         {
-          if ((event.type == NUX_MOUSE_DOUBLECLICK) && (!hit_view->DoubleClickEnabled()))
+          if (event.type == NUX_MOUSE_DOUBLECLICK && !hit_view->DoubleClickEnabled())
           {
             // If the area does not accept double click events, transform the event into a mouse pressed.
             event.type = NUX_MOUSE_PRESSED;
           }
 
           bool emit_double_click_signal = false;
-          if (mouse_over_area_ && (hit_view != mouse_over_area_))
+          if (mouse_over_area_.IsValid() && hit_view != mouse_over_area_)
           {
             // The area where the mouse was in the previous cycle and the area returned by GetAreaUnderMouse are different.
             // The area from the previous cycle receive a "mouse leave signal".
@@ -473,29 +423,29 @@ namespace
 
             mouse_over_area_->EmitMouseLeaveSignal(x, y, event.GetMouseState(), event.GetKeyState());
           }
-          else if (mouse_over_area_ && (hit_view == mouse_over_area_) && (event.type == NUX_MOUSE_DOUBLECLICK))
+          else if (mouse_over_area_.IsValid() && hit_view == mouse_over_area_ && event.type == NUX_MOUSE_DOUBLECLICK)
           {
             // Double click is emitted, if the second click happened on the same area as the first click.
             // This means mouse_over_area_ is not null and is equal to hit_view.
             emit_double_click_signal = true;
           }
 
-          SetMouseOverArea(hit_view);
-          SetMouseOwnerArea(hit_view);
+          SetMouseOverArea(hit_view.GetPointer());
+          SetMouseOwnerArea(hit_view.GetPointer());
           _mouse_position_on_owner = Point(hit_view_x, hit_view_y);
 
           // In the case of a mouse down event, if there is currently a keyboard event receiver and it is different
           // from the area returned by GetAreaUnderMouse, then stop that receiver from receiving anymore keyboard events and switch
           // make mouse_over_area_ the new receiver(if it accept keyboard events).
-          if (mouse_over_area_ != GetKeyFocusArea() && 
-              mouse_over_area_ && mouse_over_area_->AcceptKeyNavFocusOnMouseDown())
+          if (mouse_over_area_.IsValid() && mouse_over_area_ != GetKeyFocusArea() &&
+              mouse_over_area_->AcceptKeyNavFocusOnMouseDown())
           {
             InputArea* grab_area = GetKeyboardGrabArea();
             if (grab_area)
             {
               if (mouse_over_area_->IsChildOf(grab_area) /*&& mouse_over_area_->AcceptKeyboardEvent()*/)
               {
-                SetKeyFocusArea(mouse_over_area_);
+                SetKeyFocusArea(mouse_over_area_.GetPointer());
               }
               else
               {
@@ -504,7 +454,7 @@ namespace
             }
             else
             {
-              SetKeyFocusArea(mouse_over_area_);
+              SetKeyFocusArea(mouse_over_area_.GetPointer());
             }
           }
 
@@ -517,11 +467,11 @@ namespace
             mouse_over_area_->EmitMouseDownSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
           }
         }
-        else if (hit_view && (event.type == NUX_MOUSE_WHEEL))
+        else if (hit_view.IsValid() && (event.type == NUX_MOUSE_WHEEL))
         {
           hit_view->EmitMouseWheelSignal(hit_view_x, hit_view_y, event.wheel_delta, event.GetMouseState(), event.GetKeyState());
         }
-        else if (hit_view && (event.type == NUX_MOUSE_RELEASED))
+        else if (hit_view.IsValid() && (event.type == NUX_MOUSE_RELEASED))
         {
           // We only get a NUX_MOUSE_RELEASED event when the mouse was pressed
           // over another area and released here. There are a few situations that can cause 
@@ -533,11 +483,11 @@ namespace
 
           hit_view->EmitMouseUpSignal(hit_view_x, hit_view_y, event.GetMouseState(), event.GetKeyState());
         }
-        else if (hit_view == NULL)
+        else if (!hit_view.IsValid())
         {
-          if (mouse_over_area_)
+          if (mouse_over_area_.IsValid())
           {
-            Geometry geo = mouse_over_area_->GetAbsoluteGeometry();
+            Geometry const& geo = mouse_over_area_->GetAbsoluteGeometry();
             int x = event.x - geo.x;
             int y = event.y - geo.y;
 
@@ -570,13 +520,12 @@ namespace
     {
       // Context: The left mouse button down over an area. All events goes to that area.
       // But we still need to know where the mouse is.
+      ObjectWeakPtr<InputArea> hit_view; // The view under the mouse
+      ObjectWeakPtr<BaseWindow> hit_base_window; // The BaseWindow below the mouse pointer.
 
-      InputArea* hit_view = NULL;         // The view under the mouse
-      BaseWindow* hit_base_window = NULL; // The BaseWindow below the mouse pointer.
+      GetAreaUnderMouse(Point(event.x, event.y), event.type, hit_view, hit_base_window);
 
-      GetAreaUnderMouse(Point(event.x, event.y), event.type, &hit_view, &hit_base_window);
-
-      Geometry mouse_owner_geo = mouse_owner_area_->GetAbsoluteGeometry();
+      Geometry const& mouse_owner_geo = mouse_owner_area_->GetAbsoluteGeometry();
       int mouse_owner_x = event.x - mouse_owner_geo.x;
       int mouse_owner_y = event.y - mouse_owner_geo.y;
 
@@ -605,15 +554,15 @@ namespace
           mouse_owner_area_->EmitMouseDragSignal(mouse_owner_x, mouse_owner_y, dx, dy, event.GetMouseState(), event.GetKeyState());
         }
 
-        if ((mouse_over_area_ == mouse_owner_area_) && (hit_view != mouse_owner_area_))
+        if (mouse_over_area_ == mouse_owner_area_ && hit_view != mouse_owner_area_)
         {
           mouse_owner_area_->EmitMouseLeaveSignal(mouse_owner_x, mouse_owner_y, event.GetMouseState(), event.GetKeyState());
-          SetMouseOverArea(hit_view);
+          SetMouseOverArea(hit_view.GetPointer());
         }
-        else if ((mouse_over_area_ != mouse_owner_area_) && (hit_view == mouse_owner_area_))
+        else if (mouse_over_area_ != mouse_owner_area_ && hit_view == mouse_owner_area_)
         {
           mouse_owner_area_->EmitMouseEnterSignal(mouse_owner_x, mouse_owner_y, event.GetMouseState(), event.GetKeyState());
-          SetMouseOverArea(mouse_owner_area_);
+          SetMouseOverArea(mouse_owner_area_.GetPointer());
         }
 
         _mouse_position_on_owner = Point(mouse_owner_x, mouse_owner_y);
@@ -625,11 +574,11 @@ namespace
         if (hit_view == mouse_owner_area_)
         {
           mouse_owner_area_->EmitMouseClickSignal(mouse_owner_x, mouse_owner_y, event.GetMouseState(), event.GetKeyState());
-          SetMouseOverArea(mouse_owner_area_);
+          SetMouseOverArea(mouse_owner_area_.GetPointer());
         }
         else
         {
-          SetMouseOverArea(hit_view);
+          SetMouseOverArea(hit_view.GetPointer());
         }
 
         SetMouseOwnerArea(NULL);
@@ -823,36 +772,36 @@ namespace
   void WindowCompositor::FindKeyFocusArea(NuxEventType event_type,
     unsigned int key_symbol,
     unsigned int special_keys_state,
-    InputArea** key_focus_area,
-    BaseWindow** window)
+    ObjectWeakPtr<InputArea>& key_focus_area,
+    ObjectWeakPtr<BaseWindow>& window)
   {
-    *key_focus_area = NULL;
-    *window = NULL;
+    key_focus_area = NULL;
+    window = NULL;
 
     // Go through the list of BaseWindos and find the first area over which the mouse pointer is.
     WindowList::iterator window_it;
     window_it = _view_window_list.begin();
-    while ((*key_focus_area == NULL) && (window_it != _view_window_list.end()))
+    while (!key_focus_area.IsValid() && window_it != _view_window_list.end())
     {
       if ((*window_it).IsValid() && (*window_it)->IsVisible())
       {
-        *key_focus_area = NUX_STATIC_CAST(InputArea*, (*window_it)->FindKeyFocusArea(event_type, key_symbol, special_keys_state));
-        if (key_focus_area)
+        key_focus_area = NUX_STATIC_CAST(InputArea*, (*window_it)->FindKeyFocusArea(event_type, key_symbol, special_keys_state));
+        if (key_focus_area.IsValid())
         {
           // We have found an area. We are going to exit the while loop.
-          *window = (*window_it).GetPointer();
+          window = *window_it;
         }
       }
       ++window_it;
     }
 
     // If key_focus_area is NULL, then try the main window layout.
-    if (*key_focus_area == NULL)
+    if (!key_focus_area.IsValid())
     {
       Layout* main_window_layout = window_thread_->GetLayout();
       if (main_window_layout)
       {
-        *key_focus_area = NUX_STATIC_CAST(InputArea*, main_window_layout->FindKeyFocusArea(event_type, key_symbol, special_keys_state));
+        key_focus_area = NUX_STATIC_CAST(InputArea*, main_window_layout->FindKeyFocusArea(event_type, key_symbol, special_keys_state));
       }
     }
   }
@@ -861,21 +810,21 @@ namespace
     unsigned int key_symbol,
     unsigned int special_keys_state,
     InputArea* root_search_area,
-    InputArea** key_focus_area,
-    BaseWindow** window)
+    ObjectWeakPtr<InputArea>& key_focus_area,
+    ObjectWeakPtr<BaseWindow>& window)
   {
-    *key_focus_area = NULL;
-    *window = NULL;
+    key_focus_area = NULL;
+    window = NULL;
 
     if (root_search_area == NULL)
     {
       return;
     }
 
-    *key_focus_area = NUX_STATIC_CAST(InputArea*, root_search_area->FindKeyFocusArea(event_type, key_symbol, special_keys_state));
-    if (key_focus_area)
+    key_focus_area = NUX_STATIC_CAST(InputArea*, root_search_area->FindKeyFocusArea(event_type, key_symbol, special_keys_state));
+    if (key_focus_area.IsValid())
     {
-      *window = NUX_STATIC_CAST(BaseWindow*, root_search_area->GetTopLevelViewWindow());
+      window = NUX_STATIC_CAST(BaseWindow*, root_search_area->GetTopLevelViewWindow());
     }
   }
 
@@ -908,25 +857,21 @@ namespace
   {
     InputArea* keyboard_event_grab_view = GetKeyboardGrabArea();
 
-    InputArea* focus_area = NULL;   // The view under the mouse
-    BaseWindow* base_window = NULL; // The BaseWindow below the mouse pointer.
+    ObjectWeakPtr<InputArea> focus_area;   // The view under the mouse
+    ObjectWeakPtr<BaseWindow> base_window; // The BaseWindow below the mouse pointer.
 
     if (keyboard_event_grab_view)
     {
       // There is a keyboard grab.
       // Find the key focus area, under the keyboard grab area. That is to say, the key focus area is in the widget tree 
       // whose root is the keyboard grab area. This phase is known as the capture phase.
-      
       FindKeyFocusAreaFrom(event.type, event.GetKeySym(), event.GetKeyState(),
-        keyboard_event_grab_view,
-        &focus_area,
-        &base_window);
+                           keyboard_event_grab_view, focus_area, base_window);
     }
     else
     {
       FindKeyFocusArea(event.type, event.GetKeySym(), event.GetKeyState(),
-        &focus_area,
-        &base_window);
+                       focus_area, base_window);
     }
 
     KeyNavDirection direction = KEY_NAV_NONE;
@@ -964,20 +909,20 @@ namespace
       }
     }
 
-    if (focus_area)
+    if (focus_area.IsValid())
     {
-      SetKeyFocusArea(focus_area, direction);
+      SetKeyFocusArea(focus_area.GetPointer(), direction);
     }
     else
     {
       SetKeyFocusArea(NULL, KEY_NAV_NONE);
     }
 
-    if (key_focus_area_)
+    if (key_focus_area_.IsValid())
     {
       if (key_focus_area_->InspectKeyEvent(event.type, event.GetKeySym(), event.GetText()))
       {
-        SendKeyEvent(key_focus_area_,
+        SendKeyEvent(key_focus_area_.GetPointer(),
                     event.type,
                     event.GetKeySym(),
 #if defined(NUX_OS_WINDOWS)
@@ -1014,25 +959,25 @@ namespace
         }
       }
       else if (event.type == NUX_KEYDOWN)
-      {        
+      {
         if (direction == KEY_NAV_ENTER)
         {
-          if (key_focus_area_ && key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
+          if (key_focus_area_.IsValid() && key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
           {
             // Signal emitted from the WindowCompositor.
-            key_nav_focus_activate.emit(key_focus_area_);
+            key_nav_focus_activate.emit(key_focus_area_.GetPointer());
             // Signal emitted from the area itsel.
-            static_cast<InputArea*>(key_focus_area_)->key_nav_focus_activate.emit(key_focus_area_);
+            key_focus_area_->key_nav_focus_activate.emit(key_focus_area_.GetPointer());
           }
         }
         else
         {
           InputArea* key_nav_focus = NULL;
           Area* parent = key_focus_area_->GetParentObject();
-          
+
           if (parent)
             key_nav_focus = NUX_STATIC_CAST(InputArea*, parent->KeyNavIteration(direction));
-          
+
           while (key_nav_focus == NULL && parent != NULL)
           {
             parent = parent->GetParentObject();
@@ -1397,7 +1342,7 @@ namespace
     {
         //SetProcessingTopView(_tooltip_window);
         GetPainter().PaintShape(window_thread_->GetGraphicsEngine(), _tooltip_geometry, Color(0xA0000000), eSHAPE_CORNER_ROUND10, true);
-        GetPainter().PaintTextLineStatic(window_thread_->GetGraphicsEngine(), GetSysBoldFont(), _tooltip_text_geometry, m_TooltipText, Color(0xFFFFFFFF));
+        GetPainter().PaintTextLineStatic(window_thread_->GetGraphicsEngine(), GetSysBoldFont(), _tooltip_text_geometry, m_TooltipText.m_string, Color(0xFFFFFFFF));
         //SetProcessingTopView(NULL);
     }
 
@@ -1483,8 +1428,8 @@ namespace
             }
 
             m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
-            m_FrameBufferObject->SetRenderTarget( 0, rt.color_rt->GetSurfaceLevel(0));
-            m_FrameBufferObject->SetDepthSurface( rt.depth_rt->GetSurfaceLevel(0));
+            m_FrameBufferObject->SetTextureAttachment(0, rt.color_rt, 0);
+            m_FrameBufferObject->SetDepthTextureAttachment(rt.depth_rt, 0);
             m_FrameBufferObject->Activate();
             graphics_engine.SetViewport(0, 0, buffer_width, buffer_height);
             graphics_engine.SetOrthographicProjectionMatrix(buffer_width, buffer_height);
@@ -1551,8 +1496,8 @@ namespace
     }
 
     m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
-    m_FrameBufferObject->SetRenderTarget(0, m_MainColorRT->GetSurfaceLevel(0));
-    m_FrameBufferObject->SetDepthSurface(m_MainDepthRT->GetSurfaceLevel(0));
+    m_FrameBufferObject->SetTextureAttachment(0, m_MainColorRT, 0);
+    m_FrameBufferObject->SetDepthTextureAttachment(m_MainDepthRT, 0);
     m_FrameBufferObject->Activate();
 
     window_thread_->GetGraphicsEngine().EmptyClippingRegion();
@@ -1589,10 +1534,10 @@ namespace
       // End 2D Drawing
     }
 
-    if (key_focus_area_)
+    if (key_focus_area_.IsValid())
     {
       // key focus test
-      Geometry geo= key_focus_area_->GetRootGeometry();
+      Geometry const& geo = key_focus_area_->GetRootGeometry();
       //GetGraphicsDisplay()->GetGraphicsEngine()->QRP_Color(geo.x, geo.y, geo.width, geo.height, color::Blue);
     }
 
@@ -1628,8 +1573,8 @@ namespace
       nuxAssert(m_MainColorRT->GetWidth() == window_width);
       nuxAssert(m_MainColorRT->GetHeight() == window_height);
       m_FrameBufferObject->FormatFrameBufferObject(window_width, window_height, BITFMT_R8G8B8A8);
-      m_FrameBufferObject->SetRenderTarget( 0, m_MainColorRT->GetSurfaceLevel(0));
-      m_FrameBufferObject->SetDepthSurface( m_MainDepthRT->GetSurfaceLevel(0));
+      m_FrameBufferObject->SetTextureAttachment(0, m_MainColorRT, 0);
+      m_FrameBufferObject->SetDepthTextureAttachment(m_MainDepthRT, 0);
       m_FrameBufferObject->Activate();
     }
     else
@@ -1851,17 +1796,6 @@ namespace
     return true;
   }
 
-  void WindowCompositor::OnKeyNavFocusDestroyed(Object* area)
-  {
-    if (key_focus_area_ == area)
-    {
-      key_focus_area_->ResetDownwardPathToKeyFocusArea();
-      key_focus_area_->ResetUpwardPathToKeyFocusArea();
-
-      key_focus_area_ = NULL;
-    }
-  }
-  
   bool WindowCompositor::SetKeyFocusArea(InputArea* area, KeyNavDirection direction)
   {
     InputArea* keyboard_grab_area = GetKeyboardGrabArea();
@@ -1886,7 +1820,7 @@ namespace
       return false;
     }
 
-    if (key_focus_area_)
+    if (key_focus_area_.IsValid())
     {
       // This is the area that has the keyboard focus. Emit the signal 'end_key_focus'.
       key_focus_area_->end_key_focus.emit();
@@ -1898,9 +1832,9 @@ namespace
       if (key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
       {
         // Signal emitted from the WindowCompositor.
-        key_nav_focus_change.emit(key_focus_area_, false, direction);
+        key_nav_focus_change.emit(key_focus_area_.GetPointer(), false, direction);
         // Signal emitted from the area itself.
-        static_cast<InputArea*>(key_focus_area_)->key_nav_focus_change.emit(key_focus_area_, false, direction);
+        key_focus_area_->key_nav_focus_change.emit(key_focus_area_.GetPointer(), false, direction);
         // nuxDebugMsg("[WindowCompositor::SetKeyFocusArea] Area type '%s' named '%s': Lost key nav focus.",
         //   key_focus_area_->Type().name,
         //   key_focus_area_->GetBaseString().GetTCharPtr());
@@ -1908,7 +1842,7 @@ namespace
 
       if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
       {
-        static_cast<View*>(key_focus_area_)->QueueDraw();
+        static_cast<View*>(key_focus_area_.GetPointer())->QueueDraw();
       }
     }
 
@@ -1926,9 +1860,9 @@ namespace
       if (key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
       {
         // Signal emitted from the WindowCompositor.
-        key_nav_focus_change.emit(key_focus_area_, true, direction);
+        key_nav_focus_change.emit(key_focus_area_.GetPointer(), true, direction);
         // Signal emitted from the area itself.
-        static_cast<InputArea*>(key_focus_area_)->key_nav_focus_change.emit(key_focus_area_, true, direction);
+        key_focus_area_->key_nav_focus_change.emit(key_focus_area_.GetPointer(), true, direction);
         // nuxDebugMsg("[WindowCompositor::SetKeyFocusArea] Area type '%s' named '%s': Has key nav focus.",
         //   key_focus_area_->Type().name,
         //   key_focus_area_->GetBaseString().GetTCharPtr());
@@ -1936,10 +1870,10 @@ namespace
 
       if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
       {
-        static_cast<View*>(key_focus_area_)->QueueDraw();
+        static_cast<View*>(key_focus_area_.GetPointer())->QueueDraw();
       }
 
-      key_focus_area_->ChildFocusChanged.emit(key_focus_area_);
+      key_focus_area_->ChildFocusChanged.emit(key_focus_area_.GetPointer());
 
     }
     else
@@ -1947,24 +1881,12 @@ namespace
       key_focus_area_ = NULL;
     }
 
-    key_focus_area_connection_.disconnect();
-
-    if (area)
-    {
-      key_focus_area_connection_ = area->object_destroyed.connect(sigc::mem_fun(this, &WindowCompositor::OnKeyNavFocusDestroyed));
-    }
-
-    if (key_focus_area_ == NULL)
-    {
-      return false;
-    }
-
-    return true;
+    return key_focus_area_.IsValid() ? true : false;
   }
 
   InputArea* WindowCompositor::GetKeyFocusArea()
   {
-    return key_focus_area_;
+    return key_focus_area_.GetPointer();
   }
 
   void WindowCompositor::SetBackgroundPaintLayer(AbstractPaintLayer* bkg)
@@ -2001,8 +1923,8 @@ namespace
 
     // Clear the buffer the first time...
     m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
-    m_FrameBufferObject->SetRenderTarget(0, m_MainColorRT->GetSurfaceLevel(0));
-    m_FrameBufferObject->SetDepthSurface(m_MainDepthRT->GetSurfaceLevel(0));
+    m_FrameBufferObject->SetTextureAttachment(0, m_MainColorRT, 0);
+    m_FrameBufferObject->SetDepthTextureAttachment(m_MainDepthRT, 0);
     m_FrameBufferObject->Activate();
 
     CHECKGL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
@@ -2044,8 +1966,8 @@ namespace
       }
 
       m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
-      m_FrameBufferObject->SetRenderTarget(0, rt.color_rt->GetSurfaceLevel(0));
-      m_FrameBufferObject->SetDepthSurface(rt.depth_rt->GetSurfaceLevel(0));
+      m_FrameBufferObject->SetTextureAttachment(0, rt.color_rt, 0);
+      m_FrameBufferObject->SetDepthTextureAttachment(rt.depth_rt, 0);
       m_FrameBufferObject->Activate();
 
       window_thread_->GetGraphicsEngine().SetViewport(0, 0, buffer_width, buffer_height);
@@ -2062,8 +1984,8 @@ namespace
       nuxAssert(buffer_height >= 1);
       // Restore Main Frame Buffer
       m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
-      m_FrameBufferObject->SetRenderTarget(0, m_MainColorRT->GetSurfaceLevel(0));
-      m_FrameBufferObject->SetDepthSurface(m_MainDepthRT->GetSurfaceLevel(0));
+      m_FrameBufferObject->SetTextureAttachment(0, m_MainColorRT, 0);
+      m_FrameBufferObject->SetDepthTextureAttachment(m_MainDepthRT, 0);
       m_FrameBufferObject->Activate();
 
       window_thread_->GetGraphicsEngine().SetViewport(0, 0, buffer_width, buffer_height);
@@ -2220,7 +2142,7 @@ namespace
       keyboard_grab_stack_.push_front(area);
       
       // If there is any area with the key focus, cancel it.
-      if (key_focus_area_)
+      if (key_focus_area_.IsValid())
       {
         key_focus_area_->end_key_focus.emit();
         key_focus_area_->ResetUpwardPathToKeyFocusArea();
@@ -2228,9 +2150,9 @@ namespace
         if (key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
         {
           // Signal emitted from the WindowCompositor.
-          key_nav_focus_change.emit(key_focus_area_, false, KEY_NAV_NONE);
+          key_nav_focus_change.emit(key_focus_area_.GetPointer(), false, KEY_NAV_NONE);
           // Signal emitted from the area itself.
-          static_cast<InputArea*>(key_focus_area_)->key_nav_focus_change.emit(key_focus_area_, false, KEY_NAV_NONE);
+          key_focus_area_->key_nav_focus_change.emit(key_focus_area_.GetPointer(), false, KEY_NAV_NONE);
           // nuxDebugMsg("[WindowCompositor::GrabKeyboardAdd] Area type '%s' named '%s': Lost key nav focus.",
           //   key_focus_area_->Type().name,
           //   key_focus_area_->GetBaseString().GetTCharPtr());
@@ -2239,7 +2161,7 @@ namespace
 
         if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
         {
-          static_cast<View*>(key_focus_area_)->QueueDraw();
+          static_cast<View*>(key_focus_area_.GetPointer())->QueueDraw();
         }
         key_focus_area_ = NULL;
       }
@@ -2295,7 +2217,7 @@ namespace
     else
     {
       // If there is any area with the key focus, cancel it.
-      if (key_focus_area_)
+      if (key_focus_area_.IsValid())
       {
         key_focus_area_->end_key_focus.emit();
         key_focus_area_->ResetUpwardPathToKeyFocusArea();
@@ -2303,9 +2225,9 @@ namespace
         if (key_focus_area_->Type().IsDerivedFromType(InputArea::StaticObjectType))
         {
           // Signal emitted from the WindowCompositor.
-          key_nav_focus_change.emit(key_focus_area_, false, KEY_NAV_NONE);
+          key_nav_focus_change.emit(key_focus_area_.GetPointer(), false, KEY_NAV_NONE);
           // Signal emitted from the area itself.
-          static_cast<InputArea*>(key_focus_area_)->key_nav_focus_change.emit(key_focus_area_, false, KEY_NAV_NONE);
+          key_focus_area_->key_nav_focus_change.emit(key_focus_area_.GetPointer(), false, KEY_NAV_NONE);
           // nuxDebugMsg("[WindowCompositor::GrabKeyboardRemove] Area type '%s' named '%s': Lost key nav focus.",
           //   key_focus_area_->Type().name,
           //   key_focus_area_->GetBaseString().GetTCharPtr());          
@@ -2313,7 +2235,7 @@ namespace
 
         if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
         {
-          static_cast<View*>(key_focus_area_)->QueueDraw();
+          static_cast<View*>(key_focus_area_.GetPointer())->QueueDraw();
         }
         key_focus_area_ = NULL;
       }
@@ -2355,80 +2277,104 @@ namespace
     reference_fbo_geometry_ = fbo_geometry;
   }
 
+  namespace
+  {
+    bool CheckExternalFramebufferStatus (GLenum binding)
+    {
+      bool ok = false;
+      // Nux does some sanity checks to make sure that the FBO is in good condition.
+      GLenum status;
+      status = glCheckFramebufferStatusEXT(binding);
+      CHECKGL_MSG(glCheckFramebufferStatusEXT);
+
+      switch(status)
+      {
+        case GL_FRAMEBUFFER_COMPLETE_EXT: // Everything's OK
+          ok = true;
+          break;
+        case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
+          nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT");
+          ok = false;
+          break;
+        case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
+          nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT");
+          ok = false;
+          break;
+          // See issue(87) of http://www.opengl.org/registry/specs/EXT/framebuffer_object.txt
+          //  case GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT:
+          //      nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT");
+          //      ok = false;
+          //      break;
+        case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
+          nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT");
+          ok = false;
+          break;
+  #ifndef NUX_OPENGLES_20
+        case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
+          nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT");
+          ok = false;
+          break;
+        case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
+          nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT");
+          ok = false;
+          break;
+        case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
+          nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT");
+          ok = false;
+          break;
+  #endif
+        //  case GL_FRAMEBUFFER_STATUS_ERROR_EXT:
+        //      nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_STATUS_ERROR_EXT");
+        //      ok = false;
+        //      break;
+        case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
+          nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_UNSUPPORTED_EXT");
+          ok = false;
+          break;
+        default:
+          nuxError("[GLFramebufferObject::IsValid] Unknown ERROR");
+          ok = false;
+      }
+
+      return ok;
+    }
+
+    void SetReferenceFramebufferViewport (const nux::Geometry &reference_fbo_geometry_)
+    {
+      CHECKGL(glViewport(reference_fbo_geometry_.x,
+        reference_fbo_geometry_.y,
+        reference_fbo_geometry_.width,
+        reference_fbo_geometry_.height));
+    }
+  }
+
   bool WindowCompositor::RestoreReferenceFramebuffer()
   {
+    if (!reference_fbo_)
+      return false;
+
     // It is assumed that the reference fbo contains valid textures.
     // Nux does the following:
     //    - Bind the reference fbo (reference_fbo_)
     //    - Call glDrawBuffer with GL_COLOR_ATTACHMENT0
     //    - Set the opengl viewport size (reference_fbo_geometry_)
 
-    bool ok = false;
-
     CHECKGL(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, reference_fbo_));
 #ifndef NUX_OPENGLES_20
     CHECKGL(glDrawBuffer(GL_COLOR_ATTACHMENT0));
+    CHECKGL(glReadBuffer(GL_COLOR_ATTACHMENT0));
 #endif
-    CHECKGL(glViewport(reference_fbo_geometry_.x,
-      reference_fbo_geometry_.y,
-      reference_fbo_geometry_.width,
-      reference_fbo_geometry_.height));
 
-    // Nux does some sanity checks to make sure that the FBO is in good condition.
-    GLenum status;
-    status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-    CHECKGL_MSG(glCheckFramebufferStatusEXT);
+    SetReferenceFramebufferViewport (reference_fbo_geometry_);
 
-    switch(status)
-    {
-      case GL_FRAMEBUFFER_COMPLETE_EXT: // Everything's OK
-        ok = true;
-        break;
-      case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
-        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT");
-        ok = false;
-        break;
-      case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
-        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT");
-        ok = false;
-        break;
-        // See issue(87) of http://www.opengl.org/registry/specs/EXT/framebuffer_object.txt
-        //  case GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT:
-        //      nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT");
-        //      ok = false;
-        //      break;
-      case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
-        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT");
-        ok = false;
-        break;
-#ifndef NUX_OPENGLES_20
-      case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
-        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT");
-        ok = false;
-        break;
-      case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
-        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT");
-        ok = false;
-        break;
-      case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
-        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT");
-        ok = false;
-        break;
-#endif
-      //  case GL_FRAMEBUFFER_STATUS_ERROR_EXT:
-      //      nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_STATUS_ERROR_EXT");
-      //      ok = false;
-      //      break;
-      case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
-        nuxError("[GLFramebufferObject::IsValid] GL_FRAMEBUFFER_UNSUPPORTED_EXT");
-        ok = false;
-        break;
-      default:
-        nuxError("[GLFramebufferObject::IsValid] Unknown ERROR");
-        ok = false;
-    }    
+    return CheckExternalFramebufferStatus (GL_FRAMEBUFFER_EXT);
+  }
 
-    return ok;
+  void WindowCompositor::RestoreMainFramebuffer()
+  {
+    // This is a bit inefficient as we unbind and then rebind
+    nux::GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer ();
+    RestoreReferenceFramebuffer ();
   }
 
 #ifdef NUX_GESTURES_SUPPORT

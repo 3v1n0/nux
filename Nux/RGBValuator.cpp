@@ -120,16 +120,16 @@ namespace nux
     blue_caption_       = new EditTextBox("", NUX_TRACKER_LOCATION);
     alpha_caption_      = new EditTextBox("", NUX_TRACKER_LOCATION);
 
-    red_valuator_       = new InputArea(NUX_TRACKER_LOCATION);
-    green_valuator_     = new InputArea(NUX_TRACKER_LOCATION);
-    blue_valuator_      = new InputArea(NUX_TRACKER_LOCATION);
-    alpha_valuator_     = new InputArea(NUX_TRACKER_LOCATION);
-    color_square_       = new InputArea(NUX_TRACKER_LOCATION);
+    red_valuator_       = new BasicView(NUX_TRACKER_LOCATION);
+    green_valuator_     = new BasicView(NUX_TRACKER_LOCATION);
+    blue_valuator_      = new BasicView(NUX_TRACKER_LOCATION);
+    alpha_valuator_     = new BasicView(NUX_TRACKER_LOCATION);
+    color_square_       = new BasicView(NUX_TRACKER_LOCATION);
 
-    m_ComponentLabel0   = new InputArea(NUX_TRACKER_LOCATION);
-    m_ComponentLabel1   = new InputArea(NUX_TRACKER_LOCATION);
-    m_ComponentLabel2   = new InputArea(NUX_TRACKER_LOCATION);
-    m_ComponentAlpha    = new InputArea(NUX_TRACKER_LOCATION);
+    m_ComponentLabel0   = new BasicView(NUX_TRACKER_LOCATION);
+    m_ComponentLabel1   = new BasicView(NUX_TRACKER_LOCATION);
+    m_ComponentLabel2   = new BasicView(NUX_TRACKER_LOCATION);
+    m_ComponentAlpha    = new BasicView(NUX_TRACKER_LOCATION);
   }
 
   void RGBValuator::InitializeWidgets()
@@ -152,10 +152,6 @@ namespace nux
     alpha_valuator_->mouse_drag.connect(sigc::mem_fun(this, &RGBValuator::OnReceiveMouseDrag_Alpha));
     m_ColorModel->click.connect(sigc::mem_fun(this, &RGBValuator::OnChangeColorModel));
     m_ColorFormat->click.connect(sigc::mem_fun(this, &RGBValuator::OnChangeColorFormat));
-//    m_ColorModel->mouse_down.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
-//    m_ColorModel->mouse_up.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
-//    m_ColorModel->mouse_enter.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
-
 
     m_ColorModel->SetFont(GetSysBoldFont());
     m_ColorFormat->SetFont(GetSysBoldFont());
@@ -403,7 +399,7 @@ namespace nux
     Geometry base = GetGeometry();
 
     graphics_engine.PushClippingRectangle(base);
-    GetPainter().PushDrawShapeLayer(graphics_engine, vlayout->GetGeometry(), eSHAPE_CORNER_ROUND4, Color(0xFF000000), eAllCorners);
+    GetPainter().PushDrawShapeLayer(graphics_engine, vlayout->GetGeometry(), eSHAPE_CORNER_ROUND4, Color(0xFF000000), eAllCorners, true);
 
     if (m_color_model == color::RGB)
     {
@@ -418,22 +414,15 @@ namespace nux
       DrawHLS(graphics_engine);
     }
 
-    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentLabel0->GetGeometry(), m_ComponentLabel0->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
-    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentLabel1->GetGeometry(), m_ComponentLabel1->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
-    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentLabel2->GetGeometry(), m_ComponentLabel2->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
-    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentAlpha->GetGeometry(), m_ComponentAlpha->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
+    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentLabel0->GetGeometry(), m_ComponentLabel0->GetBaseString(), Color(0xFFFFFFFF));
+    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentLabel1->GetGeometry(), m_ComponentLabel1->GetBaseString(), Color(0xFFFFFFFF));
+    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentLabel2->GetGeometry(), m_ComponentLabel2->GetBaseString(), Color(0xFFFFFFFF));
+    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentAlpha->GetGeometry(), m_ComponentAlpha->GetBaseString(), Color(0xFFFFFFFF));
 
     DrawRedMarker(graphics_engine);
     DrawGreenMarker(graphics_engine);
     DrawBlueMarker(graphics_engine);
     DrawAlphaMarker(graphics_engine);
-
-    red_caption_->QueueDraw();
-    green_caption_->QueueDraw();
-    blue_caption_->QueueDraw();
-    alpha_caption_->QueueDraw();
-    m_ColorModel->QueueDraw();
-    m_ColorFormat->QueueDraw();
 
     GetPainter().PopBackground();
     graphics_engine.PopClippingRectangle();

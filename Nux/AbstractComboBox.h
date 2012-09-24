@@ -48,8 +48,8 @@ namespace nux
 
   protected:
     HLayout    *m_hlayout;
-    InputArea   *_combo_box_area;
-    InputArea   *_combo_box_opening_area;
+    BasicView   *_combo_box_area;
+    BasicView   *_combo_box_opening_area;
     StaticText  *_pango_static_text;
     bool        m_MenuIsActive;
     bool        m_IsOpeningMenu;

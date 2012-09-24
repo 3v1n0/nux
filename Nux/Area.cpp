@@ -39,11 +39,15 @@ namespace nux
   NUX_IMPLEMENT_OBJECT_TYPE(Area);
 
   Area::Area(NUX_FILE_LINE_DECL)
-    :   InitiallyUnownedObject(NUX_FILE_LINE_PARAM)
-    ,   geometry_(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT)
-    ,   min_size_(AREA_MIN_WIDTH, AREA_MIN_HEIGHT)
-    ,   max_size_(AREA_MAX_WIDTH, AREA_MAX_HEIGHT)
-    ,   layout_done_(true)
+    : InitiallyUnownedObject(NUX_FILE_LINE_PARAM)
+    , redirect_rendering_to_texture_(false)
+    , update_backup_texture_(false)
+    , present_redirected_view_(true)
+    , copy_previous_fbo_for_background_(true)
+    , geometry_(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT)
+    , min_size_(AREA_MIN_WIDTH, AREA_MIN_HEIGHT)
+    , max_size_(AREA_MAX_WIDTH, AREA_MAX_HEIGHT)
+    , layout_done_(true)
   {
     window_thread_ = GetWindowThread();
     visible_ = true;
@@ -68,16 +72,18 @@ namespace nux
 
   Area::~Area()
   {
+    ResetDownwardPathToKeyFocusArea();
+    ResetUpwardPathToKeyFocusArea();
   }
 
-  const NString &Area::GetBaseString() const
+  std::string const& Area::GetBaseString() const
   {
-    return _base_string;
+    return base_string_;
   }
 
-  void Area::SetBaseString(const char *Caption)
+  void Area::SetBaseString(std::string const& caption)
   {
-    _base_string = Caption;
+    base_string_ = caption;
   }
 
   void Area::CheckMinSize()
@@ -319,24 +325,44 @@ namespace nux
     return parent_area_;
   }
 
-  int Area::GetBaseX     () const
+  int Area::GetX() const
   {
     return geometry_.x;
   }
 
-  int Area::GetBaseY     () const
+  int Area::GetBaseX() const
+  {
+    return GetX();
+  }
+
+  int Area::GetY() const
   {
     return geometry_.y;
   }
 
-  int Area::GetBaseWidth    () const
+  int Area::GetBaseY() const
+  {
+    return GetY();
+  }
+
+  int Area::GetWidth() const
   {
     return geometry_.width;
   }
 
-  int Area::GetBaseHeight   () const
+  int Area::GetBaseWidth() const
+  {
+    return GetWidth();
+  }
+
+  int Area::GetHeight() const
   {
     return geometry_.height;
+  }
+
+  int Area::GetBaseHeight() const
+  {
+    return GetHeight();
   }
 
   void Area::SetGeometry(int x, int y, int w, int h)
@@ -344,16 +370,31 @@ namespace nux
     h = nux::Clamp<int> (h, min_size_.height, max_size_.height);
     w = nux::Clamp<int> (w, min_size_.width, max_size_.width);
 
+    bool detected_size_change = false;
+    bool detected_position_change = false;
+
+    if (geometry_.x != x || geometry_.y != y)
+      detected_position_change = true;
+
+    if (geometry_.width != w || geometry_.height != h)
+      detected_size_change = true;
+
     nux::Geometry geometry(x, y, w, h);
     if (geometry_ == geometry)
       return;
 
-    GeometryChangePending();
+    GeometryChangePending(detected_position_change, detected_size_change);
     geometry_ = geometry;
     ReconfigureParentLayout();
-    GeometryChanged();
+    GeometryChanged(detected_position_change, detected_size_change);
 
-    OnGeometryChanged.emit(this, geometry_);
+    geometry_changed.emit(this, geometry_);
+
+    if (detected_position_change)
+      position_changed.emit(this, x, y);
+
+    if (detected_size_change)
+      size_changed.emit(this, w, h);
   }
 
   void Area::SetGeometry(const Geometry &geo)
@@ -366,40 +407,64 @@ namespace nux
     return geometry_;
   }
 
-  void Area::SetBaseX(int x)
+  void Area::SetX(int x)
   {
     SetGeometry(x, geometry_.y, geometry_.width, geometry_.height);
   }
 
-  void Area::SetBaseY    (int y)
+  void Area::SetY    (int y)
   {
     SetGeometry(geometry_.x, y, geometry_.width, geometry_.height);
   }
 
-  void Area::SetBaseXY    (int x, int y)
+  void Area::SetBaseX(int x)
+  {
+    SetX(x);
+  }
+
+  void Area::SetBaseY(int y)
+  {
+    SetY(y);
+  }
+
+  void Area::SetXY(int x, int y)
   {
     SetGeometry(x, y, geometry_.width, geometry_.height);
   }
 
-  void Area::SetBaseSize(int w, int h)
+  void Area::SetBaseXY(int x, int y)
+  {
+    SetXY(x, y);
+  }
+
+  void Area::SetSize(int w, int h)
   {
     SetGeometry(geometry_.x, geometry_.y, w, h);
   }
 
-  void Area::SetBaseWidth(int w)
+  void Area::SetBaseSize(int w, int h)
+  {
+    SetSize(w, h);
+  }
+
+  void Area::SetWidth(int w)
   {
     SetGeometry(geometry_.x, geometry_.y, w, geometry_.height);
   }
 
-  void Area::SetBaseHeight(int h)
+  void Area::SetBaseWidth(int w)
+  {
+    SetWidth(w);
+  }
+
+  void Area::SetHeight(int h)
   {
     SetGeometry(geometry_.x, geometry_.y, geometry_.width, h);
   }
 
-  void Area::IncreaseSize(int x, int y)
+  void Area::SetBaseHeight(int h)
   {
-    geometry_.OffsetPosition(x, y);
-    OnResize.emit(geometry_.x, geometry_.y, geometry_.width, geometry_.height );
+    SetHeight(h);
   }
 
   long Area::ComputeContentSize()
@@ -1039,6 +1104,129 @@ namespace nux
       return true;
 
     return false;
+  }
+
+  /*** Support for redirected rendering ***/
+  void Area::SetRedirectRenderingToTexture(bool redirect)
+  {
+    if (redirect_rendering_to_texture_ == redirect)
+    {
+      return;
+    }
+
+    if ((redirect_rendering_to_texture_ == false) && redirect)
+    {
+      update_backup_texture_ = true;
+    }
+
+    redirect_rendering_to_texture_ = redirect;
+    if (redirect == false)
+    {
+      // Free the texture of this view
+      backup_fbo_.Release();
+      backup_texture_.Release();
+      backup_depth_texture_.Release();
+      prev_fbo_.Release();
+    }
+  }
+
+  bool Area::RedirectRenderingToTexture() const
+  {
+    return redirect_rendering_to_texture_;
+  }
+
+  void Area::SetUpdateBackupTextureForChildRendering(bool update)
+  {
+    update_backup_texture_ = update;
+  }
+
+  ObjectPtr<IOpenGLBaseTexture> Area::BackupTexture() const
+  {
+    // if RedirectRenderingToTexture() is false, then backup_texture_ is not a valid smart pointer.
+    return backup_texture_;
+  }
+
+  bool Area::UpdateBackupTextureForChildRendering() const
+  {
+    return update_backup_texture_;
+  }
+
+  void Area::PrepareParentRedirectedView()
+  {
+    Area* parent = GetParentObject();
+
+    while (parent)
+    {
+      if (parent->RedirectRenderingToTexture() && (parent->UpdateBackupTextureForChildRendering() == false))
+      {
+        parent->SetUpdateBackupTextureForChildRendering(true);
+        parent->PrepareParentRedirectedView();
+      }
+      else if (parent->RedirectRenderingToTexture() && (parent->UpdateBackupTextureForChildRendering() == true))
+      {
+        break;
+      }
+      else
+      {
+        parent->PrepareParentRedirectedView();
+        break;
+      }
+    }
+  }
+
+  bool Area::HasParentRedirectedView()
+  {
+    Area* parent = GetParentObject();
+
+    while (parent && !parent->Type().IsDerivedFromType(View::StaticObjectType))
+    {
+      parent = parent->GetParentObject();
+    }
+
+    if (parent)
+    {
+      View* view = static_cast<View*>(parent);
+      if (view->RedirectRenderingToTexture())
+      {
+        return true;
+      }
+      else
+      {
+        return view->HasParentRedirectedView();
+      }
+    }
+    return false;
+  }
+
+  Area* Area::RedirectedAncestor()
+  {
+    Area* parent = GetParentObject();
+
+    while (parent)
+    {
+      if (parent->RedirectRenderingToTexture())
+      {
+        return parent;
+      }
+      parent = parent->GetParentObject();
+    }
+
+    return NULL;
+  }
+
+  void Area::SetCopyPreviousFboTexture(bool copy_background)
+  {
+    copy_previous_fbo_for_background_ = copy_background;
+  }
+
+  void Area::SetPresentRedirectedView(bool present_redirected_view)
+  {
+    present_redirected_view_ = present_redirected_view;
+  }
+
+  bool Area::PresentRedirectedView() const
+  {
+    return present_redirected_view_;
   }
 
 #ifdef NUX_GESTURES_SUPPORT

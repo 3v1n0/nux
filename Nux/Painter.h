@@ -151,7 +151,8 @@ namespace nux
     ////////////////////
     // TEXT PAINTING  //
     ////////////////////
-    virtual int PaintColorTextLineEdit(GraphicsEngine &graphics_engine, const Geometry &g, const NString &Str,
+    virtual int PaintColorTextLineEdit(GraphicsEngine &graphics_engine, const Geometry &g,
+                                       std::string const& Str,
                                         Color TextColor,
                                         bool WriteAlphaChannel,
                                         Color SelectedTextColor,
@@ -162,11 +163,13 @@ namespace nux
                                         int offset = 0,
                                         int selection_start = 0, int selection_end = 0) const;
 
-    virtual int PaintTextLineStatic(GraphicsEngine &graphics_engine, ObjectPtr<FontTexture> Font, const Geometry &g,
-                                     const NString &Str,
-                                     const Color &color = Color(0.0f, 0.0f, 0.0f, 1.0f),
-                                     bool WriteAlphaChannel = true,
-                                     TextAlignment alignment = eAlignTextLeft) const;
+    virtual int PaintTextLineStatic(GraphicsEngine &graphics_engine,
+                                    ObjectPtr<FontTexture> Font,
+                                    Geometry const& g,
+                                    std::string const& text_line,
+                                    Color const& color = Color(0.0f, 0.0f, 0.0f, 1.0f),
+                                    bool WriteAlphaChannel = true,
+                                    TextAlignment alignment = eAlignTextLeft) const;
 
     void Paint2DQuadColor(GraphicsEngine &graphics_engine, const Geometry &g, const Color &c0) const;
     void Paint2DQuadColor(GraphicsEngine &graphics_engine, const Geometry &g, const Color &c0_top_left, const Color &c1_bottom_left, const Color &c2_bottom_right, const Color &c3_top_right) const;
@@ -419,6 +422,13 @@ namespace nux
 
     */
     void PaintActivePaintLayerStack(GraphicsEngine &graphics_engine, const Geometry &geo);
+
+    //! Paint all layers in all stacks
+    /*
+        Paint all layers in all stacks with the current model-view and projection matrices.
+        This is useful for redirected rendering to textures.
+    */
+    void PaintAllLayerStack(GraphicsEngine& graphics_engine, const Geometry& geo);
 
     //! Deprecated. Use PushPaintLayerStack.
     void PushBackgroundStack();

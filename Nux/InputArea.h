@@ -23,8 +23,6 @@
 #ifndef INPUTAREA_H
 #define INPUTAREA_H
 
-#include "Features.h"
-
 #include "Area.h"
 
 #if defined(NUX_OS_WINDOWS)
@@ -90,8 +88,6 @@ namespace nux
   public:
     // Override the virtual methods from Object Base
     // Here, we get a change to update the text of the keyboard handler.
-    virtual void SetBaseString(const char *Caption);
-
     void SetKeyboardReceiverIgnoreMouseDownOutside(bool ignore_mouse_down_outside);
 
     void SetAcceptKeyNavFocusOnMouseDown(bool accept);

@@ -74,8 +74,8 @@ namespace nux
 
   protected:
     EditTextBox    *m_EditLine;
-    InputArea       *m_SpinnerUpBtn;
-    InputArea       *m_SpinnerDownBtn;
+    BasicView       *m_SpinnerUpBtn;
+    BasicView       *m_SpinnerDownBtn;
 
     TimerFunctor *m_UpTimerCallback;
     TimerFunctor *m_DownTimerCallback;

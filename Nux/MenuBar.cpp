@@ -41,7 +41,7 @@ namespace nux
     :   Object(true, NUX_FILE_LINE_PARAM)
   {
     // This area is added to the layout of the MenuBar. The Menubar will will ref/unref it.
-    area = new InputArea(NUX_TRACKER_LOCATION);
+    area = new BasicView(NUX_TRACKER_LOCATION);
     icon = 0;
   }
 
@@ -97,7 +97,7 @@ namespace nux
 
     for (it = m_MenuBarItemList.begin(); it != m_MenuBarItemList.end(); it++)
     {
-      InputArea *area = (*it)->area;
+      BasicView *area = (*it)->area;
       item_geometry = area->GetGeometry();
 
       if (area->IsMouseInside())
@@ -127,7 +127,7 @@ namespace nux
         }
         else
         {
-          GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
+          GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), item_geometry, area->GetBaseString(), GetTextColor(), true, eAlignTextCenter);
         }
       }
       else
@@ -144,14 +144,14 @@ namespace nux
         }
         else
         {
-          GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
+          GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), item_geometry, area->GetBaseString(), GetTextColor(), true, eAlignTextCenter);
         }
       }
     }
 
     if (m_MenuIsActive)
     {
-      InputArea *area = m_CurrentMenu->area;
+      BasicView *area = m_CurrentMenu->area;
       item_geometry = area->GetGeometry();
       GetPainter().PaintBackground(graphics_engine, item_geometry);
       GetPainter().Paint2DQuadColor(graphics_engine, item_geometry, Color(0xFF000000));
@@ -167,7 +167,7 @@ namespace nux
       }
       else
       {
-        GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), item_geometry, area->GetBaseString().GetTCharPtr(), GetTextColor(), true, eAlignTextCenter);
+        GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), item_geometry, area->GetBaseString(), GetTextColor(), true, eAlignTextCenter);
       }
     }
 
@@ -342,7 +342,7 @@ namespace nux
 // 
 //         for (it = m_MenuBarItemList.begin(); it != m_MenuBarItemList.end(); it++)
 //         {
-//           InputArea *area = (*it)->area;
+//           BasicView *area = (*it)->area;
 //           Geometry geometry = area->GetGeometry();
 // 
 //           if (geometry.IsPointInside(winx, winy))
@@ -407,7 +407,7 @@ namespace nux
 
     for (it = m_MenuBarItemList.begin(); it != m_MenuBarItemList.end(); it++)
     {
-      InputArea *area = (*it)->area;
+      BasicView *area = (*it)->area;
       geometry = area->GetGeometry();
 
       if (geometry.IsPointInside(x, y))

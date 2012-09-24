@@ -153,6 +153,8 @@ namespace nux
   GraphicsEngine::GraphicsEngine(GraphicsDisplay& GlWindow, bool create_rendering_data)
   : _graphics_display(GlWindow)
   {
+
+    IOpenGLShaderProgram::SetShaderTracking(true);
     _scissor.x = 0;
     _scissor.y = 0;
     _clip_offset_x = 0;
@@ -411,7 +413,8 @@ namespace nux
     return _graphics_display.GetWindowHeight();
   }
 
-  int GraphicsEngine::RenderColorText(ObjectPtr<FontTexture> Font, int x, int y, const NString& Str,
+  int GraphicsEngine::RenderColorText(ObjectPtr<FontTexture> Font, int x, int y,
+                                      std::string const& Str,
                                         const Color& TextColor,
                                         bool WriteAlphaChannel,
                                         int NumCharacter)
@@ -422,7 +425,7 @@ namespace nux
     return 0;
   }
 
-  int GraphicsEngine::RenderColorTextLineStatic(ObjectPtr<FontTexture> Font, const PageBBox& pageSize, const NString& Str,
+int GraphicsEngine::RenderColorTextLineStatic(ObjectPtr<FontTexture> Font, const PageBBox& pageSize, std::string const& Str,
       const Color& TextColor,
       bool WriteAlphaChannel,
       TextAlignment alignment)
@@ -433,7 +436,7 @@ namespace nux
     return 0;
   }
 
-  int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const PageBBox& pageSize, const NString& Str,
+int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const PageBBox& pageSize, std::string const& Str,
       const Color& TextColor,
       bool WriteAlphaChannel,
       const Color& SelectedTextColor,
@@ -1034,6 +1037,11 @@ namespace nux
   void GraphicsEngine::SetOrthographicProjectionMatrix(int viewport_width, int viewport_height)
   {
     _projection_matrix.Orthographic(0, viewport_width, viewport_height, 0, -1.0f, 1.0f);
+  }
+
+  void GraphicsEngine::SetOrthographicProjectionMatrix(int left, int right, int bottom, int top)
+  {
+    _projection_matrix.Orthographic(left, right, bottom, top, -1.0f, 1.0f);
   }
 
   void GraphicsEngine::ResetProjectionMatrix()

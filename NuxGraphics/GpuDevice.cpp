@@ -623,7 +623,7 @@ namespace nux
     NUX_SAFE_DELETE(_gpu_render_states);
 
     _FrameBufferObject.Release();
-    _CurrentFrameBufferObject.Release();
+    active_framebuffer_object_.Release();
 
     _PixelBufferArray.clear();
 
@@ -908,12 +908,30 @@ namespace nux
 
   void GpuDevice::SetCurrentFrameBufferObject(ObjectPtr<IOpenGLFrameBufferObject> fbo)
   {
-    _CurrentFrameBufferObject = fbo;
+    active_framebuffer_object_ = fbo;
   }
 
   ObjectPtr<IOpenGLFrameBufferObject> GpuDevice::GetCurrentFrameBufferObject()
   {
-    return _CurrentFrameBufferObject;
+    return active_framebuffer_object_;
+  }
+
+  ObjectPtr<IOpenGLBaseTexture> GpuDevice::ActiveFboTextureAttachment(int color_attachment_index)
+  {
+    if (active_framebuffer_object_.IsValid())
+    {
+      return active_framebuffer_object_->TextureAttachment(color_attachment_index);
+    }
+    return ObjectPtr<IOpenGLBaseTexture>(0);
+  }
+
+  ObjectPtr<IOpenGLBaseTexture> GpuDevice::ActiveFboDepthTextureAttachment()
+  {
+    if (active_framebuffer_object_.IsValid())
+    {
+      return active_framebuffer_object_->DepthTextureAttachment();
+    }
+    return ObjectPtr<IOpenGLBaseTexture>(0);
   }
 
   void GpuDevice::DeactivateFrameBuffer()
@@ -924,7 +942,7 @@ namespace nux
       return;
     }
 
-    _CurrentFrameBufferObject.Release();
+    active_framebuffer_object_.Release();
     CHECKGL(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
     CHECKGL(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0));
   }
@@ -936,6 +954,11 @@ namespace nux
     , BitmapFormat PixelFormat
     , NUX_FILE_LINE_DECL)
   {
+    if ((Width <= 0) || (Height <= 0))
+    {
+      return ObjectPtr<IOpenGLBaseTexture>(0);
+    }
+
     if (GetGpuInfo().Support_ARB_Texture_Non_Power_Of_Two())
     {
       return CreateTexture(Width, Height, Levels, PixelFormat, NUX_FILE_LINE_PARAM);

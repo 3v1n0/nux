@@ -67,13 +67,13 @@ namespace nux
       if (m_bDrawBackground)
       {
         GetPainter().PushDrawLayer(graphics_engine, base, m_Background);
-        GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), GetGeometry(), m_Text.GetTCharPtr(), m_TextColor, m_WriteAlpha, m_TextAlignment);
+        GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), GetGeometry(), m_Text.m_string, m_TextColor, m_WriteAlpha, m_TextAlignment);
         GetPainter().PopBackground();
       }
       else
       {
         //GetPainter().PaintBackground(graphics_engine, base);
-        GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), GetGeometry(), m_Text.GetTCharPtr(), m_TextColor, m_WriteAlpha, m_TextAlignment);
+        GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), GetGeometry(), m_Text.m_string, m_TextColor, m_WriteAlpha, m_TextAlignment);
       }
 
       graphics_engine.PopClippingRectangle();

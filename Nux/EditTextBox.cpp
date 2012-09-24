@@ -94,7 +94,7 @@ namespace nux
   void EditTextBox::ScrollTimerInterrupt(void *v)
   {
     Geometry base = GetGeometry();
-    Event &event = GetGraphicsDisplay()->GetCurrentEvent();
+    const Event& event = GetGraphicsDisplay()->GetCurrentEvent();
 
     int X = event.x;
     m_KeyboardHandler.CaretAutoScroll(event.x, event.y, base);
@@ -160,7 +160,7 @@ namespace nux
       {
 
         GetPainter().PaintColorTextLineEdit(graphics_engine, GetGeometry(),
-                                         m_KeyboardHandler.GetTextLine(),
+                                         m_KeyboardHandler.GetTextLine().m_string,
                                          GetTextColor(),
                                          m_WriteAlpha,
                                          m_SelectedTextColor,
@@ -177,7 +177,7 @@ namespace nux
       else
       {
         GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), GetGeometry(),
-                                      m_KeyboardHandler.GetTextLine(),
+                                      m_KeyboardHandler.GetTextLine().m_string,
                                       GetTextColor());
       }
     }

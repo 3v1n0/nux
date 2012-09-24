@@ -23,7 +23,6 @@
 #ifndef WINDOWCOMPOSITOR_H
 #define WINDOWCOMPOSITOR_H
 
-#include "Features.h"
 #include "BaseWindow.h"
 
 #include <sigc++/trackable.h>
@@ -127,49 +126,37 @@ namespace nux
     //! Traverse the widget tree and found the area that is right below the mouse pointer.
     void GetAreaUnderMouse(const Point& mouse_position,
                            NuxEventType event_type,
-                           InputArea** area_under_mouse_pointer,
-                           BaseWindow** window);
+                           ObjectWeakPtr<InputArea>& area_under_mouse_pointer,
+                           ObjectWeakPtr<BaseWindow>& window);
 
     //! Traverse the widget tree and found the area has the key focus.
     void FindKeyFocusArea(NuxEventType event_type,
                           unsigned int key_symbol,
                           unsigned int special_keys_state,
-                          InputArea** key_focus_area,
-                          BaseWindow** window);
-    
+                          ObjectWeakPtr<InputArea>& key_focus_area,
+                          ObjectWeakPtr<BaseWindow>& window);
+
     //! Traverse the widget tree and found the area has the key focus, but start from a specified widget.
     void FindKeyFocusAreaFrom(NuxEventType event_type,
       unsigned int key_symbol,
       unsigned int special_keys_state,
       InputArea* root_search_area,
-      InputArea** key_focus_area,
-      BaseWindow** window);
+      ObjectWeakPtr<InputArea>& key_focus_area,
+      ObjectWeakPtr<BaseWindow>& window);
 
     void ResetMousePointerAreas();
 
     //! Get the area upon which the mouse button is currently down.
-    Area* GetMouseOwnerArea();
+    ObjectWeakPtr<InputArea> const& GetMouseOwnerArea() const;
 
     //! Set the area upon which the mouse button is currently down.
-    void SetMouseOwnerArea(Area* area);
+    void SetMouseOwnerArea(InputArea* area);
 
     //! Set the area that is right below the mouse pointer.
-    void SetMouseOverArea(Area* area);
-    
+    void SetMouseOverArea(InputArea* area);
+
     //! Set The BaseWindow of the area that is the mouse owner.
     void SetMouseOwnerBaseWindow(BaseWindow* base_window);
-
-    //! Callback: called when mouse_over_area_ is destroyed.
-    void OnMouseOverViewDestroyed(Object* area);
-    
-    //! Callback: called when mouse_owner_area_ is destroyed.
-    void OnMouseOwnerViewDestroyed(Object* area);
-
-    //! Callback: called when key_focus_area_ is destroyed.
-    void OnKeyNavFocusDestroyed(Object* area);
-
-    //! Callback: called when mouse_owner_basewindow_connection_ is destroyed.
-    void OnMouseOwnerBaseWindowDestroyed(Object* area);
 
     void SendKeyEvent(InputArea* input_area, NuxEventType event_type,
       unsigned int key_sym,
@@ -184,18 +171,13 @@ namespace nux
         The InputArea that has the mouse focus also has the keyboard focus. That is if _mouse_focus_area is not Null
         then _mouse_focus_area is equal to _mouse_focus_area;
     */
-    InputArea* key_focus_area_;
-    InputArea* mouse_owner_area_;
-    InputArea* mouse_over_area_;
-    BaseWindow* mouse_owner_base_window_;
+    ObjectWeakPtr<InputArea> key_focus_area_;
+    ObjectWeakPtr<InputArea> mouse_owner_area_;
+    ObjectWeakPtr<InputArea> mouse_over_area_;
+    ObjectWeakPtr<BaseWindow> mouse_owner_base_window_;
 
     int dnd_safety_x_;
     int dnd_safety_y_;
-
-    sigc::connection mouse_over_view_connection_;
-    sigc::connection mouse_owner_view_connection_;
-    sigc::connection mouse_owner_basewindow_connection_;
-    sigc::connection key_focus_area_connection_;
 
     /*!
         This signal is similar to Area::key_nav_focus_change. It is emitted from the WindowCompositor.
@@ -233,6 +215,7 @@ namespace nux
         @return True if no error was detected.
     */
     bool RestoreReferenceFramebuffer();
+    void RestoreMainFramebuffer();
 
     ObjectPtr<IOpenGLFrameBufferObject>& GetWindowFrameBufferObject()
     {
@@ -682,6 +665,7 @@ namespace nux
     friend class VSplitter;
     friend class TableCtrl;
     friend class View;
+    friend class TestWindowCompositor;
   };
 
 #ifdef NUX_GESTURES_SUPPORT

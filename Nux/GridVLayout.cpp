@@ -348,7 +348,7 @@ namespace nux
     graphics_engine.PopClippingRectangle();
     graphics_engine.PopModelViewMatrix();
 
-    _queued_draw = false;
+    draw_cmd_queued_ = false;
   }
 
   Area* GridVLayout::KeyNavIteration(KeyNavDirection direction)

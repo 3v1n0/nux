@@ -52,27 +52,27 @@ namespace nux
     _resize_handle_height       = 20;
     _title_bar_height           = 20;
 
-    _minimize_button    = new InputArea(NUX_TRACKER_LOCATION);
+    _minimize_button    = new BasicView(NUX_TRACKER_LOCATION);
     _minimize_button->SetParentObject(this);
 
-    _resize_handle      = new InputArea(NUX_TRACKER_LOCATION);
+    _resize_handle      = new BasicView(NUX_TRACKER_LOCATION);
     _resize_handle->SinkReference();
     _resize_handle->SetParentObject(this);
 
-    _title_bar          = new InputArea(NUX_TRACKER_LOCATION);
+    _title_bar          = new BasicView(NUX_TRACKER_LOCATION);
     _title_bar->SinkReference();
     _title_bar->SetParentObject(this);
 
-    _close_button       = new InputArea(NUX_TRACKER_LOCATION);
+    _close_button       = new BasicView(NUX_TRACKER_LOCATION);
     _window_title_bar   = new StaticTextBox("", NUX_TRACKER_LOCATION);
 
     _title_bar_layout   = new HLayout(NUX_TRACKER_LOCATION);
     _title_bar_layout->Reference();
     
     _minimize_button->SetMinMaxSize(20, 20);
-    _minimize_button->SetGeometry(0, 0, 20, 20);
+    _minimize_button->SetGeometry(Geometry(0, 0, 20, 20));
     _close_button->SetMinimumSize(20, 20);
-    _close_button->SetGeometry(0, 0, 20, 20);
+    _close_button->SetGeometry(Geometry(0, 0, 20, 20));
     _resize_handle->SetMinimumSize(_resize_handle_width, _resize_handle_height);
     _resize_handle->SetGeometry(Geometry(0, 0, _resize_handle_width, _resize_handle_height));
 
@@ -178,7 +178,7 @@ namespace nux
                                  _title_bar->GetBaseWidth(), _title_bar->GetBaseHeight()), Color(0xFF2f2f2f),
                                  eSHAPE_CORNER_ROUND10, eCornerTopLeft | eCornerTopRight);
 
-      GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), _window_title_bar->GetGeometry(), _window_title, Color(0xFFFFFFFF), true, eAlignTextCenter);
+      GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), _window_title_bar->GetGeometry(), _window_title.m_string, Color(0xFFFFFFFF), true, eAlignTextCenter);
       GetPainter().Draw2DTextureAligned(graphics_engine, CloseIcon, _close_button->GetGeometry(), TextureAlignmentStyle(eTACenter, eTACenter));
     }
 
@@ -322,7 +322,7 @@ namespace nux
     // No need to compute the window layout elements [LayoutWindowElements()]. They haven't changed.
     // No need to compute the layout [ComputeContentSize()]. It hasn't changed.
 
-    _title_bar->SetGeometry(0, 0, geo.GetWidth(), _title_bar_height);
+    _title_bar->SetGeometry(Geometry(0, 0, geo.GetWidth(), _title_bar_height));
 
 #if defined(NUX_OS_LINUX)
     if (m_input_window != 0)
@@ -371,7 +371,7 @@ namespace nux
     // Drag Bar Geometry
     if (HasTitleBar())
     {
-      _title_bar->SetGeometry(0, 0, geo.GetWidth(), _title_bar_height);
+      _title_bar->SetGeometry(Geometry(0, 0, geo.GetWidth(), _title_bar_height));
     }
 
     // Size grip Geometry
@@ -408,7 +408,7 @@ namespace nux
     // Drag Bar Geometry
     if (HasTitleBar())
     {
-      _title_bar->SetGeometry(0, 0, geo.GetWidth(), _title_bar_height);
+      _title_bar->SetGeometry(Geometry(0, 0, geo.GetWidth(), _title_bar_height));
     }
 
     // Size grip Geometry
@@ -436,7 +436,7 @@ namespace nux
     // Drag Bar Geometry
     if (HasTitleBar())
     {
-      _title_bar->SetGeometry(0, 0, geo.GetWidth(), _title_bar_height);
+      _title_bar->SetGeometry(Geometry(0, 0, geo.GetWidth(), _title_bar_height));
     }
 
     // Size grip Geometry
@@ -455,7 +455,7 @@ namespace nux
     // Define the geometry of some of the component of the window. Otherwise, if the composition layout is not set,
     // then the component won't be correctly placed after a SetGeometry. This can be redundant if the composition layout is set.
     Geometry base = GetGeometry();
-    _title_bar->SetGeometry(0, 0, base.GetWidth(), _title_bar_height);
+    _title_bar->SetGeometry(Geometry(0, 0, base.GetWidth(), _title_bar_height));
 
     _title_bar_layout->SetGeometry(_title_bar->GetGeometry());
     GetWindowThread()->ComputeElementLayout(_title_bar_layout);

@@ -27,7 +27,6 @@
 
 #include "NuxCore/Logger.h"
 
-#include "Features.h"
 #include "Nux.h"
 #include "InputArea.h"
 #include "NuxGraphics/GraphicsEngine.h"
@@ -67,17 +66,16 @@ logging::Logger logger("nux.inputarea");
 
   InputArea::~InputArea()
   {
+    while (GetWindowCompositor().GrabPointerRemove(this));
+    while (GetWindowCompositor().GrabKeyboardRemove(this));
   }
 
-  
   void InputArea::OnDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
-    graphics_engine.QRP_Color(GetBaseX(), GetBaseY(), GetBaseWidth(), GetBaseHeight(), area_color_);
-  }
+    // Draw Nothing!
 
-  void InputArea::SetBaseString(const char *Caption)
-  {
-    Area::SetBaseString(Caption);
+    // For debug Only:
+    // graphics_engine.QRP_Color(GetBaseX(), GetBaseY(), GetBaseWidth(), GetBaseHeight(), area_color_);
   }
 
   bool InputArea::HasKeyboardFocus()
