@@ -28,6 +28,7 @@
 
 #include <sigc++/trackable.h>
 #include <sigc++/signal.h>
+#include <boost/utility.hpp>
 #include "ObjectType.h"
 #include "Property.h"
 #include "PropertyTraits.h"
@@ -65,7 +66,7 @@ namespace nux
       Trackable does not implement reference counting. It only defines the API. It is up
       to the class that inherit from Trackable to implement the reference counting.
   */
-  class Trackable: public nux::Introspectable, public sigc::trackable
+  class Trackable: public nux::Introspectable, public sigc::trackable, public boost::noncopyable
   {
   public:
     NUX_DECLARE_ROOT_OBJECT_TYPE (Trackable);
@@ -160,10 +161,6 @@ namespace nux
     int _heap_allocated;
 
   private:
-    // Trackable objects are not copyable.
-    Trackable (const Trackable &);
-    Trackable &operator= (const Trackable &);
-
     static std::new_handler _new_current_handler;
 
     bool _owns_the_reference;

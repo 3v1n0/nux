@@ -1534,13 +1534,6 @@ namespace
       // End 2D Drawing
     }
 
-    if (key_focus_area_.IsValid())
-    {
-      // key focus test
-      Geometry const& geo = key_focus_area_->GetRootGeometry();
-      //GetGraphicsDisplay()->GetGraphicsEngine()->QRP_Color(geo.x, geo.y, geo.width, geo.height, color::Blue);
-    }
-
     window_thread_->GetGraphicsEngine().SetOrthographicProjectionMatrix(buffer_width, buffer_height);
     m_FrameBufferObject->Deactivate();
 

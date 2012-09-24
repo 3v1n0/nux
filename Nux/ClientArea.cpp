@@ -70,9 +70,6 @@ namespace nux
     {
       int width = GetWidth();
       int height = GetHeight();
-      int window_width, window_height;
-      window_width = prev_viewport_.width;
-      window_height = prev_viewport_.height;
 
       m_ctx.x = GetX();
       m_ctx.y = GetY();
