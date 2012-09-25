@@ -309,13 +309,14 @@ namespace nux
 
       if (1)
       {
-        BaseTexture* device_texture;
+        //BaseTexture* device_texture;
 
         NString filename = image->Attribute(TCHARToUTF8("Name"));
         NString texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL(filename.GetTCharPtr());
-        device_texture = Load2DTextureFile(texture_filename.GetTCharPtr());
-
-        pimage->texture = device_texture;
+        //device_texture = Load2DTextureFile(texture_filename.GetTCharPtr());
+        //pimage->texture = device_texture;
+        pimage->texture = 0;
+        pimage->filename = texture_filename;
       }
       else
       {
@@ -335,6 +336,12 @@ namespace nux
 
     for (it = painter_image_list_.begin(); it != painter_image_list_.end(); it++)
     {
+      if (!(*it)->texture)
+      {
+        BaseTexture* device_texture = Load2DTextureFile((*it)->filename.GetTCharPtr());
+        (*it)->texture = device_texture;
+      }
+
       if ((*it)->style == style)
       {
         return (*it);
@@ -350,6 +357,12 @@ namespace nux
 
     for (it = painter_image_list_.begin(); it != painter_image_list_.end(); it++)
     {
+      if (!(*it)->texture)
+      {
+        BaseTexture* device_texture = Load2DTextureFile((*it)->filename.GetTCharPtr());
+        (*it)->texture = device_texture;
+      }
+
       if ((*it)->style == style)
       {
         unsigned int width = (*it)->texture->GetWidth();
