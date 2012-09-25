@@ -25,7 +25,7 @@ noinst_PROGRAMS = text_entry_focus \
 #                  rotate_texture_area \
 #                  scrollview \
 #                  tab_view \
-                  textedit \
+#                  textedit \
 #                  tiles_view \
 #                  timegraph \
 #                  timeline \
@@ -71,8 +71,8 @@ ALL_LIBS = \
 #cairo_wrapper_LDADD = $(ALL_LIBS)
 #canvas_SOURCES = canvas.cpp
 #canvas_LDADD = $(ALL_LIBS)
-textedit_SOURCES = textedit.cpp
-textedit_LDADD = $(ALL_LIBS)
+#textedit_SOURCES = textedit.cpp
+#textedit_LDADD = $(ALL_LIBS)
 #button_SOURCES = button.cpp
 #button_LDADD = $(ALL_LIBS)
 #checkbox_SOURCES = checkbox.cpp
