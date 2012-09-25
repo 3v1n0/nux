@@ -309,12 +309,8 @@ namespace nux
 
       if (1)
       {
-        //BaseTexture* device_texture;
-
         NString filename = image->Attribute(TCHARToUTF8("Name"));
         NString texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL(filename.GetTCharPtr());
-        //device_texture = Load2DTextureFile(texture_filename.GetTCharPtr());
-        //pimage->texture = device_texture;
         pimage->texture = 0;
         pimage->filename = texture_filename;
       }
