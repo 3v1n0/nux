@@ -219,7 +219,7 @@ namespace nux
     return DeleteDirectory (Path, false);
   }
 
-  bool NFileManagerGeneric::Move (const TCHAR *Dest, const TCHAR *Src, bool OverWriteExisting, bool OverWriteReadOnly, NFileTransferMonitor *Monitor)
+  bool NFileManagerGeneric::Move (const TCHAR *Dest, const TCHAR *Src, bool OverWriteExisting, bool OverWriteReadOnly, NFileTransferMonitor * /* Monitor */)
   {
     // Move file manually.
     if (Copy (Dest, Src, OverWriteExisting, OverWriteReadOnly, NULL) != COPY_OK)

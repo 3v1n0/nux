@@ -472,7 +472,7 @@ namespace nux
     return (eCompliantWidth | eCompliantHeight);
   }
 
-  void Area::ComputeContentPosition(float offsetX, float offsetY)
+  void Area::ComputeContentPosition(float /* offsetX */, float /* offsetY */)
   {
 
   }
@@ -974,7 +974,7 @@ namespace nux
      return mouse_pointer_inside_area;
    }
  
-   bool Area::TestMousePointerInclusionFilterMouseWheel(const Point& mouse_position, NuxEventType event_type)
+   bool Area::TestMousePointerInclusionFilterMouseWheel(const Point& mouse_position, NuxEventType /* event_type */)
    {
      if ((IsLayout() == false) && ((visible_ == false) ||
        (sensitive_ == false) ||
@@ -1004,7 +1004,7 @@ namespace nux
      return mouse_pointer_inside_area;
    }
 
-  Area* Area::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
+  Area* Area::FindAreaUnderMouse(const Point& /* mouse_position */, NuxEventType /* event_type */)
   {
     return NULL;
   }
@@ -1078,14 +1078,14 @@ namespace nux
     next_object_to_key_focus_area_ = NULL;
   }
 
-  bool Area::InspectKeyEvent(unsigned int event_type,
-    unsigned int keysym,
-    const char* character)
+  bool Area::InspectKeyEvent(unsigned int /* event_type */,
+    unsigned int /* keysym */,
+    const char* /* character */)
   {
     return false;
   }
 
-  Area* Area::KeyNavIteration(KeyNavDirection direction)
+  Area* Area::KeyNavIteration(KeyNavDirection /* direction */)
   {
     return NULL;
   }

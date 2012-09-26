@@ -288,7 +288,7 @@ namespace nux
     int req_opengl_minor,
     bool opengl_es_20)
 #else
-  GpuDevice::GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
+  GpuDevice::GpuDevice(unsigned int /* DeviceWidth */, unsigned int /* DeviceHeight */, BitmapFormat /* DeviceFormat */,
     Display *display,
     Window window,
     bool has_glx_13_support,

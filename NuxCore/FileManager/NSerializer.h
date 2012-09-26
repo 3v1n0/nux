@@ -67,7 +67,7 @@ namespace nux
       return -1;
     }
     virtual long long Seek (long long FilePos, NSerializer::SeekPos) = 0;
-    virtual bool Precache (INT PrecacheOffset, INT PrecacheSize)
+    virtual bool Precache (INT /* PrecacheOffset */, INT /* PrecacheSize */)
     {
       return TRUE;
     }
@@ -138,7 +138,7 @@ namespace nux
     virtual void Serialize (unsigned long long    *buffer, unsigned int len, unsigned int stride = sizeof (unsigned long long)   );
     virtual void Serialize (long long    *buffer, unsigned int len, unsigned int stride = sizeof (long long)   );
 
-    virtual void Identify (const char *name) {};
+    virtual void Identify (const char* /* name */) {};
     virtual void Begin() {};
     virtual void End() {};
 

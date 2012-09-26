@@ -312,7 +312,7 @@ AM_CONDITIONAL(BUILD_DOCUMENTATION, [test "x$enable_documentation" = "xyes"])
 dnl ==========================================================================
 
 if test "x$GCC" = "xyes"; then
-  GCC_FLAGS="-g -Wall -std=c++0x"
+  GCC_FLAGS="-g -Wall -Wextra -std=c++0x"
 fi
 AC_SUBST(GCC_FLAGS)
 
@@ -326,7 +326,7 @@ AC_ARG_ENABLE([maintainer-mode],
 
 AS_IF([test "x$enable_maintainer_mode" = "xyes" && test "x$GCC" = "xyes"],
       [
-         MAINTAINER_CFLAGS+="-Werror -Wall -Wcast-align -Wno-uninitialized -Wempty-body -Wformat-security -Winit-self"
+         MAINTAINER_CFLAGS+="-Werror -Wall -Wextra -Wcast-align -Wno-uninitialized -Wempty-body -Wformat-security -Winit-self"
       ]
 )
 

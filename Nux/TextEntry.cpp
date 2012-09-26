@@ -232,7 +232,7 @@ namespace nux
     return area;
   }
 
-  void TextEntry::ProcessMouseEvent(int event_type, int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void TextEntry::ProcessMouseEvent(int event_type, int x, int y, int /* dx */, int /* dy */, unsigned long button_flags, unsigned long key_flags)
   {
     int X = static_cast<int>(x /*round(event.GetX())*/) - kInnerBorderX - scroll_offset_x_;
     int Y = static_cast<int>(y /*round(event.GetY())*/) - kInnerBorderY - scroll_offset_y_;
@@ -300,7 +300,7 @@ namespace nux
     unsigned long    keysym    ,   /*event keysym*/
     unsigned long    state     ,   /*event state*/
     const char*      character ,   /*character*/
-    unsigned short   keyCount      /*key repeat count*/)
+    unsigned short   /* keyCount */      /*key repeat count*/)
   {
 #if defined(NUX_OS_LINUX)
     if (im_running())
@@ -524,7 +524,7 @@ namespace nux
     ProcessMouseEvent(NUX_MOUSE_MOVE, x, y, dx, dy, button_flags, key_flags);
   }
 
-  void TextEntry::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void TextEntry::RecvMouseEnter(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
 #if defined(NUX_OS_LINUX)
     if (caret_cursor_ == None)
@@ -541,7 +541,7 @@ namespace nux
 #endif
   }
 
-  void TextEntry::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void TextEntry::RecvMouseLeave(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
 #if defined(NUX_OS_LINUX)
     if (caret_cursor_ != None)
@@ -587,7 +587,7 @@ namespace nux
     FocusOutx();
   }
 
-  void TextEntry::Draw(GraphicsEngine& gfxContext, bool forceDraw)
+  void TextEntry::Draw(GraphicsEngine& gfxContext, bool /* forceDraw */)
   {
     MainDraw();
     Geometry base = GetGeometry();
@@ -618,12 +618,12 @@ namespace nux
     gfxContext.PopClippingRectangle();
   }
 
-  void TextEntry::DrawContent(GraphicsEngine& gfxContext, bool forceDraw)
+  void TextEntry::DrawContent(GraphicsEngine& /* gfxContext */, bool /* forceDraw */)
   {
     //MainDraw();
   }
 
-  void TextEntry::PostDraw(GraphicsEngine& gfxContext, bool forceDraw)
+  void TextEntry::PostDraw(GraphicsEngine& /* gfxContext */, bool /* forceDraw */)
   {
     // intentionally left empty
   }
@@ -2328,7 +2328,7 @@ namespace nux
     QueueRefresh(true, true);
   }
 
-  bool TextEntry::InspectKeyEvent(unsigned int eventType, unsigned int key_sym, const char* character)
+  bool TextEntry::InspectKeyEvent(unsigned int /* eventType */, unsigned int /* key_sym */, const char* /* character */)
   {
     nux::Event const& cur_event = GetGraphicsDisplay()->GetCurrentEvent();
 

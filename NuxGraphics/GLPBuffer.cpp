@@ -766,7 +766,7 @@ namespace nux
     m_pDisplay = 0;
   }
 
-  void PBuffer::parseModeString (const char *modeString, std::vector<int> *pfAttribList, std::vector<int> *pbAttribList)
+  void PBuffer::parseModeString (const char *modeString, std::vector<int> *pfAttribList, std::vector<int> * /* pbAttribList */)
   {
     if (!modeString || strcmp (modeString, "") == 0)
       return;

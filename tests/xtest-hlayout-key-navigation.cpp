@@ -91,7 +91,7 @@ void HLayoutKeyNavigationTest::UserInterfaceSetup()
 
 HLayoutKeyNavigationTest* key_navigation_test = NULL;
 
-void TestingThread(nux::NThread* thread, void* user_data)
+void TestingThread(nux::NThread* /* thread */, void* user_data)
 {
   while (key_navigation_test->ReadyToGo() == false)
   {
@@ -179,7 +179,7 @@ void TestingThread(nux::NThread* thread, void* user_data)
   nuxDebugMsg("Exit testing thread");
 }
 
-int main(int argc, char** argv)
+int main()
 {
   int xstatus = XInitThreads();
   nuxAssertMsg(xstatus > 0, "XInitThreads has failed");

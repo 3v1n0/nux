@@ -110,7 +110,7 @@ namespace nux
   }
 
 
-  void RangeValue::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void RangeValue::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
 
@@ -134,7 +134,7 @@ namespace nux
     m_ValueString->ProcessDraw(graphics_engine, force_draw);
   }
 
-  void RangeValue::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
+  void RangeValue::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }
@@ -184,7 +184,7 @@ namespace nux
 ////////////////
 //  EMITTERS  //
 ////////////////
-  void RangeValue::OnReceiveMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RangeValue::OnReceiveMouseDown(int x, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (x < 0)
       m_Value = m_min;
@@ -201,7 +201,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RangeValue::OnReceiveMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RangeValue::OnReceiveMouseUp(int x, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
 
     if (x < 0)
@@ -219,7 +219,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RangeValue::OnReceiveMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void RangeValue::OnReceiveMouseDrag(int x, int /* y */, int /* dx */, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (x < 0)
       m_Value = m_min;
@@ -246,7 +246,7 @@ namespace nux
 
   }
 
-  void RangeValue::OnValidateKeyboardEntry(EditTextBox *textbox, const NString &text)
+  void RangeValue::OnValidateKeyboardEntry(EditTextBox * /* textbox */, const NString &text)
   {
     float f;
     f = CharToDouble(text.GetTCharPtr());

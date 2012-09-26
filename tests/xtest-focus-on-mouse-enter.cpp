@@ -76,7 +76,7 @@ void FocusOnMouseEnterTest::UserInterfaceSetup()
 
 FocusOnMouseEnterTest* focus_on_mouse_enter_test = nullptr;
 
-void TestingThread(nux::NThread* thread, void* user_data)
+void TestingThread(nux::NThread* /* thread */, void* user_data)
 {
   while (focus_on_mouse_enter_test->ReadyToGo() == false)
   {
@@ -116,7 +116,7 @@ void TestingThread(nux::NThread* thread, void* user_data)
   nuxDebugMsg("Exit testing thread");
 }
 
-int main(int argc, char** argv)
+int main()
 {
   int xstatus = XInitThreads();
   nuxAssertMsg(xstatus > 0, "XInitThreads has failed");

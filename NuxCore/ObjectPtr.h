@@ -385,7 +385,7 @@ namespace nux
         longer have a reference on ptr.
     */
     template <typename O>
-    explicit ObjectWeakPtr(O* ptr, bool WarnMissuse = false)
+    explicit ObjectWeakPtr(O* ptr, bool /* WarnMissuse */ = false)
       : ptr_(NULL)
     {
       if (ptr &&
@@ -666,7 +666,7 @@ namespace nux
       }
     }
 
-    void TargetDestroyed(Object* ptr)
+    void TargetDestroyed(Object* /* ptr */)
     {
         ptr_ = NULL;
         // rese the connetion too

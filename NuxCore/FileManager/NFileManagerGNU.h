@@ -127,13 +127,13 @@ namespace nux
     bool DeleteDirectory (const TCHAR *Path, bool DeleteContentFirst = false);
 
 
-    void FindFiles (std::vector<NString>& Result, const TCHAR *Filename, bool Files, bool Directories) {};
-    void ListFilesInDirectory (std::vector<NString>& Result, const TCHAR *DirName) {};
-    double GetFileAgeSeconds (const TCHAR *Filename)
+    void FindFiles (std::vector<NString>& /* Result */, const TCHAR * /* Filename */, bool /* Files */, bool /* Directories */) {};
+    void ListFilesInDirectory (std::vector<NString>& /* Result */, const TCHAR * /* DirName */) {};
+    double GetFileAgeSeconds (const TCHAR * /* Filename */)
     {
       return 0;
     };
-    time_t GetFileLastModified (const TCHAR *Filename)
+    time_t GetFileLastModified (const TCHAR * /* Filename */)
     {
       return 0;
     };
@@ -145,7 +145,7 @@ namespace nux
     {
       return NString();
     };
-    bool GetTimeStamp (const TCHAR *Filename, FileTimeStamp &Timestamp)
+    bool GetTimeStamp (const TCHAR * /* Filename */, FileTimeStamp & /* Timestamp */)
     {
       return false;
     };

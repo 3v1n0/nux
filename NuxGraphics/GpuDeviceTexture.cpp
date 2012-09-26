@@ -194,7 +194,8 @@ namespace nux
     int EdgeLength
     , int Levels
     , BitmapFormat PixelFormat
-    , NUX_FILE_LINE_DECL)
+    , const char * /* __Nux_FileName__ */
+    , int /* __Nux_LineNumber__ */)
   {
     IOpenGLCubeTexture *ptr;
     CreateCubeTexture(EdgeLength, Levels, PixelFormat, (IOpenGLCubeTexture **) &ptr);
@@ -208,8 +209,8 @@ namespace nux
     , unsigned int Levels
     , BitmapFormat PixelFormat
     , IOpenGLCubeTexture **ppCubeTexture
-    , NUX_FILE_LINE_DECL
-    )
+    , const char * /* __Nux_FileName__ */
+    , int /* __Nux_LineNumber__ */)
   {
     unsigned int NumTotalMipLevel    = 1 + floorf(Log2(EdgeLength));
     //    Levels
@@ -258,8 +259,8 @@ namespace nux
     , unsigned int Levels
     , BitmapFormat PixelFormat
     , IOpenGLVolumeTexture **ppVolumeTexture
-    , NUX_FILE_LINE_DECL
-    )
+    , const char * /* __Nux_FileName__ */
+    , int /* __Nux_LineNumber__ */)
   {
     unsigned int NumTotalMipLevel = 1 + floorf(Log2(Max(Max(Width, Height), Depth)));
     //    Levels

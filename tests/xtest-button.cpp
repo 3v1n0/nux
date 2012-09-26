@@ -90,7 +90,7 @@ void TestButton::UserInterfaceSetup()
 
 TestButton* test_button = NULL;
 
-void TestingThread(nux::NThread* thread, void* user_data)
+void TestingThread(nux::NThread* /* thread */, void* user_data)
 {
   while (test_button->ReadyToGo() == false)
   {
@@ -122,7 +122,7 @@ void TestingThread(nux::NThread* thread, void* user_data)
   nuxDebugMsg("Exit testing thread");
 }
 
-int main(int argc, char** argv)
+int main()
 {
   int xstatus = XInitThreads();
   nuxAssertMsg(xstatus > 0, "XInitThreads has failed");

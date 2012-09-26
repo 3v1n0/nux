@@ -141,7 +141,7 @@ void ARBProgramLimits ()
   delete graphics_display;
 }
 
-int main(int argc, char **argv)
+int main()
 {
   nux::NuxCoreInitialize(0);
   nux::NuxGraphicsInitialize();

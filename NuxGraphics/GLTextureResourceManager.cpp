@@ -340,7 +340,7 @@ namespace nux
     return ret;
   }
 
-  void Texture2D::GetData(void* Buffer, int MipIndex, int StrideY, int face)
+  void Texture2D::GetData(void* Buffer, int MipIndex, int StrideY, int /* face */)
   {
     BYTE              *Dest        = (BYTE*) Buffer;
     const BYTE        *Src         = _image.GetSurface(MipIndex).GetPtrRawData();
@@ -505,7 +505,7 @@ namespace nux
     return true;
   }
 
-  bool TextureRectangle::Update(const char* filename, bool UpdateAndCacheResource)
+  bool TextureRectangle::Update(const char* filename, bool /* UpdateAndCacheResource */)
   {
     bool b = false;
     NBitmapData* BitmapData = LoadImageFile(filename);
@@ -516,7 +516,7 @@ namespace nux
     return b;
   }
 
-  void TextureRectangle::GetData(void* Buffer, int MipIndex, int StrideY, int face)
+  void TextureRectangle::GetData(void* Buffer, int MipIndex, int StrideY, int /* face */)
   {
     BYTE              *Dest        = (BYTE *) Buffer;
     const BYTE         *Src         = _image.GetSurface(MipIndex).GetPtrRawData();
@@ -643,7 +643,7 @@ namespace nux
     return true;
   }
 
-  bool TextureCube::Update(const char* filename, bool UpdateAndCacheResource)
+  bool TextureCube::Update(const char* filename, bool /* UpdateAndCacheResource */)
   {
     NBitmapData* BitmapData = LoadImageFile(filename);
     nuxAssertMsg(BitmapData, "[TextureCube::Update] Bitmap for file(%s) is NULL.", filename);
@@ -781,7 +781,7 @@ namespace nux
     return true;
   }
 
-  bool TextureVolume::Update(const char* filename, bool UpdateAndCacheResource)
+  bool TextureVolume::Update(const char* filename, bool /* UpdateAndCacheResource */)
   {
     NBitmapData* BitmapData = LoadImageFile(filename);
     nuxAssertMsg(BitmapData, "[TextureVolume::Update] Bitmap for file(%s) is NULL.", filename);
@@ -791,7 +791,7 @@ namespace nux
     return ret;
   }
 
-  void TextureVolume::GetData(void* Buffer, int MipIndex, int StrideY, int face)
+  void TextureVolume::GetData(void* Buffer, int MipIndex, int StrideY, int /* face */)
   {
     BYTE               *Dest        = (BYTE *) Buffer;
 //     const BYTE*         Src         = _image.GetSurface(MipIndex, slice).GetPtrRawData();
@@ -952,7 +952,7 @@ namespace nux
     return true;
   }
 
-  bool TextureFrameAnimation::Update(const char* filename, bool UpdateAndCacheResource)
+  bool TextureFrameAnimation::Update(const char* filename, bool /* UpdateAndCacheResource */)
   {
     NBitmapData* BitmapData = LoadImageFile(filename);
     nuxAssertMsg(BitmapData, "[TextureFrameAnimation::Update] Bitmap for file(%s) is NULL.", filename);
@@ -962,7 +962,7 @@ namespace nux
     return ret;
   }
 
-  void TextureFrameAnimation::GetData(void* Buffer, int MipIndex, int StrideY, int slice)
+  void TextureFrameAnimation::GetData(void* Buffer, int /* MipIndex */, int StrideY, int slice)
   {
     BYTE               *Dest        = (BYTE *) Buffer;
     //for(int slice = 0; slice < ImageSurface::GetLevelDim(_image.GetFormat(), _image.GetDepth(), MipIndex); slice++)
@@ -1052,7 +1052,7 @@ namespace nux
     }
   }
 
-  void CachedTextureFrameAnimation::LoadMipLevel(BaseTexture* SourceTexture, int MipLevel)
+  void CachedTextureFrameAnimation::LoadMipLevel(BaseTexture* SourceTexture, int /* MipLevel */)
   {
     SURFACE_LOCKED_RECT       LockedRect;
     ObjectPtr <IOpenGLAnimatedTexture> AnimatedTexture = m_Texture; //m_Texture.CastRef<IOpenGLAnimatedTexture>();

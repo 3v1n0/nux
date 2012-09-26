@@ -24,13 +24,13 @@
 #include "Nux/VLayout.h"
 #include "Nux/WindowThread.h"
 
-void ThreadWidgetInit(nux::NThread* thread, void* InitData)
+void ThreadWidgetInit(nux::NThread* /* thread */, void* /* InitData */)
 {
   nux::VLayout* layout = new nux::VLayout(NUX_TRACKER_LOCATION);
   nux::GetWindowThread()->SetLayout(layout);
 }
 
-int main(int argc, char **argv)
+int main()
 {
     nux::NuxInitialize(0);
     // When the GUI thread is created, it creates the GraphicsDisplay.

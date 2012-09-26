@@ -142,7 +142,7 @@ void RenderTexturePowerOfTwo ()
 }
 
 
-int main(int argc, char **argv)
+int main()
 
 {
   nux::NuxCoreInitialize(0);

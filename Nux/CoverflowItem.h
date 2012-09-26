@@ -41,7 +41,7 @@ public:
   Property<ObjectPtr<BaseTexture> > text_texture;
 
   virtual ObjectPtr<BaseTexture> GetTexture() const = 0;
-  virtual void Activate(int button) {}
+  virtual void Activate(int /* button */) {}
 };
 
 }

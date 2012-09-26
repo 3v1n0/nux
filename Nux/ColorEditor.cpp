@@ -131,7 +131,7 @@ namespace nux
     m_bDialogRunning = false;
   }
 
-  void ColorDialogProxy::RecvDialogCancel(ColorEditor *coloreditor)
+  void ColorDialogProxy::RecvDialogCancel(ColorEditor */* coloreditor */)
   {
     m_RGBColor = m_PreviousRGBColor;
     m_bDialogChange = true;
@@ -439,7 +439,7 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void ColorEditor::DrawRGB(GraphicsEngine &graphics_engine, bool force_draw)
+  void ColorEditor::DrawRGB(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     if (m_ColorModel == color::RGB)
     {
@@ -508,7 +508,7 @@ namespace nux
     }
   }
 
-  void ColorEditor::DrawHSV(GraphicsEngine &graphics_engine, bool force_draw)
+  void ColorEditor::DrawHSV(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     if (m_ColorModel == color::HSV)
     {
@@ -614,7 +614,7 @@ namespace nux
     }
   }
 
-  void ColorEditor::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ColorEditor::RecvMouseDown(int x, int y, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     float BaseValue;
 
@@ -672,17 +672,17 @@ namespace nux
     QueueDraw();
   }
 
-  void ColorEditor::RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ColorEditor::RecvMouseUp(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();
   }
 
-  void ColorEditor::RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void ColorEditor::RecvMouseDrag(int x, int y, int /* dx */, int /* dy */, unsigned long button_flags, unsigned long key_flags)
   {
     RecvMouseDown(x, y, button_flags, key_flags);
   }
 
-  void ColorEditor::RecvPickerMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ColorEditor::RecvPickerMouseDown(int x, int y, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (m_ColorModel == color::RGB)
     {
@@ -814,17 +814,17 @@ namespace nux
     QueueDraw();
   }
 
-  void ColorEditor::RecvPickerMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ColorEditor::RecvPickerMouseUp(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();
   }
 
-  void ColorEditor::RecvPickerMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void ColorEditor::RecvPickerMouseDrag(int x, int y, int /* dx */, int /* dy */, unsigned long button_flags, unsigned long key_flags)
   {
     RecvPickerMouseDown(x, y, button_flags, key_flags);
   }
 
-  void ColorEditor::RecvCheckColorModel0(AbstractButton *button, color::Model color_mode, color::Channel color_channel)
+  void ColorEditor::RecvCheckColorModel0(AbstractButton * /* button */, color::Model color_mode, color::Channel color_channel)
   {
     RecvCheckColorModel(true, color_mode, color_channel);
   }

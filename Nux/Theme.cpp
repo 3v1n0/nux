@@ -158,12 +158,12 @@ namespace nux
   }
 
 #if defined(NUX_OS_LINUX)
-  void UXTheme::ParseStartImage(GMarkupParseContext* context,
+  void UXTheme::ParseStartImage(GMarkupParseContext* /* context */,
     const gchar*  element_name,
     const gchar** attribute_names,
     const gchar** attribute_values,
     gpointer      user_data,
-    GError**      error)
+    GError**      /* error */)
   {
     if (strcmp(element_name, "Image") != 0)
     {
@@ -217,10 +217,10 @@ namespace nux
     theme->painter_image_list_.push_back(pimage);
   }
 
-  void UXTheme::ParseEndImage(GMarkupParseContext* context,
-    const gchar*  element_name,
-    gpointer      user_data,
-    GError**      error)
+  void UXTheme::ParseEndImage(GMarkupParseContext* /* context */,
+    const gchar*  /* element_name */,
+    gpointer      /* user_data */,
+    GError**      /* error */)
   {
 
   }
@@ -375,7 +375,7 @@ namespace nux
     return texture2D;
   }
 
-  BaseTexture *UXTheme::Load2DTextureFileGenerateAlpha(const char *filename, int red, int green, int blue)
+  BaseTexture *UXTheme::Load2DTextureFileGenerateAlpha(const char * /* filename */, int /* red */, int /* green */, int /* blue */)
   {
     return 0;
   }

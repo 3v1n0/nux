@@ -54,12 +54,12 @@ struct TestBaseWindow : public nux::BaseWindow
     ShowWindow(true);
   }
 
-  nux::Area* FindAreaUnderMouse(const nux::Point& mouse_position, nux::NuxEventType event_type)
+  nux::Area* FindAreaUnderMouse(const nux::Point& /* mouse_position */, nux::NuxEventType /* event_type */)
   {
     return input_area.GetPointer();
   }
 
-  Area* FindKeyFocusArea(unsigned int key_symbol, unsigned long x11_key_code, unsigned long special_keys_state)
+  Area* FindKeyFocusArea(unsigned int /* key_symbol */, unsigned long /* x11_key_code */, unsigned long /* special_keys_state */)
   {
     return input_area.GetPointer();
   }
@@ -71,12 +71,12 @@ struct TestHLayout : public nux::HLayout
 {
   TestHLayout() : input_area(new nux::InputArea()) {}
 
-  nux::Area* FindAreaUnderMouse(const nux::Point& mouse_position, nux::NuxEventType event_type)
+  nux::Area* FindAreaUnderMouse(const nux::Point& /* mouse_position */, nux::NuxEventType /* event_type */)
   {
     return input_area.GetPointer();
   }
 
-  Area* FindKeyFocusArea(unsigned int key_symbol, unsigned long x11_key_code, unsigned long special_keys_state)
+  Area* FindKeyFocusArea(unsigned int /* key_symbol */, unsigned long /* x11_key_code */, unsigned long /* special_keys_state */)
   {
     return input_area.GetPointer();
   }

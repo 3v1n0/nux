@@ -42,8 +42,8 @@ namespace nux
 
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
   private:
-    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw) {};
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw) {};
+    virtual void DrawContent(GraphicsEngine & /* graphics_engine */, bool /* force_draw */) {};
+    virtual void PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */) {};
 
     void VScrollBarHandler(void *v);
     void ScrollDown(void *v);

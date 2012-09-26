@@ -156,7 +156,7 @@ namespace nux
     return m_ThreadState;
   }
 
-  ThreadState NThread::Stop ( bool bForceKill )
+  ThreadState NThread::Stop ( bool /* bForceKill */ )
   {
     int ret = pthread_detach (m_ThreadCtx.m_dwTID);
 
@@ -237,7 +237,7 @@ namespace nux
     m_ThreadState = state;
   }
 
-  ThreadWaitResult NThread::JoinThread(NThread *thread, unsigned int milliseconds)
+  ThreadWaitResult NThread::JoinThread(NThread *thread, unsigned int /* milliseconds */)
   {
     if (thread == NULL)
     {

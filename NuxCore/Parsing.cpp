@@ -370,7 +370,7 @@ namespace nux
     return TokenString.Length() > 0;
   }
 
-  NString ParseToken (const TCHAR *Str, bool UseEscape)
+  NString ParseToken (const TCHAR *Str, bool /* UseEscape */)
   {
     TCHAR Buffer[1024];
 

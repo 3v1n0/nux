@@ -100,7 +100,7 @@ void KeyNavDirectionTest::UserInterfaceSetup()
 
 KeyNavDirectionTest* keynav_direction_test = NULL;
 
-void TestingThread(nux::NThread* thread, void* user_data)
+void TestingThread(nux::NThread* /* thread */, void* user_data)
 {
   while (keynav_direction_test->ReadyToGo() == false)
   {
@@ -164,7 +164,7 @@ void TestingThread(nux::NThread* thread, void* user_data)
   nuxDebugMsg("Exit testing thread");
 }
 
-int main(int argc, char **argv)
+int main()
 {
   int xstatus = XInitThreads();
   nuxAssertMsg(xstatus > 0, "XInitThreads has failed");

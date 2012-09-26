@@ -171,7 +171,7 @@ namespace nux
 
   public:
 
-    virtual void GetCompositeList(std::list<Area *> *ViewList)
+    virtual void GetCompositeList(std::list<Area *> * /* ViewList */)
     {
 
     }
@@ -321,7 +321,7 @@ namespace nux
     {
     };
 
-    virtual bool FindWidget(Area *WidgetObject) const
+    virtual bool FindWidget(Area * /* WidgetObject */) const
     {
       return false;
     }
@@ -331,17 +331,17 @@ namespace nux
     }
 
 
-    virtual void AddLayout(Layout *, unsigned int stretchFactor = 1, MinorDimensionPosition minor_position = eAbove, MinorDimensionSize minor_size = eFull, float percentage = 100.0f, LayoutPosition index = NUX_LAYOUT_END)
+    virtual void AddLayout(Layout *, unsigned int /* stretchFactor */ = 1, MinorDimensionPosition /* minor_position */ = eAbove, MinorDimensionSize /* minor_size */ = eFull, float /* percentage */ = 100.0f, LayoutPosition /* index */ = NUX_LAYOUT_END)
     {
       // Do not allow a WidgetLayout to encapsulate an object of type layout
     }
 
-    virtual void AddView(Area *baseobject, unsigned int stretchFactor = 1, MinorDimensionPosition positioning = eAbove, MinorDimensionSize extend = eFull, float percentage = 100.0f, LayoutPosition index = NUX_LAYOUT_END)
+    virtual void AddView(Area * /* baseobject */, unsigned int /* stretchFactor */ = 1, MinorDimensionPosition /* positioning */ = eAbove, MinorDimensionSize /* extend */ = eFull, float /* percentage */ = 100.0f, LayoutPosition /* index */ = NUX_LAYOUT_END)
     {
       // the baseObject is provided via the constructor.
     };
 
-    virtual void AddSpace(unsigned int width, unsigned int stretchFactor = 0, LayoutPosition index = NUX_LAYOUT_END)
+    virtual void AddSpace(unsigned int /* width */, unsigned int /* stretchFactor */ = 0, LayoutPosition /* index */ = NUX_LAYOUT_END)
     {
       // Do not allow a WidgetLayout to encapsulate an object of type layout
     }
@@ -356,7 +356,7 @@ namespace nux
     {
       return 0;
     }
-    virtual void ComputeContentPosition(float offsetX, float offsetY)
+    virtual void ComputeContentPosition(float /* offsetX */, float /* offsetY */)
     {
     }
     // End: Abstract virtual function member(inherited from class Layout) that must be implemented

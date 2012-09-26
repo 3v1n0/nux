@@ -128,7 +128,7 @@ namespace nux
     return false;
   }
 
-  void IBusIMEContext::SetSurrounding(const std::wstring& text, int cursor_pos)
+  void IBusIMEContext::SetSurrounding(const std::wstring& /* text */, int /* cursor_pos */)
   {
       // TODO(penghuang) support surrounding
   }
@@ -223,7 +223,7 @@ namespace nux
     }
   }
 
-  void IBusIMEContext::OnDisconnected(IBusBus *bus)
+  void IBusIMEContext::OnDisconnected(IBusBus * /* bus */)
   {
     //nuxDebugMsg("***IBusIMEContext::OnDisonnected***");
     hotkeys_.clear();
@@ -231,7 +231,7 @@ namespace nux
     DestroyContext();
   }
 
-  void IBusIMEContext::OnConfigChanged(IBusConfig* config, gchar* section, gchar* name, GVariant* value)
+  void IBusIMEContext::OnConfigChanged(IBusConfig* /* config */, gchar* section, gchar* name, GVariant* /* value */)
   {
     if (g_strcmp0(section, "general/hotkey") == 0)
     {
@@ -260,7 +260,7 @@ namespace nux
     }
   }
 
-  void IBusIMEContext::OnUpdatePreeditText(IBusInputContext* context, IBusText* text, guint cursor_pos, gboolean visible)
+  void IBusIMEContext::OnUpdatePreeditText(IBusInputContext* context, IBusText* text, guint /* cursor_pos */, gboolean visible)
   {
     //nuxDebugMsg("***IBusIMEContext::OnUpdatePreeditText***");
     nuxAssert(context_ == context);

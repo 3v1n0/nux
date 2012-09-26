@@ -89,7 +89,7 @@ nux::LinearLayout *CreateIntermediateLayout()
   return layout;
 }
 
-void UserInterfaceInitialization(nux::NThread* thread, void* InitData)
+void UserInterfaceInitialization(nux::NThread* thread, void* /* InitData */)
 {
   nux::VLayout *root_layout = new nux::VLayout(NUX_TRACKER_LOCATION);
 
@@ -120,7 +120,7 @@ void UserInterfaceInitialization(nux::NThread* thread, void* InitData)
   static_cast<nux::WindowThread*>(thread)->SetWindowBackgroundPaintLayer(&background);
 }
 
-int main(int argc, char **argv)
+int main()
 {
   // Initialize Nux.
   nux::NuxInitialize(0);

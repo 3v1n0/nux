@@ -36,7 +36,7 @@ BasicView::~BasicView()
 
 }
 
-void BasicView::Draw(nux::GraphicsEngine& graphics_engine, bool force_draw)
+void BasicView::Draw(nux::GraphicsEngine& /* graphics_engine */, bool /* force_draw */)
 {
   // Draw nothing
   // For debug only:

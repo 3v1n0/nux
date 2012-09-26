@@ -1660,7 +1660,7 @@ namespace nux
     _asm_texrect_separable_gauss_filter_prog->Link();
   }
 
-  void GraphicsEngine::QRP_ASM_HorizontalGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma)
+  void GraphicsEngine::QRP_ASM_HorizontalGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color & /* c0 */, float /* sigma */)
   {
     NUX_RETURN_IF_FALSE(_asm_tex_separable_gauss_filter_prog.IsValid());
     NUX_RETURN_IF_FALSE(_asm_texrect_separable_gauss_filter_prog.IsValid());
@@ -1791,7 +1791,7 @@ namespace nux
     shader_program->End();
   }
 
-  void GraphicsEngine::QRP_ASM_VerticalGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma)
+  void GraphicsEngine::QRP_ASM_VerticalGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color & /* c0 */, float /* sigma */)
   {
     NUX_RETURN_IF_FALSE(_asm_tex_separable_gauss_filter_prog.IsValid());
     NUX_RETURN_IF_FALSE(_asm_texrect_separable_gauss_filter_prog.IsValid());
@@ -1927,7 +1927,7 @@ namespace nux
     int buffer_width, int buffer_height,
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
     const Color& c0,
-    float sigma, int num_pass)
+    float /* sigma */, int num_pass)
   {
     //     _offscreen_color_rt0.Release();
     //     _offscreen_color_rt1.Release();
@@ -1993,7 +1993,7 @@ namespace nux
 
   void GraphicsEngine::QRP_ASM_GetBlurTextureFx(
       int x, int y, int buffer_width, int buffer_height,
-      FxStructure *fx_structure, TexCoordXForm &texxform, const Color& color, float sigma, int num_pass)
+      FxStructure *fx_structure, TexCoordXForm &texxform, const Color& color, float /* sigma */, int num_pass)
   {
     int quad_width = fx_structure->src_texture->GetWidth();
     int quad_height = fx_structure->src_texture->GetHeight();
@@ -2206,10 +2206,10 @@ namespace nux
   }
 
   ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetLQBlur(
-    int x, int y,
-    int buffer_width, int buffer_height,
+    int /* x */, int /* y */,
+    int /* buffer_width */, int /* buffer_height */,
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-    const Color& c0)
+    const Color& /* c0 */)
   {
     //     _offscreen_color_rt0.Release();
     //     _offscreen_color_rt1.Release();

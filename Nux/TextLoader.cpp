@@ -136,7 +136,7 @@ Size TextLoader::Impl::ComputeTextSize()
   return Size(text_width, text_height);
 }
 
-void TextLoader::Impl::RasterizeText(void* cairo_context, Color color)
+void TextLoader::Impl::RasterizeText(void* cairo_context, Color /* color */)
 {
   cairo_t* cairo_ctx = (cairo_t*) cairo_context;
 

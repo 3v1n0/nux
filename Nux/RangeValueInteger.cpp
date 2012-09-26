@@ -111,7 +111,7 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void RangeValueInteger::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void RangeValueInteger::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
 
@@ -133,7 +133,7 @@ namespace nux
     m_ValueString->ProcessDraw(graphics_engine, force_draw);
   }
 
-  void RangeValueInteger::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
+  void RangeValueInteger::PostDraw(GraphicsEngine & /* graphics_engine */, bool  /* force_draw */)
   {
 
   }
@@ -181,7 +181,7 @@ namespace nux
 ////////////////
 //  EMITTERS  //
 ////////////////
-  void RangeValueInteger::OnReceiveMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RangeValueInteger::OnReceiveMouseDown(int x, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (x < 0)
     {
@@ -210,7 +210,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RangeValueInteger::OnReceiveMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RangeValueInteger::OnReceiveMouseUp(int x, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (x < 0)
       m_Value = m_min;
@@ -233,7 +233,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RangeValueInteger::OnReceiveMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void RangeValueInteger::OnReceiveMouseDrag(int x, int /* y */, int /* dx */, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (x < 0)
     {
@@ -272,7 +272,7 @@ namespace nux
 
   }
 
-  void RangeValueInteger::OnValidateKeyboardEntry(EditTextBox *textbox, const NString &text)
+  void RangeValueInteger::OnValidateKeyboardEntry(EditTextBox * /* textbox */, const NString &text)
   {
     int i;
     i = CharToInteger(text.GetTCharPtr());

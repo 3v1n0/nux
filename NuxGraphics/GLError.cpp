@@ -46,7 +46,7 @@ bool debug_glerror_stack()
 
 
 // WARNING: never call glGetError between glBegin and glEnd.
-  void CheckGLError(const char *GLcall, const char *file, int line)
+  void CheckGLError(const char * /* GLcall */, const char *file, int line)
   {
     GLenum glErr;
     std::string error_msg;

@@ -162,7 +162,7 @@ namespace nux
     return this;
   }
 
-  void FloatingWindow::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void FloatingWindow::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
     // The elements position inside the window are referenced to top-left window corner. So bring base to(0, 0).
@@ -233,7 +233,7 @@ namespace nux
     return m_hasTitleBar;
   }
 
-  void FloatingWindow::OnSizeGrigMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void FloatingWindow::OnSizeGrigMouseDown(int x, int y, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (IsSizeMatchContent())
     {
@@ -257,7 +257,7 @@ namespace nux
     //GetWindowCompositor().SetMouseFocusArea(this);
   }
 
-  void FloatingWindow::OnSizeGrigMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void FloatingWindow::OnSizeGrigMouseDrag(int x, int y, int dx, int dy, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (IsSizeMatchContent())
     {
@@ -306,12 +306,12 @@ namespace nux
     QueueDraw();
   }
 
-  void FloatingWindow::RecvTitleBarMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void FloatingWindow::RecvTitleBarMouseDown(int x, int y, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     _title_bar_mouse_down_location = Point(x, y);
   }
 
-  void FloatingWindow::RecvTitleBarMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void FloatingWindow::RecvTitleBarMouseDrag(int /* x */, int /* y */, int dx, int dy, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     Geometry geo;
     geo = GetGeometry();
@@ -335,7 +335,7 @@ namespace nux
     QueueDraw();
   }
 
-  void FloatingWindow::RecvCloseButtonClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void FloatingWindow::RecvCloseButtonClick(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
 #if defined(NUX_OS_LINUX)
     // Disable the input window if there is one.
@@ -389,7 +389,7 @@ namespace nux
 
 // Get a change to do any work on an element.
 // Here we need to position the header by hand because it is not under the control of vlayout.
-  long FloatingWindow::PostLayoutManagement(long LayoutResult)
+  long FloatingWindow::PostLayoutManagement(long /* LayoutResult */)
   {
     if (IsSizeMatchContent() && m_layout)
     {
@@ -427,7 +427,7 @@ namespace nux
 
 // Get a change to do any work on an element.
 // Here we need to position the header by hand because it is not under the control of vlayout.
-  void FloatingWindow::ComputeContentPosition(float offsetX, float offsetY)
+  void FloatingWindow::ComputeContentPosition(float /* offsetX */, float /* offsetY */)
   {
     //ScrollView::ComputeContentPosition(offsetX, offsetY);
 
