@@ -271,31 +271,7 @@ AS_IF([test "x$enable_tests" = "xyes"],
                        [AC_MSG_WARN([you are missing google-mock, apt-get install google-mock])])
         AC_LANG_POP([C++])
 
-         #Check for libboost
-
-        AC_LANG_PUSH([C++])
-        AC_CHECK_HEADER([boost/filesystem.hpp],
-                        [have_boost=yes],
-                        [AC_MSG_WARN([you are missing boost, apt-get install libboost-dev])])
-        AC_LANG_POP([C++])
-
-        #Check for libboost-system
-
-        AC_LANG_PUSH([C++])
-        AC_CHECK_HEADER([boost/filesystem.hpp],
-                        [have_boost=yes],
-                        [AC_MSG_WARN([you are missing boost, apt-get install libboost-dev])])
-        AC_LANG_POP([C++])
-
-        #Check for libboost-filesystem
-
-        AC_LANG_PUSH([C++])
-        AC_CHECK_HEADER([boost/filesystem.hpp],
-                        [have_boost=yes],
-                        [AC_MSG_WARN([you are missing boost, apt-get install libboost-dev])])
-        AC_LANG_POP([C++])
-
- #Check for libboost
+       #Check for libboost
 
         AC_LANG_PUSH([C++])
         AC_CHECK_HEADER([boost/filesystem.hpp],
