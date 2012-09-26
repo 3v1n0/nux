@@ -271,6 +271,54 @@ AS_IF([test "x$enable_tests" = "xyes"],
                        [AC_MSG_WARN([you are missing google-mock, apt-get install google-mock])])
         AC_LANG_POP([C++])
 
+         #Check for libboost
+
+        AC_LANG_PUSH([C++])
+        AC_CHECK_HEADER([boost/filesystem.hpp],
+                        [have_boost=yes],
+                        [AC_MSG_WARN([you are missing boost, apt-get install libboost-dev])])
+        AC_LANG_POP([C++])
+
+        #Check for libboost-system
+
+        AC_LANG_PUSH([C++])
+        AC_CHECK_HEADER([boost/filesystem.hpp],
+                        [have_boost=yes],
+                        [AC_MSG_WARN([you are missing boost, apt-get install libboost-dev])])
+        AC_LANG_POP([C++])
+
+        #Check for libboost-filesystem
+
+        AC_LANG_PUSH([C++])
+        AC_CHECK_HEADER([boost/filesystem.hpp],
+                        [have_boost=yes],
+                        [AC_MSG_WARN([you are missing boost, apt-get install libboost-dev])])
+        AC_LANG_POP([C++])
+
+ #Check for libboost
+
+        AC_LANG_PUSH([C++])
+        AC_CHECK_HEADER([boost/filesystem.hpp],
+                        [have_boost=yes],
+                        [AC_MSG_WARN([you are missing boost, apt-get install libboost-dev])])
+        AC_LANG_POP([C++])
+
+        #Check for libboost-system
+
+        AC_LANG_PUSH([C++])
+        AC_CHECK_HEADER([boost/system/config.hpp],
+                        [have_boost_system=yes],
+                        [AC_MSG_WARN([you are missing boost-system, apt-get install libboost-system-dev])])
+        AC_LANG_POP([C++])
+
+        #Check for libboost-filesystem
+
+        AC_LANG_PUSH([C++])
+        AC_CHECK_HEADER([boost/filesystem/fstream.hpp],
+                        [have_boost_fs=yes],
+                        [AC_MSG_WARN([you are missing boost-filesystem, apt-get install libboost-filesystem-dev])])
+        AC_LANG_POP([C++])
+
         #Check for libxtst
         AC_CHECK_HEADER([X11/extensions/XTest.h],
                        [have_xtest=yes],
@@ -279,6 +327,9 @@ AS_IF([test "x$enable_tests" = "xyes"],
 )
 
 AS_IF([test "x$have_xtest" = "xyes" &&
+       test "x$have_boost" = "xyes" &&
+       test "x$have_boost_system" = "xyes" &&
+       test "x$have_boost_fs" = "xyes" &&
        test "x$have_gmock" = "xyes" &&
        test "x$have_gtest" = "xyes"],
   [],
