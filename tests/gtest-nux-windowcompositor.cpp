@@ -128,7 +128,7 @@ struct TestWindowCompositor : public testing::Test
   void GetAreaUnderMouse(const Point& mouse_position, NuxEventType event_type,
                          ObjectWeakPtr<InputArea>& area)
   {
-    return nux::GetWindowCompositor().GetAreaUnderMouse(mouse_position, event_type, area);
+    return nux::GetWindowCompositor().FindAreaUnderMouse(mouse_position, event_type, area);
   }
 
   void FindKeyFocusArea(NuxEventType event_type, unsigned int key_symbol,
