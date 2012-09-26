@@ -57,6 +57,7 @@ source_cpp = \
   $(srcdir)/DoubleValidator.cpp \
   $(srcdir)/EditTextBox.cpp \
   $(srcdir)/FileSelector.cpp \
+  $(srcdir)/Flickable.cpp \
   $(srcdir)/FloatingWindow.cpp \
   $(srcdir)/GridHLayout.cpp \
   $(srcdir)/GroupBox.cpp \
@@ -68,6 +69,11 @@ source_cpp = \
   $(srcdir)/IntegerValidator.cpp \
   $(srcdir)/View.cpp \
   $(srcdir)/KeyboardHandler.cpp \
+  $(srcdir)/KineticScrolling/AxisDecelerationAnimation.cpp \
+  $(srcdir)/KineticScrolling/KineticAxisScroller.cpp \
+  $(srcdir)/KineticScrolling/KineticScroller.cpp \
+  $(srcdir)/KineticScrolling/FlickableTickSource.cpp \
+  $(srcdir)/KineticScrolling/VelocityCalculator.cpp \
   $(srcdir)/LayeredLayout.cpp \
   $(srcdir)/Layout.cpp \
   $(srcdir)/LinearLayout.cpp \
@@ -153,6 +159,7 @@ source_h = \
   $(srcdir)/EditTextBox.h \
   $(builddir)/Features.h \
   $(srcdir)/FileSelector.h \
+  $(srcdir)/Flickable.h \
   $(srcdir)/FloatingWindow.h \
   $(srcdir)/GridHLayout.h \
   $(srcdir)/GroupBox.h \
@@ -164,6 +171,11 @@ source_h = \
   $(srcdir)/IntegerValidator.h \
   $(srcdir)/View.h \
   $(srcdir)/KeyboardHandler.h \
+  $(srcdir)/KineticScrolling/AxisDecelerationAnimation.h \
+  $(srcdir)/KineticScrolling/KineticAxisScroller.h \
+  $(srcdir)/KineticScrolling/KineticScroller.h \
+  $(srcdir)/KineticScrolling/FlickableTickSource.h \
+  $(srcdir)/KineticScrolling/VelocityCalculator.h \
   $(srcdir)/LayeredLayout.h \
   $(srcdir)/Layout.h \
   $(srcdir)/LinearLayout.h \
