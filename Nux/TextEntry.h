@@ -210,7 +210,7 @@ namespace nux
 
     void SetPasswordMode(bool visible)
     {
-      SetVisibility(visible);
+      SetVisibility(!visible);
     }
     void SetVisibility(bool visible);
     void SetPasswordChar(const char* c);
