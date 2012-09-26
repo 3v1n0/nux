@@ -127,7 +127,7 @@ namespace nux
     int border_bottom;
     bool draw_borders_only;
 
-    NString filename;
+    std::string filename;
   };
 
   //! Load textures and other data for user interface rendering.

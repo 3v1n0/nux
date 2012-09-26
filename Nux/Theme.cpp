@@ -334,7 +334,7 @@ namespace nux
     {
       if (!(*it)->texture)
       {
-        BaseTexture* device_texture = Load2DTextureFile((*it)->filename.GetTCharPtr());
+        BaseTexture* device_texture = Load2DTextureFile((*it)->filename.c_str());
         (*it)->texture = device_texture;
       }
 
@@ -355,7 +355,7 @@ namespace nux
     {
       if (!(*it)->texture)
       {
-        BaseTexture* device_texture = Load2DTextureFile((*it)->filename.GetTCharPtr());
+        BaseTexture* device_texture = Load2DTextureFile((*it)->filename.c_str());
         (*it)->texture = device_texture;
       }
 
