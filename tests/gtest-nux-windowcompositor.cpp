@@ -667,6 +667,149 @@ TEST_F(TestWindowCompositor, MouseDrag)
   window->Dispose();
 }
 
+class TrackerWindow : public nux::BaseWindow
+{
+  public:
+    virtual bool ChildMouseEvent(const nux::Event& event)
+    {
+      child_mouse_events_received.push_back(event);
+      return wants_mouse_ownership;
+    }
+    std::vector<nux::Event> child_mouse_events_received;
+    bool wants_mouse_ownership;
+
+  protected:
+    virtual void EmitMouseUpSignal(int x, int y,
+                                   unsigned long mouse_button_state,
+                                   unsigned long special_keys_state)
+    {
+      ++mouse_up_emission_count;
+    }
+
+    virtual void EmitMouseDragSignal(int x, int y,
+                                     int dx, int dy,
+                                     unsigned long mouse_button_state,
+                                     unsigned long special_keys_state)
+    {
+      ++mouse_drag_emission_count;
+      mouse_drag_dx = dx;
+      mouse_drag_dy = dy;
+    }
+  public:
+    int mouse_up_emission_count;
+    int mouse_drag_emission_count;
+    int mouse_drag_dx;
+    int mouse_drag_dy;
+};
+
+class TrackedArea : public nux::InputArea
+{
+  protected:
+    virtual void EmitMouseDownSignal(int x, int y,
+                                     unsigned long mouse_button_state,
+                                     unsigned long special_keys_state)
+    {
+      ++mouse_down_emission_count;
+    }
+
+    virtual void EmitMouseUpSignal(int x, int y,
+                                   unsigned long mouse_button_state,
+                                   unsigned long special_keys_state)
+    {
+      ++mouse_up_emission_count;
+    }
+
+    virtual void EmitMouseDragSignal(int x, int y,
+                                     int dx, int dy,
+                                     unsigned long mouse_button_state,
+                                     unsigned long special_keys_state)
+    {
+      ++mouse_drag_emission_count;
+    }
+
+    virtual void EmitMouseCancelSignal()
+    {
+      ++mouse_cancel_emission_count;
+    }
+
+  public:
+    int mouse_down_emission_count;
+    int mouse_up_emission_count;
+    int mouse_drag_emission_count;
+    int mouse_cancel_emission_count;
+};
+
+TEST_F(TestWindowCompositor, TrackingChildMouseEvents)
+{
+  nux::WindowCompositor &wnd_compositor = wnd_thread->GetWindowCompositor();
+
+  TrackedArea *tracked_area = new TrackedArea;
+  tracked_area->SetGeometry(0, 0, 100, 1000);
+  tracked_area->SetMinimumSize(100, 1000);
+
+  nux::VLayout *layout = new VLayout(NUX_TRACKER_LOCATION);
+  layout->AddView(tracked_area, 1, eLeft, eFull);
+  layout->Set2DTranslation(0, -123, 0); // x, y, z
+
+  TrackerWindow *tracker_window = new TrackerWindow;
+  tracker_window->SetBaseXY(0, 0);
+  tracker_window->SetBaseWidth(100);
+  tracker_window->SetBaseHeight(100);
+  tracker_window->SetTrackChildMouseEvents(true);
+  tracker_window->SetLayout(layout);
+  tracker_window->ShowWindow(true);
+
+  // Mouse pressed goes both to child and tracker window
+  tracker_window->wants_mouse_ownership = false;
+  tracked_area->mouse_down_emission_count = 0;
+  nux::Event event;
+  event.type = NUX_MOUSE_PRESSED;
+  event.x = 50; // right in the center of tracker_window
+  event.y = 50;
+  wnd_compositor.ProcessEvent(event);
+  ASSERT_EQ(1, tracker_window->child_mouse_events_received.size());
+  ASSERT_EQ(1, tracked_area->mouse_down_emission_count);
+
+  // Mouse move goes both to child and tracker window, but tracker asks
+  // for mouse ownership. Therefore child also gets a mouse cancel.
+  tracker_window->child_mouse_events_received.clear();
+  tracker_window->wants_mouse_ownership = true;
+  tracked_area->mouse_drag_emission_count = 0;
+  tracked_area->mouse_cancel_emission_count = 0;
+  event.type = NUX_MOUSE_MOVE;
+  event.y = 60;
+  wnd_compositor.ProcessEvent(event);
+  ASSERT_EQ(1, tracker_window->child_mouse_events_received.size());
+  ASSERT_EQ(1, tracked_area->mouse_drag_emission_count);
+  ASSERT_EQ(1, tracked_area->mouse_cancel_emission_count);
+
+  // The second mouse move goes only to the window, but now as a regular
+  // mouse event since he's mouse owner now.
+  tracker_window->child_mouse_events_received.clear();
+  tracker_window->mouse_drag_emission_count = 0;
+  tracked_area->mouse_drag_emission_count = 0;
+  event.type = NUX_MOUSE_MOVE;
+  event.y = 70;
+  wnd_compositor.ProcessEvent(event);
+  ASSERT_EQ(0, tracker_window->child_mouse_events_received.size());
+  ASSERT_EQ(1, tracker_window->mouse_drag_emission_count);
+  ASSERT_EQ(0, tracked_area->mouse_drag_emission_count);
+  ASSERT_EQ(10, tracker_window->mouse_drag_dy);
+
+  // Mouse release goes only to the window, again as a regular
+  // mouse event.
+  tracker_window->child_mouse_events_received.clear();
+  tracker_window->mouse_up_emission_count = 0;
+  tracked_area->mouse_up_emission_count = 0;
+  event.type = NUX_MOUSE_RELEASED;
+  wnd_compositor.ProcessEvent(event);
+  ASSERT_EQ(0, tracker_window->child_mouse_events_received.size());
+  ASSERT_EQ(1, tracker_window->mouse_up_emission_count);
+  ASSERT_EQ(0, tracked_area->mouse_up_emission_count);
+
+  tracker_window->Dispose();
+}
+
 #endif // NUX_GESTURES_SUPPORT
 
 }

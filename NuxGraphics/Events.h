@@ -211,6 +211,9 @@ namespace nux
     EVENT_MOUSE_MOVE,
     EVENT_MOUSE_DOUBLECLICK,
     EVENT_MOUSE_WHEEL,
+    EVENT_MOUSE_CANCEL, /*!< InputArea lost ownership over a pressed mouse. Any
+                             changes caused by the previous EVENT_MOUSE_PRESS
+                             should be undone. */
     EVENT_KEY_DOWN,
     EVENT_KEY_UP,
     EVENT_WINDOW_SIZE_CONFIGURATION,
