@@ -9,7 +9,8 @@ if BUILD_EXAMPLES
 
 noinst_PROGRAMS = text_entry_focus \
   shortcut_keys \
-  coverflow
+  coverflow \
+  flickable
 
 #button \
 #                  cairo \
@@ -110,6 +111,9 @@ shortcut_keys_LDADD = $(ALL_LIBS)
 
 coverflow_SOURCES = coverflow.cpp
 coverflow_LDADD = $(ALL_LIBS)
+
+flickable_SOURCES = flickable.cpp TestButton.cpp
+flickable_LDADD = $(ALL_LIBS)
 
 if HAVE_GEIS
 gestures_SOURCES = gestures.cpp
