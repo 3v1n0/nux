@@ -114,7 +114,7 @@ void TestingThread(nux::NThread* thread, void* user_data)
   test.TestReportMsg(key_navigation_test->views_[0]->has_focus_, "Top left tile has key focus");
   
   // Down key
-  for (int i=0; i<NUM_VIEWS-1; ++i)
+  for (unsigned int i=0; i<NUM_VIEWS-1; ++i)
   {
     test.SendFakeKeyEvent(XK_Down, 0);
     nux::SleepForMilliseconds(500);
