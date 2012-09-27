@@ -2569,8 +2569,13 @@ namespace nux
     return password_char_;
   }
 
-  bool TextEntry::IsPasswordMode() const
+  void TextEntry::SetPasswordMode(bool visible)
   {
-    return visible_;
+    SetVisibility(!visible);
+  }
+
+  bool TextEntry::PasswordMode() const
+  {
+    return !visible_;
   }
 }
