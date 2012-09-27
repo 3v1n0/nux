@@ -94,7 +94,7 @@ bool Flickable::ChildMouseEvent(const Event& event)
   return want_mouse_ownership;
 }
 
-void Flickable::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+void Flickable::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
 {
   if (view_layout_)
   {
@@ -126,20 +126,23 @@ void Flickable::PostResizeGeometry()
   scroller_.SetViewportSize(GetBaseWidth(), GetBaseHeight());
 }
 
-void Flickable::OnMouseDown(int x, int y, unsigned long button_flags,
-                            unsigned long key_flags)
+void Flickable::OnMouseDown(int /* x */, int /* y */,
+                            unsigned long /* button_flags */,
+                            unsigned long /* key_flags */)
 {
   scroller_.ProcessFingerDown();
 }
 
-void Flickable::OnMouseUp(int x, int y, unsigned long button_flags,
-                          unsigned long key_flags)
+void Flickable::OnMouseUp(int /* x */, int /* y */,
+                          unsigned long /* button_flags */,
+                          unsigned long /* key_flags */)
 {
   scroller_.ProcessFingerUp();
 }
 
-void Flickable::OnMouseDrag(int x, int y, int dx, int dy,
-                            unsigned long button_flags, unsigned long key_flags)
+void Flickable::OnMouseDrag(int /* x */, int /* y */, int dx, int dy,
+                            unsigned long /* button_flags */,
+                            unsigned long /* key_flags */)
 {
   scroller_.ProcessFingerDrag(dx, dy);
 }
