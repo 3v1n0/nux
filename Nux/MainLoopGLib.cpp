@@ -167,21 +167,15 @@ namespace nux
     return TRUE;
   }
 
-  static GTimeVal get_time(GSource* source)
-  {
-    gint64 t = g_source_get_time(source);               // Time in microseconds
-    return GTimeVal { t / 1000000, t % 1000000 };
-  }
-
   static gboolean nux_timeline_dispatch(GSource *source, GSourceFunc callback, gpointer user_data)
   {
     bool has_timelines_left = false;
     nux_glib_threads_lock();
-    GTimeVal time_val = get_time(source);
+    gint64 micro_secs = g_source_get_time(source);
     WindowThread *window_thread = NUX_STATIC_CAST(WindowThread *, user_data);
 
     // pump the timelines
-    has_timelines_left = window_thread->ProcessTimelines(&time_val);
+    has_timelines_left = window_thread->ProcessTimelines(micro_secs);
 
     if (!has_timelines_left)
     {
@@ -389,9 +383,9 @@ namespace nux
         g_source_attach(_MasterClock, main_loop_glib_context_);
 
 
-      GTimeVal time_val = get_time(_MasterClock);
-      last_timeline_frame_time_sec_ = time_val.tv_sec;
-      last_timeline_frame_time_usec_ = time_val.tv_usec;
+      gint64 micro_secs = g_source_get_time(_MasterClock);
+      last_timeline_frame_time_sec_ = micro_secs / 1000000;
+      last_timeline_frame_time_usec_ = micro_secs % 1000000;
     }
   }
 

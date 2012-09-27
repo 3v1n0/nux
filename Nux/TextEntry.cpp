@@ -54,9 +54,8 @@ namespace nux
 
   static unsigned long long GetCurrentTime()
   {
-    GTimeVal tv;
-    g_get_current_time(&tv);
-    return static_cast<unsigned long long>(tv.tv_sec) * 1000 + tv.tv_usec / 1000;
+    gint64 micro_secs = g_get_real_time();
+    return static_cast<unsigned long long>(micro_secs / 1000);
   }
 
   static std::string CleanupLineBreaks(const char *source)
