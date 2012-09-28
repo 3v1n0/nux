@@ -132,12 +132,28 @@ namespace nux
     //! Take ownership of ptr.
     void Adopt(T* ptr)
     {
-        ObjectPtr<T> temp(ptr);
-        Swap(temp);
-        // Now we want to release the reference that was added on construction,
-        // but keep the smart pointer count.
-        if (ptr_)
-          ptr_->UnReference();
+      bool was_owned = false;
+      if (ptr)
+      {
+        // If 'was_owned' is false, then ptr has a floating reference status. The next line:
+        //    ObjectPtr<T> temp(ptr);
+        // will not increase its reference count. It will only make the object "Owned".
+        was_owned = ptr->OwnsTheReference();
+      }
+
+      // If 'was_owned' is true then the next line increases the reference count of ptr.
+      // Otherwise, ptr just becomes "Owned" (it looses it floating reference status).
+      ObjectPtr<T> temp(ptr);
+      Swap(temp);
+
+      // Now we want to release the reference that was added on construction,
+      // but keep the smart pointer count.
+      if (ptr_ && was_owned)
+      {
+        // ptr was already owned. Reduce the reference count that was added by the call to
+        //    ObjectPtr<T> temp(ptr);
+        ptr_->UnReference();
+      }
     }
 
 
