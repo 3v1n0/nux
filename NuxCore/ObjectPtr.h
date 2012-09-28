@@ -150,7 +150,7 @@ namespace nux
       // but keep the smart pointer count.
       if (ptr_ && was_owned)
       {
-        // ptr was already owned, reduce the reference count that was added by the call to
+        // ptr was already owned. Reduce the reference count that was added by the call to
         //    ObjectPtr<T> temp(ptr);
         ptr_->UnReference();
       }
