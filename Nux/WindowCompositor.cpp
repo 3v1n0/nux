@@ -595,7 +595,7 @@ namespace
                                              event.GetMouseState(),
                                              event.GetKeyState());
 
-        if (mouse_owner_area_.GetPointer() && mouse_over_area_ == mouse_owner_area_)
+        if (mouse_owner_area_.IsValid() && mouse_over_area_ == mouse_owner_area_)
         {
           mouse_owner_area_->EmitMouseClickSignal(mouse_owner_x, mouse_owner_y,
                                                   event.GetMouseState(),
