@@ -1230,7 +1230,7 @@ namespace nux
   }
 
 #ifdef NUX_GESTURES_SUPPORT
-  Area* Area::GetInputAreaHitByGesture(const GestureEvent &event)
+  Area* Area::GetInputAreaHitByGesture(const GestureEvent & /* event */)
   {
     return nullptr;
   }

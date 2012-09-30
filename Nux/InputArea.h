@@ -379,7 +379,7 @@ namespace nux
 
       Default implementation just returns GestureDeliveryRequest::NONE.
      */
-    virtual GestureDeliveryRequest GestureEvent(const GestureEvent &event)
+    virtual GestureDeliveryRequest GestureEvent(const GestureEvent & /* event */)
     {
       return GestureDeliveryRequest::NONE;
     }

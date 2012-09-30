@@ -142,7 +142,7 @@ void TestingThread(nux::NThread* /* thread */, void* user_data)
     test.SendFakeKeyEvent(XK_Up, 0);
     nux::SleepForMilliseconds(500);
     test.TestReportMsg(!key_navigation_test->views_[i]->has_focus_, "Up: key focus out");
-    if ((i - 1) == ID_UNFOCUSABLE_VIEW)
+    if ((i - 1) == (int)ID_UNFOCUSABLE_VIEW)
     {
       test.TestReportMsg(!key_navigation_test->views_[i-1]->has_focus_, "Up: key focus skipped");
       test.TestReportMsg(key_navigation_test->views_[i-2]->has_focus_, "Up: key focus in");

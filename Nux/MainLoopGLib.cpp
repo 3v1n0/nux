@@ -210,12 +210,15 @@ namespace nux
 
     if (!IsEmbeddedWindow())
     {
+
+#if GLIB_MAJOR_VERSION < 2 || GLIB_MAJOR_VERSION == 2 && GLIB_MINOR_VERSION < 32
       static bool gthread_initialized = false;
 
       if (!gthread_initialized)
         g_thread_init(NULL);
 
       gthread_initialized = true;
+#endif
 
       if (((main_loop_glib_context_ == 0) || (main_loop_glib_ == 0)) && (main_context_created == false))
       {
