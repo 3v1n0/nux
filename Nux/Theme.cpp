@@ -259,7 +259,7 @@ namespace nux
     std::string str;
     LoadFileToString(str, painter_filename.c_str());
 
-    if (g_markup_parse_context_parse(context, str.c_str(), str.Length(), NULL) == FALSE)
+    if (g_markup_parse_context_parse(context, str.c_str(), str.length(), NULL) == FALSE)
     {
       nuxCriticalMsg("[GraphicsEngine::LoadPainterImages] Failed to parse data.");
       return;
