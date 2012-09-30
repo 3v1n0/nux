@@ -230,7 +230,7 @@ namespace nux
       }
 #endif
 
-      GpuInfo& gpu_info = _graphics_display.GetGpuDevice()->GetGpuInfo();
+      const GpuInfo& gpu_info = _graphics_display.GetGpuDevice()->GetGpuInfo();
 
       if ((gpu_info.Support_ARB_Vertex_Program() && gpu_info.Support_ARB_Fragment_Program())
           || (gpu_info.Support_ARB_Vertex_Shader() && gpu_info.Support_ARB_Fragment_Shader()))
