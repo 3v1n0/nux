@@ -362,11 +362,6 @@ namespace nux
     //! Setup a NULL texture
     void InvalidateTextureUnit(int TextureUnitIndex);
 
-    unsigned int GetPixelStoreAlignment()
-    {
-      return _PixelStoreAlignment;
-    }
-
     int AllocateUnpackPixelBufferIndex(int *index);
     int FreeUnpackPixelBufferIndex(const int index);
     int BindUnpackPixelBufferIndex(const int index);
@@ -389,6 +384,8 @@ namespace nux
     //! Restore the backbuffer as the render target.
     void DeactivateFrameBuffer(); 
 
+    unsigned int GetPixelStoreAlignment() const;
+
   public:
     void SetCurrentFrameBufferObject(ObjectPtr<IOpenGLFrameBufferObject> fbo);
     ObjectPtr<IOpenGLFrameBufferObject> GetCurrentFrameBufferObject();
@@ -409,10 +406,6 @@ namespace nux
       bool   IsReserved;
     };
 
-    unsigned int _PixelStoreAlignment;
-
-    std::vector<PixelBufferObject> _PixelBufferArray;
-
   public:
 
 #if (NUX_ENABLE_CG_SHADERS)
@@ -423,16 +416,13 @@ namespace nux
     CGcontext m_Cgcontext;
 #endif
 
-    inline bool UsePixelBufferObjects() const
-    {
-      return _UsePixelBufferObject;
-    }
+    bool UsePixelBufferObjects() const;
 
     GpuBrand GetGPUBrand() const;
 
-    GpuRenderStates &GetRenderStates();
+    GpuRenderStates& GetRenderStates();
 
-    GpuInfo &GetGpuInfo();
+    const GpuInfo& GetGpuInfo() const;
 
     void ResetRenderStates();
 
@@ -460,34 +450,34 @@ namespace nux
 
     bool SUPPORT_GL_ARB_TEXTURE_NON_POWER_OF_TWO() const
     {
-      return _gpu_info->Support_ARB_Texture_Non_Power_Of_Two();
+      return gpu_info_->Support_ARB_Texture_Non_Power_Of_Two();
     }
 
     bool SUPPORT_GL_EXT_TEXTURE_RECTANGLE()    const
     {
-      return _gpu_info->Support_EXT_Texture_Rectangle();
+      return gpu_info_->Support_EXT_Texture_Rectangle();
     }
 
     bool SUPPORT_GL_ARB_TEXTURE_RECTANGLE()    const
     {
-      return _gpu_info->Support_ARB_Texture_Rectangle();
+      return gpu_info_->Support_ARB_Texture_Rectangle();
     }
     
   private:
 
     // 
-    int _opengl_major;  //!< OpenGL major version.
-    int _opengl_minor;  //!< OpenGL minor version.
-    int _glsl_version_major;  //!< GLSL major version.
-    int _glsl_version_minor;  //!< GLSL major version.
+    int opengl_major_;  //!< OpenGL major version.
+    int opengl_minor_;  //!< OpenGL minor version.
 
-    NString _board_vendor_string;     //!< GPU vendor sting.
-    NString _board_renderer_string;   //!< GPU renderer sting.
-    NString _openGL_version_string;   //!< OpenGL version string.
-    NString _glsl_version_string;     //!< GLSL version string.
-    GpuBrand _gpu_brand;              //!< GPU brand.
+    std::string _board_vendor_string;     //!< GPU vendor sting.
+    std::string _board_renderer_string;   //!< GPU renderer sting.
+    std::string _openGL_version_string;   //!< OpenGL version string.
+    GpuBrand gpu_brand_;                  //!< GPU brand.
 
-    bool _UsePixelBufferObject;
+    bool use_pixel_buffer_object_;
+    unsigned int pixel_store_alignment_;
+    std::vector<PixelBufferObject> _PixelBufferArray;
+
 
     bool OGL_EXT_SWAP_CONTROL;
     bool GL_ARB_VERTEX_PROGRAM;
@@ -504,8 +494,8 @@ namespace nux
     bool GL_ARB_TEXTURE_RECTANGLE; //!< Promoted from GL_EXT_TEXTURE_RECTANGLE to ARB.
     bool GL_NV_TEXTURE_RECTANGLE;
 
-    GpuRenderStates *_gpu_render_states;
-    GpuInfo *_gpu_info;
+    GpuRenderStates* gpu_render_states_;
+    GpuInfo* gpu_info_;
 
   public:
     
