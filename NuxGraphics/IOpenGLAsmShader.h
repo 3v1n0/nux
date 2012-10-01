@@ -121,9 +121,9 @@ namespace nux
     void SetFragmentLocalParameter4fvARB    (unsigned int index, const float *params);
 
   private:
-    IOpenGLAsmShaderProgram(NString ShaderProgramName = NString("AsmShaderProgram"));
+    IOpenGLAsmShaderProgram(std::string ShaderProgramName = std::string("AsmShaderProgram"));
     std::vector<ObjectPtr<IOpenGLAsmShader> > ShaderObjectList;
-    NString _ShaderProgramName;
+    std::string _ShaderProgramName;
 
     ObjectPtr<IOpenGLAsmVertexShader> m_AsmVertexProgram;
     ObjectPtr<IOpenGLAsmPixelShader> m_AsmFragmentProgram;
