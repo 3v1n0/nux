@@ -14,7 +14,7 @@
 #   - Increase interface_version to the next odd number
 # 
 m4_define([nux_major_version], [3])
-m4_define([nux_minor_version], [6])
+m4_define([nux_minor_version], [8])
 m4_define([nux_micro_version], [0])
 
 m4_define([nux_api_version], [3.0])
@@ -23,7 +23,7 @@ m4_define([nux_api_version], [3.0])
 # e.g.: december 5th, 2011 is: 20111205
 # To make more than one API change in a day, add a number to the date. Like 20111205.xx
 
-m4_define([nux_abi_version], [20120917.01])
+m4_define([nux_abi_version], [20120928.01])
 
 m4_define([nux_version],
           [nux_major_version.nux_minor_version.nux_micro_version])

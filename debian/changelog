@@ -1,3 +1,10 @@
+nux (3.8.0-0ubuntu1) UNRELEASED; urgency=low
+
+  * New upstream release.
+    - Add na::Controller::HasRunningAnimations (LP: #1054088) (LP: #1054074)
+
+ -- Timo Jyrinki <timo-jyrinki@ubuntu.com>  Mon, 01 Oct 2012 15:46:00 +0300
+
 nux (3.6.0-0ubuntu1) quantal-proposed; urgency=low
 
   * New upstream release.
