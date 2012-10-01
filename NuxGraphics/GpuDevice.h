@@ -114,6 +114,7 @@ namespace nux
 #endif
 
     int GetMaxFboAttachment() {return _opengl_max_fb_attachment;}
+    int GetMaxTextureSize() {return _opengl_max_texture_size;}
 
 
   private:
@@ -133,6 +134,7 @@ namespace nux
     bool _support_opengl_version_40;
     bool _support_opengl_version_41;
 
+    int _opengl_max_texture_size;
     int _opengl_max_texture_units;
     int _opengl_max_texture_coords;
     int _opengl_max_texture_image_units;
@@ -175,78 +177,6 @@ namespace nux
   {
   private:
     static STREAMSOURCE _StreamSource[MAX_NUM_STREAM];
-
-    int CreateTexture(
-      unsigned int Width
-      , unsigned int Height
-      , unsigned int Levels
-      , BitmapFormat PixelFormat
-      , IOpenGLTexture2D **ppTexture
-      , NUX_FILE_LINE_PROTO
-    );
-
-    int CreateRectangleTexture(
-      unsigned int Width
-      , unsigned int Height
-      , unsigned int Levels
-      , BitmapFormat PixelFormat
-      , IOpenGLRectangleTexture **ppTexture
-      , NUX_FILE_LINE_PROTO
-    );
-
-    int CreateCubeTexture(
-      unsigned int EdgeLength
-      , unsigned int Levels
-      , BitmapFormat PixelFormat
-      , IOpenGLCubeTexture **ppCubeTexture
-      , NUX_FILE_LINE_PROTO
-    );
-
-    int CreateVolumeTexture(
-      unsigned int Width
-      , unsigned int Height
-      , unsigned int Depth
-      , unsigned int Levels
-      , BitmapFormat PixelFormat
-      , IOpenGLVolumeTexture **ppVolumeTexture
-      , NUX_FILE_LINE_PROTO
-    );
-
-    int CreateAnimatedTexture(
-      unsigned int Width
-      , unsigned int Height
-      , unsigned int Depth
-      , BitmapFormat PixelFormat
-      , IOpenGLAnimatedTexture **ppAnimatedTexture
-    );
-
-    int CreateVertexBuffer(
-      unsigned int Length
-      , VBO_USAGE Usage    // Dynamic or WriteOnly
-      , IOpenGLVertexBuffer **ppVertexBuffer
-    );
-
-    int CreateIndexBuffer(
-      unsigned int Length
-      , VBO_USAGE Usage    // Dynamic or WriteOnly
-      , INDEX_FORMAT Format
-      , IOpenGLIndexBuffer **ppIndexBuffer
-    );
-
-    int CreatePixelBufferObject(int Size, VBO_USAGE Usage,   // Dynamic or WriteOnly
-                                 IOpenGLPixelBufferObject **ppPixelBufferObject
-                                );
-
-    int CreateQuery(
-      QUERY_TYPE Type,
-      IOpenGLQuery **ppQuery);
-
-    int CreateVertexDeclaration(
-      const VERTEXELEMENT *pVertexElements,
-      IOpenGLVertexDeclaration **ppDecl);
-
-    int CreateFrameBufferObject(
-      IOpenGLFrameBufferObject **ppFrameBufferObject);
 
   public:
     ObjectPtr<IOpenGLTexture2D> CreateTexture(
@@ -382,7 +312,7 @@ namespace nux
     void ActivateFrameBuffer();
 
     //! Restore the backbuffer as the render target.
-    void DeactivateFrameBuffer(); 
+    void DeactivateFrameBuffer();
 
     unsigned int GetPixelStoreAlignment() const;
 
@@ -448,7 +378,7 @@ namespace nux
     */
     BaseTexture* CreateSystemCapableTexture(NUX_FILE_LINE_PROTO);
 
-    bool SUPPORT_GL_ARB_TEXTURE_NON_POWER_OF_TWO() const
+    bool SUPPORT_GL_ARB_TEXTURE_NON_POWER_OF_TWO()  const
     {
       return gpu_info_->Support_ARB_Texture_Non_Power_Of_Two();
     }
@@ -458,14 +388,16 @@ namespace nux
       return gpu_info_->Support_EXT_Texture_Rectangle();
     }
 
-    bool SUPPORT_GL_ARB_TEXTURE_RECTANGLE()    const
+    bool SUPPORT_GL_ARB_TEXTURE_RECTANGLE()  const
     {
       return gpu_info_->Support_ARB_Texture_Rectangle();
     }
-    
-  private:
 
-    // 
+  private:
+    //
+    int _glsl_version_major;  //!< GLSL major version.
+    int _glsl_version_minor;  //!< GLSL major version.
+
     int opengl_major_;  //!< OpenGL major version.
     int opengl_minor_;  //!< OpenGL minor version.
 
@@ -477,7 +409,6 @@ namespace nux
     bool use_pixel_buffer_object_;
     unsigned int pixel_store_alignment_;
     std::vector<PixelBufferObject> _PixelBufferArray;
-
 
     bool OGL_EXT_SWAP_CONTROL;
     bool GL_ARB_VERTEX_PROGRAM;
@@ -498,7 +429,7 @@ namespace nux
     GpuInfo* gpu_info_;
 
   public:
-    
+
     ObjectPtr<IOpenGLTexture2D> backup_texture0_;
 
 #if defined(NUX_OS_WINDOWS)
@@ -534,7 +465,6 @@ namespace nux
           bool opengl_es_20 = false);
     #endif
 #endif
-    
     ~GpuDevice();
     friend class IOpenGLSurface;
     friend class GraphicsEngine;
@@ -543,4 +473,3 @@ namespace nux
 }
 
 #endif // GLDEVICEFACTORY_H
-

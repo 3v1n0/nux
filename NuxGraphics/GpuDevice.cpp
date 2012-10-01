@@ -217,6 +217,7 @@ namespace nux
 
     // See: http://developer.nvidia.com/object/General_FAQ.html
     // The value of GL_MAX_TEXTURE_UNITS is 4 for GeForce FX and GeForce 6 Series GPUs. Why is that, since those GPUs have 16 texture units?
+    CHECKGL(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &_opengl_max_texture_size));
     CHECKGL(glGetIntegerv(GL_MAX_TEXTURE_UNITS, &_opengl_max_texture_units));
     CHECKGL(glGetIntegerv(GL_MAX_TEXTURE_COORDS, &_opengl_max_texture_coords));
     CHECKGL(glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS_ARB, &_opengl_max_texture_image_units));
@@ -310,7 +311,7 @@ namespace nux
   {
     gpu_brand_            = GPU_VENDOR_UNKNOWN;
 
-#ifndef NUX_OPENGLES_20    
+#ifndef NUX_OPENGLES_20
     // OpenGL extension initialization
     GLenum Glew_Ok = 0;
     Glew_Ok = Glew_Ok;  // Suppress compiler warning about set but not used variable.
@@ -613,7 +614,7 @@ namespace nux
 
 //     _DeviceWidth = DeviceWidth;
 //     _DeviceHeight = DeviceHeight;
-// 
+//
 //     _ViewportX = 0;
 //     _ViewportY = 0;
 //     _ViewportWidth = DeviceWidth;
@@ -669,18 +670,9 @@ namespace nux
 
   ObjectPtr<IOpenGLFrameBufferObject> GpuDevice::CreateFrameBufferObject()
   {
-    IOpenGLFrameBufferObject *ptr;
-    CreateFrameBufferObject((IOpenGLFrameBufferObject **) &ptr);
-    ObjectPtr<IOpenGLFrameBufferObject> h = ObjectPtr<IOpenGLFrameBufferObject> (ptr);
-    ptr->UnReference();
-    return h;
-  }
-
-  int GpuDevice::CreateFrameBufferObject(IOpenGLFrameBufferObject **ppFrameBufferObject)
-  {
-    *ppFrameBufferObject = new IOpenGLFrameBufferObject(NUX_TRACKER_LOCATION);
-
-    return OGL_OK;
+    ObjectPtr<IOpenGLFrameBufferObject> result;
+    result.Adopt(new IOpenGLFrameBufferObject(NUX_TRACKER_LOCATION));
+    return result;
   }
 
   int GpuDevice::GetOpenGLMajorVersion() const
@@ -810,7 +802,7 @@ namespace nux
     CHECKGL(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0));
     return pBits;
 #else
-	return NULL;
+  return NULL;
 #endif
   }
 

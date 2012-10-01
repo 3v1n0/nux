@@ -33,83 +33,37 @@
 
 namespace nux
 {
-
   static STREAMSOURCE _StreamSource[MAX_NUM_STREAM];
 
   ObjectPtr<IOpenGLVertexBuffer> GpuDevice::CreateVertexBuffer(int Length,
       VBO_USAGE Usage)
   {
-    IOpenGLVertexBuffer *ptr;
-    CreateVertexBuffer(Length, Usage, (IOpenGLVertexBuffer **) &ptr);
-    ObjectPtr<IOpenGLVertexBuffer> h = ObjectPtr<IOpenGLVertexBuffer> (ptr);
-    ptr->UnReference();
-    return h;
+    ObjectPtr<IOpenGLVertexBuffer> result;
+    result.Adopt(new IOpenGLVertexBuffer(Length, Usage, NUX_TRACKER_LOCATION));
+    return result;
   }
 
-  int GpuDevice::CreateVertexBuffer(unsigned int Length,
-      VBO_USAGE Usage,
-      IOpenGLVertexBuffer **ppVertexBuffer)
+  ObjectPtr<IOpenGLIndexBuffer> GpuDevice::CreateIndexBuffer(int Length, VBO_USAGE Usage
+      , INDEX_FORMAT Format)
   {
-    *ppVertexBuffer = new IOpenGLVertexBuffer(Length, Usage, NUX_TRACKER_LOCATION);
-
-    return OGL_OK;
-  }
-
-  ObjectPtr<IOpenGLIndexBuffer> GpuDevice::CreateIndexBuffer(
-    int Length
-    , VBO_USAGE Usage    // Dynamic or WriteOnly
-    , INDEX_FORMAT Format)
-  {
-    IOpenGLIndexBuffer *ptr;
-    CreateIndexBuffer(Length, Usage, Format, (IOpenGLIndexBuffer **) &ptr);
-    ObjectPtr<IOpenGLIndexBuffer> h = ObjectPtr<IOpenGLIndexBuffer> (ptr);
-    ptr->UnReference();
-    return h;
-  }
-
-  int GpuDevice::CreateIndexBuffer(unsigned int Length,
-                                          VBO_USAGE Usage,
-                                          INDEX_FORMAT Format,
-                                          IOpenGLIndexBuffer **ppIndexBuffer)
-  {
-    *ppIndexBuffer = new IOpenGLIndexBuffer(Length, Usage, Format, NUX_TRACKER_LOCATION);
-
-    return OGL_OK;
+    ObjectPtr<IOpenGLIndexBuffer> result;
+    result.Adopt(new IOpenGLIndexBuffer(Length, Usage, Format, NUX_TRACKER_LOCATION));
+    return result;
   }
 
   ObjectPtr<IOpenGLPixelBufferObject> GpuDevice::CreatePixelBufferObject(int Size, VBO_USAGE Usage)
   {
-    IOpenGLPixelBufferObject *ptr;
-    CreatePixelBufferObject(Size, Usage, (IOpenGLPixelBufferObject **) &ptr);
-    ObjectPtr<IOpenGLPixelBufferObject> h = ObjectPtr<IOpenGLPixelBufferObject> (ptr);
-    ptr->UnReference();
-    return h;
-  }
-
-  int GpuDevice::CreatePixelBufferObject(int Size, VBO_USAGE Usage,
-      IOpenGLPixelBufferObject **ppPixelBufferObject)
-  {
-    *ppPixelBufferObject = new IOpenGLPixelBufferObject(Size, Usage, NUX_TRACKER_LOCATION);
-
-    return OGL_OK;
+    ObjectPtr<IOpenGLPixelBufferObject> result;
+    result.Adopt(new IOpenGLPixelBufferObject(Size, Usage, NUX_TRACKER_LOCATION));
+    return result;
   }
 
   ObjectPtr<IOpenGLVertexDeclaration> GpuDevice::CreateVertexDeclaration(
     const VERTEXELEMENT *pVertexElements)
   {
-    IOpenGLVertexDeclaration *ptr;
-    CreateVertexDeclaration(pVertexElements, (IOpenGLVertexDeclaration **) &ptr);
-    ObjectPtr<IOpenGLVertexDeclaration> h = ObjectPtr<IOpenGLVertexDeclaration> (ptr);
-    ptr->UnReference();
-    return h;
-  }
-
-  int GpuDevice::CreateVertexDeclaration(const VERTEXELEMENT *pVertexElements,
-      IOpenGLVertexDeclaration **ppDecl)
-  {
-    *ppDecl = new IOpenGLVertexDeclaration(pVertexElements);
-
-    return OGL_OK;
+    ObjectPtr<IOpenGLVertexDeclaration> result;
+    result.Adopt(new IOpenGLVertexDeclaration(pVertexElements));
+    return result;
   }
 
   void GpuDevice::InvalidateVertexBuffer()
@@ -142,9 +96,8 @@ namespace nux
     while (VertexDeclaration->_declarations_array[decl].Stream != 0xFF)
     {
       VERTEXELEMENT vtxelement = VertexDeclaration->_declarations_array[decl];
-
       int shader_attribute_location = VertexDeclaration->GetVertexShaderAttributeLocation(decl);
-      
+
       if (shader_attribute_location == -1)
       {
         ++decl;
@@ -152,9 +105,8 @@ namespace nux
       }
 
       VertexDeclaration->GetVertexBuffer(vtxelement.Stream)->BindVertexBuffer();
-
       glEnableVertexAttribArrayARB(shader_attribute_location);
-      
+
       CHECKGL(glVertexAttribPointer(shader_attribute_location,
         vtxelement.NumComponent,
         vtxelement.Type,
@@ -180,19 +132,19 @@ namespace nux
 //         case PRIMITIVE_TYPE_POINTLIST:
 //           ElementCount = PrimitiveCount;
 //           break;
-// 
+//
 //         case PRIMITIVE_TYPE_LINELIST:
 //           ElementCount = PrimitiveCount * 2;
 //           break;
-// 
+//
 //         case PRIMITIVE_TYPE_LINESTRIP:
 //           ElementCount = PrimitiveCount + 1;
 //           break;
-// 
+//
 //         case PRIMITIVE_TYPE_TRIANGLELIST:
 //           ElementCount = PrimitiveCount * 3;
 //           break;
-// 
+//
 //         case PRIMITIVE_TYPE_TRIANGLEFAN:
 //         case PRIMITIVE_TYPE_TRIANGLESTRIP:
 //           ElementCount = PrimitiveCount + 2;
@@ -236,14 +188,14 @@ namespace nux
 #ifndef NUX_OPENGLES_20
 // Draw Primitive without index buffer
   int GpuDevice::DrawPrimitive(ObjectPtr<IOpenGLVertexDeclaration> VertexDeclaration,
-                                      PRIMITIVE_TYPE PrimitiveType,
-                                      unsigned vtx_start_,
-                                      unsigned PrimitiveCount)
+      PRIMITIVE_TYPE PrimitiveType,
+      unsigned vtx_start_,
+      unsigned PrimitiveCount)
   {
 //     return OGL_OK;
 //     glDisable(GL_CULL_FACE);
 //     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-// 
+//
 //     // Maps a vertex declaration usage to a vertex shader input index.
 //     // I want to make this a static array defined outside of this function but their seems to be a problem
 //     // with initialization...
@@ -269,63 +221,63 @@ namespace nux
 //       2,   // ATTRIB_USAGE_DECL_TANGENT
 //       3,   // ATTRIB_USAGE_DECL_BINORMAL
 //     };
-// 
+//
 //     nuxAssert(VertexDeclaration.IsValid());
-// 
+//
 //     if (!VertexDeclaration.IsValid())
 //       return OGL_ERROR;
-// 
+//
 //     int decl = 0;
-// 
+//
 //     for (int i = 0; i < 16; i++)
 //       VertexDeclaration->_valid_vertex_input[i] = 0;
-// 
+//
 //     while (VertexDeclaration->_declarations_array[decl].Stream != 0xFF)
 //     {
 //       VERTEXELEMENT vtxelement = VertexDeclaration->_declarations_array[decl];
 //       int vtxInput = sVertexInputMap[vtxelement.Usage + vtxelement.UsageIndex];
-// 
+//
 //       nuxAssert(vtxInput < GetGpuInfo().GetMaxFboAttachment());
 //       // Eneble the vertex attribute(0 to 10)
 //       glEnableVertexAttribArrayARB( vtxInput );
 //       // Bind the vertex buffer
 //       _StreamSource[vtxelement.Stream].VertexBuffer->BindVertexBuffer();
-// 
+//
 //       CHECKGL(glVertexAttribPointer(vtxInput,
 //                                        vtxelement.NumComponent,
 //                                        vtxelement.Type,
 //                                        GL_FALSE,
 //                                        _StreamSource[vtxelement.Stream].StreamStride,
 //                                        (GLvoid *) (&_StreamSource[vtxelement.Stream].StreamOffset + vtxelement.Offset)));
-// 
+//
 //       VertexDeclaration->_valid_vertex_input[sVertexInputMap[vtxelement.Usage + vtxelement.UsageIndex]] = 1;
 //       decl++;
 //     }
-// 
+//
 //     {
 //       InvalidateIndexBuffer();
-// 
+//
 //       GLenum primitive = PrimitiveType;
 //       int ElementCount = 0;
-// 
+//
 //       switch(PrimitiveType)
 //       {
 //         case PRIMITIVE_TYPE_POINTLIST:
 //           ElementCount = PrimitiveCount;
 //           break;
-// 
+//
 //         case PRIMITIVE_TYPE_LINELIST:
 //           ElementCount = PrimitiveCount * 2;
 //           break;
-// 
+//
 //         case PRIMITIVE_TYPE_LINESTRIP:
 //           ElementCount = PrimitiveCount + 1;
 //           break;
-// 
+//
 //         case PRIMITIVE_TYPE_TRIANGLELIST:
 //           ElementCount = PrimitiveCount * 3;
 //           break;
-// 
+//
 //         case PRIMITIVE_TYPE_TRIANGLEFAN:
 //         case PRIMITIVE_TYPE_TRIANGLESTRIP:
 //           ElementCount = PrimitiveCount + 2;
@@ -335,23 +287,23 @@ namespace nux
 //           nuxAssertMsg(0, "[GpuDevice::DrawPrimitive] Unknown Primitive Type.");
 //           return OGL_ERROR;
 //       }
-// 
+//
 //       CHECKGL(glDrawArrays(primitive,
 //                               ElementCount,
 //                               vtx_start_));
 //     }
-// 
+//
 //     {
 //       for (int index = 0; index < 16; index++)
 //       {
 //         if (VertexDeclaration->_valid_vertex_input[index])
 //           glDisableVertexAttribArrayARB( index );
 //       }
-// 
+//
 //       InvalidateVertexBuffer();
 //       InvalidateIndexBuffer();
 //     }
-// 
+//
 //     //    for (int i = 0; i < 8; i++)
 //     //    {
 //     //        CHECKGL(glClientActiveTexture(GL_TEXTURE0 + i));
@@ -365,55 +317,55 @@ namespace nux
     return OGL_OK;
   }
 
-// Draw Primitive without index buffer, and use a user pointer for the source of the stream.
+  // Draw Primitive without index buffer, and use a user pointer for the source of the stream.
   int GpuDevice::DrawPrimitiveUP(ObjectPtr<IOpenGLVertexDeclaration> VertexDeclaration,
-                                        PRIMITIVE_TYPE PrimitiveType,
-                                        unsigned int PrimitiveCount,
-                                        const void *pVertexStreamZeroData,
-                                        unsigned int VertexStreamZeroStride)
+      PRIMITIVE_TYPE PrimitiveType,
+      unsigned int PrimitiveCount,
+      const void *pVertexStreamZeroData,
+      unsigned int VertexStreamZeroStride)
   {
 //     nuxAssertMsg(VertexDeclaration->IsUsingMoreThanStreamZero(), "[GpuDevice::DrawPrimitiveUP] Declaration is using more than stream 0.");
 //     VERTEXELEMENT vtxelement = VertexDeclaration->GetUsage(ATTRIB_USAGE_DECL_POSITION);
 //     int Stream = vtxelement.Stream;
-// 
+//
 //     if (Stream != 0xFF)
 //     {
 //       glDisable(GL_CULL_FACE);
 //       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-// 
+//
 //       InvalidateVertexBuffer();
 //       InvalidateVertexBuffer();
-// 
+//
 //       size_t ptr = * (size_t *) pVertexStreamZeroData + _StreamSource[vtxelement.Stream].StreamOffset;
 //       CHECKGL(glEnableClientState(GL_VERTEX_ARRAY));
 //       CHECKGL(glVertexPointer( vtxelement.NumComponent,
 //                                   vtxelement.Type,
 //                                   VertexStreamZeroStride,
 //                                   (GLvoid *) &ptr));
-// 
+//
 //       InvalidateIndexBuffer();
-// 
+//
 //       GLenum primitive = PrimitiveType;
 //       int ElementCount = 0;
-// 
+//
 //       switch(PrimitiveType)
 //       {
 //         case PRIMITIVE_TYPE_POINTLIST:
 //           ElementCount = PrimitiveCount;
 //           break;
-// 
+//
 //         case PRIMITIVE_TYPE_LINELIST:
 //           ElementCount = PrimitiveCount * 2;
 //           break;
-// 
+//
 //         case PRIMITIVE_TYPE_LINESTRIP:
 //           ElementCount = PrimitiveCount + 1;
 //           break;
-// 
+//
 //         case PRIMITIVE_TYPE_TRIANGLELIST:
 //           ElementCount = PrimitiveCount * 3;
 //           break;
-// 
+//
 //         case PRIMITIVE_TYPE_TRIANGLEFAN:
 //         case PRIMITIVE_TYPE_TRIANGLESTRIP:
 //           ElementCount = PrimitiveCount + 2;
@@ -423,15 +375,15 @@ namespace nux
 //           nuxAssertMsg(0, "[GpuDevice::DrawPrimitiveUP] Unknown Primitive Type.");
 //           return OGL_ERROR;
 //       }
-// 
+//
 //       CHECKGL(glDrawArrays(primitive,
 //                               ElementCount,
 //                               0));
-// 
+//
 //       CHECKGL(glDisableClientState(GL_VERTEX_ARRAY));
-// 
+//
 //     }
-// 
+//
 //     //    for (int i = 0; i < 8; i++)
 //     //    {
 //     //        CHECKGL(glClientActiveTexture(GL_TEXTURE0 + i));
@@ -495,5 +447,4 @@ namespace nux
 
     return OGL_OK;
   }
-
 }
