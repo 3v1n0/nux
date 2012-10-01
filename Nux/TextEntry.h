@@ -208,13 +208,10 @@ namespace nux
     */
     void DeleteText(int start, int end);
 
-    void SetPasswordMode(bool visible)
-    {
-      SetVisibility(visible);
-    }
+    void SetPasswordMode(bool visible);
     void SetVisibility(bool visible);
     void SetPasswordChar(const char* c);
-    bool IsPasswordMode() const;
+    bool PasswordMode() const;
     std::string GetPasswordChar();
 
   protected:
@@ -417,7 +414,7 @@ namespace nux
      */
     int cursor_blink_status_;
 
-    /** Whether the text is visible, decided by password_char_ */
+    /*! Whether the text is visible, or its characters are masked by a default char (password mode). */
     bool visible_;
     /** Whether the edit control is focused */
     bool focused_;

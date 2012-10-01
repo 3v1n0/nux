@@ -30,7 +30,6 @@ namespace nux
 //
   TCHAR *Strncpy (TCHAR *Dest, size_t Size, const TCHAR *Src, size_t MaxLen)
   {
-    nuxAssert (MaxLen >= 0);
     STRNCPY_S (Dest, Size, Src, MaxLen);
     Dest[MaxLen] = 0;
     return Dest;
@@ -150,14 +149,9 @@ namespace nux
 
     size_t len = StringLength (str);
 
-    if (len >= 0)
-    {
-      TCHAR *res = new TCHAR[len+1];
-      Strncpy (res, len + 1, str, len);
-      return res;
-    }
-
-    return 0;
+    TCHAR *res = new TCHAR[len+1];
+    Strncpy (res, len + 1, str, len);
+    return res;
   }
 
 //! Duplicate a null terminated ANSICHAR string using new[]. The resulting string is NULL terminated. Use delete[] to destroy.
@@ -531,7 +525,7 @@ namespace nux
     NString rev;
     size_t l = Length();
 
-    for (size_t i = l - 1; i >= 0; i--)
+    for (int i = l - 1; i >= 0; i--)
     {
       rev += m_string[i];
     }
@@ -757,7 +751,7 @@ namespace nux
 
   bool NString::IsSuffix (const TCHAR &suffix)
   {
-    size_t l = m_string.length() - 1;
+    int l = m_string.length() - 1;
 
     if (l < 0)
       return false;
@@ -767,7 +761,7 @@ namespace nux
     if (pos == tstring::npos)
       return false;
 
-    return (pos == l);
+    return (pos == (size_t)l);
   }
 
   bool NString::IsSuffix (const TCHAR *suffix)
@@ -777,7 +771,7 @@ namespace nux
     if (sl == 0)
       return false;
 
-    size_t l = m_string.length() - sl;
+    int l = m_string.length() - sl;
 
     if (l < 0)
       return false;
@@ -787,7 +781,7 @@ namespace nux
     if (pos == tstring::npos)
       return false;
 
-    return (pos == l);
+    return (pos == (size_t)l);
   }
 
 //! Return True is the the string is terminated by the tstring 'suffix'
@@ -798,7 +792,7 @@ namespace nux
     if (sl == 0)
       return false;
 
-    size_t l = m_string.length() - sl;
+    int l = m_string.length() - sl;
 
     if (l < 0)
       return false;
@@ -808,7 +802,7 @@ namespace nux
     if (pos == tstring::npos)
       return false;
 
-    return (pos == l);
+    return (pos == (size_t)l);
   }
 
 //! Return True is the the string is terminated by the NString 'suffix'
@@ -819,7 +813,7 @@ namespace nux
     if (sl == 0)
       return false;
 
-    size_t l = m_string.length() - sl;
+    int l = m_string.length() - sl;
 
     if (l < 0)
       return false;
@@ -829,13 +823,13 @@ namespace nux
     if (pos == tstring::npos)
       return false;
 
-    return (pos == l);
+    return (pos == (size_t)l);
   }
 
 //! Return True if the string start with the character contained in prefix
   bool NString::IsPrefix (const TCHAR &prefix)
   {
-    size_t l = m_string.length() - 1;
+    int l = m_string.length() - 1;
 
     if (l < 0)
       return false;
@@ -976,14 +970,11 @@ namespace nux
 
   NString NString::GetSubString (size_t count) const
   {
-    nuxAssert (count >= 0);
     return NString (m_string.substr (0, count) );
   }
 
   NString NString::GetSubString (size_t start, size_t count) const
   {
-    nuxAssert (start >= 0);
-    nuxAssert (count >= 0);
     return NString (m_string.substr (start, count) );
   }
 
@@ -1040,7 +1031,7 @@ namespace nux
 
   NString NString::TrimRight() const
   {
-    size_t L = Length() - 1;
+    int L = Length() - 1;
 
     while (0 <= L)
     {
@@ -1094,7 +1085,7 @@ namespace nux
 
   NString NString::TrimRight (NString str) const
   {
-    size_t L = Length();
+    int L = Length();
 
     if (L == 0)
       return *this;

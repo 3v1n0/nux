@@ -216,4 +216,24 @@ TEST(TestObject, TestObjectSignal) {
   EXPECT_TRUE(g_signal_called);
 }
 
+TEST(TestObject, TestObjectAdoptUnOwned) {
+
+  UnOwnedObject* obj = new UnOwnedObject(NUX_TRACKER_LOCATION);
+  EXPECT_THAT(obj->OwnsTheReference(), Eq(false));
+  nux::ObjectPtr<UnOwnedObject> obj_smart_ptr;
+  obj_smart_ptr.Adopt(obj);
+  EXPECT_THAT(obj->GetReferenceCount(), Eq(1));
+  EXPECT_THAT(obj->ObjectPtrCount(), Eq(1));
+  EXPECT_THAT(obj->OwnsTheReference(), Eq(true));
+}
+
+TEST(TestObject, TestObjectAdoptOwned) {
+
+  OwnedObject* obj = new OwnedObject(NUX_TRACKER_LOCATION);
+  EXPECT_THAT(obj->OwnsTheReference(), Eq(true));
+  nux::ObjectPtr<OwnedObject> obj_smart_ptr;
+  obj_smart_ptr.Adopt(obj);
+  EXPECT_THAT(obj->GetReferenceCount(), Eq(1));
+  EXPECT_THAT(obj->ObjectPtrCount(), Eq(1));
+}
 }

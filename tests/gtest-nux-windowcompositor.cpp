@@ -126,10 +126,9 @@ struct TestWindowCompositor : public testing::Test
   }
 
   void GetAreaUnderMouse(const Point& mouse_position, NuxEventType event_type,
-                         ObjectWeakPtr<InputArea>& area,
-                         ObjectWeakPtr<BaseWindow>& window)
+                         ObjectWeakPtr<InputArea>& area)
   {
-    return nux::GetWindowCompositor().GetAreaUnderMouse(mouse_position, event_type, area, window);
+    return nux::GetWindowCompositor().FindAreaUnderMouse(mouse_position, event_type, area);
   }
 
   void FindKeyFocusArea(NuxEventType event_type, unsigned int key_symbol,
@@ -550,32 +549,27 @@ TEST_F(TestWindowCompositor, MouseOwnerAreaAutomaticallyUnsets)
 TEST_F(TestWindowCompositor, GetAreaUnderMouse)
 {
   ObjectWeakPtr<InputArea> area;
-  ObjectWeakPtr<BaseWindow> window;
 
   TestBaseWindow* test_win = new TestBaseWindow();
 
-  GetAreaUnderMouse(Point(1, 2), NUX_MOUSE_MOVE, area, window);
+  GetAreaUnderMouse(Point(1, 2), NUX_MOUSE_MOVE, area);
 
   EXPECT_EQ(area.GetPointer(), test_win->input_area.GetPointer());
-  EXPECT_EQ(window.GetPointer(), test_win);
 
   test_win->UnReference();
   EXPECT_EQ(area.GetPointer(), nullptr);
-  EXPECT_EQ(window.GetPointer(), nullptr);
 }
 
 TEST_F(TestWindowCompositor, GetAreaUnderMouseFallback)
 {
   ObjectWeakPtr<InputArea> area;
-  ObjectWeakPtr<BaseWindow> window;
 
   TestHLayout* layout = new TestHLayout();
   wnd_thread->SetLayout(layout);
 
-  GetAreaUnderMouse(Point(1, 2), NUX_MOUSE_MOVE, area, window);
+  GetAreaUnderMouse(Point(1, 2), NUX_MOUSE_MOVE, area);
 
   EXPECT_EQ(area.GetPointer(), layout->input_area.GetPointer());
-  EXPECT_EQ(window.GetPointer(), nullptr);
 
   wnd_thread->SetLayout(nullptr);
   layout->UnReference();

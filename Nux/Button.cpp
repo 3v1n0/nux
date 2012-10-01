@@ -360,13 +360,6 @@ namespace nux
       ref_style = eBUTTON_NORMAL;
     }
 
-    const PainterImage *pimage = GetTheme().GetImage(ref_style);
-    BaseTexture* texture = NULL;
-    if (pimage != NULL)
-    {
-      texture = pimage->texture;
-    }
-
     TexCoordXForm texxform;
     ROPConfig rop;
     rop.Blend = true;

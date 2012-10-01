@@ -662,15 +662,15 @@ namespace nux
 
     GpuRenderStates& GetRenderStates()
     {
-      return *_graphics_display.m_DeviceFactory->_gpu_render_states;
+      return *_graphics_display.m_DeviceFactory->gpu_render_states_;
     }
     void ResetRenderStates()
     {
-      _graphics_display.m_DeviceFactory->_gpu_render_states->ResetStateChangeToDefault();
+      _graphics_display.m_DeviceFactory->gpu_render_states_->ResetStateChangeToDefault();
     }
     void VerifyRenderStates()
     {
-      _graphics_display.m_DeviceFactory->_gpu_render_states->CheckStateChange();
+      _graphics_display.m_DeviceFactory->gpu_render_states_->CheckStateChange();
     }
 
     ObjectPtr<FontTexture> GetFont();
@@ -1016,8 +1016,8 @@ namespace nux
     ObjectPtr<IOpenGLShaderProgram> blend_color_tex_prog_[LAYER_BLEND_MODE_LAST];
     ObjectPtr<IOpenGLShaderProgram> blend_tex_tex_prog_[LAYER_BLEND_MODE_LAST];
     
-    const char* const GetBlendModeBlendFunc(LayerBlendMode layer_blend_mode);
-    const char* const GetBlendModeString(LayerBlendMode layer_blend_mode);
+    const char* GetBlendModeBlendFunc(LayerBlendMode layer_blend_mode);
+    const char* GetBlendModeString(LayerBlendMode layer_blend_mode);
     
     ObjectPtr <IOpenGLShaderProgram> GetColorBlendOverTexProgram(LayerBlendMode layer_blend_mode);
     ObjectPtr <IOpenGLShaderProgram> GetTexBlendOverColorProgram(LayerBlendMode layer_blend_mode);

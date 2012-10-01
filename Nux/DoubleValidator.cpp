@@ -118,9 +118,8 @@ namespace nux
     return d;
   }
 
-  void DoubleValidator::Alternative(const char *str)
+  void DoubleValidator::Alternative(const char * /* str */)
   {
-    str = "0.0";
   }
 
   void DoubleValidator::SetDecimals(int dec)

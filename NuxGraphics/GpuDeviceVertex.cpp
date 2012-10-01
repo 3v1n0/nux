@@ -108,11 +108,11 @@ namespace nux
       glEnableVertexAttribArrayARB(shader_attribute_location);
 
       CHECKGL(glVertexAttribPointer(shader_attribute_location,
-          vtxelement.NumComponent,
-          vtxelement.Type,
-          GL_FALSE,
-          vtxelement.stride_,
-          (void*)vtxelement.Offset));
+        vtxelement.NumComponent,
+        vtxelement.Type,
+        GL_FALSE,
+        vtxelement.stride_,
+        (void*)&vtxelement.Offset));
 
       VertexDeclaration->_valid_vertex_input[shader_attribute_location] = 1;
       ++decl;

@@ -661,7 +661,7 @@ TEST_F(TestTextEntry, CompositionSequencesInput)
 TEST_F(TestTextEntry, PasswordMode)
 {
   text_entry->SetPasswordMode(true);
-  EXPECT_TRUE(text_entry->IsPasswordMode());
+  EXPECT_TRUE(text_entry->PasswordMode());
   
   text_entry->SetPasswordChar("*");
   EXPECT_EQ(text_entry->GetPasswordChar(), std::string("*"));
@@ -670,7 +670,7 @@ TEST_F(TestTextEntry, PasswordMode)
   EXPECT_EQ(text_entry->GetText(), std::string("Nux"));
 
   text_entry->SetPasswordMode(false);
-  EXPECT_FALSE(text_entry->IsPasswordMode());
+  EXPECT_FALSE(text_entry->PasswordMode());
 }
 
 #endif

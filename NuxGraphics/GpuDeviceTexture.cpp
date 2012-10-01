@@ -39,7 +39,8 @@ namespace nux
     , BitmapFormat PixelFormat
     , NUX_FILE_LINE_DECL)
   {
-    int msz = GetGpuInfo().GetMaxTextureSize();
+    GpuInfo gpu_info = GetGpuInfo();
+    int msz = gpu_info.GetMaxTextureSize();
     if(Width <= 0 || Height <= 0 || Width > msz || Height > msz)
     {
       return ObjectPtr<IOpenGLTexture2D>();
@@ -73,7 +74,8 @@ namespace nux
     , BitmapFormat pixel_format
     , NUX_FILE_LINE_DECL)
   {
-    int msz = GetGpuInfo().GetMaxTextureSize();
+    GpuInfo gpu_info = GetGpuInfo();
+    int msz = gpu_info.GetMaxTextureSize();
     if(width <= 0 || height <=0 || width > msz || height > msz)
     {
       return ObjectPtr<IOpenGLTexture2D>();
@@ -91,7 +93,8 @@ namespace nux
     , BitmapFormat PixelFormat
     , NUX_FILE_LINE_DECL)
   {
-    int msz = GetGpuInfo().GetMaxTextureSize();
+    GpuInfo gpu_info = GetGpuInfo();
+    int msz = gpu_info.GetMaxTextureSize();
     if(Width <= 0 || Height <= 0 || Width > msz || Height > msz)
     {
       return ObjectPtr<IOpenGLRectangleTexture>();
@@ -154,7 +157,8 @@ namespace nux
     , BitmapFormat PixelFormat
     , NUX_FILE_LINE_DECL)
   {
-    int msz = GetGpuInfo().GetMaxTextureSize();
+    GpuInfo gpu_info = GetGpuInfo();
+    int msz = gpu_info.GetMaxTextureSize();
     if(Width <= 0 || Height <= 0 || Width > msz || Height > msz)
     {
       return ObjectPtr<IOpenGLVolumeTexture>();
@@ -187,7 +191,8 @@ namespace nux
     , int Depth
     , BitmapFormat PixelFormat)
   {
-    int msz = GetGpuInfo().GetMaxTextureSize();
+    GpuInfo gpu_info = GetGpuInfo();
+    int msz = gpu_info.GetMaxTextureSize();
     if(Width <= 0 || Height <= 0 || Width > msz || Height > msz)
     {
       return ObjectPtr<IOpenGLAnimatedTexture>();
