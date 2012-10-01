@@ -154,8 +154,7 @@ void TestingThread(nux::NThread* /* thread */, void* user_data)
 
 int main()
 {
-  int xstatus = XInitThreads();
-  nuxAssertMsg(xstatus > 0, "XInitThreads has failed");
+  XInitThreads();
 
   button_event_test = new ButtonEventsTest("Events Test", 300, 300, 30000);
   button_event_test->Startup();

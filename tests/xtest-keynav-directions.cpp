@@ -166,8 +166,7 @@ void TestingThread(nux::NThread* /* thread */, void* user_data)
 
 int main()
 {
-  int xstatus = XInitThreads();
-  nuxAssertMsg(xstatus > 0, "XInitThreads has failed");
+  XInitThreads();
 
   keynav_direction_test = new KeyNavDirectionTest("Automated: KeyNav Directions", 300, 300, 15000);
   keynav_direction_test->Startup();

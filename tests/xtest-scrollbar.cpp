@@ -115,8 +115,7 @@ void TestingThread(nux::NThread* /* thread */, void* user_data)
 
 int main()
 {
-  int xstatus = XInitThreads();
-  nuxAssertMsg(xstatus > 0, "XInitThreads has failed");
+  XInitThreads();
 
   scrollbar_test = new ScrollBarTest("Scrollbar Test", 500, 400, 13000);
   scrollbar_test->Startup();

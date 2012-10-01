@@ -152,10 +152,9 @@ namespace nux
       return 0;
   }
 
-  bool NFileManagerGeneric::MakeDirectory (const TCHAR *Path, bool CreateCompletePath)
+  bool NFileManagerGeneric::MakeDirectory (const TCHAR *Path, bool /* CreateCompletePath */)
   {
     // Support code for making a directory tree.
-    nuxAssert (CreateCompletePath);
     unsigned int SlashCount = 0, CreateCount = 0;
 
     for (TCHAR Full[256] = TEXT (""), *Ptr = Full; ; *Ptr++ = *Path++)
@@ -180,9 +179,8 @@ namespace nux
     return CreateCount != 0;
   }
 
-  bool NFileManagerGeneric::DeleteDirectory (const TCHAR *Path, bool DeleteContentFirst)
+  bool NFileManagerGeneric::DeleteDirectory (const TCHAR *Path, bool /* DeleteContentFirst */)
   {
-    nuxAssert (DeleteContentFirst);
     nuxAssert (Path != NULL);
 
     size_t PathLength = StringLength (Path);

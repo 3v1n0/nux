@@ -212,10 +212,9 @@ namespace nux
       geo.height);
   }
 
-  void IBusIMEContext::OnConnected(IBusBus *bus)
+  void IBusIMEContext::OnConnected(IBusBus * /* bus */)
   {
     //nuxDebugMsg("***IBusIMEContext::OnConnected***");
-    nuxAssert(bus_ == bus);
     if (ibus_bus_is_connected(bus_))
     {
       DestroyContext();
@@ -240,10 +239,9 @@ namespace nux
     }
   }
 
-  void IBusIMEContext::OnCommitText(IBusInputContext *context, IBusText* text)
+  void IBusIMEContext::OnCommitText(IBusInputContext * /* context */, IBusText* text)
   {
     //nuxDebugMsg("***IBusIMEContext::OnCommitText::%s***", text->text);
-    nuxAssert(context_ == context);
 
     text_entry_->DeleteSelection();
 
@@ -260,10 +258,9 @@ namespace nux
     }
   }
 
-  void IBusIMEContext::OnUpdatePreeditText(IBusInputContext* context, IBusText* text, guint /* cursor_pos */, gboolean visible)
+  void IBusIMEContext::OnUpdatePreeditText(IBusInputContext* /* context */, IBusText* text, guint /* cursor_pos */, gboolean visible)
   {
     //nuxDebugMsg("***IBusIMEContext::OnUpdatePreeditText***");
-    nuxAssert(context_ == context);
     nuxAssert(IBUS_IS_TEXT(text));
 
     if (text_entry_->preedit_.empty())
@@ -327,44 +324,39 @@ namespace nux
     }
   }
 
-  void IBusIMEContext::OnShowPreeditText(IBusInputContext *context)
+  void IBusIMEContext::OnShowPreeditText(IBusInputContext * /* context */)
   {
     //nuxDebugMsg("***IBusIMEContext::OnShowPreeditText***");
-    nuxAssert(context_ == context);
   }
 
-  void IBusIMEContext::OnHidePreeditText(IBusInputContext *context)
+  void IBusIMEContext::OnHidePreeditText(IBusInputContext * /* context */)
   {
     //nuxDebugMsg("***IBusIMEContext::OnHidePreeditText***");
-    nuxAssert(context_ == context);
 
     text_entry_->ResetPreedit();
     text_entry_->QueueRefresh (true, true);
   }
 
-  void IBusIMEContext::OnEnable(IBusInputContext *context)
+  void IBusIMEContext::OnEnable(IBusInputContext * /* context */)
   {
     //nuxDebugMsg("***IBusIMEContext::OnEnable***");
-    nuxAssert(context_ == context);
 
     text_entry_->ime_active_ = true;
     text_entry_->text_changed.emit(text_entry_);
     UpdateCursorLocation();
   }
 
-  void IBusIMEContext::OnDisable(IBusInputContext *context)
+  void IBusIMEContext::OnDisable(IBusInputContext * /* context */)
   {
     //nuxDebugMsg("***IBusIMEContext::OnDisable***");
-    nuxAssert(context_ == context);
     text_entry_->ime_active_ = false;
     text_entry_->ResetPreedit();
     text_entry_->QueueRefresh (true, true);
   }
 
-  void IBusIMEContext::OnDestroy(IBusInputContext *context)
+  void IBusIMEContext::OnDestroy(IBusInputContext * /* context */)
   {
     //nuxDebugMsg("***IBusIMEContext::OnDestroy***");
-    nuxAssert(context_ == context);
 
     g_object_unref(context_);
     context_ = NULL;

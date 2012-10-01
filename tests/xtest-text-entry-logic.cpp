@@ -138,8 +138,7 @@ void TestingThread(nux::NThread* /* thread */, void* user_data)
 
 int main()
 {
-  int xstatus = XInitThreads();
-  nuxAssertMsg(xstatus > 0, "XInitThreads has failed");
+  XInitThreads();
 
   test_textentry = new TestTextEntry("Text Entry", 600, 200, 10000);
   test_textentry->Startup();

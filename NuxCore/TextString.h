@@ -477,6 +477,7 @@ namespace nux
 #if defined(NUX_OS_WINDOWS)
     size_t res = _snscanf_s (buffer, bufferlen, format, &value);
 #elif defined(NUX_OS_LINUX)
+    bufferlen = bufferlen; // Stop unused param warning in release mode.
     size_t res = sscanf (buffer, format, &value);
 #endif
 
