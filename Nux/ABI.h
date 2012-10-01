@@ -9,7 +9,7 @@
 // So far there is no provision for more than one break in a day.
 
 
-#define NUX_ABIVERSION 20120917.01
+#define NUX_ABIVERSION 20120928.01
 
 
 
