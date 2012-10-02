@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Inalogic® Inc.
+ * Copyright 2010, 2012 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -31,12 +31,11 @@ namespace nux
 
   View::View(NUX_FILE_LINE_DECL)
   : InputArea(NUX_FILE_LINE_PARAM)
-//   , redirect_rendering_to_texture_(false)
-//   , update_backup_texture_(false)
+  , m_TextColor(1.0f, 1.0f, 1.0f, 1.0f)
+  , view_layout_(nullptr)
+  , draw_cmd_queued_(false)
+  , child_draw_cmd_queued_(false)
   {
-    view_layout_      = NULL;
-    draw_cmd_queued_  = false;
-    m_TextColor       = Color(1.0f, 1.0f, 1.0f, 1.0f);
   }
 
   View::~View()
