@@ -29,6 +29,7 @@ class MockController : public na::Controller
 {
   MOCK_METHOD1(AddAnimation, void(na::Animation*));
   MOCK_METHOD1(RemoveAnimation, void(na::Animation*));
+  MOCK_CONST_METHOD0(HasRunningAnimations, bool());
 };
 
 TEST(TestAnimationController, CreatingControllerSetsInstance) {
@@ -123,6 +124,29 @@ public:
 
 };
 
+
+TEST(TestAnimationController, HasRunningAnimations) {
+
+  na::TickSource source;
+  MockAnimationController controller(source);
+
+  ASSERT_FALSE(controller.HasRunningAnimations());
+
+  NiceMock<MockAnimation> animation1;
+  NiceMock<MockAnimation> animation2;
+  controller.AddAnimation(&animation1);
+  controller.AddAnimation(&animation2);
+  ASSERT_FALSE(controller.HasRunningAnimations());
+
+  animation1.Start();
+  ASSERT_TRUE(controller.HasRunningAnimations());
+
+  animation1.Pause();
+  ASSERT_FALSE(controller.HasRunningAnimations());
+
+  animation1.Stop();
+  ASSERT_FALSE(controller.HasRunningAnimations());
+}
 
 TEST(TestAnimation, TestInitialState)
 {

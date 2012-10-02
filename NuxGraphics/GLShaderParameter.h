@@ -50,8 +50,8 @@ namespace nux
   {
   public:
     int                      m_Index;                  // Register m_Index / Attribute m_Index
-    eShaderParameterType        m_ShaderParameterType;
-    NString                     m_Name;
+    eShaderParameterType       m_ShaderParameterType;
+    std::string                m_Name;
     bool                       m_bIsOptional;
     bool                       m_bIsStatic;
     bool                       bStaticSet;

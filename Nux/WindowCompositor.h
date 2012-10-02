@@ -121,9 +121,22 @@ namespace nux
     sigc::signal<void, BaseWindow*> sigHiddenViewWindow;    //!< Signal emitted when the BaseWindow becomes hidden.
 
   private:
+    /*** Helper functions for MouseEventCycle() ***/
+    void UpdateKeyNavFocusOnMouseDown();
+    /* Keeps track of mouse movement and emits mouse_move and mouse_drag
+       accordingly. */
+    void TrackMouseMovement(const Event &event, bool area_under_mouse_changed);
+    /* Updates mouse_over_area_ and emits mouse_enter and mouse_leave signals
+       accordingly. Returns whether mouse_over_area_ has changed */
+    bool UpdateWhatAreaIsUnderMouse(const Event& event);
+    /* Processes NUX_MOUSEWHEEL events */
+    void ProcessMouseWheelEvent(Event& event);
+    /* Updates mouse_owner_area_ and emits mouse_down, mouse_up, mouse_click
+       and mouse_double_click accordingly. */
+    void UpdateMouseOwner(const Event& event, bool area_under_mouse_changed);
 
     //! Traverse the widget tree and found the area that is right below the mouse pointer.
-    void GetAreaUnderMouse(const Point& mouse_position,
+    void FindAreaUnderMouse(const Point& mouse_position,
                            NuxEventType event_type,
                            ObjectWeakPtr<InputArea>& area_under_mouse_pointer);
     void GetAreaUnderMouse(const Point& mouse_position,

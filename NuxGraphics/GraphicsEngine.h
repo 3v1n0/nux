@@ -662,15 +662,15 @@ namespace nux
 
     GpuRenderStates& GetRenderStates()
     {
-      return *_graphics_display.m_DeviceFactory->_gpu_render_states;
+      return *_graphics_display.m_DeviceFactory->gpu_render_states_;
     }
     void ResetRenderStates()
     {
-      _graphics_display.m_DeviceFactory->_gpu_render_states->ResetStateChangeToDefault();
+      _graphics_display.m_DeviceFactory->gpu_render_states_->ResetStateChangeToDefault();
     }
     void VerifyRenderStates()
     {
-      _graphics_display.m_DeviceFactory->_gpu_render_states->CheckStateChange();
+      _graphics_display.m_DeviceFactory->gpu_render_states_->CheckStateChange();
     }
 
     ObjectPtr<FontTexture> GetFont();

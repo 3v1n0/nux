@@ -28,19 +28,19 @@ namespace nux
 
   class IOpenGLResource;
 
-  bool ExtractShaderString3(const NString &ShaderToken, const NString &ShaderSource, NString &RetSource, NString ShaderPreprocessorDefines = NString(""));
+  bool ExtractShaderString3(const std::string &ShaderToken, const std::string &ShaderSource, std::string &RetSource, std::string ShaderPreprocessorDefines = std::string(""));
 
   class IOpenGLShader:  public IOpenGLResource
   {
     NUX_DECLARE_OBJECT_TYPE(IOpenGLShader, IOpenGLResource);
-    IOpenGLShader(NString ShaderName, OpenGLResourceType ResourceType);
+    IOpenGLShader(std::string ShaderName, OpenGLResourceType ResourceType);
     virtual ~IOpenGLShader();
   public:
     virtual void SetShaderCode(const ANSICHAR *ShaderCode, const char *ShaderPreprocessorDefines = "") = 0;
     virtual bool Compile() = 0;
     virtual bool IsValid() = 0;
-    NString _ShaderName;
-    NString _ShaderCode;
+    std::string _ShaderName;
+    std::string _ShaderCode;
   };
 
   class IOpenGLVertexShader:  public IOpenGLShader
@@ -52,7 +52,7 @@ namespace nux
     virtual bool Compile();
     virtual bool IsValid();
   private:
-    IOpenGLVertexShader(NString ShaderName = NString("Vertex Shader"));
+    IOpenGLVertexShader(std::string ShaderName = std::string("Vertex Shader"));
     int m_CompiledAndReady;
     friend class GpuDevice;
   };
@@ -66,7 +66,7 @@ namespace nux
     virtual bool Compile();
     virtual bool IsValid();
   private:
-    IOpenGLPixelShader(NString ShaderName = NString("Fragment Shader"));
+    IOpenGLPixelShader(std::string ShaderName = std::string("Fragment Shader"));
     int m_CompiledAndReady;
     friend class GpuDevice;
   };
@@ -86,7 +86,7 @@ namespace nux
     void SetMaxVertexOutput(int max_vertex_output);
 
   private:
-    IOpenGLGeometryShader(NString ShaderName = NString("Geometry Shader"));
+    IOpenGLGeometryShader(std::string ShaderName = std::string("Geometry Shader"));
     int m_CompiledAndReady;
     friend class GpuDevice;
   };
@@ -207,11 +207,11 @@ namespace nux
     int GetAttributeLocation(const char *AttributeName);
 
   private:
-    IOpenGLShaderProgram(NString ShaderProgramName = NString("ShaderProgram"));
+    IOpenGLShaderProgram(std::string ShaderProgramName = std::string("ShaderProgram"));
     ShaderAttributeDefinition m_ProgramAttributeDefinition[16/*NUM_VERTEX_SHADER_INPUT_ATTRIBUTE*/];
     std::vector<ObjectPtr<IOpenGLShader> > ShaderObjectList;
     bool m_CompiledAndReady;
-    NString _ShaderProgramName;
+    std::string _ShaderProgramName;
     friend class GpuDevice;
   };
 

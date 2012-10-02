@@ -207,7 +207,13 @@ namespace nux
     /*!
         @return The reference count of this object.
     */
-    int GetReferenceCount () const;
+    int GetReferenceCount() const;
+
+    //! Get the number of ObjectPtr holding this object.
+    /*!
+        @return The number of ObjectPtr holding this object.
+    */
+    int ObjectPtrCount() const;
 
     //! Signal emitted immediately before the object is destroyed.
     sigc::signal <void, Object *> object_destroyed;

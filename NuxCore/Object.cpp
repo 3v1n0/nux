@@ -388,10 +388,15 @@ bool debug_object_allocation_stack()
 #endif
   }
 
-  int Object::GetReferenceCount() const
-  {
-    return reference_count_->GetValue();
-  }
+int Object::GetReferenceCount() const
+{
+  return reference_count_->GetValue();
+}
+
+int Object::ObjectPtrCount() const
+{
+  return objectptr_count_->GetValue();
+}
 
 std::string Object::GetAllocationLocation() const
 {
