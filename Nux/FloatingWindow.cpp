@@ -207,21 +207,6 @@ namespace nux
     GetPainter().PopBackground();
   }
 
-  void FloatingWindow::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-    if (force_draw == false)
-    {
-      return;
-    }
-
-    if ((IsVisibleSizeGrip() == true) && (IsSizeMatchContent() == false))
-    {
-      // Do not draw the size grip if the window is constrained by the size of the container layout.
-      Geometry geo = _resize_handle->GetGeometry();
-      graphics_engine.QRP_Triangle(geo.x + geo.width, geo.y, geo.x, geo.y + geo.height, geo.x + geo.width, geo.y + geo.height, Color(0xFF999999));
-    }
-  }
-
   void FloatingWindow::EnableTitleBar(bool b)
   {
     m_hasTitleBar = b;

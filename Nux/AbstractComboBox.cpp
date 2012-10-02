@@ -105,11 +105,6 @@ namespace nux
 
   }
 
-  void AbstractComboBox::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
   void AbstractComboBox::RecvMouseEnter(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();

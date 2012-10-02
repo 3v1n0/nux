@@ -73,11 +73,6 @@ namespace nux
 
   }
 
-  void TextureArea::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
   void TextureArea::SetTexture(BaseTexture *texture)
   {
     NUX_RETURN_IF_NULL(texture);

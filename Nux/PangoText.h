@@ -41,7 +41,6 @@ namespace nux
 
     void SetText(NString text);
     void SetTextColor(Color textColor);
-    
 
     sigc::signal<void, PangoText*> sigTextChanged;
     sigc::signal<void, PangoText*> sigTextColorChanged;
@@ -52,7 +51,6 @@ namespace nux
 
     void Draw(GraphicsEngine& gfxContext, bool forceDraw);
     void DrawContent(GraphicsEngine& gfxContext, bool forceDraw);
-    void PostDraw(GraphicsEngine& gfxContext, bool forceDraw);
 
     void GetTextExtents(int &width, int &height);
 

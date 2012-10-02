@@ -278,11 +278,6 @@ namespace nux
       GetPainter().PopBackgroundStack();
   }
 
-  void ScrollView::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
 /////////
 // API //
 /////////

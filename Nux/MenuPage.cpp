@@ -344,15 +344,10 @@ namespace nux
 
   }
 
-  void MenuPage::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
   void MenuPage::SetFontName(char *font_name)
   {
     std::vector<MenuItem *>::iterator it;
-    
+
     for (it = m_MenuItemVector.begin(); it != m_MenuItemVector.end(); ++it)
     {
       (*it)->GetStaticText()->SetFontName(font_name);

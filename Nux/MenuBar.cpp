@@ -180,11 +180,6 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void MenuBar::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
   void MenuBar::AddMenu(const char *MenuLabel, MenuPage *menu)
   {
     NUX_RETURN_IF_NULL(menu);

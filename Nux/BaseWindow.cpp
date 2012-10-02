@@ -146,11 +146,6 @@ namespace nux
     GetPainter().PopBackground();
   }
 
-  void BaseWindow::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
   void BaseWindow::SetConfigureNotifyCallback(ConfigureNotifyCallback Callback, void *Data)
   {
     m_configure_notify_callback = Callback;

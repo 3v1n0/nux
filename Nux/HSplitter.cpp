@@ -179,11 +179,6 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void HSplitter::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
   void HSplitter::OverlayDrawing(GraphicsEngine &graphics_engine)
   {
     unsigned int num_element = (unsigned int) m_SplitterObject.size();

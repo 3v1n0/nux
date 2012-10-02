@@ -89,11 +89,6 @@ namespace nux
     m_EditLine->ProcessDraw(graphics_engine, force_draw);
   }
 
-  void NumericValuator::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
   void NumericValuator::SetValue(float value)
   {
     m_fValue = value;

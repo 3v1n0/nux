@@ -126,11 +126,6 @@ namespace nux
 
   }
 
-  void PangoText::PostDraw(GraphicsEngine& gfxContext, bool forceDraw)
-  {
-    // intentionally left empty
-  }
-
   void PangoText::SetText(NString text)
   {
     if (_text != text)

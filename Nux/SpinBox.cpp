@@ -126,11 +126,6 @@ namespace nux
     m_EditLine->ProcessDraw(graphics_engine, force_draw);
   }
 
-  void SpinBox::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
   void SpinBox::SetValue(int value)
   {
     m_iValue = m_IntValidator.GetClampedValue(value);

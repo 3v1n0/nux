@@ -39,7 +39,6 @@ namespace nux
     void DrawMarker(GraphicsEngine &graphics_engine);
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     /////////////////
     //  RECEIVERS  //
