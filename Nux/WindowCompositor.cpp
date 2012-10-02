@@ -537,6 +537,7 @@ namespace
 
           UpdateKeyNavFocusOnMouseDown();
 
+          _mouse_position_on_owner = Point(hit_view_x, hit_view_y);
           if (event.type == NUX_MOUSE_DOUBLECLICK
                    && mouse_over_area_->DoubleClickEnabled()
                    && !area_under_mouse_changed)
@@ -597,6 +598,7 @@ namespace
 
         if (mouse_owner_area_.IsValid() && mouse_over_area_ == mouse_owner_area_)
         {
+          _mouse_position_on_owner = Point(mouse_owner_x, mouse_owner_y);
           mouse_owner_area_->EmitMouseClickSignal(mouse_owner_x, mouse_owner_y,
                                                   event.GetMouseState(),
                                                   event.GetKeyState());
