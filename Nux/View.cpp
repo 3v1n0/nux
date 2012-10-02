@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Inalogic® Inc.
+ * Copyright 2010, 2012 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -35,8 +35,6 @@ namespace nux
   , view_layout_(nullptr)
   , draw_cmd_queued_(false)
   , child_draw_cmd_queued_(false)
-//   , redirect_rendering_to_texture_(false)
-//   , update_backup_texture_(false)
   {
   }
 
