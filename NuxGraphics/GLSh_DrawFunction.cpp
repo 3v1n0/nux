@@ -128,7 +128,7 @@ namespace nux
     background_color_ = color;
   }
 
-  void GLSh_DrawFunction::Render(int x, int y, int z, int width, int height, int WindowWidth, int WindowHeight)
+  void GLSh_DrawFunction::Render(int x, int y, int z, int width, int height, int /* WindowWidth */, int WindowHeight)
   {
     float fx = x, fy = y;
     float VtxBuffer[] =

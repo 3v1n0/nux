@@ -202,7 +202,7 @@ TEST(TestObject, TestObjectPtr2) {
 
 bool g_signal_called = false;
 
-void on_destroyed_cb (nux::Object *obj)
+void on_destroyed_cb (nux::Object * /* obj */)
 {
   g_signal_called = true;
 }

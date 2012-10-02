@@ -80,7 +80,7 @@ namespace nux
   {
   }
 
-  void SpinBox::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void SpinBox::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
     GetPainter().PaintBackground(graphics_engine, base);
@@ -126,7 +126,7 @@ namespace nux
     m_EditLine->ProcessDraw(graphics_engine, force_draw);
   }
 
-  void SpinBox::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
+  void SpinBox::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }

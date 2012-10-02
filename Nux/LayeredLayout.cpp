@@ -236,19 +236,19 @@ namespace nux
   }
 
   void LayeredLayout::AddLayout(Layout                *layout,
-                                unsigned int           stretch_factor,
-                                MinorDimensionPosition positioning,
-                                MinorDimensionSize     extend,
-                                float                  percentage)
+                                unsigned int           /* stretch_factor */,
+                                MinorDimensionPosition /* positioning */,
+                                MinorDimensionSize     /* extend */,
+                                float                  /* percentage */)
   {
     AddLayer(layout);
   }
 
   void LayeredLayout::AddView(Area                  *view,
-                              unsigned int           stretch_factor,
-                              MinorDimensionPosition positioning,
-                              MinorDimensionSize     extend,
-                              float                  percentage)
+                              unsigned int           /* stretch_factor */,
+                              MinorDimensionPosition /* positioning */,
+                              MinorDimensionSize     /* extend */,
+                              float                  /* percentage */)
   {
     AddLayer(view);
   }
@@ -266,12 +266,12 @@ namespace nux
     Layout::Clear();
   }
 
-  void LayeredLayout::ChildQueueDraw(Area *area)
+  void LayeredLayout::ChildQueueDraw(Area * /* area */)
   {
     m_child_draw_queued = true;
   }
 
-  void LayeredLayout::ChildVisibilityChanged(Area *area, bool visible)
+  void LayeredLayout::ChildVisibilityChanged(Area * /* area */, bool /* visible */)
   {
     QueueDraw();
   }

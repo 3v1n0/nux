@@ -50,7 +50,7 @@ namespace nux
     m_CaptionArea->Dispose();
   }
 
-  void GroupBox2::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void GroupBox2::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     graphics_engine.PushClippingRectangle(GetGeometry());
 
@@ -103,7 +103,7 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void GroupBox2::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
+  void GroupBox2::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }
@@ -140,7 +140,7 @@ namespace nux
     }
   }
 
-  long GroupBox2::PostLayoutManagement(long LayoutResult)
+  long GroupBox2::PostLayoutManagement(long /* LayoutResult */)
   {
     // A Group box must tightly group its children.
     // So it must embrace the size that was compute for the composition layout.

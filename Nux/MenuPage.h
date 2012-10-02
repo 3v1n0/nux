@@ -56,8 +56,8 @@ namespace nux
 
   private:
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw) {};
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw) {};
+    virtual void DrawContent(GraphicsEngine & /* graphics_engine */, bool /* force_draw */) {};
+    virtual void PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */) {};
 
     void SetChildMenu(MenuPage *menu);
     MenuPage *GetChildMenu() const;
@@ -77,8 +77,8 @@ namespace nux
     ~MenuSeparator();
 
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw) {};
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw) {};
+    virtual void DrawContent(GraphicsEngine & /* graphics_engine */, bool /* force_draw */) {};
+    virtual void PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */) {};
 
   private:
     friend class MenuPage;

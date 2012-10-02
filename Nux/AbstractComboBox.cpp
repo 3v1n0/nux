@@ -64,7 +64,7 @@ namespace nux
     _pango_static_text = 0;
   }
 
-  void AbstractComboBox::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void AbstractComboBox::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
     
@@ -100,22 +100,22 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void AbstractComboBox::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
+  void AbstractComboBox::DrawContent(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }
 
-  void AbstractComboBox::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
+  void AbstractComboBox::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }
 
-  void AbstractComboBox::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void AbstractComboBox::RecvMouseEnter(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();
   }
 
-  void AbstractComboBox::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void AbstractComboBox::RecvMouseLeave(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();
   }

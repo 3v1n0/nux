@@ -78,7 +78,7 @@ void EventsTest::UserInterfaceSetup()
 
 EventsTest* event_test = NULL;
 
-void TestingThread(nux::NThread* thread, void* user_data)
+void TestingThread(nux::NThread* /* thread */, void* user_data)
 {
   while (event_test->ReadyToGo() == false)
   {
@@ -134,10 +134,9 @@ void TestingThread(nux::NThread* thread, void* user_data)
   nuxDebugMsg("Exit testing thread");
 }
 
-int main(int argc, char** argv)
+int main()
 {
-  int xstatus = XInitThreads();
-  nuxAssertMsg(xstatus > 0, "XInitThreads has failed");
+  XInitThreads();
 
   event_test = new EventsTest("Events Test", 300, 300, 20000);
   event_test->Startup();

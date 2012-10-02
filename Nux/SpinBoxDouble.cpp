@@ -83,7 +83,7 @@ namespace nux
     m_vlayout = new VLayout(NUX_TRACKER_LOCATION);
   }
 
-  void SpinBoxDouble::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void SpinBoxDouble::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
     GetPainter().PaintBackground(graphics_engine, base);
@@ -129,7 +129,7 @@ namespace nux
     m_EditLine->ProcessDraw(graphics_engine, force_draw);
   }
 
-  void SpinBoxDouble::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
+  void SpinBoxDouble::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }

@@ -611,13 +611,13 @@ namespace nux
         This signal is only meant to inform that the size is about to change. When overriding this function,
         don't do anything that could change the size of this object. Or you risk creating an infinite loop.
     */
-    virtual void GeometryChangePending(bool position_about_to_change, bool size_about_to_change) {}
+    virtual void GeometryChangePending(bool /* position_about_to_change */, bool /* size_about_to_change */) {}
     
     /*!
         This signal is only meant to inform that the size has changed. When overriding this function,
         don't do anything that could change the size of this object. Or you risk creating an infinite loop.
     */
-    virtual void GeometryChanged(bool position_has_changed, bool size_has_changed) {}
+    virtual void GeometryChanged(bool /* position_has_changed */, bool /* size_has_changed */) {}
 
     //! Request a Layout recompute after a change of size
     /*

@@ -1322,7 +1322,7 @@ namespace
 //                                             window_thread_->GetGraphicsEngine().GetWindowHeight());
   }
 
-  void WindowCompositor::DrawOverlay(bool force_draw)
+  void WindowCompositor::DrawOverlay(bool /* force_draw */)
   {
     ObjectWeakPtr<BaseWindow> window = m_OverlayWindow;
     int buffer_width = window_thread_->GetGraphicsEngine().GetWindowWidth();
@@ -1347,7 +1347,7 @@ namespace
     //GetGraphicsDisplay()->GetGraphicsEngine()->SetContext(0, 0, buffer_width, buffer_height);
   }
 
-  void WindowCompositor::DrawTooltip(bool force_draw)
+  void WindowCompositor::DrawTooltip(bool /* force_draw */)
   {
     ObjectWeakPtr<BaseWindow> window = _tooltip_window;
     int buffer_width = window_thread_->GetGraphicsEngine().GetWindowWidth();
@@ -1573,7 +1573,7 @@ namespace
 
   }
 
-  void WindowCompositor::PresentBufferToScreen(ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground, float opacity, bool premultiply)
+  void WindowCompositor::PresentBufferToScreen(ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool /* BluredBackground */, float opacity, bool premultiply)
   {
     nuxAssert(HWTexture.IsValid());
 
@@ -1927,7 +1927,7 @@ namespace
     }
   }
 
-  void WindowCompositor::FormatRenderTargets(int width, int height)
+  void WindowCompositor::FormatRenderTargets(int /* width */, int /* height */)
   {
     int buffer_width = window_thread_->GetGraphicsEngine().GetWindowWidth();
     int buffer_height = window_thread_->GetGraphicsEngine().GetWindowHeight();

@@ -101,7 +101,7 @@ TEST_F(TestArea, TestAreaGeometry)
 }
 
 static bool object_destroyed = false;
-void OnObjectDestroyed(nux::Object* object)
+void OnObjectDestroyed(nux::Object* /* object */)
 {
   object_destroyed = true;
 }

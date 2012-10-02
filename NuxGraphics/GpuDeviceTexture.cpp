@@ -67,7 +67,7 @@ namespace nux
     return result;
   }
 
-  ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture2DFromID(int id
+  ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture2DFromID(int /* id */
     , int width
     , int height
     , int levels
@@ -125,9 +125,9 @@ namespace nux
     int EdgeLength
     , int Levels
     , BitmapFormat PixelFormat
-    , NUX_FILE_LINE_DECL)
+    , const char * /* __Nux_FileName__ */
+    , int /* __Nux_LineNumber__ */)
   {
-
     unsigned int NumTotalMipLevel = 1 + floorf(Log2(EdgeLength));
     unsigned int NumMipLevel = 0;
 
@@ -155,7 +155,8 @@ namespace nux
     , int Depth
     , int Levels
     , BitmapFormat PixelFormat
-    , NUX_FILE_LINE_DECL)
+    , const char * /* __Nux_FileName__ */
+    , int /* __Nux_LineNumber__ */)
   {
     GpuInfo gpu_info = GetGpuInfo();
     int msz = gpu_info.GetMaxTextureSize();

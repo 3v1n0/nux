@@ -42,7 +42,7 @@ class GesturalWindow : public FloatingWindow
 
   virtual ~GesturalWindow() {}
 
-  virtual GestureDeliveryRequest GestureEvent(const nux::GestureEvent &event)
+  virtual GestureDeliveryRequest GestureEvent(const nux::GestureEvent & /* event */)
   {
     std::cout << "GesturalWindow got GestureEvent "
               << ++event_count << "\n";
@@ -54,7 +54,7 @@ class GesturalWindow : public FloatingWindow
 };
 NUX_IMPLEMENT_OBJECT_TYPE(GesturalWindow);
 
-int GesturesEventInspector(Area* area, Event* event, void* data)
+int GesturesEventInspector(Area* /* area */, Event* event, void* /* data */)
 {
   if (event->type < EVENT_GESTURE_BEGIN || event->type > EVENT_GESTURE_END)
     return false;
@@ -73,7 +73,7 @@ int GesturesEventInspector(Area* area, Event* event, void* data)
   return false;
 }
 
-void UserInterfaceInitialization(NThread* thread, void* InitData)
+void UserInterfaceInitialization(NThread* /* thread */, void* /* InitData */)
 {
   window = new GesturalWindow(TEXT("Gestural Window"), NUX_TRACKER_LOCATION);
   window->SetBaseXY(100, 20);

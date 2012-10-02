@@ -188,7 +188,7 @@ namespace nux
     //--->> Removed because it cause problem with The splitter widget: ComputeContentSize();
   }
 
-  void LinearLayout::AddSpace(unsigned int width, unsigned int stretchFactor, LayoutPosition index)
+  void LinearLayout::AddSpace(unsigned int /* width */, unsigned int stretchFactor, LayoutPosition /* index */)
   {
     AddLayout(new SpaceLayout(), stretchFactor);
   }

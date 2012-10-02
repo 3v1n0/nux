@@ -136,7 +136,7 @@ namespace nux
     }
 
 
-    inline void SetTexture( const GLuint textureId )
+    inline void SetTexture( const GLuint /* textureId */)
     {
       //CHECKGL(glUniform1iARB( m_Index, textureId ));
       //CHECKGL(cgGLEnableTextureParameter( CgParameter ));

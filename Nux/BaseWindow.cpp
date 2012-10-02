@@ -111,7 +111,7 @@ namespace nux
     return this;
   }
 
-  void BaseWindow::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void BaseWindow::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
     // The elements position inside the window are referenced to top-left window corner. So bring base to(0, 0).
@@ -146,7 +146,7 @@ namespace nux
     GetPainter().PopBackground();
   }
 
-  void BaseWindow::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
+  void BaseWindow::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }
@@ -218,7 +218,7 @@ namespace nux
 
 // Get a change to do any work on an element.
 // Here we need to position the header by hand because it is not under the control of vlayout.
-  long BaseWindow::PostLayoutManagement(long LayoutResult)
+  long BaseWindow::PostLayoutManagement(long /* LayoutResult */)
   {
     if (IsSizeMatchContent() && m_layout)
     {
@@ -239,7 +239,7 @@ namespace nux
 
 // Get a change to do any work on an element.
 // Here we need to position the header by hand because it is not under the control of vlayout.
-  void BaseWindow::ComputeContentPosition(float offsetX, float offsetY)
+  void BaseWindow::ComputeContentPosition(float /* offsetX */, float /* offsetY */)
   {
 
   }
@@ -410,7 +410,7 @@ namespace nux
     return _is_modal;
   }
 
-  void BaseWindow::NotifyConfigurationChange(int Width, int Height)
+  void BaseWindow::NotifyConfigurationChange(int /* Width */, int /* Height */)
   {
     Geometry geo = GetGeometry();
 

@@ -148,7 +148,7 @@ namespace nux
     return OGL_OK;
   }
 
-  unsigned int IOpenGLTexture2D::EnableGammaCorrection(bool b)
+  unsigned int IOpenGLTexture2D::EnableGammaCorrection(bool /* b */)
   {
     nuxAssert(_OpenGLID);
     return OGL_OK;

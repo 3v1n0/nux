@@ -29,7 +29,7 @@ void TimeOutCallback(void *data)
   thread->ExitMainLoop();
 }
 
-void UserInterfaceInitialization(nux::NThread* thread, void* init_data)
+void UserInterfaceInitialization(nux::NThread* thread, void* /* init_data */)
 {
 
   nux::ColorLayer background(nux::Color(0xFF4D4D4D));
@@ -40,7 +40,7 @@ void UserInterfaceInitialization(nux::NThread* thread, void* init_data)
   static_cast<nux::WindowThread*>(thread)->GetTimerHandler().AddOneShotTimer(1000, timeout_signal, thread, NULL);
 }
 
-int main(int argc, char **argv)
+int main()
 {
   // Initialize Nux subsystem
   nux::NuxInitialize (0);

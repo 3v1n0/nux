@@ -104,7 +104,7 @@ namespace nux
       bool   operator <= ( FileTimeStamp &Other ) const;
     };
 
-    virtual void Init (bool Startup) {}
+    virtual void Init (bool /* Startup */) {}
     virtual NSerializer *CreateFileReader ( const TCHAR *Filename, DWORD ReadFlags = 0, LogOutputDevice &Error = GNullDevice ) = 0;
     virtual NSerializer *CreateFileWriter ( const TCHAR *Filename, DWORD WriteFlags = 0, LogOutputDevice &Error = GNullDevice ) = 0;
     //! Return TRUE if the file exist.

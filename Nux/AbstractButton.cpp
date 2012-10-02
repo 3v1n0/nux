@@ -71,7 +71,7 @@ namespace nux
     return visual_state_;
   }
 
-  void AbstractButton::RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void AbstractButton::RecvMouseUp(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (IsMousePointerInside())
     {
@@ -87,7 +87,7 @@ namespace nux
     QueueDraw();
   }
 
-  void AbstractButton::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void AbstractButton::RecvMouseDown(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     visual_state_ = VISUAL_STATE_PRESSED;
     mouse_pressed_ = true;
@@ -95,12 +95,12 @@ namespace nux
     QueueDraw();
   }
 
-  void AbstractButton::RecvMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void AbstractButton::RecvMouseMove(int /* x */, int /* y */, int /* dx */, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
 
   }
 
-  void AbstractButton::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void AbstractButton::RecvMouseEnter(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (mouse_pressed_)
     {
@@ -115,7 +115,7 @@ namespace nux
     QueueDraw();
   }
 
-  void AbstractButton::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void AbstractButton::RecvMouseLeave(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     visual_state_ = VISUAL_STATE_NORMAL;
     visual_state_change.emit(this);

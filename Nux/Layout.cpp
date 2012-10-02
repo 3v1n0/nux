@@ -351,7 +351,7 @@ namespace nux
     //--->> Removed because it cause problem with The splitter widget: ComputeContentSize();
   }
 
-  void Layout::AddSpace(unsigned int width, unsigned int stretchFactor, LayoutPosition index)
+  void Layout::AddSpace(unsigned int /* width */, unsigned int stretchFactor, LayoutPosition /* index */)
   {
     AddLayout(new SpaceLayout(), stretchFactor);
   }
@@ -704,7 +704,7 @@ namespace nux
     graphics_engine.PushModelViewMatrix(Matrix4::TRANSLATE(x_offset, y_offset, 0));
   }
 
-  void Layout::EndBackupTextureRendering(GraphicsEngine& graphics_engine, bool force_draw)
+  void Layout::EndBackupTextureRendering(GraphicsEngine& graphics_engine, bool /* force_draw */)
   {
     graphics_engine.PopModelViewMatrix();
 
@@ -777,7 +777,7 @@ namespace nux
     return m_ContentStacking;
   }
 
-  void Layout::RequestBottomUpLayoutComputation(Area *bo_initiator)
+  void Layout::RequestBottomUpLayoutComputation(Area * /* bo_initiator */)
   {
 
   }
@@ -825,13 +825,13 @@ namespace nux
     update_backup_texture_ = false;
   }
 
-  void Layout::GeometryChangePending(bool position_about_to_change, bool size_about_to_change)
+  void Layout::GeometryChangePending(bool /* position_about_to_change */, bool /* size_about_to_change */)
   {
     if (IsLayoutDone())
       QueueDraw();
   }
 
-  void Layout::GeometryChanged(bool position_has_changed, bool size_has_changed)
+  void Layout::GeometryChanged(bool /* position_has_changed */, bool size_has_changed)
   {
     if (RedirectedAncestor())
     {

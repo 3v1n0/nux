@@ -187,10 +187,10 @@ namespace nux
 
 #ifndef NUX_OPENGLES_20
 // Draw Primitive without index buffer
-  int GpuDevice::DrawPrimitive(ObjectPtr<IOpenGLVertexDeclaration> VertexDeclaration,
-      PRIMITIVE_TYPE PrimitiveType,
-      unsigned vtx_start_,
-      unsigned PrimitiveCount)
+  int GpuDevice::DrawPrimitive(ObjectPtr<IOpenGLVertexDeclaration> /* VertexDeclaration */,
+                                      PRIMITIVE_TYPE /* PrimitiveType */,
+                                      unsigned /* vtx_start_ */,
+                                      unsigned /* PrimitiveCount */)
   {
 //     return OGL_OK;
 //     glDisable(GL_CULL_FACE);
@@ -317,12 +317,12 @@ namespace nux
     return OGL_OK;
   }
 
-  // Draw Primitive without index buffer, and use a user pointer for the source of the stream.
-  int GpuDevice::DrawPrimitiveUP(ObjectPtr<IOpenGLVertexDeclaration> VertexDeclaration,
-      PRIMITIVE_TYPE PrimitiveType,
-      unsigned int PrimitiveCount,
-      const void *pVertexStreamZeroData,
-      unsigned int VertexStreamZeroStride)
+// Draw Primitive without index buffer, and use a user pointer for the source of the stream.
+  int GpuDevice::DrawPrimitiveUP(ObjectPtr<IOpenGLVertexDeclaration> /* VertexDeclaration */,
+                                        PRIMITIVE_TYPE /* PrimitiveType */,
+                                        unsigned int /* PrimitiveCount */,
+                                        const void * /* pVertexStreamZeroData */,
+                                        unsigned int /* VertexStreamZeroStride */)
   {
 //     nuxAssertMsg(VertexDeclaration->IsUsingMoreThanStreamZero(), "[GpuDevice::DrawPrimitiveUP] Declaration is using more than stream 0.");
 //     VERTEXELEMENT vtxelement = VertexDeclaration->GetUsage(ATTRIB_USAGE_DECL_POSITION);

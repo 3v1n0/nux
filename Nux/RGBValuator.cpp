@@ -394,7 +394,7 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void RGBValuator::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void RGBValuator::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
 
@@ -799,7 +799,7 @@ namespace nux
     sigColorChanged.emit(rgb_.red, rgb_.green, rgb_.blue, alpha_);
   }
 
-  void RGBValuator::OnReceiveMouseDown_Red(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDown_Red(int x, int /* y */, unsigned long /* button_flags */, unsigned long key_flags)
   {
     if (m_color_model == color::RGB)
     {
@@ -859,7 +859,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseDown_Green(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDown_Green(int x, int /* y */, unsigned long /* button_flags */, unsigned long key_flags)
   {
     if (m_color_model == color::RGB)
     {
@@ -919,7 +919,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseDown_Blue(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDown_Blue(int x, int /* y */, unsigned long /* button_flags */, unsigned long key_flags)
   {
     if (m_color_model == color::RGB)
     {
@@ -979,7 +979,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseDown_Alpha(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDown_Alpha(int x, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (x < 0)
       alpha_ = 0.0f;
@@ -992,27 +992,27 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseDrag_Red(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDrag_Red(int x, int y, int /* dx */, int /* dy */, unsigned long button_flags, unsigned long key_flags)
   {
     OnReceiveMouseDown_Red(x, y, button_flags, key_flags);
   }
 
-  void RGBValuator::OnReceiveMouseDrag_Green(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDrag_Green(int x, int y, int /* dx */, int /* dy */, unsigned long button_flags, unsigned long key_flags)
   {
     OnReceiveMouseDown_Green(x, y, button_flags, key_flags);
   }
 
-  void RGBValuator::OnReceiveMouseDrag_Blue(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDrag_Blue(int x, int y, int /* dx */, int /* dy */, unsigned long button_flags, unsigned long key_flags)
   {
     OnReceiveMouseDown_Blue(x, y, button_flags, key_flags);
   }
 
-  void RGBValuator::OnReceiveMouseDrag_Alpha(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDrag_Alpha(int x, int y, int /* dx */, int /* dy */, unsigned long button_flags, unsigned long key_flags)
   {
     OnReceiveMouseDown_Alpha(x, y, button_flags, key_flags);
   }
 
-  void RGBValuator::OnReceiveMouseUp_Red       (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseUp_Red       (int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (m_color_model == color::HSV)
     {
@@ -1061,7 +1061,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseUp_Green     (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseUp_Green     (int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (m_color_model == color::HSV)
     {
@@ -1110,7 +1110,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseUp_Blue(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseUp_Blue(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (m_color_model == color::HSV)
     {
@@ -1159,12 +1159,12 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::RecvMouseDownColorModel(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::RecvMouseDownColorModel(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();
   }
 
-  void RGBValuator::OnChangeColorModel(AbstractButton* button)
+  void RGBValuator::OnChangeColorModel(AbstractButton* /* button */)
   {
     if (m_color_model == color::RGB)
     {
@@ -1194,7 +1194,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnChangeColorFormat(AbstractButton* button)
+  void RGBValuator::OnChangeColorFormat(AbstractButton* /* button */)
   {
     if (m_color_format == color::FLOAT)
     {
@@ -1211,7 +1211,7 @@ namespace nux
 
   }
 
-  void RGBValuator::OnComponentInput(EditTextBox *textbox, const NString &s, int componentIndex)
+  void RGBValuator::OnComponentInput(EditTextBox * /* textbox */, const NString &s, int componentIndex)
   {
     float f = 0;
 

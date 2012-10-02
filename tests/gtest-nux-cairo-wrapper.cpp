@@ -77,7 +77,7 @@ terminate (void* data)
 }
 
 void
-init (nux::NThread* thread, void* data)
+init (nux::NThread* /* thread */, void* data)
 {
   TestFunc func = (TestFunc) data;
 

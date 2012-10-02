@@ -77,7 +77,7 @@ void FocusOnMouseDownTest::UserInterfaceSetup()
 
 FocusOnMouseDownTest* focus_on_mouse_down_test = nullptr;
 
-void TestingThread(nux::NThread* thread, void* user_data)
+void TestingThread(nux::NThread* /* thread */, void* user_data)
 {
   while (focus_on_mouse_down_test->ReadyToGo() == false)
   {
@@ -132,10 +132,9 @@ void TestingThread(nux::NThread* thread, void* user_data)
   nuxDebugMsg("Exit testing thread");
 }
 
-int main(int argc, char** argv)
+int main()
 {
-  int xstatus = XInitThreads();
-  nuxAssertMsg(xstatus > 0, "XInitThreads has failed");
+  XInitThreads();
 
   focus_on_mouse_down_test = new FocusOnMouseDownTest("Focus On Mouse Down Test", 300, 300, 15000);
   focus_on_mouse_down_test->Startup();

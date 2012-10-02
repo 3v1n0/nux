@@ -229,7 +229,7 @@ VALUE_TYPE RWProperty<VALUE_TYPE>::DefaultGetter() const
 }
 
 template <typename VALUE_TYPE>
-bool RWProperty<VALUE_TYPE>::DefaultSetter(VALUE_TYPE const& value)
+bool RWProperty<VALUE_TYPE>::DefaultSetter(VALUE_TYPE const& /* value */)
 {
   return false;
 }
@@ -282,7 +282,7 @@ bool Introspectable::SetProperty(std::string const& name, T const& value)
 }
 
 template <typename T>
-T Introspectable::GetProperty(std::string const& name, T* foo)
+T Introspectable::GetProperty(std::string const& name, T* /* foo */)
 {
   PropertyContainer::iterator i = properties_.find(name);
   if (i == properties_.end())

@@ -362,7 +362,9 @@ namespace nux
 #define SNSCANF_S(input, length, format, ...)   _sntscanf_s(input, length, format, ##__VA_ARGS__)
 #else
 #define WCSNCPY_S(strDest, numberOfElements, strSource, count)  wcsncpy (strDest, strSource, count)
-#define STRNCPY_S(strDest, numberOfElements, strSource, count)  _tcsncpy(strDest, strSource, count)
+
+// The weird numElmt - numElmt in the expansion is to stop the compiler from complaining about unused params.
+#define STRNCPY_S(strDest, numElmt, strSource, count)  _tcsncpy(strDest, strSource, count + numElmt - numElmt)
 #define STRCPY_S(strDest, numberOfElements, strSource)          _tcscpy(strDest, strSource)
 #define STRCAT_S(strDest, numberOfElements, strSource)          _tcscat(strDest, strSource)
 

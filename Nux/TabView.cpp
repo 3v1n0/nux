@@ -176,7 +176,7 @@ namespace nux
   }
 
 
-  void TabView::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void TabView::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     if (m_DrawBackgroundOnPreviousGeometry)
     {
@@ -268,7 +268,7 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void TabView::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
+  void TabView::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }
@@ -391,12 +391,12 @@ namespace nux
     QueueDraw();
   }
 
-  void TabView::TranslateLeft(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void TabView::TranslateLeft(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     TranslateTabLayout(-5);
   }
 
-  void TabView::TranslateRight(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void TabView::TranslateRight(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     TranslateTabLayout(5);
   }
@@ -439,7 +439,7 @@ namespace nux
 
   }
 
-  void TabView::RecvTabMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags, TabElement *tab)
+  void TabView::RecvTabMouseDown(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */, TabElement *tab)
   {
     m_FocusTabIndex = tab->_index;
     _visible_tab_content_layout = tab->_tab_content_layout;
@@ -478,32 +478,32 @@ namespace nux
     QueueDraw();
   }
 
-  void TabView::RecvTabMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags, TabElement *tab)
+  void TabView::RecvTabMouseUp(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */, TabElement * /* tab */)
   {
 
   }
 
-  void TabView::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
-  {
-    QueueDraw();
-  }
-
-  void TabView::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void TabView::RecvMouseEnter(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();
   }
 
-  void TabView::RecvTabRightMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void TabView::RecvMouseLeave(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
+  {
+    QueueDraw();
+  }
+
+  void TabView::RecvTabRightMouseDown(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     RecvTabRightTimerExpired(tabright_callback);
   }
 
-  void TabView::RecvTabLeftMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void TabView::RecvTabLeftMouseDown(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     RecvTabLeftTimerExpired(tableft_callback);
   }
 
-  void TabView::RecvTabButtonMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void TabView::RecvTabButtonMouseUp(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (m_TabRightTimerHandler.IsValid())
       GetTimer().RemoveTimerHandler(m_TabRightTimerHandler);
@@ -515,13 +515,13 @@ namespace nux
     m_TabLeftTimerHandler = 0;
   }
 
-  void TabView::RecvTabRightTimerExpired(void *v)
+  void TabView::RecvTabRightTimerExpired(void * /* v */)
   {
     TranslateTabLayout(-10);
     m_TabRightTimerHandler = GetTimer().AddOneShotTimer(10, tabright_callback, this);
   }
 
-  void TabView::RecvTabLeftTimerExpired(void *v)
+  void TabView::RecvTabLeftTimerExpired(void * /* v */)
   {
     TranslateTabLayout(10);
     m_TabLeftTimerHandler = GetTimer().AddOneShotTimer(10, tableft_callback, this);

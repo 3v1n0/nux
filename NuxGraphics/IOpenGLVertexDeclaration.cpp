@@ -72,7 +72,7 @@ namespace nux
 //   }
 
 
-  VERTEXELEMENT IOpenGLVertexDeclaration::GetUsage(ATTRIB_USAGE_DECL usage)
+  VERTEXELEMENT IOpenGLVertexDeclaration::GetUsage(ATTRIB_USAGE_DECL /* usage */)
   {
     VERTEXELEMENT vtxelt;
     return vtxelt;

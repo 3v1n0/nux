@@ -267,6 +267,9 @@ bool debug_object_allocation_stack()
       allocation_stacktrace_ = logging::Backtrace();
     }
  #endif
+#else
+    __Nux_FileName__ = __Nux_FileName__;
+    __Nux_LineNumber__ = __Nux_LineNumber__;
 #endif
   }
 
