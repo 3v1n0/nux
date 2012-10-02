@@ -19,7 +19,7 @@
  */
 
 #include <Nux/Nux.h>
-#include <Nux/Flickable.h>
+#include <Nux/KineticScrollView.h>
 #include <Nux/HLayout.h>
 #include <Nux/VLayout.h>
 
@@ -27,32 +27,32 @@
 
 using namespace nux;
 
-View *CreateFlickable()
+View *CreateKineticScrollView()
 {
   VLayout *layout = new VLayout (NUX_TRACKER_LOCATION);
 
   char buffer[500];
   for (int i = 0; i < 100; i++)
   {
-    sprintf(buffer, "Flickable %d", i+1);
+    sprintf(buffer, "TestButton %d", i+1);
     Button *button = new TestButton(buffer, NUX_TRACKER_LOCATION);
     button->SetMinimumHeight(50);
 
     layout->AddView(button, 1, eLeft, eFull);
   }
 
-  Flickable *flickable = new Flickable(NUX_TRACKER_LOCATION);
-  flickable->SetLayout(layout);
-  flickable->SetScrollableDirections(ScrollableDirections::Vertical);
+  KineticScrollView *kinetic_scroll_view = new KineticScrollView(NUX_TRACKER_LOCATION);
+  kinetic_scroll_view->SetLayout(layout);
+  kinetic_scroll_view->SetScrollableDirections(ScrollableDirections::Vertical);
 
-  return flickable;
+  return kinetic_scroll_view;
 }
 
 void UserInterfaceInitialization(NThread* thread, void* InitData)
 {
 
   HLayout* mainLayout = new HLayout(NUX_TRACKER_LOCATION);
-  mainLayout->AddView(CreateFlickable(), 1, eCenter, eFull);
+  mainLayout->AddView(CreateKineticScrollView(), 1, eCenter, eFull);
 
   GetWindowThread()->SetLayout(mainLayout);
 }
@@ -62,7 +62,7 @@ int main(int argc, char **argv)
   NuxInitialize(0);
 
   WindowThread* window_thread = CreateGUIThread(
-      "Flickable Example", 640, 300, 0, &UserInterfaceInitialization, 0);
+      "KineticScrollView Example", 640, 300, 0, &UserInterfaceInitialization, 0);
 
   // Start the main loop.
   window_thread->Run(NULL);

@@ -21,12 +21,12 @@
 #ifndef NUX_KINETIC_AXIS_SCROLLER_H
 #define NUX_KINETIC_AXIS_SCROLLER_H
 
-#include "FlickableEnums.h"
+#include "KineticScrollingEnums.h"
 
 namespace nux
 {
 
-namespace flickable
+namespace kinetic_scrolling
 {
   class TickSourceInterface;
 }

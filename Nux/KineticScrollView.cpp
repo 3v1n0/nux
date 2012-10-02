@@ -20,45 +20,45 @@
 
 #include <Nux/Nux.h>
 #include <Nux/Layout.h>
-#include "Flickable.h"
+#include "KineticScrollView.h"
 
 using namespace nux;
 
-NUX_IMPLEMENT_OBJECT_TYPE(Flickable);
+NUX_IMPLEMENT_OBJECT_TYPE(KineticScrollView);
 
-Flickable::Flickable(NUX_FILE_LINE_DECL)
+KineticScrollView::KineticScrollView(NUX_FILE_LINE_DECL)
   : View(NUX_FILE_LINE_PARAM),
   mouse_pressed_on_child_(false),
   last_child_mouse_position_x_(0),
   last_child_mouse_position_y_(0)
 {
-  mouse_down.connect(sigc::mem_fun(this, &Flickable::OnMouseDown));
-  mouse_up.connect(sigc::mem_fun(this, &Flickable::OnMouseUp));
-  mouse_drag.connect(sigc::mem_fun(this, &Flickable::OnMouseDrag));
+  mouse_down.connect(sigc::mem_fun(this, &KineticScrollView::OnMouseDown));
+  mouse_up.connect(sigc::mem_fun(this, &KineticScrollView::OnMouseUp));
+  mouse_drag.connect(sigc::mem_fun(this, &KineticScrollView::OnMouseDrag));
 
   scroller_.content_position_changed.connect(
-      sigc::mem_fun(this, &Flickable::SetLayoutTranslation));
+      sigc::mem_fun(this, &KineticScrollView::SetLayoutTranslation));
 
   SetTrackChildMouseEvents(true);
 
   SetBoundsBehavior(BoundsBehavior::DragAndOvershootBounds);
 }
 
-Flickable::~Flickable()
+KineticScrollView::~KineticScrollView()
 {
 }
 
-void Flickable::SetBoundsBehavior(BoundsBehavior bounds_behavior)
+void KineticScrollView::SetBoundsBehavior(BoundsBehavior bounds_behavior)
 {
   scroller_.SetBoundsBehavior(bounds_behavior);
 }
 
-void Flickable::SetScrollableDirections(ScrollableDirections scrollable_directions)
+void KineticScrollView::SetScrollableDirections(ScrollableDirections scrollable_directions)
 {
   scroller_.SetScrollableDirections(scrollable_directions);
 }
 
-bool Flickable::ChildMouseEvent(const Event& event)
+bool KineticScrollView::ChildMouseEvent(const Event& event)
 {
   bool want_mouse_ownership = false;
 
@@ -94,7 +94,7 @@ bool Flickable::ChildMouseEvent(const Event& event)
   return want_mouse_ownership;
 }
 
-void Flickable::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
+void KineticScrollView::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
 {
   if (view_layout_)
   {
@@ -102,13 +102,13 @@ void Flickable::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   }
 }
 
-void Flickable::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
+void KineticScrollView::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
 {
   if (view_layout_)
     view_layout_->ProcessDraw(graphics_engine, force_draw);
 }
 
-long Flickable::PostLayoutManagement(long LayoutResult)
+long KineticScrollView::PostLayoutManagement(long LayoutResult)
 {
   if (view_layout_)
   {
@@ -121,33 +121,33 @@ long Flickable::PostLayoutManagement(long LayoutResult)
   return 0; 
 }
 
-void Flickable::PostResizeGeometry()
+void KineticScrollView::PostResizeGeometry()
 {
   scroller_.SetViewportSize(GetBaseWidth(), GetBaseHeight());
 }
 
-void Flickable::OnMouseDown(int /* x */, int /* y */,
+void KineticScrollView::OnMouseDown(int /* x */, int /* y */,
                             unsigned long /* button_flags */,
                             unsigned long /* key_flags */)
 {
   scroller_.ProcessFingerDown();
 }
 
-void Flickable::OnMouseUp(int /* x */, int /* y */,
+void KineticScrollView::OnMouseUp(int /* x */, int /* y */,
                           unsigned long /* button_flags */,
                           unsigned long /* key_flags */)
 {
   scroller_.ProcessFingerUp();
 }
 
-void Flickable::OnMouseDrag(int /* x */, int /* y */, int dx, int dy,
+void KineticScrollView::OnMouseDrag(int /* x */, int /* y */, int dx, int dy,
                             unsigned long /* button_flags */,
                             unsigned long /* key_flags */)
 {
   scroller_.ProcessFingerDrag(dx, dy);
 }
 
-void Flickable::SetLayoutTranslation(int x, int y)
+void KineticScrollView::SetLayoutTranslation(int x, int y)
 {
   if (view_layout_)
   {

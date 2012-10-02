@@ -24,7 +24,7 @@
 #include "AxisDecelerationAnimation.h"
 #include "VelocityCalculator.h"
 #include <memory>
-#include "FlickableTickSource.h"
+#include "KineticScrollingTickSource.h"
 
 using namespace nux;
 
@@ -38,7 +38,7 @@ class KineticScroller::Private : public sigc::trackable
  public:
 
   Private();
-  Private(flickable::TickSourceInterface *tick_source);
+  Private(kinetic_scrolling::TickSourceInterface *tick_source);
   void Init();
 
   void SetViewportSize(int width, int height);
@@ -57,7 +57,7 @@ class KineticScroller::Private : public sigc::trackable
 
   ScrollableDirections scrollable_directions_;
 
-  std::unique_ptr<flickable::TickSourceInterface> tick_source_;
+  std::unique_ptr<kinetic_scrolling::TickSourceInterface> tick_source_;
 
   sigc::signal<void, int, int> *content_position_changed;
 
@@ -70,11 +70,11 @@ class KineticScroller::Private : public sigc::trackable
 
 KineticScroller::Private::Private()
 {
-  tick_source_.reset(new flickable::TimerTickSource);
+  tick_source_.reset(new kinetic_scrolling::TimerTickSource);
   Init();
 }
 
-KineticScroller::Private::Private(flickable::TickSourceInterface *tick_source)
+KineticScroller::Private::Private(kinetic_scrolling::TickSourceInterface *tick_source)
 {
   tick_source_.reset(tick_source);
   Init();
@@ -194,7 +194,7 @@ KineticScroller::KineticScroller()
   p->content_position_changed = &content_position_changed;
 }
 
-KineticScroller::KineticScroller(flickable::TickSourceInterface *tick_source)
+KineticScroller::KineticScroller(kinetic_scrolling::TickSourceInterface *tick_source)
   : p(new Private(tick_source))
 {
   p->content_position_changed = &content_position_changed;

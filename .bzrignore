@@ -31,10 +31,10 @@ examples/canvas
 examples/checkbox
 examples/combobox
 examples/coverflow
-examples/flickable
 examples/focus
 examples/gestures
 examples/gridlayout
+examples/kinetic_scroll_view
 examples/layeredlayout
 examples/moveable_view
 examples/pango_combobox

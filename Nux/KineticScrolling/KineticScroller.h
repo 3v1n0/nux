@@ -21,12 +21,12 @@
 #ifndef NUX_KINETIC_SCROLLER_H
 #define NUX_KINETIC_SCROLLER_H
 
-#include "FlickableEnums.h"
+#include "KineticScrollingEnums.h"
 
 namespace nux
 {
 
-namespace flickable
+namespace kinetic_scrolling
 {
   class TickSourceInterface;
 }
@@ -58,7 +58,7 @@ class KineticScroller
     Constructor useful for testing purposes.
     When testing you would like to manually drive the animations
    */
-  KineticScroller(flickable::TickSourceInterface *tick_source);
+  KineticScroller(kinetic_scrolling::TickSourceInterface *tick_source);
 
   virtual ~KineticScroller();
 

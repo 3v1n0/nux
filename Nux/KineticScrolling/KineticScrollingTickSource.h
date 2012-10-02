@@ -18,8 +18,8 @@
  * Authored by: Daniel d'Andrada <daniel.dandrada@canonical.com>
  */
 
-#ifndef NUX_TIMER_TICK_SOURCE_H
-#define NUX_TIMER_TICK_SOURCE_H
+#ifndef NUX_KS_TICK_SOURCE_H
+#define NUX_KS_TICK_SOURCE_H
 
 #include <Nux/TimerProc.h>
 
@@ -30,7 +30,7 @@
 
 namespace nux
 {
-namespace flickable
+namespace kinetic_scrolling
 {
 
 /*!
@@ -78,7 +78,7 @@ class TimerTickSource : public TickSourceInterface
   int64_t last_elapsed_time_;
 };
 
-} // namespace flickable
+} // namespace kinetic_scrolling
 } // namespace nux
 
-#endif // NUX_TIMER_TICK_SOURCE_H
+#endif // NUX_KS_TICK_SOURCE_H

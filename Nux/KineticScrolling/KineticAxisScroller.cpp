@@ -23,7 +23,7 @@
 #include "AxisDecelerationAnimation.h"
 #include "VelocityCalculator.h"
 #include <memory>
-#include "FlickableTickSource.h"
+#include "KineticScrollingTickSource.h"
 
 using namespace nux;
 

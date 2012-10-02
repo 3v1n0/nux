@@ -18,12 +18,12 @@
  * Authored by: Daniel d'Andrada <daniel.dandrada@canonical.com>
  */
 
-#ifndef NUX_FLICKABLE_H
-#define NUX_FLICKABLE_H
+#ifndef NUX_KINETIC_SCROLL_VIEW_H
+#define NUX_KINETIC_SCROLL_VIEW_H
 
 #include <Nux/View.h>
 #include <Nux/KineticScrolling/KineticScroller.h>
-#include <Nux/KineticScrolling/FlickableEnums.h>
+#include <Nux/KineticScrolling/KineticScrollingEnums.h>
 
 namespace nux
 {
@@ -31,13 +31,13 @@ namespace nux
 /*
   The nux equivalent of QML's Flickable (from Qt framework).
 
-  Items inside a Flickable should properly handle events of type
-  EVENT_MOUSE_CANCEL. If an item inside a flickable is pressed, it gets
+  Items inside a KineticScrollView should properly handle events of type
+  EVENT_MOUSE_CANCEL. If an item inside a kinetic scroll view is pressed, it gets
   a EVENT_MOUSE_DOWN as usual. But if the user starts dragging it (instead of
-  releasing it to generete a "click"), the Flickable will get ownership of the
+  releasing it to generete a "click"), the KineticScrollView will get ownership of the
   mouse and that item will receive an EVENT_MOUSE_CANCEL signalling that it no
   longer has the mouse and won't get any further events from it. The mouse will
-  then be used for scrolling or flicking the Flickable contents until it's
+  then be used for scrolling or flicking the KineticScrollView contents until it's
   released.
 
   Usage example:
@@ -48,16 +48,16 @@ namespace nux
     ...
     layout->AddView(item ...);
   }
-  Flickable *flickable = new Flickable;
-  flickable->SetLayout(layout);
+  KineticScrollView *kinetic_scroll_view = new KineticScrollView;
+  kinetic_scroll_view->SetLayout(layout);
 
  */
-class Flickable : public View
+class KineticScrollView : public View
 {
-  NUX_DECLARE_OBJECT_TYPE(Flickable, View);
+  NUX_DECLARE_OBJECT_TYPE(KineticScrollView, View);
  public:
-  Flickable(NUX_FILE_LINE_PROTO);
-  virtual ~Flickable();
+  KineticScrollView(NUX_FILE_LINE_PROTO);
+  virtual ~KineticScrollView();
 
   void SetScrollableDirections(ScrollableDirections scrollable_directions);
 
@@ -94,4 +94,4 @@ class Flickable : public View
 
 } // namespace nux
 
-#endif // NUX_FLICKABLE_H
+#endif // NUX_KINETIC_SCROLL_VIEW_H

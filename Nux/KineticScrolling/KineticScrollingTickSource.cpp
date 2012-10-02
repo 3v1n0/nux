@@ -19,9 +19,9 @@
  */
 
 #include <Nux/Nux.h>
-#include "FlickableTickSource.h"
+#include "KineticScrollingTickSource.h"
 
-using namespace nux::flickable;
+using namespace nux::kinetic_scrolling;
 
 TimerTickSource::TimerTickSource()
 {

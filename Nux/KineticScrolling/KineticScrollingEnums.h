@@ -18,8 +18,8 @@
  * Authored by: Daniel d'Andrada <daniel.dandrada@canonical.com>
  */
 
-#ifndef NUX_FLICKABLE_ENUMS_H
-#define NUX_FLICKABLE_ENUMS_H
+#ifndef NUX_KINETIC_SCROLLING_ENUMS_H
+#define NUX_KINETIC_SCROLLING_ENUMS_H
 namespace nux
 {
 
@@ -61,4 +61,4 @@ enum class KineticScrollerAxisState
 };
 
 } // namespace nux
-#endif // NUX_FLICKABLE_ENUMS_H
+#endif // NUX_KINETIC_SCROLLING_ENUMS_H
