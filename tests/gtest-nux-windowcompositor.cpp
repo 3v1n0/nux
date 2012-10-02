@@ -611,6 +611,62 @@ TEST_F(TestWindowCompositor, GetFocusedAreaFallback)
   EXPECT_EQ(area.GetPointer(), nullptr);
 }
 
+class DraggedWindow : public nux::BaseWindow
+{
+ protected:
+  virtual void EmitMouseDragSignal(int x, int y,
+      int dx, int dy,
+      unsigned long /*mouse_button_state*/,
+      unsigned long /*special_keys_state*/)
+  {
+    ++mouse_drag_emission_count;
+    mouse_drag_x = x;
+    mouse_drag_y = y;
+    mouse_drag_dx = dx;
+    mouse_drag_dy = dy;
+  }
+ public:
+  int mouse_drag_emission_count;
+  int mouse_drag_x;
+  int mouse_drag_y;
+  int mouse_drag_dx;
+  int mouse_drag_dy;
+};
+
+/*
+  Regression test for lp1057995
+ */
+TEST_F(TestWindowCompositor, MouseDrag)
+{
+  nux::Event event;
+
+  DraggedWindow *window = new DraggedWindow;
+  window->SetBaseXY(60, 70);
+  window->SetBaseWidth(200);
+  window->SetBaseHeight(200);
+  window->ShowWindow(true);
+
+  event.type = NUX_MOUSE_PRESSED;
+  event.x = 100;
+  event.y = 200;
+  nux::GetWindowCompositor().ProcessEvent(event);
+
+  event.type = NUX_MOUSE_MOVE;
+  event.x = 50;
+  event.y = 250;
+  nux::GetWindowCompositor().ProcessEvent(event);
+
+  ASSERT_EQ(1, window->mouse_drag_emission_count);
+
+  /* OBS: they're in local window coordinates */
+  ASSERT_EQ(50 - 60, window->mouse_drag_x); 
+  ASSERT_EQ(250 - 70, window->mouse_drag_y);
+  ASSERT_EQ(50 - 100, window->mouse_drag_dx);
+  ASSERT_EQ(250 - 200, window->mouse_drag_dy);
+
+  window->Dispose();
+}
+
 #endif // NUX_GESTURES_SUPPORT
 
 }
