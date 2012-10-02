@@ -55,7 +55,6 @@ void UserInterfaceInitialization(NThread* thread, void* InitData)
   mainLayout->AddView(CreateFlickable(), 1, eCenter, eFull);
 
   GetWindowThread()->SetLayout(mainLayout);
-  GetWindowThread()->SetLayout(mainLayout);
 }
 
 int main(int argc, char **argv)
