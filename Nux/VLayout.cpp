@@ -523,7 +523,7 @@ namespace nux
     return size_compliance;
   }
 
-  void VLayout::VLayoutManagement(int width, int height)
+  void VLayout::VLayoutManagement(int /* width */, int height)
   {
     bool need_recompute = false;
 

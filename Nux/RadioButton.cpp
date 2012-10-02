@@ -51,7 +51,7 @@ namespace nux
     }
   }
 
-  void RadioButton::Draw(GraphicsEngine& graphics_engine, bool force_draw)
+  void RadioButton::Draw(GraphicsEngine& graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
     graphics_engine.PushClippingRectangle(base);
@@ -83,7 +83,7 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void RadioButton::RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RadioButton::RecvClick(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (radio_button_group_.IsValid())
     {

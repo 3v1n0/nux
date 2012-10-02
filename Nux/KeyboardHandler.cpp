@@ -66,7 +66,7 @@ namespace nux
       m_textline.Erase(nFirst, 1);
   }
 
-  void BaseKeyboardHandler::InsertChar(unsigned int character)
+  void BaseKeyboardHandler::InsertChar(unsigned int /* character */)
   {
 
   }
@@ -83,7 +83,7 @@ namespace nux
 
   void BaseKeyboardHandler::PlaceCaret(unsigned int nCP)
   {
-    nuxAssert((nCP >= 0) && (nCP <= (unsigned int) m_textline.Length()));
+    nuxAssert(nCP <= (unsigned int) m_textline.Length());
     m_previous_cursor_position = m_caret;
     m_caret = nCP;
   }
@@ -134,7 +134,7 @@ namespace nux
     m_entering_focus = false;
   }
 
-  void BaseKeyboardHandler::MouseUp(int x, int y)
+  void BaseKeyboardHandler::MouseUp(int /* x */, int /* y */)
   {
     m_mouse_drag = false;
     m_entering_focus = false;
@@ -154,7 +154,7 @@ namespace nux
     m_entering_focus = true;
   }
 
-  void BaseKeyboardHandler::ResolveCaretPosition(int x, int y)
+  void BaseKeyboardHandler::ResolveCaretPosition(int x, int /* y */)
   {
     if (m_entering_focus)
       return;
@@ -205,7 +205,7 @@ namespace nux
     }
   }
 
-  void BaseKeyboardHandler::CaretAutoScroll(int x, int y, Geometry geo)
+  void BaseKeyboardHandler::CaretAutoScroll(int x, int /* y */, Geometry geo)
   {
     if (m_entering_focus)
       return;
@@ -269,7 +269,7 @@ namespace nux
     unsigned long    keysym       /*event keysym*/,
     unsigned long    state        /*event state*/,
     char      character    /*character*/,
-    const Geometry &g)
+    const Geometry & /* g */)
   {
     //if(event.event_type != I_AsciiKey && event.event_type != I_KeyPress && event.event_type != I_KeyRelease)
     if (eventType != NUX_KEYDOWN)

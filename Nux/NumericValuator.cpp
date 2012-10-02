@@ -70,7 +70,7 @@ namespace nux
     hlayout = new HLayout(NUX_TRACKER_LOCATION);
   }
 
-  void NumericValuator::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void NumericValuator::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
 
@@ -89,7 +89,7 @@ namespace nux
     m_EditLine->ProcessDraw(graphics_engine, force_draw);
   }
 
-  void NumericValuator::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
+  void NumericValuator::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }

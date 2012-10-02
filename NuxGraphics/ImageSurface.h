@@ -242,12 +242,12 @@ namespace nux
     {
       return const_cast<ImageSurface &> ((const_cast< const NTextureData * > (this))->GetSurface(MipLevel));
     }
-    virtual const ImageSurface &GetSurface(int face, int MipLevel) const
+    virtual const ImageSurface &GetSurface(int /* face */, int MipLevel) const
     {
       //nuxAssertMsg(0, "[NTextureData::GetSurface] Use GetSurface(unsigned int MipLevel) for NTextureData.");
       return GetSurface(MipLevel);
     }
-    virtual ImageSurface &GetSurface(int face, int MipLevel)
+    virtual ImageSurface &GetSurface(int /* face */, int MipLevel)
     {
       //nuxAssertMsg(0, "[NTextureData::GetSurface] Use GetSurface(unsigned int MipLevel) for NTextureData.");
       return GetSurface(MipLevel);
@@ -432,12 +432,12 @@ namespace nux
     virtual void AllocateCheckBoardTexture(int width, int height, int slice, int NumMipmap, Color color0, Color color1, int TileWidth = 4, int TileHeight = 4);
     virtual void AllocateColorTexture(int width, int height, int slice, int NumMipmap, Color color0 = Color(0xFFFFFFF));
 
-    virtual const ImageSurface &GetSurface(int MipLevel, int slice) const
+    virtual const ImageSurface &GetSurface(int /* MipLevel */, int /* slice */) const
     {
       nuxAssertMsg(0, "[NAnimatedTextureData::GetSurface] Use GetSurface(unsigned int Frame) for NAnimatedTextureData.");
       return GetSurface(0);
     }
-    virtual ImageSurface &GetSurface(int MipLevel, int slice)
+    virtual ImageSurface &GetSurface(int /* MipLevel */, int /* slice */)
     {
       nuxAssertMsg(0, "[NAnimatedTextureData::GetSurface] Use GetSurface(unsigned int Frame) for NAnimatedTextureData.");
       return GetSurface(0);

@@ -87,14 +87,14 @@ void TestTextEntry::ResetKeyFocusEvents()
   registered_end_keynav_focus_ = false;
 }
 
-void TestTextEntry::OnMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+void TestTextEntry::OnMouseDown(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
 {
   registered_mouse_down_ = true;
   mouse_mouse_down_ = true;
   QueueDraw();
 }
 
-void TestTextEntry::OnMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+void TestTextEntry::OnMouseUp(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
 {
   registered_mouse_up_ = true;
 
@@ -103,47 +103,47 @@ void TestTextEntry::OnMouseUp(int x, int y, unsigned long button_flags, unsigned
   QueueDraw();
 }
 
-void TestTextEntry::OnMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+void TestTextEntry::OnMouseDrag(int /* x */, int /* y */, int /* dx */, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */)
 {
   registered_mouse_drag_ = true;
   mouse_mouse_drag_ = true;
   QueueDraw();
 }
 
-void TestTextEntry::OnMouseClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
+void TestTextEntry::OnMouseClick(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
 {
   registered_mouse_click_ = true;
   QueueDraw();
 }
 
-void TestTextEntry::OnMouseDoubleClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
+void TestTextEntry::OnMouseDoubleClick(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
 {
   registered_mouse_double_click_ = true;
   mouse_mouse_down_ = true;
   QueueDraw();
 }
 
-void TestTextEntry::OnMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+void TestTextEntry::OnMouseMove(int /* x */, int /* y */, int /* dx */, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */)
 {
   registered_mouse_move_ = true;
   QueueDraw();
 }
 
-void TestTextEntry::OnMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
+void TestTextEntry::OnMouseEnter(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
 {
   registered_mouse_enter_ = true;
   mouse_in_ = true;
   QueueDraw();
 }
 
-void TestTextEntry::OnMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
+void TestTextEntry::OnMouseLeave(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
 {
   registered_mouse_leave_ = true;
   mouse_in_ = false;
   QueueDraw();
 }
 
-void TestTextEntry::OnKeyNavFocusChange(nux::Area* area, bool has_focus, nux::KeyNavDirection direction)
+void TestTextEntry::OnKeyNavFocusChange(nux::Area* /* area */, bool has_focus, nux::KeyNavDirection direction)
 {
   has_focus_ = HasKeyFocus();
   
@@ -162,12 +162,12 @@ void TestTextEntry::OnEndKeyFocus()
   registered_end_keynav_focus_ = true;
 }
 
-void TestTextEntry::OnObjectDestroyed(nux::Object* object)
+void TestTextEntry::OnObjectDestroyed(nux::Object* /* object */)
 {
   registered_object_destroyed_ = true;
 }
 
-void TestTextEntry::OnTextChanged(TextEntry* text_entry)
+void TestTextEntry::OnTextChanged(TextEntry* /* text_entry */)
 {
   registered_text_changed_ = true;
 }

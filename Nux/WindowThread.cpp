@@ -158,7 +158,7 @@ logging::Logger logger("nux.windows.thread");
     return handle;
   }
 
-  void WindowThread::AsyncWakeUpCallback(void* data)
+  void WindowThread::AsyncWakeUpCallback(void* /* data */)
   {
     this->GetTimerHandler().RemoveTimerHandler(async_wake_up_timer_handle_);
     _pending_wake_up_timer = false;
@@ -395,7 +395,7 @@ logging::Logger logger("nux.windows.thread");
     }
   }
 
-  int WindowThread::Run(void *ptr)
+  int WindowThread::Run(void * /* ptr */)
   {
     if (GetWindowThread() != this)
     {
@@ -763,7 +763,7 @@ logging::Logger logger("nux.windows.thread");
     return 1;
   }
 
-  unsigned int SpawnThread(NThread &thread)
+  unsigned int SpawnThread(NThread & /* thread */)
   {
     return 0;
   }
@@ -838,7 +838,7 @@ logging::Logger logger("nux.windows.thread");
     }
   }
 
-  ThreadState WindowThread::Start(void *ptr)
+  ThreadState WindowThread::Start(void * /* ptr */)
   {
     if (!parent_)
     {
@@ -860,7 +860,7 @@ logging::Logger logger("nux.windows.thread");
     }
   }
 
-  ThreadState WindowThread::StartChildThread(AbstractThread *thread, bool Modal)
+  ThreadState WindowThread::StartChildThread(AbstractThread *thread, bool /* Modal */)
   {
     if (wait_for_modal_window_)
     {
@@ -1321,7 +1321,7 @@ logging::Logger logger("nux.windows.thread");
 #if defined(NUX_OS_WINDOWS)
   bool WindowThread::ProcessForeignEvent(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, void *data)
 #elif defined(NUX_OS_LINUX)
-  bool WindowThread::ProcessForeignEvent(XEvent *xevent, void *data)
+  bool WindowThread::ProcessForeignEvent(XEvent *xevent, void * /* data */)
 #endif
   {
     if (graphics_display_->IsPauseThreadGraphicsRendering())

@@ -92,7 +92,7 @@ namespace nux
     virtual bool IsRedrawNeeded();
     virtual void DoneRedraw();
 
-    virtual void OverlayDrawing(GraphicsEngine &graphics_engine) {}
+    virtual void OverlayDrawing(GraphicsEngine & /* graphics_engine */) {}
 
     //Layout Bridge
 

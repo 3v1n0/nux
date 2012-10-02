@@ -43,13 +43,13 @@ namespace nux
   Formatted printing and messages.
   -----------------------------------------------------------------------------*/
 
-  unsigned int GetVariableArgs ( TCHAR *Dest, unsigned int Size, unsigned int Count, const TCHAR*& Fmt, va_list ArgPtr )
+  unsigned int GetVariableArgs ( TCHAR *Dest, unsigned int /* Size */, unsigned int Count, const TCHAR*& Fmt, va_list ArgPtr )
   {
     unsigned int Result = VSNTPRINTF_S (Dest, Size, Count, Fmt, ArgPtr);
     va_end (ArgPtr);
     return Result;
   }
-  unsigned int GetVariableArgsAnsi ( ANSICHAR *Dest, unsigned int Size, unsigned int Count, const ANSICHAR*& Fmt, va_list ArgPtr)
+  unsigned int GetVariableArgsAnsi ( ANSICHAR *Dest, unsigned int /* Size */, unsigned int Count, const ANSICHAR*& Fmt, va_list ArgPtr)
   {
     unsigned int Result = VSNPRINTF_S (Dest, Size, Count, Fmt, ArgPtr);
     va_end (ArgPtr);

@@ -70,7 +70,7 @@ logging::Logger logger("nux.inputarea");
     while (GetWindowCompositor().GrabKeyboardRemove(this));
   }
 
-  void InputArea::OnDraw(GraphicsEngine &graphics_engine, bool force_draw)
+  void InputArea::OnDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
     // Draw Nothing!
 
@@ -156,7 +156,7 @@ logging::Logger logger("nux.inputarea");
     GetWindowThread()->GetGraphicsDisplay().SendDndFinished(accepted, action);
   }
 
-  void InputArea::ProcessDndMove(int x, int y, std::list<char *>mimes)
+  void InputArea::ProcessDndMove(int x, int y, std::list<char *> /* mimes */)
   {
     // must learn to deal with x/y offsets
     Area *parent = GetToplevel();
@@ -170,7 +170,7 @@ logging::Logger logger("nux.inputarea");
     SendDndStatus(false, DNDACTION_NONE, Geometry(x, y, GetGeometry().width, GetGeometry().height));
   }
 
-  void InputArea::ProcessDndDrop(int x, int y)
+  void InputArea::ProcessDndDrop(int /* x */, int /* y */)
   {
     SendDndFinished(false, DNDACTION_NONE);
   }
@@ -227,7 +227,7 @@ logging::Logger logger("nux.inputarea");
     self->DndSourceDragFinished(result);
   }
   
-  void InputArea::DndSourceDragFinished(DndAction result)
+  void InputArea::DndSourceDragFinished(DndAction /* result */)
   {
   
   }
@@ -302,7 +302,7 @@ logging::Logger logger("nux.inputarea");
     mouse_wheel.emit(x, y, wheel_delta, mouse_button_state, special_keys_state);
   }
 
-  void InputArea::EmitKeyDownSignal(unsigned int key_symbol, unsigned long x11_key_code, unsigned long special_keys_state)
+  void InputArea::EmitKeyDownSignal(unsigned int /* key_symbol */, unsigned long /* x11_key_code */, unsigned long /* special_keys_state */)
   {
     //OnKeyPressed.emit(key_symbol, x11_key_code, special_keys_state);
   }

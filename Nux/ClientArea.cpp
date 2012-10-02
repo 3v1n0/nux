@@ -144,7 +144,7 @@ namespace nux
     graphics_engine.GetRenderStates().SetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
   }
 
-  void ClientArea::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void ClientArea::Draw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
     // don't draw here or we risk drawing more than one time.
     //BeginDraw(graphics_engine, force_draw);
@@ -155,13 +155,13 @@ namespace nux
     BeginDraw(graphics_engine, force_draw);
 
   }
-  void ClientArea::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
+  void ClientArea::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
     // don't draw here or we risk drawing more than one time.
     //BeginDraw(graphics_engine, force_draw);
   }
 
-  void ClientArea::ClientDraw(GraphicsEngine &graphics_engine, DrawAreaContext &ctx, bool force_draw)
+  void ClientArea::ClientDraw(GraphicsEngine & /* graphics_engine */, DrawAreaContext & /* ctx */, bool /* force_draw */)
   {
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -198,32 +198,32 @@ namespace nux
   }
 
 
-  void ClientArea::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ClientArea::RecvMouseDown(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
 
   }
 
-  void ClientArea::RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ClientArea::RecvMouseUp(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
 
   }
 
-  void ClientArea::RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void ClientArea::RecvMouseDrag(int /* x */, int /* y */, int /* dx */, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
 
   }
 
-  void ClientArea::RecvMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void ClientArea::RecvMouseMove(int /* x */, int /* y */, int /* dx */, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
 
   }
 
   void ClientArea::RecvKeyEvent(
-    unsigned long     event_type,    /*event type*/
-    unsigned long     GetKeySym,    /*event keysym*/
-    unsigned long     event_state,    /*event state*/
-    const char*      event_char,    /*character*/
-    unsigned short    repeat_count     /*key repeat count*/
+    unsigned long     /* event_type */,    /*event type*/
+    unsigned long     /* GetKeySym */,    /*event keysym*/
+    unsigned long     /* event_state */,    /*event state*/
+    const char*      /* event_char */,    /*character*/
+    unsigned short    /* repeat_count */     /*key repeat count*/
   )
   {
 

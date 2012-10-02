@@ -106,13 +106,13 @@ nux::WindowThread* ProgramTemplate::GetWindowThread()
   return window_thread_;
 }
 
-void ProgramTemplate::ProgramExitCall(void *data)
+void ProgramTemplate::ProgramExitCall(void * /* data */)
 {
   if (window_thread_)
     window_thread_->ExitMainLoop();
 }
 
-void ProgramTemplate::WaitForConfigureEvent(int x, int y, int width, int height)
+void ProgramTemplate::WaitForConfigureEvent(int /* x */, int /* y */, int /* width */, int /* height */)
 {
   ready_to_go_ = true;
 }

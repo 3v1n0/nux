@@ -537,6 +537,7 @@ namespace
 
           UpdateKeyNavFocusOnMouseDown();
 
+          _mouse_position_on_owner = Point(hit_view_x, hit_view_y);
           if (event.type == NUX_MOUSE_DOUBLECLICK
                    && mouse_over_area_->DoubleClickEnabled()
                    && !area_under_mouse_changed)
@@ -595,8 +596,9 @@ namespace
                                              event.GetMouseState(),
                                              event.GetKeyState());
 
-        if (mouse_over_area_ == mouse_owner_area_)
+        if (mouse_owner_area_.IsValid() && mouse_over_area_ == mouse_owner_area_)
         {
+          _mouse_position_on_owner = Point(mouse_owner_x, mouse_owner_y);
           mouse_owner_area_->EmitMouseClickSignal(mouse_owner_x, mouse_owner_y,
                                                   event.GetMouseState(),
                                                   event.GetKeyState());
@@ -1322,7 +1324,7 @@ namespace
 //                                             window_thread_->GetGraphicsEngine().GetWindowHeight());
   }
 
-  void WindowCompositor::DrawOverlay(bool force_draw)
+  void WindowCompositor::DrawOverlay(bool /* force_draw */)
   {
     ObjectWeakPtr<BaseWindow> window = m_OverlayWindow;
     int buffer_width = window_thread_->GetGraphicsEngine().GetWindowWidth();
@@ -1347,7 +1349,7 @@ namespace
     //GetGraphicsDisplay()->GetGraphicsEngine()->SetContext(0, 0, buffer_width, buffer_height);
   }
 
-  void WindowCompositor::DrawTooltip(bool force_draw)
+  void WindowCompositor::DrawTooltip(bool /* force_draw */)
   {
     ObjectWeakPtr<BaseWindow> window = _tooltip_window;
     int buffer_width = window_thread_->GetGraphicsEngine().GetWindowWidth();
@@ -1573,7 +1575,7 @@ namespace
 
   }
 
-  void WindowCompositor::PresentBufferToScreen(ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool BluredBackground, float opacity, bool premultiply)
+  void WindowCompositor::PresentBufferToScreen(ObjectPtr<IOpenGLBaseTexture> HWTexture, int x, int y, bool RenderToMainTexture, bool /* BluredBackground */, float opacity, bool premultiply)
   {
     nuxAssert(HWTexture.IsValid());
 
@@ -1927,7 +1929,7 @@ namespace
     }
   }
 
-  void WindowCompositor::FormatRenderTargets(int width, int height)
+  void WindowCompositor::FormatRenderTargets(int /* width */, int /* height */)
   {
     int buffer_width = window_thread_->GetGraphicsEngine().GetWindowWidth();
     int buffer_height = window_thread_->GetGraphicsEngine().GetWindowHeight();

@@ -46,7 +46,7 @@ bool debug_glerror_stack()
 
 
 // WARNING: never call glGetError between glBegin and glEnd.
-  void CheckGLError(const char *GLcall, const char *file, int line)
+  void CheckGLError(const char * /* GLcall */, const char *file, int line)
   {
     GLenum glErr;
     std::string error_msg;
@@ -83,8 +83,10 @@ bool debug_glerror_stack()
       if (logger.IsWarningEnabled() && !error_msg.empty())
       {
         std::string stacktrace;
+#if defined(NUX_OS_LINUX)
         if (debug_glerror_stack())
           stacktrace = "\n" + logging::Backtrace();
+#endif
         logging::LogStream(logging::Warning, logger.module(), file, line).stream()
 #ifndef NUX_OPENGLES_20
           << "[CheckGLError] OpenGL Error " << glErr << " (" << gluErrorString(glErr) << ")"

@@ -65,7 +65,7 @@ namespace nux
     */
     virtual void OnDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
-    virtual void OverlayDrawing(GraphicsEngine &graphics_engine) {}
+    virtual void OverlayDrawing(GraphicsEngine & /* graphics_engine */) {}
 
     bool HasKeyboardFocus();
 
@@ -379,7 +379,7 @@ namespace nux
 
       Default implementation just returns GestureDeliveryRequest::NONE.
      */
-    virtual GestureDeliveryRequest GestureEvent(const GestureEvent &event)
+    virtual GestureDeliveryRequest GestureEvent(const GestureEvent & /* event */)
     {
       return GestureDeliveryRequest::NONE;
     }

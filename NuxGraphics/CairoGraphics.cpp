@@ -454,7 +454,7 @@ namespace nux
 
   static inline void _blurrow(guchar* pixels,
                                gint    width,
-                               gint    height,
+                               gint    /* height */,  // TODO: This seems very strange. Why is height not used as it is in _blurcol() ?
                                gint    channels,
                                gint    line,
                                gint    alpha,

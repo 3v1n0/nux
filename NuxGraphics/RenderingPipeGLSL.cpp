@@ -1723,7 +1723,7 @@ namespace nux
     ShaderProg->End();
   }
 
-  void GraphicsEngine::QRP_GLSL_HorizontalGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0, float sigma)
+  void GraphicsEngine::QRP_GLSL_HorizontalGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color & /* c0 */, float sigma)
   {
     if (!_horizontal_gauss_filter_prog.IsValid())
         InitSLHorizontalGaussFilter();
@@ -1795,7 +1795,7 @@ namespace nux
     ShaderProg->End();
   }
 
-  void GraphicsEngine::QRP_GLSL_VerticalGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0, float sigma)
+  void GraphicsEngine::QRP_GLSL_VerticalGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color & /* c0 */, float sigma)
   {
     if (!_vertical_gauss_filter_prog.IsValid())
         InitSLVerticalGaussFilter();
@@ -1869,7 +1869,7 @@ namespace nux
     ShaderProg->End();
   }
 
-  void GraphicsEngine::QRP_GLSL_HorizontalHQGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0, float sigma)
+  void GraphicsEngine::QRP_GLSL_HorizontalHQGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color & /* c0 */, float sigma)
   {
     int k = Clamp<float>(sigma, NUX_MIN_GAUSSIAN_SIGMA, NUX_MAX_GAUSSIAN_SIGMA);
 
@@ -1945,7 +1945,7 @@ namespace nux
     ShaderProg->End();
   }
 
-  void GraphicsEngine::QRP_GLSL_VerticalHQGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0, float sigma)
+  void GraphicsEngine::QRP_GLSL_VerticalHQGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color & /* c0 */, float sigma)
   {
     int k = Clamp<float>(sigma, NUX_MIN_GAUSSIAN_SIGMA, NUX_MAX_GAUSSIAN_SIGMA);
 
@@ -2325,10 +2325,10 @@ namespace nux
   }
 
   ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GLSL_GetLQBlur(
-    int x, int y,
-    int buffer_width, int buffer_height,
+    int /* x */, int /* y */,
+    int /* buffer_width */, int /* buffer_height */,
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-    const Color& c0)
+    const Color& /* c0 */)
   {
     int quad_width = device_texture->GetWidth();
     int quad_height = device_texture->GetHeight();
@@ -2737,7 +2737,7 @@ namespace nux
   }
 
   ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GLSL_GetPixelBlocks(
-    ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color& c0, int pixel_size)
+    ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color& /* c0 */, int pixel_size)
   {
     int quad_width = device_texture->GetWidth();
     int quad_height = device_texture->GetHeight();

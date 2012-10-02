@@ -229,10 +229,10 @@ namespace nux
   }
 
   /*!
-      Load a text file to an NString. The file maybe ANSI or Unicode.
+      Load a text file to an std::string. The file maybe ANSI or Unicode.
       The resulting string is TCHAR.
   */
-  bool LoadFileToString ( NString &Result, const TCHAR *Filename, NFileManager &FileManager )
+  bool LoadFileToString(std::string &Result, const TCHAR *Filename, NFileManager &FileManager)
   {
     NSerializer *Reader = FileManager.CreateFileReader (Filename);
 
@@ -318,9 +318,9 @@ namespace nux
   /*!
       Save string to File. Attempt to write it as ASCII if possible. If not write as UTF16-BE.
   */
-  bool SaveStringToFile ( const NString &String, const TCHAR *Filename, NFileManager &FileManager )
+  bool SaveStringToFile(const std::string &String, const TCHAR *Filename, NFileManager &FileManager)
   {
-    if ( !String.Length() )
+    if ( !String.length() )
       return 0;
 
     NSerializer *Ar = FileManager.CreateFileWriter ( Filename );
@@ -347,20 +347,20 @@ namespace nux
 
     if ( SaveAsUnicode || (sizeof (TCHAR) == 1) )
     {
-      unsigned int s = (unsigned int) String.Length() * sizeof (TCHAR);
-      Ar->Serialize ( NUX_CONST_CAST (TCHAR *, String.GetTCharPtr() ), (unsigned int) s);
+      unsigned int s = (unsigned int) String.length() * sizeof (TCHAR);
+      Ar->Serialize(NUX_CONST_CAST(TCHAR *, String.c_str()), (unsigned int) s);
     }
     else
     {
-      unsigned int s = (unsigned int) String.Length();
+      unsigned int s = (unsigned int) String.length();
       std::vector<ANSICHAR> AnsiBuffer ( (unsigned int) s);
 
       // Cast all character down from UTF16 to ANSI
-      for (unsigned int i = 0; i < (unsigned int) String.Length(); i++ )
+      for (unsigned int i = 0; i < (unsigned int) String.length(); i++)
         AnsiBuffer[i] = ConvertTCHARToAnsiChar ( (unsigned int) String[i]);
 
       // serialize
-      s = (unsigned int) String.Length();
+      s = (unsigned int) String.length();
       Ar->Serialize ( NUX_CONST_CAST (ANSICHAR *, &AnsiBuffer[0]), s);
     }
 

@@ -47,7 +47,7 @@ namespace nux
       delete paint_layer_;
   }
 
-  void TextureArea::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void TextureArea::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     // Ability to rotate the widget around its center
     graphics_engine.PushModelViewMatrix(Matrix4::TRANSLATE(-GetBaseX() - GetBaseWidth() / 2, -GetBaseY() - GetBaseHeight() / 2, 0));
@@ -68,12 +68,12 @@ namespace nux
     graphics_engine.PopModelViewMatrix();
   }
 
-  void TextureArea::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
+  void TextureArea::DrawContent(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }
 
-  void TextureArea::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
+  void TextureArea::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }
@@ -147,33 +147,33 @@ namespace nux
 //     QueueDraw();
 // }
 
-  void TextureArea::RecvMouseDown(int x, int y, long button_flags, long key_flags)
+  void TextureArea::RecvMouseDown(int x, int y, long /* button_flags */, long /* key_flags */)
   {
     sigMouseDown.emit(x, y);
     QueueDraw();
   }
 
-  void TextureArea::RecvMouseClick(int x, int y, long button_flags, long key_flags)
+  void TextureArea::RecvMouseClick(int /* x */, int /* y */, long /* button_flags */, long /* key_flags */)
   {
 
   }
 
-  void TextureArea::RecvMouseUp(int x, int y, long button_flags, long key_flags)
+  void TextureArea::RecvMouseUp(int /* x */, int /* y */, long /* button_flags */, long /* key_flags */)
   {
     QueueDraw();
   }
 
-  void TextureArea::RecvMouseEnter(int x, int y, long button_flags, long key_flags)
+  void TextureArea::RecvMouseEnter(int /* x */, int /* y */, long /* button_flags */, long /* key_flags */)
   {
 
   }
 
-  void TextureArea::RecvMouseLeave(int x, int y, long button_flags, long key_flags)
+  void TextureArea::RecvMouseLeave(int /* x */, int /* y */, long /* button_flags */, long /* key_flags */)
   {
 
   }
 
-  void TextureArea::RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void TextureArea::RecvMouseDrag(int x, int y, int /* dx */, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     sigMouseDrag.emit(x, y);
   }

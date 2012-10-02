@@ -147,7 +147,7 @@ namespace nux
     //cairo_surface_write_to_png (GetCairoSurface (), "/tmp/surf-debug.png");      
   }
 
-  void Canvas::Draw (GraphicsEngine& graphics_engine, bool forceDraw)
+  void Canvas::Draw (GraphicsEngine& graphics_engine, bool /* forceDraw */)
   {
     Geometry geom = GetGeometry ();
 
@@ -185,7 +185,7 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void Canvas::DrawContent(GraphicsEngine& graphics_engine, bool forceDraw)
+  void Canvas::DrawContent(GraphicsEngine& /* graphics_engine */, bool /* forceDraw */)
   {
   }
 

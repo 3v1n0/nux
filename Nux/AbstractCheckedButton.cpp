@@ -84,7 +84,7 @@ namespace nux
     return label_;
   }
 
-  void AbstractCheckedButton::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void AbstractCheckedButton::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
     graphics_engine.PushClippingRectangle(base);

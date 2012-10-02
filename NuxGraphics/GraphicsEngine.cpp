@@ -121,7 +121,7 @@ namespace nux
     }
   }
 
-  void BlendOperator::SetCustomBlendOperator(unsigned int src_blend, unsigned int dst_blend)
+  void BlendOperator::SetCustomBlendOperator(unsigned int /* src_blend */, unsigned int /* dst_blend */)
   {
 
   }
@@ -230,7 +230,7 @@ namespace nux
       }
 #endif
 
-      GpuInfo& gpu_info = _graphics_display.GetGpuDevice()->GetGpuInfo();
+      const GpuInfo& gpu_info = _graphics_display.GetGpuDevice()->GetGpuInfo();
 
       if ((gpu_info.Support_ARB_Vertex_Program() && gpu_info.Support_ARB_Fragment_Program())
           || (gpu_info.Support_ARB_Vertex_Shader() && gpu_info.Support_ARB_Fragment_Shader()))
@@ -1135,7 +1135,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
     viewport_height = _viewport.height;
   }
 
-  void GraphicsEngine::SetScissorOffset(int x, int y)
+  void GraphicsEngine::SetScissorOffset(int /* x */, int /* y */)
   {
     nuxAssertMsg(0, "[GraphicsEngine::SetScissorOffset] SetScissorOffset is deprecated.");
 //     m_ScissorXOffset = x;
@@ -1202,7 +1202,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
   // 2D Area Clear Color Depth Stencil   //
   /////////////////////////////////////////
 
-  void GraphicsEngine::ClearAreaColorDepthStencil(int x, int y, int width, int height, Color clear_color, float cleardepth, int clearstencil)
+  void GraphicsEngine::ClearAreaColorDepthStencil(int x, int y, int width, int height, Color clear_color, float /* cleardepth */, int clearstencil)
   {
     // enable stencil buffer
     CHECKGL(glEnable(GL_STENCIL_TEST));
@@ -1226,7 +1226,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
     QRP_Color(x, y, width, height, clear_color);
   }
 
-  void GraphicsEngine::ClearAreaDepthStencil(int x, int y, int width, int height, float cleardepth, int clearstencil)
+  void GraphicsEngine::ClearAreaDepthStencil(int x, int y, int width, int height, float /* cleardepth */, int clearstencil)
   {
     // enable stencil buffer
     CHECKGL(glEnable(GL_STENCIL_TEST));

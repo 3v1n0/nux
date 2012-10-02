@@ -403,7 +403,7 @@ namespace nux
 
   }
 
-  void View::EndBackupTextureRendering(GraphicsEngine& graphics_engine, bool force_draw)
+  void View::EndBackupTextureRendering(GraphicsEngine& graphics_engine, bool /* force_draw */)
   {
     graphics_engine.PopModelViewMatrix();
 
@@ -424,17 +424,17 @@ namespace nux
     graphics_engine.SetViewport(prev_viewport_.x, prev_viewport_.y, prev_viewport_.width, prev_viewport_.height);
   }
 
-  void View::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void View::Draw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }
 
-  void View::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
+  void View::DrawContent(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }
 
-  void View::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
+  void View::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }
@@ -659,13 +659,13 @@ namespace nux
     return view_enabled_;
   }
 
-  void View::GeometryChangePending(bool position_about_to_change, bool size_about_to_change)
+  void View::GeometryChangePending(bool /* position_about_to_change */, bool /* size_about_to_change */)
   {
     if (IsLayoutDone())
       QueueDraw();
   }
 
-  void View::GeometryChanged(bool position_has_changed, bool size_has_changed)
+  void View::GeometryChanged(bool /* position_has_changed */, bool size_has_changed)
   {
     if (RedirectedAncestor())
     {

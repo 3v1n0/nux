@@ -477,6 +477,7 @@ namespace nux
 #if defined(NUX_OS_WINDOWS)
     size_t res = _snscanf_s (buffer, bufferlen, format, &value);
 #elif defined(NUX_OS_LINUX)
+    bufferlen = bufferlen; // Stop unused param warning in release mode.
     size_t res = sscanf (buffer, format, &value);
 #endif
 
@@ -555,17 +556,17 @@ namespace nux
   }
 #else
   //! Copy a string.
-  inline TCHAR *inlStringCopy (TCHAR *Dest, size_t numberOfElements, const TCHAR *Src)
+  inline TCHAR *inlStringCopy (TCHAR *Dest, size_t /* numberOfElements */, const TCHAR *Src)
   {
     return _tcscpy ( Dest, Src );
   }
   //! Append a string.
-  inline TCHAR *inlTCharStringConcat (TCHAR *Dest, size_t numberOfElements, const TCHAR *Src)
+  inline TCHAR *inlTCharStringConcat (TCHAR *Dest, size_t /* numberOfElements */, const TCHAR *Src)
   {
     return _tcscat ( Dest, Src );
   }
   //! Convert a string to uppercase. Returns a pointer to the altered string. Return 0 if not successful.
-  inline TCHAR *inlStrupr (TCHAR *String, size_t numberOfElements)
+  inline TCHAR *inlStrupr (TCHAR *String, size_t /* numberOfElements */)
   {
     nuxAssert (String);
 
