@@ -353,7 +353,7 @@ AC_ARG_ENABLE([maintainer-mode],
 
 AS_IF([test "x$enable_maintainer_mode" = "xyes" && test "x$GCC" = "xyes"],
       [
-         MAINTAINER_CFLAGS+="-Werror -Wall -Wextra -Werror -Wcast-align -Wno-uninitialized -Wempty-body -Wformat-security -Winit-self"
+         MAINTAINER_CFLAGS+="-Werror -Wall -Wextra -Wcast-align -Wno-uninitialized -Wempty-body -Wformat-security -Winit-self"
       ]
 )
 
