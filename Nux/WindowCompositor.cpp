@@ -61,6 +61,7 @@ namespace
     _starting_menu_event_cycle  = false;
     _menu_is_active             = false;
     on_menu_closure_continue_with_event_ = false;
+    _mouse_position_on_owner = Point(0, 0);
 
     m_FrameBufferObject = GetGraphicsDisplay()->GetGpuDevice()->CreateFrameBufferObject();
     // Do not leave the Fbo binded. Deactivate it.
@@ -301,16 +302,11 @@ namespace
     {
       if (mouse_over_area_.IsValid())
       {
-        Geometry hit_view_geo = mouse_over_area_->GetAbsoluteGeometry();
-        int hit_view_x = event.x - hit_view_geo.x;
-        int hit_view_y = event.y - hit_view_geo.y;
-
-        if (event.type == NUX_MOUSE_PRESSED || event.type == NUX_MOUSE_DOUBLECLICK)
+        if (event.type == NUX_MOUSE_MOVE)
         {
-          _mouse_position_on_owner = Point(hit_view_x, hit_view_y);
-        }
-        else if (event.type == NUX_MOUSE_MOVE)
-        {
+          Geometry hit_view_geo = mouse_over_area_->GetAbsoluteGeometry();
+          int hit_view_x = event.x - hit_view_geo.x;
+          int hit_view_y = event.y - hit_view_geo.y;
           int dx = event.x - _mouse_position.x;
           int dy = event.y - _mouse_position.y;
           mouse_over_area_->EmitMouseMoveSignal(hit_view_x,
@@ -324,10 +320,16 @@ namespace
     }
     else
     {
-      // Context: The left mouse button down over an area. All events goes to
-      // that area.
+      if (event.type == NUX_MOUSE_PRESSED || event.type == NUX_MOUSE_DOUBLECLICK)
+      {
+        // We just got a new mouse owner. Let's update the mouse position on him.
+        Geometry const& mouse_owner_geo = mouse_owner_area_->GetAbsoluteGeometry();
+        int mouse_owner_x = event.x - mouse_owner_geo.x;
+        int mouse_owner_y = event.y - mouse_owner_geo.y;
 
-      if (event.type == NUX_MOUSE_MOVE)
+        _mouse_position_on_owner = Point(mouse_owner_x, mouse_owner_y);
+      }
+      else if (event.type == NUX_MOUSE_MOVE)
       {
         Geometry const& mouse_owner_geo = mouse_owner_area_->GetAbsoluteGeometry();
         int mouse_owner_x = event.x - mouse_owner_geo.x;
@@ -537,7 +539,6 @@ namespace
 
           UpdateKeyNavFocusOnMouseDown();
 
-          _mouse_position_on_owner = Point(hit_view_x, hit_view_y);
           if (event.type == NUX_MOUSE_DOUBLECLICK
                    && mouse_over_area_->DoubleClickEnabled()
                    && !area_under_mouse_changed)
@@ -598,7 +599,6 @@ namespace
 
         if (mouse_owner_area_.IsValid() && mouse_over_area_ == mouse_owner_area_)
         {
-          _mouse_position_on_owner = Point(mouse_owner_x, mouse_owner_y);
           mouse_owner_area_->EmitMouseClickSignal(mouse_owner_x, mouse_owner_y,
                                                   event.GetMouseState(),
                                                   event.GetKeyState());
