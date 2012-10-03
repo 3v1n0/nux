@@ -152,6 +152,6 @@ void KineticScrollView::SetLayoutTranslation(int x, int y)
   if (view_layout_)
   {
     view_layout_->Set2DTranslation(x, y, 0);
-    view_layout_->QueueDraw();
+    QueueDraw();
   }
 }
