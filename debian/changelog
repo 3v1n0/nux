@@ -1,4 +1,4 @@
-nux (3.8.0-0ubuntu1) UNRELEASED; urgency=low
+nux (3.8.0-0ubuntu1) quantal-proposed; urgency=low
 
   * New upstream release.
     - Add na::Controller::HasRunningAnimations (LP: #1054088) (LP: #1054074)
