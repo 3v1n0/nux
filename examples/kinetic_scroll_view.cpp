@@ -48,7 +48,7 @@ View *CreateKineticScrollView()
   return kinetic_scroll_view;
 }
 
-void UserInterfaceInitialization(NThread* thread, void* InitData)
+void UserInterfaceInitialization(NThread* /* thread */, void* /* InitData */)
 {
 
   HLayout* mainLayout = new HLayout(NUX_TRACKER_LOCATION);
@@ -57,7 +57,7 @@ void UserInterfaceInitialization(NThread* thread, void* InitData)
   GetWindowThread()->SetLayout(mainLayout);
 }
 
-int main(int argc, char **argv)
+int main()
 {
   NuxInitialize(0);
 

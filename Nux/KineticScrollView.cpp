@@ -94,7 +94,8 @@ bool KineticScrollView::ChildMouseEvent(const Event& event)
   return want_mouse_ownership;
 }
 
-void KineticScrollView::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
+void KineticScrollView::Draw(GraphicsEngine & /* graphics_engine */,
+                             bool /* force_draw */)
 {
   if (view_layout_)
   {
@@ -108,7 +109,7 @@ void KineticScrollView::DrawContent(GraphicsEngine &graphics_engine, bool force_
     view_layout_->ProcessDraw(graphics_engine, force_draw);
 }
 
-long KineticScrollView::PostLayoutManagement(long LayoutResult)
+long KineticScrollView::PostLayoutManagement(long /* LayoutResult */)
 {
   if (view_layout_)
   {
