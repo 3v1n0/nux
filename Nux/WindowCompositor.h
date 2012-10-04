@@ -134,6 +134,12 @@ namespace nux
     /* Updates mouse_owner_area_ and emits mouse_down, mouse_up, mouse_click
        and mouse_double_click accordingly. */
     void UpdateMouseOwner(const Event& event, bool area_under_mouse_changed);
+    /*
+       Feed the appropriate InputArea::ChildMouseEvent() and switch mouse ownership
+       (including the emission of mouse_cancel) if asked to.
+      */
+    void UpdateEventTrackingByMouseOwnerAncestor(const Event& event);
+    void FindAncestorInterestedInChildMouseEvents(Area *area);
 
     //! Traverse the widget tree and found the area that is right below the mouse pointer.
     void FindAreaUnderMouse(const Point& mouse_position,
@@ -186,6 +192,14 @@ namespace nux
     ObjectWeakPtr<InputArea> key_focus_area_;
     ObjectWeakPtr<InputArea> mouse_owner_area_;
     ObjectWeakPtr<InputArea> mouse_over_area_;
+
+    /* An ancestor of the current mouse owner area that wants to be notified
+       about all mouse events that a descendant receives and optionally
+       take ownership over the mouse at any given moment.
+       \sa InputArea::ChildMouseEvent()
+     */
+    /* TODO: Make it a list/vector once the need for nested trackers. */
+    ObjectWeakPtr<InputArea> interested_mouse_owner_ancestor_;
 
     int dnd_safety_x_;
     int dnd_safety_y_;

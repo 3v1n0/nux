@@ -9,7 +9,8 @@ if BUILD_EXAMPLES
 
 noinst_PROGRAMS = text_entry_focus \
   shortcut_keys \
-  coverflow
+  coverflow \
+  kinetic_scroll_view
 
 #button \
 #                  cairo \
@@ -110,6 +111,9 @@ shortcut_keys_LDADD = $(ALL_LIBS)
 
 coverflow_SOURCES = coverflow.cpp
 coverflow_LDADD = $(ALL_LIBS)
+
+kinetic_scroll_view_SOURCES = kinetic_scroll_view.cpp TestButton.cpp
+kinetic_scroll_view_LDADD = $(ALL_LIBS)
 
 if HAVE_GEIS
 gestures_SOURCES = gestures.cpp

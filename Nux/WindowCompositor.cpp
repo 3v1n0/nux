@@ -609,6 +609,56 @@ namespace
     }
   }
 
+  void WindowCompositor::FindAncestorInterestedInChildMouseEvents(Area *area)
+  {
+    if (!area)
+      return;
+
+    Area *parent = area->GetParentObject();
+    if (!parent)
+      return;
+
+    if (parent->IsInputArea())
+    {
+      InputArea *parent_input_area = static_cast<InputArea*>(parent);
+      if (parent_input_area->IsTrackingChildMouseEvents())
+        interested_mouse_owner_ancestor_ = parent_input_area;
+    }
+
+    if (!interested_mouse_owner_ancestor_.IsValid())
+    {
+      // Keep searching...
+      FindAncestorInterestedInChildMouseEvents(parent);
+    }
+  }
+
+  void WindowCompositor::UpdateEventTrackingByMouseOwnerAncestor(const Event& event)
+  {
+    if (event.type == NUX_MOUSE_PRESSED || event.type == NUX_MOUSE_DOUBLECLICK)
+      FindAncestorInterestedInChildMouseEvents(mouse_owner_area_.GetPointer());
+
+    if (!interested_mouse_owner_ancestor_.IsValid())
+      return;
+
+    bool wants_ownership =
+      interested_mouse_owner_ancestor_->ChildMouseEvent(event);
+
+    if (wants_ownership)
+    {
+      mouse_owner_area_->EmitMouseCancelSignal();
+
+      SetMouseOwnerArea(interested_mouse_owner_ancestor_.GetPointer());
+      _mouse_position_on_owner = Point(event.x - mouse_owner_area_->GetAbsoluteX(),
+                                       event.y - mouse_owner_area_->GetAbsoluteY());
+
+      interested_mouse_owner_ancestor_ = NULL;
+
+    }
+
+    if (event.type == NUX_MOUSE_RELEASED)
+      interested_mouse_owner_ancestor_ = NULL;
+  }
+
   void WindowCompositor::MouseEventCycle(Event& event)
   {
     // Updates mouse_over_area_ and emits mouse_enter and mouse_leave signals
@@ -625,6 +675,10 @@ namespace
 
     if (event.type == NUX_MOUSE_WHEEL)
         ProcessMouseWheelEvent(event);
+
+    // Feed the appropriate InputArea::ChildMouseEvent() and switch mouse
+    // ownership (including the emission of mouse_cancel) if asked to.
+    UpdateEventTrackingByMouseOwnerAncestor(event);
   }
 
   void WindowCompositor::MenuEventCycle(Event& event)

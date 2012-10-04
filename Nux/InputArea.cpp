@@ -49,6 +49,7 @@ logging::Logger logger("nux.inputarea");
   , area_color_(color::Green)
   , accept_key_nav_focus_on_mouse_down_(true)
   , accept_key_nav_focus_on_mouse_enter_(false)
+  , is_tracking_child_mouse_events_(false)
   {
     SetGeometry(0, 0, 1, 1);
 
@@ -358,6 +359,11 @@ logging::Logger logger("nux.inputarea");
     mouse_down_outside_pointer_grab_area.emit(x, y, mouse_button_state, special_keys_state);
   }
 
+  void InputArea::EmitMouseCancelSignal()
+  {
+    mouse_cancel.emit();
+  }
+
   Area* InputArea::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
     if (TestMousePointerInclusion(mouse_position, event_type))
@@ -486,4 +492,20 @@ logging::Logger logger("nux.inputarea");
     return this;
   }
 #endif // NUX_GESTURES_SUPPORT
+
+void InputArea::SetTrackChildMouseEvents(bool enable)
+{
+  is_tracking_child_mouse_events_ = enable;
 }
+
+bool InputArea::IsTrackingChildMouseEvents() const
+{
+  return is_tracking_child_mouse_events_;
+}
+
+bool InputArea::ChildMouseEvent(const Event&)
+{
+  return false;
+}
+
+} // namespace nux
