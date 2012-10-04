@@ -29,7 +29,10 @@ namespace nux
 {
 
 /*
-  The nux equivalent of QML's Flickable (from Qt framework).
+  Used to scroll content that is bigger than the available space to display it.
+
+  Unlike ScrollView, where scroll bars are used to move the content, here you directly
+  drag the content with a mouse pointer or finger (in case of a touchscreen).
 
   Items inside a KineticScrollView should properly handle events of type
   EVENT_MOUSE_CANCEL. If an item inside a kinetic scroll view is pressed, it gets
