@@ -23,7 +23,7 @@
 namespace nux
 {
 
-enum class BoundsBehavior
+enum BoundsBehavior
 {
   StopAtBounds, /*!< content can not be dragged beyond viewport boundaries, and
                      flicks will not overshoot */
@@ -33,12 +33,12 @@ enum class BoundsBehavior
                               and can overshoot it when flicked. */
 };
 
-enum class ScrollableDirections
+enum ScrollableDirections
 {
-  Auto,
-  Horizontal,
-  Vertical,
-  HorizontalAndVertical
+  ScrollableDirectionsAuto,
+  ScrollableDirectionsHorizontal,
+  ScrollableDirectionsVertical,
+  ScrollableDirectionsHorizontalAndVertical
 };
 
 /*!
@@ -47,18 +47,24 @@ enum class ScrollableDirections
   Kinetic scrolling works for each axis independently. Therefore each axis has its
   own separate state.
  */
-enum class KineticScrollerAxisState
+enum KineticScrollerAxisState
 {
-  Idle, /*!< It's not pressed and not moving. This is the initial state.
-             This is also the state an axis will be if scrolling is not
-             possible or enabled for it. */
-  Pressed, /*!< It's pressed but not yet moving. */
-  FollowingFinger, /*!< It's pressed and moving to follow the user's finger */
-  MovingByInertia /*!< It's not pressed anymore but it's still moving due to inertia.
-                       Reacheable from FollowingFinger.
-                       After it loses all its momentum it will stop and therefore
-                       move to the Idle state. */
-};
+
+  /*!< It's not pressed and not moving. This is the initial state.
+       This is also the state an axis will be if scrolling is not
+       possible or enabled for it. */
+  KineticScrollerAxisStateIdle,
+
+  /*!< It's pressed but not yet moving. */
+  KineticScrollerAxisStatePressed,
+
+  /*!< It's pressed and moving to follow the user's finger */
+  KineticScrollerAxisStateFollowingFinger,
+
+  /*!< It's not pressed anymore but it's still moving due to inertia.
+       Reacheable from FollowingFinger. After it loses all its momentum
+       it will stop and therefore move to the Idle state. */
+  KineticScrollerAxisStateMovingByInertia };
 
 } // namespace nux
 #endif // NUX_KINETIC_SCROLLING_ENUMS_H

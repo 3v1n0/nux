@@ -72,8 +72,8 @@ KineticAxisScroller::Private::Private()
   content_length_ = 0.0f;
   content_pos_ = 0.0f;
   min_content_pos_ = 0.0f;
-  bounds_behavior_ = BoundsBehavior::DragAndOvershootBounds;
-  state_ = KineticScrollerAxisState::Idle;
+  bounds_behavior_ = DragAndOvershootBounds;
+  state_ = KineticScrollerAxisStateIdle;
 }
 
 void KineticAxisScroller::Private::CalculateContentPosLimits()
@@ -88,12 +88,12 @@ void KineticAxisScroller::Private::ProcessFingerDown()
 {
   switch (state_)
   {
-    case KineticScrollerAxisState::Idle:
-      state_ = KineticScrollerAxisState::Pressed;
+    case KineticScrollerAxisStateIdle:
+      state_ = KineticScrollerAxisStatePressed;
       accumulated_movement_ = 0;
       break;
-    case KineticScrollerAxisState::MovingByInertia:
-      state_ = KineticScrollerAxisState::Pressed;
+    case KineticScrollerAxisStateMovingByInertia:
+      state_ = KineticScrollerAxisStatePressed;
       accumulated_movement_ = 0;
       break;
     default:
@@ -123,7 +123,7 @@ void KineticAxisScroller::Private::ProcessFingerUp()
   deceleration_animation_.SetStartVelocity(velocity);
   deceleration_animation_.Start();
 
-  state_ = KineticScrollerAxisState::MovingByInertia;
+  state_ = KineticScrollerAxisStateMovingByInertia;
 }
 
 void KineticAxisScroller::Private::ProcessFingerDrag(int movement)
@@ -133,7 +133,7 @@ void KineticAxisScroller::Private::ProcessFingerDrag(int movement)
   if (movement == 0)
     return;
 
-  if (state_ == KineticScrollerAxisState::Pressed)
+  if (state_ == KineticScrollerAxisStatePressed)
   {
     ProcessFingerDrag_Pressed(movement);
   }
@@ -149,7 +149,7 @@ void KineticAxisScroller::Private::ProcessFingerDrag_Pressed(int movement)
 
   if (abs(accumulated_movement_) > KineticAxisScroller::MOVEMENT_THRESHOLD)
   {
-    state_ = KineticScrollerAxisState::FollowingFinger;
+    state_ = KineticScrollerAxisStateFollowingFinger;
     velocity_calculator_.Reset();
 
     ProcessFingerDrag_FollowingFinger(movement);
@@ -176,11 +176,11 @@ void KineticAxisScroller::Private::UpdateAnimations(int delta_time)
     content_pos_ = deceleration_animation_.GetPosition();
 
     if (!deceleration_animation_.IsActive())
-      state_ = KineticScrollerAxisState::Idle;
+      state_ = KineticScrollerAxisStateIdle;
   }
   else
   {
-    state_ = KineticScrollerAxisState::Idle;
+    state_ = KineticScrollerAxisStateIdle;
   }
 }
 
@@ -192,7 +192,7 @@ int KineticAxisScroller::Private::LimitOutOfBoundsMovement(int movement,
 
   if (new_position > 0)
   {
-    if (bounds_behavior_ == BoundsBehavior::StopAtBounds)
+    if (bounds_behavior_ == StopAtBounds)
     {
       return 0 - position;
     }
@@ -205,7 +205,7 @@ int KineticAxisScroller::Private::LimitOutOfBoundsMovement(int movement,
   }
   else if (new_position < min_position)
   {
-    if (bounds_behavior_ == BoundsBehavior::StopAtBounds)
+    if (bounds_behavior_ == StopAtBounds)
     {
       return min_position - position;
     }
@@ -295,7 +295,7 @@ void KineticAxisScroller::UpdateTime(int delta_time)
 
 bool KineticAxisScroller::NeedTimeUpdates() const
 {
-  return p->state_ == KineticScrollerAxisState::MovingByInertia
+  return p->state_ == KineticScrollerAxisStateMovingByInertia
     && p->deceleration_animation_.IsActive();
 }
 

@@ -77,10 +77,10 @@ bool KineticScrollView::ChildMouseEvent(const Event& event)
     scroller_.ProcessFingerDrag(dx, dy);
 
     if (scroller_.GetHorizontalAxisState() ==
-        KineticScrollerAxisState::FollowingFinger
+        KineticScrollerAxisStateFollowingFinger
         ||
         scroller_.GetVerticalAxisState() ==
-        KineticScrollerAxisState::FollowingFinger)
+        KineticScrollerAxisStateFollowingFinger)
     {
       want_mouse_ownership = true;
     }

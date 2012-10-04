@@ -82,7 +82,7 @@ KineticScroller::Private::Private(kinetic_scrolling::TickSourceInterface *tick_s
 
 void KineticScroller::Private::Init()
 {
-  scrollable_directions_ = ScrollableDirections::Auto;
+  scrollable_directions_ = ScrollableDirectionsAuto;
 
   tick_source_->tick.connect(
       sigc::mem_fun(this, &KineticScroller::Private::UpdateAnimations));
@@ -170,17 +170,17 @@ void KineticScroller::Private::CheckChangesInContentPosition()
 
 bool KineticScroller::Private::CanScrollHorizontally() const
 {
-  return scrollable_directions_ == ScrollableDirections::Horizontal
-    || scrollable_directions_ == ScrollableDirections::HorizontalAndVertical
-    || (scrollable_directions_ == ScrollableDirections::Auto
+  return scrollable_directions_ == ScrollableDirectionsHorizontal
+    || scrollable_directions_ == ScrollableDirectionsHorizontalAndVertical
+    || (scrollable_directions_ == ScrollableDirectionsAuto
         && scroller_x_.GetViewportLength() < scroller_x_.GetContentLength());
 }
 
 bool KineticScroller::Private::CanScrollVertically() const
 {
-  return scrollable_directions_ == ScrollableDirections::Vertical
-    || scrollable_directions_ == ScrollableDirections::HorizontalAndVertical
-    || (scrollable_directions_ == ScrollableDirections::Auto
+  return scrollable_directions_ == ScrollableDirectionsVertical
+    || scrollable_directions_ == ScrollableDirectionsHorizontalAndVertical
+    || (scrollable_directions_ == ScrollableDirectionsAuto
         && scroller_y_.GetViewportLength() < scroller_y_.GetContentLength());
 }
 

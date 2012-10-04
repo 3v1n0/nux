@@ -43,7 +43,7 @@ View *CreateKineticScrollView()
 
   KineticScrollView *kinetic_scroll_view = new KineticScrollView(NUX_TRACKER_LOCATION);
   kinetic_scroll_view->SetLayout(layout);
-  kinetic_scroll_view->SetScrollableDirections(ScrollableDirections::Vertical);
+  kinetic_scroll_view->SetScrollableDirections(ScrollableDirectionsVertical);
 
   return kinetic_scroll_view;
 }
