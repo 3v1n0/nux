@@ -40,7 +40,6 @@ namespace nux
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     void AddTab(const char *tab_name, Layout *tab_layout);
     void SetActiveTad(int index);

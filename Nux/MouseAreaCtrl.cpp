@@ -65,11 +65,6 @@ namespace nux
     sigDraw.emit(force_draw);
   }
 
-  void MouseAreaCtrl::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
   int MouseAreaCtrl::getAreaPosX()
   {
     return m_Area->GetBaseX();

@@ -85,11 +85,6 @@ namespace nux
 
   }
 
-  void StaticTextBox::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
   void StaticTextBox::SetText(const char &Caption)
   {
     NString s(Caption);

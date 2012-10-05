@@ -189,11 +189,6 @@ namespace nux
 
   }
 
-  void EditTextBox::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
   void EditTextBox::SetText(const char &Caption)
   {
     NString s(Caption);

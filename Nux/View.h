@@ -81,13 +81,13 @@ namespace nux
 
   public:
     virtual void ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw);
-    //! Causes a redraw. The widget parameter draw_cmd_queued_ is set to true. The widget Draw(), DrawContent() and PostDraw() are called.
+    //! Causes a redraw. The widget parameter draw_cmd_queued_ is set to true. The widget Draw() and DrawContent() are called.
     /*!
         Emits the signal \i queue_draw.
     */
     virtual void QueueDraw();
 
-    //! Causes a soft redraw. The widget parameter draw_cmd_queued_ is set to false. The widget DrawContent() and PostDraw() are called.
+    //! Causes a soft redraw. The widget parameter draw_cmd_queued_ is set to false. The widget DrawContent() is called.
     virtual void NeedSoftRedraw();
     virtual bool IsRedrawNeeded();
     virtual void DoneRedraw();
@@ -99,7 +99,6 @@ namespace nux
     bool SearchInAllSubNodes(Area *bo);
     bool SearchInFirstSubNodes(Area *bo);
 
-    
 /*    void SetGeometry(int x, int y, int w, int h);*/
 
     //! Set Geometry
@@ -173,7 +172,6 @@ namespace nux
 
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw) = 0;
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void PreLayoutManagement();
     virtual long PostLayoutManagement(long LayoutResult);
     virtual void PreResizeGeometry();

@@ -622,11 +622,6 @@ namespace nux
     //MainDraw();
   }
 
-  void TextEntry::PostDraw(GraphicsEngine& /* gfxContext */, bool /* forceDraw */)
-  {
-    // intentionally left empty
-  }
-
   TextEntry::SearchState TextEntry::GetCompositionForList(std::vector<unsigned long> const& input, std::string& composition)
   {
     SearchState search_state = SearchState::NO_MATCH;

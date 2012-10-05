@@ -268,11 +268,6 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void TabView::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
   void TabView::PreLayoutManagement()
   {
     // Give the managed layout appropriate size and position..
