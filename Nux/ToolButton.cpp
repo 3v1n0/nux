@@ -89,11 +89,6 @@ namespace nux
 
   }
 
-  void ToolButton::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
   void ToolButton::SetState(bool /* b */)
   {
 

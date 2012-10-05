@@ -104,11 +104,6 @@ namespace nux
     m_FileEditTextBox->ProcessDraw(graphics_engine, force_draw);
   }
 
-  void FileSelector::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
   void FileSelector::RecvMouseEnter(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();

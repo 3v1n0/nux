@@ -133,11 +133,6 @@ namespace nux
     m_ValueString->ProcessDraw(graphics_engine, force_draw);
   }
 
-  void RangeValueInteger::PostDraw(GraphicsEngine & /* graphics_engine */, bool  /* force_draw */)
-  {
-
-  }
-
   void RangeValueInteger::SetRange(int min_value, int max_value)
   {
     if (min_value < max_value)

@@ -129,11 +129,6 @@ namespace nux
     m_EditLine->ProcessDraw(graphics_engine, force_draw);
   }
 
-  void SpinBoxDouble::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
   void SpinBoxDouble::SetValue(double value)
   {
     m_Value = m_DoubleValidator.GetClampedValue(value);

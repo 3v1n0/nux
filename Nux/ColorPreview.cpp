@@ -90,11 +90,6 @@ namespace nux
     m_ColorValue->ProcessDraw(graphics_engine, force_draw);
   }
 
-  void ColorPreview::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
   void ColorPreview::RecvClick(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     m_DialogThreadProxy->SetColor(m_Color);

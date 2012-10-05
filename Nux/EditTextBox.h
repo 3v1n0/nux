@@ -43,7 +43,6 @@ namespace nux
     ~EditTextBox();
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     //! Return True if the the area knows what to do with the key event.
     virtual bool InspectKeyEvent(unsigned int eventType,

@@ -134,11 +134,6 @@ namespace nux
     m_ValueString->ProcessDraw(graphics_engine, force_draw);
   }
 
-  void RangeValue::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
 /////////////////
 //  RECEIVERS  //
 /////////////////

@@ -180,7 +180,6 @@ namespace nux
             full_view_draw_cmd_ = true;
             Draw(graphics_engine, force_draw);
             DrawContent(graphics_engine, force_draw);
-            PostDraw(graphics_engine, force_draw);
           }
           else
           {
@@ -189,12 +188,10 @@ namespace nux
               full_view_draw_cmd_ = true;
               Draw(graphics_engine, false);
               DrawContent(graphics_engine, false);
-              PostDraw(graphics_engine, false);
             }
             else if (update_backup_texture_)
             {
               DrawContent(graphics_engine, false);
-              PostDraw(graphics_engine, false);
             }
           }
           graphics_engine.PopModelViewMatrix();
@@ -244,7 +241,6 @@ namespace nux
         full_view_draw_cmd_ = true;
         Draw(graphics_engine, force_draw);
         DrawContent(graphics_engine, force_draw);
-        PostDraw(graphics_engine, force_draw);
 
         GetPainter().PopPaintLayerStack();
       }
@@ -258,14 +254,12 @@ namespace nux
           full_view_draw_cmd_ = true;
           Draw(graphics_engine, false);
           DrawContent(graphics_engine, false);
-          PostDraw(graphics_engine, false);
 
           GetPainter().PopPaintLayerStack();
         }
         else
         {
           DrawContent(graphics_engine, false);
-          PostDraw(graphics_engine, false);
         }
       }
 
@@ -432,11 +426,6 @@ namespace nux
 
   }
 
-  void View::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
   void View::QueueDraw()
   {
     if (draw_cmd_queued_)
@@ -448,7 +437,7 @@ namespace nux
       application->AddToDrawList(this);
       application->RequestRedraw();
     }
-    
+
     // Report to a parent view with redirect_rendering_to_texture_ set to true that one of its children
     // needs to be redrawn.
     PrepareParentRedirectedView();
