@@ -55,6 +55,8 @@ class GestureTarget
       return Equals(other);
     }
 
+    sigc::signal<void, const GestureTarget &> on_target_unavailable;
+
   private:
     /*!
       For some types of target, different instances may wrap the same actual target,
@@ -96,7 +98,7 @@ class Gesture
     Gesture(const GestureEvent &event);
 
     void AddTarget(ShPtGestureTarget target);
-    void RemoveTarget(ShPtGestureTarget target);
+    void RemoveTarget(const GestureTarget &target);
     const std::list<ShPtGestureTarget> &GetTargetList() const {return target_list_;}
 
     void EnableEventDelivery();
@@ -127,6 +129,8 @@ class Gesture
 
     AcceptanceStatus GetAcceptanceStatus() const {return acceptance_status_;}
 
+    sigc::signal <void, Gesture &> on_lost_all_targets;
+
   private:
     const GestureEvent &GetLatestEvent() const;
     GestureEvent &GetLatestEvent();
@@ -135,6 +139,7 @@ class Gesture
         std::list<ShPtGestureTarget>::iterator &it_requestor);
 
     std::list<ShPtGestureTarget> target_list_;
+    std::map <ShPtGestureTarget, sigc::connection> target_unavailable_connections_;
 
     // events that are waiting to be delivered
     std::vector<GestureEvent> queued_events_;
@@ -156,7 +161,7 @@ class GestureSet
     void Add(std::shared_ptr<Gesture> &gesture);
     std::shared_ptr<Gesture> FindFromGestureId(int gesture_id);
     std::shared_ptr<Gesture> FindFromTarget(ShPtGestureTarget target);
-    void Remove(std::shared_ptr<Gesture> &gesture);
+    void Remove(const Gesture &gesture);
 
     std::vector< std::shared_ptr<Gesture> >
       GetConflictingGestures(std::shared_ptr<Gesture> &gesture);

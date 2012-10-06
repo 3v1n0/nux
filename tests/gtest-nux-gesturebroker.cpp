@@ -34,6 +34,11 @@ class SimpleTarget : public nux::GestureTarget
       return GestureDeliveryRequest::NONE;
     }
 
+    void MakeUnavailable()
+    {
+      on_target_unavailable.emit (*this);
+    }
+
     int id;
 };
 
@@ -61,6 +66,32 @@ class GestureBrokerTest : public ::testing::Test
   SimpleGestureBroker gesture_broker;
   nux::FakeGestureEvent fake_event;
 };
+
+TEST_F(GestureBrokerTest, RejectGestureIfTargetBecomesUnavailable)
+{
+  std::shared_ptr <SimpleTarget> target (new SimpleTarget (0));
+  nux::TouchPoint touch (0, 1.0f, 1.0f);
+  gesture_broker.targets_to_be_found.push_back (target);
+
+  g_gesture_acceptance[0] = 0;
+
+  fake_event.type = nux::EVENT_GESTURE_BEGIN;
+  fake_event.gesture_id = 0;
+  fake_event.gesture_classes = nux::TOUCH_GESTURE;
+  fake_event.timestamp = 0;
+  fake_event.touches.clear();
+  fake_event.touches.push_back(touch);
+  fake_event.is_construction_finished = false;
+  gesture_broker.ProcessGestureBegin(fake_event.ToGestureEvent());
+
+  ASSERT_EQ (0, g_gesture_acceptance[0]);
+
+  /* This target is now unavailable */
+  target->MakeUnavailable();
+
+  /* Reject the gesture */
+  EXPECT_EQ (-1, g_gesture_acceptance[0]);
+}
 
 /*
   Let's simulate a situation where a user lays 4 fingers over a trackpad.
