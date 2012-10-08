@@ -59,7 +59,6 @@ namespace nux
     , m_ViewContentBottomMargin(0)
   {
 
-    //GetPainter().CreateBackgroundTexture(m_BackgroundTexture);
     _hscrollbar = new HScrollBar(NUX_TRACKER_LOCATION);
     _vscrollbar = new VScrollBar(NUX_TRACKER_LOCATION);
     // _hscrollbar and _vscrollbar have to be parented so they are correctly
@@ -81,9 +80,6 @@ namespace nux
 
     mouse_wheel.connect(sigc::mem_fun(this, &ScrollView::RecvMouseWheel));
     _vscrollbar->mouse_wheel.connect(sigc::mem_fun(this, &ScrollView::RecvMouseWheel));
-
-    //FIXME disabling until we have better API for this
-    //ChildFocusChanged.connect(sigc::mem_fun(this, &ScrollView::OnChildFocusChanged));
 
     FormatContent();
 
@@ -125,44 +121,6 @@ namespace nux
     // Delete all the interface object: This is a problem... The widget should be destroy by there associated parameters
     _hscrollbar->UnReference();
     _vscrollbar->UnReference();
-  }
-
-  void ScrollView::OnChildFocusChanged(Area *child)
-  {
-//     if (child->IsView())
-//     {
-//       View *view = (View*)child;
-//       if (view->HasPassiveFocus())
-//       {
-//         return;
-//       }
-//     }
-    if (child->IsLayout())
-      return;
-
-    int child_y = child->GetGeometry().y - GetGeometry().y;
-    int child_y_diff = child_y - abs(_delta_y);
-
-
-    if (child_y_diff + child->GetGeometry().height < GetGeometry().height && child_y_diff >= 0)
-    {
-      return;
-    }
-
-    if (child_y_diff < 0)
-    {
-      ScrollUp(1, abs(child_y_diff));
-    }
-    else
-    {
-      int size = child_y_diff - GetGeometry().height;
-
-      // always keeps the top of a view on the screen
-      size += (child->GetGeometry().height, GetGeometry().height) ? child->GetGeometry().height : GetGeometry().height;
-
-      ScrollDown(1, size);
-    }
-
   }
 
   Area* ScrollView::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
@@ -250,15 +208,7 @@ namespace nux
     graphics_engine.PushClippingRectangle(Rect(m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight));
 
     if (view_layout_)
-    {
-//       graphics_engine.PushClipOffset(_delta_x, _delta_y);
-//       graphics_engine.PushClippingRectangle(view_layout_->GetGeometry());
-//       graphics_engine.Push2DTranslationModelViewMatrix(_delta_x, _delta_y, 0.0f);
       view_layout_->ProcessDraw(graphics_engine, force_draw);
-//       graphics_engine.PopModelViewMatrix();
-//       graphics_engine.PopClippingRectangle();
-//       graphics_engine.PopClipOffset();
-    }
 
     graphics_engine.PopClippingRectangle();
 
@@ -296,13 +246,6 @@ namespace nux
 ///////////////////////
 // Internal function //
 ///////////////////////
-
-  void ScrollView::SetGeometry(const Geometry &geo)
-  {
-    Area::SetGeometry(geo);
-    //ComputeContentSize();
-  }
-
   void ScrollView::FormatContent()
   {
     Geometry geo;

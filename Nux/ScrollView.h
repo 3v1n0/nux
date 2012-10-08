@@ -61,9 +61,6 @@ namespace nux
     */
     bool IsSizeMatchContent() const;
 
-    //! Inherited from Area
-    virtual void SetGeometry(const Geometry &geo);
-
     /////////////////
     //  EMITERS    //
     /////////////////
@@ -162,7 +159,6 @@ namespace nux
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
 
     void RecvMouseWheel(int x, int y, int wheel_delta,  long button_flags, unsigned long key_flags);
-    void OnChildFocusChanged(Area *child);
 
     //! Change Vertical Scrollbar in the ScrollView.
     /*!
