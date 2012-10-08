@@ -33,15 +33,6 @@ namespace nux
   ScrollView::ScrollView(NUX_FILE_LINE_DECL)
     : View(NUX_FILE_LINE_PARAM)
     , m_MouseWheelScrollSize(32)
-      // TODO: these should really be Rects.
-    , m_ViewContentX(0)
-    , m_ViewContentY(0)
-    , m_ViewContentWidth(0)
-    , m_ViewContentHeight(0)
-    , m_ViewX(0)
-    , m_ViewY(0)
-    , m_ViewWidth(0)
-    , m_ViewHeight(0)
     , m_horizontal_scrollbar_enable(true)
     , m_vertical_scrollbar_enable(true)
     , m_top_border(0)
@@ -189,7 +180,7 @@ namespace nux
       
     graphics_engine.PushClippingRectangle(GetGeometry());
 
-    graphics_engine.PushClippingRectangle(Rect(m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight));
+    graphics_engine.PushClippingRectangle(view_geo_);
 
     if (view_layout_)
       view_layout_->ProcessDraw(graphics_engine, force_draw);
@@ -249,36 +240,36 @@ namespace nux
     nuxAssertMsg(ScrollBarWidth > 0, "[ScrollView::PreLayoutManagement] Invalid scrollbar width: %d", ScrollBarWidth);
     nuxAssertMsg(ScrollBarHeight > 0, "[ScrollView::PreLayoutManagement] Invalid scrollbar height: %d", ScrollBarHeight);
 
-    m_ViewX = GetBaseX() + m_border + m_ViewContentLeftMargin;
-    m_ViewY = GetBaseY() + m_top_border + m_ViewContentTopMargin;
+    view_geo_.x = GetBaseX() + m_border + m_ViewContentLeftMargin;
+    view_geo_.y = GetBaseY() + m_top_border + m_ViewContentTopMargin;
 
     if (m_vertical_scrollbar_enable == false)
-      m_ViewWidth = GetBaseWidth() - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin;
+      view_geo_.width = GetBaseWidth() - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin;
     else
-      m_ViewWidth = GetBaseWidth() - ScrollBarWidth - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin;
+      view_geo_.width = GetBaseWidth() - ScrollBarWidth - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin;
 
-    nuxAssertMsg(m_ViewWidth > 0, "[ScrollView::PreLayoutManagement] Invalid view width: %d", m_ViewWidth);
+    nuxAssertMsg(view_geo_.width > 0, "[ScrollView::PreLayoutManagement] Invalid view width: %d", view_geo_.width);
 
     if (m_horizontal_scrollbar_enable == false)
-      m_ViewHeight = GetBaseHeight() - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin;
+      view_geo_.height = GetBaseHeight() - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin;
     else
-      m_ViewHeight = GetBaseHeight() - ScrollBarHeight - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin;
+      view_geo_.height = GetBaseHeight() - ScrollBarHeight - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin;
 
-    nuxAssertMsg(m_ViewHeight > 0, "[ScrollView::PreLayoutManagement] Invalid view height: %d", m_ViewHeight);
+    nuxAssertMsg(view_geo_.height > 0, "[ScrollView::PreLayoutManagement] Invalid view height: %d", view_geo_.height);
 
-    if (m_ViewX + _delta_x +  m_ViewContentWidth < m_ViewX + m_ViewWidth)
+    if (_delta_x +  content_geo_.width < view_geo_.width)
     {
       // The position of the end of the content is smaller than the view right border position
       // Compute _delta_x so the end of the content match exactly the view right border position
-      _delta_x = - (m_ViewContentWidth > m_ViewWidth ? m_ViewContentWidth - m_ViewWidth : 0);
+      _delta_x = - (content_geo_.width > view_geo_.width ? content_geo_.width - view_geo_.width : 0);
       nuxAssert(_delta_x <= 0);
     }
 
-    if (m_ViewY + _delta_y + m_ViewContentHeight < m_ViewY + m_ViewHeight)
+    if (_delta_y + content_geo_.height < view_geo_.height)
     {
       // The position of the end of the content is smaller than the view right border position
       // Compute _delta_y so the end of the content match exactly the view right border position
-      _delta_y = - (m_ViewContentHeight > m_ViewHeight ? m_ViewContentHeight - m_ViewHeight : 0);
+      _delta_y = - (content_geo_.height > view_geo_.height ? content_geo_.height - view_geo_.height : 0);
       nuxAssert(_delta_y <= 0);
     }
 
@@ -288,11 +279,7 @@ namespace nux
 
       if (view_layout_->GetScaleFactor() != 0)
       {
-        view_layout_->SetGeometry(
-                m_ViewX,
-                m_ViewY,
-                m_ViewWidth,
-                m_ViewHeight);
+        view_layout_->SetGeometry(view_geo_);
       }
 
       view_layout_->Set2DTranslation(_delta_x, _delta_y, 0);
@@ -358,10 +345,7 @@ namespace nux
 
     if (view_layout_)
     {
-      m_ViewContentX = view_layout_->GetBaseX();
-      m_ViewContentY = view_layout_->GetBaseY();
-      m_ViewContentWidth = view_layout_->GetBaseWidth();
-      m_ViewContentHeight = view_layout_->GetBaseHeight();
+      content_geo_->SetGeometry(view_layout_->GetGeometry());
     }
 
     if (m_horizontal_scrollbar_enable)
@@ -445,37 +429,30 @@ namespace nux
     if (m_vertical_scrollbar_enable)
       ScrollbarWidth = _vscrollbar->GetBaseWidth();
 
-    // We want the controller to match the size of the content as defined in:
-    //      m_ViewContentX
-    //      m_ViewContentY
-    //      m_ViewContentWidth
-    //      m_ViewContentHeight
+    // We want the controller to match the size of the content as defined in content_geo_
     // So we make the composition layout the same size as the content
     // Note that classes that inherits from ScrollView are responsible for setting the dimension of the ViewContent
 
     if (view_layout_)
     {
-      view_layout_->SetBaseX(m_ViewContentX);
-      view_layout_->SetBaseY(m_ViewContentY);
-      view_layout_->SetBaseWidth(m_ViewContentWidth);
-      view_layout_->SetBaseHeight(m_ViewContentHeight);
+      view_layout_->SetGeometry(content_geo_);
     }
 
     Geometry base;
-    // Given the(m_ViewContentWidth, m_ViewContentHeight) compute the size of the ScrollView.
+    // Given the(content_geo_.width, content_geo_.height) compute the size of the ScrollView.
     // It is possible that the ScrollView size be limited by its min/Max dimension. If this happens, then the scrollbar will reflect that.
-    base.SetX(m_ViewContentX - m_border - m_ViewContentLeftMargin);
-    base.SetY(m_ViewContentY - m_top_border - m_ViewContentTopMargin);
+    base.SetX(content_geo_.x - m_border - m_ViewContentLeftMargin);
+    base.SetY(content_geo_.y - m_top_border - m_ViewContentTopMargin);
 
     if (m_horizontal_scrollbar_enable)
-      base.SetHeight(m_top_border + m_ViewContentTopMargin + m_ViewContentHeight + m_ViewContentBottomMargin + ScrollbarHeight + m_border);
+      base.SetHeight(m_top_border + m_ViewContentTopMargin + content_geo_.height + m_ViewContentBottomMargin + ScrollbarHeight + m_border);
     else
-      base.SetHeight(m_top_border + m_ViewContentTopMargin + m_ViewContentHeight + m_ViewContentBottomMargin + m_border);
+      base.SetHeight(m_top_border + m_ViewContentTopMargin + content_geo_.height + m_ViewContentBottomMargin + m_border);
 
     if (m_vertical_scrollbar_enable)
-      base.SetWidth(m_border + m_ViewContentLeftMargin + m_ViewContentWidth + m_ViewContentRightMargin + ScrollbarWidth + m_border);
+      base.SetWidth(m_border + m_ViewContentLeftMargin + content_geo_.width + m_ViewContentRightMargin + ScrollbarWidth + m_border);
     else
-      base.SetWidth(m_border + m_ViewContentLeftMargin + m_ViewContentWidth + m_ViewContentRightMargin + m_border);
+      base.SetWidth(m_border + m_ViewContentLeftMargin + content_geo_.width + m_ViewContentRightMargin + m_border);
 
     // Set the size so that is is equal to the visible content.
     Area::SetBaseWidth(base.GetWidth());
@@ -600,34 +577,34 @@ namespace nux
     w = _vscrollbar->GetBaseWidth();
     h = _hscrollbar->GetBaseHeight();
 
-    m_ViewX = GetBaseX() + m_border + m_ViewContentLeftMargin;
-    m_ViewY = GetBaseY() + m_top_border + m_ViewContentTopMargin;
+    view_geo_.x = GetBaseX() + m_border + m_ViewContentLeftMargin;
+    view_geo_.y = GetBaseY() + m_top_border + m_ViewContentTopMargin;
 
     if (m_vertical_scrollbar_enable == false)
-      m_ViewWidth = GetBaseWidth() - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin;
+      view_geo_.width = GetBaseWidth() - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin;
     else
-      m_ViewWidth = GetBaseWidth() - w - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin;
+      view_geo_.width = GetBaseWidth() - w - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin;
 
     if (m_horizontal_scrollbar_enable == false)
-      m_ViewHeight = GetBaseHeight() - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin;
+      view_geo_.height = GetBaseHeight() - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin;
     else
-      m_ViewHeight = GetBaseHeight() - h - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin;
+      view_geo_.height = GetBaseHeight() - h - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin;
 
 
-    if (m_ViewX + _delta_x +  m_ViewContentWidth < m_ViewX + m_ViewWidth)
+    if (_delta_x +  content_geo_.width < view_geo_.width)
     {
-      _delta_x = - (m_ViewContentWidth > m_ViewWidth ? m_ViewContentWidth - m_ViewWidth : 0);
+      _delta_x = - (content_geo_.width > view_geo_.width ? content_geo_.width - view_geo_.width : 0);
     }
 
-    if (m_ViewY + _delta_y + m_ViewContentHeight < m_ViewY + m_ViewHeight)
+    if (_delta_y + content_geo_.height < view_geo_.height)
     {
-      _delta_y = - (m_ViewContentHeight > m_ViewHeight ? m_ViewContentHeight - m_ViewHeight : 0);
+      _delta_y = - (content_geo_.height > view_geo_.height ? content_geo_.height - view_geo_.height : 0);
     }
 
     if (view_layout_)
     {
-      view_layout_->SetBaseX(m_ViewX);
-      view_layout_->SetBaseY(m_ViewY);
+      view_layout_->SetBaseX(view_geo_.x);
+      view_layout_->SetBaseY(view_geo_.y);
     }
 
     // Horizontal scrollbar Geometry
@@ -658,13 +635,13 @@ namespace nux
 
     if (view_layout_)
     {
-      m_ViewContentX = view_layout_->GetBaseX();
-      m_ViewContentY = view_layout_->GetBaseY();
+      content_geo_.x = view_layout_->GetBaseX();
+      content_geo_.y = view_layout_->GetBaseY();
     }
     else
     {
-      m_ViewContentX = m_ViewX;
-      m_ViewContentY = m_ViewY;
+      content_geo_.x = view_geo_.x;
+      content_geo_.y = view_geo_.y;
     }
 
     _vscrollbar->SetContentOffset(_delta_x, _delta_y);
@@ -706,9 +683,9 @@ namespace nux
     {
       _delta_x -= (float) stepx * (float) mousedx;
 
-      if (m_ViewX + _delta_x +  m_ViewContentWidth < m_ViewX + m_ViewWidth)
+      if (_delta_x +  content_geo_.width < view_geo_.width)
       {
-        _delta_x = - (m_ViewContentWidth > m_ViewWidth ? m_ViewContentWidth - m_ViewWidth : 0);
+        _delta_x = - (content_geo_.width > view_geo_.width ? content_geo_.width - view_geo_.width : 0);
       }
       view_layout_->Set2DTranslation(_delta_x, _delta_y, 0);
       scrolling.emit(_delta_x, _delta_y);
@@ -725,7 +702,7 @@ namespace nux
 
   void ScrollView::ScrollUp(float stepy, int mousedy)
   {
-    if (m_ViewContentHeight <= m_ViewHeight)
+    if (content_geo_.height <= view_geo_.height)
       return;
 
     if (view_layout_)
@@ -753,7 +730,7 @@ namespace nux
 
   void ScrollView::ScrollDown(float stepy, int mousedy)
   {
-    if (m_ViewContentHeight <= m_ViewHeight)
+    if (content_geo_.height <= view_geo_.height)
       return;
 
     if (view_layout_)
@@ -761,9 +738,9 @@ namespace nux
       int last_delta_y = _delta_y;
       _delta_y -= stepy * mousedy;
 
-      if (m_ViewY + _delta_y + m_ViewContentHeight < m_ViewY + m_ViewHeight)
+      if (_delta_y + content_geo_.height < view_geo_.height)
       {
-        _delta_y = - (m_ViewContentHeight > m_ViewHeight ? m_ViewContentHeight - m_ViewHeight : 0);
+        _delta_y = - (content_geo_.height > view_geo_.height ? content_geo_.height - view_geo_.height : 0);
       }
 
       if (last_delta_y != _delta_y)
@@ -808,7 +785,7 @@ namespace nux
   {
     if (view_layout_)
     {
-      _delta_x = - (m_ViewContentWidth > m_ViewWidth ? m_ViewContentWidth - m_ViewWidth : 0);
+      _delta_x = - (content_geo_.width > view_geo_.width ? content_geo_.width - view_geo_.width : 0);
       view_layout_->Set2DTranslation(_delta_x, _delta_y, 0);
     }
     else
@@ -840,7 +817,7 @@ namespace nux
   {
     if (view_layout_)
     {
-      _delta_y = - (m_ViewContentHeight > m_ViewHeight ? m_ViewContentHeight - m_ViewHeight : 0);
+      _delta_y = - (content_geo_.height > view_geo_.height ? content_geo_.height - view_geo_.height : 0);
       view_layout_->Set2DTranslation(_delta_x, _delta_y, 0);
     }
     else

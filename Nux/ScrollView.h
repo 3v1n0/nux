@@ -76,28 +76,11 @@ namespace nux
     // amount to scroll by for each mouse wheel event
     int m_MouseWheelScrollSize;
 
-    // Geometry of the layout that encompass the child layouts.
-    //! X Position of the content
-    int m_ViewContentX;
-    //! Y Position of the content
-    int m_ViewContentY;
-    //! Width of content
-    int m_ViewContentWidth;
-    //! Height of content
-    int m_ViewContentHeight;
-
     //Client View Area
-    //! X position of the scroll view content area
-    int m_ViewX;
-    //! Y position of the scroll view content area
-    int m_ViewY;
-    //! Width of the scroll view content area
-    int m_ViewWidth;
-    //! Height of the scroll view content area
-    int m_ViewHeight;
+    Geometry view_geo_;
 
-    Geometry m_ViewGeometry;
-    Geometry m_ContentGeometry;
+    // Geometry of the layout that encompass the child layouts.
+    Geometry content_geo;
 
     // signals
     /*!
