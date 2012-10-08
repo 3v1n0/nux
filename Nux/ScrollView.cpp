@@ -24,8 +24,6 @@
 #include "HScrollBar.h"
 #include "VScrollBar.h"
 #include "Layout.h"
-#include "HLayout.h"
-#include "VLayout.h"
 #include "ScrollView.h"
 
 namespace nux
@@ -44,8 +42,6 @@ namespace nux
     , m_ViewY(0)
     , m_ViewWidth(0)
     , m_ViewHeight(0)
-    , m_TextureIndex(0)
-    , m_ReformatTexture(true)
     , m_horizontal_scrollbar_enable(true)
     , m_vertical_scrollbar_enable(true)
     , m_top_border(0)
@@ -160,18 +156,6 @@ namespace nux
     // If the code gets here, it means that no area has been found yet.
     // Test the layout of the ScrollView
     return View::FindAreaUnderMouse(mouse_position, event_type);
-  }
-
-  bool ScrollView::SetLayout(Layout *layout)
-  {
-    if (View::SetLayout(layout) == false)
-    {
-      return false;
-    }
-
-    FormatContent();
-
-    return true;
   }
 
   void ScrollView::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)

@@ -43,7 +43,6 @@ namespace nux
     // API
     void EnableVerticalScrollBar(bool b);
     void EnableHorizontalScrollBar(bool b);
-    virtual bool SetLayout(Layout *layout);
 
     /*!
         Set the table size to be such that all the content items of the table are visible .
@@ -60,15 +59,6 @@ namespace nux
         @see SetSizeMatchContent
     */
     bool IsSizeMatchContent() const;
-
-    /////////////////
-    //  EMITERS    //
-    /////////////////
-    void OnSizeGrigMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
-    void OnSizeGrigMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    void EmitMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
-    //void EmitInternalResize(int x, int y, int w, int h);
-
 
     /////////////////
     //  RECEIVERS  //
@@ -166,24 +156,6 @@ namespace nux
         change the vertical scrollbar.
     */
     void SetVScrollBar(VScrollBar* newVScrollBar);
-
-    // Backup texture to speed up scrolling
-    ObjectPtr<IOpenGLFrameBufferObject> m_FrameBufferObject;
-
-    void SwapTextureIndex()
-    {
-      m_TextureIndex = (m_TextureIndex == 0) ? 1 : 0;
-    }
-    void SetTextureIndex(int index)
-    {
-      m_TextureIndex = index;
-    }
-    int GetTextureIndex()
-    {
-      return m_TextureIndex;
-    }
-    int m_TextureIndex;
-    bool m_ReformatTexture;
 
     // ScrollBars
     HScrollBar     *_hscrollbar;
