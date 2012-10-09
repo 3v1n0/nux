@@ -257,6 +257,9 @@ namespace nux
     if (IsSizeMatchContent())
       return PostLayoutManagement2(LayoutResult);
 
+    if (view_layout_)
+      content_geo_ = view_layout_->GetGeometry();
+
     if (m_horizontal_scrollbar_enable)
     {
       _hscrollbar->SetContainerSize(GetBaseWidth() -  2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
@@ -503,27 +506,22 @@ namespace nux
 
   void ScrollView::ScrollDown(float stepy, int mousedy)
   {
-    if (content_geo_.height <= view_geo_.height)
+    if (!view_layout || content_geo_.height <= view_geo_.height)
       return;
 
-    if (view_layout_)
+    int last_delta_y = _delta_y;
+    _delta_y -= stepy * mousedy;
+
+    if (_delta_y + content_geo_.height < view_geo_.height)
+      _delta_y = - (content_geo_.height > view_geo_.height ? content_geo_.height - view_geo_.height : 0);
+
+    if (last_delta_y != _delta_y)
     {
-      int last_delta_y = _delta_y;
-      _delta_y -= stepy * mousedy;
-
-      if (_delta_y + content_geo_.height < view_geo_.height)
-      {
-        _delta_y = - (content_geo_.height > view_geo_.height ? content_geo_.height - view_geo_.height : 0);
-      }
-
-      if (last_delta_y != _delta_y)
-      {
-        QueueDraw();
-        _vscrollbar->QueueDraw();
-      }
-
       view_layout_->Set2DTranslation(_delta_x, _delta_y, 0);
      _vscrollbar->SetContentOffset(_delta_x, _delta_y);
+
+      QueueDraw();
+      _vscrollbar->QueueDraw();
 
       scrolling.emit(_delta_x, _delta_y);
     }
