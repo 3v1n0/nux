@@ -33,7 +33,7 @@ public:
 
   nux::Color GetColor() const;
   void ResetEvents();
-  nux::VScrollBar* GetVScrollbar() {return _vscrollbar;}
+  nux::VScrollBar* GetVScrollbar() {return _vscrollbar.GetPointer();}
   
   bool registered_scroll_;
 

@@ -52,8 +52,8 @@ public:
     return ScrollView::FindAreaUnderMouse(mouse_position, event_type);
   }
 
-  nux::HScrollBar* GetHScrollbar() const { return _hscrollbar; }
-  nux::VScrollBar* GetVScrollbar() const { return _vscrollbar; }
+  nux::HScrollBar* GetHScrollbar() const { return _hscrollbar.GetPointer(); }
+  nux::VScrollBar* GetVScrollbar() const { return _vscrollbar.GetPointer(); }
 };
 
 NUX_IMPLEMENT_OBJECT_TYPE(MockScrollView);
@@ -66,12 +66,16 @@ public:
     nux::NuxInitialize(0);
     wnd_thread.reset(nux::CreateNuxWindow("ScrollView test", 300, 200, nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL));
 
-    scrollview.Adopt(new MockScrollView(NUX_TRACKER_LOCATION));
+    scrollview = new MockScrollView(NUX_TRACKER_LOCATION);
     scrollview->SetLayout(new nux::VLayout());
+
+    auto main_layout = new nux::VLayout();
+    main_layout->AddView(scrollview);
+    wnd_thread->SetLayout(main_layout);
   }
 
   std::unique_ptr<nux::WindowThread> wnd_thread;
-  nux::ObjectPtr<MockScrollView> scrollview;
+  MockScrollView* scrollview;
 };
 
 TEST_F(TestScrollView, TestQueueDrawScrollDownNoScrollbars)
@@ -93,8 +97,8 @@ TEST_F(TestScrollView, TestQueueDrawScrollUpNoScrollbars)
 
 TEST_F(TestScrollView, TestQueueDrawScrollDown)
 {
-  scrollview->m_ViewContentHeight = 500;
-  scrollview->m_ViewHeight = 400;
+  scrollview->content_geo_.height = 500;
+  scrollview->view_geo_.height = 400;
 
   EXPECT_CALL(*scrollview, QueueDraw())
     .Times(1);
@@ -105,8 +109,8 @@ TEST_F(TestScrollView, TestQueueDrawScrollDown)
 
 TEST_F(TestScrollView, TestQueueDrawScrollUp)
 {
-  scrollview->m_ViewContentHeight = 500;
-  scrollview->m_ViewHeight = 400;
+  scrollview->content_geo_.height = 500;
+  scrollview->view_geo_.height = 400;
   scrollview->ScrollDown(1, 10);
 
   EXPECT_CALL(*scrollview, QueueDraw())
@@ -118,8 +122,8 @@ TEST_F(TestScrollView, TestQueueDrawScrollUp)
 
 TEST_F(TestScrollView, TestQueueDrawScrollDownEnd)
 {
-  scrollview->m_ViewContentHeight = 500;
-  scrollview->m_ViewHeight = 400;
+  scrollview->content_geo_.height = 500;
+  scrollview->view_geo_.height = 400;
   scrollview->ScrollDown(1, 100);
 
   EXPECT_CALL(*scrollview, QueueDraw())
@@ -131,8 +135,8 @@ TEST_F(TestScrollView, TestQueueDrawScrollDownEnd)
 
 TEST_F(TestScrollView, TestQueueDrawScrollUpStart)
 {
-  scrollview->m_ViewContentHeight = 500;
-  scrollview->m_ViewHeight = 400;
+  scrollview->content_geo_.height = 500;
+  scrollview->view_geo_.height = 400;
 
   EXPECT_CALL(*scrollview, QueueDraw())
     .Times(0);
@@ -143,17 +147,14 @@ TEST_F(TestScrollView, TestQueueDrawScrollUpStart)
 
 TEST_F(TestScrollView, TestFindAreaUnderMouseScrollbars)
 {
-  scrollview->m_ViewContentHeight = 500;
-  scrollview->m_ViewHeight = 400;
+  scrollview->content_geo_ = nux::Geometry(0, 0, 500, 500);
+  scrollview->view_geo_ = nux::Geometry(0, 0, 400, 400);
   scrollview->EnableVerticalScrollBar(true);
   scrollview->EnableHorizontalScrollBar(true);
 
-  nux::Area* scroll_area = scrollview.GetPointer();
-  nux::Area* vscrollbar = scrollview->GetVScrollbar();
-  nux::Area* hscrollbar = scrollview->GetHScrollbar();
-
-  EXPECT_CALL(*scrollview, QueueDraw())
-    .Times(0);
+  nux::Area* scroll_area = scrollview;
+  auto vscrollbar = scrollview->GetVScrollbar();
+  auto hscrollbar = scrollview->GetHScrollbar();
 
   nux::Geometry const& geo_scrollview = scrollview->GetAbsoluteGeometry();
   nux::Geometry const& geo_vbar = vscrollbar->GetAbsoluteGeometry();
@@ -172,17 +173,14 @@ TEST_F(TestScrollView, TestFindAreaUnderMouseScrollbars)
 
 TEST_F(TestScrollView, TestFindAreaUnderMouseNoScrollbars)
 {
-  scrollview->m_ViewContentHeight = 500;
-  scrollview->m_ViewHeight = 400;
+  scrollview->content_geo_ = nux::Geometry(0, 0, 500, 500);
+  scrollview->view_geo_ = nux::Geometry(0, 0, 400, 400);
   scrollview->EnableVerticalScrollBar(true);
   scrollview->EnableHorizontalScrollBar(true);
 
-  nux::Area* scroll_area = scrollview.GetPointer();
-  nux::Area* vscrollbar = scrollview->GetVScrollbar();
-  nux::Area* hscrollbar = scrollview->GetHScrollbar();
-
-  EXPECT_CALL(*scrollview, QueueDraw())
-    .Times(0);
+  nux::Area* scroll_area = scrollview;
+  auto vscrollbar = scrollview->GetVScrollbar();
+  auto hscrollbar = scrollview->GetHScrollbar();
 
   nux::Geometry const& geo_scrollview = scrollview->GetAbsoluteGeometry();
   nux::Geometry const& geo_vbar = vscrollbar->GetAbsoluteGeometry();
