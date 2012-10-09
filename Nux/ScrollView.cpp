@@ -434,7 +434,7 @@ namespace nux
   {
     if (view_layout_)
     {
-      _delta_x += (float) stepx * (float) mousedx;;
+      _delta_x += stepx * mousedx;;
 
       if (_delta_x > 0)
       {
@@ -457,7 +457,7 @@ namespace nux
   {
     if (view_layout_)
     {
-      _delta_x -= (float) stepx * (float) mousedx;
+      _delta_x -= stepx * mousedx;
 
       if (_delta_x +  content_geo_.width < view_geo_.width)
       {
