@@ -114,7 +114,7 @@ namespace nux
   {
     bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
 
-    if (!mouse_inside == false)
+    if (!mouse_inside)
       return nullptr;
 
     if (m_vertical_scrollbar_enable)
