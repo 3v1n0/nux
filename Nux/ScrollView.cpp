@@ -506,7 +506,7 @@ namespace nux
 
   void ScrollView::ScrollDown(float stepy, int mousedy)
   {
-    if (!view_layout || content_geo_.height <= view_geo_.height)
+    if (!view_layout_ || content_geo_.height <= view_geo_.height)
       return;
 
     int last_delta_y = _delta_y;
