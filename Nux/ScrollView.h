@@ -133,16 +133,23 @@ namespace nux
 
     void RecvMouseWheel(int x, int y, int wheel_delta,  long button_flags, unsigned long key_flags);
 
+    //! Change Horizontal Scrollbar in the ScrollView.
+    /*!
+        For styling purpose, allow the classes that inherit from ScrollView to
+        change the horizontal scrollbar.
+    */
+    void SetHScrollBar(HScrollBar* hscrollbar);
+
     //! Change Vertical Scrollbar in the ScrollView.
     /*!
         For styling purpose, allow the classes that inherit from ScrollView to
         change the vertical scrollbar.
     */
-    void SetVScrollBar(VScrollBar* newVScrollBar);
+    void SetVScrollBar(VScrollBar* vscrollbar);
 
     // ScrollBars
-    HScrollBar     *_hscrollbar;
-    VScrollBar     *_vscrollbar;
+    ObjectPtr<HScrollBar> _hscrollbar;
+    ObjectPtr<VScrollBar> _vscrollbar;
     bool m_horizontal_scrollbar_enable;
     bool m_vertical_scrollbar_enable;
 

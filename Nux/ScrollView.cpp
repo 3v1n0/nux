@@ -45,115 +45,91 @@ namespace nux
     , m_ViewContentTopMargin(0)
     , m_ViewContentBottomMargin(0)
   {
+    SetAcceptMouseWheelEvent(true);
 
-    _hscrollbar = new HScrollBar(NUX_TRACKER_LOCATION);
-    _vscrollbar = new VScrollBar(NUX_TRACKER_LOCATION);
-    // _hscrollbar and _vscrollbar have to be parented so they are correctly
-    // rendered and so that GetRootGeometry/GetAbsoluteGeometry returns the
-    // correct Geometry. This is necessary in embedded mode.
-    _hscrollbar->SetParentObject(this);
-    _vscrollbar->SetParentObject(this);
-
-    _hscrollbar->SetReconfigureParentLayoutOnGeometryChange(false);
-    _vscrollbar->SetReconfigureParentLayoutOnGeometryChange(false);
-
-    SetMinimumSize(30, 30);
-    SetGeometry(Geometry(0, 0, 400, 200));
-
-    _hscrollbar->OnScrollLeft.connect(sigc::mem_fun(this, &ScrollView::ScrollLeft));
-    _hscrollbar->OnScrollRight.connect(sigc::mem_fun(this, &ScrollView::ScrollRight));
-    _vscrollbar->OnScrollUp.connect(sigc::mem_fun(this, &ScrollView::ScrollUp));
-    _vscrollbar->OnScrollDown.connect(sigc::mem_fun(this, &ScrollView::ScrollDown));
-
-    mouse_wheel.connect(sigc::mem_fun(this, &ScrollView::RecvMouseWheel));
-    _vscrollbar->mouse_wheel.connect(sigc::mem_fun(this, &ScrollView::RecvMouseWheel));
+    SetHScrollbar(new HScrollBar(NUX_TRACKER_LOCATION));
+    SetVScrollBar(new VScrollBar(NUX_TRACKER_LOCATION));
 
     FormatContent();
 
-    SetAcceptMouseWheelEvent(true);
-  }
-
-  // customization for Unity
-  void ScrollView::SetVScrollBar(VScrollBar* newVScrollBar)
-  {
-    if (_vscrollbar)
-    {
-      // disconnect old _vscrollbar
-      _vscrollbar->OnScrollUp.connect(sigc::mem_fun(this,
-                                                     &ScrollView::ScrollUp));
-      _vscrollbar->OnScrollDown.connect(sigc::mem_fun(this,
-                                                       &ScrollView::ScrollDown));
-      _vscrollbar->mouse_wheel.connect(sigc::mem_fun(this,
-                                                     &ScrollView::RecvMouseWheel));
-      
-      _vscrollbar->UnReference();
-    }
-
-    _vscrollbar = newVScrollBar;
-
-    _vscrollbar->SetParentObject(this);
-    _vscrollbar->SetReconfigureParentLayoutOnGeometryChange(false);
-
-    // connect new _vscrollbar
-    _vscrollbar->OnScrollUp.connect(sigc::mem_fun(this,
-                                                   &ScrollView::ScrollUp));
-    _vscrollbar->OnScrollDown.connect(sigc::mem_fun(this,
-                                                     &ScrollView::ScrollDown));
-    _vscrollbar->mouse_wheel.connect(sigc::mem_fun(this,
-                                                   &ScrollView::RecvMouseWheel));
+    mouse_wheel.connect(sigc::mem_fun(this, &ScrollView::RecvMouseWheel));
   }
 
   ScrollView::~ScrollView()
   {
-    // Delete all the interface object: This is a problem... The widget should be destroy by there associated parameters
-    _hscrollbar->UnReference();
-    _vscrollbar->UnReference();
+  }
+
+  void ScrollView::SetVScrollBar(VScrollBar* vscrollbar)
+  {
+    if (!vscrollbar)
+      return;
+
+    if (_vscrollbar)
+    {
+      scroll_up_connection_.disconnect();
+      scroll_down_connection_.disconnect();
+      vmouse_whell_connection_.disconnect();
+    }
+
+    _vscrollbar = vscrollbar;
+
+    _vscrollbar->SetParentObject(this);
+    _vscrollbar->SetReconfigureParentLayoutOnGeometryChange(false);
+
+    scroll_up_connection_ = _vscrollbar->OnScrollUp.connect(sigc::mem_fun(this, &ScrollView::ScrollUp));
+    scroll_down_connection_ = _vscrollbar->OnScrollDown.connect(sigc::mem_fun(this, &ScrollView::ScrollDown));
+    vmouse_whell_connection_ = _vscrollbar->mouse_wheel.connect(sigc::mem_fun(this, &ScrollView::RecvMouseWheel));
+  }
+
+  void ScrollView::SetHScrollBar(HScrollBar* hscrollbar)
+  {
+    if (!hscrollbar)
+      return;
+
+    if (_hscrollbar)
+    {
+      scroll_left_connection_.disconnect();
+      scroll_right_connection_.disconnect();
+      hmouse_whell_connection_.disconnect();
+    }
+
+    _hscrollbar = hscrollbar;
+
+    _hscrollbar->SetParentObject(this);
+    _hscrollbar->SetReconfigureParentLayoutOnGeometryChange(false);
+
+    scroll_left_connection_ = _hscrollbar->OnScrollLeft.connect(sigc::mem_fun(this, &ScrollView::ScrollLeft));
+    scroll_right_connection_ = _hscrollbar->OnScrollRight.connect(sigc::mem_fun(this, &ScrollView::ScrollRight));
+    hmouse_whell_connection_ = _hscrollbar->mouse_wheel.connect(sigc::mem_fun(this, &ScrollView::RecvMouseWheel));
   }
 
   Area* ScrollView::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
-    // Test if the mouse is inside the ScrollView.
-    // The last parameter of TestMousePointerInclusion is a boolean used to test if the case
-    // of mouse wheel events. If that boolean value is true, then TestMousePointerInclusion
-    // returns true only if the mouse pointer is over this area and the the area accepts
-    // mouse wheel events(see Area::SetAcceptMouseWheelEvent)
     bool mouse_inside = TestMousePointerInclusionFilterMouseWheel(mouse_position, event_type);
 
-    if (mouse_inside == false)
-    {
-      // The mouse pointer is not over this Area. return NULL.
-      return NULL;
-    }
+    if (!mouse_inside == false)
+      return nullptr;
 
-    Area* found_area;
-
-    // Recursively go over the ui element that are managed by this ScrollView and look
-    // for the area that is below the mouse.
-
-    // Test the vertical scrollbar
     if (m_vertical_scrollbar_enable)
     {
-      found_area = _vscrollbar->FindAreaUnderMouse(mouse_position, event_type);
+      Area* found_area = _vscrollbar->FindAreaUnderMouse(mouse_position, event_type);
       NUX_RETURN_VALUE_IF_NOTNULL(found_area, found_area);
     }
 
-    // Test the horizontal scrollbar
     if (m_horizontal_scrollbar_enable)
     {
-      found_area = _hscrollbar->FindAreaUnderMouse(mouse_position, event_type);
+      Area* found_area = _hscrollbar->FindAreaUnderMouse(mouse_position, event_type);
       NUX_RETURN_VALUE_IF_NOTNULL(found_area, found_area);
     }
 
-    // If the code gets here, it means that no area has been found yet.
-    // Test the layout of the ScrollView
     return View::FindAreaUnderMouse(mouse_position, event_type);
   }
 
   void ScrollView::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
-    graphics_engine.PushClippingRectangle(GetGeometry());
+    Geometry const& base = GetGeometry();
 
-    Geometry base = GetGeometry();
+    graphics_engine.PushClippingRectangle(base);
 
     if (view_layout_)
       view_layout_->QueueDraw();
@@ -161,14 +137,10 @@ namespace nux
     GetPainter().PaintBackground(graphics_engine, base);
 
     if (m_vertical_scrollbar_enable)
-    {
       _vscrollbar->QueueDraw();
-    }
 
     if (m_horizontal_scrollbar_enable)
-    {
       _hscrollbar->QueueDraw();
-    }
 
     graphics_engine.PopClippingRectangle();
   }
@@ -188,14 +160,10 @@ namespace nux
     graphics_engine.PopClippingRectangle();
 
     if (m_vertical_scrollbar_enable)
-    {
       _vscrollbar->ProcessDraw(graphics_engine, force_draw);
-    }
 
     if (m_horizontal_scrollbar_enable)
-    {
       _hscrollbar->ProcessDraw(graphics_engine, force_draw);
-    }
 
     graphics_engine.PopClippingRectangle();
 
@@ -203,9 +171,6 @@ namespace nux
       GetPainter().PopBackgroundStack();
   }
 
-/////////
-// API //
-/////////
   void ScrollView::EnableVerticalScrollBar(bool b)
   {
     m_vertical_scrollbar_enable = b;
@@ -218,14 +183,8 @@ namespace nux
     ComputeContentSize();
   }
 
-///////////////////////
-// Internal function //
-///////////////////////
   void ScrollView::FormatContent()
   {
-    Geometry geo;
-    geo = GetGeometry();
-
     ComputeContentSize();
   }
 
@@ -836,13 +795,9 @@ namespace nux
     // nux can't tell the difference between horizontal and vertical mouse wheel events
     // so we are only going to support vertical
     if (wheel_delta < 0)
-    {
       ScrollDown(abs(wheel_delta / NUX_MOUSEWHEEL_DELTA), m_MouseWheelScrollSize);
-    }
     else
-    {
       ScrollUp(abs(wheel_delta / NUX_MOUSEWHEEL_DELTA), m_MouseWheelScrollSize);
-    }
   }
 
   bool ScrollView::AcceptKeyNavFocus()
