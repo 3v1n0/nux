@@ -47,7 +47,7 @@ namespace nux
   {
     SetAcceptMouseWheelEvent(true);
 
-    SetHScrollbar(new HScrollBar(NUX_TRACKER_LOCATION));
+    SetHScrollBar(new HScrollBar(NUX_TRACKER_LOCATION));
     SetVScrollBar(new VScrollBar(NUX_TRACKER_LOCATION));
 
     FormatContent();
@@ -57,6 +57,12 @@ namespace nux
 
   ScrollView::~ScrollView()
   {
+    scroll_up_connection_.disconnect();
+    scroll_down_connection_.disconnect();
+    vmouse_whell_connection_.disconnect();
+    scroll_left_connection_.disconnect();
+    scroll_right_connection_.disconnect();
+    hmouse_whell_connection_.disconnect();
   }
 
   void ScrollView::SetVScrollBar(VScrollBar* vscrollbar)
@@ -69,6 +75,7 @@ namespace nux
       scroll_up_connection_.disconnect();
       scroll_down_connection_.disconnect();
       vmouse_whell_connection_.disconnect();
+      
     }
 
     _vscrollbar = vscrollbar;
@@ -303,9 +310,7 @@ namespace nux
     int ScrollBarHeight = 0;
 
     if (view_layout_)
-    {
-      content_geo_->SetGeometry(view_layout_->GetGeometry());
-    }
+      content_geo_ = view_layout_->GetGeometry();
 
     if (m_horizontal_scrollbar_enable)
       ScrollBarHeight = _hscrollbar->GetBaseHeight();

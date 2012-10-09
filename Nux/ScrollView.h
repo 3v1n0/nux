@@ -80,7 +80,7 @@ namespace nux
     Geometry view_geo_;
 
     // Geometry of the layout that encompass the child layouts.
-    Geometry content_geo;
+    Geometry content_geo_;
 
     // signals
     /*!
@@ -182,6 +182,13 @@ namespace nux
     int m_ViewContentRightMargin;
     int m_ViewContentTopMargin;
     int m_ViewContentBottomMargin;
+
+    sigc::connection scroll_up_connection_;
+    sigc::connection scroll_down_connection_;
+    sigc::connection vmouse_whell_connection_;
+    sigc::connection scroll_left_connection_;
+    sigc::connection scroll_right_connection_;
+    sigc::connection hmouse_whell_connection_;
   };
 }
 
