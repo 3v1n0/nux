@@ -292,17 +292,15 @@ namespace nux
                          eHSCROLLBAR, true);
   };
 
-  void HScrollBar::SetContainerSize(int /* x */, int /* y */, int w, int h)
+  void HScrollBar::SetContainerSize(int w, int h)
   {
-    // x and y are not needed
     container_width_ = w;
     container_height_ = h;
     ComputeScrolling();
   }
 
-  void HScrollBar::SetContentSize(int /* x */, int /* y */, int w, int h)
+  void HScrollBar::SetContentSize(int w, int h)
   {
-    // x and y are not needed
     content_width_ = w;
     content_height_ = h;
     ComputeScrolling();
