@@ -33,6 +33,11 @@
 #include "GraphicsEngine.h"
 
 #include <algorithm>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
+#include <vector>
+
 
 namespace nux
 {
@@ -337,53 +342,71 @@ namespace nux
     _openGL_version_string = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char *, glGetString(GL_VERSION)));
     CHECKGL_MSG(glGetString(GL_VERSION));
 
-    // We need OpenGL minor and major version. Before OpenGL 3.0, the version number was reported as a string of format
-    // "major.minor". That string has to be parsed to extract the major and minor version numbers. This is not really safe as
-    // we have no guaranty that the version string is has we think it is. Some drivers report a version string like "xx.xx.xx".
+
+    if (0)
+    {
+      // We need OpenGL minor and major version. Before OpenGL 3.0, the version number was reported as a string of format
+      // "major.minor". That string has to be parsed to extract the major and minor version numbers. This is not really safe as
+      // we have no guaranty that the version string is has we think it is. Some drivers report a version string like "xx.xx.xx".
     
-    // Begin string parsing to extract the major and minor version numbers.
-    std::string opengl_major;
-    std::string opengl_minor;
-    std::string split = ".";
+      // Begin string parsing to extract the major and minor version numbers.
+      std::string opengl_major;
+      std::string opengl_minor;
+      std::string split = ".";
 
-    size_t pos = 0;
-    pos = _openGL_version_string.find(split, pos);
+      size_t pos = 0;
+      pos = _openGL_version_string.find(split, pos);
 
-    if (pos != tstring::npos)
-    {
-      size_t split_string_size = split.length();
-      opengl_major = _openGL_version_string.substr(0, pos);
-      opengl_minor = _openGL_version_string.substr(pos + split_string_size, _openGL_version_string.length() - (pos + split_string_size) );
+      if (pos != tstring::npos)
+      {
+        size_t split_string_size = split.length();
+        opengl_major = _openGL_version_string.substr(0, pos);
+        opengl_minor = _openGL_version_string.substr(pos + split_string_size, _openGL_version_string.length() - (pos + split_string_size) );
+      }
+
+      int major_length = opengl_major.length();
+      opengl_major_ = 0;
+      int digit_position = 1;
+      while (major_length && (opengl_major.c_str()[major_length-1] >= '0') && (opengl_major.c_str()[major_length-1] <= '9'))
+      {
+        opengl_major_ += (opengl_major.c_str()[major_length-1] - '0') * digit_position;
+
+        digit_position *= 10;
+        --major_length;
+      }
+
+      int minor_length = opengl_minor.length();
+      opengl_minor_ = 0;
+      digit_position = 0;
+      while (minor_length && (opengl_minor.c_str()[digit_position] >= '0') && (opengl_minor.c_str()[digit_position] <= '9'))
+      {
+        opengl_minor_ += opengl_minor_ * 10 + (opengl_minor.c_str()[digit_position] - '0');
+
+        ++digit_position;
+        --minor_length;
+      }
+
+      // End string parsing
+
+      if (opengl_major_ >= 3)
+      {
+        CHECKGL(glGetIntegerv(GL_MAJOR_VERSION, &opengl_major_));
+        CHECKGL(glGetIntegerv(GL_MINOR_VERSION, &opengl_minor_));
+      }
     }
-
-    int major_length = opengl_major.length();
-    opengl_major_ = 0;
-    int digit_position = 1;
-    while (major_length && (opengl_major.c_str()[major_length-1] >= '0') && (opengl_major.c_str()[major_length-1] <= '9'))
+    else
     {
-      opengl_major_ += (opengl_major.c_str()[major_length-1] - '0') * digit_position;
+      std::vector<std::string> versions;
+      boost::split(versions, _openGL_version_string, boost::algorithm::is_any_of("."));
 
-      digit_position *= 10;
-      --major_length;
-    }
+      opengl_major_ = std::stoi(versions[0]);
+      opengl_minor_ = std::stoi(versions[1]);
 
-    int minor_length = opengl_minor.length();
-    opengl_minor_ = 0;
-    digit_position = 0;
-    while (minor_length && (opengl_minor.c_str()[digit_position] >= '0') && (opengl_minor.c_str()[digit_position] <= '9'))
-    {
-      opengl_minor_ += opengl_minor_ * 10 + (opengl_minor.c_str()[digit_position] - '0');
-
-      ++digit_position;
-      --minor_length;
-    }
-
-    // End string parsing
-
-    if (opengl_major_ >= 3)
-    {
-      CHECKGL(glGetIntegerv(GL_MAJOR_VERSION, &opengl_major_));
-      CHECKGL(glGetIntegerv(GL_MINOR_VERSION, &opengl_minor_));
+      if (opengl_major_ >= 3)
+      {
+        CHECKGL(glGetIntegerv(GL_MAJOR_VERSION, &opengl_major_));
+        CHECKGL(glGetIntegerv(GL_MINOR_VERSION, &opengl_minor_));
+      }
     }
 #else
     opengl_major_ = 2;
@@ -572,6 +595,7 @@ namespace nux
     nuxDebugMsg("Gpu Vendor: %s", _board_vendor_string.c_str());
     nuxDebugMsg("Gpu Renderer: %s", _board_renderer_string.c_str());
     nuxDebugMsg("Gpu OpenGL Version: %s", _openGL_version_string.c_str());
+
     nuxDebugMsg("Gpu OpenGL Major Version: %d", opengl_major_);
     nuxDebugMsg("Gpu OpenGL Minor Version: %d", opengl_minor_);
 

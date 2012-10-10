@@ -391,7 +391,7 @@ namespace nux
     m_ThreadName = ThreadName;
   }
 
-  const NString &NThread::GetThreadName() const
+  const std::string& NThread::GetThreadName() const
   {
     return m_ThreadName;
   }

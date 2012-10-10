@@ -40,7 +40,7 @@ namespace nux
 
   }
 
-  void FilePath::AddSearchPath (const NString &searchpath)
+  void FilePath::AddSearchPath (const std::string &searchpath)
   {
     if (std::find (m_SearchPath.begin(), m_SearchPath.end(), searchpath) != m_SearchPath.end() )
       return;
@@ -48,7 +48,7 @@ namespace nux
     m_SearchPath.push_back (searchpath);
   }
 
-  void FilePath::AddSearchPath (const std::vector<NString>& searchpath)
+  void FilePath::AddSearchPath (const std::vector<std::string>& searchpath)
   {
     for (unsigned int i = 0; i < searchpath.size(); i++)
     {
@@ -57,51 +57,52 @@ namespace nux
     }
   }
 
-  NString FilePath::GetPathToFile (const TCHAR *filename) const
+  std::string FilePath::GetPathToFile (const TCHAR *filename) const
   {
-    NString FileName = GetFile (filename);
+    std::string FileName = GetFile (filename);
 
-    int loc = (int) FileName.FindLastOccurence (TEXT ('\\') );
+    size_t loc = FileName.rfind(TEXT('\\'), 0);
 
-    if (loc == -1)
+    if (loc == std::string::npos)
     {
-      loc = (int) FileName.FindLastOccurence (TEXT ('/') );
+      loc = FileName.rfind(TEXT('/'), 0);
     }
 
-    if (loc != -1)
-      FileName = FileName.GetSubString (0, loc);
+    if (loc != std::string::npos)
+      FileName = FileName.substr(0, loc);
     else
-      FileName = NString (TEXT (".") );
+      FileName = std::string(TEXT ("."));
 
     return FileName;
   }
 
-  NString FilePath::GetFile (const TCHAR *filename) const
+  std::string FilePath::GetFile (const TCHAR *filename) const
   {
-    NUX_RETURN_VALUE_IF_NULL (filename, NString (TEXT ("") ) );
+    NUX_RETURN_VALUE_IF_NULL (filename, std::string (TEXT ("") ) );
 
-    if (NString (filename) == NString (TEXT ("") ) )
-      return NString (TEXT ("") );
+    if (std::string (filename) == std::string (TEXT ("") ) )
+      return std::string (TEXT ("") );
 
-    NString FileName = filename;
+    std::string FileName = filename;
 
-    if (GFileManager.FileExist (FileName.GetTCharPtr() ) )
+    if (GFileManager.FileExist(FileName.c_str() ) )
       return FileName;
 
     for (unsigned int i = 0; i < m_SearchPath.size(); i++)
     {
-      if (m_SearchPath[i].Size() == 0)
+      if (m_SearchPath[i].size() == 0)
         continue;
 
-      NString FilePath;
+      std::string FilePath;
    
-      if ((m_SearchPath[i].GetLastChar () == TEXT('/')) || (m_SearchPath[i].GetLastChar () == TEXT('\\')))
+      char last = m_SearchPath[i][m_SearchPath[i].size() - 1];
+      if (last == TEXT('/') || last == TEXT('\\'))
         FilePath = m_SearchPath[i] + filename;
       else
         FilePath = m_SearchPath[i] + NUX_PATH_SEPARATOR_STRING + filename;
 
 
-      if (GFileManager.FileExist (FilePath.GetTCharPtr() ) )
+      if (GFileManager.FileExist (FilePath.c_str() ) )
         return FilePath;
     }
 
@@ -123,27 +124,28 @@ namespace nux
     for (size_t i = 0; i < m_SearchPath.size(); i++)
     {
       size_t pos;
-      NString PathName;
+      std::string PathName;
 
-      while (FileName.FindFirstOccurenceOf (TEXT ("\\/") ) != std::string::npos)
+      while (FileName.find_first_of(TEXT ("\\/")) != std::string::npos)
       {
-        pos = FileName.FindFirstOccurenceOf (TEXT ("\\/") ) + 1;
+        pos = FileName.find_first_of(TEXT ("\\/")) + 1;
 
-        FileName = FileName.GetSubString (pos, FileName.Length() - pos);
+        FileName = FileName.substr(pos, FileName.length() - pos);
 
-        if ((m_SearchPath[i].GetLastChar () == TEXT('/')) || (m_SearchPath[i].GetLastChar () == TEXT('\\')))
+        char last = m_SearchPath[i][m_SearchPath[i].size() - 1];
+        if (last == TEXT('/') || last == TEXT('\\'))
           PathName = m_SearchPath[i] + FileName;
         else
           PathName = m_SearchPath[i] + NUX_PATH_SEPARATOR_STRING + FileName;
 
 
-        if (GFileManager.FileExist (PathName.GetTCharPtr() ) )
+        if (GFileManager.FileExist (PathName.c_str() ) )
           return PathName;
       }
     }
 
     nuxDebugMsg (TEXT ("[FilePath::GetFile] Cannot find file: %s"), filename);
-    return NString (TEXT ("") );
+    return std::string (TEXT ("") );
   }
 
 }

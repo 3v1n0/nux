@@ -98,12 +98,12 @@ namespace nux
     SetMinimumSize(32, 32);
     SetGeometry(Geometry(100, 100, 320, 200));
 
-    NString Path = NUX_FINDRESOURCELOCATION("UITextures/AddButton.png");
+    std::string Path = NUX_FINDRESOURCELOCATION("UITextures/AddButton.png");
     MinimizeIcon = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
-    MinimizeIcon->Update(Path.GetTCharPtr());
+    MinimizeIcon->Update(Path.c_str());
     Path = NUX_FINDRESOURCELOCATION("UITextures/CancelButton.png");
     CloseIcon = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
-    CloseIcon->Update(Path.GetTCharPtr());
+    CloseIcon->Update(Path.c_str());
 
     SetWindowTitle(WindowName);
   }
@@ -178,7 +178,7 @@ namespace nux
                                  _title_bar->GetBaseWidth(), _title_bar->GetBaseHeight()), Color(0xFF2f2f2f),
                                  eSHAPE_CORNER_ROUND10, eCornerTopLeft | eCornerTopRight);
 
-      GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), _window_title_bar->GetGeometry(), _window_title.m_string, Color(0xFFFFFFFF), true, eAlignTextCenter);
+      GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), _window_title_bar->GetGeometry(), _window_title, Color(0xFFFFFFFF), true, eAlignTextCenter);
       GetPainter().Draw2DTextureAligned(graphics_engine, CloseIcon, _close_button->GetGeometry(), TextureAlignmentStyle(eTACenter, eTACenter));
     }
 
@@ -457,7 +457,7 @@ namespace nux
     _window_title = title;
   }
 
-  NString FloatingWindow::GetWindowTitle()
+  std::string FloatingWindow::GetWindowTitle()
   {
     return _window_title;
   }

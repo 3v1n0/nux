@@ -95,7 +95,7 @@ namespace nux
   /*!
       @return The time formatted in a string.
   */
-  NString GetFormattedLocalTime();
+  std::string GetFormattedLocalTime();
 
   /*!
       Suspend thread execution for an interval measured in microseconds.

@@ -31,7 +31,7 @@ namespace nux
    * Written by Lukás Chmela
    * Released under GPLv3.
    */
-  NString IntegerToChar (int value, int base)
+  std::string IntegerToChar (int value, int base)
   {
     char result[65];
 
@@ -39,7 +39,7 @@ namespace nux
     if (base < 2 || base > 36)
     {
       //*result = '\0';
-      NString str = TEXT ('\0');
+      std::string str = TEXT ('\0');
       return str;
     }
 
@@ -67,16 +67,16 @@ namespace nux
       *ptr1++ = tmp_char;
     }
 
-    NString str = result;
+    std::string str = result;
     return str;
   }
 
   double CharToDouble (const TCHAR *digit)
   {
     char *endptr = NULL;
-    NString str = TCHAR_TO_ANSICHAR (digit);
+    std::string str = TCHAR_TO_ANSICHAR (digit);
     errno = 0;
-    double ret = std::strtod (str.GetTCharPtr(), &endptr);
+    double ret = std::strtod (str.c_str(), &endptr);
     unsigned int error = errno;
 
     if (error == ERANGE)
@@ -87,13 +87,16 @@ namespace nux
     return ret;
   }
 
-  NString DoubleToChar (double d)
+  std::string DoubleToChar (double d)
   {
     TCHAR *buffer = new TCHAR[64];
     Memset (buffer, 0, 64);
     SPRINTF_S (buffer, 64, "%.39f", d);
-    NString str = buffer;
-    str = str.TrimRight (TEXT ("0") );
+    std::string str = buffer;
+    while (!str.empty() && str[str.size() - 1] == '0')
+    {
+      str.erase(str.end() - 1);
+    }
 
     delete[] buffer;
     return str;
@@ -101,8 +104,8 @@ namespace nux
 
   int CharToInteger (const TCHAR *digit)
   {
-    NString str = TCHAR_TO_ANSICHAR (digit);
-    long long ret = std::atoi (str.GetTCharPtr() );
+    std::string str = TCHAR_TO_ANSICHAR (digit);
+    long long ret = std::atoi (str.c_str() );
     return ret;
   }
 

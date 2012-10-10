@@ -26,8 +26,6 @@
 namespace nux
 {
 
-  class NString;
-
 //! Convert a TCHAR string to a double value.
   /*!
       @param  digit A TCHAR string.
@@ -35,12 +33,12 @@ namespace nux
   */
   double CharToDouble (const TCHAR *digit);
 
-//! Convert a double to an NString.
+//! Convert a double to an std::string.
   /*!
       @param  d A double value.
-      @return An NString.
+      @return An std::string.
   */
-  NString DoubleToChar (double d);
+  std::string DoubleToChar (double d);
 
 //! Convert a TCHAR string to a 32 bits long value.
   /*!
@@ -55,7 +53,7 @@ namespace nux
       @param  base  Base of the integer representation.
       @return A string.
   */
-  NString IntegerToChar (int value, int base = 10);
+  std::string IntegerToChar (int value, int base = 10);
 
 //! Convert an string to an integer.
   /*!

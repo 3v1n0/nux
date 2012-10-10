@@ -127,7 +127,7 @@ namespace nux
   }
 
 
-  NString GetFormattedLocalTime()
+  std::string GetFormattedLocalTime()
   {
     TCHAR buffer[1024];
     Memset(buffer, 0, 1024);
@@ -143,10 +143,10 @@ namespace nux
     GetLocalTime (Year, Month, Day, Hour, Minute, Second, MicroSec);
 #ifdef _WIN32
     _stprintf_s (buffer, 1024 - 1, TEXT ("%d:%d:%d: %d/%d/%d"), Hour, Minute, Second, Day, Month, Year);
-    NString result = buffer;
+    std::string result = buffer;
 #else
     _stprintf (buffer, TEXT ("%d:%d:%d: %d/%d/%d"), Hour, Minute, Second, Day, Month, Year);
-    NString result = buffer;
+    std::string result = buffer;
 #endif
 
     return result;

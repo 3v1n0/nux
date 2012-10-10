@@ -47,14 +47,14 @@ namespace nux
     FilePath();
     ~FilePath();
 
-    void AddSearchPath (const NString &searchpath);
-    void AddSearchPath (const std::vector<NString>& searchpath);
+    void AddSearchPath (const std::string &searchpath);
+    void AddSearchPath (const std::vector<std::string>& searchpath);
 
-    NString GetPathToFile (const TCHAR *filename) const;
-    NString GetFile (const TCHAR *filename) const;
+    std::string GetPathToFile (const TCHAR *filename) const;
+    std::string GetFile (const TCHAR *filename) const;
 
   private:
-    std::vector<NString>          m_SearchPath;
+    std::vector<std::string>          m_SearchPath;
   };
 
 }

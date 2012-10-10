@@ -60,7 +60,7 @@ namespace nux
 
   }
 
-  static NString _GetProgramDirectory()
+  static std::string _GetProgramDirectory()
   {
 #if defined(NUX_OS_WINDOWS)
     TCHAR RootDirectory[NUX_MAX_FILEPATH_SIZE] = TEXT ("");
@@ -71,7 +71,7 @@ namespace nux
       nuxAssertMsg (Result, TEXT ("[GetProgramDirectory] Can't get program's directory path.") );
 
       if (Result == 0)
-        NString (TEXT ("Unknown Program Directory") );
+        std::string (TEXT ("Unknown Program Directory") );
 
       unsigned int i;
 
@@ -85,7 +85,7 @@ namespace nux
       RootDirectory[i] = 0;
     }
 
-    return NString (RootDirectory);
+    return std::string (RootDirectory);
 
 #elif defined(NUX_OS_LINUX)
 
@@ -97,19 +97,19 @@ namespace nux
       nuxAssertMsg (Result, TEXT ("[GetProgramDirectory] Can't get program's directory path.") );
 
       if (Result == 0)
-        NString (TEXT ("Unknown Program Directory") );
+        std::string (TEXT ("Unknown Program Directory") );
 
     }
 
     nuxDebugMsg (TEXT ("[GetProgramDirectory] Program directory path: %s"), RootDirectory);
-    return NString (RootDirectory);
+    return std::string (RootDirectory);
 
 #else
-    return NString (TEXT ("Unknown Program Directory") );
+    return std::string (TEXT ("Unknown Program Directory") );
 #endif
   }
 
-  static NString _GetComputerName()
+  static std::string _GetComputerName()
   {
 #if defined(NUX_OS_WINDOWS)
     TCHAR ComputerName[NUX_MAX_FILEPATH_SIZE] = TEXT ("");
@@ -130,7 +130,7 @@ namespace nux
       *d++ = 0;
     }
 
-    return NString (ComputerName);
+    return std::string (ComputerName);
 
 #elif defined(NUX_OS_LINUX)
     char Buffer[NUX_MAX_FILEPATH_SIZE];
@@ -138,18 +138,18 @@ namespace nux
 
     if (gethostname (Buffer, BufferSize) != -1)
     {
-      return NString (Buffer);
+      return std::string (Buffer);
     }
 
-    return NString (TEXT ("Unknown Computer Name") );
+    return std::string (TEXT ("Unknown Computer Name") );
 
 #else
-    return NString (TEXT ("Unknown Computer Name") );
+    return std::string (TEXT ("Unknown Computer Name") );
 #endif
   }
 
 // Get user name.  NOTE: Only one return value is valid at a time!
-  static NString _GetUserName()
+  static std::string _GetUserName()
   {
 #if defined(NUX_OS_WINDOWS)
     TCHAR UserName[256] = TEXT ("");
@@ -167,19 +167,19 @@ namespace nux
       *d++ = 0;
     }
 
-    return NString (UserName);
+    return std::string (UserName);
 
 #elif defined(NUX_OS_LINUX)
     struct passwd *userinfo;
     userinfo = getpwuid (getuid() );
 
     if (userinfo == 0)
-      return NString (TEXT ("Unknown User") );
+      return std::string (TEXT ("Unknown User") );
 
-    return NString (userinfo->pw_name);
+    return std::string (userinfo->pw_name);
 
 #else
-    return return NString (TEXT ("Unknown User") );
+    return return std::string (TEXT ("Unknown User") );
 #endif
   }
 
@@ -203,27 +203,27 @@ namespace nux
 
   }
 
-  NString GetComputerName()
+  std::string GetComputerName()
   {
     return NUX_GLOBAL_OBJECT_INSTANCE (NGlobalData).m_ComputerName;
   }
 
-  NString GetProgramDirectory()
+  std::string GetProgramDirectory()
   {
     return NUX_GLOBAL_OBJECT_INSTANCE (NGlobalData).m_ProgramDirectory;
   }
 
-  NString GetUserName()
+  std::string GetUserName()
   {
     return NUX_GLOBAL_OBJECT_INSTANCE (NGlobalData).m_UserName;
   }
 
-  NString GetCmdLine()
+  std::string GetCmdLine()
   {
     return NUX_GLOBAL_OBJECT_INSTANCE (NGlobalData).m_CommandLine;
   }
 
-  NString GetLogDirectory()
+  std::string GetLogDirectory()
   {
     return TEXT ("Logs");
   }
