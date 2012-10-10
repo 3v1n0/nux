@@ -37,8 +37,8 @@ namespace nux
     ,   m_MenuIsActive(false)
   {
     m_hlayout   = new HLayout(NUX_TRACKER_LOCATION);
-    _combo_box_area = new InputArea(NUX_TRACKER_LOCATION);
-    _combo_box_opening_area    = new InputArea(NUX_TRACKER_LOCATION);
+    _combo_box_area = new BasicView(NUX_TRACKER_LOCATION);
+    _combo_box_opening_area    = new BasicView(NUX_TRACKER_LOCATION);
 
     m_hlayout->AddView(_combo_box_area, 1);
     m_hlayout->AddView(_combo_box_opening_area, 0);
@@ -64,7 +64,7 @@ namespace nux
     _pango_static_text = 0;
   }
 
-  void AbstractComboBox::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void AbstractComboBox::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
     
@@ -73,7 +73,7 @@ namespace nux
     GetPainter().PaintShape(graphics_engine, base, m_sCOMBO_COLOR,  eSHAPE_CORNER_ROUND4);
 
     {
-      //GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), _combo_box_area->GetGeometry(), _combo_box_area->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
+      //GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), _combo_box_area->GetGeometry(), _combo_box_area->GetBaseString().c_str(), GetTextColor(), eAlignTextLeft);
       _pango_static_text->SetGeometry(_combo_box_area->GetGeometry());
       _pango_static_text->ProcessDraw(graphics_engine, true);
     }
@@ -100,22 +100,17 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void AbstractComboBox::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
+  void AbstractComboBox::DrawContent(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }
 
-  void AbstractComboBox::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
-  }
-
-  void AbstractComboBox::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void AbstractComboBox::RecvMouseEnter(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();
   }
 
-  void AbstractComboBox::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void AbstractComboBox::RecvMouseLeave(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();
   }

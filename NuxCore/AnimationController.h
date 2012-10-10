@@ -58,9 +58,16 @@ public:
   virtual void AddAnimation(Animation* animation) = 0;
   virtual void RemoveAnimation(Animation* animation) = 0;
 
+  virtual bool HasRunningAnimations() const = 0;
+
 private:
+#if defined(NUX_OS_WINDOWS) && !defined(NUX_VISUAL_STUDIO_VC11)
+  Controller(Controller const&);
+  Controller& operator = (Controller const&);
+#else
   Controller(Controller const&) = delete;
-  Controller& operator=(Controller const&) = delete;
+  Controller& operator = (Controller const&) = delete;
+#endif
 };
 
 class AnimationController : public Controller, public sigc::trackable
@@ -74,6 +81,8 @@ public:
 
   virtual void AddAnimation(Animation* animation);
   virtual void RemoveAnimation(Animation* animation);
+
+  virtual bool HasRunningAnimations() const;
 
 private:
   struct Impl;

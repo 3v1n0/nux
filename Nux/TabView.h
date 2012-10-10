@@ -40,7 +40,6 @@ namespace nux
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     void AddTab(const char *tab_name, Layout *tab_layout);
     void SetActiveTad(int index);
@@ -74,7 +73,7 @@ namespace nux
 
       std::string     _tab_name;
       Layout     *_tab_content_layout;
-      InputArea  *_tab_area;
+      BasicView  *_tab_area;
       int         _index;
     };
 
@@ -103,8 +102,8 @@ namespace nux
     void TranslateRight(int x, int y, unsigned long button_flags, unsigned long key_flags);
     void TranslateTabLayout(int offset);
 
-    InputArea   *_scroll_right;
-    InputArea   *_scroll_left;
+    BasicView   *_scroll_right;
+    BasicView   *_scroll_left;
 
     Layout     *_visible_tab_content_layout;
     HLayout    *_tabview_heads_layout;

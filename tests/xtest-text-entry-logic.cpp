@@ -83,7 +83,7 @@ void TestTextEntry::UserInterfaceSetup()
 
 TestTextEntry* test_textentry = NULL;
 
-void TestingThread(nux::NThread* thread, void* user_data)
+void TestingThread(nux::NThread* /* thread */, void* user_data)
 {
   while (test_textentry->ReadyToGo() == false)
   {
@@ -136,10 +136,9 @@ void TestingThread(nux::NThread* thread, void* user_data)
   nuxDebugMsg("Exit testing thread");
 }
 
-int main(int argc, char** argv)
+int main()
 {
-  int xstatus = XInitThreads();
-  nuxAssertMsg(xstatus > 0, "XInitThreads has failed");
+  XInitThreads();
 
   test_textentry = new TestTextEntry("Text Entry", 600, 200, 10000);
   test_textentry->Startup();

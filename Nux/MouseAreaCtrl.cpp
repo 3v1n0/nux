@@ -31,7 +31,7 @@ namespace nux
   {
     // Set Original State
     m_vlayout   = new VLayout(NUX_TRACKER_LOCATION);
-    m_Area      = new InputArea(NUX_TRACKER_LOCATION);
+    m_Area      = new BasicView(NUX_TRACKER_LOCATION);
 
     // Set Signals
     m_Area->mouse_down.connect(sigc::mem_fun(this, &MouseAreaCtrl::MouseDown));
@@ -60,14 +60,9 @@ namespace nux
     sigDraw.emit(force_draw);
   }
 
-  void MouseAreaCtrl::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
+  void MouseAreaCtrl::DrawContent(GraphicsEngine & /* graphics_engine */, bool force_draw)
   {
     sigDraw.emit(force_draw);
-  }
-
-  void MouseAreaCtrl::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
   }
 
   int MouseAreaCtrl::getAreaPosX()
@@ -90,15 +85,15 @@ namespace nux
 /////////////////
 //  EMITERS    //
 /////////////////
-  void MouseAreaCtrl::MouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void MouseAreaCtrl::MouseDown(int x, int y, unsigned long button_flags, unsigned long /* key_flags */)
   {
     sigMouseDown.emit(x, y, button_flags);
   }
-  void MouseAreaCtrl::MouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void MouseAreaCtrl::MouseUp(int x, int y, unsigned long button_flags, unsigned long /* key_flags */)
   {
     sigMouseUp.emit(x, y, button_flags);
   }
-  void MouseAreaCtrl::MouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void MouseAreaCtrl::MouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long /* key_flags */)
   {
     sigMouseDrag.emit(x, y, dx, dy, button_flags);
   }

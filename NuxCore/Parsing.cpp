@@ -370,7 +370,7 @@ namespace nux
     return TokenString.length() > 0;
   }
 
-  std::string ParseToken (const TCHAR *Str, bool UseEscape)
+  std::string ParseToken (const TCHAR *Str, bool /* UseEscape */)
   {
     TCHAR Buffer[1024];
 

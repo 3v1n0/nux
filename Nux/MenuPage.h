@@ -45,7 +45,7 @@ namespace nux
     //const ActionItem& GetItem() const {return m_ActionItem;}
     ActionItem *GetActionItem() const;
     //ActionItem* GetActionItem();
-    
+
     int GetTextWidth();
     int GetTextHeight();
 
@@ -56,8 +56,7 @@ namespace nux
 
   private:
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw) {};
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw) {};
+    virtual void DrawContent(GraphicsEngine & /* graphics_engine */, bool /* force_draw */) {};
 
     void SetChildMenu(MenuPage *menu);
     MenuPage *GetChildMenu() const;
@@ -77,8 +76,7 @@ namespace nux
     ~MenuSeparator();
 
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw) {};
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw) {};
+    virtual void DrawContent(GraphicsEngine & /* graphics_engine */, bool /* force_draw */) {};
 
   private:
     friend class MenuPage;
@@ -259,12 +257,11 @@ namespace nux
         For the main layout set in WindowThread or for a BaseWindow, GetRootGeometry() is equivalent to GetGeometry().
     */
     virtual Geometry GetRootGeometry() const;
-    
+
   protected:
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
   private:
 

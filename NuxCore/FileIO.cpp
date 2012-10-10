@@ -229,10 +229,10 @@ namespace nux
   }
 
   /*!
-      Load a text file to an NString. The file maybe ANSI or Unicode.
+      Load a text file to an std::string. The file maybe ANSI or Unicode.
       The resulting string is TCHAR.
   */
-  bool LoadFileToString ( std::string &Result, const TCHAR *Filename, NFileManager &FileManager )
+  bool LoadFileToString(std::string &Result, const TCHAR *Filename, NFileManager &FileManager)
   {
     NSerializer *Reader = FileManager.CreateFileReader (Filename);
 
@@ -318,7 +318,7 @@ namespace nux
   /*!
       Save string to File. Attempt to write it as ASCII if possible. If not write as UTF16-BE.
   */
-  bool SaveStringToFile ( const std::string &String, const TCHAR *Filename, NFileManager &FileManager )
+  bool SaveStringToFile(const std::string &String, const TCHAR *Filename, NFileManager &FileManager)
   {
     if ( !String.length() )
       return 0;
@@ -348,7 +348,7 @@ namespace nux
     if ( SaveAsUnicode || (sizeof (TCHAR) == 1) )
     {
       unsigned int s = (unsigned int) String.length() * sizeof (TCHAR);
-      Ar->Serialize ( NUX_CONST_CAST (TCHAR *, String.c_str() ), (unsigned int) s);
+      Ar->Serialize(NUX_CONST_CAST(TCHAR *, String.c_str()), (unsigned int) s);
     }
     else
     {
@@ -356,7 +356,7 @@ namespace nux
       std::vector<ANSICHAR> AnsiBuffer ( (unsigned int) s);
 
       // Cast all character down from UTF16 to ANSI
-      for (unsigned int i = 0; i < (unsigned int) String.length(); i++ )
+      for (unsigned int i = 0; i < (unsigned int) String.length(); i++)
         AnsiBuffer[i] = ConvertTCHARToAnsiChar ( (unsigned int) String[i]);
 
       // serialize

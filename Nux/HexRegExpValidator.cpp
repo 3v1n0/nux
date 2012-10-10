@@ -117,14 +117,13 @@ namespace nux
     return i;
   }
 
-  void HexRegExpValidator::Alternative(const char *str)
+  void HexRegExpValidator::Alternative(const char * /* str */)
   {
-    str = "0x0";
   }
 
   std::string HexRegExpValidator::ToString(int i)
   {
-    return std::to_string(i);
+    return std::to_string((long long)i);
   }
 
   int HexRegExpValidator::ToInteger(const char *str)

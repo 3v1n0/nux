@@ -86,7 +86,7 @@ namespace nux
     void SetMaxVertexOutput(int max_vertex_output);
 
   private:
-    IOpenGLGeometryShader(NString ShaderName = NString("Geometry Shader"));
+    IOpenGLGeometryShader(std::string ShaderName = std::string("Geometry Shader"));
     int m_CompiledAndReady;
     friend class GpuDevice;
   };

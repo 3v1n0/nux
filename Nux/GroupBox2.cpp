@@ -39,7 +39,7 @@ namespace nux
     ,   bCaptionAvailable(false)
     ,   m_layout(0)
   {
-    m_CaptionArea = new InputArea(NUX_TRACKER_LOCATION);
+    m_CaptionArea = new BasicView(NUX_TRACKER_LOCATION);
     SetMinimumSize(DEFAULT_WIDGET_WIDTH + 5, PRACTICAL_WIDGET_HEIGHT + 5);
     SetBaseSize(DEFAULT_WIDGET_WIDTH + 5, PRACTICAL_WIDGET_HEIGHT + 5);
     SetCaption(Caption);
@@ -50,7 +50,7 @@ namespace nux
     m_CaptionArea->Dispose();
   }
 
-  void GroupBox2::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void GroupBox2::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     graphics_engine.PushClippingRectangle(GetGeometry());
 
@@ -103,11 +103,6 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void GroupBox2::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
-  }
-
   bool GroupBox2::SetLayout(Layout *layout)
   {
     if (View::SetLayout(layout) == false)
@@ -140,7 +135,7 @@ namespace nux
     }
   }
 
-  long GroupBox2::PostLayoutManagement(long LayoutResult)
+  long GroupBox2::PostLayoutManagement(long /* LayoutResult */)
   {
     // A Group box must tightly group its children.
     // So it must embrace the size that was compute for the composition layout.

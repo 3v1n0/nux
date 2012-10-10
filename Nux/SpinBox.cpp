@@ -43,7 +43,7 @@ namespace nux
     m_EditLine->SetValidator(&m_IntValidator);
     m_EditLine->SetSuffix("");
     m_EditLine->SetPrefix("");
-    m_EditLine->SetText(std::to_string(m_IntValidator.GetMinimum()));
+    m_EditLine->SetText(std::to_string((long long)m_IntValidator.GetMinimum()));
 
     m_EditLine->SetMinimumSize(1.5 * DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT);
     m_EditLine->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
@@ -80,7 +80,7 @@ namespace nux
   {
   }
 
-  void SpinBox::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void SpinBox::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
     GetPainter().PaintBackground(graphics_engine, base);
@@ -126,15 +126,10 @@ namespace nux
     m_EditLine->ProcessDraw(graphics_engine, force_draw);
   }
 
-  void SpinBox::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
-  }
-
   void SpinBox::SetValue(int value)
   {
     m_iValue = m_IntValidator.GetClampedValue(value);
-    m_EditLine->SetText(std::to_string(m_iValue));
+    m_EditLine->SetText(std::to_string((long long)m_iValue));
     sigValueChanged.emit(this);
     sigValue.emit(m_iValue);
     QueueDraw();
@@ -224,24 +219,24 @@ namespace nux
     ret = CharToDouble(m_EditLine->GetCleanText().c_str());
     {
       m_iValue = m_IntValidator.GetClampedValue(ret);
-      m_EditLine->SetText(std::to_string(m_iValue));
+      m_EditLine->SetText(std::to_string((long long)m_iValue));
       sigValueChanged.emit(this);
       sigValue.emit(m_iValue);
 //
 //        if (m_iValue < m_IntValidator.GetMinimum())
 //        {
 //            m_iValue = m_IntValidator.GetMinimum();
-//            m_EditLine->SetText(NString::Printf("%d", m_iValue));
+//            m_EditLine->SetText(std::string::Printf("%d", m_iValue));
 //        }
 //        if (m_iValue > m_IntValidator.GetMaximum())
 //        {
 //            m_iValue = m_IntValidator.GetMaximum();
-//            m_EditLine->SetText(NString::Printf("%d", m_iValue));
+//            m_EditLine->SetText(std::string::Printf("%d", m_iValue));
 //        }
     }
 //     else
 //     {
-//         m_EditLine->SetText(NString::Printf("%d", m_iValue));
+//         m_EditLine->SetText(std::string::Printf("%d", m_iValue));
 //         sigValueChanged.emit(this);
 //         sigValue.emit(m_iValue);
 //     }

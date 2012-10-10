@@ -47,8 +47,8 @@ namespace nux
   }
 
   GeometryPositioning::GeometryPositioning(
-    HorizontalAlignment horizontal_aligment,
-    VerticalAlignment vertical_aligment,
+    HorizontalAlignment /* horizontal_aligment */,
+    VerticalAlignment /* vertical_aligment */,
     bool stretch_horizontal,
     bool stretch_vertical,
     int horizontal_margin,
@@ -703,7 +703,7 @@ int BasePainter::PaintColorTextLineEdit(GraphicsEngine &graphics_engine, const G
   }
 
   void BasePainter::PaintCheckBox(GraphicsEngine &graphics_engine, const Geometry &geo, const InteractState &interaction_state,
-                                   Color check_mark_color, Color check_box_color)
+                                   Color /* check_mark_color */, Color /* check_box_color */)
   {
 
     GeometryPositioning pctx(eHACenter, eVACenter);
@@ -750,7 +750,7 @@ int BasePainter::PaintColorTextLineEdit(GraphicsEngine &graphics_engine, const G
   }
 
   void BasePainter::PaintRadioButton(GraphicsEngine &graphics_engine, const Geometry &geo, const InteractState &interaction_state,
-                                      Color check_mark_color, Color check_box_color)
+                                      Color /* check_mark_color */, Color /* check_box_color */)
   {
     PaintBackground(graphics_engine, geo);
     GeometryPositioning pctx(eHACenter, eVACenter);
@@ -797,7 +797,7 @@ int BasePainter::PaintColorTextLineEdit(GraphicsEngine &graphics_engine, const G
     graphics_engine.GetRenderStates().SetBlend(false);
   }
 
-  void BasePainter::PaintBackground(GraphicsEngine &graphics_engine, const Geometry &geo)
+  void BasePainter::PaintActivePaintLayerStack(GraphicsEngine &graphics_engine, const Geometry &geo)
   {
     if (active_paint_layer_stack_.empty())
     {
@@ -806,7 +806,12 @@ int BasePainter::PaintColorTextLineEdit(GraphicsEngine &graphics_engine, const G
 
     std::list<AbstractPaintLayer *>::const_reverse_iterator rev_it;
 
-    bool first = true;
+    bool clear_background = false;
+    if (pushed_paint_layer_stack_.size() == 0)
+    {
+      // This is the first stack of layers. Clear the background
+      clear_background = true;
+    }
 
     for (rev_it = active_paint_layer_stack_.rbegin(); rev_it != active_paint_layer_stack_.rend(); rev_it++)
     {
@@ -817,10 +822,10 @@ int BasePainter::PaintColorTextLineEdit(GraphicsEngine &graphics_engine, const G
       graphics_engine.PushClippingRectangle(geo);
       graphics_engine.SetModelViewMatrix(layer->GetModelViewMatrix());
 
-      if (first)
+      if (clear_background)
       {
         Paint2DQuadColor(graphics_engine, layer_geo, Color(0x0));
-        first = false;
+        clear_background = false;
       }
 
       RenderSinglePaintLayer(graphics_engine, layer_geo, layer);
@@ -831,12 +836,45 @@ int BasePainter::PaintColorTextLineEdit(GraphicsEngine &graphics_engine, const G
     }
   }
 
-  void BasePainter::RenderSinglePaintLayer(GraphicsEngine &graphics_engine, Geometry geo, AbstractPaintLayer *paint_layer)
+  void BasePainter::PaintBackground(GraphicsEngine& graphics_engine, const Geometry& geo)
+  {
+    PaintActivePaintLayerStack(graphics_engine, geo);
+  }
+
+  void BasePainter::PaintAllLayerStack(GraphicsEngine& graphics_engine, const Geometry& geo)
+  {
+    std::list<std::list<AbstractPaintLayer*> >::const_iterator stack_it;
+    std::list<AbstractPaintLayer *>::const_reverse_iterator rev_layer_it;
+
+    bool clear_background = true;
+
+    for (stack_it = pushed_paint_layer_stack_.begin(); stack_it != pushed_paint_layer_stack_.end(); stack_it++)
+    {
+      std::list<AbstractPaintLayer*> stack = (*stack_it);
+      for (rev_layer_it = stack.rbegin(); rev_layer_it != stack.rend(); rev_layer_it++)
+      {
+        AbstractPaintLayer* layer = (*rev_layer_it);
+        Geometry layer_geo = layer->GetGeometry();
+
+        graphics_engine.PushClippingRectangle(geo);
+        if (clear_background)
+        {
+          Paint2DQuadColor(graphics_engine, layer_geo, Color(0x0));
+          clear_background = false;
+        }
+
+        RenderSinglePaintLayer(graphics_engine, layer_geo, layer);
+        graphics_engine.PopClippingRectangle();
+      }
+    }
+  }
+
+  void BasePainter::RenderSinglePaintLayer(GraphicsEngine &graphics_engine, Geometry /* geo */, AbstractPaintLayer *paint_layer)
   {
     paint_layer->Renderlayer(graphics_engine);
   }
 
-  void BasePainter::PushLayer(GraphicsEngine &graphics_engine, const Geometry &geo, AbstractPaintLayer *layer)
+  void BasePainter::PushLayer(GraphicsEngine & /* graphics_engine */, const Geometry &geo, AbstractPaintLayer *layer)
   {
     AbstractPaintLayer *l = layer->Clone();
     l->SetModelViewMatrix(window_thread_->GetGraphicsEngine().GetModelViewMatrix());
@@ -850,7 +888,7 @@ int BasePainter::PaintColorTextLineEdit(GraphicsEngine &graphics_engine, const G
     PaintBackground(graphics_engine, geo);
   }
 
-  void BasePainter::PushColorLayer(GraphicsEngine &graphics_engine, const Geometry &geo,
+  void BasePainter::PushColorLayer(GraphicsEngine & /* graphics_engine */, const Geometry &geo,
                                     Color color,
                                     bool WriteAlpha,
                                     const ROPConfig &ROP)
@@ -870,7 +908,7 @@ int BasePainter::PaintColorTextLineEdit(GraphicsEngine &graphics_engine, const G
     PaintBackground(graphics_engine, geo);
   }
 
-  void BasePainter::PushShapeLayer(GraphicsEngine &graphics_engine, Geometry geo,
+  void BasePainter::PushShapeLayer(GraphicsEngine & /* graphics_engine */, Geometry geo,
                                     UXStyleImageRef imageStyle,
                                     const Color &color,
                                     unsigned long Corners,
@@ -894,7 +932,7 @@ int BasePainter::PaintColorTextLineEdit(GraphicsEngine &graphics_engine, const G
     PaintBackground(graphics_engine, geo);
   }
 
-  void BasePainter::PushSliceScaledTextureLayer(GraphicsEngine &graphics_engine, Geometry geo,
+  void BasePainter::PushSliceScaledTextureLayer(GraphicsEngine & /* graphics_engine */, Geometry geo,
       UXStyleImageRef imageStyle,
       const Color &color,
       unsigned long Corners,
@@ -918,7 +956,7 @@ int BasePainter::PaintColorTextLineEdit(GraphicsEngine &graphics_engine, const G
     PaintBackground(graphics_engine, geo);
   }
 
-  void BasePainter::PushTextureLayer(GraphicsEngine &graphics_engine, Geometry geo,
+  void BasePainter::PushTextureLayer(GraphicsEngine & /* graphics_engine */, Geometry geo,
                                       ObjectPtr<IOpenGLBaseTexture> DeviceTexture,
                                       TexCoordXForm texxform,
                                       const Color &color,
@@ -931,7 +969,7 @@ int BasePainter::PaintColorTextLineEdit(GraphicsEngine &graphics_engine, const G
     active_paint_layer_stack_.push_front(tl);
   }
   
-  void BasePainter::PushCompositionLayer (GraphicsEngine &graphics_engine,
+  void BasePainter::PushCompositionLayer (GraphicsEngine & /* graphics_engine */,
 					  Geometry geo,
 					  ObjectPtr <IOpenGLBaseTexture> texture0,
 					  TexCoordXForm texxform0,
@@ -952,7 +990,7 @@ int BasePainter::PaintColorTextLineEdit(GraphicsEngine &graphics_engine, const G
     active_paint_layer_stack_.push_front(cl);
   }
 
-  void BasePainter::PushCompositionLayer (GraphicsEngine &graphics_engine,
+  void BasePainter::PushCompositionLayer (GraphicsEngine & /* graphics_engine */,
 					  Geometry geo,
 					  ObjectPtr <IOpenGLBaseTexture> texture0,
 					  TexCoordXForm texxform0,
@@ -970,7 +1008,7 @@ int BasePainter::PaintColorTextLineEdit(GraphicsEngine &graphics_engine, const G
     active_paint_layer_stack_.push_front(cl);
   }
 
-  void BasePainter::PushCompositionLayer (GraphicsEngine &graphics_engine,
+  void BasePainter::PushCompositionLayer (GraphicsEngine & /* graphics_engine */,
 					  Geometry geo,
 					  const Color& base_color,
 					  ObjectPtr <IOpenGLBaseTexture> texture0,
@@ -1038,7 +1076,7 @@ int BasePainter::PaintColorTextLineEdit(GraphicsEngine &graphics_engine, const G
 			 texxform0, color0, layer_blend_mode, WriteAlpha, ROP);
   }
 
-  void BasePainter::PushColorizeTextureLayer(GraphicsEngine &graphics_engine, Geometry geo,
+  void BasePainter::PushColorizeTextureLayer(GraphicsEngine & /* graphics_engine */, Geometry geo,
 					     ObjectPtr<IOpenGLBaseTexture> DeviceTexture,
 					     TexCoordXForm texxform,
 					     const Color &color,

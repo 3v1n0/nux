@@ -79,4 +79,14 @@ TEST_F(TestInputArea, UngrabsOnDestroy)
   EXPECT_FALSE(nux::GetWindowCompositor().IsInPointerGrabStack(area2));
 }
 
+TEST_F(TestInputArea, IsTrackingChildMouseEvents)
+{
+  ASSERT_FALSE(area->IsTrackingChildMouseEvents());
+  area->SetTrackChildMouseEvents(true);
+  ASSERT_TRUE(area->IsTrackingChildMouseEvents());
+  area->SetTrackChildMouseEvents(false);
+  ASSERT_FALSE(area->IsTrackingChildMouseEvents());
+}
+
+
 }

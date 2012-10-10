@@ -45,7 +45,7 @@ namespace nux
     BMFontParseFNT(is);
   }
 
-  FontTexture::FontTexture(int width, int height, BYTE *Texture)
+  FontTexture::FontTexture(int /* width */, int /* height */, BYTE * /* Texture */)
   {
 
   }

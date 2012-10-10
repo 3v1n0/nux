@@ -45,7 +45,7 @@ namespace nux
     MenuBarItem(NUX_FILE_LINE_PROTO);
     ~MenuBarItem();
   private:
-    InputArea   *area;
+    BasicView   *area;
     MenuPage   *menu;
     BaseTexture   *icon; // should be 24x24
 
@@ -62,7 +62,6 @@ namespace nux
 
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     //void AddActionItem(ActionItem* actionItem);
 

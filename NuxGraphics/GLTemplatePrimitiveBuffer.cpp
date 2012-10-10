@@ -182,9 +182,7 @@ namespace nux
       return;
     }
 
-    nuxAssert(AttributeIndex >= 0); // Index 0 is the vertex position attribute. This on is set in the constructor.
     nuxAssert(AttributeIndex < 16);
-    nuxAssert(AttributeLocation >= 0);
 
 
     if (VertexAttributeBuffer[AttributeIndex].IsNull())
@@ -383,7 +381,7 @@ namespace nux
     VertexAttributeBuffer[AttributeIndex]->Unlock();
   }
 
-  void TemplateQuadBuffer::UnSetQuadAttribute(UINT AttributeIndex)
+  void TemplateQuadBuffer::UnSetQuadAttribute(UINT /* AttributeIndex */)
   {
 
   }

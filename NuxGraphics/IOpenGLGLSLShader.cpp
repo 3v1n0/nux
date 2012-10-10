@@ -131,7 +131,7 @@ namespace nux
       }
 
       std::string s = "#line ";
-      s += std::to_string(LinePosition + shaderStartLine) + "\n";
+      s += std::to_string((unsigned long long)(LinePosition + shaderStartLine)) + "\n";
       RetSource.insert(Pos, s);
 
       // Insert the preprocessor definitions before the #line directive
@@ -356,7 +356,7 @@ namespace nux
   }
 
 #if 0
-  IOpenGLGeometryShader::IOpenGLGeometryShader(NString ShaderName)
+  IOpenGLGeometryShader::IOpenGLGeometryShader(std::string ShaderName)
     :   IOpenGLShader(ShaderName, RT_GLSL_GEOMETRYSHADER)
     ,   m_CompiledAndReady(false)
 
@@ -376,8 +376,8 @@ namespace nux
   {
     nuxAssertMsg(ShaderCode, "[IOpenGLGeometryShader::SetShaderCode] Invalid shader code.");
     NUX_RETURN_IF_NULL(ShaderCode);
-    NString ProcessedShaderSource;
-    NString Defines(GeometryShaderPreprocessorDefines);
+    std::string ProcessedShaderSource;
+    std::string Defines(GeometryShaderPreprocessorDefines);
     InsertPreProcessorDefinitions(ShaderCode, ProcessedShaderSource, Defines);
 
     m_CompiledAndReady = false;
@@ -513,6 +513,11 @@ namespace nux
     ObjectPtr<IOpenGLVertexShader> vs = GetGraphicsDisplay()->GetGpuDevice()->CreateVertexShader(); //new IOpenGLVertexShader;
 
     std::string ProcessedShaderSource;
+
+    if(!VtxShaderPreprocessorDefines)
+    {
+      VtxShaderPreprocessorDefines = "";
+    }
     std::string Defines(VtxShaderPreprocessorDefines);
     InsertPreProcessorDefinitions(glslshader, ProcessedShaderSource, Defines);
 
@@ -528,6 +533,11 @@ namespace nux
     ObjectPtr<IOpenGLPixelShader> ps = GetGraphicsDisplay()->GetGpuDevice()->CreatePixelShader(); //new IOpenGLPixelShader;
 
     std::string ProcessedShaderSource;
+
+    if (!FrgShaderPreprocessorDefines)
+    {
+      FrgShaderPreprocessorDefines = "";
+    }
     std::string Defines(FrgShaderPreprocessorDefines);
     InsertPreProcessorDefinitions(glslshader, ProcessedShaderSource, Defines);
 

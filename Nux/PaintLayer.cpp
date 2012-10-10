@@ -117,7 +117,16 @@ namespace nux
 
   void SliceScaledTextureLayer::Renderlayer(GraphicsEngine& graphics_engine)
   {
+    unsigned int current_alpha_blend;
+    unsigned int current_src_blend_factor;
+    unsigned int current_dest_blend_factor;
+
+    // Get the current blend states. They will be restored later.
+    graphics_engine.GetRenderStates().GetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
+
     GetPainter().PaintTextureShape(graphics_engine, geometry_, m_image_style);
+
+    graphics_engine.GetRenderStates().SetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
   }
 
   AbstractPaintLayer* SliceScaledTextureLayer::Clone() const

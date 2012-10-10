@@ -141,12 +141,12 @@ namespace nux
 //}
 
 
-  void MenuItem::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void MenuItem::Draw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }
 
-  void MenuItem::DrawAsMenuItem(GraphicsEngine &graphics_engine, const Color &textcolor, bool is_highlighted, bool isFirstItem, bool isLastItem, bool draw_icone)
+  void MenuItem::DrawAsMenuItem(GraphicsEngine &graphics_engine, const Color & /* textcolor */, bool is_highlighted, bool /* isFirstItem */, bool /* isLastItem */, bool /* draw_icone */)
   {
     Geometry geo = GetGeometry();
     Geometry icon_geo(0, 0, 20, 20);
@@ -206,7 +206,7 @@ namespace nux
 
   }
 
-  void MenuSeparator::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void MenuSeparator::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
     int y0 = base.y + base.GetHeight() / 2;
@@ -339,12 +339,7 @@ namespace nux
     }
   }
 
-  void MenuPage::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
-  }
-
-  void MenuPage::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
+  void MenuPage::DrawContent(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }
@@ -352,7 +347,7 @@ namespace nux
   void MenuPage::SetFontName(char *font_name)
   {
     std::vector<MenuItem *>::iterator it;
-    
+
     for (it = m_MenuItemVector.begin(); it != m_MenuItemVector.end(); ++it)
     {
       (*it)->GetStaticText()->SetFontName(font_name);
@@ -583,7 +578,7 @@ namespace nux
     return pMenuItem->GetChildMenu();
   }
 
-  ActionItem *MenuPage::AddSubMenu(const char *label, MenuPage *menu)
+  ActionItem *MenuPage::AddSubMenu(const char * /* label */, MenuPage *menu)
   {
     menu->m_IsTopOfMenuChain = false;
     // pMenuItem if added to the layout do not sink the Reference.
@@ -682,7 +677,7 @@ namespace nux
     ComputeContentSize();
   }
 
-  void MenuPage::RemoveItem(ActionItem *item)
+  void MenuPage::RemoveItem(ActionItem * /* item */)
   {
   }
 
@@ -700,7 +695,7 @@ namespace nux
     View::SetGeometry(base);
   }
 
-  void MenuPage::EmitMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void MenuPage::EmitMouseMove(int /* x */, int y, int /* dx */, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (IsMouseInside())
     {
@@ -885,13 +880,13 @@ namespace nux
     }
   }
 
-  void MenuPage::EmitMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void MenuPage::EmitMouseDrag(int x, int y, int /* dx */, int /* dy */, unsigned long button_flags, unsigned long key_flags)
   {
     if (IsMouseInside())
       EmitMouseMove(x, y, 0, 0, button_flags, key_flags);
   }
 
-  void MenuPage::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void MenuPage::RecvMouseLeave(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     // Cancel selected item when the mouse is out.
     if (m_HighlightedItem != -1)
@@ -914,7 +909,7 @@ namespace nux
     QueueDraw();
   }
 
-  void MenuPage::StartMenu(int MenuXPosition, int MenuYPosition, int x, int y, bool OverrideCurrentMenuChain)
+  void MenuPage::StartMenu(int MenuXPosition, int MenuYPosition, int /* x*/, int /* y */, bool /* OverrideCurrentMenuChain */)
   {
     Geometry base = GetGeometry();
     base.SetX(MenuXPosition);
@@ -971,7 +966,7 @@ namespace nux
     StopActionSubMenu();
   }
 
-  void MenuPage::StopMenu(int x, int y)
+  void MenuPage::StopMenu(int /* x */, int /* y */)
   {
     SetActive(false);
     // The Stack Manager will remove all popup that are not visible anymore
@@ -1001,7 +996,7 @@ namespace nux
   }
 
 // Never call this function directly
-  void MenuPage::Terminate(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void MenuPage::Terminate(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
   }
 

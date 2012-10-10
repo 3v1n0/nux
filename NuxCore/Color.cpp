@@ -139,7 +139,7 @@ namespace color
     return (((std::rand() % 255) << 24) |
             ((std::rand() % 255) << 16) |
             ((std::rand() % 255) << 8) |
-            (std::rand() % 255));
+            (255));
   }
 
   Color operator + (Color const& lhs, Color const& rhs)

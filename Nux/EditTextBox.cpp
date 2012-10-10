@@ -91,10 +91,10 @@ namespace nux
     m_BlinkTimerHandler = 0;
   }
 
-  void EditTextBox::ScrollTimerInterrupt(void *v)
+  void EditTextBox::ScrollTimerInterrupt(void * /* v */)
   {
     Geometry base = GetGeometry();
-    Event &event = GetGraphicsDisplay()->GetCurrentEvent();
+    const Event& event = GetGraphicsDisplay()->GetCurrentEvent();
 
     int X = event.x;
     m_KeyboardHandler.CaretAutoScroll(event.x, event.y, base);
@@ -117,7 +117,7 @@ namespace nux
     QueueDraw();
   }
 
-  void EditTextBox::BlinkCursorTimerInterrupt(void *v)
+  void EditTextBox::BlinkCursorTimerInterrupt(void * /* v */)
   {
     GetTimer().RemoveTimerHandler(m_BlinkTimerHandler);
     m_BlinkTimerHandler = GetTimer().AddOneShotTimer(500, m_BlinkTimerFunctor, this);
@@ -147,7 +147,7 @@ namespace nux
     m_Validator = validator->Clone();
   }
 
-  void EditTextBox::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void EditTextBox::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
 
@@ -184,12 +184,7 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void EditTextBox::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
-  }
-
-  void EditTextBox::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
+  void EditTextBox::DrawContent(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }
@@ -248,13 +243,13 @@ namespace nux
     return CleanText;
   }
 
-  void EditTextBox::RecvMouseDoubleClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void EditTextBox::RecvMouseDoubleClick(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     m_KeyboardHandler.SelectAllText();
     QueueDraw();
   }
 
-  void EditTextBox::RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void EditTextBox::RecvMouseUp(int x, int y, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     m_KeyboardHandler.MouseUp(x, y);
 
@@ -267,7 +262,7 @@ namespace nux
     QueueDraw();
   }
 
-  void EditTextBox::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void EditTextBox::RecvMouseDown(int x, int y, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (HasKeyboardFocus() == false)
     {
@@ -288,7 +283,7 @@ namespace nux
     QueueDraw();
   }
 
-  void EditTextBox::RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void EditTextBox::RecvMouseDrag(int x, int y, int /* dx */, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     Geometry base = GetGeometry();
 
@@ -324,7 +319,7 @@ namespace nux
     unsigned long   keysym     , /*event keysym*/
     unsigned long   state      , /*event state*/
     const char*     character  , /*character*/
-    unsigned short  keyCount     /*key repeat count*/)
+    unsigned short  /* keyCount */     /*key repeat count*/)
   {
     
     if (eventType == NUX_KEYDOWN)
@@ -471,12 +466,12 @@ namespace nux
 
   void EditTextBox::SetDoubleValue(double d)
   {
-    SetText(std::to_string(d));
+    SetText(std::to_string((long double)d));
   }
 
   void EditTextBox::SetIntegerValue(int i)
   {
-    SetText(std::to_string(i));
+    SetText(std::to_string((long long)i));
   }
 
   void EditTextBox::SetTextBackgroundColor(const Color &color)
@@ -502,7 +497,7 @@ namespace nux
 
   bool EditTextBox::InspectKeyEvent(unsigned int eventType,
     unsigned int keysym,
-    const char* character)
+    const char* /* character */)
   {
     if ((eventType == NUX_KEYDOWN) && (key_nav_mode_ == true) && (text_input_mode_ == false))
     {

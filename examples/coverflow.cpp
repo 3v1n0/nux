@@ -115,7 +115,7 @@ ObjectPtr<BaseTexture> BasicCoverflowItem::GetTexture() const
 
 }
 
-void CoverflowThread(nux::NThread* thread, void* InitData)
+void CoverflowThread(nux::NThread* thread, void* /* InitData */)
 {
   nux::Coverflow* coverflow = new nux::Coverflow();
   coverflow->fov = 45;

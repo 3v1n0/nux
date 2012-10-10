@@ -40,7 +40,6 @@ namespace nux
 
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     int getAreaPosY();
     int getAreaPosX();
@@ -64,7 +63,7 @@ namespace nux
 
   private:
     VLayout    *m_vlayout;
-    InputArea   *m_Area;
+    BasicView   *m_Area;
 
   public:
     virtual void SetGeometry(const Geometry &geo)

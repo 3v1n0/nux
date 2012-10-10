@@ -41,7 +41,7 @@ namespace nux
     :   Object(true, NUX_FILE_LINE_PARAM)
   {
     // This area is added to the layout of the MenuBar. The Menubar will will ref/unref it.
-    area = new InputArea(NUX_TRACKER_LOCATION);
+    area = new BasicView(NUX_TRACKER_LOCATION);
     icon = 0;
   }
 
@@ -87,7 +87,7 @@ namespace nux
     m_MenuBarItemList.clear();
   }
 
-  void MenuBar::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void MenuBar::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
     graphics_engine.PushClippingRectangle(base);
@@ -97,7 +97,7 @@ namespace nux
 
     for (it = m_MenuBarItemList.begin(); it != m_MenuBarItemList.end(); it++)
     {
-      InputArea *area = (*it)->area;
+      BasicView *area = (*it)->area;
       item_geometry = area->GetGeometry();
 
       if (area->IsMouseInside())
@@ -151,7 +151,7 @@ namespace nux
 
     if (m_MenuIsActive)
     {
-      InputArea *area = m_CurrentMenu->area;
+      BasicView *area = m_CurrentMenu->area;
       item_geometry = area->GetGeometry();
       GetPainter().PaintBackground(graphics_engine, item_geometry);
       GetPainter().Paint2DQuadColor(graphics_engine, item_geometry, Color(0xFF000000));
@@ -174,15 +174,10 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void MenuBar::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
+  void MenuBar::DrawContent(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     graphics_engine.PushClippingRectangle(GetGeometry());
     graphics_engine.PopClippingRectangle();
-  }
-
-  void MenuBar::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
   }
 
   void MenuBar::AddMenu(const char *MenuLabel, MenuPage *menu)
@@ -235,7 +230,7 @@ namespace nux
     GetWindowThread()->ComputeElementLayout(m_hlayout);
   }
 
-  void MenuBar::EmitItemMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item)
+  void MenuBar::EmitItemMouseEnter(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */, MenuBarItem *menubar_item)
   {
     if (m_MenuIsActive)
     {
@@ -255,11 +250,11 @@ namespace nux
     QueueDraw();
   }
 
-  void MenuBar::EmitItemMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item)
+  void MenuBar::EmitItemMouseLeave(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */, MenuBarItem * /* menubar_item */)
   {
     QueueDraw();
   }
-  void MenuBar::EmitItemMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item)
+  void MenuBar::EmitItemMouseDown(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */, MenuBarItem *menubar_item)
   {
     m_MenuBarWindow = GetWindowThread()->GetWindowCompositor().GetProcessingTopView();
 
@@ -290,7 +285,7 @@ namespace nux
     QueueDraw();
   }
 
-  void MenuBar::EmitItemMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item)
+  void MenuBar::EmitItemMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags, MenuBarItem * /* menubar_item */)
   {
     if (m_MenuIsActive)
     {
@@ -327,7 +322,7 @@ namespace nux
     QueueDraw();
   }
 
-  void MenuBar::RecvItemMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags, MenuBarItem *menubar_item)
+  void MenuBar::RecvItemMouseDrag(int /* x */, int /* y */, int /* dx */, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */, MenuBarItem * /* menubar_item */)
   {
     // TODO: Port to new event architecture
 //     // Transition between one menu bar item to another
@@ -342,7 +337,7 @@ namespace nux
 // 
 //         for (it = m_MenuBarItemList.begin(); it != m_MenuBarItemList.end(); it++)
 //         {
-//           InputArea *area = (*it)->area;
+//           BasicView *area = (*it)->area;
 //           Geometry geometry = area->GetGeometry();
 // 
 //           if (geometry.IsPointInside(winx, winy))
@@ -367,7 +362,7 @@ namespace nux
 //     }
   }
 
-  void MenuBar::RecvSigActionTriggered(MenuPage *menu, ActionItem *action)
+  void MenuBar::RecvSigActionTriggered(MenuPage * /* menu */, ActionItem * /* action */)
   {
     m_MenuIsActive = false;
 
@@ -399,7 +394,7 @@ namespace nux
     QueueDraw();
   }
 
-  void MenuBar::RecvSigMouseDownOutsideMenuCascade(MenuPage *menu, int x, int y)
+  void MenuBar::RecvSigMouseDownOutsideMenuCascade(MenuPage * /* menu */, int x, int y)
   {
     Geometry geometry;
     std::list< MenuBarItem * >::iterator it;
@@ -407,7 +402,7 @@ namespace nux
 
     for (it = m_MenuBarItemList.begin(); it != m_MenuBarItemList.end(); it++)
     {
-      InputArea *area = (*it)->area;
+      BasicView *area = (*it)->area;
       geometry = area->GetGeometry();
 
       if (geometry.IsPointInside(x, y))

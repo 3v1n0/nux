@@ -145,10 +145,6 @@ namespace nux
     */
     virtual bool IsNull() const = 0;
 
-    /*!
-      Clone the texture.
-      @return A cloned version of this texture.
-    */
     virtual BaseTexture* Clone() const = 0;
 
     /*!
@@ -177,10 +173,8 @@ namespace nux
     NUX_DECLARE_OBJECT_TYPE(Texture2D, BaseTexture);
 
   public:
-    Texture2D(NUX_FILE_LINE_PROTO);
-    Texture2D(const Texture2D& texture, NUX_FILE_LINE_PROTO);
-    Texture2D(const NTextureData& BaseTexture, NUX_FILE_LINE_PROTO);
-    Texture2D& operator = (const Texture2D& texture);
+    Texture2D(NUX_FILE_LINE_PROTO); // TODO: Why can we create a texture without a texture?
+    Texture2D(const NTextureData& Image, NUX_FILE_LINE_PROTO);
     ~Texture2D();
 
     /*!
@@ -252,11 +246,7 @@ namespace nux
       return IsPowerOf2(_image.GetWidth()) && IsPowerOf2(_image.GetHeight());
     }
 
-    /*!
-      Clone the texture.
-      @return A cloned version of this texture.
-    */
-    virtual BaseTexture* Clone() const;
+    virtual Texture2D* Clone() const;
 
   private:
     NTextureData _image; //!< Storage for the texture data
@@ -267,10 +257,8 @@ namespace nux
     NUX_DECLARE_OBJECT_TYPE(TextureRectangle, BaseTexture);
 
   public:
-    TextureRectangle(NUX_FILE_LINE_PROTO);
-    TextureRectangle(const TextureRectangle& texture);
-    TextureRectangle(const NTextureData& Image);
-    TextureRectangle& operator = (const TextureRectangle& texture);
+    TextureRectangle(NUX_FILE_LINE_PROTO);        // TODO: Why can we create a texture without a texture?
+    TextureRectangle(const NTextureData& Image, NUX_FILE_LINE_PROTO);
     ~TextureRectangle();
 
     virtual bool Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource = true);
@@ -326,11 +314,7 @@ namespace nux
       return IsPowerOf2(_image.GetWidth()) && IsPowerOf2(_image.GetHeight());
     }
 
-    /*!
-      Clone the texture.
-      @return A cloned version of this texture.
-    */
-    virtual BaseTexture* Clone() const;
+    virtual TextureRectangle* Clone() const;
 
   private:
     NTextureData _image;
@@ -341,10 +325,8 @@ namespace nux
     NUX_DECLARE_OBJECT_TYPE(TextureCube, BaseTexture);
 
   public:
-    TextureCube(NUX_FILE_LINE_PROTO);
-    //Texture2D(const NTextureData& Image);
-    TextureCube(const TextureCube& texture);
-    TextureCube& operator = (const TextureCube& texture);
+    TextureCube(NUX_FILE_LINE_PROTO);       // TODO: why can we have a texture without a texture?
+    TextureCube(const NCubemapData& Image);
     ~TextureCube();
 
     virtual bool Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource = true);
@@ -399,11 +381,7 @@ namespace nux
       return IsPowerOf2(_image.GetWidth()) && IsPowerOf2(_image.GetHeight());
     }
 
-    /*!
-      Clone the texture.
-      @return A cloned version of this texture.
-    */
-    virtual BaseTexture* Clone() const;
+    virtual TextureCube* Clone() const;
 
   private:
     NCubemapData _image;
@@ -414,10 +392,8 @@ namespace nux
     NUX_DECLARE_OBJECT_TYPE(TextureVolume, BaseTexture);
 
   public:
-    TextureVolume(NUX_FILE_LINE_PROTO);
-    //Texture2D(const NTextureData& Image);
-    TextureVolume(const TextureVolume& texture);
-    TextureVolume& operator = (const TextureVolume& texture);
+    TextureVolume(NUX_FILE_LINE_PROTO);       // TODO: why can we have a texture without a texture?
+    TextureVolume(const NVolumeData& Image);
     ~TextureVolume();
 
     virtual bool Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource = true);
@@ -481,11 +457,7 @@ namespace nux
       return IsPowerOf2(_image.GetWidth()) && IsPowerOf2(_image.GetHeight());
     }
 
-    /*!
-      Clone the texture.
-      @return A cloned version of this texture.
-    */
-    virtual BaseTexture* Clone() const;
+    virtual TextureVolume* Clone() const;
 
   private:
     NVolumeData _image;
@@ -496,9 +468,8 @@ namespace nux
     NUX_DECLARE_OBJECT_TYPE(TextureFrameAnimation, BaseTexture);
 
   public:
-    TextureFrameAnimation(NUX_FILE_LINE_PROTO);
-    TextureFrameAnimation(const TextureFrameAnimation& texture);
-    TextureFrameAnimation& operator = (const TextureFrameAnimation& texture);
+    TextureFrameAnimation(NUX_FILE_LINE_PROTO);       // TODO: why can we have a texture without a texture?
+    TextureFrameAnimation(const NAnimatedTextureData& Image);
     ~TextureFrameAnimation();
 
     virtual bool Update(const NBitmapData* BitmapData, bool UpdateAndCacheResource = true);
@@ -562,11 +533,7 @@ namespace nux
       return IsPowerOf2(_image.GetWidth()) && IsPowerOf2(_image.GetHeight());
     }
 
-    /*!
-      Clone the texture.
-      @return A cloned version of this texture.
-    */
-    virtual BaseTexture* Clone() const;
+    virtual TextureFrameAnimation* Clone() const;
 
   private:
     NAnimatedTextureData _image;

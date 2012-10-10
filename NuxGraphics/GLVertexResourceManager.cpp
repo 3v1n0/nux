@@ -54,21 +54,6 @@ namespace nux
     Allocate(num_element, size);
   }
 
-  //! Copy constructor
-  VertexBuffer::VertexBuffer(const VertexBuffer& Other)
-  {
-    _Data = Other._Data;
-    _Stride = Other._Stride;
-  }
-
-  //! Assignment constructor
-  VertexBuffer& VertexBuffer::operator = (const VertexBuffer& Other)
-  {
-    _Data = Other._Data;
-    _Stride = Other._Stride;
-    return *this;
-  }
-
   void VertexBuffer::Allocate(int num_element, int size)
   {
     nuxAssert(num_element > 0);
@@ -133,21 +118,6 @@ namespace nux
   IndexBuffer::IndexBuffer(int num_element, int size)
   {
     Allocate(num_element, size);
-  }
-
-  //! Copy constructor
-  IndexBuffer::IndexBuffer(const IndexBuffer& Other)
-  {
-    _Data = Other._Data;
-    _Stride = Other._Stride;
-  }
-
-  //! Assignment constructor
-  IndexBuffer& IndexBuffer::operator = (const IndexBuffer& Other)
-  {
-    _Data = Other._Data;
-    _Stride = Other._Stride;
-    return *this;
   }
 
   void IndexBuffer::Allocate(int num_index, int size)

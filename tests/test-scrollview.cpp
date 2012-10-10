@@ -58,13 +58,13 @@ nux::Color TestScrollView::GetColor() const
   return current_color_;
 }
 
-void TestScrollView::Draw(nux::GraphicsEngine &graphics_engine, bool force_draw)
+void TestScrollView::Draw(nux::GraphicsEngine &graphics_engine, bool /* force_draw */)
 {
   nux::Geometry geo = GetGeometry();
   graphics_engine.QRP_Color(geo.x, geo.y, geo.width, geo.height, current_color_);
 }
 
-void TestScrollView::OnScrolling(int hscroll, int vscroll)
+void TestScrollView::OnScrolling(int /* hscroll */, int /* vscroll */)
 {
   registered_scroll_ = true;
 

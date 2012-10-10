@@ -29,7 +29,7 @@ class SimpleTarget : public nux::GestureTarget
 {
   public:
     SimpleTarget(int id) : id(id) {}
-    virtual GestureDeliveryRequest GestureEvent(const nux::GestureEvent &event)
+    virtual GestureDeliveryRequest GestureEvent(const nux::GestureEvent &/* event */)
     {
       return GestureDeliveryRequest::NONE;
     }
@@ -44,7 +44,7 @@ public:
 
 private:
   std::vector<ShPtGestureTarget>
-  virtual FindGestureTargets(const nux::GestureEvent &event)
+  virtual FindGestureTargets(const nux::GestureEvent &/* event */)
   {
     return targets_to_be_found;
   }

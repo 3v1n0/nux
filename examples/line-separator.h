@@ -38,7 +38,7 @@ namespace nux
 
   protected:
     virtual void Draw (GraphicsEngine &GfxContext, bool force_draw);
-    virtual void DrawContent (GraphicsEngine &GfxContext, bool force_draw) {};
+    virtual void DrawContent (GraphicsEngine & /* GfxContext */, bool /* force_draw */) {};
   
   };
 

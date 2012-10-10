@@ -63,7 +63,7 @@ namespace nux
     m_Texture->UnReference();
   }
 
-  void FileSelector::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void FileSelector::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
 
@@ -104,23 +104,18 @@ namespace nux
     m_FileEditTextBox->ProcessDraw(graphics_engine, force_draw);
   }
 
-  void FileSelector::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
-  }
-
-  void FileSelector::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void FileSelector::RecvMouseEnter(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();
   }
 
-  void FileSelector::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void FileSelector::RecvMouseLeave(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
 
     QueueDraw();
   }
 
-  void FileSelector::RecvOpenButtonClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void FileSelector::RecvOpenButtonClick(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();
     sigClick.emit();

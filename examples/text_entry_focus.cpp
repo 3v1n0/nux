@@ -24,7 +24,7 @@
 #include "Nux/WindowThread.h"
 #include "Nux/TextEntry.h"
  
-void ThreadWidgetInit(nux::NThread* thread, void* InitData)
+void ThreadWidgetInit(nux::NThread* thread, void* /* InitData */)
 {
     nux::VLayout* MainVLayout = new nux::VLayout(NUX_TRACKER_LOCATION);
 
@@ -56,7 +56,7 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
     static_cast<nux::WindowThread*>(thread)->SetWindowBackgroundPaintLayer(&background);
 }
 
-int main(int argc, char **argv)
+int main()
 {
     nux::NuxInitialize(0);
     nux::WindowThread* wt = nux::CreateGUIThread(TEXT("Text Entry"), 400, 300, 0, &ThreadWidgetInit, 0);

@@ -52,10 +52,10 @@ namespace nux
     m_RightTimerHandler = 0;
 
     hlayout = new HLayout(NUX_TRACKER_LOCATION);
-    _scroll_left_button = new InputArea(NUX_TRACKER_LOCATION);
-    _track = new InputArea(NUX_TRACKER_LOCATION);
-    _scroll_right_button = new InputArea(NUX_TRACKER_LOCATION);
-    _slider = new InputArea(NUX_TRACKER_LOCATION);
+    _scroll_left_button = new BasicView(NUX_TRACKER_LOCATION);
+    _track = new BasicView(NUX_TRACKER_LOCATION);
+    _scroll_right_button = new BasicView(NUX_TRACKER_LOCATION);
+    _slider = new BasicView(NUX_TRACKER_LOCATION);
     _slider->SetParentObject(this);
 
     // Set Original State
@@ -151,7 +151,7 @@ namespace nux
     }
   }
 
-  void HScrollBar::ScrollRight(void *v)
+  void HScrollBar::ScrollRight(void * /* v */)
   {
     OnScrollRight.emit(m_ScrollUnit, 1);
 
@@ -163,7 +163,7 @@ namespace nux
     QueueDraw();
   }
 
-  void HScrollBar::ScrollLeft(void *v)
+  void HScrollBar::ScrollLeft(void * /* v */)
   {
     OnScrollLeft.emit(m_ScrollUnit, 1);
 
@@ -175,7 +175,7 @@ namespace nux
     QueueDraw();
   }
 
-  void HScrollBar::TrackLeft(void *v)
+  void HScrollBar::TrackLeft(void * /* v */)
   {
     if (m_TrackMouseCoord.x < _slider->GetBaseX() - _track->GetBaseX())
     {
@@ -185,7 +185,7 @@ namespace nux
     }
   }
 
-  void HScrollBar::TrackRight(void *v)
+  void HScrollBar::TrackRight(void * /* v */)
   {
     if (m_TrackMouseCoord.x > _slider->GetBaseX() + _slider->GetBaseWidth() - _track->GetBaseX())
     {
@@ -195,19 +195,19 @@ namespace nux
     }
   }
 
-  void HScrollBar::RecvStartScrollLeft(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void HScrollBar::RecvStartScrollLeft(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (!AtMinimum())
       ScrollLeft(this);
   }
 
-  void HScrollBar::RecvStartScrollRight(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void HScrollBar::RecvStartScrollRight(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (!AtMaximum())
       ScrollRight(this);
   }
 
-  void HScrollBar::RecvEndScrollRight(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void HScrollBar::RecvEndScrollRight(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (m_RightTimerHandler.IsValid())
       GetTimer().RemoveTimerHandler(m_RightTimerHandler);
@@ -215,7 +215,7 @@ namespace nux
     m_RightTimerHandler = 0;
   }
 
-  void HScrollBar::RecvEndScrollLeft(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void HScrollBar::RecvEndScrollLeft(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (m_LeftTimerHandler.IsValid())
       GetTimer().RemoveTimerHandler(m_LeftTimerHandler);
@@ -223,7 +223,7 @@ namespace nux
     m_LeftTimerHandler = 0;
   }
 
-  void HScrollBar::RecvTrackMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void HScrollBar::RecvTrackMouseDown(int x, int y, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     m_TrackMouseCoord = Point(x, y);
 
@@ -241,7 +241,7 @@ namespace nux
     }
   }
 
-  void HScrollBar::RecvTrackMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void HScrollBar::RecvTrackMouseUp(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (m_TrackLeftTimerHandler.IsValid())
       GetTimer().RemoveTimerHandler(m_TrackLeftTimerHandler);
@@ -253,7 +253,7 @@ namespace nux
     m_TrackRightTimerHandler = 0;
   }
 
-  void HScrollBar::RecvTrackMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void HScrollBar::RecvTrackMouseDrag(int /* x */, int /* y */, int /* dx */, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
 
   }
@@ -275,7 +275,7 @@ namespace nux
     return this;
   }
 
-  void HScrollBar::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void HScrollBar::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
     GetPainter().PaintBackground(graphics_engine, base);
@@ -292,7 +292,7 @@ namespace nux
                          eHSCROLLBAR, true);
   };
 
-  void HScrollBar::SetContainerSize(int x, int y, int w, int h)
+  void HScrollBar::SetContainerSize(int /* x */, int /* y */, int w, int h)
   {
     // x and y are not needed
     container_width_ = w;
@@ -300,7 +300,7 @@ namespace nux
     ComputeScrolling();
   }
 
-  void HScrollBar::SetContentSize(int x, int y, int w, int h)
+  void HScrollBar::SetContentSize(int /* x */, int /* y */, int w, int h)
   {
     // x and y are not needed
     content_width_ = w;
@@ -356,12 +356,12 @@ namespace nux
 /////////////////
 //  RECEIVERS  //
 /////////////////
-  void HScrollBar::SetValue(float value)
+  void HScrollBar::SetValue(float /* value */)
   {
     //m_ValueString.setCaption(value);
   }
 
-  void HScrollBar::SetParameterName(const char *parameter_name)
+  void HScrollBar::SetParameterName(const char * /* parameter_name */)
   {
     //m_ParameterName.setCaption(parameter_name);
   }
@@ -370,7 +370,7 @@ namespace nux
 //  EMITTERS  //
 ////////////////
 
-  void HScrollBar::OnSliderMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void HScrollBar::OnSliderMouseDown(int x, int y, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     m_SliderDragPositionX = x;
     m_SliderDragPositionY = y;
@@ -380,14 +380,14 @@ namespace nux
     GetTimer().AddOneShotTimer(10, callback, this);
   }
 
-  void HScrollBar::OnSliderMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void HScrollBar::OnSliderMouseUp(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     b_MouseDownTimer = false;
     b_MouseUpTimer = true;
     GetTimer().AddOneShotTimer(10, callback, this);
   }
 
-  void HScrollBar::OnSliderMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void HScrollBar::OnSliderMouseDrag(int x, int /* y */, int dx, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (_track->GetBaseWidth() - _slider->GetBaseWidth() > 0)
     {

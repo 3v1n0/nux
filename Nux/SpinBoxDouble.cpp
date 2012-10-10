@@ -53,7 +53,7 @@ namespace nux
     m_EditLine->SetValidator(&m_DoubleValidator);
     m_EditLine->SetSuffix("");
     m_EditLine->SetPrefix("");
-    m_EditLine->SetText(std::to_string(m_DoubleValidator.GetMinimum()));
+    m_EditLine->SetText(std::to_string((long double)m_DoubleValidator.GetMinimum()));
 
     m_EditLine->SetMinimumSize(1.5 * DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT);
     m_EditLine->SetGeometry(Geometry(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT));
@@ -83,7 +83,7 @@ namespace nux
     m_vlayout = new VLayout(NUX_TRACKER_LOCATION);
   }
 
-  void SpinBoxDouble::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void SpinBoxDouble::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
     GetPainter().PaintBackground(graphics_engine, base);
@@ -129,11 +129,6 @@ namespace nux
     m_EditLine->ProcessDraw(graphics_engine, force_draw);
   }
 
-  void SpinBoxDouble::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
-  }
-
   void SpinBoxDouble::SetValue(double value)
   {
     m_Value = m_DoubleValidator.GetClampedValue(value);
@@ -141,7 +136,7 @@ namespace nux
 //        m_Value = m_DoubleValidator.GetMinimum();
 //    if (m_Value > m_DoubleValidator.GetMaximum())
 //        m_Value = m_DoubleValidator.GetMaximum();
-    m_EditLine->SetText(std::to_string(m_Value));
+    m_EditLine->SetText(std::to_string((long double)m_Value));
     sigValueChanged.emit(this);
     sigValue.emit(m_Value);
     QueueDraw();
@@ -231,24 +226,24 @@ namespace nux
     ret = CharToDouble(m_EditLine->GetCleanText().c_str());
     {
       m_Value = m_DoubleValidator.GetClampedValue(ret);
-      m_EditLine->SetText(std::to_string(m_Value));
+      m_EditLine->SetText(std::to_string((long double)m_Value));
       sigValueChanged.emit(this);
       sigValue.emit(m_Value);
 //
 //        if (m_Value < m_DoubleValidator.GetMinimum())
 //        {
 //            m_Value = m_DoubleValidator.GetMinimum();
-//            m_EditLine->SetText(NString::Printf("%.3f", m_Value));
+//            m_EditLine->SetText(std::string::Printf("%.3f", m_Value));
 //        }
 //        if (m_Value > m_DoubleValidator.GetMaximum())
 //        {
 //            m_Value = m_DoubleValidator.GetMaximum();
-//            m_EditLine->SetText(NString::Printf("%.3f", m_Value));
+//            m_EditLine->SetText(std::string::Printf("%.3f", m_Value));
 //        }
     }
 //     else
 //     {
-//         m_EditLine->SetText(NString::Printf("%.3f", m_Value));
+//         m_EditLine->SetText(std::string::Printf("%.3f", m_Value));
 //         sigValueChanged.emit(this);
 //         sigValue.emit(m_Value);
 //     }

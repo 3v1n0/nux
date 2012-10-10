@@ -19,7 +19,6 @@
  *
  */
 
-#include "Features.h"
 #include "Nux.h"
 #include "Layout.h"
 #include "NuxCore/Logger.h"
@@ -88,10 +87,9 @@ logging::Logger logger("nux.windows.thread");
     first_pass_        = true;
 
     _Timelines = new std::list<Timeline*> ();
-    GTimeVal time_val;
-    g_get_current_time(&time_val);
-    last_timeline_frame_time_sec_ = time_val.tv_sec;
-    last_timeline_frame_time_usec_ = time_val.tv_usec;
+    gint64 micro_secs = g_get_real_time();
+    last_timeline_frame_time_sec_ = micro_secs / 1000000;
+    last_timeline_frame_time_usec_ = micro_secs % 1000000;
     _MasterClock = NULL;
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
@@ -160,7 +158,7 @@ logging::Logger logger("nux.windows.thread");
     return handle;
   }
 
-  void WindowThread::AsyncWakeUpCallback(void* data)
+  void WindowThread::AsyncWakeUpCallback(void* /* data */)
   {
     this->GetTimerHandler().RemoveTimerHandler(async_wake_up_timer_handle_);
     _pending_wake_up_timer = false;
@@ -397,7 +395,7 @@ logging::Logger logger("nux.windows.thread");
     }
   }
 
-  int WindowThread::Run(void *ptr)
+  int WindowThread::Run(void * /* ptr */)
   {
     if (GetWindowThread() != this)
     {
@@ -765,7 +763,7 @@ logging::Logger logger("nux.windows.thread");
     return 1;
   }
 
-  unsigned int SpawnThread(NThread &thread)
+  unsigned int SpawnThread(NThread & /* thread */)
   {
     return 0;
   }
@@ -840,7 +838,7 @@ logging::Logger logger("nux.windows.thread");
     }
   }
 
-  ThreadState WindowThread::Start(void *ptr)
+  ThreadState WindowThread::Start(void * /* ptr */)
   {
     if (!parent_)
     {
@@ -862,7 +860,7 @@ logging::Logger logger("nux.windows.thread");
     }
   }
 
-  ThreadState WindowThread::StartChildThread(AbstractThread *thread, bool Modal)
+  ThreadState WindowThread::StartChildThread(AbstractThread *thread, bool /* Modal */)
   {
     if (wait_for_modal_window_)
     {
@@ -941,19 +939,19 @@ logging::Logger logger("nux.windows.thread");
     return state;
   }
 
-  bool WindowThread::ProcessTimelines(GTimeVal *frame_time)
+  bool WindowThread::ProcessTimelines(gint64 micro_secs)
   {
     // go through our timelines and tick them
     // return true if we still have active timelines
 
     long msecs;
-    msecs = (frame_time->tv_sec - last_timeline_frame_time_sec_) * 1000 +
-            (frame_time->tv_usec - last_timeline_frame_time_usec_) / 1000;
+    msecs = (micro_secs / 1000000 - last_timeline_frame_time_sec_) * 1000 +
+            (micro_secs % 1000000 - last_timeline_frame_time_usec_) / 1000;
 
     if (msecs < 0)
     {
-      last_timeline_frame_time_sec_ = frame_time->tv_sec;
-      last_timeline_frame_time_usec_ = frame_time->tv_usec;
+      last_timeline_frame_time_sec_ = micro_secs / 1000000;
+      last_timeline_frame_time_usec_ = micro_secs % 1000000;
       return true;
     }
 
@@ -1323,7 +1321,7 @@ logging::Logger logger("nux.windows.thread");
 #if defined(NUX_OS_WINDOWS)
   bool WindowThread::ProcessForeignEvent(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, void *data)
 #elif defined(NUX_OS_LINUX)
-  bool WindowThread::ProcessForeignEvent(XEvent *xevent, void *data)
+  bool WindowThread::ProcessForeignEvent(XEvent *xevent, void * /* data */)
 #endif
   {
     if (graphics_display_->IsPauseThreadGraphicsRendering())

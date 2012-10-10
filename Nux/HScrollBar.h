@@ -41,8 +41,7 @@ namespace nux
 
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
   private:
-    virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw) {};
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw) {};
+    virtual void DrawContent(GraphicsEngine & /* graphics_engine */, bool /* force_draw */) {};
 
     void HScrollBarHandler(void *v);
     void ScrollRight(void *v);
@@ -99,10 +98,10 @@ namespace nux
     bool AtMaximum();
 
     HLayout *hlayout;
-    InputArea *_slider;
-    InputArea *_scroll_left_button;
-    InputArea *_scroll_right_button;
-    InputArea *_track;
+    BasicView *_slider;
+    BasicView *_scroll_left_button;
+    BasicView *_scroll_right_button;
+    BasicView *_track;
 
     int content_width_;
     int content_height_;

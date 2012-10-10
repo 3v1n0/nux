@@ -224,7 +224,7 @@ namespace nux
     parent_->mouse_up.connect(sigc::mem_fun(this, &Impl::HandleMouseUp));
     parent_->mouse_down.connect(sigc::mem_fun(this, &Impl::HandleMouseDown));
     parent_->mouse_wheel.connect(sigc::mem_fun(this, &Impl::HandleMouseWheel));
-    parent_->OnGeometryChanged.connect(sigc::mem_fun(this, &Impl::HandleGeometryChange));
+    parent_->geometry_changed.connect(sigc::mem_fun(this, &Impl::HandleGeometryChange));
 
 
     camera_position_.x = 0.0f;
@@ -286,7 +286,8 @@ namespace nux
 
     text_loader_.font_size = 10;
 
-    BaseTexture* texture = LoadTextureFromFile(PKGDATADIR"/UITextures/coverflow.oval-shadow.png");
+    std::string resource_path = NUX_FIND_RESOURCE_LOCATION_NOFAIL("UITextures/coverflow.oval-shadow.png");
+    BaseTexture* texture = LoadTextureFromFile(resource_path.c_str());
     drop_shadow_texture_ = texture->GetDeviceTexture();
     texture->UnReference();
 
@@ -443,7 +444,7 @@ namespace nux
     return false;
   }
 
-  bool Coverflow::Impl::CoverAtPoint(int x, int y, Cover& out_cover)
+  bool Coverflow::Impl::CoverAtPoint(int /* x */, int /* y */, Cover& out_cover)
   {
     Cover best;
 
@@ -480,11 +481,11 @@ namespace nux
     return false;
   }
 
-  void Coverflow::Impl::HandleKeyDown(unsigned long   eventType  , /*event type*/
+  void Coverflow::Impl::HandleKeyDown(unsigned long   /* eventType */  , /*event type*/
                                   unsigned long   keysym     , /*event keysym*/
-                                  unsigned long   state      , /*event state*/
-                                  const char*     character  , /*character*/
-                                  unsigned short  keyCount     /*key repeat count*/)
+                                  unsigned long   /* state */      , /*event state*/
+                                  const char*     /* character */  , /*character*/
+                                  unsigned short  /* keyCount */     /*key repeat count*/)
   {
     switch (keysym)
     {
@@ -498,7 +499,7 @@ namespace nux
     }
   }
 
-  void Coverflow::Impl::HandleMouseClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void Coverflow::Impl::HandleMouseClick(int x, int y, unsigned long button_flags, unsigned long /* key_flags */)
   {
     if (std::abs(mouse_down_position_.x - x) > 10 || std::abs(mouse_down_position_.y - y) > 10)
       return;
@@ -519,8 +520,8 @@ namespace nux
   }
 
   void Coverflow::Impl::HandleKeyUp(unsigned int keysym,
-                                  unsigned long x11_key_code,
-                                  unsigned long special_keys_state)
+                                  unsigned long /* x11_key_code */,
+                                  unsigned long /* special_keys_state */)
   {
     switch (keysym)
     {
@@ -537,14 +538,14 @@ namespace nux
     }
   }
 
-  void Coverflow::Impl::HandleMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void Coverflow::Impl::HandleMouseMove(int x, int y, int /* dx */, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     mouse_position_.x = x;
     mouse_position_.y = y;
     MaybeQueueDraw();
   }
 
-  void Coverflow::Impl::HandleMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void Coverflow::Impl::HandleMouseEnter(int x, int y, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     mouse_position_.x = x;
     mouse_position_.y = y;
@@ -552,7 +553,7 @@ namespace nux
     MaybeQueueDraw();
   }
 
-  void Coverflow::Impl::HandleMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void Coverflow::Impl::HandleMouseLeave(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     mouse_position_.x = 0xFFFFFFFF;
     mouse_position_.y = 0xFFFFFFFF;
@@ -560,7 +561,7 @@ namespace nux
     MaybeQueueDraw();
   }
 
-  void Coverflow::Impl::HandleMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void Coverflow::Impl::HandleMouseDown(int x, int y, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     velocity_ = 0; // stop an current velocity based animations
     mouse_down_position_.x = x;
@@ -597,7 +598,7 @@ namespace nux
     return result;
   }
 
-  void Coverflow::Impl::HandleMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void Coverflow::Impl::HandleMouseUp(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     MaybeQueueDraw();
     velocity_ = GetCurrentVelocity(32);
@@ -613,7 +614,7 @@ namespace nux
     }
   }
 
-  void Coverflow::Impl::HandleMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void Coverflow::Impl::HandleMouseDrag(int /* x */, int /* y */, int dx, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     nux::Point2 top_left, bottom_right;
     Get3DBoundingBox(camera_position_.z, top_left, bottom_right);
@@ -623,16 +624,16 @@ namespace nux
     SetPosition(position_ - (dx * scalar * parent_->mouse_drag_rate), false);
   }
 
-  void Coverflow::Impl::HandleMouseWheel(int x, int y, int wheel_delta, unsigned long button_flags, unsigned long key_flags)
+  void Coverflow::Impl::HandleMouseWheel(int /* x */, int /* y */, int /* wheel_delta */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     // do nothing yet
   }
 
-  void Coverflow::Impl::HandleGeometryChange(Area* area, Geometry geo)
+  void Coverflow::Impl::HandleGeometryChange(Area* /* area */, Geometry /* geo */)
   {
   }
 
-  CoverList Coverflow::Impl::GetCoverList(float animation_progress, gint64 timestep)
+  CoverList Coverflow::Impl::GetCoverList(float animation_progress, gint64 /* timestep */)
   {
     CoverList results;
 
@@ -728,19 +729,19 @@ namespace nux
     MaybeQueueDraw();
   }
 
-  void Coverflow::Impl::OnItemAdded(CoverflowModel* owner, CoverflowItem::Ptr new_item)
+  void Coverflow::Impl::OnItemAdded(CoverflowModel* /* owner */, CoverflowItem::Ptr /* new_item */)
   {
     SetPosition(position_, true);
     MaybeQueueDraw();
   }
 
-  void Coverflow::Impl::OnItemRemoved(CoverflowModel* owner, CoverflowItem::Ptr old_item)
+  void Coverflow::Impl::OnItemRemoved(CoverflowModel* /* owner */, CoverflowItem::Ptr /* old_item */)
   {
     SetPosition(position_, true);
     MaybeQueueDraw();
   }
 
-  void Coverflow::Impl::OnSelectionChanged(CoverflowModel* owner, CoverflowItem::Ptr selection)
+  void Coverflow::Impl::OnSelectionChanged(CoverflowModel* /* owner */, CoverflowItem::Ptr /* selection */)
   {
     size_t selection_index = parent_->model()->SelectionIndex();
 
@@ -1072,12 +1073,12 @@ namespace nux
     pimpl->MaybeQueueDraw();
   }
 
-  bool Coverflow::InspectKeyEvent(unsigned int eventType, unsigned int keysym, const char* character)
+  bool Coverflow::InspectKeyEvent(unsigned int /* eventType */, unsigned int /* keysym */, const char* /* character */)
   {
     return true;
   }
 
-  void Coverflow::ClientDraw(nux::GraphicsEngine& graphics_engine, nux::DrawAreaContext &ctx, bool force_draw)
+  void Coverflow::ClientDraw(nux::GraphicsEngine& graphics_engine, nux::DrawAreaContext &ctx, bool /* force_draw */)
   {
     gint64 current_time = g_get_monotonic_time();
     float animation_progress = std::min<float>(1.0f, (current_time - pimpl->position_set_time_) / static_cast<float>(animation_length() * 1000));
@@ -1087,7 +1088,6 @@ namespace nux
     graphics_engine.GetRenderStates().SetPremultipliedBlend(SRC_OVER);
     graphics_engine.GetRenderStates().SetColorMask(true, true, true, true);
 
-    nux::GetPainter().PaintBackground(graphics_engine, GetGeometry());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT  | GL_STENCIL_BUFFER_BIT);
 
     glViewport(0, 0, ctx.width, ctx.height);

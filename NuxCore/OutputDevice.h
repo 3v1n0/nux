@@ -54,7 +54,7 @@ namespace nux
   {
     NUX_DECLARE_GLOBAL_OBJECT (NullOutput, GlobalSingletonInitializer);
   public:
-    void Serialize ( const TCHAR *V, const TCHAR *LogPrefix, int severity) {}
+    void Serialize ( const TCHAR * /* V */, const TCHAR * /* LogPrefix */, int /* severity */) {}
   };
 
 //! Output to log file.

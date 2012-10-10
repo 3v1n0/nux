@@ -39,9 +39,8 @@ namespace nux
     //! Return true if the widget with changes to match the text width.
     bool GetSizeMatchText() const;
 
-    void SetText(NString text);
+    void SetText(std::string text);
     void SetTextColor(Color textColor);
-    
 
     sigc::signal<void, PangoText*> sigTextChanged;
     sigc::signal<void, PangoText*> sigTextColorChanged;
@@ -52,7 +51,6 @@ namespace nux
 
     void Draw(GraphicsEngine& gfxContext, bool forceDraw);
     void DrawContent(GraphicsEngine& gfxContext, bool forceDraw);
-    void PostDraw(GraphicsEngine& gfxContext, bool forceDraw);
 
     void GetTextExtents(int &width, int &height);
 
@@ -69,7 +67,7 @@ namespace nux
       PangoFont*        font;  // font this glyph uses(for bidi text, you need several fonts)
     } pango_glyph;
 
-    NString _text;
+    std::string _text;
     Color _textColor;
 
     CairoGraphics *_cairoGraphics;

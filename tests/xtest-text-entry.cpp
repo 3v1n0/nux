@@ -87,7 +87,7 @@ void TextTextEntry::OnActivated()
   activated_ = true;
 }
 
-void TextTextEntry::OnCursorMoved(int position)
+void TextTextEntry::OnCursorMoved(int /* position */)
 {
   cursor_moved_ = true;
 }
@@ -154,7 +154,7 @@ bool SetEngineActive (IBusBus* bus_, std::string engine)
 
 TextTextEntry* test_textentry = NULL;
 
-void TestingThread(nux::NThread* thread, void* user_data)
+void TestingThread(nux::NThread* /* thread */, void* user_data)
 {
   while (test_textentry->ReadyToGo() == false)
   {
@@ -451,10 +451,9 @@ void TestingThread(nux::NThread* thread, void* user_data)
   nuxDebugMsg("Exit testing thread");
 }
 
-int main(int argc, char** argv)
+int main()
 {
-  int xstatus = XInitThreads();
-  nuxAssertMsg(xstatus > 0, "XInitThreads has failed");
+  XInitThreads();
 
   test_textentry = new TextTextEntry("Text Entry", 600, 200, 40000);
   test_textentry->Startup();

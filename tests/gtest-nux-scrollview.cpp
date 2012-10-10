@@ -34,7 +34,13 @@ namespace {
 
 class MockScrollView : public nux::ScrollView
 {
+  NUX_DECLARE_OBJECT_TYPE(MockScrollView, ScrollView);
 public:
+  MockScrollView(NUX_FILE_LINE_PROTO)
+  : nux::ScrollView(NUX_FILE_LINE_PARAM)
+  {
+
+  }
   MOCK_METHOD0(QueueDraw, void());
 
   void FakeMouseWheelSignal(int x, int y, int wheel_delta, unsigned long mouse_button_state, unsigned long special_keys_state)
@@ -50,6 +56,7 @@ public:
   nux::HScrollBar* GetHScrollbar() const { return _hscrollbar; }
   nux::VScrollBar* GetVScrollbar() const { return _vscrollbar; }
 };
+NUX_IMPLEMENT_OBJECT_TYPE(MockScrollView);
 
 class TestScrollView : public ::testing::Test
 {
@@ -59,7 +66,7 @@ public:
     nux::NuxInitialize(0);
     wnd_thread.reset(nux::CreateNuxWindow("ScrollView test", 300, 200, nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL));
 
-    scrollview.Adopt(new MockScrollView());
+    scrollview.Adopt(new MockScrollView(NUX_TRACKER_LOCATION));
     scrollview->SetLayout(new nux::VLayout());
   }
 
@@ -74,7 +81,6 @@ TEST_F(TestScrollView, TestQueueDrawScrollDownNoScrollbars)
 
   scrollview->FakeMouseWheelSignal(0, 0, -NUX_MOUSEWHEEL_DELTA, 0, 0);
 }
-
 
 TEST_F(TestScrollView, TestQueueDrawScrollUpNoScrollbars)
 {

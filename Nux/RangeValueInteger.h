@@ -38,7 +38,6 @@ namespace nux
     void DrawMarker(GraphicsEngine &graphics_engine);
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     /////////////////
     //  RECEIVERS  //
@@ -118,7 +117,7 @@ namespace nux
   protected:
     HLayout        *hlayout;
     EditTextBox    *m_ValueString;
-    InputArea       *m_Percentage;
+    BasicView       *m_Percentage;
     Color m_StartColor;
     Color m_EndColor;
     Color m_ProgressColor;

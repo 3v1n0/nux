@@ -84,7 +84,6 @@ namespace nux
     Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
     virtual void Draw(GraphicsEngine& graphics_engine, bool force_draw);
     virtual void DrawContent(GraphicsEngine& graphics_engine, bool force_draw);
-    virtual void PostDraw(GraphicsEngine& graphics_engine, bool force_draw);
 
     void PreLayoutManagement();
     long PostLayoutManagement(long layoutResult);
@@ -208,13 +207,10 @@ namespace nux
     */
     void DeleteText(int start, int end);
 
-    void SetPasswordMode(bool visible)
-    {
-      SetVisibility(visible);
-    }
+    void SetPasswordMode(bool visible);
     void SetVisibility(bool visible);
     void SetPasswordChar(const char* c);
-    bool IsPasswordMode() const;
+    bool PasswordMode() const;
     std::string GetPasswordChar();
 
   protected:
@@ -237,7 +233,7 @@ namespace nux
     /**
      * Enum used for the search state of the compose list
      */
-    enum class SearchState {
+    enum SearchState {
       NO_MATCH,
       PARTIAL,
       MATCH
@@ -417,7 +413,7 @@ namespace nux
      */
     int cursor_blink_status_;
 
-    /** Whether the text is visible, decided by password_char_ */
+    /*! Whether the text is visible, or its characters are masked by a default char (password mode). */
     bool visible_;
     /** Whether the edit control is focused */
     bool focused_;

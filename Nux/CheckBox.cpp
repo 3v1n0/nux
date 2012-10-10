@@ -38,12 +38,10 @@ namespace nux
   {
   }
 
-  void CheckBox::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void CheckBox::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
     graphics_engine.PushClippingRectangle(base);
-
-    GetPainter().PaintBackground(graphics_engine, base);
 
     InteractState is;
     is.is_on = active_;
@@ -72,7 +70,7 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void CheckBox::RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void CheckBox::RecvClick(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     active_ = !active_;
 
