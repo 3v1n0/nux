@@ -515,6 +515,10 @@ namespace nux
     ObjectPtr<IOpenGLVertexShader> vs = GetGraphicsDisplay()->GetGpuDevice()->CreateVertexShader(); //new IOpenGLVertexShader;
 
     std::string ProcessedShaderSource;
+    if(!VtxShaderPreprocessorDefines)
+    {
+      VtxShaderPreprocessorDefines = "";
+    }
     std::string Defines(VtxShaderPreprocessorDefines);
     InsertPreProcessorDefinitions(glslshader, ProcessedShaderSource, Defines);
 
@@ -530,6 +534,10 @@ namespace nux
     ObjectPtr<IOpenGLPixelShader> ps = GetGraphicsDisplay()->GetGpuDevice()->CreatePixelShader(); //new IOpenGLPixelShader;
 
     std::string ProcessedShaderSource;
+    if (!FrgShaderPreprocessorDefines)
+    {
+      FrgShaderPreprocessorDefines = "";
+    }
     std::string Defines(FrgShaderPreprocessorDefines);
     InsertPreProcessorDefinitions(glslshader, ProcessedShaderSource, Defines);
 
