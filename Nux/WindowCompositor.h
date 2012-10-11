@@ -514,7 +514,7 @@ namespace nux
     int m_Width;
     int m_Height;
 
-    NString m_TooltipText;
+    std::string m_TooltipText;
     InputArea* m_TooltipArea;
     int m_TooltipX;
     int m_TooltipY;

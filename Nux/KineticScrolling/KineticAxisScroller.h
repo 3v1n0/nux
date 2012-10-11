@@ -56,7 +56,7 @@ class KineticAxisScroller
   /*!
     Enumeration that describes the possible states of the kinetic scroller
    */
-  enum class State
+  enum States
   {
    Idle, /*!< It's not pressed and not moving. This is the initial state */
    Pressed, /*!< It's pressed but not yet moving. */

@@ -49,7 +49,7 @@ namespace nux
     void SetMaximum(int value);
     int GetMaximum() const;
 
-    NString ToString(int i);
+    std::string ToString(int i);
     int ToInteger(const char *str);
 
   private:

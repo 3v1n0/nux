@@ -87,7 +87,7 @@ namespace nux
     void OnReceiveMouseUp_Green     (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void OnReceiveMouseUp_Blue      (int x, int y, unsigned long button_flags, unsigned long key_flags);
 
-    void OnComponentInput           (EditTextBox *textbox, const NString &s, int componentIndex);
+    void OnComponentInput           (EditTextBox *textbox, const std::string &s, int componentIndex);
     void OnChannelKeyboardFocus();
     void OnChannelLostKeyboardFocus();
     void OnChannelValidateKeyboardEntry();

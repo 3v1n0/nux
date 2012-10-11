@@ -76,10 +76,7 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetColorBlendOverTexProgram(Laye
   ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
   ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
   
-  NString VSString;
-  NString PSString;
-  
-  VSString =
+  const char* VSString =
                     NUX_VERTEX_SHADER_HEADER
                     "attribute vec4 AVertex;                                 \n\
                     attribute vec4 MyTextureCoord0;                          \n\
@@ -94,7 +91,7 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetColorBlendOverTexProgram(Laye
                       varyVertexColor = VertexColor;                         \n\
                     }";
 
-  PSString =
+  const char* PSString =
                     NUX_FRAGMENT_SHADER_HEADER
                     "uniform vec4 color0;                                           \n\
                     uniform sampler2D TextureObject0;                               \n\
@@ -108,16 +105,16 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetColorBlendOverTexProgram(Laye
                       gl_FragColor.a = 1.0;                                         \n\
                     }";
 
-    int l = PSString.Size();
+    int l = strlen(PSString);
     l += strlen(GetBlendModeBlendFunc(layer_blend_mode));
     l += strlen(GetBlendModeString(layer_blend_mode)) + 1;
     
     char* shader_prog = new char[l];
-    sprintf(shader_prog, PSString.GetTCharPtr(), GetBlendModeBlendFunc(layer_blend_mode),
+    sprintf(shader_prog, PSString, GetBlendModeBlendFunc(layer_blend_mode),
 	    GetBlendModeString(layer_blend_mode));
     
     blend_tex_color_prog_[layer_blend_mode] = _graphics_display.m_DeviceFactory->CreateShaderProgram();
-    VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
+    VS->SetShaderCode(TCHAR_TO_ANSI(VSString));
     PS->SetShaderCode(shader_prog, "#define SAMPLERTEX2D");
     
     delete [] shader_prog;
@@ -141,10 +138,7 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetColorBlendOverTexProgram(Laye
   ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
   ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
   
-  NString VSString;
-  NString PSString;
-  
-  VSString =
+  const char* VSString =
                 NUX_VERTEX_SHADER_HEADER
                 "attribute vec4 AVertex;                               \n\
                 attribute vec4 MyTextureCoord0;                        \n\
@@ -159,7 +153,7 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetColorBlendOverTexProgram(Laye
                   varyVertexColor = VertexColor;                       \n\
                 }";
 
-    PSString =  
+    const char* PSString =  
                 NUX_FRAGMENT_SHADER_HEADER
                 "uniform vec3 color0;                                       \n\
                 uniform float BlendOpacity;                                 \n\
@@ -174,16 +168,16 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetColorBlendOverTexProgram(Laye
                   gl_FragColor.a = 1.0;                                     \n\
                 }";
 
-    int l = PSString.Size();
+    int l = strlen(PSString);
     l += strlen(GetBlendModeBlendFunc(layer_blend_mode));
     l += strlen(GetBlendModeString(layer_blend_mode)) + 1;
     
     char* shader_prog = new char[l];
-    sprintf(shader_prog, PSString.GetTCharPtr(), GetBlendModeBlendFunc(layer_blend_mode),
+    sprintf(shader_prog, PSString, GetBlendModeBlendFunc(layer_blend_mode),
 	    GetBlendModeString(layer_blend_mode));
     
     blend_color_tex_prog_[layer_blend_mode] = _graphics_display.m_DeviceFactory->CreateShaderProgram();
-    VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
+    VS->SetShaderCode(TCHAR_TO_ANSI(VSString));
     PS->SetShaderCode(shader_prog, "#define SAMPLERTEX2D");
     
     delete [] shader_prog;
@@ -207,10 +201,7 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetBlendTexTexProgram(LayerBlend
   ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
   ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
   
-  NString VSString;
-  NString PSString;
-
-    VSString =      NUX_VERTEX_SHADER_HEADER
+    const char* VSString =      NUX_VERTEX_SHADER_HEADER
                     "uniform mat4 ViewProjectionMatrix;                     \n\
                     attribute vec4 AVertex;                                 \n\
                     attribute vec4 MyTextureCoord0;                         \n\
@@ -224,7 +215,7 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetBlendTexTexProgram(LayerBlend
                       gl_Position =  ViewProjectionMatrix * (AVertex);      \n\
                     }";
   
-    PSString =      NUX_FRAGMENT_SHADER_HEADER
+    const char* PSString =      NUX_FRAGMENT_SHADER_HEADER
                     "varying vec4 varyTexCoord0;                                \n\
                     varying vec4 varyTexCoord1;                                 \n\
                     uniform vec4 color0;                                        \n\
@@ -239,16 +230,16 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetBlendTexTexProgram(LayerBlend
                       gl_FragColor = %s(bkg_tex.rgb, frg_tex.rgb);              \n\
                     }";
 
-    int l = PSString.Size();
+    int l = strlen(PSString);
     l += strlen(GetBlendModeBlendFunc(layer_blend_mode));
     l += strlen(GetBlendModeString(layer_blend_mode)) + 1;
     
     char* shader_prog = new char[l];
-    sprintf(shader_prog, PSString.GetTCharPtr(), GetBlendModeBlendFunc(layer_blend_mode),
+    sprintf(shader_prog, PSString, GetBlendModeBlendFunc(layer_blend_mode),
 	    GetBlendModeString(layer_blend_mode));
     
     blend_tex_tex_prog_[layer_blend_mode] = _graphics_display.m_DeviceFactory->CreateShaderProgram();
-    VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
+    VS->SetShaderCode(TCHAR_TO_ANSI(VSString));
     PS->SetShaderCode(shader_prog, "#define SAMPLERTEX2D");
     
     delete [] shader_prog;

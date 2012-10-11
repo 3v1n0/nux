@@ -73,7 +73,7 @@ namespace nux
     GetPainter().PaintShape(graphics_engine, base, m_sCOMBO_COLOR,  eSHAPE_CORNER_ROUND4);
 
     {
-      //GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), _combo_box_area->GetGeometry(), _combo_box_area->GetBaseString().GetTCharPtr(), GetTextColor(), eAlignTextLeft);
+      //GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), _combo_box_area->GetGeometry(), _combo_box_area->GetBaseString().c_str(), GetTextColor(), eAlignTextLeft);
       _pango_static_text->SetGeometry(_combo_box_area->GetGeometry());
       _pango_static_text->ProcessDraw(graphics_engine, true);
     }

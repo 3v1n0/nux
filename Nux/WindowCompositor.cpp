@@ -1418,11 +1418,11 @@ namespace
     else
       window_thread_->GetGraphicsEngine().SetOpenGLClippingRectangle(0, 0, buffer_width, buffer_height);
 
-    if (m_TooltipText.Size())
+    if (m_TooltipText.size())
     {
         //SetProcessingTopView(_tooltip_window);
         GetPainter().PaintShape(window_thread_->GetGraphicsEngine(), _tooltip_geometry, Color(0xA0000000), eSHAPE_CORNER_ROUND10, true);
-        GetPainter().PaintTextLineStatic(window_thread_->GetGraphicsEngine(), GetSysBoldFont(), _tooltip_text_geometry, m_TooltipText.m_string, Color(0xFFFFFFFF));
+        GetPainter().PaintTextLineStatic(window_thread_->GetGraphicsEngine(), GetSysBoldFont(), _tooltip_text_geometry, m_TooltipText, Color(0xFFFFFFFF));
         //SetProcessingTopView(NULL);
     }
 
@@ -1807,9 +1807,9 @@ namespace
     m_TooltipX = x;
     m_TooltipY = y;
 
-    if (m_TooltipText.Size())
+    if (m_TooltipText.size())
     {
-      int w = GetSysBoldFont()->GetCharStringWidth(m_TooltipText.GetTCharPtr());
+      int w = GetSysBoldFont()->GetCharStringWidth(m_TooltipText.c_str());
       int h = GetSysBoldFont()->GetFontHeight();
 
       _tooltip_text_geometry = Geometry(
@@ -1910,7 +1910,7 @@ namespace
         key_focus_area_->key_nav_focus_change.emit(key_focus_area_.GetPointer(), false, direction);
         // nuxDebugMsg("[WindowCompositor::SetKeyFocusArea] Area type '%s' named '%s': Lost key nav focus.",
         //   key_focus_area_->Type().name,
-        //   key_focus_area_->GetBaseString().GetTCharPtr());
+        //   key_focus_area_->GetBaseString().c_str());
       }
 
       if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
@@ -1938,7 +1938,7 @@ namespace
         key_focus_area_->key_nav_focus_change.emit(key_focus_area_.GetPointer(), true, direction);
         // nuxDebugMsg("[WindowCompositor::SetKeyFocusArea] Area type '%s' named '%s': Has key nav focus.",
         //   key_focus_area_->Type().name,
-        //   key_focus_area_->GetBaseString().GetTCharPtr());
+        //   key_focus_area_->GetBaseString().c_str());
       }
 
       if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
@@ -2228,7 +2228,7 @@ namespace
           key_focus_area_->key_nav_focus_change.emit(key_focus_area_.GetPointer(), false, KEY_NAV_NONE);
           // nuxDebugMsg("[WindowCompositor::GrabKeyboardAdd] Area type '%s' named '%s': Lost key nav focus.",
           //   key_focus_area_->Type().name,
-          //   key_focus_area_->GetBaseString().GetTCharPtr());
+          //   key_focus_area_->GetBaseString().c_str());
 
         }
 
@@ -2303,7 +2303,7 @@ namespace
           key_focus_area_->key_nav_focus_change.emit(key_focus_area_.GetPointer(), false, KEY_NAV_NONE);
           // nuxDebugMsg("[WindowCompositor::GrabKeyboardRemove] Area type '%s' named '%s': Lost key nav focus.",
           //   key_focus_area_->Type().name,
-          //   key_focus_area_->GetBaseString().GetTCharPtr());          
+          //   key_focus_area_->GetBaseString().c_str());          
         }
 
         if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))

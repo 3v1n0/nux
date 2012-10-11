@@ -27,6 +27,9 @@
 #include "TimerProc.h"
 #include "StaticTextBox.h"
 
+#include <sstream>
+#include <iomanip>
+
 namespace nux
 {
 
@@ -50,8 +53,12 @@ namespace nux
     m_ColorValue->SetFont(GetSysBoldFont());
     m_ColorValue->SetMinimumWidth(128);
 
-    NString text = NString::Printf("[ R:%d, G:%d, B:%d ]", (int) (m_Color.red * 255), (int) (m_Color.green * 255), (int) (m_Color.blue * 255));
-    m_ColorValue->SetText(text);
+    std::stringstream s;
+    s << "[ R:" << (int)(m_Color.red * 255)
+      << ", G:" << (int)(m_Color.green * 255)
+      << ", B:" << (int)(m_Color.blue * 255)
+      << " ]";
+    m_ColorValue->SetText(s.str());
 
     m_ColorArea->mouse_click.connect(sigc::mem_fun(this, &ColorPreview::RecvClick));
 
