@@ -62,7 +62,6 @@ public:
     ScrollView::SetVScrollBar(vscrollbar);
   }
 
-
   nux::HScrollBar* GetHScrollbar() const { return _hscrollbar; }
   nux::VScrollBar* GetVScrollbar() const { return _vscrollbar; }
 };
@@ -154,7 +153,6 @@ TEST_F(TestScrollView, TestQueueDrawScrollUpNoScrollbars)
   scrollview->FakeMouseWheelSignal(0, 0, NUX_MOUSEWHEEL_DELTA, 0, 0);
 }
 
-
 TEST_F(TestScrollView, TestQueueDrawScrollDown)
 {
   scrollview->content_geo_.height = 500;
@@ -165,7 +163,6 @@ TEST_F(TestScrollView, TestQueueDrawScrollDown)
 
   scrollview->FakeMouseWheelSignal(0, 0, -NUX_MOUSEWHEEL_DELTA, 0, 0);
 }
-
 
 TEST_F(TestScrollView, TestQueueDrawScrollUp)
 {
@@ -179,7 +176,6 @@ TEST_F(TestScrollView, TestQueueDrawScrollUp)
   scrollview->FakeMouseWheelSignal(0, 0, NUX_MOUSEWHEEL_DELTA, 0, 0);
 }
 
-
 TEST_F(TestScrollView, TestQueueDrawScrollDownEnd)
 {
   scrollview->content_geo_.height = 500;
@@ -192,7 +188,6 @@ TEST_F(TestScrollView, TestQueueDrawScrollDownEnd)
   scrollview->FakeMouseWheelSignal(0, 0, -NUX_MOUSEWHEEL_DELTA, 0, 0);
 }
 
-
 TEST_F(TestScrollView, TestQueueDrawScrollUpStart)
 {
   scrollview->content_geo_.height = 500;
@@ -203,7 +198,6 @@ TEST_F(TestScrollView, TestQueueDrawScrollUpStart)
 
   scrollview->FakeMouseWheelSignal(0, 0, NUX_MOUSEWHEEL_DELTA, 0, 0);
 }
-
 
 TEST_F(TestScrollView, TestFindAreaUnderMouseScrollbars)
 {
@@ -229,7 +223,6 @@ TEST_F(TestScrollView, TestFindAreaUnderMouseScrollbars)
   nux::Area* bottom_area = scrollview->FindAreaUnderMouse(geo_hbar.GetCenter(), nux::NUX_MOUSE_MOVE);
   EXPECT_TRUE(bottom_area == hscrollbar || bottom_area->IsChildOf(hscrollbar));
 }
-
 
 TEST_F(TestScrollView, TestFindAreaUnderMouseNoScrollbars)
 {

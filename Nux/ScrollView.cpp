@@ -166,7 +166,7 @@ namespace nux
   {
     if (IsFullRedraw())
       GetPainter().PushBackgroundStack();
-      
+
     graphics_engine.PushClippingRectangle(GetGeometry());
 
     graphics_engine.PushClippingRectangle(view_geo_);
@@ -209,8 +209,6 @@ namespace nux
   {
     // Give the managed layout the same size and position as the Control.
 
-    Geometry const& geo = GetGeometry();
-
     view_geo_.x = GetBaseX() + m_border + m_ViewContentLeftMargin;
     view_geo_.y = GetBaseY() + m_top_border + m_ViewContentTopMargin;
 
@@ -247,6 +245,8 @@ namespace nux
 
     if (m_horizontal_scrollbar_enable)
     {
+      Geometry const& geo = GetGeometry();
+
       _hscrollbar->SetBaseWidth(GetBaseWidth() - 2 * m_border);
       _hscrollbar->SetBaseX(geo.x + m_border);
       _hscrollbar->SetBaseY(geo.y + geo.GetHeight() - _hscrollbar->GetBaseHeight() - m_border);
@@ -255,6 +255,8 @@ namespace nux
 
     if (m_vertical_scrollbar_enable)
     {
+      Geometry const& geo = GetGeometry();
+
       _vscrollbar->SetBaseHeight(GetBaseHeight() - m_top_border - m_border);
       _vscrollbar->SetBaseX(geo.x + geo.GetWidth() - _vscrollbar->GetBaseWidth() - m_border);
       _vscrollbar->SetBaseY(geo.y + m_top_border);
@@ -271,9 +273,9 @@ namespace nux
     {
       _hscrollbar->SetContainerSize(GetBaseWidth() -  2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
                                     GetBaseHeight() - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin);
-                                  
+
       if (view_layout_)
-        _hscrollbar->SetContentSize( view_layout_->GetBaseWidth(), view_layout_->GetBaseHeight());
+        _hscrollbar->SetContentSize(view_layout_->GetBaseWidth(), view_layout_->GetBaseHeight());
       else
         _hscrollbar->SetContentSize(0, 0);
 
@@ -284,7 +286,7 @@ namespace nux
     {
       _vscrollbar->SetContainerSize(GetBaseWidth() - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
                                     GetBaseHeight() - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin);
-  
+
       if (view_layout_)
         _vscrollbar->SetContentSize(view_layout_->GetBaseWidth(), view_layout_->GetBaseHeight());
       else
