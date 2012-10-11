@@ -39,7 +39,6 @@ namespace nux
     , m_border(0)
     , _delta_x(0)
     , _delta_y(0)
-    , m_bSizeMatchContent(false)
     , m_ViewContentLeftMargin(0)
     , m_ViewContentRightMargin(0)
     , m_ViewContentTopMargin(0)
@@ -255,11 +254,8 @@ namespace nux
     }
   }
 
-  long ScrollView::PostLayoutManagement(long LayoutResult)
+  long ScrollView::PostLayoutManagement(long /*LayoutResult*/)
   {
-    if (IsSizeMatchContent())
-      return PostLayoutManagement2(LayoutResult);
-
     if (view_layout_)
       content_geo_ = view_layout_->GetGeometry();
 
@@ -275,11 +271,6 @@ namespace nux
 
       _hscrollbar->SetContentOffset(_delta_x, _delta_y);
     }
-    else
-    {
-      _hscrollbar->SetContentSize(0, 0);
-      _hscrollbar->SetContentOffset(0, 0);
-    }
 
     if (m_vertical_scrollbar_enable)
     {
@@ -293,79 +284,8 @@ namespace nux
 
       _vscrollbar->SetContentOffset(_delta_x, _delta_y);
     }
-    else
-    {
-      _vscrollbar->SetContentSize(0, 0);
-      _vscrollbar->SetContentOffset(0, 0);
-    }
 
     // The ScrollView always returns complient width and height to its parent layout.
-    return (eCompliantHeight | eCompliantWidth);
-  }
-
-  long ScrollView::PostLayoutManagement2(long /* LayoutResult */)
-  {
-    // In case IsSizeMatchContent returns True, The scroll view is resized to match its content.
-
-    // We want the controller to match the size of the content as defined in content_geo_
-    // So we make the composition layout the same size as the content
-    // Note that classes that inherits from ScrollView are responsible for setting the dimension of the ViewContent
-
-    if (view_layout_)
-      view_layout_->SetGeometry(content_geo_);
-
-    Geometry base;
-    // Given the(content_geo_.width, content_geo_.height) compute the size of the ScrollView.
-    // It is possible that the ScrollView size be limited by its min/Max dimension. If this happens, then the scrollbar will reflect that.
-    base.SetX(content_geo_.x - m_border - m_ViewContentLeftMargin);
-    base.SetY(content_geo_.y - m_top_border - m_ViewContentTopMargin);
-
-    base.SetHeight(m_top_border + m_ViewContentTopMargin + content_geo_.height + m_ViewContentBottomMargin + m_border);
-    base.SetWidth(m_border + m_ViewContentLeftMargin + content_geo_.width + m_ViewContentRightMargin + m_border);
-
-    // Set the size so that is is equal to the visible content.
-    Area::SetBaseWidth(base.GetWidth());
-    Area::SetBaseHeight(base.GetHeight());
-    Geometry const& geo = GetGeometry();
-
-    // Horizontal scrollbar Geometry
-    if (m_horizontal_scrollbar_enable)
-    {
-      _hscrollbar->SetBaseWidth(GetBaseWidth() - 2 * m_border);      
-      _hscrollbar->SetBaseX(geo.x + m_border);
-      _hscrollbar->SetBaseY(geo.y + geo.GetHeight() - _hscrollbar->GetBaseHeight() - m_border);
-      _hscrollbar->ComputeContentSize();
-
-      _hscrollbar->SetContainerSize(GetBaseWidth() - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
-                                    GetBaseHeight() - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin);
-
-      if (view_layout_)
-        _hscrollbar->SetContentSize(view_layout_->GetBaseWidth(), view_layout_->GetBaseHeight());
-      else
-        _hscrollbar->SetContentSize(0, 0);
-
-      _hscrollbar->SetContentOffset(_delta_x, _delta_y);
-    }
-
-    // Vertical scrollbar Geometry
-    if (m_vertical_scrollbar_enable)
-    {
-      _vscrollbar->SetBaseHeight(GetBaseHeight() - m_top_border - m_border);
-      _vscrollbar->SetBaseX(geo.x + geo.GetWidth() - _vscrollbar->GetBaseWidth() - m_border);
-      _vscrollbar->SetBaseY(geo.y + m_top_border);
-      _vscrollbar->ComputeContentSize();
-
-      _vscrollbar->SetContainerSize(GetBaseWidth() - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
-                                    GetBaseHeight() - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin);
-
-      if (view_layout_)
-        _vscrollbar->SetContentSize(view_layout_->GetBaseWidth(), view_layout_->GetBaseHeight());
-      else
-        _vscrollbar->SetContentSize(0, 0);
-
-      _vscrollbar->SetContentOffset(_delta_x, _delta_y);
-    }
-
     return (eCompliantHeight | eCompliantWidth);
   }
 
@@ -528,19 +448,6 @@ namespace nux
 
       scrolling.emit(_delta_x, _delta_y);
     }
-  }
-
-  void ScrollView::SetSizeMatchContent(bool b)
-  {
-    m_bSizeMatchContent = b;
-
-    if (view_layout_)
-      view_layout_->ComputeContentSize();
-  }
-
-  bool ScrollView::IsSizeMatchContent() const
-  {
-    return m_bSizeMatchContent;
   }
 
   void ScrollView::ResetScrollToLeft()

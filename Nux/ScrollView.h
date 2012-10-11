@@ -20,9 +20,8 @@
  *
  */
 
-
-#ifndef SCROLLVIEW_H
-#define SCROLLVIEW_H
+#ifndef NUX_SCROLLVIEW_H
+#define NUX_SCROLLVIEW_H
 
 #include "Nux.h"
 #include "View.h"
@@ -43,22 +42,6 @@ namespace nux
     // API
     void EnableVerticalScrollBar(bool b);
     void EnableHorizontalScrollBar(bool b);
-
-    /*!
-        Set the table size to be such that all the content items of the table are visible .
-        The scrollbar will be useless as the content is entirely visible all the time. If the table is empty, then it assume its minimum size.
-        This is needed for table inside ComboBox drop down memu.
-        @param b If b is true, the size of the table is constrained by its content.
-        @see IsSizeMatchLayout()
-    */
-    void SetSizeMatchContent(bool b);
-
-    /*!
-        Check if the table size is constrained by its content.
-        @return If the return value is true, the table size is constrained by its content.
-        @see SetSizeMatchContent
-    */
-    bool IsSizeMatchContent() const;
 
     /////////////////
     //  RECEIVERS  //
@@ -167,8 +150,6 @@ namespace nux
     virtual long PostLayoutManagement(long LayoutResult);
     virtual void ComputeContentPosition(float offsetX, float offsetY);
 
-    virtual long PostLayoutManagement2(long LayoutResult);
-
   private:
 
     virtual bool AcceptKeyNavFocus();
@@ -192,4 +173,4 @@ namespace nux
   };
 }
 
-#endif // SCROLLVIEW_H
+#endif
