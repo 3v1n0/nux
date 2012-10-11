@@ -50,7 +50,7 @@ gtest_nuxcore_CPPFLAGS = \
   -DDATADIR=\""$(datadir)"\" \
   -DG_LOG_DOMAIN=\"NuxTests\" \
   -DTESTDIR=\""$(top_srcdir)/tests"\" \
-  $(GCC_FLAGS) \
+  $(GCC_TESTS_FLAGS) \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \
@@ -96,7 +96,7 @@ gtest_nux_CPPFLAGS = \
   -DDATADIR=\""$(datadir)"\" \
   -DG_LOG_DOMAIN=\"NuxTests\" \
   -DTESTDIR=\""$(top_srcdir)/tests"\" \
-  $(GCC_FLAGS) \
+  $(GCC_TESTS_FLAGS) \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \
@@ -137,7 +137,7 @@ gtest_nux_slow_CPPFLAGS = \
   -DDATADIR=\""$(datadir)"\" \
   -DG_LOG_DOMAIN=\"NuxTests\" \
   -DTESTDIR=\""$(top_srcdir)/tests"\" \
-  $(GCC_FLAGS) \
+  $(GCC_TESTS_FLAGS) \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \
@@ -162,7 +162,7 @@ TestFlags = -I$(srcdir) \
   -DDATADIR=\""$(datadir)"\" \
   -DG_LOG_DOMAIN=\"NuxTests\" \
   -DTESTDIR=\""$(top_srcdir)/tests"\" \
-  $(GCC_FLAGS) \
+  $(GCC_TESTS_FLAGS) \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \

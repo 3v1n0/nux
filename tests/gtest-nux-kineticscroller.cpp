@@ -21,12 +21,12 @@
 #include <gtest/gtest.h>
 #include <Nux/Nux.h>
 #include <Nux/KineticScrolling/KineticScroller.h>
-#include <Nux/KineticScrolling/FlickableTickSource.h>
+#include <Nux/KineticScrolling/KineticScrollingTickSource.h>
 #include "gtest-nux-globals.h"
 
 using namespace nux;
 
-class FakeTickSource : public flickable::TickSourceInterface
+class FakeTickSource : public kinetic_scrolling::TickSourceInterface
 {
  public:
   FakeTickSource() : is_running(false) {}
@@ -101,7 +101,7 @@ TEST_F(KineticScrollerTest, FlickCausesDecelerationAnimation)
   scroller_->SetContentSize(100, 3000);
   scroller_->SetContentPosition(0, 0);
   scroller_->SetBoundsBehavior(BoundsBehavior::StopAtBounds);
-  scroller_->SetScrollableDirections(ScrollableDirections::Vertical);
+  scroller_->SetScrollableDirections(ScrollableDirections::ScrollableDirectionsVertical);
 
   PerformFlickUpwards(); 
 
@@ -150,7 +150,7 @@ TEST_F(KineticScrollerTest, FingerDragUpwards_StopAtBounds)
   int min_content_pos_y = -(3000 - 100);
   scroller_->SetContentPosition(0, min_content_pos_y);
   scroller_->SetBoundsBehavior(BoundsBehavior::StopAtBounds);
-  scroller_->SetScrollableDirections(ScrollableDirections::Vertical);
+  scroller_->SetScrollableDirections(ScrollableDirections::ScrollableDirectionsVertical);
 
   scroller_->ProcessFingerDown();
 
@@ -171,7 +171,7 @@ TEST_F(KineticScrollerTest, FingerDragDownwards_StopAtBounds)
   scroller_->SetContentSize(100, 3000);
   scroller_->SetContentPosition(0, 0);
   scroller_->SetBoundsBehavior(BoundsBehavior::StopAtBounds);
-  scroller_->SetScrollableDirections(ScrollableDirections::Vertical);
+  scroller_->SetScrollableDirections(ScrollableDirections::ScrollableDirectionsVertical);
 
   scroller_->ProcessFingerDown();
 
