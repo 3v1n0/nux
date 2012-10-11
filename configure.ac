@@ -23,7 +23,7 @@ m4_define([nux_api_version], [3.0])
 # e.g.: december 5th, 2011 is: 20111205
 # To make more than one API change in a day, add a number to the date. Like 20111205.xx
 
-m4_define([nux_abi_version], [20121005.01])
+m4_define([nux_abi_version], [20121011.01])
 
 m4_define([nux_version],
           [nux_major_version.nux_minor_version.nux_micro_version])
@@ -365,6 +365,7 @@ AC_ARG_ENABLE([debug],
 AS_IF([test "x$enable_debug" = "xyes"],
       [
          MAINTAINER_CFLAGS+=" -DNUX_DEBUG"
+         # In debug mode, relax the the number of build failures due to -Werror
          GCC_FLAGS="-g -Wall -Wextra -std=c++0x"
       ]
 )
