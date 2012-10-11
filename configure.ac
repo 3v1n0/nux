@@ -356,7 +356,8 @@ AS_IF([test "x$enable_maintainer_mode" = "xyes" && test "x$GCC" = "xyes"],
       ]
 )
 
-# this enables lots of useful debugging output in Nux
+# This enables lots of useful debugging output in Nux.
+# In debug mode, relax the number of build failures due to -Werror.
 AC_ARG_ENABLE([debug],
               [AC_HELP_STRING([--enable-debug=@<:@no/yes@:>@],
               [Enable Nux debugging @<:@default=no@:>@])],
@@ -365,7 +366,6 @@ AC_ARG_ENABLE([debug],
 AS_IF([test "x$enable_debug" = "xyes"],
       [
          MAINTAINER_CFLAGS+=" -DNUX_DEBUG"
-         # In debug mode, relax the the number of build failures due to -Werror
          GCC_FLAGS="-g -Wall -Wextra -std=c++0x"
       ]
 )
