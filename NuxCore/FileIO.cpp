@@ -331,7 +331,7 @@ namespace nux
     bool SaveAsUnicode = false, Success = true;
 #if UNICODE
 
-    for ( int i = 0; i < String.Length(); i++ )
+    for ( int i = 0; i < String.length(); i++ )
     {
       // Test if the UNICODE 0xABCD is the same as the ASCII 0x00CB.
       if ( (*String) [i] != (TCHAR) (ANSIUCHAR) ConvertTCHARToAnsiChar ( (*String) [i]) )

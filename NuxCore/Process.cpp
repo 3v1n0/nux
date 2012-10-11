@@ -31,13 +31,12 @@ namespace nux
 // This is expected to return immediately as the URL is launched by another
 // task.
 //
-  void inlLaunchURL ( const TCHAR *URL, const TCHAR *Parms, NString *Error )
+  void inlLaunchURL(const TCHAR *URL, const TCHAR *Parms, std::string Error)
   {
     nuxDebugMsg ( TEXT ("LaunchURL %s %s"), URL, Parms ? Parms : TEXT ("") );
     HINSTANCE Code = CALL_OS_TCHAR_FUNCTION (ShellExecuteW (NULL, TEXT ("open"), URL, Parms ? Parms : TEXT (""), TEXT (""), SW_SHOWNORMAL), ShellExecuteA (NULL, "open", TCHAR_TO_ANSI (URL), Parms ? TCHAR_TO_ANSI (Parms) : "", "", SW_SHOWNORMAL) );
 
-    if (Error)
-      *Error = (int) Code <= 32 ? TEXT ("UrlFailed") : TEXT ("");
+    Error = (int) Code <= 32 ? TEXT ("UrlFailed") : TEXT ("");
   }
 
 //

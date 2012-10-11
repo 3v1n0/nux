@@ -27,7 +27,7 @@ namespace nux
 {
 
   void inlCopyTextToClipboard (const TCHAR *text);
-  NString inlReadTextToClipboard();
+  std::string inlReadTextToClipboard();
 
 }
 

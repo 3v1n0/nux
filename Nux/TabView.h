@@ -62,16 +62,16 @@ namespace nux
     class TabElement
     {
     public:
-      TabElement(NString TabName, Layout *TabLayout);
+      TabElement(std::string TabName, Layout *TabLayout);
       ~TabElement();
 
       void SetIndex(int index);
       int GetIndex() const;
       void SetGeometry(const Geometry &geo);
       Geometry const& GetGeometry() const;
-      const NString &GetName() const;
+      const std::string &GetName() const;
 
-      NString     _tab_name;
+      std::string     _tab_name;
       Layout     *_tab_content_layout;
       BasicView  *_tab_area;
       int         _index;

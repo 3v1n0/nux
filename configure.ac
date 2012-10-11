@@ -341,7 +341,6 @@ dnl ==========================================================================
 if test "x$GCC" = "xyes"; then
   GCC_FLAGS="-g -Wall -Wextra -Werror -std=c++0x"
 fi
-AC_SUBST(GCC_FLAGS)
 
 # use strict compiler flags only on development releases
 m4_define([maintainer_mode_default], [m4_if(m4_eval(nux_micro_version % 2), [1], [yes], [no])])
@@ -366,9 +365,11 @@ AC_ARG_ENABLE([debug],
 AS_IF([test "x$enable_debug" = "xyes"],
       [
          MAINTAINER_CFLAGS+=" -DNUX_DEBUG"
+         GCC_FLAGS="-g -Wall -Wextra -std=c++0x"
       ]
 )
 
+AC_SUBST(GCC_FLAGS)
 AC_SUBST(MAINTAINER_CFLAGS)
 
 # this enables lots of useful debugging output in Nux

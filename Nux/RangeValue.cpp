@@ -25,6 +25,9 @@
 #include "HLayout.h"
 #include "RangeValue.h"
 
+#include <sstream>
+#include <iomanip>
+
 namespace nux
 {
   NUX_IMPLEMENT_OBJECT_TYPE(RangeValue);
@@ -167,7 +170,7 @@ namespace nux
     else
       m_Value = value;
 
-    m_ValueString->SetText(NString::Printf("%.3f", m_Value));
+    m_ValueString->SetText(std::to_string((long double)m_Value));
     QueueDraw();
   }
 
@@ -188,7 +191,7 @@ namespace nux
     else
       m_Value = m_min + (m_max - m_min) * (float) x / (float) m_Percentage->GetBaseWidth();
 
-    m_ValueString->SetText(NString::Printf("%.3f", m_Value));
+    m_ValueString->SetText(std::to_string((long double)m_Value));
     sigValueChanged.emit(this);
     sigFloatChanged.emit(m_Value);
     sigMouseDown.emit(m_Value);
@@ -206,7 +209,9 @@ namespace nux
     else
       m_Value = m_min + (m_max - m_min) * (float) x / (float) m_Percentage->GetBaseWidth();
 
-    m_ValueString->SetText(NString::Printf("%.3f", m_Value));
+    std::stringstream s;
+    s << std::setprecision(3) << m_Value;
+    m_ValueString->SetText(s.str());
     sigValueChanged.emit(this);
     sigFloatChanged.emit(m_Value);
     sigMouseUp.emit(m_Value);
@@ -223,7 +228,9 @@ namespace nux
     else
       m_Value = m_min + (m_max - m_min) * (float) x / (float) m_Percentage->GetBaseWidth();
 
-    m_ValueString->SetText(NString::Printf("%.3f", m_Value));
+    std::stringstream s;
+    s << std::setprecision(3) << m_Value;
+    m_ValueString->SetText(s.str());
     sigValueChanged.emit(this);
     sigFloatChanged.emit(m_Value);
     sigMouseDrag.emit(m_Value);
@@ -241,10 +248,10 @@ namespace nux
 
   }
 
-  void RangeValue::OnValidateKeyboardEntry(EditTextBox * /* textbox */, const NString &text)
+  void RangeValue::OnValidateKeyboardEntry(EditTextBox* /* textbox */, const std::string &text)
   {
     float f;
-    f = CharToDouble(text.GetTCharPtr());
+    f = CharToDouble(text.c_str());
     SetValue(f);
     sigValueChanged.emit(this);
     sigFloatChanged.emit(m_Value);

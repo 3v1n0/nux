@@ -23,6 +23,9 @@
 #ifndef NFILE_H
 #define NFILE_H
 
+#include <vector>
+#include <string>
+
 namespace nux
 {
 
@@ -32,7 +35,6 @@ namespace nux
   bool LoadFileToString(std::string &Result, const TCHAR *Filename, NFileManager &FileManager = GFileManager );
   bool SaveArrayToFile(const std::vector<BYTE>& Array, const TCHAR *Filename, NFileManager &FileManager = GFileManager );
   bool SaveStringToFile(const std::string &String, const TCHAR *Filename, NFileManager &FileManager = GFileManager );
-
 }
 
 

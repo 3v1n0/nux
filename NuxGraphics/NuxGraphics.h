@@ -30,8 +30,8 @@ namespace nux
 
   GraphicsDisplay* GetGraphicsDisplay();
 
-  #define NUX_FINDRESOURCELOCATION(a) GNuxGraphicsResources.FindResourceLocation(a, false)()
-  #define NUX_FIND_RESOURCE_LOCATION_NOFAIL(a) GNuxGraphicsResources.FindResourceLocation(a, true)()
+  #define NUX_FINDRESOURCELOCATION(a) GNuxGraphicsResources.FindResourceLocation(a, false)
+  #define NUX_FIND_RESOURCE_LOCATION_NOFAIL(a) GNuxGraphicsResources.FindResourceLocation(a, true)
 
   inlDeclareThreadLocalStorage(GraphicsDisplay *, 1, _TLS_GraphicsDisplay);
 

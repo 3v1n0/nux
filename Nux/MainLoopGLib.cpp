@@ -332,7 +332,11 @@ namespace nux
     }
   }
 
+#if defined(NUX_OS_WINDOWS)
+  bool WindowThread::AddChildWindowGlibLoop(WindowThread* wnd_thread)
+#else
   bool WindowThread::AddChildWindowGlibLoop(WindowThread* /* wnd_thread */)
+#endif
   {
 #if defined(NUX_OS_WINDOWS)
     if (wnd_thread == NULL)

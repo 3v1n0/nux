@@ -33,7 +33,7 @@ namespace nux
     NUX_DECLARE_OBJECT_TYPE(HLayout, LinearLayout);
   public:
     HLayout(NUX_FILE_LINE_PROTO);
-    HLayout(NString name, NUX_FILE_LINE_PROTO);
+    HLayout(std::string name, NUX_FILE_LINE_PROTO);
     ~HLayout();
 
     virtual long ComputeContentSize();

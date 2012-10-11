@@ -38,10 +38,10 @@ namespace nux
     }
 
     int	    Result		= COPY_OK;
-    NString SrcFile		= InSrcFile;
-    NString DestFile	= InDestFile;
+    std::string SrcFile		= InSrcFile;
+    std::string DestFile	= InDestFile;
 
-    NSerializer *Src = CreateFileReader (SrcFile.GetTCharPtr() );
+    NSerializer *Src = CreateFileReader (SrcFile.c_str() );
 
     if (!Src)
     {
@@ -50,7 +50,7 @@ namespace nux
     else
     {
       unsigned int Size = Src->GetFileSize();
-      NSerializer *Dest = CreateFileWriter (DestFile.GetTCharPtr(), (OverWriteExisting ? 0 : FILEWRITE_NOREPLACEEXISTING) | (OverWriteReadOnly ? FILEWRITE_EVENIFREADONLY : 0) );
+      NSerializer *Dest = CreateFileWriter (DestFile.c_str(), (OverWriteExisting ? 0 : FILEWRITE_NOREPLACEEXISTING) | (OverWriteReadOnly ? FILEWRITE_EVENIFREADONLY : 0) );
 
       if (!Dest)
       {
@@ -103,7 +103,7 @@ namespace nux
 
         if (Result != COPY_OK)
         {
-          Delete (DestFile.GetTCharPtr() );
+          Delete (DestFile.c_str() );
         }
       }
 
@@ -188,28 +188,28 @@ namespace nux
     if (PathLength == 0)
       return false;
 
-    NString WildcardPath = NString (Path);
+    std::string WildcardPath = std::string (Path);
 
     if ( (WildcardPath[PathLength - 1] != NUX_BACKSLASH_CHAR) && (WildcardPath[PathLength - 1] != NUX_SLASH_CHAR) )
       WildcardPath += NUX_BACKSLASH_CHAR;
 
     WildcardPath += TEXT ("*");
 
-    std::vector<NString> List;
-    FindFiles (List, *WildcardPath, 1, 0);
+    std::vector<std::string> List;
+    FindFiles (List, WildcardPath.c_str(), 1, 0);
 
     for (unsigned int i = 0; i < List.size(); i++)
     {
-      if (!Delete (* (NString (Path) + NUX_BACKSLASH_CHAR + List[i]), 1) )
+      if (!Delete ((std::string (Path) + NUX_BACKSLASH_CHAR + List[i]).c_str(), 1) )
         return 0;
     }
 
     List.clear();
-    FindFiles (List, *WildcardPath, 0, 1);
+    FindFiles (List, WildcardPath.c_str(), 0, 1);
 
     for (unsigned int i = 0; i < List.size(); i++)
     {
-      if (!DeleteDirectory (* (NString (Path) + NUX_BACKSLASH_CHAR + List[i]), true) )
+      if (!DeleteDirectory ((std::string (Path) + NUX_BACKSLASH_CHAR + List[i]).c_str(), true) )
         return 0;
     }
 
@@ -228,13 +228,13 @@ namespace nux
   }
 
 
-  int NFileManagerGeneric::CreateUniqueFileName (const TCHAR *Filename, const TCHAR *Extension, NString &OutputFilename, unsigned int BaseIndex)
+  int NFileManagerGeneric::CreateUniqueFileName (const TCHAR *Filename, const TCHAR *Extension, std::string &OutputFilename, unsigned int BaseIndex)
   {
     nuxAssert (Filename);
     nuxAssert (Extension);
 
-    NString FullPath (Filename);
-    const size_t IndexMarker = FullPath.Length();			// Marks location of the four-digit index.
+    std::string FullPath (Filename);
+    const size_t IndexMarker = FullPath.length();			// Marks location of the four-digit index.
     FullPath += TEXT ("0000.");
     FullPath += Extension;
 
@@ -246,7 +246,7 @@ namespace nux
       FullPath[IndexMarker+2] = (i / 10)  % 10 + TEXT ('0');
       FullPath[IndexMarker+3] =   i     % 10 + TEXT ('0');
 
-      if (GFileManager.FileSize (FullPath.GetTCharPtr() ) == -1)
+      if (GFileManager.FileSize (FullPath.c_str() ) == -1)
       {
         // The file doesn't exist; output success.
         OutputFilename = FullPath;
