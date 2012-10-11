@@ -28,6 +28,12 @@
 
 namespace nux
 {
+
+  enum class ScrollBarStyle {
+    INSET,
+    OVERLAY
+  };
+
   class HScrollBar;
   class VScrollBar;
 
@@ -38,6 +44,9 @@ namespace nux
   public:
     ScrollView(NUX_FILE_LINE_PROTO);
     virtual ~ScrollView();
+
+    void SetScrollBarStyle(ScrollBarStyle scrollbar_style);
+    ScrollBarStyle GetScrollBarStyle() const;
 
     // API
     void EnableVerticalScrollBar(bool b);
@@ -153,11 +162,8 @@ namespace nux
   private:
 
     virtual bool AcceptKeyNavFocus();
-    /**
-        If True, the scrollbar size will be adjusted to match the size of the content.
-        This is useful for the ComboBoxComplex widget.
-    */
-    bool m_bSizeMatchContent;
+
+    ScrollBarStyle scrollbar_style_;
 
     int m_ViewContentLeftMargin;
     int m_ViewContentRightMargin;

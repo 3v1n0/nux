@@ -41,6 +41,7 @@ namespace nux
     , m_border(0)
     , _delta_x(0)
     , _delta_y(0)
+    , scrollbar_style_(ScrollBarStyle::INSET)
     , m_ViewContentLeftMargin(0)
     , m_ViewContentRightMargin(0)
     , m_ViewContentTopMargin(0)
@@ -70,6 +71,16 @@ namespace nux
 
     if (_vscrollbar)
       _vscrollbar->UnParentObject();
+  }
+
+  void ScrollView::SetScrollBarStyle(ScrollBarStyle scrollbar_style)
+  {
+    scrollbar_style_ = scrollbar_style;
+  }
+
+  ScrollBarStyle ScrollView::GetScrollBarStyle() const
+  {
+    return scrollbar_style_;
   }
 
   void ScrollView::SetVScrollBar(VScrollBar* vscrollbar)
@@ -208,14 +219,15 @@ namespace nux
   void ScrollView::PreLayoutManagement()
   {
     // Give the managed layout the same size and position as the Control.
-
     view_geo_.x = GetBaseX() + m_border + m_ViewContentLeftMargin;
     view_geo_.y = GetBaseY() + m_top_border + m_ViewContentTopMargin;
 
-    view_geo_.width = GetBaseWidth() - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin;
+    int vbar_width = (scrollbar_style_ == ScrollBarStyle::OVERLAY || !m_vertical_scrollbar_enable) ? 0 : _vscrollbar->GetBaseWidth();
+    view_geo_.width = GetBaseWidth() - vbar_width - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin;
     nuxAssertMsg(view_geo_.width > 0, "[ScrollView::PreLayoutManagement] Invalid view width: %d", view_geo_.width);
 
-    view_geo_.height = GetBaseHeight() - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin;
+    int hbar_height = (scrollbar_style_ == ScrollBarStyle::OVERLAY || !m_horizontal_scrollbar_enable) ? 0 : _hscrollbar->GetBaseHeight();
+    view_geo_.height = GetBaseHeight() - hbar_height - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin;
     nuxAssertMsg(view_geo_.height > 0, "[ScrollView::PreLayoutManagement] Invalid view height: %d", view_geo_.height);
 
     if (_delta_x +  content_geo_.width < view_geo_.width)
@@ -247,7 +259,7 @@ namespace nux
     {
       Geometry const& geo = GetGeometry();
 
-      _hscrollbar->SetBaseWidth(GetBaseWidth() - 2 * m_border);
+      _hscrollbar->SetBaseWidth(GetBaseWidth() - vbar_width - 2 * m_border);
       _hscrollbar->SetBaseX(geo.x + m_border);
       _hscrollbar->SetBaseY(geo.y + geo.GetHeight() - _hscrollbar->GetBaseHeight() - m_border);
       _hscrollbar->ComputeContentSize();
@@ -257,7 +269,7 @@ namespace nux
     {
       Geometry const& geo = GetGeometry();
 
-      _vscrollbar->SetBaseHeight(GetBaseHeight() - m_top_border - m_border);
+      _vscrollbar->SetBaseHeight(GetBaseHeight() - hbar_height - m_top_border - m_border);
       _vscrollbar->SetBaseX(geo.x + geo.GetWidth() - _vscrollbar->GetBaseWidth() - m_border);
       _vscrollbar->SetBaseY(geo.y + m_top_border);
       _vscrollbar->ComputeContentSize();
@@ -269,10 +281,13 @@ namespace nux
     if (view_layout_)
       content_geo_ = view_layout_->GetGeometry();
 
+    int vbar_width = (scrollbar_style_ == ScrollBarStyle::OVERLAY || !m_vertical_scrollbar_enable) ? 0 : _vscrollbar->GetBaseWidth();
+    int hbar_height = (scrollbar_style_ == ScrollBarStyle::OVERLAY || !m_horizontal_scrollbar_enable) ? 0 : _hscrollbar->GetBaseHeight();
+
     if (m_horizontal_scrollbar_enable)
     {
-      _hscrollbar->SetContainerSize(GetBaseWidth() -  2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
-                                    GetBaseHeight() - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin);
+      _hscrollbar->SetContainerSize(GetBaseWidth() - vbar_width - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
+                                    GetBaseHeight() - hbar_height -  m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin);
 
       if (view_layout_)
         _hscrollbar->SetContentSize(view_layout_->GetBaseWidth(), view_layout_->GetBaseHeight());
@@ -284,8 +299,8 @@ namespace nux
 
     if (m_vertical_scrollbar_enable)
     {
-      _vscrollbar->SetContainerSize(GetBaseWidth() - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
-                                    GetBaseHeight() - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin);
+      _vscrollbar->SetContainerSize(GetBaseWidth() - vbar_width - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
+                                    GetBaseHeight() - hbar_height - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin);
 
       if (view_layout_)
         _vscrollbar->SetContentSize(view_layout_->GetBaseWidth(), view_layout_->GetBaseHeight());
@@ -307,14 +322,15 @@ namespace nux
 // This function is called when the ScrollView is embedded within a Layout.
   void ScrollView::ComputeContentPosition(float /* offsetX */, float /* offsetY */)
   {
-    Geometry const& geo = GetGeometry();
+    int vbar_width = (scrollbar_style_ == ScrollBarStyle::OVERLAY || !m_vertical_scrollbar_enable) ? 0 : _vscrollbar->GetBaseWidth();
+    int hbar_height = (scrollbar_style_ == ScrollBarStyle::OVERLAY || !m_horizontal_scrollbar_enable) ? 0 : _hscrollbar->GetBaseHeight();
 
     view_geo_.x = GetBaseX() + m_border + m_ViewContentLeftMargin;
     view_geo_.y = GetBaseY() + m_top_border + m_ViewContentTopMargin;
-    view_geo_.width = GetBaseWidth() - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin;
-    view_geo_.height = GetBaseHeight() - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin;
+    view_geo_.width = GetBaseWidth() - vbar_width - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin;
+    view_geo_.height = GetBaseHeight() - hbar_height - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin;
 
-    if (_delta_x +  content_geo_.width < view_geo_.width)
+    if (_delta_x + content_geo_.width < view_geo_.width)
       _delta_x = - (content_geo_.width > view_geo_.width ? content_geo_.width - view_geo_.width : 0);
 
     if (_delta_y + content_geo_.height < view_geo_.height)
@@ -329,6 +345,8 @@ namespace nux
     // Horizontal scrollbar Geometry
     if (m_horizontal_scrollbar_enable)
     {
+      Geometry const& geo = GetGeometry();
+
       _hscrollbar->SetBaseWidth(GetBaseWidth() - 2 * m_border);
       _hscrollbar->SetBaseX(geo.x + m_border);
       _hscrollbar->SetBaseY(geo.y + geo.GetHeight() - _hscrollbar->GetBaseHeight() - m_border);
@@ -338,6 +356,8 @@ namespace nux
     // Vertical scrollbar Geometry
     if (m_vertical_scrollbar_enable)
     {
+      Geometry const& geo = GetGeometry();
+
       _vscrollbar->SetBaseHeight(GetBaseHeight() - m_top_border - m_border);
       _vscrollbar->SetBaseX(geo.x + geo.GetWidth() - _vscrollbar->GetBaseWidth() - m_border);
       _vscrollbar->SetBaseY(geo.y + m_top_border);
