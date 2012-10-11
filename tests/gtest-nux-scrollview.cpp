@@ -52,8 +52,19 @@ public:
     return ScrollView::FindAreaUnderMouse(mouse_position, event_type);
   }
 
-  nux::HScrollBar* GetHScrollbar() const { return _hscrollbar.GetPointer(); }
-  nux::VScrollBar* GetVScrollbar() const { return _vscrollbar.GetPointer(); }
+  void SetHScrollBar(nux::HScrollBar* hscrollbar)
+  {
+    ScrollView::SetHScrollBar(hscrollbar);
+  }
+
+  void SetVScrollBar(nux::VScrollBar* vscrollbar)
+  {
+    ScrollView::SetVScrollBar(vscrollbar);
+  }
+
+
+  nux::HScrollBar* GetHScrollbar() const { return _hscrollbar; }
+  nux::VScrollBar* GetVScrollbar() const { return _vscrollbar; }
 };
 
 NUX_IMPLEMENT_OBJECT_TYPE(MockScrollView);
@@ -69,14 +80,63 @@ public:
     scrollview = new MockScrollView(NUX_TRACKER_LOCATION);
     scrollview->SetLayout(new nux::VLayout());
 
-    auto main_layout = new nux::VLayout();
+    main_layout = new nux::VLayout();
     main_layout->AddView(scrollview);
     wnd_thread->SetLayout(main_layout);
   }
 
   std::unique_ptr<nux::WindowThread> wnd_thread;
+  nux::Layout* main_layout;
   MockScrollView* scrollview;
 };
+
+TEST_F(TestScrollView, SetHScrollbar) {
+  nux::HScrollBar* hscrollbar1 = new nux::HScrollBar(NUX_TRACKER_LOCATION);
+  nux::HScrollBar* hscrollbar2 = new nux::HScrollBar(NUX_TRACKER_LOCATION);
+
+  scrollview->Reference();
+  hscrollbar1->Reference();
+  hscrollbar2->Reference();
+  ASSERT_EQ(hscrollbar1->GetReferenceCount(), 1);
+  ASSERT_EQ(hscrollbar2->GetReferenceCount(), 1);
+
+  scrollview->SetHScrollBar(hscrollbar1);
+  ASSERT_EQ(hscrollbar1->GetReferenceCount(), 2);
+
+  scrollview->SetHScrollBar(hscrollbar2);
+  ASSERT_EQ(hscrollbar1->GetReferenceCount(), 1);
+  ASSERT_EQ(hscrollbar2->GetReferenceCount(), 2);
+  ASSERT_TRUE(hscrollbar1->UnReference());
+
+  main_layout->RemoveChildObject(scrollview);
+  ASSERT_TRUE(scrollview->UnReference());
+  ASSERT_EQ(hscrollbar2->GetReferenceCount(), 1);
+  ASSERT_TRUE(hscrollbar2->UnReference());
+}
+
+TEST_F(TestScrollView, SetVScrollbar) {
+  nux::VScrollBar* vscrollbar1 = new nux::VScrollBar(NUX_TRACKER_LOCATION);
+  nux::VScrollBar* vscrollbar2 = new nux::VScrollBar(NUX_TRACKER_LOCATION);
+
+  scrollview->Reference();
+  vscrollbar1->Reference();
+  vscrollbar2->Reference();
+  ASSERT_EQ(vscrollbar1->GetReferenceCount(), 1);
+  ASSERT_EQ(vscrollbar2->GetReferenceCount(), 1);
+
+  scrollview->SetVScrollBar(vscrollbar1);
+  ASSERT_EQ(vscrollbar1->GetReferenceCount(), 2);
+
+  scrollview->SetVScrollBar(vscrollbar2);
+  ASSERT_EQ(vscrollbar1->GetReferenceCount(), 1);
+  ASSERT_EQ(vscrollbar2->GetReferenceCount(), 2);
+  ASSERT_TRUE(vscrollbar1->UnReference());
+
+  main_layout->RemoveChildObject(scrollview);
+  ASSERT_TRUE(scrollview->UnReference());
+  ASSERT_EQ(vscrollbar2->GetReferenceCount(), 1);
+  ASSERT_TRUE(vscrollbar2->UnReference());
+}
 
 TEST_F(TestScrollView, TestQueueDrawScrollDownNoScrollbars)
 {

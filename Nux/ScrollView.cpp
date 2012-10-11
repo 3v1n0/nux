@@ -33,6 +33,8 @@ namespace nux
   ScrollView::ScrollView(NUX_FILE_LINE_DECL)
     : View(NUX_FILE_LINE_PARAM)
     , m_MouseWheelScrollSize(32)
+    , _hscrollbar(nullptr)
+    , _vscrollbar(nullptr)
     , m_horizontal_scrollbar_enable(true)
     , m_vertical_scrollbar_enable(true)
     , m_top_border(0)
@@ -62,6 +64,12 @@ namespace nux
     scroll_left_connection_.disconnect();
     scroll_right_connection_.disconnect();
     hmouse_whell_connection_.disconnect();
+
+    if (_hscrollbar)
+      _hscrollbar->UnParentObject();
+
+    if (_vscrollbar)
+      _vscrollbar->UnParentObject();
   }
 
   void ScrollView::SetVScrollBar(VScrollBar* vscrollbar)

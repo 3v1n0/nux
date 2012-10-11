@@ -131,8 +131,8 @@ namespace nux
     void SetVScrollBar(VScrollBar* vscrollbar);
 
     // ScrollBars
-    ObjectPtr<HScrollBar> _hscrollbar;
-    ObjectPtr<VScrollBar> _vscrollbar;
+    HScrollBar* _hscrollbar;
+    VScrollBar* _vscrollbar;
     bool m_horizontal_scrollbar_enable;
     bool m_vertical_scrollbar_enable;
 
