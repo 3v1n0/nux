@@ -451,7 +451,7 @@ void GraphicsEngine::QRP_GLSL_TexBlendOverColor(int x, int y, int width, int hei
     ShaderProg->End();
 }
 
-void GraphicsEngine::QRP_GLSL_TexBlendOverTex(int x, int y, int width, int height,
+void GraphicsEngine::QRP_GLSL_TexLayerOverTex(int x, int y, int width, int height,
           ObjectPtr<IOpenGLBaseTexture> bkg_device_texture, TexCoordXForm& texxform0, const Color& color0,
           ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& texxform1, const Color& color1,
           LayerBlendMode layer_blend_mode)
@@ -527,8 +527,9 @@ void GraphicsEngine::QRP_GLSL_TexBlendOverTex(int x, int y, int width, int heigh
   ShaderProg->End();
 }
 
-void GraphicsEngine::QRP_GLSL_ColorBlendOverColor(int x, int y, int width, int height,
-          const Color& color0, const Color& color1,
+void GraphicsEngine::QRP_GLSL_ColorLayerOverColor(int x, int y, int width, int height,
+          const Color& bkg_color,
+          const Color& color1,
           LayerBlendMode layer_blend_mode)
 {
   if (!UsingGLSLCodePath())
@@ -553,7 +554,7 @@ void GraphicsEngine::QRP_GLSL_ColorBlendOverColor(int x, int y, int width, int h
   int colorLocation0 = shader_prog->GetUniformLocationARB("color0");
   int colorLocation1 = shader_prog->GetUniformLocationARB("color1");
 
-  CHECKGL(glUniform4fARB(colorLocation0, color0.red, color0.green, color0.blue, color0.alpha ));
+  CHECKGL(glUniform4fARB(colorLocation0, bkg_color.red, bkg_color.green, bkg_color.blue, bkg_color.alpha ));
   CHECKGL(glUniform4fARB(colorLocation1, color1.red, color1.green, color1.blue, color1.alpha ));
 
   int VPMatrixLocation = shader_prog->GetUniformLocationARB("viewProjectionMatrix");

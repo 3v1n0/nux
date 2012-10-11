@@ -803,20 +803,27 @@ namespace nux
           ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& texxform0, const Color& color0,
           LayerBlendMode layer_blend_mode);
 
-    //! Blends a texture over a texture layer.
+    //! Uses a layer blending operation to render two textures.
     /*!
-        Blends a texture over a texture layer.
+        Uses a layer blending operation to render two textures.
 
-        @param bkg_device_texture Background layer.
-        @param frg_device_texture Foreground layer.
+        @param bkg_device_texture Background texture layer.
+        @param frg_device_texture Foreground texture layer.
     */
-    void QRP_GLSL_TexBlendOverTex(int x, int y, int width, int height,
+    void QRP_GLSL_TexLayerOverTex(int x, int y, int width, int height,
           ObjectPtr<IOpenGLBaseTexture> bkg_device_texture, TexCoordXForm& texxform0, const Color& color0,
           ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& texxform1, const Color& color1,
           LayerBlendMode layer_blend_mode);
 
-    void QRP_GLSL_ColorBlendOverColor(int x, int y, int width, int height,
-          const Color& color0, const Color& color1,
+    //! Uses a layer blending operation to render two colors.
+    /*!
+        Uses a layer blending operation to render two colors.
+        @param bkg_color Background color layer.
+        @param frg_color Foreground color layer.
+    */
+    void QRP_GLSL_ColorLayerOverColor(int x, int y, int width, int height,
+          const Color& bkg_color,
+          const Color& frg_color,
           LayerBlendMode layer_blend_mode);
 
   private:
