@@ -43,13 +43,12 @@ namespace nux
     // make the class abstract
 //    virtual void Draw(GraphicsEngine& graphics_engine, bool force_draw);
 //    virtual void DrawContent(GraphicsEngine& graphics_engine, bool force_draw);
-//    virtual void PostDraw(GraphicsEngine& graphics_engine, bool force_draw);
 
   public:
     ActionItem *AddItem(const char *label, int Uservalue = 0);
     void RemoveItem(ActionItem *item);
     void RemoveAllItem();
-    
+
     // emitters
     void OnMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
     void OnMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags);

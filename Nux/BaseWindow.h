@@ -26,7 +26,6 @@
 
 #include <boost/scoped_ptr.hpp>
 #include "ScrollView.h"
-#include "Features.h"
 
 #if defined(NUX_OS_WINDOWS)
 #include "NuxGraphics/Events.h"
@@ -80,7 +79,6 @@ namespace nux
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     virtual Layout* GetLayout();
     virtual bool SetLayout(Layout *layout);

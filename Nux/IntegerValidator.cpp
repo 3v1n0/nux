@@ -118,14 +118,13 @@ namespace nux
     return i;
   }
 
-  void IntegerValidator::Alternative(const char *str)
+  void IntegerValidator::Alternative(const char * /* str */)
   {
-    str = "0";
   }
 
   std::string IntegerValidator::ToString(int i)
   {
-    return std::to_string(i);
+    return std::to_string((long long)i);
   }
 
   int IntegerValidator::ToInteger(const char *str)

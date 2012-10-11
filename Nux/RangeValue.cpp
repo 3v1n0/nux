@@ -88,7 +88,7 @@ namespace nux
   void RangeValue::InitializeLayout()
   {
     hlayout         = new HLayout(NUX_TRACKER_LOCATION);
-    m_Percentage    = new InputArea(NUX_TRACKER_LOCATION);
+    m_Percentage    = new BasicView(NUX_TRACKER_LOCATION);
     m_ValueString   = new EditTextBox("", NUX_TRACKER_LOCATION);
   }
 
@@ -113,7 +113,7 @@ namespace nux
   }
 
 
-  void RangeValue::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void RangeValue::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
 
@@ -135,11 +135,6 @@ namespace nux
   void RangeValue::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
     m_ValueString->ProcessDraw(graphics_engine, force_draw);
-  }
-
-  void RangeValue::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
   }
 
 /////////////////
@@ -175,7 +170,7 @@ namespace nux
     else
       m_Value = value;
 
-    m_ValueString->SetText(std::to_string(m_Value));
+    m_ValueString->SetText(std::to_string((long double)m_Value));
     QueueDraw();
   }
 
@@ -187,7 +182,7 @@ namespace nux
 ////////////////
 //  EMITTERS  //
 ////////////////
-  void RangeValue::OnReceiveMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RangeValue::OnReceiveMouseDown(int x, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (x < 0)
       m_Value = m_min;
@@ -196,7 +191,7 @@ namespace nux
     else
       m_Value = m_min + (m_max - m_min) * (float) x / (float) m_Percentage->GetBaseWidth();
 
-    m_ValueString->SetText(std::to_string(m_Value));
+    m_ValueString->SetText(std::to_string((long double)m_Value));
     sigValueChanged.emit(this);
     sigFloatChanged.emit(m_Value);
     sigMouseDown.emit(m_Value);
@@ -204,7 +199,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RangeValue::OnReceiveMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RangeValue::OnReceiveMouseUp(int x, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
 
     if (x < 0)
@@ -224,7 +219,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RangeValue::OnReceiveMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void RangeValue::OnReceiveMouseDrag(int x, int /* y */, int /* dx */, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (x < 0)
       m_Value = m_min;
@@ -253,7 +248,7 @@ namespace nux
 
   }
 
-  void RangeValue::OnValidateKeyboardEntry(EditTextBox *textbox, const std::string &text)
+  void RangeValue::OnValidateKeyboardEntry(EditTextBox* /* textbox */, const std::string &text)
   {
     float f;
     f = CharToDouble(text.c_str());

@@ -58,7 +58,7 @@ namespace nux
     delete m_Background;
   }
 
-  void StaticTextBox::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void StaticTextBox::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
     {
@@ -80,12 +80,7 @@ namespace nux
     }
   }
 
-  void StaticTextBox::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
-  }
-
-  void StaticTextBox::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
+  void StaticTextBox::DrawContent(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }

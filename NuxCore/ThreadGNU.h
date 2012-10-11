@@ -165,7 +165,7 @@ namespace nux
     /*!
         Prohibit assignment operator.
     */
-    NScopeLock &operator= (const NScopeLock &ScopeLockObject)
+    NScopeLock &operator= (const NScopeLock & /* ScopeLockObject */)
     {
       return *this;
     }

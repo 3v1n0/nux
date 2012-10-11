@@ -34,6 +34,7 @@
 #include "GraphicsDisplay.h"
 
 #include <X11/extensions/shape.h>
+#include <X11/XKBlib.h>
 
 namespace nux
 {
@@ -42,7 +43,7 @@ namespace nux
   GraphicsDisplay::GraphicsDisplay()
     : m_X11Display(NULL)
     , m_X11Screen(0)
-    , m_ParentWindow(0)
+    , parent_window_(0)
     , m_GLCtx(0)
 #ifndef NUX_OPENGLES_20
     , glx_window_(0)
@@ -55,17 +56,15 @@ namespace nux
     , _glx_minor(0)
     , _has_glx_13(false)
     , m_X11RepeatKey(true)
-    , m_ViewportSize(Size(0,0))
-    , m_WindowSize(Size(0,0))
-    , m_WindowPosition(Point(0,0))
-    , m_Fullscreen(false)
-    , m_ScreenBitDepth(32)
-    , m_GfxInterfaceCreated(false)
-    , m_BestMode(-1)
+    , viewport_size_(Size(0,0))
+    , window_size_(Size(0,0))
+    , m_WindowPosition(Point(0,0)) 
+    , fullscreen_(false)
+    , screen_bit_depth_(32)
+    , gfx_interface_created_(false)
     , m_CreatedFromForeignWindow(false)
     , last_click_time_(0)
     , double_click_counter_(0)
-    , m_num_device_modes(0)
     , m_pEvent(NULL)
     , _last_dnd_position(Point(0, 0)) //DND
     , m_PauseGraphicsRendering(false)
@@ -176,38 +175,38 @@ namespace nux
 
   bool GraphicsDisplay::IsGfxInterfaceCreated()
   {
-    return m_GfxInterfaceCreated;
+    return gfx_interface_created_;
   }
 
-  static Bool WaitForNotify( Display *dpy, XEvent *event, XPointer arg )
+  static Bool WaitForNotify( Display * /* dpy */, XEvent *event, XPointer arg )
   {
     return(event->type == MapNotify) && (event->xmap.window == (Window) arg);
   }
 
 // TODO: change windowWidth, windowHeight, to window_size;
   static NCriticalSection CreateOpenGLWindow_CriticalSection;
-  bool GraphicsDisplay::CreateOpenGLWindow(const char *WindowTitle,
+  bool GraphicsDisplay::CreateOpenGLWindow(const char* window_title,
                                          unsigned int WindowWidth,
                                          unsigned int WindowHeight,
-                                         WindowStyle Style,
-                                         const GraphicsDisplay *Parent,
-                                         bool FullscreenFlag,
-                                         bool create_rendering_data)
+                                         WindowStyle /* Style */,
+                                         const GraphicsDisplay * /* Parent */,
+                                         bool fullscreen_flag,
+                                         bool /* create_rendering_data */)
   {
     int xinerama_event, xinerama_error;
     int xinerama_major, xinerama_minor;
     NScopeLock Scope(&CreateOpenGLWindow_CriticalSection);
 
-    m_GfxInterfaceCreated = false;
+    window_title_ = window_title;
+    gfx_interface_created_ = false;
 
     // FIXME : put at the end
     Size new_size(WindowWidth, WindowHeight);
-    m_ViewportSize = new_size;
-    m_WindowSize = new_size;
+    viewport_size_ = new_size;
+    window_size_ = new_size;
     // end of fixme
 
-    m_Fullscreen = FullscreenFlag;  // Set The Global Fullscreen Flag
-    m_BestMode = -1;                // assume -1 if the mode is not fullscreen
+    fullscreen_ = fullscreen_flag;  // Set The Global Fullscreen Flag
 
     // Open The display.
     m_X11Display = XOpenDisplay(0);
@@ -226,25 +225,26 @@ namespace nux
     XF86VidModeGetAllModeLines(m_X11Display, m_X11Screen, &m_NumVideoModes, &m_X11VideoModes);
     m_X11OriginalVideoMode = *m_X11VideoModes[0];
 
-    if (m_Fullscreen)               // Attempt Fullscreen Mode?
+    int best_mode = -1;
+    if (fullscreen_)               // Attempt Fullscreen Mode?
     {
       // check if resolution is supported
       bool mode_supported = false;
 
-      for (int num_modes = 0 ; num_modes < m_NumVideoModes; num_modes++)
+      for (int mode = 0 ; mode < m_NumVideoModes; ++mode)
       {
-        if ((m_X11VideoModes[num_modes]->hdisplay == m_ViewportSize.width )
-          && (m_X11VideoModes[num_modes]->vdisplay == m_ViewportSize.height ))
+        if ((m_X11VideoModes[mode]->hdisplay == viewport_size_.width )
+          && (m_X11VideoModes[mode]->vdisplay == viewport_size_.height ))
         {
           mode_supported = true;
-          m_BestMode = num_modes;
+          best_mode = mode;
           break;
         }
       }
 
       if (mode_supported == false)
       {
-        m_Fullscreen = false;
+        fullscreen_ = false;
       }
     }
 
@@ -470,7 +470,7 @@ namespace nux
     m_X11Attr.background_pixmap = 0;
     m_X11Attr.border_pixel      = 0;
     m_X11Attr.colormap          = m_X11Colormap;
-    m_X11Attr.override_redirect = m_Fullscreen;
+    m_X11Attr.override_redirect = fullscreen_;
     m_X11Attr.event_mask =
       // Mouse
       /*Button1MotionMask |
@@ -510,12 +510,12 @@ namespace nux
     //--NoEventMask;
 
 
-    if (m_Fullscreen)
+    if (fullscreen_)
     {
-      XF86VidModeSwitchToMode(m_X11Display, m_X11Screen, m_X11VideoModes[m_BestMode]);
+      XF86VidModeSwitchToMode(m_X11Display, m_X11Screen, m_X11VideoModes[best_mode]);
       XF86VidModeSetViewPort(m_X11Display, m_X11Screen, 0, 0);
-      //Width = m_X11VideoModes[m_BestMode]->hdisplay;
-      //Height = m_X11VideoModes[m_BestMode]->vdisplay;
+      //Width = m_X11VideoModes[best_mode]->hdisplay;
+      //Height = m_X11VideoModes[best_mode]->vdisplay;
       XFree(m_X11VideoModes);
 
       /* create a fullscreen window */
@@ -523,7 +523,7 @@ namespace nux
       m_X11Window = XCreateWindow(m_X11Display,
                                    RootWindow(m_X11Display, m_X11VisualInfo->screen),
                                    0, 0,                           // X, Y
-                                   m_WindowSize.width, m_WindowSize.height,
+                                   window_size_.width, window_size_.height,
                                    0,                              // Border
                                    m_X11VisualInfo->depth,         // Depth
                                    InputOutput,                    // Class
@@ -549,7 +549,7 @@ namespace nux
       m_X11Window = XCreateWindow(m_X11Display,
                                    RootWindow(m_X11Display, m_X11VisualInfo->screen),
                                    0, 0,
-                                   m_WindowSize.width, m_WindowSize.height,
+                                   window_size_.width, window_size_.height,
                                    0,
                                    m_X11VisualInfo->depth,
                                    InputOutput,
@@ -564,7 +564,7 @@ namespace nux
       m_WMDeleteWindow = XInternAtom(m_X11Display, "WM_DELETE_WINDOW", True);
       XSetWMProtocols(m_X11Display, m_X11Window, &m_WMDeleteWindow, 1);
 
-      XSetStandardProperties(m_X11Display, m_X11Window, WindowTitle, WindowTitle, None, NULL, 0, NULL);
+      XSetStandardProperties(m_X11Display, m_X11Window, window_title_.c_str(), window_title_.c_str(), None, NULL, 0, NULL);
       //XMapRaised(m_X11Display, m_X11Window);
     }
 
@@ -617,9 +617,9 @@ namespace nux
 
     MakeGLContextCurrent();
 
-    m_GfxInterfaceCreated = true;
+    gfx_interface_created_ = true;
 
-    m_DeviceFactory = new GpuDevice(m_ViewportSize.width, m_ViewportSize.height, BITFMT_R8G8B8A8,
+    m_DeviceFactory = new GpuDevice(viewport_size_.width, viewport_size_.height, BITFMT_R8G8B8A8,
         m_X11Display,
         m_X11Window,
         _has_glx_13,
@@ -635,7 +635,6 @@ namespace nux
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     SwapBuffer();
-
 
     InitGlobalGrabWindow();
 
@@ -666,15 +665,15 @@ namespace nux
     unsigned int depth_return;
 
     XGetGeometry(X11Display, X11Window, &root_return, &x_return, &y_return, &width_return, &height_return, &border_width_return, &depth_return);
-    m_WindowSize = Size(width_return, height_return);
+    window_size_ = Size(width_return, height_return);
     m_WindowPosition = Point(x_return, y_return);
 
-    m_ViewportSize = Size(width_return, height_return);
+    viewport_size_ = Size(width_return, height_return);
 
-    m_GfxInterfaceCreated = true;
+    gfx_interface_created_ = true;
 
-    // m_DeviceFactory = new GpuDevice(m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
-    m_DeviceFactory = new GpuDevice(m_ViewportSize.width, m_ViewportSize.height, BITFMT_R8G8B8A8,
+    // m_DeviceFactory = new GpuDevice(viewport_size_.GetWidth(), viewport_size_.GetHeight(), BITFMT_R8G8B8A8);
+    m_DeviceFactory = new GpuDevice(viewport_size_.width, viewport_size_.height, BITFMT_R8G8B8A8,
         m_X11Display,
         m_X11Window,
         false,
@@ -718,8 +717,8 @@ namespace nux
 // TODO(thumper): Size const& GraphicsDisplay::GetWindowSize();
   void GraphicsDisplay::GetWindowSize(int &w, int &h)
   {
-    w = m_WindowSize.width;
-    h = m_WindowSize.height;
+    w = window_size_.width;
+    h = window_size_.height;
   }
 
   void GraphicsDisplay::GetDesktopSize(int &w, int &h)
@@ -758,20 +757,20 @@ namespace nux
 
   int GraphicsDisplay::GetWindowWidth()
   {
-    return m_WindowSize.width;
+    return window_size_.width;
   }
 
   int GraphicsDisplay::GetWindowHeight()
   {
-    return m_WindowSize.height;
+    return window_size_.height;
   }
 
   void GraphicsDisplay::SetViewPort(int x, int y, int width, int height)
   {
     if (IsGfxInterfaceCreated())
     {
-      //do not rely on m_ViewportSize: glViewport can be called directly
-      m_ViewportSize = Size(width, height);
+      //do not rely on viewport_size_: glViewport can be called directly
+      viewport_size_ = Size(width, height);
       m_GraphicsContext->SetViewport(x, y, width, height);
       m_GraphicsContext->SetScissor(0, 0, width, height);
     }
@@ -795,7 +794,7 @@ namespace nux
       &border_width_return,
       &depth_return);
 
-    m_WindowSize = Size(width_return, height_return);
+    window_size_ = Size(width_return, height_return);
     m_WindowPosition = Point(x_return, y_return);
   }
 
@@ -864,12 +863,12 @@ namespace nux
 
   Rect GraphicsDisplay::GetWindowGeometry()
   {
-    return Rect(m_WindowPosition.x, m_WindowPosition.y, m_WindowSize.width, m_WindowSize.height);
+    return Rect(m_WindowPosition.x, m_WindowPosition.y, window_size_.width, window_size_.height);
   }
 
   Rect GraphicsDisplay::GetNCWindowGeometry()
   {
-    return Rect(m_WindowPosition.x, m_WindowPosition.y, m_WindowSize.width, m_WindowSize.height);
+    return Rect(m_WindowPosition.x, m_WindowPosition.y, window_size_.width, window_size_.height);
   }
 
   void GraphicsDisplay::MakeGLContextCurrent()
@@ -942,7 +941,7 @@ namespace nux
 
   void GraphicsDisplay::DestroyOpenGLWindow()
   {
-    if (m_GfxInterfaceCreated == true)
+    if (gfx_interface_created_ == true)
     {
       if (m_GLCtx == 0)
       {
@@ -992,7 +991,7 @@ namespace nux
       }
 
       /* switch back to original desktop resolution if we were in fs */
-      if (m_Fullscreen)
+      if (fullscreen_)
       {
         XF86VidModeSwitchToMode(m_X11Display, m_X11Screen, &m_X11OriginalVideoMode);
         XF86VidModeSetViewPort(m_X11Display, m_X11Screen, 0, 0);
@@ -1003,7 +1002,7 @@ namespace nux
       XCloseDisplay(m_X11Display);
     }
 
-    m_GfxInterfaceCreated = false;
+    gfx_interface_created_ = false;
   }
 
   int GraphicsDisplay::MouseMove(XEvent xevent, Event *m_pEvent)
@@ -1517,7 +1516,7 @@ namespace nux
         m_pEvent->type = NUX_SIZE_CONFIGURATION;
         m_pEvent->width =  xevent.xconfigure.width;
         m_pEvent->height = xevent.xconfigure.height;
-        m_WindowSize = Size(xevent.xconfigure.width, xevent.xconfigure.height);
+        window_size_ = Size(xevent.xconfigure.width, xevent.xconfigure.height);
 
         int x, y;
         Window child_return;
@@ -1564,7 +1563,7 @@ namespace nux
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: KeyPress event.");
         KeyCode keycode = xevent.xkey.keycode;
         KeySym keysym = NoSymbol;
-        keysym = XKeycodeToKeysym(xevent.xany.display, keycode, 0);
+        keysym = XkbKeycodeToKeysym(xevent.xany.display, keycode, 0, 0);
 
         m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
         m_pEvent->key_repeat_count = 0;
@@ -1600,7 +1599,7 @@ namespace nux
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: KeyRelease event.");
         KeyCode keycode = xevent.xkey.keycode;
         KeySym keysym = NoSymbol;
-        keysym = XKeycodeToKeysym(xevent.xany.display, keycode, 0);
+        keysym = XkbKeycodeToKeysym(xevent.xany.display, keycode, 0, 0);
 
         m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
         m_pEvent->key_repeat_count = 0;
@@ -2384,7 +2383,7 @@ namespace nux
       _dnd_source_target_accepts_drop = false;
   }
 
-  void GraphicsDisplay::HandleXDndLeave(XEvent event)
+  void GraphicsDisplay::HandleXDndLeave(XEvent /* event */)
   {
     // reset the key things
     _xdnd_types[0] = 0;
@@ -2598,7 +2597,7 @@ namespace nux
     if (_global_pointer_grab_callback)
       (*_global_pointer_grab_callback) (false, data);
 
-    _global_pointer_grab_data = false;
+    _global_pointer_grab_data = 0;
     _global_pointer_grab_callback = 0;
 
     return true;
@@ -2653,7 +2652,7 @@ namespace nux
     if (_global_keyboard_grab_callback)
       (*_global_keyboard_grab_callback) (false, data);
 
-    _global_keyboard_grab_data = false;
+    _global_keyboard_grab_data = 0;
     _global_keyboard_grab_callback = 0;
 
     return true;
@@ -2698,7 +2697,8 @@ namespace nux
 
   void GraphicsDisplay::SetWindowTitle(const char *Title)
   {
-    XStoreName(m_X11Display, m_X11Window, TCHAR_TO_ANSI(Title));
+    window_title_ = Title;
+    XStoreName(m_X11Display, m_X11Window, window_title_.c_str());
   }
 
   bool GraphicsDisplay::HasVSyncSwapControl() const

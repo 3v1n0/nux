@@ -183,7 +183,7 @@ namespace nux
 #endif
   }
 
-  void NGlobalData::Initialize (const TCHAR *CommandLine)
+  void NGlobalData::Initialize (const TCHAR * /* CommandLine */)
   {
 
   }

@@ -234,7 +234,7 @@ namespace nux
       @param  log_data    Text to log.
       @param  log_prefix	Prefix for the text
   */
-  void LogFileOutput::Serialize (const TCHAR *log_data, const TCHAR *log_prefix, int severity)
+  void LogFileOutput::Serialize (const TCHAR *log_data, const TCHAR *log_prefix, int /* severity */)
   {
     if (!_enabled)
       return;
@@ -354,18 +354,22 @@ namespace nux
       @param  log_data        Text to log.
       @param  log_prefix	Prefix for the text
   */
-  void VisualOutputConsole::Serialize (const TCHAR *text, const TCHAR *log_prefix, int severity)
+#if defined(NUX_OS_WINDOWS)
+  void VisualOutputConsole::Serialize(const TCHAR* text, const TCHAR* log_prefix, int severity)
   {
     if (!_enabled)
       return;
 
-#if defined (NUX_OS_WINDOWS)
     TCHAR Temp[4096];
 
     Snprintf (Temp, 4096, 4096 - 1, TEXT ("%s: %s%s"), log_prefix, text, NUX_LINE_TERMINATOR);
     OutputDebugString (Temp);
-#endif
   }
+#else
+  void VisualOutputConsole::Serialize(const TCHAR * /* text */, const TCHAR * /* log_prefix */, int /* severity */)
+  {
+  }
+#endif
 
   void PrintfOutputConsole::Constructor() {}
 

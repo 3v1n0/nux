@@ -86,11 +86,7 @@ struct serializable_impl
     try {
       return ResultType(boost::lexical_cast<T>(serialized_form), true);
     }
-#if defined(NUX_OS_WINDOWS)
-    catch (boost::bad_lexical_cast const& ) {
-#else
-    catch (boost::bad_lexical_cast const& e) {
-#endif
+    catch (const boost::bad_lexical_cast& ) {
       return std::make_pair<T, bool>(T(), false);
     }
   }

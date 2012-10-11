@@ -62,6 +62,9 @@ namespace nux
     case NUX_MESH_POINT:
       _num_index = num_mesh_primitive;
       break;
+    case NUX_MESH_PRIMITIVE_UNKNOWN:
+      return false;
+      break;
     }
     _index_size = 4;
 

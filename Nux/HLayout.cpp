@@ -518,7 +518,7 @@ namespace nux
     return size_compliance;
   }
 
-  void HLayout::HLayoutManagement(int width, int height)
+  void HLayout::HLayoutManagement(int width, int /* height */)
   {
     bool need_recompute = false;
 

@@ -123,16 +123,16 @@ namespace nux
     blue_caption_       = new EditTextBox("", NUX_TRACKER_LOCATION);
     alpha_caption_      = new EditTextBox("", NUX_TRACKER_LOCATION);
 
-    red_valuator_       = new InputArea(NUX_TRACKER_LOCATION);
-    green_valuator_     = new InputArea(NUX_TRACKER_LOCATION);
-    blue_valuator_      = new InputArea(NUX_TRACKER_LOCATION);
-    alpha_valuator_     = new InputArea(NUX_TRACKER_LOCATION);
-    color_square_       = new InputArea(NUX_TRACKER_LOCATION);
+    red_valuator_       = new BasicView(NUX_TRACKER_LOCATION);
+    green_valuator_     = new BasicView(NUX_TRACKER_LOCATION);
+    blue_valuator_      = new BasicView(NUX_TRACKER_LOCATION);
+    alpha_valuator_     = new BasicView(NUX_TRACKER_LOCATION);
+    color_square_       = new BasicView(NUX_TRACKER_LOCATION);
 
-    m_ComponentLabel0   = new InputArea(NUX_TRACKER_LOCATION);
-    m_ComponentLabel1   = new InputArea(NUX_TRACKER_LOCATION);
-    m_ComponentLabel2   = new InputArea(NUX_TRACKER_LOCATION);
-    m_ComponentAlpha    = new InputArea(NUX_TRACKER_LOCATION);
+    m_ComponentLabel0   = new BasicView(NUX_TRACKER_LOCATION);
+    m_ComponentLabel1   = new BasicView(NUX_TRACKER_LOCATION);
+    m_ComponentLabel2   = new BasicView(NUX_TRACKER_LOCATION);
+    m_ComponentAlpha    = new BasicView(NUX_TRACKER_LOCATION);
   }
 
   void RGBValuator::InitializeWidgets()
@@ -155,10 +155,6 @@ namespace nux
     alpha_valuator_->mouse_drag.connect(sigc::mem_fun(this, &RGBValuator::OnReceiveMouseDrag_Alpha));
     m_ColorModel->click.connect(sigc::mem_fun(this, &RGBValuator::OnChangeColorModel));
     m_ColorFormat->click.connect(sigc::mem_fun(this, &RGBValuator::OnChangeColorFormat));
-//    m_ColorModel->mouse_down.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
-//    m_ColorModel->mouse_up.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
-//    m_ColorModel->mouse_enter.connect(sigc::mem_fun(this, &RGBValuator::RecvColorModelEvent));
-
 
     m_ColorModel->SetFont(GetSysBoldFont());
     m_ColorFormat->SetFont(GetSysBoldFont());
@@ -401,12 +397,12 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void RGBValuator::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void RGBValuator::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
 
     graphics_engine.PushClippingRectangle(base);
-    GetPainter().PushDrawShapeLayer(graphics_engine, vlayout->GetGeometry(), eSHAPE_CORNER_ROUND4, Color(0xFF000000), eAllCorners);
+    GetPainter().PushDrawShapeLayer(graphics_engine, vlayout->GetGeometry(), eSHAPE_CORNER_ROUND4, Color(0xFF000000), eAllCorners, true);
 
     if (m_color_model == color::RGB)
     {
@@ -430,13 +426,6 @@ namespace nux
     DrawGreenMarker(graphics_engine);
     DrawBlueMarker(graphics_engine);
     DrawAlphaMarker(graphics_engine);
-
-    red_caption_->QueueDraw();
-    green_caption_->QueueDraw();
-    blue_caption_->QueueDraw();
-    alpha_caption_->QueueDraw();
-    m_ColorModel->QueueDraw();
-    m_ColorFormat->QueueDraw();
 
     GetPainter().PopBackground();
     graphics_engine.PopClippingRectangle();
@@ -834,7 +823,7 @@ namespace nux
     sigColorChanged.emit(rgb_.red, rgb_.green, rgb_.blue, alpha_);
   }
 
-  void RGBValuator::OnReceiveMouseDown_Red(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDown_Red(int x, int /* y */, unsigned long /* button_flags */, unsigned long key_flags)
   {
     if (m_color_model == color::RGB)
     {
@@ -894,7 +883,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseDown_Green(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDown_Green(int x, int /* y */, unsigned long /* button_flags */, unsigned long key_flags)
   {
     if (m_color_model == color::RGB)
     {
@@ -954,7 +943,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseDown_Blue(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDown_Blue(int x, int /* y */, unsigned long /* button_flags */, unsigned long key_flags)
   {
     if (m_color_model == color::RGB)
     {
@@ -1014,7 +1003,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseDown_Alpha(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDown_Alpha(int x, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (x < 0)
       alpha_ = 0.0f;
@@ -1027,27 +1016,27 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseDrag_Red(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDrag_Red(int x, int y, int /* dx */, int /* dy */, unsigned long button_flags, unsigned long key_flags)
   {
     OnReceiveMouseDown_Red(x, y, button_flags, key_flags);
   }
 
-  void RGBValuator::OnReceiveMouseDrag_Green(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDrag_Green(int x, int y, int /* dx */, int /* dy */, unsigned long button_flags, unsigned long key_flags)
   {
     OnReceiveMouseDown_Green(x, y, button_flags, key_flags);
   }
 
-  void RGBValuator::OnReceiveMouseDrag_Blue(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDrag_Blue(int x, int y, int /* dx */, int /* dy */, unsigned long button_flags, unsigned long key_flags)
   {
     OnReceiveMouseDown_Blue(x, y, button_flags, key_flags);
   }
 
-  void RGBValuator::OnReceiveMouseDrag_Alpha(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDrag_Alpha(int x, int y, int /* dx */, int /* dy */, unsigned long button_flags, unsigned long key_flags)
   {
     OnReceiveMouseDown_Alpha(x, y, button_flags, key_flags);
   }
 
-  void RGBValuator::OnReceiveMouseUp_Red       (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseUp_Red       (int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (m_color_model == color::HSV)
     {
@@ -1096,7 +1085,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseUp_Green     (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseUp_Green     (int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (m_color_model == color::HSV)
     {
@@ -1145,7 +1134,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseUp_Blue(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseUp_Blue(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (m_color_model == color::HSV)
     {
@@ -1194,12 +1183,12 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::RecvMouseDownColorModel(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::RecvMouseDownColorModel(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();
   }
 
-  void RGBValuator::OnChangeColorModel(AbstractButton* button)
+  void RGBValuator::OnChangeColorModel(AbstractButton* /* button */)
   {
     if (m_color_model == color::RGB)
     {
@@ -1229,7 +1218,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnChangeColorFormat(AbstractButton* button)
+  void RGBValuator::OnChangeColorFormat(AbstractButton* /* button */)
   {
     if (m_color_format == color::FLOAT)
     {
@@ -1246,7 +1235,7 @@ namespace nux
 
   }
 
-  void RGBValuator::OnComponentInput(EditTextBox *textbox, const std::string &s, int componentIndex)
+  void RGBValuator::OnComponentInput(EditTextBox* /* textbox */, const std::string &s, int componentIndex)
   {
     float f = 0;
 

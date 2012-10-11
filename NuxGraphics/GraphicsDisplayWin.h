@@ -67,50 +67,45 @@ namespace nux
     // WIN32 system variables
     HGLRC       opengl_rendering_context_;  //!< OpenGL Rendering Context.
     HDC         device_context_;            //!< Device Context.
-    HWND        wnd_handle_;                     //!< Window Handle.
-    HWND        m_ParentWindow;
+    HWND        wnd_handle_;                //!< Window Handle.
+    HWND        parent_window_;             //!< Parent window Handle.
 
-    char m_WindowClassName[256];
-    GLuint      m_PixelFormat;      // Holds The Results After Searching For A Match
-    DWORD       m_dwExStyle;        // Window Extended Style
-    DWORD       m_dwStyle;          // Window Style
-    NString     m_WindowTitle;
+    GLuint      pixel_format_;              //!< Holds The Results After Searching For A Match
+    DWORD       window_extended_style_;     //!< Window Extended Style
+    DWORD       window_style_;              //!< Window Style
+    std::string window_title_;
 
     static HGLRC sMainGLRC;         // Used as the first argument of wglShareLists to make all successive OpenGL  context share their objects
     static HDC   sMainDC;           // Used as the first argument of wglShareLists to make all successive OpenGL  context share their objects
 
-    ID2D1Factory    *d2d_factory_;
-    IDWriteFactory  *dw_factory_;
-    IWICImagingFactory *wic_factory_;
+    ID2D1Factory*       d2d_factory_;
+    IDWriteFactory*     dw_factory_;
+    IWICImagingFactory* wic_factory_;
 
-    // size, position
-    Size  m_ViewportSize;
-    Size m_WindowSize;
+    Size viewport_size_;            //!< Viewport size.
+    Size window_size_;              //!< Window size.
 
-    // surface attibute;
-    bool m_fullscreen;
-    unsigned int m_ScreenBitDepth;
+    //! Full screen mode.
+    bool fullscreen_;
+    //! Screen bit depth.
+    unsigned int screen_bit_depth_;
 
-    // verify that the interface is properly created
-    bool m_GfxInterfaceCreated;
+    //! State of the graphics interface.
+    bool gfx_interface_created_;
 
     // Device information
     void GetDisplayInfo();
-    int m_index_of_current_mode;
 
-    bool m_is_window_minimized;
+    bool window_minimized_;
 
-    HCURSOR cursor_;
+    HCURSOR cursor_;               //!< Windows Cursor.
 
     static int Win32KeySymToINL(int Keysym);
     static int Win32VKToNuxKey(int vk);
   public:
 
-    // Device
-    int m_num_device_modes;
-
-    // Event object
-    Event *event_;
+    //! Last Win32 event.
+    Event event_;
 
     // Creation
     bool IsGfxInterfaceCreated();
@@ -122,7 +117,7 @@ namespace nux
         @param WindowHeight     Initial window height.
         @param Style            The window style.
         @param ParentWindow     The parent window.
-        @param FullscreenFlag   Full screen flag.
+        @param fullscreen_flag  Full screen flag.
     */
     bool CreateOpenGLWindow(
       const char *WindowTitle,
@@ -130,7 +125,7 @@ namespace nux
       unsigned int WindowHeight,
       WindowStyle Style,
       const GraphicsDisplay *Parent,
-      bool FullscreenFlag = false,
+      bool fullscreen_flag = false,
       bool create_rendering_data = true);
 
     //! Create a GLWindow from a window and device context.
@@ -159,11 +154,11 @@ namespace nux
       Returns true if there was a pending event to be fetched and false otherwise
      */
     bool GetSystemEvent(Event *evt);
-    Event &GetCurrentEvent();
+    const Event& GetCurrentEvent() const;
 
     bool isWindowMinimized() const
     {
-      return m_is_window_minimized;
+      return window_minimized_;
     }
 
     void ShowWindow();
@@ -179,7 +174,7 @@ namespace nux
     }
     HWND GetParentWindowHandle() const
     {
-      return m_ParentWindow;
+      return parent_window_;
     }
     HDC GetWindowHDC() const
     {
@@ -187,7 +182,7 @@ namespace nux
     }
     bool IsChildWindow() const
     {
-      return m_ParentWindow != 0;
+      return parent_window_ != 0;
     }
 
     ID2D1Factory* GetDirect2DFactory();

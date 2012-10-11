@@ -46,36 +46,35 @@ namespace nux
     mouse_drag.connect(sigc::mem_fun(this, &ClientArea::RecvMouseDrag));
     mouse_move.connect(sigc::mem_fun(this, &ClientArea::RecvMouseMove));
     key_down.connect(sigc::mem_fun(this, &ClientArea::RecvKeyEvent));
-
-    if (GetWindowThread()->GetGraphicsDisplay().HasFrameBufferSupport())
-    {
-      m_FrameBufferObject = GetGraphicsDisplay()->GetGpuDevice()->CreateFrameBufferObject();
-      m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
-      m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
-    }
   }
 
   ClientArea::~ClientArea()
   {
   }
 
-  void ClientArea::BeginDraw(GraphicsEngine &graphics_engine, bool force_draw)
+  void ClientArea::BeginDraw(GraphicsEngine& graphics_engine, bool force_draw)
   {
-    if ((IsRedrawNeeded() == false) && (force_draw == false))
-      return;
+    // if ((IsRedrawNeeded() == false) && (force_draw == false))
+    //   return;
+
+    // Save blend states
+    unsigned int current_alpha_blend;
+    unsigned int current_src_blend_factor;
+    unsigned int current_dest_blend_factor;
+    graphics_engine.GetRenderStates().GetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
+
+    ObjectPtr<IOpenGLFrameBufferObject> prev_fbo_ = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
+    Geometry prev_viewport_ = graphics_engine.GetViewportRect();
 
     if (GetWindowThread()->GetGraphicsDisplay().HasFrameBufferSupport())
     {
-      int buffer_width = GetBaseWidth();
-      int buffer_height = GetBaseHeight();
-      int window_width, window_height;
-      window_width = graphics_engine.GetViewportWidth();
-      window_height = graphics_engine.GetViewportHeight();
+      int width = GetWidth();
+      int height = GetHeight();
 
-      m_ctx.x = GetBaseX();
-      m_ctx.y = GetBaseY();
-      m_ctx.width  = GetBaseWidth();
-      m_ctx.height = GetBaseHeight();
+      m_ctx.x = GetX();
+      m_ctx.y = GetY();
+      m_ctx.width  = width;
+      m_ctx.height = height;
 
       // A is obtained from graphics_engine. So A dimension's are in relative window coordinates.
       Rect A = graphics_engine.GetClippingRegion();
@@ -87,105 +86,65 @@ namespace nux
       m_ctx.width_clipregion  = C.GetWidth();
       m_ctx.height_clipregion = C.GetHeight();
 
-      ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
+      //ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
 
-      if ((m_FrameBufferObject->GetWidth() != buffer_width) || (m_FrameBufferObject->GetHeight() != buffer_height))
+      if (m_FrameBufferObject.IsNull())
       {
-        m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
-        m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
-        m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
+        // Create the fbo before using it for the first time.
+        m_FrameBufferObject = GetGraphicsDisplay()->GetGpuDevice()->CreateFrameBufferObject();
       }
 
-      m_FrameBufferObject->SetRenderTarget(0, m_MainColorRT->GetSurfaceLevel(0));
-      m_FrameBufferObject->SetDepthSurface(m_MainDepthRT->GetSurfaceLevel(0));
+      if (!m_MainColorRT.IsValid() || (m_MainColorRT->GetWidth() != width) || (m_MainColorRT->GetHeight() != height))
+      {
+        // Create or resize the color and depth textures before using them.
+        m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+        m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
+      }
+
+      m_FrameBufferObject->FormatFrameBufferObject(width, height, BITFMT_R8G8B8A8);
+      m_FrameBufferObject->EmptyClippingRegion();
+      m_FrameBufferObject->SetTextureAttachment(0, m_MainColorRT, 0);
+      m_FrameBufferObject->SetDepthTextureAttachment(m_MainDepthRT, 0);
       m_FrameBufferObject->Activate();
 
-      graphics_engine.SetViewport(0, 0, buffer_width, buffer_height);
-      m_FrameBufferObject->EmptyClippingRegion();
+      graphics_engine.SetViewport(0, 0, width, height);
+
 
       ClientDraw(graphics_engine, m_ctx, force_draw);
-
-      // Restore the main frame buffer object
-      prevFBO->Activate();
-
-      Area* view_window = GetTopLevelViewWindow();
-      if (view_window)
-      {
-        graphics_engine.SetViewport(0, 0, view_window->GetBaseWidth(), view_window->GetBaseHeight());
-        graphics_engine.ApplyClippingRectangle();
-        graphics_engine.ApplyModelViewMatrix();
-        graphics_engine.SetOrthographicProjectionMatrix(view_window->GetBaseWidth(), view_window->GetBaseHeight());
-
-      }
-      else
-      {
-        graphics_engine.SetViewport(0, 0, window_width, window_height);
-        graphics_engine.ApplyClippingRectangle();
-        graphics_engine.ApplyModelViewMatrix();
-        graphics_engine.SetOrthographicProjectionMatrix(window_width, window_height);
-      }
-            
-      // Copy the client frame buffer into the main frame buffer.
-      {
-        unsigned int w, h;
-        w = m_MainColorRT->GetWidth();
-        h = m_MainColorRT->GetHeight();
-        int x = m_ctx.x;
-        int y = m_ctx.y;
-
-        TexCoordXForm texxform0;
-        texxform0.uwrap = TEXWRAP_CLAMP;
-        texxform0.vwrap = TEXWRAP_CLAMP;
-        texxform0.FlipVCoord(true);
-        GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(x, y, w, h, m_MainColorRT, texxform0, Color(color::White));
-      }
     }
-    else
+
+    if (prev_fbo_.IsValid())
     {
-      int x = graphics_engine.GetContextX();
-      int y = graphics_engine.GetContextY();
+      // Restore the previous fbo
+      prev_fbo_->Activate();
 
-      // The clientarea is in absolute window coordinates. It needs to be offset so that it is in relative window coordinates.
-      m_ctx.x = GetBaseX() + x;
-      m_ctx.y = GetBaseY() + y;
-      m_ctx.width  = GetBaseWidth();
-      m_ctx.height = GetBaseHeight();
-
-      // A is obtained from graphics_engine. So A dimension's are in relative window coordinates.
-      Rect A = graphics_engine.GetClippingRegion();
-
-      Rect B = Rect(m_ctx.x, m_ctx.y, m_ctx.width, m_ctx.height);
-      Rect C = A.Intersect(B);
-
-      m_ctx.x_clipregion = C.x;
-      m_ctx.y_clipregion = C.y;
-      m_ctx.width_clipregion  = C.GetWidth();
-      m_ctx.height_clipregion = C.GetHeight();
-
-      int window_width, window_height;
-      window_width = graphics_engine.GetViewportWidth();
-      window_height = graphics_engine.GetViewportHeight();
-
-      SetClientViewport(graphics_engine);
-//         graphics_engine.SetViewport(
-//             m_ctx.x, window_height - m_ctx.y - m_ctx.height, m_ctx.width, m_ctx.height);
-//
-//         graphics_engine.SetOpenGLClippingRectangle(
-//             m_ctx.x_clipregion,
-//             window_height - m_ctx.y_clipregion - m_ctx.height_clipregion,
-//             m_ctx.width_clipregion,
-//             m_ctx.height_clipregion);
-
-      ClientDraw(graphics_engine, m_ctx, force_draw);
-
-      // go back to 2D in case that was changed by the client.
-      graphics_engine.SetViewport(0, 0, window_width, window_height);
-      graphics_engine.ApplyClippingRectangle();
-      graphics_engine.Push2DWindow(window_width, window_height);
+      prev_fbo_->ApplyClippingRegion();
     }
+
+    // Restore the matrices and the view port.
+    graphics_engine.ApplyModelViewMatrix();
+    graphics_engine.SetOrthographicProjectionMatrix(prev_viewport_.width, prev_viewport_.height);
+    graphics_engine.SetViewport(prev_viewport_.x, prev_viewport_.y, prev_viewport_.width, prev_viewport_.height);    
+
+    {
+      unsigned int w, h;
+      w = m_MainColorRT->GetWidth();
+      h = m_MainColorRT->GetHeight();
+      int x = m_ctx.x;
+      int y = m_ctx.y;
+
+      TexCoordXForm texxform0;
+      texxform0.uwrap = TEXWRAP_CLAMP;
+      texxform0.vwrap = TEXWRAP_CLAMP;
+      texxform0.FlipVCoord(true);
+      GetGraphicsDisplay()->GetGraphicsEngine()->QRP_1Tex(x, y, w, h, m_MainColorRT, texxform0, Color(color::White));
+    }
+
+    // restore blend states
+    graphics_engine.GetRenderStates().SetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
   }
 
-  void ClientArea::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void ClientArea::Draw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
     // don't draw here or we risk drawing more than one time.
     //BeginDraw(graphics_engine, force_draw);
@@ -196,13 +155,8 @@ namespace nux
     BeginDraw(graphics_engine, force_draw);
 
   }
-  void ClientArea::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-    // don't draw here or we risk drawing more than one time.
-    //BeginDraw(graphics_engine, force_draw);
-  }
 
-  void ClientArea::ClientDraw(GraphicsEngine &graphics_engine, DrawAreaContext &ctx, bool force_draw)
+  void ClientArea::ClientDraw(GraphicsEngine & /* graphics_engine */, DrawAreaContext & /* ctx */, bool /* force_draw */)
   {
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -239,48 +193,35 @@ namespace nux
   }
 
 
-  void ClientArea::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ClientArea::RecvMouseDown(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
 
   }
 
-  void ClientArea::RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ClientArea::RecvMouseUp(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
 
   }
 
-  void ClientArea::RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void ClientArea::RecvMouseDrag(int /* x */, int /* y */, int /* dx */, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
 
   }
 
-  void ClientArea::RecvMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void ClientArea::RecvMouseMove(int /* x */, int /* y */, int /* dx */, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
 
   }
 
   void ClientArea::RecvKeyEvent(
-    unsigned long     event_type,    /*event type*/
-    unsigned long     GetKeySym,    /*event keysym*/
-    unsigned long     event_state,    /*event state*/
-    const char*      event_char,    /*character*/
-    unsigned short    repeat_count     /*key repeat count*/
+    unsigned long     /* event_type */,    /*event type*/
+    unsigned long     /* GetKeySym */,    /*event keysym*/
+    unsigned long     /* event_state */,    /*event state*/
+    const char*      /* event_char */,    /*character*/
+    unsigned short    /* repeat_count */     /*key repeat count*/
   )
   {
 
-  }
-
-  void ClientArea::QueueDraw()
-  {
-    //GetWindowCompositor()..AddToDrawList(this);
-    WindowThread* application = GetWindowThread();
-    if (application)
-    {
-      application->AddToDrawList(this);
-      application->RequestRedraw();
-      //GetWindowCompositor().AddToDrawList(this);
-    }
-    draw_cmd_queued_ = true;
   }
 
   bool ClientArea::AcceptKeyNavFocus()

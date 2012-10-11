@@ -39,10 +39,6 @@ namespace nux
     VertexBuffer();
     virtual ~VertexBuffer();
     VertexBuffer(int Size, int Stride);
-    //! Copy constructor
-    VertexBuffer(const VertexBuffer&);
-    //! Assignment constructor
-    VertexBuffer& operator = (const VertexBuffer&);
 
     //! Allocate space for a "num_element", each of size "size".
     /*!
@@ -71,10 +67,6 @@ namespace nux
     IndexBuffer();
     virtual ~IndexBuffer();
     IndexBuffer(int Size, int Stride);
-    //! Copy constructor
-    IndexBuffer(const IndexBuffer&);
-    //! Assignment constructor
-    IndexBuffer& operator = (const IndexBuffer&);
 
     void Allocate(int Size, int Stride);
     int GetSize() const;

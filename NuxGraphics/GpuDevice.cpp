@@ -32,10 +32,12 @@
 #include "GLTemplatePrimitiveBuffer.h"
 #include "GraphicsEngine.h"
 
+#include <algorithm>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <vector>
+
 
 namespace nux
 {
@@ -220,6 +222,7 @@ namespace nux
 
     // See: http://developer.nvidia.com/object/General_FAQ.html
     // The value of GL_MAX_TEXTURE_UNITS is 4 for GeForce FX and GeForce 6 Series GPUs. Why is that, since those GPUs have 16 texture units?
+    CHECKGL(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &_opengl_max_texture_size));
     CHECKGL(glGetIntegerv(GL_MAX_TEXTURE_UNITS, &_opengl_max_texture_units));
     CHECKGL(glGetIntegerv(GL_MAX_TEXTURE_COORDS, &_opengl_max_texture_coords));
     CHECKGL(glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS_ARB, &_opengl_max_texture_image_units));
@@ -293,7 +296,7 @@ namespace nux
     int req_opengl_minor,
     bool opengl_es_20)
 #else
-  GpuDevice::GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
+  GpuDevice::GpuDevice(unsigned int /* DeviceWidth */, unsigned int /* DeviceHeight */, BitmapFormat /* DeviceFormat */,
     Display *display,
     Window window,
     bool has_glx_13_support,
@@ -304,15 +307,19 @@ namespace nux
     bool opengl_es_20)
 #endif
 #endif
+    : opengl_major_(0)
+    , opengl_minor_(0)
+    , use_pixel_buffer_object_(false)
+    , pixel_store_alignment_(4)
+    , gpu_render_states_(NULL)
+    , gpu_info_(NULL)
   {
-    _PixelStoreAlignment  = 4;
-    _UsePixelBufferObject = false;
-    _gpu_info             = NULL;
-    _gpu_brand            = GPU_VENDOR_UNKNOWN;
+    gpu_brand_            = GPU_VENDOR_UNKNOWN;
 
-#ifndef NUX_OPENGLES_20    
+#ifndef NUX_OPENGLES_20
     // OpenGL extension initialization
     GLenum Glew_Ok = 0;
+    Glew_Ok = Glew_Ok;  // Suppress compiler warning about set but not used variable.
 #ifdef GLEW_MX
     Glew_Ok = glewContextInit(glewGetContext());
     nuxAssertMsg(Glew_Ok == GLEW_OK, "[GpuDevice::GpuDevice] GL Extensions failed to initialize.");
@@ -327,38 +334,93 @@ namespace nux
 
     nuxAssertMsg(Glew_Ok == GLEW_OK, "[GpuDevice::GpuDevice] OpenGL Extensions failed to initialize.");
 #else
-    Glew_Ok = glewInit();
+    glewInit();
 #endif
 #endif
 
 #ifndef NUX_OPENGLES_20
-    _glsl_version_string = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char *, glGetString(GL_VERSION)));
+    _openGL_version_string = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char *, glGetString(GL_VERSION)));
     CHECKGL_MSG(glGetString(GL_VERSION));
 
-    std::vector<std::string> versions;
-    boost::split(versions, _glsl_version_string, boost::algorithm::is_any_of("."));
 
-    _opengl_major = std::stoi(versions[0]);
-    _opengl_minor = std::stoi(versions[1]);
-
-    if (_opengl_major >= 3)
+    if (0)
     {
-      CHECKGL(glGetIntegerv(GL_MAJOR_VERSION, &_opengl_major));
-      CHECKGL(glGetIntegerv(GL_MINOR_VERSION, &_opengl_minor));
+      // We need OpenGL minor and major version. Before OpenGL 3.0, the version number was reported as a string of format
+      // "major.minor". That string has to be parsed to extract the major and minor version numbers. This is not really safe as
+      // we have no guaranty that the version string is has we think it is. Some drivers report a version string like "xx.xx.xx".
+    
+      // Begin string parsing to extract the major and minor version numbers.
+      std::string opengl_major;
+      std::string opengl_minor;
+      std::string split = ".";
+
+      size_t pos = 0;
+      pos = _openGL_version_string.find(split, pos);
+
+      if (pos != tstring::npos)
+      {
+        size_t split_string_size = split.length();
+        opengl_major = _openGL_version_string.substr(0, pos);
+        opengl_minor = _openGL_version_string.substr(pos + split_string_size, _openGL_version_string.length() - (pos + split_string_size) );
+      }
+
+      int major_length = opengl_major.length();
+      opengl_major_ = 0;
+      int digit_position = 1;
+      while (major_length && (opengl_major.c_str()[major_length-1] >= '0') && (opengl_major.c_str()[major_length-1] <= '9'))
+      {
+        opengl_major_ += (opengl_major.c_str()[major_length-1] - '0') * digit_position;
+
+        digit_position *= 10;
+        --major_length;
+      }
+
+      int minor_length = opengl_minor.length();
+      opengl_minor_ = 0;
+      digit_position = 0;
+      while (minor_length && (opengl_minor.c_str()[digit_position] >= '0') && (opengl_minor.c_str()[digit_position] <= '9'))
+      {
+        opengl_minor_ += opengl_minor_ * 10 + (opengl_minor.c_str()[digit_position] - '0');
+
+        ++digit_position;
+        --minor_length;
+      }
+
+      // End string parsing
+
+      if (opengl_major_ >= 3)
+      {
+        CHECKGL(glGetIntegerv(GL_MAJOR_VERSION, &opengl_major_));
+        CHECKGL(glGetIntegerv(GL_MINOR_VERSION, &opengl_minor_));
+      }
+    }
+    else
+    {
+      std::vector<std::string> versions;
+      boost::split(versions, _openGL_version_string, boost::algorithm::is_any_of("."));
+
+      opengl_major_ = std::stoi(versions[0]);
+      opengl_minor_ = std::stoi(versions[1]);
+
+      if (opengl_major_ >= 3)
+      {
+        CHECKGL(glGetIntegerv(GL_MAJOR_VERSION, &opengl_major_));
+        CHECKGL(glGetIntegerv(GL_MINOR_VERSION, &opengl_minor_));
+      }
     }
 #else
-    _opengl_major = 2;
-    _opengl_minor = 0;
+    opengl_major_ = 2;
+    opengl_minor_ = 0;
 #endif
 
 #if defined(NUX_OS_WINDOWS)
     bool opengl_es_context_created = false;
-    if (((_opengl_major >= 3) && (req_opengl_major >= 3)) || (_opengl_major >= 3) || opengl_es_20)
+    if (((opengl_major_ >= 3) && (req_opengl_major >= 3)) || (opengl_major_ >= 3) || opengl_es_20)
 #elif defined(NUX_OS_LINUX)
     //bool opengl_es_context_created = false;
     if (has_glx_13_support &&
-    (((_opengl_major >= 3) && (req_opengl_major >= 3)) ||
-    ((_opengl_major >= 3) && opengl_es_20)))
+    (((opengl_major_ >= 3) && (req_opengl_major >= 3)) ||
+    ((opengl_major_ >= 3) && opengl_es_20)))
 #endif
     {
       // Create a new Opengl Rendering Context
@@ -369,22 +431,22 @@ namespace nux
         if ((OpenGLVersionTable[index].major == req_opengl_major) &&
           (OpenGLVersionTable[index].minor == req_opengl_minor))
         {
-          if (_opengl_major == 1)
+          if (opengl_major_ == 1)
           {
             if ((req_opengl_major == 1) && (req_opengl_minor >= 0) && (req_opengl_minor <= 5))
               requested_profile_is_supported = true;
           }
-          else if (_opengl_major == 2)
+          else if (opengl_major_ == 2)
           {
             if ((req_opengl_major == 2) && (req_opengl_minor >= 0) && (req_opengl_minor <= 1))
               requested_profile_is_supported = true;
           }
-          else if (_opengl_major == 3)
+          else if (opengl_major_ == 3)
           {
             if ((req_opengl_major == 3) && (req_opengl_minor >= 0) && (req_opengl_minor <= 3))
               requested_profile_is_supported = true;
           }
-          else if (_opengl_major == 4)
+          else if (opengl_major_ == 4)
           {
             if ((req_opengl_major == 4) && (req_opengl_minor >= 0) && (req_opengl_minor <= 1))
               requested_profile_is_supported = true;
@@ -533,40 +595,30 @@ namespace nux
     nuxDebugMsg("Gpu Vendor: %s", _board_vendor_string.c_str());
     nuxDebugMsg("Gpu Renderer: %s", _board_renderer_string.c_str());
     nuxDebugMsg("Gpu OpenGL Version: %s", _openGL_version_string.c_str());
-    nuxDebugMsg("Gpu OpenGL Major Version: %d", _opengl_major);
-    nuxDebugMsg("Gpu OpenGL Minor Version: %d", _opengl_minor);
-    nuxDebugMsg("Gpu GLSL Version: %s", _glsl_version_string.c_str());
 
-    std::string TempStr = boost::algorithm::to_upper_copy(_board_vendor_string);
+    nuxDebugMsg("Gpu OpenGL Major Version: %d", opengl_major_);
+    nuxDebugMsg("Gpu OpenGL Minor Version: %d", opengl_minor_);
 
-    if (TempStr.find("NVIDIA", 0) != std::string::npos)
-    {
-      _gpu_brand = GPU_BRAND_NVIDIA;
-    }
-    else if (TempStr.find("ATI", 0) != std::string::npos)
-    {
-      _gpu_brand = GPU_BRAND_AMD;
-    }
-    else if (TempStr.find("TUNGSTEN", 0) != std::string::npos)
-    {
-      _gpu_brand = GPU_BRAND_INTEL;
-    }
+    std::transform(_board_vendor_string.begin(), _board_vendor_string.end(), _board_vendor_string.begin(), ::toupper); 
 
-    if (0)
+    if (_board_vendor_string.find("NVIDIA", 0) != tstring::npos)
     {
-      if (GetGPUBrand() == GPU_BRAND_AMD)
-        _UsePixelBufferObject = false;
-      else
-        _UsePixelBufferObject = true;
+      gpu_brand_ = GPU_BRAND_NVIDIA;
     }
-    else
+    else if (_board_vendor_string.find("ATI", 0) != tstring::npos)
     {
-      _UsePixelBufferObject = false;
+      gpu_brand_ = GPU_BRAND_AMD;
+    }
+    else if (_board_vendor_string.find("TUNGSTEN", 0) != tstring::npos)
+    {
+      gpu_brand_ = GPU_BRAND_INTEL;
     }
 
-    _gpu_info = new GpuInfo();
-    _gpu_info->Setup();
-    _gpu_render_states = new GpuRenderStates(_gpu_brand, _gpu_info);
+   use_pixel_buffer_object_ = false;
+
+    gpu_info_ = new GpuInfo();
+    gpu_info_->Setup();
+    gpu_render_states_ = new GpuRenderStates(gpu_brand_, gpu_info_);
 
 #if defined(NUX_OS_WINDOWS)
     OGL_EXT_SWAP_CONTROL                = WGLEW_EXT_swap_control ? true : false;
@@ -581,12 +633,12 @@ namespace nux
     // http://www.opengl.org/resources/features/KilgardTechniques/oglpitfall/
     // We use a pack /unpack alignment to 1 so we don't have any padding at the end of row.
 
-    CHECKGL(glPixelStorei(GL_UNPACK_ALIGNMENT, _PixelStoreAlignment));
-    CHECKGL(glPixelStorei(GL_PACK_ALIGNMENT, _PixelStoreAlignment));
+    CHECKGL(glPixelStorei(GL_UNPACK_ALIGNMENT, pixel_store_alignment_));
+    CHECKGL(glPixelStorei(GL_PACK_ALIGNMENT, pixel_store_alignment_));
 
 //     _DeviceWidth = DeviceWidth;
 //     _DeviceHeight = DeviceHeight;
-// 
+//
 //     _ViewportX = 0;
 //     _ViewportY = 0;
 //     _ViewportWidth = DeviceWidth;
@@ -621,11 +673,11 @@ namespace nux
 
   GpuDevice::~GpuDevice()
   {
-    NUX_SAFE_DELETE(_gpu_info);
-    NUX_SAFE_DELETE(_gpu_render_states);
+    NUX_SAFE_DELETE(gpu_info_);
+    NUX_SAFE_DELETE(gpu_render_states_);
 
     _FrameBufferObject.Release();
-    _CurrentFrameBufferObject.Release();
+    active_framebuffer_object_.Release();
 
     _PixelBufferArray.clear();
 
@@ -642,53 +694,54 @@ namespace nux
 
   ObjectPtr<IOpenGLFrameBufferObject> GpuDevice::CreateFrameBufferObject()
   {
-    IOpenGLFrameBufferObject *ptr;
-    CreateFrameBufferObject((IOpenGLFrameBufferObject **) &ptr);
-    ObjectPtr<IOpenGLFrameBufferObject> h = ObjectPtr<IOpenGLFrameBufferObject> (ptr);
-    ptr->UnReference();
-    return h;
-  }
-
-  int GpuDevice::CreateFrameBufferObject(IOpenGLFrameBufferObject **ppFrameBufferObject)
-  {
-    *ppFrameBufferObject = new IOpenGLFrameBufferObject(NUX_TRACKER_LOCATION);
-
-    return OGL_OK;
+    ObjectPtr<IOpenGLFrameBufferObject> result;
+    result.Adopt(new IOpenGLFrameBufferObject(NUX_TRACKER_LOCATION));
+    return result;
   }
 
   int GpuDevice::GetOpenGLMajorVersion() const
   {
-    return _opengl_major;
+    return opengl_major_;
   }
 
   int GpuDevice::GetOpenGLMinorVersion() const
   {
-    return _opengl_minor;
+    return opengl_minor_;
+  }
+
+  unsigned int GpuDevice::GetPixelStoreAlignment() const
+  {
+    return pixel_store_alignment_;
+  }
+
+  bool GpuDevice::UsePixelBufferObjects() const
+  {
+    return use_pixel_buffer_object_;
   }
 
   GpuBrand GpuDevice::GetGPUBrand() const
   {
-    return _gpu_brand;
+    return gpu_brand_;
   }
 
   GpuRenderStates &GpuDevice::GetRenderStates()
   {
-    return *_gpu_render_states;
+    return *gpu_render_states_;
   }
 
-  GpuInfo &GpuDevice::GetGpuInfo()
+  const GpuInfo& GpuDevice::GetGpuInfo() const
   {
-    return *_gpu_info;
+    return *gpu_info_;
   }
 
   void GpuDevice::ResetRenderStates()
   {
-    _gpu_render_states->ResetStateChangeToDefault();
+    gpu_render_states_->ResetStateChangeToDefault();
   }
 
   void GpuDevice::VerifyRenderStates()
   {
-    _gpu_render_states->CheckStateChange();
+    gpu_render_states_->CheckStateChange();
   }
 
   void GpuDevice::InvalidateTextureUnit(int TextureUnitIndex)
@@ -773,7 +826,7 @@ namespace nux
     CHECKGL(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0));
     return pBits;
 #else
-	return NULL;
+  return NULL;
 #endif
   }
 
@@ -919,12 +972,30 @@ namespace nux
 
   void GpuDevice::SetCurrentFrameBufferObject(ObjectPtr<IOpenGLFrameBufferObject> fbo)
   {
-    _CurrentFrameBufferObject = fbo;
+    active_framebuffer_object_ = fbo;
   }
 
   ObjectPtr<IOpenGLFrameBufferObject> GpuDevice::GetCurrentFrameBufferObject()
   {
-    return _CurrentFrameBufferObject;
+    return active_framebuffer_object_;
+  }
+
+  ObjectPtr<IOpenGLBaseTexture> GpuDevice::ActiveFboTextureAttachment(int color_attachment_index)
+  {
+    if (active_framebuffer_object_.IsValid())
+    {
+      return active_framebuffer_object_->TextureAttachment(color_attachment_index);
+    }
+    return ObjectPtr<IOpenGLBaseTexture>(0);
+  }
+
+  ObjectPtr<IOpenGLBaseTexture> GpuDevice::ActiveFboDepthTextureAttachment()
+  {
+    if (active_framebuffer_object_.IsValid())
+    {
+      return active_framebuffer_object_->DepthTextureAttachment();
+    }
+    return ObjectPtr<IOpenGLBaseTexture>(0);
   }
 
   void GpuDevice::DeactivateFrameBuffer()
@@ -935,7 +1006,7 @@ namespace nux
       return;
     }
 
-    _CurrentFrameBufferObject.Release();
+    active_framebuffer_object_.Release();
     CHECKGL(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
     CHECKGL(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0));
   }
@@ -947,6 +1018,11 @@ namespace nux
     , BitmapFormat PixelFormat
     , NUX_FILE_LINE_DECL)
   {
+    if ((Width <= 0) || (Height <= 0))
+    {
+      return ObjectPtr<IOpenGLBaseTexture>(0);
+    }
+
     if (GetGpuInfo().Support_ARB_Texture_Non_Power_Of_Two())
     {
       return CreateTexture(Width, Height, Levels, PixelFormat, NUX_FILE_LINE_PARAM);
@@ -966,12 +1042,12 @@ namespace nux
   {
     if (GetGpuInfo().Support_ARB_Texture_Non_Power_Of_Two())
     {
-      return new Texture2D(NUX_FILE_LINE_PARAM);
+      return new Texture2D(NUX_FILE_LINE_PARAM);  // Why are we creating a texture without a texture here?
     }
 
     if (GetGpuInfo().Support_EXT_Texture_Rectangle() || GetGpuInfo().Support_ARB_Texture_Rectangle())
     {
-      return new TextureRectangle(NUX_FILE_LINE_PARAM);
+      return new TextureRectangle(NUX_FILE_LINE_PARAM);  // Why are we creating a texture without a texture here?
     }
 
     nuxAssertMsg(0, "[NuxGraphicsResources::CreateSystemCapableTexture] No support for non power of two textures or rectangle textures");

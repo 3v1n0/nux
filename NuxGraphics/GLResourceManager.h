@@ -92,10 +92,10 @@ namespace nux
     virtual void Flush() {}
 
     // FreeResource - Called when a potentially cached resource has been freed.
-    virtual void FreeResource(ResourceData *Resource) {}
+    virtual void FreeResource(ResourceData * /* Resource */) {}
 
     // FlushResource - Removes a resource from the set.
-    virtual void FlushResource(CachedResourceData *Resource) {}
+    virtual void FlushResource(CachedResourceData * /* Resource */) {}
 
     friend class CachedResourceData;
   };
@@ -181,7 +181,7 @@ namespace nux
       return Resource->Type().IsObjectType(Type());
     }
 
-    virtual CachedResourceData *BuildResource(NResourceSet *ResourceManager, ResourceData *Resource)
+    virtual CachedResourceData *BuildResource(NResourceSet * /* ResourceManager */, ResourceData * /* Resource */)
     {
       return NULL;
     }

@@ -294,30 +294,14 @@ namespace nux
     return GetGraphicsDisplay()->GetGraphicsEngine()->CacheResource(this);
   }
 
-  Texture2D::Texture2D(NUX_FILE_LINE_DECL)
+  Texture2D::Texture2D(NUX_FILE_LINE_DECL)  // TODO: Why can we create a texture without a texture?
     : BaseTexture(NUX_FILE_LINE_PARAM)
   {
-  }
-
-  Texture2D::Texture2D(const Texture2D& texture, NUX_FILE_LINE_DECL)
-    : BaseTexture(NUX_FILE_LINE_PARAM)
-  {
-    _image = texture._image;
   }
 
   Texture2D::Texture2D(const NTextureData& texture_data, NUX_FILE_LINE_DECL)
-    : BaseTexture(NUX_FILE_LINE_PARAM)
+    : BaseTexture(NUX_FILE_LINE_PARAM), _image(texture_data)
   {
-    _image = texture_data;
-  }
-
-  Texture2D& Texture2D::operator = (const Texture2D& texture)
-  {
-    if (this == &texture)
-      return *this;   // Handle self assignment
-
-    _image = texture._image;
-    return *this;
   }
 
   Texture2D::~Texture2D()
@@ -356,7 +340,7 @@ namespace nux
     return ret;
   }
 
-  void Texture2D::GetData(void* Buffer, int MipIndex, int StrideY, int face)
+  void Texture2D::GetData(void* Buffer, int MipIndex, int StrideY, int /* face */)
   {
     BYTE              *Dest        = (BYTE*) Buffer;
     const BYTE        *Src         = _image.GetSurface(MipIndex).GetPtrRawData();
@@ -371,10 +355,9 @@ namespace nux
     }
   }
 
-  BaseTexture* Texture2D::Clone() const
+  Texture2D* Texture2D::Clone() const
   {
-    Texture2D* texture = new Texture2D(*this);
-    return texture;
+    return new Texture2D(_image);
   }
 
   CachedBaseTexture::CachedBaseTexture(NResourceSet* ResourceManager)
@@ -491,23 +474,9 @@ namespace nux
   {
   }
 
-  TextureRectangle::TextureRectangle(const TextureRectangle& texture)
+  TextureRectangle::TextureRectangle(const NTextureData& texture, NUX_FILE_LINE_DECL)
+    : BaseTexture(NUX_FILE_LINE_PARAM), _image(texture)
   {
-    _image = texture._image;
-  }
-
-  TextureRectangle::TextureRectangle(const NTextureData& BaseTexture)
-  {
-    _image = BaseTexture;
-  }
-
-  TextureRectangle& TextureRectangle::operator = (const TextureRectangle& texture)
-  {
-    if (this == &texture)
-      return *this;   // Handle self assignment
-
-    _image = texture._image;
-    return *this;
   }
 
   TextureRectangle::~TextureRectangle()
@@ -536,7 +505,7 @@ namespace nux
     return true;
   }
 
-  bool TextureRectangle::Update(const char* filename, bool UpdateAndCacheResource)
+  bool TextureRectangle::Update(const char* filename, bool /* UpdateAndCacheResource */)
   {
     bool b = false;
     NBitmapData* BitmapData = LoadImageFile(filename);
@@ -547,7 +516,7 @@ namespace nux
     return b;
   }
 
-  void TextureRectangle::GetData(void* Buffer, int MipIndex, int StrideY, int face)
+  void TextureRectangle::GetData(void* Buffer, int MipIndex, int StrideY, int /* face */)
   {
     BYTE              *Dest        = (BYTE *) Buffer;
     const BYTE         *Src         = _image.GetSurface(MipIndex).GetPtrRawData();
@@ -562,10 +531,9 @@ namespace nux
     }
   }
 
-  BaseTexture* TextureRectangle::Clone() const
+  TextureRectangle* TextureRectangle::Clone() const
   {
-    TextureRectangle* texture = new TextureRectangle(*this);
-    return texture;
+    return new TextureRectangle(_image);
   }
 
   CachedTextureRectangle::CachedTextureRectangle(NResourceSet* ResourceManager, TextureRectangle* SourceTexture)
@@ -638,23 +606,14 @@ namespace nux
     OGL_CALL(TextureRectangle->UnlockRect( MipLevel ));
   }
 
-  TextureCube::TextureCube(NUX_FILE_LINE_DECL)
+  TextureCube::TextureCube(NUX_FILE_LINE_DECL)  // TODO: why can we have a texture without a texture?
     : BaseTexture(NUX_FILE_LINE_PARAM)
   {
   }
 
-  TextureCube::TextureCube(const TextureCube& texture)
+  TextureCube::TextureCube(const NCubemapData& Image)
+    : _image(Image)
   {
-    _image = texture._image;
-  }
-
-  TextureCube& TextureCube::operator = (const TextureCube& texture)
-  {
-    if (this == &texture)
-      return *this;   // Handle self assignment
-
-    _image = texture._image;
-    return *this;
   }
 
   TextureCube::~TextureCube()
@@ -684,7 +643,7 @@ namespace nux
     return true;
   }
 
-  bool TextureCube::Update(const char* filename, bool UpdateAndCacheResource)
+  bool TextureCube::Update(const char* filename, bool /* UpdateAndCacheResource */)
   {
     NBitmapData* BitmapData = LoadImageFile(filename);
     nuxAssertMsg(BitmapData, "[TextureCube::Update] Bitmap for file(%s) is NULL.", filename);
@@ -709,10 +668,9 @@ namespace nux
     }
   }
 
-  BaseTexture* TextureCube::Clone() const
+  TextureCube* TextureCube::Clone() const
   {
-    TextureCube* texture = new TextureCube(*this);
-    return texture;
+    return new TextureCube(_image);
   }
 
   CachedTextureCube::CachedTextureCube(NResourceSet* ResourceManager, TextureCube* SourceTexture)
@@ -786,23 +744,14 @@ namespace nux
     }
   }
 
-  TextureVolume::TextureVolume(NUX_FILE_LINE_DECL)
+  TextureVolume::TextureVolume(NUX_FILE_LINE_DECL)  // TODO: why can we have a texture without a texture?
     : BaseTexture(NUX_FILE_LINE_PARAM)
   {
   }
 
-  TextureVolume::TextureVolume(const TextureVolume& texture)
+  TextureVolume::TextureVolume(const NVolumeData& Image)
+    : _image(Image)
   {
-    _image = texture._image;
-  }
-
-  TextureVolume& TextureVolume::operator = (const TextureVolume& texture)
-  {
-    if (this == &texture)
-      return *this;   // Handle self assignment
-
-    _image = texture._image;
-    return *this;
   }
 
   TextureVolume::~TextureVolume()
@@ -832,7 +781,7 @@ namespace nux
     return true;
   }
 
-  bool TextureVolume::Update(const char* filename, bool UpdateAndCacheResource)
+  bool TextureVolume::Update(const char* filename, bool /* UpdateAndCacheResource */)
   {
     NBitmapData* BitmapData = LoadImageFile(filename);
     nuxAssertMsg(BitmapData, "[TextureVolume::Update] Bitmap for file(%s) is NULL.", filename);
@@ -842,7 +791,7 @@ namespace nux
     return ret;
   }
 
-  void TextureVolume::GetData(void* Buffer, int MipIndex, int StrideY, int face)
+  void TextureVolume::GetData(void* Buffer, int MipIndex, int StrideY, int /* face */)
   {
     BYTE               *Dest        = (BYTE *) Buffer;
 //     const BYTE*         Src         = _image.GetSurface(MipIndex, slice).GetPtrRawData();
@@ -878,10 +827,9 @@ namespace nux
 //     }
   }
 
-  BaseTexture* TextureVolume::Clone() const
+  TextureVolume* TextureVolume::Clone() const
   {
-    TextureVolume* texture = new TextureVolume(*this);
-    return texture;
+    return new TextureVolume(_image);
   }
 
   CachedTextureVolume::CachedTextureVolume(NResourceSet* ResourceManager, TextureVolume* SourceTexture)
@@ -967,23 +915,14 @@ namespace nux
 //     }
   }
 
-  TextureFrameAnimation::TextureFrameAnimation(NUX_FILE_LINE_DECL)
+  TextureFrameAnimation::TextureFrameAnimation(NUX_FILE_LINE_DECL) // TODO: why can we have a texture without a texture?
     : BaseTexture(NUX_FILE_LINE_PARAM)
   {
   }
 
-  TextureFrameAnimation::TextureFrameAnimation(const TextureFrameAnimation& texture)
+  TextureFrameAnimation::TextureFrameAnimation(const NAnimatedTextureData& Image)
+    : _image(Image)
   {
-    _image = texture._image;
-  }
-
-  TextureFrameAnimation& TextureFrameAnimation::operator = (const TextureFrameAnimation& texture)
-  {
-    if (this == &texture)
-      return *this;   // Handle self assignment
-
-    _image = texture._image;
-    return *this;
   }
 
   TextureFrameAnimation::~TextureFrameAnimation()
@@ -1013,7 +952,7 @@ namespace nux
     return true;
   }
 
-  bool TextureFrameAnimation::Update(const char* filename, bool UpdateAndCacheResource)
+  bool TextureFrameAnimation::Update(const char* filename, bool /* UpdateAndCacheResource */)
   {
     NBitmapData* BitmapData = LoadImageFile(filename);
     nuxAssertMsg(BitmapData, "[TextureFrameAnimation::Update] Bitmap for file(%s) is NULL.", filename);
@@ -1023,7 +962,7 @@ namespace nux
     return ret;
   }
 
-  void TextureFrameAnimation::GetData(void* Buffer, int MipIndex, int StrideY, int slice)
+  void TextureFrameAnimation::GetData(void* Buffer, int /* MipIndex */, int StrideY, int slice)
   {
     BYTE               *Dest        = (BYTE *) Buffer;
     //for(int slice = 0; slice < ImageSurface::GetLevelDim(_image.GetFormat(), _image.GetDepth(), MipIndex); slice++)
@@ -1048,10 +987,9 @@ namespace nux
     return _image.GetFrameTime(Frame);
   }
 
-  BaseTexture* TextureFrameAnimation::Clone() const
+  TextureFrameAnimation* TextureFrameAnimation::Clone() const
   {
-    TextureFrameAnimation* texture = new TextureFrameAnimation(*this);
-    return texture;
+    return new TextureFrameAnimation(_image);
   }
 
   CachedTextureFrameAnimation::CachedTextureFrameAnimation(NResourceSet* ResourceManager, TextureFrameAnimation* SourceTexture)
@@ -1114,7 +1052,7 @@ namespace nux
     }
   }
 
-  void CachedTextureFrameAnimation::LoadMipLevel(BaseTexture* SourceTexture, int MipLevel)
+  void CachedTextureFrameAnimation::LoadMipLevel(BaseTexture* SourceTexture, int /* MipLevel */)
   {
     SURFACE_LOCKED_RECT       LockedRect;
     ObjectPtr <IOpenGLAnimatedTexture> AnimatedTexture = m_Texture; //m_Texture.CastRef<IOpenGLAnimatedTexture>();

@@ -27,7 +27,6 @@
 
 #include "NuxCore/Logger.h"
 
-#include "Features.h"
 #include "Nux.h"
 #include "InputArea.h"
 #include "NuxGraphics/GraphicsEngine.h"
@@ -50,6 +49,7 @@ logging::Logger logger("nux.inputarea");
   , area_color_(color::Green)
   , accept_key_nav_focus_on_mouse_down_(true)
   , accept_key_nav_focus_on_mouse_enter_(false)
+  , is_tracking_child_mouse_events_(false)
   {
     SetGeometry(0, 0, 1, 1);
 
@@ -71,9 +71,12 @@ logging::Logger logger("nux.inputarea");
     while (GetWindowCompositor().GrabKeyboardRemove(this));
   }
 
-  void InputArea::OnDraw(GraphicsEngine &graphics_engine, bool force_draw)
+  void InputArea::OnDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
-    graphics_engine.QRP_Color(GetBaseX(), GetBaseY(), GetBaseWidth(), GetBaseHeight(), area_color_);
+    // Draw Nothing!
+
+    // For debug Only:
+    // graphics_engine.QRP_Color(GetBaseX(), GetBaseY(), GetBaseWidth(), GetBaseHeight(), area_color_);
   }
 
   bool InputArea::HasKeyboardFocus()
@@ -154,7 +157,7 @@ logging::Logger logger("nux.inputarea");
     GetWindowThread()->GetGraphicsDisplay().SendDndFinished(accepted, action);
   }
 
-  void InputArea::ProcessDndMove(int x, int y, std::list<char *>mimes)
+  void InputArea::ProcessDndMove(int x, int y, std::list<char *> /* mimes */)
   {
     // must learn to deal with x/y offsets
     Area *parent = GetToplevel();
@@ -168,7 +171,7 @@ logging::Logger logger("nux.inputarea");
     SendDndStatus(false, DNDACTION_NONE, Geometry(x, y, GetGeometry().width, GetGeometry().height));
   }
 
-  void InputArea::ProcessDndDrop(int x, int y)
+  void InputArea::ProcessDndDrop(int /* x */, int /* y */)
   {
     SendDndFinished(false, DNDACTION_NONE);
   }
@@ -225,7 +228,7 @@ logging::Logger logger("nux.inputarea");
     self->DndSourceDragFinished(result);
   }
   
-  void InputArea::DndSourceDragFinished(DndAction result)
+  void InputArea::DndSourceDragFinished(DndAction /* result */)
   {
   
   }
@@ -300,7 +303,7 @@ logging::Logger logger("nux.inputarea");
     mouse_wheel.emit(x, y, wheel_delta, mouse_button_state, special_keys_state);
   }
 
-  void InputArea::EmitKeyDownSignal(unsigned int key_symbol, unsigned long x11_key_code, unsigned long special_keys_state)
+  void InputArea::EmitKeyDownSignal(unsigned int /* key_symbol */, unsigned long /* x11_key_code */, unsigned long /* special_keys_state */)
   {
     //OnKeyPressed.emit(key_symbol, x11_key_code, special_keys_state);
   }
@@ -354,6 +357,11 @@ logging::Logger logger("nux.inputarea");
   void InputArea::EmitMouseDownOutsideArea(int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state)
   {
     mouse_down_outside_pointer_grab_area.emit(x, y, mouse_button_state, special_keys_state);
+  }
+
+  void InputArea::EmitMouseCancelSignal()
+  {
+    mouse_cancel.emit();
   }
 
   Area* InputArea::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
@@ -484,4 +492,20 @@ logging::Logger logger("nux.inputarea");
     return this;
   }
 #endif // NUX_GESTURES_SUPPORT
+
+void InputArea::SetTrackChildMouseEvents(bool enable)
+{
+  is_tracking_child_mouse_events_ = enable;
 }
+
+bool InputArea::IsTrackingChildMouseEvents() const
+{
+  return is_tracking_child_mouse_events_;
+}
+
+bool InputArea::ChildMouseEvent(const Event&)
+{
+  return false;
+}
+
+} // namespace nux

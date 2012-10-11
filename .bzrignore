@@ -34,6 +34,7 @@ examples/coverflow
 examples/focus
 examples/gestures
 examples/gridlayout
+examples/kinetic_scroll_view
 examples/layeredlayout
 examples/moveable_view
 examples/pango_combobox
@@ -60,8 +61,10 @@ gputests/texture_data
 gputests/texture_power_of_2
 tests/Logs
 tests/Makefile
+tests/gtest-nux
 tests/gtest-nux-core
 tests/gtest-nuxcore
+tests/gtest-nux-slow
 tests/test-nux
 tests/test-nux-results.xml
 tests/relative

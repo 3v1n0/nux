@@ -20,6 +20,7 @@
  *
  */
 
+#include "NuxCore.h"
 #include "AnimationController.h"
 #include "Animation.h"
 
@@ -95,6 +96,16 @@ struct na::AnimationController::Impl
       }
     }
 
+  bool HasRunningAnimations() const
+    {
+      Animations::const_iterator end = animations_.end();
+      Animations::const_iterator it = std::find_if(animations_.begin(), end, [](Animations::value_type item) {
+        return item->CurrentState() == Animation::Running;
+      });
+
+      return it != end;
+    }
+
   void Tick(long long tick)
     {
       ticking_ = true;
@@ -167,4 +178,9 @@ void na::AnimationController::RemoveAnimation(na::Animation* animation)
   {
     pimpl->Remove(animation);
   }
+}
+
+bool na::AnimationController::HasRunningAnimations() const
+{
+  return pimpl->HasRunningAnimations();
 }

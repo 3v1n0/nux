@@ -42,7 +42,7 @@ namespace nux
   {
   }
 
-  void HSeparator::Draw (GraphicsEngine &GfxContext, bool force_draw)
+  void HSeparator::Draw (GraphicsEngine &GfxContext, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
     base.OffsetPosition(3, 0);

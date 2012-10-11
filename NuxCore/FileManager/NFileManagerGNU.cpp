@@ -204,7 +204,7 @@ namespace nux
 // Choose the size so it is a power of 2. Example (size-1)= 11111111.
   const int  NGNUSerialFileWriter::sBufferSize = 32;
 
-  NGNUSerialFileWriter::NGNUSerialFileWriter (int InFileDescriptor, LogOutputDevice &InError, int InPos)
+  NGNUSerialFileWriter::NGNUSerialFileWriter (int InFileDescriptor, LogOutputDevice &InError, int /* InPos */)
     :   m_FileDescriptor (InFileDescriptor)
     ,   m_Error         (InError)
     ,   m_BufferCount   (0)
@@ -460,7 +460,7 @@ namespace nux
 
     if (Flags & NSerializer::Append)
     {
-      long long Pos = lseek (FileDesc, Pos, SEEK_END);
+      long long Pos = lseek (FileDesc, 0, SEEK_END);
 
       if (Pos == -1)
       {
@@ -521,8 +521,8 @@ namespace nux
   int NFileManagerGNU::Copy (const TCHAR *DestFile,
                              const TCHAR *SrcFile,
                              bool OverWriteExisting,
-                             bool OverWriteReadOnly,
-                             NFileTransferMonitor *Monitor)
+                             bool /* OverWriteReadOnly */,
+                             NFileTransferMonitor * /* Monitor */)
   {
     size_t nmemb;
     //int nmemb;
@@ -624,7 +624,7 @@ namespace nux
     return false;
   }
 
-  bool NFileManagerGNU::IsHidden (const TCHAR *Filename)
+  bool NFileManagerGNU::IsHidden (const TCHAR * /* Filename */)
   {
     return false;
   }
@@ -660,7 +660,7 @@ namespace nux
     return true;
   }
 
-  bool NFileManagerGNU::Move (const TCHAR *Dest, const TCHAR *Src, bool OverWriteExisting, bool OverWriteReadOnly, NFileTransferMonitor *Monitor)
+  bool NFileManagerGNU::Move (const TCHAR * /* Dest */, const TCHAR * /* Src */, bool /* OverWriteExisting */, bool /* OverWriteReadOnly */, NFileTransferMonitor * /* Monitor */)
   {
     nuxAssert (0);
     return false;
@@ -687,7 +687,7 @@ namespace nux
     return NUX_OK;
   }
 
-  bool NFileManagerGNU::DeleteDirectory (const TCHAR *Path, bool DeleteContentFirst)
+  bool NFileManagerGNU::DeleteDirectory (const TCHAR * /* Path */, bool /* DeleteContentFirst */)
   {
 //     if(DeleteContentFirst)
 //     {

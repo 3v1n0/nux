@@ -41,6 +41,7 @@ source_cpp = \
   $(srcdir)/InputArea.cpp \
   $(srcdir)/Area.cpp \
   $(srcdir)/BaseWindow.cpp \
+  $(srcdir)/BasicView.cpp \
   $(srcdir)/Button.cpp \
   $(srcdir)/Canvas.cpp \
   $(srcdir)/CairoWrapper.cpp \
@@ -67,6 +68,12 @@ source_cpp = \
   $(srcdir)/IntegerValidator.cpp \
   $(srcdir)/View.cpp \
   $(srcdir)/KeyboardHandler.cpp \
+  $(srcdir)/KineticScrolling/AxisDecelerationAnimation.cpp \
+  $(srcdir)/KineticScrolling/KineticAxisScroller.cpp \
+  $(srcdir)/KineticScrolling/KineticScroller.cpp \
+  $(srcdir)/KineticScrolling/KineticScrollingTickSource.cpp \
+  $(srcdir)/KineticScrolling/VelocityCalculator.cpp \
+  $(srcdir)/KineticScrollView.cpp \
   $(srcdir)/LayeredLayout.cpp \
   $(srcdir)/Layout.cpp \
   $(srcdir)/LinearLayout.cpp \
@@ -135,6 +142,7 @@ source_h = \
   $(srcdir)/InputArea.h \
   $(srcdir)/Area.h \
   $(srcdir)/BaseWindow.h \
+  $(srcdir)/BasicView.h \
   $(srcdir)/Button.h \
   $(srcdir)/Canvas.h \
   $(srcdir)/CairoWrapper.h \
@@ -162,6 +170,12 @@ source_h = \
   $(srcdir)/IntegerValidator.h \
   $(srcdir)/View.h \
   $(srcdir)/KeyboardHandler.h \
+  $(srcdir)/KineticScrolling/AxisDecelerationAnimation.h \
+  $(srcdir)/KineticScrolling/KineticAxisScroller.h \
+  $(srcdir)/KineticScrolling/KineticScroller.h \
+  $(srcdir)/KineticScrolling/KineticScrollingTickSource.h \
+  $(srcdir)/KineticScrolling/VelocityCalculator.h \
+  $(srcdir)/KineticScrollView.h \
   $(srcdir)/LayeredLayout.h \
   $(srcdir)/Layout.h \
   $(srcdir)/LinearLayout.h \
@@ -171,6 +185,7 @@ source_h = \
   $(srcdir)/MouseAreaCtrl.h \
   $(srcdir)/NumericValuator.h \
   $(srcdir)/Nux.h \
+  $(srcdir)/NuxTimerTickSource.h \
   $(srcdir)/NuxGlobalInitializer.h \
   $(srcdir)/Painter.h \
   $(srcdir)/Panel.h \

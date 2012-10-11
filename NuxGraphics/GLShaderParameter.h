@@ -50,7 +50,7 @@ namespace nux
   {
   public:
     int                      m_Index;                  // Register m_Index / Attribute m_Index
-    eShaderParameterType        m_ShaderParameterType;
+    eShaderParameterType       m_ShaderParameterType;
     std::string                m_Name;
     bool                       m_bIsOptional;
     bool                       m_bIsStatic;
@@ -136,7 +136,7 @@ namespace nux
     }
 
 
-    inline void SetTexture( const GLuint textureId )
+    inline void SetTexture( const GLuint /* textureId */)
     {
       //CHECKGL(glUniform1iARB( m_Index, textureId ));
       //CHECKGL(cgGLEnableTextureParameter( CgParameter ));

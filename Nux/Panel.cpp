@@ -45,7 +45,7 @@ namespace nux
     m_layout = NULL;
   }
 
-  void Panel::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void Panel::Draw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }

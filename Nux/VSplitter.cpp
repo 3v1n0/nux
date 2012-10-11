@@ -76,7 +76,7 @@ namespace nux
     m_SplitConfig.clear();
   }
 
-  void VSplitter::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void VSplitter::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
     graphics_engine.PushClippingRectangle(base);
@@ -139,11 +139,6 @@ namespace nux
           View *ic = NUX_STATIC_CAST(View *, (*it));
           ic->ProcessDraw(graphics_engine, true);
         }
-        else if ((*it)->Type().IsObjectType(InputArea::StaticObjectType))
-        {
-          InputArea *base_area = NUX_STATIC_CAST(InputArea *, (*it));
-          base_area->OnDraw(graphics_engine, true);
-        }
         else if ((*it)->Type().IsObjectType(HLayout::StaticObjectType))
         {
           HLayout *layout = NUX_STATIC_CAST(HLayout *, (*it));
@@ -162,11 +157,6 @@ namespace nux
           View *ic = NUX_STATIC_CAST(View *, (*it));
           ic->ProcessDraw(graphics_engine, false);
         }
-        else if ((*it)->Type().IsObjectType(InputArea::StaticObjectType))
-        {
-          InputArea *base_area = NUX_STATIC_CAST(InputArea *, (*it));
-          base_area->OnDraw(graphics_engine, false);
-        }
         else if ((*it)->Type().IsObjectType(HLayout::StaticObjectType))
         {
           HLayout *layout = NUX_STATIC_CAST(HLayout *, (*it));
@@ -183,11 +173,6 @@ namespace nux
     }
 
     graphics_engine.PopClippingRectangle();
-  }
-
-  void VSplitter::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
   }
 
   void VSplitter::OverlayDrawing(GraphicsEngine &graphics_engine)
@@ -355,11 +340,6 @@ namespace nux
         // ComputeElementLayout to force the computing of this element layout.
         GetWindowThread()->ComputeElementLayout(ic);
       }
-      else if (m_InterfaceObject[i]->Type().IsObjectType(InputArea::StaticObjectType))
-      {
-        InputArea *base_area = NUX_STATIC_CAST(InputArea *, m_InterfaceObject[i]);
-        base_area->SetGeometry(Geometry(accwidth, y, splitter_geo.x - accwidth, h));
-      }
       else if (m_InterfaceObject[i]->Type().IsDerivedFromType(Layout::StaticObjectType))
       {
         Layout *layout = NUX_STATIC_CAST(Layout *, m_InterfaceObject[i]);
@@ -430,7 +410,7 @@ namespace nux
     m_initial_config = true;
   }
 
-  void VSplitter::OnSplitterMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags, int header_pos)
+  void VSplitter::OnSplitterMouseDown(int x, int y, unsigned long /* button_flags */, unsigned long /* key_flags */, int header_pos)
   {
     m_point = Point(x, y);
 
@@ -441,7 +421,7 @@ namespace nux
     GetWindowThread()->RequestRedraw();
   }
 
-  void VSplitter::OnSplitterMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags, int header_pos)
+  void VSplitter::OnSplitterMouseUp(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */, int header_pos)
   {
     if (mvt_dx)
     {
@@ -471,7 +451,7 @@ namespace nux
     GetWindowThread()->RequestRedraw();
   }
 
-  void VSplitter::OnSplitterMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags, int header_pos)
+  void VSplitter::OnSplitterMouseDrag(int x, int /* y */, int /* dx */, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */, int header_pos)
   {
     Geometry geo = m_SplitterObject[header_pos]->GetGeometry();
     int num_element = (int) m_SplitterObject.size();
@@ -561,10 +541,6 @@ namespace nux
       {
         View *ic = NUX_STATIC_CAST(View *, (*it));
         ic->DoneRedraw();
-      }
-      else if ((*it)->Type().IsObjectType(InputArea::StaticObjectType))
-      {
-        //InputArea* base_area = NUX_STATIC_CAST(InputArea*, (*it));
       }
     }
   }

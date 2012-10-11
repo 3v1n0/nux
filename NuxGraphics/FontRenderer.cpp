@@ -179,7 +179,7 @@ std::string FontAsmFrgRect("!!ARBfp1.0        \n\
     if (NumCharacter == 0)
       NumChar = str_len;
     else
-      NumChar = std::min(str_len, NumCharacter);
+      NumChar = std::min<int>(str_len, NumCharacter);
 
     strBBox.width = Font->GetStringWidth(str, NumChar);
     strBBox.height = Font->GetLineHeight();
@@ -323,7 +323,7 @@ std::string FontAsmFrgRect("!!ARBfp1.0        \n\
     nuxAssertMsg(StartCharacter >= 0, "[FontRenderer::RenderText] Incorrect value for StartCharacter.");
     nuxAssertMsg(StartCharacter <= StrLength, "[FontRenderer::RenderText] Incorrect value for StartCharacter.");
 
-    int NumCharToDraw = std::min(StrLength - StartCharacter, NumCharacters);
+    int NumCharToDraw = std::min<int>(StrLength - StartCharacter, NumCharacters);
 
     if (NumCharToDraw <= 0)
       return 0;

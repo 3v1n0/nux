@@ -234,27 +234,27 @@ namespace nux
     return OGL_OK;
   }
 
-  void IOpenGLBaseTexture::GetSurfaceLevel(int Level, ObjectPtr<IOpenGLSurface>& surface)
+  void IOpenGLBaseTexture::GetSurfaceLevel(int /* Level */, ObjectPtr<IOpenGLSurface>& /* surface */)
   {
 
   }
 
-  ObjectPtr<IOpenGLSurface> IOpenGLBaseTexture::GetSurfaceLevel(int Level)
+  ObjectPtr<IOpenGLSurface> IOpenGLBaseTexture::GetSurfaceLevel(int /* Level */)
   {
     return ObjectPtr<IOpenGLSurface> (0);
   }
 
-  int IOpenGLBaseTexture::LockRect(int Level, SURFACE_LOCKED_RECT *pLockedRect, const SURFACE_RECT *pRect)
+  int IOpenGLBaseTexture::LockRect(int /* Level */, SURFACE_LOCKED_RECT * /* pLockedRect */, const SURFACE_RECT * /* pRect */)
   {
     return 0;
   }
 
-  int IOpenGLBaseTexture::UnlockRect(int Level)
+  int IOpenGLBaseTexture::UnlockRect(int /* Level */)
   {
     return 0;
   }
 
-  unsigned char* IOpenGLBaseTexture::GetSurfaceData(int level, int &width, int &height, int &stride)
+  unsigned char* IOpenGLBaseTexture::GetSurfaceData(int /* level */, int &width, int &height, int &stride)
   {
     // Make this call a pure virtual once it has been implemented for IOpenGLCubeTexture,
     // IOpenGLVolumeTexture and IOpenGLAnimatedTexture.

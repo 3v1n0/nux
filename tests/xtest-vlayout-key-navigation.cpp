@@ -91,7 +91,7 @@ void VLayoutKeyNavigationTest::UserInterfaceSetup()
 
 VLayoutKeyNavigationTest* key_navigation_test = NULL;
 
-void TestingThread(nux::NThread* thread, void* user_data)
+void TestingThread(nux::NThread* /* thread */, void* user_data)
 {
   while (key_navigation_test->ReadyToGo() == false)
   {
@@ -114,7 +114,7 @@ void TestingThread(nux::NThread* thread, void* user_data)
   test.TestReportMsg(key_navigation_test->views_[0]->has_focus_, "Top left tile has key focus");
   
   // Down key
-  for (int i=0; i<NUM_VIEWS-1; ++i)
+  for (unsigned int i=0; i<NUM_VIEWS-1; ++i)
   {
     test.SendFakeKeyEvent(XK_Down, 0);
     nux::SleepForMilliseconds(500);
@@ -142,7 +142,7 @@ void TestingThread(nux::NThread* thread, void* user_data)
     test.SendFakeKeyEvent(XK_Up, 0);
     nux::SleepForMilliseconds(500);
     test.TestReportMsg(!key_navigation_test->views_[i]->has_focus_, "Up: key focus out");
-    if ((i - 1) == ID_UNFOCUSABLE_VIEW)
+    if ((i - 1) == (int)ID_UNFOCUSABLE_VIEW)
     {
       test.TestReportMsg(!key_navigation_test->views_[i-1]->has_focus_, "Up: key focus skipped");
       test.TestReportMsg(key_navigation_test->views_[i-2]->has_focus_, "Up: key focus in");
@@ -178,10 +178,9 @@ void TestingThread(nux::NThread* thread, void* user_data)
   nuxDebugMsg("Exit testing thread");
 }
 
-int main(int argc, char** argv)
+int main()
 {
-  int xstatus = XInitThreads();
-  nuxAssertMsg(xstatus > 0, "XInitThreads has failed");
+  XInitThreads();
 
   key_navigation_test = new VLayoutKeyNavigationTest("Key navigation Test", 500, 400, 8000);
   key_navigation_test->Startup();

@@ -423,6 +423,13 @@ namespace nux
     */
     void PaintActivePaintLayerStack(GraphicsEngine &graphics_engine, const Geometry &geo);
 
+    //! Paint all layers in all stacks
+    /*
+        Paint all layers in all stacks with the current model-view and projection matrices.
+        This is useful for redirected rendering to textures.
+    */
+    void PaintAllLayerStack(GraphicsEngine& graphics_engine, const Geometry& geo);
+
     //! Deprecated. Use PushPaintLayerStack.
     void PushBackgroundStack();
 

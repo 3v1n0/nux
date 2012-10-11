@@ -374,7 +374,7 @@ GLSh_ColorPicker::GLSh_ColorPicker(color::Channel color_channel)
     _ScreenOffsetY = y;
   }
 
-  void GLSh_ColorPicker::Render(int x, int y, int z, int width, int height, int WindowWidth, int WindowHeight)
+  void GLSh_ColorPicker::Render(int x, int y, int z, int width, int height, int /* WindowWidth */, int WindowHeight)
   {
     float fx = x, fy = y;
     float VtxBuffer[] =

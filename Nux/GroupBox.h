@@ -41,7 +41,6 @@ namespace nux
 
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     virtual bool SetLayout(Layout *layout);
     void SetCaption(const char *Caption);
@@ -55,7 +54,7 @@ namespace nux
     virtual void ComputeContentPosition(float offsetX, float offsetY);
 
     bool bCaptionAvailable;
-    InputArea m_CaptionArea;
+    BasicView m_CaptionArea;
     Layout *m_layout;
   };
 }

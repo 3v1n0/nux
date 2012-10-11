@@ -98,7 +98,7 @@ namespace nux
     m_TransformMatrix = TransformMatrix;
   }
 
-  void GLSh_Fill::Render(INT x, INT y, INT z, INT width, INT height)
+  void GLSh_Fill::Render(INT x, INT y, INT /* z */, INT width, INT height)
   {
     return;
     CHECKGL(glDisable(GL_CULL_FACE));

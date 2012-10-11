@@ -95,7 +95,7 @@ namespace nux
 
       std::string FilePath;
    
-      char last = m_SearchPath[i][m_SearchPath.size() - 1];
+      char last = m_SearchPath[i][m_SearchPath[i].size() - 1];
       if (last == TEXT('/') || last == TEXT('\\'))
         FilePath = m_SearchPath[i] + filename;
       else

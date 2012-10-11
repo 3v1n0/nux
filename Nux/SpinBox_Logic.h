@@ -37,7 +37,6 @@ namespace nux
 
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw) = 0;
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw) = 0;
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw) = 0;
 
     //  RECEIVERS
     void RecvMouseMove(int x, int y, unsigned long button_flags, unsigned long key_flags);
@@ -74,8 +73,8 @@ namespace nux
 
   protected:
     EditTextBox    *m_EditLine;
-    InputArea       *m_SpinnerUpBtn;
-    InputArea       *m_SpinnerDownBtn;
+    BasicView       *m_SpinnerUpBtn;
+    BasicView       *m_SpinnerDownBtn;
 
     TimerFunctor *m_UpTimerCallback;
     TimerFunctor *m_DownTimerCallback;
