@@ -75,7 +75,8 @@ namespace nux
       scroll_up_connection_.disconnect();
       scroll_down_connection_.disconnect();
       vmouse_whell_connection_.disconnect();
-      
+
+      _vscrollbar->UnParentObject();
     }
 
     _vscrollbar = vscrollbar;
@@ -98,6 +99,8 @@ namespace nux
       scroll_left_connection_.disconnect();
       scroll_right_connection_.disconnect();
       hmouse_whell_connection_.disconnect();
+
+      _hscrollbar->UnParentObject();
     }
 
     _hscrollbar = hscrollbar;
