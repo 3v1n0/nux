@@ -39,14 +39,14 @@ namespace nux
     switch (layer_blend_mode)
       {
       case LAYER_BLEND_MODE_NORMAL:
-	return BlendNormalShader;
+  return BlendNormalShader;
         break;
       case LAYER_BLEND_MODE_OVERLAY:
-	return BlendOverlayShader;
-	break;
-	
+  return BlendOverlayShader;
+  break;
+  
       default:
-	return NULL;
+  return NULL;
       }
   }
 
@@ -110,6 +110,7 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetColorBlendOverTexProgram(Laye
     l += strlen(GetBlendModeString(layer_blend_mode)) + 1;
     
     char* shader_prog = new char[l];
+
     sprintf(shader_prog, PSString, GetBlendModeBlendFunc(layer_blend_mode),
 	    GetBlendModeString(layer_blend_mode));
     
@@ -173,6 +174,7 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetColorBlendOverTexProgram(Laye
     l += strlen(GetBlendModeString(layer_blend_mode)) + 1;
     
     char* shader_prog = new char[l];
+
     sprintf(shader_prog, PSString, GetBlendModeBlendFunc(layer_blend_mode),
 	    GetBlendModeString(layer_blend_mode));
     
@@ -235,6 +237,7 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetBlendTexTexProgram(LayerBlend
     l += strlen(GetBlendModeString(layer_blend_mode)) + 1;
     
     char* shader_prog = new char[l];
+
     sprintf(shader_prog, PSString, GetBlendModeBlendFunc(layer_blend_mode),
 	    GetBlendModeString(layer_blend_mode));
     
@@ -250,7 +253,55 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetBlendTexTexProgram(LayerBlend
     CHECKGL(glBindAttribLocation(blend_tex_tex_prog_[layer_blend_mode]->GetOpenGLID(), 0, "AVertex"));
     blend_tex_tex_prog_[layer_blend_mode]->Link();
     
-    return blend_tex_tex_prog_[layer_blend_mode];    
+    return blend_tex_tex_prog_[layer_blend_mode];
+}
+
+ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetBlendColorColorProgram(LayerBlendMode layer_blend_mode)
+{
+  if (blend_color_color_prog_[layer_blend_mode].IsValid())
+    return blend_color_color_prog_[layer_blend_mode];
+
+  ObjectPtr<IOpenGLVertexShader> vertexShader = _graphics_display.m_DeviceFactory->CreateVertexShader();
+  ObjectPtr<IOpenGLPixelShader> pixelShader = _graphics_display.m_DeviceFactory->CreatePixelShader();
+
+  std::string vertexCode = NUX_VERTEX_SHADER_HEADER
+  "uniform mat4 viewProjectionMatrix;                     \n\
+  attribute vec4 vertexPos;                               \n\
+  void main()                                             \n\
+  {                                                       \n\
+    gl_Position =  viewProjectionMatrix * vertexPos;      \n\
+  }";
+
+  std::string pixelCode = NUX_FRAGMENT_SHADER_HEADER
+  "uniform vec4 color0;                                   \n\
+  uniform vec4 color1;                                    \n\
+  %s                                                      \n\
+  void main()                                             \n\
+  {                                                       \n\
+    gl_FragColor = %s(color0.rgb, color1.rgb);            \n\
+  }";
+
+  int l = pixelCode.size();
+  l += strlen(GetBlendModeBlendFunc(layer_blend_mode));
+  l += strlen(GetBlendModeString(layer_blend_mode)) + 1;
+    
+  char* shader_prog = new char[l];
+  sprintf(shader_prog, pixelCode.c_str(), GetBlendModeBlendFunc(layer_blend_mode),
+  GetBlendModeString(layer_blend_mode));
+    
+  blend_color_color_prog_[layer_blend_mode] = _graphics_display.m_DeviceFactory->CreateShaderProgram();
+  vertexShader->SetShaderCode(vertexCode.c_str());
+  pixelShader->SetShaderCode(shader_prog, "#define SAMPLERTEX2D");
+    
+  delete [] shader_prog;
+    
+  blend_color_color_prog_[layer_blend_mode]->ClearShaderObjects();
+  blend_color_color_prog_[layer_blend_mode]->AddShaderObject(vertexShader);
+  blend_color_color_prog_[layer_blend_mode]->AddShaderObject(pixelShader);
+  CHECKGL(glBindAttribLocation(blend_color_color_prog_[layer_blend_mode]->GetOpenGLID(), 0, "vertexPos"));
+  blend_color_color_prog_[layer_blend_mode]->Link();
+    
+  return blend_color_color_prog_[layer_blend_mode];
 }
 
 void GraphicsEngine::QRP_GLSL_ColorBlendOverTex(int x, int y, int width, int height,
@@ -476,5 +527,47 @@ void GraphicsEngine::QRP_GLSL_TexBlendOverTex(int x, int y, int width, int heigh
   ShaderProg->End();
 }
 
+void GraphicsEngine::QRP_GLSL_ColorBlendOverColor(int x, int y, int width, int height,
+          const Color& color0, const Color& color1,
+          LayerBlendMode layer_blend_mode)
+{
+  if (!UsingGLSLCodePath())
+    return;
+
+  ObjectPtr <IOpenGLShaderProgram> shader_prog = GetBlendTexTexProgram(layer_blend_mode);
+
+  float fx = x, fy = y;
+  float vertexBuffer[] =
+  {
+      fx,          fy,          0.0f, 1.0f,
+      fx,          fy + height, 0.0f, 1.0f,
+      fx + width,  fy + height, 0.0f, 1.0f,
+      fx + width,  fy,          0.0f, 1.0f,
+  };
+
+  CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+  //CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
+  shader_prog->Begin();
+
+  int vertexLocation = shader_prog->GetAttributeLocation("vertexPos");
+  int colorLocation0 = shader_prog->GetUniformLocationARB("color0");
+  int colorLocation1 = shader_prog->GetUniformLocationARB("color1");
+
+  CHECKGL(glUniform4fARB(colorLocation0, color0.red, color0.green, color0.blue, color0.alpha ));
+  CHECKGL(glUniform4fARB(colorLocation1, color1.red, color1.green, color1.blue, color1.alpha ));
+
+  int VPMatrixLocation = shader_prog->GetUniformLocationARB("viewProjectionMatrix");
+  Matrix4 MVPMatrix = GetOpenGLModelViewProjectionMatrix();
+  shader_prog->SetUniformLocMatrix4fv((GLint) VPMatrixLocation, 1, false, (GLfloat*)&MVPMatrix.m);
+
+  CHECKGL(glEnableVertexAttribArrayARB(vertexLocation));
+  CHECKGL(glVertexAttribPointerARB((GLuint)vertexLocation, 4, GL_FLOAT, GL_FALSE, 48, vertexBuffer));
+
+  CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
+
+  CHECKGL(glDisableVertexAttribArrayARB(vertexLocation));
+
+  shader_prog->End();
 }
 
+}
