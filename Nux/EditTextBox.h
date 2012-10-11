@@ -49,21 +49,19 @@ namespace nux
       unsigned int keysym,
       const char* character);
 
-    void SetText(const char &Caption);
     void SetText(const char *Caption);
-    void SetText(const tstring &Caption);
-    void SetText(const NString &Caption);
+    void SetText(const std::string &Caption);
     const char *GetText() const;
     unsigned int GetTextSize() const
     {
-      return (unsigned int) m_Text.Length();
+      return (unsigned int) m_Text.length();
     }
 
     void SetDoubleValue(double d);
     void SetIntegerValue(int i);
 
     //! Return a caption string striping out the prefix and the suffix
-    virtual NString GetCleanText() const;
+    virtual std::string GetCleanText() const;
 
     void SetTextBackgroundColor(const Color &color);
     Color GetTextBackgroundColor() const;
@@ -127,10 +125,6 @@ namespace nux
     void RecvEndKeyFocus();
 
 
-    void SetPrefix(const tstring &p)
-    {
-      m_Prefix = p;
-    };
     void SetPrefix(const char *p)
     {
       m_Prefix = p;
@@ -139,19 +133,15 @@ namespace nux
     {
       m_Prefix = p;
     };
-    void SetPrefix(const NString &p)
+    void SetPrefix(const std::string &p)
     {
       m_Prefix = p;
     };
-    NString GetPrefix() const
+    std::string GetPrefix() const
     {
       return m_Prefix;
     };
 
-    void SetSuffix(const tstring &s)
-    {
-      m_Suffix = s;
-    };
     void SetSuffix(const char *s)
     {
       m_Suffix = s;
@@ -160,11 +150,11 @@ namespace nux
     {
       m_Suffix = s;
     };
-    void SetSuffix(const NString &s)
+    void SetSuffix(const std::string &s)
     {
       m_Suffix = s;
     };
-    NString Getsuffix() const
+    std::string Getsuffix() const
     {
       return m_Suffix;
     };
@@ -174,7 +164,7 @@ namespace nux
     sigc::signal< void, EditTextBox *, unsigned int > sigCharacter; // Emitted every time a character typed
     sigc::signal< void, EditTextBox * > sigEditChange; // Emitted every time a character typed
 
-    sigc::signal< void, EditTextBox *, const NString &> sigValidateKeyboardEntry;
+    sigc::signal< void, EditTextBox *, const std::string &> sigValidateKeyboardEntry;
     sigc::signal< void, EditTextBox * > sigValidateEntry;   // Emitted when the text is validated
     sigc::signal< void, EditTextBox * > sigSetText;     // Emitted when text is set with setCaption
     sigc::signal< void, EditTextBox * > sigEscapeKeyboardFocus;
@@ -195,7 +185,7 @@ namespace nux
 
     virtual long PostLayoutManagement(long LayoutResult);
 
-    NString m_Text;
+    std::string m_Text;
     HLayout *hlayout;
 
     Color m_BackgroundColor;
@@ -205,12 +195,12 @@ namespace nux
     Color m_CursorColor;
 
     BaseKeyboardHandler m_KeyboardHandler;
-    NString m_temporary_caption;
+    std::string m_temporary_caption;
     BaseKeyboardHandler::eKeyEntryType m_keytype;
 
     Validator *m_Validator;
-    NString m_Suffix;
-    NString m_Prefix;
+    std::string m_Suffix;
+    std::string m_Prefix;
 
     bool BlinkCursor;
     void BlinkCursorTimerInterrupt(void *v);

@@ -67,7 +67,7 @@ namespace nux
     //! A value defined by the user at construction time.
     int m_UserValue;
     BaseTexture* m_Icon;
-    NString m_Label;
+    std::string m_Label;
     bool m_IsActivated;
     MenuPage *m_Menu;
     bool m_Enable;

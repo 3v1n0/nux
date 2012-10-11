@@ -178,7 +178,6 @@ namespace nux
 
     UXTheme* theme = static_cast<UXTheme*>(user_data);
     PainterImage* pimage = new PainterImage;
-    std::memset(pimage, 0, sizeof(PainterImage));
 
     while (*name_cursor)
     {

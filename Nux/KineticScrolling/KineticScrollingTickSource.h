@@ -21,6 +21,7 @@
 #ifndef NUX_KS_TICK_SOURCE_H
 #define NUX_KS_TICK_SOURCE_H
 
+#include <stdint.h>
 #include <Nux/TimerProc.h>
 
 /*****

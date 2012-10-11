@@ -166,17 +166,17 @@ namespace nux
 //        if (m_iValue < m_IntValidator.GetMinimum())
 //        {
 //            m_iValue = m_IntValidator.GetMinimum();
-//            m_EditLine->setCaption(NString::Printf("%d", m_iValue));
+//            m_EditLine->setCaption(std::string::Printf("%d", m_iValue));
 //        }
 //        if (m_iValue > m_IntValidator.GetMaximum())
 //        {
 //            m_iValue = m_IntValidator.GetMaximum();
-//            m_EditLine->setCaption(NString::Printf("%d", m_iValue));
+//            m_EditLine->setCaption(std::string::Printf("%d", m_iValue));
 //        }
 //    }
 //    else
 //    {
-//        m_EditLine->setCaption(NString::Printf("%d", m_iValue));
+//        m_EditLine->setCaption(std::string::Printf("%d", m_iValue));
 //    }
   }
 

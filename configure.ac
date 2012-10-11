@@ -23,7 +23,7 @@ m4_define([nux_api_version], [3.0])
 # e.g.: december 5th, 2011 is: 20111205
 # To make more than one API change in a day, add a number to the date. Like 20111205.xx
 
-m4_define([nux_abi_version], [20121005.01])
+m4_define([nux_abi_version], [20121011.01])
 
 m4_define([nux_version],
           [nux_major_version.nux_minor_version.nux_micro_version])
@@ -341,7 +341,9 @@ dnl ==========================================================================
 if test "x$GCC" = "xyes"; then
   GCC_FLAGS="-g -Wall -Wextra -Werror -std=c++0x"
 fi
-AC_SUBST(GCC_FLAGS)
+
+# gcc flags for building the tests.
+GCC_TESTS_FLAGS="-g -Wall -Wextra -std=c++0x"
 
 # use strict compiler flags only on development releases
 m4_define([maintainer_mode_default], [m4_if(m4_eval(nux_micro_version % 2), [1], [yes], [no])])
@@ -357,7 +359,8 @@ AS_IF([test "x$enable_maintainer_mode" = "xyes" && test "x$GCC" = "xyes"],
       ]
 )
 
-# this enables lots of useful debugging output in Nux
+# This enables lots of useful debugging output in Nux.
+# In debug mode, relax the number of build failures due to -Werror.
 AC_ARG_ENABLE([debug],
               [AC_HELP_STRING([--enable-debug=@<:@no/yes@:>@],
               [Enable Nux debugging @<:@default=no@:>@])],
@@ -366,9 +369,12 @@ AC_ARG_ENABLE([debug],
 AS_IF([test "x$enable_debug" = "xyes"],
       [
          MAINTAINER_CFLAGS+=" -DNUX_DEBUG"
+         GCC_FLAGS="-g -Wall -Wextra -std=c++0x"
       ]
 )
 
+AC_SUBST(GCC_FLAGS)
+AC_SUBST(GCC_TESTS_FLAGS)
 AC_SUBST(MAINTAINER_CFLAGS)
 
 # this enables lots of useful debugging output in Nux

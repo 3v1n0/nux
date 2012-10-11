@@ -190,9 +190,9 @@ namespace nux
     // Knowing the width of a character or a string can be useful if you
     // want your UI to look good at all.
     int GetCharWidth(const char &c) const;
-    int GetStringWidth(const NString &str) const;
+    int GetStringWidth(const std::string &str) const;
     int GetCharStringWidth(const char *str) const;
-    int GetStringWidth(const NString &str, int num_char_to_compute) const;
+    int GetStringWidth(const std::string &str, int num_char_to_compute) const;
     int GetCharStringWidth(const char *str, int num_char_to_compute) const;
     int GetFontHeight();
 
@@ -211,7 +211,7 @@ namespace nux
     //          If the function succeeds, it returns S_OK.
     //          If the function fails, it returns an HRESULT.
     //          The return value can be tested with the SUCCEEDED and FAILED macros.
-    bool CursorPosToX(const NString &Str,
+    bool CursorPosToX(const std::string &Str,
                        int icp,
                        bool fTrailing,
                        int *pX);
@@ -233,7 +233,7 @@ namespace nux
     //          If the function is successful, it returns S_OK.
     //          If the function fails, it returns an HRESULT.
     //          The return value can be tested with the SUCCEEDED and FAILED macros.
-    bool XToCursorPosition(const NString &Str,
+    bool XToCursorPosition(const std::string &Str,
                             int iX,
                             unsigned int FirstVisibleCharIndex,
                             int *piCh,
