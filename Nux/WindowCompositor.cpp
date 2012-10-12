@@ -27,7 +27,9 @@
 #include "NuxGraphics/GLError.h"
 #include "WindowThread.h"
 #include "BaseWindow.h"
+#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
 #include "MenuPage.h"
+ #endif
 #include "PaintLayer.h"
 #include "Painter.h"
 

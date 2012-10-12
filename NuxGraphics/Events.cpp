@@ -88,11 +88,14 @@ namespace nux
 #endif
 
 #if defined(NUX_OS_LINUX)
+#if defined(NUX_OS_ANDROID)
+#else
     x11_keycode = 0;
     x11_keysym = 0;
     x11_timestamp = 0;
     x11_window = 0;
     x11_key_state = 0;
+#endif
 #endif
 
     //Application = 0;
@@ -108,9 +111,12 @@ namespace nux
 #endif
 
 #if defined(NUX_OS_LINUX)
+#if defined(NUX_OS_ANDROID)
+#else
     x11_keycode = 0;
     x11_keysym = 0;
     x11_key_state = 0;
+#endif
 #endif
 
     key_repeat_count = 0;
@@ -197,7 +203,7 @@ namespace nux
     return win32_keysym;
 #endif
 
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX) && !defined(NUX_OS_ANDROID))
     return x11_keysym;
 #endif
 

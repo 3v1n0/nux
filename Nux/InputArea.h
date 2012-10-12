@@ -173,7 +173,7 @@ namespace nux
 
     bool mouse_in_;
 
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX) && !defined(NUX_OS_ANDROID))
     void HandleDndEnter() {ProcessDndEnter();}
     void HandleDndLeave() {ProcessDndLeave();}
 #endif
@@ -207,7 +207,7 @@ namespace nux
     bool accept_key_nav_focus_on_mouse_enter_;
 
 
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX) && !defined(NUX_OS_ANDROID))
     // DnD support
     // Rather than being implemented with signals, DND support is implemented with protected virtual function.
     // This ensure that a class and it subclass don't process the same event more than once!

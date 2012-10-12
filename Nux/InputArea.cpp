@@ -127,7 +127,7 @@ logging::Logger logger("nux.inputarea");
 
   void InputArea::HandleDndMove(Event &event)
   {
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX) && !defined(NUX_OS_ANDROID))
     std::list<char *> mimes;
 
     mimes = GetWindowThread()->GetGraphicsDisplay().GetDndMimeTypes();
@@ -141,12 +141,12 @@ logging::Logger logger("nux.inputarea");
 
   void InputArea::HandleDndDrop(Event &event)
   {
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX) && !defined(NUX_OS_ANDROID))
     ProcessDndDrop(event.x, event.y);
 #endif
   }
 
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX) && !defined(NUX_OS_ANDROID))
   void InputArea::SendDndStatus(bool accept, DndAction action, Geometry region)
   {
     GetWindowThread()->GetGraphicsDisplay().SendDndStatus(accept, action, Rect(region.x, region.y, region.width, region.height));

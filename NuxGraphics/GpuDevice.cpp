@@ -284,6 +284,13 @@ namespace nux
     int req_opengl_major,
     int req_opengl_minor,
     bool opengl_es_20)
+#elif defined(NUX_OS_ANDROID)
+  GpuDevice::GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
+    EGLDisplay display,
+    EGLConfig fb_config,
+    EGLContext &opengl_rendering_context,
+    int req_opengl_major,
+    int req_opengl_minor)
 #elif defined(NUX_OS_LINUX)
 #ifdef NUX_OPENGLES_20
   GpuDevice::GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
@@ -416,6 +423,8 @@ namespace nux
 #if defined(NUX_OS_WINDOWS)
     bool opengl_es_context_created = false;
     if (((opengl_major_ >= 3) && (req_opengl_major >= 3)) || (opengl_major_ >= 3) || opengl_es_20)
+#elif defined(NUX_OS_ANDROID)
+    if (((_opengl_major >= 3) && (req_opengl_major >= 3)) || (_opengl_major >= 3))
 #elif defined(NUX_OS_LINUX)
     //bool opengl_es_context_created = false;
     if (has_glx_13_support &&
@@ -455,6 +464,7 @@ namespace nux
         }
       }
 
+#if !defined(NUX_OS_ANDROID)
       if (opengl_es_20)
       {
 #if defined(NUX_OS_WINDOWS)
@@ -503,7 +513,9 @@ namespace nux
         }*/
 #endif
       }
-      else if (requested_profile_is_supported)
+      else
+#endif
+      if (requested_profile_is_supported)
       {
         int profile_mask = 0;
         int profile_value = 0;

@@ -29,6 +29,10 @@
 
 #ifdef _WIN32
     #define NUX_OS_WINDOWS
+#elif __arm__
+    #define NUX_OS_ANDROID
+    #define NUX_OS_LINUX
+    #define NUX_OS_ARM
 #elif __linux__
     #define NUX_OS_LINUX
 #elif __APPLE__

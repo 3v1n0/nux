@@ -27,7 +27,9 @@
 #include "VSplitter.h"
 #include "HSplitter.h"
 #include "BaseWindow.h"
+#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
 #include "MenuPage.h"
+#endif
 
 #ifdef NUX_GESTURES_SUPPORT
 #include "NuxGraphics/GestureEvent.h"

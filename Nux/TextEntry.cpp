@@ -30,6 +30,7 @@
 
 #if defined(NUX_OS_LINUX)
 #include "TextEntryComposeSeqs.h"
+#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
 #include <X11/cursorfont.h>
 #include "InputMethodIBus.h"
 #endif
@@ -151,7 +152,7 @@ namespace nux
     , font_dpi_(96.0)
     , _text_color(color::White)
     , align_(CairoGraphics::ALIGN_LEFT)
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
     , caret_cursor_(None)
     , ime_(new IBusIMEContext(this))
 #endif
@@ -198,7 +199,7 @@ namespace nux
     if (_texture2D)
       _texture2D->UnReference();
 
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
     if (ime_)
       delete ime_;
 #endif
@@ -241,7 +242,7 @@ namespace nux
     if (event_type == NUX_MOUSE_PRESSED && (button == 2 || button == 3))
     {
       SetCursor(index);
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
       if (button == 2)
         PastePrimaryClipboard();
 #endif
@@ -301,7 +302,7 @@ namespace nux
     const char*      character ,   /*character*/
     unsigned short   /* keyCount */      /*key repeat count*/)
   {
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
     if (im_running())
     {
       // FIXME Have to get the x11_keycode for ibus-hangul/korean input
@@ -318,7 +319,7 @@ namespace nux
     if (event_type == NUX_KEYUP)
       return;
 
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
     if (IsInCompositionMode() || IsInitialCompositionKeySym(keysym))
     {
       if (HandleComposition(keysym))
@@ -525,7 +526,7 @@ namespace nux
 
   void TextEntry::RecvMouseEnter(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
     if (caret_cursor_ == None)
     {
       Display* display = nux::GetGraphicsDisplay()->GetX11Display();
@@ -542,7 +543,7 @@ namespace nux
 
   void TextEntry::RecvMouseLeave(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
     if (caret_cursor_ != None)
     {
       Display* display = nux::GetGraphicsDisplay()->GetX11Display();
@@ -676,7 +677,7 @@ namespace nux
 
   bool TextEntry::IsInitialCompositionKeySym(unsigned long keysym) const
   {
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
     /* Checks if a keysym is a valid initial composition key */
     if (keysym == XK_Multi_key ||
         (keysym >= XK_dead_grave && keysym <= XK_dead_currency) ||
@@ -690,7 +691,7 @@ namespace nux
 
   bool TextEntry::HandleComposition(unsigned long keysym)
   {
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
     bool composition_mode = IsInCompositionMode();
 
     if (composition_mode && IsModifierKey(keysym))
@@ -860,7 +861,7 @@ namespace nux
       if (!readonly_ /*&& im_context_*/)
       {
         need_im_reset_ = true;
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
         ime_->Focus();
 #endif
         //gtk_im_context_focus_in(im_context_);
@@ -882,7 +883,7 @@ namespace nux
       if (!readonly_ /*&& im_context_*/)
       {
         need_im_reset_ = true;
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
         ime_->Blur();
 #endif
         //gtk_im_context_focus_out(im_context_);
@@ -1730,7 +1731,7 @@ namespace nux
 
   bool TextEntry::im_running()
   {
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
     return ime_->IsConnected();
 #else
     return false;
@@ -1792,7 +1793,7 @@ namespace nux
 //     }
   }
 
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
   void TextEntry::PastePrimaryClipboard()
   {
     // TODO
@@ -2334,7 +2335,7 @@ namespace nux
     unsigned int eventType = event.type;
     unsigned int key_sym = event.GetKeySym();
 
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
     if (im_running())
     {
       // Always allow IBus hotkey events

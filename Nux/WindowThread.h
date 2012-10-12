@@ -216,6 +216,8 @@ namespace nux
 
 #if defined(NUX_OS_WINDOWS)
     bool ProcessForeignEvent(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, void *data);
+#elif defined(NUX_OS_ANDROID)
+    bool ProcessForeignEvent();
 #elif defined(NUX_OS_LINUX)
     bool ProcessForeignEvent(XEvent *event, void *data);
 #endif
@@ -357,6 +359,7 @@ namespace nux
         This function is called when Nux is embedded. \sa IsEmbeddedWindow.
     */
     virtual bool ThreadCtor(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext);
+#elif defined(NUX_OS_ANDROID)
 #elif defined(NUX_OS_LINUX)
 #ifdef NUX_OPENGLES_20
     /*!
@@ -690,6 +693,10 @@ namespace nux
 
 #if defined(NUX_OS_WINDOWS)
     friend WindowThread *CreateFromForeignWindow(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext,
+        ThreadUserInitFunc UserInitFunc,
+        void *InitData);
+#elif defined(NUX_OS_ANDROID)
+    friend WindowThread *CreateFromForeignWindow (EGLDisplay disp, EGLContext OpenGLContext,
         ThreadUserInitFunc UserInitFunc,
         void *InitData);
 #elif defined(NUX_OS_LINUX)

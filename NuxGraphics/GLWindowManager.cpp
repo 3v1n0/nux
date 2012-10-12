@@ -130,6 +130,7 @@ namespace nux
 
     return glwindow;
   }
+#elif defined(NUX_OS_ANDROID)
 #elif defined(NUX_OS_LINUX)
 #ifdef NUX_OPENGLES_20
   GraphicsDisplay *DisplayAccessController::CreateFromForeignWindow(Display *X11Display, Window X11Window, EGLContext OpenGLContext)

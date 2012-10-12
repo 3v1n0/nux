@@ -29,7 +29,7 @@
 #include "Logger.h"
 #include "LoggingWriter.h"
 
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX) && not defined(NUX_OS_ANDROID))
 #include <execinfo.h>
 #endif
 
@@ -386,7 +386,7 @@ Level get_logging_level(std::string level)
   return Warning;
 }
 
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX) && not defined(NUX_OS_ANDROID))
 std::string Backtrace(int levels)
 {
   std::ostringstream sout;

@@ -97,7 +97,7 @@ logging::Logger logger("nux.windows.thread");
     main_loop_glib_context_   = 0;
 #endif
 
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX) && !defined(NUX_OS_ANDROID))
     x11display_ = NULL;
     ownx11display_ = false;
 #endif
@@ -125,7 +125,7 @@ logging::Logger logger("nux.windows.thread");
     delete _Timelines;
     delete async_wake_up_signal_;
 
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX) && !defined(NUX_OS_ANDROID))
     if (x11display_ && ownx11display_)
     {
       XCloseDisplay(x11display_);
@@ -941,6 +941,7 @@ logging::Logger logger("nux.windows.thread");
 
   bool WindowThread::ProcessTimelines(gint64 micro_secs)
   {
+#if (defined(NUX_OS_LINUX) && !defined(NUX_OS_ANDROID))    
     // go through our timelines and tick them
     // return true if we still have active timelines
 
@@ -981,6 +982,8 @@ logging::Logger logger("nux.windows.thread");
 
     // return if we have any timelines left
     return (_Timelines->size() != 0);
+#endif
+    return false;    
   }
 
   void WindowThread::EnableMouseKeyboardInput()
@@ -1140,6 +1143,7 @@ logging::Logger logger("nux.windows.thread");
 
     return true;
   }
+#elif defined(NUX_OS_ANDROID)
 #elif defined(NUX_OS_LINUX)
 #ifdef NUX_OPENGLES_20
   bool WindowThread::ThreadCtor(Display *X11Display, Window X11Window, EGLContext OpenGLContext)
@@ -1320,6 +1324,8 @@ logging::Logger logger("nux.windows.thread");
 
 #if defined(NUX_OS_WINDOWS)
   bool WindowThread::ProcessForeignEvent(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, void *data)
+#elif defined(NUX_OS_ANDROID)
+  bool WindowThread::ProcessForeignEvent()
 #elif defined(NUX_OS_LINUX)
   bool WindowThread::ProcessForeignEvent(XEvent *xevent, void * /* data */)
 #endif
@@ -1333,6 +1339,7 @@ logging::Logger logger("nux.windows.thread");
     memset(&nux_event, 0, sizeof(Event));
 #if defined(NUX_OS_WINDOWS)
     graphics_display_->ProcessForeignWin32Event(hWnd, msg, wParam, lParam, &nux_event);
+#elif defined(NUX_OS_ANDROID)
 #elif defined(NUX_OS_LINUX)
     graphics_display_->ProcessForeignX11Event(xevent, &nux_event);
 #endif
