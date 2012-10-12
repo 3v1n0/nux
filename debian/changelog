@@ -1,3 +1,11 @@
+nux (3.10.0-0ubuntu1) UNRELEASED; urgency=low
+
+  * New upstream release.
+    - Remove a massive bottleneck, where almost all the CPU time was spent
+      loading a black image on texture creation. (LP: #1064834)
+
+ -- Timo Jyrinki <timo-jyrinki@ubuntu.com>  Fri, 12 Oct 2012 15:24:59 +0300
+
 nux (3.8.0-0ubuntu1) quantal-proposed; urgency=low
 
   * New upstream release.
