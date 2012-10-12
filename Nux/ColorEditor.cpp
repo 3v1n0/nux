@@ -131,7 +131,7 @@ namespace nux
     m_bDialogRunning = false;
   }
 
-  void ColorDialogProxy::RecvDialogCancel(ColorEditor */* coloreditor */)
+  void ColorDialogProxy::RecvDialogCancel(ColorEditor* /* coloreditor */)
   {
     m_RGBColor = m_PreviousRGBColor;
     m_bDialogChange = true;
