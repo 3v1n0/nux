@@ -176,7 +176,7 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetColorBlendOverTexProgram(Laye
 }
 
 void GraphicsEngine::QRP_GLSL_ColorLayerOverTexture(int x, int y, int width, int height,
-  ObjectPtr<IOpenGLBaseTexture> bkg_device_texture, TexCoordXForm& texxform, const Color& bkg_color,
+  ObjectPtr<IOpenGLBaseTexture> bkg_device_texture, TexCoordXForm& bkg_texxform, const Color& bkg_color,
   const Color& frg_color,
   LayerBlendMode layer_blend_mode)
 {
@@ -186,14 +186,14 @@ void GraphicsEngine::QRP_GLSL_ColorLayerOverTexture(int x, int y, int width, int
   ObjectPtr<IOpenGLShaderProgram> ShaderProg = GetColorBlendOverTexProgram(layer_blend_mode);
 
   m_quad_tex_stats++;
-  QRP_Compute_Texture_Coord(width, height, bkg_device_texture, texxform);
+  QRP_Compute_Texture_Coord(width, height, bkg_device_texture, bkg_texxform);
   float fx = x, fy = y;
   float vtx_buffer[] =
   {
-    fx,          fy,          0.0f, 1.0f, texxform.u0, texxform.v0, 0, 0,
-    fx,          fy + height, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 0,
-    fx + width,  fy + height, 0.0f, 1.0f, texxform.u1, texxform.v1, 0, 0,
-    fx + width,  fy,          0.0f, 1.0f, texxform.u1, texxform.v0, 0, 0,
+    fx,          fy,          0.0f, 1.0f, bkg_texxform.u0, bkg_texxform.v0, 0, 0,
+    fx,          fy + height, 0.0f, 1.0f, bkg_texxform.u0, bkg_texxform.v1, 0, 0,
+    fx + width,  fy + height, 0.0f, 1.0f, bkg_texxform.u1, bkg_texxform.v1, 0, 0,
+    fx + width,  fy,          0.0f, 1.0f, bkg_texxform.u1, bkg_texxform.v0, 0, 0,
   };
 
   CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
@@ -308,7 +308,7 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetTextureLayerOverColorProgram(
 
 void GraphicsEngine::QRP_GLSL_TextureLayerOverColor(int x, int y, int width, int height,
   const Color& bkg_color,
-  ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& texxform0, const Color& frg_color,
+  ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& frg_texxform, const Color& frg_color,
   LayerBlendMode layer_blend_mode)
 {
   if (!UsingGLSLCodePath())
@@ -317,14 +317,14 @@ void GraphicsEngine::QRP_GLSL_TextureLayerOverColor(int x, int y, int width, int
   ObjectPtr<IOpenGLShaderProgram> ShaderProg = GetTextureLayerOverColorProgram(layer_blend_mode);
 
   m_quad_tex_stats++;
-  QRP_Compute_Texture_Coord(width, height, frg_device_texture, texxform0);
+  QRP_Compute_Texture_Coord(width, height, frg_device_texture, frg_texxform);
   float fx = x, fy = y;
   float vtx_buffer[] =
   {
-    fx,          fy,          0.0f, 1.0f, texxform0.u0, texxform0.v0, 0, 0,
-    fx,          fy + height, 0.0f, 1.0f, texxform0.u0, texxform0.v1, 0, 0,
-    fx + width,  fy + height, 0.0f, 1.0f, texxform0.u1, texxform0.v1, 0, 0,
-    fx + width,  fy,          0.0f, 1.0f, texxform0.u1, texxform0.v0, 0, 0,
+    fx,          fy,          0.0f, 1.0f, frg_texxform.u0, frg_texxform.v0, 0, 0,
+    fx,          fy + height, 0.0f, 1.0f, frg_texxform.u0, frg_texxform.v1, 0, 0,
+    fx + width,  fy + height, 0.0f, 1.0f, frg_texxform.u1, frg_texxform.v1, 0, 0,
+    fx + width,  fy,          0.0f, 1.0f, frg_texxform.u1, frg_texxform.v0, 0, 0,
   };
 
   CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
@@ -547,24 +547,24 @@ ObjectPtr<IOpenGLShaderProgram> GraphicsEngine::GetTextureLayerOverTextureProgra
 }
 
 void GraphicsEngine::QRP_GLSL_TextureLayerOverTexture(int x, int y, int width, int height,
-  ObjectPtr<IOpenGLBaseTexture> bkg_device_texture, TexCoordXForm& texxform0, const Color& bkg_color,
-  ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& texxform1, const Color& frg_color,
+  ObjectPtr<IOpenGLBaseTexture> bkg_device_texture, TexCoordXForm& bkg_texxform, const Color& bkg_color,
+  ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& frg_texxform, const Color& frg_color,
   LayerBlendMode layer_blend_mode)
 {
   if (!UsingGLSLCodePath())
     return;
 
   ObjectPtr <IOpenGLShaderProgram> ShaderProg = GetTextureLayerOverTextureProgram(layer_blend_mode);
-  QRP_Compute_Texture_Coord(width, height, bkg_device_texture, texxform0);
-  QRP_Compute_Texture_Coord(width, height, frg_device_texture, texxform1);
+  QRP_Compute_Texture_Coord(width, height, bkg_device_texture, bkg_texxform);
+  QRP_Compute_Texture_Coord(width, height, frg_device_texture, frg_texxform);
 
   float fx = x, fy = y;
   float vtx_buffer[] =
   {
-    fx,          fy,          0.0f, 1.0f, texxform0.u0, texxform0.v0, 0.0f, 1.0f, texxform1.u0, texxform1.v0, 0.0f, 1.0f,
-    fx,          fy + height, 0.0f, 1.0f, texxform0.u0, texxform0.v1, 0.0f, 1.0f, texxform1.u0, texxform1.v1, 0.0f, 1.0f,
-    fx + width,  fy + height, 0.0f, 1.0f, texxform0.u1, texxform0.v1, 0.0f, 1.0f, texxform1.u1, texxform1.v1, 0.0f, 1.0f,
-    fx + width,  fy,          0.0f, 1.0f, texxform0.u1, texxform0.v0, 0.0f, 1.0f, texxform1.u1, texxform1.v0, 0.0f, 1.0f,
+    fx,          fy,          0.0f, 1.0f, bkg_texxform.u0, bkg_texxform.v0, 0.0f, 1.0f, frg_texxform.u0, frg_texxform.v0, 0.0f, 1.0f,
+    fx,          fy + height, 0.0f, 1.0f, bkg_texxform.u0, bkg_texxform.v1, 0.0f, 1.0f, frg_texxform.u0, frg_texxform.v1, 0.0f, 1.0f,
+    fx + width,  fy + height, 0.0f, 1.0f, bkg_texxform.u1, bkg_texxform.v1, 0.0f, 1.0f, frg_texxform.u1, frg_texxform.v1, 0.0f, 1.0f,
+    fx + width,  fy,          0.0f, 1.0f, bkg_texxform.u1, bkg_texxform.v0, 0.0f, 1.0f, frg_texxform.u1, frg_texxform.v0, 0.0f, 1.0f,
   };
 
   CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));

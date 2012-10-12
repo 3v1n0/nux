@@ -785,31 +785,31 @@ namespace nux
     */
     int BlendStackDepth();
 
-    //! Blends a color over a texture layer.
+    //! Blends a color layer over a texture.
     /*!
         Blends a color over a texture layer.
 
-        @param device_texture Background layer.
-        @param foreground_color Foreground layer.
+        @param bkg_device_texture Background texture.
+        @param frg_color Foreground color.
     */
     void QRP_GLSL_ColorLayerOverTexture(int x, int y, int width, int height,
-          ObjectPtr<IOpenGLBaseTexture> bkg_device_texture, TexCoordXForm& texxform, const Color& color0,
-          const Color& foreground_color,
-          LayerBlendMode layer_blend_mode);
+      ObjectPtr<IOpenGLBaseTexture> bkg_device_texture, TexCoordXForm& bkg_texxform, const Color& bkg_color,
+      const Color& frg_color,
+      LayerBlendMode layer_blend_mode);
 
-    //! Blends a texture over a color layer.
+    //! Blends a texture layer over a color.
     /*!
         Blends a texture over a color layer.
 
-        @param background_color Background layer.
-        @param device_texture Foreground layer.
+        @param bkg_color Background color.
+        @param frg_device_texture Foreground texture.
     */
     void QRP_GLSL_TextureLayerOverColor(int x, int y, int width, int height,
-          const Color& background_color,
-          ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& texxform0, const Color& color0,
-          LayerBlendMode layer_blend_mode);
+      const Color& bkg_color,
+      ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& frg_texxform, const Color& frg_color,
+      LayerBlendMode layer_blend_mode);
 
-    //! Uses a layer blending operation to render two textures.
+    //! Blends a texture layer over a texture.
     /*!
         Uses a layer blending operation to render two textures.
 
@@ -817,20 +817,20 @@ namespace nux
         @param frg_device_texture Foreground texture layer.
     */
     void QRP_GLSL_TextureLayerOverTexture(int x, int y, int width, int height,
-          ObjectPtr<IOpenGLBaseTexture> bkg_device_texture, TexCoordXForm& texxform0, const Color& color0,
-          ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& texxform1, const Color& color1,
-          LayerBlendMode layer_blend_mode);
+      ObjectPtr<IOpenGLBaseTexture> bkg_device_texture, TexCoordXForm& bkg_texxform, const Color& bkg_color,
+      ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& frg_texxform, const Color& frg_color,
+      LayerBlendMode layer_blend_mode);
 
-    //! Uses a layer blending operation to render two colors.
+    //! Blends a color layer over a color.
     /*!
         Uses a layer blending operation to render two colors.
         @param bkg_color Background color layer.
         @param frg_color Foreground color layer.
     */
     void QRP_GLSL_ColorLayerOverColor(int x, int y, int width, int height,
-          const Color& bkg_color,
-          const Color& frg_color,
-          LayerBlendMode layer_blend_mode);
+      const Color& bkg_color,
+      const Color& frg_color,
+      LayerBlendMode layer_blend_mode);
 
   private:
 
