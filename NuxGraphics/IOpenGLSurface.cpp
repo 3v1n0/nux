@@ -525,8 +525,6 @@ namespace nux
     nuxAssert( texheight > 0 ); // Should never happen
     nuxAssert( size > 0 ); // Should never happen
 
-    BYTE *DummyBuffer = (BYTE *) calloc(size, sizeof(BYTE));
-
     CHECKGL(glPixelStorei(GL_UNPACK_ALIGNMENT, MemAlignment));
 
 #ifndef NUX_OPENGLES_20
@@ -546,7 +544,7 @@ namespace nux
           texheight,
           0,                          // border
           size,                       // image Size
-          DummyBuffer                           // data
+          NULL                        // data
         );
         CHECKGL_MSG(glCompressedTexImage2DARB);
       }
@@ -580,7 +578,7 @@ namespace nux
           0,                          // border
           GPixelFormats[_BaseTexture->_PixelFormat].Format,
           GPixelFormats[_BaseTexture->_PixelFormat].type,
-          DummyBuffer);
+          NULL);
         CHECKGL_MSG(glTexImage2D);
 #ifndef NUX_OPENGLES_20
       }
@@ -601,9 +599,6 @@ namespace nux
       }
     }
 #endif
-
-    free(DummyBuffer);
-
 
     //    { //[DEBUGGING - Red Texture]
     //        // This is going to put some red in the texture.
