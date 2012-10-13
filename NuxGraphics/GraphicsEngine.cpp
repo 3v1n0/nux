@@ -195,19 +195,18 @@ namespace nux
     SetScissor(0, 0, _graphics_display.GetWindowWidth(), _graphics_display.GetWindowHeight());
     EnableScissoring(true);
 
-
-    bool opengl_14_support = true;
-
-    if ((_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion() == 1) &&
-      (_graphics_display.GetGpuDevice()->GetOpenGLMinorVersion() < 4))
-    {
-      // OpenGL version is less than OpenGL 1.4
-      opengl_14_support = false;
-    }
-
     if (create_rendering_data)
     {
 #ifndef NUX_OPENGLES_20
+      bool opengl_14_support = true;
+
+      if ((_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion() == 1) &&
+        (_graphics_display.GetGpuDevice()->GetOpenGLMinorVersion() < 4))
+      {
+        // OpenGL version is less than OpenGL 1.4
+        opengl_14_support = false;
+      }
+            
       if (_graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader() &&
         _graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Vertex_Program() &&
         opengl_14_support)

@@ -19,10 +19,23 @@ libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS= \
   $(MAINTAINER_CFLAGS) \
   $(GEIS_CFLAGS)
 
+if ARM_BUILD
+libnux_graphics_@NUX_API_VERSION@_la_LIBADD = \
+  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
+  $(NUX_GRAPHICS_LIBS) \
+  -L/usr/lib/arm-linux-gnueabi \
+  -L/usr/lib/arm-linux-gnueabi/libhybris-egl \
+  -lis \
+  -lsf \
+  -lhybris_ics \
+  -lEGL \
+  -lGLESv2
+else
 libnux_graphics_@NUX_API_VERSION@_la_LIBADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
   $(NUX_GRAPHICS_LIBS) \
   $(GEIS_LIBS)
+endif
 
 libnux_graphics_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
@@ -34,7 +47,6 @@ source_h = \
   $(srcdir)/FontTexture.h \
   $(srcdir)/FontRenderer.h \
   $(srcdir)/GdkGraphics.h \
-  $(srcdir)/GraphicsDisplayX11.h \
   $(srcdir)/Gfx_Interface.h \
   $(srcdir)/GLDeviceFrameBufferObject.h \
   $(srcdir)/GLDeviceObjects.h \
@@ -63,7 +75,6 @@ source_h = \
   $(srcdir)/MeshFileLoader-OBJ.h \
   $(srcdir)/ImageSurface.h \
   $(srcdir)/IOpenGLAnimatedTexture.h \
-  $(srcdir)/IOpenGLAsmShader.h \
   $(srcdir)/IOpenGLBaseTexture.h \
   $(srcdir)/IOpenGLCubeTexture.h \
   $(srcdir)/IOpenGLFrameBufferObject.h \
@@ -91,6 +102,16 @@ source_h = \
   $(srcdir)/RunTimeStats.h \
   $(srcdir)/VirtualKeyCodesX11.h \
   $(srcdir)/XInputWindow.h
+
+if ARM_BUILD
+source_h += \
+  $(srcdir)/GraphicsDisplayAndroid.h \
+  $(srcdir)/SystemEventSource.h
+else
+source_h += \
+  $(srcdir)/GraphicsDisplayX11.h \
+  $(srcdir)/IOpenGLAsmShader.h
+endif
 
 if HAVE_GEIS
 source_h += \
@@ -127,13 +148,11 @@ source_cpp = \
   $(srcdir)/GpuDeviceShader.cpp \
   $(srcdir)/GpuDeviceTexture.cpp \
   $(srcdir)/GpuDeviceVertex.cpp \
-  $(srcdir)/GraphicsDisplayX11.cpp \
   $(srcdir)/GraphicsEngine.cpp \
   $(srcdir)/MeshData.cpp \
   $(srcdir)/MeshFileLoader-OBJ.cpp \
   $(srcdir)/ImageSurface.cpp \
   $(srcdir)/IOpenGLAnimatedTexture.cpp \
-  $(srcdir)/IOpenGLAsmShader.cpp \
   $(srcdir)/IOpenGLBaseTexture.cpp \
   $(srcdir)/IOpenGLCubeTexture.cpp \
   $(srcdir)/IOpenGLFrameBufferObject.cpp \
@@ -159,10 +178,22 @@ source_cpp = \
   $(srcdir)/RunTimeStats.cpp \
   $(srcdir)/XInputWindow.cpp
 
+if ARM_BUILD
+source_cpp += \
+  $(srcdir)/GraphicsDisplayAndroid.cpp \
+  $(srcdir)/SystemEventSource.cpp \
+  $(srcdir)/SystemEventSourceAndroid.cpp
+else
+source_cpp += \
+  $(srcdir)/GraphicsDisplayX11.cpp \
+  $(srcdir)/IOpenGLAsmShader.cpp
+endif
+
 if HAVE_GEIS
 source_cpp += \
   $(srcdir)/GestureEvent.cpp
 endif
+
 
 libnux_graphics_@NUX_API_VERSION@_la_SOURCES = \
   $(source_cpp) \
