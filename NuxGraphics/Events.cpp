@@ -88,7 +88,7 @@ namespace nux
 #endif
 
 #if defined(NUX_OS_LINUX)
-#if defined(NUX_OS_ANDROID)
+#if defined(NUX_ARCH_ARM)
 #else
     x11_keycode = 0;
     x11_keysym = 0;
@@ -111,7 +111,7 @@ namespace nux
 #endif
 
 #if defined(NUX_OS_LINUX)
-#if defined(NUX_OS_ANDROID)
+#if defined(NUX_ARCH_ARM)
 #else
     x11_keycode = 0;
     x11_keysym = 0;
@@ -203,7 +203,7 @@ namespace nux
     return win32_keysym;
 #endif
 
-#if (defined(NUX_OS_LINUX) && !defined(NUX_OS_ANDROID))
+#if (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
     return x11_keysym;
 #endif
 

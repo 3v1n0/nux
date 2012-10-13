@@ -167,7 +167,7 @@ namespace nux
                                         HGLRC OpenGLRenderingContext,
                                         ThreadUserInitFunc user_init_func,
                                         void *data);
-#elif defined(NUX_OS_ANDROID)
+#elif defined(NUX_ARCH_ARM)
 #elif defined(NUX_OS_LINUX)
   //! Create a main graphics thread. This thread has a window and no parent window.
 #ifdef NUX_OPENGLES_20

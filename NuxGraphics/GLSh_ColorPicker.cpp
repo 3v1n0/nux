@@ -252,7 +252,7 @@ GLSh_ColorPicker::GLSh_ColorPicker(color::Channel color_channel)
   {
     const char* FrgShaderCode;
 
-#ifdef NUX_OS_ANDROID
+#ifdef NUX_ARCH_ARM
     if (GetGraphicsDisplay()->GetGraphicsEngine()->UsingGLSLCodePath())
 #else
     if (GetGraphicsDisplay()->GetGraphicsEngine()->UsingGLSLCodePath() && (GetGraphicsDisplay()->GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL))
@@ -389,7 +389,7 @@ GLSh_ColorPicker::GLSh_ColorPicker(color::Channel color_channel)
       fx + width,  fy,          0.0f, 1.0f,
     };
 
-#ifdef NUX_OS_ANDROID
+#ifdef NUX_ARCH_ARM
     if (GetGraphicsDisplay()->GetGraphicsEngine()->UsingGLSLCodePath())
 #else
     if (GetGraphicsDisplay()->GetGraphicsEngine()->UsingGLSLCodePath() && (GetGraphicsDisplay()->GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL))

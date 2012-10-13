@@ -27,7 +27,7 @@
 
 #if defined(NUX_OS_WINDOWS)
   #include "VirtualKeyCodes.h"
-#elif defined(NUX_OS_ANDROID)
+#elif defined(NUX_ARCH_ARM)
   #include "VirtualKeyCodes.h"
 #elif defined(NUX_OS_LINUX)
   #include "VirtualKeyCodesX11.h"
@@ -400,7 +400,7 @@ namespace nux
     int win32_keysym;
 #endif
 
-#if (defined(NUX_OS_LINUX) && !defined(NUX_OS_ANDROID))
+#if (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
     Time          x11_timestamp;  //!< X11 timestamp.
     Window        x11_window;     //!< X11 window.
     unsigned int  x11_key_state;  //!< X11 key state (xevent.xkey.state).

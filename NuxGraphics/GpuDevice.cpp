@@ -284,7 +284,7 @@ namespace nux
     int req_opengl_major,
     int req_opengl_minor,
     bool opengl_es_20)
-#elif defined(NUX_OS_ANDROID)
+#elif defined(NUX_ARCH_ARM)
   GpuDevice::GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
     EGLDisplay display,
     EGLConfig fb_config,
@@ -423,7 +423,7 @@ namespace nux
 #if defined(NUX_OS_WINDOWS)
     bool opengl_es_context_created = false;
     if (((opengl_major_ >= 3) && (req_opengl_major >= 3)) || (opengl_major_ >= 3) || opengl_es_20)
-#elif defined(NUX_OS_ANDROID)
+#elif defined(NUX_ARCH_ARM)
     if (((_opengl_major >= 3) && (req_opengl_major >= 3)) || (_opengl_major >= 3))
 #elif defined(NUX_OS_LINUX)
     //bool opengl_es_context_created = false;
@@ -464,7 +464,7 @@ namespace nux
         }
       }
 
-#if !defined(NUX_OS_ANDROID)
+#if !defined(NUX_ARCH_ARM)
       if (opengl_es_20)
       {
 #if defined(NUX_OS_WINDOWS)

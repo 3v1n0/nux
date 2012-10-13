@@ -335,7 +335,7 @@ namespace nux
     virtual void CopyClipboard();
     /** Paste the text in the clipboard to current offset */
     virtual void PasteClipboard();
-#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
+#if !defined(NUX_ARCH_ARM)  /*arm*/
     /** Paste the text in the primary clipboard to current offset */
     virtual void PastePrimaryClipboard();
 #endif
@@ -471,7 +471,7 @@ namespace nux
 
     CairoGraphics::Alignment align_;
     
-#if (defined(NUX_OS_LINUX) && !defined(NUX_OS_ANDROID))
+#if (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
     Cursor caret_cursor_;
 #endif
 
@@ -480,7 +480,7 @@ namespace nux
     std::list<Rect> last_cursor_region_;
     std::list<Rect> cursor_region_;
 
-#if (defined(NUX_OS_LINUX) && !defined(NUX_OS_ANDROID))
+#if (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
     IBusIMEContext* ime_;
     friend class IBusIMEContext;
 #endif

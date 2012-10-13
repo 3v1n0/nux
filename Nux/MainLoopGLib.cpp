@@ -86,7 +86,7 @@ namespace nux
   #if defined(NUX_OS_WINDOWS)
     MSG msg;
     retval = PeekMessageW(&msg, NULL, 0, 0, PM_NOREMOVE) ? TRUE : FALSE;
-  #elif defined(NUX_OS_ANDROID)
+  #elif defined(NUX_ARCH_ARM)
   #elif defined(NUX_OS_LINUX)
     retval = GetGraphicsDisplay()->HasXPendingEvent() ? TRUE : FALSE;
   #else
@@ -109,7 +109,7 @@ namespace nux
   #if defined(NUX_OS_WINDOWS)
       MSG msg;
       retval = PeekMessageW(&msg, NULL, 0, 0, PM_NOREMOVE) ? TRUE : FALSE;
-  #elif defined(NUX_OS_ANDROID)
+  #elif defined(NUX_ARCH_ARM)
   #elif defined(NUX_OS_LINUX)
       retval = GetGraphicsDisplay()->HasXPendingEvent() ? TRUE : FALSE;
   #else
@@ -171,7 +171,7 @@ namespace nux
 
   static gboolean nux_timeline_dispatch(GSource *source, GSourceFunc /* callback */, gpointer user_data)
   {
-#if (defined(NUX_OS_LINUX) && !defined(NUX_OS_ANDROID))    
+#if (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))    
     GTimeVal time_val;
     bool has_timelines_left = false;
     nux_glib_threads_lock();
@@ -255,7 +255,7 @@ namespace nux
 
 #if defined(NUX_OS_WINDOWS)
     event_source->event_poll_fd.fd = G_WIN32_MSG_HANDLE;
-  #elif defined(NUX_OS_ANDROID)
+  #elif defined(NUX_ARCH_ARM)
 #elif defined(NUX_OS_LINUX)
     event_source->event_poll_fd.fd = ConnectionNumber(GetGraphicsDisplay().GetX11Display());
 #else

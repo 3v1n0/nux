@@ -28,7 +28,7 @@
 #include "ScrollView.h"
 
 #include "NuxGraphics/Events.h"
-#if (defined(NUX_OS_LINUX) && !defined(NUX_OS_ANDROID))
+#if (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
 #include "NuxGraphics/XInputWindow.h"
 #endif
 
@@ -150,7 +150,7 @@ namespace nux
     void  SetOpacity(float opacity);
     float GetOpacity();
 
-    #if (defined(NUX_OS_LINUX) && !defined(NUX_OS_ANDROID))
+    #if (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
     void EnableInputWindow(bool        b,
                             const char* title = "nux input window",
                             bool        take_focus = False,
@@ -240,7 +240,7 @@ namespace nux
 
     bool ChildNeedsRedraw();
 
-    #if (defined(NUX_OS_LINUX) && !defined(NUX_OS_ANDROID))
+    #if (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
     bool m_input_window_enabled;
     XInputWindow *m_input_window;
     #endif

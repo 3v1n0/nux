@@ -27,11 +27,12 @@
 #include "NuxGraphics/GLError.h"
 #include "WindowThread.h"
 #include "BaseWindow.h"
-#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
+#if !defined(NUX_ARCH_ARM)  /*arm*/
 #include "MenuPage.h"
- #endif
+#endif
 #include "PaintLayer.h"
 #include "Painter.h"
+#include "Layout.h"
 
 #include "NuxGraphics/FontTexture.h"
 namespace nux
@@ -48,7 +49,6 @@ namespace
     m_OverlayWindow             = NULL;
     _tooltip_window             = NULL;
     m_TooltipArea               = NULL;
-    _menu_chain                 = NULL;
     m_Background                = NULL;
     _tooltip_window             = NULL;
     OverlayDrawingCommand       = NULL;
@@ -58,8 +58,6 @@ namespace
     inside_event_cycle_         = false;
     inside_rendering_cycle_     = false;
     _dnd_area                   = NULL;
-    _mouse_over_menu_page       = NULL;
-    _mouse_owner_menu_page      = NULL;
     _starting_menu_event_cycle  = false;
     _menu_is_active             = false;
     on_menu_closure_continue_with_event_ = false;
@@ -74,7 +72,13 @@ namespace
     m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
     m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
 
-    _menu_chain = new std::list<MenuPage*>;
+#if !defined(NUX_ARCH_ARM)  /*arm*/
+    _mouse_over_menu_page       = NULL;
+    _mouse_owner_menu_page      = NULL;
+    _menu_chain                 = NULL;
+    _menu_chain                 = new std::list<MenuPage*>;
+#endif
+
     m_MenuRemoved = false;
     m_Background = new ColorLayer(Color(0xFF4D4D4D));
 
@@ -94,11 +98,13 @@ namespace
     m_FrameBufferObject.Release();
     m_MainColorRT.Release();
     m_MainDepthRT.Release();
-    _menu_chain->clear();
     _view_window_list.clear();
     _modal_view_window_list.clear();
 
+#if !defined(NUX_ARCH_ARM)  /*arm*/
+    _menu_chain->clear();
     NUX_SAFE_DELETE(_menu_chain);
+#endif
     NUX_SAFE_DELETE(m_Background);
   }
 
@@ -172,8 +178,10 @@ namespace
   {
     mouse_over_area_ = NULL;
     SetMouseOwnerArea(NULL);
+#if !defined(NUX_ARCH_ARM)  /*arm*/
     _mouse_over_menu_page   = NULL;
     _mouse_owner_menu_page  = NULL;
+#endif
   }
 
   void WindowCompositor::FindAreaUnderMouse(const Point& mouse_position,
@@ -683,6 +691,7 @@ namespace
     UpdateEventTrackingByMouseOwnerAncestor(event);
   }
 
+#if !defined(NUX_ARCH_ARM)  /*arm*/
   void WindowCompositor::MenuEventCycle(Event& event)
   {
     // _mouse_owner_menu_page: the menu page that has the mouse down
@@ -864,6 +873,7 @@ namespace
       }
     }
   }
+#endif
 
   void WindowCompositor::FindKeyFocusArea(NuxEventType event_type,
     unsigned int key_symbol,
@@ -1101,6 +1111,7 @@ namespace
     if (((event.type >= NUX_MOUSE_PRESSED) && (event.type <= NUX_MOUSE_WHEEL)) ||
     (event.type == NUX_WINDOW_MOUSELEAVE))
     {
+#if !defined(NUX_ARCH_ARM)  /*arm*/
       bool menu_active = false;
       if (_menu_chain->size())
       {
@@ -1110,6 +1121,7 @@ namespace
       }
 
       if ((menu_active && on_menu_closure_continue_with_event_) || !(menu_active))
+#endif
       {
         MouseEventCycle(event);
       }
@@ -1350,6 +1362,7 @@ namespace
 
   void WindowCompositor::DrawMenu(bool force_draw)
   {
+#if !defined(NUX_ARCH_ARM)  /*arm*/
     ObjectWeakPtr<BaseWindow> window = m_MenuWindow;
 
     if (window.IsValid())
@@ -1374,10 +1387,7 @@ namespace
       (*rev_it_menu)->ProcessDraw(window_thread_->GetGraphicsEngine(), force_draw);
       SetProcessingTopView(NULL);
     }
-
-//     GetGraphicsDisplay()->GetGraphicsEngine()->SetContext(0, 0,
-//                                             window_thread_->GetGraphicsEngine().GetWindowWidth(),
-//                                             window_thread_->GetGraphicsEngine().GetWindowHeight());
+#endif
   }
 
   void WindowCompositor::DrawOverlay(bool /* force_draw */)
@@ -1698,6 +1708,7 @@ namespace
     }
   }
 
+#if !defined(NUX_ARCH_ARM)  /*arm*/
   void WindowCompositor::AddMenu(MenuPage* menu, BaseWindow* window, bool OverrideCurrentMenuChain)
   {
     if (_menu_chain->size() == 0)
@@ -1789,6 +1800,7 @@ namespace
       m_MenuWindow            = NULL;
     }
   }
+#endif
 
   void WindowCompositor::SetWidgetDrawingOverlay(InputArea* ic, BaseWindow* OverlayWindow)
   {

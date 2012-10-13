@@ -85,7 +85,7 @@ namespace nux
   #pragma comment( lib, "cgGL.lib"  )
   #endif
 
-#elif defined(NUX_OS_ANDROID)
+#elif defined(NUX_ARCH_ARM)
     #include "NuxGraphics/OpenGLMapping.h"
     #include "EGL/egl.h"
     #include "GLES2/gl2.h"

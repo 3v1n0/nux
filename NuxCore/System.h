@@ -32,7 +32,6 @@
 #elif __arm__
     #define NUX_OS_ANDROID
     #define NUX_OS_LINUX
-    #define NUX_OS_ARM
 #elif __linux__
     #define NUX_OS_LINUX
 #elif __APPLE__
@@ -71,7 +70,7 @@
 #elif defined(_M_IX86) || defined(__i386__)
   #define NUX_ARCH_i386
 #elif defined(__arm__)
-	#define NUX_ARCH_arm
+  #define NUX_ARCH_ARM
 #endif
 
 

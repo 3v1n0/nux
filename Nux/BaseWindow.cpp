@@ -56,7 +56,7 @@ namespace nux
     _size_match_layout = false;
     _is_visible = false;
     _is_modal = false;
-#if (defined(NUX_OS_LINUX) && !defined(NUX_OS_ANDROID))
+#if (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
     m_input_window_enabled = false;
     m_input_window = 0;
 #endif
@@ -84,7 +84,7 @@ namespace nux
       _enter_focus_input_area->UnReference();
     }
 
-#if (defined(NUX_OS_LINUX) && !defined(NUX_OS_ANDROID))
+#if (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
     if (m_input_window)
       delete m_input_window;
 #endif
@@ -238,7 +238,7 @@ namespace nux
 
   }
 
-  #if (defined(NUX_OS_LINUX) && !defined(NUX_OS_ANDROID))
+  #if (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
   void BaseWindow::EnableInputWindow(bool        b,
                                       const char* title,
                                       bool        take_focus,
@@ -308,7 +308,7 @@ namespace nux
   {
     Area::SetGeometry(geo);
 
-    #if (defined(NUX_OS_LINUX) && !defined(NUX_OS_ANDROID))
+    #if (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
     if (m_input_window)
       m_input_window->SetGeometry(geo);
     #endif

@@ -82,7 +82,7 @@ namespace nux
     
     void KeyboardEventCycle(Event& event);
 
-#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
+#if !defined(NUX_ARCH_ARM)  /*arm*/
     void MenuEventCycle(Event& event);
     MenuPage* _mouse_owner_menu_page;
     MenuPage* _mouse_over_menu_page;
@@ -255,7 +255,7 @@ namespace nux
     void StartModalWindow(ObjectWeakPtr<BaseWindow>);
     void StopModalWindow(ObjectWeakPtr<BaseWindow>);
 
-#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
+#if !defined(NUX_ARCH_ARM)  /*arm*/
     void AddMenu(MenuPage* menu, BaseWindow* window, bool OverrideCurrentMenuChain = true);
     void RemoveMenu(MenuPage* menu);
     void CleanMenu();
@@ -509,7 +509,7 @@ namespace nux
     WindowList _modal_view_window_list;
     WeakBaseWindowPtr _always_on_front_window;  //!< Floating view that always remains on top.
 
-#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
+#if !defined(NUX_ARCH_ARM)  /*arm*/
     std::list<MenuPage* >* _menu_chain;
 #endif
 

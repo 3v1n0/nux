@@ -439,7 +439,7 @@ namespace nux
       int req_opengl_minor = 0,   // requested opengl minor version.
       bool opengl_es_20 = false);
 
-#elif defined(NUX_OS_ANDROID)
+#elif defined(NUX_ARCH_ARM)
     GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
       EGLDisplay display,
       EGLConfig fb_config,
