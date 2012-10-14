@@ -386,7 +386,7 @@ Level get_logging_level(std::string level)
   return Warning;
 }
 
-#if (defined(NUX_OS_LINUX) && not defined(NUX_ARCH_ARM))
+#if (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
 std::string Backtrace(int levels)
 {
   std::ostringstream sout;
@@ -411,6 +411,13 @@ std::string Backtrace(int levels)
     free (strings);
   }
 
+  return sout.str();
+}
+#else
+std::string Backtrace(int /*levels*/)
+{
+  std::ostringstream sout;
+  sout << "Backtrace not supported on this platform." << "\n";
   return sout.str();
 }
 #endif

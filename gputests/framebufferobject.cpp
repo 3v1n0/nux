@@ -36,7 +36,7 @@
  
 void RenderToFrameBufferObject ()
 {
-  nux::GraphicsDisplay* graphics_display = gGLWindowManager.CreateGLWindow("Window", 570, 270, nux::WINDOWSTYLE_NORMAL, 0, false);
+  nux::GraphicsDisplay* graphics_display = gGLWindowManager.CreateGLWindow("Window", 200, 200, nux::WINDOWSTYLE_NORMAL, 0, false);
   nux::GraphicsEngine* graphics_engine = graphics_display->GetGraphicsEngine();
 
   graphics_display->ShowWindow();
@@ -54,19 +54,22 @@ void RenderToFrameBufferObject ()
   graphics_engine->GetWindowSize(w, h);
   graphics_engine->SetViewport(0, 0, w, h);
   graphics_engine->SetContext(0, 0, w, h);
+  graphics_engine->SetScissor(0, 0, w, h);
   graphics_engine->Push2DWindow(w, h);
 
   nux::Event event;
   memset(&event, 0, sizeof(nux::Event));
 
+  bool first_time = true;
   do
   {
     CHECKGL( glClearColor(0, 0, 0, 1) );
     CHECKGL( glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT) );
 
     graphics_display->GetSystemEvent(&event);
-    if(event.type == nux::NUX_SIZE_CONFIGURATION)
+    if(first_time || (event.type == nux::NUX_SIZE_CONFIGURATION))
     {
+      first_time = false;
       graphics_engine->DisableAllTextureMode(0);
       graphics_engine->DisableAllTextureMode(1);
       graphics_engine->DisableAllTextureMode(2);
@@ -76,16 +79,23 @@ void RenderToFrameBufferObject ()
       graphics_engine->SetScissor(0, 0, w, h);
       graphics_engine->SetContext(0, 0, w, h);
       graphics_engine->Push2DWindow(w, h);
-
-      fbo         = graphics_display->GetGpuDevice ()->CreateFrameBufferObject ();
-      texture_rt  = graphics_display->GetGpuDevice ()->CreateSystemCapableDeviceTexture (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), 1, nux::BITFMT_R8G8B8A8);
-      depth_rt    = graphics_display->GetGpuDevice ()->CreateSystemCapableDeviceTexture (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), 1, nux::BITFMT_D24S8);
+      //printf("0\n");
+      fbo         = graphics_display->GetGpuDevice()->CreateFrameBufferObject ();
+      //printf("1\n");
+      texture_rt  = graphics_display->GetGpuDevice()->CreateSystemCapableDeviceTexture (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), 1, nux::BITFMT_R8G8B8A8);
+      //printf("2\n");
+      depth_rt    = graphics_display->GetGpuDevice()->CreateSystemCapableDeviceTexture (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), 1, nux::BITFMT_D24S8);
+      //printf("3\n");
     }
-
+    //printf("4\n");
     fbo->FormatFrameBufferObject (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), nux::BITFMT_R8G8B8A8);
-    fbo->SetRenderTarget (0, texture_rt->GetSurfaceLevel (0));
-    fbo->SetDepthSurface (depth_rt->GetSurfaceLevel (0));
+    //printf("5\n");
+    fbo->SetRenderTarget(0, texture_rt->GetSurfaceLevel(0));
+    //printf("6\n");
+    fbo->SetDepthSurface(depth_rt->GetSurfaceLevel(0));
+    //printf("7\n");
     fbo->Activate();
+    //printf("8\n");
 
     graphics_engine->GetWindowSize(w, h);
     graphics_engine->SetViewport(0, 0, w, h);

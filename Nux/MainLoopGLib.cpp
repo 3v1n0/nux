@@ -87,6 +87,7 @@ namespace nux
     MSG msg;
     retval = PeekMessageW(&msg, NULL, 0, 0, PM_NOREMOVE) ? TRUE : FALSE;
   #elif defined(NUX_ARCH_ARM)
+    retval = false;
   #elif defined(NUX_OS_LINUX)
     retval = GetGraphicsDisplay()->HasXPendingEvent() ? TRUE : FALSE;
   #else

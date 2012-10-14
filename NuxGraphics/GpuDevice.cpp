@@ -424,7 +424,7 @@ namespace nux
     bool opengl_es_context_created = false;
     if (((opengl_major_ >= 3) && (req_opengl_major >= 3)) || (opengl_major_ >= 3) || opengl_es_20)
 #elif defined(NUX_ARCH_ARM)
-    if (((_opengl_major >= 3) && (req_opengl_major >= 3)) || (_opengl_major >= 3))
+    if (((opengl_major_ >= 3) && (req_opengl_major >= 3)) || (opengl_major_ >= 3))
 #elif defined(NUX_OS_LINUX)
     //bool opengl_es_context_created = false;
     if (has_glx_13_support &&
@@ -517,12 +517,12 @@ namespace nux
 #endif
       if (requested_profile_is_supported)
       {
+#if defined(NUX_OS_WINDOWS)
         int profile_mask = 0;
         int profile_value = 0;
         int flag_mask = 0;
         int flag_value = 0;
 
-#if defined(NUX_OS_WINDOWS)
         if (((req_opengl_major == 3) && (req_opengl_minor >= 3)) || (req_opengl_major >= 4))
         {
           profile_mask = WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
@@ -554,6 +554,11 @@ namespace nux
           wglMakeCurrent(device_context, opengl_rendering_context);
         }
 #elif defined(NUX_OS_LINUX) && !defined(NUX_OPENGLES_20)
+        int profile_mask = 0;
+        int profile_value = 0;
+        int flag_mask = 0;
+        int flag_value = 0;
+
         if (((req_opengl_major == 3) && (req_opengl_minor >= 3)) || (req_opengl_major >= 4))
         {
           profile_mask  = GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;

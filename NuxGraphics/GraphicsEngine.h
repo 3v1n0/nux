@@ -275,6 +275,7 @@ namespace nux
       ObjectPtr<IOpenGLBaseTexture>& src_device_texture,
       TexCoordXForm& texxform0, const Color& c0);
 
+#ifndef NUX_OPENGLES_20
     // ASM
     void QRP_ASM_1Tex(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm& texxform, const Color& color0);
     void QRP_ASM_1TexPremultiply(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm& texxform, const Color& color0);
@@ -393,7 +394,7 @@ namespace nux
       ObjectPtr<IOpenGLBaseTexture>& dst_device_texture,
       ObjectPtr<IOpenGLBaseTexture>& src_device_texture,
       TexCoordXForm& texxform0, const Color& c0);
-
+#endif
     // GLSL
 
     void QRP_GLSL_1Tex(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm& texxform, const Color& c0);

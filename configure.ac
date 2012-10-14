@@ -116,6 +116,16 @@ AC_CHECK_FUNCS([memset munmap strcasecmp strdup])
 PKG_PROG_PKG_CONFIG
 
 dnl ===========================================================================
+# Enable ARM build
+AC_ARG_ENABLE([arm_build],
+             [AC_HELP_STRING([--enable-arm-build=@<:@no/yes@:>@],
+             [Enable ARM code path @<:@default=no@:>@])],
+             [],
+             [enable_arm_build=no])
+AM_CONDITIONAL(ARM_BUILD, [test "x$enable_arm_build" = "xyes"])
+dnl ===========================================================================
+
+dnl ===========================================================================
 GL_PKGS="gl glu glew glewmx xext x11"
 MAINTAINER_CFLAGS=""
 
@@ -127,8 +137,8 @@ AC_ARG_ENABLE([opengles_20],
               [enable_opengles_20=no])
 AS_IF([test "x$enable_opengles_20" = "xyes"],
       [
-         MAINTAINER_CFLAGS+=" -DNUX_OPENGLES_20"
-         GL_PKGS="egl glesv2"
+        MAINTAINER_CFLAGS+=" -DNUX_OPENGLES_20"
+        GL_PKGS="egl glesv2"
       ]
 )
 AM_CONDITIONAL(NUX_OPENGLES_20, [test "x$enable_opengles_20" = "xyes"])
@@ -339,7 +349,7 @@ AM_CONDITIONAL(BUILD_DOCUMENTATION, [test "x$enable_documentation" = "xyes"])
 dnl ==========================================================================
 
 if test "x$GCC" = "xyes"; then
-  GCC_FLAGS="-g -Wall -Wextra -Werror -std=c++0x"
+  GCC_FLAGS="-g -Wall -Wextra -Wno-unused-parameter -fPIC -DPIC -std=c++0x"
 fi
 
 # gcc flags for building the tests.
@@ -355,7 +365,7 @@ AC_ARG_ENABLE([maintainer-mode],
 
 AS_IF([test "x$enable_maintainer_mode" = "xyes" && test "x$GCC" = "xyes"],
       [
-         MAINTAINER_CFLAGS+="-Werror -Wall -Wextra -Wcast-align -Wno-uninitialized -Wempty-body -Wformat-security -Winit-self"
+         MAINTAINER_CFLAGS+="-Werror -Wall -Wextra -Wcast-align -Wno-uninitialized -Wempty-body -Wformat-security -Winit-self -Wno-unused-parameter"
       ]
 )
 
@@ -458,6 +468,7 @@ echo -e "        Build Examples     : ${BOLD_WHITE}${enable_examples}${RESET}"
 echo -e "        Build Gpu Tests    : ${BOLD_WHITE}${enable_gputests}${RESET}"
 echo -e "        Build Nux Tests    : ${BOLD_WHITE}${enable_tests}${RESET}"
 echo -e "        Gestures support   : ${BOLD_WHITE}${have_geis}${RESET}"
+echo -e "        ARM build support  : ${BOLD_WHITE}${enable_arm_build}${RESET}"
 echo ""
 
 echo -e "${RESET}"

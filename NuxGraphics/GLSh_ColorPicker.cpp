@@ -349,11 +349,12 @@ GLSh_ColorPicker::GLSh_ColorPicker(color::Channel color_channel)
           break;
         }
       }
-
+#ifndef NUX_OPENGLES_20
       m_AsmProg = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
       m_AsmProg->LoadVertexShader(AsmVtxShader);
       m_AsmProg->LoadPixelShader(FrgShaderCode);
       m_AsmProg->Link();
+#endif
     }
   }
 
@@ -361,7 +362,9 @@ GLSh_ColorPicker::GLSh_ColorPicker(color::Channel color_channel)
   {
     GlobalPixelShader = ObjectPtr<IOpenGLPixelShader> (0);
     sprog.Release();
+#ifndef NUX_OPENGLES_20
     m_AsmProg.Release();
+#endif
   }
 
   void GLSh_ColorPicker::SetColor(float R, float G, float B, float A)

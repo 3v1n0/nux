@@ -355,7 +355,7 @@ namespace
 
           if (abs(dnd_safety_y_) > 30 || abs(dnd_safety_x_) > 30)
           {
-#ifdef NUX_OS_LINUX
+#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
             mouse_owner_area_->StartDragAsSource();
 #endif
             ResetMousePointerAreas();
@@ -1033,8 +1033,10 @@ namespace
                     event.GetKeySym(),
 #if defined(NUX_OS_WINDOWS)
                     event.win32_keycode,
-#elif defined(NUX_OS_LINUX)
+#elif (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
                     event.x11_keycode,
+#else
+                    0,
 #endif
                     event.GetKeyState(),
                     event.GetText(),
@@ -1056,8 +1058,10 @@ namespace
             event.GetKeySym(),
 #if defined(NUX_OS_WINDOWS)
             event.win32_keycode,
-#elif defined(NUX_OS_LINUX)
+#elif (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
             event.x11_keycode,
+#else
+            0,
 #endif
             event.GetKeyState(),
             event.GetText(),
@@ -2113,7 +2117,7 @@ namespace
 
   void WindowCompositor::SetDnDArea(InputArea* area)
   {
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
     if (_dnd_area == area)
       return;
 

@@ -105,11 +105,10 @@ namespace nux
     ObjectPtr<IOpenGLVertexShader> _vertex_shader_prog;
     ObjectPtr<IOpenGLShaderProgram> _shader_prog;
 
-    //ObjectPtr<IOpenGLAsmPixelShader> m_AsmPixelShaderProg;
-    //ObjectPtr<IOpenGLAsmVertexShader> m_AsmVertexShaderProg;
+#ifndef NUX_OPENGLES_20
     ObjectPtr<IOpenGLAsmShaderProgram> _asm_shader_prog;
-
     ObjectPtr<IOpenGLAsmShaderProgram> _asm_font_texture_rect_prog;
+#endif
   };
 
 }
