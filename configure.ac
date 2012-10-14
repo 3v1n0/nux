@@ -118,10 +118,10 @@ PKG_PROG_PKG_CONFIG
 dnl ===========================================================================
 # Enable ARM build
 AC_ARG_ENABLE([arm_build],
-              [AC_HELP_STRING([--enable-arm-build=@<:@no/yes@:>@],
-              [Enable ARM code path @<:@default=no@:>@])],
-              [],
-              [enable_arm_build=no])
+             [AC_HELP_STRING([--enable-arm-build=@<:@no/yes@:>@],
+             [Enable ARM code path @<:@default=no@:>@])],
+             [],
+             [enable_arm_build=no])
 AM_CONDITIONAL(ARM_BUILD, [test "x$enable_arm_build" = "xyes"])
 dnl ===========================================================================
 
@@ -137,8 +137,8 @@ AC_ARG_ENABLE([opengles_20],
               [enable_opengles_20=no])
 AS_IF([test "x$enable_opengles_20" = "xyes"],
       [
-         MAINTAINER_CFLAGS+=" -DNUX_OPENGLES_20"
-         GL_PKGS="egl glesv2"
+        MAINTAINER_CFLAGS+=" -DNUX_OPENGLES_20"
+        GL_PKGS="egl glesv2"
       ]
 )
 AM_CONDITIONAL(NUX_OPENGLES_20, [test "x$enable_opengles_20" = "xyes"])

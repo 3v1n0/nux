@@ -96,12 +96,10 @@ source_h = \
   $(srcdir)/OpenGLDefinitions.h \
   $(srcdir)/OpenGLMapping.h \
   $(srcdir)/RenderingPipe.h \
-  $(srcdir)/RenderingPipeAsm.h \
   $(srcdir)/RenderingPipeGLSL.h \
   $(srcdir)/RenderingPipeTextureBlendShaderSource.h \
   $(srcdir)/RunTimeStats.h \
-  $(srcdir)/VirtualKeyCodesX11.h \
-  $(srcdir)/XInputWindow.h
+  $(srcdir)/VirtualKeyCodesX11.h
 
 if ARM_BUILD
 source_h += \
@@ -110,7 +108,9 @@ source_h += \
 else
 source_h += \
   $(srcdir)/GraphicsDisplayX11.h \
-  $(srcdir)/IOpenGLAsmShader.h
+  $(srcdir)/IOpenGLAsmShader.h \
+  $(srcdir)/RenderingPipeAsm.h \
+  $(srcdir)/XInputWindow.h
 endif
 
 if HAVE_GEIS
@@ -171,12 +171,11 @@ source_cpp = \
   $(srcdir)/NuxGraphicsObject.cpp \
   $(srcdir)/NuxGraphicsResources.cpp \
   $(srcdir)/RenderingPipe.cpp \
-  $(srcdir)/RenderingPipeAsm.cpp \
   $(srcdir)/RenderingPipeGLSL.cpp \
   $(srcdir)/RenderingPipeTextureBlend.cpp \
   $(srcdir)/GLRenderingAPI.cpp \
-  $(srcdir)/RunTimeStats.cpp \
-  $(srcdir)/XInputWindow.cpp
+  $(srcdir)/RunTimeStats.cpp
+
 
 if ARM_BUILD
 source_cpp += \
@@ -186,7 +185,9 @@ source_cpp += \
 else
 source_cpp += \
   $(srcdir)/GraphicsDisplayX11.cpp \
-  $(srcdir)/IOpenGLAsmShader.cpp
+  $(srcdir)/IOpenGLAsmShader.cpp \
+  $(srcdir)/RenderingPipeAsm.cpp \
+  $(srcdir)/XInputWindow.cpp
 endif
 
 if HAVE_GEIS

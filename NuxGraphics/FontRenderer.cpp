@@ -141,6 +141,7 @@ std::string FontAsmFrgRect("!!ARBfp1.0        \n\
       //CHECKGL(glBindAttribLocation(_shader_prog->GetOpenGLID(), 0, "_Position"));
       _shader_prog->Link();
     }
+#ifndef NUX_OPENGLES_20
     else
     {
       _asm_shader_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
@@ -154,6 +155,7 @@ std::string FontAsmFrgRect("!!ARBfp1.0        \n\
       _asm_font_texture_rect_prog->LoadPixelShader(FontAsmFrgRect.c_str());
       _asm_font_texture_rect_prog->Link();
     }
+#endif
   }
 
   FontRenderer::~FontRenderer()
@@ -469,7 +471,9 @@ std::string FontAsmFrgRect("!!ARBfp1.0        \n\
     int in_attrib_scale = 0;
     int in_attrib_offset = 0;
 
+#ifndef NUX_OPENGLES_20
     ObjectPtr<IOpenGLAsmShaderProgram> shader_program;
+#endif
     if (_graphics_engine.UsingGLSLCodePath())
     {
       _shader_prog->Begin();
@@ -576,7 +580,9 @@ std::string FontAsmFrgRect("!!ARBfp1.0        \n\
     }
     else
     {
+#ifndef NUX_OPENGLES_20
       shader_program->End();
+#endif
     }
 
     _graphics_engine.GetRenderStates().SetColorMask(TRUE, TRUE, TRUE, TRUE);

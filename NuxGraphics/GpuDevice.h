@@ -243,9 +243,12 @@ namespace nux
     ObjectPtr<IOpenGLShaderProgram> CreateShaderProgram();
     ObjectPtr<IOpenGLVertexShader> CreateVertexShader();
     ObjectPtr<IOpenGLPixelShader> CreatePixelShader();
+
+#ifndef NUX_OPENGLES_20    
     ObjectPtr<IOpenGLAsmShaderProgram> CreateAsmShaderProgram();
     ObjectPtr<IOpenGLAsmVertexShader> CreateAsmVertexShader();
     ObjectPtr<IOpenGLAsmPixelShader> CreateAsmPixelShader();
+#endif
 
 #if (NUX_ENABLE_CG_SHADERS)
     ObjectPtr<ICgVertexShader> CreateCGVertexShader();

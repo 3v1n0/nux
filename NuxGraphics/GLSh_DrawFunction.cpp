@@ -111,10 +111,12 @@ namespace nux
     }
     else
     {
+#ifndef NUX_OPENGLES_20
       m_AsmProg = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
       m_AsmProg->LoadVertexShader(AsmVtxShader.c_str());
       m_AsmProg->LoadPixelShader(AsmFrgShader.c_str());
       m_AsmProg->Link();
+#endif
     }
   }
 
