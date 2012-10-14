@@ -38,7 +38,6 @@ namespace nux
     GFXRS_FRONTFACE,                                            // GL_CCW
 
     GFXRS_SCISSORTESTENABLE,                                    // GL_FALSE
-    GFXRS_FOGENABLE,                                            // GL_FALSE
 
     GFXRS_ZTESTENABLE,                                          // GL_TRUE
     GFXRS_ZWRITEENABLE,                                         // GL_TRUE
@@ -78,21 +77,14 @@ namespace nux
     GFXRS_BACK_STENCILZPASS,                                    // GL_KEEP
 
 
-    GFXRS_POINTSMOOTHENABLE,                                    // GL_FLASE
     GFXRS_LINESMOOTHENABLE,                                     // GL_FALSE
-    GFXRS_POINTSIZE,                                            // 1.0f
     GFXRS_LINEWIDTH,                                            // 1.0f
-    GFXRS_POINTHINT,                                            // GL_FASTEST
     GFXRS_LINEHINT,                                             // GL_FASTEST
 
     GFXRS_COLORWRITEENABLE_R,                                   // TRUE or FALSE
     GFXRS_COLORWRITEENABLE_G,                                   // TRUE or FALSE
     GFXRS_COLORWRITEENABLE_B,                                   // TRUE or FALSE
     GFXRS_COLORWRITEENABLE_A,                                   // TRUE or FALSE
-
-    GFXRS_POLYGONOFFSETENABLE,                                  // GL_FALSE
-    GFXRS_POLYGONOFFSETFACTOR,                                  // 0.0f
-    GFXRS_POLYGONOFFSETUNITS,                                   // 0.0f
 
     GFXRS_MAX_RENDERSTATES,
   };
@@ -232,11 +224,6 @@ namespace nux
       unsigned int  LineWidth = 1,
       unsigned int HINT = GL_FASTEST);
 
-    inline void EnablePointSmooth(
-      bool EnablePointSmooth = TRUE,
-      unsigned int  PointSize = 1,
-      unsigned int HINT = GL_FASTEST);
-
     inline void SetColorMask(
       unsigned int bRed      = TRUE,
       unsigned int bGreen    = TRUE,
@@ -252,7 +239,6 @@ namespace nux
     inline void SetDepthMask(unsigned int bDepth = TRUE);
 
     inline void EnableScissor(unsigned int bScissor = FALSE);
-    inline void EnableFog(unsigned int bFog = FALSE);
 #ifndef NUX_OPENGLES_20
     inline void SetPolygonMode(unsigned int FrontMode = GL_FILL, unsigned int BackMode = GL_FILL);
 #else
@@ -329,19 +315,15 @@ namespace nux
     inline void HW__EnableLineSmooth(unsigned int EnableLineSmooth);
     inline void HW__SetLineWidth(unsigned int width, unsigned int HINT);
 
-    inline void HW__EnablePointSmooth(unsigned int EnablePointSmooth);
-    inline void HW__SetPointSize(unsigned int size, unsigned int HINT);
-
     inline void HW__SetColorMask(unsigned int bRed, unsigned int bGreen, unsigned int bBlue, unsigned int bAlpha);
     inline void HW__SetDepthMask(unsigned int bDepth);
 
     inline void HW__EnableScissor(unsigned int bScissor);
-    inline void HW__EnableFog(unsigned int bFog);
 
+
+#ifndef NUX_OPENGLES_20
     inline void HW__SetPolygonMode(unsigned int FrontMode, unsigned int BackMode);
-    inline void HW__EnablePolygonOffset(unsigned int EnablePolygonOffset);
-    inline void HW__SetPolygonOffset(float Factor, float Units);
-
+#endif
   private:
     RenderStateMap render_state_changes_[GFXRS_MAX_RENDERSTATES];
     RenderStateMap sampler_state_changes_[4][GFXSS_MAX_SAMPLERSTATES];
@@ -741,31 +723,6 @@ namespace nux
     }
   }
 
-  inline void GpuRenderStates::EnablePointSmooth(
-    bool EnablePointSmooth,
-    unsigned int  PointSize,
-    unsigned int Hint)
-  {
-    if (EnablePointSmooth)
-    {
-      if (!RS_VALUE(render_state_changes_[GFXRS_POINTSMOOTHENABLE]))
-      {
-        HW__EnablePointSmooth(GL_TRUE);
-      }
-
-      if ((RS_VALUE(render_state_changes_[GFXRS_POINTSIZE]) != PointSize) ||
-           (RS_VALUE(render_state_changes_[GFXRS_POINTHINT]) != Hint))
-      {
-        HW__SetLineWidth(PointSize, Hint);
-      }
-    }
-    else
-    {
-      HW__EnablePointSmooth(GL_FALSE);
-      HW__SetLineWidth(PointSize, Hint);
-    }
-  }
-
   inline void GpuRenderStates::SetColorMask(
     unsigned int bRed,
     unsigned int bGreen,
@@ -810,14 +767,7 @@ namespace nux
     }
   }
 
-  inline void GpuRenderStates::EnableFog(unsigned int bFog)
-  {
-    if ((RS_VALUE(render_state_changes_[GFXRS_FOGENABLE]) != bFog))
-    {
-      HW__EnableFog(bFog);
-    }
-  }
-
+#ifndef NUX_OPENGLES_20
   inline void GpuRenderStates::SetPolygonMode(unsigned int FrontMode, unsigned int BackMode)
   {
     if ((RS_VALUE(render_state_changes_[GFXRS_FRONT_POLYGONMODE]) != FrontMode) ||
@@ -826,31 +776,12 @@ namespace nux
       HW__SetPolygonMode(FrontMode, BackMode);
     }
   }
-
-  inline void GpuRenderStates::SetPolygonOffset(unsigned int bEnable,
-      float Factor, float Units)
+#else
+  inline void GpuRenderStates::SetPolygonMode(unsigned int /*FrontMode*/, unsigned int /*BackMode*/)
   {
-    if (bEnable)
-    {
-      if (!RS_VALUE(render_state_changes_[GFXRS_POLYGONOFFSETENABLE]))
-      {
-        HW__EnablePolygonOffset(GL_TRUE);
-      }
-
-      if ((RS_VALUE(render_state_changes_[GFXRS_POLYGONOFFSETFACTOR]) != static_cast<unsigned int> (Factor)) ||
-           (RS_VALUE(render_state_changes_[GFXRS_POLYGONOFFSETUNITS]) != static_cast<unsigned int> (Units)))
-      {
-        HW__SetPolygonOffset(Factor, Units);
-      }
-    }
-    else
-    {
-      HW__EnablePolygonOffset(GL_FALSE);
-    }
   }
+#endif
 
-
-//////////////////////////////////////
   inline void GpuRenderStates::HW__EnableAlphaTest(unsigned int b)
   {
 #ifndef NUX_OPENGLES_20
@@ -1370,38 +1301,6 @@ namespace nux
 #endif
   }
 
-  inline void GpuRenderStates::HW__EnablePointSmooth(unsigned int EnablePointSmooth)
-  {
-#ifndef NUX_OPENGLES_20
-    if (EnablePointSmooth)
-    {
-      CHECKGL(glEnable(GL_POINT_SMOOTH));
-    }
-    else
-    {
-      CHECKGL(glDisable(GL_POINT_SMOOTH));
-    }
-
-    SET_RS_VALUE(render_state_changes_[GFXRS_POINTSMOOTHENABLE], EnablePointSmooth ? GL_TRUE : GL_FALSE);
-#endif
-  }
-
-  inline void GpuRenderStates::HW__SetPointSize(unsigned int size,  unsigned int Hint)
-  {
-#ifndef NUX_OPENGLES_20
-    nuxAssertMsg(
-      (Hint == GL_NICEST) ||
-      (Hint == GL_FASTEST) ||
-      (Hint == GL_DONT_CARE),
-      "Error(HW__SetPointSize): Invalid Point Hint RenderState");
-
-    CHECKGL(glPointSize(size));
-    CHECKGL(glHint(GL_POINT_SMOOTH_HINT, Hint);)
-    SET_RS_VALUE(render_state_changes_[GFXRS_POINTSIZE], size);
-    SET_RS_VALUE(render_state_changes_[GFXRS_POINTHINT], Hint);
-#endif
-  }
-
   inline void GpuRenderStates::HW__SetColorMask(
     unsigned int bRed,
     unsigned int bGreen,
@@ -1435,25 +1334,9 @@ namespace nux
     SET_RS_VALUE(render_state_changes_[GFXRS_SCISSORTESTENABLE], bScissor ? GL_TRUE : GL_FALSE);
   }
 
-  inline void GpuRenderStates::HW__EnableFog(unsigned int bFog)
-  {
 #ifndef NUX_OPENGLES_20
-    if (bFog)
-    {
-      CHECKGL(glEnable(GL_FOG));
-    }
-    else
-    {
-      CHECKGL(glDisable(GL_FOG));
-    }
-
-    SET_RS_VALUE(render_state_changes_[GFXRS_FOGENABLE], bFog ? GL_TRUE : GL_FALSE);
-#endif
-  }
-
   inline void GpuRenderStates::HW__SetPolygonMode(unsigned int FrontMode, unsigned int BackMode)
   {
-#ifndef NUX_OPENGLES_20
     nuxAssertMsg(
       (FrontMode == GL_FILL) ||
       (FrontMode == GL_LINE) ||
@@ -1471,30 +1354,8 @@ namespace nux
 
     SET_RS_VALUE(render_state_changes_[GFXRS_FRONT_POLYGONMODE], FrontMode);
     SET_RS_VALUE(render_state_changes_[GFXRS_BACK_POLYGONMODE], BackMode);
+  }
 #endif
-  }
-
-  inline void GpuRenderStates::HW__EnablePolygonOffset(unsigned int EnablePolygonOffset)
-  {
-    if (EnablePolygonOffset)
-    {
-      CHECKGL(glEnable(GL_POLYGON_OFFSET_FILL));
-    }
-    else
-    {
-      CHECKGL(glDisable(GL_POLYGON_OFFSET_FILL));
-    }
-
-    SET_RS_VALUE(render_state_changes_[GL_POLYGON_OFFSET_FILL], EnablePolygonOffset ? GL_TRUE : GL_FALSE);
-  }
-
-  inline void GpuRenderStates::HW__SetPolygonOffset(float Factor, float Units)
-  {
-    CHECKGL(glPolygonOffset(Factor, Units));
-
-    SET_RS_VALUE(render_state_changes_[GFXRS_POLYGONOFFSETFACTOR], static_cast<unsigned int> (Factor));
-    SET_RS_VALUE(render_state_changes_[GFXRS_POLYGONOFFSETUNITS], static_cast<unsigned int> (Units));
-  }
 
 #undef SET_RS_VALUE
 #undef RS_VALUE
