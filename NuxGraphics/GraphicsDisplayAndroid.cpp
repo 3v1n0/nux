@@ -38,7 +38,7 @@ void GraphicsDisplay::OnNewEvent(const nux::Event& event)
 Event GraphicsDisplay::GetCurrentEvent() 
 {
     //NScopeLock lock(&m_event_guard);
-    return m_current_event;
+    //return m_current_event;
 }
 
 bool GraphicsDisplay::HasFrameBufferSupport() 
@@ -95,7 +95,7 @@ bool GraphicsDisplay::IsPauseThreadGraphicsRendering() const
 
 Rect GraphicsDisplay::GetWindowGeometry()
 {
-  return Rect(0, 0, 0, 0);
+  //return Rect(0, 0, 0, 0);
 };
 
 void GraphicsDisplay::ResetWindowSize() 
@@ -161,10 +161,10 @@ void GraphicsDisplay::SwapBuffer(bool glswap)
 };
 
 
-// static void *createEvThread(void *arg)
-// {
-//     SystemEventSource::Instance()->Start();
-// }
+static void *createEvThread(void *arg)
+{
+    SystemEventSource::Instance()->Start();
+}
 
 void GraphicsDisplay::SurfaceflingerClientInit(int x, int y, float alpha)
 {
@@ -187,7 +187,6 @@ void GraphicsDisplay::SurfaceflingerClientInit(int x, int y, float alpha)
         -1, /*rgba8888*/
         std::numeric_limits<int>::max() - 1, /* set at the middle level (ranges from -INT_MAX to INT MAX */ 
         alpha,
-        true,
         "nuxsurface"
     };
 

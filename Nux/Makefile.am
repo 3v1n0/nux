@@ -45,7 +45,7 @@ source_cpp = \
   $(srcdir)/ClientArea.cpp \
   $(srcdir)/Coverflow.cpp \
   $(srcdir)/CoverflowItem.cpp \
-  $(srcdir)/CoverflowModel.cpp \  
+  $(srcdir)/CoverflowModel.cpp \
   $(srcdir)/EMMetrics.cpp \
   $(srcdir)/GridHLayout.cpp \
   $(srcdir)/HLayout.cpp \
@@ -154,7 +154,7 @@ source_h = \
   $(srcdir)/ClientArea.h \
   $(srcdir)/Coverflow.h \
   $(srcdir)/CoverflowItem.h \
-  $(srcdir)/CoverflowModel.h \  
+  $(srcdir)/CoverflowModel.h \
   $(srcdir)/EMMetrics.h \
   $(srcdir)/GridHLayout.h \
   $(srcdir)/HLayout.h \
