@@ -279,7 +279,7 @@ namespace nux
     /** Draw the Cursor to the canvas */
     void DrawCursor(CairoGraphics* canvas);
     /** Draw the text to the canvas */
-    void DrawText(CairoGraphics* canvas);
+    virtual void DrawText(CairoGraphics* canvas);
 
     void GetCursorRects(Rect* strong, Rect* weak);
 
