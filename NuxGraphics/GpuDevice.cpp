@@ -187,6 +187,12 @@ namespace nux
   STREAMSOURCE GpuDevice::_StreamSource[MAX_NUM_STREAM];
 
   GpuInfo::GpuInfo()
+  : _opengl_max_texture_size(0)
+  , _opengl_max_texture_units(0)
+  , _opengl_max_texture_coords(0)
+  , _opengl_max_texture_image_units(0)
+  , _opengl_max_fb_attachment(0)
+  , _opengl_max_vertex_attributes(0)
   {
     _support_opengl_version_11 = false;
     _support_opengl_version_12 = false;
@@ -229,6 +235,12 @@ namespace nux
     CHECKGL(glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &_opengl_max_vertex_attributes));
     CHECKGL(glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS_EXT, &_opengl_max_fb_attachment));
 #else
+    // By opengl es 2.0 standard, GL_MAX_TEXTURE_SIZE should return a minimum of 64.
+    CHECKGL(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &_opengl_max_texture_size));
+    // GL_MAX_TEXTURE_UNITS is not supported under opengl es 2.0.
+    // GL_MAX_TEXTURE_IMAGE_UNITS is supported under opengl es 2.0.
+    CHECKGL(glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &_opengl_max_texture_image_units));
+    // GL_MAX_COLOR_ATTACHMENTS_EXT is not supported under opengl es 2.0.
     _opengl_max_fb_attachment = 1;
 #endif
 

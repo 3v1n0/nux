@@ -56,6 +56,7 @@ void RenderBlurredTexture ()
   graphics_engine->GetWindowSize(w, h);
   graphics_engine->SetViewport(0, 0, w, h);
   graphics_engine->SetContext(0, 0, w, h);
+  graphics_engine->SetScissor(0, 0, w, h);
   graphics_engine->Push2DWindow(w, h);
 
   nux::Event event;
@@ -87,15 +88,28 @@ void RenderBlurredTexture ()
       graphics_engine->SetContext(0, 0, w, h);
       graphics_engine->Push2DWindow(w, h);
 
-      fbo         = graphics_display->GetGpuDevice ()->CreateFrameBufferObject ();
-      texture_rt  = graphics_display->GetGpuDevice ()->CreateSystemCapableDeviceTexture (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), 1, nux::BITFMT_R8G8B8A8);
-      depth_rt    = graphics_display->GetGpuDevice ()->CreateSystemCapableDeviceTexture (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), 1, nux::BITFMT_D24S8);
-      fbo->FormatFrameBufferObject (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), nux::BITFMT_R8G8B8A8);
+      fbo         = graphics_display->GetGpuDevice()->CreateFrameBufferObject();
+      texture_rt  = graphics_display->GetGpuDevice()->CreateSystemCapableDeviceTexture(graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), 1, nux::BITFMT_R8G8B8A8);
+      depth_rt    = graphics_display->GetGpuDevice()->CreateSystemCapableDeviceTexture(graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), 1, nux::BITFMT_D24S8);
     }
 
-    fbo->SetRenderTarget (0, texture_rt->GetSurfaceLevel (0));
-    fbo->SetDepthSurface (depth_rt->GetSurfaceLevel (0));
+    fbo->FormatFrameBufferObject(graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), nux::BITFMT_R8G8B8A8);
+    if (texture_rt.IsValid())
+    {
+      fbo->SetRenderTarget(0, texture_rt->GetSurfaceLevel (0));
+    }
+
+    if (depth_rt.IsValid())
+    {
+      fbo->SetDepthSurface(depth_rt->GetSurfaceLevel (0));
+    }
     fbo->Activate();
+
+    graphics_engine->GetWindowSize(w, h);
+    graphics_engine->SetViewport(0, 0, w, h);
+    graphics_engine->SetContext(0, 0, w, h);
+    graphics_engine->Push2DWindow(w, h);
+
     for (int i = 0; i < 1; i++)
     {
       nux::Rect geo (nux::RandomUInt(graphics_display->GetWindowWidth()),
@@ -107,13 +121,20 @@ void RenderBlurredTexture ()
     }
 
     // Restore the back buffer
-    graphics_display->GetGpuDevice ()->DeactivateFrameBuffer ();
+    graphics_display->GetGpuDevice()->DeactivateFrameBuffer();
+
+    nux::ObjectPtr <nux::IOpenGLBaseTexture> tex_blur;
 
     nux::TexCoordXForm texxform;
-    // Make a blurred copy of the previous render target
-    nux::ObjectPtr <nux::IOpenGLBaseTexture> tex_blur = graphics_engine->QRP_GetBlurTexture (
-      0, 0, texture_rt->GetWidth (), texture_rt->GetHeight (),
-      texture_rt, texxform, nux::color::White, 1.0f);
+    //Make a blurred copy of the previous render target
+    printf("exec 0\n");
+    if (texture_rt.IsValid() && graphics_engine)
+    {
+      tex_blur = graphics_engine->QRP_GLSL_GetBlurTexture(
+              0, 0, texture_rt->GetWidth(), texture_rt->GetHeight(),
+              texture_rt, texxform, nux::color::White, 7.0f);
+    }
+    printf("exec 1\n");
 
     graphics_engine->QRP_1Tex(0, 0, tex_blur->GetWidth(), tex_blur->GetHeight(), tex_blur, texxform, nux::color::White);
 
@@ -127,9 +148,6 @@ void RenderBlurredTexture ()
     page.x_margin = 0;
     page.y_margin = 0;
     graphics_engine->RenderColorTextLineStatic(graphics_engine->GetBoldFont (), page, fps, nux::color::White, false, nux::eAlignTextLeft);
-
-    graphics_display->SwapBuffer();
-
     
     float frame_time = graphics_display->GetFrameTime();
     graphics_display->ResetFrameTime();
@@ -145,8 +163,9 @@ void RenderBlurredTexture ()
       frame_periode = 0;
     }
     */
-
-  } while((event.type != nux::NUX_TERMINATE_APP) && (event.GetVirtualKeyState(NUX_VK_ESCAPE) == 0));
+  
+    graphics_display->SwapBuffer();
+  } while((event.type != nux::NUX_TERMINATE_APP));
 
   fbo.Release ();
   texture_rt.Release ();

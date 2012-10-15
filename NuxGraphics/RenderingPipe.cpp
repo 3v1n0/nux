@@ -555,6 +555,7 @@ namespace nux
     else
       return QRP_ASM_GetBlurTexture(x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
 #else
+    printf("GraphicsEngine::QRP_GetBlurTexture \n");
     return QRP_GLSL_GetBlurTexture(x, y, buffer_width, buffer_height, device_texture, texxform, c0, sigma, num_pass);
 #endif
   }

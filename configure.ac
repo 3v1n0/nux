@@ -349,7 +349,7 @@ AM_CONDITIONAL(BUILD_DOCUMENTATION, [test "x$enable_documentation" = "xyes"])
 dnl ==========================================================================
 
 if test "x$GCC" = "xyes"; then
-  GCC_FLAGS="-g -Wall -Wextra -Wno-unused-parameter -fPIC -DPIC -std=c++0x"
+  GCC_FLAGS="-g -Werror -Wall -Wextra -Wno-unused-parameter -std=c++0x"
 fi
 
 # gcc flags for building the tests.
@@ -378,8 +378,8 @@ AC_ARG_ENABLE([debug],
               [enable_debug=no])
 AS_IF([test "x$enable_debug" = "xyes"],
       [
-         MAINTAINER_CFLAGS+=" -DNUX_DEBUG"
-         GCC_FLAGS="-g -Wall -Wextra -std=c++0x"
+        MAINTAINER_CFLAGS+=" -DNUX_DEBUG"
+        GCC_FLAGS="-g -Wall -Wextra -Wno-unused-parameter -std=c++0x"
       ]
 )
 

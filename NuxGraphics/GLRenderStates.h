@@ -145,10 +145,12 @@ namespace nux
     void CheckRenderStatesConformity();
 
     // Render states
+#ifndef NUX_OPENGLES_20    
     inline void SetAlphaTest(
       bool EnableAlphaTest_,
       unsigned int AlphaTestFunc_    = GL_ALWAYS,
       BYTE  AlphaTestRef_     = 0);
+#endif
 
     inline void SetBlend(bool AlphaBlendEnable_);
     inline void SetBlend(bool AlphaBlendEnable_,
@@ -253,11 +255,12 @@ namespace nux
     GpuBrand gpu_brand_;
     GpuInfo* gpu_info_;
 
+#ifndef NUX_OPENGLES_20
     inline void HW__EnableAlphaTest(unsigned int b);
-
     inline void HW__SetAlphaTestFunc(
       unsigned int AlphaTestFunc_,
       BYTE  AlphaTestRef_);
+#endif
 
     inline void HW__EnableAlphaBlend(unsigned int b);
 
@@ -312,7 +315,9 @@ namespace nux
       unsigned int ZPassOp_);
 #endif
 
+#ifndef NUX_OPENGLES_20
     inline void HW__EnableLineSmooth(unsigned int EnableLineSmooth);
+#endif
     inline void HW__SetLineWidth(unsigned int width, unsigned int HINT);
 
     inline void HW__SetColorMask(unsigned int bRed, unsigned int bGreen, unsigned int bBlue, unsigned int bAlpha);
@@ -337,7 +342,7 @@ namespace nux
 //#define SET_RS_VALUE_FLOAT(a, b)  (a).fValue = (b)
 //#define RS_VALUE_FLOAT(a, b)      (a).fValue
 
-
+#ifndef NUX_OPENGLES_20
   inline void GpuRenderStates::SetAlphaTest(
     bool EnableAlphaTest_,
     unsigned int AlphaTestFunc_,
@@ -362,6 +367,7 @@ namespace nux
       HW__SetAlphaTestFunc(AlphaTestFunc_, AlphaTestRef_);
     }
   }
+#endif
 
   inline void GpuRenderStates::SetBlend(bool AlphaBlendEnable_)
   {
@@ -707,7 +713,9 @@ namespace nux
     {
       if (!RS_VALUE(render_state_changes_[GFXRS_LINESMOOTHENABLE]))
       {
+#ifndef NUX_OPENGLES_20        
         HW__EnableLineSmooth(GL_TRUE);
+#endif
       }
 
       if ((RS_VALUE(render_state_changes_[GFXRS_LINEWIDTH]) != LineWidth) ||
@@ -718,7 +726,9 @@ namespace nux
     }
     else
     {
+#ifndef NUX_OPENGLES_20      
       HW__EnableLineSmooth(GL_FALSE);
+#endif
       HW__SetLineWidth(LineWidth, Hint);
     }
   }
@@ -782,9 +792,9 @@ namespace nux
   }
 #endif
 
+#ifndef NUX_OPENGLES_20
   inline void GpuRenderStates::HW__EnableAlphaTest(unsigned int b)
   {
-#ifndef NUX_OPENGLES_20
     if (b)
     {
       CHECKGL(glEnable(GL_ALPHA_TEST));
@@ -795,13 +805,11 @@ namespace nux
     }
 
     SET_RS_VALUE(render_state_changes_[GFXRS_ALPHATESTENABLE], b ? GL_TRUE : GL_FALSE);
-#endif
   }
 
   inline void GpuRenderStates::HW__SetAlphaTestFunc(unsigned int AlphaTestFunc_,
       BYTE  AlphaTestRef_)
   {
-#ifndef NUX_OPENGLES_20
     nuxAssertMsg(
       (AlphaTestFunc_ == GL_NEVER) ||
       (AlphaTestFunc_ == GL_LESS) ||
@@ -816,8 +824,8 @@ namespace nux
     CHECKGL(glAlphaFunc(AlphaTestFunc_, (float) AlphaTestRef_ * (1.0f / 255.0f)));
     SET_RS_VALUE(render_state_changes_[GFXRS_ALPHATESTFUNC], AlphaTestFunc_);
     SET_RS_VALUE(render_state_changes_[GFXRS_ALPHATESTREF], AlphaTestRef_);
-#endif
   }
+#endif
 
   inline void GpuRenderStates::HW__EnableAlphaBlend(unsigned int b)
   {
@@ -1268,9 +1276,10 @@ namespace nux
   }
 #endif
 
+#ifndef NUX_OPENGLES_20
   inline void GpuRenderStates::HW__EnableLineSmooth(unsigned int EnableLineSmooth)
   {
-#ifndef NUX_OPENGLES_20
+
     if (EnableLineSmooth)
     {
       CHECKGL(glEnable(GL_LINE_SMOOTH));
@@ -1281,8 +1290,8 @@ namespace nux
     }
 
     SET_RS_VALUE(render_state_changes_[GFXRS_LINESMOOTHENABLE], EnableLineSmooth ? GL_TRUE : GL_FALSE);
-#endif
   }
+#endif
 
   inline void GpuRenderStates::HW__SetLineWidth(unsigned int width,  unsigned int Hint)
   {

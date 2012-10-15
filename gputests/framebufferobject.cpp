@@ -79,23 +79,22 @@ void RenderToFrameBufferObject ()
       graphics_engine->SetScissor(0, 0, w, h);
       graphics_engine->SetContext(0, 0, w, h);
       graphics_engine->Push2DWindow(w, h);
-      //printf("0\n");
       fbo         = graphics_display->GetGpuDevice()->CreateFrameBufferObject ();
-      //printf("1\n");
-      texture_rt  = graphics_display->GetGpuDevice()->CreateSystemCapableDeviceTexture (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), 1, nux::BITFMT_R8G8B8A8);
-      //printf("2\n");
+      texture_rt  = graphics_display->GetGpuDevice()->CreateSystemCapableDeviceTexture(graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), 1, nux::BITFMT_R8G8B8A8);
       depth_rt    = graphics_display->GetGpuDevice()->CreateSystemCapableDeviceTexture (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), 1, nux::BITFMT_D24S8);
-      //printf("3\n");
     }
-    //printf("4\n");
+
     fbo->FormatFrameBufferObject (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), nux::BITFMT_R8G8B8A8);
-    //printf("5\n");
-    fbo->SetRenderTarget(0, texture_rt->GetSurfaceLevel(0));
-    //printf("6\n");
-    fbo->SetDepthSurface(depth_rt->GetSurfaceLevel(0));
-    //printf("7\n");
+    if (texture_rt.IsValid())
+    {
+      fbo->SetRenderTarget(0, texture_rt->GetSurfaceLevel(0));
+    }
+    if (depth_rt.IsValid())
+    {
+      fbo->SetDepthSurface(depth_rt->GetSurfaceLevel(0));
+    }
+
     fbo->Activate();
-    //printf("8\n");
 
     graphics_engine->GetWindowSize(w, h);
     graphics_engine->SetViewport(0, 0, w, h);
@@ -109,7 +108,8 @@ void RenderToFrameBufferObject ()
 
     graphics_engine->QRP_Color(geo.x, geo.y, geo.width, geo.height, nux::color::RandomColor());
 
-    graphics_display->GetGpuDevice ()->DeactivateFrameBuffer ();
+    // Restore the back buffer
+    graphics_display->GetGpuDevice()->DeactivateFrameBuffer();
 
     nux::TexCoordXForm texxform;
     graphics_engine->QRP_1Tex(0, 0, graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), texture_rt, texxform, nux::color::White);
