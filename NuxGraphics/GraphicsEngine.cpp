@@ -195,19 +195,18 @@ namespace nux
     SetScissor(0, 0, _graphics_display.GetWindowWidth(), _graphics_display.GetWindowHeight());
     EnableScissoring(true);
 
-
-    bool opengl_14_support = true;
-
-    if ((_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion() == 1) &&
-      (_graphics_display.GetGpuDevice()->GetOpenGLMinorVersion() < 4))
-    {
-      // OpenGL version is less than OpenGL 1.4
-      opengl_14_support = false;
-    }
-
     if (create_rendering_data)
     {
 #ifndef NUX_OPENGLES_20
+      bool opengl_14_support = true;
+
+      if ((_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion() == 1) &&
+        (_graphics_display.GetGpuDevice()->GetOpenGLMinorVersion() < 4))
+      {
+        // OpenGL version is less than OpenGL 1.4
+        opengl_14_support = false;
+      }
+            
       if (_graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader() &&
         _graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Vertex_Program() &&
         opengl_14_support)
@@ -245,6 +244,9 @@ namespace nux
       _offscreen_color_rt1  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
       _offscreen_color_rt2  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
       _offscreen_color_rt3  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+
+      _offscreen_depth_rt0  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
+      _offscreen_depth_rt1  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
     }
   }
 
@@ -1313,7 +1315,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
     if ((depthbuffer.IsValid()) && ((depthbuffer->GetWidth() != width) || (depthbuffer->GetHeight() != height)))
     {
       // Generate a new depth texture only if a valid one was passed to this function.
-      depthbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
+      depthbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);      
     }
 
     fbo->FormatFrameBufferObject(width, height, BITFMT_R8G8B8A8);

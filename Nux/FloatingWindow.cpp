@@ -279,7 +279,7 @@ namespace nux
 
     SetGeometry(geo);
 
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
     if (m_input_window != 0)
     {
       //nuxDebugMsg("Resize Input window: %d, %d, %d, %d", geo.x, geo.y, geo.width, geo.height);
@@ -309,7 +309,7 @@ namespace nux
 
     _title_bar->SetGeometry(Geometry(0, 0, geo.GetWidth(), _title_bar_height));
 
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
     if (m_input_window != 0)
     {
       //nuxDebugMsg("Resize Input window: %d, %d, %d, %d", geo.x, geo.y, geo.width, geo.height);
@@ -322,7 +322,7 @@ namespace nux
 
   void FloatingWindow::RecvCloseButtonClick(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
-#if defined(NUX_OS_LINUX)
+#if (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
     // Disable the input window if there is one.
     EnableInputWindow(false);
 #endif

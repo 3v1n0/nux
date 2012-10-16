@@ -243,9 +243,12 @@ namespace nux
     ObjectPtr<IOpenGLShaderProgram> CreateShaderProgram();
     ObjectPtr<IOpenGLVertexShader> CreateVertexShader();
     ObjectPtr<IOpenGLPixelShader> CreatePixelShader();
+
+#ifndef NUX_OPENGLES_20    
     ObjectPtr<IOpenGLAsmShaderProgram> CreateAsmShaderProgram();
     ObjectPtr<IOpenGLAsmVertexShader> CreateAsmVertexShader();
     ObjectPtr<IOpenGLAsmPixelShader> CreateAsmPixelShader();
+#endif
 
 #if (NUX_ENABLE_CG_SHADERS)
     ObjectPtr<ICgVertexShader> CreateCGVertexShader();
@@ -438,6 +441,14 @@ namespace nux
       int req_opengl_major = 1,   // requested opengl major version.
       int req_opengl_minor = 0,   // requested opengl minor version.
       bool opengl_es_20 = false);
+
+#elif defined(NUX_ARCH_ARM)
+    GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
+      EGLDisplay display,
+      EGLConfig fb_config,
+      EGLContext &opengl_rendering_context,
+      int req_opengl_major,
+      int req_opengl_minor);
 
 #elif defined(NUX_OS_LINUX)
     #ifdef NUX_OPENGLES_20

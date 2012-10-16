@@ -43,7 +43,9 @@
 #include "IOpenGLTexture2D.h"
 #include "IOpenGLAnimatedTexture.h"
 #include "IOpenGLGLSLShader.h"
+#ifndef NUX_OPENGLES_20 
 #include "IOpenGLAsmShader.h"
+#endif
 #include "IOpenGLQuery.h"
 #include "IOpenGLVertexDeclaration.h"
 #include "IOpenGLFrameBufferObject.h"

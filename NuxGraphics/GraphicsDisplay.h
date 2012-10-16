@@ -25,6 +25,8 @@
 
 #if defined(NUX_OS_WINDOWS)
   #include "GraphicsDisplayWin.h"
+#elif defined(NUX_OS_ANDROID)
+  #include "GraphicsDisplayAndroid.h"
 #elif defined(NUX_OS_LINUX)
   #include "GraphicsDisplayX11.h"
 #else
