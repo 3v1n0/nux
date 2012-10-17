@@ -464,16 +464,17 @@ namespace nux
               // FIXME add support to Hyper and Meta keys in nux::Event
             }
           }
-
+#if !defined(NUX_ARCH_ARM)  /*arm*/
           if (!is_modifier && key)
             ev.x11_keysym = key;
+#endif
         }
-
+#if !defined(NUX_ARCH_ARM)  /*arm*/
         if (ev.x11_keysym)
         {
           hotkeys.push_back(ev);
         }
-
+#endif
         g_strfreev(binding);
       }
     }
@@ -494,6 +495,7 @@ namespace nux
 
   bool IBusIMEContext::IsHotkeyEvent(EventType type, unsigned long keysym, unsigned long modifiers) const
   {
+#if !defined(NUX_ARCH_ARM)  /*arm*/    
     for (Event const& ev : hotkeys_)
     {
       if (ev.x11_keysym == keysym && (ev.type == type || type == EVENT_KEY_DOWN))
@@ -504,7 +506,7 @@ namespace nux
           return (ev.key_modifiers == modifiers);
       }
     }
-
+#endif
     return false;
   }
 }

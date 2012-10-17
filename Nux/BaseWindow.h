@@ -27,10 +27,8 @@
 #include <boost/scoped_ptr.hpp>
 #include "ScrollView.h"
 
-#if defined(NUX_OS_WINDOWS)
 #include "NuxGraphics/Events.h"
-#elif defined(NUX_OS_LINUX)
-#include "NuxGraphics/Events.h"
+#if (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
 #include "NuxGraphics/XInputWindow.h"
 #endif
 
@@ -152,7 +150,7 @@ namespace nux
     void  SetOpacity(float opacity);
     float GetOpacity();
 
-    #if defined(NUX_OS_LINUX)
+    #if (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
     void EnableInputWindow(bool        b,
                             const char* title = "nux input window",
                             bool        take_focus = False,
@@ -242,7 +240,7 @@ namespace nux
 
     bool ChildNeedsRedraw();
 
-    #if defined(NUX_OS_LINUX)
+    #if (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
     bool m_input_window_enabled;
     XInputWindow *m_input_window;
     #endif

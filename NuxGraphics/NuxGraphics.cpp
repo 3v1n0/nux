@@ -31,6 +31,7 @@
 
 namespace nux
 {
+  extern void* global_display;
   void NuxGraphicsInitialize()
   {
     inlRegisterThreadLocalIndex(1, _TLS_GraphicsDisplay, NULL);
@@ -49,6 +50,7 @@ namespace nux
 
   GraphicsDisplay* GetGraphicsDisplay()
   {
-    return(GraphicsDisplay *) inlGetThreadLocalStorage(_TLS_GraphicsDisplay);
+      //return(GraphicsDisplay *) global_display;
+      return(GraphicsDisplay *) inlGetThreadLocalStorage(_TLS_GraphicsDisplay);
   }
 }
