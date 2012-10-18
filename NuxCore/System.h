@@ -75,13 +75,18 @@
 // If we are compiling for linux, and neither USE_X11 or NO_X11 are set,
 // then assume that we are compiling for X11
 #if defined(NUX_OS_LINUX)
-# if defined(USE_X11)
-#  if defined(NO_X11)
-#   error Can not define both USE_X11 and NO_X11
-#  endif
-# elif !defined(NO_X11)
-#  define USE_X11
+#  if defined(USE_X11)
+#    if defined(NO_X11)
+#      error Can not define both USE_X11 and NO_X11
+#    endif
+#  elif !defined(NO_X11)
+#    define USE_X11
 # endif
+#endif
+
+#if (defined(NUX_OS_LINUX) && defined(USE_X11))
+#  define DRAG_AND_DROP_SUPPORTED
+#  define INPUT_METHOD_SUPPORTED
 #endif
 
 // Compiler Macros:
