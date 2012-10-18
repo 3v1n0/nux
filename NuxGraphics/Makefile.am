@@ -104,12 +104,16 @@ source_h = \
 if USE_X11
 source_h += \
   $(srcdir)/GraphicsDisplayX11.h \
-  $(srcdir)/IOpenGLAsmShader.h \
   $(srcdir)/RenderingPipeAsm.h \
   $(srcdir)/XInputWindow.h
 else
 source_h += \
   $(srcdir)/SystemEventSource.h
+endif
+
+if !NUX_OPENGLES_20
+source_h += \
+  $(srcdir)/IOpenGLAsmShader.h
 endif
 
 if HAVE_GEIS
@@ -179,12 +183,16 @@ source_cpp = \
 if USE_X11
 source_cpp += \
   $(srcdir)/GraphicsDisplayX11.cpp \
-  $(srcdir)/IOpenGLAsmShader.cpp \
   $(srcdir)/RenderingPipeAsm.cpp \
   $(srcdir)/XInputWindow.cpp
 else
 source_cpp += \
   $(srcdir)/SystemEventSource.cpp
+endif
+
+if !NUX_OPENGLES_20
+source_cpp += \
+  $(srcdir)/IOpenGLAsmShader.cpp
 endif
 
 if HAVE_GEIS
