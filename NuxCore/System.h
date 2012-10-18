@@ -73,7 +73,11 @@
   #define NUX_ARCH_ARM
 #endif
 
-
+// If we are compiling for linux, and neither USE_X11 or NO_X11 are set,
+// then assume that we are compiling for X11
+#if (defined(NUX_OS_LINUX) && !defined(USE_X11) && !defined(NO_X11))
+#define USE_X11
+#endif
 
 // Compiler Macros:
 // NUX_GNUCPP_COMPILER
