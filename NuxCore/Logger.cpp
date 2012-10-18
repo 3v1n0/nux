@@ -29,8 +29,8 @@
 #include "Logger.h"
 #include "LoggingWriter.h"
 
-#if (defined(NUX_OS_LINUX) && not defined(NUX_ARCH_ARM))
-#include <execinfo.h>
+#if defined(NUX_OS_LINUX)
+# include <execinfo.h>
 #endif
 
 #include <map>
@@ -386,7 +386,7 @@ Level get_logging_level(std::string level)
   return Warning;
 }
 
-#if (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
+#if defined(NUX_OS_LINUX)
 std::string Backtrace(int levels)
 {
   std::ostringstream sout;
@@ -416,9 +416,7 @@ std::string Backtrace(int levels)
 #else
 std::string Backtrace(int /*levels*/)
 {
-  std::ostringstream sout;
-  sout << "Backtrace not supported on this platform." << "\n";
-  return sout.str();
+  return "Backtrace not supported on this platform.\n";
 }
 #endif
 

@@ -177,7 +177,7 @@ namespace nux
     return w;
   }
 
-#elif defined(NUX_ARCH_ARM)
+#elif defined(NO_X11)
 #elif defined(NUX_OS_LINUX)
 #ifdef NUX_OPENGLES_20
   WindowThread *CreateFromForeignWindow (Window X11Window, EGLContext OpenGLContext,

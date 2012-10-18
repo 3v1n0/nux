@@ -797,7 +797,7 @@ protected:
     friend class View;
     friend class WindowCompositor;
     friend class WindowThread;
-#if !defined(NUX_ARCH_ARM)  /*arm*/
+#if !defined(NO_X11)
     friend class HSplitter;
     friend class VSplitter;
 #endif

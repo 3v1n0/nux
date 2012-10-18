@@ -296,15 +296,8 @@ namespace nux
     int req_opengl_major,
     int req_opengl_minor,
     bool opengl_es_20)
-#elif defined(NUX_ARCH_ARM)
-  GpuDevice::GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
-    EGLDisplay display,
-    EGLConfig fb_config,
-    EGLContext &opengl_rendering_context,
-    int req_opengl_major,
-    int req_opengl_minor)
-#elif defined(NUX_OS_LINUX)
-#ifdef NUX_OPENGLES_20
+#elif defined(USE_X11)
+# ifdef NUX_OPENGLES_20
   GpuDevice::GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
     Display *display,
     Window window,
@@ -314,7 +307,7 @@ namespace nux
     int req_opengl_major,
     int req_opengl_minor,
     bool opengl_es_20)
-#else
+# else
   GpuDevice::GpuDevice(unsigned int /* DeviceWidth */, unsigned int /* DeviceHeight */, BitmapFormat /* DeviceFormat */,
     Display *display,
     Window window,
@@ -324,7 +317,14 @@ namespace nux
     int req_opengl_major,
     int req_opengl_minor,
     bool opengl_es_20)
-#endif
+# endif
+#elif defined(NO_X11)
+  GpuDevice::GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
+    EGLDisplay display,
+    EGLConfig fb_config,
+    EGLContext &opengl_rendering_context,
+    int req_opengl_major,
+    int req_opengl_minor)
 #endif
     : opengl_major_(0)
     , opengl_minor_(0)
@@ -435,13 +435,13 @@ namespace nux
 #if defined(NUX_OS_WINDOWS)
     bool opengl_es_context_created = false;
     if (((opengl_major_ >= 3) && (req_opengl_major >= 3)) || (opengl_major_ >= 3) || opengl_es_20)
-#elif defined(NUX_ARCH_ARM)
-    if (((opengl_major_ >= 3) && (req_opengl_major >= 3)) || (opengl_major_ >= 3))
-#elif defined(NUX_OS_LINUX)
+#elif defined(USE_X11) // Should this be GLES check?
     //bool opengl_es_context_created = false;
     if (has_glx_13_support &&
     (((opengl_major_ >= 3) && (req_opengl_major >= 3)) ||
     ((opengl_major_ >= 3) && opengl_es_20)))
+#elif defined(NO_X11)
+    if (((opengl_major_ >= 3) && (req_opengl_major >= 3)) || (opengl_major_ >= 3))
 #endif
     {
       // Create a new Opengl Rendering Context
@@ -476,7 +476,7 @@ namespace nux
         }
       }
 
-#if !defined(NUX_ARCH_ARM)
+#if !defined(NO_X11)
       if (opengl_es_20)
       {
 #if defined(NUX_OS_WINDOWS)

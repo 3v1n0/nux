@@ -1682,9 +1682,8 @@ namespace nux
       CHECKGL(glEnableVertexAttribArrayARB(TextureCoord0Location));
       CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 32, VtxBuffer + 4));
     }
-    //printf("HG 0\n");
+
     CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
-    //printf("HG 1\n");
 
     CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));
 

@@ -25,7 +25,7 @@
 #include "NuxGraphics/GraphicsEngine.h"
 #include "Layout.h"
 #include "BaseWindow.h"
-#if !defined(NUX_ARCH_ARM)  /*arm*/
+#ifdef USE_X11
 #include "VSplitter.h"
 #include "HSplitter.h"
 #include "MenuPage.h"
@@ -514,7 +514,7 @@ namespace nux
 
       if (ic->CanBreakLayout())
       {
-#if !defined(NUX_ARCH_ARM)  /*arm*/
+#if !defined(NO_X11)
         if ((child != 0) && (ic->Type().IsObjectType(VSplitter::StaticObjectType) || ic->Type().IsObjectType(HSplitter::StaticObjectType)))
         {
           // If this element is a Splitter, then we submit its child to the refresh list. We don't want to submit the
@@ -555,7 +555,7 @@ namespace nux
 
           if (ic->CanBreakLayout())
           {
-#if !defined(NUX_ARCH_ARM)  /*arm*/
+#if !defined(NO_X11)
             if ((child != 0) && (ic->Type().IsObjectType(VSplitter::StaticObjectType) || ic->Type().IsObjectType(HSplitter::StaticObjectType)))
             {
               // If the parent of this element is a splitter, then we submit its child to the refresh list. We don't want to submit the
@@ -779,7 +779,7 @@ namespace nux
   Geometry Area::GetAbsoluteGeometry() const
   {
     if (Type().IsDerivedFromType(BaseWindow::StaticObjectType) ||
-#if !defined(NUX_ARCH_ARM)  /*arm*/
+#if !defined(NO_X11)
       Type().IsDerivedFromType(MenuPage::StaticObjectType) ||
 #endif
       (this == window_thread_->GetLayout()))
@@ -961,7 +961,7 @@ namespace nux
      }
 
      bool mouse_pointer_inside_area = false;
-#if !defined(NUX_ARCH_ARM)  /*arm*/
+#if !defined(NO_X11)
      if (Type().IsDerivedFromType(MenuPage::StaticObjectType))
      {
        // A MenuPage geometry is already in absolute coordinates.
@@ -998,7 +998,7 @@ namespace nux
      }
 
      bool mouse_pointer_inside_area = false;
-#if !defined(NUX_ARCH_ARM)  /*arm*/
+#if !defined(NO_X11)
      if (Type().IsDerivedFromType(MenuPage::StaticObjectType))
      {
        // A MenuPage geometry is already in absolute coordinates.

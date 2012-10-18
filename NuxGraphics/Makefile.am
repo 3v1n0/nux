@@ -109,7 +109,6 @@ source_h += \
   $(srcdir)/XInputWindow.h
 else
 source_h += \
-  $(srcdir)/GraphicsDisplayAndroid.h \
   $(srcdir)/SystemEventSource.h
 endif
 
@@ -185,9 +184,7 @@ source_cpp += \
   $(srcdir)/XInputWindow.cpp
 else
 source_cpp += \
-  $(srcdir)/GraphicsDisplayAndroid.cpp \
-  $(srcdir)/SystemEventSource.cpp \
-  $(srcdir)/SystemEventSourceAndroid.cpp
+  $(srcdir)/SystemEventSource.cpp
 endif
 
 if HAVE_GEIS

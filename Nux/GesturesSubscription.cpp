@@ -35,7 +35,7 @@ namespace
 GesturesSubscription::GesturesSubscription()
   : gesture_classes_(DRAG_GESTURE|PINCH_GESTURE|ROTATE_GESTURE),
     num_touches_(2),
-#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
+#if defined(USE_X11)
     window_id_(GetWindowThread()->GetGraphicsDisplay().GetWindowHandle()),
 #else
     window_id_(0),

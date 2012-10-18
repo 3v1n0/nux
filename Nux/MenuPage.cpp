@@ -960,7 +960,7 @@ namespace nux
       m_MenuWindow = GetWindowThread()->GetWindowCompositor().GetProcessingTopView();
     }
 
-#if !defined(NUX_ARCH_ARM)  /*arm*/
+#if !defined(NO_X11)
     GetWindowThread()->GetWindowCompositor().AddMenu(this, m_MenuWindow/*, OverrideCurrentMenuChain*/);
 #endif
     m_NextMouseUpMeanStop = false;
@@ -1154,4 +1154,3 @@ namespace nux
     return on_closure_continue_with_event_;
   }
 }
-

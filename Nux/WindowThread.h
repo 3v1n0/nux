@@ -216,10 +216,10 @@ namespace nux
 
 #if defined(NUX_OS_WINDOWS)
     bool ProcessForeignEvent(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, void *data);
-#elif defined(NUX_ARCH_ARM)
-    bool ProcessForeignEvent();
-#elif defined(NUX_OS_LINUX)
+#elif defined(USE_X11)
     bool ProcessForeignEvent(XEvent *event, void *data);
+#else
+    bool ProcessForeignEvent();
 #endif
 
     /*!
@@ -359,8 +359,7 @@ namespace nux
         This function is called when Nux is embedded. \sa IsEmbeddedWindow.
     */
     virtual bool ThreadCtor(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext);
-#elif defined(NUX_ARCH_ARM)
-#elif defined(NUX_OS_LINUX)
+#elif defined(USE_X11)
 #ifdef NUX_OPENGLES_20
     /*!
         Constructor-like function for the thread.
@@ -695,20 +694,20 @@ namespace nux
     friend WindowThread *CreateFromForeignWindow(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext,
         ThreadUserInitFunc UserInitFunc,
         void *InitData);
-#elif defined(NUX_ARCH_ARM)
-    friend WindowThread *CreateFromForeignWindow (EGLDisplay disp, EGLContext OpenGLContext,
-        ThreadUserInitFunc UserInitFunc,
-        void *InitData);
-#elif defined(NUX_OS_LINUX)
-#ifdef NUX_OPENGLES_20
+#elif defined(USE_X11)
+# ifdef NUX_OPENGLES_20
     friend WindowThread *CreateFromForeignWindow (Window X11Window, EGLContext OpenGLContext,
         ThreadUserInitFunc UserInitFunc,
         void *InitData);
-#else
+# else
     friend WindowThread *CreateFromForeignWindow (Window X11Window, GLXContext OpenGLContext,
         ThreadUserInitFunc UserInitFunc,
         void *InitData);
-#endif
+# endif
+#elif defined(NO_X11)
+    friend WindowThread *CreateFromForeignWindow (EGLDisplay disp, EGLContext OpenGLContext,
+        ThreadUserInitFunc UserInitFunc,
+        void *InitData);
 #endif
 
     friend SystemThread *CreateSystemThread(AbstractThread *Parent, ThreadUserInitFunc UserInitFunc, void *InitData);

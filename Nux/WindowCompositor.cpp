@@ -27,7 +27,7 @@
 #include "NuxGraphics/GLError.h"
 #include "WindowThread.h"
 #include "BaseWindow.h"
-#if !defined(NUX_ARCH_ARM)  /*arm*/
+#if !defined(NO_X11)
 #include "MenuPage.h"
 #endif
 #include "PaintLayer.h"
@@ -72,7 +72,7 @@ namespace
     m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
     m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
 
-#if !defined(NUX_ARCH_ARM)  /*arm*/
+#if !defined(NO_X11)
     _mouse_over_menu_page       = NULL;
     _mouse_owner_menu_page      = NULL;
     _menu_chain                 = NULL;
@@ -101,11 +101,11 @@ namespace
     _view_window_list.clear();
     _modal_view_window_list.clear();
 
-#if !defined(NUX_ARCH_ARM)  /*arm*/
+#if !defined(NO_X11)
     _menu_chain->clear();
-    NUX_SAFE_DELETE(_menu_chain);
+    delete _menu_chain;
 #endif
-    NUX_SAFE_DELETE(m_Background);
+    delete m_Background;
   }
 
   WindowCompositor::RenderTargetTextures& WindowCompositor::GetWindowBuffer(BaseWindow* window)
@@ -178,7 +178,7 @@ namespace
   {
     mouse_over_area_ = NULL;
     SetMouseOwnerArea(NULL);
-#if !defined(NUX_ARCH_ARM)  /*arm*/
+#if !defined(NO_X11)
     _mouse_over_menu_page   = NULL;
     _mouse_owner_menu_page  = NULL;
 #endif
@@ -355,7 +355,7 @@ namespace
 
           if (abs(dnd_safety_y_) > 30 || abs(dnd_safety_x_) > 30)
           {
-#if (defined(NUX_OS_LINUX)  && !defined(NUX_OS_ANDROID))
+#if defined(USE_X11)
             mouse_owner_area_->StartDragAsSource();
 #endif
             ResetMousePointerAreas();
@@ -691,7 +691,7 @@ namespace
     UpdateEventTrackingByMouseOwnerAncestor(event);
   }
 
-#if !defined(NUX_ARCH_ARM)  /*arm*/
+#if !defined(NO_X11)
   void WindowCompositor::MenuEventCycle(Event& event)
   {
     // _mouse_owner_menu_page: the menu page that has the mouse down
@@ -1033,7 +1033,7 @@ namespace
                     event.GetKeySym(),
 #if defined(NUX_OS_WINDOWS)
                     event.win32_keycode,
-#elif (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
+#elif defined(USE_X11)
                     event.x11_keycode,
 #else
                     0,
@@ -1058,7 +1058,7 @@ namespace
             event.GetKeySym(),
 #if defined(NUX_OS_WINDOWS)
             event.win32_keycode,
-#elif (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
+#elif defined(USE_X11)
             event.x11_keycode,
 #else
             0,
@@ -1115,7 +1115,7 @@ namespace
     if (((event.type >= NUX_MOUSE_PRESSED) && (event.type <= NUX_MOUSE_WHEEL)) ||
     (event.type == NUX_WINDOW_MOUSELEAVE))
     {
-#if !defined(NUX_ARCH_ARM)  /*arm*/
+#if !defined(NO_X11)
       bool menu_active = false;
       if (_menu_chain->size())
       {
@@ -1366,7 +1366,7 @@ namespace
 
   void WindowCompositor::DrawMenu(bool force_draw)
   {
-#if !defined(NUX_ARCH_ARM)  /*arm*/
+#if !defined(NO_X11)
     ObjectWeakPtr<BaseWindow> window = m_MenuWindow;
 
     if (window.IsValid())
@@ -1712,7 +1712,7 @@ namespace
     }
   }
 
-#if !defined(NUX_ARCH_ARM)  /*arm*/
+#if !defined(NO_X11)  /*arm*/
   void WindowCompositor::AddMenu(MenuPage* menu, BaseWindow* window, bool OverrideCurrentMenuChain)
   {
     if (_menu_chain->size() == 0)
@@ -2117,7 +2117,7 @@ namespace
 
   void WindowCompositor::SetDnDArea(InputArea* area)
   {
-#if (defined(NUX_OS_LINUX) && !defined(NUX_ARCH_ARM))
+#if defined(USE_X11)
     if (_dnd_area == area)
       return;
 
@@ -2127,7 +2127,7 @@ namespace
       _dnd_area->UnReference();
     }
     _dnd_area = area;
-    
+
     if (_dnd_area)
     {
       _dnd_area->Reference();
