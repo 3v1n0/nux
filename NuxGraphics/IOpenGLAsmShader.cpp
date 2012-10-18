@@ -113,7 +113,7 @@ namespace
   }
 
   IOpenGLAsmPixelShader::IOpenGLAsmPixelShader()
-#ifndef NUX_OPENGLES_20  
+#ifndef NUX_OPENGLES_20
     : IOpenGLAsmShader("PixelProgram", GL_FRAGMENT_PROGRAM_ARB, RT_GLSL_PIXELSHADER)
 #else
     : IOpenGLAsmShader("PixelProgram", 0, RT_GLSL_PIXELSHADER)
