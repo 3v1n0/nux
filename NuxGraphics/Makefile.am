@@ -19,23 +19,10 @@ libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS= \
   $(MAINTAINER_CFLAGS) \
   $(GEIS_CFLAGS)
 
-if USE_X11
 libnux_graphics_@NUX_API_VERSION@_la_LIBADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
   $(NUX_GRAPHICS_LIBS) \
   $(GEIS_LIBS)
-else
-libnux_graphics_@NUX_API_VERSION@_la_LIBADD = \
-  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-  $(NUX_GRAPHICS_LIBS) \
-  -L/usr/lib/arm-linux-gnueabi \
-  -L/usr/lib/arm-linux-gnueabi/libhybris-egl \
-  -lis \
-  -lsf \
-  -lhybris_ics \
-  -lEGL \
-  -lGLESv2
-endif
 
 libnux_graphics_@NUX_API_VERSION@_la_LDFLAGS = \
   $(NUX_LT_LDFLAGS)
@@ -106,9 +93,6 @@ source_h += \
   $(srcdir)/GraphicsDisplayX11.h \
   $(srcdir)/RenderingPipeAsm.h \
   $(srcdir)/XInputWindow.h
-else
-source_h += \
-  $(srcdir)/SystemEventSource.h
 endif
 
 if !NUX_OPENGLES_20
@@ -185,9 +169,6 @@ source_cpp += \
   $(srcdir)/GraphicsDisplayX11.cpp \
   $(srcdir)/RenderingPipeAsm.cpp \
   $(srcdir)/XInputWindow.cpp
-else
-source_cpp += \
-  $(srcdir)/SystemEventSource.cpp
 endif
 
 if !NUX_OPENGLES_20
