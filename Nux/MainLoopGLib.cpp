@@ -113,11 +113,11 @@ namespace nux
       MSG msg;
       retval = PeekMessageW(&msg, NULL, 0, 0, PM_NOREMOVE) ? TRUE : FALSE;
 #elif defined(NUX_OS_LINUX)
-# if defined(USE_X11)
+#  if defined(USE_X11)
       retval = GetGraphicsDisplay()->HasXPendingEvent() ? TRUE : FALSE;
-# endif
+#  endif
 #else
-# error Not implemented.
+#  error Not implemented.
 #endif
     }
 
@@ -171,7 +171,7 @@ namespace nux
 
   static gboolean nux_timeline_dispatch(GSource *source, GSourceFunc /* callback */, gpointer user_data)
   {
-#if defined(USE_X11)
+#if !defined(NUX_MINIMAL)
     bool has_timelines_left = false;
     nux_glib_threads_lock();
     gint64 micro_secs = g_source_get_time(source);
@@ -255,11 +255,11 @@ namespace nux
 #if defined(NUX_OS_WINDOWS)
     event_source->event_poll_fd.fd = G_WIN32_MSG_HANDLE;
 #elif defined(NUX_OS_LINUX)
-# if defined(USE_X11)
+#  if defined(USE_X11)
     event_source->event_poll_fd.fd = ConnectionNumber(GetGraphicsDisplay().GetX11Display());
-# endif
+#  endif
 #else
-# error Not implemented.
+#  error Not implemented.
 #endif
 
     event_source->event_poll_fd.events = G_IO_IN;

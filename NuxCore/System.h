@@ -82,11 +82,17 @@
 #  elif !defined(NO_X11)
 #    define USE_X11
 # endif
+#elif defined(USE_X11)
+#  error X11 not supported on non-linux systems
 #endif
 
-#if (defined(NUX_OS_LINUX) && defined(USE_X11))
+#if defined(USE_X11)
 #  define DRAG_AND_DROP_SUPPORTED
-#  define INPUT_METHOD_SUPPORTED
+#endif
+
+// Right now, we only support minimal builds for ARM if no X.
+#if (defined(NUX_ARCH_ARM) && defined(NO_X11) && !defined(NUX_MINIMAL))
+#  define NUX_MINIMAL
 #endif
 
 // Compiler Macros:

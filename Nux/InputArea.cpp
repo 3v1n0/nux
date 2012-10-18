@@ -127,7 +127,7 @@ logging::Logger logger("nux.inputarea");
 
   void InputArea::HandleDndMove(Event &event)
   {
-#if defined(USE_X11)
+#if defined(DRAG_AND_DROP_SUPPORTED)
     std::list<char *> mimes;
 
     mimes = GetWindowThread()->GetGraphicsDisplay().GetDndMimeTypes();
@@ -141,7 +141,7 @@ logging::Logger logger("nux.inputarea");
 
   void InputArea::HandleDndDrop(Event &event)
   {
-#if defined(USE_X11)
+#if defined(DRAG_AND_DROP_SUPPORTED)
     ProcessDndDrop(event.x, event.y);
 #endif
   }
@@ -149,21 +149,21 @@ logging::Logger logger("nux.inputarea");
 #if defined(NUX_OS_LINUX)
   void InputArea::SendDndStatus(bool accept, DndAction action, Geometry region)
   {
-#if defined(USE_X11)
+#if defined(DRAG_AND_DROP_SUPPORTED)
     GetWindowThread()->GetGraphicsDisplay().SendDndStatus(accept, action, Rect(region.x, region.y, region.width, region.height));
 #endif
   }
 
   void InputArea::SendDndFinished(bool accepted, DndAction action)
   {
-#if defined(USE_X11)
+#if defined(DRAG_AND_DROP_SUPPORTED)
     GetWindowThread()->GetGraphicsDisplay().SendDndFinished(accepted, action);
 #endif
   }
 
   void InputArea::ProcessDndMove(int x, int y, std::list<char *> /* mimes */)
   {
-#if defined(USE_X11)
+#if defined(DRAG_AND_DROP_SUPPORTED)
     // must learn to deal with x/y offsets
     Area *parent = GetToplevel();
 
@@ -179,7 +179,7 @@ logging::Logger logger("nux.inputarea");
 
   void InputArea::ProcessDndDrop(int /* x */, int /* y */)
   {
-#if defined(USE_X11)
+#if defined(DRAG_AND_DROP_SUPPORTED)
     SendDndFinished(false, DNDACTION_NONE);
 #endif
   }
@@ -194,7 +194,7 @@ logging::Logger logger("nux.inputarea");
 
   void InputArea::SetDndEnabled(bool as_source, bool as_target)
   {
-#if defined(USE_X11)
+#if defined(DRAG_AND_DROP_SUPPORTED)
     _dnd_enabled_as_source = as_source;
     _dnd_enabled_as_target = as_target;
 #endif
@@ -234,7 +234,7 @@ logging::Logger logger("nux.inputarea");
 
   void InputArea::InnerDndSourceDragFinished(DndAction result, void *data)
   {
-#if defined(USE_X11)
+#if defined(DRAG_AND_DROP_SUPPORTED)
     InputArea *self = static_cast<InputArea *> (data);
     self->DndSourceDragFinished(result);
 #endif
@@ -246,7 +246,7 @@ logging::Logger logger("nux.inputarea");
 
   void InputArea::StartDragAsSource()
   {
-#if defined(USE_X11)
+#if defined(DRAG_AND_DROP_SUPPORTED)
     GraphicsDisplay::DndSourceFuncs funcs;
 
     funcs.get_drag_image = &InputArea::InnerDndSourceGetDragImage;

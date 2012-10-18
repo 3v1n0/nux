@@ -25,10 +25,10 @@
 #include "NuxGraphics/GraphicsEngine.h"
 #include "Layout.h"
 #include "BaseWindow.h"
-#ifdef USE_X11
-#include "VSplitter.h"
-#include "HSplitter.h"
-#include "MenuPage.h"
+#if !defined(NUX_MINIMAL)
+#  include "VSplitter.h"
+#  include "HSplitter.h"
+#  include "MenuPage.h"
 #endif
 
 #ifdef NUX_GESTURES_SUPPORT
@@ -514,7 +514,7 @@ namespace nux
 
       if (ic->CanBreakLayout())
       {
-#if !defined(NO_X11)
+#if !defined(NUX_MINIMAL)
         if ((child != 0) && (ic->Type().IsObjectType(VSplitter::StaticObjectType) || ic->Type().IsObjectType(HSplitter::StaticObjectType)))
         {
           // If this element is a Splitter, then we submit its child to the refresh list. We don't want to submit the
@@ -555,11 +555,15 @@ namespace nux
 
           if (ic->CanBreakLayout())
           {
-#if !defined(NO_X11)
-            if ((child != 0) && (ic->Type().IsObjectType(VSplitter::StaticObjectType) || ic->Type().IsObjectType(HSplitter::StaticObjectType)))
+#if !defined(NUX_MINIMAL)
+            if ((child != 0) &&
+                (ic->Type().IsObjectType(VSplitter::StaticObjectType) ||
+                 ic->Type().IsObjectType(HSplitter::StaticObjectType)))
             {
-              // If the parent of this element is a splitter, then we submit its child to the refresh list. We don't want to submit the
-              // splitter because this will cause a redraw of all parts of the splitter(costly and unnecessary).
+              // If the parent of this element is a splitter, then we submit
+              // its child to the refresh list. We don't want to submit the
+              // splitter because this will cause a redraw of all parts of the
+              // splitter(costly and unnecessary).
               window_thread_->QueueObjectLayout(this);
             }
             else
@@ -779,7 +783,7 @@ namespace nux
   Geometry Area::GetAbsoluteGeometry() const
   {
     if (Type().IsDerivedFromType(BaseWindow::StaticObjectType) ||
-#if !defined(NO_X11)
+#if !defined(NUX_MINIMAL)
       Type().IsDerivedFromType(MenuPage::StaticObjectType) ||
 #endif
       (this == window_thread_->GetLayout()))
@@ -961,7 +965,7 @@ namespace nux
      }
 
      bool mouse_pointer_inside_area = false;
-#if !defined(NO_X11)
+#if !defined(NUX_MINIMAL)
      if (Type().IsDerivedFromType(MenuPage::StaticObjectType))
      {
        // A MenuPage geometry is already in absolute coordinates.
@@ -998,7 +1002,7 @@ namespace nux
      }
 
      bool mouse_pointer_inside_area = false;
-#if !defined(NO_X11)
+#if !defined(NUX_MINIMAL)
      if (Type().IsDerivedFromType(MenuPage::StaticObjectType))
      {
        // A MenuPage geometry is already in absolute coordinates.

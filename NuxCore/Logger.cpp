@@ -30,7 +30,7 @@
 #include "LoggingWriter.h"
 
 #if defined(NUX_OS_LINUX)
-# include <execinfo.h>
+#  include <execinfo.h>
 #endif
 
 #include <map>

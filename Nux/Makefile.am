@@ -82,7 +82,7 @@ source_cpp = \
   $(srcdir)/WindowCompositor.cpp \
   $(srcdir)/WindowThread.cpp
 
-if USE_X11
+if !NUX_MINIMAL
 source_cpp += \
   $(srcdir)/ActionItem.cpp \
   $(srcdir)/AnimatedTextureArea.cpp \
@@ -190,7 +190,7 @@ source_h = \
   $(srcdir)/WindowCompositor.h \
   $(srcdir)/WindowThread.h
 
-if USE_X11
+if !NUX_MINIMAL
 source_h += \
   $(builddir)/ABI.h \
   $(srcdir)/ActionItem.h \

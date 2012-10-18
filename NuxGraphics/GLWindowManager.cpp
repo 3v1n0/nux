@@ -131,11 +131,11 @@ namespace nux
     return glwindow;
   }
 #elif defined(USE_X11)
-# ifdef NUX_OPENGLES_20
+#  ifdef NUX_OPENGLES_20
   GraphicsDisplay *DisplayAccessController::CreateFromForeignWindow(Display *X11Display, Window X11Window, EGLContext OpenGLContext)
-# else
+#  else
   GraphicsDisplay *DisplayAccessController::CreateFromForeignWindow(Display *X11Display, Window X11Window, GLXContext OpenGLContext)
-# endif
+#  endif
   {
     if (GetGraphicsDisplay())
     {
@@ -149,10 +149,8 @@ namespace nux
 
     return glwindow;
   }
-#elif defined(NO_X11)
-// TODO: write the method
 #endif
-}
+} // namespace nux
 
 #ifndef NUX_OPENGLES_20
 GLEWContext *glewGetContext()

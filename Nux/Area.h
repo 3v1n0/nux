@@ -797,7 +797,7 @@ protected:
     friend class View;
     friend class WindowCompositor;
     friend class WindowThread;
-#if !defined(NO_X11)
+#if !defined(NUX_MINIMAL)
     friend class HSplitter;
     friend class VSplitter;
 #endif

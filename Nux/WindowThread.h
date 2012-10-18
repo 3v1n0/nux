@@ -695,15 +695,15 @@ namespace nux
         ThreadUserInitFunc UserInitFunc,
         void *InitData);
 #elif defined(USE_X11)
-# ifdef NUX_OPENGLES_20
+#  ifdef NUX_OPENGLES_20
     friend WindowThread *CreateFromForeignWindow (Window X11Window, EGLContext OpenGLContext,
         ThreadUserInitFunc UserInitFunc,
         void *InitData);
-# else
+#  else
     friend WindowThread *CreateFromForeignWindow (Window X11Window, GLXContext OpenGLContext,
         ThreadUserInitFunc UserInitFunc,
         void *InitData);
-# endif
+#  endif
 #elif defined(NO_X11)
     friend WindowThread *CreateFromForeignWindow (EGLDisplay disp, EGLContext OpenGLContext,
         ThreadUserInitFunc UserInitFunc,

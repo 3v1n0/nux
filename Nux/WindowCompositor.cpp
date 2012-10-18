@@ -27,7 +27,7 @@
 #include "NuxGraphics/GLError.h"
 #include "WindowThread.h"
 #include "BaseWindow.h"
-#if !defined(NO_X11)
+#if !defined(NUX_MINIMAL)
 #include "MenuPage.h"
 #endif
 #include "PaintLayer.h"
@@ -72,7 +72,7 @@ namespace
     m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
     m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
 
-#if !defined(NO_X11)
+#if !defined(NUX_MINIMAL)
     _mouse_over_menu_page       = NULL;
     _mouse_owner_menu_page      = NULL;
     _menu_chain                 = NULL;
@@ -101,7 +101,7 @@ namespace
     _view_window_list.clear();
     _modal_view_window_list.clear();
 
-#if !defined(NO_X11)
+#if !defined(NUX_MINIMAL)
     _menu_chain->clear();
     delete _menu_chain;
 #endif
@@ -178,7 +178,7 @@ namespace
   {
     mouse_over_area_ = NULL;
     SetMouseOwnerArea(NULL);
-#if !defined(NO_X11)
+#if !defined(NUX_MINIMAL)
     _mouse_over_menu_page   = NULL;
     _mouse_owner_menu_page  = NULL;
 #endif
@@ -355,7 +355,7 @@ namespace
 
           if (abs(dnd_safety_y_) > 30 || abs(dnd_safety_x_) > 30)
           {
-#if defined(USE_X11)
+#if defined(DRAG_AND_DROP_SUPPORTED)
             mouse_owner_area_->StartDragAsSource();
 #endif
             ResetMousePointerAreas();
@@ -691,7 +691,7 @@ namespace
     UpdateEventTrackingByMouseOwnerAncestor(event);
   }
 
-#if !defined(NO_X11)
+#if !defined(NUX_MINIMAL)
   void WindowCompositor::MenuEventCycle(Event& event)
   {
     // _mouse_owner_menu_page: the menu page that has the mouse down
@@ -1115,7 +1115,7 @@ namespace
     if (((event.type >= NUX_MOUSE_PRESSED) && (event.type <= NUX_MOUSE_WHEEL)) ||
     (event.type == NUX_WINDOW_MOUSELEAVE))
     {
-#if !defined(NO_X11)
+#if !defined(NUX_MINIMAL)
       bool menu_active = false;
       if (_menu_chain->size())
       {
@@ -1366,7 +1366,7 @@ namespace
 
   void WindowCompositor::DrawMenu(bool force_draw)
   {
-#if !defined(NO_X11)
+#if !defined(NUX_MINIMAL)
     ObjectWeakPtr<BaseWindow> window = m_MenuWindow;
 
     if (window.IsValid())
@@ -1712,7 +1712,7 @@ namespace
     }
   }
 
-#if !defined(NO_X11)  /*arm*/
+#if !defined(NUX_MINIMAL)
   void WindowCompositor::AddMenu(MenuPage* menu, BaseWindow* window, bool OverrideCurrentMenuChain)
   {
     if (_menu_chain->size() == 0)
@@ -2117,7 +2117,7 @@ namespace
 
   void WindowCompositor::SetDnDArea(InputArea* area)
   {
-#if defined(USE_X11)
+#if defined(DRAG_AND_DROP_SUPPORTED)
     if (_dnd_area == area)
       return;
 

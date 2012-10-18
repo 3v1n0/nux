@@ -960,9 +960,7 @@ namespace nux
       m_MenuWindow = GetWindowThread()->GetWindowCompositor().GetProcessingTopView();
     }
 
-#if !defined(NO_X11)
     GetWindowThread()->GetWindowCompositor().AddMenu(this, m_MenuWindow/*, OverrideCurrentMenuChain*/);
-#endif
     m_NextMouseUpMeanStop = false;
 
     StopActionSubMenu();

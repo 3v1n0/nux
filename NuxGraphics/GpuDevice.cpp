@@ -297,7 +297,7 @@ namespace nux
     int req_opengl_minor,
     bool opengl_es_20)
 #elif defined(USE_X11)
-# ifdef NUX_OPENGLES_20
+#  ifdef NUX_OPENGLES_20
   GpuDevice::GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
     Display *display,
     Window window,
@@ -307,7 +307,7 @@ namespace nux
     int req_opengl_major,
     int req_opengl_minor,
     bool opengl_es_20)
-# else
+#  else
   GpuDevice::GpuDevice(unsigned int /* DeviceWidth */, unsigned int /* DeviceHeight */, BitmapFormat /* DeviceFormat */,
     Display *display,
     Window window,
@@ -317,7 +317,7 @@ namespace nux
     int req_opengl_major,
     int req_opengl_minor,
     bool opengl_es_20)
-# endif
+#  endif
 #elif defined(NO_X11)
   GpuDevice::GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
     EGLDisplay display,
