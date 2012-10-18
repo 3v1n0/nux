@@ -148,6 +148,19 @@ AS_IF([test "x$enable_opengles_20" = "xyes"],
 )
 AM_CONDITIONAL(NUX_OPENGLES_20, [test "x$enable_opengles_20" = "xyes"])
 
+# Minimal builds
+AC_ARG_ENABLE([minimal_build],
+              [AC_HELP_STRING([--enable-minimal-build=@<:@no/yes@:>@],
+              [Enable minimal builds @<:@default=no@:>@])],
+              [],
+              [enable_minimal_build=no])
+
+AS_IF([test "x$enable_minimal_build" = "xyes"], [
+        MAINTAINER_CFLAGS+=" -DNUX_MINIMAL"
+      ])
+AM_CONDITIONAL(NUX_MINIMAL, [test "x$enable_minimal_build" = "xyes"])
+
+
 AC_SUBST(GL_PKGS)
 AC_SUBST(MAINTAINER_CFLAGS)
 
@@ -474,6 +487,7 @@ echo -e "        Build Gpu Tests    : ${BOLD_WHITE}${enable_gputests}${RESET}"
 echo -e "        Build Nux Tests    : ${BOLD_WHITE}${enable_tests}${RESET}"
 echo -e "        Gestures support   : ${BOLD_WHITE}${have_geis}${RESET}"
 echo -e "        X11 build support  : ${BOLD_WHITE}${enable_x_support}${RESET}"
+echo -e "        Minimal build      : ${BOLD_WHITE}${enable_minimal_build}${RESET}"
 echo ""
 
 echo -e "${RESET}"
