@@ -343,7 +343,7 @@ if test "x$GCC" = "xyes"; then
 fi
 
 # gcc flags for building the tests.
-GCC_TESTS_FLAGS="-g -Wall -Wextra -std=c++0x"
+GCC_TESTS_FLAGS="-g -O0 -Wall -Wextra -std=c++0x"
 
 # use strict compiler flags only on development releases
 m4_define([maintainer_mode_default], [m4_if(m4_eval(nux_micro_version % 2), [1], [yes], [no])])
@@ -369,7 +369,7 @@ AC_ARG_ENABLE([debug],
 AS_IF([test "x$enable_debug" = "xyes"],
       [
          MAINTAINER_CFLAGS+=" -DNUX_DEBUG"
-         GCC_FLAGS="-g -Wall -Wextra -std=c++0x"
+         GCC_FLAGS="-g -O0 -Wall -Wextra -std=c++0x"
       ]
 )
 
