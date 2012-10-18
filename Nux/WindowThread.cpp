@@ -941,7 +941,7 @@ logging::Logger logger("nux.windows.thread");
 
   bool WindowThread::ProcessTimelines(gint64 micro_secs)
   {
-#if defined(USE_X11)
+#if !defined(NUX_MINIMAL)
     // go through our timelines and tick them
     // return true if we still have active timelines
 
