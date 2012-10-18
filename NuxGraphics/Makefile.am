@@ -19,7 +19,12 @@ libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS= \
   $(MAINTAINER_CFLAGS) \
   $(GEIS_CFLAGS)
 
-if ARM_BUILD
+if USE_X11
+libnux_graphics_@NUX_API_VERSION@_la_LIBADD = \
+  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
+  $(NUX_GRAPHICS_LIBS) \
+  $(GEIS_LIBS)
+else
 libnux_graphics_@NUX_API_VERSION@_la_LIBADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
   $(NUX_GRAPHICS_LIBS) \
@@ -30,11 +35,6 @@ libnux_graphics_@NUX_API_VERSION@_la_LIBADD = \
   -lhybris_ics \
   -lEGL \
   -lGLESv2
-else
-libnux_graphics_@NUX_API_VERSION@_la_LIBADD = \
-  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-  $(NUX_GRAPHICS_LIBS) \
-  $(GEIS_LIBS)
 endif
 
 libnux_graphics_@NUX_API_VERSION@_la_LDFLAGS = \
@@ -101,16 +101,16 @@ source_h = \
   $(srcdir)/RunTimeStats.h \
   $(srcdir)/VirtualKeyCodesX11.h
 
-if ARM_BUILD
-source_h += \
-  $(srcdir)/GraphicsDisplayAndroid.h \
-  $(srcdir)/SystemEventSource.h
-else
+if USE_X11
 source_h += \
   $(srcdir)/GraphicsDisplayX11.h \
   $(srcdir)/IOpenGLAsmShader.h \
   $(srcdir)/RenderingPipeAsm.h \
   $(srcdir)/XInputWindow.h
+else
+source_h += \
+  $(srcdir)/GraphicsDisplayAndroid.h \
+  $(srcdir)/SystemEventSource.h
 endif
 
 if HAVE_GEIS
@@ -177,17 +177,17 @@ source_cpp = \
   $(srcdir)/RunTimeStats.cpp
 
 
-if ARM_BUILD
-source_cpp += \
-  $(srcdir)/GraphicsDisplayAndroid.cpp \
-  $(srcdir)/SystemEventSource.cpp \
-  $(srcdir)/SystemEventSourceAndroid.cpp
-else
+if USE_X11
 source_cpp += \
   $(srcdir)/GraphicsDisplayX11.cpp \
   $(srcdir)/IOpenGLAsmShader.cpp \
   $(srcdir)/RenderingPipeAsm.cpp \
   $(srcdir)/XInputWindow.cpp
+else
+source_cpp += \
+  $(srcdir)/GraphicsDisplayAndroid.cpp \
+  $(srcdir)/SystemEventSource.cpp \
+  $(srcdir)/SystemEventSourceAndroid.cpp
 endif
 
 if HAVE_GEIS

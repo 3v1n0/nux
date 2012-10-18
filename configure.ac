@@ -116,18 +116,23 @@ AC_CHECK_FUNCS([memset munmap strcasecmp strdup])
 PKG_PROG_PKG_CONFIG
 
 dnl ===========================================================================
-# Enable ARM build
-AC_ARG_ENABLE([arm_build],
-             [AC_HELP_STRING([--enable-arm-build=@<:@no/yes@:>@],
-             [Enable ARM code path @<:@default=no@:>@])],
-             [],
-             [enable_arm_build=no])
-AM_CONDITIONAL(ARM_BUILD, [test "x$enable_arm_build" = "xyes"])
-dnl ===========================================================================
-
-dnl ===========================================================================
 GL_PKGS="gl glu glew glewmx xext x11"
 MAINTAINER_CFLAGS=""
+
+# X11 build
+AC_ARG_ENABLE([x_support],
+             [AC_HELP_STRING([--enable-x-support=@<:@no/yes@:>@],
+             [Enable X11 code path @<:@default=yes@:>@])],
+             [],
+             [enable_x_support=yes])
+AS_IF([test "x$enable_x_support" = "xyes"], [
+        MAINTAINER_CFLAGS+=" -DUSE_X11"
+      ])
+AS_IF([test "x$enable_x_support" = "xno"], [
+        MAINTAINER_CFLAGS+=" -DNO_X11"
+      ])
+
+AM_CONDITIONAL(USE_X11, [test "x$enable_x_support" = "xyes"])
 
 # Enable opengl es 20 code path
 AC_ARG_ENABLE([opengles_20],
@@ -468,7 +473,7 @@ echo -e "        Build Examples     : ${BOLD_WHITE}${enable_examples}${RESET}"
 echo -e "        Build Gpu Tests    : ${BOLD_WHITE}${enable_gputests}${RESET}"
 echo -e "        Build Nux Tests    : ${BOLD_WHITE}${enable_tests}${RESET}"
 echo -e "        Gestures support   : ${BOLD_WHITE}${have_geis}${RESET}"
-echo -e "        ARM build support  : ${BOLD_WHITE}${enable_arm_build}${RESET}"
+echo -e "        X11 build support  : ${BOLD_WHITE}${enable_x_support}${RESET}"
 echo ""
 
 echo -e "${RESET}"

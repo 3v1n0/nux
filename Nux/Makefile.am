@@ -82,7 +82,7 @@ source_cpp = \
   $(srcdir)/WindowCompositor.cpp \
   $(srcdir)/WindowThread.cpp
 
-if !ARM_BUILD
+if USE_X11
 source_cpp += \
   $(srcdir)/ActionItem.cpp \
   $(srcdir)/AnimatedTextureArea.cpp \
@@ -124,7 +124,7 @@ source_cpp += \
   $(srcdir)/VScrollBar.cpp
 endif
 
-if !ARM_BUILD
+if USE_X11
 source_cpp += \
   $(srcdir)/InputMethodIBus.cpp
 endif
@@ -190,7 +190,7 @@ source_h = \
   $(srcdir)/WindowCompositor.h \
   $(srcdir)/WindowThread.h
 
-if !ARM_BUILD
+if USE_X11
 source_h += \
   $(builddir)/ABI.h \
   $(srcdir)/ActionItem.h \
@@ -236,7 +236,7 @@ source_h += \
   $(srcdir)/VScrollBar.h
 endif
 
-if !ARM_BUILD
+if USE_X11
 source_cpp += \
   $(srcdir)/InputMethodIBus.h
 endif
