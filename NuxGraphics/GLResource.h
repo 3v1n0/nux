@@ -85,29 +85,20 @@ namespace nux
   #pragma comment( lib, "cgGL.lib"  )
   #endif
 
-#elif defined(NUX_ARCH_ARM)
-    #include "NuxGraphics/OpenGLMapping.h"
-    #include "EGL/egl.h"
-    #include "GLES2/gl2.h"
-    #include "GLES2/gl2ext.h"
-#elif defined(NUX_OS_LINUX) 
+#elif defined(NUX_OS_LINUX)
 
   #ifdef NUX_OPENGLES_20
     #include "NuxGraphics/OpenGLMapping.h"
     #include "EGL/egl.h"
     #include "GLES2/gl2.h"
     #include "GLES2/gl2ext.h"
-    // Explicitly include X11 headers as many EGL implementations don't
-    // do it for us.
-    #include <X11/Xlib.h>
-    #include <X11/Xutil.h>
   #else
     #ifndef GLEW_MX
       #define GLEW_MX
     #endif
     #include "GL/glew.h"
     #include "GL/glxew.h"
-    
+
     GLEWContext *glewGetContext();
     GLXEWContext *glxewGetContext();
 
@@ -117,6 +108,12 @@ namespace nux
     #endif
   #endif
 
+  #ifdef USE_X11
+    // Explicitly include X11 headers as many EGL implementations don't
+    // do it for us.
+    #include <X11/Xlib.h>
+    #include <X11/Xutil.h>
+  #endif
 #endif
 
 #include "RunTimeStats.h"
