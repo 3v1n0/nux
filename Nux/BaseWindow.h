@@ -29,7 +29,7 @@
 
 #include "NuxGraphics/Events.h"
 #if defined(USE_X11)
-#include "NuxGraphics/XInputWindow.h"
+#  include "NuxGraphics/XInputWindow.h"
 #endif
 
 #include "InputArea.h"
