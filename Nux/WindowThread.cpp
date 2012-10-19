@@ -945,9 +945,9 @@ logging::Logger logger("nux.windows.thread");
     return state;
   }
 
+#if !defined(NUX_MINIMAL)
   bool WindowThread::ProcessTimelines(gint64 micro_secs)
   {
-#if !defined(NUX_MINIMAL)
     // go through our timelines and tick them
     // return true if we still have active timelines
 
@@ -988,9 +988,8 @@ logging::Logger logger("nux.windows.thread");
 
     // return if we have any timelines left
     return (_Timelines->size() != 0);
-#endif
-    return false;
   }
+#endif
 
   void WindowThread::EnableMouseKeyboardInput()
   {
