@@ -85,19 +85,19 @@ source_h = \
   $(srcdir)/RenderingPipe.h \
   $(srcdir)/RenderingPipeGLSL.h \
   $(srcdir)/RenderingPipeTextureBlendShaderSource.h \
-  $(srcdir)/RunTimeStats.h \
-  $(srcdir)/VirtualKeyCodesX11.h
+  $(srcdir)/RunTimeStats.h
 
 if USE_X11
 source_h += \
   $(srcdir)/GraphicsDisplayX11.h \
-  $(srcdir)/RenderingPipeAsm.h \
+  $(srcdir)/VirtualKeyCodesX11.h \
   $(srcdir)/XInputWindow.h
 endif
 
 if !NUX_OPENGLES_20
 source_h += \
-  $(srcdir)/IOpenGLAsmShader.h
+  $(srcdir)/IOpenGLAsmShader.h \
+  $(srcdir)/RenderingPipeAsm.h
 endif
 
 if HAVE_GEIS
@@ -167,13 +167,13 @@ source_cpp = \
 if USE_X11
 source_cpp += \
   $(srcdir)/GraphicsDisplayX11.cpp \
-  $(srcdir)/RenderingPipeAsm.cpp \
   $(srcdir)/XInputWindow.cpp
 endif
 
 if !NUX_OPENGLES_20
 source_cpp += \
-  $(srcdir)/IOpenGLAsmShader.cpp
+  $(srcdir)/IOpenGLAsmShader.cpp \
+  $(srcdir)/RenderingPipeAsm.cpp
 endif
 
 if HAVE_GEIS
