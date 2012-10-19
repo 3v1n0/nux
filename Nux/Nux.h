@@ -67,7 +67,9 @@
 #include "AbstractThread.h"
 #include "WindowThread.h"
 #include "WindowCompositor.h"
-#include "Timeline.h"
+#if !defined(NUX_MINIMAL)
+#  include "Timeline.h"
+#endif
 #include "SystemThread.h"
 
 

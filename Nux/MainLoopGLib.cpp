@@ -287,8 +287,10 @@ namespace nux
         sigc::mem_fun(this, &WindowThread::ProcessGestureEvent));
 #endif
 
+#if !defined(NUX_MINIMAL)
     if (_Timelines->size() > 0)
       StartMasterClock();
+#endif
 
     if (!IsEmbeddedWindow())
     {
@@ -395,10 +397,11 @@ namespace nux
       else if (main_loop_glib_context_ != 0)
         g_source_attach(_MasterClock, main_loop_glib_context_);
 
-
+#if !defined(NUX_MINIMAL)
       gint64 micro_secs = g_source_get_time(_MasterClock);
       last_timeline_frame_time_sec_ = micro_secs / 1000000;
       last_timeline_frame_time_usec_ = micro_secs % 1000000;
+#endif
     }
   }
 

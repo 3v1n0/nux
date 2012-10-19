@@ -30,7 +30,7 @@
 
 #if defined(NUX_OS_LINUX)
 # include "TextEntryComposeSeqs.h"
-# if defined(USE_X11)  /*arm*/
+# if defined(USE_X11)
 #  include <X11/cursorfont.h>
 #  include "InputMethodIBus.h"
 # endif

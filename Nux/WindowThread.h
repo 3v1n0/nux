@@ -42,7 +42,9 @@ namespace nux
   class SystemThread;
   class UXTheme;
   class TimerHandler;
+#if !defined(NUX_MINIMAL)
   class Timeline;
+#endif
   class Event;
   class Area;
   struct ClientAreaDraw;
@@ -231,6 +233,7 @@ namespace nux
     */
     void RenderInterfaceFromForeignCmd(Geometry *clip);
 
+#if !defined(NUX_MINIMAL)
     /*!
         Add a timeline to our window
     */
@@ -239,6 +242,7 @@ namespace nux
     bool ProcessTimelines(gint64 micro_secs);
     long last_timeline_frame_time_sec_;
     long last_timeline_frame_time_usec_;
+#endif
 
     void StartMasterClock();
     void StopMasterClock();
@@ -538,7 +542,9 @@ namespace nux
     //! Set to true to schedule a compute cycle on the main layout.
     bool queue_main_layout_;
 
+#if !defined(NUX_MINIMAL)
     std::list<Timeline*> *_Timelines;
+#endif
 
     bool first_pass_;                     //!< True when going through the ExecutionLoop for the first time.
     unsigned int window_initial_width_;   //!< Window height at startup.

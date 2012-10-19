@@ -86,10 +86,12 @@ logging::Logger logger("nux.windows.thread");
     _draw_requested_to_host_wm       = false;
     first_pass_        = true;
 
+#if !defined(NUX_MINIMAL)
     _Timelines = new std::list<Timeline*> ();
     gint64 micro_secs = g_get_real_time();
     last_timeline_frame_time_sec_ = micro_secs / 1000000;
     last_timeline_frame_time_usec_ = micro_secs % 1000000;
+#endif
     _MasterClock = NULL;
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
@@ -116,13 +118,15 @@ logging::Logger logger("nux.windows.thread");
 #endif
 
     ThreadDtor();
+#if !defined(NUX_MINIMAL)
     std::list<Timeline*>::iterator li;
     for (li=_Timelines->begin(); li!=_Timelines->end(); ++li)
     {
       (*li)->UnReference();
     }
-    
     delete _Timelines;
+#endif
+
     delete async_wake_up_signal_;
 
 #if defined(USE_X11)
@@ -140,6 +144,7 @@ logging::Logger logger("nux.windows.thread");
 #endif
   }
 
+#if !defined(NUX_MINIMAL)
   unsigned int WindowThread::AddTimeout(unsigned int timeout_delay)
   {
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
@@ -394,6 +399,7 @@ logging::Logger logger("nux.windows.thread");
       StopMasterClock();
     }
   }
+#endif
 
   int WindowThread::Run(void * /* ptr */)
   {
