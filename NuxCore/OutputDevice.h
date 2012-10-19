@@ -54,7 +54,7 @@ namespace nux
   {
     NUX_DECLARE_GLOBAL_OBJECT (NullOutput, GlobalSingletonInitializer);
   public:
-    void Serialize ( const TCHAR *V, const TCHAR *LogPrefix, int severity) {}
+    void Serialize ( const TCHAR * /* V */, const TCHAR * /* LogPrefix */, int /* severity */) {}
   };
 
 //! Output to log file.
@@ -84,7 +84,7 @@ namespace nux
 
   private:
     NSerializer    *m_LogSerializer;
-    NString         m_Filename;
+    std::string         m_Filename;
     bool            m_Opened;
     bool            m_Closed;
 

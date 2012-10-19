@@ -35,7 +35,6 @@ namespace nux
 
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     void AddWidget(Area *ic, float stretchfactor);
     void ResetSplitConfig();
@@ -80,7 +79,7 @@ namespace nux
 
   private:
 
-    typedef InputArea MySplitter;
+    typedef BasicView MySplitter;
     std::vector<Area *> m_InterfaceObject;
     std::vector<MySplitter *> m_SplitterObject;
     std::vector<float> m_SplitConfig;

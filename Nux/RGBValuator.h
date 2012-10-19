@@ -87,7 +87,7 @@ namespace nux
     void OnReceiveMouseUp_Green     (int x, int y, unsigned long button_flags, unsigned long key_flags);
     void OnReceiveMouseUp_Blue      (int x, int y, unsigned long button_flags, unsigned long key_flags);
 
-    void OnComponentInput           (EditTextBox *textbox, const NString &s, int componentIndex);
+    void OnComponentInput           (EditTextBox *textbox, const std::string &s, int componentIndex);
     void OnChannelKeyboardFocus();
     void OnChannelLostKeyboardFocus();
     void OnChannelValidateKeyboardEntry();
@@ -148,16 +148,16 @@ namespace nux
     EditTextBox *green_caption_;
     EditTextBox *blue_caption_;
     EditTextBox *alpha_caption_;
-    InputArea *red_valuator_;
-    InputArea *green_valuator_;
-    InputArea *blue_valuator_;
-    InputArea *alpha_valuator_;
-    InputArea *color_square_;
+    BasicView *red_valuator_;
+    BasicView *green_valuator_;
+    BasicView *blue_valuator_;
+    BasicView *alpha_valuator_;
+    BasicView *color_square_;
 
-    InputArea *m_ComponentLabel0;
-    InputArea *m_ComponentLabel1;
-    InputArea *m_ComponentLabel2;
-    InputArea *m_ComponentAlpha;
+    BasicView *m_ComponentLabel0;
+    BasicView *m_ComponentLabel1;
+    BasicView *m_ComponentLabel2;
+    BasicView *m_ComponentAlpha;
 
     TextureLayer *m_CheckboardLayer;
 

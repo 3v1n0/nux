@@ -49,7 +49,7 @@ namespace nux
 
   }
 
-  VLayout::VLayout(NString name, NUX_FILE_LINE_DECL)
+  VLayout::VLayout(std::string name, NUX_FILE_LINE_DECL)
     : LinearLayout(NUX_FILE_LINE_PARAM)
   {
     m_name = name;
@@ -523,7 +523,7 @@ namespace nux
     return size_compliance;
   }
 
-  void VLayout::VLayoutManagement(int width, int height)
+  void VLayout::VLayoutManagement(int /* width */, int height)
   {
     bool need_recompute = false;
 

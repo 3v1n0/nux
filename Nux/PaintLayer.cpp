@@ -117,7 +117,16 @@ namespace nux
 
   void SliceScaledTextureLayer::Renderlayer(GraphicsEngine& graphics_engine)
   {
+    unsigned int current_alpha_blend;
+    unsigned int current_src_blend_factor;
+    unsigned int current_dest_blend_factor;
+
+    // Get the current blend states. They will be restored later.
+    graphics_engine.GetRenderStates().GetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
+
     GetPainter().PaintTextureShape(graphics_engine, geometry_, m_image_style);
+
+    graphics_engine.GetRenderStates().SetBlend(current_alpha_blend, current_src_blend_factor, current_dest_blend_factor);
   }
 
   AbstractPaintLayer* SliceScaledTextureLayer::Clone() const
@@ -128,54 +137,55 @@ namespace nux
 /////////////////////////////////////////////////////
   
   CompositionLayer::CompositionLayer (ObjectPtr <IOpenGLBaseTexture> texture0, TexCoordXForm texxform0, const Color& color0,
-              ObjectPtr <IOpenGLBaseTexture> texture1, TexCoordXForm texxform1, const Color& color1,
-              LayerBlendMode layer_blend_mode, bool write_alpha, const ROPConfig& ROP)
+    ObjectPtr <IOpenGLBaseTexture> texture1, TexCoordXForm texxform1, const Color& color1,
+    LayerBlendMode layer_blend_mode, bool write_alpha, const ROPConfig& ROP)
+    : m_source_texture(texture0),
+      m_source_texture_color(color0),
+      m_source_texture_texxform(texxform0),
+      m_foreground_texture(texture1),
+      m_foreground_texture_color(color1),
+      m_foreground_texture_texxform(texxform1),
+      m_write_alpha(write_alpha),
+      m_rop(ROP),
+      m_blend_mode(layer_blend_mode)
   {
-    m_source_texture = texture0;
-    m_source_texture_color = color0;
-    m_source_texture_texxform = texxform0;
-
-    m_foreground_texture = texture1;
-    m_foreground_texture_color = color1;
-    m_foreground_texture_texxform = texxform1;
-    
-    m_blend_mode = layer_blend_mode;
-    
-    m_rop = ROP;
-    m_write_alpha = write_alpha;
   }
 
   CompositionLayer::CompositionLayer (ObjectPtr <IOpenGLBaseTexture> texture0, TexCoordXForm texxform0, const Color& color0,
-          const Color& blend_color, LayerBlendMode layer_blend_mode,
-          bool write_alpha, const ROPConfig& ROP)
+    const Color& blend_color, LayerBlendMode layer_blend_mode,
+    bool write_alpha, const ROPConfig& ROP)
+    : m_source_texture(texture0),
+      m_source_texture_texxform(texxform0),
+      m_source_color(color0),
+      m_foreground_color(blend_color),
+      m_write_alpha(write_alpha),
+      m_rop(ROP),
+      m_blend_mode(layer_blend_mode)
   {
-    m_source_texture = texture0;
-    m_source_texture_color = color0;
-    m_source_texture_texxform = texxform0;
-    
-    m_foreground_color = blend_color;
-    
-    m_blend_mode = layer_blend_mode;
-    
-    m_write_alpha = write_alpha;
-    m_rop = ROP;
   }
 
   CompositionLayer::CompositionLayer(const Color&base_color, ObjectPtr<IOpenGLBaseTexture> texture0,
-          TexCoordXForm texxform0, const Color& color0,
-          LayerBlendMode layer_blend_mode,
-          bool write_alpha, const ROPConfig& ROP)
+    TexCoordXForm texxform0, const Color& color0,
+    LayerBlendMode layer_blend_mode,
+    bool write_alpha, const ROPConfig& ROP)
+    : m_foreground_texture(texture0),
+      m_foreground_texture_color(color0),
+      m_foreground_texture_texxform(texxform0),
+      m_source_color(base_color),
+      m_write_alpha(write_alpha),
+      m_rop(ROP),
+      m_blend_mode(layer_blend_mode)
   {
-    m_source_color = base_color;
-    
-    m_foreground_texture = texture0;
-    m_foreground_texture_texxform = texxform0;
-    m_foreground_texture_color = color0;
-    
-    m_blend_mode = layer_blend_mode;
-    m_write_alpha = write_alpha;
-    
-    m_rop = ROP;
+  }
+
+  CompositionLayer::CompositionLayer(const Color& base_color, const Color& blend_color, LayerBlendMode layer_blend_mode,
+    bool write_alpha, const ROPConfig& ROP) 
+    : m_source_color(base_color),
+      m_foreground_color(blend_color),
+      m_write_alpha(write_alpha),
+      m_rop(ROP),
+      m_blend_mode(layer_blend_mode)
+  {
   }
 
   CompositionLayer::~CompositionLayer ()
@@ -207,7 +217,7 @@ namespace nux
     {
         if (m_foreground_texture.IsValid())
         {
-          graphics_engine.QRP_GLSL_TexBlendOverTex(geometry_.x, geometry_.y, geometry_.GetWidth(),
+          graphics_engine.QRP_GLSL_TextureLayerOverTexture(geometry_.x, geometry_.y, geometry_.GetWidth(),
             geometry_.GetHeight(), m_source_texture,
             m_source_texture_texxform, m_source_texture_color,
             m_foreground_texture, m_foreground_texture_texxform,
@@ -215,7 +225,7 @@ namespace nux
         }
         else
         {
-          graphics_engine.QRP_GLSL_ColorBlendOverTex(geometry_.x, geometry_.y, geometry_.GetWidth(),
+          graphics_engine.QRP_GLSL_ColorLayerOverTexture(geometry_.x, geometry_.y, geometry_.GetWidth(),
             geometry_.GetHeight(), m_source_texture,
             m_source_texture_texxform, m_source_texture_color,
             m_foreground_color, m_blend_mode);
@@ -225,11 +235,17 @@ namespace nux
     {
       if (m_foreground_texture.IsValid())
       {
-        graphics_engine.QRP_GLSL_TexBlendOverColor(geometry_.x, geometry_.y, geometry_.GetWidth(),
+        graphics_engine.QRP_GLSL_TextureLayerOverColor(geometry_.x, geometry_.y, geometry_.GetWidth(),
           geometry_.GetHeight(), m_source_color,
           m_foreground_texture, m_foreground_texture_texxform,
           m_foreground_texture_color,
           m_blend_mode);
+      }
+      //When both textures aren't valid assume we are blending two colours.
+      else if (m_source_texture.IsValid() == false && m_foreground_texture.IsValid() == false)
+      {
+        graphics_engine.QRP_GLSL_ColorLayerOverColor(geometry_.x, geometry_.y, geometry_.GetWidth(),
+        geometry_.GetHeight(), m_source_color, m_foreground_color, m_blend_mode);
       }
     }
 
@@ -244,27 +260,26 @@ namespace nux
 
   /////////////////////////////////////////////////////
   TextureLayer::TextureLayer(ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm texxform, const Color& color, bool write_alpha, const ROPConfig& ROP)
+  : m_device_texture(device_texture),
+    m_color(color),
+    m_write_alpha(write_alpha),
+    m_rop(ROP),
+    m_texxform(texxform),
+    m_color_blend_mode(LAYER_BLEND_MODE_LAST)
   {
-    m_device_texture = device_texture;
-    m_color = color;
-    m_write_alpha = write_alpha;
-    m_rop = ROP;
-    m_texxform = texxform;
-    
-    m_color_blend_mode = LAYER_BLEND_MODE_LAST;
   }
   
   TextureLayer::TextureLayer(ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm texxform, const Color& color0,
-            bool write_alpha, const ROPConfig& ROP, const Color& blend_color, LayerBlendMode color_blend_mode)
+    bool write_alpha, const ROPConfig& ROP, const Color& blend_color, LayerBlendMode color_blend_mode)
+    : m_device_texture(device_texture),
+      m_color(color0),
+      m_write_alpha(write_alpha),
+      m_rop(ROP),
+      m_texxform(texxform),
+      m_blend_color(blend_color),
+      m_color_blend_mode(color_blend_mode)
+
   {
-    m_device_texture = device_texture;
-    m_color = color0;
-    m_write_alpha = write_alpha;
-    m_rop = ROP;
-    m_texxform = texxform;
-    
-    m_blend_color = blend_color;
-    m_color_blend_mode = color_blend_mode;
   }
 
   TextureLayer::~TextureLayer()
@@ -296,7 +311,7 @@ namespace nux
     }
     else
     {
-      graphics_engine.QRP_GLSL_ColorBlendOverTex(geometry_.x, geometry_.y, geometry_.GetWidth(), geometry_.GetHeight(), m_device_texture,
+      graphics_engine.QRP_GLSL_ColorLayerOverTexture(geometry_.x, geometry_.y, geometry_.GetWidth(), geometry_.GetHeight(), m_device_texture,
         m_texxform, m_color, m_blend_color, m_color_blend_mode);
     }
     

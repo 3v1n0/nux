@@ -43,28 +43,28 @@ namespace nux
       Get the program command line.
       @return The program command line.
   */
-  NString GetCmdLine();
+  std::string GetCmdLine();
 
 //! Get startup directory.
   /*!
       Get startup directory.
       @return The computer name.
   */
-  NString GetProgramDirectory();
+  std::string GetProgramDirectory();
 
 //! Get computer name.
   /*!
       Get computer name.
       @return The computer name.
   */
-  NString GetComputerName();
+  std::string GetComputerName();
 
 //! Get user name.
   /*!
       Get the user name.
       @return The user name.
   */
-  NString GetUserName();
+  std::string GetUserName();
 
 
 //! Return the logs directory
@@ -74,7 +74,7 @@ namespace nux
 
       @return The logs directory
   */
-  NString GetLogDirectory();
+  std::string GetLogDirectory();
 
   class NGlobalData
   {
@@ -84,11 +84,11 @@ namespace nux
     void Initialize (const TCHAR *CommandLine);
 
     unsigned int m_RandomSeed;
-    NString m_UserName;
-    NString m_ComputerName;
-    NString m_ProgramName;
-    NString m_ProgramDirectory;
-    NString m_CommandLine;
+    std::string m_UserName;
+    std::string m_ComputerName;
+    std::string m_ProgramName;
+    std::string m_ProgramDirectory;
+    std::string m_CommandLine;
   };
 
 }

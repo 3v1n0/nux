@@ -52,7 +52,7 @@ namespace nux
   {
   }
 
-  ThreadState SystemThread::Start(void *arg)
+  ThreadState SystemThread::Start(void * /* arg */)
   {
     if (!parent_)
     {
@@ -71,7 +71,7 @@ namespace nux
     }
   }
 
-  int SystemThread::Run(void *arg)
+  int SystemThread::Run(void * /* arg */)
   {
     if (user_init_func_)
     {
@@ -92,7 +92,7 @@ namespace nux
     return 0;
   }
 
-  ThreadState SystemThread::StartChildThread(AbstractThread *thread, bool Modal)
+  ThreadState SystemThread::StartChildThread(AbstractThread *thread, bool /* Modal */)
   {
     ThreadState state = thread->NThread::Start();
     //if(state == THREADRUNNING)

@@ -53,9 +53,9 @@ namespace nux
     SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     SetLayout(m_hlayout);
 
-    NString Path = NUX_FINDRESOURCELOCATION("Icons/Folder-16x16.png");
+    std::string Path = NUX_FINDRESOURCELOCATION("Icons/Folder-16x16.png");
     m_Texture = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
-    m_Texture->Update(Path.GetTCharPtr());
+    m_Texture->Update(Path.c_str());
   }
 
   FileSelector::~FileSelector()
@@ -63,7 +63,7 @@ namespace nux
     m_Texture->UnReference();
   }
 
-  void FileSelector::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void FileSelector::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
 
@@ -104,23 +104,18 @@ namespace nux
     m_FileEditTextBox->ProcessDraw(graphics_engine, force_draw);
   }
 
-  void FileSelector::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
-  }
-
-  void FileSelector::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void FileSelector::RecvMouseEnter(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();
   }
 
-  void FileSelector::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void FileSelector::RecvMouseLeave(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
 
     QueueDraw();
   }
 
-  void FileSelector::RecvOpenButtonClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void FileSelector::RecvOpenButtonClick(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();
     sigClick.emit();

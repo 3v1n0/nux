@@ -102,7 +102,7 @@ namespace nux
 
   void GraphicsEngine::InitAsmColorShader()
   {
-    NString AsmVtx = 
+    const char* AsmVtx = 
         "!!ARBvp1.0                                 \n\
         ATTRIB iPos         = vertex.position;      \n\
         ATTRIB iColor       = vertex.attrib[3];     \n\
@@ -117,20 +117,20 @@ namespace nux
         MOV   oColor, iColor;            \n\
         END";
 
-    NString AsmFrg = 
+    const char* AsmFrg = 
         "!!ARBfp1.0                                     \n\
         MOV result.color, fragment.color;               \n\
         END";
 
     m_AsmColor = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_AsmColor->LoadVertexShader(AsmVtx.GetTCharPtr());
-    m_AsmColor->LoadPixelShader(AsmFrg.GetTCharPtr());
+    m_AsmColor->LoadVertexShader(AsmVtx);
+    m_AsmColor->LoadPixelShader(AsmFrg);
     m_AsmColor->Link();
   }
 
   void GraphicsEngine::InitAsmTextureShader()
   {
-    NString AsmVtx = 
+    const char* AsmVtx = 
         "!!ARBvp1.0                                 \n\
         ATTRIB iPos         = vertex.position;      \n\
         ATTRIB iColor       = vertex.attrib[3];     \n\
@@ -147,14 +147,14 @@ namespace nux
         MOV   oTexCoord0, vertex.attrib[8];             \n\
         END";
 
-    NString AsmFrg = 
+    const char* AsmFrg = 
         "!!ARBfp1.0                                       \n\
         TEMP tex0;                                        \n\
         TEX tex0, fragment.texcoord[0], texture[0], 2D;   \n\
         MUL result.color, fragment.color, tex0;           \n\
         END";
 
-    NString AsmFrgRect = 
+    const char* AsmFrgRect = 
       "!!ARBfp1.0                                       \n\
       TEMP tex0;                                        \n\
       TEX tex0, fragment.texcoord[0], texture[0], RECT; \n\
@@ -162,19 +162,19 @@ namespace nux
       END";
 
     m_AsmTextureModColor = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_AsmTextureModColor->LoadVertexShader(AsmVtx.GetTCharPtr());
-    m_AsmTextureModColor->LoadPixelShader(AsmFrg.GetTCharPtr());
+    m_AsmTextureModColor->LoadVertexShader(AsmVtx);
+    m_AsmTextureModColor->LoadPixelShader(AsmFrg);
     m_AsmTextureModColor->Link();
 
     m_AsmTextureRectModColor = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_AsmTextureRectModColor->LoadVertexShader(AsmVtx.GetTCharPtr());
-    m_AsmTextureRectModColor->LoadPixelShader(AsmFrgRect.GetTCharPtr());
+    m_AsmTextureRectModColor->LoadVertexShader(AsmVtx);
+    m_AsmTextureRectModColor->LoadPixelShader(AsmFrgRect);
     m_AsmTextureRectModColor->Link();
   }
 
   void GraphicsEngine::InitAsmColorModTexMaskAlpha()
   {
-    NString AsmVtx = 
+    const char* AsmVtx = 
         "!!ARBvp1.0                                 \n\
         OUTPUT oPos         = result.position;      \n\
         OUTPUT oColor       = result.color;         \n\
@@ -188,7 +188,7 @@ namespace nux
         MOV   oTexCoord0, vertex.attrib[8];         \n\
         END";
 
-    NString AsmFrg = 
+    const char* AsmFrg = 
       "!!ARBfp1.0                                         \n\
       TEMP tex0;                                          \n\
       TEMP temp;                                          \n\
@@ -198,7 +198,7 @@ namespace nux
       MOV result.color, temp;                             \n\
       END";
 
-    NString AsmFrgRect = 
+    const char* AsmFrgRect = 
       "!!ARBfp1.0                                         \n\
       TEMP tex0;                                          \n\
       TEMP temp;                                          \n\
@@ -209,19 +209,19 @@ namespace nux
       END";
 
     m_AsmColorModTexMaskAlpha = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_AsmColorModTexMaskAlpha->LoadVertexShader(AsmVtx.GetTCharPtr());
-    m_AsmColorModTexMaskAlpha->LoadPixelShader(AsmFrg.GetTCharPtr());
+    m_AsmColorModTexMaskAlpha->LoadVertexShader(AsmVtx);
+    m_AsmColorModTexMaskAlpha->LoadPixelShader(AsmFrg);
     m_AsmColorModTexMaskAlpha->Link();
 
     m_AsmColorModTexRectMaskAlpha = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_AsmColorModTexRectMaskAlpha->LoadVertexShader(AsmVtx.GetTCharPtr());
-    m_AsmColorModTexRectMaskAlpha->LoadPixelShader(AsmFrgRect.GetTCharPtr());
+    m_AsmColorModTexRectMaskAlpha->LoadVertexShader(AsmVtx);
+    m_AsmColorModTexRectMaskAlpha->LoadPixelShader(AsmFrgRect);
     m_AsmColorModTexRectMaskAlpha->Link();
   }
 
   void GraphicsEngine::InitAsm2TextureAdd()
   {
-    NString AsmVtx = 
+    const char* AsmVtx = 
         "!!ARBvp1.0                                 \n\
         ATTRIB iPos         = vertex.position;      \n\
         OUTPUT oPos         = result.position;      \n\
@@ -236,7 +236,7 @@ namespace nux
         MOV   oTexCoord1, vertex.attrib[9];       \n\
         END";
 
-    NString AsmFrg = 
+    const char* AsmFrg = 
         "!!ARBfp1.0                                         \n\
         PARAM color0 = program.local[0];                    \n\
         PARAM color1 = program.local[1];                    \n\
@@ -250,7 +250,7 @@ namespace nux
         MOV result.color, temp;                             \n\
         END";
 
-    NString AsmFrgRect = 
+    const char* AsmFrgRect = 
       "!!ARBfp1.0                                         \n\
       PARAM color0 = program.local[0];                    \n\
       PARAM color1 = program.local[1];                    \n\
@@ -265,19 +265,19 @@ namespace nux
       END";
 
     m_Asm2TextureAdd = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_Asm2TextureAdd->LoadVertexShader(AsmVtx.GetTCharPtr());
-    m_Asm2TextureAdd->LoadPixelShader(AsmFrg.GetTCharPtr());
+    m_Asm2TextureAdd->LoadVertexShader(AsmVtx);
+    m_Asm2TextureAdd->LoadPixelShader(AsmFrg);
     m_Asm2TextureAdd->Link();
 
     m_Asm2TextureRectAdd = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_Asm2TextureRectAdd->LoadVertexShader(AsmVtx.GetTCharPtr());
-    m_Asm2TextureRectAdd->LoadPixelShader(AsmFrgRect.GetTCharPtr());
+    m_Asm2TextureRectAdd->LoadVertexShader(AsmVtx);
+    m_Asm2TextureRectAdd->LoadPixelShader(AsmFrgRect);
     m_Asm2TextureRectAdd->Link();
   }
 
   void GraphicsEngine::InitAsm2TextureDepRead()
   {
-    NString AsmVtx = 
+    const char* AsmVtx = 
       "!!ARBvp1.0                                 \n\
       ATTRIB iPos         = vertex.position;      \n\
       OUTPUT oPos         = result.position;      \n\
@@ -292,7 +292,7 @@ namespace nux
       MOV   oTexCoord1, vertex.attrib[9];       \n\
       END";
 
-    NString AsmFrg = 
+    const char* AsmFrg = 
       "!!ARBfp1.0                                         \n\
       PARAM color0 = program.local[0];                    \n\
       PARAM color1 = program.local[1];                    \n\
@@ -309,7 +309,7 @@ namespace nux
       MUL result.color, color1, tex1;                     \n\
       END";
 
-    NString AsmFrgRect = 
+    const char* AsmFrgRect = 
       "!!ARBfp1.0                                         \n\
       PARAM color0 = program.local[0];                    \n\
       PARAM color1 = program.local[1];                    \n\
@@ -324,19 +324,19 @@ namespace nux
       END";
 
     m_ASM2TextureDepRead = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_ASM2TextureDepRead->LoadVertexShader(AsmVtx.GetTCharPtr());
-    m_ASM2TextureDepRead->LoadPixelShader(AsmFrg.GetTCharPtr());
+    m_ASM2TextureDepRead->LoadVertexShader(AsmVtx);
+    m_ASM2TextureDepRead->LoadPixelShader(AsmFrg);
     m_ASM2TextureDepRead->Link();
 
     m_ASM2TextureRectDepRead = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_ASM2TextureRectDepRead->LoadVertexShader(AsmVtx.GetTCharPtr());
-    m_ASM2TextureRectDepRead->LoadPixelShader(AsmFrgRect.GetTCharPtr());
+    m_ASM2TextureRectDepRead->LoadVertexShader(AsmVtx);
+    m_ASM2TextureRectDepRead->LoadPixelShader(AsmFrgRect);
     m_ASM2TextureRectDepRead->Link();
   }
 
   void GraphicsEngine::InitAsm2TextureMod()
   {
-    NString AsmVtx = 
+    const char* AsmVtx = 
       "!!ARBvp1.0                                 \n\
       ATTRIB iPos         = vertex.position;      \n\
       OUTPUT oPos         = result.position;      \n\
@@ -351,7 +351,7 @@ namespace nux
       MOV   oTexCoord1, vertex.attrib[9];       \n\
       END";
 
-    NString AsmFrg = 
+    const char* AsmFrg = 
       "!!ARBfp1.0                                         \n\
       PARAM color0 = program.local[0];                    \n\
       PARAM color1 = program.local[1];                    \n\
@@ -366,7 +366,7 @@ namespace nux
       MUL result.color, temp0, temp1;                     \n\
       END";
 
-    NString AsmFrgRect = 
+    const char* AsmFrgRect = 
       "!!ARBfp1.0                                         \n\
       PARAM color0 = program.local[0];                    \n\
       PARAM color1 = program.local[1];                    \n\
@@ -382,19 +382,19 @@ namespace nux
       END";
 
     m_Asm2TextureMod = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_Asm2TextureMod->LoadVertexShader(AsmVtx.GetTCharPtr());
-    m_Asm2TextureMod->LoadPixelShader(AsmFrg.GetTCharPtr());
+    m_Asm2TextureMod->LoadVertexShader(AsmVtx);
+    m_Asm2TextureMod->LoadPixelShader(AsmFrg);
     m_Asm2TextureMod->Link();
 
     m_Asm2TextureRectMod = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_Asm2TextureRectMod->LoadVertexShader(AsmVtx.GetTCharPtr());
-    m_Asm2TextureRectMod->LoadPixelShader(AsmFrgRect.GetTCharPtr());
+    m_Asm2TextureRectMod->LoadVertexShader(AsmVtx);
+    m_Asm2TextureRectMod->LoadPixelShader(AsmFrgRect);
     m_Asm2TextureRectMod->Link();
   }
 
   void GraphicsEngine::InitAsm4TextureAdd()
   {
-    NString AsmVtx = 
+    const char* AsmVtx = 
         "!!ARBvp1.0                                 \n\
         ATTRIB iPos         = vertex.position;      \n\
         OUTPUT oPos         = result.position;      \n\
@@ -413,7 +413,7 @@ namespace nux
         MOV   oTexCoord3, vertex.attrib[11];       \n\
         END";
 
-    NString AsmFrg = 
+    const char* AsmFrg = 
         "!!ARBfp1.0                                         \n\
         PARAM color0 = program.local[0];                    \n\
         PARAM color1 = program.local[1];                    \n\
@@ -435,7 +435,7 @@ namespace nux
         MOV result.color, temp;                             \n\
         END";
 
-    NString AsmFrgRect = 
+    const char* AsmFrgRect = 
       "!!ARBfp1.0                                         \n\
       PARAM color0 = program.local[0];                    \n\
       PARAM color1 = program.local[1];                    \n\
@@ -458,19 +458,19 @@ namespace nux
       END";
 
     m_Asm4TextureAdd = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_Asm4TextureAdd->LoadVertexShader(AsmVtx.GetTCharPtr());
-    m_Asm4TextureAdd->LoadPixelShader(AsmFrg.GetTCharPtr());
+    m_Asm4TextureAdd->LoadVertexShader(AsmVtx);
+    m_Asm4TextureAdd->LoadPixelShader(AsmFrg);
     m_Asm4TextureAdd->Link();
 
     m_Asm4TextureRectAdd = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_Asm4TextureRectAdd->LoadVertexShader(AsmVtx.GetTCharPtr());
-    m_Asm4TextureRectAdd->LoadPixelShader(AsmFrgRect.GetTCharPtr());
+    m_Asm4TextureRectAdd->LoadVertexShader(AsmVtx);
+    m_Asm4TextureRectAdd->LoadPixelShader(AsmFrgRect);
     m_Asm4TextureRectAdd->Link();
   }
 
   void GraphicsEngine::InitAsmBlendModes()
   {
-    NString AsmVtx = 
+    const char* AsmVtx = 
                        "!!ARBvp1.0                                 \n\
         OUTPUT oPos         = result.position;      \n\
         OUTPUT oTexCoord0   = result.texcoord[0];   \n\
@@ -484,7 +484,7 @@ namespace nux
         MOV   oTexCoord1, vertex.attrib[9];       \n\
         END";
 
-    NString AsmPSBNormal = 
+    const char* AsmPSBNormal = 
                              "!!ARBfp1.0                                         \n\
         TEMP tex0;                                          \n\
         TEMP tex1;                                          \n\
@@ -494,12 +494,12 @@ namespace nux
         END";
 
     m_AsmPSBNormal = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_AsmPSBNormal->LoadVertexShader(AsmVtx.GetTCharPtr());
-    m_AsmPSBNormal->LoadPixelShader(AsmPSBNormal.GetTCharPtr());
+    m_AsmPSBNormal->LoadVertexShader(AsmVtx);
+    m_AsmPSBNormal->LoadPixelShader(AsmPSBNormal);
     m_AsmPSBNormal->Link();
 
     // Lighten
-    NString AsmPSBLighten = 
+    const char* AsmPSBLighten = 
                               "!!ARBfp1.0                                         \n\
         TEMP tex0;                                          \n\
         TEMP tex1;                                          \n\
@@ -513,12 +513,12 @@ namespace nux
         END";
 
     m_AsmPSBLighten = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_AsmPSBLighten->LoadVertexShader(AsmVtx.GetTCharPtr());
-    m_AsmPSBLighten->LoadPixelShader(AsmPSBLighten.GetTCharPtr());
+    m_AsmPSBLighten->LoadVertexShader(AsmVtx);
+    m_AsmPSBLighten->LoadPixelShader(AsmPSBLighten);
     m_AsmPSBLighten->Link();
 
     // Darken
-    NString AsmPSBDarken = 
+    const char* AsmPSBDarken = 
                              "!!ARBfp1.0                                         \n\
         TEMP tex0;                                          \n\
         TEMP tex1;                                          \n\
@@ -532,12 +532,12 @@ namespace nux
         END";
 
     m_AsmPSBDarken = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_AsmPSBDarken->LoadVertexShader(AsmVtx.GetTCharPtr());
-    m_AsmPSBDarken->LoadPixelShader(AsmPSBDarken.GetTCharPtr());
+    m_AsmPSBDarken->LoadVertexShader(AsmVtx);
+    m_AsmPSBDarken->LoadPixelShader(AsmPSBDarken);
     m_AsmPSBDarken->Link();
 
     // Multiply
-    NString AsmPSBMultiply = 
+    const char* AsmPSBMultiply = 
                                "!!ARBfp1.0                                         \n\
         TEMP tex0;                                          \n\
         TEMP tex1;                                          \n\
@@ -548,8 +548,8 @@ namespace nux
         END";
 
     m_AsmPSBMultiply = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_AsmPSBMultiply->LoadVertexShader(AsmVtx.GetTCharPtr());
-    m_AsmPSBMultiply->LoadPixelShader(AsmPSBMultiply.GetTCharPtr());
+    m_AsmPSBMultiply->LoadVertexShader(AsmVtx);
+    m_AsmPSBMultiply->LoadPixelShader(AsmPSBMultiply);
     m_AsmPSBMultiply->Link();
   }
 
@@ -1241,7 +1241,7 @@ namespace nux
 
   void GraphicsEngine::InitAsmPower()
   {
-    NString AsmVtx = 
+    const char* AsmVtx = 
       "!!ARBvp1.0                                 \n\
       ATTRIB iPos         = vertex.position;      \n\
       OUTPUT oPos         = result.position;      \n\
@@ -1255,7 +1255,7 @@ namespace nux
       END";
 
 
-    NString AsmFrg = 
+    const char* AsmFrg = 
       "!!ARBfp1.0                                       \n\
       PARAM color0 = program.local[0];                  \n\
       PARAM exponent = program.local[1];                \n\
@@ -1269,23 +1269,9 @@ namespace nux
       MUL result.color, color0, final;             \n\
       END";
 
-    NString AsmFrgRect = 
-      "!!ARBfp1.0                                       \n\
-      PARAM color0 = program.local[0];                  \n\
-      PARAM exponent = program.local[1];                \n\
-      TEMP tex0;                                        \n\
-      TEMP final;                                       \n\
-      TEX tex0, fragment.texcoord[0], texture[0], RECT;   \n\
-      POW final.r, tex0.r, exponent.r;             \n\
-      POW final.g, tex0.g, exponent.g;             \n\
-      POW final.b, tex0.b, exponent.b;             \n\
-      MOV final.a, tex0.a;                         \n\
-      MUL result.color, color0, final;             \n\
-      END";
-
     _asm_tex_component_exponentiation_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    _asm_tex_component_exponentiation_prog->LoadVertexShader(AsmVtx.GetTCharPtr());
-    _asm_tex_component_exponentiation_prog->LoadPixelShader(AsmFrg.GetTCharPtr());
+    _asm_tex_component_exponentiation_prog->LoadVertexShader(AsmVtx);
+    _asm_tex_component_exponentiation_prog->LoadPixelShader(AsmFrg);
     _asm_tex_component_exponentiation_prog->Link();
   }
 
@@ -1351,7 +1337,7 @@ namespace nux
 
   void GraphicsEngine::InitAsmAlphaReplicate()
   {
-    NString AsmVtx = 
+    const char* AsmVtx = 
       "!!ARBvp1.0                                 \n\
       ATTRIB iPos         = vertex.position;      \n\
       OUTPUT oPos         = result.position;      \n\
@@ -1365,7 +1351,7 @@ namespace nux
       END";
 
 
-    NString AsmFrg = 
+    const char* AsmFrg = 
       "!!ARBfp1.0                                     \n\
       PARAM color0 = program.local[0];                \n\
       TEMP tex0;                                      \n\
@@ -1373,17 +1359,9 @@ namespace nux
       MUL result.color, color0, tex0.aaaa;            \n\
       END";
 
-    NString AsmFrgRect = 
-      "!!ARBfp1.0                                       \n\
-      PARAM color0 = program.local[0];                  \n\
-      TEMP tex0;                                        \n\
-      TEX tex0, fragment.texcoord[0], texture[0], RECT; \n\
-      MUL result.color, color0, tex0.aaaa;              \n\
-      END";
-
     _asm_tex_alpha_replicate_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    _asm_tex_alpha_replicate_prog->LoadVertexShader(AsmVtx.GetTCharPtr());
-    _asm_tex_alpha_replicate_prog->LoadPixelShader(AsmFrg.GetTCharPtr());
+    _asm_tex_alpha_replicate_prog->LoadVertexShader(AsmVtx);
+    _asm_tex_alpha_replicate_prog->LoadPixelShader(AsmFrg);
     _asm_tex_alpha_replicate_prog->Link();
 
   }
@@ -1450,7 +1428,7 @@ namespace nux
 
   void GraphicsEngine::InitAsmColorMatrixFilter()
   {
-    NString AsmVtx = 
+    const char* AsmVtx = 
       "!!ARBvp1.0                                               \n\
       ATTRIB iPos         = vertex.position;                    \n\
       OUTPUT oPos         = result.position;                    \n\
@@ -1464,7 +1442,7 @@ namespace nux
       END";
 
 
-    NString AsmFrg = 
+    const char* AsmFrg = 
       "!!ARBfp1.0                                     \n\
       PARAM color0 = program.local[0];                \n\
       PARAM CM0 = program.local[1];                   \n\
@@ -1482,7 +1460,7 @@ namespace nux
       MUL result.color, color0, final;                \n\
       END";
 
-    NString AsmFrgRect = 
+    const char* AsmFrgRect = 
       "!!ARBfp1.0                                     \n\
       PARAM color0 = program.local[0];                \n\
       PARAM CM0 = program.local[1];                   \n\
@@ -1501,13 +1479,13 @@ namespace nux
       END";
 
     _asm_tex_color_matrix_filter_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    _asm_tex_color_matrix_filter_prog->LoadVertexShader(AsmVtx.GetTCharPtr());
-    _asm_tex_color_matrix_filter_prog->LoadPixelShader(AsmFrg.GetTCharPtr());
+    _asm_tex_color_matrix_filter_prog->LoadVertexShader(AsmVtx);
+    _asm_tex_color_matrix_filter_prog->LoadPixelShader(AsmFrg);
     _asm_tex_color_matrix_filter_prog->Link();
 
     _asm_texrect_color_matrix_filter_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    _asm_texrect_color_matrix_filter_prog->LoadVertexShader(AsmVtx.GetTCharPtr());
-    _asm_texrect_color_matrix_filter_prog->LoadPixelShader(AsmFrgRect.GetTCharPtr());
+    _asm_texrect_color_matrix_filter_prog->LoadVertexShader(AsmVtx);
+    _asm_texrect_color_matrix_filter_prog->LoadPixelShader(AsmFrgRect);
     _asm_texrect_color_matrix_filter_prog->Link();
   }
 
@@ -1578,7 +1556,7 @@ namespace nux
 
   void GraphicsEngine::InitAsmSeparableGaussFilter()
   {
-    NString AsmVtx = 
+    const char* AsmVtx = 
       "!!ARBvp1.0                                 \n\
       ATTRIB iPos         = vertex.position;      \n\
       OUTPUT oPos         = result.position;      \n\
@@ -1604,7 +1582,7 @@ namespace nux
       END";
 
 
-    NString AsmFrg = 
+    const char* AsmFrg = 
       "!!ARBfp1.0                                                   \n\
       TEMP tex0;                                                    \n\
       TEMP final;                                                   \n\
@@ -1627,7 +1605,7 @@ namespace nux
       END";
 
 
-    NString AsmFrgRect = 
+    const char* AsmFrgRect = 
       "!!ARBfp1.0                                                   \n\
       TEMP tex0;                                                    \n\
       TEMP final;                                                   \n\
@@ -1650,17 +1628,17 @@ namespace nux
       END";
 
     _asm_tex_separable_gauss_filter_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    _asm_tex_separable_gauss_filter_prog->LoadVertexShader(AsmVtx.GetTCharPtr());
-    _asm_tex_separable_gauss_filter_prog->LoadPixelShader(AsmFrg.GetTCharPtr());
+    _asm_tex_separable_gauss_filter_prog->LoadVertexShader(AsmVtx);
+    _asm_tex_separable_gauss_filter_prog->LoadPixelShader(AsmFrg);
     _asm_tex_separable_gauss_filter_prog->Link();
 
     _asm_texrect_separable_gauss_filter_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    _asm_texrect_separable_gauss_filter_prog->LoadVertexShader(AsmVtx.GetTCharPtr());
-    _asm_texrect_separable_gauss_filter_prog->LoadPixelShader(AsmFrgRect.GetTCharPtr());
+    _asm_texrect_separable_gauss_filter_prog->LoadVertexShader(AsmVtx);
+    _asm_texrect_separable_gauss_filter_prog->LoadPixelShader(AsmFrgRect);
     _asm_texrect_separable_gauss_filter_prog->Link();
   }
 
-  void GraphicsEngine::QRP_ASM_HorizontalGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma)
+  void GraphicsEngine::QRP_ASM_HorizontalGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color & /* c0 */, float /* sigma */)
   {
     NUX_RETURN_IF_FALSE(_asm_tex_separable_gauss_filter_prog.IsValid());
     NUX_RETURN_IF_FALSE(_asm_texrect_separable_gauss_filter_prog.IsValid());
@@ -1791,7 +1769,7 @@ namespace nux
     shader_program->End();
   }
 
-  void GraphicsEngine::QRP_ASM_VerticalGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &c0, float sigma)
+  void GraphicsEngine::QRP_ASM_VerticalGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color & /* c0 */, float /* sigma */)
   {
     NUX_RETURN_IF_FALSE(_asm_tex_separable_gauss_filter_prog.IsValid());
     NUX_RETURN_IF_FALSE(_asm_texrect_separable_gauss_filter_prog.IsValid());
@@ -1927,7 +1905,7 @@ namespace nux
     int buffer_width, int buffer_height,
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
     const Color& c0,
-    float sigma, int num_pass)
+    float /* sigma */, int num_pass)
   {
     //     _offscreen_color_rt0.Release();
     //     _offscreen_color_rt1.Release();
@@ -1993,7 +1971,7 @@ namespace nux
 
   void GraphicsEngine::QRP_ASM_GetBlurTextureFx(
       int x, int y, int buffer_width, int buffer_height,
-      FxStructure *fx_structure, TexCoordXForm &texxform, const Color& color, float sigma, int num_pass)
+      FxStructure *fx_structure, TexCoordXForm &texxform, const Color& color, float /* sigma */, int num_pass)
   {
     int quad_width = fx_structure->src_texture->GetWidth();
     int quad_height = fx_structure->src_texture->GetHeight();
@@ -2206,10 +2184,10 @@ namespace nux
   }
 
   ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_ASM_GetLQBlur(
-    int x, int y,
-    int buffer_width, int buffer_height,
+    int /* x */, int /* y */,
+    int /* buffer_width */, int /* buffer_height */,
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-    const Color& c0)
+    const Color& /* c0 */)
   {
     //     _offscreen_color_rt0.Release();
     //     _offscreen_color_rt1.Release();
@@ -2287,7 +2265,7 @@ namespace nux
 
   void GraphicsEngine::InitAsmPixelateShader()
   {
-    NString AsmVtx = 
+    const char* AsmVtx = 
       "!!ARBvp1.0                                 \n\
       ATTRIB iPos         = vertex.position;      \n\
       ATTRIB iColor       = vertex.attrib[3];     \n\
@@ -2304,7 +2282,7 @@ namespace nux
       MOV   oTexCoord0, vertex.attrib[8];             \n\
       END";
 
-    NString AsmFrg = 
+    const char* AsmFrg = 
       "!!ARBfp1.0                                       \n\
       TEMP tex0;                                        \n\
       TEMP tex_coord;                                   \n\
@@ -2317,7 +2295,7 @@ namespace nux
       MUL result.color, fragment.color, tex0;           \n\
       END";
 
-    NString AsmFrgRect = 
+    const char* AsmFrgRect = 
       "!!ARBfp1.0                                       \n\
       TEMP tex0;                                        \n\
       TEMP tex_coord;                                   \n\
@@ -2331,13 +2309,13 @@ namespace nux
       END";
 
     m_AsmPixelate = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_AsmPixelate->LoadVertexShader(AsmVtx.GetTCharPtr());
-    m_AsmPixelate->LoadPixelShader(AsmFrg.GetTCharPtr());
+    m_AsmPixelate->LoadVertexShader(AsmVtx);
+    m_AsmPixelate->LoadPixelShader(AsmFrg);
     m_AsmPixelate->Link();
 
     m_AsmPixelateRect = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-    m_AsmPixelateRect->LoadVertexShader(AsmVtx.GetTCharPtr());
-    m_AsmPixelateRect->LoadPixelShader(AsmFrgRect.GetTCharPtr());
+    m_AsmPixelateRect->LoadVertexShader(AsmVtx);
+    m_AsmPixelateRect->LoadPixelShader(AsmFrgRect);
     m_AsmPixelateRect->Link();
   }
 
@@ -2517,6 +2495,126 @@ namespace nux
     {
       SetViewport(0, 0, previous_width, previous_height);
     }
+  }
+
+  void GraphicsEngine::InitAsmTexturePremultiplyShader()
+  {
+    std::string AsmVtx = 
+      "!!ARBvp1.0                                 \n\
+      ATTRIB iPos         = vertex.position;      \n\
+      ATTRIB iColor       = vertex.attrib[3];     \n\
+      PARAM  mvp[4]       = {state.matrix.mvp};   \n\
+      OUTPUT oPos         = result.position;      \n\
+      OUTPUT oColor       = result.color;         \n\
+      OUTPUT oTexCoord0   = result.texcoord[0];   \n\
+      # Transform the vertex to clip coordinates. \n\
+      DP4   oPos.x, mvp[0], iPos;                     \n\
+      DP4   oPos.y, mvp[1], iPos;                     \n\
+      DP4   oPos.z, mvp[2], iPos;                     \n\
+      DP4   oPos.w, mvp[3], iPos;                     \n\
+      MOV   oColor, iColor;                           \n\
+      MOV   oTexCoord0, vertex.attrib[8];             \n\
+      END";
+
+    std::string AsmFrg = 
+      "!!ARBfp1.0                                       \n\
+      TEMP tex0;                                        \n\
+      TEMP temp;                                        \n\
+      TEX tex0, fragment.texcoord[0], texture[0], 2D;   \n\
+      MUL temp.rgb, tex0, tex0.aaaa;                    \n\
+      MOV temp.a, tex0.aaaa;                            \n\
+      MUL result.color, fragment.color, temp;           \n\
+      END";
+
+    std::string AsmFrgRect = 
+      "!!ARBfp1.0                                       \n\
+      TEMP tex0;                                        \n\
+      TEMP temp;                                        \n\
+      TEX tex0, fragment.texcoord[0], texture[0], RECT; \n\
+      MUL temp.rgb, tex0, tex0.aaaa;                    \n\
+      MOV temp.a, tex0.aaaa;                            \n\
+      MUL result.color, fragment.color, temp;           \n\
+      END";
+
+    m_AsmTexturePremultiplyModColor = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
+    m_AsmTexturePremultiplyModColor->LoadVertexShader(AsmVtx.c_str());
+    m_AsmTexturePremultiplyModColor->LoadPixelShader(AsmFrg.c_str());
+    m_AsmTexturePremultiplyModColor->Link();
+
+    m_AsmTexturePremultiplyRectModColor = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
+    m_AsmTexturePremultiplyRectModColor->LoadVertexShader(AsmVtx.c_str());
+    m_AsmTexturePremultiplyRectModColor->LoadPixelShader(AsmFrgRect.c_str());
+    m_AsmTexturePremultiplyRectModColor->Link();
+  }
+
+  void GraphicsEngine::QRP_ASM_1TexPremultiply(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform, const Color &color)
+  {
+    if (device_texture.IsNull())
+      return;
+
+    NUX_RETURN_IF_FALSE(m_AsmTexturePremultiplyModColor.IsValid());
+    NUX_RETURN_IF_FALSE(m_AsmTexturePremultiplyRectModColor.IsValid());
+
+    QRP_Compute_Texture_Coord(width, height, device_texture, texxform);
+    float fx = x, fy = y;
+    float VtxBuffer[] =
+    {
+      fx,          fy,          0.0f, 1.0f, texxform.u0, texxform.v0, 0, 1.0f, color.red, color.green, color.blue, color.alpha,
+      fx,          fy + height, 0.0f, 1.0f, texxform.u0, texxform.v1, 0, 1.0f, color.red, color.green, color.blue, color.alpha,
+      fx + width,  fy + height, 0.0f, 1.0f, texxform.u1, texxform.v1, 0, 1.0f, color.red, color.green, color.blue, color.alpha,
+      fx + width,  fy,          0.0f, 1.0f, texxform.u1, texxform.v0, 0, 1.0f, color.red, color.green, color.blue, color.alpha,
+    };
+
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
+
+    ObjectPtr<IOpenGLAsmShaderProgram> shader_program = m_AsmTexturePremultiplyModColor;
+    if (device_texture->Type().IsDerivedFromType(IOpenGLRectangleTexture::StaticObjectType))
+    {
+      shader_program = m_AsmTexturePremultiplyRectModColor;
+    }
+    shader_program->Begin();
+
+    SetTexture(GL_TEXTURE0, device_texture);
+
+    CHECKGL(glMatrixMode(GL_MODELVIEW));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLModelViewMatrix().m));
+    CHECKGL(glMatrixMode(GL_PROJECTION));
+    CHECKGL(glLoadIdentity());
+    CHECKGL(glLoadMatrixf((FLOAT *) GetOpenGLProjectionMatrix().m));
+
+
+    int VertexLocation          = VTXATTRIB_POSITION;
+    int TextureCoord0Location   = VTXATTRIB_TEXCOORD0;
+    int VertexColorLocation     = VTXATTRIB_COLOR;
+
+    CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+    CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer));
+
+    if (TextureCoord0Location != -1)
+    {
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord0Location));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4));
+    }
+
+    if (VertexColorLocation != -1)
+    {
+      CHECKGL(glEnableVertexAttribArrayARB(VertexColorLocation));
+      CHECKGL(glVertexAttribPointerARB((GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8));
+    }
+
+    CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
+
+    CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));
+
+    if (TextureCoord0Location != -1)
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord0Location));
+
+    if (VertexColorLocation != -1)
+      CHECKGL(glDisableVertexAttribArrayARB(VertexColorLocation));
+
+    shader_program->End();
   }
 }
 #endif // NUX_OPENGLES_20

@@ -216,7 +216,7 @@ namespace nux
     return true;
   }
 
-  void ScrollView::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void ScrollView::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     graphics_engine.PushClippingRectangle(GetGeometry());
 
@@ -278,25 +278,18 @@ namespace nux
       GetPainter().PopBackgroundStack();
   }
 
-  void ScrollView::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
-  }
-
 /////////
 // API //
 /////////
   void ScrollView::EnableVerticalScrollBar(bool b)
   {
     m_vertical_scrollbar_enable = b;
-    _delta_y = 0;
     ComputeContentSize();
   }
 
   void ScrollView::EnableHorizontalScrollBar(bool b)
   {
     m_horizontal_scrollbar_enable = b;
-    _delta_x = 0;
     ComputeContentSize();
   }
 
@@ -513,7 +506,7 @@ namespace nux
     return (eCompliantHeight | eCompliantWidth);
   }
 
-  long ScrollView::PostLayoutManagement2(long LayoutResult)
+  long ScrollView::PostLayoutManagement2(long /* LayoutResult */)
   {
     // In case IsSizeMatchContent returns True, The scroll view is resized to match its content.
     int ScrollbarWidth = 0;
@@ -671,7 +664,7 @@ namespace nux
 // object of the ScrollView. Which result in incorrect positioning.
 // Here we touch only the position. Do not touch the width or height of object.
 // This function is called when the ScrollView is embedded within a Layout.
-  void ScrollView::ComputeContentPosition(float offsetX, float offsetY)
+  void ScrollView::ComputeContentPosition(float /* offsetX */, float /* offsetY */)
   {
     Geometry geo = GetGeometry();
     int w = 0;
@@ -934,7 +927,7 @@ namespace nux
     QueueDraw();
   }
 
-  void ScrollView::RecvMouseWheel(int x, int y, int wheel_delta, long button_flags, unsigned long key_flags)
+  void ScrollView::RecvMouseWheel(int /* x */, int /* y */, int wheel_delta, long /* button_flags */, unsigned long /* key_flags */)
   {
     // nux can't tell the difference between horizontal and vertical mouse wheel events
     // so we are only going to support vertical

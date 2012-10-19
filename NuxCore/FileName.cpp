@@ -27,72 +27,59 @@
 namespace nux
 {
 
-  NString NFileName::GetDrive() const
+  std::string NFileName::GetDrive() const
   {
-    size_t Pos = FindFirstOccurence (NUX_BACKSLASH_CHAR);
-
-    if (Pos == tstring::npos)
-    {
-      Pos = FindFirstOccurence ("\\");
-
-      if (Pos != tstring::npos)
-      {
-        return GetSubString (Pos);
-      }
-    }
-
-    return TEXT ("");
+    size_t Pos = find('\\', 0);
+    return Pos != std::string::npos ? substr(0, Pos) : "";
   }
 
-  NString NFileName::GetExtension() const
+  std::string NFileName::GetExtension() const
   {
-    size_t Pos = FindLastOccurence (TEXT (".") );
-
-    if (Pos != tstring::npos)
-    {
-      return GetSubString (Pos + 1, Length() - Pos - 1);
-    }
-
-    return TEXT ("");
+    size_t Pos = rfind('.');
+    return Pos != std::string::npos ? substr(Pos + 1) : "";
   }
 
 // Returns the base filename without the path
-  NString NFileName::GetCleanFilename() const
+  std::string NFileName::GetCleanFilename() const
   {
-    size_t Pos = FindLastOccurence (NUX_BACKSLASH_CHAR);
-    Pos = Max<size_t> (Pos, FindLastOccurence (TEXT ("/") ) ); // in case we are using slash and the NUX_BACKSLASH_CHAR is different.
-    Pos = Max<size_t> (Pos, FindLastOccurence (TEXT ("\\") ) ); // in case we are using backslash and the NUX_BACKSLASH_CHAR is different.
-
-    if (Pos != tstring::npos)
+    size_t bsPos = rfind('\\');
+    size_t sPos = rfind('/');
+    size_t Pos = std::string::npos;
+    if (bsPos != std::string::npos && sPos != std::string::npos)
     {
-      return GetSubString (Pos + 1, Length() - Pos - 1);
+      Pos = Max<size_t>(bsPos, sPos);
     }
-
-    return *this;
+    else if (bsPos != std::string::npos)
+    {
+      Pos = bsPos;
+    }
+    else if (sPos != std::string::npos)
+    {
+      Pos = sPos;
+    }
+    return  Pos != std::string::npos ? (const std::string)substr(Pos + 1) : *this;
   }
 
-  NString NFileName::GetFilenameNoExtension() const
+  std::string NFileName::GetFilenameNoExtension() const
   {
-    size_t Pos = FindLastOccurence (TEXT (".") );
-
-    if (Pos != tstring::npos)
+    size_t Pos = rfind('.');
+    if (Pos != std::string::npos && Pos != 0)
     {
-      return GetSubString (Pos);
+      return substr(0, Pos);
     }
-
     return *this;
   }
 
 // Returns the base filename without the path and without the extension
-  NString NFileName::GetBaseFilename() const
+  std::string NFileName::GetBaseFilename() const
   {
-    NString Wk = GetCleanFilename();
+    std::string Wk = GetCleanFilename();
 
-    size_t Pos = Wk.FindLastOccurence (TEXT (".") );
+    size_t Pos = Wk.rfind('.');
 
-    if (Pos != tstring::npos)
+    if (Pos != std::string::npos)
     {
-      return Wk.GetSubString (Pos);
+      return Wk.substr(Pos);
     }
 
     return Wk;
@@ -100,113 +87,124 @@ namespace nux
 
 // Returns the path in front of the filename
 
-  NString NFileName::GetDirectoryPath() const
+  std::string NFileName::GetDirectoryPath() const
   {
-    size_t Pos = FindLastOccurence (NUX_BACKSLASH_CHAR);
-    Pos = Max<size_t> (Pos, FindLastOccurence (TEXT ("/") ) ); // in case we are using slash and the NUX_BACKSLASH_CHAR is different.
-    Pos = Max<size_t> (Pos, FindLastOccurence (TEXT ("\\") ) ); // in case we are using backslash and the NUX_BACKSLASH_CHAR is different.
-
-    if (Pos != tstring::npos)
+    size_t bsPos = rfind('\\');
+    size_t sPos = rfind('/');
+    size_t Pos = std::string::npos;
+    if (bsPos != std::string::npos && sPos != std::string::npos)
     {
-      return GetSubString (Pos);
+      Pos = Max<size_t>(bsPos, sPos);
     }
-
-    return *this;
+    else if (bsPos != std::string::npos)
+    {
+      Pos = bsPos;
+    }
+    else if (sPos != std::string::npos)
+    {
+      Pos = sPos;
+    }
+    return Pos != std::string::npos ? substr(Pos) : ".";
   }
 
   void NFileName::ChangeFileExtension (const TCHAR *ext)
   {
-    size_t Pos = FindLastOccurence (TEXT (".") );
-
-    if (Pos != tstring::npos)
+    size_t Pos = rfind('.');
+    if (Pos != std::string::npos)
     {
-      (*this) = GetSubString (Pos) + NString (TEXT (".") ) + NString (ext);
+      replace(begin() + Pos, end(), ext);
     }
-    else
-    {
-      (*this) = (*this) + NString (TEXT (".") ) + NString (ext);
-    }
+    *this = *this + "." + ext;
   }
 
   void NFileName::ConvertSlashToBackslash()
   {
-    size_t Pos = tstring::npos;
-    Pos = FindFirstOccurence (TEXT ('/') );
+    size_t Pos = find('/');
 
-    while (Pos != tstring::npos)
+    while (Pos != std::string::npos)
     {
-      Replace (Pos, 1, 1, TEXT ('\\') );
+      replace(Pos, 1, 1, '\\');
     }
   }
 
-
   void NFileName::ConvertBackslashToSlash()
   {
-    size_t Pos = tstring::npos;
-    Pos = FindFirstOccurence (TEXT ('\\') );
+    size_t Pos = find('\\');
 
-    while (Pos != tstring::npos)
+    while (Pos != std::string::npos)
     {
-      Replace (Pos, 1, 1, TEXT ('/') );
+      replace(Pos, 1, 1, '/');
     }
   }
 
   void NFileName::AddSlashAtEnd()
   {
-    if (GetLastChar() != TEXT ('/') )
-      *this += TEXT ('/');
+    if (!empty() && operator[](size() - 1) != '/')
+      append("/");
   }
 
   void NFileName::AddBackSlashAtEnd()
   {
-    if (GetLastChar() != TEXT ('\\') )
-      *this += TEXT ('\\');
+    if (!empty() && operator[](size() - 1) != '\\')
+      *this += '\\';
   }
 
   void NFileName::AddSlashAtStart()
   {
-    if (GetFirstChar() != TEXT ('/') )
-      Insert (0, 1, TEXT ('/') );
+    if (!empty() && operator[](0) != '/')
+      insert(0, 1, '/');
   }
 
   void NFileName::AddBackSlashAtStart()
   {
-    if (GetFirstChar() != TEXT ('\\') )
-      Insert (0, 1, TEXT ('\\') );
+    if (!empty() && operator[](0) != '\\')
+      insert(0, 1, '\\');
   }
 
   void NFileName::RemoveSlashAtEnd()
   {
-    RemoveSuffix (TEXT ('/') );
+    if (!empty() && operator[](size() - 1) == '/')
+    {
+      erase(end() - 1);
+    }
   }
 
   void NFileName::RemoveBackSlashAtEnd()
   {
-    RemoveSuffix (TEXT ('\\') );
+    if (!empty() && operator[](size() - 1) == '\\')
+    {
+      erase(end() - 1);
+    }
   }
 
   void NFileName::RemoveSlashAtStart()
   {
-    RemovePrefix (TEXT ('/') );
+    if (!empty() && operator[](0) == '/')
+    {
+      erase(0, 1);
+    }
   }
 
   void NFileName::RemoveBackSlashAtStart()
   {
-    RemovePrefix (TEXT ('\\') );
+    if (!empty() && operator[](0) == '\\')
+    {
+      erase(0, 1);
+    }
   }
 
   void NFileName::ConvertToCleanSlash()
   {
     ConvertBackslashToSlash();
 
-    size_t size = Size();
+    size_t count = size();
 
-    for (size_t i = 0; i < size; )
+    for (size_t i = 0; i < count; )
     {
-      if ( (i < size - 1) && (operator[] (i) == TEXT ('/') ) && (operator[] (i + 1) == TEXT ('/') ) )
+      if ( (i < count - 1) && (operator[] (i) == '/' ) && (operator[] (i + 1) == ('/') ) )
       {
-        Erase (i + 1, 1);
-        --size;
+        erase (i + 1, 1);
+        --count;
       }
       else
       {
@@ -219,13 +217,13 @@ namespace nux
   {
     ConvertSlashToBackslash();
 
-    size_t size = Size();
+    size_t count = size();
 
-    for (size_t i = 0; i < size; )
+    for (size_t i = 0; i < count; )
     {
-      if ( (i < size - 1) && (operator[] (i) == TEXT ('\\') ) && (operator[] (i + 1) == TEXT ('\\') ) )
+      if ( (i < count - 1) && (operator[] (i) == '\\' ) && (operator[] (i + 1) == '\\' ) )
       {
-        Erase (i + 1, 1);
+        erase (i + 1, 1);
       }
       else
       {

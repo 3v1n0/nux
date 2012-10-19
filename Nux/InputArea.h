@@ -23,8 +23,6 @@
 #ifndef INPUTAREA_H
 #define INPUTAREA_H
 
-#include "Features.h"
-
 #include "Area.h"
 
 #if defined(NUX_OS_WINDOWS)
@@ -67,7 +65,7 @@ namespace nux
     */
     virtual void OnDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
-    virtual void OverlayDrawing(GraphicsEngine &graphics_engine) {}
+    virtual void OverlayDrawing(GraphicsEngine & /* graphics_engine */) {}
 
     bool HasKeyboardFocus();
 
@@ -81,7 +79,45 @@ namespace nux
                           unsigned long special_keys_state);
 
     virtual bool AcceptKeyNavFocus() const;
-    
+
+    /*!
+      Sets whether this InputArea wants to know about all mouse events
+      sent to a child InputArea.
+
+      ChildMouseEvent() will be called for every mouse event that a child
+      InputArea receives.
+
+      \param enable Whether this InputArea should be informed about child mouse
+                    events
+      \sa ChildMouseEvent(), IsTrackingChildMouseEvents()
+     */
+    void SetTrackChildMouseEvents(bool enable);
+
+    /*!
+      Returns whether this InputArea wants to be informed about child mouse events.
+
+      This property is false by default.
+
+      \sa SetTrackChildMouseEvents(), ChildMouseEvent()
+     */
+    bool IsTrackingChildMouseEvents() const;
+
+    /*!
+      Called when a mouse event is sent to a child InputArea.
+
+      If you return true, mouse ownership will be moved to this InputArea and the
+      child InputArea will receive a MOUSE_CANCEL event.
+
+      If you return false, nothing happens and the child will keep its ownership
+      over the mouse and therefore get further mouse events.
+
+      The default implementation just returns false;
+
+      \return Whether you want to take ownership over the mouse.
+      \sa SetTrackChildMouseEvents
+     */
+    virtual bool ChildMouseEvent(const Event& event);
+
   protected:
 
   private:
@@ -90,8 +126,6 @@ namespace nux
   public:
     // Override the virtual methods from Object Base
     // Here, we get a change to update the text of the keyboard handler.
-    virtual void SetBaseString(const char *Caption);
-
     void SetKeyboardReceiverIgnoreMouseDownOutside(bool ignore_mouse_down_outside);
 
     void SetAcceptKeyNavFocusOnMouseDown(bool accept);
@@ -335,6 +369,12 @@ namespace nux
          unsigned long   // key state
          > mouse_wheel; // send(current X, current Y, delta X, delta Y)
 
+    //! Signal emitted when the InputArea loses ownership over a pressed mouse.
+    /*!
+      Any actions or changes caused by the previous mouse_down should be reverted.
+     */
+    sigc::signal<void> mouse_cancel;
+
     //! Signal emitted when the InputArea receives a key release event.
     sigc::signal<void, unsigned int, unsigned long, unsigned long> key_up;
 
@@ -383,7 +423,7 @@ namespace nux
 
       Default implementation just returns GestureDeliveryRequest::NONE.
      */
-    virtual GestureDeliveryRequest GestureEvent(const GestureEvent &event)
+    virtual GestureDeliveryRequest GestureEvent(const GestureEvent & /* event */)
     {
       return GestureDeliveryRequest::NONE;
     }
@@ -420,7 +460,12 @@ namespace nux
 
       virtual void EmitMouseDownOutsideArea   (int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state);
 
+      virtual void EmitMouseCancelSignal();
+
       friend class WindowCompositor;
+
+    private:
+      bool is_tracking_child_mouse_events_;
   };
 
 }

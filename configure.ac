@@ -22,7 +22,8 @@ m4_define([nux_api_version], [3.0])
 # The number format is : year/month/day
 # e.g.: december 5th, 2011 is: 20111205
 # To make more than one API change in a day, add a number to the date. Like 20111205.xx
-m4_define([nux_abi_version], [20120813.01])
+
+m4_define([nux_abi_version], [20121012.01])
 
 m4_define([nux_version],
           [nux_major_version.nux_minor_version.nux_micro_version])
@@ -115,7 +116,7 @@ AC_CHECK_FUNCS([memset munmap strcasecmp strdup])
 PKG_PROG_PKG_CONFIG
 
 dnl ===========================================================================
-GL_PKGS="gl glu glew glewmx"
+GL_PKGS="gl glu glew glewmx xext x11"
 MAINTAINER_CFLAGS=""
 
 # Enable opengl es 20 code path
@@ -270,6 +271,30 @@ AS_IF([test "x$enable_tests" = "xyes"],
                        [AC_MSG_WARN([you are missing google-mock, apt-get install google-mock])])
         AC_LANG_POP([C++])
 
+       #Check for libboost
+
+        AC_LANG_PUSH([C++])
+        AC_CHECK_HEADER([boost/filesystem.hpp],
+                        [have_boost=yes],
+                        [AC_MSG_WARN([you are missing boost, apt-get install libboost-dev])])
+        AC_LANG_POP([C++])
+
+        #Check for libboost-system
+
+        AC_LANG_PUSH([C++])
+        AC_CHECK_HEADER([boost/system/config.hpp],
+                        [have_boost_system=yes],
+                        [AC_MSG_WARN([you are missing boost-system, apt-get install libboost-system-dev])])
+        AC_LANG_POP([C++])
+
+        #Check for libboost-filesystem
+
+        AC_LANG_PUSH([C++])
+        AC_CHECK_HEADER([boost/filesystem/fstream.hpp],
+                        [have_boost_fs=yes],
+                        [AC_MSG_WARN([you are missing boost-filesystem, apt-get install libboost-filesystem-dev])])
+        AC_LANG_POP([C++])
+
         #Check for libxtst
         AC_CHECK_HEADER([X11/extensions/XTest.h],
                        [have_xtest=yes],
@@ -278,6 +303,9 @@ AS_IF([test "x$enable_tests" = "xyes"],
 )
 
 AS_IF([test "x$have_xtest" = "xyes" &&
+       test "x$have_boost" = "xyes" &&
+       test "x$have_boost_system" = "xyes" &&
+       test "x$have_boost_fs" = "xyes" &&
        test "x$have_gmock" = "xyes" &&
        test "x$have_gtest" = "xyes"],
   [],
@@ -311,9 +339,11 @@ AM_CONDITIONAL(BUILD_DOCUMENTATION, [test "x$enable_documentation" = "xyes"])
 dnl ==========================================================================
 
 if test "x$GCC" = "xyes"; then
-  GCC_FLAGS="-g -Wall -std=c++0x"
+  GCC_FLAGS="-g -Wall -Wextra -std=c++0x"
 fi
-AC_SUBST(GCC_FLAGS)
+
+# gcc flags for building the tests.
+GCC_TESTS_FLAGS="-g -O0 -Wall -Wextra -std=c++0x"
 
 # use strict compiler flags only on development releases
 m4_define([maintainer_mode_default], [m4_if(m4_eval(nux_micro_version % 2), [1], [yes], [no])])
@@ -325,11 +355,12 @@ AC_ARG_ENABLE([maintainer-mode],
 
 AS_IF([test "x$enable_maintainer_mode" = "xyes" && test "x$GCC" = "xyes"],
       [
-         MAINTAINER_CFLAGS+="-Werror -Wall -Wcast-align -Wno-uninitialized -Wempty-body -Wformat-security -Winit-self"
+         MAINTAINER_CFLAGS+="-Wall -Wextra -Wcast-align -Wno-uninitialized -Wempty-body -Wformat-security -Winit-self"
       ]
 )
 
-# this enables lots of useful debugging output in Nux
+# This enables lots of useful debugging output in Nux.
+# In debug mode, relax the number of build failures due to -Werror.
 AC_ARG_ENABLE([debug],
               [AC_HELP_STRING([--enable-debug=@<:@no/yes@:>@],
               [Enable Nux debugging @<:@default=no@:>@])],
@@ -338,9 +369,12 @@ AC_ARG_ENABLE([debug],
 AS_IF([test "x$enable_debug" = "xyes"],
       [
          MAINTAINER_CFLAGS+=" -DNUX_DEBUG"
+         GCC_FLAGS="-g -O0 -Wall -Wextra -std=c++0x"
       ]
 )
 
+AC_SUBST(GCC_FLAGS)
+AC_SUBST(GCC_TESTS_FLAGS)
 AC_SUBST(MAINTAINER_CFLAGS)
 
 # this enables lots of useful debugging output in Nux

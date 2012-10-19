@@ -35,7 +35,7 @@ namespace nux
 //     }
 // }
 
-// NSerializer& operator << (NSerializer& Sr, NString& s)
+// NSerializer& operator << (NSerializer& Sr, std::string& s)
 // {
 //     Sr.SerializeBuffer<TCHAR>(NUX_CONST_CAST(TCHAR*, s.GetTCharPtr()), s.Size()+1, sizeof(TCHAR));
 //     return Sr;

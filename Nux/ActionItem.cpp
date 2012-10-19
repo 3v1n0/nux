@@ -47,7 +47,7 @@ namespace nux
       m_Icon->UnReference();
   }
 
-  void ActionItem::DrawAsMenuItem(GraphicsEngine &graphics_engine, InputArea &area, bool is_highlighted, bool draw_icone)
+  void ActionItem::DrawAsMenuItem(GraphicsEngine &graphics_engine, InputArea &area, bool is_highlighted, bool /* draw_icone */)
   {
     Geometry geo = area.GetGeometry();
     Geometry icon_geo(0, 0, 20, 20);
@@ -133,7 +133,7 @@ namespace nux
 
   const char *ActionItem::GetLabel() const
   {
-    return m_Label.GetTCharPtr();
+    return m_Label.c_str();
   }
 
   void ActionItem::SetIcon(const BaseTexture* icon)

@@ -56,7 +56,7 @@
 namespace nux
 {
 
-  int CheckGLError(const char *GLcall, const char *file, int line);
+  void CheckGLError(const char *GLcall, const char *file, int line);
 
 }
 

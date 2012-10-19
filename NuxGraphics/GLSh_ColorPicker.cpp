@@ -40,7 +40,7 @@ namespace nux
 // Use assembly shaders for Intel GPUs: ARB_fragment_program does not have the required
 // instruction to implement the HSV to RGB color conversion.
 
-  static NString VtxShader = "            \n\
+  const char* VtxShader = "            \n\
         uniform mat4 ViewProjectionMatrix;      \n\
         attribute vec4 AVertex;                 \n\
         attribute vec4 VertexColor;             \n\
@@ -49,7 +49,7 @@ namespace nux
             gl_Position = ViewProjectionMatrix * AVertex;   \n\
         }";
 
-  static NString RedFrgShader = "         \n\
+  const char* RedFrgShader = "         \n\
         #ifdef GL_ES                            \n\
         precision mediump float;                \n\
         #endif                                  \n\
@@ -63,7 +63,7 @@ namespace nux
             gl_FragColor = vec4(Color.r, y, x, 1.0);                        \n\
         }";
 
-  static NString GreenFrgShader = "       \n\
+  const char* GreenFrgShader = "       \n\
         #ifdef GL_ES                            \n\
         precision mediump float;                \n\
         #endif                                  \n\
@@ -77,7 +77,7 @@ namespace nux
             gl_FragColor = vec4(y, Color.g, x, 1.0);                        \n\
         }";
 
-  static NString BlueFrgShader = "        \n\
+  const char* BlueFrgShader = "        \n\
         #ifdef GL_ES                            \n\
         precision mediump float;                \n\
         #endif                                  \n\
@@ -91,7 +91,7 @@ namespace nux
             gl_FragColor = vec4(x, y, Color.b, 1.0);                        \n\
         }";
 
-  static NString HueFrgShader = "                 \n\
+  const char* HueFrgShader = "                 \n\
         #ifdef GL_ES                                    \n\
         precision mediump float;                        \n\
         #endif                                          \n\
@@ -107,7 +107,7 @@ namespace nux
             gl_FragColor = vec4(rgb, 1.0);                      \n\
         }";
 
-  static NString SaturationFrgShader = "              \n\
+  const char* SaturationFrgShader = "              \n\
         #ifdef GL_ES                                        \n\
         precision mediump float;                            \n\
         #endif                                              \n\
@@ -123,7 +123,7 @@ namespace nux
             gl_FragColor = vec4(rgb, 1.0);                      \n\
         }";
 
-  static NString ValueFrgShader = "           \n\
+  const char* ValueFrgShader = "           \n\
         #ifdef GL_ES                                \n\
         precision mediump float;                    \n\
         #endif                                      \n\
@@ -139,7 +139,7 @@ namespace nux
             gl_FragColor = vec4(rgb, 1.0);                                  \n\
         }";
 
-  static NString HSV_To_RGBFrgShader = "                                  \n\
+  const char* HSV_To_RGBFrgShader = "                                  \n\
         #ifdef GL_ES                                                            \n\
         precision mediump float;                                                \n\
         #endif                                                                  \n\
@@ -165,7 +165,7 @@ namespace nux
 
 //////////////////////////////////////////////////////////////////////////////
 
-  static NString AsmVtxShader = "!!ARBvp1.0                                 \n\
+  const char* AsmVtxShader = "!!ARBvp1.0                                 \n\
         ATTRIB iPos         = vertex.position;      \n\
         PARAM  mvp[4]       = {state.matrix.mvp};   \n\
         OUTPUT oPos         = result.position;      \n\
@@ -176,7 +176,7 @@ namespace nux
         DP4   oPos.w, mvp[3], iPos;      \n\
         END";
 
-  NString AsmRedFrgShader = "!!ARBfp1.0                  \n\
+  const char* AsmRedFrgShader = "!!ARBfp1.0                  \n\
         PARAM RectPosition = program.local[0];              \n\
         PARAM RectDimension = program.local[1];             \n\
         PARAM Color = program.local[2];                     \n\
@@ -193,7 +193,7 @@ namespace nux
         MOV result.color, temp1;                            \n\
         END";
 
-  NString AsmGreenFrgShader = "!!ARBfp1.0                  \n\
+  const char* AsmGreenFrgShader = "!!ARBfp1.0                  \n\
        PARAM RectPosition = program.local[0];              \n\
        PARAM RectDimension = program.local[1];             \n\
        PARAM Color = program.local[2];                     \n\
@@ -210,7 +210,7 @@ namespace nux
        MOV result.color, temp1;                            \n\
        END";
 
-  NString AsmBlueFrgShader = "!!ARBfp1.0                \n\
+  const char* AsmBlueFrgShader = "!!ARBfp1.0                \n\
        PARAM RectPosition = program.local[0];              \n\
        PARAM RectDimension = program.local[1];             \n\
        PARAM Color = program.local[2];                     \n\
@@ -228,15 +228,15 @@ namespace nux
        END";
 
 
-  NString AsmHueFrgShader = "!!ARBfp1.0                  \n\
+  const char* AsmHueFrgShader = "!!ARBfp1.0                  \n\
         MOV result.color, {0, 0, 0, 0};                     \n\
         END";
 
-  NString AsmSaturationFrgShader = "!!ARBfp1.0                  \n\
+  const char* AsmSaturationFrgShader = "!!ARBfp1.0                  \n\
        MOV result.color, {0, 0, 0, 0};                      \n\
        END";
 
-  NString AsmValueFrgShader = "!!ARBfp1.0                  \n\
+  const char* AsmValueFrgShader = "!!ARBfp1.0                  \n\
        MOV result.color, {0, 0, 0, 0};                      \n\
        END";
 
@@ -250,7 +250,7 @@ GLSh_ColorPicker::GLSh_ColorPicker(color::Channel color_channel)
     ,   _ScreenOffsetX(0)
     ,   _ScreenOffsetY(0)
   {
-    NString FrgShaderCode;
+    const char* FrgShaderCode;
 
     if (GetGraphicsDisplay()->GetGraphicsEngine()->UsingGLSLCodePath() && (GetGraphicsDisplay()->GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL))
     {
@@ -297,11 +297,11 @@ GLSh_ColorPicker::GLSh_ColorPicker(color::Channel color_channel)
       GlobalPixelShader = GetGraphicsDisplay()->GetGpuDevice()->CreatePixelShader();
       sprog = GetGraphicsDisplay()->GetGpuDevice()->CreateShaderProgram();
 
-      GlobalPixelShader->SetShaderCode(HSV_To_RGBFrgShader.GetTCharPtr());
+      GlobalPixelShader->SetShaderCode(HSV_To_RGBFrgShader);
 
       sprog->AddShaderObject(GlobalPixelShader);
-      sprog->LoadVertexShader(VtxShader.GetTCharPtr(), NULL);
-      sprog->LoadPixelShader(FrgShaderCode.GetTCharPtr(), NULL);
+      sprog->LoadVertexShader(VtxShader, NULL);
+      sprog->LoadPixelShader(FrgShaderCode, NULL);
       sprog->Link();
     }
     else
@@ -347,8 +347,8 @@ GLSh_ColorPicker::GLSh_ColorPicker(color::Channel color_channel)
       }
 
       m_AsmProg = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-      m_AsmProg->LoadVertexShader(AsmVtxShader.GetTCharPtr());
-      m_AsmProg->LoadPixelShader(FrgShaderCode.GetTCharPtr());
+      m_AsmProg->LoadVertexShader(AsmVtxShader);
+      m_AsmProg->LoadPixelShader(FrgShaderCode);
       m_AsmProg->Link();
     }
   }
@@ -374,7 +374,7 @@ GLSh_ColorPicker::GLSh_ColorPicker(color::Channel color_channel)
     _ScreenOffsetY = y;
   }
 
-  void GLSh_ColorPicker::Render(int x, int y, int z, int width, int height, int WindowWidth, int WindowHeight)
+  void GLSh_ColorPicker::Render(int x, int y, int z, int width, int height, int /* WindowWidth */, int WindowHeight)
   {
     float fx = x, fy = y;
     float VtxBuffer[] =

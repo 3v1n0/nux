@@ -105,6 +105,9 @@ namespace nux
 		     TexCoordXForm texxform0, const Color& color0,
 		     LayerBlendMode layer_blend_mode,
 		     bool write_alpha, const ROPConfig& ROP);
+
+    CompositionLayer(const Color& base_color, const Color& blend_color, LayerBlendMode layer_blend_mode,
+         bool write_alpha, const ROPConfig& ROP);
     
     virtual ~CompositionLayer();
     
@@ -128,9 +131,6 @@ namespace nux
     ROPConfig m_rop;
 
     LayerBlendMode m_blend_mode;
-    
-    
-    
   };
 
   class TextureLayer: public AbstractPaintLayer

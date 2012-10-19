@@ -22,7 +22,7 @@
 #include "Nux.h"
 #include "Theme.h"
 #if defined(NUX_OS_WINDOWS)
-  #include "NuxCore/TinyXML/tinyxml.h"
+  #include "tinyxml/tinyxml.h"
 #endif
 
 namespace nux
@@ -151,19 +151,22 @@ namespace nux
     std::list<PainterImage*>::iterator it;
     for (it = painter_image_list_.begin(); it != painter_image_list_.end(); it++)
     {
-      (*it)->texture->UnReference();
+      if ((*it)->texture)
+      {
+        (*it)->texture->UnReference();
+      }
       delete(*it);
     }
     painter_image_list_.clear();
   }
 
 #if defined(NUX_OS_LINUX)
-  void UXTheme::ParseStartImage(GMarkupParseContext* context,
+  void UXTheme::ParseStartImage(GMarkupParseContext* /* context */,
     const gchar*  element_name,
     const gchar** attribute_names,
     const gchar** attribute_values,
     gpointer      user_data,
-    GError**      error)
+    GError**      /* error */)
   {
     if (strcmp(element_name, "Image") != 0)
     {
@@ -175,7 +178,6 @@ namespace nux
 
     UXTheme* theme = static_cast<UXTheme*>(user_data);
     PainterImage* pimage = new PainterImage;
-    std::memset(pimage, 0, sizeof(PainterImage));
 
     while (*name_cursor)
     {
@@ -204,8 +206,8 @@ namespace nux
       {
         BaseTexture* device_texture;
 
-        NString texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL(*value_cursor);
-        device_texture = theme->Load2DTextureFile(texture_filename.GetTCharPtr());
+        std::string texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL(*value_cursor);
+        device_texture = theme->Load2DTextureFile(texture_filename.c_str());
 
         pimage->texture = device_texture;
       }
@@ -217,10 +219,10 @@ namespace nux
     theme->painter_image_list_.push_back(pimage);
   }
 
-  void UXTheme::ParseEndImage(GMarkupParseContext* context,
-    const gchar*  element_name,
-    gpointer      user_data,
-    GError**      error)
+  void UXTheme::ParseEndImage(GMarkupParseContext* /* context */,
+    const gchar*  /* element_name */,
+    gpointer      /* user_data */,
+    GError**      /* error */)
   {
 
   }
@@ -228,8 +230,8 @@ namespace nux
 
   void UXTheme::LoadPainterImages()
   {
-    NString file_search = "Painter.xml";
-    NString painter_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL(file_search.GetTCharPtr());
+    std::string file_search = "Painter.xml";
+    std::string painter_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL(file_search.c_str());
 
     if (painter_filename == "")
     {
@@ -253,10 +255,10 @@ namespace nux
       this,
       NULL);
 
-    NString str;
-    LoadFileToString(str, painter_filename.GetTCharPtr());
+    std::string str;
+    LoadFileToString(str, painter_filename.c_str());
 
-    if (g_markup_parse_context_parse(context, str.GetTCharPtr(), str.Length(), NULL) == FALSE)
+    if (g_markup_parse_context_parse(context, str.c_str(), str.length(), NULL) == FALSE)
     {
       nuxCriticalMsg("[GraphicsEngine::LoadPainterImages] Failed to parse data.");
       return;
@@ -264,7 +266,7 @@ namespace nux
 
 #else
 
-    TiXmlDocument doc(painter_filename.GetTCharPtr());
+    TiXmlDocument doc(painter_filename.c_str());
     doc.LoadFile();
 
     TiXmlHandle docHandle( &doc );
@@ -273,12 +275,12 @@ namespace nux
 
     for (image = data->FirstChildElement(TCHARToUTF8("Image")); image; image = image->NextSiblingElement(TCHARToUTF8("Image")))
     {
-      PainterImage *pimage = new PainterImage;
+      PainterImage* pimage = new PainterImage;
       Memset(pimage, 0, sizeof(PainterImage));
 
-      NString style = image->Attribute(TCHARToUTF8("style"));
+      std::string style = image->Attribute(TCHARToUTF8("style"));
 
-      pimage->style = GetStyleImageRef(style.GetTCharPtr());
+      pimage->style = GetStyleImageRef(style.c_str());
 
       // If the attributes border_left, border_right, border_top, border_bottom are not present, assume they are equal to 0;
       pimage->border_left = pimage->border_right = pimage->border_top = pimage->border_bottom = 0;
@@ -309,19 +311,16 @@ namespace nux
 
       if (1)
       {
-        BaseTexture* device_texture;
-
-        NString filename = image->Attribute(TCHARToUTF8("Name"));
-        NString texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL(filename.GetTCharPtr());
-        device_texture = Load2DTextureFile(texture_filename.GetTCharPtr());
-
-        pimage->texture = device_texture;
+        std::string filename = image->Attribute(TCHARToUTF8("Name"));
+        std::string texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL(filename.c_str());
+        pimage->texture = 0;
+        pimage->filename = texture_filename;
       }
       else
       {
-        NString filename = image->Attribute(TCHARToUTF8("Name"));
-        NString texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL(filename.GetTCharPtr());
-        pimage->texture = Load2DTextureFile(texture_filename.GetTCharPtr());
+        std::string filename = image->Attribute(TCHARToUTF8("Name"));
+        std::string texture_filename = NUX_FIND_RESOURCE_LOCATION_NOFAIL(filename.c_str());
+        pimage->texture = Load2DTextureFile(texture_filename.c_str());
       }
 
       painter_image_list_.push_back(pimage);
@@ -335,6 +334,12 @@ namespace nux
 
     for (it = painter_image_list_.begin(); it != painter_image_list_.end(); it++)
     {
+      if (!(*it)->texture)
+      {
+        BaseTexture* device_texture = Load2DTextureFile((*it)->filename.c_str());
+        (*it)->texture = device_texture;
+      }
+
       if ((*it)->style == style)
       {
         return (*it);
@@ -350,6 +355,12 @@ namespace nux
 
     for (it = painter_image_list_.begin(); it != painter_image_list_.end(); it++)
     {
+      if (!(*it)->texture)
+      {
+        BaseTexture* device_texture = Load2DTextureFile((*it)->filename.c_str());
+        (*it)->texture = device_texture;
+      }
+
       if ((*it)->style == style)
       {
         unsigned int width = (*it)->texture->GetWidth();
@@ -375,7 +386,7 @@ namespace nux
     return texture2D;
   }
 
-  BaseTexture *UXTheme::Load2DTextureFileGenerateAlpha(const char *filename, int red, int green, int blue)
+  BaseTexture *UXTheme::Load2DTextureFileGenerateAlpha(const char * /* filename */, int /* red */, int /* green */, int /* blue */)
   {
     return 0;
   }

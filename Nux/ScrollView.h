@@ -159,7 +159,6 @@ namespace nux
 
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
 
     void RecvMouseWheel(int x, int y, int wheel_delta,  long button_flags, unsigned long key_flags);
@@ -169,7 +168,7 @@ namespace nux
     /*!
         For styling purpose, allow the classes that inherit from ScrollView to
         change the vertical scrollbar.
-    */ 
+    */
     void SetVScrollBar(VScrollBar* newVScrollBar);
 
     // Backup texture to speed up scrolling

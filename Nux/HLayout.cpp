@@ -48,7 +48,7 @@ namespace nux
     m_ContentStacking = eStackLeft;
   }
 
-  HLayout::HLayout(NString name, NUX_FILE_LINE_DECL)
+  HLayout::HLayout(std::string name, NUX_FILE_LINE_DECL)
     : LinearLayout(NUX_FILE_LINE_PARAM)
   {
     m_name = name;
@@ -518,7 +518,7 @@ namespace nux
     return size_compliance;
   }
 
-  void HLayout::HLayoutManagement(int width, int height)
+  void HLayout::HLayoutManagement(int width, int /* height */)
   {
     bool need_recompute = false;
 

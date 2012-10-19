@@ -104,7 +104,7 @@ nux::Color TestView::GetColor() const
   return current_color_;
 }
 
-void TestView::Draw(nux::GraphicsEngine& graphics_engine, bool force_draw)
+void TestView::Draw(nux::GraphicsEngine& graphics_engine, bool /* force_draw */)
 {
   nux::Geometry geo = GetGeometry();
   graphics_engine.QRP_Color(geo.x, geo.y, geo.width, geo.height, current_color_);
@@ -113,7 +113,7 @@ if (has_focus_)
   graphics_engine.QRP_Color(geo.x, geo.y, 20, 20, with_key_focus_color_);  
 }
 
-void TestView::OnMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+void TestView::OnMouseDown(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
 {
   registered_mouse_down_ = true;
   current_color_ = mouse_down_color_;
@@ -121,7 +121,7 @@ void TestView::OnMouseDown(int x, int y, unsigned long button_flags, unsigned lo
   QueueDraw();
 }
 
-void TestView::OnMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+void TestView::OnMouseUp(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
 {
   registered_mouse_up_ = true;
   if (mouse_in_)
@@ -134,7 +134,7 @@ void TestView::OnMouseUp(int x, int y, unsigned long button_flags, unsigned long
   QueueDraw();
 }
 
-void TestView::OnMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+void TestView::OnMouseDrag(int /* x */, int /* y */, int /* dx */, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */)
 {
   registered_mouse_drag_ = true;
   current_color_ = mouse_drag_color_;
@@ -142,13 +142,13 @@ void TestView::OnMouseDrag(int x, int y, int dx, int dy, unsigned long button_fl
   QueueDraw();
 }
 
-void TestView::OnMouseClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
+void TestView::OnMouseClick(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
 {
   registered_mouse_click_ = true;
   QueueDraw();
 }
 
-void TestView::OnMouseDoubleClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
+void TestView::OnMouseDoubleClick(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
 {
   registered_mouse_double_click_ = true;
   current_color_ = mouse_down_color_;
@@ -156,13 +156,13 @@ void TestView::OnMouseDoubleClick(int x, int y, unsigned long button_flags, unsi
   QueueDraw();
 }
 
-void TestView::OnMouseMove(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+void TestView::OnMouseMove(int /* x */, int /* y */, int /* dx */, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */)
 {
   registered_mouse_move_ = true;
   QueueDraw();
 }
 
-void TestView::OnMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
+void TestView::OnMouseEnter(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
 {
   registered_mouse_enter_ = true;
   mouse_in_ = true;
@@ -170,7 +170,7 @@ void TestView::OnMouseEnter(int x, int y, unsigned long button_flags, unsigned l
   QueueDraw();
 }
 
-void TestView::OnMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
+void TestView::OnMouseLeave(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
 {
   registered_mouse_leave_ = true;
   mouse_in_ = false;
@@ -178,7 +178,7 @@ void TestView::OnMouseLeave(int x, int y, unsigned long button_flags, unsigned l
   QueueDraw();
 }
 
-void TestView::OnKeyNavFocusChange(nux::Area* area, bool has_focus, nux::KeyNavDirection direction)
+void TestView::OnKeyNavFocusChange(nux::Area* /* area */, bool has_focus, nux::KeyNavDirection direction)
 {
   has_focus_ = HasKeyFocus();
   
@@ -197,7 +197,7 @@ void TestView::OnEndKeyFocus()
   registered_end_keynav_focus_ = true;
 }
 
-void TestView::OnObjectDestroyed(nux::Object* object)
+void TestView::OnObjectDestroyed(nux::Object* /* object */)
 {
   registered_object_destroyed_ = true;
 }

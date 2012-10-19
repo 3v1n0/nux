@@ -24,7 +24,6 @@
 #define WINDOWTHREAD_H
 
 #include "TimerProc.h"
-#include "Features.h"
 
 #ifdef NUX_GESTURES_SUPPORT
 #include "GeisAdapter.h"
@@ -235,7 +234,7 @@ namespace nux
     */
     void AddTimeline(Timeline* timeline);
     void RemoveTimeline(Timeline* timeline);
-    bool ProcessTimelines(GTimeVal *frame_time);
+    bool ProcessTimelines(gint64 micro_secs);
     long last_timeline_frame_time_sec_;
     long last_timeline_frame_time_usec_;
 

@@ -89,16 +89,14 @@ test_timeline (void)
   timeline->NewFrame.connect (sigc::mem_fun (test_class, &TimelineTestClass::OnNewFrame));
   timeline->Completed.connect (sigc::mem_fun (test_class, &TimelineTestClass::OnCompleted));
 
-  GTimeVal time_val;
-  g_get_current_time (&time_val);
-
-  unsigned long current_time = (time_val.tv_sec * 1000) + (time_val.tv_usec / 1000);
+  gint64 micro_secs = g_get_real_time();
+  unsigned long current_time = micro_secs / 1000;
 
   wt->AddTimeline (timeline);
   wt->Run(NULL);
 
-  g_get_current_time (&time_val);
-  g_assert ((time_val.tv_sec * 1000) + (time_val.tv_usec / 1000) - current_time > 1000); // we got at least 1000 ms of timeline
+  micro_secs = g_get_real_time();
+  g_assert(micro_secs / 1000 - current_time > 1000);
   g_assert (test_class->has_got_new_frame);
   delete test_class;
   delete wt;

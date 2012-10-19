@@ -79,12 +79,12 @@ namespace nux
     return ( ( (uintptr_t) &data) & (alignment - 1) ) == 0;
   }
 
-  void *Malloc (size_t Count, unsigned int Alignment)
+  void *Malloc (size_t Count, unsigned int /* Alignment */)
   {
     return std::malloc ( Count );
   }
 
-  void *Realloc (void *Original, size_t Count, unsigned int Alignment)
+  void *Realloc (void *Original, size_t Count, unsigned int /* Alignment */)
   {
     void *mem = std::realloc ( Original, Count );
 

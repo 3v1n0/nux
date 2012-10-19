@@ -42,24 +42,24 @@ namespace nux
     void            SetDialogTitle (const TCHAR *Title);
     const TCHAR    *GetDialogTitle()
     {
-      return *DialogTitle;
+      return DialogTitle.c_str();
     }
     void            SetInitialDirectory (const TCHAR *Directory);
     const TCHAR    *GetInitialDirectory()
     {
-      return *InitialDirectory;
+      return InitialDirectory.c_str();
     }
 
 
   public:
     NFileName ReturnFileName;
-    std::vector<NString> FilterDesc;
-    std::vector<NString> Filters;
+    std::vector<std::string> FilterDesc;
+    std::vector<std::string> Filters;
     TCHAR *FormattedFilter;
     unsigned int FilterLength;
     unsigned int NumFilters;
-    NString DialogTitle;
-    NString InitialDirectory;
+    std::string DialogTitle;
+    std::string InitialDirectory;
   };
 
 

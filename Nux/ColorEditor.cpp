@@ -131,7 +131,7 @@ namespace nux
     m_bDialogRunning = false;
   }
 
-  void ColorDialogProxy::RecvDialogCancel(ColorEditor *coloreditor)
+  void ColorDialogProxy::RecvDialogCancel(ColorEditor* /* coloreditor */)
   {
     m_RGBColor = m_PreviousRGBColor;
     m_bDialogChange = true;
@@ -207,9 +207,9 @@ namespace nux
     m_Validator.SetMaximum(1.0);
     m_Validator.SetDecimals(2);
 
-    picker_area_        = new InputArea(NUX_TRACKER_LOCATION);
-    channel_area_   = new InputArea(NUX_TRACKER_LOCATION);
-    selected_color_area_       = new InputArea(NUX_TRACKER_LOCATION);
+    picker_area_        = new BasicView(NUX_TRACKER_LOCATION);
+    channel_area_   = new BasicView(NUX_TRACKER_LOCATION);
+    selected_color_area_       = new BasicView(NUX_TRACKER_LOCATION);
     m_hlayout           = new HLayout(NUX_TRACKER_LOCATION);
 
     channel_area_->mouse_down.connect(sigc::mem_fun(this, &ColorEditor::RecvMouseDown));
@@ -316,18 +316,6 @@ namespace nux
     ctrllayout->SetHorizontalExternalMargin(2);
     ctrllayout->SetVerticalInternalMargin(2);
 
-//     //ctrllayout->AddView(new SpaceLayout(20,20,20,40), 1);
-//     OkButton = new ToggleButton("OK", NUX_TRACKER_LOCATION);
-//     OkButton->SetMinimumWidth(60);
-//     OkButton->SetMinimumHeight(20);
-//
-//     CancelButton = new ToggleButton("Cancel", NUX_TRACKER_LOCATION);
-//     CancelButton->SetMinimumWidth(60);
-//     CancelButton->SetMinimumHeight(20);
-//
-// //    ctrllayout->AddView(OkButton, 1);
-// //    ctrllayout->AddView(CancelButton, 1);
-
     m_hlayout->AddLayout(ctrllayout, 0);
 
     radiogroup = new RadioButtonGroup(NUX_TRACKER_LOCATION);
@@ -379,13 +367,11 @@ namespace nux
   {
     Geometry base = GetGeometry();
 
-    GetPainter().PaintBackground(graphics_engine, base);
-    //GetPainter().Paint2DQuadWireframe(graphics_engine, base, Color(COLOR_BACKGROUND_SECONDARY));
-
     base.OffsetPosition(1, 1);
     base.OffsetSize(-2, -2);
 
     graphics_engine.PushClippingRectangle(base);
+    GetPainter().PushDrawShapeLayer(graphics_engine, base, eSHAPE_CORNER_ROUND4, Color(0xFF000000), eAllCorners, true);
 
     if (m_ColorModel == color::RGB)
     {
@@ -396,24 +382,31 @@ namespace nux
       DrawHSV(graphics_engine, force_draw);
     }
 
-    redcheck->QueueDraw();
-    redtext->QueueDraw();
-    greencheck->QueueDraw();
-    greentext->QueueDraw();
-    bluecheck->QueueDraw();
-    bluetext->QueueDraw();
-
-    huecheck->QueueDraw();
-    hue_text_entry_->QueueDraw();
-    saturationcheck->QueueDraw();
-    saturation_text_entry_->QueueDraw();
-    valuecheck->QueueDraw();
-    value_text_entry_->QueueDraw();
-
-//     OkButton->QueueDraw();
-//     CancelButton->QueueDraw();
-
+    GetPainter().PopBackground();
     graphics_engine.PopClippingRectangle();
+  }
+
+  void ColorEditor::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
+  {
+    Geometry base = GetGeometry();
+    GetPainter().PushShapeLayer(graphics_engine, base, eSHAPE_CORNER_ROUND4, Color(0xFF000000), eAllCorners, true);
+
+    bool force = force_draw || IsFullRedraw();
+    redcheck->ProcessDraw(graphics_engine, force);
+    redtext->ProcessDraw(graphics_engine, force);
+    greencheck->ProcessDraw(graphics_engine, force);
+    greentext->ProcessDraw(graphics_engine, force);
+    bluecheck->ProcessDraw(graphics_engine, force);
+    bluetext->ProcessDraw(graphics_engine, force);
+
+    huecheck->ProcessDraw(graphics_engine, force);
+    hue_text_entry_->ProcessDraw(graphics_engine, force);
+    saturationcheck->ProcessDraw(graphics_engine, force);
+    saturation_text_entry_->ProcessDraw(graphics_engine, force);
+    valuecheck->ProcessDraw(graphics_engine, force);
+    value_text_entry_->ProcessDraw(graphics_engine, force);
+
+    GetPainter().PopBackground();
   }
 
 // Draw Marker on Base Chanel Area
@@ -446,7 +439,7 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void ColorEditor::DrawRGB(GraphicsEngine &graphics_engine, bool force_draw)
+  void ColorEditor::DrawRGB(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     if (m_ColorModel == color::RGB)
     {
@@ -515,7 +508,7 @@ namespace nux
     }
   }
 
-  void ColorEditor::DrawHSV(GraphicsEngine &graphics_engine, bool force_draw)
+  void ColorEditor::DrawHSV(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     if (m_ColorModel == color::HSV)
     {
@@ -621,24 +614,7 @@ namespace nux
     }
   }
 
-  void ColorEditor::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-    redcheck->ProcessDraw(graphics_engine, force_draw);
-    redtext->ProcessDraw(graphics_engine, force_draw);
-    greencheck->ProcessDraw(graphics_engine, force_draw);
-    greentext->ProcessDraw(graphics_engine, force_draw);
-    bluecheck->ProcessDraw(graphics_engine, force_draw);
-    bluetext->ProcessDraw(graphics_engine, force_draw);
-
-    huecheck->ProcessDraw(graphics_engine, force_draw);
-    hue_text_entry_->ProcessDraw(graphics_engine, force_draw);
-    saturationcheck->ProcessDraw(graphics_engine, force_draw);
-    saturation_text_entry_->ProcessDraw(graphics_engine, force_draw);
-    valuecheck->ProcessDraw(graphics_engine, force_draw);
-    value_text_entry_->ProcessDraw(graphics_engine, force_draw);
-  }
-
-  void ColorEditor::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ColorEditor::RecvMouseDown(int x, int y, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     float BaseValue;
 
@@ -696,17 +672,17 @@ namespace nux
     QueueDraw();
   }
 
-  void ColorEditor::RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ColorEditor::RecvMouseUp(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();
   }
 
-  void ColorEditor::RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void ColorEditor::RecvMouseDrag(int x, int y, int /* dx */, int /* dy */, unsigned long button_flags, unsigned long key_flags)
   {
     RecvMouseDown(x, y, button_flags, key_flags);
   }
 
-  void ColorEditor::RecvPickerMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ColorEditor::RecvPickerMouseDown(int x, int y, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (m_ColorModel == color::RGB)
     {
@@ -838,17 +814,17 @@ namespace nux
     QueueDraw();
   }
 
-  void ColorEditor::RecvPickerMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ColorEditor::RecvPickerMouseUp(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();
   }
 
-  void ColorEditor::RecvPickerMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void ColorEditor::RecvPickerMouseDrag(int x, int y, int /* dx */, int /* dy */, unsigned long button_flags, unsigned long key_flags)
   {
     RecvPickerMouseDown(x, y, button_flags, key_flags);
   }
 
-  void ColorEditor::RecvCheckColorModel0(AbstractButton *button, color::Model color_mode, color::Channel color_channel)
+  void ColorEditor::RecvCheckColorModel0(AbstractButton * /* button */, color::Model color_mode, color::Channel color_channel)
   {
     RecvCheckColorModel(true, color_mode, color_channel);
   }
@@ -958,7 +934,7 @@ namespace nux
   {
     rgb_ = color::RedGreenBlue(Clamp<double>(r, 0.0, 1.0),
                                Clamp<double>(g, 0.0, 1.0),
-                               Clamp<double> (b, 0.0, 1.0));
+                               Clamp<double>(b, 0.0, 1.0));
     hsv_ = color::HueSaturationValue(rgb_);
     RecvCheckColorModel(true, m_ColorModel, color_channel_);
     sigChange.emit(this);

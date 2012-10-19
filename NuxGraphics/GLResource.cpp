@@ -234,8 +234,8 @@ namespace nux
                          WORD Offset,
                          //ubiU16 Stride,
                          ATTRIB_DECL_TYPE Type,
-                         ATTRIB_USAGE_DECL Usage,
-                         BYTE UsageIndex)
+                         ATTRIB_USAGE_DECL /* Usage */,
+                         BYTE /* UsageIndex */)
   {
     VERTEXELEMENT	Element;
     Element.Stream		= Stream;

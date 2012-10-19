@@ -48,7 +48,7 @@ namespace nux
     m_TimerFunctor = 0;
   }
 
-  void AnimatedTextureArea::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void AnimatedTextureArea::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     if (m_UserTexture)
     {
@@ -61,12 +61,7 @@ namespace nux
       graphics_engine.GetRenderStates().SetBlend(false);
     }
   }
-  void AnimatedTextureArea::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
-  }
-
-  void AnimatedTextureArea::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
+  void AnimatedTextureArea::DrawContent(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }
@@ -88,12 +83,12 @@ namespace nux
     QueueDraw();
   }
 
-  void AnimatedTextureArea::RecvMouseDown(int x, int y, long button_flags, long key_flags)
+  void AnimatedTextureArea::RecvMouseDown(int x, int y, long /* button_flags */, long /* key_flags */)
   {
     sigMouseDown.emit(x, y);
   }
 
-  void AnimatedTextureArea::RecvMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void AnimatedTextureArea::RecvMouseDrag(int x, int y, int /* dx */, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     sigMouseDrag.emit(x, y);
   }
@@ -119,7 +114,7 @@ namespace nux
     }
   }
 
-  void AnimatedTextureArea::TimerNextFrame(void *v)
+  void AnimatedTextureArea::TimerNextFrame(void * /* v */)
   {
     if (m_UserTexture)
     {

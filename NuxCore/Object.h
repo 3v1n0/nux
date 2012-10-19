@@ -24,8 +24,11 @@
 #ifndef NUXCORE_OBJECT_H
 #define NUXCORE_OBJECT_H
 
+#include <string>
+
 #include <sigc++/trackable.h>
 #include <sigc++/signal.h>
+#include <boost/utility.hpp>
 #include "ObjectType.h"
 #include "Property.h"
 #include "PropertyTraits.h"
@@ -63,7 +66,7 @@ namespace nux
       Trackable does not implement reference counting. It only defines the API. It is up
       to the class that inherit from Trackable to implement the reference counting.
   */
-  class Trackable: public nux::Introspectable, public sigc::trackable
+  class Trackable: public nux::Introspectable, public sigc::trackable, public boost::noncopyable
   {
   public:
     NUX_DECLARE_ROOT_OBJECT_TYPE (Trackable);
@@ -158,10 +161,6 @@ namespace nux
     int _heap_allocated;
 
   private:
-    // Trackable objects are not copyable.
-    Trackable (const Trackable &);
-    Trackable &operator= (const Trackable &);
-
     static std::new_handler _new_current_handler;
 
     bool _owns_the_reference;
@@ -208,12 +207,19 @@ namespace nux
     /*!
         @return The reference count of this object.
     */
-    int GetReferenceCount () const;
+    int GetReferenceCount() const;
+
+    //! Get the number of ObjectPtr holding this object.
+    /*!
+        @return The number of ObjectPtr holding this object.
+    */
+    int ObjectPtrCount() const;
 
     //! Signal emitted immediately before the object is destroyed.
     sigc::signal <void, Object *> object_destroyed;
 
-    std::string GetAllocationLoation() const;
+    std::string GetAllocationLocation() const;
+    std::string GetTypeName() const;
 
   protected:
     //! Private destructor.
@@ -231,12 +237,12 @@ namespace nux
     Object (const Object &);
     Object &operator = (const Object &);
 
-    const char* allocation_file_name_;
-    int allocation_line_number_;
-
     NThreadSafeCounter* reference_count_;
     //!< Number of ObjectPtr hosting the object.
     NThreadSafeCounter* objectptr_count_;
+
+    std::string allocation_location_;
+    std::string allocation_stacktrace_;
 
     template <typename T>
     friend class ObjectPtr;

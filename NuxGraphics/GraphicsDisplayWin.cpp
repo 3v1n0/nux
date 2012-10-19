@@ -105,20 +105,17 @@ namespace nux
   HDC   GraphicsDisplay::sMainDC = 0;
 
   GraphicsDisplay::GraphicsDisplay()
-    : event_(NULL)
-    , m_GfxInterfaceCreated(false)
-    , m_fullscreen(false)
-    , m_ScreenBitDepth(32)
-    , m_num_device_modes(0)
-    , m_index_of_current_mode(-1)
+    : gfx_interface_created_(false)
+    , fullscreen_(false)
+    , screen_bit_depth_(32)
     , m_DeviceFactory(0)
     , m_GraphicsContext(0)
     , m_Style(WINDOWSTYLE_NORMAL)
     , cursor_(0)
     , m_PauseGraphicsRendering(false)
-    , m_ParentWindow(0)
-    , m_dwExStyle(0)
-    , m_dwStyle(0)
+    , parent_window_(0)
+    , window_extended_style_(0)
+    , window_style_(0)
     , device_context_(NULL)
     , wnd_handle_(NULL)
   {
@@ -149,15 +146,14 @@ namespace nux
 
     inlSetThreadLocalStorage(_TLS_GraphicsDisplay, this);
 
-    m_GfxInterfaceCreated = false;
-    event_ = new Event();
+    gfx_interface_created_ = false;
     GetDisplayInfo();
 
-    m_WindowSize.width = 0;
-    m_WindowSize.height = 0;
+    window_size_.width = 0;
+    window_size_.height = 0;
 
     // A window never starts in a minimized state.
-    m_is_window_minimized = false;
+    window_minimized_ = false;
 
     //_dnd_source_grab_active = false;
     _global_keyboard_grab_data = 0;
@@ -171,11 +167,7 @@ namespace nux
     NUX_SAFE_DELETE( m_GraphicsContext );
     NUX_SAFE_DELETE( m_DeviceFactory );
 
-//     NUX_SAFE_DELETE( m_WGLEWContext );
-//     NUX_SAFE_DELETE( m_GLEWContext );
-
     DestroyOpenGLWindow();
-    NUX_SAFE_DELETE( event_ );
 
     inlSetThreadLocalStorage(_TLS_GraphicsDisplay, 0);
 
@@ -216,7 +208,7 @@ namespace nux
 //---------------------------------------------------------------------------------------------------------
   bool GraphicsDisplay::IsGfxInterfaceCreated()
   {
-    return m_GfxInterfaceCreated;
+    return gfx_interface_created_;
   }
 
 //---------------------------------------------------------------------------------------------------------
@@ -226,45 +218,42 @@ namespace nux
                                          unsigned int WindowHeight,
                                          WindowStyle Style,
                                          const GraphicsDisplay *Parent,
-                                         bool FullscreenFlag,
+                                         bool fullscreen_flag,
                                          bool create_rendering_data)
   {
     NScopeLock Scope(&CreateOpenGLWindow_CriticalSection);
 
     RECT		WindowRect;				// Grabs Rectangle Upper Left / Lower Right Values
 
-    m_GfxInterfaceCreated = false;
+    gfx_interface_created_ = false;
 
     // FIXME : put at the end
-    m_ViewportSize.width = WindowWidth;
-    m_ViewportSize.height = WindowHeight;
-    m_WindowSize.width = WindowWidth;
-    m_WindowSize.height = WindowHeight;
+    viewport_size_.width = WindowWidth;
+    viewport_size_.height = WindowHeight;
+    window_size_.width = WindowWidth;
+    window_size_.height = WindowHeight;
 
     // end of fixme
 
     WindowRect.left     = (long) 0;
-    WindowRect.right    = (long) m_ViewportSize.width;
+    WindowRect.right    = (long) viewport_size_.width;
     WindowRect.top      = (long) 0;
-    WindowRect.bottom   = (long) m_ViewportSize.height;
+    WindowRect.bottom   = (long) viewport_size_.height;
 
-    m_fullscreen = FullscreenFlag;              // Set The Global Fullscreen Flag
-    m_index_of_current_mode = -1;               // assume -1 if the mode is not fullscreen
+    fullscreen_ = fullscreen_flag;              // Set The Global Fullscreen Flag
 
-
-    if (m_fullscreen)                           // Attempt Fullscreen Mode?
+    if (fullscreen_)                           // Attempt Fullscreen Mode?
     {
       // check if resolution is supported
       bool mode_supported = false;
 
       for (int num_modes = 0 ; num_modes < m_num_gfx_device_modes; num_modes++)
       {
-        if ((m_gfx_device_modes[num_modes].width == m_ViewportSize.width)
-             && (m_gfx_device_modes[num_modes].height == m_ViewportSize.height)
-             && (m_gfx_device_modes[num_modes].format == m_ScreenBitDepth))
+        if ((m_gfx_device_modes[num_modes].width == viewport_size_.width)
+             && (m_gfx_device_modes[num_modes].height == viewport_size_.height)
+             && (m_gfx_device_modes[num_modes].format == screen_bit_depth_))
         {
           mode_supported = true;
-          m_index_of_current_mode = num_modes;
           break;
         }
       }
@@ -274,16 +263,16 @@ namespace nux
         if (inlWin32MessageBox(NULL, "Info", MBTYPE_Ok, MBICON_Information, MBMODAL_ApplicationModal,
                                 "The requested fullscreen mode is not supported by your monitor.\nUsing windowed mode instead.") == MBRES_Yes)
         {
-          m_fullscreen = FALSE;   // Windowed Mode Selected.  Fullscreen = FALSE
+          fullscreen_ = FALSE;   // Windowed Mode Selected.  Fullscreen = FALSE
         }
       }
 
       DEVMODE dmScreenSettings;                                               // Device Mode
       memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));	              // Makes Sure Memory's Cleared
       dmScreenSettings.dmSize = sizeof(dmScreenSettings);                    // Size Of The Devmode Structure
-      dmScreenSettings.dmPelsWidth	= m_ViewportSize.width;                   // Selected Screen Width
-      dmScreenSettings.dmPelsHeight	= m_ViewportSize.height;                  // Selected Screen Height
-      dmScreenSettings.dmBitsPerPel	= m_ScreenBitDepth;                              // Selected Bits Per Pixel
+      dmScreenSettings.dmPelsWidth	= viewport_size_.width;                   // Selected Screen Width
+      dmScreenSettings.dmPelsHeight	= viewport_size_.height;                  // Selected Screen Height
+      dmScreenSettings.dmBitsPerPel	= screen_bit_depth_;                              // Selected Bits Per Pixel
       dmScreenSettings.dmDisplayFrequency = 60;
       dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT | DM_DISPLAYFREQUENCY;
 
@@ -293,7 +282,7 @@ namespace nux
         if (inlWin32MessageBox(NULL, "Info", MBTYPE_Ok, MBICON_Information, MBMODAL_ApplicationModal,
                                 "The requested fullscreen mode is not supported by your monitor.\nUsing windowed mode instead.") == MBRES_Yes)
         {
-          m_fullscreen = FALSE;                   // Windowed Mode Selected.  Fullscreen = FALSE
+          fullscreen_ = FALSE;                   // Windowed Mode Selected.  Fullscreen = FALSE
         }
         else
         {
@@ -303,21 +292,21 @@ namespace nux
       }
     }
 
-    m_dwExStyle = 0;
-    m_dwStyle = 0;
+    window_extended_style_ = 0;
+    window_style_ = 0;
 
-    if (m_fullscreen)                                   // Are We Still In Fullscreen Mode?
+    if (fullscreen_)                                   // Are We Still In Fullscreen Mode?
     {
-      m_dwExStyle = WS_EX_APPWINDOW;                    // Window Extended Style
-      m_dwStyle = WS_POPUP;                             // Windows Style
+      window_extended_style_ = WS_EX_APPWINDOW;                    // Window Extended Style
+      window_style_ = WS_POPUP;                             // Windows Style
       ShowCursor(FALSE);                              // Hide Mouse Pointer
     }
     else
     {
       // Window Extended Style
-      m_dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
+      window_extended_style_ = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
       // Windows Style
-      m_dwStyle = WS_OVERLAPPED;    // Creates an overlapped window. An overlapped window has a title bar and a border
+      window_style_ = WS_OVERLAPPED;    // Creates an overlapped window. An overlapped window has a title bar and a border
 
       // See Win32 Window Hierarchy and Styles: http://msdn.microsoft.com/en-us/library/ms997562.aspx
 
@@ -333,31 +322,31 @@ namespace nux
 
       if (Style == WINDOWSTYLE_TOOL)
       {
-        m_dwExStyle = WS_EX_TOOLWINDOW;
-        m_dwStyle = WS_CAPTION | WS_SYSMENU;
+        window_extended_style_ = WS_EX_TOOLWINDOW;
+        window_style_ = WS_CAPTION | WS_SYSMENU;
       }
       else if (Style == WINDOWSTYLE_DIALOG)
       {
-        m_dwExStyle = WS_EX_DLGMODALFRAME;
-        m_dwStyle = WS_CAPTION | WS_SYSMENU;
+        window_extended_style_ = WS_EX_DLGMODALFRAME;
+        window_style_ = WS_CAPTION | WS_SYSMENU;
       }
       else if (Style == WINDOWSTYLE_NOBORDER)
       {
-        m_dwExStyle = WS_EX_TOPMOST | WS_EX_TOOLWINDOW;
-        m_dwStyle = WS_POPUP;
+        window_extended_style_ = WS_EX_TOPMOST | WS_EX_TOOLWINDOW;
+        window_style_ = WS_POPUP;
       }
       else if (Style == WINDOWSTYLE_PANEL)
       {
-        m_dwExStyle = 0;           // Specifies that a window has a border with a raised edge
-        m_dwStyle = WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SIZEBOX;
+        window_extended_style_ = 0;           // Specifies that a window has a border with a raised edge
+        window_style_ = WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SIZEBOX;
       }
       else
       {
         // Normal Window: NormalWindow
-        m_dwExStyle = WS_EX_APPWINDOW |   // Forces a top-level window onto the taskbar when the window is visible
+        window_extended_style_ = WS_EX_APPWINDOW |   // Forces a top-level window onto the taskbar when the window is visible
                       WS_EX_WINDOWEDGE;   // Specifies that a window has a border with a raised edge
 
-        m_dwStyle |= WS_CAPTION |         // Creates a window that has a title bar.
+        window_style_ |= WS_CAPTION |         // Creates a window that has a title bar.
                      WS_SYSMENU |         // Creates a window that has a window menu on its title bar. The WS_CAPTION style must also be specified.
                      WS_THICKFRAME |      // Creates a window that has a sizing border.
                      WS_MINIMIZEBOX |     // Creates a window that has a minimize button.
@@ -368,7 +357,7 @@ namespace nux
     // The AdjustWindowRectEx function calculates the required size of the window rectangle,
     // based on the desired size of the client rectangle. The window rectangle can then be passed to
     // the CreateWindowEx function to create a window whose client area is the desired size.
-    AdjustWindowRectEx(&WindowRect, m_dwStyle, FALSE, m_dwExStyle);    // Adjust Window To True Requested Size
+    AdjustWindowRectEx(&WindowRect, window_style_, FALSE, window_extended_style_);    // Adjust Window To True Requested Size
 
     RECT rect;
     rect.top = 0;
@@ -380,8 +369,8 @@ namespace nux
 
     if (Parent)
     {
-      m_ParentWindow = Parent->GetWindowHandle();
-      GetWindowRect(m_ParentWindow, &rect);
+      parent_window_ = Parent->GetWindowHandle();
+      GetWindowRect(parent_window_, &rect);
 
       int width = rect.right - rect.left;
       int height = rect.bottom - rect.top;
@@ -389,29 +378,29 @@ namespace nux
       WindowX = rect.left + (width - (WindowRect.right - WindowRect.left)) / 2;
       WindowY = rect.top + (height - (WindowRect.bottom - WindowRect.top)) / 2;
     }
-    else if (!m_fullscreen)
+    else if (!fullscreen_)
     {
       ClipOrCenterRectToMonitor(&rect, 0);
       WindowX = rect.left;
       WindowY = rect.top;
     }
 
-    m_WindowTitle = WindowTitle;
+    window_title_ = WindowTitle;
 
     // Create The Window
-    if (! (wnd_handle_ = ::CreateWindowEx(m_dwExStyle,                      // Extended Style For The Window
+    if (! (wnd_handle_ = ::CreateWindowEx(window_extended_style_,         // Extended Style For The Window
                                       WINDOW_CLASS_NAME,                  // Class Name
-                                      m_WindowTitle.GetTCharPtr(),        // Window Title
-                                      m_dwStyle |                           // Defined Window Style
+                                      window_title_.c_str(),              // Window Title
+                                      window_style_ |                     // Defined Window Style
                                       WS_CLIPSIBLINGS |                   // Required Window Style
                                       WS_CLIPCHILDREN,                    // Required Window Style
                                       WindowX, WindowY,                   // Window Position
                                       WindowRect.right - WindowRect.left, // Calculate Window Width
                                       WindowRect.bottom - WindowRect.top, // Calculate Window Height
-                                      m_ParentWindow,                     // No Parent Window
+                                      parent_window_,                     // No Parent Window
                                       NULL,                               // No Menu
                                       gGLWindowManager.GetInstance(),     // Instance
-                                      NULL)))                           // Dont Pass Anything To WM_CREATE
+                                      NULL)))                             // Don't Pass Anything To WM_CREATE
     {
       DestroyOpenGLWindow();
       MessageBox(NULL, "Window Creation Error.", "ERROR", MB_OK | MB_ICONERROR);
@@ -486,14 +475,14 @@ namespace nux
       return FALSE;
     }
 
-    if (! (m_PixelFormat = ChoosePixelFormat(device_context_, &pfd))) // Did Windows Find A Matching Pixel Format?
+    if (! (pixel_format_ = ChoosePixelFormat(device_context_, &pfd))) // Did Windows Find A Matching Pixel Format?
     {
       DestroyOpenGLWindow();
       MessageBox(NULL, "Can't Find A Suitable PixelFormat.", "ERROR", MB_OK | MB_ICONERROR);
       return FALSE;
     }
 
-    if (!SetPixelFormat(device_context_, m_PixelFormat, &pfd))        // Are We Able To Set The Pixel Format?
+    if (!SetPixelFormat(device_context_, pixel_format_, &pfd))        // Are We Able To Set The Pixel Format?
     {
       DestroyOpenGLWindow();
       MessageBox(NULL, "Can't Set The PixelFormat.", "ERROR", MB_OK | MB_ICONERROR);
@@ -540,13 +529,13 @@ namespace nux
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     SwapBuffer();
 
-    m_GfxInterfaceCreated = true;
+    gfx_interface_created_ = true;
 
     //m_GLEWContext = new GLEWContext();
     //m_WGLEWContext = new WGLEWContext();
 
     HGLRC new_opengl_rendering_context = opengl_rendering_context_;
-    m_DeviceFactory = new GpuDevice(m_ViewportSize.width, m_ViewportSize.height, BITFMT_R8G8B8A8,
+    m_DeviceFactory = new GpuDevice(viewport_size_.width, viewport_size_.height, BITFMT_R8G8B8A8,
       device_context_,
       new_opengl_rendering_context,
       1, 0, false);
@@ -579,13 +568,13 @@ namespace nux
 
     RECT rect;
     ::GetClientRect(wnd_handle_, &rect);
-    m_WindowSize = Size(rect.right - rect.left, rect.bottom - rect.top);
-    m_ViewportSize = Size(rect.right - rect.left, rect.bottom - rect.top);
+    window_size_ = Size(rect.right - rect.left, rect.bottom - rect.top);
+    viewport_size_ = Size(rect.right - rect.left, rect.bottom - rect.top);
 
     // The opengl context should be made current by an external entity.
 
-    m_GfxInterfaceCreated = true;
-    m_DeviceFactory = new GpuDevice(m_ViewportSize.width, m_ViewportSize.height, BITFMT_R8G8B8A8,
+    gfx_interface_created_ = true;
+    m_DeviceFactory = new GpuDevice(viewport_size_.width, viewport_size_.height, BITFMT_R8G8B8A8,
       device_context_,
       opengl_rendering_context_);
 
@@ -616,28 +605,28 @@ namespace nux
 //---------------------------------------------------------------------------------------------------------
   void GraphicsDisplay::GetWindowSize(int &w, int &h)
   {
-    w = m_WindowSize.width;
-    h = m_WindowSize.height;
+    w = window_size_.width;
+    h = window_size_.height;
   }
 
 //---------------------------------------------------------------------------------------------------------
   int GraphicsDisplay::GetWindowWidth()
   {
-    return m_WindowSize.width;
+    return window_size_.width;
   }
 
 //---------------------------------------------------------------------------------------------------------
   int GraphicsDisplay::GetWindowHeight()
   {
-    return m_WindowSize.height;
+    return window_size_.height;
   }
 
   void GraphicsDisplay::ResetWindowSize()
   {
     RECT rect;
     ::GetClientRect(wnd_handle_, &rect);
-    m_WindowSize = Size(rect.right - rect.left, rect.bottom - rect.top);
-    m_ViewportSize = Size(rect.right - rect.left, rect.bottom - rect.top);
+    window_size_ = Size(rect.right - rect.left, rect.bottom - rect.top);
+    viewport_size_ = Size(rect.right - rect.left, rect.bottom - rect.top);
   }
 
 //---------------------------------------------------------------------------------------------------------
@@ -651,7 +640,7 @@ namespace nux
     new_rect.right = width;
     new_rect.top = 0;
     new_rect.bottom = height;
-    BOOL b = ::AdjustWindowRectEx(&new_rect, m_dwStyle, FALSE, m_dwExStyle);    // Adjust Window To True Requested Size
+    BOOL b = ::AdjustWindowRectEx(&new_rect, window_style_, FALSE, window_extended_style_);    // Adjust Window To True Requested Size
 
     ::MoveWindow(wnd_handle_,
                   window_rect.left,
@@ -666,11 +655,11 @@ namespace nux
   {
     if (IsGfxInterfaceCreated())
     {
-      //do not rely on m_ViewportSize: glViewport can be called directly
-      m_ViewportSize.width = width;
-      m_ViewportSize.height = height;
+      //do not rely on viewport_size_: glViewport can be called directly
+      viewport_size_.width = width;
+      viewport_size_.height = height;
 
-      m_GraphicsContext->SetViewport(x, y, m_ViewportSize.width, m_ViewportSize.height);
+      m_GraphicsContext->SetViewport(x, y, viewport_size_.width, viewport_size_.height);
       m_GraphicsContext->SetScissor(0, 0, width, height);
     }
   }
@@ -728,7 +717,7 @@ namespace nux
 
     if (!wglMakeCurrent(device_context_, glrc))
     {
-      NString error = inlGetSystemErrorMessage();
+      std::string error = inlGetSystemErrorMessage();
       DestroyOpenGLWindow();
       MessageBox(NULL, "Can't Activate The GL Rendering Context.", "ERROR", MB_OK | MB_ICONERROR);
     }
@@ -767,9 +756,9 @@ namespace nux
 //---------------------------------------------------------------------------------------------------------
   void GraphicsDisplay::DestroyOpenGLWindow()
   {
-    if (m_GfxInterfaceCreated == true)
+    if (gfx_interface_created_ == true)
     {
-      if (m_fullscreen)                                   // Are We In Fullscreen Mode?
+      if (fullscreen_)                                   // Are We In Fullscreen Mode?
       {
         ChangeDisplaySettings(NULL, 0);                  // If So Switch Back To The Desktop
         ShowCursor(TRUE);                                // Show Mouse Pointer
@@ -803,7 +792,7 @@ namespace nux
       wnd_handle_ = NULL;                                                // Set Window Handle To NULL
     }
 
-    m_GfxInterfaceCreated = false;
+    gfx_interface_created_ = false;
   }
 
 
@@ -902,26 +891,26 @@ namespace nux
       return extended ? extendedlut[vk] : vklut[vk];
   }*/
 //---------------------------------------------------------------------------------------------------------
-  static int mouse_event(HWND window, Event *event, int what, int button,
+  static int InspectMouseEvent(HWND window, Event& event, int what, int button,
                           WPARAM wParam, LPARAM lParam)
   {
     static int pmx, pmy;
-    event->x = (signed short) LOWORD(lParam);
-    event->y = (signed short) HIWORD(lParam);
-    event->x_root = 0;
-    event->y_root = 0;
+    event.x = (signed short) LOWORD(lParam);
+    event.y = (signed short) HIWORD(lParam);
+    event.x_root = 0;
+    event.y_root = 0;
 
     POINT EventScreenPosition;
 
     ClientToScreen(window, &EventScreenPosition);
-    EventScreenPosition.x = event->x;
-    EventScreenPosition.y = event->y;
+    EventScreenPosition.x = event.x;
+    EventScreenPosition.y = event.y;
     POINT WindowScreenPosition;
     WindowScreenPosition.x = WindowScreenPosition.y = 0;
     ClientToScreen(window, &WindowScreenPosition);
 
     // Erase mouse event and mouse doubleclick events. Keep the mouse states.
-    ulong _mouse_state = event->mouse_state & 0x0F000000;
+    ulong _mouse_state = event.mouse_state & 0x0F000000;
 
     // establish cause of the event
 //     if (button == 1)
@@ -933,16 +922,16 @@ namespace nux
 //     else
     if (button == 4)
     {
-      event->mouse_state |= NUX_EVENT_MOUSEWHEEL;
-      event->type = NUX_MOUSE_WHEEL;
+      event.mouse_state |= NUX_EVENT_MOUSEWHEEL;
+      event.type = NUX_MOUSE_WHEEL;
 
       int zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
       int xPos = (int) (short) LOWORD(lParam) - WindowScreenPosition.x;
       int yPos = (int) (short) HIWORD(lParam) - WindowScreenPosition.y;
-      event->x = xPos;
-      event->y = yPos;
+      event.x = xPos;
+      event.y = yPos;
 
-      event->wheel_delta = zDelta;
+      event.wheel_delta = zDelta;
       return 1;
     }
 
@@ -1016,39 +1005,39 @@ namespace nux
       break;
     }
 
-    event->mouse_state = _mouse_state;
+    event.mouse_state = _mouse_state;
 
     switch(what)
     {
       static int px, py;
       case 1: // double-click
 
-        if (event->is_click)
+        if (event.is_click)
         {
-          event->clicks++;
+          event.clicks++;
           // The SetCapture function sets the mouse capture to the specified window belonging to
           // the current thread. SetCapture captures mouse input either when the mouse is over the
           // capturing window, or when the mouse button was pressed while the mouse was over the
           // capturing window and the button is still down. Only one window at a time can capture the mouse.
           SetCapture(window);
-          event->is_click = 1;
-          px = pmx = event->x;
-          py = pmy = event->y;
-          event->type = NUX_MOUSE_DOUBLECLICK;
+          event.is_click = 1;
+          px = pmx = event.x;
+          py = pmy = event.y;
+          event.type = NUX_MOUSE_DOUBLECLICK;
           return 1;
         }
 
       case 0: // single-click
-        event->clicks = 0;
+        event.clicks = 0;
         // The SetCapture function sets the mouse capture to the specified window belonging to
         // the current thread. SetCapture captures mouse input either when the mouse is over the
         // capturing window, or when the mouse button was pressed while the mouse was over the
         // capturing window and the button is still down. Only one window at a time can capture the mouse.
         SetCapture(window);
-        event->is_click = 1;
-        px = pmx = event->x;
-        py = pmy = event->y;
-        event->type = NUX_MOUSE_PRESSED;
+        event.is_click = 1;
+        px = pmx = event.x;
+        py = pmy = event.y;
+        event.type = NUX_MOUSE_PRESSED;
         return 1;
 
       case 2: // release:
@@ -1057,21 +1046,21 @@ namespace nux
         // mouse input, regardless of the position of the cursor, except when a mouse button is clicked
         // while the cursor hot spot is in the window of another thread.
         ReleaseCapture();
-        event->type = NUX_MOUSE_RELEASED;
+        event.type = NUX_MOUSE_RELEASED;
         return 1;
 
       case 3: // move:
       default: // avoid compiler warning
         // MSWindows produces extra events even if mouse does not move, ignore them.
         // http://blogs.msdn.com/oldnewthing/archive/2003/10/01/55108.aspx: Why do I get spurious WM_MOUSEMOVE messages?
-        if (event->x == pmx && event->y == pmy)
+        if (event.x == pmx && event.y == pmy)
           return 1;
 
-        pmx = event->x;
-        pmy = event->y;
-//        if (abs(event->x - px)>5 || abs(event->y - py)>5)
-//            event->is_click = 0;
-        event->type = NUX_MOUSE_MOVE;
+        pmx = event.x;
+        pmy = event.y;
+//        if (abs(event.x - px)>5 || abs(event.y - py)>5)
+//            event.is_click = 0;
+        event.type = NUX_MOUSE_MOVE;
         return 1;
     }
 
@@ -1131,12 +1120,12 @@ namespace nux
   }
 
 //---------------------------------------------------------------------------------------------------------
-  bool GraphicsDisplay::GetSystemEvent(Event *evt)
+  bool GraphicsDisplay::GetSystemEvent(Event *event)
   {
     MSG		msg;
-    event_->Reset();
+    event_.Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
-    event_->mouse_state &= 0x0F000000;
+    event_.mouse_state &= 0x0F000000;
     bool got_event;
 
     // Always set the second parameter of PeekMessage to NULL. Indeed, many services creates
@@ -1154,12 +1143,12 @@ namespace nux
       TranslateMessage(&msg);
       DispatchMessage(&msg);
 
-      memcpy(evt, event_, sizeof(Event));
+      memcpy(event, &event_, sizeof(Event));
       got_event = true;
     }
     else
     {
-      memcpy(evt, event_, sizeof(Event));
+      memcpy(event, &event_, sizeof(Event));
       got_event = false;
     }
 
@@ -1169,14 +1158,14 @@ namespace nux
       // See [Modality, part 3: The WM_QUIT message] http://blogs.msdn.com/oldnewthing/archive/2005/02/22/378018.aspx
       PostQuitMessage(msg.wParam);
 
-      event_->type = NUX_TERMINATE_APP;
-      memcpy(evt, event_, sizeof(Event));
+      event_.type = NUX_TERMINATE_APP;
+      memcpy(event, &event_, sizeof(Event));
     }
 
     if (msg.message == -1) // error
     {
-      event_->type = NUX_NO_EVENT;
-      memcpy(evt, event_, sizeof(Event));
+      event_.type = NUX_NO_EVENT;
+      memcpy(event, &event_, sizeof(Event));
     }
 
     return got_event;
@@ -1184,16 +1173,16 @@ namespace nux
 
   void GraphicsDisplay::ProcessForeignWin32Event(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, Event *event)
   {
-    event_->Reset();
+    event_.Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
-    event_->mouse_state &= 0x0F000000;
+    event_.mouse_state &= 0x0F000000;
 
     // Always set the second parameter of PeekMessage to NULL. Indeed, many services creates
     // windows on the program behalf. If pass the main window as filter, we will miss all the
     // messages from the other windows.
     // Same with GetMessage.
     ProcessWin32Event(hWnd, msg.message, wParam, lParam);
-    memcpy(event, event_, sizeof(Event));
+    memcpy(event, &event_, sizeof(Event));
 
     if (msg.message != WM_QUIT)
     {
@@ -1201,20 +1190,20 @@ namespace nux
       // See [Modality, part 3: The WM_QUIT message] http://blogs.msdn.com/oldnewthing/archive/2005/02/22/378018.aspx
       PostQuitMessage(msg.wParam);
 
-      event_->type = NUX_TERMINATE_APP;
-      memcpy(event, event_, sizeof(Event));
+      event_.type = NUX_TERMINATE_APP;
+      memcpy(event, &event_, sizeof(Event));
     }
 
     if (msg.message == -1) // error
     {
-      event_->type = NUX_NO_EVENT;
-      memcpy(event, event_, sizeof(Event));
+      event_.type = NUX_NO_EVENT;
+      memcpy(event, &event_, sizeof(Event));
     }
   }
 
-  Event &GraphicsDisplay::GetCurrentEvent()
+  const Event& GraphicsDisplay::GetCurrentEvent() const
   {
-    return *event_;
+    return event_;
   }
 
 //---------------------------------------------------------------------------------------------------------
@@ -1268,13 +1257,13 @@ namespace nux
     {
       case WM_DESTROY:
       {
-        nuxDebugMsg("[GraphicsDisplay::WndProc]: Window \"%s\" received WM_DESTROY message.", m_WindowTitle.GetTCharPtr());
+        nuxDebugMsg("[GraphicsDisplay::WndProc]: Window \"%s\" received WM_DESTROY message.", window_title_.c_str());
         break;
       }
 
       case WM_CLOSE:
       {
-        nuxDebugMsg("[GraphicsDisplay::WndProc]: Window \"%s\" received WM_CLOSE message.", m_WindowTitle.GetTCharPtr());
+        nuxDebugMsg("[GraphicsDisplay::WndProc]: Window \"%s\" received WM_CLOSE message.", window_title_.c_str());
         // close? yes or no?
         PostQuitMessage(0);
         return 0;
@@ -1283,7 +1272,7 @@ namespace nux
       case WM_PAINT:
       {
         ValidateRect(hWnd, NULL); //  validate the surface to avoid receiving WM_PAINT continuously
-        event_->type = NUX_WINDOW_DIRTY;
+        event_.type = NUX_WINDOW_DIRTY;
         break;
       }
 
@@ -1293,7 +1282,7 @@ namespace nux
         if ((HWND) lParam == hWnd)
         {
           // Cancel everything about the mouse state and send a NUX_WINDOW_EXIT_FOCUS message.
-          event_->mouse_state = 0;
+          event_.mouse_state = 0;
           //nuxDebugMsg("Windows Msg: WM_CAPTURECHANGED/NUX_WINDOW_EXIT_FOCUS");
           return 0;
         }
@@ -1311,9 +1300,9 @@ namespace nux
         RECT clientrect;
         GetClientRect( hWnd, &clientrect);
 
-        event_->type = NUX_SIZE_CONFIGURATION;
-        event_->width =  clientrect.right - clientrect.left;
-        event_->height =  clientrect.bottom - clientrect.top;
+        event_.type = NUX_SIZE_CONFIGURATION;
+        event_.width =  clientrect.right - clientrect.left;
+        event_.height =  clientrect.bottom - clientrect.top;
         return 0;
       }
 
@@ -1322,26 +1311,26 @@ namespace nux
         RECT clientrect;
         GetClientRect( hWnd, &clientrect);
 
-        event_->type = NUX_NO_EVENT; //NUX_SIZE_CONFIGURATION;
-        event_->width =  clientrect.right - clientrect.left;
-        event_->height =  clientrect.bottom - clientrect.top;
+        event_.type = NUX_NO_EVENT; //NUX_SIZE_CONFIGURATION;
+        event_.width =  clientrect.right - clientrect.left;
+        event_.height =  clientrect.bottom - clientrect.top;
 
         //setViewPort(0, 0, clientrect.right - clientrect.left, clientrect.bottom - clientrect.top);
-        m_WindowSize.width = clientrect.right - clientrect.left;
-        m_WindowSize.height = clientrect.bottom - clientrect.top;
+        window_size_.width = clientrect.right - clientrect.left;
+        window_size_.height = clientrect.bottom - clientrect.top;
 
         if ((wParam == SIZE_MAXHIDE) || (wParam == SIZE_MINIMIZED))
         {
-          m_is_window_minimized = true;
+          window_minimized_ = true;
         }
         else
         {
-          m_is_window_minimized = false;
+          window_minimized_ = false;
         }
 
         if ((wParam == SIZE_MAXIMIZED) || (wParam == SIZE_RESTORED))
         {
-          event_->type = NUX_SIZE_CONFIGURATION;
+          event_.type = NUX_SIZE_CONFIGURATION;
         }
 
         return 0;
@@ -1349,32 +1338,32 @@ namespace nux
 
       case WM_SETFOCUS:
       {
-        event_->type = NUX_WINDOW_ENTER_FOCUS;
-        event_->mouse_state = 0;
+        event_.type = NUX_WINDOW_ENTER_FOCUS;
+        event_.mouse_state = 0;
 
         // This causes the mouse to be outside of all widgets when it is tested in m_EventHandler.Process().
         // Because WM_SETFOCUS can happen with the mouse outside of the client area, we set x and y so that the mouse will be
         // outside of all widgets. A subsequent mouse down or mouse move event will set the correct values for x and y.
-        event_->x = 0xFFFFFFFF;
-        event_->y = 0xFFFFFFFF;
-        event_->dx = 0;
-        event_->dy = 0;
-        event_->virtual_code = 0;
+        event_.x = 0xFFFFFFFF;
+        event_.y = 0xFFFFFFFF;
+        event_.dx = 0;
+        event_.dy = 0;
+        event_.virtual_code = 0;
         //nuxDebugMsg("Windows Msg: WM_SETFOCUS/NUX_WINDOW_ENTER_FOCUS");
         break;
       }
 
       case WM_KILLFOCUS:
       {
-        event_->type = NUX_WINDOW_EXIT_FOCUS;
-        event_->mouse_state = 0;
+        event_.type = NUX_WINDOW_EXIT_FOCUS;
+        event_.mouse_state = 0;
 
         // This causes the mouse to be outside of all widgets when it is tested in m_EventHandler.Process()
-        event_->x = 0xFFFFFFFF;
-        event_->y = 0xFFFFFFFF;
-        event_->dx = 0;
-        event_->dy = 0;
-        event_->virtual_code = 0;
+        event_.x = 0xFFFFFFFF;
+        event_.y = 0xFFFFFFFF;
+        event_.dx = 0;
+        event_.dy = 0;
+        event_.virtual_code = 0;
         //nuxDebugMsg("Windows Msg: WM_KILLFOCUS/NUX_WINDOW_EXIT_FOCUS");
         break;
       }
@@ -1388,24 +1377,24 @@ namespace nux
       {
         if (LOWORD(wParam) != WA_INACTIVE)
         {
-          event_->type = NUX_WINDOW_ENTER_FOCUS;
+          event_.type = NUX_WINDOW_ENTER_FOCUS;
         }
         else
         {
-          event_->type = NUX_WINDOW_EXIT_FOCUS;
+          event_.type = NUX_WINDOW_EXIT_FOCUS;
         }
-        event_->mouse_state = 0;
+        event_.mouse_state = 0;
 
         // This causes the mouse to be outside of all widgets when it is tested in m_EventHandler.Process().
         // Because WM_SETFOCUS can happen with the mouse outside of the client area, we set x and y so that the mouse will be
         // outside of all widgets. A subsequent mouse down or mouse move event will set the correct values for x and y.
-        event_->x = 0xFFFFFFFF;
-        event_->y = 0xFFFFFFFF;
-        event_->dx = 0;
-        event_->dy = 0;
-        event_->virtual_code = 0;
+        event_.x = 0xFFFFFFFF;
+        event_.y = 0xFFFFFFFF;
+        event_.dx = 0;
+        event_.dy = 0;
+        event_.virtual_code = 0;
 
-        event_->key_modifiers = GetModifierKeyState();
+        event_.key_modifiers = GetModifierKeyState();
         return 0;
       }
 
@@ -1413,48 +1402,48 @@ namespace nux
         {
           if (wParam)
           {
-            event_->type = NUX_WINDOW_ENTER_FOCUS;
+            event_.type = NUX_WINDOW_ENTER_FOCUS;
           }
           else
           {
-            event_->type = NUX_WINDOW_EXIT_FOCUS;
+            event_.type = NUX_WINDOW_EXIT_FOCUS;
           }
-          event_->mouse_state = 0;
+          event_.mouse_state = 0;
 
           // This causes the mouse to be outside of all widgets when it is tested in m_EventHandler.Process().
           // Because WM_SETFOCUS can happen with the mouse outside of the client area, we set x and y so that the mouse will be
           // outside of all widgets. A subsequent mouse down or mouse move event will set the correct values for x and y.
-          event_->x = 0xFFFFFFFF;
-          event_->y = 0xFFFFFFFF;
-          event_->dx = 0;
-          event_->dy = 0;
-          event_->virtual_code = 0;
+          event_.x = 0xFFFFFFFF;
+          event_.y = 0xFFFFFFFF;
+          event_.dx = 0;
+          event_.dy = 0;
+          event_.virtual_code = 0;
 
-          event_->key_modifiers = GetModifierKeyState();
+          event_.key_modifiers = GetModifierKeyState();
           return 0;
         }
 
       case WM_SYSKEYDOWN:
       case WM_KEYDOWN:
       {
-        event_->type = NUX_KEYDOWN;
-        event_->key_modifiers = GetModifierKeyState();
-        event_->win32_keysym = wParam;
+        event_.type = NUX_KEYDOWN;
+        event_.key_modifiers = GetModifierKeyState();
+        event_.win32_keysym = wParam;
 
         if ((uMsg == WM_KEYDOWN) || (uMsg == WM_SYSKEYDOWN))
         {
-          event_->VirtualKeycodeState[GraphicsDisplay::Win32KeySymToINL(wParam) ] = 1;
+          event_.VirtualKeycodeState[GraphicsDisplay::Win32KeySymToINL(wParam) ] = 1;
         }
 
         if (wParam == VK_CONTROL)
         {
           if (lParam & (1 << 24))
           {
-            event_->win32_keysym = NUX_VK_RCONTROL;
+            event_.win32_keysym = NUX_VK_RCONTROL;
           }
           else
           {
-            event_->win32_keysym = NUX_VK_LCONTROL;
+            event_.win32_keysym = NUX_VK_LCONTROL;
           }
         }
 
@@ -1462,11 +1451,11 @@ namespace nux
         {
           if (lParam & (1 << 24))
           {
-            event_->win32_keysym = NUX_VK_RALT;
+            event_.win32_keysym = NUX_VK_RALT;
           }
           else
           {
-            event_->win32_keysym = NUX_VK_LALT;
+            event_.win32_keysym = NUX_VK_LALT;
           }
         }
 
@@ -1474,11 +1463,11 @@ namespace nux
         {
           if (HIWORD(GetAsyncKeyState(VK_LSHIFT)))
           {
-            event_->win32_keysym = NUX_VK_LSHIFT;
+            event_.win32_keysym = NUX_VK_LSHIFT;
           }
           else if (HIWORD(GetAsyncKeyState(VK_RSHIFT)))
           {
-            event_->win32_keysym = NUX_VK_RSHIFT;
+            event_.win32_keysym = NUX_VK_RSHIFT;
           }
         }
 
@@ -1488,13 +1477,13 @@ namespace nux
       case WM_SYSKEYUP:
       case WM_KEYUP:
       {
-        event_->type = NUX_KEYUP;
-        event_->key_modifiers = GetModifierKeyState();
-        event_->win32_keysym = wParam;
+        event_.type = NUX_KEYUP;
+        event_.key_modifiers = GetModifierKeyState();
+        event_.win32_keysym = wParam;
 
         if ((uMsg == WM_KEYUP) || (uMsg == WM_SYSKEYUP))
         {
-          event_->VirtualKeycodeState[GraphicsDisplay::Win32KeySymToINL(wParam) ] = 0;
+          event_.VirtualKeycodeState[GraphicsDisplay::Win32KeySymToINL(wParam) ] = 0;
         }
 
         break;
@@ -1505,22 +1494,22 @@ namespace nux
       case WM_CHAR:
       case WM_SYSCHAR:
       {
-        event_->key_modifiers = GetModifierKeyState();
+        event_.key_modifiers = GetModifierKeyState();
 
         // reset key repeat count to 0.
-        event_->key_repeat_count = 0;
+        event_.key_repeat_count = 0;
 
         if (lParam & (1 << 31))
         {
           // key up events.
-          event_->type = NUX_KEYUP;
+          event_.type = NUX_KEYUP;
           return 0;
         }
         else
         {
           // key down events.
-          event_->type = NUX_KEYDOWN;
-          event_->key_repeat_count = (int) (lParam & 0xff);
+          event_.type = NUX_KEYDOWN;
+          event_.key_repeat_count = (int) (lParam & 0xff);
         }
 
 
@@ -1533,12 +1522,12 @@ namespace nux
         }
 
         wchar_t *utf16_str = new wchar_t [4];
-        Memset(utf16_str, 0, sizeof(wchar_t) * 4);
-        Memcpy(utf16_str, (int*) &wParam, sizeof(wParam));
+        std::memset(utf16_str, 0, sizeof(wchar_t) * 4);
+        std::memcpy(utf16_str, (int*) &wParam, sizeof(wParam));
         wchar_t *temp0 = utf16_str;
 
         unsigned char *utf8_str = new unsigned char [NUX_EVENT_TEXT_BUFFER_SIZE];
-        Memset(utf8_str, 0, sizeof(unsigned char) * NUX_EVENT_TEXT_BUFFER_SIZE);
+        std::memset(utf8_str, 0, sizeof(unsigned char) * NUX_EVENT_TEXT_BUFFER_SIZE);
         unsigned char *temp1 = utf8_str;
 
 
@@ -1550,7 +1539,7 @@ namespace nux
 
         if (res == conversionOK)
         {
-          Memcpy(event_->text, utf8_str, NUX_EVENT_TEXT_BUFFER_SIZE);
+          std::memcpy(event_.text, utf8_str, NUX_EVENT_TEXT_BUFFER_SIZE);
         }
         delete utf8_str;
         delete utf16_str;
@@ -1563,31 +1552,31 @@ namespace nux
         if (wParam == UNICODE_NOCHAR)
           return 1;
 
-        event_->key_modifiers = GetModifierKeyState();
+        event_.key_modifiers = GetModifierKeyState();
 
         // reset key repeat count to 0.
-        event_->key_repeat_count = 0;
+        event_.key_repeat_count = 0;
 
         if (lParam & (1 << 31))
         {
           // key up events.
-          event_->type = NUX_KEYUP;
+          event_.type = NUX_KEYUP;
           return 0;
         }
         else
         {
           // key down events.
-          event_->type = NUX_KEYDOWN;
-          event_->key_repeat_count = (int) (lParam & 0xff);
+          event_.type = NUX_KEYDOWN;
+          event_.key_repeat_count = (int) (lParam & 0xff);
         }
 
         unsigned int *utf32_str = new unsigned int [4];
-        Memset(utf32_str, 0, sizeof(unsigned int) * 4);
-        Memcpy(utf32_str, (int*) &wParam, sizeof(wParam));
+        std::memset(utf32_str, 0, sizeof(unsigned int) * 4);
+        std::memcpy(utf32_str, (int*) &wParam, sizeof(wParam));
         unsigned int *temp0 = utf32_str;
 
         unsigned char *utf8_str = new unsigned char [NUX_EVENT_TEXT_BUFFER_SIZE];
-        Memset(utf8_str, 0, sizeof(unsigned char) * NUX_EVENT_TEXT_BUFFER_SIZE);
+        std::memset(utf8_str, 0, sizeof(unsigned char) * NUX_EVENT_TEXT_BUFFER_SIZE);
         unsigned char *temp1 = utf8_str;
 
 
@@ -1599,7 +1588,7 @@ namespace nux
 
         if (res == conversionOK)
         {
-          Memcpy(event_->text, utf8_str, NUX_EVENT_TEXT_BUFFER_SIZE);
+          std::memcpy(event_.text, utf8_str, NUX_EVENT_TEXT_BUFFER_SIZE);
         }
         delete utf8_str;
         delete utf32_str;
@@ -1607,107 +1596,107 @@ namespace nux
 
       case WM_LBUTTONDOWN:
       {
-        mouse_event(hWnd, event_, 0, 1, wParam, lParam);
+        InspectMouseEvent(hWnd, event_, 0, 1, wParam, lParam);
         //nuxDebugMsg("Windows Msg: WM_LBUTTONDOWN");
         return 0;
       }
       case WM_LBUTTONDBLCLK:
       {
-        mouse_event(hWnd, event_, 1, 1, wParam, lParam);
+        InspectMouseEvent(hWnd, event_, 1, 1, wParam, lParam);
         //nuxDebugMsg("Windows Msg: WM_LBUTTONDBLCLK");
         return 0;
       }
       case WM_LBUTTONUP:
       {
-        mouse_event(hWnd, event_, 2, 1, wParam, lParam);
+        InspectMouseEvent(hWnd, event_, 2, 1, wParam, lParam);
         //nuxDebugMsg("Windows Msg: WM_LBUTTONUP");
         return 0;
       }
       case WM_MBUTTONDOWN:
       {
-        mouse_event(hWnd, event_, 0, 2, wParam, lParam);
+        InspectMouseEvent(hWnd, event_, 0, 2, wParam, lParam);
         break;
       }
       case WM_MBUTTONDBLCLK:
       {
-        mouse_event(hWnd, event_, 1, 2, wParam, lParam);
+        InspectMouseEvent(hWnd, event_, 1, 2, wParam, lParam);
         break;
       }
       case WM_MBUTTONUP:
       {
-        mouse_event(hWnd, event_, 2, 2, wParam, lParam);
+        InspectMouseEvent(hWnd, event_, 2, 2, wParam, lParam);
         break;
       }
       case WM_RBUTTONDOWN:
       {
-        mouse_event(hWnd, event_, 0, 3, wParam, lParam);
+        InspectMouseEvent(hWnd, event_, 0, 3, wParam, lParam);
         break;
       }
       case WM_RBUTTONDBLCLK:
       {
-        mouse_event(hWnd, event_, 1, 3, wParam, lParam);
+        InspectMouseEvent(hWnd, event_, 1, 3, wParam, lParam);
         break;
       }
       case WM_RBUTTONUP:
       {
-        mouse_event(hWnd, event_, 2, 3, wParam, lParam);
+        InspectMouseEvent(hWnd, event_, 2, 3, wParam, lParam);
         break;
       }
       case WM_MOUSEWHEEL:
       {
-        mouse_event(hWnd, event_, 0, 4, wParam, lParam);
+        InspectMouseEvent(hWnd, event_, 0, 4, wParam, lParam);
         break;
       }
 
       case WM_NCLBUTTONDBLCLK:
       {
-        event_->type = NUX_NC_WINDOW_CONFIGURATION;
+        event_.type = NUX_NC_WINDOW_CONFIGURATION;
         break;
       }
       case WM_NCLBUTTONDOWN:
       {
-        event_->type = NUX_NC_WINDOW_CONFIGURATION;
+        event_.type = NUX_NC_WINDOW_CONFIGURATION;
         break;
       }
       case WM_NCLBUTTONUP:
       {
-        event_->type = NUX_NC_WINDOW_CONFIGURATION;
+        event_.type = NUX_NC_WINDOW_CONFIGURATION;
         break;
       }
       case WM_NCMBUTTONDBLCLK:
       {
-        event_->type = NUX_NC_WINDOW_CONFIGURATION;
+        event_.type = NUX_NC_WINDOW_CONFIGURATION;
         break;
       }
       case WM_NCMBUTTONDOWN:
       {
-        event_->type = NUX_NC_WINDOW_CONFIGURATION;
+        event_.type = NUX_NC_WINDOW_CONFIGURATION;
         break;
       }
       case WM_NCMBUTTONUP:
       {
-        event_->type = NUX_NC_WINDOW_CONFIGURATION;
+        event_.type = NUX_NC_WINDOW_CONFIGURATION;
         break;
       }
       case WM_NCRBUTTONDBLCLK:
       {
-        event_->type = NUX_NC_WINDOW_CONFIGURATION;
+        event_.type = NUX_NC_WINDOW_CONFIGURATION;
         break;
       }
       case WM_NCRBUTTONDOWN:
       {
-        event_->type = NUX_NC_WINDOW_CONFIGURATION;
+        event_.type = NUX_NC_WINDOW_CONFIGURATION;
         break;
       }
       case WM_NCRBUTTONUP:
       {
-        event_->type = NUX_NC_WINDOW_CONFIGURATION;
+        event_.type = NUX_NC_WINDOW_CONFIGURATION;
         break;
       }
 
       case WM_MOUSEMOVE:
       {
-        mouse_event(hWnd, event_, 3, 0, wParam, lParam);
+        InspectMouseEvent(hWnd, event_, 3, 0, wParam, lParam);
         //nuxDebugMsg("Windows Msg: WM_MOUSEMOVE");
 
         TRACKMOUSEEVENT tme = { sizeof(tme) };
@@ -1724,10 +1713,10 @@ namespace nux
         // All tracking requested by TrackMouseEvent is canceled when this message is generated.
         // The application must call TrackMouseEvent when the mouse reenters its window if
         // it requires further tracking of mouse hover behavior.
-        event_->type = NUX_WINDOW_MOUSELEAVE;
+        event_.type = NUX_WINDOW_MOUSELEAVE;
         // This causes the mouse to be outside of all widgets when it is tested in m_EventHandler.Process()
-        event_->x = 0xFFFFFFFF;
-        event_->y = 0xFFFFFFFF;
+        event_.x = 0xFFFFFFFF;
+        event_.y = 0xFFFFFFFF;
         //nuxDebugMsg("Windows Msg: WM_MOUSELEAVE/NUX_WINDOW_MOUSELEAVE");
         break;
       }
@@ -1744,7 +1733,7 @@ namespace nux
 
       case WM_COMMAND:
       {
-        nuxDebugMsg("[GraphicsDisplay::WndProc]: Window \"%s\" received WM_COMMAND message.", m_WindowTitle.GetTCharPtr());
+        nuxDebugMsg("[GraphicsDisplay::WndProc]: Window \"%s\" received WM_COMMAND message.", window_title_.c_str());
         break;;
       }
 

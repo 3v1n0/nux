@@ -60,7 +60,7 @@ namespace nux
     m_Texture->UnReference();
   }
 
-  void ToolButton::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void ToolButton::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
 
@@ -84,17 +84,12 @@ namespace nux
       GetPainter().Draw2DTextureAligned(graphics_engine, m_Texture, base, TextureAlignmentStyle(eTACenter, eTACenter));
   }
 
-  void ToolButton::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
+  void ToolButton::DrawContent(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }
 
-  void ToolButton::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
-  }
-
-  void ToolButton::SetState(bool b)
+  void ToolButton::SetState(bool /* b */)
   {
 
   }
@@ -109,34 +104,34 @@ namespace nux
     m_Texture = Texture->Clone();
   }
 
-  void ToolButton::EmitClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ToolButton::EmitClick(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     sigClick.emit();
     if (m_ActionItem)
       m_ActionItem->Trigger();
   }
 
-  void ToolButton::RecvMouseDoubleClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ToolButton::RecvMouseDoubleClick(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();
   }
 
-  void ToolButton::RecvMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ToolButton::RecvMouseDown(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();
   }
 
-  void ToolButton::RecvMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ToolButton::RecvMouseUp(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();
   }
 
-  void ToolButton::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ToolButton::RecvMouseEnter(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();
   }
 
-  void ToolButton::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ToolButton::RecvMouseLeave(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();
   }

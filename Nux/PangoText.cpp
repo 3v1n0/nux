@@ -126,12 +126,7 @@ namespace nux
 
   }
 
-  void PangoText::PostDraw(GraphicsEngine& gfxContext, bool forceDraw)
-  {
-    // intentionally left empty
-  }
-
-  void PangoText::SetText(NString text)
+  void PangoText::SetText(std::string text)
   {
     if (_text != text)
     {
@@ -188,7 +183,7 @@ namespace nux
     pango_layout_set_font_description(layout, desc);
     pango_layout_set_wrap(layout, PANGO_WRAP_WORD_CHAR);
     pango_layout_set_ellipsize(layout, PANGO_ELLIPSIZE_END);
-    pango_layout_set_text(layout, _text.GetTCharPtr(), -1);
+    pango_layout_set_text(layout, _text.c_str(), -1);
 
     pangoCtx = pango_layout_get_context(layout); // is not ref'ed
     pango_cairo_context_set_font_options(pangoCtx, font_options);
@@ -237,7 +232,7 @@ namespace nux
 
     pango_layout_set_wrap(layout, PANGO_WRAP_WORD_CHAR);
     pango_layout_set_ellipsize(layout, PANGO_ELLIPSIZE_END);
-    pango_layout_set_text(layout, _text.GetTCharPtr(), -1);
+    pango_layout_set_text(layout, _text.c_str(), -1);
 
     pangoCtx = pango_layout_get_context(layout);
     pango_cairo_context_set_font_options(pangoCtx, font_options);
@@ -261,7 +256,7 @@ namespace nux
 
   void PangoText::UpdateTextLayout()
   {
-    pango_layout_set_text(_pango_layout, _text.GetTCharPtr(), -1);
+    pango_layout_set_text(_pango_layout, _text.c_str(), -1);
 
     // reset the glyph string
     if (_glyph_text)

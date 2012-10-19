@@ -1,4 +1,3 @@
-#include "Features.h"
 #include "Nux.h"
 #include "Layout.h"
 #include "NuxCore/Logger.h"
@@ -78,7 +77,7 @@ namespace nux
     return repeat;
   }
 
-  static gboolean nux_event_prepare(GSource *source, gint *timeout)
+  static gboolean nux_event_prepare(GSource * /* source */, gint *timeout)
   {
     nux_glib_threads_lock();
 
@@ -124,7 +123,7 @@ namespace nux
     return retval;
   }
 
-  gboolean nux_event_dispatch(GSource *source, GSourceFunc  callback, gpointer user_data)
+  gboolean nux_event_dispatch(GSource * /* source */, GSourceFunc  /* callback */, gpointer user_data)
   {
     nux_glib_threads_lock();
     WindowThread *window_thread = NUX_STATIC_CAST(WindowThread *, user_data);
@@ -147,11 +146,13 @@ namespace nux
     nux_event_prepare,
     nux_event_check,
     nux_event_dispatch,
+    NULL,
+    NULL,
     NULL
   };
 
   // Timeline source functions
-  static gboolean nux_timeline_prepare (GSource  *source, gint *timeout)
+  static gboolean nux_timeline_prepare (GSource  * /* source */, gint *timeout)
   {
     // right now we are assuming that we are v-synced, so that will handle synchronizations
     // we could guess how long we have to wait for the next frame but thats rather ugly
@@ -161,21 +162,20 @@ namespace nux
     return TRUE;
   }
 
-  static gboolean nux_timeline_check(GSource  *source)
+  static gboolean nux_timeline_check(GSource  * /* source */)
   {
     return TRUE;
   }
 
-  static gboolean nux_timeline_dispatch(GSource *source, GSourceFunc callback, gpointer user_data)
+  static gboolean nux_timeline_dispatch(GSource *source, GSourceFunc /* callback */, gpointer user_data)
   {
-    GTimeVal time_val;
     bool has_timelines_left = false;
     nux_glib_threads_lock();
-    g_source_get_current_time(source, &time_val);
+    gint64 micro_secs = g_source_get_time(source);
     WindowThread *window_thread = NUX_STATIC_CAST(WindowThread *, user_data);
 
     // pump the timelines
-    has_timelines_left = window_thread->ProcessTimelines(&time_val);
+    has_timelines_left = window_thread->ProcessTimelines(micro_secs);
 
     if (!has_timelines_left)
     {
@@ -193,6 +193,8 @@ namespace nux
     nux_timeline_prepare,
     nux_timeline_check,
     nux_timeline_dispatch,
+    NULL,
+    NULL,
     NULL
   };
 
@@ -202,12 +204,15 @@ namespace nux
 
     if (!IsEmbeddedWindow())
     {
+
+#if GLIB_MAJOR_VERSION < 2 || GLIB_MAJOR_VERSION == 2 && GLIB_MINOR_VERSION < 32
       static bool gthread_initialized = false;
 
       if (!gthread_initialized)
         g_thread_init(NULL);
 
       gthread_initialized = true;
+#endif
 
       if (((main_loop_glib_context_ == 0) || (main_loop_glib_ == 0)) && (main_context_created == false))
       {
@@ -327,7 +332,11 @@ namespace nux
     }
   }
 
+#if defined(NUX_OS_WINDOWS)
   bool WindowThread::AddChildWindowGlibLoop(WindowThread* wnd_thread)
+#else
+  bool WindowThread::AddChildWindowGlibLoop(WindowThread* /* wnd_thread */)
+#endif
   {
 #if defined(NUX_OS_WINDOWS)
     if (wnd_thread == NULL)
@@ -368,7 +377,6 @@ namespace nux
 
     if (_MasterClock == NULL)
     {
-      GTimeVal time_val;
       // make a source for our master clock
       _MasterClock = g_source_new(&timeline_funcs, sizeof(GSource));
 
@@ -382,9 +390,9 @@ namespace nux
         g_source_attach(_MasterClock, main_loop_glib_context_);
 
 
-      g_get_current_time(&time_val);
-      last_timeline_frame_time_sec_ = time_val.tv_sec;
-      last_timeline_frame_time_usec_ = time_val.tv_usec;
+      gint64 micro_secs = g_source_get_time(_MasterClock);
+      last_timeline_frame_time_sec_ = micro_secs / 1000000;
+      last_timeline_frame_time_usec_ = micro_secs % 1000000;
     }
   }
 

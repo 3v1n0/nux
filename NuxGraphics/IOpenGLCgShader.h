@@ -33,7 +33,7 @@ namespace nux
     NUX_DECLARE_OBJECT_TYPE(ICgShader, IOpenGLResource);
 
   public:
-    ICgShader(NString ShaderName, OpenGLResourceType ResourceType);
+    ICgShader(std::string ShaderName, OpenGLResourceType ResourceType);
     virtual ~ICgShader();
 
     virtual void CreateProgram(const ANSICHAR *ShaderCode, const ANSICHAR *EntryPoint) = 0;
@@ -45,9 +45,9 @@ namespace nux
     virtual bool IsValid() = 0;
     CGparameter GetNamedParameter(const char *parameter);
 
-    NString _ShaderName;
-    NString _ShaderCode;
-    NString _EntryPoint;
+    std::string _ShaderName;
+    std::string _ShaderCode;
+    std::string _EntryPoint;
     CGprogram _CgProgram;
   };
 
@@ -62,7 +62,7 @@ namespace nux
     virtual bool Compile();
     virtual bool IsValid();
   private:
-    ICgVertexShader(NString ShaderName = NString("VertexProgram"));
+    ICgVertexShader(std::string ShaderName = std::string("VertexProgram"));
     int _ready;
     friend class GpuDevice;
   };
@@ -78,7 +78,7 @@ namespace nux
     virtual bool Compile();
     virtual bool IsValid();
   private:
-    ICgPixelShader(NString ShaderName = NString("PixelProgram"));
+    ICgPixelShader(std::string ShaderName = std::string("PixelProgram"));
     int _ready;
     friend class GpuDevice;
   };

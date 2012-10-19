@@ -27,6 +27,9 @@
 #include "TimerProc.h"
 #include "StaticTextBox.h"
 
+#include <sstream>
+#include <iomanip>
+
 namespace nux
 {
 
@@ -38,7 +41,7 @@ namespace nux
   {
     //setSize(200, 100);
     m_hlayout           = new HLayout(NUX_TRACKER_LOCATION);
-    m_ColorArea         = new InputArea(NUX_TRACKER_LOCATION);
+    m_ColorArea         = new BasicView(NUX_TRACKER_LOCATION);
     m_ColorValue        = new StaticTextBox("", NUX_TRACKER_LOCATION);
     m_DialogThreadProxy = new ColorDialogProxy(true);
 
@@ -50,8 +53,12 @@ namespace nux
     m_ColorValue->SetFont(GetSysBoldFont());
     m_ColorValue->SetMinimumWidth(128);
 
-    NString text = NString::Printf("[ R:%d, G:%d, B:%d ]", (int) (m_Color.red * 255), (int) (m_Color.green * 255), (int) (m_Color.blue * 255));
-    m_ColorValue->SetText(text);
+    std::stringstream s;
+    s << "[ R:" << (int)(m_Color.red * 255)
+      << ", G:" << (int)(m_Color.green * 255)
+      << ", B:" << (int)(m_Color.blue * 255)
+      << " ]";
+    m_ColorValue->SetText(s.str());
 
     m_ColorArea->mouse_click.connect(sigc::mem_fun(this, &ColorPreview::RecvClick));
 
@@ -75,7 +82,7 @@ namespace nux
     delete m_DialogThreadProxy;
   }
 
-  void ColorPreview::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void ColorPreview::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
 
@@ -90,12 +97,7 @@ namespace nux
     m_ColorValue->ProcessDraw(graphics_engine, force_draw);
   }
 
-  void ColorPreview::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
-  }
-
-  void ColorPreview::RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void ColorPreview::RecvClick(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     m_DialogThreadProxy->SetColor(m_Color);
     m_DialogThreadProxy->Start();
@@ -103,7 +105,7 @@ namespace nux
     m_ChangeTimerHandler = GetTimer().AddOneShotTimer(33, m_ChangeDetectionTimer, this);
   }
 
-  void ColorPreview::RecvTimer(void *v)
+  void ColorPreview::RecvTimer(void * /* v */)
   {
     if (m_DialogThreadProxy->m_bDialogChange && m_DialogThreadProxy->m_bDialogRunning)
     {

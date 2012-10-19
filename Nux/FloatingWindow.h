@@ -27,7 +27,7 @@
 
 #include "ScrollView.h"
 #include "BaseWindow.h"
-#include "InputArea.h"
+#include "BasicView.h"
 #include "Layout.h"
 #include "HLayout.h"
 #include "VLayout.h"
@@ -71,7 +71,7 @@ namespace nux
     void RecvTitleBarMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
 
     void SetWindowTitle(const char *title);
-    NString GetWindowTitle();
+    std::string GetWindowTitle();
 
     //! Return true if this object can break the layout.
     /*
@@ -91,7 +91,6 @@ namespace nux
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     virtual void PreLayoutManagement();
     virtual long PostLayoutManagement(long LayoutResult);
@@ -112,12 +111,12 @@ namespace nux
     int _resize_handle_height;
     int _title_bar_height;
 
-    InputArea *_resize_handle;
-    InputArea *_title_bar;
+    BasicView *_resize_handle;
+    BasicView *_title_bar;
     Point _title_bar_mouse_down_location;
 
-    InputArea *_minimize_button;
-    InputArea *_close_button;
+    BasicView *_minimize_button;
+    BasicView *_close_button;
     StaticTextBox *_window_title_bar;
     bool m_hasTitleBar;
 
@@ -134,7 +133,7 @@ namespace nux
     std::list<View *> m_InterfaceObject;
     HLayout *_title_bar_layout;
 
-    NString _window_title;
+    std::string _window_title;
 
     friend class PopUpWindow;
     friend class ComboBox_Logic_WindowView;

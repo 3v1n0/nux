@@ -35,31 +35,29 @@ namespace nux
   {
     ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
     ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
-    NString VSString;
-    NString PSString;
 
-    VSString =  
-                     NUX_VERTEX_SHADER_HEADER
-                     "uniform mat4 ViewProjectionMatrix;                \n\
-                     attribute vec4 AVertex;                            \n\
-                     attribute vec4 VertexColor;                        \n\
-                     varying vec4 vColor;                               \n\
-                     void main()                                        \n\
-                     {                                                  \n\
-                         gl_Position = ViewProjectionMatrix * AVertex;  \n\
-                         vColor = VertexColor;                          \n\
-                     }";
+    const char* VSString =  
+      NUX_VERTEX_SHADER_HEADER
+      "uniform mat4 ViewProjectionMatrix;                \n\
+      attribute vec4 AVertex;                            \n\
+      attribute vec4 VertexColor;                        \n\
+      varying vec4 vColor;                               \n\
+      void main()                                        \n\
+      {                                                  \n\
+      gl_Position = ViewProjectionMatrix * AVertex;  \n\
+      vColor = VertexColor;                          \n\
+      }";
 
-    VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
+    VS->SetShaderCode(TCHAR_TO_ANSI(VSString));
 
-    PSString =  
-                    NUX_FRAGMENT_SHADER_HEADER
-                    "varying vec4 vColor;           \n\
-                     void main()                    \n\
-                     {                              \n\
-                         gl_FragColor = vColor;     \n\
-                     }";
-    PS->SetShaderCode(TCHAR_TO_ANSI(*PSString));
+    const char* PSString =  
+      NUX_FRAGMENT_SHADER_HEADER
+      "varying vec4 vColor;           \n\
+      void main()                    \n\
+      {                              \n\
+      gl_FragColor = vColor;     \n\
+      }";
+    PS->SetShaderCode(TCHAR_TO_ANSI(PSString));
 
     m_SlColor = _graphics_display.m_DeviceFactory->CreateShaderProgram();
     m_SlColor->ClearShaderObjects();
@@ -72,43 +70,41 @@ namespace nux
   {
     ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
     ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
-    NString VSString;
-    NString PSString;
 
-    VSString =  
-                     NUX_VERTEX_SHADER_HEADER
-                     "attribute vec4 AVertex;                                 \n\
-                     attribute vec4 MyTextureCoord0;                         \n\
-                     attribute vec4 VertexColor;                             \n\
-                     uniform mat4 ViewProjectionMatrix;                      \n\
-                     varying vec4 varyTexCoord0;                             \n\
-                     varying vec4 varyVertexColor;                           \n\
-                     void main()                                             \n\
-                     {                                                       \n\
-                     gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
-                     varyTexCoord0 = MyTextureCoord0;                        \n\
-                     varyVertexColor = VertexColor;                          \n\
-                     }";
+    const char* VSString =  
+        NUX_VERTEX_SHADER_HEADER
+        "attribute vec4 AVertex;                                \n\
+        attribute vec4 MyTextureCoord0;                         \n\
+        attribute vec4 VertexColor;                             \n\
+        uniform mat4 ViewProjectionMatrix;                      \n\
+        varying vec4 varyTexCoord0;                             \n\
+        varying vec4 varyVertexColor;                           \n\
+        void main()                                             \n\
+        {                                                       \n\
+        gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
+        varyTexCoord0 = MyTextureCoord0;                        \n\
+        varyVertexColor = VertexColor;                          \n\
+        }";
 
-    PSString =  
-                    NUX_FRAGMENT_SHADER_HEADER
-                     "varying vec4 varyTexCoord0;                                 \n\
-                     varying vec4 varyVertexColor;                               \n\
-                     uniform sampler2D TextureObject0;                           \n\
-                     vec4 SampleTexture(sampler2D TexObject, vec4 TexCoord)      \n\
-                     {                                                           \n\
-                     return texture2D(TexObject, TexCoord.st);                   \n\
-                     }                                                           \n\
-                     void main()                                                 \n\
-                     {                                                           \n\
-                     vec4 v = SampleTexture(TextureObject0, varyTexCoord0);      \n\
-                     gl_FragColor = v*varyVertexColor;                           \n\
-                     }";
+    const char* PSString =  
+        NUX_FRAGMENT_SHADER_HEADER
+        "varying vec4 varyTexCoord0;                                \n\
+        varying vec4 varyVertexColor;                               \n\
+        uniform sampler2D TextureObject0;                           \n\
+        vec4 SampleTexture(sampler2D TexObject, vec4 TexCoord)      \n\
+        {                                                           \n\
+        return texture2D(TexObject, TexCoord.st);                   \n\
+        }                                                           \n\
+        void main()                                                 \n\
+        {                                                           \n\
+        vec4 v = SampleTexture(TextureObject0, varyTexCoord0);      \n\
+        gl_FragColor = v*varyVertexColor;                           \n\
+        }";
 
     // Textured 2D Primitive Shader
     m_SlTextureModColor = _graphics_display.m_DeviceFactory->CreateShaderProgram();
-    VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
-    PS->SetShaderCode(TCHAR_TO_ANSI(*PSString), "#define SAMPLERTEX2D");
+    VS->SetShaderCode(TCHAR_TO_ANSI(VSString));
+    PS->SetShaderCode(TCHAR_TO_ANSI(PSString), "#define SAMPLERTEX2D");
 
     m_SlTextureModColor->ClearShaderObjects();
     m_SlTextureModColor->AddShaderObject(VS);
@@ -121,10 +117,8 @@ namespace nux
   {
     ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
     ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
-    NString VSString;
-    NString PSString;
 
-    VSString =  
+    const char* VSString =  
                      NUX_VERTEX_SHADER_HEADER
                      "attribute vec4 AVertex;                                 \n\
                      attribute vec4 MyTextureCoord0;                         \n\
@@ -139,7 +133,7 @@ namespace nux
                      varyVertexColor = VertexColor;                          \n\
                      }";
 
-    PSString =  
+    const char* PSString =  
                     NUX_FRAGMENT_SHADER_HEADER
                     "varying vec4 varyTexCoord0;                                        \n\
                      varying vec4 varyVertexColor;                                      \n\
@@ -155,8 +149,8 @@ namespace nux
                      }";
 
     m_SlColorModTexMaskAlpha = _graphics_display.m_DeviceFactory->CreateShaderProgram();
-    VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
-    PS->SetShaderCode(TCHAR_TO_ANSI(*PSString), "#define SAMPLERTEX2D");
+    VS->SetShaderCode(TCHAR_TO_ANSI(VSString));
+    PS->SetShaderCode(TCHAR_TO_ANSI(PSString), "#define SAMPLERTEX2D");
     m_SlColorModTexMaskAlpha->ClearShaderObjects();
     m_SlColorModTexMaskAlpha->AddShaderObject(VS);
     m_SlColorModTexMaskAlpha->AddShaderObject(PS);
@@ -170,14 +164,12 @@ namespace nux
   {
     ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
     ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
-    NString VSString;
-    NString PSString;
 
     // For some strange reason, make sure that the attribute holding the vertex position has a name that comes first in alphabetic order before all
     // other  attributes. Otherwise you get a bug on NVidia! Why is that???
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    VSString =        NUX_VERTEX_SHADER_HEADER
+    const char* VSString =        NUX_VERTEX_SHADER_HEADER
                       "uniform mat4 ViewProjectionMatrix;                      \n\
                       attribute vec4 AVertex;                                 \n\
                       attribute vec4 MyTextureCoord0;                         \n\
@@ -191,7 +183,7 @@ namespace nux
                       gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
                       }";
 
-    PSString =      NUX_FRAGMENT_SHADER_HEADER
+    const char* PSString =      NUX_FRAGMENT_SHADER_HEADER
                     "varying vec4 varyTexCoord0;                                 \n\
                     varying vec4 varyTexCoord1;                                 \n\
                     uniform vec4 color0;                                        \n\
@@ -219,8 +211,8 @@ namespace nux
                     }";
 
     m_Sl2TextureAdd = _graphics_display.m_DeviceFactory->CreateShaderProgram();
-    VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
-    PS->SetShaderCode(TCHAR_TO_ANSI(*PSString), "#define SAMPLERTEX2D");
+    VS->SetShaderCode(TCHAR_TO_ANSI(VSString));
+    PS->SetShaderCode(TCHAR_TO_ANSI(PSString), "#define SAMPLERTEX2D");
 
     m_Sl2TextureAdd->ClearShaderObjects();
     m_Sl2TextureAdd->AddShaderObject(VS);
@@ -233,14 +225,12 @@ namespace nux
   {
     ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
     ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
-    NString VSString;
-    NString PSString;
 
     // For some strange reason, make sure that the attribute holding the vertex position has a name that comes first in alphabetic order before all
     // other  attributes. Otherwise you get a bug on NVidia! Why is that???
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    VSString =          NUX_VERTEX_SHADER_HEADER
+    const char* VSString =          NUX_VERTEX_SHADER_HEADER
                         "uniform mat4 ViewProjectionMatrix;                      \n\
                         attribute vec4 AVertex;                                 \n\
                         attribute vec4 MyTextureCoord0;                         \n\
@@ -254,7 +244,7 @@ namespace nux
                         gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
                         }";
 
-    PSString =      NUX_FRAGMENT_SHADER_HEADER
+    const char* PSString =      NUX_FRAGMENT_SHADER_HEADER
                     "varying vec4 varyTexCoord0;                                 \n\
                     varying vec4 varyTexCoord1;                                 \n\
                     uniform vec4 color0;                                        \n\
@@ -274,8 +264,8 @@ namespace nux
                     }";
 
     m_Sl2TextureDepRead = _graphics_display.m_DeviceFactory->CreateShaderProgram();
-    VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
-    PS->SetShaderCode(TCHAR_TO_ANSI(*PSString));
+    VS->SetShaderCode(TCHAR_TO_ANSI(VSString));
+    PS->SetShaderCode(TCHAR_TO_ANSI(PSString));
 
     m_Sl2TextureDepRead->ClearShaderObjects();
     m_Sl2TextureDepRead->AddShaderObject(VS);
@@ -288,14 +278,12 @@ namespace nux
   {
     ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
     ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
-    NString VSString;
-    NString PSString;
 
     // For some strange reason, make sure that the attribute holding the vertex position has a name that comes first in alphabetic order before all
     // other  attributes. Otherwise you get a bug on NVidia! Why is that???
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    VSString =           NUX_VERTEX_SHADER_HEADER
+    const char* VSString =           NUX_VERTEX_SHADER_HEADER
                          "uniform mat4 ViewProjectionMatrix;                      \n\
                          attribute vec4 AVertex;                                 \n\
                          attribute vec4 MyTextureCoord0;                         \n\
@@ -309,7 +297,7 @@ namespace nux
                          gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
                          }";
 
-    PSString =           NUX_FRAGMENT_SHADER_HEADER
+    const char* PSString =           NUX_FRAGMENT_SHADER_HEADER
                          "varying vec4 varyTexCoord0;                                 \n\
                          varying vec4 varyTexCoord1;                                 \n\
                          uniform vec4 color0;                                        \n\
@@ -337,8 +325,8 @@ namespace nux
                          }";
 
     m_Sl2TextureMod = _graphics_display.m_DeviceFactory->CreateShaderProgram();
-    VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
-    PS->SetShaderCode(TCHAR_TO_ANSI(*PSString), "#define SAMPLERTEX2D");
+    VS->SetShaderCode(TCHAR_TO_ANSI(VSString));
+    PS->SetShaderCode(TCHAR_TO_ANSI(PSString), "#define SAMPLERTEX2D");
 
     m_Sl2TextureMod->ClearShaderObjects();
     m_Sl2TextureMod->AddShaderObject(VS);
@@ -351,14 +339,12 @@ namespace nux
   {
     ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
     ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
-    NString VSString;
-    NString PSString;
 
     // For some strange reason, make sure that the attribute holding the vertex position has a name that comes first in alphabetic order before all
     // other  attributes. Otherwise you get a bug on NVidia! Why is that???
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    VSString =          NUX_VERTEX_SHADER_HEADER
+    const char* VSString =          NUX_VERTEX_SHADER_HEADER
                         "uniform mat4 ViewProjectionMatrix;                      \n\
                         attribute vec4 AVertex;                                 \n\
                         attribute vec4 MyTextureCoord0;                         \n\
@@ -378,7 +364,7 @@ namespace nux
                         gl_Position =  ViewProjectionMatrix * (AVertex);        \n\
                         }";
 
-    PSString =          NUX_FRAGMENT_SHADER_HEADER
+    const char* PSString =          NUX_FRAGMENT_SHADER_HEADER
                         "varying vec4 varyTexCoord0;                                 \n\
                         varying vec4 varyTexCoord1;                                 \n\
                         varying vec4 varyTexCoord2;                                 \n\
@@ -406,8 +392,8 @@ namespace nux
 
     // Textured 2D Primitive Shader
     m_Sl4TextureAdd = _graphics_display.m_DeviceFactory->CreateShaderProgram();
-    VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
-    PS->SetShaderCode(TCHAR_TO_ANSI(*PSString));
+    VS->SetShaderCode(TCHAR_TO_ANSI(VSString));
+    PS->SetShaderCode(TCHAR_TO_ANSI(PSString));
 
     m_Sl4TextureAdd->ClearShaderObjects();
     m_Sl4TextureAdd->AddShaderObject(VS);
@@ -420,10 +406,8 @@ namespace nux
   {
     ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
     ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
-    NString VSString;
-    NString PSString;
 
-    VSString =  NUX_VERTEX_SHADER_HEADER
+    const char* VSString =  NUX_VERTEX_SHADER_HEADER
         "uniform mat4 ViewProjectionMatrix;                  \n\
         attribute vec4 AVertex;                             \n\
         attribute vec4 MyTextureCoord0;                     \n\
@@ -434,7 +418,7 @@ namespace nux
           gl_Position =  ViewProjectionMatrix * (AVertex);  \n\
         }";
 
-    PSString =  NUX_FRAGMENT_SHADER_HEADER
+    const char* PSString =  NUX_FRAGMENT_SHADER_HEADER
         "varying vec4 varyTexCoord0;                                                                           \n\
         uniform sampler2D TextureObject0;                                                                     \n\
         uniform vec2 TextureSize0;                                                                            \n\
@@ -453,8 +437,8 @@ namespace nux
 
 
     _component_exponentiation_prog = _graphics_display.m_DeviceFactory->CreateShaderProgram();
-    VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
-    PS->SetShaderCode(TCHAR_TO_ANSI(*PSString));
+    VS->SetShaderCode(TCHAR_TO_ANSI(VSString));
+    PS->SetShaderCode(TCHAR_TO_ANSI(PSString));
 
     _component_exponentiation_prog->ClearShaderObjects();
     _component_exponentiation_prog->AddShaderObject(VS);
@@ -468,11 +452,8 @@ namespace nux
   {
     ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
     ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
-    NString VSString;
-    NString PSString;
 
-
-    VSString = NUX_VERTEX_SHADER_HEADER
+    const char* VSString = NUX_VERTEX_SHADER_HEADER
         "uniform mat4 ViewProjectionMatrix;                  \n\
         attribute vec4 AVertex;                             \n\
         attribute vec4 MyTextureCoord0;                     \n\
@@ -483,7 +464,7 @@ namespace nux
           gl_Position =  ViewProjectionMatrix * (AVertex);  \n\
         }";
 
-    PSString = NUX_FRAGMENT_SHADER_HEADER
+    const char* PSString = NUX_FRAGMENT_SHADER_HEADER
         "varying vec4 varyTexCoord0;                                   \n\
         uniform sampler2D TextureObject0;                             \n\
         uniform vec4 color0;                                          \n\
@@ -498,8 +479,8 @@ namespace nux
         }";
 
     _alpha_replicate_prog = _graphics_display.m_DeviceFactory->CreateShaderProgram();
-    VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
-    PS->SetShaderCode(TCHAR_TO_ANSI(*PSString));
+    VS->SetShaderCode(TCHAR_TO_ANSI(VSString));
+    PS->SetShaderCode(TCHAR_TO_ANSI(PSString));
 
     _alpha_replicate_prog->ClearShaderObjects();
     _alpha_replicate_prog->AddShaderObject(VS);
@@ -512,11 +493,8 @@ namespace nux
   {
     ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
     ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
-    NString VSString;
-    NString PSString;
 
-
-    VSString = NUX_VERTEX_SHADER_HEADER
+    const char* VSString = NUX_VERTEX_SHADER_HEADER
         "uniform mat4 ViewProjectionMatrix;  \n\
         attribute vec4 AVertex;             \n\
         attribute vec4 MyTextureCoord0;     \n\
@@ -531,7 +509,7 @@ namespace nux
         }";
 
 
-    PSString = NUX_FRAGMENT_SHADER_HEADER
+    const char* PSString = NUX_FRAGMENT_SHADER_HEADER
         "varying vec4 varyTexCoord0;                                   \n\
         varying vec4 varyVertexColor;                                 \n\
         uniform sampler2D TextureObject0;                             \n\
@@ -567,8 +545,8 @@ namespace nux
         }";
 
     _horizontal_gauss_filter_prog = _graphics_display.m_DeviceFactory->CreateShaderProgram();
-    VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
-    PS->SetShaderCode(TCHAR_TO_ANSI(*PSString), "#define SAMPLERTEX2D");
+    VS->SetShaderCode(TCHAR_TO_ANSI(VSString));
+    PS->SetShaderCode(TCHAR_TO_ANSI(PSString), "#define SAMPLERTEX2D");
 
     _horizontal_gauss_filter_prog->ClearShaderObjects();
     _horizontal_gauss_filter_prog->AddShaderObject(VS);
@@ -582,10 +560,8 @@ namespace nux
   {
     ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
     ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
-    NString VSString;
-    NString PSString;
 
-    VSString = NUX_VERTEX_SHADER_HEADER
+    const char* VSString = NUX_VERTEX_SHADER_HEADER
         "uniform mat4 ViewProjectionMatrix;  \n\
         attribute vec4 AVertex;             \n\
         attribute vec4 MyTextureCoord0;     \n\
@@ -600,7 +576,7 @@ namespace nux
         }";
 
 
-    PSString = NUX_FRAGMENT_SHADER_HEADER
+    const char* PSString = NUX_FRAGMENT_SHADER_HEADER
         "varying vec4 varyTexCoord0;                                   \n\
         varying vec4 varyVertexColor;                                 \n\
         uniform sampler2D TextureObject0;                             \n\
@@ -636,8 +612,8 @@ namespace nux
         }";
 
     _vertical_gauss_filter_prog = _graphics_display.m_DeviceFactory->CreateShaderProgram();
-    VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
-    PS->SetShaderCode(TCHAR_TO_ANSI(*PSString), "#define SAMPLERTEX2D");
+    VS->SetShaderCode(TCHAR_TO_ANSI(VSString));
+    PS->SetShaderCode(TCHAR_TO_ANSI(PSString), "#define SAMPLERTEX2D");
 
     _vertical_gauss_filter_prog->ClearShaderObjects();
     _vertical_gauss_filter_prog->AddShaderObject(VS);
@@ -657,11 +633,8 @@ namespace nux
 
     ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
     ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
-    NString VSString;
-    NString PSString;
 
-
-    VSString = NUX_VERTEX_SHADER_HEADER
+    const char* VSString = NUX_VERTEX_SHADER_HEADER
                      "uniform mat4 ViewProjectionMatrix;   \n\
                      attribute vec4 AVertex;              \n\
                      attribute vec4 MyTextureCoord0;      \n\
@@ -676,7 +649,7 @@ namespace nux
                      }";
 
 
-    PSString =       NUX_FRAGMENT_SHADER_HEADER
+    const char* PSString =       NUX_FRAGMENT_SHADER_HEADER
                      "varying vec4 varyTexCoord0;                                  \n\
                      varying vec4 varyVertexColor;                                \n\
                      uniform sampler2D TextureObject0;                            \n\
@@ -702,12 +675,12 @@ namespace nux
                      gl_FragColor = vec4(sum.x, sum.y, sum.z, 1.0);             \n\
                      }";
 
-    int l = PSString.Size();
+    int l = strlen(PSString);
     char* shader_prog = new char[l+10];
-    sprintf(shader_prog, PSString.GetTCharPtr(), 6 * k + 1);
+    sprintf(shader_prog, PSString, 6 * k + 1);
 
     _horizontal_hq_gauss_filter_prog[k-1] = _graphics_display.m_DeviceFactory->CreateShaderProgram();
-    VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
+    VS->SetShaderCode(TCHAR_TO_ANSI(VSString));
     PS->SetShaderCode(shader_prog, "#define SAMPLERTEX2D");
     delete [] shader_prog;
 
@@ -730,10 +703,8 @@ namespace nux
 
     ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
     ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
-    NString VSString;
-    NString PSString;
 
-    VSString = 
+    const char* VSString = 
                       NUX_VERTEX_SHADER_HEADER
                      "uniform mat4 ViewProjectionMatrix;   \n\
                      attribute vec4 AVertex;              \n\
@@ -749,7 +720,7 @@ namespace nux
                      }";
 
 
-    PSString = 
+    const char* PSString = 
                     NUX_FRAGMENT_SHADER_HEADER
                      "varying vec4 varyTexCoord0;                                  \n\
                      varying vec4 varyVertexColor;                                \n\
@@ -776,12 +747,12 @@ namespace nux
                      gl_FragColor = vec4(sum.x, sum.y, sum.z, 1.0);            \n\
                      }";
 
-    int l = PSString.Size();
+    int l = strlen(PSString);
     char* shader_prog = new char[l+10];
-    sprintf(shader_prog, PSString.GetTCharPtr(), 6 * k + 1);
+    sprintf(shader_prog, PSString, 6 * k + 1);
 
     _vertical_hq_gauss_filter_prog[k-1] = _graphics_display.m_DeviceFactory->CreateShaderProgram();
-    VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
+    VS->SetShaderCode(TCHAR_TO_ANSI(VSString));
     PS->SetShaderCode(shader_prog, "#define SAMPLERTEX2D");
     delete [] shader_prog;
 
@@ -796,11 +767,8 @@ namespace nux
   {
     ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
     ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
-    NString VSString;
-    NString PSString;
 
-
-    VSString = 
+    const char* VSString = 
                       NUX_VERTEX_SHADER_HEADER
         "uniform mat4 ViewProjectionMatrix;  \n\
         attribute vec4 AVertex;             \n\
@@ -812,7 +780,7 @@ namespace nux
           gl_Position =  ViewProjectionMatrix * (AVertex);  \n\
         }";
 
-    PSString = 
+    const char* PSString = 
                     NUX_FRAGMENT_SHADER_HEADER
         "varying vec4 varyTexCoord0;                                 \n\
         uniform sampler2D TextureObject0;                           \n\
@@ -837,8 +805,8 @@ namespace nux
         }";
 
     _color_matrix_filter_prog = _graphics_display.m_DeviceFactory->CreateShaderProgram();
-    VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
-    PS->SetShaderCode(TCHAR_TO_ANSI(*PSString), "#define SAMPLERTEX2D");
+    VS->SetShaderCode(TCHAR_TO_ANSI(VSString));
+    PS->SetShaderCode(TCHAR_TO_ANSI(PSString), "#define SAMPLERTEX2D");
 
     _color_matrix_filter_prog->ClearShaderObjects();
     _color_matrix_filter_prog->AddShaderObject(VS);
@@ -1723,7 +1691,7 @@ namespace nux
     ShaderProg->End();
   }
 
-  void GraphicsEngine::QRP_GLSL_HorizontalGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0, float sigma)
+  void GraphicsEngine::QRP_GLSL_HorizontalGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color & /* c0 */, float sigma)
   {
     if (!_horizontal_gauss_filter_prog.IsValid())
         InitSLHorizontalGaussFilter();
@@ -1795,7 +1763,7 @@ namespace nux
     ShaderProg->End();
   }
 
-  void GraphicsEngine::QRP_GLSL_VerticalGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0, float sigma)
+  void GraphicsEngine::QRP_GLSL_VerticalGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color & /* c0 */, float sigma)
   {
     if (!_vertical_gauss_filter_prog.IsValid())
         InitSLVerticalGaussFilter();
@@ -1869,7 +1837,7 @@ namespace nux
     ShaderProg->End();
   }
 
-  void GraphicsEngine::QRP_GLSL_HorizontalHQGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0, float sigma)
+  void GraphicsEngine::QRP_GLSL_HorizontalHQGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color & /* c0 */, float sigma)
   {
     int k = Clamp<float>(sigma, NUX_MIN_GAUSSIAN_SIGMA, NUX_MAX_GAUSSIAN_SIGMA);
 
@@ -1945,7 +1913,7 @@ namespace nux
     ShaderProg->End();
   }
 
-  void GraphicsEngine::QRP_GLSL_VerticalHQGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color &c0, float sigma)
+  void GraphicsEngine::QRP_GLSL_VerticalHQGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color & /* c0 */, float sigma)
   {
     int k = Clamp<float>(sigma, NUX_MIN_GAUSSIAN_SIGMA, NUX_MAX_GAUSSIAN_SIGMA);
 
@@ -2325,10 +2293,10 @@ namespace nux
   }
 
   ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GLSL_GetLQBlur(
-    int x, int y,
-    int buffer_width, int buffer_height,
+    int /* x */, int /* y */,
+    int /* buffer_width */, int /* buffer_height */,
     ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform,
-    const Color& c0)
+    const Color& /* c0 */)
   {
     int quad_width = device_texture->GetWidth();
     int quad_height = device_texture->GetHeight();
@@ -2617,10 +2585,8 @@ namespace nux
   {
     ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
     ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
-    NString VSString;
-    NString PSString;
 
-    VSString =  
+    const char* VSString =  
                       NUX_VERTEX_SHADER_HEADER
                       "attribute vec4 AVertex;                                 \n\
                       attribute vec4 MyTextureCoord0;                         \n\
@@ -2635,7 +2601,7 @@ namespace nux
                       varyVertexColor = VertexColor;                          \n\
                       }";
 
-    PSString =  
+    const char* PSString =  
                     NUX_FRAGMENT_SHADER_HEADER
                       "varying vec4 varyTexCoord0;                                 \n\
                       varying vec4 varyVertexColor;                               \n\
@@ -2655,8 +2621,8 @@ namespace nux
 
     // Textured 2D Primitive Shader
     m_SLPixelate = _graphics_display.m_DeviceFactory->CreateShaderProgram();
-    VS->SetShaderCode(TCHAR_TO_ANSI(*VSString));
-    PS->SetShaderCode(TCHAR_TO_ANSI(*PSString), "#define SAMPLERTEX2D");
+    VS->SetShaderCode(TCHAR_TO_ANSI(VSString));
+    PS->SetShaderCode(TCHAR_TO_ANSI(PSString), "#define SAMPLERTEX2D");
 
     m_SLPixelate->ClearShaderObjects();
     m_SLPixelate->AddShaderObject(VS);
@@ -2737,7 +2703,7 @@ namespace nux
   }
 
   ObjectPtr<IOpenGLBaseTexture> GraphicsEngine::QRP_GLSL_GetPixelBlocks(
-    ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color& c0, int pixel_size)
+    ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm &texxform0, const Color& /* c0 */, int pixel_size)
   {
     int quad_width = device_texture->GetWidth();
     int quad_height = device_texture->GetHeight();
@@ -2833,5 +2799,239 @@ namespace nux
     }
   }
 
+  void GraphicsEngine::InitSlTexturePremultiplyShader()
+  {
+    ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
+    ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
+    std::string VSString;
+    std::string PSString;
+
+    VSString =  
+      NUX_VERTEX_SHADER_HEADER
+      "attribute vec4 i_vertex;                               \n\
+      attribute vec4 i_texture_coord0;                        \n\
+      attribute vec4 i_vertex_color;                          \n\
+      uniform mat4 ViewProjectionMatrix;                      \n\
+      varying vec4 varyTexCoord0;                             \n\
+      varying vec4 varyVertexColor;                           \n\
+      void main()                                             \n\
+      {                                                       \n\
+      gl_Position =  ViewProjectionMatrix * (i_vertex);       \n\
+      varyTexCoord0 = i_texture_coord0;                       \n\
+      varyVertexColor = i_vertex_color;                       \n\
+      }";
+
+    PSString =  
+      NUX_FRAGMENT_SHADER_HEADER
+      "varying vec4 varyTexCoord0;                                \n\
+      varying vec4 varyVertexColor;                               \n\
+      uniform sampler2D TextureObject0;                           \n\
+      void main()                                                 \n\
+      {                                                           \n\
+        vec4 tex = texture2D(TextureObject0, varyTexCoord0.st);   \n\
+        gl_FragColor = vec4(tex.r * tex.a, tex.g * tex.a, tex.b * tex.a, tex.a) * varyVertexColor;    \n\
+      }";
+
+    // Textured 2D Primitive Shader
+    m_SlTexturePremultiplyModColor = _graphics_display.m_DeviceFactory->CreateShaderProgram();
+    VS->SetShaderCode(VSString.c_str());
+    PS->SetShaderCode(PSString.c_str());
+
+    m_SlTexturePremultiplyModColor->ClearShaderObjects();
+    m_SlTexturePremultiplyModColor->AddShaderObject(VS);
+    m_SlTexturePremultiplyModColor->AddShaderObject(PS);
+    //CHECKGL(glBindAttribLocation(m_SlTexturePremultiplyModColor->GetOpenGLID(), 0, "i_vertex"));
+    m_SlTexturePremultiplyModColor->Link();
+  }
+
+  void GraphicsEngine::QRP_GLSL_1TexPremultiply(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm &texxform0, const Color &color0)
+  {
+    if (DeviceTexture.IsNull() || (!DeviceTexture->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType)))
+    {
+      return;
+    }
+
+    if (!m_SlTexturePremultiplyModColor.IsValid())
+      InitSlTexturePremultiplyShader();
+
+    m_quad_tex_stats++;
+
+    QRP_Compute_Texture_Coord(width, height, DeviceTexture, texxform0);
+    float fx = x, fy = y;
+    float VtxBuffer[] =
+    {
+      fx,          fy,          0.0f, 1.0f, texxform0.u0, texxform0.v0, 0, 0, color0.red, color0.green, color0.blue, color0.alpha,
+      fx,          fy + height, 0.0f, 1.0f, texxform0.u0, texxform0.v1, 0, 0, color0.red, color0.green, color0.blue, color0.alpha,
+      fx + width,  fy + height, 0.0f, 1.0f, texxform0.u1, texxform0.v1, 0, 0, color0.red, color0.green, color0.blue, color0.alpha,
+      fx + width,  fy,          0.0f, 1.0f, texxform0.u1, texxform0.v0, 0, 0, color0.red, color0.green, color0.blue, color0.alpha,
+    };
+
+    ObjectPtr<IOpenGLShaderProgram> ShaderProg = m_SlTexturePremultiplyModColor;
+
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
+    ShaderProg->Begin();
+
+    int TextureObjectLocation = ShaderProg->GetUniformLocationARB("TextureObject0");
+    int VertexLocation = ShaderProg->GetAttributeLocation("i_vertex");
+    int TextureCoord0Location = ShaderProg->GetAttributeLocation("i_texture_coord0");
+    int VertexColorLocation = ShaderProg->GetAttributeLocation("i_vertex_color");
+
+    SetTexture(GL_TEXTURE0, DeviceTexture);
+    CHECKGL(glUniform1iARB(TextureObjectLocation, 0));
+
+    int     VPMatrixLocation = ShaderProg->GetUniformLocationARB("ViewProjectionMatrix");
+    Matrix4 MVPMatrix = GetOpenGLModelViewProjectionMatrix();
+    ShaderProg->SetUniformLocMatrix4fv((GLint) VPMatrixLocation, 1, false, (GLfloat *) & (MVPMatrix.m));
+
+    CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+    CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer));
+
+    if (TextureCoord0Location != -1)
+    {
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord0Location));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4));
+    }
+
+    if (VertexColorLocation != -1)
+    {
+      CHECKGL(glEnableVertexAttribArrayARB(VertexColorLocation));
+      CHECKGL(glVertexAttribPointerARB((GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8));
+    }
+
+    CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
+
+    CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));
+
+    if (TextureCoord0Location != -1)
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord0Location));
+
+    if (VertexColorLocation != -1)
+      CHECKGL(glDisableVertexAttribArrayARB(VertexColorLocation));
+
+    ShaderProg->End();
+  }
+
+  void GraphicsEngine::InitSLDesaturation()
+  {
+    ObjectPtr<IOpenGLVertexShader> VS = _graphics_display.m_DeviceFactory->CreateVertexShader();
+    ObjectPtr<IOpenGLPixelShader> PS = _graphics_display.m_DeviceFactory->CreatePixelShader();
+
+    const char* VSString =  
+      NUX_VERTEX_SHADER_HEADER
+      "attribute vec4 AVertex;                                \n\
+      attribute vec4 MyTextureCoord0;                         \n\
+      attribute vec4 VertexColor;                             \n\
+      uniform mat4 ViewProjectionMatrix;                      \n\
+      varying vec4 varyTexCoord0;                             \n\
+      varying vec4 varyVertexColor;                           \n\
+      void main()                                             \n\
+      {                                                       \n\
+        gl_Position =  ViewProjectionMatrix * (AVertex);      \n\
+        varyTexCoord0 = MyTextureCoord0;                      \n\
+        varyVertexColor = VertexColor;                        \n\
+      }";
+
+    const char* PSString =  
+      NUX_FRAGMENT_SHADER_HEADER
+      "varying vec4 varyTexCoord0;                                \n\
+      varying vec4 varyVertexColor;                               \n\
+      uniform sampler2D TextureObject0;                           \n\
+      uniform float desat_factor;                                 \n\
+      uniform vec3 luma;                                          \n\
+      void main()                                                 \n\
+      {                                                           \n\
+        vec4 texel = texture2D(TextureObject0, varyTexCoord0.st); \n\
+        vec4 desat_texel = vec4 (luma.r * texel.r + luma.g * texel.g + luma.b * texel.b);  \n\
+        vec4 final = (vec4 (1.0, 1.0, 1.0, 1.0) - desat_factor) * desat_texel + desat_factor * texel; \n\
+        final.a = texel.a;                                        \n\
+        gl_FragColor = final * varyVertexColor;                   \n\
+      }";
+
+    // Textured 2D Primitive Shader
+    desaturation_prog_ = _graphics_display.m_DeviceFactory->CreateShaderProgram();
+    VS->SetShaderCode(TCHAR_TO_ANSI(VSString));
+    PS->SetShaderCode(TCHAR_TO_ANSI(PSString));
+
+    desaturation_prog_->ClearShaderObjects();
+    desaturation_prog_->AddShaderObject(VS);
+    desaturation_prog_->AddShaderObject(PS);
+    CHECKGL(glBindAttribLocation(desaturation_prog_->GetOpenGLID(), 0, "AVertex"));
+    desaturation_prog_->Link();
+  }
+
+  void GraphicsEngine::QRP_GLSL_TexDesaturate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm& texxform0, const Color& color0, float desaturation_factor)
+  {
+    if (!desaturation_prog_.IsValid())
+      InitSLDesaturation();
+
+    m_quad_tex_stats++;
+    QRP_Compute_Texture_Coord(width, height, DeviceTexture, texxform0);
+    float fx = x, fy = y;
+    float VtxBuffer[] =
+    {
+      fx,          fy,          0.0f, 1.0f, texxform0.u0, texxform0.v0, 0, 0, color0.red, color0.green, color0.blue, color0.alpha,
+      fx,          fy + height, 0.0f, 1.0f, texxform0.u0, texxform0.v1, 0, 0, color0.red, color0.green, color0.blue, color0.alpha,
+      fx + width,  fy + height, 0.0f, 1.0f, texxform0.u1, texxform0.v1, 0, 0, color0.red, color0.green, color0.blue, color0.alpha,
+      fx + width,  fy,          0.0f, 1.0f, texxform0.u1, texxform0.v0, 0, 0, color0.red, color0.green, color0.blue, color0.alpha,
+    };
+
+    ObjectPtr<IOpenGLShaderProgram> ShaderProg;
+
+    if (DeviceTexture->Type().IsDerivedFromType(IOpenGLTexture2D::StaticObjectType))
+    {
+      ShaderProg = desaturation_prog_;
+    }
+
+    CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
+    CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
+    ShaderProg->Begin();
+
+    int TextureObjectLocation = ShaderProg->GetUniformLocationARB("TextureObject0");
+    int luma_location = ShaderProg->GetUniformLocationARB("luma");
+    int desat_factor_location = ShaderProg->GetUniformLocationARB("desat_factor");
+    int VertexLocation = ShaderProg->GetAttributeLocation("AVertex");
+    int TextureCoord0Location = ShaderProg->GetAttributeLocation("MyTextureCoord0");
+    int VertexColorLocation = ShaderProg->GetAttributeLocation("VertexColor");
+
+    SetTexture(GL_TEXTURE0, DeviceTexture);
+    CHECKGL(glUniform1iARB(TextureObjectLocation, 0));
+
+    float luma[3] = {color::LumaRed, color::LumaGreen, color::LumaBlue};
+    CHECKGL(glUniform3fv(luma_location, 3, luma));
+
+    CHECKGL(glUniform1f(desat_factor_location, desaturation_factor));
+
+    int     VPMatrixLocation = ShaderProg->GetUniformLocationARB("ViewProjectionMatrix");
+    Matrix4 MVPMatrix = GetOpenGLModelViewProjectionMatrix();
+    ShaderProg->SetUniformLocMatrix4fv((GLint) VPMatrixLocation, 1, false, (GLfloat *) & (MVPMatrix.m));
+
+    CHECKGL(glEnableVertexAttribArrayARB(VertexLocation));
+    CHECKGL(glVertexAttribPointerARB((GLuint) VertexLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer));
+
+    if (TextureCoord0Location != -1)
+    {
+      CHECKGL(glEnableVertexAttribArrayARB(TextureCoord0Location));
+      CHECKGL(glVertexAttribPointerARB((GLuint) TextureCoord0Location, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 4));
+    }
+
+    if (VertexColorLocation != -1)
+    {
+      CHECKGL(glEnableVertexAttribArrayARB(VertexColorLocation));
+      CHECKGL(glVertexAttribPointerARB((GLuint) VertexColorLocation, 4, GL_FLOAT, GL_FALSE, 48, VtxBuffer + 8));
+    }
+
+    CHECKGL(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
+
+    CHECKGL(glDisableVertexAttribArrayARB(VertexLocation));
+
+    if (TextureCoord0Location != -1)
+      CHECKGL(glDisableVertexAttribArrayARB(TextureCoord0Location));
+
+    if (VertexColorLocation != -1)
+      CHECKGL(glDisableVertexAttribArrayARB(VertexColorLocation));
+
+    ShaderProg->End();    
+  }
 }
 

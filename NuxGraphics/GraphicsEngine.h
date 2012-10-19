@@ -115,31 +115,37 @@ namespace nux
   typedef enum
   {
     LAYER_BLEND_MODE_NORMAL,
-    LAYER_BLEND_MODE_LIGHTEN,
+    // Darken Modes
     LAYER_BLEND_MODE_DARKEN,
     LAYER_BLEND_MODE_MULTIPLY,
-    LAYER_BLEND_MODE_AVERAGE,
-    LAYER_BLEND_MODE_ADD,
-    LAYER_BLEND_MODE_SUBTRACT,
-    LAYER_BLEND_MODE_DIFFERENCE,
-    LAYER_BLEND_MODE_NEGATION,
-    LAYER_BLEND_MODE_EXCLUSION,
+    LAYER_BLEND_MODE_COLOR_BURN,
+    LAYER_BLEND_MODE_LINEAR_BURN,
+    // Lighten Modes
+    LAYER_BLEND_MODE_LIGHTEN,
     LAYER_BLEND_MODE_SCREEN,
+    LAYER_BLEND_MODE_COLOR_DODGE,
+    LAYER_BLEND_MODE_LINEAR_DODGE,
+    // Constrast Modes
     LAYER_BLEND_MODE_OVERLAY,
     LAYER_BLEND_MODE_SOFT_LIGHT,
     LAYER_BLEND_MODE_HARD_LIGHT,
-    LAYER_BLEND_MODE_COLOR_DODGE,
-    LAYER_BLEND_MODE_LINEAR_DODGE,
-    LAYER_BLEND_MODE_COLOR_BURN,
-    LAYER_BLEND_MODE_LINEAR_BLUR,
-    LAYER_BLEND_MODE_LINEAR_LIGHT,
     LAYER_BLEND_MODE_VIVID_LIGHT,
+    LAYER_BLEND_MODE_LINEAR_LIGHT,
     LAYER_BLEND_MODE_PIN_LIGHT,
     LAYER_BLEND_MODE_HARD_MIX,
+    // Inversion Modes
+    LAYER_BLEND_MODE_DIFFERENCE,
+    LAYER_BLEND_MODE_EXCLUSION,
+    // Cancellation Modes
+    LAYER_BLEND_MODE_SUBTRACT,
+    // Others
+    LAYER_BLEND_MODE_AVERAGE,
+    LAYER_BLEND_MODE_ADD,
+    LAYER_BLEND_MODE_NEGATION,
     LAYER_BLEND_MODE_REFLECT,
     LAYER_BLEND_MODE_GLOW,
     LAYER_BLEND_MODE_PHOENIX,
-    LAYER_BLEND_MODE_OPACITY,
+    //LAYER_BLEND_MODE_OPACITY,
     LAYER_BLEND_MODE_LAST
   } LayerBlendMode;
 
@@ -187,7 +193,18 @@ namespace nux
     ///////////////////
 
     // Neutral
+    //! Render a textured quad.
+    /*!
+        Shader Output = ve4(tex.r, tex.g, tex.b, tex.a)
+    */
     void QRP_1Tex(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm& texxform, const Color& color0);
+    //! Render a textured quad. 
+    /*!
+        Multiply the shader rgb output with the texture alpha.
+        Shader Output = ve4(tex.r*tex.a, tex.g*tex.a, tex.b*tex.a, tex.a)
+    */
+    void QRP_1TexPremultiply(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm& texxform, const Color& color0);
+    void QRP_TexDesaturate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm& texxform, const Color& color0, float desaturation_factor);    
     void QRP_Pixelate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm& texxform, const Color& c0, int pixel_size);
     void QRP_Color(int x, int y, int width, int height, const Color& c0);
     void QRP_Color(int x, int y, int width, int height, const Color& c0, const Color& c1, const Color& c2, const Color& c3);
@@ -260,6 +277,7 @@ namespace nux
 
     // ASM
     void QRP_ASM_1Tex(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm& texxform, const Color& color0);
+    void QRP_ASM_1TexPremultiply(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm& texxform, const Color& color0);
     void QRP_ASM_Pixelate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm& texxform, const Color& c0, int pixel_size);
 
     void QRP_ASM_Color(int x, int y, int width, int height, const Color& c0);
@@ -379,6 +397,8 @@ namespace nux
     // GLSL
 
     void QRP_GLSL_1Tex(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm& texxform, const Color& c0);
+    void QRP_GLSL_1TexPremultiply(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm& texxform, const Color& c0);
+    void QRP_GLSL_TexDesaturate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> Tex0, TexCoordXForm& texxform, const Color& color0, float desaturation_factor);
     void QRP_GLSL_Pixelate(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> DeviceTexture, TexCoordXForm& texxform, const Color& c0, int pixel_size);
 
     void QRP_GLSL_Color(int x, int y, int width, int height, const Color& c0);
@@ -565,17 +585,19 @@ namespace nux
 //     Rect GetImageGeometry(UXStyleImageRef style);
 //     std::list<PainterImage*> m_PainterImageList;
 
-    int RenderColorText(ObjectPtr<FontTexture> Font, int x, int y, const NString& Str,
+    int RenderColorText(ObjectPtr<FontTexture> Font, int x, int y, std::string const& Str,
                          const Color& TextColor,
                          bool WriteAlphaChannel,
                          int NumCharacter);
 
-    int RenderColorTextLineStatic(ObjectPtr<FontTexture> Font, const PageBBox& pageSize, const NString& Str,
+    int RenderColorTextLineStatic(ObjectPtr<FontTexture> Font, const PageBBox& pageSize,
+                                  std::string const& Str,
                                    const Color& TextColor,
                                    bool WriteAlphaChannel,
                                    TextAlignment alignment);
 
-    int RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const PageBBox& pageSize, const NString& Str,
+    int RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const PageBBox& pageSize,
+                                std::string const& Str,
                                  const Color& TextColor,
                                  bool WriteAlphaChannel,
                                  const Color& SelectedTextColor,
@@ -623,6 +645,17 @@ namespace nux
     */
     void SetOrthographicProjectionMatrix(int viewport_width, int viewport_height);
 
+    //! Set orthographic projection matrix.
+    /*!
+        The default projection matrix used by nux.
+
+        @param left coordinate of viewport location.
+        @param right coordinate of viewport location.
+        @param top coordinate of viewport location.
+        @param bottom coordinate of viewport location.
+    */
+    void SetOrthographicProjectionMatrix(int left, int right, int bottom, int top);
+
     //! Reset the projection matrix to identity.
     void ResetProjectionMatrix();
 
@@ -635,15 +668,15 @@ namespace nux
 
     GpuRenderStates& GetRenderStates()
     {
-      return *_graphics_display.m_DeviceFactory->_gpu_render_states;
+      return *_graphics_display.m_DeviceFactory->gpu_render_states_;
     }
     void ResetRenderStates()
     {
-      _graphics_display.m_DeviceFactory->_gpu_render_states->ResetStateChangeToDefault();
+      _graphics_display.m_DeviceFactory->gpu_render_states_->ResetStateChangeToDefault();
     }
     void VerifyRenderStates()
     {
-      _graphics_display.m_DeviceFactory->_gpu_render_states->CheckStateChange();
+      _graphics_display.m_DeviceFactory->gpu_render_states_->CheckStateChange();
     }
 
     ObjectPtr<FontTexture> GetFont();
@@ -752,42 +785,52 @@ namespace nux
     */
     int BlendStackDepth();
 
-    //! Blends a color over a texture layer.
+    //! Blends a color layer over a texture.
     /*!
         Blends a color over a texture layer.
 
-        @param device_texture Background layer.
-        @param foreground_color Foreground layer.
+        @param bkg_device_texture Background texture.
+        @param frg_color Foreground color.
     */
-    void QRP_GLSL_ColorBlendOverTex(int x, int y, int width, int height,
-          ObjectPtr<IOpenGLBaseTexture> bkg_device_texture, TexCoordXForm& texxform, const Color& color0,
-          const Color& foreground_color,
-          LayerBlendMode layer_blend_mode);
+    void QRP_GLSL_ColorLayerOverTexture(int x, int y, int width, int height,
+      ObjectPtr<IOpenGLBaseTexture> bkg_device_texture, TexCoordXForm& bkg_texxform, const Color& bkg_color,
+      const Color& frg_color,
+      LayerBlendMode layer_blend_mode);
 
-    //! Blends a texture over a color layer.
+    //! Blends a texture layer over a color.
     /*!
         Blends a texture over a color layer.
 
-        @param background_color Background layer.
-        @param device_texture Foreground layer.
+        @param bkg_color Background color.
+        @param frg_device_texture Foreground texture.
     */
-    void QRP_GLSL_TexBlendOverColor(int x, int y, int width, int height,
-          const Color& background_color,
-          ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& texxform0, const Color& color0,
-          LayerBlendMode layer_blend_mode);
+    void QRP_GLSL_TextureLayerOverColor(int x, int y, int width, int height,
+      const Color& bkg_color,
+      ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& frg_texxform, const Color& frg_color,
+      LayerBlendMode layer_blend_mode);
 
-    //! Blends a texture over a texture layer.
+    //! Blends a texture layer over a texture.
     /*!
-        Blends a texture over a texture layer.
+        Uses a layer blending operation to render two textures.
 
-        @param bkg_device_texture Background layer.
-        @param frg_device_texture Foreground layer.
+        @param bkg_device_texture Background texture layer.
+        @param frg_device_texture Foreground texture layer.
     */
-    void QRP_GLSL_TexBlendOverTex(int x, int y, int width, int height,
-          ObjectPtr<IOpenGLBaseTexture> bkg_device_texture, TexCoordXForm& texxform0, const Color& color0,
-          ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& texxform1, const Color& color1,
-          LayerBlendMode layer_blend_mode);
+    void QRP_GLSL_TextureLayerOverTexture(int x, int y, int width, int height,
+      ObjectPtr<IOpenGLBaseTexture> bkg_device_texture, TexCoordXForm& bkg_texxform, const Color& bkg_color,
+      ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& frg_texxform, const Color& frg_color,
+      LayerBlendMode layer_blend_mode);
 
+    //! Blends a color layer over a color.
+    /*!
+        Uses a layer blending operation to render two colors.
+        @param bkg_color Background color layer.
+        @param frg_color Foreground color layer.
+    */
+    void QRP_GLSL_ColorLayerOverColor(int x, int y, int width, int height,
+      const Color& bkg_color,
+      const Color& frg_color,
+      LayerBlendMode layer_blend_mode);
 
   private:
 
@@ -816,6 +859,12 @@ namespace nux
     ObjectPtr<IOpenGLAsmShaderProgram> m_AsmTextureModColor;
     //! Same as m_AsmTextureModColor for rectangle textures.
     ObjectPtr<IOpenGLAsmShaderProgram> m_AsmTextureRectModColor;
+
+    void InitAsmTexturePremultiplyShader();
+    //! Render polygons with a texture modulated by a color.
+    ObjectPtr<IOpenGLAsmShaderProgram> m_AsmTexturePremultiplyModColor;
+    //! Same as m_AsmTextureModColor for rectangle textures.
+    ObjectPtr<IOpenGLAsmShaderProgram> m_AsmTexturePremultiplyRectModColor;
 
     void InitAsmPixelateShader();
     //! Render a pixelated texture over a polygon.
@@ -895,6 +944,10 @@ namespace nux
     //! Render polygons with a texture modulated by a color.
     ObjectPtr<IOpenGLShaderProgram> m_SlTextureModColor;
 
+    void InitSlTexturePremultiplyShader();
+    //! Render polygons with a premultiplied texture modulated by a color.
+    ObjectPtr<IOpenGLShaderProgram> m_SlTexturePremultiplyModColor;
+
     void InitSlPixelateShader();
     //! Render a pixelated texture over a polygon.
     ObjectPtr<IOpenGLShaderProgram> m_SLPixelate;
@@ -956,11 +1009,12 @@ namespace nux
     //! Gauss vertical filter.
     ObjectPtr<IOpenGLShaderProgram> _vertical_hq_gauss_filter_prog[NUX_MAX_GAUSSIAN_SIGMA];
 
-
-
     void InitSLColorMatrixFilter();
     //! Color matrix filter.
     ObjectPtr<IOpenGLShaderProgram> _color_matrix_filter_prog;
+
+    void InitSLDesaturation();
+    ObjectPtr<IOpenGLShaderProgram> desaturation_prog_;
 
     void InitSlBlendModes();
 
@@ -977,13 +1031,15 @@ namespace nux
     ObjectPtr<IOpenGLShaderProgram> blend_tex_color_prog_[LAYER_BLEND_MODE_LAST];
     ObjectPtr<IOpenGLShaderProgram> blend_color_tex_prog_[LAYER_BLEND_MODE_LAST];
     ObjectPtr<IOpenGLShaderProgram> blend_tex_tex_prog_[LAYER_BLEND_MODE_LAST];
+    ObjectPtr<IOpenGLShaderProgram> blend_color_color_prog_[LAYER_BLEND_MODE_LAST];
     
-    const char* const GetBlendModeBlendFunc(LayerBlendMode layer_blend_mode);
-    const char* const GetBlendModeString(LayerBlendMode layer_blend_mode);
+    std::string GetBlendModeBlendFunc(LayerBlendMode layer_blend_mode);
+    std::string GetBlendModeString(LayerBlendMode layer_blend_mode);
     
-    ObjectPtr <IOpenGLShaderProgram> GetColorBlendOverTexProgram(LayerBlendMode layer_blend_mode);
-    ObjectPtr <IOpenGLShaderProgram> GetTexBlendOverColorProgram(LayerBlendMode layer_blend_mode);
-    ObjectPtr <IOpenGLShaderProgram> GetBlendTexTexProgram(LayerBlendMode layer_blend_mode);
+    ObjectPtr<IOpenGLShaderProgram> GetColorBlendOverTexProgram(LayerBlendMode layer_blend_mode);
+    ObjectPtr<IOpenGLShaderProgram> GetTextureLayerOverColorProgram(LayerBlendMode layer_blend_mode);
+    ObjectPtr<IOpenGLShaderProgram> GetTextureLayerOverTextureProgram(LayerBlendMode layer_blend_mode);
+    ObjectPtr<IOpenGLShaderProgram> GetColorLayerOverColorProgram(LayerBlendMode layer_blend_mode);
 
 
 

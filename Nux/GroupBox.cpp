@@ -27,7 +27,7 @@
 namespace nux
 {
 
-  GroupBox::GroupBox(const char *Caption, NUX_FILE_LINE_DECL)
+  GroupBox::GroupBox(const char * /* Caption */, NUX_FILE_LINE_DECL)
     :   View(NUX_FILE_LINE_PARAM)
     ,   bCaptionAvailable(false)
     ,   m_layout(0)
@@ -45,7 +45,7 @@ namespace nux
 
   }
 
-  void GroupBox::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void GroupBox::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     graphics_engine.PushClippingRectangle(GetGeometry());
 
@@ -66,7 +66,7 @@ namespace nux
     {
       //GetPainter().Paint2DQuadColor(m_CaptionArea.GetGeometry(), COLOR_BACKGROUND_PRIMARY);
       //GetPainter().PaintTextLineStatic(m_CaptionArea.GetGeometry(), m_CaptionArea.GetCaptionString(), eAlignTextCenter);
-      GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_CaptionArea.GetGeometry(), m_CaptionArea.GetBaseString().GetTCharPtr(), GetTextColor(),
+      GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_CaptionArea.GetGeometry(), m_CaptionArea.GetBaseString(), GetTextColor(),
                                     true, eAlignTextCenter);
     }
 
@@ -90,11 +90,6 @@ namespace nux
     }
 
     graphics_engine.PopClippingRectangle();
-  }
-
-  void GroupBox::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
   }
 
   bool GroupBox::SetLayout(Layout *layout)
@@ -134,7 +129,7 @@ namespace nux
     }
   }
 
-  long GroupBox::PostLayoutManagement(long LayoutResult)
+  long GroupBox::PostLayoutManagement(long /* LayoutResult */)
   {
     // A Group box must tightly group its children.
     // So it must embrace the size that was compute for the composition layout.

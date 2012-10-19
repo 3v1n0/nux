@@ -42,7 +42,7 @@ namespace
     GPollFD event_poll_fd;
   };
 
-  static gboolean geis_source_prepare(GSource *source, gint *timeout)
+  static gboolean geis_source_prepare(GSource * /* source */, gint *timeout)
   {
     *timeout = -1;
     return FALSE;
@@ -65,7 +65,7 @@ namespace
     return retval;
   }
 
-  gboolean geis_source_dispatch(GSource *source, GSourceFunc  callback, gpointer user_data)
+  gboolean geis_source_dispatch(GSource * /* source */, GSourceFunc /* callback */, gpointer user_data)
   {
     GeisAdapter *geis_adapter = NUX_STATIC_CAST(GeisAdapter*, user_data);
     geis_adapter->ProcessGeisEvents();
@@ -77,6 +77,8 @@ namespace
     geis_source_prepare,
     geis_source_check,
     geis_source_dispatch,
+    NULL,
+    NULL,
     NULL
   };
 #endif

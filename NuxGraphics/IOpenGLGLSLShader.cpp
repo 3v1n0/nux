@@ -43,7 +43,7 @@ namespace nux
   NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLShaderProgram);
 
 
-  bool ExtractShaderString3(const NString &ShaderToken, const NString &ShaderSource, NString &RetSource, NString ShaderPreprocessorDefines)
+  bool ExtractShaderString3(const std::string &ShaderToken, const std::string &ShaderSource, std::string &RetSource, std::string ShaderPreprocessorDefines)
   {
     size_t lineStart = 0;
     size_t lineCount = 1;
@@ -57,7 +57,7 @@ namespace nux
     {
       size_t i;
 
-      for (i = 0; i < ShaderSource.Length(); i++)
+      for (i = 0; i < ShaderSource.length(); i++)
       {
         //Check if the starting character '[' (open bracket) is found at the beginning of the line
         // i counts the characters in the file. lineStart is equal to i at the beginning of the line.
@@ -66,10 +66,10 @@ namespace nux
           if (!startTokenFound)
           {
             //Test for the start token
-            if (ShaderSource.FindFirstOccurence(ShaderToken) == i)
+            if (ShaderSource.find(ShaderToken, 0) == i)
             {
               // Found the shader token
-              shaderStringStart = i + ShaderToken.Length();
+              shaderStringStart = i + ShaderToken.length();
               startTokenFound = true;
 
               //Set what line the shader was found on
@@ -104,13 +104,13 @@ namespace nux
       }
 
       //Assign the return string
-      RetSource = ShaderSource.GetSubString(shaderStringStart, i - shaderStringStart);
+      RetSource = ShaderSource.substr(shaderStringStart, i - shaderStringStart);
 
       //Add the line directive to the shader source. See the documentation for GLSL #line directive.
       // GLSL spec: The #version directive must occur in a shader before anything else, except for comments and white space.
-      size_t Pos = RetSource.FindFirstOccurence("#version");
+      size_t Pos = RetSource.find("#version", 0);
 
-      while (RetSource[Pos] != '\n')
+      while (Pos != std::string::npos && RetSource[Pos] != '\n')
       {
         if (RetSource[Pos] == 0)
           break;
@@ -124,17 +124,19 @@ namespace nux
       size_t EndOfLinePosition = 0;
       size_t LinePosition = 0;
 
-      while ((EndOfLinePosition = RetSource.FindNextOccurence('\n', EndOfLinePosition)) < Pos - 1)
+      while ((EndOfLinePosition = RetSource.find('\n', EndOfLinePosition)) < Pos - 1)
       {
         ++EndOfLinePosition;
         ++LinePosition;
       }
 
-      RetSource.Insert(Pos, NString::Printf("#line %u\n", LinePosition + shaderStartLine));
+      std::string s = "#line ";
+      s += std::to_string((unsigned long long)(LinePosition + shaderStartLine)) + "\n";
+      RetSource.insert(Pos, s);
 
       // Insert the preprocessor definitions before the #line directive
-      if (ShaderPreprocessorDefines.Length())
-        RetSource.Insert(Pos, ShaderPreprocessorDefines + NString('\n'));
+      if (ShaderPreprocessorDefines.length())
+        RetSource.insert(Pos, ShaderPreprocessorDefines + std::string("\n"));
 
       return true;
     }
@@ -146,26 +148,26 @@ namespace nux
     }
   }
 
-  static void InsertPreProcessorDefinitions(const NString &ShaderSource, NString &RetSource, NString &ShaderPreprocessorDefines)
+  static void InsertPreProcessorDefinitions(const std::string &ShaderSource, std::string &RetSource, std::string &ShaderPreprocessorDefines)
   {
     RetSource = ShaderSource;
 
-    if (ShaderPreprocessorDefines.Length() == 0)
+    if (ShaderPreprocessorDefines.length() == 0)
       return;
 
     // GLSL spec: The #version directive must occur in a shader before anything else, except for comments and white space.
-    size_t Pos = RetSource.FindFirstOccurence("#version");
+    size_t Pos = RetSource.find("#version", 0);
 
     if (Pos != tstring::npos)
     {
-      Pos = RetSource.FindNextOccurence('\n', Pos);
+      Pos = RetSource.find('\n', Pos);
 
-      if (Pos == tstring::npos)
+      if (Pos == std::string::npos)
       {
         // this is most likely an incorrect shader
-        Pos = RetSource.Size();
-        RetSource.Insert(Pos, NString('\n'));
-        Pos = RetSource.Size();
+        Pos = RetSource.size();
+        RetSource.insert(Pos, std::string("\n"));
+        Pos = RetSource.size();
       }
       else
       {
@@ -178,11 +180,11 @@ namespace nux
       Pos = 0;
     }
 
-    if (ShaderPreprocessorDefines.Length())
-      RetSource.Insert(Pos, ShaderPreprocessorDefines + NString('\n'));
+    if (ShaderPreprocessorDefines.length())
+      RetSource.insert(Pos, ShaderPreprocessorDefines + std::string("\n"));
   }
 
-  IOpenGLShader::IOpenGLShader(NString ShaderName, OpenGLResourceType ResourceType)
+  IOpenGLShader::IOpenGLShader(std::string ShaderName, OpenGLResourceType ResourceType)
     :   IOpenGLResource(ResourceType)
     ,   _ShaderName(ShaderName)
   {
@@ -194,7 +196,7 @@ namespace nux
 
   }
 
-  IOpenGLVertexShader::IOpenGLVertexShader(NString ShaderName)
+  IOpenGLVertexShader::IOpenGLVertexShader(std::string ShaderName)
     :   IOpenGLShader(ShaderName, RT_GLSL_VERTEXSHADER)
     ,   m_CompiledAndReady(false)
   {
@@ -213,8 +215,8 @@ namespace nux
   {
     nuxAssertMsg(ShaderCode, "[IOpenGLVertexShader::SetShaderCode] Invalid shader code.");
     NUX_RETURN_IF_NULL(ShaderCode);
-    NString ProcessedShaderSource;
-    NString Defines(VtxShaderPreprocessorDefines);
+    std::string ProcessedShaderSource;
+    std::string Defines(VtxShaderPreprocessorDefines);
     InsertPreProcessorDefinitions(ShaderCode, ProcessedShaderSource, Defines);
 
     m_CompiledAndReady = false;
@@ -223,7 +225,7 @@ namespace nux
 
   bool IOpenGLVertexShader::Compile()
   {
-    size_t CodeSize = _ShaderCode.Size();
+    size_t CodeSize = _ShaderCode.size();
 
     if (CodeSize == 0)
     {
@@ -232,7 +234,7 @@ namespace nux
 
     char *ShaderSource = new char[CodeSize+1];
     Memset(ShaderSource, 0, CodeSize + 1);
-    Memcpy(ShaderSource, _ShaderCode.GetTCharPtr(), CodeSize);
+    Memcpy(ShaderSource, _ShaderCode.c_str(), CodeSize);
 
     CHECKGL(glShaderSource(_OpenGLID, 1, (const GLcharARB **) &ShaderSource, NULL));
     delete [] ShaderSource;
@@ -272,7 +274,7 @@ namespace nux
     return(m_CompiledAndReady ? true : false);
   }
 
-  IOpenGLPixelShader::IOpenGLPixelShader(NString ShaderName)
+  IOpenGLPixelShader::IOpenGLPixelShader(std::string ShaderName)
     :   IOpenGLShader(ShaderName, RT_GLSL_PIXELSHADER)
     ,   m_CompiledAndReady(false)
 
@@ -292,8 +294,8 @@ namespace nux
   {
     nuxAssertMsg(ShaderCode, "[IOpenGLPixelShader::SetShaderCode] Invalid shader code.");
     NUX_RETURN_IF_NULL(ShaderCode);
-    NString ProcessedShaderSource;
-    NString Defines(FrgShaderPreprocessorDefines);
+    std::string ProcessedShaderSource;
+    std::string Defines(FrgShaderPreprocessorDefines);
     InsertPreProcessorDefinitions(ShaderCode, ProcessedShaderSource, Defines);
 
     m_CompiledAndReady = false;
@@ -303,7 +305,7 @@ namespace nux
   bool IOpenGLPixelShader::Compile()
   {
 
-    GLint CodeSize = (GLint) _ShaderCode.Size();
+    GLint CodeSize = (GLint) _ShaderCode.size();
 
     if (CodeSize == 0)
     {
@@ -312,7 +314,7 @@ namespace nux
 
     char *ShaderSource = new char[CodeSize+1];
     Memset(ShaderSource, 0, CodeSize + 1);
-    Memcpy(ShaderSource, _ShaderCode.m_string.c_str(), CodeSize);
+    Memcpy(ShaderSource, _ShaderCode.c_str(), CodeSize);
     CHECKGL(glShaderSource(_OpenGLID, 1, (const GLcharARB **) &ShaderSource, &CodeSize));
     delete [] ShaderSource;
 
@@ -354,7 +356,7 @@ namespace nux
   }
 
 #if 0
-  IOpenGLGeometryShader::IOpenGLGeometryShader(NString ShaderName)
+  IOpenGLGeometryShader::IOpenGLGeometryShader(std::string ShaderName)
     :   IOpenGLShader(ShaderName, RT_GLSL_GEOMETRYSHADER)
     ,   m_CompiledAndReady(false)
 
@@ -374,8 +376,8 @@ namespace nux
   {
     nuxAssertMsg(ShaderCode, "[IOpenGLGeometryShader::SetShaderCode] Invalid shader code.");
     NUX_RETURN_IF_NULL(ShaderCode);
-    NString ProcessedShaderSource;
-    NString Defines(GeometryShaderPreprocessorDefines);
+    std::string ProcessedShaderSource;
+    std::string Defines(GeometryShaderPreprocessorDefines);
     InsertPreProcessorDefinitions(ShaderCode, ProcessedShaderSource, Defines);
 
     m_CompiledAndReady = false;
@@ -449,7 +451,7 @@ namespace nux
   }
 #endif
 
-  IOpenGLShaderProgram::IOpenGLShaderProgram(NString ShaderProgramName)
+  IOpenGLShaderProgram::IOpenGLShaderProgram(std::string ShaderProgramName)
     :   IOpenGLResource(RT_GLSL_SHADERPROGRAM)
     ,   _FirstParameter(0)
     ,   m_CompiledAndReady(false)
@@ -476,7 +478,7 @@ namespace nux
   {
     nuxAssertMsg(ShaderFileName, "[IOpenGLShaderProgram::LoadIShaderFile] Invalid shader file name.");
     NUX_RETURN_IF_NULL(ShaderFileName);
-    NString SourceCode;
+    std::string SourceCode;
     LoadFileToString(SourceCode, ShaderFileName);
     LoadIShader(&SourceCode[0], VtxShaderPreprocessorDefines, FrgShaderPreprocessorDefines);
   }
@@ -485,10 +487,10 @@ namespace nux
   {
     nuxAssertMsg(ShaderCode, "[IOpenGLShaderProgram::LoadIShader] Invalid shader code.");
     NUX_RETURN_IF_NULL(ShaderCode);
-    NString VertexShaderSource;
-    ExtractShaderString3("[Vertex Shader]", ShaderCode, VertexShaderSource, NString(VtxShaderPreprocessorDefines));
-    NString PixelShaderSource;
-    ExtractShaderString3("[Fragment Shader]", ShaderCode, PixelShaderSource, NString(FrgShaderPreprocessorDefines));
+    std::string VertexShaderSource;
+    ExtractShaderString3("[Vertex Shader]", ShaderCode, VertexShaderSource, std::string(VtxShaderPreprocessorDefines));
+    std::string PixelShaderSource;
+    ExtractShaderString3("[Fragment Shader]", ShaderCode, PixelShaderSource, std::string(FrgShaderPreprocessorDefines));
 
     ObjectPtr<IOpenGLVertexShader> vs = GetGraphicsDisplay()->GetGpuDevice()->CreateVertexShader(); //new IOpenGLVertexShader;
     ObjectPtr<IOpenGLPixelShader> ps = GetGraphicsDisplay()->GetGpuDevice()->CreatePixelShader(); //new IOpenGLPixelShader;
@@ -510,8 +512,13 @@ namespace nux
     NUX_RETURN_IF_NULL(glslshader);
     ObjectPtr<IOpenGLVertexShader> vs = GetGraphicsDisplay()->GetGpuDevice()->CreateVertexShader(); //new IOpenGLVertexShader;
 
-    NString ProcessedShaderSource;
-    NString Defines(VtxShaderPreprocessorDefines);
+    std::string ProcessedShaderSource;
+
+    if(!VtxShaderPreprocessorDefines)
+    {
+      VtxShaderPreprocessorDefines = "";
+    }
+    std::string Defines(VtxShaderPreprocessorDefines);
     InsertPreProcessorDefinitions(glslshader, ProcessedShaderSource, Defines);
 
     vs->SetShaderCode(glslshader);
@@ -525,8 +532,13 @@ namespace nux
     NUX_RETURN_IF_NULL(glslshader);
     ObjectPtr<IOpenGLPixelShader> ps = GetGraphicsDisplay()->GetGpuDevice()->CreatePixelShader(); //new IOpenGLPixelShader;
 
-    NString ProcessedShaderSource;
-    NString Defines(FrgShaderPreprocessorDefines);
+    std::string ProcessedShaderSource;
+
+    if (!FrgShaderPreprocessorDefines)
+    {
+      FrgShaderPreprocessorDefines = "";
+    }
+    std::string Defines(FrgShaderPreprocessorDefines);
     InsertPreProcessorDefinitions(glslshader, ProcessedShaderSource, Defines);
 
     ps->SetShaderCode(glslshader);
@@ -607,7 +619,7 @@ namespace nux
       {
         if (ShaderObjectList[i]->Compile() == false)
         {
-          nuxDebugMsg("[IOpenGLShaderProgram::Link] Attached shader %s does not compile with program: %s.", ShaderObjectList[i]->_ShaderName.GetTCharPtr(), _ShaderProgramName.GetTCharPtr());
+          nuxDebugMsg("[IOpenGLShaderProgram::Link] Attached shader %s does not compile with program: %s.", ShaderObjectList[i]->_ShaderName.c_str(), _ShaderProgramName.c_str());
         }
       }
 
@@ -793,13 +805,13 @@ namespace nux
 
     while (m_CompiledAndReady && parameter)
     {
-      int location = glGetUniformLocationARB(_OpenGLID, TCHAR_TO_ANSI(parameter->m_Name.GetTCharPtr()));
-      CHECKGL_MSG( glGetUniformLocationARB(_OpenGLID, TCHAR_TO_ANSI(parameter->m_Name.GetTCharPtr())));
+      int location = glGetUniformLocationARB(_OpenGLID, TCHAR_TO_ANSI(parameter->m_Name.c_str()));
+      CHECKGL_MSG( glGetUniformLocationARB(_OpenGLID, TCHAR_TO_ANSI(parameter->m_Name.c_str())));
 
       //nuxDebugMsg("[IOpenGLShaderProgram::CheckUniformLocation] Location index: %d", location);
       if (location == -1 && (!parameter->m_bIsOptional))
       {
-        nuxDebugMsg("[IOpenGLShaderProgram::CheckUniformLocation] Couldn't find shader program parameter %s \n", parameter->m_Name.GetTCharPtr());
+        nuxDebugMsg("[IOpenGLShaderProgram::CheckUniformLocation] Couldn't find shader program parameter %s \n", parameter->m_Name.c_str());
         nuxAssert(0);
       }
 

@@ -23,6 +23,9 @@
 #include "Nux.h"
 #include "DoubleValidator.h"
 
+#include <sstream>
+#include <iomanip>
+
 namespace nux
 {
 
@@ -118,9 +121,8 @@ namespace nux
     return d;
   }
 
-  void DoubleValidator::Alternative(const char *str)
+  void DoubleValidator::Alternative(const char * /* str */)
   {
-    str = "0.0";
   }
 
   void DoubleValidator::SetDecimals(int dec)
@@ -128,10 +130,11 @@ namespace nux
     m_Decimals = Clamp<int> (dec, 0, 13);
   }
 
-  NString DoubleValidator::ToString(double d)
+  std::string DoubleValidator::ToString(double d)
   {
-    NString Prec = NString("%.") + NString::Printf("%d", m_Decimals) + NString("f");
-    return NString::Printf(Prec.GetTCharPtr(), d);
+    std::stringstream s;
+    s << std::setprecision(m_Decimals) << d;
+    return s.str();
   }
 
   double DoubleValidator::ToDouble(const char *str)

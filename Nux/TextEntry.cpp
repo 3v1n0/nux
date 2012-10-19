@@ -27,9 +27,9 @@
 #include "NuxGraphics/CairoGraphics.h"
 
 #include "TextEntry.h"
-#include "TextEntryComposeSeqs.h"
 
 #if defined(NUX_OS_LINUX)
+#include "TextEntryComposeSeqs.h"
 #include <X11/cursorfont.h>
 #include "InputMethodIBus.h"
 #endif
@@ -54,9 +54,8 @@ namespace nux
 
   static unsigned long long GetCurrentTime()
   {
-    GTimeVal tv;
-    g_get_current_time(&tv);
-    return static_cast<unsigned long long>(tv.tv_sec) * 1000 + tv.tv_usec / 1000;
+    gint64 micro_secs = g_get_real_time();
+    return static_cast<unsigned long long>(micro_secs / 1000);
   }
 
   static std::string CleanupLineBreaks(const char *source)
@@ -187,6 +186,7 @@ namespace nux
 
     SetAcceptKeyboardEvent(true);
     EnableDoubleClick(true);
+    SetPasswordChar("*");
   }
 
   TextEntry::~TextEntry()
@@ -220,10 +220,8 @@ namespace nux
 
   void TextEntry::GeometryChanged()
   {
-
       update_canvas_ = true;
-      View::GeometryChanged();
-
+      View::GeometryChanged(true, true);
   }
 
   Area* TextEntry::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
@@ -233,7 +231,7 @@ namespace nux
     return area;
   }
 
-  void TextEntry::ProcessMouseEvent(int event_type, int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void TextEntry::ProcessMouseEvent(int event_type, int x, int y, int /* dx */, int /* dy */, unsigned long button_flags, unsigned long key_flags)
   {
     int X = static_cast<int>(x /*round(event.GetX())*/) - kInnerBorderX - scroll_offset_x_;
     int Y = static_cast<int>(y /*round(event.GetY())*/) - kInnerBorderY - scroll_offset_y_;
@@ -301,7 +299,7 @@ namespace nux
     unsigned long    keysym    ,   /*event keysym*/
     unsigned long    state     ,   /*event state*/
     const char*      character ,   /*character*/
-    unsigned short   keyCount      /*key repeat count*/)
+    unsigned short   /* keyCount */      /*key repeat count*/)
   {
 #if defined(NUX_OS_LINUX)
     if (im_running())
@@ -525,7 +523,7 @@ namespace nux
     ProcessMouseEvent(NUX_MOUSE_MOVE, x, y, dx, dy, button_flags, key_flags);
   }
 
-  void TextEntry::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void TextEntry::RecvMouseEnter(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
 #if defined(NUX_OS_LINUX)
     if (caret_cursor_ == None)
@@ -542,7 +540,7 @@ namespace nux
 #endif
   }
 
-  void TextEntry::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void TextEntry::RecvMouseLeave(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
 #if defined(NUX_OS_LINUX)
     if (caret_cursor_ != None)
@@ -588,7 +586,7 @@ namespace nux
     FocusOutx();
   }
 
-  void TextEntry::Draw(GraphicsEngine& gfxContext, bool forceDraw)
+  void TextEntry::Draw(GraphicsEngine& gfxContext, bool /* forceDraw */)
   {
     MainDraw();
     Geometry base = GetGeometry();
@@ -619,20 +617,16 @@ namespace nux
     gfxContext.PopClippingRectangle();
   }
 
-  void TextEntry::DrawContent(GraphicsEngine& gfxContext, bool forceDraw)
+  void TextEntry::DrawContent(GraphicsEngine& /* gfxContext */, bool /* forceDraw */)
   {
     //MainDraw();
-  }
-
-  void TextEntry::PostDraw(GraphicsEngine& gfxContext, bool forceDraw)
-  {
-    // intentionally left empty
   }
 
   TextEntry::SearchState TextEntry::GetCompositionForList(std::vector<unsigned long> const& input, std::string& composition)
   {
     SearchState search_state = SearchState::NO_MATCH;
 
+#if defined(NUX_OS_LINUX)
     if (input.size() >= ComposeSequence::MAX_SYMBOLS)
       return search_state;
 
@@ -670,6 +664,7 @@ namespace nux
         }
       }
     }
+#endif
 
     return search_state;
   }
@@ -2329,7 +2324,7 @@ namespace nux
     QueueRefresh(true, true);
   }
 
-  bool TextEntry::InspectKeyEvent(unsigned int eventType, unsigned int key_sym, const char* character)
+  bool TextEntry::InspectKeyEvent(unsigned int /* eventType */, unsigned int /* key_sym */, const char* /* character */)
   {
     nux::Event const& cur_event = GetGraphicsDisplay()->GetCurrentEvent();
 
@@ -2557,12 +2552,10 @@ namespace nux
   {
     if (c == NULL || *c == 0 || !IsLegalUTF8Char(c, GetUTF8CharLength(c)))
     {
-      SetVisibility(true);
       password_char_.clear();
     }
     else
     {
-      SetVisibility(false);
       password_char_.assign(c, GetUTF8CharLength(c));
     }
     QueueRefresh(true, true);
@@ -2573,8 +2566,13 @@ namespace nux
     return password_char_;
   }
 
-  bool TextEntry::IsPasswordMode() const
+  void TextEntry::SetPasswordMode(bool visible)
   {
-    return visible_;
+    SetVisibility(!visible);
+  }
+
+  bool TextEntry::PasswordMode() const
+  {
+    return !visible_;
   }
 }

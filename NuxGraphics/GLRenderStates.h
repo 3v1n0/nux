@@ -264,8 +264,8 @@ namespace nux
 
   private:
 
-    GpuBrand _gpu_brand;
-    GpuInfo *_gpu_info;
+    GpuBrand gpu_brand_;
+    GpuInfo* gpu_info_;
 
     inline void HW__EnableAlphaTest(unsigned int b);
 
@@ -963,11 +963,11 @@ namespace nux
       (BlendOpAlpha_ == GL_MAX),
       "Error(HW__SetAlphaBlendOp): Invalid Blend Equation RenderState");
 
-    if (_gpu_info->SupportOpenGL20())
+    if (gpu_info_->SupportOpenGL20())
     {
       CHECKGL(glBlendEquationSeparate(BlendOpRGB_, BlendOpAlpha_));
     }
-    else if (_gpu_info->Support_EXT_Blend_Equation_Separate())
+    else if (gpu_info_->Support_EXT_Blend_Equation_Separate())
     {
       CHECKGL(glBlendEquationSeparateEXT(BlendOpRGB_, BlendOpAlpha_));
     }
@@ -1138,7 +1138,7 @@ namespace nux
   {
     if (b)
     {
-      if (_gpu_brand == GPU_BRAND_AMD)
+      if (gpu_brand_ == GPU_BRAND_AMD)
       {
         CHECKGL(glEnable(GL_STENCIL_TEST));
       }
@@ -1149,7 +1149,7 @@ namespace nux
     }
     else
     {
-      if (_gpu_brand == GPU_BRAND_AMD)
+      if (gpu_brand_ == GPU_BRAND_AMD)
       {
         CHECKGL(glDisable(GL_STENCIL_TEST));
       }
@@ -1215,7 +1215,7 @@ namespace nux
       (Func_ == GL_ALWAYS),
       "Error(HW__SetBackFaceStencilFunc): Invalid Stencil Function RenderState");
 
-    if (_gpu_brand == GPU_BRAND_AMD)
+    if (gpu_brand_ == GPU_BRAND_AMD)
     {
       CHECKGL(glStencilFuncSeparateATI(Func_/*Front function*/, Func_/*Back function*/, Ref_, Mask_)); // incorrect
     }
@@ -1268,7 +1268,7 @@ namespace nux
       (ZPassOp_ == GL_INVERT),
       "Error(HW__SetFrontFaceStencilOp): Invalid ZPassOp RenderState");
 
-    if (_gpu_brand == GPU_BRAND_AMD)
+    if (gpu_brand_ == GPU_BRAND_AMD)
     {
       CHECKGL(glStencilOpSeparateATI(GL_FRONT, FailOp_, ZFailOp_, ZPassOp_));
     }
@@ -1321,7 +1321,7 @@ namespace nux
       (ZPassOp_ == GL_INVERT),
       "Error(HW__SetBackFaceStencilOp): Invalid ZPassOp RenderState");
 
-    if (_gpu_brand == GPU_BRAND_AMD)
+    if (gpu_brand_ == GPU_BRAND_AMD)
     {
       CHECKGL(glStencilOpSeparateATI(GL_BACK, FailOp_, ZFailOp_, ZPassOp_));
     }

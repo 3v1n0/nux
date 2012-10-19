@@ -147,7 +147,7 @@ void NuxAutomatedTestFramework::ViewSendMouseDown(nux::View *view, int button)
   SendFakeMouseEvent(button, true);
 }
 
-void NuxAutomatedTestFramework::ViewSendMouseUp(nux::View *view, int button)
+void NuxAutomatedTestFramework::ViewSendMouseUp(nux::View * /* view */, int button)
 {
   //   nux::Rect r = view->GetAbsoluteGeometry();
   // r.OffsetPosition(window_x_, window_y_);

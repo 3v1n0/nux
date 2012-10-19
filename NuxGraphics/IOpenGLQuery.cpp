@@ -48,8 +48,8 @@ namespace nux
 // These are considered successful return values.
   int IOpenGLQuery::GetData(
     int *pData,
-    unsigned int Size,
-    unsigned int GetDataFlags
+    unsigned int /* Size */,
+    unsigned int /* GetDataFlags */
   )
   {
 #ifndef NUX_OPENGLES_20

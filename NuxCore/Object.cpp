@@ -30,6 +30,16 @@ namespace nux
 namespace
 {
 logging::Logger logger("nux.core.object");
+
+bool debug_object_allocation_stack()
+{
+  // If the extra long environment variable is set, then every object that is
+  // created will record it's backtrace during allocation.  This will slow
+  // down the library, so only use for local debugging.
+  static bool extra_debugging(::getenv("NUX_DEBUG_OBJECT_ALLOCATION_STACK"));
+  return extra_debugging;
+}
+
 }
 
   NUX_IMPLEMENT_ROOT_OBJECT_TYPE (Trackable);
@@ -55,27 +65,36 @@ logging::Logger logger("nux.core.object");
     int index = 0;
 
 #if defined(NUX_OS_WINDOWS)
-  // Visual Studio does not support range based for loops.
-  for (AllocationList::iterator ptr = _allocation_list.begin(); ptr != _allocation_list.end(); ++ptr)
-  {
-    Object* obj = static_cast<Object*>(*ptr);
-    
-    std::stringstream sout;
-    sout << "\t" << ++index << " Undeleted object: Type "
-      << obj->Type().name << ", "
-      << obj->GetAllocationLoation() << "\n";
+    // Visual Studio does not support range based for loops.
+    for (AllocationList::iterator ptr = _allocation_list.begin();
+         ptr != _allocation_list.end(); ++ptr)
+    {
+      Object* obj = static_cast<Object*>(*ptr);
 
-    OutputDebugString (sout.str().c_str());
+      std::stringstream sout;
+      sout << "\t" << ++index << " Undeleted object: Type "
+           << obj->GetTypeName() << ", "
+           << obj->GetAllocationLocation() << "\n";
+      if (debug_object_allocation_stack())
+      {
+        sout << obj->allocation_stacktrace_ << "\n\n";
+      }
 
-    std::cerr << sout.str().c_str();
-  }
+      OutputDebugString(sout.str().c_str());
+
+      std::cerr << sout.str().c_str();
+    }
 #else
     for (auto ptr : _allocation_list)
     {
       Object* obj = static_cast<Object*>(ptr);
       std::cerr << "\t" << ++index << " Undeleted object: Type "
-                << obj->Type().name << ", "
-                << obj->GetAllocationLoation() << "\n";
+                << obj->GetTypeName() << ", "
+                << obj->GetAllocationLocation() << "\n";
+      if (debug_object_allocation_stack())
+      {
+        std::cerr << obj->allocation_stacktrace_ << "\n\n";
+      }
     }
 #endif
 #endif
@@ -186,6 +205,13 @@ logging::Logger logger("nux.core.object");
       GObjectStats._allocation_list.erase (i);
       ::operator delete (ptr);
     }
+#ifdef NUX_DEBUG
+    else
+    {
+      // Complain quite loudly as this should never happen.
+      LOG_ERROR(logger) << "Attempting to delete a pointer we can't find.";
+    }
+#endif
   }
 
   bool Trackable::IsHeapAllocated()
@@ -222,13 +248,29 @@ logging::Logger logger("nux.core.object");
 //////////////////////////////////////////////////////////////////////
 
   Object::Object(bool OwnTheReference, NUX_FILE_LINE_DECL)
-    : allocation_file_name_(__Nux_FileName__)
-    , allocation_line_number_(__Nux_LineNumber__)
-    , reference_count_(new NThreadSafeCounter())
+    : reference_count_(new NThreadSafeCounter())
     , objectptr_count_(new NThreadSafeCounter())
   {
     reference_count_->Set(1);
     SetOwnedReference(OwnTheReference);
+#ifdef NUX_DEBUG
+    std::ostringstream sout;
+    if (__Nux_FileName__)
+      sout << __Nux_FileName__;
+    else
+      sout << "<unspecified file>";
+    sout << ":" << __Nux_LineNumber__;
+    allocation_location_ = sout.str();
+
+ #if defined(NUX_OS_LINUX)
+    if (debug_object_allocation_stack()) {
+      allocation_stacktrace_ = logging::Backtrace();
+    }
+ #endif
+#else
+    __Nux_FileName__ = __Nux_FileName__;
+    __Nux_LineNumber__ = __Nux_LineNumber__;
+#endif
   }
 
   Object::~Object()
@@ -244,7 +286,7 @@ logging::Logger logger("nux.core.object");
       {
         LOG_WARN(logger) << "Invalid object destruction, still has "
                          << reference_count_->GetValue() << " references."
-                         << "\nObject allocated at: " << GetAllocationLoation() << "\n";
+                         << "\nObject allocated at: " << GetAllocationLocation() << "\n";
       }
     }
     delete reference_count_;
@@ -256,7 +298,7 @@ logging::Logger logger("nux.core.object");
     if (!IsHeapAllocated())
     {
       LOG_WARN(logger) << "Trying to reference an object that was not heap allocated."
-                       << "\nObject allocated at: " << GetAllocationLoation() << "\n";
+                       << "\nObject allocated at: " << GetAllocationLocation() << "\n";
       return false;
     }
 
@@ -266,7 +308,6 @@ logging::Logger logger("nux.core.object");
       // The ref count remains at 1. Exit the method.
       return true;
     }
-
     reference_count_->Increment();
     return true;
   }
@@ -276,7 +317,7 @@ logging::Logger logger("nux.core.object");
     if (!IsHeapAllocated())
     {
       LOG_WARN(logger) << "Trying to un-reference an object that was not heap allocated."
-                       << "\nObject allocated at: " << GetAllocationLoation() << "\n";
+                       << "\nObject allocated at: " << GetAllocationLocation() << "\n";
       return false;
     }
 
@@ -288,7 +329,10 @@ logging::Logger logger("nux.core.object");
       // it.  This method should not be called directly in that case.
       LOG_WARN(logger) << "There are ObjectPtr hosting this object. "
                        << "Release all of them to destroy this object. "
-                       << "\nObject allocated at: " << GetAllocationLoation() << "\n";
+                       << "\nObject allocated at: " << GetAllocationLocation() << "\n";
+ #if defined(NUX_OS_LINUX)
+      LOG_WARN(logger) << "UnReference occuring here: \n" << logging::Backtrace();
+ #endif
       return false;
     }
 
@@ -328,28 +372,40 @@ logging::Logger logger("nux.core.object");
 
   void Object::Destroy()
   {
+#ifdef NUX_DEBUG
     static int delete_depth = 0;
     ++delete_depth;
-    const char* obj_type = this->Type().name;
+    std::string obj_type = GetTypeName();
     LOG_TRACE(logger) << "Depth: " << delete_depth << ", about to delete "
-                      << obj_type << " allocated at " << GetAllocationLoation();
+                      << obj_type << " allocated at " << GetAllocationLocation();
+#endif
     // Weak smart pointers will clear their pointers when they get this signal.
     object_destroyed.emit(this);
     delete this;
+#ifdef NUX_DEBUG
     LOG_TRACE(logger) << "Depth: " << delete_depth << ", delete successful for " << obj_type;
     --delete_depth;
+#endif
   }
 
-  int Object::GetReferenceCount() const
-  {
-    return reference_count_->GetValue();
-  }
-
-std::string Object::GetAllocationLoation() const
+int Object::GetReferenceCount() const
 {
-  std::ostringstream sout;
-  sout << allocation_file_name_ << ":" << allocation_line_number_;
-  return sout.str();
+  return reference_count_->GetValue();
+}
+
+int Object::ObjectPtrCount() const
+{
+  return objectptr_count_->GetValue();
+}
+
+std::string Object::GetAllocationLocation() const
+{
+  return allocation_location_;
+}
+
+std::string Object::GetTypeName() const
+{
+  return Type().name;
 }
 
 }

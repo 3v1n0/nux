@@ -26,6 +26,8 @@
 #include "DoubleValidator.h"
 #include "NumericValuator.h"
 
+#include <string>
+
 namespace nux
 {
 
@@ -47,7 +49,7 @@ namespace nux
   void NumericValuator::InitializeWidgets()
   {
     m_EditLine->SetValidator(&m_DoubleValidator);
-    m_EditLine->SetText(NString::Printf("%d", m_DoubleValidator.GetMinimum()));
+    m_EditLine->SetText(std::to_string((long double)m_DoubleValidator.GetMinimum()));
 
     m_EditLine->SetMinimumSize(2 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     m_EditLine->SetGeometry(Geometry(0, 0, 2 * DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT));
@@ -70,7 +72,7 @@ namespace nux
     hlayout = new HLayout(NUX_TRACKER_LOCATION);
   }
 
-  void NumericValuator::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void NumericValuator::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
 
@@ -89,11 +91,6 @@ namespace nux
     m_EditLine->ProcessDraw(graphics_engine, force_draw);
   }
 
-  void NumericValuator::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
-  }
-
   void NumericValuator::SetValue(float value)
   {
     m_fValue = value;
@@ -104,7 +101,7 @@ namespace nux
     if (m_fValue > m_DoubleValidator.GetMaximum())
       m_fValue = m_DoubleValidator.GetMaximum();
 
-    m_EditLine->SetText(NString::Printf("%f", m_fValue));
+    m_EditLine->SetText(std::to_string((long double)m_fValue));
   }
 
   float NumericValuator::GetValue() const
@@ -152,25 +149,25 @@ namespace nux
   void NumericValuator::ImplementValidateEntry()
   {
     double ret = 0;
-    ret = CharToDouble(m_EditLine->GetCleanText().GetTCharPtr());
+    ret = CharToDouble(m_EditLine->GetCleanText().c_str());
     {
       m_fValue = ret;
 
       if (m_fValue < m_DoubleValidator.GetMinimum())
       {
         m_fValue = m_DoubleValidator.GetMinimum();
-        m_EditLine->SetText(NString::Printf("%f", m_fValue));
+        m_EditLine->SetText(std::to_string((long double)m_fValue));
       }
 
       if (m_fValue > m_DoubleValidator.GetMaximum())
       {
         m_fValue = m_DoubleValidator.GetMaximum();
-        m_EditLine->SetText(NString::Printf("%f", m_fValue));
+        m_EditLine->SetText(std::to_string((long double)m_fValue));
       }
     }
 //     else
 //     {
-//         m_EditLine->SetText(NString::Printf("%f", m_fValue));
+//         m_EditLine->SetText(std::string::Printf("%f", m_fValue));
 //     }
   }
 

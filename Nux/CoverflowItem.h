@@ -23,7 +23,7 @@
 #include <memory>
 #include <string>
 
-#include <Nux/Nux.h>
+#include "Nux.h"
 #include <sigc++/sigc++.h>
 
 namespace nux
@@ -41,7 +41,7 @@ public:
   Property<ObjectPtr<BaseTexture> > text_texture;
 
   virtual ObjectPtr<BaseTexture> GetTexture() const = 0;
-  virtual void Activate(int button) {}
+  virtual void Activate(int /* button */) {}
 };
 
 }

@@ -89,7 +89,7 @@ namespace nux
 
     boost::shared_ptr<XIMController> m_xim_controller;
 
-    int         m_ParentWindow;
+    int         parent_window_;
 #ifndef NUX_OPENGLES_20
     GLXContext  m_GLCtx;
     GLXFBConfig _fb_config;
@@ -122,23 +122,23 @@ namespace nux
 
     char m_WindowClassName[256];
     GLuint      m_PixelFormat;      // Holds The Results After Searching For A Match
-    NString     m_WindowTitle;
+    std::string window_title_;
 
     // size, position
-    Size m_ViewportSize;
-    Size m_WindowSize;
+    Size viewport_size_;
+    Size window_size_;
     Point m_WindowPosition;
 
-    // surface attibute;
-    bool m_Fullscreen;
-    unsigned int m_ScreenBitDepth;
+    //! Full screen mode.
+    bool fullscreen_;
+    //! Screen bit depth
+    unsigned int screen_bit_depth_;
 
-    // verifiy that the interface is properly created
-    bool m_GfxInterfaceCreated;
+    //! State of the graphics interface.
+    bool gfx_interface_created_;
 
     // Device information
     void GetDisplayInfo();
-    int m_BestMode;
 
     bool m_CreatedFromForeignWindow;
     Time last_click_time_;
@@ -165,8 +165,6 @@ namespace nux
     {
       return m_X11Display;
     }
-    // Device
-    int m_num_device_modes;
 
     // Event object
     Event *m_pEvent;
@@ -180,7 +178,7 @@ namespace nux
         @param WindowHeight     Initial window height.
         @param Style            The window style.
         @param ParentWindow     The parent window.
-        @param FullscreenFlag   Full screen flag.
+        @param fullscreen_flag  Full screen flag.
     */
     bool CreateOpenGLWindow(
       const char *WindowTitle,
@@ -188,7 +186,7 @@ namespace nux
       unsigned int WindowHeight,
       WindowStyle Style,
       const GraphicsDisplay *Parent,
-      bool FullscreenFlag = false,
+      bool fullscreen_flag = false,
       bool create_rendering_data = true);
 
     //! Create a GLWindow from a display and window created externally.
@@ -274,7 +272,7 @@ namespace nux
     }
     bool IsChildWindow() const
     {
-      return m_ParentWindow != 0;
+      return parent_window_ != 0;
     }
 
     // Return true if VSync swap control is available
@@ -433,28 +431,28 @@ namespace nux
     }
 #endif
 
-    NString FindResourceLocation(const char *ResourceFileName, bool ErrorOnFail = false);
-    NString FindUITextureLocation(const char *ResourceFileName, bool ErrorOnFail = false);
-    NString FindShaderLocation(const char *ResourceFileName, bool ErrorOnFail = false);
-    NString FindFontLocation(const char *ResourceFileName, bool ErrorOnFail = false);
+    std::string FindResourceLocation(const char *ResourceFileName, bool ErrorOnFail = false);
+    std::string FindUITextureLocation(const char *ResourceFileName, bool ErrorOnFail = false);
+    std::string FindShaderLocation(const char *ResourceFileName, bool ErrorOnFail = false);
+    std::string FindFontLocation(const char *ResourceFileName, bool ErrorOnFail = false);
 
-    const std::vector<NString>& GetFontSearchPath() const
+    const std::vector<std::string>& GetFontSearchPath() const
     {
       return m_FontSearchPath;
     }
-    const std::vector<NString>& GetShaderSearchPath() const
+    const std::vector<std::string>& GetShaderSearchPath() const
     {
       return m_ShaderSearchPath;
     }
-    const std::vector<NString>& GetUITextureSearchPath() const
+    const std::vector<std::string>& GetUITextureSearchPath() const
     {
       return m_UITextureSearchPath;
     }
 
   private:
-    std::vector<NString> m_FontSearchPath;
-    std::vector<NString> m_ShaderSearchPath;
-    std::vector<NString> m_UITextureSearchPath;
+    std::vector<std::string> m_FontSearchPath;
+    std::vector<std::string> m_ShaderSearchPath;
+    std::vector<std::string> m_UITextureSearchPath;
     FilePath m_ResourcePathLocation;
 
     GraphicsDisplay();

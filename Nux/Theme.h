@@ -118,7 +118,7 @@ namespace nux
 
   struct PainterImage
   {
-    BaseTexture *texture;
+    BaseTexture* texture;
     UXStyleImageRef style;
 
     int border_left;
@@ -126,6 +126,12 @@ namespace nux
     int border_top;
     int border_bottom;
     bool draw_borders_only;
+    std::string filename;
+
+    PainterImage()
+    {
+      texture = NULL;
+    }
   };
 
   //! Load textures and other data for user interface rendering.

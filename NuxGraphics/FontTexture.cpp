@@ -36,16 +36,16 @@ namespace nux
   FontTexture::FontTexture(const char *FontFile, NUX_FILE_LINE_DECL)
     :   Object(true, NUX_FILE_LINE_PARAM)
   {
-    NString FontPath = GNuxGraphicsResources.FindResourceLocation(FontFile);
+    std::string FontPath = GNuxGraphicsResources.FindResourceLocation(FontFile);
 
     std::filebuf fb;
-    fb.open(FontPath.GetTCharPtr(), std::ios::in);
+    fb.open(FontPath.c_str(), std::ios::in);
     std::istream is(&fb);
 
     BMFontParseFNT(is);
   }
 
-  FontTexture::FontTexture(int width, int height, BYTE *Texture)
+  FontTexture::FontTexture(int /* width */, int /* height */, BYTE * /* Texture */)
   {
 
   }
@@ -72,7 +72,7 @@ namespace nux
     return m_Charset.Chars[ascii].XAdvance;
   }
 
-  int FontTexture::GetStringWidth(const NString &str) const
+  int FontTexture::GetStringWidth(const std::string &str) const
   {
 //     unsigned int total = 0;
 //     for (unsigned int i = 0; i != (unsigned int)str.size(); ++i)
@@ -80,12 +80,12 @@ namespace nux
 //         total += GetCharWidth(str[i]);
 //     }
 //     return total;
-    return GetCharStringWidth(str.GetTCharPtr());
+    return GetCharStringWidth(str.c_str());
   }
 
   int FontTexture::GetCharStringWidth(const char *str) const
   {
-    if ((str == 0) || (NString(str) == NString("")))
+    if (str == 0 || *str == '\0')
       return 0;
 
     unsigned int total = 0;
@@ -101,14 +101,14 @@ namespace nux
     return total;
   }
 
-  int FontTexture::GetStringWidth(const NString &str, int num_char_to_compute) const
+  int FontTexture::GetStringWidth(const std::string &str, int num_char_to_compute) const
   {
-    return GetCharStringWidth(str.GetTCharPtr(), num_char_to_compute);
+    return GetCharStringWidth(str.c_str(), num_char_to_compute);
   }
 
   int FontTexture::GetCharStringWidth(const char *str, int num_char_to_compute) const
   {
-    if ((str == 0) || (NString(str) == NString("")))
+    if (str == 0 || *str == '\0')
       return 0;
 
     int num_chars = num_char_to_compute;
@@ -215,11 +215,7 @@ namespace nux
 //                 FontPath.AddSearchPath(".");
 //                 FontPath.AddSearchPath("../Fonts");
 
-#ifdef UNICODE
-          NString font_texture_file = GNuxGraphicsResources.FindResourceLocation(texture);
-#else
-          NString font_texture_file = GNuxGraphicsResources.FindResourceLocation(texture);
-#endif
+          std::string font_texture_file = GNuxGraphicsResources.FindResourceLocation(texture);
 
 #ifdef NUX_OPENGLES_20
           Texture2D *Texture = new Texture2D(NUX_TRACKER_LOCATION);
@@ -227,7 +223,7 @@ namespace nux
           TextureRectangle *Texture = new TextureRectangle(NUX_TRACKER_LOCATION);
 #endif
 
-          NBitmapData* bitmap_data = LoadImageFile(font_texture_file.GetTCharPtr());
+          NBitmapData* bitmap_data = LoadImageFile(font_texture_file.c_str());
 
           if (bitmap_data)
             Texture->Update(bitmap_data, false);
@@ -258,12 +254,12 @@ namespace nux
 //          If the function succeeds, it returns S_OK.
 //          If the function fails, it returns an HRESULT.
 //          The return value can be tested with the SUCCEEDED and FAILED macros.
-  bool FontTexture::CursorPosToX(const NString &Str,
+  bool FontTexture::CursorPosToX(const std::string &Str,
                                   int icp,
                                   bool fTrailing,
                                   int *pX)
   {
-    if (icp > (int) Str.Size())
+    if (icp > (int) Str.size())
       return false;
 
     if (fTrailing)
@@ -293,14 +289,14 @@ namespace nux
 //          If the function is successful, it returns S_OK.
 //          If the function fails, it returns an HRESULT.
 //          The return value can be tested with the SUCCEEDED and FAILED macros.
-  bool FontTexture::XToCursorPosition(const NString &Str,
+  bool FontTexture::XToCursorPosition(const std::string &Str,
                                        int iX,
                                        unsigned int FirstVisibleCharIndex,
                                        int *piCh,
                                        int *piTrailing)
   {
     unsigned int num_chars;
-    num_chars = (unsigned int) Str.Size();
+    num_chars = (unsigned int) Str.size();
     nuxAssert(FirstVisibleCharIndex < num_chars);
 
     *piCh = 0;

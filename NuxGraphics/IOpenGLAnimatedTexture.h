@@ -49,7 +49,7 @@ namespace nux
       int Frame
     );
 
-    int GetDepth(int MipLevel) const
+    int GetDepth(int /* MipLevel */) const
     {
       return _Depth;
     }

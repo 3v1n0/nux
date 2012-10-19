@@ -36,7 +36,6 @@ namespace nux
 
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     void RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags);
     void RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags);
@@ -48,8 +47,8 @@ namespace nux
 
   protected:
     HLayout    *m_hlayout;
-    InputArea   *_combo_box_area;
-    InputArea   *_combo_box_opening_area;
+    BasicView   *_combo_box_area;
+    BasicView   *_combo_box_opening_area;
     StaticText  *_pango_static_text;
     bool        m_MenuIsActive;
     bool        m_IsOpeningMenu;

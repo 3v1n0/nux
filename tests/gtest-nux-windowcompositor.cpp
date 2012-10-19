@@ -47,17 +47,188 @@ class TestInputArea : public nux::InputArea
 };
 #endif
 
-TEST(TestWindowCompositor, TestSetKeyFocusArea)
+struct TestBaseWindow : public nux::BaseWindow
 {
-  nux::NuxInitialize(0);
-  nux::WindowThread *wnd_thread = nux::CreateNuxWindow("Nux Window", 300, 200,
-    nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL);
+  TestBaseWindow() : input_area(new nux::InputArea())
+  {
+    ShowWindow(true);
+  }
 
+  nux::Area* FindAreaUnderMouse(const nux::Point& /* mouse_position */, nux::NuxEventType /* event_type */)
+  {
+    return input_area.GetPointer();
+  }
+
+  Area* FindKeyFocusArea(unsigned int /* key_symbol */, unsigned long /* x11_key_code */, unsigned long /* special_keys_state */)
+  {
+    return input_area.GetPointer();
+  }
+
+  nux::ObjectPtr<nux::InputArea> input_area;
+};
+
+struct TestHLayout : public nux::HLayout
+{
+  TestHLayout() : input_area(new nux::InputArea()) {}
+
+  nux::Area* FindAreaUnderMouse(const nux::Point& /* mouse_position */, nux::NuxEventType /* event_type */)
+  {
+    return input_area.GetPointer();
+  }
+
+  Area* FindKeyFocusArea(unsigned int /* key_symbol */, unsigned long /* x11_key_code */, unsigned long /* special_keys_state */)
+  {
+    return input_area.GetPointer();
+  }
+
+  nux::ObjectPtr<nux::InputArea> input_area;
+};
+
+}
+
+namespace nux
+{
+struct TestWindowCompositor : public testing::Test
+{
+  TestWindowCompositor()
+  {}
+
+  void SetUp()
+  {
+    nux::NuxInitialize(0);
+    wnd_thread.reset(nux::CreateNuxWindow("WindowCompositor Test", 300, 200, nux::WINDOWSTYLE_NORMAL,
+                                          NULL, false, NULL, NULL));
+  }
+
+  void ForceSetKeyFocusArea(nux::InputArea* area)
+  {
+    nux::GetWindowCompositor().key_focus_area_ = area;
+  }
+
+  ObjectWeakPtr<InputArea> const& GetMouseOwnerArea() const
+  {
+    return nux::GetWindowCompositor().GetMouseOwnerArea();
+  }
+
+  void SetMouseOwnerArea(InputArea* area)
+  {
+    nux::GetWindowCompositor().mouse_owner_area_ = area;
+  }
+
+  InputArea* GetMouseOverArea()
+  {
+    return nux::GetWindowCompositor().mouse_over_area_.GetPointer();
+  }
+
+  void SetMouseOverArea(InputArea* area)
+  {
+    nux::GetWindowCompositor().mouse_over_area_ = area;
+  }
+
+  void GetAreaUnderMouse(const Point& mouse_position, NuxEventType event_type,
+                         ObjectWeakPtr<InputArea>& area)
+  {
+    return nux::GetWindowCompositor().FindAreaUnderMouse(mouse_position, event_type, area);
+  }
+
+  void FindKeyFocusArea(NuxEventType event_type, unsigned int key_symbol,
+                        unsigned int state,
+                        ObjectWeakPtr<InputArea>& key_focus_area,
+                        ObjectWeakPtr<BaseWindow>& window)
+  {
+    return nux::GetWindowCompositor().FindKeyFocusArea(event_type, key_symbol, state, key_focus_area, window);
+  }
+
+  boost::shared_ptr<nux::WindowThread> wnd_thread;
+};
+
+namespace
+{
+  class ReferenceFramebuffer
+  {
+    public:
+
+      ReferenceFramebuffer ()
+      {
+        glGenFramebuffersEXT (1, &fboName);
+        glGenRenderbuffersEXT (1, &rbName);
+
+        glBindRenderbufferEXT (GL_RENDERBUFFER_EXT, rbName);
+        glRenderbufferStorageEXT (GL_RENDERBUFFER_EXT, GL_RGBA8_EXT, 300, 200);
+        glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, fboName);
+        glFramebufferRenderbufferEXT (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, rbName);
+      }
+
+      ~ReferenceFramebuffer ()
+      {
+        glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
+        glDeleteRenderbuffers (1, &rbName);
+        glDeleteRenderbuffers (1, &fboName);
+      }
+
+    GLuint fboName, rbName;
+  };
+}
+TEST_F(TestWindowCompositor, TestRestoreReferenceFramebufferDirect)
+{
+  ReferenceFramebuffer reference;
+  GLint  fbBinding;
+
+  glGetIntegerv (GL_FRAMEBUFFER_BINDING_EXT, &fbBinding);
+
+  ASSERT_EQ (fbBinding, reference.fboName);
+
+  wnd_thread->GetWindowCompositor().SetReferenceFramebuffer(fbBinding, nux::Geometry (0, 0, 300, 200));
+
+  ASSERT_TRUE (wnd_thread->GetWindowCompositor().RestoreReferenceFramebuffer());
+  glGetIntegerv (GL_FRAMEBUFFER_BINDING_EXT, &fbBinding);
+  ASSERT_EQ (fbBinding, reference.fboName);
+}
+
+TEST_F(TestWindowCompositor, TestRestoreReferenceFramebufferThroughRestoreMain)
+{
+  ReferenceFramebuffer reference;
+  GLint  fbBinding;
+
+  glGetIntegerv (GL_FRAMEBUFFER_BINDING_EXT, &fbBinding);
+
+  ASSERT_EQ (fbBinding, reference.fboName);
+
+  wnd_thread->GetWindowCompositor().SetReferenceFramebuffer(fbBinding, nux::Geometry (0, 0, 300, 200));
+  wnd_thread->GetWindowCompositor().RestoreMainFramebuffer();
+  glGetIntegerv (GL_FRAMEBUFFER_BINDING_EXT, &fbBinding);
+  ASSERT_EQ (fbBinding, reference.fboName);
+}
+
+TEST_F(TestWindowCompositor, TestNoRestoreReferenceFramebufferDirectIfNoReferenceFramebuffer)
+{
+  GLint fbBinding;
+  ASSERT_FALSE (wnd_thread->GetWindowCompositor().RestoreReferenceFramebuffer());
+  glGetIntegerv (GL_FRAMEBUFFER_BINDING_EXT, &fbBinding);
+  ASSERT_EQ (fbBinding, 0);
+}
+
+TEST_F(TestWindowCompositor, TestRestoreBackbufferThroughRestoreMain)
+{
+  ReferenceFramebuffer reference;
+  GLint  fbBinding;
+
+  glGetIntegerv (GL_FRAMEBUFFER_BINDING_EXT, &fbBinding);
+
+  ASSERT_EQ (fbBinding, reference.fboName);
+
+  wnd_thread->GetWindowCompositor().RestoreMainFramebuffer();
+  glGetIntegerv (GL_FRAMEBUFFER_BINDING_EXT, &fbBinding);
+  ASSERT_EQ (fbBinding, 0);
+}
+
+TEST_F(TestWindowCompositor, TestSetKeyFocusArea)
+{
   nux::TestView* test_view0 = new nux::TestView();
   nux::TestView* test_view1 = new nux::TestView();
 
   nux::HLayout* layout = new nux::HLayout();
-  
+
   layout->AddView(test_view0, 1);
   layout->AddView(test_view1, 1);
 
@@ -89,8 +260,6 @@ TEST(TestWindowCompositor, TestSetKeyFocusArea)
     EXPECT_EQ(test_view1->registered_begin_keynav_focus_, true);
     EXPECT_EQ(test_view1->registered_end_keynav_focus_, false);
   }
-
-  delete wnd_thread;
 }
 
 #ifdef NUX_GESTURES_SUPPORT
@@ -104,11 +273,8 @@ TEST(TestWindowCompositor, TestSetKeyFocusArea)
   Check that the gesture got accepted, that window A got the gesture
   events and that window B didn't get anything.
  */
-TEST(TestWindowCompositor, GestureEventsDelivery_1)
+TEST_F(TestWindowCompositor, GestureEventsDelivery_1)
 {
-  nux::NuxInitialize(0);
-  nux::WindowThread *wnd_thread = nux::CreateNuxWindow("Nux Window", 500, 500,
-    nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL);
   nux::WindowCompositor &wnd_compositor = wnd_thread->GetWindowCompositor();
   nux::FakeGestureEvent fake_event;
 
@@ -159,7 +325,6 @@ TEST(TestWindowCompositor, GestureEventsDelivery_1)
 
   target_window->Dispose();
   innocent_window->Dispose();
-  delete wnd_thread;
 }
 
 /*
@@ -171,13 +336,10 @@ TEST(TestWindowCompositor, GestureEventsDelivery_1)
   Check that the gesture got rejected and that no window got
   any gesture event.
 */
-TEST(TestWindowCompositor, GestureEventsDelivery_2)
+TEST_F(TestWindowCompositor, GestureEventsDelivery_2)
 {
-  nux::NuxInitialize(0);
-  nux::WindowThread *wnd_thread = nux::CreateNuxWindow("Nux Window", 500, 500,
-    nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL);
-  nux::WindowCompositor &wnd_compositor = wnd_thread->GetWindowCompositor();
   nux::FakeGestureEvent fake_event;
+  nux::WindowCompositor& wnd_compositor = nux::GetWindowCompositor();
 
   TestWindow *subscribed_window = new TestWindow;
   subscribed_window->SetBaseXY(10, 10);
@@ -212,7 +374,6 @@ TEST(TestWindowCompositor, GestureEventsDelivery_2)
 
   subscribed_window->Dispose();
   innocent_window->Dispose();
-  delete wnd_thread;
 }
 
 /*
@@ -225,13 +386,10 @@ TEST(TestWindowCompositor, GestureEventsDelivery_2)
   Check that the gesture gets accepted and that only the input area behind that
   window gets the gesture events.
  */
-TEST(TestWindowCompositor, GestureEventsDelivery_3)
+TEST_F(TestWindowCompositor, GestureEventsDelivery_3)
 {
-  nux::NuxInitialize(0);
-  nux::WindowThread *wnd_thread = nux::CreateNuxWindow("Nux Window", 500, 500,
-    nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL);
-  nux::WindowCompositor &wnd_compositor = wnd_thread->GetWindowCompositor();
   nux::FakeGestureEvent fake_event;
+  nux::WindowCompositor& wnd_compositor = nux::GetWindowCompositor();
 
   TestWindow *window = new TestWindow;
   window->SetBaseXY(10, 10);
@@ -287,20 +445,16 @@ TEST(TestWindowCompositor, GestureEventsDelivery_3)
   ASSERT_EQ(0, other_input_area->gesture_events_received.size());
 
   window->Dispose();
-  delete wnd_thread;
 }
 
 /*
   Check that if a gesture gets its construction finished only on its end event,
   it still gets accepted and delivered.
  */
-TEST(TestWindowCompositor, GestureEventsDelivery_4)
+TEST_F(TestWindowCompositor, GestureEventsDelivery_4)
 {
-  nux::NuxInitialize(0);
-  nux::WindowThread *wnd_thread = nux::CreateNuxWindow("Nux Window", 500, 500,
-    nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL);
-  nux::WindowCompositor &wnd_compositor = wnd_thread->GetWindowCompositor();
   nux::FakeGestureEvent fake_event;
+  nux::WindowCompositor& wnd_compositor = nux::GetWindowCompositor();
 
   TestWindow *window = new TestWindow;
   window->SetBaseXY(10, 10);
@@ -356,7 +510,304 @@ TEST(TestWindowCompositor, GestureEventsDelivery_4)
   ASSERT_EQ(0, other_input_area->gesture_events_received.size());
 
   window->Dispose();
-  delete wnd_thread;
+}
+
+TEST_F(TestWindowCompositor, KeyFocusAreaAutomaticallyUnsets)
+{
+  nux::WindowCompositor& wnd_compositor = nux::GetWindowCompositor();
+  nux::InputArea* test_area = new TestInputArea();
+
+  ForceSetKeyFocusArea(test_area);
+  ASSERT_EQ(wnd_compositor.GetKeyFocusArea(), test_area);
+
+  test_area->UnReference();
+  EXPECT_EQ(wnd_compositor.GetKeyFocusArea(), nullptr);
+}
+
+TEST_F(TestWindowCompositor, MouseOverAreaAutomaticallyUnsets)
+{
+  nux::InputArea* test_area = new TestInputArea();
+
+  SetMouseOverArea(test_area);
+  ASSERT_EQ(GetMouseOverArea(), test_area);
+
+  test_area->UnReference();
+  EXPECT_EQ(GetMouseOverArea(), nullptr);
+}
+
+TEST_F(TestWindowCompositor, MouseOwnerAreaAutomaticallyUnsets)
+{
+  nux::InputArea* test_area = new TestInputArea();
+
+  SetMouseOwnerArea(test_area);
+  ASSERT_EQ(GetMouseOwnerArea(), test_area);
+
+  test_area->UnReference();
+  EXPECT_EQ(GetMouseOwnerArea(), nullptr);
+}
+
+TEST_F(TestWindowCompositor, GetAreaUnderMouse)
+{
+  ObjectWeakPtr<InputArea> area;
+
+  TestBaseWindow* test_win = new TestBaseWindow();
+
+  GetAreaUnderMouse(Point(1, 2), NUX_MOUSE_MOVE, area);
+
+  EXPECT_EQ(area.GetPointer(), test_win->input_area.GetPointer());
+
+  test_win->UnReference();
+  EXPECT_EQ(area.GetPointer(), nullptr);
+}
+
+TEST_F(TestWindowCompositor, GetAreaUnderMouseFallback)
+{
+  ObjectWeakPtr<InputArea> area;
+
+  TestHLayout* layout = new TestHLayout();
+  wnd_thread->SetLayout(layout);
+
+  GetAreaUnderMouse(Point(1, 2), NUX_MOUSE_MOVE, area);
+
+  EXPECT_EQ(area.GetPointer(), layout->input_area.GetPointer());
+
+  wnd_thread->SetLayout(nullptr);
+  layout->UnReference();
+  EXPECT_EQ(area.GetPointer(), nullptr);
+}
+
+TEST_F(TestWindowCompositor, GetFocusedArea)
+{
+  ObjectWeakPtr<InputArea> area;
+  ObjectWeakPtr<BaseWindow> window;
+
+  TestBaseWindow* test_win = new TestBaseWindow();
+
+  FindKeyFocusArea(NUX_KEYUP, 0, 0, area, window);
+
+  EXPECT_EQ(area.GetPointer(), test_win->input_area.GetPointer());
+  EXPECT_EQ(window.GetPointer(), test_win);
+
+  test_win->UnReference();
+  EXPECT_EQ(area.GetPointer(), nullptr);
+  EXPECT_EQ(window.GetPointer(), nullptr);
+}
+
+TEST_F(TestWindowCompositor, GetFocusedAreaFallback)
+{
+  ObjectWeakPtr<InputArea> area;
+  ObjectWeakPtr<BaseWindow> window;
+
+  TestHLayout* layout = new TestHLayout();
+  wnd_thread->SetLayout(layout);
+
+  FindKeyFocusArea(NUX_KEYUP, 0, 0, area, window);
+
+  EXPECT_EQ(area.GetPointer(), layout->input_area.GetPointer());
+  EXPECT_EQ(window.GetPointer(), nullptr);
+
+  wnd_thread->SetLayout(nullptr);
+  layout->UnReference();
+  EXPECT_EQ(area.GetPointer(), nullptr);
+}
+
+class DraggedWindow : public nux::BaseWindow
+{
+ protected:
+  virtual void EmitMouseDragSignal(int x, int y,
+      int dx, int dy,
+      unsigned long /*mouse_button_state*/,
+      unsigned long /*special_keys_state*/)
+  {
+    ++mouse_drag_emission_count;
+    mouse_drag_x = x;
+    mouse_drag_y = y;
+    mouse_drag_dx = dx;
+    mouse_drag_dy = dy;
+  }
+ public:
+  int mouse_drag_emission_count;
+  int mouse_drag_x;
+  int mouse_drag_y;
+  int mouse_drag_dx;
+  int mouse_drag_dy;
+};
+
+/*
+  Regression test for lp1057995
+ */
+TEST_F(TestWindowCompositor, MouseDrag)
+{
+  nux::Event event;
+
+  DraggedWindow *window = new DraggedWindow;
+  window->SetBaseXY(60, 70);
+  window->SetBaseWidth(200);
+  window->SetBaseHeight(200);
+  window->ShowWindow(true);
+
+  event.type = NUX_MOUSE_PRESSED;
+  event.x = 100;
+  event.y = 200;
+  nux::GetWindowCompositor().ProcessEvent(event);
+
+  event.type = NUX_MOUSE_MOVE;
+  event.x = 50;
+  event.y = 250;
+  nux::GetWindowCompositor().ProcessEvent(event);
+
+  ASSERT_EQ(1, window->mouse_drag_emission_count);
+
+  /* OBS: they're in local window coordinates */
+  ASSERT_EQ(50 - 60, window->mouse_drag_x); 
+  ASSERT_EQ(250 - 70, window->mouse_drag_y);
+  ASSERT_EQ(50 - 100, window->mouse_drag_dx);
+  ASSERT_EQ(250 - 200, window->mouse_drag_dy);
+
+  window->Dispose();
+}
+
+class TrackerWindow : public nux::BaseWindow
+{
+  public:
+    virtual bool ChildMouseEvent(const nux::Event& event)
+    {
+      child_mouse_events_received.push_back(event);
+      return wants_mouse_ownership;
+    }
+    std::vector<nux::Event> child_mouse_events_received;
+    bool wants_mouse_ownership;
+
+  protected:
+    virtual void EmitMouseUpSignal(int x, int y,
+                                   unsigned long mouse_button_state,
+                                   unsigned long special_keys_state)
+    {
+      ++mouse_up_emission_count;
+    }
+
+    virtual void EmitMouseDragSignal(int x, int y,
+                                     int dx, int dy,
+                                     unsigned long mouse_button_state,
+                                     unsigned long special_keys_state)
+    {
+      ++mouse_drag_emission_count;
+      mouse_drag_dx = dx;
+      mouse_drag_dy = dy;
+    }
+  public:
+    int mouse_up_emission_count;
+    int mouse_drag_emission_count;
+    int mouse_drag_dx;
+    int mouse_drag_dy;
+};
+
+class TrackedArea : public nux::InputArea
+{
+  protected:
+    virtual void EmitMouseDownSignal(int x, int y,
+                                     unsigned long mouse_button_state,
+                                     unsigned long special_keys_state)
+    {
+      ++mouse_down_emission_count;
+    }
+
+    virtual void EmitMouseUpSignal(int x, int y,
+                                   unsigned long mouse_button_state,
+                                   unsigned long special_keys_state)
+    {
+      ++mouse_up_emission_count;
+    }
+
+    virtual void EmitMouseDragSignal(int x, int y,
+                                     int dx, int dy,
+                                     unsigned long mouse_button_state,
+                                     unsigned long special_keys_state)
+    {
+      ++mouse_drag_emission_count;
+    }
+
+    virtual void EmitMouseCancelSignal()
+    {
+      ++mouse_cancel_emission_count;
+    }
+
+  public:
+    int mouse_down_emission_count;
+    int mouse_up_emission_count;
+    int mouse_drag_emission_count;
+    int mouse_cancel_emission_count;
+};
+
+TEST_F(TestWindowCompositor, TrackingChildMouseEvents)
+{
+  nux::WindowCompositor &wnd_compositor = wnd_thread->GetWindowCompositor();
+
+  TrackedArea *tracked_area = new TrackedArea;
+  tracked_area->SetGeometry(0, 0, 100, 1000);
+  tracked_area->SetMinimumSize(100, 1000);
+
+  nux::VLayout *layout = new VLayout(NUX_TRACKER_LOCATION);
+  layout->AddView(tracked_area, 1, eLeft, eFull);
+  layout->Set2DTranslation(0, -123, 0); // x, y, z
+
+  TrackerWindow *tracker_window = new TrackerWindow;
+  tracker_window->SetBaseXY(0, 0);
+  tracker_window->SetBaseWidth(100);
+  tracker_window->SetBaseHeight(100);
+  tracker_window->SetTrackChildMouseEvents(true);
+  tracker_window->SetLayout(layout);
+  tracker_window->ShowWindow(true);
+
+  // Mouse pressed goes both to child and tracker window
+  tracker_window->wants_mouse_ownership = false;
+  tracked_area->mouse_down_emission_count = 0;
+  nux::Event event;
+  event.type = NUX_MOUSE_PRESSED;
+  event.x = 50; // right in the center of tracker_window
+  event.y = 50;
+  wnd_compositor.ProcessEvent(event);
+  ASSERT_EQ(1, tracker_window->child_mouse_events_received.size());
+  ASSERT_EQ(1, tracked_area->mouse_down_emission_count);
+
+  // Mouse move goes both to child and tracker window, but tracker asks
+  // for mouse ownership. Therefore child also gets a mouse cancel.
+  tracker_window->child_mouse_events_received.clear();
+  tracker_window->wants_mouse_ownership = true;
+  tracked_area->mouse_drag_emission_count = 0;
+  tracked_area->mouse_cancel_emission_count = 0;
+  event.type = NUX_MOUSE_MOVE;
+  event.y = 60;
+  wnd_compositor.ProcessEvent(event);
+  ASSERT_EQ(1, tracker_window->child_mouse_events_received.size());
+  ASSERT_EQ(1, tracked_area->mouse_drag_emission_count);
+  ASSERT_EQ(1, tracked_area->mouse_cancel_emission_count);
+
+  // The second mouse move goes only to the window, but now as a regular
+  // mouse event since he's mouse owner now.
+  tracker_window->child_mouse_events_received.clear();
+  tracker_window->mouse_drag_emission_count = 0;
+  tracked_area->mouse_drag_emission_count = 0;
+  event.type = NUX_MOUSE_MOVE;
+  event.y = 70;
+  wnd_compositor.ProcessEvent(event);
+  ASSERT_EQ(0, tracker_window->child_mouse_events_received.size());
+  ASSERT_EQ(1, tracker_window->mouse_drag_emission_count);
+  ASSERT_EQ(0, tracked_area->mouse_drag_emission_count);
+  ASSERT_EQ(10, tracker_window->mouse_drag_dy);
+
+  // Mouse release goes only to the window, again as a regular
+  // mouse event.
+  tracker_window->child_mouse_events_received.clear();
+  tracker_window->mouse_up_emission_count = 0;
+  tracked_area->mouse_up_emission_count = 0;
+  event.type = NUX_MOUSE_RELEASED;
+  wnd_compositor.ProcessEvent(event);
+  ASSERT_EQ(0, tracker_window->child_mouse_events_received.size());
+  ASSERT_EQ(1, tracker_window->mouse_up_emission_count);
+  ASSERT_EQ(0, tracked_area->mouse_up_emission_count);
+
+  tracker_window->Dispose();
 }
 
 #endif // NUX_GESTURES_SUPPORT

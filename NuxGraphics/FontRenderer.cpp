@@ -33,15 +33,16 @@
 
 namespace nux
 {
-
-  const int CURSOR_OFFSET = 0;
-  static int CURSOR_SIZE = 2;
+namespace
+{
+const int CURSOR_OFFSET = 0;
+static int CURSOR_SIZE = 2;
 
   // On NVidia system:
   //  - declare the vertex attribute name before any other attribute.
   //  - Give the vertex attribute a name that comes before any other attribute name. For instance prefix the vertex attribute name with "_".
 
-  NString gFontVtxShader = "                  \n\
+std::string gFontVtxShader("                  \n\
   attribute vec4 _Position;                         \n\
   attribute vec4 iOffset;                           \n\
   attribute vec4 iScale;                            \n\
@@ -53,9 +54,9 @@ namespace nux
   oTexCoord0   = iTexUV;                            \n\
   vec4 myvertex = _Position * iScale + iOffset;     \n\
   gl_Position  = ViewProjectionMatrix * myvertex;   \n\
-  }";
+  }");
 
-  NString gFontFragShader = "                                         \n\
+std::string gFontFragShader("                                         \n\
   #extension GL_ARB_texture_rectangle : enable                              \n\
   #ifdef GL_ES                                                              \n\
   precision mediump float;                                                  \n\
@@ -79,9 +80,9 @@ namespace nux
   {                                                                         \n\
     vec4 diffuse = SampleTexture(FontTexture, oTexCoord0);                  \n\
     gl_FragColor = vec4(TextColor.x, TextColor.y, TextColor.z, diffuse.w);  \n\
-  }";
+  }");
 
-  NString FontAsmVtx = "!!ARBvp1.0          \n\
+std::string FontAsmVtx("!!ARBvp1.0          \n\
   ATTRIB iScale       = vertex.attrib[9];         \n\
   ATTRIB iOffset      = vertex.attrib[10];        \n\
   OUTPUT oPos         = result.position;          \n\
@@ -94,9 +95,9 @@ namespace nux
   DP4   oPos.z, state.matrix.mvp.row[2], temp;    \n\
   DP4   oPos.w, state.matrix.mvp.row[3], temp;    \n\
   MOV   oTexCoord0, vertex.attrib[8];             \n\
-  END";
+  END");
 
-  NString FontAsmFrg = "!!ARBfp1.0            \n\
+std::string FontAsmFrg("!!ARBfp1.0            \n\
   PARAM color = program.local[0];                   \n\
   TEMP temp;                                        \n\
   TEMP tex0;                                        \n\
@@ -104,9 +105,9 @@ namespace nux
   MOV temp, color;                                  \n\
   MUL temp.w, color, tex0;                          \n\
   MOV result.color, temp;                           \n\
-  END";
+  END");
 
-  NString FontAsmFrgRect = "!!ARBfp1.0        \n\
+std::string FontAsmFrgRect("!!ARBfp1.0        \n\
   PARAM color = program.local[0];                   \n\
   TEMP temp;                                        \n\
   TEMP tex0;                                        \n\
@@ -114,8 +115,9 @@ namespace nux
   MOV temp, color;                                  \n\
   MUL temp.w, color, tex0;                          \n\
   MOV result.color, temp;                           \n\
-  END";
+  END");
 
+} // anon namespace
 
   FontRenderer::FontRenderer(GraphicsEngine &graphics_engine)
     :   _graphics_engine(graphics_engine)
@@ -126,11 +128,11 @@ namespace nux
       _vertex_shader_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateVertexShader();
       _shader_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateShaderProgram();
 
-      _vertex_shader_prog->SetShaderCode(TCHAR_TO_ANSI(*gFontVtxShader));
+      _vertex_shader_prog->SetShaderCode(gFontVtxShader.c_str());
 #ifndef NUX_OPENGLES_20
-      _pixel_shader_prog->SetShaderCode(TCHAR_TO_ANSI(*gFontFragShader), "#define SAMPLERTEX2DRECT");
+      _pixel_shader_prog->SetShaderCode(gFontFragShader.c_str(), "#define SAMPLERTEX2DRECT");
 #else
-      _pixel_shader_prog->SetShaderCode(TCHAR_TO_ANSI(*gFontFragShader), "#define SAMPLERTEX2D");
+      _pixel_shader_prog->SetShaderCode(gFontFragShader.c_str(), "#define SAMPLERTEX2D");
 #endif
 
       _shader_prog->ClearShaderObjects();
@@ -143,13 +145,13 @@ namespace nux
     {
       _asm_shader_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
 
-      _asm_shader_prog->LoadVertexShader(TCHAR_TO_ANSI(*FontAsmVtx));
-      _asm_shader_prog->LoadPixelShader(TCHAR_TO_ANSI(*FontAsmFrg));
+      _asm_shader_prog->LoadVertexShader(FontAsmVtx.c_str());
+      _asm_shader_prog->LoadPixelShader(FontAsmFrg.c_str());
       _asm_shader_prog->Link();
 
       _asm_font_texture_rect_prog = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-      _asm_font_texture_rect_prog->LoadVertexShader(TCHAR_TO_ANSI(*FontAsmVtx));
-      _asm_font_texture_rect_prog->LoadPixelShader(TCHAR_TO_ANSI(*FontAsmFrgRect));
+      _asm_font_texture_rect_prog->LoadVertexShader(FontAsmVtx.c_str());
+      _asm_font_texture_rect_prog->LoadPixelShader(FontAsmFrgRect.c_str());
       _asm_font_texture_rect_prog->Link();
     }
   }
@@ -158,30 +160,32 @@ namespace nux
   {
   }
 
-  int FontRenderer::DrawColorString(ObjectPtr<FontTexture> Font, int x, int y, const NString &str, const Color &color, bool WriteAlphaChannel, int SkipFirstNCharacters, int NumCharacter)
-  {
-    return RenderText(Font, x, y, str, color, WriteAlphaChannel, SkipFirstNCharacters, NumCharacter);
-  }
 
-  void FontRenderer::PositionString(ObjectPtr<FontTexture> Font, const NString &str, const PageBBox &pageBBox, StringBBox &strBBox, TextAlignment alignment, int NumCharacter)
+  void FontRenderer::PositionString(ObjectPtr<FontTexture> const& Font,
+                                    std::string const& str,
+                                    PageBBox const& pageBBox,
+                                    StringBBox& strBBox,
+                                    TextAlignment alignment,
+                                    int NumCharacter)
   {
-    int x, y;
-    int xmin, ymin, xmax, ymax;
-    xmin = pageBBox.xmin + pageBBox.x_margin;
-    xmax = pageBBox.xmax - pageBBox.x_margin;
-    ymin = pageBBox.ymin + pageBBox.y_margin;
-    ymax = pageBBox.ymax - pageBBox.y_margin;
+    int xmin = pageBBox.xmin + pageBBox.x_margin;
+    int xmax = pageBBox.xmax - pageBBox.x_margin;
+    int ymin = pageBBox.ymin + pageBBox.y_margin;
+    int ymax = pageBBox.ymax - pageBBox.y_margin;
 
     int NumChar = 0;
+    int str_len = str.size();
 
     if (NumCharacter == 0)
-      NumChar = str.Size();
+      NumChar = str_len;
     else
-      NumChar = Min((int) str.Size(), NumCharacter);
+      NumChar = std::min<int>(str_len, NumCharacter);
 
     strBBox.width = Font->GetStringWidth(str, NumChar);
     strBBox.height = Font->GetLineHeight();
 
+    int x = 0;
+    int y = 0;
     switch(alignment)
     {
       case eAlignTextCenter:
@@ -210,39 +214,53 @@ namespace nux
     strBBox.y = y;
   }
 
-  int FontRenderer::RenderColorText(ObjectPtr<FontTexture> Font, int x, int y, const NString &Str, const Color &color,
-                                     bool WriteAlphaChannel, int NumCharacter)
+  int FontRenderer::RenderColorText(ObjectPtr<FontTexture> const& Font,
+                                    int x, int y,
+                                    std::string const& Str,
+                                    Color const& color,
+                                    bool WriteAlphaChannel,
+                                    int NumCharacter)
   {
-    int off = DrawColorString(Font, x, y, Str, color, WriteAlphaChannel, 0, NumCharacter);
-    return off;
+    return RenderText(Font, x, y, Str, color, WriteAlphaChannel, 0, NumCharacter);
   }
 
-  int FontRenderer::RenderColorTextLineStatic(ObjectPtr<FontTexture> Font, const PageBBox &pageSize, const NString &Str, const Color &color,
-      bool WriteAlphaChannel, TextAlignment alignment)
+  int FontRenderer::RenderColorTextLineStatic(ObjectPtr<FontTexture> const& Font,
+                                              PageBBox const& pageSize,
+                                              std::string const& Str,
+                                              Color const& color,
+                                              bool WriteAlphaChannel,
+                                              TextAlignment alignment)
   {
     StringBBox stringBBox;
 
-    _graphics_engine.PushClippingRectangle(Rect(pageSize.xmin, pageSize.ymin, pageSize.xmax - pageSize.xmin, pageSize.ymax - pageSize.ymin));
+    _graphics_engine.PushClippingRectangle(Rect(pageSize.xmin,
+                                                pageSize.ymin,
+                                                pageSize.xmax - pageSize.xmin,
+                                                pageSize.ymax - pageSize.ymin));
     PositionString(Font, Str, pageSize, stringBBox, alignment);
-    int off = DrawColorString(Font, stringBBox.x, stringBBox.y, Str, color, WriteAlphaChannel, 0, Str.Size());
+    int off = RenderText(Font, stringBBox.x, stringBBox.y, Str, color, WriteAlphaChannel, 0, Str.size());
 
     _graphics_engine.PopClippingRectangle();
     return off;
   }
 
-  int FontRenderer::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const PageBBox &pageSize, const NString &Str,
-      const Color &TextColor,
-      bool WriteAlphaChannel,
-      const Color &SelectedTextColor,
-      const Color &SelectedTextBackgroundColor,
-      const Color &TextBlinkColor,
-      const Color &CursorColor,
-      bool ShowCursor, unsigned int CursorPosition, int offset, int selection_start, int selection_end)
+  int FontRenderer::RenderColorTextLineEdit(ObjectPtr<FontTexture> const& Font,
+                                            PageBBox const& pageSize,
+                                            std::string const& Str,
+                                            Color const& TextColor,
+                                            bool WriteAlphaChannel,
+                                            Color const& SelectedTextColor,
+                                            Color const& SelectedTextBackgroundColor,
+                                            Color const& TextBlinkColor,
+                                            Color const& CursorColor,
+                                            bool ShowCursor, unsigned int CursorPosition,
+                                            int offset, int selection_start, int selection_end)
   {
     StringBBox stringBBox;
     Color selection_color(0xFF888888);
 
-    NString substring = Str.GetSubString(selection_start, selection_end - selection_start);
+    // TODO: sanity checking on selection_start and end
+    std::string substring = Str.substr(selection_start, selection_end - selection_start);
     unsigned int substring_width = Font->GetStringWidth(substring);
     int substring_pos = Font->GetStringWidth(Str, selection_start);
 
@@ -253,59 +271,60 @@ namespace nux
 
     _graphics_engine.PopClippingRectangle();
 
+    // TODO: double check this, pushing exactly sthe same rect as above
     _graphics_engine.PushClippingRectangle(Rect(pageSize.xmin, pageSize.ymin, pageSize.xmax - pageSize.xmin, pageSize.ymax - pageSize.ymin));
 
     PositionString(Font, Str, pageSize, stringBBox, eAlignTextLeft);
-    //ComputeGlyphString(stringBBox.x + offset, stringBBox.y, Str.c_str());
 
     // Part before selected text
-    int off = DrawColorString(Font, stringBBox.x + offset, stringBBox.y, Str, TextColor, WriteAlphaChannel, 0, selection_start);
+    int off = RenderText(Font, stringBBox.x + offset, stringBBox.y, Str, TextColor, WriteAlphaChannel, 0, selection_start);
     // Selection part
-    off = DrawColorString(Font, stringBBox.x + offset, stringBBox.y, Str, SelectedTextColor, WriteAlphaChannel, selection_start, selection_end - selection_start);
+    off = RenderText(Font, stringBBox.x + offset, stringBBox.y, Str, SelectedTextColor, WriteAlphaChannel, selection_start, selection_end - selection_start);
     // Part after selected text
-    off = DrawColorString(Font, stringBBox.x + offset, stringBBox.y, Str, TextColor, WriteAlphaChannel, selection_end, Str.Size() - selection_end);
+    off = RenderText(Font, stringBBox.x + offset, stringBBox.y, Str, TextColor, WriteAlphaChannel, selection_end, Str.size() - selection_end);
 
     _graphics_engine.PopClippingRectangle();
 
-    // Render Cursor
-    NString temp = Str.GetSubString(0, CursorPosition);
-    int w = Font->GetStringWidth(temp.GetTCharPtr());
-
-
     if (ShowCursor)
     {
+      // Render Cursor
+      std::string temp = Str.substr(0, CursorPosition);
+      int w = Font->GetStringWidth(temp);
+
       int x = pageSize.xmin + w + offset + CURSOR_OFFSET;
       x = (x >= pageSize.xmax) ? pageSize.xmax - 1 : x;
       _graphics_engine.PushClippingRectangle(Rect(x, pageSize.ymin, CURSOR_SIZE, pageSize.ymax - pageSize.ymin));
 
       _graphics_engine.QRP_Color(x, pageSize.ymin, CURSOR_SIZE, pageSize.ymax - pageSize.ymin, CursorColor);
-      
-      DrawColorString(Font, stringBBox.x + offset, stringBBox.y, Str, TextBlinkColor, WriteAlphaChannel, CursorPosition, 1);
+
+      RenderText(Font, stringBBox.x + offset, stringBBox.y, Str, TextBlinkColor, WriteAlphaChannel, CursorPosition, 1);
       _graphics_engine.PopClippingRectangle();
     }
 
     return off;
   }
 
-  int FontRenderer::RenderText(ObjectPtr<FontTexture> Font, int x, int y, const NString &str, const Color &color, bool WriteAlphaChannel, int StartCharacter, int NumCharacter)
+  int FontRenderer::RenderText(ObjectPtr<FontTexture> const& Font,
+                               int x, int y,
+                               std::string const& str,
+                               Color const& color,
+                               bool WriteAlphaChannel,
+                               int StartCharacter,
+                               int NumCharacters)
   {
     // !WARNING This call works if all the glyph of the font are in a single texture.
 
-    int StrLength = str.Size();
+    int StrLength = str.size();
 
     if (StrLength <= 0)
       return 0;
 
-    nuxAssertMsg(NumCharacter >= 0, "[FontRenderer::RenderText] Incorrect value for NumCharacter.");
+    nuxAssertMsg(NumCharacters >= 0, "[FontRenderer::RenderText] Incorrect value for NumCharacters.");
     nuxAssertMsg(StartCharacter >= 0, "[FontRenderer::RenderText] Incorrect value for StartCharacter.");
     nuxAssertMsg(StartCharacter <= StrLength, "[FontRenderer::RenderText] Incorrect value for StartCharacter.");
 
-    //     if (NumCharacter == 0)
-    //         NumCharacter = str.Size();
+    int NumCharToDraw = std::min<int>(StrLength - StartCharacter, NumCharacters);
 
-    int NumCharToDraw = Min<int> (StrLength - StartCharacter, NumCharacter);
-
-    //nuxAssertMsg(NumCharToDraw > 0, "[FontRenderer::RenderText] Incorrect value for NumCharToDraw.");
     if (NumCharToDraw <= 0)
       return 0;
 
@@ -575,15 +594,20 @@ namespace nux
   }
 
   int FontRenderer::RenderTextToBuffer(float *VertexBuffer, int VBSize,
-                                        ObjectPtr<FontTexture> Font, Rect geo, const NString &str, const Color &color, TextAlignment alignment, int NumCharacter)
+                                       ObjectPtr<FontTexture> const& Font,
+                                       Rect const& geo,
+                                       std::string const& str,
+                                       Color const& color,
+                                       TextAlignment alignment,
+                                       int NumCharacter)
   {
     nuxAssertMsg(NumCharacter >= 0, "[FontRenderer::RenderTextToBuffer] Number of char to draw must be positive.");
     int NumCharToDraw = 0;
 
     if (NumCharacter == 0)
-      NumCharToDraw = str.Size();
+      NumCharToDraw = str.size();
     else
-      NumCharToDraw = Min((int) str.Size(), NumCharacter);
+      NumCharToDraw = Min((int) str.size(), NumCharacter);
 
     nuxAssertMsg(3 * NumCharToDraw * 16 <= VBSize, "[FontRenderer::RenderTextToBuffer] VertexBuffer not large enough.");
 

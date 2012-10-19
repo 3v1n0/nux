@@ -98,7 +98,7 @@ void GeisAttributes::AddPointer(const char *name, void *value)
 
 /******* Geis  *******/
 
-Geis geis_new(GeisString init_arg_name, ...)
+Geis geis_new(GeisString /* init_arg_name */, ...)
 {
   DEBUG_PRINT
   Geis geis = new struct _Geis;
@@ -131,7 +131,7 @@ GeisStatus geis_get_configuration(Geis geis,
   }
 }
 
-GeisStatus geis_dispatch_events(Geis geis)
+GeisStatus geis_dispatch_events(Geis /* geis */)
 {
   DEBUG_PRINT
   return GEIS_STATUS_SUCCESS;
@@ -158,17 +158,17 @@ GeisStatus geis_next_event(Geis geis, GeisEvent *event)
   }
 }
 
-GeisStatus geis_gesture_accept(Geis          geis,
-                               GeisGroup     group,
-                               GeisGestureId gesture_id)
+GeisStatus geis_gesture_accept(Geis          /* geis */,
+                               GeisGroup     /* group */,
+                               GeisGestureId /* gesture_id */)
 {
   DEBUG_PRINT
   return GEIS_STATUS_SUCCESS;
 }
 
-GeisStatus geis_gesture_reject(Geis          geis,
-                               GeisGroup     group,
-                               GeisGestureId gesture_id)
+GeisStatus geis_gesture_reject(Geis          /* geis */,
+                               GeisGroup     /* group */,
+                               GeisGestureId /* gesture_id */)
 {
   DEBUG_PRINT
   return GEIS_STATUS_SUCCESS;
@@ -252,12 +252,12 @@ GeisAttr geis_event_attr_by_name(GeisEvent event, GeisString attr_name)
 
 /******** Gesture Class   ***********/
 
-void geis_gesture_class_ref(GeisGestureClass gesture_class)
+void geis_gesture_class_ref(GeisGestureClass /* gesture_class */)
 {
   DEBUG_PRINT
 }
 
-void geis_gesture_class_unref(GeisGestureClass gesture_class)
+void geis_gesture_class_unref(GeisGestureClass /* gesture_class */)
 {
   DEBUG_PRINT
 }
@@ -407,9 +407,9 @@ GeisAttr geis_frame_attr_by_name(GeisFrame frame, GeisString name)
 
 /***** Subscription *****/
 
-GeisSubscription geis_subscription_new(Geis                  geis,
-                                       GeisString            name,
-                                       GeisSubscriptionFlags flags)
+GeisSubscription geis_subscription_new(Geis                  /* geis */,
+                                       GeisString            /* name */,
+                                       GeisSubscriptionFlags /* flags */)
 {
   DEBUG_PRINT
   return new struct _GeisSubscription;
@@ -426,13 +426,13 @@ GeisStatus geis_subscription_delete(GeisSubscription subscription)
   return GEIS_STATUS_SUCCESS;
 }
 
-GeisStatus geis_subscription_activate(GeisSubscription subscription)
+GeisStatus geis_subscription_activate(GeisSubscription /* subscription */)
 {
   DEBUG_PRINT
   return GEIS_STATUS_SUCCESS;
 }
 
-GeisStatus geis_subscription_deactivate(GeisSubscription subscription)
+GeisStatus geis_subscription_deactivate(GeisSubscription /* subscription */)
 {
   DEBUG_PRINT
   return GEIS_STATUS_SUCCESS;
@@ -458,8 +458,8 @@ GeisStatus geis_subscription_add_filter(GeisSubscription subscription,
   return GEIS_STATUS_SUCCESS;
 }
 
-GeisFilter geis_subscription_filter_by_name(GeisSubscription sub,
-                                            GeisString       name)
+GeisFilter geis_subscription_filter_by_name(GeisSubscription /* sub */,
+                                            GeisString       /* name */)
 {
   DEBUG_PRINT
   return nullptr;
