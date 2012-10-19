@@ -144,7 +144,6 @@ logging::Logger logger("nux.windows.thread");
 #endif
   }
 
-#if !defined(NUX_MINIMAL)
   unsigned int WindowThread::AddTimeout(unsigned int timeout_delay)
   {
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
@@ -384,6 +383,7 @@ logging::Logger logger("nux.windows.thread");
       StopLayoutCycle();
   }
 
+#if !defined(NUX_MINIMAL)
   void WindowThread::AddTimeline(Timeline *timeline)
   {
     _Timelines->push_back(timeline);
