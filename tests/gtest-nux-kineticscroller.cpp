@@ -19,9 +19,11 @@
  */
 
 #include <gtest/gtest.h>
+
 #include <Nux/Nux.h>
 #include <Nux/KineticScrolling/KineticScroller.h>
 #include <Nux/KineticScrolling/KineticScrollingTickSource.h>
+
 #include "gtest-nux-globals.h"
 
 using namespace nux;
@@ -101,7 +103,11 @@ TEST_F(KineticScrollerTest, FlickCausesDecelerationAnimation)
   scroller_->SetContentSize(100, 3000);
   scroller_->SetContentPosition(0, 0);
   scroller_->SetBoundsBehavior(BoundsBehavior::StopAtBounds);
+<<<<<<< TREE
+  scroller_->SetScrollableDirections(ScrollableDirectionsVertical);
+=======
   scroller_->SetScrollableDirections(ScrollableDirections::ScrollableDirectionsVertical);
+>>>>>>> MERGE-SOURCE
 
   PerformFlickUpwards(); 
 

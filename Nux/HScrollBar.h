@@ -50,8 +50,8 @@ namespace nux
     void TrackRight(void *v);
 
   public:
-    void SetContainerSize(int x, int y, int w, int h);
-    void SetContentSize(int x, int y, int w, int h);
+    void SetContainerSize(int w, int h);
+    void SetContentSize(int w, int h);
     void SetContentOffset(float dx, float dy);
     void ComputeScrolling();
 

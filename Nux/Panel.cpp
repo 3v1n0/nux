@@ -54,7 +54,7 @@ namespace nux
   {
     graphics_engine.PushClippingRectangle(GetGeometry());
 
-    graphics_engine.PushClippingRectangle(Rect(m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight));
+    graphics_engine.PushClippingRectangle(view_geo_);
 
     if (m_layout)
     {
