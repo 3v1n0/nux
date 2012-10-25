@@ -115,31 +115,37 @@ namespace nux
   typedef enum
   {
     LAYER_BLEND_MODE_NORMAL,
-    LAYER_BLEND_MODE_LIGHTEN,
+    // Darken Modes
     LAYER_BLEND_MODE_DARKEN,
     LAYER_BLEND_MODE_MULTIPLY,
-    LAYER_BLEND_MODE_AVERAGE,
-    LAYER_BLEND_MODE_ADD,
-    LAYER_BLEND_MODE_SUBTRACT,
-    LAYER_BLEND_MODE_DIFFERENCE,
-    LAYER_BLEND_MODE_NEGATION,
-    LAYER_BLEND_MODE_EXCLUSION,
+    LAYER_BLEND_MODE_COLOR_BURN,
+    LAYER_BLEND_MODE_LINEAR_BURN,
+    // Lighten Modes
+    LAYER_BLEND_MODE_LIGHTEN,
     LAYER_BLEND_MODE_SCREEN,
+    LAYER_BLEND_MODE_COLOR_DODGE,
+    LAYER_BLEND_MODE_LINEAR_DODGE,
+    // Constrast Modes
     LAYER_BLEND_MODE_OVERLAY,
     LAYER_BLEND_MODE_SOFT_LIGHT,
     LAYER_BLEND_MODE_HARD_LIGHT,
-    LAYER_BLEND_MODE_COLOR_DODGE,
-    LAYER_BLEND_MODE_LINEAR_DODGE,
-    LAYER_BLEND_MODE_COLOR_BURN,
-    LAYER_BLEND_MODE_LINEAR_BLUR,
-    LAYER_BLEND_MODE_LINEAR_LIGHT,
     LAYER_BLEND_MODE_VIVID_LIGHT,
+    LAYER_BLEND_MODE_LINEAR_LIGHT,
     LAYER_BLEND_MODE_PIN_LIGHT,
     LAYER_BLEND_MODE_HARD_MIX,
+    // Inversion Modes
+    LAYER_BLEND_MODE_DIFFERENCE,
+    LAYER_BLEND_MODE_EXCLUSION,
+    // Cancellation Modes
+    LAYER_BLEND_MODE_SUBTRACT,
+    // Others
+    LAYER_BLEND_MODE_AVERAGE,
+    LAYER_BLEND_MODE_ADD,
+    LAYER_BLEND_MODE_NEGATION,
     LAYER_BLEND_MODE_REFLECT,
     LAYER_BLEND_MODE_GLOW,
     LAYER_BLEND_MODE_PHOENIX,
-    LAYER_BLEND_MODE_OPACITY,
+    //LAYER_BLEND_MODE_OPACITY,
     LAYER_BLEND_MODE_LAST
   } LayerBlendMode;
 
@@ -779,42 +785,52 @@ namespace nux
     */
     int BlendStackDepth();
 
-    //! Blends a color over a texture layer.
+    //! Blends a color layer over a texture.
     /*!
         Blends a color over a texture layer.
 
-        @param device_texture Background layer.
-        @param foreground_color Foreground layer.
+        @param bkg_device_texture Background texture.
+        @param frg_color Foreground color.
     */
-    void QRP_GLSL_ColorBlendOverTex(int x, int y, int width, int height,
-          ObjectPtr<IOpenGLBaseTexture> bkg_device_texture, TexCoordXForm& texxform, const Color& color0,
-          const Color& foreground_color,
-          LayerBlendMode layer_blend_mode);
+    void QRP_GLSL_ColorLayerOverTexture(int x, int y, int width, int height,
+      ObjectPtr<IOpenGLBaseTexture> bkg_device_texture, TexCoordXForm& bkg_texxform, const Color& bkg_color,
+      const Color& frg_color,
+      LayerBlendMode layer_blend_mode);
 
-    //! Blends a texture over a color layer.
+    //! Blends a texture layer over a color.
     /*!
         Blends a texture over a color layer.
 
-        @param background_color Background layer.
-        @param device_texture Foreground layer.
+        @param bkg_color Background color.
+        @param frg_device_texture Foreground texture.
     */
-    void QRP_GLSL_TexBlendOverColor(int x, int y, int width, int height,
-          const Color& background_color,
-          ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& texxform0, const Color& color0,
-          LayerBlendMode layer_blend_mode);
+    void QRP_GLSL_TextureLayerOverColor(int x, int y, int width, int height,
+      const Color& bkg_color,
+      ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& frg_texxform, const Color& frg_color,
+      LayerBlendMode layer_blend_mode);
 
-    //! Blends a texture over a texture layer.
+    //! Blends a texture layer over a texture.
     /*!
-        Blends a texture over a texture layer.
+        Uses a layer blending operation to render two textures.
 
-        @param bkg_device_texture Background layer.
-        @param frg_device_texture Foreground layer.
+        @param bkg_device_texture Background texture layer.
+        @param frg_device_texture Foreground texture layer.
     */
-    void QRP_GLSL_TexBlendOverTex(int x, int y, int width, int height,
-          ObjectPtr<IOpenGLBaseTexture> bkg_device_texture, TexCoordXForm& texxform0, const Color& color0,
-          ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& texxform1, const Color& color1,
-          LayerBlendMode layer_blend_mode);
+    void QRP_GLSL_TextureLayerOverTexture(int x, int y, int width, int height,
+      ObjectPtr<IOpenGLBaseTexture> bkg_device_texture, TexCoordXForm& bkg_texxform, const Color& bkg_color,
+      ObjectPtr<IOpenGLBaseTexture> frg_device_texture, TexCoordXForm& frg_texxform, const Color& frg_color,
+      LayerBlendMode layer_blend_mode);
 
+    //! Blends a color layer over a color.
+    /*!
+        Uses a layer blending operation to render two colors.
+        @param bkg_color Background color layer.
+        @param frg_color Foreground color layer.
+    */
+    void QRP_GLSL_ColorLayerOverColor(int x, int y, int width, int height,
+      const Color& bkg_color,
+      const Color& frg_color,
+      LayerBlendMode layer_blend_mode);
 
   private:
 
@@ -1015,13 +1031,15 @@ namespace nux
     ObjectPtr<IOpenGLShaderProgram> blend_tex_color_prog_[LAYER_BLEND_MODE_LAST];
     ObjectPtr<IOpenGLShaderProgram> blend_color_tex_prog_[LAYER_BLEND_MODE_LAST];
     ObjectPtr<IOpenGLShaderProgram> blend_tex_tex_prog_[LAYER_BLEND_MODE_LAST];
+    ObjectPtr<IOpenGLShaderProgram> blend_color_color_prog_[LAYER_BLEND_MODE_LAST];
     
-    const char* GetBlendModeBlendFunc(LayerBlendMode layer_blend_mode);
-    const char* GetBlendModeString(LayerBlendMode layer_blend_mode);
+    std::string GetBlendModeBlendFunc(LayerBlendMode layer_blend_mode);
+    std::string GetBlendModeString(LayerBlendMode layer_blend_mode);
     
-    ObjectPtr <IOpenGLShaderProgram> GetColorBlendOverTexProgram(LayerBlendMode layer_blend_mode);
-    ObjectPtr <IOpenGLShaderProgram> GetTexBlendOverColorProgram(LayerBlendMode layer_blend_mode);
-    ObjectPtr <IOpenGLShaderProgram> GetBlendTexTexProgram(LayerBlendMode layer_blend_mode);
+    ObjectPtr<IOpenGLShaderProgram> GetColorBlendOverTexProgram(LayerBlendMode layer_blend_mode);
+    ObjectPtr<IOpenGLShaderProgram> GetTextureLayerOverColorProgram(LayerBlendMode layer_blend_mode);
+    ObjectPtr<IOpenGLShaderProgram> GetTextureLayerOverTextureProgram(LayerBlendMode layer_blend_mode);
+    ObjectPtr<IOpenGLShaderProgram> GetColorLayerOverColorProgram(LayerBlendMode layer_blend_mode);
 
 
 

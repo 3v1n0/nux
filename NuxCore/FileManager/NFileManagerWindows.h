@@ -130,13 +130,13 @@ namespace nux
     bool DeleteDirectory (const TCHAR *Path, bool DeleteContentFirst = false);
 
 
-    void FindFiles (std::vector<NString>& Result, const TCHAR *Filename, bool Files, bool Directories);
-    void ListFilesInDirectory (std::vector<NString>& Result, const TCHAR *DirName);
+    void FindFiles (std::vector<std::string>& Result, const TCHAR *Filename, bool Files, bool Directories);
+    void ListFilesInDirectory (std::vector<std::string>& Result, const TCHAR *DirName);
     double GetFileAgeSeconds (const TCHAR *Filename);
     time_t GetFileLastModified (const TCHAR *Filename);
     bool GetFileLastModified (const TCHAR *Filename, SYSTEMTIME &sysTime, bool bLocalTime);
     bool SetDefaultDirectory();
-    NString GetCurrentDirectory();
+    std::string GetCurrentDirectory();
     bool GetTimeStamp (const TCHAR *Filename, FileTimeStamp &Timestamp);
   };
 

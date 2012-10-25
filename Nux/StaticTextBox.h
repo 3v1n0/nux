@@ -38,14 +38,12 @@ namespace nux
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
 
     // API
-    void SetText(const char &Caption);
     void SetText(const char *Caption);
-    void SetText(const tstring &Caption);
-    void SetText(const NString &Caption);
+    void SetText(const std::string &Caption);
     const char *GetText() const;
     unsigned int GetTextSize() const
     {
-      return (unsigned int) m_Text.Length();
+      return (unsigned int) m_Text.length();
     }
 
     //! Change the widget minimum width whenever the text is set.
@@ -99,7 +97,7 @@ namespace nux
     virtual bool AcceptKeyNavFocus();
     void AdjustMinWidthToMatchText();
 
-    NString m_Text;
+    std::string m_Text;
     Color m_TextColor;
     Color m_BackgroundColor;
     tstring m_temporary_caption;

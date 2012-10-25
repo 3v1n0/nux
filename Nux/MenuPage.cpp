@@ -277,7 +277,7 @@ namespace nux
 //
   const char *MenuPage::GetName() const
   {
-    return m_Name.GetTCharPtr();
+    return m_Name.c_str();
   }
 
   bool MenuPage::CanClose() const

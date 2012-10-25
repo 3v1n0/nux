@@ -26,7 +26,6 @@
 namespace nux
 {
 
-  class NString;
   class NFileManagerWindows;
 
   class NFileTransferMonitor
@@ -149,15 +148,15 @@ namespace nux
         @param	BaseIndex		Base for index search.
         @return					Index of the new file. -1 if the file couldn't be created The index has to be in the range [0, 9999].
     */
-    virtual int CreateUniqueFileName (const TCHAR *Filename, const TCHAR *Extension, NString &OutputFilename, unsigned int BaseIndex = 0xffffffff) = 0;
+    virtual int CreateUniqueFileName (const TCHAR *Filename, const TCHAR *Extension, std::string &OutputFilename, unsigned int BaseIndex = 0xffffffff) = 0;
 
 
-    virtual void FindFiles ( std::vector<NString>& FileNames, const TCHAR *Filename, bool Files, bool Directories ) = 0;
-    virtual void ListFilesInDirectory ( std::vector<NString>& Result, const TCHAR *DirName) = 0;
+    virtual void FindFiles ( std::vector<std::string>& FileNames, const TCHAR *Filename, bool Files, bool Directories ) = 0;
+    virtual void ListFilesInDirectory ( std::vector<std::string>& Result, const TCHAR *DirName) = 0;
     virtual time_t GetFileLastModified (const TCHAR *Filename) = 0;
     virtual double GetFileAgeSeconds (const TCHAR *Filename) = 0;
     virtual bool SetDefaultDirectory() = 0;
-    virtual NString GetCurrentDirectory() = 0;
+    virtual std::string GetCurrentDirectory() = 0;
     virtual bool GetTimeStamp ( const TCHAR *Path, FileTimeStamp &Timestamp ) = 0;
 
 
@@ -172,7 +171,7 @@ namespace nux
     bool MakeDirectory (const TCHAR *Path, bool CreateCompletePath = false);
     bool DeleteDirectory (const TCHAR *Path, bool DeleteContentFirst = false);
     bool Move (const TCHAR *Dest, const TCHAR *Src, bool OverWriteExisting = true, bool OverWriteReadOnly = false, NFileTransferMonitor *Monitor = NULL);
-    int CreateUniqueFileName (const TCHAR *Filename, const TCHAR *Extension, NString &OutputFilename, unsigned int BaseIndex = 0xffffffff);
+    int CreateUniqueFileName (const TCHAR *Filename, const TCHAR *Extension, std::string &OutputFilename, unsigned int BaseIndex = 0xffffffff);
 
     bool IsDrive (const TCHAR *Path);
   };

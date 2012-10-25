@@ -61,13 +61,13 @@ namespace nux
       char      character    /*character*/,
       const Geometry &g);
 
-    NString GetTextLine() const
+    std::string GetTextLine() const
     {
       return m_textline;
     }
     unsigned int GetLength() const
     {
-      return (unsigned int) m_textline.Length();
+      return (unsigned int) m_textline.length();
     }
 
     unsigned int GetCursorPosition() const
@@ -88,8 +88,7 @@ namespace nux
     }
 
     void SetText(const char *str);
-    void SetText(const tstring &s);
-    void SetText(const NString &s);
+    void SetText(const std::string &s);
 
     void ClearText();
     void PlaceCaret(unsigned int cp);
@@ -104,13 +103,13 @@ namespace nux
     void GetTextSelection(int *start, int *end) const;
     int GetTextSelectionStart() const;
     int GetTextSelectionEnd() const;
-    NString GetSelectedText() const;
+    std::string GetSelectedText() const;
     void SelectAllText();
     void UnselectAllText();
     bool IsTextSelected();
 
-    void SetPrefix(NString); // 0x865, 25 rad, 25 degree...
-    void SetPostfix(NString);
+    void SetPrefix(std::string); // 0x865, 25 rad, 25 degree...
+    void SetPostfix(std::string);
 
     void EnterFocus();
 
@@ -128,7 +127,7 @@ namespace nux
 
   protected:
     ObjectPtr<FontTexture> m_Font;
-    NString m_textline;
+    std::string m_textline;
     int m_previous_cursor_position;
     bool m_need_redraw;
     int m_text_positionx;

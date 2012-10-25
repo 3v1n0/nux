@@ -52,7 +52,7 @@ namespace nux
 
   protected:
     bool InitRegExp();
-    NString _regexp_str;
+    std::string _regexp_str;
 
 #if defined(NUX_OS_WINDOWS)
     std::regex regex_;

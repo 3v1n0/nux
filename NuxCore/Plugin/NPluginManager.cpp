@@ -63,7 +63,7 @@ namespace nux
         if (! (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
         {
           NFileName FilePath = Path + NUX_PATH_SEPARATOR_STRING + fd.cFileName;
-          dllHandle = LoadLibrary (FilePath.GetTCharPtr() );
+          dllHandle = LoadLibrary (FilePath.c_str() );
 
           if (dllHandle != NULL)
           {
@@ -73,7 +73,7 @@ namespace nux
             if (funcHandle != NULL)
             {
               NPlugin *curPlugin = new NPlugin();
-              curPlugin->SetFileName (FilePath.GetTCharPtr() );
+              curPlugin->SetFileName (FilePath.c_str() );
 
               PLUGIN_TEXTFUNC textFunc;
               textFunc = reinterpret_cast<PLUGIN_TEXTFUNC> (GetProcAddress (dllHandle, "getPluginType") );

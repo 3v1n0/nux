@@ -110,7 +110,7 @@ namespace nux
       // GLSL spec: The #version directive must occur in a shader before anything else, except for comments and white space.
       size_t Pos = RetSource.find("#version", 0);
 
-      while (RetSource[Pos] != '\n')
+      while (Pos != std::string::npos && RetSource[Pos] != '\n')
       {
         if (RetSource[Pos] == 0)
           break;
@@ -130,11 +130,9 @@ namespace nux
         ++LinePosition;
       }
 
-      std::ostringstream o_str_stream;
-      o_str_stream << "#line " << LinePosition + shaderStartLine << "\n";
-      std::string line_num_str = o_str_stream.str();
-
-      RetSource.insert(Pos, line_num_str);
+      std::string s = "#line ";
+      s += std::to_string((unsigned long long)(LinePosition + shaderStartLine)) + "\n";
+      RetSource.insert(Pos, s);
 
       // Insert the preprocessor definitions before the #line directive
       if (ShaderPreprocessorDefines.length())
@@ -164,7 +162,7 @@ namespace nux
     {
       Pos = RetSource.find('\n', Pos);
 
-      if (Pos == tstring::npos)
+      if (Pos == std::string::npos)
       {
         // this is most likely an incorrect shader
         Pos = RetSource.size();
@@ -515,6 +513,11 @@ namespace nux
     ObjectPtr<IOpenGLVertexShader> vs = GetGraphicsDisplay()->GetGpuDevice()->CreateVertexShader(); //new IOpenGLVertexShader;
 
     std::string ProcessedShaderSource;
+
+    if(!VtxShaderPreprocessorDefines)
+    {
+      VtxShaderPreprocessorDefines = "";
+    }
     std::string Defines(VtxShaderPreprocessorDefines);
     InsertPreProcessorDefinitions(glslshader, ProcessedShaderSource, Defines);
 
@@ -530,6 +533,11 @@ namespace nux
     ObjectPtr<IOpenGLPixelShader> ps = GetGraphicsDisplay()->GetGpuDevice()->CreatePixelShader(); //new IOpenGLPixelShader;
 
     std::string ProcessedShaderSource;
+
+    if (!FrgShaderPreprocessorDefines)
+    {
+      FrgShaderPreprocessorDefines = "";
+    }
     std::string Defines(FrgShaderPreprocessorDefines);
     InsertPreProcessorDefinitions(glslshader, ProcessedShaderSource, Defines);
 

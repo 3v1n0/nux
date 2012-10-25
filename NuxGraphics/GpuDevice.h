@@ -397,7 +397,6 @@ namespace nux
     //
     int _glsl_version_major;  //!< GLSL major version.
     int _glsl_version_minor;  //!< GLSL major version.
-
     int opengl_major_;  //!< OpenGL major version.
     int opengl_minor_;  //!< OpenGL minor version.
 

@@ -717,7 +717,7 @@ namespace nux
 
     if (!wglMakeCurrent(device_context_, glrc))
     {
-      NString error = inlGetSystemErrorMessage();
+      std::string error = inlGetSystemErrorMessage();
       DestroyOpenGLWindow();
       MessageBox(NULL, "Can't Activate The GL Rendering Context.", "ERROR", MB_OK | MB_ICONERROR);
     }

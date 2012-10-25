@@ -38,13 +38,13 @@ namespace nux
   bool Validator::InitRegExp()
   {
 #if defined(NUX_OS_WINDOWS)
-    regex_ = _regexp_str.GetTCharPtr();
+    regex_ = _regexp_str.c_str();
     return true;
 #else
     const char *error;
     int   erroffset;
     _regexp = pcre_compile(
-      _regexp_str.GetTCharPtr(),    /* the pattern */
+      _regexp_str.c_str(),    /* the pattern */
       PCRE_MULTILINE,
       &error,         /* for error message */
       &erroffset,     /* for error offset */
@@ -52,7 +52,7 @@ namespace nux
 
     if (!_regexp)
     {
-      nuxDebugMsg("[IntegerValidator::IntegerValidator] Invalid regular expression: %s", _regexp_str.GetTCharPtr());
+      nuxDebugMsg("[IntegerValidator::IntegerValidator] Invalid regular expression: %s", _regexp_str.c_str());
       return false;
     }    
     return true;

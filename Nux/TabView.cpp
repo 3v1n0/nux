@@ -40,7 +40,7 @@ namespace nux
   Color TabView::TAB_HEADER_COLOR               = Color(0xFF333333);
   Color TabView::TAB_HEADER_FOCUS_COLOR         = Color(0xFF5D5D5D);
 
-  TabView::TabElement::TabElement(NString TabName, Layout *TabLayout)
+  TabView::TabElement::TabElement(std::string TabName, Layout *TabLayout)
   {
     _index = 0;
     _tab_name = TabName;
@@ -78,7 +78,7 @@ namespace nux
     return _tab_area->GetGeometry();
   }
 
-  const NString &TabView::TabElement::GetName() const
+  const std::string &TabView::TabElement::GetName() const
   {
     return _tab_name;
   }
@@ -206,7 +206,7 @@ namespace nux
     for (unsigned int i = 0; i < vector_size; i++)
     {
       Geometry tab_geo = _tab_array[i]->_tab_area->GetGeometry();
-      const char *tab_text = _tab_array[i]->GetName().GetTCharPtr();
+      const char *tab_text = _tab_array[i]->GetName().c_str();
 
       if (_tab_array[i]->_index == m_FocusTabIndex)
       {

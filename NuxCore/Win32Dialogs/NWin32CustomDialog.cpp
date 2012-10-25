@@ -78,8 +78,8 @@ namespace nux
     nuxAssert (Description);
     nuxAssert (Filter);
 
-    FilterDesc.push_back (NString (Description) );
-    Filters.push_back (NString (Filter) );
+    FilterDesc.push_back(std::string(Description));
+    Filters.push_back(std::string(Filter));
     NumFilters++;
   }
 
@@ -102,7 +102,7 @@ namespace nux
 
     for (unsigned int i = 0; i < NumFilters; i++)
     {
-      size += FilterDesc[i].Length() + Filters[i].Length() + 2; // + 2 for for the NULL char at the end of each string
+      size += FilterDesc[i].length() + Filters[i].length() + 2; // + 2 for for the NULL char at the end of each string
     }
 
     size += 1;  // + 1 for the final NULL char. The total string is terminated by two NULL char
@@ -115,12 +115,12 @@ namespace nux
 
     for (unsigned int i = 0; i < NumFilters; i++)
     {
-      Memcpy ( (void *) (FormattedFilter + l), *FilterDesc[i], FilterDesc[i].Length() );
-      l += FilterDesc[i].Length();
+      Memcpy((void *) (FormattedFilter + l), FilterDesc[i].c_str(), FilterDesc[i].length());
+      l += FilterDesc[i].length();
       FormattedFilter[l] = 0;
       l++;
-      Memcpy ( (void *) (FormattedFilter + l), *Filters[i], Filters[i].Length() );
-      l += Filters[i].Length();
+      Memcpy ( (void *) (FormattedFilter + l), Filters[i].c_str(), Filters[i].length() );
+      l += Filters[i].length();
       FormattedFilter[l] = 0;
       l++;
     }

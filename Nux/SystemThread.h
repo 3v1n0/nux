@@ -82,7 +82,7 @@ namespace nux
     // Declare operator adress-of as private
     SystemThread *operator &();
 
-    NString m_ThreadName;
+    std::string m_ThreadName;
 
     friend SystemThread *CreateSystemThread(AbstractThread *Parent, ThreadUserInitFunc UserInitFunc, void *InitData);
     

@@ -112,15 +112,15 @@ namespace nux
       @return TRUE if the token is found inside the stream.
   */
   bool Parse_int (const TCHAR *Stream, const TCHAR *Match, int &Value);
-//! Parse a NString after the named token.
+//! Parse a std::string after the named token.
   /*!
-      Parse a NString after the named token.
+      Parse a std::string after the named token.
       @param  Stream      Character stream to search.
       @param  Match       Token to match.
-      @param Value parsed NString
+      @param Value parsed std::string
       @return TRUE if the token is found inside the stream.
   */
-  bool Parse_string (const TCHAR *Stream, const TCHAR *Match, NString &Value);
+  bool Parse_string (const TCHAR *Stream, const TCHAR *Match, std::string &Value);
 //! Parse a QUADWORD after the named token.
   /*!
       Parse a QUADWORD after the named token.
@@ -168,7 +168,7 @@ namespace nux
                           If FALSE advanced the pointer past all the CR/LF character at the end of the string.
       @return True i a line was copied to LineString;
   */
-  bool ParseLine (const TCHAR **Stream, NString &LineString);
+  bool ParseLine (const TCHAR **Stream, std::string &LineString);
 
 //! Parse the next space-delimited string from the input stream. If the next token starts with a quote, gets entire quoted string.
   /*!
@@ -185,14 +185,14 @@ namespace nux
       @param TokenBuffer The parsed token string.
       @return True if a token was found.
   */
-  bool ParseToken (const TCHAR *Str, NString &TokenString);
+  bool ParseToken (const TCHAR *Str, std::string &TokenString);
 
 //! Parse the next space-delimited string from the input stream. If the next token starts with a quote, gets entire quoted string.
   /*!
       @param Str stream of characters to parse.
-      @return The next token in a NString.
+      @return The next token in a std::string.
   */
-  NString ParseToken (const TCHAR *Str);
+  std::string ParseToken (const TCHAR *Str);
 
 //! Go to the next token in the stream.
   /*!
