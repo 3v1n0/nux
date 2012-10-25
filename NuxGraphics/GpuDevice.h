@@ -113,8 +113,8 @@ namespace nux
     bool Support_ARB_Framebuffer_sRGB()          const    {return _support_arb_framebuffer_srgb;}
 #endif
 
-    int GetMaxFboAttachment() {return _opengl_max_fb_attachment;}
-    int GetMaxTextureSize() {return _opengl_max_texture_size;}
+    int GetMaxFboAttachment()                    const    {return _opengl_max_fb_attachment;}
+    int GetMaxTextureSize()                      const    {return _opengl_max_texture_size;}
 
 
   private:
