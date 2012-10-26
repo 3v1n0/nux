@@ -679,17 +679,17 @@ class TrackerWindow : public nux::BaseWindow
     bool wants_mouse_ownership;
 
   protected:
-    virtual void EmitMouseUpSignal(int /*x*/, int /*y*/,
-                                   unsigned long /*mouse_button_state*/,
-                                   unsigned long /*special_keys_state*/)
+    virtual void EmitMouseUpSignal(int x, int y,
+                                   unsigned long mouse_button_state,
+                                   unsigned long special_keys_state)
     {
       ++mouse_up_emission_count;
     }
 
-    virtual void EmitMouseDragSignal(int /*x*/, int /*y*/,
+    virtual void EmitMouseDragSignal(int x, int y,
                                      int dx, int dy,
-                                     unsigned long /*mouse_button_state*/,
-                                     unsigned long /*special_keys_state*/)
+                                     unsigned long mouse_button_state,
+                                     unsigned long special_keys_state)
     {
       ++mouse_drag_emission_count;
       mouse_drag_dx = dx;
@@ -705,24 +705,24 @@ class TrackerWindow : public nux::BaseWindow
 class TrackedArea : public nux::InputArea
 {
   protected:
-    virtual void EmitMouseDownSignal(int /*x*/, int /*y*/,
-                                     unsigned long /*mouse_button_state*/,
-                                     unsigned long /*special_keys_state*/)
+    virtual void EmitMouseDownSignal(int x, int y,
+                                     unsigned long mouse_button_state,
+                                     unsigned long special_keys_state)
     {
       ++mouse_down_emission_count;
     }
 
-    virtual void EmitMouseUpSignal(int /*x*/, int /*y*/,
-                                   unsigned long /*mouse_button_state*/,
-                                   unsigned long /*special_keys_state*/)
+    virtual void EmitMouseUpSignal(int x, int y,
+                                   unsigned long mouse_button_state,
+                                   unsigned long special_keys_state)
     {
       ++mouse_up_emission_count;
     }
 
-    virtual void EmitMouseDragSignal(int /*x*/, int /*y*/,
-                                     int /*dx*/, int /*dy*/,
-                                     unsigned long /*mouse_button_state*/,
-                                     unsigned long /*special_keys_state*/)
+    virtual void EmitMouseDragSignal(int x, int y,
+                                     int dx, int dy,
+                                     unsigned long mouse_button_state,
+                                     unsigned long special_keys_state)
     {
       ++mouse_drag_emission_count;
     }
