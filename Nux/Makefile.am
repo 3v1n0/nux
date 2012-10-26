@@ -173,6 +173,7 @@ source_h = \
   $(srcdir)/KineticScrolling/AxisDecelerationAnimation.h \
   $(srcdir)/KineticScrolling/KineticAxisScroller.h \
   $(srcdir)/KineticScrolling/KineticScroller.h \
+  $(srcdir)/KineticScrolling/KineticScrollingEnums.h \
   $(srcdir)/KineticScrolling/KineticScrollingTickSource.h \
   $(srcdir)/KineticScrolling/VelocityCalculator.h \
   $(srcdir)/KineticScrollView.h \
@@ -255,6 +256,17 @@ nux_HEADERS = $(source_h)
 
 nuxprogramframeworkdir      = $(includedir)/Nux-@NUX_API_VERSION@/Nux/ProgramFramework
 nuxprogramframework_HEADERS = $(nuxprogramframework_h)
+
+kineticscrolling_h = \
+  $(srcdir)/KineticScrolling/AxisDecelerationAnimation.h \
+  $(srcdir)/KineticScrolling/KineticAxisScroller.h \
+  $(srcdir)/KineticScrolling/KineticScroller.h \
+  $(srcdir)/KineticScrolling/KineticScrollingEnums.h \
+  $(srcdir)/KineticScrolling/KineticScrollingTickSource.h \
+  $(srcdir)/KineticScrolling/VelocityCalculator.h
+
+kineticscrollingdir      = $(includedir)/Nux-@NUX_API_VERSION@/Nux/KineticScrolling
+kineticscrolling_HEADERS = $(kineticscrolling_h)
 
 # pkg-config file
 nux-@NUX_API_VERSION@.pc: nux.pc
