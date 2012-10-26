@@ -307,15 +307,16 @@ namespace nux
       //Color(0.2156 * m_color_factor, 0.2156 * m_color_factor, 0.2156 * m_color_factor, 1.0f));
   }
 
-  void VScrollBar::SetContainerSize(int w, int h)
+  void VScrollBar::SetContainerSize(int /* x */, int /* y */, int w, int h)
   {
     container_width_ = w;
     container_height_ = h;
     ComputeScrolling();
   }
 
-  void VScrollBar::SetContentSize(int w, int h)
+  void VScrollBar::SetContentSize(int /* x */, int /* y */, int w, int h)
   {
+    // x and y are not needed
     content_width_ = w;
     content_height_ = h;
     ComputeScrolling();

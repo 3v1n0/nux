@@ -20,20 +20,15 @@
  *
  */
 
-#ifndef NUX_SCROLLVIEW_H
-#define NUX_SCROLLVIEW_H
+
+#ifndef SCROLLVIEW_H
+#define SCROLLVIEW_H
 
 #include "Nux.h"
 #include "View.h"
 
 namespace nux
 {
-
-  enum class ScrollBarStyle {
-    INSET,
-    OVERLAY
-  };
-
   class HScrollBar;
   class VScrollBar;
 
@@ -45,12 +40,38 @@ namespace nux
     ScrollView(NUX_FILE_LINE_PROTO);
     virtual ~ScrollView();
 
-    void SetScrollBarStyle(ScrollBarStyle scrollbar_style);
-    ScrollBarStyle GetScrollBarStyle() const;
-
     // API
     void EnableVerticalScrollBar(bool b);
     void EnableHorizontalScrollBar(bool b);
+    virtual bool SetLayout(Layout *layout);
+
+    /*!
+        Set the table size to be such that all the content items of the table are visible .
+        The scrollbar will be useless as the content is entirely visible all the time. If the table is empty, then it assume its minimum size.
+        This is needed for table inside ComboBox drop down memu.
+        @param b If b is true, the size of the table is constrained by its content.
+        @see IsSizeMatchLayout()
+    */
+    void SetSizeMatchContent(bool b);
+
+    /*!
+        Check if the table size is constrained by its content.
+        @return If the return value is true, the table size is constrained by its content.
+        @see SetSizeMatchContent
+    */
+    bool IsSizeMatchContent() const;
+
+    //! Inherited from Area
+    virtual void SetGeometry(const Geometry &geo);
+
+    /////////////////
+    //  EMITERS    //
+    /////////////////
+    void OnSizeGrigMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags);
+    void OnSizeGrigMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    void EmitMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
+    //void EmitInternalResize(int x, int y, int w, int h);
+
 
     /////////////////
     //  RECEIVERS  //
@@ -68,11 +89,28 @@ namespace nux
     // amount to scroll by for each mouse wheel event
     int m_MouseWheelScrollSize;
 
-    //Client View Area
-    Geometry view_geo_;
-
     // Geometry of the layout that encompass the child layouts.
-    Geometry content_geo_;
+    //! X Position of the content
+    int m_ViewContentX;
+    //! Y Position of the content
+    int m_ViewContentY;
+    //! Width of content
+    int m_ViewContentWidth;
+    //! Height of content
+    int m_ViewContentHeight;
+
+    //Client View Area
+    //! X position of the scroll view content area
+    int m_ViewX;
+    //! Y position of the scroll view content area
+    int m_ViewY;
+    //! Width of the scroll view content area
+    int m_ViewWidth;
+    //! Height of the scroll view content area
+    int m_ViewHeight;
+
+    Geometry m_ViewGeometry;
+    Geometry m_ContentGeometry;
 
     // signals
     /*!
@@ -124,24 +162,36 @@ namespace nux
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
 
     void RecvMouseWheel(int x, int y, int wheel_delta,  long button_flags, unsigned long key_flags);
-
-    //! Change Horizontal Scrollbar in the ScrollView.
-    /*!
-        For styling purpose, allow the classes that inherit from ScrollView to
-        change the horizontal scrollbar.
-    */
-    void SetHScrollBar(HScrollBar* hscrollbar);
+    void OnChildFocusChanged(Area *child);
 
     //! Change Vertical Scrollbar in the ScrollView.
     /*!
         For styling purpose, allow the classes that inherit from ScrollView to
         change the vertical scrollbar.
     */
-    void SetVScrollBar(VScrollBar* vscrollbar);
+    void SetVScrollBar(VScrollBar* newVScrollBar);
+
+    // Backup texture to speed up scrolling
+    ObjectPtr<IOpenGLFrameBufferObject> m_FrameBufferObject;
+
+    void SwapTextureIndex()
+    {
+      m_TextureIndex = (m_TextureIndex == 0) ? 1 : 0;
+    }
+    void SetTextureIndex(int index)
+    {
+      m_TextureIndex = index;
+    }
+    int GetTextureIndex()
+    {
+      return m_TextureIndex;
+    }
+    int m_TextureIndex;
+    bool m_ReformatTexture;
 
     // ScrollBars
-    HScrollBar* _hscrollbar;
-    VScrollBar* _vscrollbar;
+    HScrollBar     *_hscrollbar;
+    VScrollBar     *_vscrollbar;
     bool m_horizontal_scrollbar_enable;
     bool m_vertical_scrollbar_enable;
 
@@ -159,24 +209,22 @@ namespace nux
     virtual long PostLayoutManagement(long LayoutResult);
     virtual void ComputeContentPosition(float offsetX, float offsetY);
 
+    virtual long PostLayoutManagement2(long LayoutResult);
+
   private:
 
     virtual bool AcceptKeyNavFocus();
-
-    ScrollBarStyle scrollbar_style_;
+    /**
+        If True, the scrollbar size will be adjusted to match the size of the content.
+        This is useful for the ComboBoxComplex widget.
+    */
+    bool m_bSizeMatchContent;
 
     int m_ViewContentLeftMargin;
     int m_ViewContentRightMargin;
     int m_ViewContentTopMargin;
     int m_ViewContentBottomMargin;
-
-    sigc::connection scroll_up_connection_;
-    sigc::connection scroll_down_connection_;
-    sigc::connection vmouse_whell_connection_;
-    sigc::connection scroll_left_connection_;
-    sigc::connection scroll_right_connection_;
-    sigc::connection hmouse_whell_connection_;
   };
 }
 
-#endif
+#endif // SCROLLVIEW_H
