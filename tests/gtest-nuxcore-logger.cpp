@@ -294,7 +294,7 @@ TEST(TestLogHelpers, TestHasModule) {
 }
 
 
-DECLARE_LOGGER(file_level_logger, "test.module.file.level")
+DECLARE_LOGGER(file_level_logger, "test.module.file.level");
 
 TEST(TestStaticFileFunction, TestLoggerConstruction) {
   LoggerModules& modules = LoggerModules::Instance();
@@ -327,7 +327,7 @@ TEST(TestLoggerMacros, TestPassingObject) {
               MatchesRegex("ERROR .+ error log\n"));
 }
 
-DECLARE_LOGGER(test_logger, "test.module")
+DECLARE_LOGGER(test_logger, "test.module");
 
 TEST(TestLoggerMacros, TestPassingFunction) {
   nt::CaptureLogOutput log_output;
