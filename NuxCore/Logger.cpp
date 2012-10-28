@@ -383,7 +383,7 @@ std::string Backtrace(int levels)
 }
 #endif
 
-BlockTracer::BlockTracer(Logger& logger,
+BlockTracer::BlockTracer(Logger const& logger,
                          Level level,
                          std::string const& function_name,
                          std::string const& filename,

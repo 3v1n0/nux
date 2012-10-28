@@ -27,9 +27,9 @@
 
 namespace nux
 {
+DECLARE_LOGGER(logger, "nux.gl");
 namespace
 {
-logging::Logger logger("nux.gl");
 #ifdef NUX_DEBUG
 bool BreakOnGLErrors = false;
 #endif

@@ -56,12 +56,20 @@
   #define LOG_DEBUG_BLOCK(logger) ::nux::logging::BlockTracer _block_tracer_ ## __LINE__ (Unwrap(logger), ::nux::logging::Debug, __PRETTY_FUNCTION__, __FILE__, __LINE__)
 #endif
 
-
-// This macro is used to declare a file scoped logger module function.  The
-// purpose of this is to allow a file scoped logger that doesn't use static
-// initialisation, but instead is a method that creates the object the first
-// time it is used.
-
+/*
+ * This macro is used to declare a file scoped logger module function.  The
+ * purpose of this is to allow a file scoped logger that doesn't use static
+ * initialisation, but instead is a method that creates the object the first
+ * time it is used.
+ *
+ * Used like:
+ *
+ * DECLARE_LOGGER(logger, "test.module");
+ *
+ * Then used like this in some function (just like a normal logger object):
+ *
+ * LOG_DEBUG(logger) << "foo";
+ */
 #define DECLARE_LOGGER(logger, module)               \
 namespace {                                          \
   ::nux::logging::Logger& logger()                   \
@@ -183,14 +191,14 @@ inline Logger const& Unwrap(LoggerFunc func)
 class BlockTracer
 {
 public:
-  BlockTracer(Logger& logger,
+  BlockTracer(Logger const& logger,
               Level level,
               std::string const& function_name,
               std::string const& filename,
               int line_number);
   ~BlockTracer();
 private:
-  Logger& logger_;
+  Logger const& logger_;
   Level level_;
   std::string function_name_;
   std::string filename_;

@@ -33,10 +33,7 @@
 
 namespace nux
 {
-namespace
-{
-logging::Logger logger("nux.windows.thread");
-}
+DECLARE_LOGGER(logger, "nux.windows.thread");
 
   TimerFunctor *m_ScrollTimerFunctor;
   TimerHandle m_ScrollTimerHandler;

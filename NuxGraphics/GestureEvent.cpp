@@ -24,10 +24,7 @@
 
 using namespace nux;
 
-namespace
-{
-  nux::logging::Logger logger("nux.gestureevent");
-}
+DECLARE_LOGGER(logger, "nux.gestureevent");
 
 GestureEvent::GestureEvent()
 {
