@@ -27,13 +27,13 @@
 
 #include "NuxCore.h"
 #include "Logger.h"
+#include "LoggerPrivate.h"
 #include "LoggingWriter.h"
 
 #if defined(NUX_OS_LINUX)
 #include <execinfo.h>
 #endif
 
-#include <map>
 #include <sstream>
 #include <vector>
 #include <boost/algorithm/string.hpp>
@@ -46,49 +46,6 @@ namespace {
 char const* str_level(Level severity);
 }
 
-class LoggerModule
-{
-public:
-  LoggerModule(std::string const& module, LoggerModulePtr const& parent);
-
-  std::string const& module() const;
-
-  bool IsErrorEnabled() const;
-  bool IsWarningEnabled() const;
-  bool IsInfoEnabled() const;
-  bool IsDebugEnabled() const;
-  bool IsTraceEnabled() const;
-
-  void SetLogLevel(Level level);
-  Level GetLogLevel() const;
-  Level GetEffectiveLogLevel() const;
-
-private:
-  std::string module_;
-  Level level_;
-  LoggerModulePtr parent_;
-  // An attempt to make sure the writer is around for as long as the loggers.
-  Writer& writer_;
-};
-
-class LoggerModules : boost::noncopyable
-{
-public:
-  static LoggerModules& Instance();
-
-  LoggerModulePtr const& GetModule(std::string const& module);
-
-  void reset();
-  std::string dump_logging_levels(std::string const& prefix);
-
-private:
-  LoggerModules();
-
-private:
-  typedef std::map<std::string, LoggerModulePtr> ModuleMap;
-  ModuleMap modules_;
-  LoggerModulePtr root_;
-};
 
 
 inline std::string const& LoggerModule::module() const
@@ -217,6 +174,16 @@ LoggerModules& LoggerModules::Instance()
   return instance;
 }
 
+
+bool LoggerModules::HasModule(std::string const& module) const
+{
+  // This method assumes that the module strig has been lowercased already.
+  // This method is primarily an internal function, but is also used by the
+  // testing code.
+  return modules_.find(module) != modules_.end();
+}
+
+
 LoggerModulePtr const& LoggerModules::GetModule(std::string const& module)
 {
   std::string lower_module = boost::to_lower_copy(module);
@@ -238,7 +205,7 @@ LoggerModulePtr const& LoggerModules::GetModule(std::string const& module)
   return modules_.insert(ModuleMap::value_type(lower_module, logger)).first->second;
 }
 
-void LoggerModules::reset()
+void LoggerModules::Reset()
 {
   for (ModuleMap::iterator i = modules_.begin(), end = modules_.end(); i != end; ++i)
   {
@@ -246,11 +213,12 @@ void LoggerModules::reset()
   }
 }
 
-std::string LoggerModules::dump_logging_levels(std::string const& prefix)
+std::string LoggerModules::DumpLoggingLevels(std::string const& prefix) const
 {
   std::ostringstream sout;
   bool first = true;
-  for (ModuleMap::iterator i = modules_.begin(), end = modules_.end(); i != end; ++i)
+  for (ModuleMap::const_iterator i = modules_.begin(), end = modules_.end();
+       i != end; ++i)
   {
     std::string const& module_name = i->first;
     LoggerModulePtr const& module = i->second;
@@ -340,12 +308,12 @@ int LogStreamBuffer::sync()
  */
 void reset_logging()
 {
-  LoggerModules::Instance().reset();
+  LoggerModules::Instance().Reset();
 }
 
 std::string dump_logging_levels(std::string const& prefix)
 {
-  return LoggerModules::Instance().dump_logging_levels(prefix);
+  return LoggerModules::Instance().DumpLoggingLevels(prefix);
 }
 
 void configure_logging(const char* config_string)

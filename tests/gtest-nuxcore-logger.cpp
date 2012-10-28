@@ -1,4 +1,5 @@
 #include "NuxCore/Logger.h"
+#include "NuxCore/LoggerPrivate.h"
 #include "NuxCore/LoggingWriter.h"
 
 #include "Helpers.h"
@@ -284,6 +285,13 @@ TEST(TestLogHelpers, TestResetLogging) {
   EXPECT_THAT(levels, Eq("<root> WARNING"));
 }
 
+
+TEST(TestLogHelpers, TestHasModule) {
+  LoggerModules& modules = LoggerModules::Instance();
+  EXPECT_FALSE(modules.HasModule("test.module.non.existant"));
+  Logger("test.module.non.existant");
+  EXPECT_TRUE(modules.HasModule("test.module.non.existant"));
+}
 
 TEST(TestLogHelpers, TestConfigureLoggingNull) {
 
