@@ -293,6 +293,66 @@ TEST(TestLogHelpers, TestHasModule) {
   EXPECT_TRUE(modules.HasModule("test.module.non.existant"));
 }
 
+
+DECLARE_LOGGER(file_level_logger, "test.module.file.level")
+
+TEST(TestStaticFileFunction, TestLoggerConstruction) {
+  LoggerModules& modules = LoggerModules::Instance();
+  EXPECT_FALSE(modules.HasModule("test.module.file.level"));
+  // Call the function
+  file_level_logger();
+  EXPECT_TRUE(modules.HasModule("test.module.file.level"));
+}
+
+
+TEST(TestLoggerMacros, TestPassingObject) {
+  nt::CaptureLogOutput log_output;
+  configure_logging("test.module=trace");
+  Logger local("test.module");
+
+  LOG_TRACE(local) << "trace log";
+  EXPECT_THAT(log_output.GetOutput(),
+              MatchesRegex("TRACE .+ trace log\n"));
+  LOG_DEBUG(local) << "debug log";
+  EXPECT_THAT(log_output.GetOutput(),
+              MatchesRegex("DEBUG .+ debug log\n"));
+  LOG_INFO(local) << "info log";
+  EXPECT_THAT(log_output.GetOutput(),
+              MatchesRegex("INFO .+ info log\n"));
+  LOG_WARN(local) << "warn log";
+  EXPECT_THAT(log_output.GetOutput(),
+              MatchesRegex("WARN .+ warn log\n"));
+  LOG_ERROR(local) << "error log";
+  EXPECT_THAT(log_output.GetOutput(),
+              MatchesRegex("ERROR .+ error log\n"));
+}
+
+DECLARE_LOGGER(test_logger, "test.module")
+
+TEST(TestLoggerMacros, TestPassingFunction) {
+  nt::CaptureLogOutput log_output;
+  configure_logging("test.module=trace");
+
+  LoggerFunc the_func = test_logger;
+
+  LOG_TRACE(test_logger) << "trace log";
+  EXPECT_THAT(log_output.GetOutput(),
+              MatchesRegex("TRACE .+ trace log\n"));
+  LOG_DEBUG(test_logger) << "debug log";
+  EXPECT_THAT(log_output.GetOutput(),
+              MatchesRegex("DEBUG .+ debug log\n"));
+  LOG_INFO(test_logger) << "info log";
+  EXPECT_THAT(log_output.GetOutput(),
+              MatchesRegex("INFO .+ info log\n"));
+  LOG_WARN(test_logger) << "warn log";
+  EXPECT_THAT(log_output.GetOutput(),
+              MatchesRegex("WARN .+ warn log\n"));
+  LOG_ERROR(test_logger) << "error log";
+  EXPECT_THAT(log_output.GetOutput(),
+              MatchesRegex("ERROR .+ error log\n"));
+}
+
+
 TEST(TestLogHelpers, TestConfigureLoggingNull) {
 
   reset_logging();

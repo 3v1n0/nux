@@ -201,7 +201,7 @@ LoggerModulePtr const& LoggerModules::GetModule(std::string const& module)
   LoggerModulePtr logger(new LoggerModule(lower_module, parent));
   // std::map insert method returns a pair<iterator, bool> which seems
   // overly annoying to make a temporary of, so just return the const
-  // reference pointed to by the interator.
+  // reference pointed to by the interator. 
   return modules_.insert(ModuleMap::value_type(lower_module, logger)).first->second;
 }
 

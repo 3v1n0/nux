@@ -31,30 +31,46 @@
 #endif
 
 #define LOG_TRACE(logger) \
-  if (!logger.IsTraceEnabled()) {} \
-  else ::nux::logging::LogStream(::nux::logging::Trace, logger.module(), __FILE__, __LINE__).stream()
+  if (!Unwrap(logger).IsTraceEnabled()) {}                              \
+  else ::nux::logging::LogStream(::nux::logging::Trace, Unwrap(logger).module(), __FILE__, __LINE__).stream()
 #define LOG_DEBUG(logger) \
-  if (!logger.IsDebugEnabled()) {} \
-  else ::nux::logging::LogStream(::nux::logging::Debug, logger.module(), __FILE__, __LINE__).stream()
+  if (!Unwrap(logger).IsDebugEnabled()) {} \
+  else ::nux::logging::LogStream(::nux::logging::Debug, Unwrap(logger).module(), __FILE__, __LINE__).stream()
 #define LOG_INFO(logger) \
-  if (!logger.IsInfoEnabled()) {} \
-  else ::nux::logging::LogStream(::nux::logging::Info, logger.module(), __FILE__, __LINE__).stream()
+  if (!Unwrap(logger).IsInfoEnabled()) {} \
+  else ::nux::logging::LogStream(::nux::logging::Info, Unwrap(logger).module(), __FILE__, __LINE__).stream()
 #define LOG_WARN(logger) LOG_WARNING(logger)
 #define LOG_WARNING(logger) \
-  if (!logger.IsWarningEnabled()) {} \
-  else ::nux::logging::LogStream(::nux::logging::Warning, logger.module(), __FILE__, __LINE__).stream()
+  if (!Unwrap(logger).IsWarningEnabled()) {} \
+  else ::nux::logging::LogStream(::nux::logging::Warning, Unwrap(logger).module(), __FILE__, __LINE__).stream()
 #define LOG_ERROR(logger) \
-  if (!logger.IsErrorEnabled()) {} \
-  else ::nux::logging::LogStream(::nux::logging::Error, logger.module(), __FILE__, __LINE__).stream()
+  if (!Unwrap(logger).IsErrorEnabled()) {} \
+  else ::nux::logging::LogStream(::nux::logging::Error, Unwrap(logger).module(), __FILE__, __LINE__).stream()
 
 // We shouldn't really be logging block level information at anything higher than debug.
 #if defined(NUX_OS_WINDOWS)
   #define LOG_TRACE_BLOCK(logger)
   #define LOG_DEBUG_BLOCK(logger)
 #else
-  #define LOG_TRACE_BLOCK(logger) ::nux::logging::BlockTracer _block_tracer_ ## __LINE__ (logger, ::nux::logging::Trace, __PRETTY_FUNCTION__, __FILE__, __LINE__)
-  #define LOG_DEBUG_BLOCK(logger) ::nux::logging::BlockTracer _block_tracer_ ## __LINE__ (logger, ::nux::logging::Debug, __PRETTY_FUNCTION__, __FILE__, __LINE__)
+  #define LOG_TRACE_BLOCK(logger) ::nux::logging::BlockTracer _block_tracer_ ## __LINE__ (Unwrap(logger), ::nux::logging::Trace, __PRETTY_FUNCTION__, __FILE__, __LINE__)
+  #define LOG_DEBUG_BLOCK(logger) ::nux::logging::BlockTracer _block_tracer_ ## __LINE__ (Unwrap(logger), ::nux::logging::Debug, __PRETTY_FUNCTION__, __FILE__, __LINE__)
 #endif
+
+
+// This macro is used to declare a file scoped logger module function.  The
+// purpose of this is to allow a file scoped logger that doesn't use static
+// initialisation, but instead is a method that creates the object the first
+// time it is used.
+
+#define DECLARE_LOGGER(logger, module)               \
+namespace {                                          \
+  ::nux::logging::Logger& logger()                   \
+  {                                                  \
+    static ::nux::logging::Logger instance(module);  \
+    return instance;                                 \
+  }                                                  \
+}
+
 
 namespace nux {
 namespace logging {
@@ -132,6 +148,23 @@ public:
 private:
   LoggerModulePtr pimpl;
 };
+
+
+// The Unwrap function is used by the LOG_* macros above to accept either a
+// reference to a Logger object, or a function that when called returns a
+// reference to a Logger object.
+inline Logger const& Unwrap(Logger const& logger)
+{
+  return logger;
+}
+
+typedef Logger& (*LoggerFunc)();
+inline Logger const& Unwrap(LoggerFunc func)
+{
+  return func();
+}
+
+
 
 /**
  * This class is used to log the entry and exit of a block.
