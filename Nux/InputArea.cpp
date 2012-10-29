@@ -38,9 +38,7 @@
 
 namespace nux
 {
-namespace {
-logging::Logger logger("nux.inputarea");
-}
+DECLARE_LOGGER(logger, "nux.inputarea");
 
   NUX_IMPLEMENT_OBJECT_TYPE(InputArea);
 

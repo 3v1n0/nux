@@ -37,10 +37,7 @@
 #include "NuxGraphics/FontTexture.h"
 namespace nux
 {
-namespace
-{
-  logging::Logger logger("nux.window");
-}
+DECLARE_LOGGER(logger, "nux.window");
 
   WindowCompositor::WindowCompositor(WindowThread* window_thread)
   : reference_fbo_(0)

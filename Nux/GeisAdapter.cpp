@@ -31,10 +31,10 @@
 
 using namespace nux;
 
+DECLARE_LOGGER(logger, "nux.geisadapter");
+
 namespace
 {
-  nux::logging::Logger logger("nux.geisadapter");
-
 #ifdef NUX_USE_GLIB_LOOP
   struct GeisAdapterEventSource
   {

@@ -29,11 +29,8 @@
 
 namespace nux
 {
+DECLARE_LOGGER(logger, "nux.graphics");
 
-namespace
-{
-  logging::Logger logger("nux.graphics");
-}
   NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLAsmShader);
   NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLAsmVertexShader);
   NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLAsmPixelShader);

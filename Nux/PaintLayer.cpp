@@ -155,8 +155,8 @@ namespace nux
     const Color& blend_color, LayerBlendMode layer_blend_mode,
     bool write_alpha, const ROPConfig& ROP)
     : m_source_texture(texture0),
+      m_source_texture_color(color0),
       m_source_texture_texxform(texxform0),
-      m_source_color(color0),
       m_foreground_color(blend_color),
       m_write_alpha(write_alpha),
       m_rop(ROP),
