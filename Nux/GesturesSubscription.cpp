@@ -26,11 +26,7 @@
 
 namespace nux
 {
-
-namespace
-{
-  logging::Logger logger("nux.gestures_subscription");
-}
+DECLARE_LOGGER(logger, "nux.gestures_subscription");
 
 GesturesSubscription::GesturesSubscription()
   : gesture_classes_(DRAG_GESTURE|PINCH_GESTURE|ROTATE_GESTURE),
