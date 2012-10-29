@@ -288,9 +288,9 @@ TEST(TestLogHelpers, TestResetLogging) {
 
 TEST(TestLogHelpers, TestHasModule) {
   LoggerModules& modules = LoggerModules::Instance();
-  EXPECT_FALSE(modules.HasModule("test.module.non.existant"));
-  Logger("test.module.non.existant");
-  EXPECT_TRUE(modules.HasModule("test.module.non.existant"));
+  EXPECT_FALSE(modules.HasModule("test.module.non.existent"));
+  Logger("test.module.non.existent");
+  EXPECT_TRUE(modules.HasModule("test.module.non.existent"));
 }
 
 

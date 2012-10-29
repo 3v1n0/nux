@@ -177,7 +177,7 @@ LoggerModules& LoggerModules::Instance()
 
 bool LoggerModules::HasModule(std::string const& module) const
 {
-  // This method assumes that the module strig has been lowercased already.
+  // This method assumes that the module string has been lowercased already.
   // This method is primarily an internal function, but is also used by the
   // testing code.
   return modules_.find(module) != modules_.end();
@@ -201,7 +201,7 @@ LoggerModulePtr const& LoggerModules::GetModule(std::string const& module)
   LoggerModulePtr logger(new LoggerModule(lower_module, parent));
   // std::map insert method returns a pair<iterator, bool> which seems
   // overly annoying to make a temporary of, so just return the const
-  // reference pointed to by the interator. 
+  // reference pointed to by the iterator.
   return modules_.insert(ModuleMap::value_type(lower_module, logger)).first->second;
 }
 
