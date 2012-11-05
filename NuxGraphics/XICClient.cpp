@@ -44,8 +44,6 @@ void XICClient::ResetXIC(XIM xim, Window window)
 void XICClient::SetupXIC(XIM xim, Window window)
 {
   xic_ = XCreateIC(xim, XNInputStyle, xim_style_, XNClientWindow, window, XNFocusWindow, window, NULL);
-  if (!xic_)
-    nuxDebugMsg("[GraphicsDisplay::XIMStartCallback] failed to register xic");
 }
 
 void XICClient::SetupXIMStyle(XIM xim)

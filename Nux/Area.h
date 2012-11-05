@@ -795,12 +795,13 @@ protected:
 
     friend class Layout;
     friend class View;
+    friend class WindowCompositor;
     friend class WindowThread;
+#if !defined(NUX_MINIMAL)
     friend class HSplitter;
     friend class VSplitter;
-    friend class WindowCompositor;
+#endif
   };
-
 }
 #endif // BASEOBJECT_H
 

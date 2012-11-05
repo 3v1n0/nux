@@ -35,10 +35,7 @@
 
 namespace nux
 {
-namespace
-{
-logging::Logger logger("nux.image");
-}
+DECLARE_LOGGER(logger, "nux.image");
 
   extern PixelFormatInfo GPixelFormats[];
 

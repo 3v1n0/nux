@@ -383,6 +383,8 @@ namespace nux
 
   bool CachedBaseTexture::RecreateTexture(BaseTexture* Source)
   {
+    if (!m_Texture)
+      return false;
     int CurrentWidth   = m_Texture->GetWidth();
     int CurrentHeight  = m_Texture->GetHeight();
     int CurrentDepth   = m_Texture->GetDepth();
@@ -463,6 +465,8 @@ namespace nux
   {
     SURFACE_LOCKED_RECT LockedRect;
     ObjectPtr < IOpenGLTexture2D > Texture2D = m_Texture; //m_Texture.CastRef<IOpenGLTexture2D>();
+    if (!Texture2D)
+      return;
 
     OGL_CALL(Texture2D->LockRect(MipLevel, &LockedRect, NULL));
     SourceTexture->GetData(LockedRect.pBits, MipLevel, LockedRect.Pitch);
@@ -600,6 +604,8 @@ namespace nux
   {
     SURFACE_LOCKED_RECT            LockedRect;
     ObjectPtr <IOpenGLRectangleTexture>  TextureRectangle = m_Texture; //m_Texture.CastRef<IOpenGLRectangleTexture>();
+    if (!TextureRectangle)
+      return;
 
     OGL_CALL(TextureRectangle->LockRect( MipLevel, &LockedRect, NULL));
     SourceTexture->GetData( LockedRect.pBits, MipLevel, LockedRect.Pitch );
@@ -735,6 +741,8 @@ namespace nux
   {
     SURFACE_LOCKED_RECT    LockedRect;
     ObjectPtr <IOpenGLCubeTexture> CubemapTexture = m_Texture; //m_Texture.CastRef<IOpenGLCubeTexture>();
+    if (!CubemapTexture)
+      return;
 
     for (int face = CUBEMAP_FACE_POSITIVE_X; face < GL_TEXTURE_CUBE_MAP_NEGATIVE_Z + 1; face++)
     {
@@ -898,6 +906,8 @@ namespace nux
   {
     VOLUME_LOCKED_BOX       LockedBox;
     ObjectPtr <IOpenGLVolumeTexture> VolumeTexture = m_Texture; //m_Texture.CastRef<IOpenGLVolumeTexture>();
+    if (!VolumeTexture)
+      return;
     //TextureVolume*     Source          = UpCastResource<TextureVolume, BaseTexture>(SourceTexture);
 
     //for(int slice = 0; slice < ImageSurface::GetLevelDim(Source->GetFormat(), Source->GetDepth(), MipLevel); slice++)
@@ -1056,6 +1066,8 @@ namespace nux
   {
     SURFACE_LOCKED_RECT       LockedRect;
     ObjectPtr <IOpenGLAnimatedTexture> AnimatedTexture = m_Texture; //m_Texture.CastRef<IOpenGLAnimatedTexture>();
+    if (!AnimatedTexture)
+      return;
     TextureFrameAnimation*    Source          = UpCastResource<TextureFrameAnimation, BaseTexture> (SourceTexture);
 
     for (int frame = 0; frame < Source->GetDepth(); frame++)

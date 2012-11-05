@@ -34,7 +34,6 @@ source_h = \
   $(srcdir)/FontTexture.h \
   $(srcdir)/FontRenderer.h \
   $(srcdir)/GdkGraphics.h \
-  $(srcdir)/GraphicsDisplayX11.h \
   $(srcdir)/Gfx_Interface.h \
   $(srcdir)/GLDeviceFrameBufferObject.h \
   $(srcdir)/GLDeviceObjects.h \
@@ -63,7 +62,6 @@ source_h = \
   $(srcdir)/MeshFileLoader-OBJ.h \
   $(srcdir)/ImageSurface.h \
   $(srcdir)/IOpenGLAnimatedTexture.h \
-  $(srcdir)/IOpenGLAsmShader.h \
   $(srcdir)/IOpenGLBaseTexture.h \
   $(srcdir)/IOpenGLCubeTexture.h \
   $(srcdir)/IOpenGLFrameBufferObject.h \
@@ -85,14 +83,24 @@ source_h = \
   $(srcdir)/OpenGLDefinitions.h \
   $(srcdir)/OpenGLMapping.h \
   $(srcdir)/RenderingPipe.h \
-  $(srcdir)/RenderingPipeAsm.h \
   $(srcdir)/RenderingPipeGLSL.h \
   $(srcdir)/RenderingPipeTextureBlendShaderSource.h \
-  $(srcdir)/RunTimeStats.h \
+  $(srcdir)/RunTimeStats.h
+
+if USE_X11
+source_h += \
+  $(srcdir)/GraphicsDisplayX11.h \
   $(srcdir)/VirtualKeyCodesX11.h \
   $(srcdir)/XInputWindow.h \
   $(srcdir)/XICClient.h \
   $(srcdir)/XIMController.h
+endif
+
+if !NUX_OPENGLES_20
+source_h += \
+  $(srcdir)/IOpenGLAsmShader.h \
+  $(srcdir)/RenderingPipeAsm.h
+endif
 
 if HAVE_GEIS
 source_h += \
@@ -129,13 +137,11 @@ source_cpp = \
   $(srcdir)/GpuDeviceShader.cpp \
   $(srcdir)/GpuDeviceTexture.cpp \
   $(srcdir)/GpuDeviceVertex.cpp \
-  $(srcdir)/GraphicsDisplayX11.cpp \
   $(srcdir)/GraphicsEngine.cpp \
   $(srcdir)/MeshData.cpp \
   $(srcdir)/MeshFileLoader-OBJ.cpp \
   $(srcdir)/ImageSurface.cpp \
   $(srcdir)/IOpenGLAnimatedTexture.cpp \
-  $(srcdir)/IOpenGLAsmShader.cpp \
   $(srcdir)/IOpenGLBaseTexture.cpp \
   $(srcdir)/IOpenGLCubeTexture.cpp \
   $(srcdir)/IOpenGLFrameBufferObject.cpp \
@@ -154,19 +160,30 @@ source_cpp = \
   $(srcdir)/NuxGraphicsObject.cpp \
   $(srcdir)/NuxGraphicsResources.cpp \
   $(srcdir)/RenderingPipe.cpp \
-  $(srcdir)/RenderingPipeAsm.cpp \
   $(srcdir)/RenderingPipeGLSL.cpp \
   $(srcdir)/RenderingPipeTextureBlend.cpp \
   $(srcdir)/GLRenderingAPI.cpp \
-  $(srcdir)/RunTimeStats.cpp \
+  $(srcdir)/RunTimeStats.cpp
+
+if USE_X11
+source_cpp += \
+  $(srcdir)/GraphicsDisplayX11.cpp \
   $(srcdir)/XInputWindow.cpp \
   $(srcdir)/XICClient.cpp \
   $(srcdir)/XIMController.cpp
+endif
+
+if !NUX_OPENGLES_20
+source_cpp += \
+  $(srcdir)/IOpenGLAsmShader.cpp \
+  $(srcdir)/RenderingPipeAsm.cpp
+endif
 
 if HAVE_GEIS
 source_cpp += \
   $(srcdir)/GestureEvent.cpp
 endif
+
 
 libnux_graphics_@NUX_API_VERSION@_la_SOURCES = \
   $(source_cpp) \

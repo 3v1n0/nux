@@ -38,9 +38,7 @@
 
 namespace nux
 {
-namespace {
-logging::Logger logger("nux.inputarea");
-}
+DECLARE_LOGGER(logger, "nux.inputarea");
 
   NUX_IMPLEMENT_OBJECT_TYPE(InputArea);
 
@@ -127,7 +125,7 @@ logging::Logger logger("nux.inputarea");
 
   void InputArea::HandleDndMove(Event &event)
   {
-#if defined(NUX_OS_LINUX)
+#if defined(DRAG_AND_DROP_SUPPORTED)
     std::list<char *> mimes;
 
     mimes = GetWindowThread()->GetGraphicsDisplay().GetDndMimeTypes();
@@ -141,7 +139,7 @@ logging::Logger logger("nux.inputarea");
 
   void InputArea::HandleDndDrop(Event &event)
   {
-#if defined(NUX_OS_LINUX)
+#if defined(DRAG_AND_DROP_SUPPORTED)
     ProcessDndDrop(event.x, event.y);
 #endif
   }
@@ -149,16 +147,21 @@ logging::Logger logger("nux.inputarea");
 #if defined(NUX_OS_LINUX)
   void InputArea::SendDndStatus(bool accept, DndAction action, Geometry region)
   {
+#if defined(DRAG_AND_DROP_SUPPORTED)
     GetWindowThread()->GetGraphicsDisplay().SendDndStatus(accept, action, Rect(region.x, region.y, region.width, region.height));
+#endif
   }
 
   void InputArea::SendDndFinished(bool accepted, DndAction action)
   {
+#if defined(DRAG_AND_DROP_SUPPORTED)
     GetWindowThread()->GetGraphicsDisplay().SendDndFinished(accepted, action);
+#endif
   }
 
   void InputArea::ProcessDndMove(int x, int y, std::list<char *> /* mimes */)
   {
+#if defined(DRAG_AND_DROP_SUPPORTED)
     // must learn to deal with x/y offsets
     Area *parent = GetToplevel();
 
@@ -169,11 +172,14 @@ logging::Logger logger("nux.inputarea");
     }
 
     SendDndStatus(false, DNDACTION_NONE, Geometry(x, y, GetGeometry().width, GetGeometry().height));
+#endif
   }
 
   void InputArea::ProcessDndDrop(int /* x */, int /* y */)
   {
+#if defined(DRAG_AND_DROP_SUPPORTED)
     SendDndFinished(false, DNDACTION_NONE);
+#endif
   }
 
   void InputArea::ProcessDndEnter()
@@ -183,23 +189,25 @@ logging::Logger logger("nux.inputarea");
   void InputArea::ProcessDndLeave()
   {
   }
-  
+
   void InputArea::SetDndEnabled(bool as_source, bool as_target)
   {
+#if defined(DRAG_AND_DROP_SUPPORTED)
     _dnd_enabled_as_source = as_source;
     _dnd_enabled_as_target = as_target;
+#endif
   }
-  
+
   bool InputArea::DndSourceDragBegin()
   {
     return false;
   }
-  
-  NBitmapData * InputArea::DndSourceGetDragImage()
+
+  NBitmapData* InputArea::DndSourceGetDragImage()
   {
     return 0;
   }
-  
+
   std::list<const char *> InputArea::DndSourceGetDragTypes()
   {
     std::list<const char *> types;
@@ -207,7 +215,7 @@ logging::Logger logger("nux.inputarea");
     types.push_back("UTF8_STRING");
     return types;
   }
-    
+
   const char * InputArea::DndSourceGetDataForType(const char *type, int *size, int *format)
   {
     *format = 8;
@@ -217,33 +225,36 @@ logging::Logger logger("nux.inputarea");
       *size = (int) strlen("this is just a test");
       return "this is just a test";
     }
-    
+
     *size = 0;
     return 0;
   }
-  
-  void InputArea::InnerDndSourceDragFinished(DndAction result, void *data) 
-  { 
+
+  void InputArea::InnerDndSourceDragFinished(DndAction result, void *data)
+  {
+#if defined(DRAG_AND_DROP_SUPPORTED)
     InputArea *self = static_cast<InputArea *> (data);
     self->DndSourceDragFinished(result);
+#endif
   }
-  
+
   void InputArea::DndSourceDragFinished(DndAction /* result */)
   {
-  
   }
-  
+
   void InputArea::StartDragAsSource()
   {
+#if defined(DRAG_AND_DROP_SUPPORTED)
     GraphicsDisplay::DndSourceFuncs funcs;
-    
+
     funcs.get_drag_image = &InputArea::InnerDndSourceGetDragImage;
     funcs.get_drag_types = &InputArea::InnerDndSourceGetDragTypes;
     funcs.get_data_for_type = &InputArea::InnerDndSourceGetDataForType;
     funcs.drag_finished = &InputArea::InnerDndSourceDragFinished;
-    
+
     if (DndSourceDragBegin())
       GetWindowThread()->GetGraphicsDisplay().StartDndDrag(funcs, this);
+#endif
   }
 #endif
 

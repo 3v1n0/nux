@@ -28,10 +28,7 @@
 
 namespace nux
 {
-namespace
-{
-logging::Logger logger("nux.image");
-}
+DECLARE_LOGGER(logger, "nux.image");
 
   GdkGraphics::GdkGraphics()
     : pixbuf_(0)

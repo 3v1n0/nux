@@ -27,11 +27,9 @@
 #include <boost/scoped_ptr.hpp>
 #include "ScrollView.h"
 
-#if defined(NUX_OS_WINDOWS)
 #include "NuxGraphics/Events.h"
-#elif defined(NUX_OS_LINUX)
-#include "NuxGraphics/Events.h"
-#include "NuxGraphics/XInputWindow.h"
+#if defined(USE_X11)
+#  include "NuxGraphics/XInputWindow.h"
 #endif
 
 #include "InputArea.h"
@@ -242,7 +240,7 @@ namespace nux
 
     bool ChildNeedsRedraw();
 
-    #if defined(NUX_OS_LINUX)
+    #if defined(USE_X11)
     bool m_input_window_enabled;
     XInputWindow *m_input_window;
     #endif

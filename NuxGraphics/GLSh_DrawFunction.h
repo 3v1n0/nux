@@ -48,7 +48,9 @@ namespace nux
   private:
     Color background_color_;
     ObjectPtr<IOpenGLShaderProgram> sprog;
+#ifndef NUX_OPENGLES_20
     ObjectPtr<IOpenGLAsmShaderProgram> m_AsmProg;
+#endif
 
     float _ScreenOffsetX, _ScreenOffsetY;
     UINT ViewPortX;

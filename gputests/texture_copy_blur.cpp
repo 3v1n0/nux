@@ -62,11 +62,12 @@ void RenderBlurredCopyOfRenderTarget ()
   nux::Event event;
   memset(&event, 0, sizeof(nux::Event));
 
-  char fps [25];
+  /*char fps [25];
   int frame_counter = 0;
   int frame_periode = 0;
   float frame_rate = 0;
   float periode_time = 0;
+  */
   bool first_time = true;
   do
   {
@@ -122,7 +123,7 @@ void RenderBlurredCopyOfRenderTarget ()
     // Render the blurred texture
     graphics_engine->QRP_1Tex(0, 0, tex_blur->GetWidth(), tex_blur->GetHeight(), tex_blur, texxform, nux::color::White);
 
-    sprintf(fps, "FPS: %3.2f", frame_rate);
+    /*sprintf(fps, "FPS: %3.2f", frame_rate);
     nux::PageBBox page;
     page.xmin = 0;
     page.xmax = 100;
@@ -147,6 +148,7 @@ void RenderBlurredCopyOfRenderTarget ()
       periode_time = 0.0f;
       frame_periode = 0;
     }
+    */
 
   } while((event.type != nux::NUX_TERMINATE_APP) && (event.GetVirtualKeyState(NUX_VK_ESCAPE) == 0));
 

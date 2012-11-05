@@ -29,6 +29,8 @@
 
 #ifdef _WIN32
     #define NUX_OS_WINDOWS
+#elif __arm__
+    #define NUX_OS_LINUX
 #elif __linux__
     #define NUX_OS_LINUX
 #elif __APPLE__
@@ -67,10 +69,31 @@
 #elif defined(_M_IX86) || defined(__i386__)
   #define NUX_ARCH_i386
 #elif defined(__arm__)
-	#define NUX_ARCH_arm
+  #define NUX_ARCH_ARM
 #endif
 
+// If we are compiling for linux, and neither USE_X11 or NO_X11 are set,
+// then assume that we are compiling for X11
+#if defined(NUX_OS_LINUX)
+#  if defined(USE_X11)
+#    if defined(NO_X11)
+#      error Can not define both USE_X11 and NO_X11
+#    endif
+#  elif !defined(NO_X11)
+#    define USE_X11
+# endif
+#elif defined(USE_X11)
+#  error X11 not supported on non-linux systems
+#endif
 
+#if defined(USE_X11)
+#  define DRAG_AND_DROP_SUPPORTED
+#endif
+
+// Right now, we only support minimal builds for ARM if no X.
+#if (defined(NUX_ARCH_ARM) && defined(NO_X11) && !defined(NUX_MINIMAL))
+#  define NUX_MINIMAL
+#endif
 
 // Compiler Macros:
 // NUX_GNUCPP_COMPILER
