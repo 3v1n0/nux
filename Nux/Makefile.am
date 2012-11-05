@@ -88,6 +88,7 @@ source_cpp = \
   $(srcdir)/Painter.cpp \
   $(srcdir)/Panel.cpp \
   $(srcdir)/PopUpWindow.cpp \
+  $(srcdir)/ProximityArea.cpp \
   $(srcdir)/RadioButton.cpp \
   $(srcdir)/RadioButtonGroup.cpp \
   $(srcdir)/RangeValue.cpp \
@@ -191,6 +192,7 @@ source_h = \
   $(srcdir)/Painter.h \
   $(srcdir)/Panel.h \
   $(srcdir)/PopUpWindow.h \
+  $(srcdir)/ProximityArea.h \
   $(srcdir)/RadioButton.h \
   $(srcdir)/RadioButtonGroup.h \
   $(srcdir)/RangeValue.h \

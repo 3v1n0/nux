@@ -658,6 +658,12 @@ DECLARE_LOGGER(logger, "nux.window");
 
   void WindowCompositor::MouseEventCycle(Event& event)
   {
+    // Checks if any input areas are close enough to the mouse to emit
+    // mouse_near
+    if (event.type == NUX_MOUSE_MOVE)
+      if (!proximity_areas.empty())
+        CheckMouseNearArea(event);
+
     // Updates mouse_over_area_ and emits mouse_enter and mouse_leave signals
     // accordingly.
     bool area_under_mouse_changed = UpdateWhatAreaIsUnderMouse(event);
@@ -1271,6 +1277,30 @@ DECLARE_LOGGER(logger, "nux.window");
       _view_window_list.erase(always_top_it);
       _view_window_list.push_front(_always_on_front_window);
     }
+  }
+
+  void WindowCompositor::AddAreaInProximityList(ProximityArea* prox_area)
+  {
+    proximity_areas.push_back(prox_area);
+  }
+
+  void WindowCompositor::RemoveAreaInProximityList(ProximityArea* prox_area)
+  {
+    for (auto it = proximity_areas.begin(); it != proximity_areas.end(); ++it)
+    {
+      if (*it == prox_area)
+      {
+        proximity_areas.erase(it);
+        return;
+      }
+    }
+  }
+
+  void WindowCompositor::CheckMouseNearArea(Event& event)
+  {
+    for (auto area : proximity_areas)
+      if (area->EmitIfMouseIsNear(event))
+        area->GetArea()->EmitMouseNearSignal(event.x, event.y);
   }
 
   void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)

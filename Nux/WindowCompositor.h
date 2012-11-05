@@ -29,6 +29,7 @@
 #include <sigc++/connection.h>
 
 #include <NuxCore/ObjectPtr.h>
+#include <Nux/ProximityArea.h>
 
 #ifdef NUX_GESTURES_SUPPORT
 #include <unordered_map>
@@ -73,13 +74,15 @@ namespace nux
     void MouseEventCycle(Event& event);
     void DndEventCycle(Event& event);
 
-
     Point _mouse_position_on_owner;
     Point _mouse_position;
 
     //! Get Mouse position relative to the top left corner of the window.
     Point GetMousePosition();
-    
+
+    void AddAreaInProximityList(ProximityArea* prox_area);
+    void RemoveAreaInProximityList(ProximityArea* prox_area);
+
     void KeyboardEventCycle(Event& event);
 
     void MenuEventCycle(Event& event);
@@ -182,7 +185,9 @@ namespace nux
       unsigned long special_keys_state,
       const char* text,
       int key_repeat_count);
-
+    
+    //! Checks the list of porximity_views to see if the mouse is near any areas. 
+    void CheckMouseNearArea(Event& event);
 
     //! The InputArea that has the keyboard navigation focus.
     /*!
@@ -538,6 +543,14 @@ namespace nux
 
     */
     std::list<InputArea*> keyboard_grab_stack_;
+
+    //! List of views that will get checked for the mouse_near signal
+    /*!
+        A list of views that will be checked if
+        \near the mouse. Must add views to this 
+        \list to be checked.
+    */
+    std::list<nux::ProximityArea*> proximity_areas;
 
   private:
     WindowThread* window_thread_; //!< The WindowThread to which this object belongs.

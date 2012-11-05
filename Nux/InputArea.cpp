@@ -362,6 +362,11 @@ DECLARE_LOGGER(logger, "nux.inputarea");
     mouse_cancel.emit();
   }
 
+  void InputArea::EmitMouseNearSignal(int x, int y)
+  {
+    mouse_near.emit(x, y);
+  }
+
   Area* InputArea::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
   {
     if (TestMousePointerInclusion(mouse_position, event_type))
