@@ -13,11 +13,11 @@
 #   - Increase micro_version to the next odd number
 #   - Increase interface_version to the next odd number
 # 
-m4_define([nux_major_version], [3])
-m4_define([nux_minor_version], [4])
+m4_define([nux_major_version], [4])
+m4_define([nux_minor_version], [0])
 m4_define([nux_micro_version], [0])
 
-m4_define([nux_api_version], [3.0])
+m4_define([nux_api_version], [4.0])
 # Increase the number (to the current date) everytime you propose a branch that breaks the API or ABI
 # The number format is : year/month/day
 # e.g.: december 5th, 2011 is: 20111205
@@ -55,7 +55,7 @@ AC_PREREQ(2.59)
 AC_INIT([nux],
         [nux_version],
         [https://bugs.launchpad.net/nux])
-AC_COPYRIGHT([Copyright 2010 Inalogic Inc.])
+AC_COPYRIGHT([Copyright 2010-2012 Inalogic Inc.])
 
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
