@@ -29,6 +29,7 @@ namespace nux
 ProximityArea::ProximityArea(InputArea* area, int proximity)
   : area_(area)
   , proximity_(proximity)
+  , mouse_near_(false)
 {
   GetWindowThread()->GetWindowCompositor().AddAreaInProximityList(this);
 }

@@ -1279,6 +1279,11 @@ DECLARE_LOGGER(logger, "nux.window");
     }
   }
 
+  int WindowCompositor::GetProximityListSize() const
+  {
+    return proximity_areas.size();
+  }
+
   void WindowCompositor::AddAreaInProximityList(ProximityArea* prox_area)
   {
     proximity_areas.push_back(prox_area);
@@ -1286,9 +1291,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
   void WindowCompositor::RemoveAreaInProximityList(ProximityArea* prox_area)
   {
-    for (auto it = proximity_areas.begin(); it != proximity_areas.end(); ++it)
-      if (*it == prox_area)
-        proximity_areas.erase(it);
+    proximity_areas.remove(prox_area);
   }
 
   void WindowCompositor::CheckMouseNearArea(Event& event)

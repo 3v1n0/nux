@@ -80,6 +80,7 @@ namespace nux
     //! Get Mouse position relative to the top left corner of the window.
     Point GetMousePosition();
 
+    int GetProximityListSize() const;
     void AddAreaInProximityList(ProximityArea* prox_area);
     void RemoveAreaInProximityList(ProximityArea* prox_area);
 
