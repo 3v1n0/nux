@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Inalogic® Inc.
+ * Copyright 2012 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -38,20 +38,20 @@ ProximityArea::~ProximityArea()
   GetWindowThread()->GetWindowCompositor().RemoveAreaInProximityList(this);
 }
 
-void ProximityArea::CheckMousePosition(int x, int y)
+void ProximityArea::CheckMousePosition(Point mouse_pos)
 {
   Geometry geo = area_->GetGeometry();
   geo.Expand(proximity_, proximity_);
 
-  if (!mouse_near_ && geo.IsPointInside(x, y))
+  if (!mouse_near_ && geo.IsInside(mouse_pos))
   {
     mouse_near_ = true;
-    mouse_near.emit(x, y);
+    mouse_near.emit(mouse_pos);
   }
-  else if (mouse_near_ && !geo.IsPointInside(x, y))
+  else if (mouse_near_ && !geo.IsInside(mouse_pos))
   {
     mouse_near_ = false;
-    mouse_beyond.emit(x, y);
+    mouse_beyond.emit(mouse_pos);
   }
 }
 

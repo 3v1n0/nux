@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Inalogic® Inc.
+ * Copyright 2012 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -20,8 +20,8 @@
  */
 
 
-#ifndef PROXIMITYAREA_H
-#define PROXIMITYAREA_H
+#ifndef NUX_PROXIMITYAREA_H
+#define NUX_PROXIMITYAREA_H
 
 #include "InputArea.h"
 
@@ -32,12 +32,12 @@ class ProximityArea
 {
 public:
   ProximityArea(InputArea* area, int proximity);
-  ~ProximityArea();
+  virtual ~ProximityArea();
 
-  virtual void CheckMousePosition(int x, int y);
+  virtual void CheckMousePosition(Point mouse_pos);
 
-  sigc::signal<void, int, int> mouse_near;
-  sigc::signal<void, int, int> mouse_beyond;
+  sigc::signal<void, Point> mouse_near;
+  sigc::signal<void, Point> mouse_beyond;
 protected:
   InputArea* area_;
   int proximity_;

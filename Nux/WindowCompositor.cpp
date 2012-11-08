@@ -1294,7 +1294,7 @@ DECLARE_LOGGER(logger, "nux.window");
   void WindowCompositor::CheckMouseNearArea(Event& event)
   {
     for (auto area : proximity_areas)
-      area->CheckMousePosition(event.x, event.y);
+      area->CheckMousePosition(Point(event.x, event.y));
   }
 
   void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
