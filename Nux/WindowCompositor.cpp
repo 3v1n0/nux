@@ -1287,20 +1287,14 @@ DECLARE_LOGGER(logger, "nux.window");
   void WindowCompositor::RemoveAreaInProximityList(ProximityArea* prox_area)
   {
     for (auto it = proximity_areas.begin(); it != proximity_areas.end(); ++it)
-    {
       if (*it == prox_area)
-      {
         proximity_areas.erase(it);
-        return;
-      }
-    }
   }
 
   void WindowCompositor::CheckMouseNearArea(Event& event)
   {
     for (auto area : proximity_areas)
-      if (area->EmitIfMouseIsNear(event))
-        area->GetArea()->EmitMouseNearSignal(event.x, event.y);
+      area->CheckMousePosition(event.x, event.y);
   }
 
   void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
