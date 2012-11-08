@@ -375,14 +375,6 @@ namespace nux
      */
     sigc::signal<void> mouse_cancel;
 
-    //! Signal emitted when the InputArea receives a mouse near event. Should only be used for simple view actions.
-    /*!
-        @param void Return type of the callback hooked to this signal.
-        @param int Mouse X position.
-        @param int Mouse Y position.
-    */
-    sigc::signal<void, int, int> mouse_near;
-
     //! Signal emitted when the InputArea receives a key release event.
     sigc::signal<void, unsigned int, unsigned long, unsigned long> key_up;
 
@@ -469,8 +461,6 @@ namespace nux
       virtual void EmitMouseDownOutsideArea   (int x, int y, unsigned long mouse_button_state, unsigned long special_keys_state);
 
       virtual void EmitMouseCancelSignal();
-
-      virtual void EmitMouseNearSignal        (int x, int y);
 
       friend class WindowCompositor;
 
