@@ -49,6 +49,7 @@ namespace nux
     , glx_window_(0)
 #endif
     , m_NumVideoModes(0)
+    , m_X11VideoModes(0)
     , m_BorderPixel(0)
     , _x11_major(0)
     , _x11_minor(0)
@@ -58,7 +59,7 @@ namespace nux
     , m_X11RepeatKey(true)
     , viewport_size_(Size(0,0))
     , window_size_(Size(0,0))
-    , m_WindowPosition(Point(0,0)) 
+    , m_WindowPosition(Point(0,0))
     , fullscreen_(false)
     , screen_bit_depth_(32)
     , gfx_interface_created_(false)
@@ -111,6 +112,7 @@ namespace nux
 
     NUX_SAFE_DELETE( m_pEvent );
     inlSetThreadLocalStorage(_TLS_GraphicsDisplay, 0);
+    XFree(m_X11VideoModes);
   }
 
   std::string GraphicsDisplay::FindResourceLocation(const char *ResourceFileName, bool ErrorOnFail)
