@@ -787,29 +787,21 @@ namespace nux
 
 
     std::string ps_string = NUX_FRAGMENT_SHADER_HEADER
-                     "varying vec4 v_tex_coord;                                  \n\
-                     uniform sampler2D tex_object;                            \n\
-                     uniform vec2 tex_size;                                   \n\
-                     vec4 SampleTexture(sampler2D TexObject, vec2 TexCoord)       \n\
-                     {                                                            \n\
-                     return texture2D(TexObject, TexCoord.st);                    \n\
-                     }                                                            \n\
-                     #define NUM_SAMPLES %d                                       \n\
-                     uniform float weights[NUM_SAMPLES];                                \n\
-                     void main()                                                  \n\
-                     {                                                            \n\
-                     vec4 sum   = vec4(0.0, 0.0, 0.0, 0.0);                       \n\
-                     vec2 delta = vec2(1.0 / tex_size.x, 0.0);                \n\
-                     vec2 texCoord = vec2(v_tex_coord.s, v_tex_coord.t);      \n\
-                     texCoord.x -= float((NUM_SAMPLES - 1) / 2) / tex_size.x;      \n\
-                     texCoord.y += 0.0 / tex_size.y;                          \n\
-                     for (int i = 0; i < NUM_SAMPLES; i++)                         \n\
-                     {                                                            \n\
-                     sum += SampleTexture(tex_object, texCoord) * weights[i];       \n\
-                     texCoord += delta;                                           \n\
-                     }                                                            \n\
-                     gl_FragColor = vec4(sum.x, sum.y, sum.z, 1.0);             \n\
-                     }";
+    "varying vec4 v_tex_coord;                                                                                  \n\
+     uniform sampler2D tex_object;                                                                              \n\
+     uniform vec2 tex_size;                                                                                     \n\
+     #define NUM_SAMPLES %d                                                                                     \n\
+     uniform float weights[NUM_SAMPLES];                                                                        \n\
+     uniform float offsets[NUM_SAMPLES];                                                                        \n\
+     void main()                                                                                                \n\
+     {                                                                                                          \n\
+      gl_FragColor = texture2D(v_tex_coord.st/tex_size.x, tex_size) * weights[0];                               \n\
+      for (int i = 1; i < NUM_SAMPLES; i++)                                                                     \n\
+      {                                                                                                         \n\
+        gl_FragColor += texture2D(tex_object, (v_tex_coord.st+vec2(offsets[i], 0.0))/tex_size.x) * weights[i];  \n\
+        gl_FragColor += texture2D(tex_object, (v_tex_coord.st-vec2(offsets[i], 0.0))/tex_size.x) * weights[i];  \n\
+      }                                                                                                         \n\
+     }";
 
     int l = ps_string.length();
     char* shader_prog = new char[l+10];
@@ -850,29 +842,21 @@ namespace nux
      }";
 
     std::string ps_string = NUX_FRAGMENT_SHADER_HEADER
-                     "varying vec4 v_tex_coord;                                  \n\
-                     uniform sampler2D tex_object;                            \n\
-                     uniform vec2 tex_size;                                   \n\
-                     vec4 SampleTexture(sampler2D TexObject, vec2 TexCoord)      \n\
-                     {                                                            \n\
-                     return texture2D(TexObject, TexCoord.st);                   \n\
-                     }                                                            \n\
-                     #define NUM_SAMPLES %d                                       \n\
-                     uniform float weights[NUM_SAMPLES];                               \n\
-                     void main()                                                 \n\
-                     {                                                            \n\
-                     vec4 sum   = vec4(0.0, 0.0, 0.0, 0.0);                      \n\
-                     vec2 delta = vec2(0.0, 1.0 / tex_size.y);               \n\
-                     vec2 texCoord = vec2(v_tex_coord.s, v_tex_coord.t);     \n\
-                     texCoord.x += 0.0 / tex_size.x;                          \n\
-                     texCoord.y -= float((NUM_SAMPLES - 1) / 2) / tex_size.y;      \n\
-                     for (int i = 0; i < NUM_SAMPLES; ++i)                        \n\
-                     {                                                            \n\
-                     sum += SampleTexture(tex_object, texCoord) * weights[i];      \n\
-                     texCoord += delta;                                           \n\
-                     }                                                            \n\
-                     gl_FragColor = vec4(sum.x, sum.y, sum.z, 1.0);            \n\
-                     }";
+    "varying vec4 v_tex_coord;                                                                                  \n\
+     uniform sampler2D tex_object;                                                                              \n\
+     uniform vec2 tex_size;                                                                                     \n\
+     #define NUM_SAMPLES %d                                                                                     \n\
+     uniform float weights[NUM_SAMPLES];                                                                        \n\
+     uniform float offsets[NUM_SAMPLES];                                                                        \n\
+     void main()                                                                                                \n\
+     {                                                                                                          \n\
+      gl_FragColor = texture2D(tex_size, v_tex_coord.st/tex_size.y) * weights[0];                               \n\
+      for (int i = 1; i < NUM_SAMPLES; i++)                                                                     \n\
+      {                                                                                                         \n\
+        gl_FragColor += texture2D(tex_object, (v_tex_coord.st+vec2(0.0, offsets[i]))/tex_size.y) * weights[i];  \n\
+        gl_FragColor += texture2D(tex_object, (v_tex_coord.st-vec2(0.0, offsets[i]))/tex_size.y) * weights[i];  \n\
+      }                                                                                                         \n\
+     }";
 
     int l = ps_string.length();
     char* shader_prog = new char[l+10];
