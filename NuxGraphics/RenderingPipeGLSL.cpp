@@ -775,14 +775,14 @@ namespace nux
     ObjectPtr<IOpenGLPixelShader> ps = _graphics_display.m_DeviceFactory->CreatePixelShader();
 
     std::string vs_string = NUX_VERTEX_SHADER_HEADER
-    "uniform mat4 view_projection_matrix;   \n\
-     attribute vec4 vertex;              \n\
-     attribute vec4 tex_coord;      \n\
-     varying vec4 v_tex_coord;          \n\
-     void main()                          \n\
-     {                                    \n\
-      v_tex_coord = tex_coord;     \n\
-      gl_Position = view_projection_matrix * vertex;  \n\
+    "uniform mat4 view_projection_matrix;               \n\
+     attribute vec4 vertex;                             \n\
+     attribute vec4 tex_coord;                          \n\
+     varying vec4 v_tex_coord;                          \n\
+     void main()                                        \n\
+     {                                                  \n\
+      v_tex_coord = tex_coord;                          \n\
+      gl_Position = view_projection_matrix * vertex;    \n\
      }";
 
 
@@ -839,14 +839,14 @@ namespace nux
     ObjectPtr<IOpenGLPixelShader> ps = _graphics_display.m_DeviceFactory->CreatePixelShader();
 
     std::string vs_string = NUX_VERTEX_SHADER_HEADER
-    "uniform mat4 view_projection_matrix;   \n\
-     attribute vec4 vertex;              \n\
-     attribute vec4 tex_coord;      \n\
-     varying vec4 v_tex_coord;          \n\
-     void main()                          \n\
-     {                                    \n\
-      v_tex_coord = tex_coord;     \n\
-      gl_Position = view_projection_matrix * vertex;  \n\
+    "uniform mat4 view_projection_matrix;               \n\
+     attribute vec4 vertex;                             \n\
+     attribute vec4 tex_coord;                          \n\
+     varying vec4 v_tex_coord;                          \n\
+     void main()                                        \n\
+     {                                                  \n\
+      v_tex_coord = tex_coord;                          \n\
+      gl_Position = view_projection_matrix * vertex;    \n\
      }";
 
     std::string ps_string = NUX_FRAGMENT_SHADER_HEADER
@@ -2154,16 +2154,18 @@ namespace nux
     CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
     shader_prog->Begin();
 
-    int tex_object_location = shader_prog->GetUniformLocationARB("tex_object");
-    int weights_location       = shader_prog->GetUniformLocationARB("weights");
-    int tex_size_location   = shader_prog->GetUniformLocationARB("tex_size");
-    int vertex_location        = shader_prog->GetAttributeLocation("vertex");
-    int tex_coord_location = shader_prog->GetAttributeLocation("tex_coord");
+    int tex_object_location     = shader_prog->GetUniformLocationARB("tex_object");
+    int weights_location        = shader_prog->GetUniformLocationARB("weights");
+    int offsets_location        = shader_prog->GetUniformLocationARB("offsets");
+    int tex_size_location       = shader_prog->GetUniformLocationARB("tex_size");
+    int vertex_location         = shader_prog->GetAttributeLocation("vertex");
+    int tex_coord_location      = shader_prog->GetAttributeLocation("tex_coord");
 
     SetTexture(GL_TEXTURE0, device_texture);
     CHECKGL(glUniform1iARB(tex_object_location, 0));
 
     CHECKGL(glUniform1fv(weights_location, weights.size(), &weights[0]));
+    CHECKGL(glUniform1fv(offsets_location, offsets.size(), &offsets[0]));
 
     CHECKGL(glUniform2fARB(tex_size_location, width, height));
 
@@ -2226,17 +2228,19 @@ namespace nux
     CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
     shader_prog->Begin();
 
-    int tex_object_location = shader_prog->GetUniformLocationARB("tex_object");
-    int weights_location       = shader_prog->GetUniformLocationARB("weights");
-    int tex_size_location   = shader_prog->GetUniformLocationARB("tex_size");
-    int vertex_location        = shader_prog->GetAttributeLocation("vertex");
-    int tex_coord_location = shader_prog->GetAttributeLocation("tex_coord");
+    int tex_object_location     = shader_prog->GetUniformLocationARB("tex_object");
+    int weights_location        = shader_prog->GetUniformLocationARB("weights");
+    int offsets_location        = shader_prog->GetUniformLocationARB("offsets");
+    int tex_size_location       = shader_prog->GetUniformLocationARB("tex_size");
+    int vertex_location         = shader_prog->GetAttributeLocation("vertex");
+    int tex_coord_location      = shader_prog->GetAttributeLocation("tex_coord");
 
     SetTexture(GL_TEXTURE0, device_texture);
 
     CHECKGL(glUniform1iARB(tex_object_location, 0));
 
     CHECKGL(glUniform1fv(weights_location, weights.size(), &weights[0]));
+    CHECKGL(glUniform1fv(offsets_location, offsets.size(), &offsets[0]));
 
     CHECKGL(glUniform2fARB(tex_size_location, width, height));
 
