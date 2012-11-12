@@ -79,10 +79,10 @@ namespace nux
     MINOR_POSITION_BOTTOM = MINOR_POSITION_END,  //!< Deprecated.
     MINOR_POSITION_RIGHT = MINOR_POSITION_END,   //!< Deprecated.
 
-    eAbove = MINOR_POSITION_TOP,      //!< Deprecated.
-    eBelow = MINOR_POSITION_BOTTOM,   //!< Deprecated.
-    eLeft = MINOR_POSITION_LEFT,      //!< Deprecated.
-    eRight = MINOR_POSITION_RIGHT,    //!< Deprecated.
+    eAbove = MINOR_POSITION_START,      //!< Deprecated.
+    eBelow = MINOR_POSITION_END,   //!< Deprecated.
+    eLeft = MINOR_POSITION_START,      //!< Deprecated.
+    eRight = MINOR_POSITION_END,    //!< Deprecated.
     eCenter = MINOR_POSITION_CENTER,  //!< Deprecated.
   } MinorDimensionPosition;
 
@@ -104,10 +104,10 @@ namespace nux
     MAJOR_POSITION_RIGHT = MAJOR_POSITION_END,    //!< Deprecated.
 
 
-    eStackTop = MAJOR_POSITION_TOP,         //!< Deprecated.
-    eStackBottom = MAJOR_POSITION_BOTTOM,   //!< Deprecated.
-    eStackLeft = MAJOR_POSITION_LEFT,       //!< Deprecated.
-    eStackRight = MAJOR_POSITION_RIGHT,     //!< Deprecated.
+    eStackTop = MAJOR_POSITION_START,         //!< Deprecated.
+    eStackBottom = MAJOR_POSITION_END,   //!< Deprecated.
+    eStackLeft = MAJOR_POSITION_START,       //!< Deprecated.
+    eStackRight = MAJOR_POSITION_END,     //!< Deprecated.
     eStackCenter = MAJOR_POSITION_CENTER,   //!< Deprecated.
     eStackExpand = MAJOR_POSITION_SPREAD,   //!< Deprecated.
   }  LayoutContentDistribution;
