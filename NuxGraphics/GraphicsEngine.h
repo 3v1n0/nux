@@ -433,6 +433,8 @@ namespace nux
     void QRP_GLSL_VerticalGauss   (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm& texxform, const Color& c0, float sigma = 1.0f);
     void QRP_GLSL_HorizontalHQGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm& texxform, const Color& c0, float sigma = 1.0f);
     void QRP_GLSL_VerticalHQGauss   (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm& texxform, const Color& c0, float sigma = 1.0f);
+    void QRP_GLSL_HorizontalLSGauss(int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm& texxform, const Color& c0, float sigma = 1.0f);
+    void QRP_GLSL_VerticalLSGauss   (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm& texxform, const Color& c0, float sigma = 1.0f);
     void QRP_GLSL_ColorMatrix     (int x, int y, int width, int height, ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm& texxform, const Color& c0, Matrix4 color_matrix, Vector4 offset);
 
     /*!
@@ -444,6 +446,13 @@ namespace nux
         @param buffer_height  Height of result texture.
     */
     ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetBlurTexture(
+      int x, int y,
+      int buffer_width, int buffer_height,
+      ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm& texxform,
+      const Color& c0,
+      float sigma = 1.0f, int num_pass = 1);
+    
+    ObjectPtr<IOpenGLBaseTexture> QRP_GLSL_GetLSBlurTexture(
       int x, int y,
       int buffer_width, int buffer_height,
       ObjectPtr<IOpenGLBaseTexture> device_texture, TexCoordXForm& texxform,
@@ -841,6 +850,9 @@ namespace nux
 
     //! Helper function to compute a Gaussian filter weights
     void GaussianWeights(float **weights, float sigma, unsigned int num_tap);
+    
+    int LinearSampleGaussianWeights(std::vector<float>& weights, std::vector<float>& offsets, 
+                                                  float sigma);
 
     //! Helper function to set an fbo
     void SetFrameBufferHelper(
@@ -1008,6 +1020,14 @@ namespace nux
     void InitSLVerticalHQGaussFilter(int sigma);
     //! Gauss vertical filter.
     ObjectPtr<IOpenGLShaderProgram> _vertical_hq_gauss_filter_prog[NUX_MAX_GAUSSIAN_SIGMA];
+    
+    void InitSLHorizontalLSGaussFilter(int k);
+    //! Gauss horizontal filter.
+    ObjectPtr<IOpenGLShaderProgram> _horizontal_ls_gauss_filter_prog[NUX_MAX_GAUSSIAN_SIGMA];
+
+    void InitSLVerticalLSGaussFilter(int k);
+    //! Gauss vertical filter.
+    ObjectPtr<IOpenGLShaderProgram> _vertical_ls_gauss_filter_prog[NUX_MAX_GAUSSIAN_SIGMA];
 
     void InitSLColorMatrixFilter();
     //! Color matrix filter.

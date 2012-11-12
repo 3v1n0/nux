@@ -1330,6 +1330,41 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
     SetViewport(0, 0, width, height);
     Push2DWindow(width, height);
   }
+  
+  int GraphicsEngine::LinearSampleGaussianWeights(std::vector<float>& weights, std::vector<float>& offsets, 
+                                                  float sigma)
+  {
+    //Half our sample count due to linear sampling.
+    int support = ceil(int(sigma * 3.0f) / 2);
+    
+    float total = 0.0f;
+    
+    offsets.push_back(0);
+    
+    weights.push_back(1.0f / (sqrt(2.0f * constants::pi) * sigma));
+    total += weights.back();
+    
+    for (int i = 1; i <= support; i++)
+    {
+      float j = pow(i, 2);
+      float k = pow(i + 1, 2);
+      
+      float w1 = (1.0f/(sqrt(2.0f*constants::pi)*sigma)) * exp(-j/(sigma*sigma));
+      float w2 = (1.0f/(sqrt(2.0f*constants::pi)*sigma)) * exp(-k/(sigma*sigma));
+      
+      weights.push_back(w1 + w2);
+      total += 2.0f * weights[i];
+      
+      offsets.push_back(w1 / weights[i]);
+    }
+    
+    for (int i = 0; i < support; i++)
+    {
+      weights[i] /= total;
+    }
+    
+    return support;
+  }
 
   void GraphicsEngine::GaussianWeights(float **weights, float sigma, unsigned int num_tap)
   {
