@@ -1,12 +1,17 @@
-nux (3.10.0-0ubuntu2) UNRELEASED; urgency=low
+nux (4.0.0-0ubuntu1) UNRELEASED; urgency=low
 
+  [ Michael Terry ]
   * debian/control:
     - Update Vcs-Bzr
     - Build-Depend on dh-autoreconf and gnome-common
   * debian/rules:
     - Use dh_autoreconf
 
- -- Michael Terry <mterry@ubuntu.com>  Mon, 05 Nov 2012 16:30:30 -0500
+  [ Didier Roche ]
+  * Transition packaging to Nux 4.0
+  * Add split mode for daily build
+
+ -- Didier Roche <didrocks@ubuntu.com>  Mon, 12 Nov 2012 08:12:53 +0100
 
 nux (3.10.0-0ubuntu1) quantal-proposed; urgency=low
 
