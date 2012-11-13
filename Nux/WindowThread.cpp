@@ -1266,7 +1266,13 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
       return;
 
     if (window_compositor_)
+    {
       window_compositor_->SetBackgroundPaintLayer(background_layer);
+      if (main_layout_)
+      {
+        main_layout_->QueueDraw();
+      }
+    }
   }
   
   void WindowThread::AddToDrawList(View *view)
