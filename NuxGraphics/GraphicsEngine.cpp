@@ -1335,6 +1335,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
                                                   float sigma)
   {
     int support = int(sigma * 3.0f);
+    int standard_deviation = support / 3;
     
     float total = 0.0f;
     
@@ -1345,13 +1346,13 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
     
     for (int i = 1; i <= support; i++)
     {
-      float w1 = exp(-(i*i)/(2*sigma*sigma))/(sqrt(2*constants::pi)*sigma);
-      float w2 = exp(-((i+1)*(i+1))/(2*sigma*sigma))/(sqrt(2*constants::pi)*sigma);
+      float w1 = exp(-(i*i)/(2*standard_deviation*standard_deviation))/(sqrt(2*constants::pi)*standard_deviation);
+      float w2 = exp(-((i+1)*(i+1))/(2*standard_deviation*standard_deviation))/(sqrt(2*constants::pi)*standard_deviation);
       
       weights.push_back(w1 + w2);
       total += 2.0f * weights[i];
       
-      offsets.push_back(w1 / weights[i]);
+      offsets.push_back((w1 * i + w2 * (i + 1)) /  weights[i]);
     }
     
     for (int i = 0; i < support; i++)

@@ -785,7 +785,6 @@ namespace nux
       gl_Position = view_projection_matrix * vertex;    \n\
      }";
 
-
     std::string ps_string = NUX_FRAGMENT_SHADER_HEADER
     "varying vec4 v_tex_coord;                                                                                  \n\
      uniform sampler2D tex_object;                                                                              \n\
@@ -795,12 +794,13 @@ namespace nux
      uniform float offsets[NUM_SAMPLES];                                                                        \n\
      void main()                                                                                                \n\
      {                                                                                                          \n\
-      gl_FragColor = texture2D(v_tex_coord.st/tex_size.x, tex_size) * weights[0];                               \n\
+      vec3 frag_colour = texture2D(tex_object, v_tex_coord.st/tex_size.x).rgb * weights[0];                     \n\
       for (int i = 1; i < NUM_SAMPLES; i++)                                                                     \n\
       {                                                                                                         \n\
-        gl_FragColor += texture2D(tex_object, (v_tex_coord.st+vec2(offsets[i], 0.0))/tex_size.x) * weights[i];  \n\
-        gl_FragColor += texture2D(tex_object, (v_tex_coord.st-vec2(offsets[i], 0.0))/tex_size.x) * weights[i];  \n\
+        frag_colour += texture2D(tex_object, (v_tex_coord.st+vec2(offsets[i], 0.0))/tex_size.x).rgb*weights[i]; \n\
+        frag_colour += texture2D(tex_object, (v_tex_coord.st-vec2(offsets[i], 0.0))/tex_size.x).rgb*weights[i]; \n\
       }                                                                                                         \n\
+      gl_FragColor = vec4(frag_colour, 1.0);                                                                    \n\
      }";
 
     int l = ps_string.length();
@@ -850,12 +850,13 @@ namespace nux
      uniform float offsets[NUM_SAMPLES];                                                                        \n\
      void main()                                                                                                \n\
      {                                                                                                          \n\
-      gl_FragColor = texture2D(tex_size, v_tex_coord.st/tex_size.y) * weights[0];                               \n\
+      vec3 frag_colour = texture2D(tex_object, v_tex_coord.st/tex_size.y).rgb * weights[0];                     \n\
       for (int i = 1; i < NUM_SAMPLES; i++)                                                                     \n\
       {                                                                                                         \n\
-        gl_FragColor += texture2D(tex_object, (v_tex_coord.st+vec2(0.0, offsets[i]))/tex_size.y) * weights[i];  \n\
-        gl_FragColor += texture2D(tex_object, (v_tex_coord.st-vec2(0.0, offsets[i]))/tex_size.y) * weights[i];  \n\
+        frag_colour += texture2D(tex_object, (v_tex_coord.st+vec2(0.0, offsets[i]))/tex_size.y).rgb*weights[i]; \n\
+        frag_colour += texture2D(tex_object, (v_tex_coord.st-vec2(0.0, offsets[i]))/tex_size.y).rgb*weights[i]; \n\
       }                                                                                                         \n\
+      gl_FragColor = vec4(frag_colour, 1.0);                                                                    \n\
      }";
 
     int l = ps_string.length();
