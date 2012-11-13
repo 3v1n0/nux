@@ -2113,8 +2113,6 @@ namespace nux
     {
       InitSLHorizontalLSGaussFilter(num_samples);
     }
-    
-    printf("CHIMP\n");
 
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord(width, height, device_texture, texxform0);
@@ -2801,11 +2799,11 @@ namespace nux
     {
       SetFrameBufferHelper(_offscreen_fbo, fx_structure->temp_texture, _offscreen_depth_rt1, buffer_width, buffer_height);
       glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-      QRP_GLSL_HorizontalHQGauss(0, 0, buffer_width, buffer_height, fx_structure->dst_texture, texxform1, c0, sigma);
+      QRP_GLSL_HorizontalGauss(0, 0, buffer_width, buffer_height, fx_structure->dst_texture, texxform1, c0, sigma);
 
       SetFrameBufferHelper(_offscreen_fbo, fx_structure->dst_texture, _offscreen_depth_rt0, buffer_width, buffer_height);
       glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-      QRP_GLSL_VerticalHQGauss(0, 0, buffer_width, buffer_height, fx_structure->temp_texture, texxform1, c0, sigma);
+      QRP_GLSL_VerticalGauss(0, 0, buffer_width, buffer_height, fx_structure->temp_texture, texxform1, c0, sigma);
     }
 
     _offscreen_fbo->Deactivate();

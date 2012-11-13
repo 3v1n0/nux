@@ -1359,8 +1359,6 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
       weights[i] /= total;
     }
     
-    printf("Total: %f \n", total);
-    
     return support;
   }
 
