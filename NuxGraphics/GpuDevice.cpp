@@ -187,20 +187,49 @@ namespace nux
   STREAMSOURCE GpuDevice::_StreamSource[MAX_NUM_STREAM];
 
   GpuInfo::GpuInfo()
+    : _support_opengl_version_11(false)
+    , _support_opengl_version_12(false)
+    , _support_opengl_version_13(false)
+    , _support_opengl_version_14(false)
+    , _support_opengl_version_15(false)
+    , _support_opengl_version_20(false)
+    , _support_opengl_version_21(false)
+    , _support_opengl_version_30(false)
+    , _support_opengl_version_31(false)
+    , _support_opengl_version_32(false)
+    , _support_opengl_version_33(false)
+    , _support_opengl_version_40(false)
+    , _support_opengl_version_41(false)
+    , _opengl_max_texture_size(0)
+    , _opengl_max_texture_units(0)
+    , _opengl_max_texture_coords(0)
+    , _opengl_max_texture_image_units(0)
+    , _opengl_max_fb_attachment(0)
+    , _opengl_max_vertex_attributes(0)
+    , _support_ext_swap_control(false)
+    , _support_arb_vertex_program(false)
+    , _support_arb_fragment_program(false)
+    , _support_arb_shader_objects(false)
+    , _support_arb_vertex_shader(false)
+    , _support_arb_fragment_shader(false)
+    , _support_arb_vertex_buffer_object(false)
+    , _support_arb_texture_non_power_of_two(false)
+    , _support_ext_framebuffer_object(false)
+    , _support_ext_draw_range_elements(false)
+    , _support_ext_stencil_two_side(false)
+    , _support_ext_texture_rectangle(false)
+    , _support_arb_texture_rectangle(false)
+    , _support_nv_texture_rectangle(false)
+    , _support_arb_pixel_buffer_object(false)
+    , _support_ext_blend_equation_separate(false)
+    , _support_depth_buffer(false)
+#ifndef NUX_OPENGLES_20
+    , _support_ext_texture_srgb(false)
+    , _support_ext_texture_srgb_decode(false)
+    , _support_ext_framebuffer_srgb(false)
+    , _support_arb_framebuffer_srgb(false)
+#endif
   {
-    _support_opengl_version_11 = false;
-    _support_opengl_version_12 = false;
-    _support_opengl_version_13 = false;
-    _support_opengl_version_14 = false;
-    _support_opengl_version_15 = false;
-    _support_opengl_version_20 = false;
-    _support_opengl_version_21 = false;
-    _support_opengl_version_30 = false;
-    _support_opengl_version_31 = false;
-    _support_opengl_version_32 = false;
-    _support_opengl_version_33 = false;
-    _support_opengl_version_40 = false;
-    _support_opengl_version_41 = false;
   }
 
   void GpuInfo::Setup()

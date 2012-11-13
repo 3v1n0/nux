@@ -32,6 +32,7 @@
 #include "Painter.h"
 
 #include "NuxGraphics/FontTexture.h"
+
 namespace nux
 {
 DECLARE_LOGGER(logger, "nux.window");

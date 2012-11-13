@@ -18,7 +18,7 @@
  *
  */
 
-
+#include <memory>
 #include "NuxCore/NuxCore.h"
 #include "NuxGraphics/BitmapFormats.h"
 #include "NuxGraphics/GraphicsDisplay.h"
@@ -36,8 +36,11 @@
  
 void RenderToFrameBufferObject ()
 {
-  nux::GraphicsDisplay* graphics_display = gGLWindowManager.CreateGLWindow("Window", 570, 270, nux::WINDOWSTYLE_NORMAL, 0, false);
+  std::unique_ptr<nux::GraphicsDisplay> graphics_display(
+    gGLWindowManager.CreateGLWindow("Window", 570, 270,
+                                    nux::WINDOWSTYLE_NORMAL, 0, false));
   nux::GraphicsEngine* graphics_engine = graphics_display->GetGraphicsEngine();
+  nux::GpuInfo const& gpu_info = graphics_engine->GetGpuInfo();
 
   graphics_display->ShowWindow();
 
@@ -47,7 +50,8 @@ void RenderToFrameBufferObject ()
 
   fbo         = graphics_display->GetGpuDevice ()->CreateFrameBufferObject ();
   texture_rt  = graphics_display->GetGpuDevice ()->CreateSystemCapableDeviceTexture (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), 1, nux::BITFMT_R8G8B8A8);
-  depth_rt    = graphics_display->GetGpuDevice ()->CreateSystemCapableDeviceTexture (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), 1, nux::BITFMT_D24S8);
+  if (gpu_info.Support_Depth_Buffer())
+    depth_rt    = graphics_display->GetGpuDevice ()->CreateSystemCapableDeviceTexture (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), 1, nux::BITFMT_D24S8);
 
 
   int w, h;
@@ -79,12 +83,14 @@ void RenderToFrameBufferObject ()
 
       fbo         = graphics_display->GetGpuDevice ()->CreateFrameBufferObject ();
       texture_rt  = graphics_display->GetGpuDevice ()->CreateSystemCapableDeviceTexture (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), 1, nux::BITFMT_R8G8B8A8);
-      depth_rt    = graphics_display->GetGpuDevice ()->CreateSystemCapableDeviceTexture (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), 1, nux::BITFMT_D24S8);
+      if (gpu_info.Support_Depth_Buffer())
+        depth_rt    = graphics_display->GetGpuDevice ()->CreateSystemCapableDeviceTexture (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), 1, nux::BITFMT_D24S8);
     }
 
     fbo->FormatFrameBufferObject (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), nux::BITFMT_R8G8B8A8);
     fbo->SetRenderTarget (0, texture_rt->GetSurfaceLevel (0));
-    fbo->SetDepthSurface (depth_rt->GetSurfaceLevel (0));
+    if (gpu_info.Support_Depth_Buffer())
+      fbo->SetDepthSurface (depth_rt->GetSurfaceLevel (0));
     fbo->Activate();
 
     graphics_engine->GetWindowSize(w, h);
@@ -106,12 +112,6 @@ void RenderToFrameBufferObject ()
 
     graphics_display->SwapBuffer();
   } while(event.type != nux::NUX_TERMINATE_APP);
-
-  fbo.Release ();
-  texture_rt.Release ();
-  depth_rt.Release ();
-
-  delete graphics_display;
 }
 
 int main()

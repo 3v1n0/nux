@@ -84,8 +84,8 @@ namespace nux
     bool SupportOpenGL21() const    {return _support_opengl_version_21;}
     bool SupportOpenGL30() const    {return _support_opengl_version_30;}
     bool SupportOpenGL31() const    {return _support_opengl_version_31;}
-    bool SupportOpenGL33() const    {return _support_opengl_version_33;}
     bool SupportOpenGL32() const    {return _support_opengl_version_32;}
+    bool SupportOpenGL33() const    {return _support_opengl_version_33;}
     bool SupportOpenGL40() const    {return _support_opengl_version_40;}
     bool SupportOpenGL41() const    {return _support_opengl_version_41;}
 
@@ -105,6 +105,7 @@ namespace nux
     bool Support_NV_Texture_Rectangle()          const    {return _support_nv_texture_rectangle;}
     bool Support_ARB_Pixel_Buffer_Object()       const    {return _support_arb_pixel_buffer_object;}
     bool Support_EXT_Blend_Equation_Separate()   const    {return _support_ext_blend_equation_separate;}
+    bool Support_Depth_Buffer()                  const    {return _support_depth_buffer;}
 
 #ifndef NUX_OPENGLES_20
     bool Support_EXT_Texture_sRGB()              const    {return _support_ext_texture_srgb;}
@@ -157,6 +158,7 @@ namespace nux
     bool _support_nv_texture_rectangle;
     bool _support_arb_pixel_buffer_object;
     bool _support_ext_blend_equation_separate;
+    bool _support_depth_buffer;
 
 #ifndef NUX_OPENGLES_20
     bool _support_ext_texture_srgb;

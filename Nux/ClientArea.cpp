@@ -66,7 +66,10 @@ namespace nux
     ObjectPtr<IOpenGLFrameBufferObject> prev_fbo_ = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
     Geometry prev_viewport_ = graphics_engine.GetViewportRect();
 
-    if (GetWindowThread()->GetGraphicsDisplay().HasFrameBufferSupport())
+    GraphicsDisplay* graphics_display = GetGraphicsDisplay();
+    GpuDevice* gpu_device = graphics_display->GetGpuDevice();
+
+    if (graphics_display->HasFrameBufferSupport())
     {
       int width = GetWidth();
       int height = GetHeight();
@@ -86,25 +89,26 @@ namespace nux
       m_ctx.width_clipregion  = C.GetWidth();
       m_ctx.height_clipregion = C.GetHeight();
 
-      //ObjectPtr<IOpenGLFrameBufferObject> prevFBO = GetGraphicsDisplay()->GetGpuDevice()->GetCurrentFrameBufferObject();
-
+      bool use_depth_buffer = gpu_device->GpuInfo()->Support_Depth_Buffer();
       if (m_FrameBufferObject.IsNull())
       {
         // Create the fbo before using it for the first time.
-        m_FrameBufferObject = GetGraphicsDisplay()->GetGpuDevice()->CreateFrameBufferObject();
+        m_FrameBufferObject = gpu_device->CreateFrameBufferObject();
       }
 
       if (!m_MainColorRT.IsValid() || (m_MainColorRT->GetWidth() != width) || (m_MainColorRT->GetHeight() != height))
       {
         // Create or resize the color and depth textures before using them.
-        m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
-        m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
+        m_MainColorRT = gpu_device->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+        if (use_depth_buffer)
+          m_MainDepthRT = gpu_device->CreateSystemCapableDeviceTexture(width, height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
       }
 
       m_FrameBufferObject->FormatFrameBufferObject(width, height, BITFMT_R8G8B8A8);
       m_FrameBufferObject->EmptyClippingRegion();
       m_FrameBufferObject->SetTextureAttachment(0, m_MainColorRT, 0);
-      m_FrameBufferObject->SetDepthTextureAttachment(m_MainDepthRT, 0);
+      if (use_depth_buffer)
+        m_FrameBufferObject->SetDepthTextureAttachment(m_MainDepthRT, 0);
       m_FrameBufferObject->Activate();
 
       graphics_engine.SetViewport(0, 0, width, height);
