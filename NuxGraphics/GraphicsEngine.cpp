@@ -1352,7 +1352,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
       weights.push_back(w1 + w2);
       total += 2.0f * weights[i];
       
-      offsets.push_back((w1 * i + w2 * (i + 1)) /  weights[i]);
+      offsets.push_back(w1 /  weights[i]);
     }
     
     for (int i = 0; i < support; i++)
