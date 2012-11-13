@@ -1,7 +1,7 @@
 Source: nux
 Priority: optional
 Maintainer: Didier Roche <didrocks@ubuntu.com>
-Build-Depends: debhelper (>= 7.0.50~),
+Build-Depends: debhelper (>= 9),
                dh-autoreconf,
                gnome-common,
                autotools-dev,
@@ -10,6 +10,10 @@ Build-Depends: debhelper (>= 7.0.50~),
                libglib2.0-dev (>= 2.25.14),
                libgdk-pixbuf2.0-dev,
                libboost-dev,
+               libboost-filesystem-dev,
+               libboost-system-dev,
+               libgtest-dev,
+               google-mock,
                libcairo2-dev (>= 1.9.14),
                libpng12-dev (>= 1.2.44),
                libglew-dev [!armel !armhf],
@@ -42,6 +46,7 @@ Vcs-Bzr: https://code.launchpad.net/~unity-team/nux/trunk
 Package: libnux-4.0-0
 Section: libs
 Architecture: any
+Pre-Depends: ${misc:Pre-Depends},
 Depends: libnux-4.0-common (= ${source:Version}),
          ${shlibs:Depends},
          ${misc:Depends}
@@ -55,6 +60,7 @@ Description: Visual rendering toolkit for real-time applications - shared lib
 Package: nux-tools
 Section: x11
 Architecture: any
+Pre-Depends: ${misc:Pre-Depends},
 Depends: ${shlibs:Depends},
          ${misc:Depends}
 Description: Visual rendering toolkit for real-time applications - tools
