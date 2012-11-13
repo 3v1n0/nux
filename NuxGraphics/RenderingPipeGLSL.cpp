@@ -2113,6 +2113,8 @@ namespace nux
     {
       InitSLHorizontalLSGaussFilter(num_samples);
     }
+    
+    printf("CHIMP\n");
 
     m_quad_tex_stats++;
     QRP_Compute_Texture_Coord(width, height, device_texture, texxform0);

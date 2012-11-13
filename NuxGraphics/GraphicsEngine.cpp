@@ -1334,23 +1334,19 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
   int GraphicsEngine::LinearSampleGaussianWeights(std::vector<float>& weights, std::vector<float>& offsets, 
                                                   float sigma)
   {
-    //Half our sample count due to linear sampling.
-    int support = ceil(int(sigma * 3.0f) / 2);
+    int support = int(sigma * 3.0f);
     
     float total = 0.0f;
     
-    offsets.push_back(0);
-    
-    weights.push_back(1.0f / (sqrt(2.0f * constants::pi) * sigma));
+    weights.push_back(exp(-(0*0)/(2*sigma*sigma))/(sqrt(2*constants::pi)*sigma));
     total += weights.back();
+    
+    offsets.push_back(0);
     
     for (int i = 1; i <= support; i++)
     {
-      float j = pow(i, 2);
-      float k = pow(i + 1, 2);
-      
-      float w1 = (1.0f/(sqrt(2.0f*constants::pi)*sigma)) * exp(-j/(sigma*sigma));
-      float w2 = (1.0f/(sqrt(2.0f*constants::pi)*sigma)) * exp(-k/(sigma*sigma));
+      float w1 = exp(-(i*i)/(2*sigma*sigma))/(sqrt(2*constants::pi)*sigma);
+      float w2 = exp(-((i+1)*(i+1))/(2*sigma*sigma))/(sqrt(2*constants::pi)*sigma);
       
       weights.push_back(w1 + w2);
       total += 2.0f * weights[i];
@@ -1362,6 +1358,8 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
     {
       weights[i] /= total;
     }
+    
+    printf("Total: %f \n", total);
     
     return support;
   }
