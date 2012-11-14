@@ -454,7 +454,8 @@ namespace nux
       return false;
     }
 
-    XVisualInfo       visual_info = {0};
+    XVisualInfo visual_info;
+    memset(&visual_info, 0, sizeof(visual_info));
     visual_info.visualid = visualid;
     m_X11VisualInfo = XGetVisualInfo(m_X11Display, VisualIDMask, &visual_info, &count);
     if (!m_X11VisualInfo)
