@@ -765,7 +765,7 @@ namespace nux
   
   void GraphicsEngine::InitSLHorizontalLSGaussFilter(int k)
   {
-    if (_horizontal_hq_gauss_filter_prog[k-1].IsValid())
+    if (_horizontal_ls_gauss_filter_prog[k-1].IsValid())
     {
       // Shader program already compiled
       return;
@@ -808,21 +808,21 @@ namespace nux
     char* shader_prog = new char[l+10];
     sprintf(shader_prog, ps_string.c_str(), k);
 
-    _horizontal_hq_gauss_filter_prog[k-1] = _graphics_display.m_DeviceFactory->CreateShaderProgram();
+    _horizontal_ls_gauss_filter_prog[k-1] = _graphics_display.m_DeviceFactory->CreateShaderProgram();
     vs->SetShaderCode(vs_string.c_str());
     ps->SetShaderCode(shader_prog);
     delete[] shader_prog;
 
-    _horizontal_hq_gauss_filter_prog[k-1]->ClearShaderObjects();
-    _horizontal_hq_gauss_filter_prog[k-1]->AddShaderObject(vs);
-    _horizontal_hq_gauss_filter_prog[k-1]->AddShaderObject(ps);
-    CHECKGL(glBindAttribLocation(_horizontal_hq_gauss_filter_prog[k-1]->GetOpenGLID(), 0, "vertex"));
-    _horizontal_hq_gauss_filter_prog[k-1]->Link();
+    _horizontal_ls_gauss_filter_prog[k-1]->ClearShaderObjects();
+    _horizontal_ls_gauss_filter_prog[k-1]->AddShaderObject(vs);
+    _horizontal_ls_gauss_filter_prog[k-1]->AddShaderObject(ps);
+    CHECKGL(glBindAttribLocation(_horizontal_ls_gauss_filter_prog[k-1]->GetOpenGLID(), 0, "vertex"));
+    _horizontal_ls_gauss_filter_prog[k-1]->Link();
   }
 
   void GraphicsEngine::InitSLVerticalLSGaussFilter(int k)
   {
-    if (_vertical_hq_gauss_filter_prog[k-1].IsValid())
+    if (_vertical_ls_gauss_filter_prog[k-1].IsValid())
     {
       // Shader program already compiled
       return;
@@ -865,16 +865,16 @@ namespace nux
     char* shader_prog = new char[l+10];
     sprintf(shader_prog, ps_string.c_str(), k);
 
-    _vertical_hq_gauss_filter_prog[k-1] = _graphics_display.m_DeviceFactory->CreateShaderProgram();
+    _vertical_ls_gauss_filter_prog[k-1] = _graphics_display.m_DeviceFactory->CreateShaderProgram();
     vs->SetShaderCode(vs_string.c_str());
     ps->SetShaderCode(shader_prog);
     delete[] shader_prog;
 
-    _vertical_hq_gauss_filter_prog[k-1]->ClearShaderObjects();
-    _vertical_hq_gauss_filter_prog[k-1]->AddShaderObject(vs);
-    _vertical_hq_gauss_filter_prog[k-1]->AddShaderObject(ps);
-    CHECKGL(glBindAttribLocation(_vertical_hq_gauss_filter_prog[k-1]->GetOpenGLID(), 0, "vertex"));
-    _vertical_hq_gauss_filter_prog[k-1]->Link();
+    _vertical_ls_gauss_filter_prog[k-1]->ClearShaderObjects();
+    _vertical_ls_gauss_filter_prog[k-1]->AddShaderObject(vs);
+    _vertical_ls_gauss_filter_prog[k-1]->AddShaderObject(ps);
+    CHECKGL(glBindAttribLocation(_vertical_ls_gauss_filter_prog[k-1]->GetOpenGLID(), 0, "vertex"));
+    _vertical_ls_gauss_filter_prog[k-1]->Link();
   }
 
   void GraphicsEngine::InitSLColorMatrixFilter()
@@ -2112,7 +2112,7 @@ namespace nux
     
     int num_samples = LinearSampleGaussianWeights(weights, offsets, sigma);
 
-    if (_horizontal_hq_gauss_filter_prog[num_samples-1].IsValid() == false)
+    if (_horizontal_ls_gauss_filter_prog[num_samples-1].IsValid() == false)
     {
       InitSLHorizontalLSGaussFilter(num_samples);
     }
@@ -2135,7 +2135,7 @@ namespace nux
       return;
     }
 
-    shader_prog = _horizontal_hq_gauss_filter_prog[num_samples-1];
+    shader_prog = _horizontal_ls_gauss_filter_prog[num_samples-1];
 
     CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
     CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
@@ -2186,7 +2186,7 @@ namespace nux
     
     int num_samples = LinearSampleGaussianWeights(weights, offsets, sigma);
 
-    if (_vertical_hq_gauss_filter_prog[num_samples-1].IsValid() == false)
+    if (_vertical_ls_gauss_filter_prog[num_samples-1].IsValid() == false)
     {
       InitSLVerticalLSGaussFilter(num_samples);
     }
@@ -2209,7 +2209,7 @@ namespace nux
       return;
     }
 
-    shader_prog = _vertical_hq_gauss_filter_prog[num_samples-1];
+    shader_prog = _vertical_ls_gauss_filter_prog[num_samples-1];
 
     CHECKGL(glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0));
     CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
