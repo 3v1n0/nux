@@ -10,10 +10,6 @@ Build-Depends: debhelper (>= 9),
                libglib2.0-dev (>= 2.25.14),
                libgdk-pixbuf2.0-dev,
                libboost-dev,
-               libboost-filesystem-dev,
-               libboost-system-dev,
-               libgtest-dev,
-               google-mock,
                libcairo2-dev (>= 1.9.14),
                libpng12-dev (>= 1.2.44),
                libglew-dev [!armel !armhf],
@@ -60,6 +56,7 @@ Description: Visual rendering toolkit for real-time applications - shared lib
 Package: nux-tools
 Section: x11
 Architecture: any
+Multi-Arch: foreign
 Pre-Depends: ${misc:Pre-Depends},
 Depends: ${shlibs:Depends},
          ${misc:Depends}
@@ -97,6 +94,7 @@ Description: Visual rendering toolkit for real-time applications - dev files
 Package: libnux-4.0-common
 Section: libs
 Architecture: all
+Multi-Arch: foreign
 Depends: ${misc:Depends}
 Description: Visual rendering toolkit for real-time applications - common files
  Nux is a graphical user interface toolkit for applications that mixes opengl
