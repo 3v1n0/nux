@@ -15,7 +15,7 @@
 * License version 3 along with this program.  If not, see
 * <http://www.gnu.org/licenses/>
 *
-* Authored by: <brandon.schaefer@canonical.com>
+* Authored by: Brandon Schaefer <brandon.schaefer@canonical.com>
 *
 */
 
@@ -23,7 +23,7 @@
 #include <gmock/gmock.h>
 
 #include "Nux/Nux.h"
-#include "Nux/ProximityArea.h"
+#include "Nux/InputAreaProximity.h"
 #include "Nux/WindowCompositor.h"
 #include "Nux/ProgramFramework/TestView.h"
 
@@ -41,29 +41,30 @@ public:
   MockProxyInstance(int num_prox_areas = 0)
     : near_signal_recived_(false)
     , beyond_signal_recived_(false)
+    , approaching_signal_recived_(false)
   {
     nux::NuxInitialize(0);
     wnd_thread = nux::CreateNuxWindow("View Test", 300, 200,
                  nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL);
 
     for (int i = 0; i < num_prox_areas; i++)
-      AddProximityArea();
+      AddInputAreaProximity();
   }
 
   ~MockProxyInstance()
   {
     while (!prox_areas_.empty())
-      RemoveProximityArea();
+      RemoveInputAreaProximity();
 
     delete wnd_thread;
   }
 
-  void AddProximityArea(int poximity = 10)
+  void AddInputAreaProximity(int poximity = 10)
   {
     nux::TestView* test_view = new nux::TestView("");
     test_view->SetGeometry(nux::Geometry(0, 0, VIEW_WIDTH, VIEW_HEIGHT));
 
-    nux::ProximityArea* prox_area = new nux::ProximityArea(test_view, poximity);
+    nux::InputAreaProximity* prox_area = new nux::InputAreaProximity(test_view, poximity);
 
     prox_area->mouse_near.connect([&] (nux::Point) {
       near_signal_recived_ = true;
@@ -73,10 +74,15 @@ public:
       beyond_signal_recived_ = true;
     });
 
+    prox_area->mouse_approaching.connect([&] (nux::Point, nux::Point difference) {
+      approaching_signal_recived_ = true;
+      last_approaching_point_ = difference;
+    });
+
     prox_areas_.push(std::make_pair(prox_area, test_view));
   }
 
-  void RemoveProximityArea()
+  void RemoveInputAreaProximity()
   {
     if (!prox_areas_.empty())
     {
@@ -88,6 +94,13 @@ public:
     }
   }
 
+  void ResetSignalRecivedValues()
+  {
+    near_signal_recived_ = false;
+    beyond_signal_recived_ = false;
+    approaching_signal_recived_ = false;
+  }
+
   bool NearSignalRecived() const
   {
     return near_signal_recived_;
@@ -96,6 +109,16 @@ public:
   bool BeyondSignalRecived() const
   {
     return beyond_signal_recived_;
+  }
+
+  bool ApproachingSignalRecived() const
+  {
+    return approaching_signal_recived_;
+  }
+
+  nux::Point GetLastApprochingPoint()
+  {
+    return last_approaching_point_;
   }
 
   void MoveMouse(int x, int y)
@@ -109,24 +132,27 @@ public:
 
 private:
   nux::WindowThread* wnd_thread;
-  std::stack<std::pair<nux::ProximityArea*, nux::TestView*> > prox_areas_;
+  std::stack<std::pair<nux::InputAreaProximity*, nux::TestView*> > prox_areas_;
+
+  nux::Point last_approaching_point_;
 
   bool near_signal_recived_;
   bool beyond_signal_recived_;
+  bool approaching_signal_recived_;
 };
 
-TEST(TestProximityArea, TestProximityAreaAddsToList)
+TEST(TestInputAreaProximity, TestProximityAreaAddsToList)
 {
   MockProxyInstance mi;
   ASSERT_EQ(nux::GetWindowCompositor().GetProximityListSize(), 0);
 
-  mi.AddProximityArea();
-  mi.AddProximityArea();
+  mi.AddInputAreaProximity();
+  mi.AddInputAreaProximity();
 
   ASSERT_EQ(nux::GetWindowCompositor().GetProximityListSize(), 2);
 }
 
-TEST(TestProximityArea, TestProximityRemovesFromList)
+TEST(TestInputAreaProximity, TestProximityRemovesFromList)
 {
   int num_prox_areas = 10;
   MockProxyInstance mi(num_prox_areas);
@@ -134,18 +160,18 @@ TEST(TestProximityArea, TestProximityRemovesFromList)
 
   for (int i = 0; i < num_prox_areas; i++)
   {
-    mi.RemoveProximityArea();
+    mi.RemoveInputAreaProximity();
     ASSERT_EQ(nux::GetWindowCompositor().GetProximityListSize(), num_prox_areas - (i + 1));
   }
 }
 
-TEST(TestProximityArea, TestProximityNearSignal)
+TEST(TestInputAreaProximity, TestProximityNearSignal)
 {
   MockProxyInstance mi;
   int proximity = 10;
 
   mi.MoveMouse(VIEW_WIDTH+200, VIEW_HEIGHT+200);
-  mi.AddProximityArea(proximity);
+  mi.AddInputAreaProximity(proximity);
 
   mi.MoveMouse(VIEW_WIDTH+(proximity+1), VIEW_HEIGHT+(proximity+1));
   ASSERT_FALSE(mi.NearSignalRecived());
@@ -154,13 +180,106 @@ TEST(TestProximityArea, TestProximityNearSignal)
   ASSERT_TRUE(mi.NearSignalRecived());
 }
 
-TEST(TestProximityArea, TestProximityBeyondSignal)
+TEST(TestInputAreaProximity, TestProximityApproachingSignal)
 {
   MockProxyInstance mi;
   int proximity = 10;
 
   mi.MoveMouse(VIEW_WIDTH+200, VIEW_HEIGHT+200);
-  mi.AddProximityArea(proximity);
+  mi.AddInputAreaProximity(proximity);
+
+  mi.MoveMouse(VIEW_WIDTH+(proximity+1), VIEW_HEIGHT+(proximity+1));
+  ASSERT_FALSE(mi.ApproachingSignalRecived());
+
+  mi.MoveMouse(VIEW_WIDTH+(proximity/2), VIEW_HEIGHT+(proximity/2));
+  ASSERT_TRUE(mi.ApproachingSignalRecived());
+}
+
+TEST(TestInputAreaProximity, TestProximityApproachingDoesNotEmitInsideArea)
+{
+  MockProxyInstance mi;
+  int proximity = 10;
+
+  mi.AddInputAreaProximity(proximity);
+
+  mi.MoveMouse(VIEW_WIDTH/2, VIEW_HEIGHT/2);
+  mi.ResetSignalRecivedValues();
+
+  mi.MoveMouse(VIEW_WIDTH/4, VIEW_HEIGHT/4);
+  ASSERT_FALSE(mi.ApproachingSignalRecived());
+
+  mi.MoveMouse(VIEW_WIDTH+proximity/2, VIEW_HEIGHT+proximity/2);
+  ASSERT_TRUE(mi.ApproachingSignalRecived());
+}
+
+TEST(TestInputAreaProximity, TestProximityApproachingSignalHorizontal)
+{
+  MockProxyInstance mi;
+  int proximity = 10;
+
+  mi.MoveMouse(VIEW_WIDTH+200, VIEW_HEIGHT+200);
+  mi.AddInputAreaProximity(proximity);
+
+  nux::Point difference;
+  int expected_result;
+  for (int i = 1; i <= proximity; i++)
+  {
+    mi.MoveMouse(VIEW_WIDTH+(proximity-i), VIEW_HEIGHT+(proximity-1));
+
+    difference = mi.GetLastApprochingPoint();
+    expected_result = -(proximity - i);
+    ASSERT_EQ(expected_result, difference.x);
+    ASSERT_EQ(-(proximity-1), difference.y);
+  }
+}
+
+TEST(TestInputAreaProximity, TestProximityApproachingSignalVertical)
+{
+  MockProxyInstance mi;
+  int proximity = 10;
+
+  mi.MoveMouse(VIEW_WIDTH+200, VIEW_HEIGHT+200);
+  mi.AddInputAreaProximity(proximity);
+
+  nux::Point difference;
+  int expected_result;
+  for (int i = 1; i <= proximity; i++)
+  {
+    mi.MoveMouse(VIEW_WIDTH+(proximity-1), VIEW_HEIGHT+(proximity-i));
+    difference = mi.GetLastApprochingPoint();
+    expected_result = -(proximity - i);
+    ASSERT_EQ(-(proximity-1), difference.x);
+    ASSERT_EQ(expected_result, difference.y);
+  }
+}
+
+TEST(TestInputAreaProximity, TestProximityApproachingSignalDiagonal)
+{
+  MockProxyInstance mi;
+  int proximity = 10;
+
+  mi.MoveMouse(VIEW_WIDTH+200, VIEW_HEIGHT+200);
+  mi.AddInputAreaProximity(proximity);
+
+  nux::Point difference;
+  int expected_result;
+  for (int i = 1; i <= proximity; i++)
+  {
+    mi.MoveMouse(VIEW_WIDTH+(proximity-i), VIEW_HEIGHT+(proximity-i));
+    difference = mi.GetLastApprochingPoint();
+    expected_result = -(proximity - i);
+    ASSERT_EQ(expected_result, difference.x);
+    ASSERT_EQ(expected_result, difference.y);
+  }
+}
+
+TEST(TestInputAreaProximity, TestProximityBeyondSignal)
+{
+  MockProxyInstance mi;
+  int proximity = 10;
+
+  mi.MoveMouse(VIEW_WIDTH+200, VIEW_HEIGHT+200);
+  mi.AddInputAreaProximity(proximity);
 
   mi.MoveMouse(VIEW_WIDTH+(proximity-1), VIEW_HEIGHT+(proximity-1));
   ASSERT_FALSE(mi.BeyondSignalRecived());

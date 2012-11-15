@@ -28,21 +28,39 @@
 namespace nux
 {
 
-class ProximityArea
+class InputAreaProximity
 {
 public:
-  ProximityArea(InputArea* area, int proximity);
-  virtual ~ProximityArea();
+  InputAreaProximity(InputArea* area, int proximity);
+  virtual ~InputAreaProximity();
 
   virtual void CheckMousePosition(Point mouse_pos);
 
+  //! Signal emitted when the Mouse is near the input area.
+  /*!
+    @param Point mouse is the current Mouse position.
+  */
   sigc::signal<void, Point> mouse_near;
+
+  //! Signal emitted while the mouse is moving, near, and not yet inside the input area.
+  /*!
+    @param Point mouse is the current Mouse position.
+    @param Point difference is the distances between the mouse and the input area.
+  */
+  sigc::signal<void, Point, Point> mouse_approaching;
+
+  //! Signal emitted when the Mouse is moves beyond the input area + proximity.
+  /*!
+    @param Point mouse is the current Mouse position.
+  */
   sigc::signal<void, Point> mouse_beyond;
 protected:
+  void CheckMouseDistance(Point mouse_pos);
+
   InputArea* area_;
   int proximity_;
 
-  bool mouse_near_;
+  bool is_mouse_near_;
 };
 
 

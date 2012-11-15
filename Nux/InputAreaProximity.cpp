@@ -21,38 +21,73 @@
 
 #include "WindowCompositor.h"
 #include "WindowThread.h"
-#include "ProximityArea.h"
+#include "InputAreaProximity.h"
 
 namespace nux
 {
 
-ProximityArea::ProximityArea(InputArea* area, int proximity)
+InputAreaProximity::InputAreaProximity(InputArea* area, int proximity)
   : area_(area)
   , proximity_(proximity)
-  , mouse_near_(false)
+  , is_mouse_near_(false)
 {
   GetWindowThread()->GetWindowCompositor().AddAreaInProximityList(this);
 }
 
-ProximityArea::~ProximityArea()
+InputAreaProximity::~InputAreaProximity()
 {
   GetWindowThread()->GetWindowCompositor().RemoveAreaInProximityList(this);
 }
 
-void ProximityArea::CheckMousePosition(Point mouse_pos)
+void InputAreaProximity::CheckMousePosition(Point mouse)
 {
   Geometry geo = area_->GetGeometry();
   geo.Expand(proximity_, proximity_);
 
-  if (!mouse_near_ && geo.IsInside(mouse_pos))
+  if (!is_mouse_near_ && geo.IsInside(mouse))
   {
-    mouse_near_ = true;
-    mouse_near.emit(mouse_pos);
+    is_mouse_near_ = true;
+    mouse_near.emit(mouse);
   }
-  else if (mouse_near_ && !geo.IsInside(mouse_pos))
+  else if (is_mouse_near_ && !geo.IsInside(mouse))
   {
-    mouse_near_ = false;
-    mouse_beyond.emit(mouse_pos);
+    is_mouse_near_ = false;
+    mouse_beyond.emit(mouse);
+  }
+
+  if (is_mouse_near_)
+  {
+    CheckMouseDistance(mouse);
+  }
+}
+
+void InputAreaProximity::CheckMouseDistance(Point mouse)
+{
+  const Geometry& geo = area_->GetGeometry();
+
+  if (!geo.IsInside(mouse))
+  {
+    int dx = 0;
+    int dy = 0;
+    if (geo.x > mouse.x)
+    {
+      dx = geo.x - mouse.x;
+    }
+    else if (geo.x + geo.width < mouse.x)
+    {
+      dx = geo.x + geo.width - mouse.x;
+    }
+
+    if (geo.y > mouse.y)
+    {
+      dy = geo.y - mouse.y;
+    }
+    else if (geo.y + geo.height < mouse.y)
+    {
+      dy = geo.y + geo.height - mouse.y;
+    }
+
+    mouse_approaching.emit(mouse, nux::Point(dx,dy));
   }
 }
 

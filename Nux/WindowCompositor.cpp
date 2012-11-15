@@ -27,6 +27,7 @@
 #include "NuxGraphics/GLError.h"
 #include "WindowThread.h"
 #include "BaseWindow.h"
+#include "InputAreaProximity.h"
 #include "MenuPage.h"
 #include "PaintLayer.h"
 #include "Painter.h"
@@ -661,7 +662,7 @@ DECLARE_LOGGER(logger, "nux.window");
     // Checks if any input areas are close enough to the mouse to emit
     // mouse_near
     if (event.type == NUX_MOUSE_MOVE)
-      if (!proximity_areas.empty())
+      if (!area_proximitys_.empty())
         CheckMouseNearArea(event);
 
     // Updates mouse_over_area_ and emits mouse_enter and mouse_leave signals
@@ -1281,22 +1282,22 @@ DECLARE_LOGGER(logger, "nux.window");
 
   int WindowCompositor::GetProximityListSize() const
   {
-    return proximity_areas.size();
+    return area_proximitys_.size();
   }
 
-  void WindowCompositor::AddAreaInProximityList(ProximityArea* prox_area)
+  void WindowCompositor::AddAreaInProximityList(InputAreaProximity* prox_area)
   {
-    proximity_areas.push_back(prox_area);
+    area_proximitys_.push_back(prox_area);
   }
 
-  void WindowCompositor::RemoveAreaInProximityList(ProximityArea* prox_area)
+  void WindowCompositor::RemoveAreaInProximityList(InputAreaProximity* prox_area)
   {
-    proximity_areas.remove(prox_area);
+    area_proximitys_.remove(prox_area);
   }
 
   void WindowCompositor::CheckMouseNearArea(Event& event)
   {
-    for (auto area : proximity_areas)
+    for (auto area : area_proximitys_)
       area->CheckMousePosition(Point(event.x, event.y));
   }
 

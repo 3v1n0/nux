@@ -29,7 +29,6 @@
 #include <sigc++/connection.h>
 
 #include <NuxCore/ObjectPtr.h>
-#include <Nux/ProximityArea.h>
 
 #ifdef NUX_GESTURES_SUPPORT
 #include <unordered_map>
@@ -44,6 +43,7 @@ namespace nux
   class WindowThread;
   class View;
   class InputArea;
+  class InputAreaProximity;
   class Area;
   class PaintLayer;
   class Event;
@@ -81,8 +81,8 @@ namespace nux
     Point GetMousePosition();
 
     int GetProximityListSize() const;
-    void AddAreaInProximityList(ProximityArea* prox_area);
-    void RemoveAreaInProximityList(ProximityArea* prox_area);
+    void AddAreaInProximityList(InputAreaProximity* area_prox);
+    void RemoveAreaInProximityList(InputAreaProximity* area_prox);
 
     void KeyboardEventCycle(Event& event);
 
@@ -551,7 +551,7 @@ namespace nux
         \near the mouse. Must add views to this 
         \list to be checked.
     */
-    std::list<nux::ProximityArea*> proximity_areas;
+    std::list<nux::InputAreaProximity*> area_proximitys_;
 
   private:
     WindowThread* window_thread_; //!< The WindowThread to which this object belongs.
