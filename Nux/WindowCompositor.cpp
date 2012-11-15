@@ -1283,13 +1283,13 @@ DECLARE_LOGGER(logger, "nux.window");
 
   int WindowCompositor::GetProximityListSize() const
   {
-    return area_proximitys_.size();
+    return area_proximities_.size();
   }
 
   void WindowCompositor::AddAreaInProximityList(InputAreaProximity* prox_area)
   {
     if (prox_area)
-      area_proximitys_.push_back(prox_area);
+      area_proximities_.push_back(prox_area);
     else
       LOG_ERROR(logger) << "Error, attempted to add a NULL InputAreaProximity to the list.";
   }
@@ -1297,12 +1297,12 @@ DECLARE_LOGGER(logger, "nux.window");
   void WindowCompositor::RemoveAreaInProximityList(InputAreaProximity* prox_area)
   {
     if (prox_area)
-      area_proximitys_.remove(prox_area);
+      area_proximities_.remove(prox_area);
   }
 
   void WindowCompositor::CheckMouseNearArea(const Event& event)
   {
-    for (auto area : area_proximitys_)
+    for (auto area : area_proximities_)
     {
       if (area)
       {

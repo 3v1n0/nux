@@ -551,7 +551,7 @@ namespace nux
         \near the mouse. Must add views to this 
         \list to be checked.
     */
-    std::list<InputAreaProximity*> area_proximitys_;
+    std::list<InputAreaProximity*> area_proximities_;
 
   private:
     WindowThread* window_thread_; //!< The WindowThread to which this object belongs.
