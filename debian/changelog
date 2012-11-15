@@ -12,6 +12,9 @@ nux (4.0.0-0ubuntu1) UNRELEASED; urgency=low
   * Transition packaging to Nux 4.0
   * Add split mode for daily build
 
+  [ Ricardo Salveti de Araujo ]
+  * Doesn't need to depend on gcc 4.6 anymore (LP: #1044836)
+
  -- Didier Roche <didrocks@ubuntu.com>  Mon, 12 Nov 2012 08:12:53 +0100
 
 nux (3.10.0-0ubuntu1) quantal-proposed; urgency=low
