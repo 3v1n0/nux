@@ -795,7 +795,7 @@ namespace nux
      void main()                                                                                                \n\
      {                                                                                                          \n\
       vec3 acc = texture2D(tex_object, v_tex_coord.st).rgb*weights[0];\n\
-      vec2 pixel_size = vec2(1.0 / tex_size.x, 1.0 / tex_size.y);\n\
+      vec2 pixel_size = vec2(0.5 / tex_size.x, 0.5 / tex_size.y);\n\
       for (int i = 1; i < NUM_SAMPLES; i++)                                                                     \n\
       {                                                                                                         \n\
         acc += texture2D(tex_object, (v_tex_coord.st+(vec2(offsets[i], 0.0)*pixel_size))).rgb*weights[i]; \n\
@@ -852,7 +852,7 @@ namespace nux
      void main()                                                                                                \n\
      {                                                                                                          \n\
       vec3 acc = texture2D(tex_object, v_tex_coord.st).rgb*weights[0]; \n\
-      vec2 pixel_size = vec2(1.0 / tex_size.x, 1.0 / tex_size.y);\n\
+      vec2 pixel_size = vec2(0.5 / tex_size.x, 0.5 / tex_size.y);\n\
       for (int i = 1; i < NUM_SAMPLES; i++)                                                                     \n\
       {                                                                                                         \n\
         acc += texture2D(tex_object, (v_tex_coord.st+(vec2(0.0, offsets[i])*pixel_size))).rgb*weights[i]; \n\
