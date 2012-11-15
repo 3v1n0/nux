@@ -40,20 +40,20 @@ public:
   /*!
     @param Point mouse is the current Mouse position.
   */
-  sigc::signal<void, const Point> mouse_near;
+  sigc::signal<void, Point const&> mouse_near;
 
   //! Signal emitted while the mouse is moving, near, and not yet inside the input area.
   /*!
     @param Point mouse is the current Mouse position.
     @param Point difference is the distances between the mouse and the input area.
   */
-  sigc::signal<void, const Point, const Point> mouse_approaching;
+  sigc::signal<void, Point const&, Point const&> mouse_approaching;
 
   //! Signal emitted when the Mouse is moves beyond the input area + proximity.
   /*!
     @param Point mouse is the current Mouse position.
   */
-  sigc::signal<void, const Point> mouse_beyond;
+  sigc::signal<void, Point const&> mouse_beyond;
 protected:
   ObjectWeakPtr<InputArea> area_;
   unsigned int proximity_;

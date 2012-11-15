@@ -66,15 +66,15 @@ public:
 
     nux::InputAreaProximity* prox_area = new nux::InputAreaProximity(test_view, poximity);
 
-    prox_area->mouse_near.connect([&] (nux::Point) {
+    prox_area->mouse_near.connect([&] (const nux::Point&) {
       near_signal_recived_ = true;
     });
 
-    prox_area->mouse_beyond.connect([&] (nux::Point) {
+    prox_area->mouse_beyond.connect([&] (const nux::Point&) {
       beyond_signal_recived_ = true;
     });
 
-    prox_area->mouse_approaching.connect([&] (nux::Point, nux::Point difference) {
+    prox_area->mouse_approaching.connect([&] (const nux::Point&, const nux::Point& difference) {
       approaching_signal_recived_ = true;
       last_approaching_point_ = difference;
     });
