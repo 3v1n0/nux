@@ -1,9 +1,6 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
 
-export CC=gcc-4.6
-export CXX=g++-4.6
-
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 DEB_HOST_ARCH := $(shell dpkg-architecture -qDEB_HOST_ARCH)

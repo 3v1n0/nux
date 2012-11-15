@@ -30,8 +30,6 @@ Build-Depends: debhelper (>= 9),
                libgeis-dev (>= 2.2.10),
                libibus-1.0-dev,
                libxtst-dev,
-               gcc-4.6,
-               g++-4.6,
 Standards-Version: 3.9.3
 Section: libs
 Homepage: http://launchpad.net/nux
