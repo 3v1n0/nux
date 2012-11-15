@@ -154,6 +154,41 @@ TEST(TestInputAreaProximity, TestProximityAreaAddsNullToList)
   ASSERT_EQ(nux::GetWindowCompositor().GetProximityListSize(), prox_size);
 }
 
+TEST(TestInputAreaProximity, TestProximityAreaHandlesDeletedInputArea)
+{
+  MockProxyInstance mi;
+
+  nux::TestView* test_view = new nux::TestView("");
+  test_view->SetGeometry(nux::Geometry(0, 0, VIEW_WIDTH, VIEW_HEIGHT));
+
+  const int prox_size = nux::GetWindowCompositor().GetProximityListSize();
+  nux::InputAreaProximity* prox_area = new nux::InputAreaProximity(test_view, 10);
+  test_view->UnReference();
+
+  mi.MoveMouse(500, 500);
+  mi.MoveMouse(100, 100);
+
+  delete prox_area;
+  ASSERT_EQ(nux::GetWindowCompositor().GetProximityListSize(), prox_size);
+}
+
+TEST(TestInputAreaProximity, TestProximityAreaAddsNullProximity)
+{
+  MockProxyInstance mi;
+  const int prox_size = nux::GetWindowCompositor().GetProximityListSize();
+
+  nux::GetWindowThread()->GetWindowCompositor().AddAreaInProximityList(NULL);
+  nux::GetWindowThread()->GetWindowCompositor().AddAreaInProximityList(NULL);
+  nux::GetWindowThread()->GetWindowCompositor().AddAreaInProximityList(NULL);
+  nux::GetWindowThread()->GetWindowCompositor().AddAreaInProximityList(NULL);
+
+  mi.MoveMouse(500, 500);
+  mi.MoveMouse(100, 100);
+
+  nux::GetWindowThread()->GetWindowCompositor().RemoveAreaInProximityList(NULL);
+  ASSERT_EQ(nux::GetWindowCompositor().GetProximityListSize(), prox_size);
+}
+
 TEST(TestInputAreaProximity, TestProximityAreaAddsToList)
 {
   MockProxyInstance mi;
