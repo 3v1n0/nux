@@ -39,55 +39,29 @@ InputAreaProximity::~InputAreaProximity()
   GetWindowThread()->GetWindowCompositor().RemoveAreaInProximityList(this);
 }
 
-void InputAreaProximity::CheckMousePosition(Point mouse)
+void InputAreaProximity::CheckMousePosition(const Point& mouse)
 {
-  Geometry geo = area_->GetGeometry();
-  geo.Expand(proximity_, proximity_);
+  if (!area_.IsValid())
+    return;
 
-  if (!is_mouse_near_ && geo.IsInside(mouse))
+  const Geometry& geo = area_->GetGeometry();
+  const Geometry& expanded = geo.GetExpand(proximity_, proximity_);
+
+  if (!is_mouse_near_ && expanded.IsInside(mouse))
   {
     is_mouse_near_ = true;
     mouse_near.emit(mouse);
   }
-  else if (is_mouse_near_ && !geo.IsInside(mouse))
+  else if (is_mouse_near_ && !expanded.IsInside(mouse))
   {
     is_mouse_near_ = false;
     mouse_beyond.emit(mouse);
   }
 
-  if (is_mouse_near_)
+  if (is_mouse_near_ && !geo.IsInside(mouse))
   {
-    CheckMouseDistance(mouse);
-  }
-}
-
-void InputAreaProximity::CheckMouseDistance(Point mouse)
-{
-  const Geometry& geo = area_->GetGeometry();
-
-  if (!geo.IsInside(mouse))
-  {
-    int dx = 0;
-    int dy = 0;
-    if (geo.x > mouse.x)
-    {
-      dx = geo.x - mouse.x;
-    }
-    else if (geo.x + geo.width < mouse.x)
-    {
-      dx = geo.x + geo.width - mouse.x;
-    }
-
-    if (geo.y > mouse.y)
-    {
-      dy = geo.y - mouse.y;
-    }
-    else if (geo.y + geo.height < mouse.y)
-    {
-      dy = geo.y + geo.height - mouse.y;
-    }
-
-    mouse_approaching.emit(mouse, nux::Point(dx,dy));
+    const nux::Point& distance = geo.GetDistanceFromMouse(mouse.x, mouse.y);
+    mouse_approaching.emit(mouse, distance);
   }
 }
 

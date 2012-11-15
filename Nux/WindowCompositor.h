@@ -187,8 +187,8 @@ namespace nux
       const char* text,
       int key_repeat_count);
     
-    //! Checks the list of porximity_views to see if the mouse is near any areas. 
-    void CheckMouseNearArea(Event& event);
+    //! Checks the list of porximitys to see if the mouse is near any areas. 
+    void CheckMouseNearArea(const Event& event);
 
     //! The InputArea that has the keyboard navigation focus.
     /*!
@@ -551,7 +551,7 @@ namespace nux
         \near the mouse. Must add views to this 
         \list to be checked.
     */
-    std::list<nux::InputAreaProximity*> area_proximitys_;
+    std::list<InputAreaProximity*> area_proximitys_;
 
   private:
     WindowThread* window_thread_; //!< The WindowThread to which this object belongs.

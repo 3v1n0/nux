@@ -158,6 +158,36 @@ namespace nux
       return Rect ();
     }
   }
+  Point Rect::GetDistanceFromMouse(const Point& p) const
+  {
+    int dx = 0;
+    int dy = 0;
+
+    if (x > p.x)
+    {
+      dx = x - p.x;
+    }
+    else if (x + width < p.x)
+    {
+      dx = x + width - p.x;
+    }
+
+    if (y > p.y)
+    {
+      dy = y - p.y;
+    }
+    else if (y + height < p.y)
+    {
+      dy = y + height - p.y;
+    }
+
+    return Point(dx, dy);
+  }
+
+  Point Rect::GetDistanceFromMouse(int x, int y) const
+  {
+    return GetDistanceFromMouse(Point(x,y));
+  }
 
   // expand the width by factor_x and the height by factor_y
   void Rect::Expand (int dx, int dy)

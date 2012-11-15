@@ -1295,10 +1295,15 @@ DECLARE_LOGGER(logger, "nux.window");
     area_proximitys_.remove(prox_area);
   }
 
-  void WindowCompositor::CheckMouseNearArea(Event& event)
+  void WindowCompositor::CheckMouseNearArea(const Event& event)
   {
     for (auto area : area_proximitys_)
-      area->CheckMousePosition(Point(event.x, event.y));
+    {
+      if (area)
+      {
+        area->CheckMousePosition(Point(event.x, event.y));
+      }
+    }
   }
 
   void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)

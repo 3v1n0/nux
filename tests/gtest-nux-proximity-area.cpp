@@ -141,6 +141,19 @@ private:
   bool approaching_signal_recived_;
 };
 
+TEST(TestInputAreaProximity, TestProximityAreaAddsNullToList)
+{
+  MockProxyInstance mi;
+  int prox_size = nux::GetWindowCompositor().GetProximityListSize();
+  nux::InputAreaProximity* prox_area = new nux::InputAreaProximity(NULL, 10);
+
+  mi.MoveMouse(500, 500);
+  mi.MoveMouse(100, 100);
+
+  delete prox_area;
+  ASSERT_EQ(nux::GetWindowCompositor().GetProximityListSize(), prox_size);
+}
+
 TEST(TestInputAreaProximity, TestProximityAreaAddsToList)
 {
   MockProxyInstance mi;
