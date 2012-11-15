@@ -6,6 +6,7 @@ nux (4.0.0-0ubuntu1) UNRELEASED; urgency=low
     - Build-Depend on dh-autoreconf and gnome-common
   * debian/rules:
     - Use dh_autoreconf
+  * Switch to dh9 and multiarch
 
   [ Didier Roche ]
   * Transition packaging to Nux 4.0
