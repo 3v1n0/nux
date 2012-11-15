@@ -662,8 +662,9 @@ DECLARE_LOGGER(logger, "nux.window");
     // Checks if any input areas are close enough to the mouse to emit
     // mouse_near
     if (event.type == NUX_MOUSE_MOVE)
-      if (!area_proximitys_.empty())
-        CheckMouseNearArea(event);
+    {
+      CheckMouseNearArea(event);
+    }
 
     // Updates mouse_over_area_ and emits mouse_enter and mouse_leave signals
     // accordingly.

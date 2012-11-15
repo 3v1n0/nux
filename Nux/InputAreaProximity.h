@@ -31,7 +31,7 @@ namespace nux
 class InputAreaProximity
 {
 public:
-  InputAreaProximity(InputArea* area, int proximity);
+  InputAreaProximity(InputArea* area, unsigned int proximity);
   virtual ~InputAreaProximity();
 
   virtual void CheckMousePosition(const Point& mouse);
@@ -56,7 +56,7 @@ public:
   sigc::signal<void, const Point> mouse_beyond;
 protected:
   ObjectWeakPtr<InputArea> area_;
-  int proximity_;
+  unsigned int proximity_;
 
   bool is_mouse_near_;
 };

@@ -22,16 +22,22 @@
 #include "WindowCompositor.h"
 #include "WindowThread.h"
 #include "InputAreaProximity.h"
+#include "NuxCore/Logger.h"
 
 namespace nux
 {
 
-InputAreaProximity::InputAreaProximity(InputArea* area, int proximity)
+DECLARE_LOGGER(logger, "nux.inputarea_proximity");
+
+InputAreaProximity::InputAreaProximity(InputArea* area, unsigned int proximity)
   : area_(area)
   , proximity_(proximity)
   , is_mouse_near_(false)
 {
-  GetWindowThread()->GetWindowCompositor().AddAreaInProximityList(this);
+  if(area)
+    GetWindowThread()->GetWindowCompositor().AddAreaInProximityList(this);
+  else
+    LOG_ERROR(logger) << "Error, passing in NULL value for InputArea*";
 }
 
 InputAreaProximity::~InputAreaProximity()
