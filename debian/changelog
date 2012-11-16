@@ -6,6 +6,7 @@ nux (4.0.0-0ubuntu1) UNRELEASED; urgency=low
     - Build-Depend on dh-autoreconf and gnome-common
   * debian/rules:
     - Use dh_autoreconf
+    - Enable headless tests during build
   * Switch to dh9 and multiarch
   * Automatic snapshot from revision 700 (bootstrap)
     - Fix crash when lift clicking after right clicking (LP: #1057809)
