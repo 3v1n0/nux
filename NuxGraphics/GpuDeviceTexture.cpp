@@ -36,9 +36,15 @@ namespace nux
     int Width
     , int Height
     , int Levels
-    , BitmapFormat PixelFormat
+    , BitmapFormat pixel_format
     , NUX_FILE_LINE_DECL)
   {
+    if ((pixel_format == BITFMT_D24S8) && (!GetGpuInfo().Support_Depth_Buffer()))
+    {
+      // No support for depth buffers
+      return ObjectPtr<IOpenGLTexture2D>();
+    }
+
     GpuInfo gpu_info = GetGpuInfo();
     int msz = gpu_info.GetMaxTextureSize();
     if(Width <= 0 || Height <= 0 || Width > msz || Height > msz)
@@ -63,7 +69,7 @@ namespace nux
     }
 
     ObjectPtr<IOpenGLTexture2D> result;
-    result.Adopt(new IOpenGLTexture2D(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM));
+    result.Adopt(new IOpenGLTexture2D(Width, Height, NumMipLevel, pixel_format, false, NUX_FILE_LINE_PARAM));
     return result;
   }
 
@@ -74,6 +80,12 @@ namespace nux
     , BitmapFormat pixel_format
     , NUX_FILE_LINE_DECL)
   {
+    if ((pixel_format == BITFMT_D24S8) && (!GetGpuInfo().Support_Depth_Buffer()))
+    {
+      // No support for depth buffers
+      return ObjectPtr<IOpenGLTexture2D>();
+    }
+
     GpuInfo gpu_info = GetGpuInfo();
     int msz = gpu_info.GetMaxTextureSize();
     if(width <= 0 || height <=0 || width > msz || height > msz)
@@ -90,9 +102,15 @@ namespace nux
     int Width
     , int Height
     , int Levels
-    , BitmapFormat PixelFormat
+    , BitmapFormat pixel_format
     , NUX_FILE_LINE_DECL)
   {
+    if ((pixel_format == BITFMT_D24S8) && (!GetGpuInfo().Support_Depth_Buffer()))
+    {
+      // No support for depth buffers
+      return ObjectPtr<IOpenGLRectangleTexture>();
+    }
+
     GpuInfo gpu_info = GetGpuInfo();
     int msz = gpu_info.GetMaxTextureSize();
     if(Width <= 0 || Height <= 0 || Width > msz || Height > msz)
@@ -117,17 +135,23 @@ namespace nux
     }
 
     ObjectPtr<IOpenGLRectangleTexture> result;
-    result.Adopt(new IOpenGLRectangleTexture(Width, Height, NumMipLevel, PixelFormat, false, NUX_FILE_LINE_PARAM));
+    result.Adopt(new IOpenGLRectangleTexture(Width, Height, NumMipLevel, pixel_format, false, NUX_FILE_LINE_PARAM));
     return result;
   }
 
   ObjectPtr<IOpenGLCubeTexture> GpuDevice::CreateCubeTexture(
     int EdgeLength
     , int Levels
-    , BitmapFormat PixelFormat
+    , BitmapFormat pixel_format
     , const char * /* __Nux_FileName__ */
     , int /* __Nux_LineNumber__ */)
   {
+    if ((pixel_format == BITFMT_D24S8) && (!GetGpuInfo().Support_Depth_Buffer()))
+    {
+      // No support for depth buffers
+      return ObjectPtr<IOpenGLCubeTexture>();
+    }
+
     unsigned int NumTotalMipLevel = 1 + floorf(Log2(EdgeLength));
     unsigned int NumMipLevel = 0;
 
@@ -145,7 +169,7 @@ namespace nux
     }
 
     ObjectPtr<IOpenGLCubeTexture> result;
-    result.Adopt(new IOpenGLCubeTexture(EdgeLength, NumMipLevel, PixelFormat));
+    result.Adopt(new IOpenGLCubeTexture(EdgeLength, NumMipLevel, pixel_format));
     return result;
   }
 
@@ -154,10 +178,16 @@ namespace nux
     , int Height
     , int Depth
     , int Levels
-    , BitmapFormat PixelFormat
+    , BitmapFormat pixel_format
     , const char * /* __Nux_FileName__ */
     , int /* __Nux_LineNumber__ */)
   {
+    if ((pixel_format == BITFMT_D24S8) && (!GetGpuInfo().Support_Depth_Buffer()))
+    {
+      // No support for depth buffers
+      return ObjectPtr<IOpenGLVolumeTexture>();
+    }
+
     GpuInfo gpu_info = GetGpuInfo();
     int msz = gpu_info.GetMaxTextureSize();
     if(Width <= 0 || Height <= 0 || Width > msz || Height > msz)
@@ -182,7 +212,7 @@ namespace nux
     }
 
     ObjectPtr<IOpenGLVolumeTexture> result;
-    result.Adopt(new IOpenGLVolumeTexture(Width, Height, Depth, NumMipLevel, PixelFormat));
+    result.Adopt(new IOpenGLVolumeTexture(Width, Height, Depth, NumMipLevel, pixel_format));
     return result;
   }
 
@@ -190,8 +220,14 @@ namespace nux
     int Width
     , int Height
     , int Depth
-    , BitmapFormat PixelFormat)
+    , BitmapFormat pixel_format)
   {
+    if ((pixel_format == BITFMT_D24S8) && (!GetGpuInfo().Support_Depth_Buffer()))
+    {
+      // No support for depth buffers
+      return ObjectPtr<IOpenGLAnimatedTexture>();
+    }
+
     GpuInfo gpu_info = GetGpuInfo();
     int msz = gpu_info.GetMaxTextureSize();
     if(Width <= 0 || Height <= 0 || Width > msz || Height > msz)
@@ -200,7 +236,7 @@ namespace nux
     }
 
     ObjectPtr<IOpenGLAnimatedTexture> result;
-    result.Adopt(new IOpenGLAnimatedTexture(Width, Height, Depth, PixelFormat));
+    result.Adopt(new IOpenGLAnimatedTexture(Width, Height, Depth, pixel_format));
     return result;
   }
 
