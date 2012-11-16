@@ -523,6 +523,9 @@ namespace nux
     unsigned int reference_fbo_;
     Geometry reference_fbo_geometry_;
 
+    //! True if the platform has support for depth textures.
+    bool platform_support_for_depth_texture_;
+
     //! Pointer grab stack.
     /*!
         The head of the list is the top of the stack.
