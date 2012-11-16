@@ -40,7 +40,8 @@ class TestInputAreaProximity : public Test
 {
 public:
   TestInputAreaProximity()
-    : near_signal_recived_(false)
+    : top_proximity_(0)
+    , near_signal_recived_(false)
     , beyond_signal_recived_(false)
     , approaching_signal_recived_(false)
   {
