@@ -51,9 +51,6 @@ namespace nux
     bool IsInside(const Point2D<float> &p) const;
     Rect Intersect(const Rect &) const;
 
-    Point GetDistanceFromMouse(const Point& p) const;
-    Point GetDistanceFromMouse(int x, int y) const;
-
     // expand the width by factor_x and the height by factor_y
     void Expand (int factor_x, int factor_y);
 

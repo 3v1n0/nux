@@ -34,7 +34,7 @@ public:
   InputAreaProximity(InputArea* area, unsigned int proximity);
   virtual ~InputAreaProximity();
 
-  virtual void CheckMousePosition(const Point& mouse);
+  virtual void CheckMousePosition(Point const& mouse);
 
   //! Signal emitted when the Mouse is near the input area.
   /*!
@@ -45,7 +45,7 @@ public:
   //! Signal emitted while the mouse is moving, near, and not yet inside the input area.
   /*!
     @param Point mouse is the current Mouse position.
-    @param Point difference is the distances between the mouse and the input area.
+    @param Point offset is the offset between the mouse and the input area.
   */
   sigc::signal<void, Point const&, Point const&> mouse_approaching;
 

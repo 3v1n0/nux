@@ -1300,7 +1300,7 @@ DECLARE_LOGGER(logger, "nux.window");
       area_proximities_.remove(prox_area);
   }
 
-  void WindowCompositor::CheckMouseNearArea(const Event& event)
+  void WindowCompositor::CheckMouseNearArea(Event const& event)
   {
     for (auto area : area_proximities_)
     {
