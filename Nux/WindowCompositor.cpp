@@ -659,8 +659,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
   void WindowCompositor::MouseEventCycle(Event& event)
   {
-    // Checks if any input areas are close enough to the mouse to emit
-    // mouse_near
+    // Checks the area_proximities_ list for any mouse near/beyond signals
     if (event.type == NUX_MOUSE_MOVE)
     {
       CheckMouseNearArea(event);

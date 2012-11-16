@@ -20,8 +20,8 @@
  */
 
 
-#ifndef NUX_PROXIMITYAREA_H
-#define NUX_PROXIMITYAREA_H
+#ifndef NUX_INPUTAREA_PROXIMITY_H
+#define NUX_INPUTAREA_PROXIMITY_H
 
 #include "InputArea.h"
 
@@ -57,10 +57,8 @@ public:
 protected:
   ObjectWeakPtr<InputArea> area_;
   unsigned int proximity_;
-
   bool is_mouse_near_;
 };
-
 
 }
 

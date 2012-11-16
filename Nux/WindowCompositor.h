@@ -187,7 +187,7 @@ namespace nux
       const char* text,
       int key_repeat_count);
     
-    //! Checks the list of porximitys to see if the mouse is near any areas. 
+    //! Checks the list of porximities to see if the mouse is near any areas. 
     void CheckMouseNearArea(Event const& event);
 
     //! The InputArea that has the keyboard navigation focus.

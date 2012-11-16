@@ -92,8 +92,8 @@ void InputAreaProximity::CheckMousePosition(Point const& mouse)
 
   if (is_mouse_near_ && !geo.IsInside(mouse))
   {
-    nux::Point const& distance = GetOffsetFromRect(geo, mouse);
-    mouse_approaching.emit(mouse, distance);
+    nux::Point const& offset = GetOffsetFromRect(geo, mouse);
+    mouse_approaching.emit(mouse, offset);
   }
 }
 
