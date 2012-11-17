@@ -99,7 +99,7 @@ namespace nux
 
   void* VertexBuffer::GetPtrRawData()
   {
-    if (_Data.size() == 0)
+    if (_Data.empty())
       return 0;
 
     return NUX_CONST_CAST(void*, ((NUX_CONST_CAST(const VertexBuffer*, this))->GetPtrRawData()));
