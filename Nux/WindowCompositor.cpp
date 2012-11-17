@@ -1156,7 +1156,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
   void WindowCompositor::StopModalWindow(ObjectWeakPtr<BaseWindow> window)
   {
-    if (_modal_view_window_list.size() > 0)
+    if (!_modal_view_window_list.empty())
     {
       if (*_modal_view_window_list.begin() == window)
         _modal_view_window_list.pop_front();
