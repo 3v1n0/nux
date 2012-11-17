@@ -139,7 +139,7 @@ namespace nux
       return 0;
     }
 
-    if (surface_attachment_array_.size())
+    if (!surface_attachment_array_.empty())
     {
       if ((texture_attachment_array_[color_attachment_index] == texture) &&
       (surface_attachment_array_[color_attachment_index] == texture->GetSurfaceLevel(mip_level)))
