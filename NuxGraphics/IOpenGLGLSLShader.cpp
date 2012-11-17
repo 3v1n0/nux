@@ -45,8 +45,6 @@ namespace nux
 
   bool ExtractShaderString3(const std::string &ShaderToken, const std::string &ShaderSource, std::string &RetSource, std::string ShaderPreprocessorDefines)
   {
-    size_t lineStart = 0;
-    size_t lineCount = 1;
     bool startTokenFound = false;
     size_t shaderStringStart = 0;
     size_t shaderStartLine   = 1;
@@ -55,6 +53,8 @@ namespace nux
     //Loop for all characters in the string
     if (ShaderToken != "")
     {
+      size_t lineStart = 0;
+      size_t lineCount = 1;
       size_t i;
 
       for (i = 0; i < ShaderSource.length(); i++)
