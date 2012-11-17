@@ -730,7 +730,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
 
   void GraphicsEngine::PopClipOffset()
   {
-    if (_clip_offset_stack.size() == 0)
+    if (_clip_offset_stack.empty())
     {
       _clip_offset_x = 0;
       _clip_offset_y = 0;
