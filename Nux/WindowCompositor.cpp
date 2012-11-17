@@ -1706,7 +1706,7 @@ DECLARE_LOGGER(logger, "nux.window");
     if (it == _menu_chain->end())
     {
       // When adding a MenuPage, make sure that it is a child of the MenuPage in _menu_chain->begin().
-      if (_menu_chain->size())
+      if (!_menu_chain->empty())
       {
         if (menu->GetParentMenu() != (*_menu_chain->begin()))
         {
