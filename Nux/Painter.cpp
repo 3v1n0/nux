@@ -807,7 +807,7 @@ int BasePainter::PaintColorTextLineEdit(GraphicsEngine &graphics_engine, const G
     std::list<AbstractPaintLayer *>::const_reverse_iterator rev_it;
 
     bool clear_background = false;
-    if (pushed_paint_layer_stack_.size() == 0)
+    if (pushed_paint_layer_stack_.empty())
     {
       // This is the first stack of layers. Clear the background
       clear_background = true;
