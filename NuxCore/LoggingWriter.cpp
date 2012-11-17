@@ -85,12 +85,13 @@ std::string TimestampString(std::time_t timestamp)
   tm local_time;
 
 #if defined(NUX_OS_WINDOWS)
-  static const char* invalid_time_stamp = "invalid_time_stamp";
-
   if (localtime_s(&local_time, &timestamp) == 0)
     std::strftime(buffer, buf_size, format, &local_time);
   else
+  {
+    static const char* invalid_time_stamp = "invalid_time_stamp";
     memcpy_s(buffer, sizeof(buffer), invalid_time_stamp, strnlen(invalid_time_stamp, 30));
+  }
 #else
   std::strftime(buffer, buf_size, format, ::localtime_r(&timestamp, &local_time));
 #endif
