@@ -1097,7 +1097,7 @@ DECLARE_LOGGER(logger, "nux.window");
     (event.type == NUX_WINDOW_MOUSELEAVE))
     {
       bool menu_active = false;
-      if (_menu_chain->size())
+      if (!_menu_chain->empty())
       {
         menu_active = true;
         MenuEventCycle(event);
