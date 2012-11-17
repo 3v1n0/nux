@@ -1748,7 +1748,7 @@ DECLARE_LOGGER(logger, "nux.window");
     _menu_chain->erase(it);
     m_MenuRemoved = true;
 
-    if (_menu_is_active && (_menu_chain->size() == 0))
+    if (_menu_is_active && (_menu_chain->empty()))
     {
       // The menu is closed
       _menu_is_active         = false;
