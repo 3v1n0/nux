@@ -865,7 +865,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
     Matrix4 Mat;
     Mat.Zero();
 
-    if (m_2DModelViewMatricesStack.size() <= 0)
+    if (m_2DModelViewMatricesStack.empty())
       return Mat;
 
     std::list<Matrix4>::iterator it;
