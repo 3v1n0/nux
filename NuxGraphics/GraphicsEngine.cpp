@@ -998,7 +998,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
 
   bool GraphicsEngine::PopBlend()
   {
-    if (_blend_stack.size() == 0)
+    if (_blend_stack.empty())
     {
       GetRenderStates().SetBlend(false, GL_ONE, GL_ZERO);
       return false;
