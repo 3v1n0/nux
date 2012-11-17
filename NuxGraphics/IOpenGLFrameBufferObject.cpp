@@ -61,7 +61,7 @@ namespace nux
   {
     Deactivate();
 
-    if (surface_attachment_array_.size())
+    if (!surface_attachment_array_.empty())
     {
       for (int i = 0; i < 1 /*GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment()*/; i++)
       {
