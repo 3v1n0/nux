@@ -1124,7 +1124,7 @@ int BasePainter::PaintColorTextLineEdit(GraphicsEngine &graphics_engine, const G
   {
     nuxAssert(level >= 0);
 
-    while ((level >= 1) && (active_paint_layer_stack_.size() > 0))
+    while ((level >= 1) && (!active_paint_layer_stack_.empty()))
     {
       AbstractPaintLayer *paint_layer = (*active_paint_layer_stack_.begin());
       delete paint_layer;
