@@ -1777,7 +1777,7 @@ DECLARE_LOGGER(logger, "nux.window");
       }
     }
 
-    if (_menu_is_active && (_menu_chain->size() == 0))
+    if (_menu_is_active && (_menu_chain->empty()))
     {
       _menu_is_active         = false;
       ResetMousePointerAreas();
