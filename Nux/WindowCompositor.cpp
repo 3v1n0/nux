@@ -1759,7 +1759,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
   void WindowCompositor::CleanMenu()
   {
-    if (_menu_chain->size() == 0)
+    if (_menu_chain->empty())
       return;
 
     std::list<MenuPage*>::iterator menu_it = _menu_chain->begin();
