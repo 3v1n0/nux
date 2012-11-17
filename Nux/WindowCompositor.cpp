@@ -1695,7 +1695,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
   void WindowCompositor::AddMenu(MenuPage* menu, BaseWindow* window, bool OverrideCurrentMenuChain)
   {
-    if (_menu_chain->size() == 0)
+    if (_menu_chain->empty())
     {
       // A menu is opening.
       _starting_menu_event_cycle = true;
