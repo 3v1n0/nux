@@ -88,7 +88,7 @@ void Gesture::EnableEventDelivery()
 
   event_delivery_enabled_ = true;
 
-  if (queued_events_.empty() == 0)
+  if (queued_events_.empty())
     return;
 
   // Deliver all queued events but keep the last one
