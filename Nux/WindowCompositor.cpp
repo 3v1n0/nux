@@ -2335,7 +2335,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
   InputArea* WindowCompositor::GetKeyboardGrabArea()
   {
-    if (keyboard_grab_stack_.size() == 0)
+    if (keyboard_grab_stack_.empty())
       return NULL;
 
     return (*keyboard_grab_stack_.begin());
