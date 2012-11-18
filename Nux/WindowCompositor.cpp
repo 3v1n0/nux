@@ -1097,7 +1097,7 @@ DECLARE_LOGGER(logger, "nux.window");
     (event.type == NUX_WINDOW_MOUSELEAVE))
     {
       bool menu_active = false;
-      if (_menu_chain->size())
+      if (!_menu_chain->empty())
       {
         menu_active = true;
         MenuEventCycle(event);
@@ -1156,7 +1156,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
   void WindowCompositor::StopModalWindow(ObjectWeakPtr<BaseWindow> window)
   {
-    if (_modal_view_window_list.size() > 0)
+    if (!_modal_view_window_list.empty())
     {
       if (*_modal_view_window_list.begin() == window)
         _modal_view_window_list.pop_front();
@@ -1695,7 +1695,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
   void WindowCompositor::AddMenu(MenuPage* menu, BaseWindow* window, bool OverrideCurrentMenuChain)
   {
-    if (_menu_chain->size() == 0)
+    if (_menu_chain->empty())
     {
       // A menu is opening.
       _starting_menu_event_cycle = true;
@@ -1706,7 +1706,7 @@ DECLARE_LOGGER(logger, "nux.window");
     if (it == _menu_chain->end())
     {
       // When adding a MenuPage, make sure that it is a child of the MenuPage in _menu_chain->begin().
-      if (_menu_chain->size())
+      if (!_menu_chain->empty())
       {
         if (menu->GetParentMenu() != (*_menu_chain->begin()))
         {
@@ -1748,7 +1748,7 @@ DECLARE_LOGGER(logger, "nux.window");
     _menu_chain->erase(it);
     m_MenuRemoved = true;
 
-    if (_menu_is_active && (_menu_chain->size() == 0))
+    if (_menu_is_active && (_menu_chain->empty()))
     {
       // The menu is closed
       _menu_is_active         = false;
@@ -1759,7 +1759,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
   void WindowCompositor::CleanMenu()
   {
-    if (_menu_chain->size() == 0)
+    if (_menu_chain->empty())
       return;
 
     std::list<MenuPage*>::iterator menu_it = _menu_chain->begin();
@@ -1777,7 +1777,7 @@ DECLARE_LOGGER(logger, "nux.window");
       }
     }
 
-    if (_menu_is_active && (_menu_chain->size() == 0))
+    if (_menu_is_active && (_menu_chain->empty()))
     {
       _menu_is_active         = false;
       ResetMousePointerAreas();
@@ -2335,7 +2335,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
   InputArea* WindowCompositor::GetKeyboardGrabArea()
   {
-    if (keyboard_grab_stack_.size() == 0)
+    if (keyboard_grab_stack_.empty())
       return NULL;
 
     return (*keyboard_grab_stack_.begin());

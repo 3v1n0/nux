@@ -581,7 +581,7 @@ namespace nux
 
   Area* VSplitter::KeyNavIteration(KeyNavDirection direction)
   {
-    if (m_InterfaceObject.size() == 0)
+    if (m_InterfaceObject.empty())
       return NULL;
 
     if (next_object_to_key_focus_area_)

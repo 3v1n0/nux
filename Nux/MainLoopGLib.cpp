@@ -278,7 +278,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
         sigc::mem_fun(this, &WindowThread::ProcessGestureEvent));
 #endif
 
-    if (_Timelines->size() > 0)
+    if (!_Timelines->empty())
       StartMasterClock();
 
     if (!IsEmbeddedWindow())

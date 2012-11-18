@@ -730,7 +730,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
 
   void GraphicsEngine::PopClipOffset()
   {
-    if (_clip_offset_stack.size() == 0)
+    if (_clip_offset_stack.empty())
     {
       _clip_offset_x = 0;
       _clip_offset_y = 0;
@@ -865,7 +865,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
     Matrix4 Mat;
     Mat.Zero();
 
-    if (m_2DModelViewMatricesStack.size() <= 0)
+    if (m_2DModelViewMatricesStack.empty())
       return Mat;
 
     std::list<Matrix4>::iterator it;
@@ -998,7 +998,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
 
   bool GraphicsEngine::PopBlend()
   {
-    if (_blend_stack.size() == 0)
+    if (_blend_stack.empty())
     {
       GetRenderStates().SetBlend(false, GL_ONE, GL_ZERO);
       return false;
