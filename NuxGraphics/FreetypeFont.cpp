@@ -886,8 +886,8 @@ void FontMgr::RenderTextLineEdit (const PageBBox &pageSize, const std::string &S
 
   // Render Cursor
   std::string temp = Str.substr (0, CursorPosition);
-  int w = GetStringWidth (temp.c_str() );
-  int h = GetStringHeight (temp.c_str() );
+  int w = GetStringWidth (temp);
+  int h = GetStringHeight (temp);
 
   glDisable (GL_TEXTURE_2D);
   glColor4f (1, 0, 0, 1);
