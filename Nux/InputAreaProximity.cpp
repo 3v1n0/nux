@@ -47,28 +47,27 @@ InputAreaProximity::~InputAreaProximity()
 
 Point GetOffsetFromRect(Rect const& rect, Point const& mouse)
 {
-  int offset_x = 0;
-  int offset_y = 0;
+  Point offset;
 
   if (rect.x > mouse.x)
   {
-    offset_x = rect.x - mouse.x;
+    offset.x = rect.x - mouse.x;
   }
   else if (rect.x + rect.width < mouse.x)
   {
-    offset_x = rect.x + rect.width - mouse.x;
+    offset.x = rect.x + rect.width - mouse.x;
   }
 
   if (rect.y > mouse.y)
   {
-    offset_y = rect.y - mouse.y;
+    offset.y = rect.y - mouse.y;
   }
   else if (rect.y + rect.height < mouse.y)
   {
-    offset_y = rect.y + rect.height - mouse.y;
+    offset.y = rect.y + rect.height - mouse.y;
   }
 
-  return Point(offset_x, offset_y);
+  return offset;
 }
 
 void InputAreaProximity::CheckMousePosition(Point const& mouse)

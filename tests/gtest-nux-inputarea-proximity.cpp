@@ -68,7 +68,7 @@ public:
     test_view->SetGeometry(nux::Geometry(0, 0, VIEW_WIDTH, VIEW_HEIGHT));
     top_proximity_ = proximity;
 
-    nux::InputAreaProximity* prox_area = new nux::InputAreaProximity(test_view, proximity);
+    auto prox_area = std::make_shared<nux::InputAreaProximity>(test_view, proximity);
 
     prox_area->mouse_near.connect([&] (const nux::Point&) {
       near_signal_recived_ = true;
@@ -93,7 +93,6 @@ public:
       auto prox_area = prox_areas_.top();
       prox_areas_.pop();
 
-      delete prox_area.first;
       prox_area.second->UnReference();
     }
   }
@@ -151,7 +150,7 @@ public:
 
 private:
   std::unique_ptr<nux::WindowThread> wnd_thread;
-  std::stack<std::pair<nux::InputAreaProximity*, nux::TestView*> > prox_areas_;
+  std::stack<std::pair<std::shared_ptr<nux::InputAreaProximity>, nux::TestView*> > prox_areas_;
 
   nux::Point last_approaching_point_;
 
