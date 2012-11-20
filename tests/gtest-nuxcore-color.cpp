@@ -312,5 +312,15 @@ TEST(TestColor, TestSubtraction)
   EXPECT_THAT(difference.alpha, FloatEq(0));
 }
 
+TEST(TestColor, TestColorToRGB)
+{
+  nux::Color color = nux::Color(0.3f, 0.8f, 0.1f, 0.5f);
+  nux::color::RedGreenBlue rgb = color;
+
+  EXPECT_EQ(rgb.red, color.red);
+  EXPECT_EQ(rgb.green, color.green);
+  EXPECT_EQ(rgb.blue, color.blue);
+}
+
 }
 

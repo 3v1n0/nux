@@ -2,7 +2,7 @@ CLEANFILES =
 DISTCLEANFILES =
 EXTRA_DIST =
 
-libexec_PROGRAMS = unity_support_test
+pkglibexec_PROGRAMS = unity_support_test
 
 unity_support_test_CFLAGS = $(UNITY_SUPPORT_TEST_CFLAGS) $(MAINTAINER_CFLAGS)
 unity_support_test_LDFLAGS = $(UNITY_SUPPORT_TEST_LIBS)

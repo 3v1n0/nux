@@ -391,7 +391,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
   void WindowThread::RemoveTimeline(Timeline *timeline)
   {
     _Timelines->remove(timeline);
-    if (_Timelines->size() == 0)
+    if (_Timelines->empty())
     {
       StopMasterClock();
     }

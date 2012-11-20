@@ -121,6 +121,7 @@ gtest_nux_slow_SOURCES = \
   gtest-nux-cairo-wrapper.cpp \
   gtest-nux-input-area.cpp \
   gtest-nux-main.cpp \
+  gtest-nux-inputarea-proximity.cpp \
   gtest-nux-statictext.cpp \
   gtest-nux-scrollview.cpp \
   gtest-nux-textentry.cpp \

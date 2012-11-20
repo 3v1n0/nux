@@ -285,7 +285,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
 #endif
 
 #if !defined(NUX_MINIMAL)
-    if (_Timelines->size() > 0)
+    if (!_Timelines->empty())
       StartMasterClock();
 #endif
 
