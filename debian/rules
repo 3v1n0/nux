@@ -28,7 +28,9 @@ override_dh_install:
 	dh_install --fail-missing
 
 override_dh_auto_test:
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	make check-headless
+endif
 
 override_dh_gencontrol:
 	dh_gencontrol -- -Vnuxabiversion=$(NUX_ABIVERSION)
