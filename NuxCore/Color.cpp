@@ -476,6 +476,12 @@ namespace color
   , blue(b)
   {}
 
+  RedGreenBlue::RedGreenBlue(Color const& color)
+  : red(color.red)
+  , green(color.green)
+  , blue(color.blue)
+  {}
+
   RedGreenBlue::RedGreenBlue(HueSaturationValue const& hsv)
   {
     HSVtoRGB(red, green, blue, hsv.hue, hsv.saturation, hsv.value);

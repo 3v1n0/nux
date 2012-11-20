@@ -347,7 +347,7 @@ namespace nux
         @param unsigned long Keyboard special keys states(4th parameter of the callback).
     */
     sigc::signal<void, int, int, unsigned long, unsigned long> mouse_double_click;
-    
+
     //! Signal emitted when the InputArea receives a mouse down event, followed later by a mouse move event(while the mouse is still pressed).
     /*!
         @param void Return type of the callback hooked to this signal.

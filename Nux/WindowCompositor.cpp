@@ -27,6 +27,7 @@
 #include "NuxGraphics/GLError.h"
 #include "WindowThread.h"
 #include "BaseWindow.h"
+#include "InputAreaProximity.h"
 #include "MenuPage.h"
 #include "PaintLayer.h"
 #include "Painter.h"
@@ -658,6 +659,12 @@ DECLARE_LOGGER(logger, "nux.window");
 
   void WindowCompositor::MouseEventCycle(Event& event)
   {
+    // Checks the area_proximities_ list for any mouse near/beyond signals
+    if (event.type == NUX_MOUSE_MOVE)
+    {
+      CheckMouseNearArea(event);
+    }
+
     // Updates mouse_over_area_ and emits mouse_enter and mouse_leave signals
     // accordingly.
     bool area_under_mouse_changed = UpdateWhatAreaIsUnderMouse(event);
@@ -1270,6 +1277,42 @@ DECLARE_LOGGER(logger, "nux.window");
     {
       _view_window_list.erase(always_top_it);
       _view_window_list.push_front(_always_on_front_window);
+    }
+  }
+
+  int WindowCompositor::GetProximityListSize() const
+  {
+    return area_proximities_.size();
+  }
+
+  void WindowCompositor::AddAreaInProximityList(InputAreaProximity* prox_area)
+  {
+    if (prox_area)
+    {
+      area_proximities_.push_back(prox_area);
+    }
+    else
+    {
+      LOG_ERROR(logger) << "Error, attempted to add a NULL InputAreaProximity to the list.";
+    }
+  }
+
+  void WindowCompositor::RemoveAreaInProximityList(InputAreaProximity* prox_area)
+  {
+    if (prox_area)
+    {
+      area_proximities_.remove(prox_area);
+    }
+  }
+
+  void WindowCompositor::CheckMouseNearArea(Event const& event)
+  {
+    for (auto area : area_proximities_)
+    {
+      if (area)
+      {
+        area->CheckMousePosition(Point(event.x, event.y));
+      }
     }
   }
 
