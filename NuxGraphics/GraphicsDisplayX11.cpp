@@ -180,10 +180,12 @@ namespace nux
     return gfx_interface_created_;
   }
 
+#ifndef NUX_OPENGLES_20
   static Bool WaitForNotify( Display * /* dpy */, XEvent *event, XPointer arg )
   {
     return(event->type == MapNotify) && (event->xmap.window == (Window) arg);
   }
+#endif
 
 // TODO: change windowWidth, windowHeight, to window_size;
   static NCriticalSection CreateOpenGLWindow_CriticalSection;
