@@ -87,7 +87,7 @@ namespace nux
     win32_keysym = 0;
 #endif
 
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     x11_keycode = 0;
     x11_keysym = 0;
     x11_timestamp = 0;
@@ -107,7 +107,7 @@ namespace nux
     win32_keysym = 0;
 #endif
 
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     x11_keycode = 0;
     x11_keysym = 0;
     x11_key_state = 0;
@@ -195,14 +195,13 @@ namespace nux
   {
 #if defined(NUX_OS_WINDOWS)
     return win32_keysym;
-#endif
-
-#if defined(NUX_OS_LINUX)
+#elif defined(USE_X11)
     return x11_keysym;
-#endif
-
+#else
     return 0;
+#endif
   }
+
   unsigned short Event::GetKeyRepeatCount() const
   {
     return key_repeat_count;

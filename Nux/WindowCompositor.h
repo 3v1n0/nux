@@ -86,9 +86,12 @@ namespace nux
 
     void KeyboardEventCycle(Event& event);
 
+#if !defined(NUX_MINIMAL)
     void MenuEventCycle(Event& event);
     MenuPage* _mouse_owner_menu_page;
     MenuPage* _mouse_over_menu_page;
+#endif
+
     bool      _starting_menu_event_cycle;
     bool      _menu_is_active;
 
@@ -258,9 +261,11 @@ namespace nux
     void StartModalWindow(ObjectWeakPtr<BaseWindow>);
     void StopModalWindow(ObjectWeakPtr<BaseWindow>);
 
+#if !defined(NUX_MINIMAL)
     void AddMenu(MenuPage* menu, BaseWindow* window, bool OverrideCurrentMenuChain = true);
     void RemoveMenu(MenuPage* menu);
     void CleanMenu();
+#endif
 
     void PushModalWindow(ObjectWeakPtr<BaseWindow> window);
 
@@ -510,7 +515,9 @@ namespace nux
     WindowList _modal_view_window_list;
     WeakBaseWindowPtr _always_on_front_window;  //!< Floating view that always remains on top.
 
+#if !defined(NUX_MINIMAL)
     std::list<MenuPage* >* _menu_chain;
+#endif
 
     std::map<BaseWindow*, struct RenderTargetTextures> _window_to_texture_map;
 
