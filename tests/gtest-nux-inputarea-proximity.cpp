@@ -143,6 +143,15 @@ public:
     nux::GetWindowCompositor().ProcessEvent(event);
   }
 
+  void MoveMouseBeyondWindow()
+  {
+    nux::Event event;
+    event.type = nux::NUX_WINDOW_MOUSELEAVE;
+    event.x = VIEW_WIDTH + top_proximity_ + 10;
+    event.y = VIEW_HEIGHT + top_proximity_ + 10;
+    nux::GetWindowCompositor().ProcessEvent(event);
+  }
+
   int GetProxListSize()
   {
     return nux::GetWindowCompositor().GetProximityListSize();
@@ -318,6 +327,17 @@ TEST_F(TestInputAreaProximity, TestBeyondSignal)
   ASSERT_FALSE(BeyondSignalRecived());
 
   MoveMouseBeyond();
+  ASSERT_TRUE(BeyondSignalRecived());
+}
+
+TEST_F(TestInputAreaProximity, TestBeyondSignalEmitWhenLeavingWindow)
+{
+  AddInputAreaProximity();
+
+  MoveMouseNear();
+  ASSERT_FALSE(BeyondSignalRecived());
+
+  MoveMouseBeyondWindow();
   ASSERT_TRUE(BeyondSignalRecived());
 }
 
