@@ -136,10 +136,7 @@ namespace color
   {
     // std::rand isn't defined to be more random than 2^15, so we need
     // to generate the full unsigned in chunks.
-    return (((std::rand() % 255) << 24) |
-            ((std::rand() % 255) << 16) |
-            ((std::rand() % 255) << 8) |
-            (255));
+    return (0xff << 24) | (std::rand() << 8) | (std::rand() & 0xff);
   }
 
   Color operator + (Color const& lhs, Color const& rhs)
