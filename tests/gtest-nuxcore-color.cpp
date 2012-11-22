@@ -21,7 +21,7 @@
 
 #include <gmock/gmock.h>
 
-#include "Nux/Nux.h"
+#include "NuxCore/Color.h"
 
 using namespace testing;
 

@@ -58,8 +58,6 @@ gtest_nuxcore_CPPFLAGS = \
 
 gtest_nuxcore_LDADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
-  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
   $(NUX_LIBS) \
   libgtest.a
 

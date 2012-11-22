@@ -21,7 +21,9 @@
 
 #include <gmock/gmock.h>
 
-#include "Nux/Nux.h"
+#include "NuxCore/NuxCore.h"
+#include "NuxCore/Object.h"
+#include "NuxCore/ObjectPtr.h"
 
 using namespace testing;
 
