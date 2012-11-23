@@ -13,17 +13,17 @@
 #   - Increase micro_version to the next odd number
 #   - Increase interface_version to the next odd number
 # 
-m4_define([nux_major_version], [3])
-m4_define([nux_minor_version], [4])
+m4_define([nux_major_version], [4])
+m4_define([nux_minor_version], [0])
 m4_define([nux_micro_version], [0])
 
-m4_define([nux_api_version], [3.0])
+m4_define([nux_api_version], [4.0])
 # Increase the number (to the current date) everytime you propose a branch that breaks the API or ABI
 # The number format is : year/month/day
 # e.g.: december 5th, 2011 is: 20111205
 # To make more than one API change in a day, add a number to the date. Like 20111205.xx
 
-m4_define([nux_abi_version], [20121119.01])
+m4_define([nux_abi_version], [20121123.01])
 
 m4_define([nux_version],
           [nux_major_version.nux_minor_version.nux_micro_version])
@@ -55,7 +55,7 @@ AC_PREREQ(2.59)
 AC_INIT([nux],
         [nux_version],
         [https://bugs.launchpad.net/nux])
-AC_COPYRIGHT([Copyright 2010 Inalogic Inc.])
+AC_COPYRIGHT([Copyright 2010-2012 Inalogic Inc.])
 
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
@@ -119,6 +119,21 @@ dnl ===========================================================================
 GL_PKGS="gl glu glew glewmx xext x11"
 MAINTAINER_CFLAGS=""
 
+# X11 build
+AC_ARG_ENABLE([x_support],
+             [AC_HELP_STRING([--enable-x-support=@<:@no/yes@:>@],
+             [Enable X11 code path @<:@default=yes@:>@])],
+             [],
+             [enable_x_support=yes])
+AS_IF([test "x$enable_x_support" = "xyes"], [
+        MAINTAINER_CFLAGS+=" -DUSE_X11"
+      ])
+AS_IF([test "x$enable_x_support" = "xno"], [
+        MAINTAINER_CFLAGS+=" -DNO_X11"
+      ])
+
+AM_CONDITIONAL(USE_X11, [test "x$enable_x_support" = "xyes"])
+
 # Enable opengl es 20 code path
 AC_ARG_ENABLE([opengles_20],
               [AC_HELP_STRING([--enable-opengles-20=@<:@no/yes@:>@],
@@ -127,11 +142,24 @@ AC_ARG_ENABLE([opengles_20],
               [enable_opengles_20=no])
 AS_IF([test "x$enable_opengles_20" = "xyes"],
       [
-         MAINTAINER_CFLAGS+=" -DNUX_OPENGLES_20"
-         GL_PKGS="egl glesv2"
+        MAINTAINER_CFLAGS+=" -DNUX_OPENGLES_20"
+        GL_PKGS="egl glesv2"
       ]
 )
 AM_CONDITIONAL(NUX_OPENGLES_20, [test "x$enable_opengles_20" = "xyes"])
+
+# Minimal builds
+AC_ARG_ENABLE([minimal_build],
+              [AC_HELP_STRING([--enable-minimal-build=@<:@no/yes@:>@],
+              [Enable minimal builds @<:@default=no@:>@])],
+              [],
+              [enable_minimal_build=no])
+
+AS_IF([test "x$enable_minimal_build" = "xyes"], [
+        MAINTAINER_CFLAGS+=" -DNUX_MINIMAL"
+      ])
+AM_CONDITIONAL(NUX_MINIMAL, [test "x$enable_minimal_build" = "xyes"])
+
 
 AC_SUBST(GL_PKGS)
 AC_SUBST(MAINTAINER_CFLAGS)
@@ -339,7 +367,7 @@ AM_CONDITIONAL(BUILD_DOCUMENTATION, [test "x$enable_documentation" = "xyes"])
 dnl ==========================================================================
 
 if test "x$GCC" = "xyes"; then
-  GCC_FLAGS="-g -Wall -Wextra -std=c++0x"
+  GCC_FLAGS="-g -Werror -Wall -Wextra -Wno-unused-parameter -std=c++0x"
 fi
 
 # gcc flags for building the tests.
@@ -355,7 +383,7 @@ AC_ARG_ENABLE([maintainer-mode],
 
 AS_IF([test "x$enable_maintainer_mode" = "xyes" && test "x$GCC" = "xyes"],
       [
-         MAINTAINER_CFLAGS+="-Wall -Wextra -Wcast-align -Wno-uninitialized -Wempty-body -Wformat-security -Winit-self"
+         MAINTAINER_CFLAGS+="-Werror -Wall -Wextra -Wcast-align -Wno-uninitialized -Wempty-body -Wformat-security -Winit-self -Wno-unused-parameter"
       ]
 )
 
@@ -368,8 +396,8 @@ AC_ARG_ENABLE([debug],
               [enable_debug=no])
 AS_IF([test "x$enable_debug" = "xyes"],
       [
-         MAINTAINER_CFLAGS+=" -DNUX_DEBUG"
-         GCC_FLAGS="-g -O0 -Wall -Wextra -std=c++0x"
+        MAINTAINER_CFLAGS+=" -DNUX_DEBUG"
+        GCC_FLAGS="-g -O0 -Wall -Wextra -Wno-unused-parameter -std=c++0x"
       ]
 )
 
@@ -458,6 +486,8 @@ echo -e "        Build Examples     : ${BOLD_WHITE}${enable_examples}${RESET}"
 echo -e "        Build Gpu Tests    : ${BOLD_WHITE}${enable_gputests}${RESET}"
 echo -e "        Build Nux Tests    : ${BOLD_WHITE}${enable_tests}${RESET}"
 echo -e "        Gestures support   : ${BOLD_WHITE}${have_geis}${RESET}"
+echo -e "        X11 build support  : ${BOLD_WHITE}${enable_x_support}${RESET}"
+echo -e "        Minimal build      : ${BOLD_WHITE}${enable_minimal_build}${RESET}"
 echo ""
 
 echo -e "${RESET}"

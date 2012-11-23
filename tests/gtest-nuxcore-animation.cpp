@@ -1,3 +1,13 @@
+/*
+ * Now before you go changing any of the advance or tick values in the file,
+ * it is worthwhile considering the impact that you'll see on 32 vs 64 bit
+ * machines.  Having a 1000 ms animation with 10 x 100ms ticks on a 64 bit
+ * machine will seem to give fine integer interpolations to be exactly what is
+ * expected, but on a 32 bit machine there are rounding errors.  This is why
+ * in a number of the tests, we'll advance 101 or 201 ms instead of a nice
+ * round number.
+ */
+
 #include "NuxCore/Animation.h"
 #include "NuxCore/AnimationController.h"
 #include "NuxCore/EasingCurve.h"
@@ -352,7 +362,7 @@ TEST(TestAnimateValue, TestAdvance)
 
   animation.Start();
   for (int i = 0; i < 11; ++i) // Advance one more time than necessary
-    animation.Advance(100);
+    animation.Advance(101);
 
   std::vector<int> expected = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
 
@@ -417,7 +427,7 @@ TEST(TestAnimateValue, TestAnimatePoint)
 
   animation.Start();
   for (int i = 0; i < 10; ++i)
-    animation.Advance(200);
+    animation.Advance(201);
 
   std::vector<nux::Point> expected = {nux::Point(10,10),
                                       nux::Point(12,12),
@@ -522,13 +532,13 @@ TEST_F(TestAnimationHookup, TestSingleAnimation)
   animation.updated.connect(recorder.listener());
 
   // Ticking along with no animations has no impact.
-  ticker.ms_tick(100);
+  ticker.ms_tick(101);
 
   EXPECT_THAT(recorder.size(), Eq(0));
 
   animation.Start();
 
-  ticker.ms_tick(200);
+  ticker.ms_tick(201);
 
   std::vector<int> expected = {10, 12};
   EXPECT_THAT(recorder.changed_values, Eq(expected));
@@ -541,12 +551,12 @@ TEST_F(TestAnimationHookup, TestSingleAnimation)
   // Resuming allows updates.
 
   animation.Resume();
-  ticker.ms_tick(200);
+  ticker.ms_tick(201);
   expected.push_back(14);
   EXPECT_THAT(recorder.changed_values, Eq(expected));
 
   animation.Stop();
-  ticker.ms_tick(200);
+  ticker.ms_tick(201);
   EXPECT_THAT(recorder.changed_values, Eq(expected));
 }
 
@@ -562,32 +572,36 @@ TEST_F(TestAnimationHookup, TestTwoAnimation)
   int_animation = new na::AnimateValue<int>(0, 100, 2000);
   int_animation->updated.connect(int_recorder.listener());
   int_animation->Start();
-  ticker.ms_tick(200);
+  ticker.ms_tick(201);
 
   double_animation = new na::AnimateValue<double>(0, 10, 1000);
   double_animation->updated.connect(double_recorder.listener());
   double_animation->Start();
-  ticker.ms_tick(200);
-  ticker.ms_tick(200);
+  ticker.ms_tick(201);
+  ticker.ms_tick(201);
 
   // Removing one animation doesn't impact the other.
   delete double_animation;
 
-  std::vector<double> expected_doubles = {0, 2, 4};
-  EXPECT_THAT(double_recorder.changed_values, Eq(expected_doubles));
+  std::vector<double> expected_doubles = {0, 2.01, 4.02};
+  // Use DoubleEq to check values as calculations may give truncated values.
+  for (std::size_t i = 0; i < expected_doubles.size(); ++i)
+  {
+    ASSERT_THAT(double_recorder.changed_values[i], DoubleEq(expected_doubles[i]));
+  }
 
-  ticker.ms_tick(200);
-  ticker.ms_tick(200);
+  ticker.ms_tick(201);
+  ticker.ms_tick(201);
   std::vector<int> expected_ints = {0, 10, 20, 30, 40, 50};
   EXPECT_THAT(int_recorder.changed_values, Eq(expected_ints));
 
   int_animation->Stop();
-  ticker.ms_tick(200);
+  ticker.ms_tick(201);
   EXPECT_THAT(int_recorder.changed_values, Eq(expected_ints));
 
   delete int_animation;
   // Ticking away with no animations is fine.
-  ticker.ms_tick(200);
+  ticker.ms_tick(201);
 }
 
 TEST_F(TestAnimationHookup, TestIntProperty)
@@ -600,18 +614,18 @@ TEST_F(TestAnimationHookup, TestIntProperty)
 
   anim->Start();
   EXPECT_THAT(int_property(), Eq(10));
-  ticker.ms_tick(200);
+  ticker.ms_tick(201);
   EXPECT_THAT(int_property(), Eq(12));
-  ticker.ms_tick(200);
+  ticker.ms_tick(201);
   EXPECT_THAT(int_property(), Eq(14));
-  ticker.ms_tick(300);
+  ticker.ms_tick(301);
   EXPECT_THAT(int_property(), Eq(17));
-  ticker.ms_tick(200);
+  ticker.ms_tick(201);
   EXPECT_THAT(int_property(), Eq(19));
-  ticker.ms_tick(200);
+  ticker.ms_tick(201);
   EXPECT_THAT(int_property(), Eq(20));
   EXPECT_FALSE(bool(anim));
-  ticker.ms_tick(200);
+  ticker.ms_tick(201);
   EXPECT_THAT(int_property(), Eq(20));
 }
 

@@ -27,7 +27,6 @@
 #include "HLayout.h"
 #include "WindowCompositor.h"
 #include "BaseWindow.h"
-#include "TextEntry.h"
 
 namespace nux
 {
@@ -57,7 +56,7 @@ namespace nux
     _size_match_layout = false;
     _is_visible = false;
     _is_modal = false;
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     m_input_window_enabled = false;
     m_input_window = 0;
 #endif
@@ -85,7 +84,7 @@ namespace nux
       _enter_focus_input_area->UnReference();
     }
 
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     if (m_input_window)
       delete m_input_window;
 #endif
@@ -239,12 +238,13 @@ namespace nux
 
   }
 
-  #if defined(NUX_OS_LINUX)
+#if defined(NUX_OS_LINUX)
   void BaseWindow::EnableInputWindow(bool        b,
                                       const char* title,
                                       bool        take_focus,
                                       bool        override_redirect)
   {
+#if defined(USE_X11)
     if (b)
     {
       if (m_input_window == 0)
@@ -260,56 +260,79 @@ namespace nux
         m_input_window->Hide();
       m_input_window_enabled = false;
     }
+#endif
   }
 
   bool BaseWindow::InputWindowEnabled()
   {
+#if defined(USE_X11)
     return m_input_window_enabled;
+#else
+    return false;
+#endif
   }
 
   void BaseWindow::InputWindowEnableStruts(bool enable)
   {
+#if defined(USE_X11)
     if (m_input_window)
       m_input_window->EnableStruts(enable);
+#endif
   }
 
   bool BaseWindow::InputWindowStrutsEnabled()
   {
+#if defined(USE_X11)
     return m_input_window_enabled && m_input_window->StrutsEnabled();
+#else
+    return false;
+#endif
   }
 
   void BaseWindow::InputWindowEnableOverlayStruts(bool enable)
   {
+#if defined(USE_X11)
     if (m_input_window)
       m_input_window->EnableOverlayStruts(enable);
+#endif
   }
 
   bool BaseWindow::InputWindowOverlayStrutsEnabled()
   {
+#if defined(USE_X11)
     return m_input_window && m_input_window->OverlayStrutsEnabled();
+#else
+    return false;
+#endif
   }
 
   void BaseWindow::SetInputFocus()
   {
+#if defined(USE_X11)
     if (m_input_window)
       m_input_window->SetInputFocus();
+#endif
   }
 
   Window BaseWindow::GetInputWindowId()
   {
+#if defined(USE_X11)
     if (m_input_window)
       return m_input_window->GetWindow();
     else
       return 0;
+#else
+    return 0;
+#endif
   }
 
-  #endif
+#endif
 
   void BaseWindow::SetGeometry(const Geometry &geo)
   {
     Area::SetGeometry(geo);
 
-    #if defined(NUX_OS_LINUX)
+    #if defined(USE_X11)
     if (m_input_window)
       m_input_window->SetGeometry(geo);
     #endif

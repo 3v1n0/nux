@@ -49,6 +49,7 @@ namespace nux
     , glx_window_(0)
 #endif
     , m_NumVideoModes(0)
+    , m_X11VideoModes(0)
     , m_BorderPixel(0)
     , _x11_major(0)
     , _x11_minor(0)
@@ -58,7 +59,7 @@ namespace nux
     , m_X11RepeatKey(true)
     , viewport_size_(Size(0,0))
     , window_size_(Size(0,0))
-    , m_WindowPosition(Point(0,0)) 
+    , m_WindowPosition(Point(0,0))
     , fullscreen_(false)
     , screen_bit_depth_(32)
     , gfx_interface_created_(false)
@@ -111,6 +112,7 @@ namespace nux
 
     NUX_SAFE_DELETE( m_pEvent );
     inlSetThreadLocalStorage(_TLS_GraphicsDisplay, 0);
+    XFree(m_X11VideoModes);
   }
 
   std::string GraphicsDisplay::FindResourceLocation(const char *ResourceFileName, bool ErrorOnFail)
@@ -178,10 +180,12 @@ namespace nux
     return gfx_interface_created_;
   }
 
+#ifndef NUX_OPENGLES_20
   static Bool WaitForNotify( Display * /* dpy */, XEvent *event, XPointer arg )
   {
     return(event->type == MapNotify) && (event->xmap.window == (Window) arg);
   }
+#endif
 
 // TODO: change windowWidth, windowHeight, to window_size;
   static NCriticalSection CreateOpenGLWindow_CriticalSection;
@@ -452,7 +456,8 @@ namespace nux
       return false;
     }
 
-    XVisualInfo       visual_info = {0};
+    XVisualInfo visual_info;
+    memset(&visual_info, 0, sizeof(visual_info));
     visual_info.visualid = visualid;
     m_X11VisualInfo = XGetVisualInfo(m_X11Display, VisualIDMask, &visual_info, &count);
     if (!m_X11VisualInfo)

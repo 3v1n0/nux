@@ -187,7 +187,7 @@ void GestureBroker::ResolveBufferedGestureThatFinishedConstruction(
 
   std::vector< std::shared_ptr<Gesture> > conflicting_gestures =
     gesture_set_.GetConflictingGestures(gesture);
-  if (conflicting_gestures.size() != 0)
+  if (!conflicting_gestures.empty())
   {
     // That shouldn't happen. All conflicting gestures should have been
     // dealt with when they begun.

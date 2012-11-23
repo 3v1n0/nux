@@ -9,6 +9,7 @@
 
 #include "Nux/Nux.h"
 #include "Nux/BaseWindow.h"
+#include "Nux/InputAreaProximity.h"
 #include "Nux/HLayout.h"
 #include "Nux/VLayout.h"
 #include "Nux/ProgramFramework/TestView.h"
@@ -260,6 +261,15 @@ TEST_F(TestWindowCompositor, TestSetKeyFocusArea)
     EXPECT_EQ(test_view1->registered_begin_keynav_focus_, true);
     EXPECT_EQ(test_view1->registered_end_keynav_focus_, false);
   }
+}
+
+TEST_F(TestWindowCompositor, TestInputAreaProximityNullValue)
+{
+  const int prox_size = nux::GetWindowCompositor().GetProximityListSize();
+  nux::InputAreaProximity* prox_area = new nux::InputAreaProximity(NULL, 10);
+
+  ASSERT_EQ(nux::GetWindowCompositor().GetProximityListSize(), prox_size);
+  delete prox_area;
 }
 
 #ifdef NUX_GESTURES_SUPPORT
@@ -613,6 +623,15 @@ TEST_F(TestWindowCompositor, GetFocusedAreaFallback)
 
 class DraggedWindow : public nux::BaseWindow
 {
+ public:
+  DraggedWindow()
+  : mouse_drag_emission_count(0)
+  , mouse_drag_x(0)
+  , mouse_drag_y(0)
+  , mouse_drag_dx(0)
+  , mouse_drag_dy(0)
+  {}
+
  protected:
   virtual void EmitMouseDragSignal(int x, int y,
       int dx, int dy,
@@ -670,6 +689,13 @@ TEST_F(TestWindowCompositor, MouseDrag)
 class TrackerWindow : public nux::BaseWindow
 {
   public:
+    TrackerWindow()
+    : mouse_up_emission_count(0)
+    , mouse_drag_emission_count(0)
+    , mouse_drag_dx(0)
+    , mouse_drag_dy(0)
+    {}
+
     virtual bool ChildMouseEvent(const nux::Event& event)
     {
       child_mouse_events_received.push_back(event);
@@ -704,6 +730,14 @@ class TrackerWindow : public nux::BaseWindow
 
 class TrackedArea : public nux::InputArea
 {
+  public:
+    TrackedArea()
+    : mouse_down_emission_count(0)
+    , mouse_up_emission_count(0)
+    , mouse_drag_emission_count(0)
+    , mouse_cancel_emission_count(0)
+    {}
+
   protected:
     virtual void EmitMouseDownSignal(int x, int y,
                                      unsigned long mouse_button_state,

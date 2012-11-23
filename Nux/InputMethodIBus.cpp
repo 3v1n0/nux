@@ -464,16 +464,13 @@ namespace nux
               // FIXME add support to Hyper and Meta keys in nux::Event
             }
           }
-
           if (!is_modifier && key)
             ev.x11_keysym = key;
         }
-
         if (ev.x11_keysym)
         {
           hotkeys.push_back(ev);
         }
-
         g_strfreev(binding);
       }
     }
@@ -504,7 +501,6 @@ namespace nux
           return (ev.key_modifiers == modifiers);
       }
     }
-
     return false;
   }
 }

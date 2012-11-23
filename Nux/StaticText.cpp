@@ -341,6 +341,7 @@ namespace nux
   void StaticText::SetTextColor(const Color& text_color)
   {
     text_color_ = text_color;
+    QueueDraw();
   }
 
   Color StaticText::GetTextColor() const
