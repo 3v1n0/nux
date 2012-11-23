@@ -27,6 +27,7 @@
 #include "NuxGraphics/GLError.h"
 #include "WindowThread.h"
 #include "BaseWindow.h"
+#include "InputAreaProximity.h"
 #if !defined(NUX_MINIMAL)
 #include "MenuPage.h"
 #endif
@@ -668,6 +669,12 @@ DECLARE_LOGGER(logger, "nux.window");
 
   void WindowCompositor::MouseEventCycle(Event& event)
   {
+    // Checks the area_proximities_ list for any mouse near/beyond signals
+    if (event.type == NUX_MOUSE_MOVE || event.type == NUX_WINDOW_MOUSELEAVE)
+    {
+      CheckMouseNearArea(event);
+    }
+
     // Updates mouse_over_area_ and emits mouse_enter and mouse_leave signals
     // accordingly.
     bool area_under_mouse_changed = UpdateWhatAreaIsUnderMouse(event);
@@ -1114,7 +1121,7 @@ DECLARE_LOGGER(logger, "nux.window");
     {
 #if !defined(NUX_MINIMAL)
       bool menu_active = false;
-      if (_menu_chain->size())
+      if (!_menu_chain->empty())
       {
         menu_active = true;
         MenuEventCycle(event);
@@ -1174,7 +1181,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
   void WindowCompositor::StopModalWindow(ObjectWeakPtr<BaseWindow> window)
   {
-    if (_modal_view_window_list.size() > 0)
+    if (!_modal_view_window_list.empty())
     {
       if (*_modal_view_window_list.begin() == window)
         _modal_view_window_list.pop_front();
@@ -1288,6 +1295,42 @@ DECLARE_LOGGER(logger, "nux.window");
     {
       _view_window_list.erase(always_top_it);
       _view_window_list.push_front(_always_on_front_window);
+    }
+  }
+
+  int WindowCompositor::GetProximityListSize() const
+  {
+    return area_proximities_.size();
+  }
+
+  void WindowCompositor::AddAreaInProximityList(InputAreaProximity* prox_area)
+  {
+    if (prox_area)
+    {
+      area_proximities_.push_back(prox_area);
+    }
+    else
+    {
+      LOG_ERROR(logger) << "Error, attempted to add a NULL InputAreaProximity to the list.";
+    }
+  }
+
+  void WindowCompositor::RemoveAreaInProximityList(InputAreaProximity* prox_area)
+  {
+    if (prox_area)
+    {
+      area_proximities_.remove(prox_area);
+    }
+  }
+
+  void WindowCompositor::CheckMouseNearArea(Event const& event)
+  {
+    for (auto area : area_proximities_)
+    {
+      if (area)
+      {
+        area->CheckMousePosition(Point(event.x, event.y));
+      }
     }
   }
 
@@ -1712,7 +1755,7 @@ DECLARE_LOGGER(logger, "nux.window");
 #if !defined(NUX_MINIMAL)
   void WindowCompositor::AddMenu(MenuPage* menu, BaseWindow* window, bool OverrideCurrentMenuChain)
   {
-    if (_menu_chain->size() == 0)
+    if (_menu_chain->empty())
     {
       // A menu is opening.
       _starting_menu_event_cycle = true;
@@ -1723,7 +1766,7 @@ DECLARE_LOGGER(logger, "nux.window");
     if (it == _menu_chain->end())
     {
       // When adding a MenuPage, make sure that it is a child of the MenuPage in _menu_chain->begin().
-      if (_menu_chain->size())
+      if (!_menu_chain->empty())
       {
         if (menu->GetParentMenu() != (*_menu_chain->begin()))
         {
@@ -1765,7 +1808,7 @@ DECLARE_LOGGER(logger, "nux.window");
     _menu_chain->erase(it);
     m_MenuRemoved = true;
 
-    if (_menu_is_active && (_menu_chain->size() == 0))
+    if (_menu_is_active && (_menu_chain->empty()))
     {
       // The menu is closed
       _menu_is_active         = false;
@@ -1776,7 +1819,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
   void WindowCompositor::CleanMenu()
   {
-    if (_menu_chain->size() == 0)
+    if (_menu_chain->empty())
       return;
 
     std::list<MenuPage*>::iterator menu_it = _menu_chain->begin();
@@ -1794,7 +1837,7 @@ DECLARE_LOGGER(logger, "nux.window");
       }
     }
 
-    if (_menu_is_active && (_menu_chain->size() == 0))
+    if (_menu_is_active && (_menu_chain->empty()))
     {
       _menu_is_active         = false;
       ResetMousePointerAreas();
@@ -2353,7 +2396,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
   InputArea* WindowCompositor::GetKeyboardGrabArea()
   {
-    if (keyboard_grab_stack_.size() == 0)
+    if (keyboard_grab_stack_.empty())
       return NULL;
 
     return (*keyboard_grab_stack_.begin());

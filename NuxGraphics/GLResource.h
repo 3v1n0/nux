@@ -540,7 +540,7 @@ namespace nux
     }
 
     int Stream;
-    int Offset;
+    intptr_t Offset;
     // Type can be GL_UNSIGNED_BYTE, GL_SHORT, GL_INT, GL_FLOAT, GL_DOUBLE ...
     ATTRIB_COMPONENT_TYPE Type;
     // This can be 1, 2, 3 or 4; For a position(xyzw), it will be 4. For a texture coordinate(uv) it will be 2.

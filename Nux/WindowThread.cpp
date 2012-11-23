@@ -391,7 +391,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
   void WindowThread::RemoveTimeline(Timeline *timeline)
   {
     _Timelines->remove(timeline);
-    if (_Timelines->size() == 0)
+    if (_Timelines->empty())
     {
       StopMasterClock();
     }
@@ -1273,7 +1273,13 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
       return;
 
     if (window_compositor_)
+    {
       window_compositor_->SetBackgroundPaintLayer(background_layer);
+      if (main_layout_)
+      {
+        main_layout_->QueueDraw();
+      }
+    }
   }
   
   void WindowThread::AddToDrawList(View *view)
