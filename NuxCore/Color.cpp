@@ -136,10 +136,9 @@ namespace color
   {
     // std::rand isn't defined to be more random than 2^15, so we need
     // to generate the full unsigned in chunks.
-    return (((std::rand() % 255) << 24) |
-            ((std::rand() % 255) << 16) |
-            ((std::rand() % 255) << 8) |
-            (255));
+    // MSB is alpha, which is set to 255. The next three bytes are
+    // red, green, blue.
+    return (0xff << 24) | ((std::rand() & 0xff) << 16) | ((std::rand() & 0xff) << 8) | (std::rand() & 0xff);
   }
 
   Color operator + (Color const& lhs, Color const& rhs)
