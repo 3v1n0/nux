@@ -19,10 +19,12 @@
 *
 */
 
-#include "XIMController.h"
-#include "NuxCore/NuxCore.h"
-#include "GraphicsDisplayX11.h"
+#include <string.h>
 
+#include "XIMController.h"
+#include "NuxCore/Logger.h"
+
+DECLARE_LOGGER(logger, "xim.controller");
 
 XIMController::XIMController(Display* display)
   : display_(display),
@@ -76,20 +78,20 @@ void XIMController::InitXIMCallback()
   xmodifier = getenv("XMODIFIERS");
   if (xmodifier && strstr(xmodifier,"ibus") != NULL)
   {
-    nuxDebugMsg("[GraphicsDisplay::InitXIM] ibus natively supported");
+    LOG_WARN(logger) << "IBus natively supported.";
     return;
   }
 
   if (setlocale(LC_ALL, "") == NULL)
   {
-    nuxDebugMsg("[GraphicsDisplay::InitXIM] cannot setlocale");
+    LOG_WARN(logger) << "Cannot setlocale.";
   }
 
   if (XSupportsLocale())
   {
     if (XSetLocaleModifiers("") == NULL)
     {
-      nuxDebugMsg("[GraphicsDisplay::InitXIM] XSetLocaleModifiers failed.");
+      LOG_WARN(logger) << "XSetLocalModifiers Failed.";
     }
     XRegisterIMInstantiateCallback(display_, NULL, NULL, NULL,
                                    XIMController::SetupXIMClientCallback,
@@ -127,7 +129,7 @@ void XIMController::SetupXIM()
   }
   else
   {
-    nuxDebugMsg("[GraphicsDisplay::XIMStartCallback] Failed to open IM.");
+    LOG_WARN(logger) << "Failed to open IM.";
   }
 }
 

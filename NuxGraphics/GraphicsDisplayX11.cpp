@@ -584,7 +584,7 @@ namespace nux
       //XMapRaised(m_X11Display, m_X11Window);
     }
 
-    m_xim_controller.reset(new XIMController(m_X11Display));
+    m_xim_controller = std::make_shared<XIMController>(m_X11Display);
     m_xim_controller->SetFocusedWindow(m_X11Window);
 
     if (m_xim_controller->IsXICValid())
@@ -698,7 +698,7 @@ namespace nux
 
     gfx_interface_created_ = true;
 
-    m_xim_controller.reset(new XIMController(m_X11Display));
+    m_xim_controller = std::make_shared<XIMController>(m_X11Display);
 
     // m_DeviceFactory = new GpuDevice(viewport_size_.GetWidth(), viewport_size_.GetHeight(), BITFMT_R8G8B8A8);
     m_DeviceFactory = new GpuDevice(viewport_size_.width, viewport_size_.height, BITFMT_R8G8B8A8,

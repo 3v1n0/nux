@@ -21,16 +21,11 @@
 
 
 #include "XICClient.h"
-#include "NuxCore/NuxCore.h"
 
 XICClient::XICClient()
   : xic_(NULL),
     xim_style_(0),
     focused_(false)
-{
-}
-
-XICClient::~XICClient()
 {
 }
 

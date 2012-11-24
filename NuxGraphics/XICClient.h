@@ -29,7 +29,6 @@ class XICClient
 {
 public:
   XICClient();
-  ~XICClient();
 
   void ResetXIC(XIM xim, Window window);
 

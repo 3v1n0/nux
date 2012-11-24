@@ -39,8 +39,6 @@
 #include <X11/extensions/xf86vmode.h>
 #include <X11/extensions/Xinerama.h>
 
-#include <boost/shared_ptr.hpp>
-
 namespace nux
 {
 
@@ -87,7 +85,7 @@ namespace nux
     Window      m_X11Window;
     XVisualInfo *m_X11VisualInfo;
 
-    boost::shared_ptr<XIMController> m_xim_controller;
+    std::shared_ptr<XIMController> m_xim_controller;
 
     int         parent_window_;
 #ifndef NUX_OPENGLES_20
