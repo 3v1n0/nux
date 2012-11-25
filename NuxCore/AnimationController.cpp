@@ -115,7 +115,12 @@ struct na::AnimationController::Impl
       for (Animations::iterator i = animations_.begin(),
              end = animations_.end(); i != end; ++i)
       {
-        (*i)->Advance(ms_since_last_tick);
+        // only if it isn't pending.
+        if (do_not_tick_.empty() ||
+            do_not_tick_.find((*i)) == do_not_tick_.end())
+        {
+          (*i)->Advance(ms_since_last_tick);
+        }
       }
 
       ticking_ = false;
@@ -129,6 +134,7 @@ struct na::AnimationController::Impl
           Remove(i->first);
       }
       pending_.clear();
+      do_not_tick_.clear();
     }
 
   long long last_tick_;
@@ -137,6 +143,9 @@ struct na::AnimationController::Impl
   typedef std::vector<std::pair<Animation*, bool>> AnimationActions;
   AnimationActions pending_;
   bool ticking_;
+
+  typedef std::set<Animation*> DoNotTickActions;
+  DoNotTickActions do_not_tick_;
 };
 
 na::AnimationController::AnimationController(na::TickSource& tick_source)
@@ -173,6 +182,7 @@ void na::AnimationController::RemoveAnimation(na::Animation* animation)
   if (pimpl->ticking_)
   {
     pimpl->pending_.push_back(std::make_pair(animation, false));
+    pimpl->do_not_tick_.insert(animation);
   }
   else
   {
