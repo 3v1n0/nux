@@ -43,6 +43,7 @@ namespace nux
   class WindowThread;
   class View;
   class InputArea;
+  class InputAreaProximity;
   class Area;
   class PaintLayer;
   class Event;
@@ -73,18 +74,24 @@ namespace nux
     void MouseEventCycle(Event& event);
     void DndEventCycle(Event& event);
 
-
     Point _mouse_position_on_owner;
     Point _mouse_position;
 
     //! Get Mouse position relative to the top left corner of the window.
     Point GetMousePosition();
-    
+
+    int GetProximityListSize() const;
+    void AddAreaInProximityList(InputAreaProximity* area_prox);
+    void RemoveAreaInProximityList(InputAreaProximity* area_prox);
+
     void KeyboardEventCycle(Event& event);
 
+#if !defined(NUX_MINIMAL)
     void MenuEventCycle(Event& event);
     MenuPage* _mouse_owner_menu_page;
     MenuPage* _mouse_over_menu_page;
+#endif
+
     bool      _starting_menu_event_cycle;
     bool      _menu_is_active;
 
@@ -134,6 +141,12 @@ namespace nux
     /* Updates mouse_owner_area_ and emits mouse_down, mouse_up, mouse_click
        and mouse_double_click accordingly. */
     void UpdateMouseOwner(const Event& event, bool area_under_mouse_changed);
+    /*
+       Feed the appropriate InputArea::ChildMouseEvent() and switch mouse ownership
+       (including the emission of mouse_cancel) if asked to.
+      */
+    void UpdateEventTrackingByMouseOwnerAncestor(const Event& event);
+    void FindAncestorInterestedInChildMouseEvents(Area *area);
 
     //! Traverse the widget tree and found the area that is right below the mouse pointer.
     void FindAreaUnderMouse(const Point& mouse_position,
@@ -176,7 +189,9 @@ namespace nux
       unsigned long special_keys_state,
       const char* text,
       int key_repeat_count);
-
+    
+    //! Checks the list of porximities to see if the mouse is near any areas. 
+    void CheckMouseNearArea(Event const& event);
 
     //! The InputArea that has the keyboard navigation focus.
     /*!
@@ -186,6 +201,14 @@ namespace nux
     ObjectWeakPtr<InputArea> key_focus_area_;
     ObjectWeakPtr<InputArea> mouse_owner_area_;
     ObjectWeakPtr<InputArea> mouse_over_area_;
+
+    /* An ancestor of the current mouse owner area that wants to be notified
+       about all mouse events that a descendant receives and optionally
+       take ownership over the mouse at any given moment.
+       \sa InputArea::ChildMouseEvent()
+     */
+    /* TODO: Make it a list/vector once the need for nested trackers. */
+    ObjectWeakPtr<InputArea> interested_mouse_owner_ancestor_;
 
     int dnd_safety_x_;
     int dnd_safety_y_;
@@ -238,9 +261,11 @@ namespace nux
     void StartModalWindow(ObjectWeakPtr<BaseWindow>);
     void StopModalWindow(ObjectWeakPtr<BaseWindow>);
 
+#if !defined(NUX_MINIMAL)
     void AddMenu(MenuPage* menu, BaseWindow* window, bool OverrideCurrentMenuChain = true);
     void RemoveMenu(MenuPage* menu);
     void CleanMenu();
+#endif
 
     void PushModalWindow(ObjectWeakPtr<BaseWindow> window);
 
@@ -490,7 +515,9 @@ namespace nux
     WindowList _modal_view_window_list;
     WeakBaseWindowPtr _always_on_front_window;  //!< Floating view that always remains on top.
 
+#if !defined(NUX_MINIMAL)
     std::list<MenuPage* >* _menu_chain;
+#endif
 
     std::map<BaseWindow*, struct RenderTargetTextures> _window_to_texture_map;
 
@@ -500,7 +527,7 @@ namespace nux
     int m_Width;
     int m_Height;
 
-    NString m_TooltipText;
+    std::string m_TooltipText;
     InputArea* m_TooltipArea;
     int m_TooltipX;
     int m_TooltipY;
@@ -524,6 +551,14 @@ namespace nux
 
     */
     std::list<InputArea*> keyboard_grab_stack_;
+
+    //! List of views that will get checked for the mouse_near signal
+    /*!
+        A list of views that will be checked if
+        \near the mouse. Must add views to this 
+        \list to be checked.
+    */
+    std::list<InputAreaProximity*> area_proximities_;
 
   private:
     WindowThread* window_thread_; //!< The WindowThread to which this object belongs.

@@ -12,10 +12,7 @@
 
 namespace nux
 {
-  namespace
-  {
-    logging::Logger logger("nux.windows.thread");
-  }
+DECLARE_LOGGER(logger, "nux.windows.thread");
 
   #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
 
@@ -83,14 +80,18 @@ namespace nux
 
     gboolean retval;
     *timeout = -1;
-  #if defined(NUX_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
     MSG msg;
     retval = PeekMessageW(&msg, NULL, 0, 0, PM_NOREMOVE) ? TRUE : FALSE;
-  #elif defined(NUX_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
+# if defined(USE_X11)
     retval = GetGraphicsDisplay()->HasXPendingEvent() ? TRUE : FALSE;
-  #else
-  #error Not implemented.
-  #endif
+# else
+    retval = false;
+# endif
+#else
+# error Not implemented.
+#endif
 
     nux_glib_threads_unlock();
     return retval;
@@ -100,23 +101,21 @@ namespace nux
   {
     nux_glib_threads_lock();
 
-    gboolean retval;
+    gboolean retval = FALSE;
     NuxEventSource *event_source = (NuxEventSource*) source;
 
     if ((event_source->event_poll_fd.revents & G_IO_IN))
     {
-  #if defined(NUX_OS_WINDOWS)
+#if defined(NUX_OS_WINDOWS)
       MSG msg;
       retval = PeekMessageW(&msg, NULL, 0, 0, PM_NOREMOVE) ? TRUE : FALSE;
-  #elif defined(NUX_OS_LINUX)
+#elif defined(NUX_OS_LINUX)
+#  if defined(USE_X11)
       retval = GetGraphicsDisplay()->HasXPendingEvent() ? TRUE : FALSE;
-  #else
-  #error Not implemented.
-  #endif
-    }
-    else
-    {
-      retval = FALSE;
+#  endif
+#else
+#  error Not implemented.
+#endif
     }
 
     nux_glib_threads_unlock();
@@ -169,6 +168,7 @@ namespace nux
 
   static gboolean nux_timeline_dispatch(GSource *source, GSourceFunc /* callback */, gpointer user_data)
   {
+#if !defined(NUX_MINIMAL)
     bool has_timelines_left = false;
     nux_glib_threads_lock();
     gint64 micro_secs = g_source_get_time(source);
@@ -185,6 +185,7 @@ namespace nux
     }
 
     nux_glib_threads_unlock();
+#endif
     return TRUE;
   }
 
@@ -251,9 +252,11 @@ namespace nux
 #if defined(NUX_OS_WINDOWS)
     event_source->event_poll_fd.fd = G_WIN32_MSG_HANDLE;
 #elif defined(NUX_OS_LINUX)
+#  if defined(USE_X11)
     event_source->event_poll_fd.fd = ConnectionNumber(GetGraphicsDisplay().GetX11Display());
+#  endif
 #else
-#error Not implemented.
+#  error Not implemented.
 #endif
 
     event_source->event_poll_fd.events = G_IO_IN;
@@ -281,8 +284,10 @@ namespace nux
         sigc::mem_fun(this, &WindowThread::ProcessGestureEvent));
 #endif
 
-    if (_Timelines->size() > 0)
+#if !defined(NUX_MINIMAL)
+    if (!_Timelines->empty())
       StartMasterClock();
+#endif
 
     if (!IsEmbeddedWindow())
     {
@@ -332,7 +337,11 @@ namespace nux
     }
   }
 
+#if defined(NUX_OS_WINDOWS)
+  bool WindowThread::AddChildWindowGlibLoop(WindowThread* wnd_thread)
+#else
   bool WindowThread::AddChildWindowGlibLoop(WindowThread* /* wnd_thread */)
+#endif
   {
 #if defined(NUX_OS_WINDOWS)
     if (wnd_thread == NULL)
@@ -385,10 +394,11 @@ namespace nux
       else if (main_loop_glib_context_ != 0)
         g_source_attach(_MasterClock, main_loop_glib_context_);
 
-
+#if !defined(NUX_MINIMAL)
       gint64 micro_secs = g_source_get_time(_MasterClock);
       last_timeline_frame_time_sec_ = micro_secs / 1000000;
       last_timeline_frame_time_usec_ = micro_secs % 1000000;
+#endif
     }
   }
 

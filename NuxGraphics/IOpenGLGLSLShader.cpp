@@ -61,7 +61,8 @@ namespace nux
       {
         //Check if the starting character '[' (open bracket) is found at the beginning of the line
         // i counts the characters in the file. lineStart is equal to i at the beginning of the line.
-        if ((TCharStringNCompare(&ShaderSource[i], "[", 1) == 0) && (lineStart == i))
+        std::string sub_string = ShaderSource.substr(i, std::string::npos);
+        if ((TCharStringNCompare(sub_string.c_str(), "[", 1) == 0) && (lineStart == i))
         {
           if (!startTokenFound)
           {
@@ -85,13 +86,14 @@ namespace nux
 
         //If the character is equal to the new line character,
         // The next character must be on the new line
-        if ((TCharStringNCompare(&ShaderSource[i], "\r", 1) == 0) || (TCharStringNCompare(&ShaderSource[i], "\n", 1) == 0))
+        sub_string = ShaderSource.substr(i, std::string::npos);
+        if ((TCharStringNCompare(sub_string.c_str(), "\r", 1) == 0) || (TCharStringNCompare(sub_string.c_str(), "\n", 1) == 0))
         {
           lineStart = i + 1;
         }
 
         //Count the new lines
-        if (TCharStringNCompare(&ShaderSource[i], "\n", 1) == 0)
+        if (TCharStringNCompare(sub_string.c_str(), "\n", 1) == 0)
         {
           lineCount++;
         }
@@ -110,7 +112,7 @@ namespace nux
       // GLSL spec: The #version directive must occur in a shader before anything else, except for comments and white space.
       size_t Pos = RetSource.find("#version", 0);
 
-      while (RetSource[Pos] != '\n')
+      while (Pos != std::string::npos && RetSource[Pos] != '\n')
       {
         if (RetSource[Pos] == 0)
           break;
@@ -130,11 +132,9 @@ namespace nux
         ++LinePosition;
       }
 
-      std::ostringstream o_str_stream;
-      o_str_stream << "#line " << LinePosition + shaderStartLine << "\n";
-      std::string line_num_str = o_str_stream.str();
-
-      RetSource.insert(Pos, line_num_str);
+      std::string s = "#line ";
+      s += std::to_string((unsigned long long)(LinePosition + shaderStartLine)) + "\n";
+      RetSource.insert(Pos, s);
 
       // Insert the preprocessor definitions before the #line directive
       if (ShaderPreprocessorDefines.length())
@@ -164,7 +164,7 @@ namespace nux
     {
       Pos = RetSource.find('\n', Pos);
 
-      if (Pos == tstring::npos)
+      if (Pos == std::string::npos)
       {
         // this is most likely an incorrect shader
         Pos = RetSource.size();
@@ -497,8 +497,8 @@ namespace nux
     ObjectPtr<IOpenGLVertexShader> vs = GetGraphicsDisplay()->GetGpuDevice()->CreateVertexShader(); //new IOpenGLVertexShader;
     ObjectPtr<IOpenGLPixelShader> ps = GetGraphicsDisplay()->GetGpuDevice()->CreatePixelShader(); //new IOpenGLPixelShader;
 
-    vs->SetShaderCode(&VertexShaderSource[0]);
-    ps->SetShaderCode(&PixelShaderSource[0]);
+    vs->SetShaderCode(VertexShaderSource.c_str());
+    ps->SetShaderCode(PixelShaderSource.c_str());
     vs->Compile();
     ps->Compile();
 
@@ -515,6 +515,11 @@ namespace nux
     ObjectPtr<IOpenGLVertexShader> vs = GetGraphicsDisplay()->GetGpuDevice()->CreateVertexShader(); //new IOpenGLVertexShader;
 
     std::string ProcessedShaderSource;
+
+    if(!VtxShaderPreprocessorDefines)
+    {
+      VtxShaderPreprocessorDefines = "";
+    }
     std::string Defines(VtxShaderPreprocessorDefines);
     InsertPreProcessorDefinitions(glslshader, ProcessedShaderSource, Defines);
 
@@ -530,6 +535,11 @@ namespace nux
     ObjectPtr<IOpenGLPixelShader> ps = GetGraphicsDisplay()->GetGpuDevice()->CreatePixelShader(); //new IOpenGLPixelShader;
 
     std::string ProcessedShaderSource;
+
+    if (!FrgShaderPreprocessorDefines)
+    {
+      FrgShaderPreprocessorDefines = "";
+    }
     std::string Defines(FrgShaderPreprocessorDefines);
     InsertPreProcessorDefinitions(glslshader, ProcessedShaderSource, Defines);
 
@@ -675,7 +685,6 @@ namespace nux
     Begin();
     CheckUniformLocation();
     CheckAttributeLocation();
-    
     End();
 
     return m_CompiledAndReady;
@@ -797,28 +806,17 @@ namespace nux
 
     while (m_CompiledAndReady && parameter)
     {
-      int location = glGetUniformLocationARB(_OpenGLID, TCHAR_TO_ANSI(parameter->m_Name.c_str()));
-      CHECKGL_MSG( glGetUniformLocationARB(_OpenGLID, TCHAR_TO_ANSI(parameter->m_Name.c_str())));
+      int location = glGetUniformLocationARB(_OpenGLID, parameter->m_Name.c_str());
+      CHECKGL_MSG(glGetUniformLocationARB(_OpenGLID, parameter->m_Name.c_str()));
 
-      //nuxDebugMsg("[IOpenGLShaderProgram::CheckUniformLocation] Location index: %d", location);
-      if (location == -1 && (!parameter->m_bIsOptional))
+      //nuxDebugMsg("[IOpenGLShaderProgram::CheckUniformLocation] prog: %d, name: %s, location index: %d", _OpenGLID, parameter->m_Name.c_str(), location);
+      if ((location == -1) && (!parameter->m_bIsOptional))
       {
         nuxDebugMsg("[IOpenGLShaderProgram::CheckUniformLocation] Couldn't find shader program parameter %s \n", parameter->m_Name.c_str());
         nuxAssert(0);
       }
 
-      GLint size = 0;
-      GLenum type = 0;
-
-      if (location >= 0)
-      {
-        CHECKGL(glGetActiveUniformARB(_OpenGLID, location, 0, NULL /*&length*/, &size, &type, NULL));
-      }
-
       parameter->m_Index = location;
-      parameter->m_Size = size;
-      parameter->m_Type = type;
-
       parameter = parameter->m_NextParameter;
     }
   }

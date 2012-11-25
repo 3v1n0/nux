@@ -54,6 +54,7 @@ namespace nux
     return result;
   }
 
+#ifndef NUX_OPENGLES_20
   ObjectPtr<IOpenGLAsmShaderProgram> GpuDevice::CreateAsmShaderProgram()
   {
     ObjectPtr<IOpenGLAsmShaderProgram> result;
@@ -74,6 +75,7 @@ namespace nux
     result.Adopt(new IOpenGLAsmPixelShader());
     return result;
   }
+#endif
 
 #if (NUX_ENABLE_CG_SHADERS)
 

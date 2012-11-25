@@ -31,8 +31,8 @@ namespace nux
   * Launches a uniform resource locator (i.e. http://www.yahoo.com/finance).
   * This is expected to return immediately as the URL is launched by another task.
   */
-  void inlLaunchURL ( const TCHAR *URL, const TCHAR *Parms = NULL, NString *Error = NULL );
-  void *inlCreateProc ( const TCHAR *URL, const TCHAR *Parms );
+  void inlLaunchURL ( const TCHAR* URL, const TCHAR* Parms, std::string Error);
+  void *inlCreateProc ( const TCHAR* URL, const TCHAR* Parms );
 //! Get process termination code of a process
   BOOL inlGetProcReturnCode ( void *ProcessHandle, INT *ReturnCode );
 

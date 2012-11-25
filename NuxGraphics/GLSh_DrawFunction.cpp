@@ -32,7 +32,7 @@
 namespace nux
 {
 
-  static NString VtxShader = "            \n\
+  static std::string VtxShader = "            \n\
         uniform mat4 ViewProjectionMatrix;      \n\
         attribute vec4 AVertex;                 \n\
         attribute vec4 VertexColor;             \n\
@@ -41,7 +41,7 @@ namespace nux
             gl_Position = ViewProjectionMatrix * AVertex;   \n\
         }";
 
-  static NString FrgShader = "                    \n\
+  static std::string FrgShader = "                    \n\
         #ifdef GL_ES                                    \n\
         precision mediump float;                        \n\
         #endif                                          \n\
@@ -68,7 +68,7 @@ namespace nux
         }";
 
 
-  static NString AsmVtxShader = "!!ARBvp1.0                                 \n\
+  static std::string AsmVtxShader = "!!ARBvp1.0                                 \n\
         ATTRIB iPos         = vertex.position;      \n\
         PARAM  mvp[4]       = {state.matrix.mvp};   \n\
         OUTPUT oPos         = result.position;      \n\
@@ -79,7 +79,7 @@ namespace nux
         DP4   oPos.w, mvp[3], iPos;      \n\
         END";
 
-  NString AsmFrgShader = "!!ARBfp1.0                  \n\
+  std::string AsmFrgShader = "!!ARBfp1.0                  \n\
         PARAM RectPosition = program.local[0];              \n\
         PARAM RectDimension = program.local[1];             \n\
         PARAM Color = program.local[2];                     \n\
@@ -105,16 +105,18 @@ namespace nux
     if (GetGraphicsDisplay()->GetGraphicsEngine()->UsingGLSLCodePath() && (GetGraphicsDisplay()->GetGpuDevice()->GetGPUBrand() != GPU_BRAND_INTEL))
     {
       sprog = GetGraphicsDisplay()->GetGpuDevice()->CreateShaderProgram();
-      sprog->LoadVertexShader(VtxShader.GetTCharPtr(), NULL);
-      sprog->LoadPixelShader(FrgShader.GetTCharPtr(), NULL);
+      sprog->LoadVertexShader(VtxShader.c_str(), NULL);
+      sprog->LoadPixelShader(FrgShader.c_str(), NULL);
       sprog->Link();
     }
     else
     {
+#ifndef NUX_OPENGLES_20
       m_AsmProg = GetGraphicsDisplay()->GetGpuDevice()->CreateAsmShaderProgram();
-      m_AsmProg->LoadVertexShader(AsmVtxShader.GetTCharPtr());
-      m_AsmProg->LoadPixelShader(AsmFrgShader.GetTCharPtr());
+      m_AsmProg->LoadVertexShader(AsmVtxShader.c_str());
+      m_AsmProg->LoadPixelShader(AsmFrgShader.c_str());
       m_AsmProg->Link();
+#endif
     }
   }
 

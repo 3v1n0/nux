@@ -195,19 +195,18 @@ namespace nux
     SetScissor(0, 0, _graphics_display.GetWindowWidth(), _graphics_display.GetWindowHeight());
     EnableScissoring(true);
 
-
-    bool opengl_14_support = true;
-
-    if ((_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion() == 1) &&
-      (_graphics_display.GetGpuDevice()->GetOpenGLMinorVersion() < 4))
-    {
-      // OpenGL version is less than OpenGL 1.4
-      opengl_14_support = false;
-    }
-
     if (create_rendering_data)
     {
 #ifndef NUX_OPENGLES_20
+      bool opengl_14_support = true;
+
+      if ((_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion() == 1) &&
+        (_graphics_display.GetGpuDevice()->GetOpenGLMinorVersion() < 4))
+      {
+        // OpenGL version is less than OpenGL 1.4
+        opengl_14_support = false;
+      }
+            
       if (_graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader() &&
         _graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Vertex_Program() &&
         opengl_14_support)
@@ -245,6 +244,9 @@ namespace nux
       _offscreen_color_rt1  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
       _offscreen_color_rt2  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
       _offscreen_color_rt3  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+
+      _offscreen_depth_rt0  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
+      _offscreen_depth_rt1  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
     }
   }
 
@@ -271,18 +273,18 @@ namespace nux
       (_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion() >= 2))
 #endif
     {
-      NString renderer_string = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char* , glGetString(GL_RENDERER)));
+      std::string renderer_string = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char* , glGetString(GL_RENDERER)));
       CHECKGL_MSG(glGetString(GL_RENDERER));
 
       // Exclude Geforce FX from using GLSL
-      if (renderer_string.FindFirstOccurence("GeForce FX") != tstring::npos)
+      if (renderer_string.find("GeForce FX", 0) != tstring::npos)
       {
         _use_glsl_shaders = false;
         return;
       }
 
       // Exclude Geforce FX Go from using GLSL: this case is not needed since it is detected by the one above.
-      if (renderer_string.FindFirstOccurence("GeForce FX Go") != tstring::npos)
+      if (renderer_string.find("GeForce FX Go", 0) != tstring::npos)
       {
         _use_glsl_shaders = false;
         return;
@@ -311,14 +313,14 @@ namespace nux
 #if defined(NUX_OS_WINDOWS)
       if (_normal_font.IsNull())
       {
-        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/Tahoma_size_8.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/Tahoma_size_8.txt", true).c_str(), NUX_TRACKER_LOCATION);
         _normal_font = ObjectPtr<FontTexture> (fnt);
         fnt->UnReference();
       }
 #else
       if (_normal_font.IsNull())
       {
-        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/nuxfont_size_8.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/nuxfont_size_8.txt", true).c_str(), NUX_TRACKER_LOCATION);
         _normal_font = ObjectPtr<FontTexture> (fnt);
         fnt->UnReference();
       }
@@ -331,14 +333,14 @@ namespace nux
     #if defined(NUX_OS_WINDOWS)
       if (_bold_font.IsNull())
       {
-        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/Tahoma_size_8_bold.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/Tahoma_size_8_bold.txt", true).c_str(), NUX_TRACKER_LOCATION);
         _bold_font = ObjectPtr<FontTexture> (fnt);
         fnt->UnReference();
       }
 #else
       if (_bold_font.IsNull())
       {
-        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/nuxfont_size_8_bold.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/nuxfont_size_8_bold.txt", true).c_str(), NUX_TRACKER_LOCATION);
         _bold_font = ObjectPtr<FontTexture> (fnt);
         fnt->UnReference();
       }
@@ -730,7 +732,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
 
   void GraphicsEngine::PopClipOffset()
   {
-    if (_clip_offset_stack.size() == 0)
+    if (_clip_offset_stack.empty())
     {
       _clip_offset_x = 0;
       _clip_offset_y = 0;
@@ -865,7 +867,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
     Matrix4 Mat;
     Mat.Zero();
 
-    if (m_2DModelViewMatricesStack.size() <= 0)
+    if (m_2DModelViewMatricesStack.empty())
       return Mat;
 
     std::list<Matrix4>::iterator it;
@@ -998,7 +1000,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
 
   bool GraphicsEngine::PopBlend()
   {
-    if (_blend_stack.size() == 0)
+    if (_blend_stack.empty())
     {
       GetRenderStates().SetBlend(false, GL_ONE, GL_ZERO);
       return false;
@@ -1313,7 +1315,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
     if ((depthbuffer.IsValid()) && ((depthbuffer->GetWidth() != width) || (depthbuffer->GetHeight() != height)))
     {
       // Generate a new depth texture only if a valid one was passed to this function.
-      depthbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
+      depthbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);      
     }
 
     fbo->FormatFrameBufferObject(width, height, BITFMT_R8G8B8A8);

@@ -42,7 +42,9 @@ namespace nux
   class SystemThread;
   class UXTheme;
   class TimerHandler;
+#if !defined(NUX_MINIMAL)
   class Timeline;
+#endif
   class Event;
   class Area;
   struct ClientAreaDraw;
@@ -216,8 +218,10 @@ namespace nux
 
 #if defined(NUX_OS_WINDOWS)
     bool ProcessForeignEvent(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, void *data);
-#elif defined(NUX_OS_LINUX)
+#elif defined(USE_X11)
     bool ProcessForeignEvent(XEvent *event, void *data);
+#else
+    bool ProcessForeignEvent();
 #endif
 
     /*!
@@ -229,6 +233,7 @@ namespace nux
     */
     void RenderInterfaceFromForeignCmd(Geometry *clip);
 
+#if !defined(NUX_MINIMAL)
     /*!
         Add a timeline to our window
     */
@@ -237,6 +242,7 @@ namespace nux
     bool ProcessTimelines(gint64 micro_secs);
     long last_timeline_frame_time_sec_;
     long last_timeline_frame_time_usec_;
+#endif
 
     void StartMasterClock();
     void StopMasterClock();
@@ -357,7 +363,7 @@ namespace nux
         This function is called when Nux is embedded. \sa IsEmbeddedWindow.
     */
     virtual bool ThreadCtor(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext);
-#elif defined(NUX_OS_LINUX)
+#elif defined(USE_X11)
 #ifdef NUX_OPENGLES_20
     /*!
         Constructor-like function for the thread.
@@ -536,7 +542,9 @@ namespace nux
     //! Set to true to schedule a compute cycle on the main layout.
     bool queue_main_layout_;
 
+#if !defined(NUX_MINIMAL)
     std::list<Timeline*> *_Timelines;
+#endif
 
     bool first_pass_;                     //!< True when going through the ExecutionLoop for the first time.
     unsigned int window_initial_width_;   //!< Window height at startup.
@@ -692,16 +700,20 @@ namespace nux
     friend WindowThread *CreateFromForeignWindow(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext,
         ThreadUserInitFunc UserInitFunc,
         void *InitData);
-#elif defined(NUX_OS_LINUX)
-#ifdef NUX_OPENGLES_20
+#elif defined(USE_X11)
+#  ifdef NUX_OPENGLES_20
     friend WindowThread *CreateFromForeignWindow (Window X11Window, EGLContext OpenGLContext,
         ThreadUserInitFunc UserInitFunc,
         void *InitData);
-#else
+#  else
     friend WindowThread *CreateFromForeignWindow (Window X11Window, GLXContext OpenGLContext,
         ThreadUserInitFunc UserInitFunc,
         void *InitData);
-#endif
+#  endif
+#elif defined(NO_X11)
+    friend WindowThread *CreateFromForeignWindow (EGLDisplay disp, EGLContext OpenGLContext,
+        ThreadUserInitFunc UserInitFunc,
+        void *InitData);
 #endif
 
     friend SystemThread *CreateSystemThread(AbstractThread *Parent, ThreadUserInitFunc UserInitFunc, void *InitData);

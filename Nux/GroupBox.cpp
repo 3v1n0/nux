@@ -92,11 +92,6 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void GroupBox::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
   bool GroupBox::SetLayout(Layout *layout)
   {
     if (View::SetLayout(layout) == false)

@@ -27,8 +27,10 @@
 
 #if defined(NUX_OS_WINDOWS)
   #include "VirtualKeyCodes.h"
-#elif defined(NUX_OS_LINUX)
+#elif defined(USE_X11)
   #include "VirtualKeyCodesX11.h"
+#elif defined(NO_X11)
+  #include "VirtualKeyCodes.h"
 #else
   #error VirtualKeyCode file not Implemented.
 #endif
@@ -211,6 +213,9 @@ namespace nux
     EVENT_MOUSE_MOVE,
     EVENT_MOUSE_DOUBLECLICK,
     EVENT_MOUSE_WHEEL,
+    EVENT_MOUSE_CANCEL, /*!< InputArea lost ownership over a pressed mouse. Any
+                             changes caused by the previous EVENT_MOUSE_PRESS
+                             should be undone. */
     EVENT_KEY_DOWN,
     EVENT_KEY_UP,
     EVENT_WINDOW_SIZE_CONFIGURATION,
@@ -393,9 +398,7 @@ namespace nux
 #if defined(NUX_OS_WINDOWS)
     int win32_keycode; // Not used. Just a place holder.
     int win32_keysym;
-#endif
-
-#if defined(NUX_OS_LINUX)
+#elif defined(USE_X11)
     Time          x11_timestamp;  //!< X11 timestamp.
     Window        x11_window;     //!< X11 window.
     unsigned int  x11_key_state;  //!< X11 key state (xevent.xkey.state).

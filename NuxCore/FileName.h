@@ -28,25 +28,22 @@
 namespace nux
 {
 
-  class NFileName : public NString
+  class NFileName : public std::string
   {
   public:
     NFileName()
-      : NString()
+      : std::string()
     {}
     NFileName ( const NFileName &Filename )
-      : NString ( Filename.GetTCharPtr() )
+      : std::string ( Filename )
     {}
 
-    NFileName ( const NString &str )
-      : NString ( str )
+    NFileName ( const std::string &str )
+      : std::string ( str )
     {}
 
     NFileName ( const ANSICHAR *str )
-      : NString ( str )
-    {}
-    NFileName ( const UNICHAR *str )
-      : NString ( str )
+      : std::string ( str )
     {}
 
     //! Replace all slash with backslash.
@@ -75,18 +72,18 @@ namespace nux
     //! Replace all slash with backslash. Replace multiple consecutive backslash with one backslash.
     void ConvertToCleanBackslash();
 
-    NString GetDrive() const;
+    std::string GetDrive() const;
     //! Returns the text following the last period.
-    NString GetExtension() const;
+    std::string GetExtension() const;
     //! Returns the base filename, minus any path information.
-    NString GetCleanFilename() const;
+    std::string GetCleanFilename() const;
     //! Returns the base filename, without the extension (keep the path)
-    NString GetFilenameNoExtension() const;
+    std::string GetFilenameNoExtension() const;
 
     //! Returns the same thing as GetCleanFilename, but without the extension
-    NString GetBaseFilename() const;
+    std::string GetBaseFilename() const;
     //! Returns the path in front of the filename
-    NString GetDirectoryPath() const;
+    std::string GetDirectoryPath() const;
     //! Change the file extension. Do not start ext with a dot character '.'.
     //! ie ext = "com"
     void ChangeFileExtension (const TCHAR *ext);

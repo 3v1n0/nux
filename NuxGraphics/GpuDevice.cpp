@@ -33,6 +33,11 @@
 #include "GraphicsEngine.h"
 
 #include <algorithm>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
+#include <vector>
+
 
 namespace nux
 {
@@ -182,6 +187,12 @@ namespace nux
   STREAMSOURCE GpuDevice::_StreamSource[MAX_NUM_STREAM];
 
   GpuInfo::GpuInfo()
+  : _opengl_max_texture_size(0)
+  , _opengl_max_texture_units(0)
+  , _opengl_max_texture_coords(0)
+  , _opengl_max_texture_image_units(0)
+  , _opengl_max_fb_attachment(0)
+  , _opengl_max_vertex_attributes(0)
   {
     _support_opengl_version_11 = false;
     _support_opengl_version_12 = false;
@@ -224,6 +235,12 @@ namespace nux
     CHECKGL(glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &_opengl_max_vertex_attributes));
     CHECKGL(glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS_EXT, &_opengl_max_fb_attachment));
 #else
+    // By opengl es 2.0 standard, GL_MAX_TEXTURE_SIZE should return a minimum of 64.
+    CHECKGL(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &_opengl_max_texture_size));
+    // GL_MAX_TEXTURE_UNITS is not supported under opengl es 2.0.
+    // GL_MAX_TEXTURE_IMAGE_UNITS is supported under opengl es 2.0.
+    CHECKGL(glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &_opengl_max_texture_image_units));
+    // GL_MAX_COLOR_ATTACHMENTS_EXT is not supported under opengl es 2.0.
     _opengl_max_fb_attachment = 1;
 #endif
 
@@ -279,8 +296,8 @@ namespace nux
     int req_opengl_major,
     int req_opengl_minor,
     bool opengl_es_20)
-#elif defined(NUX_OS_LINUX)
-#ifdef NUX_OPENGLES_20
+#elif defined(USE_X11)
+#  ifdef NUX_OPENGLES_20
   GpuDevice::GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
     Display *display,
     Window window,
@@ -290,7 +307,7 @@ namespace nux
     int req_opengl_major,
     int req_opengl_minor,
     bool opengl_es_20)
-#else
+#  else
   GpuDevice::GpuDevice(unsigned int /* DeviceWidth */, unsigned int /* DeviceHeight */, BitmapFormat /* DeviceFormat */,
     Display *display,
     Window window,
@@ -300,7 +317,14 @@ namespace nux
     int req_opengl_major,
     int req_opengl_minor,
     bool opengl_es_20)
-#endif
+#  endif
+#elif defined(NO_X11)
+  GpuDevice::GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
+    EGLDisplay display,
+    EGLConfig fb_config,
+    EGLContext &opengl_rendering_context,
+    int req_opengl_major,
+    int req_opengl_minor)
 #endif
     : opengl_major_(0)
     , opengl_minor_(0)
@@ -337,53 +361,71 @@ namespace nux
     _openGL_version_string = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char *, glGetString(GL_VERSION)));
     CHECKGL_MSG(glGetString(GL_VERSION));
 
-    // We need OpenGL minor and major version. Before OpenGL 3.0, the version number was reported as a string of format
-    // "major.minor". That string has to be parsed to extract the major and minor version numbers. This is not really safe as
-    // we have no guaranty that the version string is has we think it is. Some drivers report a version string like "xx.xx.xx".
+
+    if (0)
+    {
+      // We need OpenGL minor and major version. Before OpenGL 3.0, the version number was reported as a string of format
+      // "major.minor". That string has to be parsed to extract the major and minor version numbers. This is not really safe as
+      // we have no guaranty that the version string is has we think it is. Some drivers report a version string like "xx.xx.xx".
     
-    // Begin string parsing to extract the major and minor version numbers.
-    std::string opengl_major;
-    std::string opengl_minor;
-    std::string split = ".";
+      // Begin string parsing to extract the major and minor version numbers.
+      std::string opengl_major;
+      std::string opengl_minor;
+      std::string split = ".";
 
-    size_t pos = 0;
-    pos = _openGL_version_string.find(split, pos);
+      size_t pos = 0;
+      pos = _openGL_version_string.find(split, pos);
 
-    if (pos != tstring::npos)
-    {
-      size_t split_string_size = split.length();
-      opengl_major = _openGL_version_string.substr(0, pos);
-      opengl_minor = _openGL_version_string.substr(pos + split_string_size, _openGL_version_string.length() - (pos + split_string_size) );
+      if (pos != tstring::npos)
+      {
+        size_t split_string_size = split.length();
+        opengl_major = _openGL_version_string.substr(0, pos);
+        opengl_minor = _openGL_version_string.substr(pos + split_string_size, _openGL_version_string.length() - (pos + split_string_size) );
+      }
+
+      int major_length = opengl_major.length();
+      opengl_major_ = 0;
+      int digit_position = 1;
+      while (major_length && (opengl_major.c_str()[major_length-1] >= '0') && (opengl_major.c_str()[major_length-1] <= '9'))
+      {
+        opengl_major_ += (opengl_major.c_str()[major_length-1] - '0') * digit_position;
+
+        digit_position *= 10;
+        --major_length;
+      }
+
+      int minor_length = opengl_minor.length();
+      opengl_minor_ = 0;
+      digit_position = 0;
+      while (minor_length && (opengl_minor.c_str()[digit_position] >= '0') && (opengl_minor.c_str()[digit_position] <= '9'))
+      {
+        opengl_minor_ += opengl_minor_ * 10 + (opengl_minor.c_str()[digit_position] - '0');
+
+        ++digit_position;
+        --minor_length;
+      }
+
+      // End string parsing
+
+      if (opengl_major_ >= 3)
+      {
+        CHECKGL(glGetIntegerv(GL_MAJOR_VERSION, &opengl_major_));
+        CHECKGL(glGetIntegerv(GL_MINOR_VERSION, &opengl_minor_));
+      }
     }
-
-    int major_length = opengl_major.length();
-    opengl_major_ = 0;
-    int digit_position = 1;
-    while (major_length && (opengl_major.c_str()[major_length-1] >= '0') && (opengl_major.c_str()[major_length-1] <= '9'))
+    else
     {
-      opengl_major_ += (opengl_major.c_str()[major_length-1] - '0') * digit_position;
+      std::vector<std::string> versions;
+      boost::split(versions, _openGL_version_string, boost::algorithm::is_any_of("."));
 
-      digit_position *= 10;
-      --major_length;
-    }
+      opengl_major_ = std::stoi(versions[0]);
+      opengl_minor_ = std::stoi(versions[1]);
 
-    int minor_length = opengl_minor.length();
-    opengl_minor_ = 0;
-    digit_position = 0;
-    while (minor_length && (opengl_minor.c_str()[digit_position] >= '0') && (opengl_minor.c_str()[digit_position] <= '9'))
-    {
-      opengl_minor_ += opengl_minor_ * 10 + (opengl_minor.c_str()[digit_position] - '0');
-
-      ++digit_position;
-      --minor_length;
-    }
-
-    // End string parsing
-
-    if (opengl_major_ >= 3)
-    {
-      CHECKGL(glGetIntegerv(GL_MAJOR_VERSION, &opengl_major_));
-      CHECKGL(glGetIntegerv(GL_MINOR_VERSION, &opengl_minor_));
+      if (opengl_major_ >= 3)
+      {
+        CHECKGL(glGetIntegerv(GL_MAJOR_VERSION, &opengl_major_));
+        CHECKGL(glGetIntegerv(GL_MINOR_VERSION, &opengl_minor_));
+      }
     }
 #else
     opengl_major_ = 2;
@@ -393,11 +435,13 @@ namespace nux
 #if defined(NUX_OS_WINDOWS)
     bool opengl_es_context_created = false;
     if (((opengl_major_ >= 3) && (req_opengl_major >= 3)) || (opengl_major_ >= 3) || opengl_es_20)
-#elif defined(NUX_OS_LINUX)
+#elif defined(USE_X11) // Should this be GLES check?
     //bool opengl_es_context_created = false;
     if (has_glx_13_support &&
     (((opengl_major_ >= 3) && (req_opengl_major >= 3)) ||
     ((opengl_major_ >= 3) && opengl_es_20)))
+#elif defined(NO_X11)
+    if (((opengl_major_ >= 3) && (req_opengl_major >= 3)) || (opengl_major_ >= 3))
 #endif
     {
       // Create a new Opengl Rendering Context
@@ -432,6 +476,7 @@ namespace nux
         }
       }
 
+#if !defined(NO_X11)
       if (opengl_es_20)
       {
 #if defined(NUX_OS_WINDOWS)
@@ -480,14 +525,16 @@ namespace nux
         }*/
 #endif
       }
-      else if (requested_profile_is_supported)
+      else
+#endif
+      if (requested_profile_is_supported)
       {
+#if defined(NUX_OS_WINDOWS)
         int profile_mask = 0;
         int profile_value = 0;
         int flag_mask = 0;
         int flag_value = 0;
 
-#if defined(NUX_OS_WINDOWS)
         if (((req_opengl_major == 3) && (req_opengl_minor >= 3)) || (req_opengl_major >= 4))
         {
           profile_mask = WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
@@ -519,6 +566,11 @@ namespace nux
           wglMakeCurrent(device_context, opengl_rendering_context);
         }
 #elif defined(NUX_OS_LINUX) && !defined(NUX_OPENGLES_20)
+        int profile_mask = 0;
+        int profile_value = 0;
+        int flag_mask = 0;
+        int flag_value = 0;
+
         if (((req_opengl_major == 3) && (req_opengl_minor >= 3)) || (req_opengl_major >= 4))
         {
           profile_mask  = GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
@@ -572,6 +624,7 @@ namespace nux
     nuxDebugMsg("Gpu Vendor: %s", _board_vendor_string.c_str());
     nuxDebugMsg("Gpu Renderer: %s", _board_renderer_string.c_str());
     nuxDebugMsg("Gpu OpenGL Version: %s", _openGL_version_string.c_str());
+
     nuxDebugMsg("Gpu OpenGL Major Version: %d", opengl_major_);
     nuxDebugMsg("Gpu OpenGL Minor Version: %d", opengl_minor_);
 

@@ -61,7 +61,9 @@ CaptureLogOutput::~CaptureLogOutput()
 
 std::string CaptureLogOutput::GetOutput()
 {
-  return sout_.str();
+  std::string result = sout_.str();
+  sout_.str("");
+  return result;
 }
 
 

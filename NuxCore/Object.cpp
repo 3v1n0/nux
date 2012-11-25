@@ -27,10 +27,9 @@
 
 namespace nux
 {
+DECLARE_LOGGER(logger, "nux.core.object");
 namespace
 {
-logging::Logger logger("nux.core.object");
-
 bool debug_object_allocation_stack()
 {
   // If the extra long environment variable is set, then every object that is

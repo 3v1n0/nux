@@ -67,7 +67,9 @@
 #include "AbstractThread.h"
 #include "WindowThread.h"
 #include "WindowCompositor.h"
-#include "Timeline.h"
+#if !defined(NUX_MINIMAL)
+#  include "Timeline.h"
+#endif
 #include "SystemThread.h"
 
 
@@ -167,6 +169,7 @@ namespace nux
                                         HGLRC OpenGLRenderingContext,
                                         ThreadUserInitFunc user_init_func,
                                         void *data);
+#elif defined(NO_X11)
 #elif defined(NUX_OS_LINUX)
   //! Create a main graphics thread. This thread has a window and no parent window.
 #ifdef NUX_OPENGLES_20

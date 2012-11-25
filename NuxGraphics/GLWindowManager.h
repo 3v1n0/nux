@@ -67,13 +67,15 @@ namespace nux
 #if defined(NUX_OS_WINDOWS)
     //! Create a GraphicsDisplay from a foreign window and display.
     GraphicsDisplay *CreateFromForeignWindow(HWND WindowHandle, HDC WindowDCHandle, HGLRC OpenGLRenderingContext);
-#elif defined(NUX_OS_LINUX)
+#elif defined(USE_X11)
     //! Create a GraphicsDisplay from a foreign window and display.
-#ifdef NUX_OPENGLES_20
+#  ifdef NUX_OPENGLES_20
     GraphicsDisplay *CreateFromForeignWindow(Display *X11Display, Window X11Window, EGLContext OpenGLContext);
-#else
+#  else
     GraphicsDisplay *CreateFromForeignWindow(Display *X11Display, Window X11Window, GLXContext OpenGLContext);
-#endif
+#  endif
+#elif defined(NO_X11)
+    GraphicsDisplay *CreateFromForeignWindow(EGLDisplay *disp, EGLContext OpenGLContext);
 #endif
 
     static DisplayAccessController &Instance();

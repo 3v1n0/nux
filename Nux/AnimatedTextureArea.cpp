@@ -66,11 +66,6 @@ namespace nux
 
   }
 
-  void AnimatedTextureArea::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
   void AnimatedTextureArea::SetTexture(TextureFrameAnimation *t)
   {
     m_UserTexture = t;

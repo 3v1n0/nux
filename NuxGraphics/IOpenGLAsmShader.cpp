@@ -29,11 +29,8 @@
 
 namespace nux
 {
+DECLARE_LOGGER(logger, "nux.graphics");
 
-namespace
-{
-  logging::Logger logger("nux.graphics");
-}
   NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLAsmShader);
   NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLAsmVertexShader);
   NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLAsmPixelShader);
@@ -104,12 +101,20 @@ namespace
   }
 
   IOpenGLAsmVertexShader::IOpenGLAsmVertexShader()
+#ifndef NUX_OPENGLES_20
     : IOpenGLAsmShader("VertexProgram", GL_VERTEX_PROGRAM_ARB, RT_GLSL_VERTEXSHADER)
+#else
+    : IOpenGLAsmShader("VertexProgram", 0, RT_GLSL_VERTEXSHADER)
+#endif
   {
   }
 
   IOpenGLAsmPixelShader::IOpenGLAsmPixelShader()
+#ifndef NUX_OPENGLES_20
     : IOpenGLAsmShader("PixelProgram", GL_FRAGMENT_PROGRAM_ARB, RT_GLSL_PIXELSHADER)
+#else
+    : IOpenGLAsmShader("PixelProgram", 0, RT_GLSL_PIXELSHADER)
+#endif
   {
   }
 

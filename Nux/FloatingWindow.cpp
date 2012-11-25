@@ -98,12 +98,12 @@ namespace nux
     SetMinimumSize(32, 32);
     SetGeometry(Geometry(100, 100, 320, 200));
 
-    NString Path = NUX_FINDRESOURCELOCATION("UITextures/AddButton.png");
+    std::string Path = NUX_FINDRESOURCELOCATION("UITextures/AddButton.png");
     MinimizeIcon = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
-    MinimizeIcon->Update(Path.GetTCharPtr());
+    MinimizeIcon->Update(Path.c_str());
     Path = NUX_FINDRESOURCELOCATION("UITextures/CancelButton.png");
     CloseIcon = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
-    CloseIcon->Update(Path.GetTCharPtr());
+    CloseIcon->Update(Path.c_str());
 
     SetWindowTitle(WindowName);
   }
@@ -178,7 +178,7 @@ namespace nux
                                  _title_bar->GetBaseWidth(), _title_bar->GetBaseHeight()), Color(0xFF2f2f2f),
                                  eSHAPE_CORNER_ROUND10, eCornerTopLeft | eCornerTopRight);
 
-      GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), _window_title_bar->GetGeometry(), _window_title.m_string, Color(0xFFFFFFFF), true, eAlignTextCenter);
+      GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), _window_title_bar->GetGeometry(), _window_title, Color(0xFFFFFFFF), true, eAlignTextCenter);
       GetPainter().Draw2DTextureAligned(graphics_engine, CloseIcon, _close_button->GetGeometry(), TextureAlignmentStyle(eTACenter, eTACenter));
     }
 
@@ -205,21 +205,6 @@ namespace nux
     }
 
     GetPainter().PopBackground();
-  }
-
-  void FloatingWindow::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-    if (force_draw == false)
-    {
-      return;
-    }
-
-    if ((IsVisibleSizeGrip() == true) && (IsSizeMatchContent() == false))
-    {
-      // Do not draw the size grip if the window is constrained by the size of the container layout.
-      Geometry geo = _resize_handle->GetGeometry();
-      graphics_engine.QRP_Triangle(geo.x + geo.width, geo.y, geo.x, geo.y + geo.height, geo.x + geo.width, geo.y + geo.height, Color(0xFF999999));
-    }
   }
 
   void FloatingWindow::EnableTitleBar(bool b)
@@ -294,7 +279,7 @@ namespace nux
 
     SetGeometry(geo);
 
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     if (m_input_window != 0)
     {
       //nuxDebugMsg("Resize Input window: %d, %d, %d, %d", geo.x, geo.y, geo.width, geo.height);
@@ -324,7 +309,7 @@ namespace nux
 
     _title_bar->SetGeometry(Geometry(0, 0, geo.GetWidth(), _title_bar_height));
 
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     if (m_input_window != 0)
     {
       //nuxDebugMsg("Resize Input window: %d, %d, %d, %d", geo.x, geo.y, geo.width, geo.height);
@@ -337,11 +322,10 @@ namespace nux
 
   void FloatingWindow::RecvCloseButtonClick(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     // Disable the input window if there is one.
     EnableInputWindow(false);
 #endif
-    
     StopModal();
   }
 
@@ -472,7 +456,7 @@ namespace nux
     _window_title = title;
   }
 
-  NString FloatingWindow::GetWindowTitle()
+  std::string FloatingWindow::GetWindowTitle()
   {
     return _window_title;
   }

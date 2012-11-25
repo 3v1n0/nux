@@ -113,8 +113,8 @@ namespace nux
     bool Support_ARB_Framebuffer_sRGB()          const    {return _support_arb_framebuffer_srgb;}
 #endif
 
-    int GetMaxFboAttachment() {return _opengl_max_fb_attachment;}
-    int GetMaxTextureSize() {return _opengl_max_texture_size;}
+    int GetMaxFboAttachment()                    const    {return _opengl_max_fb_attachment;}
+    int GetMaxTextureSize()                      const    {return _opengl_max_texture_size;}
 
 
   private:
@@ -243,9 +243,12 @@ namespace nux
     ObjectPtr<IOpenGLShaderProgram> CreateShaderProgram();
     ObjectPtr<IOpenGLVertexShader> CreateVertexShader();
     ObjectPtr<IOpenGLPixelShader> CreatePixelShader();
+
+#ifndef NUX_OPENGLES_20    
     ObjectPtr<IOpenGLAsmShaderProgram> CreateAsmShaderProgram();
     ObjectPtr<IOpenGLAsmVertexShader> CreateAsmVertexShader();
     ObjectPtr<IOpenGLAsmPixelShader> CreateAsmPixelShader();
+#endif
 
 #if (NUX_ENABLE_CG_SHADERS)
     ObjectPtr<ICgVertexShader> CreateCGVertexShader();
@@ -397,7 +400,6 @@ namespace nux
     //
     int _glsl_version_major;  //!< GLSL major version.
     int _glsl_version_minor;  //!< GLSL major version.
-
     int opengl_major_;  //!< OpenGL major version.
     int opengl_minor_;  //!< OpenGL minor version.
 
@@ -440,7 +442,7 @@ namespace nux
       int req_opengl_minor = 0,   // requested opengl minor version.
       bool opengl_es_20 = false);
 
-#elif defined(NUX_OS_LINUX)
+#elif defined(USE_X11)
     #ifdef NUX_OPENGLES_20
         GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight,
           BitmapFormat DeviceFormat,
@@ -464,6 +466,14 @@ namespace nux
           int req_opengl_minor = 0,   // requested opengl minor version.
           bool opengl_es_20 = false);
     #endif
+#elif defined(NO_X11)
+    GpuDevice(unsigned int DeviceWidth, unsigned int DeviceHeight, BitmapFormat DeviceFormat,
+      EGLDisplay display,
+      EGLConfig fb_config,
+      EGLContext &opengl_rendering_context,
+      int req_opengl_major,
+      int req_opengl_minor);
+
 #endif
     ~GpuDevice();
     friend class IOpenGLSurface;

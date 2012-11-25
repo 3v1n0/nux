@@ -179,11 +179,6 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void HSplitter::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
   void HSplitter::OverlayDrawing(GraphicsEngine &graphics_engine)
   {
     unsigned int num_element = (unsigned int) m_SplitterObject.size();
@@ -590,7 +585,7 @@ namespace nux
 
   Area* HSplitter::KeyNavIteration(KeyNavDirection direction)
   {
-    if (m_InterfaceObject.size() == 0)
+    if (m_InterfaceObject.empty())
       return NULL;
 
     if (next_object_to_key_focus_area_)

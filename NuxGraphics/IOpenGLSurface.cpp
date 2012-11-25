@@ -518,18 +518,17 @@ namespace nux
     // Because we use SubImage when unlocking surfaces, we must first get some dummy data in the surface before we can make a lock.
     int texwidth = ImageSurface::GetLevelWidth(_BaseTexture->_PixelFormat, _BaseTexture->_Width, _SMipLevel);
     int texheight = ImageSurface::GetLevelHeight(_BaseTexture->_PixelFormat, _BaseTexture->_Height, _SMipLevel);
-    int size = ImageSurface::GetLevelSize(_BaseTexture->_PixelFormat, _BaseTexture->_Width, _BaseTexture->_Height, _SMipLevel);
     int MemAlignment = ImageSurface::GetMemAlignment(_BaseTexture->_PixelFormat);
 
     nuxAssert( texwidth > 0 ); // Should never happen
     nuxAssert( texheight > 0 ); // Should never happen
-    nuxAssert( size > 0 ); // Should never happen
-
-    BYTE *DummyBuffer = (BYTE *) calloc(size, sizeof(BYTE));
 
     CHECKGL(glPixelStorei(GL_UNPACK_ALIGNMENT, MemAlignment));
 
 #ifndef NUX_OPENGLES_20
+    int size = ImageSurface::GetLevelSize(_BaseTexture->_PixelFormat, _BaseTexture->_Width, _BaseTexture->_Height, _SMipLevel);
+    nuxAssert( size > 0 ); // Should never happen
+
     if ( _BaseTexture->_PixelFormat == BITFMT_DXT1 ||
          _BaseTexture->_PixelFormat == BITFMT_DXT2 ||
          _BaseTexture->_PixelFormat == BITFMT_DXT3 ||
@@ -546,7 +545,7 @@ namespace nux
           texheight,
           0,                          // border
           size,                       // image Size
-          DummyBuffer                           // data
+          NULL                        // data
         );
         CHECKGL_MSG(glCompressedTexImage2DARB);
       }
@@ -580,7 +579,7 @@ namespace nux
           0,                          // border
           GPixelFormats[_BaseTexture->_PixelFormat].Format,
           GPixelFormats[_BaseTexture->_PixelFormat].type,
-          DummyBuffer);
+          NULL);
         CHECKGL_MSG(glTexImage2D);
 #ifndef NUX_OPENGLES_20
       }
@@ -601,9 +600,6 @@ namespace nux
       }
     }
 #endif
-
-    free(DummyBuffer);
-
 
     //    { //[DEBUGGING - Red Texture]
     //        // This is going to put some red in the texture.

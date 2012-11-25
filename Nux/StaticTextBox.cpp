@@ -67,13 +67,13 @@ namespace nux
       if (m_bDrawBackground)
       {
         GetPainter().PushDrawLayer(graphics_engine, base, m_Background);
-        GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), GetGeometry(), m_Text.m_string, m_TextColor, m_WriteAlpha, m_TextAlignment);
+        GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), GetGeometry(), m_Text, m_TextColor, m_WriteAlpha, m_TextAlignment);
         GetPainter().PopBackground();
       }
       else
       {
         //GetPainter().PaintBackground(graphics_engine, base);
-        GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), GetGeometry(), m_Text.m_string, m_TextColor, m_WriteAlpha, m_TextAlignment);
+        GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), GetGeometry(), m_Text, m_TextColor, m_WriteAlpha, m_TextAlignment);
       }
 
       graphics_engine.PopClippingRectangle();
@@ -85,30 +85,13 @@ namespace nux
 
   }
 
-  void StaticTextBox::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
-  void StaticTextBox::SetText(const char &Caption)
-  {
-    NString s(Caption);
-    SetText(s);
-  }
-
   void StaticTextBox::SetText(const char *Caption)
   {
-    NString s(Caption);
+    std::string s(Caption);
     SetText(s);
   }
 
-  void StaticTextBox::SetText(const tstring &Caption)
-  {
-    NString s(Caption);
-    SetText(s);
-  }
-
-  void StaticTextBox::SetText(const NString &Caption)
+  void StaticTextBox::SetText(const std::string &Caption)
   {
     m_Text = Caption;
 
@@ -133,10 +116,10 @@ namespace nux
 
   void StaticTextBox::AdjustMinWidthToMatchText()
   {
-    if (m_Text.Size() == 0)
+    if (m_Text.size() == 0)
       return;
 
-    SetMinimumWidth(/*4 + */GetFont()->GetStringWidth(m_Text.GetTStringRef()));
+    SetMinimumWidth(/*4 + */GetFont()->GetStringWidth(m_Text));
   }
 
   void StaticTextBox::SetFont(ObjectPtr<FontTexture> Font)

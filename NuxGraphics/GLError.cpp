@@ -27,9 +27,9 @@
 
 namespace nux
 {
+DECLARE_LOGGER(logger, "nux.gl");
 namespace
 {
-logging::Logger logger("nux.gl");
 #ifdef NUX_DEBUG
 bool BreakOnGLErrors = false;
 #endif
@@ -80,14 +80,14 @@ bool debug_glerror_stack()
           error_msg += "[CheckGLError] UNKNOWN ERROR, ";
       }
 
-      if (logger.IsWarningEnabled() && !error_msg.empty())
+      if (Unwrap(logger).IsWarningEnabled() && !error_msg.empty())
       {
         std::string stacktrace;
 #if defined(NUX_OS_LINUX)
         if (debug_glerror_stack())
           stacktrace = "\n" + logging::Backtrace();
 #endif
-        logging::LogStream(logging::Warning, logger.module(), file, line).stream()
+        logging::LogStream(logging::Warning, Unwrap(logger).module(), file, line).stream()
 #ifndef NUX_OPENGLES_20
           << "[CheckGLError] OpenGL Error " << glErr << " (" << gluErrorString(glErr) << ")"
 #else

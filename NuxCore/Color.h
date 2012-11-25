@@ -197,6 +197,7 @@ namespace color
   {
   public:
     RedGreenBlue(float r, float g, float b);
+    RedGreenBlue(Color const& color);
     RedGreenBlue(HueSaturationValue const&);
     RedGreenBlue(HueLightnessSaturation const&);
 

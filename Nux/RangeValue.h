@@ -39,7 +39,6 @@ namespace nux
     void DrawMarker(GraphicsEngine &graphics_engine);
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     /////////////////
     //  RECEIVERS  //
@@ -89,7 +88,7 @@ namespace nux
     void OnReceiveMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     void OnKeyboardFocus();
     void OnLostKeyboardFocus();
-    void OnValidateKeyboardEntry(EditTextBox *textbox, const NString &text);
+    void OnValidateKeyboardEntry(EditTextBox *textbox, const std::string &text);
 
     bool IsCtrlKeyPressed() const
     {

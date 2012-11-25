@@ -160,7 +160,7 @@ namespace nux
       {
 
         GetPainter().PaintColorTextLineEdit(graphics_engine, GetGeometry(),
-                                         m_KeyboardHandler.GetTextLine().m_string,
+                                         m_KeyboardHandler.GetTextLine(),
                                          GetTextColor(),
                                          m_WriteAlpha,
                                          m_SelectedTextColor,
@@ -177,7 +177,7 @@ namespace nux
       else
       {
         GetPainter().PaintTextLineStatic(graphics_engine, GetFont(), GetGeometry(),
-                                      m_KeyboardHandler.GetTextLine().m_string,
+                                      m_KeyboardHandler.GetTextLine(),
                                       GetTextColor());
       }
     }
@@ -189,39 +189,30 @@ namespace nux
 
   }
 
-  void EditTextBox::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-
-  }
-
-  void EditTextBox::SetText(const char &Caption)
-  {
-    NString s(Caption);
-    SetText(s);
-  }
-
   void EditTextBox::SetText(const char *Caption)
   {
-    NString s(Caption);
+    std::string s(Caption);
     SetText(s);
   }
 
-  void EditTextBox::SetText(const tstring &Caption)
+  void EditTextBox::SetText(const std::string &Caption)
   {
-    NString s(Caption);
-    SetText(s);
-  }
+    std::string s(Caption);
+    size_t pos = s.find(m_Prefix, 0);
+    if (pos == 0)
+    {
+      s.erase(0, m_Prefix.size());
+    }
+    pos = s.rfind(m_Suffix);
+    if (pos != std::string::npos && pos == s.size() - m_Suffix.size())
+    {
+      s.erase(pos);
+    }
 
-  void EditTextBox::SetText(const NString &Caption)
-  {
-    NString s(Caption);
-    s.RemovePrefix(m_Prefix);
-    s.RemoveSuffix(m_Suffix);
-
-    if (ValidateKeyboardEntry(s.GetTCharPtr()))
+    if (ValidateKeyboardEntry(s.c_str()))
     {
       m_Text = (m_Prefix + s) + m_Suffix;
-      m_KeyboardHandler.SetText(m_Text.GetTStringRef());
+      m_KeyboardHandler.SetText(m_Text);
       m_temporary_caption = m_Text;
       sigSetText.emit(this);
     }
@@ -232,16 +223,24 @@ namespace nux
 
   const char *EditTextBox::GetText() const
   {
-    return m_Text.GetTCharPtr();
+    return m_Text.c_str();
   }
 
 //! Return a caption string striping out the prefix and the suffix
-  NString EditTextBox::GetCleanText() const
+  std::string EditTextBox::GetCleanText() const
   {
-    NString CleanText(m_Text);
-    CleanText.RemovePrefix(m_Prefix);
-    CleanText.RemoveSuffix(m_Suffix);
-    return CleanText.m_string;
+    std::string CleanText(m_Text);
+    size_t pos = CleanText.find(m_Prefix, 0);
+    if (pos == 0)
+    {
+      CleanText.erase(0, m_Prefix.size());
+    }
+    pos = CleanText.rfind(m_Suffix);
+    if (pos != std::string::npos && pos == CleanText.size() - m_Suffix.size())
+    {
+      CleanText.erase(pos);
+    }
+    return CleanText;
   }
 
   void EditTextBox::RecvMouseDoubleClick(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
@@ -342,10 +341,14 @@ namespace nux
 
     if (keysym == NUX_VK_ENTER || keysym == NUX_KP_ENTER)
     {
-      NString str(m_KeyboardHandler.GetTextLine());
-      str.RemoveSuffix(m_Suffix);
+      std::string str(m_KeyboardHandler.GetTextLine());
+      size_t pos = str.rfind(m_Suffix);
+      if (pos != std::string::npos && pos == str.size() - m_Suffix.size())
+      {
+        str.erase(pos);
+      }
 
-      if (ValidateKeyboardEntry(str.m_string.c_str()))
+      if (ValidateKeyboardEntry(str.c_str()))
       {
         m_Text = m_KeyboardHandler.GetTextLine();
         m_temporary_caption = m_Text;
@@ -397,7 +400,7 @@ namespace nux
 
   void EditTextBox::EnteringKeyboardFocus()
   {
-    m_KeyboardHandler.SetText(m_Text.GetTStringRef());
+    m_KeyboardHandler.SetText(m_Text);
     m_KeyboardHandler.SelectAllText();
     // Preserve the current caption text. If ESC is pressed while we have keyboard focus then
     // the previous caption text is restored
@@ -408,25 +411,33 @@ namespace nux
 
   void EditTextBox::QuitingKeyboardFocus()
   {
-    NString CleanText(m_KeyboardHandler.GetTextLine());
-    CleanText.RemovePrefix(m_Prefix);
-    CleanText.RemoveSuffix(m_Suffix);
+    std::string CleanText(m_KeyboardHandler.GetTextLine());
+    size_t pos = CleanText.find(m_Prefix, 0);
+    if (pos == 0)
+    {
+      CleanText.erase(0, m_Prefix.size());
+    }
+    pos = CleanText.rfind(m_Suffix);
+    if (pos != std::string::npos && pos == CleanText.size() - m_Suffix.size())
+    {
+      CleanText.erase(pos);
+    }
 
-    if (ValidateKeyboardEntry(CleanText.GetTCharPtr()))
+    if (ValidateKeyboardEntry(CleanText.c_str()))
     {
       CleanText = m_Prefix + CleanText;
       CleanText = CleanText + m_Suffix;
 
-      m_Text = CleanText.m_string; //m_KeyboardHandler.GetTextLine();
-      m_KeyboardHandler.SetText(CleanText.m_string);
+      m_Text = CleanText; //m_KeyboardHandler.GetTextLine();
+      m_KeyboardHandler.SetText(CleanText);
       m_temporary_caption = m_Text;
-      sigValidateKeyboardEntry.emit(this, m_Text.GetTStringRef());
+      sigValidateKeyboardEntry.emit(this, m_Text);
       sigValidateEntry.emit(this);
     }
     else
     {
       m_Text = m_temporary_caption;
-      m_KeyboardHandler.SetText(m_Text.GetTStringRef());
+      m_KeyboardHandler.SetText(m_Text);
       m_KeyboardHandler.SelectAllText();
     }
 
@@ -455,12 +466,12 @@ namespace nux
 
   void EditTextBox::SetDoubleValue(double d)
   {
-    SetText(NString::Printf("%f", d));
+    SetText(std::to_string((long double)d));
   }
 
   void EditTextBox::SetIntegerValue(int i)
   {
-    SetText(NString::Printf("%d", i));
+    SetText(std::to_string((long long)i));
   }
 
   void EditTextBox::SetTextBackgroundColor(const Color &color)

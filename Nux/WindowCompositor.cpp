@@ -27,17 +27,18 @@
 #include "NuxGraphics/GLError.h"
 #include "WindowThread.h"
 #include "BaseWindow.h"
+#include "InputAreaProximity.h"
+#if !defined(NUX_MINIMAL)
 #include "MenuPage.h"
+#endif
 #include "PaintLayer.h"
 #include "Painter.h"
+#include "Layout.h"
 
 #include "NuxGraphics/FontTexture.h"
 namespace nux
 {
-namespace
-{
-  logging::Logger logger("nux.window");
-}
+DECLARE_LOGGER(logger, "nux.window");
 
   WindowCompositor::WindowCompositor(WindowThread* window_thread)
   : reference_fbo_(0)
@@ -46,7 +47,6 @@ namespace
     m_OverlayWindow             = NULL;
     _tooltip_window             = NULL;
     m_TooltipArea               = NULL;
-    _menu_chain                 = NULL;
     m_Background                = NULL;
     _tooltip_window             = NULL;
     OverlayDrawingCommand       = NULL;
@@ -56,8 +56,6 @@ namespace
     inside_event_cycle_         = false;
     inside_rendering_cycle_     = false;
     _dnd_area                   = NULL;
-    _mouse_over_menu_page       = NULL;
-    _mouse_owner_menu_page      = NULL;
     _starting_menu_event_cycle  = false;
     _menu_is_active             = false;
     on_menu_closure_continue_with_event_ = false;
@@ -72,7 +70,13 @@ namespace
     m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
     m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
 
-    _menu_chain = new std::list<MenuPage*>;
+#if !defined(NUX_MINIMAL)
+    _mouse_over_menu_page       = NULL;
+    _mouse_owner_menu_page      = NULL;
+    _menu_chain                 = NULL;
+    _menu_chain                 = new std::list<MenuPage*>;
+#endif
+
     m_MenuRemoved = false;
     m_Background = new ColorLayer(Color(0xFF4D4D4D));
 
@@ -92,12 +96,14 @@ namespace
     m_FrameBufferObject.Release();
     m_MainColorRT.Release();
     m_MainDepthRT.Release();
-    _menu_chain->clear();
     _view_window_list.clear();
     _modal_view_window_list.clear();
 
-    NUX_SAFE_DELETE(_menu_chain);
-    NUX_SAFE_DELETE(m_Background);
+#if !defined(NUX_MINIMAL)
+    _menu_chain->clear();
+    delete _menu_chain;
+#endif
+    delete m_Background;
   }
 
   WindowCompositor::RenderTargetTextures& WindowCompositor::GetWindowBuffer(BaseWindow* window)
@@ -170,8 +176,10 @@ namespace
   {
     mouse_over_area_ = NULL;
     SetMouseOwnerArea(NULL);
+#if !defined(NUX_MINIMAL)
     _mouse_over_menu_page   = NULL;
     _mouse_owner_menu_page  = NULL;
+#endif
   }
 
   void WindowCompositor::FindAreaUnderMouse(const Point& mouse_position,
@@ -345,7 +353,7 @@ namespace
 
           if (abs(dnd_safety_y_) > 30 || abs(dnd_safety_x_) > 30)
           {
-#ifdef NUX_OS_LINUX
+#if defined(DRAG_AND_DROP_SUPPORTED)
             mouse_owner_area_->StartDragAsSource();
 #endif
             ResetMousePointerAreas();
@@ -609,8 +617,64 @@ namespace
     }
   }
 
+  void WindowCompositor::FindAncestorInterestedInChildMouseEvents(Area *area)
+  {
+    if (!area)
+      return;
+
+    Area *parent = area->GetParentObject();
+    if (!parent)
+      return;
+
+    if (parent->IsInputArea())
+    {
+      InputArea *parent_input_area = static_cast<InputArea*>(parent);
+      if (parent_input_area->IsTrackingChildMouseEvents())
+        interested_mouse_owner_ancestor_ = parent_input_area;
+    }
+
+    if (!interested_mouse_owner_ancestor_.IsValid())
+    {
+      // Keep searching...
+      FindAncestorInterestedInChildMouseEvents(parent);
+    }
+  }
+
+  void WindowCompositor::UpdateEventTrackingByMouseOwnerAncestor(const Event& event)
+  {
+    if (event.type == NUX_MOUSE_PRESSED || event.type == NUX_MOUSE_DOUBLECLICK)
+      FindAncestorInterestedInChildMouseEvents(mouse_owner_area_.GetPointer());
+
+    if (!interested_mouse_owner_ancestor_.IsValid())
+      return;
+
+    bool wants_ownership =
+      interested_mouse_owner_ancestor_->ChildMouseEvent(event);
+
+    if (wants_ownership)
+    {
+      mouse_owner_area_->EmitMouseCancelSignal();
+
+      SetMouseOwnerArea(interested_mouse_owner_ancestor_.GetPointer());
+      _mouse_position_on_owner = Point(event.x - mouse_owner_area_->GetAbsoluteX(),
+                                       event.y - mouse_owner_area_->GetAbsoluteY());
+
+      interested_mouse_owner_ancestor_ = NULL;
+
+    }
+
+    if (event.type == NUX_MOUSE_RELEASED)
+      interested_mouse_owner_ancestor_ = NULL;
+  }
+
   void WindowCompositor::MouseEventCycle(Event& event)
   {
+    // Checks the area_proximities_ list for any mouse near/beyond signals
+    if (event.type == NUX_MOUSE_MOVE || event.type == NUX_WINDOW_MOUSELEAVE)
+    {
+      CheckMouseNearArea(event);
+    }
+
     // Updates mouse_over_area_ and emits mouse_enter and mouse_leave signals
     // accordingly.
     bool area_under_mouse_changed = UpdateWhatAreaIsUnderMouse(event);
@@ -625,8 +689,13 @@ namespace
 
     if (event.type == NUX_MOUSE_WHEEL)
         ProcessMouseWheelEvent(event);
+
+    // Feed the appropriate InputArea::ChildMouseEvent() and switch mouse
+    // ownership (including the emission of mouse_cancel) if asked to.
+    UpdateEventTrackingByMouseOwnerAncestor(event);
   }
 
+#if !defined(NUX_MINIMAL)
   void WindowCompositor::MenuEventCycle(Event& event)
   {
     // _mouse_owner_menu_page: the menu page that has the mouse down
@@ -808,6 +877,7 @@ namespace
       }
     }
   }
+#endif
 
   void WindowCompositor::FindKeyFocusArea(NuxEventType event_type,
     unsigned int key_symbol,
@@ -967,8 +1037,10 @@ namespace
                     event.GetKeySym(),
 #if defined(NUX_OS_WINDOWS)
                     event.win32_keycode,
-#elif defined(NUX_OS_LINUX)
+#elif defined(USE_X11)
                     event.x11_keycode,
+#else
+                    0,
 #endif
                     event.GetKeyState(),
                     event.GetText(),
@@ -990,8 +1062,10 @@ namespace
             event.GetKeySym(),
 #if defined(NUX_OS_WINDOWS)
             event.win32_keycode,
-#elif defined(NUX_OS_LINUX)
+#elif defined(USE_X11)
             event.x11_keycode,
+#else
+            0,
 #endif
             event.GetKeyState(),
             event.GetText(),
@@ -1045,8 +1119,9 @@ namespace
     if (((event.type >= NUX_MOUSE_PRESSED) && (event.type <= NUX_MOUSE_WHEEL)) ||
     (event.type == NUX_WINDOW_MOUSELEAVE))
     {
+#if !defined(NUX_MINIMAL)
       bool menu_active = false;
-      if (_menu_chain->size())
+      if (!_menu_chain->empty())
       {
         menu_active = true;
         MenuEventCycle(event);
@@ -1054,6 +1129,7 @@ namespace
       }
 
       if ((menu_active && on_menu_closure_continue_with_event_) || !(menu_active))
+#endif
       {
         MouseEventCycle(event);
       }
@@ -1105,7 +1181,7 @@ namespace
 
   void WindowCompositor::StopModalWindow(ObjectWeakPtr<BaseWindow> window)
   {
-    if (_modal_view_window_list.size() > 0)
+    if (!_modal_view_window_list.empty())
     {
       if (*_modal_view_window_list.begin() == window)
         _modal_view_window_list.pop_front();
@@ -1222,6 +1298,42 @@ namespace
     }
   }
 
+  int WindowCompositor::GetProximityListSize() const
+  {
+    return area_proximities_.size();
+  }
+
+  void WindowCompositor::AddAreaInProximityList(InputAreaProximity* prox_area)
+  {
+    if (prox_area)
+    {
+      area_proximities_.push_back(prox_area);
+    }
+    else
+    {
+      LOG_ERROR(logger) << "Error, attempted to add a NULL InputAreaProximity to the list.";
+    }
+  }
+
+  void WindowCompositor::RemoveAreaInProximityList(InputAreaProximity* prox_area)
+  {
+    if (prox_area)
+    {
+      area_proximities_.remove(prox_area);
+    }
+  }
+
+  void WindowCompositor::CheckMouseNearArea(Event const& event)
+  {
+    for (auto area : area_proximities_)
+    {
+      if (area)
+      {
+        area->CheckMousePosition(Point(event.x, event.y));
+      }
+    }
+  }
+
   void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
   {
     inside_rendering_cycle_ = true;
@@ -1294,6 +1406,7 @@ namespace
 
   void WindowCompositor::DrawMenu(bool force_draw)
   {
+#if !defined(NUX_MINIMAL)
     ObjectWeakPtr<BaseWindow> window = m_MenuWindow;
 
     if (window.IsValid())
@@ -1318,10 +1431,7 @@ namespace
       (*rev_it_menu)->ProcessDraw(window_thread_->GetGraphicsEngine(), force_draw);
       SetProcessingTopView(NULL);
     }
-
-//     GetGraphicsDisplay()->GetGraphicsEngine()->SetContext(0, 0,
-//                                             window_thread_->GetGraphicsEngine().GetWindowWidth(),
-//                                             window_thread_->GetGraphicsEngine().GetWindowHeight());
+#endif
   }
 
   void WindowCompositor::DrawOverlay(bool /* force_draw */)
@@ -1364,11 +1474,11 @@ namespace
     else
       window_thread_->GetGraphicsEngine().SetOpenGLClippingRectangle(0, 0, buffer_width, buffer_height);
 
-    if (m_TooltipText.Size())
+    if (m_TooltipText.size())
     {
         //SetProcessingTopView(_tooltip_window);
         GetPainter().PaintShape(window_thread_->GetGraphicsEngine(), _tooltip_geometry, Color(0xA0000000), eSHAPE_CORNER_ROUND10, true);
-        GetPainter().PaintTextLineStatic(window_thread_->GetGraphicsEngine(), GetSysBoldFont(), _tooltip_text_geometry, m_TooltipText.m_string, Color(0xFFFFFFFF));
+        GetPainter().PaintTextLineStatic(window_thread_->GetGraphicsEngine(), GetSysBoldFont(), _tooltip_text_geometry, m_TooltipText, Color(0xFFFFFFFF));
         //SetProcessingTopView(NULL);
     }
 
@@ -1642,9 +1752,10 @@ namespace
     }
   }
 
+#if !defined(NUX_MINIMAL)
   void WindowCompositor::AddMenu(MenuPage* menu, BaseWindow* window, bool OverrideCurrentMenuChain)
   {
-    if (_menu_chain->size() == 0)
+    if (_menu_chain->empty())
     {
       // A menu is opening.
       _starting_menu_event_cycle = true;
@@ -1655,7 +1766,7 @@ namespace
     if (it == _menu_chain->end())
     {
       // When adding a MenuPage, make sure that it is a child of the MenuPage in _menu_chain->begin().
-      if (_menu_chain->size())
+      if (!_menu_chain->empty())
       {
         if (menu->GetParentMenu() != (*_menu_chain->begin()))
         {
@@ -1697,7 +1808,7 @@ namespace
     _menu_chain->erase(it);
     m_MenuRemoved = true;
 
-    if (_menu_is_active && (_menu_chain->size() == 0))
+    if (_menu_is_active && (_menu_chain->empty()))
     {
       // The menu is closed
       _menu_is_active         = false;
@@ -1708,7 +1819,7 @@ namespace
 
   void WindowCompositor::CleanMenu()
   {
-    if (_menu_chain->size() == 0)
+    if (_menu_chain->empty())
       return;
 
     std::list<MenuPage*>::iterator menu_it = _menu_chain->begin();
@@ -1726,13 +1837,14 @@ namespace
       }
     }
 
-    if (_menu_is_active && (_menu_chain->size() == 0))
+    if (_menu_is_active && (_menu_chain->empty()))
     {
       _menu_is_active         = false;
       ResetMousePointerAreas();
       m_MenuWindow            = NULL;
     }
   }
+#endif
 
   void WindowCompositor::SetWidgetDrawingOverlay(InputArea* ic, BaseWindow* OverlayWindow)
   {
@@ -1753,9 +1865,9 @@ namespace
     m_TooltipX = x;
     m_TooltipY = y;
 
-    if (m_TooltipText.Size())
+    if (m_TooltipText.size())
     {
-      int w = GetSysBoldFont()->GetCharStringWidth(m_TooltipText.GetTCharPtr());
+      int w = GetSysBoldFont()->GetCharStringWidth(m_TooltipText.c_str());
       int h = GetSysBoldFont()->GetFontHeight();
 
       _tooltip_text_geometry = Geometry(
@@ -1856,7 +1968,7 @@ namespace
         key_focus_area_->key_nav_focus_change.emit(key_focus_area_.GetPointer(), false, direction);
         // nuxDebugMsg("[WindowCompositor::SetKeyFocusArea] Area type '%s' named '%s': Lost key nav focus.",
         //   key_focus_area_->Type().name,
-        //   key_focus_area_->GetBaseString().GetTCharPtr());
+        //   key_focus_area_->GetBaseString().c_str());
       }
 
       if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
@@ -1884,7 +1996,7 @@ namespace
         key_focus_area_->key_nav_focus_change.emit(key_focus_area_.GetPointer(), true, direction);
         // nuxDebugMsg("[WindowCompositor::SetKeyFocusArea] Area type '%s' named '%s': Has key nav focus.",
         //   key_focus_area_->Type().name,
-        //   key_focus_area_->GetBaseString().GetTCharPtr());
+        //   key_focus_area_->GetBaseString().c_str());
       }
 
       if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
@@ -2045,7 +2157,7 @@ namespace
 
   void WindowCompositor::SetDnDArea(InputArea* area)
   {
-#if defined(NUX_OS_LINUX)
+#if defined(DRAG_AND_DROP_SUPPORTED)
     if (_dnd_area == area)
       return;
 
@@ -2055,7 +2167,7 @@ namespace
       _dnd_area->UnReference();
     }
     _dnd_area = area;
-    
+
     if (_dnd_area)
     {
       _dnd_area->Reference();
@@ -2174,7 +2286,7 @@ namespace
           key_focus_area_->key_nav_focus_change.emit(key_focus_area_.GetPointer(), false, KEY_NAV_NONE);
           // nuxDebugMsg("[WindowCompositor::GrabKeyboardAdd] Area type '%s' named '%s': Lost key nav focus.",
           //   key_focus_area_->Type().name,
-          //   key_focus_area_->GetBaseString().GetTCharPtr());
+          //   key_focus_area_->GetBaseString().c_str());
 
         }
 
@@ -2249,7 +2361,7 @@ namespace
           key_focus_area_->key_nav_focus_change.emit(key_focus_area_.GetPointer(), false, KEY_NAV_NONE);
           // nuxDebugMsg("[WindowCompositor::GrabKeyboardRemove] Area type '%s' named '%s': Lost key nav focus.",
           //   key_focus_area_->Type().name,
-          //   key_focus_area_->GetBaseString().GetTCharPtr());          
+          //   key_focus_area_->GetBaseString().c_str());          
         }
 
         if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
@@ -2284,7 +2396,7 @@ namespace
 
   InputArea* WindowCompositor::GetKeyboardGrabArea()
   {
-    if (keyboard_grab_stack_.size() == 0)
+    if (keyboard_grab_stack_.empty())
       return NULL;
 
     return (*keyboard_grab_stack_.begin());

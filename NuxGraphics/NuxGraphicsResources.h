@@ -34,16 +34,16 @@ namespace nux
   public:
 
     void InitializeResources();
-    NString FindResourceLocation(const char *ResourceFileName, bool ErrorOnFail = false);
-    NString FindUITextureLocation(const char *ResourceFileName, bool ErrorOnFail = false);
-    NString FindShaderLocation(const char *ResourceFileName, bool ErrorOnFail = false);
-    NString FindFontLocation(const char *ResourceFileName, bool ErrorOnFail = false);
+    std::string FindResourceLocation(const char *ResourceFileName, bool ErrorOnFail = false);
+    std::string FindUITextureLocation(const char *ResourceFileName, bool ErrorOnFail = false);
+    std::string FindShaderLocation(const char *ResourceFileName, bool ErrorOnFail = false);
+    std::string FindFontLocation(const char *ResourceFileName, bool ErrorOnFail = false);
 
   private:
 
-    std::vector<NString> m_FontSearchPath;
-    std::vector<NString> m_ShaderSearchPath;
-    std::vector<NString> m_UITextureSearchPath;
+    std::vector<std::string> m_FontSearchPath;
+    std::vector<std::string> m_ShaderSearchPath;
+    std::vector<std::string> m_UITextureSearchPath;
     FilePath m_ResourcePathLocation;
   };
 

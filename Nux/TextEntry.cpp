@@ -29,10 +29,13 @@
 #include "TextEntry.h"
 
 #if defined(NUX_OS_LINUX)
-#include "TextEntryComposeSeqs.h"
-#include <X11/cursorfont.h>
-#include "InputMethodIBus.h"
+# include "TextEntryComposeSeqs.h"
+# if defined(USE_X11)
+#  include <X11/cursorfont.h>
+#  include "InputMethodIBus.h"
+# endif
 #endif
+
 
 namespace nux
 {
@@ -151,7 +154,7 @@ namespace nux
     , font_dpi_(96.0)
     , _text_color(color::White)
     , align_(CairoGraphics::ALIGN_LEFT)
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     , caret_cursor_(None)
     , ime_(new IBusIMEContext(this))
 #endif
@@ -198,7 +201,7 @@ namespace nux
     if (_texture2D)
       _texture2D->UnReference();
 
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     if (ime_)
       delete ime_;
 #endif
@@ -301,7 +304,7 @@ namespace nux
     const char*      character ,   /*character*/
     unsigned short   /* keyCount */      /*key repeat count*/)
   {
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     if (im_running())
     {
       // FIXME Have to get the x11_keycode for ibus-hangul/korean input
@@ -318,7 +321,7 @@ namespace nux
     if (event_type == NUX_KEYUP)
       return;
 
-#if defined(NUX_OS_LINUX)
+#if !defined(NO_X11)
     if (IsInCompositionMode() || IsInitialCompositionKeySym(keysym))
     {
       if (HandleComposition(keysym))
@@ -525,7 +528,7 @@ namespace nux
 
   void TextEntry::RecvMouseEnter(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     if (caret_cursor_ == None)
     {
       Display* display = nux::GetGraphicsDisplay()->GetX11Display();
@@ -542,7 +545,7 @@ namespace nux
 
   void TextEntry::RecvMouseLeave(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     if (caret_cursor_ != None)
     {
       Display* display = nux::GetGraphicsDisplay()->GetX11Display();
@@ -622,11 +625,6 @@ namespace nux
     //MainDraw();
   }
 
-  void TextEntry::PostDraw(GraphicsEngine& /* gfxContext */, bool /* forceDraw */)
-  {
-    // intentionally left empty
-  }
-
   TextEntry::SearchState TextEntry::GetCompositionForList(std::vector<unsigned long> const& input, std::string& composition)
   {
     SearchState search_state = SearchState::NO_MATCH;
@@ -681,7 +679,7 @@ namespace nux
 
   bool TextEntry::IsInitialCompositionKeySym(unsigned long keysym) const
   {
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     /* Checks if a keysym is a valid initial composition key */
     if (keysym == XK_Multi_key ||
         (keysym >= XK_dead_grave && keysym <= XK_dead_currency) ||
@@ -695,7 +693,7 @@ namespace nux
 
   bool TextEntry::HandleComposition(unsigned long keysym)
   {
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     bool composition_mode = IsInCompositionMode();
 
     if (composition_mode && IsModifierKey(keysym))
@@ -865,7 +863,7 @@ namespace nux
       if (!readonly_ /*&& im_context_*/)
       {
         need_im_reset_ = true;
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
         ime_->Focus();
 #endif
         //gtk_im_context_focus_in(im_context_);
@@ -887,7 +885,7 @@ namespace nux
       if (!readonly_ /*&& im_context_*/)
       {
         need_im_reset_ = true;
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
         ime_->Blur();
 #endif
         //gtk_im_context_focus_out(im_context_);
@@ -1735,7 +1733,7 @@ namespace nux
 
   bool TextEntry::im_running()
   {
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     return ime_->IsConnected();
 #else
     return false;
@@ -2339,7 +2337,7 @@ namespace nux
     unsigned int eventType = event.type;
     unsigned int key_sym = event.GetKeySym();
 
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     if (im_running())
     {
       // Always allow IBus hotkey events

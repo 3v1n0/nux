@@ -27,11 +27,9 @@
 #include <boost/scoped_ptr.hpp>
 #include "ScrollView.h"
 
-#if defined(NUX_OS_WINDOWS)
 #include "NuxGraphics/Events.h"
-#elif defined(NUX_OS_LINUX)
-#include "NuxGraphics/Events.h"
-#include "NuxGraphics/XInputWindow.h"
+#if defined(USE_X11)
+#  include "NuxGraphics/XInputWindow.h"
 #endif
 
 #include "InputArea.h"
@@ -79,7 +77,6 @@ namespace nux
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
     virtual void Draw(GraphicsEngine &graphics_engine, bool force_draw);
     virtual void DrawContent(GraphicsEngine &graphics_engine, bool force_draw);
-    virtual void PostDraw(GraphicsEngine &graphics_engine, bool force_draw);
 
     virtual Layout* GetLayout();
     virtual bool SetLayout(Layout *layout);
@@ -186,7 +183,7 @@ namespace nux
     //! Emit a signal when the BaseWindow becomes hidden.
     sigc::signal<void, BaseWindow*> sigHidden;
 
-    NString GetWindowName()
+    std::string GetWindowName()
     {
       return _name;
     }
@@ -243,7 +240,7 @@ namespace nux
 
     bool ChildNeedsRedraw();
 
-    #if defined(NUX_OS_LINUX)
+    #if defined(USE_X11)
     bool m_input_window_enabled;
     XInputWindow *m_input_window;
     #endif
@@ -252,7 +249,7 @@ namespace nux
     //! Contains the background of the texture. Can be used to blur. It is set by the window compositor.
     ObjectPtr<BaseTexture> _background_texture;
 
-    NString _name;
+    std::string _name;
     bool _size_match_layout;
     bool _is_visible;
     bool _is_modal;

@@ -690,7 +690,7 @@ namespace nux
     return true;
   }
 
-  void NFileManagerWindows::FindFiles (std::vector<NString>& Result, const TCHAR *Filename, bool Files, bool Directories)
+  void NFileManagerWindows::FindFiles (std::vector<std::string>& Result, const TCHAR *Filename, bool Files, bool Directories)
   {
     HANDLE Handle = INVALID_HANDLE_VALUE;
     WIN32_FIND_DATA SearchData;
@@ -707,7 +707,7 @@ namespace nux
 
         {
           if ( (SearchData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ? Directories : Files)
-            Result.push_back (NString (SearchData.cFileName) );
+            Result.push_back (std::string(SearchData.cFileName) );
         }
       }
       while (::FindNextFile (Handle, &SearchData) );
@@ -717,13 +717,13 @@ namespace nux
       ::FindClose (Handle);
   }
 
-  void NFileManagerWindows::ListFilesInDirectory (std::vector<NString>& Result, const TCHAR *DirName)
+  void NFileManagerWindows::ListFilesInDirectory (std::vector<std::string>& Result, const TCHAR *DirName)
   {
     WIN32_FIND_DATA SearchData;
     HANDLE Handle = INVALID_HANDLE_VALUE;
-    NString DirectoryName = DirName;
+    std::string DirectoryName = DirName;
     DirectoryName += TEXT ("\\*");
-    Handle = ::FindFirstFile (DirectoryName.GetTCharPtr(), &SearchData);
+    Handle = ::FindFirstFile (DirectoryName.c_str(), &SearchData);
 
     if (Handle != INVALID_HANDLE_VALUE)
     {
@@ -735,7 +735,7 @@ namespace nux
             ! (SearchData.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM) &&
             ! (SearchData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) )
         {
-          Result.push_back (NString (SearchData.cFileName) );
+          Result.push_back(std::string(SearchData.cFileName));
         }
       }
       while (::FindNextFile (Handle, &SearchData) );
@@ -806,19 +806,19 @@ namespace nux
 
   bool NFileManagerWindows::SetDefaultDirectory()
   {
-    return CALL_OS_TCHAR_FUNCTION (SetCurrentDirectoryW (GetProgramDirectory() ), SetCurrentDirectoryA (TCHAR_TO_ANSI (GetProgramDirectory().GetTCharPtr() ) ) ) != 0;
+    return CALL_OS_TCHAR_FUNCTION(SetCurrentDirectoryW(GetProgramDirectory()), SetCurrentDirectoryA(TCHAR_TO_ANSI(GetProgramDirectory().c_str()))) != 0;
   }
 
-  NString NFileManagerWindows::GetCurrentDirectory()
+  std::string NFileManagerWindows::GetCurrentDirectory()
   {
 #if UNICODE
     TCHAR Buffer[1024] = TEXT ("");
     ::GetCurrentDirectoryW (NUX_ARRAY_COUNT (Buffer), Buffer);
-    return NString (Buffer);
+    return std::string(Buffer);
 #else
     ANSICHAR Buffer[1024] = "";
     ::GetCurrentDirectoryA (NUX_ARRAY_COUNT (Buffer), Buffer);
-    return NString (Buffer);
+    return std::string(Buffer);
 #endif
   }
 

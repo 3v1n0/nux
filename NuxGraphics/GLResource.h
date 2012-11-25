@@ -92,17 +92,13 @@ namespace nux
     #include "EGL/egl.h"
     #include "GLES2/gl2.h"
     #include "GLES2/gl2ext.h"
-    // Explicitly include X11 headers as many EGL implementations don't
-    // do it for us.
-    #include <X11/Xlib.h>
-    #include <X11/Xutil.h>
   #else
     #ifndef GLEW_MX
       #define GLEW_MX
     #endif
     #include "GL/glew.h"
     #include "GL/glxew.h"
-    
+
     GLEWContext *glewGetContext();
     GLXEWContext *glxewGetContext();
 
@@ -112,6 +108,12 @@ namespace nux
     #endif
   #endif
 
+  #ifdef USE_X11
+    // Explicitly include X11 headers as many EGL implementations don't
+    // do it for us.
+    #include <X11/Xlib.h>
+    #include <X11/Xutil.h>
+  #endif
 #endif
 
 #include "RunTimeStats.h"
@@ -538,7 +540,7 @@ namespace nux
     }
 
     int Stream;
-    int Offset;
+    intptr_t Offset;
     // Type can be GL_UNSIGNED_BYTE, GL_SHORT, GL_INT, GL_FLOAT, GL_DOUBLE ...
     ATTRIB_COMPONENT_TYPE Type;
     // This can be 1, 2, 3 or 4; For a position(xyzw), it will be 4. For a texture coordinate(uv) it will be 2.

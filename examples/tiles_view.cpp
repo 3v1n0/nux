@@ -394,11 +394,11 @@ void ThreadWidgetInit(nux::NThread* thread, void* InitData)
   static_cast<nux::WindowThread*>(thread)->SetWindowBackgroundPaintLayer(&background);
 }
 
-nux::logging::Logger logger("test.tile_view");
 int main(int argc, char **argv)
 {
   nux::NuxInitialize(0);
 
+  nux::logging::Logger logger("test.tile_view");
   logger.SetLogLevel(nux::logging::Debug);
   LOG_DEBUG(logger) << "\nTest\n";
 

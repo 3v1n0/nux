@@ -84,7 +84,6 @@ namespace nux
     Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
     virtual void Draw(GraphicsEngine& graphics_engine, bool force_draw);
     virtual void DrawContent(GraphicsEngine& graphics_engine, bool force_draw);
-    virtual void PostDraw(GraphicsEngine& graphics_engine, bool force_draw);
 
     void PreLayoutManagement();
     long PostLayoutManagement(long layoutResult);
@@ -280,7 +279,7 @@ namespace nux
     /** Draw the Cursor to the canvas */
     void DrawCursor(CairoGraphics* canvas);
     /** Draw the text to the canvas */
-    void DrawText(CairoGraphics* canvas);
+    virtual void DrawText(CairoGraphics* canvas);
 
     void GetCursorRects(Rect* strong, Rect* weak);
 
@@ -472,7 +471,7 @@ namespace nux
 
     CairoGraphics::Alignment align_;
 
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     Cursor caret_cursor_;
 #endif
 
@@ -481,7 +480,7 @@ namespace nux
     std::list<Rect> last_cursor_region_;
     std::list<Rect> cursor_region_;
 
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     IBusIMEContext* ime_;
     friend class IBusIMEContext;
 #endif

@@ -155,11 +155,6 @@ namespace nux
     BeginDraw(graphics_engine, force_draw);
 
   }
-  void ClientArea::PostDraw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
-  {
-    // don't draw here or we risk drawing more than one time.
-    //BeginDraw(graphics_engine, force_draw);
-  }
 
   void ClientArea::ClientDraw(GraphicsEngine & /* graphics_engine */, DrawAreaContext & /* ctx */, bool /* force_draw */)
   {

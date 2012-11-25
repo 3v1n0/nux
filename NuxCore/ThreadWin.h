@@ -358,7 +358,7 @@ inline    void SetTLS_##name(type value) { nux::NThreadLocalStorage::SetData<typ
     void SetThreadState (ThreadState state);
 
     void SetThreadName (const TCHAR *ThreadName);
-    const NString &GetThreadName() const;
+    const std::string& GetThreadName() const;
 
     /*!
         Wait for a thread to complete.
@@ -373,7 +373,7 @@ inline    void SetTLS_##name(type value) { nux::NThreadLocalStorage::SetData<typ
     static ThreadWaitResult JoinThread(NThread *thread, unsigned int milliseconds);
 
   protected:
-    NString m_ThreadName;
+    std::string m_ThreadName;
 
     volatile ThreadState m_ThreadState;
 

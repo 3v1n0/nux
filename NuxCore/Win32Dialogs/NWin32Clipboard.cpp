@@ -94,9 +94,9 @@ namespace nux
     }
   }
 
-  NString inlReadTextToClipboard()
+  std::string inlReadTextToClipboard()
   {
-    NString ResultString;
+    std::string ResultString;
 
     if (::OpenClipboard (::GetActiveWindow() ) )
     {

@@ -35,53 +35,77 @@ source_cpp = \
   $(srcdir)/AbstractComboBox.cpp \
   $(srcdir)/AbstractPaintLayer.cpp \
   $(srcdir)/AbstractThread.cpp \
-  $(srcdir)/ActionItem.cpp \
-  $(srcdir)/AnimatedTextureArea.cpp \
-  $(srcdir)/PaintLayer.cpp \
-  $(srcdir)/InputArea.cpp \
   $(srcdir)/Area.cpp \
   $(srcdir)/BaseWindow.cpp \
   $(srcdir)/BasicView.cpp \
   $(srcdir)/Button.cpp \
-  $(srcdir)/Canvas.cpp \
   $(srcdir)/CairoWrapper.cpp \
+  $(srcdir)/Canvas.cpp \
   $(srcdir)/CheckBox.cpp \
   $(srcdir)/ClientArea.cpp \
-  $(srcdir)/ColorEditor.cpp \
-  $(srcdir)/ColorPickerDialog.cpp \
-  $(srcdir)/ColorPreview.cpp \
   $(srcdir)/Coverflow.cpp \
   $(srcdir)/CoverflowItem.cpp \
   $(srcdir)/CoverflowModel.cpp \
+  $(srcdir)/EMMetrics.cpp \
+  $(srcdir)/GridHLayout.cpp \
+  $(srcdir)/HLayout.cpp \
+  $(srcdir)/HSplitter.cpp \
+  $(srcdir)/InputArea.cpp \
+  $(srcdir)/KeyboardHandler.cpp \
+  $(srcdir)/KineticScrolling/AxisDecelerationAnimation.cpp \
+  $(srcdir)/KineticScrolling/KineticAxisScroller.cpp \
+  $(srcdir)/KineticScrolling/KineticScroller.cpp \
+  $(srcdir)/KineticScrolling/KineticScrollingTickSource.cpp \
+  $(srcdir)/KineticScrolling/VelocityCalculator.cpp \
+  $(srcdir)/KineticScrollView.cpp \
+  $(srcdir)/LayeredLayout.cpp \
+  $(srcdir)/Layout.cpp \
+  $(srcdir)/LinearLayout.cpp \
+  $(srcdir)/MainLoopGLib.cpp \
+  $(srcdir)/Nux.cpp \
+  $(srcdir)/NuxGlobalInitializer.cpp \
+  $(srcdir)/Painter.cpp \
+  $(srcdir)/PaintLayer.cpp \
+  $(srcdir)/StaticText.cpp \
+  $(srcdir)/StaticTextBox.cpp \
+  $(srcdir)/SystemThread.cpp \
+  $(srcdir)/TextEntry.cpp \
+  $(srcdir)/TextLoader.cpp \
+  $(srcdir)/TextureArea.cpp \
+  $(srcdir)/Theme.cpp \
+  $(srcdir)/TimerProc.cpp \
+  $(srcdir)/Utils.cpp \
+  $(srcdir)/VLayout.cpp \
+  $(srcdir)/View.cpp \
+  $(srcdir)/VSplitter.cpp \
+  $(srcdir)/WidgetMetrics.cpp \
+  $(srcdir)/WindowCompositor.cpp \
+  $(srcdir)/WindowThread.cpp
+
+if !NUX_MINIMAL
+source_cpp += \
+  $(srcdir)/ActionItem.cpp \
+  $(srcdir)/AnimatedTextureArea.cpp \
+  $(srcdir)/ColorEditor.cpp \
+  $(srcdir)/ColorPickerDialog.cpp \
+  $(srcdir)/ColorPreview.cpp \
   $(srcdir)/Dialog.cpp \
   $(srcdir)/DoubleValidator.cpp \
   $(srcdir)/EditTextBox.cpp \
   $(srcdir)/FileSelector.cpp \
   $(srcdir)/FloatingWindow.cpp \
-  $(srcdir)/GridHLayout.cpp \
   $(srcdir)/GroupBox.cpp \
   $(srcdir)/GroupBox2.cpp \
   $(srcdir)/HexRegExpValidator.cpp \
-  $(srcdir)/HLayout.cpp \
   $(srcdir)/HScrollBar.cpp \
-  $(srcdir)/HSplitter.cpp \
   $(srcdir)/IntegerValidator.cpp \
-  $(srcdir)/View.cpp \
-  $(srcdir)/KeyboardHandler.cpp \
-  $(srcdir)/LayeredLayout.cpp \
-  $(srcdir)/Layout.cpp \
-  $(srcdir)/LinearLayout.cpp \
-  $(srcdir)/MainLoopGLib.cpp \
   $(srcdir)/MenuPage.cpp \
   $(srcdir)/MenuBar.cpp \
-  $(srcdir)/EMMetrics.cpp \
   $(srcdir)/MouseAreaCtrl.cpp \
   $(srcdir)/NumericValuator.cpp \
-  $(srcdir)/Nux.cpp \
-  $(srcdir)/NuxGlobalInitializer.cpp \
-  $(srcdir)/Painter.cpp \
   $(srcdir)/Panel.cpp \
   $(srcdir)/PopUpWindow.cpp \
+  $(srcdir)/InputAreaProximity.cpp \
   $(srcdir)/RadioButton.cpp \
   $(srcdir)/RadioButtonGroup.cpp \
   $(srcdir)/RangeValue.cpp \
@@ -92,28 +116,19 @@ source_cpp = \
   $(srcdir)/SpinBox.cpp \
   $(srcdir)/SpinBoxDouble.cpp \
   $(srcdir)/SpinBox_Logic.cpp \
-  $(srcdir)/StaticText.cpp \
-  $(srcdir)/StaticTextBox.cpp \
-  $(srcdir)/SystemThread.cpp \
   $(srcdir)/TabView.cpp \
-  $(srcdir)/TextEntry.cpp \
-  $(srcdir)/InputMethodIBus.cpp \
-  $(srcdir)/TextLoader.cpp \
-  $(srcdir)/TextureArea.cpp \
   $(srcdir)/Timeline.cpp \
   $(srcdir)/TimelineEasings.cpp \
-  $(srcdir)/TimerProc.cpp \
   $(srcdir)/ToggleButton.cpp \
   $(srcdir)/ToolButton.cpp \
-  $(srcdir)/Utils.cpp \
-  $(srcdir)/Theme.cpp \
   $(srcdir)/Validator.cpp \
-  $(srcdir)/VLayout.cpp \
-  $(srcdir)/VScrollBar.cpp \
-  $(srcdir)/VSplitter.cpp \
-  $(srcdir)/WidgetMetrics.cpp \
-  $(srcdir)/WindowCompositor.cpp \
-  $(srcdir)/WindowThread.cpp
+  $(srcdir)/VScrollBar.cpp
+endif
+
+if USE_X11
+source_cpp += \
+  $(srcdir)/InputMethodIBus.cpp
+endif
 
 if HAVE_GEIS
 source_cpp += \
@@ -124,60 +139,85 @@ source_cpp += \
 endif
 
 source_h = \
-  $(builddir)/ABI.h \
+  $(builddir)/Features.h \
   $(srcdir)/AbstractButton.h \
   $(srcdir)/AbstractCheckedButton.h \
   $(srcdir)/AbstractComboBox.h \
   $(srcdir)/AbstractPaintLayer.h \
   $(srcdir)/AbstractThread.h \
-  $(srcdir)/ActionItem.h \
-  $(srcdir)/AnimatedTextureArea.h \
-  $(srcdir)/PaintLayer.h \
-  $(srcdir)/InputArea.h \
   $(srcdir)/Area.h \
   $(srcdir)/BaseWindow.h \
   $(srcdir)/BasicView.h \
   $(srcdir)/Button.h \
-  $(srcdir)/Canvas.h \
   $(srcdir)/CairoWrapper.h \
+  $(srcdir)/Canvas.h \
   $(srcdir)/CheckBox.h \
   $(srcdir)/ClientArea.h \
-  $(srcdir)/ColorEditor.h \
-  $(srcdir)/ColorPickerDialog.h \
-  $(srcdir)/ColorPreview.h \
   $(srcdir)/Coverflow.h \
   $(srcdir)/CoverflowItem.h \
   $(srcdir)/CoverflowModel.h \
-  $(srcdir)/Dialog.h \
-  $(srcdir)/DoubleValidator.h \
-  $(srcdir)/EditTextBox.h \
-  $(builddir)/Features.h \
-  $(srcdir)/FileSelector.h \
-  $(srcdir)/FloatingWindow.h \
+  $(srcdir)/EMMetrics.h \
   $(srcdir)/GridHLayout.h \
-  $(srcdir)/GroupBox.h \
-  $(srcdir)/GroupBox2.h \
-  $(srcdir)/HexRegExpValidator.h \
   $(srcdir)/HLayout.h \
-  $(srcdir)/HScrollBar.h \
   $(srcdir)/HSplitter.h \
-  $(srcdir)/IntegerValidator.h \
-  $(srcdir)/View.h \
+  $(srcdir)/InputArea.h \
   $(srcdir)/KeyboardHandler.h \
+  $(srcdir)/KineticScrolling/AxisDecelerationAnimation.h \
+  $(srcdir)/KineticScrolling/KineticAxisScroller.h \
+  $(srcdir)/KineticScrolling/KineticScroller.h \
+  $(srcdir)/KineticScrolling/KineticScrollingEnums.h \
+  $(srcdir)/KineticScrolling/KineticScrollingTickSource.h \
+  $(srcdir)/KineticScrolling/VelocityCalculator.h \
+  $(srcdir)/KineticScrollView.h \
   $(srcdir)/LayeredLayout.h \
   $(srcdir)/Layout.h \
   $(srcdir)/LinearLayout.h \
-  $(srcdir)/MenuPage.h \
-  $(srcdir)/MenuBar.h \
-  $(srcdir)/EMMetrics.h \
-  $(srcdir)/MouseAreaCtrl.h \
-  $(srcdir)/NumericValuator.h \
   $(srcdir)/Nux.h \
-  $(srcdir)/NuxTimerTickSource.h \
   $(srcdir)/NuxGlobalInitializer.h \
   $(srcdir)/Painter.h \
+  $(srcdir)/PaintLayer.h \
+  $(srcdir)/StaticText.h \
+  $(srcdir)/StaticTextBox.h \
+  $(srcdir)/SystemThread.h \
+  $(srcdir)/TextEntry.h \
+  $(srcdir)/TextLoader.h \
+  $(srcdir)/TextureArea.h \
+  $(srcdir)/Theme.h \
+  $(srcdir)/TimerProc.h \
+  $(srcdir)/Utils.h \
+  $(srcdir)/VLayout.h \
+  $(srcdir)/View.h \
+  $(srcdir)/VSplitter.h \
+  $(srcdir)/WidgetMetrics.h \
+  $(srcdir)/WindowCompositor.h \
+  $(srcdir)/WindowThread.h
+
+if !NUX_MINIMAL
+source_h += \
+  $(builddir)/ABI.h \
+  $(srcdir)/ActionItem.h \
+  $(srcdir)/AnimatedTextureArea.h \
+  $(srcdir)/ColorEditor.h \
+  $(srcdir)/ColorPickerDialog.h \
+  $(srcdir)/ColorPreview.h \
+  $(srcdir)/Dialog.h \
+  $(srcdir)/DoubleValidator.h \
+  $(srcdir)/EditTextBox.h \
+  $(srcdir)/FileSelector.h \
+  $(srcdir)/FloatingWindow.h \
+  $(srcdir)/GroupBox.h \
+  $(srcdir)/GroupBox2.h \
+  $(srcdir)/HexRegExpValidator.h \
+  $(srcdir)/HScrollBar.h \
+  $(srcdir)/IntegerValidator.h \
+  $(srcdir)/MenuPage.h \
+  $(srcdir)/MenuBar.h \
+  $(srcdir)/MouseAreaCtrl.h \
+  $(srcdir)/NumericValuator.h \
+  $(srcdir)/NuxTimerTickSource.h \
   $(srcdir)/Panel.h \
   $(srcdir)/PopUpWindow.h \
+  $(srcdir)/InputAreaProximity.h \
   $(srcdir)/RadioButton.h \
   $(srcdir)/RadioButtonGroup.h \
   $(srcdir)/RangeValue.h \
@@ -189,29 +229,20 @@ source_h = \
   $(srcdir)/SpinBox.h \
   $(srcdir)/SpinBoxDouble.h \
   $(srcdir)/SpinBox_Logic.h \
-  $(srcdir)/StaticText.h \
-  $(srcdir)/StaticTextBox.h \
-  $(srcdir)/SystemThread.h \
   $(srcdir)/TabView.h \
-  $(srcdir)/TextEntry.h \
   $(srcdir)/TextEntryComposeSeqs.h \
-  $(srcdir)/InputMethodIBus.h \
-  $(srcdir)/TextLoader.h \
-  $(srcdir)/TextureArea.h \
   $(srcdir)/Timeline.h \
   $(srcdir)/TimelineEasings.h \
-  $(srcdir)/TimerProc.h \
   $(srcdir)/ToolButton.h \
   $(srcdir)/ToggleButton.h \
-  $(srcdir)/Theme.h \
-  $(srcdir)/Utils.h \
   $(srcdir)/Validator.h \
-  $(srcdir)/VLayout.h \
-  $(srcdir)/VScrollBar.h \
-  $(srcdir)/VSplitter.h \
-  $(srcdir)/WidgetMetrics.h \
-  $(srcdir)/WindowCompositor.h \
-  $(srcdir)/WindowThread.h
+  $(srcdir)/VScrollBar.h
+endif
+
+if USE_X11
+source_cpp += \
+  $(srcdir)/InputMethodIBus.h
+endif
 
 if HAVE_GEIS
 source_h += \
@@ -243,6 +274,17 @@ nux_HEADERS = $(source_h)
 
 nuxprogramframeworkdir      = $(includedir)/Nux-@NUX_API_VERSION@/Nux/ProgramFramework
 nuxprogramframework_HEADERS = $(nuxprogramframework_h)
+
+kineticscrolling_h = \
+  $(srcdir)/KineticScrolling/AxisDecelerationAnimation.h \
+  $(srcdir)/KineticScrolling/KineticAxisScroller.h \
+  $(srcdir)/KineticScrolling/KineticScroller.h \
+  $(srcdir)/KineticScrolling/KineticScrollingEnums.h \
+  $(srcdir)/KineticScrolling/KineticScrollingTickSource.h \
+  $(srcdir)/KineticScrolling/VelocityCalculator.h
+
+kineticscrollingdir      = $(includedir)/Nux-@NUX_API_VERSION@/Nux/KineticScrolling
+kineticscrolling_HEADERS = $(kineticscrolling_h)
 
 # pkg-config file
 nux-@NUX_API_VERSION@.pc: nux.pc
