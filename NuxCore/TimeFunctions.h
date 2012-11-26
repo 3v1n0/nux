@@ -56,22 +56,6 @@ namespace nux
     void GetTime();
   };
 
-  //! Returns the time that has passed in seconds. The origin is unknown.
-  /*!
-      Returns the time that has passed in seconds. The origin is unknown.
-
-      @return the time passed in seconds.
-  */
-  double Seconds();
-
-  //! Returns the time that has passed in milliseconds. The origin is unknown.
-  /*!
-      Returns the time that has passed in milliseconds. The origin is unknown.
-
-      @return the time passed in milliseconds.
-  */
-  double MilliSeconds();
-
   // Retrieves the current local date and time.
   void GetLocalTime (unsigned int &Year,
                      unsigned int &Month,
