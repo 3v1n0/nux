@@ -84,6 +84,12 @@ int AnimateValue<VALUE_TYPE>::Duration() const
 }
 
 template <typename VALUE_TYPE>
+int AnimateValue<VALUE_TYPE>::CurrentTimePosition() const
+{
+  return msec_current_;
+}
+
+template <typename VALUE_TYPE>
 VALUE_TYPE const& AnimateValue<VALUE_TYPE>::GetStartValue() const
 {
   return start_value_;
