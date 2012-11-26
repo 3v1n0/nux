@@ -431,6 +431,31 @@ TEST(TestAnimateValue, TestUsesEasingFunction)
   }
 }
 
+TEST(TestAnimateValue, TestAnimateIntReverse)
+{
+  nt::ChangeRecorder<int> recorder;
+  na::AnimateValue<int> animation(10, 20, 1000);
+  animation.updated.connect(recorder.listener());
+
+  animation.Start();
+  for (int i = 0; i < 3; ++i)
+    animation.Advance(201);
+
+  int current_value = animation.GetCurrentValue();
+  int current_time_pos = animation.CurrentTimePosition();
+  animation.Reverse();
+  ASSERT_THAT(animation.GetStartValue(), Eq(current_value));
+  ASSERT_THAT(animation.GetFinishValue(), Eq(10));
+  ASSERT_THAT(animation.Duration(), Eq(1000 - current_time_pos));
+
+  for (int i = 0; i < 6; ++i)
+    animation.Advance(201);
+
+  std::vector<int> expected = {10, 12, 14, 16, 16, 12, 10};
+
+  ASSERT_THAT(recorder.changed_values, Eq(expected));
+}
+
 TEST(TestAnimateValue, TestAnimatePoint)
 {
   nt::ChangeRecorder<nux::Point> recorder;
