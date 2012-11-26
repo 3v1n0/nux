@@ -82,6 +82,8 @@ public:
   AnimateValue& SetDuration(int msecs);
   AnimateValue& SetEasingCurve(EasingCurve const& curve);
 
+  void Reverse();
+
   virtual int Duration() const;
   virtual int CurrentTimePosition() const;
 

@@ -140,6 +140,23 @@ void AnimateValue<VALUE_TYPE>::Restart()
   updated.emit(current_value_);
 }
 
+template <typename VALUE_TYPE>
+void AnimateValue<VALUE_TYPE>::Reverse()
+{
+  if (CurrentState() == Running)
+  {
+    int duration = (msec_current_ < msec_duration_) ? msec_duration_ - msec_current_ : 0;
+    VALUE_TYPE new_start = GetCurrentValue();
+    VALUE_TYPE new_end = GetStartValue();
+
+    Stop();
+    SetStartValue(new_start);
+    SetFinishValue(new_end);
+    SetDuration(duration);
+    Start();
+  }
+}
+
 
 }}
 
