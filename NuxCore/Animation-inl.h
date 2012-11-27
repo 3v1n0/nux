@@ -143,16 +143,20 @@ void AnimateValue<VALUE_TYPE>::Restart()
 template <typename VALUE_TYPE>
 void AnimateValue<VALUE_TYPE>::Reverse()
 {
-  if (CurrentState() == Running)
-  {
-    int duration = (msec_current_ < msec_duration_) ? msec_duration_ - msec_current_ : 0;
-    VALUE_TYPE new_start = GetCurrentValue();
-    VALUE_TYPE new_end = GetStartValue();
+  bool running = (CurrentState() == Running);
+  VALUE_TYPE new_start = GetCurrentValue();
+  VALUE_TYPE new_end = GetStartValue();
+  int new_duration = msec_current_;
 
+  if (running)
     Stop();
-    SetStartValue(new_start);
-    SetFinishValue(new_end);
-    SetDuration(duration);
+
+  SetStartValue(new_start);
+  SetFinishValue(new_end);
+
+  if (running)
+  {
+    SetDuration(new_duration);
     Start();
   }
 }

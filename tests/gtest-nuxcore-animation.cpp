@@ -446,12 +446,12 @@ TEST(TestAnimateValue, TestAnimateIntReverse)
   animation.Reverse();
   ASSERT_THAT(animation.GetStartValue(), Eq(current_value));
   ASSERT_THAT(animation.GetFinishValue(), Eq(10));
-  ASSERT_THAT(animation.Duration(), Eq(1000 - current_time_pos));
+  ASSERT_THAT(animation.Duration(), Eq(current_time_pos));
 
   for (int i = 0; i < 6; ++i)
     animation.Advance(201);
 
-  std::vector<int> expected = {10, 12, 14, 16, 16, 12, 10};
+  std::vector<int> expected = {10, 12, 14, 16, 16, 14, 12, 10};
 
   ASSERT_THAT(recorder.changed_values, Eq(expected));
 }
