@@ -431,6 +431,14 @@ TEST(TestAnimateValue, TestUsesEasingFunction)
   }
 }
 
+TEST(TestAnimateValue, TestAnimateIntReverseStopped)
+{
+  na::AnimateValue<int> animation(10, 20, 1000);
+  animation.Reverse();
+  ASSERT_THAT(animation.GetStartValue(), Eq(20));
+  ASSERT_THAT(animation.GetFinishValue(), Eq(10));
+}
+
 TEST(TestAnimateValue, TestAnimateIntReverse)
 {
   nt::ChangeRecorder<int> recorder;

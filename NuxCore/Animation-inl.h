@@ -144,20 +144,21 @@ template <typename VALUE_TYPE>
 void AnimateValue<VALUE_TYPE>::Reverse()
 {
   bool running = (CurrentState() == Running);
-  VALUE_TYPE new_start = GetCurrentValue();
-  VALUE_TYPE new_end = GetStartValue();
-  int new_duration = msec_current_;
-
-  if (running)
-    Stop();
-
-  SetStartValue(new_start);
-  SetFinishValue(new_end);
 
   if (running)
   {
+    VALUE_TYPE new_start = GetCurrentValue();
+    VALUE_TYPE new_end = GetStartValue();
+    int new_duration = msec_current_;
+    SetStartValue(new_start);
+    SetFinishValue(new_end);
     SetDuration(new_duration);
-    Start();
+    Restart();
+  }
+  else
+  {
+    // Reversing a stopped animation shouldn't start it.
+    std::swap(start_value_, finish_value_);
   }
 }
 
