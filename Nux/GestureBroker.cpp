@@ -48,9 +48,7 @@ void GestureBroker::ProcessGestureBegin(nux::GestureEvent &event)
 
 void GestureBroker::OnGestureLostAllTargets (Gesture &gesture)
 {
-  /* Reject this gesture if we can no longer accept it */
-  if (gesture.GetAcceptanceStatus() == Gesture::AcceptanceStatus::UNDECIDED)
-    gesture.Reject ();
+  
   gesture_set_.Remove(gesture);
 }
 
@@ -69,7 +67,7 @@ bool GestureBroker::BindNewGestureToTarget(nux::GestureEvent &event, ShPtGesture
     {
       gesture = std::shared_ptr<Gesture>(new Gesture(event));
       gesture_lost_all_targets_connections_[gesture] =
-        gesture->on_lost_all_targets.connect (sigc::mem_fun (this, &GestureBroker::OnGestureLostAllTargets));
+        gesture->lost_all_targets.connect (sigc::mem_fun (this, &GestureBroker::OnGestureLostAllTargets));
     }
 
     gesture->AddTarget(target);

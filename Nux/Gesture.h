@@ -55,7 +55,13 @@ class GestureTarget
       return Equals(other);
     }
 
-    sigc::signal<void, const GestureTarget &> on_target_unavailable;
+    /***
+     * We might not have ownership of every single object that we create
+     * implementations of GestureTarget's to wrap around so this signal
+     * indicates to the owner of the GestureTarget that the underlying
+     * object is no longer available, and this target should be removed
+     */
+    sigc::signal<void, const GestureTarget &> died;
 
   private:
     /*!
@@ -129,7 +135,12 @@ class Gesture
 
     AcceptanceStatus GetAcceptanceStatus() const {return acceptance_status_;}
 
-    sigc::signal <void, Gesture &> on_lost_all_targets;
+    /***
+     * This signal is emitted when a Gesture loses all of its targets and
+     * can no longer be delivered to anything. This might provide a hint
+     * to the owner to stop tracking the gesture
+     */
+    sigc::signal <void, Gesture &> lost_all_targets;
 
   private:
     const GestureEvent &GetLatestEvent() const;
@@ -139,7 +150,7 @@ class Gesture
         std::list<ShPtGestureTarget>::iterator &it_requestor);
 
     std::list<ShPtGestureTarget> target_list_;
-    std::map <ShPtGestureTarget, sigc::connection> target_unavailable_connections_;
+    std::map <ShPtGestureTarget, sigc::connection> target_died_connections_;
 
     // events that are waiting to be delivered
     std::vector<GestureEvent> queued_events_;

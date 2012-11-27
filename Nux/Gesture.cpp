@@ -68,8 +68,8 @@ Gesture::Gesture(const nux::GestureEvent &event)
 
 void Gesture::AddTarget(ShPtGestureTarget target)
 {
-  target_unavailable_connections_[target] =
-    target->on_target_unavailable.connect (sigc::mem_fun (this, &Gesture::RemoveTarget));
+  target_died_connections_[target] =
+    target->died.connect (sigc::mem_fun (this, &Gesture::RemoveTarget));
   target_list_.push_back(target);
 }
 
@@ -87,16 +87,22 @@ void Gesture::RemoveTarget(const GestureTarget &target)
   if (target_iterator != target_list_.end ())
   {
     auto connection_iterator =
-      target_unavailable_connections_.find (*target_iterator);
+      target_died_connections_.find (*target_iterator);
 
-    if (connection_iterator != target_unavailable_connections_.end ())
+    if (connection_iterator != target_died_connections_.end ())
       connection_iterator->second.disconnect ();
 
     target_list_.erase (target_iterator);
   }
 
   if (target_list_.empty ())
-    on_lost_all_targets.emit (*this);
+  {
+    /* Reject this gesture if we can no longer accept it */
+    if (GetAcceptanceStatus() == Gesture::AcceptanceStatus::UNDECIDED)
+      Reject ();
+
+    lost_all_targets.emit (*this);
+  }
 }
 
 void Gesture::EnableEventDelivery()

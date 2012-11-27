@@ -34,9 +34,9 @@ class SimpleTarget : public nux::GestureTarget
       return GestureDeliveryRequest::NONE;
     }
 
-    void MakeUnavailable()
+    void Die()
     {
-      on_target_unavailable.emit (*this);
+      died.emit (*this);
     }
 
     int id;
