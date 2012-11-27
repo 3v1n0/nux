@@ -84,6 +84,12 @@ int AnimateValue<VALUE_TYPE>::Duration() const
 }
 
 template <typename VALUE_TYPE>
+int AnimateValue<VALUE_TYPE>::CurrentTimePosition() const
+{
+  return msec_current_;
+}
+
+template <typename VALUE_TYPE>
 VALUE_TYPE const& AnimateValue<VALUE_TYPE>::GetStartValue() const
 {
   return start_value_;
@@ -132,6 +138,25 @@ void AnimateValue<VALUE_TYPE>::Restart()
   msec_current_ = 0;
   current_value_ = start_value_;
   updated.emit(current_value_);
+}
+
+template <typename VALUE_TYPE>
+void AnimateValue<VALUE_TYPE>::Reverse()
+{
+  bool running = (CurrentState() == Running);
+
+  if (running)
+  {
+    finish_value_ = start_value_;
+    start_value_ = current_value_;
+    msec_duration_ = msec_current_;
+    Restart();
+  }
+  else
+  {
+    // Reversing a stopped animation shouldn't start it.
+    std::swap(start_value_, finish_value_);
+  }
 }
 
 
