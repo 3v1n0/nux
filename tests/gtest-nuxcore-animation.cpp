@@ -129,6 +129,7 @@ class MockAnimation : public na::Animation
 {
 public:
   MOCK_CONST_METHOD0(Duration, int());
+  MOCK_CONST_METHOD0(CurrentTimePosition, int());
   MOCK_METHOD1(Advance, void(int));
   MOCK_METHOD0(Restart, void());
 
@@ -332,6 +333,7 @@ TEST(TestAnimateValue, TestConstruction)
   ASSERT_THAT(dafault_int_animation.GetCurrentValue(), Eq(0));
   ASSERT_THAT(dafault_int_animation.GetFinishValue(), Eq(0));
   ASSERT_THAT(dafault_int_animation.Duration(), Eq(0));
+  ASSERT_THAT(dafault_int_animation.CurrentTimePosition(), Eq(0));
 
   na::AnimateValue<int> value_int_animation(10, 20, 1000);
   ASSERT_THAT(value_int_animation.CurrentState(), Eq(na::Animation::Stopped));
@@ -339,6 +341,7 @@ TEST(TestAnimateValue, TestConstruction)
   ASSERT_THAT(value_int_animation.GetCurrentValue(), Eq(10));
   ASSERT_THAT(value_int_animation.GetFinishValue(), Eq(20));
   ASSERT_THAT(value_int_animation.Duration(), Eq(1000));
+  ASSERT_THAT(value_int_animation.CurrentTimePosition(), Eq(0));
 }
 
 TEST(TestAnimateValue, TestStartEmitsInitialValue)
@@ -361,8 +364,19 @@ TEST(TestAnimateValue, TestAdvance)
   animation.finished.connect(finished_called.sigc_callback());
 
   animation.Start();
-  for (int i = 0; i < 11; ++i) // Advance one more time than necessary
-    animation.Advance(101);
+  int advance_msec = 101;
+  for (int i = 0; i < 10; ++i)
+  {
+    int expected_value = advance_msec * (i + 1);
+
+    animation.Advance(advance_msec);
+
+    if (expected_value < animation.Duration())
+      ASSERT_THAT(animation.CurrentTimePosition(), Eq(101 * (i + 1)));
+  }
+
+  // Advance one more time than necessary
+  animation.Advance(advance_msec);
 
   std::vector<int> expected = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
 
@@ -415,6 +429,39 @@ TEST(TestAnimateValue, TestUsesEasingFunction)
   {
     ASSERT_THAT(recorder.changed_values[i], FloatEq(expected[i]));
   }
+}
+
+TEST(TestAnimateValue, TestAnimateIntReverseStopped)
+{
+  na::AnimateValue<int> animation(10, 20, 1000);
+  animation.Reverse();
+  ASSERT_THAT(animation.GetStartValue(), Eq(20));
+  ASSERT_THAT(animation.GetFinishValue(), Eq(10));
+}
+
+TEST(TestAnimateValue, TestAnimateIntReverse)
+{
+  nt::ChangeRecorder<int> recorder;
+  na::AnimateValue<int> animation(10, 20, 1000);
+  animation.updated.connect(recorder.listener());
+
+  animation.Start();
+  for (int i = 0; i < 3; ++i)
+    animation.Advance(201);
+
+  int current_value = animation.GetCurrentValue();
+  int current_time_pos = animation.CurrentTimePosition();
+  animation.Reverse();
+  ASSERT_THAT(animation.GetStartValue(), Eq(current_value));
+  ASSERT_THAT(animation.GetFinishValue(), Eq(10));
+  ASSERT_THAT(animation.Duration(), Eq(current_time_pos));
+
+  for (int i = 0; i < 6; ++i)
+    animation.Advance(201);
+
+  std::vector<int> expected = {10, 12, 14, 16, 16, 14, 12, 10};
+
+  ASSERT_THAT(recorder.changed_values, Eq(expected));
 }
 
 TEST(TestAnimateValue, TestAnimatePoint)
