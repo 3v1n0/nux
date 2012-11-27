@@ -147,12 +147,9 @@ void AnimateValue<VALUE_TYPE>::Reverse()
 
   if (running)
   {
-    VALUE_TYPE new_start = GetCurrentValue();
-    VALUE_TYPE new_end = GetStartValue();
-    int new_duration = msec_current_;
-    SetStartValue(new_start);
-    SetFinishValue(new_end);
-    SetDuration(new_duration);
+    finish_value_ = start_value_;
+    start_value_ = current_value_;
+    msec_duration_ = msec_current_;
     Restart();
   }
   else
