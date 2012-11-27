@@ -25,6 +25,9 @@
 /* Xlib.h is the default header that is included and has the core functionallity */
 #include <X11/Xlib.h>
 
+namespace nux
+{
+
 class XICClient
 {
 public:
@@ -51,5 +54,7 @@ private:
 
   bool focused_;
 };
+
+} //namespace nux
 
 #endif // XICClient.h

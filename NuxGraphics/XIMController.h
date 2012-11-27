@@ -27,6 +27,9 @@
 /* Xlib.h is the default header that is included and has the core functionallity */
 #include <X11/Xlib.h>
 
+namespace nux
+{
+
 class XIMController
 {
 public:
@@ -42,8 +45,8 @@ public:
   void FocusOutXIC();
 private:
   void InitXIMCallback();
-  static void SetupXIMClientCallback(Display *dpy, XPointer client_data, XPointer call_data);
-  static void EndXIMClientCallback(Display *dpy, XPointer client_data, XPointer call_data);
+  static void SetupXIMClientCallback(Display* dpy, XPointer client_data, XPointer call_data);
+  static void EndXIMClientCallback(Display* dpy, XPointer client_data, XPointer call_data);
 
   void SetupXIM();
   void SetupXIMDestroyedCallback();
@@ -53,5 +56,7 @@ private:
   XIM xim_;
   XICClient xic_client_;
 };
+
+} //namespace nux
 
 #endif // XIMController.h

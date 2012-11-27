@@ -26,17 +26,20 @@
 
 DECLARE_LOGGER(logger, "xim.controller");
 
+namespace nux
+{
+
 XIMController::XIMController(Display* display)
-  : display_(display),
-    window_(0),
-    xim_(NULL)
+  : display_(display)
+  , window_(0)
+  , xim_(NULL)
 {
   InitXIMCallback();
 }
 
 XIMController::~XIMController()
 {
-  /* The XIC must be destroyed before the XIM */
+  // The XIC must be destroyed before the XIM
   if (xic_client_.HasXIC())
     xic_client_.DestroyXIC();
 
@@ -73,9 +76,8 @@ void XIMController::FocusOutXIC()
 
 void XIMController::InitXIMCallback()
 {
-  const char *xmodifier;
-  /* don't do anything if we are using ibus */
-  xmodifier = getenv("XMODIFIERS");
+  char* const xmodifier = getenv("XMODIFIERS");
+
   if (xmodifier && strstr(xmodifier,"ibus") != NULL)
   {
     LOG_WARN(logger) << "IBus natively supported.";
@@ -99,13 +101,13 @@ void XIMController::InitXIMCallback()
   }
 }
 
-void XIMController::SetupXIMClientCallback(Display *dpy, XPointer client_data, XPointer call_data)
+void XIMController::SetupXIMClientCallback(Display* dpy, XPointer client_data, XPointer call_data)
 {
   XIMController* self = (XIMController*)client_data;
   self->SetupXIM();
 }
 
-void XIMController::EndXIMClientCallback(Display *dpy, XPointer client_data, XPointer call_data)
+void XIMController::EndXIMClientCallback(Display* dpy, XPointer client_data, XPointer call_data)
 {
   XIMController* self = (XIMController*)client_data;
   self->xim_ = NULL;
@@ -140,3 +142,5 @@ void XIMController::SetupXIMDestroyedCallback()
   destroy_callback.client_data = (XPointer)this;
   XSetIMValues (xim_, XNDestroyCallback, &destroy_callback, NULL);
 }
+
+} //namespace nux

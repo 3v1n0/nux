@@ -19,13 +19,15 @@
 *
 */
 
-
 #include "XICClient.h"
 
+namespace nux
+{
+
 XICClient::XICClient()
-  : xic_(NULL),
-    xim_style_(0),
-    focused_(false)
+  : xic_(NULL)
+  , xim_style_(0)
+  , focused_(false)
 {
 }
 
@@ -60,9 +62,7 @@ void XICClient::SetupXIMStyle(XIM xim)
 
 bool XICClient::HasXIC() const
 {
-  if (xic_ == NULL)
-    return false;
-  return true;
+  return xic_ != NULL;
 }
 
 XIC XICClient::GetXIC() const
@@ -108,3 +108,5 @@ void XICClient::DestroyXIC()
     xic_ = NULL;
   }
 }
+
+} //namespace nux
