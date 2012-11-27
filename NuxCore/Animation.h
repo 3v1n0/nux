@@ -46,6 +46,7 @@ public:
   virtual ~Animation();
 
   virtual int Duration() const = 0;
+  virtual int CurrentTimePosition() const = 0;
 
   void Start();
   void Stop();
@@ -81,7 +82,10 @@ public:
   AnimateValue& SetDuration(int msecs);
   AnimateValue& SetEasingCurve(EasingCurve const& curve);
 
+  void Reverse();
+
   virtual int Duration() const;
+  virtual int CurrentTimePosition() const;
 
   sigc::signal<void, VALUE_TYPE const&> updated;
 

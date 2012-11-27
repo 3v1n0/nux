@@ -75,7 +75,7 @@ void InputAreaProximity::CheckMousePosition(Point const& mouse)
   if (!area_.IsValid())
     return;
 
-  Geometry const& geo = area_->GetGeometry();
+  Geometry const& geo = area_->GetAbsoluteGeometry();
   Geometry const& expanded = geo.GetExpand(proximity_, proximity_);
 
   if (!is_mouse_near_ && expanded.IsInside(mouse))
