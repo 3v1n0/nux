@@ -48,7 +48,6 @@ void GestureBroker::ProcessGestureBegin(nux::GestureEvent &event)
 
 void GestureBroker::OnGestureLostAllTargets (Gesture &gesture)
 {
-  
   gesture_set_.Remove(gesture);
 }
 
@@ -67,7 +66,7 @@ bool GestureBroker::BindNewGestureToTarget(nux::GestureEvent &event, ShPtGesture
     {
       gesture = std::shared_ptr<Gesture>(new Gesture(event));
       gesture_lost_all_targets_connections_[gesture] =
-        gesture->lost_all_targets.connect (sigc::mem_fun (this, &GestureBroker::OnGestureLostAllTargets));
+        gesture->lost_all_targets.connect (sigc::mem_fun (&gesture_set_, &GestureSet::Remove));
     }
 
     gesture->AddTarget(target);
@@ -78,11 +77,6 @@ bool GestureBroker::BindNewGestureToTarget(nux::GestureEvent &event, ShPtGesture
       gesture->Accept();
       gesture->EnableEventDelivery();
     }
-  };
-
-  auto remove_target_from_existing_gesture = [&]()
-  {
-    existing_gesture->RemoveTarget (*target);
   };
 
   if (existing_gesture)
@@ -113,12 +107,12 @@ bool GestureBroker::BindNewGestureToTarget(nux::GestureEvent &event, ShPtGesture
         // than the target area can handle
         // (i.e. three fingers over an area that handles only two-fingers'
         // gestures)
-        remove_target_from_existing_gesture();
+        existing_gesture->RemoveTarget (*target);
         successful = false;
       }
       else // new_num_touches > existing_num_touches
       {
-        remove_target_from_existing_gesture();
+        existing_gesture->RemoveTarget (*target);
         create_gesture_for_target();
         successful = true;
       }
