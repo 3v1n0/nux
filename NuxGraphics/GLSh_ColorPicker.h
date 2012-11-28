@@ -46,7 +46,9 @@ namespace nux
 
     ObjectPtr<IOpenGLPixelShader> GlobalPixelShader;
     ObjectPtr<IOpenGLShaderProgram> sprog;
+#ifndef NUX_OPENGLES_20
     ObjectPtr<IOpenGLAsmShaderProgram> m_AsmProg;
+#endif
 
     UINT ViewPortX;
     UINT ViewPortY;

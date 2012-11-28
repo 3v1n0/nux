@@ -24,10 +24,12 @@
 #include "Area.h"
 #include "NuxGraphics/GraphicsEngine.h"
 #include "Layout.h"
-#include "VSplitter.h"
-#include "HSplitter.h"
 #include "BaseWindow.h"
-#include "MenuPage.h"
+#if !defined(NUX_MINIMAL)
+#  include "VSplitter.h"
+#  include "HSplitter.h"
+#  include "MenuPage.h"
+#endif
 
 #ifdef NUX_GESTURES_SUPPORT
 #include "NuxGraphics/GestureEvent.h"
@@ -512,21 +514,23 @@ namespace nux
 
       if (ic->CanBreakLayout())
       {
-
-        if ((child != 0) &&
-             (ic->Type().IsObjectType(VSplitter::StaticObjectType) || ic->Type().IsObjectType(HSplitter::StaticObjectType)))
+#if !defined(NUX_MINIMAL)
+        if ((child != 0) && (ic->Type().IsObjectType(VSplitter::StaticObjectType) || ic->Type().IsObjectType(HSplitter::StaticObjectType)))
         {
           // If this element is a Splitter, then we submit its child to the refresh list. We don't want to submit the
           // splitter because this will cause a redraw of all parts of the splitter(costly and unnecessary).
           window_thread_->QueueObjectLayout(child);
         }
         else
+#endif
         {
           window_thread_->QueueObjectLayout(ic);
         }
       }
       else if (ic->parent_area_)
+      {
         ic->parent_area_->ReconfigureParentLayout(this);
+      }
       else
       {
         window_thread_->QueueObjectLayout(ic);
@@ -551,14 +555,19 @@ namespace nux
 
           if (ic->CanBreakLayout())
           {
+#if !defined(NUX_MINIMAL)
             if ((child != 0) &&
-                 (ic->Type().IsObjectType(VSplitter::StaticObjectType) || ic->Type().IsObjectType(HSplitter::StaticObjectType)))
+                (ic->Type().IsObjectType(VSplitter::StaticObjectType) ||
+                 ic->Type().IsObjectType(HSplitter::StaticObjectType)))
             {
-              // If the parent of this element is a splitter, then we submit its child to the refresh list. We don't want to submit the
-              // splitter because this will cause a redraw of all parts of the splitter(costly and unnecessary).
+              // If the parent of this element is a splitter, then we submit
+              // its child to the refresh list. We don't want to submit the
+              // splitter because this will cause a redraw of all parts of the
+              // splitter(costly and unnecessary).
               window_thread_->QueueObjectLayout(this);
             }
             else
+#endif
             {
               window_thread_->QueueObjectLayout(ic);
             }
@@ -774,7 +783,9 @@ namespace nux
   Geometry Area::GetAbsoluteGeometry() const
   {
     if (Type().IsDerivedFromType(BaseWindow::StaticObjectType) ||
+#if !defined(NUX_MINIMAL)
       Type().IsDerivedFromType(MenuPage::StaticObjectType) ||
+#endif
       (this == window_thread_->GetLayout()))
     {
       // Do not apply the _2D_xform matrix  to a BaseWindow or the main layout
@@ -952,19 +963,20 @@ namespace nux
        // then return false.
        return false;
      }
- 
+
      bool mouse_pointer_inside_area = false;
- 
+#if !defined(NUX_MINIMAL)
      if (Type().IsDerivedFromType(MenuPage::StaticObjectType))
      {
        // A MenuPage geometry is already in absolute coordinates.
        mouse_pointer_inside_area = geometry_.IsInside(mouse_position);
      }
      else
+#endif
      {
        mouse_pointer_inside_area = GetAbsoluteGeometry().IsInside(mouse_position);
      }
- 
+
      if ((event_type == NUX_MOUSE_WHEEL) && mouse_pointer_inside_area)
      {
        if (accept_mouse_wheel_event_ == false)
@@ -985,22 +997,23 @@ namespace nux
        //    - it is not enabled
        //    - it is not visible
        // then return false.
- 
+
        return false;
      }
- 
+
      bool mouse_pointer_inside_area = false;
- 
+#if !defined(NUX_MINIMAL)
      if (Type().IsDerivedFromType(MenuPage::StaticObjectType))
      {
        // A MenuPage geometry is already in absolute coordinates.
        mouse_pointer_inside_area = geometry_.IsInside(mouse_position);
      }
      else
+#endif
      {
        mouse_pointer_inside_area = GetAbsoluteGeometry().IsInside(mouse_position);
      }
- 
+
      return mouse_pointer_inside_area;
    }
 

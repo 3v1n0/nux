@@ -101,7 +101,7 @@ namespace nux
       paint_layer_ = NULL;
     }
 
-    BaseTexture *texture = LoadTextureFromFile(filename.c_str());
+    BaseTexture *texture = LoadTextureFromFile(filename);
 
     if (texture)
     {

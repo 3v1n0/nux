@@ -471,7 +471,7 @@ namespace nux
 
     CairoGraphics::Alignment align_;
 
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     Cursor caret_cursor_;
 #endif
 
@@ -480,7 +480,7 @@ namespace nux
     std::list<Rect> last_cursor_region_;
     std::list<Rect> cursor_region_;
 
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     IBusIMEContext* ime_;
     friend class IBusIMEContext;
 #endif

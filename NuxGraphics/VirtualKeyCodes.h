@@ -134,9 +134,14 @@ namespace nux
 #define NUX_VK_RSHIFT                                   0xA1                   //   Right SHIFT key
 #define NUX_VK_LCONTROL                                 0xA2                   //   Left CONTROL key
 #define NUX_VK_RCONTROL                                 0xA3                   //   Right CONTROL key
+// To match VK in X11 file.
+#define NUX_VK_CONTROL                                  NUX_VK_LCONTROL
 #define NUX_VK_CAPITAL                                  0x14                   //   CAPS LOCK key
 #define NUX_VK_LSUPER                                   0x5B                   //   Left Windows key(Microsoft Natural Keyboard)
 #define NUX_VK_RSUPER                                   0x5C                   //   Right Windows key(Microsoft Natural Keyboard)
+// To match VK in X11 file.
+#define NUX_VK_LWIN                                     NUX_VK_LSUPER
+#define NUX_VK_RWIN                                     NUX_VK_RSUPER
 #define NUX_VK_LALT                                     0xA4                   //   Left MENU key
 #define NUX_VK_RALT                                     0xA5                   //   Right MENU key
 

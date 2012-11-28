@@ -31,7 +31,7 @@
 #include "LoggingWriter.h"
 
 #if defined(NUX_OS_LINUX)
-#include <execinfo.h>
+#  include <execinfo.h>
 #endif
 
 #include <sstream>
@@ -380,6 +380,11 @@ std::string Backtrace(int levels)
   }
 
   return sout.str();
+}
+#else
+std::string Backtrace(int /*levels*/)
+{
+  return "Backtrace not supported on this platform.\n";
 }
 #endif
 

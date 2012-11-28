@@ -124,7 +124,7 @@ namespace nux
       }
     }
 
-    if (found && (i - 1 > 0) && (radio_button_array_.size() >0))
+    if (found && (i - 1 > 0) && (!radio_button_array_.empty()))
     {
       // The previous button becomes active
       radio_button_array_[i]->SetStatePrivate(true);

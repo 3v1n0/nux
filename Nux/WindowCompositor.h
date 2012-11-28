@@ -43,6 +43,7 @@ namespace nux
   class WindowThread;
   class View;
   class InputArea;
+  class InputAreaProximity;
   class Area;
   class PaintLayer;
   class Event;
@@ -73,18 +74,24 @@ namespace nux
     void MouseEventCycle(Event& event);
     void DndEventCycle(Event& event);
 
-
     Point _mouse_position_on_owner;
     Point _mouse_position;
 
     //! Get Mouse position relative to the top left corner of the window.
     Point GetMousePosition();
-    
+
+    int GetProximityListSize() const;
+    void AddAreaInProximityList(InputAreaProximity* area_prox);
+    void RemoveAreaInProximityList(InputAreaProximity* area_prox);
+
     void KeyboardEventCycle(Event& event);
 
+#if !defined(NUX_MINIMAL)
     void MenuEventCycle(Event& event);
     MenuPage* _mouse_owner_menu_page;
     MenuPage* _mouse_over_menu_page;
+#endif
+
     bool      _starting_menu_event_cycle;
     bool      _menu_is_active;
 
@@ -182,7 +189,9 @@ namespace nux
       unsigned long special_keys_state,
       const char* text,
       int key_repeat_count);
-
+    
+    //! Checks the list of porximities to see if the mouse is near any areas. 
+    void CheckMouseNearArea(Event const& event);
 
     //! The InputArea that has the keyboard navigation focus.
     /*!
@@ -252,9 +261,11 @@ namespace nux
     void StartModalWindow(ObjectWeakPtr<BaseWindow>);
     void StopModalWindow(ObjectWeakPtr<BaseWindow>);
 
+#if !defined(NUX_MINIMAL)
     void AddMenu(MenuPage* menu, BaseWindow* window, bool OverrideCurrentMenuChain = true);
     void RemoveMenu(MenuPage* menu);
     void CleanMenu();
+#endif
 
     void PushModalWindow(ObjectWeakPtr<BaseWindow> window);
 
@@ -504,7 +515,9 @@ namespace nux
     WindowList _modal_view_window_list;
     WeakBaseWindowPtr _always_on_front_window;  //!< Floating view that always remains on top.
 
+#if !defined(NUX_MINIMAL)
     std::list<MenuPage* >* _menu_chain;
+#endif
 
     std::map<BaseWindow*, struct RenderTargetTextures> _window_to_texture_map;
 
@@ -538,6 +551,14 @@ namespace nux
 
     */
     std::list<InputArea*> keyboard_grab_stack_;
+
+    //! List of views that will get checked for the mouse_near signal
+    /*!
+        A list of views that will be checked if
+        \near the mouse. Must add views to this 
+        \list to be checked.
+    */
+    std::list<InputAreaProximity*> area_proximities_;
 
   private:
     WindowThread* window_thread_; //!< The WindowThread to which this object belongs.

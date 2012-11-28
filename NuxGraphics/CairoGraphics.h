@@ -23,7 +23,11 @@
 #ifndef CAIROGRAPHICS_H
 #define CAIROGRAPHICS_H
 
+#ifdef NUX_ARCH_ARM
+#include "cairo.h"
+#else
 #include "cairo/cairo.h"
+#endif
 #include "BitmapFormats.h"
 #include "ImageSurface.h"
 

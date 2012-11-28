@@ -6,10 +6,27 @@ nux (4.0.0-0ubuntu1) UNRELEASED; urgency=low
     - Build-Depend on dh-autoreconf and gnome-common
   * debian/rules:
     - Use dh_autoreconf
+    - Enable headless tests during build
+  * Switch to dh9 and multiarch
+  * Automatic snapshot from revision 700 (bootstrap)
+    - Fix crash when lift clicking after right clicking (LP: #1057809)
+    - Fix crash on amd64 from an invalid cast (LP: #1052765)
+    - Fix a couple crashes in example code (LP: #1064918)
+    - Fix dash and launcher being all black (LP: #1067860)
+    - Fix launcher dragging the wrong way (LP: #1057995)
+    - Only load textures once they are needed (LP: #816692)
+    - Add pointer checks for invalid cached textures (LP: #1066788)
+    - Fix some FTBFS's on armhf (LP: #1065293, LP: #1067081)
+    - Fix a bunch of compile warnings (LP: #1056633)
+    - Removed some unused code (LP: #937583)
 
   [ Didier Roche ]
   * Transition packaging to Nux 4.0
   * Add split mode for daily build
+
+  [ Ricardo Salveti de Araujo ]
+  * Doesn't need to depend on gcc 4.6 anymore (LP: #1044836)
+  * make check-headless should respect DEB_BUILD_OPTIONS=nocheck
 
  -- Didier Roche <didrocks@ubuntu.com>  Mon, 12 Nov 2012 08:12:53 +0100
 

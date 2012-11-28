@@ -9,6 +9,7 @@
 
 #include "Nux/Nux.h"
 #include "Nux/BaseWindow.h"
+#include "Nux/InputAreaProximity.h"
 #include "Nux/HLayout.h"
 #include "Nux/VLayout.h"
 #include "Nux/ProgramFramework/TestView.h"
@@ -260,6 +261,15 @@ TEST_F(TestWindowCompositor, TestSetKeyFocusArea)
     EXPECT_EQ(test_view1->registered_begin_keynav_focus_, true);
     EXPECT_EQ(test_view1->registered_end_keynav_focus_, false);
   }
+}
+
+TEST_F(TestWindowCompositor, TestInputAreaProximityNullValue)
+{
+  const int prox_size = nux::GetWindowCompositor().GetProximityListSize();
+  nux::InputAreaProximity* prox_area = new nux::InputAreaProximity(NULL, 10);
+
+  ASSERT_EQ(nux::GetWindowCompositor().GetProximityListSize(), prox_size);
+  delete prox_area;
 }
 
 #ifdef NUX_GESTURES_SUPPORT

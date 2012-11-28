@@ -58,8 +58,6 @@ gtest_nuxcore_CPPFLAGS = \
 
 gtest_nuxcore_LDADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
-  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
   $(NUX_LIBS) \
   libgtest.a
 
@@ -121,6 +119,7 @@ gtest_nux_slow_SOURCES = \
   gtest-nux-cairo-wrapper.cpp \
   gtest-nux-input-area.cpp \
   gtest-nux-main.cpp \
+  gtest-nux-inputarea-proximity.cpp \
   gtest-nux-statictext.cpp \
   gtest-nux-scrollview.cpp \
   gtest-nux-textentry.cpp \

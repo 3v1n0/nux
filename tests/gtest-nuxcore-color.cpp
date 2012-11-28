@@ -21,7 +21,7 @@
 
 #include <gmock/gmock.h>
 
-#include "Nux/Nux.h"
+#include "NuxCore/Color.h"
 
 using namespace testing;
 
@@ -312,5 +312,50 @@ TEST(TestColor, TestSubtraction)
   EXPECT_THAT(difference.alpha, FloatEq(0));
 }
 
+TEST(TestColor, TestColorToRGB)
+{
+  nux::Color color = nux::Color(0.3f, 0.8f, 0.1f, 0.5f);
+  nux::color::RedGreenBlue rgb = color;
+
+  EXPECT_EQ(rgb.red, color.red);
+  EXPECT_EQ(rgb.green, color.green);
+  EXPECT_EQ(rgb.blue, color.blue);
 }
 
+TEST(TestColor, TestRandomColor)
+{
+    float rmin = 1.0f;
+    float rmax = 0.0f;
+    float gmin = 1.0f;
+    float gmax = 0.0f;
+    float bmin = 1.0f;
+    float bmax = 0.0f;
+
+    for (int i = 0; i < 100; ++i)
+    {
+        nux::Color c = nux::color::RandomColor();
+        EXPECT_EQ(1.0f, c.alpha);
+        rmin = std::min(rmin, c.red);
+        rmax = std::max(rmax, c.red);
+        gmin = std::min(gmin, c.green);
+        gmax = std::max(gmax, c.green);
+        bmin = std::min(bmin, c.blue);
+        bmax = std::max(bmax, c.blue);
+    }
+
+    // Ultra unlikely that we create 100 identical values in a row.
+    // The universe will end long before this happens.
+    EXPECT_NE(rmin, rmax);
+    EXPECT_NE(gmin, gmax);
+    EXPECT_NE(bmin, bmax);
+
+    // Values must have changed from the initial settings
+    EXPECT_NE(1.0f, rmin);
+    EXPECT_NE(0.0f, rmax);
+    EXPECT_NE(1.0f, gmin);
+    EXPECT_NE(0.0f, gmax);
+    EXPECT_NE(1.0f, bmin);
+    EXPECT_NE(0.0f, bmax);
+}
+
+}

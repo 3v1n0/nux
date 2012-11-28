@@ -68,7 +68,7 @@ namespace nux
       return Point (x + width / 2, y + height / 2);
     }
     //! Returns a Point at the center of the Rectangle.
-    Point GetPosition()
+    Point GetPosition() const
     {
       return Point (x, y);
     }

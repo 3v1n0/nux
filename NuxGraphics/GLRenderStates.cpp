@@ -49,7 +49,6 @@ namespace nux
       UL_MAP(FRONTFACE                    ,           GL_CCW          ,       1);
 
       UL_MAP(SCISSORTESTENABLE            ,           GL_FALSE        ,       1);
-      UL_MAP(FOGENABLE                    ,           GL_FALSE        ,       1);
 
       UL_MAP(ZTESTENABLE                  ,           GL_FALSE        ,       1);
       UL_MAP(ZWRITEENABLE                 ,           GL_TRUE         ,       1);
@@ -89,11 +88,8 @@ namespace nux
       UL_MAP(BACK_STENCILZPASS            ,           GL_KEEP         ,       1);
 
 
-      UL_MAP(POINTSMOOTHENABLE            ,           GL_FALSE        ,       1);
       UL_MAP(LINESMOOTHENABLE             ,           GL_FALSE        ,       1);
-      UL_MAP(POINTSIZE                    ,           1               ,       1);
       UL_MAP(LINEWIDTH                    ,           1               ,       1);
-      UL_MAP(POINTHINT                    ,           GL_FASTEST      ,       1);
       UL_MAP(LINEHINT                     ,           GL_FASTEST      ,       1);
 
       UL_MAP(COLORWRITEENABLE_R           ,           GL_TRUE         ,       1);
@@ -140,10 +136,10 @@ namespace nux
       s_StateLUT.default_render_state[GFXRS_SRCBLEND].iValue, s_StateLUT.default_render_state[GFXRS_DESTBLEND].iValue,
       s_StateLUT.default_render_state[GFXRS_SRCBLENDALPHA].iValue, s_StateLUT.default_render_state[GFXRS_DESTBLENDALPHA ].iValue );
 
-
+#ifndef NUX_OPENGLES_20
     HW__EnableAlphaTest( s_StateLUT.default_render_state[GFXRS_ALPHATESTENABLE].iValue );
     HW__SetAlphaTestFunc( s_StateLUT.default_render_state[GFXRS_ALPHATESTFUNC].iValue, s_StateLUT.default_render_state[GFXRS_ALPHATESTREF].iValue );
-
+#endif
 
     HW__EnableStencil( s_StateLUT.default_render_state[GFXRS_STENCILENABLE].iValue );
     HW__SetStencilFunc(
@@ -155,11 +151,10 @@ namespace nux
       s_StateLUT.default_render_state[GFXRS_FRONT_STENCILZFAIL].iValue,
       s_StateLUT.default_render_state[GFXRS_FRONT_STENCILZPASS].iValue);
 
+#ifndef NUX_OPENGLES_20
     HW__EnableLineSmooth(s_StateLUT.default_render_state[GFXRS_LINESMOOTHENABLE].iValue);
+#endif
     HW__SetLineWidth(s_StateLUT.default_render_state[GFXRS_LINEWIDTH].iValue, s_StateLUT.default_render_state[GFXRS_LINEHINT].iValue);
-
-    HW__EnablePointSmooth(s_StateLUT.default_render_state[GFXRS_POINTSMOOTHENABLE].iValue);
-    HW__SetPointSize(s_StateLUT.default_render_state[GFXRS_POINTSIZE].iValue, s_StateLUT.default_render_state[GFXRS_POINTHINT].iValue);
 
 #if 0
     HW__EnableTwoSidedStencil( s_StateLUT.default_render_state[GFXRS_TWOSIDEDSTENCILENABLE].iValue );
@@ -185,7 +180,6 @@ namespace nux
 
     HW__EnableScissor( s_StateLUT.default_render_state[GFXRS_SCISSORTESTENABLE].iValue );
 
-    HW__EnableFog( s_StateLUT.default_render_state[GFXRS_FOGENABLE].iValue );
   }
 
   void GpuRenderStates::SubmitChangeStates()
@@ -205,10 +199,10 @@ namespace nux
       render_state_changes_[GFXRS_SRCBLEND].iValue, render_state_changes_[GFXRS_DESTBLEND].iValue,
       render_state_changes_[GFXRS_SRCBLENDALPHA].iValue, render_state_changes_[GFXRS_DESTBLENDALPHA ].iValue );
 
-
+#ifndef NUX_OPENGLES_20
     HW__EnableAlphaTest( render_state_changes_[GFXRS_ALPHATESTENABLE].iValue );
     HW__SetAlphaTestFunc( render_state_changes_[GFXRS_ALPHATESTFUNC].iValue, render_state_changes_[GFXRS_ALPHATESTREF].iValue );
-
+#endif
 
     HW__EnableStencil( render_state_changes_[GFXRS_STENCILENABLE].iValue );
 
@@ -221,12 +215,11 @@ namespace nux
       render_state_changes_[GFXRS_FRONT_STENCILZFAIL].iValue,
       render_state_changes_[GFXRS_FRONT_STENCILZPASS].iValue);
 
+#ifndef NUX_OPENGLES_20
     HW__EnableLineSmooth(render_state_changes_[GFXRS_LINESMOOTHENABLE].iValue);
+#endif
     HW__SetLineWidth(render_state_changes_[GFXRS_LINEWIDTH].iValue, render_state_changes_[GFXRS_LINEHINT].iValue);
 
-    HW__EnablePointSmooth(render_state_changes_[GFXRS_POINTSMOOTHENABLE].iValue);
-    HW__SetPointSize(render_state_changes_[GFXRS_POINTSIZE].iValue, render_state_changes_[GFXRS_POINTHINT].iValue);
-        
 #if 0
     HW__EnableTwoSidedStencil( s_StateLUT.default_render_state[GFXRS_TWOSIDEDSTENCILENABLE].iValue );
 
@@ -250,8 +243,6 @@ namespace nux
 #endif
 
     HW__EnableScissor( render_state_changes_[GFXRS_SCISSORTESTENABLE].iValue );
-
-    HW__EnableFog( render_state_changes_[GFXRS_FOGENABLE].iValue );
 
   }
 
