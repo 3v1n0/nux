@@ -56,6 +56,7 @@ private:
   std::vector<ShPtGestureTarget> virtual FindGestureTargets(const nux::GestureEvent &event) = 0;
 
   GestureSet gesture_set_;
+  std::map <std::shared_ptr <Gesture>, sigc::connection> gesture_lost_all_targets_connections_;
 };
 
 } // namespace nux

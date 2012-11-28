@@ -55,6 +55,14 @@ class GestureTarget
       return Equals(other);
     }
 
+    /***
+     * We might not have ownership of every single object that we create
+     * implementations of GestureTarget's to wrap around so this signal
+     * indicates to the owner of the GestureTarget that the underlying
+     * object is no longer available, and this target should be removed
+     */
+    sigc::signal<void, const GestureTarget &> died;
+
   private:
     /*!
       For some types of target, different instances may wrap the same actual target,
@@ -96,7 +104,7 @@ class Gesture
     Gesture(const GestureEvent &event);
 
     void AddTarget(ShPtGestureTarget target);
-    void RemoveTarget(ShPtGestureTarget target);
+    void RemoveTarget(const GestureTarget &target);
     const std::list<ShPtGestureTarget> &GetTargetList() const {return target_list_;}
 
     void EnableEventDelivery();
@@ -127,6 +135,13 @@ class Gesture
 
     AcceptanceStatus GetAcceptanceStatus() const {return acceptance_status_;}
 
+    /***
+     * This signal is emitted when a Gesture loses all of its targets and
+     * can no longer be delivered to anything. This might provide a hint
+     * to the owner to stop tracking the gesture
+     */
+    sigc::signal <void, Gesture &> lost_all_targets;
+
   private:
     const GestureEvent &GetLatestEvent() const;
     GestureEvent &GetLatestEvent();
@@ -135,6 +150,7 @@ class Gesture
         std::list<ShPtGestureTarget>::iterator &it_requestor);
 
     std::list<ShPtGestureTarget> target_list_;
+    std::map <ShPtGestureTarget, sigc::connection> target_died_connections_;
 
     // events that are waiting to be delivered
     std::vector<GestureEvent> queued_events_;
@@ -156,7 +172,7 @@ class GestureSet
     void Add(std::shared_ptr<Gesture> &gesture);
     std::shared_ptr<Gesture> FindFromGestureId(int gesture_id);
     std::shared_ptr<Gesture> FindFromTarget(ShPtGestureTarget target);
-    void Remove(std::shared_ptr<Gesture> &gesture);
+    void Remove(const Gesture &gesture);
 
     std::vector< std::shared_ptr<Gesture> >
       GetConflictingGestures(std::shared_ptr<Gesture> &gesture);
