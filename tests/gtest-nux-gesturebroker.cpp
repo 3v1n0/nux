@@ -36,7 +36,7 @@ class SimpleTarget : public nux::GestureTarget
 
     void Die()
     {
-      died.emit (*this);
+      died.emit(*this);
     }
 
     int id;

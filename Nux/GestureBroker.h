@@ -45,7 +45,6 @@ public:
 
 private:
 
-  void OnGestureLostAllTargets (Gesture &gesture);
   bool BindNewGestureToTarget(nux::GestureEvent &event, ShPtGestureTarget target);
 
   void ResolveBufferedGestureThatFinishedConstruction(
