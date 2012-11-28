@@ -488,6 +488,12 @@ namespace nux
       int buffer_width, int buffer_height,
       FxStructure* fx_structure, TexCoordXForm& texxform,
       const Color& c0, float sigma = 1.0f, int num_pass = 1);
+    
+   void QRP_GLSL_GetLSBlurFx(
+    int x, int y,
+    int buffer_width, int buffer_height,
+    FxStructure *fx_structure, TexCoordXForm &texxform,
+    const Color& c0, float sigma = 1.0f, int num_pass = 1);
 
     void QRP_GLSL_DisturbedTexture(
       int x, int y, int width, int height,
