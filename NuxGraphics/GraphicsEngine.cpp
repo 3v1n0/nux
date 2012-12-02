@@ -195,21 +195,23 @@ namespace nux
     SetScissor(0, 0, _graphics_display.GetWindowWidth(), _graphics_display.GetWindowHeight());
     EnableScissoring(true);
 
+    GpuDevice* gpu_device = _graphics_display.GetGpuDevice();
+    const GpuInfo& gpu_info = gpu_device->GetGpuInfo();
+
     if (create_rendering_data)
     {
 #ifndef NUX_OPENGLES_20
       bool opengl_14_support = true;
-
-      if ((_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion() == 1) &&
-        (_graphics_display.GetGpuDevice()->GetOpenGLMinorVersion() < 4))
+      if ((gpu_device->GetOpenGLMajorVersion() == 1) &&
+        (gpu_device->GetOpenGLMinorVersion() < 4))
       {
         // OpenGL version is less than OpenGL 1.4
         opengl_14_support = false;
       }
-            
-      if (_graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader() &&
-        _graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Vertex_Program() &&
-        opengl_14_support)
+
+      if (gpu_info.Support_ARB_Fragment_Shader() &&
+          gpu_info.Support_ARB_Vertex_Program() &&
+          opengl_14_support)
       {
         InitAsmColorShader();
         InitAsmTextureShader();
@@ -229,8 +231,6 @@ namespace nux
       }
 #endif
 
-      const GpuInfo& gpu_info = _graphics_display.GetGpuDevice()->GetGpuInfo();
-
       if ((gpu_info.Support_ARB_Vertex_Program() && gpu_info.Support_ARB_Fragment_Program())
           || (gpu_info.Support_ARB_Vertex_Shader() && gpu_info.Support_ARB_Fragment_Shader()))
       {
@@ -238,7 +238,7 @@ namespace nux
       }
 
       if (gpu_info.Support_EXT_Framebuffer_Object())
-        _offscreen_fbo = _graphics_display.GetGpuDevice()->CreateFrameBufferObject();
+        _offscreen_fbo = gpu_device->CreateFrameBufferObject();
 
       _offscreen_color_rt0  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
       _offscreen_color_rt1  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
@@ -1312,7 +1312,10 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
       colorbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
     }
 
-    if ((depthbuffer.IsValid()) && ((depthbuffer->GetWidth() != width) || (depthbuffer->GetHeight() != height)))
+    bool use_depth_buffer = _graphics_display.GetGpuDevice()->GetGpuInfo().Support_Depth_Buffer();
+    if (use_depth_buffer &&
+        depthbuffer.IsValid() &&
+        ((depthbuffer->GetWidth() != width) || (depthbuffer->GetHeight() != height)))
     {
       // Generate a new depth texture only if a valid one was passed to this function.
       depthbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);      
@@ -1321,7 +1324,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
     fbo->FormatFrameBufferObject(width, height, BITFMT_R8G8B8A8);
     fbo->SetRenderTarget(0, colorbuffer->GetSurfaceLevel(0));
     
-    if (depthbuffer.IsValid())
+    if (use_depth_buffer && depthbuffer.IsValid())
       fbo->SetDepthSurface(depthbuffer->GetSurfaceLevel(0));
     else
       fbo->SetDepthSurface(ObjectPtr<IOpenGLSurface>(NULL));

@@ -32,7 +32,8 @@ namespace nux
   NUX_IMPLEMENT_OBJECT_TYPE(IOpenGLFrameBufferObject);
 
   IOpenGLFrameBufferObject::IOpenGLFrameBufferObject(NUX_FILE_LINE_DECL)
-    :   IOpenGLResource(RTFRAMEBUFFEROBJECT, NUX_FILE_LINE_PARAM)
+  : IOpenGLResource(RTFRAMEBUFFEROBJECT, NUX_FILE_LINE_PARAM)
+  , platform_support_for_depth_texture_(false)
   {
     attachment_width_ = 1;
     attachment_height_ = 1;
@@ -43,6 +44,11 @@ namespace nux
     {
       texture_attachment_array_.push_back(ObjectPtr<IOpenGLBaseTexture> (0));
       surface_attachment_array_.push_back(ObjectPtr<IOpenGLSurface> (0));
+    }
+
+    if (GetGraphicsDisplay()->GetGpuDevice() && GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().Support_Depth_Buffer())
+    {
+      platform_support_for_depth_texture_ = true;
     }
 
     FormatFrameBufferObject(attachment_width_, attachment_height_, _PixelFormat);
@@ -174,7 +180,10 @@ namespace nux
 
   int IOpenGLFrameBufferObject::SetDepthSurface(ObjectPtr<IOpenGLSurface> pDepthSurface)
   {
-    //nuxAssert(pDepthSurface.IsValid());
+    if (!platform_support_for_depth_texture_)
+    {
+      return 0;
+    }
 
     if (pDepthSurface.IsNull())
     {
@@ -208,6 +217,11 @@ namespace nux
 
   int IOpenGLFrameBufferObject::SetDepthTextureAttachment(ObjectPtr<IOpenGLBaseTexture> depth_texture, int mip_level)
   {
+    if (!platform_support_for_depth_texture_)
+    {
+      return 0;
+    }
+
     if (depth_texture.IsNull())
     {
       depth_surface_attachment_ = ObjectPtr<IOpenGLSurface> (0);
@@ -289,26 +303,25 @@ namespace nux
       }
     }
 
-    if (depth_surface_attachment_.IsValid())
+    if (platform_support_for_depth_texture_)
     {
-        GLenum target   = depth_surface_attachment_->GetSurfaceTarget();
-        GLenum glID     = depth_surface_attachment_->GetOpenGLID();
-        GLint level     = depth_surface_attachment_->GetMipLevel();
-        CHECKGL(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, target, glID, level));
+      if (depth_surface_attachment_.IsValid())
+      {
+          GLenum target   = depth_surface_attachment_->GetSurfaceTarget();
+          GLenum glID     = depth_surface_attachment_->GetOpenGLID();
+          GLint level     = depth_surface_attachment_->GetMipLevel();
+          CHECKGL(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, target, glID, level));
+      }
+      else
+      {
+          CHECKGL(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, 0, 0));
+          // On the PC you need to bing the same D24S8 surface to the depth and the stencil attachment.
+      }
     }
     else
     {
-        CHECKGL(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, 0, 0));
-        // On the PC you need to bing the same D24S8 surface to the depth and the stencil attachment.
+      CHECKGL(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, 0, 0));
     }
-
-// #ifndef NUX_OPENGLES_20
-//     _Rbo.Set(GL_DEPTH_COMPONENT, attachment_width_, attachment_height_);
-//     CHECKGL(glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
-//                                             GL_DEPTH_ATTACHMENT_EXT,
-//                                             GL_RENDERBUFFER_EXT,
-//                                             _Rbo.GetId()));
-// #endif
 
     nuxAssert( _Fbo.IsValid() == true );
 

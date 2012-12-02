@@ -58,7 +58,11 @@ bool GestureBroker::BindNewGestureToTarget(nux::GestureEvent &event, ShPtGesture
       gesture_set_.FindFromGestureId(event.GetGestureId());
 
     if (!gesture)
+    {
       gesture = std::shared_ptr<Gesture>(new Gesture(event));
+      gesture_lost_all_targets_connections_[gesture] =
+        gesture->lost_all_targets.connect(sigc::mem_fun (&gesture_set_, &GestureSet::Remove));
+    }
 
     gesture->AddTarget(target);
     gesture_set_.Add(gesture);
@@ -67,16 +71,6 @@ bool GestureBroker::BindNewGestureToTarget(nux::GestureEvent &event, ShPtGesture
     {
       gesture->Accept();
       gesture->EnableEventDelivery();
-    }
-  };
-
-  auto remove_target_from_existing_gesture = [&]()
-  {
-    existing_gesture->RemoveTarget(target);
-    if (existing_gesture->GetTargetList().size() == 0)
-    {
-      existing_gesture->Reject();
-      gesture_set_.Remove(existing_gesture);
     }
   };
 
@@ -108,12 +102,12 @@ bool GestureBroker::BindNewGestureToTarget(nux::GestureEvent &event, ShPtGesture
         // than the target area can handle
         // (i.e. three fingers over an area that handles only two-fingers'
         // gestures)
-        remove_target_from_existing_gesture();
+        existing_gesture->RemoveTarget(*target);
         successful = false;
       }
       else // new_num_touches > existing_num_touches
       {
-        remove_target_from_existing_gesture();
+        existing_gesture->RemoveTarget(*target);
         create_gesture_for_target();
         successful = true;
       }
@@ -168,7 +162,12 @@ void GestureBroker::ProcessGestureEnd(nux::GestureEvent &event)
   }
 
   // We no longer have to keep track of it.
-  gesture_set_.Remove(gesture);
+  auto connection_iterator = gesture_lost_all_targets_connections_.find(gesture);
+
+  if (connection_iterator != gesture_lost_all_targets_connections_.end())
+    connection_iterator->second.disconnect();
+
+  gesture_set_.Remove(*gesture);
 
   // We cannot leave a gesture behing without making a decision on its acceptance.
   if (gesture->GetAcceptanceStatus() == Gesture::AcceptanceStatus::UNDECIDED)
@@ -194,7 +193,7 @@ void GestureBroker::ResolveBufferedGestureThatFinishedConstruction(
     for (auto conflicting_gesture : conflicting_gestures)
     {
       conflicting_gesture->Reject();
-      gesture_set_.Remove(conflicting_gesture);
+      gesture_set_.Remove(*conflicting_gesture);
     }
   }
 }
