@@ -36,6 +36,7 @@
 #include <X11/extensions/shape.h>
 #include <X11/XKBlib.h>
 
+
 namespace nux
 {
   int GraphicsDisplay::double_click_time_delay = 400; // milliseconds
@@ -187,7 +188,17 @@ namespace nux
   }
 #endif
 
-// TODO: change windowWidth, windowHeight, to window_size;
+  void GraphicsDisplay::XICFocus()
+  {
+    m_xim_controller->FocusInXIC();
+  }
+
+  void GraphicsDisplay::XICUnFocus()
+  {
+    m_xim_controller->FocusOutXIC();
+  }
+
+  // TODO: change windowWidth, windowHeight, to window_size;
   static NCriticalSection CreateOpenGLWindow_CriticalSection;
   bool GraphicsDisplay::CreateOpenGLWindow(const char* window_title,
                                          unsigned int WindowWidth,
@@ -573,6 +584,16 @@ namespace nux
       //XMapRaised(m_X11Display, m_X11Window);
     }
 
+    m_xim_controller = std::make_shared<XIMController>(m_X11Display);
+    m_xim_controller->SetFocusedWindow(m_X11Window);
+
+    if (m_xim_controller->IsXICValid())
+    {
+      long im_event_mask=0;
+      XGetICValues(m_xim_controller->GetXIC(), XNFilterEvents, &im_event_mask, NULL);
+      m_X11Attr.event_mask |= im_event_mask;
+    }
+
 #ifndef NUX_OPENGLES_20
     if (_has_glx_13)
     {
@@ -677,6 +698,8 @@ namespace nux
 
     gfx_interface_created_ = true;
 
+    m_xim_controller = std::make_shared<XIMController>(m_X11Display);
+
     // m_DeviceFactory = new GpuDevice(viewport_size_.GetWidth(), viewport_size_.GetHeight(), BITFMT_R8G8B8A8);
     m_DeviceFactory = new GpuDevice(viewport_size_.width, viewport_size_.height, BITFMT_R8G8B8A8,
         m_X11Display,
@@ -702,6 +725,11 @@ namespace nux
   GpuDevice* GraphicsDisplay::GetGpuDevice() const
   {
     return m_DeviceFactory;
+  }
+
+  void GraphicsDisplay::SetFocusedWindowForXIMController(Window window)
+  {
+    m_xim_controller->SetFocusedWindow(window);
   }
 
   int GraphicsDisplay::GetGlXMajor() const
@@ -1236,6 +1264,9 @@ namespace nux
       bool bProcessEvent = true;
       XNextEvent(m_X11Display, &xevent);
 
+      if (XFilterEvent(&xevent, None) == True)
+        return true;
+
       if (!_event_filters.empty())
       {
         for (auto filter : _event_filters)
@@ -1545,6 +1576,8 @@ namespace nux
         m_pEvent->dy = 0;
         m_pEvent->virtual_code = 0;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: FocusIn event.");
+
+        m_xim_controller->FocusInXIC();
         break;
       }
 
@@ -1560,6 +1593,8 @@ namespace nux
         m_pEvent->dy = 0;
         m_pEvent->virtual_code = 0;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: FocusOut event.");
+
+        m_xim_controller->FocusOutXIC();
         break;
       }
 
@@ -1590,7 +1625,15 @@ namespace nux
          skip = true;
         }
 
-        int num_char_stored = XLookupString(&xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->x11_keysym, NULL);
+        int num_char_stored = 0;
+        if (m_xim_controller->IsXICValid())
+        {
+          num_char_stored = XmbLookupString(m_xim_controller->GetXIC(), &xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->x11_keysym, NULL);
+        }
+        else
+        {
+          num_char_stored = XLookupString(&xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->x11_keysym, NULL);
+        }
         if (num_char_stored && (!skip))
         {
           Memcpy(m_pEvent->text, buffer, num_char_stored);

@@ -23,6 +23,7 @@
 #include <X11/keysym.h>
 #include "nux_automated_test_framework.h"
 
+#define MAX_KEYS 4 // Max keys
 
 int NuxAutomatedTestFramework::mouse_motion_time_span = 1000; // milliseconds
 int NuxAutomatedTestFramework::mouse_click_time_span = 300;   // milliseconds
@@ -394,6 +395,7 @@ void NuxAutomatedTestFramework::ViewSendString(const std::string &str)
     }
     nux::SleepForMilliseconds(300);
   }
+  XFlush(display_);
 }
 
 void NuxAutomatedTestFramework::ViewSendCompositionKeys(const std::string& str)
@@ -404,6 +406,92 @@ void NuxAutomatedTestFramework::ViewSendCompositionKeys(const std::string& str)
 
   SendFakeKeyEvent(XK_Multi_key, 0);
   ViewSendString(str);
+}
+
+
+// Send strings in the format of "key+key+key" up to 4 where the last key is not a modifier
+// example "ctrl+alt+=
+void NuxAutomatedTestFramework::ViewSendKeys(const std::string& str)
+{
+  std::string keys[MAX_KEYS];
+  KeySym keys_sym[MAX_KEYS] = {0};
+  size_t f_ptr = 0, s_ptr = 0;
+  int i = 0;
+
+  //Split up keys on the +
+  while (s_ptr != std::string::npos && i < MAX_KEYS)
+  {
+    s_ptr = str.find("+", f_ptr);
+    keys[i] = str.substr(f_ptr, (s_ptr-f_ptr));
+    f_ptr = s_ptr+1;
+    i++;
+  }
+
+  // Find what the key_sym should be for each key
+  for (int i = 0; i < MAX_KEYS; i++)
+  {
+    if (keys[i].empty())
+    {
+      break;
+    }
+    else if (keys[i] == "ctrl")
+    {
+      keys_sym[i] = XK_Control_L;
+    }
+    else if (keys[i] == "alt")
+    {
+      keys_sym[i] = XK_Alt_L;
+    }
+    else if (keys[i] == "space")
+    {
+      keys_sym[i] = XK_space;
+    }
+    else if (keys[i] == "enter" || keys[i] == "return")
+    {
+      keys_sym[i] = XK_Return;
+    }
+    else if (keys[i] == "=")
+    {
+      keys_sym[i] = XK_equal;
+    }
+    else if (keys[i] == "[")
+    {
+      keys_sym[i] = XK_bracketleft;
+    }
+    else if (keys[i] =="shift")
+    {
+      keys_sym[i] = XK_Shift_L;
+    }
+    else
+    {
+      // If nothing is found try and find it...
+      if (!(keys_sym[i] = XStringToKeysym(keys[i].c_str())))
+        printf("Undefinded Key: %s (Add it to this list)\n", keys[i].c_str());
+    }
+  }
+  XTestGrabControl(display_, True);
+  KeyCode modcode[MAX_KEYS] = {0};
+
+  // Press the keys from 0,1,2,3
+  for (int i = 0; i < MAX_KEYS; i++)
+  {
+    if (keys_sym[i] != 0)
+    {
+      modcode[i] = XKeysymToKeycode(display_, keys_sym[i]);
+      XTestFakeKeyEvent(display_, modcode[i], True, 0);
+    }
+  }
+
+  // Release the keys from 3,2,1,0
+  for (int i = MAX_KEYS-1; i >= 0; i--)
+  {
+    if (keys_sym[i] != 0)
+    {
+      XTestFakeKeyEvent(display_, modcode[i], False, 0);
+    }
+  }
+  XTestGrabControl(display_, False);
+  XFlush(display_);
 }
 
 void NuxAutomatedTestFramework::ViewSendKeyCombo(KeySym modsym0, KeySym modsym1, KeySym modsym2, const char c)
@@ -528,7 +616,7 @@ void NuxAutomatedTestFramework::ViewSendIBusToggle()
   /* Generate modkey release */
   XTestFakeKeyEvent(display_, modcode1, False, 0);
   XTestFakeKeyEvent(display_, modcode0, False, 0);
-
+  XFlush(display_);
 }
 
 void NuxAutomatedTestFramework::PutMouseAt(int x, int y)

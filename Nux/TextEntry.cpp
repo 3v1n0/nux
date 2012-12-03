@@ -865,6 +865,7 @@ namespace nux
         need_im_reset_ = true;
 #if defined(USE_X11)
         ime_->Focus();
+        nux::GetWindowThread()->GetGraphicsDisplay().XICFocus();
 #endif
         //gtk_im_context_focus_in(im_context_);
         //UpdateIMCursorLocation();
@@ -887,6 +888,7 @@ namespace nux
         need_im_reset_ = true;
 #if defined(USE_X11)
         ime_->Blur();
+        nux::GetWindowThread()->GetGraphicsDisplay().XICUnFocus();
 #endif
         //gtk_im_context_focus_out(im_context_);
       }

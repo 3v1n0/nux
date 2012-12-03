@@ -125,7 +125,7 @@ endif
 # To distribute source add the source code here
 #sourceexampledir = "$(pkgdatadir)/examples"
 #sourceexample_DATA = $(combobox_SOURCES) \
-#                    
+#
 
 endif
 

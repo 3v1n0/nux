@@ -1,4 +1,4 @@
-CLEANFILES = 
+CLEANFILES =
 DISTCLEANFILES =
 EXTRA_DIST = $(srcdir)/GraphicsDisplayWin.cpp \
              $(srcdir)/GraphicsDisplayWin.h
@@ -91,7 +91,9 @@ if USE_X11
 source_h += \
   $(srcdir)/GraphicsDisplayX11.h \
   $(srcdir)/VirtualKeyCodesX11.h \
-  $(srcdir)/XInputWindow.h
+  $(srcdir)/XInputWindow.h \
+  $(srcdir)/XICClient.h \
+  $(srcdir)/XIMController.h
 endif
 
 if !NUX_OPENGLES_20
@@ -163,11 +165,12 @@ source_cpp = \
   $(srcdir)/GLRenderingAPI.cpp \
   $(srcdir)/RunTimeStats.cpp
 
-
 if USE_X11
 source_cpp += \
   $(srcdir)/GraphicsDisplayX11.cpp \
-  $(srcdir)/XInputWindow.cpp
+  $(srcdir)/XInputWindow.cpp \
+  $(srcdir)/XICClient.cpp \
+  $(srcdir)/XIMController.cpp
 endif
 
 if !NUX_OPENGLES_20
