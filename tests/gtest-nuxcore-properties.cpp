@@ -258,7 +258,7 @@ TEST(TestProperty, TestCustomSetterFunctionLambda) {
   float_prop.SetSetterFunction([&clamp] (float &target, float const& value) {
     return clamp.Set(target, value);
   });
-  ChangeRecorder<float> recorder;
+  nt::ChangeRecorder<float> recorder;
   float_prop.changed.connect(recorder.listener());
 
   // Since the default value for a float is zero, and we clamp at zero,

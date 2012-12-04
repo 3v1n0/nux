@@ -27,6 +27,9 @@
 #include <vector>
 #include <glib.h>
 #include <sigc++/sigc++.h>
+#if __cplusplus >= 201100L || defined (__GXX_EXPERIMENTAL_CXX0X__)
+#include <functional>
+#endif
 
 
 namespace nux
