@@ -16,13 +16,15 @@ lib_LTLIBRARIES = \
 libnux_core_@NUX_API_VERSION@_la_CPPFLAGS= \
   $(GCC_FLAGS) \
   $(NUX_CORE_CFLAGS) \
-  $(MAINTAINER_CFLAGS)
+  $(MAINTAINER_CFLAGS) \
+  $(COVERAGE_CFLAGS)
 
 libnux_core_@NUX_API_VERSION@_la_LIBADD = \
   $(NUX_CORE_LIBS) -lpthread
 
 libnux_core_@NUX_API_VERSION@_la_LDFLAGS = \
-  $(NUX_LT_LDFLAGS)
+  $(NUX_LT_LDFLAGS) \
+  $(COVERAGE_LDFLAGS)
 
 source_cpp = \
   $(srcdir)/Animation.cpp \
