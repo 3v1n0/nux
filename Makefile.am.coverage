@@ -19,6 +19,7 @@ clean-gcda:
 	-find -name '*.gcda' -print | xargs -r rm
   
 coverage-html:
+	-$(MAKE) $(AM_MAKEFLAGS) -k check
 	$(MAKE) $(AM_MAKEFLAGS) generate-coverage-html
   
 generate-coverage-html:
@@ -33,10 +34,8 @@ clean-coverage-html: clean-gcda
 
 if HAVE_GCOVR
 
-coverage-xml:
-	$(MAKE) $(AM_MAKEFLAGS) coverage-gcovr
-
 coverage-gcovr:
+	-$(MAKE) $(AM_MAKEFLAGS) -k check
 	$(MAKE) $(AM_MAKEFLAGS) generate-coverage-gcovr
 	
 generate-coverage-gcovr:
