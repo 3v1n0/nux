@@ -18,7 +18,7 @@ libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS= \
   $(NUX_GRAPHICS_CFLAGS) \
   $(MAINTAINER_CFLAGS) \
   $(GEIS_CFLAGS) \
-  $(COVERAGE_FLAGS)
+  $(COVERAGE_CFLAGS)
 
 libnux_graphics_@NUX_API_VERSION@_la_LIBADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
