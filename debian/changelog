@@ -1,4 +1,4 @@
-nux (4.0.0-0ubuntu1) UNRELEASED; urgency=low
+nux (4.0.0daily12.12.05-0ubuntu1) raring; urgency=low
 
   [ Michael Terry ]
   * debian/control:
@@ -27,8 +27,18 @@ nux (4.0.0-0ubuntu1) UNRELEASED; urgency=low
   [ Ricardo Salveti de Araujo ]
   * Doesn't need to depend on gcc 4.6 anymore (LP: #1044836)
   * make check-headless should respect DEB_BUILD_OPTIONS=nocheck
+  * Does not need to be built with gcc 4.6 anymore (LP: #1044836)
 
- -- Didier Roche <didrocks@ubuntu.com>  Mon, 12 Nov 2012 08:12:53 +0100
+  [ Ying-Chun Liu (PaulLiu) ]
+  * Unable to use H.I.M.E. input method in the Unity search bar( & HUD
+    also) in Ubuntu 12.04LTS | 無法於Ubuntu 12.04LTS的Unity
+    searchbar（以及HUD）使用H.I.M.E.輸入法 (LP: #973808)
+  * Support input methods beside ibus (LP: #983254)
+
+  [ Automatic PS uploader ]
+  * Automatic snapshot from revision 727
+
+ -- Automatic PS uploader <ps-jenkins@lists.canonical.com>  Wed, 05 Dec 2012 09:27:01 +0000
 
 nux (3.10.0-0ubuntu1) quantal-proposed; urgency=low
 
