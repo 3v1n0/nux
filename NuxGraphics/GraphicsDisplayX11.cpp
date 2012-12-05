@@ -106,6 +106,9 @@ namespace nux
     NUX_SAFE_DELETE( m_GraphicsContext );
     NUX_SAFE_DELETE( m_DeviceFactory );
 
+    // The XIM Controller needs to clean up before ~GraphicsDisplayX11
+    m_xim_controller.reset();
+
     if (m_CreatedFromForeignWindow == false)
     {
       DestroyOpenGLWindow();
