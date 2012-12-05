@@ -87,7 +87,7 @@ TEST_F(GestureBrokerTest, RejectGestureIfTargetBecomesUnavailable)
   ASSERT_EQ (0, g_gesture_acceptance[0]);
 
   /* This target is now unavailable */
-  target->MakeUnavailable();
+  target->Die();
 
   /* Reject the gesture */
   EXPECT_EQ (-1, g_gesture_acceptance[0]);
