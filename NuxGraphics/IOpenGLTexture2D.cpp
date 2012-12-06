@@ -36,7 +36,7 @@ namespace nux
     external_id_ = Dummy;
     if (external_id_ == false)
     {
-      glGenTextures(1, &_OpenGLID);
+      CHECKGL(glGenTextures(1, &_OpenGLID));
       CHECKGL(glBindTexture(GL_TEXTURE_2D, _OpenGLID));
     }
 

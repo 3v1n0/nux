@@ -202,7 +202,7 @@ bool FontMgr::load_font (const char *font_filename)
       /*image->width = font_bitmap_width;
       image->Height() = font_bitmap_height;
       image->bpp = 32;
-      	        image->data = imgp;*/
+	        image->data = imgp;*/
 
       //unsigned char* buffer = new unsigned char[font_bitmap_width * font_bitmap_height];
       //agg::rendering_buffer rbuf(buffer, font_bitmap_width, font_bitmap_height, font_bitmap_height*4);
@@ -211,7 +211,7 @@ bool FontMgr::load_font (const char *font_filename)
 
       GLuint texname;
       glPixelStorei (GL_UNPACK_ALIGNMENT, 1);
-      glGenTextures (1, &texname);
+      CHECKGL(glGenTextures (1, &texname));
       glBindTexture (GL_TEXTURE_2D, texname);
 
       /*	float *border_color = new float[4];
