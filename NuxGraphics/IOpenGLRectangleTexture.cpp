@@ -38,7 +38,7 @@ namespace nux
 #ifndef NUX_OPENGLES_20
     if (Dummy == false)
     {
-      glGenTextures(1, &_OpenGLID);
+      CHECKGL(glGenTextures(1, &_OpenGLID));
       CHECKGL(glBindTexture(GL_TEXTURE_RECTANGLE_ARB, _OpenGLID));
     }
 

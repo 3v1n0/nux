@@ -26,7 +26,7 @@
 #include "NuxGraphics/GraphicsEngine.h"
 
 /*
- * Tests: 
+ * Tests:
  *  - frame buffer object
  *  - Set a texture in the fbo
  *  - Set fbo as a render target
@@ -35,7 +35,7 @@
  *  - Blur the render target texture
  *  - Render to default back buffer
  */
- 
+
 void RenderBlurredTexture ()
 {
   nux::GraphicsDisplay* graphics_display = gGLWindowManager.CreateGLWindow("Window", 600, 300, nux::WINDOWSTYLE_NORMAL, 0, false);
