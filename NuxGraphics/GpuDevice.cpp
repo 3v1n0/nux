@@ -235,19 +235,19 @@ namespace nux
   void GpuInfo::Setup()
   {
 #ifndef NUX_OPENGLES_20
-    _support_opengl_version_11 = GLEW_VERSION_1_1 ? true : false;
-    _support_opengl_version_12 = GLEW_VERSION_1_2 ? true : false;
-    _support_opengl_version_13 = GLEW_VERSION_1_3 ? true : false;
-    _support_opengl_version_14 = GLEW_VERSION_1_4 ? true : false;
-    _support_opengl_version_15 = GLEW_VERSION_1_5 ? true : false;
-    _support_opengl_version_20 = GLEW_VERSION_2_0 ? true : false;
-    _support_opengl_version_21 = GLEW_VERSION_2_1 ? true : false;
-    _support_opengl_version_30 = GLEW_VERSION_3_0 ? true : false;
-    _support_opengl_version_31 = GLEW_VERSION_3_1 ? true : false;
-    _support_opengl_version_32 = GLEW_VERSION_3_2 ? true : false;
-//     _support_opengl_version_33 = GLEW_VERSION_3_3 ? true : false;
-//     _support_opengl_version_40 = GLEW_VERSION_4_0 ? true : false;
-//     _support_opengl_version_41 = GLEW_VERSION_4_1 ? true : false;
+    _support_opengl_version_11 = GLEW_VERSION_1_1;
+    _support_opengl_version_12 = GLEW_VERSION_1_2;
+    _support_opengl_version_13 = GLEW_VERSION_1_3;
+    _support_opengl_version_14 = GLEW_VERSION_1_4;
+    _support_opengl_version_15 = GLEW_VERSION_1_5;
+    _support_opengl_version_20 = GLEW_VERSION_2_0;
+    _support_opengl_version_21 = GLEW_VERSION_2_1;
+    _support_opengl_version_30 = GLEW_VERSION_3_0;
+    _support_opengl_version_31 = GLEW_VERSION_3_1;
+    _support_opengl_version_32 = GLEW_VERSION_3_2;
+//     _support_opengl_version_33 = GLEW_VERSION_3_3;
+//     _support_opengl_version_40 = GLEW_VERSION_4_0;
+//     _support_opengl_version_41 = GLEW_VERSION_4_1;
 
     // See: http://developer.nvidia.com/object/General_FAQ.html
     // The value of GL_MAX_TEXTURE_UNITS is 4 for GeForce FX and GeForce 6 Series GPUs. Why is that, since those GPUs have 16 texture units?
@@ -274,31 +274,31 @@ namespace nux
 #endif
 
 #if defined(NUX_OS_WINDOWS)
-    _support_ext_swap_control                 = WGLEW_EXT_swap_control ? true : false;
+    _support_ext_swap_control                 = WGLEW_EXT_swap_control;
 #elif defined(NUX_OS_LINUX) && !defined(NUX_OPENGLES_20)
-    _support_ext_swap_control                 = GLXEW_SGI_swap_control ? true : false;
+    _support_ext_swap_control                 = GLXEW_SGI_swap_control;
 #endif
 
 #ifndef NUX_OPENGLES_20
-    _support_arb_vertex_program               = GLEW_ARB_vertex_program ? true : false;
-    _support_arb_fragment_program             = GLEW_ARB_fragment_program ? true : false;
-    _support_ext_framebuffer_object           = GLEW_EXT_framebuffer_object ? true : false;
-    _support_arb_shader_objects               = GLEW_ARB_shader_objects ? true : false;
-    _support_arb_vertex_shader                = GLEW_ARB_vertex_shader ? true : false;
-    _support_arb_fragment_shader              = GLEW_ARB_fragment_shader ? true : false;
-    _support_arb_vertex_buffer_object         = GLEW_ARB_vertex_buffer_object ? true : false;
-    _support_arb_texture_non_power_of_two     = GLEW_ARB_texture_non_power_of_two ? true : false;
-    _support_ext_draw_range_elements          = GLEW_EXT_draw_range_elements ? true : false;
-    _support_ext_stencil_two_side             = GLEW_EXT_stencil_two_side ? true : false;
-    _support_ext_texture_rectangle            = GLEW_EXT_texture_rectangle ? true : false;
-    _support_arb_texture_rectangle            = GLEW_ARB_texture_rectangle ? true : false;
-    _support_nv_texture_rectangle             = GLEW_NV_texture_rectangle ? true : false;
-    _support_arb_pixel_buffer_object          = GLEW_ARB_pixel_buffer_object ? true : false;
-    _support_ext_blend_equation_separate      = GLEW_EXT_blend_equation_separate ? true : false;
-    _support_ext_texture_srgb                 = GLEW_EXT_texture_sRGB ? true : false;
-    _support_ext_texture_srgb_decode          = false; //GLEW_EXT_texture_sRGB_decode ? true : false;
-    _support_ext_framebuffer_srgb             = GLEW_EXT_framebuffer_sRGB ? true : false;
-    _support_arb_framebuffer_srgb             = GLEW_ARB_framebuffer_sRGB ? true : false;
+    _support_arb_vertex_program               = GLEW_ARB_vertex_program;
+    _support_arb_fragment_program             = GLEW_ARB_fragment_program;
+    _support_ext_framebuffer_object           = GLEW_EXT_framebuffer_object;
+    _support_arb_shader_objects               = GLEW_ARB_shader_objects;
+    _support_arb_vertex_shader                = GLEW_ARB_vertex_shader;
+    _support_arb_fragment_shader              = GLEW_ARB_fragment_shader;
+    _support_arb_vertex_buffer_object         = GLEW_ARB_vertex_buffer_object;
+    _support_arb_texture_non_power_of_two     = GLEW_ARB_texture_non_power_of_two;
+    _support_ext_draw_range_elements          = GLEW_EXT_draw_range_elements;
+    _support_ext_stencil_two_side             = GLEW_EXT_stencil_two_side;
+    _support_ext_texture_rectangle            = GLEW_EXT_texture_rectangle;
+    _support_arb_texture_rectangle            = GLEW_ARB_texture_rectangle;
+    _support_nv_texture_rectangle             = GLEW_NV_texture_rectangle;
+    _support_arb_pixel_buffer_object          = GLEW_ARB_pixel_buffer_object;
+    _support_ext_blend_equation_separate      = GLEW_EXT_blend_equation_separate;
+    _support_ext_texture_srgb                 = GLEW_EXT_texture_sRGB;
+    _support_ext_texture_srgb_decode          = false; //GLEW_EXT_texture_sRGB_decode;
+    _support_ext_framebuffer_srgb             = GLEW_EXT_framebuffer_sRGB;
+    _support_arb_framebuffer_srgb             = GLEW_ARB_framebuffer_sRGB;
 #else
     _support_arb_vertex_program               = false;
     _support_arb_fragment_program             = false;
@@ -679,9 +679,9 @@ namespace nux
     gpu_render_states_ = new GpuRenderStates(gpu_brand_, gpu_info_);
 
 #if defined(NUX_OS_WINDOWS)
-    OGL_EXT_SWAP_CONTROL                = WGLEW_EXT_swap_control ? true : false;
+    OGL_EXT_SWAP_CONTROL                = WGLEW_EXT_swap_control;
 #elif defined(NUX_OS_LINUX) && !defined(NUX_OPENGLES_20)
-    OGL_EXT_SWAP_CONTROL                = GLXEW_SGI_swap_control ? true : false;
+    OGL_EXT_SWAP_CONTROL                = GLXEW_SGI_swap_control;
 #endif
 
     InitTextureFormats();

@@ -2332,7 +2332,7 @@ namespace nux
 
   bool GraphicsDisplay::IsWindowVisible()
   {
-    return(::IsWindowVisible(wnd_handle_) ? true : false);
+    return ::IsWindowVisible(wnd_handle_);
   }
 //---------------------------------------------------------------------------------------------------------
   void GraphicsDisplay::EnterMaximizeWindow()

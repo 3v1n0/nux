@@ -49,7 +49,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     unsigned int return_code = 1;
 
     dd->window_thread->_inside_timer_loop = true;
-    repeat = GetTimer().ExecTimerHandler(dd->id)? true : false;
+    repeat = GetTimer().ExecTimerHandler(dd->id);
     dd->window_thread->_inside_timer_loop = false;
 
     if (dd->window_thread->IsEmbeddedWindow())

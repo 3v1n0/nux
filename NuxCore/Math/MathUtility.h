@@ -364,7 +364,7 @@ namespace nux
   inline bool Hak32_CPULittleEndian()
   {
     const int x = 1;
-    return ((unsigned char *) &x) [0] ? true : false;
+    return ((unsigned char *) &x) [0];
   }
 
   // http://graphics.stanford.edu/~seander/bithacks.html#IntegerLogObvious

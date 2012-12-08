@@ -42,13 +42,13 @@ namespace nux
   bool GetButtonState(unsigned long button_state, MouseButton button)
   {
     if (button == NUX_MOUSE_BUTTON1)
-      return(button_state & NUX_STATE_BUTTON1_DOWN) ? true : false;
+      return (button_state & NUX_STATE_BUTTON1_DOWN);
     else if (button == NUX_MOUSE_BUTTON2)
-      return(button_state & NUX_STATE_BUTTON2_DOWN) ? true : false;
+      return (button_state & NUX_STATE_BUTTON2_DOWN);
     else if (button == NUX_MOUSE_BUTTON3)
-      return(button_state & NUX_STATE_BUTTON3_DOWN) ? true : false;
+      return (button_state & NUX_STATE_BUTTON3_DOWN);
     else if (button == NUX_MOUSE_BUTTON4)
-      return(button_state & NUX_STATE_BUTTON4_DOWN) ? true : false;
+      return (button_state & NUX_STATE_BUTTON4_DOWN);
 
     return false;
   }
@@ -170,13 +170,13 @@ namespace nux
   bool Event::GetButtonState(MouseButton button) const
   {
     if (button == 1)
-      return(mouse_state & NUX_STATE_BUTTON1_DOWN) ? true : false;
+      return (mouse_state & NUX_STATE_BUTTON1_DOWN);
     else if (button == 2)
-      return(mouse_state & NUX_STATE_BUTTON2_DOWN) ? true : false;
+      return (mouse_state & NUX_STATE_BUTTON2_DOWN);
     else if (button == 3)
-      return(mouse_state & NUX_STATE_BUTTON3_DOWN) ? true : false;
+      return (mouse_state & NUX_STATE_BUTTON3_DOWN);
     else if (button == 4)
-      return(mouse_state & NUX_STATE_BUTTON4_DOWN) ? true : false;
+      return (mouse_state & NUX_STATE_BUTTON4_DOWN);
 
     return false;
   }
@@ -232,37 +232,37 @@ namespace nux
 
   bool Event::IsShiftDown() const
   {
-    return (key_modifiers & NUX_STATE_SHIFT) ? true : false;
+    return (key_modifiers & NUX_STATE_SHIFT);
   }
 
   bool Event::IsControlDown() const
   {
-    return (key_modifiers & NUX_STATE_CTRL) ? true : false;
+    return (key_modifiers & NUX_STATE_CTRL);
   }
 
   bool Event::IsCapsLockDown() const
   {
-    return (key_modifiers & NUX_STATE_CAPS_LOCK) ? true : false;
+    return (key_modifiers & NUX_STATE_CAPS_LOCK);
   }
 
   bool Event::IsAltDown() const
   {
-    return (key_modifiers & NUX_STATE_ALT) ? true : false;
+    return (key_modifiers & NUX_STATE_ALT);
   }
 
   bool Event::IsNumLockDown() const
   {
-    return (key_modifiers & NUX_STATE_NUMLOCK) ? true : false;
+    return (key_modifiers & NUX_STATE_NUMLOCK);
   }
 
   bool Event::IsScrollLockDown() const
   {
-    return (key_modifiers & NUX_STATE_SCROLLLOCK) ? true : false;
+    return (key_modifiers & NUX_STATE_SCROLLLOCK);
   }
 
   bool Event::IsSuperKeyDown() const
   {
-    return (key_modifiers & NUX_STATE_SCROLLLOCK) ? true : false;
+    return (key_modifiers & NUX_STATE_SCROLLLOCK);
   }
 
 }

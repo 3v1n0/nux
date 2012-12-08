@@ -217,10 +217,10 @@ bool debug_object_allocation_stack()
   {
     if (_heap_allocated == -1)
     {
-      _heap_allocated = (IsDynamic () ? 1 : 0);
+      _heap_allocated = IsDynamic();
     }
 
-    return (_heap_allocated == 1 ? true : false);
+    return _heap_allocated;
   }
 
   bool Trackable::IsDynamic() const

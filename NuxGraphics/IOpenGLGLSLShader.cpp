@@ -266,12 +266,12 @@ namespace nux
       delete[] InfoLogBuffer;
     }
 
-    return(m_CompiledAndReady ? true : false);
+    return m_CompiledAndReady;
   }
 
   bool IOpenGLVertexShader::IsValid()
   {
-    return(m_CompiledAndReady ? true : false);
+    return m_CompiledAndReady;
   }
 
   IOpenGLPixelShader::IOpenGLPixelShader(std::string ShaderName)
@@ -347,12 +347,12 @@ namespace nux
       delete[] InfoLogBuffer;
     }
 
-    return(m_CompiledAndReady ? true : false);
+    return m_CompiledAndReady;
   }
 
   bool IOpenGLPixelShader::IsValid()
   {
-    return(m_CompiledAndReady ? true : false);
+    return m_CompiledAndReady;
   }
 
 #if 0
@@ -427,12 +427,12 @@ namespace nux
       delete InfoLogBuffer;
     }
 
-    return(m_CompiledAndReady ? true : false);
+    return m_CompiledAndReady;
   }
 
   bool IOpenGLGeometryShader::IsValid()
   {
-    return(m_CompiledAndReady ? true : false);
+    return m_CompiledAndReady;
   }
 
   void IOpenGLGeometryShader::SetInputPrimitiveType(GLenum type)
