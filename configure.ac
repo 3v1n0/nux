@@ -342,6 +342,17 @@ AS_IF([test "x$have_xtest" = "xyes" &&
 
 AM_CONDITIONAL(BUILD_TESTS, [test "x$enable_tests" = "xyes"])
 
+###########################
+# gcov coverage reporting
+###########################
+m4_include([m4/gcov.m4])
+AC_TDD_GCOV
+AM_CONDITIONAL([HAVE_GCOV], [test "x$ac_cv_check_gcov" = xyes])
+AM_CONDITIONAL([HAVE_LCOV], [test "x$ac_cv_check_lcov" = xyes])
+AM_CONDITIONAL([HAVE_GCOVR], [test "x$ac_cv_check_gcovr" = xyes])
+AC_SUBST(COVERAGE_CFLAGS)
+AC_SUBST(COVERAGE_LDFLAGS)
+
 dnl ===========================================================================
 
 # sets up doxygen
@@ -485,6 +496,7 @@ echo -e "${GREEN} • Misc Options:${RESET}"
 echo -e "        Build Examples     : ${BOLD_WHITE}${enable_examples}${RESET}"
 echo -e "        Build Gpu Tests    : ${BOLD_WHITE}${enable_gputests}${RESET}"
 echo -e "        Build Nux Tests    : ${BOLD_WHITE}${enable_tests}${RESET}"
+echo -e "        Coverage Reporting : ${BOLD_WHITE}${use_gcov}${RESET}"
 echo -e "        Gestures support   : ${BOLD_WHITE}${have_geis}${RESET}"
 echo -e "        X11 build support  : ${BOLD_WHITE}${enable_x_support}${RESET}"
 echo -e "        Minimal build      : ${BOLD_WHITE}${enable_minimal_build}${RESET}"
