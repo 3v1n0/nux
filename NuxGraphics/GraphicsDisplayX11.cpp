@@ -1441,7 +1441,7 @@ namespace nux
 
   bool GraphicsDisplay::HasXPendingEvent() const
   {
-    return XPending(m_X11Display) ? true : false;
+    return XPending(m_X11Display);
   }
 
   void GraphicsDisplay::RecalcXYPosition(int x_root, int y_root, int &x_recalc, int &y_recalc)

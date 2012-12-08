@@ -257,7 +257,7 @@ namespace nux
     */
     bool IsValid() const
     {
-      return (ptr_ != NULL) ? true : false;
+      return (ptr_ != NULL);
     }
 
     bool operator < (T *ptr) const
@@ -627,7 +627,7 @@ namespace nux
     */
     bool IsValid() const
     {
-      return (ptr_!= NULL) ? true : false;
+      return (ptr_ != NULL);
     }
 
     //! Return true is the hosted pointer is null or has been destroyed.

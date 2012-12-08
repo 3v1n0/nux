@@ -2025,7 +2025,7 @@ DECLARE_LOGGER(logger, "nux.window");
       key_focus_area_ = NULL;
     }
 
-    return key_focus_area_.IsValid() ? true : false;
+    return key_focus_area_.IsValid();
   }
 
   InputArea* WindowCompositor::GetKeyFocusArea()
