@@ -136,7 +136,7 @@ void TestingThread(nux::NThread* /* thread */, void* user_data)
   test.ViewSendCtrlA();
   test.ViewSendDelete();
 
-  nux::SleepForMilliseconds(100);;
+  nux::SleepForMilliseconds(100);
   //exclamdown # INVERTED EXCLAMATION MARK
   test.ViewSendCompositionKeys("!!");
   test.TestReportMsg(test_textentry->text_entry_->GetText() == "¡", "¡");

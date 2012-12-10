@@ -677,7 +677,7 @@ namespace nux
     {
       if (ptr_)
       {
-        sigc::slot<void, Object*> slot = sigc::mem_fun(this, &ObjectWeakPtr<T>::TargetDestroyed);
+        auto slot = sigc::mem_fun(this, &ObjectWeakPtr<T>::TargetDestroyed);
         destroy_listener_ = ptr_->object_destroyed.connect(slot);
       }
     }
