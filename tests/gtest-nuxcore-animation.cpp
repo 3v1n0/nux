@@ -159,6 +159,34 @@ TEST(TestAnimationController, HasRunningAnimations) {
   ASSERT_FALSE(controller.HasRunningAnimations());
 }
 
+TEST(TestAnimationController, RemoveValueInTick)
+{
+  na::TickSource source;
+  na::AnimationController controller(source);
+
+  std::shared_ptr<na::AnimateValue<int>> animation1(new na::AnimateValue<int>(0,100,1000));
+  std::shared_ptr<na::AnimateValue<int>> animation2(new na::AnimateValue<int>(0,100,1000));
+
+  int i = 0;
+  animation1->updated.connect([&](int)
+  {
+    if (++i == 2)
+    {
+      animation2.reset();
+    }
+  });
+
+  animation1->Start();
+  animation2->Start();
+  source.tick.emit(10);
+
+  ASSERT_THAT(animation1->CurrentState(), Eq(na::Animation::Running));
+  ASSERT_TRUE(animation2.get() == nullptr);
+
+  animation1.reset();
+  animation2.reset();
+}
+
 TEST(TestAnimation, TestInitialState)
 {
   MockAnimation animation;
