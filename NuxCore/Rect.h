@@ -122,7 +122,7 @@ namespace nux
   Rect operator-(Rect const& lhs, Rect const& rhs);
   Rect operator*(Rect const& lhs, float scalar);
 
-
+  typedef Rect Geometry;
 }
 
 #endif // RECT_H
