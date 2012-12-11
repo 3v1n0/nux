@@ -96,8 +96,6 @@ namespace nux
     eHARight,
   };
 
-  typedef Rect Geometry;
-
   typedef struct
   {
     int x;
