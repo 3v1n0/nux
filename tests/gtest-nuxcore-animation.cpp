@@ -590,7 +590,7 @@ TEST(TestAnimateValue, TestAnimatePoint)
   nt::ChangeRecorder<nux::Point> recorder;
   na::AnimateValue<nux::Point> animation(nux::Point(10, 10),
                                          nux::Point(20, 20),
-                                        1000);
+                                         1000);
   animation.updated.connect(recorder.listener());
 
   animation.Start();
