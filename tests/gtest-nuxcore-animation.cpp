@@ -363,6 +363,14 @@ TEST(TestAnimateValue, TestConstruction)
   ASSERT_THAT(dafault_int_animation.Duration(), Eq(0));
   ASSERT_THAT(dafault_int_animation.CurrentTimePosition(), Eq(0));
 
+  na::AnimateValue<int> duration_int_animation(10);
+  ASSERT_THAT(duration_int_animation.CurrentState(), Eq(na::Animation::Stopped));
+  ASSERT_THAT(duration_int_animation.GetStartValue(), Eq(0));
+  ASSERT_THAT(duration_int_animation.GetCurrentValue(), Eq(0));
+  ASSERT_THAT(duration_int_animation.GetFinishValue(), Eq(0));
+  ASSERT_THAT(duration_int_animation.Duration(), Eq(10));
+  ASSERT_THAT(duration_int_animation.CurrentTimePosition(), Eq(0));
+
   na::AnimateValue<int> value_int_animation(10, 20, 1000);
   ASSERT_THAT(value_int_animation.CurrentState(), Eq(na::Animation::Stopped));
   ASSERT_THAT(value_int_animation.GetStartValue(), Eq(10));
