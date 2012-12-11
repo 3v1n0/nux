@@ -275,7 +275,7 @@ xtest_text_entry_SOURCES = xtest-text-entry.cpp \
 
 xtest_text_entry_CPPFLAGS = $(TestFlags)
 xtest_text_entry_LDADD = $(TestLibs)
-xtest_text_entry_LDFLAGS = -lpthread -lXtst
+xtest_text_entry_LDFLAGS = -lpthread -lXtst -libus-1.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0
 
 xtest_text_entry_logic_SOURCES = xtest-text-entry-logic.cpp \
   nux_automated_test_framework.cpp \
