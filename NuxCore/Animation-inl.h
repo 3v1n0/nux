@@ -29,12 +29,20 @@ namespace animation
 
 template <typename VALUE_TYPE>
 AnimateValue<VALUE_TYPE>::AnimateValue()
-  : AnimateValue(VALUE_TYPE(), VALUE_TYPE(), 0)
+  : msec_current_(0)
+  , msec_duration_(0)
+  , start_value_(VALUE_TYPE())
+  , finish_value_(VALUE_TYPE())
+  , current_value_(start_value_)
 {}
 
 template <typename VALUE_TYPE>
 AnimateValue<VALUE_TYPE>::AnimateValue(int msec_duration)
-  : AnimateValue(VALUE_TYPE(), VALUE_TYPE(), msec_duration)
+  : msec_current_(0)
+  , msec_duration_(msec_duration)
+  , start_value_(VALUE_TYPE())
+  , finish_value_(VALUE_TYPE())
+  , current_value_(start_value_)
 {}
 
 template <typename VALUE_TYPE>
