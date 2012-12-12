@@ -550,9 +550,9 @@ TEST(TestAnimateValue, TestAnimateIntReverseMultipleTimes)
   animation.finished.connect([&finished]{ finished = true; });
 
   animation.Start();
-  animation.Advance(200); // 12
-  animation.Advance(200); // 14
-  animation.Advance(200); // 16
+  animation.Advance(201); // 12
+  animation.Advance(201); // 14
+  animation.Advance(201); // 16
   ASSERT_FALSE(finished);
 
   int current_time_pos = animation.CurrentTimePosition();
@@ -562,8 +562,8 @@ TEST(TestAnimateValue, TestAnimateIntReverseMultipleTimes)
   ASSERT_EQ(animation.GetFinishValue(), start_value);
   ASSERT_EQ(animation.CurrentTimePosition(), total_duration - current_time_pos);
 
-  animation.Advance(200); // 14
-  animation.Advance(200); // 12
+  animation.Advance(201); // 14
+  animation.Advance(201); // 12
   ASSERT_FALSE(finished);
 
   current_time_pos = animation.CurrentTimePosition();
@@ -572,8 +572,8 @@ TEST(TestAnimateValue, TestAnimateIntReverseMultipleTimes)
   ASSERT_EQ(animation.GetFinishValue(), finish_value);
   ASSERT_EQ(animation.CurrentTimePosition(), total_duration - current_time_pos);
 
-  animation.Advance(200); // 14
-  animation.Advance(200); // 16
+  animation.Advance(201); // 14
+  animation.Advance(201); // 16
   ASSERT_FALSE(finished);
 
   current_time_pos = animation.CurrentTimePosition();
@@ -583,9 +583,9 @@ TEST(TestAnimateValue, TestAnimateIntReverseMultipleTimes)
   ASSERT_EQ(animation.GetFinishValue(), start_value);
   ASSERT_EQ(animation.CurrentTimePosition(), total_duration - current_time_pos);
 
-  animation.Advance(200); // 14
-  animation.Advance(200); // 12
-  animation.Advance(200); // 10
+  animation.Advance(201); // 14
+  animation.Advance(201); // 12
+  animation.Advance(201); // 10
   ASSERT_TRUE(finished);
 
   std::vector<int> expected = {10, 12, 14, 16, 14, 12, 14, 16, 14, 12, 10};
