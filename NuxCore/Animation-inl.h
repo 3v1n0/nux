@@ -34,8 +34,16 @@ AnimateValue<VALUE_TYPE>::AnimateValue()
   , start_value_(VALUE_TYPE())
   , finish_value_(VALUE_TYPE())
   , current_value_(start_value_)
-{
-}
+{}
+
+template <typename VALUE_TYPE>
+AnimateValue<VALUE_TYPE>::AnimateValue(int msec_duration)
+  : msec_current_(0)
+  , msec_duration_(msec_duration)
+  , start_value_(VALUE_TYPE())
+  , finish_value_(VALUE_TYPE())
+  , current_value_(start_value_)
+{}
 
 template <typename VALUE_TYPE>
 AnimateValue<VALUE_TYPE>::AnimateValue(VALUE_TYPE const& start,
@@ -46,8 +54,7 @@ AnimateValue<VALUE_TYPE>::AnimateValue(VALUE_TYPE const& start,
   , start_value_(start)
   , finish_value_(finish)
   , current_value_(start_value_)
-{
-}
+{}
 
 template <typename VALUE_TYPE>
 AnimateValue<VALUE_TYPE>& AnimateValue<VALUE_TYPE>::SetStartValue(VALUE_TYPE const& start)
@@ -143,19 +150,11 @@ void AnimateValue<VALUE_TYPE>::Restart()
 template <typename VALUE_TYPE>
 void AnimateValue<VALUE_TYPE>::Reverse()
 {
-  bool running = (CurrentState() == Running);
+  std::swap(start_value_, finish_value_);
 
-  if (running)
+  if (CurrentState() != Stopped)
   {
-    finish_value_ = start_value_;
-    start_value_ = current_value_;
-    msec_duration_ = msec_current_;
-    Restart();
-  }
-  else
-  {
-    // Reversing a stopped animation shouldn't start it.
-    std::swap(start_value_, finish_value_);
+    msec_current_ = msec_duration_ - msec_current_;
   }
 }
 
