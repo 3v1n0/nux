@@ -446,7 +446,9 @@ namespace nux
       // m_contentHeight + (top_padding_ + bottom_padding_);
       SetBaseHeight(m_contentHeight + (top_padding_ + bottom_padding_));
 
-      int temp = m_contentHeight;
+      // Get back the Height after it has been bounded by [minHeight, maxHeight] in the preceeding call to SetBaseHeight.
+      // Then deduce the height of the content.
+      int temp = GetHeight() - (top_padding_ + bottom_padding_);
       std::vector<int>::iterator IntIterator = FullSizeUnadjusted.begin();
 
       for (IntIterator = FullSizeUnadjusted.begin(); IntIterator != FullSizeUnadjusted.end(); IntIterator++)
