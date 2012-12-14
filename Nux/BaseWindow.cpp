@@ -490,6 +490,24 @@ namespace nux
     return GetWindowThread()->GetWindowCompositor().GetBackupTextureData(this, width, height, format);
   }
 
+  void BaseWindow::PresentInEmbeddedModeOnThisFrame()
+  {
+    nuxAssertMsg (GetWindowThread()->IsEmbeddedWindow(),
+                  "[BaseWindow::PresentInEmbeddedModeOnThisFrame] only "
+                  "supported in embdded mode");
+    _present_in_embedded_mode = true;
+  }
+
+  void BaseWindow::WasPresentedInEmbeddedMode()
+  {
+    _present_in_embedded_mode = false;
+  }
+
+  bool BaseWindow::AllowPresentationInEmbeddedMode()
+  {
+    return _present_in_embedded_mode;
+  }
+
   void BaseWindow::SetEnterFocusInputArea(InputArea *input_area)
   {
     if (_enter_focus_input_area)
