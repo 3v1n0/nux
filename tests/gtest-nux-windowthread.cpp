@@ -191,5 +191,32 @@ TEST_F(EmbeddedContext, WindowThreadIsEmbedded)
   EXPECT_TRUE(WindowThread()->IsEmbeddedWindow());
 }
 
+/* There's not a whole lot we can do to test this at the moment
+ * since we can't really mock out the behaviour of GraphicsEngine
+ */
+TEST_F(EmbeddedContext, PresentViewInEmbeddedReadiesForPresentation)
+{
+  nux::ObjectPtr <nux::BaseWindow> bw(new nux::BaseWindow(TEXT("")));
+  bw->PresentInEmbeddedModeOnThisFrame();
+  EXPECT_TRUE(bw->AllowPresentationInEmbeddedMode());
+}
+
+TEST_F(EmbeddedContext, DonePresentViewInEmbeddedMode)
+{
+  nux::ObjectPtr <nux::BaseWindow> bw(new nux::BaseWindow(TEXT("")));
+  bw->PresentInEmbeddedModeOnThisFrame();
+  bw->WasPresentedInEmbeddedMode();
+  EXPECT_FALSE(bw->AllowPresentationInEmbeddedMode());
+}
+
+TEST_F(EmbeddedContext, DrawFromForeignCmdResetsAllowPresentationState)
+{
+  nux::ObjectPtr <nux::BaseWindow> bw(new nux::BaseWindow(TEXT("")));
+  bw->PresentInEmbeddedModeOnThisFrame();
+  nux::Geometry geom (0, 0, 300, 200);
+  WindowThread()->RenderInterfaceFromForeignCmd(&geom);
+  EXPECT_FALSE(bw->AllowPresentationInEmbeddedMode());
+}
+
 
 }
