@@ -1551,6 +1551,11 @@ DECLARE_LOGGER(logger, "nux.window");
           continue;
         }
 
+        /* Caller doesn't want us to render this yet */
+        if (GetWindowThread()->IsEmbeddedWindow() &&
+            !window->AllowPresentationInEmbeddedMode())
+          continue;
+
         RenderTargetTextures& rt = GetWindowBuffer(window);
 
         // Based on the areas that requested a rendering inside the
@@ -1611,6 +1616,7 @@ DECLARE_LOGGER(logger, "nux.window");
           graphics_engine.GetRenderStates().SetBlend(false);
         }
 
+        window->WasPresentedInEmbeddedMode();
         window->_child_need_redraw = false;
       }
       else

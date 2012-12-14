@@ -212,6 +212,7 @@ TEST_F(EmbeddedContext, DonePresentViewInEmbeddedMode)
 TEST_F(EmbeddedContext, DrawFromForeignCmdResetsAllowPresentationState)
 {
   nux::ObjectPtr <nux::BaseWindow> bw(new nux::BaseWindow(TEXT("")));
+  bw->ShowWindow(true, false);
   bw->PresentInEmbeddedModeOnThisFrame();
   nux::Geometry geom (0, 0, 300, 200);
   WindowThread()->RenderInterfaceFromForeignCmd(&geom);
