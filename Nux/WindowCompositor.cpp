@@ -1605,7 +1605,7 @@ DECLARE_LOGGER(logger, "nux.window");
           CHECKGL(glDepthMask(GL_FALSE));
           {
             graphics_engine.ApplyClippingRectangle();
-            PresentBufferToScreen(rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false, window->GetOpacity(), window->premultiply());
+	    PresentBufferToScreen(rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false, window->GetOpacity(), window->premultiply());
           }
           CHECKGL(glDepthMask(GL_TRUE));
           graphics_engine.GetRenderStates().SetBlend(false);

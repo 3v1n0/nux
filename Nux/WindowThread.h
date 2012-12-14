@@ -47,6 +47,7 @@ namespace nux
 #endif
   class Event;
   class Area;
+  class BaseWindow;
   struct ClientAreaDraw;
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
@@ -321,7 +322,7 @@ namespace nux
 
     void ClearDrawList();
 
-    std::vector<Geometry> GetDrawList();
+    std::vector<nux::BaseWindow *> GetDrawList ();
 
 #ifdef NUX_GESTURES_SUPPORT
     /*!
@@ -534,7 +535,7 @@ namespace nux
         This list contains the layout that need to be recomputed following the resizing of one of the sub element.
     */
     std::list<Area *> _queued_layout_list;
-    std::vector<Geometry> m_dirty_areas;
+    std::vector<BaseWindow *> m_dirty_areas;
 
     //! This variable is true while we are computing the layout the starting from the outmost layout(the Main Layout);
     bool _inside_layout_cycle;
