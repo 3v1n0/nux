@@ -267,26 +267,45 @@ TEST_F(EmbeddedContextWindow, DrawFromForeignCmdResetsAllowPresentationState)
   EXPECT_FALSE(Window()->AllowPresentationInEmbeddedMode());
 }
 
-TEST_F(EmbeddedContextWindow, AllowPresentationAddsToDrawList)
+TEST_F(EmbeddedContextWindow, AllowPresentationAddsToPresentationList)
 {
   Window()->PresentInEmbeddedModeOnThisFrame();
-  std::vector <nux::Geometry> draw_list (WindowThread()->GetDrawList());
+  std::vector <nux::Geometry> present_list (WindowThread()->GetPresentationListGeometries());
 
-  ASSERT_EQ(1, draw_list.size());
-  EXPECT_EQ (draw_list[0], Window()->GetAbsoluteGeometry());
+  ASSERT_EQ(1, present_list.size());
+  EXPECT_EQ (present_list[0], Window()->GetAbsoluteGeometry());
 }
 
-TEST_F(EmbeddedContextWindow, QueueDrawAddsParentToDrawList)
+TEST_F(EmbeddedContextWindow, MultipleAllowPresentationAddsToPresentationListUnique)
+{
+  Window()->PresentInEmbeddedModeOnThisFrame();
+  Window()->PresentInEmbeddedModeOnThisFrame();
+  std::vector <nux::Geometry> present_list (WindowThread()->GetPresentationListGeometries());
+
+  ASSERT_EQ(1, present_list.size());
+  EXPECT_EQ(present_list[0], Window()->GetAbsoluteGeometry());
+}
+
+TEST_F(EmbeddedContextWindow, DrawFromForeignCmdResetsPresentationList)
+{
+  Window()->PresentInEmbeddedModeOnThisFrame();
+  nux::Geometry geom (0, 0, 300, 200);
+  WindowThread()->RenderInterfaceFromForeignCmd(&geom);
+  std::vector <nux::Geometry> present_list (WindowThread()->GetPresentationListGeometries());
+  ASSERT_TRUE(present_list.empty());
+}
+
+TEST_F(EmbeddedContextWindow, QueueDrawAddsParentToPresentationList)
 {
   nux::HLayout* layout = new nux::HLayout(NUX_TRACKER_LOCATION);
   nux::View* view = new nux::TestView("");
   layout->AddView(view, 1);
   Window()->SetLayout(layout);
   view->QueueDraw();
-  std::vector <nux::Geometry> draw_list (WindowThread()->GetDrawList());
+  std::vector <nux::Geometry> present_list (WindowThread()->GetPresentationListGeometries());
 
-  ASSERT_EQ(1, draw_list.size());
-  EXPECT_EQ (draw_list[0], Window()->GetAbsoluteGeometry());
+  ASSERT_EQ(1, present_list.size());
+  EXPECT_EQ (present_list[0], Window()->GetAbsoluteGeometry());
 }
 
 

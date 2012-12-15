@@ -32,6 +32,7 @@
 namespace nux
 {
 
+  class BaseWindow;
   class WindowThread;
   class Layout;
   class HLayout;
@@ -317,11 +318,17 @@ namespace nux
 
     bool IsRedrawNeeded() const;
 
+    // DrawList - this is a maintained list of areas that will
+    // be completely redraw on the next frame
     void AddToDrawList(View *view);
-
     void ClearDrawList();
-
     std::vector<Geometry> GetDrawList();
+
+    // PresentationList - this is a maintained list of areas that
+    // will be presented to the reference framebuffer or backbuffer
+    // in embedded mode on the next frame
+    void AddToPresentationList(nux::BaseWindow *);
+    std::vector <Geometry> GetPresentationListGeometries();
 
 #ifdef NUX_GESTURES_SUPPORT
     /*!
@@ -535,6 +542,7 @@ namespace nux
     */
     std::list<Area *> _queued_layout_list;
     std::vector<Geometry> m_dirty_areas;
+    std::vector<BaseWindow *> m_presentation_list_embedded;
 
     //! This variable is true while we are computing the layout the starting from the outmost layout(the Main Layout);
     bool _inside_layout_cycle;

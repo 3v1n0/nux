@@ -1323,6 +1323,27 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     return m_dirty_areas;
   }
 
+  void WindowThread::AddToPresentationList(BaseWindow *bw)
+  {
+    if (std::find (m_presentation_list_embedded.begin(),
+                   m_presentation_list_embedded.end(),
+                   bw) != m_presentation_list_embedded.end())
+      return;
+
+    m_presentation_list_embedded.push_back(bw);
+  }
+
+  std::vector<nux::Geometry> WindowThread::GetPresentationListGeometries()
+  {
+    std::vector<nux::Geometry> presentation_geometries;
+    for (std::vector<nux::BaseWindow *>::iterator it =
+         m_presentation_list_embedded.begin();
+         it != m_presentation_list_embedded.end();
+         ++it)
+      presentation_geometries.push_back((*it)->GetAbsoluteGeometry());
+    return presentation_geometries;
+  }
+
   bool WindowThread::IsEmbeddedWindow()
   {
     return embedded_window_;
