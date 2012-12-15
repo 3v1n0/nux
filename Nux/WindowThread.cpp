@@ -1284,10 +1284,18 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
   
   void WindowThread::AddToDrawList(View *view)
   {
-    nux::BaseWindow *parent (NUX_STATIC_CAST (BaseWindow *, view->GetToplevel ()));
+    Area *parent;
+    Geometry geo, pgeo;
+    
+    geo = view->GetAbsoluteGeometry();
+    parent = view->GetToplevel();
     
     if (parent && (view != parent))
     {
+//       pgeo = parent->GetGeometry();
+//       geo.x += pgeo.x;
+//       geo.y += pgeo.y;
+
       if (parent->Type().IsDerivedFromType(BaseWindow::StaticObjectType))
       {
         BaseWindow* window = NUX_STATIC_CAST(BaseWindow*, parent);
@@ -1302,10 +1310,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
       window->_child_need_redraw = true;
     }
 
-    if (std::find (m_dirty_areas.begin (),
-		   m_dirty_areas.end (),
-		   parent) == m_dirty_areas.end ())
-	m_dirty_areas.push_back (parent);
+    m_dirty_areas.push_back(geo);
   }
   
   void WindowThread::ClearDrawList()
@@ -1313,7 +1318,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     m_dirty_areas.clear();
   }
   
-  std::vector<nux::BaseWindow *> WindowThread::GetDrawList()
+  std::vector<Geometry> WindowThread::GetDrawList()
   {
     return m_dirty_areas;
   }
