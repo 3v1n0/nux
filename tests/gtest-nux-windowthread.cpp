@@ -17,6 +17,19 @@
 
 using namespace testing;
 
+namespace nux {
+  std::ostream &
+  operator<< (std::ostream &os, const Geometry &geo)
+  {
+    return os << "Geometry: x: " <<
+                 geo.x << " y: " <<
+                 geo.y << " width: " <<
+                 geo.width << " height: " <<
+                 geo.height << std::endl;
+
+  }
+}
+
 namespace {
 
 TEST(TestWindowThread, TestCreate)
@@ -252,6 +265,28 @@ TEST_F(EmbeddedContextWindow, DrawFromForeignCmdResetsAllowPresentationState)
   nux::Geometry geom (0, 0, 300, 200);
   WindowThread()->RenderInterfaceFromForeignCmd(&geom);
   EXPECT_FALSE(Window()->AllowPresentationInEmbeddedMode());
+}
+
+TEST_F(EmbeddedContextWindow, AllowPresentationAddsToDrawList)
+{
+  Window()->PresentInEmbeddedModeOnThisFrame();
+  std::vector <nux::Geometry> draw_list (WindowThread()->GetDrawList());
+
+  ASSERT_EQ(1, draw_list.size());
+  EXPECT_EQ (draw_list[0], Window()->GetAbsoluteGeometry());
+}
+
+TEST_F(EmbeddedContextWindow, QueueDrawAddsParentToDrawList)
+{
+  nux::HLayout* layout = new nux::HLayout(NUX_TRACKER_LOCATION);
+  nux::View* view = new nux::TestView("");
+  layout->AddView(view, 1);
+  Window()->SetLayout(layout);
+  view->QueueDraw();
+  std::vector <nux::Geometry> draw_list (WindowThread()->GetDrawList());
+
+  ASSERT_EQ(1, draw_list.size());
+  EXPECT_EQ (draw_list[0], Window()->GetAbsoluteGeometry());
 }
 
 
