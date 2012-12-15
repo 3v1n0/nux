@@ -192,6 +192,8 @@ namespace nux
     void WasPresentedInEmbeddedMode();
     bool AllowPresentationInEmbeddedMode();
 
+    void PrepareParentRedirectedView();
+
 #ifdef NUX_GESTURES_SUPPORT
     virtual Area* GetInputAreaHitByGesture(const nux::GestureEvent &event);
 #endif

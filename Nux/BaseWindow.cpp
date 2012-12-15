@@ -508,6 +508,12 @@ namespace nux
     return _present_in_embedded_mode;
   }
 
+  void BaseWindow::PrepareParentRedirectedView()
+  {
+    Area::PrepareParentRedirectedView();
+    PresentInEmbeddedModeOnThisFrame();
+  }
+
   void BaseWindow::SetEnterFocusInputArea(InputArea *input_area)
   {
     if (_enter_focus_input_area)
