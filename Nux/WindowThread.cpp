@@ -1508,6 +1508,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
         GetWindowThread()->GetGraphicsEngine().SetGlobalClippingRectangle(Rect(clip->x, clip->y, clip->width, clip->height));
         
       window_compositor_->Draw(window_size_configuration_event_, force_rendering_);
+      m_presentation_list_embedded.clear();
       
       if (clip)
         GetWindowThread()->GetGraphicsEngine().DisableGlobalClippingRectangle();

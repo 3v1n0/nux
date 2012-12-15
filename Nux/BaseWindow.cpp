@@ -496,6 +496,7 @@ namespace nux
                   "[BaseWindow::PresentInEmbeddedModeOnThisFrame] only "
                   "supported in embdded mode");
     _present_in_embedded_mode = true;
+    nux::GetWindowThread()->AddToPresentationList(this);
   }
 
   void BaseWindow::WasPresentedInEmbeddedMode()
