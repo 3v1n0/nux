@@ -10,6 +10,9 @@
 #include <X11/X.h>
 
 #include "Nux/Nux.h"
+#include "Nux/View.h"
+#include "Nux/HLayout.h"
+#include "Nux/ProgramFramework/TestView.h"
 
 
 using namespace testing;
@@ -201,6 +204,18 @@ TEST_F(EmbeddedContext, PresentViewInEmbeddedReadiesForPresentation)
   EXPECT_TRUE(bw->AllowPresentationInEmbeddedMode());
 }
 
+TEST_F(EmbeddedContext, QueueDrawOnChildInEmbeddedReadiesForPresentation)
+{
+  nux::ObjectPtr <nux::BaseWindow> bw(new nux::BaseWindow(TEXT("")));
+  nux::HLayout* layout = new nux::HLayout(NUX_TRACKER_LOCATION);
+  nux::View* view = new nux::TestView("");
+  layout->AddView(view, 1);
+  bw->SetLayout(layout);
+
+  view->QueueDraw();
+  EXPECT_TRUE(bw->AllowPresentationInEmbeddedMode());
+}
+
 TEST_F(EmbeddedContext, DonePresentViewInEmbeddedMode)
 {
   nux::ObjectPtr <nux::BaseWindow> bw(new nux::BaseWindow(TEXT("")));
@@ -209,14 +224,34 @@ TEST_F(EmbeddedContext, DonePresentViewInEmbeddedMode)
   EXPECT_FALSE(bw->AllowPresentationInEmbeddedMode());
 }
 
-TEST_F(EmbeddedContext, DrawFromForeignCmdResetsAllowPresentationState)
+class EmbeddedContextWindow : public EmbeddedContext
 {
-  nux::ObjectPtr <nux::BaseWindow> bw(new nux::BaseWindow(TEXT("")));
-  bw->ShowWindow(true, false);
-  bw->PresentInEmbeddedModeOnThisFrame();
+  public:
+
+    virtual void SetUp ()
+    {
+      EmbeddedContext::SetUp();
+      _base_window = nux::ObjectPtr<nux::BaseWindow> (new nux::BaseWindow(TEXT("")));
+      _base_window->ShowWindow(true, false);
+    }
+
+    virtual nux::ObjectPtr <nux::BaseWindow> const &
+    Window()
+    {
+      return _base_window;
+    }
+
+  private:
+
+    nux::ObjectPtr <nux::BaseWindow> _base_window;
+};
+
+TEST_F(EmbeddedContextWindow, DrawFromForeignCmdResetsAllowPresentationState)
+{
+  Window()->PresentInEmbeddedModeOnThisFrame();
   nux::Geometry geom (0, 0, 300, 200);
   WindowThread()->RenderInterfaceFromForeignCmd(&geom);
-  EXPECT_FALSE(bw->AllowPresentationInEmbeddedMode());
+  EXPECT_FALSE(Window()->AllowPresentationInEmbeddedMode());
 }
 
 
