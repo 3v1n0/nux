@@ -19,6 +19,8 @@
  *
  */
 
+#include <functional>
+
 #include "Nux.h"
 #include "Layout.h"
 #include "NuxCore/Logger.h"
@@ -1484,9 +1486,30 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     return request_draw_cycle_to_host_wm;
   }
 
+  namespace {
+
+    void PresentOnBaseWindowIntersectsRect(const ObjectWeakPtr<BaseWindow> &w,
+                                           const Geometry &rect)
+    {
+      Geometry inter = rect.Intersect(w->GetAbsoluteGeometry());
+      if (!inter.IsNull())
+        w->PresentInEmbeddedModeOnThisFrame();
+    }
+
+    void MarkWindowUnpresented(const ObjectWeakPtr<BaseWindow> &w)
+    {
+      w->WasPresentedInEmbeddedMode();
+    }
+
+  }
+
   void WindowThread::PresentWindowsIntersectingGeometryOnThisFrame(const Geometry &rect)
   {
-    window_compositor_->PresentWindowsIntersectingGeometryOnThisFrame(rect);
+    using namespace std::placeholders;
+    nuxAssertMsg(IsEmbeddedWindow(),
+                 "[WindowThread::PresentWindowIntersectingGeometryOnThisFrame] "
+                 "can only be called inside an embedded window");
+    window_compositor_->OnAllBaseWindows(std::bind (PresentOnBaseWindowIntersectsRect, _1, rect));
   }
 
   void WindowThread::RenderInterfaceFromForeignCmd(Geometry *clip)
@@ -1513,7 +1536,6 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
         GetWindowThread()->GetGraphicsEngine().SetGlobalClippingRectangle(Rect(clip->x, clip->y, clip->width, clip->height));
         
       window_compositor_->Draw(window_size_configuration_event_, force_rendering_);
-      m_presentation_list_embedded.clear();
       
       if (clip)
         GetWindowThread()->GetGraphicsEngine().DisableGlobalClippingRectangle();
@@ -1544,6 +1566,12 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
 
   void WindowThread::ForeignFrameEnded()
   {
+    using namespace std::placeholders;
+    nuxAssertMsg(IsEmbeddedWindow(),
+                 "[WindowThread::ForeignFrameEnded] "
+                 "can only be called inside an embedded window");
+    window_compositor_->OnAllBaseWindows(std::bind (MarkWindowUnpresented, _1));
+    m_presentation_list_embedded.clear();
   }
 
   int WindowThread::InstallEventInspector(EventInspector function, void* data)

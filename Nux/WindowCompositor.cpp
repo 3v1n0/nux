@@ -1340,53 +1340,31 @@ DECLARE_LOGGER(logger, "nux.window");
     }
   }
 
-  namespace {
-
-    bool BaseWindowIntersectsRect(const ObjectWeakPtr<BaseWindow> &w,
-                                  const Geometry &rect)
-    {
-      if (w.IsValid())
-      {
-        Geometry inter = rect.Intersect(w->GetAbsoluteGeometry());
-        return !inter.IsNull();
-      }
-      else
-        return false;
-    }
-
-  }
-
-  void WindowCompositor::PresentWindowsIntersectingGeometryOnThisFrame(const Geometry &rect)
+  void WindowCompositor::OnAllBaseWindows(const WindowMutatorFunc &func)
   {
-    nuxAssertMsg(window_thread_->IsEmbeddedWindow(),
-                 "[WindowCompositor::PresentWindowIntersectingGeometryOnThisFrame] "
-                 "can only be called inside an embedded window");
     for (WindowList::iterator it = _view_window_list.begin();
          it != _view_window_list.end();
          ++it)
     {
-      if (BaseWindowIntersectsRect(*it, rect))
-        (*it)->PresentInEmbeddedModeOnThisFrame();
+      if (it->IsValid())
+        func (*it);
     }
 
     for (WindowList::iterator it = _modal_view_window_list.begin();
          it != _modal_view_window_list.end();
          ++it)
-      if (BaseWindowIntersectsRect(*it, rect))
-        (*it)->PresentInEmbeddedModeOnThisFrame();
+      if (it->IsValid())
+        func (*it);
 
 
     if (m_MenuWindow.IsValid())
-      if (BaseWindowIntersectsRect(m_MenuWindow, rect))
-        m_MenuWindow->PresentInEmbeddedModeOnThisFrame();
+      func (m_MenuWindow);
 
     if (_tooltip_window.IsValid())
-      if (BaseWindowIntersectsRect(_tooltip_window, rect))
-        _tooltip_window->PresentInEmbeddedModeOnThisFrame();
+      func (_tooltip_window);
 
     if (m_OverlayWindow.IsValid())
-      if (BaseWindowIntersectsRect(m_OverlayWindow, rect))
-        m_OverlayWindow->PresentInEmbeddedModeOnThisFrame();
+      func (m_OverlayWindow);
   }
 
   void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
@@ -1680,9 +1658,6 @@ DECLARE_LOGGER(logger, "nux.window");
         window->_child_need_redraw = false;
         window->DoneRedraw();
       }
-
-      if (window_thread_->IsEmbeddedWindow())
-        window->WasPresentedInEmbeddedMode();
     }
 
     m_FrameBufferObject->Deactivate();

@@ -23,6 +23,8 @@
 #ifndef WINDOWCOMPOSITOR_H
 #define WINDOWCOMPOSITOR_H
 
+#include <functional>
+
 #include "BaseWindow.h"
 
 #include <sigc++/trackable.h>
@@ -53,6 +55,7 @@ namespace nux
   {
   public:
     typedef ObjectWeakPtr<BaseWindow> WeakBaseWindowPtr;
+    typedef std::function <void (const WeakBaseWindowPtr &)> WindowMutatorFunc;
 
     WindowCompositor(WindowThread* window_thread);
     ~WindowCompositor();
@@ -408,7 +411,7 @@ namespace nux
 
   private:
 
-    void PresentWindowsIntersectingGeometryOnThisFrame(const Geometry &rect);
+    void OnAllBaseWindows(const WindowMutatorFunc &);
 
     //! Render the interface.
     void Draw(bool SizeConfigurationEvent, bool force_draw);
