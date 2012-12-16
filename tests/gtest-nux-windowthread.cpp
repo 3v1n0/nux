@@ -263,6 +263,23 @@ class EmbeddedContextWindow : public EmbeddedContext
     nux::ObjectPtr <nux::BaseWindow> _base_window;
 };
 
+class RedrawRequestVerification
+{
+  public:
+
+    MOCK_METHOD0(RedrawRequested, void());
+};
+
+TEST_F(EmbeddedContextWindow, AllowPresentationRequestsRedraw)
+{
+  RedrawRequestVerification verification;
+
+  EXPECT_CALL (verification, RedrawRequested());
+  WindowThread()->RedrawRequested.connect (sigc::mem_fun (&verification,
+                                                          &RedrawRequestVerification::RedrawRequested));
+  Window()->PresentInEmbeddedModeOnThisFrame();
+}
+
 TEST_F(EmbeddedContextWindow, AllowPresentationAddsToPresentationList)
 {
   Window()->PresentInEmbeddedModeOnThisFrame();

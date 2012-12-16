@@ -1327,6 +1327,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
 
   void WindowThread::AddToPresentationList(BaseWindow *bw)
   {
+    RequestRedraw();
     if (std::find (m_presentation_list_embedded.begin(),
                    m_presentation_list_embedded.end(),
                    bw) != m_presentation_list_embedded.end())
