@@ -263,14 +263,6 @@ class EmbeddedContextWindow : public EmbeddedContext
     nux::ObjectPtr <nux::BaseWindow> _base_window;
 };
 
-TEST_F(EmbeddedContextWindow, DrawFromForeignCmdResetsAllowPresentationState)
-{
-  Window()->PresentInEmbeddedModeOnThisFrame();
-  nux::Geometry geom (0, 0, 300, 200);
-  WindowThread()->RenderInterfaceFromForeignCmd(&geom);
-  EXPECT_FALSE(Window()->AllowPresentationInEmbeddedMode());
-}
-
 TEST_F(EmbeddedContextWindow, AllowPresentationAddsToPresentationList)
 {
   Window()->PresentInEmbeddedModeOnThisFrame();
@@ -288,15 +280,6 @@ TEST_F(EmbeddedContextWindow, MultipleAllowPresentationAddsToPresentationListUni
 
   ASSERT_EQ(1, present_list.size());
   EXPECT_EQ(present_list[0], Window()->GetAbsoluteGeometry());
-}
-
-TEST_F(EmbeddedContextWindow, DrawFromForeignCmdResetsPresentationList)
-{
-  Window()->PresentInEmbeddedModeOnThisFrame();
-  nux::Geometry geom (0, 0, 300, 200);
-  WindowThread()->RenderInterfaceFromForeignCmd(&geom);
-  std::vector <nux::Geometry> present_list (WindowThread()->GetPresentationListGeometries());
-  ASSERT_TRUE(present_list.empty());
 }
 
 TEST_F(EmbeddedContextWindow, QueueDrawAddsParentToPresentationList)
@@ -376,6 +359,17 @@ TEST_F(EmbeddedContextMultiWindow, PresentBoth)
   WindowThread()->PresentWindowsIntersectingGeometryOnThisFrame(geo);
   EXPECT_TRUE(window->AllowPresentationInEmbeddedMode());
   EXPECT_TRUE(other->AllowPresentationInEmbeddedMode());
+}
+
+TEST_F(EmbeddedContextMultiWindow, ForeignFrameEndedPresentNone)
+{
+  nux::Geometry geo (0, 0, 100, 100);
+  nux::ObjectPtr<nux::BaseWindow> window(SpawnWindow());
+  window->SetGeometry(geo);
+  WindowThread()->PresentWindowsIntersectingGeometryOnThisFrame(geo);
+  WindowThread()->ForeignFrameEnded();
+  EXPECT_FALSE(window->AllowPresentationInEmbeddedMode());
+  EXPECT_TRUE(WindowThread()->GetPresentationListGeometries().empty());
 }
 
 

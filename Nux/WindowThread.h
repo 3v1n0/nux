@@ -245,6 +245,11 @@ namespace nux
     */
     void RenderInterfaceFromForeignCmd(Geometry *clip);
 
+    /*!
+        Used to mark the end of the foreign frame
+     */
+    void ForeignFrameEnded();
+
 #if !defined(NUX_MINIMAL)
     /*!
         Add a timeline to our window

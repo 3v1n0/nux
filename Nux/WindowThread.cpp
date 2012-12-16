@@ -1542,6 +1542,10 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     }
   }
 
+  void WindowThread::ForeignFrameEnded()
+  {
+  }
+
   int WindowThread::InstallEventInspector(EventInspector function, void* data)
   {
     NUX_RETURN_VALUE_IF_NULL(function, 0);
