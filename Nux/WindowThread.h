@@ -226,6 +226,17 @@ namespace nux
 #endif
 
     /*!
+        In embedded mode, allow presentation on any windows intersecting this
+        rect. The effect of this is culmulative for the frame, so it can be
+        called multiple times with many different rects until
+        RenderInterfaceFromForeignCmd is called.
+        \sa IsEmbeddedWindow
+
+        @param rect Region of the display to consider for presenting windows
+     */
+    void PresentWindowsIntersectingGeometryOnThisFrame(const Geometry &rect);
+
+    /*!
         Render the interface. This command is send from the pluging when the window thread is embedded.
         The clip region matches the surface of one single monitor screen, or a region inside that screen.
         \sa IsEmbeddedWindow.

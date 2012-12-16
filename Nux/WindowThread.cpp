@@ -1484,6 +1484,11 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     return request_draw_cycle_to_host_wm;
   }
 
+  void WindowThread::PresentWindowsIntersectingGeometryOnThisFrame(const Geometry &rect)
+  {
+    window_compositor_->PresentWindowsIntersectingGeometryOnThisFrame(rect);
+  }
+
   void WindowThread::RenderInterfaceFromForeignCmd(Geometry *clip)
   {
     nuxAssertMsg(IsEmbeddedWindow() == true, "[WindowThread::RenderInterfaceFromForeignCmd] You can only call RenderInterfaceFromForeignCmd if the window was created with CreateFromForeignWindow.");

@@ -246,6 +246,10 @@ class EmbeddedContextWindow : public EmbeddedContext
       EmbeddedContext::SetUp();
       _base_window = nux::ObjectPtr<nux::BaseWindow> (new nux::BaseWindow(TEXT("")));
       _base_window->ShowWindow(true, false);
+
+      /* QueueDraw will call PresentInEmbeddedModeOnThisFrame - we
+       * need to unset this state in order to test it properly */
+      _base_window->WasPresentedInEmbeddedMode();
     }
 
     virtual nux::ObjectPtr <nux::BaseWindow> const &
@@ -306,6 +310,72 @@ TEST_F(EmbeddedContextWindow, QueueDrawAddsParentToPresentationList)
 
   ASSERT_EQ(1, present_list.size());
   EXPECT_EQ (present_list[0], Window()->GetAbsoluteGeometry());
+}
+
+class EmbeddedContextMultiWindow : public EmbeddedContext
+{
+  public:
+
+    virtual void SetUp ()
+    {
+      EmbeddedContext::SetUp();
+    }
+
+    const nux::ObjectPtr<nux::BaseWindow> & SpawnWindow()
+    {
+      _base_windows.push_back(nux::ObjectPtr<nux::BaseWindow> (new nux::BaseWindow(TEXT(""))));
+      _base_windows.back()->ShowWindow(true, false);
+
+      /* QueueDraw will call PresentInEmbeddedModeOnThisFrame - we
+       * need to unset this state in order to test it properly */
+      _base_windows.back()->WasPresentedInEmbeddedMode();
+      return _base_windows.back();
+    }
+
+    virtual std::vector <nux::ObjectPtr <nux::BaseWindow> > const &
+    Windows()
+    {
+      return _base_windows;
+    }
+
+  private:
+
+    std::vector <nux::ObjectPtr <nux::BaseWindow> > _base_windows;
+};
+
+TEST_F(EmbeddedContextMultiWindow, PresentIfIntersectsRectOneWindow)
+{
+  nux::Geometry geo (0, 0, 100, 100);
+  nux::ObjectPtr<nux::BaseWindow> window(SpawnWindow());
+  window->SetGeometry(geo);
+  WindowThread()->PresentWindowsIntersectingGeometryOnThisFrame(geo);
+  EXPECT_TRUE(window->AllowPresentationInEmbeddedMode());
+}
+
+TEST_F(EmbeddedContextMultiWindow, PresentOnlyOneWindow)
+{
+  nux::Geometry geo (0, 0, 100, 100);
+  nux::Geometry outside_geo (0, 101, 100, 100);
+  nux::ObjectPtr<nux::BaseWindow> window(SpawnWindow());
+  nux::ObjectPtr<nux::BaseWindow> outside(SpawnWindow());
+  window->SetGeometry(geo);
+  outside->SetGeometry(outside_geo);
+  WindowThread()->PresentWindowsIntersectingGeometryOnThisFrame(geo);
+  EXPECT_TRUE(window->AllowPresentationInEmbeddedMode());
+  EXPECT_FALSE(outside->AllowPresentationInEmbeddedMode());
+}
+
+TEST_F(EmbeddedContextMultiWindow, PresentBoth)
+{
+  nux::Geometry geo (0, 0, 100, 101);
+  nux::Geometry other_geo (0, 100, 100, 100);
+  nux::ObjectPtr<nux::BaseWindow> window(SpawnWindow());
+  nux::ObjectPtr<nux::BaseWindow> other(SpawnWindow());
+  window->SetGeometry(geo);
+  other->SetGeometry(other_geo);
+  WindowThread()->PresentWindowsIntersectingGeometryOnThisFrame(geo);
+  EXPECT_TRUE(window->AllowPresentationInEmbeddedMode());
+  EXPECT_TRUE(other->AllowPresentationInEmbeddedMode());
 }
 
 

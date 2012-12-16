@@ -47,6 +47,7 @@ namespace nux
     : View(NUX_FILE_LINE_PARAM)
     , _paint_layer(new ColorLayer(Color(0xFF707070)))
     , _opacity(1.0f)
+    , _present_in_embedded_mode(false)
   {
     premultiply = true;
     _name = WindowName;

@@ -407,6 +407,9 @@ namespace nux
 #endif
 
   private:
+
+    void PresentWindowsIntersectingGeometryOnThisFrame(const Geometry &rect);
+
     //! Render the interface.
     void Draw(bool SizeConfigurationEvent, bool force_draw);
 
