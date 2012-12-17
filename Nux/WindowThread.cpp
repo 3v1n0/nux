@@ -1492,6 +1492,9 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     void PresentOnBaseWindowIntersectsRect(const ObjectWeakPtr<BaseWindow> &w,
                                            const Geometry &rect)
     {
+      if (!w->IsVisible())
+        return;
+
       Geometry inter = rect.Intersect(w->GetAbsoluteGeometry());
       if (!inter.IsNull())
         w->PresentInEmbeddedModeOnThisFrame();

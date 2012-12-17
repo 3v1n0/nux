@@ -352,6 +352,16 @@ TEST_F(EmbeddedContextMultiWindow, PresentIfIntersectsRectOneWindow)
   EXPECT_TRUE(window->AllowPresentationInEmbeddedMode());
 }
 
+TEST_F(EmbeddedContextMultiWindow, NoPresentInvisible)
+{
+  nux::Geometry geo (0, 0, 100, 100);
+  nux::ObjectPtr<nux::BaseWindow> window(SpawnWindow());
+  window->SetGeometry(geo);
+  window->ShowWindow(false);
+  WindowThread()->PresentWindowsIntersectingGeometryOnThisFrame(geo);
+  EXPECT_FALSE(window->AllowPresentationInEmbeddedMode());
+}
+
 TEST_F(EmbeddedContextMultiWindow, PresentOnlyOneWindow)
 {
   nux::Geometry geo (0, 0, 100, 100);
