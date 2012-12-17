@@ -496,6 +496,11 @@ namespace nux
     nuxAssertMsg (GetWindowThread()->IsEmbeddedWindow(),
                   "[BaseWindow::PresentInEmbeddedModeOnThisFrame] only "
                   "supported in embdded mode");
+
+    /* Invisible windows are never presented */
+    if (!IsVisible())
+      return;
+
     _present_in_embedded_mode = true;
     nux::GetWindowThread()->AddToPresentationList(this);
   }
