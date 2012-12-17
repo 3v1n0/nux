@@ -237,6 +237,18 @@ TEST_F(EmbeddedContext, DonePresentViewInEmbeddedMode)
   EXPECT_FALSE(bw->AllowPresentationInEmbeddedMode());
 }
 
+TEST_F(EmbeddedContext, NoPresentInvisibleOnQueueDraw)
+{
+  nux::ObjectPtr <nux::BaseWindow> window(new nux::BaseWindow(TEXT("")));
+  nux::HLayout* layout = new nux::HLayout(NUX_TRACKER_LOCATION);
+  nux::View* view = new nux::TestView("");
+  layout->AddView(view, 1);
+  window->SetLayout(layout);
+  window->ShowWindow(false);
+  view->QueueDraw();
+  EXPECT_FALSE(window->AllowPresentationInEmbeddedMode());
+}
+
 class EmbeddedContextWindow : public EmbeddedContext
 {
   public:

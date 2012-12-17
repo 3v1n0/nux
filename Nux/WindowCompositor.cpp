@@ -1585,11 +1585,6 @@ DECLARE_LOGGER(logger, "nux.window");
           continue;
         }
 
-        /* Caller doesn't want us to render this yet */
-        if (GetWindowThread()->IsEmbeddedWindow() &&
-            !window->AllowPresentationInEmbeddedMode())
-          continue;
-
         RenderTargetTextures& rt = GetWindowBuffer(window);
 
         // Based on the areas that requested a rendering inside the
@@ -1636,6 +1631,11 @@ DECLARE_LOGGER(logger, "nux.window");
 
         if (rt.color_rt.IsValid())
         {
+          /* Caller doesn't want us to render this yet */
+          if (GetWindowThread()->IsEmbeddedWindow() &&
+              !window->AllowPresentationInEmbeddedMode())
+            continue;
+
           m_FrameBufferObject->Deactivate();
 
           // Nux is done rendering a BaseWindow into a texture. The previous call to Deactivate
