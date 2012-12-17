@@ -1333,7 +1333,6 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
                    bw) != m_presentation_list_embedded.end())
       return;
 
-    printf ("will present: %s", bw->GetWindowName().c_str());
     m_presentation_list_embedded.push_back(bw);
   }
 
