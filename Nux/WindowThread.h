@@ -346,6 +346,11 @@ namespace nux
     void AddToPresentationList(nux::BaseWindow *);
     std::vector <Geometry> GetPresentationListGeometries();
 
+    // RemovalList - this is a maintained list of areas where
+    // BaseWindows were once showing but have now been removed
+    void AddToRemovalList(nux::BaseWindow *);
+    std::vector <Geometry> GetRemovalListGeometries();
+
 #ifdef NUX_GESTURES_SUPPORT
     /*!
       Simple wrapper for ProcessEvent for connection with GeisAdapter::event_ready

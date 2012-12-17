@@ -1348,6 +1348,15 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     return presentation_geometries;
   }
 
+  void WindowThread::AddToRemovalList(nux::BaseWindow *)
+  {
+  }
+
+  std::vector <Geometry> WindowThread::GetRemovalListGeometries()
+  {
+    return std::vector <Geometry> ();
+  }
+
   bool WindowThread::IsEmbeddedWindow()
   {
     return embedded_window_;

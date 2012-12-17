@@ -501,6 +501,8 @@ namespace nux
     if (!IsVisible())
       return;
 
+    printf ("presenting window of size: %i %i %i %i\n", GetBaseX(), GetBaseY(), GetBaseWidth(), GetBaseHeight());
+
     _present_in_embedded_mode = true;
     nux::GetWindowThread()->AddToPresentationList(this);
   }
