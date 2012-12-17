@@ -368,6 +368,8 @@ namespace nux
 
   void XInputWindow::Hide()
   {
+    GetGraphicsDisplay()->RemoveFocusedWindowForXIMController();
+
     XMoveResizeWindow(display_, window_,
                       -100 - geometry_.width,
                       -100 - geometry_.height,

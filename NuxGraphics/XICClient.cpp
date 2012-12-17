@@ -35,11 +35,15 @@ void XICClient::ResetXIC(XIM xim, Window window)
 {
   if (!xim_style_)
     SetupXIMStyle(xim);
+
   SetupXIC(xim, window);
 }
 
 void XICClient::SetupXIC(XIM xim, Window window)
 {
+  if (xic_)
+    DestroyXIC();
+
   xic_ = XCreateIC(xim, XNInputStyle, xim_style_, XNClientWindow, window, XNFocusWindow, window, NULL);
 }
 
