@@ -117,7 +117,7 @@ namespace nux
 
   bool ICgVertexShader::IsValid()
   {
-    return(_ready ? true : false);
+    return _ready;
   }
 
   ICgPixelShader::ICgPixelShader(NString ShaderName)
@@ -175,7 +175,7 @@ namespace nux
 
   bool ICgPixelShader::IsValid()
   {
-    return(_ready ? true : false);
+    return _ready;
   }
 
   void cgErrorCallback(void)

@@ -257,7 +257,7 @@ namespace nux
     */
     bool IsValid() const
     {
-      return (ptr_ != NULL) ? true : false;
+      return (ptr_ != NULL);
     }
 
     bool operator < (T *ptr) const
@@ -627,7 +627,7 @@ namespace nux
     */
     bool IsValid() const
     {
-      return (ptr_!= NULL) ? true : false;
+      return (ptr_ != NULL);
     }
 
     //! Return true is the hosted pointer is null or has been destroyed.
@@ -677,7 +677,7 @@ namespace nux
     {
       if (ptr_)
       {
-        sigc::slot<void, Object*> slot = sigc::mem_fun(this, &ObjectWeakPtr<T>::TargetDestroyed);
+        auto slot = sigc::mem_fun(this, &ObjectWeakPtr<T>::TargetDestroyed);
         destroy_listener_ = ptr_->object_destroyed.connect(slot);
       }
     }

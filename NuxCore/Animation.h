@@ -73,6 +73,7 @@ class AnimateValue : public Animation
 {
 public:
   AnimateValue();
+  AnimateValue(int msec_duration);
   AnimateValue(VALUE_TYPE const& start,
                VALUE_TYPE const& finish,
                int msec_duration);

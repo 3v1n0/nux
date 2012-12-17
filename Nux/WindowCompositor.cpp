@@ -61,6 +61,8 @@ DECLARE_LOGGER(logger, "nux.window");
     on_menu_closure_continue_with_event_ = false;
     _mouse_position_on_owner = Point(0, 0);
 
+    platform_support_for_depth_texture_ = GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().Support_Depth_Buffer();
+
     m_FrameBufferObject = GetGraphicsDisplay()->GetGpuDevice()->CreateFrameBufferObject();
     // Do not leave the Fbo binded. Deactivate it.
     m_FrameBufferObject->Deactivate();
@@ -68,7 +70,11 @@ DECLARE_LOGGER(logger, "nux.window");
     // At this stage, the size of the window may not be known yet.
     // FormatRenderTargets will be called the first time runtime gets into WindowThread::ExecutionLoop
     m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
-    m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
+
+    if (platform_support_for_depth_texture_)
+    {
+      m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(2, 2, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
+    }
 
 #if !defined(NUX_MINIMAL)
     _mouse_over_menu_page       = NULL;
@@ -1625,10 +1631,17 @@ DECLARE_LOGGER(logger, "nux.window");
     buffer_width = window_thread_->GetGraphicsEngine().GetWindowWidth();
     buffer_height = window_thread_->GetGraphicsEngine().GetWindowHeight();
 
-    if ((!m_MainColorRT.IsValid()) || (!m_MainDepthRT.IsValid()) || (m_MainColorRT->GetWidth() != buffer_width) || (m_MainColorRT->GetHeight() != buffer_height))
+    if ((!m_MainColorRT.IsValid()) || (m_MainColorRT->GetWidth() != buffer_width) || (m_MainColorRT->GetHeight() != buffer_height))
     {
       m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
-      m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
+    }
+
+    if (platform_support_for_depth_texture_)
+    {
+      if ((!m_MainDepthRT.IsValid()) || (m_MainDepthRT->GetWidth() != buffer_width) || (m_MainDepthRT->GetHeight() != buffer_height))
+      {
+        m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
+      }
     }
 
     m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
@@ -2012,7 +2025,7 @@ DECLARE_LOGGER(logger, "nux.window");
       key_focus_area_ = NULL;
     }
 
-    return key_focus_area_.IsValid() ? true : false;
+    return key_focus_area_.IsValid();
   }
 
   InputArea* WindowCompositor::GetKeyFocusArea()
@@ -2050,7 +2063,10 @@ DECLARE_LOGGER(logger, "nux.window");
     nuxAssert(buffer_height >= 1);
 
     m_MainColorRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
-    m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
+    if (platform_support_for_depth_texture_)
+    {
+      m_MainDepthRT = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
+    }
 
     // Clear the buffer the first time...
     m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
@@ -2093,7 +2109,14 @@ DECLARE_LOGGER(logger, "nux.window");
       if ((rt.color_rt->GetWidth() != buffer_width) || (rt.color_rt->GetHeight() != buffer_height))
       {
         rt.color_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
-        rt.depth_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
+      }
+
+      if (platform_support_for_depth_texture_)
+      {
+        if ((rt.depth_rt->GetWidth() != buffer_width) || (rt.depth_rt->GetHeight() != buffer_height))
+        {
+          rt.depth_rt = GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableDeviceTexture(buffer_width, buffer_height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
+        }
       }
 
       m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);

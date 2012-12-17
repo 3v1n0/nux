@@ -26,7 +26,7 @@
 #include "NuxGraphics/GraphicsEngine.h"
 
 /*
- * Tests: 
+ * Tests:
  *  - Frame buffer object
  *  - Set a texture in the fbo
  *  - Set fbo as a render target
@@ -91,8 +91,9 @@ void RenderBlurredCopyOfRenderTarget ()
       fbo         = graphics_display->GetGpuDevice ()->CreateFrameBufferObject ();
       texture_rt  = graphics_display->GetGpuDevice ()->CreateSystemCapableDeviceTexture (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), 1, nux::BITFMT_R8G8B8A8);
       depth_rt    = graphics_display->GetGpuDevice ()->CreateSystemCapableDeviceTexture (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), 1, nux::BITFMT_D24S8);
-      fbo->FormatFrameBufferObject (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), nux::BITFMT_R8G8B8A8);
     }
+
+    fbo->FormatFrameBufferObject (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), nux::BITFMT_R8G8B8A8);
 
     fbo->SetRenderTarget (0, texture_rt->GetSurfaceLevel (0));
     fbo->SetDepthSurface (depth_rt->GetSurfaceLevel (0));
@@ -150,6 +151,7 @@ void RenderBlurredCopyOfRenderTarget ()
     }
     */
 
+    graphics_display->SwapBuffer();
   } while((event.type != nux::NUX_TERMINATE_APP) && (event.GetVirtualKeyState(NUX_VK_ESCAPE) == 0));
 
   fbo.Release ();

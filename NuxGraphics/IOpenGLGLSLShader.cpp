@@ -45,16 +45,14 @@ namespace nux
 
   bool ExtractShaderString3(const std::string &ShaderToken, const std::string &ShaderSource, std::string &RetSource, std::string ShaderPreprocessorDefines)
   {
-    size_t lineStart = 0;
-    size_t lineCount = 1;
-    bool startTokenFound = false;
-    size_t shaderStringStart = 0;
-    size_t shaderStartLine   = 1;
-
-
     //Loop for all characters in the string
     if (ShaderToken != "")
     {
+      size_t lineStart = 0;
+      size_t lineCount = 1;
+      bool startTokenFound = false;
+      size_t shaderStringStart = 0;
+      size_t shaderStartLine   = 1;
       size_t i;
 
       for (i = 0; i < ShaderSource.length(); i++)
@@ -268,12 +266,12 @@ namespace nux
       delete[] InfoLogBuffer;
     }
 
-    return(m_CompiledAndReady ? true : false);
+    return m_CompiledAndReady;
   }
 
   bool IOpenGLVertexShader::IsValid()
   {
-    return(m_CompiledAndReady ? true : false);
+    return m_CompiledAndReady;
   }
 
   IOpenGLPixelShader::IOpenGLPixelShader(std::string ShaderName)
@@ -349,12 +347,12 @@ namespace nux
       delete[] InfoLogBuffer;
     }
 
-    return(m_CompiledAndReady ? true : false);
+    return m_CompiledAndReady;
   }
 
   bool IOpenGLPixelShader::IsValid()
   {
-    return(m_CompiledAndReady ? true : false);
+    return m_CompiledAndReady;
   }
 
 #if 0
@@ -429,12 +427,12 @@ namespace nux
       delete InfoLogBuffer;
     }
 
-    return(m_CompiledAndReady ? true : false);
+    return m_CompiledAndReady;
   }
 
   bool IOpenGLGeometryShader::IsValid()
   {
-    return(m_CompiledAndReady ? true : false);
+    return m_CompiledAndReady;
   }
 
   void IOpenGLGeometryShader::SetInputPrimitiveType(GLenum type)

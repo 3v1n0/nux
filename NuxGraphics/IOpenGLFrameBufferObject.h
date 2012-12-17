@@ -105,6 +105,7 @@ namespace nux
 
     GLFramebufferObject _Fbo;   // The framebuffer object used for rendering to the texture
     GLRenderbuffer      _Rbo;
+    bool platform_support_for_depth_texture_;
 
     friend class GpuDevice;
   };

@@ -1,0 +1,52 @@
+//
+// Copyright 2010 Inalogic Inc.
+//
+// This program is free software: you can redistribute it and/or modify it
+// under the terms of the GNU General Public License version 3, as published
+// by the  Free Software Foundation.
+//
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranties of
+// MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+// PURPOSE.  See the GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// version 3 along with this program.  If not, see
+// <http://www.gnu.org/licenses/>
+//
+// Author by: Brandon Schaefer <brandon.schaefer@canonical.com>
+
+// 0 is the name of the IM
+// 1 is any key sequences you need to enter to get the IM
+//   in the correct state while testing
+// 2 is text that will get inputed to the IM. The input is what you
+//   would normally type to get your desired CJK string
+// 3 is the expect result that the IM should turn your input into
+// 4 is when we know the test is over and to close the current IM
+
+// This test GCIN with chewing
+0 gcin
+1 ctrl+space
+1 ctrl+alt+[
+2 w91o3g4
+1 enter
+1 ctrl+space
+3 北市
+4 halt
+
+// This test Fcitx with google pinyin
+0 fcitx
+1 ctrl+space
+2 dianshi ji1
+3 耟椒晃
+4 halt
+
+// This test Hime with anthy
+0 hime
+1 ctrl+space
+1 ctrl+alt+=
+2 shisutemu
+1 enter
+1 ctrl+space
+3 しすてむ
+4 halt

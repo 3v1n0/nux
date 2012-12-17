@@ -90,6 +90,8 @@ public:
   void ViewSendDown();
   //! Simulate composition keys.
   void ViewSendCompositionKeys(const std::string &str);
+  //! Simulate 1-4 key presses.
+  void ViewSendKeys(const std::string &str);
 
   void ViewSendIBusToggle();
 

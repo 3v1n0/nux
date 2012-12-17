@@ -324,8 +324,6 @@ namespace nux
     GLint unpack_alignment = GPixelFormats[pTexture->_PixelFormat].RowMemoryAlignment;
     unsigned int halfUnpack = Log2(unpack_alignment);
 
-    unsigned int BytePerPixel = 0;
-
     pDesc->PixelFormat = pTexture->_PixelFormat;
 
     if ( /*pTexture->_Format  == GL_COMPRESSED_RGB_S3TC_DXT1_EXT ||*/
@@ -388,13 +386,13 @@ namespace nux
     }
     else
     {
-      pDesc->Width            = Max<unsigned int> (1, pTexture->_Width >> Level);
-      pDesc->Height           = Max<unsigned int> (1, pTexture->_Height >> Level);
-      pDesc->WidthInBlocks    = pDesc->Width;
-      pDesc->HeightInBlocks   = pDesc->Height;
-      BytePerPixel            = GPixelFormats[pTexture->_PixelFormat].BlockBytes;
-      pDesc->BitsPerPixel     = BytePerPixel * 8;
-      pDesc->BytesPerBlock    = BytePerPixel; // a block is a 1x1 pixel ie. 1 pixel.
+      pDesc->Width              = Max<unsigned int> (1, pTexture->_Width >> Level);
+      pDesc->Height             = Max<unsigned int> (1, pTexture->_Height >> Level);
+      pDesc->WidthInBlocks      = pDesc->Width;
+      pDesc->HeightInBlocks     = pDesc->Height;
+      unsigned int BytePerPixel = GPixelFormats[pTexture->_PixelFormat].BlockBytes;
+      pDesc->BitsPerPixel       = BytePerPixel * 8;
+      pDesc->BytesPerBlock      = BytePerPixel; // a block is a 1x1 pixel ie. 1 pixel.
       pDesc->RowPitch = (((pDesc->Width * BytePerPixel + (unpack_alignment - 1)) >> (halfUnpack)) << (halfUnpack));
       pDesc->SlicePitch = (((pDesc->Width * BytePerPixel + (unpack_alignment - 1)) >> (halfUnpack)) << (halfUnpack)) * pDesc->Height;
     }

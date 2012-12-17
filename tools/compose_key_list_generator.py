@@ -113,8 +113,6 @@ if not os.path.exists(input_file):
 print "Parsing "+input_file+", saving it to "+output_file+"..."
 composefile = codecs.open(input_file, 'r', 'utf-8')
 
-invalid = []
-
 for line in composefile:
     parts = re.match(keys_match, line)
     if not parts:
@@ -136,10 +134,6 @@ for line in composefile:
 
     # Ignoring unknown keys
     if 0 in [Gdk.keyval_from_name(k) for k in keys]:
-        for k in keys:
-            if Gdk.keyval_from_name(k) == 0 and k not in invalid:
-                invalid.append(k)
-                print k
         continue
 
     if not char in combinations:

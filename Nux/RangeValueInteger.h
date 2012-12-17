@@ -97,7 +97,7 @@ namespace nux
 
     bool IsCtrlKeyPressed() const
     {
-      return (m_CTRL_KEY ? true : false);
+      return m_CTRL_KEY;
     }
 
     // signals

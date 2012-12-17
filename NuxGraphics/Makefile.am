@@ -1,4 +1,4 @@
-CLEANFILES = 
+CLEANFILES =
 DISTCLEANFILES =
 EXTRA_DIST = $(srcdir)/GraphicsDisplayWin.cpp \
              $(srcdir)/GraphicsDisplayWin.h
@@ -17,7 +17,8 @@ libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS= \
   $(GCC_FLAGS) \
   $(NUX_GRAPHICS_CFLAGS) \
   $(MAINTAINER_CFLAGS) \
-  $(GEIS_CFLAGS)
+  $(GEIS_CFLAGS) \
+  $(COVERAGE_CFLAGS)
 
 libnux_graphics_@NUX_API_VERSION@_la_LIBADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
@@ -25,7 +26,8 @@ libnux_graphics_@NUX_API_VERSION@_la_LIBADD = \
   $(GEIS_LIBS)
 
 libnux_graphics_@NUX_API_VERSION@_la_LDFLAGS = \
-  $(NUX_LT_LDFLAGS)
+  $(NUX_LT_LDFLAGS) \
+  $(COVERAGE_LDFLAGS)
 
 source_h = \
   $(srcdir)/BitmapFormats.h \
@@ -91,7 +93,9 @@ if USE_X11
 source_h += \
   $(srcdir)/GraphicsDisplayX11.h \
   $(srcdir)/VirtualKeyCodesX11.h \
-  $(srcdir)/XInputWindow.h
+  $(srcdir)/XInputWindow.h \
+  $(srcdir)/XICClient.h \
+  $(srcdir)/XIMController.h
 endif
 
 if !NUX_OPENGLES_20
@@ -163,11 +167,12 @@ source_cpp = \
   $(srcdir)/GLRenderingAPI.cpp \
   $(srcdir)/RunTimeStats.cpp
 
-
 if USE_X11
 source_cpp += \
   $(srcdir)/GraphicsDisplayX11.cpp \
-  $(srcdir)/XInputWindow.cpp
+  $(srcdir)/XInputWindow.cpp \
+  $(srcdir)/XICClient.cpp \
+  $(srcdir)/XIMController.cpp
 endif
 
 if !NUX_OPENGLES_20

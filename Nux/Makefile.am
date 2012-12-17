@@ -17,7 +17,8 @@ libnux_@NUX_API_VERSION@_la_CPPFLAGS= \
   $(NUX_CFLAGS) \
   $(IBUS_CFLAGS) \
   $(GEIS_CFLAGS) \
-  $(MAINTAINER_CFLAGS)
+  $(MAINTAINER_CFLAGS) \
+  $(COVERAGE_CFLAGS)
 
 libnux_@NUX_API_VERSION@_la_LIBADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
@@ -27,7 +28,8 @@ libnux_@NUX_API_VERSION@_la_LIBADD = \
   $(GEIS_LIBS)
 
 libnux_@NUX_API_VERSION@_la_LDFLAGS = \
-  $(NUX_LT_LDFLAGS)
+  $(NUX_LT_LDFLAGS) \
+  $(COVERAGE_LDFLAGS)
 
 source_cpp = \
   $(srcdir)/AbstractButton.cpp \

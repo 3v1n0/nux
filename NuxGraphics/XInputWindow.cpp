@@ -22,6 +22,8 @@
 #include "XInputWindow.h"
 #include "GraphicsDisplayX11.h"
 #include "GLThread.h"
+#include "XIMController.h"
+
 
 // Jay, what is this for?  It isn't referenced anywhere.
 #define xdnd_version 5
@@ -376,8 +378,9 @@ namespace nux
 
   void XInputWindow::Show()
   {
-    shown_ = true;
+    GetGraphicsDisplay()->SetFocusedWindowForXIMController(window_);
 
+    shown_ = true;
     if (!mapped_)
     {
       XMapRaised(display_, window_);

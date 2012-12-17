@@ -26,7 +26,7 @@
 #include "NuxGraphics/GraphicsEngine.h"
 
 /*
- * Tests: 
+ * Tests:
  *  - frame buffer object
  *  - Set a texture in the fbo
  *  - Set fbo as a render target
@@ -35,7 +35,7 @@
  *  - Blur the render target texture
  *  - Render to default back buffer
  */
- 
+
 void RenderBlurredTexture ()
 {
   nux::GraphicsDisplay* graphics_display = gGLWindowManager.CreateGLWindow("Window", 600, 300, nux::WINDOWSTYLE_NORMAL, 0, false);
@@ -127,14 +127,13 @@ void RenderBlurredTexture ()
 
     nux::TexCoordXForm texxform;
     //Make a blurred copy of the previous render target
-    printf("exec 0\n");
+
     if (texture_rt.IsValid() && graphics_engine)
     {
       tex_blur = graphics_engine->QRP_GLSL_GetBlurTexture(
               0, 0, texture_rt->GetWidth(), texture_rt->GetHeight(),
               texture_rt, texxform, nux::color::White, 7.0f);
     }
-    printf("exec 1\n");
 
     graphics_engine->QRP_1Tex(0, 0, tex_blur->GetWidth(), tex_blur->GetHeight(), tex_blur, texxform, nux::color::White);
 

@@ -2,6 +2,7 @@ SUBDIRS = data NuxCore NuxGraphics Nux examples gputests tests tools
 
 CXXFLAGS += -fno-permissive
 
+include $(top_srcdir)/Makefile.am.coverage
 include doxygen-include.am
 
 if BUILD_DOCUMENTATION

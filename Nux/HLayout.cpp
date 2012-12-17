@@ -356,10 +356,6 @@ namespace nux
         if (!(*it)->IsVisible())
           continue;
 
-        bool smaller_height = false;
-        bool larger_height  = false;
-        bool larger_width   = false;
-        bool smaller_width  = false;
         int ret = 0;
 
         if (((*it)->IsLayout()  || (*it)->IsView()) /*&& ((*it)->IsLayoutDone() == false)*/ /*&& ((*it)->GetScaleFactor() != 0)*/)
@@ -368,10 +364,10 @@ namespace nux
           ret = (*it)->ComputeContentSize();
           Geometry post_geo = (*it)->GetGeometry();
 
-          larger_width    = (pre_geo.width < post_geo.width)    ? true : false;
-          smaller_width   = (pre_geo.width > post_geo.width)    ? true : false;
-          larger_height   = (pre_geo.height < post_geo.height)  ? true : false;
-          smaller_height  = (pre_geo.height > post_geo.height)  ? true : false;
+          bool larger_width    = pre_geo.width < post_geo.width;
+          bool smaller_width   = pre_geo.width > post_geo.width;
+          bool larger_height   = pre_geo.height < post_geo.height;
+          bool smaller_height  = pre_geo.height > post_geo.height;
 
           if ((larger_width || smaller_width) && ((*it)->IsLayoutDone() == false))
           {

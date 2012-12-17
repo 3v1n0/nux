@@ -27,6 +27,9 @@
 #include <vector>
 #include <glib.h>
 #include <sigc++/sigc++.h>
+#if __cplusplus >= 201100L || defined (__GXX_EXPERIMENTAL_CXX0X__)
+#include <functional>
+#endif
 
 
 namespace nux
@@ -73,7 +76,11 @@ private:
 template <typename T>
 struct ChangeRecorder : sigc::trackable
 {
+#if __cplusplus >= 201100L || defined (__GXX_EXPERIMENTAL_CXX0X__)
+  typedef std::function<void(T const&)> Listener;
+#else
   typedef sigc::slot<void, T const&> Listener;
+#endif
 
   Listener listener()
   {
