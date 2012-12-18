@@ -256,6 +256,14 @@ TEST_F(EmbeddedContext, NoPresentInvisibleOnQueueDraw)
   EXPECT_FALSE(window->AllowPresentationInEmbeddedMode());
 }
 
+TEST_F(EmbeddedContext, NoPresentInvisible)
+{
+  nux::ObjectPtr <nux::BaseWindow> window(new nux::BaseWindow(TEXT("")));
+  window->ShowWindow(false);
+  window->PresentInEmbeddedModeOnThisFrame();
+  EXPECT_FALSE(window->AllowPresentationInEmbeddedMode());
+}
+
 TEST_F(EmbeddedContext, AllowPresentationSubsequentQueueDraw)
 {
   nux::ObjectPtr <nux::BaseWindow> window(new nux::BaseWindow(TEXT("")));
@@ -431,16 +439,6 @@ TEST_F(EmbeddedContextMultiWindow, PresentIfIntersectsRectOneWindow)
   EXPECT_TRUE(window->AllowPresentationInEmbeddedMode());
 }
 
-TEST_F(EmbeddedContextMultiWindow, NoPresentInvisible)
-{
-  nux::Geometry geo (0, 0, 100, 100);
-  nux::ObjectPtr<nux::BaseWindow> window(SpawnWindow());
-  window->SetGeometry(geo);
-  window->ShowWindow(false);
-  WindowThread()->PresentWindowsIntersectingGeometryOnThisFrame(geo);
-  EXPECT_FALSE(window->AllowPresentationInEmbeddedMode());
-}
-
 TEST_F(EmbeddedContextMultiWindow, PresentOnlyOneWindow)
 {
   nux::Geometry geo (0, 0, 100, 100);
@@ -449,6 +447,11 @@ TEST_F(EmbeddedContextMultiWindow, PresentOnlyOneWindow)
   nux::ObjectPtr<nux::BaseWindow> outside(SpawnWindow());
   window->SetGeometry(geo);
   outside->SetGeometry(outside_geo);
+
+  /* Call ForeignFrameEnded to clear the presentation list set up
+   * by making windows visible */
+  WindowThread()->ForeignFrameEnded();
+
   WindowThread()->PresentWindowsIntersectingGeometryOnThisFrame(geo);
   EXPECT_TRUE(window->AllowPresentationInEmbeddedMode());
   EXPECT_FALSE(outside->AllowPresentationInEmbeddedMode());
