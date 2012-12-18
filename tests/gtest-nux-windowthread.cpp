@@ -232,7 +232,6 @@ TEST_F(EmbeddedContext, QueueDrawOnChildInEmbeddedReadiesForPresentation)
   view->DoneRedraw();
   WindowThread()->ForeignFrameEnded();
 
-
   view->QueueDraw();
   EXPECT_TRUE(bw->AllowPresentationInEmbeddedMode());
 }

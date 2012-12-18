@@ -564,6 +564,7 @@ namespace nux
     std::list<Area *> _queued_layout_list;
     std::vector<Geometry> m_dirty_areas;
     std::vector<BaseWindow *> m_presentation_list_embedded;
+    std::vector<BaseWindow *> m_removal_list_embedded;
 
     //! This variable is true while we are computing the layout the starting from the outmost layout(the Main Layout);
     bool _inside_layout_cycle;
