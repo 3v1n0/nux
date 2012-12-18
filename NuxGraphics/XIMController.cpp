@@ -40,8 +40,7 @@ XIMController::XIMController(Display* display)
 XIMController::~XIMController()
 {
   // The XIC must be destroyed before the XIM
-  if (xic_client_.HasXIC())
-    xic_client_.DestroyXIC();
+  xic_client_.DestroyXIC();
 
   if (xim_)
     XCloseIM(xim_);
@@ -50,8 +49,15 @@ XIMController::~XIMController()
 void XIMController::SetFocusedWindow(Window window)
 {
   window_ = window;
+
   if (xim_)
     xic_client_.ResetXIC(xim_, window);
+}
+
+void XIMController::RemoveFocusedWindow()
+{
+  window_ = 0;
+  xic_client_.DestroyXIC();
 }
 
 bool XIMController::IsXICValid() const
@@ -95,6 +101,7 @@ void XIMController::InitXIMCallback()
     {
       LOG_WARN(logger) << "XSetLocalModifiers Failed.";
     }
+
     XRegisterIMInstantiateCallback(display_, NULL, NULL, NULL,
                                    XIMController::SetupXIMClientCallback,
                                    (XPointer)this);
