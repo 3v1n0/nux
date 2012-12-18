@@ -346,11 +346,6 @@ namespace nux
     void AddToPresentationList(nux::BaseWindow *);
     std::vector <Geometry> GetPresentationListGeometries();
 
-    // RemovalList - this is a maintained list of areas where
-    // BaseWindows were once showing but have now been removed
-    void AddToRemovalList(nux::BaseWindow *);
-    std::vector <Geometry> GetRemovalListGeometries();
-
 #ifdef NUX_GESTURES_SUPPORT
     /*!
       Simple wrapper for ProcessEvent for connection with GeisAdapter::event_ready
@@ -564,7 +559,6 @@ namespace nux
     std::list<Area *> _queued_layout_list;
     std::vector<Geometry> m_dirty_areas;
     std::vector<BaseWindow *> m_presentation_list_embedded;
-    std::vector<BaseWindow *> m_removal_list_embedded;
 
     //! This variable is true while we are computing the layout the starting from the outmost layout(the Main Layout);
     bool _inside_layout_cycle;

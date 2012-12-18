@@ -372,33 +372,6 @@ TEST_F(EmbeddedContextWindow, QueueDrawAddsParentToPresentationList)
   EXPECT_EQ (present_list[0], Window()->GetAbsoluteGeometry());
 }
 
-TEST_F(EmbeddedContextWindow, AddToRemovalListGeometry)
-{
-  WindowThread()->AddToRemovalList(Window().GetPointer());
-  std::vector <nux::Geometry> remove_list (WindowThread()->GetRemovalListGeometries());
-
-  ASSERT_EQ(1, remove_list.size());
-  EXPECT_EQ (remove_list[0], Window()->GetAbsoluteGeometry());
-}
-
-TEST_F(EmbeddedContextWindow, SetInvisibleAddsToRemovalList)
-{
-  Window()->ShowWindow(false, false);
-  std::vector <nux::Geometry> remove_list (WindowThread()->GetRemovalListGeometries());
-
-  ASSERT_EQ(1, remove_list.size());
-  EXPECT_EQ (remove_list[0], Window()->GetAbsoluteGeometry());
-}
-
-TEST_F(EmbeddedContextWindow, ForeignFrameEndedRemovedFromRemovalList)
-{
-  WindowThread()->AddToRemovalList(Window().GetPointer());
-  WindowThread()->ForeignFrameEnded();
-  std::vector <nux::Geometry> remove_list (WindowThread()->GetRemovalListGeometries());
-
-  ASSERT_EQ(0, remove_list.size());
-}
-
 class EmbeddedContextMultiWindow : public EmbeddedContext
 {
   public:

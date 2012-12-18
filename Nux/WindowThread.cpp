@@ -1347,28 +1347,6 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     return presentation_geometries;
   }
 
-  void WindowThread::AddToRemovalList(nux::BaseWindow *bw)
-  {
-    RequestRedraw();
-    if (std::find (m_removal_list_embedded.begin(),
-                   m_removal_list_embedded.end(),
-                   bw) != m_removal_list_embedded.end())
-      return;
-
-    m_removal_list_embedded.push_back(bw);
-  }
-
-  std::vector <Geometry> WindowThread::GetRemovalListGeometries()
-  {
-    std::vector<nux::Geometry> removal_geometries;
-    for (std::vector<nux::BaseWindow *>::iterator it =
-         m_removal_list_embedded.begin();
-         it != m_removal_list_embedded.end();
-         ++it)
-      removal_geometries.push_back((*it)->GetAbsoluteGeometry());
-    return removal_geometries;
-  }
-
   bool WindowThread::IsEmbeddedWindow()
   {
     return embedded_window_;
@@ -1595,7 +1573,6 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
                  "can only be called inside an embedded window");
     window_compositor_->OnAllBaseWindows(std::bind (MarkWindowUnpresented, _1));
     m_presentation_list_embedded.clear();
-    m_removal_list_embedded.clear();
   }
 
   int WindowThread::InstallEventInspector(EventInspector function, void* data)
