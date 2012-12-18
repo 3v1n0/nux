@@ -428,6 +428,13 @@ namespace nux
 
   void View::QueueDraw()
   {
+    // Report to a parent view with redirect_rendering_to_texture_ set to true that one of its children
+    // needs to be redrawn.
+    //
+    // We should always do this, as the conditions for parent rendering may have
+    // changed between child QueueDraw calls (eg window visibility)
+    PrepareParentRedirectedView();
+
     if (draw_cmd_queued_)
       return;
 
@@ -437,10 +444,6 @@ namespace nux
       application->AddToDrawList(this);
       application->RequestRedraw();
     }
-
-    // Report to a parent view with redirect_rendering_to_texture_ set to true that one of its children
-    // needs to be redrawn.
-    PrepareParentRedirectedView();
 
     if (view_layout_)
     {

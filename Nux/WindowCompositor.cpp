@@ -1340,6 +1340,33 @@ DECLARE_LOGGER(logger, "nux.window");
     }
   }
 
+  void WindowCompositor::OnAllBaseWindows(const WindowMutatorFunc &func)
+  {
+    for (WindowList::iterator it = _view_window_list.begin();
+         it != _view_window_list.end();
+         ++it)
+    {
+      if (it->IsValid())
+        func (*it);
+    }
+
+    for (WindowList::iterator it = _modal_view_window_list.begin();
+         it != _modal_view_window_list.end();
+         ++it)
+      if (it->IsValid())
+        func (*it);
+
+
+    if (m_MenuWindow.IsValid())
+      func (m_MenuWindow);
+
+    if (_tooltip_window.IsValid())
+      func (_tooltip_window);
+
+    if (m_OverlayWindow.IsValid())
+      func (m_OverlayWindow);
+  }
+
   void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
   {
     inside_rendering_cycle_ = true;
@@ -1536,6 +1563,7 @@ DECLARE_LOGGER(logger, "nux.window");
         continue;
 
       BaseWindow* window = window_ptr.GetPointer();
+
       if (!drawModal && window->IsModal())
         continue;
 
@@ -1597,6 +1625,11 @@ DECLARE_LOGGER(logger, "nux.window");
 
         if (rt.color_rt.IsValid())
         {
+          /* Caller doesn't want us to render this yet */
+          if (GetWindowThread()->IsEmbeddedWindow() &&
+              !window->AllowPresentationInEmbeddedMode())
+            continue;
+
           m_FrameBufferObject->Deactivate();
 
           // Nux is done rendering a BaseWindow into a texture. The previous call to Deactivate

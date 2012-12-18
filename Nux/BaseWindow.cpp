@@ -47,6 +47,7 @@ namespace nux
     : View(NUX_FILE_LINE_PARAM)
     , _paint_layer(new ColorLayer(Color(0xFF707070)))
     , _opacity(1.0f)
+    , _present_in_embedded_mode(false)
   {
     premultiply = true;
     _name = WindowName;
@@ -488,6 +489,37 @@ namespace nux
   void* BaseWindow::GetBackupTextureData(int &width, int &height, int &format)
   {
     return GetWindowThread()->GetWindowCompositor().GetBackupTextureData(this, width, height, format);
+  }
+
+  void BaseWindow::PresentInEmbeddedModeOnThisFrame()
+  {
+    nuxAssertMsg (GetWindowThread()->IsEmbeddedWindow(),
+                  "[BaseWindow::PresentInEmbeddedModeOnThisFrame] only "
+                  "supported in embdded mode");
+
+    /* Invisible windows are never presented */
+    if (!IsVisible())
+      return;
+
+    _present_in_embedded_mode = true;
+    nux::GetWindowThread()->AddToPresentationList(this);
+  }
+
+  void BaseWindow::WasPresentedInEmbeddedMode()
+  {
+    _present_in_embedded_mode = false;
+  }
+
+  bool BaseWindow::AllowPresentationInEmbeddedMode()
+  {
+    return _present_in_embedded_mode;
+  }
+
+  void BaseWindow::PrepareParentRedirectedView()
+  {
+    Area::PrepareParentRedirectedView();
+    if (GetWindowThread()->IsEmbeddedWindow())
+      PresentInEmbeddedModeOnThisFrame();
   }
 
   void BaseWindow::SetEnterFocusInputArea(InputArea *input_area)

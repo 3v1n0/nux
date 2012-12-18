@@ -19,6 +19,8 @@
  *
  */
 
+#include <functional>
+
 #include "Nux.h"
 #include "Layout.h"
 #include "NuxCore/Logger.h"
@@ -1323,6 +1325,28 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     return m_dirty_areas;
   }
 
+  void WindowThread::AddToPresentationList(BaseWindow *bw)
+  {
+    RequestRedraw();
+    if (std::find (m_presentation_list_embedded.begin(),
+                   m_presentation_list_embedded.end(),
+                   bw) != m_presentation_list_embedded.end())
+      return;
+
+    m_presentation_list_embedded.push_back(bw);
+  }
+
+  std::vector<nux::Geometry> WindowThread::GetPresentationListGeometries()
+  {
+    std::vector<nux::Geometry> presentation_geometries;
+    for (std::vector<nux::BaseWindow *>::iterator it =
+         m_presentation_list_embedded.begin();
+         it != m_presentation_list_embedded.end();
+         ++it)
+      presentation_geometries.push_back((*it)->GetAbsoluteGeometry());
+    return presentation_geometries;
+  }
+
   bool WindowThread::IsEmbeddedWindow()
   {
     return embedded_window_;
@@ -1463,6 +1487,32 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     return request_draw_cycle_to_host_wm;
   }
 
+  namespace {
+
+    void PresentOnBaseWindowIntersectsRect(const ObjectWeakPtr<BaseWindow> &w,
+                                           const Geometry &rect)
+    {
+      Geometry inter = rect.Intersect(w->GetAbsoluteGeometry());
+      if (!inter.IsNull())
+        w->PresentInEmbeddedModeOnThisFrame();
+    }
+
+    void MarkWindowUnpresented(const ObjectWeakPtr<BaseWindow> &w)
+    {
+      w->WasPresentedInEmbeddedMode();
+    }
+
+  }
+
+  void WindowThread::PresentWindowsIntersectingGeometryOnThisFrame(const Geometry &rect)
+  {
+    using namespace std::placeholders;
+    nuxAssertMsg(IsEmbeddedWindow(),
+                 "[WindowThread::PresentWindowIntersectingGeometryOnThisFrame] "
+                 "can only be called inside an embedded window");
+    window_compositor_->OnAllBaseWindows(std::bind (PresentOnBaseWindowIntersectsRect, _1, rect));
+  }
+
   void WindowThread::RenderInterfaceFromForeignCmd(Geometry *clip)
   {
     nuxAssertMsg(IsEmbeddedWindow() == true, "[WindowThread::RenderInterfaceFromForeignCmd] You can only call RenderInterfaceFromForeignCmd if the window was created with CreateFromForeignWindow.");
@@ -1513,6 +1563,16 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
         nuxDebugMsg("[WindowCompositor::RenderTopViews] Setting the Reference fbo has failed.");
       }
     }
+  }
+
+  void WindowThread::ForeignFrameEnded()
+  {
+    using namespace std::placeholders;
+    nuxAssertMsg(IsEmbeddedWindow(),
+                 "[WindowThread::ForeignFrameEnded] "
+                 "can only be called inside an embedded window");
+    window_compositor_->OnAllBaseWindows(std::bind (MarkWindowUnpresented, _1));
+    m_presentation_list_embedded.clear();
   }
 
   int WindowThread::InstallEventInspector(EventInspector function, void* data)
