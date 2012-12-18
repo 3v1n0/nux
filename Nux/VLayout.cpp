@@ -424,7 +424,7 @@ namespace nux
           {
             if (m_contentWidth < element_width)
             {
-              if (m_contentWidth < GetMaximumHeight())
+              if (m_contentWidth < GetMaximumWidth())
               {
                 // An element is larger than the layout width and the layout has not reach its maximum width yet.
                 m_contentWidth = element_width;
@@ -452,7 +452,9 @@ namespace nux
       // m_contentWidth + (left_padding_ + right_padding_);
       SetBaseWidth(m_contentWidth + (left_padding_ + right_padding_));
 
-      int temp = m_contentWidth;
+      // Get back the Width after it has been bounded by [minWidth, maxWidth] in the preceeding call to SetBaseWidth.
+      // Then deduce the width of the content.
+      int temp = GetWidth() - (left_padding_ + right_padding_);
       std::vector<int>::iterator IntIterator = FullSizeUnadjusted.begin();
 
       for (IntIterator = FullSizeUnadjusted.begin(); IntIterator != FullSizeUnadjusted.end(); ++IntIterator)
