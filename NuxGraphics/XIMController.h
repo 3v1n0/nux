@@ -37,6 +37,7 @@ public:
   ~XIMController();
 
   void SetFocusedWindow(Window window);
+  void RemoveFocusedWindow();
 
   bool IsXICValid() const;
   XIC GetXIC() const;

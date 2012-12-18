@@ -735,6 +735,11 @@ namespace nux
     m_xim_controller->SetFocusedWindow(window);
   }
 
+  void GraphicsDisplay::RemoveFocusedWindowForXIMController()
+  {
+    m_xim_controller->RemoveFocusedWindow();
+  }
+
   int GraphicsDisplay::GetGlXMajor() const
   {
     return _glx_major;

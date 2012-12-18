@@ -1343,7 +1343,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
     
     weights.push_back(exp(-(0*0)/(2*sigma*sigma))/(sqrt(2*constants::pi)*sigma));
     
-    float total = 2 * weights.back();
+    float total = weights.back();
     
     offsets.push_back(0);
     
