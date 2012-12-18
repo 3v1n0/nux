@@ -213,6 +213,8 @@ TEST_F(EmbeddedContext, WindowThreadIsEmbedded)
 TEST_F(EmbeddedContext, PresentViewInEmbeddedReadiesForPresentation)
 {
   nux::ObjectPtr <nux::BaseWindow> bw(new nux::BaseWindow(TEXT("")));
+  bw->ShowWindow(true, false);
+  WindowThread()->ForeignFrameEnded();
   bw->PresentInEmbeddedModeOnThisFrame();
   EXPECT_TRUE(bw->AllowPresentationInEmbeddedMode());
 }
@@ -224,6 +226,12 @@ TEST_F(EmbeddedContext, QueueDrawOnChildInEmbeddedReadiesForPresentation)
   nux::View* view = new nux::TestView("");
   layout->AddView(view, 1);
   bw->SetLayout(layout);
+  bw->ShowWindow(true, false);
+
+  /* Draw command is implicitly queued by ShowWindow, remove it */
+  view->DoneRedraw();
+  WindowThread()->ForeignFrameEnded();
+
 
   view->QueueDraw();
   EXPECT_TRUE(bw->AllowPresentationInEmbeddedMode());
@@ -262,6 +270,7 @@ class EmbeddedContextWindow : public EmbeddedContext
       /* QueueDraw will call PresentInEmbeddedModeOnThisFrame - we
        * need to unset this state in order to test it properly */
       _base_window->WasPresentedInEmbeddedMode();
+      _base_window->DoneRedraw();
     }
 
     virtual nux::ObjectPtr <nux::BaseWindow> const &
