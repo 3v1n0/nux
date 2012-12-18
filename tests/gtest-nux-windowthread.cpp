@@ -256,6 +256,38 @@ TEST_F(EmbeddedContext, NoPresentInvisibleOnQueueDraw)
   EXPECT_FALSE(window->AllowPresentationInEmbeddedMode());
 }
 
+TEST_F(EmbeddedContext, AllowPresentationSubsequentQueueDraw)
+{
+  nux::ObjectPtr <nux::BaseWindow> window(new nux::BaseWindow(TEXT("")));
+  nux::HLayout* layout = new nux::HLayout(NUX_TRACKER_LOCATION);
+  nux::View* view = new nux::TestView("");
+  layout->AddView(view, 1);
+  window->SetLayout(layout);
+
+  /* This will call QueueDraw initially and attempt to add
+   * the window to the presentation list */
+  window->SetGeometry(nux::Geometry(0, 0, 100, 100));
+  EXPECT_FALSE(window->AllowPresentationInEmbeddedMode());
+
+  /* This will call it again */
+  window->ShowWindow(true);
+  EXPECT_TRUE(window->AllowPresentationInEmbeddedMode());
+}
+
+TEST_F(EmbeddedContext, StillProcessDrawIfInvisible)
+{
+  nux::ObjectPtr <nux::BaseWindow> window(new nux::BaseWindow(TEXT("")));
+  nux::HLayout* layout = new nux::HLayout(NUX_TRACKER_LOCATION);
+  nux::View* view = new nux::TestView("");
+  layout->AddView(view, 1);
+  window->SetLayout(layout);
+  window->ShowWindow(false);
+  view->QueueDraw();
+  nux::Geometry clip(0, 0, 100, 100);
+  WindowThread()->RenderInterfaceFromForeignCmd(&clip);
+  EXPECT_FALSE(view->IsRedrawNeeded());
+}
+
 class EmbeddedContextWindow : public EmbeddedContext
 {
   public:

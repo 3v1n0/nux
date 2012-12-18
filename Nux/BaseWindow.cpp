@@ -401,6 +401,7 @@ namespace nux
       _entering_hidden_state = true;
       sigHidden.emit(this);
       GetWindowThread()->GetWindowCompositor().sigHiddenViewWindow.emit(this);
+      GetWindowThread()->AddToRemovalList(this);
     }
 
     if (_is_modal)

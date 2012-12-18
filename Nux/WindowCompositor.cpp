@@ -1564,12 +1564,6 @@ DECLARE_LOGGER(logger, "nux.window");
 
       BaseWindow* window = window_ptr.GetPointer();
 
-      if (window_thread_->IsEmbeddedWindow() &&
-          !window->AllowPresentationInEmbeddedMode())
-      {
-        continue;
-      }
-
       if (!drawModal && window->IsModal())
         continue;
 
