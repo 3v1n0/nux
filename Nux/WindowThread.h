@@ -246,9 +246,17 @@ namespace nux
     void RenderInterfaceFromForeignCmd(Geometry *clip);
 
     /*!
-        Used to mark the end of the foreign frame
+	Used to mark the end of the foreign frame. All calls to PresentInEmbeddedModeOnThisFrame
+	are now redirected to this upcoming frame where we will be called next.
      */
     void ForeignFrameEnded();
+
+    /*!
+	Used to mark the cutoff point where all calls to PresentInEmbeddedModeOnThisFrame
+	should be effective on the next frame, and not this one, because the parent context
+	has stopped tracking damage events for this frame
+     */
+    void ForeignFrameCutoff();
 
 #if !defined(NUX_MINIMAL)
     /*!
@@ -343,7 +351,7 @@ namespace nux
     // PresentationList - this is a maintained list of areas that
     // will be presented to the reference framebuffer or backbuffer
     // in embedded mode on the next frame
-    void AddToPresentationList(nux::BaseWindow *);
+    bool AddToPresentationList(nux::BaseWindow *);
     std::vector <Geometry> GetPresentationListGeometries();
 
 #ifdef NUX_GESTURES_SUPPORT

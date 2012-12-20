@@ -1325,15 +1325,16 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     return m_dirty_areas;
   }
 
-  void WindowThread::AddToPresentationList(BaseWindow *bw)
+  bool WindowThread::AddToPresentationList(BaseWindow *bw)
   {
     RequestRedraw();
     if (std::find (m_presentation_list_embedded.begin(),
                    m_presentation_list_embedded.end(),
                    bw) != m_presentation_list_embedded.end())
-      return;
+      return true;
 
     m_presentation_list_embedded.push_back(bw);
+    return true;
   }
 
   std::vector<nux::Geometry> WindowThread::GetPresentationListGeometries()
@@ -1573,6 +1574,10 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
                  "can only be called inside an embedded window");
     window_compositor_->OnAllBaseWindows(std::bind (MarkWindowUnpresented, _1));
     m_presentation_list_embedded.clear();
+  }
+
+  void WindowThread::ForeignFrameCutoff()
+  {
   }
 
   int WindowThread::InstallEventInspector(EventInspector function, void* data)

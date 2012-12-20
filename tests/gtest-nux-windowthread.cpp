@@ -454,5 +454,40 @@ TEST_F(EmbeddedContextMultiWindow, ForeignFrameEndedPresentNone)
   EXPECT_TRUE(WindowThread()->GetPresentationListGeometries().empty());
 }
 
+TEST_F(EmbeddedContextMultiWindow, AddToPresentationListFailsAfterCutoff)
+{
+  nux::ObjectPtr<nux::BaseWindow> windowOne(SpawnWindow());
+  nux::ObjectPtr<nux::BaseWindow> windowTwo(SpawnWindow());
+  WindowThread()->ForeignFrameEnded();
+  EXPECT_TRUE(WindowThread()->AddToPresentationList(windowOne.GetPointer()));
+  WindowThread()->ForeignFrameCutoff();
+  EXPECT_FALSE(WindowThread()->AddToPresentationList(windowTwo.GetPointer()));
+}
+
+TEST_F(EmbeddedContextMultiWindow, NoPresentInEmbeddedOnThisFrameAfterFrameCutoff)
+{
+  nux::ObjectPtr<nux::BaseWindow> windowOne(SpawnWindow());
+  nux::ObjectPtr<nux::BaseWindow> windowTwo(SpawnWindow());
+  WindowThread()->ForeignFrameEnded();
+  windowOne->PresentInEmbeddedModeOnThisFrame();
+  WindowThread()->ForeignFrameCutoff();
+  windowTwo->PresentInEmbeddedModeOnThisFrame();
+  EXPECT_TRUE(windowOne->AllowPresentationInEmbeddedMode());
+  EXPECT_FALSE(windowTwo->AllowPresentationInEmbeddedMode());
+}
+
+TEST_F(EmbeddedContextMultiWindow, MoveToPresentationListAfterFrameEndedIfCaughtInCutoff)
+{
+  nux::ObjectPtr<nux::BaseWindow> windowOne(SpawnWindow());
+  nux::ObjectPtr<nux::BaseWindow> windowTwo(SpawnWindow());
+  WindowThread()->ForeignFrameEnded();
+  windowOne->PresentInEmbeddedModeOnThisFrame();
+  WindowThread()->ForeignFrameCutoff();
+  windowTwo->PresentInEmbeddedModeOnThisFrame();
+  WindowThread()->ForeignFrameEnded();
+  EXPECT_FALSE(windowOne->AllowPresentationInEmbeddedMode());
+  EXPECT_TRUE(windowTwo->AllowPresentationInEmbeddedMode());
+}
+
 
 }
