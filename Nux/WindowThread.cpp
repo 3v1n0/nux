@@ -51,6 +51,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
 
   WindowThread::WindowThread(const char *WindowTitle, int width, int height, AbstractThread *Parent, bool Modal)
     : AbstractThread(Parent)
+    , foreign_frame_frozen_(false)
     , window_initial_width_(width)
     , window_initial_height_(height)
     , window_title_(WindowTitle)
@@ -1325,15 +1326,32 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     return m_dirty_areas;
   }
 
-  void WindowThread::AddToPresentationList(BaseWindow *bw)
+  bool WindowThread::AddToPresentationList(BaseWindow *bw,
+                                           bool force = false)
   {
     RequestRedraw();
-    if (std::find (m_presentation_list_embedded.begin(),
-                   m_presentation_list_embedded.end(),
-                   bw) != m_presentation_list_embedded.end())
-      return;
 
-    m_presentation_list_embedded.push_back(bw);
+    if (force ||
+        !foreign_frame_frozen_)
+    {
+      if (std::find (m_presentation_list_embedded.begin(),
+                     m_presentation_list_embedded.end(),
+                     bw) != m_presentation_list_embedded.end())
+        return true;
+
+      m_presentation_list_embedded.push_back(bw);
+      return true;
+    }
+    else
+    {
+      if (std::find (m_presentation_list_embedded_next_frame.begin(),
+                     m_presentation_list_embedded_next_frame.end(),
+                     bw) != m_presentation_list_embedded_next_frame.end())
+        return false;
+
+      m_presentation_list_embedded_next_frame.push_back(bw);
+      return false;
+    }
   }
 
   std::vector<nux::Geometry> WindowThread::GetPresentationListGeometries()
@@ -1494,7 +1512,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     {
       Geometry inter = rect.Intersect(w->GetAbsoluteGeometry());
       if (!inter.IsNull())
-        w->PresentInEmbeddedModeOnThisFrame();
+        w->PresentInEmbeddedModeOnThisFrame(true);
     }
 
     void MarkWindowUnpresented(const ObjectWeakPtr<BaseWindow> &w)
@@ -1573,6 +1591,24 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
                  "can only be called inside an embedded window");
     window_compositor_->OnAllBaseWindows(std::bind (MarkWindowUnpresented, _1));
     m_presentation_list_embedded.clear();
+
+    foreign_frame_frozen_ = false;
+
+    /* Move all the BaseWindows in m_presentation_list_embedded_next_frame
+     * to m_presentation_list_embedded and mark them for presentation
+     */
+    for (std::vector<nux::BaseWindow *>::iterator it =
+           m_presentation_list_embedded_next_frame.begin();
+         it != m_presentation_list_embedded_next_frame.end();
+         ++it)
+      (*it)->PresentInEmbeddedModeOnThisFrame();
+
+    m_presentation_list_embedded_next_frame.clear();
+  }
+
+  void WindowThread::ForeignFrameCutoff()
+  {
+    foreign_frame_frozen_ = true;
   }
 
   int WindowThread::InstallEventInspector(EventInspector function, void* data)

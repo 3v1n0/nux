@@ -188,7 +188,7 @@ namespace nux
       return _name;
     }
 
-    void PresentInEmbeddedModeOnThisFrame();
+    void PresentInEmbeddedModeOnThisFrame(bool force = false);
     void WasPresentedInEmbeddedMode();
     bool AllowPresentationInEmbeddedMode();
 
