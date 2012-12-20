@@ -1326,30 +1326,51 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     return m_dirty_areas;
   }
 
+  namespace
+  {
+    void
+    AssignWeakBaseWindowMatchingRaw(WindowCompositor::WeakBaseWindowPtr const& w,
+                                    BaseWindow*                                bw,
+                                    WindowCompositor::WeakBaseWindowPtr        *ptr)
+    {
+      if (w.IsValid() &&
+          w.GetPointer() == bw)
+        *ptr = w;
+    }
+  }
+
   bool WindowThread::AddToPresentationList(BaseWindow *bw,
                                            bool force = false)
   {
     RequestRedraw();
+
+    using namespace std::placeholders;
+
+    WindowCompositor::WeakBaseWindowPtr ptr;
+    window_compositor_->OnAllBaseWindows(std::bind(AssignWeakBaseWindowMatchingRaw, _1, bw, &ptr));
+
+    if (!ptr.IsValid())
+      return false;
 
     if (force ||
         !foreign_frame_frozen_)
     {
       if (std::find (m_presentation_list_embedded.begin(),
                      m_presentation_list_embedded.end(),
-                     bw) != m_presentation_list_embedded.end())
+                     ptr) != m_presentation_list_embedded.end())
         return true;
 
-      m_presentation_list_embedded.push_back(bw);
+      m_presentation_list_embedded.push_back(ptr);
       return true;
     }
     else
     {
       if (std::find (m_presentation_list_embedded_next_frame.begin(),
                      m_presentation_list_embedded_next_frame.end(),
-                     bw) != m_presentation_list_embedded_next_frame.end())
+                     ptr) != m_presentation_list_embedded_next_frame.end())
         return false;
 
-      m_presentation_list_embedded_next_frame.push_back(bw);
+      m_presentation_list_embedded_next_frame.push_back(ptr);
       return false;
     }
   }
@@ -1357,11 +1378,14 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
   std::vector<nux::Geometry> WindowThread::GetPresentationListGeometries()
   {
     std::vector<nux::Geometry> presentation_geometries;
-    for (std::vector<nux::BaseWindow *>::iterator it =
+    for (std::vector<WindowCompositor::WeakBaseWindowPtr>::iterator it =
          m_presentation_list_embedded.begin();
          it != m_presentation_list_embedded.end();
          ++it)
-      presentation_geometries.push_back((*it)->GetAbsoluteGeometry());
+    {
+      if (it->IsValid())
+        presentation_geometries.push_back((*it)->GetAbsoluteGeometry());
+    }
     return presentation_geometries;
   }
 
@@ -1507,8 +1531,8 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
 
   namespace {
 
-    void PresentOnBaseWindowIntersectsRect(const ObjectWeakPtr<BaseWindow> &w,
-                                           const Geometry &rect)
+    void PresentOnBaseWindowIntersectsRect(ObjectWeakPtr<BaseWindow> const& w,
+                                           Geometry const& rect)
     {
       Geometry inter = rect.Intersect(w->GetAbsoluteGeometry());
       if (!inter.IsNull())
@@ -1597,11 +1621,14 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     /* Move all the BaseWindows in m_presentation_list_embedded_next_frame
      * to m_presentation_list_embedded and mark them for presentation
      */
-    for (std::vector<nux::BaseWindow *>::iterator it =
+    for (std::vector<WindowCompositor::WeakBaseWindowPtr>::iterator it =
            m_presentation_list_embedded_next_frame.begin();
          it != m_presentation_list_embedded_next_frame.end();
          ++it)
-      (*it)->PresentInEmbeddedModeOnThisFrame();
+    {
+      if (it->IsValid())
+        (*it)->PresentInEmbeddedModeOnThisFrame();
+    }
 
     m_presentation_list_embedded_next_frame.clear();
   }
