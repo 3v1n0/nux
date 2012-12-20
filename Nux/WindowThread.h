@@ -246,15 +246,15 @@ namespace nux
     void RenderInterfaceFromForeignCmd(Geometry *clip);
 
     /*!
-	Used to mark the end of the foreign frame. All calls to PresentInEmbeddedModeOnThisFrame
-	are now redirected to this upcoming frame where we will be called next.
+        Used to mark the end of the foreign frame. All calls to PresentInEmbeddedModeOnThisFrame
+        are now redirected to this upcoming frame where we will be called next.
      */
     void ForeignFrameEnded();
 
     /*!
-	Used to mark the cutoff point where all calls to PresentInEmbeddedModeOnThisFrame
-	should be effective on the next frame, and not this one, because the parent context
-	has stopped tracking damage events for this frame
+        Used to mark the cutoff point where all calls to PresentInEmbeddedModeOnThisFrame
+        should be effective on the next frame, and not this one, because the parent context
+        has stopped tracking damage events for this frame
      */
     void ForeignFrameCutoff();
 
@@ -351,7 +351,7 @@ namespace nux
     // PresentationList - this is a maintained list of areas that
     // will be presented to the reference framebuffer or backbuffer
     // in embedded mode on the next frame
-    bool AddToPresentationList(nux::BaseWindow *);
+    bool AddToPresentationList(nux::BaseWindow *, bool force);
     std::vector <Geometry> GetPresentationListGeometries();
 
 #ifdef NUX_GESTURES_SUPPORT
@@ -567,6 +567,19 @@ namespace nux
     std::list<Area *> _queued_layout_list;
     std::vector<Geometry> m_dirty_areas;
     std::vector<BaseWindow *> m_presentation_list_embedded;
+
+    /*!
+        This list contains al lthe windows which will be presented on the next frame
+        (eg, after ForeignFrameEnded they are moved into m_presentation_list_embedded
+         and marked for presentation)
+     */
+    std::vector<BaseWindow *> m_presentation_list_embedded_next_frame;
+
+    /*! Whether or not the current frame is "frozen" because the host WM has stopped tracking
+        damage events. If so we should put all presentation requests on the next frame instead
+        of this one
+     */
+    bool foreign_frame_frozen_;
 
     //! This variable is true while we are computing the layout the starting from the outmost layout(the Main Layout);
     bool _inside_layout_cycle;

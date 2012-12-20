@@ -491,7 +491,7 @@ namespace nux
     return GetWindowThread()->GetWindowCompositor().GetBackupTextureData(this, width, height, format);
   }
 
-  void BaseWindow::PresentInEmbeddedModeOnThisFrame()
+  void BaseWindow::PresentInEmbeddedModeOnThisFrame(bool force)
   {
     nuxAssertMsg (GetWindowThread()->IsEmbeddedWindow(),
                   "[BaseWindow::PresentInEmbeddedModeOnThisFrame] only "
@@ -501,8 +501,8 @@ namespace nux
     if (!IsVisible())
       return;
 
-    _present_in_embedded_mode = true;
-    nux::GetWindowThread()->AddToPresentationList(this);
+    if (nux::GetWindowThread()->AddToPresentationList(this, force))
+      _present_in_embedded_mode = true;
   }
 
   void BaseWindow::WasPresentedInEmbeddedMode()
