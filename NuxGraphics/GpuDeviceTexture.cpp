@@ -73,7 +73,7 @@ namespace nux
     return result;
   }
 
-  ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture2DFromID(int /* id */
+  ObjectPtr<IOpenGLTexture2D> GpuDevice::CreateTexture2DFromID(int id
     , int width
     , int height
     , int levels
@@ -95,6 +95,12 @@ namespace nux
 
     ObjectPtr<IOpenGLTexture2D> result;
     result.Adopt(new IOpenGLTexture2D(width, height, levels, pixel_format, true, NUX_FILE_LINE_PARAM));
+
+    /* Assign the external id to the internal id. This allows us
+     * to use the foreign texture as if it were a native one.
+     *
+     * This is really important. Don't remove it */
+    result->_OpenGLID = id;
     return result;
   }
 

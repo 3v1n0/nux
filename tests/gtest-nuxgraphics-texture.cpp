@@ -52,4 +52,20 @@ TEST_F(TestTextures, TestTextureSizes)
   }
 }
 
+TEST_F(TestTextures, TestCreateTexture2DFromIDAssignemnt)
+{
+  GLuint texid;
+  glGenTextures(1, &texid);
+  glBindTexture(GL_TEXTURE_2D, texid);
+  nux::ObjectPtr<nux::IOpenGLTexture2D> foreign_texture_as_nux_texture
+	  (nux::GetGraphicsDisplay()->GetGpuDevice()->CreateTexture2DFromID(
+	       texid,
+	       1, 1,
+	       0,
+	       nux::BITFMT_B8G8R8A8));
+  EXPECT_EQ (texid, foreign_texture_as_nux_texture->GetOpenGLID());
+  glBindTexture(GL_TEXTURE_2D, 0);
+  glDeleteTextures(1, &texid);
+}
+
 }
