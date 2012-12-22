@@ -41,7 +41,8 @@ namespace nux
 DECLARE_LOGGER(logger, "nux.window");
 
   WindowCompositor::WindowCompositor(WindowThread* window_thread)
-  : reference_fbo_(0)
+  : draw_reference_fbo_(0)
+  , read_reference_fbo_(0)
   , window_thread_(window_thread)
   {
     m_OverlayWindow             = NULL;
@@ -1754,7 +1755,8 @@ DECLARE_LOGGER(logger, "nux.window");
     }
     else
     {
-      if (GetWindowThread()->IsEmbeddedWindow() && reference_fbo_)
+      if (GetWindowThread()->IsEmbeddedWindow() && (draw_reference_fbo_ ||
+                                                    read_reference_fbo_))
       {
         // In the context of Unity, we may want Nux to restore a specific fbo and render the
         // BaseWindow texture into it. That fbo is called a reference framebuffer object. if a
@@ -2458,9 +2460,12 @@ DECLARE_LOGGER(logger, "nux.window");
     return (*keyboard_grab_stack_.begin());
   }
 
-  void WindowCompositor::SetReferenceFramebuffer(unsigned int fbo_object, Geometry fbo_geometry)
+  void WindowCompositor::SetReferenceFramebuffer(unsigned int draw_fbo_object,
+                                                 unsigned int read_fbo_object,
+                                                 Geometry fbo_geometry)
   {
-    reference_fbo_ = fbo_object;
+    draw_reference_fbo_ = draw_fbo_object;
+    read_reference_fbo_ = read_fbo_object;
     reference_fbo_geometry_ = fbo_geometry;
   }
 
@@ -2537,7 +2542,8 @@ DECLARE_LOGGER(logger, "nux.window");
 
   bool WindowCompositor::RestoreReferenceFramebuffer()
   {
-    if (!reference_fbo_)
+    if (!draw_reference_fbo_ ||
+        !read_reference_fbo_)
       return false;
 
     // It is assumed that the reference fbo contains valid textures.
@@ -2546,15 +2552,27 @@ DECLARE_LOGGER(logger, "nux.window");
     //    - Call glDrawBuffer with GL_COLOR_ATTACHMENT0
     //    - Set the opengl viewport size (reference_fbo_geometry_)
 
-    CHECKGL(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, reference_fbo_));
 #ifndef NUX_OPENGLES_20
+    CHECKGL(glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, draw_reference_fbo_));
+    CHECKGL(glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, read_reference_fbo_));
     CHECKGL(glDrawBuffer(GL_COLOR_ATTACHMENT0));
     CHECKGL(glReadBuffer(GL_COLOR_ATTACHMENT0));
+#else
+    nuxAssertMsg(draw_reference_fbo_ == read_reference_fbo_,
+                 "[WindowCompositor::RestoreReferenceFramebuffer]: OpenGL|ES does not"\
+                 " support separate draw and read framebuffer bindings, using the supplied"\
+                 " draw binding");
+    CHECKGL(glBindFramebufferEXT(GL_FRAMEBUFFER, draw_reference_fbo_));
 #endif
 
     SetReferenceFramebufferViewport (reference_fbo_geometry_);
 
-    return CheckExternalFramebufferStatus (GL_FRAMEBUFFER_EXT);
+#ifndef NUX_OPENGLES_20
+    return CheckExternalFramebufferStatus(GL_DRAW_FRAMEBUFFER_EXT) &&
+        CheckExternalFramebufferStatus(GL_READ_FRAMEBUFFER_EXT);
+#else
+    return CheckExternalFramebufferStatus(GL_FRAMEBUFFER);
+#endif
   }
 
   void WindowCompositor::RestoreMainFramebuffer()

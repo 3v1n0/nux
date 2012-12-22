@@ -1597,7 +1597,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     graphics_display_->GetGpuDevice()->DeactivateFrameBuffer();
     IOpenGLShaderProgram::SetShaderTracking(false);
 
-    if (IsEmbeddedWindow() && window_compositor_->reference_fbo_)
+    if (IsEmbeddedWindow() && window_compositor_->draw_reference_fbo_)
     {
       // Restore the reference framebuffer
       if (!window_compositor_->RestoreReferenceFramebuffer())
