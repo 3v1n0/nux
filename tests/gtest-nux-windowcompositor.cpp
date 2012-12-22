@@ -143,6 +143,11 @@ struct TestWindowCompositor : public testing::Test
   boost::shared_ptr<nux::WindowThread> wnd_thread;
 };
 
+#ifdef NUX_OPENGLES_20
+#define GL_READ_FRAMEBUFFER_EXT GL_FRAMEBUFFER_EXT
+#define GL_DRAW_FRAMEBUFFER_EXT GL_FRAMEBUFFER_EXT
+#endif
+
 namespace
 {
   class ReferenceFramebuffer
@@ -156,7 +161,8 @@ namespace
 
         glBindRenderbufferEXT (GL_RENDERBUFFER_EXT, rbName);
         glRenderbufferStorageEXT (GL_RENDERBUFFER_EXT, GL_RGBA8_EXT, 300, 200);
-        glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, fboName);
+        glBindFramebufferEXT (GL_DRAW_FRAMEBUFFER_EXT, fboName);
+        glBindFramebufferEXT (GL_READ_FRAMEBUFFER_EXT, fboName);
         glFramebufferRenderbufferEXT (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, rbName);
       }
 
@@ -170,57 +176,69 @@ namespace
     GLuint fboName, rbName;
   };
 }
+
 TEST_F(TestWindowCompositor, TestRestoreReferenceFramebufferDirect)
 {
   ReferenceFramebuffer reference;
-  GLint  fbBinding;
+  GLint  dfbBinding, rfbBinding;
 
-  glGetIntegerv (GL_FRAMEBUFFER_BINDING_EXT, &fbBinding);
+  glGetIntegerv (GL_DRAW_FRAMEBUFFER_BINDING_EXT, &dfbBinding);
+  glGetIntegerv (GL_READ_FRAMEBUFFER_BINDING_EXT, &rfbBinding);
 
-  ASSERT_EQ (fbBinding, reference.fboName);
+  ASSERT_EQ (dfbBinding, reference.fboName);
 
-  wnd_thread->GetWindowCompositor().SetReferenceFramebuffer(fbBinding, nux::Geometry (0, 0, 300, 200));
+  wnd_thread->GetWindowCompositor().SetReferenceFramebuffer(dfbBinding, rfbBinding, nux::Geometry (0, 0, 300, 200));
 
   ASSERT_TRUE (wnd_thread->GetWindowCompositor().RestoreReferenceFramebuffer());
-  glGetIntegerv (GL_FRAMEBUFFER_BINDING_EXT, &fbBinding);
-  ASSERT_EQ (fbBinding, reference.fboName);
+  glGetIntegerv (GL_DRAW_FRAMEBUFFER_BINDING_EXT, &dfbBinding);
+  glGetIntegerv (GL_READ_FRAMEBUFFER_BINDING_EXT, &rfbBinding);
+  ASSERT_EQ (dfbBinding, reference.fboName);
+  ASSERT_EQ (rfbBinding, reference.fboName);
 }
 
 TEST_F(TestWindowCompositor, TestRestoreReferenceFramebufferThroughRestoreMain)
 {
   ReferenceFramebuffer reference;
-  GLint  fbBinding;
+  GLint  dfbBinding, rfbBinding;
 
-  glGetIntegerv (GL_FRAMEBUFFER_BINDING_EXT, &fbBinding);
+  glGetIntegerv (GL_DRAW_FRAMEBUFFER_BINDING_EXT, &dfbBinding);
+  glGetIntegerv (GL_READ_FRAMEBUFFER_BINDING_EXT, &rfbBinding);
 
-  ASSERT_EQ (fbBinding, reference.fboName);
+  ASSERT_EQ (dfbBinding, reference.fboName);
 
-  wnd_thread->GetWindowCompositor().SetReferenceFramebuffer(fbBinding, nux::Geometry (0, 0, 300, 200));
+  wnd_thread->GetWindowCompositor().SetReferenceFramebuffer(dfbBinding, rfbBinding, nux::Geometry (0, 0, 300, 200));
   wnd_thread->GetWindowCompositor().RestoreMainFramebuffer();
-  glGetIntegerv (GL_FRAMEBUFFER_BINDING_EXT, &fbBinding);
-  ASSERT_EQ (fbBinding, reference.fboName);
+  glGetIntegerv (GL_DRAW_FRAMEBUFFER_BINDING_EXT, &dfbBinding);
+  glGetIntegerv (GL_READ_FRAMEBUFFER_BINDING_EXT, &rfbBinding);
+  ASSERT_EQ (dfbBinding, reference.fboName);
+  ASSERT_EQ (rfbBinding, reference.fboName);
 }
 
 TEST_F(TestWindowCompositor, TestNoRestoreReferenceFramebufferDirectIfNoReferenceFramebuffer)
 {
-  GLint fbBinding;
+  GLint dfbBinding, rfbBinding;
   ASSERT_FALSE (wnd_thread->GetWindowCompositor().RestoreReferenceFramebuffer());
-  glGetIntegerv (GL_FRAMEBUFFER_BINDING_EXT, &fbBinding);
-  ASSERT_EQ (fbBinding, 0);
+  glGetIntegerv (GL_DRAW_FRAMEBUFFER_BINDING_EXT, &dfbBinding);
+  glGetIntegerv (GL_READ_FRAMEBUFFER_BINDING_EXT, &rfbBinding);
+  ASSERT_EQ (dfbBinding, 0);
+  ASSERT_EQ (rfbBinding, 0);
 }
 
 TEST_F(TestWindowCompositor, TestRestoreBackbufferThroughRestoreMain)
 {
   ReferenceFramebuffer reference;
-  GLint  fbBinding;
+  GLint dfbBinding, rfbBinding;
 
-  glGetIntegerv (GL_FRAMEBUFFER_BINDING_EXT, &fbBinding);
+  glGetIntegerv (GL_DRAW_FRAMEBUFFER_BINDING_EXT, &dfbBinding);
+  glGetIntegerv (GL_READ_FRAMEBUFFER_BINDING_EXT, &rfbBinding);
 
-  ASSERT_EQ (fbBinding, reference.fboName);
+  ASSERT_EQ (dfbBinding, reference.fboName);
 
   wnd_thread->GetWindowCompositor().RestoreMainFramebuffer();
-  glGetIntegerv (GL_FRAMEBUFFER_BINDING_EXT, &fbBinding);
-  ASSERT_EQ (fbBinding, 0);
+  glGetIntegerv (GL_DRAW_FRAMEBUFFER_BINDING_EXT, &dfbBinding);
+  glGetIntegerv (GL_READ_FRAMEBUFFER_BINDING_EXT, &rfbBinding);
+  ASSERT_EQ (dfbBinding, 0);
+  ASSERT_EQ (rfbBinding, 0);
 }
 
 TEST_F(TestWindowCompositor, TestSetKeyFocusArea)
