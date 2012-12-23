@@ -1064,8 +1064,14 @@ namespace nux
       return;
     }
 
+#ifdef NUX_OPENGLES_20
+    GLenum binding = GL_FRAMEBUFFER;
+#else
+    GLenum binding = GL_DRAW_FRAMEBUFFER_EXT;
+#endif
+
     active_framebuffer_object_.Release();
-    CHECKGL(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
+    CHECKGL(glBindFramebufferEXT(binding, 0));
     CHECKGL(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0));
   }
 
