@@ -338,7 +338,13 @@ namespace nux
 // Restore the original opengl back buffer as defined when creating the opengl context(color + depth + stencil).
   int IOpenGLFrameBufferObject::Deactivate()
   {
-    CHECKGL(glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, 0 ));
+#ifdef NUX_OPENGLES_20
+    GLenum binding = GL_FRAMEBUFFER;
+#else
+    GLenum binding = GL_DRAW_FRAMEBUFFER_EXT;
+#endif
+
+    CHECKGL(glBindFramebufferEXT( binding, 0 ));
 
 #ifndef NUX_OPENGLES_20
     CHECKGL(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0));

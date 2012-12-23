@@ -214,16 +214,6 @@ TEST_F(TestWindowCompositor, TestRestoreReferenceFramebufferThroughRestoreMain)
   ASSERT_EQ (rfbBinding, reference.fboName);
 }
 
-TEST_F(TestWindowCompositor, TestNoRestoreReferenceFramebufferDirectIfNoReferenceFramebuffer)
-{
-  GLint dfbBinding, rfbBinding;
-  ASSERT_FALSE (wnd_thread->GetWindowCompositor().RestoreReferenceFramebuffer());
-  glGetIntegerv (GL_DRAW_FRAMEBUFFER_BINDING_EXT, &dfbBinding);
-  glGetIntegerv (GL_READ_FRAMEBUFFER_BINDING_EXT, &rfbBinding);
-  ASSERT_EQ (dfbBinding, 0);
-  ASSERT_EQ (rfbBinding, 0);
-}
-
 TEST_F(TestWindowCompositor, TestRestoreBackbufferThroughRestoreMain)
 {
   ReferenceFramebuffer reference;

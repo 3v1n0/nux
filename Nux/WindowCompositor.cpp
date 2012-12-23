@@ -1755,8 +1755,7 @@ DECLARE_LOGGER(logger, "nux.window");
     }
     else
     {
-      if (GetWindowThread()->IsEmbeddedWindow() && (draw_reference_fbo_ ||
-                                                    read_reference_fbo_))
+      if (GetWindowThread()->IsEmbeddedWindow())
       {
         // In the context of Unity, we may want Nux to restore a specific fbo and render the
         // BaseWindow texture into it. That fbo is called a reference framebuffer object. if a
@@ -2542,10 +2541,6 @@ DECLARE_LOGGER(logger, "nux.window");
 
   bool WindowCompositor::RestoreReferenceFramebuffer()
   {
-    if (!draw_reference_fbo_ ||
-        !read_reference_fbo_)
-      return false;
-
     // It is assumed that the reference fbo contains valid textures.
     // Nux does the following:
     //    - Bind the reference fbo (reference_fbo_)
@@ -2555,8 +2550,23 @@ DECLARE_LOGGER(logger, "nux.window");
 #ifndef NUX_OPENGLES_20
     CHECKGL(glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, draw_reference_fbo_));
     CHECKGL(glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, read_reference_fbo_));
-    CHECKGL(glDrawBuffer(GL_COLOR_ATTACHMENT0));
-    CHECKGL(glReadBuffer(GL_COLOR_ATTACHMENT0));
+    if (draw_reference_fbo_)
+    {
+      CHECKGL(glDrawBuffer(GL_COLOR_ATTACHMENT0));
+    }
+    else
+    {
+      CHECKGL(glDrawBuffer(GL_BACK));
+    }
+
+    if (read_reference_fbo_)
+    {
+      CHECKGL(glReadBuffer(GL_COLOR_ATTACHMENT0));
+    }
+    else
+    {
+      CHECKGL(glReadBuffer(GL_BACK));
+    }
 #else
     nuxAssertMsg(draw_reference_fbo_ == read_reference_fbo_,
                  "[WindowCompositor::RestoreReferenceFramebuffer]: OpenGL|ES does not"\
@@ -2568,8 +2578,10 @@ DECLARE_LOGGER(logger, "nux.window");
     SetReferenceFramebufferViewport (reference_fbo_geometry_);
 
 #ifndef NUX_OPENGLES_20
-    return CheckExternalFramebufferStatus(GL_DRAW_FRAMEBUFFER_EXT) &&
-        CheckExternalFramebufferStatus(GL_READ_FRAMEBUFFER_EXT);
+    return (!draw_reference_fbo_ ||
+            CheckExternalFramebufferStatus(GL_DRAW_FRAMEBUFFER_EXT)) &&
+        (!read_reference_fbo_ ||
+         CheckExternalFramebufferStatus(GL_READ_FRAMEBUFFER_EXT));
 #else
     return CheckExternalFramebufferStatus(GL_FRAMEBUFFER);
 #endif
