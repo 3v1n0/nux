@@ -572,7 +572,6 @@ DECLARE_LOGGER(logger, "nux.image");
   void ImageSurface::FlipVertical()
   {
 
-    int i, j, k;
     unsigned char *flip_data;
 
     if (RawData_ == 0)
@@ -589,11 +588,11 @@ DECLARE_LOGGER(logger, "nux.image");
     {
       flip_data =  new unsigned char[m_Pitch*height_];
 
-      for (j = 0; j < height_; j++)
+      for (int j = 0; j < height_; j++)
       {
-        for (i = 0; i < width_; i++)
+        for (int i = 0; i < width_; i++)
         {
-          for (k = 0; k < bpe_; k++)
+          for (int k = 0; k < bpe_; k++)
           {
             flip_data[ (j*m_Pitch) + i *bpe_ + k] = RawData_[ (height_-j-1) *m_Pitch + i * bpe_ + k];
           }
