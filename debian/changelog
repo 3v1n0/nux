@@ -1,3 +1,12 @@
+nux (4.0.0daily12.12.05-0ubuntu2) UNRELEASED; urgency=low
+
+  * debian/control:
+    - put the -common package to any as ppa are regularly failing for other
+      archs than i386 to install the -dev package pulling the lib pulling
+      -common because of version mismatch
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 10 Jan 2013 09:36:07 +0100
+
 nux (4.0.0daily12.12.05-0ubuntu1) raring; urgency=low
 
   [ Michael Terry ]
