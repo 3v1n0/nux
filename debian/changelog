@@ -1,11 +1,19 @@
-nux (4.0.0daily12.12.05-0ubuntu2) UNRELEASED; urgency=low
+nux (4.0.0daily13.01.11-0ubuntu1) raring; urgency=low
 
+  [ Didier Roche ]
   * debian/control:
     - put the -common package to any as ppa are regularly failing for other
       archs than i386 to install the -dev package pulling the lib pulling
       -common because of version mismatch
 
- -- Didier Roche <didrocks@ubuntu.com>  Thu, 10 Jan 2013 09:36:07 +0100
+  [ Nick Dedekind ]
+  * Previews loading more than 454 lines of description text crash Unity
+    (LP: #1066788)
+
+  [ Automatic PS uploader ]
+  * Automatic snapshot from revision 745
+
+ -- Automatic PS uploader <ps-jenkins@lists.canonical.com>  Fri, 11 Jan 2013 04:02:07 +0000
 
 nux (4.0.0daily12.12.05-0ubuntu1) raring; urgency=low
 
