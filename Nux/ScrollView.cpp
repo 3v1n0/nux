@@ -81,9 +81,6 @@ namespace nux
     mouse_wheel.connect(sigc::mem_fun(this, &ScrollView::RecvMouseWheel));
     _vscrollbar->mouse_wheel.connect(sigc::mem_fun(this, &ScrollView::RecvMouseWheel));
 
-    //FIXME disabling until we have better API for this
-    //ChildFocusChanged.connect(sigc::mem_fun(this, &ScrollView::OnChildFocusChanged));
-
     FormatContent();
 
     SetAcceptMouseWheelEvent(true);
@@ -124,36 +121,6 @@ namespace nux
     // Delete all the interface object: This is a problem... The widget should be destroy by there associated parameters
     _hscrollbar->UnReference();
     _vscrollbar->UnReference();
-  }
-
-  void ScrollView::OnChildFocusChanged(Area *child)
-  {
-    if (child->IsLayout())
-      return;
-
-    int child_y = child->GetGeometry().y - GetGeometry().y;
-    int child_y_diff = child_y - abs(_delta_y);
-
-
-    if (child_y_diff + child->GetGeometry().height < GetGeometry().height && child_y_diff >= 0)
-    {
-      return;
-    }
-
-    if (child_y_diff < 0)
-    {
-      ScrollUp(1, abs(child_y_diff));
-    }
-    else
-    {
-      int size = child_y_diff - GetGeometry().height;
-
-      // always keeps the top of a view on the screen
-      size += (child->GetGeometry().height, GetGeometry().height) ? child->GetGeometry().height : GetGeometry().height;
-
-      ScrollDown(1, size);
-    }
-
   }
 
   Area* ScrollView::FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type)
@@ -279,13 +246,6 @@ namespace nux
 ///////////////////////
 // Internal function //
 ///////////////////////
-
-  void ScrollView::SetGeometry(const Geometry &geo)
-  {
-    Area::SetGeometry(geo);
-    //ComputeContentSize();
-  }
-
   void ScrollView::FormatContent()
   {
     Geometry geo;
@@ -406,9 +366,6 @@ namespace nux
 
   long ScrollView::PostLayoutManagement(long LayoutResult)
   {
-    if (IsSizeMatchContent())
-      return PostLayoutManagement2(LayoutResult);
-
     int ScrollBarWidth = 0;
     int ScrollBarHeight = 0;
 
@@ -486,158 +443,6 @@ namespace nux
       view_layout_->ComputeContentPosition(0, 0);
 
     // The ScrollView always returns complient width and height to its parent layout.
-    return (eCompliantHeight | eCompliantWidth);
-  }
-
-  long ScrollView::PostLayoutManagement2(long /* LayoutResult */)
-  {
-    // In case IsSizeMatchContent returns True, The scroll view is resized to match its content.
-    int ScrollbarWidth = 0;
-    int ScrollbarHeight = 0;
-
-    if (m_horizontal_scrollbar_enable)
-      ScrollbarHeight = _hscrollbar->GetBaseHeight();
-
-    if (m_vertical_scrollbar_enable)
-      ScrollbarWidth = _vscrollbar->GetBaseWidth();
-
-    // We want the controller to match the size of the content as defined in:
-    //      m_ViewContentX
-    //      m_ViewContentY
-    //      m_ViewContentWidth
-    //      m_ViewContentHeight
-    // So we make the composition layout the same size as the content
-    // Note that classes that inherits from ScrollView are responsible for setting the dimension of the ViewContent
-
-    if (view_layout_)
-    {
-      view_layout_->SetBaseX(m_ViewContentX);
-      view_layout_->SetBaseY(m_ViewContentY);
-      view_layout_->SetBaseWidth(m_ViewContentWidth);
-      view_layout_->SetBaseHeight(m_ViewContentHeight);
-    }
-
-    Geometry base;
-    // Given the(m_ViewContentWidth, m_ViewContentHeight) compute the size of the ScrollView.
-    // It is possible that the ScrollView size be limited by its min/Max dimension. If this happens, then the scrollbar will reflect that.
-    base.SetX(m_ViewContentX - m_border - m_ViewContentLeftMargin);
-    base.SetY(m_ViewContentY - m_top_border - m_ViewContentTopMargin);
-
-    if (m_horizontal_scrollbar_enable)
-      base.SetHeight(m_top_border + m_ViewContentTopMargin + m_ViewContentHeight + m_ViewContentBottomMargin + ScrollbarHeight + m_border);
-    else
-      base.SetHeight(m_top_border + m_ViewContentTopMargin + m_ViewContentHeight + m_ViewContentBottomMargin + m_border);
-
-    if (m_vertical_scrollbar_enable)
-      base.SetWidth(m_border + m_ViewContentLeftMargin + m_ViewContentWidth + m_ViewContentRightMargin + ScrollbarWidth + m_border);
-    else
-      base.SetWidth(m_border + m_ViewContentLeftMargin + m_ViewContentWidth + m_ViewContentRightMargin + m_border);
-
-    // Set the size so that is is equal to the visible content.
-    Area::SetBaseWidth(base.GetWidth());
-    Area::SetBaseHeight(base.GetHeight());
-    Geometry geo = GetGeometry();
-
-    // Horizontal scrollbar Geometry
-    if (m_horizontal_scrollbar_enable)
-    {
-      if (m_vertical_scrollbar_enable == false)
-        _hscrollbar->SetBaseWidth(GetBaseWidth() - 2 * m_border);
-      else
-        _hscrollbar->SetBaseWidth(GetBaseWidth() - ScrollbarWidth - 2 * m_border);
-
-      _hscrollbar->SetBaseX(geo.x + m_border);
-      _hscrollbar->SetBaseY(geo.y + geo.GetHeight() - _hscrollbar->GetBaseHeight() - m_border);
-      _hscrollbar->ComputeContentSize();
-
-      //---
-      _hscrollbar->SetContainerSize(GetBaseX() + m_border + m_ViewContentLeftMargin,
-                                    GetBaseY() + m_top_border + m_ViewContentTopMargin,
-                                    GetBaseWidth() - ScrollbarWidth - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
-                                    GetBaseHeight() - ScrollbarHeight - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin);
-
-      if (view_layout_)
-      {
-        _hscrollbar->SetContentSize(view_layout_->GetBaseX(), view_layout_->GetBaseY(),
-                                    view_layout_->GetBaseWidth(), view_layout_->GetBaseHeight());
-      }
-      else
-      {
-        _hscrollbar->SetContentSize(GetBaseX() + m_border + m_ViewContentLeftMargin,
-                                    GetBaseY() + m_top_border + m_ViewContentTopMargin, 0, 0);
-      }
-
-      _hscrollbar->SetContentOffset(_delta_x, _delta_y);
-    }
-    else
-    {
-      _hscrollbar->SetBaseWidth(GetBaseWidth() - ScrollbarWidth - 2 * m_border);
-      _hscrollbar->SetBaseX(geo.x + m_border);
-      _hscrollbar->SetBaseY(geo.y + geo.GetHeight() - _hscrollbar->GetBaseHeight() - m_border);
-      _hscrollbar->ComputeContentSize();
-
-      //---
-      _hscrollbar->SetContainerSize(GetBaseX() + m_border + m_ViewContentLeftMargin,
-                                    GetBaseY() + m_top_border + m_ViewContentTopMargin,
-                                    GetBaseWidth() - ScrollbarWidth - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
-                                    GetBaseHeight() - ScrollbarHeight - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin);
-      _hscrollbar->SetContentSize(GetBaseX() + m_border + m_ViewContentLeftMargin,
-                                  GetBaseY() + m_top_border + m_ViewContentTopMargin, 0, 0);
-      _hscrollbar->SetContentOffset(0, 0);
-    }
-
-
-    // Vertical scrollbar Geometry
-    if (m_vertical_scrollbar_enable)
-    {
-      if (m_horizontal_scrollbar_enable == false)
-        _vscrollbar->SetBaseHeight(GetBaseHeight() - m_top_border - m_border);
-      else
-        _vscrollbar->SetBaseHeight(GetBaseHeight() - ScrollbarHeight - m_top_border - m_border);
-
-      _vscrollbar->SetBaseX(geo.x + geo.GetWidth() - ScrollbarWidth - m_border);
-      _vscrollbar->SetBaseY(geo.y + m_top_border);
-      _vscrollbar->ComputeContentSize();
-
-      //---
-      _vscrollbar->SetContainerSize(GetBaseX() + m_border + m_ViewContentLeftMargin,
-                                    GetBaseY() + m_top_border + m_ViewContentTopMargin,
-                                    GetBaseWidth() - ScrollbarWidth - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
-                                    GetBaseHeight() - ScrollbarHeight - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin);
-
-      if (view_layout_)
-      {
-        _vscrollbar->SetContentSize(view_layout_->GetBaseX(), view_layout_->GetBaseY(),
-                                    view_layout_->GetBaseWidth(), view_layout_->GetBaseHeight());
-      }
-      else
-      {
-        _vscrollbar->SetContentSize(GetBaseX() + m_border + m_ViewContentLeftMargin,
-                                    GetBaseY() + m_top_border + m_ViewContentTopMargin, 0, 0);
-      }
-
-      _vscrollbar->SetContentOffset(_delta_x, _delta_y);
-    }
-    else
-    {
-      _vscrollbar->SetBaseHeight(GetBaseHeight() - ScrollbarHeight - m_top_border - m_border);
-      _vscrollbar->SetBaseX(geo.x + geo.GetWidth() - ScrollbarWidth - m_border);
-      _vscrollbar->SetBaseY(geo.y + m_top_border);
-      _vscrollbar->ComputeContentSize();
-
-      //---
-      _vscrollbar->SetContainerSize(GetBaseX() + m_border + m_ViewContentLeftMargin,
-                                    GetBaseY() + m_top_border + m_ViewContentTopMargin,
-                                    GetBaseWidth() - ScrollbarWidth - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
-                                    GetBaseHeight() - ScrollbarHeight - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin);
-      _vscrollbar->SetContentSize(GetBaseX() + m_border + m_ViewContentLeftMargin,
-                                  GetBaseY() + m_top_border + m_ViewContentTopMargin, 0, 0);
-      _vscrollbar->SetContentOffset(0, 0);
-    }
-
-    if (view_layout_)
-      view_layout_->ComputeContentPosition(0, 0);
-
     return (eCompliantHeight | eCompliantWidth);
   }
 
@@ -833,19 +638,6 @@ namespace nux
 
       scrolling.emit(_delta_x, _delta_y);
     }
-  }
-
-  void ScrollView::SetSizeMatchContent(bool b)
-  {
-    m_bSizeMatchContent = b;
-
-    if (view_layout_)
-      view_layout_->ComputeContentSize();
-  }
-
-  bool ScrollView::IsSizeMatchContent() const
-  {
-    return m_bSizeMatchContent;
   }
 
   void ScrollView::ResetScrollToLeft()
