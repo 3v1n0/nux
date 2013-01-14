@@ -59,7 +59,6 @@ namespace nux
     , m_ViewContentBottomMargin(0)
   {
 
-    //GetPainter().CreateBackgroundTexture(m_BackgroundTexture);
     _hscrollbar = new HScrollBar(NUX_TRACKER_LOCATION);
     _vscrollbar = new VScrollBar(NUX_TRACKER_LOCATION);
     // _hscrollbar and _vscrollbar have to be parented so they are correctly
@@ -129,14 +128,6 @@ namespace nux
 
   void ScrollView::OnChildFocusChanged(Area *child)
   {
-//     if (child->IsView())
-//     {
-//       View *view = (View*)child;
-//       if (view->HasPassiveFocus())
-//       {
-//         return;
-//       }
-//     }
     if (child->IsLayout())
       return;
 
@@ -250,15 +241,7 @@ namespace nux
     graphics_engine.PushClippingRectangle(Rect(m_ViewX, m_ViewY, m_ViewWidth, m_ViewHeight));
 
     if (view_layout_)
-    {
-//       graphics_engine.PushClipOffset(_delta_x, _delta_y);
-//       graphics_engine.PushClippingRectangle(view_layout_->GetGeometry());
-//       graphics_engine.Push2DTranslationModelViewMatrix(_delta_x, _delta_y, 0.0f);
       view_layout_->ProcessDraw(graphics_engine, force_draw);
-//       graphics_engine.PopModelViewMatrix();
-//       graphics_engine.PopClippingRectangle();
-//       graphics_engine.PopClipOffset();
-    }
 
     graphics_engine.PopClippingRectangle();
 
