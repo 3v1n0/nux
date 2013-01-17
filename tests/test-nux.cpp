@@ -33,7 +33,7 @@ main (gint argc, gchar *argv[])
 {
 #if G_ENCODE_VERSION (GLIB_MAJOR_VERSION, GLIB_MINOR_VERSION) <= GLIB_VERSION_2_34
   g_type_init();
-#else
+#endif
   g_test_init (&argc, &argv, NULL);
   nux::NuxInitialize(0);
 
