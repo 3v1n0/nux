@@ -31,7 +31,9 @@ void test_timeline_create_suite ();
 gint
 main (gint argc, gchar *argv[])
 {
-  g_type_init ();
+#if G_ENCODE_VERSION (GLIB_MAJOR_VERSION, GLIB_MINOR_VERSION) <= GLIB_VERSION_2_34
+  g_type_init();
+#else
   g_test_init (&argc, &argv, NULL);
   nux::NuxInitialize(0);
 
