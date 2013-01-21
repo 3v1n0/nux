@@ -272,10 +272,9 @@ namespace nux
     CHECKGL(glPixelStorei(GL_UNPACK_ALIGNMENT, MemAlignment));
     nuxAssert(MemAlignment == _VolumeTexture->GetFormatRowMemoryAlignment());
 
-    BYTE *DataPtr = 0;
-
     if (_STextureTarget == GL_TEXTURE_3D)
     {
+      BYTE *DataPtr = 0;
       CHECKGL(glBindTexture(_STextureTarget, _VolumeTexture->_OpenGLID));
 
       if (GetGraphicsDisplay()->GetGpuDevice()->UsePixelBufferObjects())

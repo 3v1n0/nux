@@ -49,7 +49,7 @@ namespace nux
   DoubleValidator::DoubleValidator(const DoubleValidator &copy)
   {
     m_Minimum   = copy.m_Minimum;
-    m_Minimum   = copy.m_Maximum;
+    m_Maximum   = copy.m_Maximum;
     _regexp_str = copy._regexp_str;
     InitRegExp();
   }
@@ -59,7 +59,7 @@ namespace nux
     if (&rhs != this)
     {
       m_Minimum   = rhs.m_Minimum;
-      m_Minimum   = rhs.m_Maximum;
+      m_Maximum   = rhs.m_Maximum;
       _regexp_str = rhs._regexp_str;
       InitRegExp();
     }

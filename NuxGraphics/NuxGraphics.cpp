@@ -39,7 +39,7 @@ namespace nux
 
 #endif
 
-#if defined(NUX_OS_LINUX)
+#if defined(NUX_OS_LINUX) && G_ENCODE_VERSION (GLIB_MAJOR_VERSION, GLIB_MINOR_VERSION) <= GLIB_VERSION_2_34
     // Necessary in order to use gdk
     g_type_init();
 #endif
