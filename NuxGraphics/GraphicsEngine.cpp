@@ -1336,15 +1336,24 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
     Push2DWindow(width, height);
   }
   
+  /*! Description - This function calculates position offsets for our gaussian weight values to utilise the GPU bilinear sampling
+   *                which gets neighbouring pixel's data in just one sample. This serves to halve the loop for both vertical and
+   *                horizontal blur shaders.
+   *  Params -      First two parameters are the weight and weight offsets which are passed as uniforms to our shader.
+   *                our sigma dictates how strong our blur will be.
+   *  Return -      We return our loop count which is a #define in our vertical and horizontal shaders.
+   */
   int GraphicsEngine::LinearSampleGaussianWeights(std::vector<float>& weights, std::vector<float>& offsets, 
                                                   float sigma)
   {
+    //Calculate our support which is used as our loop count.
     int support = int(sigma * 3.0f);
     
     weights.push_back(exp(-(0*0)/(2*sigma*sigma))/(sqrt(2*constants::pi)*sigma));
     
     float total = weights.back();
     
+    //Our first weight has an offset of 0.
     offsets.push_back(0);
     
     for (int i = 1; i <= support; i++)
@@ -1355,9 +1364,12 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
       weights.push_back(w1 + w2);
       total += 2.0f * weights[i];
       
+      //Calculate our offset to utilise our GPU's bilinear sampling capability. By sampling in between texel we get the data of
+      //neighbouring pixels with only one sample.
       offsets.push_back((i * w1 + (i + 1) * w2) / weights[i]);
     }
     
+    //Normalise our weights.
     for (int i = 0; i < support; i++)
     {
       weights[i] /= total;
