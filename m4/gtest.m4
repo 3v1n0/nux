@@ -49,10 +49,8 @@ AC_DEFUN([CHECK_GTEST],
 
   AC_LANG_POP
 
-  AC_CHECK_FILES([$GTEST_SOURCE/src/gtest-all.cc]
-                 [$GTEST_SOURCE/src/gtest_main.cc],
-                 [have_gtest_source=yes],
-                 [have_gtest_source=no])
+  AS_IF([test -f $GTEST_SOURCE/src/gtest-all.cc && test -f $GTEST_SOURCE/src/gtest_main.cc],
+        [have_gtest_source=yes], [have_gtest_source=no])
 
   AS_IF([test "x$ac_cv_header_gtest_gtest_h" = "xyes" && test "x$have_gtest_source" = "xyes"],
         [have_gtest=yes] [AC_SUBST(GTEST_CPPFLAGS)] [AC_SUBST(GTEST_SOURCE)],
