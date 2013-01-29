@@ -103,7 +103,8 @@ gtest_nux_CPPFLAGS = \
   $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \
   $(MAINTAINER_CFLAGS) \
-  $(IBUS_CFLAGS)
+  $(IBUS_CFLAGS) \
+  $(GEIS_CFLAGS)
 
 gtest_nux_LDADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
@@ -145,7 +146,8 @@ gtest_nux_slow_CPPFLAGS = \
   $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \
   $(MAINTAINER_CFLAGS) \
-  $(IBUS_CFLAGS)
+  $(IBUS_CFLAGS) \
+  $(GEIS_CFLAGS)
 
 gtest_nux_slow_LDADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
@@ -203,7 +205,8 @@ TestFlags = -I$(srcdir) \
   $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \
   $(MAINTAINER_CFLAGS) \
-  $(IBUS_CFLAGS)
+  $(IBUS_CFLAGS) \
+  $(GEIS_CFLAGS)
 
 TestLibs = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
