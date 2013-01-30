@@ -319,14 +319,13 @@ namespace nux
 
     CHECKGL(glPixelStorei(GL_UNPACK_ALIGNMENT, _BaseTexture->GetFormatRowMemoryAlignment()));
 
-    BYTE *DataPtr = 0;
-
 #ifndef NUX_OPENGLES_20
     if (_STextureTarget == GL_TEXTURE_2D || _STextureTarget == GL_TEXTURE_RECTANGLE_ARB || _STextureTarget == GL_TEXTURE_CUBE_MAP || _STextureTarget == GL_TEXTURE_3D)
 #else
     if (_STextureTarget == GL_TEXTURE_2D)
 #endif
     {
+      BYTE *DataPtr = 0;
       int w = _Rect.right - _Rect.left;
       int h = _Rect.bottom - _Rect.top;
       CHECKGL(glBindTexture(_STextureTarget, _BaseTexture->_OpenGLID));

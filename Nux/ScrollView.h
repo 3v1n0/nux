@@ -45,25 +45,6 @@ namespace nux
     void EnableHorizontalScrollBar(bool b);
     virtual bool SetLayout(Layout *layout);
 
-    /*!
-        Set the table size to be such that all the content items of the table are visible .
-        The scrollbar will be useless as the content is entirely visible all the time. If the table is empty, then it assume its minimum size.
-        This is needed for table inside ComboBox drop down memu.
-        @param b If b is true, the size of the table is constrained by its content.
-        @see IsSizeMatchLayout()
-    */
-    void SetSizeMatchContent(bool b);
-
-    /*!
-        Check if the table size is constrained by its content.
-        @return If the return value is true, the table size is constrained by its content.
-        @see SetSizeMatchContent
-    */
-    bool IsSizeMatchContent() const;
-
-    //! Inherited from Area
-    virtual void SetGeometry(const Geometry &geo);
-
     /////////////////
     //  EMITERS    //
     /////////////////
@@ -162,7 +143,6 @@ namespace nux
     virtual Area* FindAreaUnderMouse(const Point& mouse_position, NuxEventType event_type);
 
     void RecvMouseWheel(int x, int y, int wheel_delta,  long button_flags, unsigned long key_flags);
-    void OnChildFocusChanged(Area *child);
 
     //! Change Vertical Scrollbar in the ScrollView.
     /*!
@@ -208,8 +188,6 @@ namespace nux
     virtual void PreLayoutManagement();
     virtual long PostLayoutManagement(long LayoutResult);
     virtual void ComputeContentPosition(float offsetX, float offsetY);
-
-    virtual long PostLayoutManagement2(long LayoutResult);
 
   private:
 

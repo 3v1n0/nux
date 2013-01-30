@@ -1,3 +1,43 @@
+nux (4.0.0daily13.01.25-0ubuntu1) raring; urgency=low
+
+  * Automatic snapshot from revision 752
+
+ -- Automatic PS uploader <ps-jenkins@lists.canonical.com>  Fri, 25 Jan 2013 04:03:19 +0000
+
+nux (4.0.0daily13.01.18-0ubuntu1) raring; urgency=low
+
+  [ Andrea Azzarone ]
+  * Nux fails to build on raring: g_type_init is deprecated. (LP:
+    #1100927)
+
+  [ Automatic PS uploader ]
+  * Automatic snapshot from revision 749
+
+ -- Automatic PS uploader <ps-jenkins@lists.canonical.com>  Fri, 18 Jan 2013 04:01:15 +0000
+
+nux (4.0.0daily13.01.17-0ubuntu1) raring; urgency=low
+
+  * Automatic snapshot from revision 747
+
+ -- Automatic PS uploader <ps-jenkins@lists.canonical.com>  Thu, 17 Jan 2013 07:03:16 +0000
+
+nux (4.0.0daily13.01.11-0ubuntu1) raring; urgency=low
+
+  [ Didier Roche ]
+  * debian/control:
+    - put the -common package to any as ppa are regularly failing for other
+      archs than i386 to install the -dev package pulling the lib pulling
+      -common because of version mismatch
+
+  [ Nick Dedekind ]
+  * Previews loading more than 454 lines of description text crash Unity
+    (LP: #1066788)
+
+  [ Automatic PS uploader ]
+  * Automatic snapshot from revision 745
+
+ -- Automatic PS uploader <ps-jenkins@lists.canonical.com>  Fri, 11 Jan 2013 04:02:07 +0000
+
 nux (4.0.0daily12.12.05-0ubuntu1) raring; urgency=low
 
   [ Michael Terry ]
