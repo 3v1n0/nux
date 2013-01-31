@@ -155,14 +155,6 @@ namespace
   typedef void (*NGLDeleteRenderbuffers) (GLsizei, const GLuint *);
 
   #ifdef NUX_OPENGLES_20
-  NGLGenFramebuffers nglGenFramebuffers = &glGenFramebuffers;
-  NGLGenRenderbuffers nglGenRenderbuffers = &glGenRenderbuffers;
-  NGLBindRenderbuffer nglBindRenderbuffer = &glBindRenderbuffer;
-  NGLBindFramebuffer nglBindFramebuffer = &glBindFramebuffer;
-  NGLRenderbufferStorage nglRenderbufferStorage = &glRenderbufferStorage;
-  NGLFramebufferRenderbuffer nglFramebufferRenderbuffer = &glFramebufferRenderbuffer;
-  NGLDeleteRenderbuffers nglDeleteRenderbuffers = &glDeleteRenderbuffers;
-  NGLDeleteFramebuffers nglDeleteFramebuffers = &glDeleteFramebuffers;
   GLuint NGL_RENDERBUFFER = GL_RENDERBUFFER;
   /* No separate draw or read targets on OpenGL|ES */
   GLuint NGL_DRAW_FRAMEBUFFER = GL_FRAMEBUFFER;
@@ -172,14 +164,6 @@ namespace
   GLuint NGL_COLOR_ATTACHMENT0 = GL_COLOR_ATTACHMENT0;
   GLuint NGL_RGBA_STORAGE = GL_RGBA4;
   #else
-  NGLGenFramebuffers nglGenFramebuffers = &glGenFramebuffersEXT;
-  NGLGenRenderbuffers nglGenRenderbuffers = &glGenRenderbuffersEXT;
-  NGLBindRenderbuffer nglBindRenderbuffer = &glBindRenderbufferEXT;
-  NGLBindFramebuffer nglBindFramebuffer = &glBindFramebufferEXT;
-  NGLRenderbufferStorage nglRenderbufferStorage = &glRenderbufferStorageEXT;
-  NGLFramebufferRenderbuffer nglFramebufferRenderbuffer = &glFramebufferRenderbufferEXT;
-  NGLDeleteRenderbuffers nglDeleteRenderbuffers = &glDeleteRenderbuffersEXT;
-  NGLDeleteFramebuffers nglDeleteFramebuffers = &glDeleteFramebuffersEXT;
   GLuint NGL_RENDERBUFFER = GL_RENDERBUFFER_EXT;
   GLuint NGL_DRAW_FRAMEBUFFER = GL_DRAW_FRAMEBUFFER_EXT;
   GLuint NGL_READ_FRAMEBUFFER = GL_READ_FRAMEBUFFER_EXT;
@@ -195,6 +179,26 @@ namespace
 
       ReferenceFramebuffer ()
       {
+        #ifdef NUX_OPENGLES_20
+        nglGenFramebuffers = &glGenFramebuffers;
+        nglGenRenderbuffers = &glGenRenderbuffers;
+        nglBindRenderbuffer = &glBindRenderbuffer;
+        nglBindFramebuffer = &glBindFramebuffer;
+        nglRenderbufferStorage = &glRenderbufferStorage;
+        nglFramebufferRenderbuffer = &glFramebufferRenderbuffer;
+        nglDeleteRenderbuffers = &glDeleteRenderbuffers;
+        nglDeleteFramebuffers = &glDeleteFramebuffers;
+        #else
+        nglGenFramebuffers = glGenFramebuffersEXT;
+        nglGenRenderbuffers = glGenRenderbuffersEXT;
+        nglBindRenderbuffer = glBindRenderbufferEXT;
+        nglBindFramebuffer = glBindFramebufferEXT;
+        nglRenderbufferStorage = glRenderbufferStorageEXT;
+        nglFramebufferRenderbuffer = glFramebufferRenderbufferEXT;
+        nglDeleteRenderbuffers = glDeleteRenderbuffersEXT;
+        nglDeleteFramebuffers = glDeleteFramebuffersEXT;
+        #endif
+
         nglGenFramebuffers (1, &fboName);
         nglGenRenderbuffers (1, &rbName);
 
@@ -202,18 +206,31 @@ namespace
         nglRenderbufferStorage (NGL_RENDERBUFFER, NGL_RGBA_STORAGE, 300, 200);
         nglBindFramebuffer (NGL_DRAW_FRAMEBUFFER, fboName);
         nglBindFramebuffer (NGL_READ_FRAMEBUFFER, fboName);
-	nglFramebufferRenderbuffer (NGL_DRAW_FRAMEBUFFER, NGL_COLOR_ATTACHMENT0, NGL_RENDERBUFFER, rbName);
+        nglFramebufferRenderbuffer (NGL_DRAW_FRAMEBUFFER, NGL_COLOR_ATTACHMENT0, NGL_RENDERBUFFER, rbName);
       }
 
       ~ReferenceFramebuffer ()
       {
-	nglBindFramebuffer (NGL_DRAW_FRAMEBUFFER, 0);
-	nglBindFramebuffer (NGL_READ_FRAMEBUFFER, 0);
+        nglBindFramebuffer (NGL_DRAW_FRAMEBUFFER, 0);
+        nglBindFramebuffer (NGL_READ_FRAMEBUFFER, 0);
         nglDeleteRenderbuffers (1, &rbName);
         nglDeleteFramebuffers (1, &fboName);
       }
 
-    GLuint fboName, rbName;
+      GLuint fboName, rbName;
+
+      /* Each instance of the class needs to keep its own
+       * copy of the extension functions as glewInit () needs
+       * to be called in the desktop case before they are available */
+
+      NGLGenFramebuffers nglGenFramebuffers;
+      NGLGenRenderbuffers nglGenRenderbuffers;
+      NGLBindRenderbuffer nglBindRenderbuffer;
+      NGLBindFramebuffer nglBindFramebuffer;
+      NGLRenderbufferStorage nglRenderbufferStorage;
+      NGLFramebufferRenderbuffer nglFramebufferRenderbuffer;
+      NGLDeleteRenderbuffers nglDeleteRenderbuffers;
+      NGLDeleteFramebuffers nglDeleteFramebuffers; 
   };
 }
 
