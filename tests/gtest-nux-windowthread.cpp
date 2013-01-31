@@ -90,7 +90,7 @@ class EmbeddedContext : public ::testing::Test
       _context = glXCreateContext(_display, _visinfo, NULL, true);
       glXMakeCurrent(_display, _window, _context);
 #else
-      EGLDisplay *eglDisplay = eglGetDisplay ((EGLNativeDisplayType)_display);
+      EGLDisplay eglDisplay = eglGetDisplay ((EGLNativeDisplayType)_display);
       EGLint major, minor;
       if (!eglInitialize (eglDisplay, &major, &minor))
         throw std::runtime_error ("eglInitialize failed");
@@ -119,7 +119,7 @@ class EmbeddedContext : public ::testing::Test
         throw std::runtime_error("eglChooseConfig failed");
 
       visualid = temp.visualid;
-      config = configs[0];
+      EGLConfig config = configs[0];
 
       for (int i = 0; i < count; ++i)
       {
@@ -171,7 +171,7 @@ class EmbeddedContext : public ::testing::Test
 #ifndef NUX_OPENGLES_20
       glXDestroyContext(_display, _context);
 #else
-      EGLDisplay *eglDisplay = eglGetDisplay((EGLNativeDisplayType)_display);
+      EGLDisplay eglDisplay = eglGetDisplay((EGLNativeDisplayType)_display);
       eglDestroyContext(eglDisplay, _context);
       eglDestroySurface(eglDisplay, _surface);
       eglTerminate(eglDisplay);
