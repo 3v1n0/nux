@@ -386,6 +386,8 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
 
   void WindowThread::CleanupGlibLoop()
   {
+    g_source_remove_by_funcs_user_data(&event_funcs, this);
+
     for (std::list<ExternalFdData>::iterator it = _external_fds.begin();
          it != _external_fds.end();
          ++it)
