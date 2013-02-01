@@ -49,7 +49,9 @@ namespace nux
   class Area;
   struct ClientAreaDraw;
 
+
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+  class ExternalGLibSources;
   gboolean nux_event_dispatch(GSource *source, GSourceFunc callback, gpointer user_data);
   gboolean nux_timeout_dispatch(gpointer user_data);
 #endif
@@ -332,6 +334,10 @@ namespace nux
     GeisAdapter *GetGeisAdapter() const {return geis_adapter_.get();}
 #endif
 
+    typedef std::function<void()> FdWatchCallback;
+    void WatchFdForEvents(int fd, const FdWatchCallback &);
+    void UnwatchFd(int fd);
+
   protected:
 
     /*!
@@ -474,6 +480,8 @@ namespace nux
      */
     unsigned int DoProcessEvent(Event &event);
 
+    void SetupMainLoop();
+
     //! Execute the main loop of this thread.
     /*!
         Execute the main loop of this thread.
@@ -609,6 +617,18 @@ namespace nux
     */
     std::map<int, EventInspectorStorage> _event_inspectors_map; //!< map of events inspectors
 
+    typedef struct _ExternalFdData
+    {
+      int             fd;
+      FdWatchCallback cb;
+    } ExternalFdData;
+
+    //! List of external sources. This might make more sense as a map,
+    //  but providing a struct provides us much nicer GLib integration
+    std::list<ExternalFdData> _external_fds;
+
+    static bool FindDataByFd(const WindowThread::ExternalFdData &data, int fd);
+
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     GMainLoop *main_loop_glib_;
     GMainContext *main_loop_glib_context_;
@@ -616,11 +636,17 @@ namespace nux
     friend gboolean nux_timeout_dispatch(gpointer user_data);
     std::list<GSource*> child_window_list_;
 
+    std::unique_ptr<ExternalGLibSources> external_glib_sources_;
+
     void InitGlibLoop();
     void RunGlibLoop();
     void StopGLibLoop();
     void CleanupGlibLoop();
+    void AddFdToGLibLoop(int, gpointer, GSourceFunc);
+    void RemoveFdFromGLibLoop(gpointer);
     bool AddChildWindowGlibLoop(WindowThread* wnd_thread);
+
+    static gboolean ExternalSourceCallback(gpointer user_data);
 
     unsigned int AddGLibTimeout(unsigned int duration);
 #else // no GLIB loop

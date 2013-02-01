@@ -39,7 +39,21 @@ public:
 
   bool ReadyToGo();
 
+  //!< Use with caution
+  //
+  // This WindowThread here will be valid, but if you call it from
+  // another thread, and the call has a side-effect of calling
+  // nux::GetWindowThread, it will likely result in undefined behaviour
+  // since nux::GetWindowThread depends on the same thread that
+  // GetWindowThread () here provides being the currently running
+  // thread, as nux::GetWindowThread operates in terms of thread
+  // local storage.
   nux::WindowThread* GetWindowThread();
+
+  //!< Tells the program to do something, depending on the defined protocol
+  // implemented in HandleProgramMessage
+  void SendMessageToProgram (const std::string &msg);
+  void WaitForMessageFromProgram (const std::string &msg);
 
 public:
   std::string program_name_;
@@ -50,10 +64,22 @@ public:
   int window_width_;
   int window_height_;
 
+protected:
+
+  void SendMessageToTest(const std::string &msg);
+
 private:
+
+  void MessageReceivedFromTest();
+  static void ThreadInitializer(nux::NThread *, void *);
+
+  virtual void HandleProgramMessage(const std::string &);
+
   void ProgramExitCall(void* data);
   void WaitForConfigureEvent(int x, int y, int width, int height);
   bool ready_to_go_;
+  int  program_pipe_[2];
+  int  test_pipe_[2];
 };
 
 #endif // PROGRAMTEMPLATE_H

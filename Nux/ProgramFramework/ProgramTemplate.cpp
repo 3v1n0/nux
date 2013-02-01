@@ -17,6 +17,13 @@
  * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
  */
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+
+#include <fcntl.h>
+#include <unistd.h>
+#include <poll.h>
 
 #include "Nux.h"
 #include "VLayout.h"
@@ -25,6 +32,58 @@
 #include "TextEntry.h"
 #include "ProgramTemplate.h"
 
+namespace
+{
+unsigned int MAX_MESSAGE_LEN = 1024;
+
+std::string ReadMessageOnFd(int fd)
+{
+  char buf[MAX_MESSAGE_LEN + 1];
+  ssize_t bytes = read(fd, reinterpret_cast <void *>(buf), MAX_MESSAGE_LEN);
+
+  if (bytes == -1)
+    throw std::runtime_error(std::string("read: ") + strerror(errno));
+
+  buf[bytes] = '\0';
+
+  return std::string(buf);
+}
+
+bool CheckForMessageOnFd(int fd, const std::string &msg)
+{
+  struct pollfd pfd;
+  pfd.events = POLLIN;
+  pfd.revents = 0;
+  pfd.fd = fd;
+
+  if (poll(&pfd, 1, -1) == -1)
+    throw std::runtime_error(std::string("poll: ") + strerror(errno));
+
+  if (ReadMessageOnFd(fd) == msg)
+    return true;
+  else
+    return false;
+}
+
+void WaitForMessageOnFd(int fd, const std::string &msg)
+{
+  while (!CheckForMessageOnFd(fd, msg));
+}
+
+void SendMessageToFd(int fd, const std::string &msg)
+{
+  if (msg.size() > MAX_MESSAGE_LEN)
+  {
+    std::stringstream ss;
+
+    ss << "Only messages up to " << MAX_MESSAGE_LEN << " chars are supported.";
+    throw std::runtime_error(ss.str ());
+  }
+
+  if (write(fd, reinterpret_cast <void *>(const_cast<char *>(msg.c_str())), msg.size()) == -1)
+    throw std::runtime_error(std::string("write: ") + strerror(errno));
+}
+}
 
 ProgramTemplate::ProgramTemplate(const char* program_name,
   int window_width,
@@ -51,6 +110,12 @@ ProgramTemplate::ProgramTemplate(const char* program_name,
     // Minimum life span is 1 second.
     program_life_span_ = 1000;
   }
+
+  if (pipe2(test_pipe_, O_CLOEXEC) == -1)
+    throw std::runtime_error(strerror(errno));
+
+  if (pipe2(program_pipe_, O_CLOEXEC) == -1)
+    throw std::runtime_error(strerror(errno));
 }
 
 ProgramTemplate::~ProgramTemplate()
@@ -62,7 +127,8 @@ ProgramTemplate::~ProgramTemplate()
 void ProgramTemplate::Startup()
 {
   nux::NuxInitialize(0);
-  window_thread_ = nux::CreateGUIThread(program_name_.c_str(), window_width_, window_height_, NULL, NULL, NULL);
+  window_thread_ = nux::CreateGUIThread(program_name_.c_str(), window_width_, window_height_, NULL,
+                                        ProgramTemplate::ThreadInitializer, this);
 
   window_thread_->window_configuration.connect(sigc::mem_fun(this, &ProgramTemplate::WaitForConfigureEvent));
 }
@@ -94,6 +160,41 @@ void ProgramTemplate::Run()
   }
 
   window_thread_->Run(NULL);
+}
+
+void ProgramTemplate::SendMessageToProgram(const std::string &msg)
+{
+  SendMessageToFd(program_pipe_[1], msg);
+}
+
+void ProgramTemplate::WaitForMessageFromProgram(const std::string &msg)
+{
+  WaitForMessageOnFd(test_pipe_[0], msg);
+}
+
+void ProgramTemplate::SendMessageToTest(const std::string &msg)
+{
+  SendMessageToFd(test_pipe_[1], msg);
+}
+
+void ProgramTemplate::MessageReceivedFromTest()
+{
+  HandleProgramMessage(ReadMessageOnFd(program_pipe_[0]));
+}
+
+void ProgramTemplate::ThreadInitializer(nux::NThread *, void *data)
+{
+  using namespace std::placeholders;
+
+  /* Monitor the test-to-app fd for messages */
+  ProgramTemplate *pt = reinterpret_cast<ProgramTemplate *>(data);
+  pt->window_thread_->WatchFdForEvents(pt->program_pipe_[0],
+                                       std::bind(&ProgramTemplate::MessageReceivedFromTest,
+                                                 pt));
+}
+
+void ProgramTemplate::HandleProgramMessage(const std::string &msg)
+{
 }
 
 bool ProgramTemplate::ReadyToGo()
