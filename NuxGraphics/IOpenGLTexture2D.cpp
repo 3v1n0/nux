@@ -98,7 +98,7 @@ namespace nux
     if(!width || !height)
       return;
 
-    char* pixels = new char[width * height];
+    uint32_t* pixels = new uint32_t[width * height];
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
     FILE* fp;
