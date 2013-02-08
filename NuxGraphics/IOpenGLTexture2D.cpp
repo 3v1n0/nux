@@ -99,6 +99,7 @@ namespace nux
       return;
 
     uint32_t* pixels = new uint32_t[width * height];
+    uint32_t* tmp = pixels;
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
     FILE* fp;
@@ -111,7 +112,7 @@ namespace nux
 
     int sz = width * height;
     for(int i=0; i<sz; i++) {
-      uint32_t pix = *pixels++;
+      uint32_t pix = *tmp++;
       int r = (pix >> 16) & 0xff;
       int g = (pix >> 8) & 0xff;
       int b = pix & 0xff;
@@ -121,6 +122,7 @@ namespace nux
       fputc(b, fp);
     }
 
+    fclose(fp);
     delete [] pixels;
   }
 
