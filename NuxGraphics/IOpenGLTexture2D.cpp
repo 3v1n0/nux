@@ -89,18 +89,36 @@ namespace nux
 
   void IOpenGLTexture2D::Save(const char* filename)
   {
-    glBindTexture(GL_TEXTURE_2D, GetOpenGLID());
+    GLuint tex_id = GetOpenGLID();
+    glBindTexture(GL_TEXTURE_2D, tex_id);
 
     int width, height;
+
+#ifndef NUX_OPENGLES_20
     glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
     glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+#else
+    width = GetWidth();
+    height = GetHeight();
+#endif
 
     if(!width || !height)
       return;
 
     uint32_t* pixels = new uint32_t[width * height];
     uint32_t* tmp = pixels;
+
+#ifndef NUX_OPENGLES_20
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+#else
+    GLuint fbo;
+    glGenFramebuffers(1, &fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex_id, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glDeleteFramebuffers(1, &fbo);
+#endif
 
     FILE* fp;
     if(!(fp = fopen(filename, "wb"))) {
@@ -124,7 +142,7 @@ namespace nux
 
     fclose(fp);
     delete [] pixels;
-  }
+}
 
   ObjectPtr<IOpenGLSurface> IOpenGLTexture2D::GetSurfaceLevel(int Level)
   {
