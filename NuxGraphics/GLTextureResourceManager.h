@@ -207,6 +207,8 @@ namespace nux
 
     void GetData(void* Buffer, int MipIndex, int StrideY, int face = 0);
 
+    void Save(const char* filename);
+
     /*!
       @return The number of mip maps in the texture.
     */
