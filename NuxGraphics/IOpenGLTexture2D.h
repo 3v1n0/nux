@@ -33,8 +33,6 @@ namespace nux
   public:
     virtual ~IOpenGLTexture2D();
 
-    void Save(const char* filename);
-
     void GetSurfaceLevel(int Level, ObjectPtr<IOpenGLSurface>& surface);
     ObjectPtr<IOpenGLSurface> GetSurfaceLevel(int Level);
 

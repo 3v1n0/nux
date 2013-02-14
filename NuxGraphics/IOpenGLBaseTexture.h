@@ -151,6 +151,8 @@ namespace nux
     */
     virtual unsigned char* GetSurfaceData(int level, int &width, int &height, int &stride);
 
+    void Save(const char* filename);
+
   protected:
     GLTextureStates _TextureStates;
     bool            _IsPOT;             // is power of two?
