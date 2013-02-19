@@ -1,3 +1,9 @@
+nux (4.0.0daily13.02.19-0ubuntu1) raring; urgency=low
+
+  * Automatic snapshot from revision 759
+
+ -- Automatic PS uploader <ps-jenkins@lists.canonical.com>  Tue, 19 Feb 2013 08:45:32 +0000
+
 nux (4.0.0daily13.02.04-0ubuntu1) raring; urgency=low
 
   * Automatic snapshot from revision 756
