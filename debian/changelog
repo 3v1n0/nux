@@ -1,3 +1,15 @@
+nux (4.0.0daily13.02.26-0ubuntu1) raring; urgency=low
+
+  [ Sam Spilsbury ]
+  * segmentation fault when running nux tests (LP: #1097281)
+  * xtest-text-entry-deadkeys SIGABRTs with BadValue XError (LP:
+    #1112321)
+
+  [ Automatic PS uploader ]
+  * Automatic snapshot from revision 762
+
+ -- Automatic PS uploader <ps-jenkins@lists.canonical.com>  Tue, 26 Feb 2013 04:01:53 +0000
+
 nux (4.0.0daily13.02.19-0ubuntu1) raring; urgency=low
 
   * Automatic snapshot from revision 759
