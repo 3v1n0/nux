@@ -1,3 +1,13 @@
+nux (4.0.0daily13.03.13.1-0ubuntu1) raring; urgency=low
+
+  [ Marco Trevisan (Treviño) ]
+  * Event timestamp is not updated on ButtonPress (LP: #1154101)
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 764
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 13 Mar 2013 09:22:06 +0000
+
 nux (4.0.0daily13.02.26-0ubuntu1) raring; urgency=low
 
   [ Sam Spilsbury ]
