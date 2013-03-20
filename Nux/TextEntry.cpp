@@ -810,6 +810,10 @@ namespace nux
     return _text_color;
   }
 
+  void TextEntry::ForceResetLayout()
+  {
+    QueueRefresh(true, false);
+  }
 
   void TextEntry::MainDraw()
   {
