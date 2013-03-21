@@ -364,7 +364,7 @@ namespace nux
   void XInputWindow::SetInputFocus()
   {
     XSetInputFocus(display_, window_, RevertToParent, CurrentTime);
-    XSync(display_, FALSE);
+    XSync(display_, False);
   }
 
   void XInputWindow::Hide()
