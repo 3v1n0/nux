@@ -31,20 +31,32 @@ int NuxAutomatedTestFramework::minimum_sleep_time = 600;      // milliseconds
 int NuxAutomatedTestFramework::safety_border_inside_view = 1; // pixels
 
 NuxAutomatedTestFramework::NuxAutomatedTestFramework(nux::WindowThread *window_thread)
+ : ready_to_start_(false)
+ , display_(NULL)
+ , window_thread_(window_thread)
+ , window_x_(0)
+ , window_y_(0)
+ , window_width_(0)
+ , window_height_(0)
+ , terminate_when_test_over_(false)
+ , composition_keys_supported_(false)
 {
-  ready_to_start_ = false;
-  display_ = NULL;
-  window_thread_ = window_thread;
-  window_x_ = 0;
-  window_y_ = 0;
-  window_width_ = 0;
-  window_height_ = 0;
-  terminate_when_test_over_ = false;
 }
 
 NuxAutomatedTestFramework::~NuxAutomatedTestFramework()
 {
   XCloseDisplay(display_);
+}
+
+void NuxAutomatedTestFramework::WarnCompositionKeysNotSupported()
+{
+  nuxWarningMsg("Composition keys are not supported by your server, "
+                "not running the composition keys tests");
+}
+
+bool NuxAutomatedTestFramework::CompositionKeysSupported()
+{
+  return composition_keys_supported_;
 }
 
 void NuxAutomatedTestFramework::SetTerminateProgramWhenDone(bool terminate)
@@ -62,6 +74,25 @@ void NuxAutomatedTestFramework::Startup()
   display_ = XOpenDisplay(NULL);
   nux::Geometry rect = window_thread_->GetGraphicsDisplay().GetWindowGeometry();
   //nuxDebugMsg("Window geometry: (%d, %d, %d, %d)", rect.x, rect.y, rect.width, rect.height);
+
+  int min, max, per_keycode;
+
+  // Get the min and max keycodes
+  XDisplayKeycodes(display_, &min, &max);
+
+  // Must be called with:
+  // first_keycode: min,
+  // keycode_count: max - min
+  KeySym *syms = XGetKeyboardMapping(display_, min, max - min, &per_keycode);
+
+  // Number of keysyms is (max - min) * keysyms_per_keycode
+  for (int i = 0; i < (max - min) * per_keycode; ++i)
+  {
+    if (syms[i] == XK_Multi_key)
+      composition_keys_supported_ = true;
+  }
+
+  XFree(syms);
 
   window_x_ = rect.x;
   window_y_ = rect.y;

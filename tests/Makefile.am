@@ -164,7 +164,8 @@ gtest_nux_slow_LDFLAGS = \
 
 gtest_nuxgraphics_SOURCES = \
   gtest-nuxgraphics-main.cpp \
-  gtest-nuxgraphics-texture.cpp
+  gtest-nuxgraphics-texture.cpp \
+  gtest-nuxgraphics-graphic-display.cpp
 
 gtest_nuxgraphics_CPPFLAGS = \
   -I$(srcdir) \

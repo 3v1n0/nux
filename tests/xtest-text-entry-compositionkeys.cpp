@@ -108,314 +108,321 @@ void TestingThread(nux::NThread* /* thread */, void* user_data)
 
   test.TestReportMsg(test_textentry->text_entry_, "TextEntry created");
 
-  test_textentry->ResetEvents();
-  test.ViewSendMouseMotionToCenter(test_textentry->text_entry_);
+  if (test.CompositionKeysSupported())
+  {
+    test_textentry->ResetEvents();
+    test.ViewSendMouseMotionToCenter(test_textentry->text_entry_);
 
-  test.ViewSendMouseClick(0, 1);
+    test.ViewSendMouseClick(0, 1);
 
-  test.ViewSendCompositionKeys("`o");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "ò", "ò");
+    test.ViewSendCompositionKeys("`o");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "ò", "ò");
 
-  test.ViewSendCompositionKeys("~o");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "òõ", "òõ");
+    test.ViewSendCompositionKeys("~o");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "òõ", "òõ");
 
-  test.ViewSendCompositionKeys("^o");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "òõô", "òõô");
+    test.ViewSendCompositionKeys("^o");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "òõô", "òõô");
 
-  test.ViewSendCompositionKeys("c=");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "òõô€", "òõô€");
+    test.ViewSendCompositionKeys("c=");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "òõô€", "òõô€");
 
-  test.ViewSendCompositionKeys("oc");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "òõô€©", "òõô€©");
+    test.ViewSendCompositionKeys("oc");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "òõô€©", "òõô€©");
 
-  test.ViewSendCompositionKeys("\"w");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "òõô€©ẅ", "òõô€©ẅ");
+    test.ViewSendCompositionKeys("\"w");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "òõô€©ẅ", "òõô€©ẅ");
 
-  test.ViewSendCompositionKeys("'S");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "òõô€©ẅŚ", "òõô€©ẅŚ");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
+    test.ViewSendCompositionKeys("'S");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "òõô€©ẅŚ", "òõô€©ẅŚ");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
 
-  nux::SleepForMilliseconds(100);;
-  //exclamdown # INVERTED EXCLAMATION MARK
-  test.ViewSendCompositionKeys("!!");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "¡", "¡");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    nux::SleepForMilliseconds(100);;
+    //exclamdown # INVERTED EXCLAMATION MARK
+    test.ViewSendCompositionKeys("!!");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "¡", "¡");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //CENT SIGN
-  test.ViewSendCompositionKeys("|c");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "¢", "¢");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //CENT SIGN
+    test.ViewSendCompositionKeys("|c");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "¢", "¢");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //POUND SIGN
-  test.ViewSendCompositionKeys("-L");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "£", "£");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //POUND SIGN
+    test.ViewSendCompositionKeys("-L");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "£", "£");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //currency # CURRENCY SIGN
-  test.ViewSendCompositionKeys("xo");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "¤", "¤");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //currency # CURRENCY SIGN
+    test.ViewSendCompositionKeys("xo");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "¤", "¤");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //yen # YEN SIGN
-  test.ViewSendCompositionKeys("Y=");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "¥", "¥");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //yen # YEN SIGN
+    test.ViewSendCompositionKeys("Y=");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "¥", "¥");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-   //FEMININE ORDINAL INDICATOR
-  test.ViewSendCompositionKeys("^_a");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "ª", "ª");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+     //FEMININE ORDINAL INDICATOR
+    test.ViewSendCompositionKeys("^_a");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "ª", "ª");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //guillemotleft # LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
-  test.ViewSendCompositionKeys("<<");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "«", "«");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //guillemotleft # LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
+    test.ViewSendCompositionKeys("<<");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "«", "«");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
- //SUPERSCRIPT THREE
-  test.ViewSendCompositionKeys("^3");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "³", "³");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+   //SUPERSCRIPT THREE
+    test.ViewSendCompositionKeys("^3");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "³", "³");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //MIDDLE DOT
-  test.ViewSendCompositionKeys("..");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "·", "·");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //MIDDLE DOT
+    test.ViewSendCompositionKeys("..");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "·", "·");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //cedilla # CEDILLA
-  test.ViewSendCompositionKeys(", ");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "¸", "¸");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //cedilla # CEDILLA
+    test.ViewSendCompositionKeys(", ");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "¸", "¸");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //VULGAR FRACTION THREE QUARTERS
-  test.ViewSendCompositionKeys("34");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "¾", "¾");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //VULGAR FRACTION THREE QUARTERS
+    test.ViewSendCompositionKeys("34");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "¾", "¾");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //questiondown # INVERTED QUESTION MARK
-  test.ViewSendCompositionKeys("??");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "¿", "¿");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //questiondown # INVERTED QUESTION MARK
+    test.ViewSendCompositionKeys("??");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "¿", "¿");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //LATIN CAPITAL LETTER A WITH GRAVE
-  test.ViewSendCompositionKeys("`A");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "À", "À");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //LATIN CAPITAL LETTER A WITH GRAVE
+    test.ViewSendCompositionKeys("`A");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "À", "À");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //LATIN CAPITAL LETTER A WITH ACUTE
-  test.ViewSendCompositionKeys("'A");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "Á", "Á");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //LATIN CAPITAL LETTER A WITH ACUTE
+    test.ViewSendCompositionKeys("'A");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "Á", "Á");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //LATIN CAPITAL LETTER A WITH CIRCUMFLEX
-  test.ViewSendCompositionKeys("^A");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "Â", "Â");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //LATIN CAPITAL LETTER A WITH CIRCUMFLEX
+    test.ViewSendCompositionKeys("^A");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "Â", "Â");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //LATIN CAPITAL LETTER A WITH TILDE
-  test.ViewSendCompositionKeys("~A");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "Ã", "Ã");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //LATIN CAPITAL LETTER A WITH TILDE
+    test.ViewSendCompositionKeys("~A");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "Ã", "Ã");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //LATIN CAPITAL LETTER A WITH DIAERESIS
-  test.ViewSendCompositionKeys("\"A");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "Ä", "Ä");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //LATIN CAPITAL LETTER A WITH DIAERESIS
+    test.ViewSendCompositionKeys("\"A");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "Ä", "Ä");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //LATIN CAPITAL LETTER A WITH RING ABOVE
-  test.ViewSendCompositionKeys("oA");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "Å", "Å");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //LATIN CAPITAL LETTER A WITH RING ABOVE
+    test.ViewSendCompositionKeys("oA");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "Å", "Å");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //AE # LATIN CAPITAL LETTER AE
-  test.ViewSendCompositionKeys("AE");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "Æ", "Æ");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //AE # LATIN CAPITAL LETTER AE
+    test.ViewSendCompositionKeys("AE");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "Æ", "Æ");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //ssharp # LATIN SMALL LETTER SHARP S
-  test.ViewSendCompositionKeys("ss");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "ß", "ß");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //ssharp # LATIN SMALL LETTER SHARP S
+    test.ViewSendCompositionKeys("ss");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "ß", "ß");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //LATIN SMALL LETTER A WITH GRAVE
-  test.ViewSendCompositionKeys("`a");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "à", "à");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //LATIN SMALL LETTER A WITH GRAVE
+    test.ViewSendCompositionKeys("`a");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "à", "à");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //LATIN SMALL LETTER A WITH ACUTE
-  test.ViewSendCompositionKeys("'a");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "á", "á");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //LATIN SMALL LETTER A WITH ACUTE
+    test.ViewSendCompositionKeys("'a");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "á", "á");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //LATIN SMALL LETTER A WITH CIRCUMFLEX
-  test.ViewSendCompositionKeys("^a");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "â", "â");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //LATIN SMALL LETTER A WITH CIRCUMFLEX
+    test.ViewSendCompositionKeys("^a");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "â", "â");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //LATIN SMALL LETTER A WITH TILDE
-  test.ViewSendCompositionKeys("~a");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "ã", "ã");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //LATIN SMALL LETTER A WITH TILDE
+    test.ViewSendCompositionKeys("~a");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "ã", "ã");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //LATIN SMALL LETTER A WITH DIAERESIS
-  test.ViewSendCompositionKeys("\"a");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "ä", "ä");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //LATIN SMALL LETTER A WITH DIAERESIS
+    test.ViewSendCompositionKeys("\"a");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "ä", "ä");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //LATIN SMALL LETTER A WITH RING ABOVE
-  test.ViewSendCompositionKeys("oa");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "å", "å");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //LATIN SMALL LETTER A WITH RING ABOVE
+    test.ViewSendCompositionKeys("oa");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "å", "å");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //ae # LATIN SMALL LETTER AE
-  test.ViewSendCompositionKeys("ae");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "æ", "æ");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //ae # LATIN SMALL LETTER AE
+    test.ViewSendCompositionKeys("ae");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "æ", "æ");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //DIVISION SIGN
-  test.ViewSendCompositionKeys("-:");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "÷", "÷");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //DIVISION SIGN
+    test.ViewSendCompositionKeys("-:");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "÷", "÷");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //LATIN CAPITAL LETTER A WITH OGONEK
-  test.ViewSendCompositionKeys(";A");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "Ą", "Ą");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //LATIN CAPITAL LETTER A WITH OGONEK
+    test.ViewSendCompositionKeys(";A");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "Ą", "Ą");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //LATIN SMALL LETTER A WITH OGONEK
-  test.ViewSendCompositionKeys(";a");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "ą", "ą");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);;
+    //LATIN SMALL LETTER A WITH OGONEK
+    test.ViewSendCompositionKeys(";a");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "ą", "ą");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);;
 
-  //LATIN CAPITAL LETTER A WITH CARON
-  test.ViewSendCompositionKeys("cA");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "Ǎ", "Ǎ");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);
-   
-  //EN DASH
-  test.ViewSendCompositionKeys("--.");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "–", "–");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);
+    //LATIN CAPITAL LETTER A WITH CARON
+    test.ViewSendCompositionKeys("cA");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "Ǎ", "Ǎ");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);
 
-  //RIGHT SINGLE QUOTATION MARK
-  test.ViewSendCompositionKeys(">'");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "’", "’");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);
+    //EN DASH
+    test.ViewSendCompositionKeys("--.");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "–", "–");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);
 
-  //LEFT DOUBLE QUOTATION MARK
-  test.ViewSendCompositionKeys("<\"");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "“", "“");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);
+    //RIGHT SINGLE QUOTATION MARK
+    test.ViewSendCompositionKeys(">'");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "’", "’");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);
 
-  //RIGHT DOUBLE QUOTATION MARK
-  test.ViewSendCompositionKeys("\">");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "”", "”");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);
+    //LEFT DOUBLE QUOTATION MARK
+    test.ViewSendCompositionKeys("<\"");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "“", "“");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);
 
-  //DOUBLE LOW-9 QUOTATION MARK
-  test.ViewSendCompositionKeys("\",");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "„", "„");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);
+    //RIGHT DOUBLE QUOTATION MARK
+    test.ViewSendCompositionKeys("\">");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "”", "”");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);
 
-  //PER MILLE SIGN
-  test.ViewSendCompositionKeys("%o");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "‰", "‰");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);
+    //DOUBLE LOW-9 QUOTATION MARK
+    test.ViewSendCompositionKeys("\",");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "„", "„");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);
 
-  //SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
-  test.ViewSendCompositionKeys(".>");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "›", "›");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);
+    //PER MILLE SIGN
+    test.ViewSendCompositionKeys("%o");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "‰", "‰");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);
 
-  //EuroSign # EURO SIGN
-  test.ViewSendCompositionKeys("=E");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "€", "€");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);
+    //SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
+    test.ViewSendCompositionKeys(".>");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "›", "›");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);
 
-  //REVERSED DOUBLE PRIME QUOTATION MARK
-  test.ViewSendCompositionKeys("\"\\");
-  test.TestReportMsg(test_textentry->text_entry_->GetText() == "〝", "〝");
-  test.ViewSendCtrlA();
-  test.ViewSendDelete();
-  nux::SleepForMilliseconds(100);
+    //EuroSign # EURO SIGN
+    test.ViewSendCompositionKeys("=E");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "€", "€");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);
+
+    //REVERSED DOUBLE PRIME QUOTATION MARK
+    test.ViewSendCompositionKeys("\"\\");
+    test.TestReportMsg(test_textentry->text_entry_->GetText() == "〝", "〝");
+    test.ViewSendCtrlA();
+    test.ViewSendDelete();
+    nux::SleepForMilliseconds(100);
+  }
+  else
+  {
+    test.WarnCompositionKeysNotSupported();
+  }
 
   if (test.WhenDoneTerminateProgram())
   {

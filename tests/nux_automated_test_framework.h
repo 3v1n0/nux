@@ -30,6 +30,12 @@ public:
   NuxAutomatedTestFramework(nux::WindowThread *window_thread);
   virtual ~NuxAutomatedTestFramework();
 
+  //! Returns true if composition keys are supported by the server
+  bool CompositionKeysSupported();
+
+  //! Warn the developer composition keys are not supported
+  void WarnCompositionKeysNotSupported();
+
   //! Initialize the testing framework.
   void Startup();
 
@@ -130,6 +136,7 @@ private:
   int window_width_;
   int window_height_;
   bool terminate_when_test_over_;
+  bool composition_keys_supported_;
 
   static int mouse_motion_time_span;    // in milliseconds
   static int mouse_click_time_span;     // in milliseconds

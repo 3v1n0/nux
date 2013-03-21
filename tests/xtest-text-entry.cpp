@@ -29,6 +29,12 @@
 #include <X11/keysym.h> 
 #include "nux_automated_test_framework.h"
 
+namespace
+{
+std::string RESET_KEY_FOCUS_AREA_MSG = "r";
+std::string KEY_FOCUS_AREA_RESET_MSG = "d";
+}
+
 class TextTextEntry: public ProgramTemplate
 {
 public:
@@ -41,12 +47,19 @@ public:
   void OnActivated();
   void OnCursorMoved(int);
   void ResetEvents();
+  void SendResetKeyFocusAreaMessageToProgram();
+
 
   nux::TextEntry* text_entry_;
 
   bool clicked_;
   bool activated_;
   bool cursor_moved_;
+
+private:
+
+  /* Handled inside the TextEntry WindowThread */
+  void HandleProgramMessage(const std::string &);
 };
 
 TextTextEntry::TextTextEntry(const char* program_name,
@@ -72,6 +85,22 @@ void TextTextEntry::ResetEvents()
   clicked_ = false;
   activated_ = false;
   cursor_moved_ = false;
+}
+
+void TextTextEntry::SendResetKeyFocusAreaMessageToProgram()
+{
+  SendMessageToProgram(RESET_KEY_FOCUS_AREA_MSG);
+  WaitForMessageFromProgram(KEY_FOCUS_AREA_RESET_MSG);
+}
+
+void TextTextEntry::HandleProgramMessage(const std::string &m)
+{
+  if (m == RESET_KEY_FOCUS_AREA_MSG)
+  {
+    GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(NULL);
+    GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(text_entry_);
+    SendMessageToTest(KEY_FOCUS_AREA_RESET_MSG);
+  }
 }
 
 void TextTextEntry::TextEntryClick(nux::TextEntry* text_entry)
@@ -185,8 +214,7 @@ void TestingThread(nux::NThread* /* thread */, void* user_data)
     test.ViewSendString("Nux");
     test.TestReportMsg(test_textentry->text_entry_->GetText() == "Nux", "Typed \"Nux\"");
 
-    test_textentry->GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(NULL); 
-    test_textentry->GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(test_textentry->text_entry_);
+    test_textentry->SendResetKeyFocusAreaMessageToProgram();
 
     test_textentry->ResetEvents();
     test.ViewSendLeft();
@@ -205,8 +233,7 @@ void TestingThread(nux::NThread* /* thread */, void* user_data)
     test.ViewSendString("Nux");
     test.TestReportMsg(test_textentry->text_entry_->GetText() == "Nux", "Typed \"Nux\"");
 
-    test_textentry->GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(NULL); 
-    test_textentry->GetWindowThread()->GetWindowCompositor().SetKeyFocusArea(test_textentry->text_entry_);
+    test_textentry->SendResetKeyFocusAreaMessageToProgram();
 
     test_textentry->ResetEvents();
     test.ViewSendReturn();

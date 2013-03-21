@@ -1680,6 +1680,7 @@ namespace nux
         m_pEvent->x_root = 0;
         m_pEvent->y_root = 0;
         m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
+        m_pEvent->x11_timestamp = xevent.xbutton.time;
         MousePress(xevent, m_pEvent);
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: ButtonPress event.");
         break;

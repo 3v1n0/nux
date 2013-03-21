@@ -1,3 +1,31 @@
+nux (4.0.0daily13.03.13.1-0ubuntu1) raring; urgency=low
+
+  [ Marco Trevisan (Treviño) ]
+  * Event timestamp is not updated on ButtonPress (LP: #1154101)
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 764
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 13 Mar 2013 09:22:06 +0000
+
+nux (4.0.0daily13.02.26-0ubuntu1) raring; urgency=low
+
+  [ Sam Spilsbury ]
+  * segmentation fault when running nux tests (LP: #1097281)
+  * xtest-text-entry-deadkeys SIGABRTs with BadValue XError (LP:
+    #1112321)
+
+  [ Automatic PS uploader ]
+  * Automatic snapshot from revision 762
+
+ -- Automatic PS uploader <ps-jenkins@lists.canonical.com>  Tue, 26 Feb 2013 04:01:53 +0000
+
+nux (4.0.0daily13.02.19-0ubuntu1) raring; urgency=low
+
+  * Automatic snapshot from revision 759
+
+ -- Automatic PS uploader <ps-jenkins@lists.canonical.com>  Tue, 19 Feb 2013 08:45:32 +0000
+
 nux (4.0.0daily13.02.04-0ubuntu1) raring; urgency=low
 
   * Automatic snapshot from revision 756

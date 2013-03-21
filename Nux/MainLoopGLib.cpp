@@ -9,6 +9,7 @@
 #include "FloatingWindow.h"
 
 #include "WindowThread.h"
+#include "MainLoopGLib.h"
 
 namespace nux
 {
@@ -296,9 +297,104 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     }
   }
 
+  namespace
+  {
+    typedef struct _ExternalNuxSource
+    {
+      GSource source;
+      GPollFD pfd;
+    } ExternalNuxSource;
+
+    gboolean ExternalSourcePrepareFunc(GSource *source, gint *timeout)
+    {
+      /* Always block for new events */
+      *timeout = -1;
+      return FALSE;
+    }
+
+    gboolean ExternalSourceCheckFunc(GSource *source)
+    {
+      /* Only return true if there are events waiting for us */
+      ExternalNuxSource *extSource =
+          reinterpret_cast <ExternalNuxSource *>(source);
+      return extSource->pfd.revents == G_IO_IN;
+    }
+
+    gboolean ExternalSourceDispatchFunc(GSource     *source,
+                                        GSourceFunc callback,
+                                        gpointer    user_data)
+    {
+      return (*callback) (user_data);
+    }
+
+    static GSourceFuncs externalGLibFuncs =
+    {
+      &ExternalSourcePrepareFunc,
+      &ExternalSourceCheckFunc,
+      &ExternalSourceDispatchFunc, 
+      NULL,
+      /* Technically we shouldn't be touching these, but the compiler
+       * will complain if we don't */
+      0,
+      0
+    };
+  }
+
+  gboolean WindowThread::ExternalSourceCallback(gpointer user_data)
+  {
+    WindowThread::ExternalFdData *data =
+      reinterpret_cast <WindowThread::ExternalFdData *> (user_data);
+
+    data->cb ();
+    return TRUE;
+  }
+
+  void ExternalGLibSources::AddFdToGLibLoop(gint fd,
+                                            gpointer data,
+                                            GSourceFunc callback,
+                                            GMainContext *context)
+  {
+    GSource *source = g_source_new(&externalGLibFuncs, sizeof (ExternalNuxSource));
+    ExternalNuxSource *extSource =
+      reinterpret_cast <ExternalNuxSource *> (source);
+    extSource->pfd.fd = fd;
+    extSource->pfd.events = G_IO_IN;
+    extSource->pfd.revents = 0;
+
+    g_source_add_poll (source, &extSource->pfd);
+    g_source_set_callback (source, callback, data, NULL);
+
+    g_source_attach (source, context);
+  }
+
+  void ExternalGLibSources::RemoveFdFromGLibLoop(gpointer data)
+  {
+    g_source_remove_by_user_data(data);
+  }
+
+  void WindowThread::AddFdToGLibLoop(int fd,
+                                     gpointer data,
+                                     GSourceFunc callback)
+  {
+    external_glib_sources_->AddFdToGLibLoop(fd, data, callback, main_loop_glib_context_);
+  }
+
+  void WindowThread::RemoveFdFromGLibLoop(gpointer data)
+  {
+    external_glib_sources_->RemoveFdFromGLibLoop(data);
+  }
+
   void WindowThread::CleanupGlibLoop()
   {
     g_source_remove_by_funcs_user_data(&event_funcs, this);
+
+    for (std::list<ExternalFdData>::iterator it = _external_fds.begin();
+         it != _external_fds.end();
+         ++it)
+    {
+      gpointer data = reinterpret_cast<gpointer>(&(*it));
+      external_glib_sources_->RemoveFdFromGLibLoop(data);
+    }
   }
 
   unsigned int WindowThread::AddGLibTimeout(unsigned int duration)
