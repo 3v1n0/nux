@@ -181,6 +181,10 @@ namespace nux
       RecvKeyEvent(NUX_KEYUP, keysym, state, nullptr, 0);
     });
 
+    geometry_changed.connect([this] (Area* /*area*/, Geometry& /*geo*/) {
+      QueueRefresh(true, false);
+    });
+
     begin_key_focus.connect(sigc::mem_fun(this, &TextEntry::RecvStartKeyFocus));
     end_key_focus.connect(sigc::mem_fun(this, &TextEntry::RecvEndKeyFocus));
 
@@ -809,7 +813,6 @@ namespace nux
   {
     return _text_color;
   }
-
 
   void TextEntry::MainDraw()
   {
