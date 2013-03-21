@@ -381,12 +381,11 @@ namespace nux
     if (geometry_.width != w || geometry_.height != h)
       detected_size_change = true;
 
-    nux::Geometry geometry(x, y, w, h);
-    if (geometry_ == geometry)
+    if (!detected_position_change && !detected_size_change)
       return;
 
     GeometryChangePending(detected_position_change, detected_size_change);
-    geometry_ = geometry;
+    geometry_.Set(x, y, w, h);
     ReconfigureParentLayout();
     GeometryChanged(detected_position_change, detected_size_change);
 
