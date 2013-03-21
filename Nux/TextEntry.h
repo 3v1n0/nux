@@ -110,7 +110,6 @@ namespace nux
     BaseTexture *_texture2D;
 
     void MainDraw();
-    void ForceResetLayout();
     void ProcessMouseEvent(int event_type, int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags);
     void ProcessKeyEvent   (
       unsigned long    eventType  ,   /*event type*/
