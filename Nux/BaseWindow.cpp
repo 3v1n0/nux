@@ -398,6 +398,8 @@ namespace nux
     }
     else
     {
+      SetEnterFocusInputArea(NULL);
+
       _entering_hidden_state = true;
       sigHidden.emit(this);
       GetWindowThread()->GetWindowCompositor().sigHiddenViewWindow.emit(this);
