@@ -1451,7 +1451,16 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
          ++it)
     {
       if (it->IsValid())
-        presentation_geometries.push_back((*it)->GetAbsoluteGeometry());
+      {
+        nux::Geometry const& abs_geom ((*it)->GetAbsoluteGeometry());
+        nux::Geometry const& last_geom ((*it)->LastPresentedGeometryInEmbeddedMode());
+        presentation_geometries.push_back(abs_geom);
+        if (abs_geom != last_geom)
+        {
+          if (!last_geom.IsNull())
+            presentation_geometries.push_back(last_geom);
+        }
+      }
     }
     return presentation_geometries;
   }

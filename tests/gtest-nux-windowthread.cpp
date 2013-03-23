@@ -608,6 +608,30 @@ TEST_F(EmbeddedContextWindow, MultipleAllowPresentationAddsToPresentationListUni
   EXPECT_EQ(present_list[0], Window()->GetAbsoluteGeometry());
 }
 
+TEST_F(EmbeddedContextWindow, OneSetOfGeometryForRePresentOnUnchangedPosition)
+{
+  Window()->PresentInEmbeddedModeOnThisFrame();
+  Window()->WasPresentedInEmbeddedMode();
+  Window()->PresentInEmbeddedModeOnThisFrame();
+  std::vector <nux::Geometry> present_list (WindowThread()->GetPresentationListGeometries());
+
+  ASSERT_EQ(1, present_list.size());
+  EXPECT_EQ(present_list[0], Window()->GetAbsoluteGeometry());
+}
+
+TEST_F(EmbeddedContextWindow, TwoSetsOfGeometryForRePresentOnChangedPosition)
+{
+  Window()->PresentInEmbeddedModeOnThisFrame();
+  Window()->WasPresentedInEmbeddedMode();
+  Window()->PresentInEmbeddedModeOnThisFrame();
+  Window()->SetBaseX(Window()->GetBaseX() + 1);
+  std::vector <nux::Geometry> present_list (WindowThread()->GetPresentationListGeometries());
+
+  ASSERT_EQ(2, present_list.size());
+  EXPECT_EQ(present_list[0], Window()->GetAbsoluteGeometry());
+  EXPECT_EQ(present_list[1], Window()->LastPresentedGeometryInEmbeddedMode());
+}
+
 TEST_F(EmbeddedContextWindow, QueueDrawAddsParentToPresentationList)
 {
   nux::HLayout* layout = new nux::HLayout(NUX_TRACKER_LOCATION);

@@ -191,6 +191,7 @@ namespace nux
     void PresentInEmbeddedModeOnThisFrame(bool force = false);
     void WasPresentedInEmbeddedMode();
     bool AllowPresentationInEmbeddedMode();
+    nux::Geometry const& LastPresentedGeometryInEmbeddedMode();
 
     void PrepareParentRedirectedView();
 
@@ -270,6 +271,7 @@ namespace nux
     bool _present_in_embedded_mode; //!<True if we should draw this window's
                                     // backing texture to the screen on the
                                     // next frame
+    nux::Geometry _last_presented_geometry_in_embedded_mode;
 
     friend class PopUpWindow;
 
