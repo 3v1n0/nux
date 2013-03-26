@@ -507,18 +507,18 @@ namespace nux
       _present_in_embedded_mode = true;
   }
 
-  void BaseWindow::WasPresentedInEmbeddedMode()
+  void BaseWindow::OnPresentedInEmbeddedMode()
   {
     _present_in_embedded_mode = false;
     _last_presented_geometry_in_embedded_mode = GetAbsoluteGeometry();
   }
 
-  nux::Geometry const& BaseWindow::LastPresentedGeometryInEmbeddedMode()
+  nux::Geometry const& BaseWindow::LastPresentedGeometryInEmbeddedMode() const
   {
     return _last_presented_geometry_in_embedded_mode;
   }
 
-  bool BaseWindow::AllowPresentationInEmbeddedMode()
+  bool BaseWindow::AllowPresentationInEmbeddedMode() const
   {
     return _present_in_embedded_mode;
   }

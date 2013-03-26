@@ -489,7 +489,7 @@ TEST_F(EmbeddedContext, DonePresentViewInEmbeddedMode)
 {
   nux::ObjectPtr <nux::BaseWindow> bw(new nux::BaseWindow(TEXT("")));
   bw->PresentInEmbeddedModeOnThisFrame();
-  bw->WasPresentedInEmbeddedMode();
+  bw->OnPresentedInEmbeddedMode();
   EXPECT_FALSE(bw->AllowPresentationInEmbeddedMode());
 }
 
@@ -557,7 +557,7 @@ class EmbeddedContextWindow : public EmbeddedContext
 
       /* QueueDraw will call PresentInEmbeddedModeOnThisFrame - we
        * need to unset this state in order to test it properly */
-      _base_window->WasPresentedInEmbeddedMode();
+      _base_window->OnPresentedInEmbeddedMode();
       _base_window->DoneRedraw();
     }
 
@@ -611,7 +611,7 @@ TEST_F(EmbeddedContextWindow, MultipleAllowPresentationAddsToPresentationListUni
 TEST_F(EmbeddedContextWindow, OneSetOfGeometryForRePresentOnUnchangedPosition)
 {
   Window()->PresentInEmbeddedModeOnThisFrame();
-  Window()->WasPresentedInEmbeddedMode();
+  Window()->OnPresentedInEmbeddedMode();
   Window()->PresentInEmbeddedModeOnThisFrame();
   std::vector <nux::Geometry> present_list (WindowThread()->GetPresentationListGeometries());
 
@@ -622,7 +622,7 @@ TEST_F(EmbeddedContextWindow, OneSetOfGeometryForRePresentOnUnchangedPosition)
 TEST_F(EmbeddedContextWindow, TwoSetsOfGeometryForRePresentOnChangedPosition)
 {
   Window()->PresentInEmbeddedModeOnThisFrame();
-  Window()->WasPresentedInEmbeddedMode();
+  Window()->OnPresentedInEmbeddedMode();
   Window()->PresentInEmbeddedModeOnThisFrame();
   Window()->SetBaseX(Window()->GetBaseX() + 1);
   std::vector <nux::Geometry> present_list (WindowThread()->GetPresentationListGeometries());
@@ -661,7 +661,7 @@ class EmbeddedContextMultiWindow : public EmbeddedContext
 
       /* QueueDraw will call PresentInEmbeddedModeOnThisFrame - we
        * need to unset this state in order to test it properly */
-      _base_windows.back()->WasPresentedInEmbeddedMode();
+      _base_windows.back()->OnPresentedInEmbeddedMode();
       return _base_windows.back();
     }
 

@@ -245,7 +245,7 @@ namespace nux
         @param read_fbo_object The opengl index of the GL_READ_FRAMEBUFFER_EXT.
         @param fbo_geometry The geometry of the fbo.
     */
-    void SetReferenceFramebuffer(unsigned int draw_fbo_object, unsigned int read_fbo_object, Geometry fbo_geometry);
+    void SetReferenceFramebuffer(unsigned int draw_fbo_object, unsigned int read_fbo_object, const Geometry &fbo_geometry);
 
     /*!
         Bind the reference opengl framebuffer object.
@@ -412,6 +412,7 @@ namespace nux
 
   private:
 
+    WeakBaseWindowPtr FindWeakBaseWindowPtrForRawPtr (nux::BaseWindow *);
     void OnAllBaseWindows(const WindowMutatorFunc &);
 
     //! Render the interface.

@@ -1393,28 +1393,11 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     return m_dirty_areas;
   }
 
-  namespace
-  {
-    void
-    AssignWeakBaseWindowMatchingRaw(WindowCompositor::WeakBaseWindowPtr const& w,
-                                    BaseWindow*                                bw,
-                                    WindowCompositor::WeakBaseWindowPtr        *ptr)
-    {
-      if (w.IsValid() &&
-          w.GetPointer() == bw)
-        *ptr = w;
-    }
-  }
-
   bool WindowThread::AddToPresentationList(BaseWindow *bw,
                                            bool force = false)
   {
     RequestRedraw();
-
-    using namespace std::placeholders;
-
-    WindowCompositor::WeakBaseWindowPtr ptr;
-    window_compositor_->OnAllBaseWindows(std::bind(AssignWeakBaseWindowMatchingRaw, _1, bw, &ptr));
+    WindowCompositor::WeakBaseWindowPtr ptr (window_compositor_->FindWeakBaseWindowPtrForRawPtr(bw));
 
     if (!ptr.IsValid())
       return false;
@@ -1445,15 +1428,12 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
   std::vector<nux::Geometry> WindowThread::GetPresentationListGeometries()
   {
     std::vector<nux::Geometry> presentation_geometries;
-    for (std::vector<WindowCompositor::WeakBaseWindowPtr>::iterator it =
-         m_presentation_list_embedded.begin();
-         it != m_presentation_list_embedded.end();
-         ++it)
+    for (WindowCompositor::WeakBaseWindowPtr const& base_window : m_presentation_list_embedded)
     {
-      if (it->IsValid())
+      if (base_window.IsValid())
       {
-        nux::Geometry const& abs_geom ((*it)->GetAbsoluteGeometry());
-        nux::Geometry const& last_geom ((*it)->LastPresentedGeometryInEmbeddedMode());
+	nux::Geometry const& abs_geom (base_window->GetAbsoluteGeometry());
+	nux::Geometry const& last_geom (base_window->LastPresentedGeometryInEmbeddedMode());
         presentation_geometries.push_back(abs_geom);
         if (abs_geom != last_geom)
         {
@@ -1617,7 +1597,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
 
     void MarkWindowUnpresented(const ObjectWeakPtr<BaseWindow> &w)
     {
-      w->WasPresentedInEmbeddedMode();
+      w->OnPresentedInEmbeddedMode();
     }
 
   }

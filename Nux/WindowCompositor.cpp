@@ -1341,22 +1341,39 @@ DECLARE_LOGGER(logger, "nux.window");
     }
   }
 
+  namespace
+  {
+    void
+    AssignWeakBaseWindowMatchingRaw(WindowCompositor::WeakBaseWindowPtr const& w,
+				    BaseWindow*                                bw,
+				    WindowCompositor::WeakBaseWindowPtr        *ptr)
+    {
+      if (w.IsValid() &&
+	  w.GetPointer() == bw)
+	*ptr = w;
+    }
+  }
+
+  WindowCompositor::WeakBaseWindowPtr WindowCompositor::FindWeakBaseWindowPtrForRawPtr(nux::BaseWindow *raw)
+  {
+      using namespace std::placeholders;
+
+      WeakBaseWindowPtr weak;
+      OnAllBaseWindows(std::bind (AssignWeakBaseWindowMatchingRaw, _1, raw, &weak));
+      return weak;
+  }
+
   void WindowCompositor::OnAllBaseWindows(const WindowMutatorFunc &func)
   {
-    for (WindowList::iterator it = _view_window_list.begin();
-         it != _view_window_list.end();
-         ++it)
+    for (WeakBaseWindowPtr const& ptr : _view_window_list)
     {
-      if (it->IsValid())
-        func (*it);
+      if (ptr.IsValid())
+	func (ptr);
     }
 
-    for (WindowList::iterator it = _modal_view_window_list.begin();
-         it != _modal_view_window_list.end();
-         ++it)
-      if (it->IsValid())
-        func (*it);
-
+    for (WeakBaseWindowPtr const& ptr : _view_window_list)
+      if (ptr.IsValid())
+	func (ptr);
 
     if (m_MenuWindow.IsValid())
       func (m_MenuWindow);
@@ -2461,7 +2478,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
   void WindowCompositor::SetReferenceFramebuffer(unsigned int draw_fbo_object,
                                                  unsigned int read_fbo_object,
-                                                 Geometry fbo_geometry)
+						 Geometry const& fbo_geometry)
   {
     draw_reference_fbo_ = draw_fbo_object;
     read_reference_fbo_ = read_fbo_object;

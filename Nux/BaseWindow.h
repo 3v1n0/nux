@@ -189,9 +189,9 @@ namespace nux
     }
 
     void PresentInEmbeddedModeOnThisFrame(bool force = false);
-    void WasPresentedInEmbeddedMode();
-    bool AllowPresentationInEmbeddedMode();
-    nux::Geometry const& LastPresentedGeometryInEmbeddedMode();
+    void OnPresentedInEmbeddedMode();
+    bool AllowPresentationInEmbeddedMode() const;
+    nux::Geometry const& LastPresentedGeometryInEmbeddedMode() const;
 
     void PrepareParentRedirectedView();
 
