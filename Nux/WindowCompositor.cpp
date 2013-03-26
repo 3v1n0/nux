@@ -210,7 +210,10 @@ DECLARE_LOGGER(logger, "nux.window");
     WindowList::iterator window_it;
     for (window_it = _view_window_list.begin(); window_it != _view_window_list.end(); ++window_it)
     {
-      if ((*window_it).IsValid() && (*window_it)->IsVisible())
+      // Since the mouse is really an input-level thing, we want to know
+      // if the underlying input window is enabled, not if the window is
+      // necessarily visible
+      if ((*window_it).IsValid() && (*window_it)->InputWindowEnabled())
       {
         Area* area = (*window_it)->FindAreaUnderMouse(mouse_position, event_type);
         if (area)
