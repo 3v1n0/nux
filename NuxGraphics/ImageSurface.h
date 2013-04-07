@@ -224,11 +224,13 @@ namespace nux
   {
   public:
     NTextureData(BitmapFormat f = BITFMT_R8G8B8A8, int width = 16, int height = 16, int NumMipmap = 1);
-    virtual ~NTextureData();
+    virtual ~NTextureData() {}
     //! Copy constructor.
     NTextureData(const NTextureData &);
     //! Assignment constructor.
-    NTextureData &operator = (const NTextureData &);
+    NTextureData &operator = (NTextureData);
+    //! Move constructor
+    NTextureData(NTextureData&&);
 
     virtual void Allocate(BitmapFormat f, int width, int height, int NumMipmap = 1);
     virtual void AllocateCheckBoardTexture(int width, int height, int NumMipmap, Color color0, Color color1, int TileWidth = 4, int TileHeight = 4);
@@ -236,7 +238,7 @@ namespace nux
 
     virtual const ImageSurface &GetSurface(int MipLevel) const
     {
-      return *m_MipSurfaceArray[MipLevel];
+      return m_MipSurfaceArray[MipLevel];
     };
     virtual ImageSurface &GetSurface(int MipLevel)
     {
@@ -263,25 +265,27 @@ namespace nux
     virtual int GetNumMipmap() const;
     virtual int GetWidth() const
     {
-      return m_MipSurfaceArray[0]->GetWidth();
+      return m_MipSurfaceArray[0].GetWidth();
     }
     virtual int GetHeight() const
     {
-      return m_MipSurfaceArray[0]->GetHeight();
+      return m_MipSurfaceArray[0].GetHeight();
     }
     virtual BitmapFormat GetFormat() const
     {
-      return m_MipSurfaceArray[0]->GetFormat();
+      return m_MipSurfaceArray[0].GetFormat();
     }
     virtual bool IsNull() const
     {
-      return m_MipSurfaceArray[0]->IsNull();
+      return m_MipSurfaceArray[0].IsNull();
     }
 
   private:
+    void swap(NTextureData& other);
+
     int m_NumMipmap;
-    std::vector<ImageSurface *> m_MipSurfaceArray;
-    void ClearData();
+    std::vector<ImageSurface> m_MipSurfaceArray;
+
 #if defined(NUX_OS_WINDOWS)
     friend NBitmapData *read_tga_file(const TCHAR *file_name);
 #endif

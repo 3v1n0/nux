@@ -48,9 +48,11 @@ DECLARE_LOGGER(logger, "nux.image");
     NTextureData *Texture = new NTextureData(BITFMT_R8G8B8A8, width, height, 1);
 
     guchar *img = gdk_pixbuf_get_pixels(pixbuf);
+    auto& surface = Texture->GetSurface(0);
 
-    for (unsigned int i = 0; i < width; i++)
-      for (unsigned int j = 0; j < height; j++)
+    for (unsigned int i = 0; i < width; ++i)
+    {
+      for (unsigned int j = 0; j < height; ++j)
       {
         guchar *pixels = img + ( j * row_bytes + i * 4);
         UINT value =
@@ -59,8 +61,9 @@ DECLARE_LOGGER(logger, "nux.image");
           (* (pixels + 1) << 8)  |  // g
           * (pixels + 0);           // r
 
-        Texture->GetSurface(0).Write32b(i, j, value);
+        surface.Write32b(i, j, value);
       }
+    }
 
     return Texture;
   }
@@ -875,40 +878,39 @@ DECLARE_LOGGER(logger, "nux.image");
 
   ///////////////////////////////////////////////////////////////////
   NTextureData::NTextureData(BitmapFormat f, int width, int height, int NumMipmap)
-    :   m_NumMipmap(0)
+    : m_NumMipmap(0)
+    , m_MipSurfaceArray(1)
   {
     Allocate(f, width, height, NumMipmap);
   }
 
-  NTextureData::~NTextureData()
+  void NTextureData::swap(NTextureData& other)
   {
-    ClearData();
-  }
-
-  void NTextureData::ClearData()
-  {
-    for (int i = 0; i < (int) m_MipSurfaceArray.size(); i++)
-      delete m_MipSurfaceArray[i];
-
-    m_MipSurfaceArray.clear();
+    using std::swap;
+    swap(this->m_NumMipmap, other.m_NumMipmap);
+    swap(this->m_TotalMemorySize, other.m_TotalMemorySize);
+    swap(this->m_MipSurfaceArray, other.m_MipSurfaceArray);
   }
 
   //! Copy constructor
   NTextureData::NTextureData(const NTextureData &object)
   {
-    for (int i = 0; i < object.GetNumMipmap(); i++)
-      m_MipSurfaceArray.push_back(new ImageSurface(object.GetSurface(i)));
+    m_NumMipmap = object.m_NumMipmap;
+    m_TotalMemorySize = object.m_TotalMemorySize;
+    m_MipSurfaceArray = object.m_MipSurfaceArray;
   }
 
-//! Assignment constructor
-  NTextureData &NTextureData::operator = (const NTextureData &copy)
+  //! Move constructor
+  NTextureData::NTextureData(NTextureData&& other)
+    : NTextureData()
   {
-    ClearData();
-    m_NumMipmap = copy.m_NumMipmap;
-    m_TotalMemorySize = copy.m_TotalMemorySize;
+    swap(other);
+  }
 
-    for (int i = 0; i < copy.GetNumMipmap(); i++)
-      m_MipSurfaceArray.push_back(new ImageSurface(copy.GetSurface(i)));
+  //! Assignment constructor
+  NTextureData &NTextureData::operator = (NTextureData copy)
+  {
+    swap(copy);
 
     return *this;
   }
@@ -929,14 +931,14 @@ DECLARE_LOGGER(logger, "nux.image");
       m_NumMipmap = NumTotalMipLevel ? NumTotalMipLevel : 1;
 
     m_TotalMemorySize = 0;
-    ClearData();
+    m_MipSurfaceArray.resize(m_NumMipmap);
 
     for (int i = 0; i < m_NumMipmap; i++)
     {
       int w = width >> i;
       int h = height >> i;
-      m_MipSurfaceArray.push_back(new ImageSurface(format, w, h));
-      m_TotalMemorySize += m_MipSurfaceArray[i]->GetSize();
+      m_MipSurfaceArray[i] = ImageSurface(format, w, h);
+      m_TotalMemorySize += m_MipSurfaceArray[i].GetSize();
     }
   }
 
@@ -944,11 +946,11 @@ DECLARE_LOGGER(logger, "nux.image");
   {
     Allocate(BITFMT_R8G8B8A8, width, height, NumMipmap);
 
-    for (int i = 0; i < m_NumMipmap; i++)
+    for (int i = 0; i < m_NumMipmap; ++i)
     {
       int w = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetWidth(), i);
       int h = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetHeight(), i);
-      MakeCheckBoardImage(*m_MipSurfaceArray[i], w, h, color0, color1, TileWidth, TileHeight);
+      MakeCheckBoardImage(m_MipSurfaceArray[i], w, h, color0, color1, TileWidth, TileHeight);
     }
   }
 
@@ -956,17 +958,17 @@ DECLARE_LOGGER(logger, "nux.image");
   {
     Allocate(BITFMT_R8G8B8A8, width, height, NumMipmap);
 
-    for (int i = 0; i < m_NumMipmap; i++)
+    for (int i = 0; i < m_NumMipmap; ++i)
     {
       int w = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetWidth(), i);
       int h = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetHeight(), i);
-      MakeCheckBoardImage(*m_MipSurfaceArray[i], w, h, color0, color0);
+      MakeCheckBoardImage(m_MipSurfaceArray[i], w, h, color0, color0);
     }
   }
 
   int NTextureData::GetNumMipmap() const
   {
-    return m_MipSurfaceArray.size();
+    return m_NumMipmap;
   }
 
   bool NTextureData::SetSurface(int MipLevel, const ImageSurface &targetsurface)
