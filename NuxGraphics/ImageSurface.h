@@ -88,10 +88,10 @@ namespace nux
   {
   public:
     ImageSurface();
-    ~ImageSurface();
     ImageSurface(BitmapFormat format, unsigned int width, unsigned int height);
     ImageSurface(const ImageSurface &);
-    ImageSurface &operator = (const ImageSurface &);
+    ImageSurface(ImageSurface&&);
+    ImageSurface &operator = (ImageSurface);
 
     bool IsNull() const;
     int GetWidth() const
@@ -158,7 +158,7 @@ namespace nux
     void FlipBlocksDXT3(DXTColBlock *line, int numBlocks);
     void FlipBlocksDXT5(DXTColBlock *line, int numBlocks);
     void FlipDXT5Alpha(DXT5AlphaBlock *block);
-
+    friend void swap(ImageSurface&, ImageSurface&);
 
     int width_;           //!< Image width
     int height_;          //!< Image height.
@@ -166,8 +166,10 @@ namespace nux
     int m_Pitch;          //!< Image pitch.
     int bpe_;             //!< Number of byte per element.
     int Alignment_;       //!< Data alignment.
-    unsigned char    *RawData_;
+    std::vector<unsigned char> RawData_;
   };
+
+  void swap(ImageSurface&, ImageSurface&);
 
 
   class NBitmapData
