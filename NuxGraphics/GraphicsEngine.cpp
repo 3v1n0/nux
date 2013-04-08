@@ -550,8 +550,6 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
     x1 = Min(r0.x + r0.width, r1.x + r1.width);
     y1 = Min(r0.y + r0.height, r1.y + r1.height);
 
-    Rect r = r0.Intersect(r1);
-
     if ((x1 > x0) && (y1 > y0))
     {
       _clipping_rect = Rect(x0, y0, x1 - x0, y1 - y0);

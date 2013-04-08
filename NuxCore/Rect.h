@@ -33,11 +33,11 @@ namespace nux
   {
   public:
     Rect();
-    Rect (int x_, int y_, int width_, int height_);
-    ~Rect();
-    Rect (const Rect &r);
+    Rect(int x_, int y_, int width_, int height_);
+    Rect(const Rect &);
+    Rect(Rect&&);
 
-    Rect &operator = (const Rect &r);
+    Rect &operator = (Rect r);
     bool operator == (const Rect &p) const;
     bool operator != (const Rect &p) const;
 
@@ -113,6 +113,15 @@ namespace nux
 
     bool IsPointInside (int dx, int dy) const;
     Rect GetExpand (int dx, int dy) const;
+
+    friend void swap(Rect& lhs, Rect& rhs)
+    {
+      using std::swap;
+      swap(lhs.x, rhs.x);
+      swap(lhs.y, rhs.y);
+      swap(lhs.width, rhs.width);
+      swap(lhs.height, rhs.height);
+    }
 
     int x, y;
     int width, height;

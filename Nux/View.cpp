@@ -171,9 +171,6 @@ namespace nux
         {
           graphics_engine.PushModelViewMatrix(Get2DMatrix());
 
-          Geometry translated_geo = GetGeometry();
-          translated_geo.x = 0;
-          translated_geo.y = 0;
           if (force_draw)
           {
             draw_cmd_queued_ = true;
