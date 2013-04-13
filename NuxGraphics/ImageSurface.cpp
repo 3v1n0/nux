@@ -48,9 +48,11 @@ DECLARE_LOGGER(logger, "nux.image");
     NTextureData *Texture = new NTextureData(BITFMT_R8G8B8A8, width, height, 1);
 
     guchar *img = gdk_pixbuf_get_pixels(pixbuf);
+    auto& surface = Texture->GetSurface(0);
 
-    for (unsigned int i = 0; i < width; i++)
-      for (unsigned int j = 0; j < height; j++)
+    for (unsigned int i = 0; i < width; ++i)
+    {
+      for (unsigned int j = 0; j < height; ++j)
       {
         guchar *pixels = img + ( j * row_bytes + i * 4);
         UINT value =
@@ -59,8 +61,9 @@ DECLARE_LOGGER(logger, "nux.image");
           (* (pixels + 1) << 8)  |  // g
           * (pixels + 0);           // r
 
-        Texture->GetSurface(0).Write32b(i, j, value);
+        surface.Write32b(i, j, value);
       }
+    }
 
     return Texture;
   }
@@ -153,14 +156,8 @@ DECLARE_LOGGER(logger, "nux.image");
     ,   m_Pitch(0)
     ,   bpe_(0)
     ,   Alignment_(4)
-    ,   RawData_(0)
   {
     Allocate(format_, width_, height_);
-  }
-
-  ImageSurface::~ImageSurface()
-  {
-    delete [] RawData_;
   }
 
   ImageSurface::ImageSurface(BitmapFormat format, unsigned int width, unsigned int height)
@@ -170,12 +167,11 @@ DECLARE_LOGGER(logger, "nux.image");
     ,   m_Pitch(0)
     ,   bpe_(0)
     ,   Alignment_(4)
-    ,   RawData_(0)
   {
     Allocate(format, width, height);
   }
 
-  ImageSurface::ImageSurface(const ImageSurface &surface)
+  ImageSurface::ImageSurface(ImageSurface const& surface)
   {
     width_ = surface.width_;
     height_ = surface.height_;
@@ -183,28 +179,33 @@ DECLARE_LOGGER(logger, "nux.image");
     format_ = surface.format_;
     m_Pitch = surface.m_Pitch;
     Alignment_ = surface.Alignment_;
-
-    RawData_ = new unsigned char[surface.GetSize()];
-    Memcpy(RawData_, surface.RawData_, surface.GetSize());
+    RawData_ = surface.RawData_;
   }
 
-  ImageSurface &ImageSurface::operator = (const ImageSurface &surface)
+  ImageSurface::ImageSurface(ImageSurface&& surface)
+    : ImageSurface()
   {
-    if (this == &surface)
-      return *this;   // Handle self assignment
+    swap(*this, surface);
+  }
 
-    width_ = surface.width_;
-    height_ = surface.height_;
-    bpe_ = surface.bpe_;
-    format_ = surface.format_;
-    m_Pitch = surface.m_Pitch;
-    Alignment_ = surface.Alignment_;
+  ImageSurface &ImageSurface::operator = (ImageSurface copy)
+  {
+    swap(*this, copy);
 
-    delete [] RawData_;
-
-    RawData_ = new unsigned char[surface.GetSize() ];
-    Memcpy(RawData_, surface.RawData_, surface.GetSize());
     return *this;
+  }
+
+  void swap(ImageSurface& lhs, ImageSurface& rhs)
+  {
+    using std::swap;
+
+    swap(lhs.width_, rhs.width_);
+    swap(lhs.height_, rhs.height_);
+    swap(lhs.bpe_, rhs.bpe_);
+    swap(lhs.format_, rhs.format_);
+    swap(lhs.m_Pitch, rhs.m_Pitch);
+    swap(lhs.Alignment_, rhs.Alignment_);
+    swap(lhs.RawData_, rhs.RawData_);
   }
 
   int ImageSurface::GetPitch() const
@@ -250,8 +251,6 @@ DECLARE_LOGGER(logger, "nux.image");
       return;
     }
 
-    delete [] RawData_;
-
     if ((width == 0) || (height == 0))
     {
       width_ = 0;
@@ -260,45 +259,31 @@ DECLARE_LOGGER(logger, "nux.image");
       bpe_ = 0;
       format_ = BITFMT_UNKNOWN;
       m_Pitch = 0;
+      RawData_.clear();
+      RawData_.shrink_to_fit();
       return;
     }
 
     width_ = width;
     height_ = height;
 
-
     Alignment_ = GPixelFormats[format].RowMemoryAlignment;
 
     bpe_ = GPixelFormats[format].BlockBytes;
     format_ = format;
 
-    if ((format_ == BITFMT_DXT1) ||
-         (format_ == BITFMT_DXT2) ||
-         (format_ == BITFMT_DXT3) ||
-         (format_ == BITFMT_DXT4) ||
-         (format_ == BITFMT_DXT5))
-    {
-      // For DXT, width and height are rounded up to a multiple of 4 in order
-      // to create 4x4 blocks of pixels; And in this context, byte alignment
-      // is 1 ie. data is densely packed.
-      unsigned int block = GPixelFormats[format].BlockSizeX;
-      unsigned int shift = Log2(GPixelFormats[format].BlockSizeX);
-      m_Pitch = Align((bpe_ * ((width_ + (block - 1)) >> shift)), Alignment_);
+    // For DXT, width and height are rounded up to a multiple of 4 in order
+    // to create 4x4 blocks of pixels; And in this context, byte alignment
+    // is 1 ie. data is densely packed.
+    unsigned int block = GPixelFormats[format].BlockSizeX;
+    unsigned int shift = Log2(GPixelFormats[format].BlockSizeX);
+    m_Pitch = Align((bpe_ * ((width_ + (block - 1)) >> shift)), Alignment_);
 
-      block = GPixelFormats[format].BlockSizeY;
-      shift = Log2(GPixelFormats[format].BlockSizeY);
-      RawData_ = new unsigned char[m_Pitch * Align((height + (block-1)) >> shift, block) ];
-    }
-    else
-    {
-      unsigned int block = GPixelFormats[format].BlockSizeX;
-      unsigned int shift = Log2(GPixelFormats[format].BlockSizeX);
-      m_Pitch = Align((bpe_ * ((width_ + (block - 1)) >> shift)),  Alignment_);
+    block = GPixelFormats[format].BlockSizeY;
+    shift = Log2(GPixelFormats[format].BlockSizeY);
 
-      block = GPixelFormats[format].BlockSizeY;
-      shift = Log2(GPixelFormats[format].BlockSizeY);
-      RawData_ = new unsigned char[m_Pitch * Align((height + (block-1)) >> shift, block) ];
-    }
+    RawData_.resize(m_Pitch * Align((height + (block-1)) >> shift, block));
+    RawData_.shrink_to_fit();
 
     Clear();
   }
@@ -528,14 +513,14 @@ DECLARE_LOGGER(logger, "nux.image");
 
   void ImageSurface::Clear()
   {
-    if (RawData_ == 0)
+    if (RawData_.empty())
       return;
 
     if ((width_ == 0) || (height_ == 0))
       return;
 
     auto size = GetSize();
-    memset(RawData_, 0, size);
+    memset(RawData_.data(), 0, size);
   }
 
   void ImageSurface::FlipHorizontal()
@@ -544,15 +529,14 @@ DECLARE_LOGGER(logger, "nux.image");
       return;
 
     int i, j, k;
-    unsigned char *flip_data;
 
-    if (RawData_ == 0)
+    if (RawData_.empty())
       return;
 
     if (width_ == 0 || height_ == 0)
       return;
 
-    flip_data =  new unsigned char[m_Pitch*height_];
+    std::vector<unsigned char> flip_data(m_Pitch*height_);
 
     for (j = 0; j < height_; j++)
     {
@@ -565,16 +549,12 @@ DECLARE_LOGGER(logger, "nux.image");
       }
     }
 
-    delete [] RawData_;
-    RawData_ = flip_data;
+    RawData_.swap(flip_data);
   }
 
   void ImageSurface::FlipVertical()
   {
-
-    unsigned char *flip_data;
-
-    if (RawData_ == 0)
+    if (RawData_.empty())
       return;
 
     if (width_ == 0 || height_ == 0)
@@ -586,7 +566,7 @@ DECLARE_LOGGER(logger, "nux.image");
     }
     else
     {
-      flip_data =  new unsigned char[m_Pitch*height_];
+      std::vector<unsigned char> flip_data(m_Pitch*height_);
 
       for (int j = 0; j < height_; j++)
       {
@@ -599,8 +579,7 @@ DECLARE_LOGGER(logger, "nux.image");
         }
       }
 
-      delete [] RawData_;
-      RawData_ = flip_data;
+      RawData_.swap(flip_data);
     }
 
   }
@@ -646,8 +625,8 @@ DECLARE_LOGGER(logger, "nux.image");
 
     for (int j = 0; j < (yblocks >> 1); j++)
     {
-      top = (DXTColBlock *) ((unsigned char *) RawData_ + j * linesize);
-      bottom = (DXTColBlock *) ((unsigned char *) RawData_ + (((yblocks - j) - 1) * linesize));
+      top = reinterpret_cast<DXTColBlock *>(&(RawData_[j * linesize]));
+      bottom = reinterpret_cast<DXTColBlock *>(&(RawData_[((yblocks - j) - 1) * linesize]));
 
       switch(format_)
       {
@@ -682,13 +661,11 @@ DECLARE_LOGGER(logger, "nux.image");
 
   void ImageSurface::SwapBlocks(void *byte1, void *byte2, int size)
   {
-    unsigned char *tmp = new unsigned char[size];
+    std::vector<unsigned char> tmp(size);
 
-    memcpy(tmp, byte1, size);
+    memcpy(tmp.data(), byte1, size);
     memcpy(byte1, byte2, size);
-    memcpy(byte2, tmp, size);
-
-    delete [] tmp;
+    memcpy(byte2, tmp.data(), size);
   }
 
   void ImageSurface::FlipBlocksDXT1(DXTColBlock *line, int numBlocks)
@@ -821,12 +798,12 @@ DECLARE_LOGGER(logger, "nux.image");
 
   const unsigned char *ImageSurface::GetPtrRawData() const
   {
-    return RawData_;
+    return RawData_.data();
   }
 
   unsigned char *ImageSurface::GetPtrRawData()
   {
-    return RawData_;
+    return RawData_.data();
   }
 
   int ImageSurface::GetSize() const
@@ -875,40 +852,39 @@ DECLARE_LOGGER(logger, "nux.image");
 
   ///////////////////////////////////////////////////////////////////
   NTextureData::NTextureData(BitmapFormat f, int width, int height, int NumMipmap)
-    :   m_NumMipmap(0)
+    : m_NumMipmap(0)
+    , m_MipSurfaceArray(1)
   {
     Allocate(f, width, height, NumMipmap);
   }
 
-  NTextureData::~NTextureData()
+  void NTextureData::swap(NTextureData& other)
   {
-    ClearData();
-  }
-
-  void NTextureData::ClearData()
-  {
-    for (int i = 0; i < (int) m_MipSurfaceArray.size(); i++)
-      delete m_MipSurfaceArray[i];
-
-    m_MipSurfaceArray.clear();
+    using std::swap;
+    swap(this->m_NumMipmap, other.m_NumMipmap);
+    swap(this->m_TotalMemorySize, other.m_TotalMemorySize);
+    swap(this->m_MipSurfaceArray, other.m_MipSurfaceArray);
   }
 
   //! Copy constructor
   NTextureData::NTextureData(const NTextureData &object)
   {
-    for (int i = 0; i < object.GetNumMipmap(); i++)
-      m_MipSurfaceArray.push_back(new ImageSurface(object.GetSurface(i)));
+    m_NumMipmap = object.m_NumMipmap;
+    m_TotalMemorySize = object.m_TotalMemorySize;
+    m_MipSurfaceArray = object.m_MipSurfaceArray;
   }
 
-//! Assignment constructor
-  NTextureData &NTextureData::operator = (const NTextureData &copy)
+  //! Move constructor
+  NTextureData::NTextureData(NTextureData&& other)
+    : NTextureData()
   {
-    ClearData();
-    m_NumMipmap = copy.m_NumMipmap;
-    m_TotalMemorySize = copy.m_TotalMemorySize;
+    swap(other);
+  }
 
-    for (int i = 0; i < copy.GetNumMipmap(); i++)
-      m_MipSurfaceArray.push_back(new ImageSurface(copy.GetSurface(i)));
+  //! Assignment constructor
+  NTextureData &NTextureData::operator = (NTextureData copy)
+  {
+    swap(copy);
 
     return *this;
   }
@@ -929,14 +905,15 @@ DECLARE_LOGGER(logger, "nux.image");
       m_NumMipmap = NumTotalMipLevel ? NumTotalMipLevel : 1;
 
     m_TotalMemorySize = 0;
-    ClearData();
+    m_MipSurfaceArray.resize(m_NumMipmap);
+    m_MipSurfaceArray.shrink_to_fit();
 
-    for (int i = 0; i < m_NumMipmap; i++)
+    for (int i = 0; i < m_NumMipmap; ++i)
     {
       int w = width >> i;
       int h = height >> i;
-      m_MipSurfaceArray.push_back(new ImageSurface(format, w, h));
-      m_TotalMemorySize += m_MipSurfaceArray[i]->GetSize();
+      m_MipSurfaceArray[i] = ImageSurface(format, w, h);
+      m_TotalMemorySize += m_MipSurfaceArray[i].GetSize();
     }
   }
 
@@ -944,11 +921,11 @@ DECLARE_LOGGER(logger, "nux.image");
   {
     Allocate(BITFMT_R8G8B8A8, width, height, NumMipmap);
 
-    for (int i = 0; i < m_NumMipmap; i++)
+    for (int i = 0; i < m_NumMipmap; ++i)
     {
       int w = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetWidth(), i);
       int h = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetHeight(), i);
-      MakeCheckBoardImage(*m_MipSurfaceArray[i], w, h, color0, color1, TileWidth, TileHeight);
+      MakeCheckBoardImage(m_MipSurfaceArray[i], w, h, color0, color1, TileWidth, TileHeight);
     }
   }
 
@@ -956,17 +933,17 @@ DECLARE_LOGGER(logger, "nux.image");
   {
     Allocate(BITFMT_R8G8B8A8, width, height, NumMipmap);
 
-    for (int i = 0; i < m_NumMipmap; i++)
+    for (int i = 0; i < m_NumMipmap; ++i)
     {
       int w = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetWidth(), i);
       int h = ImageSurface::GetLevelDim(BITFMT_R8G8B8A8, GetHeight(), i);
-      MakeCheckBoardImage(*m_MipSurfaceArray[i], w, h, color0, color0);
+      MakeCheckBoardImage(m_MipSurfaceArray[i], w, h, color0, color0);
     }
   }
 
   int NTextureData::GetNumMipmap() const
   {
-    return m_MipSurfaceArray.size();
+    return m_NumMipmap;
   }
 
   bool NTextureData::SetSurface(int MipLevel, const ImageSurface &targetsurface)
