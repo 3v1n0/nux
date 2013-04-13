@@ -489,7 +489,6 @@ namespace nux
 
   void HSplitter::ResizeSplitter(int header_pos)
   {
-    Geometry geo = m_SplitterObject[header_pos]->GetGeometry();
     int num_element = (int) m_SplitterObject.size();
 
     if ((header_pos == 0) && (m_SplitterObject[header_pos]->GetBaseY() < GetBaseY()))

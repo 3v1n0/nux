@@ -233,12 +233,18 @@ namespace nux
 /////////
   void ScrollView::EnableVerticalScrollBar(bool b)
   {
+    if (b == m_vertical_scrollbar_enable)
+      return;
+
     m_vertical_scrollbar_enable = b;
     ComputeContentSize();
   }
 
   void ScrollView::EnableHorizontalScrollBar(bool b)
   {
+    if (m_horizontal_scrollbar_enable == b)
+      return;
+
     m_horizontal_scrollbar_enable = b;
     ComputeContentSize();
   }

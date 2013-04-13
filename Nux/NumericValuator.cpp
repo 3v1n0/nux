@@ -74,8 +74,6 @@ namespace nux
 
   void NumericValuator::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
-    Geometry base = GetGeometry();
-
     GeometryPositioning gp(eHALeft, eVACenter);
     Geometry GeoPo = ComputeGeometryPositioning(m_SpinnerUpBtn->GetGeometry(), GetTheme().GetImageGeometry(eTRIANGLE_RIGHT), gp);
     GetPainter().PaintShape(graphics_engine, GeoPo, Color(0xFFFFFFFF), eTRIANGLE_RIGHT);

@@ -494,7 +494,6 @@ namespace nux
       }
 
       Geometry pickermarker = Geometry(GetBaseX() + m_MarkerPosition.x - 2, GetBaseY() + m_MarkerPosition.y - 2, 5, 5);
-      Geometry basepickermarker = Geometry(channel_area_->GetBaseX(), channel_area_->GetBaseY() + m_VertMarkerPosition.y, 5, 5);
 
       Color color(rgb_.red, rgb_.green, rgb_.blue);
       float luma = color::LumaRed * rgb_.red + color::LumaGreen * rgb_.green + color::LumaBlue * rgb_.blue;

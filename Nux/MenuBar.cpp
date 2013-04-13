@@ -237,7 +237,6 @@ namespace nux
       if (m_CurrentMenu && (m_CurrentMenu->menu != menubar_item->menu))
         m_CurrentMenu->menu->StopMenu(0, 0);
 
-      Geometry geo = menubar_item->menu->GetGeometry();
       menubar_item->menu->m_MenuWindow = m_MenuBarWindow;
       menubar_item->menu->StartMenu(menubar_item->area->GetBaseX(),
                                      menubar_item->area->GetBaseY() + menubar_item->area->GetBaseHeight(), 0, 0);

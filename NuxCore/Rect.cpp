@@ -28,44 +28,36 @@
 namespace nux
 {
   Rect::Rect()
-  {
-    x = 0;
-    y = 0;
-    width = 0;
-    height = 0;
+    : x(0)
+    , y(0)
+    , width(0)
+    , height(0)
+  {}
 
+  Rect::Rect(int x_, int y_, int width_, int height_)
+    : x(x_)
+    , y(y_)
+    , width(Max<int> (0, width_))
+    , height(Max<int> (0, height_))
+  {}
+
+  Rect::Rect(const Rect &r)
+    : x(r.x)
+    , y(r.y)
+    , width(r.width)
+    , height(r.height)
+  {}
+
+  Rect::Rect(Rect &&r)
+    : Rect()
+  {
+    swap(*this, r);
   }
 
-  Rect::Rect (int x_, int y_, int width_, int height_)
+  Rect &Rect::operator = (Rect r)
   {
-    x = x_;
-    y = y_;
-    width = Max<int> (0, int (width_) );
-    height = Max<int> (0, int (height_) );
-  }
+    swap(*this, r);
 
-  Rect::~Rect()
-  {
-
-  }
-
-  Rect::Rect (const Rect &r)
-  {
-    x = r.x;
-    y = r.y;
-    width = r.width;
-    height = r.height;
-  }
-
-  Rect &Rect::operator = (const Rect &r)
-  {
-    if (&r == this)
-      return *this;
-
-    x = r.x;
-    y = r.y;
-    width = r.width;
-    height = r.height;
     return *this;
   }
 

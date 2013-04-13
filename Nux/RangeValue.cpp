@@ -115,8 +115,6 @@ namespace nux
 
   void RangeValue::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
-    Geometry base = GetGeometry();
-
     // Percentage
     Geometry P = m_Percentage->GetGeometry();
     GetPainter().Paint2DQuadColor(graphics_engine, P, m_StartColor, m_StartColor, m_EndColor, m_EndColor);
