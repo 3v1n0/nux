@@ -323,7 +323,7 @@ namespace nux
 
     void ClearDrawList();
 
-    std::vector<Geometry> GetDrawList();
+    std::vector<Geometry> const& GetDrawList() const;
 
 #ifdef NUX_GESTURES_SUPPORT
     /*!
