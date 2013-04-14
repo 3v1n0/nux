@@ -348,7 +348,8 @@ namespace nux
     // be completely redraw on the next frame
     void AddToDrawList(View *view);
     void ClearDrawList();
-    std::vector<Geometry> GetDrawList();
+
+    std::vector<Geometry> const& GetDrawList() const;
 
     // PresentationList - this is a maintained list of areas that
     // will be presented to the reference framebuffer or backbuffer

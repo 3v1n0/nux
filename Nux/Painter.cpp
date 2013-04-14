@@ -817,7 +817,6 @@ int BasePainter::PaintColorTextLineEdit(GraphicsEngine &graphics_engine, const G
     {
       AbstractPaintLayer *layer = (*rev_it);
       Geometry layer_geo = layer->GetGeometry();
-      Geometry xform_geo = graphics_engine.ModelViewXFormRect(geo);
 
       graphics_engine.PushClippingRectangle(geo);
       graphics_engine.SetModelViewMatrix(layer->GetModelViewMatrix());

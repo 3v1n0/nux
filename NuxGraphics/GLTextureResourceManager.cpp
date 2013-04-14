@@ -161,8 +161,7 @@ namespace nux
                                         bool premultiply)
   {
     GError* error = NULL;
-    GdkPixbuf* pixbuf =
-      gdk_pixbuf_new_from_file_at_size(filename, max_size, max_size, &error);
+    GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file_at_size(filename, max_size, max_size, &error);
     if (error == NULL)
     {
       BaseTexture* texture = CreateTexture2DFromPixbuf(pixbuf, premultiply);
@@ -172,6 +171,7 @@ namespace nux
     else
     {
       nuxDebugMsg("%s", error->message);
+      g_error_free(error);
       return NULL;
     }
   }

@@ -99,8 +99,6 @@ namespace nux
 
   void FileSelector::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
   {
-    Geometry base = GetGeometry();
-
     m_FileEditTextBox->ProcessDraw(graphics_engine, force_draw);
   }
 

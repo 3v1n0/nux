@@ -1,3 +1,22 @@
+nux (4.0.1-0ubuntu1) UNRELEASED; urgency=low
+
+  * Buming version to 4.0.1 as per recent ABI changes
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 08 Apr 2013 17:21:37 +0200
+
+nux (4.0.0daily13.03.25-0ubuntu1) raring; urgency=low
+
+  [ Brandon Schaefer ]
+  * [regression] Quickly opening then closing dash causes loss of focus.
+    (LP: #1157879)
+  * [regression] Text disappears when restoring/maximizing the Dash (LP:
+    #1157329)
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 768
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 25 Mar 2013 04:02:25 +0000
+
 nux (4.0.0daily13.03.13.1-0ubuntu1) raring; urgency=low
 
   [ Marco Trevisan (Treviño) ]
