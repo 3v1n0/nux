@@ -29,8 +29,11 @@ namespace nux
 {
 
   CairoGraphics::CairoGraphics(cairo_format_t format, int width, int height)
-    :   _width(0)
-    ,   _height(0)
+    : m_surface_format(format)
+    , _width(0)
+    , _height(0)
+    , _zoom(1.0f)
+    , _opacity(1.0f)
   {
     nuxAssert(width >= 0);
     nuxAssert(height >= 0);
@@ -44,10 +47,9 @@ namespace nux
     if (_height <= 0)
       _height = 1;
 
-    _cairo_surface = cairo_image_surface_create(format, _width, _height);
-    m_surface_format = format;
-
+    _cairo_surface = cairo_image_surface_create(m_surface_format, _width, _height);
     _cr = cairo_create(_cairo_surface);
+
     if (cairo_status(_cr) == CAIRO_STATUS_NO_MEMORY)
     {
       // If memory cannot be allocated, a special cairo_t object will be returned
@@ -55,9 +57,6 @@ namespace nux
       // You can use this object normally, but no drawing will be done. 
       nuxAssertMsg(0, "[CairoGraphics::GetContext] Cairo context error.");
     }
-
-    _opacity = 1.0f;
-    _zoom = 1.0;
   }
 
   CairoGraphics::~CairoGraphics()
@@ -70,7 +69,7 @@ namespace nux
   }
 
   cairo_t *CairoGraphics::GetContext()
-  { 
+  {
     cairo_t *cr = cairo_create(_cairo_surface);
     if (cairo_status(cr) == CAIRO_STATUS_NO_MEMORY)
     {
@@ -83,7 +82,7 @@ namespace nux
   }
 
   cairo_t *CairoGraphics::GetInternalContext()
-  { 
+  {
     return _cr;
   }
 
@@ -101,6 +100,8 @@ namespace nux
 
     NUX_RETURN_VALUE_IF_NULL(_width, 0);
     NUX_RETURN_VALUE_IF_NULL(_height, 0);
+
+    cairo_surface_flush(_cairo_surface);
 
     BitmapFormat bitmap_format = BITFMT_UNKNOWN;
 
@@ -139,13 +140,16 @@ namespace nux
       return bitmap_data; // just returns because we will segfault otherwise
     }
 
+    unsigned char* dest_u8 = bitmap_data->GetSurface(0).GetPtrRawData();
+    const int pitch = bitmap_data->GetSurface(0).GetPitch();
+
     if (m_surface_format == CAIRO_FORMAT_A1)
     {
-      unsigned char *temp = new unsigned char[bitmap_data->GetSurface(0).GetPitch() ];
+      std::vector<unsigned char> temp(pitch);
 
-      for (int j = 0; j < _height; j++)
+      for (int j = 0; j < _height; ++j)
       {
-        for (int i = 0; i < _width; i++)
+        for (int i = 0; i < _width; ++i)
         {
           // Get the byte
           int a = ptr[j * stride + i/8];
@@ -157,17 +161,12 @@ namespace nux
           temp[i] = c ? 0xFF : 0x0;
         }
 
-        Memcpy( bitmap_data->GetSurface(0).GetPtrRawData() + j * bitmap_data->GetSurface(0).GetPitch(),
-                 (const void *) (&temp[0]),
-                 _width);
+        Memcpy(dest_u8 + j * pitch, temp.data(), _width);
       }
     }
     else
     {
-      unsigned char* dest_u8 = bitmap_data->GetSurface(0).GetPtrRawData();
-      const int pitch = bitmap_data->GetSurface(0).GetPitch();
-
-      for (int j = 0; j < _height; j++)
+      for (int j = 0; j < _height; ++j)
       {
         Memcpy(dest_u8 + j * pitch,
                 (const void *) (&ptr[j * stride]),
