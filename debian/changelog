@@ -1,3 +1,14 @@
+nux (4.0.1daily13.04.17~13.04-0ubuntu1) raring; urgency=low
+
+  [ Marco Trevisan (Treviño) ]
+  * CairoGraphics leaks memory when using CAIRO_FORMAT_A1 surfaces (LP:
+    #1169157)
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 775
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 17 Apr 2013 04:04:30 +0000
+
 nux (4.0.1daily13.04.15-0ubuntu1) raring; urgency=low
 
   [ Marco Trevisan (Treviño) ]
