@@ -174,6 +174,7 @@ source_h = \
   $(srcdir)/LayeredLayout.h \
   $(srcdir)/Layout.h \
   $(srcdir)/LinearLayout.h \
+  $(srcdir)/MainLoopGLib.h \
   $(srcdir)/Nux.h \
   $(srcdir)/NuxGlobalInitializer.h \
   $(srcdir)/Painter.h \
