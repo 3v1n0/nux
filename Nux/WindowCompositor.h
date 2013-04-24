@@ -118,6 +118,8 @@ namespace nux
     */    
     InputArea* GetKeyFocusArea();
 
+    void OnAllBaseWindows(const WindowMutatorFunc &);
+
     //! Signal emitted when a BaseWindow becomes visible.
     /*!
         This signal is emitted after the BaseWindow has emitted it own sigVisible signal. 
@@ -413,7 +415,6 @@ namespace nux
   private:
 
     WeakBaseWindowPtr FindWeakBaseWindowPtrForRawPtr (nux::BaseWindow *);
-    void OnAllBaseWindows(const WindowMutatorFunc &);
 
     //! Render the interface.
     void Draw(bool SizeConfigurationEvent, bool force_draw);
