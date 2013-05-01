@@ -49,14 +49,10 @@ namespace nux
     if (!GetGraphicsDisplay()->GetGpuDevice())
       return;
 
-    int attachments = GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment();
-    texture_attachment_array_.resize(attachments);
-    surface_attachment_array_.resize(attachments);
-
-    if (GetGraphicsDisplay()->GetGpuDevice() && GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().Support_Depth_Buffer())
-    {
-      platform_support_for_depth_texture_ = true;
-    }
+    auto const& gpu_info = GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo();
+    texture_attachment_array_.resize(gpu_info.GetMaxFboAttachment());
+    surface_attachment_array_.resize(gpu_info.GetMaxFboAttachment());
+    platform_support_for_depth_texture_ = gpu_info.Support_Depth_Buffer();
 
     FormatFrameBufferObject(attachment_width_, attachment_height_, _PixelFormat);
   }
@@ -73,14 +69,8 @@ namespace nux
   {
     Deactivate();
 
-    if (!surface_attachment_array_.empty())
-    {
-      for (int i = 0; i < GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment(); ++i)
-      {
-        texture_attachment_array_[i].Release();
-        surface_attachment_array_[i].Release();
-      }
-    }
+    texture_attachment_array_.clear();
+    surface_attachment_array_.clear();
 
     depth_surface_attachment_ = ObjectPtr<IOpenGLSurface> (0);
     stencil_surface_attachment_ = ObjectPtr<IOpenGLSurface> (0);
@@ -286,8 +276,10 @@ namespace nux
     GLuint NumBuffers = 0;
     _Fbo.Bind();
 
-    if (GetGraphicsDisplay()->GetGpuDevice())
-      GetGraphicsDisplay()->GetGpuDevice()->SetCurrentFrameBufferObject(ObjectPtr<IOpenGLFrameBufferObject> (this));
+    if (!GetGraphicsDisplay()->GetGpuDevice())
+      return 0;
+
+    GetGraphicsDisplay()->GetGpuDevice()->SetCurrentFrameBufferObject(ObjectPtr<IOpenGLFrameBufferObject> (this));
 
     for (int i = 0; i < GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment(); ++i)
     {
