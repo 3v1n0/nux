@@ -1,5 +1,5 @@
 # Please keep these in alphabetical order
-PKGDATADIR="$(pkgdatadir)/@NUX_API_VERSION@"
+PKGDATADIR=$(pkgdatadir)/@NUX_API_VERSION@
 
 fontdir = $(PKGDATADIR)/Fonts
 dist_font_DATA = \

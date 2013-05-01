@@ -53,7 +53,7 @@ arb_programs_limits_SOURCES = arb_programs_limits.cpp
 arb_programs_limits_LDADD = $(ALL_LIBS)
 
 # distribute source along to the documentation
-sourcegputestsdir = "$(pkgdatadir)/gputests"
+sourcegputestsdir = $(pkgdatadir)/gputests
 sourcegputests_DATA = $(texture_power_of_2_SOURCES) \
                       $(framebufferobject_SOURCES) \
                       $(quad_2texmod) \
@@ -61,6 +61,5 @@ sourcegputests_DATA = $(texture_power_of_2_SOURCES) \
                       $(texture_blur_SOURCES) \
                       $(texture_data_SOURCES) \
                       $(arb_programs_limits_SOURCES)
-
 endif
 
