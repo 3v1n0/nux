@@ -40,19 +40,21 @@ namespace nux
     _PixelFormat = BITFMT_R8G8B8A8;
     _IsActive = false;
 
-    for (int i = 0; i < 1 /*GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment()*/; i++)
-    {
-      texture_attachment_array_.push_back(ObjectPtr<IOpenGLBaseTexture> (0));
-      surface_attachment_array_.push_back(ObjectPtr<IOpenGLSurface> (0));
-    }
+    SetupFrameBufferObject();
+    GRunTimeStats.Register(this);
+  }
 
-    if (GetGraphicsDisplay()->GetGpuDevice() && GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().Support_Depth_Buffer())
-    {
-      platform_support_for_depth_texture_ = true;
-    }
+  void IOpenGLFrameBufferObject::SetupFrameBufferObject()
+  {
+    if (!GetGraphicsDisplay()->GetGpuDevice())
+      return;
+
+    auto const& gpu_info = GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo();
+    texture_attachment_array_.resize(gpu_info.GetMaxFboAttachment());
+    surface_attachment_array_.resize(gpu_info.GetMaxFboAttachment());
+    platform_support_for_depth_texture_ = gpu_info.Support_Depth_Buffer();
 
     FormatFrameBufferObject(attachment_width_, attachment_height_, _PixelFormat);
-    GRunTimeStats.Register(this);
   }
 
   IOpenGLFrameBufferObject::~IOpenGLFrameBufferObject()
@@ -67,14 +69,8 @@ namespace nux
   {
     Deactivate();
 
-    if (!surface_attachment_array_.empty())
-    {
-      for (int i = 0; i < 1 /*GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment()*/; i++)
-      {
-        texture_attachment_array_[i].Release();
-        surface_attachment_array_[i].Release();
-      }
-    }
+    texture_attachment_array_.clear();
+    surface_attachment_array_.clear();
 
     depth_surface_attachment_ = ObjectPtr<IOpenGLSurface> (0);
     stencil_surface_attachment_ = ObjectPtr<IOpenGLSurface> (0);
@@ -100,7 +96,7 @@ namespace nux
 
   int IOpenGLFrameBufferObject::SetRenderTarget(int color_attachment_index, ObjectPtr<IOpenGLSurface> pRenderTargetSurface)
   {
-    nuxAssert(color_attachment_index < 1 /*GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment()*/);
+    nuxAssert(color_attachment_index < GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment());
 
     if (pRenderTargetSurface.IsNull())
     {
@@ -135,7 +131,7 @@ namespace nux
 
   int IOpenGLFrameBufferObject::SetTextureAttachment(int color_attachment_index, ObjectPtr<IOpenGLBaseTexture> texture, int mip_level)
   {
-    nuxAssert(color_attachment_index < 1 /*GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment()*/);
+    nuxAssert(color_attachment_index < GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment());
 
     if (texture.IsNull())
     {
@@ -266,7 +262,7 @@ namespace nux
 
   ObjectPtr<IOpenGLSurface> IOpenGLFrameBufferObject::GetRenderTarget(int ColorAttachmentIndex)
   {
-    nuxAssert(ColorAttachmentIndex < 1 /*GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment()*/);
+    nuxAssert(ColorAttachmentIndex < GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment());
     return surface_attachment_array_[ColorAttachmentIndex];
   }
 
@@ -280,10 +276,12 @@ namespace nux
     GLuint NumBuffers = 0;
     _Fbo.Bind();
 
-    if (GetGraphicsDisplay()->GetGpuDevice())
-      GetGraphicsDisplay()->GetGpuDevice()->SetCurrentFrameBufferObject(ObjectPtr<IOpenGLFrameBufferObject> (this));
+    if (!GetGraphicsDisplay()->GetGpuDevice())
+      return 0;
 
-    for (int i = 0; i < 1 /*GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment()*/; i++)
+    GetGraphicsDisplay()->GetGpuDevice()->SetCurrentFrameBufferObject(ObjectPtr<IOpenGLFrameBufferObject> (this));
+
+    for (int i = 0; i < GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo().GetMaxFboAttachment(); ++i)
     {
       if (surface_attachment_array_[i].IsValid())
       {

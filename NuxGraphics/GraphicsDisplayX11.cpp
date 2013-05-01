@@ -656,6 +656,9 @@ namespace nux
         m_GLCtx,
         1, 0, false);
 
+    if (m_DeviceFactory->GetGpuInfo().Support_EXT_Framebuffer_Object())
+      m_DeviceFactory->GetFrameBufferObject()->SetupFrameBufferObject();
+
     m_GraphicsContext = new GraphicsEngine(*this);
 
     //EnableVSyncSwapControl();
@@ -711,6 +714,10 @@ namespace nux
         _fb_config,
         m_GLCtx,
         1, 0, false);
+
+    if (m_DeviceFactory->GetGpuInfo().Support_EXT_Framebuffer_Object())
+      m_DeviceFactory->GetFrameBufferObject()->SetupFrameBufferObject();
+
     m_GraphicsContext = new GraphicsEngine(*this);
 
     InitGlobalGrabWindow();

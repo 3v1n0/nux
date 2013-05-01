@@ -1033,6 +1033,11 @@ namespace nux
     active_framebuffer_object_ = fbo;
   }
 
+  ObjectPtr<IOpenGLFrameBufferObject> GpuDevice::GetFrameBufferObject() const
+  {
+    return _FrameBufferObject;
+  }
+
   ObjectPtr<IOpenGLFrameBufferObject> GpuDevice::GetCurrentFrameBufferObject()
   {
     return active_framebuffer_object_;
