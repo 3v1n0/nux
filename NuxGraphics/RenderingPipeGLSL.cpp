@@ -3166,8 +3166,7 @@ namespace nux
     }
 
     CHECKGL(glClearColor(0, 0, 0, 0));
-    ObjectPtr<IOpenGLBaseTexture> depth_buffer(NULL);
-    SetFrameBufferHelper(_offscreen_fbo, dst_device_texture, depth_buffer, width, height);
+    SetFrameBufferHelper(_offscreen_fbo, dst_device_texture, _offscreen_depth_rt0, width, height);
     CHECKGL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
     QRP_GLSL_1Tex(0, 0, width, height, src_device_texture, texxform0, c0);

@@ -213,6 +213,7 @@ namespace nux
     int dnd_safety_x_;
     int dnd_safety_y_;
 
+  public:
     /*!
         This signal is similar to Area::key_nav_focus_change. It is emitted from the WindowCompositor.
         The user only needs to listen to this signal to find out the area that has received the keyboard focus.\n

@@ -1550,7 +1550,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
       ComputeQueuedLayout();
       
       if (clip)
-        GetWindowThread()->GetGraphicsEngine().SetGlobalClippingRectangle(Rect(clip->x, clip->y, clip->width, clip->height));
+        GetWindowThread()->GetGraphicsEngine().SetGlobalClippingRectangle(*clip);
         
       window_compositor_->Draw(window_size_configuration_event_, force_rendering_);
       

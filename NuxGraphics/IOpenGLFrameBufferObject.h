@@ -33,6 +33,7 @@ namespace nux
   public:
     virtual ~IOpenGLFrameBufferObject();
 
+    void SetupFrameBufferObject();
     int FormatFrameBufferObject(int Width, int Height, BitmapFormat PixelFormat);
     int SetRenderTarget(int color_attachment_index, ObjectPtr<IOpenGLSurface> pRenderTargetSurface);
     int SetTextureAttachment(int color_attachment_index, ObjectPtr<IOpenGLBaseTexture> texture, int surface_level);
