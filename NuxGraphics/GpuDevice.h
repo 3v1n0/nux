@@ -323,6 +323,7 @@ namespace nux
 
   public:
     void SetCurrentFrameBufferObject(ObjectPtr<IOpenGLFrameBufferObject> fbo);
+    ObjectPtr<IOpenGLFrameBufferObject> GetFrameBufferObject() const;
     ObjectPtr<IOpenGLFrameBufferObject> GetCurrentFrameBufferObject();
     ObjectPtr<IOpenGLBaseTexture> ActiveFboTextureAttachment(int color_attachment_index);
     ObjectPtr<IOpenGLBaseTexture> ActiveFboDepthTextureAttachment();
