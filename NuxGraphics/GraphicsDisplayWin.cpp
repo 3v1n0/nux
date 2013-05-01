@@ -540,6 +540,9 @@ namespace nux
       new_opengl_rendering_context,
       1, 0, false);
 
+    if (m_DeviceFactory->GetGpuInfo().Support_EXT_Framebuffer_Object())
+      m_DeviceFactory->GetCurrentFrameBufferObject()->SetupFrameBufferObject();
+
     if (new_opengl_rendering_context != 0)
     {
       opengl_rendering_context_ = new_opengl_rendering_context;
