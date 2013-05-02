@@ -611,7 +611,7 @@ DECLARE_LOGGER(logger, "nux.window");
                                              event.GetMouseState(),
                                              event.GetKeyState());
 
-        if (mouse_owner_area_.IsValid() && mouse_over_area_ == mouse_owner_area_)
+        if (mouse_owner_area_.IsValid() && mouse_over_area_ == mouse_owner_area_ && (event.mouse_state & NUX_STATE_FIRST_EVENT) != 0)
         {
           mouse_owner_area_->EmitMouseClickSignal(mouse_owner_x, mouse_owner_y,
                                                   event.GetMouseState(),
