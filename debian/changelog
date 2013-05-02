@@ -1,3 +1,13 @@
+nux (4.0.1daily13.05.01.1ubuntu.unity.next-0ubuntu1) raring; urgency=low
+
+  [ Marco Trevisan (Treviño) ]
+  * [regression] Corrupted blurred overlays (LP: #1087534)
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 781 (ubuntu-unity/next)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 01 May 2013 21:58:21 +0000
+
 nux (4.0.1daily13.04.17~13.04-0ubuntu1) raring; urgency=low
 
   [ Marco Trevisan (Treviño) ]
