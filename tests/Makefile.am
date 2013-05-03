@@ -395,8 +395,9 @@ full-report:
 	      | sed 's/>GTester Unit Test Report</>GTester Unit Test Report (normal)</' \
 	      > test-nux-results.html )
 
-clean-generic:
-	rm -f test-nux-results.xml test-nux-results.html
+CLEANFILES = \
+	test-nux-results.xml test-nux-results.html \
+	gtest-nux-results.xml
 
 .PHONY: check check-report full-report gtest test check-headless
 

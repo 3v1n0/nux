@@ -135,6 +135,8 @@ namespace nux
 #define NUX_EVENT_BUTTON4           0x00080000
 
 #define NUX_EVENT_MOUSEWHEEL        0x00100000
+// Describes the event as the first press in the double click event.
+#define NUX_STATE_FIRST_EVENT       0x00200000
 // These flags describe the state of the mouse buttons.
 // They persist over several frame until the mouse buttons change state.
 // Go in mouse_state.

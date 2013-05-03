@@ -114,7 +114,7 @@ shortcut_keys_LDADD = $(ALL_LIBS)
 coverflow_SOURCES = coverflow.cpp
 coverflow_LDADD = $(ALL_LIBS)
 
-kinetic_scroll_view_SOURCES = kinetic_scroll_view.cpp TestButton.cpp
+kinetic_scroll_view_SOURCES = kinetic_scroll_view.cpp TestButton.h TestButton.cpp
 kinetic_scroll_view_LDADD = $(ALL_LIBS)
 
 if HAVE_GEIS

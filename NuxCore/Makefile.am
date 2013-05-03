@@ -134,6 +134,7 @@ source_h = \
   $(srcdir)/Color.h \
   $(srcdir)/Colors.h \
   $(srcdir)/Logger.h \
+  $(srcdir)/LoggerPrivate.h \
   $(srcdir)/LoggingWriter.h \
   $(srcdir)/RollingFileAppender.h \
   $(srcdir)/Memory.h \

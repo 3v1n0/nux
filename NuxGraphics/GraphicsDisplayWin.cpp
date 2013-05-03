@@ -540,6 +540,9 @@ namespace nux
       new_opengl_rendering_context,
       1, 0, false);
 
+    if (m_DeviceFactory->GetGpuInfo().Support_EXT_Framebuffer_Object())
+      m_DeviceFactory->GetFrameBufferObject()->SetupFrameBufferObject();
+
     if (new_opengl_rendering_context != 0)
     {
       opengl_rendering_context_ = new_opengl_rendering_context;
@@ -577,6 +580,9 @@ namespace nux
     m_DeviceFactory = new GpuDevice(viewport_size_.width, viewport_size_.height, BITFMT_R8G8B8A8,
       device_context_,
       opengl_rendering_context_);
+
+    if (m_DeviceFactory->GetGpuInfo().Support_EXT_Framebuffer_Object())
+      m_DeviceFactory->GetFrameBufferObject()->SetupFrameBufferObject();
 
     m_GraphicsContext = new GraphicsEngine(*this);
 
