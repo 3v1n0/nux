@@ -1091,6 +1091,7 @@ namespace nux
     }
     else
     {
+      _mouse_state |= NUX_STATE_FIRST_EVENT;
       double_click_counter_ = 1;
     }
 
@@ -1181,6 +1182,11 @@ namespace nux
     _mouse_state |= (xevent.xbutton.state & Button1Mask) ? NUX_STATE_BUTTON1_DOWN : 0;
     _mouse_state |= (xevent.xbutton.state & Button2Mask) ? NUX_STATE_BUTTON2_DOWN : 0;
     _mouse_state |= (xevent.xbutton.state & Button3Mask) ? NUX_STATE_BUTTON3_DOWN : 0;
+
+    if (double_click_counter_ == 1)
+    {
+      _mouse_state |= NUX_STATE_FIRST_EVENT;
+    }
 
     if (xevent.xbutton.type == ButtonRelease)
     {
