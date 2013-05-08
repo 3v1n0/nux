@@ -2084,6 +2084,9 @@ DECLARE_LOGGER(logger, "nux.window");
     else
     {
       key_focus_area_ = NULL;
+
+      // Signal emitted from the area itself.
+      key_nav_focus_change.emit(NULL, false, direction);
     }
 
     return key_focus_area_.IsValid();
