@@ -1566,7 +1566,6 @@ DECLARE_LOGGER(logger, "nux.window");
     GraphicsEngine& graphics_engine = window_thread_->GetGraphicsEngine();
     unsigned int window_width = graphics_engine.GetWindowWidth();
     unsigned int window_height = graphics_engine.GetWindowHeight();
-    //GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
     graphics_engine.SetViewport(0, 0, window_width, window_height);
     graphics_engine.EmptyClippingRegion();
 
