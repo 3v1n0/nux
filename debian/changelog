@@ -1,3 +1,15 @@
+nux (4.0.1daily13.05.08ubuntu.unity.next-0ubuntu1) raring; urgency=low
+
+  [ Stephen M. Webb ]
+  * debian/copyright does not mention Public Domain for tinyxml/Unicode
+    functions included (LP: #753361)
+  * 'make distcheck' fails (LP: #1170358)
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 786 (ubuntu-unity/next)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 08 May 2013 04:57:11 +0000
+
 nux (4.0.1daily13.05.01.1ubuntu.unity.next-0ubuntu1) raring; urgency=low
 
   [ Marco Trevisan (Treviño) ]
