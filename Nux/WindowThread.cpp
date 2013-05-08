@@ -1649,17 +1649,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
 
     CHECKGL( glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE));
 
-    graphics_display_->GetGpuDevice()->DeactivateFrameBuffer();
     IOpenGLShaderProgram::SetShaderTracking(false);
-
-    if (IsEmbeddedWindow() && window_compositor_->draw_reference_fbo_)
-    {
-      // Restore the reference framebuffer
-      if (!window_compositor_->RestoreReferenceFramebuffer())
-      {
-        nuxDebugMsg("[WindowCompositor::RenderTopViews] Setting the Reference fbo has failed.");
-      }
-    }
   }
 
   void WindowThread::ForeignFrameEnded()

@@ -1566,12 +1566,15 @@ DECLARE_LOGGER(logger, "nux.window");
     GraphicsEngine& graphics_engine = window_thread_->GetGraphicsEngine();
     unsigned int window_width = graphics_engine.GetWindowWidth();
     unsigned int window_height = graphics_engine.GetWindowHeight();
-    GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
+    //GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
     graphics_engine.SetViewport(0, 0, window_width, window_height);
     graphics_engine.EmptyClippingRegion();
 
     Geometry global_clip_rect = graphics_engine.GetScissorRect();
     global_clip_rect.y = window_height - global_clip_rect.y - global_clip_rect.height;
+
+    // We don't need to restore framebuffers if we didn't update any windows
+    bool updated_any_windows = false;
 
     // Always make a copy of the windows to render.  We have no control over
     // the windows we are actually drawing.  It has been observed that some
@@ -1649,27 +1652,11 @@ DECLARE_LOGGER(logger, "nux.window");
           }
 
           RenderTopViewContent(window, force_draw);
-        }
 
-        if (rt.color_rt.IsValid())
-        {
-          /* Caller doesn't want us to render this yet */
-          if (GetWindowThread()->IsEmbeddedWindow() &&
-              !window->AllowPresentationInEmbeddedMode())
-            continue;
-
-          m_FrameBufferObject->Deactivate();
-
-          // Nux is done rendering a BaseWindow into a texture. The previous call to Deactivate
-          // has cancelled any opengl framebuffer object that was set.
-
-          CHECKGL(glDepthMask(GL_FALSE));
-          {
-            graphics_engine.ApplyClippingRectangle();
-            PresentBufferToScreen(rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false, window->GetOpacity(), window->premultiply());
-          }
+          m_FrameBufferObject->Deactivate ();
           CHECKGL(glDepthMask(GL_TRUE));
           graphics_engine.GetRenderStates().SetBlend(false);
+          updated_any_windows = true;
         }
 
         window->_child_need_redraw = false;
@@ -1682,7 +1669,61 @@ DECLARE_LOGGER(logger, "nux.window");
       }
     }
 
-    m_FrameBufferObject->Deactivate();
+    if (updated_any_windows)
+    {
+      if (GetWindowThread ()->IsEmbeddedWindow())
+      {
+        // Restore the reference framebuffer
+        if (!RestoreReferenceFramebuffer())
+        {
+          nuxDebugMsg("[WindowCompositor::RenderTopViews] Setting the Reference fbo has failed.");
+        }
+      }
+      else
+        GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
+    }
+
+    // Present all buffers to the screen
+    graphics_engine.ApplyClippingRectangle();
+    CHECKGL(glDepthMask(GL_FALSE));
+    for (WindowList::iterator it = windows.begin(), end = windows.end(); it != end; ++it)
+    {
+      WeakBaseWindowPtr& window_ptr = *it;
+      if (window_ptr.IsNull())
+        continue;
+
+      BaseWindow* window = window_ptr.GetPointer();
+
+      if (!drawModal && window->IsModal())
+        continue;
+
+      if (window->IsVisible())
+      {
+        if (global_clip_rect.Intersect(window->GetGeometry()).IsNull())
+        {
+          // The global clipping area can be seen as a per monitor clipping
+          // region. It is mostly used in embedded mode with compiz.  If we
+          // get here, it means that the BaseWindow we want to render is not
+          // in area of the monitor that compiz is currently rendering. So
+          // skip it.
+          continue;
+        }
+
+        RenderTargetTextures& rt = GetWindowBuffer(window);
+
+        if (rt.color_rt.IsValid())
+        {
+          /* Caller doesn't want us to render this yet */
+          if (GetWindowThread()->IsEmbeddedWindow() &&
+              !window->AllowPresentationInEmbeddedMode())
+            continue;
+
+          // Nux is done rendering a BaseWindow into a texture. The previous call to Deactivate
+          // has cancelled any opengl framebuffer object that was set.
+          PresentBufferToScreen(rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false, window->GetOpacity(), window->premultiply());
+        }
+      }
+    }
   }
 
   void WindowCompositor::RenderMainWindowComposition(bool force_draw)
@@ -1780,23 +1821,8 @@ DECLARE_LOGGER(logger, "nux.window");
       m_FrameBufferObject->SetDepthTextureAttachment(m_MainDepthRT, 0);
       m_FrameBufferObject->Activate();
     }
-    else
-    {
-      if (GetWindowThread()->IsEmbeddedWindow())
-      {
-        // In the context of Unity, we may want Nux to restore a specific fbo and render the
-        // BaseWindow texture into it. That fbo is called a reference framebuffer object. if a
-        // Reference framebuffer object is present, Nux sets it.
-        if (!RestoreReferenceFramebuffer())
-        {
-          nuxDebugMsg("[WindowCompositor::RenderTopViews] Setting the Reference fbo has failed.");
-        }
-      }
-      else
-      {
-        GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
-      }
-    }
+
+    // Reference framebuffer is already restored
 
     window_thread_->GetGraphicsEngine().EmptyClippingRegion();
     window_thread_->GetGraphicsEngine().SetOpenGLClippingRectangle(0, 0, window_width, window_height);
@@ -2200,11 +2226,19 @@ DECLARE_LOGGER(logger, "nux.window");
 
       nuxAssert(buffer_width >= 1);
       nuxAssert(buffer_height >= 1);
-      // Restore Main Frame Buffer
-      m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
-      m_FrameBufferObject->SetTextureAttachment(0, m_MainColorRT, 0);
-      m_FrameBufferObject->SetDepthTextureAttachment(m_MainDepthRT, 0);
-      m_FrameBufferObject->Activate();
+      // Restore Main Frame Buffer if not in embedded mode
+      if (!GetWindowThread ()->IsEmbeddedWindow ())
+      {
+        m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
+        m_FrameBufferObject->SetTextureAttachment(0, m_MainColorRT, 0);
+        m_FrameBufferObject->SetDepthTextureAttachment(m_MainDepthRT, 0);
+        m_FrameBufferObject->Activate();
+      }
+      else
+      {
+        // Restore reference framebuffer
+        RestoreReferenceFramebuffer();
+      }
 
       window_thread_->GetGraphicsEngine().SetViewport(0, 0, buffer_width, buffer_height);
       window_thread_->GetGraphicsEngine().SetOrthographicProjectionMatrix(buffer_width, buffer_height);
