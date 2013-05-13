@@ -15,7 +15,7 @@
 # 
 m4_define([nux_major_version], [4])
 m4_define([nux_minor_version], [0])
-m4_define([nux_micro_version], [0])
+m4_define([nux_micro_version], [1])
 
 m4_define([nux_api_version], [4.0])
 # Increase the number (to the current date) everytime you propose a branch that breaks the API or ABI
@@ -385,12 +385,11 @@ fi
 GCC_TESTS_FLAGS="-g -O0 -Wall -Wextra -std=c++0x"
 
 # use strict compiler flags only on development releases
-m4_define([maintainer_mode_default], [m4_if(m4_eval(nux_micro_version % 2), [1], [yes], [no])])
 AC_ARG_ENABLE([maintainer-mode],
               [AC_HELP_STRING([--enable-maintainer-mode=@<:@no/yes@:>@],
                               [Use strict compiler flags @<:@default=no@:>@])],
               [],
-              [enable_maintainer_mode=maintainer_mode_default])
+              [enable_maintainer_mode=no])
 
 AS_IF([test "x$enable_maintainer_mode" = "xyes" && test "x$GCC" = "xyes"],
       [
