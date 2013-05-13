@@ -411,6 +411,7 @@ namespace nux
     int wheel_delta;              //!< Wheel delta.
 
     char            text[NUX_EVENT_TEXT_BUFFER_SIZE];
+    char*           dtext;            //!< Dynamically allocated
     unsigned long   key_modifiers;    //!< Key modifiers. A bitwise inclusive OR of values in KeyModifier.
     unsigned long   mouse_state;
     unsigned short  key_repeat_count; //!< Number of time a key is repeated;

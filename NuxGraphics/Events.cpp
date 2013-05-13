@@ -61,6 +61,7 @@ namespace nux
   Event::Event()
   {
     Memset(text, 0, sizeof(text));
+    dtext = nullptr;
 
     for (int i = 0; i < NUX_MAX_VK; i++)
     {
@@ -112,6 +113,9 @@ namespace nux
     x11_keysym = 0;
     x11_key_state = 0;
 #endif
+
+    delete[] dtext;
+    dtext = nullptr;
 
     key_repeat_count = 0;
     key_modifiers = 0;
@@ -209,6 +213,9 @@ namespace nux
 
   const char* Event::GetText() const
   {
+    if (dtext)
+  		return dtext;
+
     return text;
   }
 
