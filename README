@@ -1,0 +1,62 @@
+Building Nux
+============
+Stephen M. Webb <stephen.webb@canonical.com>
+4.0.0, 2013-05-10
+
+
+Building from Revision Control
+------------------------------
+
+A fresh checkout from source control (bzr lp:nux) requires the build
+infrastructure to be prepared.  Unlike most projects that use the GNU autotools,
+Nux requires the use of the GNOME autotools wrapper to be run in order to pick
+up some GNOME-specific autoconf macros.  Using the GNU autotools tool,
+autoreconf, for that purpose will not prepare a working build system.
+
+Preparing the build system requires that the gnome-common package be installed.
+The shell command `./autogen.sh` is sufficient to prepare the build system.
+
+Normally, Nux is built out-of-source, in other words in a dorectory thatis not
+the source directory.  Running `autogen.sh` in the build directory will generate
+the configure and Makefile.in files in the _source_ directory.
+
+
+Building from a Source Tarball
+------------------------------
+
+After the build system is prepared, ir when building from a source tarball, the
+shell commands './configure; make; make install' should configure, build, ad
+install the package.  Additional instructions on how to configure and build Nux
+are found in the INSTALL file included with the source.
+
+Interesting Additional Arguments to `autogen.sh`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Atthe least, the installation prefix is usually specified when running
+`autogen.sh` or `configure`.  The default installation prefix will be
+`/usr/local`, which is most likely not what you want.
+
+-------
+./autogen.sh --prefix=<installation_directory> <@arguments>
+-------
+
+Some interesting arguments are:
+  x_support::              enable X11 support (default=YES)
+  opengles_20::            enable OpenGL ES 2.0 (default=NO)
+  minimal_build::          enable minimal builds (default=NO)
+  disable-gestures::       disable multitouch gestures (auto)
+  enable-tests::           enable tests (default=YES)
+  enable-documentation::   enable documentation (default=NO)
+  enable-maintainer-mode:: use strict compiler flags (default=NO)
+  enable-debug::           enable nux debugging (default=NO)
+  enable-examples::        enable building of examples (default=YES)
+  enable-gputests::        enable building of gputests (default=YES)
+
+example usage:
+-------
+export PREFIX=/home/user/staging/install/nux
+./autogen.sh --prefix=$PREFIX --enable-debug
+make
+make install
+-------
+
