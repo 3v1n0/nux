@@ -47,6 +47,7 @@ namespace nux
     : View(NUX_FILE_LINE_PARAM)
     , _paint_layer(new ColorLayer(Color(0xFF707070)))
     , _opacity(1.0f)
+    , _present_in_embedded_mode(false)
   {
     premultiply = true;
     _name = WindowName;
@@ -397,6 +398,8 @@ namespace nux
     }
     else
     {
+      SetEnterFocusInputArea(NULL);
+
       _entering_hidden_state = true;
       sigHidden.emit(this);
       GetWindowThread()->GetWindowCompositor().sigHiddenViewWindow.emit(this);
@@ -488,6 +491,43 @@ namespace nux
   void* BaseWindow::GetBackupTextureData(int &width, int &height, int &format)
   {
     return GetWindowThread()->GetWindowCompositor().GetBackupTextureData(this, width, height, format);
+  }
+
+  void BaseWindow::PresentInEmbeddedModeOnThisFrame(bool force)
+  {
+    nuxAssertMsg (GetWindowThread()->IsEmbeddedWindow(),
+                  "[BaseWindow::PresentInEmbeddedModeOnThisFrame] only "
+                  "supported in embdded mode");
+
+    /* Invisible windows are never presented */
+    if (!IsVisible())
+      return;
+
+    if (nux::GetWindowThread()->AddToPresentationList(this, force))
+      _present_in_embedded_mode = true;
+  }
+
+  void BaseWindow::OnPresentedInEmbeddedMode()
+  {
+    _present_in_embedded_mode = false;
+    _last_presented_geometry_in_embedded_mode = GetAbsoluteGeometry();
+  }
+
+  nux::Geometry const& BaseWindow::LastPresentedGeometryInEmbeddedMode() const
+  {
+    return _last_presented_geometry_in_embedded_mode;
+  }
+
+  bool BaseWindow::AllowPresentationInEmbeddedMode() const
+  {
+    return _present_in_embedded_mode;
+  }
+
+  void BaseWindow::PrepareParentRedirectedView()
+  {
+    Area::PrepareParentRedirectedView();
+    if (GetWindowThread()->IsEmbeddedWindow())
+      PresentInEmbeddedModeOnThisFrame();
   }
 
   void BaseWindow::SetEnterFocusInputArea(InputArea *input_area)

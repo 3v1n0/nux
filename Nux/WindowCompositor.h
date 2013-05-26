@@ -23,6 +23,8 @@
 #ifndef WINDOWCOMPOSITOR_H
 #define WINDOWCOMPOSITOR_H
 
+#include <functional>
+
 #include "BaseWindow.h"
 
 #include <sigc++/trackable.h>
@@ -53,6 +55,7 @@ namespace nux
   {
   public:
     typedef ObjectWeakPtr<BaseWindow> WeakBaseWindowPtr;
+    typedef std::function <void (const WeakBaseWindowPtr &)> WindowMutatorFunc;
 
     WindowCompositor(WindowThread* window_thread);
     ~WindowCompositor();
@@ -114,6 +117,8 @@ namespace nux
         @return The area that has the keyboard focus.
     */    
     InputArea* GetKeyFocusArea();
+
+    void OnAllBaseWindows(const WindowMutatorFunc &);
 
     //! Signal emitted when a BaseWindow becomes visible.
     /*!
@@ -239,10 +244,11 @@ namespace nux
         restored after Nux completes it rendering. The external fbo is used only in embedded mode. \n
         If the fbo_object parameter 0, then the reference fbo is invalid and will not be used.
 
-        @param fbo_object The opengl index of the fbo.
+        @param draw_fbo_object The opengl index of the GL_DRAW_FRAMEBUFFER_EXT.
+        @param read_fbo_object The opengl index of the GL_READ_FRAMEBUFFER_EXT.
         @param fbo_geometry The geometry of the fbo.
     */
-    void SetReferenceFramebuffer(unsigned int fbo_object, Geometry fbo_geometry);
+    void SetReferenceFramebuffer(unsigned int draw_fbo_object, unsigned int read_fbo_object, const Geometry &fbo_geometry);
 
     /*!
         Bind the reference opengl framebuffer object.
@@ -408,6 +414,9 @@ namespace nux
 #endif
 
   private:
+
+    WeakBaseWindowPtr FindWeakBaseWindowPtrForRawPtr (nux::BaseWindow *);
+
     //! Render the interface.
     void Draw(bool SizeConfigurationEvent, bool force_draw);
 
@@ -534,7 +543,8 @@ namespace nux
     int m_TooltipY;
 
     //! The fbo to restore after Nux rendering in embedded mode.
-    unsigned int reference_fbo_;
+    unsigned int draw_reference_fbo_;
+    unsigned int read_reference_fbo_;
     Geometry reference_fbo_geometry_;
 
     //! True if the platform has support for depth textures.
