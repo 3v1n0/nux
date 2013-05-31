@@ -1,10 +1,19 @@
-nux (4.0.2-0ubuntu1) UNRELEASED; urgency=low
+nux (4.0.3-0ubuntu1) UNRELEASED; urgency=low
+
+  * Bump ABI
+
+ -- Sam Spilsbury <smspillaz@gmail.com>  Fri, 31 May 2013 17:11:07 +0800
+
+nux (4.0.2-0ubuntu1) raring; urgency=low
 
   [ Brandon Schaefer ]
   * Fixes XIM event text buffer overflow. 
 
   [ Łukasz 'sil2100' Zemczak ]
   * Bump the upstream micro version to 4.0.2 as we have changed the ABI
+
+  [ Sam Spilsbury ]
+  * Create release
 
  -- Brandon Schaefer <brandon.schaefer@canonical.com>  Tue, 21 May 2013 12:19:53 -0700
 
