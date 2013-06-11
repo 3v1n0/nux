@@ -622,7 +622,8 @@ DECLARE_LOGGER(logger, "nux.window");
                                              event.GetMouseState(),
                                              event.GetKeyState());
 
-        if (mouse_owner_area_.IsValid() && mouse_over_area_ == mouse_owner_area_ && (event.mouse_state & NUX_STATE_FIRST_EVENT) != 0)
+        if (mouse_owner_area_.IsValid() && mouse_over_area_ == mouse_owner_area_ &&
+           (!mouse_over_area_->DoubleClickEnabled() || (event.mouse_state & NUX_STATE_FIRST_EVENT) != 0))
         {
           mouse_owner_area_->EmitMouseClickSignal(mouse_owner_x, mouse_owner_y,
                                                   event.GetMouseState(),
@@ -990,7 +991,7 @@ DECLARE_LOGGER(logger, "nux.window");
     if (keyboard_event_grab_view)
     {
       // There is a keyboard grab.
-      // Find the key focus area, under the keyboard grab area. That is to say, the key focus area is in the widget tree 
+      // Find the key focus area, under the keyboard grab area. That is to say, the key focus area is in the widget tree
       // whose root is the keyboard grab area. This phase is known as the capture phase.
       FindKeyFocusAreaFrom(event.type, event.GetKeySym(), event.GetKeyState(),
                            keyboard_event_grab_view, focus_area, base_window);
@@ -1403,10 +1404,10 @@ DECLARE_LOGGER(logger, "nux.window");
       //int w, h;
       window_thread_->GetGraphicsEngine().GetContextSize(m_Width, m_Height);
       window_thread_->GetGraphicsEngine().SetViewport(0, 0, m_Width, m_Height);
-      
+
       // Reset the Model view Matrix and the projection matrix
       window_thread_->GetGraphicsEngine().ResetProjectionMatrix();
-      
+
       window_thread_->GetGraphicsEngine().ResetModelViewMatrixStack();
       window_thread_->GetGraphicsEngine().Push2DTranslationModelViewMatrix(0.0f, 0.0f, 0.0f);
 
@@ -1559,7 +1560,7 @@ DECLARE_LOGGER(logger, "nux.window");
                                         WindowList& windows_to_render,
                                         bool drawModal)
   {
-    // Before anything, deactivate the current frame buffer, set the viewport 
+    // Before anything, deactivate the current frame buffer, set the viewport
     // to the size of the display and call EmptyClippingRegion().
     // Then call GetScissorRect() to get the size of the global clipping area.
     // This is is hack until we implement SetGlobalClippingRectangle() (the opposite of SetGlobalClippingRectangle).
@@ -2311,7 +2312,7 @@ DECLARE_LOGGER(logger, "nux.window");
       nuxDebugMsg("[WindowCompositor::GrabPointerAdd] The area already has the grab");
       return result;
     }
-    
+
     if (window_thread_->GetGraphicsDisplay().PointerGrabData() != this)
       result = window_thread_->GetGraphicsDisplay().GrabPointer(NULL, this, true);
 
@@ -2337,10 +2338,10 @@ DECLARE_LOGGER(logger, "nux.window");
       return false;
 
     pointer_grab_stack_.erase(it);
-    
+
     if (pointer_grab_stack_.empty())
       window_thread_->GetGraphicsDisplay().UngrabPointer(this);
-    
+
     // reset the mouse pointers areas.
     ResetMousePointerAreas();
 
@@ -2383,7 +2384,7 @@ DECLARE_LOGGER(logger, "nux.window");
     {
       result = window_thread_->GetGraphicsDisplay().GrabKeyboard(NULL, this, true);
     }
-    
+
     if (result)
     {
       InputArea* current_keyboard_grab = GetKeyboardGrabArea();
@@ -2391,7 +2392,7 @@ DECLARE_LOGGER(logger, "nux.window");
         current_keyboard_grab->end_keyboard_grab.emit(current_keyboard_grab);
 
       keyboard_grab_stack_.push_front(area);
-      
+
       // If there is any area with the key focus, cancel it.
       if (key_focus_area_.IsValid())
       {
@@ -2421,7 +2422,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
       area->start_keyboard_grab.emit(area);
     }
-    
+
     return result;
   }
 
@@ -2439,7 +2440,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
     InputArea* current_keyboard_grab = (*it);
     bool has_grab = false;
-    
+
     if (it == keyboard_grab_stack_.begin())
     {
       // At the top of the keyboard_grab_stack_. Means it has the keyboard grab.
@@ -2481,7 +2482,7 @@ DECLARE_LOGGER(logger, "nux.window");
           key_focus_area_->key_nav_focus_change.emit(key_focus_area_.GetPointer(), false, KEY_NAV_NONE);
           // nuxDebugMsg("[WindowCompositor::GrabKeyboardRemove] Area type '%s' named '%s': Lost key nav focus.",
           //   key_focus_area_->Type().name,
-          //   key_focus_area_->GetBaseString().c_str());          
+          //   key_focus_area_->GetBaseString().c_str());
         }
 
         if (key_focus_area_->Type().IsDerivedFromType(View::StaticObjectType))
@@ -2490,14 +2491,14 @@ DECLARE_LOGGER(logger, "nux.window");
         }
         key_focus_area_ = NULL;
       }
-            
+
       it = keyboard_grab_stack_.begin();
       SetKeyFocusArea(*it);
 
       InputArea* new_keyboard_grab = (*it);
       new_keyboard_grab->start_keyboard_grab.emit(new_keyboard_grab);
     }
-    
+
     return true;
   }
 

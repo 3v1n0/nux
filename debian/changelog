@@ -4,7 +4,32 @@ nux (4.0.3-0ubuntu1) UNRELEASED; urgency=low
 
  -- Sam Spilsbury <smspillaz@gmail.com>  Fri, 31 May 2013 17:11:07 +0800
 
-nux (4.0.2-0ubuntu1) raring; urgency=low
+nux (4.0.2daily13.06.05-0ubuntu1) saucy; urgency=low
+
+  [ Stephen M. Webb ]
+  * fix failures in 'make distcheck' (lp: #1170358). (LP: #1170358)
+  * debian/copyright: updated and corrected (lp: #753361). (LP: #753361)
+  * Add build instructions to the sources (lp: #1011395). (LP: #1011395)
+  * Bump Nux version to 4.0.1.
+
+  [ Nick Dedekind ]
+  * Changed global navigation focus area/activate signals to public.
+  * Do not send second click event when double-clicking mouse.
+  * Emit global focus change signal when setting to NULL.
+  * Double click on non double-click enabled views were not getting the
+    second click.
+
+  [ Marco Trevisan (Treviño) ]
+  * RenderingPipe: always use the depth buffer texture when getting the
+    CopyTexture. (LP: #1087534)
+  * IOpenGLFrameBufferObject: correctly use all the FBO attachments.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 793
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 05 Jun 2013 06:09:14 +0000
+
+nux (4.0.2daily13.05.31ubuntu.unity.next-0ubuntu1) raring; urgency=low
 
   [ Brandon Schaefer ]
   * Fixes XIM event text buffer overflow. 
@@ -12,10 +37,18 @@ nux (4.0.2-0ubuntu1) raring; urgency=low
   [ Łukasz 'sil2100' Zemczak ]
   * Bump the upstream micro version to 4.0.2 as we have changed the ABI
 
-  [ Sam Spilsbury ]
-  * Create release
+  [ Stephen M. Webb ]
+  * Add build instructions to the sources (lp: #1011395). (LP: #1011395)
+  * Bump Nux version to 4.0.1.
 
- -- Brandon Schaefer <brandon.schaefer@canonical.com>  Tue, 21 May 2013 12:19:53 -0700
+  [ Nick Dedekind ]
+  * Double click on non double-click enabled views were not getting the
+    second click.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 792 (ubuntu-unity/next)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 31 May 2013 04:03:20 +0000
 
 nux (4.0.1daily13.05.08ubuntu.unity.next-0ubuntu1) raring; urgency=low
 
