@@ -433,6 +433,8 @@ namespace nux
     */
     void RenderTopViews(bool force_draw, std::list< ObjectWeakPtr<BaseWindow> >& WindowList, bool draw_modal);
 
+    void PresentAnyReadyWindows();
+
     //! Render the content of a top view.
     void RenderTopViewContent(BaseWindow* window, bool force_draw);
 
@@ -580,6 +582,9 @@ namespace nux
 #ifdef NUX_GESTURES_SUPPORT
     std::unique_ptr<GestureBroker> gesture_broker_;
 #endif
+
+    WindowList *_currently_rendering_windows;
+    Geometry   *_current_global_clip_rect;
 
     //! Perform some action before destruction.
     /*!

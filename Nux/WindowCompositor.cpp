@@ -44,6 +44,8 @@ DECLARE_LOGGER(logger, "nux.window");
   : draw_reference_fbo_(0)
   , read_reference_fbo_(0)
   , window_thread_(window_thread)
+  , _currently_rendering_windows(NULL)
+  , _current_global_clip_rect(NULL)
   {
     m_OverlayWindow             = NULL;
     _tooltip_window             = NULL;
@@ -1556,6 +1558,64 @@ DECLARE_LOGGER(logger, "nux.window");
     GetPainter().EmptyBackgroundStack();
   }
 
+  void WindowCompositor::PresentAnyReadyWindows()
+  {
+    if (!_currently_rendering_windows ||
+        !_current_global_clip_rect)
+      return;
+
+    GraphicsEngine& graphics_engine = window_thread_->GetGraphicsEngine();
+
+    // Present all buffers to the screen
+    graphics_engine.ApplyClippingRectangle();
+    CHECKGL(glDepthMask(GL_FALSE));
+
+    WindowList &windows = *_currently_rendering_windows;
+    Geometry   &global_clip_rect = *_current_global_clip_rect;
+
+    for (WindowList::iterator it = windows.begin(), end = windows.end(); it != end; ++it)
+    {
+      WeakBaseWindowPtr& window_ptr = *it;
+      if (window_ptr.IsNull())
+        continue;
+
+      BaseWindow* window = window_ptr.GetPointer();
+
+      if (window->IsVisible())
+      {
+        if (global_clip_rect.Intersect(window->GetGeometry()).IsNull())
+        {
+          // The global clipping area can be seen as a per monitor clipping
+          // region. It is mostly used in embedded mode with compiz.  If we
+          // get here, it means that the BaseWindow we want to render is not
+          // in area of the monitor that compiz is currently rendering. So
+          // skip it.
+          continue;
+        }
+
+        RenderTargetTextures& rt = GetWindowBuffer(window);
+
+        if (rt.color_rt.IsValid())
+        {
+          /* Already been presented */
+          if (!window->_contents_ready_for_presentation)
+            continue;
+
+          /* Caller doesn't want us to render this yet */
+          if (GetWindowThread()->IsEmbeddedWindow() &&
+              !window->AllowPresentationInEmbeddedMode())
+            continue;
+
+          // Nux is done rendering a BaseWindow into a texture. The previous call to Deactivate
+          // has cancelled any opengl framebuffer object that was set.
+          PresentBufferToScreen(rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false, window->GetOpacity(), window->premultiply());
+
+          window->_contents_ready_for_presentation = false;
+        }
+      }
+    }
+  }
+
   void WindowCompositor::RenderTopViews(bool force_draw,
                                         WindowList& windows_to_render,
                                         bool drawModal)
@@ -1573,6 +1633,8 @@ DECLARE_LOGGER(logger, "nux.window");
     Geometry global_clip_rect = graphics_engine.GetScissorRect();
     global_clip_rect.y = window_height - global_clip_rect.y - global_clip_rect.height;
 
+    _current_global_clip_rect = &global_clip_rect;
+
     // We don't need to restore framebuffers if we didn't update any windows
     bool updated_any_windows = false;
 
@@ -1587,6 +1649,9 @@ DECLARE_LOGGER(logger, "nux.window");
     // list, lets reverse it as we are constructing, as we want to draw the
     // windows from back to front.
     WindowList windows(windows_to_render.rbegin(), windows_to_render.rend());
+
+    _currently_rendering_windows = &windows;
+
     for (WindowList::iterator it = windows.begin(), end = windows.end(); it != end; ++it)
     {
       WeakBaseWindowPtr& window_ptr = *it;
@@ -1660,6 +1725,7 @@ DECLARE_LOGGER(logger, "nux.window");
         }
 
         window->_child_need_redraw = false;
+        window->_contents_ready_for_presentation = true;
       }
       else
       {
@@ -1669,6 +1735,8 @@ DECLARE_LOGGER(logger, "nux.window");
       }
     }
 
+    /* If any windows were updated, then we need to rebind our
+     * reference framebuffer */
     if (updated_any_windows)
     {
       if (GetWindowThread ()->IsEmbeddedWindow())
@@ -1683,47 +1751,11 @@ DECLARE_LOGGER(logger, "nux.window");
         GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
     }
 
-    // Present all buffers to the screen
-    graphics_engine.ApplyClippingRectangle();
-    CHECKGL(glDepthMask(GL_FALSE));
-    for (WindowList::iterator it = windows.begin(), end = windows.end(); it != end; ++it)
-    {
-      WeakBaseWindowPtr& window_ptr = *it;
-      if (window_ptr.IsNull())
-        continue;
+    /* Present any windows which haven't yet been presented */
+    PresentAnyReadyWindows();
 
-      BaseWindow* window = window_ptr.GetPointer();
-
-      if (!drawModal && window->IsModal())
-        continue;
-
-      if (window->IsVisible())
-      {
-        if (global_clip_rect.Intersect(window->GetGeometry()).IsNull())
-        {
-          // The global clipping area can be seen as a per monitor clipping
-          // region. It is mostly used in embedded mode with compiz.  If we
-          // get here, it means that the BaseWindow we want to render is not
-          // in area of the monitor that compiz is currently rendering. So
-          // skip it.
-          continue;
-        }
-
-        RenderTargetTextures& rt = GetWindowBuffer(window);
-
-        if (rt.color_rt.IsValid())
-        {
-          /* Caller doesn't want us to render this yet */
-          if (GetWindowThread()->IsEmbeddedWindow() &&
-              !window->AllowPresentationInEmbeddedMode())
-            continue;
-
-          // Nux is done rendering a BaseWindow into a texture. The previous call to Deactivate
-          // has cancelled any opengl framebuffer object that was set.
-          PresentBufferToScreen(rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false, window->GetOpacity(), window->premultiply());
-        }
-      }
-    }
+    _currently_rendering_windows = NULL;
+    _current_global_clip_rect = NULL;
   }
 
   void WindowCompositor::RenderMainWindowComposition(bool force_draw)
@@ -2238,6 +2270,9 @@ DECLARE_LOGGER(logger, "nux.window");
       {
         // Restore reference framebuffer
         RestoreReferenceFramebuffer();
+
+        // Present any ready windows
+        PresentAnyReadyWindows();
       }
 
       window_thread_->GetGraphicsEngine().SetViewport(0, 0, buffer_width, buffer_height);
@@ -2642,13 +2677,16 @@ DECLARE_LOGGER(logger, "nux.window");
     SetReferenceFramebufferViewport (reference_fbo_geometry_);
 
 #ifndef NUX_OPENGLES_20
-    return (!draw_reference_fbo_ ||
+    int restore_status =
+           (!draw_reference_fbo_ ||
             CheckExternalFramebufferStatus(GL_DRAW_FRAMEBUFFER_EXT)) &&
-        (!read_reference_fbo_ ||
-         CheckExternalFramebufferStatus(GL_READ_FRAMEBUFFER_EXT));
+           (!read_reference_fbo_ ||
+            CheckExternalFramebufferStatus(GL_READ_FRAMEBUFFER_EXT));
 #else
-    return CheckExternalFramebufferStatus(GL_FRAMEBUFFER);
+    int restore_status = CheckExternalFramebufferStatus(GL_FRAMEBUFFER);
 #endif
+
+    return restore_status;
   }
 
   void WindowCompositor::RestoreMainFramebuffer()
@@ -2656,6 +2694,14 @@ DECLARE_LOGGER(logger, "nux.window");
     // This is a bit inefficient as we unbind and then rebind
     nux::GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer ();
     RestoreReferenceFramebuffer ();
+
+    /* Present any ready windows after restoring
+     * the reference framebuffer. This ensures that if
+     * we need to restore the reference framebuffer to
+     * get access to its contents through glCopyTexSubImage2D
+     * that it will also have any rendered views in it too
+     */
+    PresentAnyReadyWindows();
   }
 
 #ifdef NUX_GESTURES_SUPPORT

@@ -188,6 +188,7 @@ namespace nux
       return _name;
     }
 
+    bool RedrawnContentsPendingPresentation();
     void PresentInEmbeddedModeOnThisFrame(bool force = false);
     void OnPresentedInEmbeddedMode();
     bool AllowPresentationInEmbeddedMode() const;
@@ -272,6 +273,9 @@ namespace nux
                                     // backing texture to the screen on the
                                     // next frame
     nux::Geometry _last_presented_geometry_in_embedded_mode;
+
+    bool _contents_ready_for_presentation; //!<True if this window's contents has just been
+                                           // redrawn and it is awaiting presentation
 
     friend class PopUpWindow;
 
