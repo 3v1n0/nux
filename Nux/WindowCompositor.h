@@ -55,7 +55,7 @@ namespace nux
   {
   public:
     typedef ObjectWeakPtr<BaseWindow> WeakBaseWindowPtr;
-    typedef std::function <void (const WeakBaseWindowPtr &)> WindowMutatorFunc;
+    typedef std::function <void(const WeakBaseWindowPtr &)> WindowMutatorFunc;
 
     WindowCompositor(WindowThread* window_thread);
     ~WindowCompositor();
@@ -415,7 +415,7 @@ namespace nux
 
   private:
 
-    WeakBaseWindowPtr FindWeakBaseWindowPtrForRawPtr (nux::BaseWindow *);
+    WeakBaseWindowPtr FindWeakBaseWindowPtrForRawPtr(nux::BaseWindow *);
 
     //! Render the interface.
     void Draw(bool SizeConfigurationEvent, bool force_draw);

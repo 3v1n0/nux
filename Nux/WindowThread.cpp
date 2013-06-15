@@ -1396,7 +1396,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
                                            bool force = false)
   {
     RequestRedraw();
-    WindowCompositor::WeakBaseWindowPtr ptr (window_compositor_->FindWeakBaseWindowPtrForRawPtr(bw));
+    WindowCompositor::WeakBaseWindowPtr ptr(window_compositor_->FindWeakBaseWindowPtrForRawPtr(bw));
 
     if (!ptr.IsValid())
       return false;
@@ -1404,9 +1404,9 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     if (force ||
         !foreign_frame_frozen_)
     {
-      if (std::find (m_presentation_list_embedded.begin(),
-                     m_presentation_list_embedded.end(),
-                     ptr) != m_presentation_list_embedded.end())
+      if (std::find(m_presentation_list_embedded.begin(),
+                    m_presentation_list_embedded.end(),
+                    ptr) != m_presentation_list_embedded.end())
         return true;
 
       m_presentation_list_embedded.push_back(ptr);
@@ -1414,9 +1414,9 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     }
     else
     {
-      if (std::find (m_presentation_list_embedded_next_frame.begin(),
-                     m_presentation_list_embedded_next_frame.end(),
-                     ptr) != m_presentation_list_embedded_next_frame.end())
+      if (std::find(m_presentation_list_embedded_next_frame.begin(),
+                    m_presentation_list_embedded_next_frame.end(),
+                    ptr) != m_presentation_list_embedded_next_frame.end())
         return false;
 
       m_presentation_list_embedded_next_frame.push_back(ptr);
@@ -1431,8 +1431,8 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     {
       if (base_window.IsValid())
       {
-	nux::Geometry const& abs_geom (base_window->GetAbsoluteGeometry());
-	nux::Geometry const& last_geom (base_window->LastPresentedGeometryInEmbeddedMode());
+	nux::Geometry const& abs_geom(base_window->GetAbsoluteGeometry());
+	nux::Geometry const& last_geom(base_window->LastPresentedGeometryInEmbeddedMode());
         presentation_geometries.push_back(abs_geom);
         if (abs_geom != last_geom)
         {
@@ -1607,7 +1607,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     nuxAssertMsg(IsEmbeddedWindow(),
                  "[WindowThread::PresentWindowIntersectingGeometryOnThisFrame] "
                  "can only be called inside an embedded window");
-    window_compositor_->OnAllBaseWindows(std::bind (PresentOnBaseWindowIntersectsRect, _1, rect));
+    window_compositor_->OnAllBaseWindows(std::bind(PresentOnBaseWindowIntersectsRect, _1, rect));
   }
 
   void WindowThread::RenderInterfaceFromForeignCmd(Geometry *clip)
@@ -1658,7 +1658,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     nuxAssertMsg(IsEmbeddedWindow(),
                  "[WindowThread::ForeignFrameEnded] "
                  "can only be called inside an embedded window");
-    window_compositor_->OnAllBaseWindows(std::bind (MarkWindowUnpresented, _1));
+    window_compositor_->OnAllBaseWindows(std::bind(MarkWindowUnpresented, _1));
     m_presentation_list_embedded.clear();
 
     foreign_frame_frozen_ = false;

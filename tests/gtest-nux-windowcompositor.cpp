@@ -146,14 +146,14 @@ struct TestWindowCompositor : public testing::Test
 
 namespace
 {
-  typedef void (*NGLGenFramebuffers) (GLsizei, GLuint *);
-  typedef void (*NGLGenRenderbuffers) (GLsizei, GLuint *);
-  typedef void (*NGLBindFramebuffer) (GLenum, GLuint);
-  typedef void (*NGLBindRenderbuffer) (GLenum, GLuint);
-  typedef void (*NGLRenderbufferStorage) (GLenum, GLenum, GLsizei, GLsizei);
-  typedef void (*NGLFramebufferRenderbuffer) (GLenum, GLenum, GLenum, GLuint);
-  typedef void (*NGLDeleteFramebuffers) (GLsizei, const GLuint *);
-  typedef void (*NGLDeleteRenderbuffers) (GLsizei, const GLuint *);
+  typedef void (*NGLGenFramebuffers)(GLsizei, GLuint *);
+  typedef void (*NGLGenRenderbuffers)(GLsizei, GLuint *);
+  typedef void (*NGLBindFramebuffer)(GLenum, GLuint);
+  typedef void (*NGLBindRenderbuffer)(GLenum, GLuint);
+  typedef void (*NGLRenderbufferStorage)(GLenum, GLenum, GLsizei, GLsizei);
+  typedef void (*NGLFramebufferRenderbuffer)(GLenum, GLenum, GLenum, GLuint);
+  typedef void (*NGLDeleteFramebuffers)(GLsizei, const GLuint *);
+  typedef void (*NGLDeleteRenderbuffers)(GLsizei, const GLuint *);
 
   #ifdef NUX_OPENGLES_20
   GLuint NGL_RENDERBUFFER = GL_RENDERBUFFER;
@@ -200,22 +200,22 @@ namespace
         nglDeleteFramebuffers = glDeleteFramebuffersEXT;
         #endif
 
-        nglGenFramebuffers (1, &fboName);
-        nglGenRenderbuffers (1, &rbName);
+        nglGenFramebuffers(1, &fboName);
+        nglGenRenderbuffers(1, &rbName);
 
-        nglBindRenderbuffer (NGL_RENDERBUFFER, rbName);
-        nglRenderbufferStorage (NGL_RENDERBUFFER, NGL_RGBA_STORAGE, 300, 200);
-        nglBindFramebuffer (NGL_DRAW_FRAMEBUFFER, fboName);
-        nglBindFramebuffer (NGL_READ_FRAMEBUFFER, fboName);
-        nglFramebufferRenderbuffer (NGL_DRAW_FRAMEBUFFER, NGL_COLOR_ATTACHMENT0, NGL_RENDERBUFFER, rbName);
+        nglBindRenderbuffer(NGL_RENDERBUFFER, rbName);
+        nglRenderbufferStorage(NGL_RENDERBUFFER, NGL_RGBA_STORAGE, 300, 200);
+        nglBindFramebuffer(NGL_DRAW_FRAMEBUFFER, fboName);
+        nglBindFramebuffer(NGL_READ_FRAMEBUFFER, fboName);
+        nglFramebufferRenderbuffer(NGL_DRAW_FRAMEBUFFER, NGL_COLOR_ATTACHMENT0, NGL_RENDERBUFFER, rbName);
       }
 
       ~ReferenceFramebuffer ()
       {
-        nglBindFramebuffer (NGL_DRAW_FRAMEBUFFER, 0);
-        nglBindFramebuffer (NGL_READ_FRAMEBUFFER, 0);
-        nglDeleteRenderbuffers (1, &rbName);
-        nglDeleteFramebuffers (1, &fboName);
+        nglBindFramebuffer(NGL_DRAW_FRAMEBUFFER, 0);
+        nglBindFramebuffer(NGL_READ_FRAMEBUFFER, 0);
+        nglDeleteRenderbuffers(1, &rbName);
+        nglDeleteFramebuffers(1, &fboName);
       }
 
       GLuint fboName, rbName;
@@ -240,16 +240,16 @@ TEST_F(TestWindowCompositor, TestRestoreReferenceFramebufferDirect)
   ReferenceFramebuffer reference;
   GLint  dfbBinding, rfbBinding;
 
-  glGetIntegerv (NGL_DRAW_FRAMEBUFFER_BINDING, &dfbBinding);
-  glGetIntegerv (NGL_READ_FRAMEBUFFER_BINDING, &rfbBinding);
+  glGetIntegerv(NGL_DRAW_FRAMEBUFFER_BINDING, &dfbBinding);
+  glGetIntegerv(NGL_READ_FRAMEBUFFER_BINDING, &rfbBinding);
 
   ASSERT_EQ (dfbBinding, reference.fboName);
 
   wnd_thread->GetWindowCompositor().SetReferenceFramebuffer(dfbBinding, rfbBinding, nux::Geometry (0, 0, 300, 200));
 
   ASSERT_TRUE (wnd_thread->GetWindowCompositor().RestoreReferenceFramebuffer());
-  glGetIntegerv (NGL_DRAW_FRAMEBUFFER_BINDING, &dfbBinding);
-  glGetIntegerv (NGL_READ_FRAMEBUFFER_BINDING, &rfbBinding);
+  glGetIntegerv(NGL_DRAW_FRAMEBUFFER_BINDING, &dfbBinding);
+  glGetIntegerv(NGL_READ_FRAMEBUFFER_BINDING, &rfbBinding);
   ASSERT_EQ (dfbBinding, reference.fboName);
   ASSERT_EQ (rfbBinding, reference.fboName);
 }
@@ -259,17 +259,17 @@ TEST_F(TestWindowCompositor, TestRestoreReferenceFramebufferThroughRestoreMain)
   ReferenceFramebuffer reference;
   GLint  dfbBinding, rfbBinding;
 
-  glGetIntegerv (NGL_DRAW_FRAMEBUFFER_BINDING, &dfbBinding);
-  glGetIntegerv (NGL_READ_FRAMEBUFFER_BINDING, &rfbBinding);
+  glGetIntegerv(NGL_DRAW_FRAMEBUFFER_BINDING, &dfbBinding);
+  glGetIntegerv(NGL_READ_FRAMEBUFFER_BINDING, &rfbBinding);
 
-  ASSERT_EQ (dfbBinding, reference.fboName);
+  ASSERT_EQ(dfbBinding, reference.fboName);
 
   wnd_thread->GetWindowCompositor().SetReferenceFramebuffer(dfbBinding, rfbBinding, nux::Geometry (0, 0, 300, 200));
   wnd_thread->GetWindowCompositor().RestoreMainFramebuffer();
-  glGetIntegerv (NGL_DRAW_FRAMEBUFFER_BINDING, &dfbBinding);
-  glGetIntegerv (NGL_READ_FRAMEBUFFER_BINDING, &rfbBinding);
-  ASSERT_EQ (dfbBinding, reference.fboName);
-  ASSERT_EQ (rfbBinding, reference.fboName);
+  glGetIntegerv(NGL_DRAW_FRAMEBUFFER_BINDING, &dfbBinding);
+  glGetIntegerv(NGL_READ_FRAMEBUFFER_BINDING, &rfbBinding);
+  ASSERT_EQ(dfbBinding, reference.fboName);
+  ASSERT_EQ(rfbBinding, reference.fboName);
 }
 
 TEST_F(TestWindowCompositor, TestRestoreBackbufferThroughRestoreMain)
@@ -277,16 +277,16 @@ TEST_F(TestWindowCompositor, TestRestoreBackbufferThroughRestoreMain)
   ReferenceFramebuffer reference;
   GLint dfbBinding, rfbBinding;
 
-  glGetIntegerv (NGL_DRAW_FRAMEBUFFER_BINDING, &dfbBinding);
-  glGetIntegerv (NGL_READ_FRAMEBUFFER_BINDING, &rfbBinding);
+  glGetIntegerv(NGL_DRAW_FRAMEBUFFER_BINDING, &dfbBinding);
+  glGetIntegerv(NGL_READ_FRAMEBUFFER_BINDING, &rfbBinding);
 
   ASSERT_EQ (dfbBinding, reference.fboName);
 
   wnd_thread->GetWindowCompositor().RestoreMainFramebuffer();
-  glGetIntegerv (NGL_DRAW_FRAMEBUFFER_BINDING, &dfbBinding);
-  glGetIntegerv (NGL_READ_FRAMEBUFFER_BINDING, &rfbBinding);
-  ASSERT_EQ (dfbBinding, 0);
-  ASSERT_EQ (rfbBinding, 0);
+  glGetIntegerv(NGL_DRAW_FRAMEBUFFER_BINDING, &dfbBinding);
+  glGetIntegerv(NGL_READ_FRAMEBUFFER_BINDING, &rfbBinding);
+  ASSERT_EQ(dfbBinding, 0);
+  ASSERT_EQ(rfbBinding, 0);
 }
 
 TEST_F(TestWindowCompositor, TestSetKeyFocusArea)

@@ -1372,7 +1372,7 @@ DECLARE_LOGGER(logger, "nux.window");
       using namespace std::placeholders;
 
       WeakBaseWindowPtr weak;
-      OnAllBaseWindows(std::bind (AssignWeakBaseWindowMatchingRaw, _1, raw, &weak));
+      OnAllBaseWindows(std::bind(AssignWeakBaseWindowMatchingRaw, _1, raw, &weak));
       return weak;
   }
 
@@ -1381,21 +1381,21 @@ DECLARE_LOGGER(logger, "nux.window");
     for (WeakBaseWindowPtr const& ptr : _view_window_list)
     {
       if (ptr.IsValid())
-	func (ptr);
+	func(ptr);
     }
 
     for (WeakBaseWindowPtr const& ptr : _view_window_list)
       if (ptr.IsValid())
-	func (ptr);
+	func(ptr);
 
     if (m_MenuWindow.IsValid())
-      func (m_MenuWindow);
+      func(m_MenuWindow);
 
     if (_tooltip_window.IsValid())
-      func (_tooltip_window);
+      func(_tooltip_window);
 
     if (m_OverlayWindow.IsValid())
-      func (m_OverlayWindow);
+      func(m_OverlayWindow);
   }
 
   void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
@@ -1718,7 +1718,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
           RenderTopViewContent(window, force_draw);
 
-          m_FrameBufferObject->Deactivate ();
+          m_FrameBufferObject->Deactivate();
           CHECKGL(glDepthMask(GL_TRUE));
           graphics_engine.GetRenderStates().SetBlend(false);
           updated_any_windows = true;
@@ -1739,7 +1739,7 @@ DECLARE_LOGGER(logger, "nux.window");
      * reference framebuffer */
     if (updated_any_windows)
     {
-      if (GetWindowThread ()->IsEmbeddedWindow())
+      if (GetWindowThread()->IsEmbeddedWindow())
       {
         // Restore the reference framebuffer
         if (!RestoreReferenceFramebuffer())
@@ -2259,7 +2259,7 @@ DECLARE_LOGGER(logger, "nux.window");
       nuxAssert(buffer_width >= 1);
       nuxAssert(buffer_height >= 1);
       // Restore Main Frame Buffer if not in embedded mode
-      if (!GetWindowThread ()->IsEmbeddedWindow ())
+      if (!GetWindowThread()->IsEmbeddedWindow())
       {
         m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
         m_FrameBufferObject->SetTextureAttachment(0, m_MainColorRT, 0);
@@ -2629,7 +2629,7 @@ DECLARE_LOGGER(logger, "nux.window");
       return ok;
     }
 
-    void SetReferenceFramebufferViewport (const nux::Geometry &reference_fbo_geometry_)
+    void SetReferenceFramebufferViewport(const nux::Geometry &reference_fbo_geometry_)
     {
       CHECKGL(glViewport(reference_fbo_geometry_.x,
         reference_fbo_geometry_.y,
@@ -2674,7 +2674,7 @@ DECLARE_LOGGER(logger, "nux.window");
     CHECKGL(glBindFramebufferEXT(GL_FRAMEBUFFER, draw_reference_fbo_));
 #endif
 
-    SetReferenceFramebufferViewport (reference_fbo_geometry_);
+    SetReferenceFramebufferViewport(reference_fbo_geometry_);
 
 #ifndef NUX_OPENGLES_20
     int restore_status =

@@ -27,7 +27,7 @@ using ::testing::Invoke;
 
 namespace nux {
   std::ostream &
-  operator<< (std::ostream &os, const Geometry &geo)
+  operator<<(std::ostream &os, const Geometry &geo)
   {
     return os << "Geometry: x: " <<
                  geo.x << " y: " <<
@@ -302,47 +302,47 @@ class EmbeddedContext : public ::testing::Test
   public:
 
     EmbeddedContext()
-      : _display (XOpenDisplay(NULL))
-      , _root (DefaultRootWindow(_display))
-      , _window (XCreateSimpleWindow(_display,
-                                     _root,
-                                     0,
-                                     0,
-                                     300,
-                                     200,
-                                     0,
-                                     0,
-                                     0))
-      , _visinfo (NULL)
-      , _context (NULL)
+      : _display(XOpenDisplay(NULL))
+      , _root(DefaultRootWindow(_display))
+      , _window(XCreateSimpleWindow(_display,
+                                    _root,
+                                    0,
+                                    0,
+                                    300,
+                                    200,
+                                    0,
+                                    0,
+                                    0))
+      , _visinfo(NULL)
+      , _context(NULL)
     {
       XVisualInfo temp;
       XWindowAttributes attrib;
-      if (!XGetWindowAttributes (_display, _window, &attrib))
-        throw std::runtime_error ("failed to get window attributes");
+      if(!XGetWindowAttributes(_display, _window, &attrib))
+        throw std::runtime_error("failed to get window attributes");
 
-      temp.visualid = XVisualIDFromVisual (attrib.visual);
+      temp.visualid = XVisualIDFromVisual(attrib.visual);
 
       int nvinfo = 0;
-      _visinfo = XGetVisualInfo (_display, VisualIDMask, &temp, &nvinfo);
+      _visinfo = XGetVisualInfo(_display, VisualIDMask, &temp, &nvinfo);
 
       if (!_visinfo || !nvinfo)
-        throw std::runtime_error ("failed to find visual");
+        throw std::runtime_error("failed to find visual");
 
 #ifndef NUX_OPENGLES_20
       GLint value = 0;
-      glXGetConfig (_display, _visinfo, GLX_USE_GL, &value);
+      glXGetConfig(_display, _visinfo, GLX_USE_GL, &value);
 
       if (!value)
-        std::runtime_error ("available visual is not a gl visual");
+        std::runtime_error("available visual is not a gl visual");
 
       _context = glXCreateContext(_display, _visinfo, NULL, true);
       glXMakeCurrent(_display, _window, _context);
 #else
-      EGLDisplay eglDisplay = eglGetDisplay ((EGLNativeDisplayType)_display);
+      EGLDisplay eglDisplay = eglGetDisplay((EGLNativeDisplayType)_display);
       EGLint major, minor;
-      if (!eglInitialize (eglDisplay, &major, &minor))
-        throw std::runtime_error ("eglInitialize failed");
+      if (!eglInitialize(eglDisplay, &major, &minor))
+        throw std::runtime_error("eglInitialize failed");
 
       const EGLint config_attribs[] = {
           EGL_SURFACE_TYPE,         EGL_WINDOW_BIT,
@@ -364,7 +364,7 @@ class EmbeddedContext : public ::testing::Test
       EGLint               count, visualid;
       EGLConfig            configs[1024];
 
-      if (!eglChooseConfig (eglDisplay, config_attribs, configs, 1024, &count))
+      if (!eglChooseConfig(eglDisplay, config_attribs, configs, 1024, &count))
         throw std::runtime_error("eglChooseConfig failed");
 
       visualid = temp.visualid;
@@ -373,7 +373,7 @@ class EmbeddedContext : public ::testing::Test
       for (int i = 0; i < count; ++i)
       {
         EGLint val;
-        eglGetConfigAttrib (eglDisplay, configs[i], EGL_NATIVE_VISUAL_ID, &val);
+        eglGetConfigAttrib(eglDisplay, configs[i], EGL_NATIVE_VISUAL_ID, &val);
         if (visualid == val)
         {
           config = configs[i];
@@ -381,17 +381,17 @@ class EmbeddedContext : public ::testing::Test
         }
       }
 
-      eglBindAPI (EGL_OPENGL_ES_API);
+      eglBindAPI(EGL_OPENGL_ES_API);
       _surface = eglCreateWindowSurface(eglDisplay, config, _window, 0);
       if (_surface == EGL_NO_SURFACE)
-        throw std::runtime_error ("eglCreateWindowSurface failed");
+        throw std::runtime_error("eglCreateWindowSurface failed");
 
-      _context = eglCreateContext (eglDisplay, config, EGL_NO_CONTEXT, context_attribs);
+      _context = eglCreateContext(eglDisplay, config, EGL_NO_CONTEXT, context_attribs);
       if (_context == EGL_NO_CONTEXT)
-        throw std::runtime_error ("eglCreateContext failed");
+        throw std::runtime_error("eglCreateContext failed");
 
-      if (!eglMakeCurrent (eglDisplay, _surface, _surface, _context))
-        throw std::runtime_error ("eglMakeCurrent failed");
+      if (!eglMakeCurrent(eglDisplay, _surface, _surface, _context))
+        throw std::runtime_error("eglMakeCurrent failed");
 #endif
     }
 
@@ -549,10 +549,10 @@ class EmbeddedContextWindow : public EmbeddedContext
 {
   public:
 
-    virtual void SetUp ()
+    virtual void SetUp()
     {
       EmbeddedContext::SetUp();
-      _base_window = nux::ObjectPtr<nux::BaseWindow> (new nux::BaseWindow(TEXT("")));
+      _base_window = nux::ObjectPtr<nux::BaseWindow>(new nux::BaseWindow(TEXT("")));
       _base_window->ShowWindow(true, false);
 
       /* QueueDraw will call PresentInEmbeddedModeOnThisFrame - we
@@ -583,8 +583,8 @@ TEST_F(EmbeddedContextWindow, AllowPresentationRequestsRedraw)
 {
   RedrawRequestVerification verification;
 
-  EXPECT_CALL (verification, RedrawRequested());
-  WindowThread()->RedrawRequested.connect (sigc::mem_fun (&verification,
+  EXPECT_CALL(verification, RedrawRequested());
+  WindowThread()->RedrawRequested.connect(sigc::mem_fun (&verification,
                                                           &RedrawRequestVerification::RedrawRequested));
   Window()->PresentInEmbeddedModeOnThisFrame();
 }
@@ -592,17 +592,17 @@ TEST_F(EmbeddedContextWindow, AllowPresentationRequestsRedraw)
 TEST_F(EmbeddedContextWindow, AllowPresentationAddsToPresentationList)
 {
   Window()->PresentInEmbeddedModeOnThisFrame();
-  std::vector <nux::Geometry> present_list (WindowThread()->GetPresentationListGeometries());
+  std::vector <nux::Geometry> present_list(WindowThread()->GetPresentationListGeometries());
 
   ASSERT_EQ(1, present_list.size());
-  EXPECT_EQ (present_list[0], Window()->GetAbsoluteGeometry());
+  EXPECT_EQ(present_list[0], Window()->GetAbsoluteGeometry());
 }
 
 TEST_F(EmbeddedContextWindow, MultipleAllowPresentationAddsToPresentationListUnique)
 {
   Window()->PresentInEmbeddedModeOnThisFrame();
   Window()->PresentInEmbeddedModeOnThisFrame();
-  std::vector <nux::Geometry> present_list (WindowThread()->GetPresentationListGeometries());
+  std::vector <nux::Geometry> present_list(WindowThread()->GetPresentationListGeometries());
 
   ASSERT_EQ(1, present_list.size());
   EXPECT_EQ(present_list[0], Window()->GetAbsoluteGeometry());
@@ -613,7 +613,7 @@ TEST_F(EmbeddedContextWindow, OneSetOfGeometryForRePresentOnUnchangedPosition)
   Window()->PresentInEmbeddedModeOnThisFrame();
   Window()->OnPresentedInEmbeddedMode();
   Window()->PresentInEmbeddedModeOnThisFrame();
-  std::vector <nux::Geometry> present_list (WindowThread()->GetPresentationListGeometries());
+  std::vector <nux::Geometry> present_list(WindowThread()->GetPresentationListGeometries());
 
   ASSERT_EQ(1, present_list.size());
   EXPECT_EQ(present_list[0], Window()->GetAbsoluteGeometry());
@@ -625,7 +625,7 @@ TEST_F(EmbeddedContextWindow, TwoSetsOfGeometryForRePresentOnChangedPosition)
   Window()->OnPresentedInEmbeddedMode();
   Window()->PresentInEmbeddedModeOnThisFrame();
   Window()->SetBaseX(Window()->GetBaseX() + 1);
-  std::vector <nux::Geometry> present_list (WindowThread()->GetPresentationListGeometries());
+  std::vector <nux::Geometry> present_list(WindowThread()->GetPresentationListGeometries());
 
   ASSERT_EQ(2, present_list.size());
   EXPECT_EQ(present_list[0], Window()->GetAbsoluteGeometry());
@@ -639,24 +639,24 @@ TEST_F(EmbeddedContextWindow, QueueDrawAddsParentToPresentationList)
   layout->AddView(view, 1);
   Window()->SetLayout(layout);
   view->QueueDraw();
-  std::vector <nux::Geometry> present_list (WindowThread()->GetPresentationListGeometries());
+  std::vector <nux::Geometry> present_list(WindowThread()->GetPresentationListGeometries());
 
   ASSERT_EQ(1, present_list.size());
-  EXPECT_EQ (present_list[0], Window()->GetAbsoluteGeometry());
+  EXPECT_EQ(present_list[0], Window()->GetAbsoluteGeometry());
 }
 
 class EmbeddedContextMultiWindow : public EmbeddedContext
 {
   public:
 
-    virtual void SetUp ()
+    virtual void SetUp()
     {
       EmbeddedContext::SetUp();
     }
 
     const nux::ObjectPtr<nux::BaseWindow> & SpawnWindow()
     {
-      _base_windows.push_back(nux::ObjectPtr<nux::BaseWindow> (new nux::BaseWindow(TEXT(""))));
+      _base_windows.push_back(nux::ObjectPtr<nux::BaseWindow>(new nux::BaseWindow(TEXT(""))));
       _base_windows.back()->ShowWindow(true, false);
 
       /* QueueDraw will call PresentInEmbeddedModeOnThisFrame - we
@@ -678,7 +678,7 @@ class EmbeddedContextMultiWindow : public EmbeddedContext
 
 TEST_F(EmbeddedContextMultiWindow, PresentIfIntersectsRectOneWindow)
 {
-  nux::Geometry geo (0, 0, 100, 100);
+  nux::Geometry geo(0, 0, 100, 100);
   nux::ObjectPtr<nux::BaseWindow> window(SpawnWindow());
   window->SetGeometry(geo);
   WindowThread()->PresentWindowsIntersectingGeometryOnThisFrame(geo);
@@ -687,8 +687,8 @@ TEST_F(EmbeddedContextMultiWindow, PresentIfIntersectsRectOneWindow)
 
 TEST_F(EmbeddedContextMultiWindow, PresentOnlyOneWindow)
 {
-  nux::Geometry geo (0, 0, 100, 100);
-  nux::Geometry outside_geo (0, 101, 100, 100);
+  nux::Geometry geo(0, 0, 100, 100);
+  nux::Geometry outside_geo(0, 101, 100, 100);
   nux::ObjectPtr<nux::BaseWindow> window(SpawnWindow());
   nux::ObjectPtr<nux::BaseWindow> outside(SpawnWindow());
   window->SetGeometry(geo);
@@ -705,8 +705,8 @@ TEST_F(EmbeddedContextMultiWindow, PresentOnlyOneWindow)
 
 TEST_F(EmbeddedContextMultiWindow, PresentBoth)
 {
-  nux::Geometry geo (0, 0, 100, 101);
-  nux::Geometry other_geo (0, 100, 100, 100);
+  nux::Geometry geo(0, 0, 100, 101);
+  nux::Geometry other_geo(0, 100, 100, 100);
   nux::ObjectPtr<nux::BaseWindow> window(SpawnWindow());
   nux::ObjectPtr<nux::BaseWindow> other(SpawnWindow());
   window->SetGeometry(geo);
@@ -718,7 +718,7 @@ TEST_F(EmbeddedContextMultiWindow, PresentBoth)
 
 TEST_F(EmbeddedContextMultiWindow, ForeignFrameEndedPresentNone)
 {
-  nux::Geometry geo (0, 0, 100, 100);
+  nux::Geometry geo(0, 0, 100, 100);
   nux::ObjectPtr<nux::BaseWindow> window(SpawnWindow());
   window->SetGeometry(geo);
   WindowThread()->PresentWindowsIntersectingGeometryOnThisFrame(geo);
