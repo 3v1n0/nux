@@ -34,8 +34,11 @@ namespace nux
     Atom WM_WINDOW_TYPE_DOCK = 0;
     Atom WM_STATE = 0;
     Atom WM_TAKE_FOCUS = 0;
+    Atom WM_STRUT_PARTIAL = 0;
     Atom X_DND_AWARE = 0;
     Atom OVERLAY_STRUT = 0;
+
+    const unsigned STRUTS_SIZE = 12;
     const int X_DND_VERSION = 5;
 
     std::vector<Atom> WM_STATES;
@@ -131,7 +134,7 @@ namespace nux
     XRectangle         tmp_rect;
     int largestWidth = 0, largestHeight = 0;
     int screenWidth, screenHeight;
-    std::vector<long int> data(12, 0);
+    std::vector<long int> data(atom::STRUTS_SIZE, 0);
 
     /* Find the screen that this region intersects */
     tmp_rect.x = geometry_.x;
@@ -233,27 +236,23 @@ namespace nux
 
   void XInputWindow::SetStruts()
   {
-    std::vector<long int> data(GetStrutsData());
+    std::vector<long int> const& struts = GetStrutsData();
 
-    XChangeProperty(display_, window_,
-                    XInternAtom(display_, "_NET_WM_STRUT_PARTIAL", 0),
-                    XA_CARDINAL, 32, PropModeReplace,
-                    (unsigned char*) &data[0], 12);
+    XChangeProperty(display_, window_, atom::WM_STRUT_PARTIAL, XA_CARDINAL, 32,
+                    PropModeReplace, (unsigned char*) struts.data(), struts.size());
   }
 
   void XInputWindow::UnsetStruts()
   {
-    XDeleteProperty(display_, window_,
-                    XInternAtom(display_, "_NET_WM_STRUT_PARTIAL", 0));
+    XDeleteProperty(display_, window_, atom::WM_STRUT_PARTIAL);
   }
 
   void XInputWindow::SetOverlayStruts()
   {
-    std::vector<long int> data(GetStrutsData());
+    std::vector<long int> const& struts = GetStrutsData();
 
-    XChangeProperty(display_, window_, atom::OVERLAY_STRUT,
-                    XA_CARDINAL, 32, PropModeReplace,
-                    (unsigned char*) &data[0], 12);
+    XChangeProperty(display_, window_, atom::OVERLAY_STRUT, XA_CARDINAL, 32,
+                    PropModeReplace, (unsigned char*) struts.data(), struts.size());
   }
 
   void XInputWindow::UnsetOverlayStruts()
@@ -265,6 +264,9 @@ namespace nux
   {
     if (strutsEnabled_ == enable)
       return;
+
+    if (!atom::WM_STRUT_PARTIAL)
+      atom::WM_STRUT_PARTIAL = XInternAtom(display_, "_NET_WM_STRUT_PARTIAL", False);
 
     strutsEnabled_ = enable;
     if (enable)
@@ -284,7 +286,7 @@ namespace nux
       return;
 
     if (!atom::OVERLAY_STRUT)
-      atom::OVERLAY_STRUT = XInternAtom(display_, "_COMPIZ_NET_OVERLAY_STRUT", 0);
+      atom::OVERLAY_STRUT = XInternAtom(display_, "_COMPIZ_NET_OVERLAY_STRUT", False);
 
     overlayStrutsEnabled_ = enable;
     if (enable)
@@ -325,9 +327,8 @@ namespace nux
 
   void XInputWindow::EnableDnd()
   {
-    XChangeProperty(display_, window_, atom::X_DND_AWARE,
-                    XA_ATOM, 32, PropModeReplace,
-                    (unsigned char *) &atom::X_DND_VERSION, 1);
+    XChangeProperty(display_, window_, atom::X_DND_AWARE, XA_ATOM, 32,
+                    PropModeReplace, (unsigned char *) &atom::X_DND_VERSION, 1);
   }
 
   void XInputWindow::DisableDnd()
