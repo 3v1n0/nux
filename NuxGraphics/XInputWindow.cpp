@@ -24,10 +24,6 @@
 #include "GLThread.h"
 #include "XIMController.h"
 
-
-// Jay, what is this for?  It isn't referenced anywhere.
-#define xdnd_version 5
-
 namespace nux
 {
   std::vector<Window> XInputWindow::native_windows_;
@@ -35,11 +31,14 @@ namespace nux
   namespace atom
   {
     Atom WM_WINDOW_TYPE = 0;
+    Atom WM_WINDOW_TYPE_DOCK = 0;
     Atom WM_STATE = 0;
+    Atom WM_TAKE_FOCUS = 0;
+    Atom X_DND_AWARE = 0;
     Atom OVERLAY_STRUT = 0;
+    const int X_DND_VERSION = 5;
 
     std::vector<Atom> WM_STATES;
-    std::vector<Atom> WM_WINDOW_TYPE_DATA;
 
     void initialize(Display *dpy)
     {
@@ -47,9 +46,10 @@ namespace nux
         return;
 
       WM_WINDOW_TYPE = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE", False);
+      WM_WINDOW_TYPE_DOCK = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_DOCK", False);
       WM_STATE = XInternAtom(dpy, "_NET_WM_STATE", False);
-
-      WM_WINDOW_TYPE_DATA.push_back(XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_DOCK", False));
+      WM_TAKE_FOCUS = XInternAtom(dpy, "WM_TAKE_FOCUS", False);
+      X_DND_AWARE = XInternAtom(dpy, "XdndAware", False);
 
       WM_STATES.push_back(XInternAtom(dpy, "_NET_WM_STATE_STICKY", False));
       WM_STATES.push_back(XInternAtom(dpy, "_NET_WM_STATE_SKIP_TASKBAR", False));
@@ -96,7 +96,7 @@ namespace nux
                     (unsigned char *) atom::WM_STATES.data(), atom::WM_STATES.size());
 
     XChangeProperty(display_, window_, atom::WM_WINDOW_TYPE, XA_ATOM, 32, PropModeReplace,
-                    (unsigned char *) atom::WM_WINDOW_TYPE_DATA.data(), atom::WM_WINDOW_TYPE_DATA.size());
+                    (unsigned char *) &atom::WM_WINDOW_TYPE_DOCK, 1);
 
     XStoreName(display_, window_, title);
     EnsureInputs();
@@ -316,7 +316,6 @@ namespace nux
 
   void XInputWindow::EnableTakeFocus()
   {
-    Atom wmTakeFocus = XInternAtom(display_, "WM_TAKE_FOCUS", False);
     XWMHints* wmHints = NULL;
 
     wmHints = (XWMHints*) calloc(1, sizeof(XWMHints));
@@ -324,22 +323,19 @@ namespace nux
     wmHints->input = False;
     XSetWMHints(display_, window_, wmHints);
     free(wmHints);
-    XSetWMProtocols(display_, window_, &wmTakeFocus, 1);
+    XSetWMProtocols(display_, window_, &atom::WM_TAKE_FOCUS, 1);
   }
 
   void XInputWindow::EnableDnd()
   {
-    int version = 5;
-    XChangeProperty(display_, window_,
-                    XInternAtom(display_, "XdndAware", false),
+    XChangeProperty(display_, window_, atom::X_DND_AWARE,
                     XA_ATOM, 32, PropModeReplace,
-                    (unsigned char *) &version, 1);
+                    (unsigned char *) &atom::X_DND_VERSION, 1);
   }
 
   void XInputWindow::DisableDnd()
   {
-    XDeleteProperty(display_, window_,
-                    XInternAtom(display_, "XdndAware", false));
+    XDeleteProperty(display_, window_, atom::X_DND_AWARE);
   }
 
   //! Set the position and size of the window
