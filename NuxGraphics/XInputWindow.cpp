@@ -316,13 +316,10 @@ namespace nux
 
   void XInputWindow::EnableTakeFocus()
   {
-    XWMHints* wmHints = NULL;
-
-    wmHints = (XWMHints*) calloc(1, sizeof(XWMHints));
-    wmHints->flags |= InputHint;
-    wmHints->input = False;
-    XSetWMHints(display_, window_, wmHints);
-    free(wmHints);
+    XWMHints wmHints;
+    wmHints.flags = InputHint;
+    wmHints.input = False;
+    XSetWMHints(display_, window_, &wmHints);
     XSetWMProtocols(display_, window_, &atom::WM_TAKE_FOCUS, 1);
   }
 
