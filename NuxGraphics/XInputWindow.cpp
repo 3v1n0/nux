@@ -34,9 +34,27 @@ namespace nux
 
   namespace atom
   {
+    Atom WM_WINDOW_TYPE = 0;
+    Atom WM_STATE = 0;
     Atom OVERLAY_STRUT = 0;
-    std::vector<Atom> WM_WINDOW_TYPE;
-    std::vector<Atom> WM_STATE;
+
+    std::vector<Atom> WM_STATES;
+    std::vector<Atom> WM_WINDOW_TYPE_DATA;
+
+    void initialize(Display *dpy)
+    {
+      if (WM_WINDOW_TYPE)
+        return;
+
+      WM_WINDOW_TYPE = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE", False);
+      WM_STATE = XInternAtom(dpy, "_NET_WM_STATE", False);
+
+      WM_WINDOW_TYPE_DATA.push_back(XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_DOCK", False));
+
+      WM_STATES.push_back(XInternAtom(dpy, "_NET_WM_STATE_STICKY", False));
+      WM_STATES.push_back(XInternAtom(dpy, "_NET_WM_STATE_SKIP_TASKBAR", False));
+      WM_STATES.push_back(XInternAtom(dpy, "_NET_WM_STATE_SKIP_PAGER", False));
+    }
   }
 
   XInputWindow::XInputWindow(const char* title,
@@ -72,26 +90,13 @@ namespace nux
 
     native_windows_.push_back(window_);
 
-    g_print("NUX Window %p, window %lu. We have wm state: %d\n",this,window_,!atom::WM_STATE.empty());
-    if (atom::WM_STATE.empty())
-    {
-      atom::WM_STATE.push_back(XInternAtom(display_, "_NET_WM_STATE_STICKY", 0));
-      atom::WM_STATE.push_back(XInternAtom(display_, "_NET_WM_STATE_SKIP_TASKBAR", 0));
-      atom::WM_STATE.push_back(XInternAtom(display_, "_NET_WM_STATE_SKIP_PAGER", 0));
-    }
+    atom::initialize(display_);
 
-    XChangeProperty(display_, window_,
-                    XInternAtom(display_, "_NET_WM_STATE", 0),
-                    XA_ATOM, 32, PropModeReplace,
-                    (unsigned char *) atom::WM_STATE.data(), atom::WM_STATE.size());
+    XChangeProperty(display_, window_, atom::WM_STATE, XA_ATOM, 32, PropModeReplace,
+                    (unsigned char *) atom::WM_STATES.data(), atom::WM_STATES.size());
 
-    if (atom::WM_WINDOW_TYPE.empty())
-      atom::WM_WINDOW_TYPE.push_back(XInternAtom(display_, "_NET_WM_WINDOW_TYPE_DOCK", 0));
-
-    XChangeProperty(display_, window_,
-                    XInternAtom(display_, "_NET_WM_WINDOW_TYPE", 0),
-                    XA_ATOM, 32, PropModeReplace,
-                    (unsigned char *) atom::WM_WINDOW_TYPE.data(), 1);
+    XChangeProperty(display_, window_, atom::WM_WINDOW_TYPE, XA_ATOM, 32, PropModeReplace,
+                    (unsigned char *) atom::WM_WINDOW_TYPE_DATA.data(), atom::WM_WINDOW_TYPE_DATA.size());
 
     XStoreName(display_, window_, title);
     EnsureInputs();
