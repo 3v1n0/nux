@@ -32,6 +32,13 @@ namespace nux
 {
   std::vector<Window> XInputWindow::native_windows_;
 
+  namespace atom
+  {
+    Atom OVERLAY_STRUT = 0;
+    std::vector<Atom> WM_WINDOW_TYPE;
+    std::vector<Atom> WM_STATE;
+  }
+
   XInputWindow::XInputWindow(const char* title,
                              bool        take_focus,
                              int         override_redirect)
@@ -41,7 +48,6 @@ namespace nux
     , geometry_(0, 0, 1, 1)
     , shown_(false)
     , mapped_(false)
-    , overlay_strut_atom_(0)
   {
     XSetWindowAttributes attrib;
 
@@ -66,23 +72,26 @@ namespace nux
 
     native_windows_.push_back(window_);
 
-    Atom data[32];
-    int     i = 0;
-    data[i++] = XInternAtom(display_, "_NET_WM_STATE_STICKY", 0);
-    data[i++] = XInternAtom(display_, "_NET_WM_STATE_SKIP_TASKBAR", 0);
-    data[i++] = XInternAtom(display_, "_NET_WM_STATE_SKIP_PAGER", 0);
+    g_print("NUX Window %p, window %lu. We have wm state: %d\n",this,window_,!atom::WM_STATE.empty());
+    if (atom::WM_STATE.empty())
+    {
+      atom::WM_STATE.push_back(XInternAtom(display_, "_NET_WM_STATE_STICKY", 0));
+      atom::WM_STATE.push_back(XInternAtom(display_, "_NET_WM_STATE_SKIP_TASKBAR", 0));
+      atom::WM_STATE.push_back(XInternAtom(display_, "_NET_WM_STATE_SKIP_PAGER", 0));
+    }
 
     XChangeProperty(display_, window_,
                     XInternAtom(display_, "_NET_WM_STATE", 0),
                     XA_ATOM, 32, PropModeReplace,
-                    (unsigned char *) data, i);
+                    (unsigned char *) atom::WM_STATE.data(), atom::WM_STATE.size());
 
-    Atom type[1];
-    type[0] = XInternAtom(display_, "_NET_WM_WINDOW_TYPE_DOCK", 0);
+    if (atom::WM_WINDOW_TYPE.empty())
+      atom::WM_WINDOW_TYPE.push_back(XInternAtom(display_, "_NET_WM_WINDOW_TYPE_DOCK", 0));
+
     XChangeProperty(display_, window_,
                     XInternAtom(display_, "_NET_WM_WINDOW_TYPE", 0),
                     XA_ATOM, 32, PropModeReplace,
-                    (unsigned char *) type, 1);
+                    (unsigned char *) atom::WM_WINDOW_TYPE.data(), 1);
 
     XStoreName(display_, window_, title);
     EnsureInputs();
@@ -237,14 +246,14 @@ namespace nux
   {
     std::vector<long int> data(GetStrutsData());
 
-    XChangeProperty(display_, window_, overlay_strut_atom_,
+    XChangeProperty(display_, window_, atom::OVERLAY_STRUT,
                     XA_CARDINAL, 32, PropModeReplace,
                     (unsigned char*) &data[0], 12);
   }
 
   void XInputWindow::UnsetOverlayStruts()
   {
-    XDeleteProperty(display_, window_, overlay_strut_atom_);
+    XDeleteProperty(display_, window_, atom::OVERLAY_STRUT);
   }
 
   void XInputWindow::EnableStruts(bool enable)
@@ -269,8 +278,8 @@ namespace nux
     if (overlayStrutsEnabled_ == enable)
       return;
 
-    if (!overlay_strut_atom_)
-      overlay_strut_atom_ = XInternAtom(display_, "_COMPIZ_NET_OVERLAY_STRUT", 0);
+    if (!atom::OVERLAY_STRUT)
+      atom::OVERLAY_STRUT = XInternAtom(display_, "_COMPIZ_NET_OVERLAY_STRUT", 0);
 
     overlayStrutsEnabled_ = enable;
     if (enable)
