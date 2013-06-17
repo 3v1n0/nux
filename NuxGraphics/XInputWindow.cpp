@@ -33,6 +33,8 @@ namespace nux
     Atom WM_WINDOW_TYPE = 0;
     Atom WM_WINDOW_TYPE_DOCK = 0;
     Atom WM_STATE = 0;
+    Atom WM_PID;
+    Atom WM_CLIENT_MACHINE;
     Atom WM_TAKE_FOCUS = 0;
     Atom WM_STRUT_PARTIAL = 0;
     Atom X_DND_AWARE = 0;
@@ -51,6 +53,8 @@ namespace nux
       WM_WINDOW_TYPE = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE", False);
       WM_WINDOW_TYPE_DOCK = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_DOCK", False);
       WM_STATE = XInternAtom(dpy, "_NET_WM_STATE", False);
+      WM_PID = XInternAtom(dpy, "_NET_WM_PID", False);
+      WM_CLIENT_MACHINE = XInternAtom(dpy, "WM_CLIENT_MACHINE", False);
       WM_TAKE_FOCUS = XInternAtom(dpy, "WM_TAKE_FOCUS", False);
       X_DND_AWARE = XInternAtom(dpy, "XdndAware", False);
 
@@ -71,6 +75,7 @@ namespace nux
     , mapped_(false)
   {
     XSetWindowAttributes attrib;
+    char hostname[256];
 
     attrib.override_redirect = override_redirect;
     attrib.event_mask = KeyPressMask        |
@@ -100,6 +105,17 @@ namespace nux
 
     XChangeProperty(display_, window_, atom::WM_WINDOW_TYPE, XA_ATOM, 32, PropModeReplace,
                     (unsigned char *) &atom::WM_WINDOW_TYPE_DOCK, 1);
+
+    if (gethostname(hostname, sizeof(hostname)) > -1)
+    {
+      hostname[sizeof(hostname)-1] = '\0';
+      XChangeProperty(display_, window_, atom::WM_CLIENT_MACHINE, XA_STRING, 8,
+                      PropModeReplace, (unsigned char *) hostname, strlen(hostname));
+
+      pid_t pid = getpid();
+      XChangeProperty(display_, window_, atom::WM_PID, XA_CARDINAL, 32,
+                      PropModeReplace, (unsigned char *) &pid, 1);
+    }
 
     XStoreName(display_, window_, title);
     EnsureInputs();
