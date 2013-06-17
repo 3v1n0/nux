@@ -356,6 +356,7 @@ AC_SUBST(COVERAGE_LDFLAGS)
 dnl ===========================================================================
 
 # sets up doxygen
+m4_include([m4/ac_doxygen.m4])
 DX_DOXYGEN_FEATURE(ON)
 DX_HTML_FEATURE(ON)
 DX_CHM_FEATURE(OFF)
