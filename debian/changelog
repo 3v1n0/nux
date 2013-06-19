@@ -1,3 +1,19 @@
+nux (4.0.2daily13.06.19-0ubuntu1) saucy; urgency=low
+
+  [ Marco Trevisan (Treviño) ]
+  * configure.ac: fix autoreconf by including the missing doxygen m4
+    macros. (LP: #1191810)
+  * XinputWindow: cache the X Atoms we use for all the nux windows This
+    reduces the time to create a window, as we call XInternAtom just
+    once.
+  * XInputWindow: define _NET_WM_PID and WM_CLIENT_MACHINE for nux
+    windows This makes them to be matched properly.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 797
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 19 Jun 2013 04:28:40 +0000
+
 nux (4.0.2daily13.06.05-0ubuntu1) saucy; urgency=low
 
   [ Stephen M. Webb ]
