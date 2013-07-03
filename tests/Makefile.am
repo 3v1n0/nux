@@ -189,10 +189,7 @@ gtest_nuxgraphics_LDADD = \
   libgtest.a
 
 gtest_nuxgraphics_LDFLAGS = \
-  -lpthread -lgmock \
-  -lboost_filesystem -lboost_system
-
-
+  -lgmock
 
 TestFlags = -I$(srcdir) \
   -I$(top_srcdir) \

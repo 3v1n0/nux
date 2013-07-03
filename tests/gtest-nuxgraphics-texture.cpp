@@ -19,7 +19,8 @@ class TestTextures : public ::testing::Test
 {
 public:
   virtual void SetUp()
-  { 
+  {
+    g_unsetenv("NUX_FALLBACK_TEXTURE");
     nux::NuxInitialize(0);
     wnd_thread.reset(nux::CreateNuxWindow("nux::TestTextures", 300, 200, nux::WINDOWSTYLE_NORMAL, NULL, false, NULL, NULL));
   }
@@ -50,6 +51,48 @@ TEST_F(TestTextures, TestTextureSizes)
     delete bitmap;
     size*=2;
   }
+}
+
+TEST_F(TestTextures, FallbackTexture2DFromFile)
+{
+  ASSERT_THAT(CreateTexture2DFromFile(nullptr, -1, false), IsNull());
+  g_setenv("NUX_FALLBACK_TEXTURE", "TRUE", TRUE);
+  ASSERT_THAT(CreateTexture2DFromFile(nullptr, -1, false), NotNull());
+}
+
+TEST_F(TestTextures, FallbackTexture2DFromPixbuf)
+{
+  ASSERT_THAT(CreateTexture2DFromPixbuf(nullptr, false), IsNull());
+  g_setenv("NUX_FALLBACK_TEXTURE", "TRUE", TRUE);
+  ASSERT_THAT(CreateTexture2DFromPixbuf(nullptr, false), NotNull());
+}
+
+TEST_F(TestTextures, FallbackTextureFromPixbuf)
+{
+  ASSERT_THAT(CreateTextureFromPixbuf(nullptr), IsNull());
+  g_setenv("NUX_FALLBACK_TEXTURE", "TRUE", TRUE);
+  ASSERT_THAT(CreateTextureFromPixbuf(nullptr), NotNull());
+}
+
+TEST_F(TestTextures, FallbackTextureFromFile)
+{
+  ASSERT_THAT(CreateTextureFromFile(nullptr), IsNull());
+  g_setenv("NUX_FALLBACK_TEXTURE", "TRUE", TRUE);
+  ASSERT_THAT(CreateTextureFromFile(nullptr), NotNull());
+}
+
+TEST_F(TestTextures, FallbackTextureFromBitmapData)
+{
+  ASSERT_THAT(CreateTextureFromBitmapData(nullptr), IsNull());
+  g_setenv("NUX_FALLBACK_TEXTURE", "TRUE", TRUE);
+  ASSERT_THAT(CreateTextureFromBitmapData(nullptr), NotNull());
+}
+
+TEST_F(TestTextures, FallbackTextureLoadFromFile)
+{
+  ASSERT_THAT(LoadTextureFromFile(std::string()), IsNull());
+  g_setenv("NUX_FALLBACK_TEXTURE", "TRUE", TRUE);
+  ASSERT_THAT(LoadTextureFromFile(std::string()), NotNull());
 }
 
 }
