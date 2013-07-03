@@ -25,9 +25,11 @@
 #include "GpuDevice.h"
 #include "GraphicsEngine.h"
 #include "GLTextureResourceManager.h"
+#include "NuxCore/Logger.h"
 
 namespace nux
 {
+  DECLARE_LOGGER(logger, "nux.gltexture.resource.manager");
 
   NUX_IMPLEMENT_OBJECT_TYPE(BaseTexture);
   NUX_IMPLEMENT_OBJECT_TYPE(Texture2D);
@@ -45,10 +47,17 @@ namespace nux
 
 namespace
 {
-  nux::BaseTexture* get_null_texture()
+  nux::BaseTexture* get_null_texture(std::string const& extra_msg = "")
   {
     if (!g_getenv("NUX_FALLBACK_TEXTURE"))
+    {
+      LOG_ERROR(logger) << "Invalid target, impossible to generate a new texture."
+                        << " " << extra_msg;
       return nullptr;
+    }
+
+    LOG_WARN(logger) << "Invalid target, impossible to generate a new valid texture."
+                     << " " << extra_msg << ". Using fallback mode...";
 
     return GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
   }
@@ -71,7 +80,7 @@ namespace
 
   BaseTexture* CreateTexture2DFromPixbuf(GdkPixbuf* pixbuf, bool premultiply)
   {
-    NUX_RETURN_VALUE_IF_NULL(pixbuf, get_null_texture());
+    NUX_RETURN_VALUE_IF_NULL(pixbuf, get_null_texture("Null Pixbuf"));
     const unsigned int rowstride = gdk_pixbuf_get_rowstride(pixbuf);
     const unsigned int width = gdk_pixbuf_get_width(pixbuf);
     const unsigned int height = gdk_pixbuf_get_height(pixbuf);
@@ -172,7 +181,7 @@ namespace
   BaseTexture* CreateTexture2DFromFile(const char* filename, int max_size,
                                        bool premultiply)
   {
-    NUX_RETURN_VALUE_IF_NULL(filename, get_null_texture());
+    NUX_RETURN_VALUE_IF_NULL(filename, get_null_texture("Empty filename"));
 
     GError* error = NULL;
     GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file_at_size(filename, max_size, max_size, &error);
@@ -184,16 +193,16 @@ namespace
     }
     else
     {
-      nuxDebugMsg("%s", error->message);
+      std::string error_msg = (error->message ? error->message : "Unknown error");
       g_error_free(error);
-      return get_null_texture();
+      return get_null_texture("Impossible to generate a pixbuf: "+error_msg);
     }
   }
 
   BaseTexture* CreateTextureFromPixbuf(GdkPixbuf* pixbuf)
   {
     NBitmapData* BitmapData = LoadGdkPixbuf(pixbuf);
-    NUX_RETURN_VALUE_IF_NULL(BitmapData, get_null_texture());
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, get_null_texture("Invalid Pixbuf"));
 
     if (BitmapData->IsTextureData())
     {
@@ -202,14 +211,14 @@ namespace
       return texture;
     }
     delete BitmapData;
-    return get_null_texture();
+    return get_null_texture("Invalid Pixbuf");
   }
 
   BaseTexture* CreateTextureFromFile(const char* TextureFilename)
   {
     BaseTexture* texture = NULL;
     NBitmapData* BitmapData = LoadImageFile(TextureFilename);
-    NUX_RETURN_VALUE_IF_NULL(BitmapData, get_null_texture());
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, get_null_texture("No data for '"+(TextureFilename ? std::string(TextureFilename) : "<null>")+"'"));
 
     if (BitmapData->IsTextureData())
     {
@@ -244,7 +253,7 @@ namespace
 
   BaseTexture* CreateTextureFromBitmapData(const NBitmapData* BitmapData)
   {
-    NUX_RETURN_VALUE_IF_NULL(BitmapData, get_null_texture());
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, get_null_texture("Invalid BitmapData"));
 
     if (BitmapData->IsTextureData())
     {
@@ -276,9 +285,7 @@ namespace
   BaseTexture* LoadTextureFromFile(const std::string& filename)
   {
     NBitmapData* bitmap = LoadImageFile(filename.c_str());
-
-    if (!bitmap)
-      return get_null_texture();
+    NUX_RETURN_VALUE_IF_NULL(bitmap, get_null_texture("No Data for '"+filename+"'"));
 
     BaseTexture* texture = CreateTextureFromBitmapData(bitmap);
     delete bitmap;
