@@ -43,6 +43,17 @@ namespace nux
   NUX_IMPLEMENT_OBJECT_TYPE(CachedTextureVolume);
   NUX_IMPLEMENT_OBJECT_TYPE(CachedTextureFrameAnimation);
 
+namespace
+{
+  nux::BaseTexture* get_null_texture()
+  {
+    if (!g_getenv("NUX_FALLBACK_TEXTURE"))
+      return nullptr;
+
+    return GetGraphicsDisplay()->GetGpuDevice()->CreateSystemCapableTexture();
+  }
+}
+
   /*! Up cast a Resource.
       The source must be derived from the destination type
       @param   T       Destination type.
@@ -60,6 +71,9 @@ namespace nux
 
   BaseTexture* CreateTexture2DFromPixbuf(GdkPixbuf* pixbuf, bool premultiply)
   {
+    if (!pixbuf)
+      return get_null_texture();
+
     const unsigned int rowstride = gdk_pixbuf_get_rowstride(pixbuf);
     const unsigned int width = gdk_pixbuf_get_width(pixbuf);
     const unsigned int height = gdk_pixbuf_get_height(pixbuf);
@@ -172,7 +186,7 @@ namespace nux
     {
       nuxDebugMsg("%s", error->message);
       g_error_free(error);
-      return NULL;
+      return get_null_texture();
     }
   }
 
@@ -188,13 +202,12 @@ namespace nux
       return texture;
     }
     delete BitmapData;
-    return 0;
+    return get_null_texture();
   }
 
   BaseTexture* CreateTextureFromFile(const char* TextureFilename)
   {
     BaseTexture* texture = NULL;
-
     NBitmapData* BitmapData = LoadImageFile(TextureFilename);
     NUX_RETURN_VALUE_IF_NULL(BitmapData, 0);
 
@@ -222,6 +235,7 @@ namespace nux
     else
     {
       nuxDebugMsg("[CreateTextureFromFile] Invalid texture format type for file(%s)", TextureFilename);
+      texture = get_null_texture();
     }
 
     delete BitmapData;
@@ -231,7 +245,7 @@ namespace nux
   BaseTexture* CreateTextureFromBitmapData(const NBitmapData* BitmapData)
   {
     if (BitmapData == 0)
-      return 0;
+      return get_null_texture();
 
     if (BitmapData->IsTextureData())
     {
@@ -257,15 +271,15 @@ namespace nux
       texture->Update(BitmapData);
       return texture;
     }
-    return 0;
+    return get_null_texture();
   }
 
   BaseTexture* LoadTextureFromFile(const std::string& filename)
   {
     NBitmapData* bitmap = LoadImageFile(filename.c_str());
 
-    if (bitmap == NULL)
-      return NULL;
+    if (!bitmap)
+      return get_null_texture();
 
     BaseTexture* texture = CreateTextureFromBitmapData(bitmap);
     delete bitmap;
