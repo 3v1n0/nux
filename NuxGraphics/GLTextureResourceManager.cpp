@@ -172,8 +172,11 @@ namespace
   }
 
   BaseTexture* CreateTexture2DFromFile(const char* filename, int max_size,
-                                        bool premultiply)
+                                       bool premultiply)
   {
+    if (!filename)
+      return get_null_texture();
+
     GError* error = NULL;
     GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file_at_size(filename, max_size, max_size, &error);
     if (error == NULL)
