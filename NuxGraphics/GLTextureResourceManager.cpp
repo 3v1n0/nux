@@ -71,9 +71,7 @@ namespace
 
   BaseTexture* CreateTexture2DFromPixbuf(GdkPixbuf* pixbuf, bool premultiply)
   {
-    if (!pixbuf)
-      return get_null_texture();
-
+    NUX_RETURN_VALUE_IF_NULL(pixbuf, get_null_texture());
     const unsigned int rowstride = gdk_pixbuf_get_rowstride(pixbuf);
     const unsigned int width = gdk_pixbuf_get_width(pixbuf);
     const unsigned int height = gdk_pixbuf_get_height(pixbuf);
@@ -174,8 +172,7 @@ namespace
   BaseTexture* CreateTexture2DFromFile(const char* filename, int max_size,
                                        bool premultiply)
   {
-    if (!filename)
-      return get_null_texture();
+    NUX_RETURN_VALUE_IF_NULL(filename, get_null_texture());
 
     GError* error = NULL;
     GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file_at_size(filename, max_size, max_size, &error);
@@ -196,7 +193,7 @@ namespace
   BaseTexture* CreateTextureFromPixbuf(GdkPixbuf* pixbuf)
   {
     NBitmapData* BitmapData = LoadGdkPixbuf(pixbuf);
-    NUX_RETURN_VALUE_IF_NULL(BitmapData, 0);
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, get_null_texture());
 
     if (BitmapData->IsTextureData())
     {
@@ -212,7 +209,7 @@ namespace
   {
     BaseTexture* texture = NULL;
     NBitmapData* BitmapData = LoadImageFile(TextureFilename);
-    NUX_RETURN_VALUE_IF_NULL(BitmapData, 0);
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, get_null_texture());
 
     if (BitmapData->IsTextureData())
     {
@@ -247,8 +244,7 @@ namespace
 
   BaseTexture* CreateTextureFromBitmapData(const NBitmapData* BitmapData)
   {
-    if (BitmapData == 0)
-      return get_null_texture();
+    NUX_RETURN_VALUE_IF_NULL(BitmapData, get_null_texture());
 
     if (BitmapData->IsTextureData())
     {
