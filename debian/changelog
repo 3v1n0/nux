@@ -1,3 +1,16 @@
+nux (4.0.2+13.10.20130705-0ubuntu1) saucy; urgency=low
+
+  [ Marco Trevisan (Treviño) ]
+  * GLTextureResourceManager: always return an empty (but non-NULL)
+    texture if env var is set Specifically, if NUX_FALLBACK_TEXTURE env
+    variable is set, then we always try to generate a valid texture.
+    This is nice for testing purposes. (LP: #1197561)
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 799
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 05 Jul 2013 04:02:36 +0000
+
 nux (4.0.2daily13.06.19-0ubuntu1) saucy; urgency=low
 
   [ Marco Trevisan (Treviño) ]
