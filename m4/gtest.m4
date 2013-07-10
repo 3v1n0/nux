@@ -98,14 +98,14 @@ AC_DEFUN([CHECK_GTEST],
 
     AS_IF([test x$have_gtest = xyes],[
       ax_save_IFS="$IFS"; IFS=$PATH_SEPARATOR
-      for prefix in $gtest_prefix_path; do
+      for ax_prefix in $gtest_prefix_path; do
         IFS=$ax_save_IFS
-        AC_CHECK_FILES([$prefix/src/gtest-all.cc],
+        AC_CHECK_FILES([$ax_prefix/src/gtest-all.cc],
                        [have_gtest=yes],
                        [have_gtest=no])
         AS_IF([test x$have_gtest = xyes],[
-          AC_SUBST([GTEST_CPPFLAGS], "$GTEST_CPPFLAGS -I$prefix")
-          AC_SUBST([GTEST_PREFIX],[$prefix])
+          AC_SUBST([GTEST_CPPFLAGS], "$GTEST_CPPFLAGS -I$ax_prefix")
+          AC_SUBST([GTEST_PREFIX],[$ax_prefix])
           break
         ])
       done
