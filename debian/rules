@@ -23,9 +23,8 @@ endif
 NUX_ABIVERSION := $(shell sed -rn 's/^\#define[[:space:]]+NUX_ABIVERSION[[:space:]]+//p' Nux/ABI.h )
 
 override_dh_install:
-	rm debian/tmp/usr/lib/*/*la
 	rm -rf debian/tmp/usr/share/nux/gputests/
-	dh_install --fail-missing
+	dh_install --fail-missing -X.la
 
 override_dh_auto_test:
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
