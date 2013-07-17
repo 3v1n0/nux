@@ -77,6 +77,8 @@ namespace nux
     , m_GraphicsContext(0)
     , m_Style(WINDOWSTYLE_NORMAL)
     , _drag_display(NULL)
+    , _drag_window(0)
+    , _drag_source(0)
     , _drag_drop_timestamp(0)
     , _dnd_source_data(NULL)
     , _dnd_source_window(0)
