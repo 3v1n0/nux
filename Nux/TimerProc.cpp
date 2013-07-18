@@ -112,7 +112,7 @@ namespace nux
     return *this;
   }
 
-  std::shared_ptr<TimerObject> TimerHandle::operator->() const
+  std::shared_ptr<TimerObject> const& TimerHandle::operator->() const
   {
     return m_d;
   }

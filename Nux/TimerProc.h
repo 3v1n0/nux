@@ -48,7 +48,7 @@ namespace nux
     TimerHandle(const TimerHandle &);
 
     TimerHandle &operator = (const TimerHandle &);
-    std::shared_ptr<TimerObject> operator->() const;
+    std::shared_ptr<TimerObject> const& operator->() const;
     bool operator==(TimerHandle const& h) const;
 
     bool IsValid() const; //!<deprecated. use Activated().
