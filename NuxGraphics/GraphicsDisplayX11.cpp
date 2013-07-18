@@ -47,7 +47,7 @@ namespace nux
     , m_X11Window(0)
     , m_X11VisualInfo(NULL)
     , parent_window_(0)
-    , m_GLCtx(0)
+    , m_GLCtx(NULL)
 #ifndef NUX_OPENGLES_20
     , glx_window_(0)
 #endif
@@ -321,6 +321,7 @@ namespace nux
       }
 
       // Create OpenGL Context.
+      if (m_GLCtx) glXDestroyContext(m_X11Display, m_GLCtx);
       m_GLCtx = glXCreateContext(m_X11Display, m_X11VisualInfo, 0, GL_TRUE);
 
       m_X11Colormap = XCreateColormap(m_X11Display,
@@ -612,6 +613,7 @@ namespace nux
       m_X11VisualInfo = 0;
 
       /* Create a GLX context for OpenGL rendering */
+      if (m_GLCtx) glXDestroyContext(m_X11Display, m_GLCtx);
       m_GLCtx = glXCreateNewContext(m_X11Display, _fb_config, GLX_RGBA_TYPE, NULL, True);
 
       if (m_GLCtx == 0)
@@ -2370,6 +2372,9 @@ namespace nux
 
   char * GraphicsDisplay::GetDndData(char *property)
   {
+    if (!_drag_display)
+      return NULL;
+
     if (_dnd_is_drag_source)
     {
       int size, format;
