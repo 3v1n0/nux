@@ -22,8 +22,6 @@
 #ifndef NUXCORE_PROPERTY_INL_H
 #define NUXCORE_PROPERTY_INL_H
 
-using namespace std::placeholders;
-
 namespace nux {
 
 template <typename VALUE_TYPE>
@@ -54,13 +52,15 @@ void PropertyChangedSignal<VALUE_TYPE>::EmitChanged(VALUE_TYPE const& new_value)
 template <typename VALUE_TYPE>
 Property<VALUE_TYPE>::Property()
   : value_(VALUE_TYPE())
-  , setter_function_(std::bind(&Property<VALUE_TYPE>::DefaultSetter, this, _1, _2))
+  , setter_function_(std::bind(&Property<VALUE_TYPE>::DefaultSetter, this,
+                               std::placeholders::_1, std::placeholders::_2))
 {}
 
 template <typename VALUE_TYPE>
 Property<VALUE_TYPE>::Property(VALUE_TYPE const& initial)
   : value_(initial)
-  , setter_function_(std::bind(&Property<VALUE_TYPE>::DefaultSetter, this, _1, _2))
+  , setter_function_(std::bind(&Property<VALUE_TYPE>::DefaultSetter, this,
+                               std::placeholders::_1, std::placeholders::_2))
 {}
 
 template <typename VALUE_TYPE>
@@ -171,7 +171,8 @@ void ROProperty<VALUE_TYPE>::SetGetterFunction(GetterFunction getter_function)
 template <typename VALUE_TYPE>
 RWProperty<VALUE_TYPE>::RWProperty()
   : getter_function_(std::bind(&RWProperty<VALUE_TYPE>::DefaultGetter, this))
-  , setter_function_(std::bind(&RWProperty<VALUE_TYPE>::DefaultSetter, this, _1))
+  , setter_function_(std::bind(&RWProperty<VALUE_TYPE>::DefaultSetter, this,
+                               std::placeholders::_1))
 {}
 
 template <typename VALUE_TYPE>
