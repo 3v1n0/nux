@@ -32,11 +32,11 @@ AC_DEFUN([CHECK_GTEST],
 
   AC_ARG_WITH([gtest-source-path],
               [AS_HELP_STRING([--with-gtest-source-path],
-                              [location of the Google test sources, defaults to /usr/src/gtest])],
+                              [location of the Google test sources, defaults to /usr/src/gmock/gtest])],
               [GTEST_SOURCE="$withval"],
-              [GTEST_SOURCE="/usr/src/gtest"])
+              [GTEST_SOURCE="/usr/src/gmock/gtest"])
 
-  GTEST_CPPFLAGS="$GTEST_CPPFLAGS -I$GTEST_SOURCE"
+  GTEST_CPPFLAGS="$GTEST_CPPFLAGS -I$GTEST_SOURCE -I$GTEST_SOURCE/include"
 
   AC_LANG_PUSH([C++])
 
@@ -57,3 +57,37 @@ AC_DEFUN([CHECK_GTEST],
         [have_gtest=no])
 ]) # CHECK_GTEST
 
+
+AC_DEFUN([CHECK_GMOCK],
+[
+  AC_ARG_WITH([gmock-include-path],
+              [AS_HELP_STRING([--with-gmock-include-path],
+                              [location of the Google mock headers])],
+                [GMOCK_CPPFLAGS="-I$withval"])
+
+  AC_ARG_WITH([gmock-source-path],
+              [AS_HELP_STRING([--with-gmock-source-path],
+                              [location of the Google test mock, defaults to /usr/src/gmock])],
+              [GMOCK_SOURCE="$withval"],
+              [GMOCK_SOURCE="/usr/src/gmock"])
+
+  GMOCK_CPPFLAGS="$GMOCK_CPPFLAGS -I$GMOCK_SOURCE -I$GMOCK_SOURCE/gtest/include"
+
+  AC_LANG_PUSH([C++])
+
+  tmp_CPPFLAGS="$CPPFLAGS"
+  CPPFLAGS="$CPPFLAGS $GMOCK_CPPFLAGS"
+
+  AC_CHECK_HEADER([gmock/gmock.h])
+
+  CPPFLAGS="$tmp_CPPFLAGS"
+
+  AC_LANG_POP
+
+  AS_IF([test -f $GMOCK_SOURCE/src/gmock-all.cc && test -f $GMOCK_SOURCE/src/gmock_main.cc],
+        [have_gmock_source=yes], [have_gmock_source=no])
+
+  AS_IF([test "x$ac_cv_header_gmock_gmock_h" = "xyes" && test "x$have_gmock_source" = "xyes"],
+        [have_gmock=yes] [AC_SUBST(GMOCK_CPPFLAGS)] [AC_SUBST(GMOCK_SOURCE)],
+        [have_gmock=no])
+]) # CHECK_GMOCK
