@@ -27,9 +27,7 @@
 #include <string>
 #include <map>
 #include <sigc++/signal.h>
-#if __cplusplus >= 201100L || defined (__GXX_EXPERIMENTAL_CXX0X__)
 #include <functional>
-#endif
 
 /**
  * Much of this property work is based on the work by Lois Goldthwaite,
@@ -71,11 +69,7 @@ class Property : public PropertyChangedSignal<VALUE_TYPE>
 public:
   typedef VALUE_TYPE ValueType;
   typedef PropertyChangedSignal<VALUE_TYPE> SignalBase;
-#if __cplusplus >= 201100L || defined (__GXX_EXPERIMENTAL_CXX0X__)
   typedef std::function<bool(VALUE_TYPE&, VALUE_TYPE const&)> SetterFunction;
-#else
-  typedef sigc::slot<bool, VALUE_TYPE&, VALUE_TYPE const&> SetterFunction;
-#endif
 
   Property();
   explicit Property(VALUE_TYPE const& initial);
@@ -119,11 +113,7 @@ class ROProperty : public PropertyChangedSignal<VALUE_TYPE>
 {
 public:
   typedef VALUE_TYPE ValueType;
-#if __cplusplus >= 201100L || defined (__GXX_EXPERIMENTAL_CXX0X__)
   typedef std::function<VALUE_TYPE()> GetterFunction;
-#else
-  typedef sigc::slot<VALUE_TYPE> GetterFunction;
-#endif
 
   ROProperty();
   explicit ROProperty(GetterFunction getter_function);
@@ -165,13 +155,8 @@ class RWProperty : public PropertyChangedSignal<VALUE_TYPE>
 public:
   typedef VALUE_TYPE ValueType;
   typedef PropertyChangedSignal<VALUE_TYPE> SignalBase;
-#if __cplusplus >= 201100L || defined (__GXX_EXPERIMENTAL_CXX0X__)
   typedef std::function<bool(VALUE_TYPE const&)> SetterFunction;
   typedef std::function<VALUE_TYPE()> GetterFunction;
-#else
-  typedef sigc::slot<bool, VALUE_TYPE const&> SetterFunction;
-  typedef sigc::slot<VALUE_TYPE> GetterFunction;
-#endif
 
   RWProperty();
   RWProperty(GetterFunction getter_function, SetterFunction setter_function);
