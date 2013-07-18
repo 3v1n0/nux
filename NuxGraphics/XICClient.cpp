@@ -62,6 +62,8 @@ void XICClient::SetupXIMStyle(XIM xim)
   if (i >= xim_styles->count_styles)
     xim_style_ = 0;
   xim_style_ = root_style;
+
+  XFree(xim_styles);
 }
 
 bool XICClient::HasXIC() const
