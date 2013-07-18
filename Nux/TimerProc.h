@@ -45,10 +45,12 @@ namespace nux
   public:
     TimerHandle();
     TimerHandle(TimerObject *timer_object);
-    ~TimerHandle();
     TimerHandle(const TimerHandle &);
 
     TimerHandle &operator = (const TimerHandle &);
+    std::shared_ptr<TimerObject> operator->() const;
+    bool operator==(TimerHandle const& h) const;
+
     bool IsValid() const; //!<deprecated. use Activated().
     bool Activated() const;
 
@@ -61,9 +63,7 @@ namespace nux
     int GetElapsedTimed() const;
 
   private:
-    TimerObject *m_d;
-
-    friend class TimerHandler;
+    std::shared_ptr<TimerObject> m_d;
   };
 
   //! A timer manager class created by WindowThread.
@@ -86,7 +86,6 @@ namespace nux
     } TimerState;
 
     TimerHandler(WindowThread *window_thread);
-    ~TimerHandler();
 
     //! Add a timer callback.
     /*!
@@ -184,12 +183,11 @@ namespace nux
     WindowThread *window_thread_; //!< The WindowThread to which this object belongs.
 
     bool is_processing_timers_;
-    TimerObject* AddHandle(TimerObject *handle);
+    void AddHandle(TimerHandle const&);
     unsigned int GetNumPendingHandler();
 
-    //! Single linked list of timer delays.
-    TimerObject* timer_object_queue_;
-    std::list<TimerObject*> _early_timer_objects;  //!< timer objects that couldn't be started because the main loop is not runing yet.
+    std::deque<TimerHandle> timer_handler_queue_;
+    std::list<TimerHandle> early_timer_handlers_;  //!< timer objects that couldn't be started because the main loop is not runing yet.
   };
 
 }
