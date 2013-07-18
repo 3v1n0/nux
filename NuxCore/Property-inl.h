@@ -22,8 +22,9 @@
 #ifndef NUXCORE_PROPERTY_INL_H
 #define NUXCORE_PROPERTY_INL_H
 
-namespace nux {
+using namespace std::placeholders;
 
+namespace nux {
 
 template <typename VALUE_TYPE>
 PropertyChangedSignal<VALUE_TYPE>::PropertyChangedSignal()
@@ -53,13 +54,13 @@ void PropertyChangedSignal<VALUE_TYPE>::EmitChanged(VALUE_TYPE const& new_value)
 template <typename VALUE_TYPE>
 Property<VALUE_TYPE>::Property()
   : value_(VALUE_TYPE())
-  , setter_function_(sigc::mem_fun(this, &Property<VALUE_TYPE>::DefaultSetter))
+  , setter_function_(std::bind(&Property<VALUE_TYPE>::DefaultSetter, this, _1, _2))
 {}
 
 template <typename VALUE_TYPE>
 Property<VALUE_TYPE>::Property(VALUE_TYPE const& initial)
   : value_(initial)
-  , setter_function_(sigc::mem_fun(this, &Property<VALUE_TYPE>::DefaultSetter))
+  , setter_function_(std::bind(&Property<VALUE_TYPE>::DefaultSetter, this, _1, _2))
 {}
 
 template <typename VALUE_TYPE>
@@ -128,7 +129,7 @@ void Property<VALUE_TYPE>::SetSetterFunction(SetterFunction setter_function)
 
 template <typename VALUE_TYPE>
 ROProperty<VALUE_TYPE>::ROProperty()
-  : getter_function_(sigc::mem_fun(this, &ROProperty<VALUE_TYPE>::DefaultGetter))
+  : getter_function_(std::bind(&ROProperty<VALUE_TYPE>::DefaultGetter, this))
 {}
 
 template <typename VALUE_TYPE>
@@ -169,8 +170,8 @@ void ROProperty<VALUE_TYPE>::SetGetterFunction(GetterFunction getter_function)
 
 template <typename VALUE_TYPE>
 RWProperty<VALUE_TYPE>::RWProperty()
-  : getter_function_(sigc::mem_fun(this, &RWProperty<VALUE_TYPE>::DefaultGetter))
-  , setter_function_(sigc::mem_fun(this, &RWProperty<VALUE_TYPE>::DefaultSetter))
+  : getter_function_(std::bind(&RWProperty<VALUE_TYPE>::DefaultGetter, this))
+  , setter_function_(std::bind(&RWProperty<VALUE_TYPE>::DefaultSetter, this, _1))
 {}
 
 template <typename VALUE_TYPE>
