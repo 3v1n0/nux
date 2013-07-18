@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Inalogic® Inc.
+ * Copyright 2010-2013 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -16,9 +16,9 @@
  * License along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  * Authored by: Jay Taoko <jaytaoko@inalogic.com>
+ *              Marco Trevisan <marco.trevisan@canonical.com>
  *
  */
-
 
 #include "Nux.h"
 #include "TimerProc.h"
@@ -26,7 +26,7 @@
 #include "WindowThread.h"
 
 class BaseWindow;
-    
+
 namespace nux
 {
 
