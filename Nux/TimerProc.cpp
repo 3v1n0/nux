@@ -308,33 +308,12 @@ namespace nux
     timer_handle->uid = TimerUID.GetValue();
     TimerUID.Increment();
 
-    // If the queue is empty or the new timer will expire sooner than the first timer in the queue
-    // then add the new timer at the start of the queue.
-    if (timer_handler_queue_.empty() || (timer_handler_queue_.front()->ms_time > timer_handle->ms_time))
-    {
-      // Add the timer timer_object at the head of the queue
-      timer_handler_queue_.push_front(timer_handle);
-
-      return;
-    }
-
     auto tmp = timer_handler_queue_.begin();
 
-    while (++tmp != timer_handler_queue_.end())
-    {
-      // Is the time to wait for tmp to expire smaller than for timer_handle
-      if (timer_handle->ms_time > (*tmp)->ms_time)
-      {
-        // keep searching
-        continue;
-      }
+    while (tmp != timer_handler_queue_.end() && timer_handle->ms_time >= (*tmp)->ms_time)
+      ++tmp;
 
-      break;
-    }
-
-    // Push back
     timer_handler_queue_.insert(tmp, timer_handle);
-    return;
   }
 
   unsigned int TimerHandler::GetNumPendingHandler()
