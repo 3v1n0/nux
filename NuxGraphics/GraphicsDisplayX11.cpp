@@ -41,6 +41,68 @@ namespace nux
 {
   int GraphicsDisplay::double_click_time_delay = 400; // milliseconds
 
+  namespace atom
+  {
+  namespace
+  {
+    Atom XdndPosition = 0;
+    Atom XdndEnter = 0;
+    Atom XdndStatus = 0;
+    Atom XdndLeave = 0;
+    Atom XdndDrop = 0;
+    Atom XdndAware = 0;
+    Atom XdndFinished = 0;
+    Atom XdndSelection = 0;
+    Atom XdndTypeList = 0;
+    Atom XdndActionMove = 0;
+    Atom XdndActionCopy = 0;
+    Atom XdndActionPrivate = 0;
+    Atom XdndActionLink = 0;
+    Atom XdndActionAsk = 0;
+
+    Atom WM_DELETE_WINDOW = 0;
+    Atom _NET_WM_STATE_STICKY = 0;
+    Atom _NET_WM_STATE_SKIP_TASKBAR = 0;
+    Atom _NET_WM_STATE_SKIP_PAGER = 0;
+    Atom _NET_WM_STATE_ABOVE = 0;
+    Atom _NET_WM_STATE = 0;
+    Atom _NET_WM_WINDOW_TYPE = 0;
+    Atom _NET_WM_WINDOW_TYPE_UTILITY = 0;
+    Atom _NET_WM_WINDOW_TYPE_DND = 0;
+
+    void initialize(Display *dpy)
+    {
+      if (XdndPosition)
+        return;
+
+      XdndPosition = XInternAtom(dpy, "XdndPosition", False);
+      XdndEnter = XInternAtom(dpy, "XdndEnter", False);
+      XdndStatus = XInternAtom(dpy, "XdndStatus", False);
+      XdndLeave = XInternAtom(dpy, "XdndLeave", False);
+      XdndDrop = XInternAtom(dpy, "XdndDrop", False);
+      XdndAware = XInternAtom(dpy, "XdndAware", False);
+      XdndFinished = XInternAtom(dpy, "XdndFinished", False);
+      XdndSelection = XInternAtom(dpy, "XdndSelection", False);
+      XdndTypeList = XInternAtom(dpy, "XdndTypeList", False);
+      XdndActionMove = XInternAtom(dpy, "XdndActionMove", False);
+      XdndActionCopy = XInternAtom(dpy, "XdndActionCopy", False);
+      XdndActionPrivate = XInternAtom(dpy, "XdndActionPrivate", False);
+      XdndActionLink = XInternAtom(dpy, "XdndActionLink", False);
+      XdndActionAsk = XInternAtom(dpy, "XdndActionAsk", False);
+
+      WM_DELETE_WINDOW = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
+      _NET_WM_STATE_STICKY = XInternAtom(dpy, "_NET_WM_STATE_STICKY", False);
+      _NET_WM_STATE_SKIP_TASKBAR = XInternAtom(dpy, "_NET_WM_STATE_SKIP_TASKBAR", False);
+      _NET_WM_STATE_SKIP_PAGER = XInternAtom(dpy, "_NET_WM_STATE_SKIP_PAGER", False);
+      _NET_WM_STATE_ABOVE = XInternAtom(dpy, "_NET_WM_STATE_ABOVE", False);
+      _NET_WM_STATE = XInternAtom(dpy, "_NET_WM_STATE", False);
+      _NET_WM_WINDOW_TYPE = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE", False);
+      _NET_WM_WINDOW_TYPE_UTILITY = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_UTILITY", False);
+      _NET_WM_WINDOW_TYPE_DND = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_DND", False);
+    }
+    }
+  }
+
   GraphicsDisplay::GraphicsDisplay()
     : m_X11Display(NULL)
     , m_X11Screen(0)
@@ -244,6 +306,7 @@ namespace nux
     XF86VidModeQueryVersion(m_X11Display, &_x11_major, &_x11_minor);
     XineramaQueryVersion(m_X11Display, &xinerama_major, &xinerama_minor);
     XineramaQueryExtension(m_X11Display, &xinerama_event, &xinerama_error);
+    atom::initialize(m_X11Display);
 
     XF86VidModeGetAllModeLines(m_X11Display, m_X11Screen, &m_NumVideoModes, &m_X11VideoModes);
     m_X11OriginalVideoMode = *m_X11VideoModes[0];
@@ -589,7 +652,7 @@ namespace nux
                                    &m_X11Attr);
 
       /* only set window title and handle wm_delete_events if in windowed mode */
-      m_WMDeleteWindow = XInternAtom(m_X11Display, "WM_DELETE_WINDOW", True);
+      m_WMDeleteWindow = atom::WM_DELETE_WINDOW;
       XSetWMProtocols(m_X11Display, m_X11Window, &m_WMDeleteWindow, 1);
 
       XSetStandardProperties(m_X11Display, m_X11Window, window_title_.c_str(), window_title_.c_str(), None, NULL, 0, NULL);
@@ -699,6 +762,7 @@ namespace nux
     m_GLCtx = OpenGLContext;
 
     m_X11Screen = DefaultScreen(m_X11Display);
+    atom::initialize(m_X11Display);
 
     Window root_return;
     int x_return, y_return;
@@ -1799,7 +1863,7 @@ namespace nux
 
       case SelectionRequest:
       {
-        if (xevent.xselectionrequest.selection == XInternAtom(xevent.xany.display, "XdndSelection", false))
+        if (xevent.xselectionrequest.selection == atom::XdndSelection)
            HandleDndSelectionRequest(xevent);
         break;
       }
@@ -1837,30 +1901,30 @@ namespace nux
           //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: ClientMessage event: Close Application.");
         }
 
-        if (xevent.xclient.message_type == XInternAtom(xevent.xany.display, "XdndPosition", false))
+        if (xevent.xclient.message_type == atom::XdndPosition)
         {
           HandleXDndPosition(xevent, m_pEvent);
         }
-        else if (xevent.xclient.message_type == XInternAtom(xevent.xany.display, "XdndEnter", false))
+        else if (xevent.xclient.message_type == atom::XdndEnter)
         {
           HandleXDndEnter(xevent);
           m_pEvent->type = NUX_DND_ENTER_WINDOW;
         }
-        else if (xevent.xclient.message_type == XInternAtom(xevent.xany.display, "XdndStatus", false))
+        else if (xevent.xclient.message_type == atom::XdndStatus)
         {
           HandleXDndStatus(xevent);
           m_pEvent->type = NUX_NO_EVENT;
         }
-        else if (xevent.xclient.message_type == XInternAtom(xevent.xany.display, "XdndLeave", false))
+        else if (xevent.xclient.message_type == atom::XdndLeave)
         {
           HandleXDndLeave(xevent);
           m_pEvent->type = NUX_DND_LEAVE_WINDOW;
         }
-        else if (xevent.xclient.message_type == XInternAtom(xevent.xany.display, "XdndDrop", false))
+        else if (xevent.xclient.message_type == atom::XdndDrop)
         {
           HandleXDndDrop(xevent, m_pEvent);
         }
-        else if (xevent.xclient.message_type == XInternAtom(xevent.xany.display, "XdndFinished", false))
+        else if (xevent.xclient.message_type == atom::XdndFinished)
         {
           HandleXDndFinished(xevent);
           m_pEvent->type = NUX_NO_EVENT;
@@ -1969,7 +2033,7 @@ namespace nux
     drop_message.format = 32;
     drop_message.type = ClientMessage;
 
-    drop_message.message_type = XInternAtom(GetX11Display(), "XdndDrop", false);
+    drop_message.message_type = atom::XdndDrop;
     drop_message.data.l[0] = _dnd_source_window;
     drop_message.data.l[1] = 0;
     drop_message.data.l[2] = time;
@@ -1984,12 +2048,12 @@ namespace nux
     position_message.format = 32;
     position_message.type = ClientMessage;
 
-    position_message.message_type = XInternAtom(GetX11Display(), "XdndPosition", false);
+    position_message.message_type = atom::XdndPosition;
     position_message.data.l[0] = _dnd_source_window;
     position_message.data.l[1] = 0;
     position_message.data.l[2] = (x << 16) + y;
     position_message.data.l[3] = time;
-    position_message.data.l[4] = XInternAtom(GetX11Display(), "XdndActionCopy", false); //fixme
+    position_message.data.l[4] = atom::XdndActionCopy; //fixme
 
     XSendEvent(GetX11Display(), target, False, NoEventMask, (XEvent *) &position_message);
   }
@@ -2001,7 +2065,7 @@ namespace nux
     enter_message.format = 32;
     enter_message.type = ClientMessage;
 
-    enter_message.message_type = XInternAtom(GetX11Display(), "XdndEnter", false);
+    enter_message.message_type = atom::XdndEnter;
     enter_message.data.l[0] = _dnd_source_window;
     enter_message.data.l[1] = (((unsigned long) xdnd_version) << 24) + 1; // mark that we have set the atom list
     enter_message.data.l[2] = None; // fixme, these should contain the first 3 atoms
@@ -2018,7 +2082,7 @@ namespace nux
     leave_message.format = 32;
     leave_message.type = ClientMessage;
 
-    leave_message.message_type = XInternAtom(GetX11Display(), "XdndLeave", false);
+    leave_message.message_type = atom::XdndLeave;
     leave_message.data.l[0] = _dnd_source_window;
     leave_message.data.l[1] = 0; // flags
 
@@ -2069,7 +2133,7 @@ namespace nux
       int format;
       unsigned long n, a;
       unsigned char *data = 0;
-      if (XGetWindowProperty(GetX11Display(), result, XInternAtom(GetX11Display(), "XdndAware", false), 0, 1, False,
+      if (XGetWindowProperty(GetX11Display(), result, atom::XdndAware, 0, 1, False,
                              XA_ATOM, &type, &format, &n, &a, &data) == Success)
       {
         if (data)
@@ -2234,18 +2298,18 @@ namespace nux
     XMapRaised(display, _dnd_source_window);
 
     Atom atom_type[1];
-    atom_type[0] = XInternAtom(display, "_NET_WM_WINDOW_TYPE_DND", false);
-    XChangeProperty(display, _dnd_source_window, XInternAtom(display, "_NET_WM_WINDOW_TYPE", false),
+    atom_type[0] = atom::_NET_WM_WINDOW_TYPE_DND;
+    XChangeProperty(display, _dnd_source_window, atom::_NET_WM_WINDOW_TYPE,
                      XA_ATOM, 32, PropModeReplace, (unsigned char*) atom_type, 1);
 
     Atom data[32];
     int     i = 0;
-    data[i++] = XInternAtom(display, "_NET_WM_STATE_STICKY", false);
-    data[i++] = XInternAtom(display, "_NET_WM_STATE_SKIP_TASKBAR", false);
-    data[i++] = XInternAtom(display, "_NET_WM_STATE_SKIP_PAGER", false);
-    data[i++] = XInternAtom(display, "_NET_WM_STATE_ABOVE", false);
+    data[i++] = atom::_NET_WM_STATE_STICKY;
+    data[i++] = atom::_NET_WM_STATE_SKIP_TASKBAR;
+    data[i++] = atom::_NET_WM_STATE_SKIP_PAGER;
+    data[i++] = atom::_NET_WM_STATE_ABOVE;
 
-    XChangeProperty(display, _dnd_source_window, XInternAtom(display, "_NET_WM_STATE", 0),
+    XChangeProperty(display, _dnd_source_window, atom::_NET_WM_STATE,
                  XA_ATOM, 32, PropModeReplace,
                  (unsigned char *) data, i);
 
@@ -2274,7 +2338,7 @@ namespace nux
       i++;
     }
 
-    XChangeProperty(display, _dnd_source_window, XInternAtom(display, "XdndTypeList", false),
+    XChangeProperty(display, _dnd_source_window, atom::XdndTypeList,
                     XA_ATOM, 32, PropModeReplace, (unsigned char *)type_atoms, i);
 
     GrabDndSelection(display, _dnd_source_window, CurrentTime);
@@ -2282,8 +2346,8 @@ namespace nux
 
   bool GraphicsDisplay::GrabDndSelection(Display *display, Window window, Time time)
   {
-    XSetSelectionOwner(GetX11Display(), XInternAtom(display, "XdndSelection", false), window, time);
-    Window owner = XGetSelectionOwner(display, XInternAtom(display, "XdndSelection", false));
+    XSetSelectionOwner(GetX11Display(), atom::XdndSelection, window, time);
+    Window owner = XGetSelectionOwner(display, atom::XdndSelection);
     return owner == window;
   }
 
@@ -2296,19 +2360,19 @@ namespace nux
     switch(action)
     {
       case DNDACTION_MOVE:
-        a = XInternAtom(_drag_display, "XdndActionMove", false);
+        a = atom::XdndActionMove;
         break;
       case DNDACTION_COPY:
-        a = XInternAtom(_drag_display, "XdndActionCopy", false);
+        a = atom::XdndActionCopy;
         break;
       case DNDACTION_PRIVATE:
-        a = XInternAtom(_drag_display, "XdndActionPrivate", false);
+        a = atom::XdndActionPrivate;
         break;
       case DNDACTION_LINK:
-        a = XInternAtom(_drag_display, "XdndActionLink", false);
+        a = atom::XdndActionLink;
         break;
       case DNDACTION_ASK:
-        a = XInternAtom(_drag_display, "XdndActionAsk", false);
+        a = atom::XdndActionAsk;
         break;
       default:
         a = None;
@@ -2326,19 +2390,19 @@ namespace nux
     switch(performed_action)
     {
       case DNDACTION_MOVE:
-        a = XInternAtom(_drag_display, "XdndActionMove", false);
+        a = atom::XdndActionMove;
         break;
       case DNDACTION_COPY:
-        a = XInternAtom(_drag_display, "XdndActionCopy", false);
+        a = atom::XdndActionCopy;
         break;
       case DNDACTION_PRIVATE:
-        a = XInternAtom(_drag_display, "XdndActionPrivate", false);
+        a = atom::XdndActionPrivate;
         break;
       case DNDACTION_LINK:
-        a = XInternAtom(_drag_display, "XdndActionLink", false);
+        a = atom::XdndActionLink;
         break;
       case DNDACTION_ASK:
-        a = XInternAtom(_drag_display, "XdndActionAsk", false);
+        a = atom::XdndActionAsk;
         break;
       default:
         a = None;
@@ -2394,7 +2458,7 @@ namespace nux
     response.format = 32;
     response.type = ClientMessage;
 
-    response.message_type = XInternAtom(display, "XdndStatus", false);
+    response.message_type = atom::XdndStatus;
     response.data.l[0] = source;
     response.data.l[1] = 0; // flags
     response.data.l[2] = (box.x << 16) | box.y; // x, y
@@ -2453,7 +2517,7 @@ namespace nux
       int f;
       Atom type = None;
 
-      XGetWindowProperty(_drag_display, _drag_source, XInternAtom(_drag_display, "XdndTypeList", false), 0,
+      XGetWindowProperty(_drag_display, _drag_source, atom::XdndTypeList, 0,
                          _xdnd_max_type, False, XA_ATOM, &type, &f, &n, &a, &retval);
 
       if (retval)
@@ -2500,9 +2564,9 @@ namespace nux
   {
     // request the selection
     XConvertSelection(display,
-                       XInternAtom(display, "XdndSelection", false),
+                       atom::XdndSelection,
                        property,
-                       XInternAtom(display, "XdndSelection", false),
+                       atom::XdndSelection,
                        target,
                        time);
     XFlush(display);
@@ -2533,7 +2597,7 @@ namespace nux
     response.format = 32;
     response.type = ClientMessage;
 
-    response.message_type = XInternAtom(display, "XdndFinished", false);
+    response.message_type = atom::XdndFinished;
     response.data.l[0] = source;
     response.data.l[1] = result ? 1 : 0; // flags
     response.data.l[2] = action; // action
@@ -2556,7 +2620,7 @@ namespace nux
 
       if (XGetWindowProperty(display,
                              requestor,
-                             XInternAtom(display, "XdndSelection", false),
+                             atom::XdndSelection,
                              0,
                              10000,
                              False,
@@ -2599,15 +2663,15 @@ namespace nux
 
     if (accepted)
     {
-      if (l[2] == XInternAtom(GetX11Display(), "XdndActionCopy", false))
+      if (l[2] == atom::XdndActionCopy)
         result = DNDACTION_COPY;
-      else if (l[2] == XInternAtom(GetX11Display(), "XdndActionAsk", false))
+      else if (l[2] == atom::XdndActionAsk)
         result = DNDACTION_ASK;
-      else if (l[2] == XInternAtom(GetX11Display(), "XdndActionLink", false))
+      else if (l[2] == atom::XdndActionLink)
         result = DNDACTION_LINK;
-      else if (l[2] == XInternAtom(GetX11Display(), "XdndActionMove", false))
+      else if (l[2] == atom::XdndActionMove)
         result = DNDACTION_MOVE;
-      else if (l[2] == XInternAtom(GetX11Display(), "XdndActionPrivate", false))
+      else if (l[2] == atom::XdndActionPrivate)
         result = DNDACTION_PRIVATE;
     }
 
@@ -2635,18 +2699,18 @@ namespace nux
     XMapRaised(display, _global_grab_window);
 
     Atom atom_type[1];
-    atom_type[0] = XInternAtom(display, "_NET_WM_WINDOW_TYPE_UTILITY", false);
-    XChangeProperty(display, _global_grab_window, XInternAtom(display, "_NET_WM_WINDOW_TYPE", false),
+    atom_type[0] = atom::_NET_WM_WINDOW_TYPE_UTILITY;
+    XChangeProperty(display, _global_grab_window, atom::_NET_WM_WINDOW_TYPE,
                      XA_ATOM, 32, PropModeReplace, (unsigned char*) atom_type, 1);
 
     Atom data[32];
     int     i = 0;
-    data[i++] = XInternAtom(display, "_NET_WM_STATE_STICKY", false);
-    data[i++] = XInternAtom(display, "_NET_WM_STATE_SKIP_TASKBAR", false);
-    data[i++] = XInternAtom(display, "_NET_WM_STATE_SKIP_PAGER", false);
-    data[i++] = XInternAtom(display, "_NET_WM_STATE_ABOVE", false);
+    data[i++] = atom::_NET_WM_STATE_STICKY;
+    data[i++] = atom::_NET_WM_STATE_SKIP_TASKBAR;
+    data[i++] = atom::_NET_WM_STATE_SKIP_PAGER;
+    data[i++] = atom::_NET_WM_STATE_ABOVE;
 
-    XChangeProperty(display, _global_grab_window, XInternAtom(display, "_NET_WM_STATE", 0),
+    XChangeProperty(display, _global_grab_window, atom::_NET_WM_STATE,
                  XA_ATOM, 32, PropModeReplace,
                  (unsigned char *) data, i);
   }
