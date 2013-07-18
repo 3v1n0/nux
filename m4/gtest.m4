@@ -25,69 +25,93 @@
 
 AC_DEFUN([CHECK_GTEST],
 [
-  AC_ARG_WITH([gtest-include-path],
-              [AS_HELP_STRING([--with-gtest-include-path],
-                              [location of the Google test headers])],
-                [GTEST_CPPFLAGS="-I$withval"])
-
-  AC_ARG_WITH([gtest-source-path],
-              [AS_HELP_STRING([--with-gtest-source-path],
-                              [location of the Google test sources, defaults to /usr/src/gmock/gtest])],
-              [GTEST_SOURCE="$withval"],
-              [GTEST_SOURCE="/usr/src/gmock/gtest"])
-
-  GTEST_CPPFLAGS="$GTEST_CPPFLAGS -I$GTEST_SOURCE -I$GTEST_SOURCE/include"
-
   AC_LANG_PUSH([C++])
+  PATH_SEPARATOR=:
 
-  tmp_CPPFLAGS="$CPPFLAGS"
-  CPPFLAGS="$CPPFLAGS $GTEST_CPPFLAGS"
+  AC_ARG_VAR([GMOCK_PREFIX],
+             [Path to Google Mock sources.])
+  AC_ARG_VAR([GMOCK_INCLUDES],
+             [Path to Google Mock headers.])
+  AC_ARG_VAR([GMOCK_CPPFLAGS],
+             [C preprocessor flags for Google Mock.])
 
-  AC_CHECK_HEADER([gtest/gtest.h])
+  gmock_includes=
+  gmock_prefix=/usr/src/gmock
+  AC_ARG_WITH([gmock-prefix],[
+    AS_HELP_STRING([--with-gmock-prefix],
+                   [Prefix where Google Mock is installed (default $gmock_prefix)])
+  ],[
+    gmock_prefix=$withval
+  ])
 
-  CPPFLAGS="$tmp_CPPFLAGS"
+  AC_ARG_WITH([gmock-includes],[
+    AS_HELP_STRING([--with-gmock-includes],
+                   [Search path for Google Mock headers (default none)])
+  ],[
+    gmock_includes=$withval
+  ])
 
-  AC_LANG_POP
-
-  AS_IF([test -f $GTEST_SOURCE/src/gtest-all.cc && test -f $GTEST_SOURCE/src/gtest_main.cc],
-        [have_gtest_source=yes], [have_gtest_source=no])
-
-  AS_IF([test "x$ac_cv_header_gtest_gtest_h" = "xyes" && test "x$have_gtest_source" = "xyes"],
-        [have_gtest=yes] [AC_SUBST(GTEST_CPPFLAGS)] [AC_SUBST(GTEST_SOURCE)],
-        [have_gtest=no])
-]) # CHECK_GTEST
-
-
-AC_DEFUN([CHECK_GMOCK],
-[
-  AC_ARG_WITH([gmock-include-path],
-              [AS_HELP_STRING([--with-gmock-include-path],
-                              [location of the Google mock headers])],
-                [GMOCK_CPPFLAGS="-I$withval"])
-
-  AC_ARG_WITH([gmock-source-path],
-              [AS_HELP_STRING([--with-gmock-source-path],
-                              [location of the Google test mock, defaults to /usr/src/gmock])],
-              [GMOCK_SOURCE="$withval"],
-              [GMOCK_SOURCE="/usr/src/gmock"])
-
-  GMOCK_CPPFLAGS="$GMOCK_CPPFLAGS -I$GMOCK_SOURCE -I$GMOCK_SOURCE/gtest/include"
-
-  AC_LANG_PUSH([C++])
-
+  AS_IF([test x$gmock_includes != x],
+        [GMOCK_CPPFLAGS=-I$gmock_includes],
+        [GMOCK_CPPFLAGS=])
   tmp_CPPFLAGS="$CPPFLAGS"
   CPPFLAGS="$CPPFLAGS $GMOCK_CPPFLAGS"
-
-  AC_CHECK_HEADER([gmock/gmock.h])
-
+  AC_CHECK_HEADER([gmock/gmock.h],
+                  [have_gmock=yes],
+                  [have_gmock=no],
+                  [-])
   CPPFLAGS="$tmp_CPPFLAGS"
+  AS_IF([test x$have_gmock = xyes],[
+    AC_CHECK_FILES([$gmock_prefix/src/gmock-all.cc],
+                   [have_gmock=yes],
+                   [have_gmock=no])
 
-  AC_LANG_POP
+    gtest_include_path=/usr/include
+    gtest_prefix_path=/usr/src/gtest
+    AS_IF([test x$have_gmock = xyes],[
+      AC_SUBST([GMOCK_CPPFLAGS], "$GMOCK_CPPFLAGS -I$gmock_prefix")
+      AC_SUBST([GMOCK_PREFIX], [$gmock_prefix])
+      gtest_prefix_path="$GMOCK_PREFIX/gtest$PATH_SEPARATOR$gtest_prefix_path"
+      gtest_include_path="$GMOCK_PREFIX/gtest/include$PATH_SEPARATOR$gtest_include_path"
+    ])
 
-  AS_IF([test -f $GMOCK_SOURCE/src/gmock-all.cc && test -f $GMOCK_SOURCE/src/gmock_main.cc],
-        [have_gmock_source=yes], [have_gmock_source=no])
+    AC_ARG_VAR([GTEST_PREFIX],
+               [Path to Google Test sources.])
+    AC_ARG_VAR([GTEST_CPPFLAGS],
+               [C preprocessor flags for Google Test.])
 
-  AS_IF([test "x$ac_cv_header_gmock_gmock_h" = "xyes" && test "x$have_gmock_source" = "xyes"],
-        [have_gmock=yes] [AC_SUBST(GMOCK_CPPFLAGS)] [AC_SUBST(GMOCK_SOURCE)],
-        [have_gmock=no])
-]) # CHECK_GMOCK
+    ax_save_IFS="$IFS"; IFS=$PATH_SEPARATOR
+    for incdir in $gtest_include_path; do
+      IFS=$ax_save_IFS
+      tmp_CPPFLAGS="$CPPFLAGS"
+      CPPFLAGS="$CPPFLAGS -I$incdir"
+      AC_CHECK_HEADER([gtest/gtest.h],
+                      [have_gtest=yes],
+                      [have_gtest=no])
+      CPPFLAGS="$tmp_CPPFLAGS"
+      AS_IF([test x$have_gtest = xyes],[
+        GTEST_CPPFLAGS=-I$incdir
+        break
+      ])
+    done
+    IFS=$ax_save_IFS
+
+    AS_IF([test x$have_gtest = xyes],[
+      ax_save_IFS="$IFS"; IFS=$PATH_SEPARATOR
+      for ax_prefix in $gtest_prefix_path; do
+        IFS=$ax_save_IFS
+        AC_CHECK_FILES([$ax_prefix/src/gtest-all.cc],
+                       [have_gtest=yes],
+                       [have_gtest=no])
+        AS_IF([test x$have_gtest = xyes],[
+          AC_SUBST([GTEST_CPPFLAGS], "$GTEST_CPPFLAGS -I$ax_prefix")
+          AC_SUBST([GTEST_PREFIX],[$ax_prefix])
+          break
+        ])
+      done
+      IFS=$ax_save_IFS
+    ])
+
+  ])
+]) # CHECK_GTEST
+

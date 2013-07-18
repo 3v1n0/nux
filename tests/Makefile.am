@@ -1,14 +1,11 @@
 if BUILD_TESTS
 
-nodist_libgtest_a_SOURCES = $(GTEST_SOURCE)/src/gtest-all.cc
-libgtest_a_CPPFLAGS = $(GTEST_CPPFLAGS) -w
-libgtest_a_CXXFLAGS = $(GTEST_CXXFLAGS) $(AM_CXXFLAGS)
-check_LIBRARIES = libgtest.a
+nodist_libgtest_a_SOURCES = \
+ $(GMOCK_PREFIX)/src/gmock-all.cc \
+ $(GTEST_PREFIX)/src/gtest-all.cc
 
-nodist_libgmock_a_SOURCES = $(GMOCK_SOURCE)/src/gmock-all.cc
-libgmock_a_CPPFLAGS = $(GMOCK_CPPFLAGS) -w
-libgmock_a_CXXFLAGS = $(GMOCK_CXXFLAGS) $(AM_CXXFLAGS)
-check_LIBRARIES += libgmock.a
+libgtest_a_CPPFLAGS = $(GMOCK_CPPFLAGS) $(GTEST_CPPFLAGS) -w
+check_LIBRARIES = libgtest.a
 
 check_PROGRAMS = \
   gtest-nux \
@@ -59,6 +56,7 @@ gtest_nuxcore_CPPFLAGS = \
   -DG_LOG_DOMAIN=\"NuxTests\" \
   -DTESTDIR=\""$(top_srcdir)/tests"\" \
   $(GCC_TESTS_FLAGS) \
+  $(GMOCK_CPPFLAGS) \
   $(GTEST_CPPFLAGS) \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
@@ -68,8 +66,7 @@ gtest_nuxcore_CPPFLAGS = \
 gtest_nuxcore_LDADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
   $(NUX_LIBS) \
-  libgtest.a \
-  libgmock.a
+  libgtest.a
 
 gtest_nuxcore_LDFLAGS = -lboost_system \
                         -lboost_filesystem
@@ -104,6 +101,7 @@ gtest_nux_CPPFLAGS = \
   -DG_LOG_DOMAIN=\"NuxTests\" \
   -DTESTDIR=\""$(top_srcdir)/tests"\" \
   $(GCC_TESTS_FLAGS) \
+  $(GMOCK_CPPFLAGS) \
   $(GTEST_CPPFLAGS) \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
@@ -144,6 +142,7 @@ gtest_nux_slow_CPPFLAGS = \
   -DG_LOG_DOMAIN=\"NuxTests\" \
   -DTESTDIR=\""$(top_srcdir)/tests"\" \
   $(GCC_TESTS_FLAGS) \
+  $(GMOCK_CPPFLAGS) \
   $(GTEST_CPPFLAGS) \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
@@ -157,8 +156,7 @@ gtest_nux_slow_LDADD = \
   $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
   $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
   $(NUX_LIBS) \
-  libgtest.a \
-  libgmock.a
+  libgtest.a
 
 gtest_nux_slow_LDFLAGS = -lboost_system \
                          -lboost_filesystem
@@ -179,6 +177,7 @@ gtest_nuxgraphics_CPPFLAGS = \
   -DG_LOG_DOMAIN=\"NuxTests\" \
   -DTESTDIR=\""$(top_srcdir)/tests"\" \
   $(GCC_TESTS_FLAGS) \
+  $(GMOCK_CPPFLAGS) \
   $(GTEST_CPPFLAGS) \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \

@@ -288,15 +288,8 @@ AS_IF([test "x$enable_tests" = "xyes"],
       [
         # Check for google gtest
         CHECK_GTEST
-        AS_IF([test "x$have_gtest" = "xyes"],
-          [AC_SUBST([GTEST_CPPFLAGS])],
+        AS_IF([test "x$have_gtest" != "xyes"],
           [AC_MSG_WARN([you are missing google-test, apt-get install google-mock])])
-
-        # Check for googlemock
-        CHECK_GMOCK
-        AS_IF([test "x$have_gtest" = "xyes"],
-          [AC_SUBST([GTEST_CPPFLAGS])],
-          [AC_MSG_WARN([you are missing google-mock, apt-get install google-mock])])
 
        #Check for libboost
 
