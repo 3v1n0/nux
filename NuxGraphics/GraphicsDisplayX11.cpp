@@ -44,8 +44,10 @@ namespace nux
   GraphicsDisplay::GraphicsDisplay()
     : m_X11Display(NULL)
     , m_X11Screen(0)
+    , m_X11Window(0)
+    , m_X11VisualInfo(NULL)
     , parent_window_(0)
-    , m_GLCtx(0)
+    , m_GLCtx(NULL)
 #ifndef NUX_OPENGLES_20
     , glx_window_(0)
 #endif
@@ -75,6 +77,8 @@ namespace nux
     , m_GraphicsContext(0)
     , m_Style(WINDOWSTYLE_NORMAL)
     , _drag_display(NULL)
+    , _drag_window(0)
+    , _drag_source(0)
     , _drag_drop_timestamp(0)
     , _dnd_source_data(NULL)
     , _dnd_source_window(0)
@@ -117,6 +121,7 @@ namespace nux
     NUX_SAFE_DELETE( m_pEvent );
     inlSetThreadLocalStorage(_TLS_GraphicsDisplay, 0);
     XFree(m_X11VideoModes);
+    XFree(m_X11VisualInfo);
   }
 
   std::string GraphicsDisplay::FindResourceLocation(const char *ResourceFileName, bool ErrorOnFail)
@@ -306,6 +311,7 @@ namespace nux
         None
       };
 
+      XFree(m_X11VisualInfo);
       m_X11VisualInfo = glXChooseVisual(m_X11Display, m_X11Screen, g_DoubleBufferVisual);
 
       if (m_X11VisualInfo == NULL)
@@ -315,6 +321,7 @@ namespace nux
       }
 
       // Create OpenGL Context.
+      if (m_GLCtx) glXDestroyContext(m_X11Display, m_GLCtx);
       m_GLCtx = glXCreateContext(m_X11Display, m_X11VisualInfo, 0, GL_TRUE);
 
       m_X11Colormap = XCreateColormap(m_X11Display,
@@ -419,6 +426,7 @@ namespace nux
         }
 
         XFree(fbconfigs);
+        XFree(m_X11VisualInfo);
 
         m_X11VisualInfo = glXGetVisualFromFBConfig(m_X11Display, _fb_config);
 
@@ -473,6 +481,7 @@ namespace nux
     XVisualInfo visual_info;
     memset(&visual_info, 0, sizeof(visual_info));
     visual_info.visualid = visualid;
+    XFree(m_X11VisualInfo);
     m_X11VisualInfo = XGetVisualInfo(m_X11Display, VisualIDMask, &visual_info, &count);
     if (!m_X11VisualInfo)
     {
@@ -604,6 +613,7 @@ namespace nux
       m_X11VisualInfo = 0;
 
       /* Create a GLX context for OpenGL rendering */
+      if (m_GLCtx) glXDestroyContext(m_X11Display, m_GLCtx);
       m_GLCtx = glXCreateNewContext(m_X11Display, _fb_config, GLX_RGBA_TYPE, NULL, True);
 
       if (m_GLCtx == 0)
@@ -2362,6 +2372,9 @@ namespace nux
 
   char * GraphicsDisplay::GetDndData(char *property)
   {
+    if (!_drag_display)
+      return NULL;
+
     if (_dnd_is_drag_source)
     {
       int size, format;

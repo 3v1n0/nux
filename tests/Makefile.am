@@ -55,8 +55,9 @@ gtest_nuxcore_CPPFLAGS = \
   -DDATADIR=\""$(datadir)"\" \
   -DG_LOG_DOMAIN=\"NuxTests\" \
   -DTESTDIR=\""$(top_srcdir)/tests"\" \
-  $(GMOCK_CPPFLAGS) $(GTEST_CPPFLAGS) \
   $(GCC_TESTS_FLAGS) \
+  $(GMOCK_CPPFLAGS) \
+  $(GTEST_CPPFLAGS) \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \
@@ -67,9 +68,8 @@ gtest_nuxcore_LDADD = \
   $(NUX_LIBS) \
   libgtest.a
 
-gtest_nuxcore_LDFLAGS = \
-  -lpthread \
-  -lboost_filesystem -lboost_system
+gtest_nuxcore_LDFLAGS = -lboost_system \
+                        -lboost_filesystem
 
 ##### gtest-nux ######
 
@@ -100,8 +100,9 @@ gtest_nux_CPPFLAGS = \
   -DDATADIR=\""$(datadir)"\" \
   -DG_LOG_DOMAIN=\"NuxTests\" \
   -DTESTDIR=\""$(top_srcdir)/tests"\" \
-  $(GMOCK_CPPFLAGS) $(GTEST_CPPFLAGS) \
   $(GCC_TESTS_FLAGS) \
+  $(GMOCK_CPPFLAGS) \
+  $(GTEST_CPPFLAGS) \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \
@@ -115,10 +116,6 @@ gtest_nux_LDADD = \
   $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
   $(NUX_LIBS) \
   libgtest.a
-
-gtest_nux_LDFLAGS = \
-  -lpthread  \
-  -lboost_filesystem -lboost_system
 
 ##### gtest-nux-slow ######
 
@@ -144,8 +141,9 @@ gtest_nux_slow_CPPFLAGS = \
   -DDATADIR=\""$(datadir)"\" \
   -DG_LOG_DOMAIN=\"NuxTests\" \
   -DTESTDIR=\""$(top_srcdir)/tests"\" \
-  $(GMOCK_CPPFLAGS) $(GTEST_CPPFLAGS) \
   $(GCC_TESTS_FLAGS) \
+  $(GMOCK_CPPFLAGS) \
+  $(GTEST_CPPFLAGS) \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \
@@ -160,9 +158,8 @@ gtest_nux_slow_LDADD = \
   $(NUX_LIBS) \
   libgtest.a
 
-gtest_nux_slow_LDFLAGS = \
-  -lpthread  \
-  -lboost_filesystem -lboost_system
+gtest_nux_slow_LDFLAGS = -lboost_system \
+                         -lboost_filesystem
 
 ##### gtest-nuxgraphics ######
 
@@ -179,8 +176,9 @@ gtest_nuxgraphics_CPPFLAGS = \
   -DDATADIR=\""$(datadir)"\" \
   -DG_LOG_DOMAIN=\"NuxTests\" \
   -DTESTDIR=\""$(top_srcdir)/tests"\" \
-  $(GMOCK_CPPFLAGS) $(GTEST_CPPFLAGS) \
   $(GCC_TESTS_FLAGS) \
+  $(GMOCK_CPPFLAGS) \
+  $(GTEST_CPPFLAGS) \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \

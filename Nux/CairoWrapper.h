@@ -25,11 +25,7 @@
 
 namespace nux
 {
-#if __cplusplus >= 201100L || defined (__GXX_EXPERIMENTAL_CXX0X__)
   typedef std::function<void(Geometry const&, cairo_t*)> DrawCanvasCallback;
-#else
-  typedef sigc::slot<void, Geometry const&, cairo_t*> DrawCanvasCallback;
-#endif
 
   class CairoWrapper
   {
