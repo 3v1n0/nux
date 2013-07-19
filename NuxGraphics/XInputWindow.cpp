@@ -30,6 +30,8 @@ namespace nux
 
   namespace atom
   {
+  namespace
+  {
     Atom WM_WINDOW_TYPE = 0;
     Atom WM_WINDOW_TYPE_DOCK = 0;
     Atom WM_STATE = 0;
@@ -62,6 +64,7 @@ namespace nux
       WM_STATES.push_back(XInternAtom(dpy, "_NET_WM_STATE_SKIP_TASKBAR", False));
       WM_STATES.push_back(XInternAtom(dpy, "_NET_WM_STATE_SKIP_PAGER", False));
     }
+  }
   }
 
   XInputWindow::XInputWindow(const char* title,
