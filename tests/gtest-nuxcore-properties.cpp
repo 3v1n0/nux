@@ -251,7 +251,6 @@ TEST(TestProperty, TestCustomSetterFunction) {
   EXPECT_THAT(1, Eq(recorder.last()));
 }
 
-#if __cplusplus >= 201100L || defined (__GXX_EXPERIMENTAL_CXX0X__)
 TEST(TestProperty, TestCustomSetterFunctionLambda) {
   nux::Property<float> float_prop;
   FloatClamp clamp(0, 1);
@@ -278,7 +277,6 @@ TEST(TestProperty, TestCustomSetterFunctionLambda) {
   EXPECT_THAT(2, Eq(recorder.size()));
   EXPECT_THAT(1, Eq(recorder.last()));
 }
-#endif
 
 TEST(TestProperty, TestIntOperators) {
   nux::Property<int> int_prop(42);

@@ -23,8 +23,7 @@ m4_define([nux_api_version], [4.0])
 # e.g.: december 5th, 2011 is: 20111205
 # To make more than one API change in a day, add a number to the date. Like 20111205.xx
 
-m4_define([nux_abi_version], [20130531.0])
-
+m4_define([nux_abi_version], [20130722.0])
 m4_define([nux_version],
           [nux_major_version.nux_minor_version.nux_micro_version])
 
@@ -288,16 +287,8 @@ AS_IF([test "x$enable_tests" = "xyes"],
       [
         # Check for google gtest
         CHECK_GTEST
-        AS_IF([test "x$have_gtest" = "xyes"],
-          [AC_SUBST([GTEST_CPPFLAGS])],
-          [AC_MSG_WARN([you are missing google-test, apt-get install libgtest-dev])])
-
-        # Check for googlemock
-        AC_LANG_PUSH([C++])
-        AC_CHECK_HEADER([gmock/gmock.h],
-                       [have_gmock=yes],
-                       [AC_MSG_WARN([you are missing google-mock, apt-get install google-mock])])
-        AC_LANG_POP([C++])
+        AS_IF([test "x$have_gtest" != "xyes"],
+          [AC_MSG_WARN([you are missing google-test, apt-get install google-mock])])
 
        #Check for libboost
 
@@ -356,6 +347,7 @@ AC_SUBST(COVERAGE_LDFLAGS)
 dnl ===========================================================================
 
 # sets up doxygen
+m4_include([m4/ac_doxygen.m4])
 DX_DOXYGEN_FEATURE(ON)
 DX_HTML_FEATURE(ON)
 DX_CHM_FEATURE(OFF)

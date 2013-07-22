@@ -41,6 +41,7 @@ DECLARE_LOGGER(logger, "nux.image");
 
   NBitmapData *LoadGdkPixbuf(GdkPixbuf *pixbuf)
   {
+    NUX_RETURN_VALUE_IF_NULL(pixbuf, nullptr);
     unsigned int width = gdk_pixbuf_get_width(pixbuf);
     unsigned int height = gdk_pixbuf_get_height(pixbuf);
     unsigned int row_bytes = gdk_pixbuf_get_rowstride(pixbuf);
