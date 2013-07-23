@@ -1,3 +1,22 @@
+nux (4.0.2+13.10.20130723-0ubuntu1) saucy; urgency=low
+
+  [ Stephen M. Webb ]
+  * moved to newer upstream google-mock release (lp: #1185265). (LP:
+    #1185265)
+
+  [ Marco Trevisan (Treviño) ]
+  * TimerProc: use std::shared_ptr to ref TimerObject in TimerHandle and
+    a std::deque in TimerHandler This fix several memory leaks that we
+    are getting when the timer runs and makes the code more
+    maintainable. Also various memory errors leaks.
+  * GraphicsDisplayX11: cache the atom values, calling the slow
+    XInternAtom just once per each.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 803
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 23 Jul 2013 06:12:20 +0000
+
 nux (4.0.2+13.10.20130705-0ubuntu1) saucy; urgency=low
 
   [ Marco Trevisan (Treviño) ]
