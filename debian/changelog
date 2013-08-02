@@ -1,3 +1,13 @@
+nux (4.0.2+13.10.20130802-0ubuntu1) saucy; urgency=low
+
+  [ Brandon Schaefer ]
+  * Change general hotkey/tiggers to general/hotkey triggers.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 807
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 02 Aug 2013 04:02:36 +0000
+
 nux (4.0.2+13.10.20130729-0ubuntu1) saucy; urgency=low
 
   [ Kevin DuBois ]
