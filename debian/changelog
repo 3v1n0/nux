@@ -1,3 +1,18 @@
+nux (4.0.2+13.10.20130816.2-0ubuntu1) saucy; urgency=low
+
+  [ Stephen M. Webb ]
+  * Apdated gmock detection after gmock was updated.
+
+  [ Łukasz 'sil2100' Zemczak ]
+  * Add 50_check_unity_support to Xsession.d that will run the unity
+    support test app to determine if we should use the fallback mode or
+    not, since we'll be dropping the test from compiz.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 810
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 16 Aug 2013 10:34:41 +0000
+
 nux (4.0.2+13.10.20130802-0ubuntu1) saucy; urgency=low
 
   [ Brandon Schaefer ]
