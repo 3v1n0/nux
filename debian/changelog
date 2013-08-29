@@ -1,3 +1,16 @@
+nux (4.0.2+13.10.20130829.1-0ubuntu1) saucy; urgency=low
+
+  [ Brandon Schaefer ]
+  * Use a temp buf to poke for the size of string vs passing nullptr.
+    For some reason this was working for most cases, but not greek.
+    Using a temp buf allows us to poke the greeks chars and others that
+    werent working. (LP: #1205713)
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 812
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 29 Aug 2013 06:42:50 +0000
+
 nux (4.0.2+13.10.20130816.2-0ubuntu1) saucy; urgency=low
 
   [ Stephen M. Webb ]
