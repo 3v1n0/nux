@@ -1724,13 +1724,14 @@ namespace nux
         if (!skip)
         {
           int num_char_stored = 0;
+
           if (m_xim_controller->IsXICValid())
           {
             delete[] m_pEvent->dtext;
             m_pEvent->dtext = nullptr;
 
-            num_char_stored = XmbLookupString(m_xim_controller->GetXIC(), &xevent.xkey, nullptr,
-                                              0, (KeySym*) &m_pEvent->x11_keysym, nullptr);
+            num_char_stored = XmbLookupString(m_xim_controller->GetXIC(), &xevent.xkey, buffer,
+                                              NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->x11_keysym, nullptr);
 
             if (num_char_stored > 0)
             {
@@ -1744,14 +1745,18 @@ namespace nux
           }
           else
           {
-            num_char_stored = XLookupString(&xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE,
-                                            (KeySym*) &m_pEvent->x11_keysym, NULL);
+            m_pEvent->dtext = new char[NUX_EVENT_TEXT_BUFFER_SIZE];
+            num_char_stored = XLookupString(&xevent.xkey, m_pEvent->dtext, NUX_EVENT_TEXT_BUFFER_SIZE,
+                                            (KeySym*) &m_pEvent->x11_keysym, nullptr);
 
-            if (num_char_stored > 0)
-            {
-              Memcpy(m_pEvent->text, buffer, num_char_stored);
-            }
+            m_pEvent->dtext[num_char_stored] = 0;
           }
+        }
+
+        if (m_pEvent->dtext == nullptr)
+        {
+          m_pEvent->dtext = new char[NUX_EVENT_TEXT_BUFFER_SIZE];
+          m_pEvent->dtext[0] = 0;
         }
 
         break;
