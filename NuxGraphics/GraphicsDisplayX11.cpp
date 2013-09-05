@@ -1745,13 +1745,11 @@ namespace nux
           }
           else
           {
-            num_char_stored = XLookupString(&xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE,
-                                            (KeySym*) &m_pEvent->x11_keysym, NULL);
+            m_pEvent->dtext = new char[NUX_EVENT_TEXT_BUFFER_SIZE];
+            num_char_stored = XLookupString(&xevent.xkey, m_pEvent->dtext, NUX_EVENT_TEXT_BUFFER_SIZE,
+                                            (KeySym*) &m_pEvent->x11_keysym, nullptr);
 
-            if (num_char_stored > 0)
-            {
-              Memcpy(m_pEvent->text, buffer, num_char_stored);
-            }
+            m_pEvent->dtext[num_char_stored] = 0;
           }
         }
 
