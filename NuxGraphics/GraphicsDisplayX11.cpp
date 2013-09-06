@@ -1603,6 +1603,15 @@ namespace nux
     }
   }
 
+  void GetDefaultSizeLookupString(XEvent event, Event* nux_event)
+  {
+    nux_event->dtext = new char[NUX_EVENT_TEXT_BUFFER_SIZE];
+    int num_char_stored = XLookupString(&event.xkey, nux_event->dtext, NUX_EVENT_TEXT_BUFFER_SIZE,
+                                       (KeySym*)&nux_event->x11_keysym, nullptr);
+
+    nux_event->dtext[num_char_stored] = 0;
+  }
+
   void GraphicsDisplay::ProcessXEvent(XEvent xevent, bool foreign)
   {
     int x_recalc = 0;
@@ -1708,8 +1717,6 @@ namespace nux
         m_pEvent->x11_timestamp = xevent.xkey.time;
         m_pEvent->x11_key_state = xevent.xkey.state;
 
-        char buffer[NUX_EVENT_TEXT_BUFFER_SIZE];
-
         Memset(m_pEvent->text, 0, NUX_EVENT_TEXT_BUFFER_SIZE);
 
         bool skip = false;
@@ -1729,11 +1736,16 @@ namespace nux
           {
             delete[] m_pEvent->dtext;
             m_pEvent->dtext = nullptr;
+            Status status;
 
-            num_char_stored = XmbLookupString(m_xim_controller->GetXIC(), &xevent.xkey, buffer,
-                                              NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->x11_keysym, nullptr);
+            num_char_stored = XmbLookupString(m_xim_controller->GetXIC(), &xevent.xkey, nullptr,
+                                              0, (KeySym*) &m_pEvent->x11_keysym, &status);
 
-            if (num_char_stored > 0)
+            if (status == XLookupKeySym)
+            {
+              GetDefaultSizeLookupString(xevent, m_pEvent);
+            }
+            else if (num_char_stored > 0)
             {
               int buf_len = num_char_stored + 1;
               m_pEvent->dtext = new char[buf_len];
@@ -1745,11 +1757,7 @@ namespace nux
           }
           else
           {
-            m_pEvent->dtext = new char[NUX_EVENT_TEXT_BUFFER_SIZE];
-            num_char_stored = XLookupString(&xevent.xkey, m_pEvent->dtext, NUX_EVENT_TEXT_BUFFER_SIZE,
-                                            (KeySym*) &m_pEvent->x11_keysym, nullptr);
-
-            m_pEvent->dtext[num_char_stored] = 0;
+            GetDefaultSizeLookupString(xevent, m_pEvent);
           }
         }
 

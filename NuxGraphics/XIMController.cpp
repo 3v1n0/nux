@@ -78,6 +78,7 @@ void XIMController::FocusInXIC()
 void XIMController::FocusOutXIC()
 {
   xic_client_.FocusOutXIC();
+  xic_client_.DestroyXIC();
 }
 
 void XIMController::InitXIMCallback()
