@@ -481,7 +481,7 @@ namespace nux
   void IBusIMEContext::UpdateHotkeys()
   {
     IBusConfig* conf = ibus_bus_get_config(bus_);
-    GVariant* val = ibus_config_get_value(conf, "general", "hotkey/trigger");
+    GVariant* val = ibus_config_get_value(conf, "general/hotkey", "triggers");
     const gchar** keybindings = g_variant_get_strv(val, NULL);
 
     hotkeys_ = ParseIBusHotkeys(keybindings);

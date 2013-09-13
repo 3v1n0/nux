@@ -1,3 +1,70 @@
+nux (4.0.2+13.10.20130829.1-0ubuntu1) saucy; urgency=low
+
+  [ Brandon Schaefer ]
+  * Use a temp buf to poke for the size of string vs passing nullptr.
+    For some reason this was working for most cases, but not greek.
+    Using a temp buf allows us to poke the greeks chars and others that
+    werent working. (LP: #1205713)
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 812
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 29 Aug 2013 06:42:50 +0000
+
+nux (4.0.2+13.10.20130816.2-0ubuntu1) saucy; urgency=low
+
+  [ Stephen M. Webb ]
+  * Apdated gmock detection after gmock was updated.
+
+  [ Łukasz 'sil2100' Zemczak ]
+  * Add 50_check_unity_support to Xsession.d that will run the unity
+    support test app to determine if we should use the fallback mode or
+    not, since we'll be dropping the test from compiz.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 810
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 16 Aug 2013 10:34:41 +0000
+
+nux (4.0.2+13.10.20130802-0ubuntu1) saucy; urgency=low
+
+  [ Brandon Schaefer ]
+  * Change general hotkey/tiggers to general/hotkey triggers.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 807
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 02 Aug 2013 04:02:36 +0000
+
+nux (4.0.2+13.10.20130729-0ubuntu1) saucy; urgency=low
+
+  [ Kevin DuBois ]
+  * Fix examples/cairo.cpp includes.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 805
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 29 Jul 2013 04:02:59 +0000
+
+nux (4.0.2+13.10.20130723-0ubuntu1) saucy; urgency=low
+
+  [ Stephen M. Webb ]
+  * moved to newer upstream google-mock release (lp: #1185265). (LP:
+    #1185265)
+
+  [ Marco Trevisan (Treviño) ]
+  * TimerProc: use std::shared_ptr to ref TimerObject in TimerHandle and
+    a std::deque in TimerHandler This fix several memory leaks that we
+    are getting when the timer runs and makes the code more
+    maintainable. Also various memory errors leaks.
+  * GraphicsDisplayX11: cache the atom values, calling the slow
+    XInternAtom just once per each.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 803
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 23 Jul 2013 06:12:20 +0000
+
 nux (4.0.2+13.10.20130705-0ubuntu1) saucy; urgency=low
 
   [ Marco Trevisan (Treviño) ]
