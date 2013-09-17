@@ -165,8 +165,14 @@ namespace nux
     UpdateCursorLocation();
 
     IBusConfig* bus_conf = ibus_bus_get_config(bus_);
-    g_signal_handlers_disconnect_by_func(bus_conf, reinterpret_cast<gpointer>(OnConfigChanged_), this);
-    g_signal_connect(bus_conf, "value-changed", G_CALLBACK(OnConfigChanged_), this);
+
+    // may be null if not connected to bus or can't get ibus name
+    if (bus_conf)
+    {
+      g_signal_handlers_disconnect_by_func(bus_conf, reinterpret_cast<gpointer>(OnConfigChanged_), this);
+      g_signal_connect(bus_conf, "value-changed", G_CALLBACK(OnConfigChanged_), this);
+    }
+
     UpdateHotkeys();
   }
 
@@ -177,7 +183,12 @@ namespace nux
     if (ibus_bus_is_connected(bus_))
     {
       IBusConfig* bus_conf = ibus_bus_get_config(bus_);
-      g_signal_handlers_disconnect_by_func(bus_conf, reinterpret_cast<gpointer>(OnConfigChanged_), this);
+
+      // may be null if not connected to bus or can't get ibus name
+      if (bus_conf)
+      {
+        g_signal_handlers_disconnect_by_func(bus_conf, reinterpret_cast<gpointer>(OnConfigChanged_), this);
+      }
     }
 
     if (!context_)
@@ -481,12 +492,17 @@ namespace nux
   void IBusIMEContext::UpdateHotkeys()
   {
     IBusConfig* conf = ibus_bus_get_config(bus_);
-    GVariant* val = ibus_config_get_value(conf, "general/hotkey", "triggers");
-    const gchar** keybindings = g_variant_get_strv(val, NULL);
 
-    hotkeys_ = ParseIBusHotkeys(keybindings);
+    // may be null if not connected to bus or can't get ibus name
+    if (conf)
+    {
+      GVariant* val = ibus_config_get_value(conf, "general/hotkey", "triggers");
+      const gchar** keybindings = g_variant_get_strv(val, NULL);
 
-    g_variant_unref(val);
+      hotkeys_ = ParseIBusHotkeys(keybindings);
+
+      g_variant_unref(val);
+    }
   }
 
   bool IBusIMEContext::IsHotkeyEvent(EventType type, unsigned long keysym, unsigned long modifiers) const
