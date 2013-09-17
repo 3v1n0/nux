@@ -672,10 +672,7 @@ int main (int argc, char* argv[]) {
   int          resultfile;
   int          forcecheck = 0;
 
-  results.indirect = 0;
-  results.compiz = 0;
-  results.flags = 0;
-  results.error = NULL;
+  memset(&results, 0, sizeof(TestResults));
 
   // Basic command-line parsing.
   for (int i = 1; i < argc; i++) {
