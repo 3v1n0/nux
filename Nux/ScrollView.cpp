@@ -180,9 +180,6 @@ namespace nux
 
     Geometry base = GetGeometry();
 
-    if (view_layout_)
-      view_layout_->QueueDraw();
-
     GetPainter().PaintBackground(graphics_engine, base);
 
     if (m_vertical_scrollbar_enable)
@@ -274,18 +271,10 @@ namespace nux
     m_ViewX = GetBaseX() + m_border + m_ViewContentLeftMargin;
     m_ViewY = GetBaseY() + m_top_border + m_ViewContentTopMargin;
 
-    if (m_vertical_scrollbar_enable == false)
-      m_ViewWidth = GetBaseWidth() - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin;
-    else
-      m_ViewWidth = GetBaseWidth() - ScrollBarWidth - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin;
-
+    m_ViewWidth = GetBaseWidth() - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin;
     nuxAssertMsg(m_ViewWidth > 0, "[ScrollView::PreLayoutManagement] Invalid view width: %d", m_ViewWidth);
 
-    if (m_horizontal_scrollbar_enable == false)
-      m_ViewHeight = GetBaseHeight() - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin;
-    else
-      m_ViewHeight = GetBaseHeight() - ScrollBarHeight - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin;
-
+    m_ViewHeight = GetBaseHeight() - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin;
     nuxAssertMsg(m_ViewHeight > 0, "[ScrollView::PreLayoutManagement] Invalid view height: %d", m_ViewHeight);
 
     if (m_ViewX + _delta_x +  m_ViewContentWidth < m_ViewX + m_ViewWidth)
@@ -372,9 +361,6 @@ namespace nux
 
   long ScrollView::PostLayoutManagement(long LayoutResult)
   {
-    int ScrollBarWidth = 0;
-    int ScrollBarHeight = 0;
-
     if (view_layout_)
     {
       m_ViewContentX = view_layout_->GetBaseX();
@@ -383,16 +369,10 @@ namespace nux
       m_ViewContentHeight = view_layout_->GetBaseHeight();
     }
 
-    if (m_horizontal_scrollbar_enable)
-      ScrollBarHeight = _hscrollbar->GetBaseHeight();
-
-    if (m_vertical_scrollbar_enable)
-      ScrollBarWidth = _vscrollbar->GetBaseWidth();
-
     _hscrollbar->SetContainerSize(GetBaseX() + m_border + m_ViewContentLeftMargin,
                                   GetBaseY() + m_top_border + m_ViewContentTopMargin,
-                                  GetBaseWidth() - ScrollBarWidth - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
-                                  GetBaseHeight() - ScrollBarHeight - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin);
+                                  GetBaseWidth() - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
+                                  GetBaseHeight() - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin);
 
     if (m_horizontal_scrollbar_enable)
     {
@@ -418,8 +398,8 @@ namespace nux
 
     _vscrollbar->SetContainerSize(GetBaseX() + m_border + m_ViewContentLeftMargin,
                                   GetBaseY() + m_top_border + m_ViewContentTopMargin,
-                                  GetBaseWidth() - ScrollBarWidth - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
-                                  GetBaseHeight() - ScrollBarHeight - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin);
+                                  GetBaseWidth() - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin,
+                                  GetBaseHeight() - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin);
 
     if (m_vertical_scrollbar_enable)
     {
@@ -470,16 +450,10 @@ namespace nux
     m_ViewX = GetBaseX() + m_border + m_ViewContentLeftMargin;
     m_ViewY = GetBaseY() + m_top_border + m_ViewContentTopMargin;
 
-    if (m_vertical_scrollbar_enable == false)
-      m_ViewWidth = GetBaseWidth() - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin;
-    else
-      m_ViewWidth = GetBaseWidth() - w - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin;
+    m_ViewWidth = GetBaseWidth() - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin;
 
     if (m_horizontal_scrollbar_enable == false)
       m_ViewHeight = GetBaseHeight() - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin;
-    else
-      m_ViewHeight = GetBaseHeight() - h - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin;
-
 
     if (m_ViewX + _delta_x +  m_ViewContentWidth < m_ViewX + m_ViewWidth)
     {
@@ -592,6 +566,7 @@ namespace nux
 
   void ScrollView::ScrollUp(float stepy, int mousedy)
   {
+    std::cout << "ScrollView::ScrollUp" << std::endl;
     if (m_ViewContentHeight <= m_ViewHeight)
       return;
 
@@ -635,6 +610,7 @@ namespace nux
 
       if (last_delta_y != _delta_y)
       {
+        std::cout << "ScrollDown" << std::endl;
         QueueDraw();
         _vscrollbar->QueueDraw();
       }
@@ -718,6 +694,7 @@ namespace nux
     }
     else
     {
+      std::cout << "RecvMouseWheel Up" << wheel_delta << std::endl; 
       ScrollUp(abs(wheel_delta / NUX_MOUSEWHEEL_DELTA), m_MouseWheelScrollSize);
     }
   }
