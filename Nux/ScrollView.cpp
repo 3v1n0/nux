@@ -566,7 +566,6 @@ namespace nux
 
   void ScrollView::ScrollUp(float stepy, int mousedy)
   {
-    std::cout << "ScrollView::ScrollUp" << std::endl;
     if (m_ViewContentHeight <= m_ViewHeight)
       return;
 
@@ -610,7 +609,6 @@ namespace nux
 
       if (last_delta_y != _delta_y)
       {
-        std::cout << "ScrollDown" << std::endl;
         QueueDraw();
         _vscrollbar->QueueDraw();
       }
@@ -694,7 +692,6 @@ namespace nux
     }
     else
     {
-      std::cout << "RecvMouseWheel Up" << wheel_delta << std::endl; 
       ScrollUp(abs(wheel_delta / NUX_MOUSEWHEEL_DELTA), m_MouseWheelScrollSize);
     }
   }
