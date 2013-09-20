@@ -451,9 +451,7 @@ namespace nux
     m_ViewY = GetBaseY() + m_top_border + m_ViewContentTopMargin;
 
     m_ViewWidth = GetBaseWidth() - 2 * m_border - m_ViewContentRightMargin - m_ViewContentLeftMargin;
-
-    if (m_horizontal_scrollbar_enable == false)
-      m_ViewHeight = GetBaseHeight() - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin;
+    m_ViewHeight = GetBaseHeight() - m_top_border - m_border - m_ViewContentBottomMargin - m_ViewContentTopMargin;
 
     if (m_ViewX + _delta_x +  m_ViewContentWidth < m_ViewX + m_ViewWidth)
     {
