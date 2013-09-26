@@ -1,3 +1,26 @@
+nux (4.0.2+13.10.20130920-0ubuntu1) saucy; urgency=low
+
+  [ Brandon Schaefer ]
+  * Always use a dynamic char* when dealing with text events. We were
+    using a static text, then allocating dtext causing ibus to get
+    confused on what to use. (LP: #1219330)
+  * Greek does not play nice with XmbLookupString and gives us a size 0
+    for the event string size. So if we run into the status
+    XLookupKeySym, look it up using XLookupString. This way pinyin will
+    still work as it did before the greek fix went in last week. (LP:
+    #1219432)
+  * Gracefully handle ibus_bus_get_config returning NULL. (LP: #1047944)
+
+  [ Stephen M. Webb ]
+  * initialize all fields of the test results structure to avoid
+    segfaults when Unity support is not available (lp: #1226737). (LP:
+    #1226737)
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 817
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 20 Sep 2013 11:16:31 +0000
+
 nux (4.0.2+13.10.20130829.1-0ubuntu1) saucy; urgency=low
 
   [ Brandon Schaefer ]
