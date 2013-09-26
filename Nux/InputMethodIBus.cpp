@@ -381,7 +381,7 @@ namespace
     std::unique_ptr<ProcessKeyEventData> key_ev(data);
 
     GError *error = NULL;
-    ibus_input_context_process_key_event_async_finish(context, res, &error);
+    gboolean processed = ibus_input_context_process_key_event_async_finish(context, res, &error);
 
     if (error)
     {
@@ -395,11 +395,15 @@ namespace
     }
 
     nuxAssert(key_ev->context->context_ == context);
-    key_ev->context->text_entry_->ProcessKeyEvent(key_ev->event.type(),
-                                                  key_ev->event.key_sym(),
-                                                  key_ev->event.flags() | IBUS_IGNORED_MASK,
-                                                  key_ev->event.character().c_str(),
-                                                  0);
+
+    if (!processed)
+    {
+      key_ev->context->text_entry_->ProcessKeyEvent(key_ev->event.type(),
+                                                    key_ev->event.key_sym(),
+                                                    key_ev->event.flags() | IBUS_IGNORED_MASK,
+                                                    key_ev->event.character().c_str(),
+                                                    0);
+    }
   }
 
   std::vector<Event> IBusIMEContext::ParseIBusHotkeys(const gchar** keybindings)
