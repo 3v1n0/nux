@@ -22,20 +22,26 @@
 
 
 #include "Nux.h"
+#include "NuxCore/Logger.h"
 
 #include "InputMethodIBus.h"
 
 namespace nux
 {
+namespace
+{
+  DECLARE_LOGGER(logger, "nux.inputmethod.ibus");
+}
 
   std::vector<Event> IBusIMEContext::hotkeys_;
 
   IBusBus* IBusIMEContext::bus_ = NULL;
 
   IBusIMEContext::IBusIMEContext(TextEntry* text_entry)
-    : text_entry_(text_entry),
-      context_(NULL),
-      is_focused_(false)
+    : text_entry_(text_entry)
+    , context_(NULL)
+    , cancellable_(g_cancellable_new())
+    , is_focused_(false)
   {
     // init ibus
     if (!bus_)
@@ -54,17 +60,15 @@ namespace nux
     }
     else
     {
-      nuxDebugMsg("[IBusIMEContext::IBusIMEContext] Can not connect to ibus");
+      LOG_WARN(logger) << "Impossible to connect to connect to ibus";
     }
   }
 
   IBusIMEContext::~IBusIMEContext()
   {
-    // disconnect bus signals
-    g_signal_handlers_disconnect_by_func(bus_, reinterpret_cast<gpointer>(OnConnected_),    this);
-    g_signal_handlers_disconnect_by_func(bus_, reinterpret_cast<gpointer>(OnDisconnected_), this);
-
     DestroyContext();
+    g_signal_handlers_disconnect_by_data(bus_, this);
+    g_object_unref(cancellable_);
   }
 
   void IBusIMEContext::Focus()
@@ -98,7 +102,8 @@ namespace nux
   {
     guint keyval = event.key_sym(); // todo(jaytaoko): ui::GdkKeyCodeForWindowsKeyCode(event.key_code(), event.IsShiftDown() ^ event.IsCapsLockDown());
 
-    if (context_) {
+    if (context_)
+    {
       guint modifiers = 0;
 
       if (event.flags() & IBUS_IGNORED_MASK)
@@ -117,9 +122,7 @@ namespace nux
         modifiers |= IBUS_LOCK_MASK;
 
       ibus_input_context_process_key_event_async(context_,
-        keyval, event.key_code() - 8, modifiers,
-        -1,
-        NULL,
+        keyval, event.key_code() - 8, modifiers, -1, cancellable_,
         reinterpret_cast<GAsyncReadyCallback>(ProcessKeyEventDone),
         new ProcessKeyEventData(this, event));
 
@@ -133,16 +136,18 @@ namespace nux
       // TODO(penghuang) support surrounding
   }
 
-  void IBusIMEContext::CreateContext() {
+  void IBusIMEContext::CreateContext()
+  {
     nuxAssert(bus_ != NULL);
     nuxAssert(ibus_bus_is_connected(bus_));
 
     if (!(context_ = ibus_bus_create_input_context(bus_, "nux")))
     {
-      nuxDebugMsg("[IBusIMEContext::IBusIMEContext] Cannot create InputContext");
+      LOG_WARN(logger) << "Cannot create InputContext";
       return;
     }
 
+    g_cancellable_reset(cancellable_);
     text_entry_->ime_active_ = false;
 
     // connect input context signals
@@ -164,10 +169,7 @@ namespace nux
 
     UpdateCursorLocation();
 
-    IBusConfig* bus_conf = ibus_bus_get_config(bus_);
-
-    // may be null if not connected to bus or can't get ibus name
-    if (bus_conf)
+    if (IBusConfig* bus_conf = ibus_bus_get_config(bus_))
     {
       g_signal_handlers_disconnect_by_func(bus_conf, reinterpret_cast<gpointer>(OnConfigChanged_), this);
       g_signal_connect(bus_conf, "value-changed", G_CALLBACK(OnConfigChanged_), this);
@@ -178,17 +180,12 @@ namespace nux
 
   void IBusIMEContext::DestroyContext()
   {
-    //nuxDebugMsg("***IBusIMEContext::DestroyContext***");
+    LOG_DEBUG(logger) << "Destroy context";
 
     if (ibus_bus_is_connected(bus_))
     {
-      IBusConfig* bus_conf = ibus_bus_get_config(bus_);
-
-      // may be null if not connected to bus or can't get ibus name
-      if (bus_conf)
-      {
-        g_signal_handlers_disconnect_by_func(bus_conf, reinterpret_cast<gpointer>(OnConfigChanged_), this);
-      }
+      if (IBusConfig* bus_conf = ibus_bus_get_config(bus_))
+        g_signal_handlers_disconnect_by_data(bus_conf, this);
     }
 
     if (!context_)
@@ -196,7 +193,6 @@ namespace nux
 
     text_entry_->ResetPreedit();
     ibus_proxy_destroy(reinterpret_cast<IBusProxy *>(context_));
-
     nuxAssert(!context_);
   }
 
@@ -225,7 +221,8 @@ namespace nux
 
   void IBusIMEContext::OnConnected(IBusBus * /* bus */)
   {
-    //nuxDebugMsg("***IBusIMEContext::OnConnected***");
+    LOG_DEBUG(logger) << "Connected";
+
     if (ibus_bus_is_connected(bus_))
     {
       DestroyContext();
@@ -235,9 +232,9 @@ namespace nux
 
   void IBusIMEContext::OnDisconnected(IBusBus * /* bus */)
   {
-    //nuxDebugMsg("***IBusIMEContext::OnDisonnected***");
-    hotkeys_.clear();
+    LOG_DEBUG(logger) << "Disconnected";
 
+    hotkeys_.clear();
     DestroyContext();
   }
 
@@ -252,7 +249,7 @@ namespace nux
 
   void IBusIMEContext::OnCommitText(IBusInputContext * /* context */, IBusText* text)
   {
-    //nuxDebugMsg("***IBusIMEContext::OnCommitText::%s***", text->text);
+    LOG_DEBUG(logger) << "Text committed " << text->text;
 
     text_entry_->DeleteSelection();
 
@@ -271,7 +268,7 @@ namespace nux
 
   void IBusIMEContext::OnUpdatePreeditText(IBusInputContext* /* context */, IBusText* text, guint /* cursor_pos */, gboolean visible)
   {
-    //nuxDebugMsg("***IBusIMEContext::OnUpdatePreeditText***");
+    LOG_DEBUG(logger) << "Preedit Update";
     nuxAssert(IBUS_IS_TEXT(text));
 
     if (text_entry_->preedit_.empty())
@@ -337,12 +334,12 @@ namespace nux
 
   void IBusIMEContext::OnShowPreeditText(IBusInputContext * /* context */)
   {
-    //nuxDebugMsg("***IBusIMEContext::OnShowPreeditText***");
+    LOG_DEBUG(logger) << "Show preedit";
   }
 
   void IBusIMEContext::OnHidePreeditText(IBusInputContext * /* context */)
   {
-    //nuxDebugMsg("***IBusIMEContext::OnHidePreeditText***");
+    LOG_DEBUG(logger) << "Hide preedit";
 
     text_entry_->ResetPreedit();
     text_entry_->QueueRefresh (true, true);
@@ -350,7 +347,7 @@ namespace nux
 
   void IBusIMEContext::OnEnable(IBusInputContext * /* context */)
   {
-    //nuxDebugMsg("***IBusIMEContext::OnEnable***");
+    LOG_DEBUG(logger) << "On enable";
 
     text_entry_->ime_active_ = true;
     text_entry_->text_changed.emit(text_entry_);
@@ -359,7 +356,7 @@ namespace nux
 
   void IBusIMEContext::OnDisable(IBusInputContext * /* context */)
   {
-    //nuxDebugMsg("***IBusIMEContext::OnDisable***");
+    LOG_DEBUG(logger) << "On disable";
     text_entry_->ime_active_ = false;
     text_entry_->ResetPreedit();
     text_entry_->QueueRefresh (true, true);
@@ -367,38 +364,42 @@ namespace nux
 
   void IBusIMEContext::OnDestroy(IBusInputContext * /* context */)
   {
-    //nuxDebugMsg("***IBusIMEContext::OnDestroy***");
+    LOG_DEBUG(logger) << "On Destroy";
 
+    if (!context_)
+      return;
+
+    g_cancellable_cancel(cancellable_);
+    g_signal_handlers_disconnect_by_data(context_, this);
     g_object_unref(context_);
     context_ = NULL;
   }
 
   void IBusIMEContext::ProcessKeyEventDone(IBusInputContext *context, GAsyncResult* res, ProcessKeyEventData *data)
   {
-    //nuxDebugMsg("***IBusIMEContext::ProcessKeyEventDone***");
-      std::unique_ptr<ProcessKeyEventData> key_ev(data);
-      nuxAssert(key_ev->context->context_ == context);
+    LOG_DEBUG(logger) << "Key event processed";
+    std::unique_ptr<ProcessKeyEventData> key_ev(data);
 
-      GError *error = NULL;
-      gboolean processed = ibus_input_context_process_key_event_async_finish (
-                            context,
-                            res,
-                            &error);
+    GError *error = NULL;
+    ibus_input_context_process_key_event_async_finish(context, res, &error);
 
-      if (error)
+    if (error)
+    {
+      if (!g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
       {
-        g_warning ("Process Key Event failed: %s.", error->message);
-        g_error_free (error);
+        LOG_ERROR(logger) << "Process Key Event failed: " << error->message << ".";
       }
 
-      if (!processed)
-      {
-        key_ev->context->text_entry_->ProcessKeyEvent(key_ev->event.type(),
-                                                      key_ev->event.key_sym(),
-                                                      key_ev->event.flags() | IBUS_IGNORED_MASK,
-                                                      key_ev->event.character().c_str(),
-                                                      0);
-      }
+      g_error_free(error);
+      return;
+    }
+
+    nuxAssert(key_ev->context->context_ == context);
+    key_ev->context->text_entry_->ProcessKeyEvent(key_ev->event.type(),
+                                                  key_ev->event.key_sym(),
+                                                  key_ev->event.flags() | IBUS_IGNORED_MASK,
+                                                  key_ev->event.character().c_str(),
+                                                  0);
   }
 
   std::vector<Event> IBusIMEContext::ParseIBusHotkeys(const gchar** keybindings)
@@ -491,10 +492,7 @@ namespace nux
 
   void IBusIMEContext::UpdateHotkeys()
   {
-    IBusConfig* conf = ibus_bus_get_config(bus_);
-
-    // may be null if not connected to bus or can't get ibus name
-    if (conf)
+    if (IBusConfig* conf = ibus_bus_get_config(bus_))
     {
       GVariant* val = ibus_config_get_value(conf, "general/hotkey", "triggers");
       const gchar** keybindings = g_variant_get_strv(val, NULL);
