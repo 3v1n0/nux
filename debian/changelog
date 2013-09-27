@@ -1,3 +1,15 @@
+nux (4.0.2+13.10.20130927.1-0ubuntu1) saucy; urgency=low
+
+  [ Marco Trevisan (Treviño) ]
+  * InputMethodIBus: use GCancellable to ignore callback events after
+    destruction Also use nux logger and add some code cleanup. (LP:
+    #1231504)
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 819
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 27 Sep 2013 11:08:24 +0000
+
 nux (4.0.2+13.10.20130920-0ubuntu1) saucy; urgency=low
 
   [ Brandon Schaefer ]
