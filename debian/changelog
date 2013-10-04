@@ -1,3 +1,9 @@
+nux (4.0.3-0ubuntu1) UNRELEASED; urgency=low
+
+  * New upstream version 4.0.3.
+
+ -- Stephen M. Webb <stephen.webb@bregmasoft.ca>  Fri, 27 Sep 2013 14:34:03 -0400
+
 nux (4.0.2+13.10.20130927.1-0ubuntu1) saucy; urgency=low
 
   [ Marco Trevisan (Treviño) ]
