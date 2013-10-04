@@ -4,6 +4,17 @@ nux (4.0.3-0ubuntu1) UNRELEASED; urgency=low
 
  -- Stephen M. Webb <stephen.webb@bregmasoft.ca>  Fri, 27 Sep 2013 14:34:03 -0400
 
+nux (4.0.2+13.10.20131004-0ubuntu1) saucy; urgency=low
+
+  [ Stephen M. Webb ]
+  * precomputed tap invariants for bilinear Gaussian blur shaders (lp:
+    #1222602). (LP: #1222602)
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 821
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 04 Oct 2013 05:22:28 +0000
+
 nux (4.0.2+13.10.20130927.1-0ubuntu1) saucy; urgency=low
 
   [ Marco Trevisan (Treviño) ]
