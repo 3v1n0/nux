@@ -1838,6 +1838,7 @@ namespace nux
         m_pEvent->x_root = 0;
         m_pEvent->y_root = 0;
         m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
+        m_pEvent->x11_timestamp = xevent.xmotion.time;
         MouseMove(xevent, m_pEvent);
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: MotionNotify event.");
         break;
@@ -1854,6 +1855,7 @@ namespace nux
         m_pEvent->x_root = 0;
         m_pEvent->y_root = 0;
         m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
+        m_pEvent->x11_timestamp = xevent.xcrossing.time;
         m_pEvent->type = NUX_WINDOW_MOUSELEAVE;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: LeaveNotify event.");
         break;
@@ -1869,6 +1871,7 @@ namespace nux
         m_pEvent->x_root = 0;
         m_pEvent->y_root = 0;
         m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
+        m_pEvent->x11_timestamp = xevent.xcrossing.time;
         MouseMove(xevent, m_pEvent);
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: EnterNotify event.");
         break;
@@ -2662,6 +2665,7 @@ namespace nux
     // The drop does not provide(x, y) coordinates of the location of the drop. Use the last DND position.
     nux_event->x = _last_dnd_position.x;
     nux_event->y = _last_dnd_position.y;
+    nux_event->x11_timestamp = _drag_drop_timestamp;
   }
 
   void GraphicsDisplay::HandleXDndFinished(XEvent event)
