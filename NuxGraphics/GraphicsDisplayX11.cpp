@@ -1359,6 +1359,12 @@ namespace nux
       bool bProcessEvent = true;
       XNextEvent(m_X11Display, &xevent);
 
+      if ((xevent.type == KeyPress || xevent.type == KeyRelease) &&
+          m_xim_controller->GetCurrentWindow() != xevent.xkey.window)
+      {
+        m_xim_controller->SetFocusedWindow(xevent.xkey.window);
+      }
+
       if (XFilterEvent(&xevent, None) == True)
         return true;
 
