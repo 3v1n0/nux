@@ -25,7 +25,7 @@
 #include "NuxGraphics/GraphicsEngine.h"
 
 #include "Nux/TextureArea.h"
-#include "NuxImage/CairoGraphics.h"
+#include "NuxGraphics/CairoGraphics.h"
 
 
 void ThreadWidgetInit(nux::NThread* thread, void* InitData)

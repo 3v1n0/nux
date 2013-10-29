@@ -54,7 +54,7 @@ AC_PREREQ(2.59)
 AC_INIT([nux],
         [nux_version],
         [https://bugs.launchpad.net/nux])
-AC_COPYRIGHT([Copyright 2010-2012 Inalogic Inc.])
+AC_COPYRIGHT([Copyright 2010-2013 Inalogic Inc.])
 
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 

@@ -161,6 +161,7 @@ namespace nux
 
     TextEntry* text_entry_;
     IBusInputContext* context_;
+    GCancellable* cancellable_;
     bool is_focused_;
 
     static IBusBus* bus_;

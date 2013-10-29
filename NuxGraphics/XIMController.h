@@ -44,6 +44,9 @@ public:
 
   void FocusInXIC();
   void FocusOutXIC();
+
+  Window GetCurrentWindow() const;
+
 private:
   void InitXIMCallback();
   static void SetupXIMClientCallback(Display* dpy, XPointer client_data, XPointer call_data);

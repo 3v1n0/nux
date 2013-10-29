@@ -510,9 +510,9 @@ namespace nux
                      varying vec4 varyVertexColor;        \n\
                      void main()                          \n\
                      {                                    \n\
-                     varyTexCoord0 = MyTextureCoord0;     \n\
-                     varyVertexColor = VertexColor;       \n\
-                     gl_Position =  ViewProjectionMatrix * (AVertex);  \n\
+                       varyTexCoord0 = MyTextureCoord0;     \n\
+                       varyVertexColor = VertexColor;       \n\
+                       gl_Position =  ViewProjectionMatrix * (AVertex);  \n\
                      }";
 
 
@@ -653,21 +653,22 @@ namespace nux
      }";
 
     std::string ps_string = NUX_FRAGMENT_SHADER_HEADER
-    "varying vec4 v_tex_coord;                                                                                  \n\
-     uniform sampler2D tex_object;                                                                              \n\
-     uniform vec2 tex_size;                                                                                     \n\
-     #define NUM_SAMPLES %d                                                                                     \n\
-     uniform float weights[NUM_SAMPLES];                                                                        \n\
-     uniform float offsets[NUM_SAMPLES];                                                                        \n\
-     void main()                                                                                                \n\
-     {                                                                                                          \n\
-      vec3 acc = texture2D(tex_object, v_tex_coord.st).rgb*weights[0];\n\
-      for (int i = 1; i < NUM_SAMPLES; i++)                                                                     \n\
-      {                                                                                                         \n\
-        acc += texture2D(tex_object, (v_tex_coord.st+(vec2(offsets[i], 0.0)/tex_size))).rgb*weights[i]; \n\
-        acc += texture2D(tex_object, (v_tex_coord.st-(vec2(offsets[i], 0.0)/tex_size))).rgb*weights[i]; \n\
-      }                                                                                                         \n\
-      gl_FragColor = vec4(acc, 1.0);                                                                    \n\
+    "varying vec4 v_tex_coord;                                              \n\
+     uniform sampler2D tex_object;                                          \n\
+     #define NUM_SAMPLES %d                                                 \n\
+     uniform vec2 taps[NUM_SAMPLES];                                        \n\
+     void main()                                                            \n\
+     {                                                                      \n\
+      vec3 acc = texture2D(tex_object, v_tex_coord.st).rgb * taps[0][1];    \n\
+      for (int i = 1; i < NUM_SAMPLES; i++)                                 \n\
+      {                                                                     \n\
+        vec2 tap = taps[i];                                                 \n\
+        vec2 offset = vec2(tap[0], 0.0);                                    \n\
+        float weight = tap[1];                                              \n\
+        acc += texture2D(tex_object, v_tex_coord.st + offset).rgb * weight; \n\
+        acc += texture2D(tex_object, v_tex_coord.st - offset).rgb * weight; \n\
+      }                                                                     \n\
+      gl_FragColor = vec4(acc, 1.0);                                        \n\
      }";
 
     int l = ps_string.length();
@@ -709,21 +710,22 @@ namespace nux
      }";
 
     std::string ps_string = NUX_FRAGMENT_SHADER_HEADER
-    "varying vec4 v_tex_coord;                                                                                  \n\
-     uniform sampler2D tex_object;                                                                              \n\
-     uniform vec2 tex_size;                                                                                     \n\
-     #define NUM_SAMPLES %d                                                                                     \n\
-     uniform float weights[NUM_SAMPLES];                                                                        \n\
-     uniform float offsets[NUM_SAMPLES];                                                                        \n\
-     void main()                                                                                                \n\
-     {                                                                                                          \n\
-      vec3 acc = texture2D(tex_object, v_tex_coord.st).rgb*weights[0]; \n\
-      for (int i = 1; i < NUM_SAMPLES; i++)                                                                     \n\
-      {                                                                                                         \n\
-        acc += texture2D(tex_object, (v_tex_coord.st+(vec2(0.0, offsets[i])/tex_size))).rgb*weights[i]; \n\
-        acc += texture2D(tex_object, (v_tex_coord.st-(vec2(0.0, offsets[i])/tex_size))).rgb*weights[i]; \n\
-      }                                                                                                         \n\
-      gl_FragColor = vec4(acc, 1.0);                                                                    \n\
+    "varying vec4 v_tex_coord;                                              \n\
+     uniform sampler2D tex_object;                                          \n\
+     #define NUM_SAMPLES %d                                                 \n\
+     uniform vec2 taps[NUM_SAMPLES];                                        \n\
+     void main()                                                            \n\
+     {                                                                      \n\
+      vec3 acc = texture2D(tex_object, v_tex_coord.st).rgb * taps[0][1];    \n\
+      for (int i = 1; i < NUM_SAMPLES; i++)                                 \n\
+      {                                                                     \n\
+        vec2 tap = taps[i];                                                 \n\
+        vec2 offset = vec2(0.0, tap[0]);                                    \n\
+        float weight = tap[1];                                              \n\
+        acc += texture2D(tex_object, v_tex_coord.st + offset).rgb * weight; \n\
+        acc += texture2D(tex_object, v_tex_coord.st - offset).rgb * weight; \n\
+      }                                                                     \n\
+      gl_FragColor = vec4(acc, 1.0);                                        \n\
      }";
 
     int l = ps_string.length();
@@ -2131,20 +2133,21 @@ namespace nux
     CHECKGL(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0));
     shader_prog->Begin();
 
-    int tex_object_location     = shader_prog->GetUniformLocationARB("tex_object");
-    int weights_location        = shader_prog->GetUniformLocationARB("weights");
-    int offsets_location        = shader_prog->GetUniformLocationARB("offsets");
-    int tex_size_location       = shader_prog->GetUniformLocationARB("tex_size");
-    int vertex_location         = shader_prog->GetAttributeLocation("vertex");
-    int tex_coord_location      = shader_prog->GetAttributeLocation("tex_coord");
+    int tex_object_location = shader_prog->GetUniformLocationARB("tex_object");
+    int taps_location       = shader_prog->GetUniformLocationARB("taps");
+    int vertex_location     = shader_prog->GetAttributeLocation("vertex");
+    int tex_coord_location  = shader_prog->GetAttributeLocation("tex_coord");
 
     SetTexture(GL_TEXTURE0, device_texture);
     CHECKGL(glUniform1iARB(tex_object_location, 0));
 
-    CHECKGL(glUniform1fv(weights_location, weights.size(), &weights[0]));
-    CHECKGL(glUniform1fv(offsets_location, offsets.size(), &offsets[0]));
-
-    CHECKGL(glUniform2fARB(tex_size_location, width, height));
+    std::vector<float> taps;
+    for (int i = 0; i < num_samples; ++i)
+    {
+      taps.push_back(offsets[i] /= width);
+      taps.push_back(weights[i]);
+    }
+    CHECKGL(glUniform2fv(taps_location, taps.size(), &taps[0]));
 
     int     VPMatrixLocation = shader_prog->GetUniformLocationARB("view_projection_matrix");
     Matrix4 MVPMatrix = GetOpenGLModelViewProjectionMatrix();
@@ -2206,9 +2209,7 @@ namespace nux
     shader_prog->Begin();
 
     int tex_object_location     = shader_prog->GetUniformLocationARB("tex_object");
-    int weights_location        = shader_prog->GetUniformLocationARB("weights");
-    int offsets_location        = shader_prog->GetUniformLocationARB("offsets");
-    int tex_size_location       = shader_prog->GetUniformLocationARB("tex_size");
+    int taps_location           = shader_prog->GetUniformLocationARB("taps");
     int vertex_location         = shader_prog->GetAttributeLocation("vertex");
     int tex_coord_location      = shader_prog->GetAttributeLocation("tex_coord");
 
@@ -2216,10 +2217,13 @@ namespace nux
 
     CHECKGL(glUniform1iARB(tex_object_location, 0));
 
-    CHECKGL(glUniform1fv(weights_location, weights.size(), &weights[0]));
-    CHECKGL(glUniform1fv(offsets_location, offsets.size(), &offsets[0]));
-
-    CHECKGL(glUniform2fARB(tex_size_location, width, height));
+    std::vector<float> taps;
+    for (int i = 0; i < num_samples; ++i)
+    {
+      taps.push_back(offsets[i] /= height);
+      taps.push_back(weights[i]);
+    }
+    CHECKGL(glUniform2fv(taps_location, taps.size(), &taps[0]));
 
     int     VPMatrixLocation = shader_prog->GetUniformLocationARB("view_projection_matrix");
     Matrix4 MVPMatrix = GetOpenGLModelViewProjectionMatrix();

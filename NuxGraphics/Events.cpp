@@ -213,10 +213,7 @@ namespace nux
 
   const char* Event::GetText() const
   {
-    if (dtext)
-      return dtext;
-
-    return text;
+    return dtext;
   }
 
 

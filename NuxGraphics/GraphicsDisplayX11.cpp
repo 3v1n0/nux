@@ -1359,6 +1359,12 @@ namespace nux
       bool bProcessEvent = true;
       XNextEvent(m_X11Display, &xevent);
 
+      if ((xevent.type == KeyPress || xevent.type == KeyRelease) &&
+          m_xim_controller->GetCurrentWindow() != xevent.xkey.window)
+      {
+        m_xim_controller->SetFocusedWindow(xevent.xkey.window);
+      }
+
       if (XFilterEvent(&xevent, None) == True)
         return true;
 
@@ -1603,6 +1609,15 @@ namespace nux
     }
   }
 
+  void GetDefaultSizeLookupString(XEvent event, Event* nux_event)
+  {
+    nux_event->dtext = new char[NUX_EVENT_TEXT_BUFFER_SIZE];
+    int num_char_stored = XLookupString(&event.xkey, nux_event->dtext, NUX_EVENT_TEXT_BUFFER_SIZE,
+                                       (KeySym*)&nux_event->x11_keysym, nullptr);
+
+    nux_event->dtext[num_char_stored] = 0;
+  }
+
   void GraphicsDisplay::ProcessXEvent(XEvent xevent, bool foreign)
   {
     int x_recalc = 0;
@@ -1708,8 +1723,6 @@ namespace nux
         m_pEvent->x11_timestamp = xevent.xkey.time;
         m_pEvent->x11_key_state = xevent.xkey.state;
 
-        char buffer[NUX_EVENT_TEXT_BUFFER_SIZE];
-
         Memset(m_pEvent->text, 0, NUX_EVENT_TEXT_BUFFER_SIZE);
 
         bool skip = false;
@@ -1724,15 +1737,21 @@ namespace nux
         if (!skip)
         {
           int num_char_stored = 0;
+
           if (m_xim_controller->IsXICValid())
           {
             delete[] m_pEvent->dtext;
             m_pEvent->dtext = nullptr;
+            Status status;
 
             num_char_stored = XmbLookupString(m_xim_controller->GetXIC(), &xevent.xkey, nullptr,
-                                              0, (KeySym*) &m_pEvent->x11_keysym, nullptr);
+                                              0, (KeySym*) &m_pEvent->x11_keysym, &status);
 
-            if (num_char_stored > 0)
+            if (status == XLookupKeySym)
+            {
+              GetDefaultSizeLookupString(xevent, m_pEvent);
+            }
+            else if (num_char_stored > 0)
             {
               int buf_len = num_char_stored + 1;
               m_pEvent->dtext = new char[buf_len];
@@ -1744,14 +1763,14 @@ namespace nux
           }
           else
           {
-            num_char_stored = XLookupString(&xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE,
-                                            (KeySym*) &m_pEvent->x11_keysym, NULL);
-
-            if (num_char_stored > 0)
-            {
-              Memcpy(m_pEvent->text, buffer, num_char_stored);
-            }
+            GetDefaultSizeLookupString(xevent, m_pEvent);
           }
+        }
+
+        if (m_pEvent->dtext == nullptr)
+        {
+          m_pEvent->dtext = new char[NUX_EVENT_TEXT_BUFFER_SIZE];
+          m_pEvent->dtext[0] = 0;
         }
 
         break;
@@ -1825,6 +1844,7 @@ namespace nux
         m_pEvent->x_root = 0;
         m_pEvent->y_root = 0;
         m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
+        m_pEvent->x11_timestamp = xevent.xmotion.time;
         MouseMove(xevent, m_pEvent);
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: MotionNotify event.");
         break;
@@ -1841,6 +1861,7 @@ namespace nux
         m_pEvent->x_root = 0;
         m_pEvent->y_root = 0;
         m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
+        m_pEvent->x11_timestamp = xevent.xcrossing.time;
         m_pEvent->type = NUX_WINDOW_MOUSELEAVE;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: LeaveNotify event.");
         break;
@@ -1856,6 +1877,7 @@ namespace nux
         m_pEvent->x_root = 0;
         m_pEvent->y_root = 0;
         m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
+        m_pEvent->x11_timestamp = xevent.xcrossing.time;
         MouseMove(xevent, m_pEvent);
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: EnterNotify event.");
         break;
@@ -2649,6 +2671,7 @@ namespace nux
     // The drop does not provide(x, y) coordinates of the location of the drop. Use the last DND position.
     nux_event->x = _last_dnd_position.x;
     nux_event->y = _last_dnd_position.y;
+    nux_event->x11_timestamp = _drag_drop_timestamp;
   }
 
   void GraphicsDisplay::HandleXDndFinished(XEvent event)

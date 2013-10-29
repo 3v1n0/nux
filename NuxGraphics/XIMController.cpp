@@ -78,6 +78,12 @@ void XIMController::FocusInXIC()
 void XIMController::FocusOutXIC()
 {
   xic_client_.FocusOutXIC();
+  xic_client_.DestroyXIC();
+}
+
+Window XIMController::GetCurrentWindow() const
+{
+  return window_;
 }
 
 void XIMController::InitXIMCallback()
