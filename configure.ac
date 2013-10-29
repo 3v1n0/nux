@@ -15,7 +15,7 @@
 # 
 m4_define([nux_major_version], [4])
 m4_define([nux_minor_version], [0])
-m4_define([nux_micro_version], [3])
+m4_define([nux_micro_version], [4])
 
 m4_define([nux_api_version], [4.0])
 # Increase the number (to the current date) everytime you propose a branch that breaks the API or ABI
@@ -23,7 +23,7 @@ m4_define([nux_api_version], [4.0])
 # e.g.: december 5th, 2011 is: 20111205
 # To make more than one API change in a day, add a number to the date. Like 20111205.xx
 
-m4_define([nux_abi_version], [20130722.0])
+m4_define([nux_abi_version], [20131029.0])
 m4_define([nux_version],
           [nux_major_version.nux_minor_version.nux_micro_version])
 
