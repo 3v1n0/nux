@@ -188,9 +188,8 @@ namespace nux
       return _name;
     }
 
-    bool RedrawnContentsPendingPresentation();
     void PresentInEmbeddedModeOnThisFrame(bool force = false);
-    void OnPresentedInEmbeddedMode();
+    void MarkPresentedInEmbeddedMode();
     bool AllowPresentationInEmbeddedMode() const;
     nux::Geometry const& LastPresentedGeometryInEmbeddedMode() const;
 

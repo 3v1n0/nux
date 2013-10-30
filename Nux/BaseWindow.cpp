@@ -508,7 +508,7 @@ namespace nux
       _present_in_embedded_mode = true;
   }
 
-  void BaseWindow::OnPresentedInEmbeddedMode()
+  void BaseWindow::MarkPresentedInEmbeddedMode()
   {
     _present_in_embedded_mode = false;
     _last_presented_geometry_in_embedded_mode = GetAbsoluteGeometry();

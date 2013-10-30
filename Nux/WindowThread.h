@@ -236,7 +236,7 @@ namespace nux
 
         @param rect Region of the display to consider for presenting windows
      */
-    void PresentWindowsIntersectingGeometryOnThisFrame(const Geometry &rect);
+    void PresentWindowsIntersectingGeometryOnThisFrame(Geometry const& rect);
 
     /*!
         Render the interface. This command is send from the pluging when the window thread is embedded.
@@ -245,7 +245,7 @@ namespace nux
 
         @param clip Region of the display to render.
     */
-    void RenderInterfaceFromForeignCmd(Geometry *clip);
+    void RenderInterfaceFromForeignCmd(Geometry const& clip);
 
     /*!
         Used to mark the end of the foreign frame. All calls to PresentInEmbeddedModeOnThisFrame
@@ -354,8 +354,9 @@ namespace nux
     // PresentationList - this is a maintained list of areas that
     // will be presented to the reference framebuffer or backbuffer
     // in embedded mode on the next frame
-    bool AddToPresentationList(nux::BaseWindow *, bool force);
-    std::vector <Geometry> GetPresentationListGeometries();
+    bool AddToPresentationList(nux::BaseWindow*, bool force);
+
+    std::vector<Geometry> GetPresentationListGeometries() const;
 
 #ifdef NUX_GESTURES_SUPPORT
     /*!
