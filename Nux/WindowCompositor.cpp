@@ -138,7 +138,7 @@ DECLARE_LOGGER(logger, "nux.window");
                                    _view_window_list.end(), window);
     if (it == _view_window_list.end())
     {
-      _view_window_list.push_front(ObjectWeakPtr<BaseWindow>(window));
+      _view_window_list.push_front(WeakBaseWindowPtr(window));
 
       RenderTargetTextures rt;
 
@@ -195,14 +195,14 @@ DECLARE_LOGGER(logger, "nux.window");
                                            NuxEventType event_type,
                                            ObjectWeakPtr<InputArea>& area_under_mouse_pointer)
   {
-    ObjectWeakPtr<BaseWindow> window;
+    WeakBaseWindowPtr window;
     GetAreaUnderMouse(mouse_position, event_type, area_under_mouse_pointer, window);
   }
 
   void WindowCompositor::GetAreaUnderMouse(const Point& mouse_position,
                                            NuxEventType event_type,
                                            ObjectWeakPtr<InputArea>& area_under_mouse_pointer,
-                                           ObjectWeakPtr<BaseWindow>& window)
+                                           WeakBaseWindowPtr& window)
   {
     window = NULL;
     area_under_mouse_pointer = NULL;
@@ -899,7 +899,7 @@ DECLARE_LOGGER(logger, "nux.window");
     unsigned int key_symbol,
     unsigned int special_keys_state,
     ObjectWeakPtr<InputArea>& key_focus_area,
-    ObjectWeakPtr<BaseWindow>& window)
+    WeakBaseWindowPtr& window)
   {
     key_focus_area = NULL;
     window = NULL;
@@ -935,7 +935,7 @@ DECLARE_LOGGER(logger, "nux.window");
     unsigned int special_keys_state,
     InputArea* root_search_area,
     ObjectWeakPtr<InputArea>& key_focus_area,
-    ObjectWeakPtr<BaseWindow>& window)
+    WeakBaseWindowPtr& window)
   {
     key_focus_area = NULL;
     window = NULL;
@@ -982,7 +982,7 @@ DECLARE_LOGGER(logger, "nux.window");
     InputArea* keyboard_event_grab_view = GetKeyboardGrabArea();
 
     ObjectWeakPtr<InputArea> focus_area;   // The view under the mouse
-    ObjectWeakPtr<BaseWindow> base_window; // The BaseWindow below the mouse pointer.
+    WeakBaseWindowPtr base_window; // The BaseWindow below the mouse pointer.
 
     if (keyboard_event_grab_view)
     {
@@ -1180,7 +1180,7 @@ DECLARE_LOGGER(logger, "nux.window");
     inside_event_cycle_ = false;
   }
 
-  void WindowCompositor::StartModalWindow(ObjectWeakPtr<BaseWindow> window)
+  void WindowCompositor::StartModalWindow(WeakBaseWindowPtr window)
   {
     if (window == 0)
       return;
@@ -1193,7 +1193,7 @@ DECLARE_LOGGER(logger, "nux.window");
     }
   }
 
-  void WindowCompositor::StopModalWindow(ObjectWeakPtr<BaseWindow> window)
+  void WindowCompositor::StopModalWindow(WeakBaseWindowPtr window)
   {
     if (!_modal_view_window_list.empty())
     {
@@ -1213,7 +1213,7 @@ DECLARE_LOGGER(logger, "nux.window");
     if (it != _view_window_list.end())
     {
       _view_window_list.erase(it);
-      _view_window_list.push_front(ObjectWeakPtr<BaseWindow> (window));
+      _view_window_list.push_front(WeakBaseWindowPtr(window));
     }
 
     EnsureAlwaysOnFrontWindow();
@@ -1233,7 +1233,7 @@ DECLARE_LOGGER(logger, "nux.window");
     if (it != _view_window_list.end())
     {
       _view_window_list.erase(it);
-      _view_window_list.push_back(ObjectWeakPtr<BaseWindow> (window));
+      _view_window_list.push_back(WeakBaseWindowPtr(window));
     }
 
     EnsureAlwaysOnFrontWindow();
@@ -1280,7 +1280,7 @@ DECLARE_LOGGER(logger, "nux.window");
     if ((top_pos < bot_pos) && (strict == false))
     {
       _view_window_list.erase(it_top);
-      _view_window_list.insert(it_bot, ObjectWeakPtr<BaseWindow> (top_floating_view));
+      _view_window_list.insert(it_bot, WeakBaseWindowPtr(top_floating_view));
     }
 
     EnsureAlwaysOnFrontWindow();
@@ -1288,7 +1288,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
   void WindowCompositor::SetAlwaysOnFrontWindow(BaseWindow* window)
   {
-    _always_on_front_window = ObjectWeakPtr<BaseWindow> (window);
+    _always_on_front_window = WeakBaseWindowPtr(window);
 
     EnsureAlwaysOnFrontWindow();
   }
@@ -1359,19 +1359,25 @@ DECLARE_LOGGER(logger, "nux.window");
 
   WindowCompositor::WeakBaseWindowPtr WindowCompositor::FindWeakBaseWindowPtrForRawPtr(nux::BaseWindow *raw)
   {
-      using namespace std::placeholders;
+    using namespace std::placeholders;
 
-      WeakBaseWindowPtr weak;
-      ForEachBaseWindow(std::bind(AssignWeakBaseWindowMatchingRaw, _1, raw, &weak));
-      return weak;
+    WeakBaseWindowPtr weak;
+    ForEachBaseWindow(std::bind(AssignWeakBaseWindowMatchingRaw, _1, raw, &weak));
+    return weak;
   }
 
   void WindowCompositor::ForEachBaseWindow(ForEachBaseWindowFunc const& func)
   {
-    for (WeakBaseWindowPtr const& ptr : _view_window_list)
+    for (auto const& window : _view_window_list)
     {
-      if (ptr.IsValid())
-        func(ptr);
+      if (window.IsValid())
+        func(window);
+    }
+
+    for (auto const& window : _modal_view_window_list)
+    {
+      if (window.IsValid())
+        func(window);
     }
 
     if (m_MenuWindow.IsValid())
@@ -1457,7 +1463,7 @@ DECLARE_LOGGER(logger, "nux.window");
   void WindowCompositor::DrawMenu(bool force_draw)
   {
 #if !defined(NUX_MINIMAL)
-    ObjectWeakPtr<BaseWindow> window = m_MenuWindow;
+    WeakBaseWindowPtr window(m_MenuWindow);
 
     if (window.IsValid())
     {
@@ -1486,11 +1492,10 @@ DECLARE_LOGGER(logger, "nux.window");
 
   void WindowCompositor::DrawOverlay(bool /* force_draw */)
   {
-    ObjectWeakPtr<BaseWindow> window = m_OverlayWindow;
     int buffer_width = window_thread_->GetGraphicsEngine().GetWindowWidth();
     int buffer_height = window_thread_->GetGraphicsEngine().GetWindowHeight();
 
-    if (window.IsValid())
+    if (m_OverlayWindow.IsValid())
     {
       //window_thread_->GetGraphicsEngine().SetContext(x, y, buffer_width, buffer_height);
       window_thread_->GetGraphicsEngine().SetOrthographicProjectionMatrix(buffer_width, buffer_height);
@@ -1511,11 +1516,10 @@ DECLARE_LOGGER(logger, "nux.window");
 
   void WindowCompositor::DrawTooltip(bool /* force_draw */)
   {
-    ObjectWeakPtr<BaseWindow> window = _tooltip_window;
     int buffer_width = window_thread_->GetGraphicsEngine().GetWindowWidth();
     int buffer_height = window_thread_->GetGraphicsEngine().GetWindowHeight();
 
-    if (window.IsValid())
+    if (_tooltip_window.IsValid())
     {
       //window_thread_->GetGraphicsEngine().SetContext(x, y, buffer_width, buffer_height);
       window_thread_->GetGraphicsEngine().SetOrthographicProjectionMatrix(buffer_width, buffer_height);

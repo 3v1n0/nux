@@ -160,14 +160,14 @@ namespace nux
     void GetAreaUnderMouse(const Point& mouse_position,
                            NuxEventType event_type,
                            ObjectWeakPtr<InputArea>& area_under_mouse_pointer,
-                           ObjectWeakPtr<BaseWindow>& window);
+                           WeakBaseWindowPtr& window);
 
     //! Traverse the widget tree and found the area has the key focus.
     void FindKeyFocusArea(NuxEventType event_type,
                           unsigned int key_symbol,
                           unsigned int special_keys_state,
                           ObjectWeakPtr<InputArea>& key_focus_area,
-                          ObjectWeakPtr<BaseWindow>& window);
+                          WeakBaseWindowPtr& window);
 
     //! Traverse the widget tree and found the area has the key focus, but start from a specified widget.
     void FindKeyFocusAreaFrom(NuxEventType event_type,
@@ -175,7 +175,7 @@ namespace nux
       unsigned int special_keys_state,
       InputArea* root_search_area,
       ObjectWeakPtr<InputArea>& key_focus_area,
-      ObjectWeakPtr<BaseWindow>& window);
+      WeakBaseWindowPtr& window);
 
     void ResetMousePointerAreas();
 
@@ -265,8 +265,8 @@ namespace nux
     
     ObjectPtr<IOpenGLFrameBufferObject> m_FrameBufferObject;
 
-    void StartModalWindow(ObjectWeakPtr<BaseWindow>);
-    void StopModalWindow(ObjectWeakPtr<BaseWindow>);
+    void StartModalWindow(WeakBaseWindowPtr);
+    void StopModalWindow(WeakBaseWindowPtr);
 
 #if !defined(NUX_MINIMAL)
     void AddMenu(MenuPage* menu, BaseWindow* window, bool OverrideCurrentMenuChain = true);
@@ -274,7 +274,7 @@ namespace nux
     void CleanMenu();
 #endif
 
-    void PushModalWindow(ObjectWeakPtr<BaseWindow> window);
+    void PushModalWindow(WeakBaseWindowPtr window);
 
     void SetWidgetDrawingOverlay(InputArea* ic, BaseWindow* OverlayWindow);
     InputArea* GetWidgetDrawingOverlay();
@@ -414,6 +414,7 @@ namespace nux
 #endif
 
   private:
+    typedef std::list<WeakBaseWindowPtr> WindowList;
 
     WeakBaseWindowPtr FindWeakBaseWindowPtrForRawPtr(nux::BaseWindow *);
 
@@ -431,7 +432,7 @@ namespace nux
         @WindowList The list of top views.
         @draw_modal True if the top view that is modal is to be rendered.
     */
-    void RenderTopViews(bool force_draw, std::list< ObjectWeakPtr<BaseWindow> >& WindowList, bool draw_modal);
+    void RenderTopViews(bool force_draw, WindowList&, bool draw_modal);
 
     void PresentAnyReadyWindows();
 
@@ -522,7 +523,6 @@ namespace nux
     bool on_menu_closure_continue_with_event_;
     AbstractPaintLayer* m_Background;
 
-    typedef std::list<WeakBaseWindowPtr> WindowList;
     WindowList _view_window_list;
     WindowList _modal_view_window_list;
     WeakBaseWindowPtr _always_on_front_window;  //!< Floating view that always remains on top.
