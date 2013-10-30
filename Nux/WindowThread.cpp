@@ -1379,17 +1379,17 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
       window->_child_need_redraw = true;
     }
 
-    m_dirty_areas.push_back(geo);
+    dirty_areas_.push_back(geo);
   }
 
   void WindowThread::ClearDrawList()
   {
-    m_dirty_areas.clear();
+    dirty_areas_.clear();
   }
 
   std::vector<Geometry> const& WindowThread::GetDrawList() const
   {
-    return m_dirty_areas;
+    return dirty_areas_;
   }
 
   bool WindowThread::AddToPresentationList(BaseWindow* bw, bool force)
@@ -1402,22 +1402,22 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
 
     if (force || !foreign_frame_frozen_)
     {
-      if (std::find(m_presentation_list_embedded.begin(),
-                    m_presentation_list_embedded.end(),
-                    ptr) != m_presentation_list_embedded.end())
+      if (std::find(presentation_list_embedded_.begin(),
+                    presentation_list_embedded_.end(),
+                    ptr) != presentation_list_embedded_.end())
         return true;
 
-      m_presentation_list_embedded.push_back(ptr);
+      presentation_list_embedded_.push_back(ptr);
       return true;
     }
     else
     {
-      if (std::find(m_presentation_list_embedded_next_frame.begin(),
-                    m_presentation_list_embedded_next_frame.end(),
-                    ptr) != m_presentation_list_embedded_next_frame.end())
+      if (std::find(presentation_list_embedded_next_frame_.begin(),
+                    presentation_list_embedded_next_frame_.end(),
+                    ptr) != presentation_list_embedded_next_frame_.end())
         return false;
 
-      m_presentation_list_embedded_next_frame.push_back(ptr);
+      presentation_list_embedded_next_frame_.push_back(ptr);
       return false;
     }
   }
@@ -1425,7 +1425,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
   std::vector<nux::Geometry> WindowThread::GetPresentationListGeometries() const
   {
     std::vector<nux::Geometry> presentation_geometries;
-    for (auto const& base_window : m_presentation_list_embedded)
+    for (auto const& base_window : presentation_list_embedded_)
     {
       if (base_window.IsValid())
       {
@@ -1642,20 +1642,20 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
       w->MarkPresentedInEmbeddedMode();
     });
 
-    m_presentation_list_embedded.clear();
+    presentation_list_embedded_.clear();
 
     foreign_frame_frozen_ = false;
 
-    /* Move all the BaseWindows in m_presentation_list_embedded_next_frame
-     * to m_presentation_list_embedded and mark them for presentation
+    /* Move all the BaseWindows in presentation_list_embedded_next_frame_
+     * to presentation_list_embedded_ and mark them for presentation
      */
-    for (auto const& win : m_presentation_list_embedded_next_frame)
+    for (auto const& win : presentation_list_embedded_next_frame_)
     {
       if (win.IsValid())
         win->PresentInEmbeddedModeOnThisFrame();
     }
 
-    m_presentation_list_embedded_next_frame.clear();
+    presentation_list_embedded_next_frame_.clear();
   }
 
   void WindowThread::ForeignFrameCutoff()
