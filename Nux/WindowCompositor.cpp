@@ -1583,7 +1583,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
       if (window->IsVisible())
       {
-        if (global_clip_rect.Intersect(window->GetGeometry()).IsNull())
+        if (!global_clip_rect.IsIntersecting(window->GetGeometry()))
         {
           // The global clipping area can be seen as a per monitor clipping
           // region. It is mostly used in embedded mode with compiz.  If we
@@ -1665,7 +1665,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
       if (window->IsVisible())
       {
-        if (global_clip_rect.Intersect(window->GetGeometry()).IsNull())
+        if (!global_clip_rect.IsIntersecting(window->GetGeometry()))
         {
           // The global clipping area can be seen as a per monitor clipping
           // region. It is mostly used in embedded mode with compiz.  If we
