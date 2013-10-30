@@ -592,7 +592,7 @@ namespace nux
     */
     void SetScissorOffset(int x, int y);
 
-    Rect GetScissorRect();
+    Rect const& GetScissorRect() const;
     void EnableScissoring(bool b);
 
 

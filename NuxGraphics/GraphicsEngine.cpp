@@ -1188,9 +1188,9 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
     CHECKGL(glScissor(_scissor.x, _scissor.y, _scissor.width, _scissor.height));
   }
 
-  Rect GraphicsEngine::GetScissorRect()
+  Rect const& GraphicsEngine::GetScissorRect() const
   {
-    return Rect(_scissor.x, _scissor.y, _scissor.width, _scissor.height);
+    return _scissor;
   }
 
   void GraphicsEngine::EnableScissoring(bool b)
