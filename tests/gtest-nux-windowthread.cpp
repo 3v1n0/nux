@@ -477,7 +477,7 @@ TEST_F(EmbeddedContext, DonePresentViewInEmbeddedMode)
 {
   nux::ObjectPtr <nux::BaseWindow> bw(new nux::BaseWindow(TEXT("")));
   bw->PresentInEmbeddedModeOnThisFrame();
-  bw->OnPresentedInEmbeddedMode();
+  bw->MarkPresentedInEmbeddedMode();
   EXPECT_FALSE(bw->AllowPresentationInEmbeddedMode());
 }
 
@@ -529,7 +529,7 @@ TEST_F(EmbeddedContext, StillProcessDrawIfInvisible)
   window->ShowWindow(false);
   view->QueueDraw();
   nux::Geometry clip(0, 0, 100, 100);
-  WindowThread()->RenderInterfaceFromForeignCmd(&clip);
+  WindowThread()->RenderInterfaceFromForeignCmd(clip);
   EXPECT_FALSE(view->IsRedrawNeeded());
 }
 
