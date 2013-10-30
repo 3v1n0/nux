@@ -1583,29 +1583,16 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     return request_draw_cycle_to_host_wm;
   }
 
-  namespace {
-
-    void PresentOnBaseWindowIntersectsRect(ObjectWeakPtr<BaseWindow> const& w,
-                                           Geometry const& rect)
-    {
-      if (rect.IsIntersecting(w->GetAbsoluteGeometry()))
-        w->PresentInEmbeddedModeOnThisFrame(true);
-    }
-
-    void MarkWindowUnpresented(const ObjectWeakPtr<BaseWindow> &w)
-    {
-      w->MarkPresentedInEmbeddedMode();
-    }
-
-  }
-
   void WindowThread::PresentWindowsIntersectingGeometryOnThisFrame(Geometry const& rect)
   {
-    using namespace std::placeholders;
     nuxAssertMsg(IsEmbeddedWindow(),
                  "[WindowThread::PresentWindowIntersectingGeometryOnThisFrame] "
                  "can only be called inside an embedded window");
-    window_compositor_->ForEachBaseWindow(std::bind(PresentOnBaseWindowIntersectsRect, _1, rect));
+
+    window_compositor_->ForEachBaseWindow([&rect] (WeakBaseWindowPtr const& w) {
+      if (rect.IsIntersecting(w->GetAbsoluteGeometry()))
+        w->PresentInEmbeddedModeOnThisFrame(true);
+    });
   }
 
   void WindowThread::RenderInterfaceFromForeignCmd(Geometry const& clip)
@@ -1647,11 +1634,14 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
 
   void WindowThread::ForeignFrameEnded()
   {
-    using namespace std::placeholders;
     nuxAssertMsg(IsEmbeddedWindow(),
                  "[WindowThread::ForeignFrameEnded] "
                  "can only be called inside an embedded window");
-    window_compositor_->ForEachBaseWindow(std::bind(MarkWindowUnpresented, _1));
+
+    window_compositor_->ForEachBaseWindow([] (WeakBaseWindowPtr const& w) {
+      w->MarkPresentedInEmbeddedMode();
+    });
+
     m_presentation_list_embedded.clear();
 
     foreign_frame_frozen_ = false;
@@ -1659,13 +1649,10 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     /* Move all the BaseWindows in m_presentation_list_embedded_next_frame
      * to m_presentation_list_embedded and mark them for presentation
      */
-    for (std::vector<WindowCompositor::WeakBaseWindowPtr>::iterator it =
-           m_presentation_list_embedded_next_frame.begin();
-         it != m_presentation_list_embedded_next_frame.end();
-         ++it)
+    for (auto const& win : m_presentation_list_embedded_next_frame)
     {
-      if (it->IsValid())
-        (*it)->PresentInEmbeddedModeOnThisFrame();
+      if (win.IsValid())
+        win->PresentInEmbeddedModeOnThisFrame();
     }
 
     m_presentation_list_embedded_next_frame.clear();
