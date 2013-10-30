@@ -132,12 +132,7 @@ namespace nux
   Rect operator-(Rect const& lhs, Rect const& rhs);
   Rect operator*(Rect const& lhs, float scalar);
 
-  inline std::ostream& operator<<(std::ostream &os, Rect const& geo)
-  {
-    return os << "Rect, x: " << geo.x << " y: " << geo.y << " width: " <<
-                 geo.width << " height: " << geo.height << std::endl;
-
-  }
+  std::ostream& operator<<(std::ostream &os, Rect const&);
 
   typedef Rect Geometry;
 }
