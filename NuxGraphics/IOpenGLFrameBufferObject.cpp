@@ -358,7 +358,7 @@ namespace nux
     return 1;
   }
 
-  void IOpenGLFrameBufferObject::PushClippingRegion(Rect rect)
+  void IOpenGLFrameBufferObject::PushClippingRegion(Rect const& rect)
   {
     Rect r0;
     if (GetGraphicsDisplay()->GetGraphicsEngine())
@@ -371,7 +371,7 @@ namespace nux
 
     if (stacksize == 0)
     {
-      current_clip_rect = Rect(0, 0, attachment_width_, attachment_height_);
+      current_clip_rect.Set(0, 0, attachment_width_, attachment_height_);
     }
     else
     {
@@ -398,7 +398,7 @@ namespace nux
     }
     else
     {
-      _clipping_rect = Rect(0, 0, 0, 0);
+      _clipping_rect.Set(0, 0, 0, 0);
       _ClippingRegionStack.push_back(Rect(0, 0, 0, 0));
       SetOpenGLClippingRectangle(0, 0, 0, 0);
     }
@@ -411,7 +411,7 @@ namespace nux
 
     if (stacksize == 0)
     {
-      _clipping_rect = Rect(0, 0, attachment_width_, attachment_height_);
+      _clipping_rect.Set(0, 0, attachment_width_, attachment_height_);
       SetOpenGLClippingRectangle(0, 0, attachment_width_, attachment_height_);
     }
     else
@@ -426,7 +426,7 @@ namespace nux
   {
     _ClippingRegionStack.clear();
     {
-      _clipping_rect = Rect(0, 0, attachment_width_, attachment_height_);
+      _clipping_rect.Set(0, 0, attachment_width_, attachment_height_);
       SetOpenGLClippingRectangle(0, 0, attachment_width_, attachment_height_);
     }
   }
@@ -437,7 +437,7 @@ namespace nux
 
     if (stacksize == 0)
     {
-      _clipping_rect = Rect(0, 0, attachment_width_, attachment_height_);
+      _clipping_rect.Set(0, 0, attachment_width_, attachment_height_);
       SetOpenGLClippingRectangle(0, 0, attachment_width_, attachment_height_);
     }
     else
@@ -461,7 +461,7 @@ namespace nux
   {
     if (GetGraphicsDisplay()->GetGraphicsEngine())
     {
-      _clipping_rect = Rect(x, y, width, height);
+      _clipping_rect.Set(x, y, width, height);
       GetGraphicsDisplay()->GetGraphicsEngine()->SetScissor(x, y, width, height);
     }
   }
