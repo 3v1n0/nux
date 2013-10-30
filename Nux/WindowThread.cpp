@@ -1394,11 +1394,11 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
 
   bool WindowThread::AddToPresentationList(BaseWindow* bw, bool force)
   {
-    RequestRedraw();
-    WindowCompositor::WeakBaseWindowPtr ptr(window_compositor_->FindWeakBaseWindowPtrForRawPtr(bw));
-
-    if (!ptr.IsValid())
+    if (!bw)
       return false;
+
+    RequestRedraw();
+    WeakBaseWindowPtr ptr(bw);
 
     if (force || !foreign_frame_frozen_)
     {

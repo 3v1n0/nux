@@ -416,8 +416,6 @@ namespace nux
   private:
     typedef std::list<WeakBaseWindowPtr> WindowList;
 
-    WeakBaseWindowPtr FindWeakBaseWindowPtrForRawPtr(nux::BaseWindow *);
-
     //! Render the interface.
     void Draw(bool SizeConfigurationEvent, bool force_draw);
 

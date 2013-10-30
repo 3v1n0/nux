@@ -577,16 +577,16 @@ namespace nux
     std::list<Area *> _queued_layout_list;
     std::vector<Geometry> m_dirty_areas;
 
-    typedef nux::ObjectWeakPtr<nux::BaseWindow> WCWeakBaseWindowPtr;
+    typedef nux::ObjectWeakPtr<nux::BaseWindow> WeakBaseWindowPtr;
 
-    std::vector<WCWeakBaseWindowPtr> m_presentation_list_embedded;
+    std::vector<WeakBaseWindowPtr> m_presentation_list_embedded;
 
     /*!
         This list contains al lthe windows which will be presented on the next frame
         (eg, after ForeignFrameEnded they are moved into m_presentation_list_embedded
          and marked for presentation)
      */
-    std::vector<WCWeakBaseWindowPtr> m_presentation_list_embedded_next_frame;
+    std::vector<WeakBaseWindowPtr> m_presentation_list_embedded_next_frame;
 
     /*! Whether or not the current frame is "frozen" because the host WM has stopped tracking
         damage events. If so we should put all presentation requests on the next frame instead

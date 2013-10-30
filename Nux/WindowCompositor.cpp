@@ -1357,15 +1357,6 @@ DECLARE_LOGGER(logger, "nux.window");
     }
   }
 
-  WindowCompositor::WeakBaseWindowPtr WindowCompositor::FindWeakBaseWindowPtrForRawPtr(nux::BaseWindow *raw)
-  {
-    using namespace std::placeholders;
-
-    WeakBaseWindowPtr weak;
-    ForEachBaseWindow(std::bind(AssignWeakBaseWindowMatchingRaw, _1, raw, &weak));
-    return weak;
-  }
-
   void WindowCompositor::ForEachBaseWindow(ForEachBaseWindowFunc const& func)
   {
     for (auto const& window : _view_window_list)
