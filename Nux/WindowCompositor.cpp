@@ -1723,11 +1723,13 @@ DECLARE_LOGGER(logger, "nux.window");
         // Restore the reference framebuffer
         if (!RestoreReferenceFramebuffer())
         {
-          nuxDebugMsg("[WindowCompositor::RenderTopViews] Setting the Reference fbo has failed.");
+          LOG_DEBUG(logger) << "RenderTopViews: Setting the Reference fbo has failed.";
         }
       }
       else
+      {
         GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
+      }
     }
 
     /* Present any windows which haven't yet been presented */
@@ -2046,7 +2048,7 @@ DECLARE_LOGGER(logger, "nux.window");
     {
       // There is a keyboard grab pending. Only an area that is a child of the area that has
       // the keyboard grab can be set to receive keyboard events.
-      nuxDebugMsg("[WindowCompositor::SetKeyFocusArea] There is a keyboard grab pending. Cannot change the keyboard event receiver.");
+      LOG_DEBUG(logger) << "SetKeyFocusArea: There is a keyboard grab pending. Cannot change the keyboard event receiver.";
       return false;
     }
 
@@ -2322,7 +2324,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
     if (GetPointerGrabArea() == area)
     {
-      nuxDebugMsg("[WindowCompositor::GrabPointerAdd] The area already has the grab");
+      LOG_DEBUG(logger) << "GrabPointerAdd: The area already has the grab";
       return result;
     }
 
@@ -2389,7 +2391,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
     if (GetKeyboardGrabArea() == area)
     {
-      nuxDebugMsg("[WindowCompositor::GrabKeyboardAdd] The area already has the grab");
+      LOG_DEBUG(logger) << "GrabKeyboardAdd: The area already has the grab";
       return result;
     }
 
