@@ -1443,7 +1443,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     return presentation_geometries;
   }
 
-  bool WindowThread::IsEmbeddedWindow()
+  bool WindowThread::IsEmbeddedWindow() const
   {
     return embedded_window_;
   }
@@ -1605,7 +1605,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     nuxAssertMsg(IsEmbeddedWindow(),
                  "[WindowThread::PresentWindowIntersectingGeometryOnThisFrame] "
                  "can only be called inside an embedded window");
-    window_compositor_->OnAllBaseWindows(std::bind(PresentOnBaseWindowIntersectsRect, _1, rect));
+    window_compositor_->ForEachBaseWindow(std::bind(PresentOnBaseWindowIntersectsRect, _1, rect));
   }
 
   void WindowThread::RenderInterfaceFromForeignCmd(Geometry const& clip)
@@ -1651,7 +1651,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     nuxAssertMsg(IsEmbeddedWindow(),
                  "[WindowThread::ForeignFrameEnded] "
                  "can only be called inside an embedded window");
-    window_compositor_->OnAllBaseWindows(std::bind(MarkWindowUnpresented, _1));
+    window_compositor_->ForEachBaseWindow(std::bind(MarkWindowUnpresented, _1));
     m_presentation_list_embedded.clear();
 
     foreign_frame_frozen_ = false;

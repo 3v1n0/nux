@@ -217,7 +217,7 @@ namespace nux
 
         @return True if embedded inside Compiz.
     */
-    bool IsEmbeddedWindow();
+    bool IsEmbeddedWindow() const;
 
 #if defined(NUX_OS_WINDOWS)
     bool ProcessForeignEvent(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, void *data);

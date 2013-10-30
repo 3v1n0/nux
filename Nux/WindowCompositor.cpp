@@ -44,8 +44,8 @@ DECLARE_LOGGER(logger, "nux.window");
   : draw_reference_fbo_(0)
   , read_reference_fbo_(0)
   , window_thread_(window_thread)
-  , _currently_rendering_windows(NULL)
-  , _current_global_clip_rect(NULL)
+  , currently_rendering_windows_(nullptr)
+  , current_global_clip_rect_(nullptr)
   {
     m_OverlayWindow             = NULL;
     _tooltip_window             = NULL;
@@ -209,26 +209,22 @@ DECLARE_LOGGER(logger, "nux.window");
 
     // Go through the list of BaseWindo and find the first area over which the
     // mouse pointer is.
-    WindowList::iterator window_it;
-    for (window_it = _view_window_list.begin(); window_it != _view_window_list.end(); ++window_it)
+    for (auto const& window_it : _view_window_list)
     {
       // Since the mouse is really an input-level thing, we want to know
       // if the underlying input window is enabled or if the window is
       // visible
 
-      if (!window_it->IsValid())
+      if (!window_it.IsValid())
         continue;
 
-      bool visible_or_input_enabled = (*window_it)->InputWindowEnabled() ||
-                                      (*window_it)->IsVisible();
-
-      if (visible_or_input_enabled)
+      if (window_it->InputWindowEnabled() || window_it->IsVisible())
       {
-        Area* area = (*window_it)->FindAreaUnderMouse(mouse_position, event_type);
+        Area* area = window_it->FindAreaUnderMouse(mouse_position, event_type);
         if (area)
         {
           area_under_mouse_pointer = static_cast<InputArea*>(area);
-          window = *window_it;
+          window = window_it;
           return;
         }
       }
@@ -909,20 +905,18 @@ DECLARE_LOGGER(logger, "nux.window");
     window = NULL;
 
     // Go through the list of BaseWindos and find the first area over which the mouse pointer is.
-    WindowList::iterator window_it;
-    window_it = _view_window_list.begin();
-    while (!key_focus_area.IsValid() && window_it != _view_window_list.end())
+    for (auto const& window_it : _view_window_list)
     {
-      if ((*window_it).IsValid() && (*window_it)->IsVisible())
+      if (window_it.IsValid() && window_it->IsVisible())
       {
-        key_focus_area = NUX_STATIC_CAST(InputArea*, (*window_it)->FindKeyFocusArea(event_type, key_symbol, special_keys_state));
+        key_focus_area = NUX_STATIC_CAST(InputArea*, window_it->FindKeyFocusArea(event_type, key_symbol, special_keys_state));
         if (key_focus_area.IsValid())
         {
           // We have found an area. We are going to exit the while loop.
-          window = *window_it;
+          window = window_it;
+          break;
         }
       }
-      ++window_it;
     }
 
     // If key_focus_area is NULL, then try the main window layout.
@@ -1356,14 +1350,10 @@ DECLARE_LOGGER(logger, "nux.window");
 
   namespace
   {
-    void
-    AssignWeakBaseWindowMatchingRaw(WindowCompositor::WeakBaseWindowPtr const& w,
-				    BaseWindow*                                bw,
-				    WindowCompositor::WeakBaseWindowPtr        *ptr)
+    void AssignWeakBaseWindowMatchingRaw(WindowCompositor::WeakBaseWindowPtr const& w, BaseWindow* bw, WindowCompositor::WeakBaseWindowPtr *ptr)
     {
-      if (w.IsValid() &&
-	  w.GetPointer() == bw)
-	*ptr = w;
+      if (w.IsValid() && w.GetPointer() == bw)
+        *ptr = w;
     }
   }
 
@@ -1372,21 +1362,17 @@ DECLARE_LOGGER(logger, "nux.window");
       using namespace std::placeholders;
 
       WeakBaseWindowPtr weak;
-      OnAllBaseWindows(std::bind(AssignWeakBaseWindowMatchingRaw, _1, raw, &weak));
+      ForEachBaseWindow(std::bind(AssignWeakBaseWindowMatchingRaw, _1, raw, &weak));
       return weak;
   }
 
-  void WindowCompositor::OnAllBaseWindows(const WindowMutatorFunc &func)
+  void WindowCompositor::ForEachBaseWindow(ForEachBaseWindowFunc const& func)
   {
     for (WeakBaseWindowPtr const& ptr : _view_window_list)
     {
       if (ptr.IsValid())
-	func(ptr);
+        func(ptr);
     }
-
-    for (WeakBaseWindowPtr const& ptr : _view_window_list)
-      if (ptr.IsValid())
-	func(ptr);
 
     if (m_MenuWindow.IsValid())
       func(m_MenuWindow);
@@ -1560,8 +1546,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
   void WindowCompositor::PresentAnyReadyWindows()
   {
-    if (!_currently_rendering_windows ||
-        !_current_global_clip_rect)
+    if (!currently_rendering_windows_ || !current_global_clip_rect_)
       return;
 
     GraphicsEngine& graphics_engine = window_thread_->GetGraphicsEngine();
@@ -1570,12 +1555,11 @@ DECLARE_LOGGER(logger, "nux.window");
     graphics_engine.ApplyClippingRectangle();
     CHECKGL(glDepthMask(GL_FALSE));
 
-    WindowList &windows = *_currently_rendering_windows;
-    Geometry   &global_clip_rect = *_current_global_clip_rect;
+    WindowList &windows = *currently_rendering_windows_;
+    Geometry   &global_clip_rect = *current_global_clip_rect_;
 
-    for (WindowList::iterator it = windows.begin(), end = windows.end(); it != end; ++it)
+    for (auto const& window_ptr : windows)
     {
-      WeakBaseWindowPtr& window_ptr = *it;
       if (window_ptr.IsNull())
         continue;
 
@@ -1633,7 +1617,7 @@ DECLARE_LOGGER(logger, "nux.window");
     Geometry global_clip_rect = graphics_engine.GetScissorRect();
     global_clip_rect.y = window_height - global_clip_rect.y - global_clip_rect.height;
 
-    _current_global_clip_rect = &global_clip_rect;
+    current_global_clip_rect_ = &global_clip_rect;
 
     // We don't need to restore framebuffers if we didn't update any windows
     bool updated_any_windows = false;
@@ -1650,7 +1634,7 @@ DECLARE_LOGGER(logger, "nux.window");
     // windows from back to front.
     WindowList windows(windows_to_render.rbegin(), windows_to_render.rend());
 
-    _currently_rendering_windows = &windows;
+    currently_rendering_windows_ = &windows;
 
     for (WindowList::iterator it = windows.begin(), end = windows.end(); it != end; ++it)
     {
@@ -1754,8 +1738,8 @@ DECLARE_LOGGER(logger, "nux.window");
     /* Present any windows which haven't yet been presented */
     PresentAnyReadyWindows();
 
-    _currently_rendering_windows = NULL;
-    _current_global_clip_rect = NULL;
+    currently_rendering_windows_ = nullptr;
+    current_global_clip_rect_ = nullptr;
   }
 
   void WindowCompositor::RenderMainWindowComposition(bool force_draw)
@@ -2165,14 +2149,13 @@ DECLARE_LOGGER(logger, "nux.window");
   {
     WindowList::iterator it;
 
-    for (it = _view_window_list.begin(); it != _view_window_list.end(); ++it)
+    for (auto const& win : _view_window_list)
     {
-      if (!(*it).IsValid())
+      if (!win.IsValid())
         continue;
-      if ((*it)->IsVisible())
-      {
-        (*it)->NotifyConfigurationChange(Width, Height);
-      }
+
+      if (win->IsVisible())
+        win->NotifyConfigurationChange(Width, Height);
     }
   }
 
@@ -2558,9 +2541,7 @@ DECLARE_LOGGER(logger, "nux.window");
     return (*keyboard_grab_stack_.begin());
   }
 
-  void WindowCompositor::SetReferenceFramebuffer(unsigned int draw_fbo_object,
-                                                 unsigned int read_fbo_object,
-						 Geometry const& fbo_geometry)
+  void WindowCompositor::SetReferenceFramebuffer(unsigned int draw_fbo_object, unsigned int read_fbo_object, Geometry const& fbo_geometry)
   {
     draw_reference_fbo_ = draw_fbo_object;
     read_reference_fbo_ = read_fbo_object;
@@ -2714,7 +2695,7 @@ DECLARE_LOGGER(logger, "nux.window");
   {
     InputArea *input_area = nullptr;
 
-    for (auto window : _view_window_list)
+    for (auto const& window : _view_window_list)
     {
       if (!window.IsValid())
         continue;

@@ -55,7 +55,7 @@ namespace nux
   {
   public:
     typedef ObjectWeakPtr<BaseWindow> WeakBaseWindowPtr;
-    typedef std::function <void(const WeakBaseWindowPtr &)> WindowMutatorFunc;
+    typedef std::function <void(WeakBaseWindowPtr const&)> ForEachBaseWindowFunc;
 
     WindowCompositor(WindowThread* window_thread);
     ~WindowCompositor();
@@ -115,10 +115,10 @@ namespace nux
         Return the area that has the keyboard focus.
 
         @return The area that has the keyboard focus.
-    */    
+    */
     InputArea* GetKeyFocusArea();
 
-    void OnAllBaseWindows(const WindowMutatorFunc &);
+    void ForEachBaseWindow(ForEachBaseWindowFunc const&);
 
     //! Signal emitted when a BaseWindow becomes visible.
     /*!
@@ -583,8 +583,8 @@ namespace nux
     std::unique_ptr<GestureBroker> gesture_broker_;
 #endif
 
-    WindowList *_currently_rendering_windows;
-    Geometry   *_current_global_clip_rect;
+    WindowList* currently_rendering_windows_;
+    Geometry* current_global_clip_rect_;
 
     //! Perform some action before destruction.
     /*!
