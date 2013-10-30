@@ -49,6 +49,7 @@ namespace nux
 
     bool IsInside(const Point &p) const;
     bool IsInside(const Point2D<float> &p) const;
+    bool IsIntersecting(const Rect&) const;
     Rect Intersect(const Rect &) const;
 
     // expand the width by factor_x and the height by factor_y

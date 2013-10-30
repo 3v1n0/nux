@@ -37,8 +37,8 @@ namespace nux
   Rect::Rect(int x_, int y_, int width_, int height_)
     : x(x_)
     , y(y_)
-    , width(Max<int> (0, width_))
-    , height(Max<int> (0, height_))
+    , width(std::max<int>(0, width_))
+    , height(std::max<int>(0, height_))
   {}
 
   Rect::Rect(const Rect &r)
@@ -124,23 +124,26 @@ namespace nux
              (y <= y_) && (y + height > y_) );
   }
 
+  bool Rect::IsIntersecting(const Rect &r) const
+  {
+    return ! ((r.x > x + width) ||
+              (r.x + r.width < x) ||
+              (r.y > y + height) ||
+              (r.y + r.height < y));
+  }
+
   Rect Rect::Intersect (const Rect &r) const
   {
     // Get the corner points.
 
-    bool intersect = ! ((r.x > x + width) ||
-                      (r.x + r.width < x) ||
-                      (r.y > y + height) ||
-                      (r.y + r.height < y));
-
-    if (intersect)
+    if (IsIntersecting(r))
     {
       const Point &ul1 = Point (x, y);
       const Point &ul2 = Point (r.x, r.y);
-      int xx = Max<int> (ul1.x, ul2.x);
-      int yy = Max<int> (ul1.y, ul2.y);
-      int ww = Min<int> (ul1.x + width,  ul2.x + r.width) - xx;
-      int hh = Min<int> (ul1.y + height, ul2.y + r.height) - yy;
+      int xx = std::max<int>(ul1.x, ul2.x);
+      int yy = std::max<int>(ul1.y, ul2.y);
+      int ww = std::min<int>(ul1.x + width,  ul2.x + r.width) - xx;
+      int hh = std::min<int>(ul1.y + height, ul2.y + r.height) - yy;
 
       return Rect (xx, yy, ww, hh);
     }
