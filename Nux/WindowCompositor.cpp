@@ -1562,7 +1562,9 @@ DECLARE_LOGGER(logger, "nux.window");
 
       if (window->IsVisible())
       {
-        if (!global_clip_rect.IsIntersecting(window->GetGeometry()))
+        auto const& win_geo = window->GetGeometry();
+
+        if (!global_clip_rect.IsIntersecting(win_geo))
         {
           // The global clipping area can be seen as a per monitor clipping
           // region. It is mostly used in embedded mode with compiz.  If we
@@ -1581,13 +1583,12 @@ DECLARE_LOGGER(logger, "nux.window");
             continue;
 
           /* Caller doesn't want us to render this yet */
-          if (GetWindowThread()->IsEmbeddedWindow() &&
-              !window->AllowPresentationInEmbeddedMode())
+          if (window_thread_->IsEmbeddedWindow() && !window->AllowPresentationInEmbeddedMode())
             continue;
 
           // Nux is done rendering a BaseWindow into a texture. The previous call to Deactivate
           // has cancelled any opengl framebuffer object that was set.
-          PresentBufferToScreen(rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false, window->GetOpacity(), window->premultiply());
+          PresentBufferToScreen(rt.color_rt, win_geo.x, win_geo.y, false, false, window->GetOpacity(), window->premultiply());
 
           window->_contents_ready_for_presentation = false;
         }
@@ -1631,9 +1632,8 @@ DECLARE_LOGGER(logger, "nux.window");
 
     currently_rendering_windows_ = &windows;
 
-    for (WindowList::iterator it = windows.begin(), end = windows.end(); it != end; ++it)
+    for (auto const& window_ptr : windows)
     {
-      WeakBaseWindowPtr& window_ptr = *it;
       if (window_ptr.IsNull())
         continue;
 
@@ -1644,7 +1644,8 @@ DECLARE_LOGGER(logger, "nux.window");
 
       if (window->IsVisible())
       {
-        if (!global_clip_rect.IsIntersecting(window->GetGeometry()))
+        auto const& win_geo = window->GetGeometry();
+        if (!global_clip_rect.IsIntersecting(win_geo))
         {
           // The global clipping area can be seen as a per monitor clipping
           // region. It is mostly used in embedded mode with compiz.  If we
@@ -1688,10 +1689,8 @@ DECLARE_LOGGER(logger, "nux.window");
           }
           else
           {
-            int x = window->GetBaseX();
-            int y = window->GetBaseY();
             Matrix4 mat;
-            mat.Translate(x, y, 0);
+            mat.Translate(win_geo.x, win_geo.y, 0);
             graphics_engine.SetOrthographicProjectionMatrix(window_width, window_height);
           }
 
