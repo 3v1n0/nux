@@ -25,20 +25,8 @@
 using namespace testing;
 using ::testing::Invoke;
 
-namespace nux {
-  std::ostream &
-  operator<<(std::ostream &os, const Geometry &geo)
-  {
-    return os << "Geometry: x: " <<
-                 geo.x << " y: " <<
-                 geo.y << " width: " <<
-                 geo.width << " height: " <<
-                 geo.height << std::endl;
-
-  }
-}
-
-namespace {
+namespace
+{
 
 class MockFdDispatch
 {

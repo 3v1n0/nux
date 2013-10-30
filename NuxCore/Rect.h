@@ -105,6 +105,7 @@ namespace nux
       if (height < 0)
         height = 0;
     }
+
     void OffsetPosition (int dx, int dy)
     {
       x += dx;
@@ -130,6 +131,13 @@ namespace nux
   Rect operator+(Rect const& lhs, Rect const& rhs);
   Rect operator-(Rect const& lhs, Rect const& rhs);
   Rect operator*(Rect const& lhs, float scalar);
+
+  std::ostream& operator<<(std::ostream &os, Rect const& geo)
+  {
+    return os << "Rect, x: " << geo.x << " y: " << geo.y << " width: " <<
+                 geo.width << " height: " << geo.height << std::endl;
+
+  }
 
   typedef Rect Geometry;
 }
