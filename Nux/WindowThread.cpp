@@ -1398,28 +1398,16 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
       return false;
 
     RequestRedraw();
-    WeakBaseWindowPtr ptr(bw);
 
-    if (force || !foreign_frame_frozen_)
-    {
-      if (std::find(presentation_list_embedded_.begin(),
-                    presentation_list_embedded_.end(),
-                    ptr) != presentation_list_embedded_.end())
-        return true;
+    bool force_or_not_frozen = (force || !foreign_frame_frozen_);
+    std::vector<WeakBaseWindowPtr>& target_list = force_or_not_frozen ? presentation_list_embedded_ :
+                                                                        presentation_list_embedded_next_frame_;
 
-      presentation_list_embedded_.push_back(ptr);
-      return true;
-    }
-    else
-    {
-      if (std::find(presentation_list_embedded_next_frame_.begin(),
-                    presentation_list_embedded_next_frame_.end(),
-                    ptr) != presentation_list_embedded_next_frame_.end())
-        return false;
+    if (std::find(target_list.begin(), target_list.end(), bw) != target_list.end())
+      return force_or_not_frozen;
 
-      presentation_list_embedded_next_frame_.push_back(ptr);
-      return false;
-    }
+    target_list.push_back(WeakBaseWindowPtr(bw));
+    return force_or_not_frozen;
   }
 
   std::vector<nux::Geometry> WindowThread::GetPresentationListGeometries() const
