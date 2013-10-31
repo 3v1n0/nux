@@ -53,7 +53,6 @@ struct TestBaseWindow : public nux::BaseWindow
   TestBaseWindow() : input_area(new nux::InputArea())
   {
     ShowWindow(true);
-    EnableInputWindow(true);
   }
 
   nux::Area* FindAreaUnderMouse(const nux::Point& /* mouse_position */, nux::NuxEventType /* event_type */)
