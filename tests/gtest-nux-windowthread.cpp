@@ -586,6 +586,17 @@ TEST_F(EmbeddedContextWindow, AllowPresentationAddsToPresentationList)
   EXPECT_EQ(present_list[0], Window()->GetAbsoluteGeometry());
 }
 
+TEST_F(EmbeddedContextWindow, AfterCutoffAddsToPresentationListNext)
+{
+  WindowThread()->ForeignFrameEnded();
+  WindowThread()->ForeignFrameCutoff();
+  ASSERT_TRUE(WindowThread()->GetPresentationListGeometries().empty());
+
+  Window()->PresentInEmbeddedModeOnThisFrame();
+
+  EXPECT_TRUE(WindowThread()->GetPresentationListGeometries().empty());
+}
+
 TEST_F(EmbeddedContextWindow, MultipleAllowPresentationAddsToPresentationListUnique)
 {
   Window()->PresentInEmbeddedModeOnThisFrame();
@@ -720,7 +731,9 @@ TEST_F(EmbeddedContextMultiWindow, AddToPresentationListFailsAfterCutoff)
   nux::ObjectPtr<nux::BaseWindow> windowOne(SpawnWindow());
   nux::ObjectPtr<nux::BaseWindow> windowTwo(SpawnWindow());
   WindowThread()->ForeignFrameEnded();
+  ASSERT_TRUE(WindowThread()->GetPresentationListGeometries().empty());
   EXPECT_TRUE(WindowThread()->AddToPresentationList(windowOne.GetPointer(), false));
+  EXPECT_FALSE(WindowThread()->GetPresentationListGeometries().empty());
   WindowThread()->ForeignFrameCutoff();
   EXPECT_FALSE(WindowThread()->AddToPresentationList(windowTwo.GetPointer(), false));
 }
