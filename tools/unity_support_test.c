@@ -512,7 +512,7 @@ static int check_extensions (Display     *display,
 			     TestResults  *results)
 {
   // Fill flags with the supported OpenGL extensions.
-  const char* gl_extensions = glGetString (GL_EXTENSIONS);
+  const char* gl_extensions = (char*)glGetString (GL_EXTENSIONS);
   if (gl_extensions == NULL) {
     results->error = strdup ("invalid OpenGL extensions string");
     results->result = 1;
@@ -547,17 +547,17 @@ static int check_extensions (Display     *display,
     if (is_extension_supported (glx_extensions, glx_extension[i].name) == 1)
       results->flags |= glx_extension[i].flag;
   if (results->flags & FLAG_GLX_SGIX_FBCONFIG) {
-    if (glXGetProcAddressARB ("glXQueryDrawable") == NULL ||
-        glXGetProcAddressARB ("glXGetFBConfigs") == NULL ||
-        glXGetProcAddressARB ("glXGetFBConfigAttrib") == NULL ||
-        glXGetProcAddressARB ("glXCreatePixmap") == NULL ||
-        glXGetProcAddressARB ("glXDestroyPixmap") == NULL) {
+    if (glXGetProcAddressARB ((unsigned char*)"glXQueryDrawable") == NULL ||
+        glXGetProcAddressARB ((unsigned char*)"glXGetFBConfigs") == NULL ||
+        glXGetProcAddressARB ((unsigned char*)"glXGetFBConfigAttrib") == NULL ||
+        glXGetProcAddressARB ((unsigned char*)"glXCreatePixmap") == NULL ||
+        glXGetProcAddressARB ((unsigned char*)"glXDestroyPixmap") == NULL) {
       results->flags &= ~FLAG_GLX_SGIX_FBCONFIG;
     }
   }
   if (results->flags & FLAG_GLX_EXT_TEXTURE_FROM_PIXMAP) {
-    if (glXGetProcAddressARB ("glXBindTexImageEXT") == NULL ||
-        glXGetProcAddressARB ("glXReleaseTexImageEXT") == NULL) {
+    if (glXGetProcAddressARB ((unsigned char*)"glXBindTexImageEXT") == NULL ||
+        glXGetProcAddressARB ((unsigned char*)"glXReleaseTexImageEXT") == NULL) {
       results->flags &= ~FLAG_GLX_EXT_TEXTURE_FROM_PIXMAP;
     }
   }
