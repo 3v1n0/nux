@@ -546,13 +546,13 @@ namespace nux
       UnselectAllText();
     }
 
-    if ((virtual_code == NUX_VK_ESCAPE))
+    if (virtual_code == NUX_VK_ESCAPE)
     {
       // If Text is selected, Unselect
       UnselectAllText();
     }
 
-    if ((virtual_code == NUX_VK_ENTER))
+    if (virtual_code == NUX_VK_ENTER)
     {
       SelectAllText();
     }
@@ -680,7 +680,7 @@ namespace nux
     {
       return virtual_code;
     }
-    else if ((virtual_code == NUX_VK_ENTER))
+    else if (virtual_code == NUX_VK_ENTER)
     {
       return virtual_code;
     }

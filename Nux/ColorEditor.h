@@ -196,8 +196,6 @@ namespace nux
     RadioButton *valuecheck;
     EditTextBox *value_text_entry_;
 
-    Button *OkButton;
-    Button *CancelButton;
     RadioButtonGroup *radiogroup;
 
     DoubleValidator m_Validator;
