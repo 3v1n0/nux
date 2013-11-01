@@ -262,7 +262,7 @@ static int check_xcomposite (Display     *display,
 {
 // Check for XComposite
   int composite_major, composite_minor;
-  unsigned int composite_tmp;
+  int composite_tmp;
 
   if (!XQueryExtension (display, COMPOSITE_NAME, &composite_tmp, &composite_tmp, &composite_tmp))
   {
