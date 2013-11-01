@@ -54,9 +54,6 @@ namespace nux
     }
 
     void GetSize() {};
-
-  private:
-    void *m_RawDataPtr;
   };
 
   struct DXTColBlock
