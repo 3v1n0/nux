@@ -55,7 +55,7 @@ namespace nux
     //! Return true if the widget with changes to match the text width.
     bool GetMinWidthMatchText() const;
 
-    void SetTextColor(Color color)
+    void SetTextColor(const Color &color)
     {
       m_TextColor = color;
     };
