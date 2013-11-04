@@ -167,7 +167,6 @@ namespace nux
 #if defined(NUX_OS_WINDOWS) || defined(NUX_OS_LINUX)
     void parseModeString (const char *modeString, std::vector<int> *pfAttribList, std::vector<int> *pbAttribList);
 
-    bool m_bIsBound;
     bool m_bIsActive;
     bool m_bManaged;
 #endif
