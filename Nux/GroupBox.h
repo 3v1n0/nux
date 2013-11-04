@@ -53,7 +53,7 @@ namespace nux
     virtual long PostLayoutManagement(long LayoutResult);
     virtual void ComputeContentPosition(float offsetX, float offsetY);
 
-    bool bCaptionAvailable;
+//    bool bCaptionAvailable;
     BasicView m_CaptionArea;
     Layout *m_layout;
   };

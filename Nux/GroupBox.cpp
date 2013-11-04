@@ -29,7 +29,7 @@ namespace nux
 
   GroupBox::GroupBox(const char * /* Caption */, NUX_FILE_LINE_DECL)
     :   View(NUX_FILE_LINE_PARAM)
-    ,   bCaptionAvailable(false)
+//  ,   bCaptionAvailable(false)
     ,   m_layout(0)
   {
     m_CaptionArea.SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
