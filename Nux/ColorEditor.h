@@ -128,25 +128,25 @@ namespace nux
     /*!
         Prevent changing the minimum height of the ColorEditor view.
     */
-    virtual void SetMinimumHeight(){};
+    virtual void SetMinimumHeight(int h){};
 
     //! Override of Area::SetMaximumHeight and made private.
     /*!
         Prevent changing the maximum height of the ColorEditor view.
     */
-    virtual void SetMaximumHeight(){};
+    virtual void SetMaximumHeight(int h){};
 
     //! Override of Area::SetMinimumWidth and made private.
     /*!
         Prevent changing the minimum width of the ColorEditor view.
     */
-    virtual void SetMinimumWidth(){};
+    virtual void SetMinimumWidth(int w){};
 
     //! Override of Area::SetMaximumWidth and made private.
     /*!
         Prevent changing the maximum width of the ColorEditor view.
     */
-    virtual void SetMaximumWidth(){};
+    virtual void SetMaximumWidth(int w){};
 
     void DrawBaseChannelMarker(GraphicsEngine &graphics_engine);
     void DrawRGB(GraphicsEngine &graphics_engine, bool force_draw);
