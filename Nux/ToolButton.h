@@ -57,8 +57,8 @@ namespace nux
     virtual void DrawContent(GraphicsEngine &GfxContext, bool force_draw);
 
   private:
-    HLayout    *hlayout;
-    InputArea   *m_IconArea;
+    //HLayout    *hlayout;
+    //InputArea   *m_IconArea;
     ActionItem *m_ActionItem;
     BaseTexture   *m_Texture;
 
