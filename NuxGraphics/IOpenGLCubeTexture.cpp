@@ -100,7 +100,7 @@ namespace nux
     return 1;
   }
 
-  int IOpenGLCubeTexture::LockRect(
+  int IOpenGLCubeTexture::CubeLockRect(
     eCUBEMAP_FACES FaceType,
     int Level,
     SURFACE_LOCKED_RECT *pLockedRect,
@@ -128,7 +128,7 @@ namespace nux
     return OGL_OK;
   }
 
-  int IOpenGLCubeTexture::UnlockRect(
+  int IOpenGLCubeTexture::CubeUnlockRect(
     eCUBEMAP_FACES FaceType,
     int Level
   )

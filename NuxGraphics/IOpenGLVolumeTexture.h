@@ -39,13 +39,13 @@ namespace nux
       IOpenGLVolume **ppVolumeLevel
     );
 
-    int LockRect(
+    int VolumeLockRect(
       int Slice,
       int Level,
       SURFACE_LOCKED_RECT *pLockedRect,
       const SURFACE_RECT *pRect);
 
-    int UnlockRect(
+    int VolumeUnlockRect(
       int Slice,
       int Level
     );
