@@ -49,11 +49,6 @@ namespace nux
 #ifndef NUX_OPENGLES_20
     ObjectPtr<IOpenGLAsmShaderProgram> m_AsmProg;
 #endif
-
-    UINT ViewPortX;
-    UINT ViewPortY;
-    UINT ViewPortWidth;
-    UINT ViewPortHeight;
   };
 
 }
