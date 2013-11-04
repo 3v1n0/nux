@@ -825,7 +825,7 @@ namespace nux
     }
   }
 
-  Color const& TextEntry::GetTextColor() const
+  Color TextEntry::GetTextColor() const
   {
     return _text_color;
   }

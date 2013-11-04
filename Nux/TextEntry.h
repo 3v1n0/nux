@@ -154,7 +154,7 @@ namespace nux
     Color const& GetCompletionColor() const;
 
     void SetTextColor(const Color& color);
-    Color const& GetTextColor() const;
+    Color GetTextColor() const;
     void SetFontFamily(const char* font);
     void SetFontSize(double font_size);
     void SetFontOptions(const cairo_font_options_t* options);
