@@ -230,7 +230,7 @@ namespace nux
   protected:
     bool _block_focus; // used to selectively ignore focus keyevents
 
-    virtual void GeometryChanged();
+    virtual void GeometryChanged(bool position_has_changed, bool size_has_changed);
 
     /**
      * Enum used to specify different motion types.
