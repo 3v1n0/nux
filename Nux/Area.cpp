@@ -979,7 +979,7 @@ namespace nux
      if ((event_type == NUX_MOUSE_WHEEL) && mouse_pointer_inside_area)
      {
        if (accept_mouse_wheel_event_ == false)
-         return NULL;
+         return false;
      }
  
      return mouse_pointer_inside_area;
