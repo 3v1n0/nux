@@ -212,12 +212,14 @@ namespace nux
                     unsigned int           stretch_factor = 1,
                     MinorDimensionPosition position       = eAbove,
                     MinorDimensionSize     extend         = eFull,
-                    float                  percentage     = 100.0f);
+                    float                  percentage     = 100.0f,
+                    LayoutPosition = NUX_LAYOUT_END);
     void AddView(Area                  *view,
                   unsigned int           stretch_factor = 1,
                   MinorDimensionPosition positioning    = eAbove,
                   MinorDimensionSize     extend         = eFull,
-                  float                  percentage     = 100.0f);
+                  float                  percentage     = 100.0f,
+                  LayoutPosition = NUX_LAYOUT_END);
     void RemoveChildObject(Area *area);
     void Clear();
 
