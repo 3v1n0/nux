@@ -367,7 +367,7 @@ namespace nux
 #ifndef NUX_OPENGLES_20
     // OpenGL extension initialization
     GLenum Glew_Ok = 0;
-    Glew_Ok = 0;  // Suppress compiler warning about set but not used variable.
+    Glew_Ok = Glew_Ok + (1 - 1);  // Suppress compiler warning about set but not used variable.
 #ifdef GLEW_MX
     Glew_Ok = glewContextInit(glewGetContext());
     nuxAssertMsg(Glew_Ok == GLEW_OK, "[GpuDevice::GpuDevice] GL Extensions failed to initialize.");
