@@ -165,6 +165,7 @@ namespace nux
     NResourceFactory(NObjectType *Type)
       :   m_ResourceType(Type)
     {}
+    virtual ~NResourceFactory() {}
 
     // Returns the resource type for this factory
     const NObjectType &Type() const
