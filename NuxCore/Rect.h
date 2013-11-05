@@ -49,6 +49,7 @@ namespace nux
 
     bool IsInside(const Point &p) const;
     bool IsInside(const Point2D<float> &p) const;
+    bool IsIntersecting(const Rect&) const;
     Rect Intersect(const Rect &) const;
 
     // expand the width by factor_x and the height by factor_y
@@ -105,6 +106,7 @@ namespace nux
       if (height < 0)
         height = 0;
     }
+
     void OffsetPosition (int dx, int dy)
     {
       x += dx;
@@ -130,6 +132,8 @@ namespace nux
   Rect operator+(Rect const& lhs, Rect const& rhs);
   Rect operator-(Rect const& lhs, Rect const& rhs);
   Rect operator*(Rect const& lhs, float scalar);
+
+  std::ostream& operator<<(std::ostream &os, Rect const&);
 
   typedef Rect Geometry;
 }

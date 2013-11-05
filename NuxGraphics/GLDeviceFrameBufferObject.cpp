@@ -65,12 +65,22 @@ namespace nux
 
   void GLFramebufferObject::Bind()
   {
-    CHECKGL(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboId));
+#ifdef NUX_OPENGLES_20
+    GLenum binding = GL_FRAMEBUFFER;
+#else
+    GLenum binding = GL_DRAW_FRAMEBUFFER_EXT;
+#endif
+    CHECKGL(glBindFramebufferEXT(binding, m_fboId));
   }
 
   void GLFramebufferObject::Disable()
   {
-    CHECKGL(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
+#ifdef NUX_OPENGLES_20
+    GLenum binding = GL_FRAMEBUFFER;
+#else
+    GLenum binding = GL_DRAW_FRAMEBUFFER_EXT;
+#endif
+    CHECKGL(glBindFramebufferEXT(binding, 0));
   }
 
   void
@@ -170,11 +180,11 @@ namespace nux
   {
 #ifndef NUX_OPENGLES_20
     // Only binds if m_fboId is different than the currently bound FBO
-    CHECKGL(glGetIntegerv( GL_FRAMEBUFFER_BINDING_EXT, &m_savedFboId ));
+    CHECKGL(glGetIntegerv( GL_DRAW_FRAMEBUFFER_BINDING_EXT, &m_savedFboId ));
 
     if (m_fboId != m_savedFboId)
     {
-      CHECKGL(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboId));
+      CHECKGL(glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fboId));
     }
 #else
     // Only binds if m_fboId is different than the currently bound FBO
@@ -189,10 +199,15 @@ namespace nux
 
   void GLFramebufferObject::_GuardedUnbind()
   {
+#ifdef NUX_OPENGLES_20
+    GLenum binding = GL_FRAMEBUFFER;
+#else
+    GLenum binding = GL_DRAW_FRAMEBUFFER_EXT;
+#endif
     // Returns FBO binding to the previously enabled FBO
     if (m_savedFboId != m_fboId)
     {
-      CHECKGL(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, (GLuint) m_savedFboId));
+      CHECKGL(glBindFramebufferEXT(binding, (GLuint) m_savedFboId));
     }
   }
 

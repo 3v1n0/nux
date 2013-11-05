@@ -509,7 +509,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
 //////////////////////
 // DRAW CLIPPING    //
 //////////////////////
-  void GraphicsEngine::PushClippingRectangle(Rect rect)
+  void GraphicsEngine::PushClippingRectangle(Rect const& rect)
   {
     if (_graphics_display.m_DeviceFactory->GetCurrentFrameBufferObject().IsValid())
     {
@@ -530,7 +530,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
 
     if (stacksize == 0)
     {
-      r1 = Rect(0, 0, window_width, window_height);
+      r1.Set(0, 0, window_width, window_height);
     }
     else
     {
@@ -552,7 +552,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
 
     if ((x1 > x0) && (y1 > y0))
     {
-      _clipping_rect = Rect(x0, y0, x1 - x0, y1 - y0);
+      _clipping_rect.Set(x0, y0, x1 - x0, y1 - y0);
       ClippingRect.push_back(Rect(x0, y0, x1 - x0, y1 - y0));
 
       EnableScissoring(true);
@@ -560,7 +560,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
     }
     else
     {
-      _clipping_rect = Rect(0, 0, 0, 0);
+      _clipping_rect.Set(0, 0, 0, 0);
       ClippingRect.push_back(_clipping_rect);
       EnableScissoring(true);
       SetOpenGLClippingRectangle(0, 0, 0, 0);
@@ -580,7 +580,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
 
     if (stacksize == 0)
     {
-      _clipping_rect = Rect(0, 0, _viewport.width, _viewport.height);
+      _clipping_rect.Set(0, 0, _viewport.width, _viewport.height);
       EnableScissoring(true);
       SetOpenGLClippingRectangle(0, 0, _viewport.width, _viewport.height);
     }
@@ -605,7 +605,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
 
     if (stacksize == 0)
     {
-      _clipping_rect = Rect(0, 0, _viewport.width, _viewport.height);
+      _clipping_rect.Set(0, 0, _viewport.width, _viewport.height);
       EnableScissoring(true);
       SetOpenGLClippingRectangle(0, 0, _viewport.width, _viewport.height);
     }
@@ -628,23 +628,23 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
 
     ClippingRect.clear();
     {
-      _clipping_rect = Rect(0, 0, _viewport.width, _viewport.height);
+      _clipping_rect.Set(0, 0, _viewport.width, _viewport.height);
       EnableScissoring(true);
       SetOpenGLClippingRectangle(0, 0, _viewport.width, _viewport.height);
     }
   }
-  
-  void GraphicsEngine::SetGlobalClippingRectangle(Rect rect)
+
+  void GraphicsEngine::SetGlobalClippingRectangle(Rect const& rect)
   {
     _global_clipping_enabled = true;
-    _global_clipping_rect = Rect(rect.x, _viewport.height - rect.y - rect.height, rect.width, rect.height);
+    _global_clipping_rect.Set(rect.x, _viewport.height - rect.y - rect.height, rect.width, rect.height);
     ApplyClippingRectangle();
   }
-  
+
   void GraphicsEngine::DisableGlobalClippingRectangle()
   {
     _global_clipping_enabled = false;
-    _global_clipping_rect = Rect(0, 0, _viewport.width, _viewport.height);
+    _global_clipping_rect.Set(0, 0, _viewport.width, _viewport.height);
     ApplyClippingRectangle();
   }
 
@@ -1188,9 +1188,9 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
     CHECKGL(glScissor(_scissor.x, _scissor.y, _scissor.width, _scissor.height));
   }
 
-  Rect GraphicsEngine::GetScissorRect()
+  Rect const& GraphicsEngine::GetScissorRect() const
   {
-    return Rect(_scissor.x, _scissor.y, _scissor.width, _scissor.height);
+    return _scissor;
   }
 
   void GraphicsEngine::EnableScissoring(bool b)

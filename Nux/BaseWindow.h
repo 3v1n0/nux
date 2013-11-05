@@ -188,6 +188,13 @@ namespace nux
       return _name;
     }
 
+    void PresentInEmbeddedModeOnThisFrame(bool force = false);
+    void MarkPresentedInEmbeddedMode();
+    bool AllowPresentationInEmbeddedMode() const;
+    nux::Geometry const& LastPresentedGeometryInEmbeddedMode() const;
+
+    void PrepareParentRedirectedView();
+
 #ifdef NUX_GESTURES_SUPPORT
     virtual Area* GetInputAreaHitByGesture(const nux::GestureEvent &event);
 #endif
@@ -260,6 +267,14 @@ namespace nux
 
     bool _child_need_redraw;   //!<True is there is a child of the BaseWindow that needs to be redrawn;
     float _opacity;
+
+    bool _present_in_embedded_mode; //!<True if we should draw this window's
+                                    // backing texture to the screen on the
+                                    // next frame
+    nux::Geometry _last_presented_geometry_in_embedded_mode;
+
+    bool _contents_ready_for_presentation; //!<True if this window's contents has just been
+                                           // redrawn and it is awaiting presentation
 
     friend class PopUpWindow;
 
