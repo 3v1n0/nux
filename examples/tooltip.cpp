@@ -454,12 +454,12 @@ namespace nux
 
     // draw highlight
     cairo_set_operator (cr, CAIRO_OPERATOR_OVER);
-    hl_pattern = cairo_pattern_create_radial (hl_x,
-                                              hl_y,
-                                              0.0f,
-                                              hl_x,
-                                              hl_y,
-                                              hl_size);
+    hl_pattern = cairo_pattern_create_radial ((double)hl_x,
+                                              (double)hl_y,
+                                              (double)0.0f,
+                                              (double)hl_x,
+                                              (double)hl_y,
+                                              (double)hl_size);
     cairo_pattern_add_color_stop_rgba (hl_pattern,
                                        0.0f,
                                        1.0f,

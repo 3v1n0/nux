@@ -124,7 +124,7 @@ bool FontMgr::load_font (const char *font_filename)
   set_current_font (face->family_name, face->style_name);
 
   // check if the font is already loaded
-  if (find_font (face->family_name, face->style_name) )
+  if (find_font ((const char*)face->family_name, (const char*)face->style_name) )
     return true;		// the font is already loaded
 
   fs->charmap = new CharData[face->num_glyphs];
@@ -783,8 +783,8 @@ void FontMgr::RenderGlyph (const PageBBox &pageSize, const char *text, TextAlign
     unsigned int ascii_code = (unsigned int) text[n];
     FT_Face      face = get_font_family (current_font)->m_face;
 
-    int gltexid = get_font_style (face->family_name, face->style_name)->charmap[ascii_code].gltexid;
-    CharData cd = get_font_style (face->family_name, face->style_name)->charmap[ascii_code];
+    int gltexid = get_font_style ((char*)face->family_name, (char*)face->style_name)->charmap[ascii_code].gltexid;
+    CharData cd = get_font_style ((char*)face->family_name, (char*)face->style_name)->charmap[ascii_code];
     glBindTexture (GL_TEXTURE_2D, gltexid);
 
     glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -915,9 +915,9 @@ void FontMgr::RenderTextLineStatic (const PageBBox &pageSize, const std::string 
   const char *text = Str.c_str();
   FT_Face      face = get_font_family (current_font)->m_face;
   unsigned int ascii_code = (unsigned int) text[strlen (text)-1];
-  CharData last_cd = get_font_style (face->family_name, face->style_name)->charmap[ascii_code];
-  CharData dot_cd = get_font_style (face->family_name, face->style_name)->charmap[trailingchar];
-  int dot_gltexid = get_font_style (face->family_name, face->style_name)->charmap[trailingchar].gltexid;
+  CharData last_cd = get_font_style ((char*)face->family_name, (char*)face->style_name)->charmap[ascii_code];
+  CharData dot_cd = get_font_style ((char*)face->family_name, (char*)face->style_name)->charmap[trailingchar];
+  int dot_gltexid = get_font_style ((char*)face->family_name, (char*)face->style_name)->charmap[trailingchar].gltexid;
 
   glEnable (GL_TEXTURE_2D);
 
