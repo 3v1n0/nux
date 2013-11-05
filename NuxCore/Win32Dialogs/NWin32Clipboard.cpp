@@ -103,11 +103,11 @@ namespace nux
       HGLOBAL GlobalMem = NULL;
       BOOL IsUnicodeText = 0;
 
-      if ( GlobalMem = GetClipboardData ( CF_UNICODETEXT ) )
+      if ( (GlobalMem = GetClipboardData ( CF_UNICODETEXT )) )
       {
         IsUnicodeText = 1;
       }
-      else if ( GlobalMem = GetClipboardData ( CF_TEXT ) )
+      else if ( (GlobalMem = GetClipboardData ( CF_TEXT )) )
       {
         IsUnicodeText = 0;
       }
