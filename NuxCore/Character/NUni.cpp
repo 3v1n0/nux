@@ -499,6 +499,7 @@ namespace nux
         return true;
       }
     }
+    return true;
   }
 
   /**
@@ -558,7 +559,7 @@ namespace nux
       }
     }
 
-
+    return true;
   }
 
 

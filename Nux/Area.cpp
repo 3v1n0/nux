@@ -702,17 +702,17 @@ namespace nux
 
   bool Area::IsArea() const
   {
-    return this->Type().IsDerivedFromType(Area::StaticObjectType);;
+    return this->Type().IsDerivedFromType(Area::StaticObjectType);
   }
 
   bool Area::IsInputArea() const
   {
-    return this->Type().IsDerivedFromType(InputArea::StaticObjectType);;
+    return this->Type().IsDerivedFromType(InputArea::StaticObjectType);
   }
 
   bool Area::IsView() const
   {
-    return this->Type().IsDerivedFromType(View::StaticObjectType);;
+    return this->Type().IsDerivedFromType(View::StaticObjectType);
   }
 
   bool Area::IsLayout() const
@@ -727,7 +727,7 @@ namespace nux
 
   bool Area::IsSpaceLayout() const
   {
-    return this->Type().IsDerivedFromType(SpaceLayout::StaticObjectType);;
+    return this->Type().IsDerivedFromType(SpaceLayout::StaticObjectType);
   }
 
   void Area::Set2DMatrix(const Matrix4 &mat)
