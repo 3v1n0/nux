@@ -1,3 +1,10 @@
+nux (4.0.4-0ubuntu1) UNRELEASED; urgency=low
+
+  [ Sam Spilsbury ]
+  * Bump version to 4.0.4.
+
+ -- Chris Townsend <christopher.townsend@canonical.com>  Tue, 29 Oct 2013 18:12:16 -0400
+
 nux (4.0.3+13.10.20131011-0ubuntu1) saucy; urgency=low
 
   [ Stephen M. Webb ]

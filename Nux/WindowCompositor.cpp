@@ -41,8 +41,11 @@ namespace nux
 DECLARE_LOGGER(logger, "nux.window");
 
   WindowCompositor::WindowCompositor(WindowThread* window_thread)
-  : reference_fbo_(0)
+  : draw_reference_fbo_(0)
+  , read_reference_fbo_(0)
   , window_thread_(window_thread)
+  , currently_rendering_windows_(nullptr)
+  , current_global_clip_rect_(nullptr)
   {
     m_OverlayWindow             = NULL;
     _tooltip_window             = NULL;
@@ -135,7 +138,7 @@ DECLARE_LOGGER(logger, "nux.window");
                                    _view_window_list.end(), window);
     if (it == _view_window_list.end())
     {
-      _view_window_list.push_front(ObjectWeakPtr<BaseWindow>(window));
+      _view_window_list.push_front(WeakBaseWindowPtr(window));
 
       RenderTargetTextures rt;
 
@@ -192,30 +195,36 @@ DECLARE_LOGGER(logger, "nux.window");
                                            NuxEventType event_type,
                                            ObjectWeakPtr<InputArea>& area_under_mouse_pointer)
   {
-    ObjectWeakPtr<BaseWindow> window;
+    WeakBaseWindowPtr window;
     GetAreaUnderMouse(mouse_position, event_type, area_under_mouse_pointer, window);
   }
 
   void WindowCompositor::GetAreaUnderMouse(const Point& mouse_position,
                                            NuxEventType event_type,
                                            ObjectWeakPtr<InputArea>& area_under_mouse_pointer,
-                                           ObjectWeakPtr<BaseWindow>& window)
+                                           WeakBaseWindowPtr& window)
   {
     window = NULL;
     area_under_mouse_pointer = NULL;
 
     // Go through the list of BaseWindo and find the first area over which the
     // mouse pointer is.
-    WindowList::iterator window_it;
-    for (window_it = _view_window_list.begin(); window_it != _view_window_list.end(); ++window_it)
+    for (auto const& window_it : _view_window_list)
     {
-      if ((*window_it).IsValid() && (*window_it)->IsVisible())
+      // Since the mouse is really an input-level thing, we want to know
+      // if the underlying input window is enabled or if the window is
+      // visible
+
+      if (!window_it.IsValid())
+        continue;
+
+      if (window_it->InputWindowEnabled() || window_it->IsVisible())
       {
-        Area* area = (*window_it)->FindAreaUnderMouse(mouse_position, event_type);
+        Area* area = window_it->FindAreaUnderMouse(mouse_position, event_type);
         if (area)
         {
           area_under_mouse_pointer = static_cast<InputArea*>(area);
-          window = *window_it;
+          window = window_it;
           return;
         }
       }
@@ -890,26 +899,24 @@ DECLARE_LOGGER(logger, "nux.window");
     unsigned int key_symbol,
     unsigned int special_keys_state,
     ObjectWeakPtr<InputArea>& key_focus_area,
-    ObjectWeakPtr<BaseWindow>& window)
+    WeakBaseWindowPtr& window)
   {
     key_focus_area = NULL;
     window = NULL;
 
     // Go through the list of BaseWindos and find the first area over which the mouse pointer is.
-    WindowList::iterator window_it;
-    window_it = _view_window_list.begin();
-    while (!key_focus_area.IsValid() && window_it != _view_window_list.end())
+    for (auto const& window_it : _view_window_list)
     {
-      if ((*window_it).IsValid() && (*window_it)->IsVisible())
+      if (window_it.IsValid() && window_it->IsVisible())
       {
-        key_focus_area = NUX_STATIC_CAST(InputArea*, (*window_it)->FindKeyFocusArea(event_type, key_symbol, special_keys_state));
+        key_focus_area = NUX_STATIC_CAST(InputArea*, window_it->FindKeyFocusArea(event_type, key_symbol, special_keys_state));
         if (key_focus_area.IsValid())
         {
           // We have found an area. We are going to exit the while loop.
-          window = *window_it;
+          window = window_it;
+          break;
         }
       }
-      ++window_it;
     }
 
     // If key_focus_area is NULL, then try the main window layout.
@@ -928,7 +935,7 @@ DECLARE_LOGGER(logger, "nux.window");
     unsigned int special_keys_state,
     InputArea* root_search_area,
     ObjectWeakPtr<InputArea>& key_focus_area,
-    ObjectWeakPtr<BaseWindow>& window)
+    WeakBaseWindowPtr& window)
   {
     key_focus_area = NULL;
     window = NULL;
@@ -975,7 +982,7 @@ DECLARE_LOGGER(logger, "nux.window");
     InputArea* keyboard_event_grab_view = GetKeyboardGrabArea();
 
     ObjectWeakPtr<InputArea> focus_area;   // The view under the mouse
-    ObjectWeakPtr<BaseWindow> base_window; // The BaseWindow below the mouse pointer.
+    WeakBaseWindowPtr base_window; // The BaseWindow below the mouse pointer.
 
     if (keyboard_event_grab_view)
     {
@@ -1173,7 +1180,7 @@ DECLARE_LOGGER(logger, "nux.window");
     inside_event_cycle_ = false;
   }
 
-  void WindowCompositor::StartModalWindow(ObjectWeakPtr<BaseWindow> window)
+  void WindowCompositor::StartModalWindow(WeakBaseWindowPtr window)
   {
     if (window == 0)
       return;
@@ -1186,7 +1193,7 @@ DECLARE_LOGGER(logger, "nux.window");
     }
   }
 
-  void WindowCompositor::StopModalWindow(ObjectWeakPtr<BaseWindow> window)
+  void WindowCompositor::StopModalWindow(WeakBaseWindowPtr window)
   {
     if (!_modal_view_window_list.empty())
     {
@@ -1206,7 +1213,7 @@ DECLARE_LOGGER(logger, "nux.window");
     if (it != _view_window_list.end())
     {
       _view_window_list.erase(it);
-      _view_window_list.push_front(ObjectWeakPtr<BaseWindow> (window));
+      _view_window_list.push_front(WeakBaseWindowPtr(window));
     }
 
     EnsureAlwaysOnFrontWindow();
@@ -1226,7 +1233,7 @@ DECLARE_LOGGER(logger, "nux.window");
     if (it != _view_window_list.end())
     {
       _view_window_list.erase(it);
-      _view_window_list.push_back(ObjectWeakPtr<BaseWindow> (window));
+      _view_window_list.push_back(WeakBaseWindowPtr(window));
     }
 
     EnsureAlwaysOnFrontWindow();
@@ -1273,7 +1280,7 @@ DECLARE_LOGGER(logger, "nux.window");
     if ((top_pos < bot_pos) && (strict == false))
     {
       _view_window_list.erase(it_top);
-      _view_window_list.insert(it_bot, ObjectWeakPtr<BaseWindow> (top_floating_view));
+      _view_window_list.insert(it_bot, WeakBaseWindowPtr(top_floating_view));
     }
 
     EnsureAlwaysOnFrontWindow();
@@ -1281,7 +1288,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
   void WindowCompositor::SetAlwaysOnFrontWindow(BaseWindow* window)
   {
-    _always_on_front_window = ObjectWeakPtr<BaseWindow> (window);
+    _always_on_front_window = WeakBaseWindowPtr(window);
 
     EnsureAlwaysOnFrontWindow();
   }
@@ -1339,6 +1346,39 @@ DECLARE_LOGGER(logger, "nux.window");
         area->CheckMousePosition(Point(event.x, event.y));
       }
     }
+  }
+
+  namespace
+  {
+    void AssignWeakBaseWindowMatchingRaw(WindowCompositor::WeakBaseWindowPtr const& w, BaseWindow* bw, WindowCompositor::WeakBaseWindowPtr *ptr)
+    {
+      if (w.IsValid() && w.GetPointer() == bw)
+        *ptr = w;
+    }
+  }
+
+  void WindowCompositor::ForEachBaseWindow(ForEachBaseWindowFunc const& func)
+  {
+    for (auto const& window : _view_window_list)
+    {
+      if (window.IsValid())
+        func(window);
+    }
+
+    for (auto const& window : _modal_view_window_list)
+    {
+      if (window.IsValid())
+        func(window);
+    }
+
+    if (m_MenuWindow.IsValid())
+      func(m_MenuWindow);
+
+    if (_tooltip_window.IsValid())
+      func(_tooltip_window);
+
+    if (m_OverlayWindow.IsValid())
+      func(m_OverlayWindow);
   }
 
   void WindowCompositor::Draw(bool SizeConfigurationEvent, bool force_draw)
@@ -1414,7 +1454,7 @@ DECLARE_LOGGER(logger, "nux.window");
   void WindowCompositor::DrawMenu(bool force_draw)
   {
 #if !defined(NUX_MINIMAL)
-    ObjectWeakPtr<BaseWindow> window = m_MenuWindow;
+    WeakBaseWindowPtr window(m_MenuWindow);
 
     if (window.IsValid())
     {
@@ -1443,11 +1483,10 @@ DECLARE_LOGGER(logger, "nux.window");
 
   void WindowCompositor::DrawOverlay(bool /* force_draw */)
   {
-    ObjectWeakPtr<BaseWindow> window = m_OverlayWindow;
     int buffer_width = window_thread_->GetGraphicsEngine().GetWindowWidth();
     int buffer_height = window_thread_->GetGraphicsEngine().GetWindowHeight();
 
-    if (window.IsValid())
+    if (m_OverlayWindow.IsValid())
     {
       //window_thread_->GetGraphicsEngine().SetContext(x, y, buffer_width, buffer_height);
       window_thread_->GetGraphicsEngine().SetOrthographicProjectionMatrix(buffer_width, buffer_height);
@@ -1468,11 +1507,10 @@ DECLARE_LOGGER(logger, "nux.window");
 
   void WindowCompositor::DrawTooltip(bool /* force_draw */)
   {
-    ObjectWeakPtr<BaseWindow> window = _tooltip_window;
     int buffer_width = window_thread_->GetGraphicsEngine().GetWindowWidth();
     int buffer_height = window_thread_->GetGraphicsEngine().GetWindowHeight();
 
-    if (window.IsValid())
+    if (_tooltip_window.IsValid())
     {
       //window_thread_->GetGraphicsEngine().SetContext(x, y, buffer_width, buffer_height);
       window_thread_->GetGraphicsEngine().SetOrthographicProjectionMatrix(buffer_width, buffer_height);
@@ -1501,6 +1539,63 @@ DECLARE_LOGGER(logger, "nux.window");
     GetPainter().EmptyBackgroundStack();
   }
 
+  void WindowCompositor::PresentAnyReadyWindows()
+  {
+    if (!currently_rendering_windows_ || !current_global_clip_rect_)
+      return;
+
+    GraphicsEngine& graphics_engine = window_thread_->GetGraphicsEngine();
+
+    // Present all buffers to the screen
+    graphics_engine.ApplyClippingRectangle();
+    CHECKGL(glDepthMask(GL_FALSE));
+
+    WindowList &windows = *currently_rendering_windows_;
+    Geometry   &global_clip_rect = *current_global_clip_rect_;
+
+    for (auto const& window_ptr : windows)
+    {
+      if (window_ptr.IsNull())
+        continue;
+
+      BaseWindow* window = window_ptr.GetPointer();
+
+      if (window->IsVisible())
+      {
+        auto const& win_geo = window->GetGeometry();
+
+        if (!global_clip_rect.IsIntersecting(win_geo))
+        {
+          // The global clipping area can be seen as a per monitor clipping
+          // region. It is mostly used in embedded mode with compiz.  If we
+          // get here, it means that the BaseWindow we want to render is not
+          // in area of the monitor that compiz is currently rendering. So
+          // skip it.
+          continue;
+        }
+
+        RenderTargetTextures& rt = GetWindowBuffer(window);
+
+        if (rt.color_rt.IsValid())
+        {
+          /* Already been presented */
+          if (!window->_contents_ready_for_presentation)
+            continue;
+
+          /* Caller doesn't want us to render this yet */
+          if (window_thread_->IsEmbeddedWindow() && !window->AllowPresentationInEmbeddedMode())
+            continue;
+
+          // Nux is done rendering a BaseWindow into a texture. The previous call to Deactivate
+          // has cancelled any opengl framebuffer object that was set.
+          PresentBufferToScreen(rt.color_rt, win_geo.x, win_geo.y, false, false, window->GetOpacity(), window->premultiply());
+
+          window->_contents_ready_for_presentation = false;
+        }
+      }
+    }
+  }
+
   void WindowCompositor::RenderTopViews(bool force_draw,
                                         WindowList& windows_to_render,
                                         bool drawModal)
@@ -1512,12 +1607,16 @@ DECLARE_LOGGER(logger, "nux.window");
     GraphicsEngine& graphics_engine = window_thread_->GetGraphicsEngine();
     unsigned int window_width = graphics_engine.GetWindowWidth();
     unsigned int window_height = graphics_engine.GetWindowHeight();
-    GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
     graphics_engine.SetViewport(0, 0, window_width, window_height);
     graphics_engine.EmptyClippingRegion();
 
     Geometry global_clip_rect = graphics_engine.GetScissorRect();
     global_clip_rect.y = window_height - global_clip_rect.y - global_clip_rect.height;
+
+    current_global_clip_rect_ = &global_clip_rect;
+
+    // We don't need to restore framebuffers if we didn't update any windows
+    bool updated_any_windows = false;
 
     // Always make a copy of the windows to render.  We have no control over
     // the windows we are actually drawing.  It has been observed that some
@@ -1530,19 +1629,23 @@ DECLARE_LOGGER(logger, "nux.window");
     // list, lets reverse it as we are constructing, as we want to draw the
     // windows from back to front.
     WindowList windows(windows_to_render.rbegin(), windows_to_render.rend());
-    for (WindowList::iterator it = windows.begin(), end = windows.end(); it != end; ++it)
+
+    currently_rendering_windows_ = &windows;
+
+    for (auto const& window_ptr : windows)
     {
-      WeakBaseWindowPtr& window_ptr = *it;
       if (window_ptr.IsNull())
         continue;
 
       BaseWindow* window = window_ptr.GetPointer();
+
       if (!drawModal && window->IsModal())
         continue;
 
       if (window->IsVisible())
       {
-        if (global_clip_rect.Intersect(window->GetGeometry()).IsNull())
+        auto const& win_geo = window->GetGeometry();
+        if (!global_clip_rect.IsIntersecting(win_geo))
         {
           // The global clipping area can be seen as a per monitor clipping
           // region. It is mostly used in embedded mode with compiz.  If we
@@ -1586,33 +1689,21 @@ DECLARE_LOGGER(logger, "nux.window");
           }
           else
           {
-            int x = window->GetBaseX();
-            int y = window->GetBaseY();
             Matrix4 mat;
-            mat.Translate(x, y, 0);
+            mat.Translate(win_geo.x, win_geo.y, 0);
             graphics_engine.SetOrthographicProjectionMatrix(window_width, window_height);
           }
 
           RenderTopViewContent(window, force_draw);
-        }
 
-        if (rt.color_rt.IsValid())
-        {
           m_FrameBufferObject->Deactivate();
-
-          // Nux is done rendering a BaseWindow into a texture. The previous call to Deactivate
-          // has cancelled any opengl framebuffer object that was set.
-
-          CHECKGL(glDepthMask(GL_FALSE));
-          {
-            graphics_engine.ApplyClippingRectangle();
-            PresentBufferToScreen(rt.color_rt, window->GetBaseX(), window->GetBaseY(), false, false, window->GetOpacity(), window->premultiply());
-          }
           CHECKGL(glDepthMask(GL_TRUE));
           graphics_engine.GetRenderStates().SetBlend(false);
+          updated_any_windows = true;
         }
 
         window->_child_need_redraw = false;
+        window->_contents_ready_for_presentation = true;
       }
       else
       {
@@ -1622,7 +1713,29 @@ DECLARE_LOGGER(logger, "nux.window");
       }
     }
 
-    m_FrameBufferObject->Deactivate();
+    /* If any windows were updated, then we need to rebind our
+     * reference framebuffer */
+    if (updated_any_windows)
+    {
+      if (GetWindowThread()->IsEmbeddedWindow())
+      {
+        // Restore the reference framebuffer
+        if (!RestoreReferenceFramebuffer())
+        {
+          LOG_DEBUG(logger) << "RenderTopViews: Setting the Reference fbo has failed.";
+        }
+      }
+      else
+      {
+        GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
+      }
+    }
+
+    /* Present any windows which haven't yet been presented */
+    PresentAnyReadyWindows();
+
+    currently_rendering_windows_ = nullptr;
+    current_global_clip_rect_ = nullptr;
   }
 
   void WindowCompositor::RenderMainWindowComposition(bool force_draw)
@@ -1720,23 +1833,8 @@ DECLARE_LOGGER(logger, "nux.window");
       m_FrameBufferObject->SetDepthTextureAttachment(m_MainDepthRT, 0);
       m_FrameBufferObject->Activate();
     }
-    else
-    {
-      if (GetWindowThread()->IsEmbeddedWindow() && reference_fbo_)
-      {
-        // In the context of Unity, we may want Nux to restore a specific fbo and render the
-        // BaseWindow texture into it. That fbo is called a reference framebuffer object. if a
-        // Reference framebuffer object is present, Nux sets it.
-        if (!RestoreReferenceFramebuffer())
-        {
-          nuxDebugMsg("[WindowCompositor::RenderTopViews] Setting the Reference fbo has failed.");
-        }
-      }
-      else
-      {
-        GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer();
-      }
-    }
+
+    // Reference framebuffer is already restored
 
     window_thread_->GetGraphicsEngine().EmptyClippingRegion();
     window_thread_->GetGraphicsEngine().SetOpenGLClippingRectangle(0, 0, window_width, window_height);
@@ -1949,7 +2047,7 @@ DECLARE_LOGGER(logger, "nux.window");
     {
       // There is a keyboard grab pending. Only an area that is a child of the area that has
       // the keyboard grab can be set to receive keyboard events.
-      nuxDebugMsg("[WindowCompositor::SetKeyFocusArea] There is a keyboard grab pending. Cannot change the keyboard event receiver.");
+      LOG_DEBUG(logger) << "SetKeyFocusArea: There is a keyboard grab pending. Cannot change the keyboard event receiver.";
       return false;
     }
 
@@ -2047,14 +2145,13 @@ DECLARE_LOGGER(logger, "nux.window");
   {
     WindowList::iterator it;
 
-    for (it = _view_window_list.begin(); it != _view_window_list.end(); ++it)
+    for (auto const& win : _view_window_list)
     {
-      if (!(*it).IsValid())
+      if (!win.IsValid())
         continue;
-      if ((*it)->IsVisible())
-      {
-        (*it)->NotifyConfigurationChange(Width, Height);
-      }
+
+      if (win->IsVisible())
+        win->NotifyConfigurationChange(Width, Height);
     }
   }
 
@@ -2140,11 +2237,22 @@ DECLARE_LOGGER(logger, "nux.window");
 
       nuxAssert(buffer_width >= 1);
       nuxAssert(buffer_height >= 1);
-      // Restore Main Frame Buffer
-      m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
-      m_FrameBufferObject->SetTextureAttachment(0, m_MainColorRT, 0);
-      m_FrameBufferObject->SetDepthTextureAttachment(m_MainDepthRT, 0);
-      m_FrameBufferObject->Activate();
+      // Restore Main Frame Buffer if not in embedded mode
+      if (!GetWindowThread()->IsEmbeddedWindow())
+      {
+        m_FrameBufferObject->FormatFrameBufferObject(buffer_width, buffer_height, BITFMT_R8G8B8A8);
+        m_FrameBufferObject->SetTextureAttachment(0, m_MainColorRT, 0);
+        m_FrameBufferObject->SetDepthTextureAttachment(m_MainDepthRT, 0);
+        m_FrameBufferObject->Activate();
+      }
+      else
+      {
+        // Restore reference framebuffer
+        RestoreReferenceFramebuffer();
+
+        // Present any ready windows
+        PresentAnyReadyWindows();
+      }
 
       window_thread_->GetGraphicsEngine().SetViewport(0, 0, buffer_width, buffer_height);
       window_thread_->GetGraphicsEngine().SetOrthographicProjectionMatrix(buffer_width, buffer_height);
@@ -2215,7 +2323,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
     if (GetPointerGrabArea() == area)
     {
-      nuxDebugMsg("[WindowCompositor::GrabPointerAdd] The area already has the grab");
+      LOG_DEBUG(logger) << "GrabPointerAdd: The area already has the grab";
       return result;
     }
 
@@ -2282,7 +2390,7 @@ DECLARE_LOGGER(logger, "nux.window");
 
     if (GetKeyboardGrabArea() == area)
     {
-      nuxDebugMsg("[WindowCompositor::GrabKeyboardAdd] The area already has the grab");
+      LOG_DEBUG(logger) << "GrabKeyboardAdd: The area already has the grab";
       return result;
     }
 
@@ -2429,9 +2537,10 @@ DECLARE_LOGGER(logger, "nux.window");
     return (*keyboard_grab_stack_.begin());
   }
 
-  void WindowCompositor::SetReferenceFramebuffer(unsigned int fbo_object, Geometry fbo_geometry)
+  void WindowCompositor::SetReferenceFramebuffer(unsigned int draw_fbo_object, unsigned int read_fbo_object, Geometry const& fbo_geometry)
   {
-    reference_fbo_ = fbo_object;
+    draw_reference_fbo_ = draw_fbo_object;
+    read_reference_fbo_ = read_fbo_object;
     reference_fbo_geometry_ = fbo_geometry;
   }
 
@@ -2497,7 +2606,7 @@ DECLARE_LOGGER(logger, "nux.window");
       return ok;
     }
 
-    void SetReferenceFramebufferViewport (const nux::Geometry &reference_fbo_geometry_)
+    void SetReferenceFramebufferViewport(const nux::Geometry &reference_fbo_geometry_)
     {
       CHECKGL(glViewport(reference_fbo_geometry_.x,
         reference_fbo_geometry_.y,
@@ -2508,24 +2617,53 @@ DECLARE_LOGGER(logger, "nux.window");
 
   bool WindowCompositor::RestoreReferenceFramebuffer()
   {
-    if (!reference_fbo_)
-      return false;
-
     // It is assumed that the reference fbo contains valid textures.
     // Nux does the following:
     //    - Bind the reference fbo (reference_fbo_)
     //    - Call glDrawBuffer with GL_COLOR_ATTACHMENT0
     //    - Set the opengl viewport size (reference_fbo_geometry_)
 
-    CHECKGL(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, reference_fbo_));
 #ifndef NUX_OPENGLES_20
-    CHECKGL(glDrawBuffer(GL_COLOR_ATTACHMENT0));
-    CHECKGL(glReadBuffer(GL_COLOR_ATTACHMENT0));
+    CHECKGL(glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, draw_reference_fbo_));
+    CHECKGL(glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, read_reference_fbo_));
+    if (draw_reference_fbo_)
+    {
+      CHECKGL(glDrawBuffer(GL_COLOR_ATTACHMENT0));
+    }
+    else
+    {
+      CHECKGL(glDrawBuffer(GL_BACK));
+    }
+
+    if (read_reference_fbo_)
+    {
+      CHECKGL(glReadBuffer(GL_COLOR_ATTACHMENT0));
+    }
+    else
+    {
+      CHECKGL(glReadBuffer(GL_BACK));
+    }
+#else
+    nuxAssertMsg(draw_reference_fbo_ == read_reference_fbo_,
+                 "[WindowCompositor::RestoreReferenceFramebuffer]: OpenGL|ES does not"\
+                 " support separate draw and read framebuffer bindings, using the supplied"\
+                 " draw binding");
+    CHECKGL(glBindFramebufferEXT(GL_FRAMEBUFFER, draw_reference_fbo_));
 #endif
 
-    SetReferenceFramebufferViewport (reference_fbo_geometry_);
+    SetReferenceFramebufferViewport(reference_fbo_geometry_);
 
-    return CheckExternalFramebufferStatus (GL_FRAMEBUFFER_EXT);
+#ifndef NUX_OPENGLES_20
+    int restore_status =
+           (!draw_reference_fbo_ ||
+            CheckExternalFramebufferStatus(GL_DRAW_FRAMEBUFFER_EXT)) &&
+           (!read_reference_fbo_ ||
+            CheckExternalFramebufferStatus(GL_READ_FRAMEBUFFER_EXT));
+#else
+    int restore_status = CheckExternalFramebufferStatus(GL_FRAMEBUFFER);
+#endif
+
+    return restore_status;
   }
 
   void WindowCompositor::RestoreMainFramebuffer()
@@ -2533,6 +2671,14 @@ DECLARE_LOGGER(logger, "nux.window");
     // This is a bit inefficient as we unbind and then rebind
     nux::GetGraphicsDisplay()->GetGpuDevice()->DeactivateFrameBuffer ();
     RestoreReferenceFramebuffer ();
+
+    /* Present any ready windows after restoring
+     * the reference framebuffer. This ensures that if
+     * we need to restore the reference framebuffer to
+     * get access to its contents through glCopyTexSubImage2D
+     * that it will also have any rendered views in it too
+     */
+    PresentAnyReadyWindows();
   }
 
 #ifdef NUX_GESTURES_SUPPORT
@@ -2545,7 +2691,7 @@ DECLARE_LOGGER(logger, "nux.window");
   {
     InputArea *input_area = nullptr;
 
-    for (auto window : _view_window_list)
+    for (auto const& window : _view_window_list)
     {
       if (!window.IsValid())
         continue;

@@ -19,6 +19,8 @@
  *
  */
 
+#include <functional>
+
 #include "Nux.h"
 #include "Layout.h"
 #include "NuxCore/Logger.h"
@@ -50,6 +52,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
 
   WindowThread::WindowThread(const char *WindowTitle, int width, int height, AbstractThread *Parent, bool Modal)
     : AbstractThread(Parent)
+    , foreign_frame_frozen_(false)
     , window_initial_width_(width)
     , window_initial_height_(height)
     , window_title_(WindowTitle)
@@ -168,7 +171,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     this->GetTimerHandler().RemoveTimerHandler(async_wake_up_timer_handle_);
     _pending_wake_up_timer = false;
   }
-  
+
   void WindowThread::ProcessDraw(GraphicsEngine &graphics_engine, bool force_draw)
   {
     if (main_layout_)
@@ -192,7 +195,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
   {
     _draw_requested_to_host_wm = true;
     RedrawRequested.emit();
-    
+
     if (!IsEmbeddedWindow())
     {
       // If the system is not in embedded mode and an asynchronous request for a Draw is made,
@@ -728,7 +731,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
       {
         ReconfigureLayout();
       }
-      else 
+      else
       {
         // Compute the layouts that have been queued.
         ComputeQueuedLayout();
@@ -1348,7 +1351,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
       }
     }
   }
-  
+
   void WindowThread::AddToDrawList(View *view)
   {
     Area *parent;
@@ -1376,20 +1379,59 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
       window->_child_need_redraw = true;
     }
 
-    m_dirty_areas.push_back(geo);
-  }
-  
-  void WindowThread::ClearDrawList()
-  {
-    m_dirty_areas.clear();
-  }
-  
-  std::vector<Geometry> const& WindowThread::GetDrawList() const
-  {
-    return m_dirty_areas;
+    dirty_areas_.push_back(geo);
   }
 
-  bool WindowThread::IsEmbeddedWindow()
+  void WindowThread::ClearDrawList()
+  {
+    dirty_areas_.clear();
+  }
+
+  std::vector<Geometry> const& WindowThread::GetDrawList() const
+  {
+    return dirty_areas_;
+  }
+
+  bool WindowThread::AddToPresentationList(BaseWindow* bw, bool force)
+  {
+    if (!bw)
+      return false;
+
+    RequestRedraw();
+
+    bool force_or_not_frozen = (force || !foreign_frame_frozen_);
+    std::vector<WeakBaseWindowPtr>& target_list = force_or_not_frozen ? presentation_list_embedded_ :
+                                                                        presentation_list_embedded_next_frame_;
+
+    if (std::find(target_list.begin(), target_list.end(), bw) != target_list.end())
+      return force_or_not_frozen;
+
+    target_list.push_back(WeakBaseWindowPtr(bw));
+    return force_or_not_frozen;
+  }
+
+  std::vector<nux::Geometry> WindowThread::GetPresentationListGeometries() const
+  {
+    std::vector<nux::Geometry> presentation_geometries;
+    for (auto const& base_window : presentation_list_embedded_)
+    {
+      if (base_window.IsValid())
+      {
+        nux::Geometry const& abs_geom = base_window->GetAbsoluteGeometry();
+        nux::Geometry const& last_geom = base_window->LastPresentedGeometryInEmbeddedMode();
+        presentation_geometries.push_back(abs_geom);
+
+        if (abs_geom != last_geom)
+        {
+          if (!last_geom.IsNull())
+            presentation_geometries.push_back(last_geom);
+        }
+      }
+    }
+    return presentation_geometries;
+  }
+
+  bool WindowThread::IsEmbeddedWindow() const
   {
     return embedded_window_;
   }
@@ -1468,7 +1510,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
       {
         ReconfigureLayout();
       }
-      else 
+      else
       {
         // Compute the layouts that have been queued.
         ComputeQueuedLayout();
@@ -1529,13 +1571,25 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     return request_draw_cycle_to_host_wm;
   }
 
-  void WindowThread::RenderInterfaceFromForeignCmd(Geometry *clip)
+  void WindowThread::PresentWindowsIntersectingGeometryOnThisFrame(Geometry const& rect)
+  {
+    nuxAssertMsg(IsEmbeddedWindow(),
+                 "[WindowThread::PresentWindowIntersectingGeometryOnThisFrame] "
+                 "can only be called inside an embedded window");
+
+    window_compositor_->ForEachBaseWindow([&rect] (WeakBaseWindowPtr const& w) {
+      if (rect.IsIntersecting(w->GetAbsoluteGeometry()))
+        w->PresentInEmbeddedModeOnThisFrame(true);
+    });
+  }
+
+  void WindowThread::RenderInterfaceFromForeignCmd(Geometry const& clip)
   {
     nuxAssertMsg(IsEmbeddedWindow() == true, "[WindowThread::RenderInterfaceFromForeignCmd] You can only call RenderInterfaceFromForeignCmd if the window was created with CreateFromForeignWindow.");
 
     if (!IsEmbeddedWindow())
       return;
-    
+
     IOpenGLShaderProgram::SetShaderTracking(true);
 
     // Set Nux opengl states. The other plugin in compiz have changed the GPU opengl states.
@@ -1545,17 +1599,12 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     GetWindowThread()->GetGraphicsEngine().SetOpenGLClippingRectangle(0, 0, GetWindowThread()->GetGraphicsEngine().GetWindowWidth(),
         GetWindowThread()->GetGraphicsEngine().GetWindowHeight());
 
-    if (graphics_display_->IsPauseThreadGraphicsRendering() == false)
+    if (!graphics_display_->IsPauseThreadGraphicsRendering())
     {
       ComputeQueuedLayout();
-      
-      if (clip)
-        GetWindowThread()->GetGraphicsEngine().SetGlobalClippingRectangle(*clip);
-        
+      GetWindowThread()->GetGraphicsEngine().SetGlobalClippingRectangle(clip);
       window_compositor_->Draw(window_size_configuration_event_, force_rendering_);
-      
-      if (clip)
-        GetWindowThread()->GetGraphicsEngine().DisableGlobalClippingRectangle();
+      GetWindowThread()->GetGraphicsEngine().DisableGlobalClippingRectangle();
       // When rendering in embedded mode, nux does not attempt to measure the frame rate...
 
       // Cleanup
@@ -1568,17 +1617,38 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
 
     CHECKGL( glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE));
 
-    graphics_display_->GetGpuDevice()->DeactivateFrameBuffer();
     IOpenGLShaderProgram::SetShaderTracking(false);
+  }
 
-    if (IsEmbeddedWindow() && window_compositor_->reference_fbo_)
+  void WindowThread::ForeignFrameEnded()
+  {
+    nuxAssertMsg(IsEmbeddedWindow(),
+                 "[WindowThread::ForeignFrameEnded] "
+                 "can only be called inside an embedded window");
+
+    window_compositor_->ForEachBaseWindow([] (WeakBaseWindowPtr const& w) {
+      w->MarkPresentedInEmbeddedMode();
+    });
+
+    presentation_list_embedded_.clear();
+
+    foreign_frame_frozen_ = false;
+
+    /* Move all the BaseWindows in presentation_list_embedded_next_frame_
+     * to presentation_list_embedded_ and mark them for presentation
+     */
+    for (auto const& win : presentation_list_embedded_next_frame_)
     {
-      // Restore the reference framebuffer
-      if (!window_compositor_->RestoreReferenceFramebuffer())
-      {
-        nuxDebugMsg("[WindowCompositor::RenderTopViews] Setting the Reference fbo has failed.");
-      }
+      if (win.IsValid())
+        win->PresentInEmbeddedModeOnThisFrame();
     }
+
+    presentation_list_embedded_next_frame_.clear();
+  }
+
+  void WindowThread::ForeignFrameCutoff()
+  {
+    foreign_frame_frozen_ = true;
   }
 
   int WindowThread::InstallEventInspector(EventInspector function, void* data)

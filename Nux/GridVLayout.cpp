@@ -300,14 +300,9 @@ namespace nux
     it = elements.begin();
 
     Geometry base = GetGeometry();
-    Geometry parent_geometry = GetAbsoluteGeometry();
-    Geometry visibility_geometry = parent_geometry;
-    if (GetToplevel())
-    {
-      parent_geometry = GetToplevel()->GetAbsoluteGeometry();
-    }
+    Geometry const& parent_geometry = GetToplevel() ? GetToplevel()->GetAbsoluteGeometry() : GetAbsoluteGeometry();
 
-    visibility_geometry = parent_geometry.Intersect(GetAbsoluteGeometry());
+    bool geometry_is_visible = parent_geometry.IsIntersecting(GetAbsoluteGeometry());
 
     graphics_engine.PushClippingRectangle(base);
 
@@ -318,10 +313,8 @@ namespace nux
         if (it == elements.end())
           break;
 
-        Geometry intersection = base.Intersect((*it)->GetGeometry());
-
         // Test if the element is inside the Grid before rendering.
-        if (!visibility_geometry.IsNull())
+        if (geometry_is_visible)
         {
           int X = base.x + m_h_out_margin + i * (_children_size.width + m_h_in_margin);
           int Y = base.y + m_v_out_margin + j * (_children_size.height + m_v_in_margin);

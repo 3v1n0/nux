@@ -58,7 +58,7 @@ namespace nux
 
     // For 2D screen operations
     std::vector<Rect> _ClippingRegionStack;
-    void PushClippingRegion(Rect rect);
+    void PushClippingRegion(Rect const& rect);
     void PopClippingRegion();
     void EmptyClippingRegion();
     void ApplyClippingRegion();

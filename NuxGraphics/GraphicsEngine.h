@@ -533,13 +533,13 @@ namespace nux
     //////////////////////
 
     mutable std::vector<Rect> ClippingRect;
-    void PushClippingRectangle(Rect rect);
+    void PushClippingRectangle(Rect const& rect);
     void PopClippingRectangle();
     void EmptyClippingRegion();
     //! Set the clipping according to the clipping rectangle stack.
     void ApplyClippingRectangle();
-    
-    void SetGlobalClippingRectangle(Rect rect);
+
+    void SetGlobalClippingRectangle(Rect const& rect);
     void DisableGlobalClippingRectangle();
 
     //! Bypass the clipping rectangle stack and set a different clipping rectangle region.
@@ -553,7 +553,7 @@ namespace nux
 
     Rect GetClippingRegion() const;
     int GetNumberOfClippingRegions() const;
-    
+
     void AddClipOffset(int x, int y);  //!< Deprecated. Use PushClipOffset.
     void PushClipOffset(int x, int y);
     void PopClipOffset();
@@ -592,7 +592,7 @@ namespace nux
     */
     void SetScissorOffset(int x, int y);
 
-    Rect GetScissorRect();
+    Rect const& GetScissorRect() const;
     void EnableScissoring(bool b);
 
 

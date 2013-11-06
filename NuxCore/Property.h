@@ -192,6 +192,7 @@ private:
 class PropertyBase
 {
 public:
+  virtual ~PropertyBase() {}
   virtual bool SetValue(std::string const& serialized_form) = 0;
   virtual std::string GetSerializedValue() const = 0;
 };

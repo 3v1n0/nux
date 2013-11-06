@@ -23,6 +23,8 @@
 #ifndef WINDOWCOMPOSITOR_H
 #define WINDOWCOMPOSITOR_H
 
+#include <functional>
+
 #include "BaseWindow.h"
 
 #include <sigc++/trackable.h>
@@ -53,6 +55,7 @@ namespace nux
   {
   public:
     typedef ObjectWeakPtr<BaseWindow> WeakBaseWindowPtr;
+    typedef std::function <void(WeakBaseWindowPtr const&)> ForEachBaseWindowFunc;
 
     WindowCompositor(WindowThread* window_thread);
     ~WindowCompositor();
@@ -112,8 +115,10 @@ namespace nux
         Return the area that has the keyboard focus.
 
         @return The area that has the keyboard focus.
-    */    
+    */
     InputArea* GetKeyFocusArea();
+
+    void ForEachBaseWindow(ForEachBaseWindowFunc const&);
 
     //! Signal emitted when a BaseWindow becomes visible.
     /*!
@@ -155,14 +160,14 @@ namespace nux
     void GetAreaUnderMouse(const Point& mouse_position,
                            NuxEventType event_type,
                            ObjectWeakPtr<InputArea>& area_under_mouse_pointer,
-                           ObjectWeakPtr<BaseWindow>& window);
+                           WeakBaseWindowPtr& window);
 
     //! Traverse the widget tree and found the area has the key focus.
     void FindKeyFocusArea(NuxEventType event_type,
                           unsigned int key_symbol,
                           unsigned int special_keys_state,
                           ObjectWeakPtr<InputArea>& key_focus_area,
-                          ObjectWeakPtr<BaseWindow>& window);
+                          WeakBaseWindowPtr& window);
 
     //! Traverse the widget tree and found the area has the key focus, but start from a specified widget.
     void FindKeyFocusAreaFrom(NuxEventType event_type,
@@ -170,7 +175,7 @@ namespace nux
       unsigned int special_keys_state,
       InputArea* root_search_area,
       ObjectWeakPtr<InputArea>& key_focus_area,
-      ObjectWeakPtr<BaseWindow>& window);
+      WeakBaseWindowPtr& window);
 
     void ResetMousePointerAreas();
 
@@ -239,10 +244,11 @@ namespace nux
         restored after Nux completes it rendering. The external fbo is used only in embedded mode. \n
         If the fbo_object parameter 0, then the reference fbo is invalid and will not be used.
 
-        @param fbo_object The opengl index of the fbo.
+        @param draw_fbo_object The opengl index of the GL_DRAW_FRAMEBUFFER_EXT.
+        @param read_fbo_object The opengl index of the GL_READ_FRAMEBUFFER_EXT.
         @param fbo_geometry The geometry of the fbo.
     */
-    void SetReferenceFramebuffer(unsigned int fbo_object, Geometry fbo_geometry);
+    void SetReferenceFramebuffer(unsigned int draw_fbo_object, unsigned int read_fbo_object, const Geometry &fbo_geometry);
 
     /*!
         Bind the reference opengl framebuffer object.
@@ -259,8 +265,8 @@ namespace nux
     
     ObjectPtr<IOpenGLFrameBufferObject> m_FrameBufferObject;
 
-    void StartModalWindow(ObjectWeakPtr<BaseWindow>);
-    void StopModalWindow(ObjectWeakPtr<BaseWindow>);
+    void StartModalWindow(WeakBaseWindowPtr);
+    void StopModalWindow(WeakBaseWindowPtr);
 
 #if !defined(NUX_MINIMAL)
     void AddMenu(MenuPage* menu, BaseWindow* window, bool OverrideCurrentMenuChain = true);
@@ -268,7 +274,7 @@ namespace nux
     void CleanMenu();
 #endif
 
-    void PushModalWindow(ObjectWeakPtr<BaseWindow> window);
+    void PushModalWindow(WeakBaseWindowPtr window);
 
     void SetWidgetDrawingOverlay(InputArea* ic, BaseWindow* OverlayWindow);
     InputArea* GetWidgetDrawingOverlay();
@@ -408,6 +414,8 @@ namespace nux
 #endif
 
   private:
+    typedef std::list<WeakBaseWindowPtr> WindowList;
+
     //! Render the interface.
     void Draw(bool SizeConfigurationEvent, bool force_draw);
 
@@ -422,7 +430,9 @@ namespace nux
         @WindowList The list of top views.
         @draw_modal True if the top view that is modal is to be rendered.
     */
-    void RenderTopViews(bool force_draw, std::list< ObjectWeakPtr<BaseWindow> >& WindowList, bool draw_modal);
+    void RenderTopViews(bool force_draw, WindowList&, bool draw_modal);
+
+    void PresentAnyReadyWindows();
 
     //! Render the content of a top view.
     void RenderTopViewContent(BaseWindow* window, bool force_draw);
@@ -511,7 +521,6 @@ namespace nux
     bool on_menu_closure_continue_with_event_;
     AbstractPaintLayer* m_Background;
 
-    typedef std::list<WeakBaseWindowPtr> WindowList;
     WindowList _view_window_list;
     WindowList _modal_view_window_list;
     WeakBaseWindowPtr _always_on_front_window;  //!< Floating view that always remains on top.
@@ -534,7 +543,8 @@ namespace nux
     int m_TooltipY;
 
     //! The fbo to restore after Nux rendering in embedded mode.
-    unsigned int reference_fbo_;
+    unsigned int draw_reference_fbo_;
+    unsigned int read_reference_fbo_;
     Geometry reference_fbo_geometry_;
 
     //! True if the platform has support for depth textures.
@@ -570,6 +580,9 @@ namespace nux
 #ifdef NUX_GESTURES_SUPPORT
     std::unique_ptr<GestureBroker> gesture_broker_;
 #endif
+
+    WindowList* currently_rendering_windows_;
+    Geometry* current_global_clip_rect_;
 
     //! Perform some action before destruction.
     /*!

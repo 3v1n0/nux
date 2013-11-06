@@ -1126,7 +1126,7 @@ namespace nux
       return;
     }
 
-    if ((redirect_rendering_to_texture_ == false) && redirect)
+    if (!redirect_rendering_to_texture_ && redirect)
     {
       update_backup_texture_ = true;
     }
@@ -1169,14 +1169,13 @@ namespace nux
 
     while (parent)
     {
-      if (parent->RedirectRenderingToTexture() && (parent->UpdateBackupTextureForChildRendering() == false))
+      if (parent->RedirectRenderingToTexture())
       {
+        if (parent->UpdateBackupTextureForChildRendering())
+          break;
+
         parent->SetUpdateBackupTextureForChildRendering(true);
         parent->PrepareParentRedirectedView();
-      }
-      else if (parent->RedirectRenderingToTexture() && (parent->UpdateBackupTextureForChildRendering() == true))
-      {
-        break;
       }
       else
       {

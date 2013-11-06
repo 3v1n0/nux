@@ -53,7 +53,7 @@ public:
   static Controller* Instance();
 
   Controller();
-  ~Controller();
+  virtual ~Controller();
 
   virtual void AddAnimation(Animation* animation) = 0;
   virtual void RemoveAnimation(Animation* animation) = 0;
@@ -74,7 +74,7 @@ class AnimationController : public Controller, public sigc::trackable
 {
 public:
   AnimationController(TickSource& tick_source);
-  ~AnimationController();
+  virtual ~AnimationController();
 
   // tick is expected to be ever increasing
   virtual void OnTick(long long tick);

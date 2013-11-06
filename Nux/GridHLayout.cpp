@@ -516,11 +516,8 @@ namespace nux
           continue;
         }
 
-        Geometry it_geo = (*it)->GetAbsoluteGeometry();
-        Geometry intersection = visibility_geometry.Intersect(it_geo);
-
         // Test if the element is inside the Grid before rendering.
-        if (!intersection.IsNull())
+        if (visibility_geometry.IsIntersecting((*it)->GetAbsoluteGeometry()))
         {
           if (first == false)
           {
