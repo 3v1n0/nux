@@ -13,7 +13,7 @@
 
 namespace nux
 {
-//DECLARE_LOGGER(logger, "nux.windows.thread");
+  DECLARE_LOGGER(logger, "nux.windows.thread");
 
   #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
 
