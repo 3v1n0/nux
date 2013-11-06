@@ -206,13 +206,13 @@ namespace nux
     /*!
         Prevent changing the minimum height of the StaticText view.
     */
-    virtual void SetMinimumHeight(){};
+    virtual void SetMinimumHeight(int h){};
 
     //! Override of Area::SetMaximumHeight and made private.
     /*!
         Prevent changing the maximum height of the StaticText view.
     */
-    virtual void SetMaximumHeight(){};
+    virtual void SetMaximumHeight(int h){};
 
     //! Compute the full text size.
     /*!

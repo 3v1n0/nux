@@ -29,7 +29,6 @@ namespace nux
 
   GroupBox::GroupBox(const char * /* Caption */, NUX_FILE_LINE_DECL)
     :   View(NUX_FILE_LINE_PARAM)
-    ,   bCaptionAvailable(false)
     ,   m_layout(0)
   {
     m_CaptionArea.SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
@@ -51,24 +50,10 @@ namespace nux
 
     Geometry wireborder_geo = GetGeometry();
 
-    //if(bCaptionAvailable)
-    {
-      wireborder_geo.OffsetPosition(0, 10);
-      wireborder_geo.OffsetSize(0, -10);
-    }
-//    else
-//    {
-//        wireborder_geo.OffsetPosition(0, 0);
-//        wireborder_geo.OffsetSize(0, 0);
-//    }
-
-    //if(bCaptionAvailable)
-    {
-      //GetPainter().Paint2DQuadColor(m_CaptionArea.GetGeometry(), COLOR_BACKGROUND_PRIMARY);
-      //GetPainter().PaintTextLineStatic(m_CaptionArea.GetGeometry(), m_CaptionArea.GetCaptionString(), eAlignTextCenter);
-      GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_CaptionArea.GetGeometry(), m_CaptionArea.GetBaseString(), GetTextColor(),
+    wireborder_geo.OffsetPosition(0, 10);
+    wireborder_geo.OffsetSize(0, -10);
+    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_CaptionArea.GetGeometry(), m_CaptionArea.GetBaseString(), GetTextColor(),
                                     true, eAlignTextCenter);
-    }
 
     if (m_layout != 0)
     {
@@ -115,16 +100,8 @@ namespace nux
     if (view_layout_)
     {
       Geometry layout_geo = GetGeometry();
-      //if(bCaptionAvailable)
-      {
-        layout_geo.OffsetPosition(2, 20);
-        layout_geo.OffsetSize(-4, -22);
-      }
-//        else
-//        {
-//            layout_geo.OffsetPosition(2, 2);
-//            layout_geo.OffsetSize(-4, -4);
-//        }
+      layout_geo.OffsetPosition(2, 20);
+      layout_geo.OffsetSize(-4, -22);
       view_layout_->SetGeometry(layout_geo);
     }
   }
@@ -141,16 +118,8 @@ namespace nux
     if (view_layout_)
     {
       Geometry base = view_layout_->GetGeometry();
-      //if(bCaptionAvailable)
-      {
-        base.OffsetPosition(-2, -20);
-        base.OffsetSize(4, 22);
-      }
-//        else
-//        {
-//            base.OffsetPosition(-2, -2);
-//            base.OffsetSize(4, 4);
-//        }
+      base.OffsetPosition(-2, -20);
+      base.OffsetSize(4, 22);
       Area::SetGeometry(base);
     }
 
@@ -178,16 +147,8 @@ namespace nux
   {
     if (view_layout_)
     {
-      //if(bCaptionAvailable)
-      {
-        view_layout_->SetBaseX(GetBaseX() + 2);
-        view_layout_->SetBaseY(GetBaseY() + 20);
-      }
-//        else
-//        {
-//            view_layout_->SetX(GetX() + 2);
-//            view_layout_->SetY(GetY() + 2);
-//        }
+      view_layout_->SetBaseX(GetBaseX() + 2);
+      view_layout_->SetBaseY(GetBaseY() + 20);
       view_layout_->ComputeContentPosition(offsetX, offsetY);
     }
 
@@ -199,14 +160,12 @@ namespace nux
   {
     if ((name == 0) || strlen(name) == 0)
     {
-      //bCaptionAvailable = false;
       m_CaptionArea.SetBaseString("");
       m_CaptionArea.SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
       m_CaptionArea.SetBaseSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     }
     else
     {
-      //bCaptionAvailable = true;
       m_CaptionArea.SetBaseString(name);
       m_CaptionArea.SetMinimumSize(4 + GetSysBoldFont()->GetStringWidth(name), PRACTICAL_WIDGET_HEIGHT);
       m_CaptionArea.SetBaseSize(4 + GetSysBoldFont()->GetStringWidth(name), PRACTICAL_WIDGET_HEIGHT);

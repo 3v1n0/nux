@@ -53,14 +53,7 @@ namespace nux
 #endif
 
     float _ScreenOffsetX, _ScreenOffsetY;
-    UINT ViewPortX;
-    UINT ViewPortY;
-    UINT ViewPortWidth;
-    UINT ViewPortHeight;
     ObjectPtr<IOpenGLBaseTexture> m_device_texture;
-
-  private:
-    TemplateQuadBuffer *m_QuadBuffer;
   };
 }
 

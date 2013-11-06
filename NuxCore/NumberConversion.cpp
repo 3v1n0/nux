@@ -38,9 +38,7 @@ namespace nux
     // check that the base if valid
     if (base < 2 || base > 36)
     {
-      //*result = '\0';
-      std::string str = TEXT ('\0');
-      return str;
+      return std::string();
     }
 
     char *ptr = result, *ptr1 = result, tmp_char;

@@ -614,7 +614,7 @@ namespace nux
     m_TextColor = color;
   }
 
-  Color View::GetTextColor()
+  Color View::GetTextColor() const
   {
     return m_TextColor;
   }

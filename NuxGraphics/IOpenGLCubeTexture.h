@@ -40,13 +40,13 @@ namespace nux
       IOpenGLSurface **ppCubeMapSurface
     );
 
-    int LockRect(
+    int CubeLockRect(
       eCUBEMAP_FACES FaceType,
       int Level,
       SURFACE_LOCKED_RECT *pLockedRect,
       const SURFACE_RECT *pRect);
 
-    int UnlockRect(
+    int CubeUnlockRect(
       eCUBEMAP_FACES FaceType,
       int Level
     );

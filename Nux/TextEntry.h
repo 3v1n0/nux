@@ -154,7 +154,7 @@ namespace nux
     Color const& GetCompletionColor() const;
 
     void SetTextColor(const Color& color);
-    Color const& GetTextColor() const;
+    Color GetTextColor() const;
     void SetFontFamily(const char* font);
     void SetFontSize(double font_size);
     void SetFontOptions(const cairo_font_options_t* options);
@@ -230,7 +230,7 @@ namespace nux
   protected:
     bool _block_focus; // used to selectively ignore focus keyevents
 
-    virtual void GeometryChanged();
+    virtual void GeometryChanged(bool position_has_changed, bool size_has_changed);
 
     /**
      * Enum used to specify different motion types.

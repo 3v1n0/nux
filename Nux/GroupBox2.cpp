@@ -36,7 +36,6 @@ namespace nux
 
   GroupBox2::GroupBox2(const char *Caption, NUX_FILE_LINE_DECL)
     :   View(NUX_FILE_LINE_PARAM)
-    ,   bCaptionAvailable(false)
     ,   m_layout(0)
   {
     m_CaptionArea = new BasicView(NUX_TRACKER_LOCATION);
@@ -63,10 +62,7 @@ namespace nux
 
     GetPainter().PushDrawShapeLayer(graphics_engine, layoutgeomerty, eSHAPE_CORNER_ROUND4, GROUPBOX2_HEADER_BASE_COLOR, eCornerBottomLeft | eCornerBottomRight);
 
-    //if(bCaptionAvailable)
-    {
-      GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_CaptionArea->GetGeometry(), m_CaptionArea->GetBaseString(), GROUPBOX2_HEADER_TEXT_COLOR);
-    }
+    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_CaptionArea->GetGeometry(), m_CaptionArea->GetBaseString(), GROUPBOX2_HEADER_TEXT_COLOR);
 
     if (m_layout != 0)
     {
@@ -121,16 +117,8 @@ namespace nux
     if (GetCompositionLayout())
     {
       Geometry layout_geo = GetGeometry();
-      //if(bCaptionAvailable)
-      {
-        layout_geo.OffsetPosition(X_MARGIN, TOP_HEADER_HEIGHT + Y_MARGIN);
-        layout_geo.OffsetSize(-2 * X_MARGIN, -TOP_HEADER_HEIGHT - 2 * Y_MARGIN);
-      }
-//        else
-//        {
-//            layout_geo.OffsetPosition(X_MARGIN, 2);
-//            layout_geo.OffsetSize(-2*X_MARGIN, -2*Y_MARGIN);
-//        }
+      layout_geo.OffsetPosition(X_MARGIN, TOP_HEADER_HEIGHT + Y_MARGIN);
+      layout_geo.OffsetSize(-2 * X_MARGIN, -TOP_HEADER_HEIGHT - 2 * Y_MARGIN);
       GetCompositionLayout()->SetGeometry(layout_geo);
     }
   }
@@ -147,16 +135,8 @@ namespace nux
     if (GetCompositionLayout())
     {
       Geometry base = GetCompositionLayout()->GetGeometry();
-      //if(bCaptionAvailable)
-      {
-        base.OffsetPosition(-X_MARGIN, -TOP_HEADER_HEIGHT - Y_MARGIN);
-        base.OffsetSize(2 * X_MARGIN, TOP_HEADER_HEIGHT + 2 * Y_MARGIN);
-      }
-//        else
-//        {
-//            base.OffsetPosition(-X_MARGIN, -2);
-//            base.OffsetSize(2*X_MARGIN, 2*Y_MARGIN);
-//        }
+      base.OffsetPosition(-X_MARGIN, -TOP_HEADER_HEIGHT - Y_MARGIN);
+      base.OffsetSize(2 * X_MARGIN, TOP_HEADER_HEIGHT + 2 * Y_MARGIN);
       Area::SetGeometry(base);
     }
 
@@ -185,16 +165,8 @@ namespace nux
   {
     if (GetCompositionLayout())
     {
-      //if(bCaptionAvailable)
-      {
-        GetCompositionLayout()->SetBaseX(GetBaseX() + X_MARGIN);
-        GetCompositionLayout()->SetBaseY(GetBaseY() + TOP_HEADER_HEIGHT + Y_MARGIN);
-      }
-//        else
-//        {
-//            m_compositionLayout->SetX(GetX() + X_MARGIN);
-//            m_compositionLayout->SetY(GetY() + Y_MARGIN);
-//        }
+      GetCompositionLayout()->SetBaseX(GetBaseX() + X_MARGIN);
+      GetCompositionLayout()->SetBaseY(GetBaseY() + TOP_HEADER_HEIGHT + Y_MARGIN);
       GetCompositionLayout()->ComputeContentPosition(offsetX, offsetY);
     }
 
@@ -206,14 +178,12 @@ namespace nux
   {
     if ((Caption == 0) || (StringLength(Caption) == 0))
     {
-      //bCaptionAvailable = false;
       m_CaptionArea->SetBaseString("");
       m_CaptionArea->SetMinimumSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
       m_CaptionArea->SetBaseSize(DEFAULT_WIDGET_WIDTH, PRACTICAL_WIDGET_HEIGHT);
     }
     else
     {
-      //bCaptionAvailable = true;
       m_CaptionArea->SetBaseString(Caption);
       m_CaptionArea->SetMinimumSize(4 + GetSysBoldFont()->GetStringWidth(Caption), PRACTICAL_WIDGET_HEIGHT);
       m_CaptionArea->SetBaseSize(4 + GetSysBoldFont()->GetStringWidth(Caption), PRACTICAL_WIDGET_HEIGHT);

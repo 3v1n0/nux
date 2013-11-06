@@ -121,7 +121,7 @@ namespace nux
     }
 
     virtual void SetTextColor(const Color &color);
-    virtual Color GetTextColor();
+    virtual Color GetTextColor() const;
 
     //! Get the default layout of this view.
     /*!

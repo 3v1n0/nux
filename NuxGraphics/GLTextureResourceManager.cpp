@@ -766,9 +766,9 @@ namespace
 
     for (int face = CUBEMAP_FACE_POSITIVE_X; face < GL_TEXTURE_CUBE_MAP_NEGATIVE_Z + 1; face++)
     {
-      OGL_CALL( CubemapTexture->LockRect(eCUBEMAP_FACES(face), MipLevel, &LockedRect, NULL));
+      OGL_CALL( CubemapTexture->CubeLockRect(eCUBEMAP_FACES(face), MipLevel, &LockedRect, NULL));
       SourceTexture->GetData(LockedRect.pBits, MipLevel, LockedRect.Pitch, face - CUBEMAP_FACE_POSITIVE_X);
-      OGL_CALL( CubemapTexture->UnlockRect(eCUBEMAP_FACES(face), MipLevel ));
+      OGL_CALL( CubemapTexture->CubeUnlockRect(eCUBEMAP_FACES(face), MipLevel ));
     }
   }
 

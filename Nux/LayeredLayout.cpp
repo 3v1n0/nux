@@ -106,7 +106,7 @@ namespace nux
       }
       else
       {
-        props = NULL;
+        props = 0;
       }
 
       if (props && props->m_expand)
@@ -239,7 +239,8 @@ namespace nux
                                 unsigned int           /* stretch_factor */,
                                 MinorDimensionPosition /* positioning */,
                                 MinorDimensionSize     /* extend */,
-                                float                  /* percentage */)
+                                float                  /* percentage */,
+                                LayoutPosition         /* position */)
   {
     AddLayer(layout);
   }
@@ -248,7 +249,8 @@ namespace nux
                               unsigned int           /* stretch_factor */,
                               MinorDimensionPosition /* positioning */,
                               MinorDimensionSize     /* extend */,
-                              float                  /* percentage */)
+                              float                  /* percentage */,
+                              LayoutPosition         /* position */)
   {
     AddLayer(view);
   }
@@ -323,10 +325,10 @@ namespace nux
     }
     else
     {
-      props = NULL;
+      props = 0;
     }
 
-    if (props == NULL)
+    if (props == 0)
       return;
 
     props->Update(expand, x, y, width, height);

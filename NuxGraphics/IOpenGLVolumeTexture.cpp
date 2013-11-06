@@ -97,7 +97,7 @@ namespace nux
     GRunTimeStats.UnRegister(this);
   }
 
-  int IOpenGLVolumeTexture::LockRect(
+  int IOpenGLVolumeTexture::VolumeLockRect(
     int Slice,
     int Level,
     SURFACE_LOCKED_RECT *pLockedRect,
@@ -130,7 +130,7 @@ namespace nux
     return OGL_OK;
   }
 
-  int IOpenGLVolumeTexture::UnlockRect(
+  int IOpenGLVolumeTexture::VolumeUnlockRect(
     int Slice,
     int Level
   )

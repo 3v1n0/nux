@@ -241,7 +241,7 @@ namespace nux
     return result;
   }
 
-  void TextEntry::GeometryChanged()
+  void TextEntry::GeometryChanged(bool /*position_has_changed*/, bool /*size_has_changed*/)
   {
       update_canvas_ = true;
       View::GeometryChanged(true, true);
@@ -825,7 +825,7 @@ namespace nux
     }
   }
 
-  Color const& TextEntry::GetTextColor() const
+  Color TextEntry::GetTextColor() const
   {
     return _text_color;
   }

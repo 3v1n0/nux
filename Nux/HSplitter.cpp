@@ -620,7 +620,7 @@ namespace nux
         return NULL;
       }
 
-      if ((direction == KEY_NAV_UP))
+      if (direction == KEY_NAV_UP)
       {
         --it;
         Area* key_nav_focus = (*it)->KeyNavIteration(direction);
@@ -637,7 +637,7 @@ namespace nux
         return key_nav_focus;
       }
 
-      if ((direction == KEY_NAV_DOWN))
+      if (direction == KEY_NAV_DOWN)
       {
         ++it;
         Area* key_nav_focus = (*it)->KeyNavIteration(direction);
