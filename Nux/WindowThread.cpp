@@ -611,7 +611,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
       int select_result = select(_external_fds.size(), &read_fds, NULL, NULL,
                                  &timeout);
 
-      nuxAssertMsg(select_result != -1, strerror ("select()");
+      nuxAssertMsg(select_result != -1, strerror ("select()"));
 
       // Dispatch any active external fds
       for (std::list<ExternalFdData>::iterator it =
