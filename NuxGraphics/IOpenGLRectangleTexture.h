@@ -70,7 +70,7 @@ namespace nux
         pDesc->Type     = _ResourceType;
       }
 
-      return OGL_OK;;
+      return OGL_OK;
     }
 
     //! Return a pointer to a mipmap level data.
