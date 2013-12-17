@@ -34,7 +34,8 @@ XIMController::XIMController(Display* display)
   , window_(0)
   , xim_(NULL)
 {
-  InitXIMCallback();
+  if (display_)
+    InitXIMCallback();
 }
 
 XIMController::~XIMController()
@@ -78,7 +79,6 @@ void XIMController::FocusInXIC()
 void XIMController::FocusOutXIC()
 {
   xic_client_.FocusOutXIC();
-  xic_client_.DestroyXIC();
 }
 
 Window XIMController::GetCurrentWindow() const
@@ -95,6 +95,8 @@ void XIMController::InitXIMCallback()
     LOG_WARN(logger) << "IBus natively supported.";
     return;
   }
+
+  printf("We get here right?\n");
 
   if (setlocale(LC_ALL, "") == NULL)
   {

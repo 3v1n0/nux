@@ -22,7 +22,7 @@
 #include "XInputWindow.h"
 #include "GraphicsDisplayX11.h"
 #include "GLThread.h"
-#include "XIMController.h"
+//#include "XIMController.h"
 
 namespace nux
 {

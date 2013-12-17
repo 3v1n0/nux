@@ -129,7 +129,9 @@ endif
 
 if USE_X11
 source_cpp += \
-  $(srcdir)/InputMethodIBus.cpp
+  $(srcdir)/InputMethodIBus.cpp \
+  $(srcdir)/XICClient.cpp \
+  $(srcdir)/XIMController.cpp
 endif
 
 if HAVE_GEIS
@@ -244,7 +246,9 @@ endif
 
 if USE_X11
 source_cpp += \
-  $(srcdir)/InputMethodIBus.h
+  $(srcdir)/InputMethodIBus.h \
+  $(srcdir)/XICClient.h \
+  $(srcdir)/XIMController.h
 endif
 
 if HAVE_GEIS
