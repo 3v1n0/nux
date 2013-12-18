@@ -884,7 +884,7 @@ namespace nux
         need_im_reset_ = true;
 #if defined(USE_X11)
         ime_->Focus();
-        nux::GetWindowThread()->GetGraphicsDisplay().XICFocus();
+        nux::GetWindowThread()->XICFocus(this);
 #endif
         //gtk_im_context_focus_in(im_context_);
         //UpdateIMCursorLocation();
@@ -907,7 +907,7 @@ namespace nux
         need_im_reset_ = true;
 #if defined(USE_X11)
         ime_->Blur();
-        nux::GetWindowThread()->GetGraphicsDisplay().XICUnFocus();
+        nux::GetWindowThread()->XICUnFocus();
 #endif
         //gtk_im_context_focus_out(im_context_);
       }
@@ -1031,6 +1031,35 @@ namespace nux
       pango_attr_list_unref(preedit_attrs_);
       preedit_attrs_ = NULL;
     }
+  }
+
+  void TextEntry::PreeditStarted()
+  {
+    ime_active_ = true;
+  }
+
+  void TextEntry::UpdatePreedit(std::string const& preedit, int cursor)
+  {
+    preedit_ = preedit;
+    preedit_cursor_ = cursor;
+    QueueRefresh(true, true);
+  }
+
+  void TextEntry::UpdatePreeditAttribs(PangoAttrList* list)
+  {
+    if (preedit_attrs_)
+    {
+      pango_attr_list_unref(preedit_attrs_);
+      preedit_attrs_ = NULL;
+    }
+
+    preedit_attrs_ = list;
+  }
+
+  void TextEntry::ClearPreedit()
+  {
+    ResetPreedit();
+    QueueRefresh(true, true);
   }
 
   void TextEntry::DrawText(CairoGraphics *canvas)

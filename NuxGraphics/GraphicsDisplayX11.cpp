@@ -173,9 +173,6 @@ namespace nux
     NUX_SAFE_DELETE( m_GraphicsContext );
     NUX_SAFE_DELETE( m_DeviceFactory );
 
-    // The XIM Controller needs to clean up before ~GraphicsDisplayX11
-    //m_xim_controller.reset();
-
     if (m_CreatedFromForeignWindow == false)
     {
       DestroyOpenGLWindow();
@@ -258,16 +255,6 @@ namespace nux
     return(event->type == MapNotify) && (event->xmap.window == (Window) arg);
   }
 #endif
-
-  void GraphicsDisplay::XICFocus()
-  {
-    //m_xim_controller->FocusInXIC();
-  }
-
-  void GraphicsDisplay::XICUnFocus()
-  {
-    //m_xim_controller->FocusOutXIC();
-  }
 
   // TODO: change windowWidth, windowHeight, to window_size;
   static NCriticalSection CreateOpenGLWindow_CriticalSection;
@@ -660,19 +647,6 @@ namespace nux
       //XMapRaised(m_X11Display, m_X11Window);
     }
 
-    // FIXED
-    //m_xim_controller = std::make_shared<XIMController>(m_X11Display);
-    //m_xim_controller->SetFocusedWindow(m_X11Window);
-    /*
-
-    if (m_xim_controller->IsXICValid())
-    {
-      long im_event_mask=0;
-      XGetICValues(m_xim_controller->GetXIC(), XNFilterEvents, &im_event_mask, NULL);
-      m_X11Attr.event_mask |= im_event_mask;
-    }
-    */
-
 #ifndef NUX_OPENGLES_20
     if (_has_glx_13)
     {
@@ -782,9 +756,6 @@ namespace nux
 
     gfx_interface_created_ = true;
 
-    // FIXED
-    //m_xim_controller = std::make_shared<XIMController>(m_X11Display);
-
     // m_DeviceFactory = new GpuDevice(viewport_size_.GetWidth(), viewport_size_.GetHeight(), BITFMT_R8G8B8A8);
     m_DeviceFactory = new GpuDevice(viewport_size_.width, viewport_size_.height, BITFMT_R8G8B8A8,
         m_X11Display,
@@ -819,15 +790,6 @@ namespace nux
   void GraphicsDisplay::SetCurrentXIC(XIC xic)
   {
     m_current_xic = xic;
-  }
-  void GraphicsDisplay::SetFocusedWindowForXIMController(Window window)
-  {
-    //m_xim_controller->SetFocusedWindow(window);
-  }
-
-  void GraphicsDisplay::RemoveFocusedWindowForXIMController()
-  {
-    //m_xim_controller->RemoveFocusedWindow();
   }
 
   int GraphicsDisplay::GetGlXMajor() const
@@ -1368,20 +1330,8 @@ namespace nux
       bool bProcessEvent = true;
       XNextEvent(m_X11Display, &xevent);
 
-/*
-      // Hopefully working correctly!
-      if ((xevent.type == KeyPress || xevent.type == KeyRelease) &&
-          m_xim_controller->GetCurrentWindow() != xevent.xkey.window)
-      {
-        m_xim_controller->SetFocusedWindow(xevent.xkey.window);
-      }
-*/
-
       if (XFilterEvent(&xevent, None) == True)
       {
-        if ((xevent.type == KeyPress || xevent.type == KeyRelease))
-          printf("Nice\n");
-        
         return true;
       }
 
@@ -1704,7 +1654,6 @@ namespace nux
         m_pEvent->virtual_code = 0;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: FocusIn event.");
 
-        //m_xim_controller->FocusInXIC();
         break;
       }
 
@@ -1721,7 +1670,6 @@ namespace nux
         m_pEvent->virtual_code = 0;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: FocusOut event.");
 
-        //m_xim_controller->FocusOutXIC();
         break;
       }
 
@@ -1748,16 +1696,13 @@ namespace nux
             (keysym == NUX_VK_ESCAPE))
         {
           //temporary fix for TextEntry widget: filter some keys
-         skip = true;
+          skip = true;
         }
 
         if (!skip)
         {
           int num_char_stored = 0;
 
-          // FIXED
-          printf("XIC: %p\n", m_current_xic);
-          //if (m_xim_controller->IsXICValid())
           if (m_current_xic)
           {
             delete[] m_pEvent->dtext;

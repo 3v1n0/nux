@@ -118,6 +118,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
   WindowThread::~WindowThread()
   {
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
+    xim_controller_.reset();
     CleanupGlibLoop();
 #endif
 
@@ -527,8 +528,9 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     graphics_display_->GetSystemEvent(&event);
 
 #if defined(NUX_OS_LINUX) && defined(USE_X11)
+    // Make sure the current xic is synced up with the current event window
     if ((event.type == KeyPress || event.type == KeyRelease) &&
-        xim_controller_->GetCurrentWindow() != event.x11_window)
+         event.x11_window && xim_controller_->GetCurrentWindow() != event.x11_window)
     {
       xim_controller_->SetFocusedWindow(event.x11_window);
       graphics_display_->SetCurrentXIC(xim_controller_->GetXIC());
@@ -1283,6 +1285,8 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     timer_manager_ = new TimerHandler(this);
     window_compositor_ = new WindowCompositor(this);
 
+    xim_controller_ = std::make_shared<XIMController>(graphics_display_->GetX11Display());
+
     SetThreadState(THREADRUNNING);
     thread_ctor_called_ = true;
 
@@ -1795,6 +1799,19 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
       _external_fds.erase (it);
     }
   }
+#if defined(NUX_OS_LINUX) && defined(USE_X11)
+  void WindowThread::XICFocus(TextEntry* text_entry)
+  {
+    xim_controller_->FocusInXIC();
+    xim_controller_->SetCurrentTextEntry(text_entry);
+    graphics_display_->SetCurrentXIC(xim_controller_->GetXIC());
+  }
+
+  void WindowThread::XICUnFocus()
+  {
+    xim_controller_->FocusOutXIC();
+  }
+#endif
 
   GraphicsDisplay& WindowThread::GetGraphicsDisplay() const
   {

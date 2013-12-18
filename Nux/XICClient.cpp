@@ -1,5 +1,5 @@
 /*
-* Copyright 2012 Inalogic® Inc.
+* Copyright 2012-2013 Inalogic® Inc.
 *
 * This program is free software: you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License, as
@@ -19,56 +19,254 @@
 *
 */
 
+#include "Nux/Nux.h"
 #include "XICClient.h"
+
+#include "NuxCore/Logger.h"
+
+DECLARE_LOGGER(logger, "xic.client");
+
+using namespace std;
 
 namespace nux
 {
 
+int const FEEDBACK_MASK = (XIMUnderline | XIMReverse);
+
 XICClient::XICClient()
-  : xic_(NULL)
+  : xic_(nullptr)
   , xim_style_(0)
   , focused_(false)
 {
 }
 
-void XICClient::ResetXIC(XIM xim, Window window)
+void XICClient::ResetXIC(XIM xim, Window window, Display* display)
 {
   if (!xim_style_)
     SetupXIMStyle(xim);
 
-  SetupXIC(xim, window);
+  SetupXIC(xim, window, display);
 }
 
-void XICClient::SetupXIC(XIM xim, Window window)
+void XICClient::SetCurrentTextEntry(TextEntry* text_entry)
+{
+  text_entry_ = text_entry;
+}
+
+static int preedit_caret_callback(XIC xic,
+                                  XPointer clientdata,
+                                  XIMPreeditCaretCallbackStruct* call_data)
+{
+  return 0;
+}
+
+static int status_start_callback(XIC xic,
+                                 XPointer clientdata,
+                                 XIMPreeditDrawCallbackStruct* call_data)
+{
+  return 0;
+}
+
+static void status_draw_callback(XIC xic,
+                                 XPointer clientdata,
+                                 XPointer* call_data)
+{
+}
+
+static void status_done_callback(XIC xic,
+                                 XPointer clientdata,
+                                 XPointer* call_data)
+{
+}
+
+XVaNestedList XICClient::GetPreeditCallbacks()
+{
+  preedit_start_cb_.callback = (XIMProc)XICClient::PreeditStartCallback;
+  preedit_start_cb_.client_data = nullptr;
+
+  preedit_done_cb_.callback = (XIMProc)XICClient::PreeditDoneCallback;
+  preedit_done_cb_.client_data = (XPointer)text_entry_;
+
+  preedit_draw_cb_.callback = (XIMProc)XICClient::PreeditDrawCallback;
+  preedit_draw_cb_.client_data = (XPointer)text_entry_;
+
+  preedit_caret_cb_.callback = (XIMProc)preedit_caret_callback;
+  preedit_caret_cb_.client_data = nullptr;
+
+  XVaNestedList p_list = nullptr;
+  p_list = XVaCreateNestedList(0,
+                               XNPreeditStartCallback, &preedit_start_cb_,
+                               XNPreeditDoneCallback,  &preedit_done_cb_,
+                               XNPreeditDrawCallback,  &preedit_draw_cb_,
+                               XNPreeditCaretCallback, &preedit_caret_cb_,
+                               nullptr);
+
+  return p_list;
+}
+
+XVaNestedList XICClient::GetStatusCallbacks()
+{
+  status_start_cb_.callback = (XIMProc)status_start_callback;
+  status_start_cb_.client_data = nullptr;
+
+  status_done_cb_.callback = (XIMProc)status_done_callback;
+  status_done_cb_.client_data = nullptr;
+
+  status_draw_cb_.callback = (XIMProc)status_draw_callback;
+  status_draw_cb_.client_data = nullptr;
+
+  XVaNestedList s_list = nullptr;
+  s_list = XVaCreateNestedList(0,
+                               XNStatusStartCallback, &status_start_callback,
+                               XNStatusDoneCallback,  &status_done_callback,
+                               XNStatusDrawCallback,  &status_draw_callback,
+                               nullptr);
+
+  return s_list;
+}
+
+XIMStyle XICClient::FilterXIMStyle()
+{
+  XIMStyle style = 0;
+
+  if (xim_style_ & XIMPreeditCallbacks)
+  {
+    style |= XIMPreeditCallbacks;
+  }
+  else if (xim_style_ & XIMPreeditNone)
+  {
+    style |= XIMPreeditNone;
+  }
+  else
+  {
+    style |= XIMPreeditNothing;
+  }
+
+  if (xim_style_ & XIMStatusCallbacks)
+  {
+    style |= XIMStatusCallbacks;
+  }
+  else if (xim_style_ & XIMStatusNone)
+  {
+    style |= XIMStatusNone;
+  }
+  else
+  {
+    style |= XIMStatusNothing;
+  }
+
+  return style;
+}
+
+void XICClient::SetupXIC(XIM xim, Window window, Display* display)
 {
   if (xic_)
     DestroyXIC();
 
-  xic_ = XCreateIC(xim, XNInputStyle, xim_style_, XNClientWindow, window, XNFocusWindow, window, NULL);
+  XIMStyle style = FilterXIMStyle();
+
+  XVaNestedList s_list = nullptr;
+  if (style & XIMStatusCallbacks)
+    s_list = GetStatusCallbacks();
+
+  XVaNestedList p_list = nullptr;
+
+  if (style & XIMPreeditCallbacks)
+    p_list = GetPreeditCallbacks();
+
+  xic_ = XCreateIC(xim, XNInputStyle, style,
+                   XNClientWindow, window,
+                   XNPreeditAttributes, p_list,
+                   XNStatusAttributes, s_list,
+                   nullptr);
+
+  if (p_list)
+    XFree(p_list);
+
+  xim_style_ = style;
+}
+
+XIMStyle ChooseBetterStyle(XIMStyle style1, XIMStyle style2)
+{
+  XIMStyle s,t;
+  XIMStyle preedit = XIMPreeditArea | XIMPreeditCallbacks |
+                     XIMPreeditPosition | XIMPreeditNothing | XIMPreeditNone;
+
+  XIMStyle status = XIMStatusArea | XIMStatusCallbacks |
+                    XIMStatusNothing | XIMStatusNone;
+
+  if (style1 == 0)
+    return style2;
+
+  if (style2 == 0)
+    return style1;
+
+  if ((style1 & (preedit | status)) == (style2 & (preedit | status)))
+    return style1;
+
+  s = style1 & preedit;
+  t = style2 & preedit;
+  if (s != t)
+  {
+    if (s | t | XIMPreeditCallbacks)
+      return (s == XIMPreeditCallbacks) ? style1 : style2;
+    else if (s | t | XIMPreeditPosition)
+      return (s == XIMPreeditPosition)  ? style1 : style2;
+    else if (s | t | XIMPreeditArea)
+      return (s == XIMPreeditArea)      ? style1 : style2;
+    else if (s | t | XIMPreeditNothing)
+      return (s == XIMPreeditNothing)   ? style1 : style2;
+    else if (s | t | XIMPreeditNone)
+      return (s == XIMPreeditNone)      ? style1 : style2;
+  }
+  else
+  {
+    s = style1 & status;
+    t = style2 & status;
+
+    if (s | t | XIMStatusCallbacks)
+      return (s == XIMStatusCallbacks) ? style1 : style2;
+    else if (s | t | XIMStatusArea)
+      return (s == XIMStatusArea)      ? style1 : style2;
+    else if (s | t | XIMStatusNothing)
+      return (s == XIMStatusNothing)   ? style1 : style2;
+    else if (s | t | XIMStatusNone)
+      return (s == XIMStatusNone)      ? style1 : style2;
+  }
 }
 
 void XICClient::SetupXIMStyle(XIM xim)
 {
   int i;
-  XIMStyles *xim_styles = NULL;
-  XIMStyle root_style = (XIMPreeditNothing|XIMStatusNothing);
+  XIMStyles *xim_styles = nullptr;
+  XIMStyle prefered_style = XIMPreeditCallbacks | XIMStatusCallbacks;
 
-  XGetIMValues(xim, XNQueryInputStyle, &xim_styles, NULL);
+  XGetIMValues(xim, XNQueryInputStyle, &xim_styles, nullptr);
 
+  XIMStyle best = 0, style = 0;
   for (i = 0; i < xim_styles->count_styles; ++i)
-    if (xim_styles->supported_styles[i] == root_style)
-      break;
+  {
+    style = xim_styles->supported_styles[i];
 
-  if (i >= xim_styles->count_styles)
-    xim_style_ = 0;
-  xim_style_ = root_style;
+    if ((style & prefered_style) == style)
+    {
+      best = ChooseBetterStyle(style, best);
+      break;
+    }
+    else
+    {
+      best = ChooseBetterStyle(style, best);
+    }
+  }
+
+  xim_style_ = best;
 
   XFree(xim_styles);
 }
 
 bool XICClient::HasXIC() const
 {
-  return xic_ != NULL;
+  return xic_ != nullptr;
 }
 
 XIC XICClient::GetXIC() const
@@ -78,7 +276,7 @@ XIC XICClient::GetXIC() const
 
 void XICClient::Reinitialize()
 {
-  xic_ = NULL;
+  xic_ = nullptr;
   xim_style_ = 0;
   focused_ = false;
 }
@@ -111,7 +309,7 @@ void XICClient::DestroyXIC()
   if (xic_)
   {
     XDestroyIC(xic_);
-    xic_ = NULL;
+    xic_ = nullptr;
   }
 }
 

@@ -131,6 +131,7 @@ if USE_X11
 source_cpp += \
   $(srcdir)/InputMethodIBus.cpp \
   $(srcdir)/XICClient.cpp \
+  $(srcdir)/XIMCallbacks.cpp \
   $(srcdir)/XIMController.cpp
 endif
 
@@ -245,7 +246,7 @@ source_h += \
 endif
 
 if USE_X11
-source_cpp += \
+source_h += \
   $(srcdir)/InputMethodIBus.h \
   $(srcdir)/XICClient.h \
   $(srcdir)/XIMController.h

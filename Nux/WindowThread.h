@@ -377,6 +377,11 @@ namespace nux
     void WatchFdForEvents(int fd, const FdWatchCallback &);
     void UnwatchFd(int fd);
 
+#if defined(NUX_OS_LINUX) && defined(USE_X11)
+    void XICFocus(TextEntry* text_entry);
+    void XICUnFocus();
+#endif
+
   protected:
 
     /*!

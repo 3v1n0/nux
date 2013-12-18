@@ -22,7 +22,6 @@
 #include "XInputWindow.h"
 #include "GraphicsDisplayX11.h"
 #include "GLThread.h"
-//#include "XIMController.h"
 
 namespace nux
 {
@@ -396,8 +395,6 @@ namespace nux
 
   void XInputWindow::Hide()
   {
-    GetGraphicsDisplay()->RemoveFocusedWindowForXIMController();
-
     XMoveResizeWindow(display_, window_,
                       -100 - geometry_.width,
                       -100 - geometry_.height,
@@ -408,8 +405,6 @@ namespace nux
 
   void XInputWindow::Show()
   {
-    GetGraphicsDisplay()->SetFocusedWindowForXIMController(window_);
-
     shown_ = true;
     if (!mapped_)
     {
