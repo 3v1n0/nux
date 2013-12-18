@@ -19,7 +19,6 @@
 *
 */
 
-#include "Nux/Nux.h"
 #include "XICClient.h"
 
 #include "NuxCore/Logger.h"
