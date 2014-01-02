@@ -21,9 +21,6 @@
 
 #include <string.h>
 
-//#include "Nux.h"
-//#include "TextEntry.h"
-
 #include "XIMController.h"
 #include "NuxCore/Logger.h"
 
@@ -142,6 +139,7 @@ void XIMController::EndXIMClientCallback(Display* dpy, XPointer client_data, XPo
 void XIMController::SetupXIM()
 {
   xim_ = XOpenIM(display_, NULL, NULL, NULL);
+
   if (xim_)
   {
     SetupXIMDestroyedCallback();

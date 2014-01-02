@@ -163,24 +163,33 @@ void XICClient::SetupXIC(XIM xim, Window window, Display* display)
     DestroyXIC();
 
   XIMStyle style = FilterXIMStyle();
+  
+  const char* p_name = nullptr;
+  XVaNestedList p_list = nullptr;
+  if (style & XIMPreeditCallbacks)
+  {
+    p_list = GetPreeditCallbacks();
+    p_name = XNPreeditAttributes;
+  }
 
+  const char* s_name = nullptr;
   XVaNestedList s_list = nullptr;
   if (style & XIMStatusCallbacks)
+  {
     s_list = GetStatusCallbacks();
-
-  XVaNestedList p_list = nullptr;
-
-  if (style & XIMPreeditCallbacks)
-    p_list = GetPreeditCallbacks();
+    s_name = XNStatusAttributes;
+  }
 
   xic_ = XCreateIC(xim, XNInputStyle, style,
                    XNClientWindow, window,
-                   XNPreeditAttributes, p_list,
-                   XNStatusAttributes, s_list,
+                   p_name, p_list,
+                   s_name, s_list,
                    nullptr);
 
   if (p_list)
     XFree(p_list);
+  if (s_list)
+    XFree(s_list);
 
   xim_style_ = style;
 }
