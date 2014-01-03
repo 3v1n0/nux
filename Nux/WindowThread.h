@@ -29,6 +29,10 @@
 #include "GeisAdapter.h"
 #endif
 
+#if defined(NUX_OS_LINUX) && defined(USE_X11)
+#include "XIMController.h"
+#endif
+
 namespace nux
 {
 
@@ -358,6 +362,8 @@ namespace nux
 
     std::vector<Geometry> GetPresentationListGeometries() const;
 
+    Event GetNextEvent();
+
 #ifdef NUX_GESTURES_SUPPORT
     /*!
       Simple wrapper for ProcessEvent for connection with GeisAdapter::event_ready
@@ -370,6 +376,11 @@ namespace nux
     typedef std::function<void()> FdWatchCallback;
     void WatchFdForEvents(int fd, const FdWatchCallback &);
     void UnwatchFd(int fd);
+
+#if defined(NUX_OS_LINUX) && defined(USE_X11)
+    void XICFocus(TextEntry* text_entry);
+    void XICUnFocus();
+#endif
 
   protected:
 
@@ -707,6 +718,10 @@ namespace nux
 
 #ifdef NUX_GESTURES_SUPPORT
     std::unique_ptr<GeisAdapter> geis_adapter_;
+#endif
+
+#if defined(NUX_OS_LINUX) && defined(USE_X11)
+    std::shared_ptr<XIMController> xim_controller_;
 #endif
 
     /*!

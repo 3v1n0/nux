@@ -1,5 +1,5 @@
 /*
-* Copyright 2012 Inalogic® Inc.
+* Copyright 2012-2013 Inalogic® Inc.
 *
 * This program is free software: you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License, as
@@ -32,7 +32,7 @@ namespace nux
 XIMController::XIMController(Display* display)
   : display_(display)
   , window_(0)
-  , xim_(NULL)
+  , xim_(nullptr)
 {
   InitXIMCallback();
 }
@@ -51,7 +51,15 @@ void XIMController::SetFocusedWindow(Window window)
   window_ = window;
 
   if (xim_)
-    xic_client_.ResetXIC(xim_, window);
+    xic_client_.ResetXIC(xim_, window, display_);
+}
+
+void XIMController::SetCurrentTextEntry(TextEntry* text_entry)
+{
+  xic_client_.SetCurrentTextEntry(text_entry);
+
+  if (xim_)
+    xic_client_.ResetXIC(xim_, window_, display_);
 }
 
 void XIMController::RemoveFocusedWindow()
@@ -78,7 +86,7 @@ void XIMController::FocusInXIC()
 void XIMController::FocusOutXIC()
 {
   xic_client_.FocusOutXIC();
-  xic_client_.DestroyXIC();
+  xic_client_.SetCurrentTextEntry(nullptr);
 }
 
 Window XIMController::GetCurrentWindow() const
@@ -131,12 +139,13 @@ void XIMController::EndXIMClientCallback(Display* dpy, XPointer client_data, XPo
 void XIMController::SetupXIM()
 {
   xim_ = XOpenIM(display_, NULL, NULL, NULL);
+
   if (xim_)
   {
     SetupXIMDestroyedCallback();
 
     if (window_)
-      xic_client_.ResetXIC(xim_, window_);
+      xic_client_.ResetXIC(xim_, window_, display_);
 
     XUnregisterIMInstantiateCallback (display_, NULL, NULL, NULL,
                                       XIMController::SetupXIMClientCallback,

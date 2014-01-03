@@ -93,9 +93,7 @@ if USE_X11
 source_h += \
   $(srcdir)/GraphicsDisplayX11.h \
   $(srcdir)/VirtualKeyCodesX11.h \
-  $(srcdir)/XInputWindow.h \
-  $(srcdir)/XICClient.h \
-  $(srcdir)/XIMController.h
+  $(srcdir)/XInputWindow.h
 endif
 
 if !NUX_OPENGLES_20
@@ -170,9 +168,7 @@ source_cpp = \
 if USE_X11
 source_cpp += \
   $(srcdir)/GraphicsDisplayX11.cpp \
-  $(srcdir)/XInputWindow.cpp \
-  $(srcdir)/XICClient.cpp \
-  $(srcdir)/XIMController.cpp
+  $(srcdir)/XInputWindow.cpp
 endif
 
 if !NUX_OPENGLES_20

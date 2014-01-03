@@ -1,3 +1,11 @@
+nux (4.0.5-0ubuntu1) UNRELEASED; urgency=low
+
+  [ Brandon Schaefer ]
+  * Add XIM preedit support
+  * Bump version to 4.0.5
+
+ -- Brandon Schaefer <brandon.schaefer@canonical.com>  Fri, 03 Jan 2014 08:31:35 -0800
+
 nux (4.0.4-0ubuntu1) UNRELEASED; urgency=low
 
   [ Sam Spilsbury ]

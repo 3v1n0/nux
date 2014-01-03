@@ -1,5 +1,5 @@
 /*
-* Copyright 2012 Inalogic® Inc.
+* Copyright 2012-2013 Inalogic® Inc.
 *
 * This program is free software: you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License, as
@@ -27,13 +27,15 @@
 
 namespace nux
 {
+  class TextEntry;
 
 class XICClient
 {
 public:
   XICClient();
 
-  void ResetXIC(XIM xim, Window window);
+  void ResetXIC(XIM xim, Window window, Display* display);
+  void SetCurrentTextEntry(TextEntry* text_entry_);
 
   bool HasXIC() const;
   XIC GetXIC() const;
@@ -46,11 +48,31 @@ public:
 
   void DestroyXIC();
 private:
-  void SetupXIC(XIM xim, Window window);
+  void SetupXIC(XIM xim, Window window, Display* display);
   void SetupXIMStyle(XIM xim);
 
+  XVaNestedList GetPreeditCallbacks();
+  XVaNestedList GetStatusCallbacks();
+  XIMStyle FilterXIMStyle();
+
+  static int PreeditStartCallback(XIC xic, XPointer clientdata, XPointer data);
+  static int PreeditDoneCallback(XIC xic, XPointer clientdata, XPointer data);
+
+  static int PreeditDrawCallback(XIC xic, XPointer clientdata,
+                                 XIMPreeditDrawCallbackStruct* call_data);
+
+  TextEntry* text_entry_;
   XIC xic_;
   XIMStyle xim_style_;
+
+  XIMCallback preedit_start_cb_;
+  XIMCallback preedit_done_cb_;
+  XIMCallback preedit_draw_cb_;
+  XIMCallback preedit_caret_cb_;
+
+  XIMCallback status_start_cb_;
+  XIMCallback status_done_cb_;
+  XIMCallback status_draw_cb_;
 
   bool focused_;
 };

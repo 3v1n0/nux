@@ -227,6 +227,11 @@ namespace nux
     bool PasswordMode() const;
     std::string GetPasswordChar();
 
+    void PreeditStarted();
+    void UpdatePreedit(std::string const& preedit, int cursor);
+    void UpdatePreeditAttribs(PangoAttrList* list);
+    void ClearPreedit();
+
   protected:
     bool _block_focus; // used to selectively ignore focus keyevents
 
