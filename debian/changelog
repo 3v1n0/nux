@@ -13,6 +13,12 @@ nux (4.0.4-0ubuntu1) UNRELEASED; urgency=low
 
  -- Chris Townsend <christopher.townsend@canonical.com>  Tue, 29 Oct 2013 18:12:16 -0400
 
+nux (4.0.3+13.10.20131011-0ubuntu2) trusty; urgency=medium
+
+  * No change rebuild against glew 1.10.
+
+ -- Dimitri John Ledkov <xnox@ubuntu.com>  Thu, 02 Jan 2014 13:28:28 +0000
+
 nux (4.0.3+13.10.20131011-0ubuntu1) saucy; urgency=low
 
   [ Stephen M. Webb ]
