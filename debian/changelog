@@ -1,10 +1,31 @@
-nux (4.0.5-0ubuntu1) UNRELEASED; urgency=low
+nux (4.0.5+14.04.20140214-0ubuntu1) trusty; urgency=low
 
   [ Brandon Schaefer ]
   * Add XIM preedit support
   * Bump version to 4.0.5
+  * We need to check if the XIC client is synced up with the xevents
+    coming in. If someone changes the focus window and our XIC hasn't
+    been updated, we need to make sure we stay synced. Otherwise XIM
+    fails to work. (LP: #1175669)
 
- -- Brandon Schaefer <brandon.schaefer@canonical.com>  Fri, 03 Jan 2014 08:31:35 -0800
+  [ CI bot ]
+  * Flush trunk to Ubuntu
+
+  [ Chris Townsend ]
+  * Need to add version 1.10 of lcov to the supported versions so the
+    Debian package build can succeed.
+
+  [ Eleni Maria Stea ]
+  * added virtual destructors where missing (fixing static analysis
+    errors).
+  * small fixes based on clang errors and warnings.
+  * fixed syntax error in macro.
+  * minor fixes (static analyzer errors and warnings).
+
+  [ Albert Astals ]
+  * Kill declared but not implemented functions.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 14 Feb 2014 23:11:31 +0000
 
 nux (4.0.4-0ubuntu1) UNRELEASED; urgency=low
 
