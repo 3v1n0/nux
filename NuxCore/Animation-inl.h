@@ -134,8 +134,13 @@ void AnimateValue<VALUE_TYPE>::Advance(int msec)
     double value = easing_curve_.ValueForProgress(progress);
     // These operators work for most if not all the property types we care
     // about.  Should we need more, we'll reevaluate then.
-    current_value_ = start_value_ + ((finish_value_ - start_value_) * value);
-    updated.emit(current_value_);
+    VALUE_TYPE new_value = start_value_ + ((finish_value_ - start_value_) * value);
+
+    if (new_value != current_value_)
+    {
+      current_value_ = new_value;
+      updated.emit(current_value_);
+    }
   }
 }
 
