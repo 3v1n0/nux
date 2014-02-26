@@ -178,7 +178,7 @@ TEST(TestAnimationController, RemoveValueInTick)
 
   animation1->Start();
   animation2->Start();
-  source.tick.emit(10);
+  source.tick.emit(10000);
 
   ASSERT_THAT(animation1->CurrentState(), Eq(na::Animation::Running));
   ASSERT_TRUE(animation2.get() == nullptr);
@@ -213,13 +213,17 @@ TEST(TestAnimation, TestStoppingEmitsFinished)
 
 TEST(TestAnimation, TestDestructorStops)
 {
+  na::TickSource source;
+  MockAnimationController controller(source);
+
   nt::TestCallback finished_called;
   {
     NiceMock<MockAnimation> animation; // don't care about restart here
     animation.finished.connect(finished_called.sigc_callback());
     animation.Start();
+    ASSERT_TRUE(controller.HasRunningAnimations());
   }
-  ASSERT_TRUE(finished_called.happened);
+  ASSERT_FALSE(controller.HasRunningAnimations());
 }
 
 TEST(TestAnimation, TestStoppingStoppedDoesntEmitsFinished)

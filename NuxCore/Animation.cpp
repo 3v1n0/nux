@@ -32,7 +32,11 @@ na::Animation::Animation()
 
 na::Animation::~Animation()
 {
-  Stop();
+  if (state_ != Stopped)
+  {
+    if (Controller* controller = Controller::Instance())
+      controller->RemoveAnimation(this);
+  }
 }
 
 void na::Animation::Pause()
