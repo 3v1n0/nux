@@ -1,3 +1,12 @@
+nux (4.0.5+14.04.20140226-0ubuntu1) trusty; urgency=low
+
+  [ Chris Townsend ]
+  * Fix race condition in the Animation destructor which was exposed in
+    a recent Unity change that causes an intermittent crash. (LP:
+    #1282884)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 26 Feb 2014 16:47:38 +0000
+
 nux (4.0.5+14.04.20140214-0ubuntu1) trusty; urgency=low
 
   [ Brandon Schaefer ]
