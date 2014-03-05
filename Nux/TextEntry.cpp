@@ -179,6 +179,7 @@ namespace nux
     , key_nav_mode_(false)
     , lose_key_focus_on_key_nav_direction_up_(true)
     , lose_key_focus_on_key_nav_direction_down_(true)
+    , cursor_visible_on_key_focus_only_(false)
   {
     cairo_font_options_set_antialias(font_options_, CAIRO_ANTIALIAS_SUBPIXEL);
     cairo_font_options_set_hint_style(font_options_, CAIRO_HINT_STYLE_FULL);
@@ -914,6 +915,13 @@ namespace nux
       cursor_visible_ = false; // hide cursor when losing focus
       selection_changed_ = true;
       cursor_moved_ = true;
+
+      if (cursor_visible_on_key_focus_only_ && cursor_blink_timer_)
+      {
+        g_source_remove(cursor_blink_timer_);
+        cursor_blink_timer_ = 0;
+      }
+
       // Don't adjust scroll.
       QueueRefresh(true, false);
     }
@@ -1144,6 +1152,9 @@ namespace nux
 
   void TextEntry::QueueCursorBlink()
   {
+    if (cursor_visible_on_key_focus_only_ && !focused_)
+      return;
+
     if (!cursor_blink_timer_)
       cursor_blink_timer_ = g_timeout_add(kCursorBlinkTimeout,
                                           (GSourceFunc)&CursorBlinkCallback,
@@ -2515,6 +2526,41 @@ namespace nux
   bool TextEntry::GetLoseKeyFocusOnKeyNavDirectionDown() const
   {
     return lose_key_focus_on_key_nav_direction_down_;
+  }
+
+  void TextEntry::SetToggleCursorVisibilityOnKeyFocus(bool b)
+  {
+    if (cursor_visible_on_key_focus_only_ == b)
+      return;
+
+    cursor_visible_on_key_focus_only_ = b;
+
+    if (cursor_visible_on_key_focus_only_)
+    {
+      if (!focused_)
+      {
+        if (cursor_blink_timer_)
+        {
+          g_source_remove(cursor_blink_timer_);
+          cursor_blink_timer_ = 0;
+        }
+
+        cursor_visible_ = false;
+        QueueDraw();
+      }
+    }
+    else
+    {
+      if (!focused_)
+      {
+        QueueCursorBlink();
+      }
+    }
+  }
+
+  bool TextEntry::GetToggleCursorVisibilityOnKeyFocus() const
+  {
+    return cursor_visible_on_key_focus_only_;
   }
 
   bool TextEntry::IsInTextInputMode() const
