@@ -173,6 +173,8 @@ namespace nux
     void MoveCursorToLineStart();
     void MoveCursorToLineEnd();
 
+    void SetToggleCursorVisibilityOnKeyFocus(bool b);
+    bool GetToggleCursorVisibilityOnKeyFocus() const;
 
     /*!
         When the text entry is in single line mode, the keyboard arrow up/down may be used
@@ -511,6 +513,7 @@ namespace nux
 
     bool lose_key_focus_on_key_nav_direction_up_;
     bool lose_key_focus_on_key_nav_direction_down_;
+    bool cursor_visible_on_key_focus_only_;
 
     std::vector<unsigned long> composition_list_;
 
