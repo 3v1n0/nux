@@ -1,8 +1,19 @@
-nux (4.0.6-0ubuntu1) UNRELEASED; urgency=low
+nux (4.0.6+14.04.20140311.1-0ubuntu1) trusty; urgency=low
 
+  [ Stephen M. Webb ]
   * ABI bump 20140307.0
 
- -- Stephen M. Webb <stephen.webb@canonical.com>  Fri, 07 Mar 2014 09:40:43 -0500
+  [ Andrea Azzarone ]
+  * Emit nux::Layout::ViewAdded when a layout is added too. In future
+    would be nice to rename the signal name in AreaAdded. We need for
+    a11y reasons.
+
+  [ Marco Trevisan (Treviño) ]
+  * TextEntry: add setter/getter to make the cursor visible only on key
+    focus When the toggle is false, the text entry cursor is shown only
+    if the area is key-focused.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 11 Mar 2014 18:22:02 +0000
 
 nux (4.0.5+14.04.20140226-0ubuntu1) trusty; urgency=low
 
