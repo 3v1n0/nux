@@ -95,6 +95,7 @@ namespace nux
       _layout_element_list.insert(pos, layout);
     }
 
+    ViewAdded.emit(this, layout);
   }
 
 //! Add an object to the layout.
