@@ -160,8 +160,7 @@ namespace
     g_signal_connect(context_, "destroy",             G_CALLBACK(OnDestroy_),           this);
 
     guint32 caps = IBUS_CAP_PREEDIT_TEXT |
-      IBUS_CAP_FOCUS |
-      IBUS_CAP_SURROUNDING_TEXT;
+      IBUS_CAP_FOCUS;
     ibus_input_context_set_capabilities(context_, caps);
 
     if (is_focused_)
