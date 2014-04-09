@@ -1,3 +1,11 @@
+nux (4.0.6+14.04.20140409-0ubuntu1) trusty; urgency=low
+
+  [ Trung Ngo ]
+  * Do not advertise IBUS_CAP_SURROUNDING_TEXT when nux does not support
+    it. (LP: #1290900)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 09 Apr 2014 22:25:08 +0000
+
 nux (4.0.6+14.04.20140311.1-0ubuntu1) trusty; urgency=low
 
   [ Stephen M. Webb ]
