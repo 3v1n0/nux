@@ -1348,15 +1348,6 @@ DECLARE_LOGGER(logger, "nux.window");
     }
   }
 
-  namespace
-  {
-    void AssignWeakBaseWindowMatchingRaw(WindowCompositor::WeakBaseWindowPtr const& w, BaseWindow* bw, WindowCompositor::WeakBaseWindowPtr *ptr)
-    {
-      if (w.IsValid() && w.GetPointer() == bw)
-        *ptr = w;
-    }
-  }
-
   void WindowCompositor::ForEachBaseWindow(ForEachBaseWindowFunc const& func)
   {
     for (auto const& window : _view_window_list)

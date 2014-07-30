@@ -1,6 +1,5 @@
 #include "Nux.h"
 #include "Layout.h"
-#include "NuxCore/Logger.h"
 #include "NuxGraphics/GraphicsEngine.h"
 #include "ClientArea.h"
 #include "WindowCompositor.h"
@@ -13,8 +12,6 @@
 
 namespace nux
 {
-  DECLARE_LOGGER(logger, "nux.windows.thread");
-
   #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
 
   static GMutex *gLibEventMutex = 0;

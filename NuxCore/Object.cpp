@@ -28,18 +28,6 @@
 namespace nux
 {
 DECLARE_LOGGER(logger, "nux.core.object");
-namespace
-{
-bool debug_object_allocation_stack()
-{
-  // If the extra long environment variable is set, then every object that is
-  // created will record it's backtrace during allocation.  This will slow
-  // down the library, so only use for local debugging.
-  static bool extra_debugging(::getenv("NUX_DEBUG_OBJECT_ALLOCATION_STACK"));
-  return extra_debugging;
-}
-
-}
 
   NUX_IMPLEMENT_ROOT_OBJECT_TYPE (Trackable);
   NUX_IMPLEMENT_OBJECT_TYPE (Object);
