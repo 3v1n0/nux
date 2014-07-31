@@ -1,8 +1,21 @@
-nux (4.0.7-0ubuntu1) UNRELEASED; urgency=medium
+nux (4.0.7+14.10.20140731-0ubuntu1) utopic; urgency=medium
 
+  [ Stephen M. Webb ]
   * bumped to package version 4.0.7
 
- -- Stephen M. Webb <stephen.webb@canonical.com>  Wed, 30 Jul 2014 12:07:39 -0400
+  [ Christopher Townsend ]
+  * Need to add version 1.11 of lcov to the supported versions so the
+    Debian package build can succeed. (LP: #1342896)
+
+  [ Brandon Schaefer ]
+  * Fixes FTBFS. Remove unused functions. This seems to be brought up
+    only in gcc/g++ 4.9. (LP: #1350101)
+
+  [ Marco Trevisan (Treviño) ]
+  * ScrollView: correctly handle vertical and horizontal scrolling (LP:
+    #1228093)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 31 Jul 2014 14:58:52 +0000
 
 nux (4.0.6+14.04.20140409-0ubuntu1) trusty; urgency=low
 
