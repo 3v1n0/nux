@@ -15,7 +15,7 @@
 # 
 m4_define([nux_major_version], [4])
 m4_define([nux_minor_version], [0])
-m4_define([nux_micro_version], [6])
+m4_define([nux_micro_version], [7])
 
 m4_define([nux_api_version], [4.0])
 # Increase the number (to the current date) everytime you propose a branch that breaks the API or ABI
