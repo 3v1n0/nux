@@ -21,10 +21,6 @@
 
 #include "XICClient.h"
 
-#include "NuxCore/Logger.h"
-
-DECLARE_LOGGER(logger, "xic.client");
-
 using namespace std;
 
 namespace nux

@@ -25,8 +25,6 @@
 #include <sigc++/functors/ptr_fun.h>
 #include <sigc++/functors/mem_fun.h>
 
-#include "NuxCore/Logger.h"
-
 #include "Nux.h"
 #include "InputArea.h"
 #include "NuxGraphics/GraphicsEngine.h"
@@ -38,8 +36,6 @@
 
 namespace nux
 {
-  DECLARE_LOGGER(logger, "nux.inputarea");
-
   NUX_IMPLEMENT_OBJECT_TYPE(InputArea);
 
   InputArea::InputArea(NUX_FILE_LINE_DECL)
