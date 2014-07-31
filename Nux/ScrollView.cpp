@@ -712,14 +712,31 @@ namespace nux
   {
     // nux can't tell the difference between horizontal and vertical mouse wheel events
     // so we are only going to support vertical
-    if (wheel_delta < 0)
+    if (abs(wheel_delta) == NUX_MOUSEWHEEL_DELTA)
     {
-      ScrollDown(abs(wheel_delta / NUX_MOUSEWHEEL_DELTA), m_MouseWheelScrollSize);
+      // Vertical Scrolling
+      if (wheel_delta < 0)
+      {
+        ScrollDown(1, m_MouseWheelScrollSize);
+      }
+      else
+      {
+        ScrollUp(1, m_MouseWheelScrollSize);
+      }
     }
-    else
+    else if (abs(wheel_delta) == (NUX_MOUSEWHEEL_DELTA ^ 2))
     {
-      ScrollUp(abs(wheel_delta / NUX_MOUSEWHEEL_DELTA), m_MouseWheelScrollSize);
+      // Horizontal Scrolling
+      if (wheel_delta < 0)
+      {
+        ScrollRight(1, m_MouseWheelScrollSize);
+      }
+      else
+      {
+        ScrollLeft(1, m_MouseWheelScrollSize);
+      }
     }
+    
   }
 
   bool ScrollView::AcceptKeyNavFocus()
