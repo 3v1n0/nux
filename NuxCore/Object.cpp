@@ -62,10 +62,6 @@ DECLARE_LOGGER(logger, "nux.core.object");
       sout << "\t" << ++index << " Undeleted object: Type "
            << obj->GetTypeName() << ", "
            << obj->GetAllocationLocation() << "\n";
-      if (debug_object_allocation_stack())
-      {
-        sout << obj->allocation_stacktrace_ << "\n\n";
-      }
 
       OutputDebugString(sout.str().c_str());
 
@@ -78,10 +74,6 @@ DECLARE_LOGGER(logger, "nux.core.object");
       std::cerr << "\t" << ++index << " Undeleted object: Type "
                 << obj->GetTypeName() << ", "
                 << obj->GetAllocationLocation() << "\n";
-      if (debug_object_allocation_stack())
-      {
-        std::cerr << obj->allocation_stacktrace_ << "\n\n";
-      }
     }
 #endif
 #endif
@@ -249,11 +241,6 @@ DECLARE_LOGGER(logger, "nux.core.object");
     sout << ":" << __Nux_LineNumber__;
     allocation_location_ = sout.str();
 
- #if defined(NUX_OS_LINUX)
-    if (debug_object_allocation_stack()) {
-      allocation_stacktrace_ = logging::Backtrace();
-    }
- #endif
 #else
     __Nux_FileName__ = __Nux_FileName__;
     __Nux_LineNumber__ = __Nux_LineNumber__;
