@@ -1,3 +1,10 @@
+nux (4.0.7+14.10.20140904-0ubuntu1) utopic; urgency=low
+
+  [ Eleni Maria Stea ]
+  * Minor change that fixes compile errors in the debug build.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 04 Sep 2014 22:18:49 +0000
+
 nux (4.0.7+14.10.20140731-0ubuntu1) utopic; urgency=medium
 
   [ Stephen M. Webb ]
