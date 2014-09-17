@@ -74,6 +74,15 @@ namespace nux
 
   Area::~Area()
   {
+    // It is possible that the window thread has been deleted before the area
+    // itself, so check prior to calling RemoveObjectFromLayoutQueue.
+    WindowThread* wt = GetWindowThread();
+    if (wt)
+    {
+      // It is possible that the object is in the refresh list. Remove it here
+      // before it is deleted.
+      wt->RemoveObjectFromLayoutQueue(this);
+    }
     ResetDownwardPathToKeyFocusArea();
     ResetUpwardPathToKeyFocusArea();
   }

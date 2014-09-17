@@ -44,17 +44,6 @@ namespace nux
     backup_texture_.Release();
     backup_depth_texture_.Release();
     background_texture_.Release();
-    
-    // It is possible that the window thread has been deleted before the view
-    // itself, so check prior to calling.
-    WindowThread* wt = GetWindowThread();
-
-    if (wt)
-    {
-      // It is possible that the object is in the refresh list. Remove it here
-      // before it is deleted.
-      wt->RemoveObjectFromLayoutQueue(this);
-    }
 
     RemoveLayout();
   }
