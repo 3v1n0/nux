@@ -1,3 +1,11 @@
+nux (4.0.7+14.10.20141007-0ubuntu1) utopic; urgency=low
+
+  [ Marco Trevisan (Treviño) ]
+  * WindowCompositor: don't try to use an null dnd_area pointer (LP:
+    #1363959)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 07 Oct 2014 14:14:14 +0000
+
 nux (4.0.7+14.10.20140924-0ubuntu1) utopic; urgency=low
 
   [ Erkin Bahceci ]
