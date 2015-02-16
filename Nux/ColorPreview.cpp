@@ -33,8 +33,6 @@
 namespace nux
 {
 
-  static const int GRAPH_MARGIN = 1;
-
   ColorPreview::ColorPreview(Color const& c, NUX_FILE_LINE_DECL)
     : View(NUX_FILE_LINE_PARAM)
     , m_Color(c)

@@ -21,7 +21,7 @@
 
 #ifndef NUX_GESTURES_SUBSCRIPTION_H
 #define NUX_GESTURES_SUBSCRIPTION_H
-#include "Features.h"
+#include "Nux/Features.h"
 #ifdef NUX_GESTURES_SUPPORT
 
 #include <geis/geis.h>

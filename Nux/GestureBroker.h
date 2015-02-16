@@ -20,7 +20,7 @@
 
 #ifndef NUX_GESTURE_BROKER_H
 #define NUX_GESTURE_BROKER_H
-#include "Features.h"
+#include "Nux/Features.h"
 #ifdef NUX_GESTURES_SUPPORT
 
 #include <sigc++/sigc++.h>

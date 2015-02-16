@@ -21,7 +21,7 @@
 
 #ifndef GEISADAPTER_H
 #define GEISADAPTER_H
-#include "Features.h"
+#include "Nux/Features.h"
 #ifdef NUX_GESTURES_SUPPORT
 
 #include <sigc++/sigc++.h>

@@ -29,7 +29,6 @@ namespace nux
 {
 
   static const unsigned int MENU_MINIMUM_WIDTH = 10;
-  static const unsigned int MENU_MINIMUM_HEIGHT = 16;
 
   static const unsigned int MENUBAR_ICON_WIDTH = 24;
   static const unsigned int MENUBAR_ICON_HEIGHT = 24;

@@ -507,7 +507,7 @@ namespace nux
     Cover best;
     if (CoverAtPoint(x, y, best))
     {
-      if (abs(best.position.rot) <= .001)
+      if (std::abs(best.position.rot) <= .001)
       {
         best.item->Activate(nux::GetEventButton(button_flags));
       }
