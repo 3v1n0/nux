@@ -828,8 +828,6 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
   void GraphicsEngine::Pop2DWindow()
   {
 #ifndef NUX_OPENGLES_20
-    CHECKGL(glMatrixMode(GL_MODELVIEW));
-    CHECKGL(glLoadIdentity());
     CHECKGL(glMatrixMode(GL_PROJECTION));
     CHECKGL(glLoadIdentity());
     CHECKGL(glFrustum(
@@ -841,6 +839,7 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
                 2000.0  // far
               ));
     CHECKGL(glMatrixMode(GL_MODELVIEW));
+    CHECKGL(glLoadIdentity());
 #endif
   }
 
