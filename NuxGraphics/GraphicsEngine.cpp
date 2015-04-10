@@ -830,8 +830,6 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
 #ifndef NUX_OPENGLES_20
     CHECKGL(glMatrixMode(GL_PROJECTION));
     CHECKGL(glLoadIdentity());
-    CHECKGL(glMatrixMode(GL_MODELVIEW));
-    CHECKGL(glLoadIdentity());
     CHECKGL(glFrustum(
                 -1.0,     // left
                 1.0,      // right
@@ -840,6 +838,8 @@ int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const P
                 0.1,    // near,
                 2000.0  // far
               ));
+    CHECKGL(glMatrixMode(GL_MODELVIEW));
+    CHECKGL(glLoadIdentity());
 #endif
   }
 
