@@ -32,7 +32,6 @@ namespace
 {
   DECLARE_LOGGER(logger, "nux.inputmethod.ibus");
 }
-
   std::vector<Event> IBusIMEContext::hotkeys_;
 
   IBusBus* IBusIMEContext::bus_ = NULL;
@@ -44,10 +43,15 @@ namespace
     , is_focused_(false)
   {
     // init ibus
-    if (!bus_)
+    if (!G_OBJECT(bus_))
     {
       ibus_init();
       bus_ = ibus_bus_new();
+      g_object_add_weak_pointer(G_OBJECT(bus_), reinterpret_cast<gpointer*>(&bus_));
+    }
+    else
+    {
+      g_object_ref(bus_);
     }
 
     // connect bus signals
