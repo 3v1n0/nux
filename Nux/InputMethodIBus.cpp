@@ -69,6 +69,7 @@ namespace
     DestroyContext();
     g_signal_handlers_disconnect_by_data(bus_, this);
     g_object_unref(cancellable_);
+    g_object_unref(bus_);
   }
 
   void IBusIMEContext::Focus()
@@ -503,6 +504,7 @@ namespace
       hotkeys_ = ParseIBusHotkeys(keybindings);
 
       g_variant_unref(val);
+      g_free(keybindings);
     }
   }
 
