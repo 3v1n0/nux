@@ -20,7 +20,7 @@
 
 #ifndef NUX_GESTURE_H
 #define NUX_GESTURE_H
-#include "Features.h"
+#include "Nux/Features.h"
 #ifdef NUX_GESTURES_SUPPORT
 
 #include <memory>

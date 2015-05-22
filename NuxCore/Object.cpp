@@ -240,10 +240,6 @@ DECLARE_LOGGER(logger, "nux.core.object");
       sout << "<unspecified file>";
     sout << ":" << __Nux_LineNumber__;
     allocation_location_ = sout.str();
-
-#else
-    __Nux_FileName__ = __Nux_FileName__;
-    __Nux_LineNumber__ = __Nux_LineNumber__;
 #endif
   }
 

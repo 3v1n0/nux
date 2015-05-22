@@ -21,12 +21,8 @@
 
 #include "XICClient.h"
 
-using namespace std;
-
 namespace nux
 {
-
-int const FEEDBACK_MASK = (XIMUnderline | XIMReverse);
 
 XICClient::XICClient()
   : xic_(nullptr)
@@ -220,7 +216,7 @@ XIMStyle ChooseBetterStyle(XIMStyle style1, XIMStyle style2)
       return (s == XIMPreeditArea)      ? style1 : style2;
     else if (s | t | XIMPreeditNothing)
       return (s == XIMPreeditNothing)   ? style1 : style2;
-    else if (s | t | XIMPreeditNone)
+    else /*if (s | t | XIMPreeditNone)*/
       return (s == XIMPreeditNone)      ? style1 : style2;
   }
   else
@@ -234,7 +230,7 @@ XIMStyle ChooseBetterStyle(XIMStyle style1, XIMStyle style2)
       return (s == XIMStatusArea)      ? style1 : style2;
     else if (s | t | XIMStatusNothing)
       return (s == XIMStatusNothing)   ? style1 : style2;
-    else if (s | t | XIMStatusNone)
+    else /*if (s | t | XIMStatusNone)*/
       return (s == XIMStatusNone)      ? style1 : style2;
   }
 }

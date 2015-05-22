@@ -53,7 +53,7 @@
 //#define NUX_DISABLE_GLIB_LOOP
 
 #if defined(NUX_OS_LINUX)
-#include "Features.h"
+#include "Nux/Features.h"
 #endif
 
 #include "Utils.h"

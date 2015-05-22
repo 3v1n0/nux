@@ -33,10 +33,6 @@ namespace nux
 
   NUX_IMPLEMENT_OBJECT_TYPE(BaseWindow);
 
-  const int SizeGripWidth = 20;
-  const int SizeGripHeight = 20;
-  const int TitleBarHeight = 20;
-
   /*
       Elements inside the Window have coordinates based on the top-left corner of the window.
       This is true whether we are drawing or computing the layout. When computing the layout, use x_root and y_root to

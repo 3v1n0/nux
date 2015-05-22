@@ -31,8 +31,6 @@ namespace nux
 
   NUX_IMPLEMENT_OBJECT_TYPE(FontTexture);
 
-  const int CURSOR_OFFSET = 0;
-
   FontTexture::FontTexture(const char *FontFile, NUX_FILE_LINE_DECL)
     :   Object(true, NUX_FILE_LINE_PARAM)
   {

@@ -36,7 +36,6 @@ namespace nux
   NUX_IMPLEMENT_OBJECT_TYPE(MenuPage);
 
   static const int MENU_ICONE_WIDTH = 18;
-  static const int MENU_ICON_HEIGHT = 18;
   static const int MENU_ITEM_MIN_WIDTH = 90;
   static const int MENU_ITEM_MIN_HEIGHT = 20;
   static const int MENU_ITEM_BORDER_TO_ICON_MARGIN = 5;

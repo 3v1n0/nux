@@ -29,11 +29,6 @@
 namespace nux
 {
 
-  const unsigned int  STENCIL_TEST_REF = 0xFF;
-  const unsigned int  STENCIL_TEST_MASK = 0xFFFFFFFF;
-  const unsigned int  STENCIL_CLEAR = 0x0;
-  const float         ALPHA_TEST_REF = 0.0f;
-
   GeometryPositioning::GeometryPositioning()
   {
     m_stretch_horizontal = true;
