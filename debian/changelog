@@ -1,3 +1,17 @@
+nux (4.0.7+15.10.20150522-0ubuntu1) wily; urgency=medium
+
+  [ Andrea Azzarone ]
+  * Make sure nux can be built using clang. (LP: #1422427)
+
+  [ Brandon Schaefer ]
+  * Need to unref the bus, and need to free the keybindings when we are
+    done.
+
+  [ CI Train Bot ]
+  * New rebuild forced.
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Fri, 22 May 2015 13:18:44 +0000
+
 nux (4.0.7+15.04.20150410.1-0ubuntu1) vivid; urgency=medium
 
   [ CI Train Bot ]
