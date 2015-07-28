@@ -30,7 +30,6 @@ examples/cairo_wrapper
 examples/canvas
 examples/checkbox
 examples/combobox
-examples/coverflow
 examples/focus
 examples/gestures
 examples/gridlayout

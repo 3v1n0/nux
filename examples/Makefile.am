@@ -9,7 +9,6 @@ if BUILD_EXAMPLES
 
 noinst_PROGRAMS = text_entry_focus \
   shortcut_keys \
-  coverflow \
   kinetic_scroll_view
 
 #button \
@@ -110,9 +109,6 @@ text_entry_focus_LDADD = $(ALL_LIBS)
 
 shortcut_keys_SOURCES = shortcut-keys.cpp line-separator.cpp line-separator.h abstract-separator.h abstract-separator.cpp
 shortcut_keys_LDADD = $(ALL_LIBS)
-
-coverflow_SOURCES = coverflow.cpp
-coverflow_LDADD = $(ALL_LIBS)
 
 kinetic_scroll_view_SOURCES = kinetic_scroll_view.cpp TestButton.h TestButton.cpp
 kinetic_scroll_view_LDADD = $(ALL_LIBS)

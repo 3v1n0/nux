@@ -45,9 +45,6 @@ source_cpp = \
   $(srcdir)/Canvas.cpp \
   $(srcdir)/CheckBox.cpp \
   $(srcdir)/ClientArea.cpp \
-  $(srcdir)/Coverflow.cpp \
-  $(srcdir)/CoverflowItem.cpp \
-  $(srcdir)/CoverflowModel.cpp \
   $(srcdir)/EMMetrics.cpp \
   $(srcdir)/GridHLayout.cpp \
   $(srcdir)/HLayout.cpp \
@@ -158,9 +155,6 @@ source_h = \
   $(srcdir)/Canvas.h \
   $(srcdir)/CheckBox.h \
   $(srcdir)/ClientArea.h \
-  $(srcdir)/Coverflow.h \
-  $(srcdir)/CoverflowItem.h \
-  $(srcdir)/CoverflowModel.h \
   $(srcdir)/EMMetrics.h \
   $(srcdir)/GridHLayout.h \
   $(srcdir)/HLayout.h \
