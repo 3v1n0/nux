@@ -12,8 +12,6 @@
 
 namespace nux
 {
-  #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-
   static GMutex *gLibEventMutex = 0;
 
   static void nux_glib_threads_lock(void)
@@ -91,9 +89,6 @@ namespace nux
 # else
     retval = false;
 # endif
-#else
-# error Not implemented.
-#endif
 
     nux_glib_threads_unlock();
     return retval;

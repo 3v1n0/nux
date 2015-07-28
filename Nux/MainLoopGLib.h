@@ -3,8 +3,6 @@
 
 #include <glib.h>
 
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-
 namespace nux
 {
   class ExternalGLibSources
@@ -15,7 +13,5 @@ namespace nux
       void RemoveFdFromGLibLoop(gpointer data);
   };
 }
-
-#endif
 
 #endif

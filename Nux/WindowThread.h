@@ -54,12 +54,9 @@ namespace nux
   class Area;
   struct ClientAreaDraw;
 
-
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
   class ExternalGLibSources;
   gboolean nux_event_dispatch(GSource *source, GSourceFunc callback, gpointer user_data);
   gboolean nux_timeout_dispatch(gpointer user_data);
-#endif
 
   //! Event Inspector function prototype.
   /*!
@@ -490,11 +487,6 @@ namespace nux
     */
     void DisableMouseKeyboardInput();
 
-#if (!defined(NUX_OS_LINUX) && !defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) || defined(NUX_DISABLE_GLIB_LOOP)
-    //! Calls ProcessEvent in a loop
-    unsigned int ExecutionLoop();
-#endif
-
     /*!
         It does the following:
           * processes the input events
@@ -690,7 +682,6 @@ namespace nux
 
     static bool FindDataByFd(const WindowThread::ExternalFdData &data, int fd);
 
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     GMainLoop *main_loop_glib_;
     GMainContext *main_loop_glib_context_;
     friend gboolean nux_event_dispatch(GSource *source, GSourceFunc callback, gpointer user_data);
@@ -710,11 +701,6 @@ namespace nux
     static gboolean ExternalSourceCallback(gpointer user_data);
 
     unsigned int AddGLibTimeout(unsigned int duration);
-#else // no GLIB loop
-    Event input_event_;
-    GestureEvent gesture_event_;
-    Event *FetchNextEvent();
-#endif
 
 #ifdef NUX_GESTURES_SUPPORT
     std::unique_ptr<GeisAdapter> geis_adapter_;

@@ -23,10 +23,6 @@
 #include <string.h>
 #include "GeisAdapter.h"
 
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-#define NUX_USE_GLIB_LOOP
-#endif
-
 #define GEIS_CLASS_UNREF(c) if (c) {geis_gesture_class_unref(c); c = nullptr;}
 
 using namespace nux;
@@ -35,7 +31,6 @@ DECLARE_LOGGER(logger, "nux.geisadapter");
 
 namespace
 {
-#ifdef NUX_USE_GLIB_LOOP
   struct GeisAdapterEventSource
   {
     GSource source;
@@ -81,7 +76,6 @@ namespace
     NULL,
     NULL
   };
-#endif
 }
 
 GeisAdapter::GeisAdapter() :
@@ -112,12 +106,9 @@ GeisAdapter::~GeisAdapter()
   GEIS_CLASS_UNREF(class_touch_)
   geis_delete(geis_);
 
-#ifdef NUX_USE_GLIB_LOOP
   g_source_remove_by_funcs_user_data(&geis_source_funcs, this);
-#endif
 }
 
-#ifdef NUX_USE_GLIB_LOOP
 void GeisAdapter::CreateGSource(GMainContext *context)
 {
   GSource *source = g_source_new(&geis_source_funcs,
@@ -143,7 +134,6 @@ void GeisAdapter::CreateGSource(GMainContext *context)
 
   g_source_attach(source, context);
 }
-#endif // NUX_USE_GLIB_LOOP
 
 void GeisAdapter::ProcessGeisEvents()
 {

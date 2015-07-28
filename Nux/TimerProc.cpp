@@ -183,10 +183,7 @@ namespace nux
     for (auto const& timer_object : early_timer_handlers_)
     {
       timer_object->ms_time = g_get_monotonic_time() / 1000;
-
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
-        timer_object->glibid = GetWindowThread()->AddTimeout(timer_object->Period);
-#endif
+      timer_object->glibid = GetWindowThread()->AddTimeout(timer_object->Period);
     }
 
     early_timer_handlers_.clear();
@@ -210,7 +207,6 @@ namespace nux
 
     AddHandle(timer_object);
 
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     {
       if (window_thread)
         timer_object->glibid = window_thread->AddTimeout(Period);
@@ -227,7 +223,6 @@ namespace nux
 
       //nuxDebugMsg("[TimerHandler::AddOneShotTimer] Adding Timeout ID: %d", timer_object->glibid);
     }
-#endif
 
     return timer_object;
   }
@@ -246,7 +241,6 @@ namespace nux
     timer_object->state_    = TimerHandler::TIMER_STATE_RUNNING;
     AddHandle(timer_object);
 
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     {
       timer_object->glibid = GetWindowThread()->AddTimeout(Period);
 
@@ -260,7 +254,6 @@ namespace nux
 
       //nuxDebugMsg("[TimerHandler::AddOneShotTimer] Adding Timeout ID: %d", timer_object->glibid);
     }
-#endif
 
     return timer_object;
   }
@@ -279,7 +272,6 @@ namespace nux
     timer_object->state_              = TimerHandler::TIMER_STATE_RUNNING;
     AddHandle(timer_object);
 
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     {
       timer_object->glibid = GetWindowThread()->AddTimeout(Period);
 
@@ -293,7 +285,6 @@ namespace nux
 
       //nuxDebugMsg("[TimerHandler::AddOneShotTimer] Adding Timeout ID: %d", timer_object->glibid);
     }
-#endif
 
     return timer_object;
   }

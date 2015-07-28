@@ -49,9 +49,6 @@
 
 #include <glib.h>
 
-#define NUX_USE_GLIB_LOOP_ON_WINDOWS
-//#define NUX_DISABLE_GLIB_LOOP
-
 #if defined(NUX_OS_LINUX)
 #include "Nux/Features.h"
 #endif
