@@ -143,7 +143,7 @@ namespace nux
         Maximum time allowed between the end of the last click (mouse up) and the next mouse down
         to be considered as a double click event.
     */
-    static int double_click_time_delay;
+    static Time double_click_time_delay;
     int double_click_counter_;
 
   public:
