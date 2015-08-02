@@ -25,7 +25,9 @@
 #include "NuxCore/LoggingWriter.h"
 
 #include <fstream>
+#include <iostream>
 #include <stdexcept>
+#include <string>
 
 namespace nux
 {
