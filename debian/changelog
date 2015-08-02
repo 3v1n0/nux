@@ -1,3 +1,17 @@
+nux (4.0.7+15.10.20150802-0ubuntu1) wily; urgency=medium
+
+  [ CI Train Bot ]
+  * New rebuild forced.
+
+  [ Simon Arlott ]
+  * fix the size of timeout values on 64-bit platforms (thanks Simon
+    Arlott) (LP: #1379960)
+
+  [ Stephen M. Webb ]
+  * fixed a FTBFS when using GCC-5
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Sun, 02 Aug 2015 14:35:23 +0000
+
 nux (4.0.7+15.10.20150522-0ubuntu1) wily; urgency=medium
 
   [ Andrea Azzarone ]
