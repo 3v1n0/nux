@@ -33,7 +33,7 @@ Build-Depends: debhelper (>= 9),
                libgeis-dev (>= 2.2.10),
                libibus-1.0-dev,
                libxtst-dev,
-Standards-Version: 3.9.3
+Standards-Version: 3.9.6
 Section: libs
 Homepage: http://launchpad.net/nux
 # If you aren't a member of ~unity-team but need to upload packaging changes,
@@ -44,7 +44,7 @@ Package: libnux-4.0-0
 Section: libs
 Architecture: any
 Pre-Depends: ${misc:Pre-Depends},
-Depends: libnux-4.0-common (= ${source:Version}),
+Depends: libnux-4.0-common (= ${binary:Version}),
          ${shlibs:Depends},
          ${misc:Depends}
 Provides: libnux-abiversion-${nuxabiversion}

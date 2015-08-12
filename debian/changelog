@@ -1,3 +1,10 @@
+nux (4.0.8-0ubuntu1) UNRELEASED; urgency=medium
+
+  * new upstream release 4.0.8
+  * debian/control (Standards-Version): bump to 3.9.6 (no changes)
+
+ -- Stephen M. Webb <stephen.webb@canonical.com>  Wed, 12 Aug 2015 09:33:13 -0400
+
 nux (4.0.7+15.10.20150802-0ubuntu1) wily; urgency=medium
 
   [ CI Train Bot ]
