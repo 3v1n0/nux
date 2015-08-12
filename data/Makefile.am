@@ -36,6 +36,7 @@ dist_uitextures_DATA = \
   UITextures/GraphBarIcon.tga \
   UITextures/GraphIcon.tga \
   UITextures/HScrollBar.tga \
+  UITextures/InalogicStyle.asl \
   UITextures/Matrix3Preview.tga \
   UITextures/Matrix4Preview.tga \
   UITextures/Painter.xml \

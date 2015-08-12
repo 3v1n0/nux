@@ -1,6 +1,6 @@
 CLEANFILES =
 DISTCLEANFILES =
-EXTRA_DIST =
+EXTRA_DIST = data
 
 if BUILD_GPUTESTS
 
@@ -19,7 +19,7 @@ AM_CPPFLAGS = \
   -I$(srcdir) \
   -I$(top_srcdir) \
   -DPREFIX=\""$(prefix)"\" \
-	-DLIBDIR=\""$(libdir)"\" \
+  -DLIBDIR=\""$(libdir)"\" \
   -DDATADIR=\""$(datadir)"\" \
   -DG_LOG_DOMAIN=\"NuxGpuTests\" \
   $(GCC_FLAGS) \

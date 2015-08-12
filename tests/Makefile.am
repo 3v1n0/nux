@@ -400,3 +400,13 @@ CLEANFILES = \
 
 endif
 
+unused_src = \
+ manual-tests/linaro-reference-fbo.txt \
+ manual-tests/text-entry.txt \
+ test-canvas.cpp \
+ test-nux.cpp \
+ test-system.cpp \
+ test-timeline.cpp \
+ xim-test-commands.txt
+
+EXTRA_DIST =  Readme.txt ${unused_src}
