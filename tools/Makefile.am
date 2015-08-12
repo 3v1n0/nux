@@ -1,6 +1,6 @@
 CLEANFILES =
 DISTCLEANFILES =
-EXTRA_DIST =
+EXTRA_DIST = compose_key_list_generator.py
 
 pkglibexec_PROGRAMS = unity_support_test
 

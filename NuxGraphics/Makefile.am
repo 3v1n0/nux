@@ -1,7 +1,7 @@
 CLEANFILES =
 DISTCLEANFILES =
-EXTRA_DIST = $(srcdir)/GraphicsDisplayWin.cpp \
-             $(srcdir)/GraphicsDisplayWin.h
+EXTRA_DIST = GraphicsDisplayWin.cpp \
+             GraphicsDisplayWin.h
 
 lib_LTLIBRARIES = \
   libnux-graphics-@NUX_API_VERSION@.la
@@ -10,7 +10,7 @@ libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS= \
   -I$(srcdir) \
   -I$(top_srcdir) \
   -DPREFIX=\""$(prefix)"\" \
-	-DLIBDIR=\""$(libdir)"\" \
+  -DLIBDIR=\""$(libdir)"\" \
   -DDATADIR=\""$(datadir)"\" \
   -DPKGDATADIR=\""$(pkgdatadir)/@NUX_API_VERSION@"\" \
   -DG_LOG_DOMAIN=\"NuxGraphics\" \
@@ -30,156 +30,156 @@ libnux_graphics_@NUX_API_VERSION@_la_LDFLAGS = \
   $(COVERAGE_LDFLAGS)
 
 source_h = \
-  $(srcdir)/BitmapFormats.h \
-  $(srcdir)/CairoGraphics.h \
-  $(srcdir)/Events.h \
-  $(srcdir)/FontTexture.h \
-  $(srcdir)/FontRenderer.h \
-  $(srcdir)/GdkGraphics.h \
-  $(srcdir)/Gfx_Interface.h \
-  $(srcdir)/GLDeviceFrameBufferObject.h \
-  $(srcdir)/GLDeviceObjects.h \
-  $(srcdir)/GLError.h \
-  $(srcdir)/GlobalGraphicsInitializer.h \
-  $(srcdir)/GLPBuffer.h \
-  $(srcdir)/GLRenderStates.h \
-  $(srcdir)/GLResource.h \
-  $(srcdir)/GLResourceManager.h \
-  $(srcdir)/GLShader.h \
-  $(srcdir)/GLShaderParameter.h \
-  $(srcdir)/GLSh_ColorPicker.h \
-  $(srcdir)/GLSh_DrawFunction.h \
-  $(srcdir)/GLSh_Fill.h \
-  $(srcdir)/GLTemplatePrimitiveBuffer.h \
-  $(srcdir)/GLTextureResourceManager.h \
-  $(srcdir)/GLTextureStates.h \
-  $(srcdir)/GLThread.h \
-  $(srcdir)/GLTimer.h \
-  $(srcdir)/GLVertexResourceManager.h \
-  $(srcdir)/GLWindowManager.h \
-  $(srcdir)/GpuDevice.h \
-  $(srcdir)/GraphicsDisplay.h \
-  $(srcdir)/GraphicsEngine.h \
-  $(srcdir)/MeshData.h \
-  $(srcdir)/MeshFileLoader-OBJ.h \
-  $(srcdir)/ImageSurface.h \
-  $(srcdir)/IOpenGLAnimatedTexture.h \
-  $(srcdir)/IOpenGLBaseTexture.h \
-  $(srcdir)/IOpenGLCubeTexture.h \
-  $(srcdir)/IOpenGLFrameBufferObject.h \
-  $(srcdir)/IOpenGLGLSLShader.h \
-  $(srcdir)/IOpenGLIndexBuffer.h \
-  $(srcdir)/IOpenGLPixelBufferOject.h \
-  $(srcdir)/IOpenGLQuery.h \
-  $(srcdir)/IOpenGLRectangleTexture.h \
-  $(srcdir)/IOpenGLResource.h \
-  $(srcdir)/IOpenGLSurface.h \
-  $(srcdir)/IOpenGLTexture2D.h \
-  $(srcdir)/IOpenGLVertexBuffer.h \
-  $(srcdir)/IOpenGLVertexDeclaration.h \
-  $(srcdir)/IOpenGLVolume.h \
-  $(srcdir)/IOpenGLVolumeTexture.h \
-  $(srcdir)/NuxGraphics.h \
-  $(srcdir)/NuxGraphicsObject.h \
-  $(srcdir)/NuxGraphicsResources.h \
-  $(srcdir)/OpenGLDefinitions.h \
-  $(srcdir)/OpenGLMapping.h \
-  $(srcdir)/RenderingPipe.h \
-  $(srcdir)/RenderingPipeGLSL.h \
-  $(srcdir)/RenderingPipeTextureBlendShaderSource.h \
-  $(srcdir)/RunTimeStats.h
+  BitmapFormats.h \
+  CairoGraphics.h \
+  Events.h \
+  FontTexture.h \
+  FontRenderer.h \
+  GdkGraphics.h \
+  Gfx_Interface.h \
+  GLDeviceFrameBufferObject.h \
+  GLDeviceObjects.h \
+  GLError.h \
+  GlobalGraphicsInitializer.h \
+  GLPBuffer.h \
+  GLRenderStates.h \
+  GLResource.h \
+  GLResourceManager.h \
+  GLShader.h \
+  GLShaderParameter.h \
+  GLSh_ColorPicker.h \
+  GLSh_DrawFunction.h \
+  GLSh_Fill.h \
+  GLTemplatePrimitiveBuffer.h \
+  GLTextureResourceManager.h \
+  GLTextureStates.h \
+  GLThread.h \
+  GLTimer.h \
+  GLVertexResourceManager.h \
+  GLWindowManager.h \
+  GpuDevice.h \
+  GraphicsDisplay.h \
+  GraphicsEngine.h \
+  MeshData.h \
+  MeshFileLoader-OBJ.h \
+  ImageSurface.h \
+  IOpenGLAnimatedTexture.h \
+  IOpenGLBaseTexture.h \
+  IOpenGLCubeTexture.h \
+  IOpenGLFrameBufferObject.h \
+  IOpenGLGLSLShader.h \
+  IOpenGLIndexBuffer.h \
+  IOpenGLPixelBufferOject.h \
+  IOpenGLQuery.h \
+  IOpenGLRectangleTexture.h \
+  IOpenGLResource.h \
+  IOpenGLSurface.h \
+  IOpenGLTexture2D.h \
+  IOpenGLVertexBuffer.h \
+  IOpenGLVertexDeclaration.h \
+  IOpenGLVolume.h \
+  IOpenGLVolumeTexture.h \
+  NuxGraphics.h \
+  NuxGraphicsObject.h \
+  NuxGraphicsResources.h \
+  OpenGLDefinitions.h \
+  OpenGLMapping.h \
+  RenderingPipe.h \
+  RenderingPipeGLSL.h \
+  RenderingPipeTextureBlendShaderSource.h \
+  RunTimeStats.h
 
 if USE_X11
 source_h += \
-  $(srcdir)/GraphicsDisplayX11.h \
-  $(srcdir)/VirtualKeyCodesX11.h \
-  $(srcdir)/XInputWindow.h
+  GraphicsDisplayX11.h \
+  VirtualKeyCodesX11.h \
+  XInputWindow.h
 endif
 
 if !NUX_OPENGLES_20
 source_h += \
-  $(srcdir)/IOpenGLAsmShader.h \
-  $(srcdir)/RenderingPipeAsm.h
+  IOpenGLAsmShader.h \
+  RenderingPipeAsm.h
 endif
 
 if HAVE_GEIS
 source_h += \
-  $(srcdir)/GestureEvent.h
+  GestureEvent.h
 endif
 
 source_cpp = \
-  $(srcdir)/BitmapFormats.cpp \
-  $(srcdir)/CairoGraphics.cpp \
-  $(srcdir)/Events.cpp \
-  $(srcdir)/FontRenderer.cpp \
-  $(srcdir)/FontTexture.cpp \
-  $(srcdir)/GdkGraphics.cpp \
-  $(srcdir)/GLDeviceFrameBufferObject.cpp \
-  $(srcdir)/GLDeviceObjects.cpp \
-  $(srcdir)/GLError.cpp \
-  $(srcdir)/GlobalGraphicsInitializer.cpp \
-  $(srcdir)/GLPBuffer.cpp \
-  $(srcdir)/GLRenderStates.cpp \
-  $(srcdir)/GLResource.cpp \
-  $(srcdir)/GLResourceManager.cpp \
-  $(srcdir)/GLShader.cpp \
-  $(srcdir)/GLShaderParameter.cpp \
-  $(srcdir)/GLSh_ColorPicker.cpp \
-  $(srcdir)/GLSh_DrawFunction.cpp \
-  $(srcdir)/GLSh_Fill.cpp \
-  $(srcdir)/GLTemplatePrimitiveBuffer.cpp \
-  $(srcdir)/GLTextureResourceManager.cpp \
-  $(srcdir)/GLTextureStates.cpp \
-  $(srcdir)/GLTimer.cpp \
-  $(srcdir)/GLVertexResourceManager.cpp \
-  $(srcdir)/GLWindowManager.cpp \
-  $(srcdir)/GpuDevice.cpp \
-  $(srcdir)/GpuDeviceShader.cpp \
-  $(srcdir)/GpuDeviceTexture.cpp \
-  $(srcdir)/GpuDeviceVertex.cpp \
-  $(srcdir)/GraphicsEngine.cpp \
-  $(srcdir)/MeshData.cpp \
-  $(srcdir)/MeshFileLoader-OBJ.cpp \
-  $(srcdir)/ImageSurface.cpp \
-  $(srcdir)/IOpenGLAnimatedTexture.cpp \
-  $(srcdir)/IOpenGLBaseTexture.cpp \
-  $(srcdir)/IOpenGLCubeTexture.cpp \
-  $(srcdir)/IOpenGLFrameBufferObject.cpp \
-  $(srcdir)/IOpenGLGLSLShader.cpp \
-  $(srcdir)/IOpenGLIndexBuffer.cpp \
-  $(srcdir)/IOpenGLPixelBufferOject.cpp \
-  $(srcdir)/IOpenGLQuery.cpp \
-  $(srcdir)/IOpenGLRectangleTexture.cpp \
-  $(srcdir)/IOpenGLSurface.cpp \
-  $(srcdir)/IOpenGLTexture2D.cpp \
-  $(srcdir)/IOpenGLVertexBuffer.cpp \
-  $(srcdir)/IOpenGLVertexDeclaration.cpp \
-  $(srcdir)/IOpenGLVolume.cpp \
-  $(srcdir)/IOpenGLVolumeTexture.cpp \
-  $(srcdir)/NuxGraphics.cpp \
-  $(srcdir)/NuxGraphicsObject.cpp \
-  $(srcdir)/NuxGraphicsResources.cpp \
-  $(srcdir)/RenderingPipe.cpp \
-  $(srcdir)/RenderingPipeGLSL.cpp \
-  $(srcdir)/RenderingPipeTextureBlend.cpp \
-  $(srcdir)/GLRenderingAPI.cpp \
-  $(srcdir)/RunTimeStats.cpp
+  BitmapFormats.cpp \
+  CairoGraphics.cpp \
+  Events.cpp \
+  FontRenderer.cpp \
+  FontTexture.cpp \
+  GdkGraphics.cpp \
+  GLDeviceFrameBufferObject.cpp \
+  GLDeviceObjects.cpp \
+  GLError.cpp \
+  GlobalGraphicsInitializer.cpp \
+  GLPBuffer.cpp \
+  GLRenderStates.cpp \
+  GLResource.cpp \
+  GLResourceManager.cpp \
+  GLShader.cpp \
+  GLShaderParameter.cpp \
+  GLSh_ColorPicker.cpp \
+  GLSh_DrawFunction.cpp \
+  GLSh_Fill.cpp \
+  GLTemplatePrimitiveBuffer.cpp \
+  GLTextureResourceManager.cpp \
+  GLTextureStates.cpp \
+  GLTimer.cpp \
+  GLVertexResourceManager.cpp \
+  GLWindowManager.cpp \
+  GpuDevice.cpp \
+  GpuDeviceShader.cpp \
+  GpuDeviceTexture.cpp \
+  GpuDeviceVertex.cpp \
+  GraphicsEngine.cpp \
+  MeshData.cpp \
+  MeshFileLoader-OBJ.cpp \
+  ImageSurface.cpp \
+  IOpenGLAnimatedTexture.cpp \
+  IOpenGLBaseTexture.cpp \
+  IOpenGLCubeTexture.cpp \
+  IOpenGLFrameBufferObject.cpp \
+  IOpenGLGLSLShader.cpp \
+  IOpenGLIndexBuffer.cpp \
+  IOpenGLPixelBufferOject.cpp \
+  IOpenGLQuery.cpp \
+  IOpenGLRectangleTexture.cpp \
+  IOpenGLSurface.cpp \
+  IOpenGLTexture2D.cpp \
+  IOpenGLVertexBuffer.cpp \
+  IOpenGLVertexDeclaration.cpp \
+  IOpenGLVolume.cpp \
+  IOpenGLVolumeTexture.cpp \
+  NuxGraphics.cpp \
+  NuxGraphicsObject.cpp \
+  NuxGraphicsResources.cpp \
+  RenderingPipe.cpp \
+  RenderingPipeGLSL.cpp \
+  RenderingPipeTextureBlend.cpp \
+  GLRenderingAPI.cpp \
+  RunTimeStats.cpp
 
 if USE_X11
 source_cpp += \
-  $(srcdir)/GraphicsDisplayX11.cpp \
-  $(srcdir)/XInputWindow.cpp
+  GraphicsDisplayX11.cpp \
+  XInputWindow.cpp
 endif
 
 if !NUX_OPENGLES_20
 source_cpp += \
-  $(srcdir)/IOpenGLAsmShader.cpp \
-  $(srcdir)/RenderingPipeAsm.cpp
+  IOpenGLAsmShader.cpp \
+  RenderingPipeAsm.cpp
 endif
 
 if HAVE_GEIS
 source_cpp += \
-  $(srcdir)/GestureEvent.cpp
+  GestureEvent.cpp
 endif
 
 
@@ -197,6 +197,18 @@ nux-graphics-@NUX_API_VERSION@.pc: nux-graphics.pc
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = nux-graphics-@NUX_API_VERSION@.pc
 
+unused_src = \
+ FreetypeFont.cpp \
+ FreetypeFont.h \
+ GdiImageLoader.cpp \
+ GdiImageLoader.h \
+ GfxEventsX11.h \
+ IOpenGLCgShader.cpp \
+ IOpenGLCgShader.h \
+ Readme.txt \
+ VirtualKeyCodes.h
+
+
 CLEANFILES += nux-graphics-@NUX_API_VERSION@.pc
 DISTCLEANFILES += nux-graphics.pc
-EXTRA_DIST += nux-graphics.pc.in
+EXTRA_DIST += nux-graphics.pc.in ${unused_src}
