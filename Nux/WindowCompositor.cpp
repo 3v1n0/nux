@@ -520,6 +520,13 @@ DECLARE_LOGGER(logger, "nux.window");
       }
       else if (event.type == NUX_MOUSE_RELEASED)
       {
+        if (mouse_over_area_ == mouse_owner_area_ && new_area_under_mouse != mouse_over_area_)
+        {
+          mouse_owner_area_->EmitMouseLeaveSignal(mouse_owner_x, mouse_owner_y,
+                                                  event.GetMouseState(),
+                                                  event.GetKeyState());
+        }
+
         mouse_over_area_ = new_area_under_mouse;
       }
     }
