@@ -686,6 +686,25 @@ TEST_F(TestWindowCompositor, GetFocusedAreaFallback)
   EXPECT_EQ(area.GetPointer(), nullptr);
 }
 
+TEST_F(TestWindowCompositor, UpdateInputAreaMouseInsideOnRelease)
+{
+  Event ev;
+  ObjectPtr<TestBaseWindow> ia1(new TestBaseWindow());
+
+  ev.type = EVENT_MOUSE_DOWN;
+  nux::GetWindowCompositor().ProcessEvent(ev);
+
+  ASSERT_TRUE(ia1->input_area->IsMouseInside());
+  ASSERT_TRUE(ia1->input_area->IsMouseOwner());
+
+  ObjectPtr<TestBaseWindow> ia2(new TestBaseWindow());
+  ev.type = EVENT_MOUSE_UP;
+  nux::GetWindowCompositor().ProcessEvent(ev);
+
+  EXPECT_FALSE(ia1->input_area->IsMouseOwner());
+  EXPECT_FALSE(ia1->input_area->IsMouseInside());
+}
+
 class DraggedWindow : public nux::BaseWindow
 {
  public:
@@ -770,17 +789,17 @@ class TrackerWindow : public nux::BaseWindow
     bool wants_mouse_ownership;
 
   protected:
-    virtual void EmitMouseUpSignal(int x, int y,
-                                   unsigned long mouse_button_state,
-                                   unsigned long special_keys_state)
+    virtual void EmitMouseUpSignal(int, int,
+                                   unsigned long,
+                                   unsigned long)
     {
       ++mouse_up_emission_count;
     }
 
-    virtual void EmitMouseDragSignal(int x, int y,
+    virtual void EmitMouseDragSignal(int, int,
                                      int dx, int dy,
-                                     unsigned long mouse_button_state,
-                                     unsigned long special_keys_state)
+                                     unsigned long,
+                                     unsigned long)
     {
       ++mouse_drag_emission_count;
       mouse_drag_dx = dx;
@@ -804,24 +823,24 @@ class TrackedArea : public nux::InputArea
     {}
 
   protected:
-    virtual void EmitMouseDownSignal(int x, int y,
-                                     unsigned long mouse_button_state,
-                                     unsigned long special_keys_state)
+    virtual void EmitMouseDownSignal(int, int,
+                                     unsigned long,
+                                     unsigned long)
     {
       ++mouse_down_emission_count;
     }
 
-    virtual void EmitMouseUpSignal(int x, int y,
-                                   unsigned long mouse_button_state,
-                                   unsigned long special_keys_state)
+    virtual void EmitMouseUpSignal(int, int,
+                                   unsigned long,
+                                   unsigned long)
     {
       ++mouse_up_emission_count;
     }
 
-    virtual void EmitMouseDragSignal(int x, int y,
-                                     int dx, int dy,
-                                     unsigned long mouse_button_state,
-                                     unsigned long special_keys_state)
+    virtual void EmitMouseDragSignal(int, int,
+                                     int, int,
+                                     unsigned long,
+                                     unsigned long)
     {
       ++mouse_drag_emission_count;
     }
