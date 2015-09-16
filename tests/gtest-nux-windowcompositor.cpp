@@ -752,6 +752,26 @@ TEST_F(TestWindowCompositor, UpdateNewInputAreaMouseOwnerBeforeSignalEmission)
   EXPECT_EQ(GetMouseOverArea(), ia1->input_area.GetPointer());
 }
 
+TEST_F(TestWindowCompositor, EmitMouseCancelOnReleasedMouseOwner)
+{
+  Event ev;
+  ObjectPtr<TestBaseWindow> ia1(new TestBaseWindow());
+
+  ev.type = EVENT_MOUSE_DOWN;
+  nux::GetWindowCompositor().ProcessEvent(ev);
+  ASSERT_TRUE(ia1->input_area->IsMouseOwner());
+
+  bool mouse_cancel_called = false;
+  ia1->input_area->mouse_cancel.connect([this, &mouse_cancel_called] {
+    mouse_cancel_called = true;
+  });
+
+  ev.type = EVENT_MOUSE_UP;
+  nux::GetWindowCompositor().ProcessEvent(ev);
+
+  EXPECT_TRUE(mouse_cancel_called);
+}
+
 class DraggedWindow : public nux::BaseWindow
 {
  public:

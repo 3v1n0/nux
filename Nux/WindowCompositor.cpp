@@ -245,9 +245,13 @@ DECLARE_LOGGER(logger, "nux.window");
     if (mouse_owner_area_ == area)
       return;
 
+    auto* old_owner = mouse_owner_area_.GetPointer();
     mouse_owner_area_ = area;
     dnd_safety_x_ = 0;
     dnd_safety_y_ = 0;
+
+    if (old_owner)
+      old_owner->EmitMouseCancelSignal();
   }
 
   ObjectWeakPtr<InputArea> const& WindowCompositor::GetMouseOwnerArea() const
