@@ -67,8 +67,8 @@ GTestLDFlags = -lboost_system \
 gtest_nuxcore_SOURCES = \
   Helpers.h \
   Helpers.cpp \
-  $(top_builddir)/NuxCore/ColorPrivate.cpp \
-  $(top_builddir)/NuxCore/ColorPrivate.h \
+  $(top_srcdir)/NuxCore/ColorPrivate.cpp \
+  $(top_srcdir)/NuxCore/ColorPrivate.h \
   gtest-nuxcore-animation.cpp \
   gtest-nuxcore-async-file-writer.cpp \
   gtest-nuxcore-color.cpp \
@@ -286,11 +286,18 @@ gtest: gtest-build
 	./gtest-nux
 	./gtest-nux-slow
 
+CHECK_GTEST_OPTIONS =
+
+if NUX_OPENGLES_20
+# Disable EmbeddedContext tests when OpenGLES is enabled, they tend to crash
+CHECK_GTEST_OPTIONS = --gtest_filter=-EmbeddedContext*
+endif # NUX_OPENGLES_20
+
 check-headless: gtest-nuxcore gtest-nuxgraphics gtest-nux gtest-nux-slow
-	@./gtest-nuxcore --gtest_output=xml:./test-nux-core-results.xml
-	@./dummy-xorg-test-runner.sh ./gtest-nuxgraphics --gtest_output=xml:./test-nux-graphics-results.xml
-	@./dummy-xorg-test-runner.sh ./gtest-nux --gtest_output=xml:./test-nux-results.xml
-	@./dummy-xorg-test-runner.sh ./gtest-nux-slow --gtest_output=xml:./test-nux-slow-results.xml
+	@./gtest-nuxcore --gtest_output=xml:./test-nux-core-results.xml $(CHECK_GTEST_OPTIONS)
+	@./dummy-xorg-test-runner.sh ./gtest-nuxgraphics --gtest_output=xml:./test-nux-graphics-results.xml $(CHECK_GTEST_OPTIONS)
+	@./dummy-xorg-test-runner.sh ./gtest-nux --gtest_output=xml:./test-nux-results.xml $(CHECK_GTEST_OPTIONS)
+	@./dummy-xorg-test-runner.sh ./gtest-nux-slow --gtest_output=xml:./test-nux-slow-results.xml $(CHECK_GTEST_OPTIONS)
 
 check: gtest-nuxcore gtest-nuxgraphics gtest-nux gtest-nux-slow
 	@./gtest-nuxcore --gtest_output=xml:./test-nux-core-results.xml
