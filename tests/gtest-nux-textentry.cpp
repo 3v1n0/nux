@@ -125,22 +125,19 @@ class TestEvent : public Event
 {
 public:
   TestEvent(KeyModifier keymod, unsigned long keysym, EventType type = NUX_KEYDOWN)
+    : TestEvent(keysym, type)
   {
-    Init(keysym, type);
     key_modifiers = keymod;
   }
 
-  TestEvent(unsigned long keysym, EventType type = NUX_KEYDOWN)
-  {
-    Init(keysym, type);
-  }
-
-  void Init(unsigned long keysym, EventType etype)
+  TestEvent(unsigned long keysym, EventType etype = NUX_KEYDOWN)
   {
     type = etype;
 #if defined(NUX_OS_LINUX)
     x11_keysym = keysym;
-    g_unichar_to_utf8(x11_keysym, text);
+    dtext = new char[NUX_EVENT_TEXT_BUFFER_SIZE];
+    auto len = g_unichar_to_utf8(x11_keysym, dtext);
+    dtext[len] = '\0';
 #elif defined(NUX_OS_WINDOWS)
     win32_keysym = keysym;
 #endif
