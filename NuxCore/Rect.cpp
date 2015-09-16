@@ -206,8 +206,8 @@ namespace nux
 
   std::ostream& operator<<(std::ostream &os, Rect const& rect)
   {
-    return os << "Rect, x: " << rect.x << " y: " << rect.y << " width: " <<
-                 rect.width << " height: " << rect.height << std::endl;
+    return os << "Rect, x: " << rect.x << " y: " << rect.y
+              << " width: " << rect.width << " height: " << rect.height;
   }
 }
 
