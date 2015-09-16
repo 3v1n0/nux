@@ -630,20 +630,21 @@ DECLARE_LOGGER(logger, "nux.window");
         Geometry const& mouse_owner_geo = mouse_owner_area_->GetAbsoluteGeometry();
         int mouse_owner_x = event.x - mouse_owner_geo.x;
         int mouse_owner_y = event.y - mouse_owner_geo.y;
-
-        mouse_owner_area_->EmitMouseUpSignal(mouse_owner_x, mouse_owner_y,
-                                             event.GetMouseState(),
-                                             event.GetKeyState());
-
-        if (mouse_owner_area_.IsValid() && mouse_over_area_ == mouse_owner_area_ &&
-           (!mouse_over_area_->DoubleClickEnabled() || (event.mouse_state & NUX_STATE_FIRST_EVENT) != 0))
-        {
-          mouse_owner_area_->EmitMouseClickSignal(mouse_owner_x, mouse_owner_y,
-                                                  event.GetMouseState(),
-                                                  event.GetKeyState());
-        }
+        auto* old_mouse_owner_area = mouse_owner_area_.GetPointer();
 
         SetMouseOwnerArea(NULL);
+
+        old_mouse_owner_area->EmitMouseUpSignal(mouse_owner_x, mouse_owner_y,
+                                                event.GetMouseState(),
+                                                event.GetKeyState());
+
+        if (mouse_over_area_ == old_mouse_owner_area &&
+            (!mouse_over_area_->DoubleClickEnabled() || (event.mouse_state & NUX_STATE_FIRST_EVENT) != 0))
+        {
+          old_mouse_owner_area->EmitMouseClickSignal(mouse_owner_x, mouse_owner_y,
+                                                     event.GetMouseState(),
+                                                     event.GetKeyState());
+        }
       }
     }
   }
