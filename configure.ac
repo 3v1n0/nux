@@ -333,6 +333,17 @@ AS_IF([test "x$have_xtest" = "xyes" &&
 
 AM_CONDITIONAL(BUILD_TESTS, [test "x$enable_tests" = "xyes"])
 
+AS_IF([test "x$enable_tests" = "xyes" &&
+       test "x$enable_x_support" = "xyes"],
+  [
+    PKG_CHECK_MODULES(NUX_TESTS, x11)
+  ],
+  []
+)
+
+AC_SUBST(NUX_TESTS_CFLAGS)
+AC_SUBST(NUX_TESTS_LIBS)
+
 ###########################
 # gcov coverage reporting
 ###########################

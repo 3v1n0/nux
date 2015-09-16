@@ -41,6 +41,7 @@ TestFlags = -I$(srcdir) \
             $(NUX_CORE_CFLAGS) \
             $(NUX_EXAMPLES_CFLAGS) \
             $(NUX_CFLAGS) \
+            $(NUX_TESTS_CFLAGS) \
             $(MAINTAINER_CFLAGS) \
             $(IBUS_CFLAGS) \
             $(GEIS_CFLAGS)
@@ -48,6 +49,7 @@ TestFlags = -I$(srcdir) \
 TestLibs = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
            $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
            $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
+           $(NUX_TESTS_LIBS) \
            $(NUX_LIBS)
 
 GTestFlags = $(TestFlags) \
