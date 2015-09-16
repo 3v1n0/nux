@@ -352,13 +352,24 @@ check-local: test gtest test-apps
 test:
 	@gtester --verbose -k -o=gtest-nux-results.xml ./gtest-nux
 
-gtest: gtest-nuxcore gtest-nuxgraphics gtest-nux
+gtest: gtest-nuxcore gtest-nuxgraphics gtest-nux gtest-nux-slow
 	./gtest-nuxcore
 	./gtest-nuxgraphics
 	./gtest-nux
+	./gtest-nux-slow
 
-check-headless: gtest-nuxcore
-	@gtester --verbose -k -o=test-nux-results.xml ./gtest-nuxcore
+check-headless: gtest-nuxcore gtest-nuxgraphics gtest-nux gtest-nux-slow
+	@./gtest-nuxcore --gtest_output=xml:./test-nux-core-results.xml
+	@./dummy-xorg-test-runner.sh ./gtest-nuxgraphics --gtest_output=xml:./test-nux-graphics-results.xml
+	@./dummy-xorg-test-runner.sh ./gtest-nux --gtest_output=xml:./test-nux-results.xml
+	@./dummy-xorg-test-runner.sh ./gtest-nux-slow --gtest_output=xml:./test-nux-slow-results.xml
+
+check: gtest-nuxcore gtest-nuxgraphics gtest-nux gtest-nux-slow
+	@./gtest-nuxcore --gtest_output=xml:./test-nux-core-results.xml
+	@./gtest-nuxgraphics --gtest_output=xml:./test-nux-graphics-results.xml
+	@./gtest-nux --gtest_output=xml:./test-nux-results.xml
+	@./gtest-nux-slow --gtest_output=xml:./test-nux-slow-results.xml
+
 
 test-apps: test-graphics-display test-empty-window xtest-text-entry-xim xtest-text-entry xtest-button xtest-mouse-events xtest-mouse-buttons xtest-hgrid-key-navigation xtest-hlayout-key-navigation xtest-vlayout-key-navigation xtest-scrollbar xtest-focus-on-mouse-down xtest-focus-on-mouse-enter xtest-keynav-directions xtest-text-entry-logic xtest-text-entry-deadkeys xtest-text-entry-compositionkeys
 	./test-graphics-display
