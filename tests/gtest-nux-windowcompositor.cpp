@@ -703,6 +703,27 @@ TEST_F(TestWindowCompositor, UpdateInputAreaMouseInsideOnRelease)
 
   EXPECT_FALSE(ia1->input_area->IsMouseOwner());
   EXPECT_FALSE(ia1->input_area->IsMouseInside());
+  EXPECT_NE(GetMouseOverArea(), ia1->input_area.GetPointer());
+}
+
+TEST_F(TestWindowCompositor, UpdateNewInputAreaMouseInsideOnRelease)
+{
+  Event ev;
+  ObjectPtr<TestBaseWindow> ia1(new TestBaseWindow());
+
+  ev.type = EVENT_MOUSE_DOWN;
+  nux::GetWindowCompositor().ProcessEvent(ev);
+
+  ASSERT_TRUE(ia1->input_area->IsMouseInside());
+  ASSERT_TRUE(ia1->input_area->IsMouseOwner());
+
+  ObjectPtr<TestBaseWindow> ia2(new TestBaseWindow());
+  ev.type = EVENT_MOUSE_UP;
+  nux::GetWindowCompositor().ProcessEvent(ev);
+
+  EXPECT_FALSE(ia2->input_area->IsMouseOwner());
+  EXPECT_TRUE(ia2->input_area->IsMouseInside());
+  EXPECT_EQ(GetMouseOverArea(), ia2->input_area.GetPointer());
 }
 
 class DraggedWindow : public nux::BaseWindow
