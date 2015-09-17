@@ -535,11 +535,14 @@ DECLARE_LOGGER(logger, "nux.window");
 
           mouse_over_area_ = new_area_under_mouse;
 
-          auto const& over_geo = mouse_over_area_->GetAbsoluteGeometry();
-          mouse_over_area_->EmitMouseEnterSignal(event.x - over_geo.x,
-                                                 event.y - over_geo.y,
-                                                 event.GetMouseState(),
-                                                 event.GetKeyState());
+          if (mouse_over_area_.IsValid())
+          {
+            auto const& over_geo = mouse_over_area_->GetAbsoluteGeometry();
+            mouse_over_area_->EmitMouseEnterSignal(event.x - over_geo.x,
+                                                   event.y - over_geo.y,
+                                                   event.GetMouseState(),
+                                                   event.GetKeyState());
+          }
         }
       }
     }

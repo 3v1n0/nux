@@ -752,6 +752,25 @@ TEST_F(TestWindowCompositor, UpdateNewInputAreaMouseOwnerBeforeSignalEmission)
   EXPECT_EQ(GetMouseOverArea(), ia1->input_area.GetPointer());
 }
 
+TEST_F(TestWindowCompositor, InvalidMouseOverAreaOnReleaseDontCrash)
+{
+  Event ev;
+  ObjectPtr<TestBaseWindow> ia1(new TestBaseWindow());
+
+  ev.type = EVENT_MOUSE_DOWN;
+  nux::GetWindowCompositor().ProcessEvent(ev);
+  ASSERT_TRUE(ia1->input_area->IsMouseInside());
+  ASSERT_TRUE(ia1->input_area->IsMouseOwner());
+
+  // We save a copy of the input area, so that WC still things it's alive but
+  // the test window won't return it as the target area for events.
+  auto old_mouse_owner_area = ia1->input_area; (void)old_mouse_owner_area;
+  ia1->input_area.Release();
+
+  ev.type = EVENT_MOUSE_UP;
+  nux::GetWindowCompositor().ProcessEvent(ev);
+}
+
 TEST_F(TestWindowCompositor, EmitMouseCancelOnReleasedMouseOwner)
 {
   Event ev;
