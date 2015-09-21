@@ -61,9 +61,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     , embedded_window_(false)
     , window_size_configuration_event_(false)
     , force_rendering_(false)
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     , external_glib_sources_(new ExternalGLibSources)
-#endif
 #ifdef NUX_GESTURES_SUPPORT
     , geis_adapter_(new GeisAdapter)
 #endif
@@ -98,10 +96,8 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
 #endif
     _MasterClock = NULL;
 
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     main_loop_glib_      = 0;
     main_loop_glib_context_   = 0;
-#endif
 
 #if defined(USE_X11)
     x11display_ = NULL;
@@ -117,10 +113,8 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
 
   WindowThread::~WindowThread()
   {
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     xim_controller_.reset();
     CleanupGlibLoop();
-#endif
 
     ThreadDtor();
 #if !defined(NUX_MINIMAL)
@@ -144,16 +138,12 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
 
   void WindowThread::ExitMainLoop()
   {
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     StopGLibLoop();
-#endif
   }
 
   unsigned int WindowThread::AddTimeout(unsigned int timeout_delay)
   {
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     return AddGLibTimeout(timeout_delay);
-#endif
   }
 
   TimerHandle WindowThread::SetAsyncTimerCallback(int time_ms, TimeOutSignal* timeout_signal, void *user_data)
@@ -442,9 +432,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     }
     else
     {
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
       InitGlibLoop();
-#endif
     }
 
     // Called the first time so we can initialize the size of the render targets
@@ -468,11 +456,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     {
       if (GetThreadState() == THREADRUNNING)
       {
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
         RunGlibLoop();
-#else
-        ExecutionLoop();
-#endif
 
         if (parent_)
         {
@@ -539,120 +523,6 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
 
     return event;
   }
-
-#if (!defined(NUX_OS_LINUX) && !defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) || defined(NUX_DISABLE_GLIB_LOOP)
-#ifdef NUX_GESTURES_SUPPORT
-  Event *WindowThread::FetchNextEvent()
-  {
-    Event *event;
-
-    if (check_geis_first_)
-    {
-      if (geis_adapter_->ProcessNextEvent(&gesture_event_))
-      {
-        event = &gesture_event_;
-      }
-      else
-      {
-        graphics_display_->GetSystemEvent(&input_event_);
-        event = &input_event;
-      }
-    }
-    else
-    {
-      if (graphics_display_->GetSystemEvent(&input_event_))
-      {
-        event = &input_event_;
-      }
-      else
-      {
-        geis_adapter_->ProcessNextEvent(&gesture_event_);
-        event = &gesture_event_;
-      }
-    }
-
-    // If we are running in a loop and both event buffers (X and GEIS) happens
-    // to have pending events, let's take one from each alternately so that no
-    // buffer overflows.
-    check_geis_first_ = !check_geis_first_;
-
-    return event;
-  }
-#endif // NUX_GESTURES_SUPPORT
-
-  unsigned int WindowThread::ExecutionLoop()
-  {
-#ifndef NUX_GESTURES_SUPPORT
-    Event event;
-#endif
-
-    if (!IsEmbeddedWindow() && graphics_display_->IsPauseThreadGraphicsRendering())
-    {
-      // Do not sleep. Just return and let the GraphicsDisplay::SwapBuffer do the sleep if necessary.
-      return 0;
-    }
-
-    while (true)
-    {
-#ifdef NUX_GESTURES_SUPPORT
-      int result = DoProcessEvent(*FetchNextEvent());
-#else
-      graphics_display_->GetSystemEvent(&event);
-      int result = DoProcessEvent(event);
-#endif
-
-#if defined(NUX_OS_LINUX)
-      // select on all of our external fds. We can't use poll () here because
-      // ExectionLoop is designed to be a busy-wait system. In reality we should
-      // probably just drop support for this codepath.
-      //
-      // See https://bugs.launchpad.net/nux/+bug/1111216
-
-      fd_set read_fds;
-
-      FD_ZERO(&read_fds);
-
-      for (std::list<ExternalFdData>::iterator it =
-             _external_fds.begin();
-           it != _external_fds.end();
-           ++it)
-      {
-        nuxAssertMsg(it->fd < FD_SETSIZE, "[nux::WindowThread::ExecutionLoop]"\
-                     " file descriptor overflow, aborting");
-        FD_SET(it->fd, &read_fds);
-      }
-
-      // Wait 10 us
-      struct timeval timeout;
-      timeout.tv_sec = 0;
-      timeout.tv_usec = 10;
-
-      int select_result = select(_external_fds.size(), &read_fds, NULL, NULL,
-                                 &timeout);
-
-      nuxAssertMsg(select_result != -1, strerror ("select()"));
-
-      // Dispatch any active external fds
-      for (std::list<ExternalFdData>::iterator it =
-             _external_fds.begin();
-           it != _external_fds.end();
-           ++it)
-      {
-        if (FD_ISSET(it->fd, &read_fds))
-          it->cb();
-      }
-
-      if (result != 1)
-        return result;
-    }
-
-    return 1;
-  }
-#else
-  nuxAssertMsg(_external_fds.empty(), "[nux::WindowThread::ExecutionLoop]"\
-               " external fd support is not implemented on Windows");
-#endif // NUX_OS_LINUX
-#endif // GLIB loop or not
 
   unsigned int WindowThread::ProcessEvent(Event &event)
   {
@@ -1776,11 +1646,9 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     data.cb = cb;
 
     _external_fds.push_back(data);
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     AddFdToGLibLoop(fd,
                     reinterpret_cast <gpointer> (&_external_fds.back()),
                     WindowThread::ExternalSourceCallback);
-#endif
   }
 
   void WindowThread::UnwatchFd(int fd)
@@ -1793,9 +1661,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
 
     if (it != _external_fds.end())
     {
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
       RemoveFdFromGLibLoop(&(*it));
-#endif
       _external_fds.erase (it);
     }
   }

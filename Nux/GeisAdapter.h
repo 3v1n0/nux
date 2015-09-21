@@ -45,9 +45,7 @@ public:
   GeisAdapter();
   ~GeisAdapter();
 
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
   void CreateGSource(GMainContext *context);
-#endif
 
   /*
     Returns whether initialization is complete.

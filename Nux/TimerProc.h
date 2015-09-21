@@ -164,11 +164,7 @@ namespace nux
     */
     int DelayUntilNextTimerExpires();
 
-#if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     int ExecTimerHandler (unsigned int timer_id);
-#else
-    int ExecTimerHandler();
-#endif
 
     //! Start the timers that were sett before the system was fully initialized.
     void StartEarlyTimerObjects();
