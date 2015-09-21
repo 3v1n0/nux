@@ -99,7 +99,7 @@ Description: Visual rendering toolkit for real-time applications - dev files
 
 Package: libnux-4.0-common
 Section: libs
-Architecture: any
+Architecture: all
 Multi-Arch: foreign
 Depends: ${misc:Depends}
 Description: Visual rendering toolkit for real-time applications - common files
