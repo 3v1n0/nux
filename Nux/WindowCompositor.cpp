@@ -245,9 +245,13 @@ DECLARE_LOGGER(logger, "nux.window");
     if (mouse_owner_area_ == area)
       return;
 
+    auto* old_owner = mouse_owner_area_.GetPointer();
     mouse_owner_area_ = area;
     dnd_safety_x_ = 0;
     dnd_safety_y_ = 0;
+
+    if (old_owner)
+      old_owner->EmitMouseCancelSignal();
   }
 
   ObjectWeakPtr<InputArea> const& WindowCompositor::GetMouseOwnerArea() const
@@ -520,7 +524,26 @@ DECLARE_LOGGER(logger, "nux.window");
       }
       else if (event.type == NUX_MOUSE_RELEASED)
       {
-        mouse_over_area_ = new_area_under_mouse;
+        if (new_area_under_mouse != mouse_over_area_)
+        {
+          if (mouse_over_area_ == mouse_owner_area_)
+          {
+            mouse_owner_area_->EmitMouseLeaveSignal(mouse_owner_x, mouse_owner_y,
+                                                    event.GetMouseState(),
+                                                    event.GetKeyState());
+          }
+
+          mouse_over_area_ = new_area_under_mouse;
+
+          if (mouse_over_area_.IsValid())
+          {
+            auto const& over_geo = mouse_over_area_->GetAbsoluteGeometry();
+            mouse_over_area_->EmitMouseEnterSignal(event.x - over_geo.x,
+                                                   event.y - over_geo.y,
+                                                   event.GetMouseState(),
+                                                   event.GetKeyState());
+          }
+        }
       }
     }
 
@@ -614,20 +637,21 @@ DECLARE_LOGGER(logger, "nux.window");
         Geometry const& mouse_owner_geo = mouse_owner_area_->GetAbsoluteGeometry();
         int mouse_owner_x = event.x - mouse_owner_geo.x;
         int mouse_owner_y = event.y - mouse_owner_geo.y;
-
-        mouse_owner_area_->EmitMouseUpSignal(mouse_owner_x, mouse_owner_y,
-                                             event.GetMouseState(),
-                                             event.GetKeyState());
-
-        if (mouse_owner_area_.IsValid() && mouse_over_area_ == mouse_owner_area_ &&
-           (!mouse_over_area_->DoubleClickEnabled() || (event.mouse_state & NUX_STATE_FIRST_EVENT) != 0))
-        {
-          mouse_owner_area_->EmitMouseClickSignal(mouse_owner_x, mouse_owner_y,
-                                                  event.GetMouseState(),
-                                                  event.GetKeyState());
-        }
+        auto* old_mouse_owner_area = mouse_owner_area_.GetPointer();
 
         SetMouseOwnerArea(NULL);
+
+        old_mouse_owner_area->EmitMouseUpSignal(mouse_owner_x, mouse_owner_y,
+                                                event.GetMouseState(),
+                                                event.GetKeyState());
+
+        if (mouse_over_area_ == old_mouse_owner_area &&
+            (!mouse_over_area_->DoubleClickEnabled() || (event.mouse_state & NUX_STATE_FIRST_EVENT) != 0))
+        {
+          old_mouse_owner_area->EmitMouseClickSignal(mouse_owner_x, mouse_owner_y,
+                                                     event.GetMouseState(),
+                                                     event.GetKeyState());
+        }
       }
     }
   }
