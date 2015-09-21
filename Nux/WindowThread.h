@@ -586,7 +586,7 @@ namespace nux
 
     /*!
         This list contains al lthe windows which will be presented on the next frame
-        (eg, after ForeignFrameEnded they are moved into m_presentation_list_embedded
+        (eg, after ForeignFrameEnded they are moved into presentation_list_embedded_
          and marked for presentation)
      */
     std::vector<WeakBaseWindowPtr> presentation_list_embedded_next_frame_;

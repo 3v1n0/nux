@@ -985,7 +985,7 @@ TEST_F(TestWindowCompositor, TrackingChildMouseEvents)
   wnd_compositor.ProcessEvent(event);
   ASSERT_EQ(1, tracker_window->child_mouse_events_received.size());
   ASSERT_EQ(1, tracked_area->mouse_drag_emission_count);
-  ASSERT_EQ(1, tracked_area->mouse_cancel_emission_count);
+  ASSERT_EQ(2, tracked_area->mouse_cancel_emission_count);
 
   // The second mouse move goes only to the window, but now as a regular
   // mouse event since he's mouse owner now.

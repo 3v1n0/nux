@@ -1,7 +1,14 @@
 nux (4.0.8-0ubuntu1) UNRELEASED; urgency=medium
 
+  [ Stephen M. Webb ]
   * new upstream release 4.0.8
   * debian/control (Standards-Version): bump to 3.9.6 (no changes)
+
+  [ Marco Trevisan (Treviño) ]
+  * debian/control:
+    - add xserver-xorg-video-dummy as build dependency
+    - set libnux-4.0-common arch to all
+    - depend on source:Version of libnux-4.0-common
 
  -- Stephen M. Webb <stephen.webb@canonical.com>  Wed, 12 Aug 2015 09:33:13 -0400
 

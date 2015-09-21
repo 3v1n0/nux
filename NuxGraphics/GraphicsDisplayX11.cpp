@@ -72,9 +72,6 @@ namespace nux
 
     void initialize(Display *dpy)
     {
-      if (XdndPosition)
-        return;
-
       XdndPosition = XInternAtom(dpy, "XdndPosition", False);
       XdndEnter = XInternAtom(dpy, "XdndEnter", False);
       XdndStatus = XInternAtom(dpy, "XdndStatus", False);

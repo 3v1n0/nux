@@ -168,7 +168,7 @@ TEST(TestAnimationController, RemoveValueInTick)
   std::shared_ptr<na::AnimateValue<int>> animation2(new na::AnimateValue<int>(0,100,1000));
 
   int i = 0;
-  animation1->updated.connect([&](int)
+  animation1->updated.connect([this, &i, &animation2](int)
   {
     if (++i == 2)
     {

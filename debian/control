@@ -33,6 +33,7 @@ Build-Depends: debhelper (>= 9),
                libgeis-dev (>= 2.2.10),
                libibus-1.0-dev,
                libxtst-dev,
+               xserver-xorg-video-dummy,
 Standards-Version: 3.9.6
 Section: libs
 Homepage: http://launchpad.net/nux
@@ -44,7 +45,7 @@ Package: libnux-4.0-0
 Section: libs
 Architecture: any
 Pre-Depends: ${misc:Pre-Depends},
-Depends: libnux-4.0-common (= ${binary:Version}),
+Depends: libnux-4.0-common (= ${source:Version}),
          ${shlibs:Depends},
          ${misc:Depends}
 Provides: libnux-abiversion-${nuxabiversion}
@@ -98,7 +99,7 @@ Description: Visual rendering toolkit for real-time applications - dev files
 
 Package: libnux-4.0-common
 Section: libs
-Architecture: any
+Architecture: all
 Multi-Arch: foreign
 Depends: ${misc:Depends}
 Description: Visual rendering toolkit for real-time applications - common files
