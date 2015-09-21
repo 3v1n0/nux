@@ -45,7 +45,7 @@ Package: libnux-4.0-0
 Section: libs
 Architecture: any
 Pre-Depends: ${misc:Pre-Depends},
-Depends: libnux-4.0-common (= ${binary:Version}),
+Depends: libnux-4.0-common (= ${source:Version}),
          ${shlibs:Depends},
          ${misc:Depends}
 Provides: libnux-abiversion-${nuxabiversion}
