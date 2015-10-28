@@ -45,9 +45,6 @@ source_cpp = \
   Canvas.cpp \
   CheckBox.cpp \
   ClientArea.cpp \
-  Coverflow.cpp \
-  CoverflowItem.cpp \
-  CoverflowModel.cpp \
   EMMetrics.cpp \
   GridHLayout.cpp \
   HLayout.cpp \
@@ -158,9 +155,6 @@ source_h = \
   Canvas.h \
   CheckBox.h \
   ClientArea.h \
-  Coverflow.h \
-  CoverflowItem.h \
-  CoverflowModel.h \
   EMMetrics.h \
   GridHLayout.h \
   HLayout.h \

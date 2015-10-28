@@ -87,6 +87,4 @@ dist_uitextures_DATA = \
   UITextures/VectorZLabel.tga \
   UITextures/VScrollBar.tga \
   UITextures/WindowSizeGrip.tga \
-  UITextures/nux.png \
-  UITextures/coverflow.oval-shadow.png
-  
+  UITextures/nux.png
