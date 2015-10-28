@@ -15,7 +15,7 @@
 # 
 m4_define([nux_major_version], [4])
 m4_define([nux_minor_version], [0])
-m4_define([nux_micro_version], [7])
+m4_define([nux_micro_version], [8])
 
 m4_define([nux_api_version], [4.0])
 # Increase the number (to the current date) everytime you propose a branch that breaks the API or ABI
@@ -332,6 +332,17 @@ AS_IF([test "x$have_xtest" = "xyes" &&
 )
 
 AM_CONDITIONAL(BUILD_TESTS, [test "x$enable_tests" = "xyes"])
+
+AS_IF([test "x$enable_tests" = "xyes" &&
+       test "x$enable_x_support" = "xyes"],
+  [
+    PKG_CHECK_MODULES(NUX_TESTS, x11)
+  ],
+  []
+)
+
+AC_SUBST(NUX_TESTS_CFLAGS)
+AC_SUBST(NUX_TESTS_LIBS)
 
 ###########################
 # gcov coverage reporting

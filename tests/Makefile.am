@@ -30,13 +30,45 @@ check_PROGRAMS = \
   xtest-text-entry-xim \
   xtest-focus-on-mouse-enter
 
+TestFlags = -I$(srcdir) \
+            -I$(top_srcdir) \
+            -DPREFIX=\""$(prefix)"\" \
+            -DLIBDIR=\""$(libdir)"\" \
+            -DDATADIR=\""$(datadir)"\" \
+            -DG_LOG_DOMAIN=\"NuxTests\" \
+            -DTESTDIR=\""$(top_srcdir)/tests"\" \
+            $(GCC_TESTS_FLAGS) \
+            $(NUX_CORE_CFLAGS) \
+            $(NUX_EXAMPLES_CFLAGS) \
+            $(NUX_CFLAGS) \
+            $(NUX_TESTS_CFLAGS) \
+            $(MAINTAINER_CFLAGS) \
+            $(IBUS_CFLAGS) \
+            $(GEIS_CFLAGS)
+
+TestLibs = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
+           $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
+           $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
+           $(NUX_TESTS_LIBS) \
+           $(NUX_LIBS)
+
+GTestFlags = $(TestFlags) \
+             $(GMOCK_CPPFLAGS) \
+             $(GTEST_CPPFLAGS)
+
+GTestLibs = $(TestLibs) \
+            libgtest.a
+
+GTestLDFlags = -lboost_system \
+               -lboost_filesystem
+
 ##### gtest-nuxcore ######
 
 gtest_nuxcore_SOURCES = \
   Helpers.h \
   Helpers.cpp \
-  $(top_builddir)/NuxCore/ColorPrivate.cpp \
-  $(top_builddir)/NuxCore/ColorPrivate.h \
+  $(top_srcdir)/NuxCore/ColorPrivate.cpp \
+  $(top_srcdir)/NuxCore/ColorPrivate.h \
   gtest-nuxcore-animation.cpp \
   gtest-nuxcore-async-file-writer.cpp \
   gtest-nuxcore-color.cpp \
@@ -47,29 +79,9 @@ gtest_nuxcore_SOURCES = \
   gtest-nuxcore-properties.cpp \
   gtest-nuxcore-rolling-file-appender.cpp
 
-gtest_nuxcore_CPPFLAGS = \
-  -I$(srcdir) \
-  -I$(top_srcdir) \
-  -DPREFIX=\""$(prefix)"\" \
-	-DLIBDIR=\""$(libdir)"\" \
-  -DDATADIR=\""$(datadir)"\" \
-  -DG_LOG_DOMAIN=\"NuxTests\" \
-  -DTESTDIR=\""$(top_srcdir)/tests"\" \
-  $(GCC_TESTS_FLAGS) \
-  $(GMOCK_CPPFLAGS) \
-  $(GTEST_CPPFLAGS) \
-  $(NUX_CORE_CFLAGS) \
-  $(NUX_EXAMPLES_CFLAGS) \
-  $(NUX_CFLAGS) \
-  $(MAINTAINER_CFLAGS)
-
-gtest_nuxcore_LDADD = \
-  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-  $(NUX_LIBS) \
-  libgtest.a
-
-gtest_nuxcore_LDFLAGS = -lboost_system \
-                        -lboost_filesystem
+gtest_nuxcore_CPPFLAGS = $(GTestFlags)
+gtest_nuxcore_LDADD = $(GTestLibs)
+gtest_nuxcore_LDFLAGS = $(GTestLDFlags)
 
 ##### gtest-nux ######
 
@@ -92,30 +104,8 @@ gtest_nux_SOURCES += \
   gtest-nux-gesturebroker.cpp
 endif
 
-gtest_nux_CPPFLAGS = \
-  -I$(srcdir) \
-  -I$(top_srcdir) \
-  -DPREFIX=\""$(prefix)"\" \
-	-DLIBDIR=\""$(libdir)"\" \
-  -DDATADIR=\""$(datadir)"\" \
-  -DG_LOG_DOMAIN=\"NuxTests\" \
-  -DTESTDIR=\""$(top_srcdir)/tests"\" \
-  $(GCC_TESTS_FLAGS) \
-  $(GMOCK_CPPFLAGS) \
-  $(GTEST_CPPFLAGS) \
-  $(NUX_CORE_CFLAGS) \
-  $(NUX_EXAMPLES_CFLAGS) \
-  $(NUX_CFLAGS) \
-  $(MAINTAINER_CFLAGS) \
-  $(IBUS_CFLAGS) \
-  $(GEIS_CFLAGS)
-
-gtest_nux_LDADD = \
-  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
-  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-  $(NUX_LIBS) \
-  libgtest.a
+gtest_nux_CPPFLAGS = $(GTestFlags)
+gtest_nux_LDADD = $(GTestLibs)
 
 ##### gtest-nux-slow ######
 
@@ -133,33 +123,9 @@ gtest_nux_slow_SOURCES = \
   gtest-nux-windowcompositor.cpp \
   gtest-nux-windowthread.cpp
 
-gtest_nux_slow_CPPFLAGS = \
-  -I$(srcdir) \
-  -I$(top_srcdir) \
-  -DPREFIX=\""$(prefix)"\" \
-	-DLIBDIR=\""$(libdir)"\" \
-  -DDATADIR=\""$(datadir)"\" \
-  -DG_LOG_DOMAIN=\"NuxTests\" \
-  -DTESTDIR=\""$(top_srcdir)/tests"\" \
-  $(GCC_TESTS_FLAGS) \
-  $(GMOCK_CPPFLAGS) \
-  $(GTEST_CPPFLAGS) \
-  $(NUX_CORE_CFLAGS) \
-  $(NUX_EXAMPLES_CFLAGS) \
-  $(NUX_CFLAGS) \
-  $(MAINTAINER_CFLAGS) \
-  $(IBUS_CFLAGS) \
-  $(GEIS_CFLAGS)
-
-gtest_nux_slow_LDADD = \
-  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
-  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-  $(NUX_LIBS) \
-  libgtest.a
-
-gtest_nux_slow_LDFLAGS = -lboost_system \
-                         -lboost_filesystem
+gtest_nux_slow_CPPFLAGS = $(GTestFlags)
+gtest_nux_slow_LDADD = $(GTestLibs)
+gtest_nux_slow_LDFLAGS = $(GTestLDFlags)
 
 ##### gtest-nuxgraphics ######
 
@@ -168,48 +134,8 @@ gtest_nuxgraphics_SOURCES = \
   gtest-nuxgraphics-texture.cpp \
   gtest-nuxgraphics-graphic-display.cpp
 
-gtest_nuxgraphics_CPPFLAGS = \
-  -I$(srcdir) \
-  -I$(top_srcdir) \
-  -DPREFIX=\""$(prefix)"\" \
-  -DLIBDIR=\""$(libdir)"\" \
-  -DDATADIR=\""$(datadir)"\" \
-  -DG_LOG_DOMAIN=\"NuxTests\" \
-  -DTESTDIR=\""$(top_srcdir)/tests"\" \
-  $(GCC_TESTS_FLAGS) \
-  $(GMOCK_CPPFLAGS) \
-  $(GTEST_CPPFLAGS) \
-  $(NUX_CORE_CFLAGS) \
-  $(NUX_EXAMPLES_CFLAGS) \
-  $(NUX_CFLAGS) \
-  $(MAINTAINER_CFLAGS)
-
-gtest_nuxgraphics_LDADD = \
-  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
-  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-  $(NUX_LIBS) \
-  libgtest.a
-
-TestFlags = -I$(srcdir) \
-  -I$(top_srcdir) \
-  -DPREFIX=\""$(prefix)"\" \
-  -DLIBDIR=\""$(libdir)"\" \
-  -DDATADIR=\""$(datadir)"\" \
-  -DG_LOG_DOMAIN=\"NuxTests\" \
-  -DTESTDIR=\""$(top_srcdir)/tests"\" \
-  $(GCC_TESTS_FLAGS) \
-  $(NUX_CORE_CFLAGS) \
-  $(NUX_EXAMPLES_CFLAGS) \
-  $(NUX_CFLAGS) \
-  $(MAINTAINER_CFLAGS) \
-  $(IBUS_CFLAGS) \
-  $(GEIS_CFLAGS)
-
-TestLibs = $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
-  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
-  $(NUX_LIBS)
+gtest_nuxgraphics_CPPFLAGS = $(GTestFlags)
+gtest_nuxgraphics_LDADD = $(GTestLibs)
 
 
 test_graphics_display_SOURCES = test_graphics_display.cpp
@@ -352,13 +278,33 @@ check-local: test gtest test-apps
 test:
 	@gtester --verbose -k -o=gtest-nux-results.xml ./gtest-nux
 
-gtest: gtest-nuxcore gtest-nuxgraphics gtest-nux
+gtest-build: gtest-nuxcore gtest-nuxgraphics gtest-nux gtest-nux-slow
+
+gtest: gtest-build
 	./gtest-nuxcore
 	./gtest-nuxgraphics
 	./gtest-nux
+	./gtest-nux-slow
 
-check-headless: gtest-nuxcore
-	@gtester --verbose -k -o=test-nux-results.xml ./gtest-nuxcore
+CHECK_GTEST_OPTIONS =
+
+if NUX_OPENGLES_20
+# Disable EmbeddedContext tests when OpenGLES is enabled, they tend to crash
+CHECK_GTEST_OPTIONS = --gtest_filter=-EmbeddedContext*
+endif # NUX_OPENGLES_20
+
+check-headless: gtest-nuxcore gtest-nuxgraphics gtest-nux gtest-nux-slow
+	@./gtest-nuxcore --gtest_output=xml:./test-nux-core-results.xml $(CHECK_GTEST_OPTIONS)
+	@./dummy-xorg-test-runner.sh ./gtest-nuxgraphics --gtest_output=xml:./test-nux-graphics-results.xml $(CHECK_GTEST_OPTIONS)
+	@./dummy-xorg-test-runner.sh ./gtest-nux --gtest_output=xml:./test-nux-results.xml $(CHECK_GTEST_OPTIONS)
+	@./dummy-xorg-test-runner.sh ./gtest-nux-slow --gtest_output=xml:./test-nux-slow-results.xml $(CHECK_GTEST_OPTIONS)
+
+check: gtest-nuxcore gtest-nuxgraphics gtest-nux gtest-nux-slow
+	@./gtest-nuxcore --gtest_output=xml:./test-nux-core-results.xml
+	@./gtest-nuxgraphics --gtest_output=xml:./test-nux-graphics-results.xml
+	@./gtest-nux --gtest_output=xml:./test-nux-results.xml
+	@./gtest-nux-slow --gtest_output=xml:./test-nux-slow-results.xml
+
 
 test-apps: test-graphics-display test-empty-window xtest-text-entry-xim xtest-text-entry xtest-button xtest-mouse-events xtest-mouse-buttons xtest-hgrid-key-navigation xtest-hlayout-key-navigation xtest-vlayout-key-navigation xtest-scrollbar xtest-focus-on-mouse-down xtest-focus-on-mouse-enter xtest-keynav-directions xtest-text-entry-logic xtest-text-entry-deadkeys xtest-text-entry-compositionkeys
 	./test-graphics-display
@@ -400,3 +346,13 @@ CLEANFILES = \
 
 endif
 
+unused_src = \
+ manual-tests/linaro-reference-fbo.txt \
+ manual-tests/text-entry.txt \
+ test-canvas.cpp \
+ test-nux.cpp \
+ test-system.cpp \
+ test-timeline.cpp \
+ xim-test-commands.txt
+
+EXTRA_DIST =  Readme.txt ${unused_src}

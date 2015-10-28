@@ -38,7 +38,7 @@ struct ComposeSequence
   const char* result;
 };
 
-static const size_t COMPOSE_SEQUENCES_SIZE = 4376;
+static const size_t COMPOSE_SEQUENCES_SIZE = 4444;
 
 static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_hook, XK_B, XK_VoidSymbol}, "Ɓ"}, // U0181 | LATIN CAPITAL LETTER B WITH HOOK
@@ -66,6 +66,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_grave, XK_Multi_key, XK_parenright, XK_Greek_ALPHA, XK_VoidSymbol}, "Ἂ"},
   {{XK_Multi_key, XK_grave, XK_dead_psili, XK_Greek_ALPHA, XK_VoidSymbol}, "Ἂ"},
   {{XK_Multi_key, XK_grave, XK_parenright, XK_Greek_ALPHA, XK_VoidSymbol}, "Ἂ"},
+  {{XK_dead_doublegrave, XK_O, XK_VoidSymbol}, "Ȍ"}, // U020C | LATIN CAPITAL LETTER O WITH DOUBLE GRAVE
   {{XK_dead_abovedot, XK_y, XK_VoidSymbol}, "ẏ"}, // U1E8F | LATIN SMALL LETTER Y WITH DOT ABOVE
   {{XK_Multi_key, XK_period, XK_y, XK_VoidSymbol}, "ẏ"},
   {{XK_Multi_key, XK_C, XK_equal, XK_VoidSymbol}, "€"}, // EuroSign | EURO SIGN
@@ -210,6 +211,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_voiced_sound, XK_kana_KO, XK_VoidSymbol}, "ゴ"}, // U30B4 | KATAKANA LETTER GO
   {{XK_Multi_key, XK_A, XK_T, XK_VoidSymbol}, "@"}, // at | COMMERCIAL AT
   {{XK_Multi_key, XK_parenleft, XK_N, XK_parenright, XK_VoidSymbol}, "Ⓝ"}, // U24C3 | CIRCLED LATIN CAPITAL LETTER N
+  {{XK_dead_abovering, XK_nobreakspace, XK_VoidSymbol}, "̊"}, // U030A | COMBINING RING ABOVE
   {{XK_dead_abovedot, XK_N, XK_VoidSymbol}, "Ṅ"}, // U1E44 | LATIN CAPITAL LETTER N WITH DOT ABOVE
   {{XK_Multi_key, XK_period, XK_N, XK_VoidSymbol}, "Ṅ"},
   {{XK_dead_caron, XK_space, XK_VoidSymbol}, "ˇ"}, // caron | CARON
@@ -223,8 +225,8 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_diaeresis, XK_E, XK_VoidSymbol}, "Ë"}, // Ediaeresis | LATIN CAPITAL LETTER E WITH DIAERESIS
   {{XK_Multi_key, XK_quotedbl, XK_E, XK_VoidSymbol}, "Ë"},
   {{XK_Multi_key, XK_E, XK_quotedbl, XK_VoidSymbol}, "Ë"},
-  {{XK_Multi_key, XK_E, XK_diaeresis, XK_VoidSymbol}, "Ë"},
   {{XK_Multi_key, XK_diaeresis, XK_E, XK_VoidSymbol}, "Ë"},
+  {{XK_Multi_key, XK_E, XK_diaeresis, XK_VoidSymbol}, "Ë"},
   {{XK_dead_grave, XK_dead_psili, XK_Greek_OMICRON, XK_VoidSymbol}, "Ὂ"}, // U1F4A | GREEK CAPITAL LETTER OMICRON WITH PSILI AND VARIA
   {{XK_dead_grave, XK_Multi_key, XK_parenright, XK_Greek_OMICRON, XK_VoidSymbol}, "Ὂ"},
   {{XK_Multi_key, XK_grave, XK_dead_psili, XK_Greek_OMICRON, XK_VoidSymbol}, "Ὂ"},
@@ -364,6 +366,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_apostrophe, XK_parenleft, XK_Greek_alpha, XK_VoidSymbol}, "ἅ"},
   {{XK_dead_diaeresis, XK_W, XK_VoidSymbol}, "Ẅ"}, // U1E84 | LATIN CAPITAL LETTER W WITH DIAERESIS
   {{XK_Multi_key, XK_quotedbl, XK_W, XK_VoidSymbol}, "Ẅ"},
+  {{XK_dead_invertedbreve, XK_e, XK_VoidSymbol}, "ȇ"}, // U0207 | LATIN SMALL LETTER E WITH INVERTED BREVE
   {{XK_dead_grave, XK_Ecircumflex, XK_VoidSymbol}, "Ề"}, // U1EC0 | LATIN CAPITAL LETTER E WITH CIRCUMFLEX AND GRAVE
   {{XK_Multi_key, XK_grave, XK_Ecircumflex, XK_VoidSymbol}, "Ề"},
   {{XK_dead_grave, XK_dead_circumflex, XK_E, XK_VoidSymbol}, "Ề"},
@@ -377,10 +380,10 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_E, XK_period, XK_VoidSymbol}, "Ė"},
   {{XK_dead_tilde, XK_equal, XK_VoidSymbol}, "≃"}, // similarequal | ASYMPTOTICALLY EQUAL TO
   {{XK_dead_belowmacron, XK_d, XK_VoidSymbol}, "ḏ"}, // U1E0F | LATIN SMALL LETTER D WITH LINE BELOW
-  {{XK_Multi_key, XK_minus, XK_d, XK_VoidSymbol}, "đ"}, // dstroke | LATIN SMALL LETTER D WITH STROKE
-  {{XK_dead_stroke, XK_d, XK_VoidSymbol}, "đ"},
-  {{XK_Multi_key, XK_slash, XK_d, XK_VoidSymbol}, "đ"},
+  {{XK_dead_stroke, XK_d, XK_VoidSymbol}, "đ"}, // dstroke | LATIN SMALL LETTER D WITH STROKE
+  {{XK_Multi_key, XK_minus, XK_d, XK_VoidSymbol}, "đ"},
   {{XK_Multi_key, XK_d, XK_minus, XK_VoidSymbol}, "đ"},
+  {{XK_Multi_key, XK_slash, XK_d, XK_VoidSymbol}, "đ"},
   {{XK_Multi_key, XK_KP_Divide, XK_d, XK_VoidSymbol}, "đ"},
   {{XK_dead_voiced_sound, XK_kana_WA, XK_VoidSymbol}, "ヷ"}, // U30F7 | KATAKANA LETTER VA
   {{XK_dead_acute, XK_dead_dasia, XK_Greek_epsilon, XK_VoidSymbol}, "ἕ"}, // U1F15 | GREEK SMALL LETTER EPSILON WITH DASIA AND OXIA
@@ -390,6 +393,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_apostrophe, XK_dead_dasia, XK_Greek_epsilon, XK_VoidSymbol}, "ἕ"},
   {{XK_Multi_key, XK_apostrophe, XK_parenleft, XK_Greek_epsilon, XK_VoidSymbol}, "ἕ"},
   {{XK_dead_belowmacron, XK_Z, XK_VoidSymbol}, "Ẕ"}, // U1E94 | LATIN CAPITAL LETTER Z WITH LINE BELOW
+  {{XK_dead_invertedbreve, XK_u, XK_VoidSymbol}, "ȗ"}, // U0217 | LATIN SMALL LETTER U WITH INVERTED BREVE
   {{XK_dead_iota, XK_dead_grave, XK_dead_psili, XK_Greek_ETA, XK_VoidSymbol}, "ᾚ"}, // U1F9A | GREEK CAPITAL LETTER ETA WITH PSILI AND VARIA AND PROSGEGRAMMENI
   {{XK_dead_iota, XK_dead_grave, XK_Multi_key, XK_parenright, XK_Greek_ETA, XK_VoidSymbol}, "ᾚ"},
   {{XK_dead_iota, XK_Multi_key, XK_grave, XK_dead_psili, XK_Greek_ETA, XK_VoidSymbol}, "ᾚ"},
@@ -500,12 +504,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_grave, XK_A, XK_VoidSymbol}, "À"}, // Agrave | LATIN CAPITAL LETTER A WITH GRAVE
   {{XK_Multi_key, XK_grave, XK_A, XK_VoidSymbol}, "À"},
   {{XK_Multi_key, XK_A, XK_grave, XK_VoidSymbol}, "À"},
-  {{XK_dead_acute, XK_dead_dasia, XK_Greek_omicron, XK_VoidSymbol}, "ὅ"}, // U1F45 | GREEK SMALL LETTER OMICRON WITH DASIA AND OXIA
-  {{XK_dead_acute, XK_Multi_key, XK_parenleft, XK_Greek_omicron, XK_VoidSymbol}, "ὅ"},
-  {{XK_Multi_key, XK_acute, XK_dead_dasia, XK_Greek_omicron, XK_VoidSymbol}, "ὅ"},
-  {{XK_Multi_key, XK_acute, XK_parenleft, XK_Greek_omicron, XK_VoidSymbol}, "ὅ"},
-  {{XK_Multi_key, XK_apostrophe, XK_dead_dasia, XK_Greek_omicron, XK_VoidSymbol}, "ὅ"},
-  {{XK_Multi_key, XK_apostrophe, XK_parenleft, XK_Greek_omicron, XK_VoidSymbol}, "ὅ"},
+  {{XK_dead_belowcircumflex, XK_E, XK_VoidSymbol}, "Ḙ"}, // U1E18 | LATIN CAPITAL LETTER E WITH CIRCUMFLEX BELOW
   {{XK_dead_tilde, XK_Ecircumflex, XK_VoidSymbol}, "Ễ"}, // U1EC4 | LATIN CAPITAL LETTER E WITH CIRCUMFLEX AND TILDE
   {{XK_Multi_key, XK_asciitilde, XK_Ecircumflex, XK_VoidSymbol}, "Ễ"},
   {{XK_dead_tilde, XK_dead_circumflex, XK_E, XK_VoidSymbol}, "Ễ"},
@@ -573,6 +572,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_underscore, XK_dead_diaeresis, XK_u, XK_VoidSymbol}, "ǖ"},
   {{XK_Multi_key, XK_underscore, XK_quotedbl, XK_u, XK_VoidSymbol}, "ǖ"},
   {{XK_dead_macron, XK_v, XK_VoidSymbol}, "ǖ"},
+  {{XK_dead_invertedbreve, XK_Cyrillic_i, XK_VoidSymbol}, "и̑"}, // CYRILLIC SMALL LETTER I WITH COMBINING INVERTED BREVE
   {{XK_Multi_key, XK_parenleft, XK_i, XK_parenright, XK_VoidSymbol}, "ⓘ"}, // U24D8 | CIRCLED LATIN SMALL LETTER I
   {{XK_Multi_key, XK_parenleft, XK_parenleft, XK_VoidSymbol}, "["}, // bracketleft | LEFT SQUARE BRACKET
   {{XK_dead_grave, XK_Greek_IOTA, XK_VoidSymbol}, "Ὶ"}, // U1FDA | GREEK CAPITAL LETTER IOTA WITH VARIA
@@ -614,6 +614,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_parenleft, XK_KP_Space, XK_KP_0, XK_parenright, XK_VoidSymbol}, "⑳"},
   {{XK_Multi_key, XK_parenleft, XK_KP_2, XK_0, XK_parenright, XK_VoidSymbol}, "⑳"},
   {{XK_Multi_key, XK_parenleft, XK_KP_2, XK_KP_0, XK_parenright, XK_VoidSymbol}, "⑳"},
+  {{XK_Multi_key, XK_equal, XK_greater, XK_VoidSymbol}, "⇒"}, // U21D2 | RIGHTWARDS DOUBLE ARROW
   {{XK_dead_belowdot, XK_Y, XK_VoidSymbol}, "Ỵ"}, // U1EF4 | LATIN CAPITAL LETTER Y WITH DOT BELOW
   {{XK_Multi_key, XK_exclam, XK_Y, XK_VoidSymbol}, "Ỵ"},
   {{XK_dead_diaeresis, XK_dead_belowdiaeresis, XK_equal, XK_VoidSymbol}, "⩷"}, // U2A77 | EQUALS SIGN WITH TWO DOTS ABOVE AND TWO DOTS BELOW
@@ -641,7 +642,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_A, XK_underscore, XK_VoidSymbol}, "Ā"},
   {{XK_Multi_key, XK_minus, XK_A, XK_VoidSymbol}, "Ā"},
   {{XK_Multi_key, XK_A, XK_minus, XK_VoidSymbol}, "Ā"},
-  {{XK_dead_stroke, XK_R, XK_VoidSymbol}, "Ɍ"}, // U024C | LATIN CAPITAL LETTER R WITH STROKE
+  {{XK_dead_invertedbreve, XK_A, XK_VoidSymbol}, "Ȃ"}, // U0202 | LATIN CAPITAL LETTER A WITH INVERTED BREVE
   {{XK_dead_diaeresis, XK_w, XK_VoidSymbol}, "ẅ"}, // U1E85 | LATIN SMALL LETTER W WITH DIAERESIS
   {{XK_Multi_key, XK_quotedbl, XK_w, XK_VoidSymbol}, "ẅ"},
   {{XK_dead_acute, XK_dead_psili, XK_Greek_alpha, XK_VoidSymbol}, "ἄ"}, // U1F04 | GREEK SMALL LETTER ALPHA WITH PSILI AND OXIA
@@ -665,11 +666,12 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_breve, XK_Cyrillic_U, XK_VoidSymbol}, "Ў"}, // U040E | CYRILLIC CAPITAL LETTER SHORT U
   {{XK_Multi_key, XK_U, XK_Cyrillic_U, XK_VoidSymbol}, "Ў"},
   {{XK_Multi_key, XK_b, XK_Cyrillic_U, XK_VoidSymbol}, "Ў"},
-  {{XK_Multi_key, XK_minus, XK_D, XK_VoidSymbol}, "Đ"}, // Dstroke | LATIN CAPITAL LETTER D WITH STROKE
-  {{XK_dead_stroke, XK_D, XK_VoidSymbol}, "Đ"},
+  {{XK_dead_stroke, XK_D, XK_VoidSymbol}, "Đ"}, // Dstroke | LATIN CAPITAL LETTER D WITH STROKE
+  {{XK_Multi_key, XK_minus, XK_D, XK_VoidSymbol}, "Đ"},
+  {{XK_Multi_key, XK_D, XK_minus, XK_VoidSymbol}, "Đ"},
   {{XK_Multi_key, XK_slash, XK_D, XK_VoidSymbol}, "Đ"},
   {{XK_Multi_key, XK_KP_Divide, XK_D, XK_VoidSymbol}, "Đ"},
-  {{XK_Multi_key, XK_D, XK_minus, XK_VoidSymbol}, "Đ"},
+  {{XK_dead_invertedbreve, XK_R, XK_VoidSymbol}, "Ȓ"}, // U0212 | LATIN CAPITAL LETTER R WITH INVERTED BREVE
   {{XK_dead_belowmacron, XK_z, XK_VoidSymbol}, "ẕ"}, // U1E95 | LATIN SMALL LETTER Z WITH LINE BELOW
   {{XK_dead_acute, XK_dead_psili, XK_Greek_epsilon, XK_VoidSymbol}, "ἔ"}, // U1F14 | GREEK SMALL LETTER EPSILON WITH PSILI AND OXIA
   {{XK_dead_acute, XK_Multi_key, XK_parenright, XK_Greek_epsilon, XK_VoidSymbol}, "ἔ"},
@@ -683,6 +685,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_asciicircum, XK_exclam, XK_O, XK_VoidSymbol}, "Ộ"},
   {{XK_dead_belowdot, XK_Ocircumflex, XK_VoidSymbol}, "Ộ"},
   {{XK_dead_belowdot, XK_dead_circumflex, XK_O, XK_VoidSymbol}, "Ộ"},
+  {{XK_Multi_key, XK_braceleft, XK_braceright, XK_VoidSymbol}, "∅"}, // U2205 | EMPTY SET
   {{XK_dead_belowtilde, XK_E, XK_VoidSymbol}, "Ḛ"}, // U1E1A | LATIN CAPITAL LETTER E WITH TILDE BELOW
   {{XK_dead_iota, XK_dead_tilde, XK_dead_dasia, XK_Greek_ETA, XK_VoidSymbol}, "ᾟ"}, // U1F9F | GREEK CAPITAL LETTER ETA WITH DASIA AND PERISPOMENI AND PROSGEGRAMMENI
   {{XK_dead_iota, XK_dead_tilde, XK_Multi_key, XK_parenleft, XK_Greek_ETA, XK_VoidSymbol}, "ᾟ"},
@@ -761,9 +764,9 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_parenleft, XK_KP_4, XK_KP_8, XK_parenright, XK_VoidSymbol}, "㊽"},
   {{XK_dead_acute, XK_A, XK_VoidSymbol}, "Á"}, // Aacute | LATIN CAPITAL LETTER A WITH ACUTE
   {{XK_Multi_key, XK_acute, XK_A, XK_VoidSymbol}, "Á"},
+  {{XK_Multi_key, XK_A, XK_acute, XK_VoidSymbol}, "Á"},
   {{XK_Multi_key, XK_apostrophe, XK_A, XK_VoidSymbol}, "Á"},
   {{XK_Multi_key, XK_A, XK_apostrophe, XK_VoidSymbol}, "Á"},
-  {{XK_Multi_key, XK_A, XK_acute, XK_VoidSymbol}, "Á"},
   {{XK_dead_abovedot, XK_l, XK_VoidSymbol}, "ŀ"}, // U0140 | LATIN SMALL LETTER L WITH MIDDLE DOT
   {{XK_dead_tilde, XK_ecircumflex, XK_VoidSymbol}, "ễ"}, // U1EC5 | LATIN SMALL LETTER E WITH CIRCUMFLEX AND TILDE
   {{XK_Multi_key, XK_asciitilde, XK_ecircumflex, XK_VoidSymbol}, "ễ"},
@@ -858,6 +861,9 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_parenleft, XK_z, XK_parenright, XK_VoidSymbol}, "ⓩ"}, // U24E9 | CIRCLED LATIN SMALL LETTER Z
   {{XK_dead_ogonek, XK_o, XK_VoidSymbol}, "ǫ"}, // U01EB | LATIN SMALL LETTER O WITH OGONEK
   {{XK_Multi_key, XK_semicolon, XK_o, XK_VoidSymbol}, "ǫ"},
+  {{XK_Multi_key, XK_o, XK_semicolon, XK_VoidSymbol}, "ǫ"},
+  {{XK_Multi_key, XK_comma, XK_o, XK_VoidSymbol}, "ǫ"},
+  {{XK_Multi_key, XK_o, XK_comma, XK_VoidSymbol}, "ǫ"},
   {{XK_Multi_key, XK_numbersign, XK_e, XK_VoidSymbol}, "♪"}, // U266a | EIGHTH NOTE
   {{XK_Multi_key, XK_parenleft, XK_kana_HO, XK_parenright, XK_VoidSymbol}, "㋭"}, // U32ED | CIRCLED KATAKANA HO
   {{XK_Multi_key, XK_0, XK_asciitilde, XK_VoidSymbol}, "⍬"}, // U236c | 0 ~ APL FUNCTIONAL SYMBOL ZILDE
@@ -901,6 +907,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_quotedbl, XK_dead_macron, XK_U, XK_VoidSymbol}, "Ṻ"},
   {{XK_Multi_key, XK_quotedbl, XK_macron, XK_U, XK_VoidSymbol}, "Ṻ"},
   {{XK_Multi_key, XK_quotedbl, XK_underscore, XK_U, XK_VoidSymbol}, "Ṻ"},
+  {{XK_Multi_key, XK_parenleft, XK_w, XK_parenright, XK_VoidSymbol}, "ⓦ"}, // U24E6 | CIRCLED LATIN SMALL LETTER W
   {{XK_dead_abovedot, XK_t, XK_VoidSymbol}, "ṫ"}, // U1E6B | LATIN SMALL LETTER T WITH DOT ABOVE
   {{XK_Multi_key, XK_period, XK_t, XK_VoidSymbol}, "ṫ"},
   {{XK_Multi_key, XK_t, XK_period, XK_VoidSymbol}, "ṫ"},
@@ -932,6 +939,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_c, XK_period, XK_VoidSymbol}, "ċ"},
   {{XK_dead_abovedot, XK_X, XK_VoidSymbol}, "Ẋ"}, // U1E8A | LATIN CAPITAL LETTER X WITH DOT ABOVE
   {{XK_Multi_key, XK_period, XK_X, XK_VoidSymbol}, "Ẋ"},
+  {{XK_dead_doublegrave, XK_o, XK_VoidSymbol}, "ȍ"}, // U020D | LATIN SMALL LETTER O WITH DOUBLE GRAVE
   {{XK_dead_acute, XK_Greek_OMICRON, XK_VoidSymbol}, "Ό"}, // U038C | GREEK CAPITAL LETTER OMICRON WITH TONOS
   {{XK_Multi_key, XK_acute, XK_Greek_OMICRON, XK_VoidSymbol}, "Ό"},
   {{XK_Multi_key, XK_apostrophe, XK_Greek_OMICRON, XK_VoidSymbol}, "Ό"},
@@ -1061,7 +1069,11 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_tilde, XK_Multi_key, XK_parenleft, XK_Greek_IOTA, XK_VoidSymbol}, "Ἷ"},
   {{XK_Multi_key, XK_asciitilde, XK_dead_dasia, XK_Greek_IOTA, XK_VoidSymbol}, "Ἷ"},
   {{XK_Multi_key, XK_asciitilde, XK_parenleft, XK_Greek_IOTA, XK_VoidSymbol}, "Ἷ"},
-  {{XK_Multi_key, XK_parenleft, XK_I, XK_parenright, XK_VoidSymbol}, "Ⓘ"}, // U24BE | CIRCLED LATIN CAPITAL LETTER I
+  {{XK_dead_circumflex, XK_o, XK_VoidSymbol}, "ô"}, // ocircumflex | LATIN SMALL LETTER O WITH CIRCUMFLEX
+  {{XK_Multi_key, XK_asciicircum, XK_o, XK_VoidSymbol}, "ô"},
+  {{XK_Multi_key, XK_o, XK_asciicircum, XK_VoidSymbol}, "ô"},
+  {{XK_Multi_key, XK_greater, XK_o, XK_VoidSymbol}, "ô"},
+  {{XK_Multi_key, XK_o, XK_greater, XK_VoidSymbol}, "ô"},
   {{XK_dead_hook, XK_W, XK_VoidSymbol}, "Ⱳ"}, // U2C72 | LATIN CAPITAL LETTER W WITH HOOK
   {{XK_dead_abovedot, XK_n, XK_VoidSymbol}, "ṅ"}, // U1E45 | LATIN SMALL LETTER N WITH DOT ABOVE
   {{XK_Multi_key, XK_period, XK_n, XK_VoidSymbol}, "ṅ"},
@@ -1083,7 +1095,17 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_acute, XK_Greek_omicron, XK_VoidSymbol}, "ό"},
   {{XK_Multi_key, XK_apostrophe, XK_Greek_omicron, XK_VoidSymbol}, "ό"},
   {{XK_Multi_key, XK_Greek_omicron, XK_apostrophe, XK_VoidSymbol}, "ό"},
-  {{XK_Multi_key, XK_parenleft, XK_Y, XK_parenright, XK_VoidSymbol}, "Ⓨ"}, // U24CE | CIRCLED LATIN CAPITAL LETTER Y
+  {{XK_dead_acute, XK_Otilde, XK_VoidSymbol}, "Ṍ"}, // U1E4C | LATIN CAPITAL LETTER O WITH TILDE AND ACUTE
+  {{XK_Multi_key, XK_acute, XK_Otilde, XK_VoidSymbol}, "Ṍ"},
+  {{XK_Multi_key, XK_apostrophe, XK_Otilde, XK_VoidSymbol}, "Ṍ"},
+  {{XK_dead_acute, XK_dead_tilde, XK_O, XK_VoidSymbol}, "Ṍ"},
+  {{XK_dead_acute, XK_Multi_key, XK_asciitilde, XK_O, XK_VoidSymbol}, "Ṍ"},
+  {{XK_Multi_key, XK_acute, XK_dead_tilde, XK_O, XK_VoidSymbol}, "Ṍ"},
+  {{XK_Multi_key, XK_acute, XK_asciitilde, XK_O, XK_VoidSymbol}, "Ṍ"},
+  {{XK_Multi_key, XK_apostrophe, XK_dead_tilde, XK_O, XK_VoidSymbol}, "Ṍ"},
+  {{XK_Multi_key, XK_apostrophe, XK_asciitilde, XK_O, XK_VoidSymbol}, "Ṍ"},
+  {{XK_dead_tilde, XK_Oacute, XK_VoidSymbol}, "Ṍ"},
+  {{XK_dead_tilde, XK_dead_acute, XK_O, XK_VoidSymbol}, "Ṍ"},
   {{XK_dead_caron, XK_i, XK_VoidSymbol}, "ǐ"}, // U01D0 | LATIN SMALL LETTER I WITH CARON
   {{XK_Multi_key, XK_c, XK_i, XK_VoidSymbol}, "ǐ"},
   {{XK_Multi_key, XK_parenleft, XK_kana_U, XK_parenright, XK_VoidSymbol}, "㋒"}, // U32D2 | CIRCLED KATAKANA U
@@ -1181,11 +1203,13 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_abovedot, XK_Z, XK_VoidSymbol}, "Ż"}, // U017B | LATIN CAPITAL LETTER Z WITH DOT ABOVE
   {{XK_Multi_key, XK_period, XK_Z, XK_VoidSymbol}, "Ż"},
   {{XK_Multi_key, XK_Z, XK_period, XK_VoidSymbol}, "Ż"},
+  {{XK_dead_doublegrave, XK_A, XK_VoidSymbol}, "Ȁ"}, // U0200 | LATIN CAPITAL LETTER A WITH DOUBLE GRAVE
   {{XK_dead_acute, XK_w, XK_VoidSymbol}, "ẃ"}, // U1E83 | LATIN SMALL LETTER W WITH ACUTE
   {{XK_Multi_key, XK_acute, XK_w, XK_VoidSymbol}, "ẃ"},
   {{XK_Multi_key, XK_apostrophe, XK_w, XK_VoidSymbol}, "ẃ"},
   {{XK_dead_breve, XK_A, XK_VoidSymbol}, "Ă"}, // U0102 | LATIN CAPITAL LETTER A WITH BREVE
   {{XK_Multi_key, XK_U, XK_A, XK_VoidSymbol}, "Ă"},
+  {{XK_Multi_key, XK_u, XK_A, XK_VoidSymbol}, "Ă"},
   {{XK_Multi_key, XK_b, XK_A, XK_VoidSymbol}, "Ă"},
   {{XK_Multi_key, XK_A, XK_parenleft, XK_VoidSymbol}, "Ă"},
   {{XK_dead_doublegrave, XK_Cyrillic_u, XK_VoidSymbol}, "у̏"}, // CYRILLIC SMALL LETTER U WITH COMBINING DOUBLE GRAVE ACCENT
@@ -1217,6 +1241,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_tilde, XK_Multi_key, XK_parenright, XK_Greek_ALPHA, XK_VoidSymbol}, "Ἆ"},
   {{XK_Multi_key, XK_asciitilde, XK_dead_psili, XK_Greek_ALPHA, XK_VoidSymbol}, "Ἆ"},
   {{XK_Multi_key, XK_asciitilde, XK_parenright, XK_Greek_ALPHA, XK_VoidSymbol}, "Ἆ"},
+  {{XK_dead_doublegrave, XK_R, XK_VoidSymbol}, "Ȑ"}, // U0210 | LATIN CAPITAL LETTER R WITH DOUBLE GRAVE
   {{XK_dead_belowdot, XK_z, XK_VoidSymbol}, "ẓ"}, // U1E93 | LATIN SMALL LETTER Z WITH DOT BELOW
   {{XK_Multi_key, XK_exclam, XK_z, XK_VoidSymbol}, "ẓ"},
   {{XK_dead_macron, XK_E, XK_VoidSymbol}, "Ē"}, // U0112 | LATIN CAPITAL LETTER E WITH MACRON
@@ -1225,8 +1250,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_E, XK_underscore, XK_VoidSymbol}, "Ē"},
   {{XK_Multi_key, XK_minus, XK_E, XK_VoidSymbol}, "Ē"},
   {{XK_Multi_key, XK_E, XK_minus, XK_VoidSymbol}, "Ē"},
-  {{XK_dead_currency, XK_f, XK_VoidSymbol}, "ƒ"}, // function | LATIN SMALL LETTER F WITH HOOK
-  {{XK_dead_hook, XK_f, XK_VoidSymbol}, "ƒ"},
+  {{XK_Multi_key, XK_F, XK_U, XK_VoidSymbol}, "🖕"}, // U1F595 | REVERSED HAND WITH MIDDLE FINGER EXTENDED
   {{XK_dead_iota, XK_dead_dasia, XK_Greek_ETA, XK_VoidSymbol}, "ᾙ"}, // U1F99 | GREEK CAPITAL LETTER ETA WITH DASIA AND PROSGEGRAMMENI
   {{XK_dead_iota, XK_Multi_key, XK_parenleft, XK_Greek_ETA, XK_VoidSymbol}, "ᾙ"},
   {{XK_Multi_key, XK_Greek_iota, XK_dead_dasia, XK_Greek_ETA, XK_VoidSymbol}, "ᾙ"},
@@ -1324,6 +1348,8 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_comma, XK_C, XK_VoidSymbol}, "Ç"},
   {{XK_Multi_key, XK_C, XK_comma, XK_VoidSymbol}, "Ç"},
   {{XK_Multi_key, XK_cedilla, XK_C, XK_VoidSymbol}, "Ç"},
+  {{XK_Multi_key, XK_parenleft, XK_1, XK_parenright, XK_VoidSymbol}, "①"}, // U2460 | CIRCLED DIGIT ONE
+  {{XK_Multi_key, XK_parenleft, XK_KP_1, XK_parenright, XK_VoidSymbol}, "①"},
   {{XK_dead_belowmacron, XK_N, XK_VoidSymbol}, "Ṉ"}, // U1E48 | LATIN CAPITAL LETTER N WITH LINE BELOW
   {{XK_dead_voiced_sound, XK_kana_SA, XK_VoidSymbol}, "ザ"}, // U30B6 | KATAKANA LETTER ZA
   {{XK_dead_caron, XK_A, XK_VoidSymbol}, "Ǎ"}, // U01CD | LATIN CAPITAL LETTER A WITH CARON
@@ -1403,6 +1429,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_grave, XK_y, XK_VoidSymbol}, "ỳ"},
   {{XK_dead_ogonek, XK_U, XK_VoidSymbol}, "Ų"}, // U0172 | LATIN CAPITAL LETTER U WITH OGONEK
   {{XK_Multi_key, XK_semicolon, XK_U, XK_VoidSymbol}, "Ų"},
+  {{XK_Multi_key, XK_U, XK_semicolon, XK_VoidSymbol}, "Ų"},
   {{XK_Multi_key, XK_comma, XK_U, XK_VoidSymbol}, "Ų"},
   {{XK_Multi_key, XK_U, XK_comma, XK_VoidSymbol}, "Ų"},
   {{XK_Multi_key, XK_slash, XK_minus, XK_VoidSymbol}, "⌿"}, // U233f | / - APL FUNCTIONAL SYMBOL SLASH BAR
@@ -1421,7 +1448,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_tilde, XK_Uacute, XK_VoidSymbol}, "Ṹ"},
   {{XK_dead_tilde, XK_dead_acute, XK_U, XK_VoidSymbol}, "Ṹ"},
   {{XK_Multi_key, XK_parenleft, XK_kana_WA, XK_parenright, XK_VoidSymbol}, "㋻"}, // U32FB | CIRCLED KATAKANA WA
-  {{XK_dead_voiced_sound, XK_kana_SO, XK_VoidSymbol}, "ゾ"}, // U30BE | KATAKANA LETTER ZO
+  {{XK_Multi_key, XK_parenleft, XK_I, XK_parenright, XK_VoidSymbol}, "Ⓘ"}, // U24BE | CIRCLED LATIN CAPITAL LETTER I
   {{XK_dead_acute, XK_ae, XK_VoidSymbol}, "ǽ"}, // U01FD | LATIN SMALL LETTER AE WITH ACUTE
   {{XK_Multi_key, XK_acute, XK_ae, XK_VoidSymbol}, "ǽ"},
   {{XK_Multi_key, XK_apostrophe, XK_ae, XK_VoidSymbol}, "ǽ"},
@@ -1444,6 +1471,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_parenleft, XK_Greek_ALPHA, XK_VoidSymbol}, "Ἁ"},
   {{XK_dead_belowdot, XK_W, XK_VoidSymbol}, "Ẉ"}, // U1E88 | LATIN CAPITAL LETTER W WITH DOT BELOW
   {{XK_Multi_key, XK_exclam, XK_W, XK_VoidSymbol}, "Ẉ"},
+  {{XK_dead_invertedbreve, XK_i, XK_VoidSymbol}, "ȋ"}, // U020B | LATIN SMALL LETTER I WITH INVERTED BREVE
   {{XK_dead_caron, XK_c, XK_VoidSymbol}, "č"}, // U010D | LATIN SMALL LETTER C WITH CARON
   {{XK_Multi_key, XK_c, XK_c, XK_VoidSymbol}, "č"},
   {{XK_Multi_key, XK_less, XK_c, XK_VoidSymbol}, "č"},
@@ -1461,6 +1489,8 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_abovering, XK_w, XK_VoidSymbol}, "ẘ"}, // U1E98 | LATIN SMALL LETTER W WITH RING ABOVE
   {{XK_Multi_key, XK_o, XK_w, XK_VoidSymbol}, "ẘ"},
   {{XK_dead_belowcomma, XK_t, XK_VoidSymbol}, "ț"}, // U021B | LATIN SMALL LETTER T WITH COMMA BELOW
+  {{XK_Multi_key, XK_semicolon, XK_t, XK_VoidSymbol}, "ț"},
+  {{XK_Multi_key, XK_t, XK_semicolon, XK_VoidSymbol}, "ț"},
   {{XK_dead_circumflex, XK_g, XK_VoidSymbol}, "ĝ"}, // U011D | LATIN SMALL LETTER G WITH CIRCUMFLEX
   {{XK_Multi_key, XK_asciicircum, XK_g, XK_VoidSymbol}, "ĝ"},
   {{XK_dead_iota, XK_dead_tilde, XK_dead_psili, XK_Greek_ETA, XK_VoidSymbol}, "ᾞ"}, // U1F9E | GREEK CAPITAL LETTER ETA WITH PSILI AND PERISPOMENI AND PROSGEGRAMMENI
@@ -1576,6 +1606,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_parenleft, XK_3, XK_KP_1, XK_parenright, XK_VoidSymbol}, "㉛"},
   {{XK_Multi_key, XK_parenleft, XK_KP_3, XK_1, XK_parenright, XK_VoidSymbol}, "㉛"},
   {{XK_Multi_key, XK_parenleft, XK_KP_3, XK_KP_1, XK_parenright, XK_VoidSymbol}, "㉛"},
+  {{XK_Multi_key, XK_parenleft, XK_Y, XK_parenright, XK_VoidSymbol}, "Ⓨ"}, // U24CE | CIRCLED LATIN CAPITAL LETTER Y
   {{XK_dead_circumflex, XK_s, XK_VoidSymbol}, "ŝ"}, // U015D | LATIN SMALL LETTER S WITH CIRCUMFLEX
   {{XK_Multi_key, XK_asciicircum, XK_s, XK_VoidSymbol}, "ŝ"},
   {{XK_dead_diaeresis, XK_U, XK_VoidSymbol}, "Ü"}, // Udiaeresis | LATIN CAPITAL LETTER U WITH DIAERESIS
@@ -1661,7 +1692,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_Greek_iota, XK_grave, XK_dead_dasia, XK_Greek_alpha, XK_VoidSymbol}, "ᾃ"},
   {{XK_Multi_key, XK_Greek_iota, XK_grave, XK_parenleft, XK_Greek_alpha, XK_VoidSymbol}, "ᾃ"},
   {{XK_dead_hook, XK_C, XK_VoidSymbol}, "Ƈ"}, // U0187 | LATIN CAPITAL LETTER C WITH HOOK
-  {{XK_Multi_key, XK_parenleft, XK_w, XK_parenright, XK_VoidSymbol}, "ⓦ"}, // U24E6 | CIRCLED LATIN SMALL LETTER W
+  {{XK_dead_invertedbreve, XK_E, XK_VoidSymbol}, "Ȇ"}, // U0206 | LATIN CAPITAL LETTER E WITH INVERTED BREVE
   {{XK_dead_belowdot, XK_w, XK_VoidSymbol}, "ẉ"}, // U1E89 | LATIN SMALL LETTER W WITH DOT BELOW
   {{XK_Multi_key, XK_exclam, XK_w, XK_VoidSymbol}, "ẉ"},
   {{XK_dead_psili, XK_Greek_ALPHA, XK_VoidSymbol}, "Ἀ"}, // U1F08 | GREEK CAPITAL LETTER ALPHA WITH PSILI
@@ -1685,10 +1716,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_stroke, XK_I, XK_VoidSymbol}, "Ɨ"}, // U0197 | LATIN CAPITAL LETTER I WITH STROKE
   {{XK_Multi_key, XK_slash, XK_I, XK_VoidSymbol}, "Ɨ"},
   {{XK_Multi_key, XK_KP_Divide, XK_I, XK_VoidSymbol}, "Ɨ"},
-  {{XK_Multi_key, XK_parenleft, XK_3, XK_7, XK_parenright, XK_VoidSymbol}, "㊲"}, // U32B2 | CIRCLED NUMBER THIRTY SEVEN
-  {{XK_Multi_key, XK_parenleft, XK_3, XK_KP_7, XK_parenright, XK_VoidSymbol}, "㊲"},
-  {{XK_Multi_key, XK_parenleft, XK_KP_3, XK_7, XK_parenright, XK_VoidSymbol}, "㊲"},
-  {{XK_Multi_key, XK_parenleft, XK_KP_3, XK_KP_7, XK_parenright, XK_VoidSymbol}, "㊲"},
+  {{XK_dead_invertedbreve, XK_U, XK_VoidSymbol}, "Ȗ"}, // U0216 | LATIN CAPITAL LETTER U WITH INVERTED BREVE
   {{XK_dead_abovering, XK_y, XK_VoidSymbol}, "ẙ"}, // U1E99 | LATIN SMALL LETTER Y WITH RING ABOVE
   {{XK_Multi_key, XK_o, XK_y, XK_VoidSymbol}, "ẙ"},
   {{XK_dead_psili, XK_Greek_EPSILON, XK_VoidSymbol}, "Ἐ"}, // U1F18 | GREEK CAPITAL LETTER EPSILON WITH PSILI
@@ -1885,6 +1913,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_i, XK_apostrophe, XK_VoidSymbol}, "í"},
   {{XK_dead_breve, XK_U, XK_VoidSymbol}, "Ŭ"}, // U016C | LATIN CAPITAL LETTER U WITH BREVE
   {{XK_Multi_key, XK_U, XK_U, XK_VoidSymbol}, "Ŭ"},
+  {{XK_Multi_key, XK_u, XK_U, XK_VoidSymbol}, "Ŭ"},
   {{XK_Multi_key, XK_b, XK_U, XK_VoidSymbol}, "Ŭ"},
   {{XK_Multi_key, XK_numbersign, XK_f, XK_VoidSymbol}, "♮"}, // U266e | MUSIC NATURAL SIGN
   {{XK_Multi_key, XK_parenleft, XK_kana_ME, XK_parenright, XK_VoidSymbol}, "㋱"}, // U32F1 | CIRCLED KATAKANA ME
@@ -1910,6 +1939,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_voiced_sound, XK_kana_CHI, XK_VoidSymbol}, "ヂ"}, // U30C2 | KATAKANA LETTER DI
   {{XK_dead_belowdot, XK_V, XK_VoidSymbol}, "Ṿ"}, // U1E7E | LATIN CAPITAL LETTER V WITH DOT BELOW
   {{XK_Multi_key, XK_exclam, XK_V, XK_VoidSymbol}, "Ṿ"},
+  {{XK_dead_doublegrave, XK_a, XK_VoidSymbol}, "ȁ"}, // U0201 | LATIN SMALL LETTER A WITH DOUBLE GRAVE
   {{XK_dead_grave, XK_dead_dasia, XK_Greek_alpha, XK_VoidSymbol}, "ἃ"}, // U1F03 | GREEK SMALL LETTER ALPHA WITH DASIA AND VARIA
   {{XK_dead_grave, XK_Multi_key, XK_parenleft, XK_Greek_alpha, XK_VoidSymbol}, "ἃ"},
   {{XK_Multi_key, XK_grave, XK_dead_dasia, XK_Greek_alpha, XK_VoidSymbol}, "ἃ"},
@@ -1944,8 +1974,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_doubleacute, XK_nobreakspace, XK_VoidSymbol}, "̋"}, // U030B | COMBINING DOUBLE ACUTE ACCENT
   {{XK_dead_abovedot, XK_Y, XK_VoidSymbol}, "Ẏ"}, // U1E8E | LATIN CAPITAL LETTER Y WITH DOT ABOVE
   {{XK_Multi_key, XK_period, XK_Y, XK_VoidSymbol}, "Ẏ"},
-  {{XK_dead_circumflex, XK_Cyrillic_a, XK_VoidSymbol}, "а̂"}, // CYRILLIC SMALL LETTER A WITH COMBINING CIRCUMFLEX ACCENT
-  {{XK_Multi_key, XK_asciicircum, XK_Cyrillic_a, XK_VoidSymbol}, "а̂"},
+  {{XK_dead_doublegrave, XK_r, XK_VoidSymbol}, "ȑ"}, // U0211 | LATIN SMALL LETTER R WITH DOUBLE GRAVE
   {{XK_dead_acute, XK_Greek_iotadieresis, XK_VoidSymbol}, "ΐ"}, // U0390 | GREEK SMALL LETTER IOTA WITH DIALYTIKA AND TONOS
   {{XK_Multi_key, XK_acute, XK_Greek_iotadieresis, XK_VoidSymbol}, "ΐ"},
   {{XK_Multi_key, XK_apostrophe, XK_Greek_iotadieresis, XK_VoidSymbol}, "ΐ"},
@@ -1986,10 +2015,10 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_grave, XK_Multi_key, XK_parenleft, XK_Greek_eta, XK_VoidSymbol}, "ἣ"},
   {{XK_Multi_key, XK_grave, XK_dead_dasia, XK_Greek_eta, XK_VoidSymbol}, "ἣ"},
   {{XK_Multi_key, XK_grave, XK_parenleft, XK_Greek_eta, XK_VoidSymbol}, "ἣ"},
-  {{XK_Multi_key, XK_bar, XK_C, XK_VoidSymbol}, "¢"}, // cent | CENT SIGN
-  {{XK_Multi_key, XK_bar, XK_c, XK_VoidSymbol}, "¢"},
-  {{XK_Multi_key, XK_C, XK_bar, XK_VoidSymbol}, "¢"},
+  {{XK_Multi_key, XK_C, XK_bar, XK_VoidSymbol}, "¢"}, // cent | CENT SIGN
+  {{XK_Multi_key, XK_bar, XK_C, XK_VoidSymbol}, "¢"},
   {{XK_Multi_key, XK_c, XK_bar, XK_VoidSymbol}, "¢"},
+  {{XK_Multi_key, XK_bar, XK_c, XK_VoidSymbol}, "¢"},
   {{XK_Multi_key, XK_c, XK_slash, XK_VoidSymbol}, "¢"},
   {{XK_Multi_key, XK_slash, XK_c, XK_VoidSymbol}, "¢"},
   {{XK_dead_currency, XK_c, XK_VoidSymbol}, "¢"},
@@ -2010,6 +2039,10 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_acute, XK_Cyrillic_U, XK_VoidSymbol}, "У́"},
   {{XK_Multi_key, XK_apostrophe, XK_Cyrillic_U, XK_VoidSymbol}, "У́"},
   {{XK_dead_stroke, XK_E, XK_VoidSymbol}, "Ɇ"}, // U0246 | LATIN CAPITAL LETTER E WITH STROKE
+  {{XK_Multi_key, XK_parenleft, XK_3, XK_7, XK_parenright, XK_VoidSymbol}, "㊲"}, // U32B2 | CIRCLED NUMBER THIRTY SEVEN
+  {{XK_Multi_key, XK_parenleft, XK_3, XK_KP_7, XK_parenright, XK_VoidSymbol}, "㊲"},
+  {{XK_Multi_key, XK_parenleft, XK_KP_3, XK_7, XK_parenright, XK_VoidSymbol}, "㊲"},
+  {{XK_Multi_key, XK_parenleft, XK_KP_3, XK_KP_7, XK_parenright, XK_VoidSymbol}, "㊲"},
   {{XK_dead_hook, XK_T, XK_VoidSymbol}, "Ƭ"}, // U01AC | LATIN CAPITAL LETTER T WITH HOOK
   {{XK_dead_acute, XK_Abreve, XK_VoidSymbol}, "Ắ"}, // U1EAE | LATIN CAPITAL LETTER A WITH BREVE AND ACUTE
   {{XK_Multi_key, XK_acute, XK_Abreve, XK_VoidSymbol}, "Ắ"},
@@ -2048,11 +2081,11 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_grave, XK_parenleft, XK_Greek_iota, XK_VoidSymbol}, "ἳ"},
   {{XK_dead_circumflex, XK_2, XK_VoidSymbol}, "²"}, // twosuperior | SUPERSCRIPT TWO
   {{XK_Multi_key, XK_asciicircum, XK_2, XK_VoidSymbol}, "²"},
+  {{XK_Multi_key, XK_2, XK_asciicircum, XK_VoidSymbol}, "²"},
   {{XK_dead_circumflex, XK_KP_Space, XK_VoidSymbol}, "²"},
   {{XK_Multi_key, XK_asciicircum, XK_KP_Space, XK_VoidSymbol}, "²"},
   {{XK_dead_circumflex, XK_KP_2, XK_VoidSymbol}, "²"},
   {{XK_Multi_key, XK_asciicircum, XK_KP_2, XK_VoidSymbol}, "²"},
-  {{XK_Multi_key, XK_2, XK_asciicircum, XK_VoidSymbol}, "²"},
   {{XK_Multi_key, XK_parenleft, XK_kana_RA, XK_parenright, XK_VoidSymbol}, "㋶"}, // U32F6 | CIRCLED KATAKANA RA
   {{XK_dead_cedilla, XK_k, XK_VoidSymbol}, "ķ"}, // U0137 | LATIN SMALL LETTER K WITH CEDILLA
   {{XK_Multi_key, XK_comma, XK_k, XK_VoidSymbol}, "ķ"},
@@ -2086,9 +2119,9 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_grave, XK_parenleft, XK_Greek_omicron, XK_VoidSymbol}, "ὃ"},
   {{XK_dead_circumflex, XK_A, XK_VoidSymbol}, "Â"}, // Acircumflex | LATIN CAPITAL LETTER A WITH CIRCUMFLEX
   {{XK_Multi_key, XK_asciicircum, XK_A, XK_VoidSymbol}, "Â"},
+  {{XK_Multi_key, XK_A, XK_asciicircum, XK_VoidSymbol}, "Â"},
   {{XK_Multi_key, XK_greater, XK_A, XK_VoidSymbol}, "Â"},
   {{XK_Multi_key, XK_A, XK_greater, XK_VoidSymbol}, "Â"},
-  {{XK_Multi_key, XK_A, XK_asciicircum, XK_VoidSymbol}, "Â"},
   {{XK_dead_caron, XK_N, XK_VoidSymbol}, "Ň"}, // U0147 | LATIN CAPITAL LETTER N WITH CARON
   {{XK_Multi_key, XK_c, XK_N, XK_VoidSymbol}, "Ň"},
   {{XK_Multi_key, XK_less, XK_N, XK_VoidSymbol}, "Ň"},
@@ -2107,8 +2140,6 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_parenleft, XK_KP_Space, XK_KP_1, XK_parenright, XK_VoidSymbol}, "㉑"},
   {{XK_Multi_key, XK_parenleft, XK_KP_2, XK_1, XK_parenright, XK_VoidSymbol}, "㉑"},
   {{XK_Multi_key, XK_parenleft, XK_KP_2, XK_KP_1, XK_parenright, XK_VoidSymbol}, "㉑"},
-  {{XK_dead_circumflex, XK_Cyrillic_ie, XK_VoidSymbol}, "е̂"}, // CYRILLIC SMALL LETTER IE WITH COMBINING CIRCUMFLEX ACCENT
-  {{XK_Multi_key, XK_asciicircum, XK_Cyrillic_ie, XK_VoidSymbol}, "е̂"},
   {{XK_dead_grave, XK_dead_dasia, XK_Greek_upsilon, XK_VoidSymbol}, "ὓ"}, // U1F53 | GREEK SMALL LETTER UPSILON WITH DASIA AND VARIA
   {{XK_dead_grave, XK_Multi_key, XK_parenleft, XK_Greek_upsilon, XK_VoidSymbol}, "ὓ"},
   {{XK_Multi_key, XK_grave, XK_dead_dasia, XK_Greek_upsilon, XK_VoidSymbol}, "ὓ"},
@@ -2116,6 +2147,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_grave, XK_O, XK_VoidSymbol}, "Ò"}, // Ograve | LATIN CAPITAL LETTER O WITH GRAVE
   {{XK_Multi_key, XK_grave, XK_O, XK_VoidSymbol}, "Ò"},
   {{XK_Multi_key, XK_O, XK_grave, XK_VoidSymbol}, "Ò"},
+  {{XK_dead_voiced_sound, XK_kana_SO, XK_VoidSymbol}, "ゾ"}, // U30BE | KATAKANA LETTER ZO
   {{XK_dead_cedilla, XK_r, XK_VoidSymbol}, "ŗ"}, // U0157 | LATIN SMALL LETTER R WITH CEDILLA
   {{XK_Multi_key, XK_comma, XK_r, XK_VoidSymbol}, "ŗ"},
   {{XK_Multi_key, XK_r, XK_comma, XK_VoidSymbol}, "ŗ"},
@@ -2163,7 +2195,8 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_KP_Divide, XK_t, XK_VoidSymbol}, "ŧ"},
   {{XK_Multi_key, XK_t, XK_slash, XK_VoidSymbol}, "ŧ"},
   {{XK_Multi_key, XK_t, XK_minus, XK_VoidSymbol}, "ŧ"},
-  {{XK_Multi_key, XK_parenleft, XK_kana_NU, XK_parenright, XK_VoidSymbol}, "㋦"}, // U32E6 | CIRCLED KATAKANA NU
+  {{XK_dead_psili, XK_Greek_upsilon, XK_VoidSymbol}, "ὐ"}, // U1F50 | GREEK SMALL LETTER UPSILON WITH PSILI
+  {{XK_Multi_key, XK_parenright, XK_Greek_upsilon, XK_VoidSymbol}, "ὐ"},
   {{XK_Multi_key, XK_numbersign, XK_q, XK_VoidSymbol}, "♩"}, // U2669 | QUARTER NOTE
   {{XK_dead_breve, XK_Greek_UPSILON, XK_VoidSymbol}, "Ῠ"}, // U1FE8 | GREEK CAPITAL LETTER UPSILON WITH VRACHY
   {{XK_Multi_key, XK_U, XK_Greek_UPSILON, XK_VoidSymbol}, "Ῠ"},
@@ -2189,7 +2222,8 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_horn, XK_dead_tilde, XK_U, XK_VoidSymbol}, "Ữ"},
   {{XK_dead_hook, XK_m, XK_VoidSymbol}, "ɱ"}, // U0271 | LATIN SMALL LETTER M WITH HOOK
   {{XK_dead_currency, XK_M, XK_VoidSymbol}, "ℳ"}, // U2133 | SCRIPT CAPITAL M
-  {{XK_Multi_key, XK_parenleft, XK_v, XK_parenright, XK_VoidSymbol}, "ⓥ"}, // U24E5 | CIRCLED LATIN SMALL LETTER V
+  {{XK_dead_circumflex, XK_Cyrillic_ie, XK_VoidSymbol}, "е̂"}, // CYRILLIC SMALL LETTER IE WITH COMBINING CIRCUMFLEX ACCENT
+  {{XK_Multi_key, XK_asciicircum, XK_Cyrillic_ie, XK_VoidSymbol}, "е̂"},
   {{XK_dead_grave, XK_o, XK_VoidSymbol}, "ò"}, // ograve | LATIN SMALL LETTER O WITH GRAVE
   {{XK_Multi_key, XK_grave, XK_o, XK_VoidSymbol}, "ò"},
   {{XK_Multi_key, XK_o, XK_grave, XK_VoidSymbol}, "ò"},
@@ -2240,13 +2274,15 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_diaeresis, XK_acute, XK_VoidSymbol}, "΅"},
   {{XK_Multi_key, XK_diaeresis, XK_apostrophe, XK_VoidSymbol}, "΅"},
   {{XK_Multi_key, XK_apostrophe, XK_quotedbl, XK_space, XK_VoidSymbol}, "΅"},
+  {{XK_dead_doublegrave, XK_E, XK_VoidSymbol}, "Ȅ"}, // U0204 | LATIN CAPITAL LETTER E WITH DOUBLE GRAVE
   {{XK_dead_abovedot, XK_w, XK_VoidSymbol}, "ẇ"}, // U1E87 | LATIN SMALL LETTER W WITH DOT ABOVE
   {{XK_Multi_key, XK_period, XK_w, XK_VoidSymbol}, "ẇ"},
   {{XK_Multi_key, XK_0, XK_3, XK_VoidSymbol}, "↉"}, // U2189 | VULGAR FRACTION ZERO THIRDS
   {{XK_Multi_key, XK_space, XK_period, XK_VoidSymbol}, " "}, // U2008 | PUNCTUATION SPACE
   {{XK_dead_grave, XK_Cyrillic_U, XK_VoidSymbol}, "У̀"}, // CYRILLIC CAPITAL LETTER U WITH COMBINING GRAVE ACCENT
   {{XK_Multi_key, XK_grave, XK_Cyrillic_U, XK_VoidSymbol}, "У̀"},
-  {{XK_dead_abovering, XK_nobreakspace, XK_VoidSymbol}, "̊"}, // U030A | COMBINING RING ABOVE
+  {{XK_dead_currency, XK_f, XK_VoidSymbol}, "ƒ"}, // function | LATIN SMALL LETTER F WITH HOOK
+  {{XK_dead_hook, XK_f, XK_VoidSymbol}, "ƒ"},
   {{XK_dead_iota, XK_dead_acute, XK_dead_dasia, XK_Greek_ALPHA, XK_VoidSymbol}, "ᾍ"}, // U1F8D | GREEK CAPITAL LETTER ALPHA WITH DASIA AND OXIA AND PROSGEGRAMMENI
   {{XK_dead_iota, XK_dead_acute, XK_Multi_key, XK_parenleft, XK_Greek_ALPHA, XK_VoidSymbol}, "ᾍ"},
   {{XK_dead_iota, XK_Multi_key, XK_acute, XK_dead_dasia, XK_Greek_ALPHA, XK_VoidSymbol}, "ᾍ"},
@@ -2270,6 +2306,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_grave, XK_Multi_key, XK_parenright, XK_Greek_epsilon, XK_VoidSymbol}, "ἒ"},
   {{XK_Multi_key, XK_grave, XK_dead_psili, XK_Greek_epsilon, XK_VoidSymbol}, "ἒ"},
   {{XK_Multi_key, XK_grave, XK_parenright, XK_Greek_epsilon, XK_VoidSymbol}, "ἒ"},
+  {{XK_dead_doublegrave, XK_U, XK_VoidSymbol}, "Ȕ"}, // U0214 | LATIN CAPITAL LETTER U WITH DOUBLE GRAVE
   {{XK_dead_diaeresis, XK_t, XK_VoidSymbol}, "ẗ"}, // U1E97 | LATIN SMALL LETTER T WITH DIAERESIS
   {{XK_Multi_key, XK_quotedbl, XK_t, XK_VoidSymbol}, "ẗ"},
   {{XK_Multi_key, XK_underscore, XK_apostrophe, XK_VoidSymbol}, "⍘"}, // U2358 | _ ' APL FUNCTIONAL SYMBOL QUOTE UNDERBAR
@@ -2307,8 +2344,8 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_G, XK_parenleft, XK_VoidSymbol}, "Ğ"},
   {{XK_dead_hook, XK_d, XK_VoidSymbol}, "ɗ"}, // U0257 | LATIN SMALL LETTER D WITH HOOK
   {{XK_Multi_key, XK_L, XK_minus, XK_VoidSymbol}, "£"}, // sterling | POUND SIGN
-  {{XK_Multi_key, XK_l, XK_minus, XK_VoidSymbol}, "£"},
   {{XK_Multi_key, XK_minus, XK_L, XK_VoidSymbol}, "£"},
+  {{XK_Multi_key, XK_l, XK_minus, XK_VoidSymbol}, "£"},
   {{XK_Multi_key, XK_minus, XK_l, XK_VoidSymbol}, "£"},
   {{XK_dead_currency, XK_l, XK_VoidSymbol}, "£"},
   {{XK_dead_grave, XK_dead_psili, XK_Greek_eta, XK_VoidSymbol}, "ἢ"}, // U1F22 | GREEK SMALL LETTER ETA WITH PSILI AND VARIA
@@ -2343,17 +2380,19 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_belowtilde, XK_I, XK_VoidSymbol}, "Ḭ"}, // U1E2C | LATIN CAPITAL LETTER I WITH TILDE BELOW
   {{XK_dead_ogonek, XK_I, XK_VoidSymbol}, "Į"}, // U012E | LATIN CAPITAL LETTER I WITH OGONEK
   {{XK_Multi_key, XK_semicolon, XK_I, XK_VoidSymbol}, "Į"},
+  {{XK_Multi_key, XK_I, XK_semicolon, XK_VoidSymbol}, "Į"},
   {{XK_Multi_key, XK_comma, XK_I, XK_VoidSymbol}, "Į"},
   {{XK_Multi_key, XK_I, XK_comma, XK_VoidSymbol}, "Į"},
   {{XK_dead_circumflex, XK_3, XK_VoidSymbol}, "³"}, // threesuperior | SUPERSCRIPT THREE
   {{XK_Multi_key, XK_asciicircum, XK_3, XK_VoidSymbol}, "³"},
+  {{XK_Multi_key, XK_3, XK_asciicircum, XK_VoidSymbol}, "³"},
   {{XK_dead_circumflex, XK_KP_3, XK_VoidSymbol}, "³"},
   {{XK_Multi_key, XK_asciicircum, XK_KP_3, XK_VoidSymbol}, "³"},
-  {{XK_Multi_key, XK_3, XK_asciicircum, XK_VoidSymbol}, "³"},
   {{XK_dead_grave, XK_dead_psili, XK_Greek_iota, XK_VoidSymbol}, "ἲ"}, // U1F32 | GREEK SMALL LETTER IOTA WITH PSILI AND VARIA
   {{XK_dead_grave, XK_Multi_key, XK_parenright, XK_Greek_iota, XK_VoidSymbol}, "ἲ"},
   {{XK_Multi_key, XK_grave, XK_dead_psili, XK_Greek_iota, XK_VoidSymbol}, "ἲ"},
   {{XK_Multi_key, XK_grave, XK_parenright, XK_Greek_iota, XK_VoidSymbol}, "ἲ"},
+  {{XK_Multi_key, XK_colon, XK_period, XK_VoidSymbol}, "∴"}, // therefore | : . THEREFORE
   {{XK_dead_breve, XK_dead_belowdot, XK_a, XK_VoidSymbol}, "ặ"}, // U1EB7 | LATIN SMALL LETTER A WITH BREVE AND DOT BELOW
   {{XK_dead_breve, XK_Multi_key, XK_exclam, XK_a, XK_VoidSymbol}, "ặ"},
   {{XK_Multi_key, XK_U, XK_dead_belowdot, XK_a, XK_VoidSymbol}, "ặ"},
@@ -2396,17 +2435,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_belowdot, XK_ecircumflex, XK_VoidSymbol}, "ệ"},
   {{XK_dead_belowdot, XK_dead_circumflex, XK_e, XK_VoidSymbol}, "ệ"},
   {{XK_Multi_key, XK_parenleft, XK_V, XK_parenright, XK_VoidSymbol}, "Ⓥ"}, // U24CB | CIRCLED LATIN CAPITAL LETTER V
-  {{XK_dead_acute, XK_Otilde, XK_VoidSymbol}, "Ṍ"}, // U1E4C | LATIN CAPITAL LETTER O WITH TILDE AND ACUTE
-  {{XK_Multi_key, XK_acute, XK_Otilde, XK_VoidSymbol}, "Ṍ"},
-  {{XK_Multi_key, XK_apostrophe, XK_Otilde, XK_VoidSymbol}, "Ṍ"},
-  {{XK_dead_acute, XK_dead_tilde, XK_O, XK_VoidSymbol}, "Ṍ"},
-  {{XK_dead_acute, XK_Multi_key, XK_asciitilde, XK_O, XK_VoidSymbol}, "Ṍ"},
-  {{XK_Multi_key, XK_acute, XK_dead_tilde, XK_O, XK_VoidSymbol}, "Ṍ"},
-  {{XK_Multi_key, XK_acute, XK_asciitilde, XK_O, XK_VoidSymbol}, "Ṍ"},
-  {{XK_Multi_key, XK_apostrophe, XK_dead_tilde, XK_O, XK_VoidSymbol}, "Ṍ"},
-  {{XK_Multi_key, XK_apostrophe, XK_asciitilde, XK_O, XK_VoidSymbol}, "Ṍ"},
-  {{XK_dead_tilde, XK_Oacute, XK_VoidSymbol}, "Ṍ"},
-  {{XK_dead_tilde, XK_dead_acute, XK_O, XK_VoidSymbol}, "Ṍ"},
+  {{XK_Multi_key, XK_backslash, XK_o, XK_slash, XK_VoidSymbol}, "🙌"}, // PERSON RAISING BOTH HANDS IN CELEBRATION
   {{XK_dead_breve, XK_O, XK_VoidSymbol}, "Ŏ"}, // U014E | LATIN CAPITAL LETTER O WITH BREVE
   {{XK_Multi_key, XK_U, XK_O, XK_VoidSymbol}, "Ŏ"},
   {{XK_Multi_key, XK_b, XK_O, XK_VoidSymbol}, "Ŏ"},
@@ -2444,8 +2473,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_c, XK_quotedbl, XK_U, XK_VoidSymbol}, "Ǚ"},
   {{XK_dead_caron, XK_V, XK_VoidSymbol}, "Ǚ"},
   {{XK_dead_diaeresis, XK_dead_caron, XK_U, XK_VoidSymbol}, "Ǚ"},
-  {{XK_dead_iota, XK_Greek_ALPHA, XK_VoidSymbol}, "ᾼ"}, // U1FBC | GREEK CAPITAL LETTER ALPHA WITH PROSGEGRAMMENI
-  {{XK_Multi_key, XK_Greek_iota, XK_Greek_ALPHA, XK_VoidSymbol}, "ᾼ"},
+  {{XK_Multi_key, XK_parenleft, XK_v, XK_parenright, XK_VoidSymbol}, "ⓥ"}, // U24E5 | CIRCLED LATIN SMALL LETTER V
   {{XK_Multi_key, XK_parenleft, XK_l, XK_parenright, XK_VoidSymbol}, "ⓛ"}, // U24DB | CIRCLED LATIN SMALL LETTER L
   {{XK_Multi_key, XK_parenleft, XK_4, XK_2, XK_parenright, XK_VoidSymbol}, "㊷"}, // U32B7 | CIRCLED NUMBER FORTY TWO
   {{XK_Multi_key, XK_parenleft, XK_4, XK_KP_Space, XK_parenright, XK_VoidSymbol}, "㊷"},
@@ -2465,8 +2493,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_comma, XK_S, XK_VoidSymbol}, "Ş"},
   {{XK_Multi_key, XK_S, XK_comma, XK_VoidSymbol}, "Ş"},
   {{XK_Multi_key, XK_cedilla, XK_S, XK_VoidSymbol}, "Ş"},
-  {{XK_Multi_key, XK_parenleft, XK_1, XK_parenright, XK_VoidSymbol}, "①"}, // U2460 | CIRCLED DIGIT ONE
-  {{XK_Multi_key, XK_parenleft, XK_KP_1, XK_parenright, XK_VoidSymbol}, "①"},
+  {{XK_Multi_key, XK_1, XK_1, XK_0, XK_VoidSymbol}, "⅒"}, // U2152 | VULGAR FRACTION ONE TENTH
   {{XK_dead_tilde, XK_a, XK_VoidSymbol}, "ã"}, // atilde | LATIN SMALL LETTER A WITH TILDE
   {{XK_Multi_key, XK_asciitilde, XK_a, XK_VoidSymbol}, "ã"},
   {{XK_Multi_key, XK_a, XK_asciitilde, XK_VoidSymbol}, "ã"},
@@ -2481,6 +2508,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_question, XK_u, XK_VoidSymbol}, "ủ"},
   {{XK_dead_caron, XK_k, XK_VoidSymbol}, "ǩ"}, // U01E9 | LATIN SMALL LETTER K WITH CARON
   {{XK_Multi_key, XK_c, XK_k, XK_VoidSymbol}, "ǩ"},
+  {{XK_dead_stroke, XK_R, XK_VoidSymbol}, "Ɍ"}, // U024C | LATIN CAPITAL LETTER R WITH STROKE
   {{XK_dead_hook, XK_h, XK_VoidSymbol}, "ɦ"}, // U0266 | LATIN SMALL LETTER H WITH HOOK
   {{XK_Multi_key, XK_diaeresis, XK_dead_grave, XK_VoidSymbol}, "῭"}, // U1FED | GREEK DIALYTIKA AND VARIA
   {{XK_Multi_key, XK_diaeresis, XK_grave, XK_VoidSymbol}, "῭"},
@@ -2551,6 +2579,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_apostrophe, XK_parenleft, XK_Greek_ALPHA, XK_VoidSymbol}, "Ἅ"},
   {{XK_dead_diaeresis, XK_X, XK_VoidSymbol}, "Ẍ"}, // U1E8C | LATIN CAPITAL LETTER X WITH DIAERESIS
   {{XK_Multi_key, XK_quotedbl, XK_X, XK_VoidSymbol}, "Ẍ"},
+  {{XK_dead_invertedbreve, XK_o, XK_VoidSymbol}, "ȏ"}, // U020F | LATIN SMALL LETTER O WITH INVERTED BREVE
   {{XK_dead_circumflex, XK_parenright, XK_VoidSymbol}, "⁾"}, // U207E | SUPERSCRIPT RIGHT PARENTHESIS
   {{XK_Multi_key, XK_asciicircum, XK_parenright, XK_VoidSymbol}, "⁾"},
   {{XK_Multi_key, XK_minus, XK_minus, XK_period, XK_VoidSymbol}, "–"}, // U2013 | EN DASH
@@ -2576,11 +2605,18 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_apostrophe, XK_underscore, XK_e, XK_VoidSymbol}, "ḗ"},
   {{XK_dead_macron, XK_eacute, XK_VoidSymbol}, "ḗ"},
   {{XK_dead_macron, XK_dead_acute, XK_e, XK_VoidSymbol}, "ḗ"},
-  {{XK_dead_belowcircumflex, XK_E, XK_VoidSymbol}, "Ḙ"}, // U1E18 | LATIN CAPITAL LETTER E WITH CIRCUMFLEX BELOW
+  {{XK_Multi_key, XK_L, XK_L, XK_A, XK_P, XK_VoidSymbol}, "🖖"}, // U1F596 | RAISED HAND WITH PART BETWEEN MIDDLE AND RING FINGERS
   {{XK_dead_ogonek, XK_e, XK_VoidSymbol}, "ę"}, // U0119 | LATIN SMALL LETTER E WITH OGONEK
   {{XK_Multi_key, XK_semicolon, XK_e, XK_VoidSymbol}, "ę"},
+  {{XK_Multi_key, XK_e, XK_semicolon, XK_VoidSymbol}, "ę"},
   {{XK_Multi_key, XK_comma, XK_e, XK_VoidSymbol}, "ę"},
   {{XK_Multi_key, XK_e, XK_comma, XK_VoidSymbol}, "ę"},
+  {{XK_dead_acute, XK_dead_dasia, XK_Greek_omicron, XK_VoidSymbol}, "ὅ"}, // U1F45 | GREEK SMALL LETTER OMICRON WITH DASIA AND OXIA
+  {{XK_dead_acute, XK_Multi_key, XK_parenleft, XK_Greek_omicron, XK_VoidSymbol}, "ὅ"},
+  {{XK_Multi_key, XK_acute, XK_dead_dasia, XK_Greek_omicron, XK_VoidSymbol}, "ὅ"},
+  {{XK_Multi_key, XK_acute, XK_parenleft, XK_Greek_omicron, XK_VoidSymbol}, "ὅ"},
+  {{XK_Multi_key, XK_apostrophe, XK_dead_dasia, XK_Greek_omicron, XK_VoidSymbol}, "ὅ"},
+  {{XK_Multi_key, XK_apostrophe, XK_parenleft, XK_Greek_omicron, XK_VoidSymbol}, "ὅ"},
   {{XK_dead_belowmacron, XK_T, XK_VoidSymbol}, "Ṯ"}, // U1E6E | LATIN CAPITAL LETTER T WITH LINE BELOW
   {{XK_dead_acute, XK_dead_dasia, XK_Greek_EPSILON, XK_VoidSymbol}, "Ἕ"}, // U1F1D | GREEK CAPITAL LETTER EPSILON WITH DASIA AND OXIA
   {{XK_dead_acute, XK_Multi_key, XK_parenleft, XK_Greek_EPSILON, XK_VoidSymbol}, "Ἕ"},
@@ -2828,6 +2864,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_caron, XK_9, XK_VoidSymbol}, "₉"},
   {{XK_dead_circumflex, XK_C, XK_VoidSymbol}, "Ĉ"}, // U0108 | LATIN CAPITAL LETTER C WITH CIRCUMFLEX
   {{XK_Multi_key, XK_asciicircum, XK_C, XK_VoidSymbol}, "Ĉ"},
+  {{XK_dead_invertedbreve, XK_I, XK_VoidSymbol}, "Ȋ"}, // U020A | LATIN CAPITAL LETTER I WITH INVERTED BREVE
   {{XK_dead_diaeresis, XK_x, XK_VoidSymbol}, "ẍ"}, // U1E8D | LATIN SMALL LETTER X WITH DIAERESIS
   {{XK_Multi_key, XK_quotedbl, XK_x, XK_VoidSymbol}, "ẍ"},
   {{XK_dead_acute, XK_dead_psili, XK_Greek_ALPHA, XK_VoidSymbol}, "Ἄ"}, // U1F0C | GREEK CAPITAL LETTER ALPHA WITH PSILI AND OXIA
@@ -2854,9 +2891,12 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_Greek_iota, XK_asciitilde, XK_parenleft, XK_Greek_eta, XK_VoidSymbol}, "ᾗ"},
   {{XK_dead_ogonek, XK_E, XK_VoidSymbol}, "Ę"}, // U0118 | LATIN CAPITAL LETTER E WITH OGONEK
   {{XK_Multi_key, XK_semicolon, XK_E, XK_VoidSymbol}, "Ę"},
+  {{XK_Multi_key, XK_E, XK_semicolon, XK_VoidSymbol}, "Ę"},
   {{XK_Multi_key, XK_comma, XK_E, XK_VoidSymbol}, "Ę"},
   {{XK_Multi_key, XK_E, XK_comma, XK_VoidSymbol}, "Ę"},
   {{XK_dead_belowcomma, XK_T, XK_VoidSymbol}, "Ț"}, // U021A | LATIN CAPITAL LETTER T WITH COMMA BELOW
+  {{XK_Multi_key, XK_semicolon, XK_T, XK_VoidSymbol}, "Ț"},
+  {{XK_Multi_key, XK_T, XK_semicolon, XK_VoidSymbol}, "Ț"},
   {{XK_dead_acute, XK_dead_psili, XK_Greek_EPSILON, XK_VoidSymbol}, "Ἔ"}, // U1F1C | GREEK CAPITAL LETTER EPSILON WITH PSILI AND OXIA
   {{XK_dead_acute, XK_Multi_key, XK_parenright, XK_Greek_EPSILON, XK_VoidSymbol}, "Ἔ"},
   {{XK_Multi_key, XK_acute, XK_dead_psili, XK_Greek_EPSILON, XK_VoidSymbol}, "Ἔ"},
@@ -2926,11 +2966,10 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_iota, XK_Multi_key, XK_parenright, XK_Greek_ALPHA, XK_VoidSymbol}, "ᾈ"},
   {{XK_Multi_key, XK_Greek_iota, XK_dead_psili, XK_Greek_ALPHA, XK_VoidSymbol}, "ᾈ"},
   {{XK_Multi_key, XK_Greek_iota, XK_parenright, XK_Greek_ALPHA, XK_VoidSymbol}, "ᾈ"},
-  {{XK_dead_circumflex, XK_1, XK_VoidSymbol}, "¹"}, // onesuperior | SUPERSCRIPT ONE
-  {{XK_Multi_key, XK_asciicircum, XK_1, XK_VoidSymbol}, "¹"},
-  {{XK_dead_circumflex, XK_KP_1, XK_VoidSymbol}, "¹"},
-  {{XK_Multi_key, XK_asciicircum, XK_KP_1, XK_VoidSymbol}, "¹"},
-  {{XK_Multi_key, XK_1, XK_asciicircum, XK_VoidSymbol}, "¹"},
+  {{XK_Multi_key, XK_R, XK_equal, XK_VoidSymbol}, "₹"}, // U20b9 | INDIAN RUPEE SIGN
+  {{XK_Multi_key, XK_equal, XK_R, XK_VoidSymbol}, "₹"},
+  {{XK_Multi_key, XK_r, XK_equal, XK_VoidSymbol}, "₹"},
+  {{XK_Multi_key, XK_equal, XK_r, XK_VoidSymbol}, "₹"},
   {{XK_Multi_key, XK_k, XK_k, XK_VoidSymbol}, "ĸ"}, // U0138 | LATIN SMALL LETTER KRA
   {{XK_dead_stroke, XK_A, XK_VoidSymbol}, "Ⱥ"}, // U023A | LATIN CAPITAL LETTER A WITH STROKE
   {{XK_dead_tilde, XK_e, XK_VoidSymbol}, "ẽ"}, // U1EBD | LATIN SMALL LETTER E WITH TILDE
@@ -2958,9 +2997,9 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_parenleft, XK_q, XK_parenright, XK_VoidSymbol}, "ⓠ"}, // U24E0 | CIRCLED LATIN SMALL LETTER Q
   {{XK_dead_acute, XK_E, XK_VoidSymbol}, "É"}, // Eacute | LATIN CAPITAL LETTER E WITH ACUTE
   {{XK_Multi_key, XK_acute, XK_E, XK_VoidSymbol}, "É"},
+  {{XK_Multi_key, XK_E, XK_acute, XK_VoidSymbol}, "É"},
   {{XK_Multi_key, XK_apostrophe, XK_E, XK_VoidSymbol}, "É"},
   {{XK_Multi_key, XK_E, XK_apostrophe, XK_VoidSymbol}, "É"},
-  {{XK_Multi_key, XK_E, XK_acute, XK_VoidSymbol}, "É"},
   {{XK_dead_caron, XK_n, XK_VoidSymbol}, "ň"}, // U0148 | LATIN SMALL LETTER N WITH CARON
   {{XK_Multi_key, XK_c, XK_n, XK_VoidSymbol}, "ň"},
   {{XK_Multi_key, XK_less, XK_n, XK_VoidSymbol}, "ň"},
@@ -3031,6 +3070,8 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_greater, XK_space, XK_VoidSymbol}, "^"},
   {{XK_Multi_key, XK_space, XK_greater, XK_VoidSymbol}, "^"},
   {{XK_Multi_key, XK_parenleft, XK_r, XK_parenright, XK_VoidSymbol}, "ⓡ"}, // U24E1 | CIRCLED LATIN SMALL LETTER R
+  {{XK_dead_circumflex, XK_Cyrillic_a, XK_VoidSymbol}, "а̂"}, // CYRILLIC SMALL LETTER A WITH COMBINING CIRCUMFLEX ACCENT
+  {{XK_Multi_key, XK_asciicircum, XK_Cyrillic_a, XK_VoidSymbol}, "а̂"},
   {{XK_dead_macron, XK_ae, XK_VoidSymbol}, "ǣ"}, // U01E3 | LATIN SMALL LETTER AE WITH MACRON
   {{XK_Multi_key, XK_macron, XK_ae, XK_VoidSymbol}, "ǣ"},
   {{XK_Multi_key, XK_underscore, XK_ae, XK_VoidSymbol}, "ǣ"},
@@ -3100,12 +3141,13 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_quotedbl, XK_Cyrillic_IE, XK_VoidSymbol}, "Ё"},
   {{XK_dead_breve, XK_a, XK_VoidSymbol}, "ă"}, // U0103 | LATIN SMALL LETTER A WITH BREVE
   {{XK_Multi_key, XK_U, XK_a, XK_VoidSymbol}, "ă"},
+  {{XK_Multi_key, XK_u, XK_a, XK_VoidSymbol}, "ă"},
   {{XK_Multi_key, XK_b, XK_a, XK_VoidSymbol}, "ă"},
   {{XK_Multi_key, XK_a, XK_parenleft, XK_VoidSymbol}, "ă"},
   {{XK_dead_acute, XK_W, XK_VoidSymbol}, "Ẃ"}, // U1E82 | LATIN CAPITAL LETTER W WITH ACUTE
   {{XK_Multi_key, XK_acute, XK_W, XK_VoidSymbol}, "Ẃ"},
   {{XK_Multi_key, XK_apostrophe, XK_W, XK_VoidSymbol}, "Ẃ"},
-  {{XK_Multi_key, XK_braceleft, XK_braceright, XK_VoidSymbol}, "∅"}, // U2205 | EMPTY SET
+  {{XK_dead_doublegrave, XK_e, XK_VoidSymbol}, "ȅ"}, // U0205 | LATIN SMALL LETTER E WITH DOUBLE GRAVE
   {{XK_dead_macron, XK_Cyrillic_a, XK_VoidSymbol}, "а̄"}, // CYRILLIC SMALL LETTER A WITH COMBINING MACRON
   {{XK_Multi_key, XK_macron, XK_Cyrillic_a, XK_VoidSymbol}, "а̄"},
   {{XK_Multi_key, XK_underscore, XK_Cyrillic_a, XK_VoidSymbol}, "а̄"},
@@ -3138,6 +3180,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_e, XK_minus, XK_VoidSymbol}, "ē"},
   {{XK_dead_belowdot, XK_Z, XK_VoidSymbol}, "Ẓ"}, // U1E92 | LATIN CAPITAL LETTER Z WITH DOT BELOW
   {{XK_Multi_key, XK_exclam, XK_Z, XK_VoidSymbol}, "Ẓ"},
+  {{XK_dead_doublegrave, XK_u, XK_VoidSymbol}, "ȕ"}, // U0215 | LATIN SMALL LETTER U WITH DOUBLE GRAVE
   {{XK_dead_belowmacron, XK_t, XK_VoidSymbol}, "ṯ"}, // U1E6F | LATIN SMALL LETTER T WITH LINE BELOW
   {{XK_dead_currency, XK_B, XK_VoidSymbol}, "₱"}, // U20B1 | PESO SIGN
   {{XK_Multi_key, XK_greater, XK_apostrophe, XK_VoidSymbol}, "’"}, // U2019 | RIGHT SINGLE QUOTATION MARK
@@ -3199,6 +3242,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_o, XK_R, XK_VoidSymbol}, "®"},
   {{XK_Multi_key, XK_O, XK_r, XK_VoidSymbol}, "®"},
   {{XK_Multi_key, XK_O, XK_R, XK_VoidSymbol}, "®"},
+  {{XK_Multi_key, XK_R, XK_o, XK_VoidSymbol}, "®"},
   {{XK_Multi_key, XK_R, XK_O, XK_VoidSymbol}, "®"},
   {{XK_Multi_key, XK_i, XK_j, XK_VoidSymbol}, "ĳ"}, // U0133 | LATIN SMALL LIGATURE IJ
   {{XK_dead_hook, XK_Abreve, XK_VoidSymbol}, "Ẳ"}, // U1EB2 | LATIN CAPITAL LETTER A WITH BREVE AND HOOK ABOVE
@@ -3210,6 +3254,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_question, XK_b, XK_A, XK_VoidSymbol}, "Ẳ"},
   {{XK_dead_breve, XK_Ahook, XK_VoidSymbol}, "Ẳ"},
   {{XK_dead_breve, XK_dead_hook, XK_A, XK_VoidSymbol}, "Ẳ"},
+  {{XK_Multi_key, XK_period, XK_colon, XK_VoidSymbol}, "∵"}, // because | . : BECAUSE
   {{XK_dead_tilde, XK_dead_dasia, XK_Greek_iota, XK_VoidSymbol}, "ἷ"}, // U1F37 | GREEK SMALL LETTER IOTA WITH DASIA AND PERISPOMENI
   {{XK_dead_tilde, XK_Multi_key, XK_parenleft, XK_Greek_iota, XK_VoidSymbol}, "ἷ"},
   {{XK_Multi_key, XK_asciitilde, XK_dead_dasia, XK_Greek_iota, XK_VoidSymbol}, "ἷ"},
@@ -3222,11 +3267,8 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_parenleft, XK_KP_4, XK_5, XK_parenright, XK_VoidSymbol}, "㊺"},
   {{XK_Multi_key, XK_parenleft, XK_KP_4, XK_KP_5, XK_parenright, XK_VoidSymbol}, "㊺"},
   {{XK_dead_belowcircumflex, XK_l, XK_VoidSymbol}, "ḽ"}, // U1E3D | LATIN SMALL LETTER L WITH CIRCUMFLEX BELOW
-  {{XK_dead_diaeresis, XK_y, XK_VoidSymbol}, "ÿ"}, // ydiaeresis | LATIN SMALL LETTER Y WITH DIAERESIS
-  {{XK_Multi_key, XK_quotedbl, XK_y, XK_VoidSymbol}, "ÿ"},
-  {{XK_Multi_key, XK_y, XK_quotedbl, XK_VoidSymbol}, "ÿ"},
-  {{XK_Multi_key, XK_diaeresis, XK_y, XK_VoidSymbol}, "ÿ"},
-  {{XK_Multi_key, XK_y, XK_diaeresis, XK_VoidSymbol}, "ÿ"},
+  {{XK_dead_iota, XK_Greek_ALPHA, XK_VoidSymbol}, "ᾼ"}, // U1FBC | GREEK CAPITAL LETTER ALPHA WITH PROSGEGRAMMENI
+  {{XK_Multi_key, XK_Greek_iota, XK_Greek_ALPHA, XK_VoidSymbol}, "ᾼ"},
   {{XK_dead_grave, XK_Cyrillic_a, XK_VoidSymbol}, "а̀"}, // CYRILLIC SMALL LETTER A WITH COMBINING GRAVE ACCENT
   {{XK_Multi_key, XK_grave, XK_Cyrillic_a, XK_VoidSymbol}, "а̀"},
   {{XK_Multi_key, XK_3, XK_4, XK_VoidSymbol}, "¾"}, // threequarters | VULGAR FRACTION THREE QUARTERS
@@ -3348,6 +3390,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_parenleft, XK_KP_1, XK_KP_8, XK_parenright, XK_VoidSymbol}, "⑱"},
   {{XK_dead_ogonek, XK_u, XK_VoidSymbol}, "ų"}, // U0173 | LATIN SMALL LETTER U WITH OGONEK
   {{XK_Multi_key, XK_semicolon, XK_u, XK_VoidSymbol}, "ų"},
+  {{XK_Multi_key, XK_u, XK_semicolon, XK_VoidSymbol}, "ų"},
   {{XK_Multi_key, XK_comma, XK_u, XK_VoidSymbol}, "ų"},
   {{XK_Multi_key, XK_u, XK_comma, XK_VoidSymbol}, "ų"},
   {{XK_dead_grave, XK_Y, XK_VoidSymbol}, "Ỳ"}, // U1EF2 | LATIN CAPITAL LETTER Y WITH GRAVE
@@ -3381,7 +3424,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_acute, XK_Greek_ETA, XK_VoidSymbol}, "Ή"},
   {{XK_Multi_key, XK_apostrophe, XK_Greek_ETA, XK_VoidSymbol}, "Ή"},
   {{XK_Multi_key, XK_Greek_ETA, XK_apostrophe, XK_VoidSymbol}, "Ή"},
-  {{XK_dead_currency, XK_p, XK_VoidSymbol}, "₰"}, // U20B0 | GERMAN PENNY SIGN
+  {{XK_dead_doublegrave, XK_I, XK_VoidSymbol}, "Ȉ"}, // U0208 | LATIN CAPITAL LETTER I WITH DOUBLE GRAVE
   {{XK_dead_abovedot, XK_x, XK_VoidSymbol}, "ẋ"}, // U1E8B | LATIN SMALL LETTER X WITH DOT ABOVE
   {{XK_Multi_key, XK_period, XK_x, XK_VoidSymbol}, "ẋ"},
   {{XK_dead_abovedot, XK_C, XK_VoidSymbol}, "Ċ"}, // U010A | LATIN CAPITAL LETTER C WITH DOT ABOVE
@@ -3410,6 +3453,8 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_cedilla, XK_dead_currency, XK_c, XK_VoidSymbol}, "₵"},
   {{XK_dead_currency, XK_dead_cedilla, XK_c, XK_VoidSymbol}, "₵"},
   {{XK_dead_belowcomma, XK_S, XK_VoidSymbol}, "Ș"}, // U0218 | LATIN CAPITAL LETTER S WITH COMMA BELOW
+  {{XK_Multi_key, XK_semicolon, XK_S, XK_VoidSymbol}, "Ș"},
+  {{XK_Multi_key, XK_S, XK_semicolon, XK_VoidSymbol}, "Ș"},
   {{XK_dead_abovedot, XK_Multi_key, XK_f, XK_s, XK_VoidSymbol}, "ẛ"}, // U1e9b | LATIN SMALL LETTER LONG S WITH DOT ABOVE
   {{XK_Multi_key, XK_dead_abovedot, XK_f, XK_s, XK_VoidSymbol}, "ẛ"},
   {{XK_dead_caron, XK_E, XK_VoidSymbol}, "Ě"}, // U011A | LATIN CAPITAL LETTER E WITH CARON
@@ -3587,7 +3632,6 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_U, XK_underscore, XK_VoidSymbol}, "Ū"},
   {{XK_Multi_key, XK_minus, XK_U, XK_VoidSymbol}, "Ū"},
   {{XK_Multi_key, XK_U, XK_minus, XK_VoidSymbol}, "Ū"},
-  {{XK_Multi_key, XK_backslash, XK_o, XK_slash, XK_VoidSymbol}, "🙌"}, // PERSON RAISING BOTH HANDS IN CELEBRATION
   {{XK_dead_circumflex, XK_Multi_key, XK_S, XK_M, XK_VoidSymbol}, "℠"}, // U2120 | SERVICE MARK
   {{XK_Multi_key, XK_S, XK_M, XK_VoidSymbol}, "℠"},
   {{XK_dead_circumflex, XK_Multi_key, XK_s, XK_M, XK_VoidSymbol}, "℠"},
@@ -3619,14 +3663,19 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_acute, XK_z, XK_VoidSymbol}, "ź"},
   {{XK_Multi_key, XK_apostrophe, XK_z, XK_VoidSymbol}, "ź"},
   {{XK_Multi_key, XK_z, XK_apostrophe, XK_VoidSymbol}, "ź"},
-  {{XK_Multi_key, XK_u, XK_b, XK_u, XK_n, XK_t, XK_u, XK_VoidSymbol}, ""}, // UBUNTU CIRCLE
-  {{XK_Multi_key, XK_U, XK_B, XK_U, XK_N, XK_T, XK_U, XK_VoidSymbol}, ""},
+  {{XK_dead_diaeresis, XK_y, XK_VoidSymbol}, "ÿ"}, // ydiaeresis | LATIN SMALL LETTER Y WITH DIAERESIS
+  {{XK_Multi_key, XK_quotedbl, XK_y, XK_VoidSymbol}, "ÿ"},
+  {{XK_Multi_key, XK_y, XK_quotedbl, XK_VoidSymbol}, "ÿ"},
+  {{XK_Multi_key, XK_diaeresis, XK_y, XK_VoidSymbol}, "ÿ"},
+  {{XK_Multi_key, XK_y, XK_diaeresis, XK_VoidSymbol}, "ÿ"},
   {{XK_dead_dasia, XK_Greek_alpha, XK_VoidSymbol}, "ἁ"}, // U1F01 | GREEK SMALL LETTER ALPHA WITH DASIA
   {{XK_Multi_key, XK_parenleft, XK_Greek_alpha, XK_VoidSymbol}, "ἁ"},
   {{XK_dead_grave, XK_W, XK_VoidSymbol}, "Ẁ"}, // U1E80 | LATIN CAPITAL LETTER W WITH GRAVE
   {{XK_Multi_key, XK_grave, XK_W, XK_VoidSymbol}, "Ẁ"},
+  {{XK_dead_invertedbreve, XK_a, XK_VoidSymbol}, "ȃ"}, // U0203 | LATIN SMALL LETTER A WITH INVERTED BREVE
   {{XK_dead_ogonek, XK_a, XK_VoidSymbol}, "ą"}, // U0105 | LATIN SMALL LETTER A WITH OGONEK
   {{XK_Multi_key, XK_semicolon, XK_a, XK_VoidSymbol}, "ą"},
+  {{XK_Multi_key, XK_a, XK_semicolon, XK_VoidSymbol}, "ą"},
   {{XK_Multi_key, XK_comma, XK_a, XK_VoidSymbol}, "ą"},
   {{XK_Multi_key, XK_a, XK_comma, XK_VoidSymbol}, "ą"},
   {{XK_Multi_key, XK_underscore, XK_4, XK_VoidSymbol}, "₄"}, // U2084 | SUBSCRIPT FOUR
@@ -3659,7 +3708,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_parenleft, XK_Greek_epsilon, XK_VoidSymbol}, "ἑ"},
   {{XK_dead_circumflex, XK_Z, XK_VoidSymbol}, "Ẑ"}, // U1E90 | LATIN CAPITAL LETTER Z WITH CIRCUMFLEX
   {{XK_Multi_key, XK_asciicircum, XK_Z, XK_VoidSymbol}, "Ẑ"},
-  {{XK_Multi_key, XK_1, XK_1, XK_0, XK_VoidSymbol}, "⅒"}, // U2152 | VULGAR FRACTION ONE TENTH
+  {{XK_dead_invertedbreve, XK_r, XK_VoidSymbol}, "ȓ"}, // U0213 | LATIN SMALL LETTER R WITH INVERTED BREVE
   {{XK_Multi_key, XK_parenleft, XK_M, XK_parenright, XK_VoidSymbol}, "Ⓜ"}, // U24C2 | CIRCLED LATIN CAPITAL LETTER M
   {{XK_dead_breve, XK_e, XK_VoidSymbol}, "ĕ"}, // U0115 | LATIN SMALL LETTER E WITH BREVE
   {{XK_Multi_key, XK_U, XK_e, XK_VoidSymbol}, "ĕ"},
@@ -3737,8 +3786,8 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_diaeresis, XK_A, XK_VoidSymbol}, "Ä"}, // Adiaeresis | LATIN CAPITAL LETTER A WITH DIAERESIS
   {{XK_Multi_key, XK_quotedbl, XK_A, XK_VoidSymbol}, "Ä"},
   {{XK_Multi_key, XK_A, XK_quotedbl, XK_VoidSymbol}, "Ä"},
-  {{XK_Multi_key, XK_A, XK_diaeresis, XK_VoidSymbol}, "Ä"},
   {{XK_Multi_key, XK_diaeresis, XK_A, XK_VoidSymbol}, "Ä"},
+  {{XK_Multi_key, XK_A, XK_diaeresis, XK_VoidSymbol}, "Ä"},
   {{XK_dead_tilde, XK_Greek_eta, XK_VoidSymbol}, "ῆ"}, // U1FC6 | GREEK SMALL LETTER ETA WITH PERISPOMENI
   {{XK_Multi_key, XK_asciitilde, XK_Greek_eta, XK_VoidSymbol}, "ῆ"},
   {{XK_dead_belowcircumflex, XK_n, XK_VoidSymbol}, "ṋ"}, // U1E4B | LATIN SMALL LETTER N WITH CIRCUMFLEX BELOW
@@ -3831,6 +3880,9 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_numbersign, XK_E, XK_VoidSymbol}, "♫"}, // U266b | BEAMED EIGHTH NOTES
   {{XK_dead_ogonek, XK_O, XK_VoidSymbol}, "Ǫ"}, // U01EA | LATIN CAPITAL LETTER O WITH OGONEK
   {{XK_Multi_key, XK_semicolon, XK_O, XK_VoidSymbol}, "Ǫ"},
+  {{XK_Multi_key, XK_O, XK_semicolon, XK_VoidSymbol}, "Ǫ"},
+  {{XK_Multi_key, XK_comma, XK_O, XK_VoidSymbol}, "Ǫ"},
+  {{XK_Multi_key, XK_O, XK_comma, XK_VoidSymbol}, "Ǫ"},
   {{XK_dead_diaeresis, XK_Cyrillic_E, XK_VoidSymbol}, "Ӭ"}, // U04EC | CYRILLIC CAPITAL LETTER E WITH DIAERESIS
   {{XK_Multi_key, XK_quotedbl, XK_Cyrillic_E, XK_VoidSymbol}, "Ӭ"},
   {{XK_dead_circumflex, XK_equal, XK_VoidSymbol}, "⁼"}, // U207C | SUPERSCRIPT EQUALS SIGN
@@ -3848,11 +3900,8 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_circumflex, XK_w, XK_VoidSymbol}, "ŵ"}, // U0175 | LATIN SMALL LETTER W WITH CIRCUMFLEX
   {{XK_Multi_key, XK_asciicircum, XK_w, XK_VoidSymbol}, "ŵ"},
   {{XK_Multi_key, XK_w, XK_asciicircum, XK_VoidSymbol}, "ŵ"},
-  {{XK_dead_circumflex, XK_o, XK_VoidSymbol}, "ô"}, // ocircumflex | LATIN SMALL LETTER O WITH CIRCUMFLEX
-  {{XK_Multi_key, XK_asciicircum, XK_o, XK_VoidSymbol}, "ô"},
-  {{XK_Multi_key, XK_o, XK_asciicircum, XK_VoidSymbol}, "ô"},
-  {{XK_Multi_key, XK_greater, XK_o, XK_VoidSymbol}, "ô"},
-  {{XK_Multi_key, XK_o, XK_greater, XK_VoidSymbol}, "ô"},
+  {{XK_Multi_key, XK_u, XK_b, XK_u, XK_n, XK_t, XK_u, XK_VoidSymbol}, ""}, // UBUNTU CIRCLE
+  {{XK_Multi_key, XK_U, XK_B, XK_U, XK_N, XK_T, XK_U, XK_VoidSymbol}, ""},
   {{XK_dead_tilde, XK_Greek_omega, XK_VoidSymbol}, "ῶ"}, // U1FF6 | GREEK SMALL LETTER OMEGA WITH PERISPOMENI
   {{XK_Multi_key, XK_asciitilde, XK_Greek_omega, XK_VoidSymbol}, "ῶ"},
   {{XK_Multi_key, XK_parenleft, XK_kana_RU, XK_parenright, XK_VoidSymbol}, "㋸"}, // U32F8 | CIRCLED KATAKANA RU
@@ -3887,6 +3936,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_caron, XK_5, XK_VoidSymbol}, "₅"},
   {{XK_dead_ogonek, XK_A, XK_VoidSymbol}, "Ą"}, // U0104 | LATIN CAPITAL LETTER A WITH OGONEK
   {{XK_Multi_key, XK_semicolon, XK_A, XK_VoidSymbol}, "Ą"},
+  {{XK_Multi_key, XK_A, XK_semicolon, XK_VoidSymbol}, "Ą"},
   {{XK_Multi_key, XK_comma, XK_A, XK_VoidSymbol}, "Ą"},
   {{XK_Multi_key, XK_A, XK_comma, XK_VoidSymbol}, "Ą"},
   {{XK_dead_belowmacron, XK_B, XK_VoidSymbol}, "Ḇ"}, // U1E06 | LATIN CAPITAL LETTER B WITH LINE BELOW
@@ -3900,10 +3950,12 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_Greek_iota, XK_dead_grave, XK_parenleft, XK_Greek_ALPHA, XK_VoidSymbol}, "ᾋ"},
   {{XK_Multi_key, XK_Greek_iota, XK_grave, XK_dead_dasia, XK_Greek_ALPHA, XK_VoidSymbol}, "ᾋ"},
   {{XK_Multi_key, XK_Greek_iota, XK_grave, XK_parenleft, XK_Greek_ALPHA, XK_VoidSymbol}, "ᾋ"},
+  {{XK_dead_invertedbreve, XK_O, XK_VoidSymbol}, "Ȏ"}, // U020E | LATIN CAPITAL LETTER O WITH INVERTED BREVE
   {{XK_dead_circumflex, XK_z, XK_VoidSymbol}, "ẑ"}, // U1E91 | LATIN SMALL LETTER Z WITH CIRCUMFLEX
   {{XK_Multi_key, XK_asciicircum, XK_z, XK_VoidSymbol}, "ẑ"},
   {{XK_dead_psili, XK_Greek_epsilon, XK_VoidSymbol}, "ἐ"}, // U1F10 | GREEK SMALL LETTER EPSILON WITH PSILI
   {{XK_Multi_key, XK_parenright, XK_Greek_epsilon, XK_VoidSymbol}, "ἐ"},
+  {{XK_dead_currency, XK_p, XK_VoidSymbol}, "₰"}, // U20B0 | GERMAN PENNY SIGN
   {{XK_dead_breve, XK_E, XK_VoidSymbol}, "Ĕ"}, // U0114 | LATIN CAPITAL LETTER E WITH BREVE
   {{XK_Multi_key, XK_U, XK_E, XK_VoidSymbol}, "Ĕ"},
   {{XK_Multi_key, XK_b, XK_E, XK_VoidSymbol}, "Ĕ"},
@@ -3939,8 +3991,8 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_parenright, XK_Greek_eta, XK_VoidSymbol}, "ἠ"},
   {{XK_dead_semivoiced_sound, XK_kana_HE, XK_VoidSymbol}, "ペ"}, // U30DA | KATAKANA LETTER PE
   {{XK_Multi_key, XK_Y, XK_equal, XK_VoidSymbol}, "¥"}, // yen | YEN SIGN
-  {{XK_Multi_key, XK_y, XK_equal, XK_VoidSymbol}, "¥"},
   {{XK_Multi_key, XK_equal, XK_Y, XK_VoidSymbol}, "¥"},
+  {{XK_Multi_key, XK_y, XK_equal, XK_VoidSymbol}, "¥"},
   {{XK_Multi_key, XK_equal, XK_y, XK_VoidSymbol}, "¥"},
   {{XK_Multi_key, XK_Y, XK_minus, XK_VoidSymbol}, "¥"},
   {{XK_Multi_key, XK_minus, XK_Y, XK_VoidSymbol}, "¥"},
@@ -4027,8 +4079,11 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_apostrophe, XK_asciicircum, XK_o, XK_VoidSymbol}, "ố"},
   {{XK_dead_circumflex, XK_oacute, XK_VoidSymbol}, "ố"},
   {{XK_dead_circumflex, XK_dead_acute, XK_o, XK_VoidSymbol}, "ố"},
-  {{XK_dead_psili, XK_Greek_upsilon, XK_VoidSymbol}, "ὐ"}, // U1F50 | GREEK SMALL LETTER UPSILON WITH PSILI
-  {{XK_Multi_key, XK_parenright, XK_Greek_upsilon, XK_VoidSymbol}, "ὐ"},
+  {{XK_dead_circumflex, XK_1, XK_VoidSymbol}, "¹"}, // onesuperior | SUPERSCRIPT ONE
+  {{XK_Multi_key, XK_asciicircum, XK_1, XK_VoidSymbol}, "¹"},
+  {{XK_Multi_key, XK_1, XK_asciicircum, XK_VoidSymbol}, "¹"},
+  {{XK_dead_circumflex, XK_KP_1, XK_VoidSymbol}, "¹"},
+  {{XK_Multi_key, XK_asciicircum, XK_KP_1, XK_VoidSymbol}, "¹"},
   {{XK_Multi_key, XK_parenleft, XK_s, XK_parenright, XK_VoidSymbol}, "ⓢ"}, // U24E2 | CIRCLED LATIN SMALL LETTER S
   {{XK_dead_tilde, XK_O, XK_VoidSymbol}, "Õ"}, // Otilde | LATIN CAPITAL LETTER O WITH TILDE
   {{XK_Multi_key, XK_asciitilde, XK_O, XK_VoidSymbol}, "Õ"},
@@ -4054,7 +4109,11 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_Greek_iota, XK_asciitilde, XK_parenright, XK_Greek_ALPHA, XK_VoidSymbol}, "ᾎ"},
   {{XK_dead_diaeresis, XK_Cyrillic_zhe, XK_VoidSymbol}, "ӝ"}, // U04DD | CYRILLIC SMALL LETTER ZHE WITH DIAERESIS
   {{XK_Multi_key, XK_quotedbl, XK_Cyrillic_zhe, XK_VoidSymbol}, "ӝ"},
-  {{XK_dead_invertedbreve, XK_Cyrillic_i, XK_VoidSymbol}, "и̑"}, // CYRILLIC SMALL LETTER I WITH COMBINING INVERTED BREVE
+  {{XK_dead_acute, XK_J, XK_VoidSymbol}, "J́"}, // LATIN CAPITAL LETTER J U004A with COMBINING ACUTE ACCENT U0301
+  {{XK_Multi_key, XK_apostrophe, XK_J, XK_VoidSymbol}, "J́"},
+  {{XK_Multi_key, XK_J, XK_apostrophe, XK_VoidSymbol}, "J́"},
+  {{XK_Multi_key, XK_acute, XK_J, XK_VoidSymbol}, "J́"},
+  {{XK_Multi_key, XK_J, XK_acute, XK_VoidSymbol}, "J́"},
   {{XK_dead_macron, XK_adiaeresis, XK_VoidSymbol}, "ǟ"}, // U01DF | LATIN SMALL LETTER A WITH DIAERESIS AND MACRON
   {{XK_Multi_key, XK_macron, XK_adiaeresis, XK_VoidSymbol}, "ǟ"},
   {{XK_Multi_key, XK_underscore, XK_adiaeresis, XK_VoidSymbol}, "ǟ"},
@@ -4112,6 +4171,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_T, XK_m, XK_VoidSymbol}, "™"},
   {{XK_dead_circumflex, XK_Multi_key, XK_t, XK_m, XK_VoidSymbol}, "™"},
   {{XK_Multi_key, XK_t, XK_m, XK_VoidSymbol}, "™"},
+  {{XK_Multi_key, XK_parenleft, XK_kana_NU, XK_parenright, XK_VoidSymbol}, "㋦"}, // U32E6 | CIRCLED KATAKANA NU
   {{XK_dead_diaeresis, XK_Cyrillic_e, XK_VoidSymbol}, "ӭ"}, // U04ED | CYRILLIC SMALL LETTER E WITH DIAERESIS
   {{XK_Multi_key, XK_quotedbl, XK_Cyrillic_e, XK_VoidSymbol}, "ӭ"},
   {{XK_dead_doublegrave, XK_Cyrillic_ER, XK_VoidSymbol}, "Р̏"}, // CYRILLIC CAPITAL LETTER ER WITH COMBINING DOUBLE GRAVE ACCENT
@@ -4167,9 +4227,7 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_F, XK_i, XK_VoidSymbol}, "ﬃ"}, // Ufb03 | LATIN SMALL LIGATURE FFI
   {{XK_dead_abovedot, XK_W, XK_VoidSymbol}, "Ẇ"}, // U1E86 | LATIN CAPITAL LETTER W WITH DOT ABOVE
   {{XK_Multi_key, XK_period, XK_W, XK_VoidSymbol}, "Ẇ"},
-  {{XK_dead_acute, XK_Cyrillic_O, XK_VoidSymbol}, "О́"}, // CYRILLIC CAPITAL LETTER O WITH COMBINING ACUTE ACCENT
-  {{XK_Multi_key, XK_acute, XK_Cyrillic_O, XK_VoidSymbol}, "О́"},
-  {{XK_Multi_key, XK_apostrophe, XK_Cyrillic_O, XK_VoidSymbol}, "О́"},
+  {{XK_dead_doublegrave, XK_i, XK_VoidSymbol}, "ȉ"}, // U0209 | LATIN SMALL LETTER I WITH DOUBLE GRAVE
   {{XK_dead_acute, XK_Greek_EPSILON, XK_VoidSymbol}, "Έ"}, // U0388 | GREEK CAPITAL LETTER EPSILON WITH TONOS
   {{XK_Multi_key, XK_acute, XK_Greek_EPSILON, XK_VoidSymbol}, "Έ"},
   {{XK_Multi_key, XK_apostrophe, XK_Greek_EPSILON, XK_VoidSymbol}, "Έ"},
@@ -4199,6 +4257,11 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_KP_Divide, XK_Cyrillic_GHE, XK_VoidSymbol}, "Ғ"},
   {{XK_dead_belowmacron, XK_h, XK_VoidSymbol}, "ẖ"}, // U1E96 | LATIN SMALL LETTER H WITH LINE BELOW
   {{XK_dead_belowcomma, XK_s, XK_VoidSymbol}, "ș"}, // U0219 | LATIN SMALL LETTER S WITH COMMA BELOW
+  {{XK_Multi_key, XK_semicolon, XK_s, XK_VoidSymbol}, "ș"},
+  {{XK_Multi_key, XK_s, XK_semicolon, XK_VoidSymbol}, "ș"},
+  {{XK_dead_acute, XK_Cyrillic_O, XK_VoidSymbol}, "О́"}, // CYRILLIC CAPITAL LETTER O WITH COMBINING ACUTE ACCENT
+  {{XK_Multi_key, XK_acute, XK_Cyrillic_O, XK_VoidSymbol}, "О́"},
+  {{XK_Multi_key, XK_apostrophe, XK_Cyrillic_O, XK_VoidSymbol}, "О́"},
   {{XK_dead_grave, XK_dead_dasia, XK_Greek_EPSILON, XK_VoidSymbol}, "Ἓ"}, // U1F1B | GREEK CAPITAL LETTER EPSILON WITH DASIA AND VARIA
   {{XK_dead_grave, XK_Multi_key, XK_parenleft, XK_Greek_EPSILON, XK_VoidSymbol}, "Ἓ"},
   {{XK_Multi_key, XK_grave, XK_dead_dasia, XK_Greek_EPSILON, XK_VoidSymbol}, "Ἓ"},
@@ -4266,6 +4329,11 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_dead_circumflex, XK_Multi_key, XK_underscore, XK_o, XK_VoidSymbol}, "º"}, // masculine | MASCULINE ORDINAL INDICATOR
   {{XK_Multi_key, XK_asciicircum, XK_underscore, XK_o, XK_VoidSymbol}, "º"},
   {{XK_dead_circumflex, XK_nobreakspace, XK_VoidSymbol}, "̂"}, // U0302 | COMBINING CIRCUMFLEX ACCENT
+  {{XK_dead_acute, XK_j, XK_VoidSymbol}, "j́"}, // LATIN SMALL LETTER J U006A with COMBINING ACUTE ACCENT U0301
+  {{XK_Multi_key, XK_apostrophe, XK_j, XK_VoidSymbol}, "j́"},
+  {{XK_Multi_key, XK_j, XK_apostrophe, XK_VoidSymbol}, "j́"},
+  {{XK_Multi_key, XK_acute, XK_j, XK_VoidSymbol}, "j́"},
+  {{XK_Multi_key, XK_j, XK_acute, XK_VoidSymbol}, "j́"},
   {{XK_dead_abovedot, XK_L, XK_VoidSymbol}, "Ŀ"}, // U013F | LATIN CAPITAL LETTER L WITH MIDDLE DOT
   {{XK_Multi_key, XK_parenleft, XK_4, XK_9, XK_parenright, XK_VoidSymbol}, "㊾"}, // U32BE | CIRCLED NUMBER FORTY NINE
   {{XK_Multi_key, XK_parenleft, XK_4, XK_KP_9, XK_parenright, XK_VoidSymbol}, "㊾"},
@@ -4297,9 +4365,9 @@ static const ComposeSequence COMPOSE_SEQUENCES[] = {
   {{XK_Multi_key, XK_grave, XK_parenleft, XK_Greek_OMICRON, XK_VoidSymbol}, "Ὃ"},
   {{XK_dead_circumflex, XK_E, XK_VoidSymbol}, "Ê"}, // Ecircumflex | LATIN CAPITAL LETTER E WITH CIRCUMFLEX
   {{XK_Multi_key, XK_asciicircum, XK_E, XK_VoidSymbol}, "Ê"},
+  {{XK_Multi_key, XK_E, XK_asciicircum, XK_VoidSymbol}, "Ê"},
   {{XK_Multi_key, XK_greater, XK_E, XK_VoidSymbol}, "Ê"},
   {{XK_Multi_key, XK_E, XK_greater, XK_VoidSymbol}, "Ê"},
-  {{XK_Multi_key, XK_E, XK_asciicircum, XK_VoidSymbol}, "Ê"},
   {{XK_dead_doublegrave, XK_Cyrillic_er, XK_VoidSymbol}, "р̏"}, // CYRILLIC SMALL LETTER ER WITH COMBINING DOUBLE GRAVE ACCENT
   {{XK_Multi_key, XK_grave, XK_grave, XK_Cyrillic_er, XK_VoidSymbol}, "р̏"},
   {{XK_dead_breve, XK_o, XK_VoidSymbol}, "ŏ"}, // U014F | LATIN SMALL LETTER O WITH BREVE

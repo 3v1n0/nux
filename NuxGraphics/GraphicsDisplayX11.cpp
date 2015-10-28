@@ -39,7 +39,7 @@
 
 namespace nux
 {
-  int GraphicsDisplay::double_click_time_delay = 400; // milliseconds
+  Time GraphicsDisplay::double_click_time_delay = 400; // milliseconds
 
   namespace atom
   {
@@ -72,9 +72,6 @@ namespace nux
 
     void initialize(Display *dpy)
     {
-      if (XdndPosition)
-        return;
-
       XdndPosition = XInternAtom(dpy, "XdndPosition", False);
       XdndEnter = XInternAtom(dpy, "XdndEnter", False);
       XdndStatus = XInternAtom(dpy, "XdndStatus", False);
@@ -1129,7 +1126,7 @@ namespace nux
 
     bool double_click = false;
     Time current_time = xevent.xbutton.time;
-    if ((double_click_counter_ == 1) && ((int)current_time - (int)last_click_time_ < double_click_time_delay))
+    if ((double_click_counter_ == 1) && (current_time - last_click_time_ < double_click_time_delay))
     {
       double_click = true;
       double_click_counter_ = 0;

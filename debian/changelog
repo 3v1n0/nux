@@ -1,3 +1,38 @@
+nux (4.0.8+15.10.20150921.1-0ubuntu1) wily; urgency=medium
+
+  [ Stephen M. Webb ]
+  * new upstream release 4.0.8
+  * debian/control (Standards-Version): bump to 3.9.6 (no changes)
+
+  [ Marco Trevisan (Treviño) ]
+  * debian/control:
+    - add xserver-xorg-video-dummy as build dependency
+    - set libnux-4.0-common arch to all
+    - depend on source:Version of libnux-4.0-common
+
+  [ Andrea Azzarone andrea.azzarone@canonical.com ]
+  * Remove alternative select mainloop. (LP: #1111216)
+
+  [ Marco Trevisan (Treviño) ]
+  * WindowCompositor: emit mouse_leave signal when releasing mouse over
+    a new area (LP: #1496140)
+
+ -- Marco Trevisan (Treviño) <mail@3v1n0.net>  Mon, 21 Sep 2015 17:41:54 +0000
+
+nux (4.0.7+15.10.20150802-0ubuntu1) wily; urgency=medium
+
+  [ CI Train Bot ]
+  * New rebuild forced.
+
+  [ Simon Arlott ]
+  * fix the size of timeout values on 64-bit platforms (thanks Simon
+    Arlott) (LP: #1379960)
+
+  [ Stephen M. Webb ]
+  * fixed a FTBFS when using GCC-5
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Sun, 02 Aug 2015 14:35:23 +0000
+
 nux (4.0.7+15.10.20150522-0ubuntu1) wily; urgency=medium
 
   [ Andrea Azzarone ]

@@ -1,6 +1,28 @@
+unused_src = \
+ button.cpp \
+ cairo.cpp \
+ cairo_wrapper.cpp \
+ canvas.cpp \
+ checkbox.cpp \
+ combobox.cpp \
+ focus.cpp \
+ gridlayout.cpp \
+ layeredlayout.cpp \
+ moveable_view.cpp \
+ pango_combobox.cpp \
+ pangotextedit.cpp \
+ rotate_texture_area.cpp \
+ scrollview.cpp \
+ tab_view.cpp \
+ textedit.cpp \
+ tiles_view.cpp \
+ timegraph.cpp \
+ timeline.cpp \
+ tooltip.cpp
+
 CLEANFILES =
 DISTCLEANFILES =
-EXTRA_DIST =
+EXTRA_DIST = ${unused_src}
 
 if BUILD_EXAMPLES
 

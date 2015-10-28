@@ -10,7 +10,7 @@ all: doxygen-doc
 endif
 
 DISTCLEANFILES = doc/html/* doc/*
-EXTRA_DIST = $(DX_CONFIG) autogen.sh COPYING.gpl .bzrignore
+EXTRA_DIST = $(DX_CONFIG) autogen.sh COPYING.gpl COPYING.lgpl-v2.1 .bzrignore
 
 check-headless:
 	cd tests; $(MAKE) check-headless

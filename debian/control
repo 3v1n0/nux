@@ -33,7 +33,8 @@ Build-Depends: debhelper (>= 9),
                libgeis-dev (>= 2.2.10),
                libibus-1.0-dev,
                libxtst-dev,
-Standards-Version: 3.9.3
+               xserver-xorg-video-dummy,
+Standards-Version: 3.9.6
 Section: libs
 Homepage: http://launchpad.net/nux
 # If you aren't a member of ~unity-team but need to upload packaging changes,
@@ -98,7 +99,7 @@ Description: Visual rendering toolkit for real-time applications - dev files
 
 Package: libnux-4.0-common
 Section: libs
-Architecture: any
+Architecture: all
 Multi-Arch: foreign
 Depends: ${misc:Depends}
 Description: Visual rendering toolkit for real-time applications - common files

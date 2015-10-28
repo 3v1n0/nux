@@ -70,15 +70,15 @@ public:
 
     auto prox_area = std::make_shared<nux::InputAreaProximity>(test_view, proximity);
 
-    prox_area->mouse_near.connect([&] (const nux::Point&) {
+    prox_area->mouse_near.connect([this] (const nux::Point&) {
       near_signal_recived_ = true;
     });
 
-    prox_area->mouse_beyond.connect([&] (const nux::Point&) {
+    prox_area->mouse_beyond.connect([this] (const nux::Point&) {
       beyond_signal_recived_ = true;
     });
 
-    prox_area->mouse_approaching.connect([&] (const nux::Point&, const nux::Point& difference) {
+    prox_area->mouse_approaching.connect([this] (const nux::Point&, const nux::Point& difference) {
       approaching_signal_recived_ = true;
       last_approaching_point_ = difference;
     });
