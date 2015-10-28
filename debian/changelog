@@ -1,3 +1,13 @@
+nux (4.0.8+16.04.20151028-0ubuntu1) xenial; urgency=medium
+
+  [ Andrea Azzarone ]
+  * Remove coverflow code.
+
+  [ Andrea Azzarone andrea.azzarone@canonical.com ]
+  * Remove coverflow code.
+
+ -- Marco Trevisan (Treviño) <mail@3v1n0.net>  Wed, 28 Oct 2015 09:53:50 +0000
+
 nux (4.0.8+15.10.20150921.1-0ubuntu1) wily; urgency=medium
 
   [ Stephen M. Webb ]
