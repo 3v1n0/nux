@@ -1,3 +1,11 @@
+nux (4.0.8+16.04.20151210-0ubuntu1) xenial; urgency=medium
+
+  [ Andrea Azzarone ]
+  * Fix Dash scrollbar so that it does not displace Dash background
+    texture (LP: #1050959)
+
+ -- Marco Trevisan (Treviño) <mail@3v1n0.net>  Thu, 10 Dec 2015 15:51:27 +0000
+
 nux (4.0.8+16.04.20151028-0ubuntu1) xenial; urgency=medium
 
   [ Andrea Azzarone ]
