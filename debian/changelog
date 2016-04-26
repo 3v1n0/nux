@@ -1,3 +1,15 @@
+nux (4.0.8+16.04.20160209-0ubuntu4) yakkety; urgency=medium
+
+  * (Build-)depend on libpng-dev.
+
+ -- Matthias Klose <doko@ubuntu.com>  Tue, 26 Apr 2016 12:18:33 +0200
+
+nux (4.0.8+16.04.20160209-0ubuntu3) yakkety; urgency=medium
+
+  * No-change rebuild for libpng soname change.
+
+ -- Matthias Klose <doko@ubuntu.com>  Tue, 26 Apr 2016 10:11:32 +0000
+
 nux (4.0.8+16.04.20160209-0ubuntu2) xenial; urgency=medium
 
   * Build without optimization on s390x for a first build. LP: #1570894.
