@@ -594,8 +594,8 @@ static int check_blacklist (Display     *display,
 
   // jaytaoko: Balcklist the Geforce FX cards
   if (results->renderer != NULL) {
-    char* str = strstr (results->renderer, "GeForce FX");
-    if (str != NULL) {
+    if (strstr (results->renderer, "GeForce FX") ||
+        (getenv("UNITY_LOW_GFX_MODE") != NULL && atoi(getenv("UNITY_LOW_GFX_MODE")) == 1)) {
       results->flags |= FLAG_BLACKLISTED;
     }
   }
