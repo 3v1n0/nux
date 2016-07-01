@@ -587,7 +587,8 @@ static int check_blacklist (Display     *display,
   if (results->renderer != NULL &&
       (strncmp (results->renderer, "Software Rasterizer", 19) == 0 ||
        strncmp (results->renderer, "Mesa X11", 8) == 0 ||
-       strstr (results->renderer, "on softpipe") != NULL)) {
+       strstr (results->renderer, "llvmpipe") ||
+       strstr (results->renderer, "on softpipe"))) {
     results->flags |= FLAG_SOFTWARE_RENDERING;
   }
 
