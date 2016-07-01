@@ -697,7 +697,7 @@ int main (int argc, char* argv[]) {
     } else if ((strncmp (argv[i], "-h", 2) == 0) ||
                (strncmp (argv[i], "--help", 6) == 0)) {
       print_help ();
-      return 2;
+      return 0;
     } else {
       fprintf (stderr, "Error: unknown command-line option `%s'\n\n", argv[i]);
       print_help ();
