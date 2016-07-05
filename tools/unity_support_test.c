@@ -158,6 +158,7 @@ static void print_help () {
            "    -i, --indirect:     Force an indirect rendering context\n"
            "    -p, --print:        Print detection results on stdout\n"
            "    -c, --compiz:       Only check for Compiz support\n"
+           "    -f  --force-check   Force checking already performed tests\n"
            "    -h, --help:         Show help\n");
 }
 
@@ -587,14 +588,15 @@ static int check_blacklist (Display     *display,
   if (results->renderer != NULL &&
       (strncmp (results->renderer, "Software Rasterizer", 19) == 0 ||
        strncmp (results->renderer, "Mesa X11", 8) == 0 ||
-       strstr (results->renderer, "on softpipe") != NULL)) {
+       strstr (results->renderer, "llvmpipe") ||
+       strstr (results->renderer, "on softpipe"))) {
     results->flags |= FLAG_SOFTWARE_RENDERING;
   }
 
   // jaytaoko: Balcklist the Geforce FX cards
   if (results->renderer != NULL) {
-    char* str = strstr (results->renderer, "GeForce FX");
-    if (str != NULL) {
+    if (strstr (results->renderer, "GeForce FX") ||
+        (getenv("UNITY_LOW_GFX_MODE") != NULL && atoi(getenv("UNITY_LOW_GFX_MODE")) == 1)) {
       results->flags |= FLAG_BLACKLISTED;
     }
   }
@@ -696,7 +698,7 @@ int main (int argc, char* argv[]) {
     } else if ((strncmp (argv[i], "-h", 2) == 0) ||
                (strncmp (argv[i], "--help", 6) == 0)) {
       print_help ();
-      return 2;
+      return 0;
     } else {
       fprintf (stderr, "Error: unknown command-line option `%s'\n\n", argv[i]);
       print_help ();
