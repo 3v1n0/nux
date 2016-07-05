@@ -158,6 +158,7 @@ static void print_help () {
            "    -i, --indirect:     Force an indirect rendering context\n"
            "    -p, --print:        Print detection results on stdout\n"
            "    -c, --compiz:       Only check for Compiz support\n"
+           "    -f  --force-check   Force checking already performed tests\n"
            "    -h, --help:         Show help\n");
 }
 
