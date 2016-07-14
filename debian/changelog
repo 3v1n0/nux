@@ -1,3 +1,10 @@
+nux (4.0.8+16.10.20160714-0ubuntu1) yakkety; urgency=medium
+
+  [ Eleni Maria Stea ]
+  * unity_support_test: set back 2 return value on --help
+
+ -- Marco Trevisan (Treviño) <mail@3v1n0.net>  Thu, 14 Jul 2016 10:03:44 +0000
+
 nux (4.0.8+16.10.20160705.1-0ubuntu1) yakkety; urgency=medium
 
   * unity_support_test: add llvmpipe as software-rendererd (LP:
