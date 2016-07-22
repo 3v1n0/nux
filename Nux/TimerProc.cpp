@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "Nux.h"
 #include "TimerProc.h"
 #include "WindowCompositor.h"
