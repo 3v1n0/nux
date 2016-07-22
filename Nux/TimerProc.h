@@ -19,7 +19,6 @@
  *
  */
 
-
 #ifndef TIMERPROC_H
 #define TIMERPROC_H
 
