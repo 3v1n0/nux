@@ -93,6 +93,7 @@ AC_CONFIG_MACRO_DIR([m4])
 dnl ===========================================================================
 
 # Checks for programs
+AM_CXXFLAGS-"$CXXFLAGS -std=c++0x"
 AC_PROG_CC_C99
 AC_PROG_CXX
 AM_PROG_CC_C_O

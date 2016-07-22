@@ -23,7 +23,7 @@
 #ifndef TIMERPROC_H
 #define TIMERPROC_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 namespace nux
 {
 
@@ -49,7 +49,7 @@ namespace nux
     TimerHandle(const TimerHandle &);
 
     TimerHandle &operator = (const TimerHandle &);
-    boost::shared_ptr<TimerObject> const& operator->() const;
+    std::shared_ptr<TimerObject> const& operator->() const;
     bool operator==(TimerHandle const& h) const;
 
     bool IsValid() const; //!<deprecated. use Activated().
@@ -64,7 +64,7 @@ namespace nux
     int GetElapsedTimed() const;
 
   private:
-    boost::shared_ptr<TimerObject> m_d;
+    std::shared_ptr<TimerObject> m_d;
   };
 
   //! A timer manager class created by WindowThread.

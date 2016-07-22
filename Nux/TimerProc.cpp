@@ -20,6 +20,7 @@
  *
  */
 
+
 #include "Nux.h"
 #include "TimerProc.h"
 #include "WindowCompositor.h"
@@ -112,7 +113,7 @@ namespace nux
     return *this;
   }
 
-  boost::shared_ptr<TimerObject> const& TimerHandle::operator->() const
+  std::shared_ptr<TimerObject> const& TimerHandle::operator->() const
   {
     return m_d;
   }

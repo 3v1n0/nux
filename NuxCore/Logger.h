@@ -22,9 +22,9 @@
 #ifndef NUX_CORE_LOGGER_H
 #define NUX_CORE_LOGGER_H
 
+#include <memory>
 #include <ostream>
 #include <string>
-#include <boost/shared_ptr.hpp>
 
 #if defined(NUX_OS_WINDOWS)
   #define __func__ __FUNCTION__
@@ -134,7 +134,7 @@ public:
 
 
 class LoggerModule;
-typedef boost::shared_ptr<LoggerModule> LoggerModulePtr;
+typedef std::shared_ptr<LoggerModule> LoggerModulePtr;
 
 class Logger
 {

@@ -22,10 +22,9 @@
 #ifndef NUX_CORE_PROPERTY_ANIMATION_H
 #define NUX_CORE_PROPERTY_ANIMATION_H
 
+#include <memory>
 #include "Animation.h"
 #include "Property.h"
-
-#include <boost/shared_ptr.hpp>
 
 namespace nux
 {
@@ -33,12 +32,12 @@ namespace animation
 {
 
 template <typename T>
-boost::shared_ptr<AnimateValue<T>> animate_property(Property<T>& prop,
+std::shared_ptr<AnimateValue<T>> animate_property(Property<T>& prop,
                                                     T const& start,
                                                     T const& finish,
                                                     int ms_duration)
 {
-  boost::shared_ptr<AnimateValue<T> > anim(new AnimateValue<T>(start, finish, ms_duration));
+  std::shared_ptr<AnimateValue<T> > anim(new AnimateValue<T>(start, finish, ms_duration));
   anim->updated.connect([&prop](T const& v) { prop = v; });
   return anim;
 }
