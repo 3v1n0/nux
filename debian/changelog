@@ -1,3 +1,10 @@
+nux (4.0.8+17.04.20161107-0ubuntu1) zesty; urgency=medium
+
+  * Don't build-depend on libglew-dev. It should be sufficient to build
+    against libglewmx-dev (LP: #1639622)
+
+ -- Jeremy Bicha <jbicha@ubuntu.com>  Mon, 07 Nov 2016 01:33:29 +0000
+
 nux (4.0.8+16.10.20160714-0ubuntu1) yakkety; urgency=medium
 
   [ Eleni Maria Stea ]
