@@ -115,7 +115,7 @@ AC_CHECK_FUNCS([memset munmap strcasecmp strdup])
 PKG_PROG_PKG_CONFIG
 
 dnl ===========================================================================
-GL_PKGS="gl glu glew glewmx xext x11"
+GL_PKGS="gl glu glewmx xext x11"
 MAINTAINER_CFLAGS=""
 
 # X11 build
