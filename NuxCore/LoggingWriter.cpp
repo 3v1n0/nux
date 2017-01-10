@@ -47,7 +47,7 @@ void cleanup_writer_instance()
 
 struct StreamWrapper
 {
-  typedef boost::shared_ptr<StreamWrapper> Ptr;
+  typedef std::shared_ptr<StreamWrapper> Ptr;
 
   StreamWrapper(std::ostream& output) : out(output) {}
   std::ostream& out;

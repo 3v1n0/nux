@@ -23,6 +23,7 @@
 #ifndef TIMERPROC_H
 #define TIMERPROC_H
 
+#include <memory>
 namespace nux
 {
 
