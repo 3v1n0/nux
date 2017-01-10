@@ -1,3 +1,14 @@
+nux (4.0.8+17.04.20170110.1-0ubuntu1) zesty; urgency=medium
+
+  [ Eleni Maria Stea ]
+  * replaced std::shared_ptr with boost::shared_ptr to fix compile
+    errors
+
+  [ Marco Trevisan (Treviño) ]
+  * debian/control: add libgtest-dev to build-dependency
+
+ -- Marco Trevisan (Treviño) <mail@3v1n0.net>  Tue, 10 Jan 2017 14:29:53 +0000
+
 nux (4.0.8+17.04.20161107-0ubuntu1) zesty; urgency=medium
 
   * Don't build-depend on libglew-dev. It should be sufficient to build
