@@ -37,7 +37,7 @@ std::shared_ptr<AnimateValue<T>> animate_property(Property<T>& prop,
                                                     T const& finish,
                                                     int ms_duration)
 {
-  std::shared_ptr<AnimateValue<T> > anim(new AnimateValue<T>(start, finish, ms_duration));
+  auto anim = std::make_shared<AnimateValue<T>>(start, finish, ms_duration);
   anim->updated.connect([&prop](T const& v) { prop = v; });
   return anim;
 }

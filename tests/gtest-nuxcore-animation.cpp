@@ -21,8 +21,6 @@
 
 #include <gmock/gmock.h>
 
-#include <boost/shared_ptr.hpp>
-
 namespace na = nux::animation;
 namespace nt = nux::testing;
 
@@ -789,7 +787,7 @@ TEST_F(TestAnimationHookup, TestIntProperty)
   nux::Property<int> int_property;
   EXPECT_THAT(int_property(), Eq(0));
 
-  boost::shared_ptr<na::AnimateValue<int> > anim = na::animate_property(int_property, 10, 20, 1000);
+  std::shared_ptr<na::AnimateValue<int> > anim = na::animate_property(int_property, 10, 20, 1000);
   anim->finished.connect([&anim]() {anim.reset();});
 
   anim->Start();
