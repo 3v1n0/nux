@@ -452,22 +452,25 @@ namespace nux
 
         handled = true;
       }
-      else if (((keyval == NUX_VK_x) && ctrl && !shift) || ((keyval == NUX_VK_DELETE) && shift && !ctrl))
+      else if (((keyval == NUX_VK_x || keyval == NUX_VK_X) && ctrl && !shift) ||
+               ((keyval == NUX_VK_DELETE) && shift && !ctrl))
       {
         CutClipboard();
         handled = true;
       }
-      else if (((keyval == NUX_VK_c) && ctrl && (!shift)) || ((keyval == NUX_VK_INSERT) && ctrl && (!shift)))
+      else if (((keyval == NUX_VK_c || keyval == NUX_VK_C) && ctrl && !shift) ||
+               ((keyval == NUX_VK_INSERT) && ctrl && !shift))
       {
         CopyClipboard();
         handled = true;
       }
-      else if (((keyval == NUX_VK_v) && ctrl && (!shift)) || ((keyval == NUX_VK_INSERT) && shift && (!ctrl)))
+      else if (((keyval == NUX_VK_v || keyval == NUX_VK_V) && ctrl && !shift) ||
+               ((keyval == NUX_VK_INSERT) && shift && !ctrl))
       {
         PasteClipboard();
         handled = true;
       }
-      else if ((keyval == NUX_VK_a) && ctrl)
+      else if ((keyval == NUX_VK_a || keyval == NUX_VK_A) && ctrl)
       {
         SelectAll();
         handled = true;
