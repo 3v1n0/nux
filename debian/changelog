@@ -1,3 +1,10 @@
+nux (4.0.8+17.04.20170213-0ubuntu1) zesty; urgency=medium
+
+  * TextEntry: Make sure Ctr+{C,V,X,A} work with caps-lock on (LP:
+    #1664205)
+
+ -- Marco Trevisan (Treviño) <mail@3v1n0.net>  Mon, 13 Feb 2017 13:22:38 +0000
+
 nux (4.0.8+17.04.20170110.1-0ubuntu1) zesty; urgency=medium
 
   [ Eleni Maria Stea ]
