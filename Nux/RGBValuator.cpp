@@ -85,12 +85,14 @@ namespace nux
         SetColorModel(color::HSV);
         SetHSV(x, y, z);
         SetAlpha(alpha);
+        break;
       }
       case color::HLS:
       {
         SetColorModel(color::HLS);
         SetHLS(x, y, z);
         SetAlpha(alpha);
+        break;
       }
       default:
       case color::RGB:
