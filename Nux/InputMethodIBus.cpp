@@ -472,6 +472,7 @@ namespace
               case XK_Super_L:
               case XK_Super_R:
                 ev.key_modifiers |= KEY_MODIFIER_SUPER;
+                break;
               case XK_Caps_Lock:
                 ev.key_modifiers |= KEY_MODIFIER_CAPS_LOCK;
                 break;
