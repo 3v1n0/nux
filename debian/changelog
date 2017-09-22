@@ -1,3 +1,9 @@
+nux (4.0.8+17.10.20170922-0ubuntu1) artful; urgency=medium
+
+  * Nux: mark explicit fallthrough jumps (to please gcc7)
+
+ -- Marco Trevisan (Treviño) <mail@3v1n0.net>  Fri, 22 Sep 2017 13:12:53 +0000
+
 nux (4.0.8+17.04.20170213-0ubuntu1) zesty; urgency=medium
 
   * TextEntry: Make sure Ctr+{C,V,X,A} work with caps-lock on (LP:
