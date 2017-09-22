@@ -371,12 +371,15 @@ namespace nux
         case 4:
           *--target = (unsigned char) ( (ch | byteMark) & byteMask);
           ch >>= 6;
+          [[gnu::fallthrough]];
         case 3:
           *--target = (unsigned char) ( (ch | byteMark) & byteMask);
           ch >>= 6;
+          [[gnu::fallthrough]];
         case 2:
           *--target = (unsigned char) ( (ch | byteMark) & byteMask);
           ch >>= 6;
+          [[gnu::fallthrough]];
         case 1:
           *--target =  (unsigned char) (ch | firstByteMark[bytesToWrite]);
       }
@@ -413,16 +416,19 @@ namespace nux
         return false;
         /* Everything else falls through when "true"... */
       case 4:
+        if ( (a = (*--srcptr) ) < 0x80 || a > 0xBF)
+          return false;
 
-        if ( (a = (*--srcptr) ) < 0x80 || a > 0xBF) return false;
-
+        [[gnu::fallthrough]];
       case 3:
+        if ( (a = (*--srcptr) ) < 0x80 || a > 0xBF)
+          return false;
 
-        if ( (a = (*--srcptr) ) < 0x80 || a > 0xBF) return false;
-
+        [[gnu::fallthrough]];
       case 2:
 
-        if ( (a = (*--srcptr) ) > 0xBF) return false;
+        if ( (a = (*--srcptr) ) > 0xBF)
+          return false;
 
         switch (*source)
         {
@@ -452,9 +458,13 @@ namespace nux
             if (a < 0x80) return false;
         }
 
-      case 1:
+        [[gnu::fallthrough]];
 
-        if (*source >= 0x80 && *source < 0xC2) return false;
+      case 1:
+        if (*source >= 0x80 && *source < 0xC2)
+          return false;
+
+      [[gnu::fallthrough]];
     }
 
     if (*source > 0xF4) return false;
@@ -597,18 +607,23 @@ namespace nux
         case 5:
           ch += *source++;
           ch <<= 6; /* remember, illegal UTF-8 */
+          [[gnu::fallthrough]];
         case 4:
           ch += *source++;
           ch <<= 6; /* remember, illegal UTF-8 */
+          [[gnu::fallthrough]];
         case 3:
           ch += *source++;
           ch <<= 6;
+          [[gnu::fallthrough]];
         case 2:
           ch += *source++;
           ch <<= 6;
+          [[gnu::fallthrough]];
         case 1:
           ch += *source++;
           ch <<= 6;
+          [[gnu::fallthrough]];
         case 0:
           ch += *source++;
       }
@@ -748,12 +763,15 @@ namespace nux
         case 4:
           *--target = (unsigned char) ( (ch | byteMark) & byteMask);
           ch >>= 6;
+          [[gnu::fallthrough]];
         case 3:
           *--target = (unsigned char) ( (ch | byteMark) & byteMask);
           ch >>= 6;
+          [[gnu::fallthrough]];
         case 2:
           *--target = (unsigned char) ( (ch | byteMark) & byteMask);
           ch >>= 6;
+          [[gnu::fallthrough]];
         case 1:
           *--target = (unsigned char) (ch | firstByteMark[bytesToWrite]);
       }
@@ -802,18 +820,23 @@ namespace nux
         case 5:
           ch += *source++;
           ch <<= 6;
+          [[gnu::fallthrough]];
         case 4:
           ch += *source++;
           ch <<= 6;
+          [[gnu::fallthrough]];
         case 3:
           ch += *source++;
           ch <<= 6;
+          [[gnu::fallthrough]];
         case 2:
           ch += *source++;
           ch <<= 6;
+          [[gnu::fallthrough]];
         case 1:
           ch += *source++;
           ch <<= 6;
+          [[gnu::fallthrough]];
         case 0:
           ch += *source++;
       }
@@ -875,6 +898,7 @@ namespace nux
               ch += *source++;
               --tmpBytesToRead;
               if (tmpBytesToRead) ch <<= 6;
+              [[gnu::fallthrough]];
           } while (tmpBytesToRead > 0);
       }
   In UTF-8 writing code, the switches on "bytesToWrite" are

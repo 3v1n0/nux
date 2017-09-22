@@ -96,6 +96,9 @@ void GeisAttributes::AddPointer(const char *name, void *value)
   vector.push_back(std::move(attr));
 }
 
+extern "C"
+{
+
 /******* Geis  *******/
 
 Geis geis_new(GeisString /* init_arg_name */, ...)
@@ -481,3 +484,5 @@ GeisStatus geis_subscription_remove_filter(GeisSubscription subscription,
   }
   return GEIS_STATUS_BAD_ARGUMENT;
 }
+
+} // extern "C"

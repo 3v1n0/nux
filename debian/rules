@@ -7,7 +7,7 @@ DEB_HOST_ARCH := $(shell dpkg-architecture -qDEB_HOST_ARCH)
 gles2_architectures := armel armhf
 
 ifneq (,$(filter $(DEB_HOST_ARCH),s390x))
-  DEB_BUILD_OPTIONS := $(DEB_BUILD_OPTIONS) noopt
+  DEB_BUILD_OPTIONS := $(DEB_BUILD_OPTIONS) noopt nocheck
   export DEB_BUILD_OPTIONS
 endif
 
