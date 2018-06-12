@@ -2,6 +2,6 @@
 # If the hardware does not pass unity_support_test, fall back to LLVMpipe
 # which does.
 
-if [ "x$DESKTOP_SESSION" = "xubuntu" ]; then
+if [ "x$DESKTOP_SESSION" = "xubuntu" ] && [ -x "/usr/lib/nux/unity_support_test" ]; then
     /usr/lib/nux/unity_support_test || export LIBGL_ALWAYS_SOFTWARE=1
 fi
