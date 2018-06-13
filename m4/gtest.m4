@@ -35,8 +35,8 @@ AC_DEFUN([CHECK_GTEST],
   AC_ARG_VAR([GMOCK_CPPFLAGS],
              [C preprocessor flags for Google Mock.])
 
-  gmock_prefix=/usr/src/gmock
-  gmock_includes=$gmock_prefix/gtest/include
+  gmock_prefix=/usr/src/googletest/googlemock
+  gmock_includes=$gmock_prefix/include
   AC_ARG_WITH([gmock-prefix],[
     AS_HELP_STRING([--with-gmock-prefix],
                    [Prefix where Google Mock is installed (default $gmock_prefix)])
