@@ -1,3 +1,3 @@
 usr/lib/*/nux/unity_support_test usr/lib/nux
-debian/X11-check-unity-support usr/lib/nux
+debian/50_check_unity_support etc/X11/Xsession.d
 debian/source_nux.py usr/share/apport/package-hooks
