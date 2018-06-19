@@ -39,7 +39,8 @@ Section: libs
 Homepage: http://launchpad.net/nux
 # If you aren't a member of ~unity-team but need to upload packaging changes,
 # just go ahead.  ~unity-team will notice and sync up the code again.
-Vcs-Bzr: https://code.launchpad.net/~unity-team/nux/trunk
+Vcs-Browser: https://git.launchpad.net/~unity-team/nux
+Vcs-Git: https://git.launchpad.net/~unity-team/nux
 
 Package: libnux-4.0-0
 Section: libs
