@@ -33,7 +33,7 @@ override_dh_install:
 
 override_dh_auto_test:
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
-	make check-headless
+	env LIBGL_ALWAYS_SOFTWARE=1 make check-headless
 endif
 
 override_dh_gencontrol:
