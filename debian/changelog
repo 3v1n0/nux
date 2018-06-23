@@ -1,4 +1,4 @@
-nux (4.0.8+18.10.20180613.3-0ubuntu2) UNRELEASED; urgency=medium
+nux (4.0.8+18.10.20180623-0ubuntu1) cosmic; urgency=medium
 
   * debian/control: update Vcs
   * debian/nux-tools.preinst:
@@ -8,7 +8,7 @@ nux (4.0.8+18.10.20180613.3-0ubuntu2) UNRELEASED; urgency=medium
     - build tests using LIBGL_ALWAYS_SOFTWARE env var to fix build crash
       on launchpad builders (there are memory errors in the hw drivers).
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 19 Jun 2018 05:20:32 +0200
+ -- Marco Trevisan (Treviño) <mail@3v1n0.net>  Sat, 23 Jun 2018 07:30:26 +0000
 
 nux (4.0.8+18.10.20180613.3-0ubuntu1) cosmic; urgency=medium
 
