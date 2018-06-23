@@ -1,0 +1,28 @@
+#!/bin/sh
+
+set -e
+
+restore_backup_conffiles() {
+    PKGNAME="$1"
+    PREVERSION="$2"
+    MAXVERSION="$3"
+
+    if dpkg --compare-versions "$PREVERSION" lt-nl "$MAXVERSION"; then
+        conffiles="$(dpkg-query --show -f='${Conffiles}' "$PKGNAME")"
+        filepaths="$(echo "$conffiles" | cut -f-2 -d' ')"
+
+        for cfile in $filepaths; do
+          if [ -e "$cfile".x11-back ]; then
+            echo "Moving conffile $cfile back in place..."
+            mv -f "$cfile".x11-back "$cfile"
+          fi
+        done
+    fi
+}
+
+case "$1" in
+install)
+    restore_backup_conffiles nux-tools "$2" 4.0.8+18.10.20180613.3-0ubuntu1;;
+esac
+
+#DEBHELPER#

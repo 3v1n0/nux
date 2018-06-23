@@ -1,3 +1,15 @@
+nux (4.0.8+18.10.20180613.3-0ubuntu2) UNRELEASED; urgency=medium
+
+  * debian/control: update Vcs
+  * debian/nux-tools.preinst:
+    - Restore backup config files before installing nux-tools, so that they
+      will be updaded with the fixed versions (LP: #1768610)
+  * debian/rules:
+    - build tests using LIBGL_ALWAYS_SOFTWARE env var to fix build crash
+      on launchpad builders (there are memory errors in the hw drivers).
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 19 Jun 2018 05:20:32 +0200
+
 nux (4.0.8+18.10.20180613.3-0ubuntu1) cosmic; urgency=medium
 
   * debian/50_check_unity_support:
